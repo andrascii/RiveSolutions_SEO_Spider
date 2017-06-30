@@ -8,84 +8,119 @@ namespace QuickieWebBot
 class ModelControllerData
 {
 private:
-	using CrawlerQueueType = std::unordered_set<std::shared_ptr<WebsiteAnalyseElement>, WebsiteAnalyseElementHasher>;
-	using GuiQueueType = std::vector<std::shared_ptr<WebsiteAnalyseElement>>;
+	using CrawlerStorageType = std::unordered_set<std::shared_ptr<WebsiteAnalyseElement>, WebsiteAnalyseElementHasher>;
+	using GuiStorageType = std::vector<std::shared_ptr<WebsiteAnalyseElement>>;
 
 public:
-	enum QueueType
+	enum StorageType
 	{
-		InternalQueueType,
-		CrawledQueueType,
-		ExternalQueueType
+		InternalUrlStorageType,
+		CrawledUrlStorageType,
+		ExternalUrlStorageType,
+
+		UpperCaseUrlStorageType,
+		NonAsciiCharacterUrlStorageType,
+		VeryLongUrlStorageType,
+
+		EmptyTitleUrlStorageType,
+		DuplicatedTitleUrlStorageType,
+		VeryLongTitleUrlStorageType,
+		VeryShortTitleUrlStorageType,
+		DuplicatedH1TitleUrlStorageType,
+		SeveralTitleUrlStorageType,
+
+		EmptyMetaDescriptionUrlStorageType,
+		DuplicatedMetaDescriptionUrlStorageType,
+		VeryLongMetaDescriptionUrlStorageType,
+		VeryShortMetaDescriptionUrlStorageType,
+		SeveralMetaDescriptionUrlStorageType,
+
+		EmptyMetaKeywordsUrlStorageType,
+		DuplicatedMetaKeywordsUrlStorageType,
+		SeveralMetaKeywordsUrlStorageType,
+
+		MissingH1UrlStorageType,
+		DuplicatedH1UrlStorageType,
+		VeryLongH1UrlStorageType,
+		SeveralH1UrlStorageType,
+
+		MissingH2UrlStorageType,
+		DuplicatedH2UrlStorageType,
+		VeryLongH2UrlStorageType,
+		SeveralH2UrlStorageType,
+
+		Over100kbImageStorageType,
+		MissingAltTextImageStorageType,
+		VeryLongAltTextImageStorageType
 	};
 
-	bool isElementExists(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, QueueType type) const noexcept;
-	void addElement(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, QueueType type) noexcept;
+	bool isElementExists(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, StorageType type) const noexcept;
+	void addElement(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, StorageType type) noexcept;
 
 private:
-	void checkQueueType(QueueType type) const noexcept;
+	void checkStorageType(StorageType type) const noexcept;
 
-	CrawlerQueueType const* crawlerQueue(QueueType type) const noexcept;
-	CrawlerQueueType* crawlerQueue(QueueType type) noexcept;
+	CrawlerStorageType const* crawlerStorage(StorageType type) const noexcept;
+	CrawlerStorageType* crawlerStorage(StorageType type) noexcept;
 
-	GuiQueueType const* guiQueue(QueueType type) const noexcept;
-	GuiQueueType* guiQueue(QueueType type) noexcept;
+	GuiStorageType const* guiStorage(StorageType type) const noexcept;
+	GuiStorageType* guiStorage(StorageType type) noexcept;
 
 private:
-	template <typename QueueType>
-	struct Queues
+	template <typename StorageType>
+	struct Storage
 	{
 		// internal crawler url queues
-		QueueType internalUrlsQueue;
-		QueueType crawledUrlsQueue;
-		QueueType externalUrlsQueue;
+		StorageType internalUrlStorage;
+		StorageType crawledUrlStorage;
+		StorageType externalUrlStorage;
 
 		// urls
-		QueueType upperCaseUrlsQueue;
-		QueueType nonAsciiCharacterUrlsQueue;
-		QueueType veryLongUrlsQueue;
+		StorageType upperCaseUrlStorage;
+		StorageType nonAsciiCharacterUrlStorage;
+		StorageType veryLongUrlStorage;
 
 		// titles
-		QueueType emptyTitleUrlsQueue;
-		QueueType duplicatedTitleUrlsQueue;
-		QueueType veryLongTitleUrlsQueue;
-		QueueType veryShortTitleUrlsQueue;
-		QueueType duplicatedH1TitleUrlsQueue;
-		QueueType severalTitleUrlsQueue;
+		StorageType emptyTitleUrlStorage;
+		StorageType duplicatedTitleUrlStorage;
+		StorageType veryLongTitleUrlStorage;
+		StorageType veryShortTitleUrlStorage;
+		StorageType duplicatedH1TitleUrlStorage;
+		StorageType severalTitleUrlStorage;
 
 		// meta descriptions
-		QueueType emptyMetaDescriptionUrlsQueue;
-		QueueType duplicatedMetaDescriptionUrlsQueue;
-		QueueType veryLongMetaDescriptionUrlsQueue;
-		QueueType veryShortMetaDescriptionUrlsQueue;
-		QueueType severalMetaDescriptionUrlsQueue;
+		StorageType emptyMetaDescriptionUrlStorage;
+		StorageType duplicatedMetaDescriptionUrlStorage;
+		StorageType veryLongMetaDescriptionUrlStorage;
+		StorageType veryShortMetaDescriptionUrlStorage;
+		StorageType severalMetaDescriptionUrlStorage;
 
 		// meta keywords
-		QueueType emptyMetaKeywordsUrlsQueue;
-		QueueType duplicatedMetaKeywordsUrlsQueue;
-		QueueType severalMetaKeywordsUrlsQueue;
+		StorageType emptyMetaKeywordsUrlStorage;
+		StorageType duplicatedMetaKeywordsUrlStorage;
+		StorageType severalMetaKeywordsUrlStorage;
 
 		// H1
-		QueueType missingH1UrlsQueue;
-		QueueType duplicatedH1UrlsQueue;
-		QueueType veryLongH1UrlsQueue;
-		QueueType severalH1UrlsQueue;
+		StorageType missingH1UrlStorage;
+		StorageType duplicatedH1UrlStorage;
+		StorageType veryLongH1UrlStorage;
+		StorageType severalH1UrlStorage;
 
 		// H2
-		QueueType missingH2UrlsQueue;
-		QueueType duplicatedH2UrlsQueue;
-		QueueType veryLongH2UrlsQueue;
-		QueueType severalH2UrlsQueue;
+		StorageType missingH2UrlStorage;
+		StorageType duplicatedH2UrlStorage;
+		StorageType veryLongH2UrlStorage;
+		StorageType severalH2UrlStorage;
 
 		// images
-		QueueType over100kbImagesQueue;
-		QueueType missingAltTextImagesQueue;
-		QueueType veryLongAltTextImagesQueue;
+		StorageType over100kbImageStorage;
+		StorageType missingAltTextImageStorage;
+		StorageType veryLongAltTextImageStorage;
 	};
 
 private:
-	Queues<CrawlerQueueType> m_crawlerQueues;
-	Queues<GuiQueueType> m_guiQueues;
+	Storage<CrawlerStorageType> m_crawlerQueues;
+	Storage<GuiStorageType> m_guiQueues;
 };
 
 }

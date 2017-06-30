@@ -47,7 +47,7 @@ struct WebsiteAnalyseElement
 
 struct WebsiteAnalyseElementHasher
 {
-	size_t operator()(WebsiteAnalyseElement const* websiteAnalyseElement) const noexcept
+	size_t operator()(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalyseElement) const noexcept
 	{
 		return hasher(websiteAnalyseElement->url.toString().toStdString());
 	}

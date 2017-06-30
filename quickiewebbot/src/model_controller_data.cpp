@@ -3,60 +3,90 @@
 namespace QuickieWebBot
 {
 
-bool ModelControllerData::isElementExists(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, QueueType type) const noexcept
+bool ModelControllerData::isElementExists(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, StorageType type) const noexcept
 {
-	checkQueueType(type);
+	checkStorageType(type);
 
-	CrawlerQueueType const* pQueue = crawlerQueue(type);
+	CrawlerStorageType const* pQueue = crawlerStorage(type);
 
 	return pQueue->find(websiteAnalysElement) != std::end(*pQueue);
 }
 
-void ModelControllerData::addElement(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, QueueType type) noexcept
+void ModelControllerData::addElement(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, StorageType type) noexcept
 {
 	if (isElementExists(websiteAnalysElement, type))
 	{
 		return;
 	}
 
-	CrawlerQueueType* pQueue = crawlerQueue(type);
-
-	pQueue->insert(websiteAnalysElement);
-
-	//
-	// TODO: add element to all queues
-	//
+	crawlerStorage(type)->insert(websiteAnalysElement);
+	guiStorage(type)->push_back(websiteAnalysElement);
 }
 
-void ModelControllerData::checkQueueType(QueueType type) const noexcept
+void ModelControllerData::checkStorageType(StorageType type) const noexcept
 {
-	assert(type == InternalQueueType || 
-		type == CrawledQueueType || 
-		type == ExternalQueueType
+	assert(
+		type == InternalUrlStorageType || 
+		type == CrawledUrlStorageType || 
+		type == ExternalUrlStorageType ||
+		type == UpperCaseUrlStorageType ||
+		type == NonAsciiCharacterUrlStorageType ||
+		type == VeryLongUrlStorageType ||
+
+		type == EmptyTitleUrlStorageType ||
+		type == DuplicatedTitleUrlStorageType ||
+		type == VeryLongTitleUrlStorageType ||
+		type == VeryShortTitleUrlStorageType ||
+		type == DuplicatedH1TitleUrlStorageType ||
+		type == SeveralTitleUrlStorageType ||
+
+		type == EmptyMetaDescriptionUrlStorageType ||
+		type == DuplicatedMetaDescriptionUrlStorageType ||
+		type == VeryLongMetaDescriptionUrlStorageType ||
+		type == VeryShortMetaDescriptionUrlStorageType ||
+		type == SeveralMetaDescriptionUrlStorageType ||
+
+		type == EmptyMetaKeywordsUrlStorageType ||
+		type == DuplicatedMetaKeywordsUrlStorageType ||
+		type == SeveralMetaKeywordsUrlStorageType ||
+
+		type == MissingH1UrlStorageType ||
+		type == DuplicatedH1UrlStorageType ||
+		type == VeryLongH1UrlStorageType ||
+		type == SeveralH1UrlStorageType ||
+
+		type == MissingH2UrlStorageType ||
+		type == DuplicatedH2UrlStorageType ||
+		type == VeryLongH2UrlStorageType ||
+		type == SeveralH2UrlStorageType ||
+
+		type == Over100kbImageStorageType ||
+		type == MissingAltTextImageStorageType ||
+		type == VeryLongAltTextImageStorageType
 	);
 }
 
-ModelControllerData::CrawlerQueueType const* ModelControllerData::crawlerQueue(QueueType type) const noexcept
+ModelControllerData::CrawlerStorageType const* ModelControllerData::crawlerStorage(StorageType type) const noexcept
 {
-	CrawlerQueueType const* pQueue = nullptr;
+	CrawlerStorageType const* pQueue = nullptr;
 
 	switch (type)
 	{
-		case InternalQueueType:
+		case InternalUrlStorageType:
 		{
-			pQueue = &m_crawlerQueues.internalUrlsQueue;
+			pQueue = &m_crawlerQueues.internalUrlStorage;
 			break;
 		}
 
-		case CrawledQueueType:
+		case CrawledUrlStorageType:
 		{
-			pQueue = &m_crawlerQueues.crawledUrlsQueue;
+			pQueue = &m_crawlerQueues.crawledUrlStorage;
 			break;
 		}
 
-		case ExternalQueueType:
+		case ExternalUrlStorageType:
 		{
-			pQueue = &m_crawlerQueues.externalUrlsQueue;
+			pQueue = &m_crawlerQueues.externalUrlStorage;
 
 			break;
 		}
@@ -65,33 +95,33 @@ ModelControllerData::CrawlerQueueType const* ModelControllerData::crawlerQueue(Q
 	return pQueue;
 }
 
-ModelControllerData::CrawlerQueueType* ModelControllerData::crawlerQueue(QueueType type) noexcept
+ModelControllerData::CrawlerStorageType* ModelControllerData::crawlerStorage(StorageType type) noexcept
 {
-	CrawlerQueueType const* pQueue = const_cast<ModelControllerData const * const>(this)->crawlerQueue(type);
-	return const_cast<CrawlerQueueType*>(pQueue);
+	CrawlerStorageType const* pQueue = const_cast<ModelControllerData const * const>(this)->crawlerStorage(type);
+	return const_cast<CrawlerStorageType*>(pQueue);
 }
 
-ModelControllerData::GuiQueueType const* ModelControllerData::guiQueue(QueueType type) const noexcept
+ModelControllerData::GuiStorageType const* ModelControllerData::guiStorage(StorageType type) const noexcept
 {
-	GuiQueueType const* pQueue = nullptr;
+	GuiStorageType const* pQueue = nullptr;
 
 	switch (type)
 	{
-		case InternalQueueType:
+		case InternalUrlStorageType:
 		{
-			pQueue = &m_guiQueues.internalUrlsQueue;
+			pQueue = &m_guiQueues.internalUrlStorage;
 			break;
 		}
 
-		case CrawledQueueType:
+		case CrawledUrlStorageType:
 		{
-			pQueue = &m_guiQueues.crawledUrlsQueue;
+			pQueue = &m_guiQueues.crawledUrlStorage;
 			break;
 		}
 
-		case ExternalQueueType:
+		case ExternalUrlStorageType:
 		{
-			pQueue = &m_guiQueues.externalUrlsQueue;
+			pQueue = &m_guiQueues.externalUrlStorage;
 
 			break;
 		}
@@ -100,10 +130,10 @@ ModelControllerData::GuiQueueType const* ModelControllerData::guiQueue(QueueType
 	return pQueue;
 }
 
-ModelControllerData::GuiQueueType* ModelControllerData::guiQueue(QueueType type) noexcept
+ModelControllerData::GuiStorageType* ModelControllerData::guiStorage(StorageType type) noexcept
 {
-	GuiQueueType const* pQueue = const_cast<ModelControllerData const * const>(this)->guiQueue(type);
-	return const_cast<GuiQueueType*>(pQueue);
+	GuiStorageType const* pQueue = const_cast<ModelControllerData const * const>(this)->guiStorage(type);
+	return const_cast<GuiStorageType*>(pQueue);
 }
 
 }
