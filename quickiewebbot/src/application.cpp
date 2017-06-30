@@ -33,7 +33,7 @@ void Application::initialize()
 
 	s_app = this;
 
-	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager(this));
+	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
 }
 
 void Application::initializeStyleSheet()
