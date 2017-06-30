@@ -8,7 +8,7 @@ class TableModel : public QAbstractTableModel
 	Q_OBJECT
 
 public:
-	TableModel();
+	TableModel(QObject* parent = nullptr);
 
 	virtual int rowCount(QModelIndex const& parent = QModelIndex()) const override;
 	virtual int columnCount(QModelIndex const& parent = QModelIndex()) const override;

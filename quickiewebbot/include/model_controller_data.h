@@ -1,6 +1,7 @@
 #pragma once
 
 #include "website_analyse_element.h"
+#include "table_model.h"
 
 namespace QuickieWebBot
 {
@@ -57,14 +58,14 @@ public:
 	bool isElementExists(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, StorageType type) const noexcept;
 	void addElement(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, StorageType type) noexcept;
 
-private:
-	void checkStorageType(StorageType type) const noexcept;
-
 	CrawlerStorageType* crawlerStorage(StorageType type) noexcept;
 	CrawlerStorageType const* crawlerStorage(StorageType type) const noexcept;
 
 	GuiStorageType* guiStorage(StorageType type) noexcept;
 	GuiStorageType const* guiStorage(StorageType type) const noexcept;
+
+private:
+	void checkStorageType(StorageType type) const noexcept;
 
 private:
 	template <typename StorageType>

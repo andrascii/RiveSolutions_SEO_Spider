@@ -14,8 +14,8 @@ class ModelController
 
 public:
 	ModelController(QObject* parent = nullptr);
-	
 
+	
 };
 
 }

@@ -3,9 +3,9 @@
 namespace QuickieWebBot
 {
 
-TableModel::TableModel()
+TableModel::TableModel(QObject* parent)
+	: QAbstractTableModel(parent)
 {
-
 }
 
 int TableModel::rowCount(QModelIndex const& parent) const

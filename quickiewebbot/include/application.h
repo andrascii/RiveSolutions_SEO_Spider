@@ -5,17 +5,24 @@
 namespace QuickieWebBot
 {
 
+class ModelController;
+
 class Application : public QApplication
 {
 	Q_OBJECT
 
 public:
-	Application(int argc, char** argv);
+	static Application* instance();
+	Application(int& argc, char** argv);
 
 private:
+	void init();
 	void initializeStyleSheet();
 
 private:
+	static Application* s_app;
+
+	ModelController* m_modelController;
 	std::unique_ptr<MainFrame> m_mainFrame;
 };
 
