@@ -1,6 +1,7 @@
 #include "application.h"
 #include "style_loader.h"
 #include "model_controller.h"
+#include "service_locator.h"
 
 namespace QuickieWebBot
 {
@@ -17,20 +18,22 @@ Application::Application(int& argc, char** argv)
 	, m_modelController(new ModelController(this))
 	, m_mainFrame(new MainFrame)
 {
-	init();
+	initialize();
 
 	initializeStyleSheet();
 
 	m_mainFrame->show();
 }
 
-void Application::init()
+void Application::initialize()
 {
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleSheet("styles.css", QStringLiteral("F5"));
 #endif
 
 	s_app = this;
+
+	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager(this));
 }
 
 void Application::initializeStyleSheet()

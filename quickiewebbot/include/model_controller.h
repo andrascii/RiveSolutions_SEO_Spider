@@ -15,7 +15,7 @@ class ModelController
 public:
 	ModelController(QObject* parent = nullptr);
 
-	
+	Q_INVOKABLE void addWebsiteAnalyseElement(std::shared_ptr<WebsiteAnalyseElement> urlInfo);
 };
 
 }

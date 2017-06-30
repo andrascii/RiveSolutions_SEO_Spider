@@ -16,7 +16,7 @@ public:
 	Application(int& argc, char** argv);
 
 private:
-	void init();
+	void initialize();
 	void initializeStyleSheet();
 
 private:

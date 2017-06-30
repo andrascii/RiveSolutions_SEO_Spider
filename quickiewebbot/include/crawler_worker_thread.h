@@ -12,13 +12,15 @@ class CrawlerWorkerThread : public QObject
 public:
 	CrawlerWorkerThread(QObject* parent = nullptr);
 	
-	Q_INVOKABLE void start(ModelController* pModelController);
+	void setupModelController(ModelController* pModelController);
+
+	Q_INVOKABLE void start();
 
 private:
-
 
 private:
 	std::atomic_bool m_onAboutToStop;
+	ModelController* m_modelController;
 
 	QNetworkAccessManager m_networkAccessManager;
 	QNetworkRequest m_networkRequest;
