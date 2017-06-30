@@ -1,0 +1,34 @@
+Необходимы следующие типы натсроек приложения:
+
+1. Количество потоков
+
+2. Поведение краулера:
+	- Проверять ли изображения?
+	- Проверять ли CSS?
+	- Проверять ли JavaScript?
+	- Проверять ли SWF?
+	- Проверять ли внешние ссылки?
+	- Follow Internal "nofollow"?
+	- Follow External "nofollow"?
+	- Анализировать субдомены?
+	- Анализировать Canonicals?
+	- Следовать правилам robots.txt? Кем притвориться? Googlebot'ом, YandexBot'ом, Yahoobot'ом и т.д.
+	
+3. Лимиты краулинга:
+	- Максимальное количество ссылок для анализа (Limit Search Total)
+	- Максимальная длина анализируемых ссылок (Limit Max URI Length to Crawl)
+	- Таймаут ответа сервера (Limit Max Response Timeout)
+	- Максимальное количество редиректов (Max Redirects to Follow)
+	
+4. Preferences
+	- Максимальная длина H1 (Max H1 Length Chars)
+	- Максимальная длина H2 (Max H2 Length Chars)
+	- Максимальная длина alt image (Max Image Alt Text Chars)
+	- Максимальная длина изображения (Max Image Size in Kilobytes)
+	- Максимальная длина метаописания (Max Description Width)
+	- Максимальная длина заголовка страницы (Max Title Width)
+	
+5. HTTP header
+	- user-agent
+
+6. Proxy

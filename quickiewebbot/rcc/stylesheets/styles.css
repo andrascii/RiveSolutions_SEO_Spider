@@ -1,0 +1,148 @@
+QWidget
+{
+	font-family: Arial;
+	font-size: 10pt;
+	color: #ededed;
+	background-color: #1f2530;
+}
+
+/*/////////////////////////////// Menubar and actions ///////////////////////////////*/
+
+QMenuBar
+{	
+	padding-top: 1em;
+	padding-bottom: 1em;
+}
+
+QMenuBar::item:selected
+{
+	background: #343b49;
+}
+
+QMenu
+{
+	padding: 0.1em;
+	border: 0.05em solid #1f2530;
+	background-color: #f5f5f5;
+}
+
+QMenu::item
+{
+	color: #494949;
+	selection-background-color: #d6d6d6;
+}
+
+QIcon
+{
+	selection-background-color: #d6d6d6;
+}
+
+/*/////////////////////////////////// Border ////////////////////////////*/
+
+QLineEdit,
+QProgressBar,
+QPushButton,
+QTableView,
+QComboBox
+{
+	border: 0.05em solid #c3c3c3;
+	border-radius: 2px;
+}
+
+/*////////////////////////////////// Line edit //////////////////////////*/
+
+QLineEdit
+{
+	min-height: 1.5em;
+	background-color: #ffffff;
+	color: #494949;
+}
+
+/*////////////////////////////////// Progress Bar //////////////////////////*/
+
+QProgressBar
+{
+	min-height: 1.5em;
+	background-color: #ffffff;
+	text-align: center;
+	color: #494949;
+}
+
+QProgressBar::chunk
+{
+	background-color: #61a032;
+}
+
+/*////////////////////////////////// Push Buttons //////////////////////////*/
+
+QPushButton
+{
+	background-color: #f5f5f5;
+	color: #494949;
+	min-height: 1.5em;
+	min-width: 3em;
+}
+
+QPushButton:pressed
+{
+	background-color: #d6d6d6;
+}
+
+/*/////////////////////////////// QComboBox ///////////////////////////////*/
+
+QComboBox
+{
+	background-color: #f5f5f5;
+	color: #494949;
+	min-height: 1.5em;
+	min-width: 3em;
+}
+
+QComboBox::item
+{
+	background: #ffffff;
+}
+
+QComboBox::drop-down
+{
+	margin-right: 0.4em;
+	background-color: #f5f5f5;
+	color: #494949;
+}
+
+QComboBox::down-arrow
+{
+	image: url(:/images/arrow-down-icon.png);
+}
+
+/*/////////////////////////////// Info frame ///////////////////////////////*/
+
+QWidget#titleWidget
+{
+	padding-left: 1em;
+	min-height: 3em;
+	background: #e7e7e7;
+}
+
+QStackedWidget
+{	
+	border: none;
+}
+
+QStackedWidget QWidget
+{
+	background-color: #e7e7e7;
+	margin-bottom: 3em;
+}
+
+/*/////////////////////////////// Table view ///////////////////////////////*/
+
+QTableView
+{
+	background-color: #ffffff;
+}
+
+
+
+
+
