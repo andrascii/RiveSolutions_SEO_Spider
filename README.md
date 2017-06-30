@@ -7,7 +7,7 @@ Steps for build:
 
 1. For this we need to get git-bash. (You can download it here: https://git-scm.com/downloads)
 2. Create folder on your computer then open it and right-click, start Git Bash.
-3. Type in "git clone https://bitbucket.org/quickiewebbotteam/quickiewebbot".
+3. Type in "git clone https://bitbucket.org/quickiewebbotteam/quickiewebbot-app".
 
 After that you have all sources. For now we need to generate Visual Studio project.
 For that you need CMake. You can download it here: https://cmake.org/download/
