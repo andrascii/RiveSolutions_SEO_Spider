@@ -6,7 +6,7 @@ namespace QuickieWebBot
 
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
-	, m_modelController(new QuickieWebBot::ModelController(this))
+	, m_modelController(new ModelController(this))
 {
 	initialize();
 }

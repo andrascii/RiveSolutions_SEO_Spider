@@ -55,6 +55,9 @@ using std::size_t;
 #define PRODUCTION
 #endif
 
+#if !defined(PRODUCTION)
+#define DEBUG
+#endif
 
 #if !defined(PRODUCTION)
 #define VERIFY(Connection) assert(Connection)

@@ -8,13 +8,11 @@ CrawlerWorkerThread::CrawlerWorkerThread(QObject* parent)
 {
 }
 
-void CrawlerWorkerThread::start(IModelController* pModelController)
+void CrawlerWorkerThread::start(ModelController* pModelController)
 {
 	while (!m_onAboutToStop.load())
 	{
-		QUrl const& url = pModelController->url();
-
-		m_networkRequest.setUrl(url);
+		
 	}
 }
 

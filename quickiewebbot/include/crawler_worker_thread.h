@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imodel_controller.h"
+#include "model_controller.h"
 
 namespace QuickieWebBot
 {
@@ -12,7 +12,7 @@ class CrawlerWorkerThread : public QObject
 public:
 	CrawlerWorkerThread(QObject* parent = nullptr);
 	
-	Q_INVOKABLE void start(IModelController* pModelController);
+	Q_INVOKABLE void start(ModelController* pModelController);
 
 private:
 

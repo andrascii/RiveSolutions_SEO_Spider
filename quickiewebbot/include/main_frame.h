@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-class IModelController;
+class ModelController;
 
 class MainFrame : public QMainWindow
 {
@@ -21,7 +21,7 @@ private:
 private:
 	Ui::MainFrameClass ui;
 
-	IModelController* m_modelController;
+	ModelController* m_modelController;
 };
 
 }
