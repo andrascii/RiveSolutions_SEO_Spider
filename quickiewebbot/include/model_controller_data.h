@@ -60,11 +60,11 @@ public:
 private:
 	void checkStorageType(StorageType type) const noexcept;
 
-	CrawlerStorageType const* crawlerStorage(StorageType type) const noexcept;
 	CrawlerStorageType* crawlerStorage(StorageType type) noexcept;
+	CrawlerStorageType const* crawlerStorage(StorageType type) const noexcept;
 
-	GuiStorageType const* guiStorage(StorageType type) const noexcept;
 	GuiStorageType* guiStorage(StorageType type) noexcept;
+	GuiStorageType const* guiStorage(StorageType type) const noexcept;
 
 private:
 	template <typename StorageType>
@@ -119,8 +119,8 @@ private:
 	};
 
 private:
-	Storage<CrawlerStorageType> m_crawlerQueues;
-	Storage<GuiStorageType> m_guiQueues;
+	Storage<CrawlerStorageType> m_crawlerStorage;
+	Storage<GuiStorageType> m_guiStorage;
 };
 
 }
