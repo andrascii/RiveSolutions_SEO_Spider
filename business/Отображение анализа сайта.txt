@@ -6,7 +6,7 @@
 4. Title
 5. Длина Title
 6. Meta Description
-7. Meta Description
+7. Meta Description length
 8. Meta keywords
 9. Meta keywords length
 10. Тег H1-1
