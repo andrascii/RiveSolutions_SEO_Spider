@@ -2,6 +2,7 @@
 #include "style_loader.h"
 #include "model_controller.h"
 #include "service_locator.h"
+#include "thread_dispatcher.h"
 
 namespace QuickieWebBot
 {
@@ -33,7 +34,8 @@ void Application::initialize()
 
 	s_app = this;
 
-	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
+	//ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
+	ServiceLocator::instance()->addService<ThreadDispatcher>(new ThreadDispatcher);
 }
 
 void Application::initializeStyleSheet()

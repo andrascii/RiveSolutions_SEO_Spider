@@ -44,10 +44,15 @@
 using namespace std::chrono_literals;
 using std::size_t;
 
+#define STRING(Any) #Any
+
 #if defined(NDEBUG)
 #define PRODUCTION
 #endif
 
+#if !defined(PRODUCTION)
+#define DEBUG
+#endif
 
 #if !defined(PRODUCTION)
 #define VERIFY(Connection) assert(Connection)

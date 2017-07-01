@@ -42,6 +42,8 @@
 #include <QTextCodec>
 #include <QAbstractListModel>
 #include <QKeyEvent>
+#include <QMetaObject>
+#include <QMetaMethod>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
@@ -51,16 +53,15 @@ using std::size_t;
 
 #define myApp Application::instance()
 
+#define STRING(Any) #Any
 
 #if defined(NDEBUG)
 #define PRODUCTION
 #endif
 
-
 #if !defined(PRODUCTION)
 #define DEBUG
 #endif
-
 
 #if !defined(PRODUCTION)
 #define VERIFY(Connection) assert(Connection)
