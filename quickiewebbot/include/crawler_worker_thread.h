@@ -21,9 +21,6 @@ private:
 private:
 	std::atomic_bool m_onAboutToStop;
 	ModelController* m_modelController;
-
-	QNetworkAccessManager m_networkAccessManager;
-	QNetworkRequest m_networkRequest;
 };
 
 }

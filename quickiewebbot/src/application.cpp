@@ -34,8 +34,7 @@ void Application::initialize()
 
 	s_app = this;
 
-	//ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
-	ServiceLocator::instance()->addService<ThreadDispatcher>(new ThreadDispatcher);
+	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
 }
 
 void Application::initializeStyleSheet()

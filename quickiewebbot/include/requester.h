@@ -1,12 +1,14 @@
 #pragma once
 
+#include "request_types.h"
+
 namespace QuickieWebBot
 {
 
 class Requester
 {
 public:
-	Requester(QObject* targetObject, QMetaMethod& metaMethod)
+	Requester(IRequest::RequestType requestType, QObject* targetObject, QMetaMethod& metaMethod)
 		: m_targetObject(targetObject)
 		, m_metaMethod(metaMethod)
 	{
@@ -27,7 +29,8 @@ public:
 	{
 		bool result = false;
 
-		const int invokableMethodCount = targetObject->metaObject()->methodCount();
+		const int invokableMethodCount = 
+			targetObject->metaObject()->methodCount();
 
 		for (int i = 0; i < invokableMethodCount; ++i)
 		{
