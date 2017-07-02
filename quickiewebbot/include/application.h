@@ -15,6 +15,8 @@ public:
 	static Application* instance();
 	Application(int& argc, char** argv);
 
+	MainFrame const* mainFrame() const noexcept;
+
 private:
 	void initialize();
 	void initializeStyleSheet();

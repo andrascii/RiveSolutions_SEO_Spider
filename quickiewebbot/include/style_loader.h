@@ -6,7 +6,7 @@ namespace QuickieWebBot
 class StyleLoader : public QObject
 {
 public:
-	static void attachStyleSheet(QString const& filename, QKeySequence const& keySequence);
+	static void attachStyleLoader(QString const& filename, QKeySequence const& keySequence);
 
 protected:
 	virtual bool eventFilter(QObject* obj, QEvent* event) override;
