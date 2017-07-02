@@ -8,7 +8,7 @@ TableModel::TableModel(QObject* parent)
 {
 }
 
-TableModel::TableModel(std::vector<WebsiteAnalyseElement> const * const dataStorage, QObject* parent)
+TableModel::TableModel(QVector<WebsiteAnalyseElement> const * const dataStorage, QObject* parent)
 	: QAbstractTableModel(parent)
 	, ModelData(dataStorage)
 {

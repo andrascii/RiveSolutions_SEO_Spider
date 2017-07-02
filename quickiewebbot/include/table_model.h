@@ -13,7 +13,7 @@ class TableModel
 
 public:
 	TableModel(QObject* parent = nullptr);
-	TableModel(std::vector<WebsiteAnalyseElement> const * const dataStorage, QObject* parent = nullptr);
+	TableModel(QVector<WebsiteAnalyseElement> const * const dataStorage, QObject* parent = nullptr);
 
 	virtual int rowCount(QModelIndex const& parent = QModelIndex()) const override;
 	virtual int columnCount(QModelIndex const& parent = QModelIndex()) const override;

@@ -1,9 +1,221 @@
 #include "model_controller_data.h"
+#include "website_analyse_element.h"
 
 namespace QuickieWebBot
 {
 
-void ModelControllerData::checkStorageType(StorageType type) const noexcept
+ModelControllerData::ModelControllerData()
+	: m_crawlerStorageMap(std::initializer_list<std::pair<const int, CrawlerStorageTypePtr>>
+	{
+		std::make_pair(InternalUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(CrawledUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(ExternalUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(UpperCaseUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(NonAsciiCharacterUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(VeryLongUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(EmptyTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(DuplicatedTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(VeryLongTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(VeryShortTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(DuplicatedH1TitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(SeveralTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(EmptyMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(VeryLongMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(VeryShortMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(SeveralMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(EmptyMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(SeveralMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(MissingH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(DuplicatedH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(VeryLongH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(SeveralH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(MissingH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(DuplicatedH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(VeryLongH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(SeveralH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(Over100kbImageStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(MissingAltTextImageStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+
+		std::make_pair(VeryLongAltTextImageStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl)))))
+	})
+	, m_guiStorageMap(std::initializer_list<std::pair<const int, GuiStorageTypePtr>>
+	{
+		std::make_pair(InternalUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(CrawledUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ExternalUrlStorageType, std::make_shared<GuiStorageType>()),
+		
+		std::make_pair(UpperCaseUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(NonAsciiCharacterUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongUrlStorageType, std::make_shared<GuiStorageType>()),
+		
+		std::make_pair(EmptyTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryShortTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedH1TitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(EmptyMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryShortMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(EmptyMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(MissingH1UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedH1UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongH1UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralH1UrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(MissingH2UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedH2UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongH2UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralH2UrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(Over100kbImageStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(MissingAltTextImageStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>())
+	})
+{
+}
+
+bool ModelControllerData::isElementExists(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, int storageType) const noexcept
+{
+	checkStorageType(storageType);
+	CrawlerStorageType const* pQueue = crawlerStorage(storageType);
+	return pQueue->find(websiteAnalysElement) != std::end(*pQueue);
+}
+
+void ModelControllerData::addElement(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, int storageType) noexcept
+{
+	if (isElementExists(websiteAnalysElement, storageType))
+	{
+		return;
+	}
+
+	crawlerStorage(storageType)->insert(websiteAnalysElement);
+	guiStorage(storageType)->push_back(websiteAnalysElement);
+}
+
+ModelControllerData::GuiStorageType* ModelControllerData::guiStorage(int type) noexcept
+{
+	return m_guiStorageMap[type].get();
+}
+
+ModelControllerData::GuiStorageType const* ModelControllerData::guiStorage(int type) const noexcept
+{
+	GuiStorageType const* pQueue = const_cast<ModelControllerData * const>(this)->guiStorage(type);
+	return pQueue;
+}
+
+ModelControllerData::CrawlerStorageType* ModelControllerData::crawlerStorage(int type) noexcept
+{
+	return m_crawlerStorageMap[type].get();
+}
+
+ModelControllerData::CrawlerStorageType const* ModelControllerData::crawlerStorage(int type) const noexcept
+{
+	CrawlerStorageType const* pQueue = const_cast<ModelControllerData * const>(this)->crawlerStorage(type);
+	return pQueue;
+}
+
+void ModelControllerData::checkStorageType(int type) const noexcept
 {
 	assert(
 		type == InternalUrlStorageType || 
@@ -44,208 +256,6 @@ void ModelControllerData::checkStorageType(StorageType type) const noexcept
 		type == MissingAltTextImageStorageType ||
 		type == VeryLongAltTextImageStorageType
 	);
-}
-
-ModelControllerData::GuiStorageType* ModelControllerData::guiStorage(StorageType type) noexcept
-{
-	GuiStorageType const* pQueue = const_cast<ModelControllerData const * const>(this)->guiStorage(type);
-	return const_cast<GuiStorageType*>(pQueue);
-}
-
-ModelControllerData::GuiStorageType const* ModelControllerData::guiStorage(StorageType type) const noexcept
-{
-	GuiStorageType const* pQueue = nullptr;
-
-	switch (type)
-	{
-		case InternalUrlStorageType:
-		{
-			pQueue = &m_guiStorage.internalUrlStorage;
-			break;
-		}
-
-		case CrawledUrlStorageType:
-		{
-			pQueue = &m_guiStorage.crawledUrlStorage;
-			break;
-		}
-
-		case ExternalUrlStorageType:
-		{
-			pQueue = &m_guiStorage.externalUrlStorage;
-			break;
-		}
-
-		case UpperCaseUrlStorageType:
-		{
-			pQueue = &m_guiStorage.upperCaseUrlStorage;
-			break;
-		}
-
-		case NonAsciiCharacterUrlStorageType:
-		{
-			pQueue = &m_guiStorage.nonAsciiCharacterUrlStorage;
-			break;
-		}
-
-		case VeryLongUrlStorageType:
-		{
-			pQueue = &m_guiStorage.veryLongUrlStorage;
-			break;
-		}
-
-		case EmptyTitleUrlStorageType:
-		{
-			pQueue = &m_guiStorage.emptyTitleUrlStorage;
-			break;
-		}
-
-		case DuplicatedTitleUrlStorageType:
-		{
-			pQueue = &m_guiStorage.duplicatedTitleUrlStorage;
-			break;
-		}
-
-		case VeryLongTitleUrlStorageType:
-		{
-			pQueue = &m_guiStorage.veryLongTitleUrlStorage;
-			break;
-		}
-
-		case VeryShortTitleUrlStorageType:
-		{
-			pQueue = &m_guiStorage.veryShortTitleUrlStorage;
-			break;
-		}
-
-		case DuplicatedH1TitleUrlStorageType:
-		{
-			pQueue = &m_guiStorage.duplicatedH1TitleUrlStorage;
-			break;
-		}
-
-		case SeveralTitleUrlStorageType:
-		{
-			pQueue = &m_guiStorage.severalTitleUrlStorage;
-			break;
-		}
-
-		case EmptyMetaDescriptionUrlStorageType:
-		{
-			pQueue = &m_guiStorage.emptyMetaDescriptionUrlStorage;
-			break;
-		}
-
-		case DuplicatedMetaDescriptionUrlStorageType:
-		{
-			pQueue = &m_guiStorage.duplicatedMetaDescriptionUrlStorage;
-			break;
-		}
-
-		case VeryLongMetaDescriptionUrlStorageType:
-		{
-			pQueue = &m_guiStorage.veryLongMetaDescriptionUrlStorage;
-			break;
-		}
-
-		case VeryShortMetaDescriptionUrlStorageType:
-		{
-			pQueue = &m_guiStorage.veryShortMetaDescriptionUrlStorage;
-			break;
-		}
-
-		case SeveralMetaDescriptionUrlStorageType:
-		{
-			pQueue = &m_guiStorage.severalMetaDescriptionUrlStorage;
-			break;
-		}
-
-		case EmptyMetaKeywordsUrlStorageType:
-		{
-			pQueue = &m_guiStorage.emptyMetaKeywordsUrlStorage;
-			break;
-		}
-
-		case DuplicatedMetaKeywordsUrlStorageType:
-		{
-			pQueue = &m_guiStorage.duplicatedMetaKeywordsUrlStorage;
-			break;
-		}
-
-		case SeveralMetaKeywordsUrlStorageType:
-		{
-			pQueue = &m_guiStorage.severalMetaKeywordsUrlStorage;
-			break;
-		}
-
-		case MissingH1UrlStorageType:
-		{
-			pQueue = &m_guiStorage.missingH1UrlStorage;
-			break;
-		}
-
-		case DuplicatedH1UrlStorageType:
-		{
-			pQueue = &m_guiStorage.duplicatedH1UrlStorage;
-			break;
-		}
-
-		case VeryLongH1UrlStorageType:
-		{
-			pQueue = &m_guiStorage.veryLongH1UrlStorage;
-			break;
-		}
-
-		case SeveralH1UrlStorageType:
-		{
-			pQueue = &m_guiStorage.severalH1UrlStorage;
-			break;
-		}
-
-		case MissingH2UrlStorageType:
-		{
-			pQueue = &m_guiStorage.missingH2UrlStorage;
-			break;
-		}
-
-		case DuplicatedH2UrlStorageType:
-		{
-			pQueue = &m_guiStorage.duplicatedH2UrlStorage;
-			break;
-		}
-
-		case VeryLongH2UrlStorageType:
-		{
-			pQueue = &m_guiStorage.veryLongH2UrlStorage;
-			break;
-		}
-
-		case SeveralH2UrlStorageType:
-		{
-			pQueue = &m_guiStorage.severalH2UrlStorage;
-			break;
-		}
-
-		case Over100kbImageStorageType:
-		{
-			pQueue = &m_guiStorage.over100kbImageStorage;
-			break;
-		}
-
-		case MissingAltTextImageStorageType:
-		{
-			pQueue = &m_guiStorage.missingAltTextImageStorage;
-			break;
-		}
-
-		case VeryLongAltTextImageStorageType:
-		{
-			pQueue = &m_guiStorage.veryLongAltTextImageStorage;
-			break;
-		}
-	}
-
-	return pQueue;
 }
 
 }

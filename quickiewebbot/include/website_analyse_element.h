@@ -45,49 +45,53 @@ struct WebsiteAnalyseElement
 	size_t pageHash;
 };
 
+enum WebSiteAnalyseElementMemberGetter
+{
+	GetterUrl,
+	GetterContent,
+	GetterMetaRefresh,
+	GetterMetaRobots,
+	GetterRedirectedUrl,
+	GetterServerResponse,
+	GetterTitle,
+	GetterMetaDescription,
+	GetterMetaKeywords,
+	GetterFirstH1,
+	GetterSecondH1,
+	GetterFirstH2,
+	GetterSecondH2,
+	GeterCanonicalLinkElement,
+	GetterStatusCode,
+	GetterTitleLength,
+	GetterMetaDescriptionLength,
+	GetterMetaKeywordsLength,
+	GetterFirstH1Length,
+	GetterSecondH1Length,
+	GetterFirstH2Length,
+	GetterSecondH2Length,
+	GetterPageSizeBytes,
+	GetterWordCount
+};
 
+using WebSiteAnalyseElementPtr = std::shared_ptr<WebsiteAnalyseElement>;
 
+struct IWebsiteAnalyseElementHasher
+{
+	virtual size_t operator()(WebSiteAnalyseElementPtr const& websiteAnalyseElement) const noexcept = 0;
+};
 
 template <int MemberGetterType>
-struct WebsiteAnalyseElementHasher
+struct WebsiteAnalyseElementHasher : public IWebsiteAnalyseElementHasher
 {
-
-	using WebSiteAnalyseElementPtr = std::shared_ptr<WebsiteAnalyseElement>;
-	enum WebSiteAnalyseElementMemberGetter {
-		GetterUrl,
-		GetterContent,
-		GetterMetaRefresh,
-		GetterMetaRobots,
-		GetterRedirectedUrl,
-		GetterServerResponse,
-		GetterTitle,
-		GetterMetaDescription,
-		GetterMetaKeywords,
-		GetterFirstH1,
-		GetterSecondH1,
-		GetterFirstH2,
-		GetterSecondH2,
-		GeterCanonicalLinkElement,
-		GetterStatusCode,
-		GetterTitleLength,
-		GetterMetaDescriptionLength,
-		GetterMetaKeywordsLength,
-		GetterFirstH1Length,
-		GetterSecondH1Length,
-		GetterFirstH2Length,
-		GetterSecondH2Length,
-		GetterPageSizeBytes,
-		GetterWordCount
-	};
-
-
-	size_t operator()(WebSiteAnalyseElementPtr const& websiteAnalyseElement) const noexcept
+	virtual size_t operator()(WebSiteAnalyseElementPtr const& websiteAnalyseElement) const noexcept override
 	{
 		static_assert(MemberGetterType >= GetterUrl && MemberGetterType <= static_cast<int>(GetterWordCount), "Invalid MemberGetterType");
+
 		static boost::hash<std::string> s_stringHasher;
 		static boost::hash<int> s_intHasher;
 		
-		static std::map<WebSiteAnalyseElementMemberGetter, std::function<size_t(WebSiteAnalyseElementPtr const&)>> s_hashFuncs{
+		static std::map<int, std::function<size_t(WebSiteAnalyseElementPtr const&)>> s_hashFuncs
+		{
 			{ GetterUrl, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->url.toString().toStdString()); } },
 			{ GetterContent, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->content.toStdString()); } },
 			{ GetterMetaRefresh, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
@@ -114,35 +118,50 @@ struct WebsiteAnalyseElementHasher
 			{ GetterWordCount, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->wordCount); } }
 		};
 
-		return s_hashFuncs[static_cast<WebSiteAnalyseElementMemberGetter>(MemberGetterType)](websiteAnalyseElement);
+		return s_hashFuncs[MemberGetterType](websiteAnalyseElement);
 	}
 };
 
+using WebsiteAnalyseElementHasherUrl = WebsiteAnalyseElementHasher<GetterUrl>;
+using WebsiteAnalyseElementHasherContent = WebsiteAnalyseElementHasher<GetterContent>;
+using WebsiteAnalyseElementHasherMetaRefresh = WebsiteAnalyseElementHasher<GetterMetaRefresh>;
+using WebsiteAnalyseElementHasherMetaRobots = WebsiteAnalyseElementHasher<GetterMetaRobots>;
+using WebsiteAnalyseElementHasherRedirectedUrl = WebsiteAnalyseElementHasher<GetterRedirectedUrl>;
+using WebsiteAnalyseElementHasherServerResponse = WebsiteAnalyseElementHasher<GetterServerResponse>;
+using WebsiteAnalyseElementHasherTitle = WebsiteAnalyseElementHasher<GetterTitle>;
+using WebsiteAnalyseElementHasherMetaDescription = WebsiteAnalyseElementHasher<GetterMetaDescription>;
+using WebsiteAnalyseElementHasherMetaKeywords = WebsiteAnalyseElementHasher<GetterMetaKeywords>;
+using WebsiteAnalyseElementHasherFirstH1 = WebsiteAnalyseElementHasher<GetterFirstH1>;
+using WebsiteAnalyseElementHasherSecondH1 = WebsiteAnalyseElementHasher<GetterSecondH1>;
+using WebsiteAnalyseElementHasherFirstH2 = WebsiteAnalyseElementHasher<GetterFirstH2>;
+using WebsiteAnalyseElementHasherSecondH2 = WebsiteAnalyseElementHasher<GetterSecondH2>;
+using WebsiteAnalyseElementHasherCanonicalLinkElement = WebsiteAnalyseElementHasher<GeterCanonicalLinkElement>;
+using WebsiteAnalyseElementHasherStatusCode = WebsiteAnalyseElementHasher<GetterStatusCode>;
+using WebsiteAnalyseElementHasherTitleLength = WebsiteAnalyseElementHasher<GetterTitleLength>;
+using WebsiteAnalyseElementHasherMetaDescriptionLength = WebsiteAnalyseElementHasher<GetterMetaDescriptionLength>;
+using WebsiteAnalyseElementHasherMetaKeywordsLength = WebsiteAnalyseElementHasher<GetterMetaKeywordsLength>;
+using WebsiteAnalyseElementHasherFirstH1Length = WebsiteAnalyseElementHasher<GetterFirstH1Length>;
+using WebsiteAnalyseElementHasherSecondH1Length = WebsiteAnalyseElementHasher<GetterSecondH1Length>;
+using WebsiteAnalyseElementHasherFirstH2Length = WebsiteAnalyseElementHasher<GetterFirstH2Length>;
+using WebsiteAnalyseElementHasherSecondH2Length = WebsiteAnalyseElementHasher<GetterSecondH2Length>;
+using WebsiteAnalyseElementHasherPageSizeBytes = WebsiteAnalyseElementHasher<GetterPageSizeBytes>;
+using WebsiteAnalyseElementHasherWordCount = WebsiteAnalyseElementHasher<GetterWordCount>;
 
-using WebsiteAnalyseElementHasherUrl = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterUrl>;
-using WebsiteAnalyseElementHasherContent = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterContent>;
-using WebsiteAnalyseElementHasherMetaRefresh = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterMetaRefresh>;
-using WebsiteAnalyseElementHasherMetaRobots = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterMetaRobots>;
-using WebsiteAnalyseElementHasherRedirectedUrl = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterRedirectedUrl>;
-using WebsiteAnalyseElementHasherServerResponse = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterServerResponse>;
-using WebsiteAnalyseElementHasherTitle = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterTitle>;
-using WebsiteAnalyseElementHasherMetaDescription = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterMetaDescription>;
-using WebsiteAnalyseElementHasherMetaKeywords = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterMetaKeywords>;
-using WebsiteAnalyseElementHasherFirstH1 = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterFirstH1>;
-using WebsiteAnalyseElementHasherSecondH1 = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterSecondH1>;
-using WebsiteAnalyseElementHasherFirstH2 = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterFirstH2>;
-using WebsiteAnalyseElementHasherSecondH2 = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterSecondH2>;
-using WebsiteAnalyseElementHasherCanonicalLinkElement = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GeterCanonicalLinkElement>;
-using WebsiteAnalyseElementHasherStatusCode = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterStatusCode>;
-using WebsiteAnalyseElementHasherTitleLength = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterTitleLength>;
-using WebsiteAnalyseElementHasherMetaDescriptionLength = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterMetaDescriptionLength>;
-using WebsiteAnalyseElementHasherMetaKeywordsLength = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterMetaKeywordsLength>;
-using WebsiteAnalyseElementHasherFirstH1Length = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterFirstH1Length>;
-using WebsiteAnalyseElementHasherSecondH1Length = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterSecondH1Length>;
-using WebsiteAnalyseElementHasherFirstH2Length = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterFirstH2Length>;
-using WebsiteAnalyseElementHasherSecondH2Length = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterSecondH2Length>;
-using WebsiteAnalyseElementHasherPageSizeBytes = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterPageSizeBytes>;
-using WebsiteAnalyseElementHasherWordCount = WebsiteAnalyseElementHasher<WebsiteAnalyseElementHasher<0>::GetterWordCount>;
+class UniversalWebsiteAnalyseElementHasher
+{
+public:
+	UniversalWebsiteAnalyseElementHasher(std::shared_ptr<IWebsiteAnalyseElementHasher> const& hasher)
+		: m_hasher(hasher)
+	{
+	}
 
+	size_t operator()(WebSiteAnalyseElementPtr const& websiteAnalyseElement) const noexcept
+	{
+		return (*m_hasher)(websiteAnalyseElement);
+	}
+
+private:
+	std::shared_ptr<IWebsiteAnalyseElementHasher> m_hasher;
+};
 
 }
