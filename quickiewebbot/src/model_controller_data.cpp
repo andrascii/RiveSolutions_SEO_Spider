@@ -33,91 +33,91 @@ ModelControllerData::ModelControllerData()
 
 		std::make_pair(EmptyTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherTitle))))),
 
 		std::make_pair(DuplicatedTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherTitle))))),
 
 		std::make_pair(VeryLongTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherTitle))))),
 
 		std::make_pair(VeryShortTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherTitle))))),
 
 		std::make_pair(DuplicatedH1TitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherTitle))))),
 
 		std::make_pair(SeveralTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherTitle))))),
 
 		std::make_pair(EmptyMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherMetaDescription))))),
 
 		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherMetaDescription))))),
 
 		std::make_pair(VeryLongMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherMetaDescription))))),
 
 		std::make_pair(VeryShortMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherMetaDescription))))),
 
 		std::make_pair(SeveralMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherMetaDescription))))),
 
 		std::make_pair(EmptyMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherMetaKeywords))))),
 
 		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherMetaKeywords))))),
 
 		std::make_pair(SeveralMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherMetaKeywords))))),
 
 		std::make_pair(MissingH1UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherFirstH1))))),
 
 		std::make_pair(DuplicatedH1UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherFirstH1))))),
 
 		std::make_pair(VeryLongH1UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherFirstH1))))),
 
 		std::make_pair(SeveralH1UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherFirstH1))))),
 
 		std::make_pair(MissingH2UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherFirstH2))))),
 
 		std::make_pair(DuplicatedH2UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherFirstH2))))),
 
 		std::make_pair(VeryLongH2UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherFirstH2))))),
 
 		std::make_pair(SeveralH2UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
-				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherUrl))))),
+				std::shared_ptr<IWebsiteAnalyseElementHasher>(new WebsiteAnalyseElementHasherFirstH2))))),
 
 		std::make_pair(Over100kbImageStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
