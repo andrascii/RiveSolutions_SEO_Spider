@@ -8,24 +8,50 @@ TableModel::TableModel(QObject* parent)
 {
 }
 
+TableModel::TableModel(std::vector<WebsiteAnalyseElement> const * const dataStorage, QObject* parent)
+	: QAbstractTableModel(parent)
+	, ModelData(dataStorage)
+{
+}
+
 int TableModel::rowCount(QModelIndex const& parent) const
 {
-	return 0;
+	return dataStorage().size();
 }
 
 int TableModel::columnCount(QModelIndex const& parent) const
 {
-	return 0;
+	return headerItems().size();
 }
 
 QVariant TableModel::data(QModelIndex const& index, int role) const
 {
-	return 0;
+	if (role == Qt::DisplayRole)
+	{
+		return dataStorage()[index.row()].title;
+	}
+
+	if (role == Qt::BackgroundColorRole)
+	{
+		return QColor(Qt::white);
+	}
+
+	return QVariant();
 }
 
 QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	return 0;
+	if (orientation == Qt::Vertical)
+	{
+		return QVariant();
+	}
+
+	if (role == Qt::DisplayRole)
+	{
+		return headerItems()[section];
+	}
+
+	return QVariant();
 }
 
 bool TableModel::insertRows(int row, int count, QModelIndex const& parent)

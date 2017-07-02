@@ -139,10 +139,24 @@ QStackedWidget QWidget
 
 QTableView
 {
-	background-color: #ffffff;
+	/*in order to hide left borer of items of first column*/
+	padding-left: -0.05em;
 }
 
+QHeaderView::section
+{
+	min-height: 3em;
+	color: #494949;
+	background: #ffffff;
+}
 
+QTableView::item
+{
+    color: #494949;
+	selection-background-color: #343b49;
+}
 
-
-
+QTableView::item:focus
+{
+	selection-background-color: #1f2530;
+}

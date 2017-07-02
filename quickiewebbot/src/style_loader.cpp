@@ -35,7 +35,7 @@ StyleLoader::StyleLoader(QObject* parent, QString const& filename, QKeySequence 
 
 void StyleLoader::updateStyleSheet()
 {
-	QFile styles(m_filename);
+	QFile styles("C:/" + m_filename);
 
 	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
