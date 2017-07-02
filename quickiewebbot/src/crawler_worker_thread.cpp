@@ -29,6 +29,8 @@ void CrawlerWorkerThread::start()
 	{
 		pNetworkAccessManager->get(QNetworkRequest());
 
+
+
 		QMetaObject::invokeMethod(m_modelController, "addWebsiteAnalyseElement",
 			Q_ARG(std::shared_ptr<WebsiteAnalyseElement>, std::shared_ptr<WebsiteAnalyseElement>(nullptr)));
 	}
