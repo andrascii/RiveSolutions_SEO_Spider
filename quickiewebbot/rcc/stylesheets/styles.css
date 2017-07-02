@@ -145,14 +145,14 @@ QTableView
 
 QHeaderView::section
 {
-	min-height: 3em;
-	color: #494949;
-	background: #ffffff;
+	color: #AAAAAA;
+	background: #333333;
+	height: 6em;
 }
 
 QTableView::item
 {
-    color: #494949;
+	color: #494949;
 	selection-background-color: #343b49;
 }
 
