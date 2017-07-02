@@ -3,12 +3,12 @@
 namespace QuickieWebBot
 {
 
-ModelData::ModelData(std::vector<WebsiteAnalyseElement> const * const dataStorage)
+ModelData::ModelData(QVector<WebsiteAnalyseElement> const * const dataStorage)
 	: m_dataStorage(dataStorage)
 {
 }
 
-void ModelData::setDataStorage(std::vector<WebsiteAnalyseElement> const * const dataStorage) noexcept
+void ModelData::setDataStorage(QVector<WebsiteAnalyseElement> const * const dataStorage) noexcept
 {
 	m_dataStorage = dataStorage;
 }
@@ -21,12 +21,12 @@ void ModelData::setHeaderItems(std::initializer_list<QString> lst) noexcept
 	}
 }
 
-std::vector<QuickieWebBot::WebsiteAnalyseElement> const& ModelData::dataStorage() const noexcept
+QVector<QuickieWebBot::WebsiteAnalyseElement> const& ModelData::dataStorage() const noexcept
 {
 	return *m_dataStorage;
 }
 
-std::vector<QString> const& ModelData::headerItems() const noexcept
+QVector<QString> const& ModelData::headerItems() const noexcept
 {
 	return m_headerItems;
 }

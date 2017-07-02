@@ -21,7 +21,7 @@ void MainFrame::init()
 
 	//////////////////////////////////////////////////////////////////////////
 	// Debug code
-	std::vector<WebsiteAnalyseElement>* dataStorage = new std::vector<WebsiteAnalyseElement>;
+	QVector<WebsiteAnalyseElement>* dataStorage = new QVector<WebsiteAnalyseElement>;
 
 	for (int i = 0; i < 10; ++i)
 	{
