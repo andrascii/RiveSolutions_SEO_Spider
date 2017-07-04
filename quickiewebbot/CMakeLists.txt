@@ -5,7 +5,6 @@ set(AppSourcesDir src)
 set(AppHeadersDir include)
 
 # deps headers
-set(GumboLibHeadersDir ../gumbo/include)
 set(CommonLibHeadersDir ../common/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
@@ -27,14 +26,11 @@ source_group(
 	${AppResourcesListAdded} 
 	${AppResourcesList} 
 	${AppFormsHeadersList}
-	src/moc_compilation.cpp
-	${CMAKE_CURRENT_DIR}/moc_compilation.cpp
-	moc_compilation.cpp
 )
 
-source_group(PrecompiledHeaders FILES include/stdafx.h src/stdafx.cpp)
-source_group(Ui FILES ${AppFormsList})
-source_group(Qrc FILES ${AppResourcesList})
+source_group(precompiled_headers FILES include/stdafx.h src/stdafx.cpp)
+source_group(ui FILES ${AppFormsList})
+source_group(qrc FILES ${AppResourcesList})
 
 add_executable(
 	${AppName} 
@@ -73,7 +69,6 @@ endif()
 
 include_directories(
 	${AppHeadersDir}
-	${GumboLibHeadersDir}
 	${CommonLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
@@ -82,7 +77,7 @@ include_directories(
 target_link_libraries(
 	${AppName}
 	${CommonLibName}
-	${GumboLibName}
+	${CrawlerLibName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
