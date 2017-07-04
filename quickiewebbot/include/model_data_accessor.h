@@ -6,7 +6,9 @@
 namespace QuickieWebBot
 {
 
-class ModelDataAccessorAllItems : public QObject, public IModelDataAccessorItem
+class ModelDataAccessorAllItems 
+	: public QObject
+	, public IModelDataAccessorItem
 {
 	Q_OBJECT
 public:

@@ -14,44 +14,15 @@ public:
 		Title
 	};
 
-	static QString getTitle(Info item)
-	{
-		static std::map<Info, QString> s_titles
-		{
-			{ Url, "Url" },
-			{ Title, "Title" }
-		};
-
-		return s_titles[item];
-	}
-
-	static QVariant getValue(WebSiteAnalyseElementPtr element, Info item)
-	{
-		return getter(item)(element);
-	}
+	static QString getTitle(Info item);
+	static QVariant getValue(WebSiteAnalyseElementPtr element, Info item);
 
 private: 
 	using GetterInternal = QVariant(*)(WebSiteAnalyseElementPtr);
 
-	static GetterInternal getter(Info item)
-	{
-		switch (item)
-		{
-			case QuickieWebBot::WebsiteAnalyseElementInfo::Url:
-				return &WebsiteAnalyseElementInfo::getElementUrl;
+	static GetterInternal getter(Info item);
 
-			case QuickieWebBot::WebsiteAnalyseElementInfo::Title:
-				return &WebsiteAnalyseElementInfo::getElementTitle;
-
-			default:
-				break;
-		}
-	}
-
-	static QVariant getElementUrl(WebSiteAnalyseElementPtr element)
-	{
-		return element->url.toString();
-	}
+	static QVariant getElementUrl(WebSiteAnalyseElementPtr element);
 
 	static QVariant getElementTitle(WebSiteAnalyseElementPtr element)
 	{

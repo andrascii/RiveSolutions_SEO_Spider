@@ -51,6 +51,7 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QTimer>
+#include <QAbstractItemDelegate>
 
 using namespace std::chrono_literals;
 using std::size_t;

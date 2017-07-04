@@ -76,6 +76,7 @@ void TableModel::setDataAccessor(std::unique_ptr<IModelDataAccessorItem> accesso
 	}
 
 	m_accessor = std::move(accessor);
+
 	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
 }
 

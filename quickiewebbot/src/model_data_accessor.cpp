@@ -3,6 +3,7 @@
 
 namespace QuickieWebBot
 {
+
 ModelDataAccessorAllItems::ModelDataAccessorAllItems(ModelControllerData* data, ModelControllerData::StorageType storageType)
 	: m_modelControllerData(data)
 	, m_storageType(storageType)

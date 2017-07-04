@@ -7,7 +7,9 @@ namespace QuickieWebBot
 {
 
 
-class ModelDataAccessorItemStub : public QObject, public IModelDataAccessorItem
+class ModelDataAccessorItemStub 
+	: public QObject
+	, public IModelDataAccessorItem
 {
 	Q_OBJECT
 
@@ -20,9 +22,10 @@ public:
 		VERIFY(QObject::connect(timer, SIGNAL(timeout()), this, SLOT(timeOut())));
 		timer->start(1000);
 	}
+
 	virtual int columnCount() const override
 	{
-		return 5;
+		return 10;
 	}
 
 	virtual int rowCount() const override

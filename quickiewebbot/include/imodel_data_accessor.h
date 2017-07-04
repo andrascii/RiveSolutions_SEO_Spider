@@ -1,15 +1,12 @@
 #pragma once
 
 #include "website_analyse_element.h"
-#include <QAbstractItemDelegate>
 
 namespace QuickieWebBot
 {
 
-
 class IModelDataAccessorItem
 {
-
 public:
 	virtual ~IModelDataAccessorItem() = default;
 	
@@ -38,7 +35,5 @@ public:
 	virtual std::unique_ptr<IModelDataAccessorItem> allProcessedItems() const = 0;
 	// TODO: add more
 };
-
-
 
 }
