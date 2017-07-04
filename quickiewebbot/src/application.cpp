@@ -1,5 +1,6 @@
 #include "application.h"
 #include "style_loader.h"
+#include "widget_detector.h"
 #include "model_controller.h"
 #include "service_locator.h"
 #include "thread_dispatcher.h"
@@ -26,10 +27,16 @@ Application::Application(int& argc, char** argv)
 	m_mainFrame->show();
 }
 
+MainFrame const* Application::mainFrame() const noexcept
+{
+	return m_mainFrame.get();
+}
+
 void Application::initialize()
 {
 #if !defined(PRODUCTION)
-	StyleLoader::attachStyleSheet("styles.css", QStringLiteral("F5"));
+	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
+	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
 
 	s_app = this;

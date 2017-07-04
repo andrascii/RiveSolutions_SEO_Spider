@@ -127,27 +127,33 @@ QWidget#titleWidget
 QStackedWidget
 {	
 	border: none;
+	margin-bottom: 3em;
 }
 
-QStackedWidget QWidget
+QStackedWidget QWidget#crawlingPage
 {
 	background-color: #e7e7e7;
-	margin-bottom: 3em;
 }
 
 /*/////////////////////////////// Table view ///////////////////////////////*/
 
 QTableView
 {
-	/*in order to hide left borer of items of first column*/
-	padding-left: -0.05em;
+	font-size: 9pt;
+	background: white;
 }
 
 QHeaderView::section
 {
-	color: #AAAAAA;
-	background: #333333;
-	height: 6em;
+	font-size: 9pt;
+	color: #494949;
+	
+	border: 0.05em solid #c3c3c3;
+	border-top: none;
+	border-left: none;
+	
+	background: #e0e0e0;
+	min-height: 3em;
 }
 
 QTableView::item

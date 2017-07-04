@@ -3,7 +3,7 @@
 namespace QuickieWebBot
 {
 
-void StyleLoader::attachStyleSheet(QString const& filename, QKeySequence const& keySequence)
+void StyleLoader::attachStyleLoader(QString const& filename, QKeySequence const& keySequence)
 {
 	StyleLoader* styleLoader = new StyleLoader(qApp, filename, keySequence);
 	qApp->installEventFilter(styleLoader);
@@ -18,8 +18,6 @@ bool StyleLoader::eventFilter(QObject* obj, QEvent* event)
 		if (m_keySequence == QKeySequence(keyEvent->key()))
 		{
 			updateStyleSheet();
-
-			return true;
 		}
 	}
 
