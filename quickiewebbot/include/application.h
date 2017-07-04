@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main_frame.h"
+#include "software_branding.h"
 
 namespace QuickieWebBot
 {
@@ -15,17 +16,24 @@ public:
 	static Application* instance();
 	Application(int& argc, char** argv);
 
-	MainFrame const* mainFrame() const noexcept;
+	MainFrame* mainFrame() const noexcept;
+	SoftwareBranding const* softwareBrandingOptions() const noexcept;
 
 private:
-	void initialize();
-	void initializeStyleSheet();
+	Q_SLOT void mainFrameIsReadyToShow();
+
+private:
+	void initialize() noexcept;
+	void initializeStyleSheet() noexcept;
+	void showStartScreen() const noexcept;
 
 private:
 	static Application* s_app;
 
 	ModelController* m_modelController;
+
 	std::unique_ptr<MainFrame> m_mainFrame;
+	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 };
 
 }

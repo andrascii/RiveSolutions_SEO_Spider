@@ -2,8 +2,7 @@
 #include "style_loader.h"
 #include "widget_detector.h"
 #include "model_controller.h"
-#include "service_locator.h"
-#include "thread_dispatcher.h"
+#include "start_screen.h"
 
 namespace QuickieWebBot
 {
@@ -19,32 +18,43 @@ Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_modelController(new ModelController(this))
 	, m_mainFrame(new MainFrame)
+	, m_softwareBrandingOptions(new SoftwareBranding)
 {
+	/* initialize debug features if needed and myApp macro */
 	initialize();
 
 	initializeStyleSheet();
 
-	m_mainFrame->show();
+	showStartScreen();
 }
 
-MainFrame const* Application::mainFrame() const noexcept
+MainFrame* Application::mainFrame() const noexcept
 {
 	return m_mainFrame.get();
 }
 
-void Application::initialize()
+SoftwareBranding const* Application::softwareBrandingOptions() const noexcept
 {
+	return m_softwareBrandingOptions.get();
+}
+
+void Application::mainFrameIsReadyToShow()
+{
+	mainFrame()->show();
+}
+
+void Application::initialize() noexcept
+{
+	s_app = this;
+
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
 
-	s_app = this;
-
-	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
 }
 
-void Application::initializeStyleSheet()
+void Application::initializeStyleSheet() noexcept
 {
 	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
 
@@ -54,6 +64,15 @@ void Application::initializeStyleSheet()
 	{
 		setStyleSheet(styles.readAll());
 	}
+}
+
+void Application::showStartScreen() const noexcept
+{
+	StartScreen* startScreen = StartScreen::instance();
+
+	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameIsReadyToShow));
+
+	startScreen->show();
 }
 
 }

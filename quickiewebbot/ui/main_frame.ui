@@ -17,6 +17,9 @@
    <iconset resource="../rcc/main_frame.qrc">
     <normaloff>:/images/robot.ico</normaloff>:/images/robot.ico</iconset>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">

@@ -9,5 +9,6 @@
         <file>images/cpu-icon.png</file>
         <file>stylesheets/styles.css</file>
         <file>images/arrow-down-icon.png</file>
+        <file>images/brand-logo.jpg</file>
     </qresource>
 </RCC>
