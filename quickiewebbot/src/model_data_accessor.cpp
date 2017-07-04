@@ -6,7 +6,7 @@ namespace QuickieWebBot
 ModelDataAccessorAllItems::ModelDataAccessorAllItems(ModelControllerData* data, ModelControllerData::StorageType storageType)
 	: m_modelControllerData(data)
 	, m_storageType(storageType)
-	, m_columns { WebsiteAnalyseElementInfo::Url, WebsiteAnalyseElementInfo::Title}
+	, m_columns{ WebsiteAnalyseElementInfo::Url, WebsiteAnalyseElementInfo::Title }
 {
 	VERIFY(QObject::connect(data, SIGNAL(rowAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 }

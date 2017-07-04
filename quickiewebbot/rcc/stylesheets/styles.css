@@ -143,6 +143,11 @@ QTableView
 	background: white;
 }
 
+QHeaderView
+{
+	background: #e0e0e0;
+}
+
 QHeaderView::section
 {
 	font-size: 9pt;

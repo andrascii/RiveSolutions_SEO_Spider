@@ -68,6 +68,7 @@ public:
 	GuiStorageType* guiStorage(int type) noexcept;
 
 	Q_SIGNAL void rowAdded(int row, int storageType);
+
 protected:
 	CrawlerStorageType* crawlerStorage(int type) noexcept;
 	CrawlerStorageType const* crawlerStorage(int type) const noexcept;
