@@ -3,45 +3,56 @@
 namespace QuickieWebBot
 {
 
-	QString WebsiteAnalyseElementInfo::getTitle(Info item)
-	{
-		static std::map<Info, QString> s_titles
-		{
-			{ Url, "Url" },
-			{ Title, "Title" }
-		};
+QString WebsiteAnalyseElementInfo::getTitle(Info item)
+{
+	checkInfoItem(item);
 
-		return s_titles[item];
-	}
-
-	QVariant WebsiteAnalyseElementInfo::getValue(WebSiteAnalyseElementPtr element, Info item)
+	static std::map<Info, QString> s_titles
 	{
-		return getter(item)(element);
-	}
+		{ Url, "Url" },
+		{ Title, "Title" }
+	};
 
-	WebsiteAnalyseElementInfo::GetterInternal WebsiteAnalyseElementInfo::getter(Info item)
+	return s_titles[item];
+}
+
+QVariant WebsiteAnalyseElementInfo::getValue(WebSiteAnalyseElementPtr element, Info item)
+{
+	return getter(item)(element);
+}
+
+WebsiteAnalyseElementInfo::GetterInternal WebsiteAnalyseElementInfo::getter(Info item)
+{
+	checkInfoItem(item);
+
+	switch (item)
 	{
-		switch (item)
-		{
 		case QuickieWebBot::WebsiteAnalyseElementInfo::Url:
 			return &WebsiteAnalyseElementInfo::getElementUrl;
 
 		case QuickieWebBot::WebsiteAnalyseElementInfo::Title:
 			return &WebsiteAnalyseElementInfo::getElementTitle;
-
-		default:
-			break;
-		}
 	}
 
-	QVariant WebsiteAnalyseElementInfo::getElementUrl(WebSiteAnalyseElementPtr element)
-	{
-		return element->url.toString();
-	}
+	//
+	// TODO: handle this warning!!!
+	//
+	return GetterInternal();
+}
 
-	QVariant WebsiteAnalyseElementInfo::getElementTitle(WebSiteAnalyseElementPtr element)
-	{
-		return element->title;
-	}
+QVariant WebsiteAnalyseElementInfo::getElementUrl(WebSiteAnalyseElementPtr element)
+{
+	return element->url.toString();
+}
+
+QVariant WebsiteAnalyseElementInfo::getElementTitle(WebSiteAnalyseElementPtr element)
+{
+	return element->title;
+}
+
+void WebsiteAnalyseElementInfo::checkInfoItem(Info item)
+{
+	assert(item == Url || item == Title);
+}
 
 }

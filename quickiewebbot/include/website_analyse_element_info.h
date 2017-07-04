@@ -21,13 +21,10 @@ private:
 	using GetterInternal = QVariant(*)(WebSiteAnalyseElementPtr);
 
 	static GetterInternal getter(Info item);
-
 	static QVariant getElementUrl(WebSiteAnalyseElementPtr element);
+	static QVariant getElementTitle(WebSiteAnalyseElementPtr element);
 
-	static QVariant getElementTitle(WebSiteAnalyseElementPtr element)
-	{
-		return element->title;
-	}
+	static void checkInfoItem(Info item);
 };
 
 }
