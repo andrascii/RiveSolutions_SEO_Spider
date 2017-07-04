@@ -19,7 +19,7 @@ int ModelDataAccessorAllItems::columnCount() const
 	
 QString ModelDataAccessorAllItems::columnText(int column) const
 {
-	return WebsiteAnalyseElementInfo::getTitle(static_cast<WebsiteAnalyseElementInfo::Info>(m_columns[column]));
+	return WebsiteAnalyseElementInfo::title(static_cast<WebsiteAnalyseElementInfo::ElementInfo>(m_columns[column]));
 }
 	
 int ModelDataAccessorAllItems::rowCount() const
@@ -30,8 +30,8 @@ int ModelDataAccessorAllItems::rowCount() const
 QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 {
 	const auto storage = m_modelControllerData->guiStorage(m_storageType);
-	auto info = static_cast<WebsiteAnalyseElementInfo::Info>(m_columns[index.column()]);
-	return WebsiteAnalyseElementInfo::getValue((*storage)[index.row()], info);
+	auto info = static_cast<WebsiteAnalyseElementInfo::ElementInfo>(m_columns[index.column()]);
+	return WebsiteAnalyseElementInfo::value((*storage)[index.row()], info);
 }
 
 int ModelDataAccessorAllItems::itemColSpan(const QModelIndex & index) const
