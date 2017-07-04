@@ -4,8 +4,9 @@
 namespace QuickieWebBot
 {
 
-ModelControllerData::ModelControllerData()
-	: m_crawlerStorageMap(std::initializer_list<std::pair<const int, CrawlerStorageTypePtr>>
+ModelControllerData::ModelControllerData(QObject* parent)
+	: QObject(parent)
+	, m_crawlerStorageMap(std::initializer_list<std::pair<const int, CrawlerStorageTypePtr>>
 	{
 		std::make_pair(InternalUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalWebsiteAnalyseElementHasher(
@@ -190,7 +191,10 @@ void ModelControllerData::addElement(std::shared_ptr<WebsiteAnalyseElement> cons
 	}
 
 	crawlerStorage(storageType)->insert(websiteAnalysElement);
-	guiStorage(storageType)->push_back(websiteAnalysElement);
+	auto storageGui = guiStorage(storageType);
+	storageGui->push_back(websiteAnalysElement);
+
+	emit rowAdded(static_cast<int>(storageGui->size() - 1), storageType);
 }
 
 ModelControllerData::GuiStorageType* ModelControllerData::guiStorage(int type) noexcept

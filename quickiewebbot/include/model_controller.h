@@ -6,9 +6,7 @@
 namespace QuickieWebBot
 {
 
-class ModelController 
-	: public QObject
-	, public ModelControllerData
+class ModelController: public ModelControllerData
 {
 	Q_OBJECT
 

@@ -17,7 +17,7 @@ Application* Application::instance()
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_modelController(new ModelController(this))
-	, m_mainFrame(new MainFrame)
+	, m_mainFrame(new MainFrame(m_modelController))
 {
 	initialize();
 
