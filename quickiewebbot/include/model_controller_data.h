@@ -6,8 +6,9 @@
 namespace QuickieWebBot
 {
 
-class ModelControllerData
+class ModelControllerData: public QObject
 {
+	Q_OBJECT
 protected:
 	using CrawlerStorageType = std::unordered_multiset<std::shared_ptr<WebsiteAnalyseElement>, UniversalWebsiteAnalyseElementHasher>;
 	using CrawlerStorageTypePtr = std::shared_ptr<CrawlerStorageType>;
@@ -58,7 +59,7 @@ public:
 		VeryLongAltTextImageStorageType
 	};
 
-	ModelControllerData();
+	ModelControllerData(QObject* parent);
 
 	bool isElementExists(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, int storageType) const noexcept;
 	void addElement(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, int storageType) noexcept;
@@ -66,6 +67,7 @@ public:
 	GuiStorageType const* guiStorage(int type) const noexcept;
 	GuiStorageType* guiStorage(int type) noexcept;
 
+	Q_SIGNAL void rowAdded(int row, int storageType);
 protected:
 	CrawlerStorageType* crawlerStorage(int type) noexcept;
 	CrawlerStorageType const* crawlerStorage(int type) const noexcept;

@@ -1,19 +1,17 @@
 #pragma once
 
-#include "model_data.h"
+#include "imodel_data_accessor.h"
 
 namespace QuickieWebBot
 {
 
 class TableModel 
 	: public QAbstractTableModel
-	, public ModelData
 {
 	Q_OBJECT
 
 public:
 	TableModel(QObject* parent = nullptr);
-	TableModel(QVector<WebsiteAnalyseElement> const * const dataStorage, QObject* parent = nullptr);
 
 	virtual int rowCount(QModelIndex const& parent = QModelIndex()) const override;
 	virtual int columnCount(QModelIndex const& parent = QModelIndex()) const override;
@@ -26,6 +24,14 @@ public:
 
 	virtual bool insertColumns(int column, int count, QModelIndex const& parent = QModelIndex()) override;
 	virtual bool removeColumns(int column, int count, QModelIndex const& parent = QModelIndex()) override;
+
+	void setDataAccessor(std::unique_ptr<IModelDataAccessorItem> accessor);
+
+private:
+	Q_SLOT void onRowAdded(int row);
+
+private:
+	std::unique_ptr<IModelDataAccessorItem> m_accessor;
 };
 
 }

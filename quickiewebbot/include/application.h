@@ -20,7 +20,7 @@ public:
 	SoftwareBranding const* softwareBrandingOptions() const noexcept;
 
 private:
-	Q_SLOT void mainFrameIsReadyToShow();
+	Q_SLOT void mainFrameReadyForShow();
 
 private:
 	void initialize() noexcept;

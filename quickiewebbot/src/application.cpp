@@ -2,6 +2,7 @@
 #include "style_loader.h"
 #include "widget_detector.h"
 #include "model_controller.h"
+#include "software_branding.h"
 #include "start_screen.h"
 
 namespace QuickieWebBot
@@ -17,10 +18,9 @@ Application* Application::instance()
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_modelController(new ModelController(this))
-	, m_mainFrame(new MainFrame)
+	, m_mainFrame(new MainFrame(m_modelController))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
-	/* initialize debug features if needed and myApp macro */
 	initialize();
 
 	initializeStyleSheet();
@@ -38,7 +38,7 @@ SoftwareBranding const* Application::softwareBrandingOptions() const noexcept
 	return m_softwareBrandingOptions.get();
 }
 
-void Application::mainFrameIsReadyToShow()
+void Application::mainFrameReadyForShow()
 {
 	mainFrame()->show();
 }
@@ -51,7 +51,6 @@ void Application::initialize() noexcept
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
-
 }
 
 void Application::initializeStyleSheet() noexcept
@@ -70,7 +69,7 @@ void Application::showStartScreen() const noexcept
 {
 	StartScreen* startScreen = StartScreen::instance();
 
-	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameIsReadyToShow));
+	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameReadyForShow));
 
 	startScreen->show();
 }

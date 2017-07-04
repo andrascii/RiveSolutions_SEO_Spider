@@ -5,7 +5,7 @@ namespace QuickieWebBot
 {
 
 ModelController::ModelController(QObject* parent)
-	: QObject(parent)
+	: ModelControllerData(parent)
 {
 }
 

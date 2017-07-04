@@ -8,27 +8,21 @@ TableModel::TableModel(QObject* parent)
 {
 }
 
-TableModel::TableModel(QVector<WebsiteAnalyseElement> const * const dataStorage, QObject* parent)
-	: QAbstractTableModel(parent)
-	, ModelData(dataStorage)
-{
-}
-
 int TableModel::rowCount(QModelIndex const& parent) const
 {
-	return dataStorage().size();
+	return m_accessor->rowCount();
 }
 
 int TableModel::columnCount(QModelIndex const& parent) const
 {
-	return headerItems().size();
+	return m_accessor->columnCount();
 }
 
 QVariant TableModel::data(QModelIndex const& index, int role) const
 {
 	if (role == Qt::DisplayRole)
 	{
-		return dataStorage()[index.row()].title;
+		return m_accessor->itemValue(index);
 	}
 
 	if (role == Qt::BackgroundColorRole)
@@ -48,7 +42,7 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 
 	if (role == Qt::DisplayRole)
 	{
-		return headerItems()[section];
+		return m_accessor->columnText(section);
 	}
 
 	return QVariant();
@@ -72,6 +66,23 @@ bool TableModel::insertColumns(int column, int count, QModelIndex const& parent)
 bool TableModel::removeColumns(int column, int count, QModelIndex const& parent)
 {
 	return 0;
+}
+
+void TableModel::setDataAccessor(std::unique_ptr<IModelDataAccessorItem> accessor)
+{
+	if (m_accessor)
+	{
+		VERIFY(QObject::disconnect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
+	}
+
+	m_accessor = std::move(accessor);
+	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
+}
+
+void TableModel::onRowAdded(int row)
+{
+	beginInsertRows(QModelIndex(), row, row);
+	endInsertRows();
 }
 
 }
