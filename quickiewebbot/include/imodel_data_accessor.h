@@ -18,6 +18,7 @@ public:
 	virtual int itemColSpan(const QModelIndex& index) const = 0;
 
 	virtual QAbstractItemDelegate* itemDelegate(const QModelIndex& index) const = 0;
+	virtual QPixmap* pixmap(const QModelIndex& index) const = 0;
 
 	virtual QObject* qobject() = 0;
 	

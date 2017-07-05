@@ -27,6 +27,8 @@ public:
 
 	void setDataAccessor(std::unique_ptr<IModelDataAccessorItem> accessor);
 
+	Q_SIGNAL void colspan(const QModelIndex& index, int span) const;
+
 private:
 	Q_SLOT void onRowAdded(int row);
 

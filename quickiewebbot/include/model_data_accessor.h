@@ -21,6 +21,7 @@ public:
 	virtual int itemColSpan(const QModelIndex& index) const override;
 
 	virtual QAbstractItemDelegate* itemDelegate(const QModelIndex& index) const override;
+	virtual QPixmap* pixmap(const QModelIndex& index) const override;
 
 	virtual QObject* qobject() override;
 

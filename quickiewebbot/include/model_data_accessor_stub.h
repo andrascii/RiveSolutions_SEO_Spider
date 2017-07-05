@@ -40,11 +40,21 @@ public:
 
 	virtual QVariant itemValue(const QModelIndex& index) const override
 	{
+		if (index.column() == 3)
+		{
+			return QVariant();
+		}
+		
 		return QLatin1String("Item Text") + QString::number(index.row()) + QString::number(index.column());
 	}
 
 	virtual int itemColSpan(const QModelIndex& index) const override
 	{
+		if (index.column() == 2)
+		{
+			return 2;
+		}
+
 		return 0;
 	}
 
@@ -56,6 +66,18 @@ public:
 	virtual QObject* qobject() 
 	{
 		return this;
+	}
+
+	virtual QPixmap* pixmap(const QModelIndex& index) const override
+	{
+		static QPixmap s_pixmap = QPixmap(":/images/arrow-down-icon.png");
+
+		if (index.column() == 0) 
+		{
+			return &s_pixmap;
+		}
+		
+		return nullptr;
 	}
 
 	// signals

@@ -3,6 +3,7 @@
 #include "model_data_accessor_stub.h"
 #include "model_data_accessor.h"
 #include "model_controller_data.h"
+#include "table_view_span_extension.h"
 
 namespace QuickieWebBot
 {
@@ -33,6 +34,7 @@ void MainFrame::init()
 	//model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(m_data, ModelControllerData::CrawledUrlStorageType));
 
 	ui.crawlingTableView->setModel(model);
+	new TableViewSpanExtension(ui.crawlingTableView);
 	//////////////////////////////////////////////////////////////////////////
 }
 

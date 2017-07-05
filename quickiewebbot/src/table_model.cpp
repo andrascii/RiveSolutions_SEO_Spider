@@ -22,7 +22,17 @@ QVariant TableModel::data(QModelIndex const& index, int role) const
 {
 	if (role == Qt::DisplayRole)
 	{
+		emit colspan(index, m_accessor->itemColSpan(index));
 		return m_accessor->itemValue(index);
+	}
+
+	if (role == Qt::DecorationRole)
+	{
+		QPixmap* pixmap = m_accessor->pixmap(index);
+		if (pixmap != nullptr)
+		{
+			return *pixmap;
+		}
 	}
 
 	if (role == Qt::BackgroundColorRole)

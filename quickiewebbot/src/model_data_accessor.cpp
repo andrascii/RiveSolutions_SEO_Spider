@@ -44,6 +44,11 @@ QAbstractItemDelegate * ModelDataAccessorAllItems::itemDelegate(const QModelInde
 	return nullptr;
 }
 
+QPixmap * ModelDataAccessorAllItems::pixmap(const QModelIndex & index) const
+{
+	return nullptr;
+}
+
 QObject * ModelDataAccessorAllItems::qobject()
 {
 	return this;
