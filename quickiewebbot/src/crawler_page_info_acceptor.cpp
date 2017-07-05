@@ -68,18 +68,22 @@ void CrawlerPageInfoAcceptor::parsePage(QString const& htmlPage) noexcept
 
 void CrawlerPageInfoAcceptor::parseContent(GumboNode* head) noexcept
 {
+	Q_UNUSED(head);
 }
 
 void CrawlerPageInfoAcceptor::parseMetaRefresh(GumboNode* head) noexcept
 {
+	Q_UNUSED(head);
 }
 
 void CrawlerPageInfoAcceptor::parseMetaRobots(GumboNode* head) noexcept
 {
+	Q_UNUSED(head);
 }
 
 void CrawlerPageInfoAcceptor::parseRedirectedUrl(GumboNode* head) noexcept
 {
+	Q_UNUSED(head);
 }
 
 void CrawlerPageInfoAcceptor::parseTitle(GumboNode* head) noexcept
@@ -110,26 +114,32 @@ void CrawlerPageInfoAcceptor::parseTitle(GumboNode* head) noexcept
 
 void CrawlerPageInfoAcceptor::parseMetaDescription(GumboNode* head) noexcept
 {
+	Q_UNUSED(head);
 }
 
 void CrawlerPageInfoAcceptor::parseMetaKeywords(GumboNode* head) noexcept
 {
+	Q_UNUSED(head);
 }
 
 void CrawlerPageInfoAcceptor::parseFirstH1(GumboNode* body) noexcept
 {
+	Q_UNUSED(body);
 }
 
 void CrawlerPageInfoAcceptor::parseSecondH1(GumboNode* body) noexcept
 {
+	Q_UNUSED(body);
 }
 
 void CrawlerPageInfoAcceptor::parseFirstH2(GumboNode* body) noexcept
 {
+	Q_UNUSED(body);
 }
 
 void CrawlerPageInfoAcceptor::parseSecondH2(GumboNode* body) noexcept
 {
+	Q_UNUSED(body);
 }
 
 void CrawlerPageInfoAcceptor::pageDownloaded(QNetworkReply* reply)

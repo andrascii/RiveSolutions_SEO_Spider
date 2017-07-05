@@ -53,6 +53,7 @@ if(MSVC)
 		/EHsc
 		/MP
 		/permissive-
+		/W4
 	)
 	
 	set_target_properties(

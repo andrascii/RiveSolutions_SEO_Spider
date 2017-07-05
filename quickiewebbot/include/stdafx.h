@@ -1,5 +1,9 @@
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable:4127)
+#pragma warning(disable:4251)
+
 //
 // C/C++
 //
@@ -73,3 +77,5 @@ using std::size_t;
 #else
 #define VERIFY(Connection) Connection
 #endif
+
+#pragma warning(pop)

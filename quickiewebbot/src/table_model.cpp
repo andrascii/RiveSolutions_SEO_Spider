@@ -10,11 +10,13 @@ TableModel::TableModel(QObject* parent)
 
 int TableModel::rowCount(QModelIndex const& parent) const
 {
+	Q_UNUSED(parent);
 	return m_accessor->rowCount();
 }
 
 int TableModel::columnCount(QModelIndex const& parent) const
 {
+	Q_UNUSED(parent);
 	return m_accessor->columnCount();
 }
 
@@ -60,21 +62,33 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 
 bool TableModel::insertRows(int row, int count, QModelIndex const& parent)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(count);
+	Q_UNUSED(row);
 	return 0;
 }
 
 bool TableModel::removeRows(int row, int count, QModelIndex const& parent)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(count);
+	Q_UNUSED(row);
 	return 0;
 }
 
 bool TableModel::insertColumns(int column, int count, QModelIndex const& parent)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(count);
+	Q_UNUSED(column);
 	return 0;
 }
 
 bool TableModel::removeColumns(int column, int count, QModelIndex const& parent)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(count);
+	Q_UNUSED(column);
 	return 0;
 }
 

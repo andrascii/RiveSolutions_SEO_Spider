@@ -26,33 +26,55 @@ void TableViewSpanExtension::colspan(const QModelIndex& index, int span)
 	m_tableView->setSpan(index.row(), index.column(), 1, span);
 }
 
-void TableViewSpanExtension::rowsInserted(const QModelIndex & parent, int first, int last)
+void TableViewSpanExtension::rowsInserted(const QModelIndex& parent, int first, int last)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(first);
+	Q_UNUSED(last);
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::rowsMoved(const QModelIndex & parent, int start, int end, const QModelIndex & destination, int row)
+void TableViewSpanExtension::rowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(start);
+	Q_UNUSED(end);
+	Q_UNUSED(destination);
+	Q_UNUSED(row);
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::rowsRemoved(const QModelIndex & parent, int first, int last)
+void TableViewSpanExtension::rowsRemoved(const QModelIndex& parent, int first, int last)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(first);
+	Q_UNUSED(last);
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::columnsInserted(const QModelIndex & parent, int first, int last)
+void TableViewSpanExtension::columnsInserted(const QModelIndex& parent, int first, int last)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(first);
+	Q_UNUSED(last);
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::columnsMoved(const QModelIndex & parent, int start, int end, const QModelIndex & destination, int column)
+void TableViewSpanExtension::columnsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int column)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(start);
+	Q_UNUSED(end);
+	Q_UNUSED(destination);
+	Q_UNUSED(column);
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::columnsRemoved(const QModelIndex & parent, int first, int last)
+void TableViewSpanExtension::columnsRemoved(const QModelIndex& parent, int first, int last)
 {
+	Q_UNUSED(parent);
+	Q_UNUSED(first);
+	Q_UNUSED(last);
 	// TODO: handle this event
 }
 
