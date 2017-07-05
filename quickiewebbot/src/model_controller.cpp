@@ -9,9 +9,18 @@ ModelController::ModelController(QObject* parent)
 {
 }
 
-void ModelController::addWebsiteAnalyseElement(std::shared_ptr<WebsiteAnalyseElement> urlInfo)
+void ModelController::addWebsiteAnalyseElement(std::shared_ptr<WebsiteAnalyseElement> urlInfo) noexcept
 {
+}
 
+void ModelController::setHost(QUrl const& host) noexcept
+{
+	m_host = host;
+}
+
+QUrl const& ModelController::host() const noexcept
+{
+	return m_host;
 }
 
 }

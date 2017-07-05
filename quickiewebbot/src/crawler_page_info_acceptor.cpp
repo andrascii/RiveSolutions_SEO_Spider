@@ -10,7 +10,7 @@ CrawlerPageInfoAcceptor::CrawlerPageInfoAcceptor(QObject* parent)
 	VERIFY(connect(m_networkAccesManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(pageDownloaded(QNetworkReply*))));
 }
 
-void CrawlerPageInfoAcceptor::downloadPage(QUrl url)
+void CrawlerPageInfoAcceptor::handleUrl(QUrl url)
 {
 	m_networkAccesManager->get(QNetworkRequest(url));
 }

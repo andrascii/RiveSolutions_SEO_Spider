@@ -77,7 +77,6 @@ include_directories(
 target_link_libraries(
 	${AppName}
 	${CommonLibName}
-	${CrawlerLibName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}

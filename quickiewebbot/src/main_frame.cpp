@@ -8,9 +8,8 @@
 namespace QuickieWebBot
 {
 
-MainFrame::MainFrame(ModelControllerData* data, QWidget* parent)
+MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
-	, m_data(data)
 {
 	init();
 }

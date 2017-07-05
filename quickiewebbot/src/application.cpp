@@ -4,6 +4,8 @@
 #include "model_controller.h"
 #include "software_branding.h"
 #include "start_screen.h"
+#include "service_locator.h"
+#include "crawler_controller.h"
 
 namespace QuickieWebBot
 {
@@ -17,8 +19,8 @@ Application* Application::instance()
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_modelController(new ModelController(this))
-	, m_mainFrame(new MainFrame(m_modelController))
+	, m_crawlerController(new CrawlerController(std::thread::hardware_concurrency(), this))
+	, m_mainFrame(new MainFrame)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
 	initialize();
@@ -51,6 +53,9 @@ void Application::initialize() noexcept
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
+
+	ServiceLocator::instance()->addService<ModelController>(new ModelController);
+	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
 }
 
 void Application::initializeStyleSheet() noexcept

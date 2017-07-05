@@ -1,5 +1,7 @@
 #pragma once
 
+#include "website_analyse_element.h"
+
 namespace QuickieWebBot
 {
 
@@ -10,7 +12,9 @@ class CrawlerPageInfoAcceptor : public QObject
 public:
 	CrawlerPageInfoAcceptor(QObject* parent = nullptr);
 
-	Q_INVOKABLE void downloadPage(QUrl url);
+	Q_SIGNAL void addElement(QThread* fromThread, WebSiteAnalyseElementPtr element);
+
+	Q_SLOT void handleUrl(QUrl url);
 
 private:
 	void parsePage();
