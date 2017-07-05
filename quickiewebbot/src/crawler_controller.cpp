@@ -41,6 +41,7 @@ void CrawlerController::stop()
 
 void CrawlerController::setThreadCount(unsigned int threadCount) noexcept
 {
+	Q_UNUSED(threadCount);
 }
 
 void CrawlerController::prepareAndStart() noexcept
@@ -58,6 +59,8 @@ void CrawlerController::prepareAndStart() noexcept
 
 void CrawlerController::onElementAdded(QThread* fromThread, WebSiteAnalyseElementPtr element)
 {
+	Q_UNUSED(fromThread);
+	Q_UNUSED(element);
 	//
 	// write element to model controller and send new url to fromThread
 	//

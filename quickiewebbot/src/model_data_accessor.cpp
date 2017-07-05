@@ -34,18 +34,21 @@ QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 	return WebsiteAnalyseElementInfo::value((*storage)[index.row()], info);
 }
 
-int ModelDataAccessorAllItems::itemColSpan(const QModelIndex & index) const
+int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 {
+	Q_UNUSED(index);
 	return 0;
 }
 
-QAbstractItemDelegate * ModelDataAccessorAllItems::itemDelegate(const QModelIndex & index) const
+QAbstractItemDelegate * ModelDataAccessorAllItems::itemDelegate(const QModelIndex& index) const
 {
+	Q_UNUSED(index);
 	return nullptr;
 }
 
-QPixmap * ModelDataAccessorAllItems::pixmap(const QModelIndex & index) const
+QPixmap * ModelDataAccessorAllItems::pixmap(const QModelIndex& index) const
 {
+	Q_UNUSED(index);
 	return nullptr;
 }
 
