@@ -9,7 +9,7 @@ ModelController::ModelController(QObject* parent)
 {
 }
 
-void ModelController::addWebsiteAnalyseElement(std::shared_ptr<WebsiteAnalyseElement> urlInfo) noexcept
+void ModelController::addWebsiteAnalyseElement(std::shared_ptr<WebSiteAnalyseElement> urlInfo) noexcept
 {
 }
 

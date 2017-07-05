@@ -6,6 +6,7 @@ set(AppHeadersDir include)
 
 # deps headers
 set(CommonLibHeadersDir ../common/include)
+set(GumboLibHeadersDir ../gumbo)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppHeadersList "include/*.h")
@@ -21,7 +22,7 @@ list(REMOVE_ITEM AppSourcesList src/stdafx.cpp)
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" AppSourcesList)
 
 source_group(
-	GeneratedFiles FILES 
+	generated_files FILES 
 	${AppHeadersMocList} 
 	${AppResourcesListAdded} 
 	${AppResourcesList} 
@@ -70,6 +71,7 @@ endif()
 include_directories(
 	${AppHeadersDir}
 	${CommonLibHeadersDir}
+	${GumboLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )

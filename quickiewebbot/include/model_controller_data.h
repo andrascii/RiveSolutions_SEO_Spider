@@ -11,11 +11,11 @@ class ModelControllerData
 {
 	Q_OBJECT
 protected:
-	using CrawlerStorageType = std::unordered_multiset<std::shared_ptr<WebsiteAnalyseElement>, UniversalWebsiteAnalyseElementHasher>;
+	using CrawlerStorageType = std::unordered_multiset<std::shared_ptr<WebSiteAnalyseElement>, UniversalWebSiteAnalyseElementHasher>;
 	using CrawlerStorageTypePtr = std::shared_ptr<CrawlerStorageType>;
 
 public:
-	using GuiStorageType = QVector<std::shared_ptr<WebsiteAnalyseElement>>;
+	using GuiStorageType = QVector<std::shared_ptr<WebSiteAnalyseElement>>;
 	using GuiStorageTypePtr = std::shared_ptr<GuiStorageType>;
 
 	enum StorageType
@@ -62,8 +62,8 @@ public:
 
 	ModelControllerData(QObject* parent);
 
-	bool isElementExists(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, int storageType) const noexcept;
-	void addElement(std::shared_ptr<WebsiteAnalyseElement> const& websiteAnalysElement, int storageType) noexcept;
+	bool isElementExists(std::shared_ptr<WebSiteAnalyseElement> const& websiteAnalysElement, int storageType) const noexcept;
+	void addElement(std::shared_ptr<WebSiteAnalyseElement> const& websiteAnalysElement, int storageType) noexcept;
 
 	GuiStorageType const* guiStorage(int type) const noexcept;
 	GuiStorageType* guiStorage(int type) noexcept;

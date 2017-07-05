@@ -13,7 +13,7 @@ class ModelController: public ModelControllerData
 public:
 	ModelController(QObject* parent = nullptr);
 
-	void addWebsiteAnalyseElement(std::shared_ptr<WebsiteAnalyseElement> urlInfo) noexcept;
+	void addWebsiteAnalyseElement(std::shared_ptr<WebSiteAnalyseElement> urlInfo) noexcept;
 
 	void setHost(QUrl const& host) noexcept;
 	QUrl const& host() const noexcept;

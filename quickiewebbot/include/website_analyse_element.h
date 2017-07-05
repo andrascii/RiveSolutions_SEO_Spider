@@ -3,7 +3,7 @@
 namespace QuickieWebBot
 {
 
-struct WebsiteAnalyseElement
+struct WebSiteAnalyseElement
 {
 	QUrl url;
 	QString content;
@@ -32,112 +32,112 @@ struct WebsiteAnalyseElement
 	size_t pageHash;
 };
 
-enum WebSiteAnalyseElementMemberGetter
-{
-	GetterUrl,
-	GetterContent,
-	GetterMetaRefresh,
-	GetterMetaRobots,
-	GetterRedirectedUrl,
-	GetterServerResponse,
-	GetterTitle,
-	GetterMetaDescription,
-	GetterMetaKeywords,
-	GetterFirstH1,
-	GetterSecondH1,
-	GetterFirstH2,
-	GetterSecondH2,
-	GeterCanonicalLinkElement,
-	GetterStatusCode,
-	GetterTitleLength,
-	GetterMetaDescriptionLength,
-	GetterMetaKeywordsLength,
-	GetterFirstH1Length,
-	GetterSecondH1Length,
-	GetterFirstH2Length,
-	GetterSecondH2Length,
-	GetterPageSizeBytes,
-	GetterWordCount
-};
-
-using WebSiteAnalyseElementPtr = std::shared_ptr<WebsiteAnalyseElement>;
+using WebSiteAnalyseElementPtr = std::shared_ptr<WebSiteAnalyseElement>;
 
 struct IWebsiteAnalyseElementHasher
 {
+	enum WebSiteAnalyseElementMember
+	{
+		UrlMember,
+		ContentMember,
+		MetaRefreshMember,
+		MetaRobotsMember,
+		RedirectedUrlMember,
+		ServerResponseMember,
+		TitleMember,
+		MetaDescriptionMember,
+		MetaKeywordsMember,
+		FirstH1Member,
+		SecondH1Member,
+		FirstH2Member,
+		SecondH2Member,
+		CanonicalLinkElementMember,
+		StatusCodeMember,
+		TitleLengthMember,
+		MetaDescriptionLengthMember,
+		MetaKeywordsLengthMember,
+		FirstH1LengthMember,
+		SecondH1LengthMember,
+		FirstH2LengthMember,
+		SecondH2LengthMember,
+		PageSizeBytesMember,
+		WordCountMember
+	};
+
 	virtual size_t operator()(WebSiteAnalyseElementPtr const& websiteAnalyseElement) const noexcept = 0;
 };
 
-template <int MemberGetterType>
-struct WebsiteAnalyseElementHasher : public IWebsiteAnalyseElementHasher
+template <int MemberType>
+struct WebSiteAnalyseElementHasher : public IWebsiteAnalyseElementHasher
 {
 	virtual size_t operator()(WebSiteAnalyseElementPtr const& websiteAnalyseElement) const noexcept override
 	{
-		static_assert(MemberGetterType >= GetterUrl && MemberGetterType <= static_cast<int>(GetterWordCount), "Invalid MemberGetterType");
+		static_assert(MemberType >= UrlMember && MemberType <= static_cast<int>(WordCountMember), "Invalid MemberGetterType");
 
 		static boost::hash<std::string> s_stringHasher;
 		static boost::hash<int> s_intHasher;
 		
 		static std::map<int, std::function<size_t(WebSiteAnalyseElementPtr const&)>> s_hashFuncs
 		{
-			{ GetterUrl, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->url.toString().toStdString()); } },
-			{ GetterContent, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->content.toStdString()); } },
-			{ GetterMetaRefresh, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
-			{ GetterMetaRobots, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaRobots.toStdString()); } },
-			{ GetterRedirectedUrl, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->redirectedUrl.toStdString()); } },
-			{ GetterServerResponse, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->serverResponse.toStdString()); } },
-			{ GetterTitle, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->title.toStdString()); } },
-			{ GetterMetaDescription, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaDescription.toStdString()); } },
-			{ GetterMetaKeywords, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaKeywords.toStdString()); } },
-			{ GetterFirstH1, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->firstH1.toStdString()); } },
-			{ GetterSecondH1, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->secondH1.toStdString()); } },
-			{ GetterFirstH2, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->firstH2.toStdString()); } },
-			{ GetterSecondH2, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->secondH2.toStdString()); } },
-			{ GeterCanonicalLinkElement, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->canonicalLinkElement.toStdString()); } },
-			{ GetterStatusCode, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->statusCode); } },
-			{ GetterTitleLength, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->titleLength); } },
-			{ GetterMetaDescriptionLength, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->metaDescriptionLength); } },
-			{ GetterMetaKeywordsLength, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->metaKeywordsLength); } },
-			{ GetterFirstH1Length, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->firstH1Length); } },
-			{ GetterSecondH1Length, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->secondH1Length); } },
-			{ GetterFirstH2Length, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->firstH2Length); } },
-			{ GetterSecondH2Length, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->secondH2Length); } },
-			{ GetterPageSizeBytes, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->pageSizeBytes); } },
-			{ GetterWordCount, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->wordCount); } }
+			{ UrlMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->url.toString().toStdString()); } },
+			{ ContentMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->content.toStdString()); } },
+			{ MetaRefreshMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
+			{ MetaRobotsMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaRobots.toStdString()); } },
+			{ RedirectedUrlMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->redirectedUrl.toStdString()); } },
+			{ ServerResponseMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->serverResponse.toStdString()); } },
+			{ TitleMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->title.toStdString()); } },
+			{ MetaDescriptionMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaDescription.toStdString()); } },
+			{ MetaKeywordsMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->metaKeywords.toStdString()); } },
+			{ FirstH1Member, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->firstH1.toStdString()); } },
+			{ SecondH1Member, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->secondH1.toStdString()); } },
+			{ FirstH2Member, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->firstH2.toStdString()); } },
+			{ SecondH2Member, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->secondH2.toStdString()); } },
+			{ CanonicalLinkElementMember, [](WebSiteAnalyseElementPtr const& el) { return s_stringHasher(el->canonicalLinkElement.toStdString()); } },
+			{ StatusCodeMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->statusCode); } },
+			{ TitleLengthMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->titleLength); } },
+			{ MetaDescriptionLengthMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->metaDescriptionLength); } },
+			{ MetaKeywordsLengthMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->metaKeywordsLength); } },
+			{ FirstH1LengthMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->firstH1Length); } },
+			{ SecondH1LengthMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->secondH1Length); } },
+			{ FirstH2LengthMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->firstH2Length); } },
+			{ SecondH2LengthMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->secondH2Length); } },
+			{ PageSizeBytesMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->pageSizeBytes); } },
+			{ WordCountMember, [](WebSiteAnalyseElementPtr const& el) { return s_intHasher(el->wordCount); } }
 		};
 
-		return s_hashFuncs[MemberGetterType](websiteAnalyseElement);
+		return s_hashFuncs[MemberType](websiteAnalyseElement);
 	}
 };
 
-using WebsiteAnalyseElementHasherUrl = WebsiteAnalyseElementHasher<GetterUrl>;
-using WebsiteAnalyseElementHasherContent = WebsiteAnalyseElementHasher<GetterContent>;
-using WebsiteAnalyseElementHasherMetaRefresh = WebsiteAnalyseElementHasher<GetterMetaRefresh>;
-using WebsiteAnalyseElementHasherMetaRobots = WebsiteAnalyseElementHasher<GetterMetaRobots>;
-using WebsiteAnalyseElementHasherRedirectedUrl = WebsiteAnalyseElementHasher<GetterRedirectedUrl>;
-using WebsiteAnalyseElementHasherServerResponse = WebsiteAnalyseElementHasher<GetterServerResponse>;
-using WebsiteAnalyseElementHasherTitle = WebsiteAnalyseElementHasher<GetterTitle>;
-using WebsiteAnalyseElementHasherMetaDescription = WebsiteAnalyseElementHasher<GetterMetaDescription>;
-using WebsiteAnalyseElementHasherMetaKeywords = WebsiteAnalyseElementHasher<GetterMetaKeywords>;
-using WebsiteAnalyseElementHasherFirstH1 = WebsiteAnalyseElementHasher<GetterFirstH1>;
-using WebsiteAnalyseElementHasherSecondH1 = WebsiteAnalyseElementHasher<GetterSecondH1>;
-using WebsiteAnalyseElementHasherFirstH2 = WebsiteAnalyseElementHasher<GetterFirstH2>;
-using WebsiteAnalyseElementHasherSecondH2 = WebsiteAnalyseElementHasher<GetterSecondH2>;
-using WebsiteAnalyseElementHasherCanonicalLinkElement = WebsiteAnalyseElementHasher<GeterCanonicalLinkElement>;
-using WebsiteAnalyseElementHasherStatusCode = WebsiteAnalyseElementHasher<GetterStatusCode>;
-using WebsiteAnalyseElementHasherTitleLength = WebsiteAnalyseElementHasher<GetterTitleLength>;
-using WebsiteAnalyseElementHasherMetaDescriptionLength = WebsiteAnalyseElementHasher<GetterMetaDescriptionLength>;
-using WebsiteAnalyseElementHasherMetaKeywordsLength = WebsiteAnalyseElementHasher<GetterMetaKeywordsLength>;
-using WebsiteAnalyseElementHasherFirstH1Length = WebsiteAnalyseElementHasher<GetterFirstH1Length>;
-using WebsiteAnalyseElementHasherSecondH1Length = WebsiteAnalyseElementHasher<GetterSecondH1Length>;
-using WebsiteAnalyseElementHasherFirstH2Length = WebsiteAnalyseElementHasher<GetterFirstH2Length>;
-using WebsiteAnalyseElementHasherSecondH2Length = WebsiteAnalyseElementHasher<GetterSecondH2Length>;
-using WebsiteAnalyseElementHasherPageSizeBytes = WebsiteAnalyseElementHasher<GetterPageSizeBytes>;
-using WebsiteAnalyseElementHasherWordCount = WebsiteAnalyseElementHasher<GetterWordCount>;
+using WebsiteAnalyseElementHasherUrl = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::UrlMember>;
+using WebsiteAnalyseElementHasherContent = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::ContentMember>;
+using WebsiteAnalyseElementHasherMetaRefresh = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::MetaRefreshMember>;
+using WebsiteAnalyseElementHasherMetaRobots = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::MetaRobotsMember>;
+using WebsiteAnalyseElementHasherRedirectedUrl = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::RedirectedUrlMember>;
+using WebsiteAnalyseElementHasherServerResponse = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::ServerResponseMember>;
+using WebsiteAnalyseElementHasherTitle = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::TitleMember>;
+using WebsiteAnalyseElementHasherMetaDescription = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::MetaDescriptionMember>;
+using WebsiteAnalyseElementHasherMetaKeywords = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::MetaKeywordsMember>;
+using WebsiteAnalyseElementHasherFirstH1 = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::FirstH1Member>;
+using WebsiteAnalyseElementHasherSecondH1 = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::SecondH1Member>;
+using WebsiteAnalyseElementHasherFirstH2 = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::FirstH2Member>;
+using WebsiteAnalyseElementHasherSecondH2 = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::SecondH2Member>;
+using WebsiteAnalyseElementHasherCanonicalLinkElement = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::CanonicalLinkElementMember>;
+using WebsiteAnalyseElementHasherStatusCode = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::StatusCodeMember>;
+using WebsiteAnalyseElementHasherTitleLength = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::TitleLengthMember>;
+using WebsiteAnalyseElementHasherMetaDescriptionLength = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::MetaDescriptionLengthMember>;
+using WebsiteAnalyseElementHasherMetaKeywordsLength = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::MetaKeywordsLengthMember>;
+using WebsiteAnalyseElementHasherFirstH1Length = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::FirstH1LengthMember>;
+using WebsiteAnalyseElementHasherSecondH1Length = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::SecondH1LengthMember>;
+using WebsiteAnalyseElementHasherFirstH2Length = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::FirstH2LengthMember>;
+using WebsiteAnalyseElementHasherSecondH2Length = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::SecondH2LengthMember>;
+using WebsiteAnalyseElementHasherPageSizeBytes = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::PageSizeBytesMember>;
+using WebsiteAnalyseElementHasherWordCount = WebSiteAnalyseElementHasher<IWebsiteAnalyseElementHasher::WordCountMember>;
 
-class UniversalWebsiteAnalyseElementHasher
+class UniversalWebSiteAnalyseElementHasher
 {
 public:
-	UniversalWebsiteAnalyseElementHasher(std::shared_ptr<IWebsiteAnalyseElementHasher> const& hasher)
+	UniversalWebSiteAnalyseElementHasher(std::shared_ptr<IWebsiteAnalyseElementHasher> const& hasher)
 		: m_hasher(hasher)
 	{
 	}
