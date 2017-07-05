@@ -40,7 +40,7 @@ SoftwareBranding const* Application::softwareBrandingOptions() const noexcept
 
 void Application::mainFrameReadyForShow()
 {
-	mainFrame()->show();
+	mainFrame()->showMaximized();
 }
 
 void Application::initialize() noexcept

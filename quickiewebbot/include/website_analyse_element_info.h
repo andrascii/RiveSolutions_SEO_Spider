@@ -8,23 +8,23 @@ namespace QuickieWebBot
 class WebsiteAnalyseElementInfo
 {
 public:
-	enum Info 
+	enum ElementInfo 
 	{ 
 		Url,
 		Title
 	};
 
-	static QString getTitle(Info item);
-	static QVariant getValue(WebSiteAnalyseElementPtr element, Info item);
+	static QString title(ElementInfo item);
+	static QVariant value(WebSiteAnalyseElementPtr element, ElementInfo item);
 
 private: 
 	using GetterInternal = QVariant(*)(WebSiteAnalyseElementPtr);
 
-	static GetterInternal getter(Info item);
-	static QVariant getElementUrl(WebSiteAnalyseElementPtr element);
-	static QVariant getElementTitle(WebSiteAnalyseElementPtr element);
+	static GetterInternal acceptElement(ElementInfo item);
+	static QVariant elementUrl(WebSiteAnalyseElementPtr element);
+	static QVariant elementTitle(WebSiteAnalyseElementPtr element);
 
-	static void checkInfoItem(Info item);
+	static void checkInfoItem(ElementInfo item);
 };
 
 }

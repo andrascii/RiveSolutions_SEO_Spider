@@ -10,9 +10,6 @@ class CrawlerController : public QObject
 public:
 	CrawlerController();
 
-	void startCrawlers(size_t num);
-	void stopCrawlers();
-
 private:
 	std::vector<QThread*> m_workerThreads;
 };
