@@ -6,6 +6,7 @@ namespace QuickieWebBot
 CrawlerPageInfoAcceptor::CrawlerPageInfoAcceptor(QObject* parent)
 	: QObject(parent)
 	, m_networkAccesManager(new QNetworkAccessManager(this))
+	, m_element(std::make_shared<WebSiteAnalyseElement>())
 {
 	VERIFY(connect(m_networkAccesManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(pageDownloaded(QNetworkReply*))));
 }
@@ -29,7 +30,7 @@ void CrawlerPageInfoAcceptor::parsePage(QString const& htmlPage) noexcept
 	{
 		GumboNode* node = nullptr;
 
-		for (int i = 0; i < rootChildren->length; ++i)
+		for (unsigned i = 0; i < rootChildren->length; ++i)
 		{
 			GumboNode* child = static_cast<GumboNode*>(rootChildren->data[i]);
 
@@ -85,7 +86,7 @@ void CrawlerPageInfoAcceptor::parseTitle(GumboNode* head) noexcept
 {
 	const GumboVector* headChildren = &head->v.element.children;
 
-	for (int i = 0; i < headChildren->length; ++i)
+	for (unsigned i = 0; i < headChildren->length; ++i)
 	{
 		GumboNode* child = static_cast<GumboNode*>(headChildren->data[i]);
 
