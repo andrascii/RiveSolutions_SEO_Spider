@@ -26,11 +26,12 @@ void MainFrame::init()
 	//////////////////////////////////////////////////////////////////////////
 	// Debug code
 
-	TableModel* model = new TableModel(this);
-	static ModelDataAccessorStub s_stub;
-	model->setDataAccessor(s_stub.allProcessedItems());
+	//TableModel* model = new TableModel(this);
+	//static ModelDataAccessorStub s_stub;
+	//model->setDataAccessor(s_stub.allProcessedItems());
+
 	
-	//model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(m_data, ModelControllerData::CrawledUrlStorageType));
+	model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(ModelControllerData::CrawledUrlStorageType));
 
 	ui.crawlingTableView->setModel(model);
 	new TableViewSpanExtension(ui.crawlingTableView);

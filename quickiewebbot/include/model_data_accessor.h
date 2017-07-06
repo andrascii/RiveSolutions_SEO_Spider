@@ -12,7 +12,7 @@ class ModelDataAccessorAllItems
 {
 	Q_OBJECT
 public:
-	ModelDataAccessorAllItems(ModelControllerData* data, ModelControllerData::StorageType storageType);
+	ModelDataAccessorAllItems(ModelControllerData::StorageType storageType);
 	virtual int columnCount() const override;
 	virtual QString columnText(int column) const override;
 
@@ -35,7 +35,7 @@ protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
 
 private:
-	ModelControllerData* m_modelControllerData;
+	mutable ModelControllerData* m_modelControllerData;
 	ModelControllerData::StorageType m_storageType;
 	std::vector<int> m_columns;
 };
