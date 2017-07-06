@@ -1,4 +1,5 @@
 #include "crawler_page_info_acceptor.h"
+#include "ihtml_parser.h"
 
 namespace QuickieWebBot
 {

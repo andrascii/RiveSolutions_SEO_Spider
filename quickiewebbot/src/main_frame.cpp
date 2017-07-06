@@ -26,7 +26,7 @@ void MainFrame::init()
 	//////////////////////////////////////////////////////////////////////////
 	// Debug code
 
-	//TableModel* model = new TableModel(this);
+	TableModel* model = new TableModel(this);
 	//static ModelDataAccessorStub s_stub;
 	//model->setDataAccessor(s_stub.allProcessedItems());
 
