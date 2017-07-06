@@ -20,10 +20,10 @@ Application* Application::instance()
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_crawlerController(new CrawlerController(std::thread::hardware_concurrency(), this))
-	, m_mainFrame(new MainFrame)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
 	initialize();
+	m_mainFrame.reset(new MainFrame());
 
 	initializeStyleSheet();
 

@@ -1,15 +1,44 @@
 #include "model_data_accessor.h"
 #include "website_analyse_element_info.h"
+#include "service_locator.h"
+#include "model_controller.h"
 
 namespace QuickieWebBot
 {
 
-ModelDataAccessorAllItems::ModelDataAccessorAllItems(ModelControllerData* data, ModelControllerData::StorageType storageType)
-	: m_modelControllerData(data)
+ModelDataAccessorAllItems::ModelDataAccessorAllItems(ModelControllerData::StorageType storageType)
+	: m_modelControllerData(nullptr)
 	, m_storageType(storageType)
-	, m_columns{ WebsiteAnalyseElementInfo::Url, WebsiteAnalyseElementInfo::Title }
 {
-	VERIFY(QObject::connect(data, SIGNAL(rowAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
+	m_columns =
+	{
+		WebsiteAnalyseElementInfo::Url,
+		WebsiteAnalyseElementInfo::Title,
+		WebsiteAnalyseElementInfo::TitleLength,
+		WebsiteAnalyseElementInfo::MetaRefresh,
+		WebsiteAnalyseElementInfo::MetaRobots,
+		WebsiteAnalyseElementInfo::RedirectedUrl,
+		WebsiteAnalyseElementInfo::ServerResponse,
+		WebsiteAnalyseElementInfo::MetaDescription,
+		WebsiteAnalyseElementInfo::MetaDescriptionLength,
+		WebsiteAnalyseElementInfo::MetaKeywords,
+		WebsiteAnalyseElementInfo::MetaKeywordsLength,
+		WebsiteAnalyseElementInfo::FirstH1,
+		WebsiteAnalyseElementInfo::FirstH1Length,
+		WebsiteAnalyseElementInfo::SecondH1,
+		WebsiteAnalyseElementInfo::SecondH1Length,
+		WebsiteAnalyseElementInfo::FirstH2,
+		WebsiteAnalyseElementInfo::FirstH2Length,
+		WebsiteAnalyseElementInfo::SecondH2,
+		WebsiteAnalyseElementInfo::SecondH2Length,
+		WebsiteAnalyseElementInfo::CanonicalLinkElement,
+		WebsiteAnalyseElementInfo::StatusCode,
+		WebsiteAnalyseElementInfo::PageSizeBytes,
+		WebsiteAnalyseElementInfo::WordCount
+	};
+
+	m_modelControllerData = ServiceLocator::instance()->service<ModelController>();
+	VERIFY(QObject::connect(m_modelControllerData, SIGNAL(rowAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 }
 	
 int ModelDataAccessorAllItems::columnCount() const
