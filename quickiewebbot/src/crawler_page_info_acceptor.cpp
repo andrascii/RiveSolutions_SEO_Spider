@@ -1,4 +1,5 @@
 #include "crawler_page_info_acceptor.h"
+#include "ihtml_parser.h"
 
 namespace QuickieWebBot
 {
@@ -24,128 +25,65 @@ void CrawlerPageInfoAcceptor::parsePage(QString const& htmlPage) noexcept
 	assert(root->type == GUMBO_NODE_ELEMENT);
 	assert(root->v.element.children.length >= 2);
 
-	const GumboVector* rootChildren = &root->v.element.children;
+	GumboNode* head = findGumboNode(root, GUMBO_TAG_HEAD);
+	GumboNode* title = findGumboNode(head, GUMBO_TAG_TITLE);
 
-	auto tagFinder = [](const GumboVector* rootChildren, int tagType) -> GumboNode*
-	{
-		GumboNode* node = nullptr;
-
-		for (unsigned i = 0; i < rootChildren->length; ++i)
-		{
-			GumboNode* child = static_cast<GumboNode*>(rootChildren->data[i]);
-
-			if (child->type == GUMBO_NODE_ELEMENT && child->v.element.tag == tagType)
-			{
-				node = child;
-				break;
-			}
-		}
-
-		return node;
-	};
-
-	GumboNode* head = tagFinder(rootChildren, GUMBO_TAG_HEAD);
-	GumboNode* body = tagFinder(rootChildren, GUMBO_TAG_BODY);
-
-	assert(head != nullptr);
-	assert(body != nullptr);
-
-	parseContent(head);
-	parseMetaRefresh(head);
-	parseMetaRefresh(head);
-	parseRedirectedUrl(head);
-	parseTitle(head);
-	parseMetaDescription(head);
-	parseMetaKeywords(head);
-
-	parseFirstH1(body);
-	parseSecondH1(body);
-	parseFirstH2(body);
-	parseSecondH2(body);
+	m_element->title = title->v.text.text;
 
 	gumbo_destroy_output(&kGumboDefaultOptions, output);
 }
 
-void CrawlerPageInfoAcceptor::parseContent(GumboNode* head) noexcept
+GumboNode* CrawlerPageInfoAcceptor::findGumboNode(GumboNode* node, int gumboTagType) noexcept
 {
-	Q_UNUSED(head);
-}
+	GumboNode* findNode = nullptr;
 
-void CrawlerPageInfoAcceptor::parseMetaRefresh(GumboNode* head) noexcept
-{
-	Q_UNUSED(head);
-}
+	const GumboVector* nodeChildren = &node->v.element.children;
 
-void CrawlerPageInfoAcceptor::parseMetaRobots(GumboNode* head) noexcept
-{
-	Q_UNUSED(head);
-}
-
-void CrawlerPageInfoAcceptor::parseRedirectedUrl(GumboNode* head) noexcept
-{
-	Q_UNUSED(head);
-}
-
-void CrawlerPageInfoAcceptor::parseTitle(GumboNode* head) noexcept
-{
-	const GumboVector* headChildren = &head->v.element.children;
-
-	for (unsigned i = 0; i < headChildren->length; ++i)
+	for (unsigned i = 0; i < nodeChildren->length; ++i)
 	{
-		GumboNode* child = static_cast<GumboNode*>(headChildren->data[i]);
+		GumboNode* child = static_cast<GumboNode*>(nodeChildren->data[i]);
 
-		if (child->type == GUMBO_NODE_ELEMENT && child->v.element.tag == GUMBO_TAG_TITLE)
+		if (child->type == GUMBO_NODE_ELEMENT && child->v.element.tag == gumboTagType)
 		{
-			if (child->v.element.children.length != 1)
-			{
-				//return "<empty title>";
-			}
-
-			GumboNode* title_text = static_cast<GumboNode*>(child->v.element.children.data[0]);
-
-			assert(title_text->type == GUMBO_NODE_TEXT || title_text->type == GUMBO_NODE_WHITESPACE);
-
-			//return title_text->v.text.text;
+			findNode = child;
+			break;
 		}
 	}
 
-	// title not found
+	return findNode;
 }
 
-void CrawlerPageInfoAcceptor::parseMetaDescription(GumboNode* head) noexcept
+unsigned CrawlerPageInfoAcceptor::countGumboNode(GumboNode* node, int gumboTagType) noexcept
 {
-	Q_UNUSED(head);
-}
+	unsigned counter = 0;
 
-void CrawlerPageInfoAcceptor::parseMetaKeywords(GumboNode* head) noexcept
-{
-	Q_UNUSED(head);
-}
+	const GumboVector* nodeChildren = &node->v.element.children;
 
-void CrawlerPageInfoAcceptor::parseFirstH1(GumboNode* body) noexcept
-{
-	Q_UNUSED(body);
-}
+	for (unsigned i = 0; i < nodeChildren->length; ++i)
+	{
+		GumboNode* child = static_cast<GumboNode*>(nodeChildren->data[i]);
 
-void CrawlerPageInfoAcceptor::parseSecondH1(GumboNode* body) noexcept
-{
-	Q_UNUSED(body);
-}
+		if (child->type == GUMBO_NODE_ELEMENT && child->v.element.tag == gumboTagType)
+		{
+			++counter;
+		}
+	}
 
-void CrawlerPageInfoAcceptor::parseFirstH2(GumboNode* body) noexcept
-{
-	Q_UNUSED(body);
-}
-
-void CrawlerPageInfoAcceptor::parseSecondH2(GumboNode* body) noexcept
-{
-	Q_UNUSED(body);
+	return counter;
 }
 
 void CrawlerPageInfoAcceptor::pageDownloaded(QNetworkReply* reply)
 {
 	QString htmlPage = reply->readAll();
+
+	for(QPair<QByteArray, QByteArray> const& pair : reply->rawHeaderPairs())
+	{
+		m_element->serverResponse += pair.first + ": " + pair.second + "\n";
+	}
+
 	parsePage(htmlPage);
+	
+	emit addElement(thread(), m_element);
 }
 
 }

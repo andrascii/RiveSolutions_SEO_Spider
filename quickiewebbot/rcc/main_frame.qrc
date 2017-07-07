@@ -10,5 +10,6 @@
         <file>stylesheets/styles.css</file>
         <file>images/arrow-down-icon.png</file>
         <file>images/brand-logo.jpg</file>
+        <file>images/brand-logo-logaster.png</file>
     </qresource>
 </RCC>
