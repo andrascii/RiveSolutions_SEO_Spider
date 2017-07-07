@@ -81,6 +81,11 @@ public:
 		return nullptr;
 	}
 
+	virtual QColor itemBackgroundColor(const QModelIndex& index) const override
+	{
+		return index.row() % 2 == 0 ? Qt::transparent : Qt::lightGray;
+	}
+
 	// signals
 	Q_SIGNAL void itemChanged(QModelIndex index);
 	Q_SIGNAL void rowRemoved(int row);

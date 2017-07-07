@@ -18,6 +18,7 @@ public:
 
 	virtual int rowCount() const override;
 	virtual QVariant itemValue(const QModelIndex& index) const override;
+	virtual QColor itemBackgroundColor(const QModelIndex& index) const override;
 	virtual int itemColSpan(const QModelIndex& index) const override;
 
 	virtual QAbstractItemDelegate* itemDelegate(const QModelIndex& index) const override;

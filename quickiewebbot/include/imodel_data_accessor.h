@@ -15,6 +15,7 @@ public:
 
 	virtual int rowCount() const = 0;
 	virtual QVariant itemValue(const QModelIndex& index) const = 0;
+	virtual QColor itemBackgroundColor(const QModelIndex& index) const = 0;
 	virtual int itemColSpan(const QModelIndex& index) const = 0;
 
 	virtual QAbstractItemDelegate* itemDelegate(const QModelIndex& index) const = 0;

@@ -39,6 +39,11 @@ QVariant TableModel::data(QModelIndex const& index, int role) const
 
 	if (role == Qt::BackgroundColorRole)
 	{
+		return m_accessor->itemBackgroundColor(index);
+	}
+
+	if (role == Qt::BackgroundColorRole)
+	{
 		return QColor(Qt::white);
 	}
 

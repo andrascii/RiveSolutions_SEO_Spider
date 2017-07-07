@@ -63,6 +63,11 @@ QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 	return WebsiteAnalyseElementInfo::value((*storage)[index.row()], info);
 }
 
+QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex & index) const
+{
+	return Qt::transparent;
+}
+
 int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 {
 	Q_UNUSED(index);
