@@ -1,6 +1,6 @@
 #pragma once
 
-#include "website_analyse_element.h"
+#include "page_info.h"
 
 namespace QuickieWebBot
 {

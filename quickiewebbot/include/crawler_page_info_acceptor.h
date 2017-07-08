@@ -1,6 +1,6 @@
 #pragma once
 
-#include "website_analyse_element.h"
+#include "page_info.h"
 #include "gumbo.h"
 
 namespace QuickieWebBot
@@ -13,20 +13,33 @@ class CrawlerPageInfoAcceptor : public QObject
 public:
 	CrawlerPageInfoAcceptor(QObject* parent = nullptr);
 
-	Q_SIGNAL void addElement(QThread* fromThread, WebSiteAnalyseElementPtr element);
+	const std::vector<QUrl>& pageUrlList() const noexcept;
+	Q_INVOKABLE void handlePage(QUrl url);
 
-	Q_SLOT void handleUrl(QUrl url);
+//signals:
+	Q_SIGNAL void pageParsed(QThread* fromThread, PageInfoPtr pageInfo);
+	Q_SIGNAL void urlListParsed(const std::vector<QUrl>& urls);
 
 private:
-	void parsePage(QString const& htmlPage) noexcept;
-	GumboNode* findGumboNode(GumboNode* node, int gumboTagType) noexcept;
-	unsigned countGumboNode(GumboNode* node, int gumboTagType) noexcept;
-
 	Q_SLOT void pageDownloaded(QNetworkReply* reply);
+
+	void parsePageUrlList(const GumboNode* node) noexcept;
+	void parsePage(const QString& htmlPage) noexcept;
+	void parsePageTitle(const GumboNode* head) noexcept;
+	void parsePageMeta(const GumboNode* head) noexcept;
+
+	//
+	// gumbo helper functions
+	//
+	GumboNode* firstSubNode(const GumboNode* node, GumboTag tag, unsigned startIndexWhithinParent = 0) const noexcept;
+	std::vector<GumboNode*> allSubNodes(const GumboNode* node, GumboTag tag) const noexcept;
+	QString nodeText(const GumboNode* node) const noexcept;
+	unsigned countChildren(const GumboNode* node, GumboTag tag) const noexcept;
 
 private:
 	QNetworkAccessManager* m_networkAccesManager;
-	WebSiteAnalyseElementPtr m_element;
+	PageInfoPtr m_element;
+	std::vector<QUrl> m_pageUrlList;
 };
 
 }
