@@ -28,6 +28,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 void Crawler::start()
 {
 	m_stop = false;
+	m_initialCrawling = true;
 
 	QUrl host = ServiceLocator::instance()->service<ModelController>()->host();
 	QMetaObject::invokeMethod(m_workers.begin()->second, "handlePage", Q_ARG(QUrl, host));
@@ -70,6 +71,23 @@ void Crawler::onPageInfoParsed(QThread* fromThread, PageInfoPtr pageInfo)
 	{
 		QUrl url = *m_internalUrlList.begin();
 		m_internalUrlList.erase(m_internalUrlList.begin());
+
+		//
+		// if we have url count greater then all threads except fromThread
+		// or equal then start all of these threads for crawling too
+		//
+		if (m_initialCrawling && m_internalUrlList.size() >= m_workers.size() - 1)
+		{
+			for(const std::pair<const QThread*, CrawlerPageInfoAcceptor*>& pair : m_workers)
+			{
+				QUrl url = *m_internalUrlList.begin();
+				m_internalUrlList.erase(m_internalUrlList.begin());
+
+				QMetaObject::invokeMethod(pair.second, "handlePage", Q_ARG(QUrl, url));
+			}
+
+			m_initialCrawling = false;
+		}
 
 		QMetaObject::invokeMethod(m_workers[fromThread], "handlePage", Q_ARG(QUrl, url));
 	}

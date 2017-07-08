@@ -38,6 +38,7 @@ private:
 
 private:
 	bool m_stop;
+	bool m_initialCrawling;
 
 	std::unordered_set<QUrl, QUrlHasher> m_internalUrlList;
 	std::unordered_set<QUrl, QUrlHasher> m_crawledUrlList;

@@ -4,7 +4,6 @@
 namespace QuickieWebBot
 {
 
-
 HyperlinkItemDelegate::HyperlinkItemDelegate(QWidget* parent)
 	: QStyledItemDelegate(parent)
 {
