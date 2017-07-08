@@ -31,7 +31,8 @@ private:
 
 private:
 	static Application* s_app;
-
+	
+	QNetworkAccessManager* m_networkAccessManager;
 	Crawler* m_crawler;
 
 	std::unique_ptr<MainFrame> m_mainFrame;
