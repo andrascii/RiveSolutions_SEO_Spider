@@ -29,7 +29,11 @@ Application::Application(int& argc, char** argv)
 
 	initializeStyleSheet();
 
+#if defined(PRODUCTION)
 	showStartScreen();
+#else
+	mainFrameReadyForShow();
+#endif
 }
 
 const Crawler* Application::crawler() const noexcept
@@ -61,9 +65,10 @@ void Application::initialize() noexcept
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
 
-	ServiceLocator::instance()->addService<ModelController>(new NetworkAccessManagerFutureProvider(m_networkAccessManager));
+	ServiceLocator::instance()->addService<NetworkAccessManagerFutureProvider>(
+		new NetworkAccessManagerFutureProvider(m_networkAccessManager));
+
 	ServiceLocator::instance()->addService<ModelController>(new ModelController);
-	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
 }
 
 void Application::initializeStyleSheet() noexcept

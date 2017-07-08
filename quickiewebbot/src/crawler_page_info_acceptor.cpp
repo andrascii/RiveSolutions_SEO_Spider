@@ -1,4 +1,6 @@
 #include "crawler_page_info_acceptor.h"
+#include "service_locator.h"
+#include "network_access_manager_future_provider.h"
 
 namespace QuickieWebBot
 {
@@ -20,7 +22,15 @@ const std::vector<QUrl>& CrawlerPageInfoAcceptor::pageUrlList() const noexcept
 void CrawlerPageInfoAcceptor::handlePage(QUrl url)
 {
 	m_state.store(WorkingState);
-	m_networkAccesManager->get(QNetworkRequest(url));
+	//m_networkAccesManager->get(QNetworkRequest(url));
+
+	std::future<NetworkAccessManagerFutureProvider::ResponsePack> response = 
+		ServiceLocator::instance()->service<NetworkAccessManagerFutureProvider>()->get(QNetworkRequest(url));
+
+	NetworkAccessManagerFutureProvider::ResponsePack responsePack = response.get();
+
+	responsePack.responseBody;
+	pageUrlList();
 }
 
 void CrawlerPageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
