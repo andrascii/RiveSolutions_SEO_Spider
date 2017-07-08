@@ -8,7 +8,7 @@ namespace QuickieWebBot
 
 class ModelDataAccessorAllItems 
 	: public QObject
-	, public IModelDataAccessorItem
+	, public ModelDataAccessorItemBase
 {
 	Q_OBJECT
 public:
@@ -20,6 +20,7 @@ public:
 	virtual QVariant itemValue(const QModelIndex& index) const override;
 	virtual QColor itemBackgroundColor(const QModelIndex& index) const override;
 	virtual int itemColSpan(const QModelIndex& index) const override;
+	virtual int flags(const QModelIndex& index) const override;
 
 	virtual QAbstractItemDelegate* itemDelegate(const QModelIndex& index) const override;
 	virtual QPixmap* pixmap(const QModelIndex& index) const override;

@@ -9,7 +9,7 @@ namespace QuickieWebBot
 
 class ModelDataAccessorItemStub 
 	: public QObject
-	, public IModelDataAccessorItem
+	, public ModelDataAccessorItemBase
 {
 	Q_OBJECT
 
@@ -44,8 +44,18 @@ public:
 		{
 			return QVariant();
 		}
+
+		if (index.column() == 2)
+		{
+			return QUrl("http://google.com");
+		}
 		
 		return QLatin1String("Item Text") + QString::number(index.row()) + QString::number(index.column());
+	}
+
+	virtual int flags(const QModelIndex& index) const override
+	{
+		return index.column() == 2 ? IModelDataAccessorItem::ItemFlagUrl : IModelDataAccessorItem::ItemFlagNone;
 	}
 
 	virtual int itemColSpan(const QModelIndex& index) const override

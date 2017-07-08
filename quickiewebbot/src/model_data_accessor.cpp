@@ -74,6 +74,11 @@ int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 	return 0;
 }
 
+int ModelDataAccessorAllItems::flags(const QModelIndex& index) const
+{
+	return m_columns[index.column()] == static_cast<int>(WebsiteAnalyseElementInfo::Url) ? ItemFlagUrl : ItemFlagNone;
+}
+
 QAbstractItemDelegate * ModelDataAccessorAllItems::itemDelegate(const QModelIndex& index) const
 {
 	Q_UNUSED(index);
