@@ -6,6 +6,7 @@
 #include "table_view_span_extension.h"
 #include "application.h"
 #include "crawler.h"
+#include "hyperlink_item_delegate.h"
 
 namespace QuickieWebBot
 {
@@ -38,6 +39,7 @@ void MainFrame::init()
 	model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(ModelControllerData::CrawledUrlStorageType));
 
 	ui.crawlingTableView->setModel(model);
+	ui.crawlingTableView->setItemDelegate(new HyperlinkItemDelegate());
 	new TableViewSpanExtension(ui.crawlingTableView);
 	//////////////////////////////////////////////////////////////////////////
 }
