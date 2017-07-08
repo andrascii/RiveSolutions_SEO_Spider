@@ -28,11 +28,8 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 void Crawler::start()
 {
 	m_stop = false;
-	
-	ServiceLocator* serviceLocator = ServiceLocator::instance();
-	ModelController* modelController = serviceLocator->service<ModelController>();
-	QUrl host = modelController->host();
 
+	QUrl host = ServiceLocator::instance()->service<ModelController>()->host();
 	QMetaObject::invokeMethod(m_workers.begin()->second, "handlePage", Q_ARG(QUrl, host));
 }
 
@@ -48,8 +45,15 @@ void Crawler::setThreadCount(unsigned int threadCount) noexcept
 
 void Crawler::onPageInfoParsed(QThread* fromThread, PageInfoPtr pageInfo)
 {
-	ServiceLocator::instance()->service<ModelController>()->addPageInfo(pageInfo);
+	ModelController* modelController = ServiceLocator::instance()->service<ModelController>();
+
+	modelController->addPageInfo(pageInfo);
 	m_crawledUrlList.insert(pageInfo->url);
+
+	if (m_stop)
+	{
+		return;
+	}
 
 	CrawlerPageInfoAcceptor* pageInfoAcceptor = m_workers[fromThread];
 	std::vector<QUrl> pageUrlList = pageInfoAcceptor->pageUrlList();

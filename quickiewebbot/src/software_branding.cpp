@@ -15,7 +15,7 @@ QString SoftwareBranding::productName() const noexcept
 
 QPixmap SoftwareBranding::brandingLogoImage() const noexcept
 {
-	return QPixmap(":/images/brand-logo-logaster.png");
+	return QPixmap(":/images/brand-logo.jpg");
 }
 
 }

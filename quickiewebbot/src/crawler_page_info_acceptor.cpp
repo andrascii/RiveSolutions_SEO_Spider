@@ -6,7 +6,8 @@ namespace QuickieWebBot
 CrawlerPageInfoAcceptor::CrawlerPageInfoAcceptor(QObject* parent)
 	: QObject(parent)
 	, m_networkAccesManager(new QNetworkAccessManager(this))
-	, m_element(std::make_shared<PageInfo>())
+	, m_pageInfo(std::make_shared<PageInfo>())
+	, m_state(PendingState)
 {
 	VERIFY(connect(m_networkAccesManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(pageDownloaded(QNetworkReply*))));
 }
@@ -18,6 +19,7 @@ const std::vector<QUrl>& CrawlerPageInfoAcceptor::pageUrlList() const noexcept
 
 void CrawlerPageInfoAcceptor::handlePage(QUrl url)
 {
+	m_state.store(WorkingState);
 	m_networkAccesManager->get(QNetworkRequest(url));
 }
 
@@ -65,7 +67,7 @@ void CrawlerPageInfoAcceptor::parsePageTitle(const GumboNode* head) noexcept
 
 	if (title)
 	{
-		m_element->title = nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
+		m_pageInfo->title = nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
 	}
 }
 
@@ -94,12 +96,12 @@ void CrawlerPageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
 		{
 			if (metaHttpEquivAttribute->value == "Content-Type")
 			{
-				m_element->content = contentAttribute->value;
+				m_pageInfo->content = contentAttribute->value;
 			}
 
 			if (metaHttpEquivAttribute->value == "refresh")
 			{
-				m_element->metaRefresh = contentAttribute->value;
+				m_pageInfo->metaRefresh = contentAttribute->value;
 			}
 		}
 
@@ -107,17 +109,17 @@ void CrawlerPageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
 		{
 			if (metaNameAttribute->value == "description")
 			{
-				m_element->metaDescription = contentAttribute->value;
+				m_pageInfo->metaDescription = contentAttribute->value;
 			}
 
 			if (metaNameAttribute->value == "keywords")
 			{
-				m_element->metaKeywords = contentAttribute->value;
+				m_pageInfo->metaKeywords = contentAttribute->value;
 			}
 
 			if (metaNameAttribute->value == "robots")
 			{
-				m_element->metaRobots = contentAttribute->value;
+				m_pageInfo->metaRobots = contentAttribute->value;
 			}
 		}
 	}
@@ -198,20 +200,15 @@ void CrawlerPageInfoAcceptor::pageDownloaded(QNetworkReply* reply)
 	QByteArray htmlPage = reply->readAll();
 	parsePage(htmlPage);
 
-	QFile file("E:/test.html");
-	if (file.open(QIODevice::WriteOnly))
-	{
-		file.write(htmlPage);
-	}
-
 	for(const QPair<QByteArray, QByteArray>& pair : reply->rawHeaderPairs())
 	{
-		m_element->serverResponse += pair.first + ": " + pair.second + "\n";
+		m_pageInfo->serverResponse += pair.first + ": " + pair.second + "\n";
 	}
 
-	m_element->url = reply->url();
+	m_pageInfo->url = reply->url();
 	
-	emit pageParsed(thread(), m_element);
+	emit pageParsed(thread(), m_pageInfo);
+	m_state.store(PendingState);
 }
 
 }

@@ -20,7 +20,7 @@ StartScreen* StartScreen::instance()
 
 void StartScreen::show()
 {
-	m_timer->setInterval(5000);
+	m_timer->setInterval(3000);
 	m_timer->setSingleShot(true);
 
 	VERIFY(connect(m_timer, &QTimer::timeout, this, &QWidget::deleteLater));

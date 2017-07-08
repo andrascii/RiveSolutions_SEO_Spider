@@ -173,23 +173,27 @@ ModelControllerData::ModelControllerData(QObject* parent)
 
 bool ModelControllerData::isPageInfoExists(const PageInfoPtr& pageInfo, int storageType) const noexcept
 {
+	qDebug() << pageInfo->url.toString();
+
 	checkStorageType(storageType);
 	CrawlerStorageType const* pQueue = crawlerStorage(storageType);
-	return pQueue->find(pageInfo) != std::end(*pQueue);
+	return pQueue->find(pageInfo) != pQueue->end();
 }
 
 void ModelControllerData::addPageInfo(const PageInfoPtr& pageInfo, int storageType) noexcept
 {
 	if (isPageInfoExists(pageInfo, storageType))
 	{
+		auto iter = crawlerStorage(storageType)->find(pageInfo);
+
+		qDebug() << "not inserted because it the same as " << (*iter)->url;
 		return;
 	}
 
 	crawlerStorage(storageType)->insert(pageInfo);
-	auto storageGui = guiStorage(storageType);
-	storageGui->push_back(pageInfo);
+	guiStorage(storageType)->push_back(pageInfo);
 
-	emit pageInfoAdded(static_cast<int>(storageGui->size() - 1), storageType);
+	emit pageInfoAdded(static_cast<int>(guiStorage(storageType)->size() - 1), storageType);
 }
 
 ModelControllerData::GuiStorageType* ModelControllerData::guiStorage(int type) noexcept
@@ -199,7 +203,7 @@ ModelControllerData::GuiStorageType* ModelControllerData::guiStorage(int type) n
 
 ModelControllerData::GuiStorageType const* ModelControllerData::guiStorage(int type) const noexcept
 {
-	GuiStorageType const* pQueue = const_cast<ModelControllerData * const>(this)->guiStorage(type);
+	const GuiStorageType* pQueue = const_cast<ModelControllerData* const>(this)->guiStorage(type);
 	return pQueue;
 }
 
@@ -210,7 +214,7 @@ ModelControllerData::CrawlerStorageType* ModelControllerData::crawlerStorage(int
 
 ModelControllerData::CrawlerStorageType const* ModelControllerData::crawlerStorage(int type) const noexcept
 {
-	CrawlerStorageType const* pQueue = const_cast<ModelControllerData * const>(this)->crawlerStorage(type);
+	const CrawlerStorageType* pQueue = const_cast<ModelControllerData* const>(this)->crawlerStorage(type);
 	return pQueue;
 }
 

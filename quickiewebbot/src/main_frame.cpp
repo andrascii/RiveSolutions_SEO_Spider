@@ -22,6 +22,7 @@ void MainFrame::init()
 
 	VERIFY(connect(ui.actionAbout, &QAction::triggered, myApp, &Application::aboutQt));
 	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, myApp->crawler(), &Crawler::start));
+	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, myApp->crawler(), &Crawler::stop));
 
 	ui.viewTypeComboBox->addItem(tr("List"));
 	ui.viewTypeComboBox->addItem(tr("Tree"));

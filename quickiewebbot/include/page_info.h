@@ -50,20 +50,20 @@ struct IPageInfoHasher
 		WordCountMember
 	};
 
-	virtual size_t operator()(PageInfoPtr const& websiteAnalyseElement) const noexcept = 0;
+	virtual size_t operator()(const PageInfoPtr& pageInfo) const noexcept = 0;
 };
 
 template <int MemberType>
 struct PageInfoHasher : public IPageInfoHasher
 {
-	virtual size_t operator()(PageInfoPtr const& websiteAnalyseElement) const noexcept override
+	virtual size_t operator()(const PageInfoPtr& pageInfo) const noexcept override
 	{
 		static_assert(MemberType >= UrlMember && MemberType <= static_cast<int>(WordCountMember), "Invalid MemberGetterType");
 
 		static boost::hash<std::string> s_stringHasher;
 		static boost::hash<int> s_intHasher;
 		
-		static std::map<int, std::function<size_t(PageInfoPtr const&)>> s_hashFuncs
+		static std::map<int, std::function<size_t(const PageInfoPtr&)>> s_hashFuncs
 		{
 			{ UrlMember, [](PageInfoPtr const& el) { return s_stringHasher(el->url.toString().toStdString()); } },
 			{ ContentMember, [](PageInfoPtr const& el) { return s_stringHasher(el->content.toStdString()); } },
@@ -84,7 +84,7 @@ struct PageInfoHasher : public IPageInfoHasher
 			{ WordCountMember, [](PageInfoPtr const& el) { return s_intHasher(el->wordCount); } }
 		};
 
-		return s_hashFuncs[MemberType](websiteAnalyseElement);
+		return s_hashFuncs[MemberType](pageInfo);
 	}
 };
 
@@ -109,14 +109,14 @@ using PageInfoHasherWordCount = PageInfoHasher<IPageInfoHasher::WordCountMember>
 class UniversalPageInfoHasher
 {
 public:
-	UniversalPageInfoHasher(std::shared_ptr<IPageInfoHasher> const& hasher)
+	UniversalPageInfoHasher(const std::shared_ptr<IPageInfoHasher>& hasher)
 		: m_hasher(hasher)
 	{
 	}
 
-	size_t operator()(PageInfoPtr const& websiteAnalyseElement) const noexcept
+	size_t operator()(const PageInfoPtr& pageInfo) const noexcept
 	{
-		return (*m_hasher)(websiteAnalyseElement);
+		return (*m_hasher)(pageInfo);
 	}
 
 private:
