@@ -5,7 +5,7 @@
 #include "software_branding.h"
 #include "start_screen.h"
 #include "service_locator.h"
-#include "crawler_controller.h"
+#include "crawler.h"
 
 namespace QuickieWebBot
 {
@@ -19,7 +19,7 @@ Application* Application::instance()
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_crawlerController(new CrawlerController(std::thread::hardware_concurrency(), this))
+	, m_crawlerController(new Crawler(std::thread::hardware_concurrency(), this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
 	initialize();

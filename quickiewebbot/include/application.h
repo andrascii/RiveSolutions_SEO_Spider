@@ -7,7 +7,7 @@ namespace QuickieWebBot
 {
 
 class ModelController;
-class CrawlerController;
+class Crawler;
 
 class Application : public QApplication
 {
@@ -31,7 +31,7 @@ private:
 private:
 	static Application* s_app;
 
-	CrawlerController* m_crawlerController;
+	Crawler* m_crawlerController;
 
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;

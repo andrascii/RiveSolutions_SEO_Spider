@@ -1,26 +1,25 @@
 #pragma once
 
-#include "website_analyse_element.h"
+#include "page_info.h"
 #include "table_model.h"
 
 namespace QuickieWebBot
 {
 
-class ModelControllerData
-	: public QObject
+class ModelControllerData : public QObject
 {
 	Q_OBJECT
+
 protected:
-	using CrawlerStorageType = std::unordered_multiset<std::shared_ptr<WebSiteAnalyseElement>, UniversalWebSiteAnalyseElementHasher>;
+	using CrawlerStorageType = std::unordered_multiset<std::shared_ptr<PageInfo>, UniversalPageInfoHasher>;
 	using CrawlerStorageTypePtr = std::shared_ptr<CrawlerStorageType>;
 
 public:
-	using GuiStorageType = QVector<std::shared_ptr<WebSiteAnalyseElement>>;
+	using GuiStorageType = QVector<std::shared_ptr<PageInfo>>;
 	using GuiStorageTypePtr = std::shared_ptr<GuiStorageType>;
 
 	enum StorageType
 	{
-		InternalUrlStorageType,
 		CrawledUrlStorageType,
 		ExternalUrlStorageType,
 
@@ -62,17 +61,17 @@ public:
 
 	ModelControllerData(QObject* parent);
 
-	bool isElementExists(std::shared_ptr<WebSiteAnalyseElement> const& websiteAnalysElement, int storageType) const noexcept;
-	void addElement(std::shared_ptr<WebSiteAnalyseElement> const& websiteAnalysElement, int storageType) noexcept;
+	bool isPageInfoExists(const PageInfoPtr& pageInfo, int storageType) const noexcept;
+	void addPageInfo(const PageInfoPtr& pageInfo, int storageType) noexcept;
 
 	GuiStorageType const* guiStorage(int type) const noexcept;
 	GuiStorageType* guiStorage(int type) noexcept;
 
-	Q_SIGNAL void rowAdded(int row, int storageType);
+	Q_SIGNAL void pageInfoAdded(int row, int storageType);
 
 protected:
 	CrawlerStorageType* crawlerStorage(int type) noexcept;
-	CrawlerStorageType const* crawlerStorage(int type) const noexcept;
+	const CrawlerStorageType* crawlerStorage(int type) const noexcept;
 	
 private:
 	void checkStorageType(int type) const noexcept;

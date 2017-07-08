@@ -1,5 +1,5 @@
 #include "model_data_accessor.h"
-#include "website_analyse_element_info.h"
+#include "page_info_item_accessor_helper.h"
 #include "service_locator.h"
 #include "model_controller.h"
 
@@ -12,33 +12,33 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(ModelControllerData::Storag
 {
 	m_columns =
 	{
-		WebsiteAnalyseElementInfo::Url,
-		WebsiteAnalyseElementInfo::Title,
-		WebsiteAnalyseElementInfo::TitleLength,
-		WebsiteAnalyseElementInfo::MetaRefresh,
-		WebsiteAnalyseElementInfo::MetaRobots,
-		WebsiteAnalyseElementInfo::RedirectedUrl,
-		WebsiteAnalyseElementInfo::ServerResponse,
-		WebsiteAnalyseElementInfo::MetaDescription,
-		WebsiteAnalyseElementInfo::MetaDescriptionLength,
-		WebsiteAnalyseElementInfo::MetaKeywords,
-		WebsiteAnalyseElementInfo::MetaKeywordsLength,
-		WebsiteAnalyseElementInfo::FirstH1,
-		WebsiteAnalyseElementInfo::FirstH1Length,
-		WebsiteAnalyseElementInfo::SecondH1,
-		WebsiteAnalyseElementInfo::SecondH1Length,
-		WebsiteAnalyseElementInfo::FirstH2,
-		WebsiteAnalyseElementInfo::FirstH2Length,
-		WebsiteAnalyseElementInfo::SecondH2,
-		WebsiteAnalyseElementInfo::SecondH2Length,
-		WebsiteAnalyseElementInfo::CanonicalLinkElement,
-		WebsiteAnalyseElementInfo::StatusCode,
-		WebsiteAnalyseElementInfo::PageSizeBytes,
-		WebsiteAnalyseElementInfo::WordCount
+		PageInfoItemAccessorHelper::Url,
+		PageInfoItemAccessorHelper::Title,
+		PageInfoItemAccessorHelper::TitleLength,
+		PageInfoItemAccessorHelper::MetaRefresh,
+		PageInfoItemAccessorHelper::MetaRobots,
+		PageInfoItemAccessorHelper::RedirectedUrl,
+		PageInfoItemAccessorHelper::ServerResponse,
+		PageInfoItemAccessorHelper::MetaDescription,
+		PageInfoItemAccessorHelper::MetaDescriptionLength,
+		PageInfoItemAccessorHelper::MetaKeywords,
+		PageInfoItemAccessorHelper::MetaKeywordsLength,
+		PageInfoItemAccessorHelper::FirstH1,
+		PageInfoItemAccessorHelper::FirstH1Length,
+		PageInfoItemAccessorHelper::SecondH1,
+		PageInfoItemAccessorHelper::SecondH1Length,
+		PageInfoItemAccessorHelper::FirstH2,
+		PageInfoItemAccessorHelper::FirstH2Length,
+		PageInfoItemAccessorHelper::SecondH2,
+		PageInfoItemAccessorHelper::SecondH2Length,
+		PageInfoItemAccessorHelper::CanonicalLinkElement,
+		PageInfoItemAccessorHelper::StatusCode,
+		PageInfoItemAccessorHelper::PageSizeBytes,
+		PageInfoItemAccessorHelper::WordCount
 	};
 
-	m_modelControllerData = ServiceLocator::instance()->service<ModelController>();
-	VERIFY(QObject::connect(m_modelControllerData, SIGNAL(rowAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
+	m_modelControllerData = ServiceLocator::instance()->service<ModelController>()->data();
+	VERIFY(QObject::connect(m_modelControllerData, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 }
 	
 int ModelDataAccessorAllItems::columnCount() const
@@ -48,7 +48,7 @@ int ModelDataAccessorAllItems::columnCount() const
 	
 QString ModelDataAccessorAllItems::columnText(int column) const
 {
-	return WebsiteAnalyseElementInfo::title(static_cast<WebsiteAnalyseElementInfo::ElementInfo>(m_columns[column]));
+	return PageInfoItemAccessorHelper::title(static_cast<PageInfoItemAccessorHelper::ItemInfo>(m_columns[column]));
 }
 	
 int ModelDataAccessorAllItems::rowCount() const
@@ -59,8 +59,8 @@ int ModelDataAccessorAllItems::rowCount() const
 QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 {
 	const auto storage = m_modelControllerData->guiStorage(m_storageType);
-	auto info = static_cast<WebsiteAnalyseElementInfo::ElementInfo>(m_columns[index.column()]);
-	return WebsiteAnalyseElementInfo::value((*storage)[index.row()], info);
+	auto info = static_cast<PageInfoItemAccessorHelper::ItemInfo>(m_columns[index.column()]);
+	return PageInfoItemAccessorHelper::value((*storage)[index.row()], info);
 }
 
 QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex & index) const
@@ -74,13 +74,13 @@ int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 	return 0;
 }
 
-QAbstractItemDelegate * ModelDataAccessorAllItems::itemDelegate(const QModelIndex& index) const
+QAbstractItemDelegate* ModelDataAccessorAllItems::itemDelegate(const QModelIndex& index) const
 {
 	Q_UNUSED(index);
 	return nullptr;
 }
 
-QPixmap * ModelDataAccessorAllItems::pixmap(const QModelIndex& index) const
+QPixmap* ModelDataAccessorAllItems::pixmap(const QModelIndex& index) const
 {
 	Q_UNUSED(index);
 	return nullptr;

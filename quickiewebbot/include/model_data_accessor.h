@@ -36,7 +36,7 @@ protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
 
 private:
-	mutable ModelControllerData* m_modelControllerData;
+	const ModelControllerData* m_modelControllerData;
 	ModelControllerData::StorageType m_storageType;
 	std::vector<int> m_columns;
 };
