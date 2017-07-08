@@ -65,7 +65,7 @@ void CrawlerPageInfoAcceptor::parsePageTitle(const GumboNode* head) noexcept
 
 	GumboNode* title = firstSubNode(head, GUMBO_TAG_TITLE);
 
-	if (title)
+	if (title && title->v.element.children.length > 0)
 	{
 		m_pageInfo->title = nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
 	}
