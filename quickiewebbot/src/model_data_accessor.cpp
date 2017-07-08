@@ -58,12 +58,13 @@ int ModelDataAccessorAllItems::rowCount() const
 	
 QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 {
-	const auto storage = m_modelControllerData->guiStorage(m_storageType);
-	auto info = static_cast<PageInfoItemAccessorHelper::ItemInfo>(m_columns[index.column()]);
+	const ModelControllerData::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
+	PageInfoItemAccessorHelper::ItemInfo info = static_cast<PageInfoItemAccessorHelper::ItemInfo>(m_columns[index.column()]);
+
 	return PageInfoItemAccessorHelper::value((*storage)[index.row()], info);
 }
 
-QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex & index) const
+QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex& index) const
 {
 	return Qt::transparent;
 }
@@ -86,7 +87,7 @@ QPixmap* ModelDataAccessorAllItems::pixmap(const QModelIndex& index) const
 	return nullptr;
 }
 
-QObject * ModelDataAccessorAllItems::qobject()
+QObject* ModelDataAccessorAllItems::qobject()
 {
 	return this;
 }

@@ -16,9 +16,9 @@ public:
 	const std::vector<QUrl>& pageUrlList() const noexcept;
 	Q_INVOKABLE void handlePage(QUrl url);
 
-signals:
-	void pageParsed(QThread* fromThread, PageInfoPtr element);
-	void urlListParsed(const std::vector<QUrl>& urls);
+//signals:
+	Q_SIGNAL void pageParsed(QThread* fromThread, PageInfoPtr pageInfo);
+	Q_SIGNAL void urlListParsed(const std::vector<QUrl>& urls);
 
 private:
 	Q_SLOT void pageDownloaded(QNetworkReply* reply);

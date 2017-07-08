@@ -44,6 +44,7 @@
 #include <QKeyEvent>
 #include <QMetaObject>
 #include <QMetaMethod>
+#include <QMetaType>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>

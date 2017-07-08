@@ -34,7 +34,7 @@ public:
 	void setThreadCount(unsigned int threadCount) noexcept;
 
 private:
-	Q_SLOT void onPageInfoAdded(QThread* fromThread, PageInfoPtr pageInfo);
+	Q_SLOT void onPageInfoParsed(QThread* fromThread, PageInfoPtr pageInfo);
 
 private:
 	bool m_stop;

@@ -23,14 +23,15 @@ void CrawlerPageInfoAcceptor::handlePage(QUrl url)
 
 void CrawlerPageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
 {
-	if (node->type != GUMBO_NODE_ELEMENT)
+	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
 	{
 		return;
 	}
 
-	if (node->v.element.tag == GUMBO_TAG_A)
+	GumboAttribute* href = nullptr;
+
+	if (node->v.element.tag == GUMBO_TAG_A && (href = gumbo_get_attribute(&node->v.element.attributes, "href")))
 	{
-		GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
 		m_pageUrlList.push_back(QUrl(href->value));
 	}
 
@@ -48,12 +49,10 @@ void CrawlerPageInfoAcceptor::parsePage(const QString& htmlPage) noexcept
 
 	const GumboNode* head = firstSubNode(output->root, GUMBO_TAG_HEAD);
 	const GumboNode* body = firstSubNode(output->root, GUMBO_TAG_BODY);
-	const GumboNode* title = firstSubNode(head, GUMBO_TAG_TITLE);
-	const GumboNode* meta = firstSubNode(head, GUMBO_TAG_META);
 
-	parsePageTitle(title);
+	parsePageTitle(head);
 	parsePageMeta(head);
-	parsePageUrlList(body);
+	parsePageUrlList(output->root);
 
 	gumbo_destroy_output(&kGumboDefaultOptions, output);
 }
@@ -64,7 +63,10 @@ void CrawlerPageInfoAcceptor::parsePageTitle(const GumboNode* head) noexcept
 
 	GumboNode* title = firstSubNode(head, GUMBO_TAG_TITLE);
 
-	m_element->title = nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
+	if (title)
+	{
+		m_element->title = nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
+	}
 }
 
 void CrawlerPageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
@@ -85,7 +87,8 @@ void CrawlerPageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
 		GumboAttribute* metaHttpEquivAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "http-equiv");
 		GumboAttribute* metaNameAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "name");
 
-		assert(metaHttpEquivAttribute && metaNameAttribute);
+		assert(metaHttpEquivAttribute && !metaNameAttribute || 
+			!metaHttpEquivAttribute && metaNameAttribute);
 
 		if (metaHttpEquivAttribute)
 		{
@@ -131,7 +134,7 @@ unsigned CrawlerPageInfoAcceptor::countChildren(const GumboNode* node, GumboTag 
 	{
 		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
 
-		if (child->type == tag)
+		if (child->type == GUMBO_NODE_ELEMENT && child->v.element.tag == tag)
 		{
 			++counter;
 		}
@@ -147,13 +150,13 @@ GumboNode* CrawlerPageInfoAcceptor::firstSubNode(const GumboNode* node, GumboTag
 	const GumboVector* children = &node->v.element.children;
 	GumboNode* searchingNode = nullptr;
 
-	assert(startIndexWhithinParent >= children->length);
+	assert(startIndexWhithinParent <= children->length);
 
 	for (unsigned i = startIndexWhithinParent; i < children->length; ++i)
 	{
 		GumboNode* child = static_cast<GumboNode*>(children->data[i]);
 
-		if (child->type == tag)
+		if (child->type == GUMBO_NODE_ELEMENT && child->v.element.tag == tag)
 		{
 			searchingNode = child;
 			break;
@@ -174,7 +177,7 @@ std::vector<GumboNode*> CrawlerPageInfoAcceptor::allSubNodes(const GumboNode* no
 	{
 		GumboNode* child = static_cast<GumboNode*>(children->data[i]);
 
-		if (child->type == tag)
+		if (child->type == GUMBO_NODE_ELEMENT && child->v.element.tag == tag)
 		{
 			nodes.push_back(child);
 		}
@@ -192,8 +195,14 @@ QString CrawlerPageInfoAcceptor::nodeText(const GumboNode* node) const noexcept
 
 void CrawlerPageInfoAcceptor::pageDownloaded(QNetworkReply* reply)
 {
-	QString htmlPage = reply->readAll();
+	QByteArray htmlPage = reply->readAll();
 	parsePage(htmlPage);
+
+	QFile file("E:/test.html");
+	if (file.open(QIODevice::WriteOnly))
+	{
+		file.write(htmlPage);
+	}
 
 	for(const QPair<QByteArray, QByteArray>& pair : reply->rawHeaderPairs())
 	{

@@ -10,6 +10,8 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	: QObject(parent)
 	, m_stop(false)
 {
+	qRegisterMetaType<PageInfoPtr>();
+
 	for (unsigned i = 0; i < threadCount; ++i)
 	{
 		QThread* thread = new QThread(this);
@@ -17,7 +19,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 		m_workers[thread]->moveToThread(thread);
 
 		VERIFY(connect(m_workers[thread], SIGNAL(pageParsed(QThread*, PageInfoPtr)),
-			this, SLOT(onPageInfoAdded(QThread*, PageInfoPtr))));
+			this, SLOT(onPageInfoParsed(QThread*, PageInfoPtr)), Qt::QueuedConnection));
 
 		thread->start();
 	}
@@ -44,8 +46,9 @@ void Crawler::setThreadCount(unsigned int threadCount) noexcept
 	Q_UNUSED(threadCount);
 }
 
-void Crawler::onPageInfoAdded(QThread* fromThread, PageInfoPtr pageInfo)
+void Crawler::onPageInfoParsed(QThread* fromThread, PageInfoPtr pageInfo)
 {
+	ServiceLocator::instance()->service<ModelController>()->addPageInfo(pageInfo);
 	m_crawledUrlList.insert(pageInfo->url);
 
 	CrawlerPageInfoAcceptor* pageInfoAcceptor = m_workers[fromThread];
@@ -59,10 +62,13 @@ void Crawler::onPageInfoAdded(QThread* fromThread, PageInfoPtr pageInfo)
 	pageUrlList.erase(std::remove_if(pageUrlList.begin(), pageUrlList.end(), findCrawledUrl), pageUrlList.end());
 	m_internalUrlList.insert(pageUrlList.begin(), pageUrlList.end());
 
-	QUrl url = *m_internalUrlList.begin();
-	m_internalUrlList.erase(m_internalUrlList.begin());
+	if (m_internalUrlList.size())
+	{
+		QUrl url = *m_internalUrlList.begin();
+		m_internalUrlList.erase(m_internalUrlList.begin());
 
-	QMetaObject::invokeMethod(m_workers[fromThread], "handlePage", Q_ARG(QUrl, url));
+		QMetaObject::invokeMethod(m_workers[fromThread], "handlePage", Q_ARG(QUrl, url));
+	}
 }
 
 }

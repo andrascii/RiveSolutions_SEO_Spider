@@ -10,8 +10,9 @@ ModelController::ModelController(QObject* parent)
 {
 }
 
-void ModelController::addPageInfo(std::shared_ptr<PageInfo> urlInfo) noexcept
+void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
+	data()->addPageInfo(pageInfo, ModelControllerData::CrawledUrlStorageType);
 }
 
 void ModelController::setHost(QUrl const& host) noexcept
@@ -19,12 +20,12 @@ void ModelController::setHost(QUrl const& host) noexcept
 	m_host = host;
 }
 
-QUrl const& ModelController::host() const noexcept
+QUrl ModelController::host() const noexcept
 {
-	return m_host;
+	return QString("http://www.php.su")/*m_host*/;
 }
 
-const ModelControllerData* ModelController::data() const noexcept
+ModelControllerData* ModelController::data() noexcept
 {
 	return m_data;
 }

@@ -14,12 +14,12 @@ class ModelController : public QObject
 public:
 	ModelController(QObject* parent = nullptr);
 
-	void addPageInfo(std::shared_ptr<PageInfo> urlInfo) noexcept;
+	void addPageInfo(PageInfoPtr pageInfo) noexcept;
 
 	void setHost(QUrl const& host) noexcept;
-	QUrl const& host() const noexcept;
+	QUrl host() const noexcept;
 
-	const ModelControllerData* data() const noexcept;
+	ModelControllerData* data() noexcept;
 
 private:
 

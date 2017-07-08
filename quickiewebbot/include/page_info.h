@@ -123,4 +123,7 @@ private:
 	std::shared_ptr<IPageInfoHasher> m_hasher;
 };
 
+
+Q_DECLARE_METATYPE(PageInfoPtr);
+
 }

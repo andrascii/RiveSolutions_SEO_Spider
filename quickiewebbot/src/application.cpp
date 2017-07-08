@@ -19,7 +19,7 @@ Application* Application::instance()
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_crawlerController(new Crawler(std::thread::hardware_concurrency(), this))
+	, m_crawler(new Crawler(std::thread::hardware_concurrency(), this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
 	initialize();
@@ -28,6 +28,11 @@ Application::Application(int& argc, char** argv)
 	initializeStyleSheet();
 
 	showStartScreen();
+}
+
+const Crawler* Application::crawler() const noexcept
+{
+	return m_crawler;
 }
 
 MainFrame* Application::mainFrame() const noexcept

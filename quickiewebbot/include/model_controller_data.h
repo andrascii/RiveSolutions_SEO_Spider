@@ -11,11 +11,11 @@ class ModelControllerData : public QObject
 	Q_OBJECT
 
 protected:
-	using CrawlerStorageType = std::unordered_multiset<std::shared_ptr<PageInfo>, UniversalPageInfoHasher>;
+	using CrawlerStorageType = std::unordered_multiset<PageInfoPtr, UniversalPageInfoHasher>;
 	using CrawlerStorageTypePtr = std::shared_ptr<CrawlerStorageType>;
 
 public:
-	using GuiStorageType = QVector<std::shared_ptr<PageInfo>>;
+	using GuiStorageType = QVector<PageInfoPtr>;
 	using GuiStorageTypePtr = std::shared_ptr<GuiStorageType>;
 
 	enum StorageType
