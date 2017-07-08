@@ -90,7 +90,8 @@ void CrawlerPageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
 		GumboAttribute* metaNameAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "name");
 
 		assert(metaHttpEquivAttribute && !metaNameAttribute || 
-			!metaHttpEquivAttribute && metaNameAttribute);
+			!metaHttpEquivAttribute && metaNameAttribute ||
+			!metaHttpEquivAttribute && !metaNameAttribute);
 
 		if (metaHttpEquivAttribute)
 		{
