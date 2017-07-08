@@ -13,24 +13,28 @@ NetworkAccessManagerFutureProvider::NetworkAccessManagerFutureProvider(QNetworkA
 std::future<NetworkAccessManagerFutureProvider::ResponsePack>
 NetworkAccessManagerFutureProvider::get(const QNetworkRequest& request) noexcept
 {
+	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_responsePromiseMapper[m_manager->get(request)].get_future();
 }
 
 std::future<NetworkAccessManagerFutureProvider::ResponsePack>
 NetworkAccessManagerFutureProvider::post(const QNetworkRequest& request, QIODevice* data) noexcept
 {
+	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_responsePromiseMapper[m_manager->post(request, data)].get_future();
 }
 
 std::future<NetworkAccessManagerFutureProvider::ResponsePack>
 NetworkAccessManagerFutureProvider::post(const QNetworkRequest& request, const QByteArray& data) noexcept
 {
+	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_responsePromiseMapper[m_manager->post(request, data)].get_future();
 }
 
 std::future<NetworkAccessManagerFutureProvider::ResponsePack>
 NetworkAccessManagerFutureProvider::post(const QNetworkRequest& request, QHttpMultiPart* multiPart) noexcept
 {
+	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_responsePromiseMapper[m_manager->post(request, multiPart)].get_future();
 }
 

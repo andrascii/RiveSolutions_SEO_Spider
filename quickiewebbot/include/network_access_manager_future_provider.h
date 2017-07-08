@@ -26,6 +26,7 @@ protected:
 
 private:
 	QNetworkAccessManager* m_manager;
+	mutable std::mutex m_mutex;
 	std::map<QNetworkReply*, std::promise<ResponsePack>> m_responsePromiseMapper;
 };
 

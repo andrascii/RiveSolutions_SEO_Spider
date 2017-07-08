@@ -6,6 +6,7 @@
 #include "start_screen.h"
 #include "service_locator.h"
 #include "crawler.h"
+#include "network_access_manager_future_provider.h"
 
 namespace QuickieWebBot
 {
@@ -19,6 +20,7 @@ Application* Application::instance()
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
+	, m_networkAccessManager(new QNetworkAccessManager(this))
 	, m_crawler(new Crawler(std::thread::hardware_concurrency(), this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
@@ -59,6 +61,7 @@ void Application::initialize() noexcept
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
 
+	ServiceLocator::instance()->addService<ModelController>(new NetworkAccessManagerFutureProvider(m_networkAccessManager));
 	ServiceLocator::instance()->addService<ModelController>(new ModelController);
 	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
 }
