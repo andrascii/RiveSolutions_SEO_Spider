@@ -25,6 +25,7 @@ private:
 
 public:
 	Crawler(unsigned int threadCount, QObject* parent = nullptr);
+	~Crawler();
 
 	Q_SIGNAL void addedPageInfo(PageInfoPtr element);
 

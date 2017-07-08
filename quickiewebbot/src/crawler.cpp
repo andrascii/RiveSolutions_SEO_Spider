@@ -25,6 +25,14 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	}
 }
 
+Crawler::~Crawler()
+{
+	for (const std::pair<QThread*, CrawlerPageInfoAcceptor*>& pair : m_workers)
+	{
+		pair.first->quit();
+	}
+}
+
 void Crawler::start()
 {
 	m_stop = false;
