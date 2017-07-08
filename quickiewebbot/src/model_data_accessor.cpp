@@ -2,6 +2,7 @@
 #include "page_info_item_accessor_helper.h"
 #include "service_locator.h"
 #include "model_controller.h"
+#include "page_info_item_accessor_helper.h"
 
 namespace QuickieWebBot
 {
@@ -77,7 +78,7 @@ int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 
 int ModelDataAccessorAllItems::flags(const QModelIndex& index) const
 {
-	return m_columns[index.column()] == static_cast<int>(WebsiteAnalyseElementInfo::Url) ? ItemFlagUrl : ItemFlagNone;
+	return m_columns[index.column()] == static_cast<int>(PageInfoItemAccessorHelper::Url) ? ItemFlagUrl : ItemFlagNone;
 }
 
 QAbstractItemDelegate* ModelDataAccessorAllItems::itemDelegate(const QModelIndex& index) const
