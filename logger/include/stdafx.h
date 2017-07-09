@@ -44,19 +44,13 @@
 #include <QKeyEvent>
 #include <QMetaObject>
 #include <QMetaMethod>
+#include <QLocalSocket>
+#include <QLocalServer>
+#include <QProcess>
+#include <iostream>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPainter>
-#include <QTimer>
-#include <QAbstractItemDelegate>
-
-//
-// Наш код
-//
-#include "logger.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
@@ -64,11 +58,6 @@ using std::size_t;
 #define myApp Application::instance()
 
 #define STRING(Any) #Any
-
-#define INFOLOG(tag, text) Logger::instance()->log(Logger::InformationMessageType,tag,text)
-#define DEBUGLOG(tag, text) Logger::instance()->log(Logger::DebugMessageType,tag,text)
-#define WARNINGLOG(tag, text) Logger::instance()->log(Logger::WarningMessageType,tag,text)
-#define ERRORLOG(tag, text) Logger::instance()->log(Logger::ErrorMessageType,tag,text)
 
 #if defined(NDEBUG)
 #define PRODUCTION

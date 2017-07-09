@@ -1,10 +1,11 @@
+#define LOGGING_ON
+
 #include "application.h"
 #include "style_loader.h"
 #include "widget_detector.h"
 #include "model_controller.h"
-#include "software_branding.h"
-#include "start_screen.h"
-#include "logger.h"
+#include "service_locator.h"
+#include "thread_dispatcher.h"
 
 namespace QuickieWebBot
 {
@@ -19,41 +20,40 @@ Application* Application::instance()
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_modelController(new ModelController(this))
-	, m_mainFrame(new MainFrame(m_modelController))
-	, m_softwareBrandingOptions(new SoftwareBranding)
+	, m_mainFrame(new MainFrame)
 {
 	initialize();
 
 	initializeStyleSheet();
 
-	showStartScreen();
+	m_mainFrame->show();
 }
 
-MainFrame* Application::mainFrame() const noexcept
+MainFrame const* Application::mainFrame() const noexcept
 {
 	return m_mainFrame.get();
 }
 
-SoftwareBranding const* Application::softwareBrandingOptions() const noexcept
+void Application::initialize()
 {
-	return m_softwareBrandingOptions.get();
-}
-
-void Application::mainFrameReadyForShow()
-{
-	mainFrame()->showMaximized();
-}
-
-void Application::initialize() noexcept
-{
-	s_app = this;
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
+	QProcess* loggerProc = new QProcess(this);
+	loggerProc->start("logger.exe", QIODevice::WriteOnly);
+	loggerProc->waitForStarted();
+	loggerProc->waitForReadyRead();
+	QByteArray data = "Privet, cho\n";
+	loggerProc->write(data);
+	loggerProc->closeWriteChannel();
 #endif
+
+	s_app = this;
+
+	ServiceLocator::instance()->addService<QNetworkAccessManager>(new QNetworkAccessManager);
 }
 
-void Application::initializeStyleSheet() noexcept
+void Application::initializeStyleSheet()
 {
 	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
 
@@ -63,15 +63,6 @@ void Application::initializeStyleSheet() noexcept
 	{
 		setStyleSheet(styles.readAll());
 	}
-}
-
-void Application::showStartScreen() const noexcept
-{
-	StartScreen* startScreen = StartScreen::instance();
-
-	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameReadyForShow));
-
-	startScreen->show();
 }
 
 }

@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainFrameClass</class>
+ <widget class="QMainWindow" name="MainFrameClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1053</width>
+    <height>772</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Quickie Web Bot</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../rcc/main_frame.qrc">
+    <normaloff>:/images/robot.ico</normaloff>:/images/robot.ico</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="titleWidget" native="true">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>6</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing">
+        <number>6</number>
+       </property>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="startOrConrinueCrawlingButton">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="urlLineEdit"/>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="stopCrawlingButton">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QProgressBar" name="progressBar">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="value">
+          <number>24</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="3">
+        <widget class="QComboBox" name="viewTypeComboBox">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QStackedWidget" name="mainGuiStackedWidget">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="crawlingPage">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QTableView" name="crawlingTableView">
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="errorsFilterPage">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QListView" name="listView"/>
+        </item>
+        <item>
+         <widget class="QStackedWidget" name="stackedWidget_2">
+          <widget class="QWidget" name="page"/>
+          <widget class="QWidget" name="page_2"/>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1053</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionOpenRecent"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuLicence">
+    <property name="title">
+     <string>Licence</string>
+    </property>
+    <addaction name="actionBuyALicence"/>
+    <addaction name="actionEnterLicence"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionOnline_User_Guide"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuickieWebBot_Home_Page"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuSitemaps">
+    <property name="title">
+     <string>Sitemaps</string>
+    </property>
+    <addaction name="actionCreateXmlSitemap"/>
+    <addaction name="actionCreateImageSitemap"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionSpiderSettings"/>
+    <addaction name="actionSpeedSettings"/>
+    <addaction name="separator"/>
+    <addaction name="actionHttpHeaderSettings"/>
+    <addaction name="actionProxy"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuSitemaps"/>
+   <addaction name="menuLicence"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="action">
+   <property name="text">
+    <string>Сохранить</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Сохранить как</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../rcc/main_frame.qrc">
+     <normaloff>:/images/open-file-icon.png</normaloff>:/images/open-file-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionOpenRecent">
+   <property name="icon">
+    <iconset resource="../rcc/main_frame.qrc">
+     <normaloff>:/images/actions-document-open-recent-icon.png</normaloff>:/images/actions-document-open-recent-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open Recent</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../rcc/main_frame.qrc">
+     <normaloff>:/images/save-icon.png</normaloff>:/images/save-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="icon">
+    <iconset resource="../rcc/main_frame.qrc">
+     <normaloff>:/images/save-as-icon.png</normaloff>:/images/save-as-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+  </action>
+  <action name="actionBuyALicence">
+   <property name="text">
+    <string>Buy A Licence</string>
+   </property>
+  </action>
+  <action name="actionEnterLicence">
+   <property name="text">
+    <string>Enter Licence...</string>
+   </property>
+  </action>
+  <action name="actionCreateXmlSitemap">
+   <property name="text">
+    <string>Create XML Sitemap</string>
+   </property>
+  </action>
+  <action name="actionCreateImageSitemap">
+   <property name="text">
+    <string>Create Image Sitemap</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionSpiderSettings">
+   <property name="icon">
+    <iconset resource="../rcc/main_frame.qrc">
+     <normaloff>:/images/spider-icon.png</normaloff>:/images/spider-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Spider Settings</string>
+   </property>
+  </action>
+  <action name="actionSpeedSettings">
+   <property name="icon">
+    <iconset resource="../rcc/main_frame.qrc">
+     <normaloff>:/images/cpu-icon.png</normaloff>:/images/cpu-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Speed Settings</string>
+   </property>
+  </action>
+  <action name="actionHttpHeaderSettings">
+   <property name="text">
+    <string>HTTP Header Settings</string>
+   </property>
+  </action>
+  <action name="actionProxy">
+   <property name="text">
+    <string>Proxy</string>
+   </property>
+  </action>
+  <action name="actionOnline_User_Guide">
+   <property name="text">
+    <string>Online User Guide</string>
+   </property>
+  </action>
+  <action name="actionQuickieWebBot_Home_Page">
+   <property name="text">
+    <string>Quickie Web Bot Home Page</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../rcc/main_frame.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainFrameClass</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>526</x>
+     <y>385</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

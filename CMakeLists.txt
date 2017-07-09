@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 set(AppName quickiewebbot)
+set(LoggerAppName logger)
 project(${AppName})
 
 set(GuiBinName ${AppName})
@@ -46,3 +47,4 @@ add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${CommonLibName})
 add_subdirectory(${CrawlerLibName})
+add_subdirectory(${LoggerAppName})
