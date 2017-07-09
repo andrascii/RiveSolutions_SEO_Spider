@@ -35,6 +35,9 @@ public:
 	void setThreadCount(unsigned int threadCount) noexcept;
 
 private:
+	void saveUrlList(QThread* fromThread) noexcept;
+	void startAllThreadsIfNeeded();
+
 	Q_SLOT void onPageInfoParsed(QThread* fromThread, PageInfoPtr pageInfo);
 
 private:

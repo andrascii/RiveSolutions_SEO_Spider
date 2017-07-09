@@ -20,7 +20,6 @@ Application* Application::instance()
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_networkAccessManager(new QNetworkAccessManager(this))
 	, m_crawler(new Crawler(std::thread::hardware_concurrency(), this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
@@ -46,7 +45,7 @@ MainFrame* Application::mainFrame() const noexcept
 	return m_mainFrame.get();
 }
 
-SoftwareBranding const* Application::softwareBrandingOptions() const noexcept
+const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 {
 	return m_softwareBrandingOptions.get();
 }
@@ -65,9 +64,7 @@ void Application::initialize() noexcept
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
 
-	ServiceLocator::instance()->addService<NetworkAccessManagerFutureProvider>(
-		new NetworkAccessManagerFutureProvider(m_networkAccessManager));
-
+	ServiceLocator::instance()->addService<NetworkAccessManagerFutureProvider>(new NetworkAccessManagerFutureProvider);
 	ServiceLocator::instance()->addService<ModelController>(new ModelController);
 }
 

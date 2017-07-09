@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imodel_data_accessor.h"
-#include "model_controller_data.h"
+#include "data_collection.h"
 
 namespace QuickieWebBot
 {
@@ -11,8 +11,9 @@ class ModelDataAccessorAllItems
 	, public ModelDataAccessorItemBase
 {
 	Q_OBJECT
+
 public:
-	ModelDataAccessorAllItems(ModelControllerData::StorageType storageType);
+	ModelDataAccessorAllItems(DataCollection::StorageType storageType);
 	virtual int columnCount() const override;
 	virtual QString columnText(int column) const override;
 
@@ -37,8 +38,8 @@ protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
 
 private:
-	const ModelControllerData* m_modelControllerData;
-	ModelControllerData::StorageType m_storageType;
+	const DataCollection* m_modelControllerData;
+	DataCollection::StorageType m_storageType;
 	std::vector<int> m_columns;
 };
 

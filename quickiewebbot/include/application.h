@@ -19,7 +19,7 @@ public:
 
 	const Crawler* crawler() const noexcept;
 	MainFrame* mainFrame() const noexcept;
-	SoftwareBranding const* softwareBrandingOptions() const noexcept;
+	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 private:
 	Q_SLOT void mainFrameReadyForShow();
@@ -32,7 +32,6 @@ private:
 private:
 	static Application* s_app;
 	
-	QNetworkAccessManager* m_networkAccessManager;
 	Crawler* m_crawler;
 
 	std::unique_ptr<MainFrame> m_mainFrame;

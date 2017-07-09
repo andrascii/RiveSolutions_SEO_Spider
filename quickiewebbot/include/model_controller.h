@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-class ModelControllerData;
+class DataCollection;
 
 class ModelController : public QObject
 {
@@ -19,14 +19,14 @@ public:
 	void setHost(QUrl const& host) noexcept;
 	QUrl host() const noexcept;
 
-	ModelControllerData* data() noexcept;
+	DataCollection* data() noexcept;
 
 private:
 
 
 private:
 	QUrl m_host;
-	ModelControllerData* m_data;
+	DataCollection* m_data;
 };
 
 }

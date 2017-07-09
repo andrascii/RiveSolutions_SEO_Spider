@@ -7,7 +7,7 @@
 namespace QuickieWebBot
 {
 
-ModelDataAccessorAllItems::ModelDataAccessorAllItems(ModelControllerData::StorageType storageType)
+ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType storageType)
 	: m_modelControllerData(nullptr)
 	, m_storageType(storageType)
 {
@@ -59,7 +59,7 @@ int ModelDataAccessorAllItems::rowCount() const
 	
 QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 {
-	const ModelControllerData::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
+	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
 	PageInfoItemAccessorHelper::ItemInfo info = static_cast<PageInfoItemAccessorHelper::ItemInfo>(m_columns[index.column()]);
 
 	return PageInfoItemAccessorHelper::value((*storage)[index.row()], info);

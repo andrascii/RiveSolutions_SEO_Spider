@@ -5,25 +5,20 @@
 
 namespace QuickieWebBot
 {			
-			
+
+class NetworkAccessManagerFutureProvider;
+
 class CrawlerPageInfoAcceptor : public QObject
 {			
 	Q_OBJECT
 			
-public:		
-	enum State
-	{
-		WorkingState,
-		PendingState
-	};
-
+public:
 	CrawlerPageInfoAcceptor(QObject* parent = nullptr);
 			
 	const std::vector<QUrl>& pageUrlList() const noexcept;
 	Q_INVOKABLE void handlePage(QUrl url);
 			
 	Q_SIGNAL void pageParsed(QThread* fromThread, PageInfoPtr pageInfo);
-	Q_SIGNAL void urlListParsed(const std::vector<QUrl>& urls);
 			
 private:	
 	Q_SLOT void pageDownloaded(QNetworkReply* reply);
@@ -41,7 +36,6 @@ private:
 private:
 	QNetworkAccessManager* m_networkAccesManager;
 	PageInfoPtr m_pageInfo;
-	std::atomic_int m_state;
 	std::vector<QUrl> m_pageUrlList;
 };
 

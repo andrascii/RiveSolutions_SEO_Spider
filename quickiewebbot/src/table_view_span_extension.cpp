@@ -23,7 +23,7 @@ TableViewSpanExtension::TableViewSpanExtension(QTableView* view)
 
 void TableViewSpanExtension::colspan(const QModelIndex& index, int span)
 {
-	m_tableView->setSpan(index.row(), index.column(), 1, span);
+	//m_tableView->setSpan(index.row(), index.column(), 1, span);
 }
 
 void TableViewSpanExtension::rowsInserted(const QModelIndex& parent, int first, int last)

@@ -1,7 +1,7 @@
 #include "crawler.h"
 #include "crawler_page_info_acceptor.h"
 #include "service_locator.h"
-#include "model_controller_data.h"
+#include "data_collection.h"
 
 namespace QuickieWebBot
 {
@@ -30,6 +30,7 @@ Crawler::~Crawler()
 	for (const std::pair<QThread*, CrawlerPageInfoAcceptor*>& pair : m_workers)
 	{
 		pair.first->quit();
+		delete pair.second;
 	}
 }
 
@@ -52,6 +53,39 @@ void Crawler::setThreadCount(unsigned int threadCount) noexcept
 	Q_UNUSED(threadCount);
 }
 
+void Crawler::saveUrlList(QThread* fromThread) noexcept
+{
+	std::vector<QUrl> pageUrlList = m_workers[fromThread]->pageUrlList();
+
+	auto findCrawledUrl = [&](const QUrl& url)
+	{
+		return m_crawledUrlList.find(url) != m_crawledUrlList.end();
+	};
+
+	pageUrlList.erase(std::remove_if(pageUrlList.begin(), pageUrlList.end(), findCrawledUrl), pageUrlList.end());
+	m_internalUrlList.insert(pageUrlList.begin(), pageUrlList.end());
+}
+
+void Crawler::startAllThreadsIfNeeded()
+{
+	//
+	// if we have url count greater then all threads except fromThread
+	// or equal then start all of these threads for crawling too
+	//
+	if (m_initialCrawling && m_internalUrlList.size() >= m_workers.size() - 1)
+	{
+		for (const auto& pair : m_workers)
+		{
+			QUrl url = *m_internalUrlList.begin();
+			m_internalUrlList.erase(m_internalUrlList.begin());
+
+			QMetaObject::invokeMethod(pair.second, "handlePage", Q_ARG(QUrl, url));
+		}
+
+		m_initialCrawling = false;
+	}
+}
+
 void Crawler::onPageInfoParsed(QThread* fromThread, PageInfoPtr pageInfo)
 {
 	ModelController* modelController = ServiceLocator::instance()->service<ModelController>();
@@ -64,38 +98,14 @@ void Crawler::onPageInfoParsed(QThread* fromThread, PageInfoPtr pageInfo)
 		return;
 	}
 
-	CrawlerPageInfoAcceptor* pageInfoAcceptor = m_workers[fromThread];
-	std::vector<QUrl> pageUrlList = pageInfoAcceptor->pageUrlList();
-
-	auto findCrawledUrl = [&](const QUrl& url)
-	{
-		return m_crawledUrlList.find(url) != m_crawledUrlList.end();
-	};
-
-	pageUrlList.erase(std::remove_if(pageUrlList.begin(), pageUrlList.end(), findCrawledUrl), pageUrlList.end());
-	m_internalUrlList.insert(pageUrlList.begin(), pageUrlList.end());
+	saveUrlList(fromThread);
 
 	if (m_internalUrlList.size())
 	{
 		QUrl url = *m_internalUrlList.begin();
 		m_internalUrlList.erase(m_internalUrlList.begin());
 
-		//
-		// if we have url count greater then all threads except fromThread
-		// or equal then start all of these threads for crawling too
-		//
-		if (m_initialCrawling && m_internalUrlList.size() >= m_workers.size() - 1)
-		{
-			for(const std::pair<const QThread*, CrawlerPageInfoAcceptor*>& pair : m_workers)
-			{
-				QUrl url = *m_internalUrlList.begin();
-				m_internalUrlList.erase(m_internalUrlList.begin());
-
-				QMetaObject::invokeMethod(pair.second, "handlePage", Q_ARG(QUrl, url));
-			}
-
-			m_initialCrawling = false;
-		}
+		startAllThreadsIfNeeded();
 
 		QMetaObject::invokeMethod(m_workers[fromThread], "handlePage", Q_ARG(QUrl, url));
 	}

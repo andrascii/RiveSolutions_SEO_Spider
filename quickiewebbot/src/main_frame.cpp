@@ -2,7 +2,7 @@
 #include "model_controller.h"
 #include "model_data_accessor_stub.h"
 #include "model_data_accessor.h"
-#include "model_controller_data.h"
+#include "data_collection.h"
 #include "table_view_span_extension.h"
 #include "application.h"
 #include "crawler.h"
@@ -36,11 +36,11 @@ void MainFrame::init()
 	//model->setDataAccessor(s_stub.allProcessedItems());
 
 	
-	model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(ModelControllerData::CrawledUrlStorageType));
+	model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(DataCollection::CrawledUrlStorageType));
 
 	ui.crawlingTableView->setModel(model);
 	//ui.crawlingTableView->setItemDelegate(new HyperlinkItemDelegate());
-	new TableViewSpanExtension(ui.crawlingTableView);
+	//new TableViewSpanExtension(ui.crawlingTableView);
 	//////////////////////////////////////////////////////////////////////////
 }
 

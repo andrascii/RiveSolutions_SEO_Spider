@@ -8,8 +8,6 @@ namespace QuickieWebBot
 CrawlerPageInfoAcceptor::CrawlerPageInfoAcceptor(QObject* parent)
 	: QObject(parent)
 	, m_networkAccesManager(new QNetworkAccessManager(this))
-	, m_pageInfo(std::make_shared<PageInfo>())
-	, m_state(PendingState)
 {
 	VERIFY(connect(m_networkAccesManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(pageDownloaded(QNetworkReply*))));
 }
@@ -21,16 +19,13 @@ const std::vector<QUrl>& CrawlerPageInfoAcceptor::pageUrlList() const noexcept
 
 void CrawlerPageInfoAcceptor::handlePage(QUrl url)
 {
-	m_state.store(WorkingState);
-	//m_networkAccesManager->get(QNetworkRequest(url));
+	NetworkAccessManagerFutureProvider* networkFutureProvider =
+		ServiceLocator::instance()->service<NetworkAccessManagerFutureProvider>();
 
-	std::future<NetworkAccessManagerFutureProvider::ResponsePack> response = 
-		ServiceLocator::instance()->service<NetworkAccessManagerFutureProvider>()->get(QNetworkRequest(url));
+	NetworkSharedFuture shredFuture = networkFutureProvider->get(QNetworkRequest(url));
+	NetworkAccessManagerFutureProvider::ResponsePack pack = shredFuture.get();
 
-	NetworkAccessManagerFutureProvider::ResponsePack responsePack = response.get();
-
-	responsePack.responseBody;
-	pageUrlList();
+	m_pageInfo.reset(new PageInfo);
 }
 
 void CrawlerPageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
@@ -217,9 +212,8 @@ void CrawlerPageInfoAcceptor::pageDownloaded(QNetworkReply* reply)
 	}
 
 	m_pageInfo->url = reply->url();
-	
+
 	emit pageParsed(thread(), m_pageInfo);
-	m_state.store(PendingState);
 }
 
 }
