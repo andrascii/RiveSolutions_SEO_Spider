@@ -1,5 +1,6 @@
 #pragma once
 
+#include "crawler.h"
 #include "page_info.h"
 #include "gumbo.h"
 
@@ -7,24 +8,23 @@ namespace QuickieWebBot
 {			
 
 class NetworkAccessManagerFutureProvider;
+class CrawlerStorage;
 
-class CrawlerPageInfoAcceptor : public QObject
+class PageInfoAcceptor : public QObject
 {			
 	Q_OBJECT
 			
 public:
-	CrawlerPageInfoAcceptor(QObject* parent = nullptr);
-			
+	PageInfoAcceptor(CrawlerStorage* crawlerStorage, QObject* parent = nullptr);
+
 	const std::vector<QUrl>& pageUrlList() const noexcept;
-	Q_INVOKABLE void handlePage(QUrl url);
-			
-	Q_SIGNAL void pageParsed(QThread* fromThread, PageInfoPtr pageInfo);
-			
-private:	
-	Q_SLOT void pageDownloaded(QNetworkReply* reply);
-			
-	void parsePageUrlList(const GumboNode* node) noexcept;
+
+	Q_INVOKABLE void start();
+	Q_SIGNAL void pageParsed(PageInfoPtr pageInfo);
+
+private:
 	void parsePage(const QString& htmlPage) noexcept;
+	void parsePageUrlList(const GumboNode* node) noexcept;
 	void parsePageTitle(const GumboNode* head) noexcept;
 	void parsePageMeta(const GumboNode* head) noexcept;
 
@@ -34,7 +34,8 @@ private:
 	unsigned countChildren(const GumboNode* node, GumboTag tag) const noexcept;
 
 private:
-	QNetworkAccessManager* m_networkAccesManager;
+	CrawlerStorage* m_crawlerStorage;
+	std::atomic_bool m_stop;
 	PageInfoPtr m_pageInfo;
 	std::vector<QUrl> m_pageUrlList;
 };

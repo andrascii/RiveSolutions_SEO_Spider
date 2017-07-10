@@ -20,7 +20,8 @@ Application* Application::instance()
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_crawler(new Crawler(std::thread::hardware_concurrency(), this))
+	, m_modelController(new ModelController(this))
+	, m_crawler(new Crawler(std::thread::hardware_concurrency(), m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
 	initialize();
@@ -40,9 +41,14 @@ const Crawler* Application::crawler() const noexcept
 	return m_crawler;
 }
 
-MainFrame* Application::mainFrame() const noexcept
+MainFrame* Application::mainFrame() noexcept
 {
 	return m_mainFrame.get();
+}
+
+ModelController* Application::modelController() noexcept
+{
+	return m_modelController;
 }
 
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
@@ -65,7 +71,6 @@ void Application::initialize() noexcept
 #endif
 
 	ServiceLocator::instance()->addService<NetworkAccessManagerFutureProvider>(new NetworkAccessManagerFutureProvider);
-	ServiceLocator::instance()->addService<ModelController>(new ModelController);
 }
 
 void Application::initializeStyleSheet() noexcept

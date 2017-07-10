@@ -18,7 +18,9 @@ public:
 	Application(int& argc, char** argv);
 
 	const Crawler* crawler() const noexcept;
-	MainFrame* mainFrame() const noexcept;
+	MainFrame* mainFrame() noexcept;
+	ModelController* modelController() noexcept;
+
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 private:
@@ -32,6 +34,7 @@ private:
 private:
 	static Application* s_app;
 	
+	ModelController* m_modelController;
 	Crawler* m_crawler;
 
 	std::unique_ptr<MainFrame> m_mainFrame;

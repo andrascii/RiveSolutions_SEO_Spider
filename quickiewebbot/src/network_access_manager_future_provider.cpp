@@ -9,11 +9,10 @@ NetworkAccessManagerFutureProvider::NetworkAccessManagerFutureProvider()
 	: QObject(nullptr)
 	, m_manager(new QNetworkAccessManager(this))
 {
+	moveToThread(&s_networkAccessManagerThread);
 	VERIFY(connect(m_manager, SIGNAL(finished(QNetworkReply*)), SLOT(finished(QNetworkReply*))));
 
 	qRegisterMetaType<NetworkSharedFuture>();
-
-	moveToThread(&s_networkAccessManagerThread);
 	s_networkAccessManagerThread.start();
 }
 
@@ -25,48 +24,48 @@ NetworkAccessManagerFutureProvider::~NetworkAccessManagerFutureProvider()
 
 NetworkSharedFuture NetworkAccessManagerFutureProvider::get(const QNetworkRequest& request) noexcept
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
-
 	QNetworkReply* reply = nullptr;
 
 	VERIFY(QMetaObject::invokeMethod(this, "getAtThreadContext", Qt::BlockingQueuedConnection,
 		Q_RETURN_ARG(QNetworkReply*, reply), Q_ARG(const QNetworkRequest&, request)));
+
+	std::lock_guard<std::mutex> locker(m_mutex);
 
 	return m_responsePromiseMapper[reply].get_future();
 }
 
 NetworkSharedFuture NetworkAccessManagerFutureProvider::post(const QNetworkRequest& request, QIODevice* data) noexcept
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
-
 	QNetworkReply* reply = nullptr;
 
 	VERIFY(QMetaObject::invokeMethod(this, "postAtThreadContext", Qt::BlockingQueuedConnection,
 		Q_RETURN_ARG(QNetworkReply*, reply), Q_ARG(const QNetworkRequest&, request), Q_ARG(QIODevice*, data)));
+
+	std::lock_guard<std::mutex> locker(m_mutex);
 
 	return m_responsePromiseMapper[reply].get_future();
 }
 
 NetworkSharedFuture NetworkAccessManagerFutureProvider::post(const QNetworkRequest& request, const QByteArray& data) noexcept
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
-
 	QNetworkReply* reply = nullptr;
 
 	VERIFY(QMetaObject::invokeMethod(this, "postAtThreadContext", Qt::BlockingQueuedConnection,
 		Q_RETURN_ARG(QNetworkReply*, reply), Q_ARG(const QNetworkRequest&, request), Q_ARG(const QByteArray&, data)));
+
+	std::lock_guard<std::mutex> locker(m_mutex);
 
 	return m_responsePromiseMapper[reply].get_future();
 }
 
 NetworkSharedFuture NetworkAccessManagerFutureProvider::post(const QNetworkRequest& request, QHttpMultiPart* multiPart) noexcept
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
-
 	QNetworkReply* reply = nullptr;
 
 	VERIFY(QMetaObject::invokeMethod(this, "postAtThreadContext", Qt::BlockingQueuedConnection,
 		Q_RETURN_ARG(QNetworkReply*, reply), Q_ARG(const QNetworkRequest&, request), Q_ARG(QHttpMultiPart*, multiPart)));
+
+	std::lock_guard<std::mutex> locker(m_mutex);
 
 	return m_responsePromiseMapper[reply].get_future();
 }
@@ -93,6 +92,7 @@ QNetworkReply* NetworkAccessManagerFutureProvider::postAtThreadContext(const QNe
 
 void NetworkAccessManagerFutureProvider::finished(QNetworkReply* reply)
 {
+	std::lock_guard<std::mutex> locker(m_mutex);
 	ResponsePack responsePack{ reply->readAll() };
 
 	for (const QPair<QByteArray, QByteArray>& headerValuePair : reply->rawHeaderPairs())

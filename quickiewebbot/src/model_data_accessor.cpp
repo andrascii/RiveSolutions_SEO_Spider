@@ -1,3 +1,4 @@
+#include "application.h"
 #include "model_data_accessor.h"
 #include "page_info_item_accessor_helper.h"
 #include "service_locator.h"
@@ -38,7 +39,7 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 		PageInfoItemAccessorHelper::WordCount
 	};
 
-	m_modelControllerData = ServiceLocator::instance()->service<ModelController>()->data();
+	m_modelControllerData = myApp->modelController()->data();
 	VERIFY(QObject::connect(m_modelControllerData, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 }
 	

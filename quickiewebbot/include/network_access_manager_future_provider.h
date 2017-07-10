@@ -40,7 +40,7 @@ private:
 
 	QNetworkAccessManager* m_manager;
 
-	std::map<QNetworkReply*, std::promise<ResponsePack>> m_responsePromiseMapper;
+	std::unordered_map<QNetworkReply*, std::promise<ResponsePack>> m_responsePromiseMapper;
 };
 
 using NetworkSharedFuture = std::shared_future<NetworkAccessManagerFutureProvider::ResponsePack>;
