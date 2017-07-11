@@ -39,7 +39,7 @@ void MainFrame::init()
 	model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(ModelControllerData::CrawledUrlStorageType));
 
 	ui.crawlingTableView->setModel(model);
-	//ui.crawlingTableView->setItemDelegate(new HyperlinkItemDelegate());
+	ui.crawlingTableView->setItemDelegate(new HyperlinkItemDelegate(ui.crawlingTableView));
 	new TableViewSpanExtension(ui.crawlingTableView);
 	//////////////////////////////////////////////////////////////////////////
 }

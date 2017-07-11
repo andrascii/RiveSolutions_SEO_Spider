@@ -38,6 +38,7 @@
 #include <QDialog>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QTableView>
 #include <QMessageBox>
 #include <QTextCodec>
 #include <QAbstractListModel>
@@ -53,6 +54,8 @@
 #include <QPainter>
 #include <QTimer>
 #include <QAbstractItemDelegate>
+#include <QDebug>
+
 
 using namespace std::chrono_literals;
 using std::size_t;
