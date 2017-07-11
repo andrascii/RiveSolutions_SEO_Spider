@@ -1,14 +1,13 @@
 #pragma once
 
 #include "main_frame.h"
-#include "downloader.h"
 #include "software_branding.h"
 
 namespace QuickieWebBot
 {
 
 class ModelController;
-class Crawler;
+class WebCrawler;
 
 class Application : public QApplication
 {
@@ -18,7 +17,7 @@ public:
 	static Application* instance();
 	Application(int& argc, char** argv);
 
-	const Crawler* crawler() const noexcept;
+	const WebCrawler* webCrawler() const noexcept;
 	MainFrame* mainFrame() noexcept;
 	ModelController* modelController() noexcept;
 
@@ -37,9 +36,8 @@ private:
 	
 	ModelController* m_modelController;
 	
-	Crawler* m_crawler;
+	WebCrawler* m_webCrawler;
 	
-	std::unique_ptr<Downloader> m_downloader;
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 };

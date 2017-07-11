@@ -5,8 +5,7 @@
 #include "software_branding.h"
 #include "start_screen.h"
 #include "service_locator.h"
-#include "crawler.h"
-#include "network_access_manager_future_provider.h"
+#include "web_crawler.h"
 
 namespace QuickieWebBot
 {
@@ -21,15 +20,12 @@ Application* Application::instance()
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_modelController(new ModelController(this))
-	, m_crawler(new Crawler(std::thread::hardware_concurrency(), m_modelController, this))
-	, m_downloader(new Downloader)
+	, m_webCrawler(new WebCrawler(std::thread::hardware_concurrency(), m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
 	s_app = this;
 
 	initialize();
-
-	m_downloader->scheduleRequest(QUrl("http://www.cyberforum.ru"));
 
 	initializeStyleSheet();
 
@@ -40,9 +36,9 @@ Application::Application(int& argc, char** argv)
 #endif
 }
 
-const Crawler* Application::crawler() const noexcept
+const WebCrawler* Application::webCrawler() const noexcept
 {
-	return m_crawler;
+	return m_webCrawler;
 }
 
 MainFrame* Application::mainFrame() noexcept
@@ -73,10 +69,6 @@ void Application::initialize() noexcept
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
-
-	ServiceLocator::instance()->addService<NetworkAccessManagerFutureProvider>(new NetworkAccessManagerFutureProvider);
-
-	m_downloader->start();
 }
 
 void Application::initializeStyleSheet() noexcept

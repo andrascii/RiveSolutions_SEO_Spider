@@ -5,7 +5,7 @@
 #include "data_collection.h"
 #include "table_view_span_extension.h"
 #include "application.h"
-#include "crawler.h"
+#include "web_crawler.h"
 #include "hyperlink_item_delegate.h"
 
 namespace QuickieWebBot
@@ -22,8 +22,8 @@ void MainFrame::init()
 	ui.setupUi(this);
 
 	VERIFY(connect(ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->crawler(), &Crawler::start));
-	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->crawler(), &Crawler::stop));
+	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::start));
+	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stop));
 
 	ui.viewTypeComboBox->addItem(tr("List"));
 	ui.viewTypeComboBox->addItem(tr("Tree"));

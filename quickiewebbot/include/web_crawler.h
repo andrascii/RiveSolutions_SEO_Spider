@@ -1,7 +1,8 @@
 #pragma once
 
 #include "page_info.h"
-#include "crawler_storage.h"
+#include "web_crawler_internal_url_storage.h"
+#include "queued_downloader.h"
 
 namespace QuickieWebBot
 {
@@ -9,13 +10,13 @@ namespace QuickieWebBot
 class PageInfoAcceptor;
 class ModelController;
 
-class Crawler : public QObject
+class WebCrawler : public QObject
 {
 	Q_OBJECT
 
 public:
-	Crawler(unsigned int threadCount, ModelController* modelController, QObject* parent = nullptr);
-	~Crawler();
+	WebCrawler(unsigned int threadCount, ModelController* modelController, QObject* parent = nullptr);
+	~WebCrawler();
 
 	Q_SLOT void start();
 	Q_SLOT void stop();
@@ -24,8 +25,12 @@ private:
 	Q_SLOT void onPageInfoParsed(PageInfoPtr pageInfo);
 
 private:
+	QueuedDownloader m_queuedDownloader;
+
 	ModelController* m_modelController;
-	CrawlerStorage m_storage;
+	
+	WebCrawlerInternalUrlStorage m_storage;
+
 	std::vector<std::pair<QThread*, PageInfoAcceptor*>> m_workers;
 };
 

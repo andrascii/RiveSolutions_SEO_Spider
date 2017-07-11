@@ -1,34 +1,40 @@
 #pragma once
 
-#include "crawler.h"
+#include "web_crawler.h"
 #include "page_info.h"
 #include "gumbo.h"
+#include "queued_downloader.h"
 
 namespace QuickieWebBot
 {			
 
-class NetworkAccessManagerFutureProvider;
-class CrawlerStorage;
+class WebCrawlerInternalUrlStorage;
 
 class PageInfoAcceptor : public QObject
 {			
 	Q_OBJECT
 			
 public:
-	PageInfoAcceptor(CrawlerStorage* crawlerStorage, QObject* parent = nullptr);
+	PageInfoAcceptor(WebCrawlerInternalUrlStorage* crawlerStorage, 
+		QueuedDownloader* queuedDownloader, QObject* parent = nullptr);
 
 	const std::vector<QUrl>& pageUrlList() const noexcept;
 
 	Q_INVOKABLE void start();
-	void stop();
+	Q_INVOKABLE void stop();
 	
 	Q_SIGNAL void pageParsed(PageInfoPtr pageInfo);
 
+protected:
+	virtual void timerEvent(QTimerEvent* event) override;
+
 private:
-	void parsePage(const QString& htmlPage) noexcept;
-	void parsePageUrlList(const GumboNode* node) noexcept;
-	void parsePageTitle(const GumboNode* head) noexcept;
-	void parsePageMeta(const GumboNode* head) noexcept;
+	void processWebPage();
+
+	void parseWebPage(const QString& htmlPage) noexcept;
+	void parseWebPageUrlList(const GumboNode* node) noexcept;
+	void parseWebPageTitle(const GumboNode* head) noexcept;
+	void parseWebPageMeta(const GumboNode* head) noexcept;
 
 	GumboNode* firstSubNode(const GumboNode* node, GumboTag tag, unsigned startIndexWhithinParent = 0) const noexcept;
 	std::vector<GumboNode*> allSubNodes(const GumboNode* node, GumboTag tag) const noexcept;
@@ -36,9 +42,14 @@ private:
 	unsigned countChildren(const GumboNode* node, GumboTag tag) const noexcept;
 
 private:
-	CrawlerStorage* m_crawlerStorage;
-	std::atomic_bool m_stop;
+	WebCrawlerInternalUrlStorage* m_crawlerStorage;
+
+	QueuedDownloader* m_queuedDownloader;
+
 	PageInfoPtr m_pageInfo;
+
+	int m_timerId;
+
 	std::vector<QUrl> m_pageUrlList;
 };
 

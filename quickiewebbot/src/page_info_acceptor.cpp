@@ -1,15 +1,17 @@
-#include "network_access_manager_future_provider.h"
 #include "page_info_acceptor.h"
 #include "service_locator.h"
-#include "crawler_storage.h"
+#include "web_crawler_internal_url_storage.h"
+#include "constants.h"
 
 namespace QuickieWebBot
 {
 
-PageInfoAcceptor::PageInfoAcceptor(CrawlerStorage* crawlerStorage, QObject* parent)
+PageInfoAcceptor::PageInfoAcceptor(WebCrawlerInternalUrlStorage* crawlerStorage, QueuedDownloader* queuedDownloader, QObject* parent)
 	: QObject(parent)
 	, m_crawlerStorage(crawlerStorage)
-	, m_stop(false)
+	, m_queuedDownloader(queuedDownloader)
+	, m_pageInfo(new PageInfo)
+	, m_timerId(0)
 {
 }
 
@@ -20,38 +22,46 @@ const std::vector<QUrl>& PageInfoAcceptor::pageUrlList() const noexcept
 
 void PageInfoAcceptor::start()
 {
-	NetworkAccessManagerFutureProvider* networkFutureProvider = 
-		ServiceLocator::instance()->service<NetworkAccessManagerFutureProvider>();
-
-	using ResponsePack = NetworkAccessManagerFutureProvider::ResponsePack;
-
-	m_stop.store(false);
-
-	while (!m_stop.load())
-	{
-		m_pageInfo.reset(new PageInfo);
-
-		QUrl url = m_crawlerStorage->get();
-		NetworkSharedFuture networkSharedFuture = networkFutureProvider->get(QNetworkRequest(url));
-
-		ResponsePack responsePack = networkSharedFuture.get();
-		parsePage(responsePack.responseBody);
-
-		m_pageInfo->url = url;
-		m_pageInfo->serverResponse = responsePack.responseHeaderValuePairs;
-
-		m_crawlerStorage->saveUrlList(pageUrlList());
-
-		emit pageParsed(m_pageInfo);
-	}
+	m_timerId = startTimer(Common::g_minimumRecommendedTimerResolution);
+	assert(m_timerId);
 }
 
 void PageInfoAcceptor::stop()
 {
-	m_stop.store(true);
+	assert(m_timerId);
+	killTimer(m_timerId);
 }
 
-void PageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
+void PageInfoAcceptor::timerEvent(QTimerEvent* event)
+{
+	processWebPage();
+}
+
+void PageInfoAcceptor::processWebPage()
+{
+	QUrl url;
+
+	if (!m_crawlerStorage->get(url))
+	{
+		return;
+	}
+
+	QueuedDownloader::Response response;
+
+	m_queuedDownloader->scheduleUrl(url);
+	m_queuedDownloader->extractResponse(response, QueuedDownloader::SuspendExtractType);
+
+	parseWebPage(response.responseBody);
+
+	m_pageInfo->url = response.url;
+	m_pageInfo->serverResponse = response.responseHeaderValuePairs;
+
+	m_crawlerStorage->saveUrlList(pageUrlList());
+
+	emit pageParsed(m_pageInfo);
+}
+
+void PageInfoAcceptor::parseWebPageUrlList(const GumboNode* node) noexcept
 {
 	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
 	{
@@ -69,25 +79,25 @@ void PageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
 
 	for (unsigned int i = 0; i < children->length; ++i)
 	{
-		parsePageUrlList(static_cast<const GumboNode*>(children->data[i]));
+		parseWebPageUrlList(static_cast<const GumboNode*>(children->data[i]));
 	}
 }
 
-void PageInfoAcceptor::parsePage(const QString& htmlPage) noexcept
+void PageInfoAcceptor::parseWebPage(const QString& htmlPage) noexcept
 {
 	GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, htmlPage.toStdString().c_str(), htmlPage.size());
 
 	const GumboNode* head = firstSubNode(output->root, GUMBO_TAG_HEAD);
 	const GumboNode* body = firstSubNode(output->root, GUMBO_TAG_BODY);
 
-	parsePageTitle(head);
-	parsePageMeta(head);
-	parsePageUrlList(output->root);
+	parseWebPageTitle(head);
+	parseWebPageMeta(head);
+	parseWebPageUrlList(output->root);
 
 	gumbo_destroy_output(&kGumboDefaultOptions, output);
 }
 
-void PageInfoAcceptor::parsePageTitle(const GumboNode* head) noexcept
+void PageInfoAcceptor::parseWebPageTitle(const GumboNode* head) noexcept
 {
 	assert(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
 
@@ -99,7 +109,7 @@ void PageInfoAcceptor::parsePageTitle(const GumboNode* head) noexcept
 	}
 }
 
-void PageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
+void PageInfoAcceptor::parseWebPageMeta(const GumboNode* head) noexcept
 {
 	assert(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
 

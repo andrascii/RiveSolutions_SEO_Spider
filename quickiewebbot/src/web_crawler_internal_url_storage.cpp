@@ -1,29 +1,34 @@
-#include "crawler_storage.h"
+#include "web_crawler_internal_url_storage.h"
 
 namespace QuickieWebBot
 {
 
-void CrawlerStorage::setHost(const QUrl& url)
+void WebCrawlerInternalUrlStorage::setHost(const QUrl& url)
 {
+	std::lock_guard<std::mutex> locker(m_mutex);
+
 	m_internalUrlList.insert(url);
 }
 
-QUrl CrawlerStorage::get() noexcept
+bool WebCrawlerInternalUrlStorage::get(QUrl& url) noexcept
 {
-	std::unique_lock<std::mutex> locker(m_mutex);
-	m_condition.wait(locker, [&] { return m_internalUrlList.size(); });
+	std::lock_guard<std::mutex> locker(m_mutex);
+
+	if (m_internalUrlList.empty())
+	{
+		return false;
+	}
 
 	auto iter = m_internalUrlList.begin();
-	
-	QUrl url = *iter;
+	url = *iter;
 
 	m_crawledUrlList.insert(*iter);
 	m_internalUrlList.erase(iter);
 
-	return url;
+	return true;
 }
 
-void CrawlerStorage::saveUrlList(const std::vector<QUrl>& urlList) noexcept
+void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList) noexcept
 {
 	using VectorIterator = std::vector<QUrl>::const_iterator;
 
