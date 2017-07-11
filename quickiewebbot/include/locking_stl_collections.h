@@ -310,4 +310,55 @@ private:
 	mutable std::mutex m_mutex;
 };
 
+template <typename ObjectType>
+class LocableProxyObject
+{
+public:
+	LocableProxyObject(ObjectType* object, std::mutex& mutex)
+		: m_object(object)
+		, m_mutex(mutex)
+	{
+		m_mutex.lock();
+	}
+
+	LocableProxyObject(LocableProxyObject&& other) noexcept
+		: m_object(other.m_object)
+		, m_mutex(std::move(other.m_mutex))
+	{
+	}
+
+	ObjectType* operator->() noexcept
+	{
+		return m_object;
+	}
+
+	const ObjectType* operator->() const noexcept
+	{
+		return m_object;
+	}
+
+	~LocableProxyObject()
+	{
+		m_mutex.unlock();
+	}
+
+private:
+	ObjectType* m_object;
+	std::mutex& m_mutex;
+};
+
+template <typename ObjectType>
+class LockableObject
+{
+public:
+	LocableProxyObject<ObjectType> lock() noexcept
+	{
+		return LocableProxyObject<ObjectType>(&m_object, m_mutex);
+	}
+
+private:
+	ObjectType m_object;
+	mutable std::mutex m_mutex;
+};
+
 }

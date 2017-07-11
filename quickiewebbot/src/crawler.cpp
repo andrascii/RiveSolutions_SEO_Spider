@@ -28,6 +28,12 @@ Crawler::Crawler(unsigned int threadCount, ModelController* modelController, QOb
 
 Crawler::~Crawler()
 {
+	for (const auto& pair : m_workers)
+	{
+		pair.second->stop();
+		pair.first->quit();
+		pair.first->wait();
+	}
 }
 
 void Crawler::start()
@@ -42,7 +48,10 @@ void Crawler::start()
 
 void Crawler::stop()
 {
-
+	for (const auto& pair : m_workers)
+	{
+		pair.second->stop();
+	}
 }
 
 void Crawler::onPageInfoParsed(PageInfoPtr pageInfo)

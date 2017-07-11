@@ -53,11 +53,17 @@
 #include <QPainter>
 #include <QTimer>
 #include <QAbstractItemDelegate>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QReadWriteLock>
+#include <QSemaphore>
+#include <QWaitCondition>
+#include <QQueue>
 
 using namespace std::chrono_literals;
 using std::size_t;
 
-#define myApp Application::instance()
+#define theApp Application::instance()
 
 #define STRING(Any) #Any
 

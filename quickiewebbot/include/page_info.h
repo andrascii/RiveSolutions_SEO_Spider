@@ -58,7 +58,8 @@ struct PageInfoHasher : public IPageInfoHasher
 {
 	virtual size_t operator()(const PageInfoPtr& pageInfo) const noexcept override
 	{
-		static_assert(MemberType >= UrlMember && MemberType <= static_cast<int>(WordCountMember), "Invalid MemberGetterType");
+		static_assert(MemberType >= UrlMember && MemberType <= static_cast<int>(WordCountMember), 
+			"Invalid MemberGetterType");
 
 		static boost::hash<std::string> s_stringHasher;
 		static boost::hash<int> s_intHasher;

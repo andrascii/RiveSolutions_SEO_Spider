@@ -39,7 +39,7 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 		PageInfoItemAccessorHelper::WordCount
 	};
 
-	m_modelControllerData = myApp->modelController()->data();
+	m_modelControllerData = theApp->modelController()->data();
 	VERIFY(QObject::connect(m_modelControllerData, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 }
 	

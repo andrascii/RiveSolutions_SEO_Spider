@@ -39,7 +39,7 @@ StartScreen::StartScreen()
 
 	s_alreadyShown = true;
 
-	m_brandingLogoImage = myApp->softwareBrandingOptions()->brandingLogoImage();
+	m_brandingLogoImage = theApp->softwareBrandingOptions()->brandingLogoImage();
 
 	m_startScreenContent->setupUi(this);
 

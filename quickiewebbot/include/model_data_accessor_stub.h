@@ -1,7 +1,6 @@
 #pragma once
 
 #include "imodel_data_accessor.h"
-#include <QTimer>
 
 namespace QuickieWebBot
 {

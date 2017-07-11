@@ -46,6 +46,11 @@ void PageInfoAcceptor::start()
 	}
 }
 
+void PageInfoAcceptor::stop()
+{
+	m_stop.store(true);
+}
+
 void PageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
 {
 	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))

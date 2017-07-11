@@ -20,6 +20,8 @@ public:
 	const std::vector<QUrl>& pageUrlList() const noexcept;
 
 	Q_INVOKABLE void start();
+	void stop();
+	
 	Q_SIGNAL void pageParsed(PageInfoPtr pageInfo);
 
 private:
