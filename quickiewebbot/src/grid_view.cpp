@@ -1,4 +1,4 @@
-#include "gridview.h"
+#include "grid_view.h"
 #include "imodel_data_accessor.h"
 #include "gridview_model.h"
 

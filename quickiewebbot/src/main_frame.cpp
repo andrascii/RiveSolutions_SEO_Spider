@@ -4,7 +4,6 @@
 #include "model_data_accessor_factory.h"
 #include "data_collection.h"
 #include "application.h"
-#include "crawler.h"
 #include "gridview_extension.h"
 #include "gridview_delegate.h"
 #include "web_crawler.h"
