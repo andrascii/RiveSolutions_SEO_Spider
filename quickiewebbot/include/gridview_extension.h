@@ -5,13 +5,13 @@
 namespace QuickieWebBot
 {
 
-//class TableModel;
+//class GridViewModel;
 
-class TableViewSpanExtension : public QObject
+class GridViewExtension : public QObject
 {
 	Q_OBJECT
 public:
-	TableViewSpanExtension(QTableView* view);
+	GridViewExtension(QTableView* view);
 
 private:
 	Q_SLOT void colspan(const QModelIndex& index, int span);

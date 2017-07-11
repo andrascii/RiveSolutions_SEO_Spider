@@ -8,7 +8,7 @@ namespace QuickieWebBot
 
 class ModelDataAccessorItemStub 
 	: public QObject
-	, public ModelDataAccessorItemBase
+	, public ModelDataAccessorBase
 {
 	Q_OBJECT
 
@@ -54,7 +54,7 @@ public:
 
 	virtual int flags(const QModelIndex& index) const override
 	{
-		return index.column() == 2 ? IModelDataAccessorItem::ItemFlagUrl : IModelDataAccessorItem::ItemFlagNone;
+		return index.column() == 2 ? IModelDataAccessor::ItemFlagUrl : IModelDataAccessor::ItemFlagNone;
 	}
 
 	virtual int itemColSpan(const QModelIndex& index) const override
@@ -109,17 +109,6 @@ private:
 	}
 
 	int m_rows;
-};
-
-class ModelDataAccessorStub : public IModelDataAccessor
-{
-public:
-
-	virtual std::unique_ptr<IModelDataAccessorItem> allProcessedItems() const override
-	{
-		return std::make_unique<ModelDataAccessorItemStub>();
-	}
-
 };
 
 }

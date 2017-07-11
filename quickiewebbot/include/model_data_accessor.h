@@ -8,7 +8,7 @@ namespace QuickieWebBot
 
 class ModelDataAccessorAllItems 
 	: public QObject
-	, public ModelDataAccessorItemBase
+	, public ModelDataAccessorBase
 {
 	Q_OBJECT
 
@@ -33,6 +33,8 @@ public:
 	Q_SIGNAL void rowRemoved(int row);
 	Q_SIGNAL void rowAdded(int row);
 	Q_SIGNAL void reset();
+
+	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
 
 protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
