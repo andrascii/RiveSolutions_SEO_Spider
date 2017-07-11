@@ -61,6 +61,7 @@
 #include <QWaitCondition>
 #include <QQueue>
 #include <QDebug>
+#include <QStyledItemDelegate>
 
 
 using namespace std::chrono_literals;

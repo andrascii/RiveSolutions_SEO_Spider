@@ -1,7 +1,7 @@
 #pragma once
 
 #include "page_info.h"
-#include "table_model.h"
+#include "gridview_model.h"
 
 namespace QuickieWebBot
 {

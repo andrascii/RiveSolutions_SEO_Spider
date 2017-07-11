@@ -1,26 +1,26 @@
-#include "table_model.h"
+#include "gridview_model.h"
 
 namespace QuickieWebBot
 {
 
-TableModel::TableModel(QObject* parent)
+GridViewModel::GridViewModel(QObject* parent)
 	: QAbstractTableModel(parent)
 {
 }
 
-int TableModel::rowCount(QModelIndex const& parent) const
+int GridViewModel::rowCount(QModelIndex const& parent) const
 {
 	Q_UNUSED(parent);
 	return m_accessor->rowCount();
 }
 
-int TableModel::columnCount(QModelIndex const& parent) const
+int GridViewModel::columnCount(QModelIndex const& parent) const
 {
 	Q_UNUSED(parent);
 	return m_accessor->columnCount();
 }
 
-QVariant TableModel::data(QModelIndex const& index, int role) const
+QVariant GridViewModel::data(QModelIndex const& index, int role) const
 {
 	if (role == Qt::DisplayRole)
 	{
@@ -55,7 +55,7 @@ QVariant TableModel::data(QModelIndex const& index, int role) const
 	return QVariant();
 }
 
-QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant GridViewModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (orientation == Qt::Vertical)
 	{
@@ -70,7 +70,7 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 	return QVariant();
 }
 
-bool TableModel::insertRows(int row, int count, QModelIndex const& parent)
+bool GridViewModel::insertRows(int row, int count, QModelIndex const& parent)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(count);
@@ -78,7 +78,7 @@ bool TableModel::insertRows(int row, int count, QModelIndex const& parent)
 	return 0;
 }
 
-bool TableModel::removeRows(int row, int count, QModelIndex const& parent)
+bool GridViewModel::removeRows(int row, int count, QModelIndex const& parent)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(count);
@@ -86,7 +86,7 @@ bool TableModel::removeRows(int row, int count, QModelIndex const& parent)
 	return 0;
 }
 
-bool TableModel::insertColumns(int column, int count, QModelIndex const& parent)
+bool GridViewModel::insertColumns(int column, int count, QModelIndex const& parent)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(count);
@@ -94,7 +94,7 @@ bool TableModel::insertColumns(int column, int count, QModelIndex const& parent)
 	return 0;
 }
 
-bool TableModel::removeColumns(int column, int count, QModelIndex const& parent)
+bool GridViewModel::removeColumns(int column, int count, QModelIndex const& parent)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(count);
@@ -102,7 +102,7 @@ bool TableModel::removeColumns(int column, int count, QModelIndex const& parent)
 	return 0;
 }
 
-void TableModel::setDataAccessor(std::unique_ptr<IModelDataAccessorItem> accessor)
+void GridViewModel::setDataAccessor(std::unique_ptr<IModelDataAccessor> accessor)
 {
 	if (m_accessor)
 	{
@@ -112,9 +112,15 @@ void TableModel::setDataAccessor(std::unique_ptr<IModelDataAccessorItem> accesso
 	m_accessor = std::move(accessor);
 
 	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
+	emit modelAccessorChanged(m_accessor.get());
 }
 
-void TableModel::onRowAdded(int row)
+IModelDataAccessor * GridViewModel::dataAcessor() const
+{
+	return m_accessor.get();
+}
+
+void GridViewModel::onRowAdded(int row)
 {
 	beginInsertRows(QModelIndex(), row, row);
 	endInsertRows();

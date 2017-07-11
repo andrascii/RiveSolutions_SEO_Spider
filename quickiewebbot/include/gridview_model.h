@@ -5,13 +5,13 @@
 namespace QuickieWebBot
 {
 
-class TableModel 
+class GridViewModel 
 	: public QAbstractTableModel
 {
 	Q_OBJECT
 
 public:
-	TableModel(QObject* parent = nullptr);
+	GridViewModel(QObject* parent = nullptr);
 
 	virtual int rowCount(QModelIndex const& parent = QModelIndex()) const override;
 	virtual int columnCount(QModelIndex const& parent = QModelIndex()) const override;
@@ -25,15 +25,17 @@ public:
 	virtual bool insertColumns(int column, int count, QModelIndex const& parent = QModelIndex()) override;
 	virtual bool removeColumns(int column, int count, QModelIndex const& parent = QModelIndex()) override;
 
-	void setDataAccessor(std::unique_ptr<IModelDataAccessorItem> accessor);
+	void setDataAccessor(std::unique_ptr<IModelDataAccessor> accessor);
+	IModelDataAccessor* dataAcessor() const;
 
 	Q_SIGNAL void colspan(const QModelIndex& index, int span) const;
+	Q_SIGNAL void modelAccessorChanged(IModelDataAccessor* accessor);
 
 private:
 	Q_SLOT void onRowAdded(int row);
 
 private:
-	std::unique_ptr<IModelDataAccessorItem> m_accessor;
+	std::unique_ptr<IModelDataAccessor> m_accessor;
 };
 
 }

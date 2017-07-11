@@ -1,11 +1,12 @@
 #pragma once
 
 #include "page_info.h"
+#include "gridview_painter.h"
 
 namespace QuickieWebBot
 {
 
-class IModelDataAccessorItem
+class IModelDataAccessor
 {
 public:
 	enum ItemFlag
@@ -14,7 +15,7 @@ public:
 		ItemFlagUrl = 1
 	};
 
-	virtual ~IModelDataAccessorItem() = default;
+	virtual ~IModelDataAccessor() = default;
 	
 	virtual int columnCount() const = 0;
 	virtual QString columnText(int column) const = 0;
@@ -37,24 +38,18 @@ public:
 	virtual void rowRemoved(int row) = 0;
 	virtual void rowAdded(int row) = 0;
 	virtual void reset() = 0;
+
+	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const = 0;
 };
 
-class ModelDataAccessorItemBase : public IModelDataAccessorItem
+class ModelDataAccessorBase : public IModelDataAccessor
 {
 public:
 	virtual QColor itemTextColor(const QModelIndex& index) const override
 	{
 		// not working, why?
-		return flags(index) & IModelDataAccessorItem::ItemFlagUrl ? Qt::blue : Qt::black;
+		return flags(index) & IModelDataAccessor::ItemFlagUrl ? Qt::blue : Qt::black;
 	}
-};
-
-class IModelDataAccessor
-{
-public:
-	virtual ~IModelDataAccessor() = default;
-	virtual std::unique_ptr<IModelDataAccessorItem> allProcessedItems() const = 0;
-	// TODO: add more
 };
 
 }

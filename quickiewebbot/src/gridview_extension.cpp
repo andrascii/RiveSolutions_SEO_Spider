@@ -1,9 +1,9 @@
-#include "table_view_span_extension.h"
+#include "gridview_extension.h"
 
 namespace QuickieWebBot
 {
 
-TableViewSpanExtension::TableViewSpanExtension(QTableView* view)
+GridViewExtension::GridViewExtension(QTableView* view)
 	: QObject(view)
 	, m_tableView(view)
 {
@@ -21,12 +21,12 @@ TableViewSpanExtension::TableViewSpanExtension(QTableView* view)
 	VERIFY(QObject::connect(model, SIGNAL(columnsRemoved(const QModelIndex&, int, int)), this, SLOT(columnsRemoved(const QModelIndex&, int, int))));
 }
 
-void TableViewSpanExtension::colspan(const QModelIndex& index, int span)
+void GridViewExtension::colspan(const QModelIndex& index, int span)
 {
 	//m_tableView->setSpan(index.row(), index.column(), 1, span);
 }
 
-void TableViewSpanExtension::rowsInserted(const QModelIndex& parent, int first, int last)
+void GridViewExtension::rowsInserted(const QModelIndex& parent, int first, int last)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(first);
@@ -34,7 +34,7 @@ void TableViewSpanExtension::rowsInserted(const QModelIndex& parent, int first, 
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::rowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row)
+void GridViewExtension::rowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(start);
@@ -44,7 +44,7 @@ void TableViewSpanExtension::rowsMoved(const QModelIndex& parent, int start, int
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::rowsRemoved(const QModelIndex& parent, int first, int last)
+void GridViewExtension::rowsRemoved(const QModelIndex& parent, int first, int last)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(first);
@@ -52,7 +52,7 @@ void TableViewSpanExtension::rowsRemoved(const QModelIndex& parent, int first, i
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::columnsInserted(const QModelIndex& parent, int first, int last)
+void GridViewExtension::columnsInserted(const QModelIndex& parent, int first, int last)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(first);
@@ -60,7 +60,7 @@ void TableViewSpanExtension::columnsInserted(const QModelIndex& parent, int firs
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::columnsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int column)
+void GridViewExtension::columnsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int column)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(start);
@@ -70,7 +70,7 @@ void TableViewSpanExtension::columnsMoved(const QModelIndex& parent, int start, 
 	// TODO: handle this event
 }
 
-void TableViewSpanExtension::columnsRemoved(const QModelIndex& parent, int first, int last)
+void GridViewExtension::columnsRemoved(const QModelIndex& parent, int first, int last)
 {
 	Q_UNUSED(parent);
 	Q_UNUSED(first);

@@ -1,12 +1,12 @@
 #include "main_frame.h"
 #include "model_controller.h"
 #include "model_data_accessor_stub.h"
-#include "model_data_accessor.h"
+#include "model_data_accessor_factory.h"
 #include "data_collection.h"
-#include "table_view_span_extension.h"
 #include "application.h"
 #include "crawler.h"
-#include "hyperlink_item_delegate.h"
+#include "gridview_extension.h"
+#include "gridview_delegate.h"
 
 namespace QuickieWebBot
 {
@@ -31,16 +31,15 @@ void MainFrame::init()
 	//////////////////////////////////////////////////////////////////////////
 	// Debug code
 
-	TableModel* model = new TableModel(this);
+	GridViewModel* model = new GridViewModel(this);
 	//static ModelDataAccessorStub s_stub;
 	//model->setDataAccessor(s_stub.allProcessedItems());
 
-	
-	model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(DataCollection::CrawledUrlStorageType));
-
+	ModelDataAccessorFactory factory;
+	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams()));
 	ui.crawlingTableView->setModel(model);
-	ui.crawlingTableView->setItemDelegate(new HyperlinkItemDelegate(ui.crawlingTableView));
-	new TableViewSpanExtension(ui.crawlingTableView);
+	ui.crawlingTableView->setItemDelegate(new GridViewDelegate(ui.crawlingTableView));
+	new GridViewExtension(ui.crawlingTableView);
 	//////////////////////////////////////////////////////////////////////////
 }
 
