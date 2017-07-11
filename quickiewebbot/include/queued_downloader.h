@@ -32,7 +32,7 @@ public:
 	void scheduleUrl(const QUrl& url) noexcept;
 	void scheduleUrlList(const QList<QUrl>& urlList) noexcept;
 
-	bool extractResponse(Reply& response, ReplyExtractPolicy type) noexcept;
+	bool extractReply(Reply& response, ReplyExtractPolicy type) noexcept;
 
 protected:
 	virtual void timerEvent(QTimerEvent* event) override;

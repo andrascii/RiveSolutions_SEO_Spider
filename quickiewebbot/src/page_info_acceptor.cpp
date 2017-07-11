@@ -40,7 +40,7 @@ void PageInfoAcceptor::timerEvent(QTimerEvent* event)
 void PageInfoAcceptor::processWebPage()
 {
 	QUrl url;
-	QueuedDownloader::Reply response;
+	QueuedDownloader::Reply reply;
 
 	if (!m_crawlerStorage->get(url))
 	{
@@ -48,12 +48,12 @@ void PageInfoAcceptor::processWebPage()
 	}
 
 	m_queuedDownloader->scheduleUrl(url);
-	m_queuedDownloader->extractResponse(response, QueuedDownloader::SuspendExtractPolicy);
+	m_queuedDownloader->extractReply(reply, QueuedDownloader::SuspendExtractPolicy);
 
-	parseWebPage(response.responseBody);
+	parseWebPage(reply.responseBody);
 
-	m_pageInfo->url = response.url;
-	m_pageInfo->serverResponse = response.responseHeaderValuePairs;
+	m_pageInfo->url = reply.url;
+	m_pageInfo->serverResponse = reply.responseHeaderValuePairs;
 
 	m_crawlerStorage->saveUrlList(pageUrlList());
 

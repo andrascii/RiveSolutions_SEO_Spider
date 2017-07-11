@@ -43,7 +43,7 @@ void WebCrawler::start()
 
 	for (const auto& pair : m_workers)
 	{
-		QMetaObject::invokeMethod(pair.second, "start", Qt::QueuedConnection);
+		QMetaObject::invokeMethod(pair.second, "start");
 	}
 }
 
@@ -51,7 +51,7 @@ void WebCrawler::stop()
 {
 	for (const auto& pair : m_workers)
 	{
-		QMetaObject::invokeMethod(pair.second, "stop", Qt::QueuedConnection);
+		QMetaObject::invokeMethod(pair.second, "stop");
 	}
 
 	m_queuedDownloader.stop();

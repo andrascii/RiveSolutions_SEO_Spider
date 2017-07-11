@@ -74,7 +74,7 @@ void QueuedDownloader::scheduleUrlList(const QList<QUrl>& urlList) noexcept
 	m_requestQueue.append(urlList);
 }
 
-bool QueuedDownloader::extractResponse(Reply& response, ReplyExtractPolicy type) noexcept
+bool QueuedDownloader::extractReply(Reply& response, ReplyExtractPolicy type) noexcept
 {
 	if (type == SuspendExtractPolicy)
 	{
@@ -111,7 +111,7 @@ bool QueuedDownloader::extractResponse(Reply& response, ReplyExtractPolicy type)
 		return true;
 	}
 
-	assert(!"Invalid RepliesExtractType");
+	assert(!"Invalid ReplyExtractPolicy");
 	return false;
 }
 
