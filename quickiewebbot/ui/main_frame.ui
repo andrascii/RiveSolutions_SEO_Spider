@@ -147,7 +147,7 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QTableView" name="crawlingTableView">
+          <widget class="QuickieWebBot::GridView" name="crawlingTableView">
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
@@ -352,6 +352,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QuickieWebBot::GridView</class>
+   <extends>QTableView</extends>
+   <header>gridview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../rcc/main_frame.qrc"/>
  </resources>
