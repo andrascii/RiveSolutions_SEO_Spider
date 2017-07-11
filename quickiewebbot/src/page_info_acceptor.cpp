@@ -1,39 +1,57 @@
-#include "crawler_page_info_acceptor.h"
-#include "service_locator.h"
 #include "network_access_manager_future_provider.h"
+#include "page_info_acceptor.h"
+#include "service_locator.h"
+#include "crawler_storage.h"
 
 namespace QuickieWebBot
 {
 
-CrawlerPageInfoAcceptor::CrawlerPageInfoAcceptor(QObject* parent)
+PageInfoAcceptor::PageInfoAcceptor(CrawlerStorage* crawlerStorage, QObject* parent)
 	: QObject(parent)
-	, m_networkAccesManager(new QNetworkAccessManager(this))
-	, m_pageInfo(std::make_shared<PageInfo>())
-	, m_state(PendingState)
+	, m_crawlerStorage(crawlerStorage)
+	, m_stop(false)
 {
-	VERIFY(connect(m_networkAccesManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(pageDownloaded(QNetworkReply*))));
 }
 
-const std::vector<QUrl>& CrawlerPageInfoAcceptor::pageUrlList() const noexcept
+const std::vector<QUrl>& PageInfoAcceptor::pageUrlList() const noexcept
 {
 	return m_pageUrlList;
 }
 
-void CrawlerPageInfoAcceptor::handlePage(QUrl url)
+void PageInfoAcceptor::start()
 {
-	m_state.store(WorkingState);
-	//m_networkAccesManager->get(QNetworkRequest(url));
+	NetworkAccessManagerFutureProvider* networkFutureProvider = 
+		ServiceLocator::instance()->service<NetworkAccessManagerFutureProvider>();
 
-	std::future<NetworkAccessManagerFutureProvider::ResponsePack> response = 
-		ServiceLocator::instance()->service<NetworkAccessManagerFutureProvider>()->get(QNetworkRequest(url));
+	using ResponsePack = NetworkAccessManagerFutureProvider::ResponsePack;
 
-	NetworkAccessManagerFutureProvider::ResponsePack responsePack = response.get();
+	m_stop.store(false);
 
-	responsePack.responseBody;
-	pageUrlList();
+	while (!m_stop.load())
+	{
+		m_pageInfo.reset(new PageInfo);
+
+		QUrl url = m_crawlerStorage->get();
+		NetworkSharedFuture networkSharedFuture = networkFutureProvider->get(QNetworkRequest(url));
+
+		ResponsePack responsePack = networkSharedFuture.get();
+		parsePage(responsePack.responseBody);
+
+		m_pageInfo->url = url;
+		m_pageInfo->serverResponse = responsePack.responseHeaderValuePairs;
+
+		m_crawlerStorage->saveUrlList(pageUrlList());
+
+		emit pageParsed(m_pageInfo);
+	}
 }
 
-void CrawlerPageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
+void PageInfoAcceptor::stop()
+{
+	m_stop.store(true);
+}
+
+void PageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
 {
 	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
 	{
@@ -55,7 +73,7 @@ void CrawlerPageInfoAcceptor::parsePageUrlList(const GumboNode* node) noexcept
 	}
 }
 
-void CrawlerPageInfoAcceptor::parsePage(const QString& htmlPage) noexcept
+void PageInfoAcceptor::parsePage(const QString& htmlPage) noexcept
 {
 	GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, htmlPage.toStdString().c_str(), htmlPage.size());
 
@@ -69,7 +87,7 @@ void CrawlerPageInfoAcceptor::parsePage(const QString& htmlPage) noexcept
 	gumbo_destroy_output(&kGumboDefaultOptions, output);
 }
 
-void CrawlerPageInfoAcceptor::parsePageTitle(const GumboNode* head) noexcept
+void PageInfoAcceptor::parsePageTitle(const GumboNode* head) noexcept
 {
 	assert(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
 
@@ -81,7 +99,7 @@ void CrawlerPageInfoAcceptor::parsePageTitle(const GumboNode* head) noexcept
 	}
 }
 
-void CrawlerPageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
+void PageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
 {
 	assert(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
 
@@ -136,7 +154,7 @@ void CrawlerPageInfoAcceptor::parsePageMeta(const GumboNode* head) noexcept
 	}
 }
 
-unsigned CrawlerPageInfoAcceptor::countChildren(const GumboNode* node, GumboTag tag) const noexcept
+unsigned PageInfoAcceptor::countChildren(const GumboNode* node, GumboTag tag) const noexcept
 {
 	assert(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
 
@@ -156,7 +174,7 @@ unsigned CrawlerPageInfoAcceptor::countChildren(const GumboNode* node, GumboTag 
 	return counter;
 }
 
-GumboNode* CrawlerPageInfoAcceptor::firstSubNode(const GumboNode* node, GumboTag tag, unsigned startIndexWhithinParent) const noexcept
+GumboNode* PageInfoAcceptor::firstSubNode(const GumboNode* node, GumboTag tag, unsigned startIndexWhithinParent) const noexcept
 {
 	assert(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
 
@@ -179,7 +197,7 @@ GumboNode* CrawlerPageInfoAcceptor::firstSubNode(const GumboNode* node, GumboTag
 	return searchingNode;
 }
 
-std::vector<GumboNode*> CrawlerPageInfoAcceptor::allSubNodes(const GumboNode* node, GumboTag tag) const noexcept
+std::vector<GumboNode*> PageInfoAcceptor::allSubNodes(const GumboNode* node, GumboTag tag) const noexcept
 {
 	assert(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
 
@@ -199,27 +217,11 @@ std::vector<GumboNode*> CrawlerPageInfoAcceptor::allSubNodes(const GumboNode* no
 	return nodes;
 }
 
-QString CrawlerPageInfoAcceptor::nodeText(const GumboNode* node) const noexcept
+QString PageInfoAcceptor::nodeText(const GumboNode* node) const noexcept
 {
 	assert(node->type == GUMBO_NODE_TEXT || node->type == GUMBO_NODE_WHITESPACE);
 
 	return node->v.text.text;
-}
-
-void CrawlerPageInfoAcceptor::pageDownloaded(QNetworkReply* reply)
-{
-	QByteArray htmlPage = reply->readAll();
-	parsePage(htmlPage);
-
-	for(const QPair<QByteArray, QByteArray>& pair : reply->rawHeaderPairs())
-	{
-		m_pageInfo->serverResponse += pair.first + ": " + pair.second + "\n";
-	}
-
-	m_pageInfo->url = reply->url();
-	
-	emit pageParsed(thread(), m_pageInfo);
-	m_state.store(PendingState);
 }
 
 }

@@ -20,12 +20,16 @@ Application* Application::instance()
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_networkAccessManager(new QNetworkAccessManager(this))
-	, m_crawler(new Crawler(std::thread::hardware_concurrency(), this))
+	, m_modelController(new ModelController(this))
+	, m_crawler(new Crawler(std::thread::hardware_concurrency(), m_modelController, this))
+	, m_downloader(new Downloader)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
+	s_app = this;
+
 	initialize();
-	m_mainFrame.reset(new MainFrame());
+
+	m_downloader->scheduleRequest(QUrl("http://www.cyberforum.ru"));
 
 	initializeStyleSheet();
 
@@ -41,12 +45,17 @@ const Crawler* Application::crawler() const noexcept
 	return m_crawler;
 }
 
-MainFrame* Application::mainFrame() const noexcept
+MainFrame* Application::mainFrame() noexcept
 {
 	return m_mainFrame.get();
 }
 
-SoftwareBranding const* Application::softwareBrandingOptions() const noexcept
+ModelController* Application::modelController() noexcept
+{
+	return m_modelController;
+}
+
+const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 {
 	return m_softwareBrandingOptions.get();
 }
@@ -58,17 +67,16 @@ void Application::mainFrameReadyForShow()
 
 void Application::initialize() noexcept
 {
-	s_app = this;
+	m_mainFrame.reset(new MainFrame);
 
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
 
-	ServiceLocator::instance()->addService<NetworkAccessManagerFutureProvider>(
-		new NetworkAccessManagerFutureProvider(m_networkAccessManager));
+	ServiceLocator::instance()->addService<NetworkAccessManagerFutureProvider>(new NetworkAccessManagerFutureProvider);
 
-	ServiceLocator::instance()->addService<ModelController>(new ModelController);
+	m_downloader->start();
 }
 
 void Application::initializeStyleSheet() noexcept

@@ -1,18 +1,18 @@
 #include "application.h"
 #include "model_controller.h"
-#include "model_controller_data.h"
+#include "data_collection.h"
 
 namespace QuickieWebBot
 {
 
 ModelController::ModelController(QObject* parent)
-	: m_data(new ModelControllerData(this))
+	: m_data(new DataCollection(this))
 {
 }
 
 void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
-	data()->addPageInfo(pageInfo, ModelControllerData::CrawledUrlStorageType);
+	data()->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
 }
 
 void ModelController::setHost(QUrl const& host) noexcept
@@ -25,7 +25,7 @@ QUrl ModelController::host() const noexcept
 	return QString("http://www.php.su")/*m_host*/;
 }
 
-ModelControllerData* ModelController::data() noexcept
+DataCollection* ModelController::data() noexcept
 {
 	return m_data;
 }

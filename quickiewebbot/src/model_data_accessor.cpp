@@ -1,3 +1,4 @@
+#include "application.h"
 #include "model_data_accessor.h"
 #include "page_info_item_accessor_helper.h"
 #include "service_locator.h"
@@ -7,7 +8,7 @@
 namespace QuickieWebBot
 {
 
-ModelDataAccessorAllItems::ModelDataAccessorAllItems(ModelControllerData::StorageType storageType)
+ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType storageType)
 	: m_modelControllerData(nullptr)
 	, m_storageType(storageType)
 {
@@ -38,7 +39,7 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(ModelControllerData::Storag
 		PageInfoItemAccessorHelper::WordCount
 	};
 
-	m_modelControllerData = ServiceLocator::instance()->service<ModelController>()->data();
+	m_modelControllerData = theApp->modelController()->data();
 	VERIFY(QObject::connect(m_modelControllerData, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 }
 	
@@ -59,7 +60,7 @@ int ModelDataAccessorAllItems::rowCount() const
 	
 QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 {
-	const ModelControllerData::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
+	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
 	PageInfoItemAccessorHelper::ItemInfo info = static_cast<PageInfoItemAccessorHelper::ItemInfo>(m_columns[index.column()]);
 
 	return PageInfoItemAccessorHelper::value((*storage)[index.row()], info);

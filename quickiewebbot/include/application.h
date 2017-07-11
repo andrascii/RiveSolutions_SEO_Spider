@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main_frame.h"
+#include "downloader.h"
 #include "software_branding.h"
 
 namespace QuickieWebBot
@@ -18,8 +19,10 @@ public:
 	Application(int& argc, char** argv);
 
 	const Crawler* crawler() const noexcept;
-	MainFrame* mainFrame() const noexcept;
-	SoftwareBranding const* softwareBrandingOptions() const noexcept;
+	MainFrame* mainFrame() noexcept;
+	ModelController* modelController() noexcept;
+
+	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 private:
 	Q_SLOT void mainFrameReadyForShow();
@@ -32,9 +35,11 @@ private:
 private:
 	static Application* s_app;
 	
-	QNetworkAccessManager* m_networkAccessManager;
+	ModelController* m_modelController;
+	
 	Crawler* m_crawler;
-
+	
+	std::unique_ptr<Downloader> m_downloader;
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 };

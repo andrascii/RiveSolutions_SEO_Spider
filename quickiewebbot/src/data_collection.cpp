@@ -1,10 +1,10 @@
-#include "model_controller_data.h"
+#include "data_collection.h"
 #include "page_info.h"
 
 namespace QuickieWebBot
 {
 
-ModelControllerData::ModelControllerData(QObject* parent)
+DataCollection::DataCollection(QObject* parent)
 	: QObject(parent)
 	, m_crawlerStorageMap(std::initializer_list<std::pair<const int, CrawlerStorageTypePtr>>
 	{
@@ -171,7 +171,7 @@ ModelControllerData::ModelControllerData(QObject* parent)
 {
 }
 
-bool ModelControllerData::isPageInfoExists(const PageInfoPtr& pageInfo, int storageType) const noexcept
+bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, int storageType) const noexcept
 {
 	qDebug() << pageInfo->url.toString();
 
@@ -180,7 +180,7 @@ bool ModelControllerData::isPageInfoExists(const PageInfoPtr& pageInfo, int stor
 	return pQueue->find(pageInfo) != pQueue->end();
 }
 
-void ModelControllerData::addPageInfo(const PageInfoPtr& pageInfo, int storageType) noexcept
+void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, int storageType) noexcept
 {
 	if (isPageInfoExists(pageInfo, storageType))
 	{
@@ -196,29 +196,29 @@ void ModelControllerData::addPageInfo(const PageInfoPtr& pageInfo, int storageTy
 	emit pageInfoAdded(static_cast<int>(guiStorage(storageType)->size() - 1), storageType);
 }
 
-ModelControllerData::GuiStorageType* ModelControllerData::guiStorage(int type) noexcept
+DataCollection::GuiStorageType* DataCollection::guiStorage(int type) noexcept
 {
 	return m_guiStorageMap[type].get();
 }
 
-ModelControllerData::GuiStorageType const* ModelControllerData::guiStorage(int type) const noexcept
+DataCollection::GuiStorageType const* DataCollection::guiStorage(int type) const noexcept
 {
-	const GuiStorageType* pQueue = const_cast<ModelControllerData* const>(this)->guiStorage(type);
+	const GuiStorageType* pQueue = const_cast<DataCollection* const>(this)->guiStorage(type);
 	return pQueue;
 }
 
-ModelControllerData::CrawlerStorageType* ModelControllerData::crawlerStorage(int type) noexcept
+DataCollection::CrawlerStorageType* DataCollection::crawlerStorage(int type) noexcept
 {
 	return m_crawlerStorageMap[type].get();
 }
 
-ModelControllerData::CrawlerStorageType const* ModelControllerData::crawlerStorage(int type) const noexcept
+DataCollection::CrawlerStorageType const* DataCollection::crawlerStorage(int type) const noexcept
 {
-	const CrawlerStorageType* pQueue = const_cast<ModelControllerData* const>(this)->crawlerStorage(type);
+	const CrawlerStorageType* pQueue = const_cast<DataCollection* const>(this)->crawlerStorage(type);
 	return pQueue;
 }
 
-void ModelControllerData::checkStorageType(int type) const noexcept
+void DataCollection::checkStorageType(int type) const noexcept
 {
 	assert(
 		type == CrawledUrlStorageType || 

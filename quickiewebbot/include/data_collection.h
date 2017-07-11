@@ -6,7 +6,7 @@
 namespace QuickieWebBot
 {
 
-class ModelControllerData : public QObject
+class DataCollection : public QObject
 {
 	Q_OBJECT
 
@@ -59,7 +59,7 @@ public:
 		VeryLongAltTextImageStorageType
 	};
 
-	ModelControllerData(QObject* parent);
+	DataCollection(QObject* parent);
 
 	bool isPageInfoExists(const PageInfoPtr& pageInfo, int storageType) const noexcept;
 	void addPageInfo(const PageInfoPtr& pageInfo, int storageType) noexcept;

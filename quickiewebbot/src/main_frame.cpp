@@ -2,7 +2,7 @@
 #include "model_controller.h"
 #include "model_data_accessor_stub.h"
 #include "model_data_accessor.h"
-#include "model_controller_data.h"
+#include "data_collection.h"
 #include "table_view_span_extension.h"
 #include "application.h"
 #include "crawler.h"
@@ -21,9 +21,9 @@ void MainFrame::init()
 {
 	ui.setupUi(this);
 
-	VERIFY(connect(ui.actionAbout, &QAction::triggered, myApp, &Application::aboutQt));
-	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, myApp->crawler(), &Crawler::start));
-	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, myApp->crawler(), &Crawler::stop));
+	VERIFY(connect(ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
+	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->crawler(), &Crawler::start));
+	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->crawler(), &Crawler::stop));
 
 	ui.viewTypeComboBox->addItem(tr("List"));
 	ui.viewTypeComboBox->addItem(tr("Tree"));
@@ -36,7 +36,7 @@ void MainFrame::init()
 	//model->setDataAccessor(s_stub.allProcessedItems());
 
 	
-	model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(ModelControllerData::CrawledUrlStorageType));
+	model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(DataCollection::CrawledUrlStorageType));
 
 	ui.crawlingTableView->setModel(model);
 	ui.crawlingTableView->setItemDelegate(new HyperlinkItemDelegate(ui.crawlingTableView));
