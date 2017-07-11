@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Common
+namespace QuickieWebBot
 {
 
 const int g_minimumRecommendedTimerResolution = 21;

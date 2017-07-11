@@ -8,7 +8,7 @@ namespace QuickieWebBot
 
 PageInfoAcceptor::PageInfoAcceptor(WebCrawlerInternalUrlStorage* crawlerStorage, QueuedDownloader* queuedDownloader, QObject* parent)
 	: QObject(parent)
-	, m_crawlerStorage(crawlerStorage)
+	, m_webCrawlerInternalUrlStorage(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
 	, m_pageInfo(new PageInfo)
 	, m_timerId(0)
@@ -22,14 +22,17 @@ const std::vector<QUrl>& PageInfoAcceptor::pageUrlList() const noexcept
 
 void PageInfoAcceptor::start()
 {
-	m_timerId = startTimer(Common::g_minimumRecommendedTimerResolution);
+	m_timerId = startTimer(g_minimumRecommendedTimerResolution);
 	assert(m_timerId);
 }
 
 void PageInfoAcceptor::stop()
 {
-	assert(m_timerId);
-	killTimer(m_timerId);
+	if (m_timerId)
+	{
+		killTimer(m_timerId);
+		m_timerId = 0;
+	}
 }
 
 void PageInfoAcceptor::timerEvent(QTimerEvent* event)
@@ -42,12 +45,13 @@ void PageInfoAcceptor::processWebPage()
 	QUrl url;
 	QueuedDownloader::Reply reply;
 
-	if (!m_crawlerStorage->get(url))
+	if (!m_webCrawlerInternalUrlStorage->extractUrl(url))
 	{
 		return;
 	}
 
 	m_queuedDownloader->scheduleUrl(url);
+
 	m_queuedDownloader->extractReply(reply, QueuedDownloader::SuspendExtractPolicy);
 
 	parseWebPage(reply.responseBody);
@@ -55,7 +59,7 @@ void PageInfoAcceptor::processWebPage()
 	m_pageInfo->url = reply.url;
 	m_pageInfo->serverResponse = reply.responseHeaderValuePairs;
 
-	m_crawlerStorage->saveUrlList(pageUrlList());
+	m_webCrawlerInternalUrlStorage->saveUrlList(pageUrlList());
 
 	emit pageParsed(m_pageInfo);
 }

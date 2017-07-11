@@ -5,12 +5,9 @@ namespace QuickieWebBot
 {
 
 QueuedDownloader::QueuedDownloader()
-	: QObject(nullptr)
-	, m_networkAccessManager(new QNetworkAccessManager(this))
-	, m_timerId(0)
-	, m_isRunning(false)
+	: m_networkAccessManager(new QNetworkAccessManager(this))
 {
-	moveToThread(&m_thisThread);
+	moveThisToSeparateThread();
 
 	VERIFY(connect(m_networkAccessManager, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*))));
 }
@@ -18,48 +15,12 @@ QueuedDownloader::QueuedDownloader()
 QueuedDownloader::~QueuedDownloader()
 {
 	stop();
-	wait();
-}
-
-bool QueuedDownloader::isRunning() const noexcept
-{
-	return m_isRunning.load();
-}
-
-void QueuedDownloader::start()
-{
-	if (!m_thisThread.isRunning())
-	{
-		m_thisThread.start();
-
-		QMetaObject::invokeMethod(this, "startTimer", Qt::BlockingQueuedConnection,
-			Q_ARG(int, Common::g_minimumRecommendedTimerResolution), Q_ARG(Qt::TimerType, Qt::CoarseTimer));
-
-		assert(m_timerId);
-
-		m_isRunning.store(true);
-	}
 }
 
 void QueuedDownloader::stop()
 {
-	if (m_thisThread.isRunning())
-	{
-		assert(m_timerId);
-
-		QMetaObject::invokeMethod(this, "killTimer",
-			Qt::BlockingQueuedConnection, Q_ARG(int, m_timerId));
-
-		m_thisThread.quit();
-
-		m_isRunning.store(false);
-		m_repliesWaitCondition.notify_all();
-	}
-}
-
-void QueuedDownloader::wait()
-{
-	m_thisThread.wait();
+	AbstractThreadableObject::stop();
+	m_repliesWaitCondition.notify_all();
 }
 
 void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
@@ -83,7 +44,7 @@ bool QueuedDownloader::extractReply(Reply& response, ReplyExtractPolicy type) no
 		while (!m_repliesQueue.size())
 		{
 			m_repliesWaitCondition.wait(locker);
-			
+
 			if (!isRunning())
 			{
 				return false;
@@ -115,11 +76,6 @@ bool QueuedDownloader::extractReply(Reply& response, ReplyExtractPolicy type) no
 	return false;
 }
 
-void QueuedDownloader::timerEvent(QTimerEvent* event)
-{
-	processUrlQueue();
-}
-
 void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 {
 	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);
@@ -136,7 +92,7 @@ void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 	m_repliesWaitCondition.notify_all();
 }
 
-void QueuedDownloader::processUrlQueue()
+void QueuedDownloader::process()
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
 
@@ -145,21 +101,6 @@ void QueuedDownloader::processUrlQueue()
 		m_networkAccessManager->get(QNetworkRequest(url));
 		m_requestQueue.erase(m_requestQueue.begin());
 	}
-}
-
-void QueuedDownloader::stopProcessingUrlQueue()
-{
-	m_networkAccessManager->setNetworkAccessible(QNetworkAccessManager::NotAccessible);
-}
-
-void QueuedDownloader::startTimer(int interval, Qt::TimerType timerType)
-{
-	m_timerId = QObject::startTimer(interval, timerType);
-}
-
-void QueuedDownloader::killTimer(int timerId)
-{
-	QObject::killTimer(timerId);
 }
 
 }

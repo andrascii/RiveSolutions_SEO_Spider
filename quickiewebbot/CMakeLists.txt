@@ -5,7 +5,6 @@ set(AppSourcesDir src)
 set(AppHeadersDir include)
 
 # deps headers
-set(CommonLibHeadersDir ../common/include)
 set(GumboLibHeadersDir ../gumbo)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
@@ -70,7 +69,6 @@ endif()
 
 include_directories(
 	${AppHeadersDir}
-	${CommonLibHeadersDir}
 	${GumboLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
@@ -78,7 +76,6 @@ include_directories(
 
 target_link_libraries(
 	${AppName}
-	${CommonLibName}
 	${GumboLibName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}

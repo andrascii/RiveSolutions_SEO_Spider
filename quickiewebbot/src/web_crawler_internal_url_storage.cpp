@@ -10,7 +10,7 @@ void WebCrawlerInternalUrlStorage::setHost(const QUrl& url)
 	m_internalUrlList.insert(url);
 }
 
-bool WebCrawlerInternalUrlStorage::get(QUrl& url) noexcept
+bool WebCrawlerInternalUrlStorage::extractUrl(QUrl& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 

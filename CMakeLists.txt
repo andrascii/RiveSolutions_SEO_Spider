@@ -5,7 +5,6 @@ project(${AppName})
 
 set(GuiBinName ${AppName})
 set(GumboLibName gumbo)
-set(CommonLibName common)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -43,4 +42,3 @@ ENDMACRO(add_msvc_precompiled_header)
 
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
-add_subdirectory(${CommonLibName})

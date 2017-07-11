@@ -42,7 +42,7 @@ private:
 	unsigned countChildren(const GumboNode* node, GumboTag tag) const noexcept;
 
 private:
-	WebCrawlerInternalUrlStorage* m_crawlerStorage;
+	WebCrawlerInternalUrlStorage* m_webCrawlerInternalUrlStorage;
 
 	QueuedDownloader* m_queuedDownloader;
 
