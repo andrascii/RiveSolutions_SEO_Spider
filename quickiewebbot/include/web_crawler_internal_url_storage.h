@@ -5,16 +5,17 @@
 namespace QuickieWebBot
 {
 
-class CrawlerStorage
+class WebCrawlerInternalUrlStorage
 {
 public:
+	
+	// all methods are thread-safe
 
 	void setHost(const QUrl& url);
 
-	//
-	// Returns random url for crawling
-	//
-	QUrl get() noexcept;
+	// returns random url for crawling (async operation)
+	bool get(QUrl& url) noexcept;
+
 	void saveUrlList(const std::vector<QUrl>& urlList) noexcept;
 
 private:

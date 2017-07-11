@@ -173,8 +173,6 @@ DataCollection::DataCollection(QObject* parent)
 
 bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, int storageType) const noexcept
 {
-	qDebug() << pageInfo->url.toString();
-
 	checkStorageType(storageType);
 	CrawlerStorageType const* pQueue = crawlerStorage(storageType);
 	return pQueue->find(pageInfo) != pQueue->end();
@@ -185,8 +183,6 @@ void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, int storageType) n
 	if (isPageInfoExists(pageInfo, storageType))
 	{
 		auto iter = crawlerStorage(storageType)->find(pageInfo);
-
-		qDebug() << "not inserted because it the same as " << (*iter)->url;
 		return;
 	}
 

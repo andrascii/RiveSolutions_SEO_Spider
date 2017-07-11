@@ -5,6 +5,7 @@
 
 namespace QuickieWebBot
 {
+
 GridView::GridView(QWidget * parent)
 	: QTableView(parent)
 	, m_accessor(nullptr)

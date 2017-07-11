@@ -356,7 +356,7 @@
   <customwidget>
    <class>QuickieWebBot::GridView</class>
    <extends>QTableView</extends>
-   <header>gridview.h</header>
+   <header>grid_view.h</header>
   </customwidget>
  </customwidgets>
  <resources>

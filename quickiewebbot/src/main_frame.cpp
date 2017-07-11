@@ -7,6 +7,7 @@
 #include "crawler.h"
 #include "gridview_extension.h"
 #include "gridview_delegate.h"
+#include "web_crawler.h"
 
 namespace QuickieWebBot
 {
@@ -22,8 +23,8 @@ void MainFrame::init()
 	ui.setupUi(this);
 
 	VERIFY(connect(ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->crawler(), &Crawler::start));
-	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->crawler(), &Crawler::stop));
+	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::start));
+	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stop));
 
 	ui.viewTypeComboBox->addItem(tr("List"));
 	ui.viewTypeComboBox->addItem(tr("Tree"));
