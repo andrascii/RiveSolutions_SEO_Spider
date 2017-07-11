@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main_frame.h"
+#include "downloader.h"
 #include "software_branding.h"
 
 namespace QuickieWebBot
@@ -35,8 +36,10 @@ private:
 	static Application* s_app;
 	
 	ModelController* m_modelController;
+	
 	Crawler* m_crawler;
-
+	
+	std::unique_ptr<Downloader> m_downloader;
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 };

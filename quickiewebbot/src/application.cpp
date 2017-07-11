@@ -22,10 +22,14 @@ Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_modelController(new ModelController(this))
 	, m_crawler(new Crawler(std::thread::hardware_concurrency(), m_modelController, this))
+	, m_downloader(new Downloader)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
+	s_app = this;
+
 	initialize();
-	m_mainFrame.reset(new MainFrame());
+
+	m_downloader->scheduleRequest(QUrl("http://www.cyberforum.ru"));
 
 	initializeStyleSheet();
 
@@ -63,7 +67,7 @@ void Application::mainFrameReadyForShow()
 
 void Application::initialize() noexcept
 {
-	s_app = this;
+	m_mainFrame.reset(new MainFrame);
 
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
@@ -71,6 +75,8 @@ void Application::initialize() noexcept
 #endif
 
 	ServiceLocator::instance()->addService<NetworkAccessManagerFutureProvider>(new NetworkAccessManagerFutureProvider);
+
+	m_downloader->start();
 }
 
 void Application::initializeStyleSheet() noexcept

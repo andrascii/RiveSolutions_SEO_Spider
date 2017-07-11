@@ -1,4 +1,5 @@
 #include "application.h"
+#include "software_branding.h"
 #include "start_screen.h"
 
 namespace QuickieWebBot
