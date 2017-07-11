@@ -40,16 +40,15 @@ void PageInfoAcceptor::timerEvent(QTimerEvent* event)
 void PageInfoAcceptor::processWebPage()
 {
 	QUrl url;
+	QueuedDownloader::Reply response;
 
 	if (!m_crawlerStorage->get(url))
 	{
 		return;
 	}
 
-	QueuedDownloader::Response response;
-
 	m_queuedDownloader->scheduleUrl(url);
-	m_queuedDownloader->extractResponse(response, QueuedDownloader::SuspendExtractType);
+	m_queuedDownloader->extractResponse(response, QueuedDownloader::SuspendExtractPolicy);
 
 	parseWebPage(response.responseBody);
 

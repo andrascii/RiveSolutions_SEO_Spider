@@ -8,6 +8,7 @@ QueuedDownloader::QueuedDownloader()
 	: QObject(nullptr)
 	, m_networkAccessManager(new QNetworkAccessManager(this))
 	, m_timerId(0)
+	, m_isRunning(false)
 {
 	moveToThread(&m_thisThread);
 
@@ -22,7 +23,7 @@ QueuedDownloader::~QueuedDownloader()
 
 bool QueuedDownloader::isRunning() const noexcept
 {
-	return m_isRunning;
+	return m_isRunning.load();
 }
 
 void QueuedDownloader::start()
@@ -36,7 +37,7 @@ void QueuedDownloader::start()
 
 		assert(m_timerId);
 
-		m_isRunning = true;
+		m_isRunning.store(true);
 	}
 }
 
@@ -51,7 +52,8 @@ void QueuedDownloader::stop()
 
 		m_thisThread.quit();
 
-		m_isRunning = false;
+		m_isRunning.store(false);
+		m_repliesWaitCondition.notify_all();
 	}
 }
 
@@ -72,15 +74,20 @@ void QueuedDownloader::scheduleUrlList(const QList<QUrl>& urlList) noexcept
 	m_requestQueue.append(urlList);
 }
 
-bool QueuedDownloader::extractResponse(Response& response, ResponseExtractType type) noexcept
+bool QueuedDownloader::extractResponse(Reply& response, ReplyExtractPolicy type) noexcept
 {
-	if (type == SuspendExtractType)
+	if (type == SuspendExtractPolicy)
 	{
 		std::unique_lock<std::mutex> locker(m_repliesQueueMutex);
 
 		while (!m_repliesQueue.size())
 		{
 			m_repliesWaitCondition.wait(locker);
+			
+			if (!isRunning())
+			{
+				return false;
+			}
 		}
 
 		response = std::move(*m_repliesQueue.begin());
@@ -89,7 +96,7 @@ bool QueuedDownloader::extractResponse(Response& response, ResponseExtractType t
 		return true;
 	}
 
-	if (type == AsyncExtractType)
+	if (type == AsyncExtractPolicy)
 	{
 		std::unique_lock<std::mutex> locker(m_repliesQueueMutex); 
 		
@@ -104,7 +111,7 @@ bool QueuedDownloader::extractResponse(Response& response, ResponseExtractType t
 		return true;
 	}
 
-	assert(!"Invalid ResponseExtractType");
+	assert(!"Invalid RepliesExtractType");
 	return false;
 }
 
@@ -117,7 +124,7 @@ void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 {
 	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);
 
-	Response response{ reply->url(), reply->readAll() };
+	Reply response{ reply->url(), reply->readAll() };
 
 	for (const QPair<QByteArray, QByteArray>& headerValuePair : reply->rawHeaderPairs())
 	{

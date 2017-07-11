@@ -8,13 +8,13 @@ class QueuedDownloader : public QObject
 	Q_OBJECT
 
 public:
-	enum ResponseExtractType
+	enum ReplyExtractPolicy
 	{
-		SuspendExtractType,
-		AsyncExtractType
+		SuspendExtractPolicy,
+		AsyncExtractPolicy
 	};
 
-	struct Response
+	struct Reply
 	{
 		QUrl url;
 		QString responseBody;
@@ -32,7 +32,7 @@ public:
 	void scheduleUrl(const QUrl& url) noexcept;
 	void scheduleUrlList(const QList<QUrl>& urlList) noexcept;
 
-	bool extractResponse(Response& response, ResponseExtractType type) noexcept;
+	bool extractResponse(Reply& response, ReplyExtractPolicy type) noexcept;
 
 protected:
 	virtual void timerEvent(QTimerEvent* event) override;
@@ -55,10 +55,10 @@ private:
 	std::mutex m_repliesQueueMutex;
 	std::condition_variable m_repliesWaitCondition;
 	QQueue<QUrl> m_requestQueue;
-	QQueue<Response> m_repliesQueue;
+	QQueue<Reply> m_repliesQueue;
 
 	int m_timerId;
-	bool m_isRunning;
+	std::atomic_bool m_isRunning;
 };
 
 }
