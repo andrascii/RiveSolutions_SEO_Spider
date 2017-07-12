@@ -1,7 +1,7 @@
 #pragma once
 
 #include "page_info.h"
-#include "gridview_painter.h"
+#include "grid_view_painter.h"
 
 namespace QuickieWebBot
 {
@@ -48,7 +48,7 @@ public:
 	virtual QColor itemTextColor(const QModelIndex& index) const override
 	{
 		// not working, why?
-		return flags(index) & IModelDataAccessor::ItemFlagUrl ? Qt::blue : Qt::black;
+		return flags(index) & IModelDataAccessor::ItemFlagUrl ? QColor("#050577") : Qt::black;
 	}
 };
 

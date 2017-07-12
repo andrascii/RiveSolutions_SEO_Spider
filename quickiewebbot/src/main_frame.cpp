@@ -4,8 +4,8 @@
 #include "model_data_accessor_factory.h"
 #include "data_collection.h"
 #include "application.h"
-#include "gridview_extension.h"
-#include "gridview_delegate.h"
+#include "grid_view_extension.h"
+#include "grid_view_delegate.h"
 #include "web_crawler.h"
 
 namespace QuickieWebBot

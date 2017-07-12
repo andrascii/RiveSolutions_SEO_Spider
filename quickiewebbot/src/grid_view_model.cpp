@@ -1,4 +1,4 @@
-#include "gridview_model.h"
+#include "grid_view_model.h"
 
 namespace QuickieWebBot
 {

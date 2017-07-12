@@ -4,7 +4,8 @@
 #include "service_locator.h"
 #include "model_controller.h"
 #include "page_info_item_accessor_helper.h"
-#include "gridview_painter_text.h"
+#include "grid_view_painter_text.h"
+#include "grid_view_painter_background.h"
 
 namespace QuickieWebBot
 {
@@ -104,8 +105,9 @@ std::vector<GridViewPainter*> ModelDataAccessorAllItems::painters(const QModelIn
 {
 	Q_UNUSED(index);
 	static GridViewPainterText s_painterText;
+	static GridViewPainterBackground s_painterBackground;
 
-	return { &s_painterText };
+	return { &s_painterBackground, &s_painterText };
 }
 
 

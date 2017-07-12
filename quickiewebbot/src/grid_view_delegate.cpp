@@ -1,6 +1,6 @@
-#include "gridview_delegate.h"
+#include "grid_view_delegate.h"
 #include "imodel_data_accessor.h"
-#include "gridview_painter.h"
+#include "grid_view_painter.h"
 #include "grid_view.h"
 
 namespace QuickieWebBot
