@@ -14,10 +14,10 @@ namespace QuickieWebBot
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
 {
-	init();
+	initialize();
 }
 
-void MainFrame::init()
+void MainFrame::initialize()
 {
 	ui.setupUi(this);
 
