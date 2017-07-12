@@ -4,7 +4,7 @@ namespace QuickieWebBot
 {
 Logger::Logger(QObject* parent) : QObject(parent)
 {
-	QProcess* loggerProc =  new QProcess();
+	QProcess* loggerProc =  new QProcess(this);
 	loggerProc->start("logger.exe", QIODevice::WriteOnly);
 	if (!loggerProc->waitForStarted(2000))
 	{
