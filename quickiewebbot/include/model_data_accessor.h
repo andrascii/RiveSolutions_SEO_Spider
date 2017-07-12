@@ -1,26 +1,30 @@
 #pragma once
 
 #include "imodel_data_accessor.h"
-#include "model_controller_data.h"
+#include "data_collection.h"
 
 namespace QuickieWebBot
 {
 
 class ModelDataAccessorAllItems 
 	: public QObject
-	, public IModelDataAccessorItem
+	, public ModelDataAccessorBase
 {
 	Q_OBJECT
+
 public:
-	ModelDataAccessorAllItems(ModelControllerData* data, ModelControllerData::StorageType storageType);
+	ModelDataAccessorAllItems(DataCollection::StorageType storageType);
 	virtual int columnCount() const override;
 	virtual QString columnText(int column) const override;
 
 	virtual int rowCount() const override;
 	virtual QVariant itemValue(const QModelIndex& index) const override;
+	virtual QColor itemBackgroundColor(const QModelIndex& index) const override;
 	virtual int itemColSpan(const QModelIndex& index) const override;
+	virtual int flags(const QModelIndex& index) const override;
 
 	virtual QAbstractItemDelegate* itemDelegate(const QModelIndex& index) const override;
+	virtual QPixmap* pixmap(const QModelIndex& index) const override;
 
 	virtual QObject* qobject() override;
 
@@ -30,12 +34,14 @@ public:
 	Q_SIGNAL void rowAdded(int row);
 	Q_SIGNAL void reset();
 
+	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
+
 protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
 
 private:
-	ModelControllerData* m_modelControllerData;
-	ModelControllerData::StorageType m_storageType;
+	const DataCollection* m_modelControllerData;
+	DataCollection::StorageType m_storageType;
 	std::vector<int> m_columns;
 };
 

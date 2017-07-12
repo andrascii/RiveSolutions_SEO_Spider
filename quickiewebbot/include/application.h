@@ -7,20 +7,23 @@ namespace QuickieWebBot
 {
 
 class ModelController;
+class WebCrawler;
 
 class Application : public QApplication
 {
 	Q_OBJECT
 
 public:
-	static Application* instance();
 	Application(int& argc, char** argv);
 
-	MainFrame* mainFrame() const noexcept;
-	SoftwareBranding const* softwareBrandingOptions() const noexcept;
+	const WebCrawler* webCrawler() const noexcept;
+	MainFrame* mainFrame() noexcept;
+	ModelController* modelController() noexcept;
+
+	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 private:
-	Q_SLOT void mainFrameReadyForShow();
+	Q_SLOT void mainFrameIsReadyForShow();
 
 private:
 	void initialize() noexcept;
@@ -28,10 +31,10 @@ private:
 	void showStartScreen() const noexcept;
 
 private:
-	static Application* s_app;
-
 	ModelController* m_modelController;
-
+	
+	WebCrawler* m_webCrawler;
+	
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 };

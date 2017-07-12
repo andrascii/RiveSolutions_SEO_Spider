@@ -1,4 +1,5 @@
 #include "application.h"
+#include "software_branding.h"
 #include "start_screen.h"
 
 namespace QuickieWebBot
@@ -20,12 +21,12 @@ StartScreen* StartScreen::instance()
 
 void StartScreen::show()
 {
-	m_timer->setInterval(5000);
+	m_timer->setInterval(3000);
 	m_timer->setSingleShot(true);
 
 	VERIFY(connect(m_timer, &QTimer::timeout, this, &QWidget::deleteLater));
 
-	__super::show();
+	QWidget::show();
 
 	m_timer->start();
 }
@@ -39,7 +40,7 @@ StartScreen::StartScreen()
 
 	s_alreadyShown = true;
 
-	m_brandingLogoImage = myApp->softwareBrandingOptions()->brandingLogoImage();
+	m_brandingLogoImage = theApp->softwareBrandingOptions()->brandingLogoImage();
 
 	m_startScreenContent->setupUi(this);
 

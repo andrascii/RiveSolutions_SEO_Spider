@@ -53,6 +53,7 @@ void LoggerMainWindow::slotReadyRead()
 			break;
 		}
 		QString str;
+
 		in >> str;
 
 		m_incomingMessages.append(str.split('|'));

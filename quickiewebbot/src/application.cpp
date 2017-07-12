@@ -4,58 +4,63 @@
 #include "model_controller.h"
 #include "software_branding.h"
 #include "start_screen.h"
-#include "logger.h"
+#include "service_locator.h"
+#include "web_crawler.h"
+#include "constants.h"
 
 namespace QuickieWebBot
 {
 
-Application* Application::s_app = nullptr;
-
-Application* Application::instance()
-{
-	return s_app;
-}
-
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_modelController(new ModelController(this))
-	, m_mainFrame(new MainFrame(m_modelController))
+	, m_webCrawler(new WebCrawler(g_optimalParserThreadsCount, m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
 	initialize();
 
 	initializeStyleSheet();
 
+#if defined(PRODUCTION)
 	showStartScreen();
+#else
+	mainFrameIsReadyForShow();
+#endif
 }
 
-MainFrame* Application::mainFrame() const noexcept
+const WebCrawler* Application::webCrawler() const noexcept
+{
+	return m_webCrawler;
+}
+
+MainFrame* Application::mainFrame() noexcept
 {
 	return m_mainFrame.get();
 }
 
-SoftwareBranding const* Application::softwareBrandingOptions() const noexcept
+ModelController* Application::modelController() noexcept
+{
+	return m_modelController;
+}
+
+const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 {
 	return m_softwareBrandingOptions.get();
 }
 
-void Application::mainFrameReadyForShow()
+void Application::mainFrameIsReadyForShow()
 {
 	mainFrame()->showMaximized();
 }
 
 void Application::initialize() noexcept
 {
-	s_app = this;
+	m_mainFrame.reset(new MainFrame);
+
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
-	INFOLOG("tag1", "text1");
-	INFOLOG("tag2", "text2");
-	WARNINGLOG("warning", "warning text");
-	ERRORLOG("error", "error text");
-	DEBUGLOG("deb", "il");
 }
 
 void Application::initializeStyleSheet() noexcept
@@ -74,7 +79,7 @@ void Application::showStartScreen() const noexcept
 {
 	StartScreen* startScreen = StartScreen::instance();
 
-	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameReadyForShow));
+	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameIsReadyForShow));
 
 	startScreen->show();
 }

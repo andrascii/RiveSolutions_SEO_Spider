@@ -1,19 +1,32 @@
 #pragma once
 
-#include "website_analyse_element.h"
-#include "model_controller_data.h"
+#include "page_info.h"
 
 namespace QuickieWebBot
 {
 
-class ModelController: public ModelControllerData
+class DataCollection;
+
+class ModelController : public QObject
 {
 	Q_OBJECT
 
 public:
 	ModelController(QObject* parent = nullptr);
 
-	Q_INVOKABLE void addWebsiteAnalyseElement(std::shared_ptr<WebsiteAnalyseElement> urlInfo);
+	void addPageInfo(PageInfoPtr pageInfo) noexcept;
+
+	void setHost(QUrl const& host) noexcept;
+	QUrl host() const noexcept;
+
+	DataCollection* data() noexcept;
+
+private:
+
+
+private:
+	QUrl m_host;
+	DataCollection* m_data;
 };
 
 }

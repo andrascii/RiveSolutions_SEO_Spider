@@ -38,14 +38,14 @@
 #include <QDialog>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QTableView>
 #include <QMessageBox>
 #include <QTextCodec>
 #include <QAbstractListModel>
 #include <QKeyEvent>
 #include <QMetaObject>
 #include <QMetaMethod>
-#include <QTcpServer>
-#include <QTcpSocket>
+#include <QMetaType>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
@@ -53,24 +53,25 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QTimer>
+#include <QTcpSocket>
+#include <QTcpServer>
 #include <QAbstractItemDelegate>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QReadWriteLock>
+#include <QSemaphore>
+#include <QWaitCondition>
+#include <QQueue>
+#include <QDebug>
+#include <QStyledItemDelegate>
 
-//
-// Наш код
-//
-#include "logger.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
 
-#define myApp Application::instance()
+#define theApp static_cast<Application*>(Application::instance())
 
 #define STRING(Any) #Any
-
-#define INFOLOG(tag, text) Logger::instance()->log(Logger::InformationMessageType,tag,text,__FUNCTION__)
-#define DEBUGLOG(tag, text) Logger::instance()->log(Logger::DebugMessageType,tag,text,__FUNCTION__)
-#define WARNINGLOG(tag, text) Logger::instance()->log(Logger::WarningMessageType,tag,text,__FUNCTION__)
-#define ERRORLOG(tag, text) Logger::instance()->log(Logger::ErrorMessageType,tag,text,__FUNCTION__)
 
 #if defined(NDEBUG)
 #define PRODUCTION
@@ -85,3 +86,8 @@ using std::size_t;
 #else
 #define VERIFY(Connection) Connection
 #endif
+
+#define INFOLOG(tag, text) Logger::instance()->log(Logger::InformationMessageType,tag,text,__FUNCTION__)
+#define DEBUGLOG(tag, text) Logger::instance()->log(Logger::DebugMessageType,tag,text,__FUNCTION__)
+#define WARNINGLOG(tag, text) Logger::instance()->log(Logger::WarningMessageType,tag,text,__FUNCTION__)
+#define ERRORLOG(tag, text) Logger::instance()->log(Logger::ErrorMessageType,tag,text,__FUNCTION__)

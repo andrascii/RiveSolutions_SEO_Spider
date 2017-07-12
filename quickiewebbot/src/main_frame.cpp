@@ -1,24 +1,29 @@
 #include "main_frame.h"
 #include "model_controller.h"
 #include "model_data_accessor_stub.h"
-#include "model_data_accessor.h"
-#include "model_controller_data.h"
+#include "model_data_accessor_factory.h"
+#include "data_collection.h"
+#include "application.h"
+#include "gridview_extension.h"
+#include "gridview_delegate.h"
+#include "web_crawler.h"
 
 namespace QuickieWebBot
 {
 
-MainFrame::MainFrame(ModelControllerData* data, QWidget* parent)
+MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
-	, m_data(data)
 {
-	init();
+	initialize();
 }
 
-void MainFrame::init()
+void MainFrame::initialize()
 {
 	ui.setupUi(this);
 
-	VERIFY(connect(ui.actionAbout, &QAction::triggered, qApp, &QApplication::aboutQt));
+	VERIFY(connect(ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
+	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::startCrawling));
+	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));
 
 	ui.viewTypeComboBox->addItem(tr("List"));
 	ui.viewTypeComboBox->addItem(tr("Tree"));
@@ -26,13 +31,15 @@ void MainFrame::init()
 	//////////////////////////////////////////////////////////////////////////
 	// Debug code
 
-	TableModel* model = new TableModel(this);
-	static ModelDataAccessorStub s_stub;
-	model->setDataAccessor(s_stub.allProcessedItems());
-	
-	//model->setDataAccessor(std::make_unique<ModelDataAccessorAllItems>(m_data, ModelControllerData::CrawledUrlStorageType));
+	GridViewModel* model = new GridViewModel(this);
+	//static ModelDataAccessorStub s_stub;
+	//model->setDataAccessor(s_stub.allProcessedItems());
 
+	ModelDataAccessorFactory factory;
+	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams()));
 	ui.crawlingTableView->setModel(model);
+	ui.crawlingTableView->setItemDelegate(new GridViewDelegate(ui.crawlingTableView));
+	new GridViewExtension(ui.crawlingTableView);
 	//////////////////////////////////////////////////////////////////////////
 }
 

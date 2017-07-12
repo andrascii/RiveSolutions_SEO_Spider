@@ -5,22 +5,19 @@
 namespace QuickieWebBot
 {
 
-class ModelControllerData;
-
 class MainFrame : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	MainFrame(ModelControllerData* data, QWidget *parent = 0);
+	MainFrame(QWidget *parent = 0);
 
 
 private:
-	void init();
+	void initialize();
 
 private:
 	Ui::MainFrameClass ui;
-	ModelControllerData* m_data;
 };
 
 }
