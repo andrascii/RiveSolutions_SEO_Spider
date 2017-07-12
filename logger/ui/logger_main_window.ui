@@ -47,7 +47,21 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="clearButton">
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLineEdit" name="lineEdit"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Find</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

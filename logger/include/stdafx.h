@@ -23,6 +23,7 @@
 #include <utility>
 #include <cassert>
 #include <functional>
+#include <iostream>
 
 //
 // boost
@@ -49,16 +50,13 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QProcess>
-#include <iostream>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
-
+#include <QTimer>
 
 using namespace std::chrono_literals;
 using std::size_t;
-
-#define myApp Application::instance()
 
 #define STRING(Any) #Any
 

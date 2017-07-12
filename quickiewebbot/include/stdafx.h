@@ -64,6 +64,7 @@
 #include <QQueue>
 #include <QDebug>
 #include <QStyledItemDelegate>
+#include <QProcess>
 
 #include "logger.h"
 
@@ -89,6 +90,12 @@ using std::size_t;
 #endif
 
 #define INFOLOG(tag, text) Logger::instance()->log(Logger::InformationMessageType,tag,text,__FUNCTION__)
+
+#ifdef DEBUG
 #define DEBUGLOG(tag, text) Logger::instance()->log(Logger::DebugMessageType,tag,text,__FUNCTION__)
+#else
+#define DEBUGLOG
+#endif
+
 #define WARNINGLOG(tag, text) Logger::instance()->log(Logger::WarningMessageType,tag,text,__FUNCTION__)
 #define ERRORLOG(tag, text) Logger::instance()->log(Logger::ErrorMessageType,tag,text,__FUNCTION__)
