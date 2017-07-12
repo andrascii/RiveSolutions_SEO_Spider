@@ -6,25 +6,17 @@
 #include "start_screen.h"
 #include "service_locator.h"
 #include "web_crawler.h"
+#include "constants.h"
 
 namespace QuickieWebBot
 {
 
-Application* Application::s_app = nullptr;
-
-Application* Application::instance()
-{
-	return s_app;
-}
-
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_modelController(new ModelController(this))
-	, m_webCrawler(new WebCrawler(std::thread::hardware_concurrency(), m_modelController, this))
+	, m_webCrawler(new WebCrawler(g_optimalParserThreadsCount, m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
-	s_app = this;
-
 	initialize();
 
 	initializeStyleSheet();
@@ -32,7 +24,7 @@ Application::Application(int& argc, char** argv)
 #if defined(PRODUCTION)
 	showStartScreen();
 #else
-	mainFrameReadyForShow();
+	mainFrameIsReadyForShow();
 #endif
 }
 
@@ -56,7 +48,7 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 	return m_softwareBrandingOptions.get();
 }
 
-void Application::mainFrameReadyForShow()
+void Application::mainFrameIsReadyForShow()
 {
 	mainFrame()->showMaximized();
 }
@@ -87,7 +79,7 @@ void Application::showStartScreen() const noexcept
 {
 	StartScreen* startScreen = StartScreen::instance();
 
-	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameReadyForShow));
+	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameIsReadyForShow));
 
 	startScreen->show();
 }

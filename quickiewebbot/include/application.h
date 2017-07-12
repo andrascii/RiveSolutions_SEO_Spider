@@ -14,7 +14,6 @@ class Application : public QApplication
 	Q_OBJECT
 
 public:
-	static Application* instance();
 	Application(int& argc, char** argv);
 
 	const WebCrawler* webCrawler() const noexcept;
@@ -24,7 +23,7 @@ public:
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 private:
-	Q_SLOT void mainFrameReadyForShow();
+	Q_SLOT void mainFrameIsReadyForShow();
 
 private:
 	void initialize() noexcept;
@@ -32,8 +31,6 @@ private:
 	void showStartScreen() const noexcept;
 
 private:
-	static Application* s_app;
-	
 	ModelController* m_modelController;
 	
 	WebCrawler* m_webCrawler;

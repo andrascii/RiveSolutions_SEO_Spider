@@ -5,9 +5,10 @@ namespace QuickieWebBot
 {
 
 QueuedDownloader::QueuedDownloader()
-	: m_networkAccessManager(new QNetworkAccessManager(this))
+	: AbstractThreadableObject(this)
+	, m_networkAccessManager(new QNetworkAccessManager(this))
 {
-	moveThisToSeparateThread();
+	moveThisToSeparateThread<QueuedDownloader>();
 
 	VERIFY(connect(m_networkAccessManager, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*))));
 }
@@ -35,45 +36,19 @@ void QueuedDownloader::scheduleUrlList(const QList<QUrl>& urlList) noexcept
 	m_requestQueue.append(urlList);
 }
 
-bool QueuedDownloader::extractReply(Reply& response, ReplyExtractPolicy type) noexcept
+bool QueuedDownloader::extractReply(Reply& response) noexcept
 {
-	if (type == SuspendExtractPolicy)
-	{
-		std::unique_lock<std::mutex> locker(m_repliesQueueMutex);
-
-		while (!m_repliesQueue.size())
-		{
-			m_repliesWaitCondition.wait(locker);
-
-			if (!isRunning())
-			{
-				return false;
-			}
-		}
-
-		response = std::move(*m_repliesQueue.begin());
-		m_repliesQueue.erase(m_repliesQueue.begin());
-
-		return true;
-	}
-
-	if (type == AsyncExtractPolicy)
-	{
-		std::unique_lock<std::mutex> locker(m_repliesQueueMutex); 
+	std::unique_lock<std::mutex> locker(m_repliesQueueMutex); 
 		
-		if (m_repliesQueue.empty())
-		{
-			return false;
-		}
-
-		response = std::move(*m_repliesQueue.begin());
-		m_repliesQueue.erase(m_repliesQueue.begin());
-
-		return true;
+	if (m_repliesQueue.empty())
+	{
+		return false;
 	}
 
-	assert(!"Invalid ReplyExtractPolicy");
-	return false;
+	response = std::move(*m_repliesQueue.begin());
+	m_repliesQueue.erase(m_repliesQueue.begin());
+
+	return true;
 }
 
 void QueuedDownloader::urlDownloaded(QNetworkReply* reply)

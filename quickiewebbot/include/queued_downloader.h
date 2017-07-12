@@ -10,12 +10,6 @@ class QueuedDownloader : public AbstractThreadableObject
 	Q_OBJECT
 
 public:
-	enum ReplyExtractPolicy
-	{
-		SuspendExtractPolicy,
-		AsyncExtractPolicy
-	};
-
 	struct Reply
 	{
 		QUrl url;
@@ -31,7 +25,7 @@ public:
 	void scheduleUrl(const QUrl& url) noexcept;
 	void scheduleUrlList(const QList<QUrl>& urlList) noexcept;
 
-	bool extractReply(Reply& response, ReplyExtractPolicy type) noexcept;
+	bool extractReply(Reply& response) noexcept;
 
 private:
 	virtual void process() override;

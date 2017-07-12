@@ -67,7 +67,7 @@
 using namespace std::chrono_literals;
 using std::size_t;
 
-#define theApp Application::instance()
+#define theApp static_cast<Application*>(Application::instance())
 
 #define STRING(Any) #Any
 

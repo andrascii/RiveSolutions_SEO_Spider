@@ -7,12 +7,12 @@ namespace QuickieWebBot
 {
 
 PageInfoAcceptor::PageInfoAcceptor(WebCrawlerInternalUrlStorage* crawlerStorage, QueuedDownloader* queuedDownloader, QObject* parent)
-	: QObject(parent)
+	: AbstractThreadableObject(this)
 	, m_webCrawlerInternalUrlStorage(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
 	, m_pageInfo(new PageInfo)
-	, m_timerId(0)
 {
+	moveThisToSeparateThread<PageInfoAcceptor>();
 }
 
 const std::vector<QUrl>& PageInfoAcceptor::pageUrlList() const noexcept
@@ -20,48 +20,32 @@ const std::vector<QUrl>& PageInfoAcceptor::pageUrlList() const noexcept
 	return m_pageUrlList;
 }
 
-void PageInfoAcceptor::start()
-{
-	m_timerId = startTimer(g_minimumRecommendedTimerResolution);
-	assert(m_timerId);
-}
-
-void PageInfoAcceptor::stop()
-{
-	if (m_timerId)
-	{
-		killTimer(m_timerId);
-		m_timerId = 0;
-	}
-}
-
-void PageInfoAcceptor::timerEvent(QTimerEvent* event)
-{
-	processWebPage();
-}
-
-void PageInfoAcceptor::processWebPage()
+void PageInfoAcceptor::process()
 {
 	QUrl url;
 	QueuedDownloader::Reply reply;
 
-	if (!m_webCrawlerInternalUrlStorage->extractUrl(url))
+	const bool replyExtracted = m_queuedDownloader->extractReply(reply);
+	const bool urlExtracted = m_webCrawlerInternalUrlStorage->extractUrl(url);
+
+	if (urlExtracted)
 	{
-		return;
+		m_queuedDownloader->scheduleUrl(url);
 	}
 
-	m_queuedDownloader->scheduleUrl(url);
+	if (replyExtracted)
+	{
+		m_pageInfo.reset(new PageInfo);
 
-	m_queuedDownloader->extractReply(reply, QueuedDownloader::SuspendExtractPolicy);
+		parseWebPage(reply.responseBody);
 
-	parseWebPage(reply.responseBody);
+		m_pageInfo->url = reply.url;
+		m_pageInfo->serverResponse = reply.responseHeaderValuePairs;
 
-	m_pageInfo->url = reply.url;
-	m_pageInfo->serverResponse = reply.responseHeaderValuePairs;
+		m_webCrawlerInternalUrlStorage->saveUrlList(pageUrlList());
 
-	m_webCrawlerInternalUrlStorage->saveUrlList(pageUrlList());
-
-	emit pageParsed(m_pageInfo);
+		emit pageParsed(m_pageInfo);
+	}
 }
 
 void PageInfoAcceptor::parseWebPageUrlList(const GumboNode* node) noexcept

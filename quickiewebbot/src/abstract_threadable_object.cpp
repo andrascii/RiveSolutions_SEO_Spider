@@ -4,17 +4,6 @@
 namespace QuickieWebBot
 {
 
-AbstractThreadableObject::AbstractThreadableObject()
-	: m_isRunning(false)
-	, m_timerId(0)
-{
-}
-
-void AbstractThreadableObject::moveThisToSeparateThread()
-{
-	moveToThread(&m_thread);
-}
-
 bool AbstractThreadableObject::isRunning() const noexcept
 {
 	return m_isRunning.load();

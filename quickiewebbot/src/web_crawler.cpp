@@ -1,5 +1,4 @@
 #include "web_crawler.h"
-#include "page_info_acceptor.h"
 #include "data_collection.h"
 #include "model_controller.h"
 
@@ -9,49 +8,42 @@ namespace QuickieWebBot
 WebCrawler::WebCrawler(unsigned int threadCount, ModelController* modelController, QObject* parent)
 	: QObject(parent)
 	, m_modelController(modelController)
-	, m_workers(threadCount)
 {
 	qRegisterMetaType<PageInfoPtr>();
 
 	for (unsigned i = 0; i < threadCount; ++i)
 	{
-		m_workers[i].first = new QThread(this);
-		m_workers[i].second = new PageInfoAcceptor(&m_storage, &m_queuedDownloader);
-		m_workers[i].second->moveToThread(m_workers[i].first);
+		m_workers.push_back(std::make_unique<PageInfoAcceptor>(&m_internalUrlStorage, &m_queuedDownloader));
 		
-		VERIFY(connect(m_workers[i].second, SIGNAL(pageParsed(PageInfoPtr)), 
+		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(PageInfoPtr)), 
 			SLOT(onPageInfoParsed(PageInfoPtr))));
-
-		m_workers[i].first->start();
 	}
 }
 
 WebCrawler::~WebCrawler()
 {
-	for (const auto& pair : m_workers)
+	for (auto& worker : m_workers)
 	{
-		pair.second->stop();
-		pair.first->quit();
-		pair.first->wait();
+		worker->stop();
 	}
 }
 
-void WebCrawler::start()
+void WebCrawler::startCrawling()
 {
 	m_queuedDownloader.start();
-	m_storage.setHost(m_modelController->host());
+	m_internalUrlStorage.setHost(m_modelController->host());
 
-	for (const auto& pair : m_workers)
+	for (std::unique_ptr<PageInfoAcceptor>& worker : m_workers)
 	{
-		QMetaObject::invokeMethod(pair.second, "start");
+		worker->start();
 	}
 }
 
-void WebCrawler::stop()
+void WebCrawler::stopCrawling()
 {
-	for (const auto& pair : m_workers)
+	for (std::unique_ptr<PageInfoAcceptor>& worker : m_workers)
 	{
-		QMetaObject::invokeMethod(pair.second, "stop");
+		worker->stop();
 	}
 
 	m_queuedDownloader.stop();
