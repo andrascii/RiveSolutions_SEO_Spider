@@ -2,22 +2,24 @@
 
 namespace QuickieWebBot
 {
-Logger::Logger()
+Logger::Logger(QObject* parent) : QObject(parent)
 {
 	QProcess* loggerProc =  new QProcess();
-	loggerProc->start("logger", QIODevice::WriteOnly);
+	loggerProc->start("logger.exe", QIODevice::WriteOnly);
 	if (!loggerProc->waitForStarted(2000))
 	{
 		qDebug() << "logger starting error";
 		return;
 	}
+	qDebug() << loggerProc->errorString();
 
 
-	socket = new QLocalSocket();
+	socket = new QTcpSocket();
 	init();
-	socket->connectToServer("Logger", QIODevice::WriteOnly);
+	socket->connectToHost(QHostAddress::LocalHost, 12345);
 	if (socket->waitForConnected(10000))
 	{
+
 		qDebug() << "Connection initialized!";
 		return;
 	}
@@ -36,8 +38,8 @@ Logger* Logger::instance()
 
 void Logger::init()
 {
-	VERIFY(socket, &QLocalSocket::connected, this, &Logger::connected);
-	VERIFY(socket, SIGNAL(QLocalSocket::error(QAbstractSocket::SocketError)), this, &Logger::showError);
+	VERIFY(socket, SIGNAL(connected), this, SLOT(connected()));
+	VERIFY(socket, SIGNAL(QTcpSocket::error(QAbstractSocket::SocketError)), this, SLOT(showError()));
 	//VERIFY(socket, &QLocalSocket::connected, this, &Logger::connected);
 	//VERIFY(socket, &QLocalSocket::connectionClosed, this, &Logger::connectionClosedByServer);
 	//VERIFY(socket, &QLocalSocket::error(int), this, &Logger::error(int));
@@ -50,7 +52,7 @@ void Logger::showError()
 
 void Logger::connected()
 {
-	m_connected = true;
+	qDebug() << "Connection initialized!";
 }
 
 void Logger::sendMessage()
@@ -73,7 +75,6 @@ void Logger::log(MessageType type, QString tag, QString text) const noexcept
 	out.device()->seek(0);
 	out << (quint16)(block.size() - sizeof(quint16));
 	socket->write(block);
-
-	
+	socket->waitForBytesWritten();
 }
 }

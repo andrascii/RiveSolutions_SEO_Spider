@@ -14,16 +14,15 @@ private:
 	void init();
 
 private slots:
-	void sendMessage();
+	void slotNewConnection();
+	void slotReadyRead();
 
 private:
 	Ui::MainWindow ui;
-	QLocalServer* m_server;
+	QTcpServer* m_server;
 	QString message;
 
 	//QLocalSocket* m_socket;
 	//QString m_currentFortune;
-	//quint32 m_blockSize;
-
-
+	quint16 m_blockSize;
 };

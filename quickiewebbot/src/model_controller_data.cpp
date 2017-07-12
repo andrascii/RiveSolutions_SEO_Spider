@@ -193,7 +193,6 @@ void ModelControllerData::addElement(std::shared_ptr<WebsiteAnalyseElement> cons
 	crawlerStorage(storageType)->insert(websiteAnalysElement);
 	auto storageGui = guiStorage(storageType);
 	storageGui->push_back(websiteAnalysElement);
-
 	emit rowAdded(static_cast<int>(storageGui->size() - 1), storageType);
 }
 

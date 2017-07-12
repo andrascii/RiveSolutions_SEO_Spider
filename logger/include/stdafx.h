@@ -46,6 +46,8 @@
 #include <QMetaMethod>
 #include <QLocalSocket>
 #include <QLocalServer>
+#include <QTcpServer>
+#include <QTcpSocket>
 #include <QProcess>
 #include <iostream>
 #include <QtNetwork/QNetworkAccessManager>

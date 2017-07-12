@@ -2,10 +2,11 @@
 #include <QProcess>
 #include <QLocalSocket>
 
-namespace QuickieWebBot
+namespace QuickieWebBot 
 {
-	class Logger
+	class Logger : public QObject
 	{
+	Q_OBJECT
 	public:
 		enum MessageType
 		{
@@ -26,12 +27,12 @@ namespace QuickieWebBot
 		void log(MessageType type, QString tag, QString text) const noexcept;
 		void init();
 	private:
-		Logger();
+		Logger(QObject* parent = 0);
 
 
 	private:
 		QProcess* m_loggerProc;
-		QLocalSocket* socket;
+		QTcpSocket* socket;
 		QTimer connectionTimer;
 		int blockSize;
 		bool m_connected;

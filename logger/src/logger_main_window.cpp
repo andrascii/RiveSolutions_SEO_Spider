@@ -1,59 +1,60 @@
 #include "logger_main_window.h"
+#include <Windows.h>
 
 LoggerMainWindow::LoggerMainWindow(QWidget* parent) : QMainWindow(parent)
 {
 	ui.setupUi(this);
-	
-	m_server = new QLocalServer(this);
-	if (!m_server->listen("Logger"))
+	m_server = new QTcpServer(this);
+	if (!m_server->listen(QHostAddress::LocalHost,12345))
 	{
-		//QMessageBox::critical(this, tr("Logger Server"),
-		//	tr("Unable to start the server: %1.").arg(m_server->errorString()));
-		close();
+		QMessageBox::critical(this, tr("Logger Server"),
+			tr("Unable to start the server: %1.").arg(m_server->errorString()));
+		m_server->close();
 		return;
 	}
 	//QMessageBox::information(this, tr("Logger Server"),
 	//		tr("Server starter"));
-	
-	connect(m_server, &QLocalServer::newConnection, this, &LoggerMainWindow::sendMessage);
-
+	m_blockSize = 0;
+	connect(m_server, SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
 }
 
-void LoggerMainWindow::sendMessage()
+void LoggerMainWindow::slotNewConnection()
 {
-	//QByteArray block;
-	//QDataStream out(&block, QIODevice::WriteOnly);
-	//out.setVersion(QDataStream::Qt_5_1);
-	//out << (quint32)0;
-	//out << message;
-	//out.device()->seek(0);
-	//out << (quint32)(block.size() - sizeof(quint32));
-	//
-	//QLocalSocket* clientConnection = m_server->nextPendingConnection();
-	//connect(clientConnection, SIGNAL(disconnected()),
-	//	clientConnection, SLOT(deleteLater()));
-	//
-	//clientConnection->write(block);
-	//clientConnection->flush();
-	//clientConnection->disconnectFromServer();
-	//m_server->
-	ui.textBrowser->append("zalupa");
-	quint16 blockSize = 0;
-	QLocalSocket* client_socket = m_server->nextPendingConnection();
+	//while (!IsDebuggerPresent())
+	//{
+	//}
+
+	QTcpSocket* clientSocket = m_server->nextPendingConnection();
+	connect(clientSocket, SIGNAL(readyRead()),
+		this, SLOT(slotReadyRead()));
+	ui.textBrowser->append("connected");
+}
+
+void LoggerMainWindow::slotReadyRead()
+{
+	ui.textBrowser->append("data recieved");
+	QTcpSocket* client_socket = (QTcpSocket*)sender();
 	QDataStream in(client_socket);
 	in.setVersion(QDataStream::Qt_4_0);
-	if (client_socket->waitForReadyRead())
+
+	for (;;)
 	{
-		if (blockSize == 0)
+		if (!m_blockSize)
 		{
-			if (client_socket->bytesAvailable() < (int)sizeof(quint16))
-				return;
-			in >> blockSize;
+			if (client_socket->bytesAvailable() < sizeof(quint16))
+			{
+				break;
+			}
+			in >> m_blockSize;
 		}
-		if (in.atEnd())
-			return;
-		QString mes;
-		in >> mes;
-		ui.textBrowser->append(mes);
+	
+		if (client_socket->bytesAvailable() < m_blockSize)
+		{
+			break;
+		}
+		QString str;
+		in >> str;
+		ui.textBrowser->append(str);
+		m_blockSize = 0;
 	}
 }

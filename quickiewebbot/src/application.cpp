@@ -51,6 +51,10 @@ void Application::initialize() noexcept
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
+	INFOLOG("tag1", "text1");
+	INFOLOG("tag2", "text2");
+	WARNINGLOG("warning", "warning text");
+	ERRORLOG("error", "error text");
 }
 
 void Application::initializeStyleSheet() noexcept

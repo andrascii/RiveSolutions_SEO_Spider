@@ -44,6 +44,8 @@
 #include <QKeyEvent>
 #include <QMetaObject>
 #include <QMetaMethod>
+#include <QTcpServer>
+#include <QTcpSocket>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
