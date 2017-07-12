@@ -55,6 +55,7 @@ void Application::initialize() noexcept
 	INFOLOG("tag2", "text2");
 	WARNINGLOG("warning", "warning text");
 	ERRORLOG("error", "error text");
+	DEBUGLOG("deb", "il");
 }
 
 void Application::initializeStyleSheet() noexcept

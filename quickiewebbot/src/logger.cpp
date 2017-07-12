@@ -61,17 +61,18 @@ void Logger::sendMessage()
 
 void Logger::log(MessageType type, QString tag, QString text) const noexcept
 {
-	//QByteArray message;
-	//QString ctype = static_cast<char>(static_cast<int>(type) + 48);
-	//message += ctype + "|" + tag + "|" + text + "\n";
-	//m_loggerProc->waitForReadyRead(5);
-	//m_loggerProc->write(message);
 
 	QByteArray block;
+	QString message;
 	QDataStream out(&block, QIODevice::WriteOnly);
 	out.setVersion(QDataStream::Qt_4_0);
-	out << (quint16)0;
-	out << tag + "|" + text;
+	out << (quint16)0;	
+	//message += static_cast<QChar>(static_cast<int>(type) + 48) + '|';
+	message += QString("%1").arg(type) + '|';
+	message += QDateTime::currentDateTimeUtc().toString() + '|' ;
+	message += tag + '|';
+	message += text;
+	out << message;
 	out.device()->seek(0);
 	out << (quint16)(block.size() - sizeof(quint16));
 	socket->write(block);

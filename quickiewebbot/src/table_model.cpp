@@ -82,7 +82,7 @@ void TableModel::setDataAccessor(std::unique_ptr<IModelDataAccessorItem> accesso
 
 void TableModel::onRowAdded(int row)
 {
-	INFOLOG("onRowAdded", "new row added");
+	INFOLOG(__FUNCTION__, "new row added");
 	beginInsertRows(QModelIndex(), row, row);
 	endInsertRows();
 }

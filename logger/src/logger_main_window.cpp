@@ -32,7 +32,7 @@ void LoggerMainWindow::slotNewConnection()
 
 void LoggerMainWindow::slotReadyRead()
 {
-	ui.textBrowser->append("data recieved");
+	//ui.textBrowser->append("data recieved");
 	QTcpSocket* client_socket = (QTcpSocket*)sender();
 	QDataStream in(client_socket);
 	in.setVersion(QDataStream::Qt_4_0);
@@ -54,6 +54,16 @@ void LoggerMainWindow::slotReadyRead()
 		}
 		QString str;
 		in >> str;
+
+		QStringList strList = str.split('|');
+		
+		switch (strList[0][0].toLatin1())
+		{
+		case '0': ui.textBrowser->setTextColor(QColor(0, 0, 0)); break;
+		case '1': ui.textBrowser->setTextColor(QColor(0, 0, 255)); break;
+		case '2': ui.textBrowser->setTextColor(QColor(255,165,0)); break;
+		case '3': ui.textBrowser->setTextColor(QColor(255, 0, 0)); break;
+		}
 		ui.textBrowser->append(str);
 		m_blockSize = 0;
 	}
