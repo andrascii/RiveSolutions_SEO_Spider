@@ -9,9 +9,9 @@ Logger::Logger(QObject* parent) : QObject(parent)
 	if (!loggerProc->waitForStarted(2000))
 	{
 		qDebug() << "logger starting error";
+		qDebug() << loggerProc->errorString();
 		return;
 	}
-	qDebug() << loggerProc->errorString();
 
 
 	socket = new QTcpSocket();
@@ -59,7 +59,7 @@ void Logger::sendMessage()
 {
 }
 
-void Logger::log(MessageType type, QString tag, QString text) const noexcept
+void Logger::log(MessageType type, QString tag, QString text, QString func) const noexcept
 {
 
 	QByteArray block;
@@ -69,7 +69,8 @@ void Logger::log(MessageType type, QString tag, QString text) const noexcept
 	out << (quint16)0;	
 	//message += static_cast<QChar>(static_cast<int>(type) + 48) + '|';
 	message += QString("%1").arg(type) + '|';
-	message += QDateTime::currentDateTimeUtc().toString() + '|' ;
+	message += QDateTime::currentDateTime().toString() + '|' ;
+	message += func + '|';
 	message += tag + '|';
 	message += text;
 	out << message;

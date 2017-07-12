@@ -67,10 +67,10 @@ using std::size_t;
 
 #define STRING(Any) #Any
 
-#define INFOLOG(tag, text) Logger::instance()->log(Logger::InformationMessageType,tag,text)
-#define DEBUGLOG(tag, text) Logger::instance()->log(Logger::DebugMessageType,tag,text)
-#define WARNINGLOG(tag, text) Logger::instance()->log(Logger::WarningMessageType,tag,text)
-#define ERRORLOG(tag, text) Logger::instance()->log(Logger::ErrorMessageType,tag,text)
+#define INFOLOG(tag, text) Logger::instance()->log(Logger::InformationMessageType,tag,text,__FUNCTION__)
+#define DEBUGLOG(tag, text) Logger::instance()->log(Logger::DebugMessageType,tag,text,__FUNCTION__)
+#define WARNINGLOG(tag, text) Logger::instance()->log(Logger::WarningMessageType,tag,text,__FUNCTION__)
+#define ERRORLOG(tag, text) Logger::instance()->log(Logger::ErrorMessageType,tag,text,__FUNCTION__)
 
 #if defined(NDEBUG)
 #define PRODUCTION

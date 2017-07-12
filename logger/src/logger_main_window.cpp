@@ -55,16 +55,21 @@ void LoggerMainWindow::slotReadyRead()
 		QString str;
 		in >> str;
 
-		QStringList strList = str.split('|');
-		
-		switch (strList[0][0].toLatin1())
+		m_incomingMessages.append(str.split('|'));
+	
+		switch (m_incomingMessages.last().type)
 		{
-		case '0': ui.textBrowser->setTextColor(QColor(0, 0, 0)); break;
-		case '1': ui.textBrowser->setTextColor(QColor(0, 0, 255)); break;
-		case '2': ui.textBrowser->setTextColor(QColor(255,165,0)); break;
-		case '3': ui.textBrowser->setTextColor(QColor(255, 0, 0)); break;
+		case InformationMessageType: 
+			ui.textBrowser->setTextColor(QColor(0, 0, 0)); break;
+		case DebugMessageType:
+			ui.textBrowser->setTextColor(QColor(0, 0, 255)); break;
+		case WarningMessageType: 
+			ui.textBrowser->setTextColor(QColor(255,165,0)); break;
+		case ErrorMessageType: 
+			ui.textBrowser->setTextColor(QColor(255, 0, 0)); break;
 		}
-		ui.textBrowser->append(str);
+
+		ui.textBrowser->append(m_incomingMessages.last().toString());
 		m_blockSize = 0;
 	}
 }

@@ -24,7 +24,7 @@ namespace QuickieWebBot
 	public:
 
 		static Logger* instance();
-		void log(MessageType type, QString tag, QString text) const noexcept;
+		void log(MessageType type, QString tag, QString text, QString func) const noexcept;
 		void init();
 	private:
 		Logger(QObject* parent = 0);
