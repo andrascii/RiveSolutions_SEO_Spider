@@ -21,7 +21,9 @@
 #include <atomic>
 #include <memory>
 #include <utility>
+#include <cassert>
 #include <functional>
+#include <iostream>
 
 //
 // boost
@@ -40,6 +42,18 @@
 #include <QMessageBox>
 #include <QTextCodec>
 #include <QAbstractListModel>
+#include <QKeyEvent>
+#include <QMetaObject>
+#include <QMetaMethod>
+#include <QLocalSocket>
+#include <QLocalServer>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QProcess>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
+#include <QTimer>
 
 using namespace std::chrono_literals;
 using std::size_t;

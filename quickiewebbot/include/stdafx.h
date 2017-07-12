@@ -53,6 +53,8 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QTimer>
+#include <QTcpSocket>
+#include <QTcpServer>
 #include <QAbstractItemDelegate>
 #include <QMutex>
 #include <QMutexLocker>
@@ -62,12 +64,14 @@
 #include <QQueue>
 #include <QDebug>
 #include <QStyledItemDelegate>
+#include <QProcess>
 
+#include "logger_connection_service_api.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
 
-#define theApp Application::instance()
+#define theApp static_cast<Application*>(Application::instance())
 
 #define STRING(Any) #Any
 
@@ -84,3 +88,14 @@ using std::size_t;
 #else
 #define VERIFY(Connection) Connection
 #endif
+
+#define INFOLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,tag,text,__FUNCTION__)
+
+#ifdef DEBUG
+#define DEBUGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,tag,text,__FUNCTION__)
+#else
+#define DEBUGLOG
+#endif
+
+#define WARNINGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,tag,text,__FUNCTION__)
+#define ERRORLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,tag,text,__FUNCTION__)

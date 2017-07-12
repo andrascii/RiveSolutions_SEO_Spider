@@ -14,7 +14,7 @@ public:
 
 
 private:
-	void init();
+	void initialize();
 
 private:
 	Ui::MainFrameClass ui;

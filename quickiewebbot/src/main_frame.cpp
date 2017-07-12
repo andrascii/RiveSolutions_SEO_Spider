@@ -14,16 +14,16 @@ namespace QuickieWebBot
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
 {
-	init();
+	initialize();
 }
 
-void MainFrame::init()
+void MainFrame::initialize()
 {
 	ui.setupUi(this);
 
 	VERIFY(connect(ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::start));
-	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stop));
+	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::startCrawling));
+	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));
 
 	ui.viewTypeComboBox->addItem(tr("List"));
 	ui.viewTypeComboBox->addItem(tr("Tree"));

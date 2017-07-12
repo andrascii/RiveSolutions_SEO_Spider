@@ -14,7 +14,9 @@ public:
 	void setHost(const QUrl& url);
 
 	// returns random url for crawling (async operation)
-	bool get(QUrl& url) noexcept;
+	// returns false if urls queue is empty
+	// otherwise returns true and write url to passed argument
+	bool extractUrl(QUrl& url) noexcept;
 
 	void saveUrlList(const std::vector<QUrl>& urlList) noexcept;
 

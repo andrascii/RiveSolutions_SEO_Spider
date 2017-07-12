@@ -1,6 +1,7 @@
 #pragma once
 
 #include "page_info.h"
+#include "page_info_acceptor.h"
 #include "web_crawler_internal_url_storage.h"
 #include "queued_downloader.h"
 
@@ -18,8 +19,8 @@ public:
 	WebCrawler(unsigned int threadCount, ModelController* modelController, QObject* parent = nullptr);
 	~WebCrawler();
 
-	Q_SLOT void start();
-	Q_SLOT void stop();
+	Q_SLOT void startCrawling();
+	Q_SLOT void stopCrawling();
 
 private:
 	Q_SLOT void onPageInfoParsed(PageInfoPtr pageInfo);
@@ -29,9 +30,9 @@ private:
 
 	ModelController* m_modelController;
 	
-	WebCrawlerInternalUrlStorage m_storage;
+	WebCrawlerInternalUrlStorage m_internalUrlStorage;
 
-	std::vector<std::pair<QThread*, PageInfoAcceptor*>> m_workers;
+	std::vector<std::unique_ptr<PageInfoAcceptor>> m_workers;
 };
 
 }

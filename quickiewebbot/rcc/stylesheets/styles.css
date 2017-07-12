@@ -141,6 +141,7 @@ QTableView
 {
 	font-size: 9pt;
 	background: white;
+	border-radius: 0px;
 }
 
 QHeaderView

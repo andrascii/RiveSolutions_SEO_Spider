@@ -4,13 +4,14 @@
 #include "page_info.h"
 #include "gumbo.h"
 #include "queued_downloader.h"
+#include "abstract_threadable_object.h"
 
 namespace QuickieWebBot
 {			
 
 class WebCrawlerInternalUrlStorage;
 
-class PageInfoAcceptor : public QObject
+class PageInfoAcceptor : public AbstractThreadableObject
 {			
 	Q_OBJECT
 			
@@ -20,16 +21,10 @@ public:
 
 	const std::vector<QUrl>& pageUrlList() const noexcept;
 
-	Q_INVOKABLE void start();
-	Q_INVOKABLE void stop();
-	
 	Q_SIGNAL void pageParsed(PageInfoPtr pageInfo);
 
-protected:
-	virtual void timerEvent(QTimerEvent* event) override;
-
 private:
-	void processWebPage();
+	virtual void process() override;
 
 	void parseWebPage(const QString& htmlPage) noexcept;
 	void parseWebPageUrlList(const GumboNode* node) noexcept;
@@ -42,13 +37,11 @@ private:
 	unsigned countChildren(const GumboNode* node, GumboTag tag) const noexcept;
 
 private:
-	WebCrawlerInternalUrlStorage* m_crawlerStorage;
+	WebCrawlerInternalUrlStorage* m_webCrawlerInternalUrlStorage;
 
 	QueuedDownloader* m_queuedDownloader;
 
 	PageInfoPtr m_pageInfo;
-
-	int m_timerId;
 
 	std::vector<QUrl> m_pageUrlList;
 };

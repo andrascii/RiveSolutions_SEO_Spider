@@ -26,7 +26,7 @@ void StartScreen::show()
 
 	VERIFY(connect(m_timer, &QTimer::timeout, this, &QWidget::deleteLater));
 
-	__super::show();
+	QWidget::show();
 
 	m_timer->start();
 }
