@@ -66,7 +66,7 @@
 #include <QStyledItemDelegate>
 #include <QProcess>
 
-#include "logger.h"
+#include "logger_connection_service_api.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
@@ -89,13 +89,13 @@ using std::size_t;
 #define VERIFY(Connection) Connection
 #endif
 
-#define INFOLOG(tag, text) Logger::instance()->log(Logger::InformationMessageType,tag,text,__FUNCTION__)
+#define INFOLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,tag,text,__FUNCTION__)
 
 #ifdef DEBUG
-#define DEBUGLOG(tag, text) Logger::instance()->log(Logger::DebugMessageType,tag,text,__FUNCTION__)
+#define DEBUGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,tag,text,__FUNCTION__)
 #else
 #define DEBUGLOG
 #endif
 
-#define WARNINGLOG(tag, text) Logger::instance()->log(Logger::WarningMessageType,tag,text,__FUNCTION__)
-#define ERRORLOG(tag, text) Logger::instance()->log(Logger::ErrorMessageType,tag,text,__FUNCTION__)
+#define WARNINGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,tag,text,__FUNCTION__)
+#define ERRORLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,tag,text,__FUNCTION__)

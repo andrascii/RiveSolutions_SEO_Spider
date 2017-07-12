@@ -3,7 +3,7 @@
 namespace QuickieWebBot 
 {
 
-class Logger : public QObject
+class LoggerConnectionServiceApi : public QObject
 {
 	Q_OBJECT
 
@@ -17,12 +17,12 @@ public:
 	};
 
 public:
-	static Logger* instance();
+	static LoggerConnectionServiceApi* instance();
 
 	void log(MessageType type, QString tag, QString text, QString func) const noexcept;
 
 private:
-	Logger(QObject* parent = 0);
+	LoggerConnectionServiceApi(QObject* parent = 0);
 
 private:
 	mutable std::mutex m_mutex;

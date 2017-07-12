@@ -1,9 +1,9 @@
-#include "logger.h"
+#include "logger_connection_service_api.h"
 
 namespace QuickieWebBot
 {
 
-Logger::Logger(QObject* parent) 
+LoggerConnectionServiceApi::LoggerConnectionServiceApi(QObject* parent) 
 	: QObject(parent)
 {
 	QProcess* loggerProc = new QProcess(this);
@@ -26,13 +26,13 @@ Logger::Logger(QObject* parent)
 	}
 }
 
-Logger* Logger::instance()
+LoggerConnectionServiceApi* LoggerConnectionServiceApi::instance()
 {
-	static Logger logger;
+	static LoggerConnectionServiceApi logger;
 	return &logger;
 }
 
-void Logger::log(MessageType type, QString tag, QString text, QString func) const noexcept
+void LoggerConnectionServiceApi::log(MessageType type, QString tag, QString text, QString func) const noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
