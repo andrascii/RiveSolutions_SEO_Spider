@@ -30,6 +30,8 @@ WebCrawler::~WebCrawler()
 
 void WebCrawler::startCrawling()
 {
+	INFOLOG("crawler", "crawler started");
+
 	m_queuedDownloader.start();
 	m_internalUrlStorage.setHost(m_modelController->host());
 
@@ -41,6 +43,8 @@ void WebCrawler::startCrawling()
 
 void WebCrawler::stopCrawling()
 {
+	INFOLOG("crawler", "crawler stopped");
+
 	for (std::unique_ptr<PageInfoAcceptor>& worker : m_workers)
 	{
 		worker->stop();

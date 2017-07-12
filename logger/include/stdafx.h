@@ -23,6 +23,7 @@
 #include <utility>
 #include <cassert>
 #include <functional>
+#include <iostream>
 
 //
 // boost
@@ -38,40 +39,24 @@
 #include <QDialog>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QTableView>
 #include <QMessageBox>
 #include <QTextCodec>
 #include <QAbstractListModel>
 #include <QKeyEvent>
 #include <QMetaObject>
 #include <QMetaMethod>
-#include <QMetaType>
+#include <QLocalSocket>
+#include <QLocalServer>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QProcess>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPainter>
 #include <QTimer>
-#include <QTcpSocket>
-#include <QTcpServer>
-#include <QAbstractItemDelegate>
-#include <QMutex>
-#include <QMutexLocker>
-#include <QReadWriteLock>
-#include <QSemaphore>
-#include <QWaitCondition>
-#include <QQueue>
-#include <QDebug>
-#include <QStyledItemDelegate>
-#include <QProcess>
-
-#include "logger_connection_service_api.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
-
-#define theApp static_cast<Application*>(Application::instance())
 
 #define STRING(Any) #Any
 
@@ -88,14 +73,3 @@ using std::size_t;
 #else
 #define VERIFY(Connection) Connection
 #endif
-
-#define INFOLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,tag,text,__FUNCTION__)
-
-#ifdef DEBUG
-#define DEBUGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,tag,text,__FUNCTION__)
-#else
-#define DEBUGLOG
-#endif
-
-#define WARNINGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,tag,text,__FUNCTION__)
-#define ERRORLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,tag,text,__FUNCTION__)

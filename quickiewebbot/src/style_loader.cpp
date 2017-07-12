@@ -33,12 +33,20 @@ StyleLoader::StyleLoader(QObject* parent, QString const& filename, QKeySequence 
 
 void StyleLoader::updateStyleSheet()
 {
-	QFile styles("C:/" + m_filename);
+	QString filenamePath = "C:/" + m_filename;
+
+	QFile styles(filenamePath);
 
 	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		QString styleSheet = styles.readAll();
 		qApp->setStyleSheet(styleSheet);
+
+		DEBUGLOG("StyleLoader", QString("Debug styles loaded from %1").arg(filenamePath));
+	}
+	else
+	{
+		DEBUGLOG("StyleLoader", QString("Debug styles cannot be loaded from %1").arg(filenamePath));
 	}
 }
 

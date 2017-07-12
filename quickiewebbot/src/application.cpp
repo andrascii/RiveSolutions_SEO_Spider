@@ -51,6 +51,8 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 void Application::mainFrameIsReadyForShow()
 {
 	mainFrame()->showMaximized();
+
+	INFOLOG("", "MainFrame shown");
 }
 
 void Application::initialize() noexcept
@@ -72,6 +74,8 @@ void Application::initializeStyleSheet() noexcept
 	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		setStyleSheet(styles.readAll());
+
+		INFOLOG("", "Stylesheets loaded");
 	}
 }
 

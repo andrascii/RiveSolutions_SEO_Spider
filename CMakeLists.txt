@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 set(AppName quickiewebbot)
+set(LoggerAppName logger)
 project(${AppName})
 
 set(GuiBinName ${AppName})
+set(LoggerBinName ${LoggerAppName})
 set(GumboLibName gumbo)
 
 # Find includes in corresponding build directories
@@ -40,5 +42,6 @@ if(MSVC)
 endif(MSVC)
 ENDMACRO(add_msvc_precompiled_header)
 
+add_subdirectory(${LoggerAppName})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
