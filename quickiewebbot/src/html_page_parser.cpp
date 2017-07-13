@@ -4,7 +4,7 @@
 namespace QuickieWebBot
 {
 
-void HtmlPageParser::addPageInfoParser(std::unique_ptr<IPageParser> webPageInfoParser) noexcept
+void HtmlPageParser::addPageInfoParser(std::shared_ptr<IPageParser> webPageInfoParser) noexcept
 {
 	m_parserPack.push_back(std::move(webPageInfoParser));
 }
@@ -13,7 +13,7 @@ void HtmlPageParser::parsePage(const QString& htmlPage, PageInfoPtr& pageInfo) n
 {
 	GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, htmlPage.toStdString().c_str(), htmlPage.size());
 
-	for (const std::unique_ptr<IPageParser>& parser : m_parserPack)
+	for (const std::shared_ptr<IPageParser>& parser : m_parserPack)
 	{
 		parser->parse(output, pageInfo);
 	}

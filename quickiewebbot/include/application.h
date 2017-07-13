@@ -22,12 +22,13 @@ public:
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
+	void initializeStyleSheet() noexcept;
+
 private:
 	Q_SLOT void mainFrameIsReadyForShow();
 
 private:
 	void initialize() noexcept;
-	void initializeStyleSheet() noexcept;
 	void showStartScreen() const noexcept;
 
 private:

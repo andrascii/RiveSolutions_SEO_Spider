@@ -1,11 +1,12 @@
 #include "style_loader.h"
+#include "application.h"
 
 namespace QuickieWebBot
 {
 
-void StyleLoader::attachStyleLoader(QString const& filename, QKeySequence const& keySequence)
+void StyleLoader::attachStyleLoader(QString const& filename, QKeySequence const& keySequenceCustomStyleSheet)
 {
-	StyleLoader* styleLoader = new StyleLoader(qApp, filename, keySequence);
+	StyleLoader* styleLoader = new StyleLoader(qApp, filename, keySequenceCustomStyleSheet);
 	qApp->installEventFilter(styleLoader);
 }
 
@@ -15,23 +16,30 @@ bool StyleLoader::eventFilter(QObject* obj, QEvent* event)
 	{
 		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 
-		if (m_keySequence == QKeySequence(keyEvent->key()))
+		if (m_keySequenceCustomStyleSheet == QKeySequence(keyEvent->key()))
 		{
-			updateStyleSheet();
+			if (keyEvent->modifiers() & Qt::ControlModifier)
+			{
+				loadStandardStyleSheet();
+			}
+			else
+			{
+				loadCustomStyleSheet();
+			}
 		}
 	}
 
 	return QObject::eventFilter(obj, event);
 }
 
-StyleLoader::StyleLoader(QObject* parent, QString const& filename, QKeySequence const& keySequence)
+StyleLoader::StyleLoader(QObject* parent, QString const& filename, QKeySequence const& keySequenceCustomStyleSheet)
 	: QObject(parent)
 	, m_filename(filename)
-	, m_keySequence(keySequence)
+	, m_keySequenceCustomStyleSheet(keySequenceCustomStyleSheet)
 {
 }
 
-void StyleLoader::updateStyleSheet()
+void StyleLoader::loadCustomStyleSheet()
 {
 	QString filenamePath = "C:/" + m_filename;
 
@@ -48,6 +56,12 @@ void StyleLoader::updateStyleSheet()
 	{
 		DEBUGLOG("StyleLoader", QString("Debug styles cannot be loaded from %1").arg(filenamePath));
 	}
+}
+
+void StyleLoader::loadStandardStyleSheet()
+{
+	DEBUGLOG("StyleLoader", QString("Loaded standard stylesheets"));
+	theApp->initializeStyleSheet();
 }
 
 }

@@ -2,6 +2,8 @@
 #include "service_locator.h"
 #include "web_crawler_internal_url_storage.h"
 #include "constants.h"
+#include "html_page_title_parser.h"
+#include "html_page_meta_parser.h"
 
 namespace QuickieWebBot
 {
@@ -13,6 +15,9 @@ PageInfoProcessor::PageInfoProcessor(WebCrawlerInternalUrlStorage* crawlerStorag
 	, m_pageInfo(new PageInfo)
 {
 	moveThisToSeparateThread<PageInfoProcessor>();
+
+	m_htmlPageParser.addPageInfoParser(std::make_shared<HtmlPageMetaParser>());
+	m_htmlPageParser.addPageInfoParser(std::make_shared<HtmlPageTitleParser>());
 }
 
 void PageInfoProcessor::process()
