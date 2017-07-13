@@ -13,9 +13,9 @@ WebCrawler::WebCrawler(unsigned int threadCount, ModelController* modelControlle
 
 	for (unsigned i = 0; i < threadCount; ++i)
 	{
-		m_workers.push_back(std::make_unique<PageInfoAcceptor>(&m_internalUrlStorage, &m_queuedDownloader));
+		m_workers.push_back(std::make_unique<PageInfoProcessor>(&m_internalUrlStorage, &m_queuedDownloader));
 		
-		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(PageInfoPtr)), 
+		VERIFY(connect(m_workers[i].get(), SIGNAL(webPageParsed(PageInfoPtr)), 
 			SLOT(onPageInfoParsed(PageInfoPtr))));
 	}
 }
@@ -35,7 +35,7 @@ void WebCrawler::startCrawling()
 	m_queuedDownloader.start();
 	m_internalUrlStorage.setHost(m_modelController->host());
 
-	for (std::unique_ptr<PageInfoAcceptor>& worker : m_workers)
+	for (std::unique_ptr<PageInfoProcessor>& worker : m_workers)
 	{
 		worker->start();
 	}
@@ -45,7 +45,7 @@ void WebCrawler::stopCrawling()
 {
 	INFOLOG("crawler", "crawler stopped");
 
-	for (std::unique_ptr<PageInfoAcceptor>& worker : m_workers)
+	for (std::unique_ptr<PageInfoProcessor>& worker : m_workers)
 	{
 		worker->stop();
 	}

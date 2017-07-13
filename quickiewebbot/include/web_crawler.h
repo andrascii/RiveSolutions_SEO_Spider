@@ -1,14 +1,14 @@
 #pragma once
 
 #include "page_info.h"
-#include "page_info_acceptor.h"
+#include "page_info_processor.h"
 #include "web_crawler_internal_url_storage.h"
 #include "queued_downloader.h"
 
 namespace QuickieWebBot
 {
 
-class PageInfoAcceptor;
+class PageInfoProcessor;
 class ModelController;
 
 class WebCrawler : public QObject
@@ -32,7 +32,7 @@ private:
 	
 	WebCrawlerInternalUrlStorage m_internalUrlStorage;
 
-	std::vector<std::unique_ptr<PageInfoAcceptor>> m_workers;
+	std::vector<std::unique_ptr<PageInfoProcessor>> m_workers;
 };
 
 }
