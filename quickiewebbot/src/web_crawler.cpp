@@ -24,7 +24,7 @@ WebCrawler::~WebCrawler()
 {
 	for (auto& worker : m_workers)
 	{
-		worker->stop();
+		worker->stopExecution();
 	}
 }
 
@@ -32,12 +32,12 @@ void WebCrawler::startCrawling()
 {
 	INFOLOG("crawler", "crawler started");
 
-	m_queuedDownloader.start();
+	m_queuedDownloader.startExecution();
 	m_internalUrlStorage.setHost(m_modelController->host());
 
 	for (std::unique_ptr<PageInfoProcessor>& worker : m_workers)
 	{
-		worker->start();
+		worker->startExecution();
 	}
 }
 
@@ -47,10 +47,10 @@ void WebCrawler::stopCrawling()
 
 	for (std::unique_ptr<PageInfoProcessor>& worker : m_workers)
 	{
-		worker->stop();
+		worker->stopExecution();
 	}
 
-	m_queuedDownloader.stop();
+	m_queuedDownloader.stopExecution();
 }
 
 void WebCrawler::onPageInfoParsed(PageInfoPtr pageInfo)

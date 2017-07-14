@@ -36,6 +36,11 @@ void LoggerConnectionServiceApi::log(MessageType type, QString tag, QString text
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
+	if (!m_socket->isOpen())
+	{
+		return;
+	}
+
 	QByteArray block;
 	QString message;
 

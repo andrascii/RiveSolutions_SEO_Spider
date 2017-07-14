@@ -14,7 +14,7 @@ PageInfoProcessor::PageInfoProcessor(WebCrawlerInternalUrlStorage* crawlerStorag
 	, m_queuedDownloader(queuedDownloader)
 	, m_pageInfo(new PageInfo)
 {
-	moveThisToSeparateThread<PageInfoProcessor>();
+	moveThisToSeparateThread();
 
 	m_htmlPageParser.addPageInfoParser(std::make_shared<HtmlPageMetaParser>());
 	m_htmlPageParser.addPageInfoParser(std::make_shared<HtmlPageTitleParser>());

@@ -1,5 +1,4 @@
 #include "logger_main_window.h"
-#include <Windows.h>
 
 LoggerMainWindow::LoggerMainWindow(QWidget* parent) : QMainWindow(parent)
 {

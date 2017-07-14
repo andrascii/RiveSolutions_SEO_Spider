@@ -66,6 +66,8 @@
 #include <QStyledItemDelegate>
 #include <QProcess>
 
+#include <windows.h>
+
 #include "logger_connection_service_api.h"
 
 using namespace std::chrono_literals;
