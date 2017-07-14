@@ -20,7 +20,7 @@ public:
 	QueuedDownloader();
 	virtual ~QueuedDownloader();
 
-	void stop();
+	void stopExecution();
 
 	void scheduleUrl(const QUrl& url) noexcept;
 	void scheduleUrlList(const QList<QUrl>& urlList) noexcept;

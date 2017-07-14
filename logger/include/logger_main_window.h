@@ -40,6 +40,8 @@ private:
 		QString source;
 		QString tag;
 		QString text;
+		QString file;
+		QString line;
 		
 		incomingMessage(QStringList message)
 		{
@@ -48,11 +50,20 @@ private:
 			source = message[2];
 			tag = message[3];
 			text = message[4];
+			file = message[5];
+			line = message[6];
 		}
 
 		QString toString()
 		{
-			return QString(dateTime + ' ' + source + ": " + tag + " \"" + text + '\"');
+			//return QString(dateTime + ' ' + source + ": " + tag + " \"" + text + '\"');
+			return QString("%1 %2(%3) %4: %5 \"%6\"")
+				.arg(dateTime)
+				.arg(file)
+				.arg(line)
+				.arg(source)
+				.arg(tag)
+				.arg(text);
 		}
 	};
 

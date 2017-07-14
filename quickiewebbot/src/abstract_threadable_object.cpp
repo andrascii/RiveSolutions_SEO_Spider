@@ -4,13 +4,27 @@
 namespace QuickieWebBot
 {
 
+AbstractThreadableObject::~AbstractThreadableObject()
+{
+	m_thread.exit(0);
+}
+
+void AbstractThreadableObject::moveThisToSeparateThread()
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+
+	m_derivedObjectPtr->moveToThread(&m_thread);
+}
+
 bool AbstractThreadableObject::isRunning() const noexcept
 {
 	return m_isRunning.load();
 }
 
-void AbstractThreadableObject::start() noexcept
+void AbstractThreadableObject::startExecution() noexcept
 {
+	std::lock_guard<std::mutex> locker(m_mutex);
+
 	if (!m_thread.isRunning())
 	{
 		m_thread.start();
@@ -22,17 +36,25 @@ void AbstractThreadableObject::start() noexcept
 	}
 }
 
-void AbstractThreadableObject::stop() noexcept
+void AbstractThreadableObject::stopExecution() noexcept
 {
+	std::lock_guard<std::mutex> locker(m_mutex);
+
 	if (m_thread.isRunning())
 	{
 		QMetaObject::invokeMethod(this, "killTimer",
 			Qt::BlockingQueuedConnection, Q_ARG(int, m_timerId));
 
 		m_thread.quit();
+		m_thread.wait();
 
 		m_isRunning.store(false);
 	}
+}
+
+void AbstractThreadableObject::waitExecution() noexcept
+{
+	m_thread.wait();
 }
 
 void AbstractThreadableObject::timerEvent(QTimerEvent* event)

@@ -3,7 +3,7 @@ QWidget
 	font-family: Arial;
 	font-size: 10pt;
 	color: #ededed;
-	background-color: #1f2530;
+	background-color: #343b49;
 }
 
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
@@ -23,18 +23,13 @@ QMenu
 {
 	padding: 0.1em;
 	border: 0.05em solid #1f2530;
-	background-color: #f5f5f5;
+	background-color: #343b49;
 }
 
 QMenu::item
 {
-	color: #494949;
-	selection-background-color: #d6d6d6;
-}
-
-QIcon
-{
-	selection-background-color: #d6d6d6;
+	color: #ededed;
+	selection-background-color: #1f2530;
 }
 
 /*/////////////////////////////////// Border ////////////////////////////*/
@@ -144,6 +139,18 @@ QTableView
 	border-radius: 0px;
 }
 
+QTableView::item
+{
+	color: #494949;
+	selection-background-color: #343b49;
+	border-left: none;
+}
+
+QTableView::item:focus
+{
+	selection-background-color: #1f2530;
+}
+
 QHeaderView
 {
 	background: #e0e0e0;
@@ -162,13 +169,9 @@ QHeaderView::section
 	min-height: 3em;
 }
 
-QTableView::item
+QScrollBar:vertical
 {
-	color: #494949;
-	selection-background-color: #343b49;
-}
+  border: none;
 
-QTableView::item:focus
-{
-	selection-background-color: #1f2530;
+  background-color: #d6d6d6;
 }

@@ -8,19 +8,19 @@ QueuedDownloader::QueuedDownloader()
 	: AbstractThreadableObject(this)
 	, m_networkAccessManager(new QNetworkAccessManager(this))
 {
-	moveThisToSeparateThread<QueuedDownloader>();
+	moveThisToSeparateThread();
 
 	VERIFY(connect(m_networkAccessManager, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*))));
 }
 
 QueuedDownloader::~QueuedDownloader()
 {
-	stop();
+	stopExecution();
 }
 
-void QueuedDownloader::stop()
+void QueuedDownloader::stopExecution()
 {
-	AbstractThreadableObject::stop();
+	AbstractThreadableObject::stopExecution();
 	m_repliesWaitCondition.notify_all();
 }
 

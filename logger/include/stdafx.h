@@ -55,6 +55,8 @@
 #include <QtNetwork/QNetworkReply>
 #include <QTimer>
 
+#include <windows.h>
+
 using namespace std::chrono_literals;
 using std::size_t;
 
