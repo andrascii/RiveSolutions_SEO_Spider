@@ -3,16 +3,16 @@
 namespace QuickieWebBot
 {
 
-GridViewPainterBackground::GridViewPainterBackground()
+GridViewPainterBackground::GridViewPainterBackground(QColor color, QColor alternateColor)
+	: m_color(color)
+	, m_alternateColor(alternateColor)
 {
 }
 
 void GridViewPainterBackground::paint(QPainter* painter, const QRect& rect, const QModelIndex& index) const
 {
-	if (index.row() % 2 == 0)
-	{
-		painter->fillRect(rect, QColor("#eeeeee"));
-	}
+	painter->fillRect(rect, index.row() % 2 == 0 ? m_color : m_alternateColor);
+
 }
 
 }

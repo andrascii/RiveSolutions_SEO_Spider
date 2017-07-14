@@ -13,8 +13,11 @@ public:
 	explicit GridView(QWidget* parent = nullptr);
 
 	virtual void setModel(QAbstractItemModel* model) override;
+	virtual void mouseMoveEvent(QMouseEvent *event) override;
 
 	IModelDataAccessor* dataAccessor();
+
+	QModelIndex hoveredIndex() const;
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
@@ -23,6 +26,7 @@ protected:
 
 private:
 	IModelDataAccessor* m_accessor;
+	QModelIndex m_hoveredIndex;
 };
 
 

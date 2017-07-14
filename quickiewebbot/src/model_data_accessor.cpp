@@ -105,7 +105,7 @@ std::vector<GridViewPainter*> ModelDataAccessorAllItems::painters(const QModelIn
 {
 	Q_UNUSED(index);
 	static GridViewPainterText s_painterText;
-	static GridViewPainterBackground s_painterBackground;
+	static GridViewPainterBackground s_painterBackground(Qt::transparent, QColor("#eeeeee"));
 
 	return { &s_painterBackground, &s_painterText };
 }

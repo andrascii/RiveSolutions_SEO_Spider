@@ -2,6 +2,7 @@
 #include "imodel_data_accessor.h"
 #include "grid_view_painter.h"
 #include "grid_view.h"
+#include "grid_view_painter_background.h"
 
 namespace QuickieWebBot
 {
@@ -18,10 +19,21 @@ void GridViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 	IModelDataAccessor* accessor = m_gridView->dataAccessor();
 	assert(accessor != nullptr);
 
+	//QStyleOptionViewItemV4 opt = option;
+	//initStyleOption(&opt, index);
+
+
+
 	const std::vector<GridViewPainter*> painters = accessor->painters(index);
 	for (auto it = std::begin(painters); it < std::end(painters); it++)
 	{
 		(*it)->paint(painter, option.rect, index);
+	}
+
+	if (m_gridView->hoveredIndex().row() == index.row())
+	{
+		GridViewPainterBackground s_backgroundPainter(QColor(0, 0, 255, 50), QColor(0, 0, 255, 50));
+		s_backgroundPainter.paint(painter, option.rect, index);
 	}
 }
 

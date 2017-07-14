@@ -10,7 +10,7 @@ GridView::GridView(QWidget * parent)
 	: QTableView(parent)
 	, m_accessor(nullptr)
 {
-
+	setMouseTracking(true);
 }
 
 void GridView::setModel(QAbstractItemModel* model)
@@ -24,9 +24,26 @@ void GridView::setModel(QAbstractItemModel* model)
 	VERIFY(QObject::connect(model, SIGNAL(modelAccessorChanged(IModelDataAccessor*)), this, SLOT(onModelAccessorChanged(IModelDataAccessor*))));
 }
 
+void GridView::mouseMoveEvent(QMouseEvent* event)
+{
+	QModelIndex index = indexAt(event->pos());
+	if (index != m_hoveredIndex)
+	{
+		m_hoveredIndex = index;
+		// raise paint event on prev and current hovered row
+	}
+
+	QTableView::mouseMoveEvent(event);
+}
+
 IModelDataAccessor* GridView::dataAccessor()
 {
 	return m_accessor;
+}
+
+QModelIndex GridView::hoveredIndex() const
+{
+	return m_hoveredIndex;
 }
 
 void GridView::paintEvent(QPaintEvent* event)

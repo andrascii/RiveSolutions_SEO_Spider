@@ -9,7 +9,7 @@ namespace QuickieWebBot
 class GridViewPainterText : public GridViewPainter
 {
 public:
-	GridViewPainterText(int cacheSize = 0);
+	GridViewPainterText(int cacheSize = 200);
 	virtual void paint(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
 
 private:
@@ -30,6 +30,7 @@ private:
 	int m_marginBottom;
 
 	mutable QHash<CacheKey, Cache> m_cache;
+	mutable std::multimap<std::chrono::system_clock::time_point, CacheKey> m_cacheAccessTime;
 	int m_cacheSize;
 };
 

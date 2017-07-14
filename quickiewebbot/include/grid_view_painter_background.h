@@ -8,8 +8,12 @@ namespace QuickieWebBot
 class GridViewPainterBackground : public GridViewPainter
 {
 public:
-	GridViewPainterBackground();
+	GridViewPainterBackground(QColor color, QColor alternateColor);
 	virtual void paint(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
+
+private:
+	QColor m_color;
+	QColor m_alternateColor;
 };
 
 }

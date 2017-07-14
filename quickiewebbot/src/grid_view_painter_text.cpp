@@ -40,13 +40,15 @@ void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QMod
 		QRect pixmapRect(m_marginLeft, m_marginTop, rect.width() - m_marginLeft - m_marginRight, rect.height() - m_marginTop - m_marginBottom);
 	
 		QPixmap pixmap(pixmapRect.size());
+		pixmap.fill(Qt::transparent);
 		QPainter painterPixmap(&pixmap);
 
 		painterPixmap.setPen(qvariant_cast<QColor>(index.data(Qt::TextColorRole)));
-		painterPixmap.fillRect(pixmapRect, Qt::transparent);
 		painterPixmap.drawText(pixmapRect, Qt::AlignLeft | Qt::AlignTop, key.first);
 
-		m_cache[key] = Cache{ pixmap, std::chrono::system_clock::now() };
+		auto accessTime = std::chrono::system_clock::now();
+		m_cache[key] = Cache{ pixmap, accessTime };
+		m_cacheAccessTime.insert(std::make_pair(accessTime, key));
 
 		pixmapPointer = &(m_cache[key].pixmap);
 		
@@ -65,7 +67,22 @@ QPixmap* GridViewPainterText::getCached(const CacheKey& key) const
 	auto it = m_cache.find(key);
 	if (it != std::end(m_cache))
 	{
+		auto rangeIt = m_cacheAccessTime.equal_range(it->lastAccess);
+		auto rmIt = rangeIt.first;
+		for (auto rangeIt1 = rangeIt.first; rangeIt1 != rangeIt.second; rangeIt1++)
+		{
+			if (rangeIt1->second == key)
+			{
+				rmIt = rangeIt1;
+				break;
+			}
+		}
+
+		m_cacheAccessTime.erase(rmIt);
+
 		it->lastAccess = std::chrono::system_clock::now();
+		m_cacheAccessTime.insert(std::make_pair(it->lastAccess, key));
+
 		return &(it->pixmap);
 	}
 
@@ -74,7 +91,13 @@ QPixmap* GridViewPainterText::getCached(const CacheKey& key) const
 
 void GridViewPainterText::removeExtraCache() const
 {
+	int i = 0;
+	for (auto it = std::begin(m_cacheAccessTime); i < m_cacheSize / 2; i++)
+	{
+		m_cache.remove(it->second);
+		it = m_cacheAccessTime.erase(it);
 
+	}
 }
 
 }

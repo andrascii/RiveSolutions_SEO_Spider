@@ -65,6 +65,7 @@
 #include <QDebug>
 #include <QStyledItemDelegate>
 #include <QProcess>
+#include <QDateTime>
 
 #include "logger_connection_service_api.h"
 
