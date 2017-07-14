@@ -7,14 +7,16 @@ LoggerMainWindow::LoggerMainWindow(QWidget* parent) : QMainWindow(parent)
 
 	if (!m_server->listen(QHostAddress::LocalHost,12345))
 	{
-		QMessageBox::critical(this, tr("Logger Server"), tr("Unable to start the server: %1.").arg(m_server->errorString()));
+		QMessageBox::critical(this, tr("Logger Server"),
+			tr("Unable to start the server cause 12345 port is busy: %1.").arg(m_server->errorString()));
 
 		m_server->close();
 		return;
 	}
 
 	m_blockSize = 0;
-	connect(m_server, SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
+
+	VERIFY(connect(m_server, SIGNAL(newConnection()), this, SLOT(slotNewConnection())));
 }
 
 void LoggerMainWindow::slotNewConnection()
@@ -30,6 +32,7 @@ void LoggerMainWindow::slotReadyRead()
 {
 	QTcpSocket* client_socket = (QTcpSocket*)sender();
 	QDataStream in(client_socket);
+
 	in.setVersion(QDataStream::Qt_4_0);
 
 	for (;;)
@@ -56,14 +59,26 @@ void LoggerMainWindow::slotReadyRead()
 	
 		switch (m_incomingMessages.last().type)
 		{
-		case InformationMessageType: 
-			ui.textBrowser->setTextColor(QColor(0, 0, 0)); break;
-		case DebugMessageType:
-			ui.textBrowser->setTextColor(QColor(0, 0, 255)); break;
-		case WarningMessageType: 
-			ui.textBrowser->setTextColor(QColor(255,165,0)); break;
-		case ErrorMessageType: 
-			ui.textBrowser->setTextColor(QColor(255, 0, 0)); break;
+			case InformationMessageType:
+			{
+				ui.textBrowser->setTextColor(QColor(0, 0, 0));
+				break;
+			}
+			case DebugMessageType:
+			{
+				ui.textBrowser->setTextColor(QColor(0, 0, 255));
+				break;
+			}
+			case WarningMessageType:
+			{
+				ui.textBrowser->setTextColor(QColor(255, 165, 0));
+				break;
+			}
+			case ErrorMessageType:
+			{
+				ui.textBrowser->setTextColor(QColor(255, 0, 0));
+				break;
+			}
 		}
 
 		ui.textBrowser->append(m_incomingMessages.last().toString());
