@@ -19,7 +19,7 @@ public:
 public:
 	static LoggerConnectionServiceApi* instance();
 
-	void log(MessageType type, QString tag, QString text, QString func) const noexcept;
+	void log(MessageType type, QString tag, QString text, QString func, QString file, int line) const noexcept;
 
 private:
 	LoggerConnectionServiceApi(QObject* parent = 0);

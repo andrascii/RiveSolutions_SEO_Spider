@@ -32,7 +32,7 @@ LoggerConnectionServiceApi* LoggerConnectionServiceApi::instance()
 	return &logger;
 }
 
-void LoggerConnectionServiceApi::log(MessageType type, QString tag, QString text, QString func) const noexcept
+void LoggerConnectionServiceApi::log(MessageType type, QString tag, QString text, QString func, QString file, int line) const noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
@@ -44,12 +44,14 @@ void LoggerConnectionServiceApi::log(MessageType type, QString tag, QString text
 
 	out << static_cast<quint16>(0);
 
-	message += QString("%1 | %2 | %3 | %4 | %5")
+	message += QString("%1|%2|%3|%4|%5|%6|%7")
 		.arg(type)
 		.arg(QDateTime::currentDateTime().toString())
 		.arg(func)
 		.arg(tag)
-		.arg(text);
+		.arg(text)
+		.arg(file)
+		.arg(line);
 	
 	out << message;
  	out.device()->seek(0);
