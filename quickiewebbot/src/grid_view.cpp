@@ -29,7 +29,21 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 	QModelIndex index = indexAt(event->pos());
 	if (index != m_hoveredIndex)
 	{
+		// TODO: paint only selection
+		QAbstractItemModel* mod = model();
+		int columnCount = mod->columnCount();
+
+		if (m_hoveredIndex.isValid())
+		{
+			mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), columnCount));
+		}
+		
 		m_hoveredIndex = index;
+
+		if (m_hoveredIndex.isValid())
+		{
+			mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), columnCount));
+		}
 		// raise paint event on prev and current hovered row
 	}
 
