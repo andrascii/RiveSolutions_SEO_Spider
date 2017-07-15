@@ -175,3 +175,31 @@ QScrollBar:vertical
 
   background-color: #d6d6d6;
 }
+
+/*/////////////////////////////// Group buttons ///////////////////////////////*/
+
+QPushButton[groupButton] {
+	/*background-color: #d6d6d6;*/
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+}
+
+QPushButton:checked[groupButton] {
+	background-color: #d6d6d6;
+}
+
+QPushButton[groupButton="left"] {
+	margin-right: 0em;
+	border-top-left-radius: 0.2em;
+	border-top-right-radius: 0em;
+	border-bottom-right-radius: 0em;
+	border-bottom-left-radius: 0.2em;
+	border-right: 0em;
+}
+QPushButton[groupButton="right"] {
+	margin-left: 0em;
+	border-top-left-radius: 0em;
+	border-top-right-radius: 0.2em;
+	border-bottom-right-radius: 0.2em;
+	border-bottom-left-radius: 0em;
+}
