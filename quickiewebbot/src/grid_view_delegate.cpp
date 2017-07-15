@@ -30,10 +30,16 @@ void GridViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 		(*it)->paint(painter, option.rect, index);
 	}
 
+	if (option.state & QStyle::State_Selected)
+	{
+		GridViewPainterBackground s_selectionPainter(QColor(0, 50, 100, 50), QColor(0, 50, 100, 50));
+		s_selectionPainter.paint(painter, option.rect, index);
+	}
+	
 	if (m_gridView->hoveredIndex().row() == index.row())
 	{
-		GridViewPainterBackground s_backgroundPainter(QColor(0, 0, 255, 50), QColor(0, 0, 255, 50));
-		s_backgroundPainter.paint(painter, option.rect, index);
+		GridViewPainterBackground s_hoveredRowsPainter(QColor(0, 0, 255, 30), QColor(0, 0, 255, 30));
+		s_hoveredRowsPainter.paint(painter, option.rect, index);
 	}
 }
 

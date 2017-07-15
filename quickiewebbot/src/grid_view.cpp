@@ -11,6 +11,7 @@ GridView::GridView(QWidget * parent)
 	, m_accessor(nullptr)
 {
 	setMouseTracking(true);
+	setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
 void GridView::setModel(QAbstractItemModel* model)
