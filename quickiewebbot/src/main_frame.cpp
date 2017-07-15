@@ -21,28 +21,30 @@ void MainFrame::initialize()
 {
 	ui.setupUi(this);
 
-	VERIFY(connect(ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::startCrawling));
-	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));
-
-	using pushButtonToggledFunction = void (QAbstractButton::*)(bool);
-	VERIFY(connect(ui.generalViewButton, static_cast<pushButtonToggledFunction>(&QPushButton::toggled), [&ui = ui](bool checked)
-	{ 
+	auto showListView = [this](bool checked)
+	{
 		ui.summaryViewButton->setChecked(!checked);
 		if (checked)
 		{
 			ui.mainGuiStackedWidget->setCurrentIndex(0);
 		}
-	}));
+	};
 
-	VERIFY(connect(ui.summaryViewButton, static_cast<pushButtonToggledFunction>(&QPushButton::toggled), [&ui = ui](bool checked)
+	auto showSummaryView = [this](bool checked)
 	{
 		ui.generalViewButton->setChecked(!checked);
 		if (checked)
 		{
 			ui.mainGuiStackedWidget->setCurrentIndex(1);
 		}
-	}));
+	};
+
+	VERIFY(connect(ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
+	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::startCrawling));
+	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));
+
+	VERIFY(connect(ui.generalViewButton, &QPushButton::toggled, showListView));
+	VERIFY(connect(ui.summaryViewButton, &QPushButton::toggled, showSummaryView));
 
 
 	ui.viewTypeComboBox->addItem(tr("List"));

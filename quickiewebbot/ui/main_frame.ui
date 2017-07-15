@@ -398,5 +398,22 @@
  <resources>
   <include location="../rcc/main_frame.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainFrameClass</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>526</x>
+     <y>385</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
