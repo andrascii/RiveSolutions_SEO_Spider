@@ -25,6 +25,8 @@ public:
 private:
 	virtual void process() override;
 
+	void validateUrlList(std::vector<QUrl>& urlList) noexcept;
+
 private:
 	HtmlPageParser m_htmlPageParser;
 

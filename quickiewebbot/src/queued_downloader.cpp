@@ -18,12 +18,6 @@ QueuedDownloader::~QueuedDownloader()
 	stopExecution();
 }
 
-void QueuedDownloader::stopExecution()
-{
-	AbstractThreadableObject::stopExecution();
-	m_repliesWaitCondition.notify_all();
-}
-
 void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
@@ -63,8 +57,6 @@ void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 	}
 
 	m_repliesQueue.push_back(std::move(response));
-
-	m_repliesWaitCondition.notify_all();
 }
 
 void QueuedDownloader::process()

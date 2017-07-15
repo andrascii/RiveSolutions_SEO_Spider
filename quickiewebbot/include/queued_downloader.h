@@ -20,8 +20,6 @@ public:
 	QueuedDownloader();
 	virtual ~QueuedDownloader();
 
-	void stopExecution();
-
 	void scheduleUrl(const QUrl& url) noexcept;
 	void scheduleUrlList(const QList<QUrl>& urlList) noexcept;
 
@@ -37,7 +35,6 @@ private:
 
 	std::mutex m_requestQueueMutex;
 	std::mutex m_repliesQueueMutex;
-	std::condition_variable m_repliesWaitCondition;
 
 	QQueue<QUrl> m_requestQueue;
 	QQueue<Reply> m_repliesQueue;

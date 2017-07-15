@@ -17,7 +17,9 @@ void HtmlPageParser::parsePage(const QString& htmlPage, PageInfoPtr& pageInfo) n
 	{
 		parser->parse(output, pageInfo);
 	}
-	
+
+	m_pageUrlList.clear();
+
 	parsePageUrlList(output->root);
 
 	gumbo_destroy_output(&kGumboDefaultOptions, output);

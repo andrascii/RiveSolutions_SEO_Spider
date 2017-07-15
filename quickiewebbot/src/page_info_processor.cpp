@@ -42,9 +42,20 @@ void PageInfoProcessor::process()
 		m_pageInfo->url = reply.url;
 		m_pageInfo->serverResponse = reply.responseHeaderValuePairs;
 
-		m_webCrawlerInternalUrlStorage->saveUrlList(m_htmlPageParser.pageUrlList());
+		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
+
+		validateUrlList(urlList);
+		m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
 
 		emit webPageParsed(m_pageInfo);
+	}
+}
+
+void PageInfoProcessor::validateUrlList(std::vector<QUrl>& urlList) noexcept
+{
+	for (QUrl& url : urlList)
+	{
+		
 	}
 }
 

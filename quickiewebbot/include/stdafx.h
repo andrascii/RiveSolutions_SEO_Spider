@@ -66,6 +66,7 @@
 #include <QStyledItemDelegate>
 #include <QProcess>
 #include <QDateTime>
+#include <QLineEdit>
 
 #include <windows.h>
 
