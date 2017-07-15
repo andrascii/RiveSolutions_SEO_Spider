@@ -7,12 +7,14 @@
 #include "service_locator.h"
 #include "web_crawler.h"
 #include "constants.h"
+#include "application_properties.h"
 
 namespace QuickieWebBot
 {
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
+	, m_appicationProperties(new ApplicationProperties(this))
 	, m_modelController(new ModelController(this))
 	, m_webCrawler(new WebCrawler(g_optimalParserThreadsCount, m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
@@ -41,6 +43,11 @@ MainFrame* Application::mainFrame() noexcept
 ModelController* Application::modelController() noexcept
 {
 	return m_modelController;
+}
+
+const QuickieWebBot::ApplicationProperties* Application::properties() const noexcept
+{
+	return m_appicationProperties;
 }
 
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept

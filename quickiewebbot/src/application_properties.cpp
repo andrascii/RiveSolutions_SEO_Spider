@@ -245,4 +245,9 @@ void ApplicationProperties::setMaxTitleWidth(int value)
 	emit maxTitleWidthChanged();
 }
 
+ApplicationProperties::ApplicationProperties(QObject* parent)
+	: QObject(parent)
+{
+}
+
 }

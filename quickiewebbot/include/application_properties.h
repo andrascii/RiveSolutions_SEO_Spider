@@ -129,10 +129,14 @@ public:
 	int maxDescriptionWidth() const;
 	Q_SLOT void setMaxDescriptionWidth(int value);
 	Q_SIGNAL void maxDescriptionWidthChanged();
-
+	
 	int maxTitleWidth() const;
 	Q_SLOT void setMaxTitleWidth(int value);
 	Q_SIGNAL void maxTitleWidthChanged();
+
+	//////////////////////////////////////////////////////////////////////////
+
+	ApplicationProperties(QObject* parent);
 
 private:
 	unsigned m_threadCount;
