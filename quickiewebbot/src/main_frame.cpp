@@ -53,8 +53,6 @@ void MainFrame::initialize()
 
 	m_ui.crawlingTableView->setItemDelegate(new GridViewDelegate(m_ui.crawlingTableView));
 	new GridViewExtension(m_ui.crawlingTableView);
-<<<<<<< HEAD
-=======
 
 	GridViewModel* summaryModel = new GridViewModel(this);
 	summaryModel->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
@@ -63,7 +61,6 @@ void MainFrame::initialize()
 	m_ui.summaryGridView->setColumnResizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }));
 
 	//////////////////////////////////////////////////////////////////////////
->>>>>>> b0b2e63a5e9d0590d41e6ca8e93dab6213523dd7
 }
 
 }
