@@ -17,38 +17,21 @@ MainFrame::MainFrame(QWidget* parent)
 	initialize();
 }
 
+void MainFrame::showListView()
+{
+	m_ui.mainGuiStackedWidget->setCurrentIndex(0);
+}
+
+void MainFrame::showSummaryView()
+{
+	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
+}
+
 void MainFrame::initialize()
 {
-	ui.setupUi(this);
+	m_ui.setupUi(this);
 
-	auto showListView = [this](bool checked)
-	{
-		ui.summaryViewButton->setChecked(!checked);
-		if (checked)
-		{
-			ui.mainGuiStackedWidget->setCurrentIndex(0);
-		}
-	};
-
-	auto showSummaryView = [this](bool checked)
-	{
-		ui.generalViewButton->setChecked(!checked);
-		if (checked)
-		{
-			ui.mainGuiStackedWidget->setCurrentIndex(1);
-		}
-	};
-
-	VERIFY(connect(ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-	VERIFY(connect(ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::startCrawling));
-	VERIFY(connect(ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));
-
-	VERIFY(connect(ui.generalViewButton, &QPushButton::toggled, showListView));
-	VERIFY(connect(ui.summaryViewButton, &QPushButton::toggled, showSummaryView));
-
-
-	ui.viewTypeComboBox->addItem(tr("List"));
-	ui.viewTypeComboBox->addItem(tr("Tree"));
+ 	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Debug code
@@ -59,9 +42,9 @@ void MainFrame::initialize()
 
 	ModelDataAccessorFactory factory;
 	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams()));
-	ui.crawlingTableView->setModel(model);
-	ui.crawlingTableView->setItemDelegate(new GridViewDelegate(ui.crawlingTableView));
-	new GridViewExtension(ui.crawlingTableView);
+	m_ui.crawlingTableView->setModel(model);
+	m_ui.crawlingTableView->setItemDelegate(new GridViewDelegate(m_ui.crawlingTableView));
+	new GridViewExtension(m_ui.crawlingTableView);
 	//////////////////////////////////////////////////////////////////////////
 }
 
