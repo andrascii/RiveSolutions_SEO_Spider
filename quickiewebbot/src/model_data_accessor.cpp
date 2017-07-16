@@ -84,12 +84,6 @@ int ModelDataAccessorAllItems::flags(const QModelIndex& index) const
 	return m_columns[index.column()] == static_cast<int>(PageInfoItemAccessorHelper::Url) ? ItemFlagUrl : ItemFlagNone;
 }
 
-QAbstractItemDelegate* ModelDataAccessorAllItems::itemDelegate(const QModelIndex& index) const
-{
-	Q_UNUSED(index);
-	return nullptr;
-}
-
 QPixmap* ModelDataAccessorAllItems::pixmap(const QModelIndex& index) const
 {
 	Q_UNUSED(index);

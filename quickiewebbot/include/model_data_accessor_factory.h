@@ -7,6 +7,14 @@ class IModelDataAccessor;
 
 struct ModelDataAccessorFactoryParams
 {
+	enum Type 
+	{
+		TypeAllCrawledUrls,
+		TypeSummary
+	};
+
+	Type accessorType;
+
 	// TODO: add params
 
 };

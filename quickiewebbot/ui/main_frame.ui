@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
-    <height>371</height>
+    <width>1085</width>
+    <height>772</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,23 @@
       <widget class="QWidget" name="errorsFilterPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QListView" name="listView"/>
+         <widget class="QuickieWebBot::GridView" name="summaryGridView">
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <property name="showGrid">
+           <bool>false</bool>
+          </property>
+          <property name="gridStyle">
+           <enum>Qt::NoPen</enum>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
         </item>
         <item>
          <widget class="QStackedWidget" name="stackedWidget_2">
@@ -121,7 +137,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>528</width>
+     <width>1085</width>
      <height>21</height>
     </rect>
    </property>

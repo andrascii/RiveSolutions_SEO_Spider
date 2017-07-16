@@ -4,6 +4,7 @@ namespace QuickieWebBot
 {
 
 class IModelDataAccessor;
+class IGridViewResizeStrategy;
 
 class GridView : public QTableView
 {
@@ -13,7 +14,7 @@ public:
 	explicit GridView(QWidget* parent = nullptr);
 
 	virtual void setModel(QAbstractItemModel* model) override;
-	virtual void mouseMoveEvent(QMouseEvent *event) override;
+	void setColumnResizeStrategy(std::unique_ptr<IGridViewResizeStrategy> strategy);
 
 	IModelDataAccessor* dataAccessor();
 
@@ -21,12 +22,18 @@ public:
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
+	virtual void mouseMoveEvent(QMouseEvent* event) override;
+	virtual void resizeEvent(QResizeEvent* event) override;
 
 	Q_SLOT void onModelAccessorChanged(IModelDataAccessor* accessor);
 
 private:
+	void updateColumnsSpan();
+
+private:
 	IModelDataAccessor* m_accessor;
 	QModelIndex m_hoveredIndex;
+	std::unique_ptr<IGridViewResizeStrategy> m_resizeStrategy;
 };
 
 

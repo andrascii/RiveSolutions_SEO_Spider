@@ -67,12 +67,6 @@ public:
 		return 0;
 	}
 
-	virtual QAbstractItemDelegate* itemDelegate(const QModelIndex& index) const override
-	{
-		Q_UNUSED(index);
-		return nullptr;
-	}
-
 	virtual QObject* qobject() 
 	{
 		return this;

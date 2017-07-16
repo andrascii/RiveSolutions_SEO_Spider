@@ -7,6 +7,7 @@
 #include "grid_view_extension.h"
 #include "grid_view_delegate.h"
 #include "web_crawler.h"
+#include "grid_view_full_size_resize_strategy.h"
 
 namespace QuickieWebBot
 {
@@ -47,11 +48,22 @@ void MainFrame::initialize()
 	GridViewModel* model = new GridViewModel(this);
 
 	ModelDataAccessorFactory factory;
-	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams()));
+	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingTableView->setModel(model);
 
 	m_ui.crawlingTableView->setItemDelegate(new GridViewDelegate(m_ui.crawlingTableView));
 	new GridViewExtension(m_ui.crawlingTableView);
+<<<<<<< HEAD
+=======
+
+	GridViewModel* summaryModel = new GridViewModel(this);
+	summaryModel->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
+	m_ui.summaryGridView->setModel(summaryModel);
+	m_ui.summaryGridView->setItemDelegate(new GridViewDelegate(m_ui.summaryGridView));
+	m_ui.summaryGridView->setColumnResizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }));
+
+	//////////////////////////////////////////////////////////////////////////
+>>>>>>> b0b2e63a5e9d0590d41e6ca8e93dab6213523dd7
 }
 
 }
