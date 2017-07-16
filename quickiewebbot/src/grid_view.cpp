@@ -1,6 +1,7 @@
 #include "grid_view.h"
 #include "imodel_data_accessor.h"
 #include "grid_view_model.h"
+#include "igrid_view_resize_strategy.h"
 
 
 namespace QuickieWebBot
@@ -23,6 +24,12 @@ void GridView::setModel(QAbstractItemModel* model)
 	m_accessor = gridViewModel->dataAcessor();
 
 	VERIFY(QObject::connect(model, SIGNAL(modelAccessorChanged(IModelDataAccessor*)), this, SLOT(onModelAccessorChanged(IModelDataAccessor*))));
+	updateColumnsSpan();
+}
+
+void GridView::setColumnResizeStrategy(std::unique_ptr<IGridViewResizeStrategy> strategy)
+{
+	m_resizeStrategy = std::move(strategy);
 }
 
 void GridView::mouseMoveEvent(QMouseEvent* event)
@@ -51,6 +58,16 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 	QTableView::mouseMoveEvent(event);
 }
 
+void GridView::resizeEvent(QResizeEvent* event)
+{
+	QTableView::resizeEvent(event);
+
+	if (m_resizeStrategy)
+	{
+		m_resizeStrategy->resize(this);
+	}
+}
+
 IModelDataAccessor* GridView::dataAccessor()
 {
 	return m_accessor;
@@ -70,6 +87,23 @@ void GridView::paintEvent(QPaintEvent* event)
 void GridView::onModelAccessorChanged(IModelDataAccessor* accessor)
 {
 	m_accessor = accessor;
+	updateColumnsSpan();
+}
+
+void GridView::updateColumnsSpan()
+{
+	int rows = model()->rowCount();
+	int columns = model()->columnCount();
+	for (int row = 0; row < rows; ++row)
+	{
+		for (int column = 0; column < columns;)
+		{
+			int colSpan = m_accessor->itemColSpan(model()->index(row, column));
+			assert(colSpan > 0);
+			setSpan(row, column, 1, colSpan);
+			column += colSpan;
+		}
+	}
 }
 
 }

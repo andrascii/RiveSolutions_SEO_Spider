@@ -1,19 +1,19 @@
 #pragma once
 
 #include "imodel_data_accessor.h"
-#include "data_collection.h"
 
 namespace QuickieWebBot
 {
 
-class ModelDataAccessorAllItems 
+class ModelDataAccessorSummary 
 	: public QObject
 	, public ModelDataAccessorBase
 {
 	Q_OBJECT
 
 public:
-	ModelDataAccessorAllItems(DataCollection::StorageType storageType);
+	ModelDataAccessorSummary();
+
 	virtual int columnCount() const override;
 	virtual QString columnText(int column) const override;
 
@@ -35,13 +35,35 @@ public:
 
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
 
-protected:
-	Q_SLOT void onModelDataRowAdded(int row, int type);
+private:
+	enum ItemStatus
+	{
+		StatusOK,
+		StatusWarning,
+		StatusError
+	};
+
+	struct SummaryItem
+	{
+		QString name;
+		QByteArray id;
+		ItemStatus status;
+		int issueCount;
+	};
+
+	struct SummaryGroup 
+	{
+		QString groupName;
+		std::vector<SummaryItem> groupItems;
+	};
+
+	bool isGroupHeaderRow(int row) const;
 
 private:
-	const DataCollection* m_modelControllerData;
-	DataCollection::StorageType m_storageType;
-	std::vector<int> m_columns;
+	std::vector<SummaryGroup> m_groups;
+	std::map<int, SummaryGroup*> m_groupRefs;
+	std::map<int, SummaryItem*> m_itemRefs;
+
 };
 
 }

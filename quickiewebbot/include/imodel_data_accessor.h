@@ -12,7 +12,11 @@ public:
 	enum ItemFlag
 	{
 		ItemFlagNone = 0,
-		ItemFlagUrl = 1
+		ItemFlagUrl = 1,
+		ItemFlagHasPixmap = 1 << 1,
+		ItemFlagTextBold = 1 << 2,
+		ItemFlagAlignRight = 1 << 3,
+		ItemFlagAlignCenter = 1 << 4
 	};
 
 	virtual ~IModelDataAccessor() = default;
@@ -26,7 +30,6 @@ public:
 	virtual QColor itemTextColor(const QModelIndex& index) const = 0;
 	virtual int itemColSpan(const QModelIndex& index) const = 0;
 
-	virtual QAbstractItemDelegate* itemDelegate(const QModelIndex& index) const = 0;
 	virtual QPixmap* pixmap(const QModelIndex& index) const = 0;
 
 	virtual int flags(const QModelIndex& index) const = 0;
