@@ -1,3 +1,5 @@
+#include "application.h"
+#include "application_properties.h"
 #include "web_crawler.h"
 #include "data_collection.h"
 #include "model_controller.h"
@@ -30,10 +32,14 @@ WebCrawler::~WebCrawler()
 
 void WebCrawler::startCrawling()
 {
-	INFOLOG("crawler", "crawler started");
+	QUrl host = theApp->properties()->host();
+
+	assert(host.isValid());
+
+	INFOLOG("", "crawler started");
 
 	m_queuedDownloader.startExecution();
-	m_internalUrlStorage.setHost(m_modelController->host());
+	m_internalUrlStorage.setHost(host);
 
 	for (std::unique_ptr<PageInfoProcessor>& worker : m_workers)
 	{
@@ -43,7 +49,7 @@ void WebCrawler::startCrawling()
 
 void WebCrawler::stopCrawling()
 {
-	INFOLOG("crawler", "crawler stopped");
+	INFOLOG("", "crawler stopped");
 
 	for (std::unique_ptr<PageInfoProcessor>& worker : m_workers)
 	{

@@ -112,9 +112,8 @@ QComboBox::down-arrow
 
 /*/////////////////////////////// Info frame ///////////////////////////////*/
 
-QWidget#titleWidget
+QuickieWebBot--CrawlerControlWidget QWidget#crawlerControlWidget
 {
-	padding-left: 1em;
 	min-height: 3em;
 	background: #e7e7e7;
 }

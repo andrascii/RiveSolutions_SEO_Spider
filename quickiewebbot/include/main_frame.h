@@ -12,12 +12,14 @@ class MainFrame : public QMainWindow
 public:
 	MainFrame(QWidget *parent = 0);
 
+	void showListView();
+	void showSummaryView();
 
 private:
 	void initialize();
 
 private:
-	Ui::MainFrameClass ui;
+	Ui::MainFrameClass m_ui;
 };
 
 }

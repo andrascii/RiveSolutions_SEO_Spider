@@ -18,8 +18,8 @@ public:
 	Application(int& argc, char** argv);
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
-	const ApplicationProperties* properties() const noexcept;
 	const WebCrawler* webCrawler() const noexcept;
+	ApplicationProperties* properties() noexcept;
 	ModelController* modelController() noexcept;
 	MainFrame* mainFrame() noexcept;
 

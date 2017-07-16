@@ -38,127 +38,32 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QWidget" name="titleWidget" native="true">
+     <widget class="QuickieWebBot::CrawlerControlWidget" name="crawlerControlWidget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
        </property>
        <property name="horizontalSpacing">
-        <number>6</number>
+        <number>0</number>
        </property>
-       <item row="0" column="9">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="2">
-        <widget class="QPushButton" name="stopCrawlingButton">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Stop</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="8">
-        <widget class="QProgressBar" name="progressBar">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="value">
-          <number>24</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="startOrConrinueCrawlingButton">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Start</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QComboBox" name="viewTypeComboBox">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLineEdit" name="urlLineEdit"/>
-       </item>
-       <item row="0" column="4">
-        <layout class="QHBoxLayout" name="viewModeLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="generalViewButton">
-           <property name="text">
-            <string>List</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <property name="groupButton" stdset="0">
-            <string notr="true">left</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="summaryViewButton">
-           <property name="text">
-            <string>Summary</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="groupButton" stdset="0">
-            <string notr="true">right</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
       </layout>
      </widget>
     </item>
@@ -409,6 +314,12 @@
    <class>QuickieWebBot::GridView</class>
    <extends>QTableView</extends>
    <header>grid_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QuickieWebBot::CrawlerControlWidget</class>
+   <extends>QWidget</extends>
+   <header>crawler_control_widget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
