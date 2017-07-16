@@ -41,7 +41,7 @@ protected:
 private:
 	const DataCollection* m_modelControllerData;
 	DataCollection::StorageType m_storageType;
-	std::vector<int> m_columns;
+	QVector<int> m_columns;
 };
 
 }

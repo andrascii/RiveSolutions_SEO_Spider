@@ -33,7 +33,6 @@ void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QMod
 		return;
 	}
 
-
 	CacheKey key = std::make_pair(index.data(Qt::DisplayRole).toString(), std::make_pair(rect.width(), rect.height()));
 	QPixmap* pixmapPointer = getCached(key);
 
@@ -69,10 +68,12 @@ void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QMod
 QPixmap* GridViewPainterText::getCached(const CacheKey& key) const
 {
 	auto it = m_cache.find(key);
+
 	if (it != std::end(m_cache))
 	{
 		auto rangeIt = m_cacheAccessTime.equal_range(it->lastAccess);
 		auto rmIt = rangeIt.first;
+
 		for (auto rangeIt1 = rangeIt.first; rangeIt1 != rangeIt.second; rangeIt1++)
 		{
 			if (rangeIt1->second == key)
@@ -96,11 +97,11 @@ QPixmap* GridViewPainterText::getCached(const CacheKey& key) const
 void GridViewPainterText::removeExtraCache() const
 {
 	int i = 0;
+
 	for (auto it = std::begin(m_cacheAccessTime); i < m_cacheSize; i++)
 	{
 		m_cache.remove(it->second);
 		it = m_cacheAccessTime.erase(it);
-
 	}
 }
 
@@ -113,12 +114,12 @@ void GridViewPainterText::applyTextBold(QPainter* painter, int flags) const
 		font.setPointSize(font.pointSize() + 1);
 		painter->setFont(font);
 	}
-	
 }
 
 int GridViewPainterText::textAlign(int flags) const
 {
 	int result = Qt::AlignTop;
+
 	if (flags & IModelDataAccessor::ItemFlagAlignRight)
 	{
 		result |= Qt::AlignRight;
