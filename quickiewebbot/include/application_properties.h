@@ -45,6 +45,11 @@ class ApplicationProperties : public QObject
 	Q_PROPERTY(int maxDescriptionWidth READ maxDescriptionWidth WRITE setMaxDescriptionWidth NOTIFY maxDescriptionWidthChanged);
 	Q_PROPERTY(int maxTitleWidth READ maxTitleWidth WRITE setMaxTitleWidth NOTIFY maxTitleWidthChanged);
 
+	//
+	// Crawler start
+	//
+	Q_PROPERTY(QUrl host READ host WRITE setHost NOTIFY hostChanged);
+
 public:
 	unsigned threadCount() const;
 	Q_SLOT void setThreadCount(unsigned value);
@@ -134,6 +139,10 @@ public:
 	Q_SLOT void setMaxTitleWidth(int value);
 	Q_SIGNAL void maxTitleWidthChanged();
 
+	const QUrl& host() const;
+	Q_SLOT void setHost(const QUrl& host);
+	Q_SIGNAL void hostChanged();
+
 	//////////////////////////////////////////////////////////////////////////
 
 	ApplicationProperties(QObject* parent);
@@ -163,6 +172,8 @@ private:
 	int m_maxImageSize;
 	int m_maxDescriptionWidth;
 	int m_maxTitleWidth;
+
+	QUrl m_host;
 };
 
 }

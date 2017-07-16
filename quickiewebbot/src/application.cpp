@@ -45,7 +45,7 @@ ModelController* Application::modelController() noexcept
 	return m_modelController;
 }
 
-const QuickieWebBot::ApplicationProperties* Application::properties() const noexcept
+QuickieWebBot::ApplicationProperties* Application::properties() noexcept
 {
 	return m_appicationProperties;
 }

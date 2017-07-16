@@ -1,5 +1,6 @@
-#include "crawler_control_widget.h"
 #include "application.h"
+#include "application_properties.h"
+#include "crawler_control_widget.h"
 #include "web_crawler.h"
 
 namespace QuickieWebBot
@@ -31,6 +32,11 @@ void CrawlerControlWidget::showSummaryView(bool value)
 	}
 }
 
+void CrawlerControlWidget::setHost()
+{
+	theApp->properties()->setHost(m_ui.urlLineEdit->text());
+}
+
 void CrawlerControlWidget::initialize()
 {
 	m_ui.setupUi(this);
@@ -40,6 +46,8 @@ void CrawlerControlWidget::initialize()
 
 	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::startCrawling));
 	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));
+
+	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &CrawlerControlWidget::setHost));
 
 	m_ui.viewTypeComboBox->addItem(tr("List"));
 	m_ui.viewTypeComboBox->addItem(tr("Tree"));

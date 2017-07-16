@@ -16,6 +16,9 @@ public:
 	Q_SLOT void showSummaryView(bool value);
 
 private:
+	Q_SLOT void setHost();
+
+private:
 	void initialize();
 
 private:

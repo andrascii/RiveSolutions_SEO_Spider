@@ -245,6 +245,17 @@ void ApplicationProperties::setMaxTitleWidth(int value)
 	emit maxTitleWidthChanged();
 }
 
+const QUrl& ApplicationProperties::host() const
+{
+	return m_host;
+}
+
+void ApplicationProperties::setHost(const QUrl& host)
+{
+	m_host = host;
+	emit hostChanged();
+}
+
 ApplicationProperties::ApplicationProperties(QObject* parent)
 	: QObject(parent)
 {
