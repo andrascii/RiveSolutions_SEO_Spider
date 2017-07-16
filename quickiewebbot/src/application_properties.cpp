@@ -25,6 +25,39 @@ void ApplicationProperties::setUseProxy(bool value)
 	emit useProxyChanged();
 }
 
+bool ApplicationProperties::proxyNeedAuthorization() const
+{
+	return m_proxyNeedAuthorization;
+}
+
+void ApplicationProperties::setProxyNeedAuthorization(bool value)
+{
+	m_proxyNeedAuthorization = value;
+	emit proxyNeedAuthorizationChanged();
+}
+
+const QString& ApplicationProperties::proxyUsername() const
+{
+	return m_proxyUsername;
+}
+
+void ApplicationProperties::setProxyUsername(const QString& value)
+{
+	m_proxyUsername = value;
+	emit proxyUsernameChanged();
+}
+
+const QString& ApplicationProperties::proxyPassword() const
+{
+	return m_proxyPassword;
+}
+
+void ApplicationProperties::setProxyPassword(const QString& value)
+{
+	m_proxyPassword = value;
+	emit proxyPasswordChanged();
+}
+
 bool ApplicationProperties::checkImages() const
 {
 	return m_checkImages;

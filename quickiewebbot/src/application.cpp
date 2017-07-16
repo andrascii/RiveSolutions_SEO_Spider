@@ -30,7 +30,7 @@ Application::Application(int& argc, char** argv)
 #endif
 }
 
-const WebCrawler* Application::webCrawler() const noexcept
+WebCrawler* Application::webCrawler() noexcept
 {
 	return m_webCrawler;
 }

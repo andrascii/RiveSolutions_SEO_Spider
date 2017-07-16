@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1053</width>
-    <height>772</height>
+    <width>528</width>
+    <height>371</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QuickieWebBot::CrawlerControlWidget" name="crawlerControlWidget" native="true">
+     <widget class="QuickieWebBot::ControlPanelWidget" name="controlPanelWidget" native="true">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -121,7 +121,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1053</width>
+     <width>528</width>
      <height>21</height>
     </rect>
    </property>
@@ -273,7 +273,7 @@
   </action>
   <action name="actionProxy">
    <property name="text">
-    <string>Proxy</string>
+    <string>Proxy Settings</string>
    </property>
   </action>
   <action name="actionOnline_User_Guide">
@@ -300,9 +300,9 @@
    <header>grid_view.h</header>
   </customwidget>
   <customwidget>
-   <class>QuickieWebBot::CrawlerControlWidget</class>
+   <class>QuickieWebBot::ControlPanelWidget</class>
    <extends>QWidget</extends>
-   <header>crawler_control_widget.h</header>
+   <header>control_panel_widget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

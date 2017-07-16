@@ -15,16 +15,6 @@ void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 	data()->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
 }
 
-void ModelController::setHost(QUrl const& host) noexcept
-{
-	m_host = host;
-}
-
-QUrl ModelController::host() const noexcept
-{
-	return QString("http://www.php.su")/*m_host*/;
-}
-
 DataCollection* ModelController::data() noexcept
 {
 	return m_data;

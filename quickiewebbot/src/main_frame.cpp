@@ -27,25 +27,31 @@ void MainFrame::showSummaryView()
 	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
 }
 
+void MainFrame::showProxySettingsWidget()
+{
+	if (!m_proxySettingsWidget)
+	{
+		m_proxySettingsWidget = std::make_unique<ProxySettingsWidget>();
+	}
+
+	m_proxySettingsWidget->show();
+}
+
 void MainFrame::initialize()
 {
 	m_ui.setupUi(this);
 
  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-
-	//////////////////////////////////////////////////////////////////////////
-	// Debug code
+	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsWidget));
 
 	GridViewModel* model = new GridViewModel(this);
-	//static ModelDataAccessorStub s_stub;
-	//model->setDataAccessor(s_stub.allProcessedItems());
 
 	ModelDataAccessorFactory factory;
 	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams()));
 	m_ui.crawlingTableView->setModel(model);
+
 	m_ui.crawlingTableView->setItemDelegate(new GridViewDelegate(m_ui.crawlingTableView));
 	new GridViewExtension(m_ui.crawlingTableView);
-	//////////////////////////////////////////////////////////////////////////
 }
 
 }
