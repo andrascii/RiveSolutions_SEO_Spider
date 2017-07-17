@@ -69,13 +69,13 @@ void QueuedDownloader::process()
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
 
 	static const int s_maxUnprocessedReplies = 200;
-	static const int s_maxPendingRequests = 30;
+	static const int s_maxPendingRequests = 50;
 	static const int s_maxRequestsOneBatch = 100;
 
 	int requestsThisBatch = 0;
 	
 	while (m_requestQueue.size() && requestsThisBatch < s_maxRequestsOneBatch &&
-		m_pendingReguestsCount < s_maxUnprocessedReplies && m_unprocessedRepliesCount < s_maxUnprocessedReplies)
+		m_pendingReguestsCount < s_maxPendingRequests && m_unprocessedRepliesCount < s_maxUnprocessedReplies)
 	{
 		m_networkAccessManager->get(QNetworkRequest(*m_requestQueue.begin()));
 		m_requestQueue.erase(m_requestQueue.begin());
