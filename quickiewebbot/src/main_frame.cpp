@@ -14,6 +14,7 @@ namespace QuickieWebBot
 
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
+	, m_proxySettingsDialog(nullptr)
 {
 	initialize();
 }
@@ -28,22 +29,29 @@ void MainFrame::showSummaryView()
 	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
 }
 
+void MainFrame::showProxySettingsDialog()
+{
+	if (!m_proxySettingsDialog)
+	{
+		m_proxySettingsDialog = new ProxySettingsDialog(this);
+	}
+
+	m_proxySettingsDialog->exec();
+}
+
 void MainFrame::initialize()
 {
 	m_ui.setupUi(this);
 
  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-
-	//////////////////////////////////////////////////////////////////////////
-	// Debug code
+	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
 
 	GridViewModel* model = new GridViewModel(this);
-	//static ModelDataAccessorStub s_stub;
-	//model->setDataAccessor(s_stub.allProcessedItems());
 
 	ModelDataAccessorFactory factory;
 	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingTableView->setModel(model);
+
 	m_ui.crawlingTableView->setItemDelegate(new GridViewDelegate(m_ui.crawlingTableView));
 	new GridViewExtension(m_ui.crawlingTableView);
 

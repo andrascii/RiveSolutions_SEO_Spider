@@ -1,28 +1,29 @@
 #pragma once
 
-#include "ui_crawler_control_widget.h"
+#include "ui_control_panel_widget.h"
 
 namespace QuickieWebBot
 {
 
-class CrawlerControlWidget : public QWidget
+class ControlPanelWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CrawlerControlWidget(QWidget* parent);
+	ControlPanelWidget(QWidget* parent);
 
 	Q_SLOT void showListView(bool value);
 	Q_SLOT void showSummaryView(bool value);
 
 private:
 	Q_SLOT void setHost();
+	Q_SLOT void startCrawling();
 
 private:
 	void initialize();
 
 private:
-	Ui::CrawlerControlWidget m_ui;
+	Ui::ControlPanelWidget m_ui;
 };
 
 }

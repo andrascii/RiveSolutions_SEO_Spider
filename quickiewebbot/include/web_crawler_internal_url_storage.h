@@ -1,7 +1,5 @@
 #pragma once
 
-#include "locking_stl_collections.h"
-
 namespace QuickieWebBot
 {
 
@@ -31,10 +29,9 @@ private:
 		boost::hash<std::string> hasher;
 	};
 
-	LockingUnorderedSet<QUrl, QUrlHasher> m_internalUrlList;
-	LockingUnorderedSet<QUrl, QUrlHasher> m_crawledUrlList;
+	std::unordered_set<QUrl, QUrlHasher> m_internalUrlList;
+	std::unordered_set<QUrl, QUrlHasher> m_crawledUrlList;
 
-	std::condition_variable m_condition;
 	std::mutex m_mutex;
 };
 

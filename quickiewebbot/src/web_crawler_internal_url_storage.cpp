@@ -53,11 +53,6 @@ void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList)
 	{
 		insert(first);
 	}
-
-	if (insertedUrlCounter)
-	{
-		m_condition.notify_all();
-	}
 }
 
 }

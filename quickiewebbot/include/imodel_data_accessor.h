@@ -51,7 +51,7 @@ public:
 	virtual QColor itemTextColor(const QModelIndex& index) const override
 	{
 		// not working, why?
-		return flags(index) & IModelDataAccessor::ItemFlagUrl ? QColor("#050577") : Qt::black;
+		return flags(index) & IModelDataAccessor::ItemFlagUrl ? QColor("#4753C5") : Qt::black;
 	}
 };
 

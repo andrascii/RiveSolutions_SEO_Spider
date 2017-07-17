@@ -22,7 +22,6 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 		PageInfoItemAccessorHelper::MetaRefresh,
 		PageInfoItemAccessorHelper::MetaRobots,
 		PageInfoItemAccessorHelper::RedirectedUrl,
-		PageInfoItemAccessorHelper::ServerResponse,
 		PageInfoItemAccessorHelper::MetaDescription,
 		PageInfoItemAccessorHelper::MetaDescriptionLength,
 		PageInfoItemAccessorHelper::MetaKeywords,
@@ -47,7 +46,7 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 	
 int ModelDataAccessorAllItems::columnCount() const
 {
-	return static_cast<int>(m_columns.size());
+	return m_columns.size();
 }
 	
 QString ModelDataAccessorAllItems::columnText(int column) const
@@ -81,7 +80,7 @@ int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 
 int ModelDataAccessorAllItems::flags(const QModelIndex& index) const
 {
-	return m_columns[index.column()] == static_cast<int>(PageInfoItemAccessorHelper::Url) ? ItemFlagUrl : ItemFlagNone;
+	return m_columns[index.column()] == PageInfoItemAccessorHelper::Url ? ItemFlagUrl : ItemFlagNone;
 }
 
 QPixmap* ModelDataAccessorAllItems::pixmap(const QModelIndex& index) const
@@ -98,8 +97,9 @@ QObject* ModelDataAccessorAllItems::qobject()
 std::vector<GridViewPainter*> ModelDataAccessorAllItems::painters(const QModelIndex& index) const
 {
 	Q_UNUSED(index);
+
 	static GridViewPainterText s_painterText;
-	static GridViewPainterBackground s_painterBackground(Qt::transparent, QColor("#eeeeee"));
+	static GridViewPainterBackground s_painterBackground(Qt::transparent, Qt::transparent);
 
 	return { &s_painterBackground, &s_painterText };
 }

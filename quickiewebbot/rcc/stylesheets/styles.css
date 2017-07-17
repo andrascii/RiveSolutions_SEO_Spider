@@ -3,7 +3,11 @@ QWidget
 	font-family: Arial;
 	font-size: 10pt;
 	color: #ededed;
-	background-color: #343b49;
+}
+
+QMainWindow
+{
+	background-color: #343B49;
 }
 
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
@@ -12,6 +16,7 @@ QMenuBar
 {	
 	padding-top: 1em;
 	padding-bottom: 1em;
+	background-color: #343B49;
 }
 
 QMenuBar::item:selected
@@ -38,15 +43,17 @@ QLineEdit,
 QProgressBar,
 QPushButton,
 QTableView,
-QComboBox
+QComboBox,
+QSpinBox
 {
 	border: 0.05em solid #c3c3c3;
 	border-radius: 2px;
 }
 
-/*////////////////////////////////// Line edit //////////////////////////*/
+/*////////////////////////////////// Line edit and spin box //////////////////////////*/
 
-QLineEdit
+QLineEdit,
+QSpinBox
 {
 	min-height: 1.5em;
 	background-color: #ffffff;
@@ -112,19 +119,20 @@ QComboBox::down-arrow
 
 /*/////////////////////////////// Info frame ///////////////////////////////*/
 
-QuickieWebBot--CrawlerControlWidget QWidget#crawlerControlWidget
+QuickieWebBot--ControlPanelWidget QWidget#controlPanelWidget
 {
-	min-height: 3em;
+	padding-bottom: 1em;
+	min-height: 2.5em;
 	background: #e7e7e7;
 }
 
 QStackedWidget
 {	
 	border: none;
-	margin-bottom: 3em;
 }
 
-QStackedWidget QWidget#crawlingPage
+QStackedWidget QWidget#crawlingPage,
+QStackedWidget QWidget#errorsFilterPage
 {
 	background-color: #e7e7e7;
 }
@@ -135,20 +143,15 @@ QTableView
 {
 	font-size: 9pt;
 	background: white;
-	border-radius: 0px;
 }
 
 QTableView::item
 {
 	color: #494949;
-	selection-background-color: #343b49;
 	border-left: none;
 }
 
-QTableView::item:focus
-{
-	selection-background-color: #1f2530;
-}
+/*/////////////////////////////// Header view ///////////////////////////////*/
 
 QHeaderView
 {
@@ -168,11 +171,132 @@ QHeaderView::section
 	min-height: 3em;
 }
 
+/*/////////////////////////////// Horizontal Scroll Bar ///////////////////////////////*/
+
+QScrollBar:horizontal
+{
+	background: #D6D6D6;
+	height: 1.2em;
+	padding-top: 0.09em;
+	padding-bottom: 0.09em;
+}
+
+QScrollBar::handle:horizontal
+{
+	border: 0.05em solid #c3c3c3;
+	border-radius: 2px;
+	
+	background-color: #e7e7e7;
+	min-width: 2em;
+}
+
+QScrollBar::add-line:horizontal
+{
+	border: none;
+    background: none;
+}
+
+QScrollBar::sub-line:horizontal
+{
+	border: none;
+	background: none;
+}
+
+QScrollBar:left-arrow:horizontal,
+QScrollBar::right-arrow:horizontal
+{
+	max-width: 0em;
+	max-height: 0em;
+	border: none;
+    background: none;
+    color: none;
+}
+
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal
+{
+	background: none;
+}
+
+/*/////////////////////////////// Vertical Scroll Bar ///////////////////////////////*/
+
 QScrollBar:vertical
 {
-  border: none;
+	background: #D6D6D6;
+	width: 1.2em;
+	padding-left: 0.09em;
+	padding-right: 0.09em;
+}
 
-  background-color: #d6d6d6;
+QScrollBar::handle:vertical
+{
+	border: 0.05em solid #c3c3c3;
+	border-radius: 2px;
+	
+	background-color: #e7e7e7;
+	min-height: 2em;
+	min-width: 0.8em;
+}
+
+QScrollBar::add-line:vertical
+{
+	border: none;
+    background: none;
+}
+
+QScrollBar::sub-line:vertical
+{
+	border: none;
+	background: none;
+}
+
+QScrollBar:left-arrow:vertical,
+QScrollBar::right-arrow:vertical
+{
+	max-width: 0em;
+	max-height: 0em;
+	border: none;
+    background: none;
+    color: none;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical
+{
+	background: none;
+}
+
+/*/////////////////////////////// Proxy Settings Widget ///////////////////////////////*/
+
+QWidget#ProxySettingsDialog
+{
+	background: #343B49;
+}
+
+QWidget#ProxySettingsDialog QLabel,
+QWidget#ProxySettingsDialog QCheckBox
+{
+	color: #494949;
+}
+
+QWidget#ProxySettingsDialog QFrame#headerFrame
+{
+	min-height: 8em;
+	background: white;
+	padding: 0.5em;
+}
+
+QWidget#ProxySettingsDialog QLabel#headerName
+{
+	font-size: 16pt;
+	min-height: 3em;
+	color: #61a032;
+}
+
+QWidget#ProxySettingsDialog QFrame#settingsFrame
+{
+	background: #e7e7e7;
+	padding: 0.5em;
 }
 
 /*/////////////////////////////// Group buttons ///////////////////////////////*/

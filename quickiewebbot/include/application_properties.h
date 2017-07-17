@@ -13,9 +13,16 @@ class ApplicationProperties : public QObject
 	Q_PROPERTY(unsigned threadCount READ threadCount WRITE setThreadCount NOTIFY threadCountChanged);
 
 	//
-	// Web crawler properties
+	// Proxy properties
 	//
 	Q_PROPERTY(bool useProxy READ useProxy WRITE setUseProxy NOTIFY useProxyChanged);
+	Q_PROPERTY(bool proxyNeedAuthorization READ proxyNeedAuthorization WRITE setProxyNeedAuthorization NOTIFY proxyNeedAuthorizationChanged);
+	Q_PROPERTY(QString proxyUsername READ proxyUsername WRITE setProxyUsername NOTIFY proxyUsernameChanged);
+	Q_PROPERTY(QString proxyPassword READ proxyPassword WRITE setProxyPassword NOTIFY proxyPasswordChanged);
+
+	//
+	// Web crawler properties
+	//
 	Q_PROPERTY(bool checkImages READ checkImages WRITE setCheckImages NOTIFY checkImagesChanged);
 	Q_PROPERTY(bool checkJavaScript READ checkJavaScript WRITE setCheckJavaScript NOTIFY checkJavaScriptChanged);
 	Q_PROPERTY(bool checkSWF READ checkSWF WRITE setCheckSWF NOTIFY checkSWFChanged);
@@ -58,6 +65,18 @@ public:
 	bool useProxy() const;
 	Q_SLOT void setUseProxy(bool value);
 	Q_SIGNAL void useProxyChanged();
+
+	bool proxyNeedAuthorization() const;
+	Q_SLOT void setProxyNeedAuthorization(bool value);
+	Q_SIGNAL void proxyNeedAuthorizationChanged();
+
+	const QString& proxyUsername() const;
+	Q_SLOT void setProxyUsername(const QString& value);
+	Q_SIGNAL void proxyUsernameChanged();
+
+	const QString& proxyPassword() const;
+	Q_SLOT void setProxyPassword(const QString& value);
+	Q_SIGNAL void proxyPasswordChanged();
 
 	bool checkImages() const;
 	Q_SLOT void setCheckImages(bool value);
@@ -149,7 +168,12 @@ public:
 
 private:
 	unsigned m_threadCount;
+
 	bool m_useProxy;
+	bool m_proxyNeedAuthorization;
+	QString m_proxyUsername;
+	QString m_proxyPassword;
+
 	bool m_checkImages;
 	bool m_checkJavaScript;
 	bool m_checkSWF;
