@@ -36,8 +36,8 @@ private:
 	std::mutex m_requestQueueMutex;
 	std::mutex m_repliesQueueMutex;
 
-	QQueue<QUrl> m_requestQueue;
-	QQueue<Reply> m_repliesQueue;
+	std::vector<QUrl> m_requestQueue;
+	std::vector<Reply> m_repliesQueue;
 };
 
 }

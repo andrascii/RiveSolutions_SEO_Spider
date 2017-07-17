@@ -27,7 +27,7 @@ void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
 void QueuedDownloader::scheduleUrlList(const QList<QUrl>& urlList) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
-	m_requestQueue.append(urlList);
+	m_requestQueue.insert(m_requestQueue.end(), urlList.begin(), urlList.end());
 }
 
 bool QueuedDownloader::extractReply(Reply& response) noexcept
@@ -66,8 +66,9 @@ void QueuedDownloader::process()
 	foreach(const QUrl& url, m_requestQueue)
 	{
 		m_networkAccessManager->get(QNetworkRequest(url));
-		m_requestQueue.erase(m_requestQueue.begin());
 	}
+
+	m_requestQueue.clear();
 }
 
 }
