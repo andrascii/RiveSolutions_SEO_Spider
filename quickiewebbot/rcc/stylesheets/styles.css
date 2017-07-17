@@ -268,11 +268,20 @@ QScrollBar::sub-page:vertical
 
 /*/////////////////////////////// Proxy Settings Widget ///////////////////////////////*/
 
+QWidget#ProxySettingsWidget
+{
+	background: #343B49;
+}
+
 QFrame#headerFrame
+{
+	background: white;
+}
+
+QFrame#settingsFrame
 {
 	background: #e7e7e7;
 }
-
 
 /*/////////////////////////////// Group buttons ///////////////////////////////*/
 
