@@ -273,14 +273,30 @@ QWidget#ProxySettingsWidget
 	background: #343B49;
 }
 
-QFrame#headerFrame
+QWidget#ProxySettingsWidget QLabel,
+QWidget#ProxySettingsWidget QCheckBox
 {
-	background: white;
+	color: #494949;
 }
 
-QFrame#settingsFrame
+QWidget#ProxySettingsWidget QFrame#headerFrame
+{
+	min-height: 8em;
+	background: white;
+	padding: 0.5em;
+}
+
+QWidget#ProxySettingsWidget QLabel#headerName
+{
+	font-size: 16pt;
+	min-height: 3em;
+	color: #61a032;
+}
+
+QWidget#ProxySettingsWidget QFrame#settingsFrame
 {
 	background: #e7e7e7;
+	padding: 0.5em;
 }
 
 /*/////////////////////////////// Group buttons ///////////////////////////////*/
