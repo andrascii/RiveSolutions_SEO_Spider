@@ -94,18 +94,18 @@ using std::size_t;
 #endif
 
 #ifdef _WIN32
-	#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define INFOLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,tag,text,__FUNCTION__,__FILENAME__,__LINE__)
+#define INFOLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
 
 #ifdef DEBUG
-#define DEBUGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,tag,text,__FUNCTION__,__FILENAME__,__LINE__)
+#define DEBUGLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
 #else
 #define DEBUGLOG
 #endif
 
-#define WARNINGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,tag,text,__FUNCTION__,__FILENAME__,__LINE__)
-#define ERRORLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,tag,text,__FUNCTION__,__FILENAME__,__LINE__)
+#define WARNINGLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__,__VA_ARGS__)
+#define ERRORLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
