@@ -1,7 +1,5 @@
 #pragma once
 
-#include "locking_stl_collections.h"
-
 namespace QuickieWebBot
 {
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui_main_frame.h"
-#include "proxy_settings_widget.h"
+#include "proxy_settings_dialog.h"
 
 namespace QuickieWebBot
 {
@@ -19,7 +19,7 @@ public:
 	//
 	// settings pages
 	//
-	Q_SLOT void showProxySettingsWidget();
+	Q_SLOT void showProxySettingsDialog();
 
 private:
 	void initialize();
@@ -27,7 +27,7 @@ private:
 private:
 	Ui::MainFrameClass m_ui;
 
-	std::unique_ptr<ProxySettingsWidget> m_proxySettingsWidget;
+	ProxySettingsDialog* m_proxySettingsDialog;
 };
 
 }

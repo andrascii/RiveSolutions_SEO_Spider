@@ -14,6 +14,7 @@ namespace QuickieWebBot
 
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
+	, m_proxySettingsDialog(nullptr)
 {
 	initialize();
 }
@@ -28,14 +29,14 @@ void MainFrame::showSummaryView()
 	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
 }
 
-void MainFrame::showProxySettingsWidget()
+void MainFrame::showProxySettingsDialog()
 {
-	if (!m_proxySettingsWidget)
+	if (!m_proxySettingsDialog)
 	{
-		m_proxySettingsWidget = std::make_unique<ProxySettingsWidget>();
+		m_proxySettingsDialog = new ProxySettingsDialog(this);
 	}
 
-	m_proxySettingsWidget->show();
+	m_proxySettingsDialog->exec();
 }
 
 void MainFrame::initialize()
@@ -43,7 +44,7 @@ void MainFrame::initialize()
 	m_ui.setupUi(this);
 
  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsWidget));
+	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
 
 	GridViewModel* model = new GridViewModel(this);
 

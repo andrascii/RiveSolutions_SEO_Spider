@@ -268,32 +268,32 @@ QScrollBar::sub-page:vertical
 
 /*/////////////////////////////// Proxy Settings Widget ///////////////////////////////*/
 
-QWidget#ProxySettingsWidget
+QWidget#ProxySettingsDialog
 {
 	background: #343B49;
 }
 
-QWidget#ProxySettingsWidget QLabel,
-QWidget#ProxySettingsWidget QCheckBox
+QWidget#ProxySettingsDialog QLabel,
+QWidget#ProxySettingsDialog QCheckBox
 {
 	color: #494949;
 }
 
-QWidget#ProxySettingsWidget QFrame#headerFrame
+QWidget#ProxySettingsDialog QFrame#headerFrame
 {
 	min-height: 8em;
 	background: white;
 	padding: 0.5em;
 }
 
-QWidget#ProxySettingsWidget QLabel#headerName
+QWidget#ProxySettingsDialog QLabel#headerName
 {
 	font-size: 16pt;
 	min-height: 3em;
 	color: #61a032;
 }
 
-QWidget#ProxySettingsWidget QFrame#settingsFrame
+QWidget#ProxySettingsDialog QFrame#settingsFrame
 {
 	background: #e7e7e7;
 	padding: 0.5em;
