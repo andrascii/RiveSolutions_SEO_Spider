@@ -38,6 +38,8 @@ private:
 
 	QQueue<QUrl> m_requestQueue;
 	QQueue<Reply> m_repliesQueue;
+	std::atomic<int> m_unprocessedRepliesCount;
+	std::atomic<int> m_pendingReguestsCount;
 };
 
 }

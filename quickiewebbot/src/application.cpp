@@ -28,6 +28,10 @@ Application::Application(int& argc, char** argv)
 #else
 	mainFrameIsReadyForShow();
 #endif
+
+#ifdef _WINDOWS
+	INFOLOG("", QString::number(reinterpret_cast<DWORD>(QThread::currentThreadId())) + " Main Thread has been started");
+#endif
 }
 
 const WebCrawler* Application::webCrawler() const noexcept
