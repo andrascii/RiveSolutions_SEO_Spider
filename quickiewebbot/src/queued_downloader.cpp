@@ -83,8 +83,6 @@ void QueuedDownloader::process()
 		m_pendingReguestsCount++;
 		requestsThisBatch++;
 	}
-
-	m_requestQueue.clear();
 }
 
 }
