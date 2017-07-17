@@ -1,7 +1,9 @@
 #include "logger_main_window.h"
 #include <Windows.h>
 
-LoggerMainWindow::LoggerMainWindow(QWidget* parent) : QMainWindow(parent)
+LoggerMainWindow::LoggerMainWindow(QWidget* parent) :
+	QMainWindow(parent),
+	m_blockSize(0)
 {
 	ui.setupUi(this);
 	m_server = new QTcpServer(this);
@@ -14,10 +16,9 @@ LoggerMainWindow::LoggerMainWindow(QWidget* parent) : QMainWindow(parent)
 		return;
 	}
 
-	ui.textBrowser->setFontPointSize(12);
+	VERIFY(connect(m_server, SIGNAL(newConnection()), this, SLOT(slotNewConnection())));
 
-	m_blockSize = 0;
-	connect(m_server, SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
+	ui.textBrowser->setFontPointSize(12);
 }
 
 void LoggerMainWindow::slotNewConnection()
@@ -62,15 +63,15 @@ QColor LoggerMainWindow::identifyMessageColor(const incomingMessage& message)
 
 void LoggerMainWindow::slotReadyRead()
 {
-	QTcpSocket* client_socket = (QTcpSocket*)sender();
-	QDataStream in(client_socket);
+	QTcpSocket* clientSocket = (QTcpSocket*)sender();
+	QDataStream in(clientSocket);
 	in.setVersion(QDataStream::Qt_4_0);
 
 	for (;;)
 	{
 		if (!m_blockSize)
 		{
-			if (client_socket->bytesAvailable() < sizeof(quint16))
+			if (clientSocket->bytesAvailable() < sizeof(quint16))
 			{
 				break;
 			}
@@ -78,15 +79,15 @@ void LoggerMainWindow::slotReadyRead()
 			in >> m_blockSize;
 		}
 	
-		if (client_socket->bytesAvailable() < m_blockSize)
+		if (clientSocket->bytesAvailable() < m_blockSize)
 		{
 			break;
 		}
-		QString str;
+		QString incomingMessage;
 
-		in >> str;
+		in >> incomingMessage;
 
-		m_incomingMessages.append(str.split('|'));
+		m_incomingMessages.append(incomingMessage.split('|'));
 		emit messageAppendedToList();
 		//appendNewMessage();
 

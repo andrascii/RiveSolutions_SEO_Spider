@@ -39,7 +39,6 @@ private:
 
 		QString toString()
 		{
-			//return QString(dateTime + ' ' + source + ": " + tag + " \"" + text + '\"');
 			return QString("%1 %2(%3) %4: \"%5\"")
 				.arg(dateTime)
 				.arg(file)
@@ -63,11 +62,8 @@ private slots:
 
 private:
 	Ui::MainWindow ui;
-	QTcpServer* m_server;
-	QString message;
 
-	//QLocalSocket* m_socket;
-	//QString m_currentFortune;
+	QTcpServer* m_server;
 	quint16 m_blockSize;
 
 	QList<incomingMessage> m_incomingMessages;

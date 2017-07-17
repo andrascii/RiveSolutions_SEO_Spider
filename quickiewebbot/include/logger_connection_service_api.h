@@ -70,8 +70,6 @@ public:
 		addPackToStream(messageStream, rest...);
 	}
 
-	LoggerConnectionServiceApi::LoggerDataStream LoggerConnectionServiceApi::log(MessageType type, QString func, QString file, int line);
-
 	template<typename ... StringPack>
 	void log(MessageType type, QString func, QString file, int line, const StringPack&... textPack)
 	{
@@ -109,6 +107,8 @@ public:
 		m_socket->write(block);
 		m_socket->waitForBytesWritten();
 	}
+
+	LoggerConnectionServiceApi::LoggerDataStream LoggerConnectionServiceApi::log(MessageType type, QString func, QString file, int line);
 
 private:
 	LoggerConnectionServiceApi(QObject* parent = 0);
