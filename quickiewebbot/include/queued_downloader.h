@@ -21,7 +21,6 @@ public:
 	virtual ~QueuedDownloader();
 
 	void scheduleUrl(const QUrl& url) noexcept;
-	void scheduleUrlList(const QList<QUrl>& urlList) noexcept;
 
 	bool extractReply(Reply& response) noexcept;
 

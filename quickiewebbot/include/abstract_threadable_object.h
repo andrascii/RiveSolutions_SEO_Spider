@@ -37,6 +37,8 @@ public:
 	void stopExecution() noexcept;
 	void waitExecution() noexcept;
 
+	const QByteArray& threadName() const;
+
 protected:
 	virtual void process() = 0;
 

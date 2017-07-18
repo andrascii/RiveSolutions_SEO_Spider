@@ -34,7 +34,7 @@ public:
 		~LoggerDataStream();
 
 		template<typename T>
-		LoggerDataStream& operator<<(T str)
+		LoggerDataStream& operator<<(const T& str)
 		{
 			(*m_textStream) << str << ' ';
 			return *this;

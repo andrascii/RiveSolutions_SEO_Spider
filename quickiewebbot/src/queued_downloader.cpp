@@ -26,12 +26,6 @@ void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
 	m_requestQueue.push_back(url);
 }
 
-void QueuedDownloader::scheduleUrlList(const QList<QUrl>& urlList) noexcept
-{
-	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
-	m_requestQueue.insert(m_requestQueue.end(), urlList.begin(), urlList.end());
-}
-
 bool QueuedDownloader::extractReply(Reply& response) noexcept
 {
 	std::unique_lock<std::mutex> locker(m_repliesQueueMutex); 
