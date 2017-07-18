@@ -5,7 +5,7 @@ namespace QuickieWebBot
 {
 
 QueuedDownloader::QueuedDownloader()
-	: AbstractThreadableObject(this)
+	: AbstractThreadableObject(this, QByteArray("QuickieWebBot::QueuedDownloaderThread"))
 	, m_networkAccessManager(new QNetworkAccessManager(this))
 	, m_unprocessedRepliesCount(0)
 	, m_pendingReguestsCount(0)

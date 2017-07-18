@@ -1,6 +1,7 @@
 #pragma once
 
 #include "application.h"
+#include "named_thread.h"
 
 namespace QuickieWebBot
 {
@@ -11,8 +12,10 @@ class AbstractThreadableObject : public QObject
 
 public:
 	template <typename Derived>
-	AbstractThreadableObject(Derived* derivedObjectPtr)
+	AbstractThreadableObject(Derived* derivedObjectPtr, const QByteArray& threadName = QByteArray())
 		: m_derivedObjectPtr(derivedObjectPtr)
+		, m_threadName(threadName)
+		, m_thread(m_threadName)
 		, m_isRunning(false)
 		, m_timerId(0)
 	{
@@ -45,7 +48,9 @@ protected:
 private:
 	QObject* m_derivedObjectPtr;
 
-	QThread m_thread;
+	const QByteArray& m_threadName;
+
+	NamedThread m_thread;
 
 	std::atomic_bool m_isRunning;
 
