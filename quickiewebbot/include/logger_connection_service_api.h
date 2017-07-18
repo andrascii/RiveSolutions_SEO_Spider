@@ -19,7 +19,6 @@ public:
 
 	class LoggerDataStream 
 	{
-		
 	public:
 		LoggerDataStream(MessageType type, QString func, QString file, int line) :
 			m_messageType(type),
@@ -37,7 +36,7 @@ public:
 		template<typename T>
 		LoggerDataStream& operator<<(T str)
 		{
-			this->m_textStream << str << ' ';
+			(*m_textStream) << str << ' ';
 			return *this;
 		}
 

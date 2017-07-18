@@ -64,9 +64,10 @@ void AbstractThreadableObject::timerEvent(QTimerEvent* event)
 
 void AbstractThreadableObject::startTimer(int interval, Qt::TimerType timerType)
 {
-#ifdef _WINDOWS
-	INFOLOG("", QString::number(reinterpret_cast<DWORD>(QThread::currentThreadId())) + " Thread has been started");
+#ifdef Q_OS_WIN
+	INFOLOG() << QThread::currentThreadId() << "Thread has been started";
 #endif
+
 	m_timerId = QObject::startTimer(g_minimumRecommendedTimerResolution);
 	assert(m_timerId);
 }

@@ -29,8 +29,8 @@ Application::Application(int& argc, char** argv)
 	mainFrameIsReadyForShow();
 #endif
 
-#ifdef _WINDOWS
-	INFOLOG("", QString::number(reinterpret_cast<DWORD>(QThread::currentThreadId())) + " Main Thread has been started");
+#ifdef Q_OS_WIN
+	INFOLOG() << QThread::currentThreadId() << "Main thread has been started";
 #endif
 }
 
