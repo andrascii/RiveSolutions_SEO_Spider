@@ -32,39 +32,14 @@ LoggerConnectionServiceApi* LoggerConnectionServiceApi::instance()
 	return &logger;
 }
 
-void LoggerConnectionServiceApi::log(MessageType type, QString tag, QString text, QString func, QString file, int line) const noexcept
+LoggerConnectionServiceApi::LoggerDataStream LoggerConnectionServiceApi::log(MessageType type, QString func, QString file, int line)
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
+	return LoggerDataStream(type, func, file, line);
+}
 
-	if (!m_socket->isOpen())
-	{
-		return;
-	}
-
-	QByteArray block;
-	QString message;
-
-	QDataStream out(&block, QIODevice::WriteOnly);
-	out.setVersion(QDataStream::Qt_4_0);
-
-	out << static_cast<quint16>(0);
-
-	message += QString("%1|%2|%3|%4|%5|%6|%7")
-		.arg(type)
-		.arg(QDateTime::currentDateTime().toString())
-		.arg(func)
-		.arg(tag)
-		.arg(text)
-		.arg(file)
-		.arg(line);
-	
-	out << message;
- 	out.device()->seek(0);
-
-	out << static_cast<quint16>(block.size() - sizeof(quint16)) << message;
-
-	m_socket->write(block);
-	m_socket->waitForBytesWritten();
+LoggerConnectionServiceApi::LoggerDataStream::~LoggerDataStream()
+{
+	LoggerConnectionServiceApi::instance()->log(this->m_messageType, this->m_fucntionName, this->m_fileName, this->m_lineNumber, this->m_message.trimmed());
 }
 
 }

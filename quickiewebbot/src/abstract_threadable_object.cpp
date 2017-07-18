@@ -57,6 +57,11 @@ void AbstractThreadableObject::waitExecution() noexcept
 	m_thread.wait();
 }
 
+const QByteArray& AbstractThreadableObject::threadName() const
+{
+	return m_threadName;
+}
+
 void AbstractThreadableObject::timerEvent(QTimerEvent* event)
 {
 	process();
@@ -64,9 +69,12 @@ void AbstractThreadableObject::timerEvent(QTimerEvent* event)
 
 void AbstractThreadableObject::startTimer(int interval, Qt::TimerType timerType)
 {
-#ifdef _WINDOWS
-	INFOLOG("", QString::number(reinterpret_cast<DWORD>(QThread::currentThreadId())) + " Thread has been started");
+#ifdef Q_OS_WIN
+
+	INFOLOG() << QThread::currentThreadId() << "Thread has been started";
+
 #endif
+
 	m_timerId = QObject::startTimer(g_minimumRecommendedTimerResolution);
 	assert(m_timerId);
 }

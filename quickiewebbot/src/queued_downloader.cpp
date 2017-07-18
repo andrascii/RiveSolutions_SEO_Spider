@@ -5,7 +5,7 @@ namespace QuickieWebBot
 {
 
 QueuedDownloader::QueuedDownloader()
-	: AbstractThreadableObject(this)
+	: AbstractThreadableObject(this, QByteArray("QuickieWebBot::QueuedDownloaderThread"))
 	, m_networkAccessManager(new QNetworkAccessManager(this))
 	, m_unprocessedRepliesCount(0)
 	, m_pendingReguestsCount(0)
@@ -24,12 +24,6 @@ void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
 	m_requestQueue.push_back(url);
-}
-
-void QueuedDownloader::scheduleUrlList(const QList<QUrl>& urlList) noexcept
-{
-	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
-	m_requestQueue.insert(m_requestQueue.end(), urlList.begin(), urlList.end());
 }
 
 bool QueuedDownloader::extractReply(Reply& response) noexcept

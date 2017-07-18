@@ -67,8 +67,13 @@
 #include <QProcess>
 #include <QDateTime>
 #include <QLineEdit>
+#include <QScrollBar>
 
+#ifdef Q_OS_WIN
 #include <windows.h>
+#else
+#error You compile this code on unsupported operating system!
+#endif
 
 #include "logger_connection_service_api.h"
 
@@ -77,7 +82,7 @@ using std::size_t;
 
 #define theApp static_cast<Application*>(Application::instance())
 
-#define STRING(Any) #Any
+#define MAKE_STRING(Any) #Any
 
 #if defined(NDEBUG)
 #define PRODUCTION
@@ -93,19 +98,19 @@ using std::size_t;
 #define VERIFY(Connection) Connection
 #endif
 
-#ifdef _WIN32
-	#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#ifdef Q_OS_WIN
+#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define INFOLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,tag,text,__FUNCTION__,__FILENAME__,__LINE__)
+#define INFOLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
 
 #ifdef DEBUG
-#define DEBUGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,tag,text,__FUNCTION__,__FILENAME__,__LINE__)
+#define DEBUGLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
 #else
 #define DEBUGLOG
 #endif
 
-#define WARNINGLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,tag,text,__FUNCTION__,__FILENAME__,__LINE__)
-#define ERRORLOG(tag, text) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,tag,text,__FUNCTION__,__FILENAME__,__LINE__)
+#define WARNINGLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__,__VA_ARGS__)
+#define ERRORLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
