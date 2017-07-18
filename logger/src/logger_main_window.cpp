@@ -3,7 +3,8 @@
 
 LoggerMainWindow::LoggerMainWindow(QWidget* parent) :
 	QMainWindow(parent),
-	m_blockSize(0)
+	m_blockSize(0),
+	m_currentTypeFilter(NoType)
 {
 	ui.setupUi(this);
 	m_server = new QTcpServer(this);
@@ -17,6 +18,7 @@ LoggerMainWindow::LoggerMainWindow(QWidget* parent) :
 	}
 
 	VERIFY(connect(m_server, SIGNAL(newConnection()), this, SLOT(slotNewConnection())));
+	VERIFY(connect(ui.comboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotApplyTypeFilter(QString))));
 
 	ui.textBrowser->setFontPointSize(12);
 }
@@ -26,27 +28,58 @@ void LoggerMainWindow::slotNewConnection()
 	QTcpSocket* clientSocket = m_server->nextPendingConnection();
 
 	VERIFY(connect(clientSocket, SIGNAL(readyRead()), this, SLOT(slotReadyRead())));
-	VERIFY(connect(this, SIGNAL(messageAppendedToList()), this, SLOT(appendNewMessage())));
+	VERIFY(connect(this, SIGNAL(messageAppendedToList()), this, SLOT(slotTryToShowNewMessage())));
 	ui.textBrowser->append("connected");
 }
 
-void LoggerMainWindow::appendNewMessage()
+LoggerMainWindow::MessageType LoggerMainWindow::typeFromString(const QString& type)
 {
-	ui.textBrowser->setTextColor(identifyMessageColor(m_incomingMessages.last())); 
-	ui.textBrowser->append(m_incomingMessages.last().toString());
+	if (type == "Information")
+		return InformationMessageType;
+	if (type == "Warning")
+		return WarningMessageType;
+	if (type == "Errors")
+		return ErrorMessageType;
+	if (type == "Debug")
+		return DebugMessageType;
+
+	return NoType;
+}
+
+void LoggerMainWindow::slotApplyTypeFilter(const QString& type)
+{
+	if (m_currentTypeFilter != typeFromString(type))
+	{
+		m_currentTypeFilter = typeFromString(type);
+		redrawList();
+	}
+}
+
+void LoggerMainWindow::slotTryToShowNewMessage()
+{
+	if (m_currentTypeFilter == NoType || m_incomingMessages.last().type == m_currentTypeFilter)
+	{
+		ui.textBrowser->setTextColor(identifyMessageColor(m_incomingMessages.last().type));
+		ui.textBrowser->append(m_incomingMessages.last().toString());
+	}
 }
 
 void LoggerMainWindow::redrawList()
 {
-	for (auto item : m_incomingMessages)
+	ui.textBrowser->clear();
+	for (auto currentMessage : m_incomingMessages)
 	{
-		ui.textBrowser->append(item.toString());
-	}
+		if (m_currentTypeFilter == NoType || currentMessage.type == m_currentTypeFilter)
+		{
+			ui.textBrowser->setTextColor(identifyMessageColor(currentMessage.type));
+			ui.textBrowser->append(currentMessage.toString());
+		}
+	}	
 }
 
-QColor LoggerMainWindow::identifyMessageColor(const incomingMessage& message)
+QColor LoggerMainWindow::identifyMessageColor(MessageType type)
 {
-	switch (message.type)
+	switch (type)
 	{
 	case InformationMessageType:
 		return QColor(0, 0, 0); break;
@@ -89,7 +122,6 @@ void LoggerMainWindow::slotReadyRead()
 
 		m_incomingMessages.append(incomingMessage.split('|'));
 		emit messageAppendedToList();
-		//appendNewMessage();
 
 		m_blockSize = 0;
 	}

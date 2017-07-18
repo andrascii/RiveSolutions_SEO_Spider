@@ -14,7 +14,8 @@ public:
 		InformationMessageType,
 		DebugMessageType,
 		WarningMessageType,
-		ErrorMessageType
+		ErrorMessageType,
+		NoType
 	};
 
 private:
@@ -50,7 +51,8 @@ private:
 
 	void init();
 	void redrawList();
-	QColor identifyMessageColor(const incomingMessage& message);
+	QColor identifyMessageColor(MessageType type);
+	MessageType typeFromString(const QString& type);
 
 signals:
 	void messageAppendedToList();
@@ -58,7 +60,8 @@ signals:
 private slots:
 	void slotNewConnection();
 	void slotReadyRead();
-	void appendNewMessage();
+	void slotApplyTypeFilter(const QString& type);
+	void slotTryToShowNewMessage();
 
 private:
 	Ui::MainWindow ui;
@@ -67,5 +70,5 @@ private:
 	quint16 m_blockSize;
 
 	QList<incomingMessage> m_incomingMessages;
-	
+	MessageType m_currentTypeFilter;
 };
