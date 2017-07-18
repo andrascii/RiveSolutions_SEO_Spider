@@ -67,8 +67,13 @@
 #include <QProcess>
 #include <QDateTime>
 #include <QLineEdit>
+#include <QScrollBar>
 
+#ifdef Q_OS_WIN
 #include <windows.h>
+#else
+#error You compile this code on unsupported operating system!
+#endif
 
 #include "logger_connection_service_api.h"
 
@@ -77,7 +82,7 @@ using std::size_t;
 
 #define theApp static_cast<Application*>(Application::instance())
 
-#define STRING(Any) #Any
+#define MAKE_STRING(Any) #Any
 
 #if defined(NDEBUG)
 #define PRODUCTION
@@ -93,7 +98,7 @@ using std::size_t;
 #define VERIFY(Connection) Connection
 #endif
 
-#ifdef _WIN32
+#ifdef Q_OS_WIN
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)

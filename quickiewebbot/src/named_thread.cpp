@@ -59,6 +59,8 @@ namespace QuickieWebBot
 	{
 #if defined (USE_WINDOWS_SET_THREAD_NAME_HACK)
 		setCurrentThreadName(objectName().toAscii());
+#else
+		WARNINGLOG() << "NamedThread hack supports only OS Windows!";
 #endif
 		QThread::run();
 	}
