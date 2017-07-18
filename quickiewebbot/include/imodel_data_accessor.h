@@ -16,7 +16,8 @@ public:
 		ItemFlagHasPixmap = 1 << 1,
 		ItemFlagTextBold = 1 << 2,
 		ItemFlagAlignRight = 1 << 3,
-		ItemFlagAlignCenter = 1 << 4
+		ItemFlagAlignCenter = 1 << 4,
+		ItemFlagNotSelectable = 1 << 5
 	};
 
 	virtual ~IModelDataAccessor() = default;

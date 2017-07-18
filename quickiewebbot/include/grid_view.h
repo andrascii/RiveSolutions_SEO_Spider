@@ -23,6 +23,7 @@ public:
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
+	virtual void leaveEvent(QEvent* event) override;
 	virtual void resizeEvent(QResizeEvent* event) override;
 
 	Q_SLOT void onModelAccessorChanged(IModelDataAccessor* accessor);
