@@ -25,12 +25,13 @@ public:
 			m_messageType(type),
 			m_fucntionName(func),
 			m_fileName(file),
-			m_lineNumber(line) 
+			m_lineNumber(line),
+			m_textStream(new QTextStream)
 		{
-			m_textStream.setString(&m_message, QIODevice::WriteOnly);
+			m_textStream->setString(&m_message, QIODevice::WriteOnly);
 		};
 
-		LoggerDataStream(LoggerDataStream&);
+		LoggerDataStream(LoggerDataStream&&) = default;
 		~LoggerDataStream();
 
 		template<typename T>
@@ -46,7 +47,7 @@ public:
 		QString m_fileName;
 		int m_lineNumber;
 		QString m_message;
-		QTextStream m_textStream;
+		std::unique_ptr<QTextStream> m_textStream;
 	};
 
 public:
@@ -108,7 +109,7 @@ public:
 		m_socket->waitForBytesWritten();
 	}
 
-	LoggerConnectionServiceApi::LoggerDataStream LoggerConnectionServiceApi::log(MessageType type, QString func, QString file, int line);
+	LoggerDataStream log(MessageType type, QString func, QString file, int line);
 
 private:
 	LoggerConnectionServiceApi(QObject* parent = 0);
