@@ -58,7 +58,7 @@ void PageInfoProcessor::resolveRelativeUrl(QUrl& relativeUrl, const QUrl& baseUr
 	// see: https://tools.ietf.org/html/rfc1808#section-4
 	//
 
-	assert(!baseUrl.isRelative() && !"Base address always MUST BE an absolute URL!!!");
+	assert(!baseUrl.isRelative() && "Base URL always MUST BE an absolute URL!!!");
 
 
 	if (!relativeUrl.isRelative())
@@ -68,31 +68,35 @@ void PageInfoProcessor::resolveRelativeUrl(QUrl& relativeUrl, const QUrl& baseUr
 		return;
 	}
 
-	QRegularExpression pathWithoutFileRegexp;
-	QRegularExpression fileRegexp;
-
+	relativeUrl.setScheme(baseUrl.scheme());
 	relativeUrl.setHost(baseUrl.host());
 
-	if (relativeUrl.path().isEmpty())
-	{
-		//
-		// remove file from baseUrl
-		//
-		relativeUrl.setPath(baseUrl.path());
-		return;
-	}
+	QString pathWithoutFile = baseUrl.path();
+	int lastSlashIndex = pathWithoutFile.lastIndexOf("/");
 
 	if (relativeUrl.path().startsWith("/"))
 	{
+		//
+		// Just exit from function because we already make it absolute
+		//
 		return;
 	}
+	else
+	{
+		//
+		// Make path starts with slash for ensure valid QUrl behavior
+		//
+		relativeUrl.setPath("/" + relativeUrl.path());
+	}
 
-	//
-	// concat url paths
-	//
-
-
-	return;
+	if (relativeUrl.path().isEmpty())
+	{
+		relativeUrl.setPath(pathWithoutFile.left(lastSlashIndex + 1));
+	}
+	else
+	{
+		relativeUrl.setPath(pathWithoutFile.left(lastSlashIndex) + relativeUrl.path());
+	}
 }
 
 void PageInfoProcessor::resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& urlList) noexcept
