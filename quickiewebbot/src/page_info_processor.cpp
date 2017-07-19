@@ -65,7 +65,26 @@ QUrl PageInfoProcessor::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& 
 		return QUrl();
 	}
 
+	QRegularExpression pathWithoutFileRegexp;
+	QRegularExpression fileRegexp;
 
+	relativeUrl.setHost(theApp->properties()->host().toDisplayString());
+
+	if (relativeUrl.path().isEmpty())
+	{
+		//
+		// remove file from baseUrl
+		//
+		relativeUrl.setPath(baseUrl.path());
+		return relativeUrl;
+	}
+
+	if (relativeUrl.path().startsWith("/"))
+	{
+		return relativeUrl;
+	}
+
+	return relativeUrl;
 }
 
 void PageInfoProcessor::resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& urlList) noexcept
