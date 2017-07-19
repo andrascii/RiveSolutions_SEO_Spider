@@ -70,10 +70,15 @@ int ModelDataAccessorSummary::itemColSpan(const QModelIndex& index) const
 
 int ModelDataAccessorSummary::flags(const QModelIndex& index) const
 {
-	int result = isGroupHeaderRow(index.row()) ? ItemFlagTextBold | ItemFlagNotSelectable : ItemFlagHasPixmap;
+	bool group = isGroupHeaderRow(index.row());
+	int result = group ? ItemFlagTextBold | ItemFlagNotSelectable : ItemFlagNone;
 	if (index.column() != 0)
 	{
 		result |= ItemFlagAlignRight;
+	}
+	else if (!group)
+	{
+		result |= ItemFlagTextDecorator;
 	}
 
 	return result;
@@ -83,7 +88,7 @@ QPixmap* ModelDataAccessorSummary::pixmap(const QModelIndex& index) const
 {
 	// just for test, will be implemented later
 	static QPixmap s_pixmap = QPixmap(":/images/arrow-down-icon.png");
-	return isGroupHeaderRow(index.row()) ? &s_pixmap : nullptr;
+	return !isGroupHeaderRow(index.row()) && index.column() == 0 ? &s_pixmap : nullptr;
 }
 
 QObject* ModelDataAccessorSummary::qobject()

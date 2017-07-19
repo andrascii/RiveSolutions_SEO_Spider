@@ -88,6 +88,9 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
+          <property name="opaqueResize">
+           <bool>false</bool>
+          </property>
           <widget class="QuickieWebBot::GridView" name="crawlingTableView">
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
@@ -104,6 +107,9 @@
          <widget class="QuickieWebBot::GridView" name="summaryGridView">
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
           </property>
           <property name="showGrid">
            <bool>false</bool>

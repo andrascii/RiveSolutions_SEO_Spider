@@ -25,6 +25,7 @@ private:
 
 	void applyTextBold(QPainter* painter, int flags) const;
 	int textAlign(int flags) const;
+	QRect paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const;
 
 private:
 	int m_marginLeft;

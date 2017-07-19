@@ -27,6 +27,10 @@ void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QMod
 		painter->setPen(qvariant_cast<QColor>(index.data(Qt::TextColorRole)));
 		applyTextBold(painter, flags);
 
+		if (flags && IModelDataAccessor::ItemFlagTextDecorator)
+		{
+			adjustedRect = paintDecorator(painter, index, adjustedRect);
+		}
 		painter->drawText(adjustedRect, textAlign(flags), index.data(Qt::DisplayRole).toString());
 
 		painter->restore();
@@ -47,6 +51,12 @@ void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QMod
 		applyTextBold(&painterPixmap, flags);
 
 		painterPixmap.setPen(qvariant_cast<QColor>(index.data(Qt::TextColorRole)));
+
+		if (flags && IModelDataAccessor::ItemFlagTextDecorator)
+		{
+			pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
+		}
+
 		painterPixmap.drawText(pixmapRect, textAlign(flags), key.first);
 
 		auto accessTime = std::chrono::system_clock::now();
@@ -134,6 +144,15 @@ int GridViewPainterText::textAlign(int flags) const
 	}
 
 	return result;
+}
+
+QRect GridViewPainterText::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const
+{
+	QPixmap pixmap = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
+	QSize pixmapSize = pixmap.size();
+	painter->drawPixmap(QRect(rect.topLeft(), pixmapSize), pixmap);
+
+	return rect.adjusted(pixmapSize.width() + 5, 0, 0, 0);
 }
 
 }
