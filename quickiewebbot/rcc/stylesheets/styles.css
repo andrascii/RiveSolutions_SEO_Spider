@@ -151,6 +151,17 @@ QTableView::item
 	border-left: none;
 }
 
+QTableView#summaryGridView
+{
+	min-width: 28em;
+	max-width: 28em;
+}
+
+QTableView#itemGridView
+{
+	max-height: 25em;
+}
+
 /*/////////////////////////////// Header view ///////////////////////////////*/
 
 QHeaderView
@@ -168,7 +179,7 @@ QHeaderView::section
 	border-left: none;
 	
 	background: #e0e0e0;
-	min-height: 3em;
+	min-height: 2em;
 }
 
 /*/////////////////////////////// Horizontal Scroll Bar ///////////////////////////////*/
@@ -176,7 +187,7 @@ QHeaderView::section
 QScrollBar:horizontal
 {
 	background: #D6D6D6;
-	height: 1.2em;
+	height: 0.8em;
 	padding-top: 0.09em;
 	padding-bottom: 0.09em;
 }
@@ -223,7 +234,7 @@ QScrollBar::sub-page:horizontal
 QScrollBar:vertical
 {
 	background: #D6D6D6;
-	width: 1.2em;
+	width: 0.8em;
 	padding-left: 0.09em;
 	padding-right: 0.09em;
 }
@@ -297,6 +308,20 @@ QWidget#ProxySettingsDialog QFrame#settingsFrame
 {
 	background: #e7e7e7;
 	padding: 0.5em;
+}
+
+/*/////////////////////////////// Splitters ///////////////////////////////*/
+
+QSplitter::handle:horizontal
+{
+	image: url(:/images/ui-splitter-horizontal-icon.png);
+    width: 1em;
+}
+
+QSplitter::handle:vertical
+{
+	image: url(:/images/ui-splitter-vertical-icon.png);
+    height: 1em;
 }
 
 /*/////////////////////////////// Group buttons ///////////////////////////////*/

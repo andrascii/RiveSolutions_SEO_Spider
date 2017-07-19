@@ -50,18 +50,17 @@ void MainFrame::initialize()
 
 	ModelDataAccessorFactory factory;
 	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
-	m_ui.crawlingTableView->setModel(model);
+	m_ui.crawlingGridView->setModel(model);
 
-	m_ui.crawlingTableView->setItemDelegate(new GridViewDelegate(m_ui.crawlingTableView));
-	new GridViewExtension(m_ui.crawlingTableView);
+	m_ui.crawlingGridView->setItemDelegate(new GridViewDelegate(m_ui.crawlingGridView));
+	new GridViewExtension(m_ui.crawlingGridView);
 
 	GridViewModel* summaryModel = new GridViewModel(this);
 	summaryModel->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
+
 	m_ui.summaryGridView->setModel(summaryModel);
 	m_ui.summaryGridView->setItemDelegate(new GridViewDelegate(m_ui.summaryGridView));
 	m_ui.summaryGridView->setColumnResizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }));
-
-	//////////////////////////////////////////////////////////////////////////
 }
 
 }

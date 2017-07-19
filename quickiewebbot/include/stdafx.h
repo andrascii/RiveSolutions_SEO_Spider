@@ -106,11 +106,7 @@ using std::size_t;
 
 #define INFOLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
 
-#ifdef DEBUG
 #define DEBUGLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
-#else
-#define DEBUGLOG
-#endif
 
 #define WARNINGLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__,__VA_ARGS__)
 #define ERRORLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)

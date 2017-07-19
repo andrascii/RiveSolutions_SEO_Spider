@@ -1,6 +1,6 @@
 #include "named_thread.h"
 
-#if defined (Q_OS_WIN) && defined (NDEBUG)
+#if defined (Q_OS_WIN)
 #define USE_WINDOWS_SET_THREAD_NAME_HACK
 #endif
 
@@ -58,7 +58,7 @@ namespace QuickieWebBot
 	void NamedThread::run()
 	{
 #ifdef USE_WINDOWS_SET_THREAD_NAME_HACK
-		setCurrentThreadName(objectName().toAscii());
+		setCurrentThreadName(objectName().toLatin1());
 #endif
 		QThread::run();
 	}
