@@ -25,7 +25,7 @@ public:
 private:
 	virtual void process() override;
 
-	QUrl resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& baseUrl);
+	void resolveRelativeUrl(QUrl& relativeUrl, const QUrl& baseUrl);
 
 	void resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& urlList) noexcept;
 

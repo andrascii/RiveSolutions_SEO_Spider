@@ -114,3 +114,17 @@ using std::size_t;
 
 #define WARNINGLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__,__VA_ARGS__)
 #define ERRORLOG(...) LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__, __VA_ARGS__)
+
+inline void debugBreak()
+{
+#ifdef DEBUG
+
+#ifdef Q_OS_WIN
+	__debugbreak();
+#else
+	char* p = nullptr;
+	*p = 0;
+#endif
+
+#endif
+}

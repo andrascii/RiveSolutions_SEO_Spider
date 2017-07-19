@@ -52,23 +52,26 @@ void PageInfoProcessor::process()
 	}
 }
 
-QUrl PageInfoProcessor::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& baseUrl)
+void PageInfoProcessor::resolveRelativeUrl(QUrl& relativeUrl, const QUrl& baseUrl)
 {
 	//
-	// see: https://tools.ietf.org/html/rfc1808
+	// see: https://tools.ietf.org/html/rfc1808#section-4
 	//
+
+	assert(!baseUrl.isRelative() && !"Base address always MUST BE an absolute URL!!!");
+
 
 	if (!relativeUrl.isRelative())
 	{
 		DEBUGLOG() << "Passed non-relative url:" << relativeUrl.toDisplayString();
 
-		return QUrl();
+		return;
 	}
 
 	QRegularExpression pathWithoutFileRegexp;
 	QRegularExpression fileRegexp;
 
-	relativeUrl.setHost(theApp->properties()->host().toDisplayString());
+	relativeUrl.setHost(baseUrl.host());
 
 	if (relativeUrl.path().isEmpty())
 	{
@@ -76,15 +79,20 @@ QUrl PageInfoProcessor::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& 
 		// remove file from baseUrl
 		//
 		relativeUrl.setPath(baseUrl.path());
-		return relativeUrl;
+		return;
 	}
 
 	if (relativeUrl.path().startsWith("/"))
 	{
-		return relativeUrl;
+		return;
 	}
 
-	return relativeUrl;
+	//
+	// concat url paths
+	//
+
+
+	return;
 }
 
 void PageInfoProcessor::resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& urlList) noexcept
@@ -93,7 +101,7 @@ void PageInfoProcessor::resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& u
 	{
 		if (url.isRelative())
 		{
-			url = resolveRelativeUrl(url, baseUrl);
+			resolveRelativeUrl(url, baseUrl);
 			continue;
 		}
 
