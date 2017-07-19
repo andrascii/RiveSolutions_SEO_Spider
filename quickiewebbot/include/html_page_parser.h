@@ -9,7 +9,7 @@ namespace QuickieWebBot
 class HtmlPageParser
 {
 public:
-	void addPageInfoParser(std::shared_ptr<IPageParser> webPageInfoParser) noexcept;
+	void addPageInfoParser(std::shared_ptr<IPageParser> pageInfoParser) noexcept;
 
 	void parsePage(const QString& htmlPage, PageInfoPtr& pageInfo) noexcept;
 

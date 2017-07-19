@@ -1,5 +1,5 @@
 #include "application.h"
-#include "model_data_accessor.h"
+#include "model_data_accessor_all_items.h"
 #include "page_info_item_accessor_helper.h"
 #include "service_locator.h"
 #include "model_controller.h"

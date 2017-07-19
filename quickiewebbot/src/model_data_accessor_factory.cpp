@@ -1,5 +1,5 @@
 #include "model_data_accessor_factory.h"
-#include "model_data_accessor.h"
+#include "model_data_accessor_all_items.h"
 #include "model_data_accessor_summary.h"
 
 namespace QuickieWebBot

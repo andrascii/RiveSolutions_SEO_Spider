@@ -44,18 +44,43 @@ void PageInfoProcessor::process()
 
 		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 
-		validateUrlList(urlList);
+		resolveUrlList(reply.url, urlList);
+
 		m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
 
 		emit webPageParsed(m_pageInfo);
 	}
 }
 
-void PageInfoProcessor::validateUrlList(std::vector<QUrl>& urlList) noexcept
+QUrl PageInfoProcessor::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& baseUrl)
+{
+	//
+	// see: https://tools.ietf.org/html/rfc1808
+	//
+
+	if (!relativeUrl.isRelative())
+	{
+		DEBUGLOG() << "Passed non-relative url:" << relativeUrl.toDisplayString();
+
+		return QUrl();
+	}
+
+
+}
+
+void PageInfoProcessor::resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& urlList) noexcept
 {
 	for (QUrl& url : urlList)
 	{
-		
+		if (url.isRelative())
+		{
+			url = resolveRelativeUrl(url, baseUrl);
+			continue;
+		}
+
+		//
+		// TODO: process absolute urls
+		//
 	}
 }
 
