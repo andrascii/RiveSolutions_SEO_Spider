@@ -70,7 +70,7 @@ int ModelDataAccessorSummary::itemColSpan(const QModelIndex& index) const
 
 int ModelDataAccessorSummary::flags(const QModelIndex& index) const
 {
-	int result = isGroupHeaderRow(index.row()) ? ItemFlagTextBold : ItemFlagHasPixmap;
+	int result = isGroupHeaderRow(index.row()) ? ItemFlagTextBold | ItemFlagNotSelectable : ItemFlagHasPixmap;
 	if (index.column() != 0)
 	{
 		result |= ItemFlagAlignRight;

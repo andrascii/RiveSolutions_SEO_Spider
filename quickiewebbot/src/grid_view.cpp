@@ -2,6 +2,7 @@
 #include "imodel_data_accessor.h"
 #include "grid_view_model.h"
 #include "igrid_view_resize_strategy.h"
+#include "grid_view_selection_model.h"
 
 
 namespace QuickieWebBot
@@ -25,6 +26,7 @@ void GridView::setModel(QAbstractItemModel* model)
 
 	VERIFY(QObject::connect(model, SIGNAL(modelAccessorChanged(IModelDataAccessor*)), this, SLOT(onModelAccessorChanged(IModelDataAccessor*))));
 	updateColumnsSpan();
+	setSelectionModel(new GridViewSelectionModel(this));
 }
 
 void GridView::setColumnResizeStrategy(std::unique_ptr<IGridViewResizeStrategy> strategy)
@@ -35,27 +37,42 @@ void GridView::setColumnResizeStrategy(std::unique_ptr<IGridViewResizeStrategy> 
 void GridView::mouseMoveEvent(QMouseEvent* event)
 {
 	QModelIndex index = indexAt(event->pos());
-	if (index != m_hoveredIndex)
+	if (index == m_hoveredIndex || 
+		index.data(Qt::UserRole).toInt() & IModelDataAccessor::ItemFlagNotSelectable)
 	{
-		// TODO: paint only selection
-		QAbstractItemModel* mod = model();
-		int columnCount = mod->columnCount();
+		QTableView::mouseMoveEvent(event);
+		return;
+	}
 
-		if (m_hoveredIndex.isValid())
-		{
-			mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), columnCount));
-		}
-		
-		m_hoveredIndex = index;
+	// TODO: paint only selection
+	QAbstractItemModel* mod = model();
+	int columnCount = mod->columnCount();
 
-		if (m_hoveredIndex.isValid())
-		{
-			mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), columnCount));
-		}
-		// raise paint event on prev and current hovered row
+	if (m_hoveredIndex.isValid())
+	{
+		mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), columnCount));
+	}
+
+	m_hoveredIndex = index;
+
+	if (m_hoveredIndex.isValid())
+	{
+		mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), columnCount));
 	}
 
 	QTableView::mouseMoveEvent(event);
+}
+
+void GridView::leaveEvent(QEvent* event)
+{
+	if (m_hoveredIndex.isValid())
+	{
+		QAbstractItemModel* mod = model();
+		mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), mod->columnCount()));
+		m_hoveredIndex = QModelIndex();
+	}
+	
+	QTableView::leaveEvent(event);
 }
 
 void GridView::resizeEvent(QResizeEvent* event)
