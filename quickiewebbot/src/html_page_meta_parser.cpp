@@ -30,12 +30,14 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexc
 
 		if (metaHttpEquivAttribute)
 		{
-			if (metaHttpEquivAttribute->value == "Content-Type")
+			QString attributeValue = QString(metaHttpEquivAttribute->value).toLower();
+
+			if (attributeValue == "content-type")
 			{
 				pageInfo->content = contentAttribute->value;
 			}
 
-			if (metaHttpEquivAttribute->value == "refresh")
+			if (attributeValue == "refresh")
 			{
 				pageInfo->metaRefresh = contentAttribute->value;
 			}
@@ -43,17 +45,19 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexc
 
 		if (metaNameAttribute)
 		{
-			if (metaNameAttribute->value == "description")
+			QString attributeValue = QString(metaNameAttribute->value).toLower();
+
+			if (attributeValue == "description")
 			{
 				pageInfo->metaDescription = contentAttribute->value;
 			}
 
-			if (metaNameAttribute->value == "keywords")
+			if (attributeValue == "keywords")
 			{
 				pageInfo->metaKeywords = contentAttribute->value;
 			}
 
-			if (metaNameAttribute->value == "robots")
+			if (attributeValue == "robots")
 			{
 				pageInfo->metaRobots = contentAttribute->value;
 			}

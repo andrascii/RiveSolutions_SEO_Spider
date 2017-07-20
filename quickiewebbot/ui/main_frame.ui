@@ -91,44 +91,53 @@
           <property name="opaqueResize">
            <bool>false</bool>
           </property>
-          <widget class="QuickieWebBot::GridView" name="crawlingTableView">
+          <widget class="QuickieWebBot::GridView" name="crawlingGridView">
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QTableView" name="tableView"/>
+          <widget class="QuickieWebBot::GridView" name="itemGridView"/>
          </widget>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="errorsFilterPage">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QuickieWebBot::GridView" name="summaryGridView">
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustToContents</enum>
+         <widget class="QSplitter" name="splitter_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::SingleSelection</enum>
-          </property>
-          <property name="showGrid">
+          <property name="opaqueResize">
            <bool>false</bool>
           </property>
-          <property name="gridStyle">
-           <enum>Qt::NoPen</enum>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
           </property>
-          <attribute name="horizontalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-         </widget>
-        </item>
-        <item>
-         <widget class="QStackedWidget" name="stackedWidget_2">
-          <widget class="QWidget" name="page"/>
-          <widget class="QWidget" name="page_2"/>
+          <widget class="QuickieWebBot::GridView" name="summaryGridView">
+           <property name="sizeAdjustPolicy">
+            <enum>QAbstractScrollArea::AdjustToContents</enum>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="showGrid">
+            <bool>false</bool>
+           </property>
+           <property name="gridStyle">
+            <enum>Qt::NoPen</enum>
+           </property>
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+          </widget>
+          <widget class="QStackedWidget" name="stackedWidget_2">
+           <widget class="QWidget" name="page"/>
+           <widget class="QWidget" name="page_2"/>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -319,7 +328,7 @@
   <customwidget>
    <class>QuickieWebBot::GridView</class>
    <extends>QTableView</extends>
-   <header>grid_view.h</header>
+   <header location="global">grid_view.h</header>
   </customwidget>
   <customwidget>
    <class>QuickieWebBot::ControlPanelWidget</class>

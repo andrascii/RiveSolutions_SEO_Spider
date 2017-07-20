@@ -1,8 +1,5 @@
 #pragma once
 
-
-#pragma once
-
 namespace QuickieWebBot
 {
 
