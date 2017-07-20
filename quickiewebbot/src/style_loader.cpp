@@ -50,17 +50,17 @@ void StyleLoader::loadCustomStyleSheet()
 		QString styleSheet = styles.readAll();
 		qApp->setStyleSheet(styleSheet);
 
-		DEBUGLOG("StyleLoader", QString("Debug styles loaded from %1").arg(filenamePath));
+		DEBUGLOG << "StyleLoader" << QString("Debug styles loaded from %1").arg(filenamePath);
 	}
 	else
 	{
-		DEBUGLOG("StyleLoader", QString("Debug styles cannot be loaded from %1").arg(filenamePath));
+		DEBUGLOG << "StyleLoader" << QString("Debug styles cannot be loaded from %1").arg(filenamePath);
 	}
 }
 
 void StyleLoader::loadStandardStyleSheet()
 {
-	DEBUGLOG("StyleLoader", QString("Loaded standard stylesheets"));
+	DEBUGLOG << "StyleLoader" << QString("Loaded standard stylesheets");
 	theApp->initializeStyleSheet();
 }
 

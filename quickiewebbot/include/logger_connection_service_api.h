@@ -36,7 +36,14 @@ public:
 		template<typename T>
 		LoggerDataStream& operator<<(const T& str)
 		{
-			(*m_textStream) << str << ' ';
+			if (!(&str))
+			{
+				(*m_textStream) << "NULL" << ' ';
+			}
+			else
+			{
+				(*m_textStream) << str << ' ';
+			}
 			return *this;
 		}
 
@@ -51,6 +58,8 @@ public:
 
 public:
 	static LoggerConnectionServiceApi* instance();
+	~LoggerConnectionServiceApi();
+
 
 	void addPackToStream(QTextStream& messageStream)
 	{

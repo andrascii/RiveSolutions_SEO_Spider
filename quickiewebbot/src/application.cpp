@@ -30,7 +30,7 @@ Application::Application(int& argc, char** argv)
 #endif
 
 #ifdef Q_OS_WIN
-	INFOLOG() << QThread::currentThreadId() << "Main thread has been started";
+	INFOLOG << QThread::currentThreadId() << "Main thread has been started";
 #endif
 }
 
@@ -63,7 +63,7 @@ void Application::mainFrameIsReadyForShow()
 {
 	mainFrame()->showMaximized();
 
-	INFOLOG("", "MainFrame shown");
+	INFOLOG << "MainFrame shown";
 }
 
 void Application::initialize() noexcept
@@ -86,7 +86,7 @@ void Application::initializeStyleSheet() noexcept
 	{
 		setStyleSheet(styles.readAll());
 
-		INFOLOG("", "Stylesheets loaded");
+		INFOLOG << "Stylesheets loaded";
 	}
 }
 

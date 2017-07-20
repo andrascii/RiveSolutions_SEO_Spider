@@ -63,7 +63,7 @@ void PageInfoProcessor::resolveRelativeUrl(QUrl& relativeUrl, const QUrl& baseUr
 
 	if (!relativeUrl.isRelative())
 	{
-		DEBUGLOG() << "Passed non-relative url:" << relativeUrl.toDisplayString();
+		DEBUGLOG << "Passed non-relative url:" << relativeUrl.toDisplayString();
 
 		return;
 	}
