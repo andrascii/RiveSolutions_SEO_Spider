@@ -122,7 +122,6 @@ IModelDataAccessor * GridViewModel::dataAcessor() const
 
 void GridViewModel::onRowAdded(int row)
 {
-	INFOLOG() << "new row added" << row;
 	beginInsertRows(QModelIndex(), row, row);
 	endInsertRows();
 }
