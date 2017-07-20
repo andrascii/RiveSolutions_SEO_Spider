@@ -62,6 +62,7 @@ private slots:
 	void slotReadyRead();
 	void slotApplyTypeFilter(const QString& type);
 	void slotTryToShowNewMessage();
+	void slotSocketDisconected();
 
 private:
 	Ui::MainWindow ui;

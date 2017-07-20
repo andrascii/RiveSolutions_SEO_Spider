@@ -20,7 +20,7 @@ LoggerMainWindow::LoggerMainWindow(QWidget* parent) :
 	VERIFY(connect(m_server, SIGNAL(newConnection()), this, SLOT(slotNewConnection())));
 	VERIFY(connect(ui.comboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotApplyTypeFilter(QString))));
 
-	ui.textBrowser->setFontPointSize(12);
+	ui.textBrowser->setFontPointSize(11);
 }
 
 void LoggerMainWindow::slotNewConnection()
@@ -28,7 +28,9 @@ void LoggerMainWindow::slotNewConnection()
 	QTcpSocket* clientSocket = m_server->nextPendingConnection();
 
 	VERIFY(connect(clientSocket, SIGNAL(readyRead()), this, SLOT(slotReadyRead())));
+	VERIFY(connect(clientSocket, SIGNAL(disconnected()), this, SLOT(slotSocketDisconected())));
 	VERIFY(connect(this, SIGNAL(messageAppendedToList()), this, SLOT(slotTryToShowNewMessage())));
+
 	ui.textBrowser->append("connected");
 }
 
@@ -44,6 +46,14 @@ LoggerMainWindow::MessageType LoggerMainWindow::typeFromString(const QString& ty
 		return DebugMessageType;
 
 	return NoType;
+}
+
+
+void LoggerMainWindow::slotSocketDisconected()
+{
+	VERIFY(disconnect((QTcpSocket*)sender(), SIGNAL(readyRead()), this, SLOT(slotReadyRead())));
+	VERIFY(disconnect(this, SIGNAL(messageAppendedToList()), this, SLOT(slotTryToShowNewMessage())));
+	ui.textBrowser->append("disconnected");
 }
 
 void LoggerMainWindow::slotApplyTypeFilter(const QString& type)

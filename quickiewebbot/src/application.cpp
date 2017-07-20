@@ -31,6 +31,7 @@ Application::Application(int& argc, char** argv)
 
 #ifdef Q_OS_WIN
 	INFOLOG() << QThread::currentThreadId() << "Main thread has been started";
+	debugBreak();
 #endif
 }
 
