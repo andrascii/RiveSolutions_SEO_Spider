@@ -36,7 +36,7 @@ void WebCrawler::startCrawling()
 
 	assert(host.isValid());
 
-	INFOLOG("", "crawler started");
+	INFOLOG << "crawler started";
 
 	m_queuedDownloader.startExecution();
 	m_internalUrlStorage.setHost(host);
@@ -49,7 +49,7 @@ void WebCrawler::startCrawling()
 
 void WebCrawler::stopCrawling()
 {
-	INFOLOG("", "crawler stopped");
+	INFOLOG << "crawler stopped";
 
 	for (std::unique_ptr<PageInfoProcessor>& worker : m_workers)
 	{
