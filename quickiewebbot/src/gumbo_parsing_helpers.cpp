@@ -26,7 +26,7 @@ GumboNode* GumboParsingHelpers::findSubNode(const GumboNode* node, GumboTag tag,
 	return searchingNode;
 }
 
-QString GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
+QByteArray GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
 {
 	assert(node->type == GUMBO_NODE_TEXT || node->type == GUMBO_NODE_WHITESPACE);
 

@@ -4,7 +4,7 @@
 namespace QuickieWebBot
 {
 
-void HtmlPageTitleParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexcept
+void HtmlPageTitleParser::parse(GumboOutput* output, PageInfoPtr& pageInfo, QTextCodec* textCodec) noexcept
 {
 	GumboNode* head = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_HEAD);
 

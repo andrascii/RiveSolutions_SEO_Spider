@@ -286,6 +286,14 @@ const QUrl& ApplicationProperties::host() const
 void ApplicationProperties::setHost(const QUrl& host)
 {
 	m_host = host;
+
+	if (m_host.scheme().isEmpty())
+	{
+		DEBUGLOG << "Corrected scheme of passed URL";
+
+		m_host.setUrl("http://" + host.toString());
+	}
+
 	emit hostChanged();
 }
 

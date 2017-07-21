@@ -11,12 +11,13 @@ class HtmlPageParser
 public:
 	void addPageInfoParser(std::shared_ptr<IPageParser> pageInfoParser) noexcept;
 
-	void parsePage(const QString& htmlPage, PageInfoPtr& pageInfo) noexcept;
+	void parsePage(const QByteArray& htmlPage, PageInfoPtr& pageInfo) noexcept;
 
 	const std::vector<QUrl>& pageUrlList() const noexcept;
 
 private:
 	void parsePageUrlList(const GumboNode* node) noexcept;
+	QByteArray identifyHtmlPageCharset(const QByteArray& htmlPage) const noexcept;
 
 private:
 	std::vector<QUrl> m_pageUrlList;

@@ -13,8 +13,8 @@ public:
 	struct Reply
 	{
 		QUrl url;
-		QString responseBody;
-		QString responseHeaderValuePairs;
+		QByteArray responseBody;
+		QByteArray responseHeaderValuePairs;
 	};
 	
 	QueuedDownloader();

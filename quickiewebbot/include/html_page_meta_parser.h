@@ -8,7 +8,7 @@ namespace QuickieWebBot
 class HtmlPageMetaParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, PageInfoPtr& pageInfo) noexcept override;
+	virtual void parse(GumboOutput* output, PageInfoPtr& pageInfo, QTextCodec* textCodec = QTextCodec::codecForLocale()) noexcept override;
 };
 
 }

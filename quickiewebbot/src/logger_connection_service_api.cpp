@@ -6,10 +6,10 @@ namespace QuickieWebBot
 LoggerConnectionServiceApi::LoggerConnectionServiceApi(QObject* parent) 
 	: QObject(parent)
 {
-	QProcess* loggerProc = new QProcess();
+	QProcess* loggerProc = new QProcess(this);
 	loggerProc->start("logger.exe", QIODevice::WriteOnly);
 
-	if (!loggerProc->waitForStarted(2000))
+	if (!loggerProc->waitForStarted())
 	{
 		qDebug() << "logger starting error";
 		qDebug() << loggerProc->errorString();
@@ -19,7 +19,7 @@ LoggerConnectionServiceApi::LoggerConnectionServiceApi(QObject* parent)
 	m_socket = new QTcpSocket(this);
 	m_socket->connectToHost(QHostAddress::LocalHost, 12345);
 
-	if (!m_socket->waitForConnected(10000))
+	if (!m_socket->waitForConnected())
 	{
 		qDebug() << "Connection timeout!";
 		return;

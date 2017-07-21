@@ -9,7 +9,7 @@ namespace QuickieWebBot
 class IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, PageInfoPtr& pageInfo) noexcept = 0;
+	virtual void parse(GumboOutput* output, PageInfoPtr& pageInfo, QTextCodec* textCodec = QTextCodec::codecForLocale()) noexcept = 0;
 };
 
 }
