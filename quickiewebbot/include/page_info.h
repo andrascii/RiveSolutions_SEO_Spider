@@ -7,6 +7,9 @@ struct PageInfo
 {
 	enum ItemType
 	{
+		PageInfoItemTypeStart,
+		// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
+
 		UrlItemType,
 		TitleItemType,
 		ContentItemType,
@@ -31,7 +34,10 @@ struct PageInfo
 		FirstH1LengthItemType,
 		SecondH1LengthItemType,
 		FirstH2LengthItemType,
-		SecondH2LengthItemType
+		SecondH2LengthItemType,
+
+		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
+		PageInfoItemTypeLast
 	};
 
 	static QString itemTitle(ItemType item);

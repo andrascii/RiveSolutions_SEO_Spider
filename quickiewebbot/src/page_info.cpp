@@ -199,7 +199,7 @@ QVariant PageInfo::acceptWordCount(const std::shared_ptr<PageInfo>& pageInfo)
 
 void PageInfo::checkInfoItem(ItemType item)
 {
-	assert(item >= UrlItemType && item <= SecondH2LengthItemType);
+	assert(item >= PageInfoItemTypeStart && item <= PageInfoItemTypeLast);
 }
 
 }
