@@ -25,6 +25,8 @@ public:
 
 	void initializeStyleSheet() noexcept;
 
+	QString operatingSystemVersion() const noexcept;
+
 private:
 	Q_SLOT void mainFrameIsReadyForShow();
 
