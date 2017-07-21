@@ -16,7 +16,6 @@ public:
 		ErrorMessageType
 	};
 
-
 	class LoggerDataStream 
 	{
 	public:

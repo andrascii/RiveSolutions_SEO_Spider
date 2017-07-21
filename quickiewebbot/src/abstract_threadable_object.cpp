@@ -71,7 +71,7 @@ void AbstractThreadableObject::startTimer(int interval, Qt::TimerType timerType)
 {
 #ifdef Q_OS_WIN
 
-	INFOLOG << QThread::currentThreadId() << "Thread has been started";
+	INFOLOG << threadName() << QThread::currentThreadId() << "Thread has been started";
 
 #endif
 

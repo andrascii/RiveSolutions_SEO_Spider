@@ -1,9 +1,7 @@
 #include "application.h"
 #include "model_data_accessor_all_items.h"
-#include "page_info_item_accessor_helper.h"
 #include "service_locator.h"
 #include "model_controller.h"
-#include "page_info_item_accessor_helper.h"
 #include "grid_view_painter_text.h"
 #include "grid_view_painter_background.h"
 
@@ -16,28 +14,28 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 {
 	m_columns =
 	{
-		PageInfoItemAccessorHelper::Url,
-		PageInfoItemAccessorHelper::Title,
-		PageInfoItemAccessorHelper::TitleLength,
-		PageInfoItemAccessorHelper::MetaRefresh,
-		PageInfoItemAccessorHelper::MetaRobots,
-		PageInfoItemAccessorHelper::RedirectedUrl,
-		PageInfoItemAccessorHelper::MetaDescription,
-		PageInfoItemAccessorHelper::MetaDescriptionLength,
-		PageInfoItemAccessorHelper::MetaKeywords,
-		PageInfoItemAccessorHelper::MetaKeywordsLength,
-		PageInfoItemAccessorHelper::FirstH1,
-		PageInfoItemAccessorHelper::FirstH1Length,
-		PageInfoItemAccessorHelper::SecondH1,
-		PageInfoItemAccessorHelper::SecondH1Length,
-		PageInfoItemAccessorHelper::FirstH2,
-		PageInfoItemAccessorHelper::FirstH2Length,
-		PageInfoItemAccessorHelper::SecondH2,
-		PageInfoItemAccessorHelper::SecondH2Length,
-		PageInfoItemAccessorHelper::CanonicalLinkElement,
-		PageInfoItemAccessorHelper::StatusCode,
-		PageInfoItemAccessorHelper::PageSizeBytes,
-		PageInfoItemAccessorHelper::WordCount
+		PageInfo::UrlItemType,
+		PageInfo::TitleItemType,
+		PageInfo::TitleLengthItemType,
+		PageInfo::MetaRefreshItemType,
+		PageInfo::MetaRobotsItemType,
+		PageInfo::RedirectedUrlItemType,
+		PageInfo::MetaDescriptionItemType,
+		PageInfo::MetaDescriptionLengthItemType,
+		PageInfo::MetaKeywordsItemType,
+		PageInfo::MetaKeywordsLengthItemType,
+		PageInfo::FirstH1ItemType,
+		PageInfo::FirstH1LengthItemType,
+		PageInfo::SecondH1ItemType,
+		PageInfo::SecondH1LengthItemType,
+		PageInfo::FirstH2ItemType,
+		PageInfo::FirstH2LengthItemType,
+		PageInfo::SecondH2ItemType,
+		PageInfo::SecondH2LengthItemType,
+		PageInfo::CanonicalLinkElementItemType,
+		PageInfo::StatusCodeItemType,
+		PageInfo::PageSizeKbItemType,
+		PageInfo::WordCountItemType
 	};
 
 	m_modelControllerData = theApp->modelController()->data();
@@ -51,7 +49,7 @@ int ModelDataAccessorAllItems::columnCount() const
 	
 QString ModelDataAccessorAllItems::columnText(int column) const
 {
-	return PageInfoItemAccessorHelper::title(static_cast<PageInfoItemAccessorHelper::ItemInfo>(m_columns[column]));
+	return PageInfo::itemTitle(static_cast<PageInfo::ItemType>(m_columns[column]));
 }
 	
 int ModelDataAccessorAllItems::rowCount() const
@@ -62,9 +60,9 @@ int ModelDataAccessorAllItems::rowCount() const
 QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 {
 	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
-	PageInfoItemAccessorHelper::ItemInfo info = static_cast<PageInfoItemAccessorHelper::ItemInfo>(m_columns[index.column()]);
+	PageInfo::ItemType info = static_cast<PageInfo::ItemType>(m_columns[index.column()]);
 
-	return PageInfoItemAccessorHelper::value((*storage)[index.row()], info);
+	return PageInfo::itemValue((*storage)[index.row()], info);
 }
 
 QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex& index) const
@@ -80,7 +78,7 @@ int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 
 int ModelDataAccessorAllItems::flags(const QModelIndex& index) const
 {
-	return m_columns[index.column()] == PageInfoItemAccessorHelper::Url ? ItemFlagUrl : ItemFlagNone;
+	return m_columns[index.column()] == PageInfo::UrlItemType ? ItemFlagUrl : ItemFlagNone;
 }
 
 QPixmap* ModelDataAccessorAllItems::pixmap(const QModelIndex& index) const

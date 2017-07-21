@@ -49,14 +49,14 @@ void MainFrame::initialize()
 	GridViewModel* model = new GridViewModel(this);
 
 	ModelDataAccessorFactory factory;
-	model->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
+	model->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingGridView->setModel(model);
 
 	m_ui.crawlingGridView->setItemDelegate(new GridViewDelegate(m_ui.crawlingGridView));
 	new GridViewExtension(m_ui.crawlingGridView);
 
 	GridViewModel* summaryModel = new GridViewModel(this);
-	summaryModel->setDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
+	summaryModel->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
 
 	m_ui.summaryGridView->setModel(summaryModel);
 	m_ui.summaryGridView->setItemDelegate(new GridViewDelegate(m_ui.summaryGridView));

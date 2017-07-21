@@ -25,11 +25,11 @@ public:
 	virtual bool insertColumns(int column, int count, QModelIndex const& parent = QModelIndex()) override;
 	virtual bool removeColumns(int column, int count, QModelIndex const& parent = QModelIndex()) override;
 
-	void setDataAccessor(std::unique_ptr<IModelDataAccessor> accessor);
-	IModelDataAccessor* dataAcessor() const;
+	void setModelDataAccessor(std::unique_ptr<IModelDataAccessor> accessor);
+	IModelDataAccessor* modelDataAcessor() const;
 
 	Q_SIGNAL void colspan(const QModelIndex& index, int span) const;
-	Q_SIGNAL void modelAccessorChanged(IModelDataAccessor* accessor);
+	Q_SIGNAL void modelDataAccessorChanged(IModelDataAccessor* accessor);
 
 private:
 	Q_SLOT void onRowAdded(int row);

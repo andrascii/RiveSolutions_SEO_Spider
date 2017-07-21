@@ -22,9 +22,9 @@ void GridView::setModel(QAbstractItemModel* model)
 
 	GridViewModel* gridViewModel = dynamic_cast<GridViewModel*>(model);
 	assert(gridViewModel != nullptr);
-	m_accessor = gridViewModel->dataAcessor();
+	m_accessor = gridViewModel->modelDataAcessor();
 
-	VERIFY(QObject::connect(model, SIGNAL(modelAccessorChanged(IModelDataAccessor*)), this, SLOT(onModelAccessorChanged(IModelDataAccessor*))));
+	VERIFY(QObject::connect(model, SIGNAL(modelDataAccessorChanged(IModelDataAccessor*)), this, SLOT(onModelDataAccessorChanged(IModelDataAccessor*))));
 	updateColumnsSpan();
 	setSelectionModel(new GridViewSelectionModel(this));
 }
@@ -101,7 +101,7 @@ void GridView::paintEvent(QPaintEvent* event)
 
 }
 
-void GridView::onModelAccessorChanged(IModelDataAccessor* accessor)
+void GridView::onModelDataAccessorChanged(IModelDataAccessor* accessor)
 {
 	m_accessor = accessor;
 	updateColumnsSpan();

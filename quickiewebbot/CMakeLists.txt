@@ -21,16 +21,16 @@ list(REMOVE_ITEM AppSourcesList src/stdafx.cpp)
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" AppSourcesList)
 
 source_group(
-	generated_files FILES 
+	"Generated Files" FILES 
 	${AppHeadersMocList} 
 	${AppResourcesListAdded} 
 	${AppResourcesList} 
 	${AppFormsHeadersList}
 )
 
-source_group(precompiled_headers FILES include/stdafx.h src/stdafx.cpp)
-source_group(ui FILES ${AppFormsList})
-source_group(qrc FILES ${AppResourcesList})
+source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
+source_group(Ui FILES ${AppFormsList})
+source_group(Qrc FILES ${AppResourcesList})
 
 add_executable(
 	${AppName} 
@@ -52,6 +52,7 @@ if(MSVC)
 		/EHsc
 		/MP
 		/permissive-
+		/std:c++14
 	)
 	
 	set_target_properties(

@@ -26,7 +26,7 @@ protected:
 	virtual void leaveEvent(QEvent* event) override;
 	virtual void resizeEvent(QResizeEvent* event) override;
 
-	Q_SLOT void onModelAccessorChanged(IModelDataAccessor* accessor);
+	Q_SLOT void onModelDataAccessorChanged(IModelDataAccessor* accessor);
 
 private:
 	void updateColumnsSpan();

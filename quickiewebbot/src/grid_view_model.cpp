@@ -102,7 +102,7 @@ bool GridViewModel::removeColumns(int column, int count, QModelIndex const& pare
 	return 0;
 }
 
-void GridViewModel::setDataAccessor(std::unique_ptr<IModelDataAccessor> accessor)
+void GridViewModel::setModelDataAccessor(std::unique_ptr<IModelDataAccessor> accessor)
 {
 	if (m_accessor)
 	{
@@ -112,10 +112,10 @@ void GridViewModel::setDataAccessor(std::unique_ptr<IModelDataAccessor> accessor
 	m_accessor = std::move(accessor);
 
 	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
-	emit modelAccessorChanged(m_accessor.get());
+	emit modelDataAccessorChanged(m_accessor.get());
 }
 
-IModelDataAccessor * GridViewModel::dataAcessor() const
+IModelDataAccessor * GridViewModel::modelDataAcessor() const
 {
 	return m_accessor.get();
 }

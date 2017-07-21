@@ -50,7 +50,7 @@ protected:
 private:
 	QObject* m_derivedObjectPtr;
 
-	const QByteArray& m_threadName;
+	QByteArray m_threadName;
 
 	NamedThread m_thread;
 

@@ -5,6 +5,38 @@ namespace QuickieWebBot
 
 struct PageInfo
 {
+	enum ItemType
+	{
+		UrlItemType,
+		TitleItemType,
+		ContentItemType,
+		MetaRefreshItemType,
+		MetaRobotsItemType,
+		MetaDescriptionItemType,
+		MetaKeywordsItemType,
+		RedirectedUrlItemType,
+		ServerResponseItemType,
+		FirstH1ItemType,
+		SecondH1ItemType,
+		FirstH2ItemType,
+		SecondH2ItemType,
+		CanonicalLinkElementItemType,
+		StatusCodeItemType,
+		PageSizeKbItemType,
+		WordCountItemType,
+		PageHashItemType,
+		TitleLengthItemType,
+		MetaDescriptionLengthItemType,
+		MetaKeywordsLengthItemType,
+		FirstH1LengthItemType,
+		SecondH1LengthItemType,
+		FirstH2LengthItemType,
+		SecondH2LengthItemType
+	};
+
+	static QString itemTitle(ItemType item);
+	static QVariant itemValue(const std::shared_ptr<PageInfo>& pageInfo, ItemType item);
+
 	QUrl url;
 	QString title;
 	QString content;
@@ -20,110 +52,42 @@ struct PageInfo
 	QString secondH2;
 	QString canonicalLinkElement;
 	int statusCode;
-	int pageSizeBytes;
+	int pageSizeKb;
 	int wordCount;
 	size_t pageHash;
+
+private:
+	using MethodAcceptor = QVariant(*)(const std::shared_ptr<PageInfo>&);
+
+	static MethodAcceptor acceptItem(ItemType item);
+	static QVariant acceptUrl(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptTitle(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptMetaRefresh(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptMetaRobots(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptRedirectedUrl(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptServerResponse(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptMetaDescription(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptMetaKeywords(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptFirstH1(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptSecondH1(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptFirstH2(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptSecondH2(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptCanonicalLinkElement(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptStatusCode(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptTitleLength(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptMetaDescriptionLength(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptMetaKeywordsLength(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptFirstH1Length(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptSecondH1Length(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptFirstH2Length(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptSecondH2Length(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptPageSizeKb(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptWordCount(const std::shared_ptr<PageInfo>& pageInfo);
+
+	static void checkInfoItem(PageInfo::ItemType item);
 };
 
 using PageInfoPtr = std::shared_ptr<PageInfo>;
-
-struct IPageInfoHasher
-{
-	enum PageInfoMember
-	{
-		UrlMember,
-		ContentMember,
-		MetaRefreshMember,
-		MetaRobotsMember,
-		RedirectedUrlMember,
-		ServerResponseMember,
-		TitleMember,
-		MetaDescriptionMember,
-		MetaKeywordsMember,
-		FirstH1Member,
-		SecondH1Member,
-		FirstH2Member,
-		SecondH2Member,
-		CanonicalLinkElementMember,
-		StatusCodeMember,
-		PageSizeBytesMember,
-		WordCountMember
-	};
-
-	virtual size_t operator()(const PageInfoPtr& pageInfo) const noexcept = 0;
-};
-
-template <int MemberType>
-struct PageInfoHasher : public IPageInfoHasher
-{
-	virtual size_t operator()(const PageInfoPtr& pageInfo) const noexcept override
-	{
-		static_assert(MemberType >= UrlMember && MemberType <= static_cast<int>(WordCountMember), 
-			"Invalid MemberGetterType");
-
-		static boost::hash<std::string> s_stringHasher;
-		static boost::hash<int> s_intHasher;
-		
-		static std::map<int, std::function<size_t(const PageInfoPtr&)>> s_hashFuncs
-		{
-			{ UrlMember, [](PageInfoPtr const& el) { return s_stringHasher(el->url.toString().toStdString()); } },
-			{ ContentMember, [](PageInfoPtr const& el) { return s_stringHasher(el->content.toStdString()); } },
-			{ MetaRefreshMember, [](PageInfoPtr const& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
-			{ MetaRobotsMember, [](PageInfoPtr const& el) { return s_stringHasher(el->metaRobots.toStdString()); } },
-			{ RedirectedUrlMember, [](PageInfoPtr const& el) { return s_stringHasher(el->redirectedUrl.toStdString()); } },
-			{ ServerResponseMember, [](PageInfoPtr const& el) { return s_stringHasher(el->serverResponse.toStdString()); } },
-			{ TitleMember, [](PageInfoPtr const& el) { return s_stringHasher(el->title.toStdString()); } },
-			{ MetaDescriptionMember, [](PageInfoPtr const& el) { return s_stringHasher(el->metaDescription.toStdString()); } },
-			{ MetaKeywordsMember, [](PageInfoPtr const& el) { return s_stringHasher(el->metaKeywords.toStdString()); } },
-			{ FirstH1Member, [](PageInfoPtr const& el) { return s_stringHasher(el->firstH1.toStdString()); } },
-			{ SecondH1Member, [](PageInfoPtr const& el) { return s_stringHasher(el->secondH1.toStdString()); } },
-			{ FirstH2Member, [](PageInfoPtr const& el) { return s_stringHasher(el->firstH2.toStdString()); } },
-			{ SecondH2Member, [](PageInfoPtr const& el) { return s_stringHasher(el->secondH2.toStdString()); } },
-			{ CanonicalLinkElementMember, [](PageInfoPtr const& el) { return s_stringHasher(el->canonicalLinkElement.toStdString()); } },
-			{ StatusCodeMember, [](PageInfoPtr const& el) { return s_intHasher(el->statusCode); } },
-			{ PageSizeBytesMember, [](PageInfoPtr const& el) { return s_intHasher(el->pageSizeBytes); } },
-			{ WordCountMember, [](PageInfoPtr const& el) { return s_intHasher(el->wordCount); } }
-		};
-
-		return s_hashFuncs[MemberType](pageInfo);
-	}
-};
-
-using PageInfoHasherUrl = PageInfoHasher<IPageInfoHasher::UrlMember>;
-using PageInfoHasherContent = PageInfoHasher<IPageInfoHasher::ContentMember>;
-using PageInfoHasherMetaRefresh = PageInfoHasher<IPageInfoHasher::MetaRefreshMember>;
-using PageInfoHasherMetaRobots = PageInfoHasher<IPageInfoHasher::MetaRobotsMember>;
-using PageInfoHasherRedirectedUrl = PageInfoHasher<IPageInfoHasher::RedirectedUrlMember>;
-using PageInfoHasherServerResponse = PageInfoHasher<IPageInfoHasher::ServerResponseMember>;
-using PageInfoHasherTitle = PageInfoHasher<IPageInfoHasher::TitleMember>;
-using PageInfoHasherMetaDescription = PageInfoHasher<IPageInfoHasher::MetaDescriptionMember>;
-using PageInfoHasherMetaKeywords = PageInfoHasher<IPageInfoHasher::MetaKeywordsMember>;
-using PageInfoHasherFirstH1 = PageInfoHasher<IPageInfoHasher::FirstH1Member>;
-using PageInfoHasherSecondH1 = PageInfoHasher<IPageInfoHasher::SecondH1Member>;
-using PageInfoHasherFirstH2 = PageInfoHasher<IPageInfoHasher::FirstH2Member>;
-using PageInfoHasherSecondH2 = PageInfoHasher<IPageInfoHasher::SecondH2Member>;
-using PageInfoHasherCanonicalLinkElement = PageInfoHasher<IPageInfoHasher::CanonicalLinkElementMember>;
-using PageInfoHasherStatusCode = PageInfoHasher<IPageInfoHasher::StatusCodeMember>;
-using PageInfoHasherPageSizeBytes = PageInfoHasher<IPageInfoHasher::PageSizeBytesMember>;
-using PageInfoHasherWordCount = PageInfoHasher<IPageInfoHasher::WordCountMember>;
-
-class UniversalPageInfoHasher
-{
-public:
-	UniversalPageInfoHasher(const std::shared_ptr<IPageInfoHasher>& hasher)
-		: m_hasher(hasher)
-	{
-	}
-
-	size_t operator()(const PageInfoPtr& pageInfo) const noexcept
-	{
-		return (*m_hasher)(pageInfo);
-	}
-
-private:
-	std::shared_ptr<IPageInfoHasher> m_hasher;
-};
-
 
 Q_DECLARE_METATYPE(PageInfoPtr);
 
