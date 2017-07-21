@@ -14,6 +14,9 @@ GridView::GridView(QWidget * parent)
 {
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
+
+	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
 
 void GridView::setModel(QAbstractItemModel* model)

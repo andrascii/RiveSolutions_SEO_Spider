@@ -68,6 +68,7 @@
 #include <QDateTime>
 #include <QLineEdit>
 #include <QScrollBar>
+#include <QScreen>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
