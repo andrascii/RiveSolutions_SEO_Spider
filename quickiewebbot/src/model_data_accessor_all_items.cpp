@@ -15,6 +15,7 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 	m_columns =
 	{
 		PageInfo::UrlItemType,
+		PageInfo::ContentItemType,
 		PageInfo::TitleItemType,
 		PageInfo::TitleLengthItemType,
 		PageInfo::MetaRefreshItemType,

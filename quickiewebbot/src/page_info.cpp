@@ -10,6 +10,7 @@ QString PageInfo::itemTitle(ItemType item)
 	static std::map<ItemType, QString> s_titles
 	{
 		{ UrlItemType, "Url" },
+		{ ContentItemType, "Content" },
 		{ TitleItemType, "Title" },
 		{ MetaRefreshItemType, "Meta Refresh" },
 		{ MetaRobotsItemType, "Meta Robots" },
@@ -46,29 +47,30 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 {
 	switch (item)
 	{
-	case UrlItemType: return &PageInfo::acceptUrl;
-	case TitleItemType: return &PageInfo::acceptTitle;
-	case MetaRefreshItemType: return &PageInfo::acceptMetaRefresh;
-	case MetaRobotsItemType: return &PageInfo::acceptMetaRobots;
-	case RedirectedUrlItemType: return &PageInfo::acceptMetaRobots;
-	case ServerResponseItemType: return &PageInfo::acceptServerResponse;
-	case MetaDescriptionItemType: return &PageInfo::acceptMetaDescription;
-	case MetaKeywordsItemType: return &PageInfo::acceptMetaKeywords;
-	case FirstH1ItemType: return &PageInfo::acceptFirstH1;
-	case SecondH1ItemType: return &PageInfo::acceptSecondH1;
-	case FirstH2ItemType: return &PageInfo::acceptFirstH2;
-	case SecondH2ItemType: return &PageInfo::acceptSecondH2;
-	case CanonicalLinkElementItemType: return &PageInfo::acceptCanonicalLinkElement;
-	case StatusCodeItemType: return &PageInfo::acceptStatusCode;
-	case TitleLengthItemType: return &PageInfo::acceptTitleLength;
-	case MetaDescriptionLengthItemType: return &PageInfo::acceptMetaDescriptionLength;
-	case MetaKeywordsLengthItemType: return &PageInfo::acceptMetaKeywordsLength;
-	case FirstH1LengthItemType: return &PageInfo::acceptFirstH1Length;
-	case SecondH1LengthItemType: return &PageInfo::acceptSecondH1Length;
-	case FirstH2LengthItemType: return &PageInfo::acceptFirstH2Length;
-	case SecondH2LengthItemType: return &PageInfo::acceptSecondH2Length;
-	case PageSizeKbItemType: return &PageInfo::acceptPageSizeKb;
-	case WordCountItemType: return &PageInfo::acceptWordCount;
+		case UrlItemType: return &PageInfo::acceptUrl;
+		case ContentItemType: return &PageInfo::acceptContent;
+		case TitleItemType: return &PageInfo::acceptTitle;
+		case MetaRefreshItemType: return &PageInfo::acceptMetaRefresh;
+		case MetaRobotsItemType: return &PageInfo::acceptMetaRobots;
+		case RedirectedUrlItemType: return &PageInfo::acceptMetaRobots;
+		case ServerResponseItemType: return &PageInfo::acceptServerResponse;
+		case MetaDescriptionItemType: return &PageInfo::acceptMetaDescription;
+		case MetaKeywordsItemType: return &PageInfo::acceptMetaKeywords;
+		case FirstH1ItemType: return &PageInfo::acceptFirstH1;
+		case SecondH1ItemType: return &PageInfo::acceptSecondH1;
+		case FirstH2ItemType: return &PageInfo::acceptFirstH2;
+		case SecondH2ItemType: return &PageInfo::acceptSecondH2;
+		case CanonicalLinkElementItemType: return &PageInfo::acceptCanonicalLinkElement;
+		case StatusCodeItemType: return &PageInfo::acceptStatusCode;
+		case TitleLengthItemType: return &PageInfo::acceptTitleLength;
+		case MetaDescriptionLengthItemType: return &PageInfo::acceptMetaDescriptionLength;
+		case MetaKeywordsLengthItemType: return &PageInfo::acceptMetaKeywordsLength;
+		case FirstH1LengthItemType: return &PageInfo::acceptFirstH1Length;
+		case SecondH1LengthItemType: return &PageInfo::acceptSecondH1Length;
+		case FirstH2LengthItemType: return &PageInfo::acceptFirstH2Length;
+		case SecondH2LengthItemType: return &PageInfo::acceptSecondH2Length;
+		case PageSizeKbItemType: return &PageInfo::acceptPageSizeKb;
+		case WordCountItemType: return &PageInfo::acceptWordCount;
 	}
 
 	assert(!"Unknown element");
@@ -78,6 +80,11 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 QVariant PageInfo::acceptUrl(const std::shared_ptr<PageInfo>& pageInfo)
 {
 	return pageInfo->url;
+}
+
+QVariant PageInfo::acceptContent(const std::shared_ptr<PageInfo>& pageInfo)
+{
+	return pageInfo->content;
 }
 
 QVariant PageInfo::acceptTitle(const std::shared_ptr<PageInfo>& pageInfo)

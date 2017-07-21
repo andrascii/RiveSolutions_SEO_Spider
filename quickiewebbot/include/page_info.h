@@ -61,6 +61,7 @@ private:
 
 	static MethodAcceptor acceptItem(ItemType item);
 	static QVariant acceptUrl(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptContent(const std::shared_ptr<PageInfo>& pageInfo);
 	static QVariant acceptTitle(const std::shared_ptr<PageInfo>& pageInfo);
 	static QVariant acceptMetaRefresh(const std::shared_ptr<PageInfo>& pageInfo);
 	static QVariant acceptMetaRobots(const std::shared_ptr<PageInfo>& pageInfo);

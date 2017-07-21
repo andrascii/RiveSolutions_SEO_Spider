@@ -112,6 +112,8 @@ void PageInfoProcessor::resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& u
 		//
 		// TODO: process absolute urls
 		//
+
+
 	}
 }
 
