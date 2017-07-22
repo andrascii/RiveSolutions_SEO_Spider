@@ -13,6 +13,11 @@ ModelController::ModelController(QObject* parent)
 void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
 	data()->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
+
+	if (pageInfo->title.isEmpty())
+	{
+		data()->addPageInfo(pageInfo, DataCollection::EmptyTitleUrlStorageType);
+	}
 }
 
 DataCollection* ModelController::data() noexcept
