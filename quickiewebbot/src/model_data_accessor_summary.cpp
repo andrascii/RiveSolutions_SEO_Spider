@@ -1,6 +1,7 @@
 #include "model_data_accessor_summary.h"
 #include "grid_view_painter_text.h"
 #include "model_data_accessor_factory.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -154,7 +155,7 @@ QPixmap* ModelDataAccessorSummary::pixmap(const QModelIndex& index) const
 {
 	// TODO: implement
 	// TODO: get pixels from em
-	static QPixmap s_okPixmap = getPixmapIcon(StatusOK, 18);
+	static QPixmap s_okPixmap = getPixmapIcon(StatusOK, QuickieWebBotHelpers::pointsToPixels(13.5));
 	//static QPixmap s_warningPixmap = getPixmapIcon(StatusWarning, 18);
 	//static QPixmap s_errorPixmap = getPixmapIcon(StatusError, 18);
 

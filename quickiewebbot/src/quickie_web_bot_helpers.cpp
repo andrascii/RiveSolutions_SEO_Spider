@@ -3,14 +3,29 @@
 namespace QuickieWebBot
 {
 
-int QuickieWebBotHelpers::pointsToPixels(int dpi, double sizeInPoints)
+qreal getScreenDpi()
 {
+	return QApplication::screens().at(0)->logicalDotsPerInch();
+}
+
+int QuickieWebBotHelpers::pointsToPixels(double sizeInPoints, double dpi)
+{
+	if (dpi == 0)
+	{
+		dpi = getScreenDpi();
+	}
+
 	const double pointSizeInPixels = dpi / 72.0;
 	return qRound(sizeInPoints * pointSizeInPixels);
 }
 
-double QuickieWebBotHelpers::pixelsToPoints(int dpi, int sizeInPixels)
+double QuickieWebBotHelpers::pixelsToPoints(int sizeInPixels, double dpi)
 {
+	if (dpi == 0)
+	{
+		dpi = getScreenDpi();
+	}
+
 	return (double)sizeInPixels * 72.0 / dpi;
 }
 

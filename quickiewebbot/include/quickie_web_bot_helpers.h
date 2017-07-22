@@ -6,8 +6,8 @@ namespace QuickieWebBot
 class QuickieWebBotHelpers
 {
 public:
-	static int pointsToPixels(int dpi, double sizeInPoints);
-	static double pixelsToPoints(int dpi, int sizeInPixels);
+	static int pointsToPixels(double sizeInPoints, double dpi = 0);
+	static double pixelsToPoints(int sizeInPixels, double dpi = 0);
 };
 
 }
