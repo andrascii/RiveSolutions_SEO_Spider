@@ -3,6 +3,7 @@
 #include "grid_view_model.h"
 #include "igrid_view_resize_strategy.h"
 #include "grid_view_selection_model.h"
+#include "grid_view_delegate.h"
 
 
 namespace QuickieWebBot
@@ -19,16 +20,17 @@ GridView::GridView(QWidget * parent)
 
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+
+	setItemDelegate(new GridViewDelegate(this));
 }
 
 void GridView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	GridViewModel* gridViewModel = dynamic_cast<GridViewModel*>(model);
-	assert(gridViewModel != nullptr);
-	m_accessor = gridViewModel->modelDataAcessor();
-	m_gridViewModel = gridViewModel;
+	GridViewModel* m_gridViewModel = dynamic_cast<GridViewModel*>(model);
+	assert(m_gridViewModel != nullptr);
+	m_accessor = m_gridViewModel->modelDataAcessor();
 
 	VERIFY(QObject::connect(model, SIGNAL(modelDataAccessorChanged(IModelDataAccessor*)), this, SLOT(onModelDataAccessorChanged(IModelDataAccessor*))));
 	updateColumnsSpan();
@@ -125,6 +127,14 @@ void GridView::setParams(const ModelDataAccessorFactoryParams& params)
 	}
 
 	ModelDataAccessorFactory factory;
+	if (m_gridViewModel == nullptr)
+	{
+		GridViewModel* mod = new GridViewModel(this);
+		mod->setModelDataAccessor(factory.getModelDataAccessor(params));
+		setModel(mod);
+		return;
+	}
+
 	m_gridViewModel->setModelDataAccessor(factory.getModelDataAccessor(params));
 }
 

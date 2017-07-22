@@ -74,7 +74,7 @@ QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex& index) 
 int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 {
 	Q_UNUSED(index);
-	return 0;
+	return 1;
 }
 
 int ModelDataAccessorAllItems::flags(const QModelIndex& index) const

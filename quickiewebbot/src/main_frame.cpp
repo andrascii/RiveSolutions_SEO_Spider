@@ -5,7 +5,6 @@
 #include "data_collection.h"
 #include "application.h"
 #include "grid_view_extension.h"
-#include "grid_view_delegate.h"
 #include "web_crawler.h"
 #include "grid_view_full_size_resize_strategy.h"
 
@@ -52,14 +51,10 @@ void MainFrame::initialize()
 	model->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingGridView->setModel(model);
 
-	m_ui.crawlingGridView->setItemDelegate(new GridViewDelegate(m_ui.crawlingGridView));
-	new GridViewExtension(m_ui.crawlingGridView);
-
 	GridViewModel* summaryModel = new GridViewModel(this);
 	summaryModel->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
 
 	m_ui.summaryGridView->setModel(summaryModel);
-	m_ui.summaryGridView->setItemDelegate(new GridViewDelegate(m_ui.summaryGridView));
 	m_ui.summaryGridView->setColumnResizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }));
 
 
