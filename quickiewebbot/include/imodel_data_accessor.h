@@ -2,6 +2,7 @@
 
 #include "page_info.h"
 #include "grid_view_painter.h"
+#include "model_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
@@ -44,6 +45,8 @@ public:
 	virtual void reset() = 0;
 
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const = 0;
+
+	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const = 0;
 };
 
 class ModelDataAccessorBase : public IModelDataAccessor
@@ -53,6 +56,11 @@ public:
 	{
 		// not working, why?
 		return flags(index) & IModelDataAccessor::ItemFlagUrl ? QColor("#4753C5") : Qt::black;
+	}
+
+	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override
+	{
+		return ModelDataAccessorFactoryParams::TypeInvalid;
 	}
 };
 

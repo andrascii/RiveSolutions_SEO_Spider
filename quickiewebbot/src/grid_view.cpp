@@ -10,6 +10,7 @@ namespace QuickieWebBot
 
 GridView::GridView(QWidget * parent)
 	: QTableView(parent)
+	, m_gridViewModel(nullptr)
 	, m_accessor(nullptr)
 	, m_isCursorOverriden(false)
 {
@@ -27,6 +28,7 @@ void GridView::setModel(QAbstractItemModel* model)
 	GridViewModel* gridViewModel = dynamic_cast<GridViewModel*>(model);
 	assert(gridViewModel != nullptr);
 	m_accessor = gridViewModel->modelDataAcessor();
+	m_gridViewModel = gridViewModel;
 
 	VERIFY(QObject::connect(model, SIGNAL(modelDataAccessorChanged(IModelDataAccessor*)), this, SLOT(onModelDataAccessorChanged(IModelDataAccessor*))));
 	updateColumnsSpan();
@@ -93,6 +95,18 @@ void GridView::resizeEvent(QResizeEvent* event)
 	}
 }
 
+void GridView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	Q_UNUSED(deselected);
+	if (m_accessor) 
+	{
+		ModelDataAccessorFactoryParams params = m_accessor->childViewParams(selected);
+		emit childViewParamsChanged(params);
+	}
+	
+	QTableView::selectionChanged(selected, deselected);
+}
+
 IModelDataAccessor* GridView::dataAccessor()
 {
 	return m_accessor;
@@ -101,6 +115,17 @@ IModelDataAccessor* GridView::dataAccessor()
 QModelIndex GridView::hoveredIndex() const
 {
 	return m_hoveredIndex;
+}
+
+void GridView::setParams(const ModelDataAccessorFactoryParams& params)
+{
+	if (!params.isValid())
+	{
+		return;
+	}
+
+	ModelDataAccessorFactory factory;
+	m_gridViewModel->setModelDataAccessor(factory.getModelDataAccessor(params));
 }
 
 void GridView::paintEvent(QPaintEvent* event)

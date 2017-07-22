@@ -134,10 +134,7 @@
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QStackedWidget" name="stackedWidget_2">
-           <widget class="QWidget" name="page"/>
-           <widget class="QWidget" name="page_2"/>
-          </widget>
+          <widget class="QuickieWebBot::GridView" name="summaryDetailsGridView"/>
          </widget>
         </item>
        </layout>

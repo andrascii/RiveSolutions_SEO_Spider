@@ -61,6 +61,10 @@ void MainFrame::initialize()
 	m_ui.summaryGridView->setModel(summaryModel);
 	m_ui.summaryGridView->setItemDelegate(new GridViewDelegate(m_ui.summaryGridView));
 	m_ui.summaryGridView->setColumnResizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }));
+
+
+	VERIFY(connect(m_ui.summaryGridView, SIGNAL(childViewParamsChanged(const ModelDataAccessorFactoryParams&)), 
+		m_ui.summaryDetailsGridView, SLOT(setParams(const ModelDataAccessorFactoryParams&))));
 }
 
 }

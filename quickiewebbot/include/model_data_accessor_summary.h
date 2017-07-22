@@ -27,11 +27,15 @@ public:
 
 	virtual QObject* qobject() override;
 
+	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
+
 	// signals
 	Q_SIGNAL void itemChanged(QModelIndex index);
 	Q_SIGNAL void rowRemoved(int row);
 	Q_SIGNAL void rowAdded(int row);
 	Q_SIGNAL void reset();
+
+	//Q_SIGNAL void selectedItemChanged(int itemId);
 
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
 
@@ -46,7 +50,7 @@ private:
 	struct SummaryItem
 	{
 		QString name;
-		QByteArray id;
+		int id;
 		ItemStatus status;
 		int issueCount;
 	};

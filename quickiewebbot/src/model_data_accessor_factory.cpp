@@ -22,6 +22,11 @@ std::unique_ptr<IModelDataAccessor> ModelDataAccessorFactory::getModelDataAccess
 		return std::make_unique<ModelDataAccessorSummary>();
 	}
 
+	if (params.accessorType == ModelDataAccessorFactoryParams::TypeSummaryTitlesEmpty)
+	{
+		return std::make_unique<ModelDataAccessorAllItems>(DataCollection::EmptyTitleUrlStorageType);
+	}
+
 	assert(!"Invalid params");
 	return std::unique_ptr<IModelDataAccessor>();
 }

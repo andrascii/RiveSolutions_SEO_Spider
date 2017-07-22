@@ -1,81 +1,84 @@
 #include "model_data_accessor_summary.h"
 #include "grid_view_painter_text.h"
+#include "model_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
 
 ModelDataAccessorSummary::ModelDataAccessorSummary()
 {
+	using FP = QuickieWebBot::ModelDataAccessorFactoryParams;
+
 	m_groups = 
 	{
 		SummaryGroup
 		{
 			"Links",
 			{
-				SummaryItem{ "Links with non-ASCII characters", "links_non_ascii", StatusOK, 0 },
-				SummaryItem{ "Links with uppercase characters", "links_uppercase", StatusOK, 0 },
-				SummaryItem{ "Too long links", "links_too_long", StatusOK, 0 },
+				SummaryItem{ "Links with non-ASCII characters", FP::TypeSummaryLinksNonAscii, StatusOK, 0 },
+				SummaryItem{ "Links with uppercase characters", FP::TypeSummaryLinksUpperCase, StatusOK, 0 },
+				SummaryItem{ "Too long links", FP::TypeSummaryLinksTooLong, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's Title",
 			{
-				SummaryItem{ "Empty titles", "titles_empty", StatusOK, 0 },
-				SummaryItem{ "Duplicate titles", "titles_duplicate", StatusOK, 0 },
-				SummaryItem{ "Too long titles", "titles_too_long", StatusOK, 0 },
-				SummaryItem{ "Too short titles", "titles_too_short", StatusOK, 0 },
-				SummaryItem{ "H1 Duplcates titles", "titles_h1_duplicates", StatusOK, 0 },
-				SummaryItem{ "Several title tags", "titles_several_tags", StatusOK, 0 },
+				SummaryItem{ "Empty titles", FP::TypeSummaryTitlesEmpty, StatusOK, 0 },
+				SummaryItem{ "Duplicate titles", FP::TypeSummaryTitlesDuplicates, StatusOK, 0 },
+				SummaryItem{ "Too long titles", FP::TypeSummaryTitlesTooLong, StatusOK, 0 },
+				SummaryItem{ "Too short titles", FP::TypeSummaryTitlesTooShort, StatusOK, 0 },
+				SummaryItem{ "H1 Duplcates titles", FP::TypeSummaryTitlesH1Duplicates, StatusOK, 0 },
+				SummaryItem{ "Several title tags", FP::TypeSummaryTitlesSeveralTags, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's Meta Description",
 			{
-				SummaryItem{ "Empty meta description", "metadescriptions_empty", StatusOK, 0 },
-				SummaryItem{ "Duplicate meta descriptions", "metadescriptions_duplicate", StatusOK, 0 },
-				SummaryItem{ "Too long meta descriptions", "metadescriptions_too_long", StatusOK, 0 },
-				SummaryItem{ "Too short meta descriptions", "metadescriptions_too_short", StatusOK, 0 },
-				SummaryItem{ "Several meta descriptions tags", "metadescriptions_several_tags", StatusOK, 0 },
+				SummaryItem{ "Empty meta description", FP::TypeSummaryMetaDescriptionsEmpty, StatusOK, 0 },
+				SummaryItem{ "Duplicate meta descriptions", FP::TypeSummaryMetaDescriptionsDuplicates, StatusOK, 0 },
+				SummaryItem{ "Too long meta descriptions", FP::TypeSummaryMetaDescriptionsTooLong, StatusOK, 0 },
+				SummaryItem{ "Too short meta descriptions", FP::TypeSummaryMetaDescriptionsTooShort, StatusOK, 0 },
+				SummaryItem{ "Several meta descriptions tags", FP::TypeSummaryMetaDescriptionsSeveralTags, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's Meta Key Words",
 			{
-				SummaryItem{ "Empty meta key words", "metakeywords_empty", StatusOK, 0 },
-				SummaryItem{ "Duplicate meta key words", "metakeywords_duplicate", StatusOK, 0 },
-				SummaryItem{ "Several meta key words tags", "metakeywords_several_tags", StatusOK, 0 },
+				SummaryItem{ "Empty meta key words", FP::TypeSummaryMetaKeyWordsEmpty, StatusOK, 0 },
+				SummaryItem{ "Duplicate meta key words", FP::TypeSummaryMetaKeyWordsDuplicates, StatusOK, 0 },
+				SummaryItem{ "Several meta key words tags", FP::TypeSummaryMetaKeyWordsSeveralTags, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's H1 Headers",
 			{
-				SummaryItem{ "Missing H1", "h1_missing", StatusOK, 0 },
-				SummaryItem{ "Duplicate H1 headers", "h1_duplicate", StatusOK, 0 },
-				SummaryItem{ "Too long H1 headers", "h1_too_long", StatusOK, 0 },
-				SummaryItem{ "Several H1 tags", "h1_several_tags", StatusOK, 0 },
+				SummaryItem{ "Missing H1", FP::TypeSummaryH1Missing, StatusOK, 0 },
+				SummaryItem{ "Duplicate H1 headers", FP::TypeSummaryH1Duplicates, StatusOK, 0 },
+				SummaryItem{ "Too long H1 headers", FP::TypeSummaryH1TooLong, StatusOK, 0 },
+				SummaryItem{ "Several H1 tags", FP::TypeSummaryH1SeveralTags, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's H2 Headers",
 			{
-				SummaryItem{ "Missing H2", "h2_missing", StatusOK, 0 },
-				SummaryItem{ "Duplicate H2 headers", "h2_duplicate", StatusOK, 0 },
-				SummaryItem{ "Too long H2 headers", "h2_too_long", StatusOK, 0 },
-				SummaryItem{ "Several H2 tags", "h2_several_tags", StatusOK, 0 },
+				SummaryItem{ "Missing H2", FP::TypeSummaryH2Missing, StatusOK, 0 },
+				SummaryItem{ "Duplicate H2 headers", FP::TypeSummaryH2Duplicates, StatusOK, 0 },
+				SummaryItem{ "Too long H2 headers", FP::TypeSummaryH2TooLong, StatusOK, 0 },
+				SummaryItem{ "Several H2 tags", FP::TypeSummaryH2SeveralTags, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's Images",
 			{
-				SummaryItem{ "Over 100KB size", "images_over_100kb", StatusOK, 0 },
-				SummaryItem{ "Missing alt description", "images_alt_missing", StatusOK, 0 },
-				SummaryItem{ "Too long alt descriptions", "images_alt_too_long", StatusOK, 0 },
+				SummaryItem{ "Over 100KB size", FP::TypeSummaryImagesOver100KB, StatusOK, 0 },
+				SummaryItem{ "Missing alt description", FP::TypeSummaryImagesAltMissing, StatusOK, 0 },
+				SummaryItem{ "Too long alt descriptions", FP::TypeSummaryImagesAltTooLong, StatusOK, 0 },
 			}
 		}
 	};
@@ -161,6 +164,25 @@ QPixmap* ModelDataAccessorSummary::pixmap(const QModelIndex& index) const
 QObject* ModelDataAccessorSummary::qobject()
 {
 	return this;
+}
+
+ModelDataAccessorFactoryParams ModelDataAccessorSummary::childViewParams(const QItemSelection& selection) const
+{
+	QModelIndexList indicies = selection.indexes();
+	if (indicies.isEmpty())
+	{
+		return ModelDataAccessorFactoryParams::TypeInvalid;
+	}
+
+	QModelIndex index = indicies.first();
+	assert(!isGroupHeaderRow(index.row()));
+	assert(index.isValid());
+
+	auto itemIt = m_itemRefs.find(index.row());
+	assert(itemIt != m_itemRefs.end());
+
+	auto accessorType = static_cast<ModelDataAccessorFactoryParams::Type>(itemIt->second->id);
+	return ModelDataAccessorFactoryParams(accessorType);
 }
 
 std::vector<GridViewPainter*> ModelDataAccessorSummary::painters(const QModelIndex & index) const
