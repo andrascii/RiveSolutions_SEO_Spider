@@ -13,7 +13,10 @@ void HtmlPageTitleParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noex
 
 	if (title && title->v.element.children.length > 0)
 	{
-		pageInfo->title = GumboParsingHelpers::nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
+		QByteArray titleValue = GumboParsingHelpers::nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
+		titleValue = titleValue.trimmed().remove('\n', Qt::CaseInsensitive);
+
+		pageInfo->title = titleValue;
 	}
 }
 

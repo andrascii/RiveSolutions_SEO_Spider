@@ -21,6 +21,9 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexc
 			continue;
 		}
 
+		QString contentAttributeValue = 
+			QString(contentAttribute->value).trimmed().remove(QChar('\n'), Qt::CaseInsensitive);
+
 		GumboAttribute* metaHttpEquivAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "http-equiv");
 		GumboAttribute* metaNameAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "name");
 
@@ -30,16 +33,16 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexc
 
 		if (metaHttpEquivAttribute)
 		{
-			QString attributeValue = QString(metaHttpEquivAttribute->value).toLower();
+			QString attributeValue = QString(metaHttpEquivAttribute->value).toLower().trimmed();
 
 			if (attributeValue == "content-type")
 			{
-				pageInfo->content = contentAttribute->value;
+				pageInfo->content = contentAttributeValue;
 			}
 
 			if (attributeValue == "refresh")
 			{
-				pageInfo->metaRefresh = contentAttribute->value;
+				pageInfo->metaRefresh = contentAttributeValue;
 			}
 		}
 
@@ -49,17 +52,17 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexc
 
 			if (attributeValue == "description")
 			{
-				pageInfo->metaDescription = contentAttribute->value;
+				pageInfo->metaDescription = contentAttributeValue;
 			}
 
 			if (attributeValue == "keywords")
 			{
-				pageInfo->metaKeywords = contentAttribute->value;
+				pageInfo->metaKeywords = contentAttributeValue;
 			}
 
 			if (attributeValue == "robots")
 			{
-				pageInfo->metaRobots = contentAttribute->value;
+				pageInfo->metaRobots = contentAttributeValue;
 			}
 		}
 	}
