@@ -47,9 +47,9 @@ bool GridViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QSt
 {
 	if (index.data(Qt::UserRole).toInt() & IModelDataAccessor::ItemFlagUrl)
 	{
-		if (event->type() == QEvent::MouseButtonRelease)
+		if (event->type() == QEvent::MouseButtonPress)
 		{
-			// TODO: open url
+			QDesktopServices::openUrl(index.data(Qt::DisplayRole).toString());
 		}
 
 	}

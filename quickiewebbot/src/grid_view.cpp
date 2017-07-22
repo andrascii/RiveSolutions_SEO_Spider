@@ -11,6 +11,7 @@ namespace QuickieWebBot
 GridView::GridView(QWidget * parent)
 	: QTableView(parent)
 	, m_accessor(nullptr)
+	, m_isCursorOverriden(false)
 {
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -40,8 +41,10 @@ void GridView::setColumnResizeStrategy(std::unique_ptr<IGridViewResizeStrategy> 
 void GridView::mouseMoveEvent(QMouseEvent* event)
 {
 	QModelIndex index = indexAt(event->pos());
-	if (index == m_hoveredIndex || 
-		index.data(Qt::UserRole).toInt() & IModelDataAccessor::ItemFlagNotSelectable)
+	int flags = index.data(Qt::UserRole).toInt();
+	updateCursor(flags);
+
+	if (index == m_hoveredIndex || flags & IModelDataAccessor::ItemFlagNotSelectable)
 	{
 		QTableView::mouseMoveEvent(event);
 		return;
@@ -74,6 +77,8 @@ void GridView::leaveEvent(QEvent* event)
 		mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), mod->columnCount()));
 		m_hoveredIndex = QModelIndex();
 	}
+
+	updateCursor(IModelDataAccessor::ItemFlagNone);
 	
 	QTableView::leaveEvent(event);
 }
@@ -123,6 +128,23 @@ void GridView::updateColumnsSpan()
 			setSpan(row, column, 1, colSpan);
 			column += colSpan;
 		}
+	}
+}
+
+void GridView::updateCursor(int flags)
+{
+	if (flags & IModelDataAccessor::ItemFlagUrl)
+	{
+		if (!m_isCursorOverriden)
+		{
+			QApplication::setOverrideCursor(Qt::PointingHandCursor);
+			m_isCursorOverriden = true;
+		}
+	}
+	else if (m_isCursorOverriden)
+	{
+		QApplication::restoreOverrideCursor();
+		m_isCursorOverriden = false;
 	}
 }
 
