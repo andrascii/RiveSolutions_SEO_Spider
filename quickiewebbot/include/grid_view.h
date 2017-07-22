@@ -30,11 +30,13 @@ protected:
 
 private:
 	void updateColumnsSpan();
+	void updateCursor(int flags);
 
 private:
 	IModelDataAccessor* m_accessor;
 	QModelIndex m_hoveredIndex;
 	std::unique_ptr<IGridViewResizeStrategy> m_resizeStrategy;
+	bool m_isCursorOverriden;
 };
 
 
