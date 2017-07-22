@@ -71,6 +71,8 @@
 #include <QScreen>
 #include <QtSvg>
 
+#include "application.h"
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #else

@@ -107,11 +107,14 @@ void GridViewModel::setModelDataAccessor(std::unique_ptr<IModelDataAccessor> acc
 	if (m_accessor)
 	{
 		VERIFY(QObject::disconnect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
+		VERIFY(QObject::disconnect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), this, SLOT(onItemChanged(int, int))));
+		//Q_SIGNAL virtual void itemChanged(int row, int column) override;
 	}
 
 	m_accessor = std::move(accessor);
 
 	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
+	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), this, SLOT(onItemChanged(int, int))));
 	emit modelDataAccessorChanged(m_accessor.get());
 }
 
@@ -124,6 +127,12 @@ void GridViewModel::onRowAdded(int row)
 {
 	beginInsertRows(QModelIndex(), row, row);
 	endInsertRows();
+}
+
+void GridViewModel::onItemChanged(int row, int column)
+{
+	QModelIndex idx = index(row, column);
+	emit dataChanged(idx, idx);
 }
 
 }

@@ -2,6 +2,8 @@
 #include "grid_view_painter_text.h"
 #include "model_data_accessor_factory.h"
 #include "quickie_web_bot_helpers.h"
+#include "model_controller.h"
+#include "data_collection.h"
 
 namespace QuickieWebBot
 {
@@ -87,14 +89,19 @@ ModelDataAccessorSummary::ModelDataAccessorSummary()
 	int modelRowIndex = 0;
 	for (auto groupIt = std::begin(m_groups); groupIt != std::end(m_groups); ++groupIt)
 	{
-		m_groupRefs[modelRowIndex] = &(*groupIt);
+		m_groupByRowRefs[modelRowIndex] = &(*groupIt);
 		modelRowIndex++;
 		for (auto itemIt = std::begin(groupIt->groupItems); itemIt != std::end(groupIt->groupItems); ++itemIt)
 		{
-			m_itemRefs[modelRowIndex] = &(*itemIt);
+			m_itemByRowRefs[modelRowIndex] = &(*itemIt);
+			m_itemByTypeRefs[itemIt->id] = &(*itemIt);
+			itemIt->row = modelRowIndex;
 			modelRowIndex++;
 		}
 	}
+
+	DataCollection* modelControllerData = theApp->modelController()->data();
+	VERIFY(QObject::connect(modelControllerData, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 }
 
 int ModelDataAccessorSummary::columnCount() const
@@ -109,19 +116,19 @@ QString ModelDataAccessorSummary::columnText(int column) const
 
 int ModelDataAccessorSummary::rowCount() const
 {
-	return static_cast<int>(m_groupRefs.size() + m_itemRefs.size());
+	return static_cast<int>(m_groupByRowRefs.size() + m_itemByRowRefs.size());
 }
 
 QVariant ModelDataAccessorSummary::itemValue(const QModelIndex& index) const
 {
-	auto groupIt = m_groupRefs.find(index.row());
-	if (groupIt != m_groupRefs.end())
+	auto groupIt = m_groupByRowRefs.find(index.row());
+	if (groupIt != m_groupByRowRefs.end())
 	{
 		return groupIt->second->groupName;
 	}
 
-	auto itemIt = m_itemRefs.find(index.row());
-	assert(itemIt != m_itemRefs.end());
+	auto itemIt = m_itemByRowRefs.find(index.row());
+	assert(itemIt != m_itemByRowRefs.end());
 	return index.column() == 0 ? QVariant(itemIt->second->name) : QVariant(itemIt->second->issueCount);
 }
 
@@ -132,7 +139,7 @@ QColor ModelDataAccessorSummary::itemBackgroundColor(const QModelIndex& index) c
 
 int ModelDataAccessorSummary::itemColSpan(const QModelIndex& index) const
 {
-	return m_groupRefs.find(index.row()) != m_groupRefs.end() ? 2 : 1;
+	return m_groupByRowRefs.find(index.row()) != m_groupByRowRefs.end() ? 2 : 1;
 }
 
 int ModelDataAccessorSummary::flags(const QModelIndex& index) const
@@ -156,8 +163,8 @@ QPixmap* ModelDataAccessorSummary::pixmap(const QModelIndex& index) const
 	// TODO: implement
 	// TODO: get pixels from em
 	static QPixmap s_okPixmap = getPixmapIcon(StatusOK, QuickieWebBotHelpers::pointsToPixels(13.5));
-	//static QPixmap s_warningPixmap = getPixmapIcon(StatusWarning, 18);
-	//static QPixmap s_errorPixmap = getPixmapIcon(StatusError, 18);
+	//static QPixmap s_warningPixmap = getPixmapIcon(StatusWarning, QuickieWebBotHelpers::pointsToPixels(13.5));
+	//static QPixmap s_errorPixmap = getPixmapIcon(StatusError, QuickieWebBotHelpers::pointsToPixels(13.5));
 
 	return !isGroupHeaderRow(index.row()) && index.column() == 0 ? &s_okPixmap : nullptr;
 }
@@ -179,8 +186,8 @@ ModelDataAccessorFactoryParams ModelDataAccessorSummary::childViewParams(const Q
 	assert(!isGroupHeaderRow(index.row()));
 	assert(index.isValid());
 
-	auto itemIt = m_itemRefs.find(index.row());
-	assert(itemIt != m_itemRefs.end());
+	auto itemIt = m_itemByRowRefs.find(index.row());
+	assert(itemIt != m_itemByRowRefs.end());
 
 	auto accessorType = static_cast<ModelDataAccessorFactoryParams::Type>(itemIt->second->id);
 	return ModelDataAccessorFactoryParams(accessorType);
@@ -194,7 +201,7 @@ std::vector<GridViewPainter*> ModelDataAccessorSummary::painters(const QModelInd
 
 bool ModelDataAccessorSummary::isGroupHeaderRow(int row) const
 {
-	return m_groupRefs.find(row) != m_groupRefs.end();
+	return m_groupByRowRefs.find(row) != m_groupByRowRefs.end();
 }
 
 QPixmap ModelDataAccessorSummary::getPixmapIcon(ItemStatus status, int size) const
@@ -214,6 +221,16 @@ QPixmap ModelDataAccessorSummary::getPixmapIcon(ItemStatus status, int size) con
 	renderer.render(&painterPixmap);
 
 	return pixmap;
+}
+
+void ModelDataAccessorSummary::onModelDataRowAdded(int row, int type)
+{
+	auto it = m_itemByTypeRefs.find(type);
+	if (it != m_itemByTypeRefs.end())
+	{
+		it->second->issueCount++;
+		emit itemChanged(it->second->row, 1);
+	}
 }
 
 }

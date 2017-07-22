@@ -39,7 +39,7 @@ public:
 	virtual QObject* qobject() = 0;
 	
 	// signals
-	virtual void itemChanged(QModelIndex index) = 0;
+	virtual void itemChanged(int row, int column) = 0;
 	virtual void rowRemoved(int row) = 0;
 	virtual void rowAdded(int row) = 0;
 	virtual void reset() = 0;

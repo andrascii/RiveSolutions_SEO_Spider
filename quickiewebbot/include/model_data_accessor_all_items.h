@@ -28,10 +28,10 @@ public:
 	virtual QObject* qobject() override;
 
 	// signals
-	Q_SIGNAL void itemChanged(QModelIndex index);
-	Q_SIGNAL void rowRemoved(int row);
-	Q_SIGNAL void rowAdded(int row);
-	Q_SIGNAL void reset();
+	Q_SIGNAL virtual void itemChanged(int row, int column) override;
+	Q_SIGNAL virtual void rowRemoved(int row) override;
+	Q_SIGNAL virtual void rowAdded(int row) override;
+	Q_SIGNAL virtual void reset() override;
 
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
 

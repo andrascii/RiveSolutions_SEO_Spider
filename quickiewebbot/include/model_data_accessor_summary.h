@@ -30,10 +30,10 @@ public:
 	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
 
 	// signals
-	Q_SIGNAL void itemChanged(QModelIndex index);
-	Q_SIGNAL void rowRemoved(int row);
-	Q_SIGNAL void rowAdded(int row);
-	Q_SIGNAL void reset();
+	Q_SIGNAL virtual void itemChanged(int row, int column) override;
+	Q_SIGNAL virtual void rowRemoved(int row) override;
+	Q_SIGNAL virtual void rowAdded(int row) override;
+	Q_SIGNAL virtual void reset() override;
 
 	//Q_SIGNAL void selectedItemChanged(int itemId);
 
@@ -53,6 +53,7 @@ private:
 		int id;
 		ItemStatus status;
 		int issueCount;
+		int row;
 	};
 
 	struct SummaryGroup 
@@ -63,11 +64,13 @@ private:
 
 	bool isGroupHeaderRow(int row) const;
 	QPixmap getPixmapIcon(ItemStatus status, int size) const;
+	Q_SLOT void onModelDataRowAdded(int row, int type);
 
 private:
 	std::vector<SummaryGroup> m_groups;
-	std::map<int, SummaryGroup*> m_groupRefs;
-	std::map<int, SummaryItem*> m_itemRefs;
+	std::map<int, SummaryGroup*> m_groupByRowRefs;
+	std::map<int, SummaryItem*> m_itemByRowRefs;
+	std::map<int, SummaryItem*> m_itemByTypeRefs;
 
 };
 

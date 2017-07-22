@@ -33,6 +33,7 @@ public:
 
 private:
 	Q_SLOT void onRowAdded(int row);
+	Q_SLOT void onItemChanged(int row, int column);
 
 private:
 	std::unique_ptr<IModelDataAccessor> m_accessor;
