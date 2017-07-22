@@ -17,7 +17,9 @@ public:
 
 private:
 	void parsePageUrlList(const GumboNode* node) noexcept;
-	QByteArray identifyHtmlPageCharset(const QByteArray& htmlPage) const noexcept;
+
+	QByteArray identifyHtmlPageContentType(const QByteArray& htmlPage) const noexcept;
+	QByteArray decodeHtmlPage(const QByteArray& htmlPage) const noexcept;
 
 private:
 	std::vector<QUrl> m_pageUrlList;

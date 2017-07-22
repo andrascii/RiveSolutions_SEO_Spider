@@ -50,17 +50,7 @@ void HtmlPageParser::parsePage(const QByteArray& htmlPage, PageInfoPtr& pageInfo
 	// TODO: optimize this code because for now we need double parsing of the same page
 	//
 
-	QByteArray decodedHtmlPage = htmlPage;
-	QByteArray charset = identifyHtmlPageCharset(htmlPage);
-
-	if (charset.isEmpty())
-	{
-		decodedHtmlPage = QTextCodec::codecForHtml(decodedHtmlPage.data())->toUnicode(decodedHtmlPage).toStdString().data();
-	}
-	else
-	{
-		decodedHtmlPage = QTextCodec::codecForName(charset)->toUnicode(decodedHtmlPage.data()).toStdString().data();
-	}
+	QByteArray decodedHtmlPage = decodeHtmlPage(htmlPage);
 
 	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
 
@@ -102,7 +92,7 @@ void HtmlPageParser::parsePageUrlList(const GumboNode* node) noexcept
 }
 
 
-QByteArray HtmlPageParser::identifyHtmlPageCharset(const QByteArray& htmlPage) const noexcept
+QByteArray HtmlPageParser::identifyHtmlPageContentType(const QByteArray& htmlPage) const noexcept
 {
 	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, htmlPage);
 
@@ -128,15 +118,51 @@ QByteArray HtmlPageParser::identifyHtmlPageCharset(const QByteArray& htmlPage) c
 
 			if (attributeValue == "content-type")
 			{
-				QString contentType = contentAttribute->value;
-				contentType.right(contentType.size() - contentType.lastIndexOf("="));
-
-				return contentType.right(contentType.size() - contentType.lastIndexOf("=") - 1).toUtf8();
+				return contentAttribute->value;
 			}
 		}
 	}
 
 	return QByteArray();
+}
+
+QByteArray HtmlPageParser::decodeHtmlPage(const QByteArray& htmlPage) const noexcept
+{
+	QByteArray decodedHtmlPage = htmlPage;
+	QByteArray contentType = identifyHtmlPageContentType(htmlPage);
+
+	QByteArray charset = contentType.right(contentType.size() - contentType.lastIndexOf("=") - 1);
+
+	if (charset.isEmpty())
+	{
+		QTextCodec* codecForHtml = QTextCodec::codecForHtml(decodedHtmlPage.data());
+
+		if (codecForHtml)
+		{
+			decodedHtmlPage = codecForHtml->toUnicode(decodedHtmlPage).toStdString().data();
+		}
+		else
+		{
+			ERRORLOG << "Cannot identify page encoding";
+		}
+	}
+	else
+	{
+		QTextCodec* codecForCharset = QTextCodec::codecForName(charset);
+
+		if (codecForCharset)
+		{
+			decodedHtmlPage = codecForCharset->toUnicode(decodedHtmlPage.data()).toStdString().data();
+		}
+		else
+		{
+			ERRORLOG << "Cannot find QTextCodec for page encoding";
+			ERRORLOG << "content-type:" << contentType;
+			ERRORLOG << "charset:" << charset;
+		}
+	}
+
+	return decodedHtmlPage;
 }
 
 }

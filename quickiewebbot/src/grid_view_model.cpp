@@ -1,4 +1,6 @@
+#include "application.h"
 #include "grid_view_model.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -8,15 +10,13 @@ GridViewModel::GridViewModel(QObject* parent)
 {
 }
 
-int GridViewModel::rowCount(QModelIndex const& parent) const
+int GridViewModel::rowCount(QModelIndex const&) const
 {
-	Q_UNUSED(parent);
 	return m_accessor->rowCount();
 }
 
-int GridViewModel::columnCount(QModelIndex const& parent) const
+int GridViewModel::columnCount(QModelIndex const&) const
 {
-	Q_UNUSED(parent);
 	return m_accessor->columnCount();
 }
 
