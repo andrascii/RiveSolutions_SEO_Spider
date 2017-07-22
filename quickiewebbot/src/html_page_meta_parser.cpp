@@ -4,7 +4,7 @@
 namespace QuickieWebBot
 {
 
-void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo, QTextCodec* textCodec) noexcept
+void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexcept
 {
 	GumboNode* head = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_HEAD);
 

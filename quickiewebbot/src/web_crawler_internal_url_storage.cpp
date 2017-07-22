@@ -38,10 +38,6 @@ void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList)
 
 	auto insert = [&](VectorIterator iter)
 	{
-		//
-		// here two or more threads can attempt insert the same element
-		// more then once, but collections are thread-safe
-		//
 		if (m_crawledUrlList.find(*iter) == m_crawledUrlList.end())
 		{
 			m_internalUrlList.insert(*iter);
