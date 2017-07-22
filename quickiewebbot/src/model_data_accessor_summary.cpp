@@ -149,9 +149,13 @@ int ModelDataAccessorSummary::flags(const QModelIndex& index) const
 
 QPixmap* ModelDataAccessorSummary::pixmap(const QModelIndex& index) const
 {
-	// just for test, will be implemented later
-	static QPixmap s_pixmap = QPixmap(":/images/arrow-down-icon.png");
-	return !isGroupHeaderRow(index.row()) && index.column() == 0 ? &s_pixmap : nullptr;
+	// TODO: implement
+	// TODO: get pixels from em
+	static QPixmap s_okPixmap = getPixmapIcon(StatusOK, 18);
+	//static QPixmap s_warningPixmap = getPixmapIcon(StatusWarning, 18);
+	//static QPixmap s_errorPixmap = getPixmapIcon(StatusError, 18);
+
+	return !isGroupHeaderRow(index.row()) && index.column() == 0 ? &s_okPixmap : nullptr;
 }
 
 QObject* ModelDataAccessorSummary::qobject()
@@ -168,6 +172,25 @@ std::vector<GridViewPainter*> ModelDataAccessorSummary::painters(const QModelInd
 bool ModelDataAccessorSummary::isGroupHeaderRow(int row) const
 {
 	return m_groupRefs.find(row) != m_groupRefs.end();
+}
+
+QPixmap ModelDataAccessorSummary::getPixmapIcon(ItemStatus status, int size) const
+{
+	QMap<ItemStatus, QByteArray> paths
+	{
+		{ StatusOK, ":/images/icon-ok.svg" },
+		{ StatusWarning, ":/images/icon-warning.svg" },
+		{ StatusError, ":/images/icon-error.svg" },
+	};
+
+	QSvgRenderer renderer(QString(paths.value(status)));
+
+	QPixmap pixmap(size, size);
+	pixmap.fill(Qt::transparent);
+	QPainter painterPixmap(&pixmap);
+	renderer.render(&painterPixmap);
+
+	return pixmap;
 }
 
 }

@@ -69,6 +69,7 @@
 #include <QLineEdit>
 #include <QScrollBar>
 #include <QScreen>
+#include <QtSvg>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

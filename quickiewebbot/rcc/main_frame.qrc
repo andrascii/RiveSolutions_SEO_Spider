@@ -13,5 +13,8 @@
         <file>images/brand-logo-logaster.png</file>
         <file>images/ui-splitter-horizontal-icon.png</file>
         <file>images/ui-splitter-vertical-icon.png</file>
+        <file>images/icon-ok.svg</file>
+        <file>images/icon-warning.svg</file>
+        <file>images/icon-error.svg</file>
     </qresource>
 </RCC>

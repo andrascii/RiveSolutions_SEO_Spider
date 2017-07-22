@@ -58,6 +58,7 @@ private:
 	};
 
 	bool isGroupHeaderRow(int row) const;
+	QPixmap getPixmapIcon(ItemStatus status, int size) const;
 
 private:
 	std::vector<SummaryGroup> m_groups;
