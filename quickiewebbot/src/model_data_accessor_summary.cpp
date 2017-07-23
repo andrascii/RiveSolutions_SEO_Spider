@@ -160,13 +160,19 @@ int ModelDataAccessorSummary::flags(const QModelIndex& index) const
 
 QPixmap* ModelDataAccessorSummary::pixmap(const QModelIndex& index) const
 {
-	// TODO: implement
-	// TODO: get pixels from em
 	static QPixmap s_okPixmap = getPixmapIcon(StatusOK, QuickieWebBotHelpers::pointsToPixels(13.5));
-	//static QPixmap s_warningPixmap = getPixmapIcon(StatusWarning, QuickieWebBotHelpers::pointsToPixels(13.5));
+	static QPixmap s_warningPixmap = getPixmapIcon(StatusWarning, QuickieWebBotHelpers::pointsToPixels(13.5));
 	//static QPixmap s_errorPixmap = getPixmapIcon(StatusError, QuickieWebBotHelpers::pointsToPixels(13.5));
 
-	return !isGroupHeaderRow(index.row()) && index.column() == 0 ? &s_okPixmap : nullptr;
+	if (isGroupHeaderRow(index.row()) || index.column() != 0)
+	{
+		return nullptr;
+	}
+
+	auto it = m_itemByRowRefs.find(index.row());
+	assert(it != m_itemByRowRefs.end());
+	
+	return it->second->issueCount > 0 ? &s_warningPixmap : &s_okPixmap;
 }
 
 QObject* ModelDataAccessorSummary::qobject()
@@ -230,6 +236,12 @@ void ModelDataAccessorSummary::onModelDataRowAdded(int row, int type)
 	{
 		it->second->issueCount++;
 		emit itemChanged(it->second->row, 1);
+
+		if (it->second->issueCount == 1)
+		{
+			// first issue, update icon
+			emit itemChanged(it->second->row, 0);
+		}
 	}
 }
 
