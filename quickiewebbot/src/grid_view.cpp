@@ -12,7 +12,6 @@ namespace QuickieWebBot
 GridView::GridView(QWidget * parent)
 	: QTableView(parent)
 	, m_gridViewModel(nullptr)
-	, m_accessor(nullptr)
 	, m_isCursorOverriden(false)
 {
 	setMouseTracking(true);
@@ -28,18 +27,22 @@ void GridView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	GridViewModel* m_gridViewModel = dynamic_cast<GridViewModel*>(model);
-	assert(m_gridViewModel != nullptr);
-	m_accessor = m_gridViewModel->modelDataAcessor();
+	GridViewModel* newModel = dynamic_cast<GridViewModel*>(model);
+	assert(newModel != nullptr);
 
-	VERIFY(QObject::connect(model, SIGNAL(modelDataAccessorChanged(IModelDataAccessor*)), this, SLOT(onModelDataAccessorChanged(IModelDataAccessor*))));
+	if (newModel->resizeStrategy() != nullptr)
+	{
+		IGridViewResizeStrategy* oldStrategy = m_gridViewModel != nullptr ? m_gridViewModel->resizeStrategy() : nullptr;
+		newModel->resizeStrategy()->init(this, oldStrategy);
+	}
+
+	m_gridViewModel = newModel;
+
+	VERIFY(QObject::connect(model, SIGNAL(modelDataAccessorChanged(IModelDataAccessor*, IModelDataAccessor*)), 
+		this, SLOT(onModelDataAccessorChanged(IModelDataAccessor*, IModelDataAccessor*))));
+	
 	updateColumnsSpan();
 	setSelectionModel(new GridViewSelectionModel(this));
-}
-
-void GridView::setColumnResizeStrategy(std::unique_ptr<IGridViewResizeStrategy> strategy)
-{
-	m_resizeStrategy = std::move(strategy);
 }
 
 void GridView::mouseMoveEvent(QMouseEvent* event)
@@ -91,18 +94,18 @@ void GridView::resizeEvent(QResizeEvent* event)
 {
 	QTableView::resizeEvent(event);
 
-	if (m_resizeStrategy)
+	if (m_gridViewModel != nullptr && m_gridViewModel->resizeStrategy() != nullptr)
 	{
-		m_resizeStrategy->resize(this);
+		m_gridViewModel->resizeStrategy()->resize(this);
 	}
 }
 
 void GridView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
 	Q_UNUSED(deselected);
-	if (m_accessor) 
+	if (dataAccessor())
 	{
-		ModelDataAccessorFactoryParams params = m_accessor->childViewParams(selected);
+		ModelDataAccessorFactoryParams params = dataAccessor()->childViewParams(selected);
 		emit childViewParamsChanged(params);
 	}
 	
@@ -111,7 +114,7 @@ void GridView::selectionChanged(const QItemSelection& selected, const QItemSelec
 
 IModelDataAccessor* GridView::dataAccessor()
 {
-	return m_accessor;
+	return m_gridViewModel != nullptr ? m_gridViewModel->modelDataAcessor() : nullptr;
 }
 
 QModelIndex GridView::hoveredIndex() const
@@ -144,9 +147,13 @@ void GridView::paintEvent(QPaintEvent* event)
 
 }
 
-void GridView::onModelDataAccessorChanged(IModelDataAccessor* accessor)
+void GridView::onModelDataAccessorChanged(IModelDataAccessor* accessor, IModelDataAccessor* oldAccessor)
 {
-	m_accessor = accessor;
+	if (accessor->resizeStrategy() != nullptr)
+	{
+		IGridViewResizeStrategy* oldStrategy = oldAccessor != nullptr ? oldAccessor->resizeStrategy() : nullptr;
+		accessor->resizeStrategy()->init(this, oldStrategy);
+	}
 	updateColumnsSpan();
 }
 
@@ -158,7 +165,7 @@ void GridView::updateColumnsSpan()
 	{
 		for (int column = 0; column < columns;)
 		{
-			int colSpan = m_accessor->itemColSpan(model()->index(row, column));
+			int colSpan = dataAccessor()->itemColSpan(model()->index(row, column));
 			assert(colSpan > 0);
 			setSpan(row, column, 1, colSpan);
 			column += colSpan;

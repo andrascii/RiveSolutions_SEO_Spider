@@ -55,7 +55,7 @@ void MainFrame::initialize()
 	summaryModel->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
 
 	m_ui.summaryGridView->setModel(summaryModel);
-	m_ui.summaryGridView->setColumnResizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }));
+	//m_ui.summaryGridView->setColumnResizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }));
 
 
 	VERIFY(connect(m_ui.summaryGridView, SIGNAL(childViewParamsChanged(const ModelDataAccessorFactoryParams&)), 

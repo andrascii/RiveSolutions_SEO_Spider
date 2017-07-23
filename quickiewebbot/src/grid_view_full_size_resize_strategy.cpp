@@ -10,14 +10,26 @@ GridViewFullSizeResizeStrategy::GridViewFullSizeResizeStrategy(std::vector<int> 
 
 void GridViewFullSizeResizeStrategy::resize(GridView* gridView) const
 {
-	static int s_extraWidth = 5; // gridwiew border, etc
+	for (int i = 0; i < m_columnsPercentSize.size(); ++i)
+	{
+		gridView->setColumnWidth(static_cast<int>(i), columnSize(i, gridView));
+	}
+}
+
+void GridViewFullSizeResizeStrategy::init(GridView* gridView, const IGridViewResizeStrategy* prev)
+{
+	Q_UNUSED(gridView);
+	Q_UNUSED(prev);
+}
+
+int GridViewFullSizeResizeStrategy::columnSize(int column, const GridView* gridView) const
+{
+	int s_extraWidth = 5; // gridwiew border, etc
 	int scroolBarWidth = gridView->verticalScrollBar()->width();
 	int width = gridView->width() - scroolBarWidth - s_extraWidth;
-	for (size_t i = 0; i < m_columnsPercentSize.size(); ++i)
-	{
-		int columnWidth = m_columnsPercentSize[i] * width / 100;
-		gridView->setColumnWidth(static_cast<int>(i), columnWidth);
-	}
+	assert(m_columnsPercentSize.size() > column);
+	int columnWidth = m_columnsPercentSize[column] * width / 100;
+	return columnWidth;
 }
 
 }

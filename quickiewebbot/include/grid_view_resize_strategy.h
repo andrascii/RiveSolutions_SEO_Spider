@@ -4,16 +4,17 @@
 namespace QuickieWebBot
 {
 
-class GridViewFullSizeResizeStrategy : public IGridViewResizeStrategy
+class GridViewResizeStrategy : public IGridViewResizeStrategy
 {
 public:
-	GridViewFullSizeResizeStrategy(std::vector<int> columnsPercentSize);
+	GridViewResizeStrategy();
 	virtual void resize(GridView* gridView) const override;
 	virtual void init(GridView* gridView, const IGridViewResizeStrategy* prev = nullptr) override;
 	virtual int columnSize(int column, const GridView* gridView) const override;
 
+	void setColumnsSize(std::map<int, int> size);
 private:
-	std::vector<int> m_columnsPercentSize;
+	std::map<int, int> m_columnsSize;
 };
 
 }

@@ -4,11 +4,13 @@
 #include "quickie_web_bot_helpers.h"
 #include "model_controller.h"
 #include "data_collection.h"
+#include "grid_view_full_size_resize_strategy.h"
 
 namespace QuickieWebBot
 {
 
 ModelDataAccessorSummary::ModelDataAccessorSummary()
+	: m_resizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }))
 {
 	using FP = QuickieWebBot::ModelDataAccessorFactoryParams;
 
@@ -197,6 +199,11 @@ ModelDataAccessorFactoryParams ModelDataAccessorSummary::childViewParams(const Q
 
 	auto accessorType = static_cast<ModelDataAccessorFactoryParams::Type>(itemIt->second->id);
 	return ModelDataAccessorFactoryParams(accessorType);
+}
+
+IGridViewResizeStrategy* ModelDataAccessorSummary::resizeStrategy() const
+{
+	return m_resizeStrategy.get();
 }
 
 std::vector<GridViewPainter*> ModelDataAccessorSummary::painters(const QModelIndex & index) const

@@ -16,7 +16,6 @@ public:
 	explicit GridView(QWidget* parent = nullptr);
 
 	virtual void setModel(QAbstractItemModel* model) override;
-	void setColumnResizeStrategy(std::unique_ptr<IGridViewResizeStrategy> strategy);
 
 	IModelDataAccessor* dataAccessor();
 
@@ -32,7 +31,7 @@ protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 
-	Q_SLOT void onModelDataAccessorChanged(IModelDataAccessor* accessor);
+	Q_SLOT void onModelDataAccessorChanged(IModelDataAccessor* accessor, IModelDataAccessor* oldAccessor);
 
 private:
 	void updateColumnsSpan();
@@ -40,9 +39,7 @@ private:
 
 private:
 	GridViewModel* m_gridViewModel;
-	IModelDataAccessor* m_accessor;
 	QModelIndex m_hoveredIndex;
-	std::unique_ptr<IGridViewResizeStrategy> m_resizeStrategy;
 	bool m_isCursorOverriden;
 };
 

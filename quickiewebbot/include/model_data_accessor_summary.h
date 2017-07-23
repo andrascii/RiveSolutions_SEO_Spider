@@ -28,6 +28,7 @@ public:
 	virtual QObject* qobject() override;
 
 	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
+	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 	// signals
 	Q_SIGNAL virtual void itemChanged(int row, int column) override;
@@ -71,6 +72,8 @@ private:
 	std::map<int, SummaryGroup*> m_groupByRowRefs;
 	std::map<int, SummaryItem*> m_itemByRowRefs;
 	std::map<int, SummaryItem*> m_itemByTypeRefs;
+
+	std::unique_ptr<IGridViewResizeStrategy> m_resizeStrategy;
 
 };
 

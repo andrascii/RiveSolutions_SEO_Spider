@@ -111,16 +111,22 @@ void GridViewModel::setModelDataAccessor(std::unique_ptr<IModelDataAccessor> acc
 		//Q_SIGNAL virtual void itemChanged(int row, int column) override;
 	}
 
+	std::unique_ptr<IModelDataAccessor> oldAccessor = std::move(m_accessor);
 	m_accessor = std::move(accessor);
 
 	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
 	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), this, SLOT(onItemChanged(int, int))));
-	emit modelDataAccessorChanged(m_accessor.get());
+	emit modelDataAccessorChanged(m_accessor.get(), oldAccessor.get());
 }
 
-IModelDataAccessor * GridViewModel::modelDataAcessor() const
+IModelDataAccessor* GridViewModel::modelDataAcessor() const
 {
 	return m_accessor.get();
+}
+
+IGridViewResizeStrategy* GridViewModel::resizeStrategy() const
+{
+	return m_accessor ? m_accessor->resizeStrategy() : nullptr;
 }
 
 void GridViewModel::onRowAdded(int row)

@@ -27,9 +27,10 @@ public:
 
 	void setModelDataAccessor(std::unique_ptr<IModelDataAccessor> accessor);
 	IModelDataAccessor* modelDataAcessor() const;
+	IGridViewResizeStrategy* resizeStrategy() const;
 
 	Q_SIGNAL void colspan(const QModelIndex& index, int span) const;
-	Q_SIGNAL void modelDataAccessorChanged(IModelDataAccessor* accessor);
+	Q_SIGNAL void modelDataAccessorChanged(IModelDataAccessor* accessor, IModelDataAccessor* oldAccessor);
 
 private:
 	Q_SLOT void onRowAdded(int row);

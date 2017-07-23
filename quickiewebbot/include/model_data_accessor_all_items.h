@@ -6,6 +6,8 @@
 namespace QuickieWebBot
 {
 
+class GridViewResizeStrategy;
+
 class ModelDataAccessorAllItems 
 	: public QObject
 	, public ModelDataAccessorBase
@@ -34,6 +36,7 @@ public:
 	Q_SIGNAL virtual void reset() override;
 
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
+	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
@@ -42,6 +45,7 @@ private:
 	const DataCollection* m_modelControllerData;
 	DataCollection::StorageType m_storageType;
 	QVector<int> m_columns;
+	std::unique_ptr<GridViewResizeStrategy> m_resizeStrategy;
 };
 
 }

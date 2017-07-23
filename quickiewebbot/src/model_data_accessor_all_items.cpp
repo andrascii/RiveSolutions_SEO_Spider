@@ -4,6 +4,8 @@
 #include "model_controller.h"
 #include "grid_view_painter_text.h"
 #include "grid_view_painter_background.h"
+#include "grid_view_resize_strategy.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -11,6 +13,7 @@ namespace QuickieWebBot
 ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType storageType)
 	: m_modelControllerData(nullptr)
 	, m_storageType(storageType)
+	, m_resizeStrategy(std::make_unique<GridViewResizeStrategy>())
 {
 	m_columns =
 	{
@@ -41,6 +44,17 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 
 	m_modelControllerData = theApp->modelController()->data();
 	VERIFY(QObject::connect(m_modelControllerData, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
+
+	// TODO: improve
+	std::map<int, int> columnsSize =
+	{
+		{ 0, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ 1, QuickieWebBotHelpers::pointsToPixels(200) },
+		{ 2, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ 3, QuickieWebBotHelpers::pointsToPixels(60) },
+	};
+
+	m_resizeStrategy->setColumnsSize(columnsSize);
 }
 	
 int ModelDataAccessorAllItems::columnCount() const
@@ -101,6 +115,11 @@ std::vector<GridViewPainter*> ModelDataAccessorAllItems::painters(const QModelIn
 	static GridViewPainterBackground s_painterBackground(Qt::transparent, Qt::transparent);
 
 	return { &s_painterBackground, &s_painterText };
+}
+
+IGridViewResizeStrategy* ModelDataAccessorAllItems::resizeStrategy() const
+{
+	return m_resizeStrategy.get();
 }
 
 

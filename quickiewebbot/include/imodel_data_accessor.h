@@ -7,6 +7,8 @@
 namespace QuickieWebBot
 {
 
+class IGridViewResizeStrategy;
+
 class IModelDataAccessor
 {
 public:
@@ -45,8 +47,8 @@ public:
 	virtual void reset() = 0;
 
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const = 0;
-
 	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const = 0;
+	virtual IGridViewResizeStrategy* resizeStrategy() const = 0;
 };
 
 class ModelDataAccessorBase : public IModelDataAccessor
