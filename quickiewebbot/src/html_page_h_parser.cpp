@@ -45,7 +45,10 @@ void HtmlPageHParser::recurseSearch(const GumboNode* node, GumboTag tag, std::ve
 
 	if (node->v.element.tag == tag && node->v.element.children.length > 0)
 	{
-		container.push_back(GumboParsingHelpers::nodeText(static_cast<GumboNode*>(node->v.element.children.data[0])));
+		QString value = GumboParsingHelpers::nodeText(static_cast<GumboNode*>(node->v.element.children.data[0]));
+		value = value.trimmed().remove(QChar('\n'), Qt::CaseInsensitive);
+
+		container.push_back(value);
 	}
 
 	const GumboVector* children = &node->v.element.children;
