@@ -90,6 +90,7 @@ private:
 	static QVariant acceptSecondH2Length(const std::shared_ptr<PageInfo>& pageInfo);
 	static QVariant acceptPageSizeKb(const std::shared_ptr<PageInfo>& pageInfo);
 	static QVariant acceptWordCount(const std::shared_ptr<PageInfo>& pageInfo);
+	static QVariant acceptPageHash(const std::shared_ptr<PageInfo>& pageInfo);
 
 	static void checkInfoItem(PageInfo::ItemType item);
 };

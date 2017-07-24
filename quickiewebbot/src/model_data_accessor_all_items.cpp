@@ -39,7 +39,8 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 		PageInfo::CanonicalLinkElementItemType,
 		PageInfo::StatusCodeItemType,
 		PageInfo::PageSizeKbItemType,
-		PageInfo::WordCountItemType
+		PageInfo::WordCountItemType,
+		PageInfo::PageHashItemType
 	};
 
 	m_modelControllerData = theApp->modelController()->data();

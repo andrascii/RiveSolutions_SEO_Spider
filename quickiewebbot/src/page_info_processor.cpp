@@ -5,6 +5,7 @@
 #include "html_page_title_parser.h"
 #include "html_page_meta_parser.h"
 #include "html_page_h_parser.h"
+#include "html_page_word_count_parser.h"
 
 namespace QuickieWebBot
 {
@@ -20,6 +21,7 @@ PageInfoProcessor::PageInfoProcessor(WebCrawlerInternalUrlStorage* crawlerStorag
 	m_htmlPageParser.addPageInfoParser(std::make_shared<HtmlPageMetaParser>());
 	m_htmlPageParser.addPageInfoParser(std::make_shared<HtmlPageTitleParser>());
 	m_htmlPageParser.addPageInfoParser(std::make_shared<HtmlPageHParser>());
+	m_htmlPageParser.addPageInfoParser(std::make_shared<HtmlPageWordCountParser>());
 }
 
 void PageInfoProcessor::process()
@@ -41,8 +43,12 @@ void PageInfoProcessor::process()
 
 		m_htmlPageParser.parsePage(reply.responseBody, m_pageInfo);
 
+		size_t pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
+
+		m_pageInfo->statusCode = reply.statusCode;
 		m_pageInfo->url = reply.url;
 		m_pageInfo->serverResponse = reply.responseHeaderValuePairs;
+		m_pageInfo->pageHash = pageHash;
 
 		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 

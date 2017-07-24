@@ -12,6 +12,7 @@ class QueuedDownloader : public AbstractThreadableObject
 public:
 	struct Reply
 	{
+		int statusCode;
 		QUrl url;
 		QByteArray responseBody;
 		QByteArray responseHeaderValuePairs;

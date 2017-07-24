@@ -31,8 +31,9 @@ QString PageInfo::itemTitle(ItemType item)
 		{ SecondH1LengthItemType, "Second H1 Length" },
 		{ FirstH2LengthItemType, "First H2 Length" },
 		{ SecondH2LengthItemType, "Second H2 Length" },
-		{ PageSizeKbItemType, "Page Size Bytes" },
-		{ WordCountItemType, "Word Count" }
+		{ PageSizeKbItemType, "Page Size Kilobytes" },
+		{ WordCountItemType, "Word Count" },
+		{ PageHashItemType, "Page Hash" }
 	};
 
 	return s_titles[item];
@@ -71,6 +72,7 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 		case SecondH2LengthItemType: return &PageInfo::acceptSecondH2Length;
 		case PageSizeKbItemType: return &PageInfo::acceptPageSizeKb;
 		case WordCountItemType: return &PageInfo::acceptWordCount;
+		case PageHashItemType: return &PageInfo::acceptPageHash;
 	}
 
 	assert(!"Unknown element");
@@ -195,6 +197,11 @@ QVariant PageInfo::acceptPageSizeKb(const std::shared_ptr<PageInfo>& pageInfo)
 QVariant PageInfo::acceptWordCount(const std::shared_ptr<PageInfo>& pageInfo)
 {
 	return pageInfo->wordCount;
+}
+
+QVariant PageInfo::acceptPageHash(const std::shared_ptr<PageInfo>& pageInfo)
+{
+	return pageInfo->pageHash;
 }
 
 void PageInfo::checkInfoItem(ItemType item)

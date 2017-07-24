@@ -50,8 +50,9 @@ void HtmlPageParser::parsePage(const QByteArray& htmlPage, PageInfoPtr& pageInfo
 	// TODO: optimize this code because for now we need double parsing of the same page
 	//
 
-	QByteArray decodedHtmlPage = decodeHtmlPage(htmlPage);
+	pageInfo->pageSizeKb = htmlPage.size() / 1024;
 
+	QByteArray decodedHtmlPage = decodeHtmlPage(htmlPage);
 	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
 
 	for (const std::shared_ptr<IPageParser>& parser : m_parserPack)
@@ -60,7 +61,6 @@ void HtmlPageParser::parsePage(const QByteArray& htmlPage, PageInfoPtr& pageInfo
 	}
 
 	m_pageUrlList.clear();
-
 	parsePageUrlList(gumboOutput.output()->root);
 }
 
@@ -87,7 +87,8 @@ void HtmlPageParser::parsePageUrlList(const GumboNode* node) noexcept
 
 	for (unsigned int i = 0; i < children->length; ++i)
 	{
-		parsePageUrlList(static_cast<const GumboNode*>(children->data[i]));
+		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
+		parsePageUrlList(child);
 	}
 }
 

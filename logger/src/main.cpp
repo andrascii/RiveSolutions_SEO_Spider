@@ -1,20 +1,45 @@
 #include "logger_main_window.h"
 
-int main(int argc, char *argv[])
+#ifndef Q_OS_WIN
+
+#define ERROR_ALREADY_EXISTS 183L
+
+#endif
+
+namespace
 {
-	//while (!IsDebuggerPresent());
+
+void doCheckingClones()
+{
+#ifdef Q_OS_WIN
 
 	CreateEvent(nullptr, FALSE, FALSE, "QuickieWebBot.Logger.Checking.Process.IsRunning");
 
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 	{
-		return ERROR_ALREADY_EXISTS;
+		throw ERROR_ALREADY_EXISTS;
 	}
 
-	QApplication app(argc, argv);
+#endif
+}
 
-	LoggerMainWindow w;
-	w.show();
+}
 
-	return app.exec();
+int main(int argc, char *argv[])
+{
+	try
+	{
+		doCheckingClones();
+
+		QApplication app(argc, argv);
+
+		LoggerMainWindow w;
+		w.show();
+
+		return app.exec();
+	}
+	catch (...)
+	{
+		return ERROR_ALREADY_EXISTS;
+	}
 }

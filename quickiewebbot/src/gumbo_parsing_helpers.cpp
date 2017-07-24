@@ -28,8 +28,6 @@ GumboNode* GumboParsingHelpers::findSubNode(const GumboNode* node, GumboTag tag,
 
 QByteArray GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
 {
-	//assert(node->type == GUMBO_NODE_TEXT || node->type == GUMBO_NODE_WHITESPACE);
-
 	return node->v.text.text;
 }
 
@@ -71,6 +69,40 @@ unsigned GumboParsingHelpers::countChildren(const GumboNode* node, GumboTag tag)
 	}
 
 	return counter;
+}
+
+QByteArray GumboParsingHelpers::cutAllTagsFromNode(const GumboNode* node) noexcept
+{
+	QByteArray text;
+	cutAllTagsFromNodeHelper(node, text);
+
+	return text;
+}
+
+void GumboParsingHelpers::cutAllTagsFromNodeHelper(const GumboNode* node, QByteArray& result) noexcept
+{
+	if (!node)
+	{
+		return;
+	}
+
+	if (node->type == GUMBO_NODE_TEXT)
+	{
+		result += nodeText(node) % " ";
+		return;
+	}
+
+	const GumboVector* children = &node->v.element.children;
+
+	for (unsigned i = 0; i < children->length; ++i)
+	{
+		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
+
+		if (child->type == GUMBO_NODE_ELEMENT || child->type == GUMBO_NODE_TEXT)
+		{
+			cutAllTagsFromNodeHelper(child, result);
+		}
+	}
 }
 
 }
