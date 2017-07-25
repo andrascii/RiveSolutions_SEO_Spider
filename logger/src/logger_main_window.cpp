@@ -9,6 +9,8 @@ LoggerMainWindow::LoggerMainWindow(QWidget* parent) :
 	ui.setupUi(this);
 	m_server = new QTcpServer(this);
 
+	//while (!IsDebuggerPresent());
+
 	if (!m_server->listen(QHostAddress::LocalHost,12345))
 	{
 		QMessageBox::critical(this, tr("Logger Server"), tr("Unable to start the server: %1.").arg(m_server->errorString()));
@@ -18,8 +20,12 @@ LoggerMainWindow::LoggerMainWindow(QWidget* parent) :
 	}
 
 	VERIFY(connect(m_server, SIGNAL(newConnection()), this, SLOT(slotNewConnection())));
-	VERIFY(connect(ui.comboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotApplyTypeFilter(QString))));
 
+	VERIFY(connect(ui.comboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotApplyTypeFilter(QString))));
+	VERIFY(connect(ui.clearButton, SIGNAL(released()), this, SLOT(slotClearLogger())));
+	VERIFY(connect(ui.lineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(slotApplyStringFilter())));	
+	
+	ui.lineEdit->setClearButtonEnabled(true);
 	ui.textBrowser->setFontPointSize(11);
 }
 
@@ -48,6 +54,23 @@ LoggerMainWindow::MessageType LoggerMainWindow::typeFromString(const QString& ty
 	return NoType;
 }
 
+void LoggerMainWindow::slotApplyStringFilter()
+{
+	if (m_currentStringFilter != ui.lineEdit->text())
+	{
+		m_currentStringFilter = ui.lineEdit->text();
+		redrawList();
+	}
+}
+
+void LoggerMainWindow::slotClearLogger()
+{
+	m_incomingMessages.clear();
+
+	ui.textBrowser->clear();
+	ui.lineEdit->clear();
+	ui.comboBox->setCurrentIndex(0);
+}
 
 void LoggerMainWindow::slotSocketDisconected()
 {
@@ -77,9 +100,10 @@ void LoggerMainWindow::slotTryToShowNewMessage()
 void LoggerMainWindow::redrawList()
 {
 	ui.textBrowser->clear();
-	for (auto currentMessage : m_incomingMessages)
+	for (const auto& currentMessage : m_incomingMessages)
 	{
-		if (m_currentTypeFilter == NoType || currentMessage.type == m_currentTypeFilter)
+		if ((m_currentTypeFilter == NoType || currentMessage.type == m_currentTypeFilter) && 
+			(m_currentStringFilter.isEmpty() || currentMessage.toString().contains(m_currentStringFilter, Qt::CaseInsensitive)))
 		{
 			ui.textBrowser->setTextColor(identifyMessageColor(currentMessage.type));
 			ui.textBrowser->append(currentMessage.toString());

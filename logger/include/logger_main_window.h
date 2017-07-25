@@ -38,7 +38,7 @@ private:
 			text = message[5];
 		}
 
-		QString toString()
+		QString toString() const noexcept
 		{
 			return QString("%1 %2(%3) %4: \"%5\"")
 				.arg(dateTime)
@@ -61,8 +61,10 @@ private slots:
 	void slotNewConnection();
 	void slotReadyRead();
 	void slotApplyTypeFilter(const QString& type);
+	void slotApplyStringFilter();
 	void slotTryToShowNewMessage();
 	void slotSocketDisconected();
+	void slotClearLogger();
 
 private:
 	Ui::MainWindow ui;
@@ -71,5 +73,7 @@ private:
 	quint16 m_blockSize;
 
 	QList<incomingMessage> m_incomingMessages;
+
 	MessageType m_currentTypeFilter;
+	QString m_currentStringFilter;
 };
