@@ -37,12 +37,12 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexc
 
 			if (attributeValue == "content-type")
 			{
-				pageInfo->content = contentAttributeValue;
+				pageInfo->setItemValue(contentAttributeValue, PageInfo::ContentItemType);
 			}
 
 			if (attributeValue == "refresh")
 			{
-				pageInfo->metaRefresh = contentAttributeValue;
+				pageInfo->setItemValue(contentAttributeValue, PageInfo::MetaRefreshItemType);
 			}
 		}
 
@@ -52,17 +52,17 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexc
 
 			if (attributeValue == "description")
 			{
-				pageInfo->metaDescription = contentAttributeValue;
+				pageInfo->setItemValue(contentAttributeValue, PageInfo::MetaDescriptionItemType);
 			}
 
 			if (attributeValue == "keywords")
 			{
-				pageInfo->metaKeywords = contentAttributeValue;
+				pageInfo->setItemValue(contentAttributeValue, PageInfo::MetaKeywordsItemType);
 			}
 
 			if (attributeValue == "robots")
 			{
-				pageInfo->metaRobots = contentAttributeValue;
+				pageInfo->setItemValue(contentAttributeValue, PageInfo::MetaRobotsItemType);
 			}
 		}
 	}

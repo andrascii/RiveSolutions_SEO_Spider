@@ -48,10 +48,10 @@ void PageInfoProcessor::process()
 
 		size_t pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
 
-		m_pageInfo->statusCode = reply.statusCode;
-		m_pageInfo->url = reply.url;
-		m_pageInfo->serverResponse = reply.responseHeaderValuePairs;
-		m_pageInfo->pageHash = pageHash;
+		m_pageInfo->setItemValue(reply.statusCode, PageInfo::StatusCodeItemType);
+		m_pageInfo->setItemValue(reply.url, PageInfo::UrlItemType);
+		m_pageInfo->setItemValue(reply.responseHeaderValuePairs, PageInfo::ServerResponseItemType);
+		m_pageInfo->setItemValue(pageHash, PageInfo::PageHashItemType);
 
 		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 

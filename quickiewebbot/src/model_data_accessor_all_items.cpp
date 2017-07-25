@@ -78,7 +78,7 @@ QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
 	PageInfo::ItemType info = static_cast<PageInfo::ItemType>(m_columns[index.column()]);
 
-	return PageInfo::itemValue((*storage)[index.row()], info);
+	return (*storage)[index.row()]->itemValue(info);
 }
 
 QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex& index) const

@@ -17,7 +17,7 @@ void HtmlPageWordCountParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) 
 	QByteArray textFromPage = GumboParsingHelpers::cutAllTagsFromNode(body);
 	QList<QByteArray> allWordsFromPage = textFromPage.split(' ');
 
-	pageInfo->wordCount = allWordsFromPage.size();
+	pageInfo->setItemValue(allWordsFromPage.size(), PageInfo::WordCountItemType);
 }
 
 }

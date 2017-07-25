@@ -14,21 +14,21 @@ void HtmlPageHParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexcept
 
 	if (m_h1Tags.size())
 	{
-		pageInfo->firstH1 = m_h1Tags[0];
+		pageInfo->setItemValue(m_h1Tags[0], PageInfo::FirstH1ItemType);
 
 		if (m_h1Tags.size() >= 2)
 		{
-			pageInfo->secondH1 = m_h1Tags[1];
+			pageInfo->setItemValue(m_h1Tags[1], PageInfo::SecondH1ItemType);
 		}
 	}
 
 	if (m_h2Tags.size())
 	{
-		pageInfo->firstH2 = m_h2Tags[0];
+		pageInfo->setItemValue(m_h2Tags[0], PageInfo::FirstH2ItemType);
 
 		if (m_h2Tags.size() >= 2)
 		{
-			pageInfo->secondH2 = m_h2Tags[1];
+			pageInfo->setItemValue(m_h2Tags[1], PageInfo::SecondH2ItemType);
 		}
 	}
 

@@ -39,9 +39,245 @@ QString PageInfo::itemTitle(ItemType item)
 	return s_titles[item];
 }
 
-QVariant PageInfo::itemValue(const std::shared_ptr<PageInfo>& pageInfo, ItemType item)
+QVariant PageInfo::itemValue(ItemType item)
 {
-	return acceptItem(item)(pageInfo);
+	return (this->*acceptItem(item))();
+}
+
+void PageInfo::setItemValue(const QVariant& value, ItemType item)
+{
+	assert(!(item >= TitleLengthItemType && item <= SecondH2LengthItemType) &&
+		"Length will be set automatically! It should not be set directly!");
+
+	using setItemPtr = void(PageInfo::*)(const QVariant& value);
+
+	setItemPtr setItemFunction = nullptr;
+
+	switch (item)
+	{
+		case UrlItemType:
+		{
+			setItemFunction = &PageInfo::setUrl;
+			break;
+		}
+		case ContentItemType:
+		{
+			setItemFunction = &PageInfo::setContent;
+			break;
+		}
+		case TitleItemType:
+		{
+			setItemFunction = &PageInfo::setTitle;
+			break;
+		}
+		case MetaRefreshItemType:
+		{
+			setItemFunction = &PageInfo::setMetaRefresh;
+			break;
+		}
+		case MetaRobotsItemType:
+		{
+			setItemFunction = &PageInfo::setMetaRobots;
+			break;
+		}
+		case RedirectedUrlItemType:
+		{
+			setItemFunction = &PageInfo::setRedirectedUrl;
+			break;
+		}
+		case ServerResponseItemType:
+		{
+			setItemFunction = &PageInfo::setServerResponse;
+			break;
+		}
+		case MetaDescriptionItemType:
+		{
+			setItemFunction = &PageInfo::setMetaDescription;
+			break;
+		}
+		case MetaKeywordsItemType:
+		{
+			setItemFunction = &PageInfo::setMetaKeywords;
+			break;
+		}
+		case FirstH1ItemType:
+		{
+			setItemFunction = &PageInfo::setFirstH1;
+			break;
+		}
+		case SecondH1ItemType:
+		{
+			setItemFunction = &PageInfo::setSecondH1;
+			break;
+		}
+		case FirstH2ItemType:
+		{
+			setItemFunction = &PageInfo::setFirstH2;
+			break;
+		}
+		case SecondH2ItemType:
+		{
+			setItemFunction = &PageInfo::setSecondH2;
+			break;
+		}
+		case CanonicalLinkElementItemType:
+		{
+			setItemFunction = &PageInfo::setCanonicalLinkElement;
+			break;
+		}
+		case StatusCodeItemType:
+		{
+			setItemFunction = &PageInfo::setStatusCode;
+			break;
+		}
+		case PageSizeKbItemType:
+		{
+			setItemFunction = &PageInfo::setPageSizeKb;
+			break;
+		}
+		case WordCountItemType:
+		{
+			setItemFunction = &PageInfo::setWordCount;
+			break;
+		}
+		case PageHashItemType:
+		{
+			setItemFunction = &PageInfo::setPageHash;
+			break;
+		}
+	}
+
+	assert(setItemFunction && "Cannot find setter function for this item");
+
+	(this->*setItemFunction)(value);
+}
+
+
+void PageInfo::setUrl(const QVariant& value)
+{
+	assert(value.type() == QVariant::Url && "Passed type must be QUrl!");
+
+	m_url = value.toUrl();
+}
+
+void PageInfo::setContent(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_content = value.toString();
+}
+
+void PageInfo::setTitle(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_title = value.toString();
+}
+
+void PageInfo::setMetaRefresh(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_metaRefresh = value.toString();
+}
+
+void PageInfo::setMetaRobots(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_metaRobots = value.toString();
+}
+
+void PageInfo::setRedirectedUrl(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_redirectedUrl = value.toString();
+}
+
+void PageInfo::setServerResponse(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_serverResponse = value.toString();
+}
+
+void PageInfo::setMetaDescription(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_metaDescription = value.toString();
+}
+
+void PageInfo::setMetaKeywords(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_metaKeywords = value.toString();
+}
+
+void PageInfo::setFirstH1(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_firstH1 = value.toString();
+}
+
+void PageInfo::setSecondH1(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_secondH2 = value.toString();
+}
+
+void PageInfo::setFirstH2(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_firstH2 = value.toString();
+}
+
+void PageInfo::setSecondH2(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_secondH2 = value.toString();
+}
+
+void PageInfo::setCanonicalLinkElement(const QVariant& value)
+{
+	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+
+	m_canonicalLinkElement = value.toString();
+}
+
+void PageInfo::setStatusCode(const QVariant& value)
+{
+	assert(value.type() == QVariant::Int && "Passed type must be int!");
+
+	m_statusCode = value.toInt();
+}
+
+void PageInfo::setPageSizeKb(const QVariant& value)
+{
+	assert(value.type() == QVariant::Int && "Passed type must be int!");
+
+	m_pageSizeKb = value.toInt();
+}
+
+void PageInfo::setWordCount(const QVariant& value)
+{
+	assert(value.type() == QVariant::Int && "Passed type must be int!");
+
+	m_wordCount = value.toInt();
+}
+
+void PageInfo::setPageHash(const QVariant& value)
+{
+	assert(value.type() == QVariant::ULongLong ||
+		value.type() == QVariant::UInt);
+
+	m_pageHash = value.value<size_t>();
 }
 
 PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
@@ -79,129 +315,129 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 	return MethodAcceptor();
 }
 
-QVariant PageInfo::acceptUrl(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptUrl()
 {
-	return pageInfo->url;
+	return m_url;
 }
 
-QVariant PageInfo::acceptContent(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptContent()
 {
-	return pageInfo->content;
+	return m_content;
 }
 
-QVariant PageInfo::acceptTitle(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptTitle()
 {
-	return pageInfo->title;
+	return m_title;
 }
 
-QVariant PageInfo::acceptMetaRefresh(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptMetaRefresh()
 {
-	return pageInfo->metaRefresh;
+	return m_metaRefresh;
 }
 
-QVariant PageInfo::acceptMetaRobots(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptMetaRobots()
 {
-	return pageInfo->metaRobots;
+	return m_metaRobots;
 }
 
-QVariant PageInfo::acceptRedirectedUrl(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptRedirectedUrl()
 {
-	return pageInfo->redirectedUrl;
+	return m_redirectedUrl;
 }
 
-QVariant PageInfo::acceptServerResponse(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptServerResponse()
 {
-	return pageInfo->serverResponse;
+	return m_serverResponse;
 }
 
-QVariant PageInfo::acceptMetaDescription(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptMetaDescription()
 {
-	return pageInfo->metaDescription;
+	return m_metaDescription;
 }
 
-QVariant PageInfo::acceptMetaKeywords(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptMetaKeywords()
 {
-	return pageInfo->metaKeywords;
+	return m_metaKeywords;
 }
 
-QVariant PageInfo::acceptFirstH1(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptFirstH1()
 {
-	return pageInfo->firstH1;
+	return m_firstH1;
 }
 
-QVariant PageInfo::acceptSecondH1(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptSecondH1()
 {
-	return pageInfo->secondH1;
+	return m_secondH1;
 }
 
-QVariant PageInfo::acceptFirstH2(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptFirstH2()
 {
-	return pageInfo->firstH2;
+	return m_firstH2;
 }
 
-QVariant PageInfo::acceptSecondH2(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptSecondH2()
 {
-	return pageInfo->secondH2;
+	return m_secondH2;
 }
 
-QVariant PageInfo::acceptCanonicalLinkElement(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptCanonicalLinkElement()
 {
-	return pageInfo->canonicalLinkElement;
+	return m_canonicalLinkElement;
 }
 
-QVariant PageInfo::acceptStatusCode(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptStatusCode()
 {
-	return pageInfo->statusCode;
+	return m_statusCode;
 }
 
-QVariant PageInfo::acceptTitleLength(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptTitleLength()
 {
-	return pageInfo->title.size();
+	return m_title.size();
 }
 
-QVariant PageInfo::acceptMetaDescriptionLength(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptMetaDescriptionLength()
 {
-	return pageInfo->metaDescription.size();
+	return m_metaDescription.size();
 }
 
-QVariant PageInfo::acceptMetaKeywordsLength(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptMetaKeywordsLength()
 {
-	return pageInfo->metaKeywords.size();
+	return m_metaKeywords.size();
 }
 
-QVariant PageInfo::acceptFirstH1Length(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptFirstH1Length()
 {
-	return pageInfo->firstH1.size();
+	return m_firstH1.size();
 }
 
-QVariant PageInfo::acceptSecondH1Length(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptSecondH1Length()
 {
-	return pageInfo->secondH1.size();
+	return m_secondH1.size();
 }
 
-QVariant PageInfo::acceptFirstH2Length(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptFirstH2Length()
 {
-	return pageInfo->firstH2.size();
+	return m_firstH2.size();
 }
 
-QVariant PageInfo::acceptSecondH2Length(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptSecondH2Length()
 {
-	return pageInfo->secondH2.size();
+	return m_secondH2.size();
 }
 
-QVariant PageInfo::acceptPageSizeKb(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptPageSizeKb()
 {
-	return pageInfo->pageSizeKb;
+	return m_pageSizeKb;
 }
 
-QVariant PageInfo::acceptWordCount(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptWordCount()
 {
-	return pageInfo->wordCount;
+	return m_wordCount;
 }
 
-QVariant PageInfo::acceptPageHash(const std::shared_ptr<PageInfo>& pageInfo)
+QVariant PageInfo::acceptPageHash()
 {
-	return pageInfo->pageHash;
+	return m_pageHash;
 }
 
 void PageInfo::checkInfoItem(ItemType item)

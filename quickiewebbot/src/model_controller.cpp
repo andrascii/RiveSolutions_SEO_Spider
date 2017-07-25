@@ -15,12 +15,12 @@ void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
 	data()->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
 
-	if (pageInfo->title.isEmpty())
+	if (pageInfo->itemValue(PageInfo::TitleItemType).toString().isEmpty())
 	{
 		data()->addPageInfo(pageInfo, DataCollection::EmptyTitleUrlStorageType);
 	}
 
-	if (pageInfo->url.host() != theApp->properties()->url().host())
+	if (pageInfo->itemValue(PageInfo::UrlItemType).toUrl().host() != theApp->properties()->url().host())
 	{
 		data()->addPageInfo(pageInfo, DataCollection::ExternalUrlStorageType);
 	}

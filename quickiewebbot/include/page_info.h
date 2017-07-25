@@ -41,58 +41,81 @@ struct PageInfo
 	};
 
 	static QString itemTitle(ItemType item);
-	static QVariant itemValue(const std::shared_ptr<PageInfo>& pageInfo, ItemType item);
 
-	QUrl url;
-	QString title;
-	QString content;
-	QString metaRefresh;
-	QString metaRobots;
-	QString metaDescription;
-	QString metaKeywords;
-	QString redirectedUrl;
-	QString serverResponse;
-	QString firstH1;
-	QString secondH1;
-	QString firstH2;
-	QString secondH2;
-	QString canonicalLinkElement;
-	int statusCode;
-	int pageSizeKb;
-	int wordCount;
-	size_t pageHash;
+	QVariant itemValue(ItemType item);
+	void setItemValue(const QVariant& value, ItemType item);
 
 private:
-	using MethodAcceptor = QVariant(*)(const std::shared_ptr<PageInfo>&);
+	void setUrl(const QVariant& value);
+	void setContent(const QVariant& value);
+	void setTitle(const QVariant& value);
+	void setMetaRefresh(const QVariant& value);
+	void setMetaRobots(const QVariant& value);
+	void setRedirectedUrl(const QVariant& value);
+	void setServerResponse(const QVariant& value);
+	void setMetaDescription(const QVariant& value);
+	void setMetaKeywords(const QVariant& value);
+	void setFirstH1(const QVariant& value);
+	void setSecondH1(const QVariant& value);
+	void setFirstH2(const QVariant& value);
+	void setSecondH2(const QVariant& value);
+	void setCanonicalLinkElement(const QVariant& value);
+	void setStatusCode(const QVariant& value);
+	void setPageSizeKb(const QVariant& value);
+	void setWordCount(const QVariant& value);
+	void setPageHash(const QVariant& value);
 
-	static MethodAcceptor acceptItem(ItemType item);
-	static QVariant acceptUrl(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptContent(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptTitle(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptMetaRefresh(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptMetaRobots(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptRedirectedUrl(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptServerResponse(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptMetaDescription(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptMetaKeywords(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptFirstH1(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptSecondH1(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptFirstH2(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptSecondH2(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptCanonicalLinkElement(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptStatusCode(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptTitleLength(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptMetaDescriptionLength(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptMetaKeywordsLength(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptFirstH1Length(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptSecondH1Length(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptFirstH2Length(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptSecondH2Length(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptPageSizeKb(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptWordCount(const std::shared_ptr<PageInfo>& pageInfo);
-	static QVariant acceptPageHash(const std::shared_ptr<PageInfo>& pageInfo);
+private:
+	using MethodAcceptor = QVariant(PageInfo::*)();
+
+	MethodAcceptor acceptItem(ItemType item);
+	QVariant acceptUrl();
+	QVariant acceptContent();
+	QVariant acceptTitle();
+	QVariant acceptMetaRefresh();
+	QVariant acceptMetaRobots();
+	QVariant acceptRedirectedUrl();
+	QVariant acceptServerResponse();
+	QVariant acceptMetaDescription();
+	QVariant acceptMetaKeywords();
+	QVariant acceptFirstH1();
+	QVariant acceptSecondH1();
+	QVariant acceptFirstH2();
+	QVariant acceptSecondH2();
+	QVariant acceptCanonicalLinkElement();
+	QVariant acceptStatusCode();
+	QVariant acceptTitleLength();
+	QVariant acceptMetaDescriptionLength();
+	QVariant acceptMetaKeywordsLength();
+	QVariant acceptFirstH1Length();
+	QVariant acceptSecondH1Length();
+	QVariant acceptFirstH2Length();
+	QVariant acceptSecondH2Length();
+	QVariant acceptPageSizeKb();
+	QVariant acceptWordCount();
+	QVariant acceptPageHash();
 
 	static void checkInfoItem(PageInfo::ItemType item);
+
+private:
+	QUrl m_url;
+	QString m_title;
+	QString m_content;
+	QString m_metaRefresh;
+	QString m_metaRobots;
+	QString m_metaDescription;
+	QString m_metaKeywords;
+	QString m_redirectedUrl;
+	QString m_serverResponse;
+	QString m_firstH1;
+	QString m_secondH1;
+	QString m_firstH2;
+	QString m_secondH2;
+	QString m_canonicalLinkElement;
+	int m_statusCode;
+	int m_pageSizeKb;
+	int m_wordCount;
+	size_t m_pageHash;
 };
 
 using PageInfoPtr = std::shared_ptr<PageInfo>;

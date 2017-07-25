@@ -16,7 +16,7 @@ void HtmlPageTitleParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noex
 		QByteArray titleValue = GumboParsingHelpers::nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
 		titleValue = titleValue.trimmed().remove('\n', Qt::CaseInsensitive);
 
-		pageInfo->title = titleValue;
+		pageInfo->setItemValue(titleValue, PageInfo::TitleItemType);
 	}
 }
 
