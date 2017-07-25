@@ -274,6 +274,9 @@ void PageInfo::setWordCount(const QVariant& value)
 
 void PageInfo::setPageHash(const QVariant& value)
 {
+	//
+	// Here should be the some unsigned number
+	//
 	assert(value.type() == QVariant::ULongLong ||
 		value.type() == QVariant::UInt);
 
