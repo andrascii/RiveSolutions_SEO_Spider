@@ -15,7 +15,13 @@ void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
 	data()->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
 
-	if (pageInfo->itemValue(PageInfo::TitleItemType).toString().isEmpty())
+	int statusCode = pageInfo->itemValue(PageInfo::StatusCodeItemType).toInt();
+
+	//
+	// Replace 301 and 302 constants
+	//
+	if (pageInfo->itemValue(PageInfo::TitleItemType).toString().isEmpty() ||
+		statusCode == 301 || statusCode == 302)
 	{
 		data()->addPageInfo(pageInfo, DataCollection::EmptyTitleUrlStorageType);
 	}
