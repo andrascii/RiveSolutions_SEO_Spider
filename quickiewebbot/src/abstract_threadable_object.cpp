@@ -7,6 +7,7 @@ namespace QuickieWebBot
 AbstractThreadableObject::~AbstractThreadableObject()
 {
 	m_thread.exit(0);
+	m_thread.wait();
 }
 
 void AbstractThreadableObject::moveThisToSeparateThread()

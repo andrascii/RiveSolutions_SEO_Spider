@@ -55,7 +55,7 @@ class ApplicationProperties : public QObject
 	//
 	// Crawler start
 	//
-	Q_PROPERTY(QUrl host READ host WRITE setHost NOTIFY hostChanged);
+	Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged);
 
 public:
 	unsigned threadCount() const;
@@ -158,9 +158,9 @@ public:
 	Q_SLOT void setMaxTitleWidth(int value);
 	Q_SIGNAL void maxTitleWidthChanged();
 
-	const QUrl& host() const;
-	Q_SLOT void setHost(const QUrl& host);
-	Q_SIGNAL void hostChanged();
+	const QUrl& url() const;
+	Q_SLOT void setUrl(const QUrl& url);
+	Q_SIGNAL void urlChanged();
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -197,7 +197,7 @@ private:
 	int m_maxDescriptionWidth;
 	int m_maxTitleWidth;
 
-	QUrl m_host;
+	QUrl m_url;
 };
 
 }

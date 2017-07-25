@@ -32,7 +32,7 @@ WebCrawler::~WebCrawler()
 
 void WebCrawler::startCrawling()
 {
-	QUrl host = theApp->properties()->host();
+	QUrl host = theApp->properties()->url();
 
 	assert(host.isValid());
 

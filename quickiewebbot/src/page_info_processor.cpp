@@ -1,3 +1,5 @@
+#include "application.h"
+#include "application_properties.h"
 #include "page_info_processor.h"
 #include "service_locator.h"
 #include "web_crawler_internal_url_storage.h"
@@ -6,6 +8,7 @@
 #include "html_page_meta_parser.h"
 #include "html_page_h_parser.h"
 #include "html_page_word_count_parser.h"
+
 
 namespace QuickieWebBot
 {
@@ -111,17 +114,12 @@ void PageInfoProcessor::resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& u
 {
 	for (QUrl& url : urlList)
 	{
-		if (url.isRelative())
+		if (!url.isRelative())
 		{
-			resolveRelativeUrl(url, baseUrl);
 			continue;
 		}
 
-		//
-		// TODO: process absolute urls
-		//
-
-
+		resolveRelativeUrl(url, baseUrl);
 	}
 }
 

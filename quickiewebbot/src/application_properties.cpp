@@ -278,23 +278,23 @@ void ApplicationProperties::setMaxTitleWidth(int value)
 	emit maxTitleWidthChanged();
 }
 
-const QUrl& ApplicationProperties::host() const
+const QUrl& ApplicationProperties::url() const
 {
-	return m_host;
+	return m_url;
 }
 
-void ApplicationProperties::setHost(const QUrl& host)
+void ApplicationProperties::setUrl(const QUrl& url)
 {
-	m_host = host;
+	m_url = url;
 
-	if (m_host.scheme().isEmpty())
+	if (m_url.scheme().isEmpty())
 	{
 		DEBUGLOG << "Corrected scheme of passed URL";
 
-		m_host.setUrl("http://" + host.toString());
+		m_url.setUrl("http://" + url.toString());
 	}
 
-	emit hostChanged();
+	emit urlChanged();
 }
 
 ApplicationProperties::ApplicationProperties(QObject* parent)

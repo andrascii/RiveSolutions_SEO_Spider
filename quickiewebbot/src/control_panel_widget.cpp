@@ -34,7 +34,7 @@ void ControlPanelWidget::showSummaryView(bool value)
 
 void ControlPanelWidget::setHost()
 {
-	theApp->properties()->setHost(m_ui.urlLineEdit->text());
+	theApp->properties()->setUrl(m_ui.urlLineEdit->text());
 }
 
 void ControlPanelWidget::startCrawling()
