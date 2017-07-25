@@ -28,6 +28,7 @@
 // boost
 //
 #include <boost/functional/hash.hpp>
+#include <boost/regex.hpp>
 
 //
 // Qt

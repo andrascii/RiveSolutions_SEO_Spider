@@ -32,14 +32,17 @@ void ControlPanelWidget::showSummaryView(bool value)
 	}
 }
 
-void ControlPanelWidget::setHost()
+void ControlPanelWidget::setUrl()
 {
-	theApp->properties()->setUrl(m_ui.urlLineEdit->text());
+	if (m_ui.urlLineEdit->isUrlCorrect())
+	{
+		theApp->properties()->setUrl(m_ui.urlLineEdit->text());
+	}
 }
 
 void ControlPanelWidget::startCrawling()
 {
-	if (QUrl(m_ui.urlLineEdit->text()).isValid())
+	if (m_ui.urlLineEdit->isUrlCorrect())
 	{
 		theApp->webCrawler()->startCrawling();
 	}
@@ -55,7 +58,7 @@ void ControlPanelWidget::initialize()
 	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::startCrawling));
 	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));
 
-	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setHost));
+	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
 
 	m_ui.viewTypeComboBox->addItem(tr("List"));
 	m_ui.viewTypeComboBox->addItem(tr("Tree"));

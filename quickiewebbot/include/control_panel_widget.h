@@ -16,7 +16,7 @@ public:
 	Q_SLOT void showSummaryView(bool value);
 
 private:
-	Q_SLOT void setHost();
+	Q_SLOT void setUrl();
 	Q_SLOT void startCrawling();
 
 private:

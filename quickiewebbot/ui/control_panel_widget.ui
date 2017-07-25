@@ -110,7 +110,11 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLineEdit" name="urlLineEdit"/>
+       <widget class="QuickieWebBot::UrlLineEdit" name="urlLineEdit">
+        <property name="isValidUrl" stdset="0">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="0" column="4">
        <layout class="QHBoxLayout" name="viewModeLayout">
@@ -153,6 +157,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QuickieWebBot::UrlLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>url_line_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

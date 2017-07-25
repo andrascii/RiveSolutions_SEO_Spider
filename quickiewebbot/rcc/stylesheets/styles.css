@@ -60,6 +60,16 @@ QSpinBox
 	color: #494949;
 }
 
+QLineEdit#urlLineEdit:focus[isValidUrl=true]
+{
+	border-color: #61a032;
+}
+
+QLineEdit#urlLineEdit:focus[isValidUrl=false]
+{
+	border-color: #cc0000; 
+}
+
 /*////////////////////////////////// Progress Bar //////////////////////////*/
 
 QProgressBar
