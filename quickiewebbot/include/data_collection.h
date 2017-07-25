@@ -21,13 +21,22 @@ public:
 
 	enum StorageType
 	{
+		//
+		// Statistic data
+		//
 		CrawledUrlStorageType,
 		ExternalUrlStorageType,
 
+		//
+		// Url problems
+		//
 		UpperCaseUrlStorageType,
 		NonAsciiCharacterUrlStorageType,
 		VeryLongUrlStorageType,
 
+		//
+		// Title problems
+		//
 		EmptyTitleUrlStorageType,
 		DuplicatedTitleUrlStorageType,
 		VeryLongTitleUrlStorageType,
@@ -35,26 +44,41 @@ public:
 		DuplicatedH1TitleUrlStorageType,
 		SeveralTitleUrlStorageType,
 
+		//
+		// Meta description problems
+		//
 		EmptyMetaDescriptionUrlStorageType,
 		DuplicatedMetaDescriptionUrlStorageType,
 		VeryLongMetaDescriptionUrlStorageType,
 		VeryShortMetaDescriptionUrlStorageType,
 		SeveralMetaDescriptionUrlStorageType,
 
+		//
+		// Meta keywords problems
+		//
 		EmptyMetaKeywordsUrlStorageType,
 		DuplicatedMetaKeywordsUrlStorageType,
 		SeveralMetaKeywordsUrlStorageType,
 
+		//
+		// H1 problems
+		//
 		MissingH1UrlStorageType,
 		DuplicatedH1UrlStorageType,
 		VeryLongH1UrlStorageType,
 		SeveralH1UrlStorageType,
 
+		//
+		// H2 problems
+		//
 		MissingH2UrlStorageType,
 		DuplicatedH2UrlStorageType,
 		VeryLongH2UrlStorageType,
 		SeveralH2UrlStorageType,
 
+		//
+		// Images problems
+		//
 		Over100kbImageStorageType,
 		MissingAltTextImageStorageType,
 		VeryLongAltTextImageStorageType

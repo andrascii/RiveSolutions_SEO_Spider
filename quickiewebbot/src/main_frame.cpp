@@ -1,12 +1,13 @@
+#include "application.h"
 #include "main_frame.h"
 #include "model_controller.h"
 #include "model_data_accessor_stub.h"
 #include "model_data_accessor_factory.h"
 #include "data_collection.h"
-#include "application.h"
 #include "grid_view_extension.h"
 #include "web_crawler.h"
 #include "grid_view_full_size_resize_strategy.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -60,6 +61,8 @@ void MainFrame::initialize()
 
 	VERIFY(connect(m_ui.summaryGridView, SIGNAL(childViewParamsChanged(const ModelDataAccessorFactoryParams&)), 
 		m_ui.summaryDetailsGridView, SLOT(setParams(const ModelDataAccessorFactoryParams&))));
+
+	m_ui.summaryGridView->setMinimumWidth(QuickieWebBotHelpers::pointsToPixels(350));
 }
 
 }

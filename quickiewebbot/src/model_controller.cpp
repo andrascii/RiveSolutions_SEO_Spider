@@ -1,4 +1,5 @@
 #include "application.h"
+#include "application_properties.h"
 #include "model_controller.h"
 #include "data_collection.h"
 
@@ -17,6 +18,11 @@ void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 	if (pageInfo->title.isEmpty())
 	{
 		data()->addPageInfo(pageInfo, DataCollection::EmptyTitleUrlStorageType);
+	}
+
+	if (pageInfo->url.host() != theApp->properties()->url().host())
+	{
+		data()->addPageInfo(pageInfo, DataCollection::ExternalUrlStorageType);
 	}
 }
 
