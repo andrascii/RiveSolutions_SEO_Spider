@@ -15,7 +15,8 @@ void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
 	data()->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
 
-	if (pageInfo->title.isEmpty())
+	//replace 301 and 302 constants to enumeration
+	if (pageInfo->title.isEmpty() && pageInfo->statusCode != 301 && pageInfo->statusCode != 302)
 	{
 		data()->addPageInfo(pageInfo, DataCollection::EmptyTitleUrlStorageType);
 	}
