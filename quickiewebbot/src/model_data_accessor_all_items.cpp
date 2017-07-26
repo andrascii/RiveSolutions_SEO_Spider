@@ -6,6 +6,7 @@
 #include "grid_view_painter_background.h"
 #include "grid_view_resize_strategy.h"
 #include "quickie_web_bot_helpers.h"
+#include "model_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
@@ -58,6 +59,10 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 	m_resizeStrategy->setColumnsSize(columnsSize);
 }
 	
+ModelDataAccessorAllItems::~ModelDataAccessorAllItems()
+{
+}
+
 int ModelDataAccessorAllItems::columnCount() const
 {
 	return m_columns.size();
@@ -123,8 +128,29 @@ IGridViewResizeStrategy* ModelDataAccessorAllItems::resizeStrategy() const
 	return m_resizeStrategy.get();
 }
 
+ModelDataAccessorFactoryParams ModelDataAccessorAllItems::childViewParams(const QItemSelection& selection) const
+{
+	QModelIndexList indicies = selection.indexes();
+
+	if (indicies.isEmpty())
+	{
+		return ModelDataAccessorFactoryParams(ModelDataAccessorFactoryParams::TypeInvalid, ModelDataAccessorFactoryParams::ModeGeneral);
+	}
+
+	QModelIndex index = indicies.first();
+	assert(index.isValid());
+
+	return ModelDataAccessorFactoryParams(static_cast<ModelDataAccessorFactoryParams::Type>(m_storageType), 
+		ModelDataAccessorFactoryParams::ModeOneRow);
+}
+
 
 void ModelDataAccessorAllItems::onModelDataRowAdded(int row, int type)
+{
+	onModelDataRowAddedInternal(row, type);
+}
+
+void ModelDataAccessorAllItems::onModelDataRowAddedInternal(int row, int type)
 {
 	if (type == m_storageType)
 	{

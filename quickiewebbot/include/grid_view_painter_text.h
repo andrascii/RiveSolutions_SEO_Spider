@@ -33,7 +33,7 @@ private:
 	int m_marginRight;
 	int m_marginBottom;
 
-	mutable QHash<CacheKey, Cache> m_cache;
+	mutable std::map<CacheKey, Cache> m_cache;
 	mutable std::multimap<std::chrono::system_clock::time_point, CacheKey> m_cacheAccessTime;
 	int m_cacheSize;
 };

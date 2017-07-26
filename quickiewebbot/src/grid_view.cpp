@@ -28,6 +28,7 @@ void GridView::setModel(QAbstractItemModel* model)
 	QTableView::setModel(model);
 
 	GridViewModel* newModel = dynamic_cast<GridViewModel*>(model);
+
 	assert(newModel != nullptr);
 
 	if (newModel->resizeStrategy() != nullptr)
@@ -49,6 +50,7 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 {
 	QModelIndex index = indexAt(event->pos());
 	int flags = index.data(Qt::UserRole).toInt();
+
 	updateCursor(flags);
 
 	if (index == m_hoveredIndex || flags & IModelDataAccessor::ItemFlagNotSelectable)
@@ -58,19 +60,19 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 	}
 
 	// TODO: paint only selection
-	QAbstractItemModel* mod = model();
-	int columnCount = mod->columnCount();
+	QAbstractItemModel* viewModel = model();
+	int columnCount = viewModel->columnCount();
 
 	if (m_hoveredIndex.isValid())
 	{
-		mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), columnCount));
+		viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), viewModel->index(m_hoveredIndex.row(), columnCount));
 	}
 
 	m_hoveredIndex = index;
 
 	if (m_hoveredIndex.isValid())
 	{
-		mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), columnCount));
+		viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), viewModel->index(m_hoveredIndex.row(), columnCount));
 	}
 
 	QTableView::mouseMoveEvent(event);
@@ -80,8 +82,11 @@ void GridView::leaveEvent(QEvent* event)
 {
 	if (m_hoveredIndex.isValid())
 	{
-		QAbstractItemModel* mod = model();
-		mod->dataChanged(mod->index(m_hoveredIndex.row(), 0), mod->index(m_hoveredIndex.row(), mod->columnCount()));
+		QAbstractItemModel* viewModel = model();
+
+		viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), 
+			viewModel->index(m_hoveredIndex.row(), viewModel->columnCount()));
+
 		m_hoveredIndex = QModelIndex();
 	}
 
@@ -102,7 +107,6 @@ void GridView::resizeEvent(QResizeEvent* event)
 
 void GridView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-	Q_UNUSED(deselected);
 	if (dataAccessor())
 	{
 		ModelDataAccessorFactoryParams params = dataAccessor()->childViewParams(selected);
@@ -110,6 +114,34 @@ void GridView::selectionChanged(const QItemSelection& selected, const QItemSelec
 	}
 	
 	QTableView::selectionChanged(selected, deselected);
+}
+
+void GridView::mousePressEvent(QMouseEvent* event)
+{
+	if (event->button() != Qt::RightButton)
+	{
+		return QTableView::mousePressEvent(event);
+	}
+
+	if (!m_rowMenu)
+	{
+		m_rowMenu = new QMenu(this);
+		m_rowMenu->addAction(QIcon(), tr("Open Url"));
+		m_rowMenu->addAction(QIcon(), tr("Copy"));
+		m_rowMenu->addAction(QIcon(), tr("Refresh All Results"));
+		m_rowMenu->addAction(QIcon(), tr("Remove Row"));
+		m_rowMenu->addSeparator();
+		m_rowMenu->addAction(QIcon(), tr("Check Index"));
+		m_rowMenu->addAction(QIcon(), tr("Check Google Cache"));
+		m_rowMenu->addAction(QIcon(), tr("Open robots.txt"));
+		m_rowMenu->addAction(QIcon(), tr("Show Other Domains on IP"));
+		m_rowMenu->addAction(QIcon(), tr("Check HTML With W3C Validator"));
+	}
+
+	QPoint globalPosition = event->globalPos();
+
+	m_rowMenu->move(globalPosition.x(), globalPosition.y());
+	m_rowMenu->show();
 }
 
 IModelDataAccessor* GridView::dataAccessor()
@@ -130,11 +162,13 @@ void GridView::setParams(const ModelDataAccessorFactoryParams& params)
 	}
 
 	ModelDataAccessorFactory factory;
+
 	if (m_gridViewModel == nullptr)
 	{
-		GridViewModel* mod = new GridViewModel(this);
-		mod->setModelDataAccessor(factory.getModelDataAccessor(params));
-		setModel(mod);
+		GridViewModel* model = new GridViewModel(this);
+		model->setModelDataAccessor(factory.getModelDataAccessor(params));
+
+		setModel(model);
 		return;
 	}
 
@@ -144,7 +178,6 @@ void GridView::setParams(const ModelDataAccessorFactoryParams& params)
 void GridView::paintEvent(QPaintEvent* event)
 {
 	QTableView::paintEvent(event);
-
 }
 
 void GridView::onModelDataAccessorChanged(IModelDataAccessor* accessor, IModelDataAccessor* oldAccessor)
@@ -154,6 +187,7 @@ void GridView::onModelDataAccessorChanged(IModelDataAccessor* accessor, IModelDa
 		IGridViewResizeStrategy* oldStrategy = oldAccessor != nullptr ? oldAccessor->resizeStrategy() : nullptr;
 		accessor->resizeStrategy()->init(this, oldStrategy);
 	}
+
 	updateColumnsSpan();
 }
 
@@ -161,12 +195,15 @@ void GridView::updateColumnsSpan()
 {
 	int rows = model()->rowCount();
 	int columns = model()->columnCount();
+
 	for (int row = 0; row < rows; ++row)
 	{
 		for (int column = 0; column < columns;)
 		{
 			int colSpan = dataAccessor()->itemColSpan(model()->index(row, column));
+
 			assert(colSpan > 0);
+
 			setSpan(row, column, 1, colSpan);
 			column += colSpan;
 		}
@@ -188,6 +225,14 @@ void GridView::updateCursor(int flags)
 		QApplication::restoreOverrideCursor();
 		m_isCursorOverriden = false;
 	}
+}
+
+int GridView::rowNumberAtPoint(const QPoint& point) const noexcept
+{
+	//
+	// TODO: implement getting row number at specified point by viewport
+	//
+	return 0;
 }
 
 }

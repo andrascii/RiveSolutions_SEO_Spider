@@ -8,6 +8,7 @@
 #include "web_crawler.h"
 #include "grid_view_full_size_resize_strategy.h"
 #include "quickie_web_bot_helpers.h"
+#include "grid_view_model.h"
 
 namespace QuickieWebBot
 {

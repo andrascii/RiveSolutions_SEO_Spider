@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imodel_data_accessor.h"
+#include "model_data_accessor_base.h"
 #include "data_collection.h"
 
 namespace QuickieWebBot
@@ -16,6 +16,7 @@ class ModelDataAccessorAllItems
 
 public:
 	ModelDataAccessorAllItems(DataCollection::StorageType storageType);
+	~ModelDataAccessorAllItems();
 	virtual int columnCount() const override;
 	virtual QString columnText(int column) const override;
 
@@ -38,10 +39,13 @@ public:
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
+	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
+
 protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
+	virtual void onModelDataRowAddedInternal(int row, int type);
 
-private:
+protected:
 	const DataCollection* m_modelControllerData;
 	DataCollection::StorageType m_storageType;
 	QVector<int> m_columns;

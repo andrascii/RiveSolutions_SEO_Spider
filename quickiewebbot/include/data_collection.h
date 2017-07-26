@@ -1,7 +1,6 @@
 #pragma once
 
 #include "page_info.h"
-#include "grid_view_model.h"
 #include "universal_page_info_hasher.h"
 
 namespace QuickieWebBot
