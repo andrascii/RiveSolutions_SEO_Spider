@@ -123,15 +123,34 @@ int ModelDataAccessorSummary::rowCount() const
 
 QVariant ModelDataAccessorSummary::itemValue(const QModelIndex& index) const
 {
-	auto groupIt = m_groupByRowRefs.find(index.row());
-	if (groupIt != m_groupByRowRefs.end())
+	auto groupIterator = m_groupByRowRefs.find(index.row());
+
+	if (groupIterator != m_groupByRowRefs.end())
 	{
-		return groupIt->second->groupName;
+		return groupIterator->second->groupName;
 	}
 
-	auto itemIt = m_itemByRowRefs.find(index.row());
-	assert(itemIt != m_itemByRowRefs.end());
-	return index.column() == 0 ? QVariant(itemIt->second->name) : QVariant(itemIt->second->issueCount);
+	auto itemIterator = m_itemByRowRefs.find(index.row());
+
+	assert(itemIterator != m_itemByRowRefs.end());
+
+	return index.column() == 0 ? QVariant(itemIterator->second->name) : QVariant(itemIterator->second->issueCount);
+}
+
+QVariant ModelDataAccessorSummary::itemValue(int row, int column) const
+{
+	auto groupIterator = m_groupByRowRefs.find(row);
+
+	if (groupIterator != m_groupByRowRefs.end())
+	{
+		return groupIterator->second->groupName;
+	}
+
+	auto itemIterator = m_itemByRowRefs.find(row);
+
+	assert(itemIterator != m_itemByRowRefs.end());
+
+	return column == 0 ? QVariant(itemIterator->second->name) : QVariant(itemIterator->second->issueCount);
 }
 
 QColor ModelDataAccessorSummary::itemBackgroundColor(const QModelIndex& index) const

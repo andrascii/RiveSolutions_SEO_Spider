@@ -1,6 +1,7 @@
 #include "application.h"
 #include "grid_view_model.h"
 #include "quickie_web_bot_helpers.h"
+#include "imodel_data_accessor.h"
 
 namespace QuickieWebBot
 {
@@ -124,12 +125,22 @@ void GridViewModel::setModelDataAccessor(std::unique_ptr<IModelDataAccessor> acc
 	endResetModel();
 }
 
-IModelDataAccessor* GridViewModel::modelDataAcessor() const
+const IModelDataAccessor* GridViewModel::modelDataAcessor() const
 {
 	return m_accessor.get();
 }
 
-IGridViewResizeStrategy* GridViewModel::resizeStrategy() const
+IModelDataAccessor* GridViewModel::modelDataAcessor()
+{
+	return m_accessor.get();
+}
+
+const IGridViewResizeStrategy* GridViewModel::resizeStrategy() const
+{
+	return m_accessor ? m_accessor->resizeStrategy() : nullptr;
+}
+
+IGridViewResizeStrategy* GridViewModel::resizeStrategy()
 {
 	return m_accessor ? m_accessor->resizeStrategy() : nullptr;
 }

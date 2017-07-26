@@ -1,4 +1,5 @@
 #pragma once
+
 #include "model_data_accessor_factory.h"
 
 namespace QuickieWebBot
@@ -20,6 +21,8 @@ public:
 	IModelDataAccessor* dataAccessor();
 	QModelIndex hoveredIndex() const;
 
+	void setContextMenu(QMenu* menu);
+
 	Q_SLOT void setParams(const ModelDataAccessorFactoryParams& params);
 	Q_SIGNAL void childViewParamsChanged(const ModelDataAccessorFactoryParams& params);
 
@@ -36,14 +39,13 @@ protected:
 private:
 	void updateColumnsSpan();
 	void updateCursor(int flags);
-
-	int rowNumberAtPoint(const QPoint& point) const noexcept;
+	void selectRow(const QPoint& point);
 
 private:
 	GridViewModel* m_gridViewModel;
 	QModelIndex m_hoveredIndex;
 	bool m_isCursorOverriden;
-	QPointer<QMenu> m_rowMenu;
+	QMenu* m_contextMenu;
 };
 
 }

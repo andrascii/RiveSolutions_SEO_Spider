@@ -80,10 +80,20 @@ int ModelDataAccessorAllItems::rowCount() const
 	
 QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 {
-	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
-	PageInfo::ItemType info = static_cast<PageInfo::ItemType>(m_columns[index.column()]);
+	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
 
-	return (*storage)[index.row()]->itemValue(info);
+	PageInfo::ItemType info = m_columns[index.column()];
+
+	return storage[index.row()]->itemValue(info);
+}
+
+QVariant ModelDataAccessorAllItems::itemValue(int row, int column) const
+{
+	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
+
+	PageInfo::ItemType info = m_columns[column];
+
+	return storage[row]->itemValue(info);
 }
 
 QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex& index) const

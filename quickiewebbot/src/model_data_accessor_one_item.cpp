@@ -3,8 +3,6 @@
 namespace QuickieWebBot
 {
 
-
-
 ModelDataAccessorOneItem::ModelDataAccessorOneItem(DataCollection::StorageType storageType, int row)
 	: ModelDataAccessorAllItems(storageType)
 	, m_row(row)
@@ -28,10 +26,12 @@ int ModelDataAccessorOneItem::rowCount() const
 
 QVariant ModelDataAccessorOneItem::itemValue(const QModelIndex& index) const
 {
-	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
-	PageInfo::ItemType info = static_cast<PageInfo::ItemType>(m_columns[index.row()]);
+	return ModelDataAccessorAllItems::itemValue(index);
+}
 
-	return (*storage)[m_row]->itemValue(info);
+QVariant ModelDataAccessorOneItem::itemValue(int row, int column) const
+{
+	return ModelDataAccessorAllItems::itemValue(row, column);
 }
 
 QColor ModelDataAccessorOneItem::itemBackgroundColor(const QModelIndex& index) const

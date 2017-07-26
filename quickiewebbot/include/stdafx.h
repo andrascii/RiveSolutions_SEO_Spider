@@ -70,6 +70,7 @@
 #include <QLineEdit>
 #include <QScrollBar>
 #include <QScreen>
+#include <QItemSelectionModel>
 #include <QtSvg>
 
 #include "application.h"

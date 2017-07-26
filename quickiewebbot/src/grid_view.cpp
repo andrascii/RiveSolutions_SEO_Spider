@@ -13,6 +13,7 @@ GridView::GridView(QWidget * parent)
 	: QTableView(parent)
 	, m_gridViewModel(nullptr)
 	, m_isCursorOverriden(false)
+	, m_contextMenu(nullptr)
 {
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -118,30 +119,17 @@ void GridView::selectionChanged(const QItemSelection& selected, const QItemSelec
 
 void GridView::mousePressEvent(QMouseEvent* event)
 {
-	if (event->button() != Qt::RightButton)
+	if (event->button() != Qt::RightButton || !m_contextMenu)
 	{
 		return QTableView::mousePressEvent(event);
 	}
 
-	if (!m_rowMenu)
-	{
-		m_rowMenu = new QMenu(this);
-		m_rowMenu->addAction(QIcon(), tr("Open Url"));
-		m_rowMenu->addAction(QIcon(), tr("Copy"));
-		m_rowMenu->addAction(QIcon(), tr("Refresh All Results"));
-		m_rowMenu->addAction(QIcon(), tr("Remove Row"));
-		m_rowMenu->addSeparator();
-		m_rowMenu->addAction(QIcon(), tr("Check Index"));
-		m_rowMenu->addAction(QIcon(), tr("Check Google Cache"));
-		m_rowMenu->addAction(QIcon(), tr("Open robots.txt"));
-		m_rowMenu->addAction(QIcon(), tr("Show Other Domains on IP"));
-		m_rowMenu->addAction(QIcon(), tr("Check HTML With W3C Validator"));
-	}
-
 	QPoint globalPosition = event->globalPos();
 
-	m_rowMenu->move(globalPosition.x(), globalPosition.y());
-	m_rowMenu->show();
+	selectRow(event->pos());
+
+	m_contextMenu->move(globalPosition.x(), globalPosition.y());
+	m_contextMenu->show();
 }
 
 IModelDataAccessor* GridView::dataAccessor()
@@ -152,6 +140,11 @@ IModelDataAccessor* GridView::dataAccessor()
 QModelIndex GridView::hoveredIndex() const
 {
 	return m_hoveredIndex;
+}
+
+void GridView::setContextMenu(QMenu* menu)
+{
+	m_contextMenu = menu;
 }
 
 void GridView::setParams(const ModelDataAccessorFactoryParams& params)
@@ -227,12 +220,12 @@ void GridView::updateCursor(int flags)
 	}
 }
 
-int GridView::rowNumberAtPoint(const QPoint& point) const noexcept
+void GridView::selectRow(const QPoint& point)
 {
-	//
-	// TODO: implement getting row number at specified point by viewport
-	//
-	return 0;
+	QModelIndex rowIndex = indexAt(point);
+	QItemSelectionModel* modelSelection = selectionModel();
+
+	modelSelection->select(rowIndex, QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
 }
 
 }

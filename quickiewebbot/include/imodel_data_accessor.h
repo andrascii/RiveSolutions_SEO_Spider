@@ -27,18 +27,18 @@ public:
 	virtual ~IModelDataAccessor() = default;
 	
 	virtual int columnCount() const = 0;
+	virtual int rowCount() const = 0;
+
 	virtual QString columnText(int column) const = 0;
 
-	virtual int rowCount() const = 0;
 	virtual QVariant itemValue(const QModelIndex& index) const = 0;
+	virtual QVariant itemValue(int row, int column) const = 0;
+
 	virtual QColor itemBackgroundColor(const QModelIndex& index) const = 0;
 	virtual QColor itemTextColor(const QModelIndex& index) const = 0;
 	virtual int itemColSpan(const QModelIndex& index) const = 0;
-
 	virtual QPixmap* pixmap(const QModelIndex& index) const = 0;
-
 	virtual int flags(const QModelIndex& index) const = 0;
-
 	virtual QObject* qobject() = 0;
 	
 	// signals

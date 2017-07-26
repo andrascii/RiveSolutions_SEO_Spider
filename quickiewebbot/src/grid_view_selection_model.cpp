@@ -29,7 +29,6 @@ void GridViewSelectionModel::select(const QItemSelection& selection, QItemSelect
 		QItemSelectionModel::select(selection, command);
 	}
 
-
 	// TODO: optimize
 	QItemSelection fixedSelection;
 

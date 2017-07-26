@@ -9,6 +9,7 @@
 #include "grid_view_full_size_resize_strategy.h"
 #include "quickie_web_bot_helpers.h"
 #include "grid_view_model.h"
+#include "context_menu_data_collection_row.h"
 
 namespace QuickieWebBot
 {
@@ -64,6 +65,7 @@ void MainFrame::initialize()
 	ModelDataAccessorFactory factory;
 	model->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingGridView->setModel(model);
+	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 
 	GridViewModel* summaryModel = new GridViewModel(this);
 	summaryModel->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));

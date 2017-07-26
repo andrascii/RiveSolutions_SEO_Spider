@@ -7,6 +7,7 @@ namespace QuickieWebBot
 
 UrlLineEdit::UrlLineEdit(QWidget* parent) 
 	: QLineEdit(parent)
+	, m_isUrlCorrect(false)
 {
 	VERIFY(connect(this, SIGNAL(textEdited(const QString&)), this, SLOT(checkUrlCorrectness())));
 
