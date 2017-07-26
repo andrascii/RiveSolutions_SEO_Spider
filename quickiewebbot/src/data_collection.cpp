@@ -187,7 +187,12 @@ void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, int storageType) n
 	}
 
 	crawlerStorage(storageType)->insert(pageInfo);
+
+
+	//int oldSize = guiStorage(storageType)->size();
 	guiStorage(storageType)->push_back(pageInfo);
+	//int newSize = guiStorage(storageType)->size();
+	//assert(newSize > oldSize);
 
 	emit pageInfoAdded(static_cast<int>(guiStorage(storageType)->size() - 1), storageType);
 }

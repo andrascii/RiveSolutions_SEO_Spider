@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imodel_data_accessor.h"
+#include "model_data_accessor_base.h"
 
 namespace QuickieWebBot
 {

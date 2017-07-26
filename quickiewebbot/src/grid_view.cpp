@@ -105,8 +105,8 @@ void GridView::selectionChanged(const QItemSelection& selected, const QItemSelec
 	Q_UNUSED(deselected);
 	if (dataAccessor())
 	{
-		ModelDataAccessorFactoryParams params = dataAccessor()->childViewParams(selected);
-		emit childViewParamsChanged(params);
+		std::unique_ptr<ModelDataAccessorFactoryParams> params = dataAccessor()->childViewParams(selected);
+		emit childViewParamsChanged(*params);
 	}
 	
 	QTableView::selectionChanged(selected, deselected);

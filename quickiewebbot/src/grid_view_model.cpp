@@ -59,6 +59,7 @@ QVariant GridViewModel::headerData(int section, Qt::Orientation orientation, int
 {
 	if (orientation == Qt::Vertical)
 	{
+		//return m_accessor->columnText(section);
 		return QVariant();
 	}
 
@@ -117,6 +118,10 @@ void GridViewModel::setModelDataAccessor(std::unique_ptr<IModelDataAccessor> acc
 	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
 	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), this, SLOT(onItemChanged(int, int))));
 	emit modelDataAccessorChanged(m_accessor.get(), oldAccessor.get());
+	
+
+	beginResetModel();
+	endResetModel();
 }
 
 IModelDataAccessor* GridViewModel::modelDataAcessor() const

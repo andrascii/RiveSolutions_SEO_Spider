@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imodel_data_accessor.h"
+#include "model_data_accessor_base.h"
 
 namespace QuickieWebBot
 {
@@ -27,7 +27,7 @@ public:
 
 	virtual QObject* qobject() override;
 
-	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
+	virtual std::unique_ptr<ModelDataAccessorFactoryParams> childViewParams(const QItemSelection& selection) const override;
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 	// signals

@@ -81,7 +81,7 @@ QPixmap* GridViewPainterText::getCached(const CacheKey& key) const
 
 	if (it != std::end(m_cache))
 	{
-		auto rangeIt = m_cacheAccessTime.equal_range(it->lastAccess);
+		auto rangeIt = m_cacheAccessTime.equal_range(it->second.lastAccess);
 		auto rmIt = rangeIt.first;
 
 		for (auto rangeIt1 = rangeIt.first; rangeIt1 != rangeIt.second; rangeIt1++)
@@ -95,10 +95,10 @@ QPixmap* GridViewPainterText::getCached(const CacheKey& key) const
 
 		m_cacheAccessTime.erase(rmIt);
 
-		it->lastAccess = std::chrono::system_clock::now();
-		m_cacheAccessTime.insert(std::make_pair(it->lastAccess, key));
+		it->second.lastAccess = std::chrono::system_clock::now();
+		m_cacheAccessTime.insert(std::make_pair(it->second.lastAccess, key));
 
-		return &(it->pixmap);
+		return &(it->second.pixmap);
 	}
 
 	return nullptr;
@@ -110,7 +110,7 @@ void GridViewPainterText::removeExtraCache() const
 
 	for (auto it = std::begin(m_cacheAccessTime); i < m_cacheSize; i++)
 	{
-		m_cache.remove(it->second);
+		m_cache.erase(it->second);
 		it = m_cacheAccessTime.erase(it);
 	}
 }
