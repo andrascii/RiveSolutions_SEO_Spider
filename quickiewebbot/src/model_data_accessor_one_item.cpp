@@ -56,8 +56,13 @@ int ModelDataAccessorOneItem::itemColSpan(const QModelIndex& index) const
 }
 
 int ModelDataAccessorOneItem::flags(const QModelIndex& index) const
-{
-	return 0;
+{	
+	if (index.column() == 0)
+	{
+		return ItemFlagNone;
+	}
+	
+	return m_columns[index.row()] == PageInfo::UrlItemType ? ItemFlagUrl : ItemFlagNone;
 }
 
 QPixmap* ModelDataAccessorOneItem::pixmap(const QModelIndex& index) const
