@@ -118,15 +118,30 @@ void GridView::selectionChanged(const QItemSelection& selected, const QItemSelec
 
 void GridView::mousePressEvent(QMouseEvent* event)
 {
+	if (event->button() != Qt::RightButton)
+	{
+		return QTableView::mousePressEvent(event);
+	}
+
 	if (!m_rowMenu)
 	{
 		m_rowMenu = new QMenu(this);
+		m_rowMenu->addAction(QIcon(), tr("Open Url"));
+		m_rowMenu->addAction(QIcon(), tr("Copy"));
+		m_rowMenu->addAction(QIcon(), tr("Refresh All Results"));
+		m_rowMenu->addAction(QIcon(), tr("Remove Row"));
+		m_rowMenu->addSeparator();
+		m_rowMenu->addAction(QIcon(), tr("Check Index"));
+		m_rowMenu->addAction(QIcon(), tr("Check Google Cache"));
+		m_rowMenu->addAction(QIcon(), tr("Open robots.txt"));
+		m_rowMenu->addAction(QIcon(), tr("Show Other Domains on IP"));
+		m_rowMenu->addAction(QIcon(), tr("Check HTML With W3C Validator"));
 	}
 
-// 	m_rowMenu->addAction(QIcon(), "Test");
-// 
-// 	m_rowMenu->move(event->x(), event->y());
-// 	m_rowMenu->show();
+	QPoint globalPosition = event->globalPos();
+
+	m_rowMenu->move(globalPosition.x(), globalPosition.y());
+	m_rowMenu->show();
 }
 
 IModelDataAccessor* GridView::dataAccessor()
