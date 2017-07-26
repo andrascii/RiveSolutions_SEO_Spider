@@ -81,10 +81,20 @@ int ModelDataAccessorAllItems::rowCount() const
 	
 QVariant ModelDataAccessorAllItems::itemValue(const QModelIndex& index) const
 {
-	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
-	PageInfo::ItemType info = static_cast<PageInfo::ItemType>(m_columns[index.column()]);
+	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
 
-	return (*storage)[index.row()]->itemValue(info);
+	PageInfo::ItemType info = m_columns[index.column()];
+
+	return storage[index.row()]->itemValue(info);
+}
+
+QVariant ModelDataAccessorAllItems::itemValue(int row, int column) const
+{
+	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
+
+	PageInfo::ItemType info = m_columns[column];
+
+	return storage[row]->itemValue(info);
 }
 
 QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex& index) const
@@ -129,19 +139,20 @@ IGridViewResizeStrategy* ModelDataAccessorAllItems::resizeStrategy() const
 	return m_resizeStrategy.get();
 }
 
-std::unique_ptr<ModelDataAccessorFactoryParams> ModelDataAccessorAllItems::childViewParams(const QItemSelection& selection) const
+ModelDataAccessorFactoryParams ModelDataAccessorAllItems::childViewParams(const QItemSelection& selection) const
 {
-	using FP = ModelDataAccessorFactoryParams;
 	QModelIndexList indicies = selection.indexes();
+
 	if (indicies.isEmpty())
 	{
-		return std::make_unique<FP>(FP::TypeInvalid, FP::ModeGeneral);
+		return ModelDataAccessorFactoryParams(ModelDataAccessorFactoryParams::TypeInvalid, ModelDataAccessorFactoryParams::ModeGeneral);
 	}
 
 	QModelIndex index = indicies.first();
 	assert(index.isValid());
 
-	return std::make_unique<FP>(static_cast<FP::Type>(m_storageType), FP::ModeOneRow, index.row());
+	return ModelDataAccessorFactoryParams(static_cast<ModelDataAccessorFactoryParams::Type>(m_storageType), 
+		ModelDataAccessorFactoryParams::ModeOneRow, index.row());
 }
 
 

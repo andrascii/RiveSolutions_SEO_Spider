@@ -17,17 +17,19 @@ class ModelDataAccessorAllItems
 public:
 	ModelDataAccessorAllItems(DataCollection::StorageType storageType);
 	~ModelDataAccessorAllItems();
+
 	virtual int columnCount() const override;
+	virtual int rowCount() const override;
+
 	virtual QString columnText(int column) const override;
 
-	virtual int rowCount() const override;
 	virtual QVariant itemValue(const QModelIndex& index) const override;
+	virtual QVariant itemValue(int row, int column) const override;
+
 	virtual QColor itemBackgroundColor(const QModelIndex& index) const override;
 	virtual int itemColSpan(const QModelIndex& index) const override;
 	virtual int flags(const QModelIndex& index) const override;
-
 	virtual QPixmap* pixmap(const QModelIndex& index) const override;
-
 	virtual QObject* qobject() override;
 
 	// signals
@@ -39,7 +41,7 @@ public:
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
-	virtual std::unique_ptr<ModelDataAccessorFactoryParams> childViewParams(const QItemSelection& selection) const override;
+	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
 
 protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
@@ -47,8 +49,11 @@ protected:
 
 protected:
 	const DataCollection* m_modelControllerData;
+
 	DataCollection::StorageType m_storageType;
-	QVector<int> m_columns;
+
+	QVector<PageInfo::ItemType> m_columns;
+
 	std::unique_ptr<GridViewResizeStrategy> m_resizeStrategy;
 };
 

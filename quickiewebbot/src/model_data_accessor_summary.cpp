@@ -123,15 +123,34 @@ int ModelDataAccessorSummary::rowCount() const
 
 QVariant ModelDataAccessorSummary::itemValue(const QModelIndex& index) const
 {
-	auto groupIt = m_groupByRowRefs.find(index.row());
-	if (groupIt != m_groupByRowRefs.end())
+	auto groupIterator = m_groupByRowRefs.find(index.row());
+
+	if (groupIterator != m_groupByRowRefs.end())
 	{
-		return groupIt->second->groupName;
+		return groupIterator->second->groupName;
 	}
 
-	auto itemIt = m_itemByRowRefs.find(index.row());
-	assert(itemIt != m_itemByRowRefs.end());
-	return index.column() == 0 ? QVariant(itemIt->second->name) : QVariant(itemIt->second->issueCount);
+	auto itemIterator = m_itemByRowRefs.find(index.row());
+
+	assert(itemIterator != m_itemByRowRefs.end());
+
+	return index.column() == 0 ? QVariant(itemIterator->second->name) : QVariant(itemIterator->second->issueCount);
+}
+
+QVariant ModelDataAccessorSummary::itemValue(int row, int column) const
+{
+	auto groupIterator = m_groupByRowRefs.find(row);
+
+	if (groupIterator != m_groupByRowRefs.end())
+	{
+		return groupIterator->second->groupName;
+	}
+
+	auto itemIterator = m_itemByRowRefs.find(row);
+
+	assert(itemIterator != m_itemByRowRefs.end());
+
+	return column == 0 ? QVariant(itemIterator->second->name) : QVariant(itemIterator->second->issueCount);
 }
 
 QColor ModelDataAccessorSummary::itemBackgroundColor(const QModelIndex& index) const
@@ -182,13 +201,13 @@ QObject* ModelDataAccessorSummary::qobject()
 	return this;
 }
 
-std::unique_ptr<ModelDataAccessorFactoryParams> ModelDataAccessorSummary::childViewParams(const QItemSelection& selection) const
+ModelDataAccessorFactoryParams ModelDataAccessorSummary::childViewParams(const QItemSelection& selection) const
 {
 	using FP = ModelDataAccessorFactoryParams;
 	QModelIndexList indicies = selection.indexes();
 	if (indicies.isEmpty())
 	{
-		return std::make_unique<ModelDataAccessorFactoryParams>(ModelDataAccessorFactoryParams::TypeInvalid);
+		return ModelDataAccessorFactoryParams(ModelDataAccessorFactoryParams::TypeInvalid);
 	}
 
 	QModelIndex index = indicies.first();
@@ -199,7 +218,7 @@ std::unique_ptr<ModelDataAccessorFactoryParams> ModelDataAccessorSummary::childV
 	assert(itemIt != m_itemByRowRefs.end());
 
 	auto accessorType = static_cast<ModelDataAccessorFactoryParams::Type>(itemIt->second->id);
-	return std::make_unique<ModelDataAccessorFactoryParams>(ModelDataAccessorFactoryParams(accessorType, ModelDataAccessorFactoryParams::ModeSummary));
+	return ModelDataAccessorFactoryParams(accessorType, ModelDataAccessorFactoryParams::ModeSummary);
 }
 
 IGridViewResizeStrategy* ModelDataAccessorSummary::resizeStrategy() const

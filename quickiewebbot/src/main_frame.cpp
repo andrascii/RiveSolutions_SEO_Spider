@@ -8,6 +8,8 @@
 #include "web_crawler.h"
 #include "grid_view_full_size_resize_strategy.h"
 #include "quickie_web_bot_helpers.h"
+#include "grid_view_model.h"
+#include "context_menu_data_collection_row.h"
 
 namespace QuickieWebBot
 {
@@ -15,6 +17,7 @@ namespace QuickieWebBot
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
 	, m_proxySettingsDialog(nullptr)
+	, m_limitsSettingsDialog(nullptr)
 {
 	initialize();
 }
@@ -39,18 +42,30 @@ void MainFrame::showProxySettingsDialog()
 	m_proxySettingsDialog->exec();
 }
 
+void MainFrame::showLimitsSettingsDialog()
+{
+	if (!m_limitsSettingsDialog)
+	{
+		m_limitsSettingsDialog = new LimitsSettingsDialog(this);
+	}
+
+	m_limitsSettingsDialog->exec();
+}
+
 void MainFrame::initialize()
 {
 	m_ui.setupUi(this);
 
  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
+	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
 
 	GridViewModel* model = new GridViewModel(this);
 
 	ModelDataAccessorFactory factory;
 	model->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingGridView->setModel(model);
+	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 
 	GridViewModel* summaryModel = new GridViewModel(this);
 	summaryModel->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "imodel_data_accessor.h"
-
 namespace QuickieWebBot
 {
+
+class IModelDataAccessor;
 
 class GridViewModel 
 	: public QAbstractTableModel
@@ -19,15 +19,18 @@ public:
 
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-	virtual bool insertRows(int row, int count, const QModelIndex & parent = QModelIndex()) override;
-	virtual bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex()) override;
+	virtual bool insertRows(int row, int count, const QModelIndex& parent = QModelIndex()) override;
+	virtual bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex()) override;
 
 	virtual bool insertColumns(int column, int count, QModelIndex const& parent = QModelIndex()) override;
 	virtual bool removeColumns(int column, int count, QModelIndex const& parent = QModelIndex()) override;
 
 	void setModelDataAccessor(std::unique_ptr<IModelDataAccessor> accessor);
-	IModelDataAccessor* modelDataAcessor() const;
-	IGridViewResizeStrategy* resizeStrategy() const;
+	const IModelDataAccessor* modelDataAcessor() const;
+	IModelDataAccessor* modelDataAcessor();
+
+	const IGridViewResizeStrategy* resizeStrategy() const;
+	IGridViewResizeStrategy* resizeStrategy();
 
 	Q_SIGNAL void colspan(const QModelIndex& index, int span) const;
 	Q_SIGNAL void modelDataAccessorChanged(IModelDataAccessor* accessor, IModelDataAccessor* oldAccessor);

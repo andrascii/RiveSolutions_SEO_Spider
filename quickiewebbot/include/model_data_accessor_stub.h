@@ -48,8 +48,23 @@ public:
 		{
 			return QUrl("http://google.com");
 		}
-		
+
 		return QLatin1String("Item Text") + QString::number(index.row()) + QString::number(index.column());
+	}
+
+	virtual QVariant itemValue(int row, int column) const override
+	{
+		if (column == 3)
+		{
+			return QVariant();
+		}
+
+		if (column == 2)
+		{
+			return QUrl("http://google.com");
+		}
+
+		return QLatin1String("Item Text") + QString::number(row) + QString::number(column);
 	}
 
 	virtual int flags(const QModelIndex& index) const override

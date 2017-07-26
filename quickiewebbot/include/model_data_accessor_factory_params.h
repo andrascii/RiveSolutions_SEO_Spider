@@ -1,4 +1,5 @@
 #pragma once
+
 #include "data_collection.h"
 
 namespace QuickieWebBot
