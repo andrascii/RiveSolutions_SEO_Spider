@@ -15,6 +15,7 @@ namespace QuickieWebBot
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
 	, m_proxySettingsDialog(nullptr)
+	, m_limitsSettingsDialog(nullptr)
 {
 	initialize();
 }
@@ -39,12 +40,23 @@ void MainFrame::showProxySettingsDialog()
 	m_proxySettingsDialog->exec();
 }
 
+void MainFrame::showLimitsSettingsDialog()
+{
+	if (!m_limitsSettingsDialog)
+	{
+		m_limitsSettingsDialog = new LimitsSettingsDialog(this);
+	}
+
+	m_limitsSettingsDialog->exec();
+}
+
 void MainFrame::initialize()
 {
 	m_ui.setupUi(this);
 
  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
+	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
 
 	GridViewModel* model = new GridViewModel(this);
 

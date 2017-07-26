@@ -288,11 +288,21 @@ QScrollBar::sub-page:vertical
 	background: none;
 }
 
+/*/////////////////////////////// Limits Settings Widget //////////////////////////////*/
+QWidget#LimitsSettingsDialog QLabel
+{
+	color: #494949;
+}
+
 /*/////////////////////////////// Proxy Settings Widget ///////////////////////////////*/
 
 QWidget#ProxySettingsDialog
 {
 	background: #343B49;
+	min-width: 40em;
+	max-width: 40em;
+	min-height: 28em;
+	max-height: 28em;
 }
 
 QWidget#ProxySettingsDialog QLabel,
@@ -306,19 +316,21 @@ QWidget#ProxySettingsDialog QFrame#headerFrame
 	min-height: 8em;
 	background: white;
 	padding: 0.5em;
+	border: 0.05em solid #c3c3c3;
 }
 
 QWidget#ProxySettingsDialog QLabel#headerName
 {
 	font-size: 16pt;
-	min-height: 3em;
+	min-height: 2em;
 	color: #61a032;
 }
 
 QWidget#ProxySettingsDialog QFrame#settingsFrame
 {
 	background: #e7e7e7;
-	padding: 0.5em;
+	padding: 1em;
+	border: 0.05em solid #c3c3c3;
 }
 
 /*/////////////////////////////// Splitters ///////////////////////////////*/

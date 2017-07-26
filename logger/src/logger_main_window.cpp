@@ -90,7 +90,8 @@ void LoggerMainWindow::slotApplyTypeFilter(const QString& type)
 
 void LoggerMainWindow::slotTryToShowNewMessage()
 {
-	if (m_currentTypeFilter == NoType || m_incomingMessages.last().type == m_currentTypeFilter)
+	if ((m_currentTypeFilter == NoType || m_incomingMessages.last().type == m_currentTypeFilter) &&
+		(m_currentStringFilter.isEmpty() || m_incomingMessages.last().toString().contains(m_currentStringFilter, Qt::CaseInsensitive)))
 	{
 		ui.textBrowser->setTextColor(identifyMessageColor(m_incomingMessages.last().type));
 		ui.textBrowser->append(m_incomingMessages.last().toString());
