@@ -1,9 +1,8 @@
 #include "model_data_accessor_one_item.h"
+#include "grid_view_full_size_resize_strategy.h"
 
 namespace QuickieWebBot
 {
-
-
 
 ModelDataAccessorOneItem::ModelDataAccessorOneItem(DataCollection::StorageType storageType, int row)
 	: ModelDataAccessorAllItems(storageType)
@@ -13,12 +12,13 @@ ModelDataAccessorOneItem::ModelDataAccessorOneItem(DataCollection::StorageType s
 
 int ModelDataAccessorOneItem::columnCount() const
 {
-	return 1;
+	return 2;
 }
 
 QString ModelDataAccessorOneItem::columnText(int column) const
 {
-	return ModelDataAccessorAllItems::columnText(column);
+	return QString();
+	//return ModelDataAccessorAllItems::columnText(column);
 }
 
 int ModelDataAccessorOneItem::rowCount() const
@@ -28,6 +28,11 @@ int ModelDataAccessorOneItem::rowCount() const
 
 QVariant ModelDataAccessorOneItem::itemValue(const QModelIndex& index) const
 {
+	if (index.column() == 0)
+	{
+		return ModelDataAccessorAllItems::columnText(index.row());
+	}
+
 	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
 	PageInfo::ItemType info = static_cast<PageInfo::ItemType>(m_columns[index.row()]);
 
@@ -52,6 +57,12 @@ int ModelDataAccessorOneItem::flags(const QModelIndex& index) const
 QPixmap* ModelDataAccessorOneItem::pixmap(const QModelIndex& index) const
 {
 	return nullptr;
+}
+
+IGridViewResizeStrategy* ModelDataAccessorOneItem::resizeStrategy() const
+{
+	static GridViewFullSizeResizeStrategy s_resizeStrategy({ 35, 65 });
+	return &s_resizeStrategy;
 }
 
 void ModelDataAccessorOneItem::onModelDataRowAddedInternal(int row, int type)

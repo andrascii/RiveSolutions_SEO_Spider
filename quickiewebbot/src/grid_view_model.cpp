@@ -24,7 +24,6 @@ QVariant GridViewModel::data(QModelIndex const& index, int role) const
 {
 	if (role == Qt::DisplayRole)
 	{
-		emit colspan(index, m_accessor->itemColSpan(index));
 		return m_accessor->itemValue(index);
 	}
 
@@ -59,8 +58,8 @@ QVariant GridViewModel::headerData(int section, Qt::Orientation orientation, int
 {
 	if (orientation == Qt::Vertical)
 	{
-		//return m_accessor->columnText(section);
-		return QVariant();
+		return m_accessor->columnText(section);
+		//return QVariant();
 	}
 
 	if (role == Qt::DisplayRole)

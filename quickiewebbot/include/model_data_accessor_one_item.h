@@ -19,6 +19,7 @@ public:
 	virtual int flags(const QModelIndex& index) const override;
 
 	virtual QPixmap* pixmap(const QModelIndex& index) const override;
+	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 protected:
 	virtual void onModelDataRowAddedInternal(int row, int type) override;

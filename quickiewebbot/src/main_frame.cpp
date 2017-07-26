@@ -56,11 +56,13 @@ void MainFrame::initialize()
 	summaryModel->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
 
 	m_ui.summaryGridView->setModel(summaryModel);
-	//m_ui.summaryGridView->setColumnResizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }));
 
 
 	VERIFY(connect(m_ui.summaryGridView, SIGNAL(childViewParamsChanged(const ModelDataAccessorFactoryParams&)), 
 		m_ui.summaryDetailsGridView, SLOT(setParams(const ModelDataAccessorFactoryParams&))));
+
+	VERIFY(connect(m_ui.crawlingGridView, SIGNAL(childViewParamsChanged(const ModelDataAccessorFactoryParams&)),
+		m_ui.itemGridView, SLOT(setParams(const ModelDataAccessorFactoryParams&))));
 
 	m_ui.summaryGridView->setMinimumWidth(QuickieWebBotHelpers::pointsToPixels(350));
 }

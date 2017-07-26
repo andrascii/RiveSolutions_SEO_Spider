@@ -96,7 +96,14 @@
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QuickieWebBot::GridView" name="itemGridView"/>
+          <widget class="QuickieWebBot::GridView" name="itemGridView">
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+          </widget>
          </widget>
         </item>
        </layout>

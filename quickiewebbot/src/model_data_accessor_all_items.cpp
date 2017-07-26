@@ -70,7 +70,8 @@ int ModelDataAccessorAllItems::columnCount() const
 	
 QString ModelDataAccessorAllItems::columnText(int column) const
 {
-	return PageInfo::itemTitle(static_cast<PageInfo::ItemType>(m_columns[column]));
+	return m_columns.size() > column 
+		? PageInfo::itemTitle(static_cast<PageInfo::ItemType>(m_columns[column])) : QString();
 }
 	
 int ModelDataAccessorAllItems::rowCount() const
@@ -140,7 +141,7 @@ std::unique_ptr<ModelDataAccessorFactoryParams> ModelDataAccessorAllItems::child
 	QModelIndex index = indicies.first();
 	assert(index.isValid());
 
-	return std::make_unique<FP>(static_cast<FP::Type>(m_storageType), FP::ModeOneRow);
+	return std::make_unique<FP>(static_cast<FP::Type>(m_storageType), FP::ModeOneRow, index.row());
 }
 
 
