@@ -28,17 +28,21 @@ int ModelDataAccessorOneItem::rowCount() const
 
 QVariant ModelDataAccessorOneItem::itemValue(const QModelIndex& index) const
 {
-	if (index.column() == 0)
-	{
-		return ModelDataAccessorAllItems::columnText(index.row());
-	}
-
-	const DataCollection::GuiStorageType* storage = m_modelControllerData->guiStorage(m_storageType);
-	PageInfo::ItemType info = static_cast<PageInfo::ItemType>(m_columns[index.row()]);
+	return itemValue(index.row(), index.column());
+}
 
 QVariant ModelDataAccessorOneItem::itemValue(int row, int column) const
 {
-	return ModelDataAccessorAllItems::itemValue(row, column);
+	if (column == 0)
+	{
+		return ModelDataAccessorAllItems::columnText(row);
+	}
+
+	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
+
+	PageInfo::ItemType info = m_columns[row];
+
+	return storage[m_row]->itemValue(info);
 }
 
 QColor ModelDataAccessorOneItem::itemBackgroundColor(const QModelIndex& index) const
