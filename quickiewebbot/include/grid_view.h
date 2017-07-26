@@ -18,7 +18,6 @@ public:
 	virtual void setModel(QAbstractItemModel* model) override;
 
 	IModelDataAccessor* dataAccessor();
-
 	QModelIndex hoveredIndex() const;
 
 	Q_SLOT void setParams(const ModelDataAccessorFactoryParams& params);
@@ -37,6 +36,8 @@ protected:
 private:
 	void updateColumnsSpan();
 	void updateCursor(int flags);
+
+	int rowNumberAtPoint(const QPoint& point) const noexcept;
 
 private:
 	GridViewModel* m_gridViewModel;

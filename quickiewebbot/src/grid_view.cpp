@@ -162,13 +162,13 @@ void GridView::setParams(const ModelDataAccessorFactoryParams& params)
 	}
 
 	ModelDataAccessorFactory factory;
+
 	if (m_gridViewModel == nullptr)
 	{
 		GridViewModel* model = new GridViewModel(this);
 		model->setModelDataAccessor(factory.getModelDataAccessor(params));
 
 		setModel(model);
-
 		return;
 	}
 
@@ -225,6 +225,14 @@ void GridView::updateCursor(int flags)
 		QApplication::restoreOverrideCursor();
 		m_isCursorOverriden = false;
 	}
+}
+
+int GridView::rowNumberAtPoint(const QPoint& point) const noexcept
+{
+	//
+	// TODO: implement getting row number at specified point by viewport
+	//
+	return 0;
 }
 
 }
