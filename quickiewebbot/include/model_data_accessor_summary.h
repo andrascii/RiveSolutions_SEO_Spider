@@ -27,7 +27,7 @@ public:
 
 	virtual QObject* qobject() override;
 
-	virtual std::unique_ptr<ModelDataAccessorFactoryParams> childViewParams(const QItemSelection& selection) const override;
+	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 	// signals

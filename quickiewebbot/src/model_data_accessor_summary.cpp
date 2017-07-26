@@ -182,13 +182,13 @@ QObject* ModelDataAccessorSummary::qobject()
 	return this;
 }
 
-std::unique_ptr<ModelDataAccessorFactoryParams> ModelDataAccessorSummary::childViewParams(const QItemSelection& selection) const
+ModelDataAccessorFactoryParams ModelDataAccessorSummary::childViewParams(const QItemSelection& selection) const
 {
 	using FP = ModelDataAccessorFactoryParams;
 	QModelIndexList indicies = selection.indexes();
 	if (indicies.isEmpty())
 	{
-		return std::make_unique<ModelDataAccessorFactoryParams>(ModelDataAccessorFactoryParams::TypeInvalid);
+		return ModelDataAccessorFactoryParams(ModelDataAccessorFactoryParams::TypeInvalid);
 	}
 
 	QModelIndex index = indicies.first();
@@ -199,7 +199,7 @@ std::unique_ptr<ModelDataAccessorFactoryParams> ModelDataAccessorSummary::childV
 	assert(itemIt != m_itemByRowRefs.end());
 
 	auto accessorType = static_cast<ModelDataAccessorFactoryParams::Type>(itemIt->second->id);
-	return std::make_unique<ModelDataAccessorFactoryParams>(ModelDataAccessorFactoryParams(accessorType, ModelDataAccessorFactoryParams::ModeSummary));
+	return ModelDataAccessorFactoryParams(accessorType, ModelDataAccessorFactoryParams::ModeSummary);
 }
 
 IGridViewResizeStrategy* ModelDataAccessorSummary::resizeStrategy() const

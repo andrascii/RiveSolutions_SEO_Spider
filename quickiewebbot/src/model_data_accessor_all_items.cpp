@@ -128,19 +128,20 @@ IGridViewResizeStrategy* ModelDataAccessorAllItems::resizeStrategy() const
 	return m_resizeStrategy.get();
 }
 
-std::unique_ptr<ModelDataAccessorFactoryParams> ModelDataAccessorAllItems::childViewParams(const QItemSelection& selection) const
+ModelDataAccessorFactoryParams ModelDataAccessorAllItems::childViewParams(const QItemSelection& selection) const
 {
-	using FP = ModelDataAccessorFactoryParams;
 	QModelIndexList indicies = selection.indexes();
+
 	if (indicies.isEmpty())
 	{
-		return std::make_unique<FP>(FP::TypeInvalid, FP::ModeGeneral);
+		return ModelDataAccessorFactoryParams(ModelDataAccessorFactoryParams::TypeInvalid, ModelDataAccessorFactoryParams::ModeGeneral);
 	}
 
 	QModelIndex index = indicies.first();
 	assert(index.isValid());
 
-	return std::make_unique<FP>(static_cast<FP::Type>(m_storageType), FP::ModeOneRow);
+	return ModelDataAccessorFactoryParams(static_cast<ModelDataAccessorFactoryParams::Type>(m_storageType), 
+		ModelDataAccessorFactoryParams::ModeOneRow);
 }
 
 

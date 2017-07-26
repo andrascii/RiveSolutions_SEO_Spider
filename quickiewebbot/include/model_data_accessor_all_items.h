@@ -39,7 +39,7 @@ public:
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const override;
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
-	virtual std::unique_ptr<ModelDataAccessorFactoryParams> childViewParams(const QItemSelection& selection) const override;
+	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
 
 protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
