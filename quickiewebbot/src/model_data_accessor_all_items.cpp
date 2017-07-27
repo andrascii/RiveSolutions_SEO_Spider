@@ -93,6 +93,13 @@ QVariant ModelDataAccessorAllItems::itemValue(int row, int column) const
 	return storage[row]->itemValue(info);
 }
 
+PageInfoPtr ModelDataAccessorAllItems::pageInfoAtRow(int row) const
+{
+	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
+
+	return storage[row];
+}
+
 QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex& index) const
 {
 	return Qt::transparent;

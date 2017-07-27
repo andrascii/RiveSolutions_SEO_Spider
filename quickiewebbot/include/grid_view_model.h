@@ -1,9 +1,9 @@
 #pragma once
 
+#include "imodel_data_accessor.h"
+
 namespace QuickieWebBot
 {
-
-class IModelDataAccessor;
 
 class GridViewModel 
 	: public QAbstractTableModel

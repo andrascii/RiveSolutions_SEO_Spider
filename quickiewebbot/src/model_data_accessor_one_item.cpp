@@ -45,6 +45,18 @@ QVariant ModelDataAccessorOneItem::itemValue(int row, int column) const
 	return storage[m_row]->itemValue(info);
 }
 
+PageInfoPtr ModelDataAccessorOneItem::pageInfoAtRow(int row) const
+{
+	//
+	// Because this accessor type refers to only one PageInfo
+	//
+	Q_UNUSED(row);
+
+	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
+
+	return storage[m_row];
+}
+
 QColor ModelDataAccessorOneItem::itemBackgroundColor(const QModelIndex& index) const
 {
 	return QColor();

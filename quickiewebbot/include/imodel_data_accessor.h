@@ -34,6 +34,8 @@ public:
 	virtual QVariant itemValue(const QModelIndex& index) const = 0;
 	virtual QVariant itemValue(int row, int column) const = 0;
 
+	virtual PageInfoPtr pageInfoAtRow(int row) const = 0;
+
 	virtual QColor itemBackgroundColor(const QModelIndex& index) const = 0;
 	virtual QColor itemTextColor(const QModelIndex& index) const = 0;
 	virtual int itemColSpan(const QModelIndex& index) const = 0;

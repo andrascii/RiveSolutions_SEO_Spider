@@ -1,7 +1,6 @@
 #include "application.h"
 #include "main_frame.h"
 #include "model_controller.h"
-#include "model_data_accessor_stub.h"
 #include "model_data_accessor_factory.h"
 #include "data_collection.h"
 #include "grid_view_extension.h"

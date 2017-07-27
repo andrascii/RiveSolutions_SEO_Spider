@@ -18,6 +18,8 @@ public:
 	virtual QVariant itemValue(const QModelIndex& index) const override;
 	virtual QVariant itemValue(int row, int column) const override;
 
+	virtual PageInfoPtr pageInfoAtRow(int row) const override;
+
 	virtual QColor itemBackgroundColor(const QModelIndex& index) const override;
 	virtual int itemColSpan(const QModelIndex& index) const override;
 	virtual int flags(const QModelIndex& index) const override;

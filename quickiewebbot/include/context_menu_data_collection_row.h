@@ -1,5 +1,7 @@
 #pragma once
 
+#include "page_info.h"
+
 namespace QuickieWebBot
 {
 	
@@ -10,16 +12,24 @@ class ContextMenuDataCollectionRow : public QMenu
 	Q_OBJECT
 
 public:
-	ContextMenuDataCollectionRow(const QAbstractItemView* associatedAbstractView, QWidget* parent = nullptr);
+	ContextMenuDataCollectionRow(const GridView* associatedGridView, QWidget* parent = nullptr);
+	
+private:
+	PageInfoPtr pageInfoAtPopuppedPoint() const noexcept;
+	QModelIndex popuppedPointModelIndex() const noexcept;
+	QModelIndexList selectedRowsList() const noexcept;
+	GridViewModel* model() const noexcept;
 
 private slots:
 	void openUrlAction();
+	void copyToClipboardAllColumnsData();
+	void copyToClipboardAllPages();
+	void copyToClipboardUrl();
 
 private:
-	const QAbstractItemView* m_associatedAbstractView;
+	const GridView* m_associatedGridView;
 
 	QAction* m_openUrlAction;
-	QAction* m_copyAction;
 	QAction* m_refreshAllResultsAction;
 	QAction* m_removeRowAction;
 	QAction* m_checkIndexAction;
@@ -27,6 +37,11 @@ private:
 	QAction* m_openRobotsTxtAction;
 	QAction* m_showOtherDomainsOnIpAction;
 	QAction* m_checkHtmlAction;
+
+	QAction* m_copyToClipboardAllColumnsAction;
+	QAction* m_copyToClipboardAllPagesAction;
+	QAction* m_copyToClipboardUrlAction;
+
 };
 
 }

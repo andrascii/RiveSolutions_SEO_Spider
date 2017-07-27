@@ -8,6 +8,7 @@ namespace QuickieWebBot
 class GridViewModel;
 class IModelDataAccessor;
 class IGridViewResizeStrategy;
+class ContextMenuDataCollectionRow;
 
 class GridView : public QTableView
 {
@@ -21,7 +22,7 @@ public:
 	IModelDataAccessor* dataAccessor();
 	QModelIndex hoveredIndex() const;
 
-	void setContextMenu(QMenu* menu);
+	void setContextMenu(ContextMenuDataCollectionRow* menu);
 
 	Q_SLOT void setParams(const ModelDataAccessorFactoryParams& params);
 	Q_SIGNAL void childViewParamsChanged(const ModelDataAccessorFactoryParams& params);
@@ -45,7 +46,7 @@ private:
 	GridViewModel* m_gridViewModel;
 	QModelIndex m_hoveredIndex;
 	bool m_isCursorOverriden;
-	QMenu* m_contextMenu;
+	ContextMenuDataCollectionRow* m_contextMenu;
 };
 
 }

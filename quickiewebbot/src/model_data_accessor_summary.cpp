@@ -153,6 +153,12 @@ QVariant ModelDataAccessorSummary::itemValue(int row, int column) const
 	return column == 0 ? QVariant(itemIterator->second->name) : QVariant(itemIterator->second->issueCount);
 }
 
+PageInfoPtr ModelDataAccessorSummary::pageInfoAtRow(int row) const
+{
+	assert(!"This type don't implement this call");
+	return PageInfoPtr();
+}
+
 QColor ModelDataAccessorSummary::itemBackgroundColor(const QModelIndex& index) const
 {
 	return QColor();

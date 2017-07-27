@@ -4,7 +4,7 @@
 #include "igrid_view_resize_strategy.h"
 #include "grid_view_selection_model.h"
 #include "grid_view_delegate.h"
-
+#include "context_menu_data_collection_row.h"
 
 namespace QuickieWebBot
 {
@@ -142,7 +142,7 @@ QModelIndex GridView::hoveredIndex() const
 	return m_hoveredIndex;
 }
 
-void GridView::setContextMenu(QMenu* menu)
+void GridView::setContextMenu(ContextMenuDataCollectionRow* menu)
 {
 	m_contextMenu = menu;
 }

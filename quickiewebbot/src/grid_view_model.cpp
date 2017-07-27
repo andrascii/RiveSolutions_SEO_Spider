@@ -1,7 +1,6 @@
 #include "application.h"
 #include "grid_view_model.h"
 #include "quickie_web_bot_helpers.h"
-#include "imodel_data_accessor.h"
 
 namespace QuickieWebBot
 {
