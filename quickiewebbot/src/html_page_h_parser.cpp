@@ -45,7 +45,7 @@ void HtmlPageHParser::recurseSearch(const GumboNode* node, GumboTag tag, std::ve
 
 	if (node->v.element.tag == tag && node->v.element.children.length > 0)
 	{
-		const GumboNode* tagData;
+		const GumboNode* tagData = nullptr;
 
 		for (unsigned int i = 0; i < node->v.element.children.length; ++i)
 		{
@@ -78,9 +78,11 @@ void HtmlPageHParser::recurseSearchText(const GumboNode* node, std::vector<QStri
 		}
 		else
 		{
+			const GumboNode* tagData = nullptr;
+
 			for (unsigned int i = 0; i < node->v.element.children.length; ++i)
 			{
-				const GumboNode* tagData = static_cast<const GumboNode*>(node->v.element.children.data[i]);
+				tagData = static_cast<const GumboNode*>(node->v.element.children.data[i]);
 
 				recurseSearchText(tagData, container);
 			}
