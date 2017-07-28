@@ -28,6 +28,7 @@ struct PageInfo
 		PageSizeKbItemType,
 		WordCountItemType,
 		PageHashItemType,
+		UrlLengthItemType,
 		TitleLengthItemType,
 		MetaDescriptionLengthItemType,
 		MetaKeywordsLengthItemType,
@@ -35,15 +36,20 @@ struct PageInfo
 		SecondH1LengthItemType,
 		FirstH2LengthItemType,
 		SecondH2LengthItemType,
+		AltTextItemType,
+		AltTextLengthItemType,
+		ImageSizeKbItemType,
 
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		PageInfoItemTypeLast
 	};
 
 	static QString itemTitle(ItemType item);
+	static int columnPrefferedSize(ItemType item);
 
 	QVariant itemValue(ItemType item);
 	void setItemValue(const QVariant& value, ItemType item);
+	
 
 private:
 	void setUrl(const QVariant& value);
@@ -84,6 +90,7 @@ private:
 	QVariant acceptSecondH2();
 	QVariant acceptCanonicalLinkElement();
 	QVariant acceptStatusCode();
+	QVariant acceptUrlLength();
 	QVariant acceptTitleLength();
 	QVariant acceptMetaDescriptionLength();
 	QVariant acceptMetaKeywordsLength();

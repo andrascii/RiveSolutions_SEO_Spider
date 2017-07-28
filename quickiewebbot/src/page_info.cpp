@@ -1,4 +1,5 @@
 #include "page_info.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -7,7 +8,7 @@ QString PageInfo::itemTitle(ItemType item)
 {
 	checkInfoItem(item);
 
-	static std::map<ItemType, QString> s_titles
+	static QMap<ItemType, QString> s_titles
 	{
 		{ UrlItemType, "Url" },
 		{ ContentItemType, "Content" },
@@ -24,6 +25,7 @@ QString PageInfo::itemTitle(ItemType item)
 		{ SecondH2ItemType,"Second H2" },
 		{ CanonicalLinkElementItemType, "Canonical Link Element" },
 		{ StatusCodeItemType, "Status Code" },
+		{ UrlLengthItemType, "Url Length" },
 		{ TitleLengthItemType, "Title Length" },
 		{ MetaDescriptionLengthItemType, "Meta Description Length" },
 		{ MetaKeywordsLengthItemType, "Meta Keywords Length" },
@@ -33,10 +35,53 @@ QString PageInfo::itemTitle(ItemType item)
 		{ SecondH2LengthItemType, "Second H2 Length" },
 		{ PageSizeKbItemType, "Page Size Kilobytes" },
 		{ WordCountItemType, "Word Count" },
-		{ PageHashItemType, "Page Hash" }
+		{ PageHashItemType, "Page Hash" },
+		{ AltTextItemType, "Alt Text" },
+		{ AltTextLengthItemType, "Alt Text Length" },
+		{ ImageSizeKbItemType, "Image Size KB" }
 	};
 
-	return s_titles[item];
+	return s_titles.value(item, QString::null);
+}
+
+int PageInfo::columnPrefferedSize(ItemType item)
+{
+	static QMap<ItemType, double> s_prefferedSizes
+	{
+		{ UrlItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ TitleItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ContentItemType, QuickieWebBotHelpers::pointsToPixels(200) },
+		{ MetaRefreshItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ MetaRobotsItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ MetaDescriptionItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ MetaKeywordsItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ RedirectedUrlItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ServerResponseItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ FirstH1ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ SecondH1ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ FirstH2ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ SecondH2ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ CanonicalLinkElementItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ StatusCodeItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ PageSizeKbItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ WordCountItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ PageHashItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ TitleLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ UrlLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ MetaDescriptionLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ MetaKeywordsLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ FirstH1LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ SecondH1LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ FirstH2LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ SecondH2LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ AltTextItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ AltTextLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ImageSizeKbItemType, QuickieWebBotHelpers::pointsToPixels(100) }
+	};
+
+	int result = s_prefferedSizes.value(item, -1);
+	assert(result >= 0);
+	return result;
 }
 
 QVariant PageInfo::itemValue(ItemType item)
@@ -151,7 +196,6 @@ void PageInfo::setItemValue(const QVariant& value, ItemType item)
 
 	(this->*setItemFunction)(value);
 }
-
 
 void PageInfo::setUrl(const QVariant& value)
 {
@@ -302,6 +346,7 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 		case SecondH2ItemType: return &PageInfo::acceptSecondH2;
 		case CanonicalLinkElementItemType: return &PageInfo::acceptCanonicalLinkElement;
 		case StatusCodeItemType: return &PageInfo::acceptStatusCode;
+		case UrlLengthItemType: return &PageInfo::acceptUrlLength;
 		case TitleLengthItemType: return &PageInfo::acceptTitleLength;
 		case MetaDescriptionLengthItemType: return &PageInfo::acceptMetaDescriptionLength;
 		case MetaKeywordsLengthItemType: return &PageInfo::acceptMetaKeywordsLength;
@@ -391,6 +436,11 @@ QVariant PageInfo::acceptCanonicalLinkElement()
 QVariant PageInfo::acceptStatusCode()
 {
 	return m_statusCode;
+}
+
+QVariant PageInfo::acceptUrlLength()
+{
+	return m_url.toString().length();
 }
 
 QVariant PageInfo::acceptTitleLength()

@@ -11,50 +11,53 @@
 namespace QuickieWebBot
 {
 
-ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType storageType)
+ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType storageType, std::vector<PageInfo::ItemType> columns)
 	: m_modelControllerData(nullptr)
 	, m_storageType(storageType)
+	, m_columns(columns)
 	, m_resizeStrategy(std::make_unique<GridViewResizeStrategy>())
 {
-	m_columns =
+	if (m_columns.size() == 0)
 	{
-		PageInfo::UrlItemType,
-		PageInfo::ContentItemType,
-		PageInfo::TitleItemType,
-		PageInfo::TitleLengthItemType,
-		PageInfo::MetaRefreshItemType,
-		PageInfo::MetaRobotsItemType,
-		PageInfo::RedirectedUrlItemType,
-		PageInfo::MetaDescriptionItemType,
-		PageInfo::MetaDescriptionLengthItemType,
-		PageInfo::MetaKeywordsItemType,
-		PageInfo::MetaKeywordsLengthItemType,
-		PageInfo::FirstH1ItemType,
-		PageInfo::FirstH1LengthItemType,
-		PageInfo::SecondH1ItemType,
-		PageInfo::SecondH1LengthItemType,
-		PageInfo::FirstH2ItemType,
-		PageInfo::FirstH2LengthItemType,
-		PageInfo::SecondH2ItemType,
-		PageInfo::SecondH2LengthItemType,
-		PageInfo::CanonicalLinkElementItemType,
-		PageInfo::StatusCodeItemType,
-		PageInfo::PageSizeKbItemType,
-		PageInfo::WordCountItemType,
-		PageInfo::PageHashItemType
-	};
+		m_columns =
+		{
+			PageInfo::UrlItemType,
+			PageInfo::ContentItemType,
+			PageInfo::TitleItemType,
+			PageInfo::TitleLengthItemType,
+			PageInfo::MetaRefreshItemType,
+			PageInfo::MetaRobotsItemType,
+			PageInfo::RedirectedUrlItemType,
+			PageInfo::MetaDescriptionItemType,
+			PageInfo::MetaDescriptionLengthItemType,
+			PageInfo::MetaKeywordsItemType,
+			PageInfo::MetaKeywordsLengthItemType,
+			PageInfo::FirstH1ItemType,
+			PageInfo::FirstH1LengthItemType,
+			PageInfo::SecondH1ItemType,
+			PageInfo::SecondH1LengthItemType,
+			PageInfo::FirstH2ItemType,
+			PageInfo::FirstH2LengthItemType,
+			PageInfo::SecondH2ItemType,
+			PageInfo::SecondH2LengthItemType,
+			PageInfo::CanonicalLinkElementItemType,
+			PageInfo::StatusCodeItemType,
+			PageInfo::PageSizeKbItemType,
+			PageInfo::WordCountItemType,
+			PageInfo::PageHashItemType
+		};
+	}
 
 	m_modelControllerData = theApp->modelController()->data();
 	VERIFY(QObject::connect(m_modelControllerData, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 
-	// TODO: improve
-	std::map<int, int> columnsSize =
+	int columnIndex = 0;
+	std::map<int, int> columnsSize;
+	for (PageInfo::ItemType column : m_columns)
 	{
-		{ 0, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ 1, QuickieWebBotHelpers::pointsToPixels(200) },
-		{ 2, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ 3, QuickieWebBotHelpers::pointsToPixels(60) },
-	};
+		columnsSize[columnIndex] = PageInfo::columnPrefferedSize(column);
+		columnIndex++;
+	}
 
 	m_resizeStrategy->setColumnsSize(columnsSize);
 }

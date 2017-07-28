@@ -5,7 +5,7 @@ namespace QuickieWebBot
 {
 
 ModelDataAccessorOneItem::ModelDataAccessorOneItem(DataCollection::StorageType storageType, int row)
-	: ModelDataAccessorAllItems(storageType)
+	: ModelDataAccessorAllItems(storageType, {})
 	, m_row(row)
 {
 }
