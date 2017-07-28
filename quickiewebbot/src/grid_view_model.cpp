@@ -59,7 +59,6 @@ QVariant GridViewModel::headerData(int section, Qt::Orientation orientation, int
 	if (orientation == Qt::Vertical)
 	{
 		return m_accessor->columnText(section);
-		//return QVariant();
 	}
 
 	if (role == Qt::DisplayRole)
@@ -72,33 +71,21 @@ QVariant GridViewModel::headerData(int section, Qt::Orientation orientation, int
 
 bool GridViewModel::insertRows(int row, int count, QModelIndex const& parent)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(count);
-	Q_UNUSED(row);
 	return 0;
 }
 
 bool GridViewModel::removeRows(int row, int count, QModelIndex const& parent)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(count);
-	Q_UNUSED(row);
 	return 0;
 }
 
 bool GridViewModel::insertColumns(int column, int count, QModelIndex const& parent)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(count);
-	Q_UNUSED(column);
 	return 0;
 }
 
 bool GridViewModel::removeColumns(int column, int count, QModelIndex const& parent)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(count);
-	Q_UNUSED(column);
 	return 0;
 }
 
@@ -106,19 +93,21 @@ void GridViewModel::setModelDataAccessor(std::unique_ptr<IModelDataAccessor> acc
 {
 	if (m_accessor)
 	{
-		VERIFY(QObject::disconnect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
-		VERIFY(QObject::disconnect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), this, SLOT(onItemChanged(int, int))));
-		//Q_SIGNAL virtual void itemChanged(int row, int column) override;
+		VERIFY(disconnect(m_accessor->qobject(), SIGNAL(rowAdded(int)), 
+			this, SLOT(onRowAdded(int))));
+
+		VERIFY(disconnect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), 
+			this, SLOT(onItemChanged(int, int))));
 	}
 
 	std::unique_ptr<IModelDataAccessor> oldAccessor = std::move(m_accessor);
 	m_accessor = std::move(accessor);
 
-	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
-	VERIFY(QObject::connect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), this, SLOT(onItemChanged(int, int))));
+	VERIFY(connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
+	VERIFY(connect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), this, SLOT(onItemChanged(int, int))));
+
 	emit modelDataAccessorChanged(m_accessor.get(), oldAccessor.get());
 	
-
 	beginResetModel();
 	endResetModel();
 }

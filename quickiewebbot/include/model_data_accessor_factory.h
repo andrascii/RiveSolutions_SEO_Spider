@@ -10,7 +10,7 @@ class IModelDataAccessor;
 class ModelDataAccessorFactory
 {
 public:
-	std::unique_ptr<IModelDataAccessor> getModelDataAccessor(const ModelDataAccessorFactoryParams& params);
+	std::unique_ptr<IModelDataAccessor> create(const ModelDataAccessorFactoryParams& params);
 };
 
 }

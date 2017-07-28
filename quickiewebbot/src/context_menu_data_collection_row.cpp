@@ -8,47 +8,53 @@ namespace QuickieWebBot
 ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const GridView* associatedGridView, QWidget* parent)
 	: QMenu(parent)
 	, m_associatedGridView(associatedGridView)
-	, m_openUrlAction(new QAction(QIcon(), tr("Open Url"), this))
-	, m_refreshAllResultsAction(new QAction(QIcon(), tr("Refresh All Results"), this))
-	, m_removeRowAction(new QAction(QIcon(), tr("Remove Row"), this))
-	, m_checkIndexAction(new QAction(QIcon(), tr("Check Index"), this))
-	, m_checkGoogleCacheAction(new QAction(QIcon(), tr("Check Google Cache"), this))
-	, m_openRobotsTxtAction(new QAction(QIcon(), tr("Open robots.txt"), this))
-	, m_showOtherDomainsOnIpAction(new QAction(QIcon(), tr("Show Other Domains on IP"), this))
-	, m_checkHtmlAction(new QAction(QIcon(), tr("Check HTML With W3C Validator"), this))
-	, m_copyToClipboardAllColumnsAction(new QAction(QIcon(), tr("Copy to Clipboard All Columns Data"), this))
-	, m_copyToClipboardAllPagesAction(new QAction(QIcon(), tr("Copy to Clipboard All Pages"), this))
-	, m_copyToClipboardUrlAction(new QAction(QIcon(), tr("Copy to Clipboard Url"), this))
 {
-	QMenu* copySubMenu = new QMenu(tr("Copy"), this);
-	copySubMenu->addAction(m_copyToClipboardAllColumnsAction);
-	copySubMenu->addAction(m_copyToClipboardAllPagesAction);
-	copySubMenu->addAction(m_copyToClipboardUrlAction);
+	struct ActionDescriptor
+	{
+		int action;
+		QString description;
+		QIcon icon;
+	};
 
-	addAction(m_openUrlAction);
-	addMenu(copySubMenu);
-	addAction(m_refreshAllResultsAction);
-	addAction(m_removeRowAction);
+	ActionDescriptor descriptors[] = 
+	{
+		{ OpenUrlActionType, tr("Open URL"), QIcon() },
+		{ RefreshAllResultsActionType, tr("Refresh All Results"), QIcon() },
+		{ RemoveRowActionType, tr("Remove Row"), QIcon() },
+		{ CheckIndexActionType, tr("Check Index"), QIcon() },
+		{ CheckGoogleActionType, tr("Check Google Cache"), QIcon() },
+		{ OpenRobotsTxtActionType, tr("Open Robots.txt"), QIcon() },
+		{ ShowOtherDomainsOnIpActionType, tr("Show Other Domains On IP"), QIcon() },
+		{ CheckHtmlActionType, tr("Check HTML With W3C Validator"), QIcon() },
+		{ CopyToClipboardAllColumnsActionType, tr("Copy to Clipboard All Columns Data"), QIcon() },
+		{ CopyToClipboardAllPagesActionType, tr("Copy to Clipboard All Pages"), QIcon() },
+		{ CopyToClipboardUrlActionType, tr("Copy to Clipboard URL"), QIcon() }
+	};
+
+	for (const auto& [actionType, description, icon] : descriptors)
+	{
+		m_actions[actionType] = new QAction(icon, description, this);
+		m_actions[actionType]->setData(actionType);
+	}
+
+	QMenu* copySubMenu = new QMenu("Copy to Clipboard", this);
+	copySubMenu->addAction(m_actions[CopyToClipboardAllColumnsActionType]);
+	copySubMenu->addAction(m_actions[CopyToClipboardAllPagesActionType]);
+	copySubMenu->addAction(m_actions[CopyToClipboardUrlActionType]);
+
+	addAction(m_actions[OpenUrlActionType]);
+	addAction(m_actions[RefreshAllResultsActionType]);
+	addAction(m_actions[RemoveRowActionType]);
 	addSeparator();
-	addAction(m_checkIndexAction);
-	addAction(m_checkGoogleCacheAction);
-	addAction(m_openRobotsTxtAction);
-	addAction(m_showOtherDomainsOnIpAction);
-	addAction(m_checkHtmlAction);
+	addAction(m_actions[CheckIndexActionType]);
+	addAction(m_actions[CheckGoogleActionType]);
+	addAction(m_actions[OpenRobotsTxtActionType]);
+	addAction(m_actions[ShowOtherDomainsOnIpActionType]);
+	addAction(m_actions[CheckHtmlActionType]);
+	addMenu(copySubMenu);
 
-	VERIFY(QObject::connect(m_openUrlAction, &QAction::triggered, this, &ContextMenuDataCollectionRow::openUrlAction));
-	VERIFY(QObject::connect(m_copyToClipboardUrlAction, &QAction::triggered, this, &ContextMenuDataCollectionRow::copyToClipboardUrl));
-}
-
-PageInfoPtr ContextMenuDataCollectionRow::pageInfoAtPopuppedPoint() const noexcept
-{
-	return model()->modelDataAcessor()->pageInfoAtRow(popuppedPointModelIndex().row());
-}
-
-QModelIndex ContextMenuDataCollectionRow::popuppedPointModelIndex() const noexcept
-{
-	QPoint popuppedPoint = pos();
-	return m_associatedGridView->indexAt(popuppedPoint);
+	VERIFY(QObject::connect(m_actions[OpenUrlActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::openUrlAction));
+	VERIFY(QObject::connect(m_actions[CopyToClipboardUrlActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::copyToClipboardUrl));
 }
 
 QModelIndexList ContextMenuDataCollectionRow::selectedRowsList() const noexcept
@@ -65,7 +71,10 @@ GridViewModel* ContextMenuDataCollectionRow::model() const noexcept
 
 void ContextMenuDataCollectionRow::openUrlAction()
 {
-	QDesktopServices::openUrl(pageInfoAtPopuppedPoint()->itemValue(PageInfo::UrlItemType).toUrl());
+	for (QModelIndex index : selectedRowsList())
+	{
+		QDesktopServices::openUrl(model()->modelDataAcessor()->pageInfoAtRow(index.row())->itemValue(PageInfo::UrlItemType).toUrl());
+	}
 }
 
 void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
@@ -74,9 +83,6 @@ void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
 
 	foreach(QModelIndex index, selectedRows)
 	{
-// 		PageInfoPtr pageInfoPtr = model()->modelDataAcessor()->pageInfoAtRow(popuppedPointModelIndex().row());
-// 
-// 		clipboard->setText(pageInfoPtr->itemValue(PageInfo::UrlItemType).toUrl().toDisplayString());
 	}
 }
 
@@ -87,12 +93,11 @@ void ContextMenuDataCollectionRow::copyToClipboardAllPages()
 
 void ContextMenuDataCollectionRow::copyToClipboardUrl()
 {
-	QModelIndexList selectedRows = selectedRowsList();
 	QClipboard* clipboard = theApp->clipboard();
 
-	foreach(QModelIndex index, selectedRows)
+	foreach(QModelIndex index, selectedRowsList())
 	{
-		PageInfoPtr pageInfoPtr = model()->modelDataAcessor()->pageInfoAtRow(popuppedPointModelIndex().row());
+		PageInfoPtr pageInfoPtr = model()->modelDataAcessor()->pageInfoAtRow(index.row());
 
 		clipboard->setText(pageInfoPtr->itemValue(PageInfo::UrlItemType).toUrl().toDisplayString());
 	}

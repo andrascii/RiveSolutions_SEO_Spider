@@ -12,7 +12,7 @@ class MainFrame : public QMainWindow
 	Q_OBJECT
 
 public:
-	MainFrame(QWidget *parent = 0);
+	MainFrame(QWidget *parent = nullptr);
 
 	void showListView();
 	void showSummaryView();

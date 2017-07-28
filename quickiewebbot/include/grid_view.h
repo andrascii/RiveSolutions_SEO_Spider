@@ -33,7 +33,7 @@ protected:
 	virtual void leaveEvent(QEvent* event) override;
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
-	virtual void mousePressEvent(QMouseEvent* event) override;
+	virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
 	Q_SLOT void onModelDataAccessorChanged(IModelDataAccessor* accessor, IModelDataAccessor* oldAccessor);
 
