@@ -31,7 +31,7 @@ void GridViewSelectionModel::select(const QItemSelection& selection, QItemSelect
 
 	// TODO: optimize
 	QItemSelection fixedSelection;
-
+	 
 	QModelIndex topLeft;
 	QModelIndex bottomRight;
 

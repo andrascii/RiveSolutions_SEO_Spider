@@ -55,6 +55,7 @@ ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const GridView* assoc
 
 	VERIFY(QObject::connect(m_actions[OpenUrlActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::openUrlAction));
 	VERIFY(QObject::connect(m_actions[CopyToClipboardUrlActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::copyToClipboardUrl));
+	VERIFY(QObject::connect(m_actions[CopyToClipboardAllColumnsActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::copyToClipboardAllColumnsData));
 }
 
 QModelIndexList ContextMenuDataCollectionRow::selectedRowsList() const noexcept
@@ -79,11 +80,19 @@ void ContextMenuDataCollectionRow::openUrlAction()
 
 void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
 {
-	QModelIndexList selectedRows = selectedRowsList();
+	QString allColumnsData;
 
-	foreach(QModelIndex index, selectedRows)
+	foreach(QModelIndex index, selectedRowsList())
 	{
+		for (int i = 0; i < model()->modelDataAcessor()->columnCount(); ++i)
+		{
+			allColumnsData += model()->modelDataAcessor()->itemValue(index.row(), i).toString() + " ";
+		}
+
+		allColumnsData += "\n";
 	}
+
+	theApp->clipboard()->setText(allColumnsData);
 }
 
 void ContextMenuDataCollectionRow::copyToClipboardAllPages()

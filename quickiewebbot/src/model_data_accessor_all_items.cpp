@@ -11,7 +11,7 @@
 namespace QuickieWebBot
 {
 
-ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType storageType, std::vector<PageInfo::ItemType> columns)
+ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType storageType, QVector<PageInfo::ItemType> columns)
 	: m_modelControllerData(nullptr)
 	, m_storageType(storageType)
 	, m_columns(columns)

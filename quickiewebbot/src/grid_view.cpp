@@ -61,19 +61,13 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 	}
 
 	QAbstractItemModel* viewModel = model();
-
 	int columnCount = viewModel->columnCount();
-
-	if (m_hoveredIndex.isValid())
-	{
-		emit viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), viewModel->index(m_hoveredIndex.row(), columnCount));
-	}
 
 	m_hoveredIndex = index;
 
-	if (m_hoveredIndex.isValid())
+	if (int hoveredIndexRow = m_hoveredIndex.row(); m_hoveredIndex.isValid())
 	{
-		emit viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), viewModel->index(m_hoveredIndex.row(), columnCount));
+		emit viewModel->dataChanged(viewModel->index(hoveredIndexRow, 0), viewModel->index(hoveredIndexRow, columnCount));
 	}
 
 	QTableView::mouseMoveEvent(event);
@@ -81,12 +75,11 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 
 void GridView::leaveEvent(QEvent* event)
 {
-	if (m_hoveredIndex.isValid())
+	if (int hoveredIndexRow = m_hoveredIndex.row(); m_hoveredIndex.isValid())
 	{
 		QAbstractItemModel* viewModel = model();
 
-		viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), 
-			viewModel->index(m_hoveredIndex.row(), viewModel->columnCount()));
+		emit viewModel->dataChanged(viewModel->index(hoveredIndexRow, 0), viewModel->index(hoveredIndexRow, viewModel->columnCount()));
 
 		m_hoveredIndex = QModelIndex();
 	}
@@ -156,7 +149,7 @@ void GridView::setParams(const ModelDataAccessorFactoryParams& params)
 
 	ModelDataAccessorFactory factory;
 
-	if (m_gridViewModel == nullptr)
+	if (!m_gridViewModel)
 	{
 		GridViewModel* model = new GridViewModel(this);
 		model->setModelDataAccessor(factory.create(params));
@@ -205,6 +198,8 @@ void GridView::updateColumnsSpan()
 
 void GridView::updateCursor(int flags)
 {
+	return;
+
 	if (flags & IModelDataAccessor::ItemFlagUrl)
 	{
 		if (!m_isCursorOverriden)

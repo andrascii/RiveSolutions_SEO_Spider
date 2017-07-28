@@ -1,6 +1,5 @@
 #include "application.h"
 #include "style_loader.h"
-#include "widget_detector.h"
 #include "model_controller.h"
 #include "software_branding.h"
 #include "start_screen.h"
@@ -76,7 +75,6 @@ void Application::initialize() noexcept
 
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
-	WidgetDetector::attachWidgetDetector(QStringLiteral("F6"));
 #endif
 }
 

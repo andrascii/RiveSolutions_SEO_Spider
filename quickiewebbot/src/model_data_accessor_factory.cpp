@@ -25,72 +25,135 @@ std::unique_ptr<IModelDataAccessor> ModelDataAccessorFactory::create(const Model
 
 	if (params.mode == ModelDataAccessorFactoryParams::ModeGeneral)
 	{
-		return std::make_unique<ModelDataAccessorAllItems>(storageType, std::vector<PageInfo::ItemType>());
+		return std::make_unique<ModelDataAccessorAllItems>(storageType, QVector<PageInfo::ItemType>());
 	}
 
 	if (params.mode == ModelDataAccessorFactoryParams::ModeSummary)
 	{
-		using Inf = PageInfo;
-		std::vector<PageInfo::ItemType> columns;
+		QVector<PageInfo::ItemType> columns;
+
 		switch (storageType)
 		{
 			//
 			// Url problems
 			//
-		case DataCollection::UpperCaseUrlStorageType:
-		case DataCollection::NonAsciiCharacterUrlStorageType:
-		case DataCollection::VeryLongUrlStorageType:
-			columns = { Inf::UrlItemType, Inf::UrlLengthItemType, Inf::ContentItemType, Inf::StatusCodeItemType };
-			break;
+			case DataCollection::UpperCaseUrlStorageType:
+			case DataCollection::NonAsciiCharacterUrlStorageType:
+			case DataCollection::VeryLongUrlStorageType:
+			{
+				columns = 
+				{ 
+					PageInfo::UrlItemType, 
+					PageInfo::UrlLengthItemType, 
+					PageInfo::ContentItemType, 
+					PageInfo::StatusCodeItemType 
+				};
+
+				break;
+			}
 		
-		case DataCollection::EmptyTitleUrlStorageType:
-		case DataCollection::DuplicatedTitleUrlStorageType:
-		case DataCollection::VeryLongTitleUrlStorageType:
-		case DataCollection::VeryShortTitleUrlStorageType:
-		case DataCollection::DuplicatedH1TitleUrlStorageType:
-		case DataCollection::SeveralTitleUrlStorageType:
-			columns = { Inf::UrlItemType, Inf::ContentItemType, Inf::TitleItemType, Inf::TitleLengthItemType };
-			break;
+			case DataCollection::EmptyTitleUrlStorageType:
+			case DataCollection::DuplicatedTitleUrlStorageType:
+			case DataCollection::VeryLongTitleUrlStorageType:
+			case DataCollection::VeryShortTitleUrlStorageType:
+			case DataCollection::DuplicatedH1TitleUrlStorageType:
+			case DataCollection::SeveralTitleUrlStorageType:
+			{
+				columns = 
+				{ 
+					PageInfo::UrlItemType, 
+					PageInfo::ContentItemType, 
+					PageInfo::TitleItemType, 
+					PageInfo::TitleLengthItemType
+				};
 			
-		case DataCollection::EmptyMetaDescriptionUrlStorageType:
-		case DataCollection::DuplicatedMetaDescriptionUrlStorageType:
-		case DataCollection::VeryLongMetaDescriptionUrlStorageType:
-		case DataCollection::VeryShortMetaDescriptionUrlStorageType:
-		case DataCollection::SeveralMetaDescriptionUrlStorageType:
-			columns = { Inf::UrlItemType, Inf::ContentItemType, Inf::MetaDescriptionItemType, Inf::MetaDescriptionLengthItemType };
-			break;
+				break;
+			}
+			
+			case DataCollection::EmptyMetaDescriptionUrlStorageType:
+			case DataCollection::DuplicatedMetaDescriptionUrlStorageType:
+			case DataCollection::VeryLongMetaDescriptionUrlStorageType:
+			case DataCollection::VeryShortMetaDescriptionUrlStorageType:
+			case DataCollection::SeveralMetaDescriptionUrlStorageType:
+			{
+				columns = 
+				{ 
+					PageInfo::UrlItemType, 
+					PageInfo::ContentItemType, 
+					PageInfo::MetaDescriptionItemType, 
+					PageInfo::MetaDescriptionLengthItemType
+				};
+			
+				break;
+			}
 
-		case DataCollection::EmptyMetaKeywordsUrlStorageType:
-		case DataCollection::DuplicatedMetaKeywordsUrlStorageType:
-		case DataCollection::SeveralMetaKeywordsUrlStorageType:
-			columns = { Inf::UrlItemType, Inf::ContentItemType, Inf::MetaKeywordsItemType, Inf::MetaKeywordsLengthItemType };
-			break;
-				
+			case DataCollection::EmptyMetaKeywordsUrlStorageType:
+			case DataCollection::DuplicatedMetaKeywordsUrlStorageType:
+			case DataCollection::SeveralMetaKeywordsUrlStorageType:
+			{
+				columns = 
+				{ 
+					PageInfo::UrlItemType, 
+					PageInfo::ContentItemType, 
+					PageInfo::MetaKeywordsItemType, 
+					PageInfo::MetaKeywordsLengthItemType
+				};
+			
+				break;
+			}
 
-		case DataCollection::MissingH1UrlStorageType:
-		case DataCollection::DuplicatedH1UrlStorageType:
-		case DataCollection::VeryLongH1UrlStorageType:
-		case DataCollection::SeveralH1UrlStorageType:
-			columns = { Inf::UrlItemType, Inf::ContentItemType, Inf::FirstH1ItemType, Inf::FirstH1LengthItemType, Inf::SecondH1ItemType, Inf::SecondH1LengthItemType };
-			break;
+			case DataCollection::MissingH1UrlStorageType:
+			case DataCollection::DuplicatedH1UrlStorageType:
+			case DataCollection::VeryLongH1UrlStorageType:
+			case DataCollection::SeveralH1UrlStorageType:
+			{
+				columns = 
+				{ 
+					PageInfo::UrlItemType, 
+					PageInfo::ContentItemType, 
+					PageInfo::FirstH1ItemType, 
+					PageInfo::FirstH1LengthItemType, 
+					PageInfo::SecondH1ItemType, 
+					PageInfo::SecondH1LengthItemType 
+				};
+			
+				break;
+			}
 
-		case DataCollection::MissingH2UrlStorageType:
-		case DataCollection::DuplicatedH2UrlStorageType:
-		case DataCollection::VeryLongH2UrlStorageType:
-		case DataCollection::SeveralH2UrlStorageType:
-			columns = { Inf::UrlItemType, Inf::ContentItemType, Inf::FirstH2ItemType, Inf::FirstH2LengthItemType, Inf::SecondH2ItemType, Inf::SecondH2LengthItemType };
-			break;
+			case DataCollection::MissingH2UrlStorageType:
+			case DataCollection::DuplicatedH2UrlStorageType:
+			case DataCollection::VeryLongH2UrlStorageType:
+			case DataCollection::SeveralH2UrlStorageType:
+			{
+				columns = 
+				{ 
+					PageInfo::UrlItemType, 
+					PageInfo::ContentItemType, 
+					PageInfo::FirstH2ItemType, 
+					PageInfo::FirstH2LengthItemType, 
+					PageInfo::SecondH2ItemType, 
+					PageInfo::SecondH2LengthItemType 
+				};
+			
+				break;
+			}
 
+			case DataCollection::Over100kbImageStorageType:
+			case DataCollection::MissingAltTextImageStorageType:
+			case DataCollection::VeryLongAltTextImageStorageType:
+			{
+				columns = 
+				{ 
+					PageInfo::UrlItemType, 
+					PageInfo::AltTextItemType, 
+					PageInfo::AltTextLengthItemType, 
+					PageInfo::ImageSizeKbItemType
+				};
 
-		case DataCollection::Over100kbImageStorageType:
-		case DataCollection::MissingAltTextImageStorageType:
-		case DataCollection::VeryLongAltTextImageStorageType:
-			columns = { Inf::UrlItemType, Inf::AltTextItemType, Inf::AltTextLengthItemType, Inf::ImageSizeKbItemType, };
-			break;
+				break;
+			}
 		
-		default:
-			assert(!"Unsupported params");
-			break;
+			default: assert(!"Unsupported params");
 		}
 
 		return std::make_unique<ModelDataAccessorAllItems>(storageType, columns);

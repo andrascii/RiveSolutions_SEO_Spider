@@ -15,7 +15,7 @@ class ModelDataAccessorAllItems
 	Q_OBJECT
 
 public:
-	ModelDataAccessorAllItems(DataCollection::StorageType storageType, std::vector<PageInfo::ItemType> columns);
+	ModelDataAccessorAllItems(DataCollection::StorageType storageType, QVector<PageInfo::ItemType> columns);
 	~ModelDataAccessorAllItems();
 
 	virtual int columnCount() const override;
@@ -54,7 +54,7 @@ protected:
 
 	DataCollection::StorageType m_storageType;
 
-	std::vector<PageInfo::ItemType> m_columns;
+	QVector<PageInfo::ItemType> m_columns;
 
 	std::unique_ptr<GridViewResizeStrategy> m_resizeStrategy;
 };
