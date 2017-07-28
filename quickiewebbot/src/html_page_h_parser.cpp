@@ -45,10 +45,16 @@ void HtmlPageHParser::recurseSearch(const GumboNode* node, GumboTag tag, std::ve
 
 	if (node->v.element.tag == tag && node->v.element.children.length > 0)
 	{
-		QString value = GumboParsingHelpers::nodeText(static_cast<GumboNode*>(node->v.element.children.data[0]));
-		value = value.trimmed().remove(QChar('\n'), Qt::CaseInsensitive);
+		const GumboNode* tagData;
 
-		container.push_back(value);
+		for (unsigned int i = 0; i < node->v.element.children.length; ++i)
+		{
+			tagData = static_cast<const GumboNode*>(node->v.element.children.data[i]);
+
+			recurseSearchText(tagData, container);			
+		}
+
+		return;
 	}
 
 	const GumboVector* children = &node->v.element.children;
@@ -56,6 +62,31 @@ void HtmlPageHParser::recurseSearch(const GumboNode* node, GumboTag tag, std::ve
 	for (unsigned int i = 0; i < children->length; ++i)
 	{
 		recurseSearch(static_cast<const GumboNode*>(children->data[i]), tag, container);
+	}
+}
+
+void HtmlPageHParser::recurseSearchText(const GumboNode* node, std::vector<QString>& container) noexcept
+{
+	if (node->v.element.children.length > 0)
+	{
+		if ((node->type == GUMBO_NODE_TEXT || node->type == GUMBO_NODE_WHITESPACE))
+		{
+			QByteArray value = node->v.text.text;
+			value = value.trimmed().remove('\n', Qt::CaseInsensitive);
+
+			container.push_back(value);
+		}
+		else
+		{
+			for (unsigned int i = 0; i < node->v.element.children.length; ++i)
+			{
+				const GumboNode* tagData = static_cast<const GumboNode*>(node->v.element.children.data[i]);
+
+				recurseSearchText(tagData, container);
+			}
+
+			return;
+		}
 	}
 }
 
