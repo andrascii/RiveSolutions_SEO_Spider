@@ -16,7 +16,7 @@ public:
 	enum ItemFlag
 	{
 		ItemFlagNone = 0,
-		ItemFlagUrl = 1,
+		ItemFlagUrl = 1 << 0,
 		ItemFlagTextDecorator = 1 << 1,
 		ItemFlagTextBold = 1 << 2,
 		ItemFlagAlignRight = 1 << 3,
@@ -53,7 +53,5 @@ public:
 	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const = 0;
 	virtual IGridViewResizeStrategy* resizeStrategy() const = 0;
 };
-
-
 
 }

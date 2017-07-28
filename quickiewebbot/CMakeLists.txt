@@ -52,7 +52,7 @@ if(MSVC)
 		/EHsc
 		/MP
 		/permissive-
-		/std:c++14
+		/std:c++latest
 	)
 	
 	set_target_properties(

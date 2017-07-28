@@ -6,7 +6,7 @@
 namespace QuickieWebBot
 {
 
-std::unique_ptr<IModelDataAccessor> ModelDataAccessorFactory::getModelDataAccessor(const ModelDataAccessorFactoryParams& params)
+std::unique_ptr<IModelDataAccessor> ModelDataAccessorFactory::create(const ModelDataAccessorFactoryParams& params)
 {
 	Q_UNUSED(params);
 

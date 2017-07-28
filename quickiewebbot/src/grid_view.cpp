@@ -40,7 +40,7 @@ void GridView::setModel(QAbstractItemModel* model)
 
 	m_gridViewModel = newModel;
 
-	VERIFY(QObject::connect(model, SIGNAL(modelDataAccessorChanged(IModelDataAccessor*, IModelDataAccessor*)), 
+	VERIFY(connect(model, SIGNAL(modelDataAccessorChanged(IModelDataAccessor*, IModelDataAccessor*)), 
 		this, SLOT(onModelDataAccessorChanged(IModelDataAccessor*, IModelDataAccessor*))));
 	
 	updateColumnsSpan();
@@ -60,20 +60,20 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 		return;
 	}
 
-	// TODO: paint only selection
 	QAbstractItemModel* viewModel = model();
+
 	int columnCount = viewModel->columnCount();
 
 	if (m_hoveredIndex.isValid())
 	{
-		viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), viewModel->index(m_hoveredIndex.row(), columnCount));
+		emit viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), viewModel->index(m_hoveredIndex.row(), columnCount));
 	}
 
 	m_hoveredIndex = index;
 
 	if (m_hoveredIndex.isValid())
 	{
-		viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), viewModel->index(m_hoveredIndex.row(), columnCount));
+		emit viewModel->dataChanged(viewModel->index(m_hoveredIndex.row(), 0), viewModel->index(m_hoveredIndex.row(), columnCount));
 	}
 
 	QTableView::mouseMoveEvent(event);
@@ -117,11 +117,11 @@ void GridView::selectionChanged(const QItemSelection& selected, const QItemSelec
 	QTableView::selectionChanged(selected, deselected);
 }
 
-void GridView::mousePressEvent(QMouseEvent* event)
+void GridView::mouseReleaseEvent(QMouseEvent* event)
 {
 	if (event->button() != Qt::RightButton || !m_contextMenu)
 	{
-		return QTableView::mousePressEvent(event);
+		return QTableView::mouseReleaseEvent(event);
 	}
 
 	QPoint globalPosition = event->globalPos();
@@ -159,13 +159,13 @@ void GridView::setParams(const ModelDataAccessorFactoryParams& params)
 	if (m_gridViewModel == nullptr)
 	{
 		GridViewModel* model = new GridViewModel(this);
-		model->setModelDataAccessor(factory.getModelDataAccessor(params));
+		model->setModelDataAccessor(factory.create(params));
 
 		setModel(model);
 		return;
 	}
 
-	m_gridViewModel->setModelDataAccessor(factory.getModelDataAccessor(params));
+	m_gridViewModel->setModelDataAccessor(factory.create(params));
 }
 
 void GridView::paintEvent(QPaintEvent* event)
@@ -225,7 +225,22 @@ void GridView::selectRow(const QPoint& point)
 	QModelIndex rowIndex = indexAt(point);
 	QItemSelectionModel* modelSelection = selectionModel();
 
-	modelSelection->select(rowIndex, QItemSelectionModel::Rows | QItemSelectionModel::ClearAndSelect);
+	QItemSelectionModel::SelectionFlags flags = QItemSelectionModel::Rows;
+
+	foreach(QModelIndex index, modelSelection->selectedRows())
+	{
+		if (index.row() == rowIndex.row())
+		{
+			flags |= QItemSelectionModel::Select;
+		}
+	}
+
+	if (!(flags & QItemSelectionModel::Select))
+	{
+		flags |= QItemSelectionModel::ClearAndSelect;
+	}
+
+	modelSelection->select(rowIndex, flags);
 }
 
 }

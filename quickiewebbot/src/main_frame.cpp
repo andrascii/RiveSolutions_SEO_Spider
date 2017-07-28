@@ -62,12 +62,12 @@ void MainFrame::initialize()
 	GridViewModel* model = new GridViewModel(this);
 
 	ModelDataAccessorFactory factory;
-	model->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
+	model->setModelDataAccessor(factory.create(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingGridView->setModel(model);
 	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 
 	GridViewModel* summaryModel = new GridViewModel(this);
-	summaryModel->setModelDataAccessor(factory.getModelDataAccessor(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
+	summaryModel->setModelDataAccessor(factory.create(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
 
 	m_ui.summaryGridView->setModel(summaryModel);
 
