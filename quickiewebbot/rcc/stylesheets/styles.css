@@ -374,3 +374,38 @@ QPushButton[groupButton="right"] {
 	border-bottom-right-radius: 0.2em;
 	border-bottom-left-radius: 0em;
 }
+
+/*/////////////////////////////// Tab Widget ///////////////////////////////*/
+
+QTabWidget::pane { 
+     border-top: 0px;
+     padding: 0px;
+     margin: 0px;
+     background-color: white;
+     border: 1px solid lightgray;
+ }
+
+ QTabWidget::tab-bar {
+     left: 0px;
+ }
+
+ 
+ QTabBar::tab {
+     min-width: 45ex;
+     color: #333333;
+     padding: 0.2em;
+     background-color: #eeeeee;
+     border-left: 1px solid lightgray;
+     border-right: 1px solid lightgray;
+     border-top: 1px solid lightgray;
+     border-bottom: 0px;
+}
+
+QTabBar::tab:!first {
+     border-left: 0px;
+ }
+
+ QTabBar::tab:selected {
+     color: #333333;
+     background-color: white;
+ }

@@ -23,12 +23,14 @@ MainFrame::MainFrame(QWidget* parent)
 
 void MainFrame::showListView()
 {
-	m_ui.mainGuiStackedWidget->setCurrentIndex(0);
+	m_ui.maintTabWidget->setCurrentIndex(0);
+	m_ui.siteStructureTabWidget->setCurrentIndex(1);
 }
 
 void MainFrame::showSummaryView()
 {
-	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
+	m_ui.maintTabWidget->setCurrentIndex(0);
+	m_ui.siteStructureTabWidget->setCurrentIndex(0);
 }
 
 void MainFrame::showProxySettingsDialog()
@@ -74,9 +76,6 @@ void MainFrame::initialize()
 
 	VERIFY(connect(m_ui.summaryGridView, SIGNAL(childViewParamsChanged(const ModelDataAccessorFactoryParams&)), 
 		m_ui.summaryDetailsGridView, SLOT(setParams(const ModelDataAccessorFactoryParams&))));
-
-	VERIFY(connect(m_ui.crawlingGridView, SIGNAL(childViewParamsChanged(const ModelDataAccessorFactoryParams&)),
-		m_ui.itemGridView, SLOT(setParams(const ModelDataAccessorFactoryParams&))));
 
 	m_ui.summaryGridView->setMinimumWidth(QuickieWebBotHelpers::pointsToPixels(350));
 }
