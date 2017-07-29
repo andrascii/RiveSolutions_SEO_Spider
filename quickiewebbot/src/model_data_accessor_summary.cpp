@@ -13,6 +13,9 @@ ModelDataAccessorSummary::ModelDataAccessorSummary()
 	: m_resizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }))
 	, m_backgroundPainter(Qt::transparent, Qt::transparent)
 {
+	// colspan
+	//return m_groupByRowRefs.find(index.row()) != m_groupByRowRefs.end() ? 2 : 1;
+
 	m_groups = 
 	{
 		SummaryGroup
@@ -103,26 +106,21 @@ ModelDataAccessorSummary::ModelDataAccessorSummary()
 		}
 	}
 
-	DataCollection* modelControllerData = theApp->modelController()->data();
+	const DataCollection* modelControllerData = theApp->modelController()->data();
 	VERIFY(connect(modelControllerData, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onModelDataRowAdded(int, int))));
 }
 
-int ModelDataAccessorSummary::columnCount() const
+QList<PageInfo::ItemType> ModelDataAccessorSummary::supportedColumns() const
 {
-	return 2;
+	return m_supportedColumns;
 }
 
-QString ModelDataAccessorSummary::headerData(int column, Qt::Orientation orientation) const
-{
-	return QString();
-}
-
-int ModelDataAccessorSummary::rowCount() const
+int ModelDataAccessorSummary::itemCount() const
 {
 	return static_cast<int>(m_groupByRowRefs.size() + m_itemByRowRefs.size());
 }
 
-QVariant ModelDataAccessorSummary::itemValue(const QModelIndex& index) const
+QVariant ModelDataAccessorSummary::item(const QModelIndex& index) const
 {
 	auto groupIterator = m_groupByRowRefs.find(index.row());
 
@@ -138,7 +136,7 @@ QVariant ModelDataAccessorSummary::itemValue(const QModelIndex& index) const
 	return index.column() == 0 ? QVariant(itemIterator->second->name) : QVariant(itemIterator->second->issueCount);
 }
 
-QVariant ModelDataAccessorSummary::itemValue(int row, int column) const
+QVariant ModelDataAccessorSummary::item(int row, int column) const
 {
 	auto groupIterator = m_groupByRowRefs.find(row);
 
@@ -158,56 +156,6 @@ PageInfoPtr ModelDataAccessorSummary::pageInfoAtRow(int row) const
 {
 	assert(!"This type don't implement this call");
 	return PageInfoPtr();
-}
-
-QColor ModelDataAccessorSummary::itemBackgroundColor(const QModelIndex& index) const
-{
-	return QColor();
-}
-
-int ModelDataAccessorSummary::itemColSpan(const QModelIndex& index) const
-{
-	return m_groupByRowRefs.find(index.row()) != m_groupByRowRefs.end() ? 2 : 1;
-}
-
-int ModelDataAccessorSummary::flags(const QModelIndex& index) const
-{
-	bool group = isGroupHeaderRow(index.row());
-
-	int result = group ? ItemFlagTextBold | ItemFlagNotSelectable : ItemFlagNone;
-
-	if (index.column() != 0)
-	{
-		result |= ItemFlagAlignRight;
-	}
-	else if (!group)
-	{
-		result |= ItemFlagTextDecorator;
-	}
-
-	return result;
-}
-
-QPixmap* ModelDataAccessorSummary::pixmap(const QModelIndex& index) const
-{
-	static QPixmap s_okPixmap = pixmapIcon(StatusOK, QuickieWebBotHelpers::pointsToPixels(13.5));
-	static QPixmap s_warningPixmap = pixmapIcon(StatusWarning, QuickieWebBotHelpers::pointsToPixels(13.5));
-	static QPixmap s_errorPixmap = pixmapIcon(StatusError, QuickieWebBotHelpers::pointsToPixels(13.5));
-
-	if (isGroupHeaderRow(index.row()) || index.column() != 0)
-	{
-		return nullptr;
-	}
-
-	auto it = m_itemByRowRefs.find(index.row());
-	assert(it != m_itemByRowRefs.end());
-	
-	return it->second->issueCount > 0 ? &s_warningPixmap : &s_okPixmap;
-}
-
-QObject* ModelDataAccessorSummary::qobject()
-{
-	return this;
 }
 
 ModelDataAccessorFactoryParams ModelDataAccessorSummary::childViewParams(const QItemSelection& selection) const
@@ -235,34 +183,9 @@ IGridViewResizeStrategy* ModelDataAccessorSummary::resizeStrategy() const
 	return m_resizeStrategy.get();
 }
 
-std::vector<const GridViewPainter*> ModelDataAccessorSummary::painters(const QModelIndex & index) const
+QObject* ModelDataAccessorSummary::qobject()
 {
-	return { &m_backgroundPainter, &m_textPainter };
-}
-
-std::vector<GridViewPainter*> ModelDataAccessorSummary::painters(const QModelIndex& index)
-{
-	return { &m_backgroundPainter, &m_textPainter };
-}
-
-const GridViewPainter* ModelDataAccessorSummary::backgroundPainter(const QModelIndex& index) const
-{
-	return &m_backgroundPainter;
-}
-
-GridViewPainter* ModelDataAccessorSummary::backgroundPainter(const QModelIndex& index)
-{
-	return &m_backgroundPainter;
-}
-
-const GridViewPainter* ModelDataAccessorSummary::textPainter(const QModelIndex& index) const
-{
-	return &m_textPainter;
-}
-
-GridViewPainter* ModelDataAccessorSummary::textPainter(const QModelIndex& index)
-{
-	return &m_textPainter;
+	return this;
 }
 
 bool ModelDataAccessorSummary::isGroupHeaderRow(int row) const

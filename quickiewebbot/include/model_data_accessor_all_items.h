@@ -20,38 +20,24 @@ class ModelDataAccessorAllItems
 public:
 	ModelDataAccessorAllItems(DataCollection::StorageType storageType, QVector<PageInfo::ItemType> columns);
 
-	virtual int columnCount() const override;
-	virtual int rowCount() const override;
+	virtual QList<PageInfo::ItemType> supportedColumns() const override;
+	virtual int itemCount() const override;
 
-	virtual QString headerData(int column, Qt::Orientation orientation) const override;
-
-	virtual QVariant itemValue(const QModelIndex& index) const override;
-	virtual QVariant itemValue(int row, int column) const override;
+	virtual QVariant item(const QModelIndex& index) const override;
+	virtual QVariant item(int row, int column) const override;
 
 	virtual PageInfoPtr pageInfoAtRow(int row) const override;
-
-	virtual QColor itemBackgroundColor(const QModelIndex& index) const override;
-	virtual int itemColSpan(const QModelIndex& index) const override;
-	virtual int flags(const QModelIndex& index) const override;
-	virtual QPixmap* pixmap(const QModelIndex& index) const override;
-	virtual QObject* qobject() override;
 
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
 
-	virtual std::vector<const GridViewPainter*> painters(const QModelIndex& index) const override;
-	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) override;
+	virtual QObject* qobject() override;
 
-	virtual const GridViewPainter* backgroundPainter(const QModelIndex& index) const override;
-	virtual GridViewPainter* backgroundPainter(const QModelIndex& index) override;
-
-	virtual const GridViewPainter* textPainter(const QModelIndex& index) const override;
-	virtual GridViewPainter* textPainter(const QModelIndex& index) override;
-
-	Q_SIGNAL virtual void itemChanged(int row, int column) override;
-	Q_SIGNAL virtual void rowRemoved(int row) override;
-	Q_SIGNAL virtual void rowAdded(int row) override;
-	Q_SIGNAL virtual void reset() override;
+signals:
+	virtual void itemChanged(int row, int column) override;
+	virtual void rowRemoved(int row) override;
+	virtual void rowAdded(int row) override;
+	virtual void reset() override;
 
 protected:
 	Q_SLOT void onModelDataRowAdded(int row, int type);
@@ -66,6 +52,8 @@ protected:
 
 	GridViewPainterText m_painterText;
 	GridViewPainterBackground m_painterBackground;
+
+	QList<PageInfo::ItemType> m_supportedColumns;
 };
 
 }

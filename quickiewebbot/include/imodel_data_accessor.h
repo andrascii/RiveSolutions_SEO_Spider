@@ -12,50 +12,24 @@ class IGridViewResizeStrategy;
 class IModelDataAccessor
 {
 public:
-
-	enum ItemFlag
-	{
-		ItemFlagNone = 0,
-		ItemFlagUrl = 1 << 0,
-		ItemFlagTextDecorator = 1 << 1,
-		ItemFlagTextBold = 1 << 2,
-		ItemFlagAlignRight = 1 << 3,
-		ItemFlagAlignCenter = 1 << 4,
-		ItemFlagNotSelectable = 1 << 5
-	};
-
 	virtual ~IModelDataAccessor() = default;
-	
-	virtual int columnCount() const = 0;
-	virtual int rowCount() const = 0;
 
-	virtual QString headerData(int column, Qt::Orientation orientation) const = 0;
+	virtual QList<PageInfo::ItemType> supportedColumns() const = 0;
 
-	virtual QVariant itemValue(const QModelIndex& index) const = 0;
-	virtual QVariant itemValue(int row, int column) const = 0;
+	virtual int itemCount() const = 0;
+	virtual QVariant item(const QModelIndex& index) const = 0;
+	virtual QVariant item(int row, int column) const = 0;
 
 	virtual PageInfoPtr pageInfoAtRow(int row) const = 0;
-
-	virtual QColor itemBackgroundColor(const QModelIndex& index) const = 0;
-	virtual QColor itemTextColor(const QModelIndex& index) const = 0;
-	virtual int itemColSpan(const QModelIndex& index) const = 0;
-	virtual QPixmap* pixmap(const QModelIndex& index) const = 0;
-	virtual int flags(const QModelIndex& index) const = 0;
-	virtual QObject* qobject() = 0;
 
 	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const = 0;
 	virtual IGridViewResizeStrategy* resizeStrategy() const = 0;
 
-	virtual std::vector<const GridViewPainter*> painters(const QModelIndex& index) const = 0;
-	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) = 0;
+	virtual QObject* qobject() = 0;
 
-	virtual const GridViewPainter* backgroundPainter(const QModelIndex& index) const = 0;
-	virtual GridViewPainter* backgroundPainter(const QModelIndex& index) = 0;
-
-	virtual const GridViewPainter* textPainter(const QModelIndex& index) const = 0;
-	virtual GridViewPainter* textPainter(const QModelIndex& index) = 0;
-
+	//
 	// signals
+	//
 	virtual void itemChanged(int row, int column) = 0;
 	virtual void rowRemoved(int row) = 0;
 	virtual void rowAdded(int row) = 0;

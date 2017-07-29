@@ -84,9 +84,9 @@ void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
 
 	foreach(QModelIndex index, selectedRowsList())
 	{
-		for (int i = 0; i < model()->modelDataAcessor()->columnCount(); ++i)
+		for (int i = 0; i < model()->modelDataAcessor()->supportedColumns().size(); ++i)
 		{
-			allColumnsData += model()->modelDataAcessor()->itemValue(index.row(), i).toString() + " ";
+			allColumnsData += model()->modelDataAcessor()->item(index.row(), i).toString() + " ";
 		}
 
 		allColumnsData += "\n";

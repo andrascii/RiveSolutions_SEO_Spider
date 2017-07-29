@@ -49,7 +49,6 @@ struct PageInfo
 
 	QVariant itemValue(ItemType item);
 	void setItemValue(const QVariant& value, ItemType item);
-	
 
 private:
 	void setUrl(const QVariant& value);

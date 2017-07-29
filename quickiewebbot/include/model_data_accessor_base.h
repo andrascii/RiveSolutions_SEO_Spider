@@ -9,7 +9,11 @@ namespace QuickieWebBot
 class ModelDataAccessorBase : public IModelDataAccessor
 {
 public:
-	virtual QColor itemTextColor(const QModelIndex& index) const override;
+
+// 	QColor ModelDataAccessorBase::itemTextColor(const QModelIndex& index) const
+// 	{
+// 		return flags(index) & IModelDataAccessor::ItemFlagUrl ? QColor("#4753C5") : Qt::black;
+// 	}
 
 	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
 };

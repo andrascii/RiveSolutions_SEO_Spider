@@ -48,16 +48,21 @@ void GridView::setModel(QAbstractItemModel* model)
 
 void GridView::mouseMoveEvent(QMouseEvent* event)
 {
+	return QTableView::mouseMoveEvent(event);
+
 	QModelIndex index = indexAt(event->pos());
 	int flags = index.data(Qt::UserRole).toInt();
 
 	updateCursor(flags);
 
-	if (index == m_hoveredIndex || flags & IModelDataAccessor::ItemFlagNotSelectable)
-	{
-		QTableView::mouseMoveEvent(event);
-		return;
-	}
+
+// 	if (index == m_hoveredIndex || flags & IModelDataAccessor::ItemFlagNotSelectable)
+// 	{
+// 		QTableView::mouseMoveEvent(event);
+// 		return;
+// 	}
+
+	qDebug() << objectName();
 
 	QAbstractItemModel* viewModel = model();
 	int columnCount = viewModel->columnCount();
@@ -83,7 +88,7 @@ void GridView::leaveEvent(QEvent* event)
 		m_hoveredIndex = QModelIndex();
 	}
 
-	updateCursor(IModelDataAccessor::ItemFlagNone);
+	//updateCursor(IModelDataAccessor::ItemFlagNone);
 	
 	QTableView::leaveEvent(event);
 }
@@ -185,7 +190,7 @@ void GridView::updateColumnsSpan()
 	{
 		for (int column = 0; column < columns;)
 		{
-			int colSpan = modelDataAccessor()->itemColSpan(model()->index(row, column));
+			int colSpan = 1;// modelDataAccessor()->itemColSpan(model()->index(row, column));
 
 			assert(colSpan > 0);
 
@@ -197,19 +202,19 @@ void GridView::updateColumnsSpan()
 
 void GridView::updateCursor(int flags)
 {
-	if (flags & IModelDataAccessor::ItemFlagUrl)
-	{
-		if (!m_isCursorOverriden)
-		{
-			QApplication::setOverrideCursor(Qt::PointingHandCursor);
-			m_isCursorOverriden = true;
-		}
-	}
-	else if (m_isCursorOverriden)
-	{
-		QApplication::restoreOverrideCursor();
-		m_isCursorOverriden = false;
-	}
+// 	if (flags & IModelDataAccessor::ItemFlagUrl)
+// 	{
+// 		if (!m_isCursorOverriden)
+// 		{
+// 			QApplication::setOverrideCursor(Qt::PointingHandCursor);
+// 			m_isCursorOverriden = true;
+// 		}
+// 	}
+// 	else if (m_isCursorOverriden)
+// 	{
+// 		QApplication::restoreOverrideCursor();
+// 		m_isCursorOverriden = false;
+// 	}
 }
 
 void GridView::selectRow(const QPoint& point)

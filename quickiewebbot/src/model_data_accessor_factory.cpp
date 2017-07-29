@@ -160,7 +160,7 @@ std::unique_ptr<IModelDataAccessor> ModelDataAccessorFactory::create(const Model
 	}
 
 	assert(params.row > -1);
-	return std::make_unique<ModelDataAccessorOneItem>(storageType,  params.row);
+	//return std::make_unique<ModelDataAccessorOneItem>(storageType,  params.row);
 
 	assert(!"Invalid params");
 	return std::unique_ptr<IModelDataAccessor>();

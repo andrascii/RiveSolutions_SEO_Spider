@@ -13,7 +13,7 @@ ModelController::ModelController(QObject* parent)
 
 void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
-	data()->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
+	m_data->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
 
 	int statusCode = pageInfo->itemValue(PageInfo::StatusCodeItemType).toInt();
 
@@ -23,16 +23,16 @@ void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 	if (pageInfo->itemValue(PageInfo::TitleItemType).toString().isEmpty() ||
 		statusCode == 301 || statusCode == 302)
 	{
-		data()->addPageInfo(pageInfo, DataCollection::EmptyTitleUrlStorageType);
+		m_data->addPageInfo(pageInfo, DataCollection::EmptyTitleUrlStorageType);
 	}
 
 	if (pageInfo->itemValue(PageInfo::UrlItemType).toUrl().host() != theApp->properties()->url().host())
 	{
-		data()->addPageInfo(pageInfo, DataCollection::ExternalUrlStorageType);
+		m_data->addPageInfo(pageInfo, DataCollection::ExternalUrlStorageType);
 	}
 }
 
-DataCollection* ModelController::data() noexcept
+const DataCollection* ModelController::data() const noexcept
 {
 	return m_data;
 }

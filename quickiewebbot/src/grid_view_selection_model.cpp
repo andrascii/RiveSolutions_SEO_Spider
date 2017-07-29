@@ -13,12 +13,6 @@ GridViewSelectionModel::GridViewSelectionModel(GridView* parent)
 
 void GridViewSelectionModel::select(const QModelIndex& index, QItemSelectionModel::SelectionFlags command)
 {
-	// TODO: use command to make selection more precisely
-	/*if (m_gridView->dataAccessor()->flags(index) & IModelDataAccessor::ItemFlagNotSelectable)
-	{
-		return;
-	}*/
-
 	QItemSelectionModel::select(index, command);
 }
 
@@ -44,26 +38,27 @@ void GridViewSelectionModel::select(const QItemSelection& selection, QItemSelect
 			fixedSelection.append(QItemSelectionRange(topLeft, bottomRight));
 		}
 
-		auto indexes = rangeIt->indexes();
-		for (auto indexIt = indexes.cbegin(); indexIt < indexes.cend(); ++indexIt)
-		{
-			if (m_gridView->modelDataAccessor()->flags(*indexIt) & IModelDataAccessor::ItemFlagNotSelectable)
-			{
-				if (prevIndexSelectable)
-				{
-					fixedSelection.append(QItemSelectionRange(topLeft, bottomRight));
-				}
+		QModelIndexList indexes = rangeIt->indexes();
 
-				prevIndexSelectable = false;
-				continue;
-			}
+		for (auto it = indexes.cbegin(); it < indexes.cend(); ++it)
+		{
+// 			if (m_gridView->modelDataAccessor()->flags(*it) & IModelDataAccessor::ItemFlagNotSelectable)
+// 			{
+// 				if (prevIndexSelectable)
+// 				{
+// 					fixedSelection.append(QItemSelectionRange(topLeft, bottomRight));
+// 				}
+// 
+// 				prevIndexSelectable = false;
+// 				continue;
+// 			}
 
 			if (!prevIndexSelectable)
 			{
-				topLeft = *indexIt;
+				topLeft = *it;
 			}
 
-			bottomRight = *indexIt;
+			bottomRight = *it;
 			prevIndexSelectable = true;
 		}
 	}
@@ -83,10 +78,10 @@ void GridViewSelectionModel::select(const QItemSelection& selection, QItemSelect
 
 void GridViewSelectionModel::setCurrentIndex(const QModelIndex& index, QItemSelectionModel::SelectionFlags command)
 {
-	if (m_gridView->modelDataAccessor()->flags(index) & IModelDataAccessor::ItemFlagNotSelectable)
-	{
-		return;
-	}
+// 	if (m_gridView->modelDataAccessor()->flags(index) & IModelDataAccessor::ItemFlagNotSelectable)
+// 	{
+// 		return;
+// 	}
 
 	QItemSelectionModel::setCurrentIndex(index, command);
 }

@@ -27,10 +27,10 @@ void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QMod
 		painter->setPen(qvariant_cast<QColor>(index.data(Qt::TextColorRole)));
 		applyTextBold(painter, flags);
 
-		if (flags && IModelDataAccessor::ItemFlagTextDecorator)
-		{
-			adjustedRect = paintDecorator(painter, index, adjustedRect);
-		}
+// 		if (flags && IModelDataAccessor::ItemFlagTextDecorator)
+// 		{
+// 			adjustedRect = paintDecorator(painter, index, adjustedRect);
+// 		}
 		painter->drawText(adjustedRect, textAlign(flags), index.data(Qt::DisplayRole).toString());
 
 		painter->restore();
@@ -52,10 +52,10 @@ void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QMod
 
 		painterPixmap.setPen(qvariant_cast<QColor>(index.data(Qt::TextColorRole)));
 
-		if (flags && IModelDataAccessor::ItemFlagTextDecorator)
-		{
-			pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
-		}
+// 		if (flags && IModelDataAccessor::ItemFlagTextDecorator)
+// 		{
+// 			pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
+// 		}
 
 		painterPixmap.drawText(pixmapRect, textAlign(flags), key.first);
 
@@ -117,7 +117,7 @@ void GridViewPainterText::removeExtraCache() const
 
 void GridViewPainterText::applyTextBold(QPainter* painter, int flags) const
 {
-	if (flags & IModelDataAccessor::ItemFlagTextBold)
+	//if (flags & IModelDataAccessor::ItemFlagTextBold)
 	{
 		QFont font = painter->font();
 		font.setBold(true);
@@ -130,18 +130,18 @@ int GridViewPainterText::textAlign(int flags) const
 {
 	int result = Qt::AlignTop;
 
-	if (flags & IModelDataAccessor::ItemFlagAlignRight)
-	{
-		result |= Qt::AlignRight;
-	}
-	else if (flags & IModelDataAccessor::ItemFlagAlignCenter)
-	{
-		result |= Qt::AlignHCenter;
-	}
-	else
-	{
-		result |= Qt::AlignLeft;
-	}
+// 	if (flags & IModelDataAccessor::ItemFlagAlignRight)
+// 	{
+// 		result |= Qt::AlignRight;
+// 	}
+// 	else if (flags & IModelDataAccessor::ItemFlagAlignCenter)
+// 	{
+// 		result |= Qt::AlignHCenter;
+// 	}
+// 	else
+// 	{
+// 		result |= Qt::AlignLeft;
+// 	}
 
 	return result;
 }

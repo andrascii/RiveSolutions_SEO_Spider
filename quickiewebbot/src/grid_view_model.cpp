@@ -12,44 +12,44 @@ GridViewModel::GridViewModel(QObject* parent)
 
 int GridViewModel::rowCount(QModelIndex const&) const
 {
-	return m_accessor->rowCount();
+	return m_accessor->itemCount();
 }
 
 int GridViewModel::columnCount(QModelIndex const&) const
 {
-	return m_accessor->columnCount();
+	return m_accessor->supportedColumns().size();
 }
 
 QVariant GridViewModel::data(QModelIndex const& index, int role) const
 {
 	if (role == Qt::DisplayRole)
 	{
-		return m_accessor->itemValue(index);
+		return m_accessor->item(index);
 	}
 
 	if (role == Qt::DecorationRole)
 	{
-		QPixmap* pixmap = m_accessor->pixmap(index);
-
-		if (pixmap != nullptr)
-		{
-			return *pixmap;
-		}
+// 		QPixmap* pixmap = m_accessor->pixmap(index);
+// 
+// 		if (pixmap != nullptr)
+// 		{
+// 			return *pixmap;
+// 		}
 	}
 
 	if (role == Qt::BackgroundColorRole)
 	{
-		return m_accessor->itemBackgroundColor(index);
+		//return m_accessor->itemBackgroundColor(index);
 	}
 
 	if (role == Qt::TextColorRole)
 	{
-		return m_accessor->itemTextColor(index);
+		//return m_accessor->itemTextColor(index);
 	}
 
 	if (role == Qt::UserRole)
 	{
-		return m_accessor->flags(index);
+		//return m_accessor->flags(index);
 	}
 
 	return QVariant();
@@ -59,35 +59,15 @@ QVariant GridViewModel::headerData(int section, Qt::Orientation orientation, int
 {
 	if (orientation == Qt::Vertical)
 	{
-		return m_accessor->headerData(section, orientation);
+		return section;
 	}
 
 	if (role == Qt::DisplayRole)
 	{
-		return m_accessor->headerData(section, orientation);
+		return PageInfo::itemTitle(m_accessor->supportedColumns()[section]);
 	}
 
 	return QVariant();
-}
-
-bool GridViewModel::insertRows(int row, int count, QModelIndex const& parent)
-{
-	return 0;
-}
-
-bool GridViewModel::removeRows(int row, int count, QModelIndex const& parent)
-{
-	return 0;
-}
-
-bool GridViewModel::insertColumns(int column, int count, QModelIndex const& parent)
-{
-	return 0;
-}
-
-bool GridViewModel::removeColumns(int column, int count, QModelIndex const& parent)
-{
-	return 0;
 }
 
 void GridViewModel::setModelDataAccessor(std::unique_ptr<IModelDataAccessor> accessor)
@@ -97,7 +77,7 @@ void GridViewModel::setModelDataAccessor(std::unique_ptr<IModelDataAccessor> acc
 		VERIFY(disconnect(m_accessor->qobject(), SIGNAL(rowAdded(int)), 
 			this, SLOT(onRowAdded(int))));
 
-		VERIFY(disconnect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)), 
+		VERIFY(disconnect(m_accessor->qobject(), SIGNAL(itemChanged(int, int)),
 			this, SLOT(onItemChanged(int, int))));
 	}
 
