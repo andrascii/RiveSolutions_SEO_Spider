@@ -47,7 +47,7 @@ void GridViewSelectionModel::select(const QItemSelection& selection, QItemSelect
 		auto indexes = rangeIt->indexes();
 		for (auto indexIt = indexes.cbegin(); indexIt < indexes.cend(); ++indexIt)
 		{
-			if (m_gridView->dataAccessor()->flags(*indexIt) & IModelDataAccessor::ItemFlagNotSelectable)
+			if (m_gridView->modelDataAccessor()->flags(*indexIt) & IModelDataAccessor::ItemFlagNotSelectable)
 			{
 				if (prevIndexSelectable)
 				{
@@ -83,7 +83,7 @@ void GridViewSelectionModel::select(const QItemSelection& selection, QItemSelect
 
 void GridViewSelectionModel::setCurrentIndex(const QModelIndex& index, QItemSelectionModel::SelectionFlags command)
 {
-	if (m_gridView->dataAccessor()->flags(index) & IModelDataAccessor::ItemFlagNotSelectable)
+	if (m_gridView->modelDataAccessor()->flags(index) & IModelDataAccessor::ItemFlagNotSelectable)
 	{
 		return;
 	}

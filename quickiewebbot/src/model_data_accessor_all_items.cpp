@@ -16,6 +16,7 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 	, m_storageType(storageType)
 	, m_columns(columns)
 	, m_resizeStrategy(std::make_unique<GridViewResizeStrategy>())
+	, m_painterBackground(Qt::transparent, Qt::transparent)
 {
 	if (m_columns.size() == 0)
 	{
@@ -53,6 +54,7 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 
 	int columnIndex = 0;
 	std::map<int, int> columnsSize;
+
 	for (PageInfo::ItemType column : m_columns)
 	{
 		columnsSize[columnIndex] = PageInfo::columnPrefferedSize(column);
@@ -61,20 +63,21 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 
 	m_resizeStrategy->setColumnsSize(columnsSize);
 }
-	
-ModelDataAccessorAllItems::~ModelDataAccessorAllItems()
-{
-}
 
 int ModelDataAccessorAllItems::columnCount() const
 {
 	return m_columns.size();
 }
 	
-QString ModelDataAccessorAllItems::columnText(int column) const
+QString ModelDataAccessorAllItems::headerData(int column, Qt::Orientation orientation) const
 {
-	return m_columns.size() > column 
-		? PageInfo::itemTitle(static_cast<PageInfo::ItemType>(m_columns[column])) : QString();
+	if (orientation == Qt::Horizontal)
+	{
+		assert(column < m_columns.size());
+		return PageInfo::itemTitle(m_columns[column]);
+	}
+
+	return QString("%1").arg(column);
 }
 	
 int ModelDataAccessorAllItems::rowCount() const
@@ -110,7 +113,6 @@ QColor ModelDataAccessorAllItems::itemBackgroundColor(const QModelIndex& index) 
 
 int ModelDataAccessorAllItems::itemColSpan(const QModelIndex& index) const
 {
-	Q_UNUSED(index);
 	return 1;
 }
 
@@ -121,7 +123,6 @@ int ModelDataAccessorAllItems::flags(const QModelIndex& index) const
 
 QPixmap* ModelDataAccessorAllItems::pixmap(const QModelIndex& index) const
 {
-	Q_UNUSED(index);
 	return nullptr;
 }
 
@@ -130,14 +131,14 @@ QObject* ModelDataAccessorAllItems::qobject()
 	return this;
 }
 
-std::vector<GridViewPainter*> ModelDataAccessorAllItems::painters(const QModelIndex& index) const
+std::vector<const GridViewPainter*> ModelDataAccessorAllItems::painters(const QModelIndex& index) const
 {
-	Q_UNUSED(index);
+	return { &m_painterBackground, &m_painterText };
+}
 
-	static GridViewPainterText s_painterText;
-	static GridViewPainterBackground s_painterBackground(Qt::transparent, Qt::transparent);
-
-	return { &s_painterBackground, &s_painterText };
+std::vector<GridViewPainter*> ModelDataAccessorAllItems::painters(const QModelIndex& index)
+{
+	return { &m_painterBackground, &m_painterText };
 }
 
 IGridViewResizeStrategy* ModelDataAccessorAllItems::resizeStrategy() const
@@ -161,6 +162,27 @@ ModelDataAccessorFactoryParams ModelDataAccessorAllItems::childViewParams(const 
 		ModelDataAccessorFactoryParams::ModeOneRow, index.row());
 }
 
+const GridViewPainter* ModelDataAccessorAllItems::backgroundPainter(const QModelIndex& index) const
+{
+	return &m_painterBackground;
+}
+
+
+GridViewPainter* ModelDataAccessorAllItems::backgroundPainter(const QModelIndex& index)
+{
+	return &m_painterBackground;
+}
+
+const GridViewPainter* ModelDataAccessorAllItems::textPainter(const QModelIndex& index) const
+{
+	return &m_painterText;
+}
+
+
+GridViewPainter* ModelDataAccessorAllItems::textPainter(const QModelIndex& index)
+{
+	return &m_painterText;
+}
 
 void ModelDataAccessorAllItems::onModelDataRowAdded(int row, int type)
 {

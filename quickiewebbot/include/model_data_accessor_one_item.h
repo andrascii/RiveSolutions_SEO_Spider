@@ -13,7 +13,7 @@ public:
 	virtual int columnCount() const override;
 	virtual int rowCount() const override;
 
-	virtual QString columnText(int column) const override;
+	virtual QString headerData(int column, Qt::Orientation orientation) const override;
 
 	virtual QVariant itemValue(const QModelIndex& index) const override;
 	virtual QVariant itemValue(int row, int column) const override;

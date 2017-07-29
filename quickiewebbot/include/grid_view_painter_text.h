@@ -18,6 +18,7 @@ private:
 		QPixmap pixmap;
 		std::chrono::system_clock::time_point lastAccess;
 	};
+
 	using CacheKey = std::pair<QString, std::pair<int, int>>;
 
 	QPixmap* getCached(const CacheKey& key) const;

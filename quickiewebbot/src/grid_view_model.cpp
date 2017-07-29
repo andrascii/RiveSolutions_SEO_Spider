@@ -59,12 +59,12 @@ QVariant GridViewModel::headerData(int section, Qt::Orientation orientation, int
 {
 	if (orientation == Qt::Vertical)
 	{
-		return m_accessor->columnText(section);
+		return m_accessor->headerData(section, orientation);
 	}
 
 	if (role == Qt::DisplayRole)
 	{
-		return m_accessor->columnText(section);
+		return m_accessor->headerData(section, orientation);
 	}
 
 	return QVariant();

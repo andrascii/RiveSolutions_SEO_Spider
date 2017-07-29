@@ -29,7 +29,7 @@ public:
 	virtual int columnCount() const = 0;
 	virtual int rowCount() const = 0;
 
-	virtual QString columnText(int column) const = 0;
+	virtual QString headerData(int column, Qt::Orientation orientation) const = 0;
 
 	virtual QVariant itemValue(const QModelIndex& index) const = 0;
 	virtual QVariant itemValue(int row, int column) const = 0;
@@ -42,16 +42,24 @@ public:
 	virtual QPixmap* pixmap(const QModelIndex& index) const = 0;
 	virtual int flags(const QModelIndex& index) const = 0;
 	virtual QObject* qobject() = 0;
-	
+
+	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const = 0;
+	virtual IGridViewResizeStrategy* resizeStrategy() const = 0;
+
+	virtual std::vector<const GridViewPainter*> painters(const QModelIndex& index) const = 0;
+	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) = 0;
+
+	virtual const GridViewPainter* backgroundPainter(const QModelIndex& index) const = 0;
+	virtual GridViewPainter* backgroundPainter(const QModelIndex& index) = 0;
+
+	virtual const GridViewPainter* textPainter(const QModelIndex& index) const = 0;
+	virtual GridViewPainter* textPainter(const QModelIndex& index) = 0;
+
 	// signals
 	virtual void itemChanged(int row, int column) = 0;
 	virtual void rowRemoved(int row) = 0;
 	virtual void rowAdded(int row) = 0;
 	virtual void reset() = 0;
-
-	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const = 0;
-	virtual std::vector<GridViewPainter*> painters(const QModelIndex& index) const = 0;
-	virtual IGridViewResizeStrategy* resizeStrategy() const = 0;
 };
 
 }

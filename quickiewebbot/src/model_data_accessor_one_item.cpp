@@ -15,7 +15,7 @@ int ModelDataAccessorOneItem::columnCount() const
 	return 2;
 }
 
-QString ModelDataAccessorOneItem::columnText(int column) const
+QString ModelDataAccessorOneItem::headerData(int column, Qt::Orientation orientation) const
 {
 	return QString();
 	//return ModelDataAccessorAllItems::columnText(column);
@@ -35,7 +35,7 @@ QVariant ModelDataAccessorOneItem::itemValue(int row, int column) const
 {
 	if (column == 0)
 	{
-		return ModelDataAccessorAllItems::columnText(row);
+		return ModelDataAccessorAllItems::headerData(row, Qt::Horizontal);
 	}
 
 	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
@@ -90,8 +90,6 @@ IGridViewResizeStrategy* ModelDataAccessorOneItem::resizeStrategy() const
 
 void ModelDataAccessorOneItem::onModelDataRowAddedInternal(int row, int type)
 {
-	Q_UNUSED(row);
-	Q_UNUSED(type);
 }
 
 }

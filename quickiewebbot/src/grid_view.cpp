@@ -28,9 +28,8 @@ void GridView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	GridViewModel* newModel = dynamic_cast<GridViewModel*>(model);
-
-	assert(newModel != nullptr);
+	assert(dynamic_cast<GridViewModel*>(model));
+	GridViewModel* newModel = static_cast<GridViewModel*>(model);
 
 	if (newModel->resizeStrategy() != nullptr)
 	{
@@ -101,9 +100,9 @@ void GridView::resizeEvent(QResizeEvent* event)
 
 void GridView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-	if (dataAccessor())
+	if (modelDataAccessor())
 	{
-		ModelDataAccessorFactoryParams params = dataAccessor()->childViewParams(selected);
+		ModelDataAccessorFactoryParams params = modelDataAccessor()->childViewParams(selected);
 		emit childViewParamsChanged(params);
 	}
 	
@@ -125,7 +124,7 @@ void GridView::mouseReleaseEvent(QMouseEvent* event)
 	m_contextMenu->show();
 }
 
-IModelDataAccessor* GridView::dataAccessor()
+IModelDataAccessor* GridView::modelDataAccessor()
 {
 	return m_gridViewModel != nullptr ? m_gridViewModel->modelDataAcessor() : nullptr;
 }
@@ -186,7 +185,7 @@ void GridView::updateColumnsSpan()
 	{
 		for (int column = 0; column < columns;)
 		{
-			int colSpan = dataAccessor()->itemColSpan(model()->index(row, column));
+			int colSpan = modelDataAccessor()->itemColSpan(model()->index(row, column));
 
 			assert(colSpan > 0);
 
@@ -198,8 +197,6 @@ void GridView::updateColumnsSpan()
 
 void GridView::updateCursor(int flags)
 {
-	return;
-
 	if (flags & IModelDataAccessor::ItemFlagUrl)
 	{
 		if (!m_isCursorOverriden)

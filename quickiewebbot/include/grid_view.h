@@ -19,7 +19,7 @@ public:
 
 	virtual void setModel(QAbstractItemModel* model) override;
 
-	IModelDataAccessor* dataAccessor();
+	IModelDataAccessor* modelDataAccessor();
 	QModelIndex hoveredIndex() const;
 
 	void setContextMenu(ContextMenuDataCollectionRow* menu);
