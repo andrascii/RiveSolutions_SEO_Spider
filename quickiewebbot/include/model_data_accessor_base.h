@@ -1,12 +1,12 @@
 #pragma once
 
-#include "imodel_data_accessor.h"
+#include "igrid_model_data_accessor.h"
 #include "model_data_accessor_factory_params.h"
 
 namespace QuickieWebBot
 {
 
-class ModelDataAccessorBase : public IModelDataAccessor
+class ModelDataAccessorBase : public IGridModelDataAccessor
 {
 public:
 

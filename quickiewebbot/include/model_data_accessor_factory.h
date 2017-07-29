@@ -5,12 +5,12 @@
 namespace QuickieWebBot
 {
 
-class IModelDataAccessor;
+class IGridModelDataAccessor;
 
 class ModelDataAccessorFactory
 {
 public:
-	std::unique_ptr<IModelDataAccessor> create(const ModelDataAccessorFactoryParams& params);
+	std::unique_ptr<IGridModelDataAccessor> create(const ModelDataAccessorFactoryParams& params);
 };
 
 }

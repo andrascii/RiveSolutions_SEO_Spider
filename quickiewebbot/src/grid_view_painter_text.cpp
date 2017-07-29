@@ -1,5 +1,5 @@
 #include "grid_view_painter_text.h"
-#include "imodel_data_accessor.h"
+#include "igrid_model_data_accessor.h"
 
 namespace QuickieWebBot
 {

@@ -1,5 +1,5 @@
 #include "grid_view_delegate.h"
-#include "imodel_data_accessor.h"
+#include "igrid_model_data_accessor.h"
 #include "grid_view_painter.h"
 #include "grid_view.h"
 #include "grid_view_painter_background.h"

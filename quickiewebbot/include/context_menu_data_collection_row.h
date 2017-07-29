@@ -31,7 +31,7 @@ private:
 	};
 
 	QModelIndexList selectedRowsList() const noexcept;
-	GridViewModel* model() const noexcept;
+	GridModel* model() const noexcept;
 
 private slots:
 	void openUrlAction();

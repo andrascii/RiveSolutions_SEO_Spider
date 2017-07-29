@@ -7,7 +7,7 @@
 #include "web_crawler.h"
 #include "grid_view_full_size_resize_strategy.h"
 #include "quickie_web_bot_helpers.h"
-#include "grid_view_model.h"
+#include "grid_model.h"
 #include "context_menu_data_collection_row.h"
 #include "naviagation_panel_controller.h"
 
@@ -60,14 +60,14 @@ void MainFrame::initialize()
 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
 	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
 
-	GridViewModel* model = new GridViewModel(this);
+	GridModel* model = new GridModel(this);
 
 	ModelDataAccessorFactory factory;
 	model->setModelDataAccessor(factory.create(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingGridView->setModel(model);
 	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 
-	GridViewModel* summaryModel = new GridViewModel(this);
+	GridModel* summaryModel = new GridModel(this);
 	summaryModel->setModelDataAccessor(factory.create(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
 
 	m_ui.summaryGridView->setModel(summaryModel);

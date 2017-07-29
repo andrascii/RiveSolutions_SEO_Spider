@@ -1,6 +1,6 @@
 #include "context_menu_data_collection_row.h"
-#include "grid_view_model.h"
-#include "imodel_data_accessor.h"
+#include "grid_model.h"
+#include "igrid_model_data_accessor.h"
 
 namespace QuickieWebBot
 {
@@ -64,10 +64,10 @@ QModelIndexList ContextMenuDataCollectionRow::selectedRowsList() const noexcept
 	return associatedGridViewSelecionModel->selectedRows();
 }
 
-GridViewModel* ContextMenuDataCollectionRow::model() const noexcept
+GridModel* ContextMenuDataCollectionRow::model() const noexcept
 {
-	assert(dynamic_cast<GridViewModel*>(m_associatedGridView->model()));
-	return static_cast<GridViewModel*>(m_associatedGridView->model());
+	assert(dynamic_cast<GridModel*>(m_associatedGridView->model()));
+	return static_cast<GridModel*>(m_associatedGridView->model());
 }
 
 void ContextMenuDataCollectionRow::openUrlAction()

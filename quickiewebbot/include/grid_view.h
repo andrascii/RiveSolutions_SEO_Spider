@@ -5,8 +5,8 @@
 namespace QuickieWebBot
 {
 
-class GridViewModel;
-class IModelDataAccessor;
+class GridModel;
+class IGridModelDataAccessor;
 class IGridViewResizeStrategy;
 class ContextMenuDataCollectionRow;
 
@@ -19,7 +19,7 @@ public:
 
 	virtual void setModel(QAbstractItemModel* model) override;
 
-	IModelDataAccessor* modelDataAccessor();
+	IGridModelDataAccessor* modelDataAccessor();
 	QModelIndex hoveredIndex() const;
 
 	void setContextMenu(ContextMenuDataCollectionRow* menu);
@@ -35,7 +35,7 @@ protected:
 	virtual void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 	virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
-	Q_SLOT void onModelDataAccessorChanged(IModelDataAccessor* accessor, IModelDataAccessor* oldAccessor);
+	Q_SLOT void onModelDataAccessorChanged(IGridModelDataAccessor* accessor, IGridModelDataAccessor* oldAccessor);
 
 private:
 	void updateColumnsSpan();
@@ -43,7 +43,7 @@ private:
 	void selectRow(const QPoint& point);
 
 private:
-	GridViewModel* m_gridViewModel;
+	GridModel* m_gridViewModel;
 	QModelIndex m_hoveredIndex;
 	bool m_isCursorOverriden;
 	ContextMenuDataCollectionRow* m_contextMenu;

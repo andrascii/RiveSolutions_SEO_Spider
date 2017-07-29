@@ -1,6 +1,6 @@
 #include "grid_view.h"
-#include "imodel_data_accessor.h"
-#include "grid_view_model.h"
+#include "igrid_model_data_accessor.h"
+#include "grid_model.h"
 #include "igrid_view_resize_strategy.h"
 #include "grid_view_selection_model.h"
 #include "grid_view_delegate.h"
@@ -28,8 +28,8 @@ void GridView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	assert(dynamic_cast<GridViewModel*>(model));
-	GridViewModel* newModel = static_cast<GridViewModel*>(model);
+	assert(dynamic_cast<GridModel*>(model));
+	GridModel* newModel = static_cast<GridModel*>(model);
 
 	if (newModel->resizeStrategy() != nullptr)
 	{
@@ -39,8 +39,8 @@ void GridView::setModel(QAbstractItemModel* model)
 
 	m_gridViewModel = newModel;
 
-	VERIFY(connect(model, SIGNAL(modelDataAccessorChanged(IModelDataAccessor*, IModelDataAccessor*)), 
-		this, SLOT(onModelDataAccessorChanged(IModelDataAccessor*, IModelDataAccessor*))));
+	VERIFY(connect(model, SIGNAL(modelDataAccessorChanged(IGridModelDataAccessor*, IGridModelDataAccessor*)), 
+		this, SLOT(onModelDataAccessorChanged(IGridModelDataAccessor*, IGridModelDataAccessor*))));
 	
 	updateColumnsSpan();
 	setSelectionModel(new GridViewSelectionModel(this));
@@ -129,7 +129,7 @@ void GridView::mouseReleaseEvent(QMouseEvent* event)
 	m_contextMenu->show();
 }
 
-IModelDataAccessor* GridView::modelDataAccessor()
+IGridModelDataAccessor* GridView::modelDataAccessor()
 {
 	return m_gridViewModel != nullptr ? m_gridViewModel->modelDataAcessor() : nullptr;
 }
@@ -155,7 +155,7 @@ void GridView::setParams(const ModelDataAccessorFactoryParams& params)
 
 	if (!m_gridViewModel)
 	{
-		GridViewModel* model = new GridViewModel(this);
+		GridModel* model = new GridModel(this);
 		model->setModelDataAccessor(factory.create(params));
 
 		setModel(model);
@@ -170,7 +170,7 @@ void GridView::paintEvent(QPaintEvent* event)
 	QTableView::paintEvent(event);
 }
 
-void GridView::onModelDataAccessorChanged(IModelDataAccessor* accessor, IModelDataAccessor* oldAccessor)
+void GridView::onModelDataAccessorChanged(IGridModelDataAccessor* accessor, IGridModelDataAccessor* oldAccessor)
 {
 	if (accessor->resizeStrategy() != nullptr)
 	{
