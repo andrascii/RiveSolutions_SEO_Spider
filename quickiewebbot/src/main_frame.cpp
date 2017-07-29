@@ -9,6 +9,7 @@
 #include "quickie_web_bot_helpers.h"
 #include "grid_view_model.h"
 #include "context_menu_data_collection_row.h"
+#include "naviagation_panel_controller.h"
 
 namespace QuickieWebBot
 {
@@ -23,14 +24,12 @@ MainFrame::MainFrame(QWidget* parent)
 
 void MainFrame::showListView()
 {
-	m_ui.maintTabWidget->setCurrentIndex(0);
-	m_ui.siteStructureTabWidget->setCurrentIndex(1);
+	m_ui.mainGuiStackedWidget->setCurrentIndex(0);
 }
 
 void MainFrame::showSummaryView()
 {
-	m_ui.maintTabWidget->setCurrentIndex(0);
-	m_ui.siteStructureTabWidget->setCurrentIndex(0);
+	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
 }
 
 void MainFrame::showProxySettingsDialog()
@@ -78,6 +77,9 @@ void MainFrame::initialize()
 		m_ui.summaryDetailsGridView, SLOT(setParams(const ModelDataAccessorFactoryParams&))));
 
 	m_ui.summaryGridView->setMinimumWidth(QuickieWebBotHelpers::pointsToPixels(350));
+
+	new NavigationPanelController(this, &m_ui);
+	
 }
 
 }
