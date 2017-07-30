@@ -6,7 +6,7 @@
 namespace QuickieWebBot
 {
 	
-class SummaryModel : public QAbstractTableModel
+class SummaryModel : public GridModel
 {
 public:
 	SummaryModel(QObject* parent = nullptr);

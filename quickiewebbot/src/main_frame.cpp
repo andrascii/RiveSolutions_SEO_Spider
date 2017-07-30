@@ -10,6 +10,7 @@
 #include "grid_model.h"
 #include "context_menu_data_collection_row.h"
 #include "naviagation_panel_controller.h"
+#include "summary_model.h"
 
 namespace QuickieWebBot
 {
@@ -67,9 +68,8 @@ void MainFrame::initialize()
 	m_ui.crawlingGridView->setModel(model);
 	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 
-	GridModel* summaryModel = new GridModel(this);
-	summaryModel->setModelDataAccessor(factory.create(GridDataAccessorFactoryParams{ GridDataAccessorFactoryParams::TypeSummary }));
-
+	SummaryModel* summaryModel = new SummaryModel(this);
+	//summaryModel->setModelDataAccessor(factory.create(GridDataAccessorFactoryParams{ GridDataAccessorFactoryParams::TypeSummary }));
 	m_ui.summaryGridView->setModel(summaryModel);
 
 

@@ -3,6 +3,7 @@
 
 namespace QuickieWebBot
 {
+
 GridViewFullSizeResizeStrategy::GridViewFullSizeResizeStrategy(std::vector<int> columnsPercentSize)
 	: m_columnsPercentSize(columnsPercentSize)
 {
