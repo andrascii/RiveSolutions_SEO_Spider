@@ -9,7 +9,7 @@ class GridViewPainterText : public IGridViewPainter
 {
 public:
 	explicit GridViewPainterText(int cacheSize = 0);
-	virtual void paint(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
+	virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 private:
 	struct Cache

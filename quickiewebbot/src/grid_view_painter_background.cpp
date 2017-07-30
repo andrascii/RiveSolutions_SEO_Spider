@@ -9,9 +9,9 @@ GridViewPainterBackground::GridViewPainterBackground(QColor color, QColor altern
 {
 }
 
-void GridViewPainterBackground::paint(QPainter* painter, const QRect& rect, const QModelIndex& index) const
+void GridViewPainterBackground::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	painter->fillRect(rect, index.row() % 2 == 0 ? m_color : m_alternateColor);
+	painter->fillRect(option.rect, index.row() % 2 == 0 ? m_color : m_alternateColor);
 }
 
 }

@@ -1,12 +1,14 @@
 #include "grid_view.h"
 #include "igrid_data_accessor.h"
 #include "grid_model.h"
+#include "summary_model.h"
 #include "igrid_view_resize_strategy.h"
 #include "grid_view_selection_model.h"
 #include "grid_view_delegate.h"
 #include "context_menu_data_collection_row.h"
 #include "grid_view_painter_text.h"
 #include "grid_view_painter_background.h"
+#include "grid_selection_background_item_painter.h"
 
 namespace QuickieWebBot
 {
@@ -145,8 +147,12 @@ QList<IGridViewPainter*> GridView::painters() const noexcept
 {
 	static GridViewPainterText s_painterText;
 	static GridViewPainterBackground s_backgroundPainter(Qt::transparent, Qt::transparent);
+	static GridSelectionBackgroundItemPainter s_selectionBackgroundPainter(QColor(97, 160, 50, 255), QColor(97, 160, 50, 255));
 
-	return QList<IGridViewPainter*>() << &s_backgroundPainter << &s_painterText;
+	return QList<IGridViewPainter*>()
+		<< &s_selectionBackgroundPainter
+		<< &s_backgroundPainter
+		<< &s_painterText;
 }
 
 void GridView::setParams(const GridDataAccessorFactoryParams& params)

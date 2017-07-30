@@ -155,8 +155,13 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		}
 	}
 
-	if (role == Qt::TextAlignmentRole && index.column() == 1)
+	if (role == Qt::TextAlignmentRole)
 	{
+		if (index.column() != 0)
+		{
+			return Qt::AlignRight;
+		}
+
 		return Qt::AlignLeft;
 	}
 

@@ -12,7 +12,7 @@ GridModel::GridModel(QObject* parent)
 
 Qt::ItemFlags GridModel::flags(const QModelIndex &index) const
 {
-	return Qt::NoItemFlags;
+	return Qt::ItemIsSelectable;
 }
 
 int GridModel::rowCount(QModelIndex const&) const

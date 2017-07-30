@@ -20,7 +20,7 @@ void GridViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 {
 	foreach(IGridViewPainter* gridViewPainter, m_gridView->painters())
 	{
-		gridViewPainter->paint(painter, option.rect, index);
+		gridViewPainter->paint(painter, option, index);
 	}
 }
 

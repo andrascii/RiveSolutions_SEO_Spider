@@ -14,16 +14,16 @@ GridViewPainterText::GridViewPainterText(int cacheSize)
 {
 }
 
-void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QModelIndex& index) const
+void GridViewPainterText::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	const bool isTextBold = index.data(Qt::FontRole).value<QFont>().bold();
 	const bool isDecorationValid = index.data(Qt::DecorationRole).isValid();
 
-	const int textAlignmentFlags = index.data(Qt::TextAlignmentRole).toInt();
+	const int textAlignmentFlags = index.data(Qt::TextAlignmentRole).toInt() | Qt::AlignTop;
 	const QString paintingText = index.data(Qt::DisplayRole).toString();
 	const QColor textColor = qvariant_cast<QColor>(index.data(Qt::TextColorRole));
 
-	QRect adjustedRect = rect.adjusted(m_marginLeft, m_marginTop, -m_marginRight, -m_marginBottom);
+	QRect adjustedRect = option.rect.adjusted(m_marginLeft, m_marginTop, -m_marginRight, -m_marginBottom);
 
 	if (!m_cacheSize)
 	{
@@ -47,7 +47,7 @@ void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QMod
 		return;
 	}
 
-	CacheKey key = std::make_pair(paintingText, std::make_pair(rect.width(), rect.height()));
+	CacheKey key = std::make_pair(paintingText, std::make_pair(option.rect.width(), option.rect.height()));
 	QPixmap* pixmapPointer = cached(key);
 
 	if (!pixmapPointer)
