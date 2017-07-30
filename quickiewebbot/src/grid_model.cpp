@@ -10,6 +10,11 @@ GridModel::GridModel(QObject* parent)
 {
 }
 
+Qt::ItemFlags GridModel::flags(const QModelIndex &index) const
+{
+	return Qt::NoItemFlags;
+}
+
 int GridModel::rowCount(QModelIndex const&) const
 {
 	return m_accessor->itemCount();
@@ -27,29 +32,9 @@ QVariant GridModel::data(QModelIndex const& index, int role) const
 		return m_accessor->item(index);
 	}
 
-	if (role == Qt::DecorationRole)
+	if (role == CustomRoles::ItemTypeRole)
 	{
-// 		QPixmap* pixmap = m_accessor->pixmap(index);
-// 
-// 		if (pixmap != nullptr)
-// 		{
-// 			return *pixmap;
-// 		}
-	}
-
-	if (role == Qt::BackgroundColorRole)
-	{
-		//return backgroundColor();
-	}
-
-	if (role == Qt::TextColorRole)
-	{
-		//return textColor();
-	}
-
-	if (role == Qt::UserRole)
-	{
-		//return m_accessor->flags(index);
+		return m_accessor->itemType(index);
 	}
 
 	return QVariant();

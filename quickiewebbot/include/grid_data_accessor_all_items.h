@@ -25,6 +25,8 @@ public:
 
 	virtual QVariant columnDescription(int section) const override;
 
+	virtual PageInfo::ItemType itemType(const QModelIndex& index) const override;
+
 	virtual QVariant item(const QModelIndex& index) const override;
 	virtual QVariant item(int row, int column) const override;
 

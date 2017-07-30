@@ -5,6 +5,8 @@
 #include "grid_view_selection_model.h"
 #include "grid_view_delegate.h"
 #include "context_menu_data_collection_row.h"
+#include "grid_view_painter_text.h"
+#include "grid_view_painter_background.h"
 
 namespace QuickieWebBot
 {
@@ -21,7 +23,7 @@ GridView::GridView(QWidget * parent)
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-//	setItemDelegate(new GridViewDelegate(this));
+	setItemDelegate(new GridViewDelegate(this));
 }
 
 void GridView::setModel(QAbstractItemModel* model)
@@ -48,21 +50,16 @@ void GridView::setModel(QAbstractItemModel* model)
 
 void GridView::mouseMoveEvent(QMouseEvent* event)
 {
-	return QTableView::mouseMoveEvent(event);
-
 	QModelIndex index = indexAt(event->pos());
 	int flags = index.data(Qt::UserRole).toInt();
 
 	updateCursor(flags);
 
-
-// 	if (index == m_hoveredIndex || flags & IModelDataAccessor::ItemFlagNotSelectable)
-// 	{
-// 		QTableView::mouseMoveEvent(event);
-// 		return;
-// 	}
-
-	qDebug() << objectName();
+	if (index == m_hoveredIndex || !(index.flags() & Qt::ItemIsSelectable))
+	{
+		QTableView::mouseMoveEvent(event);
+		return;
+	}
 
 	QAbstractItemModel* viewModel = model();
 	int columnCount = viewModel->columnCount();
@@ -144,6 +141,14 @@ void GridView::setContextMenu(ContextMenuDataCollectionRow* menu)
 	m_contextMenu = menu;
 }
 
+QList<IGridViewPainter*> GridView::painters() const noexcept
+{
+	static GridViewPainterText s_painterText;
+	static GridViewPainterBackground s_backgroundPainter(Qt::transparent, Qt::transparent);
+
+	return QList<IGridViewPainter*>() << &s_backgroundPainter << &s_painterText;
+}
+
 void GridView::setParams(const GridDataAccessorFactoryParams& params)
 {
 	if (!params.isValid())
@@ -163,11 +168,6 @@ void GridView::setParams(const GridDataAccessorFactoryParams& params)
 	}
 
 	m_gridViewModel->setModelDataAccessor(factory.create(params));
-}
-
-void GridView::paintEvent(QPaintEvent* event)
-{
-	QTableView::paintEvent(event);
 }
 
 void GridView::onModelDataAccessorChanged(IGridDataAccessor* accessor, IGridDataAccessor* oldAccessor)

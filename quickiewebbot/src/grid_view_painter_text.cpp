@@ -1,81 +1,94 @@
 #include "grid_view_painter_text.h"
 #include "igrid_data_accessor.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
 
 GridViewPainterText::GridViewPainterText(int cacheSize)
 	: m_cacheSize(cacheSize)
-	, m_marginLeft(4)
-	, m_marginTop(2)
-	, m_marginRight(4)
-	, m_marginBottom(2)
+	, m_marginLeft(QuickieWebBotHelpers::pointsToPixels(4))
+	, m_marginTop(QuickieWebBotHelpers::pointsToPixels(2))
+	, m_marginRight(QuickieWebBotHelpers::pointsToPixels(4))
+	, m_marginBottom(QuickieWebBotHelpers::pointsToPixels(2))
 {
 }
 
 void GridViewPainterText::paint(QPainter* painter, const QRect& rect, const QModelIndex& index) const
 {
-	QRect adjustedRect = rect.adjusted(m_marginLeft, m_marginTop, -m_marginRight, -m_marginBottom);
-	int flags = index.data(Qt::UserRole).toInt();
+	const bool isTextBold = index.data(Qt::FontRole).value<QFont>().bold();
+	const bool isDecorationValid = index.data(Qt::DecorationRole).isValid();
 
-	QPainter* painterLocal = painter;
-	if (m_cacheSize == 0)
+	const int textAlignmentFlags = index.data(Qt::TextAlignmentRole).toInt();
+	const QString paintingText = index.data(Qt::DisplayRole).toString();
+	const QColor textColor = qvariant_cast<QColor>(index.data(Qt::TextColorRole));
+
+	QRect adjustedRect = rect.adjusted(m_marginLeft, m_marginTop, -m_marginRight, -m_marginBottom);
+
+	if (!m_cacheSize)
 	{
-		
 		painter->save();
 		painter->setClipRect(adjustedRect);
-		painter->setPen(qvariant_cast<QColor>(index.data(Qt::TextColorRole)));
-		applyTextBold(painter, flags);
+		painter->setPen(textColor);
+		
+		if (isTextBold)
+		{
+			applyTextBold(painter);
+		}
 
-// 		if (flags && IModelDataAccessor::ItemFlagTextDecorator)
-// 		{
-// 			adjustedRect = paintDecorator(painter, index, adjustedRect);
-// 		}
-		painter->drawText(adjustedRect, textAlign(flags), index.data(Qt::DisplayRole).toString());
+		if (isDecorationValid)
+		{
+			adjustedRect = paintDecorator(painter, index, adjustedRect);
+		}
+
+		painter->drawText(adjustedRect, textAlignmentFlags, paintingText);
 
 		painter->restore();
 		return;
 	}
 
-	CacheKey key = std::make_pair(index.data(Qt::DisplayRole).toString(), std::make_pair(rect.width(), rect.height()));
-	QPixmap* pixmapPointer = getCached(key);
+	CacheKey key = std::make_pair(paintingText, std::make_pair(rect.width(), rect.height()));
+	QPixmap* pixmapPointer = cached(key);
 
-	if (pixmapPointer == nullptr)
+	if (!pixmapPointer)
 	{
 		QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
-	
+
 		QPixmap pixmap(pixmapRect.size());
 		pixmap.fill(Qt::transparent);
+
 		QPainter painterPixmap(&pixmap);
 
-		applyTextBold(&painterPixmap, flags);
+		if (isTextBold)
+		{
+			applyTextBold(&painterPixmap);
+		}
 
-		painterPixmap.setPen(qvariant_cast<QColor>(index.data(Qt::TextColorRole)));
+		painterPixmap.setPen(textColor);
 
-// 		if (flags && IModelDataAccessor::ItemFlagTextDecorator)
-// 		{
-// 			pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
-// 		}
+		if (isDecorationValid)
+		{
+			pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
+		}
 
-		painterPixmap.drawText(pixmapRect, textAlign(flags), key.first);
+		painterPixmap.drawText(pixmapRect, textAlignmentFlags, key.first);
 
 		auto accessTime = std::chrono::system_clock::now();
 		m_cache[key] = Cache{ pixmap, accessTime };
 		m_cacheAccessTime.insert(std::make_pair(accessTime, key));
 
 		pixmapPointer = &(m_cache[key].pixmap);
-		
 	}
 
 	painter->drawPixmap(adjustedRect, *pixmapPointer);
+
 	if (m_cache.size() > m_cacheSize * 2)
 	{
 		removeExtraCache();
 	}
-	
 }
 
-QPixmap* GridViewPainterText::getCached(const CacheKey& key) const
+QPixmap* GridViewPainterText::cached(const CacheKey& key) const
 {
 	auto it = m_cache.find(key);
 
@@ -115,35 +128,14 @@ void GridViewPainterText::removeExtraCache() const
 	}
 }
 
-void GridViewPainterText::applyTextBold(QPainter* painter, int flags) const
+void GridViewPainterText::applyTextBold(QPainter* painter) const
 {
-	//if (flags & IModelDataAccessor::ItemFlagTextBold)
-	{
-		QFont font = painter->font();
-		font.setBold(true);
-		font.setPointSize(font.pointSize() + 1);
-		painter->setFont(font);
-	}
-}
+	QFont font = painter->font();
 
-int GridViewPainterText::textAlign(int flags) const
-{
-	int result = Qt::AlignTop;
+	font.setBold(true);
+	font.setPointSize(font.pointSize() + 1);
 
-// 	if (flags & IModelDataAccessor::ItemFlagAlignRight)
-// 	{
-// 		result |= Qt::AlignRight;
-// 	}
-// 	else if (flags & IModelDataAccessor::ItemFlagAlignCenter)
-// 	{
-// 		result |= Qt::AlignHCenter;
-// 	}
-// 	else
-// 	{
-// 		result |= Qt::AlignLeft;
-// 	}
-
-	return result;
+	painter->setFont(font);
 }
 
 QRect GridViewPainterText::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const

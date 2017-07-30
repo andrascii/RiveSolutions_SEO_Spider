@@ -9,6 +9,7 @@ class GridModel;
 class IGridDataAccessor;
 class IGridViewResizeStrategy;
 class ContextMenuDataCollectionRow;
+class IGridViewPainter;
 
 class GridView : public QTableView
 {
@@ -19,16 +20,20 @@ public:
 
 	virtual void setModel(QAbstractItemModel* model) override;
 
+	void setContextMenu(ContextMenuDataCollectionRow* menu);
+
+	//
+	// TODO: make it pure virtual
+	//
+	QList<IGridViewPainter*> painters() const noexcept;
+
 	IGridDataAccessor* modelDataAccessor();
 	QModelIndex hoveredIndex() const;
-
-	void setContextMenu(ContextMenuDataCollectionRow* menu);
 
 	Q_SLOT void setParams(const GridDataAccessorFactoryParams& params);
 	Q_SIGNAL void childViewParamsChanged(const GridDataAccessorFactoryParams& params);
 
 protected:
-	virtual void paintEvent(QPaintEvent* event) override;
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
 	virtual void leaveEvent(QEvent* event) override;
 	virtual void resizeEvent(QResizeEvent* event) override;

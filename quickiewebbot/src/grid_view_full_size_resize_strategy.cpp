@@ -26,10 +26,14 @@ void GridViewFullSizeResizeStrategy::init(GridView* gridView, const IGridViewRes
 int GridViewFullSizeResizeStrategy::columnSize(int column, const GridView* gridView) const
 {
 	int s_extraWidth = 5; // gridwiew border, etc
-	int scroolBarWidth = gridView->verticalScrollBar()->width();
-	int width = gridView->width() - scroolBarWidth - s_extraWidth;
+
+	int scrollBarWidth = gridView->verticalScrollBar()->width();
+	int width = gridView->width() - scrollBarWidth - s_extraWidth;
+
 	assert(m_columnsPercentSize.size() > column);
+
 	int columnWidth = m_columnsPercentSize[column] * width / 100;
+
 	return columnWidth;
 }
 

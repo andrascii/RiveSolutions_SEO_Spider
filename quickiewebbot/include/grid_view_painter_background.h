@@ -1,11 +1,11 @@
 #pragma once
 
-#include "grid_view_painter.h"
+#include "igrid_view_painter.h"
 
 namespace QuickieWebBot
 {
 
-class GridViewPainterBackground : public GridViewPainter
+class GridViewPainterBackground : public IGridViewPainter
 {
 public:
 	GridViewPainterBackground(QColor color, QColor alternateColor);

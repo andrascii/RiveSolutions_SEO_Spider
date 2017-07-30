@@ -1,7 +1,6 @@
 #include "grid_data_accessor_factory.h"
 #include "grid_data_accessor_all_items.h"
 #include "grid_data_accessor_one_item.h"
-#include "grid_data_accessor_summary.h"
 
 namespace QuickieWebBot
 {
@@ -15,11 +14,6 @@ std::unique_ptr<IGridDataAccessor> GridDataAccessorFactory::create(const GridDat
 	// or add for each problem criteria one model data accessor
 	// etc. ModelDataAccessorMetaDescriptions for all meta description problems
 	//
-
-	if (params.accessorType == GridDataAccessorFactoryParams::TypeSummary)
-	{
-		return std::make_unique<GridDataAccessorSummary>();
-	}
 
 	auto storageType = static_cast<DataCollection::StorageType>(params.accessorType);
 

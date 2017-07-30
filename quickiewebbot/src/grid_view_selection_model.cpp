@@ -1,6 +1,7 @@
 #include "grid_view_selection_model.h"
 #include "grid_view.h"
 #include "igrid_data_accessor.h"
+#include "grid_model.h"
 
 namespace QuickieWebBot
 {
@@ -42,16 +43,16 @@ void GridViewSelectionModel::select(const QItemSelection& selection, QItemSelect
 
 		for (auto it = indexes.cbegin(); it < indexes.cend(); ++it)
 		{
-// 			if (m_gridView->modelDataAccessor()->flags(*it) & IModelDataAccessor::ItemFlagNotSelectable)
-// 			{
-// 				if (prevIndexSelectable)
-// 				{
-// 					fixedSelection.append(QItemSelectionRange(topLeft, bottomRight));
-// 				}
-// 
-// 				prevIndexSelectable = false;
-// 				continue;
-// 			}
+			if (!(it->flags() & Qt::ItemIsSelectable))
+			{
+				if (prevIndexSelectable)
+				{
+					fixedSelection.append(QItemSelectionRange(topLeft, bottomRight));
+				}
+
+				prevIndexSelectable = false;
+				continue;
+			}
 
 			if (!prevIndexSelectable)
 			{
@@ -78,10 +79,10 @@ void GridViewSelectionModel::select(const QItemSelection& selection, QItemSelect
 
 void GridViewSelectionModel::setCurrentIndex(const QModelIndex& index, QItemSelectionModel::SelectionFlags command)
 {
-// 	if (m_gridView->modelDataAccessor()->flags(index) & IModelDataAccessor::ItemFlagNotSelectable)
-// 	{
-// 		return;
-// 	}
+	if (!(index.flags() & Qt::ItemIsSelectable))
+	{
+		return;
+	}
 
 	QItemSelectionModel::setCurrentIndex(index, command);
 }

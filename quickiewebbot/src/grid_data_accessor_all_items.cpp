@@ -84,6 +84,11 @@ QVariant GridDataAccessorAllItems::columnDescription(int section) const
 	return PageInfo::itemTitle(m_columns[section]);
 }
 
+PageInfo::ItemType GridDataAccessorAllItems::itemType(const QModelIndex& index) const
+{
+	return m_columns[index.column()];
+}
+
 QVariant GridDataAccessorAllItems::item(const QModelIndex& index) const
 {
 	return item(index.row(), index.column());

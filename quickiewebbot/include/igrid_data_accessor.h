@@ -1,7 +1,7 @@
 #pragma once
 
 #include "page_info.h"
-#include "grid_view_painter.h"
+#include "igrid_view_painter.h"
 #include "grid_data_accessor_factory_params.h"
 
 namespace QuickieWebBot
@@ -18,6 +18,8 @@ public:
 	virtual int itemCount() const = 0;
 
 	virtual QVariant columnDescription(int section) const = 0;
+
+	virtual PageInfo::ItemType itemType(const QModelIndex& index) const = 0;
 
 	virtual QVariant item(const QModelIndex& index) const = 0;
 	virtual QVariant item(int row, int column) const = 0;

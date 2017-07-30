@@ -1,15 +1,14 @@
 #pragma once
 
-#include "grid_view_painter.h"
-#include <chrono>
+#include "igrid_view_painter.h"
 
 namespace QuickieWebBot
 {
 
-class GridViewPainterText : public GridViewPainter
+class GridViewPainterText : public IGridViewPainter
 {
 public:
-	GridViewPainterText(int cacheSize = 0);
+	explicit GridViewPainterText(int cacheSize = 0);
 	virtual void paint(QPainter* painter, const QRect& rect, const QModelIndex& index) const override;
 
 private:
@@ -21,11 +20,10 @@ private:
 
 	using CacheKey = std::pair<QString, std::pair<int, int>>;
 
-	QPixmap* getCached(const CacheKey& key) const;
+	QPixmap* cached(const CacheKey& key) const;
 	void removeExtraCache() const;
 
-	void applyTextBold(QPainter* painter, int flags) const;
-	int textAlign(int flags) const;
+	void applyTextBold(QPainter* painter) const;
 	QRect paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const;
 
 private:
