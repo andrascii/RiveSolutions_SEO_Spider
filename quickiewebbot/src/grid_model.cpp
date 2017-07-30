@@ -39,12 +39,12 @@ QVariant GridModel::data(QModelIndex const& index, int role) const
 
 	if (role == Qt::BackgroundColorRole)
 	{
-		return backgroundColor();
+		//return backgroundColor();
 	}
 
 	if (role == Qt::TextColorRole)
 	{
-		return textColor();
+		//return textColor();
 	}
 
 	if (role == Qt::UserRole)
@@ -111,119 +111,6 @@ const IGridViewResizeStrategy* GridModel::resizeStrategy() const
 IGridViewResizeStrategy* GridModel::resizeStrategy()
 {
 	return m_accessor ? m_accessor->resizeStrategy() : nullptr;
-}
-
-QColor GridModel::backgroundColor() const
-{
-	return m_backgroundColor;
-}
-
-void GridModel::setBackgroundColor(const QColor& color)
-{
-	m_backgroundColor = color;
-
-	Q_EMIT backgroundColorChanged(m_backgroundColor);
-}
-
-QColor GridModel::textColor() const
-{
-	return m_textColor;
-}
-
-Q_SLOT void GridModel::setTextColor(const QColor& color)
-{
-	m_textColor = color;
-
-	Q_EMIT textColorChanged(m_textColor);
-}
-
-QColor GridModel::headerBackgroundColor() const
-{
-	return m_headerBackgroundColor;
-}
-
-void GridModel::setHeaderBackgroundColor(const QColor& color)
-{
-	m_headerBackgroundColor = color;
-
-	Q_EMIT headerBackgroundColorChanged(m_headerBackgroundColor);
-}
-
-QColor GridModel::headerTextColor() const
-{
-	return m_headerTextColor;
-}
-
-void GridModel::setHeaderTextColor(const QColor& color)
-{
-	m_headerTextColor = color;
-
-	Q_EMIT headerTextColorChanged(m_headerTextColor);
-}
-
-QFont GridModel::textFont() const
-{
-	return m_textFont;
-}
-
-Q_SLOT void GridModel::setTextFont(const QFont& font)
-{
-	if (m_textFont == font)
-	{
-		return;
-	}
-
-	m_textFont = font;
-
-	Q_EMIT textFontChanged(m_textFont);
-}
-
-QColor GridModel::gridSelectionBackgroundColor() const
-{
-	return m_gridSelectionBackgroundColor;
-}
-
-Q_SLOT void GridModel::setGridSelectionBackgroundColor(const QColor& color)
-{
-	m_gridSelectionBackgroundColor = color;
-
-	Q_EMIT gridSelectionBackgroundColorChanged(m_gridSelectionBackgroundColor);
-}
-
-QColor GridModel::gridSelectionBackgroundInactiveColor() const
-{
-	return m_gridSelectionBackgroundInactiveColor;
-}
-
-void GridModel::setGridSelectionBackgroundInactiveColor(const QColor& color)
-{
-	m_gridSelectionBackgroundInactiveColor = color;
-
-	Q_EMIT gridSelectionBackgroundInactiveColorChanged(m_gridSelectionBackgroundInactiveColor);
-}
-
-QColor GridModel::gridSelectionBorderColor() const
-{
-	return m_gridSelectionBorderColor;
-}
-
-Q_SLOT void GridModel::setGridSelectionBorderColor(const QColor& color)
-{
-	m_gridSelectionBorderColor = color;
-
-	Q_EMIT gridSelectionBorderColorChanged(m_gridSelectionBorderColor);
-}
-
-QColor GridModel::gridSelectionBorderInactiveColor() const
-{
-	return m_gridSelectionBorderInactiveColor;
-}
-
-void GridModel::setGridSelectionBorderInactiveColor(const QColor& color)
-{
-	m_gridSelectionBorderInactiveColor = color;
-
-	Q_EMIT gridSelectionBorderColorInactiveChanged(m_gridSelectionBorderInactiveColor);
 }
 
 void GridModel::onRowAdded(int row)

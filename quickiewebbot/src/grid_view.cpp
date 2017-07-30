@@ -21,7 +21,7 @@ GridView::GridView(QWidget * parent)
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-	setItemDelegate(new GridViewDelegate(this));
+//	setItemDelegate(new GridViewDelegate(this));
 }
 
 void GridView::setModel(QAbstractItemModel* model)

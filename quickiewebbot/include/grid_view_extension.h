@@ -1,11 +1,7 @@
 #pragma once
 
-#include <QTableView>
-
 namespace QuickieWebBot
 {
-
-//class GridViewModel;
 
 class GridViewExtension : public QObject
 {
@@ -24,10 +20,8 @@ private:
 	Q_SLOT void columnsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int column);
 	Q_SLOT void columnsRemoved(const QModelIndex &parent, int first, int last);
 
-
 private:
 	QTableView* m_tableView;
-
 };
 
 }
