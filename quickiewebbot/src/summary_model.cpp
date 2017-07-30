@@ -102,12 +102,14 @@ SummaryModel::SummaryModel(QObject* parent)
 
 Qt::ItemFlags SummaryModel::flags(const QModelIndex& index) const
 {
+	Qt::ItemFlags flags = Qt::ItemIsEnabled;
+
 	if (!isGroupHeaderRow(index.row()))
 	{
-		return Qt::NoItemFlags;
+		flags |= Qt::ItemIsSelectable;
 	}
 
-	return Qt::ItemIsSelectable;
+	return flags;
 }
 
 QVariant SummaryModel::data(const QModelIndex& index, int role) const
