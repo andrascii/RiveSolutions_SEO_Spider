@@ -1,11 +1,11 @@
 #pragma once
 
-#include "model_data_accessor_all_items.h"
+#include "grid_data_accessor_all_items.h"
 
 namespace QuickieWebBot
 {
 
-// class ModelDataAccessorOneItem : public ModelDataAccessorAllItems
+// class ModelDataAccessorOneItem : public GridDataAccessorAllItems
 // {
 // public:
 // 	ModelDataAccessorOneItem(DataCollection::StorageType storageType, int row);

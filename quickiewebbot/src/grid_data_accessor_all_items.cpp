@@ -1,17 +1,17 @@
 #include "application.h"
-#include "model_data_accessor_all_items.h"
+#include "grid_data_accessor_all_items.h"
 #include "service_locator.h"
 #include "model_controller.h"
 #include "grid_view_painter_text.h"
 #include "grid_view_painter_background.h"
 #include "grid_view_resize_strategy.h"
 #include "quickie_web_bot_helpers.h"
-#include "model_data_accessor_factory.h"
+#include "grid_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
 
-ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType storageType, QVector<PageInfo::ItemType> columns)
+GridDataAccessorAllItems::GridDataAccessorAllItems(DataCollection::StorageType storageType, QVector<PageInfo::ItemType> columns)
 	: m_modelControllerData(nullptr)
 	, m_storageType(storageType)
 	, m_columns(columns)
@@ -64,22 +64,32 @@ ModelDataAccessorAllItems::ModelDataAccessorAllItems(DataCollection::StorageType
 	m_resizeStrategy->setColumnsSize(columnsSize);
 }
 	
-QList<PageInfo::ItemType> ModelDataAccessorAllItems::supportedColumns() const
+int GridDataAccessorAllItems::columnsCount() const
 {
-	return m_supportedColumns;
+	return m_columns.size();
 }
 
-int ModelDataAccessorAllItems::itemCount() const
+int GridDataAccessorAllItems::itemCount() const
 {
 	return m_modelControllerData->guiStorage(m_storageType)->size();
 }
 	
-QVariant ModelDataAccessorAllItems::item(const QModelIndex& index) const
+QVariant GridDataAccessorAllItems::columnDescription(int section) const
+{
+	if (section >= m_columns.size())
+	{
+		return QVariant();
+	}
+
+	return PageInfo::itemTitle(m_columns[section]);
+}
+
+QVariant GridDataAccessorAllItems::item(const QModelIndex& index) const
 {
 	return item(index.row(), index.column());
 }
 
-QVariant ModelDataAccessorAllItems::item(int row, int column) const
+QVariant GridDataAccessorAllItems::item(int row, int column) const
 {
 	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
 
@@ -88,45 +98,45 @@ QVariant ModelDataAccessorAllItems::item(int row, int column) const
 	return storage[row]->itemValue(info);
 }
 
-PageInfoPtr ModelDataAccessorAllItems::pageInfoAtRow(int row) const
+PageInfoPtr GridDataAccessorAllItems::pageInfoAtRow(int row) const
 {
 	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);
 
 	return storage[row];
 }
 
-IGridViewResizeStrategy* ModelDataAccessorAllItems::resizeStrategy() const
+IGridViewResizeStrategy* GridDataAccessorAllItems::resizeStrategy() const
 {
 	return m_resizeStrategy.get();
 }
 
-ModelDataAccessorFactoryParams ModelDataAccessorAllItems::childViewParams(const QItemSelection& selection) const
+GridDataAccessorFactoryParams GridDataAccessorAllItems::childViewParams(const QItemSelection& selection) const
 {
 	QModelIndexList indicies = selection.indexes();
 
 	if (indicies.isEmpty())
 	{
-		return ModelDataAccessorFactoryParams(ModelDataAccessorFactoryParams::TypeInvalid, ModelDataAccessorFactoryParams::ModeGeneral);
+		return GridDataAccessorFactoryParams(GridDataAccessorFactoryParams::TypeInvalid, GridDataAccessorFactoryParams::ModeGeneral);
 	}
 
 	QModelIndex index = indicies.first();
 	assert(index.isValid());
 
-	return ModelDataAccessorFactoryParams(static_cast<ModelDataAccessorFactoryParams::Type>(m_storageType), 
-		ModelDataAccessorFactoryParams::ModeOneRow, index.row());
+	return GridDataAccessorFactoryParams(static_cast<GridDataAccessorFactoryParams::Type>(m_storageType), 
+		GridDataAccessorFactoryParams::ModeOneRow, index.row());
 }
 
-QObject* ModelDataAccessorAllItems::qobject()
+QObject* GridDataAccessorAllItems::qobject()
 {
 	return this;
 }
 
-void ModelDataAccessorAllItems::onModelDataRowAdded(int row, int type)
+void GridDataAccessorAllItems::onModelDataRowAdded(int row, int type)
 {
 	onModelDataRowAddedInternal(row, type);
 }
 
-void ModelDataAccessorAllItems::onModelDataRowAddedInternal(int row, int type)
+void GridDataAccessorAllItems::onModelDataRowAddedInternal(int row, int type)
 {
 	if (type == m_storageType)
 	{

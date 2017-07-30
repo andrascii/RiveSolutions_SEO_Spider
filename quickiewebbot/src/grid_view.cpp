@@ -1,5 +1,5 @@
 #include "grid_view.h"
-#include "igrid_model_data_accessor.h"
+#include "igrid_data_accessor.h"
 #include "grid_model.h"
 #include "igrid_view_resize_strategy.h"
 #include "grid_view_selection_model.h"
@@ -39,8 +39,8 @@ void GridView::setModel(QAbstractItemModel* model)
 
 	m_gridViewModel = newModel;
 
-	VERIFY(connect(model, SIGNAL(modelDataAccessorChanged(IGridModelDataAccessor*, IGridModelDataAccessor*)), 
-		this, SLOT(onModelDataAccessorChanged(IGridModelDataAccessor*, IGridModelDataAccessor*))));
+	VERIFY(connect(model, SIGNAL(modelDataAccessorChanged(IGridDataAccessor*, IGridDataAccessor*)), 
+		this, SLOT(onModelDataAccessorChanged(IGridDataAccessor*, IGridDataAccessor*))));
 	
 	updateColumnsSpan();
 	setSelectionModel(new GridViewSelectionModel(this));
@@ -107,7 +107,7 @@ void GridView::selectionChanged(const QItemSelection& selected, const QItemSelec
 {
 	if (modelDataAccessor())
 	{
-		ModelDataAccessorFactoryParams params = modelDataAccessor()->childViewParams(selected);
+		GridDataAccessorFactoryParams params = modelDataAccessor()->childViewParams(selected);
 		emit childViewParamsChanged(params);
 	}
 	
@@ -129,7 +129,7 @@ void GridView::mouseReleaseEvent(QMouseEvent* event)
 	m_contextMenu->show();
 }
 
-IGridModelDataAccessor* GridView::modelDataAccessor()
+IGridDataAccessor* GridView::modelDataAccessor()
 {
 	return m_gridViewModel != nullptr ? m_gridViewModel->modelDataAcessor() : nullptr;
 }
@@ -144,14 +144,14 @@ void GridView::setContextMenu(ContextMenuDataCollectionRow* menu)
 	m_contextMenu = menu;
 }
 
-void GridView::setParams(const ModelDataAccessorFactoryParams& params)
+void GridView::setParams(const GridDataAccessorFactoryParams& params)
 {
 	if (!params.isValid())
 	{
 		return;
 	}
 
-	ModelDataAccessorFactory factory;
+	GridDataAccessorFactory factory;
 
 	if (!m_gridViewModel)
 	{
@@ -170,7 +170,7 @@ void GridView::paintEvent(QPaintEvent* event)
 	QTableView::paintEvent(event);
 }
 
-void GridView::onModelDataAccessorChanged(IGridModelDataAccessor* accessor, IGridModelDataAccessor* oldAccessor)
+void GridView::onModelDataAccessorChanged(IGridDataAccessor* accessor, IGridDataAccessor* oldAccessor)
 {
 	if (accessor->resizeStrategy() != nullptr)
 	{

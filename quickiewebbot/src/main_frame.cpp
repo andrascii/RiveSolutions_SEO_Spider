@@ -1,7 +1,7 @@
 #include "application.h"
 #include "main_frame.h"
 #include "model_controller.h"
-#include "model_data_accessor_factory.h"
+#include "grid_data_accessor_factory.h"
 #include "data_collection.h"
 #include "grid_view_extension.h"
 #include "web_crawler.h"
@@ -62,19 +62,19 @@ void MainFrame::initialize()
 
 	GridModel* model = new GridModel(this);
 
-	ModelDataAccessorFactory factory;
-	model->setModelDataAccessor(factory.create(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeAllCrawledUrls }));
+	GridDataAccessorFactory factory;
+	model->setModelDataAccessor(factory.create(GridDataAccessorFactoryParams{ GridDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingGridView->setModel(model);
 	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 
 	GridModel* summaryModel = new GridModel(this);
-	summaryModel->setModelDataAccessor(factory.create(ModelDataAccessorFactoryParams{ ModelDataAccessorFactoryParams::TypeSummary }));
+	summaryModel->setModelDataAccessor(factory.create(GridDataAccessorFactoryParams{ GridDataAccessorFactoryParams::TypeSummary }));
 
 	m_ui.summaryGridView->setModel(summaryModel);
 
 
-	VERIFY(connect(m_ui.summaryGridView, SIGNAL(childViewParamsChanged(const ModelDataAccessorFactoryParams&)), 
-		m_ui.summaryDetailsGridView, SLOT(setParams(const ModelDataAccessorFactoryParams&))));
+	VERIFY(connect(m_ui.summaryGridView, SIGNAL(childViewParamsChanged(const GridDataAccessorFactoryParams&)), 
+		m_ui.summaryDetailsGridView, SLOT(setParams(const GridDataAccessorFactoryParams&))));
 
 	m_ui.summaryGridView->setMinimumWidth(QuickieWebBotHelpers::pointsToPixels(350));
 

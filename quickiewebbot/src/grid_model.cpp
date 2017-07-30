@@ -17,7 +17,7 @@ int GridModel::rowCount(QModelIndex const&) const
 
 int GridModel::columnCount(QModelIndex const&) const
 {
-	return m_accessor->supportedColumns().size();
+	return m_accessor->columnsCount();
 }
 
 QVariant GridModel::data(QModelIndex const& index, int role) const
@@ -39,12 +39,12 @@ QVariant GridModel::data(QModelIndex const& index, int role) const
 
 	if (role == Qt::BackgroundColorRole)
 	{
-		//return m_accessor->itemBackgroundColor(index);
+		return backgroundColor();
 	}
 
 	if (role == Qt::TextColorRole)
 	{
-		//return m_accessor->itemTextColor(index);
+		return textColor();
 	}
 
 	if (role == Qt::UserRole)
@@ -64,13 +64,13 @@ QVariant GridModel::headerData(int section, Qt::Orientation orientation, int rol
 
 	if (role == Qt::DisplayRole)
 	{
-		return PageInfo::itemTitle(m_accessor->supportedColumns()[section]);
+		return m_accessor->columnDescription(section);
 	}
 
 	return QVariant();
 }
 
-void GridModel::setModelDataAccessor(std::unique_ptr<IGridModelDataAccessor> accessor)
+void GridModel::setModelDataAccessor(std::unique_ptr<IGridDataAccessor> accessor)
 {
 	if (m_accessor)
 	{
@@ -81,7 +81,7 @@ void GridModel::setModelDataAccessor(std::unique_ptr<IGridModelDataAccessor> acc
 			this, SLOT(onItemChanged(int, int))));
 	}
 
-	std::unique_ptr<IGridModelDataAccessor> oldAccessor = std::move(m_accessor);
+	std::unique_ptr<IGridDataAccessor> oldAccessor = std::move(m_accessor);
 	m_accessor = std::move(accessor);
 
 	VERIFY(connect(m_accessor->qobject(), SIGNAL(rowAdded(int)), this, SLOT(onRowAdded(int))));
@@ -93,12 +93,12 @@ void GridModel::setModelDataAccessor(std::unique_ptr<IGridModelDataAccessor> acc
 	endResetModel();
 }
 
-const IGridModelDataAccessor* GridModel::modelDataAcessor() const
+const IGridDataAccessor* GridModel::modelDataAcessor() const
 {
 	return m_accessor.get();
 }
 
-IGridModelDataAccessor* GridModel::modelDataAcessor()
+IGridDataAccessor* GridModel::modelDataAcessor()
 {
 	return m_accessor.get();
 }
@@ -198,6 +198,7 @@ QColor GridModel::gridSelectionBackgroundInactiveColor() const
 void GridModel::setGridSelectionBackgroundInactiveColor(const QColor& color)
 {
 	m_gridSelectionBackgroundInactiveColor = color;
+
 	Q_EMIT gridSelectionBackgroundInactiveColorChanged(m_gridSelectionBackgroundInactiveColor);
 }
 
@@ -209,6 +210,7 @@ QColor GridModel::gridSelectionBorderColor() const
 Q_SLOT void GridModel::setGridSelectionBorderColor(const QColor& color)
 {
 	m_gridSelectionBorderColor = color;
+
 	Q_EMIT gridSelectionBorderColorChanged(m_gridSelectionBorderColor);
 }
 
@@ -220,6 +222,7 @@ QColor GridModel::gridSelectionBorderInactiveColor() const
 void GridModel::setGridSelectionBorderInactiveColor(const QColor& color)
 {
 	m_gridSelectionBorderInactiveColor = color;
+
 	Q_EMIT gridSelectionBorderColorInactiveChanged(m_gridSelectionBorderInactiveColor);
 }
 

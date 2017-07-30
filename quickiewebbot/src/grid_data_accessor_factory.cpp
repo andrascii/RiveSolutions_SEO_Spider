@@ -1,12 +1,12 @@
-#include "model_data_accessor_factory.h"
-#include "model_data_accessor_all_items.h"
-#include "model_data_accessor_one_item.h"
-#include "model_data_accessor_summary.h"
+#include "grid_data_accessor_factory.h"
+#include "grid_data_accessor_all_items.h"
+#include "grid_data_accessor_one_item.h"
+#include "grid_data_accessor_summary.h"
 
 namespace QuickieWebBot
 {
 
-std::unique_ptr<IGridModelDataAccessor> ModelDataAccessorFactory::create(const ModelDataAccessorFactoryParams& params)
+std::unique_ptr<IGridDataAccessor> GridDataAccessorFactory::create(const GridDataAccessorFactoryParams& params)
 {
 	Q_UNUSED(params);
 
@@ -16,19 +16,19 @@ std::unique_ptr<IGridModelDataAccessor> ModelDataAccessorFactory::create(const M
 	// etc. ModelDataAccessorMetaDescriptions for all meta description problems
 	//
 
-	if (params.accessorType == ModelDataAccessorFactoryParams::TypeSummary)
+	if (params.accessorType == GridDataAccessorFactoryParams::TypeSummary)
 	{
-		return std::make_unique<ModelDataAccessorSummary>();
+		return std::make_unique<GridDataAccessorSummary>();
 	}
 
 	auto storageType = static_cast<DataCollection::StorageType>(params.accessorType);
 
-	if (params.mode == ModelDataAccessorFactoryParams::ModeGeneral)
+	if (params.mode == GridDataAccessorFactoryParams::ModeGeneral)
 	{
-		return std::make_unique<ModelDataAccessorAllItems>(storageType, QVector<PageInfo::ItemType>());
+		return std::make_unique<GridDataAccessorAllItems>(storageType, QVector<PageInfo::ItemType>());
 	}
 
-	if (params.mode == ModelDataAccessorFactoryParams::ModeSummary)
+	if (params.mode == GridDataAccessorFactoryParams::ModeSummary)
 	{
 		QVector<PageInfo::ItemType> columns;
 
@@ -156,14 +156,14 @@ std::unique_ptr<IGridModelDataAccessor> ModelDataAccessorFactory::create(const M
 			default: assert(!"Unsupported params");
 		}
 
-		return std::make_unique<ModelDataAccessorAllItems>(storageType, columns);
+		return std::make_unique<GridDataAccessorAllItems>(storageType, columns);
 	}
 
 	assert(params.row > -1);
 	//return std::make_unique<ModelDataAccessorOneItem>(storageType,  params.row);
 
 	assert(!"Invalid params");
-	return std::unique_ptr<IGridModelDataAccessor>();
+	return std::unique_ptr<IGridDataAccessor>();
 }
 
 }

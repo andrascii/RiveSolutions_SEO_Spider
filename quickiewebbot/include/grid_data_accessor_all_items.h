@@ -1,7 +1,7 @@
 #pragma once
 
-#include "model_data_accessor_base.h"
 #include "data_collection.h"
+#include "grid_data_accessor_base.h"
 #include "grid_view_resize_strategy.h"
 #include "grid_view_painter_text.h"
 #include "grid_view_painter_background.h"
@@ -11,17 +11,19 @@ namespace QuickieWebBot
 
 class GridViewResizeStrategy;
 
-class ModelDataAccessorAllItems 
+class GridDataAccessorAllItems 
 	: public QObject
-	, public ModelDataAccessorBase
+	, public GridDataAccessorBase
 {
 	Q_OBJECT
 
 public:
-	ModelDataAccessorAllItems(DataCollection::StorageType storageType, QVector<PageInfo::ItemType> columns);
+	GridDataAccessorAllItems(DataCollection::StorageType storageType, QVector<PageInfo::ItemType> columns);
 
-	virtual QList<PageInfo::ItemType> supportedColumns() const override;
+	virtual int columnsCount() const override;
 	virtual int itemCount() const override;
+
+	virtual QVariant columnDescription(int section) const override;
 
 	virtual QVariant item(const QModelIndex& index) const override;
 	virtual QVariant item(int row, int column) const override;
@@ -29,7 +31,7 @@ public:
 	virtual PageInfoPtr pageInfoAtRow(int row) const override;
 
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
-	virtual ModelDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
+	virtual GridDataAccessorFactoryParams childViewParams(const QItemSelection& selection) const override;
 
 	virtual QObject* qobject() override;
 

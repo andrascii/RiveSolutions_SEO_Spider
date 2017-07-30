@@ -1,12 +1,12 @@
 #pragma once
 
-#include "model_data_accessor_factory.h"
+#include "grid_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
 
 class GridModel;
-class IGridModelDataAccessor;
+class IGridDataAccessor;
 class IGridViewResizeStrategy;
 class ContextMenuDataCollectionRow;
 
@@ -19,13 +19,13 @@ public:
 
 	virtual void setModel(QAbstractItemModel* model) override;
 
-	IGridModelDataAccessor* modelDataAccessor();
+	IGridDataAccessor* modelDataAccessor();
 	QModelIndex hoveredIndex() const;
 
 	void setContextMenu(ContextMenuDataCollectionRow* menu);
 
-	Q_SLOT void setParams(const ModelDataAccessorFactoryParams& params);
-	Q_SIGNAL void childViewParamsChanged(const ModelDataAccessorFactoryParams& params);
+	Q_SLOT void setParams(const GridDataAccessorFactoryParams& params);
+	Q_SIGNAL void childViewParamsChanged(const GridDataAccessorFactoryParams& params);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
@@ -35,7 +35,7 @@ protected:
 	virtual void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 	virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
-	Q_SLOT void onModelDataAccessorChanged(IGridModelDataAccessor* accessor, IGridModelDataAccessor* oldAccessor);
+	Q_SLOT void onModelDataAccessorChanged(IGridDataAccessor* accessor, IGridDataAccessor* oldAccessor);
 
 private:
 	void updateColumnsSpan();

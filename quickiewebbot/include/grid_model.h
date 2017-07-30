@@ -1,6 +1,6 @@
 #pragma once
 
-#include "igrid_model_data_accessor.h"
+#include "igrid_data_accessor.h"
 
 namespace QuickieWebBot
 {
@@ -45,10 +45,10 @@ public:
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 
-	void setModelDataAccessor(std::unique_ptr<IGridModelDataAccessor> accessor);
+	void setModelDataAccessor(std::unique_ptr<IGridDataAccessor> accessor);
 
-	const IGridModelDataAccessor* modelDataAcessor() const;
-	IGridModelDataAccessor* modelDataAcessor();
+	const IGridDataAccessor* modelDataAcessor() const;
+	IGridDataAccessor* modelDataAcessor();
 
 	const IGridViewResizeStrategy* resizeStrategy() const;
 	IGridViewResizeStrategy* resizeStrategy();
@@ -90,7 +90,7 @@ public:
 	Q_SIGNAL void gridSelectionBorderColorInactiveChanged(const QColor&);
 
 signals:
-	void modelDataAccessorChanged(IGridModelDataAccessor* accessor, IGridModelDataAccessor* oldAccessor);
+	void modelDataAccessorChanged(IGridDataAccessor* accessor, IGridDataAccessor* oldAccessor);
 
 private slots:
 	void onRowAdded(int row);
@@ -114,7 +114,7 @@ private:
 	QColor m_headerTextColor;
 	QColor m_headerBackgroundColor;
 
-	std::unique_ptr<IGridModelDataAccessor> m_accessor;
+	std::unique_ptr<IGridDataAccessor> m_accessor;
 };
 
 }

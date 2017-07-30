@@ -1,5 +1,5 @@
 #include "grid_view_delegate.h"
-#include "igrid_model_data_accessor.h"
+#include "igrid_data_accessor.h"
 #include "grid_view_painter.h"
 #include "grid_view.h"
 #include "grid_view_painter_background.h"
@@ -17,7 +17,7 @@ GridViewDelegate::GridViewDelegate(GridView* parent)
 
 void GridViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-// 	IModelDataAccessor* accessor = m_gridView->modelDataAccessor();
+// 	IGridDataAccessor* accessor = m_gridView->modelDataAccessor();
 // 	assert(accessor != nullptr);
 // 
 // 	if (option.state & QStyle::State_Selected)

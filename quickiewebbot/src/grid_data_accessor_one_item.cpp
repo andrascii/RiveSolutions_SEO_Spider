@@ -1,11 +1,11 @@
-#include "model_data_accessor_one_item.h"
+#include "grid_data_accessor_one_item.h"
 #include "grid_view_full_size_resize_strategy.h"
 
 namespace QuickieWebBot
 {
 
 // ModelDataAccessorOneItem::ModelDataAccessorOneItem(DataCollection::StorageType storageType, int row)
-// 	: ModelDataAccessorAllItems(storageType, {})
+// 	: GridDataAccessorAllItems(storageType, {})
 // 	, m_row(row)
 // {
 // }
@@ -24,7 +24,7 @@ namespace QuickieWebBot
 // {
 // 	if (column == 0)
 // 	{
-// 		return ModelDataAccessorAllItems::headerData(row, Qt::Horizontal);
+// 		return GridDataAccessorAllItems::headerData(row, Qt::Horizontal);
 // 	}
 // 
 // 	const DataCollection::GuiStorageType& storage = *m_modelControllerData->guiStorage(m_storageType);

@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-struct ModelDataAccessorFactoryParams
+struct GridDataAccessorFactoryParams
 {
 	enum Type
 	{
@@ -55,7 +55,7 @@ struct ModelDataAccessorFactoryParams
 	Mode mode;
 	int row;
 
-	ModelDataAccessorFactoryParams(Type accessorType, Mode mode = ModeGeneral, int row = -1)
+	GridDataAccessorFactoryParams(Type accessorType, Mode mode = ModeGeneral, int row = -1)
 		: accessorType(accessorType)
 		, mode(mode)
 		, row(row)

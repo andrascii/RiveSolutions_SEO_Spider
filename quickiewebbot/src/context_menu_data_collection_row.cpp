@@ -1,6 +1,6 @@
 #include "context_menu_data_collection_row.h"
 #include "grid_model.h"
-#include "igrid_model_data_accessor.h"
+#include "igrid_data_accessor.h"
 
 namespace QuickieWebBot
 {
@@ -84,7 +84,7 @@ void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
 
 	foreach(QModelIndex index, selectedRowsList())
 	{
-		for (int i = 0; i < model()->modelDataAcessor()->supportedColumns().size(); ++i)
+		for (int i = 0; i < model()->modelDataAcessor()->columnsCount(); ++i)
 		{
 			allColumnsData += model()->modelDataAcessor()->item(index.row(), i).toString() + " ";
 		}
