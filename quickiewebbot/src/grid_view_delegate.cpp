@@ -1,6 +1,5 @@
 #include "grid_view.h"
 #include "grid_view_delegate.h"
-#include "igrid_data_accessor.h"
 #include "igrid_view_painter.h"
 #include "grid_view_painter_background.h"
 #include "grid_view_painter_text.h"

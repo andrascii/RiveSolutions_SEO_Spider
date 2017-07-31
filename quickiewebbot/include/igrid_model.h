@@ -1,7 +1,5 @@
 #pragma once
 
-#include "igrid_data_accessor.h"
-
 namespace QuickieWebBot
 {
 

@@ -1,5 +1,4 @@
 #include "grid_view.h"
-#include "igrid_data_accessor.h"
 #include "igrid_model.h"
 #include "summary_model.h"
 #include "igrid_view_resize_strategy.h"

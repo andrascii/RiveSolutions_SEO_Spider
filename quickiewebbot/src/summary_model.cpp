@@ -17,70 +17,70 @@ SummaryModel::SummaryModel(QObject* parent)
 		{
 			"Links",
 			{
-				SummaryItem{ "Links with non-ASCII characters", GridDataAccessorFactoryParams::TypeAllNonAsciiLinks, StatusOK, 0 },
-				SummaryItem{ "Links with uppercase characters", GridDataAccessorFactoryParams::TypeAllUppercaseLinks, StatusOK, 0 },
-				SummaryItem{ "Too long links", GridDataAccessorFactoryParams::TypeAllVeryLongLinks, StatusOK, 0 },
+				SummaryItem{ "Links with non-ASCII characters", DataCollection::NonAsciiCharacterUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Links with uppercase characters", DataCollection::UpperCaseUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Too long links", DataCollection::VeryLongUrlStorageType, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's Title",
 			{
-				SummaryItem{ "Empty titles", GridDataAccessorFactoryParams::TypeAllEmptyTitle, StatusOK, 0 },
-				SummaryItem{ "Duplicate titles", GridDataAccessorFactoryParams::TypeAllDuplicatedTitle, StatusOK, 0 },
-				SummaryItem{ "Too long titles", GridDataAccessorFactoryParams::TypeAllVeryLongTitle, StatusOK, 0 },
-				SummaryItem{ "Too short titles", GridDataAccessorFactoryParams::TypeAllVeryShortTitle, StatusOK, 0 },
-				SummaryItem{ "H1 Duplcates titles", GridDataAccessorFactoryParams::TypeAllDuplicatedH1Title, StatusOK, 0 },
-				SummaryItem{ "Several title tags", GridDataAccessorFactoryParams::TypeAllSeveralTitle, StatusOK, 0 },
+				SummaryItem{ "Empty titles", DataCollection::EmptyTitleUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Duplicate titles", DataCollection::DuplicatedTitleUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Too long titles", DataCollection::VeryLongTitleUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Too short titles", DataCollection::VeryShortTitleUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "H1 Duplcates titles", DataCollection::DuplicatedH1TitleUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Several title tags", DataCollection::SeveralTitleUrlStorageType, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's Meta Description",
 			{
-				SummaryItem{ "Empty meta description", GridDataAccessorFactoryParams::TypeAllEmptyMetaDescription, StatusOK, 0 },
-				SummaryItem{ "Duplicate meta descriptions", GridDataAccessorFactoryParams::TypeAllDuplicatedH1, StatusOK, 0 },
-				SummaryItem{ "Too long meta descriptions", GridDataAccessorFactoryParams::TypeAllVeryLongMetaDescription, StatusOK, 0 },
-				SummaryItem{ "Too short meta descriptions", GridDataAccessorFactoryParams::TypeAllVeryShortMetaDescription, StatusOK, 0 },
-				SummaryItem{ "Several meta descriptions tags", GridDataAccessorFactoryParams::TypeAllSeveralMetaDescription, StatusOK, 0 },
+				SummaryItem{ "Empty meta description", DataCollection::EmptyMetaDescriptionUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Duplicate meta descriptions", DataCollection::DuplicatedMetaDescriptionUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Too long meta descriptions", DataCollection::VeryLongMetaDescriptionUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Too short meta descriptions", DataCollection::VeryShortMetaDescriptionUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Several meta descriptions tags", DataCollection::SeveralMetaDescriptionUrlStorageType, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's Meta Key Words",
 			{
-				SummaryItem{ "Empty meta key words", GridDataAccessorFactoryParams::TypeAllEmptyMetaKeywords, StatusOK, 0 },
-				SummaryItem{ "Duplicate meta key words", GridDataAccessorFactoryParams::TypeAllDuplicatedMetaKeywords, StatusOK, 0 },
-				SummaryItem{ "Several meta key words tags", GridDataAccessorFactoryParams::TypeAllSeveralMetaKeywords, StatusOK, 0 },
+				SummaryItem{ "Empty meta keywords", DataCollection::EmptyMetaKeywordsUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Duplicate meta keywords", DataCollection::DuplicatedMetaKeywordsUrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Several meta keywords tags", DataCollection::SeveralMetaKeywordsUrlStorageType, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's H1 Headers",
 			{
-				SummaryItem{ "Missing H1", GridDataAccessorFactoryParams::TypeAllMissingH1, StatusOK, 0 },
-				SummaryItem{ "Duplicate H1 headers", GridDataAccessorFactoryParams::TypeAllDuplicatedH1, StatusOK, 0 },
-				SummaryItem{ "Too long H1 headers", GridDataAccessorFactoryParams::TypeAllVeryLongH1, StatusOK, 0 },
-				SummaryItem{ "Several H1 tags", GridDataAccessorFactoryParams::TypeAllSeveralH1, StatusOK, 0 },
+				SummaryItem{ "Missing H1", DataCollection::MissingH1UrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Duplicate H1 headers", DataCollection::DuplicatedH1UrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Too long H1 headers", DataCollection::VeryLongH1UrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Several H1 tags", DataCollection::SeveralH1UrlStorageType, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's H2 Headers",
 			{
-				SummaryItem{ "Missing H2", GridDataAccessorFactoryParams::TypeAllMissingH2, StatusOK, 0 },
-				SummaryItem{ "Duplicate H2 headers", GridDataAccessorFactoryParams::TypeAllDuplicatedH2, StatusOK, 0 },
-				SummaryItem{ "Too long H2 headers", GridDataAccessorFactoryParams::TypeAllVeryLongH2, StatusOK, 0 },
-				SummaryItem{ "Several H2 tags", GridDataAccessorFactoryParams::TypeAllSeveralH2, StatusOK, 0 },
+				SummaryItem{ "Missing H2", DataCollection::MissingH2UrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Duplicate H2 headers", DataCollection::DuplicatedH2UrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Too long H2 headers", DataCollection::VeryLongH2UrlStorageType, StatusOK, 0 },
+				SummaryItem{ "Several H2 tags", DataCollection::SeveralH2UrlStorageType, StatusOK, 0 },
 			}
 		},
 		SummaryGroup
 		{
 			"Page's Images",
 			{
-				SummaryItem{ "Over 100KB size", GridDataAccessorFactoryParams::TypeAllOver100kbImages, StatusOK, 0 },
-				SummaryItem{ "Missing alt description", GridDataAccessorFactoryParams::TypeAllMissingAltImages, StatusOK, 0 },
-				SummaryItem{ "Too long alt descriptions", GridDataAccessorFactoryParams::TypeAllVeryLongAltTextImages, StatusOK, 0 },
+				SummaryItem{ "Over 100KB size", DataCollection::Over100kbImageStorageType, StatusOK, 0 },
+				SummaryItem{ "Missing alt description", DataCollection::MissingAltTextImageStorageType, StatusOK, 0 },
+				SummaryItem{ "Too long alt descriptions", DataCollection::VeryLongAltTextImageStorageType, StatusOK, 0 },
 			}
 		}
 	};

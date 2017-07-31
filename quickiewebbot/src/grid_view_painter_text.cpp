@@ -1,5 +1,4 @@
 #include "grid_view_painter_text.h"
-#include "igrid_data_accessor.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot

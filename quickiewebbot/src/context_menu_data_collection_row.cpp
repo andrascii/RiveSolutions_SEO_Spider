@@ -1,6 +1,5 @@
 #include "context_menu_data_collection_row.h"
 #include "igrid_model.h"
-#include "igrid_data_accessor.h"
 
 namespace QuickieWebBot
 {

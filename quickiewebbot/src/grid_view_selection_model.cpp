@@ -1,6 +1,5 @@
 #include "grid_view_selection_model.h"
 #include "grid_view.h"
-#include "igrid_data_accessor.h"
 #include "igrid_model.h"
 
 namespace QuickieWebBot
