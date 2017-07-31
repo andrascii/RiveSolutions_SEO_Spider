@@ -3,16 +3,16 @@
 
 namespace QuickieWebBot
 {
+
 GridViewResizeStrategy::GridViewResizeStrategy()
 {
 }
 
-void GridViewResizeStrategy::resize(GridView* gridView) const
+void GridViewResizeStrategy::resize(GridView*) const noexcept
 {
-	Q_UNUSED(gridView);
 }
 
-void GridViewResizeStrategy::init(GridView* gridView, const IGridViewResizeStrategy* prev)
+void GridViewResizeStrategy::init(GridView* gridView, const IGridViewResizeStrategy* prev) const noexcept
 {
 	for (auto it = m_columnsSize.begin(); it != m_columnsSize.end(); ++it)
 	{
@@ -20,7 +20,7 @@ void GridViewResizeStrategy::init(GridView* gridView, const IGridViewResizeStrat
 	}
 }
 
-int GridViewResizeStrategy::columnSize(int column, const GridView* gridView) const
+int GridViewResizeStrategy::columnSize(int column, const GridView* gridView) const noexcept
 {
 	auto it = m_columnsSize.find(column);
 	assert(it != m_columnsSize.end());

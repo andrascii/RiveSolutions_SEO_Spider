@@ -4,7 +4,7 @@
 #include "igrid_view_painter.h"
 #include "grid_view_painter_background.h"
 #include "grid_view_painter_text.h"
-#include "grid_model.h"
+#include "igrid_model.h"
 
 namespace QuickieWebBot
 {
@@ -26,13 +26,13 @@ void GridViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
 bool GridViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-	if (index.data(GridModel::ItemTypeRole) == PageInfo::UrlItemType)
-	{
-		if (event->type() == QEvent::MouseButtonPress)
-		{
-			QDesktopServices::openUrl(index.data(Qt::DisplayRole).toString());
-		}
-	}
+// 	if (index.data(IGridModel::ItemTypeRole) == PageInfo::UrlItemType)
+// 	{
+// 		if (event->type() == QEvent::MouseButtonPress)
+// 		{
+// 			QDesktopServices::openUrl(index.data(Qt::DisplayRole).toString());
+// 		}
+// 	}
 	
 	return false;
 }

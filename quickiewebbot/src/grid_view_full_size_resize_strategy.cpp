@@ -9,7 +9,7 @@ GridViewFullSizeResizeStrategy::GridViewFullSizeResizeStrategy(std::vector<int> 
 {
 }
 
-void GridViewFullSizeResizeStrategy::resize(GridView* gridView) const
+void GridViewFullSizeResizeStrategy::resize(GridView* gridView) const noexcept
 {
 	for (int i = 0; i < m_columnsPercentSize.size(); ++i)
 	{
@@ -17,13 +17,11 @@ void GridViewFullSizeResizeStrategy::resize(GridView* gridView) const
 	}
 }
 
-void GridViewFullSizeResizeStrategy::init(GridView* gridView, const IGridViewResizeStrategy* prev)
+void GridViewFullSizeResizeStrategy::init(GridView*, const IGridViewResizeStrategy*) const noexcept
 {
-	Q_UNUSED(gridView);
-	Q_UNUSED(prev);
 }
 
-int GridViewFullSizeResizeStrategy::columnSize(int column, const GridView* gridView) const
+int GridViewFullSizeResizeStrategy::columnSize(int column, const GridView* gridView) const noexcept
 {
 	int s_extraWidth = 5; // gridwiew border, etc
 

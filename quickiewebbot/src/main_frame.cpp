@@ -3,14 +3,15 @@
 #include "model_controller.h"
 #include "grid_data_accessor_factory.h"
 #include "data_collection.h"
-#include "grid_view_extension.h"
 #include "web_crawler.h"
 #include "grid_view_full_size_resize_strategy.h"
 #include "quickie_web_bot_helpers.h"
-#include "grid_model.h"
-#include "context_menu_data_collection_row.h"
 #include "naviagation_panel_controller.h"
+#include "context_menu_data_collection_row.h"
+#include "igrid_model.h"
 #include "summary_model.h"
+#include "page_info_storage_model.h"
+
 
 namespace QuickieWebBot
 {
@@ -61,20 +62,13 @@ void MainFrame::initialize()
 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
 	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
 
-	GridModel* model = new GridModel(this);
+	IGridModel* model = new PageInfoStorageModel(this);
 
-	GridDataAccessorFactory factory;
-	model->setModelDataAccessor(factory.create(GridDataAccessorFactoryParams{ GridDataAccessorFactoryParams::TypeAllCrawledUrls }));
 	m_ui.crawlingGridView->setModel(model);
 	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 
 	SummaryModel* summaryModel = new SummaryModel(this);
-	//summaryModel->setModelDataAccessor(factory.create(GridDataAccessorFactoryParams{ GridDataAccessorFactoryParams::TypeSummary }));
 	m_ui.summaryGridView->setModel(summaryModel);
-
-
-	VERIFY(connect(m_ui.summaryGridView, SIGNAL(childViewParamsChanged(const GridDataAccessorFactoryParams&)), 
-		m_ui.summaryDetailsGridView, SLOT(setParams(const GridDataAccessorFactoryParams&))));
 
 	m_ui.summaryGridView->setMinimumWidth(QuickieWebBotHelpers::pointsToPixels(350));
 

@@ -1,5 +1,5 @@
 #include "context_menu_data_collection_row.h"
-#include "grid_model.h"
+#include "igrid_model.h"
 #include "igrid_data_accessor.h"
 
 namespace QuickieWebBot
@@ -64,17 +64,17 @@ QModelIndexList ContextMenuDataCollectionRow::selectedRowsList() const noexcept
 	return associatedGridViewSelecionModel->selectedRows();
 }
 
-GridModel* ContextMenuDataCollectionRow::model() const noexcept
+IGridModel* ContextMenuDataCollectionRow::model() const noexcept
 {
-	assert(dynamic_cast<GridModel*>(m_associatedGridView->model()));
-	return static_cast<GridModel*>(m_associatedGridView->model());
+	assert(dynamic_cast<IGridModel*>(m_associatedGridView->model()));
+	return static_cast<IGridModel*>(m_associatedGridView->model());
 }
 
 void ContextMenuDataCollectionRow::openUrlAction()
 {
 	for (QModelIndex index : selectedRowsList())
 	{
-		QDesktopServices::openUrl(model()->modelDataAcessor()->pageInfoAtRow(index.row())->itemValue(PageInfo::UrlItemType).toUrl());
+		//QDesktopServices::openUrl(model()->modelDataAcessor()->pageInfoAtRow(index.row())->itemValue(PageInfo::UrlItemType).toUrl());
 	}
 }
 
@@ -84,10 +84,10 @@ void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
 
 	foreach(QModelIndex index, selectedRowsList())
 	{
-		for (int i = 0; i < model()->modelDataAcessor()->columnsCount(); ++i)
-		{
-			allColumnsData += model()->modelDataAcessor()->item(index.row(), i).toString() + " ";
-		}
+// 		for (int i = 0; i < model()->modelDataAcessor()->columnsCount(); ++i)
+// 		{
+// 			allColumnsData += model()->modelDataAcessor()->item(index.row(), i).toString() + " ";
+// 		}
 
 		allColumnsData += "\n";
 	}
@@ -106,9 +106,9 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl()
 
 	foreach(QModelIndex index, selectedRowsList())
 	{
-		PageInfoPtr pageInfoPtr = model()->modelDataAcessor()->pageInfoAtRow(index.row());
+		//PageInfoPtr pageInfoPtr = model()->modelDataAcessor()->pageInfoAtRow(index.row());
 
-		clipboard->setText(pageInfoPtr->itemValue(PageInfo::UrlItemType).toUrl().toDisplayString());
+		//clipboard->setText(pageInfoPtr->itemValue(PageInfo::UrlItemType).toUrl().toDisplayString());
 	}
 }
 

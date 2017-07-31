@@ -1,6 +1,6 @@
 #include "data_collection.h"
 #include "page_info.h"
-#include "grid_model.h"
+#include "igrid_model.h"
 
 namespace QuickieWebBot
 {

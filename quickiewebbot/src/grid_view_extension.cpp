@@ -23,58 +23,43 @@ GridViewExtension::GridViewExtension(QTableView* view)
 
 void GridViewExtension::colspan(const QModelIndex& index, int span)
 {
+	index; span;
 	//m_tableView->setSpan(index.row(), index.column(), 1, span);
 }
 
 void GridViewExtension::rowsInserted(const QModelIndex& parent, int first, int last)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(first);
-	Q_UNUSED(last);
+	parent; first; last;
 	// TODO: handle this event
 }
 
 void GridViewExtension::rowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(start);
-	Q_UNUSED(end);
-	Q_UNUSED(destination);
-	Q_UNUSED(row);
+	parent; start; end; destination; row;
 	// TODO: handle this event
 }
 
 void GridViewExtension::rowsRemoved(const QModelIndex& parent, int first, int last)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(first);
-	Q_UNUSED(last);
+	parent; first; last;
 	// TODO: handle this event
 }
 
 void GridViewExtension::columnsInserted(const QModelIndex& parent, int first, int last)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(first);
-	Q_UNUSED(last);
+	parent; first; last;
 	// TODO: handle this event
 }
 
 void GridViewExtension::columnsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int column)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(start);
-	Q_UNUSED(end);
-	Q_UNUSED(destination);
-	Q_UNUSED(column);
+	parent; start; end; destination;
 	// TODO: handle this event
 }
 
 void GridViewExtension::columnsRemoved(const QModelIndex& parent, int first, int last)
 {
-	Q_UNUSED(parent);
-	Q_UNUSED(first);
-	Q_UNUSED(last);
+	parent; first; last;
 	// TODO: handle this event
 }
 

@@ -66,9 +66,6 @@ struct GridDataAccessorFactoryParams
 	{
 		return accessorType != TypeInvalid;
 	}
-
-	// TODO: add params
-
 };
 
 }
