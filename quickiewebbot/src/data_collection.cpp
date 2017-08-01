@@ -279,12 +279,19 @@ QList<QuickieWebBot::PageInfo::ItemType> DataCollection::StorageAdaptor::availab
 	return m_availableColumns;
 }
 
+QString DataCollection::StorageAdaptor::columnDescription(int columnIndex) const noexcept
+{
+	assert(columnIndex < m_availableColumns.size());
+
+	return PageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
+}
+
 int DataCollection::StorageAdaptor::itemCount() const noexcept
 {
 	return m_associatedStorage->size();
 }
 
-QVariant DataCollection::StorageAdaptor::item(const QModelIndex& index) const noexcept
+QVariant DataCollection::StorageAdaptor::itemAt(const QModelIndex& index) const noexcept
 {
 	const GuiStorageType& storage = *m_associatedStorage;
 	
@@ -292,6 +299,13 @@ QVariant DataCollection::StorageAdaptor::item(const QModelIndex& index) const no
 	assert(index.column() < m_availableColumns.size());
 
 	return storage[index.row()]->itemValue(m_availableColumns[index.column()]);
+}
+
+PageInfo::ItemType DataCollection::StorageAdaptor::itemTypeAt(const QModelIndex& index) const noexcept
+{
+	assert(index.column() < m_availableColumns.size());
+
+	return m_availableColumns[index.column()];
 }
 
 }

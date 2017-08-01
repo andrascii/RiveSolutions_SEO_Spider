@@ -24,7 +24,8 @@ public:
 	Q_SLOT void showLimitsSettingsDialog();
 
 private:
-	void initialize();
+	void init();
+	void initCrawlingGridView();
 
 private:
 	Ui::MainFrameClass m_ui;

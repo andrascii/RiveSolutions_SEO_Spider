@@ -38,9 +38,8 @@ public:
 
 	void setStorageAdaptor(DataCollection::StorageAdaptor storageAdaptor) noexcept;
 
-	//
+
 	// IGridModel implementation
-	//
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 private:

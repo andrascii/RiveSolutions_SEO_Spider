@@ -56,24 +56,48 @@ DataCollection::StorageAdaptor* PageInfoStorageModel::storageAdaptor()
 
 QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 {
-	if (!storageAdaptor())
+	if (!storageAdaptor() && !index.isValid())
 	{
 		return QVariant();
 	}
 
+	switch (role)
+	{
+		case Qt::DisplayRole:
+		{
+			return storageAdaptor()->itemAt(index);
+		}
 
+		case Qt::DecorationRole:
+		{
+			if (storageAdaptor()->itemTypeAt(index) != PageInfo::UrlItemType)
+			{
+				return QPixmap(":/images/url-icon.png");
+			}
+		}
+
+		case Qt::BackgroundColorRole:
+		{
+
+		}
+
+		case Qt::TextColorRole:
+		{
+
+		}
+	}
 
 	return QVariant();
 }
 
 QVariant PageInfoStorageModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (!storageAdaptor())
+	if (!storageAdaptor() || orientation == Qt::Vertical)
 	{
 		return QVariant();
 	}
 
-	return QVariant();
+	return storageAdaptor()->columnDescription(section);
 }
 
 int PageInfoStorageModel::columnCount(const QModelIndex&) const

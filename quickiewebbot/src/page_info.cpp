@@ -4,7 +4,7 @@
 namespace QuickieWebBot
 {
 
-QString PageInfo::itemTitle(ItemType item)
+QString PageInfo::itemTypeDescription(ItemType item)
 {
 	checkInfoItem(item);
 

@@ -26,9 +26,11 @@ public:
 	public:
 		virtual void setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept;
 		virtual QList<PageInfo::ItemType> availableColumns() const noexcept;
+		virtual QString columnDescription(int columnIndex) const noexcept;
 
 		virtual int itemCount() const noexcept;
-		virtual QVariant item(const QModelIndex& index) const noexcept;
+		virtual QVariant itemAt(const QModelIndex& index) const noexcept;
+		virtual PageInfo::ItemType itemTypeAt(const QModelIndex& index) const noexcept;
 
 	private:
 		StorageAdaptor(const GuiStorageTypePtr& associatedStorage);

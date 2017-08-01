@@ -20,7 +20,7 @@ MainFrame::MainFrame(QWidget* parent)
 	, m_proxySettingsDialog(nullptr)
 	, m_limitsSettingsDialog(nullptr)
 {
-	initialize();
+	init();
 }
 
 void MainFrame::showListView()
@@ -53,7 +53,7 @@ void MainFrame::showLimitsSettingsDialog()
 	m_limitsSettingsDialog->exec();
 }
 
-void MainFrame::initialize()
+void MainFrame::init()
 {
 	m_ui.setupUi(this);
 
@@ -61,10 +61,7 @@ void MainFrame::initialize()
 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
 	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
 
-	IGridModel* model = new PageInfoStorageModel(this);
-
-	m_ui.crawlingGridView->setModel(model);
-	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
+	initCrawlingGridView();
 
 	SummaryModel* summaryModel = new SummaryModel(this);
 	m_ui.summaryGridView->setModel(summaryModel);
@@ -72,7 +69,49 @@ void MainFrame::initialize()
 	m_ui.summaryGridView->setMinimumWidth(QuickieWebBotHelpers::pointsToPixels(350));
 
 	new NavigationPanelController(this, &m_ui);
-	
+}
+
+void MainFrame::initCrawlingGridView()
+{
+	PageInfoStorageModel* model = new PageInfoStorageModel(this);
+
+	DataCollection::StorageAdaptor storageAdaptor = 
+		theApp->modelController()->data()->createStorageAdaptor(DataCollection::CrawledUrlStorageType);
+
+	storageAdaptor.setAvailableColumns(QList<PageInfo::ItemType>() 
+		<< PageInfo::UrlItemType
+		<< PageInfo::ContentItemType
+		<< PageInfo::TitleItemType
+		<< PageInfo::TitleLengthItemType
+		<< PageInfo::MetaRefreshItemType
+		<< PageInfo::MetaRobotsItemType
+		<< PageInfo::MetaDescriptionItemType
+		<< PageInfo::MetaDescriptionLengthItemType
+		<< PageInfo::MetaKeywordsItemType
+		<< PageInfo::MetaKeywordsLengthItemType
+		<< PageInfo::RedirectedUrlItemType
+		<< PageInfo::ServerResponseItemType
+		<< PageInfo::FirstH1ItemType
+		<< PageInfo::FirstH1LengthItemType
+		<< PageInfo::SecondH1ItemType
+		<< PageInfo::SecondH1LengthItemType
+		<< PageInfo::FirstH2ItemType
+		<< PageInfo::FirstH2LengthItemType
+		<< PageInfo::SecondH2ItemType
+		<< PageInfo::SecondH2LengthItemType
+		<< PageInfo::CanonicalLinkElementItemType
+		<< PageInfo::StatusCodeItemType
+		<< PageInfo::PageSizeKbItemType
+		<< PageInfo::WordCountItemType
+		<< PageInfo::PageHashItemType
+		<< PageInfo::UrlLengthItemType
+	);
+
+	model->setStorageAdaptor(storageAdaptor);
+
+	m_ui.crawlingGridView->setModel(model);
+
+	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 }
 
 }
