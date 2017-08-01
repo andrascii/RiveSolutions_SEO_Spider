@@ -23,6 +23,7 @@
 #include <utility>
 #include <cassert>
 #include <functional>
+#include <optional>
 
 //
 // boost

@@ -3,42 +3,43 @@
 namespace QuickieWebBot
 {
 
-struct PageInfo
+class PageInfo
 {
-	enum ItemType
+public:
+	enum ItemType : std::uint64_t
 	{
 		PageInfoItemTypeStart,
 		// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
 
-		UrlItemType,
-		TitleItemType,
-		ContentItemType,
-		MetaRefreshItemType,
-		MetaRobotsItemType,
-		MetaDescriptionItemType,
-		MetaKeywordsItemType,
-		RedirectedUrlItemType,
-		ServerResponseItemType,
-		FirstH1ItemType,
-		SecondH1ItemType,
-		FirstH2ItemType,
-		SecondH2ItemType,
-		CanonicalLinkElementItemType,
-		StatusCodeItemType,
-		PageSizeKbItemType,
-		WordCountItemType,
-		PageHashItemType,
-		UrlLengthItemType,
-		TitleLengthItemType,
-		MetaDescriptionLengthItemType,
-		MetaKeywordsLengthItemType,
-		FirstH1LengthItemType,
-		SecondH1LengthItemType,
-		FirstH2LengthItemType,
-		SecondH2LengthItemType,
-		AltTextItemType,
-		AltTextLengthItemType,
-		ImageSizeKbItemType,
+		UrlItemType						= 1 << 0,
+		TitleItemType					= 1 << 1,
+		ContentItemType					= 1 << 2,
+		MetaRefreshItemType				= 1 << 3,
+		MetaRobotsItemType				= 1 << 4,
+		MetaDescriptionItemType			= 1 << 5,
+		MetaKeywordsItemType			= 1 << 6,
+		RedirectedUrlItemType			= 1 << 7,
+		ServerResponseItemType			= 1 << 8,
+		FirstH1ItemType					= 1 << 9,
+		SecondH1ItemType				= 1 << 10,
+		FirstH2ItemType					= 1 << 11,
+		SecondH2ItemType				= 1 << 12,
+		CanonicalLinkElementItemType	= 1 << 13,
+		StatusCodeItemType				= 1 << 14,
+		PageSizeKbItemType				= 1 << 15,
+		WordCountItemType				= 1 << 16,
+		PageHashItemType				= 1 << 17,
+		UrlLengthItemType				= 1 << 18,
+		TitleLengthItemType				= 1 << 19,
+		MetaDescriptionLengthItemType	= 1 << 20,
+		MetaKeywordsLengthItemType		= 1 << 21,
+		FirstH1LengthItemType			= 1 << 22,
+		SecondH1LengthItemType			= 1 << 23,
+		FirstH2LengthItemType			= 1 << 24,
+		SecondH2LengthItemType			= 1 << 25,
+		AltTextItemType					= 1 << 26,
+		AltTextLengthItemType			= 1 << 27,
+		ImageSizeKbItemType				= 1 << 28,
 
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		PageInfoItemTypeLast

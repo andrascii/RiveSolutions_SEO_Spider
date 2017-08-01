@@ -2,6 +2,7 @@
 
 #include "igrid_model.h"
 #include "page_info.h"
+#include "data_collection.h"
 
 namespace QuickieWebBot
 {
@@ -35,15 +36,21 @@ public:
 
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+	void setStorageAdaptor(DataCollection::StorageAdaptor storageAdaptor) noexcept;
+
 	//
 	// IGridModel implementation
 	//
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 private:
-	QList<PageInfo::ItemType> m_pageInfoColumns;
+	const DataCollection::StorageAdaptor* storageAdaptor() const;
+	DataCollection::StorageAdaptor* storageAdaptor();
 
+private:
 	std::unique_ptr<GridViewResizeStrategy> m_resizeStrategy;
+
+	std::optional<DataCollection::StorageAdaptor> m_storageAdaptor;
 };
 
 }

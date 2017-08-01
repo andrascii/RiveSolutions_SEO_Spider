@@ -172,55 +172,55 @@ DataCollection::DataCollection(QObject* parent)
 {
 }
 
-bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, int storageType) const noexcept
+DataCollection::StorageAdaptor DataCollection::createStorageAdaptor(StorageType type) const
 {
-	checkStorageType(storageType);
-	CrawlerStorageType const* pQueue = crawlerStorage(storageType);
+	return StorageAdaptor(m_guiStorageMap.at(type));
+}
+
+bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept
+{
+	checkStorageType(type);
+	CrawlerStorageType const* pQueue = crawlerStorage(type);
 	return pQueue->find(pageInfo) != pQueue->end();
 }
 
-void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, int storageType) noexcept
+void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept
 {
-	if (isPageInfoExists(pageInfo, storageType))
+	if (isPageInfoExists(pageInfo, type))
 	{
-		auto iter = crawlerStorage(storageType)->find(pageInfo);
+		auto iter = crawlerStorage(type)->find(pageInfo);
 		return;
 	}
 
-	crawlerStorage(storageType)->insert(pageInfo);
+	crawlerStorage(type)->insert(pageInfo);
+	guiStorage(type)->push_back(pageInfo);
 
-
-	//int oldSize = guiStorage(storageType)->size();
-	guiStorage(storageType)->push_back(pageInfo);
-	//int newSize = guiStorage(storageType)->size();
-	//assert(newSize > oldSize);
-
-	emit pageInfoAdded(static_cast<int>(guiStorage(storageType)->size() - 1), storageType);
+	Q_EMIT pageInfoAdded(guiStorage(type)->size() - 1, type);
 }
 
-DataCollection::GuiStorageType* DataCollection::guiStorage(int type) noexcept
+DataCollection::GuiStorageType* DataCollection::guiStorage(StorageType type) noexcept
 {
 	return m_guiStorageMap[type].get();
 }
 
-DataCollection::GuiStorageType const* DataCollection::guiStorage(int type) const noexcept
+DataCollection::GuiStorageType const* DataCollection::guiStorage(StorageType type) const noexcept
 {
 	const GuiStorageType* pQueue = const_cast<DataCollection* const>(this)->guiStorage(type);
 	return pQueue;
 }
 
-DataCollection::CrawlerStorageType* DataCollection::crawlerStorage(int type) noexcept
+DataCollection::CrawlerStorageType* DataCollection::crawlerStorage(StorageType type) noexcept
 {
 	return m_crawlerStorageMap[type].get();
 }
 
-DataCollection::CrawlerStorageType const* DataCollection::crawlerStorage(int type) const noexcept
+DataCollection::CrawlerStorageType const* DataCollection::crawlerStorage(StorageType type) const noexcept
 {
 	const CrawlerStorageType* pQueue = const_cast<DataCollection* const>(this)->crawlerStorage(type);
 	return pQueue;
 }
 
-void DataCollection::checkStorageType(int type) const noexcept
+void DataCollection::checkStorageType(StorageType type) const noexcept
 {
 	assert(
 		type == CrawledUrlStorageType || 
@@ -260,6 +260,38 @@ void DataCollection::checkStorageType(int type) const noexcept
 		type == MissingAltTextImageStorageType ||
 		type == VeryLongAltTextImageStorageType
 	);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+DataCollection::StorageAdaptor::StorageAdaptor(const GuiStorageTypePtr& associatedStorage)
+	: m_associatedStorage(associatedStorage)
+{
+}
+
+void DataCollection::StorageAdaptor::setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept
+{
+	m_availableColumns = availableColumns;
+}
+
+QList<QuickieWebBot::PageInfo::ItemType> DataCollection::StorageAdaptor::availableColumns() const noexcept
+{
+	return m_availableColumns;
+}
+
+int DataCollection::StorageAdaptor::itemCount() const noexcept
+{
+	return m_associatedStorage->size();
+}
+
+QVariant DataCollection::StorageAdaptor::item(const QModelIndex& index) const noexcept
+{
+	const GuiStorageType& storage = *m_associatedStorage;
+	
+	assert(index.row() < storage.size());
+	assert(index.column() < m_availableColumns.size());
+
+	return storage[index.row()]->itemValue(m_availableColumns[index.column()]);
 }
 
 }

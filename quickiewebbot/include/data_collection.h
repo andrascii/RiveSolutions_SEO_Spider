@@ -18,6 +18,27 @@ public:
 	using GuiStorageType = QVector<PageInfoPtr>;
 	using GuiStorageTypePtr = std::shared_ptr<GuiStorageType>;
 
+	//////////////////////////////////////////////////////////////////////////
+	class StorageAdaptor
+	{
+		friend class DataCollection;
+
+	public:
+		virtual void setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept;
+		virtual QList<PageInfo::ItemType> availableColumns() const noexcept;
+
+		virtual int itemCount() const noexcept;
+		virtual QVariant item(const QModelIndex& index) const noexcept;
+
+	private:
+		StorageAdaptor(const GuiStorageTypePtr& associatedStorage);
+
+	private:
+		GuiStorageTypePtr m_associatedStorage;
+		QList<PageInfo::ItemType> m_availableColumns;
+	};
+	//////////////////////////////////////////////////////////////////////////
+
 	enum StorageType
 	{
 		//
@@ -85,20 +106,22 @@ public:
 
 	DataCollection(QObject* parent);
 
-	bool isPageInfoExists(const PageInfoPtr& pageInfo, int storageType) const noexcept;
-	void addPageInfo(const PageInfoPtr& pageInfo, int storageType) noexcept;
+	StorageAdaptor createStorageAdaptor(StorageType type) const;
 
-	GuiStorageType const* guiStorage(int type) const noexcept;
-	GuiStorageType* guiStorage(int type) noexcept;
+	bool isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
+	void addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept;
+
+	GuiStorageType const* guiStorage(StorageType type) const noexcept;
+	GuiStorageType* guiStorage(StorageType type) noexcept;
 
 	Q_SIGNAL void pageInfoAdded(int row, int storageType);
 
 protected:
-	CrawlerStorageType* crawlerStorage(int type) noexcept;
-	const CrawlerStorageType* crawlerStorage(int type) const noexcept;
+	CrawlerStorageType* crawlerStorage(StorageType type) noexcept;
+	const CrawlerStorageType* crawlerStorage(StorageType type) const noexcept;
 	
 private:
-	void checkStorageType(int type) const noexcept;
+	void checkStorageType(StorageType type) const noexcept;
 
 private:
 	std::unordered_map<int, CrawlerStorageTypePtr> m_crawlerStorageMap;

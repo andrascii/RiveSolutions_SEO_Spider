@@ -141,7 +141,7 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 
 		return index.column() == 0 ? QVariant(itemIterator.value()->name) : QVariant(itemIterator.value()->issueCount);
 	}
-
+	
 	if (role == Qt::DecorationRole)
 	{
 		static QPixmap s_okPixmap = pixmap(StatusOK, QuickieWebBotHelpers::pointsToPixels(13.5));
