@@ -61,7 +61,7 @@ void WebCrawler::stopCrawling()
 
 void WebCrawler::onPageInfoParsed(PageInfoPtr pageInfo)
 {
-	m_modelController->addPageInfo(pageInfo);
+	m_modelController->addPageInfoData(pageInfo);
 }
 
 }

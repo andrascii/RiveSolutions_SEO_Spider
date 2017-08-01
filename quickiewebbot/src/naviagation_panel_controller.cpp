@@ -24,7 +24,7 @@ bool NavigationPanelController::eventFilter(QObject* watched, QEvent* event)
 {
 	if (event->type() != QEvent::MouseButtonPress)
 	{
-		return false
+		return false;
 	}
 
 	if (QPushButton* button = qobject_cast<QPushButton*>(watched))

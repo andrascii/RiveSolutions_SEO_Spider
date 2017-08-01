@@ -9,6 +9,7 @@ namespace QuickieWebBot
 
 class IGridViewResizeStrategy;
 class GridViewResizeStrategy;
+class StorageAdaptor;
 
 //
 //! This model intended for establish associate with some PageInfo storage 
@@ -36,20 +37,24 @@ public:
 
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-	void setStorageAdaptor(DataCollection::StorageAdaptor storageAdaptor) noexcept;
+	void setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept;
 
 
 	// IGridModel implementation
 	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 private:
-	const DataCollection::StorageAdaptor* storageAdaptor() const;
-	DataCollection::StorageAdaptor* storageAdaptor();
+	const StorageAdaptor* storageAdaptor() const;
+	StorageAdaptor* storageAdaptor();
+
+private slots:
+	void onPageInfoDataAdded(int rowIndex);
+	void onPageInfoItemChanged(int row, int column);
 
 private:
 	std::unique_ptr<GridViewResizeStrategy> m_resizeStrategy;
 
-	std::optional<DataCollection::StorageAdaptor> m_storageAdaptor;
+	StorageAdaptor* m_storageAdaptor;
 };
 
 }

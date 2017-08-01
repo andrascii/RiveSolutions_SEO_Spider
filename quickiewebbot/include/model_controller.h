@@ -14,11 +14,10 @@ class ModelController : public QObject
 public:
 	ModelController(QObject* parent = nullptr);
 
-	void addPageInfo(PageInfoPtr pageInfo) noexcept;
+	void addPageInfoData(PageInfoPtr pageInfo) noexcept;
+
 	const DataCollection* data() const noexcept;
-
-private:
-
+	DataCollection* data() noexcept;
 
 private:
 	DataCollection* m_data;

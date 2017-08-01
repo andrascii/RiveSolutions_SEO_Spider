@@ -10,7 +10,7 @@
 #include "igrid_model.h"
 #include "summary_model.h"
 #include "page_info_storage_model.h"
-
+#include "storage_adaptor.h"
 
 namespace QuickieWebBot
 {
@@ -75,10 +75,10 @@ void MainFrame::initCrawlingGridView()
 {
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 
-	DataCollection::StorageAdaptor storageAdaptor = 
+	StorageAdaptor* storageAdaptor = 
 		theApp->modelController()->data()->createStorageAdaptor(DataCollection::CrawledUrlStorageType);
 
-	storageAdaptor.setAvailableColumns(QList<PageInfo::ItemType>() 
+	storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>() 
 		<< PageInfo::UrlItemType
 		<< PageInfo::ContentItemType
 		<< PageInfo::TitleItemType

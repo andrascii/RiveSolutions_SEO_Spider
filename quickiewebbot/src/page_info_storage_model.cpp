@@ -1,5 +1,6 @@
 #include "page_info_storage_model.h"
 #include "grid_view_resize_strategy.h"
+#include "storage_adaptor.h"
 
 namespace QuickieWebBot
 {
@@ -7,6 +8,7 @@ namespace QuickieWebBot
 PageInfoStorageModel::PageInfoStorageModel(QObject* parent)
 	: IGridModel(parent)
 	, m_resizeStrategy(std::make_unique<GridViewResizeStrategy>())
+	, m_storageAdaptor(nullptr)
 {
 }
 
@@ -20,7 +22,7 @@ Qt::ItemFlags PageInfoStorageModel::flags(const QModelIndex& index) const
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-void PageInfoStorageModel::setStorageAdaptor(DataCollection::StorageAdaptor storageAdaptor) noexcept
+void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept
 {
 	m_storageAdaptor = storageAdaptor;
 }
@@ -30,28 +32,14 @@ IGridViewResizeStrategy* PageInfoStorageModel::resizeStrategy() const
 	return m_resizeStrategy.get();
 }
 
-const DataCollection::StorageAdaptor* PageInfoStorageModel::storageAdaptor() const
+const StorageAdaptor* PageInfoStorageModel::storageAdaptor() const
 {
-	try
-	{
-		return std::addressof(m_storageAdaptor.value());
-	}
-	catch (const std::bad_optional_access&)
-	{
-		return nullptr;
-	}
+	return m_storageAdaptor;
 }
 
-DataCollection::StorageAdaptor* PageInfoStorageModel::storageAdaptor()
+StorageAdaptor* PageInfoStorageModel::storageAdaptor()
 {
-	try
-	{
-		return std::addressof(m_storageAdaptor.value());
-	}
-	catch (const std::bad_optional_access&)
-	{
-		return nullptr;
-	}
+	return m_storageAdaptor;
 }
 
 QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
@@ -97,7 +85,12 @@ QVariant PageInfoStorageModel::headerData(int section, Qt::Orientation orientati
 		return QVariant();
 	}
 
-	return storageAdaptor()->columnDescription(section);
+	if (role == Qt::DisplayRole)
+	{
+		return storageAdaptor()->columnDescription(section);
+	}
+
+	return QVariant();
 }
 
 int PageInfoStorageModel::columnCount(const QModelIndex&) const
@@ -118,6 +111,20 @@ int PageInfoStorageModel::rowCount(const QModelIndex& parent) const
 	}
 
 	return storageAdaptor()->itemCount();
+}
+
+void PageInfoStorageModel::onPageInfoDataAdded(int rowIndex)
+{
+	beginInsertRows(QModelIndex(), rowIndex, rowIndex);
+	
+	endInsertRows();
+}
+
+void PageInfoStorageModel::onPageInfoItemChanged(int row, int column)
+{
+	QModelIndex indexItemChanged = index(row, column);
+
+	Q_EMIT dataChanged(indexItemChanged, indexItemChanged);
 }
 
 }

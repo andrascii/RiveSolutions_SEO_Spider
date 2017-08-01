@@ -1,6 +1,5 @@
 #include "data_collection.h"
-#include "page_info.h"
-#include "igrid_model.h"
+#include "storage_adaptor.h"
 
 namespace QuickieWebBot
 {
@@ -172,9 +171,9 @@ DataCollection::DataCollection(QObject* parent)
 {
 }
 
-DataCollection::StorageAdaptor DataCollection::createStorageAdaptor(StorageType type) const
+StorageAdaptor* DataCollection::createStorageAdaptor(StorageType type)
 {
-	return StorageAdaptor(m_guiStorageMap.at(type));
+	return new StorageAdaptor(m_guiStorageMap.at(type), this);
 }
 
 bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept
@@ -260,52 +259,6 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 		type == MissingAltTextImageStorageType ||
 		type == VeryLongAltTextImageStorageType
 	);
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-DataCollection::StorageAdaptor::StorageAdaptor(const GuiStorageTypePtr& associatedStorage)
-	: m_associatedStorage(associatedStorage)
-{
-}
-
-void DataCollection::StorageAdaptor::setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept
-{
-	m_availableColumns = availableColumns;
-}
-
-QList<QuickieWebBot::PageInfo::ItemType> DataCollection::StorageAdaptor::availableColumns() const noexcept
-{
-	return m_availableColumns;
-}
-
-QString DataCollection::StorageAdaptor::columnDescription(int columnIndex) const noexcept
-{
-	assert(columnIndex < m_availableColumns.size());
-
-	return PageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
-}
-
-int DataCollection::StorageAdaptor::itemCount() const noexcept
-{
-	return m_associatedStorage->size();
-}
-
-QVariant DataCollection::StorageAdaptor::itemAt(const QModelIndex& index) const noexcept
-{
-	const GuiStorageType& storage = *m_associatedStorage;
-	
-	assert(index.row() < storage.size());
-	assert(index.column() < m_availableColumns.size());
-
-	return storage[index.row()]->itemValue(m_availableColumns[index.column()]);
-}
-
-PageInfo::ItemType DataCollection::StorageAdaptor::itemTypeAt(const QModelIndex& index) const noexcept
-{
-	assert(index.column() < m_availableColumns.size());
-
-	return m_availableColumns[index.column()];
 }
 
 }

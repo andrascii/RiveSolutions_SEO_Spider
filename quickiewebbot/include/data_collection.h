@@ -6,6 +6,8 @@
 namespace QuickieWebBot
 {
 
+class StorageAdaptor;
+
 class DataCollection : public QObject
 {
 	Q_OBJECT
@@ -17,29 +19,6 @@ protected:
 public:
 	using GuiStorageType = QVector<PageInfoPtr>;
 	using GuiStorageTypePtr = std::shared_ptr<GuiStorageType>;
-
-	//////////////////////////////////////////////////////////////////////////
-	class StorageAdaptor
-	{
-		friend class DataCollection;
-
-	public:
-		virtual void setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept;
-		virtual QList<PageInfo::ItemType> availableColumns() const noexcept;
-		virtual QString columnDescription(int columnIndex) const noexcept;
-
-		virtual int itemCount() const noexcept;
-		virtual QVariant itemAt(const QModelIndex& index) const noexcept;
-		virtual PageInfo::ItemType itemTypeAt(const QModelIndex& index) const noexcept;
-
-	private:
-		StorageAdaptor(const GuiStorageTypePtr& associatedStorage);
-
-	private:
-		GuiStorageTypePtr m_associatedStorage;
-		QList<PageInfo::ItemType> m_availableColumns;
-	};
-	//////////////////////////////////////////////////////////////////////////
 
 	enum StorageType
 	{
@@ -108,7 +87,7 @@ public:
 
 	DataCollection(QObject* parent);
 
-	StorageAdaptor createStorageAdaptor(StorageType type) const;
+	StorageAdaptor* createStorageAdaptor(StorageType type);
 
 	bool isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
 	void addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept;
