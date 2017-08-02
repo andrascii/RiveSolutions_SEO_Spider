@@ -24,67 +24,22 @@ void GridViewPainterText::paint(QPainter* painter, const QStyleOptionViewItem& o
 
 	QRect adjustedRect = option.rect.adjusted(m_marginLeft, m_marginTop, -m_marginRight, -m_marginBottom);
 
-	if (!m_cacheSize)
+	painter->save();
+	painter->setPen(textColor);
+
+	if (isTextBold)
 	{
-		painter->save();
-		painter->setClipRect(adjustedRect);
-		painter->setPen(textColor);
-		
-		if (isTextBold)
-		{
-			applyTextBold(painter);
-		}
-
-		if (isDecorationValid)
-		{
-			adjustedRect = paintDecorator(painter, index, adjustedRect);
-		}
-
-		painter->drawText(adjustedRect, textAlignmentFlags, paintingText);
-
-		painter->restore();
-		return;
+		applyTextBold(painter);
 	}
 
-	CacheKey key = std::make_pair(paintingText, std::make_pair(option.rect.width(), option.rect.height()));
-	QPixmap* pixmapPointer = cached(key);
-
-	if (!pixmapPointer)
+	if (isDecorationValid)
 	{
-		QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
-
-		QPixmap pixmap(pixmapRect.size());
-		pixmap.fill(Qt::transparent);
-
-		QPainter painterPixmap(&pixmap);
-
-		if (isTextBold)
-		{
-			applyTextBold(&painterPixmap);
-		}
-
-		painterPixmap.setPen(textColor);
-
-		if (isDecorationValid)
-		{
-			pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
-		}
-
-		painterPixmap.drawText(pixmapRect, textAlignmentFlags, key.first);
-
-		auto accessTime = std::chrono::system_clock::now();
-		m_cache[key] = Cache{ pixmap, accessTime };
-		m_cacheAccessTime.insert(std::make_pair(accessTime, key));
-
-		pixmapPointer = &(m_cache[key].pixmap);
+		adjustedRect = paintDecorator(painter, index, adjustedRect);
 	}
 
-	painter->drawPixmap(adjustedRect, *pixmapPointer);
-
-	if (m_cache.size() > m_cacheSize * 2)
-	{
-		removeExtraCache();
-	}
+	painter->setClipRect(adjustedRect);
+	painter->drawText(adjustedRect, textAlignmentFlags, paintingText);
+	painter->restore();
 }
 
 QPixmap* GridViewPainterText::cached(const CacheKey& key) const
