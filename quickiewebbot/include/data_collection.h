@@ -95,7 +95,7 @@ public:
 	GuiStorageType const* guiStorage(StorageType type) const noexcept;
 	GuiStorageType* guiStorage(StorageType type) noexcept;
 
-	Q_SIGNAL void pageInfoAdded(int row, int storageType);
+	Q_SIGNAL void pageInfoDataAdded(int row, int storageType);
 
 protected:
 	CrawlerStorageType* crawlerStorage(StorageType type) noexcept;

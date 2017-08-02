@@ -132,7 +132,7 @@ void GridView::initSpan()
 			QSize colSpan = model()->span(model()->index(row, column));
 
 			setSpan(row, column, colSpan.height(), colSpan.width());
-			column += 1;//colSpan.width();
+			column += colSpan.width();
 		}
 	}
 }

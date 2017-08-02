@@ -173,7 +173,7 @@ DataCollection::DataCollection(QObject* parent)
 
 StorageAdaptor* DataCollection::createStorageAdaptor(StorageType type)
 {
-	return new StorageAdaptor(m_guiStorageMap.at(type), this);
+	return new StorageAdaptor(m_guiStorageMap.at(type), type, this);
 }
 
 bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept
@@ -194,7 +194,7 @@ void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, StorageType type) 
 	crawlerStorage(type)->insert(pageInfo);
 	guiStorage(type)->push_back(pageInfo);
 
-	Q_EMIT pageInfoAdded(guiStorage(type)->size() - 1, type);
+	Q_EMIT pageInfoDataAdded(guiStorage(type)->size() - 1, type);
 }
 
 DataCollection::GuiStorageType* DataCollection::guiStorage(StorageType type) noexcept

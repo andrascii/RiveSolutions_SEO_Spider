@@ -180,6 +180,11 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		return Qt::AlignLeft;
 	}
 
+	if (role == Qt::BackgroundColorRole)
+	{
+		return QColor(Qt::transparent);
+	}
+
 	return QVariant();
 }
 

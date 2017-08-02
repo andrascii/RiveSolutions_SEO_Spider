@@ -24,6 +24,8 @@ Qt::ItemFlags PageInfoStorageModel::flags(const QModelIndex& index) const
 
 void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept
 {
+	VERIFY(connect(storageAdaptor, SIGNAL(pageInfoDataAdded(int)), this, SLOT(onPageInfoDataAdded(int))));
+	
 	m_storageAdaptor = storageAdaptor;
 }
 
@@ -66,12 +68,30 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 
 		case Qt::BackgroundColorRole:
 		{
-
+			return QColor(Qt::white);
 		}
 
 		case Qt::TextColorRole:
 		{
+			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
+			{
+				return QColor("#343B49");
+			}
 
+			return QColor(Qt::black);
+		}
+
+		case Qt::FontRole:
+		{
+			QFont font;
+
+			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
+			{
+				font.setBold(true);
+				return font;
+			}
+
+			return font;
 		}
 	}
 

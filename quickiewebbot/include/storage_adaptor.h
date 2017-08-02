@@ -11,7 +11,9 @@ class StorageAdaptor : public QObject
 	Q_OBJECT
 
 public:
-	StorageAdaptor(const DataCollection::GuiStorageTypePtr& associatedStorage, QObject* parent = nullptr);
+	StorageAdaptor(const DataCollection::GuiStorageTypePtr& associatedStorage, 
+		DataCollection::StorageType storageType, 
+		QObject* parent = nullptr);
 
 	virtual void setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept;
 	virtual QList<PageInfo::ItemType> availableColumns() const noexcept;
@@ -24,9 +26,13 @@ public:
 signals:
 	void pageInfoDataAdded(int rowIndex);
 
+private slots:
+	void onStorageUpdated(int row, int type);
+
 private:
 	DataCollection::GuiStorageTypePtr m_associatedStorage;
 	QList<PageInfo::ItemType> m_availableColumns;
+	DataCollection::StorageType m_storageType;
 };
 
 }

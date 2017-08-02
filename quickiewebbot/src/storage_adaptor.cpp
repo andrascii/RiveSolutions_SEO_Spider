@@ -3,10 +3,17 @@
 namespace QuickieWebBot
 {
 
-StorageAdaptor::StorageAdaptor(const DataCollection::GuiStorageTypePtr& associatedStorage, QObject* parent)
+StorageAdaptor::StorageAdaptor(const DataCollection::GuiStorageTypePtr& associatedStorage, 
+	DataCollection::StorageType storageType, QObject* parent)
 	: QObject(parent)
 	, m_associatedStorage(associatedStorage)
+	, m_storageType(storageType)
 {
+	DataCollection* dataCollection = qobject_cast<DataCollection*>(parent);
+
+	assert(dataCollection);
+
+	connect(dataCollection, SIGNAL(pageInfoDataAdded(int, int)), this, SLOT(onStorageUpdated(int, int)));
 }
 
 void StorageAdaptor::setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept
@@ -46,6 +53,16 @@ PageInfo::ItemType StorageAdaptor::itemTypeAt(const QModelIndex& index) const no
 	assert(index.column() < m_availableColumns.size());
 
 	return m_availableColumns[index.column()];
+}
+
+void StorageAdaptor::onStorageUpdated(int row, int type)
+{
+	if (type != m_storageType)
+	{
+		return;
+	}
+
+	Q_EMIT pageInfoDataAdded(row);
 }
 
 }
