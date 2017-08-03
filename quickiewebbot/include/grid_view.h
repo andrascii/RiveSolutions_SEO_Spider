@@ -17,7 +17,6 @@ public:
 	explicit GridView(QWidget* parent = nullptr);
 
 	virtual void setModel(QAbstractItemModel* model) override;
-
 	void setContextMenu(ContextMenuDataCollectionRow* menu);
 
 	//
@@ -39,9 +38,12 @@ private:
 
 private:
 	IGridModel* m_gridViewModel;
+
 	QModelIndex m_hoveredIndex;
+
+	QMenu* m_contextMenu;
+
 	bool m_isCursorOverriden;
-	ContextMenuDataCollectionRow* m_contextMenu;
 };
 
 }

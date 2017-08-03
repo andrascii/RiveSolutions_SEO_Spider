@@ -93,6 +93,11 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 
 			return font;
 		}
+
+		case IGridModel::WhatsThisRole:
+		{
+			return storageAdaptor()->itemTypeAt(index);
+		}
 	}
 
 	return QVariant();

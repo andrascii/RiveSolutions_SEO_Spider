@@ -15,12 +15,12 @@ GridViewPainterText::GridViewPainterText(int cacheSize)
 
 void GridViewPainterText::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	const bool isTextBold = index.data(Qt::FontRole).value<QFont>().bold();
-	const bool isDecorationValid = index.data(Qt::DecorationRole).isValid();
+	const bool isTextBold = false;// index.data(Qt::FontRole).value<QFont>().bold();
+	const bool isDecorationValid = false;// index.data(Qt::DecorationRole).isValid();
 
-	const int textAlignmentFlags = index.data(Qt::TextAlignmentRole).toInt() | Qt::AlignTop;
+	const int textAlignmentFlags = Qt::AlignTop;// index.data(Qt::TextAlignmentRole).toInt() | Qt::AlignTop;
 	const QString paintingText = index.data(Qt::DisplayRole).toString();
-	const QColor textColor = qvariant_cast<QColor>(index.data(Qt::TextColorRole));
+	const QColor textColor = QColor(Qt::black);// qvariant_cast<QColor>(index.data(Qt::TextColorRole));
 
 	QRect adjustedRect = option.rect.adjusted(m_marginLeft, m_marginTop, -m_marginRight, -m_marginBottom);
 

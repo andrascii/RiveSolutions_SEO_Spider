@@ -15,8 +15,8 @@ namespace QuickieWebBot
 GridView::GridView(QWidget * parent)
 	: QTableView(parent)
 	, m_gridViewModel(nullptr)
-	, m_isCursorOverriden(false)
 	, m_contextMenu(nullptr)
+	, m_isCursorOverriden(false)
 {
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
