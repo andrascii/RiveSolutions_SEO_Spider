@@ -5,9 +5,10 @@ namespace QuickieWebBot
 
 class IGridModel;
 class IGridDataAccessor;
-class IGridViewResizeStrategy;
+class IGridViewResizePolicy;
 class ContextMenuDataCollectionRow;
-class IGridViewPainter;
+class IRenderer;
+class IGridViewModel;
 
 class GridView : public QTableView
 {
@@ -17,12 +18,11 @@ public:
 	explicit GridView(QWidget* parent = nullptr);
 
 	virtual void setModel(QAbstractItemModel* model) override;
+
 	void setContextMenu(ContextMenuDataCollectionRow* menu);
 
-	//
-	// TODO: make it pure virtual
-	//
-	QList<IGridViewPainter*> painters() const noexcept;
+	void setViewModel(IGridViewModel* modelView);
+	const IGridViewModel* viewModel() const noexcept;
 
 	QModelIndex hoveredIndex() const;
 
@@ -37,7 +37,9 @@ private:
 	void selectRow(const QPoint& point);
 
 private:
-	IGridModel* m_gridViewModel;
+	IGridModel* m_model;
+
+	IGridViewModel* m_viewModel;
 
 	QModelIndex m_hoveredIndex;
 

@@ -11,6 +11,7 @@
 #include "summary_model.h"
 #include "page_info_storage_model.h"
 #include "storage_adaptor.h"
+#include "page_info_storage_view_model.h"
 
 namespace QuickieWebBot
 {
@@ -74,6 +75,7 @@ void MainFrame::init()
 void MainFrame::initCrawlingGridView()
 {
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
+	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model);
 
 	StorageAdaptor* storageAdaptor = 
 		theApp->modelController()->data()->createStorageAdaptor(DataCollection::CrawledUrlStorageType);
@@ -110,6 +112,7 @@ void MainFrame::initCrawlingGridView()
 	model->setStorageAdaptor(storageAdaptor);
 
 	m_ui.crawlingGridView->setModel(model);
+	m_ui.crawlingGridView->setViewModel(modelView);
 
 	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
 }

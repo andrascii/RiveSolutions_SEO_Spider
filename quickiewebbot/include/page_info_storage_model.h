@@ -7,7 +7,7 @@
 namespace QuickieWebBot
 {
 
-class IGridViewResizeStrategy;
+class IGridViewResizePolicy;
 class GridViewResizeStrategy;
 class StorageAdaptor;
 
@@ -39,10 +39,6 @@ public:
 
 	void setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept;
 
-
-	// IGridModel implementation
-	virtual IGridViewResizeStrategy* resizeStrategy() const override;
-
 private:
 	const StorageAdaptor* storageAdaptor() const;
 	StorageAdaptor* storageAdaptor();
@@ -52,8 +48,6 @@ private slots:
 	void onPageInfoItemChanged(int row, int column);
 
 private:
-	std::unique_ptr<GridViewResizeStrategy> m_resizeStrategy;
-
 	StorageAdaptor* m_storageAdaptor;
 };
 

@@ -1,28 +1,29 @@
 #pragma once
 
-#include "igrid_model_view.h"
+#include "igrid_view_model.h"
 
 namespace QuickieWebBot
 {
 
 class PageInfoStorageModel;
 
-class PageInfoStorageModelView 
+class PageInfoStorageViewModel 
 	: public QObject
-	, public IGridModelView
+	, public IGridViewModel
 {
 	Q_OBJECT
 
 public:
-	PageInfoStorageModelView(PageInfoStorageModel* model, QObject* parent = nullptr);
+	PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent = nullptr);
 
 	virtual const QFont& textFont(const QModelIndex& index) const noexcept override;
 	virtual const QColor& textColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& backgroundColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& selectionBackgroundColor(const QModelIndex& index) const noexcept override;
 	virtual const QPixmap& decoration(const QModelIndex& index) const noexcept override;
-	virtual QList<IGridViewPainter*> painters(const QModelIndex& index) const noexcept override;
-	virtual IGridViewResizeStrategy* resizeStrategy() const noexcept override;
+	virtual int textAlignmentFlags(const QModelIndex& index) const noexcept override;
+	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
+	virtual IGridViewResizePolicy* resizeStrategy() const noexcept override;
 
 signals:
 	void textFontChanged(const QModelIndex& index);

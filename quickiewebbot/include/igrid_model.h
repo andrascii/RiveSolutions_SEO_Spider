@@ -13,8 +13,6 @@ public:
 
 	using QAbstractTableModel::QAbstractTableModel;
 	virtual ~IGridModel() = default;
-
-	virtual IGridViewResizeStrategy* resizeStrategy() const = 0;
 };
 
 }

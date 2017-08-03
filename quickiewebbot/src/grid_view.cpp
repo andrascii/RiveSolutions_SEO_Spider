@@ -1,27 +1,27 @@
 #include "grid_view.h"
 #include "igrid_model.h"
-#include "summary_model.h"
+#include "igrid_view_model.h"
 #include "igrid_view_resize_strategy.h"
 #include "grid_view_selection_model.h"
 #include "grid_view_delegate.h"
 #include "context_menu_data_collection_row.h"
-#include "grid_view_painter_text.h"
-#include "grid_view_painter_background.h"
-#include "grid_selection_background_item_painter.h"
 
 namespace QuickieWebBot
 {
 
 GridView::GridView(QWidget * parent)
 	: QTableView(parent)
-	, m_gridViewModel(nullptr)
+	, m_model(nullptr)
+	, m_viewModel(nullptr)
 	, m_contextMenu(nullptr)
 	, m_isCursorOverriden(false)
 {
 	setMouseTracking(true);
+
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+
 	setItemDelegate(new GridViewDelegate(this));
 	setSelectionModel(new GridViewSelectionModel(this));
 }
@@ -31,15 +31,8 @@ void GridView::setModel(QAbstractItemModel* model)
 	QTableView::setModel(model);
 
 	assert(dynamic_cast<IGridModel*>(model));
-	IGridModel* newModel = static_cast<IGridModel*>(model);
 
-	if (newModel->resizeStrategy() != nullptr)
-	{
-		IGridViewResizeStrategy* oldStrategy = m_gridViewModel ? m_gridViewModel->resizeStrategy() : nullptr;
-		newModel->resizeStrategy()->init(this, oldStrategy);
-	}
-
-	m_gridViewModel = newModel;
+	m_model = static_cast<IGridModel*>(model);
 	
 	initSpan();
 }
@@ -75,12 +68,12 @@ void GridView::leaveEvent(QEvent* event)
 
 void GridView::resizeEvent(QResizeEvent* event)
 {
-	QTableView::resizeEvent(event);
-
-	if (m_gridViewModel != nullptr && m_gridViewModel->resizeStrategy() != nullptr)
+	if (m_viewModel && m_viewModel->resizeStrategy())
 	{
-		m_gridViewModel->resizeStrategy()->resize(this);
+		m_viewModel->resizeStrategy()->resize(this);
 	}
+
+	QTableView::resizeEvent(event);
 }
 
 void GridView::mouseReleaseEvent(QMouseEvent* event)
@@ -108,16 +101,20 @@ void GridView::setContextMenu(ContextMenuDataCollectionRow* menu)
 	m_contextMenu = menu;
 }
 
-QList<IGridViewPainter*> GridView::painters() const noexcept
+void GridView::setViewModel(IGridViewModel* modelView)
 {
-	static GridViewPainterText s_painterText;
-	static GridViewPainterBackground s_backgroundPainter(Qt::transparent, Qt::transparent);
-	static GridSelectionBackgroundItemPainter s_selectionBackgroundPainter(QColor(97, 160, 50, 255), QColor(97, 160, 50, 255));
+	m_viewModel = modelView;
 
-	return QList<IGridViewPainter*>()
-		<< &s_selectionBackgroundPainter
-		<< &s_backgroundPainter
-		<< &s_painterText;
+	if (m_viewModel->resizeStrategy())
+	{
+		IGridViewResizePolicy* prevPolicy = m_viewModel ? m_viewModel->resizeStrategy() : nullptr;
+		m_viewModel->resizeStrategy()->init(this, prevPolicy);
+	}
+}
+
+const IGridViewModel* GridView::viewModel() const noexcept
+{
+	return m_viewModel;
 }
 
 void GridView::initSpan()

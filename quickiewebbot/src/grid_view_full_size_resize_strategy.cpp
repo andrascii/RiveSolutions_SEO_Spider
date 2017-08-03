@@ -17,7 +17,7 @@ void GridViewFullSizeResizeStrategy::resize(GridView* gridView) const noexcept
 	}
 }
 
-void GridViewFullSizeResizeStrategy::init(GridView*, const IGridViewResizeStrategy*) const noexcept
+void GridViewFullSizeResizeStrategy::init(GridView*, const IGridViewResizePolicy*) const noexcept
 {
 }
 

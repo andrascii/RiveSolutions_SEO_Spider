@@ -114,11 +114,6 @@ Qt::ItemFlags SummaryModel::flags(const QModelIndex& index) const
 	return flags;
 }
 
-IGridViewResizeStrategy* SummaryModel::resizeStrategy() const
-{
-	return m_resizeStrategy.get();
-}
-
 QSize SummaryModel::span(const QModelIndex& index) const
 {
 	return m_groups.find(index.row()) != m_groups.end() ? QSize(2, 1) : QSize(1, 1);

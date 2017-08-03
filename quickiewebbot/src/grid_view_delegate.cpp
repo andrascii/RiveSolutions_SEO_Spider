@@ -1,9 +1,10 @@
 #include "grid_view.h"
 #include "grid_view_delegate.h"
-#include "igrid_view_painter.h"
-#include "grid_view_painter_background.h"
-#include "grid_view_painter_text.h"
+#include "irenderer.h"
 #include "igrid_model.h"
+#include "igrid_view_model.h"
+#include "text_renderer.h"
+#include "background_renderer.h"
 
 namespace QuickieWebBot
 {
@@ -17,22 +18,20 @@ GridViewDelegate::GridViewDelegate(GridView* parent)
 
 void GridViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	foreach(IGridViewPainter* gridViewPainter, m_gridView->painters())
+	if (!m_gridView->viewModel())
 	{
-		gridViewPainter->paint(painter, option, index);
+		ERRORLOG << "For this view did not installed ViewModel!";
+		return;
+	}
+
+	foreach(const IRenderer* gridViewPainter, m_gridView->viewModel()->renderers(index))
+	{
+		gridViewPainter->render(painter, option, index);
 	}
 }
 
 bool GridViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-// 	if (index.data(IGridModel::ItemTypeRole) == PageInfo::UrlItemType)
-// 	{
-// 		if (event->type() == QEvent::MouseButtonPress)
-// 		{
-// 			QDesktopServices::openUrl(index.data(Qt::DisplayRole).toString());
-// 		}
-// 	}
-	
 	return false;
 }
 

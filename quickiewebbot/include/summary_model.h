@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-class IGridViewResizeStrategy;
+class IGridViewResizePolicy;
 class GridViewFullSizeResizeStrategy;
 	
 class SummaryModel : public IGridModel
@@ -23,11 +23,6 @@ public:
 
 	virtual QSize span(const QModelIndex& index) const override;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
-
-	//
-	// IGridModel implementation
-	//
-	virtual IGridViewResizeStrategy* resizeStrategy() const override;
 
 private:
 	enum ItemStatus

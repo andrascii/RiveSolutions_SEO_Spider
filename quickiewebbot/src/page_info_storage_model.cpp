@@ -7,7 +7,6 @@ namespace QuickieWebBot
 
 PageInfoStorageModel::PageInfoStorageModel(QObject* parent)
 	: IGridModel(parent)
-	, m_resizeStrategy(std::make_unique<GridViewResizeStrategy>())
 	, m_storageAdaptor(nullptr)
 {
 }
@@ -27,11 +26,6 @@ void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noe
 	VERIFY(connect(storageAdaptor, SIGNAL(pageInfoDataAdded(int)), this, SLOT(onPageInfoDataAdded(int))));
 	
 	m_storageAdaptor = storageAdaptor;
-}
-
-IGridViewResizeStrategy* PageInfoStorageModel::resizeStrategy() const
-{
-	return m_resizeStrategy.get();
 }
 
 const StorageAdaptor* PageInfoStorageModel::storageAdaptor() const
@@ -56,42 +50,6 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		case Qt::DisplayRole:
 		{
 			return storageAdaptor()->itemAt(index);
-		}
-
-		case Qt::DecorationRole:
-		{
-			if (storageAdaptor()->itemTypeAt(index) != PageInfo::UrlItemType)
-			{
-				return QPixmap(":/images/url-icon.png");
-			}
-		}
-
-		case Qt::BackgroundColorRole:
-		{
-			return QColor(Qt::white);
-		}
-
-		case Qt::TextColorRole:
-		{
-			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
-			{
-				return QColor("#343B49");
-			}
-
-			return QColor(Qt::black);
-		}
-
-		case Qt::FontRole:
-		{
-			QFont font;
-
-			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
-			{
-				font.setBold(true);
-				return font;
-			}
-
-			return font;
 		}
 
 		case IGridModel::WhatsThisRole:

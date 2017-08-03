@@ -12,7 +12,7 @@ void GridViewResizeStrategy::resize(GridView*) const noexcept
 {
 }
 
-void GridViewResizeStrategy::init(GridView* gridView, const IGridViewResizeStrategy* prev) const noexcept
+void GridViewResizeStrategy::init(GridView* gridView, const IGridViewResizePolicy* prev) const noexcept
 {
 	for (auto it = m_columnsSize.begin(); it != m_columnsSize.end(); ++it)
 	{

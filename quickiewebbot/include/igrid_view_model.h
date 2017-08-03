@@ -3,10 +3,10 @@
 namespace QuickieWebBot
 {
 
-class IGridViewPainter;
-class IGridViewResizeStrategy;
+class IRenderer;
+class IGridViewResizePolicy;
 
-class IGridModelView
+class IGridViewModel
 {
 public:
 	virtual const QFont& textFont(const QModelIndex& index) const noexcept = 0;
@@ -14,8 +14,9 @@ public:
 	virtual const QColor& backgroundColor(const QModelIndex& index) const noexcept = 0;
 	virtual const QColor& selectionBackgroundColor(const QModelIndex& index) const noexcept = 0;
 	virtual const QPixmap& decoration(const QModelIndex& index) const noexcept = 0;
-	virtual QList<IGridViewPainter*> painters(const QModelIndex& index) const noexcept = 0;
-	virtual IGridViewResizeStrategy* resizeStrategy() const noexcept = 0;
+	virtual int textAlignmentFlags(const QModelIndex& index) const noexcept = 0;
+	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
+	virtual IGridViewResizePolicy* resizeStrategy() const noexcept = 0;
 
 	// signals
 	virtual void textFontChanged(const QModelIndex& index) = 0;
