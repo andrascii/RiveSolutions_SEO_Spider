@@ -13,12 +13,6 @@ TextRenderer::TextRenderer(const IGridViewModel* viewModel, int maxCacheSize)
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	const bool isDecorationValid = index.data(Qt::DecorationRole).isValid();
-	const int textAlignmentFlags = index.data(Qt::TextAlignmentRole).toInt();
-	const QFont& font = index.data(Qt::FontRole).value<QFont>();
-	const QString paintingText = index.data(Qt::DisplayRole).toString();
-	const QColor& textColor = index.data(Qt::TextColorRole).value<QColor>();
-
 	QRect adjustedRect = option.rect.adjusted(
 		m_viewModel->marginLeft(index),
 		m_viewModel->marginTop(index),
@@ -28,27 +22,36 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 
 	QPixmap* pixmapPointer = cached(index);
 
-	if (pixmapPointer == nullptr || pixmapPointer->rect().size() != adjustedRect.size())
+	if (pixmapPointer && pixmapPointer->rect().size() == adjustedRect.size())
 	{
-		QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
-
-		QPixmap pixmap(pixmapRect.size());
-		pixmap.fill(Qt::transparent);
-
-		QPainter painterPixmap(&pixmap);
-		painterPixmap.setRenderHints(QPainter::HighQualityAntialiasing);
-		painterPixmap.setFont(font);
-		painterPixmap.setPen(textColor);
-
-		if (isDecorationValid)
-		{
-			pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
-		}
-
-		painterPixmap.drawText(pixmapRect, textAlignmentFlags, paintingText);
-		m_cache[index] = pixmap;
-		pixmapPointer = &m_cache[index];
+		painter->drawPixmap(adjustedRect, *pixmapPointer);
+		return;
 	}
+
+	const bool isDecorationValid = index.data(Qt::DecorationRole).isValid();
+	const int textAlignmentFlags = index.data(Qt::TextAlignmentRole).toInt();
+	const QFont& font = index.data(Qt::FontRole).value<QFont>();
+	const QString paintingText = index.data(Qt::DisplayRole).toString();
+	const QColor& textColor = index.data(Qt::TextColorRole).value<QColor>();
+
+	QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
+	QPixmap pixmap(pixmapRect.size());
+	pixmap.fill(Qt::transparent);
+
+	QPainter painterPixmap(&pixmap);
+
+	painterPixmap.setRenderHints(QPainter::HighQualityAntialiasing);
+	painterPixmap.setFont(font);
+	painterPixmap.setPen(textColor);
+
+	if (isDecorationValid)
+	{
+		pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
+	}
+
+	painterPixmap.drawText(pixmapRect, textAlignmentFlags, paintingText);
+	m_cache[index] = pixmap;
+	pixmapPointer = &m_cache[index];
 
 	painter->drawPixmap(adjustedRect, *pixmapPointer);
 
@@ -83,7 +86,7 @@ QRect TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, 
 
 void TextRenderer::clearCacheIfNeeded() const noexcept
 {
-	if (m_cache.size() > m_maxCacheSize * 2)
+	if (m_cache.size() > m_maxCacheSize)
 	{
 		m_cache.clear();
 	}

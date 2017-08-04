@@ -21,11 +21,6 @@ private:
 private:
 	const IGridViewModel* m_viewModel;
 
-	int m_marginLeft;
-	int m_marginTop;
-	int m_marginRight;
-	int m_marginBottom;
-
 	mutable std::map<QModelIndex, QPixmap> m_cache;
 	int m_maxCacheSize;
 };

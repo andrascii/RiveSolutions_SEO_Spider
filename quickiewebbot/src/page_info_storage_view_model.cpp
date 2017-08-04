@@ -53,7 +53,7 @@ QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) 
 {
 	static SelectionBackgroundRenderer s_selectionBgPainter;
 	static BackgroundRenderer s_bgPainter;
-	static TextRenderer s_textPainter(this, std::pow(m_model->columnCount(index), 3));
+	static TextRenderer s_textPainter(this, std::pow(m_model->columnCount(index), 2));
 
 	return QList<IRenderer*>()
 		<< &s_bgPainter

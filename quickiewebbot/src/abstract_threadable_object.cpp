@@ -29,11 +29,10 @@ void AbstractThreadableObject::startExecution() noexcept
 	if (!m_thread.isRunning())
 	{
 		m_thread.start();
+		m_isRunning.store(true);
 
 		QMetaObject::invokeMethod(this, "startTimer", Qt::BlockingQueuedConnection,
 			Q_ARG(int, g_minimumRecommendedTimerResolution), Q_ARG(Qt::TimerType, Qt::CoarseTimer));
-
-		m_isRunning.store(true);
 	}
 }
 
@@ -43,12 +42,12 @@ void AbstractThreadableObject::stopExecution() noexcept
 
 	if (m_thread.isRunning())
 	{
-		QMetaObject::invokeMethod(this, "killTimer",
-			Qt::BlockingQueuedConnection, Q_ARG(int, m_timerId));
-
+		//
+		// Just terminate thread. 
+		// This moment we need to refactor to avoid creating thread overhead.
+		//
 		m_thread.quit();
-		m_thread.wait();
-
+		m_thread.wait(); 
 		m_isRunning.store(false);
 	}
 }
