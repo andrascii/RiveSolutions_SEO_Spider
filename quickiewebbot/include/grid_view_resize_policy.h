@@ -1,14 +1,14 @@
 #pragma once
 
-#include "igrid_view_resize_strategy.h"
+#include "igrid_view_resize_policy.h"
 
 namespace QuickieWebBot
 {
 
-class GridViewResizeStrategy : public IGridViewResizePolicy
+class GridViewResizePolicy : public IGridViewResizePolicy
 {
 public:
-	GridViewResizeStrategy();
+	GridViewResizePolicy();
 
 	virtual void init(GridView* gridView, const IGridViewResizePolicy* prev = nullptr)  const noexcept override;
 

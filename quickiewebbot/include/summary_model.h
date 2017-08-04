@@ -6,7 +6,7 @@ namespace QuickieWebBot
 {
 
 class IGridViewResizePolicy;
-class GridViewFullSizeResizeStrategy;
+class GridViewFullSizeResizePolicy;
 	
 class SummaryModel : public IGridModel
 {
@@ -59,7 +59,7 @@ private:
 	QMap<int, SummaryItem*> m_itemRows;
 	QMap<int, SummaryItem*> m_itemTypes;
 
-	std::unique_ptr<GridViewFullSizeResizeStrategy> m_resizeStrategy;
+	std::unique_ptr<GridViewFullSizeResizePolicy> m_resizeStrategy;
 };
 
 }

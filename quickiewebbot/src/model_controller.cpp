@@ -11,7 +11,7 @@ ModelController::ModelController(QObject* parent)
 {
 }
 
-void ModelController::addPageInfoData(PageInfoPtr pageInfo) noexcept
+void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
 	m_data->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
 

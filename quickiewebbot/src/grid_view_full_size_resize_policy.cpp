@@ -1,15 +1,15 @@
-#include "grid_view_full_size_resize_strategy.h"
+#include "grid_view_full_size_resize_policy.h"
 #include "grid_view.h"
 
 namespace QuickieWebBot
 {
 
-GridViewFullSizeResizeStrategy::GridViewFullSizeResizeStrategy(std::vector<int> columnsPercentSize)
+GridViewFullSizeResizePolicy::GridViewFullSizeResizePolicy(std::vector<int> columnsPercentSize)
 	: m_columnsPercentSize(columnsPercentSize)
 {
 }
 
-void GridViewFullSizeResizeStrategy::resize(GridView* gridView) const noexcept
+void GridViewFullSizeResizePolicy::resize(GridView* gridView) const noexcept
 {
 	for (int i = 0; i < m_columnsPercentSize.size(); ++i)
 	{
@@ -17,11 +17,11 @@ void GridViewFullSizeResizeStrategy::resize(GridView* gridView) const noexcept
 	}
 }
 
-void GridViewFullSizeResizeStrategy::init(GridView*, const IGridViewResizePolicy*) const noexcept
+void GridViewFullSizeResizePolicy::init(GridView*, const IGridViewResizePolicy*) const noexcept
 {
 }
 
-int GridViewFullSizeResizeStrategy::columnSize(int column, const GridView* gridView) const noexcept
+int GridViewFullSizeResizePolicy::columnSize(int column, const GridView* gridView) const noexcept
 {
 	int s_extraWidth = 5; // gridwiew border, etc
 

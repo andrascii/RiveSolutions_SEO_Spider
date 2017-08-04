@@ -20,10 +20,8 @@ public:
 	virtual void setModel(QAbstractItemModel* model) override;
 
 	void setContextMenu(ContextMenuDataCollectionRow* menu);
-
 	void setViewModel(IGridViewModel* modelView);
 	const IGridViewModel* viewModel() const noexcept;
-
 	QModelIndex hoveredIndex() const;
 
 protected:
@@ -38,13 +36,9 @@ private:
 
 private:
 	IGridModel* m_model;
-
 	IGridViewModel* m_viewModel;
-
 	QModelIndex m_hoveredIndex;
-
 	QMenu* m_contextMenu;
-
 	bool m_isCursorOverriden;
 };
 

@@ -3,7 +3,7 @@
 #include "model_controller.h"
 #include "data_collection.h"
 #include "web_crawler.h"
-#include "grid_view_full_size_resize_strategy.h"
+#include "grid_view_full_size_resize_policy.h"
 #include "quickie_web_bot_helpers.h"
 #include "naviagation_panel_controller.h"
 #include "context_menu_data_collection_row.h"
@@ -67,6 +67,8 @@ void MainFrame::init()
 	initSummaryGridView();
 
 	new NavigationPanelController(this, &m_ui);
+
+	m_ui.statusBar->showMessage("MainFrame initialized", 30000);
 }
 
 void MainFrame::initCrawlingGridView()

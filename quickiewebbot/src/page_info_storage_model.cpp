@@ -1,5 +1,5 @@
 #include "page_info_storage_model.h"
-#include "grid_view_resize_strategy.h"
+#include "grid_view_resize_policy.h"
 #include "storage_adaptor.h"
 #include "quickie_web_bot_helpers.h"
 
@@ -122,14 +122,19 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 
 QVariant PageInfoStorageModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (!storageAdaptor() || orientation == Qt::Vertical)
+	if (!storageAdaptor())
 	{
 		return QVariant();
 	}
 
-	if (role == Qt::DisplayRole)
+	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 	{
 		return storageAdaptor()->columnDescription(section);
+	}
+
+	if (orientation == Qt::Vertical && role == Qt::DisplayRole)
+	{
+		return section;
 	}
 
 	return QVariant();

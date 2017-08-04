@@ -4,14 +4,14 @@
 #include "background_renderer.h"
 #include "selection_background_renderer.h"
 #include "quickie_web_bot_helpers.h"
-#include "grid_view_full_size_resize_strategy.h"
+#include "grid_view_full_size_resize_policy.h"
 
 namespace QuickieWebBot
 {
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: m_model(model)
-	, m_resizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }))
+	, m_resizePolicy(std::make_unique<GridViewFullSizeResizePolicy>(std::vector<int>{ 60, 40 }))
 {
 }
 
@@ -27,9 +27,9 @@ QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const no
 		<< &s_textPainter;
 }
 
-IGridViewResizePolicy* SummaryViewModel::resizeStrategy() const noexcept
+IGridViewResizePolicy* SummaryViewModel::resizePolicy() const noexcept
 {
-	return m_resizeStrategy.get();
+	return m_resizePolicy.get();
 }
 
 }

@@ -8,7 +8,7 @@ namespace QuickieWebBot
 {
 
 class IGridViewResizePolicy;
-class GridViewResizeStrategy;
+class GridViewResizePolicy;
 class StorageAdaptor;
 
 //

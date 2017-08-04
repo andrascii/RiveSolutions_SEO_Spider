@@ -2,14 +2,14 @@
 #include "model_controller.h"
 #include "data_collection.h"
 #include "quickie_web_bot_helpers.h"
-#include "grid_view_full_size_resize_strategy.h"
+#include "grid_view_full_size_resize_policy.h"
 
 namespace QuickieWebBot
 {
 
 SummaryModel::SummaryModel(QObject* parent)
 	: IGridModel(parent)
-	, m_resizeStrategy(std::make_unique<GridViewFullSizeResizeStrategy>(std::vector<int>{ 60, 40 }))
+	, m_resizeStrategy(std::make_unique<GridViewFullSizeResizePolicy>(std::vector<int>{ 60, 40 }))
 {
 	m_allGroups =
 	{

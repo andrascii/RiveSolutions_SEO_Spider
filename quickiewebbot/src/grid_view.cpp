@@ -1,7 +1,7 @@
 #include "grid_view.h"
 #include "igrid_model.h"
 #include "igrid_view_model.h"
-#include "igrid_view_resize_strategy.h"
+#include "igrid_view_resize_policy.h"
 #include "grid_view_selection_model.h"
 #include "grid_view_delegate.h"
 #include "context_menu_data_collection_row.h"
@@ -68,9 +68,9 @@ void GridView::leaveEvent(QEvent* event)
 
 void GridView::resizeEvent(QResizeEvent* event)
 {
-	if (m_viewModel && m_viewModel->resizeStrategy())
+	if (m_viewModel && m_viewModel->resizePolicy())
 	{
-		m_viewModel->resizeStrategy()->resize(this);
+		m_viewModel->resizePolicy()->resize(this);
 	}
 
 	QTableView::resizeEvent(event);
@@ -105,10 +105,10 @@ void GridView::setViewModel(IGridViewModel* modelView)
 {
 	m_viewModel = modelView;
 
-	if (m_viewModel->resizeStrategy())
+	if (m_viewModel->resizePolicy())
 	{
-		IGridViewResizePolicy* prevPolicy = m_viewModel ? m_viewModel->resizeStrategy() : nullptr;
-		m_viewModel->resizeStrategy()->init(this, prevPolicy);
+		IGridViewResizePolicy* prevPolicy = m_viewModel ? m_viewModel->resizePolicy() : nullptr;
+		m_viewModel->resizePolicy()->init(this, prevPolicy);
 	}
 }
 
@@ -124,12 +124,10 @@ void GridView::initSpan()
 
 	for (int row = 0; row < rows; ++row)
 	{
-		for (int column = 0; column < columns;)
+		for (int column = 0; column < columns; ++column)
 		{
 			QSize colSpan = model()->span(model()->index(row, column));
-
 			setSpan(row, column, colSpan.height(), colSpan.width());
-			column += colSpan.width();
 		}
 	}
 }

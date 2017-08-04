@@ -6,7 +6,7 @@ namespace QuickieWebBot
 {
 
 class SummaryModel;
-class GridViewFullSizeResizeStrategy;
+class GridViewFullSizeResizePolicy;
 
 class SummaryViewModel
 	: public QObject
@@ -18,12 +18,12 @@ public:
 	SummaryViewModel(SummaryModel* model, QObject* parent = nullptr);
 
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
-	virtual IGridViewResizePolicy* resizeStrategy() const noexcept override;
+	virtual IGridViewResizePolicy* resizePolicy() const noexcept override;
 
 private:
 	SummaryModel* m_model;
 
-	std::unique_ptr<GridViewFullSizeResizeStrategy> m_resizeStrategy;
+	std::unique_ptr<GridViewFullSizeResizePolicy> m_resizePolicy;
 };
 
 }

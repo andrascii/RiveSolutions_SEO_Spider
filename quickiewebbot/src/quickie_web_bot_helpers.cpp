@@ -3,7 +3,7 @@
 namespace QuickieWebBot
 {
 
-qreal getScreenDpi()
+qreal primaryScreenDpi()
 {
 	return QApplication::screens().at(0)->logicalDotsPerInch();
 }
@@ -12,7 +12,7 @@ int QuickieWebBotHelpers::pointsToPixels(double sizeInPoints, double dpi)
 {
 	if (dpi == 0)
 	{
-		dpi = getScreenDpi();
+		dpi = primaryScreenDpi();
 	}
 
 	const double pointSizeInPixels = dpi / 72.0;
@@ -23,7 +23,7 @@ double QuickieWebBotHelpers::pixelsToPoints(int sizeInPixels, double dpi)
 {
 	if (dpi == 0)
 	{
-		dpi = getScreenDpi();
+		dpi = primaryScreenDpi();
 	}
 
 	return (double)sizeInPixels * 72.0 / dpi;
