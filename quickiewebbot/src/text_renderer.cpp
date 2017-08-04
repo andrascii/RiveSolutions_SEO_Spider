@@ -8,22 +8,23 @@ namespace QuickieWebBot
 TextRenderer::TextRenderer(const IGridViewModel* viewModel, int maxCacheSize)
 	: m_viewModel(viewModel)
 	, m_maxCacheSize(maxCacheSize)
-	, m_marginLeft(QuickieWebBotHelpers::pointsToPixels(4))
-	, m_marginTop(QuickieWebBotHelpers::pointsToPixels(2))
-	, m_marginRight(QuickieWebBotHelpers::pointsToPixels(4))
-	, m_marginBottom(QuickieWebBotHelpers::pointsToPixels(2))
 {
 }
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	const bool isDecorationValid = m_viewModel->decoration(index).isNull();
-	const int textAlignmentFlags = m_viewModel->textAlignmentFlags(index);
-	const QFont& font = m_viewModel->textFont(index);
+	const bool isDecorationValid = index.data(Qt::DecorationRole).isValid();
+	const int textAlignmentFlags = index.data(Qt::TextAlignmentRole).toInt();
+	const QFont& font = index.data(Qt::FontRole).value<QFont>();
 	const QString paintingText = index.data(Qt::DisplayRole).toString();
-	const QColor& textColor = m_viewModel->textColor(index);
+	const QColor& textColor = index.data(Qt::TextColorRole).value<QColor>();
 
-	QRect adjustedRect = option.rect.adjusted(m_marginLeft, m_marginTop, -m_marginRight, -m_marginBottom);
+	QRect adjustedRect = option.rect.adjusted(
+		m_viewModel->marginLeft(index),
+		m_viewModel->marginTop(index),
+		-m_viewModel->marginRight(index),
+		-m_viewModel->marginBottom(index)
+	);
 
 	QPixmap* pixmapPointer = cached(index);
 
@@ -35,6 +36,7 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 		pixmap.fill(Qt::transparent);
 
 		QPainter painterPixmap(&pixmap);
+		painterPixmap.setRenderHints(QPainter::HighQualityAntialiasing);
 		painterPixmap.setFont(font);
 		painterPixmap.setPen(textColor);
 
@@ -49,6 +51,10 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 	}
 
 	painter->drawPixmap(adjustedRect, *pixmapPointer);
+
+	//
+	// TODO: Refactor. Incorrect call of method with side-effect from const method
+	//
 	clearCacheIfNeeded();
 }
 
@@ -66,7 +72,7 @@ QPixmap* TextRenderer::cached(const QModelIndex& index) const
 
 QRect TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const
 {
-	const QPixmap& pixmap = m_viewModel->decoration(index);
+	QPixmap pixmap = index.data(Qt::DecorationRole).value<QPixmap>();
 
 	QSize pixmapSize = pixmap.size();
 

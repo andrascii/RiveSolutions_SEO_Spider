@@ -8,7 +8,8 @@ class IGridModel : public QAbstractTableModel
 public:
 	enum CustomRoles
 	{
-		WhatsThisRole = Qt::UserRole
+		WhatsThisRole = Qt::UserRole,
+		SelectionBackgroundColorRole
 	};
 
 	using QAbstractTableModel::QAbstractTableModel;

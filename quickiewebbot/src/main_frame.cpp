@@ -92,7 +92,6 @@ void MainFrame::initCrawlingGridView()
 		<< PageInfo::MetaKeywordsItemType
 		<< PageInfo::MetaKeywordsLengthItemType
 		<< PageInfo::RedirectedUrlItemType
-		<< PageInfo::ServerResponseItemType
 		<< PageInfo::FirstH1ItemType
 		<< PageInfo::FirstH1LengthItemType
 		<< PageInfo::SecondH1ItemType

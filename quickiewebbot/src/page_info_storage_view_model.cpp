@@ -1,10 +1,16 @@
 #include "page_info.h"
 #include "igrid_model.h"
-#include "text_renderer.h"
 #include "grid_view_resize_strategy.h"
-#include "page_info_storage_view_model.h"
+
+#include "text_renderer.h"
 #include "background_renderer.h"
 #include "selection_background_renderer.h"
+
+#include "page_info_storage_model.h"
+#include "page_info_storage_view_model.h"
+
+#include "quickie_web_bot_helpers.h"
+
 
 namespace QuickieWebBot
 {
@@ -15,67 +21,43 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 {
 }
 
-const QFont& PageInfoStorageViewModel::textFont(const QModelIndex& index) const noexcept
+int PageInfoStorageViewModel::marginTop(const QModelIndex& index) const noexcept
 {
-	static QFont font;
+	index;
 
-	return font;
+	return QuickieWebBotHelpers::pointsToPixels(2);
 }
 
-const QColor& PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexcept
+int PageInfoStorageViewModel::marginBottom(const QModelIndex& index) const noexcept
 {
-	static QColor color(Qt::black);
-	static QColor urlColor("#4753C5");
+	index;
 
-	if (index.data(IGridModel::WhatsThisRole).toInt() == PageInfo::UrlItemType)
-	{
-		return urlColor;
-	}
-
-	return color;
+	return QuickieWebBotHelpers::pointsToPixels(2);
 }
 
-const QColor& PageInfoStorageViewModel::backgroundColor(const QModelIndex& index) const noexcept
+int PageInfoStorageViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
-	static QColor color(Qt::transparent);
+	index;
 
-	return color;
+	return QuickieWebBotHelpers::pointsToPixels(4);
 }
 
-const QColor& PageInfoStorageViewModel::selectionBackgroundColor(const QModelIndex& index) const noexcept
+int PageInfoStorageViewModel::marginRight(const QModelIndex& index) const noexcept
 {
-	static QColor color(7, 160, 50, 255);
+	index;
 
-	return color;
-}
-
-const QPixmap& PageInfoStorageViewModel::decoration(const QModelIndex& index) const noexcept
-{
-	static QPixmap decoration;
-	static QPixmap urlDecoration(":/images/url-icon.png");
-
-	if (index.data(IGridModel::WhatsThisRole).toInt() == PageInfo::UrlItemType)
-	{
-		return urlDecoration;
-	}
-
-	return decoration;
-}
-
-int PageInfoStorageViewModel::textAlignmentFlags(const QModelIndex& index) const noexcept
-{
-	return Qt::AlignVCenter | Qt::AlignLeft;
+	return QuickieWebBotHelpers::pointsToPixels(4);
 }
 
 QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	static BackgroundRenderer s_bgPainter(backgroundColor(index), backgroundColor(index));
-	static SelectionBackgroundRenderer s_selectionBgPainter(selectionBackgroundColor(index), selectionBackgroundColor(index));
-	static TextRenderer s_textPainter(this, 1000);
+	static SelectionBackgroundRenderer s_selectionBgPainter;
+	static BackgroundRenderer s_bgPainter;
+	static TextRenderer s_textPainter(this, std::pow(m_model->columnCount(index), 3));
 
 	return QList<IRenderer*>()
-		<< &s_selectionBgPainter
 		<< &s_bgPainter
+		<< &s_selectionBgPainter
 		<< &s_textPainter;
 }
 

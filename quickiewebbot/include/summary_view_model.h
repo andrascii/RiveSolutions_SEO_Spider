@@ -5,16 +5,16 @@
 namespace QuickieWebBot
 {
 
-class PageInfoStorageModel;
+class SummaryModel;
 
-class PageInfoStorageViewModel 
+class SummaryViewModel
 	: public QObject
 	, public IGridViewModel
 {
 	Q_OBJECT
 
 public:
-	PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent = nullptr);
+	SummaryViewModel(SummaryModel* model, QObject* parent = nullptr);
 
 	virtual int marginTop(const QModelIndex& index) const noexcept override;
 	virtual int marginBottom(const QModelIndex& index) const noexcept override;
@@ -25,7 +25,7 @@ public:
 	virtual IGridViewResizePolicy* resizeStrategy() const noexcept override;
 
 private:
-	PageInfoStorageModel* m_model;
+	SummaryModel* m_model;
 };
 
 }

@@ -5,10 +5,9 @@
 namespace QuickieWebBot
 {
 	
-class SelectionBackgroundRenderer : public BackgroundRenderer
+class SelectionBackgroundRenderer : public IRenderer
 {
 public:
-	SelectionBackgroundRenderer(QColor color, QColor alternateColor);
 	virtual void render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };
 

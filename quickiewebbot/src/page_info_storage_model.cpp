@@ -52,9 +52,47 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 			return storageAdaptor()->itemAt(index);
 		}
 
-		case IGridModel::WhatsThisRole:
+		case Qt::DecorationRole:
 		{
-			return storageAdaptor()->itemTypeAt(index);
+			static QPixmap urlPixmap(":/images/url-icon.png");
+
+			if (storageAdaptor()->itemTypeAt(index) != PageInfo::UrlItemType)
+			{
+				return urlPixmap;
+			}
+		}
+
+		case Qt::BackgroundColorRole:
+		{
+			return QColor(Qt::white);
+		}
+
+		case Qt::TextColorRole:
+		{
+			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
+			{
+				return QColor("#343B49");
+			}
+
+			return QColor(Qt::black);
+		}
+
+		case Qt::FontRole:
+		{
+			QFont font;
+
+			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
+			{
+				font.setBold(true);
+				return font;
+			}
+
+			return font;
+		}
+
+		case IGridModel::SelectionBackgroundColorRole:
+		{
+			return QColor(7, 160, 50, 255);
 		}
 	}
 
