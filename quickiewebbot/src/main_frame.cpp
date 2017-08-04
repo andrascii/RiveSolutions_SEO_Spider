@@ -12,6 +12,7 @@
 #include "page_info_storage_model.h"
 #include "storage_adaptor.h"
 #include "page_info_storage_view_model.h"
+#include "summary_view_model.h"
 
 namespace QuickieWebBot
 {
@@ -63,11 +64,7 @@ void MainFrame::init()
 	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
 
 	initCrawlingGridView();
-
-	SummaryModel* summaryModel = new SummaryModel(this);
-	m_ui.summaryGridView->setModel(summaryModel);
-
-	m_ui.summaryGridView->setMinimumWidth(QuickieWebBotHelpers::pointsToPixels(350));
+	initSummaryGridView();
 
 	new NavigationPanelController(this, &m_ui);
 }
@@ -75,7 +72,7 @@ void MainFrame::init()
 void MainFrame::initCrawlingGridView()
 {
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
-	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model);
+	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);
 
 	StorageAdaptor* storageAdaptor = 
 		theApp->modelController()->data()->createStorageAdaptor(DataCollection::CrawledUrlStorageType);
@@ -114,6 +111,15 @@ void MainFrame::initCrawlingGridView()
 	m_ui.crawlingGridView->setViewModel(modelView);
 
 	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
+}
+
+void MainFrame::initSummaryGridView()
+{
+	SummaryModel* summaryModel = new SummaryModel(this);
+	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);
+
+	m_ui.summaryGridView->setModel(summaryModel);
+	m_ui.summaryGridView->setViewModel(summaryViewModel);
 }
 
 }

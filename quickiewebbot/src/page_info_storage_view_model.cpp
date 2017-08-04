@@ -1,14 +1,11 @@
 #include "page_info.h"
 #include "igrid_model.h"
 #include "grid_view_resize_strategy.h"
-
 #include "text_renderer.h"
 #include "background_renderer.h"
 #include "selection_background_renderer.h"
-
 #include "page_info_storage_model.h"
 #include "page_info_storage_view_model.h"
-
 #include "quickie_web_bot_helpers.h"
 
 
@@ -19,34 +16,6 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	: QObject(parent)
 	, m_model(model)
 {
-}
-
-int PageInfoStorageViewModel::marginTop(const QModelIndex& index) const noexcept
-{
-	index;
-
-	return QuickieWebBotHelpers::pointsToPixels(2);
-}
-
-int PageInfoStorageViewModel::marginBottom(const QModelIndex& index) const noexcept
-{
-	index;
-
-	return QuickieWebBotHelpers::pointsToPixels(2);
-}
-
-int PageInfoStorageViewModel::marginLeft(const QModelIndex& index) const noexcept
-{
-	index;
-
-	return QuickieWebBotHelpers::pointsToPixels(4);
-}
-
-int PageInfoStorageViewModel::marginRight(const QModelIndex& index) const noexcept
-{
-	index;
-
-	return QuickieWebBotHelpers::pointsToPixels(4);
 }
 
 QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept

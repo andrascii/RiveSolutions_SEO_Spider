@@ -1,5 +1,6 @@
 #include "text_renderer.h"
 #include "igrid_view_model.h"
+#include "igrid_model.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
@@ -13,13 +14,12 @@ TextRenderer::TextRenderer(const IGridViewModel* viewModel, int maxCacheSize)
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	QRect adjustedRect = option.rect.adjusted(
-		m_viewModel->marginLeft(index),
-		m_viewModel->marginTop(index),
-		-m_viewModel->marginRight(index),
-		-m_viewModel->marginBottom(index)
-	);
+	int marginTop = index.data(IGridModel::MarginTop).toInt();
+	int marginBottom = index.data(IGridModel::MarginBottom).toInt();
+	int marginLeft = index.data(IGridModel::MarginLeft).toInt();
+	int marginRight = index.data(IGridModel::MarginRight).toInt();
 
+	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = cached(index);
 
 	if (pixmapPointer && pixmapPointer->rect().size() == adjustedRect.size())

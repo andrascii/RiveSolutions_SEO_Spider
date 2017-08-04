@@ -12,9 +12,6 @@ class ControlPanelWidget : public QWidget
 public:
 	ControlPanelWidget(QWidget* parent);
 
-	Q_SLOT void showListView(bool value);
-	Q_SLOT void showSummaryView(bool value);
-
 private:
 	Q_SLOT void setUrl();
 	Q_SLOT void startCrawling();

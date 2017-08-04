@@ -12,48 +12,29 @@ ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	initialize();
 }
 
-void ControlPanelWidget::showListView(bool value)
-{
-	m_ui.summaryViewButton->setChecked(!value);
-
-	if (value)
-	{
-		theApp->mainFrame()->showListView();
-	}
-}
-
-void ControlPanelWidget::showSummaryView(bool value)
-{
-	m_ui.generalViewButton->setChecked(!value);
-
-	if (value)
-	{
-		theApp->mainFrame()->showSummaryView();
-	}
-}
-
 void ControlPanelWidget::setUrl()
 {
-	if (m_ui.urlLineEdit->isUrlCorrect())
+	if (!m_ui.urlLineEdit->isUrlCorrect())
 	{
-		theApp->properties()->setUrl(m_ui.urlLineEdit->text());
+		return;
 	}
+
+	theApp->properties()->setUrl(m_ui.urlLineEdit->text());
 }
 
 void ControlPanelWidget::startCrawling()
 {
-	if (m_ui.urlLineEdit->isUrlCorrect())
+	if (!m_ui.urlLineEdit->isUrlCorrect())
 	{
-		theApp->webCrawler()->startCrawling();
+		return;
 	}
+
+	theApp->webCrawler()->startCrawling();
 }
 
 void ControlPanelWidget::initialize()
 {
 	m_ui.setupUi(this);
-
-	VERIFY(connect(m_ui.generalViewButton, &QPushButton::toggled, this, &ControlPanelWidget::showListView));
-	VERIFY(connect(m_ui.summaryViewButton, &QPushButton::toggled, this, &ControlPanelWidget::showSummaryView));
 
 	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::startCrawling));
 	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));

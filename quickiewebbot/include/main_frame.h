@@ -26,6 +26,7 @@ public:
 private:
 	void init();
 	void initCrawlingGridView();
+	void initSummaryGridView();
 
 private:
 	Ui::MainFrameClass m_ui;

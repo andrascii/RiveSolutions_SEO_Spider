@@ -1,6 +1,7 @@
 #include "page_info_storage_model.h"
 #include "grid_view_resize_strategy.h"
 #include "storage_adaptor.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -93,6 +94,26 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		case IGridModel::SelectionBackgroundColorRole:
 		{
 			return QColor(7, 160, 50, 255);
+		}
+
+		case IGridModel::MarginTop:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(2);
+		}
+
+		case IGridModel::MarginBottom:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(2);
+		}
+
+		case IGridModel::MarginLeft:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(4);
+		}
+
+		case IGridModel::MarginRight:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(4);
 		}
 	}
 

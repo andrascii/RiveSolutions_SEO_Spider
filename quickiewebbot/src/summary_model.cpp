@@ -121,63 +121,92 @@ QSize SummaryModel::span(const QModelIndex& index) const
 
 QVariant SummaryModel::data(const QModelIndex& index, int role) const
 {
-	if (role == Qt::DisplayRole)
+	switch (role)
 	{
-		auto groupIterator = m_groups.find(index.row());
-
-		if (groupIterator != m_groups.end())
+		case Qt::DisplayRole:
 		{
-			return groupIterator.value()->groupName;
+			auto groupIterator = m_groups.find(index.row());
+
+			if (groupIterator != m_groups.end())
+			{
+				return groupIterator.value()->groupName;
+			}
+
+			auto itemIterator = m_itemRows.find(index.row());
+
+			assert(itemIterator != m_itemRows.end());
+
+			return index.column() == 0 ? QVariant(itemIterator.value()->name) : QVariant(itemIterator.value()->issueCount);
 		}
 
-		auto itemIterator = m_itemRows.find(index.row());
-
-		assert(itemIterator != m_itemRows.end());
-
-		return index.column() == 0 ? QVariant(itemIterator.value()->name) : QVariant(itemIterator.value()->issueCount);
-	}
-	
-	if (role == Qt::DecorationRole)
-	{
-		static QPixmap s_okPixmap = pixmap(StatusOK, QuickieWebBotHelpers::pointsToPixels(13.5));
-		static QPixmap s_warningPixmap = pixmap(StatusWarning, QuickieWebBotHelpers::pointsToPixels(13.5));
-		static QPixmap s_errorPixmap = pixmap(StatusError, QuickieWebBotHelpers::pointsToPixels(13.5));
-
-		if (isGroupHeaderRow(index.row()) || index.column() != 0)
+		case Qt::DecorationRole:
 		{
-			return QVariant();
+			static QPixmap s_okPixmap = pixmap(StatusOK, QuickieWebBotHelpers::pointsToPixels(13.5));
+			static QPixmap s_warningPixmap = pixmap(StatusWarning, QuickieWebBotHelpers::pointsToPixels(13.5));
+			static QPixmap s_errorPixmap = pixmap(StatusError, QuickieWebBotHelpers::pointsToPixels(13.5));
+
+			if (isGroupHeaderRow(index.row()) || index.column() != 0)
+			{
+				return QVariant();
+			}
+
+			auto it = m_itemRows.find(index.row());
+			assert(it != m_itemRows.end());
+
+			return it.value()->issueCount > 0 ? s_warningPixmap : s_okPixmap;
 		}
 
-		auto it = m_itemRows.find(index.row());
-		assert(it != m_itemRows.end());
-
-		return it.value()->issueCount > 0 ? s_warningPixmap : s_okPixmap;
-	}
-
-	if (role == Qt::FontRole)
-	{
-		QFont font;
-
-		if (isGroupHeaderRow(index.row()))
+		case Qt::FontRole:
 		{
-			font.setBold(true);
+			QFont font;
+
+			if (isGroupHeaderRow(index.row()))
+			{
+				font.setBold(true);
+			}
+
 			return font;
 		}
-	}
 
-	if (role == Qt::TextAlignmentRole)
-	{
-		if (index.column() != 0)
+		case Qt::TextAlignmentRole:
 		{
-			return Qt::AlignRight;
+			if (index.column() != 0)
+			{
+				return Qt::AlignRight;
+			}
+
+			return Qt::AlignLeft;
 		}
 
-		return Qt::AlignLeft;
-	}
+		case Qt::BackgroundColorRole:
+		{
+			return QColor(Qt::transparent);
+		}
 
-	if (role == Qt::BackgroundColorRole)
-	{
-		return QColor(Qt::transparent);
+		case IGridModel::SelectionBackgroundColorRole:
+		{
+			return QColor(7, 160, 50, 255);
+		}
+
+		case IGridModel::MarginTop:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(2);
+		}
+
+		case IGridModel::MarginBottom:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(2);
+		}
+
+		case IGridModel::MarginLeft:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(4);
+		}
+
+		case IGridModel::MarginRight:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(4);
+		}
 	}
 
 	return QVariant();

@@ -38,7 +38,7 @@
      <number>5</number>
     </property>
     <item row="1" column="2">
-     <widget class="QWidget" name="navigationWidget" native="true">
+     <widget class="QWidget" name="navigationPanelWidget" native="true">
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
         <number>0</number>

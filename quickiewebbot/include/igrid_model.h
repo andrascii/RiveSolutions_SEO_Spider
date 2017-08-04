@@ -9,7 +9,11 @@ public:
 	enum CustomRoles
 	{
 		WhatsThisRole = Qt::UserRole,
-		SelectionBackgroundColorRole
+		SelectionBackgroundColorRole,
+		MarginTop,
+		MarginBottom,
+		MarginLeft,
+		MarginRight
 	};
 
 	using QAbstractTableModel::QAbstractTableModel;

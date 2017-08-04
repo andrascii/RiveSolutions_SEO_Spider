@@ -42,10 +42,9 @@ void AbstractThreadableObject::stopExecution() noexcept
 
 	if (m_thread.isRunning())
 	{
-		//
-		// Just terminate thread. 
-		// This moment we need to refactor to avoid creating thread overhead.
-		//
+		QMetaObject::invokeMethod(this, "killTimer", Qt::BlockingQueuedConnection,
+			Q_ARG(int, g_minimumRecommendedTimerResolution), Q_ARG(Qt::TimerType, Qt::CoarseTimer));
+
 		m_thread.quit();
 		m_thread.wait(); 
 		m_isRunning.store(false);

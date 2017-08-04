@@ -47,19 +47,6 @@
       <property name="spacing">
        <number>6</number>
       </property>
-      <item row="0" column="9">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="0" column="2">
        <widget class="QPushButton" name="stopCrawlingButton">
         <property name="font">
@@ -73,7 +60,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="8">
+      <item row="0" column="7">
        <widget class="QProgressBar" name="progressBar">
         <property name="font">
          <font>
@@ -116,41 +103,18 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
-       <layout class="QHBoxLayout" name="viewModeLayout">
-        <property name="spacing">
-         <number>0</number>
+      <item row="0" column="8">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <item>
-         <widget class="QPushButton" name="generalViewButton">
-          <property name="text">
-           <string>List</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="groupButton" stdset="0">
-           <string notr="true">left</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="summaryViewButton">
-          <property name="text">
-           <string>Summary</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="groupButton" stdset="0">
-           <string notr="true">right</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
