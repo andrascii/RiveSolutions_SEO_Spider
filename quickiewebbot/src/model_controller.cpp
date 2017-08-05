@@ -44,12 +44,12 @@ void ModelController::processPageInfoUrl(PageInfoPtr pageInfo) noexcept
 		m_data->addPageInfo(pageInfo, DataCollection::ExternalUrlStorageType);
 	}
 
-	if (urlStr.toUpper() == urlStr)
+	if (urlStr.toLower() != urlStr)
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::UpperCaseUrlStorageType);
 	}
 
-	if (urlStr.size() > /* props->maxUrlLength() */ 50)
+	if (urlStr.size() > theApp->properties()->limitMaxUrlLength())
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::VeryLongUrlStorageType);
 	}
@@ -84,11 +84,11 @@ void ModelController::processPageInfoTitle(PageInfoPtr pageInfo) noexcept
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::EmptyTitleUrlStorageType);
 	}
-	else if (title.size() > /* props->maxTitleLength() */ 50)
+	else if (title.size() > theApp->properties()->maxTitleLength())
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::VeryLongTitleUrlStorageType);
 	}
-	else if (title.size() < /* props->minTitleLength() */ 5)
+	else if (title.size() < theApp->properties()->minTitleLength())
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::VeryLongTitleUrlStorageType);
 	}
@@ -126,11 +126,11 @@ void ModelController::processPageInfoMetaDescription(PageInfoPtr pageInfo) noexc
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::EmptyMetaDescriptionUrlStorageType);
 	}
-	else if (metaDescriptionLength > /* props->maxMetaDescriptionLength */ 50)
+	else if (metaDescriptionLength > theApp->properties()->maxDescriptionLength())
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::VeryLongMetaDescriptionUrlStorageType);
 	}
-	else if (metaDescriptionLength < /* props->maxMetaDescriptionLength */ 5)
+	else if (metaDescriptionLength < theApp->properties()->minDescriptionLength())
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::VeryShortMetaDescriptionUrlStorageType);
 	}
@@ -193,7 +193,7 @@ void ModelController::processPageInfoH1(PageInfoPtr pageInfo) noexcept
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::MissingH1UrlStorageType);
 	}
-	else if (h1Length > /* props->maxH1Length() */ 50)
+	else if (h1Length > theApp->properties()->maxH1LengthChars())
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::VeryLongH1UrlStorageType);
 	}
@@ -227,7 +227,7 @@ void ModelController::processPageInfoH2(PageInfoPtr pageInfo) noexcept
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::MissingH2UrlStorageType);
 	}
-	else if (h2Length > /* props->maxH2Length() */ 50)
+	else if (h2Length > theApp->properties()->maxH2LengthChars())
 	{
 		m_data->addPageInfo(pageInfo, DataCollection::VeryLongH2UrlStorageType);
 	}
@@ -258,13 +258,13 @@ void ModelController::processPageInfoImage(PageInfoPtr pageInfo) noexcept
 
 	bool veryLongAltText = false;
 	bool missingAltText = false;
-	bool over100Kb = false;
+	bool tooBig = false;
 
 	for (int i = 0; i < imageCount; ++i)
 	{
 		const int altLength = pageInfo->itemValue(PageInfo::ImageAltTextLengthItemType, i).toInt();
 		const int sizeKB = pageInfo->itemValue(PageInfo::ImageSizeKbItemType, i).toInt();
-		if (!veryLongAltText && altLength > /* props->maxImageAltTextLengt()*/ 50)
+		if (!veryLongAltText && altLength > theApp->properties()->maxImageAltTextChars())
 		{
 			m_data->addPageInfo(pageInfo, DataCollection::VeryLongAltTextImageStorageType);
 			veryLongAltText = true;
@@ -276,13 +276,13 @@ void ModelController::processPageInfoImage(PageInfoPtr pageInfo) noexcept
 			missingAltText = true;
 		}
 
-		if (!over100Kb && sizeKB > 100)
+		if (!tooBig && sizeKB > theApp->properties()->maxImageSize())
 		{
 			m_data->addPageInfo(pageInfo, DataCollection::Over100kbImageStorageType);
-			over100Kb = true;
+			tooBig = true;
 		}
 
-		if (veryLongAltText && missingAltText && over100Kb)
+		if (veryLongAltText && missingAltText && tooBig)
 		{
 			break;
 		}

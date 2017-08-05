@@ -49,8 +49,10 @@ class ApplicationProperties : public QObject
 	Q_PROPERTY(int maxH2LengthChars READ maxH2LengthChars WRITE setMaxH2LengthChars NOTIFY maxH2LengthCharsChanged);
 	Q_PROPERTY(int maxImageAltTextChars READ maxImageAltTextChars WRITE setMaxImageAltTextChars NOTIFY maxImageAltTextCharsChanged);
 	Q_PROPERTY(int maxImageSize READ maxImageSize WRITE setMaxImageSize NOTIFY maxImageSizeChanged);
-	Q_PROPERTY(int maxDescriptionWidth READ maxDescriptionWidth WRITE setMaxDescriptionWidth NOTIFY maxDescriptionWidthChanged);
-	Q_PROPERTY(int maxTitleWidth READ maxTitleWidth WRITE setMaxTitleWidth NOTIFY maxTitleWidthChanged);
+	Q_PROPERTY(int maxDescriptionLength READ maxDescriptionLength WRITE setMaxDescriptionLength NOTIFY maxDescriptionLengthChanged);
+	Q_PROPERTY(int minDescriptionLength READ minDescriptionLength WRITE setMinDescriptionLength NOTIFY minDescriptionLengthChanged);
+	Q_PROPERTY(int maxTitleLength READ maxTitleLength WRITE setMaxTitleLength NOTIFY maxTitleLengthChanged);
+	Q_PROPERTY(int minTitleLength READ minTitleLength WRITE setMinTitleLength NOTIFY minTitleLengthChanged);
 
 	//
 	// Crawler start
@@ -58,6 +60,7 @@ class ApplicationProperties : public QObject
 	Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged);
 
 public:
+
 	unsigned threadCount() const;
 	Q_SLOT void setThreadCount(unsigned value);
 	Q_SIGNAL void threadCountChanged();
@@ -150,13 +153,21 @@ public:
 	Q_SLOT void setMaxImageSize(int value);
 	Q_SIGNAL void maxImageSizeChanged();
 
-	int maxDescriptionWidth() const;
-	Q_SLOT void setMaxDescriptionWidth(int value);
-	Q_SIGNAL void maxDescriptionWidthChanged();
+	int maxDescriptionLength() const;
+	Q_SLOT void setMaxDescriptionLength(int value);
+	Q_SIGNAL void maxDescriptionLengthChanged();
+
+	int minDescriptionLength() const;
+	Q_SLOT void setMinDescriptionLength(int value);
+	Q_SIGNAL void minDescriptionLengthChanged();
 	
-	int maxTitleWidth() const;
-	Q_SLOT void setMaxTitleWidth(int value);
-	Q_SIGNAL void maxTitleWidthChanged();
+	int maxTitleLength() const;
+	Q_SLOT void setMaxTitleLength(int value);
+	Q_SIGNAL void maxTitleLengthChanged();
+
+	int minTitleLength() const;
+	Q_SLOT void setMinTitleLength(int value);
+	Q_SIGNAL void minTitleLengthChanged();
 
 	const QUrl& url() const;
 	Q_SLOT void setUrl(const QUrl& url);
@@ -194,8 +205,10 @@ private:
 	int m_maxH2LengthChars;
 	int m_maxImageAltTextChars;
 	int m_maxImageSize;
-	int m_maxDescriptionWidth;
-	int m_maxTitleWidth;
+	int m_maxDescriptionLength;
+	int m_minDescriptionLength;
+	int m_maxTitleLength;
+	int m_minTitleLength;
 
 	QUrl m_url;
 };

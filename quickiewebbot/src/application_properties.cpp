@@ -3,6 +3,20 @@
 namespace QuickieWebBot
 {
 
+ApplicationProperties::ApplicationProperties(QObject* parent)
+	: QObject(parent)
+	, m_minTitleLength(5)
+	, m_maxTitleLength(50)
+	, m_limitMaxUrlLength(50)
+	, m_maxDescriptionLength(50)
+	, m_minDescriptionLength(5)
+	, m_maxH1LengthChars(50)
+	, m_maxH2LengthChars(50)
+	, m_maxImageAltTextChars(100)
+	, m_maxImageSize(100)
+{
+}
+
 unsigned ApplicationProperties::threadCount() const
 {
 	return m_threadCount;
@@ -256,26 +270,48 @@ void ApplicationProperties::setMaxImageSize(int value)
 	emit maxImageSizeChanged();
 }
 
-int ApplicationProperties::maxDescriptionWidth() const
+int ApplicationProperties::maxDescriptionLength() const
 {
-	return m_maxDescriptionWidth;
+	return m_maxDescriptionLength;
 }
 
-void ApplicationProperties::setMaxDescriptionWidth(int value)
+void ApplicationProperties::setMaxDescriptionLength(int value)
 {
-	m_maxDescriptionWidth = value;
-	emit maxDescriptionWidthChanged();
+	m_maxDescriptionLength = value;
+	emit maxDescriptionLengthChanged();
 }
 
-int ApplicationProperties::maxTitleWidth() const
+int ApplicationProperties::minDescriptionLength() const
 {
-	return m_maxTitleWidth;
+	return m_minDescriptionLength;
 }
 
-void ApplicationProperties::setMaxTitleWidth(int value)
+void ApplicationProperties::setMinDescriptionLength(int value)
 {
-	m_maxTitleWidth = value;
-	emit maxTitleWidthChanged();
+	m_minDescriptionLength = value;
+	emit minDescriptionLengthChanged();
+}
+
+int ApplicationProperties::maxTitleLength() const
+{
+	return m_maxTitleLength;
+}
+
+void ApplicationProperties::setMaxTitleLength(int value)
+{
+	m_maxTitleLength = value;
+	emit maxTitleLengthChanged();
+}
+
+int ApplicationProperties::minTitleLength() const
+{
+	return m_minTitleLength;
+}
+
+void ApplicationProperties::setMinTitleLength(int value)
+{
+	m_minTitleLength = value;
+	emit minTitleLengthChanged();
 }
 
 const QUrl& ApplicationProperties::url() const
@@ -295,11 +331,6 @@ void ApplicationProperties::setUrl(const QUrl& url)
 	}
 
 	emit urlChanged();
-}
-
-ApplicationProperties::ApplicationProperties(QObject* parent)
-	: QObject(parent)
-{
 }
 
 }
