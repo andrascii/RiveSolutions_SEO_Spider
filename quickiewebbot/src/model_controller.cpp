@@ -187,7 +187,7 @@ void ModelController::processPageInfoMetaKeywords(PageInfoPtr pageInfo) noexcept
 
 void ModelController::processPageInfoH1(PageInfoPtr pageInfo) noexcept
 {
-	const QString h1Length = pageInfo->itemValue(PageInfo::FirstH1LengthItemType).toString();
+	const int h1Length = pageInfo->itemValue(PageInfo::FirstH1LengthItemType).toInt();
 
 	if (h1Length == 0)
 	{
@@ -221,7 +221,7 @@ void ModelController::processPageInfoH1(PageInfoPtr pageInfo) noexcept
 
 void ModelController::processPageInfoH2(PageInfoPtr pageInfo) noexcept
 {
-	const QString h2Length = pageInfo->itemValue(PageInfo::FirstH2LengthItemType).toString();
+	const int h2Length = pageInfo->itemValue(PageInfo::FirstH2LengthItemType).toInt();
 
 	if (h2Length == 0)
 	{
