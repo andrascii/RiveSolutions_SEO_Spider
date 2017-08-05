@@ -254,7 +254,7 @@ void ModelController::processPageInfoH2(PageInfoPtr pageInfo) noexcept
 
 void ModelController::processPageInfoImage(PageInfoPtr pageInfo) noexcept
 {
-	const int imageCount = pageInfo->itemValue(PageInfo::ImageCountItemCType).toInt();
+	const int imageCount = pageInfo->itemValue(PageInfo::ImageCountItemType).toInt();
 
 	bool veryLongAltText = false;
 	bool missingAltText = false;

@@ -362,7 +362,7 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 		case HasSeveralMetaKeywordsTagsItemType: return &PageInfo::acceptHasSeveralMetaKeywords;
 		case HasSeveralH1TagsItemType: return &PageInfo::acceptHasSeveralH1;
 		case HasSeveralH2TagsItemType: return &PageInfo::acceptHasSeveralH2;
-		case ImageCountItemCType: return &PageInfo::acceptImageCount;
+		case ImageCountItemType: return &PageInfo::acceptImageCount;
 		case ImageSizeKbItemType: return &PageInfo::acceptImageSizeKb;
 		case ImageAltTextItemType: return &PageInfo::acceptImageAltText;
 		case ImageAltTextLengthItemType: return &PageInfo::acceptImageAltTextLength;

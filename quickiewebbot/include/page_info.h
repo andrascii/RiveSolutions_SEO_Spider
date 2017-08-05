@@ -40,7 +40,7 @@ public:
 		ImageAltTextItemType, // remove?
 		ImageAltTextLengthItemType, // remove ?
 		ImageSizeKbItemType, // remove ?
-		ImageCountItemCType,
+		ImageCountItemType,
 		HasSeveralTitleTagsItemType,
 		HasSeveralMetaDescriptionTagsItemType,
 		HasSeveralMetaKeywordsTagsItemType,
