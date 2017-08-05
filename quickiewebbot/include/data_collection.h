@@ -101,7 +101,7 @@ public:
 	StorageAdaptorFactory* storageAdaptorFactory();
 
 	bool isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
-	PageInfoPtr getPageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
+	PageInfoPtr pageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
 	void addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept;
 
 	const GuiStorageTypePtr& guiStorage(StorageType type) const noexcept;

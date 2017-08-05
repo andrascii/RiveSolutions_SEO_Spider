@@ -205,7 +205,7 @@ bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, StorageType t
 	return storage->find(pageInfo) != storage->end();
 }
 
-QuickieWebBot::PageInfoPtr DataCollection::getPageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept
+QuickieWebBot::PageInfoPtr DataCollection::pageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept
 {
 	checkStorageType(type);
 	assert(isPageInfoExists(pageInfo, type));

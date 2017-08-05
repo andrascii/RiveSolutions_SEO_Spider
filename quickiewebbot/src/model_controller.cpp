@@ -97,7 +97,7 @@ void ModelController::processPageInfoTitle(PageInfoPtr pageInfo) noexcept
 	{
 		if (m_data->isPageInfoExists(pageInfo, DataCollection::AllTitlesUrlStorageType))
 		{
-			PageInfoPtr duplicate = m_data->getPageInfo(pageInfo, DataCollection::AllTitlesUrlStorageType);
+			PageInfoPtr duplicate = m_data->pageInfo(pageInfo, DataCollection::AllTitlesUrlStorageType);
 			m_data->addPageInfo(pageInfo, DataCollection::DuplicatedTitleUrlStorageType);
 			m_data->addPageInfo(duplicate, DataCollection::DuplicatedTitleUrlStorageType);
 		}
@@ -139,7 +139,7 @@ void ModelController::processPageInfoMetaDescription(PageInfoPtr pageInfo) noexc
 	{
 		if (m_data->isPageInfoExists(pageInfo, DataCollection::AllMetaDescriptionsUrlStorageType))
 		{
-			PageInfoPtr duplicate = m_data->getPageInfo(pageInfo, DataCollection::AllMetaDescriptionsUrlStorageType);
+			PageInfoPtr duplicate = m_data->pageInfo(pageInfo, DataCollection::AllMetaDescriptionsUrlStorageType);
 			m_data->addPageInfo(pageInfo, DataCollection::DuplicatedMetaDescriptionUrlStorageType);
 			m_data->addPageInfo(duplicate, DataCollection::DuplicatedMetaDescriptionUrlStorageType);
 		}
@@ -168,7 +168,7 @@ void ModelController::processPageInfoMetaKeywords(PageInfoPtr pageInfo) noexcept
 	{
 		if (m_data->isPageInfoExists(pageInfo, DataCollection::AllMetaKeywordsUrlStorageType))
 		{
-			PageInfoPtr duplicate = m_data->getPageInfo(pageInfo, DataCollection::AllMetaKeywordsUrlStorageType);
+			PageInfoPtr duplicate = m_data->pageInfo(pageInfo, DataCollection::AllMetaKeywordsUrlStorageType);
 			m_data->addPageInfo(pageInfo, DataCollection::DuplicatedMetaKeywordsUrlStorageType);
 			m_data->addPageInfo(duplicate, DataCollection::DuplicatedMetaKeywordsUrlStorageType);
 		}
@@ -202,7 +202,7 @@ void ModelController::processPageInfoH1(PageInfoPtr pageInfo) noexcept
 	{
 		if (m_data->isPageInfoExists(pageInfo, DataCollection::AllH1UrlStorageType))
 		{
-			PageInfoPtr duplicate = m_data->getPageInfo(pageInfo, DataCollection::AllH1UrlStorageType);
+			PageInfoPtr duplicate = m_data->pageInfo(pageInfo, DataCollection::AllH1UrlStorageType);
 			m_data->addPageInfo(pageInfo, DataCollection::DuplicatedH1UrlStorageType);
 			m_data->addPageInfo(duplicate, DataCollection::DuplicatedH1UrlStorageType);
 		}
@@ -236,7 +236,7 @@ void ModelController::processPageInfoH2(PageInfoPtr pageInfo) noexcept
 	{
 		if (m_data->isPageInfoExists(pageInfo, DataCollection::AllH2UrlStorageType))
 		{
-			PageInfoPtr duplicate = m_data->getPageInfo(pageInfo, DataCollection::AllH2UrlStorageType);
+			PageInfoPtr duplicate = m_data->pageInfo(pageInfo, DataCollection::AllH2UrlStorageType);
 			m_data->addPageInfo(pageInfo, DataCollection::DuplicatedH2UrlStorageType);
 			m_data->addPageInfo(duplicate, DataCollection::DuplicatedH2UrlStorageType);
 		}
