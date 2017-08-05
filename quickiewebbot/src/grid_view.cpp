@@ -87,7 +87,7 @@ void GridView::mouseReleaseEvent(QMouseEvent* event)
 
 	selectRow(event->pos());
 
-	m_contextMenu->move(globalPosition.x(), globalPosition.y());
+	m_contextMenu->popup(globalPosition);
 	m_contextMenu->show();
 }
 

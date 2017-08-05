@@ -10,19 +10,30 @@ StorageAdaptorFactory::StorageAdaptorFactory(DataCollection* dataCollection)
 {
 }
 
-StorageAdaptor* StorageAdaptorFactory::create(DataCollection::StorageType type) const
+StorageAdaptor* StorageAdaptorFactory::create(DataCollection::StorageType type)
 {
 	assert(type > DataCollection::BeginEnumStorageType && type < DataCollection::EndEnumStorageType);
 
+	if (m_storageAdaptors.find(type) != std::end(m_storageAdaptors))
+	{
+		return m_storageAdaptors[type];
+	}
+
+	StorageAdaptor* storageAdaptor = new StorageAdaptor(m_dataCollection->guiStorage(type), type, m_dataCollection);
+
+	setupAvailableColumns(storageAdaptor, type);
+
+	m_storageAdaptors[type] = storageAdaptor;
+
+	return storageAdaptor;
+}
+
+void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor, DataCollection::StorageType type) const
+{
 	switch (type)
 	{
-		//
-		// Statistic data
-		//
 		case DataCollection::CrawledUrlStorageType:
 		{
-			StorageAdaptor* storageAdaptor = new StorageAdaptor(m_dataCollection->guiStorage(type), type, m_dataCollection);
-
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
 				<< PageInfo::ContentItemType
@@ -51,156 +62,125 @@ StorageAdaptor* StorageAdaptorFactory::create(DataCollection::StorageType type) 
 				<< PageInfo::UrlLengthItemType
 			);
 
-			return storageAdaptor;
-		}
-		case DataCollection::ExternalUrlStorageType:
-		{
-
+			return;
 		}
 
 		//
-		// Url string problems
+		// Links available columns
 		//
 		case DataCollection::UpperCaseUrlStorageType:
-		{
-
-		}
 		case DataCollection::NonAsciiCharacterUrlStorageType:
-		{
-
-		}
 		case DataCollection::VeryLongUrlStorageType:
 		{
-
+			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
+				<< PageInfo::UrlItemType
+				<< PageInfo::UrlLengthItemType
+				<< PageInfo::ContentItemType
+				<< PageInfo::StatusCodeItemType
+			);
 		}
 
 		//
-		// Titles problems
+		// Title available columns
 		//
 		case DataCollection::EmptyTitleUrlStorageType:
-		{
-
-		}
 		case DataCollection::DuplicatedTitleUrlStorageType:
-		{
-
-		}
 		case DataCollection::VeryLongTitleUrlStorageType:
-		{
-
-		}
 		case DataCollection::VeryShortTitleUrlStorageType:
-		{
-
-		}
 		case DataCollection::DuplicatedH1TitleUrlStorageType:
-		{
-
-		}
 		case DataCollection::SeveralTitleUrlStorageType:
 		{
-
+			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
+				<< PageInfo::UrlItemType
+				<< PageInfo::ContentItemType
+				<< PageInfo::TitleItemType
+				<< PageInfo::TitleLengthItemType
+			);
 		}
 
 		//
-		// Meta Descriptions problems
+		// Meta description available columns
 		//
 		case DataCollection::EmptyMetaDescriptionUrlStorageType:
-		{
-
-		}
 		case DataCollection::DuplicatedMetaDescriptionUrlStorageType:
-		{
-
-		}
 		case DataCollection::VeryLongMetaDescriptionUrlStorageType:
-		{
-
-		}
 		case DataCollection::VeryShortMetaDescriptionUrlStorageType:
-		{
-
-		}
 		case DataCollection::SeveralMetaDescriptionUrlStorageType:
 		{
-
+			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
+				<< PageInfo::UrlItemType
+				<< PageInfo::ContentItemType
+				<< PageInfo::MetaDescriptionItemType
+				<< PageInfo::MetaDescriptionLengthItemType
+			);
 		}
 
 		//
-		// Meta Kerywords problems
-		//
+		// Meta keywords available columns
+		// 
 		case DataCollection::EmptyMetaKeywordsUrlStorageType:
-		{
-
-		}
 		case DataCollection::DuplicatedMetaKeywordsUrlStorageType:
-		{
-
-		}
 		case DataCollection::SeveralMetaKeywordsUrlStorageType:
 		{
-
+			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
+				<< PageInfo::UrlItemType
+				<< PageInfo::ContentItemType
+				<< PageInfo::MetaKeywordsItemType
+				<< PageInfo::MetaKeywordsLengthItemType
+			);
 		}
 
 		//
-		// H1 problems
+		// H1 available columns
 		//
 		case DataCollection::MissingH1UrlStorageType:
-		{
-
-		}
 		case DataCollection::DuplicatedH1UrlStorageType:
-		{
-
-		}
 		case DataCollection::VeryLongH1UrlStorageType:
-		{
-
-		}
 		case DataCollection::SeveralH1UrlStorageType:
 		{
-
+			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
+				<< PageInfo::UrlItemType
+				<< PageInfo::ContentItemType
+				<< PageInfo::FirstH1ItemType
+				<< PageInfo::FirstH1LengthItemType
+				<< PageInfo::SecondH1ItemType
+				<< PageInfo::SecondH1LengthItemType
+			);
 		}
 
 		//
-		// H2 problems
+		// H2 available columns
 		//
 		case DataCollection::MissingH2UrlStorageType:
-		{
-
-		}
 		case DataCollection::DuplicatedH2UrlStorageType:
-		{
-
-		}
 		case DataCollection::VeryLongH2UrlStorageType:
-		{
-
-		}
 		case DataCollection::SeveralH2UrlStorageType:
 		{
-
+			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
+				<< PageInfo::UrlItemType
+				<< PageInfo::ContentItemType
+				<< PageInfo::FirstH2ItemType
+				<< PageInfo::FirstH2LengthItemType
+				<< PageInfo::SecondH2ItemType
+				<< PageInfo::SecondH2LengthItemType
+			);
 		}
 
 		//
-		// Images problems
+		// Images available columns
 		//
 		case DataCollection::Over100kbImageStorageType:
-		{
-
-		}
 		case DataCollection::MissingAltTextImageStorageType:
-		{
-
-		}
 		case DataCollection::VeryLongAltTextImageStorageType:
 		{
-
+			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
+				<< PageInfo::UrlItemType
+				<< PageInfo::AltTextItemType
+				<< PageInfo::AltTextLengthItemType
+				<< PageInfo::ImageSizeKbItemType
+			);
 		}
 	}
-
-	assert(!"Invalid type");
-	return nullptr;
 }
 
 }

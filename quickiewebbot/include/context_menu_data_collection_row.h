@@ -30,8 +30,7 @@ private:
 		CopyToClipboardUrlActionType
 	};
 
-	QModelIndexList selectedRowsList() const noexcept;
-	IGridModel* model() const noexcept;
+	QModelIndexList selectedIndexes() const noexcept;
 
 private slots:
 	void openUrlAction();
