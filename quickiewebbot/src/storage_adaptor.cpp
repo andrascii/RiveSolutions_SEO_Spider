@@ -13,7 +13,7 @@ StorageAdaptor::StorageAdaptor(const DataCollection::GuiStorageTypePtr& associat
 
 	assert(dataCollection);
 
-	connect(dataCollection, SIGNAL(pageInfoDataAdded(int, int)), this, SLOT(onStorageUpdated(int, int)));
+	VERIFY(connect(dataCollection, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onStorageUpdated(int, int))));
 }
 
 void StorageAdaptor::setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept
@@ -62,7 +62,7 @@ void StorageAdaptor::onStorageUpdated(int row, int type)
 		return;
 	}
 
-	Q_EMIT pageInfoDataAdded(row);
+	Q_EMIT pageInfoAdded(row);
 }
 
 }

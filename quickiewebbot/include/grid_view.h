@@ -20,9 +20,9 @@ public:
 	virtual void setModel(QAbstractItemModel* model) override;
 
 	void setContextMenu(ContextMenuDataCollectionRow* menu);
-	void setViewModel(IGridViewModel* modelView);
+	void setViewModel(IGridViewModel* modelView) noexcept;
 	const IGridViewModel* viewModel() const noexcept;
-	QModelIndex hoveredIndex() const;
+	QModelIndex hoveredIndex() const noexcept;
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;

@@ -47,9 +47,6 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 		return;
 	}
 
-	QAbstractItemModel* viewModel = model();
-	int columnCount = viewModel->columnCount();
-
 	m_hoveredIndex = index;
 
 	QTableView::mouseMoveEvent(event);
@@ -59,7 +56,6 @@ void GridView::leaveEvent(QEvent* event)
 {
 	if (int hoveredIndexRow = m_hoveredIndex.row(); m_hoveredIndex.isValid())
 	{
-		QAbstractItemModel* viewModel = model();
 		m_hoveredIndex = QModelIndex();
 	}
 
@@ -91,7 +87,7 @@ void GridView::mouseReleaseEvent(QMouseEvent* event)
 	m_contextMenu->show();
 }
 
-QModelIndex GridView::hoveredIndex() const
+QModelIndex GridView::hoveredIndex() const noexcept
 {
 	return m_hoveredIndex;
 }
@@ -101,7 +97,7 @@ void GridView::setContextMenu(ContextMenuDataCollectionRow* menu)
 	m_contextMenu = menu;
 }
 
-void GridView::setViewModel(IGridViewModel* modelView)
+void GridView::setViewModel(IGridViewModel* modelView) noexcept
 {
 	m_viewModel = modelView;
 
@@ -124,10 +120,12 @@ void GridView::initSpan()
 
 	for (int row = 0; row < rows; ++row)
 	{
-		for (int column = 0; column < columns; ++column)
+		for (int column = 0; column < columns;)
 		{
 			QSize colSpan = model()->span(model()->index(row, column));
 			setSpan(row, column, colSpan.height(), colSpan.width());
+
+			column += colSpan.width();
 		}
 	}
 }

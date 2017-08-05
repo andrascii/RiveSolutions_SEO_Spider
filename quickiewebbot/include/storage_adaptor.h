@@ -24,7 +24,7 @@ public:
 	virtual PageInfo::ItemType itemTypeAt(const QModelIndex& index) const noexcept;
 
 signals:
-	void pageInfoDataAdded(int rowIndex);
+	void pageInfoAdded(int rowIndex);
 
 private slots:
 	void onStorageUpdated(int row, int type);

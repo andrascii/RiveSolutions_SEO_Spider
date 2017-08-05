@@ -205,7 +205,7 @@ bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, StorageType t
 	return storage->find(pageInfo) != storage->end();
 }
 
-QuickieWebBot::PageInfoPtr DataCollection::pageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept
+const PageInfoPtr& DataCollection::pageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept
 {
 	checkStorageType(type);
 	assert(isPageInfoExists(pageInfo, type));
@@ -227,7 +227,7 @@ void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, StorageType type) 
 	if (guiStorageIt != m_guiStorageMap.end())
 	{
 		guiStorageIt->second->push_back(pageInfo);
-		Q_EMIT pageInfoDataAdded(guiStorage(type)->size() - 1, type);
+		Q_EMIT pageInfoAdded(guiStorage(type)->size() - 1, type);
 	}	
 }
 

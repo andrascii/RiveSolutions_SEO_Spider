@@ -20,15 +20,21 @@ public:
 		MetaKeywordsItemType,
 		RedirectedUrlItemType,
 		ServerResponseItemType,
+
 		FirstH1ItemType,
 		SecondH1ItemType,
 		FirstH2ItemType,
 		SecondH2ItemType,
+
 		CanonicalLinkElementItemType,
 		StatusCodeItemType,
 		PageSizeKbItemType,
 		WordCountItemType,
 		PageHashItemType,
+
+		BeginLengthEnumeratorsItemType,
+		// !!!!!!!!!!!!!!!!!!! add length enumerators below this!!!!!!!!!!!!!!!!!!!
+
 		UrlLengthItemType,
 		TitleLengthItemType,
 		MetaDescriptionLengthItemType,
@@ -37,10 +43,15 @@ public:
 		SecondH1LengthItemType,
 		FirstH2LengthItemType,
 		SecondH2LengthItemType,
+
+		// !!!!!!!!!!!!!!!!!!! add new length enumerators above this!!!!!!!!!!!!!!!!!!!
+		EndLengthEnumeratorsItemType,
+
 		ImageAltTextItemType, // remove?
 		ImageAltTextLengthItemType, // remove ?
 		ImageSizeKbItemType, // remove ?
 		ImageCountItemType,
+
 		HasSeveralTitleTagsItemType,
 		HasSeveralMetaDescriptionTagsItemType,
 		HasSeveralMetaKeywordsTagsItemType,
