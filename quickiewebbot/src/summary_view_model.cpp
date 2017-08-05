@@ -17,14 +17,14 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 
 QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	static SelectionBackgroundRenderer s_selectionBgPainter;
-	static BackgroundRenderer s_bgPainter;
-	static TextRenderer s_textPainter(this, std::pow(m_model->columnCount(index), 2));
+	static SelectionBackgroundRenderer s_selectionBackgroundRenderer;
+	static BackgroundRenderer s_backgroundRenderer;
+	static TextRenderer s_textRenderer(std::pow(m_model->columnCount(index), 2));
 
 	return QList<IRenderer*>()
-		<< &s_bgPainter
-		<< &s_selectionBgPainter
-		<< &s_textPainter;
+		<< &s_backgroundRenderer
+		<< &s_selectionBackgroundRenderer
+		<< &s_textRenderer;
 }
 
 IGridViewResizePolicy* SummaryViewModel::resizePolicy() const noexcept

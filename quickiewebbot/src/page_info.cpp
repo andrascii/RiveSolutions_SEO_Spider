@@ -61,7 +61,7 @@ int PageInfo::columnPrefferedSize(ItemType item)
 		{ SecondH1ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ FirstH2ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ SecondH2ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ CanonicalLinkElementItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ CanonicalLinkElementItemType, QuickieWebBotHelpers::pointsToPixels(150) },
 		{ StatusCodeItemType, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ PageSizeKbItemType, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ WordCountItemType, QuickieWebBotHelpers::pointsToPixels(100) },

@@ -8,8 +8,6 @@ namespace QuickieWebBot
 class GridViewResizePolicy : public IGridViewResizePolicy
 {
 public:
-	GridViewResizePolicy();
-
 	virtual void init(GridView* gridView, const IGridViewResizePolicy* prev = nullptr)  const noexcept override;
 
 	virtual void resize(GridView* gridView) const noexcept override;

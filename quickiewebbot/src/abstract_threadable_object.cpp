@@ -42,8 +42,7 @@ void AbstractThreadableObject::stopExecution() noexcept
 
 	if (m_thread.isRunning())
 	{
-		QMetaObject::invokeMethod(this, "killTimer", Qt::BlockingQueuedConnection,
-			Q_ARG(int, g_minimumRecommendedTimerResolution), Q_ARG(Qt::TimerType, Qt::CoarseTimer));
+		QMetaObject::invokeMethod(this, "killTimer", Qt::BlockingQueuedConnection, Q_ARG(int, m_timerId));
 
 		m_thread.quit();
 		m_thread.wait(); 

@@ -6,9 +6,8 @@
 namespace QuickieWebBot
 {
 
-TextRenderer::TextRenderer(const IGridViewModel* viewModel, int maxCacheSize)
-	: m_viewModel(viewModel)
-	, m_maxCacheSize(maxCacheSize)
+TextRenderer::TextRenderer(int maxCacheSize)
+	: m_maxCacheSize(maxCacheSize)
 {
 }
 

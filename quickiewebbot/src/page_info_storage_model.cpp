@@ -57,7 +57,7 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		{
 			static QPixmap urlPixmap(":/images/url-icon.png");
 
-			if (storageAdaptor()->itemTypeAt(index) != PageInfo::UrlItemType)
+			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
 			{
 				return urlPixmap;
 			}
@@ -115,6 +115,11 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		{
 			return QuickieWebBotHelpers::pointsToPixels(4);
 		}
+
+		case IGridModel::WhatsThisRole:
+		{
+			return storageAdaptor()->itemTypeAt(index);
+		}
 	}
 
 	return QVariant();
@@ -132,6 +137,9 @@ QVariant PageInfoStorageModel::headerData(int section, Qt::Orientation orientati
 		return storageAdaptor()->columnDescription(section);
 	}
 
+	//
+	// Do not work. Why?
+	// 
 	if (orientation == Qt::Vertical && role == Qt::DisplayRole)
 	{
 		return section;

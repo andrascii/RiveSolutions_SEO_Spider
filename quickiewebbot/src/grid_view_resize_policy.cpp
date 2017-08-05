@@ -4,10 +4,6 @@
 namespace QuickieWebBot
 {
 
-GridViewResizePolicy::GridViewResizePolicy()
-{
-}
-
 void GridViewResizePolicy::resize(GridView*) const noexcept
 {
 }
