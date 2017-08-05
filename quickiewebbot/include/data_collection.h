@@ -41,6 +41,7 @@ public:
 		//
 		// Title problems
 		//
+		AllTitlesUrlStorageType,
 		EmptyTitleUrlStorageType,
 		DuplicatedTitleUrlStorageType,
 		VeryLongTitleUrlStorageType,
@@ -51,6 +52,7 @@ public:
 		//
 		// Meta description problems
 		//
+		AllMetaDescriptionsUrlStorageType,
 		EmptyMetaDescriptionUrlStorageType,
 		DuplicatedMetaDescriptionUrlStorageType,
 		VeryLongMetaDescriptionUrlStorageType,
@@ -60,6 +62,7 @@ public:
 		//
 		// Meta keywords problems
 		//
+		AllMetaKeywordsUrlStorageType,
 		EmptyMetaKeywordsUrlStorageType,
 		DuplicatedMetaKeywordsUrlStorageType,
 		SeveralMetaKeywordsUrlStorageType,
@@ -67,6 +70,7 @@ public:
 		//
 		// H1 problems
 		//
+		AllH1UrlStorageType,
 		MissingH1UrlStorageType,
 		DuplicatedH1UrlStorageType,
 		VeryLongH1UrlStorageType,
@@ -75,6 +79,7 @@ public:
 		//
 		// H2 problems
 		//
+		AllH2UrlStorageType,
 		MissingH2UrlStorageType,
 		DuplicatedH2UrlStorageType,
 		VeryLongH2UrlStorageType,
@@ -96,6 +101,7 @@ public:
 	StorageAdaptorFactory* storageAdaptorFactory();
 
 	bool isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
+	PageInfoPtr getPageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
 	void addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept;
 
 	const GuiStorageTypePtr& guiStorage(StorageType type) const noexcept;

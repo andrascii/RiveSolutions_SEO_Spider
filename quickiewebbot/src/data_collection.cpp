@@ -29,13 +29,17 @@ DataCollection::DataCollection(QObject* parent)
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
 				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherUrl))))),
 
+		std::make_pair(AllTitlesUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageInfoHasher(
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherTitle))))),
+
 		std::make_pair(EmptyTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
 				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherTitle))))),
 
 		std::make_pair(DuplicatedTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
-				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherTitle))))),
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherUrl))))),
 
 		std::make_pair(VeryLongTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
@@ -47,11 +51,15 @@ DataCollection::DataCollection(QObject* parent)
 
 		std::make_pair(DuplicatedH1TitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
-				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherTitle))))),
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherUrl))))),
 
 		std::make_pair(SeveralTitleUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
 				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherTitle))))),
+
+		std::make_pair(AllMetaDescriptionsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageInfoHasher(
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherMetaDescription))))),
 
 		std::make_pair(EmptyMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
@@ -59,7 +67,7 @@ DataCollection::DataCollection(QObject* parent)
 
 		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
-				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherMetaDescription))))),
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherUrl))))),
 
 		std::make_pair(VeryLongMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
@@ -73,17 +81,25 @@ DataCollection::DataCollection(QObject* parent)
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
 				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherMetaDescription))))),
 
+		std::make_pair(AllMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageInfoHasher(
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherMetaKeywords))))),
+
 		std::make_pair(EmptyMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
 				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherMetaKeywords))))),
 
 		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
-				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherMetaKeywords))))),
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherUrl))))),
 
 		std::make_pair(SeveralMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
 				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherMetaKeywords))))),
+
+		std::make_pair(AllH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageInfoHasher(
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherFirstH1))))),
 
 		std::make_pair(MissingH1UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
@@ -91,7 +107,7 @@ DataCollection::DataCollection(QObject* parent)
 
 		std::make_pair(DuplicatedH1UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
-				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherFirstH1))))),
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherUrl))))),
 
 		std::make_pair(VeryLongH1UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
@@ -101,13 +117,17 @@ DataCollection::DataCollection(QObject* parent)
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
 				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherFirstH1))))),
 
+		std::make_pair(AllH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageInfoHasher(
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherFirstH2))))),
+
 		std::make_pair(MissingH2UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
 				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherFirstH2))))),
 
 		std::make_pair(DuplicatedH2UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
-				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherFirstH2))))),
+				std::shared_ptr<IPageInfoHasher>(new PageInfoHasherUrl))))),
 
 		std::make_pair(VeryLongH2UrlStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageInfoHasher(
@@ -185,6 +205,14 @@ bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, StorageType t
 	return storage->find(pageInfo) != storage->end();
 }
 
+QuickieWebBot::PageInfoPtr DataCollection::getPageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept
+{
+	checkStorageType(type);
+	assert(isPageInfoExists(pageInfo, type));
+	auto iter = crawlerStorage(type)->find(pageInfo);
+	return *iter;
+}
+
 void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept
 {
 	if (isPageInfoExists(pageInfo, type))
@@ -194,13 +222,18 @@ void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, StorageType type) 
 	}
 
 	crawlerStorage(type)->insert(pageInfo);
-	guiStorage(type)->push_back(pageInfo);
 
-	Q_EMIT pageInfoDataAdded(guiStorage(type)->size() - 1, type);
+	auto guiStorageIt = m_guiStorageMap.find(type);
+	if (guiStorageIt != m_guiStorageMap.end())
+	{
+		guiStorageIt->second->push_back(pageInfo);
+		Q_EMIT pageInfoDataAdded(guiStorage(type)->size() - 1, type);
+	}	
 }
 
 DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) noexcept
 {
+	assert(m_guiStorageMap.find(type) != m_guiStorageMap.end());
 	return m_guiStorageMap[type];
 }
 
@@ -230,6 +263,7 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 		type == NonAsciiCharacterUrlStorageType ||
 		type == VeryLongUrlStorageType ||
 
+		type == AllTitlesUrlStorageType ||
 		type == EmptyTitleUrlStorageType ||
 		type == DuplicatedTitleUrlStorageType ||
 		type == VeryLongTitleUrlStorageType ||
@@ -237,21 +271,25 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 		type == DuplicatedH1TitleUrlStorageType ||
 		type == SeveralTitleUrlStorageType ||
 
+		type == AllMetaDescriptionsUrlStorageType ||
 		type == EmptyMetaDescriptionUrlStorageType ||
 		type == DuplicatedMetaDescriptionUrlStorageType ||
 		type == VeryLongMetaDescriptionUrlStorageType ||
 		type == VeryShortMetaDescriptionUrlStorageType ||
 		type == SeveralMetaDescriptionUrlStorageType ||
 
+		type == AllMetaKeywordsUrlStorageType ||
 		type == EmptyMetaKeywordsUrlStorageType ||
 		type == DuplicatedMetaKeywordsUrlStorageType ||
 		type == SeveralMetaKeywordsUrlStorageType ||
 
+		type == AllH1UrlStorageType ||
 		type == MissingH1UrlStorageType ||
 		type == DuplicatedH1UrlStorageType ||
 		type == VeryLongH1UrlStorageType ||
 		type == SeveralH1UrlStorageType ||
 
+		type == AllH2UrlStorageType ||
 		type == MissingH2UrlStorageType ||
 		type == DuplicatedH2UrlStorageType ||
 		type == VeryLongH2UrlStorageType ||

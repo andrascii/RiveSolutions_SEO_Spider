@@ -49,8 +49,8 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 		{ PageInfo::SecondH1LengthItemType, PageInfo::columnPrefferedSize(PageInfo::SecondH1LengthItemType) },
 		{ PageInfo::FirstH2LengthItemType, PageInfo::columnPrefferedSize(PageInfo::FirstH2LengthItemType) },
 		{ PageInfo::SecondH2LengthItemType, PageInfo::columnPrefferedSize(PageInfo::SecondH2LengthItemType) },
-		{ PageInfo::AltTextItemType, PageInfo::columnPrefferedSize(PageInfo::AltTextItemType) },
-		{ PageInfo::AltTextLengthItemType, PageInfo::columnPrefferedSize(PageInfo::AltTextLengthItemType) },
+		{ PageInfo::ImageAltTextItemType, PageInfo::columnPrefferedSize(PageInfo::ImageAltTextItemType) },
+		{ PageInfo::ImageAltTextLengthItemType, PageInfo::columnPrefferedSize(PageInfo::ImageAltTextLengthItemType) },
 		{ PageInfo::ImageSizeKbItemType, PageInfo::columnPrefferedSize(PageInfo::ImageSizeKbItemType) }
 	};
 

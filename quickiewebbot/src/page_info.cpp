@@ -36,8 +36,8 @@ QString PageInfo::itemTypeDescription(ItemType item)
 		{ PageSizeKbItemType, "Page Size Kilobytes" },
 		{ WordCountItemType, "Word Count" },
 		{ PageHashItemType, "Page Hash" },
-		{ AltTextItemType, "Alt Text" },
-		{ AltTextLengthItemType, "Alt Text Length" },
+		{ ImageAltTextItemType, "Alt Text" },
+		{ ImageAltTextLengthItemType, "Alt Text Length" },
 		{ ImageSizeKbItemType, "Image Size KB" }
 	};
 
@@ -74,8 +74,8 @@ int PageInfo::columnPrefferedSize(ItemType item)
 		{ SecondH1LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ FirstH2LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ SecondH2LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ AltTextItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ AltTextLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ImageAltTextItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ImageAltTextLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ ImageSizeKbItemType, QuickieWebBotHelpers::pointsToPixels(100) }
 	};
 
@@ -84,9 +84,9 @@ int PageInfo::columnPrefferedSize(ItemType item)
 	return result;
 }
 
-QVariant PageInfo::itemValue(ItemType item)
+QVariant PageInfo::itemValue(ItemType item, int itemChildIndex)
 {
-	return (this->*acceptItem(item))();
+	return (this->*acceptItem(item))(itemChildIndex);
 }
 
 void PageInfo::setItemValue(const QVariant& value, ItemType item)
@@ -357,140 +357,206 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 		case PageSizeKbItemType: return &PageInfo::acceptPageSizeKb;
 		case WordCountItemType: return &PageInfo::acceptWordCount;
 		case PageHashItemType: return &PageInfo::acceptPageHash;
+		case HasSeveralTitleTagsItemType: return &PageInfo::acceptHasSeveralTitles;
+		case HasSeveralMetaDescriptionTagsItemType: return &PageInfo::acceptHasSeveralMetaDescriptions;
+		case HasSeveralMetaKeywordsTagsItemType: return &PageInfo::acceptHasSeveralMetaKeywords;
+		case HasSeveralH1TagsItemType: return &PageInfo::acceptHasSeveralH1;
+		case HasSeveralH2TagsItemType: return &PageInfo::acceptHasSeveralH2;
+		case ImageCountItemCType: return &PageInfo::acceptImageCount;
+		case ImageSizeKbItemType: return &PageInfo::acceptImageSizeKb;
+		case ImageAltTextItemType: return &PageInfo::acceptImageAltText;
+		case ImageAltTextLengthItemType: return &PageInfo::acceptImageAltTextLength;
 	}
 
 	assert(!"Unknown element");
 	return MethodAcceptor();
 }
 
-QVariant PageInfo::acceptUrl()
+QVariant PageInfo::acceptUrl(int)
 {
 	return m_url;
 }
 
-QVariant PageInfo::acceptContent()
+QVariant PageInfo::acceptContent(int)
 {
 	return m_content;
 }
 
-QVariant PageInfo::acceptTitle()
+QVariant PageInfo::acceptTitle(int)
 {
 	return m_title;
 }
 
-QVariant PageInfo::acceptMetaRefresh()
+QVariant PageInfo::acceptMetaRefresh(int)
 {
 	return m_metaRefresh;
 }
 
-QVariant PageInfo::acceptMetaRobots()
+QVariant PageInfo::acceptMetaRobots(int)
 {
 	return m_metaRobots;
 }
 
-QVariant PageInfo::acceptRedirectedUrl()
+QVariant PageInfo::acceptRedirectedUrl(int)
 {
 	return m_redirectedUrl;
 }
 
-QVariant PageInfo::acceptServerResponse()
+QVariant PageInfo::acceptServerResponse(int)
 {
 	return m_serverResponse;
 }
 
-QVariant PageInfo::acceptMetaDescription()
+QVariant PageInfo::acceptMetaDescription(int)
 {
 	return m_metaDescription;
 }
 
-QVariant PageInfo::acceptMetaKeywords()
+QVariant PageInfo::acceptMetaKeywords(int)
 {
 	return m_metaKeywords;
 }
 
-QVariant PageInfo::acceptFirstH1()
+QVariant PageInfo::acceptFirstH1(int)
 {
 	return m_firstH1;
 }
 
-QVariant PageInfo::acceptSecondH1()
+QVariant PageInfo::acceptSecondH1(int)
 {
 	return m_secondH1;
 }
 
-QVariant PageInfo::acceptFirstH2()
+QVariant PageInfo::acceptFirstH2(int)
 {
 	return m_firstH2;
 }
 
-QVariant PageInfo::acceptSecondH2()
+QVariant PageInfo::acceptSecondH2(int)
 {
 	return m_secondH2;
 }
 
-QVariant PageInfo::acceptCanonicalLinkElement()
+QVariant PageInfo::acceptCanonicalLinkElement(int)
 {
 	return m_canonicalLinkElement;
 }
 
-QVariant PageInfo::acceptStatusCode()
+QVariant PageInfo::acceptStatusCode(int)
 {
 	return m_statusCode;
 }
 
-QVariant PageInfo::acceptUrlLength()
+QVariant PageInfo::acceptUrlLength(int)
 {
 	return m_url.toString().length();
 }
 
-QVariant PageInfo::acceptTitleLength()
+QVariant PageInfo::acceptTitleLength(int)
 {
 	return m_title.size();
 }
 
-QVariant PageInfo::acceptMetaDescriptionLength()
+QVariant PageInfo::acceptMetaDescriptionLength(int)
 {
 	return m_metaDescription.size();
 }
 
-QVariant PageInfo::acceptMetaKeywordsLength()
+QVariant PageInfo::acceptMetaKeywordsLength(int)
 {
 	return m_metaKeywords.size();
 }
 
-QVariant PageInfo::acceptFirstH1Length()
+QVariant PageInfo::acceptFirstH1Length(int)
 {
 	return m_firstH1.size();
 }
 
-QVariant PageInfo::acceptSecondH1Length()
+QVariant PageInfo::acceptSecondH1Length(int)
 {
 	return m_secondH1.size();
 }
 
-QVariant PageInfo::acceptFirstH2Length()
+QVariant PageInfo::acceptFirstH2Length(int)
 {
 	return m_firstH2.size();
 }
 
-QVariant PageInfo::acceptSecondH2Length()
+QVariant PageInfo::acceptSecondH2Length(int)
 {
 	return m_secondH2.size();
 }
 
-QVariant PageInfo::acceptPageSizeKb()
+QVariant PageInfo::acceptPageSizeKb(int)
 {
 	return m_pageSizeKb;
 }
 
-QVariant PageInfo::acceptWordCount()
+QVariant PageInfo::acceptWordCount(int)
 {
 	return m_wordCount;
 }
 
-QVariant PageInfo::acceptPageHash()
+QVariant PageInfo::acceptPageHash(int)
 {
 	return m_pageHash;
+}
+
+QVariant PageInfo::acceptHasSeveralTitles(int)
+{
+	// TODO: implement
+	return false;
+}
+
+QVariant PageInfo::acceptHasSeveralMetaDescriptions(int)
+{
+	// TODO: implement
+	return false;
+}
+
+QVariant PageInfo::acceptHasSeveralMetaKeywords(int)
+{
+	// TODO: implement
+	return false;
+}
+
+QVariant PageInfo::acceptHasSeveralH1(int)
+{
+	// TODO: implement
+	return false;
+}
+
+QVariant PageInfo::acceptHasSeveralH2(int)
+{
+	// TODO: implement
+	return false;
+}
+
+QVariant PageInfo::acceptImageCount(int)
+{
+	// TODO: implement
+	return 0;
+}
+
+QVariant PageInfo::acceptImageSizeKb(int childItem)
+{
+	Q_UNUSED(childItem);
+	// TODO: implement
+	return 0;
+}
+
+QVariant PageInfo::acceptImageAltText(int childItem)
+{
+	Q_UNUSED(childItem);
+	// TODO: implement
+	return QString();
+}
+
+QVariant PageInfo::acceptImageAltTextLength(int childItem)
+{
+	Q_UNUSED(childItem);
+	// TODO: implement
+	return 0;
 }
 
 void PageInfo::checkInfoItem(ItemType item)
