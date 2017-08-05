@@ -79,7 +79,7 @@
 #ifdef Q_OS_WIN
 #include <windows.h>
 #else
-#error You compile this code on unsupported operating system!
+#error You compile this code on unsupported platform!
 #endif
 
 #include "logger_connection_service_api.h"

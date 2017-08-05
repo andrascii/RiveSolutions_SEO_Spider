@@ -57,23 +57,22 @@ ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const GridView* assoc
 	VERIFY(QObject::connect(m_actions[CopyToClipboardAllColumnsActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::copyToClipboardAllColumnsData));
 }
 
-QModelIndexList ContextMenuDataCollectionRow::selectedRowsList() const noexcept
+QModelIndexList ContextMenuDataCollectionRow::selectedIndexes() const noexcept
 {
 	QItemSelectionModel* associatedGridViewSelecionModel = m_associatedGridView->selectionModel();
-	return associatedGridViewSelecionModel->selectedRows();
-}
-
-IGridModel* ContextMenuDataCollectionRow::model() const noexcept
-{
-	assert(dynamic_cast<IGridModel*>(m_associatedGridView->model()));
-	return static_cast<IGridModel*>(m_associatedGridView->model());
+	return associatedGridViewSelecionModel->selectedIndexes();
 }
 
 void ContextMenuDataCollectionRow::openUrlAction()
 {
-	for (QModelIndex index : selectedRowsList())
+	for (QModelIndex index : selectedIndexes())
 	{
-		//QDesktopServices::openUrl(model()->modelDataAcessor()->pageInfoAtRow(index.row())->itemValue(PageInfo::UrlItemType).toUrl());
+		if (index.data(IGridModel::WhatsThisRole) != PageInfo::UrlItemType)
+		{
+			continue;
+		}
+
+		QDesktopServices::openUrl(index.data(Qt::DisplayRole).toUrl());
 	}
 }
 
@@ -81,14 +80,9 @@ void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
 {
 	QString allColumnsData;
 
-	foreach(QModelIndex index, selectedRowsList())
+	foreach(QModelIndex index, selectedIndexes())
 	{
-// 		for (int i = 0; i < model()->modelDataAcessor()->columnsCount(); ++i)
-// 		{
-// 			allColumnsData += model()->modelDataAcessor()->item(index.row(), i).toString() + " ";
-// 		}
-
-		allColumnsData += "\n";
+		allColumnsData += index.data(Qt::DisplayRole).toString() + "\n";
 	}
 
 	theApp->clipboard()->setText(allColumnsData);
@@ -101,13 +95,14 @@ void ContextMenuDataCollectionRow::copyToClipboardAllPages()
 
 void ContextMenuDataCollectionRow::copyToClipboardUrl()
 {
-	QClipboard* clipboard = theApp->clipboard();
-
-	foreach(QModelIndex index, selectedRowsList())
+	foreach(QModelIndex index, selectedIndexes())
 	{
-		//PageInfoPtr pageInfoPtr = model()->modelDataAcessor()->pageInfoAtRow(index.row());
+		if (index.data(IGridModel::WhatsThisRole) != PageInfo::UrlItemType)
+		{
+			continue;
+		}
 
-		//clipboard->setText(pageInfoPtr->itemValue(PageInfo::UrlItemType).toUrl().toDisplayString());
+		theApp->clipboard()->setText(index.data(Qt::DisplayRole).toString() + " ");
 	}
 }
 
