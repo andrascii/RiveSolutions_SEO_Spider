@@ -1,5 +1,6 @@
 #include "data_collection.h"
 #include "storage_adaptor.h"
+#include "storage_adaptor_factory.h"
 
 namespace QuickieWebBot
 {
@@ -168,19 +169,20 @@ DataCollection::DataCollection(QObject* parent)
 		std::make_pair(MissingAltTextImageStorageType, std::make_shared<GuiStorageType>()),
 		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>())
 	})
+	, m_storageAdaptorFactory(std::make_unique<StorageAdaptorFactory>(this))
 {
 }
 
-StorageAdaptor* DataCollection::createStorageAdaptor(StorageType type)
+StorageAdaptorFactory* DataCollection::storageAdaptorFactory()
 {
-	return new StorageAdaptor(m_guiStorageMap.at(type), type, this);
+	return m_storageAdaptorFactory.get();
 }
 
 bool DataCollection::isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept
 {
 	checkStorageType(type);
-	CrawlerStorageType const* pQueue = crawlerStorage(type);
-	return pQueue->find(pageInfo) != pQueue->end();
+	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
+	return storage->find(pageInfo) != storage->end();
 }
 
 void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept
@@ -197,26 +199,26 @@ void DataCollection::addPageInfo(const PageInfoPtr& pageInfo, StorageType type) 
 	Q_EMIT pageInfoDataAdded(guiStorage(type)->size() - 1, type);
 }
 
-DataCollection::GuiStorageType* DataCollection::guiStorage(StorageType type) noexcept
+DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) noexcept
 {
-	return m_guiStorageMap[type].get();
+	return m_guiStorageMap[type];
 }
 
-DataCollection::GuiStorageType const* DataCollection::guiStorage(StorageType type) const noexcept
+const DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) const noexcept
 {
-	const GuiStorageType* pQueue = const_cast<DataCollection* const>(this)->guiStorage(type);
-	return pQueue;
+	const GuiStorageTypePtr& storage = const_cast<DataCollection* const>(this)->guiStorage(type);
+	return storage;
 }
 
-DataCollection::CrawlerStorageType* DataCollection::crawlerStorage(StorageType type) noexcept
+DataCollection::CrawlerStorageTypePtr& DataCollection::crawlerStorage(StorageType type) noexcept
 {
-	return m_crawlerStorageMap[type].get();
+	return m_crawlerStorageMap[type];
 }
 
-DataCollection::CrawlerStorageType const* DataCollection::crawlerStorage(StorageType type) const noexcept
+const DataCollection::CrawlerStorageTypePtr& DataCollection::crawlerStorage(StorageType type) const noexcept
 {
-	const CrawlerStorageType* pQueue = const_cast<DataCollection* const>(this)->crawlerStorage(type);
-	return pQueue;
+	const CrawlerStorageTypePtr& storage = const_cast<DataCollection* const>(this)->crawlerStorage(type);
+	return storage;
 }
 
 void DataCollection::checkStorageType(StorageType type) const noexcept

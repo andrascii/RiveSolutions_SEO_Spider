@@ -6,7 +6,7 @@
 namespace QuickieWebBot
 {
 
-class StorageAdaptor;
+class StorageAdaptorFactory;
 
 class DataCollection : public QObject
 {
@@ -22,6 +22,9 @@ public:
 
 	enum StorageType
 	{
+		BeginEnumStorageType,
+		// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
+
 		//
 		// Statistic data
 		//
@@ -82,24 +85,27 @@ public:
 		//
 		Over100kbImageStorageType,
 		MissingAltTextImageStorageType,
-		VeryLongAltTextImageStorageType
+		VeryLongAltTextImageStorageType,
+
+		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
+		EndEnumStorageType
 	};
 
 	DataCollection(QObject* parent);
 
-	StorageAdaptor* createStorageAdaptor(StorageType type);
+	StorageAdaptorFactory* storageAdaptorFactory();
 
 	bool isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
 	void addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept;
 
-	GuiStorageType const* guiStorage(StorageType type) const noexcept;
-	GuiStorageType* guiStorage(StorageType type) noexcept;
+	const GuiStorageTypePtr& guiStorage(StorageType type) const noexcept;
+	GuiStorageTypePtr& guiStorage(StorageType type) noexcept;
 
 	Q_SIGNAL void pageInfoDataAdded(int row, int storageType);
 
 protected:
-	CrawlerStorageType* crawlerStorage(StorageType type) noexcept;
-	const CrawlerStorageType* crawlerStorage(StorageType type) const noexcept;
+	CrawlerStorageTypePtr& crawlerStorage(StorageType type) noexcept;
+	const CrawlerStorageTypePtr& crawlerStorage(StorageType type) const noexcept;
 	
 private:
 	void checkStorageType(StorageType type) const noexcept;
@@ -107,6 +113,7 @@ private:
 private:
 	std::unordered_map<int, CrawlerStorageTypePtr> m_crawlerStorageMap;
 	std::unordered_map<int, GuiStorageTypePtr> m_guiStorageMap;
+	std::unique_ptr<StorageAdaptorFactory> m_storageAdaptorFactory;
 };
 
 }

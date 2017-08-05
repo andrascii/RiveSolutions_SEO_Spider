@@ -8,7 +8,7 @@ class PageInfo
 public:
 	enum ItemType : std::uint64_t
 	{
-		PageInfoItemTypeStart,
+		BeginEnumPageInfoItemType,
 		// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
 
 		UrlItemType,
@@ -42,7 +42,7 @@ public:
 		ImageSizeKbItemType,
 
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
-		PageInfoItemTypeLast
+		EndEnumPageInfoItemType
 	};
 
 	static QString itemTypeDescription(ItemType item);

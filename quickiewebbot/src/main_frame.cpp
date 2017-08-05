@@ -13,6 +13,7 @@
 #include "storage_adaptor.h"
 #include "page_info_storage_view_model.h"
 #include "summary_view_model.h"
+#include "storage_adaptor_factory.h"
 
 namespace QuickieWebBot
 {
@@ -76,36 +77,8 @@ void MainFrame::initCrawlingGridView()
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);
 
-	StorageAdaptor* storageAdaptor = 
-		theApp->modelController()->data()->createStorageAdaptor(DataCollection::CrawledUrlStorageType);
-
-	storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>() 
-		<< PageInfo::UrlItemType
-		<< PageInfo::ContentItemType
-		<< PageInfo::TitleItemType
-		<< PageInfo::TitleLengthItemType
-		<< PageInfo::MetaRefreshItemType
-		<< PageInfo::MetaRobotsItemType
-		<< PageInfo::MetaDescriptionItemType
-		<< PageInfo::MetaDescriptionLengthItemType
-		<< PageInfo::MetaKeywordsItemType
-		<< PageInfo::MetaKeywordsLengthItemType
-		<< PageInfo::RedirectedUrlItemType
-		<< PageInfo::FirstH1ItemType
-		<< PageInfo::FirstH1LengthItemType
-		<< PageInfo::SecondH1ItemType
-		<< PageInfo::SecondH1LengthItemType
-		<< PageInfo::FirstH2ItemType
-		<< PageInfo::FirstH2LengthItemType
-		<< PageInfo::SecondH2ItemType
-		<< PageInfo::SecondH2LengthItemType
-		<< PageInfo::CanonicalLinkElementItemType
-		<< PageInfo::StatusCodeItemType
-		<< PageInfo::PageSizeKbItemType
-		<< PageInfo::WordCountItemType
-		<< PageInfo::PageHashItemType
-		<< PageInfo::UrlLengthItemType
-	);
+	StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
+	StorageAdaptor* storageAdaptor = storageAdaptorFactory->create(DataCollection::CrawledUrlStorageType);
 
 	model->setStorageAdaptor(storageAdaptor);
 

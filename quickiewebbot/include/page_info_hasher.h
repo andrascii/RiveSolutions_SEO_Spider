@@ -16,8 +16,8 @@ struct PageInfoHasher : public IPageInfoHasher
 	virtual size_t operator()(const PageInfoPtr& pageInfo) const noexcept override
 	{
 		static_assert(
-			ItemType >= PageInfo::PageInfoItemTypeStart &&
-			ItemType <= PageInfo::PageInfoItemTypeLast,
+			ItemType >= PageInfo::BeginEnumPageInfoItemType &&
+			ItemType <= PageInfo::EndEnumPageInfoItemType,
 			"Invalid ItemType"
 			);
 

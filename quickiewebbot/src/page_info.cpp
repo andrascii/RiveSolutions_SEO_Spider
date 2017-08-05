@@ -495,7 +495,7 @@ QVariant PageInfo::acceptPageHash()
 
 void PageInfo::checkInfoItem(ItemType item)
 {
-	assert(item >= PageInfoItemTypeStart && item <= PageInfoItemTypeLast);
+	assert(item > BeginEnumPageInfoItemType && item < EndEnumPageInfoItemType);
 }
 
 }

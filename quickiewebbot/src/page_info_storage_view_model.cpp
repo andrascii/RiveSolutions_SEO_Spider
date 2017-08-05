@@ -18,6 +18,10 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	, m_model(model)
 	, m_resizePolicy(std::make_unique<GridViewResizePolicy>())
 {
+	//
+	// columnPrefferedSize should not be in the PageInfo class
+	//
+
 	std::map<int, int> sizes =
 	{
 		{ PageInfo::UrlItemType, PageInfo::columnPrefferedSize(PageInfo::UrlItemType) },
