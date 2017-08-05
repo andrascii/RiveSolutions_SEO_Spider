@@ -175,8 +175,8 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
-				<< PageInfo::AltTextItemType
-				<< PageInfo::AltTextLengthItemType
+				<< PageInfo::ImageAltTextItemType
+				<< PageInfo::ImageAltTextLengthItemType
 				<< PageInfo::ImageSizeKbItemType
 			);
 		}
