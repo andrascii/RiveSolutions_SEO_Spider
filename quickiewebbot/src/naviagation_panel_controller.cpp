@@ -8,12 +8,12 @@ NavigationPanelController::NavigationPanelController(QObject* parent, Ui::MainFr
 	, m_ui(ui)
 	, m_prevSelectedButton(nullptr)
 {
-	m_ui->ceoAnalysisButton->setProperty("selected", true);
+	m_ui->seoAnalysisButton->setProperty("selected", true);
 	m_ui->mainGuiStackedWidget->setCurrentIndex(1);
-	m_prevSelectedButton = m_ui->ceoAnalysisButton;
+	m_prevSelectedButton = m_ui->seoAnalysisButton;
 
 	m_ui->siteStructureButton->installEventFilter(this);
-	m_ui->ceoAnalysisButton->installEventFilter(this);
+	m_ui->seoAnalysisButton->installEventFilter(this);
 	m_ui->allPagesButton->installEventFilter(this);
 	m_ui->allResourcesButton->installEventFilter(this);
 	m_ui->domainMetricsButton->installEventFilter(this);
@@ -62,7 +62,7 @@ bool NavigationPanelController::eventFilter(QObject* watched, QEvent* event)
 		{
 			index = 0;
 		}
-		else if (m_prevSelectedButton == m_ui->ceoAnalysisButton)
+		else if (m_prevSelectedButton == m_ui->seoAnalysisButton)
 		{
 			index = 1;
 		}

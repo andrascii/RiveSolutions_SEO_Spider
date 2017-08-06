@@ -68,8 +68,6 @@ void MainFrame::init()
 	initSummaryGridView();
 
 	new NavigationPanelController(this, &m_ui);
-
-	m_ui.statusBar->showMessage("MainFrame initialized", 30000);
 }
 
 void MainFrame::initCrawlingGridView()

@@ -14,7 +14,7 @@ namespace QuickieWebBot
 {
 
 PageInfoProcessor::PageInfoProcessor(WebCrawlerInternalUrlStorage* crawlerStorage, QueuedDownloader* queuedDownloader, QObject* parent)
-	: AbstractThreadableObject(this, QByteArray("QuickieWebBot::PageInfoProcessorThread"))
+	: AbstractThreadableObject(this, QByteArray("PageInfoProcessorThread"))
 	, m_webCrawlerInternalUrlStorage(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
 	, m_pageInfo(new PageInfo)
@@ -80,7 +80,7 @@ void PageInfoProcessor::process()
 
 		m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
 
-		emit webPageParsed(m_pageInfo);
+		Q_EMIT webPageParsed(m_pageInfo);
 	}
 }
 

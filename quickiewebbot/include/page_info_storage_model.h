@@ -44,7 +44,7 @@ private:
 	StorageAdaptor* storageAdaptor();
 
 private slots:
-	void onPageInfoDataAdded(int rowIndex);
+	void onPageInfoAdded(int rowIndex);
 	void onPageInfoItemChanged(int row, int column);
 
 private:

@@ -101,13 +101,13 @@ public:
 	StorageAdaptorFactory* storageAdaptorFactory();
 
 	bool isPageInfoExists(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
-	PageInfoPtr pageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
 	void addPageInfo(const PageInfoPtr& pageInfo, StorageType type) noexcept;
+	const PageInfoPtr& pageInfo(const PageInfoPtr& pageInfo, StorageType type) const noexcept;
 
 	const GuiStorageTypePtr& guiStorage(StorageType type) const noexcept;
 	GuiStorageTypePtr& guiStorage(StorageType type) noexcept;
 
-	Q_SIGNAL void pageInfoDataAdded(int row, int storageType);
+	Q_SIGNAL void pageInfoAdded(int row, int storageType);
 
 protected:
 	CrawlerStorageTypePtr& crawlerStorage(StorageType type) noexcept;

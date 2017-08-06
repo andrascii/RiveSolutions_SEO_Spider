@@ -8,6 +8,7 @@ class GridView;
 class GridViewSelectionModel : public QItemSelectionModel
 {
 	Q_OBJECT
+
 public:
 	GridViewSelectionModel(GridView* parent);
 

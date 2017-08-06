@@ -10,6 +10,7 @@ public:
 	{
 		WhatsThisRole = Qt::UserRole,
 		SelectionBackgroundColorRole,
+		HoveredBackgroundColorRole,
 		MarginTop,
 		MarginBottom,
 		MarginLeft,

@@ -24,7 +24,7 @@ Qt::ItemFlags PageInfoStorageModel::flags(const QModelIndex& index) const
 
 void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept
 {
-	VERIFY(connect(storageAdaptor, SIGNAL(pageInfoDataAdded(int)), this, SLOT(onPageInfoDataAdded(int))));
+	VERIFY(connect(storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int))));
 	
 	m_storageAdaptor = storageAdaptor;
 }
@@ -137,14 +137,6 @@ QVariant PageInfoStorageModel::headerData(int section, Qt::Orientation orientati
 		return storageAdaptor()->columnDescription(section);
 	}
 
-	//
-	// Do not work. Why?
-	// 
-	if (orientation == Qt::Vertical && role == Qt::DisplayRole)
-	{
-		return section;
-	}
-
 	return QVariant();
 }
 
@@ -168,7 +160,7 @@ int PageInfoStorageModel::rowCount(const QModelIndex& parent) const
 	return storageAdaptor()->itemCount();
 }
 
-void PageInfoStorageModel::onPageInfoDataAdded(int rowIndex)
+void PageInfoStorageModel::onPageInfoAdded(int rowIndex)
 {
 	beginInsertRows(QModelIndex(), rowIndex, rowIndex);
 	

@@ -52,9 +52,14 @@ ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const GridView* assoc
 	addAction(m_actions[CheckHtmlActionType]);
 	addMenu(copySubMenu);
 
-	VERIFY(QObject::connect(m_actions[OpenUrlActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::openUrlAction));
-	VERIFY(QObject::connect(m_actions[CopyToClipboardUrlActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::copyToClipboardUrl));
-	VERIFY(QObject::connect(m_actions[CopyToClipboardAllColumnsActionType], &QAction::triggered, this, &ContextMenuDataCollectionRow::copyToClipboardAllColumnsData));
+	VERIFY(QObject::connect(m_actions[OpenUrlActionType], &QAction::triggered, 
+		this, &ContextMenuDataCollectionRow::openUrlAction));
+
+	VERIFY(QObject::connect(m_actions[CopyToClipboardUrlActionType], &QAction::triggered, 
+		this, &ContextMenuDataCollectionRow::copyToClipboardUrl));
+
+	VERIFY(QObject::connect(m_actions[CopyToClipboardAllColumnsActionType], &QAction::triggered, 
+		this, &ContextMenuDataCollectionRow::copyToClipboardAllColumnsData));
 }
 
 QModelIndexList ContextMenuDataCollectionRow::selectedIndexes() const noexcept
