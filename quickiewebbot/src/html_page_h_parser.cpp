@@ -69,7 +69,7 @@ void HtmlPageHParser::recurseSearchText(const GumboNode* node, std::vector<QStri
 {
 	if (node->v.element.children.length > 0)
 	{
-		if ((node->type == GUMBO_NODE_TEXT || node->type == GUMBO_NODE_WHITESPACE))
+		if (node->type == GUMBO_NODE_TEXT || node->type == GUMBO_NODE_WHITESPACE || node->type == GUMBO_NODE_COMMENT)
 		{
 			QByteArray value = node->v.text.text;
 			value = value.trimmed().remove('\n', Qt::CaseInsensitive);
@@ -79,6 +79,7 @@ void HtmlPageHParser::recurseSearchText(const GumboNode* node, std::vector<QStri
 		else
 		{
 			const GumboNode* tagData = nullptr;
+
 
 			for (unsigned int i = 0; i < node->v.element.children.length; ++i)
 			{

@@ -11,6 +11,7 @@ QString PageInfo::itemTypeDescription(ItemType item)
 	static QMap<ItemType, QString> s_titles
 	{
 		{ UrlItemType, "Url" },
+		{ FromUrlItemType, "From URL"},
 		{ ContentItemType, "Content" },
 		{ TitleItemType, "Title" },
 		{ MetaRefreshItemType, "Meta Refresh" },
@@ -49,6 +50,7 @@ int PageInfo::columnPrefferedSize(ItemType item)
 	static QMap<ItemType, double> s_prefferedSizes
 	{
 		{ UrlItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ FromUrlItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ TitleItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ ContentItemType, QuickieWebBotHelpers::pointsToPixels(200) },
 		{ MetaRefreshItemType, QuickieWebBotHelpers::pointsToPixels(100) },
@@ -84,9 +86,9 @@ int PageInfo::columnPrefferedSize(ItemType item)
 	return result;
 }
 
-QVariant PageInfo::itemValue(ItemType item, int itemChildIndex)
+QVariant PageInfo::itemValue(ItemType item)
 {
-	return (this->*acceptItem(item))(itemChildIndex);
+	return (this->*acceptItem(item))();
 }
 
 void PageInfo::setItemValue(const QVariant& value, ItemType item)
@@ -101,95 +103,62 @@ void PageInfo::setItemValue(const QVariant& value, ItemType item)
 	switch (item)
 	{
 		case UrlItemType:
-		{
 			setItemFunction = &PageInfo::setUrl;
 			break;
-		}
+		case FromUrlItemType:
+			setItemFunction = &PageInfo::setFromUrl;
+			break;
 		case ContentItemType:
-		{
 			setItemFunction = &PageInfo::setContent;
 			break;
-		}
 		case TitleItemType:
-		{
 			setItemFunction = &PageInfo::setTitle;
 			break;
-		}
 		case MetaRefreshItemType:
-		{
 			setItemFunction = &PageInfo::setMetaRefresh;
 			break;
-		}
 		case MetaRobotsItemType:
-		{
 			setItemFunction = &PageInfo::setMetaRobots;
 			break;
-		}
 		case RedirectedUrlItemType:
-		{
 			setItemFunction = &PageInfo::setRedirectedUrl;
 			break;
-		}
 		case ServerResponseItemType:
-		{
 			setItemFunction = &PageInfo::setServerResponse;
 			break;
-		}
 		case MetaDescriptionItemType:
-		{
 			setItemFunction = &PageInfo::setMetaDescription;
 			break;
-		}
 		case MetaKeywordsItemType:
-		{
 			setItemFunction = &PageInfo::setMetaKeywords;
 			break;
-		}
 		case FirstH1ItemType:
-		{
 			setItemFunction = &PageInfo::setFirstH1;
 			break;
-		}
 		case SecondH1ItemType:
-		{
 			setItemFunction = &PageInfo::setSecondH1;
 			break;
-		}
 		case FirstH2ItemType:
-		{
 			setItemFunction = &PageInfo::setFirstH2;
 			break;
-		}
 		case SecondH2ItemType:
-		{
 			setItemFunction = &PageInfo::setSecondH2;
 			break;
-		}
 		case CanonicalLinkElementItemType:
-		{
 			setItemFunction = &PageInfo::setCanonicalLinkElement;
 			break;
-		}
 		case StatusCodeItemType:
-		{
 			setItemFunction = &PageInfo::setStatusCode;
 			break;
-		}
 		case PageSizeKbItemType:
-		{
 			setItemFunction = &PageInfo::setPageSizeKb;
 			break;
-		}
 		case WordCountItemType:
-		{
 			setItemFunction = &PageInfo::setWordCount;
 			break;
-		}
 		case PageHashItemType:
-		{
 			setItemFunction = &PageInfo::setPageHash;
 			break;
-		}
 	}
 
 	assert(setItemFunction && "Cannot find setter function for this item");
@@ -202,6 +171,13 @@ void PageInfo::setUrl(const QVariant& value)
 	assert(value.type() == QVariant::Url && "Passed type must be QUrl!");
 
 	m_url = value.toUrl();
+}
+
+void PageInfo::setFromUrl(const QVariant& value)
+{
+	assert(value.type() == QVariant::Url && "Passed type must be QUrl!");
+
+	m_fromUrl = value.toUrl();
 }
 
 void PageInfo::setContent(const QVariant& value)
@@ -332,6 +308,7 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 	switch (item)
 	{
 		case UrlItemType: return &PageInfo::acceptUrl;
+		case FromUrlItemType: return &PageInfo::acceptFromUrl;
 		case ContentItemType: return &PageInfo::acceptContent;
 		case TitleItemType: return &PageInfo::acceptTitle;
 		case MetaRefreshItemType: return &PageInfo::acceptMetaRefresh;
@@ -362,7 +339,6 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 		case HasSeveralMetaKeywordsTagsItemType: return &PageInfo::acceptHasSeveralMetaKeywords;
 		case HasSeveralH1TagsItemType: return &PageInfo::acceptHasSeveralH1;
 		case HasSeveralH2TagsItemType: return &PageInfo::acceptHasSeveralH2;
-		case ImageCountItemType: return &PageInfo::acceptImageCount;
 		case ImageSizeKbItemType: return &PageInfo::acceptImageSizeKb;
 		case ImageAltTextItemType: return &PageInfo::acceptImageAltText;
 		case ImageAltTextLengthItemType: return &PageInfo::acceptImageAltTextLength;
@@ -372,189 +348,185 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 	return MethodAcceptor();
 }
 
-QVariant PageInfo::acceptUrl(int)
+QVariant PageInfo::acceptUrl()
 {
 	return m_url;
 }
 
-QVariant PageInfo::acceptContent(int)
+QVariant PageInfo::acceptFromUrl()
+{
+	return m_fromUrl;
+}
+
+QVariant PageInfo::acceptContent()
 {
 	return m_content;
 }
 
-QVariant PageInfo::acceptTitle(int)
+QVariant PageInfo::acceptTitle()
 {
 	return m_title;
 }
 
-QVariant PageInfo::acceptMetaRefresh(int)
+QVariant PageInfo::acceptMetaRefresh()
 {
 	return m_metaRefresh;
 }
 
-QVariant PageInfo::acceptMetaRobots(int)
+QVariant PageInfo::acceptMetaRobots()
 {
 	return m_metaRobots;
 }
 
-QVariant PageInfo::acceptRedirectedUrl(int)
+QVariant PageInfo::acceptRedirectedUrl()
 {
 	return m_redirectedUrl;
 }
 
-QVariant PageInfo::acceptServerResponse(int)
+QVariant PageInfo::acceptServerResponse()
 {
 	return m_serverResponse;
 }
 
-QVariant PageInfo::acceptMetaDescription(int)
+QVariant PageInfo::acceptMetaDescription()
 {
 	return m_metaDescription;
 }
 
-QVariant PageInfo::acceptMetaKeywords(int)
+QVariant PageInfo::acceptMetaKeywords()
 {
 	return m_metaKeywords;
 }
 
-QVariant PageInfo::acceptFirstH1(int)
+QVariant PageInfo::acceptFirstH1()
 {
 	return m_firstH1;
 }
 
-QVariant PageInfo::acceptSecondH1(int)
+QVariant PageInfo::acceptSecondH1()
 {
 	return m_secondH1;
 }
 
-QVariant PageInfo::acceptFirstH2(int)
+QVariant PageInfo::acceptFirstH2()
 {
 	return m_firstH2;
 }
 
-QVariant PageInfo::acceptSecondH2(int)
+QVariant PageInfo::acceptSecondH2()
 {
 	return m_secondH2;
 }
 
-QVariant PageInfo::acceptCanonicalLinkElement(int)
+QVariant PageInfo::acceptCanonicalLinkElement()
 {
 	return m_canonicalLinkElement;
 }
 
-QVariant PageInfo::acceptStatusCode(int)
+QVariant PageInfo::acceptStatusCode()
 {
 	return m_statusCode;
 }
 
-QVariant PageInfo::acceptUrlLength(int)
+QVariant PageInfo::acceptUrlLength()
 {
 	return m_url.toString().length();
 }
 
-QVariant PageInfo::acceptTitleLength(int)
+QVariant PageInfo::acceptTitleLength()
 {
 	return m_title.size();
 }
 
-QVariant PageInfo::acceptMetaDescriptionLength(int)
+QVariant PageInfo::acceptMetaDescriptionLength()
 {
 	return m_metaDescription.size();
 }
 
-QVariant PageInfo::acceptMetaKeywordsLength(int)
+QVariant PageInfo::acceptMetaKeywordsLength()
 {
 	return m_metaKeywords.size();
 }
 
-QVariant PageInfo::acceptFirstH1Length(int)
+QVariant PageInfo::acceptFirstH1Length()
 {
 	return m_firstH1.size();
 }
 
-QVariant PageInfo::acceptSecondH1Length(int)
+QVariant PageInfo::acceptSecondH1Length()
 {
 	return m_secondH1.size();
 }
 
-QVariant PageInfo::acceptFirstH2Length(int)
+QVariant PageInfo::acceptFirstH2Length()
 {
 	return m_firstH2.size();
 }
 
-QVariant PageInfo::acceptSecondH2Length(int)
+QVariant PageInfo::acceptSecondH2Length()
 {
 	return m_secondH2.size();
 }
 
-QVariant PageInfo::acceptPageSizeKb(int)
+QVariant PageInfo::acceptPageSizeKb()
 {
 	return m_pageSizeKb;
 }
 
-QVariant PageInfo::acceptWordCount(int)
+QVariant PageInfo::acceptWordCount()
 {
 	return m_wordCount;
 }
 
-QVariant PageInfo::acceptPageHash(int)
+QVariant PageInfo::acceptPageHash()
 {
 	return m_pageHash;
 }
 
-QVariant PageInfo::acceptHasSeveralTitles(int)
+QVariant PageInfo::acceptHasSeveralTitles()
 {
 	// TODO: implement
 	return false;
 }
 
-QVariant PageInfo::acceptHasSeveralMetaDescriptions(int)
+QVariant PageInfo::acceptHasSeveralMetaDescriptions()
 {
 	// TODO: implement
 	return false;
 }
 
-QVariant PageInfo::acceptHasSeveralMetaKeywords(int)
+QVariant PageInfo::acceptHasSeveralMetaKeywords()
 {
 	// TODO: implement
 	return false;
 }
 
-QVariant PageInfo::acceptHasSeveralH1(int)
+QVariant PageInfo::acceptHasSeveralH1()
 {
 	// TODO: implement
 	return false;
 }
 
-QVariant PageInfo::acceptHasSeveralH2(int)
+QVariant PageInfo::acceptHasSeveralH2()
 {
 	// TODO: implement
 	return false;
 }
 
-QVariant PageInfo::acceptImageCount(int)
+QVariant PageInfo::acceptImageSizeKb()
 {
 	// TODO: implement
 	return 0;
 }
 
-QVariant PageInfo::acceptImageSizeKb(int childItem)
+QVariant PageInfo::acceptImageAltText()
 {
-	Q_UNUSED(childItem);
-	// TODO: implement
-	return 0;
-}
-
-QVariant PageInfo::acceptImageAltText(int childItem)
-{
-	Q_UNUSED(childItem);
 	// TODO: implement
 	return QString();
 }
 
-QVariant PageInfo::acceptImageAltTextLength(int childItem)
+QVariant PageInfo::acceptImageAltTextLength()
 {
-	Q_UNUSED(childItem);
 	// TODO: implement
 	return 0;
 }

@@ -16,6 +16,7 @@ public:
 		QUrl url;
 		QByteArray responseBody;
 		QByteArray responseHeaderValuePairs;
+		QMap<QByteArray, QByteArray> responseHeaders;
 	};
 	
 	QueuedDownloader();

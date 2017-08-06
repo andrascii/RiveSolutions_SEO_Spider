@@ -50,7 +50,6 @@ void HtmlPageParser::parsePage(const QByteArray& htmlPage, PageInfoPtr& pageInfo
 	// TODO: optimize this code because for now we need double parsing of the same page
 	//
 
-	pageInfo->setItemValue(htmlPage.size() / 1024, PageInfo::PageSizeKbItemType);
 
 	QByteArray decodedHtmlPage = decodeHtmlPage(htmlPage);
 	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);

@@ -44,12 +44,33 @@ void PageInfoProcessor::process()
 	{
 		m_pageInfo.reset(new PageInfo);
 
-		m_htmlPageParser.parsePage(reply.responseBody, m_pageInfo);
+		
 
+		int sizeKB = reply.responseBody.size() / 1024;
+		m_pageInfo->setItemValue(sizeKB, PageInfo::PageSizeKbItemType);
+		
 		size_t pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
+		const QByteArray contentType = reply.responseHeaders.value("Content-Type", "");
 
-		m_pageInfo->setItemValue(reply.statusCode, PageInfo::StatusCodeItemType);
+		if (!contentType.startsWith("application"))
+		{
+			// check for contentType != text/html ???
+			// or check for existence html tags like <body> ???
+			// or combine several approaches ???
+			if (sizeKB > 512)
+			{
+				WARNINGLOG << "Page size is greater than 512 KB, "
+					<< "size: " << sizeKB << " KB, "
+					<< "URL: " << reply.url.toString() << ", "
+					<< "Content-Type: " << contentType;
+			}
+
+
+			m_htmlPageParser.parsePage(reply.responseBody, m_pageInfo);
+		}
+
 		m_pageInfo->setItemValue(reply.url, PageInfo::UrlItemType);
+		m_pageInfo->setItemValue(reply.statusCode, PageInfo::StatusCodeItemType);
 		m_pageInfo->setItemValue(reply.responseHeaderValuePairs, PageInfo::ServerResponseItemType);
 		m_pageInfo->setItemValue(pageHash, PageInfo::PageHashItemType);
 

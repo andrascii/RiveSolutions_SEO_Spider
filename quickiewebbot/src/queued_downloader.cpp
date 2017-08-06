@@ -47,13 +47,23 @@ void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);
 
 	QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-
-	Reply response{ statusCode.isValid() ? statusCode.toInt() : -1, reply->url(), reply->readAll() };
+	Reply response{ statusCode.isValid() ? statusCode.toInt() : -1, reply->url() };
 
 	for (const QPair<QByteArray, QByteArray>& headerValuePair : reply->rawHeaderPairs())
 	{
 		response.responseHeaderValuePairs += headerValuePair.first + ": " + headerValuePair.second + "\n";
+		response.responseHeaders[headerValuePair.first] = headerValuePair.second;
 	}
+
+	if (response.responseHeaders.value("Content-Type", "").startsWith("application"))
+	{
+		reply->abort();
+	}
+	else
+	{
+		response.responseBody = reply->readAll();
+	}
+	
 
 	m_repliesQueue.push_back(std::move(response));
 	m_pendingReguestsCount--;

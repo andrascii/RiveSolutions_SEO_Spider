@@ -12,6 +12,7 @@ public:
 		// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
 
 		UrlItemType,
+		FromUrlItemType,
 		TitleItemType,
 		ContentItemType,
 		MetaRefreshItemType,
@@ -37,10 +38,9 @@ public:
 		SecondH1LengthItemType,
 		FirstH2LengthItemType,
 		SecondH2LengthItemType,
-		ImageAltTextItemType, // remove?
-		ImageAltTextLengthItemType, // remove ?
-		ImageSizeKbItemType, // remove ?
-		ImageCountItemType,
+		ImageAltTextItemType,
+		ImageAltTextLengthItemType,
+		ImageSizeKbItemType,
 		HasSeveralTitleTagsItemType,
 		HasSeveralMetaDescriptionTagsItemType,
 		HasSeveralMetaKeywordsTagsItemType,
@@ -54,11 +54,12 @@ public:
 	static QString itemTypeDescription(ItemType item);
 	static int columnPrefferedSize(ItemType item);
 
-	QVariant itemValue(ItemType item, int itemChildIndex = 0);
+	QVariant itemValue(ItemType item);
 	void setItemValue(const QVariant& value, ItemType item);
 
 private:
 	void setUrl(const QVariant& value);
+	void setFromUrl(const QVariant& value);
 	void setContent(const QVariant& value);
 	void setTitle(const QVariant& value);
 	void setMetaRefresh(const QVariant& value);
@@ -78,49 +79,50 @@ private:
 	void setPageHash(const QVariant& value);
 
 private:
-	using MethodAcceptor = QVariant(PageInfo::*)(int);
+	using MethodAcceptor = QVariant(PageInfo::*)();
 
 	MethodAcceptor acceptItem(ItemType item);
-	QVariant acceptUrl(int);
-	QVariant acceptContent(int);
-	QVariant acceptTitle(int);
-	QVariant acceptMetaRefresh(int);
-	QVariant acceptMetaRobots(int);
-	QVariant acceptRedirectedUrl(int);
-	QVariant acceptServerResponse(int);
-	QVariant acceptMetaDescription(int);
-	QVariant acceptMetaKeywords(int);
-	QVariant acceptFirstH1(int);
-	QVariant acceptSecondH1(int);
-	QVariant acceptFirstH2(int);
-	QVariant acceptSecondH2(int);
-	QVariant acceptCanonicalLinkElement(int);
-	QVariant acceptStatusCode(int);
-	QVariant acceptUrlLength(int);
-	QVariant acceptTitleLength(int);
-	QVariant acceptMetaDescriptionLength(int);
-	QVariant acceptMetaKeywordsLength(int);
-	QVariant acceptFirstH1Length(int);
-	QVariant acceptSecondH1Length(int);
-	QVariant acceptFirstH2Length(int);
-	QVariant acceptSecondH2Length(int);
-	QVariant acceptPageSizeKb(int);
-	QVariant acceptWordCount(int);
-	QVariant acceptPageHash(int);
-	QVariant acceptHasSeveralTitles(int);
-	QVariant acceptHasSeveralMetaDescriptions(int);
-	QVariant acceptHasSeveralMetaKeywords(int);
-	QVariant acceptHasSeveralH1(int);
-	QVariant acceptHasSeveralH2(int);
-	QVariant acceptImageCount(int);
-	QVariant acceptImageSizeKb(int childItem);
-	QVariant acceptImageAltText(int childItem);
-	QVariant acceptImageAltTextLength(int childItem);
+	QVariant acceptUrl();
+	QVariant acceptFromUrl();
+	QVariant acceptContent();
+	QVariant acceptTitle();
+	QVariant acceptMetaRefresh();
+	QVariant acceptMetaRobots();
+	QVariant acceptRedirectedUrl();
+	QVariant acceptServerResponse();
+	QVariant acceptMetaDescription();
+	QVariant acceptMetaKeywords();
+	QVariant acceptFirstH1();
+	QVariant acceptSecondH1();
+	QVariant acceptFirstH2();
+	QVariant acceptSecondH2();
+	QVariant acceptCanonicalLinkElement();
+	QVariant acceptStatusCode();
+	QVariant acceptUrlLength();
+	QVariant acceptTitleLength();
+	QVariant acceptMetaDescriptionLength();
+	QVariant acceptMetaKeywordsLength();
+	QVariant acceptFirstH1Length();
+	QVariant acceptSecondH1Length();
+	QVariant acceptFirstH2Length();
+	QVariant acceptSecondH2Length();
+	QVariant acceptPageSizeKb();
+	QVariant acceptWordCount();
+	QVariant acceptPageHash();
+	QVariant acceptHasSeveralTitles();
+	QVariant acceptHasSeveralMetaDescriptions();
+	QVariant acceptHasSeveralMetaKeywords();
+	QVariant acceptHasSeveralH1();
+	QVariant acceptHasSeveralH2();
+	QVariant acceptImageSizeKb();
+	QVariant acceptImageAltText();
+	QVariant acceptImageAltTextLength();
 
 	static void checkInfoItem(PageInfo::ItemType item);
 
 private:
 	QUrl m_url;
+	QUrl m_fromUrl;
 	QString m_title;
 	QString m_content;
 	QString m_metaRefresh;

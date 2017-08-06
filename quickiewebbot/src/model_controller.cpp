@@ -13,13 +13,21 @@ ModelController::ModelController(QObject* parent)
 
 void ModelController::addPageInfo(PageInfoPtr pageInfo) noexcept
 {
-	processPageInfoUrl(pageInfo);
-	processPageInfoTitle(pageInfo);
-	processPageInfoMetaDescription(pageInfo);
-	processPageInfoMetaKeywords(pageInfo);
-	processPageInfoH1(pageInfo);
-	processPageInfoH2(pageInfo);
-	processPageInfoImage(pageInfo);
+	if (pageInfo->itemValue(PageInfo::FromUrlItemType).toUrl().toString().isEmpty())
+	{
+		// page
+		processPageInfoUrl(pageInfo);
+		processPageInfoTitle(pageInfo);
+		processPageInfoMetaDescription(pageInfo);
+		processPageInfoMetaKeywords(pageInfo);
+		processPageInfoH1(pageInfo);
+		processPageInfoH2(pageInfo);
+	}
+	else
+	{
+		// image resource
+		processPageInfoImage(pageInfo);
+	}
 }
 
 const DataCollection* ModelController::data() const noexcept
@@ -254,38 +262,22 @@ void ModelController::processPageInfoH2(PageInfoPtr pageInfo) noexcept
 
 void ModelController::processPageInfoImage(PageInfoPtr pageInfo) noexcept
 {
-	const int imageCount = pageInfo->itemValue(PageInfo::ImageCountItemType).toInt();
-
-	bool veryLongAltText = false;
-	bool missingAltText = false;
-	bool tooBig = false;
-
-	for (int i = 0; i < imageCount; ++i)
+	const int altLength = pageInfo->itemValue(PageInfo::ImageAltTextLengthItemType).toInt();
+	const int sizeKB = pageInfo->itemValue(PageInfo::ImageSizeKbItemType).toInt();
+	if (altLength > theApp->properties()->maxImageAltTextChars())
 	{
-		const int altLength = pageInfo->itemValue(PageInfo::ImageAltTextLengthItemType, i).toInt();
-		const int sizeKB = pageInfo->itemValue(PageInfo::ImageSizeKbItemType, i).toInt();
-		if (!veryLongAltText && altLength > theApp->properties()->maxImageAltTextChars())
-		{
-			m_data->addPageInfo(pageInfo, DataCollection::VeryLongAltTextImageStorageType);
-			veryLongAltText = true;
-		}
+		m_data->addPageInfo(pageInfo, DataCollection::VeryLongAltTextImageStorageType);
+		
+	}
 
-		if (!missingAltText && altLength == 0)
-		{
-			m_data->addPageInfo(pageInfo, DataCollection::MissingAltTextImageStorageType);
-			missingAltText = true;
-		}
+	if (altLength == 0)
+	{
+		m_data->addPageInfo(pageInfo, DataCollection::MissingAltTextImageStorageType);
+	}
 
-		if (!tooBig && sizeKB > theApp->properties()->maxImageSize())
-		{
-			m_data->addPageInfo(pageInfo, DataCollection::Over100kbImageStorageType);
-			tooBig = true;
-		}
-
-		if (veryLongAltText && missingAltText && tooBig)
-		{
-			break;
-		}
+	if (sizeKB > theApp->properties()->maxImageSize())
+	{
+		m_data->addPageInfo(pageInfo, DataCollection::Over100kbImageStorageType);
 	}
 }
 
