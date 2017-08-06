@@ -35,7 +35,7 @@
      <number>5</number>
     </property>
     <property name="spacing">
-     <number>5</number>
+     <number>0</number>
     </property>
     <item row="1" column="2">
      <widget class="QWidget" name="navigationPanelWidget" native="true">
@@ -99,9 +99,9 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="ceoAnalysisButton">
+              <widget class="QPushButton" name="seoAnalysisButton">
                <property name="text">
-                <string>CEO Analysis</string>
+                <string>SEO Analysis</string>
                </property>
                <property name="childElement" stdset="0">
                 <bool>true</bool>
