@@ -52,6 +52,11 @@ void PageInfoProcessor::process()
 		size_t pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
 		const QByteArray contentType = reply.responseHeaders.value("Content-Type", "");
 
+		m_pageInfo->setItemValue(reply.url, PageInfo::UrlItemType);
+		m_pageInfo->setItemValue(reply.statusCode, PageInfo::StatusCodeItemType);
+		m_pageInfo->setItemValue(reply.responseHeaderValuePairs, PageInfo::ServerResponseItemType);
+		m_pageInfo->setItemValue(pageHash, PageInfo::PageHashItemType);
+
 		if (!contentType.startsWith("application"))
 		{
 			// check for contentType != text/html ???
@@ -68,11 +73,6 @@ void PageInfoProcessor::process()
 
 			m_htmlPageParser.parsePage(reply.responseBody, m_pageInfo);
 		}
-
-		m_pageInfo->setItemValue(reply.url, PageInfo::UrlItemType);
-		m_pageInfo->setItemValue(reply.statusCode, PageInfo::StatusCodeItemType);
-		m_pageInfo->setItemValue(reply.responseHeaderValuePairs, PageInfo::ServerResponseItemType);
-		m_pageInfo->setItemValue(pageHash, PageInfo::PageHashItemType);
 
 		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 

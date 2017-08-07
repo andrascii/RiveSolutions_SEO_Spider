@@ -44,6 +44,17 @@ bool QueuedDownloader::extractReply(Reply& response) noexcept
 
 void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 {
+	bool processBody = !reply->header(QNetworkRequest::ContentTypeHeader).toString().startsWith("application");
+	if (!processBody)
+	{
+		reply->abort();
+	}
+
+	if (processBody && !reply->isFinished())
+	{
+		return;
+	}
+
 	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);
 
 	QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
@@ -55,15 +66,10 @@ void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 		response.responseHeaders[headerValuePair.first] = headerValuePair.second;
 	}
 
-	if (response.responseHeaders.value("Content-Type", "").startsWith("application"))
-	{
-		reply->abort();
-	}
-	else
+	if (processBody)
 	{
 		response.responseBody = reply->readAll();
 	}
-	
 
 	m_repliesQueue.push_back(std::move(response));
 	m_pendingReguestsCount--;
@@ -83,7 +89,16 @@ void QueuedDownloader::process()
 	while (m_requestQueue.size() && requestsThisBatch < s_maxRequestsOneBatch &&
 		m_pendingReguestsCount < s_maxPendingRequests && m_unprocessedRepliesCount < s_maxUnprocessedReplies)
 	{
-		m_networkAccessManager->get(QNetworkRequest(*m_requestQueue.begin()));
+		QNetworkReply* reply = m_networkAccessManager->get(QNetworkRequest(*m_requestQueue.begin()));
+
+		VERIFY(QObject::connect(
+			reply, 
+			&QNetworkReply::metaDataChanged, 
+			this, 
+			[this]() { urlDownloaded(qobject_cast<QNetworkReply*>(sender())); }, 
+			Qt::QueuedConnection
+		));
+
 		m_requestQueue.erase(m_requestQueue.begin());
 
 		m_pendingReguestsCount++;

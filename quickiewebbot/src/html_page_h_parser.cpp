@@ -7,6 +7,12 @@ namespace QuickieWebBot
 void HtmlPageHParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexcept
 {
 	GumboNode* body = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_BODY);
+	if (body == nullptr)
+	{
+		WARNINGLOG << "Tag body is not found: " << pageInfo->itemValue(PageInfo::UrlItemType).toUrl().toString();
+		return;
+	}
+
 	assert(body->type == GUMBO_NODE_ELEMENT && body->v.element.tag == GUMBO_TAG_BODY);
 
 	recurseSearch(body, GUMBO_TAG_H1, m_h1Tags);
