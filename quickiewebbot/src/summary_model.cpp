@@ -185,7 +185,7 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 
 		case IGridModel::SelectionBackgroundColorRole:
 		{
-			return QColor(7, 160, 50, 255);
+			return QColor(97, 160, 50, 150);
 		}
 
 		case IGridModel::MarginTop:

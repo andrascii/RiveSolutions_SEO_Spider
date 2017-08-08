@@ -93,7 +93,7 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 
 		case IGridModel::SelectionBackgroundColorRole:
 		{
-			return QColor(7, 160, 50, 255);
+			return QColor(97, 160, 50, 200);
 		}
 
 		case IGridModel::MarginTop:

@@ -14,27 +14,31 @@
 #include "page_info_storage_view_model.h"
 #include "summary_view_model.h"
 #include "storage_adaptor_factory.h"
+#include "main_frame_controller.h"
 
 namespace QuickieWebBot
 {
 
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
+	, m_mainFrameController(new MainFrameController(this, this))
 	, m_proxySettingsDialog(nullptr)
 	, m_limitsSettingsDialog(nullptr)
 {
 	init();
+
+	//installEventFilter()
 }
 
-void MainFrame::showListView()
-{
-	m_ui.mainGuiStackedWidget->setCurrentIndex(0);
-}
-
-void MainFrame::showSummaryView()
-{
-	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
-}
+// void MainFrame::showListView()
+// {
+// 	m_ui.mainGuiStackedWidget->setCurrentIndex(0);
+// }
+// 
+// void MainFrame::showSummaryView()
+// {
+// 	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
+// }
 
 void MainFrame::showProxySettingsDialog()
 {
@@ -58,41 +62,12 @@ void MainFrame::showLimitsSettingsDialog()
 
 void MainFrame::init()
 {
-	m_ui.setupUi(this);
-
- 	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
-	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
-
-	initCrawlingGridView();
-	initSummaryGridView();
-
-	new NavigationPanelController(this, &m_ui);
-}
-
-void MainFrame::initCrawlingGridView()
-{
-	PageInfoStorageModel* model = new PageInfoStorageModel(this);
-	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);
-
-	StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
-	StorageAdaptor* storageAdaptor = storageAdaptorFactory->create(DataCollection::CrawledUrlStorageType);
-
-	model->setStorageAdaptor(storageAdaptor);
-
-	m_ui.crawlingGridView->setModel(model);
-	m_ui.crawlingGridView->setViewModel(modelView);
-
-	m_ui.crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(m_ui.crawlingGridView));
-}
-
-void MainFrame::initSummaryGridView()
-{
-	SummaryModel* summaryModel = new SummaryModel(this);
-	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);
-
-	m_ui.summaryGridView->setModel(summaryModel);
-	m_ui.summaryGridView->setViewModel(summaryViewModel);
+	setCentralWidget(new NavigationPanelWidget(this));
+// 
+//  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
+// 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
+// 	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
+	
 }
 
 }
