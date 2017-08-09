@@ -13,9 +13,6 @@ public:
 	ErrorsFilterWidget(QWidget* parent = nullptr);
 
 private:
-	void init();
-
-private:
 
 };
 

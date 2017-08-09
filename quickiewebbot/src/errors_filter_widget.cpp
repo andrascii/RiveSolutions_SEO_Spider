@@ -8,11 +8,6 @@ namespace QuickieWebBot
 ErrorsFilterWidget::ErrorsFilterWidget(QWidget* parent)
 	: QWidget(parent)
 {
-	init();
-}
-
-void ErrorsFilterWidget::init()
-{
 	setupUi(this);
 
 	SummaryModel* summaryModel = new SummaryModel(this);

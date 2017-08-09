@@ -60,7 +60,7 @@ public:
 	~LoggerConnectionServiceApi();
 
 
-	void addPackToStream(QTextStream& messageStream)
+	void addPackToStream(QTextStream&)
 	{
 		return;
 	}

@@ -7,7 +7,8 @@ namespace QuickieWebBot
 {
 
 ModelController::ModelController(QObject* parent)
-	: m_data(new DataCollection(this))
+	: QObject(parent)
+	, m_data(new DataCollection(this))
 {
 }
 
@@ -42,8 +43,8 @@ DataCollection* ModelController::data() noexcept
 
 void ModelController::processPageInfoUrl(PageInfoPtr pageInfo) noexcept
 {
-	const QUrl url = pageInfo->itemValue(PageInfo::UrlItemType).toUrl();
-	const QString urlStr = url.toString();
+	const QUrl& url = pageInfo->itemValue(PageInfo::UrlItemType).toUrl();
+	const QString& urlStr = url.toString();
 
 	m_data->addPageInfo(pageInfo, DataCollection::CrawledUrlStorageType);
 

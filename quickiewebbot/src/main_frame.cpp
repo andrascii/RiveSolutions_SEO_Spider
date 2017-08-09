@@ -3,18 +3,9 @@
 #include "model_controller.h"
 #include "data_collection.h"
 #include "web_crawler.h"
-#include "grid_view_full_size_resize_policy.h"
 #include "quickie_web_bot_helpers.h"
-#include "naviagation_panel_controller.h"
-#include "context_menu_data_collection_row.h"
-#include "igrid_model.h"
-#include "summary_model.h"
-#include "page_info_storage_model.h"
-#include "storage_adaptor.h"
-#include "page_info_storage_view_model.h"
-#include "summary_view_model.h"
-#include "storage_adaptor_factory.h"
 #include "main_frame_controller.h"
+#include "data_pages_widget.h"
 
 namespace QuickieWebBot
 {
@@ -62,7 +53,7 @@ void MainFrame::showLimitsSettingsDialog()
 
 void MainFrame::init()
 {
-	setCentralWidget(new NavigationPanelWidget(this));
+	setCentralWidget(new DataPagesWidget(this));
 // 
 //  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
 // 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));

@@ -1,0 +1,183 @@
+#include "data_pages_widget.h"
+#include "application.h"
+#include "grid_view.h"
+#include "errors_filter_widget.h"
+#include "page_info_storage_model.h"
+#include "page_info_storage_view_model.h"
+#include "storage_adaptor.h"
+#include "storage_adaptor_factory.h"
+#include "model_controller.h"
+#include "context_menu_data_collection_row.h"
+#include "data_collection.h"
+#include "quickie_web_bot_helpers.h"
+
+namespace QuickieWebBot
+{
+
+DataPagesWidget::DataPagesWidget(QWidget* parent)
+	: QWidget(parent)
+{
+	initializeNavigationPanelWidget();
+	initializeStackedWidget();
+
+	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
+	horizontalLayout->addWidget(m_stackedWidget);
+	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
+
+	setLayout(horizontalLayout);
+}
+
+void DataPagesWidget::showPage(Page page)
+{
+	m_stackedWidget->setCurrentIndex(m_pageIndexes[page]);
+}
+
+void DataPagesWidget::handleNavigationPanelButtonClick()
+{
+	static QPushButton* prevButton = nullptr;
+
+	QObject* object = sender();
+
+	QPushButton* button = qobject_cast<QPushButton*>(sender());
+	assert(button);
+
+	if (prevButton == button)
+	{
+		return;
+	}
+
+	if (button->property("subButton").toBool() == false)
+	{
+		if (button == m_navigationPanel.pushButtons[Page::SiteStructurePanelPage])
+		{
+			const bool isSiteStructurePanelButtonVisible = m_navigationPanel.siteStructurePanelWidget->isVisible();
+			m_navigationPanel.siteStructurePanelWidget->setVisible(!isSiteStructurePanelButtonVisible);
+
+			return;
+		}
+	}
+
+	if (prevButton)
+	{
+		prevButton->setProperty("selected", false);
+		prevButton->repaint();
+		prevButton->style()->unpolish(prevButton);
+		prevButton->style()->polish(prevButton);
+	}
+
+	button = button;
+	button->setProperty("selected", true);
+	button->style()->unpolish(button);
+	button->style()->polish(button);
+
+	prevButton = button;
+
+	auto pushButtonsIterator = std::find_if(
+		std::begin(m_navigationPanel.pushButtons),
+		std::end(m_navigationPanel.pushButtons), 
+		[button](const auto& pair) { return pair.second == button; }
+	);
+
+	assert(pushButtonsIterator != std::end(m_navigationPanel.pushButtons));
+
+	showPage(pushButtonsIterator->first);
+}
+
+void DataPagesWidget::initializeNavigationPanelWidget()
+{
+	m_navigationPanel.navigationPanelWidget = new QWidget(this);
+	m_navigationPanel.verticalMainLayout = new QVBoxLayout(m_navigationPanel.navigationPanelWidget);
+
+	m_navigationPanel.siteStructurePanelWidget = new QWidget(m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.verticalSubbuttonsLayout = new QVBoxLayout(m_navigationPanel.siteStructurePanelWidget);
+
+
+	m_navigationPanel.pushButtons[Page::SiteStructurePanelPage] = 
+		new QPushButton(QStringLiteral("Site Structure"), m_navigationPanel.navigationPanelWidget);
+
+	m_navigationPanel.pushButtons[Page::SeoAnalysisPage] = 
+		new QPushButton(QStringLiteral("Seo Analysis"), m_navigationPanel.navigationPanelWidget);
+
+	m_navigationPanel.pushButtons[Page::AllPagesPage] = 
+		new QPushButton(QStringLiteral("All Site Pages"), m_navigationPanel.navigationPanelWidget);
+
+	m_navigationPanel.pushButtons[Page::AllResourcesPage] = 
+		new QPushButton(QStringLiteral("All Resources"), m_navigationPanel.navigationPanelWidget);
+
+	m_navigationPanel.pushButtons[Page::DomainMetricsPage] = 
+		new QPushButton(QStringLiteral("Domain Metrics"), m_navigationPanel.navigationPanelWidget);
+
+	m_navigationPanel.pushButtons[Page::ReportsPage] = 
+		new QPushButton(QStringLiteral("Reports"), m_navigationPanel.navigationPanelWidget);
+
+
+	m_navigationPanel.pushButtons[Page::SeoAnalysisPage]->setProperty("subButton", true);
+	m_navigationPanel.pushButtons[Page::AllPagesPage]->setProperty("subButton", true);
+	m_navigationPanel.pushButtons[Page::AllResourcesPage]->setProperty("subButton", true);
+	m_navigationPanel.pushButtons[Page::SeoAnalysisPage]->setProperty("selected", true);
+
+
+	VERIFY(connect(m_navigationPanel.pushButtons[Page::SiteStructurePanelPage], &QPushButton::clicked,
+		this, &DataPagesWidget::handleNavigationPanelButtonClick));
+
+	VERIFY(connect(m_navigationPanel.pushButtons[Page::SeoAnalysisPage], &QPushButton::clicked,
+		this, &DataPagesWidget::handleNavigationPanelButtonClick));
+
+	VERIFY(connect(m_navigationPanel.pushButtons[Page::AllPagesPage], &QPushButton::clicked,
+		this, &DataPagesWidget::handleNavigationPanelButtonClick));
+
+	VERIFY(connect(m_navigationPanel.pushButtons[Page::AllResourcesPage], &QPushButton::clicked,
+		this, &DataPagesWidget::handleNavigationPanelButtonClick));
+
+	VERIFY(connect(m_navigationPanel.pushButtons[Page::DomainMetricsPage], &QPushButton::clicked,
+		this, &DataPagesWidget::handleNavigationPanelButtonClick));
+
+	VERIFY(connect(m_navigationPanel.pushButtons[Page::ReportsPage], &QPushButton::clicked,
+		this, &DataPagesWidget::handleNavigationPanelButtonClick));
+
+
+	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::SeoAnalysisPage]);
+	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::AllPagesPage]);
+	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::AllResourcesPage]);
+	m_navigationPanel.siteStructurePanelWidget->setLayout(m_navigationPanel.verticalSubbuttonsLayout);
+
+
+	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::SiteStructurePanelPage]);
+	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.siteStructurePanelWidget);
+	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::DomainMetricsPage]);
+	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::ReportsPage]);
+
+	m_navigationPanel.verticalMainLayout->addItem(
+		new QSpacerItem(QuickieWebBotHelpers::pointsToPixels(15),
+		QuickieWebBotHelpers::pointsToPixels(30), 
+		QSizePolicy::Minimum, QSizePolicy::Expanding)
+	);
+
+	m_navigationPanel.navigationPanelWidget->setLayout(m_navigationPanel.verticalMainLayout);
+
+	// use this name for customize style through stylesheets
+	m_navigationPanel.navigationPanelWidget->setObjectName(QStringLiteral("NavigationPanel"));
+}
+
+void DataPagesWidget::initializeStackedWidget()
+{
+	m_stackedWidget = new QStackedWidget(this);
+
+	ErrorsFilterWidget* errorsFilterWidget = new ErrorsFilterWidget(m_stackedWidget);
+	GridView* crawlingGridView = new GridView(m_stackedWidget);
+
+	PageInfoStorageModel* model = new PageInfoStorageModel(this);
+	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);
+
+	StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
+	model->setStorageAdaptor(storageAdaptorFactory->create(DataCollection::CrawledUrlStorageType));
+
+	crawlingGridView->setModel(model);
+	crawlingGridView->setViewModel(modelView);
+	crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(crawlingGridView));
+
+	m_pageIndexes[Page::SeoAnalysisPage] = m_stackedWidget->addWidget(errorsFilterWidget);
+	m_pageIndexes[Page::AllPagesPage] = m_stackedWidget->addWidget(crawlingGridView);
+}
+
+}

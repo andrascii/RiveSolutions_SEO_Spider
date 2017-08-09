@@ -54,7 +54,7 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 
 void GridView::leaveEvent(QEvent* event)
 {
-	if (int hoveredIndexRow = m_hoveredIndex.row(); m_hoveredIndex.isValid())
+	if (m_hoveredIndex.isValid())
 	{
 		m_hoveredIndex = QModelIndex();
 	}
