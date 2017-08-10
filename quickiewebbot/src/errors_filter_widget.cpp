@@ -53,8 +53,8 @@ ErrorsFilterWidget::ErrorsFilterWidget(QWidget* parent)
 
 	setLayout(verticalLayout);
 
-	VERIFY(connect(m_summaryGridView, SIGNAL(selectionWasChanged(const QItemSelection&, const QItemSelection&)),
-		this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&))));
+// 	VERIFY(connect(m_summaryGridView, SIGNAL(selectionWasChanged(const QItemSelection&, const QItemSelection&)),
+// 		this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
 void ErrorsFilterWidget::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
