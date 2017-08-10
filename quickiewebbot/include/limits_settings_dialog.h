@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_limits_settings_dialog.h"
+#include "ui_limits_settings.h"
 
 namespace QuickieWebBot
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_proxy_settings_dialog.h"
+#include "ui_proxy_settings.h"
 
 namespace QuickieWebBot
 {

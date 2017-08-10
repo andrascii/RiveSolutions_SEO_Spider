@@ -207,6 +207,17 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		{
 			return QuickieWebBotHelpers::pointsToPixels(4);
 		}
+
+		case IGridModel::WhatsThisRole:
+		{
+			if (isGroupHeaderRow(index.row()))
+			{
+				assert(!"Todo");
+			}
+
+			auto itemIterator = m_itemRows.find(index.row());
+			return itemIterator.value()->id;
+		}
 	}
 
 	return QVariant();

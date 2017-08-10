@@ -92,7 +92,7 @@ QModelIndex GridView::hoveredIndex() const noexcept
 	return m_hoveredIndex;
 }
 
-void GridView::setContextMenu(ContextMenuDataCollectionRow* menu)
+void GridView::setContextMenu(ContextMenuDataCollectionRow* menu) noexcept
 {
 	m_contextMenu = menu;
 }
@@ -134,7 +134,6 @@ void GridView::selectRow(const QPoint& point)
 {
 	QModelIndex rowIndex = indexAt(point);
 	QItemSelectionModel* modelSelection = selectionModel();
-
 	QItemSelectionModel::SelectionFlags flags = QItemSelectionModel::Rows;
 
 	foreach(QModelIndex index, modelSelection->selectedRows())
@@ -151,6 +150,13 @@ void GridView::selectRow(const QPoint& point)
 	}
 
 	modelSelection->select(rowIndex, flags);
+}
+
+void GridView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	QTableView::selectionChanged(selected, deselected);
+
+	Q_EMIT selectionWasChanged(selected, deselected);
 }
 
 }
