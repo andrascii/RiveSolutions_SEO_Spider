@@ -7,6 +7,8 @@ class GridView;
 
 class ErrorsFilterWidget : public QWidget
 {
+	Q_OBJECT
+
 public:
 	ErrorsFilterWidget(QWidget* parent = nullptr);
 

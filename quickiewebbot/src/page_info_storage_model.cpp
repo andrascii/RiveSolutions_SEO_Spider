@@ -24,9 +24,14 @@ Qt::ItemFlags PageInfoStorageModel::flags(const QModelIndex& index) const
 
 void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept
 {
+	disconnect(m_storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int)));
 	VERIFY(connect(storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int))));
 	
+	beginResetModel();
+	
 	m_storageAdaptor = storageAdaptor;
+
+	endResetModel();
 }
 
 const StorageAdaptor* PageInfoStorageModel::storageAdaptor() const

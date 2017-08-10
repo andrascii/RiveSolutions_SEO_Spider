@@ -6,6 +6,7 @@
 #include "quickie_web_bot_helpers.h"
 #include "main_frame_controller.h"
 #include "data_pages_widget.h"
+#include "control_panel_widget.h"
 
 namespace QuickieWebBot
 {
@@ -53,7 +54,15 @@ void MainFrame::showLimitsSettingsDialog()
 
 void MainFrame::init()
 {
-	setCentralWidget(new DataPagesWidget(this));
+	QWidget* centralWidget = new QWidget(this);
+	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
+
+	layout->addWidget(new ControlPanelWidget(centralWidget));
+	layout->addWidget(new DataPagesWidget(centralWidget));
+
+	centralWidget->setLayout(layout);
+
+	setCentralWidget(centralWidget);
 // 
 //  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
 // 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
