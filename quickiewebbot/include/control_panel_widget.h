@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_control_panel_widget.h"
+#include "ui_control_panel.h"
 
 namespace QuickieWebBot
 {
@@ -20,7 +20,7 @@ private:
 	void initialize();
 
 private:
-	Ui::ControlPanelWidget m_ui;
+	Ui::ControlPanel m_ui;
 };
 
 }

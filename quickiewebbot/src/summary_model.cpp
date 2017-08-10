@@ -185,7 +185,7 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 
 		case IGridModel::SelectionBackgroundColorRole:
 		{
-			return QColor(7, 160, 50, 255);
+			return QColor(97, 160, 50, 150);
 		}
 
 		case IGridModel::MarginTop:
@@ -206,6 +206,17 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		case IGridModel::MarginRight:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(4);
+		}
+
+		case IGridModel::WhatsThisRole:
+		{
+			if (isGroupHeaderRow(index.row()))
+			{
+				assert(!"Todo");
+			}
+
+			auto itemIterator = m_itemRows.find(index.row());
+			return itemIterator.value()->id;
 		}
 	}
 

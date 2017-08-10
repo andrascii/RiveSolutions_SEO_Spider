@@ -24,9 +24,14 @@ Qt::ItemFlags PageInfoStorageModel::flags(const QModelIndex& index) const
 
 void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept
 {
+	disconnect(m_storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int)));
 	VERIFY(connect(storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int))));
 	
+	beginResetModel();
+	
 	m_storageAdaptor = storageAdaptor;
+
+	endResetModel();
 }
 
 const StorageAdaptor* PageInfoStorageModel::storageAdaptor() const
@@ -93,7 +98,7 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 
 		case IGridModel::SelectionBackgroundColorRole:
 		{
-			return QColor(7, 160, 50, 255);
+			return QColor(97, 160, 50, 200);
 		}
 
 		case IGridModel::MarginTop:

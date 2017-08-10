@@ -78,6 +78,8 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 				<< PageInfo::ContentItemType
 				<< PageInfo::StatusCodeItemType
 			);
+
+			return;
 		}
 
 		//
@@ -96,6 +98,8 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 				<< PageInfo::TitleItemType
 				<< PageInfo::TitleLengthItemType
 			);
+
+			return;
 		}
 
 		//
@@ -113,6 +117,8 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 				<< PageInfo::MetaDescriptionItemType
 				<< PageInfo::MetaDescriptionLengthItemType
 			);
+
+			return;
 		}
 
 		//
@@ -128,6 +134,8 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 				<< PageInfo::MetaKeywordsItemType
 				<< PageInfo::MetaKeywordsLengthItemType
 			);
+
+			return;
 		}
 
 		//
@@ -146,6 +154,8 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 				<< PageInfo::SecondH1ItemType
 				<< PageInfo::SecondH1LengthItemType
 			);
+
+			return;
 		}
 
 		//
@@ -164,6 +174,8 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 				<< PageInfo::SecondH2ItemType
 				<< PageInfo::SecondH2LengthItemType
 			);
+
+			return;
 		}
 
 		//
@@ -179,6 +191,8 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 				<< PageInfo::ImageAltTextLengthItemType
 				<< PageInfo::ImageSizeKbItemType
 			);
+
+			return;
 		}
 	}
 }

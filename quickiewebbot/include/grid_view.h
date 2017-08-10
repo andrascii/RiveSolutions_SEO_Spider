@@ -19,16 +19,20 @@ public:
 
 	virtual void setModel(QAbstractItemModel* model) override;
 
-	void setContextMenu(ContextMenuDataCollectionRow* menu);
+	void setContextMenu(ContextMenuDataCollectionRow* menu) noexcept;
 	void setViewModel(IGridViewModel* modelView) noexcept;
 	const IGridViewModel* viewModel() const noexcept;
 	QModelIndex hoveredIndex() const noexcept;
 
+	Q_SIGNAL void selectionWasChanged(const QItemSelection& selected, const QItemSelection& deselected);
+
 protected:
-	virtual void mouseMoveEvent(QMouseEvent* event) override;
-	virtual void leaveEvent(QEvent* event) override;
-	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void mouseReleaseEvent(QMouseEvent* event) override;
+	virtual void mouseMoveEvent(QMouseEvent* event) override;
+	virtual void resizeEvent(QResizeEvent* event) override;
+	virtual void leaveEvent(QEvent* event) override;
+
+	virtual void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 
 private:
 	void initSpan();
@@ -36,9 +40,13 @@ private:
 
 private:
 	IGridModel* m_model;
+
 	IGridViewModel* m_viewModel;
+
 	QModelIndex m_hoveredIndex;
+
 	QMenu* m_contextMenu;
+
 	bool m_isCursorOverriden;
 };
 

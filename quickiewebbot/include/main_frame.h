@@ -1,18 +1,19 @@
 #pragma once
 
-#include "ui_main_frame.h"
 #include "proxy_settings_dialog.h"
 #include "limits_settings_dialog.h"
 
 namespace QuickieWebBot
 {
 
+class MainFrameController;
+
 class MainFrame : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	MainFrame(QWidget *parent = nullptr);
+	MainFrame(QWidget* parent = nullptr);
 
 	void showListView();
 	void showSummaryView();
@@ -25,11 +26,9 @@ public:
 
 private:
 	void init();
-	void initCrawlingGridView();
-	void initSummaryGridView();
 
 private:
-	Ui::MainFrameClass m_ui;
+	MainFrameController* m_mainFrameController;
 
 	ProxySettingsDialog* m_proxySettingsDialog;
 	LimitsSettingsDialog* m_limitsSettingsDialog;
