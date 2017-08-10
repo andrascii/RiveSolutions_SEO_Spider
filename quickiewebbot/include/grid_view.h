@@ -24,6 +24,8 @@ public:
 	const IGridViewModel* viewModel() const noexcept;
 	QModelIndex hoveredIndex() const noexcept;
 
+	Q_SIGNAL void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
 	virtual void leaveEvent(QEvent* event) override;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ui_data_pages.h"
-
 namespace QuickieWebBot
 {
 
@@ -25,6 +23,8 @@ public:
 	DataPagesWidget(QWidget* parent = nullptr);
 
 	Q_SLOT void showPage(Page page);
+
+private:
 	Q_SLOT void handleNavigationPanelButtonClick();
 
 private:

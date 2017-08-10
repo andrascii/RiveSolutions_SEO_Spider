@@ -1,19 +1,18 @@
 #pragma once
 
-#include "ui_errors_filter.h"
-
 namespace QuickieWebBot
 {
 
-class ErrorsFilterWidget 
-	: public QWidget
-	, public Ui::ErrorsFilter
+class GridView;
+
+class ErrorsFilterWidget : public QWidget
 {
 public:
 	ErrorsFilterWidget(QWidget* parent = nullptr);
 
 private:
-
+	GridView* m_summaryGridView;
+	GridView* m_summaryDetailsGridView;
 };
 
 }

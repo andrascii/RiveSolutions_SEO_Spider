@@ -148,9 +148,10 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::ReportsPage]);
 
 	m_navigationPanel.verticalMainLayout->addItem(
-		new QSpacerItem(QuickieWebBotHelpers::pointsToPixels(15),
-		QuickieWebBotHelpers::pointsToPixels(30), 
-		QSizePolicy::Minimum, QSizePolicy::Expanding)
+		new QSpacerItem(
+			QuickieWebBotHelpers::pointsToPixels(15),
+			QuickieWebBotHelpers::pointsToPixels(30), 
+			QSizePolicy::Minimum, QSizePolicy::Expanding)
 	);
 
 	m_navigationPanel.navigationPanelWidget->setLayout(m_navigationPanel.verticalMainLayout);
