@@ -17,6 +17,7 @@ class SummaryViewModel
 public:
 	SummaryViewModel(SummaryModel* model, QObject* parent = nullptr);
 
+	virtual void resetRenderersCache() const noexcept override;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
 	virtual IGridViewResizePolicy* resizePolicy() const noexcept override;
 

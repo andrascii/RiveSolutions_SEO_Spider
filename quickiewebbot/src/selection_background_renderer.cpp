@@ -12,4 +12,8 @@ void SelectionBackgroundRenderer::render(QPainter* painter, const QStyleOptionVi
 	}
 }
 
+void SelectionBackgroundRenderer::resetCache() const
+{
+}
+
 }

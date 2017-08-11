@@ -14,6 +14,7 @@ class IGridViewResizePolicy;
 class IGridViewModel
 {
 public:
+	virtual void resetRenderersCache() const noexcept = 0;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
 	virtual IGridViewResizePolicy* resizePolicy() const noexcept = 0;
 };

@@ -15,11 +15,17 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 {
 }
 
+void SummaryViewModel::resetRenderersCache() const noexcept
+{
+}
+
 QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
 {
 	static SelectionBackgroundRenderer s_selectionBackgroundRenderer;
 	static BackgroundRenderer s_backgroundRenderer;
-	static TextRenderer s_textRenderer(std::pow(m_model->columnCount(index), 2));
+
+	// disabled caching
+	static TextRenderer s_textRenderer;
 
 	return QList<IRenderer*>()
 		<< &s_backgroundRenderer

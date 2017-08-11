@@ -54,10 +54,12 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 
 	painter->drawPixmap(adjustedRect, *pixmapPointer);
 
-	//
-	// TODO: Refactor. Incorrect call of method with side-effect from const method
-	//
 	clearCacheIfNeeded();
+}
+
+void TextRenderer::resetCache() const
+{
+	m_cache.clear();
 }
 
 QPixmap* TextRenderer::cached(const QModelIndex& index) const

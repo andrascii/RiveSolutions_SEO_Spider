@@ -11,7 +11,9 @@ class TextRenderer : public IRenderer
 {
 public:
 	explicit TextRenderer(int maxCacheSize = 0);
+
 	virtual void render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+	virtual void resetCache() const override;
 
 protected:
 	virtual QRect paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const;
