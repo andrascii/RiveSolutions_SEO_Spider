@@ -18,19 +18,7 @@ MainFrame::MainFrame(QWidget* parent)
 	, m_limitsSettingsDialog(nullptr)
 {
 	init();
-
-	//installEventFilter()
 }
-
-// void MainFrame::showListView()
-// {
-// 	m_ui.mainGuiStackedWidget->setCurrentIndex(0);
-// }
-// 
-// void MainFrame::showSummaryView()
-// {
-// 	m_ui.mainGuiStackedWidget->setCurrentIndex(1);
-// }
 
 void MainFrame::showProxySettingsDialog()
 {
@@ -63,11 +51,6 @@ void MainFrame::init()
 	centralWidget->setLayout(layout);
 
 	setCentralWidget(centralWidget);
-// 
-//  	VERIFY(connect(m_ui.actionAbout, &QAction::triggered, theApp, &Application::aboutQt));
-// 	VERIFY(connect(m_ui.actionProxy, &QAction::triggered, this, &MainFrame::showProxySettingsDialog));
-// 	VERIFY(connect(m_ui.actionSpiderSettings, &QAction::triggered, this, &MainFrame::showLimitsSettingsDialog));
-	
 }
 
 }

@@ -15,9 +15,6 @@ class MainFrame : public QMainWindow
 public:
 	MainFrame(QWidget* parent = nullptr);
 
-	void showListView();
-	void showSummaryView();
-
 	//
 	// settings pages
 	//

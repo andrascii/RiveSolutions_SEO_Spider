@@ -13,7 +13,12 @@ public:
 	ErrorsFilterWidget(QWidget* parent = nullptr);
 
 private:
-	Q_SLOT void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+
+private:
+	void init();
+	void initSummaryView();
+	void initDetailsView();
 
 private:
 	GridView* m_summaryGridView;
