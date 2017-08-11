@@ -37,6 +37,8 @@ void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& sel
 
 	PageInfoStorageModel* storageModel = dynamic_cast<PageInfoStorageModel*>(m_summaryDetailsGridView->model());
 	storageModel->setStorageAdaptor(storageAdaptorFactory->create(storageType));
+
+	m_summaryDetailsGridView->viewModel()->resetRenderersCache();
 }
 
 void ErrorsFilterWidget::init()

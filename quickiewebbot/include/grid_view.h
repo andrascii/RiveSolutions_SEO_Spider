@@ -27,10 +27,10 @@ public:
 	Q_SIGNAL void selectionWasChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 protected:
-	virtual void mouseReleaseEvent(QMouseEvent* event) override;
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void leaveEvent(QEvent* event) override;
+	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 	virtual void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 

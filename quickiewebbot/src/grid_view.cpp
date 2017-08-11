@@ -62,6 +62,14 @@ void GridView::leaveEvent(QEvent* event)
 	QTableView::leaveEvent(event);
 }
 
+void GridView::contextMenuEvent(QContextMenuEvent* event)
+{
+	if (m_contextMenu)
+	{
+		m_contextMenu->exec(event->globalPos());
+	}
+}
+
 void GridView::resizeEvent(QResizeEvent* event)
 {
 	if (m_viewModel && m_viewModel->resizePolicy())
@@ -70,21 +78,6 @@ void GridView::resizeEvent(QResizeEvent* event)
 	}
 
 	QTableView::resizeEvent(event);
-}
-
-void GridView::mouseReleaseEvent(QMouseEvent* event)
-{
-	if (event->button() != Qt::RightButton || !m_contextMenu)
-	{
-		return QTableView::mouseReleaseEvent(event);
-	}
-
-	QPoint globalPosition = event->globalPos();
-
-	selectRow(event->pos());
-
-	m_contextMenu->popup(globalPosition);
-	m_contextMenu->show();
 }
 
 QModelIndex GridView::hoveredIndex() const noexcept
