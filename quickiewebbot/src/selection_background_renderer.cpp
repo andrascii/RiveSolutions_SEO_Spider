@@ -1,5 +1,5 @@
 #include "selection_background_renderer.h"
-#include "igrid_model.h"
+#include "itable_model.h"
 
 namespace QuickieWebBot
 {
@@ -8,7 +8,7 @@ void SelectionBackgroundRenderer::render(QPainter* painter, const QStyleOptionVi
 {
 	if (option.state & QStyle::State_Selected)
 	{
-		painter->fillRect(option.rect, index.data(IGridModel::SelectionBackgroundColorRole).value<QColor>());
+		painter->fillRect(option.rect, index.data(ITableModel::SelectionBackgroundColorRole).value<QColor>());
 	}
 }
 

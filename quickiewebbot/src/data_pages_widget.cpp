@@ -1,6 +1,6 @@
 #include "data_pages_widget.h"
 #include "application.h"
-#include "grid_view.h"
+#include "table_view.h"
 #include "errors_filter_widget.h"
 #include "page_info_storage_model.h"
 #include "page_info_storage_view_model.h"
@@ -34,43 +34,36 @@ void DataPagesWidget::showPage(Page page)
 
 void DataPagesWidget::handleNavigationPanelButtonClick()
 {
-	static QPushButton* prevButton = nullptr;
-
-	QObject* object = sender();
-
 	QPushButton* button = qobject_cast<QPushButton*>(sender());
 	assert(button);
 
-	if (prevButton == button)
+	if (m_prevButton == button)
 	{
 		return;
 	}
 
-	if (button->property("subButton").toBool() == false)
+	if (button->property("subButton").toBool() == false &&
+		button == m_navigationPanel.pushButtons[Page::SiteStructurePanelPage])
 	{
-		if (button == m_navigationPanel.pushButtons[Page::SiteStructurePanelPage])
-		{
-			const bool isSiteStructurePanelButtonVisible = m_navigationPanel.siteStructurePanelWidget->isVisible();
-			m_navigationPanel.siteStructurePanelWidget->setVisible(!isSiteStructurePanelButtonVisible);
+		const bool isSiteStructurePanelButtonVisible = m_navigationPanel.siteStructurePanelWidget->isVisible();
+		m_navigationPanel.siteStructurePanelWidget->setVisible(!isSiteStructurePanelButtonVisible);
 
-			return;
-		}
+		return;
 	}
 
-	if (prevButton)
+	if (m_prevButton)
 	{
-		prevButton->setProperty("selected", false);
-		prevButton->repaint();
-		prevButton->style()->unpolish(prevButton);
-		prevButton->style()->polish(prevButton);
+		m_prevButton->setProperty("selected", false);
+		m_prevButton->repaint();
+		m_prevButton->style()->unpolish(m_prevButton);
+		m_prevButton->style()->polish(m_prevButton);
 	}
 
-	button = button;
 	button->setProperty("selected", true);
 	button->style()->unpolish(button);
 	button->style()->polish(button);
 
-	prevButton = button;
+	m_prevButton = button;
 
 	auto pushButtonsIterator = std::find_if(
 		std::begin(m_navigationPanel.pushButtons),
@@ -115,6 +108,7 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 	m_navigationPanel.pushButtons[Page::AllPagesPage]->setProperty("subButton", true);
 	m_navigationPanel.pushButtons[Page::AllResourcesPage]->setProperty("subButton", true);
 	m_navigationPanel.pushButtons[Page::SeoAnalysisPage]->setProperty("selected", true);
+	m_prevButton = m_navigationPanel.pushButtons[Page::SeoAnalysisPage];
 
 
 	VERIFY(connect(m_navigationPanel.pushButtons[Page::SiteStructurePanelPage], &QPushButton::clicked,
@@ -139,6 +133,7 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::SeoAnalysisPage]);
 	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::AllPagesPage]);
 	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::AllResourcesPage]);
+	m_navigationPanel.verticalSubbuttonsLayout->setSpacing(0);
 	m_navigationPanel.siteStructurePanelWidget->setLayout(m_navigationPanel.verticalSubbuttonsLayout);
 
 
@@ -146,6 +141,7 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.siteStructurePanelWidget);
 	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::DomainMetricsPage]);
 	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::ReportsPage]);
+	m_navigationPanel.verticalMainLayout->setSpacing(0);
 
 	m_navigationPanel.verticalMainLayout->addItem(
 		new QSpacerItem(
@@ -165,7 +161,7 @@ void DataPagesWidget::initializeStackedWidget()
 	m_stackedWidget = new QStackedWidget(this);
 
 	ErrorsFilterWidget* errorsFilterWidget = new ErrorsFilterWidget(m_stackedWidget);
-	GridView* crawlingGridView = new GridView(m_stackedWidget);
+	TableView* crawlingGridView = new TableView(m_stackedWidget);
 
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);

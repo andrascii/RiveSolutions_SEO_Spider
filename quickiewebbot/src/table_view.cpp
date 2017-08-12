@@ -1,15 +1,15 @@
-#include "grid_view.h"
-#include "igrid_model.h"
-#include "igrid_view_model.h"
-#include "igrid_view_resize_policy.h"
-#include "grid_view_selection_model.h"
-#include "grid_view_delegate.h"
+#include "table_view.h"
+#include "itable_model.h"
+#include "iview_model.h"
+#include "iresize_policy.h"
+#include "selection_model.h"
+#include "delegate.h"
 #include "context_menu_data_collection_row.h"
 
 namespace QuickieWebBot
 {
 
-GridView::GridView(QWidget * parent)
+TableView::TableView(QWidget * parent)
 	: QTableView(parent)
 	, m_model(nullptr)
 	, m_viewModel(nullptr)
@@ -22,22 +22,22 @@ GridView::GridView(QWidget * parent)
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-	setItemDelegate(new GridViewDelegate(this));
-	setSelectionModel(new GridViewSelectionModel(this));
+	setItemDelegate(new Delegate(this));
+	setSelectionModel(new SelectionModel(this));
 }
 
-void GridView::setModel(QAbstractItemModel* model)
+void TableView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	assert(dynamic_cast<IGridModel*>(model));
+	assert(dynamic_cast<ITableModel*>(model));
 
-	m_model = static_cast<IGridModel*>(model);
+	m_model = static_cast<ITableModel*>(model);
 	
 	initSpan();
 }
 
-void GridView::mouseMoveEvent(QMouseEvent* event)
+void TableView::mouseMoveEvent(QMouseEvent* event)
 {
 	QModelIndex index = indexAt(event->pos());
 
@@ -52,7 +52,7 @@ void GridView::mouseMoveEvent(QMouseEvent* event)
 	QTableView::mouseMoveEvent(event);
 }
 
-void GridView::leaveEvent(QEvent* event)
+void TableView::leaveEvent(QEvent* event)
 {
 	if (m_hoveredIndex.isValid())
 	{
@@ -62,7 +62,7 @@ void GridView::leaveEvent(QEvent* event)
 	QTableView::leaveEvent(event);
 }
 
-void GridView::contextMenuEvent(QContextMenuEvent* event)
+void TableView::contextMenuEvent(QContextMenuEvent* event)
 {
 	if (m_contextMenu)
 	{
@@ -70,7 +70,7 @@ void GridView::contextMenuEvent(QContextMenuEvent* event)
 	}
 }
 
-void GridView::resizeEvent(QResizeEvent* event)
+void TableView::resizeEvent(QResizeEvent* event)
 {
 	if (m_viewModel && m_viewModel->resizePolicy())
 	{
@@ -80,33 +80,33 @@ void GridView::resizeEvent(QResizeEvent* event)
 	QTableView::resizeEvent(event);
 }
 
-QModelIndex GridView::hoveredIndex() const noexcept
+QModelIndex TableView::hoveredIndex() const noexcept
 {
 	return m_hoveredIndex;
 }
 
-void GridView::setContextMenu(ContextMenuDataCollectionRow* menu) noexcept
+void TableView::setContextMenu(ContextMenuDataCollectionRow* menu) noexcept
 {
 	m_contextMenu = menu;
 }
 
-void GridView::setViewModel(IGridViewModel* modelView) noexcept
+void TableView::setViewModel(IViewModel* modelView) noexcept
 {
 	m_viewModel = modelView;
 
 	if (m_viewModel->resizePolicy())
 	{
-		IGridViewResizePolicy* prevPolicy = m_viewModel ? m_viewModel->resizePolicy() : nullptr;
+		IResizePolicy* prevPolicy = m_viewModel ? m_viewModel->resizePolicy() : nullptr;
 		m_viewModel->resizePolicy()->init(this, prevPolicy);
 	}
 }
 
-const IGridViewModel* GridView::viewModel() const noexcept
+const IViewModel* TableView::viewModel() const noexcept
 {
 	return m_viewModel;
 }
 
-void GridView::initSpan()
+void TableView::initSpan()
 {
 	int rows = model()->rowCount();
 	int columns = model()->columnCount();
@@ -123,7 +123,7 @@ void GridView::initSpan()
 	}
 }
 
-void GridView::selectRow(const QPoint& point)
+void TableView::selectRow(const QPoint& point)
 {
 	QModelIndex rowIndex = indexAt(point);
 	QItemSelectionModel* modelSelection = selectionModel();
@@ -145,7 +145,7 @@ void GridView::selectRow(const QPoint& point)
 	modelSelection->select(rowIndex, flags);
 }
 
-void GridView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void TableView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
 	QTableView::selectionChanged(selected, deselected);
 

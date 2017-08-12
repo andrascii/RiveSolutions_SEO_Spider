@@ -47,6 +47,7 @@ private:
 	std::map<Page, int> m_pageIndexes;
 
 	NavigationPanelControls m_navigationPanel;
+	QPushButton* m_prevButton;
 };
 
 }

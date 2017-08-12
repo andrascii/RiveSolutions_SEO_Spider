@@ -3,25 +3,25 @@
 namespace QuickieWebBot
 {
 
-class IGridModel;
+class ITableModel;
 class IGridDataAccessor;
-class IGridViewResizePolicy;
+class IResizePolicy;
 class ContextMenuDataCollectionRow;
 class IRenderer;
-class IGridViewModel;
+class IViewModel;
 
-class GridView : public QTableView
+class TableView : public QTableView
 {
 	Q_OBJECT
 
 public:
-	explicit GridView(QWidget* parent = nullptr);
+	explicit TableView(QWidget* parent = nullptr);
 
 	virtual void setModel(QAbstractItemModel* model) override;
 
 	void setContextMenu(ContextMenuDataCollectionRow* menu) noexcept;
-	void setViewModel(IGridViewModel* modelView) noexcept;
-	const IGridViewModel* viewModel() const noexcept;
+	void setViewModel(IViewModel* modelView) noexcept;
+	const IViewModel* viewModel() const noexcept;
 	QModelIndex hoveredIndex() const noexcept;
 
 	Q_SIGNAL void selectionWasChanged(const QItemSelection& selected, const QItemSelection& deselected);
@@ -39,9 +39,9 @@ private:
 	void selectRow(const QPoint& point);
 
 private:
-	IGridModel* m_model;
+	ITableModel* m_model;
 
-	IGridViewModel* m_viewModel;
+	IViewModel* m_viewModel;
 
 	QModelIndex m_hoveredIndex;
 

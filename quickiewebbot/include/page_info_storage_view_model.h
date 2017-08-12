@@ -1,6 +1,6 @@
 #pragma once
 
-#include "igrid_view_model.h"
+#include "iview_model.h"
 
 namespace QuickieWebBot
 {
@@ -13,7 +13,7 @@ class BackgroundRenderer;
 
 class PageInfoStorageViewModel 
 	: public QObject
-	, public IGridViewModel
+	, public IViewModel
 {
 	Q_OBJECT
 
@@ -22,11 +22,11 @@ public:
 
 	virtual void resetRenderersCache() const noexcept override;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
-	virtual IGridViewResizePolicy* resizePolicy() const noexcept override;
+	virtual IResizePolicy* resizePolicy() const noexcept override;
 
 private:
 	PageInfoStorageModel* m_model;
-	std::unique_ptr<GridViewResizePolicy> m_resizePolicy;
+	std::unique_ptr<ResizePolicy> m_resizePolicy;
 
 	std::unique_ptr<TextRenderer> m_textRenderer;
 	std::unique_ptr<UrlRenderer> m_urlRenderer;

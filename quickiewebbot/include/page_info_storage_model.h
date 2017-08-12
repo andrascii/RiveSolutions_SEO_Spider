@@ -1,14 +1,14 @@
 #pragma once
 
-#include "igrid_model.h"
+#include "itable_model.h"
 #include "page_info.h"
 #include "data_collection.h"
 
 namespace QuickieWebBot
 {
 
-class IGridViewResizePolicy;
-class GridViewResizePolicy;
+class IResizePolicy;
+class ResizePolicy;
 class StorageAdaptor;
 
 //
@@ -17,7 +17,7 @@ class StorageAdaptor;
 //! Using this model you can customize PageInfo columns set.
 //
 
-class PageInfoStorageModel : public IGridModel
+class PageInfoStorageModel : public ITableModel
 {
 	Q_OBJECT
 

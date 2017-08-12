@@ -1,5 +1,5 @@
 #include "page_info_storage_model.h"
-#include "grid_view_resize_policy.h"
+#include "resize_policy.h"
 #include "storage_adaptor.h"
 #include "quickie_web_bot_helpers.h"
 
@@ -7,7 +7,7 @@ namespace QuickieWebBot
 {
 
 PageInfoStorageModel::PageInfoStorageModel(QObject* parent)
-	: IGridModel(parent)
+	: ITableModel(parent)
 	, m_storageAdaptor(nullptr)
 {
 }
@@ -96,32 +96,32 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 			return font;
 		}
 
-		case IGridModel::SelectionBackgroundColorRole:
+		case ITableModel::SelectionBackgroundColorRole:
 		{
 			return QColor(97, 160, 50, 200);
 		}
 
-		case IGridModel::MarginTop:
+		case ITableModel::MarginTop:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(2);
 		}
 
-		case IGridModel::MarginBottom:
+		case ITableModel::MarginBottom:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(2);
 		}
 
-		case IGridModel::MarginLeft:
+		case ITableModel::MarginLeft:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(4);
 		}
 
-		case IGridModel::MarginRight:
+		case ITableModel::MarginRight:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(4);
 		}
 
-		case IGridModel::WhatsThisRole:
+		case ITableModel::WhatsThisRole:
 		{
 			return storageAdaptor()->itemTypeAt(index);
 		}

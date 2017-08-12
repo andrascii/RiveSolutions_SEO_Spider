@@ -2,14 +2,14 @@
 #include "model_controller.h"
 #include "data_collection.h"
 #include "quickie_web_bot_helpers.h"
-#include "grid_view_full_size_resize_policy.h"
+#include "full_size_resize_policy.h"
 
 namespace QuickieWebBot
 {
 
 SummaryModel::SummaryModel(QObject* parent)
-	: IGridModel(parent)
-	, m_resizeStrategy(std::make_unique<GridViewFullSizeResizePolicy>(std::vector<int>{ 60, 40 }))
+	: ITableModel(parent)
+	, m_resizeStrategy(std::make_unique<FullSizeResizePolicy>(std::vector<int>{ 60, 40 }))
 {
 	m_allGroups =
 	{
@@ -183,32 +183,32 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 			return QColor(Qt::transparent);
 		}
 
-		case IGridModel::SelectionBackgroundColorRole:
+		case ITableModel::SelectionBackgroundColorRole:
 		{
 			return QColor(97, 160, 50, 150);
 		}
 
-		case IGridModel::MarginTop:
+		case ITableModel::MarginTop:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(2);
 		}
 
-		case IGridModel::MarginBottom:
+		case ITableModel::MarginBottom:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(2);
 		}
 
-		case IGridModel::MarginLeft:
+		case ITableModel::MarginLeft:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(4);
 		}
 
-		case IGridModel::MarginRight:
+		case ITableModel::MarginRight:
 		{
 			return QuickieWebBotHelpers::pointsToPixels(4);
 		}
 
-		case IGridModel::WhatsThisRole:
+		case ITableModel::WhatsThisRole:
 		{
 			if (isGroupHeaderRow(index.row()))
 			{

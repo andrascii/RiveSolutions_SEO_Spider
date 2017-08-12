@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-class IGridViewModel;
+class IViewModel;
 
 class UrlRenderer : public TextRenderer
 {

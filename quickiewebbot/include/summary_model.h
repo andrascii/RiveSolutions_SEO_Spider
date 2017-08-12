@@ -1,14 +1,14 @@
 #pragma once
 
-#include "igrid_model.h"
+#include "itable_model.h"
 
 namespace QuickieWebBot
 {
 
-class IGridViewResizePolicy;
-class GridViewFullSizeResizePolicy;
+class IResizePolicy;
+class FullSizeResizePolicy;
 	
-class SummaryModel : public IGridModel
+class SummaryModel : public ITableModel
 {
 	Q_OBJECT
 
@@ -59,7 +59,7 @@ private:
 	QMap<int, SummaryItem*> m_itemRows;
 	QMap<int, SummaryItem*> m_itemTypes;
 
-	std::unique_ptr<GridViewFullSizeResizePolicy> m_resizeStrategy;
+	std::unique_ptr<FullSizeResizePolicy> m_resizeStrategy;
 };
 
 }

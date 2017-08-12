@@ -149,21 +149,21 @@ QStackedWidget QWidget#errorsFilterPage
 	background-color: #e7e7e7;
 }
 
-/*/////////////////////////////// GridView ///////////////////////////////*/
+/*/////////////////////////////// TableView ///////////////////////////////*/
 
-QuickieWebBot--GridView
+QuickieWebBot--TableView
 {
 	font-size: 9pt;
 	background: white;
 }
 
-QuickieWebBot--GridView#summaryGridView
+QuickieWebBot--TableView#summaryGridView
 {
 	min-width: 28em;
 	max-width: 28em;
 }
 
-QuickieWebBot--GridView#itemGridView
+QuickieWebBot--TableView#itemGridView
 {
 	max-height: 25em;
 }

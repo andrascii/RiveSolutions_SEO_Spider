@@ -3,7 +3,7 @@
 namespace QuickieWebBot
 {
 
-class GridView;
+class TableView;
 
 class ErrorsFilterWidget : public QWidget
 {
@@ -21,8 +21,8 @@ private:
 	void initDetailsView();
 
 private:
-	GridView* m_summaryGridView;
-	GridView* m_summaryDetailsGridView;
+	TableView* m_summaryTableView;
+	TableView* m_summaryDetailsTableView;
 };
 
 }

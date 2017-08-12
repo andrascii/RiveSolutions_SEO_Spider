@@ -1,6 +1,6 @@
 #include "errors_filter_widget.h"
 #include "application.h"
-#include "grid_view.h"
+#include "table_view.h"
 #include "summary_model.h"
 #include "summary_view_model.h"
 #include "page_info_storage_model.h"
@@ -16,29 +16,31 @@ namespace QuickieWebBot
 
 ErrorsFilterWidget::ErrorsFilterWidget(QWidget* parent)
 	: QWidget(parent)
-	, m_summaryGridView(nullptr)
-	, m_summaryDetailsGridView(nullptr)
+	, m_summaryTableView(nullptr)
+	, m_summaryDetailsTableView(nullptr)
 {
 	init();
 
-	VERIFY(connect(m_summaryGridView, SIGNAL(selectionWasChanged(const QItemSelection&, const QItemSelection&)),
+	VERIFY(connect(m_summaryTableView, SIGNAL(selectionWasChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
 void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-	assert(selected.indexes().size() > 1);
+	if (!selected.indexes().size())
+	{
+		return;
+	}
+
 	QModelIndex index = selected.indexes()[0];
 
 	StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
 
 	DataCollection::StorageType storageType = 
-		static_cast<DataCollection::StorageType>(index.data(IGridModel::WhatsThisRole).toInt());
+		static_cast<DataCollection::StorageType>(index.data(ITableModel::WhatsThisRole).toInt());
 
-	PageInfoStorageModel* storageModel = dynamic_cast<PageInfoStorageModel*>(m_summaryDetailsGridView->model());
+	PageInfoStorageModel* storageModel = dynamic_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model());
 	storageModel->setStorageAdaptor(storageAdaptorFactory->create(storageType));
-
-	m_summaryDetailsGridView->viewModel()->resetRenderersCache();
 }
 
 void ErrorsFilterWidget::init()
@@ -53,11 +55,11 @@ void ErrorsFilterWidget::init()
 	splitter->setOrientation(Qt::Horizontal);
 	splitter->setOpaqueResize(false);
 
-	m_summaryGridView->setParent(splitter);
-	m_summaryDetailsGridView->setParent(splitter);
+	m_summaryTableView->setParent(splitter);
+	m_summaryDetailsTableView->setParent(splitter);
 
-	splitter->addWidget(m_summaryGridView);
-	splitter->addWidget(m_summaryDetailsGridView);
+	splitter->addWidget(m_summaryTableView);
+	splitter->addWidget(m_summaryDetailsTableView);
 	verticalLayout->addWidget(splitter);
 
 	setLayout(verticalLayout);
@@ -65,23 +67,23 @@ void ErrorsFilterWidget::init()
 
 void ErrorsFilterWidget::initSummaryView()
 {
-	m_summaryGridView = new GridView;
-	m_summaryGridView->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_summaryGridView->setShowGrid(false);
-	m_summaryGridView->setGridStyle(Qt::NoPen);
-	m_summaryGridView->horizontalHeader()->setVisible(false);
-	m_summaryGridView->verticalHeader()->setVisible(false);
-	m_summaryGridView->resize(QuickieWebBotHelpers::pointsToPixels(20), m_summaryGridView->height());
+	m_summaryTableView = new TableView;
+	m_summaryTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+	m_summaryTableView->setShowGrid(false);
+	m_summaryTableView->setGridStyle(Qt::NoPen);
+	m_summaryTableView->horizontalHeader()->setVisible(false);
+	m_summaryTableView->verticalHeader()->setVisible(false);
+	m_summaryTableView->resize(QuickieWebBotHelpers::pointsToPixels(20), m_summaryTableView->height());
 
 	SummaryModel* summaryModel = new SummaryModel(this);
 	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);
-	m_summaryGridView->setModel(summaryModel);
-	m_summaryGridView->setViewModel(summaryViewModel);
+	m_summaryTableView->setModel(summaryModel);
+	m_summaryTableView->setViewModel(summaryViewModel);
 }
 
 void ErrorsFilterWidget::initDetailsView()
 {
-	m_summaryDetailsGridView = new GridView;
+	m_summaryDetailsTableView = new TableView;
 
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* viewModel = new PageInfoStorageViewModel(model, this);
@@ -89,8 +91,8 @@ void ErrorsFilterWidget::initDetailsView()
 	StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
 	model->setStorageAdaptor(storageAdaptorFactory->create(DataCollection::CrawledUrlStorageType));
 
-	m_summaryDetailsGridView->setModel(model);
-	m_summaryDetailsGridView->setViewModel(viewModel);
+	m_summaryDetailsTableView->setModel(model);
+	m_summaryDetailsTableView->setViewModel(viewModel);
 }
 
 }

@@ -1,11 +1,11 @@
 #include "context_menu_data_collection_row.h"
-#include "igrid_model.h"
-#include "grid_view.h"
+#include "itable_model.h"
+#include "table_view.h"
 
 namespace QuickieWebBot
 {
 
-ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const GridView* associatedGridView, QWidget* parent)
+ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const TableView* associatedGridView, QWidget* parent)
 	: QMenu(parent)
 	, m_associatedGridView(associatedGridView)
 {
@@ -73,7 +73,7 @@ void ContextMenuDataCollectionRow::openUrlAction()
 {
 	for (QModelIndex index : selectedIndexes())
 	{
-		if (index.data(IGridModel::WhatsThisRole) != PageInfo::UrlItemType)
+		if (index.data(ITableModel::WhatsThisRole) != PageInfo::UrlItemType)
 		{
 			continue;
 		}
@@ -103,7 +103,7 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl()
 {
 	foreach(QModelIndex index, selectedIndexes())
 	{
-		if (index.data(IGridModel::WhatsThisRole) != PageInfo::UrlItemType)
+		if (index.data(ITableModel::WhatsThisRole) != PageInfo::UrlItemType)
 		{
 			continue;
 		}

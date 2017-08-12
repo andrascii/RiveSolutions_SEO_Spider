@@ -1,6 +1,6 @@
 #include "page_info.h"
-#include "igrid_model.h"
-#include "grid_view_resize_policy.h"
+#include "itable_model.h"
+#include "resize_policy.h"
 #include "url_renderer.h"
 #include "text_renderer.h"
 #include "background_renderer.h"
@@ -16,9 +16,9 @@ namespace QuickieWebBot
 PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent)
 	: QObject(parent)
 	, m_model(model)
-	, m_resizePolicy(std::make_unique<GridViewResizePolicy>())
-	, m_textRenderer(std::make_unique<TextRenderer>(std::pow(m_model->columnCount(QModelIndex()), 2)))
-	, m_urlRenderer(std::make_unique<UrlRenderer>(std::pow(m_model->columnCount(QModelIndex()), 2)))
+	, m_resizePolicy(std::make_unique<ResizePolicy>())
+	, m_textRenderer(std::make_unique<TextRenderer>(static_cast<int>(std::pow(m_model->columnCount(QModelIndex()), 2))))
+	, m_urlRenderer(std::make_unique<UrlRenderer>(static_cast<int>(std::pow(m_model->columnCount(QModelIndex()), 2))))
 	, m_selectionBackgroundRenderer(std::make_unique<SelectionBackgroundRenderer>())
 	, m_backgroundRenderer(std::make_unique<BackgroundRenderer>())
 {
@@ -72,7 +72,7 @@ void PageInfoStorageViewModel::resetRenderersCache() const noexcept
 QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
 	IRenderer* renderer =
-		index.data(IGridModel::WhatsThisRole).toInt() == PageInfo::UrlItemType ? 
+		index.data(ITableModel::WhatsThisRole).toInt() == PageInfo::UrlItemType ? 
 		m_urlRenderer.get() : 
 		m_textRenderer.get();
 
@@ -82,7 +82,7 @@ QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) 
 		<< renderer;
 }
 
-IGridViewResizePolicy* PageInfoStorageViewModel::resizePolicy() const noexcept
+IResizePolicy* PageInfoStorageViewModel::resizePolicy() const noexcept
 {
 	return m_resizePolicy.get();
 }
