@@ -8,6 +8,7 @@
 #include "page_info_storage_model.h"
 #include "page_info_storage_view_model.h"
 #include "quickie_web_bot_helpers.h"
+#include "table_view.h"
 
 
 namespace QuickieWebBot
@@ -17,15 +18,11 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	: QObject(parent)
 	, m_model(model)
 	, m_resizePolicy(std::make_unique<ResizePolicy>())
-	, m_textRenderer(std::make_unique<TextRenderer>(static_cast<int>(std::pow(m_model->columnCount(QModelIndex()), 2))))
-	, m_urlRenderer(std::make_unique<UrlRenderer>(static_cast<int>(std::pow(m_model->columnCount(QModelIndex()), 2))))
+	, m_textRenderer(std::make_unique<TextRenderer>(static_cast<int>(std::pow(m_model->columnCount(), 2))))
+	, m_urlRenderer(std::make_unique<UrlRenderer>(static_cast<int>(std::pow(m_model->columnCount(), 2))))
 	, m_selectionBackgroundRenderer(std::make_unique<SelectionBackgroundRenderer>())
 	, m_backgroundRenderer(std::make_unique<BackgroundRenderer>())
 {
-	//
-	// columnPrefferedSize should not be in the PageInfo class
-	//
-
 	std::map<int, int> sizes =
 	{
 		{ PageInfo::UrlItemType, PageInfo::columnPrefferedSize(PageInfo::UrlItemType) },

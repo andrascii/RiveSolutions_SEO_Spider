@@ -58,8 +58,6 @@ private:
 	QMap<int, SummaryGroup*> m_groups;
 	QMap<int, SummaryItem*> m_itemRows;
 	QMap<int, SummaryItem*> m_itemTypes;
-
-	std::unique_ptr<FullSizeResizePolicy> m_resizeStrategy;
 };
 
 }

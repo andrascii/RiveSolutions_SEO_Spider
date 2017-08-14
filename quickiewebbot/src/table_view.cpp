@@ -31,7 +31,6 @@ void TableView::setModel(QAbstractItemModel* model)
 	QTableView::setModel(model);
 
 	assert(dynamic_cast<ITableModel*>(model));
-
 	m_model = static_cast<ITableModel*>(model);
 	
 	initSpan();
@@ -52,6 +51,16 @@ void TableView::mouseMoveEvent(QMouseEvent* event)
 	QTableView::mouseMoveEvent(event);
 }
 
+void TableView::resizeEvent(QResizeEvent* event)
+{
+	if (m_viewModel && m_viewModel->resizePolicy())
+	{
+		m_viewModel->resizePolicy()->resize(this);
+	}
+
+	QTableView::resizeEvent(event);
+}
+
 void TableView::leaveEvent(QEvent* event)
 {
 	if (m_hoveredIndex.isValid())
@@ -70,16 +79,6 @@ void TableView::contextMenuEvent(QContextMenuEvent* event)
 	}
 }
 
-void TableView::resizeEvent(QResizeEvent* event)
-{
-	if (m_viewModel && m_viewModel->resizePolicy())
-	{
-		m_viewModel->resizePolicy()->resize(this);
-	}
-
-	QTableView::resizeEvent(event);
-}
-
 QModelIndex TableView::hoveredIndex() const noexcept
 {
 	return m_hoveredIndex;
@@ -94,9 +93,9 @@ void TableView::setViewModel(IViewModel* modelView) noexcept
 {
 	m_viewModel = modelView;
 
-	if (m_viewModel->resizePolicy())
+	if (m_viewModel && m_viewModel->resizePolicy())
 	{
-		IResizePolicy* prevPolicy = m_viewModel ? m_viewModel->resizePolicy() : nullptr;
+		IResizePolicy* prevPolicy = m_viewModel->resizePolicy();
 		m_viewModel->resizePolicy()->init(this, prevPolicy);
 	}
 }

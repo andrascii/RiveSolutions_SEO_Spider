@@ -39,8 +39,12 @@ void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& sel
 	DataCollection::StorageType storageType = 
 		static_cast<DataCollection::StorageType>(index.data(ITableModel::WhatsThisRole).toInt());
 
-	PageInfoStorageModel* storageModel = dynamic_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model());
+	assert(dynamic_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model()));
+	PageInfoStorageModel* storageModel = static_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model());
+
 	storageModel->setStorageAdaptor(storageAdaptorFactory->create(storageType));
+
+	m_summaryDetailsTableView->viewModel()->resetRenderersCache();
 }
 
 void ErrorsFilterWidget::init()
@@ -73,7 +77,7 @@ void ErrorsFilterWidget::initSummaryView()
 	m_summaryTableView->setGridStyle(Qt::NoPen);
 	m_summaryTableView->horizontalHeader()->setVisible(false);
 	m_summaryTableView->verticalHeader()->setVisible(false);
-	m_summaryTableView->resize(QuickieWebBotHelpers::pointsToPixels(20), m_summaryTableView->height());
+	m_summaryTableView->resize(QuickieWebBotHelpers::pointsToPixels(100), m_summaryTableView->height());
 
 	SummaryModel* summaryModel = new SummaryModel(this);
 	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);

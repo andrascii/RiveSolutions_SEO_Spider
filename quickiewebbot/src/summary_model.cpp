@@ -9,7 +9,6 @@ namespace QuickieWebBot
 
 SummaryModel::SummaryModel(QObject* parent)
 	: ITableModel(parent)
-	, m_resizeStrategy(std::make_unique<FullSizeResizePolicy>(std::vector<int>{ 60, 40 }))
 {
 	m_allGroups =
 	{

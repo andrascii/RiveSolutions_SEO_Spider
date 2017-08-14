@@ -11,7 +11,7 @@ namespace QuickieWebBot
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: m_model(model)
-	, m_resizePolicy(std::make_unique<FullSizeResizePolicy>(std::vector<int>{ 60, 40 }))
+	, m_resizePolicy(std::make_unique<FullSizeResizePolicy>(std::vector<int>{ 85, 15 }))
 {
 }
 
