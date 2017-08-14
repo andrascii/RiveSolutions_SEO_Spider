@@ -24,6 +24,8 @@ public:
 	virtual QSize span(const QModelIndex& index) const override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
 
+	virtual IResizePolicy* resizePolicy() const noexcept override;
+
 private:
 	enum ItemStatus
 	{
@@ -53,6 +55,8 @@ private:
 
 private:
 	static constexpr int s_summaryColumnCount = 2;
+
+	std::shared_ptr<IResizePolicy> m_resizePolicy;
 
 	QVector<SummaryGroup> m_allGroups;
 	QMap<int, SummaryGroup*> m_groups;

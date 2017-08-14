@@ -3,6 +3,8 @@
 namespace QuickieWebBot
 {
 
+class IResizePolicy;
+
 class ITableModel : public QAbstractTableModel
 {
 public:
@@ -19,6 +21,8 @@ public:
 
 	using QAbstractTableModel::QAbstractTableModel;
 	virtual ~ITableModel() = default;
+
+	virtual IResizePolicy* resizePolicy() const noexcept = 0;
 };
 
 }

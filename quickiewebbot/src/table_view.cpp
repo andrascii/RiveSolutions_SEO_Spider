@@ -32,6 +32,14 @@ void TableView::setModel(QAbstractItemModel* model)
 
 	assert(dynamic_cast<ITableModel*>(model));
 	m_model = static_cast<ITableModel*>(model);
+
+	if (m_model->resizePolicy())
+	{
+		IResizePolicy* prevPolicy = m_model->resizePolicy();
+		m_model->resizePolicy()->init(this, prevPolicy);
+
+		VERIFY(connect(m_model->resizePolicy()->qobject(), SIGNAL(columnSizeChanged()), this, SLOT(adjustColumnSize())));
+	}
 	
 	initSpan();
 }
@@ -53,9 +61,9 @@ void TableView::mouseMoveEvent(QMouseEvent* event)
 
 void TableView::resizeEvent(QResizeEvent* event)
 {
-	if (m_viewModel && m_viewModel->resizePolicy())
+	if (m_model && m_model->resizePolicy())
 	{
-		m_viewModel->resizePolicy()->resize(this);
+		m_model->resizePolicy()->resize(this);
 	}
 
 	QTableView::resizeEvent(event);
@@ -93,11 +101,11 @@ void TableView::setViewModel(IViewModel* modelView) noexcept
 {
 	m_viewModel = modelView;
 
-	if (m_viewModel && m_viewModel->resizePolicy())
-	{
-		IResizePolicy* prevPolicy = m_viewModel->resizePolicy();
-		m_viewModel->resizePolicy()->init(this, prevPolicy);
-	}
+// 	if (m_viewModel && m_viewModel->resizePolicy())
+// 	{
+// 		IResizePolicy* prevPolicy = m_viewModel->resizePolicy();
+// 		m_viewModel->resizePolicy()->init(this, prevPolicy);
+// 	}
 }
 
 const IViewModel* TableView::viewModel() const noexcept
@@ -142,6 +150,18 @@ void TableView::selectRow(const QPoint& point)
 	}
 
 	modelSelection->select(rowIndex, flags);
+}
+
+void TableView::adjustColumnSize()
+{
+	assert(dynamic_cast<ITableModel*>(model()));
+	m_model = static_cast<ITableModel*>(model());
+
+	if (m_model->resizePolicy())
+	{
+		IResizePolicy* prevPolicy = m_model->resizePolicy();
+		m_model->resizePolicy()->init(this, prevPolicy);
+	}
 }
 
 void TableView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

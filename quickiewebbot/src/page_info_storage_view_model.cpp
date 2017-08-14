@@ -1,6 +1,6 @@
 #include "page_info.h"
 #include "itable_model.h"
-#include "resize_policy.h"
+#include "default_column_resize_policy.h"
 #include "url_renderer.h"
 #include "text_renderer.h"
 #include "background_renderer.h"
@@ -17,7 +17,7 @@ namespace QuickieWebBot
 PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent)
 	: QObject(parent)
 	, m_model(model)
-	, m_resizePolicy(std::make_unique<ResizePolicy>())
+	, m_resizePolicy(std::make_unique<DefaultColumnResizePolicy>())
 	, m_textRenderer(std::make_unique<TextRenderer>(static_cast<int>(std::pow(m_model->columnCount(), 2))))
 	, m_urlRenderer(std::make_unique<UrlRenderer>(static_cast<int>(std::pow(m_model->columnCount(), 2))))
 	, m_selectionBackgroundRenderer(std::make_unique<SelectionBackgroundRenderer>())
@@ -77,11 +77,6 @@ QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) 
 		<< m_backgroundRenderer.get()
 		<< m_selectionBackgroundRenderer.get()
 		<< renderer;
-}
-
-IResizePolicy* PageInfoStorageViewModel::resizePolicy() const noexcept
-{
-	return m_resizePolicy.get();
 }
 
 }

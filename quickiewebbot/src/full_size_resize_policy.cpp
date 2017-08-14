@@ -35,4 +35,9 @@ int FullSizeResizePolicy::columnSize(int column, const TableView* gridView) cons
 	return columnWidth;
 }
 
+QObject* FullSizeResizePolicy::qobject() noexcept
+{
+	return this;
+}
+
 }

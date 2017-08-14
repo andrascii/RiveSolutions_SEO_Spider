@@ -9,6 +9,7 @@ namespace QuickieWebBot
 
 SummaryModel::SummaryModel(QObject* parent)
 	: ITableModel(parent)
+	, m_resizePolicy(std::make_shared<FullSizeResizePolicy>(std::vector<int>{ 85, 15 }))
 {
 	m_allGroups =
 	{
@@ -111,6 +112,11 @@ Qt::ItemFlags SummaryModel::flags(const QModelIndex& index) const
 	}
 
 	return flags;
+}
+
+IResizePolicy* SummaryModel::resizePolicy() const noexcept
+{
+	return m_resizePolicy.get();
 }
 
 QSize SummaryModel::span(const QModelIndex& index) const

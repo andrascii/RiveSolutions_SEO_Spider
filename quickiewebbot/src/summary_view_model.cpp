@@ -33,9 +33,4 @@ QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const no
 		<< &s_textRenderer;
 }
 
-IResizePolicy* SummaryViewModel::resizePolicy() const noexcept
-{
-	return m_resizePolicy.get();
-}
-
 }

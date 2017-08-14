@@ -38,6 +38,8 @@ private:
 	void initSpan();
 	void selectRow(const QPoint& point);
 
+	Q_SLOT void adjustColumnSize();
+
 private:
 	ITableModel* m_model;
 

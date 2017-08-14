@@ -8,7 +8,6 @@ namespace QuickieWebBot
 {
 
 class IResizePolicy;
-class ResizePolicy;
 class StorageAdaptor;
 
 //
@@ -39,6 +38,8 @@ public:
 
 	void setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept;
 
+	virtual IResizePolicy* resizePolicy() const noexcept override;
+
 private:
 	const StorageAdaptor* storageAdaptor() const;
 	StorageAdaptor* storageAdaptor();
@@ -49,6 +50,7 @@ private slots:
 
 private:
 	StorageAdaptor* m_storageAdaptor;
+	std::shared_ptr<IResizePolicy> m_resizePolicy;
 };
 
 }

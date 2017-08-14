@@ -16,7 +16,6 @@ class IViewModel
 public:
 	virtual void resetRenderersCache() const noexcept = 0;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
-	virtual IResizePolicy* resizePolicy() const noexcept = 0;
 };
 
 }

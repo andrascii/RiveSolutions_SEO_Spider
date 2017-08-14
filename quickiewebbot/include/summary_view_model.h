@@ -19,7 +19,6 @@ public:
 
 	virtual void resetRenderersCache() const noexcept override;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
-	virtual IResizePolicy* resizePolicy() const noexcept override;
 
 private:
 	SummaryModel* m_model;
