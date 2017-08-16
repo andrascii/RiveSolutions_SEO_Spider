@@ -39,7 +39,7 @@ private slots:
 	void copyToClipboardUrl();
 
 private:
-	const TableView* m_associatedGridView;
+	const TableView* m_associatedView;
 	QMap<int, QAction*> m_actions;
 };
 

@@ -112,10 +112,10 @@ using std::size_t;
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define INFOLOG		LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define DEBUGLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define WARNINGLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define ERRORLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define INFOLOG LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType, __FUNCTION__, __FILENAME__, __LINE__)
+#define DEBUGLOG LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType, __FUNCTION__, __FILENAME__, __LINE__)
+#define WARNLOG LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType, __FUNCTION__, __FILENAME__, __LINE__)
+#define ERRLOG LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType, __FUNCTION__, __FILENAME__, __LINE__)
 
 inline void debugBreak()
 {

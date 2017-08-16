@@ -6,17 +6,18 @@
 namespace QuickieWebBot
 {
 
-TextRenderer::TextRenderer(int maxCacheSize)
-	: m_maxCacheSize(maxCacheSize)
+TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
+	: m_viewModel(viewModel)
+	, m_cacheSize(cacheSize)
 {
 }
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	int marginTop = index.data(ITableModel::MarginTop).toInt();
-	int marginBottom = index.data(ITableModel::MarginBottom).toInt();
-	int marginLeft = index.data(ITableModel::MarginLeft).toInt();
-	int marginRight = index.data(ITableModel::MarginRight).toInt();
+	int marginTop = m_viewModel->marginTop();
+	int marginBottom = m_viewModel->marginBottom();
+	int marginLeft = m_viewModel->marginLeft();
+	int marginRight = m_viewModel->marginRight();
 
 	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = cached(index);
@@ -57,9 +58,16 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 	clearCacheIfNeeded();
 }
 
-void TextRenderer::resetCache() const
+void TextRenderer::resetCache()
 {
 	m_cache.clear();
+}
+
+void TextRenderer::setCacheSize(int cacheSize)
+{
+	m_cacheSize = cacheSize;
+
+	clearCacheIfNeeded();
 }
 
 QPixmap* TextRenderer::cached(const QModelIndex& index) const
@@ -87,7 +95,7 @@ QRect TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, 
 
 void TextRenderer::clearCacheIfNeeded() const noexcept
 {
-	if (m_cache.size() > m_maxCacheSize)
+	if (m_cache.size() > m_cacheSize)
 	{
 		m_cache.clear();
 	}

@@ -64,7 +64,7 @@ void PageInfoProcessor::process()
 			// or combine several approaches ???
 			if (sizeKB > 512)
 			{
-				WARNINGLOG << "Page size is greater than 512 KB, "
+				WARNLOG << "Page size is greater than 512 KB, "
 					<< "size: " << sizeKB << " KB, "
 					<< "URL: " << reply.url.toString() << ", "
 					<< "Content-Type: " << contentType;

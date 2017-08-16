@@ -4,7 +4,7 @@
 #include "iresize_policy.h"
 #include "selection_model.h"
 #include "delegate.h"
-#include "context_menu_data_collection_row.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -30,8 +30,7 @@ void TableView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	assert(dynamic_cast<ITableModel*>(model));
-	m_model = static_cast<ITableModel*>(model);
+	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<ITableModel*>(model);
 
 	if (m_model->resizePolicy())
 	{
@@ -92,7 +91,7 @@ QModelIndex TableView::hoveredIndex() const noexcept
 	return m_hoveredIndex;
 }
 
-void TableView::setContextMenu(ContextMenuDataCollectionRow* menu) noexcept
+void TableView::setContextMenu(QMenu* menu) noexcept
 {
 	m_contextMenu = menu;
 }
@@ -100,12 +99,6 @@ void TableView::setContextMenu(ContextMenuDataCollectionRow* menu) noexcept
 void TableView::setViewModel(IViewModel* modelView) noexcept
 {
 	m_viewModel = modelView;
-
-// 	if (m_viewModel && m_viewModel->resizePolicy())
-// 	{
-// 		IResizePolicy* prevPolicy = m_viewModel->resizePolicy();
-// 		m_viewModel->resizePolicy()->init(this, prevPolicy);
-// 	}
 }
 
 const IViewModel* TableView::viewModel() const noexcept
@@ -154,8 +147,7 @@ void TableView::selectRow(const QPoint& point)
 
 void TableView::adjustColumnSize()
 {
-	assert(dynamic_cast<ITableModel*>(model()));
-	m_model = static_cast<ITableModel*>(model());
+	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<ITableModel*>(model());
 
 	if (m_model->resizePolicy())
 	{

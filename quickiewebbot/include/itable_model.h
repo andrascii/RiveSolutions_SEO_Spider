@@ -10,19 +10,17 @@ class ITableModel : public QAbstractTableModel
 public:
 	enum CustomRoles
 	{
-		WhatsThisRole = Qt::UserRole,
-		SelectionBackgroundColorRole,
-		HoveredBackgroundColorRole,
-		MarginTop,
-		MarginBottom,
-		MarginLeft,
-		MarginRight
+		SelectionBackgroundColorRole = Qt::UserRole,
+		HoveredBackgroundColorRole
 	};
 
 	using QAbstractTableModel::QAbstractTableModel;
 	virtual ~ITableModel() = default;
 
 	virtual IResizePolicy* resizePolicy() const noexcept = 0;
+
+	// signals
+	virtual void internalDataChanged() = 0;
 };
 
 }

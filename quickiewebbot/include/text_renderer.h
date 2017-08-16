@@ -10,10 +10,11 @@ class IViewModel;
 class TextRenderer : public IRenderer
 {
 public:
-	explicit TextRenderer(int maxCacheSize = 0);
+	explicit TextRenderer(const IViewModel* viewModel, int cacheSize = 0);
 
 	virtual void render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-	virtual void resetCache() const override;
+	virtual void resetCache() override;
+	virtual void setCacheSize(int cacheSize) override;
 
 protected:
 	virtual QRect paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const;
@@ -22,8 +23,9 @@ protected:
 	void clearCacheIfNeeded() const noexcept;
 
 private:
+	const IViewModel* m_viewModel;
 	mutable std::map<QModelIndex, QPixmap> m_cache;
-	int m_maxCacheSize;
+	int m_cacheSize;
 };
 
 }

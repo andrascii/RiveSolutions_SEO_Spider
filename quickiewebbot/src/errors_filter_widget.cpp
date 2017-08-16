@@ -33,11 +33,10 @@ void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& sel
 	}
 
 	QModelIndex index = selected.indexes()[0];
+	const SummaryModel* summaryModel = QuickieWebBotHelpers::safe_runtime_static_cast<const SummaryModel*>(index.model());
 
 	StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
-
-	DataCollection::StorageType storageType = 
-		static_cast<DataCollection::StorageType>(index.data(ITableModel::WhatsThisRole).toInt());
+	DataCollection::StorageType storageType = summaryModel->itemType(index);
 
 	assert(dynamic_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model()));
 	PageInfoStorageModel* storageModel = static_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model());

@@ -19,7 +19,7 @@ void Delegate::paint(QPainter* painter, const QStyleOptionViewItem& option, cons
 {
 	if (!m_view->viewModel())
 	{
-		ERRORLOG << "For this view did not installed ViewModel!";
+		ERRLOG << "For this view did not installed ViewModel!";
 		return;
 	}
 

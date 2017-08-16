@@ -9,7 +9,7 @@ void HtmlPageHParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) noexcept
 	GumboNode* body = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_BODY);
 	if (body == nullptr)
 	{
-		WARNINGLOG << "Tag body is not found: " << pageInfo->itemValue(PageInfo::UrlItemType).toUrl().toString();
+		WARNLOG << "Tag body is not found: " << pageInfo->itemValue(PageInfo::UrlItemType).toUrl().toString();
 		return;
 	}
 

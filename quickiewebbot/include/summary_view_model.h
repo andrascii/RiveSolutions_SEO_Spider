@@ -6,7 +6,7 @@ namespace QuickieWebBot
 {
 
 class SummaryModel;
-class FullSizeResizePolicy;
+class ViewportPercentResizePolicy;
 
 class SummaryViewModel
 	: public QObject
@@ -17,13 +17,18 @@ class SummaryViewModel
 public:
 	SummaryViewModel(SummaryModel* model, QObject* parent = nullptr);
 
+	virtual int marginTop() const noexcept override;
+	virtual int marginBottom() const noexcept override;
+	virtual int marginRight() const noexcept override;
+	virtual int marginLeft() const noexcept override;
+
 	virtual void resetRenderersCache() const noexcept override;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
 
 private:
 	SummaryModel* m_model;
 
-	std::unique_ptr<FullSizeResizePolicy> m_resizePolicy;
+	std::unique_ptr<ViewportPercentResizePolicy> m_resizePolicy;
 };
 
 }

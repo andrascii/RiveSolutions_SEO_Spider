@@ -2,14 +2,14 @@
 #include "model_controller.h"
 #include "data_collection.h"
 #include "quickie_web_bot_helpers.h"
-#include "full_size_resize_policy.h"
+#include "viewport_percent_resize_policy.h"
 
 namespace QuickieWebBot
 {
 
 SummaryModel::SummaryModel(QObject* parent)
 	: ITableModel(parent)
-	, m_resizePolicy(std::make_shared<FullSizeResizePolicy>(std::vector<int>{ 85, 15 }))
+	, m_resizePolicy(std::make_shared<ViewportPercentResizePolicy>(std::vector<int>{ 85, 15 }))
 {
 	m_allGroups =
 	{
@@ -119,6 +119,17 @@ IResizePolicy* SummaryModel::resizePolicy() const noexcept
 	return m_resizePolicy.get();
 }
 
+DataCollection::StorageType SummaryModel::itemType(const QModelIndex& index) const noexcept
+{
+	if (isGroupHeaderRow(index.row()))
+	{
+		assert(!"Todo");
+	}
+
+	auto itemIterator = m_itemRows.find(index.row());
+	return static_cast<DataCollection::StorageType>(itemIterator.value()->id);
+}
+
 QSize SummaryModel::span(const QModelIndex& index) const
 {
 	return m_groups.find(index.row()) != m_groups.end() ? QSize(2, 1) : QSize(1, 1);
@@ -191,37 +202,6 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		case ITableModel::SelectionBackgroundColorRole:
 		{
 			return QColor(97, 160, 50, 150);
-		}
-
-		case ITableModel::MarginTop:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(2);
-		}
-
-		case ITableModel::MarginBottom:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(2);
-		}
-
-		case ITableModel::MarginLeft:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(4);
-		}
-
-		case ITableModel::MarginRight:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(4);
-		}
-
-		case ITableModel::WhatsThisRole:
-		{
-			if (isGroupHeaderRow(index.row()))
-			{
-				assert(!"Todo");
-			}
-
-			auto itemIterator = m_itemRows.find(index.row());
-			return itemIterator.value()->id;
 		}
 	}
 

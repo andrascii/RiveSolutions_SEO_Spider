@@ -19,7 +19,7 @@ public:
 
 	virtual void setModel(QAbstractItemModel* model) override;
 
-	void setContextMenu(ContextMenuDataCollectionRow* menu) noexcept;
+	void setContextMenu(QMenu* menu) noexcept;
 	void setViewModel(IViewModel* modelView) noexcept;
 	const IViewModel* viewModel() const noexcept;
 	QModelIndex hoveredIndex() const noexcept;

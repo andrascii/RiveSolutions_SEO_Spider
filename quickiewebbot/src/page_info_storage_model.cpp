@@ -25,6 +25,11 @@ Qt::ItemFlags PageInfoStorageModel::flags(const QModelIndex& index) const
 
 void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept
 {
+	if (m_storageAdaptor == storageAdaptor)
+	{
+		return;
+	}
+
 	beginResetModel();
 
 	disconnect(m_storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int)));
@@ -42,6 +47,13 @@ void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noe
 	std::dynamic_pointer_cast<DefaultColumnResizePolicy>(m_resizePolicy)->setColumnsSize(columnsWidth);
 
 	endResetModel();
+
+	emit internalDataChanged();
+}
+
+PageInfo::ItemType PageInfoStorageModel::itemType(const QModelIndex& index) const noexcept
+{
+	return storageAdaptor()->itemTypeAt(index);
 }
 
 IResizePolicy* PageInfoStorageModel::resizePolicy() const noexcept
@@ -114,31 +126,6 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		case ITableModel::SelectionBackgroundColorRole:
 		{
 			return QColor(97, 160, 50, 200);
-		}
-
-		case ITableModel::MarginTop:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(2);
-		}
-
-		case ITableModel::MarginBottom:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(2);
-		}
-
-		case ITableModel::MarginLeft:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(4);
-		}
-
-		case ITableModel::MarginRight:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(4);
-		}
-
-		case ITableModel::WhatsThisRole:
-		{
-			return storageAdaptor()->itemTypeAt(index);
 		}
 	}
 

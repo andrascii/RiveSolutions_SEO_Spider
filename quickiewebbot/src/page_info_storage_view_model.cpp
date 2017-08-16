@@ -18,11 +18,13 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	: QObject(parent)
 	, m_model(model)
 	, m_resizePolicy(std::make_unique<DefaultColumnResizePolicy>())
-	, m_textRenderer(std::make_unique<TextRenderer>(static_cast<int>(std::pow(m_model->columnCount(), 2))))
-	, m_urlRenderer(std::make_unique<UrlRenderer>(static_cast<int>(std::pow(m_model->columnCount(), 2))))
+	, m_textRenderer(std::make_unique<TextRenderer>(this, static_cast<int>(std::pow((m_model->columnCount()), 2.0))))
+	, m_urlRenderer(std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0))))
 	, m_selectionBackgroundRenderer(std::make_unique<SelectionBackgroundRenderer>())
 	, m_backgroundRenderer(std::make_unique<BackgroundRenderer>())
 {
+	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
+
 	std::map<int, int> sizes =
 	{
 		{ PageInfo::UrlItemType, PageInfo::columnPrefferedSize(PageInfo::UrlItemType) },
@@ -58,6 +60,26 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	m_resizePolicy->setColumnsSize(sizes);
 }
 
+int PageInfoStorageViewModel::marginTop() const noexcept
+{
+	return QuickieWebBotHelpers::pointsToPixels(2);
+}
+
+int PageInfoStorageViewModel::marginBottom() const noexcept
+{
+	return QuickieWebBotHelpers::pointsToPixels(2);
+}
+
+int PageInfoStorageViewModel::marginRight() const noexcept
+{
+	return QuickieWebBotHelpers::pointsToPixels(4);
+}
+
+int PageInfoStorageViewModel::marginLeft() const noexcept
+{
+	return QuickieWebBotHelpers::pointsToPixels(4);
+}
+
 void PageInfoStorageViewModel::resetRenderersCache() const noexcept
 {
 	m_textRenderer->resetCache();
@@ -68,15 +90,19 @@ void PageInfoStorageViewModel::resetRenderersCache() const noexcept
 
 QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	IRenderer* renderer =
-		index.data(ITableModel::WhatsThisRole).toInt() == PageInfo::UrlItemType ? 
-		m_urlRenderer.get() : 
-		m_textRenderer.get();
+	IRenderer* renderer = 
+		m_model->itemType(index) == PageInfo::UrlItemType ? 
+		m_urlRenderer.get() : m_textRenderer.get();
 
 	return QList<IRenderer*>()
 		<< m_backgroundRenderer.get()
 		<< m_selectionBackgroundRenderer.get()
 		<< renderer;
+}
+
+void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
+{
+	m_textRenderer->setCacheSize(static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
 }
 
 }

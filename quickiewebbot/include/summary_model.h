@@ -1,12 +1,13 @@
 #pragma once
 
 #include "itable_model.h"
+#include "data_collection.h"
 
 namespace QuickieWebBot
 {
 
 class IResizePolicy;
-class FullSizeResizePolicy;
+class ViewportPercentResizePolicy;
 	
 class SummaryModel : public ITableModel
 {
@@ -25,6 +26,10 @@ public:
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
 
 	virtual IResizePolicy* resizePolicy() const noexcept override;
+	DataCollection::StorageType itemType(const QModelIndex& index) const noexcept;
+
+signals:
+	virtual void internalDataChanged() override;
 
 private:
 	enum ItemStatus

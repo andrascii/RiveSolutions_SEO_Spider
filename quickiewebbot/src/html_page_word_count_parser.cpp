@@ -10,7 +10,7 @@ void HtmlPageWordCountParser::parse(GumboOutput* output, PageInfoPtr& pageInfo) 
 	
 	if (!(body && body->type == GUMBO_NODE_ELEMENT && body->v.element.tag == GUMBO_TAG_BODY))
 	{
-		WARNINGLOG << "Cannot find body tag on passed page";
+		WARNLOG << "Cannot find body tag on passed page";
 		return;
 	}
 

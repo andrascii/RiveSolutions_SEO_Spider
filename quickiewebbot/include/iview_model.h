@@ -14,6 +14,11 @@ class IResizePolicy;
 class IViewModel
 {
 public:
+	virtual int marginTop() const noexcept = 0;
+	virtual int marginBottom() const noexcept = 0;
+	virtual int marginRight() const noexcept = 0;
+	virtual int marginLeft() const noexcept = 0;
+
 	virtual void resetRenderersCache() const noexcept = 0;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
 };

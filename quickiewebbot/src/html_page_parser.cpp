@@ -143,7 +143,7 @@ QByteArray HtmlPageParser::decodeHtmlPage(const QByteArray& htmlPage) const noex
 		}
 		else
 		{
-			ERRORLOG << "Cannot identify page encoding";
+			ERRLOG << "Cannot identify page encoding";
 		}
 	}
 	else
@@ -156,9 +156,9 @@ QByteArray HtmlPageParser::decodeHtmlPage(const QByteArray& htmlPage) const noex
 		}
 		else
 		{
-			ERRORLOG << "Cannot find QTextCodec for page encoding";
-			ERRORLOG << "content-type:" << contentType;
-			ERRORLOG << "charset:" << charset;
+			ERRLOG << "Cannot find QTextCodec for page encoding";
+			ERRLOG << "content-type:" << contentType;
+			ERRLOG << "charset:" << charset;
 		}
 	}
 
