@@ -166,9 +166,8 @@ void DataPagesWidget::initializeStackedWidget()
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);
 
-	// TODO: fix
-	//StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
-	//model->setStorageAdaptor(storageAdaptorFactory->create(WebCrawler::DataCollection::CrawledUrlStorageType));
+	StorageAdaptorFactory storageAdaptorFactory = StorageAdaptorFactory(theApp->modelController()->data());
+	model->setStorageAdaptor(storageAdaptorFactory.create(WebCrawler::DataCollection::CrawledUrlStorageType));
 
 	crawlingGridView->setModel(model);
 	crawlingGridView->setViewModel(modelView);

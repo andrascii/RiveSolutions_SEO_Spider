@@ -13,7 +13,7 @@ StorageAdaptor::StorageAdaptor(const WebCrawler::DataCollection::GuiStorageTypeP
 
 	assert(dataCollection);
 
-	VERIFY(connect(dataCollection, SIGNAL(pageInfoAdded(int, int)), this, SLOT(onStorageUpdated(int, int))));
+	VERIFY(connect(dataCollection, SIGNAL(pageRawAdded(int, int)), this, SLOT(onStorageUpdated(int, int))));
 }
 
 void StorageAdaptor::setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept
