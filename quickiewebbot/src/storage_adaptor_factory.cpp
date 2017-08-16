@@ -5,14 +5,14 @@
 namespace QuickieWebBot
 {
 
-StorageAdaptorFactory::StorageAdaptorFactory(DataCollection* dataCollection)
+StorageAdaptorFactory::StorageAdaptorFactory(WebCrawler::DataCollection* dataCollection)
 	: m_dataCollection(dataCollection)
 {
 }
 
-StorageAdaptor* StorageAdaptorFactory::create(DataCollection::StorageType type)
+StorageAdaptor* StorageAdaptorFactory::create(WebCrawler::DataCollection::StorageType type)
 {
-	assert(type > DataCollection::BeginEnumStorageType && type < DataCollection::EndEnumStorageType);
+	assert(type > WebCrawler::DataCollection::BeginEnumStorageType && type < WebCrawler::DataCollection::EndEnumStorageType);
 
 	if (m_storageAdaptors.find(type) != std::end(m_storageAdaptors))
 	{
@@ -28,11 +28,11 @@ StorageAdaptor* StorageAdaptorFactory::create(DataCollection::StorageType type)
 	return storageAdaptor;
 }
 
-void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor, DataCollection::StorageType type) const
+void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor, WebCrawler::DataCollection::StorageType type) const
 {
 	switch (type)
 	{
-		case DataCollection::CrawledUrlStorageType:
+		case WebCrawler::DataCollection::CrawledUrlStorageType:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -68,9 +68,9 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Links available columns
 		//
-		case DataCollection::UpperCaseUrlStorageType:
-		case DataCollection::NonAsciiCharacterUrlStorageType:
-		case DataCollection::VeryLongUrlStorageType:
+		case WebCrawler::DataCollection::UpperCaseUrlStorageType:
+		case WebCrawler::DataCollection::NonAsciiCharacterUrlStorageType:
+		case WebCrawler::DataCollection::VeryLongUrlStorageType:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -83,12 +83,12 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Title available columns
 		//
-		case DataCollection::EmptyTitleUrlStorageType:
-		case DataCollection::DuplicatedTitleUrlStorageType:
-		case DataCollection::VeryLongTitleUrlStorageType:
-		case DataCollection::VeryShortTitleUrlStorageType:
-		case DataCollection::DuplicatedH1TitleUrlStorageType:
-		case DataCollection::SeveralTitleUrlStorageType:
+		case WebCrawler::DataCollection::EmptyTitleUrlStorageType:
+		case WebCrawler::DataCollection::DuplicatedTitleUrlStorageType:
+		case WebCrawler::DataCollection::VeryLongTitleUrlStorageType:
+		case WebCrawler::DataCollection::VeryShortTitleUrlStorageType:
+		case WebCrawler::DataCollection::DuplicatedH1TitleUrlStorageType:
+		case WebCrawler::DataCollection::SeveralTitleUrlStorageType:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -101,11 +101,11 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Meta description available columns
 		//
-		case DataCollection::EmptyMetaDescriptionUrlStorageType:
-		case DataCollection::DuplicatedMetaDescriptionUrlStorageType:
-		case DataCollection::VeryLongMetaDescriptionUrlStorageType:
-		case DataCollection::VeryShortMetaDescriptionUrlStorageType:
-		case DataCollection::SeveralMetaDescriptionUrlStorageType:
+		case WebCrawler::DataCollection::EmptyMetaDescriptionUrlStorageType:
+		case WebCrawler::DataCollection::DuplicatedMetaDescriptionUrlStorageType:
+		case WebCrawler::DataCollection::VeryLongMetaDescriptionUrlStorageType:
+		case WebCrawler::DataCollection::VeryShortMetaDescriptionUrlStorageType:
+		case WebCrawler::DataCollection::SeveralMetaDescriptionUrlStorageType:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -118,9 +118,9 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Meta keywords available columns
 		// 
-		case DataCollection::EmptyMetaKeywordsUrlStorageType:
-		case DataCollection::DuplicatedMetaKeywordsUrlStorageType:
-		case DataCollection::SeveralMetaKeywordsUrlStorageType:
+		case WebCrawler::DataCollection::EmptyMetaKeywordsUrlStorageType:
+		case WebCrawler::DataCollection::DuplicatedMetaKeywordsUrlStorageType:
+		case WebCrawler::DataCollection::SeveralMetaKeywordsUrlStorageType:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -133,10 +133,10 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// H1 available columns
 		//
-		case DataCollection::MissingH1UrlStorageType:
-		case DataCollection::DuplicatedH1UrlStorageType:
-		case DataCollection::VeryLongH1UrlStorageType:
-		case DataCollection::SeveralH1UrlStorageType:
+		case WebCrawler::DataCollection::MissingH1UrlStorageType:
+		case WebCrawler::DataCollection::DuplicatedH1UrlStorageType:
+		case WebCrawler::DataCollection::VeryLongH1UrlStorageType:
+		case WebCrawler::DataCollection::SeveralH1UrlStorageType:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -151,10 +151,10 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// H2 available columns
 		//
-		case DataCollection::MissingH2UrlStorageType:
-		case DataCollection::DuplicatedH2UrlStorageType:
-		case DataCollection::VeryLongH2UrlStorageType:
-		case DataCollection::SeveralH2UrlStorageType:
+		case WebCrawler::DataCollection::MissingH2UrlStorageType:
+		case WebCrawler::DataCollection::DuplicatedH2UrlStorageType:
+		case WebCrawler::DataCollection::VeryLongH2UrlStorageType:
+		case WebCrawler::DataCollection::SeveralH2UrlStorageType:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -169,9 +169,9 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Images available columns
 		//
-		case DataCollection::Over100kbImageStorageType:
-		case DataCollection::MissingAltTextImageStorageType:
-		case DataCollection::VeryLongAltTextImageStorageType:
+		case WebCrawler::DataCollection::Over100kbImageStorageType:
+		case WebCrawler::DataCollection::MissingAltTextImageStorageType:
+		case WebCrawler::DataCollection::VeryLongAltTextImageStorageType:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType

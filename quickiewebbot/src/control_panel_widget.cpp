@@ -29,7 +29,22 @@ void ControlPanelWidget::startCrawling()
 		return;
 	}
 
-	theApp->webCrawler()->startCrawling();
+	// set properties
+
+	WebCrawler::WebCrawlerOptions options;
+	options.url = theApp->properties()->url();
+	options.minTitleLength = theApp->properties()->minTitleLength();
+	options.maxTitleLength = theApp->properties()->maxTitleLength();
+	options.limitMaxUrlLength = theApp->properties()->limitMaxUrlLength();
+	options.maxDescriptionLength = theApp->properties()->maxDescriptionLength();
+	options.minDescriptionLength = theApp->properties()->minDescriptionLength();
+	options.maxH1LengthChars = theApp->properties()->maxH1LengthChars();
+	options.maxH2LengthChars = theApp->properties()->maxH2LengthChars();
+	options.maxImageAltTextChars = theApp->properties()->maxImageAltTextChars();
+	options.maxImageSizeKb = theApp->properties()->maxImageSize();
+
+
+	theApp->webCrawler()->startCrawling(options);
 }
 
 void ControlPanelWidget::initialize()
@@ -37,7 +52,7 @@ void ControlPanelWidget::initialize()
 	m_ui.setupUi(this);
 
 	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::startCrawling));
-	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::stopCrawling));
+	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, theApp->webCrawler(), &WebCrawler::WebCrawler::stopCrawling));
 
 	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
 

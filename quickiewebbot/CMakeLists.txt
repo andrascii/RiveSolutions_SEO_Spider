@@ -5,7 +5,8 @@ set(AppSourcesDir src)
 set(AppHeadersDir include)
 
 # deps headers
-set(GumboLibHeadersDir ../gumbo)
+# set(GumboLibHeadersDir ../gumbo)
+set(WebCrawlerLibHeadersDir ../webcrawler/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppHeadersList "include/*.h")
@@ -70,14 +71,16 @@ endif()
 
 include_directories(
 	${AppHeadersDir}
-	${GumboLibHeadersDir}
+#	${GumboLibHeadersDir}
+	${WebCrawlerLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(
 	${AppName}
-	${GumboLibName}
+#	${GumboLibName}
+	${WebCrawlerLibName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}

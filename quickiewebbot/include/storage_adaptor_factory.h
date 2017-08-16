@@ -10,16 +10,16 @@ class StorageAdaptor;
 class StorageAdaptorFactory
 {
 public:
-	StorageAdaptorFactory(DataCollection* dataCollection);
+	StorageAdaptorFactory(WebCrawler::DataCollection* dataCollection);
 
-	StorageAdaptor* create(DataCollection::StorageType type);
+	StorageAdaptor* create(WebCrawler::DataCollection::StorageType type);
 
 protected:
-	void setupAvailableColumns(StorageAdaptor* storageAdaptor, DataCollection::StorageType type) const;
+	void setupAvailableColumns(StorageAdaptor* storageAdaptor, WebCrawler::DataCollection::StorageType type) const;
 
 private:
-	DataCollection* m_dataCollection;
-	std::map<DataCollection::StorageType, StorageAdaptor*> m_storageAdaptors;
+	WebCrawler::DataCollection* m_dataCollection;
+	std::map<WebCrawler::DataCollection::StorageType, StorageAdaptor*> m_storageAdaptors;
 };
 
 }

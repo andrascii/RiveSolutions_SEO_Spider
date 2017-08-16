@@ -11,8 +11,8 @@ class StorageAdaptor : public QObject
 	Q_OBJECT
 
 public:
-	StorageAdaptor(const DataCollection::GuiStorageTypePtr& associatedStorage, 
-		DataCollection::StorageType storageType, 
+	StorageAdaptor(const WebCrawler::DataCollection::GuiStorageTypePtr& associatedStorage,
+		WebCrawler::DataCollection::StorageType storageType,
 		QObject* parent = nullptr);
 
 	virtual void setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept;
@@ -30,9 +30,9 @@ private slots:
 	void onStorageUpdated(int row, int type);
 
 private:
-	DataCollection::GuiStorageTypePtr m_associatedStorage;
+	WebCrawler::DataCollection::GuiStorageTypePtr m_associatedStorage;
 	QList<PageInfo::ItemType> m_availableColumns;
-	DataCollection::StorageType m_storageType;
+	WebCrawler::DataCollection::StorageType m_storageType;
 };
 
 }

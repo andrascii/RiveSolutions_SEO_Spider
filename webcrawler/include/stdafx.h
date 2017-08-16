@@ -36,28 +36,28 @@
 //
 #include <QObject>
 #include <QThread>
-#include <QWidget>
-#include <QDialog>
+//#include <QWidget>
+//#include <QDialog>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QTableView>
-#include <QMessageBox>
+//#include <QMessageBox>
 #include <QTextCodec>
 #include <QAbstractListModel>
-#include <QKeyEvent>
+//#include <QKeyEvent>
 #include <QMetaObject>
 #include <QMetaMethod>
 #include <QMetaType>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPainter>
+//#include <QVBoxLayout>
+//#include <QHBoxLayout>
+//#include <QPainter>
 #include <QTimer>
 #include <QTcpSocket>
 #include <QTcpServer>
-#include <QAbstractItemDelegate>
+//#include <QAbstractItemDelegate>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QReadWriteLock>
@@ -65,16 +65,16 @@
 #include <QWaitCondition>
 #include <QQueue>
 #include <QDebug>
-#include <QStyledItemDelegate>
+//#include <QStyledItemDelegate>
 #include <QProcess>
 #include <QDateTime>
-#include <QLineEdit>
-#include <QScrollBar>
-#include <QScreen>
-#include <QItemSelectionModel>
-#include <QtSvg>
+//#include <QLineEdit>
+//#include <QScrollBar>
+//#include <QScreen>
+//#include <QItemSelectionModel>
+//#include <QtSvg>
 
-#include "application.h"
+//#include "application.h"
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -111,10 +111,10 @@ using std::size_t;
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define INFOLOG		WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define WARNINGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define ERRORLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define INFOLOG		LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define DEBUGLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define WARNINGLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define ERRORLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 
 inline void debugBreak()
 {

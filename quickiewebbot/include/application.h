@@ -3,12 +3,19 @@
 #include "main_frame.h"
 #include "software_branding.h"
 
+namespace WebCrawler
+{
+
+class WebCrawler;
+class ModelController;
+
+}
+
 namespace QuickieWebBot
 {
 
 class ApplicationProperties;
-class ModelController;
-class WebCrawler;
+
 
 class Application : public QApplication
 {
@@ -18,9 +25,9 @@ public:
 	Application(int& argc, char** argv);
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
-	WebCrawler* webCrawler() noexcept;
+	WebCrawler::WebCrawler* webCrawler() noexcept;
 	ApplicationProperties* properties() noexcept;
-	ModelController* modelController() noexcept;
+	WebCrawler::ModelController* modelController() noexcept;
 	MainFrame* mainFrame() noexcept;
 
 	void initializeStyleSheet() noexcept;
@@ -36,8 +43,8 @@ private:
 
 private:
 	ApplicationProperties* m_appicationProperties;
-	ModelController* m_modelController;
-	WebCrawler* m_webCrawler;
+	WebCrawler::ModelController* m_modelController;
+	WebCrawler::WebCrawler* m_webCrawler;
 	
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;

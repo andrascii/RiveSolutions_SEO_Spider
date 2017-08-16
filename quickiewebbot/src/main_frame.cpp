@@ -75,10 +75,11 @@ void MainFrame::initCrawlingGridView()
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);
 
-	StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
-	StorageAdaptor* storageAdaptor = storageAdaptorFactory->create(DataCollection::CrawledUrlStorageType);
+	// TODO: fix
+	//StorageAdaptorFactory* storageAdaptorFactory = theApp->modelController()->data()->storageAdaptorFactory();
+	//StorageAdaptor* storageAdaptor = storageAdaptorFactory->create(WebCrawler::DataCollection::CrawledUrlStorageType);
 
-	model->setStorageAdaptor(storageAdaptor);
+	//model->setStorageAdaptor(storageAdaptor);
 
 	m_ui.crawlingGridView->setModel(model);
 	m_ui.crawlingGridView->setViewModel(modelView);

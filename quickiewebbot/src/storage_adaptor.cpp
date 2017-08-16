@@ -3,13 +3,13 @@
 namespace QuickieWebBot
 {
 
-StorageAdaptor::StorageAdaptor(const DataCollection::GuiStorageTypePtr& associatedStorage, 
-	DataCollection::StorageType storageType, QObject* parent)
+StorageAdaptor::StorageAdaptor(const WebCrawler::DataCollection::GuiStorageTypePtr& associatedStorage,
+	WebCrawler::DataCollection::StorageType storageType, QObject* parent)
 	: QObject(parent)
 	, m_associatedStorage(associatedStorage)
 	, m_storageType(storageType)
 {
-	DataCollection* dataCollection = qobject_cast<DataCollection*>(parent);
+	WebCrawler::DataCollection* dataCollection = qobject_cast<WebCrawler::DataCollection*>(parent);
 
 	assert(dataCollection);
 
@@ -40,12 +40,12 @@ int StorageAdaptor::itemCount() const noexcept
 
 QVariant StorageAdaptor::itemAt(const QModelIndex& index) const noexcept
 {
-	const DataCollection::GuiStorageType& storage = *m_associatedStorage;
+	const WebCrawler::DataCollection::GuiStorageType& storage = *m_associatedStorage;
 
 	assert(index.row() < storage.size());
 	assert(index.column() < m_availableColumns.size());
 
-	return storage[index.row()]->itemValue(m_availableColumns[index.column()]);
+	return PageInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
 }
 
 PageInfo::ItemType StorageAdaptor::itemTypeAt(const QModelIndex& index) const noexcept

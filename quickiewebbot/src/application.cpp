@@ -14,8 +14,8 @@ namespace QuickieWebBot
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_appicationProperties(new ApplicationProperties(this))
-	, m_modelController(new ModelController(this))
-	, m_webCrawler(new WebCrawler(g_optimalParserThreadsCount, m_modelController, this))
+	, m_modelController(new WebCrawler::ModelController(this))
+	, m_webCrawler(new WebCrawler::WebCrawler(WebCrawler::g_optimalParserThreadsCount, m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 {
 	initialize();
@@ -37,7 +37,7 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 }
 
-WebCrawler* Application::webCrawler() noexcept
+WebCrawler::WebCrawler* Application::webCrawler() noexcept
 {
 	return m_webCrawler;
 }
@@ -47,7 +47,7 @@ MainFrame* Application::mainFrame() noexcept
 	return m_mainFrame.get();
 }
 
-ModelController* Application::modelController() noexcept
+WebCrawler::ModelController* Application::modelController() noexcept
 {
 	return m_modelController;
 }

@@ -11,6 +11,7 @@ SummaryModel::SummaryModel(QObject* parent)
 	: IGridModel(parent)
 	, m_resizeStrategy(std::make_unique<GridViewFullSizeResizePolicy>(std::vector<int>{ 60, 40 }))
 {
+	using namespace WebCrawler;
 	m_allGroups =
 	{
 		SummaryGroup

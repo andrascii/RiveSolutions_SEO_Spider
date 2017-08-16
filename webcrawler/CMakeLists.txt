@@ -1,0 +1,88 @@
+cmake_minimum_required(VERSION 2.8.11)
+project(${WebCrawlerLibName})
+
+set(WebCrawlerSourcesDir src)
+set(WebCrawlerHeadersDir include)
+
+# deps headers
+set(GumboLibHeadersDir ../gumbo)
+
+aux_source_directory(${WebCrawlerSourcesDir} WebCrawlerSourcesList)
+file(GLOB_RECURSE WebCrawlerHeadersList "include/*.h")
+file(GLOB_RECURSE WebCrawlerFormsList "ui/*.ui")
+file(GLOB_RECURSE WebCrawlerResourcesList "rcc/*.qrc")
+
+qt5_wrap_ui(WebCrawlerFormsHeadersList ${WebCrawlerFormsList})
+qt5_wrap_cpp(WebCrawlerHeadersMocList ${WebCrawlerFormsHeadersList})
+qt5_add_resources(WebCrawlerResourcesListAdded ${WebCrawlerResourcesList})
+
+list(REMOVE_ITEM WebCrawlerSourcesList src/stdafx.cpp)
+
+add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" WebCrawlerSourcesList)
+
+source_group(
+	"Generated Files" FILES 
+	${WebCrawlerHeadersMocList} 
+	${WebCrawlerResourcesListAdded} 
+	${WebCrawlerResourcesList} 
+	${WebCrawlerFormsHeadersList}
+)
+
+source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
+source_group(Ui FILES ${WebCrawlerFormsList})
+source_group(Qrc FILES ${WebCrawlerResourcesList})
+
+add_library(
+ 	${WebCrawlerLibName} 
+ 	${WebCrawlerSourcesList} 
+ 	${WebCrawlerHeadersList} 
+ 	${WebCrawlerFormsList} 
+ 	${WebCrawlerResourcesList}
+ 	${WebCrawlerFormsHeadersList}
+ 	${WebCrawlerHeadersMocList}
+ 	${WebCrawlerResourcesListAdded}
+)
+
+add_definitions(
+	${QT_DEFINITIONS}
+)
+
+if(MSVC)
+	add_definitions(
+		/EHsc
+		/MP
+		/permissive-
+		/std:c++latest
+	)
+	
+	set_target_properties(
+		${WebCrawlerLibName}
+		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
+		VS_DEBUGGER_WORKING_DIRECTORY $ENV{CMAKE_PREFIX_PATH}/bin
+	)
+	
+#	set_target_properties(
+#		${WebCrawlerLibName} 
+#		PROPERTIES WIN32_EXECUTABLE YES
+#		LINK_FLAGS "/ENTRY:mainCRTStartup"
+#	)
+endif()
+
+include_directories(
+	${WebCrawlerHeadersDir}
+	${GumboLibHeadersDir}
+	${Boost_INCLUDE_DIRS}
+	${CMAKE_CURRENT_BINARY_DIR}
+)
+
+target_link_libraries(
+	${WebCrawlerLibName}
+	${GumboLibName}
+	${Boost_LIBRARIES}
+	${Boost_SYSTEM_LIBRARY}
+	${Boost_ASIO_LIBRARY}
+	${Boost_REGEX_LIBRARY}
+###	Qt5::Widgets
+	Qt5::Network
+###	Qt5::Svg
+)

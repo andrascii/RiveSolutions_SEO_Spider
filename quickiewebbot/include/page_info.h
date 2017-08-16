@@ -1,5 +1,7 @@
 #pragma once
 
+#include "page_raw.h"
+
 namespace QuickieWebBot
 {
 
@@ -61,6 +63,8 @@ public:
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		EndEnumPageInfoItemType
 	};
+
+	PageInfo(WebCrawler::PageRawPtr pageRawPtr);
 
 	static QString itemTypeDescription(ItemType item);
 	static int columnPrefferedSize(ItemType item);
@@ -132,25 +136,7 @@ private:
 	static void checkInfoItem(PageInfo::ItemType item);
 
 private:
-	QUrl m_url;
-	QUrl m_fromUrl;
-	QString m_title;
-	QString m_content;
-	QString m_metaRefresh;
-	QString m_metaRobots;
-	QString m_metaDescription;
-	QString m_metaKeywords;
-	QString m_redirectedUrl;
-	QString m_serverResponse;
-	QString m_firstH1;
-	QString m_secondH1;
-	QString m_firstH2;
-	QString m_secondH2;
-	QString m_canonicalLinkElement;
-	int m_statusCode;
-	int m_pageSizeKb;
-	int m_wordCount;
-	size_t m_pageHash;
+	WebCrawler::PageRawPtr m_pageRawPtr;
 };
 
 using PageInfoPtr = std::shared_ptr<PageInfo>;
