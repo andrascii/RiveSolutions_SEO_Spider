@@ -32,7 +32,7 @@ WebCrawler::~WebCrawler()
 
 void WebCrawler::startCrawling(const WebCrawlerOptions& options)
 {
-	ServiceLocator::instance()->service<ModelController>()->setWebCrawlerOptions(options);
+	m_modelController->setWebCrawlerOptions(options);
 
 	QUrl host = options.url;
 
