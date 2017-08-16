@@ -5,14 +5,14 @@
 namespace QuickieWebBot
 {
 	
-class GridView;
+class TableView;
 
 class ContextMenuDataCollectionRow : public QMenu
 {
 	Q_OBJECT
 
 public:
-	ContextMenuDataCollectionRow(const GridView* associatedGridView, QWidget* parent = nullptr);
+	ContextMenuDataCollectionRow(const TableView* associatedGridView, QWidget* parent = nullptr);
 	
 private:
 	enum ActionType
@@ -39,7 +39,7 @@ private slots:
 	void copyToClipboardUrl();
 
 private:
-	const GridView* m_associatedGridView;
+	const TableView* m_associatedView;
 	QMap<int, QAction*> m_actions;
 };
 

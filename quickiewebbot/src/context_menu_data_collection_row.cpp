@@ -1,12 +1,15 @@
 #include "context_menu_data_collection_row.h"
-#include "igrid_model.h"
+#include "itable_model.h"
+#include "table_view.h"
+#include "quickie_web_bot_helpers.h"
+#include "page_info_storage_model.h"
 
 namespace QuickieWebBot
 {
 
-ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const GridView* associatedGridView, QWidget* parent)
+ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const TableView* associatedView, QWidget* parent)
 	: QMenu(parent)
-	, m_associatedGridView(associatedGridView)
+	, m_associatedView(associatedView)
 {
 	struct ActionDescriptor
 	{
@@ -64,7 +67,7 @@ ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const GridView* assoc
 
 QModelIndexList ContextMenuDataCollectionRow::selectedIndexes() const noexcept
 {
-	QItemSelectionModel* associatedGridViewSelecionModel = m_associatedGridView->selectionModel();
+	QItemSelectionModel* associatedGridViewSelecionModel = m_associatedView->selectionModel();
 	return associatedGridViewSelecionModel->selectedIndexes();
 }
 
@@ -72,7 +75,10 @@ void ContextMenuDataCollectionRow::openUrlAction()
 {
 	for (QModelIndex index : selectedIndexes())
 	{
-		if (index.data(IGridModel::WhatsThisRole) != PageInfo::UrlItemType)
+		const PageInfoStorageModel* model = 
+			QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(index.model());
+
+		if (model->itemType(index) != PageInfo::UrlItemType)
 		{
 			continue;
 		}
@@ -102,7 +108,10 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl()
 {
 	foreach(QModelIndex index, selectedIndexes())
 	{
-		if (index.data(IGridModel::WhatsThisRole) != PageInfo::UrlItemType)
+		const PageInfoStorageModel* model = 
+			QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(index.model());
+
+		if (model->itemType(index) != PageInfo::UrlItemType)
 		{
 			continue;
 		}

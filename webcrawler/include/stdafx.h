@@ -34,7 +34,7 @@
 //
 // Qt
 //
-#include <QObject>
+//include <QObject>
 #include <QThread>
 //#include <QWidget>
 //#include <QDialog>

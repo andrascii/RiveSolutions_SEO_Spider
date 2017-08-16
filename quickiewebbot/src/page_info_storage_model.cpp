@@ -1,5 +1,5 @@
 #include "page_info_storage_model.h"
-#include "grid_view_resize_policy.h"
+#include "default_column_resize_policy.h"
 #include "storage_adaptor.h"
 #include "quickie_web_bot_helpers.h"
 
@@ -7,8 +7,9 @@ namespace QuickieWebBot
 {
 
 PageInfoStorageModel::PageInfoStorageModel(QObject* parent)
-	: IGridModel(parent)
+	: ITableModel(parent)
 	, m_storageAdaptor(nullptr)
+	, m_resizePolicy(std::make_shared<DefaultColumnResizePolicy>())
 {
 }
 
@@ -24,9 +25,40 @@ Qt::ItemFlags PageInfoStorageModel::flags(const QModelIndex& index) const
 
 void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept
 {
+	if (m_storageAdaptor == storageAdaptor)
+	{
+		return;
+	}
+
+	beginResetModel();
+
+	disconnect(m_storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int)));
 	VERIFY(connect(storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int))));
 	
 	m_storageAdaptor = storageAdaptor;
+
+	std::map<int, int> columnsWidth;
+
+	for (int i = 0; i < m_storageAdaptor->availableColumns().size(); ++i)
+	{
+		columnsWidth[i] = PageInfo::columnPrefferedSize(m_storageAdaptor->availableColumns()[i]);
+	}
+
+	std::dynamic_pointer_cast<DefaultColumnResizePolicy>(m_resizePolicy)->setColumnsSize(columnsWidth);
+
+	endResetModel();
+
+	emit internalDataChanged();
+}
+
+PageInfo::ItemType PageInfoStorageModel::itemType(const QModelIndex& index) const noexcept
+{
+	return storageAdaptor()->itemTypeAt(index);
+}
+
+IResizePolicy* PageInfoStorageModel::resizePolicy() const noexcept
+{
+	return m_resizePolicy.get();
 }
 
 const StorageAdaptor* PageInfoStorageModel::storageAdaptor() const
@@ -91,34 +123,9 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 			return font;
 		}
 
-		case IGridModel::SelectionBackgroundColorRole:
+		case ITableModel::SelectionBackgroundColorRole:
 		{
-			return QColor(7, 160, 50, 255);
-		}
-
-		case IGridModel::MarginTop:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(2);
-		}
-
-		case IGridModel::MarginBottom:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(2);
-		}
-
-		case IGridModel::MarginLeft:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(4);
-		}
-
-		case IGridModel::MarginRight:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(4);
-		}
-
-		case IGridModel::WhatsThisRole:
-		{
-			return storageAdaptor()->itemTypeAt(index);
+			return QColor(97, 160, 50, 200);
 		}
 	}
 

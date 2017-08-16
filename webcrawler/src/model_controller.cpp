@@ -7,7 +7,8 @@ namespace WebCrawler
 {
 
 ModelController::ModelController(QObject* parent)
-	: m_data(new DataCollection(this))
+	: QObject(parent)
+	, m_data(new DataCollection(this))
 {
 }
 

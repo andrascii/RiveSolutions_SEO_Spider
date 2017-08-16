@@ -1,22 +1,23 @@
 #include "text_renderer.h"
-#include "igrid_view_model.h"
-#include "igrid_model.h"
+#include "iview_model.h"
+#include "itable_model.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
 
-TextRenderer::TextRenderer(int maxCacheSize)
-	: m_maxCacheSize(maxCacheSize)
+TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
+	: m_viewModel(viewModel)
+	, m_cacheSize(cacheSize)
 {
 }
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	int marginTop = index.data(IGridModel::MarginTop).toInt();
-	int marginBottom = index.data(IGridModel::MarginBottom).toInt();
-	int marginLeft = index.data(IGridModel::MarginLeft).toInt();
-	int marginRight = index.data(IGridModel::MarginRight).toInt();
+	int marginTop = m_viewModel->marginTop();
+	int marginBottom = m_viewModel->marginBottom();
+	int marginLeft = m_viewModel->marginLeft();
+	int marginRight = m_viewModel->marginRight();
 
 	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = cached(index);
@@ -54,9 +55,18 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 
 	painter->drawPixmap(adjustedRect, *pixmapPointer);
 
-	//
-	// TODO: Refactor. Incorrect call of method with side-effect from const method
-	//
+	clearCacheIfNeeded();
+}
+
+void TextRenderer::resetCache()
+{
+	m_cache.clear();
+}
+
+void TextRenderer::setCacheSize(int cacheSize)
+{
+	m_cacheSize = cacheSize;
+
 	clearCacheIfNeeded();
 }
 
@@ -85,7 +95,7 @@ QRect TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, 
 
 void TextRenderer::clearCacheIfNeeded() const noexcept
 {
-	if (m_cache.size() > m_maxCacheSize)
+	if (m_cache.size() > m_cacheSize)
 	{
 		m_cache.clear();
 	}

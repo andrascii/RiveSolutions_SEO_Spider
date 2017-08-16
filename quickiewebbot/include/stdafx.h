@@ -30,6 +30,7 @@
 //
 #include <boost/functional/hash.hpp>
 #include <boost/regex.hpp>
+#include <boost/any.hpp>
 
 //
 // Qt

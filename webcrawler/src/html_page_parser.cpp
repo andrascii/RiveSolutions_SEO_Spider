@@ -1,5 +1,6 @@
 #include "html_page_parser.h"
 #include "gumbo_parsing_helpers.h"
+#include "logger_connection_service_api.h"
 
 namespace WebCrawler
 {

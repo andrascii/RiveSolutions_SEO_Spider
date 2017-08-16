@@ -4,8 +4,8 @@
 namespace QuickieWebBot
 {
 
-UrlRenderer::UrlRenderer(int maxCacheSize)
-	: TextRenderer(maxCacheSize)
+UrlRenderer::UrlRenderer(const IViewModel* viewModel, int maxCacheSize)
+	: TextRenderer(viewModel, maxCacheSize)
 {
 }
 

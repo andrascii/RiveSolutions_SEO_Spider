@@ -33,8 +33,14 @@ LoggerConnectionServiceApi::~LoggerConnectionServiceApi()
 
 LoggerConnectionServiceApi* LoggerConnectionServiceApi::instance()
 {
-	static LoggerConnectionServiceApi logger;
-	return &logger;
+	static std::unique_ptr<LoggerConnectionServiceApi> logger;
+
+	if (!logger)
+	{
+		logger.reset(new LoggerConnectionServiceApi());
+	}
+
+	return logger.get();
 }
 
 LoggerConnectionServiceApi::LoggerDataStream LoggerConnectionServiceApi::log(MessageType type, QString func, QString file, int line)

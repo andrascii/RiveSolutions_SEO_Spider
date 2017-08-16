@@ -3,19 +3,19 @@
 namespace QuickieWebBot
 {
 
-class GridView;
+class TableView;
 
-class GridViewDelegate : public QStyledItemDelegate
+class Delegate : public QStyledItemDelegate
 {
 public:
-	GridViewDelegate(GridView* parent = nullptr);
+	Delegate(TableView* parent = nullptr);
 
 protected:
 	virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 	virtual bool editorEvent(QEvent *event, QAbstractItemModel*, const QStyleOptionViewItem& option, const QModelIndex& index) override;
 
 private:
-	GridView* m_gridView;
+	TableView* m_view;
 };
 
 }

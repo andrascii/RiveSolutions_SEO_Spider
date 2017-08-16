@@ -1,14 +1,15 @@
 #pragma once
 
-#include "igrid_model.h"
+#include "itable_model.h"
+#include "data_collection.h"
 
 namespace QuickieWebBot
 {
 
-class IGridViewResizePolicy;
-class GridViewFullSizeResizePolicy;
+class IResizePolicy;
+class ViewportPercentResizePolicy;
 	
-class SummaryModel : public IGridModel
+class SummaryModel : public ITableModel
 {
 	Q_OBJECT
 
@@ -23,6 +24,12 @@ public:
 
 	virtual QSize span(const QModelIndex& index) const override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
+
+	virtual IResizePolicy* resizePolicy() const noexcept override;
+	WebCrawler::DataCollection::StorageType itemType(const QModelIndex& index) const noexcept;
+
+signals:
+	virtual void internalDataChanged() override;
 
 private:
 	enum ItemStatus
@@ -54,12 +61,12 @@ private:
 private:
 	static constexpr int s_summaryColumnCount = 2;
 
+	std::shared_ptr<IResizePolicy> m_resizePolicy;
+
 	QVector<SummaryGroup> m_allGroups;
 	QMap<int, SummaryGroup*> m_groups;
 	QMap<int, SummaryItem*> m_itemRows;
 	QMap<int, SummaryItem*> m_itemTypes;
-
-	std::unique_ptr<GridViewFullSizeResizePolicy> m_resizeStrategy;
 };
 
 }

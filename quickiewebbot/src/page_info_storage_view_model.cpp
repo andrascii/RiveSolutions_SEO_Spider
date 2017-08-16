@@ -1,6 +1,6 @@
 #include "page_info.h"
-#include "igrid_model.h"
-#include "grid_view_resize_policy.h"
+#include "itable_model.h"
+#include "default_column_resize_policy.h"
 #include "url_renderer.h"
 #include "text_renderer.h"
 #include "background_renderer.h"
@@ -8,6 +8,7 @@
 #include "page_info_storage_model.h"
 #include "page_info_storage_view_model.h"
 #include "quickie_web_bot_helpers.h"
+#include "table_view.h"
 
 
 namespace QuickieWebBot
@@ -16,11 +17,13 @@ namespace QuickieWebBot
 PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent)
 	: QObject(parent)
 	, m_model(model)
-	, m_resizePolicy(std::make_unique<GridViewResizePolicy>())
+	, m_resizePolicy(std::make_unique<DefaultColumnResizePolicy>())
+	, m_textRenderer(std::make_unique<TextRenderer>(this, static_cast<int>(std::pow((m_model->columnCount()), 2.0))))
+	, m_urlRenderer(std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0))))
+	, m_selectionBackgroundRenderer(std::make_unique<SelectionBackgroundRenderer>())
+	, m_backgroundRenderer(std::make_unique<BackgroundRenderer>())
 {
-	//
-	// columnPrefferedSize should not be in the PageInfo class
-	//
+	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
 
 	std::map<int, int> sizes =
 	{
@@ -57,24 +60,49 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	m_resizePolicy->setColumnsSize(sizes);
 }
 
+int PageInfoStorageViewModel::marginTop() const noexcept
+{
+	return QuickieWebBotHelpers::pointsToPixels(2);
+}
+
+int PageInfoStorageViewModel::marginBottom() const noexcept
+{
+	return QuickieWebBotHelpers::pointsToPixels(2);
+}
+
+int PageInfoStorageViewModel::marginRight() const noexcept
+{
+	return QuickieWebBotHelpers::pointsToPixels(4);
+}
+
+int PageInfoStorageViewModel::marginLeft() const noexcept
+{
+	return QuickieWebBotHelpers::pointsToPixels(4);
+}
+
+void PageInfoStorageViewModel::resetRenderersCache() const noexcept
+{
+	m_textRenderer->resetCache();
+	m_urlRenderer->resetCache();
+	m_selectionBackgroundRenderer->resetCache();
+	m_backgroundRenderer->resetCache();
+}
+
 QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	static TextRenderer s_textRenderer(std::pow(m_model->columnCount(index), 2));
-	static UrlRenderer s_urlRenderer(std::pow(m_model->columnCount(index), 2));
-	static SelectionBackgroundRenderer s_selectionBackgroundRenderer;
-	static BackgroundRenderer s_backgroundRenderer;
-
-	IRenderer* renderer = index.data(IGridModel::WhatsThisRole).toInt() == PageInfo::UrlItemType ? &s_urlRenderer : &s_textRenderer;
+	IRenderer* renderer = 
+		m_model->itemType(index) == PageInfo::UrlItemType ? 
+		m_urlRenderer.get() : m_textRenderer.get();
 
 	return QList<IRenderer*>()
-		<< &s_backgroundRenderer
-		<< &s_selectionBackgroundRenderer
+		<< m_backgroundRenderer.get()
+		<< m_selectionBackgroundRenderer.get()
 		<< renderer;
 }
 
-IGridViewResizePolicy* PageInfoStorageViewModel::resizePolicy() const noexcept
+void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
 {
-	return m_resizePolicy.get();
+	m_textRenderer->setCacheSize(static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
 }
 
 }

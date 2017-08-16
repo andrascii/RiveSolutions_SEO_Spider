@@ -7,7 +7,8 @@ QWidget
 
 QMainWindow
 {
-	background-color: #343B49;
+	/*#343B49*/
+	background-color: #e7e7e7;
 }
 
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
@@ -130,7 +131,7 @@ QComboBox::down-arrow
 
 /*/////////////////////////////// Info frame ///////////////////////////////*/
 
-QuickieWebBot--ControlPanelWidget QWidget#controlPanelWidget
+QuickieWebBot--ControlPanelWidget
 {
 	padding-bottom: 1em;
 	min-height: 2.5em;
@@ -148,27 +149,21 @@ QStackedWidget QWidget#errorsFilterPage
 	background-color: #e7e7e7;
 }
 
-/*/////////////////////////////// Table view ///////////////////////////////*/
+/*/////////////////////////////// TableView ///////////////////////////////*/
 
-QTableView
+QuickieWebBot--TableView
 {
 	font-size: 9pt;
 	background: white;
 }
 
-QTableView::item
-{
-	color: #494949;
-	border-left: none;
-}
-
-QTableView#summaryGridView
+QuickieWebBot--TableView#summaryGridView
 {
 	min-width: 28em;
 	max-width: 28em;
 }
 
-QTableView#itemGridView
+QuickieWebBot--TableView#itemGridView
 {
 	max-height: 25em;
 }
@@ -377,16 +372,17 @@ QPushButton[groupButton="right"]
 	border-top-right-radius: 0.2em;
 	border-bottom-right-radius: 0.2em;
 	border-bottom-left-radius: 0em;
-}
+} 
 
 /*/////////////////////////////// Navigation Widget ///////////////////////////////*/
 
-QWidget#navigationPanelWidget
+
+QWidget#NavigationPanel
 {
 	background-color: white;
 }
 
-QWidget#navigationPanelWidget QPushButton
+QWidget#NavigationPanel QPushButton
 {
 	background-color: white;
 	width: 12em;
@@ -398,7 +394,7 @@ QWidget#navigationPanelWidget QPushButton
 	font-size: 10pt;
 }
 
-QWidget#navigationPanelWidget QPushButton[childElement="true"]
+QWidget#NavigationPanel QPushButton[childElement="true"]
 {
 	padding-left: 3em;
 	font-size: 8pt;
@@ -406,7 +402,7 @@ QWidget#navigationPanelWidget QPushButton[childElement="true"]
 	border: none;
 }
 
-QWidget#navigationPanelWidget QPushButton[selected="true"]
+QWidget#NavigationPanel QPushButton[selected="true"]
 {
 	background-color: lightgray;
 }

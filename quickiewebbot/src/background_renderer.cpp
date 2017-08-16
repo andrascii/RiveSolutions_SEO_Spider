@@ -8,4 +8,12 @@ void BackgroundRenderer::render(QPainter* painter, const QStyleOptionViewItem& o
 	painter->fillRect(option.rect, index.data(Qt::BackgroundColorRole).value<QColor>());
 }
 
+void BackgroundRenderer::resetCache()
+{
+}
+
+void BackgroundRenderer::setCacheSize(int)
+{
+}
+
 }
