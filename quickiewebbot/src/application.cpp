@@ -2,7 +2,7 @@
 #include "style_loader.h"
 #include "model_controller.h"
 #include "software_branding.h"
-#include "start_screen.h"
+#include "splash_screen.h"
 #include "service_locator.h"
 #include "web_crawler.h"
 #include "constants.h"
@@ -277,11 +277,11 @@ QString Application::operatingSystemVersion() const noexcept
 
 void Application::showStartScreen() const noexcept
 {
-	StartScreen* startScreen = StartScreen::instance();
+	SplashScreen* splashScreen = SplashScreen::instance();
 
-	VERIFY(connect(startScreen, &StartScreen::finished, this, &Application::mainFrameIsReadyForShow));
+	VERIFY(connect(splashScreen, &SplashScreen::finished, this, &Application::mainFrameIsReadyForShow));
 
-	startScreen->show();
+	splashScreen->show();
 }
 
 }

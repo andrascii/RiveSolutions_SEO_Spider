@@ -38,7 +38,7 @@ int StorageAdaptor::itemCount() const noexcept
 	return m_associatedStorage->size();
 }
 
-QVariant StorageAdaptor::itemAt(const QModelIndex& index) const noexcept
+QVariant StorageAdaptor::item(const QModelIndex& index) const noexcept
 {
 	const WebCrawler::DataCollection::GuiStorageType& storage = *m_associatedStorage;
 
@@ -48,7 +48,7 @@ QVariant StorageAdaptor::itemAt(const QModelIndex& index) const noexcept
 	return PageInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
 }
 
-PageInfo::ItemType StorageAdaptor::itemTypeAt(const QModelIndex& index) const noexcept
+PageInfo::ItemType StorageAdaptor::itemType(const QModelIndex& index) const noexcept
 {
 	assert(index.column() < m_availableColumns.size());
 

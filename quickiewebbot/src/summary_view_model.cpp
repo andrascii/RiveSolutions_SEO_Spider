@@ -15,22 +15,22 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 {
 }
 
-int SummaryViewModel::marginTop() const noexcept
+int SummaryViewModel::marginTop(const QModelIndex& index) const noexcept
 {
 	return QuickieWebBotHelpers::pointsToPixels(2);
 }
 
-int SummaryViewModel::marginBottom() const noexcept
+int SummaryViewModel::marginBottom(const QModelIndex& index) const noexcept
 {
 	return QuickieWebBotHelpers::pointsToPixels(2);
 }
 
-int SummaryViewModel::marginRight() const noexcept
+int SummaryViewModel::marginRight(const QModelIndex& index) const noexcept
 {
 	return QuickieWebBotHelpers::pointsToPixels(4);
 }
 
-int SummaryViewModel::marginLeft() const noexcept
+int SummaryViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
 	return QuickieWebBotHelpers::pointsToPixels(4);
 }

@@ -20,8 +20,8 @@ public:
 	virtual QString columnDescription(int columnIndex) const noexcept;
 
 	virtual int itemCount() const noexcept;
-	virtual QVariant itemAt(const QModelIndex& index) const noexcept;
-	virtual PageInfo::ItemType itemTypeAt(const QModelIndex& index) const noexcept;
+	virtual QVariant item(const QModelIndex& index) const noexcept;
+	virtual PageInfo::ItemType itemType(const QModelIndex& index) const noexcept;
 
 signals:
 	void pageInfoAdded(int rowIndex);

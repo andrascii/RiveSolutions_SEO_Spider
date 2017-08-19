@@ -20,11 +20,6 @@ class PageInfoStorageModel : public ITableModel
 {
 	Q_OBJECT
 
-	//
-	// If you want to add a model for only one PageInfo then you need
-	// to create a new derived type from IGridModel and customize it appropriately.
-	//
-
 public:
 	PageInfoStorageModel(QObject* parent = nullptr);
 

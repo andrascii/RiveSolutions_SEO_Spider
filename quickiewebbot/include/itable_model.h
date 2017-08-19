@@ -11,7 +11,11 @@ public:
 	enum CustomRoles
 	{
 		SelectionBackgroundColorRole = Qt::UserRole,
-		HoveredBackgroundColorRole
+		HoveredBackgroundColorRole,
+		MarginTop,
+		MarginBottom,
+		MarginLeft,
+		MarginRight
 	};
 
 	using QAbstractTableModel::QAbstractTableModel;

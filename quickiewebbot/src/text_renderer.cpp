@@ -14,10 +14,10 @@ TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	int marginTop = m_viewModel->marginTop();
-	int marginBottom = m_viewModel->marginBottom();
-	int marginLeft = m_viewModel->marginLeft();
-	int marginRight = m_viewModel->marginRight();
+	int marginTop = m_viewModel->marginTop(index);
+	int marginBottom = m_viewModel->marginBottom(index);
+	int marginLeft = m_viewModel->marginLeft(index);
+	int marginRight = m_viewModel->marginRight(index);
 
 	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = cached(index);

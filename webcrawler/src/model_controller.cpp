@@ -1,5 +1,3 @@
-//#include "application.h"
-//#include "application_properties.h"
 #include "model_controller.h"
 #include "data_collection.h"
 
@@ -48,7 +46,7 @@ DataCollection* ModelController::data() noexcept
 
 void ModelController::processPageRawUrl(PageRawPtr pageRaw) noexcept
 {
-	const QUrl url = pageRaw->url;;
+	const QUrl url = pageRaw->url;
 	const QString urlStr = url.toString();
 
 	m_data->addPageRaw(pageRaw, DataCollection::CrawledUrlStorageType);

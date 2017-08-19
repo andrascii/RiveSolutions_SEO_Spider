@@ -53,7 +53,7 @@ void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noe
 
 PageInfo::ItemType PageInfoStorageModel::itemType(const QModelIndex& index) const noexcept
 {
-	return storageAdaptor()->itemTypeAt(index);
+	return storageAdaptor()->itemType(index);
 }
 
 IResizePolicy* PageInfoStorageModel::resizePolicy() const noexcept
@@ -82,14 +82,14 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 	{
 		case Qt::DisplayRole:
 		{
-			return storageAdaptor()->itemAt(index);
+			return storageAdaptor()->item(index);
 		}
 
 		case Qt::DecorationRole:
 		{
 			static QPixmap urlPixmap(":/images/url-icon.png");
 
-			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
+			if (storageAdaptor()->itemType(index) == PageInfo::UrlItemType)
 			{
 				return urlPixmap;
 			}
@@ -102,7 +102,7 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 
 		case Qt::TextColorRole:
 		{
-			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
+			if (storageAdaptor()->itemType(index) == PageInfo::UrlItemType)
 			{
 				return QColor("#343B49");
 			}
@@ -114,7 +114,7 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		{
 			QFont font;
 
-			if (storageAdaptor()->itemTypeAt(index) == PageInfo::UrlItemType)
+			if (storageAdaptor()->itemType(index) == PageInfo::UrlItemType)
 			{
 				font.setBold(true);
 				return font;
