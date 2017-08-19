@@ -7,6 +7,7 @@
 #include "web_crawler.h"
 #include "constants.h"
 #include "application_properties.h"
+#include "storage_adaptor_factory.h"
 
 namespace QuickieWebBot
 {
@@ -17,6 +18,7 @@ Application::Application(int& argc, char** argv)
 	, m_modelController(new WebCrawler::ModelController(this))
 	, m_webCrawler(new WebCrawler::WebCrawler(WebCrawler::g_optimalParserThreadsCount, m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
+	, m_storageAdatpterFactory(new StorageAdaptorFactory(m_modelController->data()))
 {
 	initialize();
 
@@ -37,6 +39,11 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 }
 
+Application::~Application()
+{
+
+}
+
 WebCrawler::WebCrawler* Application::webCrawler() noexcept
 {
 	return m_webCrawler;
@@ -50,6 +57,11 @@ MainFrame* Application::mainFrame() noexcept
 WebCrawler::ModelController* Application::modelController() noexcept
 {
 	return m_modelController;
+}
+
+QuickieWebBot::StorageAdaptorFactory* Application::storageAdapterFactory() noexcept
+{
+	return m_storageAdatpterFactory.get();
 }
 
 ApplicationProperties* Application::properties() noexcept
