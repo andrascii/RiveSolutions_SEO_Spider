@@ -10,6 +10,8 @@
 #include "storage_adaptor_factory.h"
 #include "model_controller.h"
 #include "quickie_web_bot_helpers.h"
+#include "summary_category_item.h"
+#include "summary_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
@@ -35,12 +37,12 @@ void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& sel
 	QModelIndex index = selected.indexes()[0];
 	const SummaryModel* summaryModel = QuickieWebBotHelpers::safe_runtime_static_cast<const SummaryModel*>(index.model());
 
-	WebCrawler::DataCollection::StorageType storageType = summaryModel->itemType(index);
+	SummaryCategoryItem category = summaryModel->itemCategory(index);
 
-	assert(dynamic_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model()));
-	PageInfoStorageModel* storageModel = static_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model());
+	PageInfoStorageModel* storageModel = 
+		QuickieWebBotHelpers::safe_runtime_static_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model());
 
-	storageModel->setStorageAdaptor(theApp->storageAdapterFactory()->create(storageType));
+	storageModel->setStorageAdaptor(theApp->storageAdapterFactory()->create(category));
 
 	m_summaryDetailsTableView->viewModel()->resetRenderersCache();
 }
@@ -78,7 +80,10 @@ void ErrorsFilterWidget::initSummaryView()
 	m_summaryTableView->resize(QuickieWebBotHelpers::pointsToPixels(100), m_summaryTableView->height());
 
 	SummaryModel* summaryModel = new SummaryModel(this);
+	summaryModel->setDataAccessor(theApp->summaryDataAccessorFactory()->create(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage));
+
 	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);
+
 	m_summaryTableView->setModel(summaryModel);
 	m_summaryTableView->setViewModel(summaryViewModel);
 }
@@ -90,7 +95,7 @@ void ErrorsFilterWidget::initDetailsView()
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* viewModel = new PageInfoStorageViewModel(model, this);
 
-	model->setStorageAdaptor(theApp->storageAdapterFactory()->create(WebCrawler::DataCollection::CrawledUrlStorageType));
+	model->setStorageAdaptor(theApp->storageAdapterFactory()->create(SummaryCategoryItem::SummaryCategoryItemAllPages));
 
 	m_summaryDetailsTableView->setModel(model);
 	m_summaryDetailsTableView->setViewModel(viewModel);

@@ -17,32 +17,12 @@ namespace QuickieWebBot
 PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent)
 	: QObject(parent)
 	, m_model(model)
-	, m_textRenderer(std::make_unique<TextRenderer>(this, static_cast<int>(std::pow((m_model->columnCount()), 2.0))))
-	, m_urlRenderer(std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0))))
+	, m_textRenderer(std::make_unique<TextRenderer>(static_cast<int>(std::pow((m_model->columnCount()), 2.0))))
+	, m_urlRenderer(std::make_unique<UrlRenderer>(static_cast<int>(std::pow(m_model->columnCount(), 2.0))))
 	, m_selectionBackgroundRenderer(std::make_unique<SelectionBackgroundRenderer>())
 	, m_backgroundRenderer(std::make_unique<BackgroundRenderer>())
 {
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
-}
-
-int PageInfoStorageViewModel::marginTop(const QModelIndex& index) const noexcept
-{
-	return QuickieWebBotHelpers::pointsToPixels(2);
-}
-
-int PageInfoStorageViewModel::marginBottom(const QModelIndex& index) const noexcept
-{
-	return QuickieWebBotHelpers::pointsToPixels(2);
-}
-
-int PageInfoStorageViewModel::marginRight(const QModelIndex& index) const noexcept
-{
-	return QuickieWebBotHelpers::pointsToPixels(4);
-}
-
-int PageInfoStorageViewModel::marginLeft(const QModelIndex& index) const noexcept
-{
-	return QuickieWebBotHelpers::pointsToPixels(4);
 }
 
 void PageInfoStorageViewModel::resetRenderersCache() const noexcept

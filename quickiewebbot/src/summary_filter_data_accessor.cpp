@@ -157,6 +157,11 @@ SummaryCategoryItem SummaryFilterDataAccessor::itemCategory(const QModelIndex& i
 
 QPixmap SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexcept
 {
+	if (isHeaderItem(index) || index.column() != 0)
+	{
+		return QPixmap();
+	}
+
 	static QMap<ItemStatus, QByteArray> s_paths
 	{
 		{ StatusOK, ":/images/icon-ok.svg" },

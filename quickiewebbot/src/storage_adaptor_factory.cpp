@@ -10,16 +10,20 @@ StorageAdaptorFactory::StorageAdaptorFactory(WebCrawler::DataCollection* dataCol
 {
 }
 
-StorageAdaptor* StorageAdaptorFactory::create(WebCrawler::DataCollection::StorageType type)
+StorageAdaptor* StorageAdaptorFactory::create(SummaryCategoryItem type)
 {
-	assert(type > WebCrawler::DataCollection::BeginEnumStorageType && type < WebCrawler::DataCollection::EndEnumStorageType);
+	assert(type > SummaryCategoryItem::SummaryCategoryItemBegin && 
+		type < SummaryCategoryItem::SummaryCategoryItemEnd);
+
+	WebCrawler::DataCollection::StorageType storageType = 
+		static_cast<WebCrawler::DataCollection::StorageType>(type);
 
 	if (m_storageAdaptors.find(type) != std::end(m_storageAdaptors))
 	{
 		return m_storageAdaptors[type];
 	}
 
-	StorageAdaptor* storageAdaptor = new StorageAdaptor(m_dataCollection->guiStorage(type), type, m_dataCollection);
+	StorageAdaptor* storageAdaptor = new StorageAdaptor(m_dataCollection->guiStorage(storageType), storageType, m_dataCollection);
 
 	setupAvailableColumns(storageAdaptor, type);
 
@@ -28,11 +32,11 @@ StorageAdaptor* StorageAdaptorFactory::create(WebCrawler::DataCollection::Storag
 	return storageAdaptor;
 }
 
-void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor, WebCrawler::DataCollection::StorageType type) const
+void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor, SummaryCategoryItem type) const
 {
 	switch (type)
 	{
-		case WebCrawler::DataCollection::CrawledUrlStorageType:
+		case SummaryCategoryItem::SummaryCategoryItemAllPages:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -68,9 +72,9 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Links available columns
 		//
-		case WebCrawler::DataCollection::UpperCaseUrlStorageType:
-		case WebCrawler::DataCollection::NonAsciiCharacterUrlStorageType:
-		case WebCrawler::DataCollection::VeryLongUrlStorageType:
+		case SummaryCategoryItem::SummaryCategoryItemUpperCaseLinks:
+		case SummaryCategoryItem::SummaryCategoryItemNonAsciiLinks:
+		case SummaryCategoryItem::SummaryCategoryItemVeryLongLinks:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -85,12 +89,12 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Title available columns
 		//
-		case WebCrawler::DataCollection::EmptyTitleUrlStorageType:
-		case WebCrawler::DataCollection::DuplicatedTitleUrlStorageType:
-		case WebCrawler::DataCollection::VeryLongTitleUrlStorageType:
-		case WebCrawler::DataCollection::VeryShortTitleUrlStorageType:
-		case WebCrawler::DataCollection::DuplicatedH1TitleUrlStorageType:
-		case WebCrawler::DataCollection::SeveralTitleUrlStorageType:
+		case SummaryCategoryItem::SummaryCategoryItemEmptyTitles:
+		case SummaryCategoryItem::SummaryCategoryItemDuplicatedTitles:
+		case SummaryCategoryItem::SummaryCategoryItemVeryLongTitles:
+		case SummaryCategoryItem::SummaryCategoryItemVeryShortTitles:
+		case SummaryCategoryItem::SummaryCategoryItemDuplicatedH1Titles:
+		case SummaryCategoryItem::SummaryCategoryItemSeveralTitlesOnPage:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -105,11 +109,11 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Meta description available columns
 		//
-		case WebCrawler::DataCollection::EmptyMetaDescriptionUrlStorageType:
-		case WebCrawler::DataCollection::DuplicatedMetaDescriptionUrlStorageType:
-		case WebCrawler::DataCollection::VeryLongMetaDescriptionUrlStorageType:
-		case WebCrawler::DataCollection::VeryShortMetaDescriptionUrlStorageType:
-		case WebCrawler::DataCollection::SeveralMetaDescriptionUrlStorageType:
+		case SummaryCategoryItem::SummaryCategoryItemEmptyMetaDescriptions:
+		case SummaryCategoryItem::SummaryCategoryItemDuplicatedMetaDescriptions:
+		case SummaryCategoryItem::SummaryCategoryItemVeryLongMetaDescriptions:
+		case SummaryCategoryItem::SummaryCategoryItemVeryShortMetaDescriptions:
+		case SummaryCategoryItem::SummaryCategoryItemSeveralMetaDescriptionsOnPage:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -124,9 +128,9 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Meta keywords available columns
 		// 
-		case WebCrawler::DataCollection::EmptyMetaKeywordsUrlStorageType:
-		case WebCrawler::DataCollection::DuplicatedMetaKeywordsUrlStorageType:
-		case WebCrawler::DataCollection::SeveralMetaKeywordsUrlStorageType:
+		case SummaryCategoryItem::SummaryCategoryItemEmptyMetaKeywords:
+		case SummaryCategoryItem::SummaryCategoryItemDuplicatedMetaKeywords:
+		case SummaryCategoryItem::SummaryCategoryItemSeveralMetaKeywordsOnPage:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -141,10 +145,10 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// H1 available columns
 		//
-		case WebCrawler::DataCollection::MissingH1UrlStorageType:
-		case WebCrawler::DataCollection::DuplicatedH1UrlStorageType:
-		case WebCrawler::DataCollection::VeryLongH1UrlStorageType:
-		case WebCrawler::DataCollection::SeveralH1UrlStorageType:
+		case SummaryCategoryItem::SummaryCategoryItemMissingH1s:
+		case SummaryCategoryItem::SummaryCategoryItemDuplicatedH1s:
+		case SummaryCategoryItem::SummaryCategoryItemVeryLongH1s:
+		case SummaryCategoryItem::SummaryCategoryItemSeveralH1s:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -161,10 +165,10 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// H2 available columns
 		//
-		case WebCrawler::DataCollection::MissingH2UrlStorageType:
-		case WebCrawler::DataCollection::DuplicatedH2UrlStorageType:
-		case WebCrawler::DataCollection::VeryLongH2UrlStorageType:
-		case WebCrawler::DataCollection::SeveralH2UrlStorageType:
+		case SummaryCategoryItem::SummaryCategoryItemMissingH2s:
+		case SummaryCategoryItem::SummaryCategoryItemDuplicatedH2s:
+		case SummaryCategoryItem::SummaryCategoryItemVeryLongH2s:
+		case SummaryCategoryItem::SummaryCategoryItemSeveralH2s:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType
@@ -181,9 +185,9 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Images available columns
 		//
-		case WebCrawler::DataCollection::Over100kbImageStorageType:
-		case WebCrawler::DataCollection::MissingAltTextImageStorageType:
-		case WebCrawler::DataCollection::VeryLongAltTextImageStorageType:
+		case SummaryCategoryItem::SummaryCategoryItemImagesOver100kb:
+		case SummaryCategoryItem::SummaryCategoryItemImageMissingAltText:
+		case SummaryCategoryItem::SummaryCategoryItemImagesVeryLongAltText:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType

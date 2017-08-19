@@ -95,6 +95,18 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		{
 			return QColor(97, 160, 50, 150);
 		}
+
+		case ITableModel::MarginTop:
+		case ITableModel::MarginBottom:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(4);
+		}
+
+		case ITableModel::MarginRight:
+		case ITableModel::MarginLeft:
+		{
+			return QuickieWebBotHelpers::pointsToPixels(2);
+		}
 	}
 
 	return QVariant();

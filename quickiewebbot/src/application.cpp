@@ -8,6 +8,7 @@
 #include "constants.h"
 #include "application_properties.h"
 #include "storage_adaptor_factory.h"
+#include "summary_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
@@ -19,13 +20,14 @@ Application::Application(int& argc, char** argv)
 	, m_webCrawler(new WebCrawler::WebCrawler(WebCrawler::g_optimalParserThreadsCount, m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory(m_modelController->data()))
+	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 {
 	initialize();
 
 	initializeStyleSheet();
 
 #if defined(PRODUCTION)
-	showStartScreen();
+	showSplashScreen();
 #else
 	mainFrameIsReadyForShow();
 #endif
@@ -62,6 +64,11 @@ WebCrawler::ModelController* Application::modelController() noexcept
 QuickieWebBot::StorageAdaptorFactory* Application::storageAdapterFactory() noexcept
 {
 	return m_storageAdatpterFactory.get();
+}
+
+SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() noexcept
+{
+	return m_summaryDataAccessorFactory.get();
 }
 
 ApplicationProperties* Application::properties() noexcept
@@ -287,7 +294,7 @@ QString Application::operatingSystemVersion() const noexcept
 	return osVersion;
 }
 
-void Application::showStartScreen() const noexcept
+void Application::showSplashScreen() const noexcept
 {
 	SplashScreen* splashScreen = SplashScreen::instance();
 

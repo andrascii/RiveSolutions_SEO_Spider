@@ -7,8 +7,12 @@ namespace QuickieWebBot
 
 enum class SummaryCategoryItem
 {
+	SummaryCategoryItemBegin,
+
 	// used for headers
 	SummaryCategoryItemNone,
+
+	SummaryCategoryItemAllPages = WebCrawler::DataCollection::CrawledUrlStorageType,
 
 	SummaryCategoryItemUpperCaseLinks = WebCrawler::DataCollection::UpperCaseUrlStorageType,
 	SummaryCategoryItemNonAsciiLinks = WebCrawler::DataCollection::NonAsciiCharacterUrlStorageType,
@@ -43,7 +47,9 @@ enum class SummaryCategoryItem
 	
 	SummaryCategoryItemImagesOver100kb = WebCrawler::DataCollection::Over100kbImageStorageType,
 	SummaryCategoryItemImageMissingAltText = WebCrawler::DataCollection::MissingAltTextImageStorageType,
-	SummaryCategoryItemImagesVeryLongAltText = WebCrawler::DataCollection::VeryLongAltTextImageStorageType
+	SummaryCategoryItemImagesVeryLongAltText = WebCrawler::DataCollection::VeryLongAltTextImageStorageType,
+
+	SummaryCategoryItemEnd
 };
 
 }

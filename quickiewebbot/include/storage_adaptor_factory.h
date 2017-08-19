@@ -1,6 +1,7 @@
 #pragma once
 
 #include "data_collection.h"
+#include "summary_category_item.h"
 
 namespace QuickieWebBot
 {
@@ -12,14 +13,14 @@ class StorageAdaptorFactory
 public:
 	StorageAdaptorFactory(WebCrawler::DataCollection* dataCollection);
 
-	StorageAdaptor* create(WebCrawler::DataCollection::StorageType type);
+	StorageAdaptor* create(SummaryCategoryItem type);
 
 protected:
-	void setupAvailableColumns(StorageAdaptor* storageAdaptor, WebCrawler::DataCollection::StorageType type) const;
+	void setupAvailableColumns(StorageAdaptor* storageAdaptor, SummaryCategoryItem type) const;
 
 private:
 	WebCrawler::DataCollection* m_dataCollection;
-	std::map<WebCrawler::DataCollection::StorageType, StorageAdaptor*> m_storageAdaptors;
+	std::map<SummaryCategoryItem, StorageAdaptor*> m_storageAdaptors;
 };
 
 }

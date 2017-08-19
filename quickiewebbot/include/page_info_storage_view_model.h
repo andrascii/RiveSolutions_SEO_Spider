@@ -21,11 +21,6 @@ class PageInfoStorageViewModel
 public:
 	PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent = nullptr);
 
-	virtual int marginTop(const QModelIndex& index) const noexcept override;
-	virtual int marginBottom(const QModelIndex& index) const noexcept override;
-	virtual int marginRight(const QModelIndex& index) const noexcept override;
-	virtual int marginLeft(const QModelIndex& index) const noexcept override;
-
 	virtual void resetRenderersCache() const noexcept override;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
 

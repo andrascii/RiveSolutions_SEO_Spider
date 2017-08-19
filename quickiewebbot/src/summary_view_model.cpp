@@ -15,26 +15,6 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 {
 }
 
-int SummaryViewModel::marginTop(const QModelIndex& index) const noexcept
-{
-	return QuickieWebBotHelpers::pointsToPixels(2);
-}
-
-int SummaryViewModel::marginBottom(const QModelIndex& index) const noexcept
-{
-	return QuickieWebBotHelpers::pointsToPixels(2);
-}
-
-int SummaryViewModel::marginRight(const QModelIndex& index) const noexcept
-{
-	return QuickieWebBotHelpers::pointsToPixels(4);
-}
-
-int SummaryViewModel::marginLeft(const QModelIndex& index) const noexcept
-{
-	return QuickieWebBotHelpers::pointsToPixels(4);
-}
-
 void SummaryViewModel::resetRenderersCache() const noexcept
 {
 }
@@ -45,7 +25,7 @@ QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const no
 	static BackgroundRenderer s_backgroundRenderer;
 
 	// disabled caching
-	static TextRenderer s_textRenderer(this);
+	static TextRenderer s_textRenderer;
 
 	return QList<IRenderer*>()
 		<< &s_backgroundRenderer

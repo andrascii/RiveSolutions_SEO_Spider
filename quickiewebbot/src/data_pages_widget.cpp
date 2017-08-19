@@ -161,19 +161,19 @@ void DataPagesWidget::initializeStackedWidget()
 	m_stackedWidget = new QStackedWidget(this);
 
 	ErrorsFilterWidget* errorsFilterWidget = new ErrorsFilterWidget(m_stackedWidget);
-	TableView* crawlingGridView = new TableView(m_stackedWidget);
+	TableView* crawlingTableView = new TableView(m_stackedWidget);
 
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);
 
-	model->setStorageAdaptor(theApp->storageAdapterFactory()->create(WebCrawler::DataCollection::CrawledUrlStorageType));
+	model->setStorageAdaptor(theApp->storageAdapterFactory()->create(SummaryCategoryItem::SummaryCategoryItemAllPages));
 
-	crawlingGridView->setModel(model);
-	crawlingGridView->setViewModel(modelView);
-	crawlingGridView->setContextMenu(new ContextMenuDataCollectionRow(crawlingGridView));
+	crawlingTableView->setModel(model);
+	crawlingTableView->setViewModel(modelView);
+	crawlingTableView->setContextMenu(new ContextMenuDataCollectionRow(crawlingTableView));
 
 	m_pageIndexes[Page::SeoAnalysisPage] = m_stackedWidget->addWidget(errorsFilterWidget);
-	m_pageIndexes[Page::AllPagesPage] = m_stackedWidget->addWidget(crawlingGridView);
+	m_pageIndexes[Page::AllPagesPage] = m_stackedWidget->addWidget(crawlingTableView);
 }
 
 }

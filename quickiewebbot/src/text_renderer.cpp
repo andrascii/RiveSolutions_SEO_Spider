@@ -6,18 +6,17 @@
 namespace QuickieWebBot
 {
 
-TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
-	: m_viewModel(viewModel)
-	, m_cacheSize(cacheSize)
+TextRenderer::TextRenderer(int cacheSize)
+	: m_cacheSize(cacheSize)
 {
 }
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	int marginTop = m_viewModel->marginTop(index);
-	int marginBottom = m_viewModel->marginBottom(index);
-	int marginLeft = m_viewModel->marginLeft(index);
-	int marginRight = m_viewModel->marginRight(index);
+	const int marginTop = index.data(ITableModel::MarginTop).toInt();
+	const int marginBottom = index.data(ITableModel::MarginBottom).toInt();
+	const int marginLeft = index.data(ITableModel::MarginLeft).toInt();
+	const int marginRight = index.data(ITableModel::MarginRight).toInt();
 
 	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = cached(index);
