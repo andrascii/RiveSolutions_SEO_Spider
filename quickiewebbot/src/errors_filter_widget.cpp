@@ -35,13 +35,12 @@ void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& sel
 	QModelIndex index = selected.indexes()[0];
 	const SummaryModel* summaryModel = QuickieWebBotHelpers::safe_runtime_static_cast<const SummaryModel*>(index.model());
 
-	StorageAdaptorFactory storageAdaptorFactory = StorageAdaptorFactory(theApp->modelController()->data());
 	WebCrawler::DataCollection::StorageType storageType = summaryModel->itemType(index);
 
 	assert(dynamic_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model()));
 	PageInfoStorageModel* storageModel = static_cast<PageInfoStorageModel*>(m_summaryDetailsTableView->model());
 
-	storageModel->setStorageAdaptor(storageAdaptorFactory.create(storageType));
+	storageModel->setStorageAdaptor(theApp->storageAdapterFactory()->create(storageType));
 
 	m_summaryDetailsTableView->viewModel()->resetRenderersCache();
 }
@@ -91,8 +90,7 @@ void ErrorsFilterWidget::initDetailsView()
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* viewModel = new PageInfoStorageViewModel(model, this);
 
-	StorageAdaptorFactory storageAdaptorFactory = StorageAdaptorFactory(theApp->modelController()->data());
-	model->setStorageAdaptor(storageAdaptorFactory.create(WebCrawler::DataCollection::CrawledUrlStorageType));
+	model->setStorageAdaptor(theApp->storageAdapterFactory()->create(WebCrawler::DataCollection::CrawledUrlStorageType));
 
 	m_summaryDetailsTableView->setModel(model);
 	m_summaryDetailsTableView->setViewModel(viewModel);

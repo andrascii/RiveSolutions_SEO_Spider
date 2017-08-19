@@ -17,7 +17,7 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
-	if (pageRaw->url.toString().isEmpty())
+	if (pageRaw->fromUrl.toString().isEmpty())
 	{
 		// page
 		processPageRawUrl(pageRaw);
