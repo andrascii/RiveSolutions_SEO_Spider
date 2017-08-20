@@ -23,6 +23,11 @@ public:
 	virtual QVariant item(const QModelIndex& index) const noexcept;
 	virtual PageInfo::ItemType itemType(const QModelIndex& index) const noexcept;
 
+#ifdef DEBUG
+	WebCrawler::PageRaw* pageRaw(const QModelIndex& index) const noexcept;
+#endif // DEBUG
+
+
 signals:
 	void pageInfoAdded(int rowIndex);
 

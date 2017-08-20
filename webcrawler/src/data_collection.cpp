@@ -217,6 +217,7 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 {
 	if (isPageRawExists(pageRaw, type))
 	{
+		assert(crawlerStorage(type)->size() > 0);
 		auto iter = crawlerStorage(type)->find(pageRaw);
 		return;
 	}
@@ -228,6 +229,7 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 	{
 		guiStorageIt->second->push_back(pageRaw);
 		Q_EMIT pageRawAdded(guiStorage(type)->size() - 1, type);
+		assert(isPageRawExists(pageRaw, type));
 	}	
 }
 

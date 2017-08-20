@@ -40,6 +40,8 @@ void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList)
 	{
 		if (m_crawledUrlList.find(*iter) == m_crawledUrlList.end())
 		{
+			//std::lock_guard<std::mutex> locker(m_mutex);
+
 			m_internalUrlList.insert(*iter);
 			++insertedUrlCounter;
 		}

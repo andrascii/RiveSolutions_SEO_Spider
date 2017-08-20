@@ -70,11 +70,19 @@ void PageRawProcessor::process()
 			m_htmlPageParser.parsePage(reply.responseBody, m_pageRaw);
 		}
 
+
 		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 
 		resolveUrlList(reply.url, urlList);
 
 		m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
+
+#ifdef DEBUG
+		if (m_pageRaw->fromUrl.toString().isEmpty())
+		{
+			m_pageRaw->rawHtml = qCompress(reply.responseBody, 9);
+		}
+#endif // DEBUG
 
 		Q_EMIT webPageParsed(m_pageRaw);
 	}

@@ -8,6 +8,12 @@
 #include "data_pages_widget.h"
 #include "control_panel_widget.h"
 
+#ifdef DEBUG
+#include "debug_info_web_page_widget.h"
+#endif // DEBUG
+
+
+
 namespace QuickieWebBot
 {
 
@@ -40,6 +46,16 @@ void MainFrame::showLimitsSettingsDialog()
 	m_limitsSettingsDialog->exec();
 }
 
+void MainFrame::closeEvent(QCloseEvent* event)
+{
+	QMainWindow::closeEvent(event);
+
+#ifdef DEBUG
+	m_debugWebPageInfoWidget->close();
+#endif // DEBUG
+
+}
+
 void MainFrame::init()
 {
 	QWidget* centralWidget = new QWidget(this);
@@ -51,6 +67,12 @@ void MainFrame::init()
 	centralWidget->setLayout(layout);
 
 	setCentralWidget(centralWidget);
+
+#ifdef DEBUG
+	m_debugWebPageInfoWidget.reset(new DebugInfoWebPageWidget(nullptr));
+	m_debugWebPageInfoWidget->show();
+#endif // DEBUG
+
 }
 
 }

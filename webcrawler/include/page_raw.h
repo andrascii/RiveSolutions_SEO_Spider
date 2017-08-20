@@ -32,6 +32,11 @@ struct PageRaw
 	bool hasSeveralH1Tags;
 	bool hasSeveralH2Tags;
 
+#ifdef DEBUG
+	QByteArray rawHtml;
+#endif // DEBUG
+
+
 };
 
 using PageRawPtr = std::shared_ptr<PageRaw>;

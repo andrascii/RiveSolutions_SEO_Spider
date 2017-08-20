@@ -406,3 +406,10 @@ QWidget#NavigationPanel QPushButton[selected="true"]
 {
 	background-color: lightgray;
 }
+
+/*/////////////////////////////// Web Page Debug Widget ///////////////////////////////*/
+QWidget#DebugWebPageInfoWidget,
+QWidget#DebugWebPageInfoWidget QWidget
+{
+	color: black;
+}

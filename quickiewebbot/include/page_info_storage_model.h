@@ -33,13 +33,13 @@ public:
 	virtual IResizePolicy* resizePolicy() const noexcept override;
 
 	void setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept;
+	const StorageAdaptor* storageAdaptor() const;
 	PageInfo::ItemType itemType(const QModelIndex& index) const noexcept;
 
 signals:
 	virtual void internalDataChanged() override;
 
 private:
-	const StorageAdaptor* storageAdaptor() const;
 	StorageAdaptor* storageAdaptor();
 
 private slots:
