@@ -26,6 +26,11 @@ MainFrame::MainFrame(QWidget* parent)
 	init();
 }
 
+MainFrame::~MainFrame()
+{
+
+}
+
 void MainFrame::showProxySettingsDialog()
 {
 	if (!m_proxySettingsDialog)

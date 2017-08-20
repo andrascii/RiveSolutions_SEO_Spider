@@ -7,7 +7,11 @@ namespace QuickieWebBot
 {
 
 class MainFrameController;
+
+#ifdef DEBUG
 class DebugInfoWebPageWidget;
+#endif // DEBUG
+
 
 class MainFrame : public QMainWindow
 {
@@ -15,6 +19,7 @@ class MainFrame : public QMainWindow
 
 public:
 	MainFrame(QWidget* parent = nullptr);
+	~MainFrame();
 
 	//
 	// settings pages
@@ -34,7 +39,9 @@ private:
 	ProxySettingsDialog* m_proxySettingsDialog;
 	LimitsSettingsDialog* m_limitsSettingsDialog;
 
+#ifdef DEBUG
 	std::unique_ptr<DebugInfoWebPageWidget> m_debugWebPageInfoWidget;
+#endif // DEBUG
 };
 
 }

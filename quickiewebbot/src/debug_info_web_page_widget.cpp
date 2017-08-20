@@ -18,9 +18,12 @@ void DebugInfoWebPageWidget::onPageSelected(WebCrawler::PageRaw* page)
 {
 	responseHeadersEdit->setPlainText(page->serverResponse);
 	requestHeadersEdit->setPlainText("Not Implemented yet");
+#ifdef DEBUG
 	QByteArray rawHtml = qUncompress(page->rawHtml);
 	rawHtmlEdit->setPlainText(rawHtml);
 	webEngineView->setHtml(rawHtml, page->url);
+#endif // DEBUG
+	
 }
 
 }
