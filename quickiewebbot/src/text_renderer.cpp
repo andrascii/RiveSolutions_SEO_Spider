@@ -13,10 +13,10 @@ TextRenderer::TextRenderer(int cacheSize)
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	const int marginTop = index.data(ITableModel::MarginTop).toInt();
-	const int marginBottom = index.data(ITableModel::MarginBottom).toInt();
-	const int marginLeft = index.data(ITableModel::MarginLeft).toInt();
-	const int marginRight = index.data(ITableModel::MarginRight).toInt();
+	const int marginTop = qvariant_cast<int>(index.data(ITableModel::MarginTop));
+	const int marginBottom = qvariant_cast<int>(index.data(ITableModel::MarginBottom));
+	const int marginLeft = qvariant_cast<int>(index.data(ITableModel::MarginLeft));
+	const int marginRight = qvariant_cast<int>(index.data(ITableModel::MarginRight));
 
 	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = cached(index);
@@ -28,10 +28,10 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 	}
 
 	const bool isDecorationValid = index.data(Qt::DecorationRole).isValid();
-	const int textAlignmentFlags = index.data(Qt::TextAlignmentRole).toInt();
-	const QFont& font = index.data(Qt::FontRole).value<QFont>();
-	const QString paintingText = index.data(Qt::DisplayRole).toString();
-	const QColor& textColor = index.data(Qt::TextColorRole).value<QColor>();
+	const int textAlignmentFlags = qvariant_cast<int>(index.data(Qt::TextAlignmentRole));
+	const QFont& font = qvariant_cast<QFont>(index.data(Qt::FontRole)).resolve(option.font);
+	const QString paintingText = qvariant_cast<QString>(index.data(Qt::DisplayRole));
+	const QColor& textColor = qvariant_cast<QColor>(index.data(Qt::TextColorRole));
 
 	QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
 	QPixmap pixmap(pixmapRect.size());

@@ -5,7 +5,7 @@ namespace QuickieWebBot
 
 class ErrorsFilterWidget;
 
-class DataPagesWidget : public QWidget
+class DataPagesWidget : public QFrame
 {
 	Q_OBJECT
 

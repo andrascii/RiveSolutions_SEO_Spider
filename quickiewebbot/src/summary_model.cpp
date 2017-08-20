@@ -76,6 +76,24 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 			return dataAccessor()->pixmap(index);
 		}
 
+		case Qt::FontRole:
+		{
+			QFont font = Application::font();
+
+			if (!dataAccessor())
+			{
+				return font;
+			}
+
+			if (dataAccessor()->isHeaderItem(index))
+			{
+				font.setBold(true);
+				return font;
+			}
+
+			return font;
+		}
+
 		case Qt::TextAlignmentRole:
 		{
 			if (index.column() != 0)

@@ -15,14 +15,14 @@ namespace QuickieWebBot
 {
 
 DataPagesWidget::DataPagesWidget(QWidget* parent)
-	: QWidget(parent)
+	: QFrame(parent)
 {
 	initializeNavigationPanelWidget();
 	initializeStackedWidget();
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
-	horizontalLayout->addWidget(m_stackedWidget);
 	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
+	horizontalLayout->addWidget(m_stackedWidget);
 
 	setLayout(horizontalLayout);
 }
@@ -134,6 +134,7 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::AllPagesPage]);
 	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::AllResourcesPage]);
 	m_navigationPanel.verticalSubbuttonsLayout->setSpacing(0);
+	m_navigationPanel.verticalSubbuttonsLayout->setContentsMargins(-1, 0, 0, 0);
 	m_navigationPanel.siteStructurePanelWidget->setLayout(m_navigationPanel.verticalSubbuttonsLayout);
 
 

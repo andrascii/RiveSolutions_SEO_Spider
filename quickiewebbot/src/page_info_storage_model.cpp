@@ -39,9 +39,19 @@ void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noe
 
 	std::map<int, int> columnsWidth;
 
-	for (int i = 0; i < m_storageAdaptor->availableColumns().size(); ++i)
+	for (int i = 0; i < m_storageAdaptor->availableColumns().size() + 1; ++i)
 	{
-		columnsWidth[i] = PageInfo::columnPrefferedSize(m_storageAdaptor->availableColumns()[i]);
+		if (i == 0)
+		{
+			// set first column width which shows row number
+
+			columnsWidth[0] = QuickieWebBotHelpers::pointsToPixels(30);
+			continue;
+		}
+
+		// set other column widths
+
+		columnsWidth[i] = PageInfo::columnPrefferedSize(m_storageAdaptor->availableColumns()[i - 1]);
 	}
 
 	std::dynamic_pointer_cast<DefaultColumnResizePolicy>(m_resizePolicy)->setColumnsSize(columnsWidth);
@@ -78,66 +88,57 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 	}
 
+	if (role == Qt::BackgroundColorRole)
+	{
+		return QColor(Qt::white);
+	}
+
+	if (role == ITableModel::SelectionBackgroundColorRole)
+	{
+		return QColor(97, 160, 50, 200);
+	}
+
+	if (role == ITableModel::MarginTop ||
+		role == ITableModel::MarginBottom)
+	{
+		return QuickieWebBotHelpers::pointsToPixels(4);
+	}
+
+	if (role == ITableModel::MarginLeft ||
+		role == ITableModel::MarginRight)
+	{
+		return QuickieWebBotHelpers::pointsToPixels(2);
+	}
+
+	if (index.column() == 0)
+	{
+		if (role == Qt::DisplayRole)
+		{
+			return index.row();
+		}
+		else
+		{
+			return QVariant();
+		}
+	}
+
+	QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);
+
 	switch (role)
 	{
 		case Qt::DisplayRole:
 		{
-			return storageAdaptor()->item(index);
+			return storageAdaptor()->item(validatedIndex);
 		}
 
 		case Qt::DecorationRole:
 		{
 			static QPixmap urlPixmap(":/images/url-icon.png");
 
-			if (storageAdaptor()->itemType(index) == PageInfo::UrlItemType)
+			if (storageAdaptor()->itemType(validatedIndex) == PageInfo::UrlItemType)
 			{
 				return urlPixmap;
 			}
-		}
-
-		case Qt::BackgroundColorRole:
-		{
-			return QColor(Qt::white);
-		}
-
-		case Qt::TextColorRole:
-		{
-			if (storageAdaptor()->itemType(index) == PageInfo::UrlItemType)
-			{
-				return QColor("#343B49");
-			}
-
-			return QColor(Qt::black);
-		}
-
-		case Qt::FontRole:
-		{
-			QFont font;
-
-			if (storageAdaptor()->itemType(index) == PageInfo::UrlItemType)
-			{
-				font.setBold(true);
-				return font;
-			}
-
-			return font;
-		}
-
-		case ITableModel::SelectionBackgroundColorRole:
-		{
-			return QColor(97, 160, 50, 200);
-		}
-
-		case ITableModel::MarginTop:
-		case ITableModel::MarginBottom:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(4);
-		}
-
-		case ITableModel::MarginRight:
-		case ITableModel::MarginLeft:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(2);
 		}
 	}
 
@@ -153,7 +154,12 @@ QVariant PageInfoStorageModel::headerData(int section, Qt::Orientation orientati
 
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 	{
-		return storageAdaptor()->columnDescription(section);
+		if (section == 0)
+		{
+			return QString(tr("#"));
+		}
+
+		return storageAdaptor()->columnDescription(section - 1);
 	}
 
 	return QVariant();
@@ -166,7 +172,7 @@ int PageInfoStorageModel::columnCount(const QModelIndex&) const
 		return 0;
 	}
 
-	return storageAdaptor()->availableColumns().size();
+	return storageAdaptor()->availableColumns().size() + 1;
 }
 
 int PageInfoStorageModel::rowCount(const QModelIndex& parent) const

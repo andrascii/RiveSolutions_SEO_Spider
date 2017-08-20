@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-class ControlPanelWidget : public QWidget
+class ControlPanelWidget : public QFrame
 {
 	Q_OBJECT
 

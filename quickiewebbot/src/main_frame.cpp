@@ -45,12 +45,13 @@ void MainFrame::init()
 	QWidget* centralWidget = new QWidget(this);
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 
+	layout->setSpacing(0);
 	layout->addWidget(new ControlPanelWidget(centralWidget));
 	layout->addWidget(new DataPagesWidget(centralWidget));
 
-	centralWidget->setLayout(layout);
-
 	setCentralWidget(centralWidget);
+
+	centralWidget->setObjectName("MainFrameCentralWidget");
 }
 
 }
