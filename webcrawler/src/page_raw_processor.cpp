@@ -6,7 +6,7 @@
 #include "html_page_meta_parser.h"
 #include "html_page_h_parser.h"
 #include "html_page_word_count_parser.h"
-
+#include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
@@ -80,7 +80,7 @@ void PageRawProcessor::process()
 #ifdef DEBUG
 		if (m_pageRaw->fromUrl.toString().isEmpty())
 		{
-			m_pageRaw->rawHtml = qCompress(reply.responseBody, 9);
+			m_pageRaw->rawHtml = qCompress(GumboParsingHelpers::decodeHtmlPage(reply.responseBody), 9);
 		}
 #endif // DEBUG
 
