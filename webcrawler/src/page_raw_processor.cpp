@@ -77,7 +77,7 @@ void PageRawProcessor::process()
 
 		m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 		if (m_pageRaw->fromUrl.toString().isEmpty())
 		{
 			m_pageRaw->rawHtml = qCompress(reply.responseBody, 9);

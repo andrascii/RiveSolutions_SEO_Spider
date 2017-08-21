@@ -55,7 +55,7 @@ PageInfo::ItemType StorageAdaptor::itemType(const QModelIndex& index) const noex
 	return m_availableColumns[index.column()];
 }
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 WebCrawler::PageRaw* StorageAdaptor::pageRaw(const QModelIndex& index) const noexcept
 {
 	const WebCrawler::DataCollection::GuiStorageType& storage = *m_associatedStorage;

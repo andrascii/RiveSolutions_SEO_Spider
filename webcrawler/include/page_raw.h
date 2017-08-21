@@ -32,7 +32,7 @@ struct PageRaw
 	bool hasSeveralH1Tags;
 	bool hasSeveralH2Tags;
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 	QByteArray rawHtml;
 #endif // DEBUG
 

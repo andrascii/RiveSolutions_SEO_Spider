@@ -92,6 +92,9 @@ public:
 		MissingAltTextImageStorageType,
 		VeryLongAltTextImageStorageType,
 
+
+		Status404StorageType,
+
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		EndEnumStorageType
 	};

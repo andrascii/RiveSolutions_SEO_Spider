@@ -8,7 +8,7 @@ namespace QuickieWebBot
 
 class MainFrameController;
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 class DebugInfoWebPageWidget;
 #endif // DEBUG
 
@@ -39,7 +39,7 @@ private:
 	ProxySettingsDialog* m_proxySettingsDialog;
 	LimitsSettingsDialog* m_limitsSettingsDialog;
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 	std::unique_ptr<DebugInfoWebPageWidget> m_debugWebPageInfoWidget;
 #endif // DEBUG
 };

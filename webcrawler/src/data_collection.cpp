@@ -147,7 +147,11 @@ DataCollection::DataCollection(QObject* parent)
 
 		std::make_pair(VeryLongAltTextImageStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)))))
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+		std::make_pair(Status404StorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
 	})
 	, m_guiStorageMap(std::initializer_list<std::pair<const int, GuiStorageTypePtr>>
 	{
@@ -299,7 +303,9 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 
 		type == Over100kbImageStorageType ||
 		type == MissingAltTextImageStorageType ||
-		type == VeryLongAltTextImageStorageType
+		type == VeryLongAltTextImageStorageType ||
+
+		type == Status404StorageType
 	);
 }
 

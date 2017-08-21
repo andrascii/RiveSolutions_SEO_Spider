@@ -2,7 +2,7 @@
 #include "table_view.h"
 #include "itable_model.h"
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 #include "debug_info_web_page_widget.h"
 #include "page_info_storage_model.h"
 #include "storage_adaptor.h"
@@ -80,7 +80,7 @@ void SelectionModel::select(const QItemSelection& selection, QItemSelectionModel
 		return;
 	}
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 	QModelIndex firstSelectedIndex = fixedSelection.indexes().first();
 	const PageInfoStorageModel* storageModel = dynamic_cast<const PageInfoStorageModel*>(firstSelectedIndex.model());
 	if (storageModel != nullptr)

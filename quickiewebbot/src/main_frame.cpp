@@ -8,7 +8,7 @@
 #include "data_pages_widget.h"
 #include "control_panel_widget.h"
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 #include "debug_info_web_page_widget.h"
 #endif // DEBUG
 
@@ -55,7 +55,7 @@ void MainFrame::closeEvent(QCloseEvent* event)
 {
 	QMainWindow::closeEvent(event);
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 	m_debugWebPageInfoWidget->close();
 #endif // DEBUG
 
@@ -73,7 +73,7 @@ void MainFrame::init()
 
 	setCentralWidget(centralWidget);
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
 	m_debugWebPageInfoWidget.reset(new DebugInfoWebPageWidget(nullptr));
 	m_debugWebPageInfoWidget->show();
 #endif // DEBUG

@@ -17,6 +17,8 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
+	processPageRawStatusCode(pageRaw);
+
 	if (pageRaw->fromUrl.toString().isEmpty())
 	{
 		// page
@@ -282,6 +284,14 @@ void ModelController::processPageRawImage(PageRawPtr pageRaw) noexcept
 	if (sizeKB > m_webCrawlerOptions.maxImageSizeKb)
 	{
 		m_data->addPageRaw(pageRaw, DataCollection::Over100kbImageStorageType);
+	}
+}
+
+void ModelController::processPageRawStatusCode(PageRawPtr pageRaw) noexcept
+{
+	if (pageRaw->statusCode == 404)
+	{
+		m_data->addPageRaw(pageRaw, DataCollection::Status404StorageType);
 	}
 }
 

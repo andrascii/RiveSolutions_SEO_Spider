@@ -30,6 +30,7 @@ private:
 	void processPageRawH1(PageRawPtr pageRaw) noexcept;
 	void processPageRawH2(PageRawPtr pageRaw) noexcept;
 	void processPageRawImage(PageRawPtr pageRaw) noexcept;
+	void processPageRawStatusCode(PageRawPtr pageRaw) noexcept;
 
 private:
 	DataCollection* m_data;
