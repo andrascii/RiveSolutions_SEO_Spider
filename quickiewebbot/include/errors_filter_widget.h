@@ -1,11 +1,13 @@
 #pragma once
 
+#include "ui_errors_filter_widget.h"
+
 namespace QuickieWebBot
 {
 
 class TableView;
 
-class ErrorsFilterWidget : public QWidget
+class ErrorsFilterWidget : public QFrame
 {
 	Q_OBJECT
 
@@ -21,8 +23,7 @@ private:
 	void initDetailsView();
 
 private:
-	TableView* m_summaryTableView;
-	TableView* m_summaryDetailsTableView;
+	std::unique_ptr<Ui::ErrorsFilterWidget> m_ui;
 };
 
 }

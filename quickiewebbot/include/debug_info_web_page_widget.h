@@ -13,6 +13,7 @@ namespace QuickieWebBot
 class GlobalWebPageSelectedNotifier : public QObject
 {
 	Q_OBJECT
+
 public:
 	static GlobalWebPageSelectedNotifier* instanse() noexcept
 	{

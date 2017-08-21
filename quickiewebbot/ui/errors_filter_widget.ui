@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ErrorsFilter</class>
- <widget class="QWidget" name="ErrorsFilter">
+ <class>ErrorsFilterWidget</class>
+ <widget class="QWidget" name="ErrorsFilterWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>951</width>
-    <height>535</height>
+    <width>846</width>
+    <height>475</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>9</number>
-   </property>
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QuickieWebBot::GridView" name="summaryGridView">
+     <widget class="QuickieWebBot::TableView" name="summaryTableView">
       <property name="sizeAdjustPolicy">
        <enum>QAbstractScrollArea::AdjustToContents</enum>
       </property>
@@ -42,16 +39,16 @@
        <bool>false</bool>
       </attribute>
      </widget>
-     <widget class="QuickieWebBot::GridView" name="summaryDetailsGridView"/>
+     <widget class="QuickieWebBot::TableView" name="summaryDetailsTableView"/>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QuickieWebBot::GridView</class>
+   <class>QuickieWebBot::TableView</class>
    <extends>QTableView</extends>
-   <header location="global">grid_view.h</header>
+   <header location="global">table_view.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -7,6 +7,7 @@
 #include "main_frame_controller.h"
 #include "data_pages_widget.h"
 #include "control_panel_widget.h"
+#include "titled_widget.h"
 
 #ifdef QT_DEBUG
 #include "debug_info_web_page_widget.h"

@@ -7,7 +7,7 @@ namespace QuickieWebBot
 {
 
 ControlPanelWidget::ControlPanelWidget(QWidget* parent)
-	: QWidget(parent)
+	: QFrame(parent)
 {
 	initialize();
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_start_screen.h"
+#include "ui_splash_screen.h"
 
 namespace QuickieWebBot
 {
@@ -27,7 +27,7 @@ private:
 	static SplashScreen* s_instance;
 	static bool s_alreadyShown;
 
-	std::unique_ptr<Ui::StartScreen> m_screenContent;
+	std::unique_ptr<Ui::SplashScreen> m_screenContent;
 
 	QPixmap m_brandingLogoImage;
 	QTimer* m_timer;
