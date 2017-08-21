@@ -7,6 +7,7 @@ namespace QuickieWebBot
 {
 
 class MainFrameController;
+class DebugInfoWebPageWidget;
 
 class MainFrame : public QMainWindow
 {
@@ -21,6 +22,9 @@ public:
 	Q_SLOT void showProxySettingsDialog();
 	Q_SLOT void showLimitsSettingsDialog();
 
+protected:
+	virtual void closeEvent(QCloseEvent* event) override;
+
 private:
 	void init();
 
@@ -29,6 +33,8 @@ private:
 
 	ProxySettingsDialog* m_proxySettingsDialog;
 	LimitsSettingsDialog* m_limitsSettingsDialog;
+
+	std::unique_ptr<DebugInfoWebPageWidget> m_debugWebPageInfoWidget;
 };
 
 }

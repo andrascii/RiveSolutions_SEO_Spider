@@ -41,6 +41,7 @@ void TableView::setModel(QAbstractItemModel* model)
 	}
 	
 	initSpan();
+	setSelectionModel(new SelectionModel(this));
 }
 
 void TableView::mouseMoveEvent(QMouseEvent* event)
