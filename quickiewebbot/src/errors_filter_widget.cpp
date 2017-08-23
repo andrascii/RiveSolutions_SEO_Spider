@@ -22,7 +22,7 @@ ErrorsFilterWidget::ErrorsFilterWidget(QWidget* parent)
 {
 	init();
 
-	VERIFY(connect(m_ui->summaryTableView, SIGNAL(selectionWasChanged(const QItemSelection&, const QItemSelection&)),
+	VERIFY(connect(m_ui->summaryTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 

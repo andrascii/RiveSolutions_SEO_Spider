@@ -1,6 +1,7 @@
 #include "selection_model.h"
 #include "table_view.h"
 #include "itable_model.h"
+#include "quickie_web_bot_helpers.h"
 
 #ifdef QT_DEBUG
 #include "debug_info_web_page_widget.h"
@@ -14,7 +15,7 @@ namespace QuickieWebBot
 
 SelectionModel::SelectionModel(TableView* parent)
 	: QItemSelectionModel(parent->model())
-	, m_gridView(parent)
+	, m_view(parent)
 {
 }
 
@@ -81,15 +82,18 @@ void SelectionModel::select(const QItemSelection& selection, QItemSelectionModel
 	}
 
 #ifdef QT_DEBUG
+
 	QModelIndex firstSelectedIndex = fixedSelection.indexes().first();
+
 	const PageInfoStorageModel* storageModel = dynamic_cast<const PageInfoStorageModel*>(firstSelectedIndex.model());
+
 	if (storageModel != nullptr)
 	{
 		WebCrawler::PageRaw* pageRaw = storageModel->storageAdaptor()->pageRaw(firstSelectedIndex);
 		GlobalWebPageSelectedNotifier::instanse()->pageSelected(pageRaw);
 	}
-#endif // DEBUG
 
+#endif // DEBUG
 
 	QItemSelectionModel::select(fixedSelection, command);
 }

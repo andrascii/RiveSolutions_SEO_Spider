@@ -157,11 +157,4 @@ void TableView::adjustColumnSize()
 	}
 }
 
-void TableView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
-{
-	QTableView::selectionChanged(selected, deselected);
-
-	Q_EMIT selectionWasChanged(selected, deselected);
-}
-
 }
