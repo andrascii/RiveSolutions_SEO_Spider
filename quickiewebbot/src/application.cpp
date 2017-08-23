@@ -7,8 +7,6 @@
 #include "web_crawler.h"
 #include "constants.h"
 #include "application_properties.h"
-#include "storage_adaptor_factory.h"
-#include "summary_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
@@ -39,11 +37,6 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "Kernel version:" << QSysInfo::kernelVersion();
 	INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
-}
-
-Application::~Application()
-{
-
 }
 
 WebCrawler::WebCrawler* Application::webCrawler() noexcept
