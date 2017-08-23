@@ -101,8 +101,6 @@ public:
 
 	DataCollection(QObject* parent);
 
-	//StorageAdaptorFactory* storageAdaptorFactory();
-
 	bool isPageRawExists(const PageRawPtr& pageRaw, StorageType type) const noexcept;
 	void addPageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept;
 	const PageRawPtr& pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept;
@@ -122,7 +120,6 @@ private:
 private:
 	std::unordered_map<int, CrawlerStorageTypePtr> m_crawlerStorageMap;
 	std::unordered_map<int, GuiStorageTypePtr> m_guiStorageMap;
-	//std::unique_ptr<StorageAdaptorFactory> m_storageAdaptorFactory;
 };
 
 }

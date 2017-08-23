@@ -63,7 +63,16 @@ void PageInfoStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noe
 
 PageInfo::ItemType PageInfoStorageModel::itemType(const QModelIndex& index) const noexcept
 {
-	return storageAdaptor()->itemType(index);
+	if (index.column() == 0)
+	{
+		// just return invalid enum for item number
+
+		return PageInfo::BeginEnumPageInfoItemType;
+	}
+
+	const QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);
+
+	return storageAdaptor()->itemType(validatedIndex);
 }
 
 IResizePolicy* PageInfoStorageModel::resizePolicy() const noexcept
