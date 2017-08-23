@@ -26,6 +26,8 @@ public:
 	Q_SLOT void showProxySettingsDialog();
 	Q_SLOT void showLimitsSettingsDialog();
 
+	Q_SIGNAL void onAboutMainFrameToClose();
+
 protected:
 	virtual void closeEvent(QCloseEvent* event) override;
 
@@ -39,12 +41,6 @@ private:
 
 	ProxySettingsDialog* m_proxySettingsDialog;
 	LimitsSettingsDialog* m_limitsSettingsDialog;
-
-#ifdef QT_DEBUG
-
-	std::unique_ptr<DebugInfoWebPageWidget> m_debugWebPageInfoWidget;
-
-#endif // DEBUG
 
 	QAction* m_openFileAction;
 	QAction* m_closeFileAction;

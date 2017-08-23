@@ -6,8 +6,8 @@ namespace QuickieWebBot
 
 void StyleLoader::attachStyleLoader(QString const& filename, QKeySequence const& keySequenceCustomStyleSheet)
 {
-	StyleLoader* styleLoader = new StyleLoader(qApp, filename, keySequenceCustomStyleSheet);
-	qApp->installEventFilter(styleLoader);
+	StyleLoader* styleLoader = new StyleLoader(theApp, filename, keySequenceCustomStyleSheet);
+	theApp->installEventFilter(styleLoader);
 }
 
 bool StyleLoader::eventFilter(QObject* obj, QEvent* event)
@@ -26,6 +26,8 @@ bool StyleLoader::eventFilter(QObject* obj, QEvent* event)
 			{
 				loadCustomStyleSheet();
 			}
+
+			return true;
 		}
 	}
 

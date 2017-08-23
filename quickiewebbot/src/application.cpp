@@ -7,6 +7,7 @@
 #include "web_crawler.h"
 #include "constants.h"
 #include "application_properties.h"
+#include "debug_info_web_page_widget.h"
 
 namespace QuickieWebBot
 {
@@ -87,6 +88,7 @@ void Application::initialize() noexcept
 
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
+	DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
 #endif
 }
 

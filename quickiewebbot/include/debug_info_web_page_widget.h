@@ -25,16 +25,22 @@ public:
 
 private:
 	GlobalWebPageSelectedNotifier() = default;
-
 };
 
 class DebugInfoWebPageWidget : public QWidget, public Ui::DebugWebPageInfoWidget
 {
 	Q_OBJECT
+
 public:
-	DebugInfoWebPageWidget(QWidget* parent);
+	static void attachDebugInfoWebPageWidget();
 
 	Q_SLOT void onPageSelected(WebCrawler::PageRaw* page);
+
+protected:
+	virtual bool eventFilter(QObject* object, QEvent* event) override;
+
+private:
+	DebugInfoWebPageWidget(QWidget* parent);
 };
 
 }

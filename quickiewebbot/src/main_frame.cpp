@@ -53,12 +53,7 @@ void MainFrame::closeEvent(QCloseEvent* event)
 {
 	QMainWindow::closeEvent(event);
 
-#ifdef QT_DEBUG
-
-	m_debugWebPageInfoWidget->close();
-
-#endif // DEBUG
-
+	Q_EMIT onAboutMainFrameToClose();
 }
 
 void MainFrame::init()
@@ -67,13 +62,6 @@ void MainFrame::init()
 	createAndSetCentralWidget();
 
 	setWindowIcon(QIcon(QStringLiteral(":/images/robot.ico")));
-
-#ifdef QT_DEBUG
-
-	m_debugWebPageInfoWidget.reset(new DebugInfoWebPageWidget(nullptr));
-	m_debugWebPageInfoWidget->show();
-
-#endif // DEBUG
 
 	setMenuBar(new MainFrameMenuBar(this));
 }
@@ -84,11 +72,20 @@ void MainFrame::createActions()
 
 	// file actions
 	actionRegistry.addActionGroup(s_fileActionGroup);
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, "Open File");
+
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, 
+		QIcon(QStringLiteral(":/images/open-file-icon.png")), "Open File");
+
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, "Close File");
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, "Recent Files");
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, "Save File");
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, "Save File As");
+
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, 
+		QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")), "Recent Files");
+
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, 
+		QIcon(QStringLiteral(":/images/save-icon.png")), "Save File");
+
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, 
+		QIcon(QStringLiteral(":/images/save-as-icon.png")), "Save File As");
 
 	actionRegistry.addGlobalAction(s_exitProgramAction, "Close");
 }
