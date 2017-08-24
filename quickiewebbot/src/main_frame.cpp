@@ -11,12 +11,6 @@
 #include "action_registry.h"
 #include "main_frame_menu_bar.h"
 
-#ifdef QT_DEBUG
-#include "debug_info_web_page_widget.h"
-#endif // DEBUG
-
-
-
 namespace QuickieWebBot
 {
 
