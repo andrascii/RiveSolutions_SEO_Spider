@@ -2,6 +2,7 @@
 
 #include "proxy_settings_dialog.h"
 #include "limits_settings_dialog.h"
+#include "application_settings_widget.h"
 
 namespace QuickieWebBot
 {
@@ -25,6 +26,7 @@ public:
 	//
 	Q_SLOT void showProxySettingsDialog();
 	Q_SLOT void showLimitsSettingsDialog();
+	Q_SLOT void showApplicationSettingsWidget();
 
 	Q_SIGNAL void onAboutMainFrameToClose();
 
@@ -41,13 +43,17 @@ private:
 
 	ProxySettingsDialog* m_proxySettingsDialog;
 	LimitsSettingsDialog* m_limitsSettingsDialog;
-
+	ApplicationSettingsWidget* m_applicationSettingsWidget;
+	
 	QAction* m_openFileAction;
 	QAction* m_closeFileAction;
 	QAction* m_recentFilesAction;
 	QAction* m_saveFileAction;
 	QAction* m_saveFileAsAction;
 	QAction* m_exitProgramAction;
+
+	QAction* m_openSettingsWidget;
+
 };
 
 }

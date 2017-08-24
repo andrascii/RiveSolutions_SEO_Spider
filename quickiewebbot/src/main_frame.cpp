@@ -19,6 +19,7 @@ MainFrame::MainFrame(QWidget* parent)
 	, m_mainFrameController(new MainFrameController(this, this))
 	, m_proxySettingsDialog(nullptr)
 	, m_limitsSettingsDialog(nullptr)
+	, m_applicationSettingsWidget(nullptr)
 {
 	init();
 }
@@ -42,6 +43,17 @@ void MainFrame::showLimitsSettingsDialog()
 
 	m_limitsSettingsDialog->exec();
 }
+
+void MainFrame::showApplicationSettingsWidget()
+{
+	if (!m_applicationSettingsWidget)
+	{
+		m_applicationSettingsWidget = new ApplicationSettingsWidget(this);
+	}
+
+	m_applicationSettingsWidget->show();
+}
+
 
 void MainFrame::closeEvent(QCloseEvent* event)
 {
@@ -82,6 +94,14 @@ void MainFrame::createActions()
 		QIcon(QStringLiteral(":/images/save-as-icon.png")), "Save File As");
 
 	actionRegistry.addGlobalAction(s_exitProgramAction, "Close");
+
+	// settings actions
+	actionRegistry.addActionGroup(s_settingsActionGroup);
+
+	m_openSettingsWidget = actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openSettingsAction,
+		QIcon(QStringLiteral(":/images/setting.png")), "Settings");
+
+	VERIFY(connect(m_openSettingsWidget, SIGNAL(triggered()), this, SLOT(showApplicationSettingsWidget())));
 }
 
 void MainFrame::createAndSetCentralWidget()
