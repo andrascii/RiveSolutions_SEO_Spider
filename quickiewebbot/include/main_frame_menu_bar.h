@@ -14,6 +14,7 @@ private:
 	void init();
 
 	QMenu* buildMenuFile();
+	QMenu* buildMenuSettings();
 };
 
 }

@@ -14,6 +14,7 @@ MainFrameMenuBar::MainFrameMenuBar(QWidget* parent)
 void MainFrameMenuBar::init()
 {
 	addMenu(buildMenuFile());
+	addMenu(buildMenuSettings());
 }
 
 QMenu* MainFrameMenuBar::buildMenuFile()
@@ -30,6 +31,17 @@ QMenu* MainFrameMenuBar::buildMenuFile()
 	fileMenu->addAction(actionRegistry.globalAction(s_closeFileAction));
 
 	return fileMenu;
+}
+
+QMenu* MainFrameMenuBar::buildMenuSettings()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	QMenu* settingsMenu = new QMenu(tr("Settings"), this);
+
+	settingsMenu->addAction(actionRegistry.globalAction(s_openSettingsAction));
+
+	return settingsMenu;
 }
 
 }
