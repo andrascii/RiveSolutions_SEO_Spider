@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Crawler settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <property name="sizeConstraint">
@@ -179,11 +179,6 @@
     </spacer>
    </item>
   </layout>
-  <zorder>groupBox</zorder>
-  <zorder>groupBox_2</zorder>
-  <zorder>groupBox_2</zorder>
-  <zorder>title</zorder>
-  <zorder>description</zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
  <resources/>

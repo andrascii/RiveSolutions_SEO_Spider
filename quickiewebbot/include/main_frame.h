@@ -1,7 +1,5 @@
 #pragma once
 
-#include "proxy_settings_dialog.h"
-#include "limits_settings_dialog.h"
 #include "application_settings_widget.h"
 
 namespace QuickieWebBot
@@ -19,8 +17,6 @@ public:
 	//
 	// settings pages
 	//
-	Q_SLOT void showProxySettingsDialog();
-	Q_SLOT void showLimitsSettingsDialog();
 	Q_SLOT void showApplicationSettingsWidget();
 
 	Q_SIGNAL void onAboutMainFrameToClose();
@@ -32,12 +28,11 @@ private:
 	void init();
 	void createActions();
 	void createAndSetCentralWidget();
+	void createSettingsPages();
 
 private:
 	MainFrameController* m_mainFrameController;
 
-	ProxySettingsDialog* m_proxySettingsDialog;
-	LimitsSettingsDialog* m_limitsSettingsDialog;
 	ApplicationSettingsWidget* m_applicationSettingsWidget;
 	
 	QAction* m_openFileAction;
