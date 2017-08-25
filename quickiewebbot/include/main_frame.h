@@ -9,11 +9,6 @@ namespace QuickieWebBot
 
 class MainFrameController;
 
-#ifdef QT_DEBUG
-class DebugInfoWebPageWidget;
-#endif // DEBUG
-
-
 class MainFrame : public QMainWindow
 {
 	Q_OBJECT

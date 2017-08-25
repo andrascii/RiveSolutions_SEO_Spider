@@ -55,7 +55,7 @@ WebCrawler::ModelController* Application::modelController() noexcept
 	return m_modelController;
 }
 
-QuickieWebBot::StorageAdaptorFactory* Application::storageAdapterFactory() noexcept
+StorageAdaptorFactory* Application::storageAdapterFactory() noexcept
 {
 	return m_storageAdatpterFactory.get();
 }

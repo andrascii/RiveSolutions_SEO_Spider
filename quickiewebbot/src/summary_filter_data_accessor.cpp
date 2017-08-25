@@ -1,99 +1,35 @@
 #include "summary_filter_data_accessor.h"
 #include "quickie_web_bot_helpers.h"
+#include "application.h"
+#include "model_controller.h"
 
 namespace QuickieWebBot
 {
 
 SummaryFilterDataAccessor::SummaryFilterDataAccessor()
 {
-	using namespace WebCrawler;
+	DataCollectionGroupsFactory dcGroupsFactory;
 
-	m_allGroups =
-	{
-		SummaryGroup
-		{
-			"Links",
-			{
-				SummaryItem{ "Links with non-ASCII characters", SummaryCategoryItem::SummaryCategoryItemNonAsciiLinks, StatusOK, 0 },
-				SummaryItem{ "Links with uppercase characters", SummaryCategoryItem::SummaryCategoryItemUpperCaseLinks, StatusOK, 0 },
-				SummaryItem{ "Too long links", SummaryCategoryItem::SummaryCategoryItemVeryLongLinks, StatusOK, 0 },
-			}
-		},
-		SummaryGroup
-		{
-			"Page's Title",
-			{
-				SummaryItem{ "Empty titles", SummaryCategoryItem::SummaryCategoryItemEmptyTitles, StatusOK, 0 },
-				SummaryItem{ "Duplicate titles", SummaryCategoryItem::SummaryCategoryItemDuplicatedTitles, StatusOK, 0 },
-				SummaryItem{ "Too long titles", SummaryCategoryItem::SummaryCategoryItemVeryLongTitles, StatusOK, 0 },
-				SummaryItem{ "Too short titles", SummaryCategoryItem::SummaryCategoryItemVeryShortTitles, StatusOK, 0 },
-				SummaryItem{ "H1 Duplicates titles", SummaryCategoryItem::SummaryCategoryItemDuplicatedH1Titles, StatusOK, 0 },
-				SummaryItem{ "Several title tags", SummaryCategoryItem::SummaryCategoryItemSeveralTitlesOnPage, StatusOK, 0 },
-			}
-		},
-		SummaryGroup
-		{
-			"Page's Meta Description",
-			{
-				SummaryItem{ "Empty meta description", SummaryCategoryItem::SummaryCategoryItemEmptyMetaDescriptions, StatusOK, 0 },
-				SummaryItem{ "Duplicate meta descriptions", SummaryCategoryItem::SummaryCategoryItemDuplicatedMetaDescriptions, StatusOK, 0 },
-				SummaryItem{ "Too long meta descriptions", SummaryCategoryItem::SummaryCategoryItemVeryLongMetaDescriptions, StatusOK, 0 },
-				SummaryItem{ "Too short meta descriptions", SummaryCategoryItem::SummaryCategoryItemVeryShortMetaDescriptions, StatusOK, 0 },
-				SummaryItem{ "Several meta descriptions tags", SummaryCategoryItem::SummaryCategoryItemSeveralMetaDescriptionsOnPage, StatusOK, 0 },
-			}
-		},
-		SummaryGroup
-		{
-			"Page's Meta Key Words",
-			{
-				SummaryItem{ "Empty meta keywords", SummaryCategoryItem::SummaryCategoryItemEmptyMetaKeywords, StatusOK, 0 },
-				SummaryItem{ "Duplicate meta keywords", SummaryCategoryItem::SummaryCategoryItemDuplicatedMetaKeywords, StatusOK, 0 },
-				SummaryItem{ "Several meta keywords tags", SummaryCategoryItem::SummaryCategoryItemSeveralMetaKeywordsOnPage, StatusOK, 0 },
-			}
-		},
-		SummaryGroup
-		{
-			"Page's H1 Headers",
-			{
-				SummaryItem{ "Missing H1", SummaryCategoryItem::SummaryCategoryItemMissingH1s, StatusOK, 0 },
-				SummaryItem{ "Duplicate H1 headers", SummaryCategoryItem::SummaryCategoryItemDuplicatedH1s, StatusOK, 0 },
-				SummaryItem{ "Too long H1 headers", SummaryCategoryItem::SummaryCategoryItemVeryLongH1s, StatusOK, 0 },
-				SummaryItem{ "Several H1 tags", SummaryCategoryItem::SummaryCategoryItemSeveralH1s, StatusOK, 0 },
-			}
-		},
-		SummaryGroup
-		{
-			"Page's H2 Headers",
-			{
-				SummaryItem{ "Missing H2", SummaryCategoryItem::SummaryCategoryItemMissingH2s, StatusOK, 0 },
-				SummaryItem{ "Duplicate H2 headers", SummaryCategoryItem::SummaryCategoryItemDuplicatedH2s, StatusOK, 0 },
-				SummaryItem{ "Too long H2 headers", SummaryCategoryItem::SummaryCategoryItemVeryLongH2s, StatusOK, 0 },
-				SummaryItem{ "Several H2 tags", SummaryCategoryItem::SummaryCategoryItemSeveralH2s, StatusOK, 0 },
-			}
-		},
-		SummaryGroup
-		{
-			"Page's Images",
-			{
-				SummaryItem{ "Over 100KB size", SummaryCategoryItem::SummaryCategoryItemImagesOver100kb, StatusOK, 0 },
-				SummaryItem{ "Missing alt description", SummaryCategoryItem::SummaryCategoryItemImageMissingAltText, StatusOK, 0 },
-				SummaryItem{ "Too long alt descriptions", SummaryCategoryItem::SummaryCategoryItemImagesVeryLongAltText, StatusOK, 0 },
-			}
-		}
-	};
+	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::LinkProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::TitleProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::MetaDescriptionProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::MetaKeywordProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::H1Problems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::H2Problems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::ImageProblems));
 
 	int modelRowIndex = 0;
 
-	for (auto start = std::begin(m_allGroups); start != std::end(m_allGroups); ++start)
+	for (auto start = std::begin(m_allGroupRows); start != std::end(m_allGroupRows); ++start)
 	{
-		m_groups[modelRowIndex] = &(*start);
+		m_groupRows[modelRowIndex] = *start;
+
 		++modelRowIndex;
 
-		for (auto itemStart = std::begin(start->groupItems); itemStart != std::end(start->groupItems); ++itemStart)
+		for (auto itemStart = std::begin((*start)->descriptions); itemStart != std::end((*start)->descriptions); ++itemStart)
 		{
 			m_itemRows[modelRowIndex] = &(*itemStart);
-			m_itemTypes[itemStart->category] = &(*itemStart);
-			itemStart->row = modelRowIndex;
+
 			++modelRowIndex;
 		}
 	}
@@ -106,7 +42,7 @@ int SummaryFilterDataAccessor::columnCount() const noexcept
 
 int SummaryFilterDataAccessor::rowCount() const noexcept
 {
-	return m_groups.size() + m_itemRows.size();
+	return m_groupRows.size() + m_itemRows.size();
 }
 
 Qt::ItemFlags SummaryFilterDataAccessor::flags(const QModelIndex& index) const noexcept
@@ -121,38 +57,41 @@ Qt::ItemFlags SummaryFilterDataAccessor::flags(const QModelIndex& index) const n
 
 QSize SummaryFilterDataAccessor::span(const QModelIndex& index) const noexcept
 {
-	return m_groups.find(index.row()) != m_groups.end() ? QSize(2, 1) : QSize(1, 1);
+	return m_groupRows.find(index.row()) != m_groupRows.end() ? QSize(2, 1) : QSize(1, 1);
 }
 
 QVariant SummaryFilterDataAccessor::item(const QModelIndex& index) const noexcept
 {
-	auto groupIterator = m_groups.find(index.row());
-
-	if (groupIterator != m_groups.end())
+	if (isHeaderItem(index))
 	{
-		return groupIterator.value()->groupName;
+		return m_groupRows.find(index.row()).value()->name;
 	}
 
 	auto itemIterator = m_itemRows.find(index.row());
 
 	assert(itemIterator != m_itemRows.end());
 
-	return index.column() == 0 ? QVariant(itemIterator.value()->name) : QVariant(itemIterator.value()->issueCount);
+	if (index.column() == 0)
+	{
+		return itemIterator.value()->storageTypeDescriptionName;
+	}
+
+	return theApp->modelController()->data()->guiStorage(itemIterator.value()->storageType)->size();
 }
 
 bool SummaryFilterDataAccessor::isHeaderItem(const QModelIndex& index) const noexcept
 {
-	return m_groups.find(index.row()) != m_groups.end();
+	return m_groupRows.find(index.row()) != m_groupRows.end();
 }
 
 SummaryCategoryItem SummaryFilterDataAccessor::itemCategory(const QModelIndex& index) const noexcept
 {
 	if (isHeaderItem(index))
 	{
-		return SummaryCategoryItem::SummaryCategoryItemNone;
+		return SummaryCategoryItem::SummaryCategoryItemHeader;
 	}
 
-	return m_itemRows[index.row()]->category;
+	return SummaryCategoryItem(m_itemRows[index.row()]->storageType);
 }
 
 QPixmap SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexcept
@@ -171,10 +110,14 @@ QPixmap SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexce
 
 	QSvgRenderer renderer(QString(s_paths.value(itemStatus(index))));
 
-	QPixmap pixmap(QSize(QuickieWebBotHelpers::pointsToPixels(13.5), QuickieWebBotHelpers::pointsToPixels(13.5)));
+	const int etalonPixmapHeightWidth = QuickieWebBotHelpers::pointsToPixels(13.5);
+
+	QPixmap pixmap(QSize(etalonPixmapHeightWidth, etalonPixmapHeightWidth));
+
 	pixmap.fill(Qt::transparent);
 
 	QPainter painterPixmap(&pixmap);
+
 	renderer.render(&painterPixmap);
 
 	return pixmap;
@@ -182,7 +125,10 @@ QPixmap SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexce
 
 SummaryFilterDataAccessor::ItemStatus SummaryFilterDataAccessor::itemStatus(const QModelIndex& index) const noexcept
 {
-	return m_itemRows[index.row()]->status;
+	//
+	// TODO
+	//
+	return StatusOK;
 }
 
 }

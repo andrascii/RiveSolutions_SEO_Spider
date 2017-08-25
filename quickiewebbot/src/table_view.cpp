@@ -3,13 +3,13 @@
 #include "iview_model.h"
 #include "iresize_policy.h"
 #include "selection_model.h"
-#include "delegate.h"
+#include "item_view_delegate.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
 
-TableView::TableView(QWidget * parent)
+TableView::TableView(QWidget* parent)
 	: QTableView(parent)
 	, m_model(nullptr)
 	, m_viewModel(nullptr)
@@ -22,7 +22,7 @@ TableView::TableView(QWidget * parent)
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-	setItemDelegate(new Delegate(this));
+	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	setSelectionModel(new SelectionModel(this));
 }
 
@@ -100,6 +100,8 @@ void TableView::setContextMenu(QMenu* menu) noexcept
 void TableView::setViewModel(IViewModel* modelView) noexcept
 {
 	m_viewModel = modelView;
+
+	QuickieWebBotHelpers::safe_runtime_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
 }
 
 const IViewModel* TableView::viewModel() const noexcept

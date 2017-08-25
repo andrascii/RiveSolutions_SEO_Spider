@@ -39,7 +39,7 @@ SummaryCategoryItem SummaryModel::itemCategory(const QModelIndex& index) const n
 {
 	if (!dataAccessor())
 	{
-		return SummaryCategoryItem::SummaryCategoryItemNone;
+		return SummaryCategoryItem::SummaryCategoryItemHeader;
 	}
 
 	return dataAccessor()->itemCategory(index);

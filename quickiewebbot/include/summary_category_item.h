@@ -10,7 +10,9 @@ enum class SummaryCategoryItem
 	SummaryCategoryItemBegin,
 
 	// used for headers
-	SummaryCategoryItemNone,
+	SummaryCategoryItemHeader,
+
+	// all these values must be able to mapped to DataCollection::StorageType
 
 	SummaryCategoryItemAllPages = WebCrawler::DataCollection::CrawledUrlStorageType,
 
