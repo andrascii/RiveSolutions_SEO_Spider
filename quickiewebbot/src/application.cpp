@@ -8,6 +8,7 @@
 #include "constants.h"
 #include "application_properties.h"
 #include "debug_info_web_page_widget.h"
+#include "settings_page_registry.h"
 
 namespace QuickieWebBot
 {
@@ -84,6 +85,8 @@ void Application::mainFrameIsReadyForShow()
 
 void Application::initialize() noexcept
 {
+	ServiceLocator::instance()->addService <SettingsPageRegistry>(new SettingsPageRegistry);
+
 	m_mainFrame.reset(new MainFrame);
 
 #if !defined(PRODUCTION)

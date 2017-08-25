@@ -1,4 +1,3 @@
-#include "service_locator.h"
 #include "web_crawler.h"
 #include "data_collection.h"
 #include "model_controller.h"

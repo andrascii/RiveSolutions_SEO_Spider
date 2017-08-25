@@ -1,7 +1,5 @@
 #pragma once
 
-#include "application_settings_model.h"
-
 #include "ui_application_settings_widget.h"
 #include "crawler_settings_widget.h"
 
@@ -15,11 +13,13 @@ class ApplicationSettingsWidget : public QWidget
 public:
 	ApplicationSettingsWidget(QWidget* parent = nullptr);
 
-private:
+	private:
 	void initialize();
 
 	Ui::ApplicationSettingsWidget m_ui;
-	//CrawlerSettingsWidget m_crawlerSettingsWidget;
+
+	QByteArray m_currentPage;
+	QStackedWidget* m_stackedWidget;
 };
 
 }
