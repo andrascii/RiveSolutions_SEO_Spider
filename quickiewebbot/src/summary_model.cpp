@@ -24,10 +24,18 @@ IResizePolicy* SummaryModel::resizePolicy() const noexcept
 	return m_resizePolicy.get();
 }
 
-
-void SummaryModel::setDataAccessor(ISummaryDataAccessor* dataAccessor) noexcept
+void SummaryModel::setDataAccessor(ISummaryDataAccessor* accessor) noexcept
 {
-	m_dataAccessor = dataAccessor;
+	if (dataAccessor())
+	{
+		disconnect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int)),
+			this, SLOT(formActualUpdateDataSignal(int, int)));
+	}
+
+	m_dataAccessor = accessor;
+
+	VERIFY(connect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int)),
+		this, SLOT(formActualUpdateDataSignal(int, int))));
 }
 
 ISummaryDataAccessor* SummaryModel::dataAccessor() const noexcept
@@ -43,6 +51,12 @@ SummaryCategoryItem SummaryModel::itemCategory(const QModelIndex& index) const n
 	}
 
 	return dataAccessor()->itemCategory(index);
+}
+
+
+void SummaryModel::formActualUpdateDataSignal(int row, int column)
+{
+	Q_EMIT dataChanged(createIndex(row, column), createIndex(row, column));
 }
 
 QSize SummaryModel::span(const QModelIndex& index) const

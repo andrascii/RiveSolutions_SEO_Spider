@@ -24,23 +24,25 @@ public:
 	SummaryFilterDataAccessor();
 
 	virtual SummaryCategoryItem itemCategory(const QModelIndex& index) const noexcept override;
-
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 
 	virtual bool isHeaderItem(const QModelIndex& index) const noexcept override;
-
 	virtual QPixmap pixmap(const QModelIndex& index) const noexcept override;
-
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
-
 	virtual QSize span(const QModelIndex& index) const noexcept override;
 
 	virtual int columnCount() const noexcept override;
-
 	virtual int rowCount() const noexcept override;
+
+	virtual QObject* qobject() noexcept override;
+
+	Q_SIGNAL virtual void dataChanged(int row, int column) override;
 
 private:
 	ItemStatus itemStatus(const QModelIndex& index) const noexcept;
+	int rowForStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
+
+	Q_SLOT void emitDataChanged(int row, int storageType);
 
 private:
 	static constexpr int s_summaryColumnCount = 2;

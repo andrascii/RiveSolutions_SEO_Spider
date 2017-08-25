@@ -23,6 +23,13 @@ public:
 	virtual int columnCount() const noexcept = 0;
 
 	virtual int rowCount() const noexcept = 0;
+
+
+	virtual QObject* qobject() noexcept = 0;
+
+	// signals
+
+	virtual void dataChanged(int row, int column) = 0;
 };
 
 }

@@ -34,6 +34,9 @@ public:
 signals:
 	virtual void internalDataChanged() override;
 
+private slots:
+	void formActualUpdateDataSignal(int row, int column);
+
 private:
 	std::shared_ptr<IResizePolicy> m_resizePolicy;
 	ISummaryDataAccessor* m_dataAccessor;

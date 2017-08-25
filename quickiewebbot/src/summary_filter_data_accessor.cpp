@@ -33,6 +33,8 @@ SummaryFilterDataAccessor::SummaryFilterDataAccessor()
 			++modelRowIndex;
 		}
 	}
+
+	VERIFY(connect(theApp->modelController()->data(), SIGNAL(pageRawAdded(int, int)), this, SLOT(emitDataChanged(int, int))));
 }
 
 int SummaryFilterDataAccessor::columnCount() const noexcept
@@ -43,6 +45,11 @@ int SummaryFilterDataAccessor::columnCount() const noexcept
 int SummaryFilterDataAccessor::rowCount() const noexcept
 {
 	return m_groupRows.size() + m_itemRows.size();
+}
+
+QObject* SummaryFilterDataAccessor::qobject() noexcept
+{
+	return this;
 }
 
 Qt::ItemFlags SummaryFilterDataAccessor::flags(const QModelIndex& index) const noexcept
@@ -91,7 +98,7 @@ SummaryCategoryItem SummaryFilterDataAccessor::itemCategory(const QModelIndex& i
 		return SummaryCategoryItem::SummaryCategoryItemHeader;
 	}
 
-	return SummaryCategoryItem(m_itemRows[index.row()]->storageType);
+	return SummaryCategoryItem{ m_itemRows[index.row()]->storageType };
 }
 
 QPixmap SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexcept
@@ -129,6 +136,29 @@ SummaryFilterDataAccessor::ItemStatus SummaryFilterDataAccessor::itemStatus(cons
 	// TODO
 	//
 	return StatusOK;
+}
+
+int SummaryFilterDataAccessor::rowForStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept
+{
+	for(auto beg = m_itemRows.begin(); beg != m_itemRows.end(); ++beg)
+	{
+		if (beg.value()->storageType == storageType)
+		{
+			return beg.key();
+		}
+	}
+
+	return -1;
+}
+
+void SummaryFilterDataAccessor::emitDataChanged(int row, int storageType)
+{
+	int storageTypeRow = rowForStorageType(static_cast<WebCrawler::DataCollection::StorageType>(storageType));
+
+	if (storageTypeRow != -1)
+	{
+		Q_EMIT dataChanged(storageTypeRow, 1);
+	}
 }
 
 }
