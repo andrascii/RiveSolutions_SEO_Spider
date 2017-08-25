@@ -7,9 +7,23 @@ namespace QuickieWebBot
 
 ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	: QWidget(parent, Qt::Dialog)
-	, m_stackedWidget(new QStackedWidget)
+	, m_stackedWidget(new QStackedWidget(this))
 {
 	initialize();
+}
+
+
+ApplicationSettingsWidget::~ApplicationSettingsWidget()
+{
+	while (m_stackedWidget->count() > 0)
+	{
+		const int lastRemovingWidgetIndex = m_stackedWidget->count() - 1;
+
+		QWidget* widget = m_stackedWidget->widget(lastRemovingWidgetIndex);
+		widget->setParent(nullptr);
+
+		m_stackedWidget->removeWidget(widget);
+	}
 }
 
 void ApplicationSettingsWidget::initialize()

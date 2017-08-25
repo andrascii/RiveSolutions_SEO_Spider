@@ -12,8 +12,9 @@ class ApplicationSettingsWidget : public QWidget
 
 public:
 	ApplicationSettingsWidget(QWidget* parent = nullptr);
+	~ApplicationSettingsWidget();
 
-	private:
+private:
 	void initialize();
 
 	Ui::ApplicationSettingsWidget m_ui;

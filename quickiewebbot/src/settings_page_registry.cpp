@@ -39,4 +39,5 @@ void SettingsPageRegistry::settingsPageDestroyed()
 {
 	assert(m_deleting);
 }
+
 }
