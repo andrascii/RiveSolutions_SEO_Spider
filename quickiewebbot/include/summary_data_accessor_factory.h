@@ -1,5 +1,10 @@
 #pragma once
 
+namespace WebCrawler
+{
+	class DataCollection;
+}
+
 namespace QuickieWebBot
 {
 
@@ -18,7 +23,7 @@ public:
 		DataAccessorTypeEnd
 	};
 
-	ISummaryDataAccessor* create(DataAccessorType accessorType) const noexcept;
+	ISummaryDataAccessor* create(DataAccessorType accessorType, WebCrawler::DataCollection* dataCollection) const noexcept;
 };
 
 }

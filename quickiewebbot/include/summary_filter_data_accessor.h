@@ -21,7 +21,7 @@ private:
 	};
 
 public:
-	SummaryFilterDataAccessor();
+	SummaryFilterDataAccessor(WebCrawler::DataCollection* dataCollection);
 
 	virtual SummaryCategoryItem itemCategory(const QModelIndex& index) const noexcept override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
@@ -40,13 +40,16 @@ public:
 
 private:
 	ItemStatus itemStatus(const QModelIndex& index) const noexcept;
-	int rowForStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
+	int rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
+
+	WebCrawler::DataCollection::GuiStorageTypePtr storageByRow(int row) const noexcept;
 
 	Q_SLOT void emitDataChanged(int row, int storageType);
 
 private:
 	static constexpr int s_summaryColumnCount = 2;
 
+	WebCrawler::DataCollection* m_dataCollection;
 
 	QVector<DCStorageDescriptionPtr> m_allGroupRows;
 

@@ -32,7 +32,7 @@ public:
 
 	WebCrawler::ModelController* modelController() noexcept;
 
-	StorageAdaptorFactory* storageAdapterFactory() noexcept;
+	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
 
 	MainFrame* mainFrame() noexcept;

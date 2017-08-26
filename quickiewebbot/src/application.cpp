@@ -56,7 +56,7 @@ WebCrawler::ModelController* Application::modelController() noexcept
 	return m_modelController;
 }
 
-StorageAdaptorFactory* Application::storageAdapterFactory() noexcept
+StorageAdaptorFactory* Application::storageAdaptorFactory() noexcept
 {
 	return m_storageAdatpterFactory.get();
 }

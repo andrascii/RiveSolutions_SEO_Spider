@@ -6,17 +6,18 @@
 namespace QuickieWebBot
 {
 
-SummaryFilterDataAccessor::SummaryFilterDataAccessor()
+SummaryFilterDataAccessor::SummaryFilterDataAccessor(WebCrawler::DataCollection* dataCollection)
+	: m_dataCollection(dataCollection)
 {
 	DataCollectionGroupsFactory dcGroupsFactory;
 
-	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::LinkProblems));
-	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::TitleProblems));
-	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::MetaDescriptionProblems));
-	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::MetaKeywordProblems));
-	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::H1Problems));
-	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::H2Problems));
-	m_allGroupRows.push_back(dcGroupsFactory.create(theApp->modelController()->data(), ProblemAuditGroups::ImageProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, ProblemAuditGroups::LinkProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, ProblemAuditGroups::TitleProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, ProblemAuditGroups::MetaDescriptionProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, ProblemAuditGroups::MetaKeywordProblems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, ProblemAuditGroups::H1Problems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, ProblemAuditGroups::H2Problems));
+	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, ProblemAuditGroups::ImageProblems));
 
 	int modelRowIndex = 0;
 
@@ -34,7 +35,7 @@ SummaryFilterDataAccessor::SummaryFilterDataAccessor()
 		}
 	}
 
-	VERIFY(connect(theApp->modelController()->data(), SIGNAL(pageRawAdded(int, int)), this, SLOT(emitDataChanged(int, int))));
+	VERIFY(connect(m_dataCollection, SIGNAL(pageRawAdded(int, int)), this, SLOT(emitDataChanged(int, int))));
 }
 
 int SummaryFilterDataAccessor::columnCount() const noexcept
@@ -83,7 +84,7 @@ QVariant SummaryFilterDataAccessor::item(const QModelIndex& index) const noexcep
 		return itemIterator.value()->storageTypeDescriptionName;
 	}
 
-	return theApp->modelController()->data()->guiStorage(itemIterator.value()->storageType)->size();
+	return m_dataCollection->guiStorage(itemIterator.value()->storageType)->size();
 }
 
 bool SummaryFilterDataAccessor::isHeaderItem(const QModelIndex& index) const noexcept
@@ -132,13 +133,24 @@ QPixmap SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexce
 
 SummaryFilterDataAccessor::ItemStatus SummaryFilterDataAccessor::itemStatus(const QModelIndex& index) const noexcept
 {
-	//
-	// TODO
-	//
+	WebCrawler::DataCollection::GuiStorageTypePtr storage = storageByRow(index.row());
+
+	assert(storage);
+
+	if (storage->size() > 10)
+	{
+		return StatusError;
+	}
+	
+	if (storage->size())
+	{
+		return StatusWarning;
+	}
+
 	return StatusOK;
 }
 
-int SummaryFilterDataAccessor::rowForStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept
+int SummaryFilterDataAccessor::rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept
 {
 	for(auto beg = m_itemRows.begin(); beg != m_itemRows.end(); ++beg)
 	{
@@ -151,9 +163,23 @@ int SummaryFilterDataAccessor::rowForStorageType(WebCrawler::DataCollection::Sto
 	return -1;
 }
 
+WebCrawler::DataCollection::GuiStorageTypePtr 
+SummaryFilterDataAccessor::storageByRow(int row) const noexcept
+{
+	for (auto beg = m_itemRows.begin(); beg != m_itemRows.end(); ++beg)
+	{
+		if (beg.key() == row)
+		{
+			return m_dataCollection->guiStorage(beg.value()->storageType);
+		}
+	}
+
+	return nullptr;
+}
+
 void SummaryFilterDataAccessor::emitDataChanged(int row, int storageType)
 {
-	int storageTypeRow = rowForStorageType(static_cast<WebCrawler::DataCollection::StorageType>(storageType));
+	int storageTypeRow = rowByStorageType(static_cast<WebCrawler::DataCollection::StorageType>(storageType));
 
 	if (storageTypeRow != -1)
 	{
