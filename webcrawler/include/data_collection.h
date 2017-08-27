@@ -116,7 +116,7 @@ public:
 	bool isPageRawExists(const PageRawPtr& pageRaw, StorageType type) const noexcept;
 	void addPageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept;
 	PageRawPtr removePageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept;
-	const PageRawPtr& pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept;
+	const PageRawPtr pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept;
 
 	const GuiStorageTypePtr& guiStorage(StorageType type) const noexcept;
 	GuiStorageTypePtr& guiStorage(StorageType type) noexcept;

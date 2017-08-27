@@ -227,13 +227,12 @@ bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type
 	return storage->find(pageRaw) != storage->end();
 }
 
-const PageRawPtr& DataCollection::pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept
+const PageRawPtr DataCollection::pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept
 {
 	checkStorageType(type);
 	//assert(isPageRawExists(pageRaw, type));
 	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
 	auto iter = storage->find(pageRaw);
-
 	return iter != storage->end() ? *iter : PageRawPtr();
 }
 
@@ -260,13 +259,18 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 PageRawPtr DataCollection::removePageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept
 {
 	checkStorageType(type);
-	assert(isPageRawExists(pageRaw, type));
+	//assert(isPageRawExists(pageRaw, type));
 	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
 	auto iter = storage->find(pageRaw);
-	PageRawPtr result = *iter;
 
-	storage->erase(iter);
-	return result;
+	if (iter != storage->end())
+	{
+		PageRawPtr result = *iter;
+		storage->erase(iter);
+		return result;
+	}
+
+	return PageRawPtr();
 }
 
 DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) noexcept

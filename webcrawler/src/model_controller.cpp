@@ -332,6 +332,7 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		}
 
 		resourcePage->url = resource.resourceUrl;
+		INFOLOG << "Trying to find " << resourcePage->url.toDisplayString();
 		PageRawPtr existingResource = m_data->pageRaw(resourcePage, DataCollection::CrawledUrlStorageType);
 		if (existingResource)
 		{
@@ -347,6 +348,8 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 			pageRaw->linksFromThisResource.push_back(pendingResource);
 			m_data->addPageRaw(pendingResource, DataCollection::HtmlPendingResourcesStorageType);
 		}
+
+		pageRaw->rawResources.clear();
 	}
 }
 
