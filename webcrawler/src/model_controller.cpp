@@ -332,8 +332,13 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		}
 
 		resourcePage->url = resource.resourceUrl;
-		INFOLOG << "Trying to find " << resourcePage->url.toDisplayString();
+		//INFOLOG << "Trying to find " << resourcePage->url.toDisplayString();
 		PageRawPtr existingResource = m_data->pageRaw(resourcePage, DataCollection::CrawledUrlStorageType);
+		if (!existingResource)
+		{
+			existingResource = m_data->pageRaw(resourcePage, DataCollection::HtmlPendingResourcesStorageType);
+		}
+
 		if (existingResource)
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
