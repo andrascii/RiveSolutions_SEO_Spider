@@ -11,16 +11,9 @@ BackgroundRenderer::BackgroundRenderer(const IViewModel* viewModel)
 
 void BackgroundRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	QColor bgColor;
-
-	if (m_viewModel->hoveredIndex().row() == index.row())
-	{
-		bgColor = QColor("grey");
-	}
-	else
-	{
-		bgColor = qvariant_cast<QColor>(index.data(Qt::BackgroundColorRole));
-	}
+	QColor bgColor = m_viewModel->hoveredIndex().row() == index.row() ?
+		m_viewModel->hoveredBackgroundColor(index) :
+		m_viewModel->backgroundColor(index);
 
 	painter->fillRect(option.rect, bgColor);
 }

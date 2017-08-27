@@ -84,61 +84,6 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		{
 			return dataAccessor()->item(index);
 		}
-
-		case Qt::DecorationRole:
-		{
-			return dataAccessor()->pixmap(index);
-		}
-
-		case Qt::FontRole:
-		{
-			QFont font = Application::font();
-
-			if (!dataAccessor())
-			{
-				return font;
-			}
-
-			if (dataAccessor()->isHeaderItem(index))
-			{
-				font.setBold(true);
-				return font;
-			}
-
-			return font;
-		}
-
-		case Qt::TextAlignmentRole:
-		{
-			if (index.column() != 0)
-			{
-				return Qt::AlignRight;
-			}
-
-			return Qt::AlignLeft;
-		}
-
-		case Qt::BackgroundColorRole:
-		{
-			return QColor(Qt::transparent);
-		}
-
-		case ITableModel::SelectionBackgroundColorRole:
-		{
-			return QColor(97, 160, 50, 150);
-		}
-
-		case ITableModel::MarginTop:
-		case ITableModel::MarginBottom:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(4);
-		}
-
-		case ITableModel::MarginRight:
-		case ITableModel::MarginLeft:
-		{
-			return QuickieWebBotHelpers::pointsToPixels(2);
-		}
 	}
 
 	return QVariant();

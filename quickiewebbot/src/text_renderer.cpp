@@ -6,17 +6,18 @@
 namespace QuickieWebBot
 {
 
-TextRenderer::TextRenderer(int cacheSize)
-	: m_cacheSize(cacheSize)
+TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
+	: m_viewModel(viewModel)
+	, m_cacheSize(cacheSize)
 {
 }
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	const int marginTop = qvariant_cast<int>(index.data(ITableModel::MarginTop));
-	const int marginBottom = qvariant_cast<int>(index.data(ITableModel::MarginBottom));
-	const int marginLeft = qvariant_cast<int>(index.data(ITableModel::MarginLeft));
-	const int marginRight = qvariant_cast<int>(index.data(ITableModel::MarginRight));
+	const int marginTop = m_viewModel->marginTop(index);
+	const int marginBottom = m_viewModel->marginBottom(index);
+	const int marginLeft = m_viewModel->marginLeft(index);
+	const int marginRight = m_viewModel->marginRight(index);
 
 	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = cached(index);
@@ -27,11 +28,11 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 		return;
 	}
 
-	const bool isDecorationValid = index.data(Qt::DecorationRole).isValid();
-	const int textAlignmentFlags = qvariant_cast<int>(index.data(Qt::TextAlignmentRole));
-	const QFont& font = qvariant_cast<QFont>(index.data(Qt::FontRole)).resolve(option.font);
+	const bool isDecorationValid = !m_viewModel->itemPixmap(index).isNull();
+	const Qt::AlignmentFlag textAlignmentFlags = m_viewModel->textAlignment(index);
+	const QFont& font = m_viewModel->font(index).resolve(option.font);
+	const QColor& textColor = m_viewModel->textColor(index);
 	const QString paintingText = qvariant_cast<QString>(index.data(Qt::DisplayRole));
-	const QColor& textColor = qvariant_cast<QColor>(index.data(Qt::TextColorRole));
 
 	QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
 	QPixmap pixmap(pixmapRect.size());
@@ -83,7 +84,7 @@ QPixmap* TextRenderer::cached(const QModelIndex& index) const
 
 QRect TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const
 {
-	QPixmap pixmap = index.data(Qt::DecorationRole).value<QPixmap>();
+	const QPixmap& pixmap = m_viewModel->itemPixmap(index);
 
 	QSize pixmapSize = pixmap.size();
 

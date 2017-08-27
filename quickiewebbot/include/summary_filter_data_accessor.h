@@ -27,7 +27,7 @@ public:
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 
 	virtual bool isHeaderItem(const QModelIndex& index) const noexcept override;
-	virtual QPixmap pixmap(const QModelIndex& index) const noexcept override;
+	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept override;
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual QSize span(const QModelIndex& index) const noexcept override;
 
@@ -40,9 +40,11 @@ public:
 
 private:
 	ItemStatus itemStatus(const QModelIndex& index) const noexcept;
-	int rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
 
+	int rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
 	WebCrawler::DataCollection::GuiStorageTypePtr storageByRow(int row) const noexcept;
+
+	void initializePixmaps();
 
 	Q_SLOT void emitDataChanged(int row, int storageType);
 
@@ -52,10 +54,12 @@ private:
 	WebCrawler::DataCollection* m_dataCollection;
 
 	QVector<DCStorageDescriptionPtr> m_allGroupRows;
-
 	QMap<int, DCStorageDescriptionPtr> m_groupRows;
-
 	QMap<int, DCStorageDescription*> m_itemRows;
+
+	QPixmap m_okPixmap;
+	QPixmap m_warningPixmap;
+	QPixmap m_errorPixmap;
 };
 
 }

@@ -97,28 +97,6 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 	}
 
-	if (role == Qt::BackgroundColorRole)
-	{
-		return QColor(Qt::white);
-	}
-
-	if (role == ITableModel::SelectionBackgroundColorRole)
-	{
-		return QColor(97, 160, 50, 200);
-	}
-
-	if (role == ITableModel::MarginTop ||
-		role == ITableModel::MarginBottom)
-	{
-		return QuickieWebBotHelpers::pointsToPixels(4);
-	}
-
-	if (role == ITableModel::MarginLeft ||
-		role == ITableModel::MarginRight)
-	{
-		return QuickieWebBotHelpers::pointsToPixels(2);
-	}
-
 	if (index.column() == 0)
 	{
 		if (role == Qt::DisplayRole)

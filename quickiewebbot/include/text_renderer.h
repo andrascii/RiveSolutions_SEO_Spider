@@ -10,7 +10,7 @@ class IViewModel;
 class TextRenderer : public IRenderer
 {
 public:
-	explicit TextRenderer(int cacheSize = 0);
+	explicit TextRenderer(const IViewModel* viewModel, int cacheSize = 0);
 
 	virtual void render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 	virtual void resetCache() override;
@@ -23,7 +23,10 @@ protected:
 	void clearCacheIfNeeded() const noexcept;
 
 private:
+	const IViewModel* m_viewModel;
+
 	mutable std::map<QModelIndex, QPixmap> m_cache;
+
 	int m_cacheSize;
 };
 

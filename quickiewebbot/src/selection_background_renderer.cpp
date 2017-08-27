@@ -1,14 +1,19 @@
 #include "selection_background_renderer.h"
-#include "itable_model.h"
+#include "iview_model.h"
 
 namespace QuickieWebBot
 {
+
+SelectionBackgroundRenderer::SelectionBackgroundRenderer(const IViewModel* viewModel)
+	: m_viewModel(viewModel)
+{
+}
 
 void SelectionBackgroundRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	if (option.state & QStyle::State_Selected)
 	{
-		painter->fillRect(option.rect, index.data(ITableModel::SelectionBackgroundColorRole).value<QColor>());
+		painter->fillRect(option.rect, m_viewModel->selectionBackgroundColor(index));
 	}
 }
 

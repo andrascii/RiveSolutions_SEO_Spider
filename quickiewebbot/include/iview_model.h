@@ -14,8 +14,25 @@ class IResizePolicy;
 class IViewModel
 {
 public:
+	virtual int marginTop(const QModelIndex& index) const noexcept = 0;
+	virtual int marginBottom(const QModelIndex& index) const noexcept = 0;
+	virtual int marginLeft(const QModelIndex& index) const noexcept = 0;
+	virtual int marginRight(const QModelIndex& index) const noexcept = 0;
+
+	virtual const QPixmap& itemPixmap(const QModelIndex& index) const noexcept = 0;
+	virtual QRect itemPixmapPosition(const QModelIndex& index) const noexcept = 0;
+
+	virtual const QColor& selectionBackgroundColor(const QModelIndex& index) const noexcept = 0;
+	virtual const QColor& hoveredBackgroundColor(const QModelIndex& index) const noexcept = 0;
+	virtual const QColor& backgroundColor(const QModelIndex& index) const noexcept = 0;
+
+	virtual const QFont& font(const QModelIndex& index) const noexcept = 0;
+	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept = 0;
+	virtual QColor textColor(const QModelIndex& index) const noexcept = 0;
+
 	virtual void resetRenderersCache() const noexcept = 0;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
+
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept = 0;
 	virtual const QModelIndex& hoveredIndex() const noexcept = 0;
 };
