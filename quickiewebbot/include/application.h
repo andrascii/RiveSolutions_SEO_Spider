@@ -2,6 +2,8 @@
 
 #include "main_frame.h"
 #include "software_branding.h"
+#include "summary_data_accessor_factory.h"
+#include "storage_adaptor_factory.h"
 
 namespace WebCrawler
 {
@@ -15,9 +17,6 @@ namespace QuickieWebBot
 {
 
 class ApplicationProperties;
-class StorageAdaptorFactory;
-class SummaryDataAccessorFactory;
-
 
 class Application : public QApplication
 {
@@ -25,7 +24,6 @@ class Application : public QApplication
 
 public:
 	Application(int& argc, char** argv);
-	~Application();
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
@@ -34,7 +32,7 @@ public:
 
 	WebCrawler::ModelController* modelController() noexcept;
 
-	StorageAdaptorFactory* storageAdapterFactory() noexcept;
+	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
 
 	MainFrame* mainFrame() noexcept;

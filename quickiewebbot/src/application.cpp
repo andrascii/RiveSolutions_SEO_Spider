@@ -7,8 +7,8 @@
 #include "web_crawler.h"
 #include "constants.h"
 #include "application_properties.h"
-#include "storage_adaptor_factory.h"
-#include "summary_data_accessor_factory.h"
+#include "debug_info_web_page_widget.h"
+#include "settings_page_registry.h"
 
 namespace QuickieWebBot
 {
@@ -41,11 +41,6 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 }
 
-Application::~Application()
-{
-
-}
-
 WebCrawler::WebCrawler* Application::webCrawler() noexcept
 {
 	return m_webCrawler;
@@ -61,7 +56,7 @@ WebCrawler::ModelController* Application::modelController() noexcept
 	return m_modelController;
 }
 
-QuickieWebBot::StorageAdaptorFactory* Application::storageAdapterFactory() noexcept
+StorageAdaptorFactory* Application::storageAdaptorFactory() noexcept
 {
 	return m_storageAdatpterFactory.get();
 }
@@ -90,10 +85,13 @@ void Application::mainFrameIsReadyForShow()
 
 void Application::initialize() noexcept
 {
+	ServiceLocator::instance()->addService <SettingsPageRegistry>(new SettingsPageRegistry);
+
 	m_mainFrame.reset(new MainFrame);
 
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
+	DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
 #endif
 }
 

@@ -3,13 +3,13 @@
 #include "iview_model.h"
 #include "iresize_policy.h"
 #include "selection_model.h"
-#include "delegate.h"
+#include "item_view_delegate.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
 
-TableView::TableView(QWidget * parent)
+TableView::TableView(QWidget* parent)
 	: QTableView(parent)
 	, m_model(nullptr)
 	, m_viewModel(nullptr)
@@ -22,7 +22,7 @@ TableView::TableView(QWidget * parent)
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-	setItemDelegate(new Delegate(this));
+	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	setSelectionModel(new SelectionModel(this));
 }
 
@@ -48,13 +48,16 @@ void TableView::mouseMoveEvent(QMouseEvent* event)
 {
 	QModelIndex index = indexAt(event->pos());
 
-	if (index == m_hoveredIndex || !(index.flags() & Qt::ItemIsSelectable))
+	if (index == viewModel()->hoveredIndex() || !(index.flags() & Qt::ItemIsSelectable))
 	{
 		QTableView::mouseMoveEvent(event);
 		return;
 	}
 
-	m_hoveredIndex = index;
+	if (viewModel())
+	{
+		viewModel()->setHoveredIndex(index);
+	}
 
 	QTableView::mouseMoveEvent(event);
 }
@@ -71,9 +74,9 @@ void TableView::resizeEvent(QResizeEvent* event)
 
 void TableView::leaveEvent(QEvent* event)
 {
-	if (m_hoveredIndex.isValid())
+	if (viewModel()->hoveredIndex().isValid())
 	{
-		m_hoveredIndex = QModelIndex();
+		viewModel()->setHoveredIndex(QModelIndex());
 	}
 
 	QTableView::leaveEvent(event);
@@ -87,11 +90,6 @@ void TableView::contextMenuEvent(QContextMenuEvent* event)
 	}
 }
 
-QModelIndex TableView::hoveredIndex() const noexcept
-{
-	return m_hoveredIndex;
-}
-
 void TableView::setContextMenu(QMenu* menu) noexcept
 {
 	m_contextMenu = menu;
@@ -100,9 +98,11 @@ void TableView::setContextMenu(QMenu* menu) noexcept
 void TableView::setViewModel(IViewModel* modelView) noexcept
 {
 	m_viewModel = modelView;
+
+	QuickieWebBotHelpers::safe_runtime_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
 }
 
-const IViewModel* TableView::viewModel() const noexcept
+IViewModel* TableView::viewModel() const noexcept
 {
 	return m_viewModel;
 }
@@ -155,13 +155,6 @@ void TableView::adjustColumnSize()
 		IResizePolicy* prevPolicy = m_model->resizePolicy();
 		m_model->resizePolicy()->init(this, prevPolicy);
 	}
-}
-
-void TableView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
-{
-	QTableView::selectionChanged(selected, deselected);
-
-	Q_EMIT selectionWasChanged(selected, deselected);
 }
 
 }

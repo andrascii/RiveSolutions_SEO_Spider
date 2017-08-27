@@ -4,7 +4,7 @@
 namespace QuickieWebBot
 {
 
-ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType) const noexcept
+ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, WebCrawler::DataCollection* dataCollection) const noexcept
 {
 	assert(accessorType > DataAccessorType::DataAccessorTypeBegin &&
 		accessorType < DataAccessorType::DataAccessorTypeEnd);
@@ -13,7 +13,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 	{
 		case DataAccessorType::ErrorsFilterPage:
 		{
-			return new SummaryFilterDataAccessor;
+			return new SummaryFilterDataAccessor(dataCollection);
 		}
 	}
 

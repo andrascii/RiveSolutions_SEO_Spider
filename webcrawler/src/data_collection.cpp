@@ -214,16 +214,11 @@ DataCollection::DataCollection(QObject* parent)
 
 		std::make_pair(Over100kbImageStorageType, std::make_shared<GuiStorageType>()),
 		std::make_pair(MissingAltTextImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>())
+		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(Status404StorageType, std::make_shared<GuiStorageType>())
 	})
-	//, m_storageAdaptorFactory(std::make_unique<StorageAdaptorFactory>(this))
 {
 }
-
-// StorageAdaptorFactory* DataCollection::storageAdaptorFactory()
-// {
-// 	return m_storageAdaptorFactory.get();
-// }
 
 bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type) const noexcept
 {

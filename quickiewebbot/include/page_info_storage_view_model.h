@@ -23,6 +23,8 @@ public:
 
 	virtual void resetRenderersCache() const noexcept override;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
+	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
+	virtual const QModelIndex& hoveredIndex() const noexcept override;
 
 private slots:
 	void onAttachedModelInternalDataChanged();
@@ -34,6 +36,8 @@ private:
 	std::unique_ptr<UrlRenderer> m_urlRenderer;
 	std::unique_ptr<SelectionBackgroundRenderer> m_selectionBackgroundRenderer;
 	std::unique_ptr<BackgroundRenderer> m_backgroundRenderer;
+
+	QModelIndex m_hoveredIndex;
 };
 
 }

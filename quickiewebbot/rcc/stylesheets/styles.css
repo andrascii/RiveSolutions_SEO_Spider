@@ -289,6 +289,13 @@ QWidget#LimitsSettingsDialog QLabel
 	color: #494949;
 }
 
+QWidget#ApplicationSettingsWidget QLabel,
+QWidget#ApplicationSettingsWidget QWidget,
+QWidget#ApplicationSettingsWidget QCheckBox
+{
+	color: #494949;
+}
+
 /*/////////////////////////////// Proxy Settings Widget ///////////////////////////////*/
 
 QWidget#ProxySettingsDialog

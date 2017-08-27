@@ -22,7 +22,7 @@ ErrorsFilterWidget::ErrorsFilterWidget(QWidget* parent)
 {
 	init();
 
-	VERIFY(connect(m_ui->summaryTableView, SIGNAL(selectionWasChanged(const QItemSelection&, const QItemSelection&)),
+	VERIFY(connect(m_ui->summaryTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
@@ -41,7 +41,7 @@ void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& sel
 	PageInfoStorageModel* storageModel = 
 		QuickieWebBotHelpers::safe_runtime_static_cast<PageInfoStorageModel*>(m_ui->summaryDetailsTableView->model());
 
-	storageModel->setStorageAdaptor(theApp->storageAdapterFactory()->create(category));
+	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->create(category));
 
 	m_ui->summaryDetailsTableView->viewModel()->resetRenderersCache();
 }
@@ -58,8 +58,11 @@ void ErrorsFilterWidget::initSummaryView()
 {
 	m_ui->summaryTableView->resize(QuickieWebBotHelpers::pointsToPixels(100), m_ui->summaryTableView->height());
 
+	WebCrawler::DataCollection* dataCollection = theApp->modelController()->data();
+	SummaryDataAccessorFactory::DataAccessorType dataAccessorType = SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage;
+
 	SummaryModel* summaryModel = new SummaryModel(this);
-	summaryModel->setDataAccessor(theApp->summaryDataAccessorFactory()->create(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage));
+	summaryModel->setDataAccessor(theApp->summaryDataAccessorFactory()->create(dataAccessorType, dataCollection));
 
 	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);
 
@@ -72,7 +75,7 @@ void ErrorsFilterWidget::initDetailsView()
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* viewModel = new PageInfoStorageViewModel(model, this);
 
-	model->setStorageAdaptor(theApp->storageAdapterFactory()->create(SummaryCategoryItem::SummaryCategoryItemAllPages));
+	model->setStorageAdaptor(theApp->storageAdaptorFactory()->create(SummaryCategoryItem::SummaryCategoryItemAllPages));
 
 	m_ui->summaryDetailsTableView->setModel(model);
 	m_ui->summaryDetailsTableView->setViewModel(viewModel);

@@ -22,7 +22,7 @@ void SummaryViewModel::resetRenderersCache() const noexcept
 QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
 {
 	static SelectionBackgroundRenderer s_selectionBackgroundRenderer;
-	static BackgroundRenderer s_backgroundRenderer;
+	static BackgroundRenderer s_backgroundRenderer(this);
 
 	// disabled caching
 	static TextRenderer s_textRenderer;
@@ -31,6 +31,16 @@ QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const no
 		<< &s_backgroundRenderer
 		<< &s_selectionBackgroundRenderer
 		<< &s_textRenderer;
+}
+
+void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
+{
+	m_hoveredIndex = index;
+}
+
+const QModelIndex& SummaryViewModel::hoveredIndex() const noexcept
+{
+	return m_hoveredIndex;
 }
 
 }

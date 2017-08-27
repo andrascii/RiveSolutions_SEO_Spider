@@ -20,7 +20,7 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	, m_textRenderer(std::make_unique<TextRenderer>(static_cast<int>(std::pow((m_model->columnCount()), 2.0))))
 	, m_urlRenderer(std::make_unique<UrlRenderer>(static_cast<int>(std::pow(m_model->columnCount(), 2.0))))
 	, m_selectionBackgroundRenderer(std::make_unique<SelectionBackgroundRenderer>())
-	, m_backgroundRenderer(std::make_unique<BackgroundRenderer>())
+	, m_backgroundRenderer(std::make_unique<BackgroundRenderer>(this))
 {
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
 }
@@ -43,6 +43,16 @@ QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) 
 		<< m_backgroundRenderer.get()
 		<< m_selectionBackgroundRenderer.get()
 		<< renderer;
+}
+
+void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
+{
+	m_hoveredIndex = index;
+}
+
+const QModelIndex& PageInfoStorageViewModel::hoveredIndex() const noexcept
+{
+	return m_hoveredIndex;
 }
 
 void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()

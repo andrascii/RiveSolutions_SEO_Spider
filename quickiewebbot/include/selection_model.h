@@ -18,7 +18,7 @@ protected:
 	Q_SLOT virtual void setCurrentIndex(const QModelIndex& index, QItemSelectionModel::SelectionFlags command) override;
 	
 private:
-	TableView* m_gridView;
+	TableView* m_view;
 };
 
 }

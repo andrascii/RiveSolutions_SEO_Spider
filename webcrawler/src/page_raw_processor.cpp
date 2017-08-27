@@ -1,5 +1,4 @@
 #include "page_raw_processor.h"
-#include "service_locator.h"
 #include "web_crawler_internal_url_storage.h"
 #include "constants.h"
 #include "html_page_title_parser.h"
