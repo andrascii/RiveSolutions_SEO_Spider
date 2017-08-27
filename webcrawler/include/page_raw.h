@@ -7,9 +7,9 @@ struct PageRawResource
 {
 	enum ResourseType
 	{
-		ResourseHtml,
-		ResourseImage,
-		ResourseJavaScript,
+		ResourceHtml,
+		ResourceImage,
+		ResourceJavaScript,
 		ResourceStyleSheet,
 	};
 

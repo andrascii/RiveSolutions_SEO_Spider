@@ -61,7 +61,7 @@ std::vector<QUrl> PageRawParserHelpers::resolveUrlList(const QUrl& baseUrl, cons
 	{
 		if (!url.isRelative())
 		{
-			result.push_back(resolveRelativeUrl(url, baseUrl));
+			result.push_back(url);
 			continue;
 		}
 

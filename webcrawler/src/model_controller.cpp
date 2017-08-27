@@ -302,7 +302,7 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 	// 1. remove from pending resources if exists
 	PageRawPtr pendingPageRaw = m_data->removePageRaw(pageRaw, DataCollection::HtmlPendingResourcesStorageType);
 
-	if (pageRaw->resourceType != PageRawResource::ResourseHtml)
+	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
 	{
 		// if it is not an html resource, just remove it from pending resources and exit
 		return;
@@ -326,13 +326,13 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 	PageRawPtr resourcePage = std::make_shared<PageRaw>();
 	for (const PageRawResource& resource : pageRaw->rawResources)
 	{
-		if (resource.resourceType != PageRawResource::ResourseHtml)
+		if (resource.resourceType != PageRawResource::ResourceHtml)
 		{
 			continue;
 		}
 
 		resourcePage->url = resource.resourceUrl;
-		//INFOLOG << "Trying to find " << resourcePage->url.toDisplayString();
+		INFOLOG << "Trying to find " << resourcePage->url.toDisplayString();
 		PageRawPtr existingResource = m_data->pageRaw(resourcePage, DataCollection::CrawledUrlStorageType);
 		if (!existingResource)
 		{
