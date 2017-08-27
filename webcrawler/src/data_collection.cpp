@@ -152,6 +152,29 @@ DataCollection::DataCollection(QObject* parent)
 		std::make_pair(Status404StorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageRawHasher(
 				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+
+		std::make_pair(HtmlPendingResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+
+		std::make_pair(HtmlResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+		std::make_pair(ImageResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+
+		std::make_pair(JavaScriptResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+		std::make_pair(StyleSheetResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
 	})
 	, m_guiStorageMap(std::initializer_list<std::pair<const int, GuiStorageTypePtr>>
 	{
@@ -212,9 +235,11 @@ bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type
 const PageRawPtr& DataCollection::pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept
 {
 	checkStorageType(type);
-	assert(isPageRawExists(pageRaw, type));
-	auto iter = crawlerStorage(type)->find(pageRaw);
-	return *iter;
+	//assert(isPageRawExists(pageRaw, type));
+	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
+	auto iter = storage->find(pageRaw);
+
+	return iter != storage->end() ? *iter : PageRawPtr();
 }
 
 void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept
@@ -235,6 +260,18 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 		Q_EMIT pageRawAdded(guiStorage(type)->size() - 1, type);
 		assert(isPageRawExists(pageRaw, type));
 	}	
+}
+
+PageRawPtr DataCollection::removePageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept
+{
+	checkStorageType(type);
+	assert(isPageRawExists(pageRaw, type));
+	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
+	auto iter = storage->find(pageRaw);
+	PageRawPtr result = *iter;
+
+	storage->erase(iter);
+	return result;
 }
 
 DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) noexcept
@@ -263,7 +300,7 @@ const DataCollection::CrawlerStorageTypePtr& DataCollection::crawlerStorage(Stor
 void DataCollection::checkStorageType(StorageType type) const noexcept
 {
 	assert(
-		type == CrawledUrlStorageType || 
+		type == CrawledUrlStorageType ||
 		type == ExternalUrlStorageType ||
 		type == UpperCaseUrlStorageType ||
 		type == NonAsciiCharacterUrlStorageType ||
@@ -305,7 +342,13 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 		type == MissingAltTextImageStorageType ||
 		type == VeryLongAltTextImageStorageType ||
 
-		type == Status404StorageType
+		type == Status404StorageType ||
+
+		type == HtmlPendingResourcesStorageType ||
+		type == HtmlResourcesStorageType ||
+		type == ImageResourcesStorageType ||
+		type == JavaScriptResourcesStorageType ||
+		type == StyleSheetResourcesStorageType
 	);
 }
 

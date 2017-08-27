@@ -17,6 +17,8 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
+	processPageRawHtmlResources(pageRaw);
+
 	processPageRawStatusCode(pageRaw);
 
 	if (pageRaw->fromUrl.toString().isEmpty())
@@ -292,6 +294,59 @@ void ModelController::processPageRawStatusCode(PageRawPtr pageRaw) noexcept
 	if (pageRaw->statusCode == 404)
 	{
 		m_data->addPageRaw(pageRaw, DataCollection::Status404StorageType);
+	}
+}
+
+void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
+{
+	// 1. remove from pending resources if exists
+	PageRawPtr pendingPageRaw = m_data->removePageRaw(pageRaw, DataCollection::HtmlPendingResourcesStorageType);
+
+	if (pageRaw->resourceType != PageRawResource::ResourseHtml)
+	{
+		// if it is not an html resource, just remove it from pending resources and exit
+		return;
+	}
+
+	// 2. if it's really html resource and pending page exists - merge two pages
+	if (pendingPageRaw)
+	{
+		std::copy(std::begin(pendingPageRaw->linksToThisResource),
+			std::end(pendingPageRaw->linksToThisResource),
+			std::begin(pageRaw->linksToThisResource));
+
+		*pendingPageRaw = *pageRaw;
+		// we should use the original PageRawPtr because there are pages containing links to it
+		pageRaw = pendingPageRaw;
+	}
+
+	// 3. add this page to html resources storage
+	m_data->addPageRaw(pageRaw, DataCollection::HtmlResourcesStorageType);
+
+	PageRawPtr resourcePage = std::make_shared<PageRaw>();
+	for (const PageRawResource& resource : pageRaw->rawResources)
+	{
+		if (resource.resourceType != PageRawResource::ResourseHtml)
+		{
+			continue;
+		}
+
+		resourcePage->url = resource.resourceUrl;
+		PageRawPtr existingResource = m_data->pageRaw(resourcePage, DataCollection::CrawledUrlStorageType);
+		if (existingResource)
+		{
+			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
+			existingResource->linksToThisResource.push_back(pageRaw);
+			pageRaw->linksFromThisResource.push_back(existingResource);
+
+		}
+		else
+		{
+			PageRawPtr pendingResource = std::make_shared<PageRaw>();
+			pendingResource->linksToThisResource.push_back(pageRaw);
+			pageRaw->linksFromThisResource.push_back(pendingResource);
+			m_data->addPageRaw(pendingResource, DataCollection::HtmlPendingResourcesStorageType);
+		}
 	}
 }
 
