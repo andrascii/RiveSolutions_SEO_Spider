@@ -3,8 +3,26 @@
 namespace WebCrawler
 {
 
+struct PageRawResource
+{
+	enum ResourseType
+	{
+		ResourseHtml,
+		ResourseImage,
+		ResourseJavaScript,
+		ResourceStyleSheet,
+	};
+
+	ResourseType resourceType;
+	QUrl resourceUrl;
+	QUrl resourcePageUrl;
+};
+
+
 struct PageRaw
 {
+	using PageRawWeakPtr = std::weak_ptr<PageRaw>;
+
 	QUrl url;
 	QUrl fromUrl;
 	QString title;
@@ -31,6 +49,13 @@ struct PageRaw
 	bool hasSeveralMetaKeywordsTags;
 	bool hasSeveralH1Tags;
 	bool hasSeveralH2Tags;
+
+	PageRawResource::ResourseType resourceType;
+
+	std::vector<PageRawResource> rawResources; // TODO: move to another structure
+	
+	std::vector<PageRawWeakPtr> linksFromThisResource;
+	std::vector<PageRawWeakPtr> linksToThisResource;
 
 #ifdef QT_DEBUG
 	QByteArray rawHtml;

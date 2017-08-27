@@ -92,8 +92,20 @@ public:
 		MissingAltTextImageStorageType,
 		VeryLongAltTextImageStorageType,
 
-
+		//
+		// Statuses
+		//
 		Status404StorageType,
+
+
+		//
+		// Resources
+		//
+		HtmlPendingResourcesStorageType,
+		HtmlResourcesStorageType,
+		ImageResourcesStorageType,
+		JavaScriptResourcesStorageType,
+		StyleSheetResourcesStorageType,
 
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		EndEnumStorageType
@@ -103,7 +115,8 @@ public:
 
 	bool isPageRawExists(const PageRawPtr& pageRaw, StorageType type) const noexcept;
 	void addPageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept;
-	const PageRawPtr& pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept;
+	PageRawPtr removePageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept;
+	const PageRawPtr pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept;
 
 	const GuiStorageTypePtr& guiStorage(StorageType type) const noexcept;
 	GuiStorageTypePtr& guiStorage(StorageType type) noexcept;

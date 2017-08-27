@@ -24,19 +24,11 @@ public:
 private:
 	virtual void process() override;
 
-	void resolveRelativeUrl(QUrl& relativeUrl, const QUrl& baseUrl);
-
-	void resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& urlList) noexcept;
-
 private:
 	HtmlPageParser m_htmlPageParser;
-
 	WebCrawlerInternalUrlStorage* m_webCrawlerInternalUrlStorage;
-
 	QueuedDownloader* m_queuedDownloader;
-
 	PageRawPtr m_pageRaw;
-
 	std::vector<QUrl> m_pageUrlList;
 };
 

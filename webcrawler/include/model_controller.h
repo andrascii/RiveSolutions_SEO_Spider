@@ -32,6 +32,8 @@ private:
 	void processPageRawImage(PageRawPtr pageRaw) noexcept;
 	void processPageRawStatusCode(PageRawPtr pageRaw) noexcept;
 
+	void processPageRawHtmlResources(PageRawPtr pageRaw) noexcept;
+
 private:
 	DataCollection* m_data;
 	WebCrawlerOptions m_webCrawlerOptions;

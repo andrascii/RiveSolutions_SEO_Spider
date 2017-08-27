@@ -176,6 +176,36 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage) noexc
 	return decodedHtmlPage;
 }
 
+std::vector<QUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node) noexcept
+{
+	std::vector<QUrl> result;
+
+
+	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
+	{
+		return result;
+	}
+
+	GumboAttribute* href = nullptr;
+
+	if (node->v.element.tag == GUMBO_TAG_A && (href = gumbo_get_attribute(&node->v.element.attributes, "href")))
+	{
+		result.push_back(QUrl(href->value));
+	}
+
+	const GumboVector* children = &node->v.element.children;
+
+	for (unsigned int i = 0; i < children->length; ++i)
+	{
+		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
+		std::vector<QUrl> childResult = parsePageUrlList(child);
+
+		result.insert(std::end(result), std::begin(childResult), std::end(childResult));
+	}
+
+	return result;
+}
+
 void GumboParsingHelpers::cutAllTagsFromNodeHelper(const GumboNode* node, QByteArray& result) noexcept
 {
 	if (!node)

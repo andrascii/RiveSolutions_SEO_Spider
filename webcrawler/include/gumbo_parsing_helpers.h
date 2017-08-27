@@ -35,6 +35,8 @@ public:
 	static QByteArray identifyHtmlPageContentType(const QByteArray& htmlPage) noexcept;
 	static QByteArray decodeHtmlPage(const QByteArray& htmlPage) noexcept;
 
+	static std::vector<QUrl> parsePageUrlList(const GumboNode* node) noexcept;
+
 private:
 	static void cutAllTagsFromNodeHelper(const GumboNode* node, QByteArray& result) noexcept;
 };

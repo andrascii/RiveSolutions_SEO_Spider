@@ -5,12 +5,15 @@
 #include "html_page_meta_parser.h"
 #include "html_page_h_parser.h"
 #include "html_page_word_count_parser.h"
+#include "html_page_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
+#include "page_raw_parser_helpers.h"
 
 namespace WebCrawler
 {
 
-PageRawProcessor::PageRawProcessor(WebCrawlerInternalUrlStorage* crawlerStorage, QueuedDownloader* queuedDownloader, QObject* parent)
+PageRawProcessor::PageRawProcessor(WebCrawlerInternalUrlStorage* crawlerStorage, 
+	QueuedDownloader* queuedDownloader, QObject* parent)
 	: AbstractThreadableObject(this, QByteArray("PageRawProcessorThread"))
 	, m_webCrawlerInternalUrlStorage(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
@@ -22,6 +25,7 @@ PageRawProcessor::PageRawProcessor(WebCrawlerInternalUrlStorage* crawlerStorage,
 	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageTitleParser>());
 	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageHParser>());
 	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageWordCountParser>());
+	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageResourcesParser>());
 }
 
 void PageRawProcessor::process()
@@ -51,6 +55,7 @@ void PageRawProcessor::process()
 		m_pageRaw->statusCode = reply.statusCode;
 		m_pageRaw->serverResponse = reply.responseHeaderValuePairs;
 		m_pageRaw->pageHash = pageHash;
+		m_pageRaw->content = contentType;
 
 		if (!contentType.startsWith("application"))
 		{
@@ -72,7 +77,7 @@ void PageRawProcessor::process()
 
 		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 
-		resolveUrlList(reply.url, urlList);
+		urlList = PageRawParserHelpers::resolveUrlList(reply.url, urlList);
 
 		m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
 
@@ -87,64 +92,6 @@ void PageRawProcessor::process()
 	}
 }
 
-void PageRawProcessor::resolveRelativeUrl(QUrl& relativeUrl, const QUrl& baseUrl)
-{
-	//
-	// see: https://tools.ietf.org/html/rfc1808#section-4
-	//
 
-	assert(!baseUrl.isRelative() && "Base URL always MUST BE an absolute URL!!!");
-
-
-	if (!relativeUrl.isRelative())
-	{
-		DEBUGLOG << "Passed non-relative url:" << relativeUrl.toDisplayString();
-
-		return;
-	}
-
-	relativeUrl.setScheme(baseUrl.scheme());
-	relativeUrl.setHost(baseUrl.host());
-
-	QString pathWithoutFile = baseUrl.path();
-	int lastSlashIndex = pathWithoutFile.lastIndexOf("/");
-
-	if (relativeUrl.path().startsWith("/"))
-	{
-		//
-		// Just exit from function because we already make it absolute
-		//
-		return;
-	}
-	else
-	{
-		//
-		// Make path starts with slash for ensure valid QUrl behavior
-		//
-		relativeUrl.setPath("/" + relativeUrl.path());
-	}
-
-	if (relativeUrl.path().isEmpty())
-	{
-		relativeUrl.setPath(pathWithoutFile.left(lastSlashIndex + 1));
-	}
-	else
-	{
-		relativeUrl.setPath(pathWithoutFile.left(lastSlashIndex) + relativeUrl.path());
-	}
-}
-
-void PageRawProcessor::resolveUrlList(const QUrl& baseUrl, std::vector<QUrl>& urlList) noexcept
-{
-	for (QUrl& url : urlList)
-	{
-		if (!url.isRelative())
-		{
-			continue;
-		}
-
-		resolveRelativeUrl(url, baseUrl);
-	}
-}
 
 }
