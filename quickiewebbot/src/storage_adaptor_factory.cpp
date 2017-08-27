@@ -75,6 +75,7 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemUpperCaseLinks:
 		case SummaryCategoryItem::SummaryCategoryItemNonAsciiLinks:
 		case SummaryCategoryItem::SummaryCategoryItemVeryLongLinks:
+		case SummaryCategoryItem::SummaryCategoryItemBrokenLinks:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType

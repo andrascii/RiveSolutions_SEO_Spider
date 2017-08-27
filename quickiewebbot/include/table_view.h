@@ -21,8 +21,7 @@ public:
 
 	void setContextMenu(QMenu* menu) noexcept;
 	void setViewModel(IViewModel* modelView) noexcept;
-	const IViewModel* viewModel() const noexcept;
-	QModelIndex hoveredIndex() const noexcept;
+	IViewModel* viewModel() const noexcept;
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
@@ -40,8 +39,6 @@ private:
 	ITableModel* m_model;
 
 	IViewModel* m_viewModel;
-
-	QModelIndex m_hoveredIndex;
 
 	QMenu* m_contextMenu;
 

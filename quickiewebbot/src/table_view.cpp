@@ -48,13 +48,16 @@ void TableView::mouseMoveEvent(QMouseEvent* event)
 {
 	QModelIndex index = indexAt(event->pos());
 
-	if (index == m_hoveredIndex || !(index.flags() & Qt::ItemIsSelectable))
+	if (index == viewModel()->hoveredIndex() || !(index.flags() & Qt::ItemIsSelectable))
 	{
 		QTableView::mouseMoveEvent(event);
 		return;
 	}
 
-	m_hoveredIndex = index;
+	if (viewModel())
+	{
+		viewModel()->setHoveredIndex(index);
+	}
 
 	QTableView::mouseMoveEvent(event);
 }
@@ -71,9 +74,9 @@ void TableView::resizeEvent(QResizeEvent* event)
 
 void TableView::leaveEvent(QEvent* event)
 {
-	if (m_hoveredIndex.isValid())
+	if (viewModel()->hoveredIndex().isValid())
 	{
-		m_hoveredIndex = QModelIndex();
+		viewModel()->setHoveredIndex(QModelIndex());
 	}
 
 	QTableView::leaveEvent(event);
@@ -85,11 +88,6 @@ void TableView::contextMenuEvent(QContextMenuEvent* event)
 	{
 		m_contextMenu->exec(event->globalPos());
 	}
-}
-
-QModelIndex TableView::hoveredIndex() const noexcept
-{
-	return m_hoveredIndex;
 }
 
 void TableView::setContextMenu(QMenu* menu) noexcept
@@ -104,7 +102,7 @@ void TableView::setViewModel(IViewModel* modelView) noexcept
 	QuickieWebBotHelpers::safe_runtime_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
 }
 
-const IViewModel* TableView::viewModel() const noexcept
+IViewModel* TableView::viewModel() const noexcept
 {
 	return m_viewModel;
 }

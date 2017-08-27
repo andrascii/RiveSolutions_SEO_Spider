@@ -17,5 +17,6 @@
         <file>images/icon-ok.svg</file>
         <file>images/icon-warning.svg</file>
         <file>images/icon-error.svg</file>
+		<file>images/url-icon.png</file>
     </qresource>
 </RCC>

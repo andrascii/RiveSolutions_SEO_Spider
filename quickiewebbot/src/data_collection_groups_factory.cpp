@@ -16,6 +16,7 @@ DCStorageDescriptionPtr DataCollectionGroupsFactory::create(WebCrawler::DataColl
 			p->descriptions.push_back({ WebCrawler::DataCollection::UpperCaseUrlStorageType, "Links With Uppercase Characters" });
 			p->descriptions.push_back({ WebCrawler::DataCollection::NonAsciiCharacterUrlStorageType, "Links With Non-ASCII Characters" });
 			p->descriptions.push_back({ WebCrawler::DataCollection::VeryLongUrlStorageType, "Too Long Links" });
+			p->descriptions.push_back({ WebCrawler::DataCollection::Status404StorageType, "Broken Links" });
 
 			return p;
 		}

@@ -191,7 +191,8 @@ DataCollection::DataCollection(QObject* parent)
 
 		std::make_pair(Over100kbImageStorageType, std::make_shared<GuiStorageType>()),
 		std::make_pair(MissingAltTextImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>())
+		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(Status404StorageType, std::make_shared<GuiStorageType>())
 	})
 {
 }

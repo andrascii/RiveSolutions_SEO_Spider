@@ -16,6 +16,8 @@ class IViewModel
 public:
 	virtual void resetRenderersCache() const noexcept = 0;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
+	virtual void setHoveredIndex(const QModelIndex& index) noexcept = 0;
+	virtual const QModelIndex& hoveredIndex() const noexcept = 0;
 };
 
 }

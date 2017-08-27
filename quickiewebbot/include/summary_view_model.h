@@ -19,11 +19,15 @@ public:
 
 	virtual void resetRenderersCache() const noexcept override;
 	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
+	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
+	virtual const QModelIndex& hoveredIndex() const noexcept override;
 
 private:
 	SummaryModel* m_model;
 
 	std::unique_ptr<ViewportPercentResizePolicy> m_resizePolicy;
+
+	QModelIndex m_hoveredIndex;
 };
 
 }
