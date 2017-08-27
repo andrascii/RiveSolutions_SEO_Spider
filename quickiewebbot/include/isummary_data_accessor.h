@@ -14,7 +14,7 @@ public:
 
 	virtual bool isHeaderItem(const QModelIndex& index) const noexcept = 0;
 
-	virtual QPixmap pixmap(const QModelIndex& index) const noexcept = 0;
+	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept = 0;
 
 	virtual QVariant item(const QModelIndex& index) const noexcept = 0;
 

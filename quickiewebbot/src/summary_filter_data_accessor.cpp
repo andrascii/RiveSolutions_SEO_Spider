@@ -8,7 +8,12 @@ namespace QuickieWebBot
 
 SummaryFilterDataAccessor::SummaryFilterDataAccessor(WebCrawler::DataCollection* dataCollection)
 	: m_dataCollection(dataCollection)
+	, m_okPixmap(QuickieWebBotHelpers::pointsToPixels(13.5), QuickieWebBotHelpers::pointsToPixels(13.5))
+	, m_warningPixmap(QuickieWebBotHelpers::pointsToPixels(13.5), QuickieWebBotHelpers::pointsToPixels(13.5))
+	, m_errorPixmap(QuickieWebBotHelpers::pointsToPixels(13.5), QuickieWebBotHelpers::pointsToPixels(13.5))
 {
+	initializePixmaps();
+
 	DataCollectionGroupsFactory dcGroupsFactory;
 
 	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, ProblemAuditGroups::LinkProblems));
@@ -102,33 +107,23 @@ SummaryCategoryItem SummaryFilterDataAccessor::itemCategory(const QModelIndex& i
 	return SummaryCategoryItem{ m_itemRows[index.row()]->storageType };
 }
 
-QPixmap SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexcept
+const QPixmap& SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexcept
 {
+	static QPixmap emptyPixmap;
+
 	if (isHeaderItem(index) || index.column() != 0)
 	{
-		return QPixmap();
+		return emptyPixmap;
 	}
 
-	static QMap<ItemStatus, QByteArray> s_paths
-	{
-		{ StatusOK, ":/images/icon-ok.svg" },
-		{ StatusWarning, ":/images/icon-warning.svg" },
-		{ StatusError, ":/images/icon-error.svg" },
+	static std::map<ItemStatus, const QPixmap*> s_pixmaps
+ 	{
+		{ StatusOK, &m_okPixmap },
+		{ StatusWarning, &m_warningPixmap },
+		{ StatusError, &m_errorPixmap }
 	};
 
-	QSvgRenderer renderer(QString(s_paths.value(itemStatus(index))));
-
-	const int etalonPixmapHeightWidth = QuickieWebBotHelpers::pointsToPixels(13.5);
-
-	QPixmap pixmap(QSize(etalonPixmapHeightWidth, etalonPixmapHeightWidth));
-
-	pixmap.fill(Qt::transparent);
-
-	QPainter painterPixmap(&pixmap);
-
-	renderer.render(&painterPixmap);
-
-	return pixmap;
+	return *s_pixmaps[itemStatus(index)];
 }
 
 SummaryFilterDataAccessor::ItemStatus SummaryFilterDataAccessor::itemStatus(const QModelIndex& index) const noexcept
@@ -175,6 +170,34 @@ SummaryFilterDataAccessor::storageByRow(int row) const noexcept
 	}
 
 	return nullptr;
+}
+
+void SummaryFilterDataAccessor::initializePixmaps()
+{
+	QVector<QString> paths
+	{
+		{ QStringLiteral(":/images/icon-ok.svg") },
+		{ QStringLiteral(":/images/icon-warning.svg") },
+		{ QStringLiteral(":/images/icon-error.svg") },
+	};
+
+	QVector<QPixmap*> pixmaps
+	{
+		&m_okPixmap,
+		&m_warningPixmap,
+		&m_errorPixmap
+	};
+
+	QSvgRenderer svgRenderer;
+
+	for (int i = 0; i < paths.size(); ++i)
+	{
+		pixmaps[i]->fill(Qt::transparent);
+		QPainter painterPixmap(pixmaps[i]);
+
+		svgRenderer.load(paths[i]);
+		svgRenderer.render(&painterPixmap);
+	}
 }
 
 void SummaryFilterDataAccessor::emitDataChanged(int row, int storageType)
