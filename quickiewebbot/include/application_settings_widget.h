@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ui_application_settings_widget.h"
-#include "crawler_settings_widget.h"
 
 namespace QuickieWebBot
 {
@@ -13,6 +12,9 @@ class ApplicationSettingsWidget : public QWidget
 public:
 	ApplicationSettingsWidget(QWidget* parent = nullptr);
 	~ApplicationSettingsWidget();
+
+private:
+	Q_SLOT void applyChanges();
 
 private:
 	void initialize();
