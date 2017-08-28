@@ -5,18 +5,15 @@
         <file>images/open-file-icon.png</file>
         <file>images/save-as-icon.png</file>
         <file>images/save-icon.png</file>
-        <file>images/spider-icon.png</file>
-        <file>images/cpu-icon.png</file>
-		<file>images/setting.png</file>
+		    <file>images/setting.png</file>
         <file>stylesheets/styles.css</file>
         <file>images/arrow-down-icon.png</file>
         <file>images/brand-logo.jpg</file>
-        <file>images/brand-logo-logaster.png</file>
         <file>images/ui-splitter-horizontal-icon.png</file>
         <file>images/ui-splitter-vertical-icon.png</file>
         <file>images/icon-ok.svg</file>
         <file>images/icon-warning.svg</file>
         <file>images/icon-error.svg</file>
-		<file>images/url-icon.png</file>
+		    <file>images/url-icon.png</file>
     </qresource>
 </RCC>

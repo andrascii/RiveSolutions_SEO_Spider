@@ -164,9 +164,7 @@
     </spacer>
    </item>
   </layout>
-  <zorder>layoutWidget</zorder>
   <zorder>label_3</zorder>
-  <zorder>layoutWidget</zorder>
   <zorder>groupBox</zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
