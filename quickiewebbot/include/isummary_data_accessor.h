@@ -29,7 +29,7 @@ public:
 
 	// signals
 
-	virtual void dataChanged(int row, int column) = 0;
+	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const = 0;
 };
 
 }

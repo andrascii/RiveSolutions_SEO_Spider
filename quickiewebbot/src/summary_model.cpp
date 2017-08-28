@@ -28,14 +28,14 @@ void SummaryModel::setDataAccessor(ISummaryDataAccessor* accessor) noexcept
 {
 	if (dataAccessor())
 	{
-		disconnect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int)),
-			this, SLOT(formActualUpdateDataSignal(int, int)));
+		disconnect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)),
+			this, SLOT(formActualUpdateDataSignal(int, int, Qt::ItemDataRole)));
 	}
 
 	m_dataAccessor = accessor;
 
-	VERIFY(connect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int)),
-		this, SLOT(formActualUpdateDataSignal(int, int))));
+	VERIFY(connect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)),
+		this, SLOT(formActualUpdateDataSignal(int, int, Qt::ItemDataRole))));
 }
 
 ISummaryDataAccessor* SummaryModel::dataAccessor() const noexcept
@@ -54,9 +54,9 @@ SummaryCategoryItem SummaryModel::itemCategory(const QModelIndex& index) const n
 }
 
 
-void SummaryModel::formActualUpdateDataSignal(int row, int column)
+void SummaryModel::formActualUpdateDataSignal(int row, int column, Qt::ItemDataRole role)
 {
-	Q_EMIT dataChanged(createIndex(row, column), createIndex(row, column));
+	Q_EMIT dataChanged(createIndex(row, column), createIndex(row, column), QVector<int>() << role);
 }
 
 QSize SummaryModel::span(const QModelIndex& index) const
@@ -81,6 +81,11 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		case Qt::AccessibleTextRole:
 		case Qt::AccessibleDescriptionRole:
 		case Qt::DisplayRole:
+		{
+			return dataAccessor()->item(index);
+		}
+
+		case Qt::DecorationRole:
 		{
 			return dataAccessor()->item(index);
 		}
