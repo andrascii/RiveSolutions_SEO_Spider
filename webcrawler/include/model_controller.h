@@ -33,6 +33,7 @@ private:
 	void processPageRawStatusCode(PageRawPtr pageRaw) noexcept;
 
 	void processPageRawHtmlResources(PageRawPtr pageRaw) noexcept;
+	void processPageRawResources(PageRawPtr pageRaw) noexcept;
 
 private:
 	DataCollection* m_data;

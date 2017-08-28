@@ -5,15 +5,18 @@ namespace WebCrawler
 
 struct PageRawResource
 {
-	enum ResourseType
+	enum ResourceType
 	{
 		ResourceHtml,
 		ResourceImage,
 		ResourceJavaScript,
 		ResourceStyleSheet,
+		ResourceFlash,
+		ResourceVideo,
+		ResourceOther
 	};
 
-	ResourseType resourceType;
+	ResourceType resourceType;
 	QUrl resourceUrl;
 	QUrl resourcePageUrl;
 };
@@ -50,7 +53,7 @@ struct PageRaw
 	bool hasSeveralH1Tags;
 	bool hasSeveralH2Tags;
 
-	PageRawResource::ResourseType resourceType;
+	PageRawResource::ResourceType resourceType;
 
 	std::vector<PageRawResource> rawResources; // TODO: move to another structure
 	

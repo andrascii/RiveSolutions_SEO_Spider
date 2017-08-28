@@ -18,6 +18,7 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
 	processPageRawHtmlResources(pageRaw);
+	pageRaw->rawResources.clear();
 
 	processPageRawStatusCode(pageRaw);
 
@@ -349,12 +350,43 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		else
 		{
 			PageRawPtr pendingResource = std::make_shared<PageRaw>();
+			pendingResource->url = resource.resourceUrl;
 			pendingResource->linksToThisResource.push_back(pageRaw);
 			pageRaw->linksFromThisResource.push_back(pendingResource);
 			m_data->addPageRaw(pendingResource, DataCollection::HtmlPendingResourcesStorageType);
+			assert(m_data->isPageRawExists(pendingResource, DataCollection::HtmlPendingResourcesStorageType));
+
+			// isPageRawExists is not working correctly, uncomment this code to check it
+			// PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
+			// pendingResourceCopy->url = resource.resourceUrl;
+			// assert(m_data->isPageRawExists(pendingResourceCopy, DataCollection::HtmlPendingResourcesStorageType));
+		}
+	}
+}
+
+void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
+{
+	std::map<PageRawResource::ResourceType, DataCollection::StorageType> storageTypes
+	{
+		{ PageRawResource::ResourceImage, DataCollection::ImageResourcesStorageType },
+		{ PageRawResource::ResourceJavaScript, DataCollection::JavaScriptResourcesStorageType },
+		{ PageRawResource::ResourceStyleSheet, DataCollection::StyleSheetResourcesStorageType },
+		{ PageRawResource::ResourceFlash, DataCollection::FlashResourcesStorageType },
+		{ PageRawResource::ResourceVideo, DataCollection::VideoResourcesStorageType },
+		{ PageRawResource::ResourceOther, DataCollection::OtherResourcesStorageType },
+	};
+
+	for (const PageRawResource& resource : pageRaw->rawResources)
+	{
+		if (resource.resourceType == PageRawResource::ResourceHtml)
+		{
+			continue;
 		}
 
-		pageRaw->rawResources.clear();
+		PageRawPtr newResource = std::make_shared<PageRaw>();
+		newResource->linksToThisResource.push_back(pageRaw);
+		newResource->url = resource.resourceUrl;
+		newResource->resourceType = resource.resourceType;
 	}
 }
 

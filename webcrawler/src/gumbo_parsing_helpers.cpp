@@ -200,7 +200,7 @@ std::vector<QUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node) n
 		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
 		std::vector<QUrl> childResult = parsePageUrlList(child);
 
-		result.insert(std::begin(result), std::end(childResult), std::end(childResult));
+		result.insert(std::end(result), std::begin(childResult), std::end(childResult));
 	}
 
 	return result;

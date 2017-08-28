@@ -158,7 +158,6 @@ DataCollection::DataCollection(QObject* parent)
 			new CrawlerStorageType(0, UniversalPageRawHasher(
 				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
 
-
 		std::make_pair(HtmlResourcesStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageRawHasher(
 				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
@@ -167,12 +166,23 @@ DataCollection::DataCollection(QObject* parent)
 			new CrawlerStorageType(0, UniversalPageRawHasher(
 				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
 
-
 		std::make_pair(JavaScriptResourcesStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageRawHasher(
 				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
 
 		std::make_pair(StyleSheetResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+		std::make_pair(FlashResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+		std::make_pair(VideoResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
+
+		std::make_pair(OtherResourcesStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, UniversalPageRawHasher(
 				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl))))),
 	})
@@ -215,7 +225,15 @@ DataCollection::DataCollection(QObject* parent)
 		std::make_pair(Over100kbImageStorageType, std::make_shared<GuiStorageType>()),
 		std::make_pair(MissingAltTextImageStorageType, std::make_shared<GuiStorageType>()),
 		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(Status404StorageType, std::make_shared<GuiStorageType>())
+		std::make_pair(Status404StorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(HtmlResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ImageResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(JavaScriptResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(StyleSheetResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(FlashResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VideoResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(OtherResourcesStorageType, std::make_shared<GuiStorageType>())
 	})
 {
 }
@@ -347,7 +365,10 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 		type == HtmlResourcesStorageType ||
 		type == ImageResourcesStorageType ||
 		type == JavaScriptResourcesStorageType ||
-		type == StyleSheetResourcesStorageType
+		type == StyleSheetResourcesStorageType ||
+		type == FlashResourcesStorageType ||
+		type == VideoResourcesStorageType ||
+		type == OtherResourcesStorageType
 	);
 }
 

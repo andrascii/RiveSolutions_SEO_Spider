@@ -106,6 +106,9 @@ public:
 		ImageResourcesStorageType,
 		JavaScriptResourcesStorageType,
 		StyleSheetResourcesStorageType,
+		FlashResourcesStorageType,
+		VideoResourcesStorageType,
+		OtherResourcesStorageType,
 
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		EndEnumStorageType
