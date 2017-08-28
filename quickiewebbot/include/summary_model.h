@@ -35,7 +35,7 @@ signals:
 	virtual void internalDataChanged() override;
 
 private slots:
-	void formActualUpdateDataSignal(int row, int column);
+	void formActualUpdateDataSignal(int row, int column, Qt::ItemDataRole role);
 
 private:
 	std::shared_ptr<IResizePolicy> m_resizePolicy;

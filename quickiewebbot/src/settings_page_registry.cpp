@@ -1,4 +1,5 @@
 #include "settings_page_registry.h"
+#include "isettings_page.h"
 
 namespace QuickieWebBot
 {
@@ -17,6 +18,7 @@ SettingsPageRegistry::~SettingsPageRegistry()
 
 void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, QWidget* page)
 {
+	assert(dynamic_cast<ISettingsPage*>(page));
 	assert(m_settingsPages.contains(pageId) == false);
 
 	VERIFY(connect(page, SIGNAL(destroyed(QObject*)), SLOT(settingsPageDestroyed())));

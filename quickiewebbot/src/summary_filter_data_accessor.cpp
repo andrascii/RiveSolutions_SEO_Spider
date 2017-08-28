@@ -34,7 +34,7 @@ SummaryFilterDataAccessor::SummaryFilterDataAccessor(WebCrawler::DataCollection*
 
 		for (auto itemStart = std::begin((*start)->descriptions); itemStart != std::end((*start)->descriptions); ++itemStart)
 		{
-			m_itemRows[modelRowIndex] = &(*itemStart);
+			m_itemRows[modelRowIndex] = qMakePair(&m_okPixmap, &(*itemStart));
 
 			++modelRowIndex;
 		}
@@ -86,10 +86,10 @@ QVariant SummaryFilterDataAccessor::item(const QModelIndex& index) const noexcep
 
 	if (index.column() == 0)
 	{
-		return itemIterator.value()->storageTypeDescriptionName;
+		return itemIterator.value().second->storageTypeDescriptionName;
 	}
 
-	return m_dataCollection->guiStorage(itemIterator.value()->storageType)->size();
+	return m_dataCollection->guiStorage(itemIterator.value().second->storageType)->size();
 }
 
 bool SummaryFilterDataAccessor::isHeaderItem(const QModelIndex& index) const noexcept
@@ -104,7 +104,7 @@ SummaryCategoryItem SummaryFilterDataAccessor::itemCategory(const QModelIndex& i
 		return SummaryCategoryItem::SummaryCategoryItemHeader;
 	}
 
-	return SummaryCategoryItem{ m_itemRows[index.row()]->storageType };
+	return SummaryCategoryItem{ m_itemRows[index.row()].second->storageType };
 }
 
 const QPixmap& SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const noexcept
@@ -116,19 +116,19 @@ const QPixmap& SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const
 		return emptyPixmap;
 	}
 
-	static std::map<ItemStatus, const QPixmap*> s_pixmaps
- 	{
-		{ StatusOK, &m_okPixmap },
-		{ StatusWarning, &m_warningPixmap },
-		{ StatusError, &m_errorPixmap }
-	};
+	auto storageDescriptionIter = m_itemRows.find(index.row());
 
-	return *s_pixmaps[itemStatus(index)];
+	if (storageDescriptionIter == std::end(m_itemRows))
+	{
+		assert(!"This code must not be executed because above already exists if header item check");
+	}
+
+	return *storageDescriptionIter.value().first;
 }
 
-SummaryFilterDataAccessor::ItemStatus SummaryFilterDataAccessor::itemStatus(const QModelIndex& index) const noexcept
+SummaryFilterDataAccessor::ItemStatus SummaryFilterDataAccessor::itemStatus(int row) const noexcept
 {
-	WebCrawler::DataCollection::GuiStorageTypePtr storage = storageByRow(index.row());
+	WebCrawler::DataCollection::GuiStorageTypePtr storage = storageByRow(row);
 
 	assert(storage);
 
@@ -149,7 +149,7 @@ int SummaryFilterDataAccessor::rowByStorageType(WebCrawler::DataCollection::Stor
 {
 	for(auto beg = m_itemRows.begin(); beg != m_itemRows.end(); ++beg)
 	{
-		if (beg.value()->storageType == storageType)
+		if (beg.value().second->storageType == storageType)
 		{
 			return beg.key();
 		}
@@ -165,11 +165,36 @@ SummaryFilterDataAccessor::storageByRow(int row) const noexcept
 	{
 		if (beg.key() == row)
 		{
-			return m_dataCollection->guiStorage(beg.value()->storageType);
+			return m_dataCollection->guiStorage(beg.value().second->storageType);
 		}
 	}
 
 	return nullptr;
+}
+
+void SummaryFilterDataAccessor::changeItemPixmapIfNeeded(int row) noexcept
+{
+	assert(m_itemRows.find(row) != std::end(m_itemRows));
+
+
+	static std::map<ItemStatus, QPixmap*> s_pixmaps
+	{
+		{ StatusOK, &m_okPixmap },
+		{ StatusWarning, &m_warningPixmap },
+		{ StatusError, &m_errorPixmap }
+	};
+
+	auto storageDescriptionIter = m_itemRows.find(row);
+
+	QPixmap* currentItemPixmap = storageDescriptionIter.value().first;
+
+	if (!currentItemPixmap || currentItemPixmap == s_pixmaps[itemStatus(row)])
+	{
+		return;
+	}
+
+	storageDescriptionIter.value().first = s_pixmaps[itemStatus(row)];
+	Q_EMIT dataChanged(row, 0, Qt::DecorationRole);
 }
 
 void SummaryFilterDataAccessor::initializePixmaps()
@@ -204,10 +229,13 @@ void SummaryFilterDataAccessor::emitDataChanged(int row, int storageType)
 {
 	int storageTypeRow = rowByStorageType(static_cast<WebCrawler::DataCollection::StorageType>(storageType));
 
-	if (storageTypeRow != -1)
+	if (storageTypeRow == -1)
 	{
-		Q_EMIT dataChanged(storageTypeRow, 1);
+		return;
 	}
+
+	Q_EMIT dataChanged(storageTypeRow, 1, Qt::DisplayRole);
+	changeItemPixmapIfNeeded(storageTypeRow);
 }
 
 }

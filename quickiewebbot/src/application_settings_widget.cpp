@@ -1,17 +1,64 @@
 #include "application_settings_widget.h"
 #include "service_locator.h"
 #include "settings_page_registry.h"
+#include "crawler_settings_widget.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
 
 ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
-	: QWidget(parent, Qt::Dialog)
+	: QDialog(parent)
 	, m_stackedWidget(new QStackedWidget(this))
+	, m_somethingChanged(false)
 {
 	initialize();
+
+	VERIFY(connect(m_ui.okButton, SIGNAL(clicked()), this, SLOT(okButtonClicked())));
+	VERIFY(connect(m_ui.applyButton, SIGNAL(clicked()), this, SLOT(applyChanges())));
+	VERIFY(connect(m_ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonClicked())));
+
 }
 
+void ApplicationSettingsWidget::showEvent(QShowEvent* event)
+{
+	reloadSettings();
+}
+
+void ApplicationSettingsWidget::applyChanges()
+{
+	for (int index = 0 ; index < m_stackedWidget->count(); index++)
+	{
+		QWidget* widget = m_stackedWidget->widget(index);
+
+		dynamic_cast<ISettingsPage*>(widget)->applyChanges();
+	}
+
+	m_somethingChanged = false;
+	m_ui.applyButton->setEnabled(m_somethingChanged);
+
+}
+
+void ApplicationSettingsWidget::okButtonClicked()
+{
+	applyChanges();
+	close();
+}
+
+void ApplicationSettingsWidget::cancelButtonClicked()
+{
+	close();
+}
+
+void ApplicationSettingsWidget::reloadSettings()
+{
+	for (int index = 0; index < m_stackedWidget->count(); index++)
+	{
+		QWidget* widget = m_stackedWidget->widget(index);
+
+		dynamic_cast<ISettingsPage*>(widget)->reloadSettings();
+	}
+}
 
 ApplicationSettingsWidget::~ApplicationSettingsWidget()
 {
@@ -42,13 +89,18 @@ void ApplicationSettingsWidget::initialize()
 	foreach (QByteArray pageId , settingsPageRegistry->pagesKeys())
 	{
 		QWidget* page = settingsPageRegistry->settingsPageById(pageId);	
-		QListWidgetItem* item = new QListWidgetItem(page->windowTitle());
+		
+		if (dynamic_cast<ISettingsPage*>(page)->isAutoApply())
+		{
+			continue;
+		}
 
+		QListWidgetItem* item = new QListWidgetItem(page->windowTitle());
 		item->setData(Qt::UserRole, pageId);
 
 		m_stackedWidget->addWidget(page);
-
 		m_ui.propGroupsList->addItem(item);
+
 	}
 }
 

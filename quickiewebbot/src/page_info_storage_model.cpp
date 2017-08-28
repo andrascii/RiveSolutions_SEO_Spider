@@ -117,24 +117,6 @@ QVariant PageInfoStorageModel::data(const QModelIndex& index, int role) const
 		{
 			return storageAdaptor()->item(validatedIndex);
 		}
-
-		case Qt::DecorationRole:
-		{
-			static QPixmap urlPixmap;
-
-			if (urlPixmap.isNull())
-			{
-				QPixmap pixmap{ ":/images/url-icon.png" };
-				urlPixmap = pixmap.scaled(QuickieWebBotHelpers::pointsToPixels(13.5), QuickieWebBotHelpers::pointsToPixels(13.5));
-			}
-
-			if (storageAdaptor()->itemType(validatedIndex) == PageInfo::UrlItemType)
-			{
-				return urlPixmap;
-			}
-
-			break;
-		}
 	}
 
 	return QVariant();

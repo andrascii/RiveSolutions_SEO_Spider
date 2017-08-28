@@ -13,6 +13,7 @@
 #include "service_locator.h"
 #include "settings_page_registry.h"
 
+#include "crawler_settings_widget.h"
 #include "limits_settings_dialog.h"
 #include "proxy_settings_dialog.h"
 
@@ -36,7 +37,7 @@ void MainFrame::showApplicationSettingsWidget()
 		m_applicationSettingsWidget = new ApplicationSettingsWidget(this);
 	}
 
-	m_applicationSettingsWidget->show();
+	m_applicationSettingsWidget->exec();
 }
 
 
@@ -95,11 +96,11 @@ void MainFrame::createSettingsPages()
 	ServiceLocator::instance()->service<SettingsPageRegistry>()->registerSettingsPage(TYPE_STRING(CrawlerSettingsWidget), 
 		new CrawlerSettingsWidget());
 
-	ServiceLocator::instance()->service<SettingsPageRegistry>()->registerSettingsPage(TYPE_STRING(LimitsSettingsDialog),
-		new LimitsSettingsDialog());
-
-	ServiceLocator::instance()->service<SettingsPageRegistry>()->registerSettingsPage(TYPE_STRING(ProxySettingsDialog),
-		new ProxySettingsDialog());
+	//ServiceLocator::instance()->service<SettingsPageRegistry>()->registerSettingsPage(TYPE_STRING(LimitsSettingsDialog),
+	//	new LimitsSettingsDialog());
+	//
+	//ServiceLocator::instance()->service<SettingsPageRegistry>()->registerSettingsPage(TYPE_STRING(ProxySettingsDialog),
+	//	new ProxySettingsDialog());
 }
 
 void MainFrame::createAndSetCentralWidget()

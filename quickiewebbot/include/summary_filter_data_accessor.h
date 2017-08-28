@@ -36,13 +36,14 @@ public:
 
 	virtual QObject* qobject() noexcept override;
 
-	Q_SIGNAL virtual void dataChanged(int row, int column) override;
+	Q_SIGNAL virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;
 
 private:
-	ItemStatus itemStatus(const QModelIndex& index) const noexcept;
+	ItemStatus itemStatus(int row) const noexcept;
 
 	int rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
 	WebCrawler::DataCollection::GuiStorageTypePtr storageByRow(int row) const noexcept;
+	void changeItemPixmapIfNeeded(int row) noexcept;
 
 	void initializePixmaps();
 
@@ -55,7 +56,7 @@ private:
 
 	QVector<DCStorageDescriptionPtr> m_allGroupRows;
 	QMap<int, DCStorageDescriptionPtr> m_groupRows;
-	QMap<int, DCStorageDescription*> m_itemRows;
+	QMap<int, QPair<QPixmap*, DCStorageDescription*>> m_itemRows;
 
 	QPixmap m_okPixmap;
 	QPixmap m_warningPixmap;

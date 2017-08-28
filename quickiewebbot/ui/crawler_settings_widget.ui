@@ -64,7 +64,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
-        <string>Crawler beheviour</string>
+        <string>Crawler behaviour</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
@@ -74,6 +74,9 @@
           </property>
           <item>
            <widget class="QCheckBox" name="checkExternalLinks">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>External links</string>
             </property>
@@ -81,6 +84,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkInternalNF">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Internal &quot;nofollow&quot;</string>
             </property>
@@ -88,6 +94,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkExternalNF">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>External &quot;nofollow&quot;</string>
             </property>
@@ -95,6 +104,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkSubdomains">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Subdomains</string>
             </property>
@@ -102,6 +114,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkCanonicals">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Canonicals</string>
             </property>
@@ -109,6 +124,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkFollowRobots">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Follow robots.txt</string>
             </property>
@@ -132,6 +150,9 @@
           </property>
           <item>
            <widget class="QCheckBox" name="checkImages">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Images</string>
             </property>
@@ -139,6 +160,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkCSS">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>CSS</string>
             </property>
@@ -146,6 +170,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkJS">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>JavaScript</string>
             </property>
@@ -153,6 +180,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkSWF">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>SWF</string>
             </property>
@@ -179,7 +209,6 @@
     </spacer>
    </item>
   </layout>
-  <zorder>verticalSpacer</zorder>
  </widget>
  <resources/>
  <connections/>
