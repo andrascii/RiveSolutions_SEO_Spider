@@ -106,7 +106,12 @@ Qt::AlignmentFlag PageInfoStorageViewModel::textAlignment(const QModelIndex&) co
 
 QColor PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexcept
 {
-	return QColor(Qt::black);
+	if (m_model->itemType(index) == PageInfo::UrlItemType)
+	{
+		return QColor("#6F99C8");
+	}
+
+	return QColor("#02072E");
 }
 
 void PageInfoStorageViewModel::resetRenderersCache() const noexcept
