@@ -8,18 +8,25 @@ namespace QuickieWebBot
 {
 
 ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
-	: QWidget(parent, Qt::Dialog)
+	: QDialog(parent)
 	, m_stackedWidget(new QStackedWidget(this))
+	, m_somethingChanged(false)
 {
 	initialize();
 
-	VERIFY(connect(m_ui.okButton, SIGNAL(clicked()), this, SLOT(applyChanges())));
+	VERIFY(connect(m_ui.okButton, SIGNAL(clicked()), this, SLOT(okButtonClicked())));
+	VERIFY(connect(m_ui.applyButton, SIGNAL(clicked()), this, SLOT(applyChanges())));
+	VERIFY(connect(m_ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonClicked())));
+
+}
+
+void ApplicationSettingsWidget::showEvent(QShowEvent* event)
+{
+	reloadSettings();
 }
 
 void ApplicationSettingsWidget::applyChanges()
 {
-	SettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<SettingsPageRegistry>();
-
 	for (int index = 0 ; index < m_stackedWidget->count(); index++)
 	{
 		QWidget* widget = m_stackedWidget->widget(index);
@@ -27,6 +34,30 @@ void ApplicationSettingsWidget::applyChanges()
 		dynamic_cast<ISettingsPage*>(widget)->applyChanges();
 	}
 
+	m_somethingChanged = false;
+	m_ui.applyButton->setEnabled(m_somethingChanged);
+
+}
+
+void ApplicationSettingsWidget::okButtonClicked()
+{
+	applyChanges();
+	close();
+}
+
+void ApplicationSettingsWidget::cancelButtonClicked()
+{
+	close();
+}
+
+void ApplicationSettingsWidget::reloadSettings()
+{
+	for (int index = 0; index < m_stackedWidget->count(); index++)
+	{
+		QWidget* widget = m_stackedWidget->widget(index);
+
+		dynamic_cast<ISettingsPage*>(widget)->reloadSettings();
+	}
 }
 
 ApplicationSettingsWidget::~ApplicationSettingsWidget()
@@ -68,8 +99,8 @@ void ApplicationSettingsWidget::initialize()
 		item->setData(Qt::UserRole, pageId);
 
 		m_stackedWidget->addWidget(page);
-
 		m_ui.propGroupsList->addItem(item);
+
 	}
 }
 

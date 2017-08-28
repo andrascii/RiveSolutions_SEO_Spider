@@ -37,7 +37,7 @@ void MainFrame::showApplicationSettingsWidget()
 		m_applicationSettingsWidget = new ApplicationSettingsWidget(this);
 	}
 
-	m_applicationSettingsWidget->show();
+	m_applicationSettingsWidget->exec();
 }
 
 

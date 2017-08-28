@@ -83,6 +83,17 @@ void ApplicationProperties::setCheckImages(bool value)
 	emit checkImagesChanged();
 }
 
+bool ApplicationProperties::checkCSS() const
+{
+	return m_checkCSS;
+}
+
+void ApplicationProperties::setCheckCSS(bool value)
+{
+	m_checkCSS = value;
+	emit checkCSSChanged();
+}
+
 bool ApplicationProperties::checkJavaScript() const
 {
 	return m_checkJavaScript;

@@ -14,11 +14,15 @@ public:
 	CrawlerSettingsWidget(QWidget* parent = nullptr);
 
 	virtual void applyChanges() noexcept override;
+	virtual void reloadSettings() noexcept override;
 	virtual bool isAutoApply() const noexcept override;
+
+	Q_SLOT void somethingChangedSlot();
 
 private:
 	void initialize();
 
+private:
 	Ui::CrawlerSettingsWidget m_ui;
 };
 

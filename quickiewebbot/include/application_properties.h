@@ -24,6 +24,7 @@ class ApplicationProperties : public QObject
 	// Web crawler properties
 	//
 	Q_PROPERTY(bool checkImages READ checkImages WRITE setCheckImages NOTIFY checkImagesChanged);
+	Q_PROPERTY(bool checkCSS READ checkCSS WRITE setCheckCSS NOTIFY checkCSSChanged);
 	Q_PROPERTY(bool checkJavaScript READ checkJavaScript WRITE setCheckJavaScript NOTIFY checkJavaScriptChanged);
 	Q_PROPERTY(bool checkSWF READ checkSWF WRITE setCheckSWF NOTIFY checkSWFChanged);
 	Q_PROPERTY(bool checkExternalUrls READ checkExternalUrls WRITE setCheckExternalUrls NOTIFY checkExternalUrlsChanged);
@@ -84,6 +85,10 @@ public:
 	bool checkImages() const;
 	Q_SLOT void setCheckImages(bool value);
 	Q_SIGNAL void checkImagesChanged();
+
+	bool checkCSS() const;
+	Q_SLOT void setCheckCSS(bool value);
+	Q_SIGNAL void checkCSSChanged();
 
 	bool checkJavaScript() const;
 	Q_SLOT void setCheckJavaScript(bool value);
@@ -186,6 +191,7 @@ private:
 	QString m_proxyPassword;
 
 	bool m_checkImages;
+	bool m_checkCSS;
 	bool m_checkJavaScript;
 	bool m_checkSWF;
 	bool m_checkExternalUrls;
