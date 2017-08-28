@@ -14,6 +14,9 @@ public:
 
 private:
 	virtual QRect paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const override;
+
+private:
+	const IViewModel* m_viewModel;
 };
 
 }
