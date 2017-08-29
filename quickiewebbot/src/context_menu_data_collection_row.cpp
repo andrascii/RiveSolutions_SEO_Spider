@@ -33,7 +33,7 @@ ContextMenuDataCollectionRow::ContextMenuDataCollectionRow(const TableView* asso
 		{ CopyToClipboardUrlActionType, tr("Copy to Clipboard URL"), QIcon() }
 	};
 
-	for (const auto& [actionType, description, icon] : descriptors)
+	for (const auto&[actionType, description, icon] : descriptors)
 	{
 		m_actions[actionType] = new QAction(icon, description, this);
 		m_actions[actionType]->setData(actionType);

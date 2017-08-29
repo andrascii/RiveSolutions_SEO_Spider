@@ -242,6 +242,8 @@ bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type
 {
 	checkStorageType(type);
 
+	WARNINGLOG << "Find url" << pageRaw->url.toDisplayString();
+
 	for (const auto& item : *crawlerStorage(type))
 	{
 		WARNINGLOG << item->url.toDisplayString();
@@ -254,9 +256,10 @@ bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type
 const PageRawPtr DataCollection::pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept
 {
 	checkStorageType(type);
-	//assert(isPageRawExists(pageRaw, type));
+
 	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
 	auto iter = storage->find(pageRaw);
+
 	return iter != storage->end() ? *iter : PageRawPtr();
 }
 
@@ -272,6 +275,7 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 	crawlerStorage(type)->insert(pageRaw);
 
 	auto guiStorageIt = m_guiStorageMap.find(type);
+
 	if (guiStorageIt != m_guiStorageMap.end())
 	{
 		guiStorageIt->second->push_back(pageRaw);
@@ -283,7 +287,7 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 PageRawPtr DataCollection::removePageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept
 {
 	checkStorageType(type);
-	//assert(isPageRawExists(pageRaw, type));
+
 	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
 	auto iter = storage->find(pageRaw);
 
@@ -300,7 +304,7 @@ PageRawPtr DataCollection::removePageRaw(const PageRawPtr& pageRaw, StorageType 
 DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) noexcept
 {
 	assert(m_guiStorageMap.find(type) != m_guiStorageMap.end());
-	return m_guiStorageMap[type];
+	return m_guiStorageMap.find(type)->second;
 }
 
 const DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) const noexcept
@@ -311,7 +315,8 @@ const DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType 
 
 DataCollection::CrawlerStorageTypePtr& DataCollection::crawlerStorage(StorageType type) noexcept
 {
-	return m_crawlerStorageMap[type];
+	assert(m_crawlerStorageMap.find(type) != m_crawlerStorageMap.end());
+	return m_crawlerStorageMap.find(type)->second;
 }
 
 const DataCollection::CrawlerStorageTypePtr& DataCollection::crawlerStorage(StorageType type) const noexcept

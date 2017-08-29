@@ -6,8 +6,6 @@
 namespace WebCrawler
 {
 
-//class StorageAdaptorFactory;
-
 class DataCollection : public QObject
 {
 	Q_OBJECT
