@@ -272,13 +272,6 @@ bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type
 {
 	checkStorageType(type);
 
-	WARNINGLOG << "Find url" << pageRaw->url.toDisplayString();
-
-	for (const auto& item : *crawlerStorage(type))
-	{
-		WARNINGLOG << item->url.toDisplayString();
-	}
-
 	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
 	return storage->find(pageRaw) != storage->end();
 }

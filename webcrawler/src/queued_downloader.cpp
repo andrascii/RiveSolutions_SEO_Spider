@@ -22,8 +22,6 @@ QueuedDownloader::~QueuedDownloader()
 
 void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
 {
-	DEBUGLOG << "New url scheduled: " << url.toString();
-
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
 	m_requestQueue.push_back(url);
 }
