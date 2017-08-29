@@ -33,7 +33,7 @@ struct PageRaw
 	QUrl url;
 	QUrl fromUrl;
 	QString title;
-	QString content;
+	QString contentType;
 	QString metaRefresh;
 	QString metaRobots;
 	QString metaDescription;
@@ -59,10 +59,10 @@ struct PageRaw
 
 	PageRawResource::ResourceType resourceType;
 
-	std::vector<PageRawResource> rawResources; // TODO: move to another structure
+	std::deque<PageRawResource> rawResources; // TODO: move to another structure
 	
-	std::vector<PageRawWeakPtr> linksFromThisResource;
-	std::vector<PageRawWeakPtr> linksToThisResource;
+	std::deque<PageRawWeakPtr> linksFromThisResource;
+	std::deque<PageRawWeakPtr> linksToThisResource;
 
 #ifdef QT_DEBUG
 	QByteArray rawHtml;

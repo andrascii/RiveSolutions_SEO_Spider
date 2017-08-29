@@ -13,7 +13,7 @@ void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) no
 
 void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	if (pageRaw->content.startsWith("text/html") || pageRaw->content.isEmpty())
+	if (pageRaw->contentType.startsWith("text/html") || pageRaw->contentType.isEmpty())
 	{
 		pageRaw->resourceType = PageRawResource::ResourceHtml;
 	}

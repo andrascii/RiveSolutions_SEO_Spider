@@ -45,7 +45,7 @@ struct PageRawHasher : public IPageRawHasher
 		static std::map<int, std::function<size_t(const PageRawPtr&)>> s_hashFuncs
 		{
 			{ IPageRawHasher::UrlItemType, [](const PageRawPtr& el) { return s_stringHasher(el->url.toDisplayString().toStdString()); } },
-			{ IPageRawHasher::ContentItemType, [](const PageRawPtr& el) { return s_stringHasher(el->content.toStdString()); } },
+			{ IPageRawHasher::ContentItemType, [](const PageRawPtr& el) { return s_stringHasher(el->contentType.toStdString()); } },
 			{ IPageRawHasher::MetaRefreshItemType, [](const PageRawPtr& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
 			{ IPageRawHasher::MetaRobotsItemType, [](const PageRawPtr& el) { return s_stringHasher(el->metaRobots.toStdString()); } },
 			{ IPageRawHasher::RedirectedUrlItemType, [](const PageRawPtr& el) { return s_stringHasher(el->redirectedUrl.toStdString()); } },

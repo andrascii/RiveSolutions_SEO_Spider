@@ -190,7 +190,7 @@ void PageInfo::setContent(const QVariant& value)
 {
 	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
-	m_pageRawPtr->content = value.toString();
+	m_pageRawPtr->contentType = value.toString();
 }
 
 void PageInfo::setTitle(const QVariant& value)
@@ -366,7 +366,7 @@ QVariant PageInfo::acceptFromUrl()
 
 QVariant PageInfo::acceptContent()
 {
-	return m_pageRawPtr->content;
+	return m_pageRawPtr->contentType;
 }
 
 QVariant PageInfo::acceptTitle()

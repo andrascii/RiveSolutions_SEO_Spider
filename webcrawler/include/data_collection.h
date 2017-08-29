@@ -2,6 +2,7 @@
 
 #include "page_raw.h"
 #include "universal_page_raw_hasher.h"
+#include "page_raw_comparator.h"
 
 namespace WebCrawler
 {
@@ -11,7 +12,7 @@ class DataCollection : public QObject
 	Q_OBJECT
 
 protected:
-	using CrawlerStorageType = std::unordered_multiset<PageRawPtr, UniversalPageRawHasher>;
+	using CrawlerStorageType = std::unordered_multiset<PageRawPtr, UniversalPageRawHasher, PageRawComparatorProxy>;
 	using CrawlerStorageTypePtr = std::shared_ptr<CrawlerStorageType>;
 
 public:

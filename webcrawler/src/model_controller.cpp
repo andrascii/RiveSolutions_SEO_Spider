@@ -312,9 +312,15 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 	// 2. if it's really html resource and pending page exists - merge two pages
 	if (pendingPageRaw)
 	{
-		std::copy(std::begin(pendingPageRaw->linksToThisResource),
-			std::end(pendingPageRaw->linksToThisResource),
-			std::begin(pageRaw->linksToThisResource));
+// 		std::copy(std::begin(pendingPageRaw->linksToThisResource),
+// 			std::end(pendingPageRaw->linksToThisResource),
+// 			std::begin(pageRaw->linksToThisResource));
+
+		pageRaw->linksToThisResource.insert(
+			std::begin(pageRaw->linksToThisResource),
+			std::begin(pendingPageRaw->linksToThisResource), 
+			std::end(pendingPageRaw->linksToThisResource)
+		);
 
 		*pendingPageRaw = *pageRaw;
 		// we should use the original PageRawPtr because there are pages containing links to it
@@ -357,9 +363,9 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 			assert(m_data->isPageRawExists(pendingResource, DataCollection::HtmlPendingResourcesStorageType));
 
 			// isPageRawExists is not working correctly, uncomment this code to check it
-// 			PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
-// 			pendingResourceCopy->url = resource.resourceUrl;
-// 			assert(m_data->isPageRawExists(pendingResourceCopy, DataCollection::HtmlPendingResourcesStorageType));
+			PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
+			pendingResourceCopy->url = resource.resourceUrl;
+			assert(m_data->isPageRawExists(pendingResourceCopy, DataCollection::HtmlPendingResourcesStorageType));
 		}
 	}
 }

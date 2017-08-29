@@ -37,7 +37,7 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcep
 
 			if (attributeValue == "content-type")
 			{
-				pageRaw->content = contentAttributeValue;
+				pageRaw->contentType = contentAttributeValue;
 			}
 
 			if (attributeValue == "refresh")

@@ -54,7 +54,7 @@ void PageRawProcessor::process()
 		pageRaw->statusCode = reply.statusCode;
 		pageRaw->serverResponse = reply.responseHeaderValuePairs;
 		pageRaw->pageHash = pageHash;
-		pageRaw->content = contentType;
+		pageRaw->contentType = contentType;
 
 		if (!contentType.startsWith("application"))
 		{
