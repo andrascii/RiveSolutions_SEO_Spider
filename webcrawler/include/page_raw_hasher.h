@@ -25,15 +25,13 @@ struct IPageRawHasher
 		CanonicalLinkElementItemType
 	};
 
-	virtual size_t operator()(const PageRawPtr& PageRaw) const noexcept = 0;
+	virtual size_t operator()(const PageRawPtr& pageRaw) const noexcept = 0;
 };
 
 template <int ItemType>
 struct PageRawHasher : public IPageRawHasher
 {
-	
-	
-	virtual size_t operator()(const PageRawPtr& PageRaw) const noexcept override
+	virtual size_t operator()(const PageRawPtr& pageRaw) const noexcept override
 	{
 		static_assert(
 			ItemType >= IPageRawHasher::UrlItemType &&
@@ -62,7 +60,7 @@ struct PageRawHasher : public IPageRawHasher
 			{ IPageRawHasher::CanonicalLinkElementItemType, [](const PageRawPtr& el) { return s_stringHasher(el->canonicalLinkElement.toStdString()); } }
 		};
 
-		return s_hashFuncs[ItemType](PageRaw);
+		return s_hashFuncs[ItemType](pageRaw);
 	}
 };
 

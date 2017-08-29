@@ -20,7 +20,7 @@ QRect UrlRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, c
 
 	painter->drawPixmap(offsetByX, offsetByY, QuickieWebBotHelpers::pointsToPixels(15), QuickieWebBotHelpers::pointsToPixels(15), pixmap);
 
-	return rect.adjusted(pixmap.size().width() + 5, 0, 0, 0);
+	return rect;
 }
 
 }

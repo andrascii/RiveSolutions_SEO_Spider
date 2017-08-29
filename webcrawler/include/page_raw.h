@@ -26,6 +26,10 @@ struct PageRaw
 {
 	using PageRawWeakPtr = std::weak_ptr<PageRaw>;
 
+	~PageRaw()
+	{
+	}
+
 	QUrl url;
 	QUrl fromUrl;
 	QString title;

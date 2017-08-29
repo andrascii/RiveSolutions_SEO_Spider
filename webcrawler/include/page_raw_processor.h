@@ -28,7 +28,6 @@ private:
 	HtmlPageParser m_htmlPageParser;
 	WebCrawlerInternalUrlStorage* m_webCrawlerInternalUrlStorage;
 	QueuedDownloader* m_queuedDownloader;
-	PageRawPtr m_pageRaw;
 	std::vector<QUrl> m_pageUrlList;
 };
 

@@ -26,9 +26,11 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	, m_hoveredBgColor("#a5a5a5")
 	, m_bgColor(Qt::white)
 {
-	QPixmap pixmap{ ":/images/url-icon.png" };
+	QPixmap pixmap;
+	pixmap.fill(backgroundColor(QModelIndex()));
+	pixmap.load(":/images/url-icon.png");
 
-	m_urlIcon = pixmap.scaled(QuickieWebBotHelpers::pointsToPixels(13.5), QuickieWebBotHelpers::pointsToPixels(13.5));
+	m_urlIcon = pixmap.scaled(QuickieWebBotHelpers::pointsToPixels(20), QuickieWebBotHelpers::pointsToPixels(20));
 
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
 }
