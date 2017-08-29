@@ -5,10 +5,10 @@
 namespace WebCrawler
 {
 
-class UniversalPageRawHasher
+class PageRawHasherProxy
 {
 public:
-	UniversalPageRawHasher(const std::shared_ptr<IPageRawHasher>& hasher);
+	PageRawHasherProxy(const std::shared_ptr<IPageRawHasher>& hasher);
 	size_t operator()(const PageRawPtr& pageRaw) const noexcept;
 
 private:

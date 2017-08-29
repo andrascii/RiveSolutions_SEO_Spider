@@ -4,7 +4,6 @@
 #include "data_collection.h"
 #include "web_crawler.h"
 #include "quickie_web_bot_helpers.h"
-#include "main_frame_controller.h"
 #include "data_pages_widget.h"
 #include "control_panel_widget.h"
 #include "action_keys.h"
@@ -22,7 +21,6 @@ namespace QuickieWebBot
 
 MainFrame::MainFrame(QWidget* parent)
 	: QMainWindow(parent)
-	, m_mainFrameController(new MainFrameController(this, this))
 	, m_applicationSettingsWidget(nullptr)
 {
 	init();

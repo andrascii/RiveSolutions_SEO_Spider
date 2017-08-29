@@ -5,8 +5,6 @@
 namespace QuickieWebBot
 {
 
-class MainFrameController;
-
 class MainFrame : public QMainWindow
 {
 	Q_OBJECT
@@ -31,8 +29,6 @@ private:
 	void createSettingsPages();
 
 private:
-	MainFrameController* m_mainFrameController;
-
 	ApplicationSettingsWidget* m_applicationSettingsWidget;
 	
 	QAction* m_openFileAction;
