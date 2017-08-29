@@ -17,7 +17,6 @@ PageRawProcessor::PageRawProcessor(WebCrawlerInternalUrlStorage* crawlerStorage,
 	: AbstractThreadableObject(this, QByteArray("PageRawProcessorThread"))
 	, m_webCrawlerInternalUrlStorage(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
-	, m_pageRaw(new PageRaw)
 {
 	moveThisToSeparateThread();
 
@@ -43,19 +42,19 @@ void PageRawProcessor::process()
 
 	if (replyExtracted)
 	{
-		m_pageRaw.reset(new PageRaw);
+		PageRawPtr pageRaw(new PageRaw);
 
 		int sizeKB = reply.responseBody.size() / 1024;
-		m_pageRaw->pageSizeKb = sizeKB;
+		pageRaw->pageSizeKb = sizeKB;
 		
 		size_t pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
 		const QByteArray contentType = reply.responseHeaders.value("Content-Type", "");
 
-		m_pageRaw->url = reply.url;
-		m_pageRaw->statusCode = reply.statusCode;
-		m_pageRaw->serverResponse = reply.responseHeaderValuePairs;
-		m_pageRaw->pageHash = pageHash;
-		m_pageRaw->content = contentType;
+		pageRaw->url = reply.url;
+		pageRaw->statusCode = reply.statusCode;
+		pageRaw->serverResponse = reply.responseHeaderValuePairs;
+		pageRaw->pageHash = pageHash;
+		pageRaw->content = contentType;
 
 		if (!contentType.startsWith("application"))
 		{
@@ -71,7 +70,7 @@ void PageRawProcessor::process()
 			}
 
 
-			m_htmlPageParser.parsePage(reply.responseBody, m_pageRaw);
+			m_htmlPageParser.parsePage(reply.responseBody, pageRaw);
 		}
 
 
@@ -82,13 +81,13 @@ void PageRawProcessor::process()
 		m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
 
 #ifdef QT_DEBUG
-		if (m_pageRaw->fromUrl.toString().isEmpty())
+		if (pageRaw->fromUrl.toString().isEmpty())
 		{
-			m_pageRaw->rawHtml = qCompress(GumboParsingHelpers::decodeHtmlPage(reply.responseBody), 9);
+			pageRaw->rawHtml = qCompress(GumboParsingHelpers::decodeHtmlPage(reply.responseBody), 9);
 		}
 #endif // DEBUG
 
-		Q_EMIT webPageParsed(m_pageRaw);
+		Q_EMIT webPageParsed(pageRaw);
 	}
 }
 

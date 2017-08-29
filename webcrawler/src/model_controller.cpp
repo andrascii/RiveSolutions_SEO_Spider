@@ -357,9 +357,9 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 			assert(m_data->isPageRawExists(pendingResource, DataCollection::HtmlPendingResourcesStorageType));
 
 			// isPageRawExists is not working correctly, uncomment this code to check it
-			// PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
-			// pendingResourceCopy->url = resource.resourceUrl;
-			// assert(m_data->isPageRawExists(pendingResourceCopy, DataCollection::HtmlPendingResourcesStorageType));
+// 			PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
+// 			pendingResourceCopy->url = resource.resourceUrl;
+// 			assert(m_data->isPageRawExists(pendingResourceCopy, DataCollection::HtmlPendingResourcesStorageType));
 		}
 	}
 }

@@ -241,6 +241,12 @@ DataCollection::DataCollection(QObject* parent)
 bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type) const noexcept
 {
 	checkStorageType(type);
+
+	for (const auto& item : *crawlerStorage(type))
+	{
+		WARNINGLOG << item->url.toDisplayString();
+	}
+
 	const CrawlerStorageTypePtr& storage = crawlerStorage(type);
 	return storage->find(pageRaw) != storage->end();
 }
