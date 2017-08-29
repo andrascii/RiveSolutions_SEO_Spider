@@ -80,6 +80,9 @@
             <property name="text">
              <string>External links</string>
             </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">externalLinksKey</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -89,6 +92,9 @@
             </property>
             <property name="text">
              <string>Internal &quot;nofollow&quot;</string>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">internalNoFollow</string>
             </property>
            </widget>
           </item>
@@ -100,6 +106,9 @@
             <property name="text">
              <string>External &quot;nofollow&quot;</string>
             </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">externalNoFollow</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -109,6 +118,9 @@
             </property>
             <property name="text">
              <string>Subdomains</string>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">checkSubdomains</string>
             </property>
            </widget>
           </item>
@@ -120,6 +132,9 @@
             <property name="text">
              <string>Canonicals</string>
             </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">checkCanonicals</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -129,6 +144,9 @@
             </property>
             <property name="text">
              <string>Follow robots.txt</string>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">followRobotsTxt</string>
             </property>
            </widget>
           </item>
@@ -156,6 +174,9 @@
             <property name="text">
              <string>Images</string>
             </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">checkImages</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -165,6 +186,9 @@
             </property>
             <property name="text">
              <string>CSS</string>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">checkCSS</string>
             </property>
            </widget>
           </item>
@@ -176,6 +200,9 @@
             <property name="text">
              <string>JavaScript</string>
             </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">ckeckJavaScript</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -185,6 +212,9 @@
             </property>
             <property name="text">
              <string>SWF</string>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">ckeckSWF</string>
             </property>
            </widget>
           </item>
@@ -209,6 +239,7 @@
     </spacer>
    </item>
   </layout>
+  <zorder>verticalSpacer</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "ui_crawler_settings_widget.h"
-#include "isettings_page.h"
+#include "settings_page.h"
 
 namespace QuickieWebBot
 {
 
-class CrawlerSettingsWidget : public QWidget, public ISettingsPage
+class CrawlerSettingsWidget 
+	: public SettingsPage<Ui::CrawlerSettingsWidget>
 {
 	Q_OBJECT
 
@@ -21,9 +22,6 @@ public:
 
 private:
 	void initialize();
-
-private:
-	Ui::CrawlerSettingsWidget m_ui;
 };
 
 }
