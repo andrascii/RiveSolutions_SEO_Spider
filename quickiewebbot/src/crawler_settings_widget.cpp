@@ -5,11 +5,14 @@ namespace QuickieWebBot
 {
 
 CrawlerSettingsWidget::CrawlerSettingsWidget(QWidget* parent)
-	: QWidget(parent)
+	: SettingsPage(parent)
 {
 	initialize();
 
-	foreach(QObject* obj, m_ui.groupBox->children())
+	QList<QWidget*> widgets = findChildren<QWidget*>();
+	widgets.size();
+
+	foreach(QObject* obj, children())
 	{
 		QCheckBox* tempCheck = qobject_cast<QCheckBox*>(obj);
 		if (tempCheck)
@@ -26,7 +29,7 @@ void CrawlerSettingsWidget::somethingChangedSlot()
 
 void CrawlerSettingsWidget::initialize()
 {
-	m_ui.setupUi(this);
+	//setupUi(this);
 }
 
 void CrawlerSettingsWidget::applyChanges() noexcept
@@ -39,20 +42,20 @@ void CrawlerSettingsWidget::applyChanges() noexcept
 	//
 	//setting checking resourses
 	//
-	theApp->properties()->setCheckImages(m_ui.checkImages->isChecked());
-	theApp->properties()->setCheckCSS(m_ui.checkCSS->isChecked());
-	theApp->properties()->setCheckJavaScript(m_ui.checkJS->isChecked());
-	theApp->properties()->setCheckSWF(m_ui.checkSWF->isChecked());
+	theApp->properties()->setCheckImages(checkImages->isChecked());
+	theApp->properties()->setCheckCSS(checkCSS->isChecked());
+	theApp->properties()->setCheckJavaScript(checkJS->isChecked());
+	theApp->properties()->setCheckSWF(checkSWF->isChecked());
 
 	//
 	//setting crawer beraviour
 	//
-	theApp->properties()->setCheckExternalUrls(m_ui.checkExternalLinks->isChecked());
-	theApp->properties()->setFollowInternalNoFollow(m_ui.checkInternalNF->isChecked());
-	theApp->properties()->setFollowExternalNoFollow(m_ui.checkExternalNF->isChecked());
-	theApp->properties()->setCheckSubdomains(m_ui.checkSubdomains->isChecked());
-	theApp->properties()->setCheckCanonicals(m_ui.checkCanonicals->isChecked());
-	theApp->properties()->setFollowRobotsTxt(m_ui.checkFollowRobots->isChecked());
+	theApp->properties()->setCheckExternalUrls(checkExternalLinks->isChecked());
+	theApp->properties()->setFollowInternalNoFollow(checkInternalNF->isChecked());
+	theApp->properties()->setFollowExternalNoFollow(checkExternalNF->isChecked());
+	theApp->properties()->setCheckSubdomains(checkSubdomains->isChecked());
+	theApp->properties()->setCheckCanonicals(checkCanonicals->isChecked());
+	theApp->properties()->setFollowRobotsTxt(checkFollowRobots->isChecked());
 }
 
 void CrawlerSettingsWidget::reloadSettings() noexcept
@@ -60,38 +63,38 @@ void CrawlerSettingsWidget::reloadSettings() noexcept
 	//
 	//Checking resourses
 	//
-	m_ui.checkImages->setChecked(theApp->properties()->checkImages());
-	m_ui.checkImages->setEnabled(true);
+	checkImages->setChecked(theApp->properties()->checkImages());
+	checkImages->setEnabled(true);
 
-	m_ui.checkCSS->setChecked(theApp->properties()->checkCSS());
-	m_ui.checkCSS->setEnabled(true);
+	checkCSS->setChecked(theApp->properties()->checkCSS());
+	checkCSS->setEnabled(true);
 
-	m_ui.checkJS->setChecked(theApp->properties()->checkJavaScript());
-	m_ui.checkJS->setEnabled(true);
+	checkJS->setChecked(theApp->properties()->checkJavaScript());
+	checkJS->setEnabled(true);
 
-	m_ui.checkSWF->setChecked(theApp->properties()->checkSWF());
-	m_ui.checkSWF->setEnabled(true);
+	checkSWF->setChecked(theApp->properties()->checkSWF());
+	checkSWF->setEnabled(true);
 
 	//
 	//Crawler behaviour
 	//
-	m_ui.checkExternalLinks->setChecked(theApp->properties()->checkExternalUrls());
-	m_ui.checkExternalLinks->setEnabled(true);
+	checkExternalLinks->setChecked(theApp->properties()->checkExternalUrls());
+	checkExternalLinks->setEnabled(true);
 
-	m_ui.checkInternalNF->setChecked(theApp->properties()->followInternalNoFollow());
-	m_ui.checkInternalNF->setEnabled(true);
+	checkInternalNF->setChecked(theApp->properties()->followInternalNoFollow());
+	checkInternalNF->setEnabled(true);
 
-	m_ui.checkExternalNF->setChecked(theApp->properties()->followExternalNoFollow());
-	m_ui.checkExternalNF->setEnabled(true);
+	checkExternalNF->setChecked(theApp->properties()->followExternalNoFollow());
+	checkExternalNF->setEnabled(true);
 
-	m_ui.checkSubdomains->setChecked(theApp->properties()->checkSubdomains());
-	m_ui.checkSubdomains->setEnabled(true);
+	checkSubdomains->setChecked(theApp->properties()->checkSubdomains());
+	checkSubdomains->setEnabled(true);
 
-	m_ui.checkCanonicals->setChecked(theApp->properties()->checkCanonicals());
-	m_ui.checkCanonicals->setEnabled(true);
+	checkCanonicals->setChecked(theApp->properties()->checkCanonicals());
+	checkCanonicals->setEnabled(true);
 
-	m_ui.checkFollowRobots->setChecked(theApp->properties()->followRobotsTxt());
-	m_ui.checkFollowRobots->setEnabled(true);
+	checkFollowRobots->setChecked(theApp->properties()->followRobotsTxt());
+	checkFollowRobots->setEnabled(true);
 
 
 }
