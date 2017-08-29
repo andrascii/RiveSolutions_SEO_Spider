@@ -131,6 +131,7 @@ protected:
 	
 private:
 	void checkStorageType(StorageType type) const noexcept;
+	void initializeStorages();
 
 private:
 	std::unordered_map<int, CrawlerStorageTypePtr> m_crawlerStorageMap;

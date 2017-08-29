@@ -6,266 +6,8 @@ namespace WebCrawler
 
 DataCollection::DataCollection(QObject* parent)
 	: QObject(parent)
-	, m_crawlerStorageMap(std::initializer_list<std::pair<const int, CrawlerStorageTypePtr>>
-	{
-		std::make_pair(CrawledUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		//
-		// Link Problems Storages
-		//
-
-		std::make_pair(ExternalUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(UpperCaseUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(NonAsciiCharacterUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(VeryLongUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(Status404StorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		//
-		// Title Storages
-		//
-
-		std::make_pair(AllTitlesUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), PageRawComparatorProxy(new PageRawTitleComparator)))),
-
-		std::make_pair(EmptyTitleUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), PageRawComparatorProxy(new PageRawTitleComparator)))),
-
-		std::make_pair(DuplicatedTitleUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), PageRawComparatorProxy(new PageRawTitleComparator)))),
-
-		std::make_pair(VeryLongTitleUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), PageRawComparatorProxy(new PageRawTitleComparator)))),
-
-		std::make_pair(VeryShortTitleUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), PageRawComparatorProxy(new PageRawTitleComparator)))),
-
-		std::make_pair(DuplicatedH1TitleUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(SeveralTitleUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), PageRawComparatorProxy(new PageRawTitleComparator)))),
-
-		//
-		// Meta Description Storages
-		//
-
-		std::make_pair(AllMetaDescriptionsUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
-
-		std::make_pair(EmptyMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
-
-		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
-
-		std::make_pair(VeryLongMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
-
-		std::make_pair(VeryShortMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
-
-		std::make_pair(SeveralMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
-
-		//
-		// Meta Keywords Problems Storages
-		//
-
-		std::make_pair(AllMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaKeywords)), PageRawComparatorProxy(new PageRawMetaKeywordsComparator)))),
-
-		std::make_pair(EmptyMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaKeywords)), PageRawComparatorProxy(new PageRawMetaKeywordsComparator)))),
-
-		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaKeywords)), PageRawComparatorProxy(new PageRawMetaKeywordsComparator)))),
-
-		std::make_pair(SeveralMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaKeywords)), PageRawComparatorProxy(new PageRawMetaKeywordsComparator)))),
-
-		//
-		// H1 Problems Storages
-		//
-
-		std::make_pair(AllH1UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
-
-		std::make_pair(MissingH1UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
-
-		std::make_pair(DuplicatedH1UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
-
-		std::make_pair(VeryLongH1UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
-
-		std::make_pair(SeveralH1UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
-
-		//
-		// H2 Problems Storages
-		//
-
-		std::make_pair(AllH2UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
-
-		std::make_pair(MissingH2UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
-
-		std::make_pair(DuplicatedH2UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
-
-		std::make_pair(VeryLongH2UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
-
-		std::make_pair(SeveralH2UrlStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
-
-		//
-		// Images Problems Storages
-		//
-
-		std::make_pair(Over100kbImageStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(MissingAltTextImageStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(VeryLongAltTextImageStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		//
-		// Resources Types Storages
-		//
-
-		std::make_pair(HtmlPendingResourcesStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(HtmlResourcesStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(ImageResourcesStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(JavaScriptResourcesStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(StyleSheetResourcesStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(FlashResourcesStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(VideoResourcesStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-
-		std::make_pair(OtherResourcesStorageType, CrawlerStorageTypePtr(
-			new CrawlerStorageType(0, UniversalPageRawHasher(
-				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), PageRawComparatorProxy(new PageRawUrlComparator)))),
-	})
-	, m_guiStorageMap(std::initializer_list<std::pair<const int, GuiStorageTypePtr>>
-	{
-		std::make_pair(CrawledUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ExternalUrlStorageType, std::make_shared<GuiStorageType>()),
-		
-		std::make_pair(UpperCaseUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(NonAsciiCharacterUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongUrlStorageType, std::make_shared<GuiStorageType>()),
-		
-		std::make_pair(EmptyTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryShortTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedH1TitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(EmptyMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryShortMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(EmptyMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(MissingH1UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedH1UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongH1UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralH1UrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(MissingH2UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedH2UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongH2UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralH2UrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(Over100kbImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(MissingAltTextImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(Status404StorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(HtmlResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ImageResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(JavaScriptResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(StyleSheetResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(FlashResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VideoResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(OtherResourcesStorageType, std::make_shared<GuiStorageType>())
-	})
 {
+	initializeStorages();
 }
 
 bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type) const noexcept
@@ -404,6 +146,315 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 		type == VideoResourcesStorageType ||
 		type == OtherResourcesStorageType
 	);
+}
+
+
+void DataCollection::initializeStorages()
+{
+	m_crawlerStorageMap = std::initializer_list<std::pair<const int, CrawlerStorageTypePtr>>
+	{
+		std::make_pair(CrawledUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		//
+		// Link Problems Storages
+		//
+
+		std::make_pair(ExternalUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(UpperCaseUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(NonAsciiCharacterUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(VeryLongUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(Status404StorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		//
+		// Title Storages
+		//
+
+		std::make_pair(AllTitlesUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), 
+				PageRawComparatorProxy(new PageRawTitleComparator)))),
+
+		std::make_pair(EmptyTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), 
+				PageRawComparatorProxy(new PageRawTitleComparator)))),
+
+		std::make_pair(DuplicatedTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), 
+				PageRawComparatorProxy(new PageRawTitleComparator)))),
+
+		std::make_pair(VeryLongTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), 
+				PageRawComparatorProxy(new PageRawTitleComparator)))),
+
+		std::make_pair(VeryShortTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), 
+				PageRawComparatorProxy(new PageRawTitleComparator)))),
+
+		std::make_pair(DuplicatedH1TitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(SeveralTitleUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherTitle)), 
+				PageRawComparatorProxy(new PageRawTitleComparator)))),
+
+		//
+		// Meta Description Storages
+		//
+
+		std::make_pair(AllMetaDescriptionsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), 
+				PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
+
+		std::make_pair(EmptyMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), 
+				PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
+
+		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), 
+				PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
+
+		std::make_pair(VeryLongMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), 
+				PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
+
+		std::make_pair(VeryShortMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), 
+				PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
+
+		std::make_pair(SeveralMetaDescriptionUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaDescription)), 
+				PageRawComparatorProxy(new PageRawMetaDescriptionComparator)))),
+
+		//
+		// Meta Keywords Problems Storages
+		//
+
+		std::make_pair(AllMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaKeywords)), 
+				PageRawComparatorProxy(new PageRawMetaKeywordsComparator)))),
+
+		std::make_pair(EmptyMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaKeywords)), 
+				PageRawComparatorProxy(new PageRawMetaKeywordsComparator)))),
+
+		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaKeywords)), 
+				PageRawComparatorProxy(new PageRawMetaKeywordsComparator)))),
+
+		std::make_pair(SeveralMetaKeywordsUrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherMetaKeywords)), 
+				PageRawComparatorProxy(new PageRawMetaKeywordsComparator)))),
+
+		//
+		// H1 Problems Storages
+		//
+
+		std::make_pair(AllH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), 
+				PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
+
+		std::make_pair(MissingH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), 
+				PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
+
+		std::make_pair(DuplicatedH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), 
+				PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
+
+		std::make_pair(VeryLongH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), 
+				PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
+
+		std::make_pair(SeveralH1UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH1)), 
+				PageRawComparatorProxy(new PageRawFirstH1Comparator)))),
+
+		//
+		// H2 Problems Storages
+		//
+
+		std::make_pair(AllH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), 
+				PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
+
+		std::make_pair(MissingH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), 
+				PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
+
+		std::make_pair(DuplicatedH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), 
+				PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
+
+		std::make_pair(VeryLongH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), 
+				PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
+
+		std::make_pair(SeveralH2UrlStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherFirstH2)), 
+				PageRawComparatorProxy(new PageRawFirstH2Comparator)))),
+
+		//
+		// Images Problems Storages
+		//
+
+		std::make_pair(Over100kbImageStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(MissingAltTextImageStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(VeryLongAltTextImageStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		//
+		// Resources Types Storages
+		//
+
+		std::make_pair(HtmlPendingResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(HtmlResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(ImageResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(JavaScriptResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(StyleSheetResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(FlashResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(VideoResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(OtherResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, UniversalPageRawHasher(
+				std::shared_ptr<IPageRawHasher>(new PageRawHasherUrl)), 
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+	};
+
+	m_guiStorageMap = std::initializer_list<std::pair<const int, GuiStorageTypePtr>>
+	{
+		std::make_pair(CrawledUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ExternalUrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(UpperCaseUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(NonAsciiCharacterUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongUrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(EmptyTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryShortTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedH1TitleUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralTitleUrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(EmptyMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryShortMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(EmptyMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(MissingH1UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedH1UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongH1UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralH1UrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(MissingH2UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(DuplicatedH2UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongH2UrlStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(SeveralH2UrlStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(Over100kbImageStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(MissingAltTextImageStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(Status404StorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(HtmlResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ImageResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(JavaScriptResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(StyleSheetResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(FlashResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(VideoResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(OtherResourcesStorageType, std::make_shared<GuiStorageType>())
+	};
 }
 
 }
