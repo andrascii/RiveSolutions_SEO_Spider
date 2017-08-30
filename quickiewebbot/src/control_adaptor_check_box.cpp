@@ -4,7 +4,7 @@
 namespace QuickieWebBot
 {
 
-void ControlAdaptorQCheckBox::setPropertyControl(QObject* control)
+void ControlAdaptorQCheckBox::setControl(QObject* control)
 {
 	Q_ASSERT(qobject_cast<QCheckBox*>(control));
 

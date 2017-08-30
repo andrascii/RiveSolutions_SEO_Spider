@@ -7,7 +7,7 @@ namespace QuickieWebBot
 class ControlAdaptorQCheckBox : public IControlAdaptor
 {
 public:
-	virtual void setPropertyControl(QObject* control) override;
+	virtual void setControl(QObject* control) override;
 	virtual QVariant value() const override;
 	virtual void setValue(const QVariant& val) override;
 

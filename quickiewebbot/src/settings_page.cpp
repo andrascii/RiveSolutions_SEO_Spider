@@ -46,7 +46,7 @@ bool SettingsPage::isAutoApply() const noexcept
 {
 	return m_isAutoApply;
 }
-
+ 
 void SettingsPage::init()
 {
 	registerMetaTypes();
@@ -70,7 +70,9 @@ void SettingsPage::init()
 			continue;
 		}
 
-		if (!theApp->properties()->property(controlKey.constData()).isValid())
+		QVariant propertyValue = theApp->properties()->property(controlKey.constData()).isValid();
+
+		if (!propertyValue.isValid())
 		{
 			ERRORLOG << controlKey.constData() 
 				<< "which appears in the" 
@@ -82,7 +84,7 @@ void SettingsPage::init()
 
 		std::shared_ptr<IControlAdaptor> controlAdaptor = createControlAdaptor(control);
 
-		controlAdaptor->setValue(theApp->properties()->property(controlKey.constData()));
+		controlAdaptor->setValue(propertyValue);
 
 		m_controlAdaptors[controlKeyString] = controlAdaptor;
 	}
@@ -103,7 +105,7 @@ std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* con
 
 	std::shared_ptr<IControlAdaptor> controlAdaptor{ static_cast<IControlAdaptor*>(QMetaType::create(type)) };
 
-	controlAdaptor->setPropertyControl(control);
+	controlAdaptor->setControl(control);
 
 	return controlAdaptor;
 }
