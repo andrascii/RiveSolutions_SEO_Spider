@@ -31,7 +31,7 @@ void ApplicationSettingsWidget::applyChanges()
 	{
 		QWidget* widget = m_stackedWidget->widget(index);
 
-		dynamic_cast<ISettingsPage*>(widget)->applyChanges();
+		QuickieWebBotHelpers::safe_runtime_static_cast<SettingsPage*>(widget)->applyChanges();
 	}
 
 	m_somethingChanged = false;
@@ -56,7 +56,7 @@ void ApplicationSettingsWidget::reloadSettings()
 	{
 		QWidget* widget = m_stackedWidget->widget(index);
 
-		dynamic_cast<ISettingsPage*>(widget)->reloadSettings();
+		QuickieWebBotHelpers::safe_runtime_static_cast<SettingsPage*>(widget)->reloadSettings();
 	}
 }
 

@@ -10,6 +10,7 @@ namespace QuickieWebBot
 SettingsPage::SettingsPage(bool isAutoApply, QWidget* parent)
 	: QWidget(parent)
 	, m_isAutoApply(isAutoApply)
+	, m_somethingChanged(false)
 {
 }
 
@@ -34,12 +35,21 @@ void SettingsPage::applyChanges() noexcept
 			continue;
 		}
 
+		if (!m_changedSettingsKeys.contains(controlKeyString))
+		{
+			continue;
+		}
+
 		theApp->properties()->setProperty(controlKey.constData(), m_controlAdaptors[controlKey]->value());
 	}
+
+	m_changedSettingsKeys.clear();
+	m_somethingChanged = false;
 }
 
 void SettingsPage::reloadSettings() noexcept
 {
+
 }
 
 bool SettingsPage::isAutoApply() const noexcept
@@ -98,6 +108,10 @@ void SettingsPage::registerMetaTypes()
 
 void SettingsPage::somethingChanged()
 {
+	Q_ASSERT(sender()->property("controlKey").isValid());
+
+	m_changedSettingsKeys.push_back(sender()->property("controlKey").toString());
+
 	m_somethingChanged = true;
 }
 
@@ -111,6 +125,7 @@ std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* con
 	std::shared_ptr<IControlAdaptor> controlAdaptor{ static_cast<IControlAdaptor*>(QMetaType::create(type)) };
 
 	controlAdaptor->setControl(control);
+	controlAdaptor->connectChangesObserver(this);
 
 	return controlAdaptor;
 }

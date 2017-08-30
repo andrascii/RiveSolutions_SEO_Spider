@@ -11,6 +11,8 @@ class SettingsPage
 	: public QWidget
 	, public ISettingsPage
 {
+	Q_OBJECT
+
 public:
 	SettingsPage(bool isAutoApply = false, QWidget* parent = nullptr);
 
@@ -30,6 +32,7 @@ private:
 	bool m_somethingChanged;
 
 	std::map<QString, std::shared_ptr<IControlAdaptor>> m_controlAdaptors;
+	QStringList m_changedSettingsKeys;
 };
 
 }
