@@ -81,7 +81,7 @@
              <string>External links</string>
             </property>
             <property name="controlKey" stdset="0">
-             <string notr="true">externalLinksKey</string>
+             <string notr="true">checkExternalUrls</string>
             </property>
            </widget>
           </item>
