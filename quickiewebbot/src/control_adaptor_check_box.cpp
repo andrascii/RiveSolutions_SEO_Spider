@@ -6,7 +6,7 @@ namespace QuickieWebBot
 
 void ControlAdaptorQCheckBox::setControl(QObject* control)
 {
-	Q_ASSERT(qobject_cast<QCheckBox*>(control));
+	DEBUG_ASSERT(qobject_cast<QCheckBox*>(control));
 
 	m_control = qobject_cast<QCheckBox*>(control);
 }
@@ -18,7 +18,7 @@ QVariant ControlAdaptorQCheckBox::value() const
 
 void ControlAdaptorQCheckBox::setValue(const QVariant& val)
 {
-	Q_ASSERT(val.type() == QVariant::Bool);
+	DEBUG_ASSERT(val.type() == QVariant::Bool);
 
 	m_control->setChecked(val.toBool());
 }

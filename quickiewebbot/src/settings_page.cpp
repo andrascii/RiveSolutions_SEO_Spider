@@ -24,8 +24,8 @@ void SettingsPage::applyChanges() noexcept
 
 		const QString controlKeyString = qvariant_cast<QString>(control->property("controlKey"));
 
-		Q_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
-		Q_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
+		DEBUG_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
+		DEBUG_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
 
 		const QByteArray controlKey = controlKeyString.toLatin1();
 
@@ -60,8 +60,8 @@ void SettingsPage::init()
 
 		const QString controlKeyString = qvariant_cast<QString>(control->property("controlKey"));
 
-		Q_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
-		Q_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
+		DEBUG_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
+		DEBUG_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
 
 		const QByteArray controlKey = controlKeyString.toLatin1();
 

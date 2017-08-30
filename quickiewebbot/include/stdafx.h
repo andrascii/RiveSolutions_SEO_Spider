@@ -24,6 +24,7 @@
 #include <cassert>
 #include <functional>
 #include <optional>
+#include <sstream>
 
 //
 // boost
@@ -84,6 +85,7 @@
 #endif
 
 #include "logger_connection_service_api.h"
+#include "debug_helpers_api.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
@@ -92,18 +94,8 @@ using std::size_t;
 
 #define MAKE_STRING(Any) #Any
 
-#if defined(NDEBUG)
+#ifndef QT_DEBUG
 #define PRODUCTION
-#endif
-
-#if !defined(PRODUCTION)
-#define DEBUG
-#endif
-
-#if !defined(PRODUCTION)
-#define VERIFY(Connection) assert(Connection)
-#else
-#define VERIFY(Connection) Connection
 #endif
 
 #ifdef Q_OS_WIN
@@ -117,16 +109,18 @@ using std::size_t;
 #define WARNINGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 #define ERRORLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 
-inline void debugBreak()
-{
-#ifdef DEBUG
+// Assertions
 
-#ifdef Q_OS_WIN
-	__debugbreak();
+#define ASSERT(condition) if(condition == false) DebugHelpersApi::doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
+
+#ifdef QT_DEBUG
+#define DEBUG_ASSERT(condition) ASSERT(condition)
 #else
-	char* p = nullptr;
-	*p = 0;
+#define DEBUG_ASSERT(condition)
 #endif
 
+#ifndef QT_DEBUG
+#define VERIFY(Connection) DEBUG_ASSERT(Connection)
+#else
+#define VERIFY(Connection) Connection
 #endif
-}
