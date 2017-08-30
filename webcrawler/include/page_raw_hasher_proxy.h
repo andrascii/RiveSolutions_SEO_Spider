@@ -8,7 +8,7 @@ namespace WebCrawler
 class PageRawHasherProxy
 {
 public:
-	PageRawHasherProxy(const std::shared_ptr<IPageRawHasher>& hasher);
+	PageRawHasherProxy(IPageRawHasher* hasher);
 	size_t operator()(const PageRawPtr& pageRaw) const noexcept;
 
 private:
