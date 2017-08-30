@@ -1,6 +1,8 @@
 #include "application.h"
 #include "application_properties.h"
 #include "settings_page.h"
+#include "icontrol_adaptor.h"
+#include "control_adaptor_check_box.h"
 
 namespace QuickieWebBot
 {
@@ -25,20 +27,19 @@ void SettingsPage::applyChanges() noexcept
 		Q_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
 		Q_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
 
-		const QByteArray controlKeyValue = controlKeyString.toLatin1();
+		const QByteArray controlKey = controlKeyString.toLatin1();
 
-		if (controlKeyValue.isEmpty())
+		if (controlKey.isEmpty())
 		{
 			continue;
 		}
 
-		theApp->properties()->setProperty(controlKeyValue.constData(), control->property("controlKey"));
+		theApp->properties()->setProperty(controlKey.constData(), m_controlAdaptors[controlKey]->value());
 	}
 }
 
 void SettingsPage::reloadSettings() noexcept
 {
-
 }
 
 bool SettingsPage::isAutoApply() const noexcept
@@ -48,6 +49,8 @@ bool SettingsPage::isAutoApply() const noexcept
 
 void SettingsPage::init()
 {
+	registerMetaTypes();
+
 	foreach(QObject* control, findChildren<QObject*>())
 	{
 		if (!control->property("controlKey").isValid())
@@ -60,15 +63,49 @@ void SettingsPage::init()
 		Q_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
 		Q_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
 
-		const QByteArray controlKeyValue = controlKeyString.toLatin1();
+		const QByteArray controlKey = controlKeyString.toLatin1();
 
-		if (controlKeyValue.isEmpty())
+		if (controlKey.isEmpty())
 		{
 			continue;
 		}
 
-		control->setProperty("controlKey", theApp->properties()->property(controlKeyValue.constData()));
+		if (!theApp->properties()->property(controlKey.constData()).isValid())
+		{
+			ERRORLOG << controlKey.constData() 
+				<< "which appears in the" 
+				<< control->objectName() 
+				<< "is not exists in the ApplicationProperties! It will be ignored!";
+
+			continue;
+		}
+
+		std::shared_ptr<IControlAdaptor> controlAdaptor = createControlAdaptor(control);
+
+		controlAdaptor->setValue(theApp->properties()->property(controlKey.constData()));
+
+		m_controlAdaptors[controlKeyString] = controlAdaptor;
 	}
+}
+
+
+void SettingsPage::registerMetaTypes()
+{
+	qRegisterMetaType<ControlAdaptorQCheckBox>();
+}
+
+std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* control)
+{
+	const QMetaObject* metaObject = control->metaObject();
+	const char* className = metaObject->className();
+	const QByteArray controlStringType = QString{ "%1%2" }.arg("ControlAdaptor").arg(className).toLatin1();
+	const int type = QMetaType::type(controlStringType);
+
+	std::shared_ptr<IControlAdaptor> controlAdaptor{ static_cast<IControlAdaptor*>(QMetaType::create(type)) };
+
+	controlAdaptor->setPropertyControl(control);
+
+	return controlAdaptor;
 }
 
 }

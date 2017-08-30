@@ -1,5 +1,5 @@
 #include "settings_page_registry.h"
-#include "isettings_page.h"
+#include "settings_page.h"
 
 namespace QuickieWebBot
 {
@@ -16,7 +16,7 @@ SettingsPageRegistry::~SettingsPageRegistry()
 	m_pagesKeys.clear();
 }
 
-void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, QWidget* page)
+void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, SettingsPage* page)
 {
 	assert(dynamic_cast<ISettingsPage*>(page));
 	assert(m_settingsPages.contains(pageId) == false);
@@ -27,7 +27,7 @@ void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, QWidge
 	m_pagesKeys.append(pageId);
 }
 
-QWidget* SettingsPageRegistry::settingsPageById(const QByteArray& pageId) const
+SettingsPage* SettingsPageRegistry::settingsPageById(const QByteArray& pageId) const
 {
 	return m_settingsPages.value(pageId);
 }

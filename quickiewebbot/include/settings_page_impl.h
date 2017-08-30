@@ -24,21 +24,21 @@ public:
 		load();
 	}
 
-protected:
-	static void registerSettingsPage(const QByteArray& pageId, SettingsPage* page)
+	static void registerSettingsPage(const QIcon& icon, const QByteArray& pageId, SettingsPage* page)
 	{
+		page->setWindowIcon(icon);
+
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 		SettingsPageRegistry* settingsPageRegistry = serviceLocator->service<SettingsPageRegistry>();
 
 		settingsPageRegistry->registerSettingsPage(pageId, page);
 	}
 
-	template <typename NewUiType>
-	static void registerSettingsPage(const QByteArray& pageId)
+	static void registerSettingsPage(const QIcon& icon, const QByteArray& pageId)
 	{
-		SettingsPage* page = new SettingsPageImpl<NewUiType>(false, nullptr);
+		SettingsPage* page = new SettingsPageImpl<UiType>(false, nullptr);
 
-		SettingsPageImpl::registerSettingsPage(pageId, page);
+		SettingsPageImpl::registerSettingsPage(icon, pageId, page);
 	}
 
 private:

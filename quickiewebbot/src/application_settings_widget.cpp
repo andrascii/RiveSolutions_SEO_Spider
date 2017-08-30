@@ -1,8 +1,8 @@
 #include "application_settings_widget.h"
 #include "service_locator.h"
 #include "settings_page_registry.h"
-#include "crawler_settings_widget.h"
 #include "quickie_web_bot_helpers.h"
+#include "isettings_page.h"
 
 namespace QuickieWebBot
 {
@@ -86,12 +86,14 @@ void ApplicationSettingsWidget::initialize()
 	
 	SettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<SettingsPageRegistry>();
 
-	foreach (QByteArray pageId , settingsPageRegistry->pagesKeys())
+	foreach (QByteArray pageId, settingsPageRegistry->pagesKeys())
 	{
-		QWidget* page = settingsPageRegistry->settingsPageById(pageId);	
+		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);	
 		
-		if (dynamic_cast<ISettingsPage*>(page)->isAutoApply())
+		if (page->isAutoApply())
 		{
+			INFOLOG << pageId << " is not auto apply settings page. It will be ignored!";
+
 			continue;
 		}
 

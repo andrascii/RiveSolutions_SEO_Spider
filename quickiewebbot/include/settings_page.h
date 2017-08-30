@@ -5,6 +5,8 @@
 namespace QuickieWebBot
 {
 
+class IControlAdaptor;
+
 class SettingsPage 
 	: public QWidget
 	, public ISettingsPage
@@ -18,9 +20,13 @@ public:
 
 protected:
 	void init();
+	void registerMetaTypes();
+	std::shared_ptr<IControlAdaptor> createControlAdaptor(QObject* control);
 
 private:
 	const bool m_isAutoApply;
+
+	std::map<QString, std::shared_ptr<IControlAdaptor>> m_controlAdaptors;
 };
 
 }

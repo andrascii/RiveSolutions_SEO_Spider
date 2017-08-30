@@ -27,15 +27,13 @@ public:
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
-	WebCrawler::WebCrawler* webCrawler() noexcept;
 	ApplicationProperties* properties() noexcept;
-
-	WebCrawler::ModelController* modelController() noexcept;
-
+	MainFrame* mainFrame() noexcept;
 	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
 
-	MainFrame* mainFrame() noexcept;
+	WebCrawler::WebCrawler* webCrawler() noexcept;
+	WebCrawler::ModelController* modelController() noexcept;
 
 	void initializeStyleSheet() noexcept;
 
@@ -43,6 +41,8 @@ public:
 
 private:
 	Q_SLOT void mainFrameIsReadyForShow();
+
+	void registerSettingsPages() const;
 
 private:
 	void initialize() noexcept;
