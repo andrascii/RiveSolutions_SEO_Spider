@@ -18,6 +18,8 @@ public:
 	virtual void reloadSettings() noexcept override;
 	virtual bool isAutoApply() const noexcept override;
 
+	Q_SLOT void somethingChanged();
+
 protected:
 	void init();
 	void registerMetaTypes();
@@ -25,6 +27,7 @@ protected:
 
 private:
 	const bool m_isAutoApply;
+	bool m_somethingChanged;
 
 	std::map<QString, std::shared_ptr<IControlAdaptor>> m_controlAdaptors;
 };

@@ -23,4 +23,9 @@ void ControlAdaptorQCheckBox::setValue(const QVariant& val)
 	m_control->setChecked(val.toBool());
 }
 
+void ControlAdaptorQCheckBox::connectChangesObserver(SettingsPage* page)
+{
+	VERIFY(connect(m_control, SIGNAL(stateChanged(int)), page, SLOT(somethingChanged())));
+}
+
 }

@@ -96,6 +96,11 @@ void SettingsPage::registerMetaTypes()
 	qRegisterMetaType<ControlAdaptorQCheckBox>();
 }
 
+void SettingsPage::somethingChanged()
+{
+	m_somethingChanged = true;
+}
+
 std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* control)
 {
 	const QMetaObject* metaObject = control->metaObject();

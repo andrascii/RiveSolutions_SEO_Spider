@@ -13,6 +13,7 @@ public:
 
 	virtual QVariant value() const = 0;
 	virtual void setValue(const QVariant& val) = 0;
+	virtual void connectChangesObserver(SettingsPage* page);
 };
 
 }
