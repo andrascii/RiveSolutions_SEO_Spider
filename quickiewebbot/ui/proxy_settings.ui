@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProxySettingsDialog</class>
- <widget class="QWidget" name="ProxySettingsDialog">
+ <class>ProxySettings</class>
+ <widget class="QWidget" name="ProxySettings">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>862</width>
-    <height>505</height>
+    <width>484</width>
+    <height>336</height>
    </rect>
   </property>
   <property name="windowTitle">

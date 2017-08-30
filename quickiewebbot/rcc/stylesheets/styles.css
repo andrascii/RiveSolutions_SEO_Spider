@@ -284,21 +284,21 @@ QScrollBar::sub-page:vertical
 }
 
 /*/////////////////////////////// Limits Settings Widget //////////////////////////////*/
-QWidget#LimitsSettingsDialog QLabel
+QWidget#LimitsSettings QLabel
 {
 	color: #494949;
 }
 
-QWidget#ApplicationSettingsWidget QLabel,
-QWidget#ApplicationSettingsWidget QWidget,
-QWidget#ApplicationSettingsWidget QCheckBox
+QuickieWebBot--ApplicationSettingsWidget QLabel,
+QuickieWebBot--ApplicationSettingsWidget QWidget,
+QuickieWebBot--ApplicationSettingsWidget QCheckBox
 {
 	color: #494949;
 }
 
 /*/////////////////////////////// Proxy Settings Widget ///////////////////////////////*/
 
-QWidget#ProxySettingsDialog
+QWidget#ProxySettings
 {
 	background: #343B49;
 	min-width: 40em;
@@ -307,13 +307,13 @@ QWidget#ProxySettingsDialog
 	max-height: 28em;
 }
 
-QWidget#ProxySettingsDialog QLabel,
-QWidget#ProxySettingsDialog QCheckBox
+QWidget#ProxySettings QLabel,
+QWidget#ProxySettings QCheckBox
 {
 	color: #494949;
 }
 
-QWidget#ProxySettingsDialog QFrame#headerFrame
+QWidget#ProxySettings QFrame#headerFrame
 {
 	min-height: 8em;
 	background: white;
@@ -321,14 +321,14 @@ QWidget#ProxySettingsDialog QFrame#headerFrame
 	border: 0.05em solid #c3c3c3;
 }
 
-QWidget#ProxySettingsDialog QLabel#headerName
+QWidget#ProxySettings QLabel#headerName
 {
 	font-size: 16pt;
 	min-height: 2em;
 	color: #61a032;
 }
 
-QWidget#ProxySettingsDialog QFrame#settingsFrame
+QWidget#ProxySettings QFrame#settingsFrame
 {
 	background: #e7e7e7;
 	padding: 1em;

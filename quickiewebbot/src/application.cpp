@@ -10,7 +10,9 @@
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
 
-#include "ui_crawler_settings_widget.h"
+#include "ui_crawler_settings.h"
+#include "ui_proxy_settings.h"
+#include "ui_limits_settings.h"
 
 namespace QuickieWebBot
 {
@@ -87,7 +89,9 @@ void Application::mainFrameIsReadyForShow()
 
 void Application::registerSettingsPages() const
 {
-	SettingsPageImpl<Ui_CrawlerSettingsWidget>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_CrawlerSettingsWidget));
+	SettingsPageImpl<Ui_CrawlerSettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_CrawlerSettings));
+	SettingsPageImpl<Ui_ProxySettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_ProxySettings));
+	SettingsPageImpl<Ui_LimitsSettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_LimitsSettings));
 }
 
 void Application::initialize() noexcept
