@@ -14,6 +14,7 @@ public:
 private:
 	void parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 	void parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+	void parseJavaScriptResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 };
 
 }

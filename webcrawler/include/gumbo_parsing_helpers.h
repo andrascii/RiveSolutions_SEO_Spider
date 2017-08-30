@@ -37,6 +37,23 @@ public:
 
 	static std::vector<QUrl> parsePageUrlList(const GumboNode* node) noexcept;
 
+	using ConditionFunc = bool(const GumboNode*);
+	static std::vector<const GumboNode*> findNodesRecursive(const GumboNode* node, ConditionFunc) noexcept;
+
+	template <class TResultFunc>
+	static auto findNodesAndGetResult(const GumboNode* node, ConditionFunc cond, TResultFunc res)
+	{
+		std::vector<const GumboNode*> nodes = findNodesRecursive(node, cond);
+
+		std::vector<decltype(res(node))> result;
+		for (const GumboNode* node : nodes)
+		{
+			result.push_back(res(node));
+		}
+
+		return result;
+	}
+
 private:
 	static void cutAllTagsFromNodeHelper(const GumboNode* node, QByteArray& result) noexcept;
 };
