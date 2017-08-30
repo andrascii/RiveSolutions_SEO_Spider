@@ -8,7 +8,8 @@ namespace WebCrawler
 void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
 	parseResourceType(output, pageRaw);
-	
+	parseHtmlResources(output, pageRaw);
+	parseJavaScriptResources(output, pageRaw);
 }
 
 void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
@@ -17,8 +18,6 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 	{
 		pageRaw->resourceType = PageRawResource::ResourceHtml;
 	}
-
-	parseHtmlResources(output, pageRaw);
 }
 
 void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
@@ -30,6 +29,31 @@ void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr
 	for (const QUrl& url : resolvedUrls)
 	{
 		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceHtml, url, pageRaw->url });
+	}
+}
+
+void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+{
+	auto cond = [](const GumboNode* node)
+	{
+		return node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_SCRIPT &&
+			gumbo_get_attribute(&node->v.element.attributes, "src");
+	};
+
+	auto res = [](const GumboNode* node)
+	{
+		GumboAttribute* href = href = gumbo_get_attribute(&node->v.element.attributes, "src");
+		return QUrl(href->value);
+	};
+
+	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+
+	for (const QUrl& url : resolvedUrls)
+	{
+		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, url, pageRaw->url });
 	}
 }
 

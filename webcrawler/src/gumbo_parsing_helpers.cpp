@@ -178,29 +178,71 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage) noexc
 
 std::vector<QUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node) noexcept
 {
-	std::vector<QUrl> result;
-
-
-	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
+	auto cond = [](const GumboNode* node)
 	{
-		return result;
+		return node && 
+			node->type == GUMBO_NODE_ELEMENT && 
+			node->v.element.tag == GUMBO_TAG_A && 
+			gumbo_get_attribute(&node->v.element.attributes, "href");
+	};
+
+	auto res = [](const GumboNode* node)
+	{
+		GumboAttribute* href = href = gumbo_get_attribute(&node->v.element.attributes, "href");
+		return QUrl(href->value);
+	};
+
+	std::vector<QUrl> result = findNodesAndGetResult(node, cond, res);
+
+	return result;
+
+
+// 	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
+// 	{
+// 		return result;
+// 	}
+// 
+// 	GumboAttribute* href = nullptr;
+// 
+// 	if (node->v.element.tag == GUMBO_TAG_A && (href = gumbo_get_attribute(&node->v.element.attributes, "href")))
+// 	{
+// 		result.push_back(QUrl(href->value));
+// 	}
+// 
+// 	const GumboVector* children = &node->v.element.children;
+// 
+// 	for (unsigned int i = 0; i < children->length; ++i)
+// 	{
+// 		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
+// 		std::vector<QUrl> childResult = parsePageUrlList(child);
+// 
+// 		result.insert(std::end(result), std::begin(childResult), std::end(childResult));
+// 	}
+// 
+// 	return result;
+}
+
+std::vector<const GumboNode*> GumboParsingHelpers::findNodesRecursive(const GumboNode* node, ConditionFunc func) noexcept
+{
+	std::vector<const GumboNode*> result;
+
+	if (func(node))
+	{
+		result.push_back(node);
 	}
 
-	GumboAttribute* href = nullptr;
 
-	if (node->v.element.tag == GUMBO_TAG_A && (href = gumbo_get_attribute(&node->v.element.attributes, "href")))
+	if (node->type == GUMBO_NODE_ELEMENT)
 	{
-		result.push_back(QUrl(href->value));
-	}
+		const GumboVector* children = &node->v.element.children;
 
-	const GumboVector* children = &node->v.element.children;
+		for (unsigned int i = 0; i < children->length; ++i)
+		{
+			const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
+			std::vector<const GumboNode*> childResult = findNodesRecursive(child, func);
 
-	for (unsigned int i = 0; i < children->length; ++i)
-	{
-		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
-		std::vector<QUrl> childResult = parsePageUrlList(child);
-
-		result.insert(std::end(result), std::begin(childResult), std::end(childResult));
+			result.insert(std::end(result), std::begin(childResult), std::end(childResult));
+		}
 	}
 
 	return result;

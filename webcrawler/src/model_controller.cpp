@@ -18,6 +18,7 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
 	processPageRawHtmlResources(pageRaw);
+	processPageRawResources(pageRaw);
 	pageRaw->rawResources.clear();
 
 	processPageRawStatusCode(pageRaw);
@@ -388,10 +389,19 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 			continue;
 		}
 
-		PageRawPtr newResource = std::make_shared<PageRaw>();
-		newResource->linksToThisResource.push_back(pageRaw);
-		newResource->url = resource.resourceUrl;
-		newResource->resourceType = resource.resourceType;
+		PageRawPtr resourceRaw = std::make_shared<PageRaw>();
+		resourceRaw->url = resource.resourceUrl;
+		
+
+		PageRawPtr newOrExistingResource = m_data->pageRaw(resourceRaw, storageTypes[resource.resourceType]);
+		if (!newOrExistingResource)
+		{
+			newOrExistingResource = resourceRaw;
+			m_data->addPageRaw(newOrExistingResource, storageTypes[resource.resourceType]);
+		}
+
+		newOrExistingResource->linksToThisResource.push_back(pageRaw);
+		newOrExistingResource->resourceType = resource.resourceType;
 	}
 }
 
