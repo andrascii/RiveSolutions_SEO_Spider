@@ -84,7 +84,7 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
-	${Boost_REGEX_LIBRARY}
+#	${Boost_REGEX_LIBRARY}
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Svg
