@@ -26,7 +26,6 @@ private:
 	void init();
 	void createActions();
 	void createAndSetCentralWidget();
-	void createSettingsPages();
 
 private:
 	ApplicationSettingsWidget* m_applicationSettingsWidget;

@@ -1,4 +1,7 @@
 #pragma once
+
+#include "settings_page.h"
+
 #define TYPE_STRING(prop_page_type) QByteArray(#prop_page_type)
 
 namespace QuickieWebBot
@@ -13,8 +16,8 @@ public:
 	SettingsPageRegistry(QObject* parent = nullptr);
 	~SettingsPageRegistry();
 
-	void registerSettingsPage(const QByteArray& pageId, QWidget* page);
-	QWidget* settingsPageById(const QByteArray& pageId) const;
+	void registerSettingsPage(const QByteArray& pageId, SettingsPage* page);
+	SettingsPage* settingsPageById(const QByteArray& pageId) const;
 
 	const QList<QByteArray>& pagesKeys();
 
@@ -22,7 +25,7 @@ private:
 	Q_SLOT void settingsPageDestroyed();
 
 private:
-	QMap<QByteArray, QWidget*> m_settingsPages;
+	QMap<QByteArray, SettingsPage*> m_settingsPages;
 	QList<QByteArray> m_pagesKeys;
 
 	bool m_deleting;

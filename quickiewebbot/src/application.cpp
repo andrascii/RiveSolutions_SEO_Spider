@@ -8,7 +8,11 @@
 #include "constants.h"
 #include "application_properties.h"
 #include "debug_info_web_page_widget.h"
-#include "settings_page_registry.h"
+#include "settings_page_impl.h"
+
+#include "ui_crawler_settings.h"
+#include "ui_proxy_settings.h"
+#include "ui_limits_settings.h"
 
 namespace QuickieWebBot
 {
@@ -83,9 +87,16 @@ void Application::mainFrameIsReadyForShow()
 	INFOLOG << "MainFrame shown";
 }
 
+void Application::registerSettingsPages() const
+{
+	SettingsPageImpl<Ui_CrawlerSettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_CrawlerSettings));
+	SettingsPageImpl<Ui_ProxySettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_ProxySettings));
+	SettingsPageImpl<Ui_LimitsSettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_LimitsSettings));
+}
+
 void Application::initialize() noexcept
 {
-	ServiceLocator::instance()->addService <SettingsPageRegistry>(new SettingsPageRegistry);
+	ServiceLocator::instance()->addService<SettingsPageRegistry>(new SettingsPageRegistry);
 
 	m_mainFrame.reset(new MainFrame);
 
@@ -93,6 +104,8 @@ void Application::initialize() noexcept
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
 #endif
+
+	registerSettingsPages();
 }
 
 void Application::initializeStyleSheet() noexcept

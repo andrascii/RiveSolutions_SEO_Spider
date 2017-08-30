@@ -3,7 +3,7 @@
 namespace WebCrawler
 {
 
-PageRawHasherProxy::PageRawHasherProxy(const std::shared_ptr<IPageRawHasher>& hasher)
+PageRawHasherProxy::PageRawHasherProxy(IPageRawHasher* hasher)
 	: m_hasher(hasher)
 {
 }

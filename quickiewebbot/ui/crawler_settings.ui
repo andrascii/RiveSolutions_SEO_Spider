@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CrawlerSettingsWidget</class>
- <widget class="QWidget" name="CrawlerSettingsWidget">
+ <class>CrawlerSettings</class>
+ <widget class="QWidget" name="CrawlerSettings">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Crawler settings</string>
+   <string>Crawler Settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <property name="sizeConstraint">
@@ -40,7 +40,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Crawler settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Crawler Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -73,48 +73,48 @@
            <number>12</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="checkExternalLinks">
+           <widget class="QCheckBox" name="checkBox_3">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>External links</string>
             </property>
             <property name="controlKey" stdset="0">
-             <string notr="true">externalLinksKey</string>
+             <string notr="true">checkExternalUrls</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkInternalNF">
+           <widget class="QCheckBox" name="checkBox">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Internal &quot;nofollow&quot;</string>
             </property>
             <property name="controlKey" stdset="0">
-             <string notr="true">internalNoFollow</string>
+             <string notr="true">followInternalNoFollow</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkExternalNF">
+           <widget class="QCheckBox" name="checkBox_4">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>External &quot;nofollow&quot;</string>
             </property>
             <property name="controlKey" stdset="0">
-             <string notr="true">externalNoFollow</string>
+             <string notr="true">followExternalNoFollow</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkSubdomains">
+           <widget class="QCheckBox" name="checkBox_6">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Subdomains</string>
@@ -125,9 +125,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkCanonicals">
+           <widget class="QCheckBox" name="checkBox_2">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Canonicals</string>
@@ -138,9 +138,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkFollowRobots">
+           <widget class="QCheckBox" name="checkBox_5">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Follow robots.txt</string>
@@ -167,9 +167,9 @@
            <number>12</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="checkImages">
+           <widget class="QCheckBox" name="checkBox_9">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Images</string>
@@ -180,9 +180,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkCSS">
+           <widget class="QCheckBox" name="checkBox_8">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>CSS</string>
@@ -193,28 +193,28 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkJS">
+           <widget class="QCheckBox" name="checkBox_10">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>JavaScript</string>
             </property>
             <property name="controlKey" stdset="0">
-             <string notr="true">ckeckJavaScript</string>
+             <string notr="true">checkJavaScript</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkSWF">
+           <widget class="QCheckBox" name="checkBox_7">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>SWF</string>
             </property>
             <property name="controlKey" stdset="0">
-             <string notr="true">ckeckSWF</string>
+             <string notr="true">checkSWF</string>
             </property>
            </widget>
           </item>

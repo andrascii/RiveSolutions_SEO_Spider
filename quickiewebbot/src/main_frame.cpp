@@ -12,10 +12,6 @@
 #include "service_locator.h"
 #include "settings_page_registry.h"
 
-#include "crawler_settings_widget.h"
-#include "limits_settings_dialog.h"
-#include "proxy_settings_dialog.h"
-
 namespace QuickieWebBot
 {
 
@@ -26,8 +22,6 @@ MainFrame::MainFrame(QWidget* parent)
 	init();
 }
 
-
-
 void MainFrame::showApplicationSettingsWidget()
 {
 	if (!m_applicationSettingsWidget)
@@ -37,7 +31,6 @@ void MainFrame::showApplicationSettingsWidget()
 
 	m_applicationSettingsWidget->exec();
 }
-
 
 void MainFrame::closeEvent(QCloseEvent* event)
 {
@@ -50,7 +43,6 @@ void MainFrame::init()
 {
 	createActions();
 	createAndSetCentralWidget();
-	createSettingsPages();
 
 	setWindowIcon(QIcon(QStringLiteral(":/images/robot.ico")));
 
@@ -87,18 +79,6 @@ void MainFrame::createActions()
 		QIcon(QStringLiteral(":/images/setting.png")), "Settings");
 
 	VERIFY(connect(m_openSettingsWidget, SIGNAL(triggered()), this, SLOT(showApplicationSettingsWidget())));
-}
-
-void MainFrame::createSettingsPages()
-{
-	ServiceLocator::instance()->service<SettingsPageRegistry>()->registerSettingsPage(TYPE_STRING(CrawlerSettingsWidget), 
-		new CrawlerSettingsWidget());
-
-	//ServiceLocator::instance()->service<SettingsPageRegistry>()->registerSettingsPage(TYPE_STRING(LimitsSettingsDialog),
-	//	new LimitsSettingsDialog());
-	//
-	//ServiceLocator::instance()->service<SettingsPageRegistry>()->registerSettingsPage(TYPE_STRING(ProxySettingsDialog),
-	//	new ProxySettingsDialog());
 }
 
 void MainFrame::createAndSetCentralWidget()
