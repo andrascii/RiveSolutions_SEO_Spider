@@ -360,12 +360,12 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 			pendingResource->linksToThisResource.push_back(pageRaw);
 			pageRaw->linksFromThisResource.push_back(pendingResource);
 			m_data->addPageRaw(pendingResource, DataCollection::HtmlPendingResourcesStorageType);
-			assert(m_data->isPageRawExists(pendingResource, DataCollection::HtmlPendingResourcesStorageType));
+			DEBUG_ASSERT(m_data->isPageRawExists(pendingResource, DataCollection::HtmlPendingResourcesStorageType));
 
 			// isPageRawExists is not working correctly, uncomment this code to check it
 			PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
 			pendingResourceCopy->url = resource.resourceUrl;
-			assert(m_data->isPageRawExists(pendingResourceCopy, DataCollection::HtmlPendingResourcesStorageType));
+			DEBUG_ASSERT(m_data->isPageRawExists(pendingResourceCopy, DataCollection::HtmlPendingResourcesStorageType));
 		}
 	}
 }

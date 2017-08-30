@@ -88,7 +88,7 @@ int PageInfo::columnPrefferedSize(ItemType item)
 	};
 
 	int result = s_prefferedSizes.value(item, -1);
-	assert(result >= 0);
+	ASSERT(result >= 0);
 	return result;
 }
 
@@ -99,7 +99,7 @@ QVariant PageInfo::itemValue(ItemType item)
 
 void PageInfo::setItemValue(const QVariant& value, ItemType item)
 {
-	assert(!(item >= TitleLengthItemType && item <= SecondH2LengthItemType) &&
+	ASSERT(!(item >= TitleLengthItemType && item <= SecondH2LengthItemType) &&
 		"Length will be set automatically! It should not be set directly!");
 
 	using setItemPtr = void(PageInfo::*)(const QVariant& value);
@@ -167,133 +167,133 @@ void PageInfo::setItemValue(const QVariant& value, ItemType item)
 			break;
 	}
 
-	assert(setItemFunction && "Cannot find setter function for this item");
+	ASSERT(setItemFunction && "Cannot find setter function for this item");
 
 	(this->*setItemFunction)(value);
 }
 
 void PageInfo::setUrl(const QVariant& value)
 {
-	assert(value.type() == QVariant::Url && "Passed type must be QUrl!");
+	ASSERT(value.type() == QVariant::Url && "Passed type must be QUrl!");
 
 	m_pageRawPtr->url = value.toUrl();
 }
 
 void PageInfo::setFromUrl(const QVariant& value)
 {
-	assert(value.type() == QVariant::Url && "Passed type must be QUrl!");
+	ASSERT(value.type() == QVariant::Url && "Passed type must be QUrl!");
 
 	m_pageRawPtr->fromUrl = value.toUrl();
 }
 
 void PageInfo::setContent(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->contentType = value.toString();
 }
 
 void PageInfo::setTitle(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->title = value.toString();
 }
 
 void PageInfo::setMetaRefresh(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->metaRefresh = value.toString();
 }
 
 void PageInfo::setMetaRobots(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->metaRobots = value.toString();
 }
 
 void PageInfo::setRedirectedUrl(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->redirectedUrl = value.toString();
 }
 
 void PageInfo::setServerResponse(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->serverResponse = value.toString();
 }
 
 void PageInfo::setMetaDescription(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->metaDescription = value.toString();
 }
 
 void PageInfo::setMetaKeywords(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->metaKeywords = value.toString();
 }
 
 void PageInfo::setFirstH1(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->firstH1 = value.toString();
 }
 
 void PageInfo::setSecondH1(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->secondH2 = value.toString();
 }
 
 void PageInfo::setFirstH2(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->firstH2 = value.toString();
 }
 
 void PageInfo::setSecondH2(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->secondH2 = value.toString();
 }
 
 void PageInfo::setCanonicalLinkElement(const QVariant& value)
 {
-	assert(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
+	ASSERT(value.type() == QVariant::String || value.type() == QVariant::ByteArray);
 
 	m_pageRawPtr->canonicalLinkElement = value.toString();
 }
 
 void PageInfo::setStatusCode(const QVariant& value)
 {
-	assert(value.type() == QVariant::Int && "Passed type must be int!");
+	ASSERT(value.type() == QVariant::Int && "Passed type must be int!");
 
 	m_pageRawPtr->statusCode = value.toInt();
 }
 
 void PageInfo::setPageSizeKb(const QVariant& value)
 {
-	assert(value.type() == QVariant::Int && "Passed type must be int!");
+	ASSERT(value.type() == QVariant::Int && "Passed type must be int!");
 
 	m_pageRawPtr->pageSizeKb = value.toInt();
 }
 
 void PageInfo::setWordCount(const QVariant& value)
 {
-	assert(value.type() == QVariant::Int && "Passed type must be int!");
+	ASSERT(value.type() == QVariant::Int && "Passed type must be int!");
 
 	m_pageRawPtr->wordCount = value.toInt();
 }
@@ -303,7 +303,7 @@ void PageInfo::setPageHash(const QVariant& value)
 	//
 	// Here should be the some unsigned number
 	//
-	assert(value.type() == QVariant::ULongLong ||
+	ASSERT(value.type() == QVariant::ULongLong ||
 		value.type() == QVariant::UInt);
 
 	m_pageRawPtr->pageHash = value.value<size_t>();
@@ -350,7 +350,7 @@ PageInfo::MethodAcceptor PageInfo::acceptItem(ItemType item)
 		case ImageAltTextLengthItemType: return &PageInfo::acceptImageAltTextLength;
 	}
 
-	assert(!"Unknown element");
+	ASSERT(!"Unknown element");
 	return MethodAcceptor();
 }
 
@@ -531,7 +531,7 @@ QVariant PageInfo::acceptImageAltTextLength()
 
 void PageInfo::checkInfoItem(ItemType item)
 {
-	assert(item > BeginEnumPageInfoItemType && item < EndEnumPageInfoItemType);
+	ASSERT(item > BeginEnumPageInfoItemType && item < EndEnumPageInfoItemType);
 }
 
 }

@@ -12,7 +12,7 @@ StorageAdaptorFactory::StorageAdaptorFactory(WebCrawler::DataCollection* dataCol
 
 StorageAdaptor* StorageAdaptorFactory::create(SummaryCategoryItem type)
 {
-	assert(type > SummaryCategoryItem::SummaryCategoryItemBegin && 
+	ASSERT(type > SummaryCategoryItem::SummaryCategoryItemBegin &&
 		type < SummaryCategoryItem::SummaryCategoryItemEnd);
 
 	WebCrawler::DataCollection::StorageType storageType = 

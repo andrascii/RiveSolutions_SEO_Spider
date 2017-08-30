@@ -7,7 +7,7 @@ namespace WebCrawler
 void HtmlPageTitleParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
 	GumboNode* head = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_HEAD);
-	assert(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
+	DEBUG_ASSERT(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
 
 	GumboNode* title = GumboParsingHelpers::findSubNode(head, GUMBO_TAG_TITLE);
 

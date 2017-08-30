@@ -74,7 +74,7 @@ void AbstractThreadableObject::startTimer(int interval, Qt::TimerType timerType)
 #endif
 
 	m_timerId = QObject::startTimer(g_minimumRecommendedTimerResolution);
-	assert(m_timerId);
+	ASSERT(m_timerId);
 }
 
 void AbstractThreadableObject::killTimer(int timerId)

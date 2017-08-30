@@ -27,12 +27,12 @@ GumboOutput* GumboOutputCreatorDestroyerGuard::output() noexcept
 
 GumboNode* GumboParsingHelpers::findSubNode(const GumboNode* node, GumboTag tag, unsigned startIndexWhithinParent) noexcept
 {
-	assert(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
+	DEBUG_ASSERT(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
 
 	const GumboVector* children = &node->v.element.children;
 	GumboNode* searchingNode = nullptr;
 
-	assert(startIndexWhithinParent <= children->length);
+	DEBUG_ASSERT(startIndexWhithinParent <= children->length);
 
 	for (unsigned i = startIndexWhithinParent; i < children->length; ++i)
 	{
@@ -55,7 +55,7 @@ QByteArray GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
 
 std::vector<GumboNode*> GumboParsingHelpers::subNodes(const GumboNode* node, GumboTag tag) noexcept
 {
-	assert(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
+	DEBUG_ASSERT(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
 
 	const GumboVector* children = &node->v.element.children;
 	std::vector<GumboNode*> nodes;
@@ -75,7 +75,7 @@ std::vector<GumboNode*> GumboParsingHelpers::subNodes(const GumboNode* node, Gum
 
 unsigned GumboParsingHelpers::countChildren(const GumboNode* node, GumboTag tag) noexcept
 {
-	assert(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
+	DEBUG_ASSERT(node->type == GUMBO_NODE_ELEMENT || node->type == GUMBO_NODE_DOCUMENT);
 
 	const GumboVector* children = &node->v.element.children;
 	unsigned counter = 0;
@@ -107,7 +107,7 @@ QByteArray GumboParsingHelpers::identifyHtmlPageContentType(const QByteArray& ht
 	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, htmlPage);
 
 	GumboNode* head = GumboParsingHelpers::findSubNode(gumboOutput.output()->root, GUMBO_TAG_HEAD);
-	assert(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
+	DEBUG_ASSERT(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
 
 	std::vector<GumboNode*> metaTags = GumboParsingHelpers::subNodes(head, GUMBO_TAG_META);
 

@@ -6,7 +6,7 @@ namespace QuickieWebBot
 
 ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, WebCrawler::DataCollection* dataCollection) const noexcept
 {
-	assert(accessorType > DataAccessorType::DataAccessorTypeBegin &&
+	ASSERT(accessorType > DataAccessorType::DataAccessorTypeBegin &&
 		accessorType < DataAccessorType::DataAccessorTypeEnd);
 
 	switch (accessorType)

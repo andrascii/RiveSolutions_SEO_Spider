@@ -23,7 +23,7 @@ public:
 	{
 		static_assert(std::is_base_of<ServiceType, ServiceImpl>::value, "Type of pointer must be the same type or derived from");
 
-		assert(m_services.find(typeid(ServiceType).name()) == m_services.end());
+		DEBUG_ASSERT(m_services.find(typeid(ServiceType).name()) == m_services.end());
 
 		m_services[typeid(ServiceType).name()] = std::make_pair(service, &internalDeleter<ServiceType>);
 	}
@@ -31,7 +31,7 @@ public:
 	template<typename ServiceType>
 	void destroyService()
 	{
-		assert(m_services.find(typeid(ServiceType).name()) != m_services.end());
+		DEBUG_ASSERT(m_services.find(typeid(ServiceType).name()) != m_services.end());
 
 		auto findIterator = m_services.find(typeid(ServiceType).name());
 
@@ -50,7 +50,7 @@ public:
 	{
 		auto findIterator = m_services.find(typeid(ServiceType).name());
 
-		assert(findIterator != m_services.end());
+		DEBUG_ASSERT(findIterator != m_services.end());
 
 		return static_cast<ServiceType*>(std::get<0>(std::get<1>(*findIterator)));
 	}

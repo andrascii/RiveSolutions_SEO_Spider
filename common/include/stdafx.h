@@ -27,13 +27,6 @@
 #include <sstream>
 
 //
-// boost
-//
-#include <boost/functional/hash.hpp>
-//#include <boost/regex.hpp>
-#include <boost/any.hpp>
-
-//
 // Qt
 //
 #include <QObject>
@@ -76,35 +69,17 @@
 #include <QItemSelectionModel>
 #include <QtSvg>
 
-#include "application.h"
-
 #ifdef Q_OS_WIN
 #include <windows.h>
 #else
 #error You compile this code on unsupported platform!
 #endif
 
-#include "logger_connection_service_api.h"
-#include "common_macro_helpers.h"
+#include "debug_helpers_api.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
 
-#define theApp static_cast<Application*>(Application::instance())
-
-#define MAKE_STRING(Any) #Any
-
 #ifndef QT_DEBUG
 #define PRODUCTION
 #endif
-
-#ifdef Q_OS_WIN
-#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
-#else
-#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-#endif
-
-#define INFOLOG		WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define WARNINGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define ERRORLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)

@@ -6,6 +6,7 @@ set(WebCrawlerHeadersDir include)
 
 # deps headers
 set(GumboLibHeadersDir ../gumbo)
+set(CommonLibHeadersDir ../common/include)
 
 aux_source_directory(${WebCrawlerSourcesDir} WebCrawlerSourcesList)
 file(GLOB_RECURSE WebCrawlerHeadersList "include/*.h")
@@ -60,17 +61,13 @@ if(MSVC)
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
 		VS_DEBUGGER_WORKING_DIRECTORY $ENV{CMAKE_PREFIX_PATH}/bin
 	)
-	
-#	set_target_properties(
-#		${WebCrawlerLibName} 
-#		PROPERTIES WIN32_EXECUTABLE YES
-#		LINK_FLAGS "/ENTRY:mainCRTStartup"
-#	)
+
 endif()
 
 include_directories(
 	${WebCrawlerHeadersDir}
 	${GumboLibHeadersDir}
+	${CommonLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -78,11 +75,10 @@ include_directories(
 target_link_libraries(
 	${WebCrawlerLibName}
 	${GumboLibName}
+	${CommonLibName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
 	${Boost_REGEX_LIBRARY}
-###	Qt5::Widgets
 	Qt5::Network
-###	Qt5::Svg
 )

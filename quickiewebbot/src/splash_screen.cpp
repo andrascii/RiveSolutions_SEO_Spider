@@ -36,7 +36,7 @@ SplashScreen::SplashScreen()
 	, m_screenContent(new Ui::SplashScreen)
 	, m_timer(new QTimer(this))
 {
-	assert(!s_alreadyShown);
+	DEBUG_ASSERT(!s_alreadyShown);
 
 	s_alreadyShown = true;
 

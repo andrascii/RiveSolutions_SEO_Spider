@@ -22,7 +22,7 @@ public:
 		static_assert(std::is_base_of<AbstractThreadableObject, Derived>::value,
 			"Passed type must be derived from this class type.");
 
-		assert(QApplication::instance()->thread() == QObject::thread());
+		ASSERT(QApplication::instance()->thread() == QObject::thread());
 	}
 
 	virtual ~AbstractThreadableObject();

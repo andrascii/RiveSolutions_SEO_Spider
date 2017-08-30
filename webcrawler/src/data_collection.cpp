@@ -32,7 +32,7 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 {
 	if (isPageRawExists(pageRaw, type))
 	{
-		assert(crawlerStorage(type)->size() > 0);
+		ASSERT(crawlerStorage(type)->size() > 0);
 		auto iter = crawlerStorage(type)->find(pageRaw);
 		return;
 	}
@@ -45,7 +45,7 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 	{
 		guiStorageIt->second->push_back(pageRaw);
 		Q_EMIT pageRawAdded(guiStorage(type)->size() - 1, type);
-		assert(isPageRawExists(pageRaw, type));
+		ASSERT(isPageRawExists(pageRaw, type));
 	}	
 }
 
@@ -68,7 +68,7 @@ PageRawPtr DataCollection::removePageRaw(const PageRawPtr& pageRaw, StorageType 
 
 DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) noexcept
 {
-	assert(m_guiStorageMap.find(type) != m_guiStorageMap.end());
+	ASSERT(m_guiStorageMap.find(type) != m_guiStorageMap.end());
 	return m_guiStorageMap.find(type)->second;
 }
 
@@ -80,7 +80,7 @@ const DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType 
 
 DataCollection::CrawlerStorageTypePtr& DataCollection::crawlerStorage(StorageType type) noexcept
 {
-	assert(m_crawlerStorageMap.find(type) != m_crawlerStorageMap.end());
+	ASSERT(m_crawlerStorageMap.find(type) != m_crawlerStorageMap.end());
 	return m_crawlerStorageMap.find(type)->second;
 }
 
@@ -92,7 +92,7 @@ const DataCollection::CrawlerStorageTypePtr& DataCollection::crawlerStorage(Stor
 
 void DataCollection::checkStorageType(StorageType type) const noexcept
 {
-	assert(
+	ASSERT(
 		type == CrawledUrlStorageType ||
 		type == ExternalUrlStorageType ||
 		type == UpperCaseUrlStorageType ||

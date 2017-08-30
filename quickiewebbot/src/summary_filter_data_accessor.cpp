@@ -82,7 +82,7 @@ QVariant SummaryFilterDataAccessor::item(const QModelIndex& index) const noexcep
 
 	auto itemIterator = m_itemRows.find(index.row());
 
-	assert(itemIterator != m_itemRows.end());
+	ASSERT(itemIterator != m_itemRows.end());
 
 	if (index.column() == 0)
 	{
@@ -120,7 +120,7 @@ const QPixmap& SummaryFilterDataAccessor::pixmap(const QModelIndex& index) const
 
 	if (storageDescriptionIter == std::end(m_itemRows))
 	{
-		assert(!"This code must not be executed because above already exists if header item check");
+		DEBUG_ASSERT(!"This code must not be executed because above already exists if header item check");
 	}
 
 	return *storageDescriptionIter.value().first;
@@ -130,7 +130,7 @@ SummaryFilterDataAccessor::ItemStatus SummaryFilterDataAccessor::itemStatus(int 
 {
 	WebCrawler::DataCollection::GuiStorageTypePtr storage = storageByRow(row);
 
-	assert(storage);
+	ASSERT(storage);
 
 	if (storage->size() > 10)
 	{
@@ -174,7 +174,7 @@ SummaryFilterDataAccessor::storageByRow(int row) const noexcept
 
 void SummaryFilterDataAccessor::changeItemPixmapIfNeeded(int row) noexcept
 {
-	assert(m_itemRows.find(row) != std::end(m_itemRows));
+	ASSERT(m_itemRows.find(row) != std::end(m_itemRows));
 
 
 	static std::map<ItemStatus, QPixmap*> s_pixmaps

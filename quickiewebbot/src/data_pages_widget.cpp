@@ -36,7 +36,7 @@ void DataPagesWidget::showPage(Page page)
 void DataPagesWidget::handleNavigationPanelButtonClick()
 {
 	QPushButton* button = qobject_cast<QPushButton*>(sender());
-	assert(button);
+	DEBUG_ASSERT(button);
 
 	if (m_prevButton == button)
 	{
@@ -72,7 +72,7 @@ void DataPagesWidget::handleNavigationPanelButtonClick()
 		[button](const auto& pair) { return pair.second == button; }
 	);
 
-	assert(pushButtonsIterator != std::end(m_navigationPanel.pushButtons));
+	DEBUG_ASSERT(pushButtonsIterator != std::end(m_navigationPanel.pushButtons));
 
 	showPage(pushButtonsIterator->first);
 }

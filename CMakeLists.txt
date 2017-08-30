@@ -3,11 +3,12 @@ cmake_minimum_required(VERSION 2.8.11)
 set(AppName quickiewebbot)
 set(LoggerAppName logger)
 set(WebCrawlerLibName webcrawler)
+set(CommonLibName common)
+set(GumboLibName gumbo)
 project(${AppName})
 
 set(GuiBinName ${AppName})
 set(LoggerBinName ${LoggerAppName})
-set(GumboLibName gumbo)
 
 
 # Find includes in corresponding build directories
@@ -48,3 +49,4 @@ add_subdirectory(${WebCrawlerLibName})
 add_subdirectory(${LoggerAppName})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
+add_subdirectory(${CommonLibName})

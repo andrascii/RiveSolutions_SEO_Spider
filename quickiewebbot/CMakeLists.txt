@@ -5,8 +5,8 @@ set(AppSourcesDir src)
 set(AppHeadersDir include)
 
 # deps headers
-# set(GumboLibHeadersDir ../gumbo)
 set(WebCrawlerLibHeadersDir ../webcrawler/include)
+set(CommonLibHeadersDir ../common/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppHeadersList "include/*.h")
@@ -71,20 +71,19 @@ endif()
 
 include_directories(
 	${AppHeadersDir}
-#	${GumboLibHeadersDir}
 	${WebCrawlerLibHeadersDir}
+	${CommonLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(
 	${AppName}
-#	${GumboLibName}
 	${WebCrawlerLibName}
+	${CommonLibName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
-#	${Boost_REGEX_LIBRARY}
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Svg

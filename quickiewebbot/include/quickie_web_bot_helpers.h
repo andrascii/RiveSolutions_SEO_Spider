@@ -14,7 +14,7 @@ public:
 	{
 		if constexpr(std::is_pointer<DestinationType>::value && std::is_pointer<SourceType>::value)
 		{
-			assert(dynamic_cast<DestinationType>(p));
+			DEBUG_ASSERT(dynamic_cast<DestinationType>(p));
 			return static_cast<DestinationType>(p);
 		}
 		else if constexpr(std::is_reference<DestinationType>::value && std::is_reference<SourceType>::value)
@@ -26,7 +26,7 @@ public:
 			}
 			catch (...)
 			{
-				assert(!"Actual type differs from DestinationType");
+				DEBUG_ASSERT(!"Actual type differs from DestinationType");
 			}
 		#endif
 

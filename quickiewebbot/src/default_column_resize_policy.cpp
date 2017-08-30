@@ -24,7 +24,7 @@ void DefaultColumnResizePolicy::init(TableView* view, const IResizePolicy* prev)
 int DefaultColumnResizePolicy::columnSize(int column, const TableView* view) const noexcept
 {
 	auto it = m_columnsSize.find(column);
-	assert(it != m_columnsSize.end());
+	DEBUG_ASSERT(it != m_columnsSize.end());
 
 	return it->second;
 }

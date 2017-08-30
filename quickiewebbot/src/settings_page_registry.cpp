@@ -18,8 +18,8 @@ SettingsPageRegistry::~SettingsPageRegistry()
 
 void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, SettingsPage* page)
 {
-	assert(dynamic_cast<ISettingsPage*>(page));
-	assert(m_settingsPages.contains(pageId) == false);
+	DEBUG_ASSERT(dynamic_cast<ISettingsPage*>(page));
+	DEBUG_ASSERT(m_settingsPages.contains(pageId) == false);
 
 	VERIFY(connect(page, SIGNAL(destroyed(QObject*)), SLOT(settingsPageDestroyed())));
 
@@ -39,7 +39,7 @@ const QList<QByteArray>& SettingsPageRegistry::pagesKeys()
 
 void SettingsPageRegistry::settingsPageDestroyed()
 {
-	assert(m_deleting);
+	DEBUG_ASSERT(m_deleting);
 }
 
 }

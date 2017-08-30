@@ -35,7 +35,7 @@ void WebCrawler::startCrawling(const WebCrawlerOptions& options)
 
 	QUrl host = options.url;
 
-	assert(host.isValid());
+	DEBUG_ASSERT(host.isValid());
 
 	INFOLOG << "crawler started";
 

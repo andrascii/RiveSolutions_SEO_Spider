@@ -11,7 +11,7 @@ QUrl PageRawParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUr
 	// see: https://tools.ietf.org/html/rfc1808#section-4
 	//
 
-	assert(!baseUrl.isRelative() && "Base URL always MUST BE an absolute URL!!!");
+	DEBUG_ASSERT(!baseUrl.isRelative() && "Base URL always MUST BE an absolute URL!!!");
 
 
 	if (!result.isRelative())

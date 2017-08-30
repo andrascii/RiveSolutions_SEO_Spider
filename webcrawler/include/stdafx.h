@@ -29,35 +29,25 @@
 // boost
 //
 #include <boost/functional/hash.hpp>
-//#include <boost/regex.hpp>
 
 //
 // Qt
 //
-//include <QObject>
 #include <QThread>
-//#include <QWidget>
-//#include <QDialog>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QTableView>
-//#include <QMessageBox>
 #include <QTextCodec>
 #include <QAbstractListModel>
-//#include <QKeyEvent>
 #include <QMetaObject>
 #include <QMetaMethod>
 #include <QMetaType>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
-//#include <QVBoxLayout>
-//#include <QHBoxLayout>
-//#include <QPainter>
 #include <QTimer>
 #include <QTcpSocket>
 #include <QTcpServer>
-//#include <QAbstractItemDelegate>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QReadWriteLock>
@@ -65,14 +55,8 @@
 #include <QWaitCondition>
 #include <QQueue>
 #include <QDebug>
-//#include <QStyledItemDelegate>
 #include <QProcess>
 #include <QDateTime>
-//#include <QLineEdit>
-//#include <QScrollBar>
-//#include <QScreen>
-//#include <QItemSelectionModel>
-//#include <QtSvg>
 
 //#include "application.h"
 
@@ -83,27 +67,10 @@
 #endif
 
 #include "logger_connection_service_api.h"
+#include "common_macro_helpers.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
-
-#define theApp static_cast<Application*>(Application::instance())
-
-#define MAKE_STRING(Any) #Any
-
-#if defined(NDEBUG)
-#define PRODUCTION
-#endif
-
-#if !defined(PRODUCTION)
-#define DEBUG
-#endif
-
-#if !defined(PRODUCTION)
-#define VERIFY(Connection) assert(Connection)
-#else
-#define VERIFY(Connection) Connection
-#endif
 
 #ifdef Q_OS_WIN
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
@@ -115,17 +82,3 @@ using std::size_t;
 #define DEBUGLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 #define WARNINGLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 #define ERRORLOG	LoggerConnectionServiceApi::instance()->log(LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-
-inline void debugBreak()
-{
-#ifdef DEBUG
-
-#ifdef Q_OS_WIN
-	__debugbreak();
-#else
-	char* p = nullptr;
-	*p = 0;
-#endif
-
-#endif
-}

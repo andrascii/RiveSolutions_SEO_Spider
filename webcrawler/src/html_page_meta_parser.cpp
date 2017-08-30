@@ -8,7 +8,7 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcep
 {
 	GumboNode* head = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_HEAD);
 
-	assert(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
+	DEBUG_ASSERT(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
 
 	std::vector<GumboNode*> metaTags = GumboParsingHelpers::subNodes(head, GUMBO_TAG_META);
 
@@ -27,7 +27,7 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcep
 		GumboAttribute* metaHttpEquivAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "http-equiv");
 		GumboAttribute* metaNameAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "name");
 
-		assert(metaHttpEquivAttribute && !metaNameAttribute ||
+		DEBUG_ASSERT(metaHttpEquivAttribute && !metaNameAttribute ||
 			!metaHttpEquivAttribute && metaNameAttribute ||
 			!metaHttpEquivAttribute && !metaNameAttribute);
 
