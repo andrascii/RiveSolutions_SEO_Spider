@@ -48,15 +48,16 @@ void TableView::mouseMoveEvent(QMouseEvent* event)
 {
 	QModelIndex index = indexAt(event->pos());
 
-	if (index == viewModel()->hoveredIndex() || !(index.flags() & Qt::ItemIsSelectable))
-	{
-		QTableView::mouseMoveEvent(event);
-		return;
-	}
-
 	if (viewModel())
 	{
-		viewModel()->setHoveredIndex(index);
+		if (!(index.flags() & Qt::ItemIsSelectable))
+		{
+			viewModel()->setHoveredIndex(QModelIndex());
+		}
+		else
+		{
+			viewModel()->setHoveredIndex(index);
+		}
 	}
 
 	QTableView::mouseMoveEvent(event);
@@ -97,16 +98,7 @@ void TableView::setContextMenu(QMenu* menu) noexcept
 
 void TableView::setViewModel(IViewModel* modelView) noexcept
 {
-	if (m_viewModel)
-	{
-		disconnect(m_viewModel->qobject(), SIGNAL(repaintItem(const QModelIndexList&)),
-			this, SLOT(onAboutRepaintItem(const QModelIndexList&)));
-	}
-
 	m_viewModel = modelView;
-
-	VERIFY(connect(m_viewModel->qobject(), SIGNAL(repaintItem(const QModelIndexList&)),
-		this, SLOT(onAboutRepaintItem(const QModelIndexList&))));
 
 	QuickieWebBotHelpers::safe_runtime_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
 }
@@ -163,19 +155,6 @@ void TableView::adjustColumnSize()
 	{
 		IResizePolicy* prevPolicy = m_model->resizePolicy();
 		m_model->resizePolicy()->init(this, prevPolicy);
-	}
-}
-
-void TableView::onAboutRepaintItem(const QModelIndexList& indexesList)
-{
-	foreach(const QModelIndex& index, indexesList)
-	{
-		if (!index.isValid())
-		{
-			continue;
-		}
-
-		repaint(visualRect(index));
 	}
 }
 

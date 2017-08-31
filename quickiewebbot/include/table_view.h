@@ -23,8 +23,6 @@ public:
 	void setViewModel(IViewModel* modelView) noexcept;
 	IViewModel* viewModel() const noexcept;
 
-	Q_SLOT void onAboutRepaintItem(const QModelIndexList& indexesList);
-
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
 	virtual void resizeEvent(QResizeEvent* event) override;

@@ -108,28 +108,12 @@ QList<const IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) co
 
 void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 {
-	const QModelIndex previousValidHoveredIndex = m_hoveredIndex;
-
-	const QModelIndexList previousHoveredRowIndexes 
-		= m_model->modelIndexesForRow(previousValidHoveredIndex.row());
-
-	m_hoveredIndex = index;
-
-	invalidateCacheIndex(previousValidHoveredIndex);
-
-	Q_EMIT repaintItem(previousHoveredRowIndexes);
-
-	if (!m_hoveredIndex.isValid())
+	if (index == m_hoveredIndex)
 	{
 		return;
 	}
 
-	invalidateCacheIndex(m_hoveredIndex);
-
-	const QModelIndexList hoveredRowIndexes
-		= m_model->modelIndexesForRow(m_hoveredIndex.row());
-
-	Q_EMIT repaintItem(hoveredRowIndexes);
+	m_hoveredIndex = index;
 }
 
 const QModelIndex& SummaryViewModel::hoveredIndex() const noexcept

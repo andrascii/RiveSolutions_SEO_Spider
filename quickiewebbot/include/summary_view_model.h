@@ -41,8 +41,6 @@ public:
 	
 	virtual QObject* qobject() noexcept override;
 
-	Q_SIGNAL virtual void repaintItem(const QModelIndexList& indexesList) override;
-
 private:
 	void invalidateCacheIndex(const QModelIndex& index);
 

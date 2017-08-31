@@ -10,8 +10,8 @@
 #define DEBUG_ASSERT(condition)
 #endif
 
-#ifndef QT_DEBUG
-#define VERIFY(Connection) DEBUG_ASSERT((Connection) == true)
+#ifdef QT_DEBUG
+#define VERIFY(Connection) ASSERT(Connection)
 #else
 #define VERIFY(Connection) Connection
 #endif
