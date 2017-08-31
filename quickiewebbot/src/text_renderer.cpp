@@ -59,12 +59,12 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 	clearCacheIfNeeded();
 }
 
-void TextRenderer::invalidateCacheIndex(const QModelIndex& index)
+void TextRenderer::invalidateCacheIndex(const QModelIndex& index) const
 {
 	m_cache.erase(index);
 }
 
-void TextRenderer::invalidateCache()
+void TextRenderer::invalidateCache() const
 {
 	m_cache.clear();
 }

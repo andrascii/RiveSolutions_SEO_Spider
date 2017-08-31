@@ -4,30 +4,68 @@
 namespace QuickieWebBot
 {
 
-BackgroundRenderer::BackgroundRenderer(const IViewModel* viewModel)
+BackgroundRenderer::BackgroundRenderer(const IViewModel* viewModel, int cacheSize)
 	: m_viewModel(viewModel)
+	, m_cacheSize(cacheSize)
 {
 }
 
 void BackgroundRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
+	QPixmap* cachedPixmap = cached(index);
+
+	if (cachedPixmap && cachedPixmap->rect().size() == option.rect.size())
+	{
+		painter->drawPixmap(option.rect, m_cache[index]);
+		return;
+	}
+
 	QColor bgColor = m_viewModel->hoveredIndex().row() == index.row() ?
 		m_viewModel->hoveredBackgroundColor(index) :
 		m_viewModel->backgroundColor(index);
 
-	painter->fillRect(option.rect, bgColor);
+	QPixmap pixmap(option.rect.size());
+	pixmap.fill(bgColor);
+
+	painter->drawPixmap(option.rect, pixmap);
+
+	m_cache[index] = pixmap;
+	clearCacheIfNeeded();
 }
 
-void BackgroundRenderer::invalidateCacheIndex(const QModelIndex&)
+void BackgroundRenderer::invalidateCacheIndex(const QModelIndex& index) const
 {
+	m_cache.erase(index);
 }
 
-void BackgroundRenderer::invalidateCache()
+void BackgroundRenderer::invalidateCache() const
 {
+	m_cache.clear();
 }
 
-void BackgroundRenderer::setCacheSize(int)
+void BackgroundRenderer::setCacheSize(int cacheSize)
 {
+	m_cacheSize = cacheSize;
+}
+
+void BackgroundRenderer::clearCacheIfNeeded() const
+{
+	if (m_cache.size() >= m_cacheSize)
+	{
+		invalidateCache();
+	}
+}
+
+QPixmap* BackgroundRenderer::cached(const QModelIndex& index) const noexcept
+{
+	auto cachedPixmapIterator = m_cache.find(index);
+
+	if (cachedPixmapIterator != std::end(m_cache))
+	{
+		return &cachedPixmapIterator->second;
+	}
+
+	return nullptr;
 }
 
 }

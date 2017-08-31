@@ -68,6 +68,10 @@ void ErrorsFilterWidget::initSummaryView()
 
 	m_ui->summaryTableView->setModel(summaryModel);
 	m_ui->summaryTableView->setViewModel(summaryViewModel);
+
+	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(150);
+
+	m_ui->splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
 }
 
 void ErrorsFilterWidget::initDetailsView()

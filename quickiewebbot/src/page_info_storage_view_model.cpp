@@ -141,7 +141,16 @@ void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcep
 		return;
 	}
 
+	const QModelIndex previousHoveredIndex = m_hoveredIndex;
+
 	m_hoveredIndex = index;
+
+	if (previousHoveredIndex.isValid())
+	{
+		invalidateCacheIndexes(m_model->modelIndexesForRow(previousHoveredIndex.row()));
+	}
+
+	invalidateCacheIndexes(m_model->modelIndexesForRow(m_hoveredIndex.row()));
 }
 
 const QModelIndex& PageInfoStorageViewModel::hoveredIndex() const noexcept
@@ -157,6 +166,14 @@ QObject* PageInfoStorageViewModel::qobject() noexcept
 void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
 {
 	m_renderers[IViewModel::PlainTextRendererType]->setCacheSize(static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
+}
+
+void PageInfoStorageViewModel::invalidateCacheIndexes(const QModelIndexList& indexesList)
+{
+	foreach(const QModelIndex& index, indexesList)
+	{
+		invalidateCacheIndex(index);
+	}
 }
 
 void PageInfoStorageViewModel::invalidateCacheIndex(const QModelIndex& index)

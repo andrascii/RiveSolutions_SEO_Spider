@@ -44,6 +44,7 @@ private slots:
 	void onAttachedModelInternalDataChanged();
 
 private:
+	void invalidateCacheIndexes(const QModelIndexList& indexesList);
 	void invalidateCacheIndex(const QModelIndex& index);
 	void initializeRenderers();
 

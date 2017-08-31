@@ -11,12 +11,12 @@ namespace QuickieWebBot
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: m_model(model)
-	, m_resizePolicy(std::make_unique<ViewportPercentResizePolicy>(std::vector<int>{ 85, 15 }))
 	, m_hoveredIndex(QModelIndex())
 	, m_selectionBgColor(97, 160, 50, 200)
 	, m_hoveredBgColor("#a5a5a5")
 	, m_bgColor(Qt::transparent)
 {
+	initializeRenderers();
 }
 
 int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
@@ -94,16 +94,10 @@ void SummaryViewModel::invalidateRenderersCache() const noexcept
 
 QList<const IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	static SelectionBackgroundRenderer s_selectionBackgroundRenderer(this);
-	static BackgroundRenderer s_backgroundRenderer(this);
-
-	// disabled caching
-	static TextRenderer s_textRenderer(this);
-
 	return QList<const IRenderer*>()
-		<< &s_backgroundRenderer
-		<< &s_selectionBackgroundRenderer
-		<< &s_textRenderer;
+		<< m_renderers.find(IViewModel::BackgroundRendererType)->second.get()
+		<< m_renderers.find(IViewModel::SelectionBackgroundRendererType)->second.get()
+		<< m_renderers.find(IViewModel::PlainTextRendererType)->second.get();
 }
 
 void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
@@ -112,8 +106,17 @@ void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	{
 		return;
 	}
+	
+	const QModelIndex previousHoveredIndex = m_hoveredIndex;
 
 	m_hoveredIndex = index;
+
+	if (previousHoveredIndex.isValid())
+	{
+		invalidateCacheIndexes(m_model->modelIndexesForRow(previousHoveredIndex.row()));
+	}
+
+	invalidateCacheIndexes(m_model->modelIndexesForRow(m_hoveredIndex.row()));
 }
 
 const QModelIndex& SummaryViewModel::hoveredIndex() const noexcept
@@ -126,11 +129,32 @@ QObject* SummaryViewModel::qobject() noexcept
 	return this;
 }
 
-void SummaryViewModel::invalidateCacheIndex(const QModelIndex&)
+void SummaryViewModel::invalidateCacheIndexes(const QModelIndexList& indexesList)
 {
-	//
-	// TODO: invalidate index in all renderers
-	//
+	foreach(const QModelIndex& index, indexesList)
+	{
+		invalidateCacheIndex(index);
+	}
+}
+
+void SummaryViewModel::invalidateCacheIndex(const QModelIndex& index)
+{
+	for (const auto& pair : m_renderers)
+	{
+		pair.second->invalidateCacheIndex(index);
+	}
+}
+
+void SummaryViewModel::initializeRenderers()
+{
+	m_renderers[IViewModel::PlainTextRendererType] =
+		std::make_unique<TextRenderer>(this);
+
+	m_renderers[IViewModel::SelectionBackgroundRendererType] =
+		std::make_unique<SelectionBackgroundRenderer>(this);
+
+	m_renderers[IViewModel::BackgroundRendererType] =
+		std::make_unique<BackgroundRenderer>(this, m_model->rowCount() * m_model->columnCount());
 }
 
 QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept

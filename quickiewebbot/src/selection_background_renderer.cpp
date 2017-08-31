@@ -17,11 +17,11 @@ void SelectionBackgroundRenderer::render(QPainter* painter, const QStyleOptionVi
 	}
 }
 
-void SelectionBackgroundRenderer::invalidateCacheIndex(const QModelIndex&)
+void SelectionBackgroundRenderer::invalidateCacheIndex(const QModelIndex&) const
 {
 }
 
-void SelectionBackgroundRenderer::invalidateCache()
+void SelectionBackgroundRenderer::invalidateCache() const
 {
 }
 

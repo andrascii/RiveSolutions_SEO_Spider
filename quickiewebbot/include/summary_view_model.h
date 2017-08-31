@@ -42,12 +42,14 @@ public:
 	virtual QObject* qobject() noexcept override;
 
 private:
+	void invalidateCacheIndexes(const QModelIndexList& indexesList);
 	void invalidateCacheIndex(const QModelIndex& index);
+	void initializeRenderers();
 
 private:
 	SummaryModel* m_model;
 
-	std::unique_ptr<ViewportPercentResizePolicy> m_resizePolicy;
+	std::map<RendererType, std::unique_ptr<IRenderer>> m_renderers;
 
 	QModelIndex m_hoveredIndex;
 
