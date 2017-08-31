@@ -2,7 +2,7 @@
 
 #include "debug_helpers_api.h"
 
-#define ASSERT(condition) if(condition == false) Common::DebugHelpersApi::doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
+#define ASSERT(condition) if((condition) == false) Common::DebugHelpersApi::doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
 
 #ifdef QT_DEBUG
 #define DEBUG_ASSERT(condition) ASSERT(condition)
