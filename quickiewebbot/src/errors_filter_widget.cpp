@@ -43,7 +43,7 @@ void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& sel
 
 	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->create(category));
 
-	m_ui->summaryDetailsTableView->viewModel()->resetRenderersCache();
+	m_ui->summaryDetailsTableView->viewModel()->invalidateRenderersCache();
 }
 
 void ErrorsFilterWidget::init()

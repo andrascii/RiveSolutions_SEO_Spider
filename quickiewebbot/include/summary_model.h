@@ -1,6 +1,6 @@
 #pragma once
 
-#include "itable_model.h"
+#include "abstract_table_model.h"
 #include "data_collection.h"
 #include "isummary_data_accessor.h"
 
@@ -10,7 +10,7 @@ namespace QuickieWebBot
 class IResizePolicy;
 class ViewportPercentResizePolicy;
 	
-class SummaryModel : public ITableModel
+class SummaryModel : public AbstractTableModel
 {
 	Q_OBJECT
 

@@ -88,11 +88,11 @@ Qt::AlignmentFlag SummaryViewModel::textAlignment(const QModelIndex& index) cons
 	return Qt::AlignLeft;
 }
 
-void SummaryViewModel::resetRenderersCache() const noexcept
+void SummaryViewModel::invalidateRenderersCache() const noexcept
 {
 }
 
-QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
+QList<const IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
 {
 	static SelectionBackgroundRenderer s_selectionBackgroundRenderer(this);
 	static BackgroundRenderer s_backgroundRenderer(this);
@@ -100,7 +100,7 @@ QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const no
 	// disabled caching
 	static TextRenderer s_textRenderer(this);
 
-	return QList<IRenderer*>()
+	return QList<const IRenderer*>()
 		<< &s_backgroundRenderer
 		<< &s_selectionBackgroundRenderer
 		<< &s_textRenderer;
@@ -108,12 +108,45 @@ QList<IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const no
 
 void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 {
+	const QModelIndex previousValidHoveredIndex = m_hoveredIndex;
+
+	const QModelIndexList previousHoveredRowIndexes 
+		= m_model->modelIndexesForRow(previousValidHoveredIndex.row());
+
 	m_hoveredIndex = index;
+
+	invalidateCacheIndex(previousValidHoveredIndex);
+
+	Q_EMIT repaintItem(previousHoveredRowIndexes);
+
+	if (!m_hoveredIndex.isValid())
+	{
+		return;
+	}
+
+	invalidateCacheIndex(m_hoveredIndex);
+
+	const QModelIndexList hoveredRowIndexes
+		= m_model->modelIndexesForRow(m_hoveredIndex.row());
+
+	Q_EMIT repaintItem(hoveredRowIndexes);
 }
 
 const QModelIndex& SummaryViewModel::hoveredIndex() const noexcept
 {
 	return m_hoveredIndex;
+}
+
+QObject* SummaryViewModel::qobject() noexcept
+{
+	return this;
+}
+
+void SummaryViewModel::invalidateCacheIndex(const QModelIndex&)
+{
+	//
+	// TODO: invalidate index in all renderers
+	//
 }
 
 QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept

@@ -1,6 +1,6 @@
 #include "selection_model.h"
 #include "table_view.h"
-#include "itable_model.h"
+#include "abstract_table_model.h"
 #include "quickie_web_bot_helpers.h"
 
 #ifdef QT_DEBUG

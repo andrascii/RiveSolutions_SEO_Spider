@@ -33,11 +33,18 @@ public:
 	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept override;
 	virtual QColor textColor(const QModelIndex& index) const noexcept override;
 
-	virtual void resetRenderersCache() const noexcept override;
-	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
+	virtual void invalidateRenderersCache() const noexcept override;
+	virtual QList<const IRenderer*> renderers(const QModelIndex& index) const noexcept override;
 
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
 	virtual const QModelIndex& hoveredIndex() const noexcept override;
+	
+	virtual QObject* qobject() noexcept override;
+
+	Q_SIGNAL virtual void repaintItem(const QModelIndexList& indexesList) override;
+
+private:
+	void invalidateCacheIndex(const QModelIndex& index);
 
 private:
 	SummaryModel* m_model;

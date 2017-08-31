@@ -1,5 +1,5 @@
 #include "page_info.h"
-#include "itable_model.h"
+#include "abstract_table_model.h"
 #include "default_column_resize_policy.h"
 #include "url_renderer.h"
 #include "text_renderer.h"
@@ -17,15 +17,13 @@ namespace QuickieWebBot
 PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent)
 	: QObject(parent)
 	, m_model(model)
-	, m_textRenderer(std::make_unique<TextRenderer>(this, static_cast<int>(std::pow((m_model->columnCount()), 2.0))))
-	, m_urlRenderer(std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0))))
-	, m_selectionBackgroundRenderer(std::make_unique<SelectionBackgroundRenderer>(this))
-	, m_backgroundRenderer(std::make_unique<BackgroundRenderer>(this))
 	, m_hoveredIndex(QModelIndex())
 	, m_selectionBgColor(97, 160, 50, 200)
 	, m_hoveredBgColor("#a5a5a5")
 	, m_bgColor(Qt::white)
 {
+	initializeRenderers();
+
 	QPixmap pixmap;
 	pixmap.fill(backgroundColor(QModelIndex()));
 	pixmap.load(":/images/url-icon.png");
@@ -116,29 +114,50 @@ QColor PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexc
 	return QColor("#02072E");
 }
 
-void PageInfoStorageViewModel::resetRenderersCache() const noexcept
+void PageInfoStorageViewModel::invalidateRenderersCache() const noexcept
 {
-	m_textRenderer->resetCache();
-	m_urlRenderer->resetCache();
-	m_selectionBackgroundRenderer->resetCache();
-	m_backgroundRenderer->resetCache();
+	for (const auto& pair : m_renderers)
+	{
+		pair.second->invalidateCache();
+	}
 }
 
-QList<IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
+QList<const IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	IRenderer* renderer = 
-		m_model->itemType(index) == PageInfo::UrlItemType ? 
-		m_urlRenderer.get() : m_textRenderer.get();
+	const IRenderer* renderer = m_model->itemType(index) == PageInfo::UrlItemType ?
+		m_renderers.find(IViewModel::UrlRendererType)->second.get() :
+		m_renderers.find(IViewModel::PlainTextRendererType)->second.get();
 
-	return QList<IRenderer*>()
-		<< m_backgroundRenderer.get()
-		<< m_selectionBackgroundRenderer.get()
+	return QList<const IRenderer*>()
+		<< m_renderers.find(IViewModel::BackgroundRendererType)->second.get()
+		<< m_renderers.find(IViewModel::SelectionBackgroundRendererType)->second.get()
 		<< renderer;
 }
 
 void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 {
+	const QModelIndex previousValidHoveredIndex = m_hoveredIndex;
+
+	const QModelIndexList previousHoveredRowIndexes
+		= m_model->modelIndexesForRow(previousValidHoveredIndex.row());
+
 	m_hoveredIndex = index;
+
+	invalidateCacheIndex(previousValidHoveredIndex);
+
+	Q_EMIT repaintItem(previousHoveredRowIndexes);
+
+	if (!m_hoveredIndex.isValid())
+	{
+		return;
+	}
+
+	invalidateCacheIndex(m_hoveredIndex);
+
+	const QModelIndexList hoveredRowIndexes
+		= m_model->modelIndexesForRow(m_hoveredIndex.row());
+
+	Q_EMIT repaintItem(hoveredRowIndexes);
 }
 
 const QModelIndex& PageInfoStorageViewModel::hoveredIndex() const noexcept
@@ -146,9 +165,37 @@ const QModelIndex& PageInfoStorageViewModel::hoveredIndex() const noexcept
 	return m_hoveredIndex;
 }
 
+QObject* PageInfoStorageViewModel::qobject() noexcept
+{
+	return this;
+}
+
 void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
 {
-	m_textRenderer->setCacheSize(static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
+	m_renderers[IViewModel::PlainTextRendererType]->setCacheSize(static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
+}
+
+void PageInfoStorageViewModel::invalidateCacheIndex(const QModelIndex& index)
+{
+	for (const auto& pair : m_renderers)
+	{
+		pair.second->invalidateCacheIndex(index);
+	}
+}
+
+void PageInfoStorageViewModel::initializeRenderers()
+{
+	m_renderers[IViewModel::PlainTextRendererType] =
+		std::make_unique<TextRenderer>(this, static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
+
+	m_renderers[IViewModel::UrlRendererType] =
+		std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0)));
+
+	m_renderers[IViewModel::SelectionBackgroundRendererType] =
+		std::make_unique<SelectionBackgroundRenderer>(this);
+
+	m_renderers[IViewModel::BackgroundRendererType] = 
+		std::make_unique<BackgroundRenderer>(this);
 }
 
 }

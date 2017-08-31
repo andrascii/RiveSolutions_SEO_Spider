@@ -30,11 +30,25 @@ public:
 	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept = 0;
 	virtual QColor textColor(const QModelIndex& index) const noexcept = 0;
 
-	virtual void resetRenderersCache() const noexcept = 0;
-	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
+	virtual void invalidateRenderersCache() const noexcept = 0;
+	virtual QList<const IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
 
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept = 0;
 	virtual const QModelIndex& hoveredIndex() const noexcept = 0;
+
+	virtual QObject* qobject() noexcept = 0;
+
+	// signal
+	virtual void repaintItem(const QModelIndexList& indexesList) = 0;
+
+protected:
+	enum RendererType
+	{
+		PlainTextRendererType,
+		UrlRendererType,
+		BackgroundRendererType,
+		SelectionBackgroundRendererType
+	};
 };
 
 }

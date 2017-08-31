@@ -1,6 +1,6 @@
 #include "text_renderer.h"
 #include "iview_model.h"
-#include "itable_model.h"
+#include "abstract_table_model.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
@@ -59,7 +59,12 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 	clearCacheIfNeeded();
 }
 
-void TextRenderer::resetCache()
+void TextRenderer::invalidateCacheIndex(const QModelIndex& index)
+{
+	m_cache.erase(index);
+}
+
+void TextRenderer::invalidateCache()
 {
 	m_cache.clear();
 }

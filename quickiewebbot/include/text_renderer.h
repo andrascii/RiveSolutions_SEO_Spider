@@ -13,7 +13,9 @@ public:
 	explicit TextRenderer(const IViewModel* viewModel, int cacheSize = 0);
 
 	virtual void render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-	virtual void resetCache() override;
+
+	virtual void invalidateCacheIndex(const QModelIndex& index) override;
+	virtual void invalidateCache() override;
 	virtual void setCacheSize(int cacheSize) override;
 
 protected:

@@ -1,5 +1,5 @@
 #include "context_menu_data_collection_row.h"
-#include "itable_model.h"
+#include "abstract_table_model.h"
 #include "table_view.h"
 #include "quickie_web_bot_helpers.h"
 #include "page_info_storage_model.h"

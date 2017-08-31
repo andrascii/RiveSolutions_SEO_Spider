@@ -8,7 +8,7 @@ namespace QuickieWebBot
 {
 
 SummaryModel::SummaryModel(QObject* parent)
-	: ITableModel(parent)
+	: AbstractTableModel(parent)
 	, m_resizePolicy(std::make_shared<ViewportPercentResizePolicy>(std::vector<int>{ 85, 15 }))
 	, m_dataAccessor(nullptr)
 {
@@ -52,7 +52,6 @@ SummaryCategoryItem SummaryModel::itemCategory(const QModelIndex& index) const n
 
 	return dataAccessor()->itemCategory(index);
 }
-
 
 void SummaryModel::formActualUpdateDataSignal(int row, int column, Qt::ItemDataRole role)
 {

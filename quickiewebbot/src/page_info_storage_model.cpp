@@ -7,7 +7,7 @@ namespace QuickieWebBot
 {
 
 PageInfoStorageModel::PageInfoStorageModel(QObject* parent)
-	: ITableModel(parent)
+	: AbstractTableModel(parent)
 	, m_storageAdaptor(nullptr)
 	, m_resizePolicy(std::make_shared<DefaultColumnResizePolicy>())
 {

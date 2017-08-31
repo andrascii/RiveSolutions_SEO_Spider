@@ -89,9 +89,9 @@ void Application::mainFrameIsReadyForShow()
 
 void Application::registerSettingsPages() const
 {
-	SettingsPageImpl<Ui_CrawlerSettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_CrawlerSettings));
-	SettingsPageImpl<Ui_ProxySettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_ProxySettings));
-	SettingsPageImpl<Ui_LimitsSettings>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_LimitsSettings));
+	SettingsPageImpl<Ui_CrawlerSettings>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettings));
+	SettingsPageImpl<Ui_ProxySettings>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettings));
+	SettingsPageImpl<Ui_LimitsSettings>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettings));
 }
 
 void Application::initialize() noexcept

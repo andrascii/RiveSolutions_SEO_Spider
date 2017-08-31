@@ -5,12 +5,7 @@
 namespace QuickieWebBot
 {
 
-class DefaultColumnResizePolicy;
 class PageInfoStorageModel;
-class TextRenderer;
-class UrlRenderer;
-class SelectionBackgroundRenderer;
-class BackgroundRenderer;
 
 class PageInfoStorageViewModel
 	: public QObject
@@ -37,22 +32,27 @@ public:
 	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept override;
 	virtual QColor textColor(const QModelIndex& index) const noexcept override;
 
-	virtual void resetRenderersCache() const noexcept override;
-	virtual QList<IRenderer*> renderers(const QModelIndex& index) const noexcept override;
+	virtual void invalidateRenderersCache() const noexcept override;
+	virtual QList<const IRenderer*> renderers(const QModelIndex& index) const noexcept override;
 
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
 	virtual const QModelIndex& hoveredIndex() const noexcept override;
+
+	virtual QObject* qobject() noexcept override;
+
+	Q_SIGNAL virtual void repaintItem(const QModelIndexList& indexesList) override;
 
 private slots:
 	void onAttachedModelInternalDataChanged();
 
 private:
+	void invalidateCacheIndex(const QModelIndex& index);
+	void initializeRenderers();
+
+private:
 	PageInfoStorageModel* m_model;
 
-	std::unique_ptr<TextRenderer> m_textRenderer;
-	std::unique_ptr<UrlRenderer> m_urlRenderer;
-	std::unique_ptr<SelectionBackgroundRenderer> m_selectionBackgroundRenderer;
-	std::unique_ptr<BackgroundRenderer> m_backgroundRenderer;
+	std::map<RendererType, std::unique_ptr<IRenderer>> m_renderers;
 
 	QModelIndex m_hoveredIndex;
 

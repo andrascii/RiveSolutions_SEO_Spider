@@ -1,5 +1,5 @@
 #include "table_view.h"
-#include "itable_model.h"
+#include "abstract_table_model.h"
 #include "iview_model.h"
 #include "iresize_policy.h"
 #include "selection_model.h"
@@ -30,7 +30,7 @@ void TableView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<ITableModel*>(model);
+	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<AbstractTableModel*>(model);
 
 	if (m_model->resizePolicy())
 	{
@@ -97,7 +97,16 @@ void TableView::setContextMenu(QMenu* menu) noexcept
 
 void TableView::setViewModel(IViewModel* modelView) noexcept
 {
+	if (m_viewModel)
+	{
+		disconnect(m_viewModel->qobject(), SIGNAL(repaintItem(const QModelIndexList&)),
+			this, SLOT(onAboutRepaintItem(const QModelIndexList&)));
+	}
+
 	m_viewModel = modelView;
+
+	VERIFY(connect(m_viewModel->qobject(), SIGNAL(repaintItem(const QModelIndexList&)),
+		this, SLOT(onAboutRepaintItem(const QModelIndexList&))));
 
 	QuickieWebBotHelpers::safe_runtime_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
 }
@@ -148,12 +157,25 @@ void TableView::selectRow(const QPoint& point)
 
 void TableView::adjustColumnSize()
 {
-	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<ITableModel*>(model());
+	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<AbstractTableModel*>(model());
 
 	if (m_model->resizePolicy())
 	{
 		IResizePolicy* prevPolicy = m_model->resizePolicy();
 		m_model->resizePolicy()->init(this, prevPolicy);
+	}
+}
+
+void TableView::onAboutRepaintItem(const QModelIndexList& indexesList)
+{
+	foreach(const QModelIndex& index, indexesList)
+	{
+		if (!index.isValid())
+		{
+			continue;
+		}
+
+		repaint(visualRect(index));
 	}
 }
 

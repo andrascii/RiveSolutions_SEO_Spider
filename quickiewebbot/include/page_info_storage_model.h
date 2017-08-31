@@ -1,6 +1,6 @@
 #pragma once
 
-#include "itable_model.h"
+#include "abstract_table_model.h"
 #include "page_info.h"
 #include "data_collection.h"
 
@@ -16,7 +16,7 @@ class StorageAdaptor;
 //! Using this model you can customize PageInfo columns set.
 //
 
-class PageInfoStorageModel : public ITableModel
+class PageInfoStorageModel : public AbstractTableModel
 {
 	Q_OBJECT
 

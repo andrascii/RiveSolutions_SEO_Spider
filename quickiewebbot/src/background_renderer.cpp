@@ -18,7 +18,11 @@ void BackgroundRenderer::render(QPainter* painter, const QStyleOptionViewItem& o
 	painter->fillRect(option.rect, bgColor);
 }
 
-void BackgroundRenderer::resetCache()
+void BackgroundRenderer::invalidateCacheIndex(const QModelIndex&)
+{
+}
+
+void BackgroundRenderer::invalidateCache()
 {
 }
 
