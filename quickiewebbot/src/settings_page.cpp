@@ -106,13 +106,14 @@ void SettingsPage::registerMetaTypes()
 	qRegisterMetaType<ControlAdaptorQCheckBox>();
 }
 
-void SettingsPage::somethingChanged()
+void SettingsPage::somethingChangedSlot()
 {
-	Q_ASSERT(sender()->property("controlKey").isValid());
+	DEBUG_ASSERT(sender()->property("controlKey").isValid());
 
 	m_changedSettingsKeys.push_back(sender()->property("controlKey").toString());
 
 	m_somethingChanged = true;
+	emit somethingChangedSignal();
 }
 
 std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* control)

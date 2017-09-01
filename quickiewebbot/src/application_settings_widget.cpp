@@ -72,6 +72,12 @@ ApplicationSettingsWidget::~ApplicationSettingsWidget()
 	}
 }
 
+void ApplicationSettingsWidget::somethingChangedSlot()
+{
+	m_somethingChanged = true;
+	m_ui.applyButton->setEnabled(m_somethingChanged);
+}
+
 void ApplicationSettingsWidget::initialize()
 {
 	m_ui.setupUi(this);
@@ -100,6 +106,7 @@ void ApplicationSettingsWidget::initialize()
 		QListWidgetItem* item = new QListWidgetItem(page->windowTitle());
 		item->setData(Qt::DecorationRole, page->windowIcon());
 		item->setData(Qt::UserRole, pageId);
+		VERIFY(connect(page, SIGNAL(somethingChangedSignal()), this, SLOT(somethingChangedSlot())));
 
 		m_stackedWidget->addWidget(page);
 		m_ui.propGroupsList->addItem(item);

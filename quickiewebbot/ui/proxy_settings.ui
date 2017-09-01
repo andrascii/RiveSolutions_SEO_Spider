@@ -92,12 +92,18 @@ Also if your proxy server requires authorization enter your name and password.</
            <property name="text">
             <string>Proxy requires authorization</string>
            </property>
+           <property name="controlKey" stdset="0">
+            <string notr="true">proxyNeedAuthorization</string>
+           </property>
           </widget>
          </item>
          <item row="0" column="0">
           <widget class="QCheckBox" name="useProxyCheckBox">
            <property name="text">
             <string>Use Proxy</string>
+           </property>
+           <property name="controlKey" stdset="0">
+            <string notr="true">useProxy</string>
            </property>
           </widget>
          </item>

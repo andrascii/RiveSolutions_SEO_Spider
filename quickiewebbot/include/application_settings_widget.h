@@ -17,6 +17,7 @@ private:
 	Q_SLOT void applyChanges();
 	Q_SLOT void okButtonClicked();
 	Q_SLOT void cancelButtonClicked();
+	Q_SLOT void somethingChangedSlot();
 
 private:
 	void initialize();

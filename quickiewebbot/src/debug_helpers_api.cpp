@@ -14,7 +14,7 @@ public:
 
 	int askUser()
 	{
-		Q_ASSERT(!isRunning());
+		DEBUG_ASSERT(!isRunning());
 		QThread::start();
 		QThread::wait();
 		return m_result;

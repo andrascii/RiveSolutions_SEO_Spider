@@ -283,22 +283,8 @@ QScrollBar::sub-page:vertical
 	background: none;
 }
 
-/*/////////////////////////////// Limits Settings Widget //////////////////////////////*/
-QWidget#LimitsSettings QLabel
-{
-	color: #494949;
-}
-
-QuickieWebBot--ApplicationSettingsWidget QLabel,
-QuickieWebBot--ApplicationSettingsWidget QWidget,
-QuickieWebBot--ApplicationSettingsWidget QCheckBox
-{
-	color: #494949;
-}
-
-/*/////////////////////////////// Proxy Settings Widget ///////////////////////////////*/
-
-QWidget#ProxySettings
+/*/////////////////////////////// Settings page Widget ////////////////////////////////*/
+QuickieWebBot--SettingsPage
 {
 	background: #343B49;
 	min-width: 40em;
@@ -307,32 +293,51 @@ QWidget#ProxySettings
 	max-height: 28em;
 }
 
-QWidget#ProxySettings QLabel,
-QWidget#ProxySettings QCheckBox
+QuickieWebBot--SettingsPage QLabel,
+QuickieWebBot--SettingsPage QCheckBox
 {
 	color: #494949;
 }
 
-QWidget#ProxySettings QFrame#headerFrame
+QuickieWebBot--SettingsPage QFrame#headerFrame
 {
 	min-height: 8em;
+	max-height: 8em;
 	background: white;
 	padding: 0.5em;
 	border: 0.05em solid #c3c3c3;
 }
 
-QWidget#ProxySettings QLabel#headerName
+QuickieWebBot--SettingsPage QLabel#headerName
 {
 	font-size: 16pt;
 	min-height: 2em;
 	color: #61a032;
 }
 
-QWidget#ProxySettings QFrame#settingsFrame
+QuickieWebBot--SettingsPage QFrame#settingsFrame
 {
 	background: #e7e7e7;
 	padding: 1em;
 	border: 0.05em solid #c3c3c3;
+}
+
+/*/////////////////////////////// ApplicationSettingsWidget ///////////////////////////*/
+
+QuickieWebBot--ApplicationSettingsWidget QLabel,
+QuickieWebBot--ApplicationSettingsWidget QWidget,
+QuickieWebBot--ApplicationSettingsWidget QCheckBox
+{
+	color: #494949;
+}
+
+QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:disabled
+{
+	color: rgb(255, 255, 255);
+}
+QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:enabled
+{
+	color: rgb(0, 255, 0);
 }
 
 /*/////////////////////////////// Splitters ///////////////////////////////*/
