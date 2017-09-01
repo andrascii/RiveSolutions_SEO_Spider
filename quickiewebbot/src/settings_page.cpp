@@ -4,6 +4,7 @@
 #include "icontrol_adaptor.h"
 #include "control_adaptor_check_box.h"
 #include "control_adaptor_line_edit.h"
+#include "control_adaptor_spin_box.h"
 
 namespace QuickieWebBot
 {
@@ -127,6 +128,7 @@ void SettingsPage::registerMetaTypes()
 {
 	qRegisterMetaType<ControlAdaptorQCheckBox>();
 	qRegisterMetaType<ControlAdaptorQLineEdit>();
+	qRegisterMetaType<ControlAdaptorQSpinBox>();
 }
 
 void SettingsPage::somethingChangedSlot()

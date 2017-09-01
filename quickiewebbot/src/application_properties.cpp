@@ -14,7 +14,7 @@ ApplicationProperties::ApplicationProperties(QObject* parent)
 	, m_maxH2LengthChars(50)
 	, m_maxImageAltTextChars(100)
 	, m_maxImageSize(100)
-	, m_proxyAdress("http://example.com")
+	, m_proxyPort(80)
 {
 }
 
@@ -73,15 +73,26 @@ void ApplicationProperties::setProxyPassword(const QString& value)
 	emit proxyPasswordChanged();
 }
 
-const QString& ApplicationProperties::proxyAdress() const
+const QString& ApplicationProperties::proxyAddress() const
 {
-	return m_proxyAdress;
+	return m_proxyAddress;
 }
 
-void ApplicationProperties::setProxyAdress(const QString& value)
+void ApplicationProperties::setProxyAddress(const QString& value)
 {
-	m_proxyAdress = value;
-	emit proxyAdressChanged();
+	m_proxyAddress = value;
+	emit proxyAddressChanged();
+}
+
+int ApplicationProperties::proxyPort() const
+{
+	return m_proxyPort;
+}
+
+void ApplicationProperties::setProxyPort(int value)
+{
+	m_proxyPort = value;
+	emit proxyPortChanged();
 }
 
 bool ApplicationProperties::checkImages() const

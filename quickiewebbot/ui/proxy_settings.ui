@@ -132,7 +132,14 @@ Also if your proxy server requires authorization enter your name and password.</
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="usernameLineEdit"/>
+              <widget class="QLineEdit" name="usernameLineEdit">
+               <property name="placeholderText">
+                <string notr="true">myusername</string>
+               </property>
+               <property name="controlKey" stdset="0">
+                <string notr="true">proxyUsername</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -146,7 +153,14 @@ Also if your proxy server requires authorization enter your name and password.</
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="passwordLineEdit"/>
+              <widget class="QLineEdit" name="passwordLineEdit">
+               <property name="placeholderText">
+                <string notr="true">qwerty</string>
+               </property>
+               <property name="controlKey" stdset="0">
+                <string notr="true">proxyPassword</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -165,8 +179,11 @@ Also if your proxy server requires authorization enter your name and password.</
              </item>
              <item>
               <widget class="QLineEdit" name="proxyAddressLineEdit">
+               <property name="placeholderText">
+                <string notr="true">http://example.com</string>
+               </property>
                <property name="controlKey" stdset="0">
-                <string notr="true">proxyAdress</string>
+                <string notr="true">proxyAddress</string>
                </property>
               </widget>
              </item>
@@ -188,6 +205,9 @@ Also if your proxy server requires authorization enter your name and password.</
                </property>
                <property name="value">
                 <number>80</number>
+               </property>
+               <property name="controlKey" stdset="0">
+                <string notr="true">proxyPort</string>
                </property>
               </widget>
              </item>
