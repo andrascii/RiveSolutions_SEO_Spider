@@ -34,6 +34,7 @@ private:
 	void selectRow(const QPoint& point);
 
 	Q_SLOT void adjustColumnSize();
+	Q_SLOT void onAboutRepaintItems(const QModelIndexList& modelIndexes);
 
 private:
 	AbstractTableModel* m_model;

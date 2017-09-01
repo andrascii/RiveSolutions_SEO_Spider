@@ -147,10 +147,21 @@ void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcep
 
 	if (previousHoveredIndex.isValid())
 	{
-		invalidateCacheIndexes(m_model->modelIndexesForRow(previousHoveredIndex.row()));
+		const QModelIndexList& modelIndexes = m_model->modelIndexesForRow(previousHoveredIndex.row());
+
+		invalidateCacheIndexes(modelIndexes);
+
+		Q_EMIT repaintItems(modelIndexes);
 	}
 
-	invalidateCacheIndexes(m_model->modelIndexesForRow(m_hoveredIndex.row()));
+	if (m_hoveredIndex.isValid())
+	{
+		const QModelIndexList& modelIndexes = m_model->modelIndexesForRow(m_hoveredIndex.row());
+
+		invalidateCacheIndexes(m_model->modelIndexesForRow(m_hoveredIndex.row()));
+
+		Q_EMIT repaintItems(modelIndexes);
+	}
 }
 
 const QModelIndex& PageInfoStorageViewModel::hoveredIndex() const noexcept
