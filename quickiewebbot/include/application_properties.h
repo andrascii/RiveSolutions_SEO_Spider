@@ -19,6 +19,7 @@ class ApplicationProperties : public QObject
 	Q_PROPERTY(bool proxyNeedAuthorization READ proxyNeedAuthorization WRITE setProxyNeedAuthorization NOTIFY proxyNeedAuthorizationChanged);
 	Q_PROPERTY(QString proxyUsername READ proxyUsername WRITE setProxyUsername NOTIFY proxyUsernameChanged);
 	Q_PROPERTY(QString proxyPassword READ proxyPassword WRITE setProxyPassword NOTIFY proxyPasswordChanged);
+	Q_PROPERTY(QString proxyAdress READ proxyAdress WRITE setProxyAdress NOTIFY proxyAdressChanged);
 
 	//
 	// Web crawler properties
@@ -81,6 +82,10 @@ public:
 	const QString& proxyPassword() const;
 	Q_SLOT void setProxyPassword(const QString& value);
 	Q_SIGNAL void proxyPasswordChanged();
+
+	const QString& proxyAdress() const;
+	Q_SLOT void setProxyAdress(const QString& value);
+	Q_SIGNAL void proxyAdressChanged();
 
 	bool checkImages() const;
 	Q_SLOT void setCheckImages(bool value);
@@ -189,6 +194,8 @@ private:
 	bool m_proxyNeedAuthorization;
 	QString m_proxyUsername;
 	QString m_proxyPassword;
+	QString m_proxyAdress;
+	int m_proxyPort;
 
 	bool m_checkImages;
 	bool m_checkCSS;

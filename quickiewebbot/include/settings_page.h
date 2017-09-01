@@ -20,6 +20,8 @@ public:
 	virtual void reloadSettings() noexcept override;
 	virtual bool isAutoApply() const noexcept override;
 
+	void setSomethingChanged(bool val) noexcept;
+
 	Q_SLOT void somethingChangedSlot();
 	Q_SIGNAL void somethingChangedSignal();
 

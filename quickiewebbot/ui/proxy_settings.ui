@@ -164,7 +164,11 @@ Also if your proxy server requires authorization enter your name and password.</
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="proxyAddressLineEdit"/>
+              <widget class="QLineEdit" name="proxyAddressLineEdit">
+               <property name="controlKey" stdset="0">
+                <string notr="true">proxyAdress</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>

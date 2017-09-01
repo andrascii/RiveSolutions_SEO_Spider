@@ -14,6 +14,7 @@ ApplicationProperties::ApplicationProperties(QObject* parent)
 	, m_maxH2LengthChars(50)
 	, m_maxImageAltTextChars(100)
 	, m_maxImageSize(100)
+	, m_proxyAdress("http://example.com")
 {
 }
 
@@ -70,6 +71,17 @@ void ApplicationProperties::setProxyPassword(const QString& value)
 {
 	m_proxyPassword = value;
 	emit proxyPasswordChanged();
+}
+
+const QString& ApplicationProperties::proxyAdress() const
+{
+	return m_proxyAdress;
+}
+
+void ApplicationProperties::setProxyAdress(const QString& value)
+{
+	m_proxyAdress = value;
+	emit proxyAdressChanged();
 }
 
 bool ApplicationProperties::checkImages() const

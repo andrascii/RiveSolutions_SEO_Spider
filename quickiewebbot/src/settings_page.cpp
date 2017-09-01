@@ -3,6 +3,7 @@
 #include "settings_page.h"
 #include "icontrol_adaptor.h"
 #include "control_adaptor_check_box.h"
+#include "control_adaptor_line_edit.h"
 
 namespace QuickieWebBot
 {
@@ -44,19 +45,39 @@ void SettingsPage::applyChanges() noexcept
 	}
 
 	m_changedSettingsKeys.clear();
-	m_somethingChanged = false;
+	setSomethingChanged(false);
 }
 
 void SettingsPage::reloadSettings() noexcept
 {
+	INFOLOG << "Trying reload settings for " << this->windowTitle();
 
+	if (m_somethingChanged)
+	{
+		return;
+	}
+
+	for (auto controlAdaptor : m_controlAdaptors)
+	{
+		QVariant propertyValue = theApp->properties()->property(controlAdaptor.first.toLatin1().constData());
+		controlAdaptor.second->setValue(propertyValue);
+	}
+		
+	setSomethingChanged(false);
+	INFOLOG << "Settings reloaded for " << this->windowTitle();
 }
+
 
 bool SettingsPage::isAutoApply() const noexcept
 {
 	return m_isAutoApply;
 }
  
+void SettingsPage::setSomethingChanged(bool val) noexcept
+{
+	m_somethingChanged = val;
+}
+
 void SettingsPage::init()
 {
 	registerMetaTypes();
@@ -80,7 +101,8 @@ void SettingsPage::init()
 			continue;
 		}
 
-		QVariant propertyValue = theApp->properties()->property(controlKey.constData()).isValid();
+		
+		QVariant propertyValue = theApp->properties()->property(controlKey.constData());
 
 		if (!propertyValue.isValid())
 		{
@@ -104,6 +126,7 @@ void SettingsPage::init()
 void SettingsPage::registerMetaTypes()
 {
 	qRegisterMetaType<ControlAdaptorQCheckBox>();
+	qRegisterMetaType<ControlAdaptorQLineEdit>();
 }
 
 void SettingsPage::somethingChangedSlot()
@@ -112,7 +135,7 @@ void SettingsPage::somethingChangedSlot()
 
 	m_changedSettingsKeys.push_back(sender()->property("controlKey").toString());
 
-	m_somethingChanged = true;
+	setSomethingChanged(true);
 	emit somethingChangedSignal();
 }
 
@@ -124,6 +147,8 @@ std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* con
 	const int type = QMetaType::type(controlStringType);
 
 	std::shared_ptr<IControlAdaptor> controlAdaptor{ static_cast<IControlAdaptor*>(QMetaType::create(type)) };
+
+	DEBUG_ASSERT((controlAdaptor != nullptr) && "Non registered control adaptor type.");
 
 	controlAdaptor->setControl(control);
 	controlAdaptor->connectChangesObserver(this);

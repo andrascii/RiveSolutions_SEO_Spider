@@ -18,11 +18,13 @@ private:
 	Q_SLOT void okButtonClicked();
 	Q_SLOT void cancelButtonClicked();
 	Q_SLOT void somethingChangedSlot();
+	Q_SLOT void reloadSettingsSlot();
 
 private:
 	void initialize();
-	void reloadSettings();
+	void uncheckChangedValues();
 	virtual void showEvent(QShowEvent* event);
+	virtual void hideEvent(QHideEvent* event);
 
 private:
 	Ui::ApplicationSettingsWidget m_ui;
