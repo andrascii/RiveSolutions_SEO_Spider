@@ -38,6 +38,9 @@ public:
 
 	virtual QObject* qobject() noexcept = 0;
 
+	// signal
+	virtual void repaintItems(const QModelIndexList& modelIndexes) const = 0;
+
 protected:
 	enum RendererType
 	{

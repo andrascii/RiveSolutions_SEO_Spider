@@ -40,6 +40,8 @@ public:
 
 	virtual QObject* qobject() noexcept override;
 
+	Q_SIGNAL virtual void repaintItems(const QModelIndexList& modelIndexes) const override;
+
 private slots:
 	void onAttachedModelInternalDataChanged();
 

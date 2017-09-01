@@ -98,7 +98,16 @@ void TableView::setContextMenu(QMenu* menu) noexcept
 
 void TableView::setViewModel(IViewModel* modelView) noexcept
 {
+	if (m_viewModel)
+	{
+		disconnect(m_viewModel->qobject(), SIGNAL(repaintItems(const QModelIndexList&)), 
+			this, SLOT(onAboutRepaintItems(const QModelIndexList&)));
+	}
+
 	m_viewModel = modelView;
+
+	VERIFY(connect(m_viewModel->qobject(), SIGNAL(repaintItems(const QModelIndexList&)),
+		this, SLOT(onAboutRepaintItems(const QModelIndexList&))));
 
 	QuickieWebBotHelpers::safe_runtime_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
 }
@@ -155,6 +164,24 @@ void TableView::adjustColumnSize()
 	{
 		IResizePolicy* prevPolicy = m_model->resizePolicy();
 		m_model->resizePolicy()->init(this, prevPolicy);
+	}
+}
+
+void TableView::onAboutRepaintItems(const QModelIndexList& modelIndexes)
+{
+	if (!isVisible())
+	{
+		return;
+	}
+
+	foreach(const QModelIndex& index, modelIndexes)
+	{
+		if (!index.isValid())
+		{
+			continue;
+		}
+
+		update(index);
 	}
 }
 
