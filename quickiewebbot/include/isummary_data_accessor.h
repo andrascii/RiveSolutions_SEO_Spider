@@ -1,6 +1,7 @@
 #pragma once
 
 #include "summary_category_item.h"
+#include "data_collection_groups_factory.h"
 
 namespace QuickieWebBot
 {
@@ -11,21 +12,26 @@ public:
 	virtual SummaryCategoryItem itemCategory(const QModelIndex& index) const noexcept = 0;
 
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept = 0;
-
-	virtual bool isHeaderItem(const QModelIndex& index) const noexcept = 0;
+	virtual bool isHeaderRow(int row) const noexcept = 0;
 
 	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept = 0;
 
 	virtual QVariant item(const QModelIndex& index) const noexcept = 0;
-
 	virtual QSize span(const QModelIndex& index) const noexcept = 0;
 
 	virtual int columnCount() const noexcept = 0;
-
 	virtual int rowCount() const noexcept = 0;
 
+	virtual void addGroup(AuditGroup group) noexcept = 0;
+
+	virtual const WebCrawler::DataCollection* dataCollection() const noexcept = 0;
 
 	virtual QObject* qobject() noexcept = 0;
+
+	virtual const DCStorageDescription* storageDescriptionByRow(int row) const noexcept = 0;
+	virtual const DCStorageGroupDescription* storageGroupDescriptionByRow(int row) const noexcept = 0;
+	virtual const DCStorageDescription* storageDescription(WebCrawler::DataCollection::StorageType type) const noexcept = 0;
+	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept = 0;
 
 	// signals
 

@@ -70,7 +70,7 @@ const QFont& SummaryViewModel::font(const QModelIndex& index) const noexcept
 
 	font.setBold(false);
 
-	if (m_model->dataAccessor()->isHeaderItem(index))
+	if (m_model->dataAccessor()->isHeaderRow(index.row()))
 	{
 		font.setBold(true);
 	}

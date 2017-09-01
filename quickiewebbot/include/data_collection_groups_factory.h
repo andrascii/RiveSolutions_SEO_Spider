@@ -5,6 +5,26 @@
 namespace QuickieWebBot
 {
 
+enum class AuditGroup
+{
+	//
+	// Problem groups
+	//
+	LinkAuditGroup,
+	TitleAuditGroup,
+	MetaDescriptionAuditGroup,
+	MetaKeywordAuditGroup,
+	H1AuditGroup,
+	H2AuditGroup,
+	ImageAuditGroup,
+
+	//
+	// Resources
+	//
+	InternalResourcesGroup,
+	ExternalResourcesGroup
+};
+
 // DC - DataCollection
 
 struct DCStorageDescription
@@ -16,26 +36,16 @@ struct DCStorageDescription
 struct DCStorageGroupDescription
 {
 	QString name;
+	AuditGroup group;
 	QVector<DCStorageDescription> descriptions;
 };
 
-enum class ProblemAuditGroups
-{
-	LinkProblems,
-	TitleProblems,
-	MetaDescriptionProblems,
-	MetaKeywordProblems,
-	H1Problems,
-	H2Problems,
-	ImageProblems
-};
-
-using DCStorageDescriptionPtr = std::shared_ptr<DCStorageGroupDescription>;
+using DCStorageGroupDescriptionPtr = std::shared_ptr<DCStorageGroupDescription>;
 
 class DataCollectionGroupsFactory
 {
 public:
-	DCStorageDescriptionPtr create(WebCrawler::DataCollection* dataCollection, ProblemAuditGroups problemsGroup);
+	DCStorageGroupDescriptionPtr create(WebCrawler::DataCollection* dataCollection, AuditGroup group);
 };
 
 }

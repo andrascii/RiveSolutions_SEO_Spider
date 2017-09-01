@@ -52,6 +52,14 @@ enum class SummaryCategoryItem
 	SummaryCategoryItemImageMissingAltText = WebCrawler::DataCollection::MissingAltTextImageStorageType,
 	SummaryCategoryItemImagesVeryLongAltText = WebCrawler::DataCollection::VeryLongAltTextImageStorageType,
 
+	SummaryCategoryItemHtmlResources = WebCrawler::DataCollection::HtmlResourcesStorageType,
+	SummaryCategoryItemImageResources = WebCrawler::DataCollection::ImageResourcesStorageType,
+	SummaryCategoryItemJavaScriptResources = WebCrawler::DataCollection::JavaScriptResourcesStorageType,
+	SummaryCategoryItemStyleSheetResources = WebCrawler::DataCollection::StyleSheetResourcesStorageType,
+	SummaryCategoryItemFlashResources = WebCrawler::DataCollection::FlashResourcesStorageType,
+	SummaryCategoryItemVideoResources = WebCrawler::DataCollection::VideoResourcesStorageType,
+	SummaryCategoryItemOtherResources = WebCrawler::DataCollection::OtherResourcesStorageType,
+
 	SummaryCategoryItemEnd = WebCrawler::DataCollection::EndEnumStorageType
 };
 

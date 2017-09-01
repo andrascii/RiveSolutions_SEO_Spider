@@ -37,6 +37,13 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 	switch (type)
 	{
 		case SummaryCategoryItem::SummaryCategoryItemAllPages:
+		case SummaryCategoryItem::SummaryCategoryItemHtmlResources:
+		case SummaryCategoryItem::SummaryCategoryItemImageResources:
+		case SummaryCategoryItem::SummaryCategoryItemJavaScriptResources:
+		case SummaryCategoryItem::SummaryCategoryItemStyleSheetResources:
+		case SummaryCategoryItem::SummaryCategoryItemFlashResources:
+		case SummaryCategoryItem::SummaryCategoryItemVideoResources:
+		case SummaryCategoryItem::SummaryCategoryItemOtherResources:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
 				<< PageInfo::UrlItemType

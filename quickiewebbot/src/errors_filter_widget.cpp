@@ -62,7 +62,9 @@ void ErrorsFilterWidget::initSummaryView()
 	SummaryDataAccessorFactory::DataAccessorType dataAccessorType = SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage;
 
 	SummaryModel* summaryModel = new SummaryModel(this);
-	summaryModel->setDataAccessor(theApp->summaryDataAccessorFactory()->create(dataAccessorType, dataCollection));
+	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, dataCollection);
+
+	summaryModel->setDataAccessor(summaryDataAccessor);
 
 	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);
 
