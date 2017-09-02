@@ -299,6 +299,11 @@ QuickieWebBot--SettingsPage QCheckBox
 	color: #494949;
 }
 
+QuickieWebBot--SettingsPage QLineEdit:hasFocus
+{
+	border-color: #61a032;
+}
+
 QuickieWebBot--SettingsPage QFrame#headerFrame
 {
 	min-height: 8em;

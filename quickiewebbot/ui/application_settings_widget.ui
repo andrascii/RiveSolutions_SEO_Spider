@@ -10,12 +10,6 @@
     <height>609</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="windowTitle">
    <string>Application settings</string>
   </property>
@@ -42,6 +36,9 @@
        <width>811</width>
        <height>16777215</height>
       </size>
+     </property>
+     <property name="currentRow">
+      <number>-1</number>
      </property>
     </widget>
    </item>
@@ -103,6 +100,15 @@
    </item>
    <item row="0" column="1" colspan="4">
     <widget class="QFrame" name="currentGroup">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -113,6 +119,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>propGroupsList</tabstop>
+  <tabstop>currentGroup</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+  <tabstop>applyButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

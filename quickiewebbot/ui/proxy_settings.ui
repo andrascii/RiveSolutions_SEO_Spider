@@ -179,6 +179,9 @@ Also if your proxy server requires authorization enter your name and password.</
              </item>
              <item>
               <widget class="QLineEdit" name="proxyAddressLineEdit">
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
                <property name="placeholderText">
                 <string notr="true">http://example.com</string>
                </property>
@@ -236,6 +239,15 @@ Also if your proxy server requires authorization enter your name and password.</
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>useProxyCheckBox</tabstop>
+  <tabstop>proxyAddressLineEdit</tabstop>
+  <tabstop>portSpinBox</tabstop>
+  <tabstop>proxyNeedAuthorizationCheckBox</tabstop>
+  <tabstop>usernameLineEdit</tabstop>
+  <tabstop>passwordLineEdit</tabstop>
+  <tabstop>pushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

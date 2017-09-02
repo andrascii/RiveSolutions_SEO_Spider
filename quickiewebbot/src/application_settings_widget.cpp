@@ -39,6 +39,7 @@ void ApplicationSettingsWidget::hideEvent(QHideEvent* event)
 	uncheckChangedValues();
 }
 
+
 void ApplicationSettingsWidget::uncheckChangedValues()
 {
 	m_somethingChanged = false;
