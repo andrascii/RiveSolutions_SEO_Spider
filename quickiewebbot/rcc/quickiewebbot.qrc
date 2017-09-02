@@ -18,5 +18,6 @@
 		<file>images/crawler-settings.png</file>
 		<file>images/proxy-settings.png</file>
 		<file>images/limits-settings.png</file>
+		<file>images/preferences-settings-icon.png</file>
     </qresource>
 </RCC>

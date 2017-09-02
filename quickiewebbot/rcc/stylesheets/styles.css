@@ -287,10 +287,10 @@ QScrollBar::sub-page:vertical
 QuickieWebBot--SettingsPage
 {
 	background: #343B49;
-	min-width: 40em;
-	max-width: 40em;
+	min-width: 20em;
+	/*max-width: 40em;*/
 	min-height: 28em;
-	max-height: 28em;
+	max-height: 45em;
 }
 
 QuickieWebBot--SettingsPage QLabel,
@@ -299,7 +299,7 @@ QuickieWebBot--SettingsPage QCheckBox
 	color: #494949;
 }
 
-QuickieWebBot--SettingsPage QLineEdit:hasFocus
+QuickieWebBot--SettingsPage QLineEdit:focus
 {
 	border-color: #61a032;
 }
@@ -336,13 +336,25 @@ QuickieWebBot--ApplicationSettingsWidget QCheckBox
 	color: #494949;
 }
 
+QuickieWebBot--ApplicationSettingsWidget QPushButton
+{
+	padding: 0.05em;
+}
+
 QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:disabled
 {
 	color: rgb(255, 255, 255);
 }
 QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:enabled
 {
-	color: rgb(0, 255, 0);
+	color: white;
+    background-color: #61a032;
+    padding: 0.05em;
+}
+
+QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:enabled:pressed
+{
+    background-color: #61b012;
 }
 
 /*/////////////////////////////// Splitters ///////////////////////////////*/
