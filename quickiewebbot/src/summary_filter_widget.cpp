@@ -1,4 +1,4 @@
-#include "errors_filter_widget.h"
+#include "summary_filter_widget.h"
 #include "application.h"
 #include "table_view.h"
 #include "summary_model.h"
@@ -11,14 +11,13 @@
 #include "model_controller.h"
 #include "quickie_web_bot_helpers.h"
 #include "summary_category_item.h"
-#include "summary_data_accessor_factory.h"
 
 namespace QuickieWebBot
 {
 
-ErrorsFilterWidget::ErrorsFilterWidget(QWidget* parent)
+SummaryFilterWidget::SummaryFilterWidget(QWidget* parent)
 	: QFrame(parent)
-	, m_ui(new Ui::ErrorsFilterWidget)
+	, m_ui(new Ui::SummaryFilterWidget)
 {
 	init();
 
@@ -26,7 +25,21 @@ ErrorsFilterWidget::ErrorsFilterWidget(QWidget* parent)
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
-void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void SummaryFilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
+{
+	WebCrawler::DataCollection* dataCollection = theApp->modelController()->data();
+
+	SummaryModel* summaryModel = 
+		QuickieWebBotHelpers::safe_runtime_static_cast<SummaryModel*>(m_ui->summaryTableView->model());
+
+	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, dataCollection);
+
+	summaryModel->setDataAccessor(summaryDataAccessor);
+
+	m_ui->summaryTableView->initSpan();
+}
+
+void SummaryFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
 	if (!selected.indexes().size())
 	{
@@ -46,7 +59,7 @@ void ErrorsFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& sel
 	m_ui->summaryDetailsTableView->viewModel()->invalidateRenderersCache();
 }
 
-void ErrorsFilterWidget::init()
+void SummaryFilterWidget::init()
 {
 	m_ui->setupUi(this);
 
@@ -54,18 +67,11 @@ void ErrorsFilterWidget::init()
 	initDetailsView();
 }
 
-void ErrorsFilterWidget::initSummaryView()
+void SummaryFilterWidget::initSummaryView()
 {
 	m_ui->summaryTableView->resize(QuickieWebBotHelpers::pointsToPixels(100), m_ui->summaryTableView->height());
 
-	WebCrawler::DataCollection* dataCollection = theApp->modelController()->data();
-	SummaryDataAccessorFactory::DataAccessorType dataAccessorType = SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage;
-
 	SummaryModel* summaryModel = new SummaryModel(this);
-	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, dataCollection);
-
-	summaryModel->setDataAccessor(summaryDataAccessor);
-
 	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);
 
 	m_ui->summaryTableView->setModel(summaryModel);
@@ -76,7 +82,7 @@ void ErrorsFilterWidget::initSummaryView()
 	m_ui->splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
 }
 
-void ErrorsFilterWidget::initDetailsView()
+void SummaryFilterWidget::initDetailsView()
 {
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
 	PageInfoStorageViewModel* viewModel = new PageInfoStorageViewModel(model, this);

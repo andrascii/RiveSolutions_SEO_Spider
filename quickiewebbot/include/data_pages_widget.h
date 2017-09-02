@@ -3,7 +3,7 @@
 namespace QuickieWebBot
 {
 
-class ErrorsFilterWidget;
+class SummaryFilterWidget;
 
 class DataPagesWidget : public QFrame
 {

@@ -23,6 +23,8 @@ public:
 	void setViewModel(IViewModel* modelView) noexcept;
 	IViewModel* viewModel() const noexcept;
 
+	void initSpan();
+
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
 	virtual void resizeEvent(QResizeEvent* event) override;
@@ -30,7 +32,6 @@ protected:
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
 private:
-	void initSpan();
 	void selectRow(const QPoint& point);
 
 	Q_SLOT void adjustColumnSize();

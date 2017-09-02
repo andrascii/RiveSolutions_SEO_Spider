@@ -1,7 +1,7 @@
 #include "data_pages_widget.h"
 #include "application.h"
 #include "table_view.h"
-#include "errors_filter_widget.h"
+#include "summary_filter_widget.h"
 #include "page_info_storage_model.h"
 #include "page_info_storage_view_model.h"
 #include "storage_adaptor.h"
@@ -162,7 +162,12 @@ void DataPagesWidget::initializeStackedWidget()
 {
 	m_stackedWidget = new QStackedWidget(this);
 	
-	ErrorsFilterWidget* errorsFilterWidget = new ErrorsFilterWidget(m_stackedWidget);
+	SummaryFilterWidget* errorsFilterWidget = new SummaryFilterWidget(m_stackedWidget);
+	errorsFilterWidget->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
+
+	SummaryFilterWidget* allResourcesPage = new SummaryFilterWidget(m_stackedWidget);
+	allResourcesPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
+
 	TableView* crawlingTableView = new TableView(m_stackedWidget);
 
 	PageInfoStorageModel* model = new PageInfoStorageModel(this);
@@ -175,6 +180,7 @@ void DataPagesWidget::initializeStackedWidget()
 	crawlingTableView->setContextMenu(new ContextMenuDataCollectionRow(crawlingTableView));
 
 	m_pageIndexes[Page::SeoAnalysisPage] = m_stackedWidget->addWidget(errorsFilterWidget);
+	m_pageIndexes[Page::AllResourcesPage] = m_stackedWidget->addWidget(allResourcesPage);
 	m_pageIndexes[Page::AllPagesPage] = m_stackedWidget->addWidget(crawlingTableView);
 }
 

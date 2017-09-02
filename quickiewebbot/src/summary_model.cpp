@@ -26,6 +26,8 @@ IResizePolicy* SummaryModel::resizePolicy() const noexcept
 
 void SummaryModel::setDataAccessor(ISummaryDataAccessor* accessor) noexcept
 {
+	beginResetModel();
+
 	if (dataAccessor())
 	{
 		disconnect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)),
@@ -36,6 +38,8 @@ void SummaryModel::setDataAccessor(ISummaryDataAccessor* accessor) noexcept
 
 	VERIFY(connect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)),
 		this, SLOT(formActualUpdateDataSignal(int, int, Qt::ItemDataRole))));
+
+	endResetModel();
 }
 
 ISummaryDataAccessor* SummaryModel::dataAccessor() const noexcept
