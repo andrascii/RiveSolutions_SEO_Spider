@@ -159,6 +159,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>limitURILength</tabstop>
+  <tabstop>limitSearch</tabstop>
+  <tabstop>responseTimeout</tabstop>
+  <tabstop>maxRedirects</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
