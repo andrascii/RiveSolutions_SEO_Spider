@@ -105,6 +105,11 @@ using std::size_t;
 #endif
 
 #define INFOLOG		WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 #define WARNINGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 #define ERRORLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+
+#ifdef QT_DEBUG
+#define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#else
+#define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::EmptyMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#endif
