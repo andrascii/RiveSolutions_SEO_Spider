@@ -13,7 +13,8 @@ public:
 		InformationMessageType,
 		DebugMessageType,
 		WarningMessageType,
-		ErrorMessageType
+		ErrorMessageType,
+		EmptyMessageType
 	};
 
 	class LoggerDataStream 
@@ -81,6 +82,11 @@ public:
 	template<typename ... StringPack>
 	void log(MessageType type, QString func, QString file, int line, const StringPack&... textPack)
 	{
+		if (type == EmptyMessageType)
+		{
+			return;
+		}
+
 		std::lock_guard<std::mutex> locker(m_mutex);
 
 		if (!m_socket->isOpen())
