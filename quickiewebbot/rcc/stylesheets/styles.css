@@ -54,12 +54,13 @@ QPushButton,
 QComboBox,
 QSpinBox
 {
+	border-radius: 2px;
 	border: 0.05em solid #c3c3c3;
 }
 
 QuickieWebBot--TableView
 {
-	border: 0.05em solid #546E7A;
+	border: 0.05em solid #D6D6D6;
 }
 
 /*////////////////////////////////// Line edit and spin box //////////////////////////*/
@@ -145,6 +146,7 @@ QComboBox::down-arrow
 QuickieWebBot--ControlPanelWidget
 {
 	min-height: 2.5em;
+	min-width: 40em;
 }
 
 QStackedWidget
@@ -407,7 +409,7 @@ QPushButton[groupButton="right"]
 QWidget#NavigationPanel
 {
 	background-color: #263238;
-	border-right: 0.1em solid #546E7A;
+	border-right: 0.1em solid #d6d6d6;
 }
 
 QWidget#NavigationPanel QPushButton
@@ -449,14 +451,14 @@ QWidget#DebugWebPageInfoWidget QWidget
 
 QuickieWebBot--TitledWidget
 {
-	background-color: #E7E7E7;
+	background-color: #e7e7e7;
 }
 
 QuickieWebBot--TitledWidget QFrame#TitleFrame
 {
 	min-height: 3em;
-	background-color: #263238;
-	border-bottom: 0.1em solid #546E7A;
+	background-color: #C0C0C0;
+	border-bottom: 0.1em solid #d6d6d6;/*#263238;*/
 }
 
 /*/////////////////////////////// DataPagesWidget ///////////////////////////////*/

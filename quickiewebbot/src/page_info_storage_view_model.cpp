@@ -18,8 +18,8 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	: QObject(parent)
 	, m_model(model)
 	, m_hoveredIndex(QModelIndex())
-	, m_selectionBgColor(97, 160, 50, 200)
-	, m_hoveredBgColor("#a5a5a5")
+	, m_selectionBgColor("#C0C0C0")
+	, m_hoveredBgColor("#F3F3F3")
 	, m_bgColor(Qt::white)
 {
 	initializeRenderers();
