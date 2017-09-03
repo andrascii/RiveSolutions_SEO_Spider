@@ -56,8 +56,6 @@ void ControlPanelWidget::initialize()
 
 	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
 
-	m_ui.viewTypeComboBox->addItem(tr("List"));
-	m_ui.viewTypeComboBox->addItem(tr("Tree"));
 }
 
 }

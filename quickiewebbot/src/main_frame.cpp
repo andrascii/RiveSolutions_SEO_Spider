@@ -11,6 +11,8 @@
 #include "main_frame_menu_bar.h"
 #include "service_locator.h"
 #include "settings_page_registry.h"
+#include "titled_widget.h"
+
 
 namespace QuickieWebBot
 {
@@ -47,6 +49,7 @@ void MainFrame::init()
 	setWindowIcon(QIcon(QStringLiteral(":/images/robot.ico")));
 
 	setMenuBar(new MainFrameMenuBar(this));
+	setStatusBar(new QStatusBar(this));
 }
 
 void MainFrame::createActions()
@@ -84,9 +87,10 @@ void MainFrame::createActions()
 void MainFrame::createAndSetCentralWidget()
 {
 	QWidget* centralWidget = new QWidget(this);
-	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 
-	layout->addWidget(new ControlPanelWidget(centralWidget));
+	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
+	layout->setSpacing(0);
+
 	layout->addWidget(new DataPagesWidget(centralWidget));
 
 	centralWidget->setLayout(layout);

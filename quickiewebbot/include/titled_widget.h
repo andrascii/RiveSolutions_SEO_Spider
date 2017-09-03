@@ -10,7 +10,7 @@ class TitledWidget : public QFrame
 public:
 	TitledWidget(QWidget* parent = nullptr);
 
-	void addTitleWidget(QWidget* widget, Qt::AlignmentFlag align);
+	void addTitleWidget(QWidget* widget, Qt::AlignmentFlag align = Qt::AlignLeft);
 	void setContentWidget(QWidget* widget);
 
 private:

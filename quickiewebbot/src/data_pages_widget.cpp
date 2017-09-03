@@ -11,6 +11,7 @@
 #include "data_collection.h"
 #include "quickie_web_bot_helpers.h"
 #include "titled_widget.h"
+#include "control_panel_widget.h"
 
 namespace QuickieWebBot
 {
@@ -21,9 +22,15 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 	initializeNavigationPanelWidget();
 	initializeStackedWidget();
 
+	TitledWidget* titledStackedWidget = new TitledWidget(this);
+	titledStackedWidget->addTitleWidget(new ControlPanelWidget(this));
+	titledStackedWidget->setContentWidget(m_stackedWidget);
+
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
+	horizontalLayout->setSpacing(0);
+
 	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
-	horizontalLayout->addWidget(m_stackedWidget);
+	horizontalLayout->addWidget(titledStackedWidget);
 
 	setLayout(horizontalLayout);
 }
@@ -79,8 +86,13 @@ void DataPagesWidget::handleNavigationPanelButtonClick()
 
 void DataPagesWidget::initializeNavigationPanelWidget()
 {
+	QFont font;
+	font.setBold(true);
+	font.setWeight(75);
+
 	m_navigationPanel.navigationPanelWidget = new QWidget(this);
 	m_navigationPanel.verticalMainLayout = new QVBoxLayout(m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.verticalMainLayout->setContentsMargins(0, 0, -1, 0);
 
 	m_navigationPanel.siteStructurePanelWidget = new QWidget(m_navigationPanel.navigationPanelWidget);
 	m_navigationPanel.verticalSubbuttonsLayout = new QVBoxLayout(m_navigationPanel.siteStructurePanelWidget);
@@ -88,26 +100,33 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 
 	m_navigationPanel.pushButtons[Page::SiteStructurePanelPage] = 
 		new QPushButton(QStringLiteral("Site Structure"), m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.pushButtons[Page::SiteStructurePanelPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::SeoAnalysisPage] = 
 		new QPushButton(QStringLiteral("Seo Analysis"), m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.pushButtons[Page::SeoAnalysisPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::AllPagesPage] = 
 		new QPushButton(QStringLiteral("All Site Pages"), m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.pushButtons[Page::AllPagesPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::AllResourcesPage] = 
 		new QPushButton(QStringLiteral("All Resources"), m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.pushButtons[Page::AllResourcesPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::DomainMetricsPage] = 
 		new QPushButton(QStringLiteral("Domain Metrics"), m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.pushButtons[Page::DomainMetricsPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::ReportsPage] = 
 		new QPushButton(QStringLiteral("Reports"), m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.pushButtons[Page::ReportsPage]->setFont(font);
 
 
 	m_navigationPanel.pushButtons[Page::SeoAnalysisPage]->setProperty("subButton", true);
 	m_navigationPanel.pushButtons[Page::AllPagesPage]->setProperty("subButton", true);
 	m_navigationPanel.pushButtons[Page::AllResourcesPage]->setProperty("subButton", true);
+
 	m_navigationPanel.pushButtons[Page::SeoAnalysisPage]->setProperty("selected", true);
 	m_prevButton = m_navigationPanel.pushButtons[Page::SeoAnalysisPage];
 
@@ -161,7 +180,7 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 void DataPagesWidget::initializeStackedWidget()
 {
 	m_stackedWidget = new QStackedWidget(this);
-	
+
 	SummaryFilterWidget* errorsFilterWidget = new SummaryFilterWidget(m_stackedWidget);
 	errorsFilterWidget->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 

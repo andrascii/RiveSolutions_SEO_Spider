@@ -8,7 +8,7 @@ namespace QuickieWebBot
 class IControlAdaptor;
 
 class SettingsPage 
-	: public QWidget
+	: public QFrame
 	, public ISettingsPage
 {
 	Q_OBJECT

@@ -10,7 +10,7 @@ namespace QuickieWebBot
 {
 
 SettingsPage::SettingsPage(bool isAutoApply, QWidget* parent)
-	: QWidget(parent)
+	: QFrame(parent)
 	, m_isAutoApply(isAutoApply)
 	, m_somethingChanged(false)
 {
