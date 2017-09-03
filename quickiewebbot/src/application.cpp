@@ -13,6 +13,7 @@
 #include "ui_crawler_settings.h"
 #include "ui_proxy_settings.h"
 #include "ui_limits_settings.h"
+#include "ui_preferences_settings.h"
 
 namespace QuickieWebBot
 {
@@ -92,6 +93,7 @@ void Application::registerSettingsPages() const
 	SettingsPageImpl<Ui_CrawlerSettings>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettings));
 	SettingsPageImpl<Ui_ProxySettings>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettings));
 	SettingsPageImpl<Ui_LimitsSettings>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettings));
+	SettingsPageImpl<Ui_PreferencesSettings>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettings));
 }
 
 void Application::initialize() noexcept
