@@ -5,6 +5,7 @@
 #include "text_renderer.h"
 #include "background_renderer.h"
 #include "selection_background_renderer.h"
+#include "grid_line_renderer.h"
 #include "page_info_storage_model.h"
 #include "page_info_storage_view_model.h"
 #include "quickie_web_bot_helpers.h"
@@ -33,9 +34,14 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
 }
 
-int PageInfoStorageViewModel::marginTop(const QModelIndex&) const noexcept
+int PageInfoStorageViewModel::marginTop(const QModelIndex& index) const noexcept
 {
-	return QuickieWebBotHelpers::pointsToPixels(4);
+	if (index.column() == 0)
+	{
+		return QuickieWebBotHelpers::pointsToPixels(4);
+	}
+
+	return QuickieWebBotHelpers::pointsToPixels(6);
 }
 
 int PageInfoStorageViewModel::marginBottom(const QModelIndex&) const noexcept
@@ -43,9 +49,14 @@ int PageInfoStorageViewModel::marginBottom(const QModelIndex&) const noexcept
 	return QuickieWebBotHelpers::pointsToPixels(4);
 }
 
-int PageInfoStorageViewModel::marginLeft(const QModelIndex&) const noexcept
+int PageInfoStorageViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
-	return QuickieWebBotHelpers::pointsToPixels(2);
+	if (index.column() == 0)
+	{
+		return QuickieWebBotHelpers::pointsToPixels(2);
+	}
+
+	return QuickieWebBotHelpers::pointsToPixels(6);
 }
 
 int PageInfoStorageViewModel::marginRight(const QModelIndex&) const noexcept
@@ -87,20 +98,18 @@ const QColor& PageInfoStorageViewModel::backgroundColor(const QModelIndex&) cons
 
 const QFont& PageInfoStorageViewModel::font(const QModelIndex& index) const noexcept
 {
-	static QFont font;
-
-	font.setBold(false);
-
-	if (m_model->itemType(index) == PageInfo::UrlItemType)
-	{
-		font.setBold(true);
-	}
+	static QFont font = Application::font();
 
 	return font;
 }
 
-Qt::AlignmentFlag PageInfoStorageViewModel::textAlignment(const QModelIndex&) const noexcept
+Qt::AlignmentFlag PageInfoStorageViewModel::textAlignment(const QModelIndex& index) const noexcept
 {
+	if (index.column() == 0)
+	{
+		return Qt::AlignCenter;
+	}
+
 	return Qt::AlignLeft;
 }
 
@@ -108,10 +117,10 @@ QColor PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexc
 {
 	if (m_model->itemType(index) == PageInfo::UrlItemType)
 	{
-		return QColor("#6F99C8");
+		return QColor("#1754A8");
 	}
 
-	return QColor("#02072E");
+	return QColor("#000000");
 }
 
 void PageInfoStorageViewModel::invalidateRenderersCache() const noexcept
@@ -125,13 +134,14 @@ void PageInfoStorageViewModel::invalidateRenderersCache() const noexcept
 QList<const IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
 	const IRenderer* renderer = m_model->itemType(index) == PageInfo::UrlItemType ?
-		m_renderers.find(IViewModel::UrlRendererType)->second.get() :
-		m_renderers.find(IViewModel::PlainTextRendererType)->second.get();
+		m_renderers.find(UrlRendererType)->second.get() :
+		m_renderers.find(PlainTextRendererType)->second.get();
 
 	return QList<const IRenderer*>()
-		<< m_renderers.find(IViewModel::BackgroundRendererType)->second.get()
-		<< m_renderers.find(IViewModel::SelectionBackgroundRendererType)->second.get()
-		<< renderer;
+		<< m_renderers.find(BackgroundRendererType)->second.get()
+		<< m_renderers.find(SelectionBackgroundRendererType)->second.get()
+		<< renderer
+		<< m_renderers.find(GridLineRendererType)->second.get();
 }
 
 void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
@@ -176,7 +186,7 @@ QObject* PageInfoStorageViewModel::qobject() noexcept
 
 void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
 {
-	m_renderers[IViewModel::PlainTextRendererType]->setCacheSize(static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
+	m_renderers[PlainTextRendererType]->setCacheSize(static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
 }
 
 void PageInfoStorageViewModel::invalidateCacheIndexes(const QModelIndexList& indexesList)
@@ -197,17 +207,11 @@ void PageInfoStorageViewModel::invalidateCacheIndex(const QModelIndex& index)
 
 void PageInfoStorageViewModel::initializeRenderers()
 {
-	m_renderers[IViewModel::PlainTextRendererType] =
-		std::make_unique<TextRenderer>(this, static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
-
-	m_renderers[IViewModel::UrlRendererType] =
-		std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0)));
-
-	m_renderers[IViewModel::SelectionBackgroundRendererType] =
-		std::make_unique<SelectionBackgroundRenderer>(this);
-
-	m_renderers[IViewModel::BackgroundRendererType] = 
-		std::make_unique<BackgroundRenderer>(this);
+	m_renderers[PlainTextRendererType] = std::make_unique<TextRenderer>(this, static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
+	m_renderers[UrlRendererType] = std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0)));
+	m_renderers[SelectionBackgroundRendererType] = std::make_unique<SelectionBackgroundRenderer>(this);
+	m_renderers[BackgroundRendererType] = std::make_unique<BackgroundRenderer>(this);
+	m_renderers[GridLineRendererType] = std::make_unique<GridLineRenderer>(this, QColor("#F1F1F1")); // #F1F1F1
 }
 
 }

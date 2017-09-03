@@ -95,9 +95,9 @@ void SummaryViewModel::invalidateRenderersCache() const noexcept
 QList<const IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
 {
 	return QList<const IRenderer*>()
-		<< m_renderers.find(IViewModel::BackgroundRendererType)->second.get()
-		<< m_renderers.find(IViewModel::SelectionBackgroundRendererType)->second.get()
-		<< m_renderers.find(IViewModel::PlainTextRendererType)->second.get();
+		<< m_renderers.find(BackgroundRendererType)->second.get()
+		<< m_renderers.find(SelectionBackgroundRendererType)->second.get()
+		<< m_renderers.find(PlainTextRendererType)->second.get();
 }
 
 void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
@@ -160,14 +160,9 @@ void SummaryViewModel::invalidateCacheIndex(const QModelIndex& index)
 
 void SummaryViewModel::initializeRenderers()
 {
-	m_renderers[IViewModel::PlainTextRendererType] =
-		std::make_unique<TextRenderer>(this);
-
-	m_renderers[IViewModel::SelectionBackgroundRendererType] =
-		std::make_unique<SelectionBackgroundRenderer>(this);
-
-	m_renderers[IViewModel::BackgroundRendererType] =
-		std::make_unique<BackgroundRenderer>(this, m_model->rowCount() * m_model->columnCount());
+	m_renderers[PlainTextRendererType] = std::make_unique<TextRenderer>(this);
+	m_renderers[SelectionBackgroundRendererType] = std::make_unique<SelectionBackgroundRenderer>(this);
+	m_renderers[BackgroundRendererType] = std::make_unique<BackgroundRenderer>(this, m_model->rowCount() * m_model->columnCount());
 }
 
 QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept

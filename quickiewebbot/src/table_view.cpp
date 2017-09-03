@@ -24,6 +24,7 @@ TableView::TableView(QWidget* parent)
 
 	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	setSelectionModel(new SelectionModel(this));
+	setShowGrid(false);
 }
 
 void TableView::setModel(QAbstractItemModel* model)

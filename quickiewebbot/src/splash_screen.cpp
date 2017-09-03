@@ -1,6 +1,7 @@
 #include "application.h"
 #include "software_branding.h"
 #include "splash_screen.h"
+#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -65,7 +66,16 @@ void SplashScreen::paintEvent(QPaintEvent* event)
 	Q_UNUSED(event);
 
 	QPainter painter(this);
+
+	QPen pen(QColor("#D6D6D6"));
+	pen.setWidth(QuickieWebBotHelpers::pointsToPixels(2));
+
+	painter.setPen(pen);
+
+	QRect adjustedRect = rect().adjusted(0, 0, -1, -1);
+
 	painter.drawPixmap(rect(), m_brandingLogoImage);
+	painter.drawRect(adjustedRect);
 }
 
 }

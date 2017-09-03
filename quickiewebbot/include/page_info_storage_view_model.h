@@ -51,6 +51,16 @@ private:
 	void initializeRenderers();
 
 private:
+	enum RendererType
+	{
+		PlainTextRendererType,
+		UrlRendererType,
+		BackgroundRendererType,
+		SelectionBackgroundRendererType,
+		GridLineRendererType
+	};
+
+private:
 	PageInfoStorageModel* m_model;
 
 	std::map<RendererType, std::unique_ptr<IRenderer>> m_renderers;
