@@ -10,8 +10,7 @@ namespace QuickieWebBot
 {
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
-	: m_model(model)
-	, m_hoveredIndex(QModelIndex())
+	: AbstractViewModel(model, parent)
 	, m_selectionBgColor("#C0C0C0")
 	, m_hoveredBgColor("#F3F3F3")
 	, m_bgColor(Qt::transparent)
@@ -41,7 +40,9 @@ int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
 
 const QPixmap& SummaryViewModel::itemPixmap(const QModelIndex& index) const noexcept
 {
-	return m_model->dataAccessor()->pixmap(index);
+	const SummaryModel* model = QuickieWebBotHelpers::safe_runtime_static_cast<const SummaryModel*>(AbstractViewModel::model());
+
+	return model->dataAccessor()->pixmap(index);
 }
 
 QRect SummaryViewModel::itemPixmapPosition(const QModelIndex&) const noexcept
@@ -66,11 +67,13 @@ const QColor& SummaryViewModel::backgroundColor(const QModelIndex&) const noexce
 
 const QFont& SummaryViewModel::font(const QModelIndex& index) const noexcept
 {
+	const SummaryModel* model = QuickieWebBotHelpers::safe_runtime_static_cast<const SummaryModel*>(AbstractViewModel::model());
+
 	static QFont font;
 
 	font.setBold(false);
 
-	if (m_model->dataAccessor()->isHeaderRow(index.row()))
+	if (model->dataAccessor()->isHeaderRow(index.row()))
 	{
 		font.setBold(true);
 	}
@@ -88,121 +91,45 @@ Qt::AlignmentFlag SummaryViewModel::textAlignment(const QModelIndex& index) cons
 	return Qt::AlignLeft;
 }
 
-void SummaryViewModel::invalidateRenderersCache() const noexcept
-{
-}
-
 QList<const IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
 {
 	return QList<const IRenderer*>()
-		<< m_renderers.find(BackgroundRendererType)->second.get()
-		<< m_renderers.find(SelectionBackgroundRendererType)->second.get()
-		<< m_renderers.find(PlainTextRendererType)->second.get();
-}
-
-void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
-{
-	if (index == m_hoveredIndex)
-	{
-		return;
-	}
-	
-	const QModelIndex previousHoveredIndex = m_hoveredIndex;
-
-	m_hoveredIndex = index;
-
-	if (previousHoveredIndex.isValid())
-	{
-		const QModelIndexList& modelIndexes = m_model->modelIndexesForRow(previousHoveredIndex.row());
-
-		invalidateCacheIndexes(modelIndexes);
-
-		Q_EMIT repaintItems(modelIndexes);
-	}
-
-	if (m_hoveredIndex.isValid())
-	{
-		const QModelIndexList& modelIndexes = m_model->modelIndexesForRow(m_hoveredIndex.row());
-
-		invalidateCacheIndexes(m_model->modelIndexesForRow(m_hoveredIndex.row()));
-
-		Q_EMIT repaintItems(modelIndexes);
-	}
-
-	DEBUGLOG << "current hovered row" << m_hoveredIndex.row();
-}
-
-const QModelIndex& SummaryViewModel::hoveredIndex() const noexcept
-{
-	return m_hoveredIndex;
-}
-
-QObject* SummaryViewModel::qobject() noexcept
-{
-	return this;
-}
-
-void SummaryViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept
-{
-	for (int i = 0; i < modelIndexes.size(); ++i)
-	{
-		if (!m_selectedModelIndexes.contains(modelIndexes[i]))
-		{
-			m_selectedModelIndexes.append(modelIndexes[i]);
-		}
-	}
-
-	invalidateCacheIndexes(m_selectedModelIndexes);
-
-	Q_EMIT repaintItems(m_selectedModelIndexes);
-}
-
-void SummaryViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept
-{
-	for (int i = 0; i < modelIndexes.size(); ++i)
-	{
-		if (m_selectedModelIndexes.contains(modelIndexes[i]))
-		{
-			m_selectedModelIndexes.removeOne(modelIndexes[i]);
-		}
-	}
-
-	invalidateCacheIndexes(m_selectedModelIndexes);
-
-	Q_EMIT repaintItems(m_selectedModelIndexes);
-}
-
-const QModelIndexList& SummaryViewModel::selectedIndexes() const noexcept
-{
-	return m_selectedModelIndexes;
-}
-
-void SummaryViewModel::invalidateCacheIndexes(const QModelIndexList& indexesList)
-{
-	foreach(const QModelIndex& index, indexesList)
-	{
-		invalidateCacheIndex(index);
-	}
-}
-
-void SummaryViewModel::invalidateCacheIndex(const QModelIndex& index)
-{
-	for (const auto& pair : m_renderers)
-	{
-		pair.second->invalidateCacheIndex(index);
-	}
+		<< AbstractViewModel::renderer(AbstractViewModel::BackgroundRendererType)
+		<< AbstractViewModel::renderer(AbstractViewModel::SelectionBackgroundRendererType)
+		<< AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType);
 }
 
 void SummaryViewModel::initializeRenderers()
 {
-	m_renderers[PlainTextRendererType] = std::make_unique<TextRenderer>(this);
-	m_renderers[SelectionBackgroundRendererType] = std::make_unique<SelectionBackgroundRenderer>(this);
-	m_renderers[BackgroundRendererType] = std::make_unique<BackgroundRenderer>(this, m_model->rowCount() * m_model->columnCount());
+	AbstractViewModel::addRenderer(AbstractViewModel::PlainTextRendererType, new TextRenderer(this));
+	AbstractViewModel::addRenderer(AbstractViewModel::SelectionBackgroundRendererType, new SelectionBackgroundRenderer(this));
+	AbstractViewModel::addRenderer(AbstractViewModel::BackgroundRendererType, new BackgroundRenderer(this, model()->rowCount() * model()->columnCount()));
 }
 
 QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept
 {
 	return QColor(Qt::black);
+}
+
+void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
+{
+	AbstractViewModel::setHoveredIndex(index);
+
+	QModelIndex previousHoveredIndex = AbstractViewModel::previousHoveredIndex();
+
+	if (previousHoveredIndex.isValid())
+	{
+		const QModelIndexList& modelIndexes = model()->modelIndexesForRow(previousHoveredIndex.row());
+
+		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
+	}
+
+	if (hoveredIndex().isValid())
+	{
+		const QModelIndexList& modelIndexes = model()->modelIndexesForRow(hoveredIndex().row());
+
+		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
+	}
 }
 
 }
