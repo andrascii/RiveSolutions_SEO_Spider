@@ -113,10 +113,8 @@ void ApplicationSettingsWidget::initialize()
 {
 	m_ui.setupUi(this);
 
-	QVBoxLayout* layout = new QVBoxLayout;
-	layout->addWidget(m_stackedWidget);
+	m_ui.settingsPageWidget->layout()->addWidget(m_stackedWidget);
 
-	m_ui.currentGroup->setLayout(layout);
 	m_ui.propGroupsList->setCurrentRow(0);
 
 	SettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<SettingsPageRegistry>();

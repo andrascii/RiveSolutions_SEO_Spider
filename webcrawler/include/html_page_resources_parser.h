@@ -15,6 +15,12 @@ private:
 	void parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 	void parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 	void parseJavaScriptResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+	void parseStyleSheetResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+	void parseImageResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+	void parseVideoResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+	void parseFlashResourcesV1(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+	void parseFlashResourcesV2(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+	void parseFlashResourcesV3(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 };
 
 }

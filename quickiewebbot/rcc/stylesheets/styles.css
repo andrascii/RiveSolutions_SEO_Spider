@@ -296,10 +296,10 @@ QScrollBar::sub-page:vertical
 QuickieWebBot--SettingsPage
 {
 	background: #343B49;
-	min-width: 40em;
-	max-width: 40em;
+	min-width: 20em;
+	/*max-width: 40em;*/
 	min-height: 28em;
-	max-height: 28em;
+	max-height: 45em;
 }
 
 QuickieWebBot--SettingsPage QLabel,

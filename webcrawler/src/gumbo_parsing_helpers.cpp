@@ -248,6 +248,48 @@ std::vector<const GumboNode*> GumboParsingHelpers::findNodesRecursive(const Gumb
 	return result;
 }
 
+const GumboNode* GumboParsingHelpers::findChildNode(const GumboNode* node, GumboTag expectedTag, std::map<const char*, const char*> expectedAttributes) noexcept
+{
+	if (!node || node->type != GUMBO_NODE_ELEMENT)
+	{
+		return nullptr;
+	}
+
+	const GumboVector* children = &node->v.element.children;
+
+	for (unsigned int i = 0; i < children->length; ++i)
+	{
+		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
+		if (!child || child->type != GUMBO_NODE_ELEMENT || child->v.element.tag != expectedTag)
+		{
+			continue;
+		}
+
+		bool success = true;
+		for (auto attr : expectedAttributes)
+		{
+			GumboAttribute* gumboAttr = gumbo_get_attribute(&child->v.element.attributes, attr.first);
+			success = success && gumboAttr && (strlen(attr.second) == 0 || QString(gumboAttr->value).toLower() == attr.second);
+			if (!success)
+			{
+				break;
+			}
+		}
+
+		if (success)
+		{
+			return child;
+		}
+	}
+
+	return nullptr;
+}
+
+const GumboNode* GumboParsingHelpers::findChildNode(const GumboNode* node, GumboTag expectedTag, std::pair<const char*, const char*> expectedAttributes) noexcept
+{
+	return findChildNode(node, expectedTag, std::map<const char*, const char*>{ expectedAttributes });
+}
+
 void GumboParsingHelpers::cutAllTagsFromNodeHelper(const GumboNode* node, QByteArray& result) noexcept
 {
 	if (!node)

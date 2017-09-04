@@ -40,6 +40,9 @@ public:
 	using ConditionFunc = bool(const GumboNode*);
 	static std::vector<const GumboNode*> findNodesRecursive(const GumboNode* node, ConditionFunc) noexcept;
 
+	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::pair<const char*, const char*> expectedAttributes) noexcept;
+	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::map<const char*, const char*> expectedAttributes) noexcept;
+
 	template <class TResultFunc>
 	static auto findNodesAndGetResult(const GumboNode* node, ConditionFunc cond, TResultFunc res)
 	{
