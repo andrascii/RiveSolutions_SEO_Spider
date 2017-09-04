@@ -16,28 +16,44 @@ void GridLineRenderer::setCacheSize(int)
 void GridLineRenderer::renderThisIfItAboveHoveredHelper(QPainter* painter, const QRect& adjustedRect, const QModelIndex& index) const noexcept
 {
 	const QPoint firstPointBottomLine(adjustedRect.x(), adjustedRect.y() + adjustedRect.height());
-	const QPoint secondPointBottomLine(adjustedRect.x() + adjustedRect.width(), adjustedRect.y() + adjustedRect.height());
+	const QPoint secondPointBottomLine(adjustedRect.width() + adjustedRect.x(), adjustedRect.y() + adjustedRect.height());
 
-	QColor bottomLineColor = m_viewModel->hoveredBackgroundColor(index);
+	const bool isThisRowSelected = isRowSelected(index.row());
+
+	QColor bottomLineColor = isThisRowSelected ?
+		m_viewModel->selectionBackgroundColor(index) : 
+		m_viewModel->hoveredBackgroundColor(index);
+
+	QColor rightVerticalLineColor = isThisRowSelected ? m_viewModel->selectionBackgroundColor(index) : m_gridLineColor;
 
 	const QPoint firstPointRightVerticalLine(adjustedRect.x() + adjustedRect.width(), adjustedRect.y() + adjustedRect.height());
 	const QPoint secondPointRightVerticalLine(adjustedRect.x() + adjustedRect.width(), adjustedRect.y());
 
-	QPen oldPen = painter->pen();
-
+	painter->save();
 	painter->setPen(bottomLineColor);
 	painter->drawLine(firstPointBottomLine, secondPointBottomLine);
 
-	painter->setPen(oldPen);
+	painter->setPen(rightVerticalLineColor);
 	painter->drawLine(firstPointRightVerticalLine, secondPointRightVerticalLine);
+	painter->restore();
 }
 
 void GridLineRenderer::renderHelper(QPainter* painter, const QRect& adjustedRect, const QModelIndex& index) const noexcept
 {
-	const bool isThisItemRowHovered = m_viewModel->hoveredIndex().row() == index.row();
-
-	QColor rectangleColor = isThisItemRowHovered ?
-		m_viewModel->hoveredBackgroundColor(index) : m_gridLineColor;
+	QColor rectangleColor = m_gridLineColor;
+	
+	if (isRowSelected(index.row()))
+	{
+		rectangleColor = m_viewModel->selectionBackgroundColor(index);
+	}
+	else if (m_viewModel->hoveredIndex().row() == index.row())
+	{
+		rectangleColor = m_viewModel->hoveredBackgroundColor(index);
+	}
+	else
+	{
+		rectangleColor = m_gridLineColor;
+	}
 
 	painter->save();
 	painter->setPen(rectangleColor);
@@ -56,8 +72,8 @@ void GridLineRenderer::renderHelper(QPainter* painter, const QRect& adjustedRect
 void GridLineRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	QRect rect = option.rect.adjusted(0, 0, -1, -1);
-	
-	const bool isThisItemRowAboveHovered = m_viewModel->hoveredIndex().row() + 1 == index.row();
+
+	const bool isThisItemRowAboveHovered = m_viewModel->hoveredIndex().row() - 1 == index.row() || isRowSelected(index.row() + 1);
 
 	if (isThisItemRowAboveHovered)
 	{
@@ -74,6 +90,19 @@ void GridLineRenderer::invalidateCacheIndex(const QModelIndex&) const
 
 void GridLineRenderer::invalidateCache() const
 {
+}
+
+bool GridLineRenderer::isRowSelected(int row) const noexcept
+{
+	foreach(const QModelIndex& index, m_viewModel->selectedIndexes())
+	{
+		if (index.row() == row)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 }

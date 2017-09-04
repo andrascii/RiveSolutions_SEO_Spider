@@ -157,7 +157,9 @@ void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcep
 
 	if (previousHoveredIndex.isValid())
 	{
-		const QModelIndexList& modelIndexes = m_model->modelIndexesForRow(previousHoveredIndex.row());
+		QModelIndexList modelIndexes;
+		modelIndexes.append(m_model->modelIndexesForRow(previousHoveredIndex.row()));
+		modelIndexes.append(m_model->modelIndexesForRow(previousHoveredIndex.row() - 1));
 
 		invalidateCacheIndexes(modelIndexes);
 
@@ -166,9 +168,11 @@ void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcep
 
 	if (m_hoveredIndex.isValid())
 	{
-		const QModelIndexList& modelIndexes = m_model->modelIndexesForRow(m_hoveredIndex.row());
+		QModelIndexList modelIndexes;
+		modelIndexes.append(m_model->modelIndexesForRow(m_hoveredIndex.row()));
+		modelIndexes.append(m_model->modelIndexesForRow(m_hoveredIndex.row() - 1));
 
-		invalidateCacheIndexes(m_model->modelIndexesForRow(m_hoveredIndex.row()));
+		invalidateCacheIndexes(modelIndexes);
 
 		Q_EMIT repaintItems(modelIndexes);
 	}
@@ -177,6 +181,41 @@ void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcep
 const QModelIndex& PageInfoStorageViewModel::hoveredIndex() const noexcept
 {
 	return m_hoveredIndex;
+}
+
+void PageInfoStorageViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept
+{
+	for (int i = 0; i < modelIndexes.size(); ++i)
+	{
+		if (!m_selectedModelIndexes.contains(modelIndexes[i]))
+		{
+			m_selectedModelIndexes.append(modelIndexes[i]);
+		}
+	}
+
+	invalidateCacheIndexes(m_selectedModelIndexes);
+
+	Q_EMIT repaintItems(m_selectedModelIndexes);
+}
+
+void PageInfoStorageViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept
+{
+	for (int i = 0; i < modelIndexes.size(); ++i)
+	{
+		if (m_selectedModelIndexes.contains(modelIndexes[i]))
+		{
+			m_selectedModelIndexes.removeOne(modelIndexes[i]);
+		}
+	}
+
+	invalidateCacheIndexes(m_selectedModelIndexes);
+
+	Q_EMIT repaintItems(m_selectedModelIndexes);
+}
+
+const QModelIndexList& PageInfoStorageViewModel::selectedIndexes() const noexcept
+{
+	return m_selectedModelIndexes;
 }
 
 QObject* PageInfoStorageViewModel::qobject() noexcept
@@ -211,7 +250,7 @@ void PageInfoStorageViewModel::initializeRenderers()
 	m_renderers[UrlRendererType] = std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0)));
 	m_renderers[SelectionBackgroundRendererType] = std::make_unique<SelectionBackgroundRenderer>(this);
 	m_renderers[BackgroundRendererType] = std::make_unique<BackgroundRenderer>(this);
-	m_renderers[GridLineRendererType] = std::make_unique<GridLineRenderer>(this, QColor("#F1F1F1")); // #F1F1F1
+	m_renderers[GridLineRendererType] = std::make_unique<GridLineRenderer>(this, QColor("#F1F1F1"));
 }
 
 }

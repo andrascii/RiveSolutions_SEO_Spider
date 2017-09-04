@@ -31,9 +31,9 @@ protected:
 	virtual void leaveEvent(QEvent* event) override;
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
 
-private:
-	void selectRow(const QPoint& point);
+	virtual void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
+private:
 	Q_SLOT void adjustColumnSize();
 	Q_SLOT void onAboutRepaintItems(const QModelIndexList& modelIndexes);
 

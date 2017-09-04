@@ -142,6 +142,41 @@ QObject* SummaryViewModel::qobject() noexcept
 	return this;
 }
 
+void SummaryViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept
+{
+	for (int i = 0; i < modelIndexes.size(); ++i)
+	{
+		if (!m_selectedModelIndexes.contains(modelIndexes[i]))
+		{
+			m_selectedModelIndexes.append(modelIndexes[i]);
+		}
+	}
+
+	invalidateCacheIndexes(m_selectedModelIndexes);
+
+	Q_EMIT repaintItems(m_selectedModelIndexes);
+}
+
+void SummaryViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept
+{
+	for (int i = 0; i < modelIndexes.size(); ++i)
+	{
+		if (m_selectedModelIndexes.contains(modelIndexes[i]))
+		{
+			m_selectedModelIndexes.removeOne(modelIndexes[i]);
+		}
+	}
+
+	invalidateCacheIndexes(m_selectedModelIndexes);
+
+	Q_EMIT repaintItems(m_selectedModelIndexes);
+}
+
+const QModelIndexList& SummaryViewModel::selectedIndexes() const noexcept
+{
+	return m_selectedModelIndexes;
+}
+
 void SummaryViewModel::invalidateCacheIndexes(const QModelIndexList& indexesList)
 {
 	foreach(const QModelIndex& index, indexesList)

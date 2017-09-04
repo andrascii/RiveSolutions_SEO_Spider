@@ -38,6 +38,10 @@ public:
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
 	virtual const QModelIndex& hoveredIndex() const noexcept override;
 
+	virtual void setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept override;
+	virtual void setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept override;
+	virtual const QModelIndexList& selectedIndexes() const noexcept override;
+
 	virtual QObject* qobject() noexcept override;
 
 	Q_SIGNAL virtual void repaintItems(const QModelIndexList& modelIndexes) const override;
@@ -72,6 +76,8 @@ private:
 	QColor m_bgColor;
 
 	QPixmap m_urlIcon;
+
+	QModelIndexList m_selectedModelIndexes;
 };
 
 }

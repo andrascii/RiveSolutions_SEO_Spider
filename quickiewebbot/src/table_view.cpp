@@ -92,6 +92,17 @@ void TableView::contextMenuEvent(QContextMenuEvent* event)
 	}
 }
 
+void TableView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	if (viewModel())
+	{
+		viewModel()->setSelectedIndexes(selected.indexes());
+		viewModel()->setDeselectedIndexes(deselected.indexes());
+	}
+
+	QTableView::selectionChanged(selected, deselected);
+}
+
 void TableView::setContextMenu(QMenu* menu) noexcept
 {
 	m_contextMenu = menu;
@@ -133,28 +144,6 @@ void TableView::initSpan()
 			column += colSpan.width();
 		}
 	}
-}
-
-void TableView::selectRow(const QPoint& point)
-{
-	QModelIndex rowIndex = indexAt(point);
-	QItemSelectionModel* modelSelection = selectionModel();
-	QItemSelectionModel::SelectionFlags flags = QItemSelectionModel::Rows;
-
-	foreach(QModelIndex index, modelSelection->selectedRows())
-	{
-		if (index.row() == rowIndex.row())
-		{
-			flags |= QItemSelectionModel::Select;
-		}
-	}
-
-	if (!(flags & QItemSelectionModel::Select))
-	{
-		flags |= QItemSelectionModel::ClearAndSelect;
-	}
-
-	modelSelection->select(rowIndex, flags);
 }
 
 void TableView::adjustColumnSize()

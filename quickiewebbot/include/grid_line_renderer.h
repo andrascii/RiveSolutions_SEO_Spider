@@ -21,6 +21,8 @@ private:
 	void renderThisIfItAboveHoveredHelper(QPainter* painter, const QRect& adjustedRect, const QModelIndex& index) const noexcept;
 	void renderHelper(QPainter* painter, const QRect& adjustedRect, const QModelIndex& index) const noexcept;
 
+	bool isRowSelected(int row) const noexcept;
+
 private:
 	const IViewModel* m_viewModel;
 
