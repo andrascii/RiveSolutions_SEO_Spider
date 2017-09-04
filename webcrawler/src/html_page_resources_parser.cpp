@@ -10,6 +10,7 @@ void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) no
 	parseResourceType(output, pageRaw);
 	parseHtmlResources(output, pageRaw);
 	parseJavaScriptResources(output, pageRaw);
+	parseStyleSheetResources(output, pageRaw);
 }
 
 void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
@@ -54,6 +55,33 @@ void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, Page
 	for (const QUrl& url : resolvedUrls)
 	{
 		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, url, pageRaw->url });
+	}
+}
+
+void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+{
+	auto cond = [](const GumboNode* node)
+	{
+		return node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_LINK &&
+			gumbo_get_attribute(&node->v.element.attributes, "href") &&
+			gumbo_get_attribute(&node->v.element.attributes, "rel") &&
+			QString(gumbo_get_attribute(&node->v.element.attributes, "rel")->value).toLower() == "stylesheet";
+	};
+
+	auto res = [](const GumboNode* node)
+	{
+		GumboAttribute* href = href = gumbo_get_attribute(&node->v.element.attributes, "href");
+		return QUrl(href->value);
+	};
+
+	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+
+	for (const QUrl& url : resolvedUrls)
+	{
+		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceStyleSheet, url, pageRaw->url });
 	}
 }
 
