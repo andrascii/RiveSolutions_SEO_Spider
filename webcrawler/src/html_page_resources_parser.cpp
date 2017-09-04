@@ -5,6 +5,11 @@
 namespace WebCrawler
 {
 
+bool checkAttribute(const GumboAttribute* attribute, const char* expectedValue)
+{
+	return attribute && QString(attribute->value).toLower() == expectedValue;
+}
+
 void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
 	parseResourceType(output, pageRaw);
@@ -13,6 +18,9 @@ void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) no
 	parseStyleSheetResources(output, pageRaw);
 	parseImageResources(output, pageRaw);
 	parseVideoResources(output, pageRaw);
+	parseFlashResourcesV1(output, pageRaw);
+	parseFlashResourcesV2(output, pageRaw);
+	parseFlashResourcesV3(output, pageRaw);
 }
 
 void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
@@ -68,8 +76,7 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_LINK &&
 			gumbo_get_attribute(&node->v.element.attributes, "href") &&
-			gumbo_get_attribute(&node->v.element.attributes, "rel") &&
-			QString(gumbo_get_attribute(&node->v.element.attributes, "rel")->value).toLower() == "stylesheet";
+			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "rel"), "stylesheet");
 	};
 
 	auto res = [](const GumboNode* node)
@@ -116,35 +123,16 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 {
 	auto cond = [](const GumboNode* node)
 	{
-		bool result = node &&
+		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_VIDEO &&
-			gumbo_get_attribute(&node->v.element.attributes, "src");
-
-		if (!result)
-		{
-			return result;
-		}
-
-		const GumboVector* children = &node->v.element.children;
-		if (children->length == 0)
-		{
-			return false;
-		}
-
-		const GumboNode* child = static_cast<const GumboNode*>(children->data[0]);
-		return child &&
-			child->type == GUMBO_NODE_ELEMENT &&
-			child->v.element.tag == GUMBO_TAG_SOURCE &&
-			gumbo_get_attribute(&node->v.element.attributes, "src");
-
+			!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
 	};
 
 	auto res = [](const GumboNode* node)
 	{
-		const GumboVector* children = &node->v.element.children;
-		const GumboNode* child = static_cast<const GumboNode*>(children->data[0]);
-		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
+		const GumboNode* child = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
+		GumboAttribute* src = gumbo_get_attribute(&child->v.element.attributes, "src");
 		return QUrl(src->value);
 	};
 
@@ -154,6 +142,114 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 	for (const QUrl& url : resolvedUrls)
 	{
 		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceVideo, url, pageRaw->url });
+	}
+}
+
+void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+{
+	//<embed type="application/x-shockwave-flash" src="myContent.swf" width="300" height="120" pluginspage="http://www.adobe.com/go/getflashplayer" / >
+	//<noembed>Alternative content</noembed>
+
+	auto cond = [](const GumboNode* node)
+	{
+		return node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_EMBED &&
+			gumbo_get_attribute(&node->v.element.attributes, "src") &&
+			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "type"), "application/x-shockwave-flash");
+	};
+
+	auto res = [](const GumboNode* node)
+	{
+		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
+		return QUrl(src->value);
+	};
+
+	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+
+	for (const QUrl& url : resolvedUrls)
+	{
+		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
+	}
+}
+
+void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+{
+	// 	<object type="application/x-shockwave-flash" data="myContent.swf" width="300" height="120">
+	// 	<p>Alternative content</p>
+	// 	</object>
+
+	auto cond = [](const GumboNode* node)
+	{
+		return node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_OBJECT &&
+			gumbo_get_attribute(&node->v.element.attributes, "data") &&
+			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "type"), "application/x-shockwave-flash");
+	};
+
+	auto res = [](const GumboNode* node)
+	{
+		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "data");
+		return QUrl(src->value);
+	};
+
+	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+
+	for (const QUrl& url : resolvedUrls)
+	{
+		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
+	}
+}
+
+void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+{
+	// 	<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="300" height="120">
+	// 	<param name="movie" value="myContent.swf" />
+	// 	<p>Alternative content</p>
+	// 	</object>
+
+	auto cond = [](const GumboNode* node)
+	{
+		bool result = node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_OBJECT &&
+			gumbo_get_attribute(&node->v.element.attributes, "data") &&
+			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "classid"), "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000");
+
+		if (!result)
+		{
+			return result;
+		}
+
+		return !!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", "")) || 
+			!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", ""));
+
+	};
+
+	auto res = [](const GumboNode* node)
+	{
+		const GumboNode* childNode = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", ""));
+		if (childNode)
+		{
+			GumboAttribute* movie = gumbo_get_attribute(&childNode->v.element.attributes, "movie");
+			return QUrl(movie->value);
+		}
+			
+		childNode = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", ""));
+
+		GumboAttribute* src = gumbo_get_attribute(&childNode->v.element.attributes, "src");
+		return QUrl(src->value);
+	};
+
+	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+
+	for (const QUrl& url : resolvedUrls)
+	{
+		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
 	}
 }
 
