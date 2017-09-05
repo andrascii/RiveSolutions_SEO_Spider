@@ -100,7 +100,7 @@ public:
 		//
 		// Resources
 		//
-		HtmlPendingResourcesStorageType,
+		PendingResourcesStorageType,
 		HtmlResourcesStorageType,
 		ImageResourcesStorageType,
 		JavaScriptResourcesStorageType,

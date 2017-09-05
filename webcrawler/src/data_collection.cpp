@@ -137,7 +137,7 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 
 		type == Status404StorageType ||
 
-		type == HtmlPendingResourcesStorageType ||
+		type == PendingResourcesStorageType ||
 		type == HtmlResourcesStorageType ||
 		type == ImageResourcesStorageType ||
 		type == JavaScriptResourcesStorageType ||
@@ -329,7 +329,7 @@ void DataCollection::initializeStorages()
 		// Resources Types Storages
 		//
 
-		std::make_pair(HtmlPendingResourcesStorageType, CrawlerStorageTypePtr(
+		std::make_pair(PendingResourcesStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl), 
 				PageRawComparatorProxy(new PageRawUrlComparator)))),
 

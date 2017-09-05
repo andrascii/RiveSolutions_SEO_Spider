@@ -4,6 +4,24 @@
 namespace WebCrawler
 {
 
+PageRawPtr mergeTwoPages(PageRawPtr existingPage, PageRawPtr newPage)
+{
+	if (!existingPage)
+	{
+		return newPage;
+	}
+
+	newPage->linksToThisResource.insert(
+		std::begin(newPage->linksToThisResource),
+		std::begin(existingPage->linksToThisResource),
+		std::end(existingPage->linksToThisResource)
+	);
+
+	*existingPage = *newPage;
+	// we should use the original PageRawPtr because there are pages containing links to it
+	return existingPage;
+}
+
 ModelController::ModelController(QObject* parent)
 	: QObject(parent)
 	, m_data(new DataCollection(this))
@@ -38,6 +56,8 @@ void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 		// image resource
 		processPageRawImage(pageRaw);
 	}
+
+	m_data->removePageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
 }
 
 const DataCollection* ModelController::data() const noexcept
@@ -301,32 +321,17 @@ void ModelController::processPageRawStatusCode(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 {
-	// 1. remove from pending resources if exists
-	PageRawPtr pendingPageRaw = m_data->removePageRaw(pageRaw, DataCollection::HtmlPendingResourcesStorageType);
-
 	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
 	{
-		// if it is not an html resource, just remove it from pending resources and exit
+		// if it is not an html resource, just exit
 		return;
 	}
 
+	// 1. get from pending resources if exists
+	PageRawPtr pendingPageRaw = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
+
 	// 2. if it's really html resource and pending page exists - merge two pages
-	if (pendingPageRaw)
-	{
-// 		std::copy(std::begin(pendingPageRaw->linksToThisResource),
-// 			std::end(pendingPageRaw->linksToThisResource),
-// 			std::begin(pageRaw->linksToThisResource));
-
-		pageRaw->linksToThisResource.insert(
-			std::begin(pageRaw->linksToThisResource),
-			std::begin(pendingPageRaw->linksToThisResource), 
-			std::end(pendingPageRaw->linksToThisResource)
-		);
-
-		*pendingPageRaw = *pageRaw;
-		// we should use the original PageRawPtr because there are pages containing links to it
-		pageRaw = pendingPageRaw;
-	}
+	pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
 
 	// 3. add this page to html resources storage
 	m_data->addPageRaw(pageRaw, DataCollection::HtmlResourcesStorageType);
@@ -343,7 +348,7 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		PageRawPtr existingResource = m_data->pageRaw(resourcePage, DataCollection::CrawledUrlStorageType);
 		if (!existingResource)
 		{
-			existingResource = m_data->pageRaw(resourcePage, DataCollection::HtmlPendingResourcesStorageType);
+			existingResource = m_data->pageRaw(resourcePage, DataCollection::PendingResourcesStorageType);
 		}
 
 		if (existingResource)
@@ -359,19 +364,28 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 			pendingResource->url = resource.resourceUrl;
 			pendingResource->linksToThisResource.push_back(pageRaw);
 			pageRaw->linksFromThisResource.push_back(pendingResource);
-			m_data->addPageRaw(pendingResource, DataCollection::HtmlPendingResourcesStorageType);
-			DEBUG_ASSERT(m_data->isPageRawExists(pendingResource, DataCollection::HtmlPendingResourcesStorageType));
+			m_data->addPageRaw(pendingResource, DataCollection::PendingResourcesStorageType);
+			DEBUG_ASSERT(m_data->isPageRawExists(pendingResource, DataCollection::PendingResourcesStorageType));
 
 			// isPageRawExists is not working correctly, uncomment this code to check it
 			PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
 			pendingResourceCopy->url = resource.resourceUrl;
-			DEBUG_ASSERT(m_data->isPageRawExists(pendingResourceCopy, DataCollection::HtmlPendingResourcesStorageType));
+			DEBUG_ASSERT(m_data->isPageRawExists(pendingResourceCopy, DataCollection::PendingResourcesStorageType));
 		}
 	}
 }
 
 void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 {
+	if (pageRaw->resourceType == PageRawResource::ResourceOther)
+	{
+		PageRawPtr pendingPageRaw = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
+		pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
+
+		m_data->addPageRaw(pageRaw, DataCollection::OtherResourcesStorageType);
+	}
+
+
 	std::map<PageRawResource::ResourceType, DataCollection::StorageType> storageTypes
 	{
 		{ PageRawResource::ResourceImage, DataCollection::ImageResourcesStorageType },
@@ -391,7 +405,6 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 
 		PageRawPtr resourceRaw = std::make_shared<PageRaw>();
 		resourceRaw->url = resource.resourceUrl;
-		
 
 		PageRawPtr newOrExistingResource = m_data->pageRaw(resourceRaw, storageTypes[resource.resourceType]);
 		if (!newOrExistingResource)
