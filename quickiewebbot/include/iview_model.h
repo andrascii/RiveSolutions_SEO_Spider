@@ -36,6 +36,10 @@ public:
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept = 0;
 	virtual const QModelIndex& hoveredIndex() const noexcept = 0;
 
+	virtual void setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept = 0;
+	virtual void setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept = 0;
+	virtual const QModelIndexList& selectedIndexes() const noexcept = 0;
+
 	virtual QObject* qobject() noexcept = 0;
 
 	// signal

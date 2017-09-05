@@ -1,15 +1,13 @@
 #pragma once
 
-#include "iview_model.h"
+#include "abstract_view_model.h"
 
 namespace QuickieWebBot
 {
 
 class PageInfoStorageModel;
 
-class PageInfoStorageViewModel
-	: public QObject
-	, public IViewModel
+class PageInfoStorageViewModel : public AbstractViewModel
 {
 	Q_OBJECT
 
@@ -32,41 +30,17 @@ public:
 	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept override;
 	virtual QColor textColor(const QModelIndex& index) const noexcept override;
 
-	virtual void invalidateRenderersCache() const noexcept override;
-	virtual QList<const IRenderer*> renderers(const QModelIndex& index) const noexcept override;
-
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
-	virtual const QModelIndex& hoveredIndex() const noexcept override;
 
-	virtual QObject* qobject() noexcept override;
-
-	Q_SIGNAL virtual void repaintItems(const QModelIndexList& modelIndexes) const override;
+	virtual QList<const IRenderer*> renderers(const QModelIndex& index) const noexcept override;
 
 private slots:
 	void onAttachedModelInternalDataChanged();
 
 private:
-	void invalidateCacheIndexes(const QModelIndexList& indexesList);
-	void invalidateCacheIndex(const QModelIndex& index);
 	void initializeRenderers();
 
 private:
-	enum RendererType
-	{
-		PlainTextRendererType,
-		UrlRendererType,
-		BackgroundRendererType,
-		SelectionBackgroundRendererType,
-		GridLineRendererType
-	};
-
-private:
-	PageInfoStorageModel* m_model;
-
-	std::map<RendererType, std::unique_ptr<IRenderer>> m_renderers;
-
-	QModelIndex m_hoveredIndex;
-
 	QColor m_selectionBgColor;
 	QColor m_hoveredBgColor;
 	QColor m_bgColor;

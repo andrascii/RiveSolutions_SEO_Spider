@@ -16,9 +16,7 @@ namespace QuickieWebBot
 {
 
 PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent)
-	: QObject(parent)
-	, m_model(model)
-	, m_hoveredIndex(QModelIndex())
+	: AbstractViewModel(model, parent)
 	, m_selectionBgColor("#C0C0C0")
 	, m_hoveredBgColor("#F3F3F3")
 	, m_bgColor(Qt::white)
@@ -27,11 +25,11 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 
 	QPixmap pixmap;
 	pixmap.fill(backgroundColor(QModelIndex()));
-	pixmap.load(":/images/url-icon.png");
+	pixmap.load(":/images/click-to-url-icon.png");
 
-	m_urlIcon = pixmap.scaled(QuickieWebBotHelpers::pointsToPixels(20), QuickieWebBotHelpers::pointsToPixels(20));
+	m_urlIcon = pixmap.scaled(QuickieWebBotHelpers::pointsToPixels(12), QuickieWebBotHelpers::pointsToPixels(12));
 
-	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
+	VERIFY(connect(model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
 }
 
 int PageInfoStorageViewModel::marginTop(const QModelIndex& index) const noexcept
@@ -66,9 +64,12 @@ int PageInfoStorageViewModel::marginRight(const QModelIndex&) const noexcept
 
 const QPixmap& PageInfoStorageViewModel::itemPixmap(const QModelIndex& index) const noexcept
 {
+	const PageInfoStorageModel* model =
+		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+
 	static QPixmap emptyPixmap;
 
-	if (m_model->itemType(index) == PageInfo::UrlItemType)
+	if (model->itemType(index) == PageInfo::UrlItemType)
 	{
 		return m_urlIcon;
 	}
@@ -115,7 +116,10 @@ Qt::AlignmentFlag PageInfoStorageViewModel::textAlignment(const QModelIndex& ind
 
 QColor PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexcept
 {
-	if (m_model->itemType(index) == PageInfo::UrlItemType)
+	const PageInfoStorageModel* model =
+		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+
+	if (model->itemType(index) == PageInfo::UrlItemType)
 	{
 		return QColor("#1754A8");
 	}
@@ -123,95 +127,65 @@ QColor PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexc
 	return QColor("#000000");
 }
 
-void PageInfoStorageViewModel::invalidateRenderersCache() const noexcept
+void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 {
-	for (const auto& pair : m_renderers)
+	AbstractViewModel::setHoveredIndex(index);
+
+	QModelIndex previousHoveredIndex = AbstractViewModel::previousHoveredIndex();
+
+	if (previousHoveredIndex.isValid())
 	{
-		pair.second->invalidateCache();
+		QModelIndexList modelIndexes;
+		modelIndexes.append(model()->modelIndexesForRow(previousHoveredIndex.row()));
+		modelIndexes.append(model()->modelIndexesForRow(previousHoveredIndex.row() - 1));
+		
+		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
+	}
+
+	if (hoveredIndex().isValid())
+	{
+		QModelIndexList modelIndexes;
+		modelIndexes.append(model()->modelIndexesForRow(hoveredIndex().row()));
+		modelIndexes.append(model()->modelIndexesForRow(hoveredIndex().row() - 1));
+
+		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}
 }
 
 QList<const IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	const IRenderer* renderer = m_model->itemType(index) == PageInfo::UrlItemType ?
-		m_renderers.find(UrlRendererType)->second.get() :
-		m_renderers.find(PlainTextRendererType)->second.get();
+	const PageInfoStorageModel* model =
+		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+
+	const IRenderer* renderer = model->itemType(index) == PageInfo::UrlItemType ?
+		AbstractViewModel::renderer(AbstractViewModel::UrlRendererType) :
+		AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType);
 
 	return QList<const IRenderer*>()
-		<< m_renderers.find(BackgroundRendererType)->second.get()
-		<< m_renderers.find(SelectionBackgroundRendererType)->second.get()
+		<< AbstractViewModel::renderer(AbstractViewModel::BackgroundRendererType)
+		<< AbstractViewModel::renderer(AbstractViewModel::SelectionBackgroundRendererType)
 		<< renderer
-		<< m_renderers.find(GridLineRendererType)->second.get();
-}
-
-void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
-{
-	if (index == m_hoveredIndex)
-	{
-		return;
-	}
-
-	const QModelIndex previousHoveredIndex = m_hoveredIndex;
-
-	m_hoveredIndex = index;
-
-	if (previousHoveredIndex.isValid())
-	{
-		const QModelIndexList& modelIndexes = m_model->modelIndexesForRow(previousHoveredIndex.row());
-
-		invalidateCacheIndexes(modelIndexes);
-
-		Q_EMIT repaintItems(modelIndexes);
-	}
-
-	if (m_hoveredIndex.isValid())
-	{
-		const QModelIndexList& modelIndexes = m_model->modelIndexesForRow(m_hoveredIndex.row());
-
-		invalidateCacheIndexes(m_model->modelIndexesForRow(m_hoveredIndex.row()));
-
-		Q_EMIT repaintItems(modelIndexes);
-	}
-}
-
-const QModelIndex& PageInfoStorageViewModel::hoveredIndex() const noexcept
-{
-	return m_hoveredIndex;
-}
-
-QObject* PageInfoStorageViewModel::qobject() noexcept
-{
-	return this;
+		<< AbstractViewModel::renderer(AbstractViewModel::GridLineRendererType);
 }
 
 void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
 {
-	m_renderers[PlainTextRendererType]->setCacheSize(static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
-}
+	const PageInfoStorageModel* model =
+		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
 
-void PageInfoStorageViewModel::invalidateCacheIndexes(const QModelIndexList& indexesList)
-{
-	foreach(const QModelIndex& index, indexesList)
-	{
-		invalidateCacheIndex(index);
-	}
-}
-
-void PageInfoStorageViewModel::invalidateCacheIndex(const QModelIndex& index)
-{
-	for (const auto& pair : m_renderers)
-	{
-		pair.second->invalidateCacheIndex(index);
-	}
+	AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType)->setCacheSize(static_cast<int>(std::pow((model->columnCount()), 2.0)));
 }
 
 void PageInfoStorageViewModel::initializeRenderers()
 {
-	m_renderers[PlainTextRendererType] = std::make_unique<TextRenderer>(this, static_cast<int>(std::pow((m_model->columnCount()), 2.0)));
-	m_renderers[UrlRendererType] = std::make_unique<UrlRenderer>(this, static_cast<int>(std::pow(m_model->columnCount(), 2.0)));
-	m_renderers[SelectionBackgroundRendererType] = std::make_unique<SelectionBackgroundRenderer>(this);
-	m_renderers[BackgroundRendererType] = std::make_unique<BackgroundRenderer>(this);
-	m_renderers[GridLineRendererType] = std::make_unique<GridLineRenderer>(this, QColor("#F1F1F1")); // #F1F1F1
+	const PageInfoStorageModel* model =
+		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+
+	AbstractViewModel::addRenderer(AbstractViewModel::PlainTextRendererType, new TextRenderer(this, static_cast<int>(std::pow((model->columnCount()), 2.0))));
+	AbstractViewModel::addRenderer(AbstractViewModel::UrlRendererType, new UrlRenderer(this, static_cast<int>(std::pow(model->columnCount(), 2.0))));
+	AbstractViewModel::addRenderer(AbstractViewModel::SelectionBackgroundRendererType, new SelectionBackgroundRenderer(this));
+	AbstractViewModel::addRenderer(AbstractViewModel::BackgroundRendererType, new BackgroundRenderer(this));
+	AbstractViewModel::addRenderer(AbstractViewModel::GridLineRendererType, new GridLineRenderer(this, QColor("#F1F1F1")));
 }
 
 }
