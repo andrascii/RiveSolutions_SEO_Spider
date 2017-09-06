@@ -43,6 +43,7 @@ private:
 	Q_SLOT void mainFrameIsReadyForShow();
 
 	void registerSettingsPages() const;
+	void registerServices() const;
 
 private:
 	void initialize() noexcept;

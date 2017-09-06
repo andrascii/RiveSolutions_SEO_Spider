@@ -5,14 +5,14 @@
 namespace QuickieWebBot
 {
 
-class PageInfoStorageModel;
+class WebSitePagesStorageModel;
 
-class PageInfoStorageViewModel : public AbstractViewModel
+class WebSitePagesStorageViewModel : public AbstractViewModel
 {
 	Q_OBJECT
 
 public:
-	PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent = nullptr);
+	WebSitePagesStorageViewModel(WebSitePagesStorageModel* model, QObject* parent = nullptr);
 
 	virtual int marginTop(const QModelIndex& index) const noexcept override;
 	virtual int marginBottom(const QModelIndex& index) const noexcept override;

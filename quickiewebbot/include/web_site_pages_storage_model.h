@@ -1,7 +1,7 @@
 #pragma once
 
 #include "abstract_table_model.h"
-#include "page_info.h"
+#include "page_raw_info.h"
 #include "data_collection.h"
 
 namespace QuickieWebBot
@@ -10,18 +10,12 @@ namespace QuickieWebBot
 class IResizePolicy;
 class StorageAdaptor;
 
-//
-//! This model intended for establish associate with some PageInfo storage 
-//! which placed in the DataCollection instance.
-//! Using this model you can customize PageInfo columns set.
-//
-
-class PageInfoStorageModel : public AbstractTableModel
+class WebSitePagesStorageModel : public AbstractTableModel
 {
 	Q_OBJECT
 
 public:
-	PageInfoStorageModel(QObject* parent = nullptr);
+	WebSitePagesStorageModel(QObject* parent = nullptr);
 
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -29,12 +23,11 @@ public:
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-	// ITableView
 	virtual IResizePolicy* resizePolicy() const noexcept override;
 
 	void setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept;
 	const StorageAdaptor* storageAdaptor() const;
-	PageInfo::ItemType itemType(const QModelIndex& index) const noexcept;
+	PageRawInfo::ItemType itemType(const QModelIndex& index) const noexcept;
 
 signals:
 	virtual void internalDataChanged() override;

@@ -27,18 +27,12 @@ private:
 	void createActions();
 	void createAndSetCentralWidget();
 
+	Q_SLOT void startCrawler();
+	Q_SLOT void stopCrawler();
+	Q_SLOT void clearCrawledData();
+
 private:
 	ApplicationSettingsWidget* m_applicationSettingsWidget;
-	
-	QAction* m_openFileAction;
-	QAction* m_closeFileAction;
-	QAction* m_recentFilesAction;
-	QAction* m_saveFileAction;
-	QAction* m_saveFileAsAction;
-	QAction* m_exitProgramAction;
-
-	QAction* m_openSettingsWidget;
-
 };
 
 }

@@ -1,5 +1,5 @@
 #include "application.h"
-#include "page_info.h"
+#include "page_raw_info.h"
 
 int main(int argc, char *argv[])
 {

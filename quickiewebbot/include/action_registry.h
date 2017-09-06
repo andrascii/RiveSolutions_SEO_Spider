@@ -11,12 +11,12 @@ public:
 	QAction* globalAction(const QByteArray& actionKey) const;
 	QActionGroup* actionGroup(const QByteArray& actionGroupKey) const;
 
-	QAction* addGlobalAction(const QByteArray& actionKey, const QIcon& icon = QIcon(), const QByteArray& text = QByteArray());
-	QAction* addGlobalAction(const QByteArray& actionKey, const QByteArray& text);
+	QAction* addGlobalAction(const QByteArray& actionKey, const QIcon& icon = QIcon(), const QString& text = QString());
+	QAction* addGlobalAction(const QByteArray& actionKey, const QString& text);
 
 	QActionGroup* addActionGroup(const QByteArray& actionGroupKey);
-	QAction* addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QIcon& icon = QIcon(), const QByteArray& text = QByteArray());
-	QAction* addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QByteArray& text);
+	QAction* addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QIcon& icon = QIcon(), const QString& text = QString());
+	QAction* addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QString& text);
 
 private:
 	ActionRegistry();
