@@ -25,10 +25,22 @@ void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) no
 
 void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	if (pageRaw->contentType.startsWith("text/html") || pageRaw->contentType.isEmpty())
+	if (pageRaw->contentType.startsWith("image/"))
+	{
+		pageRaw->resourceType = PageRawResource::ResourceImage;
+		return;
+	}
+
+	if (pageRaw->contentType.startsWith("text/html") || 
+		pageRaw->contentType.startsWith("text/xhtml") ||
+		pageRaw->contentType.startsWith("application/xhtml") ||
+		pageRaw->contentType.isEmpty())
 	{
 		pageRaw->resourceType = PageRawResource::ResourceHtml;
+		return;
 	}
+
+	pageRaw->resourceType = PageRawResource::ResourceOther;
 }
 
 void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
@@ -213,19 +225,12 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 
 	auto cond = [](const GumboNode* node)
 	{
-		bool result = node &&
+		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_OBJECT &&
-			gumbo_get_attribute(&node->v.element.attributes, "data") &&
-			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "classid"), "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000");
-
-		if (!result)
-		{
-			return result;
-		}
-
-		return !!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", "")) || 
-			!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", ""));
+			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "classid"), "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000") &&
+			(!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", "")) ||
+				!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", "")));
 
 	};
 
