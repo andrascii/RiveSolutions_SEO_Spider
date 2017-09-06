@@ -32,11 +32,15 @@ public:
 
 	Q_SIGNAL virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;
 
-protected:
 	virtual const DCStorageDescription* storageDescriptionByRow(int row) const noexcept override;
 	virtual const DCStorageGroupDescription* storageGroupDescriptionByRow(int row) const noexcept override;
 	virtual const DCStorageDescription* storageDescription(WebCrawler::DataCollection::StorageType type) const noexcept override;
 	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept override;
+
+private:
+	int rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
+
+	Q_SLOT void emitDataChanged(int, int);
 
 private:
 	static constexpr int s_summaryColumnCount = 2;

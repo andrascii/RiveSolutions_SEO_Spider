@@ -9,6 +9,7 @@ namespace QuickieWebBot
 SummaryDataAccessor::SummaryDataAccessor(WebCrawler::DataCollection* dataCollection)
 	: m_dataCollection(dataCollection)
 {
+	VERIFY(connect(dataCollection, SIGNAL(pageRawAdded(int, int)), this, SLOT(emitDataChanged(int, int))));
 }
 
 int SummaryDataAccessor::columnCount() const noexcept
@@ -97,6 +98,36 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(Au
 	}
 
 	return nullptr;
+}
+
+int SummaryDataAccessor::rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept
+{
+	for (int i = 0; i < rowCount(); ++i)
+	{
+		if (!storageDescriptionByRow(i))
+		{
+			continue;
+		}
+
+		if (storageDescriptionByRow(i)->storageType == storageType)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void SummaryDataAccessor::emitDataChanged(int, int storageType)
+{
+	const int row = rowByStorageType(static_cast<WebCrawler::DataCollection::StorageType>(storageType));
+
+	if (row == -1)
+	{
+		return;
+	}
+
+	Q_EMIT dataChanged(row, 1, Qt::DisplayRole);
 }
 
 Qt::ItemFlags SummaryDataAccessor::flags(const QModelIndex& index) const noexcept

@@ -40,7 +40,7 @@ int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
 
 const QPixmap& SummaryViewModel::itemPixmap(const QModelIndex& index) const noexcept
 {
-	const SummaryModel* model = QuickieWebBotHelpers::safe_runtime_static_cast<const SummaryModel*>(AbstractViewModel::model());
+	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
 
 	return model->dataAccessor()->pixmap(index);
 }
@@ -67,7 +67,7 @@ const QColor& SummaryViewModel::backgroundColor(const QModelIndex&) const noexce
 
 const QFont& SummaryViewModel::font(const QModelIndex& index) const noexcept
 {
-	const SummaryModel* model = QuickieWebBotHelpers::safe_runtime_static_cast<const SummaryModel*>(AbstractViewModel::model());
+	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
 
 	static QFont font;
 

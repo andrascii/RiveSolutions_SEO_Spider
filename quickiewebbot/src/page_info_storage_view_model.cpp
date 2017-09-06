@@ -64,12 +64,12 @@ int PageInfoStorageViewModel::marginRight(const QModelIndex&) const noexcept
 
 const QPixmap& PageInfoStorageViewModel::itemPixmap(const QModelIndex& index) const noexcept
 {
-	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+	const PageInfoStorageModel* model = 
+		static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
 
 	static QPixmap emptyPixmap;
 
-	if (model->itemType(index) == PageInfo::UrlItemType)
+	if (model->itemType(index) == PageInfo::UrlItemType && hoveredIndex() == index)
 	{
 		return m_urlIcon;
 	}
@@ -116,8 +116,8 @@ Qt::AlignmentFlag PageInfoStorageViewModel::textAlignment(const QModelIndex& ind
 
 QColor PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexcept
 {
-	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+	const PageInfoStorageModel* model = 
+		static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
 
 	if (model->itemType(index) == PageInfo::UrlItemType)
 	{
@@ -154,8 +154,8 @@ void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcep
 
 QList<const IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+	const PageInfoStorageModel* model = 
+		static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
 
 	const IRenderer* renderer = model->itemType(index) == PageInfo::UrlItemType ?
 		AbstractViewModel::renderer(AbstractViewModel::UrlRendererType) :
@@ -171,7 +171,7 @@ QList<const IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& i
 void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
 {
 	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+		static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
 
 	AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType)->setCacheSize(static_cast<int>(std::pow((model->columnCount()), 2.0)));
 }
@@ -179,7 +179,7 @@ void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
 void PageInfoStorageViewModel::initializeRenderers()
 {
 	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+		static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
 
 	AbstractViewModel::addRenderer(AbstractViewModel::PlainTextRendererType, new TextRenderer(this, static_cast<int>(std::pow((model->columnCount()), 2.0))));
 	AbstractViewModel::addRenderer(AbstractViewModel::UrlRendererType, new UrlRenderer(this, static_cast<int>(std::pow(model->columnCount(), 2.0))));

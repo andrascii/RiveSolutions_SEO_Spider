@@ -28,6 +28,7 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
 	horizontalLayout->setSpacing(0);
+	horizontalLayout->setMargin(0);
 
 	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
 	horizontalLayout->addWidget(titledStackedWidget);

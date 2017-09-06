@@ -24,12 +24,11 @@ private:
 
 	ItemStatus itemStatus(int row) const noexcept;
 
-	int rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
 	WebCrawler::DataCollection::GuiStorageTypePtr storageByRow(int row) const noexcept;
 
 	void initializePixmaps();
 
-	Q_SLOT void emitDataChanged(int row, int storageType);
+	Q_SLOT void interceptDecoratingObjectSignal(int row, int storageType, Qt::ItemDataRole);
 
 private:
 	QMap<ItemStatus, QPixmap> m_pixmaps;
