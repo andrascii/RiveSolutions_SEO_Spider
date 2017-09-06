@@ -321,6 +321,8 @@ void ModelController::processPageRawStatusCode(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 {
+	return;
+
 	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
 	{
 		// if it is not an html resource, just exit
@@ -366,11 +368,6 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 			pageRaw->linksFromThisResource.push_back(pendingResource);
 			m_data->addPageRaw(pendingResource, DataCollection::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isPageRawExists(pendingResource, DataCollection::PendingResourcesStorageType));
-
-			// isPageRawExists is not working correctly, uncomment this code to check it
-			PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
-			pendingResourceCopy->url = resource.resourceUrl;
-			DEBUG_ASSERT(m_data->isPageRawExists(pendingResourceCopy, DataCollection::PendingResourcesStorageType));
 		}
 	}
 }
