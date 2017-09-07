@@ -327,8 +327,6 @@ void ModelController::processPageRawStatusCode(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 {
-	return;
-
 	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
 	{
 		// if it is not an html resource, just exit
