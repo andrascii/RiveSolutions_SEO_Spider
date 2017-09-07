@@ -54,6 +54,7 @@ enum class SummaryCategoryItem
 	SummaryCategoryItemImageMissingAltText = WebCrawler::DataCollection::MissingAltTextImageStorageType,
 	SummaryCategoryItemImagesVeryLongAltText = WebCrawler::DataCollection::VeryLongAltTextImageStorageType,
 
+	// internal resources enum mappers
 	SummaryCategoryItemHtmlResources = WebCrawler::DataCollection::HtmlResourcesStorageType,
 	SummaryCategoryItemImageResources = WebCrawler::DataCollection::ImageResourcesStorageType,
 	SummaryCategoryItemJavaScriptResources = WebCrawler::DataCollection::JavaScriptResourcesStorageType,
@@ -61,6 +62,15 @@ enum class SummaryCategoryItem
 	SummaryCategoryItemFlashResources = WebCrawler::DataCollection::FlashResourcesStorageType,
 	SummaryCategoryItemVideoResources = WebCrawler::DataCollection::VideoResourcesStorageType,
 	SummaryCategoryItemOtherResources = WebCrawler::DataCollection::OtherResourcesStorageType,
+
+	// external resources enum mappers
+	SummaryCategoryItemExternalHtmlResources = WebCrawler::DataCollection::ExternalHtmlResourcesStorageType,
+	SummaryCategoryItemExternalImageResources = WebCrawler::DataCollection::ExternalImageResourcesStorageType,
+	SummaryCategoryItemExternalJavaScriptResources = WebCrawler::DataCollection::ExternalJavaScriptResourcesStorageType,
+	SummaryCategoryItemExternalStyleSheetResources = WebCrawler::DataCollection::ExternalStyleSheetResourcesStorageType,
+	SummaryCategoryItemExternalFlashResources = WebCrawler::DataCollection::ExternalFlashResourcesStorageType,
+	SummaryCategoryItemExternalVideoResources = WebCrawler::DataCollection::ExternalVideoResourcesStorageType,
+	SummaryCategoryItemExternalOtherResources = WebCrawler::DataCollection::ExternalOtherResourcesStorageType,
 
 	SummaryCategoryItemEnd = WebCrawler::DataCollection::EndEnumStorageType
 };

@@ -38,12 +38,7 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 	{
 		case SummaryCategoryItem::SummaryCategoryItemAllPages:
 		case SummaryCategoryItem::SummaryCategoryItemHtmlResources:
-		case SummaryCategoryItem::SummaryCategoryItemImageResources:
-		case SummaryCategoryItem::SummaryCategoryItemJavaScriptResources:
-		case SummaryCategoryItem::SummaryCategoryItemStyleSheetResources:
-		case SummaryCategoryItem::SummaryCategoryItemFlashResources:
-		case SummaryCategoryItem::SummaryCategoryItemVideoResources:
-		case SummaryCategoryItem::SummaryCategoryItemOtherResources:
+		case SummaryCategoryItem::SummaryCategoryItemExternalHtmlResources:
 		{
 			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
 				<< PageRawInfo::UrlItemType
@@ -70,6 +65,31 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 				<< PageRawInfo::PageSizeKbItemType
 				<< PageRawInfo::WordCountItemType
 				<< PageRawInfo::PageHashItemType
+				<< PageRawInfo::UrlLengthItemType
+			);
+
+			return;
+		}
+		
+		//
+		// Resources columns
+		//
+		case SummaryCategoryItem::SummaryCategoryItemImageResources:
+		case SummaryCategoryItem::SummaryCategoryItemExternalImageResources:
+		case SummaryCategoryItem::SummaryCategoryItemJavaScriptResources:
+		case SummaryCategoryItem::SummaryCategoryItemExternalJavaScriptResources:
+		case SummaryCategoryItem::SummaryCategoryItemStyleSheetResources:
+		case SummaryCategoryItem::SummaryCategoryItemExternalStyleSheetResources:
+		case SummaryCategoryItem::SummaryCategoryItemFlashResources:
+		case SummaryCategoryItem::SummaryCategoryItemExternalFlashResources:
+		case SummaryCategoryItem::SummaryCategoryItemOtherResources:
+		case SummaryCategoryItem::SummaryCategoryItemExternalOtherResources:
+		case SummaryCategoryItem::SummaryCategoryItemVideoResources:
+		case SummaryCategoryItem::SummaryCategoryItemExternalVideoResources:
+		{
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::StatusCodeItemType
 				<< PageRawInfo::UrlLengthItemType
 			);
 

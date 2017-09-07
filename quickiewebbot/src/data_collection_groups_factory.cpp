@@ -114,13 +114,13 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(WebCrawler::Dat
 		{
 			p->name = QObject::tr("External Resources");
 			p->group = AuditGroup::ExternalResourcesGroup;
-			p->descriptions.push_back({ WebCrawler::DataCollection::HtmlResourcesStorageType, QObject::tr("HTML Resources") });
-			p->descriptions.push_back({ WebCrawler::DataCollection::ImageResourcesStorageType, QObject::tr("Image Resources") });
-			p->descriptions.push_back({ WebCrawler::DataCollection::JavaScriptResourcesStorageType, QObject::tr("JavaScript Resources") });
-			p->descriptions.push_back({ WebCrawler::DataCollection::StyleSheetResourcesStorageType, QObject::tr("StyleSheet Resources") });
-			p->descriptions.push_back({ WebCrawler::DataCollection::FlashResourcesStorageType, QObject::tr("Flash Resources") });
-			p->descriptions.push_back({ WebCrawler::DataCollection::VideoResourcesStorageType, QObject::tr("Video Resources") });
-			p->descriptions.push_back({ WebCrawler::DataCollection::OtherResourcesStorageType, QObject::tr("Other Resources") });
+			p->descriptions.push_back({ WebCrawler::DataCollection::ExternalHtmlResourcesStorageType, QObject::tr("HTML Resources") });
+			p->descriptions.push_back({ WebCrawler::DataCollection::ExternalImageResourcesStorageType, QObject::tr("Image Resources") });
+			p->descriptions.push_back({ WebCrawler::DataCollection::ExternalJavaScriptResourcesStorageType, QObject::tr("JavaScript Resources") });
+			p->descriptions.push_back({ WebCrawler::DataCollection::ExternalStyleSheetResourcesStorageType, QObject::tr("StyleSheet Resources") });
+			p->descriptions.push_back({ WebCrawler::DataCollection::ExternalFlashResourcesStorageType, QObject::tr("Flash Resources") });
+			p->descriptions.push_back({ WebCrawler::DataCollection::ExternalVideoResourcesStorageType, QObject::tr("Video Resources") });
+			p->descriptions.push_back({ WebCrawler::DataCollection::ExternalOtherResourcesStorageType, QObject::tr("Other Resources") });
 
 			return p;
 		}

@@ -101,7 +101,7 @@ QVariant WebSitePagesStorageModel::data(const QModelIndex& index, int role) cons
 	{
 		if (role == Qt::DisplayRole)
 		{
-			return index.row();
+			return index.row() + 1;
 		}
 		else
 		{
