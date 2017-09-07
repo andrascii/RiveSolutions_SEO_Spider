@@ -1,10 +1,11 @@
 #include "model_controller.h"
 #include "data_collection.h"
+#include "page_raw_parser_helpers.h"
 
-namespace WebCrawler
+namespace
 {
 
-PageRawPtr mergeTwoPages(PageRawPtr existingPage, PageRawPtr newPage)
+WebCrawler::PageRawPtr mergeTwoPages(WebCrawler::PageRawPtr existingPage, WebCrawler::PageRawPtr newPage)
 {
 	if (!existingPage)
 	{
@@ -21,6 +22,11 @@ PageRawPtr mergeTwoPages(PageRawPtr existingPage, PageRawPtr newPage)
 	// we should use the original PageRawPtr because there are pages containing links to it
 	return existingPage;
 }
+
+}
+
+namespace WebCrawler
+{
 
 ModelController::ModelController(QObject* parent)
 	: QObject(parent)
@@ -334,7 +340,12 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 	pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
 
 	// 3. add this page to html resources storage
-	m_data->addPageRaw(pageRaw, DataCollection::HtmlResourcesStorageType);
+	const bool external = isUrlExternal(pageRaw->url);
+	
+	DataCollection::StorageType storage = external ?
+		DataCollection::ExternalHtmlResourcesStorageType : DataCollection::HtmlResourcesStorageType;
+
+	m_data->addPageRaw(pageRaw, storage);
 
 	PageRawPtr resourcePage = std::make_shared<PageRaw>();
 	for (const PageRawResource& resource : pageRaw->rawResources)
@@ -377,12 +388,17 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 {
+	const bool external = isUrlExternal(pageRaw->url);
+
 	if (pageRaw->resourceType == PageRawResource::ResourceOther)
 	{
 		PageRawPtr pendingPageRaw = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
 		pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
 
-		m_data->addPageRaw(pageRaw, DataCollection::OtherResourcesStorageType);
+		DataCollection::StorageType storage = external ? 
+			DataCollection::ExternalOtherResourcesStorageType : DataCollection::OtherResourcesStorageType;
+		
+		m_data->addPageRaw(pageRaw, storage);
 	}
 
 
@@ -396,6 +412,16 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		{ PageRawResource::ResourceOther, DataCollection::OtherResourcesStorageType },
 	};
 
+	std::map<PageRawResource::ResourceType, DataCollection::StorageType> externalStorageTypes
+	{
+		{ PageRawResource::ResourceImage, DataCollection::ExternalImageResourcesStorageType },
+		{ PageRawResource::ResourceJavaScript, DataCollection::ExternalJavaScriptResourcesStorageType },
+		{ PageRawResource::ResourceStyleSheet, DataCollection::ExternalStyleSheetResourcesStorageType },
+		{ PageRawResource::ResourceFlash, DataCollection::ExternalFlashResourcesStorageType },
+		{ PageRawResource::ResourceVideo, DataCollection::ExternalVideoResourcesStorageType },
+		{ PageRawResource::ResourceOther, DataCollection::ExternalOtherResourcesStorageType },
+	};
+
 	for (const PageRawResource& resource : pageRaw->rawResources)
 	{
 		if (resource.resourceType == PageRawResource::ResourceHtml)
@@ -406,16 +432,24 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		PageRawPtr resourceRaw = std::make_shared<PageRaw>();
 		resourceRaw->url = resource.resourceUrl;
 
-		PageRawPtr newOrExistingResource = m_data->pageRaw(resourceRaw, storageTypes[resource.resourceType]);
+		DataCollection::StorageType storage = external ? 
+			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
+
+		PageRawPtr newOrExistingResource = m_data->pageRaw(resourceRaw, storage);
 		if (!newOrExistingResource)
 		{
 			newOrExistingResource = resourceRaw;
-			m_data->addPageRaw(newOrExistingResource, storageTypes[resource.resourceType]);
+			m_data->addPageRaw(newOrExistingResource, storage);
 		}
 
 		newOrExistingResource->linksToThisResource.push_back(pageRaw);
 		newOrExistingResource->resourceType = resource.resourceType;
 	}
+}
+
+bool ModelController::isUrlExternal(const QUrl& url) const noexcept
+{
+	return PageRawParserHelpers::isUrlExternal(m_webCrawlerOptions.url, url);
 }
 
 }

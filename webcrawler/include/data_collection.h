@@ -109,6 +109,17 @@ public:
 		VideoResourcesStorageType,
 		OtherResourcesStorageType,
 
+		//
+		// ExternalResources
+		//
+		ExternalHtmlResourcesStorageType,
+		ExternalImageResourcesStorageType,
+		ExternalJavaScriptResourcesStorageType,
+		ExternalStyleSheetResourcesStorageType,
+		ExternalFlashResourcesStorageType,
+		ExternalVideoResourcesStorageType,
+		ExternalOtherResourcesStorageType,
+
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		EndEnumStorageType
 	};

@@ -71,4 +71,19 @@ std::vector<QUrl> PageRawParserHelpers::resolveUrlList(const QUrl& baseUrl, cons
 	return result;
 }
 
+bool PageRawParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept
+{
+	// TODO: improve
+	QString baseUrlHost = baseUrl.host();
+	QString urlHost = url.host();
+	
+	const bool isUrlInternal =  baseUrlHost == urlHost || 
+		(urlHost.endsWith("." + baseUrlHost)) ||
+		(baseUrlHost.endsWith("." + urlHost));
+
+	// TODO: what if both urls are sub-domains?
+
+	return !isUrlInternal;
+}
+
 }

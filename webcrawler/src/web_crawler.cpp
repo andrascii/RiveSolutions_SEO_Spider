@@ -44,6 +44,8 @@ void WebCrawler::startCrawling(const WebCrawlerOptions& options)
 
 	for (std::unique_ptr<PageRawProcessor>& worker : m_workers)
 	{
+		VERIFY(QMetaObject::invokeMethod(worker.get(), "setHost", Qt::QueuedConnection, Q_ARG(QUrl, host)));
+
 		worker->startExecution();
 	}
 }

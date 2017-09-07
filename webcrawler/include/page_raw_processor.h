@@ -20,6 +20,7 @@ public:
 		QueuedDownloader* queuedDownloader, QObject* parent = nullptr);
 
 	Q_SIGNAL void webPageParsed(PageRawPtr pageRaw);
+	Q_SLOT void setHost(QUrl host);
 
 private:
 	virtual void process() override;
@@ -29,6 +30,7 @@ private:
 	WebCrawlerInternalUrlStorage* m_webCrawlerInternalUrlStorage;
 	QueuedDownloader* m_queuedDownloader;
 	std::vector<QUrl> m_pageUrlList;
+	QUrl m_host;
 };
 
 }

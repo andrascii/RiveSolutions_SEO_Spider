@@ -2,13 +2,18 @@
 #include "gumbo_parsing_helpers.h"
 #include "page_raw_parser_helpers.h"
 
-namespace WebCrawler
+namespace
 {
 
 bool checkAttribute(const GumboAttribute* attribute, const char* expectedValue)
 {
 	return attribute && QString(attribute->value).toLower() == expectedValue;
 }
+
+}
+
+namespace WebCrawler
+{
 
 void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {

@@ -144,7 +144,15 @@ void DataCollection::checkStorageType(StorageType type) const noexcept
 		type == StyleSheetResourcesStorageType ||
 		type == FlashResourcesStorageType ||
 		type == VideoResourcesStorageType ||
-		type == OtherResourcesStorageType
+		type == OtherResourcesStorageType ||
+
+		type == ExternalHtmlResourcesStorageType ||
+		type == ExternalImageResourcesStorageType ||
+		type == ExternalJavaScriptResourcesStorageType ||
+		type == ExternalStyleSheetResourcesStorageType ||
+		type == ExternalFlashResourcesStorageType ||
+		type == ExternalVideoResourcesStorageType ||
+		type == ExternalOtherResourcesStorageType
 	);
 }
 
@@ -360,6 +368,35 @@ void DataCollection::initializeStorages()
 		std::make_pair(OtherResourcesStorageType, CrawlerStorageTypePtr(
 			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl), 
 				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+
+		std::make_pair(ExternalHtmlResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl),
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(ExternalImageResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl),
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(ExternalJavaScriptResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl),
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(ExternalStyleSheetResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl),
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(ExternalFlashResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl),
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(ExternalVideoResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl),
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
+
+		std::make_pair(ExternalOtherResourcesStorageType, CrawlerStorageTypePtr(
+			new CrawlerStorageType(0, PageRawHasherProxy(new PageRawHasherUrl),
+				PageRawComparatorProxy(new PageRawUrlComparator)))),
 	};
 
 	m_guiStorageMap = std::initializer_list<std::pair<const int, GuiStorageTypePtr>>
@@ -409,7 +446,15 @@ void DataCollection::initializeStorages()
 		std::make_pair(StyleSheetResourcesStorageType, std::make_shared<GuiStorageType>()),
 		std::make_pair(FlashResourcesStorageType, std::make_shared<GuiStorageType>()),
 		std::make_pair(VideoResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(OtherResourcesStorageType, std::make_shared<GuiStorageType>())
+		std::make_pair(OtherResourcesStorageType, std::make_shared<GuiStorageType>()),
+
+		std::make_pair(ExternalHtmlResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ExternalImageResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ExternalJavaScriptResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ExternalStyleSheetResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ExternalFlashResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ExternalVideoResourcesStorageType, std::make_shared<GuiStorageType>()),
+		std::make_pair(ExternalOtherResourcesStorageType, std::make_shared<GuiStorageType>())
 	};
 }
 

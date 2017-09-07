@@ -27,6 +27,11 @@ PageRawProcessor::PageRawProcessor(WebCrawlerInternalUrlStorage* crawlerStorage,
 	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageResourcesParser>());
 }
 
+void PageRawProcessor::setHost(QUrl host)
+{
+	m_host = host;
+}
+
 void PageRawProcessor::process()
 {
 	QUrl url;
@@ -73,12 +78,12 @@ void PageRawProcessor::process()
 			m_htmlPageParser.parsePage(reply.responseBody, pageRaw);
 		}
 
-
-		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
-
-		urlList = PageRawParserHelpers::resolveUrlList(reply.url, urlList);
-
-		m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
+		if (!PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url))
+		{
+			std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
+			urlList = PageRawParserHelpers::resolveUrlList(reply.url, urlList);
+			m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
+		}
 
 #ifdef QT_DEBUG
 		if (pageRaw->fromUrl.toString().isEmpty())
