@@ -11,7 +11,7 @@
 #endif
 
 #ifdef QT_DEBUG
-#define VERIFY(Connection) assert(Connection)
+#define VERIFY(Connection) ASSERT(Connection)
 #else
 #define VERIFY(Connection) Connection
 #endif

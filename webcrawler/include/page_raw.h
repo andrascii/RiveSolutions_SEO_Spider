@@ -26,10 +26,6 @@ struct PageRaw
 {
 	using PageRawWeakPtr = std::weak_ptr<PageRaw>;
 
-	~PageRaw()
-	{
-	}
-
 	QUrl url;
 	QUrl fromUrl;
 	QString title;
@@ -61,14 +57,14 @@ struct PageRaw
 
 	std::deque<PageRawResource> rawResources; // TODO: move to another structure
 	
-	std::deque<PageRawWeakPtr> linksFromThisResource;
-	std::deque<PageRawWeakPtr> linksToThisResource;
+	std::deque<PageRawWeakPtr> linksFromThisPage;
+	std::deque<PageRawWeakPtr> linksToThisPage;
 
 #ifdef QT_DEBUG
+
 	QByteArray rawHtml;
-#endif // DEBUG
 
-
+#endif
 };
 
 using PageRawPtr = std::shared_ptr<PageRaw>;

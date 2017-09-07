@@ -3,8 +3,8 @@
 #include "table_view.h"
 #include "summary_model.h"
 #include "summary_view_model.h"
-#include "page_info_storage_model.h"
-#include "page_info_storage_view_model.h"
+#include "web_site_pages_storage_model.h"
+#include "web_site_pages_storage_view_model.h"
 #include "data_collection.h"
 #include "storage_adaptor.h"
 #include "storage_adaptor_factory.h"
@@ -51,8 +51,8 @@ void SummaryFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& se
 
 	SummaryCategoryItem category = summaryModel->itemCategory(index);
 
-	PageInfoStorageModel* storageModel = 
-		QuickieWebBotHelpers::safe_runtime_static_cast<PageInfoStorageModel*>(m_ui->summaryDetailsTableView->model());
+	WebSitePagesStorageModel* storageModel = 
+		QuickieWebBotHelpers::safe_runtime_static_cast<WebSitePagesStorageModel*>(m_ui->summaryDetailsTableView->model());
 
 	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->create(category));
 
@@ -84,8 +84,8 @@ void SummaryFilterWidget::initSummaryView()
 
 void SummaryFilterWidget::initDetailsView()
 {
-	PageInfoStorageModel* model = new PageInfoStorageModel(this);
-	PageInfoStorageViewModel* viewModel = new PageInfoStorageViewModel(model, this);
+	WebSitePagesStorageModel* model = new WebSitePagesStorageModel(this);
+	WebSitePagesStorageViewModel* viewModel = new WebSitePagesStorageViewModel(model, this);
 
 	model->setStorageAdaptor(theApp->storageAdaptorFactory()->create(SummaryCategoryItem::SummaryCategoryItemAllPages));
 

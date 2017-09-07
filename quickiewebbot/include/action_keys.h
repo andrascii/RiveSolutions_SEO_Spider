@@ -5,7 +5,6 @@ namespace QuickieWebBot
 
 // action group keys
 static const QByteArray s_fileActionGroup = "fileActionGourp";
-static const QByteArray s_settingsActionGroup = "settingsActionGroup";
 
 // action keys
 
@@ -20,5 +19,10 @@ static const QByteArray s_exitProgramAction = "exitProgramAction";
 
 // settings actions
 static const QByteArray s_openSettingsAction = "openSettingsAction";
+
+// crawler actions
+static const QByteArray s_startCrawlerAction = "startCrawlerAction";
+static const QByteArray s_stopCrawlerAction = "stopCrawlerAction";
+static const QByteArray s_clearCrawledDataAction = "clearCrawledDataAction";
 
 }

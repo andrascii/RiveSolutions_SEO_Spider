@@ -2,8 +2,8 @@
 #include "application.h"
 #include "table_view.h"
 #include "summary_filter_widget.h"
-#include "page_info_storage_model.h"
-#include "page_info_storage_view_model.h"
+#include "web_site_pages_storage_model.h"
+#include "web_site_pages_storage_view_model.h"
 #include "storage_adaptor.h"
 #include "storage_adaptor_factory.h"
 #include "model_controller.h"
@@ -28,6 +28,7 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
 	horizontalLayout->setSpacing(0);
+	horizontalLayout->setMargin(0);
 
 	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
 	horizontalLayout->addWidget(titledStackedWidget);
@@ -189,8 +190,8 @@ void DataPagesWidget::initializeStackedWidget()
 
 	TableView* crawlingTableView = new TableView(m_stackedWidget);
 
-	PageInfoStorageModel* model = new PageInfoStorageModel(this);
-	PageInfoStorageViewModel* modelView = new PageInfoStorageViewModel(model, this);
+	WebSitePagesStorageModel* model = new WebSitePagesStorageModel(this);
+	WebSitePagesStorageViewModel* modelView = new WebSitePagesStorageViewModel(model, this);
 
 	model->setStorageAdaptor(theApp->storageAdaptorFactory()->create(SummaryCategoryItem::SummaryCategoryItemAllPages));
 

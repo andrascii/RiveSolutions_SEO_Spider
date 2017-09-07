@@ -28,7 +28,7 @@ QActionGroup* ActionRegistry::actionGroup(const QByteArray& actionGroupKey) cons
 	return actionGroupIterator->second.get();
 }
 
-QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, const QIcon& icon, const QByteArray& text)
+QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, const QIcon& icon, const QString& text)
 {
 	DEBUG_ASSERT(m_globalActions.find(actionKey) == std::end(m_globalActions));
 
@@ -40,7 +40,7 @@ QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, const QIco
 	return action;
 }
 
-QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, const QByteArray& text)
+QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, const QString& text)
 {
 	return addGlobalAction(actionKey, QIcon(), text);
 }
@@ -54,7 +54,7 @@ QActionGroup* ActionRegistry::addActionGroup(const QByteArray& actionGroupKey)
 	return m_actionGroups[actionGroupKey].get();
 }
 
-QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QIcon& icon, const QByteArray& text)
+QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QIcon& icon, const QString& text)
 {
 	DEBUG_ASSERT(m_actionGroups.find(actionGroupKey) != std::end(m_actionGroups));
 
@@ -66,7 +66,7 @@ QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey
 	return action;
 }
 
-QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QByteArray& text)
+QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QString& text)
 {
 	return addActionToActionGroup(actionGroupKey, actionKey, QIcon(), text);
 }

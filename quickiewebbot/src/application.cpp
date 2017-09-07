@@ -96,9 +96,14 @@ void Application::registerSettingsPages() const
 	SettingsPageImpl<Ui_PreferencesSettings>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettings));
 }
 
-void Application::initialize() noexcept
+void Application::registerServices() const
 {
 	ServiceLocator::instance()->addService<SettingsPageRegistry>(new SettingsPageRegistry);
+}
+
+void Application::initialize() noexcept
+{
+	registerServices();
 
 	m_mainFrame.reset(new MainFrame);
 

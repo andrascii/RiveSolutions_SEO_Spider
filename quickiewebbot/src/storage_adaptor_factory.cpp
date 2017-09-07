@@ -1,6 +1,6 @@
 #include "storage_adaptor_factory.h"
 #include "storage_adaptor.h"
-#include "page_info.h"
+#include "page_raw_info.h"
 
 namespace QuickieWebBot
 {
@@ -45,32 +45,32 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemVideoResources:
 		case SummaryCategoryItem::SummaryCategoryItemOtherResources:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
-				<< PageInfo::UrlItemType
-				<< PageInfo::ContentItemType
-				<< PageInfo::TitleItemType
-				<< PageInfo::TitleLengthItemType
-				<< PageInfo::MetaRefreshItemType
-				<< PageInfo::MetaRobotsItemType
-				<< PageInfo::MetaDescriptionItemType
-				<< PageInfo::MetaDescriptionLengthItemType
-				<< PageInfo::MetaKeywordsItemType
-				<< PageInfo::MetaKeywordsLengthItemType
-				<< PageInfo::RedirectedUrlItemType
-				<< PageInfo::FirstH1ItemType
-				<< PageInfo::FirstH1LengthItemType
-				<< PageInfo::SecondH1ItemType
-				<< PageInfo::SecondH1LengthItemType
-				<< PageInfo::FirstH2ItemType
-				<< PageInfo::FirstH2LengthItemType
-				<< PageInfo::SecondH2ItemType
-				<< PageInfo::SecondH2LengthItemType
-				<< PageInfo::CanonicalLinkElementItemType
-				<< PageInfo::StatusCodeItemType
-				<< PageInfo::PageSizeKbItemType
-				<< PageInfo::WordCountItemType
-				<< PageInfo::PageHashItemType
-				<< PageInfo::UrlLengthItemType
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::TitleItemType
+				<< PageRawInfo::TitleLengthItemType
+				<< PageRawInfo::MetaRefreshItemType
+				<< PageRawInfo::MetaRobotsItemType
+				<< PageRawInfo::MetaDescriptionItemType
+				<< PageRawInfo::MetaDescriptionLengthItemType
+				<< PageRawInfo::MetaKeywordsItemType
+				<< PageRawInfo::MetaKeywordsLengthItemType
+				<< PageRawInfo::RedirectedUrlItemType
+				<< PageRawInfo::FirstH1ItemType
+				<< PageRawInfo::FirstH1LengthItemType
+				<< PageRawInfo::SecondH1ItemType
+				<< PageRawInfo::SecondH1LengthItemType
+				<< PageRawInfo::FirstH2ItemType
+				<< PageRawInfo::FirstH2LengthItemType
+				<< PageRawInfo::SecondH2ItemType
+				<< PageRawInfo::SecondH2LengthItemType
+				<< PageRawInfo::CanonicalLinkElementItemType
+				<< PageRawInfo::StatusCodeItemType
+				<< PageRawInfo::PageSizeKbItemType
+				<< PageRawInfo::WordCountItemType
+				<< PageRawInfo::PageHashItemType
+				<< PageRawInfo::UrlLengthItemType
 			);
 
 			return;
@@ -84,11 +84,11 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemVeryLongLinks:
 		case SummaryCategoryItem::SummaryCategoryItemBrokenLinks:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
-				<< PageInfo::UrlItemType
-				<< PageInfo::UrlLengthItemType
-				<< PageInfo::ContentItemType
-				<< PageInfo::StatusCodeItemType
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::UrlLengthItemType
+				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::StatusCodeItemType
 			);
 
 			return;
@@ -104,11 +104,11 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemDuplicatedH1Titles:
 		case SummaryCategoryItem::SummaryCategoryItemSeveralTitlesOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
-				<< PageInfo::UrlItemType
-				<< PageInfo::ContentItemType
-				<< PageInfo::TitleItemType
-				<< PageInfo::TitleLengthItemType
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::TitleItemType
+				<< PageRawInfo::TitleLengthItemType
 			);
 
 			return;
@@ -123,11 +123,11 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemVeryShortMetaDescriptions:
 		case SummaryCategoryItem::SummaryCategoryItemSeveralMetaDescriptionsOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
-				<< PageInfo::UrlItemType
-				<< PageInfo::ContentItemType
-				<< PageInfo::MetaDescriptionItemType
-				<< PageInfo::MetaDescriptionLengthItemType
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::MetaDescriptionItemType
+				<< PageRawInfo::MetaDescriptionLengthItemType
 			);
 
 			return;
@@ -140,11 +140,11 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemDuplicatedMetaKeywords:
 		case SummaryCategoryItem::SummaryCategoryItemSeveralMetaKeywordsOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
-				<< PageInfo::UrlItemType
-				<< PageInfo::ContentItemType
-				<< PageInfo::MetaKeywordsItemType
-				<< PageInfo::MetaKeywordsLengthItemType
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::MetaKeywordsItemType
+				<< PageRawInfo::MetaKeywordsLengthItemType
 			);
 
 			return;
@@ -158,13 +158,13 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemVeryLongH1s:
 		case SummaryCategoryItem::SummaryCategoryItemSeveralH1s:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
-				<< PageInfo::UrlItemType
-				<< PageInfo::ContentItemType
-				<< PageInfo::FirstH1ItemType
-				<< PageInfo::FirstH1LengthItemType
-				<< PageInfo::SecondH1ItemType
-				<< PageInfo::SecondH1LengthItemType
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::FirstH1ItemType
+				<< PageRawInfo::FirstH1LengthItemType
+				<< PageRawInfo::SecondH1ItemType
+				<< PageRawInfo::SecondH1LengthItemType
 			);
 
 			return;
@@ -178,13 +178,13 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemVeryLongH2s:
 		case SummaryCategoryItem::SummaryCategoryItemSeveralH2s:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
-				<< PageInfo::UrlItemType
-				<< PageInfo::ContentItemType
-				<< PageInfo::FirstH2ItemType
-				<< PageInfo::FirstH2LengthItemType
-				<< PageInfo::SecondH2ItemType
-				<< PageInfo::SecondH2LengthItemType
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::FirstH2ItemType
+				<< PageRawInfo::FirstH2LengthItemType
+				<< PageRawInfo::SecondH2ItemType
+				<< PageRawInfo::SecondH2LengthItemType
 			);
 
 			return;
@@ -197,11 +197,11 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		case SummaryCategoryItem::SummaryCategoryItemImageMissingAltText:
 		case SummaryCategoryItem::SummaryCategoryItemImagesVeryLongAltText:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageInfo::ItemType>()
-				<< PageInfo::UrlItemType
-				<< PageInfo::ImageAltTextItemType
-				<< PageInfo::ImageAltTextLengthItemType
-				<< PageInfo::ImageSizeKbItemType
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+				<< PageRawInfo::UrlItemType
+				<< PageRawInfo::ImageAltTextItemType
+				<< PageRawInfo::ImageAltTextLengthItemType
+				<< PageRawInfo::ImageSizeKbItemType
 			);
 
 			return;

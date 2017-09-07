@@ -12,10 +12,10 @@ WebCrawler::PageRawPtr mergeTwoPages(WebCrawler::PageRawPtr existingPage, WebCra
 		return newPage;
 	}
 
-	newPage->linksToThisResource.insert(
-		std::begin(newPage->linksToThisResource),
-		std::begin(existingPage->linksToThisResource),
-		std::end(existingPage->linksToThisResource)
+	newPage->linksToThisPage.insert(
+		std::begin(newPage->linksToThisPage),
+		std::begin(existingPage->linksToThisPage),
+		std::end(existingPage->linksToThisPage)
 	);
 
 	*existingPage = *newPage;
@@ -327,6 +327,8 @@ void ModelController::processPageRawStatusCode(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 {
+	return;
+
 	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
 	{
 		// if it is not an html resource, just exit
@@ -365,23 +367,18 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		if (existingResource)
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
-			existingResource->linksToThisResource.push_back(pageRaw);
-			pageRaw->linksFromThisResource.push_back(existingResource);
+			existingResource->linksToThisPage.push_back(pageRaw);
+			pageRaw->linksFromThisPage.push_back(existingResource);
 
 		}
 		else
 		{
 			PageRawPtr pendingResource = std::make_shared<PageRaw>();
 			pendingResource->url = resource.resourceUrl;
-			pendingResource->linksToThisResource.push_back(pageRaw);
-			pageRaw->linksFromThisResource.push_back(pendingResource);
+			pendingResource->linksToThisPage.push_back(pageRaw);
+			pageRaw->linksFromThisPage.push_back(pendingResource);
 			m_data->addPageRaw(pendingResource, DataCollection::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isPageRawExists(pendingResource, DataCollection::PendingResourcesStorageType));
-
-			// isPageRawExists is not working correctly, uncomment this code to check it
-			PageRawPtr pendingResourceCopy = std::make_shared<PageRaw>();
-			pendingResourceCopy->url = resource.resourceUrl;
-			DEBUG_ASSERT(m_data->isPageRawExists(pendingResourceCopy, DataCollection::PendingResourcesStorageType));
 		}
 	}
 }
@@ -442,7 +439,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 			m_data->addPageRaw(newOrExistingResource, storage);
 		}
 
-		newOrExistingResource->linksToThisResource.push_back(pageRaw);
+		newOrExistingResource->linksToThisPage.push_back(pageRaw);
 		newOrExistingResource->resourceType = resource.resourceType;
 	}
 }

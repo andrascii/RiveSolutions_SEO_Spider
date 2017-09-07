@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-class PageInfo
+class PageRawInfo
 {
 public:
 	enum ItemType : std::uint64_t
@@ -54,23 +54,23 @@ public:
 		ImageAltTextLengthItemType,
 		ImageSizeKbItemType,
 
-		HasSeveralTitleTagsItemType,
-		HasSeveralMetaDescriptionTagsItemType,
-		HasSeveralMetaKeywordsTagsItemType,
-		HasSeveralH1TagsItemType,
-		HasSeveralH2TagsItemType,
-
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		EndEnumPageInfoItemType
 	};
 
-	PageInfo(WebCrawler::PageRawPtr pageRawPtr);
+	PageRawInfo(WebCrawler::PageRawPtr pageRawPtr);
 
 	static QString itemTypeDescription(ItemType item);
 	static int columnPrefferedSize(ItemType item);
 
 	QVariant itemValue(ItemType item);
 	void setItemValue(const QVariant& value, ItemType item);
+
+	size_t countLinksFromThisPage() const noexcept;
+	WebCrawler::PageRaw::PageRawWeakPtr linkFromThisPage(size_t number);
+
+	size_t countLinksToThisPage() const noexcept;
+	WebCrawler::PageRaw::PageRawWeakPtr linkToThisPage(size_t number);
 
 private:
 	void setUrl(const QVariant& value);
@@ -94,7 +94,7 @@ private:
 	void setPageHash(const QVariant& value);
 
 private:
-	using MethodAcceptor = QVariant(PageInfo::*)();
+	using MethodAcceptor = QVariant(PageRawInfo::*)();
 
 	MethodAcceptor acceptItem(ItemType item);
 	QVariant acceptUrl();
@@ -124,22 +124,17 @@ private:
 	QVariant acceptPageSizeKb();
 	QVariant acceptWordCount();
 	QVariant acceptPageHash();
-	QVariant acceptHasSeveralTitles();
-	QVariant acceptHasSeveralMetaDescriptions();
-	QVariant acceptHasSeveralMetaKeywords();
-	QVariant acceptHasSeveralH1();
-	QVariant acceptHasSeveralH2();
 	QVariant acceptImageSizeKb();
 	QVariant acceptImageAltText();
 	QVariant acceptImageAltTextLength();
 
-	static void checkInfoItem(PageInfo::ItemType item);
+	static void checkInfoItem(PageRawInfo::ItemType item);
 
 private:
 	WebCrawler::PageRawPtr m_pageRawPtr;
 };
 
-using PageInfoPtr = std::shared_ptr<PageInfo>;
+using PageInfoPtr = std::shared_ptr<PageRawInfo>;
 
 Q_DECLARE_METATYPE(PageInfoPtr);
 

@@ -9,6 +9,8 @@ enum class SummaryCategoryItem
 {
 	SummaryCategoryItemBegin = WebCrawler::DataCollection::BeginEnumStorageType,
 
+	SummaryCategoryItemNone,
+
 	// used for headers
 	SummaryCategoryItemHeader,
 

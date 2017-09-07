@@ -16,12 +16,12 @@ StorageAdaptor::StorageAdaptor(const WebCrawler::DataCollection::GuiStorageTypeP
 	VERIFY(connect(dataCollection, SIGNAL(pageRawAdded(int, int)), this, SLOT(onStorageUpdated(int, int))));
 }
 
-void StorageAdaptor::setAvailableColumns(QList<PageInfo::ItemType> availableColumns) noexcept
+void StorageAdaptor::setAvailableColumns(QList<PageRawInfo::ItemType> availableColumns) noexcept
 {
 	m_availableColumns = availableColumns;
 }
 
-QList<PageInfo::ItemType> StorageAdaptor::availableColumns() const noexcept
+QList<PageRawInfo::ItemType> StorageAdaptor::availableColumns() const noexcept
 {
 	return m_availableColumns;
 }
@@ -30,7 +30,7 @@ QString StorageAdaptor::columnDescription(int columnIndex) const noexcept
 {
 	DEBUG_ASSERT(columnIndex < m_availableColumns.size());
 
-	return PageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
+	return PageRawInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
 int StorageAdaptor::itemCount() const noexcept
@@ -45,10 +45,10 @@ QVariant StorageAdaptor::item(const QModelIndex& index) const noexcept
 	DEBUG_ASSERT(index.row() < storage.size());
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
-	return PageInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
+	return PageRawInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
 }
 
-PageInfo::ItemType StorageAdaptor::itemType(const QModelIndex& index) const noexcept
+PageRawInfo::ItemType StorageAdaptor::itemType(const QModelIndex& index) const noexcept
 {
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 

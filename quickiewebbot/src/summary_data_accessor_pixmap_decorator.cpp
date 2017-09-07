@@ -9,7 +9,7 @@ SummaryDataAccessorPixmapDecorator::SummaryDataAccessorPixmapDecorator(ISummaryD
 {
 	initializePixmaps();
 
-	VERIFY(connect(SummaryDataAccessorDecorator::dataCollection(), SIGNAL(pageRawAdded(int, int)), this, SLOT(emitDataChanged(int, int))));
+	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), this, SLOT(interceptDecoratingObjectSignal(int, int, Qt::ItemDataRole))));
 }
 
 const QPixmap& SummaryDataAccessorPixmapDecorator::pixmap(const QModelIndex& index) const noexcept
@@ -45,24 +45,6 @@ SummaryDataAccessorPixmapDecorator::ItemStatus SummaryDataAccessorPixmapDecorato
 	}
 
 	return StatusOK;
-}
-
-int SummaryDataAccessorPixmapDecorator::rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept
-{
-	for (int i = 0; i < SummaryDataAccessorDecorator::rowCount(); ++i)
-	{
-		if (!SummaryDataAccessorDecorator::storageDescriptionByRow(i))
-		{
-			continue;
-		}
-
-		if (SummaryDataAccessorDecorator::storageDescriptionByRow(i)->storageType == storageType)
-		{
-			return i;
-		}
-	}
-
-	return -1;
 }
 
 WebCrawler::DataCollection::GuiStorageTypePtr SummaryDataAccessorPixmapDecorator::storageByRow(int row) const noexcept
@@ -105,16 +87,8 @@ void SummaryDataAccessorPixmapDecorator::initializePixmaps()
 	}
 }
 
-void SummaryDataAccessorPixmapDecorator::emitDataChanged(int row, int storageType)
+void SummaryDataAccessorPixmapDecorator::interceptDecoratingObjectSignal(int row, int column, Qt::ItemDataRole)
 {
-	int storageTypeRow = rowByStorageType(static_cast<WebCrawler::DataCollection::StorageType>(storageType));
-
-	if (storageTypeRow == -1)
-	{
-		return;
-	}
-
-	Q_EMIT dataChanged(storageTypeRow, 1, Qt::DisplayRole);
 	Q_EMIT dataChanged(row, 0, Qt::DecorationRole);
 }
 

@@ -1,4 +1,4 @@
-#include "page_info.h"
+#include "page_raw_info.h"
 #include "abstract_table_model.h"
 #include "default_column_resize_policy.h"
 #include "url_renderer.h"
@@ -6,8 +6,8 @@
 #include "background_renderer.h"
 #include "selection_background_renderer.h"
 #include "grid_line_renderer.h"
-#include "page_info_storage_model.h"
-#include "page_info_storage_view_model.h"
+#include "web_site_pages_storage_model.h"
+#include "web_site_pages_storage_view_model.h"
 #include "quickie_web_bot_helpers.h"
 #include "table_view.h"
 
@@ -15,7 +15,7 @@
 namespace QuickieWebBot
 {
 
-PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, QObject* parent)
+WebSitePagesStorageViewModel::WebSitePagesStorageViewModel(WebSitePagesStorageModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
 	, m_selectionBgColor("#C0C0C0")
 	, m_hoveredBgColor("#F3F3F3")
@@ -32,7 +32,7 @@ PageInfoStorageViewModel::PageInfoStorageViewModel(PageInfoStorageModel* model, 
 	VERIFY(connect(model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
 }
 
-int PageInfoStorageViewModel::marginTop(const QModelIndex& index) const noexcept
+int WebSitePagesStorageViewModel::marginTop(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
@@ -42,12 +42,12 @@ int PageInfoStorageViewModel::marginTop(const QModelIndex& index) const noexcept
 	return QuickieWebBotHelpers::pointsToPixels(6);
 }
 
-int PageInfoStorageViewModel::marginBottom(const QModelIndex&) const noexcept
+int WebSitePagesStorageViewModel::marginBottom(const QModelIndex&) const noexcept
 {
 	return QuickieWebBotHelpers::pointsToPixels(4);
 }
 
-int PageInfoStorageViewModel::marginLeft(const QModelIndex& index) const noexcept
+int WebSitePagesStorageViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
@@ -57,19 +57,19 @@ int PageInfoStorageViewModel::marginLeft(const QModelIndex& index) const noexcep
 	return QuickieWebBotHelpers::pointsToPixels(6);
 }
 
-int PageInfoStorageViewModel::marginRight(const QModelIndex&) const noexcept
+int WebSitePagesStorageViewModel::marginRight(const QModelIndex&) const noexcept
 {
 	return QuickieWebBotHelpers::pointsToPixels(2);
 }
 
-const QPixmap& PageInfoStorageViewModel::itemPixmap(const QModelIndex& index) const noexcept
+const QPixmap& WebSitePagesStorageViewModel::itemPixmap(const QModelIndex& index) const noexcept
 {
-	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+	const WebSitePagesStorageModel* model = 
+		static_cast<const WebSitePagesStorageModel*>(AbstractViewModel::model());
 
 	static QPixmap emptyPixmap;
 
-	if (model->itemType(index) == PageInfo::UrlItemType)
+	if (model->itemType(index) == PageRawInfo::UrlItemType && hoveredIndex() == index)
 	{
 		return m_urlIcon;
 	}
@@ -77,34 +77,34 @@ const QPixmap& PageInfoStorageViewModel::itemPixmap(const QModelIndex& index) co
 	return emptyPixmap;
 }
 
-QRect PageInfoStorageViewModel::itemPixmapPosition(const QModelIndex&) const noexcept
+QRect WebSitePagesStorageViewModel::itemPixmapPosition(const QModelIndex&) const noexcept
 {
 	return QRect();
 }
 
-const QColor& PageInfoStorageViewModel::selectionBackgroundColor(const QModelIndex&) const noexcept
+const QColor& WebSitePagesStorageViewModel::selectionBackgroundColor(const QModelIndex&) const noexcept
 {
 	return m_selectionBgColor;
 }
 
-const QColor& PageInfoStorageViewModel::hoveredBackgroundColor(const QModelIndex&) const noexcept
+const QColor& WebSitePagesStorageViewModel::hoveredBackgroundColor(const QModelIndex&) const noexcept
 {
 	return m_hoveredBgColor;
 }
 
-const QColor& PageInfoStorageViewModel::backgroundColor(const QModelIndex&) const noexcept
+const QColor& WebSitePagesStorageViewModel::backgroundColor(const QModelIndex&) const noexcept
 {
 	return m_bgColor;
 }
 
-const QFont& PageInfoStorageViewModel::font(const QModelIndex& index) const noexcept
+const QFont& WebSitePagesStorageViewModel::font(const QModelIndex& index) const noexcept
 {
 	static QFont font = Application::font();
 
 	return font;
 }
 
-Qt::AlignmentFlag PageInfoStorageViewModel::textAlignment(const QModelIndex& index) const noexcept
+Qt::AlignmentFlag WebSitePagesStorageViewModel::textAlignment(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
@@ -114,12 +114,12 @@ Qt::AlignmentFlag PageInfoStorageViewModel::textAlignment(const QModelIndex& ind
 	return Qt::AlignLeft;
 }
 
-QColor PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexcept
+QColor WebSitePagesStorageViewModel::textColor(const QModelIndex& index) const noexcept
 {
-	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+	const WebSitePagesStorageModel* model = 
+		static_cast<const WebSitePagesStorageModel*>(AbstractViewModel::model());
 
-	if (model->itemType(index) == PageInfo::UrlItemType)
+	if (model->itemType(index) == PageRawInfo::UrlItemType)
 	{
 		return QColor("#1754A8");
 	}
@@ -127,7 +127,7 @@ QColor PageInfoStorageViewModel::textColor(const QModelIndex& index) const noexc
 	return QColor("#000000");
 }
 
-void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
+void WebSitePagesStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 {
 	AbstractViewModel::setHoveredIndex(index);
 
@@ -152,12 +152,12 @@ void PageInfoStorageViewModel::setHoveredIndex(const QModelIndex& index) noexcep
 	}
 }
 
-QList<const IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& index) const noexcept
+QList<const IRenderer*> WebSitePagesStorageViewModel::renderers(const QModelIndex& index) const noexcept
 {
-	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+	const WebSitePagesStorageModel* model = 
+		static_cast<const WebSitePagesStorageModel*>(AbstractViewModel::model());
 
-	const IRenderer* renderer = model->itemType(index) == PageInfo::UrlItemType ?
+	const IRenderer* renderer = model->itemType(index) == PageRawInfo::UrlItemType ?
 		AbstractViewModel::renderer(AbstractViewModel::UrlRendererType) :
 		AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType);
 
@@ -168,18 +168,18 @@ QList<const IRenderer*> PageInfoStorageViewModel::renderers(const QModelIndex& i
 		<< AbstractViewModel::renderer(AbstractViewModel::GridLineRendererType);
 }
 
-void PageInfoStorageViewModel::onAttachedModelInternalDataChanged()
+void WebSitePagesStorageViewModel::onAttachedModelInternalDataChanged()
 {
-	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+	const WebSitePagesStorageModel* model =
+		static_cast<const WebSitePagesStorageModel*>(AbstractViewModel::model());
 
 	AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType)->setCacheSize(static_cast<int>(std::pow((model->columnCount()), 2.0)));
 }
 
-void PageInfoStorageViewModel::initializeRenderers()
+void WebSitePagesStorageViewModel::initializeRenderers()
 {
-	const PageInfoStorageModel* model =
-		QuickieWebBotHelpers::safe_runtime_static_cast<const PageInfoStorageModel*>(AbstractViewModel::model());
+	const WebSitePagesStorageModel* model =
+		static_cast<const WebSitePagesStorageModel*>(AbstractViewModel::model());
 
 	AbstractViewModel::addRenderer(AbstractViewModel::PlainTextRendererType, new TextRenderer(this, static_cast<int>(std::pow((model->columnCount()), 2.0))));
 	AbstractViewModel::addRenderer(AbstractViewModel::UrlRendererType, new UrlRenderer(this, static_cast<int>(std::pow(model->columnCount(), 2.0))));
