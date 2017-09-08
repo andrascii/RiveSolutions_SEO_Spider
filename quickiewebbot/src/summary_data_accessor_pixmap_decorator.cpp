@@ -30,7 +30,7 @@ const QPixmap& SummaryDataAccessorPixmapDecorator::pixmap(const QModelIndex& ind
 
 SummaryDataAccessorPixmapDecorator::ItemStatus SummaryDataAccessorPixmapDecorator::itemStatus(int row) const noexcept
 {
-	WebCrawler::DataCollection::GuiStorageTypePtr storage = storageByRow(row);
+	WebCrawler::GuiStorage::GuiStorageTypePtr storage = storageByRow(row);
 
 	ASSERT(storage);
 
@@ -47,7 +47,7 @@ SummaryDataAccessorPixmapDecorator::ItemStatus SummaryDataAccessorPixmapDecorato
 	return StatusOK;
 }
 
-WebCrawler::DataCollection::GuiStorageTypePtr SummaryDataAccessorPixmapDecorator::storageByRow(int row) const noexcept
+WebCrawler::GuiStorage::GuiStorageTypePtr SummaryDataAccessorPixmapDecorator::storageByRow(int row) const noexcept
 {
 	DEBUG_ASSERT(row < SummaryDataAccessorDecorator::rowCount());
 
@@ -59,7 +59,7 @@ WebCrawler::DataCollection::GuiStorageTypePtr SummaryDataAccessorPixmapDecorator
 		return nullptr;
 	}
 
-	return SummaryDataAccessorDecorator::dataCollection()->guiStorage(storageDesc->storageType);
+	return SummaryDataAccessorDecorator::guiStorage()->guiStorage(storageDesc->storageType);
 }
 
 void SummaryDataAccessorPixmapDecorator::initializePixmaps()

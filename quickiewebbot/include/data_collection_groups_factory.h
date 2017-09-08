@@ -45,7 +45,7 @@ using DCStorageGroupDescriptionPtr = std::shared_ptr<DCStorageGroupDescription>;
 class DataCollectionGroupsFactory
 {
 public:
-	DCStorageGroupDescriptionPtr create(WebCrawler::DataCollection* dataCollection, AuditGroup group);
+	DCStorageGroupDescriptionPtr create(/*WebCrawler::GuiStorage* guiStorage, */AuditGroup group);
 };
 
 }

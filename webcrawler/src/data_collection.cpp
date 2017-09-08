@@ -1,13 +1,24 @@
 #include "data_collection.h"
 #include "page_raw_comparator.h"
+#include "gui_storage.h"
 
 namespace WebCrawler
 {
 
 DataCollection::DataCollection(QObject* parent)
 	: QObject(parent)
+	, m_guiStorage(new GuiStorage)
 {
 	initializeStorages();
+
+
+	m_guiStorage->moveToThread(QApplication::instance()->thread());
+	QObject::connect(this, &DataCollection::pageRawAdded, m_guiStorage, &GuiStorage::addPageRaw, Qt::QueuedConnection);
+}
+
+DataCollection::~DataCollection()
+{
+	m_guiStorage->deleteLater();
 }
 
 bool DataCollection::isPageRawExists(const PageRawPtr& pageRaw, StorageType type) const noexcept
@@ -28,6 +39,11 @@ const PageRawPtr DataCollection::pageRaw(const PageRawPtr& pageRaw, StorageType 
 	return iter != storage->end() ? *iter : PageRawPtr();
 }
 
+WebCrawler::GuiStorage* DataCollection::guiStorage() const noexcept
+{
+	return m_guiStorage;
+}
+
 void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept
 {
 	if (isPageRawExists(pageRaw, type))
@@ -38,15 +54,7 @@ void DataCollection::addPageRaw(const PageRawPtr& pageRaw, StorageType type) noe
 	}
 
 	crawlerStorage(type)->insert(pageRaw);
-
-	auto guiStorageIt = m_guiStorageMap.find(type);
-
-	if (guiStorageIt != m_guiStorageMap.end())
-	{
-		guiStorageIt->second->push_back(pageRaw);
-		Q_EMIT pageRawAdded(guiStorage(type)->size() - 1, type);
-		ASSERT(isPageRawExists(pageRaw, type));
-	}	
+	emit pageRawAdded(pageRaw, type);
 }
 
 PageRawPtr DataCollection::removePageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept
@@ -64,18 +72,6 @@ PageRawPtr DataCollection::removePageRaw(const PageRawPtr& pageRaw, StorageType 
 	}
 
 	return PageRawPtr();
-}
-
-DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) noexcept
-{
-	ASSERT(m_guiStorageMap.find(type) != m_guiStorageMap.end());
-	return m_guiStorageMap.find(type)->second;
-}
-
-const DataCollection::GuiStorageTypePtr& DataCollection::guiStorage(StorageType type) const noexcept
-{
-	const GuiStorageTypePtr& storage = const_cast<DataCollection* const>(this)->guiStorage(type);
-	return storage;
 }
 
 DataCollection::CrawlerStorageTypePtr& DataCollection::crawlerStorage(StorageType type) noexcept
@@ -399,63 +395,7 @@ void DataCollection::initializeStorages()
 				PageRawComparatorProxy(new PageRawUrlComparator)))),
 	};
 
-	m_guiStorageMap = std::initializer_list<std::pair<const int, GuiStorageTypePtr>>
-	{
-		std::make_pair(CrawledUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ExternalUrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(UpperCaseUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(NonAsciiCharacterUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongUrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(EmptyTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryShortTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedH1TitleUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralTitleUrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(EmptyMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryShortMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralMetaDescriptionUrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(EmptyMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralMetaKeywordsUrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(MissingH1UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedH1UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongH1UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralH1UrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(MissingH2UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(DuplicatedH2UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongH2UrlStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(SeveralH2UrlStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(Over100kbImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(MissingAltTextImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VeryLongAltTextImageStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(Status404StorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(HtmlResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ImageResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(JavaScriptResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(StyleSheetResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(FlashResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(VideoResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(OtherResourcesStorageType, std::make_shared<GuiStorageType>()),
-
-		std::make_pair(ExternalHtmlResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ExternalImageResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ExternalJavaScriptResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ExternalStyleSheetResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ExternalFlashResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ExternalVideoResourcesStorageType, std::make_shared<GuiStorageType>()),
-		std::make_pair(ExternalOtherResourcesStorageType, std::make_shared<GuiStorageType>())
-	};
+	m_guiStorage->initializeStorages();
 }
 
 }

@@ -9,12 +9,12 @@ ApplicationSettings& ApplicationSettings::instance()
 	return singleton;
 }
 
-QVariant ApplicationSettings::get(QString key, SettingsGroup group = SettingsGroup::General)
+QVariant ApplicationSettings::get(QString key, SettingsGroup group/* = SettingsGroup::General*/)
 {
 	return 0;
 }
 
-void ApplicationSettings::set(QString key, QVariant value, SettingsGroup group = SettingsGroup::General)
+void ApplicationSettings::set(QString key, QVariant value, SettingsGroup group/* = SettingsGroup::General*/)
 {
 
 }

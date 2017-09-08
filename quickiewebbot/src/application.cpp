@@ -5,6 +5,7 @@
 #include "splash_screen.h"
 #include "service_locator.h"
 #include "web_crawler.h"
+#include "gui_storage.h"
 #include "constants.h"
 #include "application_properties.h"
 #include "debug_info_web_page_widget.h"
@@ -21,12 +22,15 @@ namespace QuickieWebBot
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_appicationProperties(new ApplicationProperties(this))
-	, m_modelController(new WebCrawler::ModelController(this))
-	, m_webCrawler(new WebCrawler::WebCrawler(WebCrawler::g_optimalParserThreadsCount, m_modelController, this))
+	, m_webCrawler(new WebCrawler::WebCrawler(WebCrawler::g_optimalParserThreadsCount))
 	, m_softwareBrandingOptions(new SoftwareBranding)
-	, m_storageAdatpterFactory(new StorageAdaptorFactory(m_modelController->data()))
+	, m_storageAdatpterFactory(new StorageAdaptorFactory(m_webCrawler->guiStorage()))
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 {
+	WebCrawler::GuiStorage* storage = m_webCrawler->guiStorage();
+	ASSERT(storage->thread() == QThread::currentThread());
+	m_guiStorage = storage;
+
 	initialize();
 
 	initializeStyleSheet();
@@ -46,9 +50,14 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 }
 
+Application::~Application()
+{
+
+}
+
 WebCrawler::WebCrawler* Application::webCrawler() noexcept
 {
-	return m_webCrawler;
+	return m_webCrawler.get();
 }
 
 MainFrame* Application::mainFrame() noexcept
@@ -56,9 +65,9 @@ MainFrame* Application::mainFrame() noexcept
 	return m_mainFrame.get();
 }
 
-WebCrawler::ModelController* Application::modelController() noexcept
+WebCrawler::GuiStorage* Application::guiStorage() noexcept
 {
-	return m_modelController;
+	return m_guiStorage;
 }
 
 StorageAdaptorFactory* Application::storageAdaptorFactory() noexcept

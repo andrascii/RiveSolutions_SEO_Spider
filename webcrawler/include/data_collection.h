@@ -7,6 +7,8 @@
 namespace WebCrawler
 {
 
+class GuiStorage;
+
 class DataCollection : public QObject
 {
 	Q_OBJECT
@@ -16,9 +18,6 @@ protected:
 	using CrawlerStorageTypePtr = std::shared_ptr<CrawlerStorageType>;
 
 public:
-	using GuiStorageType = QVector<PageRawPtr>;
-	using GuiStorageTypePtr = std::shared_ptr<GuiStorageType>;
-
 	enum StorageType
 	{
 		BeginEnumStorageType,
@@ -125,16 +124,16 @@ public:
 	};
 
 	DataCollection(QObject* parent);
+	~DataCollection();
 
 	bool isPageRawExists(const PageRawPtr& pageRaw, StorageType type) const noexcept;
 	void addPageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept;
 	PageRawPtr removePageRaw(const PageRawPtr& pageRaw, StorageType type) noexcept;
 	const PageRawPtr pageRaw(const PageRawPtr& pageRaw, StorageType type) const noexcept;
 
-	const GuiStorageTypePtr& guiStorage(StorageType type) const noexcept;
-	GuiStorageTypePtr& guiStorage(StorageType type) noexcept;
+	GuiStorage* guiStorage() const noexcept;
 
-	Q_SIGNAL void pageRawAdded(int row, int storageType);
+	Q_SIGNAL void pageRawAdded(PageRawPtr pageRaw, int type);
 
 protected:
 	CrawlerStorageTypePtr& crawlerStorage(StorageType type) noexcept;
@@ -146,7 +145,7 @@ private:
 
 private:
 	std::unordered_map<int, CrawlerStorageTypePtr> m_crawlerStorageMap;
-	std::unordered_map<int, GuiStorageTypePtr> m_guiStorageMap;
+	GuiStorage* m_guiStorage;
 };
 
 }

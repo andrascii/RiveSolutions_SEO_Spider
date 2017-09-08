@@ -13,7 +13,8 @@ class ModelController : public QObject
 	Q_OBJECT
 
 public:
-	ModelController(QObject* parent = nullptr);
+	ModelController(QObject* parent);
+	~ModelController();
 
 	void setWebCrawlerOptions(const WebCrawlerOptions& options);
 

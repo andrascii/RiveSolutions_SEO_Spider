@@ -11,7 +11,7 @@ class StorageAdaptor;
 class StorageAdaptorFactory
 {
 public:
-	StorageAdaptorFactory(WebCrawler::DataCollection* dataCollection);
+	StorageAdaptorFactory(WebCrawler::GuiStorage* guiStorage);
 
 	StorageAdaptor* create(SummaryCategoryItem type);
 
@@ -19,7 +19,7 @@ protected:
 	void setupAvailableColumns(StorageAdaptor* storageAdaptor, SummaryCategoryItem type) const;
 
 private:
-	WebCrawler::DataCollection* m_dataCollection;
+	WebCrawler::GuiStorage* m_guiStorage;
 	std::map<SummaryCategoryItem, StorageAdaptor*> m_storageAdaptors;
 };
 

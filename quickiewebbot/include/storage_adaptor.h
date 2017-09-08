@@ -1,7 +1,7 @@
 #pragma once
 
 #include "page_raw_info.h"
-#include "data_collection.h"
+#include "gui_storage.h"
 
 namespace QuickieWebBot
 {
@@ -11,7 +11,7 @@ class StorageAdaptor : public QObject
 	Q_OBJECT
 
 public:
-	StorageAdaptor(const WebCrawler::DataCollection::GuiStorageTypePtr& associatedStorage,
+	StorageAdaptor(const WebCrawler::GuiStorage::GuiStorageTypePtr& associatedStorage,
 		WebCrawler::DataCollection::StorageType storageType,
 		QObject* parent = nullptr);
 
@@ -35,7 +35,7 @@ private slots:
 	void onStorageUpdated(int row, int type);
 
 private:
-	WebCrawler::DataCollection::GuiStorageTypePtr m_associatedStorage;
+	WebCrawler::GuiStorage::GuiStorageTypePtr m_associatedStorage;
 	QList<PageRawInfo::ItemType> m_availableColumns;
 	WebCrawler::DataCollection::StorageType m_storageType;
 };

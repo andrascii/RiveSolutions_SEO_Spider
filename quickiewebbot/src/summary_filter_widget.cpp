@@ -27,12 +27,12 @@ SummaryFilterWidget::SummaryFilterWidget(QWidget* parent)
 
 void SummaryFilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
 {
-	WebCrawler::DataCollection* dataCollection = theApp->modelController()->data();
+	WebCrawler::GuiStorage* guiStorage = theApp->guiStorage();
 
 	SummaryModel* summaryModel = 
 		QuickieWebBotHelpers::safe_runtime_static_cast<SummaryModel*>(m_ui->summaryTableView->model());
 
-	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, dataCollection);
+	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, guiStorage);
 
 	summaryModel->setDataAccessor(summaryDataAccessor);
 

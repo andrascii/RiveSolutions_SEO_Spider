@@ -3,17 +3,17 @@
 namespace QuickieWebBot
 {
 
-StorageAdaptor::StorageAdaptor(const WebCrawler::DataCollection::GuiStorageTypePtr& associatedStorage,
+StorageAdaptor::StorageAdaptor(const WebCrawler::GuiStorage::GuiStorageTypePtr& associatedStorage,
 	WebCrawler::DataCollection::StorageType storageType, QObject* parent)
 	: QObject(parent)
 	, m_associatedStorage(associatedStorage)
 	, m_storageType(storageType)
 {
-	WebCrawler::DataCollection* dataCollection = qobject_cast<WebCrawler::DataCollection*>(parent);
+	WebCrawler::GuiStorage* guiStorage = theApp->guiStorage();
 
-	DEBUG_ASSERT(dataCollection);
+	DEBUG_ASSERT(guiStorage);
 
-	VERIFY(connect(dataCollection, SIGNAL(pageRawAdded(int, int)), this, SLOT(onStorageUpdated(int, int))));
+	QObject::connect(guiStorage, &WebCrawler::GuiStorage::pageRawAdded, this, &StorageAdaptor::onStorageUpdated);
 }
 
 void StorageAdaptor::setAvailableColumns(QList<PageRawInfo::ItemType> availableColumns) noexcept
@@ -40,7 +40,7 @@ int StorageAdaptor::itemCount() const noexcept
 
 QVariant StorageAdaptor::item(const QModelIndex& index) const noexcept
 {
-	const WebCrawler::DataCollection::GuiStorageType& storage = *m_associatedStorage;
+	const WebCrawler::GuiStorage::GuiStorageType& storage = *m_associatedStorage;
 
 	DEBUG_ASSERT(index.row() < storage.size());
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
@@ -58,7 +58,7 @@ PageRawInfo::ItemType StorageAdaptor::itemType(const QModelIndex& index) const n
 #ifdef QT_DEBUG
 WebCrawler::PageRaw* StorageAdaptor::pageRaw(const QModelIndex& index) const noexcept
 {
-	const WebCrawler::DataCollection::GuiStorageType& storage = *m_associatedStorage;
+	const WebCrawler::GuiStorage::GuiStorageType& storage = *m_associatedStorage;
 	return storage[index.row()].get();
 }
 #endif // DEBUG

@@ -27,7 +27,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept override;
 
-	virtual const WebCrawler::DataCollection* dataCollection() const noexcept override;
+	virtual const WebCrawler::GuiStorage* guiStorage() const noexcept override;
 
 	virtual QObject* qobject() noexcept override;
 

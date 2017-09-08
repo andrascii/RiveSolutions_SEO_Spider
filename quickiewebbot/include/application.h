@@ -9,7 +9,7 @@ namespace WebCrawler
 {
 
 class WebCrawler;
-class ModelController;
+class GuiStorage;
 
 }
 
@@ -24,6 +24,7 @@ class Application : public QApplication
 
 public:
 	Application(int& argc, char** argv);
+	~Application();
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
@@ -33,7 +34,7 @@ public:
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
 
 	WebCrawler::WebCrawler* webCrawler() noexcept;
-	WebCrawler::ModelController* modelController() noexcept;
+	WebCrawler::GuiStorage* guiStorage() noexcept;
 
 	void initializeStyleSheet() noexcept;
 
@@ -51,8 +52,9 @@ private:
 
 private:
 	ApplicationProperties* m_appicationProperties;
-	WebCrawler::ModelController* m_modelController;
-	WebCrawler::WebCrawler* m_webCrawler;
+	std::unique_ptr<WebCrawler::WebCrawler> m_webCrawler;
+
+	WebCrawler::GuiStorage* m_guiStorage;
 	
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;

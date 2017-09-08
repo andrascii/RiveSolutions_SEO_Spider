@@ -34,6 +34,11 @@ ModelController::ModelController(QObject* parent)
 {
 }
 
+ModelController::~ModelController()
+{
+	
+}
+
 void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 {
 	m_webCrawlerOptions = options;

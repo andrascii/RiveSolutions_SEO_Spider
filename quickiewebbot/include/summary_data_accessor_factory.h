@@ -2,7 +2,7 @@
 
 namespace WebCrawler
 {
-	class DataCollection;
+class GuiStorage;
 }
 
 namespace QuickieWebBot
@@ -23,7 +23,7 @@ public:
 		DataAccessorTypeEnd
 	};
 
-	ISummaryDataAccessor* create(DataAccessorType accessorType, WebCrawler::DataCollection* dataCollection) const noexcept;
+	ISummaryDataAccessor* create(DataAccessorType accessorType, WebCrawler::GuiStorage* guiStorage) const noexcept;
 };
 
 }

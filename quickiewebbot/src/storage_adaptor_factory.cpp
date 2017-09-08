@@ -5,8 +5,8 @@
 namespace QuickieWebBot
 {
 
-StorageAdaptorFactory::StorageAdaptorFactory(WebCrawler::DataCollection* dataCollection)
-	: m_dataCollection(dataCollection)
+StorageAdaptorFactory::StorageAdaptorFactory(WebCrawler::GuiStorage* guiStorage)
+	: m_guiStorage(guiStorage)
 {
 }
 
@@ -23,7 +23,7 @@ StorageAdaptor* StorageAdaptorFactory::create(SummaryCategoryItem type)
 		return m_storageAdaptors[type];
 	}
 
-	StorageAdaptor* storageAdaptor = new StorageAdaptor(m_dataCollection->guiStorage(storageType), storageType, m_dataCollection);
+	StorageAdaptor* storageAdaptor = new StorageAdaptor(theApp->guiStorage()->guiStorage(storageType), storageType, m_guiStorage);
 
 	setupAvailableColumns(storageAdaptor, type);
 

@@ -24,7 +24,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept = 0;
 
-	virtual const WebCrawler::DataCollection* dataCollection() const noexcept = 0;
+	virtual const WebCrawler::GuiStorage* guiStorage() const noexcept = 0;
 
 	virtual QObject* qobject() noexcept = 0;
 
