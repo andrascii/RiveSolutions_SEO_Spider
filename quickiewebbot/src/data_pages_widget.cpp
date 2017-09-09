@@ -2,8 +2,8 @@
 #include "application.h"
 #include "table_view.h"
 #include "summary_filter_widget.h"
-#include "web_site_pages_storage_model.h"
-#include "web_site_pages_storage_view_model.h"
+#include "web_site_pages_model.h"
+#include "web_site_pages_view_model.h"
 #include "page_raw_info_storage_adaptor.h"
 #include "storage_adaptor_factory.h"
 #include "model_controller.h"
@@ -191,8 +191,8 @@ void DataPagesWidget::initializeStackedWidget()
 
 	TableView* crawlingTableView = new TableView(m_stackedWidget);
 
-	WebSitePagesStorageModel* model = new WebSitePagesStorageModel(this);
-	WebSitePagesStorageViewModel* modelView = new WebSitePagesStorageViewModel(model, this);
+	WebSitePagesModel* model = new WebSitePagesModel(this);
+	WebSitePagesViewModel* modelView = new WebSitePagesViewModel(model, this);
 
 	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->guiStorage()));
 

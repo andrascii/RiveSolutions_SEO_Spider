@@ -58,7 +58,7 @@ int PageRawInfo::columnPrefferedSize(Column column)
 {
 	static QMap<Column, int> s_prefferedSizes
 	{
-		{ UrlItemType, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ UrlItemType, QuickieWebBotHelpers::pointsToPixels(300) },
 		{ FromUrlItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ TitleItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ ContentTypeItemType, QuickieWebBotHelpers::pointsToPixels(150) },

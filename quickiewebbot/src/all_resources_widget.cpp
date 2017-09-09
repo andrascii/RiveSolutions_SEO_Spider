@@ -4,8 +4,8 @@
 #include "summary_view_model.h"
 #include "summary_data_accessor_factory.h"
 #include "quickie_web_bot_helpers.h"
-#include "web_site_pages_storage_model.h"
-#include "web_site_pages_storage_view_model.h"
+#include "web_site_pages_model.h"
+#include "web_site_pages_view_model.h"
 
 
 namespace QuickieWebBot
@@ -53,9 +53,10 @@ AllResourcesWidget::AllResourcesWidget(QWidget* parent)
 	QHBoxLayout* mainLayout = new QHBoxLayout(this);
 	mainLayout->addWidget(mainSplitter);
 
-	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(50);
-	mainSplitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
+	setLayout(mainLayout);
 
+	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(20);
+	mainSplitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
 
 	VERIFY(connect(m_resourcesTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onFilterViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
@@ -82,15 +83,15 @@ void AllResourcesWidget::initializeResourcesTableView()
 
 void AllResourcesWidget::initializewebResourcePagesTable()
 {
-	WebSitePagesStorageModel* pagesModel = new WebSitePagesStorageModel(this);
-	WebSitePagesStorageViewModel* pagesViewModel = new WebSitePagesStorageViewModel(pagesModel, this);
+	WebSitePagesModel* pagesModel = new WebSitePagesModel(this);
+	WebSitePagesViewModel* pagesViewModel = new WebSitePagesViewModel(pagesModel, this);
 
 	m_webResourcePagesTable->setModel(pagesModel);
 	m_webResourcePagesTable->setViewModel(pagesViewModel);
 
 
-	WebSitePagesStorageModel* linksFromThisPageModel = new WebSitePagesStorageModel(this);
-	WebSitePagesStorageViewModel* linksFromThisPageViewModel = new WebSitePagesStorageViewModel(linksFromThisPageModel, this);
+	WebSitePagesModel* linksFromThisPageModel = new WebSitePagesModel(this);
+	WebSitePagesViewModel* linksFromThisPageViewModel = new WebSitePagesViewModel(linksFromThisPageModel, this);
 
 	m_linksFromThisPage->setModel(linksFromThisPageModel);
 	m_linksFromThisPage->setViewModel(linksFromThisPageViewModel);
@@ -108,7 +109,7 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 
 	StorageAdaptorType category = summaryModel->storageAdaptorType(index);
 
-	WebSitePagesStorageModel* storageModel = dynamic_cast<WebSitePagesStorageModel*>(m_webResourcePagesTable->model());
+	WebSitePagesModel* storageModel = dynamic_cast<WebSitePagesModel*>(m_webResourcePagesTable->model());
 
 	if (!storageModel)
 	{
@@ -120,8 +121,8 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 
 	m_resourcesTableView->viewModel()->invalidateRenderersCache();
 
-	if (WebSitePagesStorageModel* linksFromThisPageModel = 
-		dynamic_cast<WebSitePagesStorageModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
+	if (WebSitePagesModel* linksFromThisPageModel = 
+		dynamic_cast<WebSitePagesModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
 	{
 		StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 		IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
@@ -139,7 +140,7 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 
 	QModelIndex index = selected.indexes()[0];
 
-	WebSitePagesStorageModel* storageModel = dynamic_cast<WebSitePagesStorageModel*>(m_webResourcePagesTable->model());
+	WebSitePagesModel* storageModel = dynamic_cast<WebSitePagesModel*>(m_webResourcePagesTable->model());
 
 	if (!storageModel)
 	{
@@ -150,8 +151,8 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 	IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
 
-	if (WebSitePagesStorageModel* linksFromThisPageModel =
-		dynamic_cast<WebSitePagesStorageModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
+	if (WebSitePagesModel* linksFromThisPageModel =
+		dynamic_cast<WebSitePagesModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
 	{
 		IStorageAdaptor* newPageInfoAdaptor = factory->createPageLinksStorage(PageLinkType::LinkFromThisPageType, storageAdaptor->pageRawInfoPtr(index));
 		linksFromThisPageModel->setStorageAdaptor(newPageInfoAdaptor);

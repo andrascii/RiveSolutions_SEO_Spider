@@ -3,8 +3,8 @@
 #include "table_view.h"
 #include "summary_model.h"
 #include "summary_view_model.h"
-#include "web_site_pages_storage_model.h"
-#include "web_site_pages_storage_view_model.h"
+#include "web_site_pages_model.h"
+#include "web_site_pages_view_model.h"
 #include "data_collection.h"
 #include "page_raw_info_storage_adaptor.h"
 #include "storage_adaptor_factory.h"
@@ -54,7 +54,7 @@ void SummaryFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& se
 
 	StorageAdaptorType category = summaryModel->storageAdaptorType(index);
 
-	WebSitePagesStorageModel* storageModel = dynamic_cast<WebSitePagesStorageModel*>(m_ui->summaryDetailsTableView->model());
+	WebSitePagesModel* storageModel = dynamic_cast<WebSitePagesModel*>(m_ui->summaryDetailsTableView->model());
 
 	if (!storageModel)
 	{
@@ -69,23 +69,21 @@ void SummaryFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& se
 
 void SummaryFilterWidget::initSummaryView()
 {
-	m_ui->summaryTableView->resize(QuickieWebBotHelpers::pointsToPixels(100), m_ui->summaryTableView->height());
-
 	SummaryModel* summaryModel = new SummaryModel(this);
 	SummaryViewModel* summaryViewModel = new SummaryViewModel(summaryModel, this);
 
 	m_ui->summaryTableView->setModel(summaryModel);
 	m_ui->summaryTableView->setViewModel(summaryViewModel);
 
-	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(150);
+	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(120);
 
 	m_ui->splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
 }
 
 void SummaryFilterWidget::initDetailsView()
 {
-	WebSitePagesStorageModel* model = new WebSitePagesStorageModel(this);
-	WebSitePagesStorageViewModel* viewModel = new WebSitePagesStorageViewModel(model, this);
+	WebSitePagesModel* model = new WebSitePagesModel(this);
+	WebSitePagesViewModel* viewModel = new WebSitePagesViewModel(model, this);
 
 	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->guiStorage()));
 

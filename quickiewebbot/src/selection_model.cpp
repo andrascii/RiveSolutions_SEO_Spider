@@ -5,7 +5,7 @@
 
 #ifdef QT_DEBUG
 #include "debug_info_web_page_widget.h"
-#include "web_site_pages_storage_model.h"
+#include "web_site_pages_model.h"
 #include "page_raw_info_storage_adaptor.h"
 #endif // DEBUG
 
@@ -87,7 +87,7 @@ void SelectionModel::select(const QItemSelection& selection, QItemSelectionModel
 
 	QModelIndex firstSelectedIndex = fixedSelection.indexes().first();
 
-	const WebSitePagesStorageModel* storageModel = dynamic_cast<const WebSitePagesStorageModel*>(firstSelectedIndex.model());
+	const WebSitePagesModel* storageModel = dynamic_cast<const WebSitePagesModel*>(firstSelectedIndex.model());
 
 	if (!storageModel)
 	{
