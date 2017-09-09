@@ -17,7 +17,7 @@ AllResourcesWidget::AllResourcesWidget(QWidget* parent)
 	, m_webResourcePagesTable(new TableView(this))
 	, m_linksFromThisPage(new TableView(this))
 	, m_linksToThisPage(new TableView(this))
-	, m_httpResponse(new QPlainTextEdit(this))
+	, m_httpResponse(new QLabel(this))
 {
 	initializeResourcesTableView();
 	initializewebResourcePagesTable();
@@ -89,13 +89,14 @@ void AllResourcesWidget::initializewebResourcePagesTable()
 	m_webResourcePagesTable->setModel(pagesModel);
 	m_webResourcePagesTable->setViewModel(pagesViewModel);
 
-
+	// links from this page
 	WebSitePagesModel* linksFromThisPageModel = new WebSitePagesModel(this);
 	WebSitePagesViewModel* linksFromThisPageViewModel = new WebSitePagesViewModel(linksFromThisPageModel, this);
 
 	m_linksFromThisPage->setModel(linksFromThisPageModel);
 	m_linksFromThisPage->setViewModel(linksFromThisPageViewModel);
 
+	// links to this page
 	WebSitePagesModel* linksToThisPageModel = new WebSitePagesModel(this);
 	WebSitePagesViewModel* linksToThisPageViewModel = new WebSitePagesViewModel(linksToThisPageModel, this);
 
@@ -163,6 +164,31 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 
 		linksToThisPageModel->setStorageAdaptor(factory->createPageLinksStorage(PageLinkType::LinkToThisPageType, storageAdaptor->pageRawInfoPtr(index)));
 	}
+
+	setPageServerResponse(storageAdaptor->pageRawInfoPtr(index));
+}
+
+void AllResourcesWidget::setPageServerResponse(const PageRawInfoPtr& page)
+{
+	QString selectedPageServerResponse = page->itemValue(PageRawInfo::ServerResponseItemType).toString();
+
+	QStringList serverResponseHeaders = selectedPageServerResponse.split("\n");
+
+	for (int i = 0; i < serverResponseHeaders.size(); ++i)
+	{
+		serverResponseHeaders[i].insert(0, "<b>");
+		serverResponseHeaders[i].insert(serverResponseHeaders[i].indexOf(":") + 1, "</b>");
+	}
+
+	selectedPageServerResponse.clear();
+
+	for (int i = 0; i < serverResponseHeaders.size(); ++i)
+	{
+		selectedPageServerResponse += serverResponseHeaders[i] + "<br>";
+	}
+
+	m_httpResponse->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+	m_httpResponse->setText(selectedPageServerResponse);
 }
 
 }

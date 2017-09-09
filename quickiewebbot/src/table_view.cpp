@@ -43,6 +43,8 @@ void TableView::setModel(QAbstractItemModel* model)
 	
 	initSpan();
 	setSelectionModel(new SelectionModel(this));
+
+	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpan())));
 }
 
 void TableView::mouseMoveEvent(QMouseEvent* event)

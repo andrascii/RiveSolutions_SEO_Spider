@@ -20,12 +20,14 @@ private:
 	Q_SLOT void onFilterViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 	Q_SLOT void onPageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
+	void setPageServerResponse(const PageRawInfoPtr& page);
+
 private:
 	TableView* m_resourcesTableView;
 	TableView* m_webResourcePagesTable;
 	TableView* m_linksFromThisPage;
 	TableView* m_linksToThisPage;
-	QPlainTextEdit* m_httpResponse;
+	QLabel* m_httpResponse;
 };
 
 }
