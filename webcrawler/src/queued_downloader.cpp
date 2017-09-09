@@ -28,7 +28,7 @@ void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
 
 bool QueuedDownloader::extractReply(Reply& response) noexcept
 {
-	std::unique_lock<std::mutex> locker(m_repliesQueueMutex); 
+	std::unique_lock<std::mutex> locker(m_repliesQueueMutex);
 		
 	if (m_repliesQueue.empty())
 	{

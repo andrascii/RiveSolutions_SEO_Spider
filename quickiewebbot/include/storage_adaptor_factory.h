@@ -6,21 +6,21 @@
 namespace QuickieWebBot
 {
 
-class StorageAdaptor;
+class IStorageAdaptor;
 
 class StorageAdaptorFactory
 {
 public:
 	StorageAdaptorFactory(WebCrawler::GuiStorage* guiStorage);
 
-	StorageAdaptor* create(SummaryCategoryItem type);
+	IStorageAdaptor* create(SummaryCategoryItem type);
 
 protected:
-	void setupAvailableColumns(StorageAdaptor* storageAdaptor, SummaryCategoryItem type) const;
+	void setupAvailableColumns(IStorageAdaptor* storageAdaptor, SummaryCategoryItem type) const;
 
 private:
 	WebCrawler::GuiStorage* m_guiStorage;
-	std::map<SummaryCategoryItem, StorageAdaptor*> m_storageAdaptors;
+	std::map<SummaryCategoryItem, IStorageAdaptor*> m_storageAdaptors;
 };
 
 }

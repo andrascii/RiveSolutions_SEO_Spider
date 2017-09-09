@@ -6,7 +6,7 @@
 #ifdef QT_DEBUG
 #include "debug_info_web_page_widget.h"
 #include "web_site_pages_storage_model.h"
-#include "storage_adaptor.h"
+#include "page_raw_info_storage_adaptor.h"
 #endif // DEBUG
 
 
@@ -81,21 +81,27 @@ void SelectionModel::select(const QItemSelection& selection, QItemSelectionModel
 		return;
 	}
 
+	QItemSelectionModel::select(fixedSelection, command);
+
 #ifdef QT_DEBUG
 
 	QModelIndex firstSelectedIndex = fixedSelection.indexes().first();
 
 	const WebSitePagesStorageModel* storageModel = dynamic_cast<const WebSitePagesStorageModel*>(firstSelectedIndex.model());
 
-	if (storageModel != nullptr)
+	if (!storageModel)
 	{
-		WebCrawler::PageRaw* pageRaw = storageModel->storageAdaptor()->pageRaw(firstSelectedIndex);
+		return;
+	}
+
+	if (const PageRawInfoStorageAdaptor* storageAdaptor = 
+		dynamic_cast<const PageRawInfoStorageAdaptor*>(storageModel->storageAdaptor()); storageAdaptor)
+	{
+		WebCrawler::PageRaw* pageRaw = storageAdaptor->pageRaw(firstSelectedIndex);
 		GlobalWebPageSelectedNotifier::instanse()->pageSelected(pageRaw);
 	}
 
-#endif // DEBUG
-
-	QItemSelectionModel::select(fixedSelection, command);
+#endif
 }
 
 void SelectionModel::setCurrentIndex(const QModelIndex& index, QItemSelectionModel::SelectionFlags command)

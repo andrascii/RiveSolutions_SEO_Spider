@@ -8,7 +8,7 @@ namespace QuickieWebBot
 class PageRawInfo
 {
 public:
-	enum ItemType : std::uint64_t
+	enum Column
 	{
 		BeginEnumPageInfoItemType,
 		// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
@@ -16,13 +16,14 @@ public:
 		UrlItemType,
 		FromUrlItemType,
 		TitleItemType,
-		ContentItemType,
+		ContentTypeItemType,
 		MetaRefreshItemType,
 		MetaRobotsItemType,
 		MetaDescriptionItemType,
 		MetaKeywordsItemType,
 		RedirectedUrlItemType,
 		ServerResponseItemType,
+		AltTextItemType,
 
 		FirstH1ItemType,
 		SecondH1ItemType,
@@ -35,6 +36,11 @@ public:
 		WordCountItemType,
 		PageHashItemType,
 
+		ImageSizeKbItemType,
+
+		NoFollowDoFollowLinkItemType,
+		AltTextLinkItemType,
+
 		BeginLengthEnumeratorsItemType,
 		// !!!!!!!!!!!!!!!!!!! add length enumerators below this!!!!!!!!!!!!!!!!!!!
 
@@ -46,13 +52,10 @@ public:
 		SecondH1LengthItemType,
 		FirstH2LengthItemType,
 		SecondH2LengthItemType,
+		AltTextLengthItemType,
 
 		// !!!!!!!!!!!!!!!!!!! add new length enumerators above this!!!!!!!!!!!!!!!!!!!
 		EndLengthEnumeratorsItemType,
-
-		ImageAltTextItemType,
-		ImageAltTextLengthItemType,
-		ImageSizeKbItemType,
 
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 		EndEnumPageInfoItemType
@@ -60,82 +63,61 @@ public:
 
 	PageRawInfo(WebCrawler::PageRawPtr pageRawPtr);
 
-	static QString itemTypeDescription(ItemType item);
-	static int columnPrefferedSize(ItemType item);
+	static QString itemTypeDescription(Column column);
+	static int columnPrefferedSize(Column column);
 
-	QVariant itemValue(ItemType item);
-	void setItemValue(const QVariant& value, ItemType item);
+	QVariant itemValue(Column column) const;
 
 	size_t countLinksFromThisPage() const noexcept;
-	WebCrawler::PageRaw::PageRawWeakPtr linkFromThisPage(size_t number);
+	WebCrawler::PageRawWeakPtr linkFromThisPage(size_t number);
 
 	size_t countLinksToThisPage() const noexcept;
-	WebCrawler::PageRaw::PageRawWeakPtr linkToThisPage(size_t number);
+	WebCrawler::PageRawWeakPtr linkToThisPage(size_t number);
 
 private:
-	void setUrl(const QVariant& value);
-	void setFromUrl(const QVariant& value);
-	void setContent(const QVariant& value);
-	void setTitle(const QVariant& value);
-	void setMetaRefresh(const QVariant& value);
-	void setMetaRobots(const QVariant& value);
-	void setRedirectedUrl(const QVariant& value);
-	void setServerResponse(const QVariant& value);
-	void setMetaDescription(const QVariant& value);
-	void setMetaKeywords(const QVariant& value);
-	void setFirstH1(const QVariant& value);
-	void setSecondH1(const QVariant& value);
-	void setFirstH2(const QVariant& value);
-	void setSecondH2(const QVariant& value);
-	void setCanonicalLinkElement(const QVariant& value);
-	void setStatusCode(const QVariant& value);
-	void setPageSizeKb(const QVariant& value);
-	void setWordCount(const QVariant& value);
-	void setPageHash(const QVariant& value);
+	using MethodAcceptor = QVariant(PageRawInfo::*)() const;
 
-private:
-	using MethodAcceptor = QVariant(PageRawInfo::*)();
+	MethodAcceptor acceptItem(Column item) const;
+	QVariant acceptUrl() const;
+	QVariant acceptFromUrl() const;
+	QVariant acceptContentType() const;
+	QVariant acceptTitle() const;
+	QVariant acceptMetaRefresh() const;
+	QVariant acceptMetaRobots() const;
+	QVariant acceptRedirectedUrl() const;
+	QVariant acceptServerResponse() const;
+	QVariant acceptMetaDescription() const;
+	QVariant acceptMetaKeywords() const;
+	QVariant acceptFirstH1() const;
+	QVariant acceptSecondH1() const;
+	QVariant acceptFirstH2() const;
+	QVariant acceptSecondH2() const;
+	QVariant acceptCanonicalLinkElement() const;
+	QVariant acceptStatusCode() const;
+	QVariant acceptUrlLength() const;
+	QVariant acceptTitleLength() const;
+	QVariant acceptMetaDescriptionLength() const;
+	QVariant acceptMetaKeywordsLength() const;
+	QVariant acceptFirstH1Length() const;
+	QVariant acceptSecondH1Length() const;
+	QVariant acceptFirstH2Length() const;
+	QVariant acceptSecondH2Length() const;
+	QVariant acceptAltTextLength() const;
+	QVariant acceptPageSizeKb() const;
+	QVariant acceptWordCount() const;
+	QVariant acceptPageHash() const;
+	QVariant acceptImageSizeKb() const;
+	QVariant acceptAltText() const;
+	QVariant acceptDofollowNofollow() const;
 
-	MethodAcceptor acceptItem(ItemType item);
-	QVariant acceptUrl();
-	QVariant acceptFromUrl();
-	QVariant acceptContent();
-	QVariant acceptTitle();
-	QVariant acceptMetaRefresh();
-	QVariant acceptMetaRobots();
-	QVariant acceptRedirectedUrl();
-	QVariant acceptServerResponse();
-	QVariant acceptMetaDescription();
-	QVariant acceptMetaKeywords();
-	QVariant acceptFirstH1();
-	QVariant acceptSecondH1();
-	QVariant acceptFirstH2();
-	QVariant acceptSecondH2();
-	QVariant acceptCanonicalLinkElement();
-	QVariant acceptStatusCode();
-	QVariant acceptUrlLength();
-	QVariant acceptTitleLength();
-	QVariant acceptMetaDescriptionLength();
-	QVariant acceptMetaKeywordsLength();
-	QVariant acceptFirstH1Length();
-	QVariant acceptSecondH1Length();
-	QVariant acceptFirstH2Length();
-	QVariant acceptSecondH2Length();
-	QVariant acceptPageSizeKb();
-	QVariant acceptWordCount();
-	QVariant acceptPageHash();
-	QVariant acceptImageSizeKb();
-	QVariant acceptImageAltText();
-	QVariant acceptImageAltTextLength();
-
-	static void checkInfoItem(PageRawInfo::ItemType item);
+	static void checkColumnType(PageRawInfo::Column column);
 
 private:
 	WebCrawler::PageRawPtr m_pageRawPtr;
 };
 
-using PageInfoPtr = std::shared_ptr<PageRawInfo>;
+using PageRawInfoPtr = std::shared_ptr<PageRawInfo>;
 
-Q_DECLARE_METATYPE(PageInfoPtr);
+Q_DECLARE_METATYPE(PageRawInfoPtr);
 
 }

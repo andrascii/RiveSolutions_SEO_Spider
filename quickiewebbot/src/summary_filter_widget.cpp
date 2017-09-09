@@ -6,7 +6,7 @@
 #include "web_site_pages_storage_model.h"
 #include "web_site_pages_storage_view_model.h"
 #include "data_collection.h"
-#include "storage_adaptor.h"
+#include "page_raw_info_storage_adaptor.h"
 #include "storage_adaptor_factory.h"
 #include "model_controller.h"
 #include "quickie_web_bot_helpers.h"
@@ -19,7 +19,10 @@ SummaryFilterWidget::SummaryFilterWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_ui(new Ui::SummaryFilterWidget)
 {
-	init();
+	m_ui->setupUi(this);
+
+	initSummaryView();
+	initDetailsView();
 
 	VERIFY(connect(m_ui->summaryTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
@@ -57,14 +60,6 @@ void SummaryFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& se
 	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->create(category));
 
 	m_ui->summaryDetailsTableView->viewModel()->invalidateRenderersCache();
-}
-
-void SummaryFilterWidget::init()
-{
-	m_ui->setupUi(this);
-
-	initSummaryView();
-	initDetailsView();
 }
 
 void SummaryFilterWidget::initSummaryView()

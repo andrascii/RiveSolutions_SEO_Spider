@@ -4,7 +4,7 @@
 #include "summary_filter_widget.h"
 #include "web_site_pages_storage_model.h"
 #include "web_site_pages_storage_view_model.h"
-#include "storage_adaptor.h"
+#include "page_raw_info_storage_adaptor.h"
 #include "storage_adaptor_factory.h"
 #include "model_controller.h"
 #include "context_menu_data_collection_row.h"

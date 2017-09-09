@@ -303,7 +303,7 @@ void ModelController::processPageRawH2(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawImage(PageRawPtr pageRaw) noexcept
 {
-	const int altLength = pageRaw->imageAltText.size();
+	const int altLength = pageRaw->altText.size();
 	const int sizeKB = pageRaw->pageSizeKb;
 	if (altLength > m_webCrawlerOptions.maxImageAltTextChars)
 	{

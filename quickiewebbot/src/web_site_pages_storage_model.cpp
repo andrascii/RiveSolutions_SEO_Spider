@@ -1,6 +1,6 @@
 #include "web_site_pages_storage_model.h"
 #include "default_column_resize_policy.h"
-#include "storage_adaptor.h"
+#include "page_raw_info_storage_adaptor.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
@@ -23,7 +23,7 @@ Qt::ItemFlags WebSitePagesStorageModel::flags(const QModelIndex& index) const
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-void WebSitePagesStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept
+void WebSitePagesStorageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 {
 	if (m_storageAdaptor == storageAdaptor)
 	{
@@ -32,8 +32,12 @@ void WebSitePagesStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor)
 
 	beginResetModel();
 
-	disconnect(m_storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int)));
-	VERIFY(connect(storageAdaptor, SIGNAL(pageInfoAdded(int)), this, SLOT(onPageInfoAdded(int))));
+	if (m_storageAdaptor)
+	{
+		disconnect(m_storageAdaptor->qobject(), SIGNAL(pageRawInfoAdded(int)), this, SLOT(onPageRawInfoAdded(int)));
+	}
+
+	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(pageRawInfoAdded(int)), this, SLOT(onPageRawInfoAdded(int))));
 	
 	m_storageAdaptor = storageAdaptor;
 
@@ -61,7 +65,7 @@ void WebSitePagesStorageModel::setStorageAdaptor(StorageAdaptor* storageAdaptor)
 	emit internalDataChanged();
 }
 
-PageRawInfo::ItemType WebSitePagesStorageModel::itemType(const QModelIndex& index) const noexcept
+PageRawInfo::Column WebSitePagesStorageModel::itemType(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
@@ -80,12 +84,12 @@ IResizePolicy* WebSitePagesStorageModel::resizePolicy() const noexcept
 	return m_resizePolicy.get();
 }
 
-const StorageAdaptor* WebSitePagesStorageModel::storageAdaptor() const
+const IStorageAdaptor* WebSitePagesStorageModel::storageAdaptor() const
 {
 	return m_storageAdaptor;
 }
 
-StorageAdaptor* WebSitePagesStorageModel::storageAdaptor()
+IStorageAdaptor* WebSitePagesStorageModel::storageAdaptor()
 {
 	return m_storageAdaptor;
 }
@@ -162,7 +166,7 @@ int WebSitePagesStorageModel::rowCount(const QModelIndex& parent) const
 	return storageAdaptor()->itemCount();
 }
 
-void WebSitePagesStorageModel::onPageInfoAdded(int rowIndex)
+void WebSitePagesStorageModel::onPageRawInfoAdded(int rowIndex)
 {
 	beginInsertRows(QModelIndex(), rowIndex, rowIndex);
 	

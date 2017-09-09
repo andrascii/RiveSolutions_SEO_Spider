@@ -8,7 +8,7 @@ namespace QuickieWebBot
 {
 
 class IResizePolicy;
-class StorageAdaptor;
+class IStorageAdaptor;
 
 class WebSitePagesStorageModel : public AbstractTableModel
 {
@@ -25,22 +25,22 @@ public:
 
 	virtual IResizePolicy* resizePolicy() const noexcept override;
 
-	void setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept;
-	const StorageAdaptor* storageAdaptor() const;
-	PageRawInfo::ItemType itemType(const QModelIndex& index) const noexcept;
+	void setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept;
+	const IStorageAdaptor* storageAdaptor() const;
+	PageRawInfo::Column itemType(const QModelIndex& index) const noexcept;
 
 signals:
 	virtual void internalDataChanged() override;
 
 private:
-	StorageAdaptor* storageAdaptor();
+	IStorageAdaptor* storageAdaptor();
 
 private slots:
-	void onPageInfoAdded(int rowIndex);
+	void onPageRawInfoAdded(int rowIndex);
 	void onPageInfoItemChanged(int row, int column);
 
 private:
-	StorageAdaptor* m_storageAdaptor;
+	IStorageAdaptor* m_storageAdaptor;
 	std::shared_ptr<IResizePolicy> m_resizePolicy;
 };
 
