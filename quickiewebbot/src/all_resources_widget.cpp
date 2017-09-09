@@ -53,11 +53,15 @@ AllResourcesWidget::AllResourcesWidget(QWidget* parent)
 	QHBoxLayout* mainLayout = new QHBoxLayout(this);
 	mainLayout->addWidget(mainSplitter);
 
+	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(50);
+	mainSplitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
+
+
 	VERIFY(connect(m_resourcesTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onFilterViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 
-	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(50);
-	mainSplitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
+	VERIFY(connect(m_webResourcePagesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+		this, SLOT(onPageViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
 void AllResourcesWidget::initializeResourcesTableView()
@@ -108,7 +112,7 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 
 	if (!storageModel)
 	{
-		ERRORLOG << "View does not have a model";
+		ERRORLOG << "m_webResourcePagesTable does not have a model";
 		return;
 	}
 
@@ -124,7 +128,34 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 
 		linksFromThisPageModel->setStorageAdaptor(factory->createPageLinksStorage(PageLinkType::LinkFromThisPageType, storageAdaptor->pageRawInfoPtr(index)));
 	}
+}
 
+void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	if (!selected.indexes().size())
+	{
+		return;
+	}
+
+	QModelIndex index = selected.indexes()[0];
+
+	WebSitePagesStorageModel* storageModel = dynamic_cast<WebSitePagesStorageModel*>(m_webResourcePagesTable->model());
+
+	if (!storageModel)
+	{
+		ERRORLOG << "m_webResourcePagesTable does not have a model";
+		return;
+	}
+
+	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
+	IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
+
+	if (WebSitePagesStorageModel* linksFromThisPageModel =
+		dynamic_cast<WebSitePagesStorageModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
+	{
+		IStorageAdaptor* newPageInfoAdaptor = factory->createPageLinksStorage(PageLinkType::LinkFromThisPageType, storageAdaptor->pageRawInfoPtr(index));
+		linksFromThisPageModel->setStorageAdaptor(newPageInfoAdaptor);
+	}
 }
 
 }
