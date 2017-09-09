@@ -16,7 +16,7 @@ class GuiStorage;
 namespace QuickieWebBot
 {
 
-class ApplicationProperties;
+class ApplicationSettings;
 
 class Application : public QApplication
 {
@@ -28,7 +28,7 @@ public:
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
-	ApplicationProperties* properties() noexcept;
+	ApplicationSettings* properties() noexcept;
 	MainFrame* mainFrame() noexcept;
 	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
@@ -51,7 +51,7 @@ private:
 	void showSplashScreen() const noexcept;
 
 private:
-	ApplicationProperties* m_appicationProperties;
+	ApplicationSettings* m_appicationProperties;
 	std::unique_ptr<WebCrawler::WebCrawler> m_webCrawler;
 
 	WebCrawler::GuiStorage* m_guiStorage;
