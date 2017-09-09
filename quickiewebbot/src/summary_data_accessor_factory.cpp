@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, WebCrawler::DataCollection* dataCollection) const noexcept
+ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, WebCrawler::GuiStorage* guiStorage) const noexcept
 {
 	ASSERT(accessorType > DataAccessorType::DataAccessorTypeBegin &&
 		accessorType < DataAccessorType::DataAccessorTypeEnd);
@@ -16,7 +16,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 	{
 		case DataAccessorType::ErrorsFilterPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection));
+			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(guiStorage));
 
 			summaryDataAccessor->addGroup(AuditGroup::LinkAuditGroup);
 			summaryDataAccessor->addGroup(AuditGroup::TitleAuditGroup);
@@ -31,7 +31,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 
 		case DataAccessorType::AllResourcesPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessor(dataCollection);
+			summaryDataAccessor = new SummaryDataAccessor(guiStorage);
 
 			summaryDataAccessor->addGroup(AuditGroup::InternalResourcesGroup);
 			summaryDataAccessor->addGroup(AuditGroup::ExternalResourcesGroup);

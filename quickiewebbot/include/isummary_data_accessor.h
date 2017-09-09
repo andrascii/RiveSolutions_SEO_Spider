@@ -1,6 +1,6 @@
 #pragma once
 
-#include "summary_category_item.h"
+#include "storage_adaptor_type.h"
 #include "data_collection_groups_factory.h"
 
 namespace QuickieWebBot
@@ -9,7 +9,7 @@ namespace QuickieWebBot
 class ISummaryDataAccessor
 {
 public:
-	virtual SummaryCategoryItem itemCategory(const QModelIndex& index) const noexcept = 0;
+	virtual StorageAdaptorType itemCategory(const QModelIndex& index) const noexcept = 0;
 
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept = 0;
 	virtual bool isHeaderRow(int row) const noexcept = 0;
@@ -24,7 +24,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept = 0;
 
-	virtual const WebCrawler::DataCollection* dataCollection() const noexcept = 0;
+	virtual const WebCrawler::GuiStorage* guiStorage() const noexcept = 0;
 
 	virtual QObject* qobject() noexcept = 0;
 

@@ -17,14 +17,23 @@ struct PageRawResource
 	};
 
 	ResourceType resourceType;
+
+	// !!!!!!!!!!!!!! Must rename fields below corresponding to them sense !!!!!!!!!!!!!!
 	QUrl resourceUrl;
 	QUrl resourcePageUrl;
 };
 
+struct PageRaw;
+using PageRawWeakPtr = std::weak_ptr<PageRaw>;
 
 struct PageRaw
 {
-	using PageRawWeakPtr = std::weak_ptr<PageRaw>;
+	enum LinkParameter
+	{
+		UnknownParameter,
+		NofollowParameter,
+		DofollowParameter
+	};
 
 	QUrl url;
 	QUrl fromUrl;
@@ -41,11 +50,13 @@ struct PageRaw
 	QString firstH2;
 	QString secondH2;
 	QString canonicalLinkElement;
-	QString imageAltText;
+	QString altText;
 	int statusCode;
 	int pageSizeKb;
 	int wordCount;
 	size_t pageHash;
+
+	LinkParameter linkParameter;
 
 	bool hasSeveralTitleTags;
 	bool hasSeveralMetaDescriptionTags;
@@ -70,5 +81,6 @@ struct PageRaw
 using PageRawPtr = std::shared_ptr<PageRaw>;
 
 Q_DECLARE_METATYPE(PageRawPtr);
+Q_DECLARE_METATYPE(PageRawWeakPtr);
 
 }

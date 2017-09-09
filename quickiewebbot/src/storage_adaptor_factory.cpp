@@ -1,48 +1,48 @@
 #include "storage_adaptor_factory.h"
-#include "storage_adaptor.h"
 #include "page_raw_info.h"
+#include "page_raw_info_storage_adaptor.h"
 
 namespace QuickieWebBot
 {
 
-StorageAdaptorFactory::StorageAdaptorFactory(WebCrawler::DataCollection* dataCollection)
-	: m_dataCollection(dataCollection)
+IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, WebCrawler::GuiStorage* guiStorage)
 {
-}
-
-StorageAdaptor* StorageAdaptorFactory::create(SummaryCategoryItem type)
-{
-	ASSERT(type > SummaryCategoryItem::SummaryCategoryItemBegin &&
-		type < SummaryCategoryItem::SummaryCategoryItemEnd);
+	ASSERT(type > StorageAdaptorType::StorageAdaptorTypeBegin &&
+		type < StorageAdaptorType::StorageAdaptorTypeEnd);
 
 	WebCrawler::DataCollection::StorageType storageType = 
 		static_cast<WebCrawler::DataCollection::StorageType>(type);
 
-	if (m_storageAdaptors.find(type) != std::end(m_storageAdaptors))
-	{
-		return m_storageAdaptors[type];
-	}
-
-	StorageAdaptor* storageAdaptor = new StorageAdaptor(m_dataCollection->guiStorage(storageType), storageType, m_dataCollection);
+	IStorageAdaptor* storageAdaptor = new PageRawInfoStorageAdaptor(guiStorage->guiStorage(storageType), storageType, guiStorage);
 
 	setupAvailableColumns(storageAdaptor, type);
-
-	m_storageAdaptors[type] = storageAdaptor;
 
 	return storageAdaptor;
 }
 
-void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor, SummaryCategoryItem type) const
+
+IStorageAdaptor* StorageAdaptorFactory::createPageLinksStorage(PageLinkType type, PageRawInfoPtr associatedPageRawInfoPointer)
+{
+	IStorageAdaptor* storageAdaptor = nullptr;
+
+	storageAdaptor = new PageLinksStorageAdaptor(associatedPageRawInfoPointer, type);
+
+	setupAvailablePageLinkColumns(storageAdaptor);
+
+	return storageAdaptor;
+}
+
+void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdaptor, StorageAdaptorType type) const
 {
 	switch (type)
 	{
-		case SummaryCategoryItem::SummaryCategoryItemAllPages:
-		case SummaryCategoryItem::SummaryCategoryItemHtmlResources:
-		case SummaryCategoryItem::SummaryCategoryItemExternalHtmlResources:
+		case StorageAdaptorType::StorageAdaptorTypeAllPages:
+		case StorageAdaptorType::StorageAdaptorTypeHtmlResources:
+		case StorageAdaptorType::StorageAdaptorTypeExternalHtmlResources:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::ContentTypeItemType
 				<< PageRawInfo::TitleItemType
 				<< PageRawInfo::TitleLengthItemType
 				<< PageRawInfo::MetaRefreshItemType
@@ -74,20 +74,20 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Resources columns
 		//
-		case SummaryCategoryItem::SummaryCategoryItemImageResources:
-		case SummaryCategoryItem::SummaryCategoryItemExternalImageResources:
-		case SummaryCategoryItem::SummaryCategoryItemJavaScriptResources:
-		case SummaryCategoryItem::SummaryCategoryItemExternalJavaScriptResources:
-		case SummaryCategoryItem::SummaryCategoryItemStyleSheetResources:
-		case SummaryCategoryItem::SummaryCategoryItemExternalStyleSheetResources:
-		case SummaryCategoryItem::SummaryCategoryItemFlashResources:
-		case SummaryCategoryItem::SummaryCategoryItemExternalFlashResources:
-		case SummaryCategoryItem::SummaryCategoryItemOtherResources:
-		case SummaryCategoryItem::SummaryCategoryItemExternalOtherResources:
-		case SummaryCategoryItem::SummaryCategoryItemVideoResources:
-		case SummaryCategoryItem::SummaryCategoryItemExternalVideoResources:
+		case StorageAdaptorType::StorageAdaptorTypeImageResources:
+		case StorageAdaptorType::StorageAdaptorTypeExternalImageResources:
+		case StorageAdaptorType::StorageAdaptorTypeJavaScriptResources:
+		case StorageAdaptorType::StorageAdaptorTypeExternalJavaScriptResources:
+		case StorageAdaptorType::StorageAdaptorTypeStyleSheetResources:
+		case StorageAdaptorType::StorageAdaptorTypeExternalStyleSheetResources:
+		case StorageAdaptorType::StorageAdaptorTypeFlashResources:
+		case StorageAdaptorType::StorageAdaptorTypeExternalFlashResources:
+		case StorageAdaptorType::StorageAdaptorTypeOtherResources:
+		case StorageAdaptorType::StorageAdaptorTypeExternalOtherResources:
+		case StorageAdaptorType::StorageAdaptorTypeVideoResources:
+		case StorageAdaptorType::StorageAdaptorTypeExternalVideoResources:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
 				<< PageRawInfo::StatusCodeItemType
 				<< PageRawInfo::UrlLengthItemType
@@ -99,15 +99,15 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Links available columns
 		//
-		case SummaryCategoryItem::SummaryCategoryItemUpperCaseLinks:
-		case SummaryCategoryItem::SummaryCategoryItemNonAsciiLinks:
-		case SummaryCategoryItem::SummaryCategoryItemVeryLongLinks:
-		case SummaryCategoryItem::SummaryCategoryItemBrokenLinks:
+		case StorageAdaptorType::StorageAdaptorTypeUpperCaseLinks:
+		case StorageAdaptorType::StorageAdaptorTypeNonAsciiLinks:
+		case StorageAdaptorType::StorageAdaptorTypeVeryLongLinks:
+		case StorageAdaptorType::StorageAdaptorTypeBrokenLinks:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
 				<< PageRawInfo::UrlLengthItemType
-				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::ContentTypeItemType
 				<< PageRawInfo::StatusCodeItemType
 			);
 
@@ -117,16 +117,16 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Title available columns
 		//
-		case SummaryCategoryItem::SummaryCategoryItemEmptyTitles:
-		case SummaryCategoryItem::SummaryCategoryItemDuplicatedTitles:
-		case SummaryCategoryItem::SummaryCategoryItemVeryLongTitles:
-		case SummaryCategoryItem::SummaryCategoryItemVeryShortTitles:
-		case SummaryCategoryItem::SummaryCategoryItemDuplicatedH1Titles:
-		case SummaryCategoryItem::SummaryCategoryItemSeveralTitlesOnPage:
+		case StorageAdaptorType::StorageAdaptorTypeEmptyTitles:
+		case StorageAdaptorType::StorageAdaptorTypeDuplicatedTitles:
+		case StorageAdaptorType::StorageAdaptorTypeVeryLongTitles:
+		case StorageAdaptorType::StorageAdaptorTypeVeryShortTitles:
+		case StorageAdaptorType::StorageAdaptorTypeDuplicatedH1Titles:
+		case StorageAdaptorType::StorageAdaptorTypeSeveralTitlesOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::ContentTypeItemType
 				<< PageRawInfo::TitleItemType
 				<< PageRawInfo::TitleLengthItemType
 			);
@@ -137,15 +137,15 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Meta description available columns
 		//
-		case SummaryCategoryItem::SummaryCategoryItemEmptyMetaDescriptions:
-		case SummaryCategoryItem::SummaryCategoryItemDuplicatedMetaDescriptions:
-		case SummaryCategoryItem::SummaryCategoryItemVeryLongMetaDescriptions:
-		case SummaryCategoryItem::SummaryCategoryItemVeryShortMetaDescriptions:
-		case SummaryCategoryItem::SummaryCategoryItemSeveralMetaDescriptionsOnPage:
+		case StorageAdaptorType::StorageAdaptorTypeEmptyMetaDescriptions:
+		case StorageAdaptorType::StorageAdaptorTypeDuplicatedMetaDescriptions:
+		case StorageAdaptorType::StorageAdaptorTypeVeryLongMetaDescriptions:
+		case StorageAdaptorType::StorageAdaptorTypeVeryShortMetaDescriptions:
+		case StorageAdaptorType::StorageAdaptorTypeSeveralMetaDescriptionsOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::ContentTypeItemType
 				<< PageRawInfo::MetaDescriptionItemType
 				<< PageRawInfo::MetaDescriptionLengthItemType
 			);
@@ -156,13 +156,13 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Meta keywords available columns
 		// 
-		case SummaryCategoryItem::SummaryCategoryItemEmptyMetaKeywords:
-		case SummaryCategoryItem::SummaryCategoryItemDuplicatedMetaKeywords:
-		case SummaryCategoryItem::SummaryCategoryItemSeveralMetaKeywordsOnPage:
+		case StorageAdaptorType::StorageAdaptorTypeEmptyMetaKeywords:
+		case StorageAdaptorType::StorageAdaptorTypeDuplicatedMetaKeywords:
+		case StorageAdaptorType::StorageAdaptorTypeSeveralMetaKeywordsOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::ContentTypeItemType
 				<< PageRawInfo::MetaKeywordsItemType
 				<< PageRawInfo::MetaKeywordsLengthItemType
 			);
@@ -173,14 +173,14 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// H1 available columns
 		//
-		case SummaryCategoryItem::SummaryCategoryItemMissingH1s:
-		case SummaryCategoryItem::SummaryCategoryItemDuplicatedH1s:
-		case SummaryCategoryItem::SummaryCategoryItemVeryLongH1s:
-		case SummaryCategoryItem::SummaryCategoryItemSeveralH1s:
+		case StorageAdaptorType::StorageAdaptorTypeMissingH1s:
+		case StorageAdaptorType::StorageAdaptorTypeDuplicatedH1s:
+		case StorageAdaptorType::StorageAdaptorTypeVeryLongH1s:
+		case StorageAdaptorType::StorageAdaptorTypeSeveralH1s:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::ContentTypeItemType
 				<< PageRawInfo::FirstH1ItemType
 				<< PageRawInfo::FirstH1LengthItemType
 				<< PageRawInfo::SecondH1ItemType
@@ -193,14 +193,14 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// H2 available columns
 		//
-		case SummaryCategoryItem::SummaryCategoryItemMissingH2s:
-		case SummaryCategoryItem::SummaryCategoryItemDuplicatedH2s:
-		case SummaryCategoryItem::SummaryCategoryItemVeryLongH2s:
-		case SummaryCategoryItem::SummaryCategoryItemSeveralH2s:
+		case StorageAdaptorType::StorageAdaptorTypeMissingH2s:
+		case StorageAdaptorType::StorageAdaptorTypeDuplicatedH2s:
+		case StorageAdaptorType::StorageAdaptorTypeVeryLongH2s:
+		case StorageAdaptorType::StorageAdaptorTypeSeveralH2s:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentItemType
+				<< PageRawInfo::ContentTypeItemType
 				<< PageRawInfo::FirstH2ItemType
 				<< PageRawInfo::FirstH2LengthItemType
 				<< PageRawInfo::SecondH2ItemType
@@ -213,20 +213,31 @@ void StorageAdaptorFactory::setupAvailableColumns(StorageAdaptor* storageAdaptor
 		//
 		// Images available columns
 		//
-		case SummaryCategoryItem::SummaryCategoryItemImagesOver100kb:
-		case SummaryCategoryItem::SummaryCategoryItemImageMissingAltText:
-		case SummaryCategoryItem::SummaryCategoryItemImagesVeryLongAltText:
+		case StorageAdaptorType::StorageAdaptorTypeImagesOver100kb:
+		case StorageAdaptorType::StorageAdaptorTypeImageMissingAltText:
+		case StorageAdaptorType::StorageAdaptorTypeImagesVeryLongAltText:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::ItemType>()
+			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
 				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ImageAltTextItemType
-				<< PageRawInfo::ImageAltTextLengthItemType
+				<< PageRawInfo::AltTextItemType
+				<< PageRawInfo::AltTextLengthItemType
 				<< PageRawInfo::ImageSizeKbItemType
 			);
 
 			return;
 		}
 	}
+}
+
+
+void StorageAdaptorFactory::setupAvailablePageLinkColumns(IStorageAdaptor* storageAdaptor)
+{
+	storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
+		<< PageRawInfo::UrlItemType
+		<< PageRawInfo::StatusCodeItemType
+		<< PageRawInfo::AltTextItemType
+		<< PageRawInfo::NoFollowDoFollowLinkItemType
+	);
 }
 
 }

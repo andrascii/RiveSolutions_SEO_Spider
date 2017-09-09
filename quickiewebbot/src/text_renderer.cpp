@@ -1,3 +1,4 @@
+#include "application.h"
 #include "text_renderer.h"
 #include "iview_model.h"
 #include "abstract_table_model.h"
@@ -32,11 +33,14 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 	const Qt::AlignmentFlag textAlignmentFlags = m_viewModel->textAlignment(index);
 	const QFont& font = m_viewModel->font(index).resolve(option.font);
 	const QColor& textColor = m_viewModel->textColor(index);
-	const QString paintingText = qvariant_cast<QString>(index.data(Qt::DisplayRole));
+	QString paintingText = qvariant_cast<QString>(index.data(Qt::DisplayRole));
 
 	QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
 	QPixmap pixmap(pixmapRect.size());
 	pixmap.fill(Qt::transparent);
+
+	QFontMetrics fontMetrics(Application::font());
+	paintingText = fontMetrics.elidedText(paintingText, Qt::ElideRight, adjustedRect.width());
 
 	QPainter painterPixmap(&pixmap);
 

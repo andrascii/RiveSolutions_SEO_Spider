@@ -1,15 +1,20 @@
 #include "web_crawler.h"
 #include "data_collection.h"
+#include "gui_storage.h"
 #include "model_controller.h"
 #include "page_raw_processor.h"
 
 namespace WebCrawler
 {
 
-WebCrawler::WebCrawler(unsigned int threadCount, ModelController* modelController, QObject* parent)
-	: QObject(parent)
-	, m_modelController(modelController)
+WebCrawler::WebCrawler(unsigned int threadCount)
+	: QObject(nullptr)
 {
+	m_crawlerThread = new QThread();
+	this->moveToThread(m_crawlerThread);
+	m_crawlerThread->start();
+
+	m_modelController = new ModelController(this);
 	qRegisterMetaType<PageRawPtr>();
 
 	for (unsigned i = 0; i < threadCount; ++i)
@@ -19,6 +24,8 @@ WebCrawler::WebCrawler(unsigned int threadCount, ModelController* modelControlle
 		VERIFY(connect(m_workers[i].get(), SIGNAL(webPageParsed(PageRawPtr)),
 			SLOT(onPageRawParsed(PageRawPtr))));
 	}
+
+	ASSERT(qRegisterMetaType<WebCrawlerOptions>() > -1);
 }
 
 WebCrawler::~WebCrawler()
@@ -27,9 +34,25 @@ WebCrawler::~WebCrawler()
 	{
 		worker->stopExecution();
 	}
+
+	// Dtor should be called from a different thread
+	ASSERT(this->thread() != QThread::currentThread());
+	m_crawlerThread->quit();
+	m_crawlerThread->wait();
+	m_crawlerThread->deleteLater();
 }
 
 void WebCrawler::startCrawling(const WebCrawlerOptions& options)
+{
+	VERIFY(QMetaObject::invokeMethod(this, "startCrawlingInternal", Qt::QueuedConnection, Q_ARG(const WebCrawlerOptions&, options)));
+}
+
+void WebCrawler::stopCrawling()
+{
+	VERIFY(QMetaObject::invokeMethod(this, "stopCrawlingInternal", Qt::QueuedConnection));
+}
+
+void WebCrawler::startCrawlingInternal(const WebCrawlerOptions& options)
 {
 	m_modelController->setWebCrawlerOptions(options);
 
@@ -50,7 +73,7 @@ void WebCrawler::startCrawling(const WebCrawlerOptions& options)
 	}
 }
 
-void WebCrawler::stopCrawling()
+void WebCrawler::stopCrawlingInternal()
 {
 	INFOLOG << "crawler stopped";
 
@@ -60,6 +83,11 @@ void WebCrawler::stopCrawling()
 	}
 
 	m_queuedDownloader.stopExecution();
+}
+
+GuiStorage* WebCrawler::guiStorage() const noexcept
+{
+	return m_modelController->data()->guiStorage();
 }
 
 void WebCrawler::onPageRawParsed(PageRawPtr pageRaw)

@@ -2,14 +2,15 @@
 #include "quickie_web_bot_helpers.h"
 #include "application.h"
 #include "model_controller.h"
+#include "gui_storage.h"
 
 namespace QuickieWebBot
 {
 
-SummaryDataAccessor::SummaryDataAccessor(WebCrawler::DataCollection* dataCollection)
-	: m_dataCollection(dataCollection)
+SummaryDataAccessor::SummaryDataAccessor(WebCrawler::GuiStorage* guiStorage)
+	: m_guiStorage(guiStorage)
 {
-	VERIFY(connect(dataCollection, SIGNAL(pageRawAdded(int, int)), this, SLOT(emitDataChanged(int, int))));
+	QObject::connect(m_guiStorage, &WebCrawler::GuiStorage::pageRawAdded, this, &SummaryDataAccessor::emitDataChanged);
 }
 
 int SummaryDataAccessor::columnCount() const noexcept
@@ -25,7 +26,7 @@ int SummaryDataAccessor::rowCount() const noexcept
 void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
 {
 	DataCollectionGroupsFactory dcGroupsFactory;
-	m_allGroupRows.push_back(dcGroupsFactory.create(m_dataCollection, group));
+	m_allGroupRows.push_back(dcGroupsFactory.create(/*m_guiStorage, */group));
 
 	int modelRowIndex = rowCount();
 	m_groupRows[modelRowIndex++] = m_allGroupRows.last();
@@ -38,9 +39,9 @@ void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
 	}
 }
 
-const WebCrawler::DataCollection* SummaryDataAccessor::dataCollection() const noexcept
+const WebCrawler::GuiStorage* SummaryDataAccessor::guiStorage() const noexcept
 {
-	return m_dataCollection;
+	return m_guiStorage;
 }
 
 QObject* SummaryDataAccessor::qobject() noexcept
@@ -161,7 +162,7 @@ QVariant SummaryDataAccessor::item(const QModelIndex& index) const noexcept
 		return itemIterator.value()->storageTypeDescriptionName;
 	}
 
-	return m_dataCollection->guiStorage(itemIterator.value()->storageType)->size();
+	return m_guiStorage->guiStorage(itemIterator.value()->storageType)->size();
 }
 
 bool SummaryDataAccessor::isHeaderRow(int row) const noexcept
@@ -169,14 +170,14 @@ bool SummaryDataAccessor::isHeaderRow(int row) const noexcept
 	return m_groupRows.find(row) != m_groupRows.end();
 }
 
-SummaryCategoryItem SummaryDataAccessor::itemCategory(const QModelIndex& index) const noexcept
+StorageAdaptorType SummaryDataAccessor::itemCategory(const QModelIndex& index) const noexcept
 {
 	if (isHeaderRow(index.row()))
 	{
-		return SummaryCategoryItem::SummaryCategoryItemHeader;
+		return StorageAdaptorType::StorageAdaptorTypeNone;
 	}
 
-	return SummaryCategoryItem{ m_itemRows[index.row()]->storageType };
+	return StorageAdaptorType{ m_itemRows[index.row()]->storageType };
 }
 
 const QPixmap& SummaryDataAccessor::pixmap(const QModelIndex& index) const noexcept

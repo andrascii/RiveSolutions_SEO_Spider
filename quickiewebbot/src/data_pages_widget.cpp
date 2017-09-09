@@ -2,9 +2,9 @@
 #include "application.h"
 #include "table_view.h"
 #include "summary_filter_widget.h"
-#include "web_site_pages_storage_model.h"
-#include "web_site_pages_storage_view_model.h"
-#include "storage_adaptor.h"
+#include "web_site_pages_model.h"
+#include "web_site_pages_view_model.h"
+#include "page_raw_info_storage_adaptor.h"
 #include "storage_adaptor_factory.h"
 #include "model_controller.h"
 #include "context_menu_data_collection_row.h"
@@ -12,6 +12,8 @@
 #include "quickie_web_bot_helpers.h"
 #include "titled_widget.h"
 #include "control_panel_widget.h"
+#include "all_resources_widget.h"
+
 
 namespace QuickieWebBot
 {
@@ -185,15 +187,14 @@ void DataPagesWidget::initializeStackedWidget()
 	SummaryFilterWidget* errorsFilterWidget = new SummaryFilterWidget(m_stackedWidget);
 	errorsFilterWidget->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 
-	SummaryFilterWidget* allResourcesPage = new SummaryFilterWidget(m_stackedWidget);
-	allResourcesPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
+	AllResourcesWidget* allResourcesPage = new AllResourcesWidget(m_stackedWidget);
 
 	TableView* crawlingTableView = new TableView(m_stackedWidget);
 
-	WebSitePagesStorageModel* model = new WebSitePagesStorageModel(this);
-	WebSitePagesStorageViewModel* modelView = new WebSitePagesStorageViewModel(model, this);
+	WebSitePagesModel* model = new WebSitePagesModel(this);
+	WebSitePagesViewModel* modelView = new WebSitePagesViewModel(model, this);
 
-	model->setStorageAdaptor(theApp->storageAdaptorFactory()->create(SummaryCategoryItem::SummaryCategoryItemAllPages));
+	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->guiStorage()));
 
 	crawlingTableView->setModel(model);
 	crawlingTableView->setViewModel(modelView);

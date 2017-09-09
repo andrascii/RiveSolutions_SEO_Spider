@@ -8,14 +8,14 @@ namespace QuickieWebBot
 {
 
 class IResizePolicy;
-class StorageAdaptor;
+class IStorageAdaptor;
 
-class WebSitePagesStorageModel : public AbstractTableModel
+class WebSitePagesModel : public AbstractTableModel
 {
 	Q_OBJECT
 
 public:
-	WebSitePagesStorageModel(QObject* parent = nullptr);
+	WebSitePagesModel(QObject* parent = nullptr);
 
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -25,22 +25,20 @@ public:
 
 	virtual IResizePolicy* resizePolicy() const noexcept override;
 
-	void setStorageAdaptor(StorageAdaptor* storageAdaptor) noexcept;
-	const StorageAdaptor* storageAdaptor() const;
-	PageRawInfo::ItemType itemType(const QModelIndex& index) const noexcept;
+	void setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept;
+	const IStorageAdaptor* storageAdaptor() const;
+	IStorageAdaptor* storageAdaptor();
+	PageRawInfo::Column itemType(const QModelIndex& index) const noexcept;
 
 signals:
 	virtual void internalDataChanged() override;
 
-private:
-	StorageAdaptor* storageAdaptor();
-
 private slots:
-	void onPageInfoAdded(int rowIndex);
+	void onPageRawInfoAdded(int rowIndex);
 	void onPageInfoItemChanged(int row, int column);
 
 private:
-	StorageAdaptor* m_storageAdaptor;
+	IStorageAdaptor* m_storageAdaptor;
 	std::shared_ptr<IResizePolicy> m_resizePolicy;
 };
 

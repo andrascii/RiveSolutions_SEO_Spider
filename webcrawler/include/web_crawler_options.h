@@ -23,4 +23,6 @@ struct WebCrawlerOptions
 	int maxImageSizeKb;
 };
 
+Q_DECLARE_METATYPE(WebCrawlerOptions);
+
 }

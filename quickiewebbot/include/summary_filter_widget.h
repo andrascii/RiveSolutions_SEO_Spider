@@ -21,7 +21,6 @@ private:
 	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
-	void init();
 	void initSummaryView();
 	void initDetailsView();
 

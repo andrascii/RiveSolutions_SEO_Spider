@@ -11,9 +11,9 @@ class SummaryDataAccessor : public QObject, public ISummaryDataAccessor
 	Q_OBJECT
 
 public:
-	SummaryDataAccessor(WebCrawler::DataCollection* dataCollection);
+	SummaryDataAccessor(WebCrawler::GuiStorage* guiStorage);
 
-	virtual SummaryCategoryItem itemCategory(const QModelIndex& index) const noexcept override;
+	virtual StorageAdaptorType itemCategory(const QModelIndex& index) const noexcept override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 
 	virtual bool isHeaderRow(int row) const noexcept override;
@@ -26,7 +26,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept override;
 
-	virtual const WebCrawler::DataCollection* dataCollection() const noexcept override;
+	virtual const WebCrawler::GuiStorage* guiStorage() const noexcept override;
 
 	virtual QObject* qobject() noexcept override;
 
@@ -45,7 +45,7 @@ private:
 private:
 	static constexpr int s_summaryColumnCount = 2;
 
-	WebCrawler::DataCollection* m_dataCollection;
+	WebCrawler::GuiStorage* m_guiStorage;
 
 	QVector<DCStorageGroupDescriptionPtr> m_allGroupRows;
 	QMap<int, DCStorageGroupDescriptionPtr> m_groupRows;

@@ -12,7 +12,7 @@ class SummaryDataAccessorDecorator : public QObject, public ISummaryDataAccessor
 public:
 	SummaryDataAccessorDecorator(ISummaryDataAccessor* dataAccessor);
 
-	virtual SummaryCategoryItem itemCategory(const QModelIndex& index) const noexcept override;
+	virtual StorageAdaptorType itemCategory(const QModelIndex& index) const noexcept override;
 
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 	virtual bool isHeaderRow(int row) const noexcept override;
@@ -27,7 +27,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept override;
 
-	virtual const WebCrawler::DataCollection* dataCollection() const noexcept override;
+	virtual const WebCrawler::GuiStorage* guiStorage() const noexcept override;
 
 	virtual QObject* qobject() noexcept override;
 

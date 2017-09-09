@@ -29,7 +29,7 @@ public:
 	void setDataAccessor(ISummaryDataAccessor* dataAccessor) noexcept;
 	ISummaryDataAccessor* dataAccessor() const noexcept;
 
-	SummaryCategoryItem itemCategory(const QModelIndex& index) const noexcept;
+	StorageAdaptorType storageAdaptorType(const QModelIndex& index) const noexcept;
 
 signals:
 	virtual void internalDataChanged() override;
