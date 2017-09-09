@@ -46,7 +46,7 @@ namespace
 
 #endif
 
-namespace WebCrawler
+namespace Common
 {
 
 	NamedThread::NamedThread(const QByteArray& name, QObject* parent)

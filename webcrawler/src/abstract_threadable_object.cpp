@@ -32,7 +32,7 @@ void AbstractThreadableObject::startExecution() noexcept
 		m_isRunning.store(true);
 
 		QMetaObject::invokeMethod(this, "startTimer", Qt::BlockingQueuedConnection,
-			Q_ARG(int, g_minimumRecommendedTimerResolution), Q_ARG(Qt::TimerType, Qt::CoarseTimer));
+			Q_ARG(int, Common::g_minimumRecommendedTimerResolution), Q_ARG(Qt::TimerType, Qt::CoarseTimer));
 	}
 }
 
@@ -73,7 +73,7 @@ void AbstractThreadableObject::startTimer(int interval, Qt::TimerType timerType)
 
 #endif
 
-	m_timerId = QObject::startTimer(g_minimumRecommendedTimerResolution);
+	m_timerId = QObject::startTimer(Common::g_minimumRecommendedTimerResolution);
 	ASSERT(m_timerId);
 }
 

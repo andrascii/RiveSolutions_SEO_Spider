@@ -23,7 +23,7 @@ public:
 	void setViewModel(IViewModel* modelView) noexcept;
 	IViewModel* viewModel() const noexcept;
 
-	void initSpan();
+	Q_SLOT void initSpan();
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;

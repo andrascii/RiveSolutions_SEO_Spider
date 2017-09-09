@@ -22,7 +22,7 @@ namespace QuickieWebBot
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_appicationProperties(new ApplicationSettings(this))
-	, m_webCrawler(new WebCrawler::WebCrawler(WebCrawler::g_optimalParserThreadsCount))
+	, m_webCrawler(new WebCrawler::WebCrawler(Common::g_optimalParserThreadsCount))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)

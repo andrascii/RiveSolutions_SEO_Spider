@@ -448,6 +448,16 @@ QuickieWebBot--DataPagesWidget
 
 /*/////////////////////////////// QTabWidget ///////////////////////////////*/
 
+QuickieWebBot--AllResourcesWidget QLabel
+{
+	background: white;
+	border-color: #d6d6d6;
+	color: black;
+	font-family: Arial;
+	font-size: 11pt;
+	padding: 0.7em;
+}
+
 QTabWidget::pane
 { 
 	/* The tab widget frame */
