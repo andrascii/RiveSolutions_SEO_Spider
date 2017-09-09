@@ -1,6 +1,6 @@
 #pragma once
 
-namespace WebCrawler
+namespace Common
 {
 
 const int g_minimumRecommendedTimerResolution = 21;

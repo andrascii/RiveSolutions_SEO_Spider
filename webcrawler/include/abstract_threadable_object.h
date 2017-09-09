@@ -52,7 +52,7 @@ private:
 
 	QByteArray m_threadName;
 
-	NamedThread m_thread;
+	Common::NamedThread m_thread;
 
 	std::atomic_bool m_isRunning;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace WebCrawler
+namespace Common
 {
 
 class NamedThread : public QThread
