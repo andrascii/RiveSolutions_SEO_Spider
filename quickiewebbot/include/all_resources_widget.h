@@ -15,6 +15,7 @@ public:
 
 private:
 	void initializeResourcesTableView();
+	void initializewebResourcePagesTable();
 	Q_SLOT void onFilterViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:

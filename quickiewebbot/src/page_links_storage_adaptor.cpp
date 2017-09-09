@@ -28,6 +28,11 @@ QString PageLinksStorageAdaptor::columnDescription(int columnIndex) const noexce
 
 int PageLinksStorageAdaptor::itemCount() const noexcept
 {
+	if (!m_associatedPageRawInfoPtr)
+	{
+		return 0;
+	}
+
 	PageRawInfoCountAcceptorMethodType countLinksAcceptor = countLinks();
 
 	return static_cast<int>(((*m_associatedPageRawInfoPtr).*countLinksAcceptor)());
@@ -35,6 +40,11 @@ int PageLinksStorageAdaptor::itemCount() const noexcept
 
 QVariant PageLinksStorageAdaptor::item(const QModelIndex& index) const noexcept
 {
+	if (!m_associatedPageRawInfoPtr)
+	{
+		return QVariant();
+	}
+
 	PageRawInfoLinkAcceptorMethodType linksAcceptor = link();
 	WebCrawler::PageRawWeakPtr ptr = ((*m_associatedPageRawInfoPtr).*linksAcceptor)(index.row());
 
@@ -49,6 +59,11 @@ PageRawInfo::Column PageLinksStorageAdaptor::itemType(const QModelIndex& index) 
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
 	return m_availableColumns[index.column()];
+}
+
+PageRawInfoPtr PageLinksStorageAdaptor::pageRawInfoPtr(const QModelIndex& index) const noexcept
+{
+	return m_associatedPageRawInfoPtr;
 }
 
 QObject* PageLinksStorageAdaptor::qobject() noexcept

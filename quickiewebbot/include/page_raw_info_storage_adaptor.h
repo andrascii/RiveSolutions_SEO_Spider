@@ -24,6 +24,8 @@ public:
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual PageRawInfo::Column itemType(const QModelIndex& index) const noexcept override;
 
+	virtual PageRawInfoPtr pageRawInfoPtr(const QModelIndex& index) const noexcept override;
+
 	virtual QObject* qobject() noexcept override;
 
 	Q_SIGNAL virtual void pageRawInfoAdded(int rowIndex) const override;

@@ -47,11 +47,11 @@ ISummaryDataAccessor* SummaryModel::dataAccessor() const noexcept
 	return m_dataAccessor;
 }
 
-SummaryCategoryItem SummaryModel::itemCategory(const QModelIndex& index) const noexcept
+StorageAdaptorType SummaryModel::storageAdaptorType(const QModelIndex& index) const noexcept
 {
 	if (!dataAccessor())
 	{
-		return SummaryCategoryItem::SummaryCategoryItemNone;
+		return StorageAdaptorType::StorageAdaptorTypeNone;
 	}
 
 	return dataAccessor()->itemCategory(index);

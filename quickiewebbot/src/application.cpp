@@ -24,7 +24,7 @@ Application::Application(int& argc, char** argv)
 	, m_appicationProperties(new ApplicationProperties(this))
 	, m_webCrawler(new WebCrawler::WebCrawler(WebCrawler::g_optimalParserThreadsCount))
 	, m_softwareBrandingOptions(new SoftwareBranding)
-	, m_storageAdatpterFactory(new StorageAdaptorFactory(m_webCrawler->guiStorage()))
+	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 {
 	WebCrawler::GuiStorage* storage = m_webCrawler->guiStorage();

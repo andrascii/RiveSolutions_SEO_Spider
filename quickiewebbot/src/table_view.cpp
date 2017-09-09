@@ -47,18 +47,20 @@ void TableView::setModel(QAbstractItemModel* model)
 
 void TableView::mouseMoveEvent(QMouseEvent* event)
 {
+	if (!viewModel())
+	{
+		return QTableView::mouseMoveEvent(event);
+	}
+
 	QModelIndex index = indexAt(event->pos());
 
-	if (viewModel())
+	if (!(index.flags() & Qt::ItemIsSelectable))
 	{
-		if (!(index.flags() & Qt::ItemIsSelectable))
-		{
-			viewModel()->setHoveredIndex(QModelIndex());
-		}
-		else
-		{
-			viewModel()->setHoveredIndex(index);
-		}
+		viewModel()->setHoveredIndex(QModelIndex());
+	}
+	else
+	{
+		viewModel()->setHoveredIndex(index);
 	}
 
 	QTableView::mouseMoveEvent(event);
@@ -76,7 +78,7 @@ void TableView::resizeEvent(QResizeEvent* event)
 
 void TableView::leaveEvent(QEvent* event)
 {
-	if (viewModel()->hoveredIndex().isValid())
+	if (viewModel() && viewModel()->hoveredIndex().isValid())
 	{
 		viewModel()->setHoveredIndex(QModelIndex());
 	}

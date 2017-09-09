@@ -56,6 +56,18 @@ PageRawInfo::Column PageRawInfoStorageAdaptor::itemType(const QModelIndex& index
 }
 
 
+PageRawInfoPtr PageRawInfoStorageAdaptor::pageRawInfoPtr(const QModelIndex& index) const noexcept
+{
+	WebCrawler::PageRawPtr ptrToPageRawData;
+
+	if (itemCount() > index.row())
+	{
+		ptrToPageRawData = (*m_associatedStorage)[index.row()];
+	}
+
+	return std::make_shared<PageRawInfo>(ptrToPageRawData);
+}
+
 QObject* PageRawInfoStorageAdaptor::qobject() noexcept
 {
 	return this;

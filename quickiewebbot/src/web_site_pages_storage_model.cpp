@@ -25,6 +25,8 @@ Qt::ItemFlags WebSitePagesStorageModel::flags(const QModelIndex& index) const
 
 void WebSitePagesStorageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 {
+	IStorageAdaptor* oldStorageAdaptor = m_storageAdaptor;
+
 	if (m_storageAdaptor == storageAdaptor)
 	{
 		return;
@@ -63,6 +65,11 @@ void WebSitePagesStorageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor
 	endResetModel();
 
 	emit internalDataChanged();
+
+	if (oldStorageAdaptor)
+	{
+		oldStorageAdaptor->qobject()->deleteLater();
+	}
 }
 
 PageRawInfo::Column WebSitePagesStorageModel::itemType(const QModelIndex& index) const noexcept

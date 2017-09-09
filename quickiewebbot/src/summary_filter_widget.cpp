@@ -10,7 +10,7 @@
 #include "storage_adaptor_factory.h"
 #include "model_controller.h"
 #include "quickie_web_bot_helpers.h"
-#include "summary_category_item.h"
+#include "storage_adaptor_type.h"
 
 namespace QuickieWebBot
 {
@@ -52,12 +52,17 @@ void SummaryFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& se
 	QModelIndex index = selected.indexes()[0];
 	const SummaryModel* summaryModel = QuickieWebBotHelpers::safe_runtime_static_cast<const SummaryModel*>(index.model());
 
-	SummaryCategoryItem category = summaryModel->itemCategory(index);
+	StorageAdaptorType category = summaryModel->storageAdaptorType(index);
 
-	WebSitePagesStorageModel* storageModel = 
-		QuickieWebBotHelpers::safe_runtime_static_cast<WebSitePagesStorageModel*>(m_ui->summaryDetailsTableView->model());
+	WebSitePagesStorageModel* storageModel = dynamic_cast<WebSitePagesStorageModel*>(m_ui->summaryDetailsTableView->model());
 
-	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->create(category));
+	if (!storageModel)
+	{
+		ERRORLOG << "View does not have a model";
+		return;
+	}
+
+	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(category, theApp->guiStorage()));
 
 	m_ui->summaryDetailsTableView->viewModel()->invalidateRenderersCache();
 }
@@ -82,7 +87,7 @@ void SummaryFilterWidget::initDetailsView()
 	WebSitePagesStorageModel* model = new WebSitePagesStorageModel(this);
 	WebSitePagesStorageViewModel* viewModel = new WebSitePagesStorageViewModel(model, this);
 
-	model->setStorageAdaptor(theApp->storageAdaptorFactory()->create(SummaryCategoryItem::SummaryCategoryItemAllPages));
+	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->guiStorage()));
 
 	m_ui->summaryDetailsTableView->setModel(model);
 	m_ui->summaryDetailsTableView->setViewModel(viewModel);

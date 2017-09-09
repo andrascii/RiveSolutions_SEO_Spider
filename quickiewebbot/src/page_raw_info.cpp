@@ -61,7 +61,7 @@ int PageRawInfo::columnPrefferedSize(Column column)
 		{ UrlItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ FromUrlItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ TitleItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ ContentTypeItemType, QuickieWebBotHelpers::pointsToPixels(200) },
+		{ ContentTypeItemType, QuickieWebBotHelpers::pointsToPixels(150) },
 		{ MetaRefreshItemType, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ MetaRobotsItemType, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ MetaDescriptionItemType, QuickieWebBotHelpers::pointsToPixels(400) },
@@ -87,7 +87,8 @@ int PageRawInfo::columnPrefferedSize(Column column)
 		{ SecondH2LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ AltTextItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ AltTextLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ ImageSizeKbItemType, QuickieWebBotHelpers::pointsToPixels(100) }
+		{ ImageSizeKbItemType, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ NoFollowDoFollowLinkItemType, QuickieWebBotHelpers::pointsToPixels(150) }
 	};
 
 	int result = s_prefferedSizes.value(column, -1);
@@ -102,6 +103,11 @@ QVariant PageRawInfo::itemValue(Column column) const
 
 size_t PageRawInfo::countLinksFromThisPage() const noexcept
 {
+	if (!m_pageRawPtr)
+	{
+		return 0;
+	}
+
 	return m_pageRawPtr->linksFromThisPage.size();
 }
 
@@ -114,6 +120,11 @@ WebCrawler::PageRawWeakPtr PageRawInfo::linkFromThisPage(size_t number)
 
 size_t PageRawInfo::countLinksToThisPage() const noexcept
 {
+	if (!m_pageRawPtr)
+	{
+		return 0;
+	}
+
 	return m_pageRawPtr->linksToThisPage.size();
 }
 

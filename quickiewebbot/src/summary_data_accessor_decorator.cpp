@@ -9,7 +9,7 @@ SummaryDataAccessorDecorator::SummaryDataAccessorDecorator(ISummaryDataAccessor*
 	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), this, SIGNAL(dataChanged(int, int, Qt::ItemDataRole))));
 }
 
-SummaryCategoryItem SummaryDataAccessorDecorator::itemCategory(const QModelIndex& index) const noexcept
+StorageAdaptorType SummaryDataAccessorDecorator::itemCategory(const QModelIndex& index) const noexcept
 {
 	return m_summaryDataAccessor->itemCategory(index);
 }

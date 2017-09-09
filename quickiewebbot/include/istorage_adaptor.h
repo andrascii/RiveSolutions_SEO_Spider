@@ -16,6 +16,8 @@ public:
 	virtual QVariant item(const QModelIndex& index) const noexcept = 0;
 	virtual PageRawInfo::Column itemType(const QModelIndex& index) const noexcept = 0;
 
+	virtual PageRawInfoPtr pageRawInfoPtr(const QModelIndex& index) const noexcept = 0;
+
 	virtual QObject* qobject() noexcept = 0;
 
 	// signal

@@ -11,7 +11,7 @@ namespace QuickieWebBot
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectionBgColor("#C0C0C0")
+	, m_selectionBgColor("#E6EE9C")
 	, m_hoveredBgColor("#F3F3F3")
 	, m_bgColor(Qt::transparent)
 {
