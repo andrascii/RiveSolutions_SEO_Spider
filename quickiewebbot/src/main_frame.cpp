@@ -1,5 +1,5 @@
 #include "application.h"
-#include "application_properties.h"
+#include "application_settings.h"
 #include "main_frame.h"
 #include "model_controller.h"
 #include "data_collection.h"

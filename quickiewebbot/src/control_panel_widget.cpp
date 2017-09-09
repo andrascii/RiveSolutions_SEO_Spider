@@ -1,5 +1,5 @@
 #include "application.h"
-#include "application_properties.h"
+#include "application_settings.h"
 #include "control_panel_widget.h"
 #include "action_registry.h"
 #include "action_keys.h"

@@ -6,7 +6,7 @@
 #include "service_locator.h"
 #include "web_crawler.h"
 #include "constants.h"
-#include "application_properties.h"
+#include "application_settings.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
 
@@ -20,7 +20,7 @@ namespace QuickieWebBot
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_appicationProperties(new ApplicationProperties(this))
+	, m_appicationProperties(new ApplicationSettings(this))
 	, m_modelController(new WebCrawler::ModelController(this))
 	, m_webCrawler(new WebCrawler::WebCrawler(WebCrawler::g_optimalParserThreadsCount, m_modelController, this))
 	, m_softwareBrandingOptions(new SoftwareBranding)
@@ -71,7 +71,7 @@ SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() noexcept
 	return m_summaryDataAccessorFactory.get();
 }
 
-ApplicationProperties* Application::properties() noexcept
+ApplicationSettings* Application::properties() noexcept
 {
 	return m_appicationProperties;
 }

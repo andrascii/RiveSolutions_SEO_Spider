@@ -16,7 +16,7 @@ class ModelController;
 namespace QuickieWebBot
 {
 
-class ApplicationProperties;
+class ApplicationSettings;
 
 class Application : public QApplication
 {
@@ -27,7 +27,7 @@ public:
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
-	ApplicationProperties* properties() noexcept;
+	ApplicationSettings* properties() noexcept;
 	MainFrame* mainFrame() noexcept;
 	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
@@ -50,7 +50,7 @@ private:
 	void showSplashScreen() const noexcept;
 
 private:
-	ApplicationProperties* m_appicationProperties;
+	ApplicationSettings* m_appicationProperties;
 	WebCrawler::ModelController* m_modelController;
 	WebCrawler::WebCrawler* m_webCrawler;
 	

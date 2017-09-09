@@ -1,5 +1,5 @@
 #include "application.h"
-#include "application_properties.h"
+#include "application_settings.h"
 #include "settings_page.h"
 #include "icontrol_adaptor.h"
 #include "control_adaptor_check_box.h"
