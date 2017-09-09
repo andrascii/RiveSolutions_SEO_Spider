@@ -367,19 +367,41 @@ void ApplicationSettings::setUrl(const QUrl& url)
 	emit urlChanged();
 }
 
-QVariant ApplicationSettings::get(QString key, SettingsGroup group )
+QVariant ApplicationSettings::get(const QString& key, SettingsGroup group )
 {
-	// m_applicationSettings[group].value(key, 0);
-	return 0;
+	return m_applicationSettings.value(key, m_defaults[key]);
 }
 
-void ApplicationSettings::set(QString key, QVariant value, SettingsGroup group)
+void ApplicationSettings::set(const QString& key, QVariant value, SettingsGroup group)
 {
 	//m_applicationSettings[group].setValue(key, value);
 }
 
 void ApplicationSettings::setDefaults(const QString &str)
 {
+	//group/key : value
+	//group - optional
+	QRegExp rxRecord("^\\s*(((\\w+)/)?(\\w+))\\s*:\\s*([^\\s].{0,})\\b\\s*$");
+
+	QStringList keyValues = str.split(QRegExp(";\\W*"), QString::SkipEmptyParts);
+
+	foreach(QString keyValue, keyValues)
+	{
+		if (rxRecord.indexIn(keyValue) != -1)
+		{
+			QString group = rxRecord.cap(3);
+			QString key = rxRecord.cap(4);
+			QString value = rxRecord.cap(5);
+
+			DEBUGLOG << group << " " << key << " " << value;
+			DEBUGLOG << rxRecord.cap(1);
+			
+			if (!key.isEmpty())
+			{
+				m_defaults[rxRecord.cap(1)] = value;
+			}
+		}
+	}
 
 }
 
