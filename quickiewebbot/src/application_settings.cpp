@@ -5,16 +5,6 @@ namespace QuickieWebBot
 
 ApplicationSettings::ApplicationSettings(QObject* parent)
 	: QObject(parent)
-	, m_minTitleLength(5)
-	, m_maxTitleLength(50)
-	, m_limitMaxUrlLength(50)
-	, m_maxDescriptionLength(50)
-	, m_minDescriptionLength(5)
-	, m_maxH1LengthChars(50)
-	, m_maxH2LengthChars(50)
-	, m_maxImageAltTextChars(100)
-	, m_maxImageSize(100)
-	, m_proxyPort(80)
 {
 }
 
