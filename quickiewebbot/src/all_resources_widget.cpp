@@ -95,6 +95,12 @@ void AllResourcesWidget::initializewebResourcePagesTable()
 
 	m_linksFromThisPage->setModel(linksFromThisPageModel);
 	m_linksFromThisPage->setViewModel(linksFromThisPageViewModel);
+
+	WebSitePagesModel* linksToThisPageModel = new WebSitePagesModel(this);
+	WebSitePagesViewModel* linksToThisPageViewModel = new WebSitePagesViewModel(linksToThisPageModel, this);
+
+	m_linksToThisPage->setModel(linksToThisPageModel);
+	m_linksToThisPage->setViewModel(linksToThisPageViewModel);
 }
 
 void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -120,15 +126,6 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(category, theApp->guiStorage()));
 
 	m_resourcesTableView->viewModel()->invalidateRenderersCache();
-
-	if (WebSitePagesModel* linksFromThisPageModel = 
-		dynamic_cast<WebSitePagesModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
-	{
-		StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
-		IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
-
-		linksFromThisPageModel->setStorageAdaptor(factory->createPageLinksStorage(PageLinkType::LinkFromThisPageType, storageAdaptor->pageRawInfoPtr(index)));
-	}
 }
 
 void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -156,6 +153,15 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 	{
 		IStorageAdaptor* newPageInfoAdaptor = factory->createPageLinksStorage(PageLinkType::LinkFromThisPageType, storageAdaptor->pageRawInfoPtr(index));
 		linksFromThisPageModel->setStorageAdaptor(newPageInfoAdaptor);
+	}
+
+	if (WebSitePagesModel* linksToThisPageModel =
+		dynamic_cast<WebSitePagesModel*>(m_linksToThisPage->model()); linksToThisPageModel)
+	{
+		StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
+		IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
+
+		linksToThisPageModel->setStorageAdaptor(factory->createPageLinksStorage(PageLinkType::LinkToThisPageType, storageAdaptor->pageRawInfoPtr(index)));
 	}
 }
 
