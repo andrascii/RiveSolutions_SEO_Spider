@@ -98,6 +98,11 @@ int PageRawInfo::columnPrefferedSize(Column column)
 
 QVariant PageRawInfo::itemValue(Column column) const
 {
+	if (!m_pageRawPtr)
+	{
+		return QVariant();
+	}
+
 	return (this->*acceptItem(column))();
 }
 

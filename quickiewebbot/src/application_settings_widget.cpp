@@ -36,11 +36,11 @@ void ApplicationSettingsWidget::showEvent(QShowEvent* event)
 
 void ApplicationSettingsWidget::hideEvent(QHideEvent* event)
 {
-	uncheckChangedValues();
+	restoreChangedValues();
 }
 
 
-void ApplicationSettingsWidget::uncheckChangedValues()
+void ApplicationSettingsWidget::restoreChangedValues()
 {
 	m_somethingChanged = false;
 

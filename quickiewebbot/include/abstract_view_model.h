@@ -50,10 +50,12 @@ protected:
 
 	void emitNeedToRepaintIndexes(const QModelIndexList& modelIndexes) noexcept;
 
-private:
 	void invalidateCacheIndexes(const QModelIndexList& indexesList);
 	void invalidateCacheIndex(const QModelIndex& index);
 
+	void clearSelectedIndexes() noexcept;
+
+private:
 	void setPreviousHoveredIndex(const QModelIndex& index);
 
 private:

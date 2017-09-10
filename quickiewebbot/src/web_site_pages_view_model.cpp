@@ -170,10 +170,15 @@ QList<const IRenderer*> WebSitePagesViewModel::renderers(const QModelIndex& inde
 
 void WebSitePagesViewModel::onAttachedModelInternalDataChanged()
 {
+	AbstractViewModel::clearSelectedIndexes();
+	AbstractViewModel::invalidateRenderersCache();
+
 	const WebSitePagesModel* model =
 		static_cast<const WebSitePagesModel*>(AbstractViewModel::model());
 
-	AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType)->setCacheSize(static_cast<int>(std::pow((model->columnCount()), 2.0)));
+	AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType)->setCacheSize(static_cast<int>(model->columnCount() * model->rowCount() * 2));
+	AbstractViewModel::renderer(AbstractViewModel::UrlRendererType)->setCacheSize(static_cast<int>(model->rowCount() * 2));
+	AbstractViewModel::renderer(AbstractViewModel::BackgroundRendererType)->setCacheSize(static_cast<int>(model->columnCount() * model->rowCount() * 2));
 }
 
 void WebSitePagesViewModel::initializeRenderers()
@@ -181,10 +186,10 @@ void WebSitePagesViewModel::initializeRenderers()
 	const WebSitePagesModel* model =
 		static_cast<const WebSitePagesModel*>(AbstractViewModel::model());
 
-	AbstractViewModel::addRenderer(AbstractViewModel::PlainTextRendererType, new TextRenderer(this, static_cast<int>(std::pow((model->columnCount()), 2.0))));
-	AbstractViewModel::addRenderer(AbstractViewModel::UrlRendererType, new UrlRenderer(this, static_cast<int>(std::pow(model->columnCount(), 2.0))));
+	AbstractViewModel::addRenderer(AbstractViewModel::PlainTextRendererType, new TextRenderer(this, static_cast<int>(model->columnCount() * model->rowCount() * 2)));
+	AbstractViewModel::addRenderer(AbstractViewModel::UrlRendererType, new UrlRenderer(this, static_cast<int>(model->rowCount() * 2)));
 	AbstractViewModel::addRenderer(AbstractViewModel::SelectionBackgroundRendererType, new SelectionBackgroundRenderer(this));
-	AbstractViewModel::addRenderer(AbstractViewModel::BackgroundRendererType, new BackgroundRenderer(this));
+	AbstractViewModel::addRenderer(AbstractViewModel::BackgroundRendererType, new BackgroundRenderer(this, static_cast<int>(model->columnCount() * model->rowCount() * 2)));
 	AbstractViewModel::addRenderer(AbstractViewModel::GridLineRendererType, new GridLineRenderer(this, QColor("#F1F1F1")));
 }
 

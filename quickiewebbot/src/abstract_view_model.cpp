@@ -131,6 +131,11 @@ void AbstractViewModel::invalidateCacheIndex(const QModelIndex& index)
 	}
 }
 
+void AbstractViewModel::clearSelectedIndexes() noexcept
+{
+	m_selectedModelIndexes.clear();
+}
+
 void AbstractViewModel::setPreviousHoveredIndex(const QModelIndex& index)
 {
 	m_previousHoveredIndex = index;

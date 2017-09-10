@@ -22,7 +22,7 @@ private:
 
 private:
 	void initialize();
-	void uncheckChangedValues();
+	void restoreChangedValues();
 	virtual void showEvent(QShowEvent* event);
 	virtual void hideEvent(QHideEvent* event);
 
