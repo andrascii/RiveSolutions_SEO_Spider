@@ -162,7 +162,7 @@ QVariant SummaryDataAccessor::item(const QModelIndex& index) const noexcept
 		return itemIterator.value()->storageTypeDescriptionName;
 	}
 
-	return m_guiStorage->guiStorage(itemIterator.value()->storageType)->size();
+	return m_guiStorage->storage(itemIterator.value()->storageType)->size();
 }
 
 bool SummaryDataAccessor::isHeaderRow(int row) const noexcept

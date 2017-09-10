@@ -59,7 +59,7 @@ WebCrawler::GuiStorage::GuiStorageTypePtr SummaryDataAccessorPixmapDecorator::st
 		return nullptr;
 	}
 
-	return SummaryDataAccessorDecorator::guiStorage()->guiStorage(storageDesc->storageType);
+	return SummaryDataAccessorDecorator::guiStorage()->storage(storageDesc->storageType);
 }
 
 void SummaryDataAccessorPixmapDecorator::initializePixmaps()

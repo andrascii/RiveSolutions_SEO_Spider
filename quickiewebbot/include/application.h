@@ -4,6 +4,7 @@
 #include "software_branding.h"
 #include "summary_data_accessor_factory.h"
 #include "storage_adaptor_factory.h"
+#include "isettings_accessor.h"
 
 namespace WebCrawler
 {
@@ -18,7 +19,7 @@ namespace QuickieWebBot
 
 class ApplicationSettings;
 
-class Application : public QApplication
+class Application : public QApplication, public ISettingsAccessor
 {
 	Q_OBJECT
 
@@ -32,13 +33,16 @@ public:
 	MainFrame* mainFrame() noexcept;
 	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
-
+	
 	WebCrawler::WebCrawler* webCrawler() noexcept;
 	WebCrawler::GuiStorage* guiStorage() noexcept;
 
 	void initializeStyleSheet() noexcept;
 
 	QString operatingSystemVersion() const noexcept;
+
+	virtual void saveToSettings() noexcept;
+	virtual void loadFromSettings() noexcept;
 
 private:
 	Q_SLOT void mainFrameIsReadyForShow();

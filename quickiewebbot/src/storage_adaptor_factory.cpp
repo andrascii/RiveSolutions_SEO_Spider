@@ -13,7 +13,7 @@ IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorT
 	WebCrawler::DataCollection::StorageType storageType = 
 		static_cast<WebCrawler::DataCollection::StorageType>(type);
 
-	IStorageAdaptor* storageAdaptor = new PageRawInfoStorageAdaptor(guiStorage->guiStorage(storageType), storageType, guiStorage);
+	IStorageAdaptor* storageAdaptor = new PageRawInfoStorageAdaptor(guiStorage->storage(storageType), storageType, guiStorage);
 
 	setupAvailableColumns(storageAdaptor, type);
 

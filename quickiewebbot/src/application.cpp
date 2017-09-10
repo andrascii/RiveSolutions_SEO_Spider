@@ -31,6 +31,11 @@ Application::Application(int& argc, char** argv)
 	ASSERT(storage->thread() == QThread::currentThread());
 	m_guiStorage = storage;
 
+	QFile config(":/config/defaults.cfg");
+	config.open(QIODevice::ReadOnly);
+	m_appicationProperties->setDefaults(config.readAll());
+	loadFromSettings();
+
 	initialize();
 
 	initializeStyleSheet();
@@ -83,6 +88,32 @@ SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() noexcept
 ApplicationSettings* Application::properties() noexcept
 {
 	return m_appicationProperties;
+}
+
+void Application::loadFromSettings() noexcept
+{
+	const QMetaObject* metaObject = theApp->properties()->metaObject();
+	int propertyCount = metaObject->propertyCount();
+
+	for (int i = 0; i < propertyCount; i++)
+	{
+		QMetaProperty metaPropertry = metaObject->property(i);
+		const char* metaPropertryName = metaPropertry.name();
+		theApp->properties()->setProperty(metaPropertryName, m_appicationProperties->get(metaPropertryName));
+	}
+}
+
+void Application::saveToSettings() noexcept
+{
+	const QMetaObject* metaObject = theApp->properties()->metaObject();
+	int propertyCount = metaObject->propertyCount();
+
+	for (int i = 0; i < propertyCount; i++)
+	{
+		QMetaProperty metaPropertry = metaObject->property(i);
+		const char* metaPropertryName = metaPropertry.name();
+		m_appicationProperties->set(metaPropertryName, theApp->properties()->property(metaPropertryName));
+	}
 }
 
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept

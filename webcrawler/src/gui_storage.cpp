@@ -7,15 +7,15 @@ GuiStorage::GuiStorage()
 {
 }
 
-GuiStorage::GuiStorageTypePtr& GuiStorage::guiStorage(DataCollection::StorageType type) noexcept
+GuiStorage::GuiStorageTypePtr& GuiStorage::storage(DataCollection::StorageType type) noexcept
 {
 	ASSERT(m_guiStorageMap.find(type) != m_guiStorageMap.end());
 	return m_guiStorageMap.find(type)->second;
 }
 
-const GuiStorage::GuiStorageTypePtr& GuiStorage::guiStorage(DataCollection::StorageType type) const noexcept
+const GuiStorage::GuiStorageTypePtr& GuiStorage::storage(DataCollection::StorageType type) const noexcept
 {
-	const GuiStorageTypePtr& storage = const_cast<GuiStorage* const>(this)->guiStorage(type);
+	const GuiStorageTypePtr& storage = const_cast<GuiStorage* const>(this)->storage(type);
 	return storage;
 }
 
@@ -27,7 +27,7 @@ void GuiStorage::addPageRaw(PageRawPtr pageRaw, int type) noexcept
 	if (guiStorageIt != m_guiStorageMap.end())
 	{
 		guiStorageIt->second->push_back(pageRaw);
-		Q_EMIT pageRawAdded(guiStorage(storageType)->size() - 1, storageType);
+		Q_EMIT pageRawAdded(storage(storageType)->size() - 1, storageType);
 		//ASSERT(isPageRawExists(pageRaw, storageType));
 	}
 }

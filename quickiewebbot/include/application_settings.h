@@ -202,12 +202,12 @@ public:
 	};
 	
 	void setDefaults(const QString &str);
-	void set(QString key, QVariant value, SettingsGroup group = SettingsGroup::General);
-	QVariant get(QString key, SettingsGroup group = SettingsGroup::General);
+	void set(const QString& key, QVariant value, SettingsGroup group = SettingsGroup::General);
+	QVariant get(const QString& key, SettingsGroup group = SettingsGroup::General);
 	
 private:
 	QSettings m_applicationSettings;
-	std::map<QString, QVariant> m_defaluts;
+	std::map<QString, QVariant> m_defaults;
 
 	unsigned m_threadCount;
 
