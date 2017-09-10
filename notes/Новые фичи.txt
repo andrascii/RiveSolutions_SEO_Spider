@@ -1,0 +1,1 @@
+Надо реализовать аналоги Google Analitycs Integration и Custom Extraction как в Screaming Frog Seo Spider.
