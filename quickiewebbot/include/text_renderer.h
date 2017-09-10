@@ -19,10 +19,13 @@ public:
 	virtual void setCacheSize(int cacheSize) override;
 
 protected:
+	virtual QString elidedText(const QString& string, const int width, bool isDecorationValid) const noexcept;
 	virtual QRect paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const;
 
 	QPixmap* cached(const QModelIndex& index) const;
 	void clearCacheIfNeeded() const noexcept;
+
+	const IViewModel* viewModel() const noexcept;
 
 private:
 	const IViewModel* m_viewModel;

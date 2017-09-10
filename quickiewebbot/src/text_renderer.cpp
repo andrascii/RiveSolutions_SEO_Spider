@@ -15,10 +15,10 @@ TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
 
 void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	const int marginTop = m_viewModel->marginTop(index);
-	const int marginBottom = m_viewModel->marginBottom(index);
-	const int marginLeft = m_viewModel->marginLeft(index);
-	const int marginRight = m_viewModel->marginRight(index);
+	const int marginTop = viewModel()->marginTop(index);
+	const int marginBottom = viewModel()->marginBottom(index);
+	const int marginLeft = viewModel()->marginLeft(index);
+	const int marginRight = viewModel()->marginRight(index);
 
 	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = cached(index);
@@ -29,18 +29,17 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 		return;
 	}
 
-	const bool isDecorationValid = !m_viewModel->itemPixmap(index).isNull();
-	const Qt::AlignmentFlag textAlignmentFlags = m_viewModel->textAlignment(index);
-	const QFont& font = m_viewModel->font(index).resolve(option.font);
-	const QColor& textColor = m_viewModel->textColor(index);
+	const bool isDecorationValid = !viewModel()->itemPixmap(index).isNull();
+	const Qt::AlignmentFlag textAlignmentFlags = viewModel()->textAlignment(index);
+	const QFont& font = viewModel()->font(index).resolve(option.font);
+	const QColor& textColor = viewModel()->textColor(index);
 	QString paintingText = qvariant_cast<QString>(index.data(Qt::DisplayRole));
 
 	QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
 	QPixmap pixmap(pixmapRect.size());
 	pixmap.fill(Qt::transparent);
 
-	QFontMetrics fontMetrics(Application::font());
-	paintingText = fontMetrics.elidedText(paintingText, Qt::ElideRight, adjustedRect.width());
+	paintingText = elidedText(paintingText, adjustedRect.width(), isDecorationValid);
 
 	QPainter painterPixmap(&pixmap);
 
@@ -92,6 +91,12 @@ QPixmap* TextRenderer::cached(const QModelIndex& index) const
 	return nullptr;
 }
 
+QString TextRenderer::elidedText(const QString& string, const int width, bool) const noexcept
+{
+	QFontMetrics fontMetrics(Application::font());
+	return fontMetrics.elidedText(string, Qt::ElideRight, width);
+}
+
 QRect TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const
 {
 	const QPixmap& pixmap = m_viewModel->itemPixmap(index);
@@ -109,6 +114,11 @@ void TextRenderer::clearCacheIfNeeded() const noexcept
 	{
 		m_cache.clear();
 	}
+}
+
+const IViewModel* TextRenderer::viewModel() const noexcept
+{
+	return m_viewModel;
 }
 
 }

@@ -11,6 +11,14 @@ UrlRenderer::UrlRenderer(const IViewModel* viewModel, int maxCacheSize)
 {
 }
 
+
+QString UrlRenderer::elidedText(const QString& string, const int width, bool isDecorationValid) const noexcept
+{
+	const int correctedWidth = isDecorationValid ? width - QuickieWebBotHelpers::pointsToPixels(20) : width;
+
+	return TextRenderer::elidedText(string, correctedWidth, isDecorationValid);
+}
+
 QRect UrlRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const
 {
 	const QPixmap& pixmap = m_viewModel->itemPixmap(index);
