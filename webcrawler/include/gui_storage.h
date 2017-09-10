@@ -17,8 +17,8 @@ public:
 
 	GuiStorage();
 
-	const GuiStorageTypePtr& guiStorage(DataCollection::StorageType type) const noexcept;
-	GuiStorageTypePtr& guiStorage(DataCollection::StorageType type) noexcept;
+	const GuiStorageTypePtr& storage(DataCollection::StorageType type) const noexcept;
+	GuiStorageTypePtr& storage(DataCollection::StorageType type) noexcept;
 
 	Q_SIGNAL void pageRawAdded(int row, int storageType);
 private:
