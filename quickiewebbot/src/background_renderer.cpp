@@ -10,7 +10,7 @@ BackgroundRenderer::BackgroundRenderer(const IViewModel* viewModel, int cacheSiz
 {
 }
 
-void BackgroundRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void BackgroundRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	QPixmap* cachedPixmap = cached(index);
 
@@ -46,6 +46,11 @@ void BackgroundRenderer::invalidateCache() const
 void BackgroundRenderer::setCacheSize(int cacheSize)
 {
 	m_cacheSize = cacheSize;
+}
+
+void BackgroundRenderer::addRenderer(int)
+{
+	ASSERT(!"Attempt to add renderer to leaf");
 }
 
 void BackgroundRenderer::clearCacheIfNeeded() const

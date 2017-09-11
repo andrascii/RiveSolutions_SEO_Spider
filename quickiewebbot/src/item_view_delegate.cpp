@@ -9,34 +9,27 @@
 namespace QuickieWebBot
 {
 
-ItemViewDelegate::ItemViewDelegate(IViewModel* viewModel, QObject* parent)
+ItemViewDelegate::ItemViewDelegate(IViewModel* itemView, QObject* parent)
 	: QStyledItemDelegate(parent)
-	, m_viewModel(viewModel)
+	, m_itemView(itemView)
 {
 }
 
-void ItemViewDelegate::setViewModel(IViewModel* viewModel) noexcept
+void ItemViewDelegate::setViewModel(IViewModel* itemView) noexcept
 {
-	m_viewModel = viewModel;
+	m_itemView = itemView;
 }
 
-IViewModel* ItemViewDelegate::viewModel() const noexcept
+IViewModel* ItemViewDelegate::itemView() const noexcept
 {
-	return m_viewModel;
+	return m_itemView;
 }
 
 void ItemViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	if (!m_viewModel)
-	{
-		ERRORLOG << "For this view did not installed ViewModel!";
-		return;
-	}
+	ASSERT(m_itemView);
 
-	foreach(const IRenderer* renderer, m_viewModel->renderers(index))
-	{
-		renderer->render(painter, option, index);
-	}
+	m_itemView->itemViewRenderer(index)->draw(painter, option, index);
 }
 
 bool ItemViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QStyleOptionViewItem& option, const QModelIndex& index)

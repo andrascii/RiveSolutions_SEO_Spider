@@ -9,6 +9,7 @@ AbstractViewModel::AbstractViewModel(AbstractTableModel* model, QObject* parent)
 	, m_model(model)
 	, m_hoveredIndex(QModelIndex())
 	, m_previousHoveredIndex(QModelIndex())
+	, m_itemRenderer(this)
 {
 }
 
@@ -48,6 +49,16 @@ const QModelIndexList& AbstractViewModel::selectedIndexes() const noexcept
 	return m_selectedModelIndexes;
 }
 
+void AbstractViewModel::invalidateItemViewRendererCache() const noexcept
+{
+	m_itemRenderer.invalidateCache();
+}
+
+const IRenderer* AbstractViewModel::itemViewRenderer(const QModelIndex& index) const noexcept
+{
+	return &m_itemRenderer;
+}
+
 void AbstractViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 {
 	if (index == m_hoveredIndex)
@@ -60,18 +71,6 @@ void AbstractViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	m_hoveredIndex = index;
 
 	setPreviousHoveredIndex(previousHoveredIndex);
-}
-
-QList<const IRenderer*> AbstractViewModel::renderers(const QModelIndex& index) const noexcept
-{
-	QList<const IRenderer*> renderers;
-
-	for(const auto& p : m_renderers)
-	{
-		renderers.append(p.second.get());
-	}
-
-	return renderers;
 }
 
 QObject* AbstractViewModel::qobject() noexcept
@@ -89,20 +88,6 @@ AbstractTableModel* AbstractViewModel::model() noexcept
 	return m_model;
 }
 
-void AbstractViewModel::addRenderer(RendererType rendererType, IRenderer* renderer)
-{
-	DEBUG_ASSERT(m_renderers.find(rendererType) == m_renderers.end());
-
-	m_renderers[rendererType] = std::unique_ptr<IRenderer>(renderer);
-}
-
-IRenderer* AbstractViewModel::renderer(RendererType rendererType) const noexcept
-{
-	auto rendererIterator = m_renderers.find(rendererType);
-
-	return rendererIterator == m_renderers.end() ? nullptr : rendererIterator->second.get();
-}
-
 const QModelIndex& AbstractViewModel::previousHoveredIndex() const noexcept
 {
 	return m_previousHoveredIndex;
@@ -115,20 +100,27 @@ void AbstractViewModel::emitNeedToRepaintIndexes(const QModelIndexList& modelInd
 	Q_EMIT repaintItems(modelIndexes);
 }
 
-void AbstractViewModel::invalidateCacheIndexes(const QModelIndexList& indexesList)
+void AbstractViewModel::addRenderer(int rendererTypes)
 {
-	foreach(const QModelIndex& index, indexesList)
+	m_itemRenderer.addRenderer(rendererTypes);
+}
+
+void AbstractViewModel::setItemRendererCacheSize(int cacheSize)
+{
+	m_itemRenderer.setCacheSize(cacheSize);
+}
+
+void AbstractViewModel::invalidateCacheIndexes(const QModelIndexList& modelIndexes) noexcept
+{
+	foreach(const QModelIndex& index, modelIndexes)
 	{
-		invalidateCacheIndex(index);
+		m_itemRenderer.invalidateCacheIndex(index);
 	}
 }
 
-void AbstractViewModel::invalidateCacheIndex(const QModelIndex& index)
+void AbstractViewModel::invalidateCacheIndex(const QModelIndex& index) noexcept
 {
-	for (const auto& pair : m_renderers)
-	{
-		pair.second->invalidateCacheIndex(index);
-	}
+	m_itemRenderer.invalidateCacheIndex(index);
 }
 
 void AbstractViewModel::clearSelectedIndexes() noexcept
@@ -139,14 +131,6 @@ void AbstractViewModel::clearSelectedIndexes() noexcept
 void AbstractViewModel::setPreviousHoveredIndex(const QModelIndex& index)
 {
 	m_previousHoveredIndex = index;
-}
-
-void AbstractViewModel::invalidateRenderersCache() const noexcept
-{
-	for (const auto& pair : m_renderers)
-	{
-		pair.second->invalidateCache();
-	}
 }
 
 }

@@ -6,11 +6,6 @@ namespace QuickieWebBot
 class IRenderer;
 class IResizePolicy;
 
-//
-// This interface represents Qt Model extension and it's formed
-// with Qt View and Qt Model MVVM pattern. Its methods used by delegates.
-//
-
 class IViewModel
 {
 public:
@@ -19,8 +14,11 @@ public:
 	virtual int marginLeft(const QModelIndex& index) const noexcept = 0;
 	virtual int marginRight(const QModelIndex& index) const noexcept = 0;
 
-	virtual const QPixmap& itemPixmap(const QModelIndex& index) const noexcept = 0;
-	virtual QRect itemPixmapPosition(const QModelIndex& index) const noexcept = 0;
+	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept = 0;
+	virtual QRect pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept = 0;
+
+	virtual QString displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept = 0;
+	virtual QRect displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept = 0;
 
 	virtual const QColor& selectionBackgroundColor(const QModelIndex& index) const noexcept = 0;
 	virtual const QColor& hoveredBackgroundColor(const QModelIndex& index) const noexcept = 0;
@@ -30,8 +28,8 @@ public:
 	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept = 0;
 	virtual QColor textColor(const QModelIndex& index) const noexcept = 0;
 
-	virtual void invalidateRenderersCache() const noexcept = 0;
-	virtual QList<const IRenderer*> renderers(const QModelIndex& index) const noexcept = 0;
+	virtual void invalidateItemViewRendererCache() const noexcept = 0;
+	virtual const IRenderer* itemViewRenderer(const QModelIndex& index) const noexcept = 0;
 
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept = 0;
 	virtual const QModelIndex& hoveredIndex() const noexcept = 0;

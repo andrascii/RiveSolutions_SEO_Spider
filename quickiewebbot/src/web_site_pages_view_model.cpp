@@ -20,6 +20,7 @@ WebSitePagesViewModel::WebSitePagesViewModel(WebSitePagesModel* model, QObject* 
 	, m_selectionBgColor("#E6EE9C")
 	, m_hoveredBgColor("#F3F3F3")
 	, m_bgColor(Qt::white)
+	, m_itemRenderer(this)
 {
 	initializeRenderers();
 
@@ -62,7 +63,7 @@ int WebSitePagesViewModel::marginRight(const QModelIndex&) const noexcept
 	return QuickieWebBotHelpers::pointsToPixels(2);
 }
 
-const QPixmap& WebSitePagesViewModel::itemPixmap(const QModelIndex& index) const noexcept
+const QPixmap& WebSitePagesViewModel::pixmap(const QModelIndex& index) const noexcept
 {
 	const WebSitePagesModel* model = 
 		static_cast<const WebSitePagesModel*>(AbstractViewModel::model());
@@ -77,9 +78,34 @@ const QPixmap& WebSitePagesViewModel::itemPixmap(const QModelIndex& index) const
 	return emptyPixmap;
 }
 
-QRect WebSitePagesViewModel::itemPixmapPosition(const QModelIndex&) const noexcept
+QRect WebSitePagesViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	return QRect();
+	const WebSitePagesModel* model =
+		static_cast<const WebSitePagesModel*>(AbstractViewModel::model());
+
+	if (model->itemType(index) == PageRawInfo::UrlItemType)
+	{
+		return itemVisualRect.adjusted(itemVisualRect.width() - QuickieWebBotHelpers::pointsToPixels(20), 0, 0, 0);
+	}
+
+	return itemVisualRect.adjusted(itemVisualRect.width() + QuickieWebBotHelpers::pointsToPixels(3), 0, 0, 0);
+}
+
+QString WebSitePagesViewModel::displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
+{
+	DEBUG_ASSERT(index.model() == static_cast<const QAbstractItemModel*>(model()));
+
+	const QString displayData = index.data(Qt::DisplayRole).toString();
+
+	const int pixmapOccupiedWidth = index.row() == hoveredIndex().row() ? itemVisualRect.width() - pixmapPosition(index, itemVisualRect).x() : 0;
+
+	QFontMetrics fontMetrics(Application::font());
+	return fontMetrics.elidedText(displayData, Qt::ElideRight, itemVisualRect.width() - pixmapOccupiedWidth);
+}
+
+QRect WebSitePagesViewModel::displayDataPosition(const QModelIndex&, const QRect& itemVisualRect) const noexcept
+{
+	return itemVisualRect;
 }
 
 const QColor& WebSitePagesViewModel::selectionBackgroundColor(const QModelIndex&) const noexcept
@@ -152,33 +178,16 @@ void WebSitePagesViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	}
 }
 
-QList<const IRenderer*> WebSitePagesViewModel::renderers(const QModelIndex& index) const noexcept
-{
-	const WebSitePagesModel* model = 
-		static_cast<const WebSitePagesModel*>(AbstractViewModel::model());
-
-	const IRenderer* renderer = model->itemType(index) == PageRawInfo::UrlItemType ?
-		AbstractViewModel::renderer(AbstractViewModel::UrlRendererType) :
-		AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType);
-
-	return QList<const IRenderer*>()
-		<< AbstractViewModel::renderer(AbstractViewModel::BackgroundRendererType)
-		<< AbstractViewModel::renderer(AbstractViewModel::SelectionBackgroundRendererType)
-		<< renderer
-		<< AbstractViewModel::renderer(AbstractViewModel::GridLineRendererType);
-}
-
 void WebSitePagesViewModel::onAttachedModelInternalDataChanged()
 {
-	AbstractViewModel::clearSelectedIndexes();
-	AbstractViewModel::invalidateRenderersCache();
-
 	const WebSitePagesModel* model =
 		static_cast<const WebSitePagesModel*>(AbstractViewModel::model());
 
-	AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType)->setCacheSize(static_cast<int>(model->columnCount() * model->rowCount() * 2));
-	AbstractViewModel::renderer(AbstractViewModel::UrlRendererType)->setCacheSize(static_cast<int>(model->rowCount() * 2));
-	AbstractViewModel::renderer(AbstractViewModel::BackgroundRendererType)->setCacheSize(static_cast<int>(model->columnCount() * model->rowCount() * 2));
+	AbstractViewModel::clearSelectedIndexes();
+
+	invalidateItemViewRendererCache();
+
+	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->rowCount() * 2));
 }
 
 void WebSitePagesViewModel::initializeRenderers()
@@ -186,11 +195,14 @@ void WebSitePagesViewModel::initializeRenderers()
 	const WebSitePagesModel* model =
 		static_cast<const WebSitePagesModel*>(AbstractViewModel::model());
 
-	AbstractViewModel::addRenderer(AbstractViewModel::PlainTextRendererType, new TextRenderer(this, static_cast<int>(model->columnCount() * model->rowCount() * 2)));
-	AbstractViewModel::addRenderer(AbstractViewModel::UrlRendererType, new UrlRenderer(this, static_cast<int>(model->rowCount() * 2)));
-	AbstractViewModel::addRenderer(AbstractViewModel::SelectionBackgroundRendererType, new SelectionBackgroundRenderer(this));
-	AbstractViewModel::addRenderer(AbstractViewModel::BackgroundRendererType, new BackgroundRenderer(this, static_cast<int>(model->columnCount() * model->rowCount() * 2)));
-	AbstractViewModel::addRenderer(AbstractViewModel::GridLineRendererType, new GridLineRenderer(this, QColor("#F1F1F1")));
+	AbstractViewModel::addRenderer(
+		IRenderer::PlainTextRendererType | 
+		IRenderer::SelectionBackgroundRendererType | 
+		IRenderer::BackgroundRendererType | 
+		IRenderer::GridLineRendererType
+	);
+
+	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->rowCount() * 2));
 }
 
 }

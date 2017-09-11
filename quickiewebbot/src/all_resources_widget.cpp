@@ -126,7 +126,7 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 
 	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(category, theApp->guiStorage()));
 
-	m_resourcesTableView->viewModel()->invalidateRenderersCache();
+	m_resourcesTableView->viewModel()->invalidateItemViewRendererCache();
 }
 
 void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

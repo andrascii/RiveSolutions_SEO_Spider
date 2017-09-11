@@ -13,7 +13,7 @@ TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
 {
 }
 
-void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	const int marginTop = viewModel()->marginTop(index);
 	const int marginBottom = viewModel()->marginBottom(index);
@@ -29,19 +29,17 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 		return;
 	}
 
-	const bool isDecorationValid = !viewModel()->itemPixmap(index).isNull();
-	const Qt::AlignmentFlag textAlignmentFlags = viewModel()->textAlignment(index);
-	const QFont& font = viewModel()->font(index).resolve(option.font);
-	const QColor& textColor = viewModel()->textColor(index);
-	QString paintingText = qvariant_cast<QString>(index.data(Qt::DisplayRole));
-
 	QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
 	QPixmap pixmap(pixmapRect.size());
 	pixmap.fill(Qt::transparent);
 
-	paintingText = elidedText(paintingText, adjustedRect.width(), isDecorationValid);
-
 	QPainter painterPixmap(&pixmap);
+
+	const bool isDecorationValid = !viewModel()->pixmap(index).isNull();
+	const Qt::AlignmentFlag textAlignmentFlags = viewModel()->textAlignment(index);
+	const QFont& font = viewModel()->font(index).resolve(option.font);
+	const QColor& textColor = viewModel()->textColor(index);
+	const QString paintingText = viewModel()->displayData(index, pixmapRect);
 
 	painterPixmap.setRenderHints(QPainter::HighQualityAntialiasing);
 	painterPixmap.setFont(font);
@@ -49,10 +47,10 @@ void TextRenderer::render(QPainter* painter, const QStyleOptionViewItem& option,
 
 	if (isDecorationValid)
 	{
-		pixmapRect = paintDecorator(&painterPixmap, index, pixmapRect);
+		paintDecorator(&painterPixmap, index, viewModel()->pixmapPosition(index, pixmapRect));
 	}
 
-	painterPixmap.drawText(pixmapRect, textAlignmentFlags, paintingText);
+	painterPixmap.drawText(viewModel()->displayDataPosition(index, pixmapRect), textAlignmentFlags, paintingText);
 
 	m_cache[index] = pixmap;
 	pixmapPointer = &m_cache[index];
@@ -79,6 +77,11 @@ void TextRenderer::setCacheSize(int cacheSize)
 	clearCacheIfNeeded();
 }
 
+void TextRenderer::addRenderer(int)
+{
+	ASSERT(!"Attempt to add renderer to leaf");
+}
+
 QPixmap* TextRenderer::cached(const QModelIndex& index) const
 {
 	auto iter = m_cache.find(index);
@@ -97,15 +100,11 @@ QString TextRenderer::elidedText(const QString& string, const int width, bool) c
 	return fontMetrics.elidedText(string, Qt::ElideRight, width);
 }
 
-QRect TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const
+void TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const
 {
-	const QPixmap& pixmap = m_viewModel->itemPixmap(index);
-
+	const QPixmap& pixmap = m_viewModel->pixmap(index);
 	QSize pixmapSize = pixmap.size();
-
 	painter->drawPixmap(QRect(rect.topLeft(), pixmapSize), pixmap);
-
-	return rect.adjusted(pixmapSize.width() + 5, 0, 0, 0);
 }
 
 void TextRenderer::clearCacheIfNeeded() const noexcept
