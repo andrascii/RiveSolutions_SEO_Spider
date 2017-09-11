@@ -50,6 +50,7 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "Kernel version:" << QSysInfo::kernelVersion();
 	INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
+	INFOLOG << "App Version:" << applicationVersion();
 }
 
 Application::~Application()

@@ -64,7 +64,7 @@ void SummaryFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& se
 
 	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(category, theApp->guiStorage()));
 
-	m_ui->summaryDetailsTableView->viewModel()->invalidateRenderersCache();
+	m_ui->summaryDetailsTableView->viewModel()->invalidateItemViewRendererCache();
 }
 
 void SummaryFilterWidget::initSummaryView()

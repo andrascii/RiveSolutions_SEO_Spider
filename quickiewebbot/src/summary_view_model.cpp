@@ -14,6 +14,7 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	, m_selectionBgColor("#E6EE9C")
 	, m_hoveredBgColor("#F3F3F3")
 	, m_bgColor(Qt::transparent)
+	, m_itemRenderer(this)
 {
 	initializeRenderers();
 }
@@ -38,16 +39,30 @@ int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
 	return QuickieWebBotHelpers::pointsToPixels(2);
 }
 
-const QPixmap& SummaryViewModel::itemPixmap(const QModelIndex& index) const noexcept
+const QPixmap& SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
 {
 	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
 
 	return model->dataAccessor()->pixmap(index);
 }
 
-QRect SummaryViewModel::itemPixmapPosition(const QModelIndex&) const noexcept
+QRect SummaryViewModel::pixmapPosition(const QModelIndex&, const QRect& itemVisualRect) const noexcept
 {
-	return QRect();
+	return itemVisualRect;
+}
+
+QString SummaryViewModel::displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
+{
+	DEBUG_ASSERT(index.model() == static_cast<const QAbstractItemModel*>(model()));
+
+	const QString displayData = index.data(Qt::DisplayRole).toString();
+	QFontMetrics fontMetrics(Application::font());
+	return fontMetrics.elidedText(displayData, Qt::ElideRight, itemVisualRect.width());
+}
+
+QRect SummaryViewModel::displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
+{
+	return itemVisualRect.adjusted(pixmap(index).width() + QuickieWebBotHelpers::pointsToPixels(3), 0, 0, 0);
 }
 
 const QColor& SummaryViewModel::selectionBackgroundColor(const QModelIndex&) const noexcept
@@ -91,19 +106,15 @@ Qt::AlignmentFlag SummaryViewModel::textAlignment(const QModelIndex& index) cons
 	return Qt::AlignLeft;
 }
 
-QList<const IRenderer*> SummaryViewModel::renderers(const QModelIndex& index) const noexcept
-{
-	return QList<const IRenderer*>()
-		<< AbstractViewModel::renderer(AbstractViewModel::BackgroundRendererType)
-		<< AbstractViewModel::renderer(AbstractViewModel::SelectionBackgroundRendererType)
-		<< AbstractViewModel::renderer(AbstractViewModel::PlainTextRendererType);
-}
-
 void SummaryViewModel::initializeRenderers()
 {
-	AbstractViewModel::addRenderer(AbstractViewModel::PlainTextRendererType, new TextRenderer(this));
-	AbstractViewModel::addRenderer(AbstractViewModel::SelectionBackgroundRendererType, new SelectionBackgroundRenderer(this));
-	AbstractViewModel::addRenderer(AbstractViewModel::BackgroundRendererType, new BackgroundRenderer(this, model()->rowCount() * model()->columnCount()));
+	AbstractViewModel::addRenderer(
+		IRenderer::PlainTextRendererType | 
+		IRenderer::SelectionBackgroundRendererType | 
+		IRenderer::BackgroundRendererType
+	);
+
+	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model()->columnCount() * model()->rowCount() * 2));
 }
 
 QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept

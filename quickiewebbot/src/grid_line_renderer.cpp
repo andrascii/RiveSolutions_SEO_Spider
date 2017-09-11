@@ -13,6 +13,11 @@ void GridLineRenderer::setCacheSize(int)
 {
 }
 
+void GridLineRenderer::addRenderer(int)
+{
+	ASSERT(!"Attempt to add renderer to leaf");
+}
+
 void GridLineRenderer::renderThisIfItAboveHoveredHelper(QPainter* painter, const QRect& adjustedRect, const QModelIndex& index) const noexcept
 {
 	const QPoint firstPointBottomLine(adjustedRect.x(), adjustedRect.y() + adjustedRect.height());
@@ -69,7 +74,7 @@ void GridLineRenderer::renderHelper(QPainter* painter, const QRect& adjustedRect
 	painter->restore();
 }
 
-void GridLineRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void GridLineRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	QRect rect = option.rect.adjusted(0, 0, -1, -1);
 
