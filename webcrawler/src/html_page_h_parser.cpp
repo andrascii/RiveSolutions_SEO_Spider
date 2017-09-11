@@ -6,96 +6,63 @@ namespace WebCrawler
 
 void HtmlPageHParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	GumboNode* body = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_BODY);
-	if (body == nullptr)
-	{
-		WARNINGLOG << "Tag body is not found: " << pageRaw->url.toString();
-		return;
-	}
-
-	assert(body->type == GUMBO_NODE_ELEMENT && body->v.element.tag == GUMBO_TAG_BODY);
-
-	recurseSearch(body, GUMBO_TAG_H1, m_h1Tags);
-	recurseSearch(body, GUMBO_TAG_H2, m_h2Tags);
-
-	if (m_h1Tags.size())
-	{
-		pageRaw->firstH1 = m_h1Tags[0];
-
-		if (m_h1Tags.size() >= 2)
-		{
-			pageRaw->secondH1 = m_h1Tags[1];
-		}
-	}
-
-	if (m_h2Tags.size())
-	{
-		pageRaw->firstH2 = m_h2Tags[0];
-
-		if (m_h2Tags.size() >= 2)
-		{
-			pageRaw->secondH2 = m_h2Tags[1];
-		}
-	}
-
-	m_h1Tags.clear();
-	m_h2Tags.clear();
+	parseH1(output, pageRaw);
+	parseH2(output, pageRaw);
 }
 
-void HtmlPageHParser::recurseSearch(const GumboNode* node, GumboTag tag, std::vector<QString>& container) noexcept
+void HtmlPageHParser::parseH1(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
+	auto cond = [](const GumboNode* node)
 	{
-		return;
+		return node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_H1;
+	};
+
+	auto res = [](const GumboNode* node)
+	{
+		QString val = GumboParsingHelpers::nodeText(node);
+		val = val.trimmed().remove(QChar('\n'), Qt::CaseInsensitive);
+		return val;
+	};
+
+	std::vector<QString> h1 = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	if (!h1.empty())
+	{
+		pageRaw->firstH1 = h1.front();
 	}
-
-	if (node->v.element.tag == tag && node->v.element.children.length > 0)
+	if (h1.size() > 1)
 	{
-		const GumboNode* tagData = nullptr;
-
-		for (unsigned int i = 0; i < node->v.element.children.length; ++i)
-		{
-			tagData = static_cast<const GumboNode*>(node->v.element.children.data[i]);
-
-			recurseSearchText(tagData, container);			
-		}
-
-		return;
-	}
-
-	const GumboVector* children = &node->v.element.children;
-
-	for (unsigned int i = 0; i < children->length; ++i)
-	{
-		recurseSearch(static_cast<const GumboNode*>(children->data[i]), tag, container);
+		pageRaw->secondH1 = h1[1];
+		pageRaw->hasSeveralH1Tags = true;
 	}
 }
 
-void HtmlPageHParser::recurseSearchText(const GumboNode* node, std::vector<QString>& container) noexcept
+void HtmlPageHParser::parseH2(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	if (node->v.element.children.length > 0)
+	auto cond = [](const GumboNode* node)
 	{
-		if (node->type == GUMBO_NODE_TEXT || node->type == GUMBO_NODE_WHITESPACE || node->type == GUMBO_NODE_COMMENT)
-		{
-			QByteArray value = node->v.text.text;
-			value = value.trimmed().remove('\n', Qt::CaseInsensitive);
+		return node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_H2;
+	};
 
-			container.push_back(value);
-		}
-		else
-		{
-			const GumboNode* tagData = nullptr;
+	auto res = [](const GumboNode* node)
+	{
+		QString val = GumboParsingHelpers::nodeText(node);
+		val = val.trimmed().remove(QChar('\n'), Qt::CaseInsensitive);
+		return val;
+	};
 
-
-			for (unsigned int i = 0; i < node->v.element.children.length; ++i)
-			{
-				tagData = static_cast<const GumboNode*>(node->v.element.children.data[i]);
-
-				recurseSearchText(tagData, container);
-			}
-
-			return;
-		}
+	std::vector<QString> h2 = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	if (!h2.empty())
+	{
+		pageRaw->firstH2 = h2.front();
+	}
+	if (h2.size() > 1)
+	{
+		pageRaw->secondH2 = h2[1];
+		pageRaw->hasSeveralH2Tags = true;
 	}
 }
 

@@ -156,7 +156,7 @@ void ModelController::processPageRawTitle(PageRawPtr pageRaw) noexcept
 		}
 	}
 
-	if (h1 == title)
+	if (!h1.isEmpty() && h1 == title)
 	{
 		m_data->addPageRaw(pageRaw, DataCollection::DuplicatedH1TitleUrlStorageType);
 	}
@@ -351,6 +351,12 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		DataCollection::ExternalHtmlResourcesStorageType : DataCollection::HtmlResourcesStorageType;
 
 	m_data->addPageRaw(pageRaw, storage);
+
+	if (external)
+	{
+		// do not parse resources from an external one
+		return;
+	}
 
 	PageRawPtr resourcePage = std::make_shared<PageRaw>();
 	for (const PageRawResource& resource : pageRaw->rawResources)

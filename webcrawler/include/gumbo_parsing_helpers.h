@@ -28,7 +28,7 @@ class GumboParsingHelpers
 {
 public:
 	static GumboNode* findSubNode(const GumboNode* node, GumboTag tag, unsigned startIndexWhithinParent = 0) noexcept;
-	static QByteArray nodeText(const GumboNode* node) noexcept;
+	static const char* nodeText(const GumboNode* node) noexcept;
 	static std::vector<GumboNode*> subNodes(const GumboNode* node, GumboTag tag) noexcept;
 	static unsigned countChildren(const GumboNode* node, GumboTag tag) noexcept;
 	static QByteArray cutAllTagsFromNode(const GumboNode* node) noexcept;
@@ -42,6 +42,8 @@ public:
 
 	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::pair<const char*, const char*> expectedAttributes) noexcept;
 	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::map<const char*, const char*> expectedAttributes) noexcept;
+
+	static bool checkAttribute(const GumboNode* node, const char* attribute, const char* expectedValue) noexcept;
 
 	template <class TResultFunc>
 	static auto findNodesAndGetResult(const GumboNode* node, ConditionFunc cond, TResultFunc res)
