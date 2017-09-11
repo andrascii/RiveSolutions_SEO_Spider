@@ -1,7 +1,6 @@
 #include "page_raw_info.h"
 #include "abstract_table_model.h"
 #include "default_column_resize_policy.h"
-#include "url_renderer.h"
 #include "text_renderer.h"
 #include "background_renderer.h"
 #include "selection_background_renderer.h"

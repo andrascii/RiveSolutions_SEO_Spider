@@ -135,6 +135,11 @@ void SettingsPage::somethingChangedSlot()
 {
 	DEBUG_ASSERT(sender()->property("controlKey").isValid());
 
+	if (m_changedSettingsKeys.contains(sender()->property("controlKey").toString()))
+	{
+		return;
+	}
+
 	m_changedSettingsKeys.push_back(sender()->property("controlKey").toString());
 
 	setSomethingChanged(true);

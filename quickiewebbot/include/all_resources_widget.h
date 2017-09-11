@@ -22,7 +22,12 @@ private:
 
 	void setPageServerResponse(const PageRawInfoPtr& page);
 
+protected:
+	virtual void showEvent(QShowEvent* event) override;
+
 private:
+	QSplitter* m_mainSplitter;
+	QSplitter* m_tablesSplitter;
 	TableView* m_resourcesTableView;
 	TableView* m_webResourcePagesTable;
 	TableView* m_linksFromThisPage;

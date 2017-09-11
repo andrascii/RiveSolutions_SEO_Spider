@@ -275,9 +275,6 @@ QuickieWebBot--SettingsPage
 {
 	background: #343B49;
 	min-width: 20em;
-	/*max-width: 40em;*/
-	min-height: 28em;
-	max-height: 45em;
 }
 
 QuickieWebBot--SettingsPage QLabel,
@@ -436,7 +433,7 @@ QuickieWebBot--TitledWidget QFrame#TitleFrame
 {
 	min-height: 3em;
 	background-color: #C0C0C0;
-	border-bottom: 0.1em solid #d6d6d6;/*#263238;*/
+	border-bottom: 0.1em solid #d6d6d6;
 }
 
 /*/////////////////////////////// DataPagesWidget ///////////////////////////////*/
@@ -451,7 +448,7 @@ QuickieWebBot--DataPagesWidget
 QuickieWebBot--AllResourcesWidget QLabel
 {
 	background: white;
-	border-color: #d6d6d6;
+	border: 0.05em solid #D6D6D6;
 	color: black;
 	font-family: Arial;
 	font-size: 11pt;
@@ -525,3 +522,5 @@ QTabBar::tab:only-one
 {
     margin: 0; /* if there is only one tab, we don't want overlapping margins */
 }
+
+/**/
