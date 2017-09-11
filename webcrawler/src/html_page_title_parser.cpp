@@ -5,19 +5,29 @@ namespace WebCrawler
 {
 
 void HtmlPageTitleParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
-{
-	GumboNode* head = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_HEAD);
-	DEBUG_ASSERT(head->type == GUMBO_NODE_ELEMENT && head->v.element.tag == GUMBO_TAG_HEAD);
-
-	GumboNode* title = GumboParsingHelpers::findSubNode(head, GUMBO_TAG_TITLE);
-
-	if (title && title->v.element.children.length > 0)
+{	
+	auto cond = [](const GumboNode* node)
 	{
-		QByteArray titleValue = GumboParsingHelpers::nodeText(static_cast<GumboNode*>(title->v.element.children.data[0]));
-		titleValue = titleValue.trimmed().remove('\n', Qt::CaseInsensitive);
+		return node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_TITLE &&
+			node->parent &&
+			node->parent->v.element.tag == GUMBO_TAG_HEAD;
+	};
 
-		pageRaw->title = titleValue;
+	auto res = [](const GumboNode* node)
+	{
+		QByteArray titleValue = GumboParsingHelpers::nodeText(node);
+		titleValue = titleValue.trimmed().remove('\n', Qt::CaseInsensitive);
+		return titleValue;
+	};
+
+	std::vector<QByteArray> titles = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	if (!titles.empty())
+	{
+		pageRaw->title = titles.front();
 	}
+	pageRaw->hasSeveralTitleTags = titles.size() > 1;
 }
 
 }

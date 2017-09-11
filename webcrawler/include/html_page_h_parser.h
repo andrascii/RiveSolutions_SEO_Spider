@@ -12,12 +12,8 @@ public:
 	virtual void parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept override;
 
 private:
-	void recurseSearch(const GumboNode* node, GumboTag tag, std::vector<QString>& container) noexcept;
-	void recurseSearchText(const GumboNode* node, std::vector<QString>& container) noexcept;
-
-private:
-	std::vector<QString> m_h1Tags;
-	std::vector<QString> m_h2Tags;
+	void parseH1(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+	void parseH2(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 };
 
 }

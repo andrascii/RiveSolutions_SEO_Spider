@@ -48,9 +48,23 @@ GumboNode* GumboParsingHelpers::findSubNode(const GumboNode* node, GumboTag tag,
 	return searchingNode;
 }
 
-QByteArray GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
+const char* GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
 {
-	return node->v.text.text;
+	if (node->type == GUMBO_NODE_TEXT)
+	{
+		return node->v.text.text;
+	}
+
+	if (node->v.element.children.length > 0)
+	{
+		GumboNode* textNode = static_cast<GumboNode*>(node->v.element.children.data[0]);
+		if (node->type == GUMBO_NODE_TEXT)
+		{
+			return textNode->v.text.text;
+		}
+	}
+	
+	return "";
 }
 
 std::vector<GumboNode*> GumboParsingHelpers::subNodes(const GumboNode* node, GumboTag tag) noexcept
@@ -290,6 +304,12 @@ const GumboNode* GumboParsingHelpers::findChildNode(const GumboNode* node, Gumbo
 	return findChildNode(node, expectedTag, std::map<const char*, const char*>{ expectedAttributes });
 }
 
+bool GumboParsingHelpers::checkAttribute(const GumboNode* node, const char* attribute, const char* expectedValue) noexcept
+{
+	const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, attribute);
+	return attr && (strlen(expectedValue) == 0 || QString(attr->value).toLower().trimmed() == expectedValue);
+}
+
 void GumboParsingHelpers::cutAllTagsFromNodeHelper(const GumboNode* node, QByteArray& result) noexcept
 {
 	if (!node)
@@ -300,7 +320,7 @@ void GumboParsingHelpers::cutAllTagsFromNodeHelper(const GumboNode* node, QByteA
 	if (node->type == GUMBO_NODE_TEXT)
 	{
 		//result += nodeText(node) % " ";
-		result += nodeText(node) + " ";
+		result += QByteArray(nodeText(node)) + " ";
 		return;
 	}
 

@@ -2,16 +2,6 @@
 #include "gumbo_parsing_helpers.h"
 #include "page_raw_parser_helpers.h"
 
-namespace
-{
-
-bool checkAttribute(const GumboAttribute* attribute, const char* expectedValue)
-{
-	return attribute && QString(attribute->value).toLower() == expectedValue;
-}
-
-}
-
 namespace WebCrawler
 {
 
@@ -93,7 +83,7 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_LINK &&
 			gumbo_get_attribute(&node->v.element.attributes, "href") &&
-			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "rel"), "stylesheet");
+			GumboParsingHelpers::checkAttribute(node, "rel", "stylesheet");
 	};
 
 	auto res = [](const GumboNode* node)
@@ -173,7 +163,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRaw
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_EMBED &&
 			gumbo_get_attribute(&node->v.element.attributes, "src") &&
-			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "type"), "application/x-shockwave-flash");
+			GumboParsingHelpers::checkAttribute(node, "type", "application/x-shockwave-flash");
 	};
 
 	auto res = [](const GumboNode* node)
@@ -203,7 +193,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRaw
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_OBJECT &&
 			gumbo_get_attribute(&node->v.element.attributes, "data") &&
-			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "type"), "application/x-shockwave-flash");
+			GumboParsingHelpers::checkAttribute(node, "type", "application/x-shockwave-flash");
 	};
 
 	auto res = [](const GumboNode* node)
@@ -233,7 +223,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_OBJECT &&
-			checkAttribute(gumbo_get_attribute(&node->v.element.attributes, "classid"), "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000") &&
+			GumboParsingHelpers::checkAttribute(node, "classid", "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000") &&
 			(!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", "")) ||
 				!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", "")));
 

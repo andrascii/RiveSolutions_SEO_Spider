@@ -60,6 +60,11 @@ void PageRawProcessor::process()
 		pageRaw->serverResponse = reply.responseHeaderValuePairs;
 		pageRaw->pageHash = pageHash;
 		pageRaw->contentType = contentType;
+		pageRaw->hasSeveralH1Tags = false;
+		pageRaw->hasSeveralH2Tags = false;
+		pageRaw->hasSeveralMetaDescriptionTags = false;
+		pageRaw->hasSeveralMetaKeywordsTags = false;
+		pageRaw->hasSeveralTitleTags = false;
 
 		if (!contentType.startsWith("application"))
 		{
