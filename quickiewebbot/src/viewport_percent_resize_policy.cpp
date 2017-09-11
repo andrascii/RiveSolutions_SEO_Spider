@@ -25,7 +25,7 @@ int ViewportPercentResizePolicy::columnSize(int column, const TableView* view) c
 {
 	int s_extraWidth = 5; // view border, etc
 
-	int scrollBarWidth = view->verticalScrollBar()->width();
+	int scrollBarWidth = view->verticalScrollBar()->isVisible() ? view->verticalScrollBar()->width() : 0;
 	int width = view->width() - scrollBarWidth - s_extraWidth;
 
 	DEBUG_ASSERT(m_columnsPercentSize.size() > column);

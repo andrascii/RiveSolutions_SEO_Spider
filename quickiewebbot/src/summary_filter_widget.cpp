@@ -3,8 +3,8 @@
 #include "table_view.h"
 #include "summary_model.h"
 #include "summary_view_model.h"
-#include "web_site_pages_model.h"
-#include "web_site_pages_view_model.h"
+#include "page_model.h"
+#include "page_view_model.h"
 #include "data_collection.h"
 #include "page_raw_info_storage_adaptor.h"
 #include "storage_adaptor_factory.h"
@@ -54,7 +54,7 @@ void SummaryFilterWidget::onSummaryViewSelectionChanged(const QItemSelection& se
 
 	StorageAdaptorType category = summaryModel->storageAdaptorType(index);
 
-	WebSitePagesModel* storageModel = dynamic_cast<WebSitePagesModel*>(m_ui->summaryDetailsTableView->model());
+	PageModel* storageModel = dynamic_cast<PageModel*>(m_ui->summaryDetailsTableView->model());
 
 	if (!storageModel)
 	{
@@ -82,8 +82,8 @@ void SummaryFilterWidget::initSummaryView()
 
 void SummaryFilterWidget::initDetailsView()
 {
-	WebSitePagesModel* model = new WebSitePagesModel(this);
-	WebSitePagesViewModel* viewModel = new WebSitePagesViewModel(model, this);
+	PageModel* model = new PageModel(this);
+	PageViewModel* viewModel = new PageViewModel(model, this);
 
 	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->guiStorage()));
 

@@ -4,8 +4,8 @@
 #include "summary_view_model.h"
 #include "summary_data_accessor_factory.h"
 #include "quickie_web_bot_helpers.h"
-#include "web_site_pages_model.h"
-#include "web_site_pages_view_model.h"
+#include "page_model.h"
+#include "page_view_model.h"
 
 
 namespace QuickieWebBot
@@ -80,22 +80,22 @@ void AllResourcesWidget::initializeResourcesTableView()
 
 void AllResourcesWidget::initializewebResourcePagesTable()
 {
-	WebSitePagesModel* pagesModel = new WebSitePagesModel(this);
-	WebSitePagesViewModel* pagesViewModel = new WebSitePagesViewModel(pagesModel, this);
+	PageModel* pagesModel = new PageModel(this);
+	PageViewModel* pagesViewModel = new PageViewModel(pagesModel, this);
 
 	m_webResourcePagesTable->setModel(pagesModel);
 	m_webResourcePagesTable->setViewModel(pagesViewModel);
 
 	// links from this page
-	WebSitePagesModel* linksFromThisPageModel = new WebSitePagesModel(this);
-	WebSitePagesViewModel* linksFromThisPageViewModel = new WebSitePagesViewModel(linksFromThisPageModel, this);
+	PageModel* linksFromThisPageModel = new PageModel(this);
+	PageViewModel* linksFromThisPageViewModel = new PageViewModel(linksFromThisPageModel, this);
 
 	m_linksFromThisPage->setModel(linksFromThisPageModel);
 	m_linksFromThisPage->setViewModel(linksFromThisPageViewModel);
 
 	// links to this page
-	WebSitePagesModel* linksToThisPageModel = new WebSitePagesModel(this);
-	WebSitePagesViewModel* linksToThisPageViewModel = new WebSitePagesViewModel(linksToThisPageModel, this);
+	PageModel* linksToThisPageModel = new PageModel(this);
+	PageViewModel* linksToThisPageViewModel = new PageViewModel(linksToThisPageModel, this);
 
 	m_linksToThisPage->setModel(linksToThisPageModel);
 	m_linksToThisPage->setViewModel(linksToThisPageViewModel);
@@ -113,7 +113,7 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 
 	StorageAdaptorType category = summaryModel->storageAdaptorType(index);
 
-	WebSitePagesModel* storageModel = dynamic_cast<WebSitePagesModel*>(m_webResourcePagesTable->model());
+	PageModel* storageModel = dynamic_cast<PageModel*>(m_webResourcePagesTable->model());
 
 	if (!storageModel)
 	{
@@ -135,7 +135,7 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 
 	QModelIndex index = selected.indexes()[0];
 
-	WebSitePagesModel* storageModel = dynamic_cast<WebSitePagesModel*>(m_webResourcePagesTable->model());
+	PageModel* storageModel = dynamic_cast<PageModel*>(m_webResourcePagesTable->model());
 
 	if (!storageModel)
 	{
@@ -146,15 +146,15 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 	IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
 
-	if (WebSitePagesModel* linksFromThisPageModel =
-		dynamic_cast<WebSitePagesModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
+	if (PageModel* linksFromThisPageModel =
+		dynamic_cast<PageModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
 	{
 		IStorageAdaptor* newPageInfoAdaptor = factory->createPageLinksStorage(PageLinkType::LinkFromThisPageType, storageAdaptor->pageRawInfoPtr(index));
 		linksFromThisPageModel->setStorageAdaptor(newPageInfoAdaptor);
 	}
 
-	if (WebSitePagesModel* linksToThisPageModel =
-		dynamic_cast<WebSitePagesModel*>(m_linksToThisPage->model()); linksToThisPageModel)
+	if (PageModel* linksToThisPageModel =
+		dynamic_cast<PageModel*>(m_linksToThisPage->model()); linksToThisPageModel)
 	{
 		StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 		IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();

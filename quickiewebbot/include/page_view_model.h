@@ -6,14 +6,14 @@
 namespace QuickieWebBot
 {
 
-class WebSitePagesModel;
+class PageModel;
 
-class WebSitePagesViewModel : public AbstractViewModel
+class PageViewModel : public AbstractViewModel
 {
 	Q_OBJECT
 
 public:
-	WebSitePagesViewModel(WebSitePagesModel* model, QObject* parent = nullptr);
+	PageViewModel(PageModel* model, QObject* parent = nullptr);
 
 	virtual int marginTop(const QModelIndex& index) const noexcept override;
 	virtual int marginBottom(const QModelIndex& index) const noexcept override;
