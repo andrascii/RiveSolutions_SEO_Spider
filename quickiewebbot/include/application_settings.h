@@ -192,6 +192,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 	ApplicationSettings(QObject* parent = nullptr);
+	~ApplicationSettings();
 
 public:
 	enum SettingsGroup
@@ -202,11 +203,12 @@ public:
 	};
 	
 	void setDefaults(const QString &str);
-	void set(const QString& key, QVariant value, SettingsGroup group = SettingsGroup::General);
-	QVariant get(const QString& key, SettingsGroup group = SettingsGroup::General);
-	
+	void set(const QByteArray& key, QVariant value, SettingsGroup group = SettingsGroup::General);
+	QVariant get(const QByteArray& key, SettingsGroup group = SettingsGroup::General);
+	void saveSettingsToDisk();
+
 private:
-	QSettings m_applicationSettings;
+	QSettings* m_applicationSettings;
 	std::map<QString, QVariant> m_defaults;
 
 	unsigned m_threadCount;

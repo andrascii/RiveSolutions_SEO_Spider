@@ -41,8 +41,9 @@ void SettingsPage::applyChanges() noexcept
 		{
 			continue;
 		}
-
+		DEBUGLOG << controlKey.constData() << " " << m_controlAdaptors[controlKey]->value().toString();
 		theApp->properties()->setProperty(controlKey.constData(), m_controlAdaptors[controlKey]->value());
+		DEBUGLOG << theApp->properties()->property(controlKey.constData()).toString();
 	}
 
 	m_changedSettingsKeys.clear();
@@ -62,6 +63,7 @@ void SettingsPage::reloadSettings() noexcept
 	{
 		QVariant propertyValue = theApp->properties()->property(controlAdaptor.first.toLatin1().constData());
 		controlAdaptor.second->setValue(propertyValue);
+		DEBUGLOG << controlAdaptor.first << " " << controlAdaptor.second->value().toString();
 	}
 		
 	setSomethingChanged(false);
@@ -135,8 +137,12 @@ void SettingsPage::somethingChangedSlot()
 {
 	DEBUG_ASSERT(sender()->property("controlKey").isValid());
 
-	m_changedSettingsKeys.push_back(sender()->property("controlKey").toString());
+	if (m_changedSettingsKeys.contains(sender()->property("controlKey").toString()))
+	{
+		return;
+	}
 
+	m_changedSettingsKeys.push_back(sender()->property("controlKey").toString());
 	setSomethingChanged(true);
 	emit somethingChangedSignal();
 }

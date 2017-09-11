@@ -5,8 +5,22 @@ namespace QuickieWebBot
 
 ApplicationSettings::ApplicationSettings(QObject* parent)
 	: QObject(parent)
+	, m_applicationSettings(new QSettings(QSettings::NativeFormat
+		, QSettings::UserScope
+		, theApp->softwareBrandingOptions()->organizationName()
+		, theApp->softwareBrandingOptions()->productName()
+		, this))
 {
+	QFile config(":/config/defaults.cfg");
+	config.open(QIODevice::ReadOnly);
+	setDefaults(config.readAll());
 }
+
+ApplicationSettings::~ApplicationSettings()
+{
+	//m_applicationSettings->sync();
+}
+
 
 unsigned ApplicationSettings::threadCount() const
 {
@@ -268,7 +282,7 @@ int ApplicationSettings::maxH2LengthChars() const
 
 void ApplicationSettings::setMaxH2LengthChars(int value)
 {
-	m_maxH1LengthChars = value;
+	m_maxH2LengthChars = value;
 	emit maxH2LengthCharsChanged();
 }
 
@@ -357,14 +371,19 @@ void ApplicationSettings::setUrl(const QUrl& url)
 	emit urlChanged();
 }
 
-QVariant ApplicationSettings::get(const QString& key, SettingsGroup group )
+QVariant ApplicationSettings::get(const QByteArray& key, SettingsGroup group )
 {
-	return m_applicationSettings.value(key, m_defaults[key]);
+	return m_applicationSettings->value(key, m_defaults[key]);
 }
 
-void ApplicationSettings::set(const QString& key, QVariant value, SettingsGroup group)
+void ApplicationSettings::set(const QByteArray& key, QVariant value, SettingsGroup group)
 {
-	//m_applicationSettings[group].setValue(key, value);
+	m_applicationSettings->setValue(key, value);
+}
+
+void ApplicationSettings::saveSettingsToDisk()
+{
+	m_applicationSettings->sync();
 }
 
 void ApplicationSettings::setDefaults(const QString &str)

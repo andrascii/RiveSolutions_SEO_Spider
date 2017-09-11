@@ -31,9 +31,6 @@ Application::Application(int& argc, char** argv)
 	ASSERT(storage->thread() == QThread::currentThread());
 	m_guiStorage = storage;
 
-	QFile config(":/config/defaults.cfg");
-	config.open(QIODevice::ReadOnly);
-	m_appicationProperties->setDefaults(config.readAll());
 	loadFromSettings();
 
 	initialize();
@@ -57,7 +54,7 @@ Application::Application(int& argc, char** argv)
 
 Application::~Application()
 {
-
+	saveToSettings();
 }
 
 WebCrawler::WebCrawler* Application::webCrawler() noexcept
@@ -98,9 +95,16 @@ void Application::loadFromSettings() noexcept
 	for (int i = 0; i < propertyCount; i++)
 	{
 		QMetaProperty metaPropertry = metaObject->property(i);
-		const char* metaPropertryName = metaPropertry.name();
-		theApp->properties()->setProperty(metaPropertryName, m_appicationProperties->get(metaPropertryName));
+		QByteArray metaPropertryName = metaPropertry.name();
+		QVariant propertyValue = m_appicationProperties->get(metaPropertryName);
+
+		DEBUGLOG << propertyValue.toString();
+		if (propertyValue.isValid())
+		{
+			theApp->properties()->setProperty(metaPropertryName, propertyValue);
+		}
 	}
+
 }
 
 void Application::saveToSettings() noexcept
@@ -114,6 +118,7 @@ void Application::saveToSettings() noexcept
 		const char* metaPropertryName = metaPropertry.name();
 		m_appicationProperties->set(metaPropertryName, theApp->properties()->property(metaPropertryName));
 	}
+	m_appicationProperties->saveSettingsToDisk();
 }
 
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
