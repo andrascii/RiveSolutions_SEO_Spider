@@ -39,7 +39,7 @@ AllResourcesWidget::AllResourcesWidget(QWidget* parent)
 	m_tablesSplitter->setOpaqueResize(false);
 	m_tablesSplitter->setChildrenCollapsible(false);
 
-	tabWidget->addTab(m_linksFromThisPage, tr("Links From This Page"));
+	tabWidget->addTab(m_linksFromThisPage, tr("Links On This Page"));
 	tabWidget->addTab(m_linksToThisPage, tr("Links To This Page"));
 	tabWidget->addTab(m_httpResponse, tr("HTTP Response"));
 
@@ -167,7 +167,17 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 
 void AllResourcesWidget::setPageServerResponse(const PageRawInfoPtr& page)
 {
-	QString selectedPageServerResponse = page->itemValue(PageRawInfo::ServerResponseItemType).toString();
+	m_httpResponse->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+	QString selectedPageServerResponse = page->itemValue(PageRawInfo::ServerResponseItemType).toString().trimmed();
+
+	if (selectedPageServerResponse.isEmpty())
+	{
+		QPixmap oopsPixmap(":/images/oops.jpg");
+
+		m_httpResponse->setPixmap(oopsPixmap.scaled(QSize(oopsPixmap.width() / 3, oopsPixmap.height() / 3)));
+		return;
+	}
 
 	QStringList serverResponseHeaders = selectedPageServerResponse.split("\n");
 
@@ -184,7 +194,6 @@ void AllResourcesWidget::setPageServerResponse(const PageRawInfoPtr& page)
 		selectedPageServerResponse += serverResponseHeaders[i] + "<br>";
 	}
 
-	m_httpResponse->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	m_httpResponse->setText(selectedPageServerResponse);
 }
 
