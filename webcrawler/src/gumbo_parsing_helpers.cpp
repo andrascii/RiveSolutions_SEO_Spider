@@ -58,7 +58,7 @@ const char* GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
 	if (node->v.element.children.length > 0)
 	{
 		GumboNode* textNode = static_cast<GumboNode*>(node->v.element.children.data[0]);
-		if (node->type == GUMBO_NODE_TEXT)
+		if (textNode->type == GUMBO_NODE_TEXT)
 		{
 			return textNode->v.text.text;
 		}
