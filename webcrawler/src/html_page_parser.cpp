@@ -26,35 +26,12 @@ void HtmlPageParser::parsePage(const QByteArray& htmlPage, PageRawPtr& pageRaw) 
 	}
 
 	m_pageUrlList.clear();
-	parsePageUrlList(gumboOutput.output()->root);
+	m_pageUrlList = GumboParsingHelpers::parsePageUrlList(gumboOutput.output()->root);
 }
 
 const std::vector<QUrl>& HtmlPageParser::pageUrlList() const noexcept
 {
 	return m_pageUrlList;
-}
-
-void HtmlPageParser::parsePageUrlList(const GumboNode* node) noexcept
-{
-	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
-	{
-		return;
-	}
-
-	GumboAttribute* href = nullptr;
-
-	if (node->v.element.tag == GUMBO_TAG_A && (href = gumbo_get_attribute(&node->v.element.attributes, "href")))
-	{
-		m_pageUrlList.push_back(QUrl(href->value));
-	}
-
-	const GumboVector* children = &node->v.element.children;
-
-	for (unsigned int i = 0; i < children->length; ++i)
-	{
-		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
-		parsePageUrlList(child);
-	}
 }
 
 }
