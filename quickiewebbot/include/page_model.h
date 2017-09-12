@@ -10,12 +10,12 @@ namespace QuickieWebBot
 class IResizePolicy;
 class IStorageAdaptor;
 
-class WebSitePagesModel : public AbstractTableModel
+class PageModel : public AbstractTableModel
 {
 	Q_OBJECT
 
 public:
-	WebSitePagesModel(QObject* parent = nullptr);
+	PageModel(QObject* parent = nullptr);
 
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;

@@ -9,7 +9,7 @@ SelectionBackgroundRenderer::SelectionBackgroundRenderer(const IViewModel* viewM
 {
 }
 
-void SelectionBackgroundRenderer::render(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void SelectionBackgroundRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	if (option.state & QStyle::State_Selected)
 	{
@@ -27,6 +27,11 @@ void SelectionBackgroundRenderer::invalidateCache() const
 
 void SelectionBackgroundRenderer::setCacheSize(int)
 {
+}
+
+void SelectionBackgroundRenderer::addRenderer(int)
+{
+	ASSERT(!"Attempt to add renderer to leaf");
 }
 
 }

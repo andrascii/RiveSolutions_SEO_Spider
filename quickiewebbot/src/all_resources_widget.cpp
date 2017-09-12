@@ -4,8 +4,8 @@
 #include "summary_view_model.h"
 #include "summary_data_accessor_factory.h"
 #include "quickie_web_bot_helpers.h"
-#include "web_site_pages_model.h"
-#include "web_site_pages_view_model.h"
+#include "page_model.h"
+#include "page_view_model.h"
 
 
 namespace QuickieWebBot
@@ -22,10 +22,10 @@ AllResourcesWidget::AllResourcesWidget(QWidget* parent)
 	initializeResourcesTableView();
 	initializewebResourcePagesTable();
 
-	QSplitter* mainSplitter = new QSplitter(this);
-	mainSplitter->setOrientation(Qt::Horizontal);
-	mainSplitter->setOpaqueResize(false);
-	mainSplitter->setChildrenCollapsible(false);
+	m_mainSplitter = new QSplitter(this);
+	m_mainSplitter->setOrientation(Qt::Horizontal);
+	m_mainSplitter->setOpaqueResize(false);
+	m_mainSplitter->setChildrenCollapsible(false);
 
 	QFrame* tablesFrame = new QFrame(this);
 
@@ -34,29 +34,26 @@ AllResourcesWidget::AllResourcesWidget(QWidget* parent)
 
 	QTabWidget* tabWidget = new QTabWidget(tablesFrame);
 
-	QSplitter* tablesSplitter = new QSplitter(this);
-	tablesSplitter->setOrientation(Qt::Vertical);
-	tablesSplitter->setOpaqueResize(false);
-	tablesSplitter->setChildrenCollapsible(false);
+	m_tablesSplitter = new QSplitter(tablesFrame);
+	m_tablesSplitter->setOrientation(Qt::Vertical);
+	m_tablesSplitter->setOpaqueResize(false);
+	m_tablesSplitter->setChildrenCollapsible(false);
 
-	tabWidget->addTab(m_linksFromThisPage, tr("Links From This Page"));
+	tabWidget->addTab(m_linksFromThisPage, tr("Links On This Page"));
 	tabWidget->addTab(m_linksToThisPage, tr("Links To This Page"));
 	tabWidget->addTab(m_httpResponse, tr("HTTP Response"));
 
-	tablesSplitter->addWidget(m_webResourcePagesTable);
-	tablesSplitter->addWidget(tabWidget);
-	tablesLayout->addWidget(tablesSplitter);
+	m_tablesSplitter->addWidget(m_webResourcePagesTable);
+	m_tablesSplitter->addWidget(tabWidget);
+	tablesLayout->addWidget(m_tablesSplitter);
 
-	mainSplitter->addWidget(m_resourcesTableView);
-	mainSplitter->addWidget(tablesFrame);
+	m_mainSplitter->addWidget(m_resourcesTableView);
+	m_mainSplitter->addWidget(tablesFrame);
 
 	QHBoxLayout* mainLayout = new QHBoxLayout(this);
-	mainLayout->addWidget(mainSplitter);
+	mainLayout->addWidget(m_mainSplitter);
 
 	setLayout(mainLayout);
-
-	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(20);
-	mainSplitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
 
 	VERIFY(connect(m_resourcesTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onFilterViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
@@ -83,22 +80,22 @@ void AllResourcesWidget::initializeResourcesTableView()
 
 void AllResourcesWidget::initializewebResourcePagesTable()
 {
-	WebSitePagesModel* pagesModel = new WebSitePagesModel(this);
-	WebSitePagesViewModel* pagesViewModel = new WebSitePagesViewModel(pagesModel, this);
+	PageModel* pagesModel = new PageModel(this);
+	PageViewModel* pagesViewModel = new PageViewModel(pagesModel, this);
 
 	m_webResourcePagesTable->setModel(pagesModel);
 	m_webResourcePagesTable->setViewModel(pagesViewModel);
 
 	// links from this page
-	WebSitePagesModel* linksFromThisPageModel = new WebSitePagesModel(this);
-	WebSitePagesViewModel* linksFromThisPageViewModel = new WebSitePagesViewModel(linksFromThisPageModel, this);
+	PageModel* linksFromThisPageModel = new PageModel(this);
+	PageViewModel* linksFromThisPageViewModel = new PageViewModel(linksFromThisPageModel, this);
 
 	m_linksFromThisPage->setModel(linksFromThisPageModel);
 	m_linksFromThisPage->setViewModel(linksFromThisPageViewModel);
 
 	// links to this page
-	WebSitePagesModel* linksToThisPageModel = new WebSitePagesModel(this);
-	WebSitePagesViewModel* linksToThisPageViewModel = new WebSitePagesViewModel(linksToThisPageModel, this);
+	PageModel* linksToThisPageModel = new PageModel(this);
+	PageViewModel* linksToThisPageViewModel = new PageViewModel(linksToThisPageModel, this);
 
 	m_linksToThisPage->setModel(linksToThisPageModel);
 	m_linksToThisPage->setViewModel(linksToThisPageViewModel);
@@ -116,7 +113,7 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 
 	StorageAdaptorType category = summaryModel->storageAdaptorType(index);
 
-	WebSitePagesModel* storageModel = dynamic_cast<WebSitePagesModel*>(m_webResourcePagesTable->model());
+	PageModel* storageModel = dynamic_cast<PageModel*>(m_webResourcePagesTable->model());
 
 	if (!storageModel)
 	{
@@ -126,7 +123,7 @@ void AllResourcesWidget::onFilterViewSelectionChanged(const QItemSelection& sele
 
 	storageModel->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(category, theApp->guiStorage()));
 
-	m_resourcesTableView->viewModel()->invalidateRenderersCache();
+	m_resourcesTableView->viewModel()->invalidateItemViewRendererCache();
 }
 
 void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -138,7 +135,7 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 
 	QModelIndex index = selected.indexes()[0];
 
-	WebSitePagesModel* storageModel = dynamic_cast<WebSitePagesModel*>(m_webResourcePagesTable->model());
+	PageModel* storageModel = dynamic_cast<PageModel*>(m_webResourcePagesTable->model());
 
 	if (!storageModel)
 	{
@@ -149,15 +146,15 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 	IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
 
-	if (WebSitePagesModel* linksFromThisPageModel =
-		dynamic_cast<WebSitePagesModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
+	if (PageModel* linksFromThisPageModel =
+		dynamic_cast<PageModel*>(m_linksFromThisPage->model()); linksFromThisPageModel)
 	{
 		IStorageAdaptor* newPageInfoAdaptor = factory->createPageLinksStorage(PageLinkType::LinkFromThisPageType, storageAdaptor->pageRawInfoPtr(index));
 		linksFromThisPageModel->setStorageAdaptor(newPageInfoAdaptor);
 	}
 
-	if (WebSitePagesModel* linksToThisPageModel =
-		dynamic_cast<WebSitePagesModel*>(m_linksToThisPage->model()); linksToThisPageModel)
+	if (PageModel* linksToThisPageModel =
+		dynamic_cast<PageModel*>(m_linksToThisPage->model()); linksToThisPageModel)
 	{
 		StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 		IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
@@ -170,7 +167,17 @@ void AllResourcesWidget::onPageViewSelectionChanged(const QItemSelection& select
 
 void AllResourcesWidget::setPageServerResponse(const PageRawInfoPtr& page)
 {
-	QString selectedPageServerResponse = page->itemValue(PageRawInfo::ServerResponseItemType).toString();
+	m_httpResponse->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+	QString selectedPageServerResponse = page->itemValue(PageRawInfo::ServerResponseItemType).toString().trimmed();
+
+	if (selectedPageServerResponse.isEmpty())
+	{
+		QPixmap oopsPixmap(":/images/oops.jpg");
+
+		m_httpResponse->setPixmap(oopsPixmap.scaled(QSize(oopsPixmap.width() / 3, oopsPixmap.height() / 3)));
+		return;
+	}
 
 	QStringList serverResponseHeaders = selectedPageServerResponse.split("\n");
 
@@ -187,8 +194,18 @@ void AllResourcesWidget::setPageServerResponse(const PageRawInfoPtr& page)
 		selectedPageServerResponse += serverResponseHeaders[i] + "<br>";
 	}
 
-	m_httpResponse->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	m_httpResponse->setText(selectedPageServerResponse);
+}
+
+void AllResourcesWidget::showEvent(QShowEvent* event)
+{
+	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(230);
+	m_mainSplitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
+
+	const int webResourcePagesTableHeight = QuickieWebBotHelpers::pointsToPixels(300);
+	m_tablesSplitter->setSizes(QList<int>() << webResourcePagesTableHeight << height() - webResourcePagesTableHeight);
+
+	event->ignore();
 }
 
 }

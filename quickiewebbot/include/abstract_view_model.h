@@ -2,6 +2,7 @@
 
 #include "iview_model.h"
 #include "abstract_table_model.h"
+#include "item_renderer.h"
 
 namespace QuickieWebBot
 {
@@ -21,39 +22,27 @@ public:
 	virtual void setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept override;
 	virtual const QModelIndexList& selectedIndexes() const noexcept override;
 
+	virtual void invalidateItemViewRendererCache() const noexcept override;
+	virtual const IRenderer* itemViewRenderer(const QModelIndex& index) const noexcept override;
+
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
-
-	virtual void invalidateRenderersCache() const noexcept override;
-	virtual QList<const IRenderer*> renderers(const QModelIndex& index) const noexcept override;
-
 	virtual QObject* qobject() noexcept override;
 
 	Q_SIGNAL virtual void repaintItems(const QModelIndexList& modelIndexes) const override;
 
 protected:
-	enum RendererType
-	{
-		PlainTextRendererType,
-		UrlRendererType,
-		BackgroundRendererType,
-		SelectionBackgroundRendererType,
-		GridLineRendererType
-	};
-
 	const AbstractTableModel* model() const noexcept;
 	AbstractTableModel* model() noexcept;
 
-	void addRenderer(RendererType rendererType, IRenderer* renderer);
-	IRenderer* renderer(RendererType rendererType) const noexcept;
-
 	const QModelIndex& previousHoveredIndex() const noexcept;
+	void clearSelectedIndexes() noexcept;
 
 	void emitNeedToRepaintIndexes(const QModelIndexList& modelIndexes) noexcept;
 
-	void invalidateCacheIndexes(const QModelIndexList& indexesList);
-	void invalidateCacheIndex(const QModelIndex& index);
-
-	void clearSelectedIndexes() noexcept;
+	void addRenderer(int rendererTypes);
+	void setItemRendererCacheSize(int cacheSize);
+	void invalidateCacheIndexes(const QModelIndexList& modelIndexes) noexcept;
+	void invalidateCacheIndex(const QModelIndex& index) noexcept;
 
 private:
 	void setPreviousHoveredIndex(const QModelIndex& index);
@@ -66,7 +55,7 @@ private:
 
 	QModelIndexList m_selectedModelIndexes;
 
-	std::map<RendererType, std::unique_ptr<IRenderer>> m_renderers;
+	ItemRenderer m_itemRenderer;
 };
 
 }

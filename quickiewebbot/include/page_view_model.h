@@ -1,26 +1,30 @@
 #pragma once
 
 #include "abstract_view_model.h"
+#include "item_renderer.h"
 
 namespace QuickieWebBot
 {
 
-class WebSitePagesModel;
+class PageModel;
 
-class WebSitePagesViewModel : public AbstractViewModel
+class PageViewModel : public AbstractViewModel
 {
 	Q_OBJECT
 
 public:
-	WebSitePagesViewModel(WebSitePagesModel* model, QObject* parent = nullptr);
+	PageViewModel(PageModel* model, QObject* parent = nullptr);
 
 	virtual int marginTop(const QModelIndex& index) const noexcept override;
 	virtual int marginBottom(const QModelIndex& index) const noexcept override;
 	virtual int marginLeft(const QModelIndex& index) const noexcept override;
 	virtual int marginRight(const QModelIndex& index) const noexcept override;
 
-	virtual const QPixmap& itemPixmap(const QModelIndex& index) const noexcept override;
-	virtual QRect itemPixmapPosition(const QModelIndex& index) const noexcept override;
+	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept override;
+	virtual QRect pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
+
+	virtual QString displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
+	virtual QRect displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
 
 	virtual const QColor& selectionBackgroundColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& hoveredBackgroundColor(const QModelIndex& index) const noexcept override;
@@ -32,10 +36,8 @@ public:
 
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
 
-	virtual QList<const IRenderer*> renderers(const QModelIndex& index) const noexcept override;
-
-private slots:
-	void onAttachedModelInternalDataChanged();
+private:
+	Q_SLOT void onAttachedModelInternalDataChanged();
 
 private:
 	void initializeRenderers();
@@ -46,6 +48,8 @@ private:
 	QColor m_bgColor;
 
 	QPixmap m_urlIcon;
+
+	ItemRenderer m_itemRenderer;
 };
 
 }

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "application_settings_widget.h"
-
 namespace QuickieWebBot
 {
+
+class ApplicationSettingsWidget;
 
 class MainFrame : public QMainWindow
 {

@@ -2,7 +2,7 @@
 #include "abstract_table_model.h"
 #include "table_view.h"
 #include "quickie_web_bot_helpers.h"
-#include "web_site_pages_model.h"
+#include "page_model.h"
 
 namespace QuickieWebBot
 {
@@ -75,8 +75,8 @@ void ContextMenuDataCollectionRow::openUrlAction()
 {
 	for (QModelIndex index : selectedIndexes())
 	{
-		const WebSitePagesModel* model = 
-			QuickieWebBotHelpers::safe_runtime_static_cast<const WebSitePagesModel*>(index.model());
+		const PageModel* model = 
+			QuickieWebBotHelpers::safe_runtime_static_cast<const PageModel*>(index.model());
 
 		if (model->itemType(index) != PageRawInfo::UrlItemType)
 		{
@@ -108,8 +108,8 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl()
 {
 	foreach(QModelIndex index, selectedIndexes())
 	{
-		const WebSitePagesModel* model = 
-			QuickieWebBotHelpers::safe_runtime_static_cast<const WebSitePagesModel*>(index.model());
+		const PageModel* model = 
+			QuickieWebBotHelpers::safe_runtime_static_cast<const PageModel*>(index.model());
 
 		if (model->itemType(index) != PageRawInfo::UrlItemType)
 		{
