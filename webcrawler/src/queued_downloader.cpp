@@ -1,5 +1,6 @@
 #include "queued_downloader.h"
 #include "constants.h"
+#include "page_raw_parser_helpers.h"
 
 namespace WebCrawler
 {
@@ -8,7 +9,7 @@ QueuedDownloader::QueuedDownloader()
 	: AbstractThreadableObject(this, QByteArray("QueuedDownloaderThread"))
 	, m_networkAccessManager(new QNetworkAccessManager(this))
 	, m_unprocessedRepliesCount(0)
-	, m_pendingReguestsCount(0)
+	, m_pendingRequestsCount(0)
 {
 	moveThisToSeparateThread();
 
@@ -23,12 +24,13 @@ QueuedDownloader::~QueuedDownloader()
 void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
+	//INFOLOG << "Url scheduled: " << url.toDisplayString();
 	m_requestQueue.push_back(url);
 }
 
 bool QueuedDownloader::extractReply(Reply& response) noexcept
 {
-	std::unique_lock<std::mutex> locker(m_repliesQueueMutex);
+	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);
 		
 	if (m_repliesQueue.empty())
 	{
@@ -37,6 +39,8 @@ bool QueuedDownloader::extractReply(Reply& response) noexcept
 
 	response = std::move(*m_repliesQueue.begin());
 	m_repliesQueue.erase(m_repliesQueue.begin());
+
+	//INFOLOG << "Reply extracted: " << response.url.toDisplayString() << " " << QThread::currentThreadId();
 	m_unprocessedRepliesCount--;
 
 	return true;
@@ -44,18 +48,40 @@ bool QueuedDownloader::extractReply(Reply& response) noexcept
 
 void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 {
-	bool processBody = !reply->header(QNetworkRequest::ContentTypeHeader).toString().startsWith("application");
-	if (!processBody)
-	{
-		reply->abort();
-	}
+	processReply(reply);
+}
 
-	if (processBody && !reply->isFinished())
+void QueuedDownloader::metaDataChanged(QNetworkReply* reply)
+{
+	if (isReplyProcessed(reply))
 	{
 		return;
 	}
 
-	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);
+	bool nonHtmlResponse = !PageRawParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+	if (nonHtmlResponse)
+	{
+		processReply(reply);
+		
+		reply->abort();
+	}
+}
+
+void QueuedDownloader::processReply(QNetworkReply* reply)
+{
+	if (isReplyProcessed(reply))
+	{
+		return;
+	}
+
+	markReplyProcessed(reply);
+	reply->disconnect(this);
+
+	bool nonHtmlResponse = !PageRawParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+	bool processBody = !nonHtmlResponse;
+	
+
+	QVariant alreadyProcessed = reply->property("processed");
 
 	QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 	Reply response{ statusCode.isValid() ? statusCode.toInt() : -1, reply->url() };
@@ -71,9 +97,32 @@ void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 		response.responseBody = reply->readAll();
 	}
 
+	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);
+
+	//INFOLOG << "Reply added: " << response.url.toDisplayString() << " " << QThread::currentThreadId();
 	m_repliesQueue.push_back(std::move(response));
-	m_pendingReguestsCount--;
+
+	m_pendingRequestsCount--;
 	m_unprocessedRepliesCount++;
+
+	reply->deleteLater();
+}
+
+void QueuedDownloader::markReplyProcessed(QNetworkReply* reply) const noexcept
+{
+	ASSERT(reply != nullptr);
+	reply->setProperty("processed", true);
+}
+
+bool QueuedDownloader::isReplyProcessed(QNetworkReply* reply) const noexcept
+{
+	if (reply == nullptr)
+	{
+		// was already destroyed by deleteLater()
+		return true;
+	}
+	QVariant alreadyProcessed = reply->property("processed");
+	return alreadyProcessed.isValid();
 }
 
 void QueuedDownloader::process()
@@ -87,21 +136,24 @@ void QueuedDownloader::process()
 	int requestsThisBatch = 0;
 	
 	while (m_requestQueue.size() && requestsThisBatch < s_maxRequestsOneBatch &&
-		m_pendingReguestsCount < s_maxPendingRequests && m_unprocessedRepliesCount < s_maxUnprocessedReplies)
+		m_pendingRequestsCount < s_maxPendingRequests && m_unprocessedRepliesCount < s_maxUnprocessedReplies)
 	{
 		QNetworkReply* reply = m_networkAccessManager->get(QNetworkRequest(*m_requestQueue.begin()));
+
+		auto requestIt = m_requestQueue.begin();
+		//INFOLOG << "Request started" << requestIt->url() << " " << QThread::currentThreadId();
 
 		VERIFY(QObject::connect(
 			reply, 
 			&QNetworkReply::metaDataChanged, 
 			this, 
-			[this]() { urlDownloaded(qobject_cast<QNetworkReply*>(sender())); }, 
+			[this]() { metaDataChanged(qobject_cast<QNetworkReply*>(sender())); }, 
 			Qt::QueuedConnection
 		));
 
 		m_requestQueue.erase(m_requestQueue.begin());
 
-		m_pendingReguestsCount++;
+		m_pendingRequestsCount++;
 		requestsThisBatch++;
 	}
 }

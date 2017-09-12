@@ -86,4 +86,12 @@ bool PageRawParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) n
 	return !isUrlInternal;
 }
 
+bool PageRawParserHelpers::isHtmlContentType(const QString& contentType) noexcept
+{
+	return contentType.startsWith("text/html") ||
+		contentType.startsWith("text/xhtml") ||
+		contentType.startsWith("application/xhtml") ||
+		contentType.isEmpty();
+}
+
 }

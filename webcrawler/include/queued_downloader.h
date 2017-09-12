@@ -30,6 +30,12 @@ private:
 	virtual void process() override;
 
 	Q_SLOT void urlDownloaded(QNetworkReply* reply);
+	Q_SLOT void metaDataChanged(QNetworkReply* reply);
+
+	void processReply(QNetworkReply* reply);
+
+	void markReplyProcessed(QNetworkReply* reply) const noexcept;
+	bool isReplyProcessed(QNetworkReply* reply) const noexcept;
 
 private:
 	QNetworkAccessManager* m_networkAccessManager;
@@ -41,7 +47,7 @@ private:
 	std::vector<Reply> m_repliesQueue;
 
 	std::atomic<int> m_unprocessedRepliesCount;
-	std::atomic<int> m_pendingReguestsCount;
+	std::atomic<int> m_pendingRequestsCount;
 };
 
 }

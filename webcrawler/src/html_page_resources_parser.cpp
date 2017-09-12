@@ -26,10 +26,7 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 		return;
 	}
 
-	if (pageRaw->contentType.startsWith("text/html") || 
-		pageRaw->contentType.startsWith("text/xhtml") ||
-		pageRaw->contentType.startsWith("application/xhtml") ||
-		pageRaw->contentType.isEmpty())
+	if (PageRawParserHelpers::isHtmlContentType(pageRaw->contentType))
 	{
 		pageRaw->resourceType = PageRawResource::ResourceHtml;
 		return;
