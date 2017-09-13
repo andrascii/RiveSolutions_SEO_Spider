@@ -16,7 +16,6 @@
 #include "ui_limits_settings.h"
 #include "ui_preferences_settings.h"
 
-__declspec(dllimport) void test();
 
 namespace QuickieWebBot
 {
@@ -53,8 +52,6 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 	INFOLOG << "App Version:" << applicationVersion();
-
-	test();
 }
 
 Application::~Application()

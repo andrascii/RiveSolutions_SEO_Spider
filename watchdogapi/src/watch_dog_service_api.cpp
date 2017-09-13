@@ -9,6 +9,10 @@ void WatchDogServiceApi::setProcessExceptionHandlers() const noexcept
 	// Install top-level SEH handler
 	SetUnhandledExceptionFilter(CrashHandler::sehHandler);
 
+#ifdef _WIN64
+	AddVectoredExceptionHandler(0, CrashHandler::stackOverflowExceptionFilter);
+#endif
+
 	// Catch pure virtual function calls.
 	// Because there is one _purecall_handler for the whole process, 
 	// calling this function immediately impacts all threads. The last 
@@ -61,10 +65,6 @@ void WatchDogServiceApi::setThreadExceptionHandlers() const noexcept
 
 	// Catch illegal storage access errors
 	std::signal(SIGSEGV, CrashHandler::sigSegvHandler);
-}
-
-void WatchDogServiceApi::createMiniDump() const noexcept
-{
 }
 
 }

@@ -7,6 +7,7 @@ class CrashHandler
 {
 public:
 	static LONG WINAPI sehHandler(PEXCEPTION_POINTERS pExceptionPtrs);
+	static LONG WINAPI stackOverflowExceptionFilter(EXCEPTION_POINTERS* exceptionInfo);
 	static void terminateHandler();
 	static void unexpectedHandler();
 	static void pureCallHandler();

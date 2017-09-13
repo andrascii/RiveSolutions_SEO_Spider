@@ -10,8 +10,6 @@ class WatchDogServiceApi : public IWatchDogServiceApi
 public:
 	virtual void setProcessExceptionHandlers() const noexcept override;
 	virtual void setThreadExceptionHandlers() const noexcept override;
-
-	virtual void createMiniDump() const noexcept override;
 };
 
 }

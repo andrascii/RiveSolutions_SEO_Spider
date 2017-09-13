@@ -1,8 +1,10 @@
 #include "application.h"
-#include "page_raw_info.h"
+#include "watch_dog_api.h"
 
 int main(int argc, char *argv[])
 {
+	initializeWatchDog();
+
 	QuickieWebBot::Application app(argc, argv);
 	return app.exec();
 }

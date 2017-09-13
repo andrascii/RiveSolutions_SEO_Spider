@@ -6,7 +6,17 @@ namespace WatchDog
 LONG WINAPI CrashHandler::sehHandler(PEXCEPTION_POINTERS pExceptionPtrs)
 {
 	setEventToWatchDogProcess();
-	return 0xDEAD;
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+LONG WINAPI CrashHandler::stackOverflowExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
+{
+	if (exceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_STACK_OVERFLOW)
+	{
+		return sehHandler(exceptionInfo);
+	}
+
+	return EXCEPTION_CONTINUE_SEARCH;
 }
 
 void CrashHandler::terminateHandler()
@@ -62,7 +72,7 @@ int CrashHandler::newHandler(size_t)
 
 void CrashHandler::invalidParameterHandler(
 	const wchar_t* expression, 
-	const wchar_t* function, 
+	const wchar_t* function,
 	const wchar_t* file, 
 	unsigned int line, 
 	uintptr_t pReserved)
@@ -73,7 +83,7 @@ void CrashHandler::invalidParameterHandler(
 void CrashHandler::setEventToWatchDogProcess()
 {
 	MessageBoxA(NULL, "Handler intercepted critical error", "Crash", MB_OK);
-	Sleep(3000);
+	Sleep(INFINITE);
 	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
