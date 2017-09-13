@@ -10,11 +10,9 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 	{
 		case DLL_PROCESS_ATTACH:
 		{
+			WatchDogApi::watchDogServiceApi()->init();
 			WatchDogApi::watchDogServiceApi()->setProcessExceptionHandlers();
-
 			WatchDogApi::lockExceptionFilter();
-
-			CreateEvent(nullptr, FALSE, FALSE, "WatchDogApiCrashEvent");
 
 			break;
 		}
@@ -22,6 +20,10 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 		{
 			WatchDogApi::watchDogServiceApi()->setThreadExceptionHandlers();
 			break;
+		}
+		case DLL_PROCESS_DETACH:
+		{
+			WatchDogApi::watchDogServiceApi()->free();
 		}
 	}
 
