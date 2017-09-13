@@ -51,6 +51,32 @@ QUrl PageRawParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUr
 		result.setPath(pathWithoutFile.left(lastSlashIndex) + result.path());
 	}
 
+	if (result.path().contains("http"))
+	{
+		WARNINGLOG << "HTTP in path";
+	}
+
+	QString fixedPath = result.path();
+	if (fixedPath.contains("/./"))
+	{
+		fixedPath = fixedPath.replace("/./", "/");
+	}
+	
+	while (fixedPath.contains(".."))
+	{
+		int doublePointsPos = fixedPath.indexOf("/../");
+		int prevSlashPos = fixedPath.left(doublePointsPos).lastIndexOf("/");
+		if (prevSlashPos == -1)
+		{
+			WARNINGLOG << "Can't resolve absolute path: " << fixedPath;
+			break;
+		}
+		
+		fixedPath = fixedPath.left(prevSlashPos + 1) + fixedPath.right(fixedPath.size() - doublePointsPos - 4);
+	}
+
+	result.setPath(fixedPath);
+
 	return result;
 }
 
