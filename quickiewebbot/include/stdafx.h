@@ -25,6 +25,7 @@
 #include <functional>
 #include <optional>
 #include <sstream>
+#include <csignal>
 
 //
 // boost

@@ -45,9 +45,9 @@ MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(add_msvc_precompiled_header)
 
+add_subdirectory(${WatchDogApi})
 add_subdirectory(${WebCrawlerLibName})
 add_subdirectory(${LoggerAppName})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${CommonLibName})
-add_subdirectory(${WatchDogApi})

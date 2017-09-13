@@ -4,9 +4,6 @@ project(${WatchDogApi})
 set(WatchDogApiSourcesDir src)
 set(WatchDogApiHeadersDir include)
 
-# deps headers
-set(CommonLibHeadersDir ../common/include)
-
 aux_source_directory(${WatchDogApiSourcesDir} WatchDogApiSourcesList)
 file(GLOB_RECURSE WatchDogApiHeadersList "include/*.h")
 

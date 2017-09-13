@@ -63,4 +63,8 @@ void WatchDogServiceApi::setThreadExceptionHandlers() const noexcept
 	std::signal(SIGSEGV, CrashHandler::sigSegvHandler);
 }
 
+void WatchDogServiceApi::createMiniDump() const noexcept
+{
+}
+
 }

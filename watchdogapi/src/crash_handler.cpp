@@ -72,6 +72,9 @@ void CrashHandler::invalidParameterHandler(
 
 void CrashHandler::setEventToWatchDogProcess()
 {
+	MessageBoxA(NULL, "Handler intercepted critical error", "Crash", MB_OK);
+	Sleep(3000);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 }

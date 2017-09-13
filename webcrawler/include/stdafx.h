@@ -24,6 +24,7 @@
 #include <cassert>
 #include <functional>
 #include <optional>
+#include <csignal>
 
 //
 // boost
