@@ -9,7 +9,7 @@
 namespace
 {
 
-static const BYTE s_patchBytes[] =
+const std::uint8_t s_patchBytes[] =
 {
 #ifdef _WIN64
 	//	XOR RAX, RAX
@@ -55,19 +55,20 @@ bool lockExceptionFilter()
 
 	HMODULE kernel32 = GetModuleHandleW(L"KERNEL32.DLL");
 
-	if (kernel32 == NULL)
+	if (kernel32 == nullptr)
 	{
 		return false;
 	}
 
 	void* entryPoint = static_cast<void*>(GetProcAddress(kernel32, "SetUnhandledExceptionFilter"));
 
-	if (entryPoint == NULL)
+	if (entryPoint == nullptr)
 	{
 		return false;
 	}
 
 	DWORD oldProtect = 0;
+
 	if (VirtualProtect(entryPoint, sizeof(s_patchBytes), PAGE_EXECUTE_READWRITE, &oldProtect) == FALSE)
 	{
 		return false;

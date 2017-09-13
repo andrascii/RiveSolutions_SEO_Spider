@@ -186,7 +186,7 @@ void PageViewModel::onAttachedModelInternalDataChanged()
 
 	invalidateItemViewRendererCache();
 
-	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->rowCount() * 2));
+	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->columnCount()));
 }
 
 void PageViewModel::initializeRenderers()
@@ -201,7 +201,7 @@ void PageViewModel::initializeRenderers()
 		IRenderer::GridLineRendererType
 	);
 
-	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->rowCount() * 2));
+	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->columnCount()));
 }
 
 }

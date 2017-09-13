@@ -3,6 +3,9 @@
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
+	Q_UNUSED(hinstDLL);
+	Q_UNUSED(lpvReserved);
+
 	switch (fdwReason)
 	{
 		case DLL_PROCESS_ATTACH:
@@ -10,6 +13,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 			WatchDogApi::watchDogServiceApi()->setProcessExceptionHandlers();
 
 			WatchDogApi::lockExceptionFilter();
+
+			CreateEvent(nullptr, FALSE, FALSE, "WatchDogApiCrashEvent");
 
 			break;
 		}
