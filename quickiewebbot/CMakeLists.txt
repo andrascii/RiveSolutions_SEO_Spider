@@ -81,7 +81,7 @@ include_directories(
 
 target_link_libraries(
 	${AppName}
-	${WatchDogApi}
+	${WatchDogApiDllName}
 	${WebCrawlerLibName}
 	${CommonLibName}
 	${Boost_LIBRARIES}

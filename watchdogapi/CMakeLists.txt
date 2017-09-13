@@ -1,22 +1,22 @@
 cmake_minimum_required(VERSION 2.8.11)
-project(${WatchDogApi})
+project(${WatchDogApiDllName})
 
-set(WatchDogApiSourcesDir src)
-set(WatchDogApiHeadersDir include)
+set(WatchDogApiDllNameSourcesDir src)
+set(WatchDogApiDllNameHeadersDir include)
 
-aux_source_directory(${WatchDogApiSourcesDir} WatchDogApiSourcesList)
-file(GLOB_RECURSE WatchDogApiHeadersList "include/*.h")
+aux_source_directory(${WatchDogApiDllNameSourcesDir} WatchDogApiDllNameSourcesList)
+file(GLOB_RECURSE WatchDogApiDllNameHeadersList "include/*.h")
 
-list(REMOVE_ITEM WatchDogApiSourcesList src/stdafx.cpp)
+list(REMOVE_ITEM WatchDogApiDllNameSourcesList src/stdafx.cpp)
 
-add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" WatchDogApiSourcesList)
+add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" WatchDogApiDllNameSourcesList)
 
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
 add_library(
- 	${WatchDogApi} SHARED
- 	${WatchDogApiSourcesList} 
- 	${WatchDogApiHeadersList}
+ 	${WatchDogApiDllName} SHARED
+ 	${WatchDogApiDllNameSourcesList} 
+ 	${WatchDogApiDllNameHeadersList}
 )
 
 add_definitions(
@@ -32,7 +32,7 @@ if(MSVC)
 	)
 	
 	set_target_properties(
-		${WatchDogApi}
+		${WatchDogApiDllName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
 		VS_DEBUGGER_WORKING_DIRECTORY $ENV{CMAKE_PREFIX_PATH}/bin
 		RUNTIME_OUTPUT_DIRECTORY "../quickiewebbot/"
@@ -41,13 +41,13 @@ if(MSVC)
 endif()
 
 include_directories(
-	${WatchDogApiHeadersDir}
+	${WatchDogApiDllNameHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(
-	${WatchDogApi}
+	${WatchDogApiDllName}
 	${Boost_LIBRARIES}
 	Qt5::Network
 )

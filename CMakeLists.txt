@@ -5,11 +5,13 @@ set(LoggerAppName logger)
 set(WebCrawlerLibName webcrawler)
 set(CommonLibName common)
 set(GumboLibName gumbo)
-set(WatchDogApi watchdogapi)
+set(WatchDogApiDllName watchdogapi)
+set(WatchDogServiceAppName watchdogservice)
 project(${AppName})
 
 set(GuiBinName ${AppName})
 set(LoggerBinName ${LoggerAppName})
+set(WatchDogServiceName ${WatchDogServiceAppName})
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -45,9 +47,10 @@ MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(add_msvc_precompiled_header)
 
-add_subdirectory(${WatchDogApi})
 add_subdirectory(${WebCrawlerLibName})
 add_subdirectory(${LoggerAppName})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${CommonLibName})
+add_subdirectory(${WatchDogApiDllName})
+add_subdirectory(${WatchDogServiceAppName})
