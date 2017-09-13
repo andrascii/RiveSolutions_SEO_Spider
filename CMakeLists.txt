@@ -5,11 +5,11 @@ set(LoggerAppName logger)
 set(WebCrawlerLibName webcrawler)
 set(CommonLibName common)
 set(GumboLibName gumbo)
+set(WatchDogApi watchdogapi)
 project(${AppName})
 
 set(GuiBinName ${AppName})
 set(LoggerBinName ${LoggerAppName})
-
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -50,3 +50,4 @@ add_subdirectory(${LoggerAppName})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${CommonLibName})
+add_subdirectory(${WatchDogApi})
