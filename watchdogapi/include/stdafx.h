@@ -24,11 +24,7 @@
 #include <cassert>
 #include <functional>
 #include <optional>
-
-//
-// boost
-//
-//#include <boost/functional/hash.hpp>
+#include <csignal>
 
 //
 // Qt
@@ -60,11 +56,10 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#include <new.h>
 #else
 #error You compile this code on unsupported platform!
 #endif
-
-//#include "common_macro_helpers.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
