@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-	initializeWatchDog();
+	initWatchDogApi();
 
 	QuickieWebBot::Application app(argc, argv);
 	return app.exec();

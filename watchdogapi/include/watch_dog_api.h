@@ -6,4 +6,4 @@
 #define WATCH_DOG_API_EXPORT Q_DECL_IMPORT
 #endif
 
-extern "C" WATCH_DOG_API_EXPORT void initializeWatchDog();
+extern "C" WATCH_DOG_API_EXPORT void initWatchDogApi();

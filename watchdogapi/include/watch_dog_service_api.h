@@ -2,7 +2,7 @@
 
 #include "iwatch_dog_service_api.h"
 
-namespace WatchDog
+namespace WatchDogApi
 {
 
 class WatchDogServiceApi : public IWatchDogServiceApi

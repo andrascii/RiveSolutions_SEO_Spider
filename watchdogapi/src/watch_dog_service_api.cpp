@@ -1,7 +1,7 @@
 #include "watch_dog_service_api.h"
 #include "crash_handler.h"
 
-namespace WatchDog
+namespace WatchDogApi
 {
 
 void WatchDogServiceApi::setProcessExceptionHandlers() const noexcept
@@ -27,7 +27,6 @@ void WatchDogServiceApi::setProcessExceptionHandlers() const noexcept
 	_set_invalid_parameter_handler(CrashHandler::invalidParameterHandler);
 
 	// Set up C++ signal handlers
-
 	_set_abort_behavior(_CALL_REPORTFAULT, _CALL_REPORTFAULT);
 
 	// Catch an abnormal program termination
@@ -42,18 +41,13 @@ void WatchDogServiceApi::setProcessExceptionHandlers() const noexcept
 
 void WatchDogServiceApi::setThreadExceptionHandlers() const noexcept
 {
-	// Catch terminate() calls. 
-	// In a multithreaded environment, terminate functions are maintained 
+	// Catch terminate/unexpected calls. 
+	// In a multi-threaded environment, terminate functions are maintained 
 	// separately for each thread. Each new thread needs to install its own 
 	// terminate function. Thus, each thread is in charge of its own termination handling.
 	// http://msdn.microsoft.com/en-us/library/t6fk7h29.aspx
-	set_terminate(CrashHandler::terminateHandler);
-
-	// Catch unexpected() calls.
-	// In a multithreaded environment, unexpected functions are maintained 
-	// separately for each thread. Each new thread needs to install its own 
-	// unexpected function. Thus, each thread is in charge of its own unexpected handling.
 	// http://msdn.microsoft.com/en-us/library/h46t5b69.aspx  
+	set_terminate(CrashHandler::terminateHandler);
 	set_unexpected(CrashHandler::unexpectedHandler);
 
 	// Catch a floating point error

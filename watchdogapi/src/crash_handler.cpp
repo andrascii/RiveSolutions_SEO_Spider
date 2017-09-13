@@ -1,6 +1,6 @@
 #include "crash_handler.h"
 
-namespace WatchDog
+namespace WatchDogApi
 {
 
 LONG WINAPI CrashHandler::sehHandler(PEXCEPTION_POINTERS pExceptionPtrs)
@@ -83,7 +83,6 @@ void CrashHandler::invalidParameterHandler(
 void CrashHandler::setEventToWatchDogProcess()
 {
 	MessageBoxA(NULL, "Handler intercepted critical error", "Crash", MB_OK);
-	Sleep(INFINITE);
 	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 

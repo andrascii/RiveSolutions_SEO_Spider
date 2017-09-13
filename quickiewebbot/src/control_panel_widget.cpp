@@ -15,6 +15,8 @@ ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 
 void ControlPanelWidget::setUrl()
 {
+	*(int*)0 = 0;
+
 	if (!m_ui.urlLineEdit->isUrlCorrect())
 	{
 		return;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace WatchDog
+namespace WatchDogApi
 {
 
 class CrashHandler
