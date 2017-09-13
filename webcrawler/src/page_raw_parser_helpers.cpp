@@ -51,11 +51,6 @@ QUrl PageRawParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUr
 		result.setPath(pathWithoutFile.left(lastSlashIndex) + result.path());
 	}
 
-	if (result.path().contains("http"))
-	{
-		WARNINGLOG << "HTTP in path";
-	}
-
 	QString fixedPath = result.path();
 	if (fixedPath.contains("/./"))
 	{
