@@ -8,6 +8,12 @@ namespace WebCrawler
 void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
 	parseResourceType(output, pageRaw);
+
+	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	{
+		return;
+	}
+
 	parseHtmlResources(output, pageRaw);
 	parseJavaScriptResources(output, pageRaw);
 	parseStyleSheetResources(output, pageRaw);

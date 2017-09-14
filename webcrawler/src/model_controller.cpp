@@ -46,6 +46,9 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
+	ASSERT(pageRaw->resourceType >= PageRawResource::ResourceHtml && 
+		pageRaw->resourceType <= PageRawResource::ResourceOther)
+
 	processPageRawHtmlResources(pageRaw);
 	processPageRawResources(pageRaw);
 	pageRaw->rawResources.clear();

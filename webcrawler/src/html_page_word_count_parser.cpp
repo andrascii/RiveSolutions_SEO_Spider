@@ -6,6 +6,11 @@ namespace WebCrawler
 
 void HtmlPageWordCountParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
+	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	{
+		return;
+	}
+
 	GumboNode* body = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_BODY);
 	
 	if (!(body && body->type == GUMBO_NODE_ELEMENT && body->v.element.tag == GUMBO_TAG_BODY))
