@@ -57,7 +57,7 @@ QUrl PageRawParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUr
 		fixedPath = fixedPath.replace("/./", "/");
 	}
 	
-	while (fixedPath.contains(".."))
+	while (fixedPath.contains("/../"))
 	{
 		int doublePointsPos = fixedPath.indexOf("/../");
 		int prevSlashPos = fixedPath.left(doublePointsPos).lastIndexOf("/");
