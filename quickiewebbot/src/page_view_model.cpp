@@ -165,6 +165,8 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 		modelIndexes.append(model()->modelIndexesForRow(previousHoveredIndex.row() - 1));
 		
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
+
+		AbstractViewModel::resetPreviousHoveredIndex();
 	}
 
 	if (hoveredIndex().isValid())
