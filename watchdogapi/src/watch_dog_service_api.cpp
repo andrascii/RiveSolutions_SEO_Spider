@@ -46,11 +46,7 @@ void WatchDogServiceApi::setProcessExceptionHandlers() const noexcept
 {
 	SetUnhandledExceptionFilter(CrashHandler::sehHandler);
 
-#ifdef _WIN64
-
-	AddVectoredExceptionHandler(0, CrashHandler::stackOverflowExceptionFilter);
-
-#endif
+	AddVectoredExceptionHandler(1, CrashHandler::vehHandler);
 
 	_set_purecall_handler(CrashHandler::pureCallHandler);
 
