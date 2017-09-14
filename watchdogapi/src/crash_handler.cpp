@@ -11,7 +11,12 @@ LONG WINAPI CrashHandler::sehHandler(PEXCEPTION_POINTERS pExceptionPtrs)
 
 LONG WINAPI CrashHandler::vehHandler(EXCEPTION_POINTERS* exceptionInfo)
 {
-	return sehHandler(exceptionInfo);
+	if (exceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_STACK_OVERFLOW)
+	{
+		return sehHandler(exceptionInfo);
+	}
+
+	return EXCEPTION_CONTINUE_SEARCH;
 }
 
 void CrashHandler::terminateHandler()

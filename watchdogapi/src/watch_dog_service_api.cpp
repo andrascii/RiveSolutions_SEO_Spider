@@ -46,7 +46,7 @@ void WatchDogServiceApi::setProcessExceptionHandlers() const noexcept
 {
 	SetUnhandledExceptionFilter(CrashHandler::sehHandler);
 
-	AddVectoredExceptionHandler(1, CrashHandler::vehHandler);
+	AddVectoredExceptionHandler(0, CrashHandler::vehHandler);
 
 	_set_purecall_handler(CrashHandler::pureCallHandler);
 
