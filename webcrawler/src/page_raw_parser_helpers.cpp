@@ -89,6 +89,11 @@ std::vector<QUrl> PageRawParserHelpers::resolveUrlList(const QUrl& baseUrl, cons
 		result.push_back(resolveRelativeUrl(url, baseUrl));
 	}
 
+	for (QUrl& url : result)
+	{
+		url.setFragment(QString());
+	}
+
 	return result;
 }
 
@@ -113,6 +118,20 @@ bool PageRawParserHelpers::isHtmlContentType(const QString& contentType) noexcep
 		contentType.startsWith("text/xhtml") ||
 		contentType.startsWith("application/xhtml") ||
 		contentType.isEmpty();
+}
+
+bool PageRawParserHelpers::isHttpOrHttpsScheme(const QString& urlStr) noexcept
+{
+	static QRegularExpression expr("^\\w{0,10}:");
+
+	if (expr.match(urlStr).hasMatch() && !urlStr.startsWith("https://") && !urlStr.startsWith("http://"))
+	{
+		//DEBUGLOG << "Non-http link: " << urlStr;
+		return false;
+	}
+
+	return true;
+
 }
 
 }
