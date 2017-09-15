@@ -8,6 +8,9 @@ class IWatchDogServiceApi
 public:
 	virtual void init() noexcept = 0;
 	virtual void free() const noexcept = 0;
+	
+	virtual void setProcessSignaledState() const noexcept = 0;
+
 	virtual void setProcessExceptionHandlers() const noexcept = 0;
 	virtual void setThreadExceptionHandlers() const noexcept = 0;
 

@@ -49,5 +49,5 @@ include_directories(
 target_link_libraries(
 	${WatchDogServiceName}
 	${Boost_LIBRARIES}
-	Qt5::Network
+	Qt5::Widgets
 )

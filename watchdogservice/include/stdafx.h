@@ -46,8 +46,6 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 #include <QTimer>
-#include <QTcpSocket>
-#include <QTcpServer>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QReadWriteLock>
