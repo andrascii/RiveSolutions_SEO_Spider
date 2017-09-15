@@ -35,25 +35,49 @@ public:
 	static QByteArray identifyHtmlPageContentType(const QByteArray& htmlPage) noexcept;
 	static QByteArray decodeHtmlPage(const QByteArray& htmlPage) noexcept;
 
-	static std::vector<QUrl> parsePageUrlList(const GumboNode* node) noexcept;
-
-	using ConditionFunc = bool(const GumboNode*);
-	static std::vector<const GumboNode*> findNodesRecursive(const GumboNode* node, ConditionFunc) noexcept;
+	static std::vector<QUrl> parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly = true) noexcept;
 
 	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::pair<const char*, const char*> expectedAttributes) noexcept;
 	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::map<const char*, const char*> expectedAttributes) noexcept;
 
 	static bool checkAttribute(const GumboNode* node, const char* attribute, const char* expectedValue) noexcept;
 
-	template <class TResultFunc>
-	static auto findNodesAndGetResult(const GumboNode* node, ConditionFunc cond, TResultFunc res)
-	{
-		std::vector<const GumboNode*> nodes = findNodesRecursive(node, cond);
 
-		std::vector<decltype(res(node))> result;
+	template <class UnaryPredicate>
+	static std::vector<const GumboNode*> findNodesRecursive(const GumboNode* node, UnaryPredicate predicate) noexcept
+	{
+		std::vector<const GumboNode*> result;
+
+		if (predicate(node))
+		{
+			result.push_back(node);
+		}
+
+		if (node->type == GUMBO_NODE_ELEMENT)
+		{
+			const GumboVector* children = &node->v.element.children;
+
+			for (unsigned int i = 0; i < children->length; ++i)
+			{
+				const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
+				std::vector<const GumboNode*> childResult = findNodesRecursive(child, predicate);
+
+				result.insert(std::end(result), std::begin(childResult), std::end(childResult));
+			}
+		}
+
+		return result;
+	}
+
+	template <class UnaryPredicate, class MapFunc>
+	static auto findNodesAndGetResult(const GumboNode* node, UnaryPredicate predicate, MapFunc mapFunc)
+	{
+		std::vector<const GumboNode*> nodes = findNodesRecursive(node, predicate);
+
+		std::vector<decltype(mapFunc(node))> result;
 		for (const GumboNode* node : nodes)
 		{
-			result.push_back(res(node));
+			result.push_back(mapFunc(node));
 		}
 
 		return result;

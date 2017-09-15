@@ -46,6 +46,9 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
+	ASSERT(pageRaw->resourceType >= PageRawResource::ResourceHtml && 
+		pageRaw->resourceType <= PageRawResource::ResourceOther)
+
 	processPageRawHtmlResources(pageRaw);
 	processPageRawResources(pageRaw);
 	pageRaw->rawResources.clear();
@@ -394,7 +397,8 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 {
-	const bool external = isUrlExternal(pageRaw->url);
+	const bool external = isUrlExternal(pageRaw->url) || 
+		!PageRawParserHelpers::isHttpOrHttpsScheme(pageRaw->url.toDisplayString());
 
 	if (pageRaw->resourceType == PageRawResource::ResourceOther)
 	{
@@ -430,7 +434,11 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 
 	for (const PageRawResource& resource : pageRaw->rawResources)
 	{
-		if (resource.resourceType == PageRawResource::ResourceHtml)
+		QString resourceDisplayUrl = resource.resourceUrl.toDisplayString();
+
+		if (resource.resourceType == PageRawResource::ResourceHtml || 
+			resourceDisplayUrl.startsWith("javascript:") ||
+			resourceDisplayUrl.startsWith("#"))
 		{
 			continue;
 		}
@@ -438,7 +446,10 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		PageRawPtr resourceRaw = std::make_shared<PageRaw>();
 		resourceRaw->url = resource.resourceUrl;
 
-		DataCollection::StorageType storage = external ? 
+		bool resourceExternal = isUrlExternal(resourceRaw->url) || 
+			!PageRawParserHelpers::isHttpOrHttpsScheme(resourceDisplayUrl);
+
+		DataCollection::StorageType storage = resourceExternal ?
 			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
 
 		PageRawPtr newOrExistingResource = m_data->pageRaw(resourceRaw, storage);

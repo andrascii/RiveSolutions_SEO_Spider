@@ -35,6 +35,7 @@ protected:
 	AbstractTableModel* model() noexcept;
 
 	const QModelIndex& previousHoveredIndex() const noexcept;
+	const void resetPreviousHoveredIndex() noexcept;
 	void clearSelectedIndexes() noexcept;
 
 	void emitNeedToRepaintIndexes(const QModelIndexList& modelIndexes) noexcept;

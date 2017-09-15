@@ -147,7 +147,7 @@ void QueuedDownloader::process()
 			reply, 
 			&QNetworkReply::metaDataChanged, 
 			this, 
-			[this]() { metaDataChanged(qobject_cast<QNetworkReply*>(sender())); }, 
+			[this, reply]() { metaDataChanged(reply); }, 
 			Qt::QueuedConnection
 		));
 

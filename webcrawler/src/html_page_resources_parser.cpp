@@ -8,6 +8,12 @@ namespace WebCrawler
 void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
 	parseResourceType(output, pageRaw);
+
+	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	{
+		return;
+	}
+
 	parseHtmlResources(output, pageRaw);
 	parseJavaScriptResources(output, pageRaw);
 	parseStyleSheetResources(output, pageRaw);
@@ -37,13 +43,16 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 
 void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	std::vector<QUrl> urls = GumboParsingHelpers::parsePageUrlList(output->root);
+	std::vector<QUrl> urls = GumboParsingHelpers::parsePageUrlList(output->root, false);
 
 	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceHtml, url, pageRaw->url });
+		PageRawResource::ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
+			PageRawResource::ResourceHtml : PageRawResource::ResourceOther;
+		
+		pageRaw->rawResources.push_back(PageRawResource{ resourceType, url, pageRaw->url });
 	}
 }
 
