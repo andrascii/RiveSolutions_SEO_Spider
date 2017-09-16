@@ -77,6 +77,8 @@ void LoggerMainWindow::slotSocketDisconected()
 	VERIFY(disconnect((QTcpSocket*)sender(), SIGNAL(readyRead()), this, SLOT(slotReadyRead())));
 	VERIFY(disconnect(this, SIGNAL(messageAppendedToList()), this, SLOT(slotTryToShowNewMessage())));
 	ui.textBrowser->append("disconnected");
+
+	qApp->quit();
 }
 
 void LoggerMainWindow::slotApplyTypeFilter(const QString& type)

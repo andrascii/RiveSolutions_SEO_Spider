@@ -37,7 +37,7 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 
 	const bool isDecorationValid = !viewModel()->pixmap(index).isNull();
 	const Qt::AlignmentFlag textAlignmentFlags = viewModel()->textAlignment(index);
-	const QFont& font = viewModel()->font(index).resolve(option.font);
+	const QFont& font = viewModel()->font(index);
 	const QColor& textColor = viewModel()->textColor(index);
 	const QString paintingText = viewModel()->displayData(index, pixmapRect);
 

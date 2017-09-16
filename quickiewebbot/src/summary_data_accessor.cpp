@@ -10,7 +10,7 @@ namespace QuickieWebBot
 SummaryDataAccessor::SummaryDataAccessor(WebCrawler::GuiStorage* guiStorage)
 	: m_guiStorage(guiStorage)
 {
-	QObject::connect(m_guiStorage, &WebCrawler::GuiStorage::pageRawAdded, this, &SummaryDataAccessor::emitDataChanged);
+	VERIFY(connect(m_guiStorage, &WebCrawler::GuiStorage::pageRawAdded, this, &SummaryDataAccessor::emitDataChanged));
 }
 
 int SummaryDataAccessor::columnCount() const noexcept
@@ -172,7 +172,7 @@ bool SummaryDataAccessor::isHeaderRow(int row) const noexcept
 
 StorageAdaptorType SummaryDataAccessor::itemCategory(const QModelIndex& index) const noexcept
 {
-	if (isHeaderRow(index.row()))
+	if (isHeaderRow(index.row()) || !index.isValid())
 	{
 		return StorageAdaptorType::StorageAdaptorTypeNone;
 	}

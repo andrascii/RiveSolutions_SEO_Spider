@@ -1,4 +1,7 @@
-1. Начиная с Windows Vista SP1 мы можем воспользоваться встроенным в Windows
-	механизмом сбора дампов. https://msdn.microsoft.com/ru-ru/library/windows/desktop/bb787181(v=vs.85).aspx
+Начиная с Windows Vista SP1 мы можем воспользоваться встроенным в Windows
+механизмом сбора дампов. https://msdn.microsoft.com/ru-ru/library/windows/desktop/bb787181(v=vs.85).aspx
 	
-2. Debug a Release Build: https://msdn.microsoft.com/en-us/library/fsk896zz.aspx
+Debug a Release Build: https://msdn.microsoft.com/en-us/library/fsk896zz.aspx
+
+How to trap stack overflow in a Visual C++ application
+https://support.microsoft.com/en-us/help/315937/how-to-trap-stack-overflow-in-a-visual-c-application

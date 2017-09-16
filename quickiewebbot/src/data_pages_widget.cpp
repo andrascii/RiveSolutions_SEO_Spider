@@ -1,7 +1,6 @@
 #include "data_pages_widget.h"
 #include "application.h"
 #include "table_view.h"
-#include "summary_filter_widget.h"
 #include "page_model.h"
 #include "page_view_model.h"
 #include "page_raw_info_storage_adaptor.h"
@@ -13,6 +12,8 @@
 #include "titled_widget.h"
 #include "control_panel_widget.h"
 #include "all_resources_widget.h"
+#include "filter_widget.h"
+#include "website_data_widget.h"
 
 
 namespace QuickieWebBot
@@ -184,7 +185,7 @@ void DataPagesWidget::initializeStackedWidget()
 {
 	m_stackedWidget = new QStackedWidget(this);
 
-	SummaryFilterWidget* errorsFilterWidget = new SummaryFilterWidget(m_stackedWidget);
+	FilterWidget* errorsFilterWidget = new FilterWidget(new WebSiteDataWidget(m_stackedWidget), m_stackedWidget);
 	errorsFilterWidget->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 
 	AllResourcesWidget* allResourcesPage = new AllResourcesWidget(m_stackedWidget);

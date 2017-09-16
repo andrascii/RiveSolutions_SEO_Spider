@@ -98,7 +98,7 @@ QString PageViewModel::displayData(const QModelIndex& index, const QRect& itemVi
 
 	const int pixmapOccupiedWidth = index.row() == hoveredIndex().row() ? itemVisualRect.width() - pixmapPosition(index, itemVisualRect).x() : 0;
 
-	QFontMetrics fontMetrics(Application::font());
+	QFontMetrics fontMetrics(font(index));
 	return fontMetrics.elidedText(displayData, Qt::ElideRight, itemVisualRect.width() - pixmapOccupiedWidth);
 }
 
@@ -124,7 +124,7 @@ const QColor& PageViewModel::backgroundColor(const QModelIndex&) const noexcept
 
 const QFont& PageViewModel::font(const QModelIndex& index) const noexcept
 {
-	static QFont font = Application::font();
+	static QFont font("Times", 9);
 
 	return font;
 }
@@ -149,7 +149,7 @@ QColor PageViewModel::textColor(const QModelIndex& index) const noexcept
 		return QColor("#1754A8");
 	}
 
-	return QColor("#000000");
+	return QColor("#333333");
 }
 
 void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
