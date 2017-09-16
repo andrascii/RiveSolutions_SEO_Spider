@@ -18,7 +18,7 @@ void WatchDogServiceApi::init() noexcept
 	const boost::uuids::uuid uuid = boost::uuids::random_generator()();
 	const std::wstring crashHandlerEventName = boost::lexical_cast<std::wstring>(uuid);
 
-	std::wstring commandLine = L"watchdogservice.exe " + crashHandlerEventName;
+	std::wstring commandLine = L"watchdogservice.exe " + crashHandlerEventName + L" " + std::to_wstring(GetCurrentProcessId());
 
 	m_crashEventHandle = CreateEventW(nullptr, TRUE, FALSE, crashHandlerEventName.c_str());
 
@@ -38,8 +38,6 @@ void WatchDogServiceApi::init() noexcept
 
 void WatchDogServiceApi::free() const noexcept
 {
-	TerminateProcess(m_processInfo.hProcess, 0);
-
 	CloseHandle(m_processInfo.hThread);
 	CloseHandle(m_processInfo.hProcess);
 	CloseHandle(m_crashEventHandle);
