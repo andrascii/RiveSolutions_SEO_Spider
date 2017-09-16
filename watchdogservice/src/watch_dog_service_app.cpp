@@ -10,6 +10,8 @@ WatchDogServiceApp::WatchDogServiceApp(int& argc, char** argv)
 	, m_dialog(new FatalErrorDialog)
 	, m_dbgHelpDllLoader(new DebugHelpDllLoader)
 {
+	setSeDebugPrivilege(true);
+
 	bool processIdConvertion = false;
 
 	m_eventName = commandLineParameter(1).toLatin1();
@@ -79,6 +81,34 @@ void WatchDogServiceApp::makeCrashDump(HANDLE processHandle) const noexcept
 	m_dbgHelpDllLoader->writeDump(processHandle, m_processId, dumpFileHandle, miniDumpType, NULL, NULL, NULL);
 
 	CloseHandle(dumpFileHandle);
+}
+
+
+bool WatchDogServiceApp::setSeDebugPrivilege(bool flag) const noexcept
+{
+	HANDLE hThisProcessToken = nullptr;
+
+	if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hThisProcessToken))
+	{
+		TOKEN_PRIVILEGES tokenPrivileges;
+		DWORD enableStatus = flag ? SE_PRIVILEGE_ENABLED : 0;
+
+		tokenPrivileges.Privileges[0].Attributes = enableStatus;
+		tokenPrivileges.PrivilegeCount = 1;
+
+		BOOL bLookupResult = LookupPrivilegeValue(nullptr, SE_DEBUG_NAME, &tokenPrivileges.Privileges[0].Luid);
+
+		if (!bLookupResult)
+		{
+			CloseHandle(hThisProcessToken);
+			return false;
+		}
+
+		AdjustTokenPrivileges(hThisProcessToken, FALSE, &tokenPrivileges, sizeof(tokenPrivileges), nullptr, nullptr);
+		CloseHandle(hThisProcessToken);
+	}
+
+	return GetLastError() == ERROR_SUCCESS;
 }
 
 }

@@ -20,7 +20,6 @@ public:
 
 private:
 	static LONG WINAPI sehHandler(PEXCEPTION_POINTERS pExceptionPtrs);
-	static LONG WINAPI vehHandler(EXCEPTION_POINTERS* exceptionInfo);
 	static void terminateHandler();
 	static void unexpectedHandler();
 	static void pureCallHandler();

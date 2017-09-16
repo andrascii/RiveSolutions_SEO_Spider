@@ -19,6 +19,7 @@ private:
 	QString commandLineParameter(int num) const noexcept;
 
 	void makeCrashDump(HANDLE processHandle) const noexcept;
+	bool setSeDebugPrivilege(bool flag) const noexcept;
 
 	Q_SIGNAL void closeServiceApp() const;
 

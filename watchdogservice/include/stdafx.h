@@ -57,6 +57,7 @@
 #include <QDateTime>
 #include <QUuid>
 #include <QDialog>
+#include <QMessageBox>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

@@ -55,7 +55,6 @@ void WatchDogServiceApi::setProcessSignaledState() const noexcept
 void WatchDogServiceApi::setProcessExceptionHandlers() const noexcept
 {
 	SetUnhandledExceptionFilter(WatchDogServiceApi::sehHandler);
-	AddVectoredExceptionHandler(0, WatchDogServiceApi::vehHandler);
 
 	_set_purecall_handler(WatchDogServiceApi::pureCallHandler);
 	_set_new_handler(WatchDogServiceApi::newHandler);
@@ -83,16 +82,6 @@ LONG WINAPI WatchDogServiceApi::sehHandler(PEXCEPTION_POINTERS pExceptionPtrs)
 {
 	s_self->setProcessSignaledState();
 	return EXCEPTION_EXECUTE_HANDLER;
-}
-
-LONG WINAPI WatchDogServiceApi::vehHandler(EXCEPTION_POINTERS* exceptionInfo)
-{
-	if (exceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_STACK_OVERFLOW)
-	{
-		return sehHandler(exceptionInfo);
-	}
-
-	return EXCEPTION_CONTINUE_SEARCH;
 }
 
 void WatchDogServiceApi::terminateHandler()
