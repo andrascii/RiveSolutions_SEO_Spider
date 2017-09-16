@@ -21,7 +21,7 @@ QueuedDownloader::~QueuedDownloader()
 	stopExecution();
 }
 
-void QueuedDownloader::scheduleUrl(const QUrl& url) noexcept
+void QueuedDownloader::scheduleUrl(const WebCrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
 	//INFOLOG << "Url scheduled: " << url.toDisplayString();
@@ -138,7 +138,21 @@ void QueuedDownloader::process()
 	while (m_requestQueue.size() && requestsThisBatch < s_maxRequestsOneBatch &&
 		m_pendingRequestsCount < s_maxPendingRequests && m_unprocessedRepliesCount < s_maxUnprocessedReplies)
 	{
-		QNetworkReply* reply = m_networkAccessManager->get(QNetworkRequest(*m_requestQueue.begin()));
+		WebCrawlerRequest request = *m_requestQueue.begin();
+		QNetworkReply* reply = nullptr;
+
+		switch (request.requestType)
+		{
+		case RequestTypeGet:
+			reply = m_networkAccessManager->get(QNetworkRequest(request.url));
+			break;
+		case RequestTypeHead:
+			reply = m_networkAccessManager->head(QNetworkRequest(request.url));
+			break;
+		default:
+			ASSERT(!"Unsupported request type");
+			break;
+		}
 
 		auto requestIt = m_requestQueue.begin();
 		//INFOLOG << "Request started" << requestIt->url() << " " << QThread::currentThreadId();

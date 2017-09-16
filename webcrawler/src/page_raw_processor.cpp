@@ -35,7 +35,7 @@ void PageRawProcessor::setHost(QUrl host)
 
 void PageRawProcessor::process()
 {
-	QUrl url;
+	WebCrawlerRequest url;
 	QueuedDownloader::Reply reply;
 
 	const bool replyExtracted = m_queuedDownloader->extractReply(reply);
@@ -82,7 +82,7 @@ void PageRawProcessor::process()
 		{
 			std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 			urlList = PageRawParserHelpers::resolveUrlList(reply.url, urlList);
-			m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
+			m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
 		}
 
 #ifdef QT_DEBUG

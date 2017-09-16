@@ -1,6 +1,7 @@
 #pragma once
 
 #include "abstract_threadable_object.h"
+#include "web_crawler_request.h"
 
 namespace WebCrawler
 {
@@ -22,7 +23,7 @@ public:
 	QueuedDownloader();
 	virtual ~QueuedDownloader();
 
-	void scheduleUrl(const QUrl& url) noexcept;
+	void scheduleUrl(const WebCrawlerRequest& url) noexcept;
 
 	bool extractReply(Reply& response) noexcept;
 
@@ -43,7 +44,7 @@ private:
 	std::mutex m_requestQueueMutex;
 	std::mutex m_repliesQueueMutex;
 
-	std::vector<QUrl> m_requestQueue;
+	std::vector<WebCrawlerRequest> m_requestQueue;
 	std::vector<Reply> m_repliesQueue;
 
 	std::atomic<int> m_unprocessedRepliesCount;
