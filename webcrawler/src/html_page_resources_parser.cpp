@@ -26,6 +26,12 @@ void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) no
 
 void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
+	if (pageRaw->contentType.contains("javascript"))
+	{
+		pageRaw->resourceType = PageRawResource::ResourceJavaScript;
+		return;
+	}
+
 	if (pageRaw->contentType.startsWith("image/"))
 	{
 		pageRaw->resourceType = PageRawResource::ResourceImage;
@@ -37,6 +43,8 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 		pageRaw->resourceType = PageRawResource::ResourceHtml;
 		return;
 	}
+
+	WARNINGLOG << "Unknown resource type: " << pageRaw->contentType;
 
 	pageRaw->resourceType = PageRawResource::ResourceOther;
 }

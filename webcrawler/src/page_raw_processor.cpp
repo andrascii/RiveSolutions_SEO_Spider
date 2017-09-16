@@ -83,6 +83,19 @@ void PageRawProcessor::process()
 			std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 			urlList = PageRawParserHelpers::resolveUrlList(reply.url, urlList);
 			m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
+
+			std::vector<QUrl> resourcesUrlList;
+			for (const PageRawResource& resource : pageRaw->rawResources)
+			{
+				QString resourceUrlStr = resource.resourceUrl.toDisplayString();
+				
+				if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) && 
+					resource.resourceType != PageRawResource::ResourceHtml)
+				{
+					resourcesUrlList.push_back(resource.resourceUrl);
+				}
+			}
+			m_webCrawlerInternalUrlStorage->saveUrlList(resourcesUrlList, RequestTypeHead);
 		}
 
 #ifdef QT_DEBUG
