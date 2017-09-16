@@ -93,6 +93,11 @@ const QModelIndex& AbstractViewModel::previousHoveredIndex() const noexcept
 	return m_previousHoveredIndex;
 }
 
+const void AbstractViewModel::resetPreviousHoveredIndex() noexcept
+{
+	m_previousHoveredIndex = QModelIndex();
+}
+
 void AbstractViewModel::emitNeedToRepaintIndexes(const QModelIndexList& modelIndexes) noexcept
 {
 	invalidateCacheIndexes(modelIndexes);

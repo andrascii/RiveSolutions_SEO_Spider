@@ -14,6 +14,9 @@ public:
 	virtual void free() const noexcept override
 	{
 	}
+	virtual void setProcessSignaledState() const noexcept override
+	{
+	}
 	virtual void setProcessExceptionHandlers() const noexcept override
 	{
 	}

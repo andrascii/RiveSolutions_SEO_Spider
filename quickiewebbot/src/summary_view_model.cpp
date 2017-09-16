@@ -113,8 +113,6 @@ void SummaryViewModel::initializeRenderers()
 		IRenderer::SelectionBackgroundRendererType | 
 		IRenderer::BackgroundRendererType
 	);
-
-	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model()->columnCount() * model()->rowCount() * 2));
 }
 
 QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept
