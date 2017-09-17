@@ -191,6 +191,9 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 
+	QSettings* getSettings() noexcept;
+	void registryProperty(const QByteArray& key, QVariant property, QVariant defaultValue) noexcept;
+
 	ApplicationSettings(QObject* parent = nullptr);
 	~ApplicationSettings();
 
@@ -203,9 +206,6 @@ public:
 	};
 	
 	void setDefaults(const QString &str);
-	void set(const QByteArray& key, QVariant value, SettingsGroup group = SettingsGroup::General);
-	QVariant get(const QByteArray& key, SettingsGroup group = SettingsGroup::General);
-	void saveSettingsToDisk();
 
 private:
 	QSettings* m_applicationSettings;

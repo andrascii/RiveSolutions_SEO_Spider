@@ -41,8 +41,10 @@ public:
 
 	QString operatingSystemVersion() const noexcept;
 
-	virtual void saveToSettings() noexcept;
-	virtual void loadFromSettings() noexcept;
+	virtual void saveToSettings(const QByteArray& key, const QVariant& value) noexcept override;
+	virtual QVariant loadFromSettings(const QByteArray& key, const QVariant& defaultValue = QVariant()) const noexcept override;
+	virtual void removeKeyFromSettings(const QByteArray& key) override;
+	virtual QList<QByteArray> allKeys() const override;
 
 private:
 	Q_SLOT void mainFrameIsReadyForShow();
@@ -55,7 +57,7 @@ private:
 	void showSplashScreen() const noexcept;
 
 private:
-	ApplicationSettings* m_appicationProperties;
+	ApplicationSettings* m_appicationSettings;
 	std::unique_ptr<WebCrawler::WebCrawler> m_webCrawler;
 
 	WebCrawler::GuiStorage* m_guiStorage;

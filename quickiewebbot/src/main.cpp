@@ -11,6 +11,6 @@ int main(int argc, char *argv[])
 	initWatchDogApi();
 
 	QuickieWebBot::Application app(argc, argv);
-	stackOverflowFunction(42);
+	//stackOverflowFunction(42);
 	return app.exec(); 
 }
