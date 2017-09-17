@@ -4,6 +4,8 @@ project(${WatchDogApiDllName})
 set(WatchDogApiDllNameSourcesDir src)
 set(WatchDogApiDllNameHeadersDir include)
 
+set(CommonLibHeadersDir ../common/include)
+
 aux_source_directory(${WatchDogApiDllNameSourcesDir} WatchDogApiDllNameSourcesList)
 file(GLOB_RECURSE WatchDogApiDllNameHeadersList "include/*.h")
 

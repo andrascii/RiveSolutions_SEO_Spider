@@ -377,7 +377,7 @@ void ApplicationSettings::setUrl(const QUrl& url)
 
 void ApplicationSettings::registryProperty(const QByteArray& key, QVariant property, QVariant defaultValue) noexcept
 {
-
+	m_applicationSettings->setValue(key.constData(), m_defaults[key].isValid() ? m_defaults[key] : defaultValue);
 }
 
 void ApplicationSettings::setDefaults(const QString &str)

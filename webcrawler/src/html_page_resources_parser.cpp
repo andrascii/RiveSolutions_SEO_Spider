@@ -8,6 +8,12 @@ namespace WebCrawler
 void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
 	parseResourceType(output, pageRaw);
+
+	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	{
+		return;
+	}
+
 	parseHtmlResources(output, pageRaw);
 	parseJavaScriptResources(output, pageRaw);
 	parseStyleSheetResources(output, pageRaw);
@@ -20,6 +26,12 @@ void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) no
 
 void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
+	if (pageRaw->contentType.contains("javascript"))
+	{
+		pageRaw->resourceType = PageRawResource::ResourceJavaScript;
+		return;
+	}
+
 	if (pageRaw->contentType.startsWith("image/"))
 	{
 		pageRaw->resourceType = PageRawResource::ResourceImage;
@@ -32,18 +44,23 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 		return;
 	}
 
+	WARNINGLOG << "Unknown resource type: " << pageRaw->contentType;
+
 	pageRaw->resourceType = PageRawResource::ResourceOther;
 }
 
 void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	std::vector<QUrl> urls = GumboParsingHelpers::parsePageUrlList(output->root);
+	std::vector<QUrl> urls = GumboParsingHelpers::parsePageUrlList(output->root, false);
 
 	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceHtml, url, pageRaw->url });
+		PageRawResource::ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
+			PageRawResource::ResourceHtml : PageRawResource::ResourceOther;
+		
+		pageRaw->rawResources.push_back(PageRawResource{ resourceType, url, pageRaw->url });
 	}
 }
 

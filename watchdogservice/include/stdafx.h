@@ -46,8 +46,6 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 #include <QTimer>
-#include <QTcpSocket>
-#include <QTcpServer>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QReadWriteLock>
@@ -57,12 +55,18 @@
 #include <QDebug>
 #include <QProcess>
 #include <QDateTime>
+#include <QUuid>
+#include <QDialog>
+#include <QMessageBox>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#include <dbghelp.h>
 #else
 #error You compile this code on unsupported platform!
 #endif
+
+#include "common_macro_helpers.h"
 
 
 using namespace std::chrono_literals;

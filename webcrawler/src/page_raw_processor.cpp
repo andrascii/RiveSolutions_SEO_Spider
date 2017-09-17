@@ -20,11 +20,12 @@ PageRawProcessor::PageRawProcessor(WebCrawlerInternalUrlStorage* crawlerStorage,
 {
 	moveThisToSeparateThread();
 
+	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageResourcesParser>()); // should be first in the list
 	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageMetaParser>());
 	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageTitleParser>());
 	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageHParser>());
 	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageWordCountParser>());
-	m_htmlPageParser.addPageRawParser(std::make_shared<HtmlPageResourcesParser>());
+	
 }
 
 void PageRawProcessor::setHost(QUrl host)
@@ -34,7 +35,7 @@ void PageRawProcessor::setHost(QUrl host)
 
 void PageRawProcessor::process()
 {
-	QUrl url;
+	WebCrawlerRequest url;
 	QueuedDownloader::Reply reply;
 
 	const bool replyExtracted = m_queuedDownloader->extractReply(reply);
@@ -66,28 +67,35 @@ void PageRawProcessor::process()
 		pageRaw->hasSeveralMetaKeywordsTags = false;
 		pageRaw->hasSeveralTitleTags = false;
 
-		if (!contentType.startsWith("application"))
+
+		if (sizeKB > 512)
 		{
-			// check for contentType != text/html ???
-			// or check for existence html tags like <body> ???
-			// or combine several approaches ???
-			if (sizeKB > 512)
-			{
-				WARNINGLOG << "Page size is greater than 512 KB, "
-					<< "size: " << sizeKB << " KB, "
-					<< "URL: " << reply.url.toString() << ", "
-					<< "Content-Type: " << contentType;
-			}
-
-
-			m_htmlPageParser.parsePage(reply.responseBody, pageRaw);
+			WARNINGLOG << "Page size is greater than 512 KB, "
+				<< "size: " << sizeKB << " KB, "
+				<< "URL: " << reply.url.toString() << ", "
+				<< "Content-Type: " << contentType;
 		}
+		
+		m_htmlPageParser.parsePage(reply.responseBody, pageRaw);
 
 		if (!PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url))
 		{
 			std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 			urlList = PageRawParserHelpers::resolveUrlList(reply.url, urlList);
-			m_webCrawlerInternalUrlStorage->saveUrlList(urlList);
+			m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
+
+			std::vector<QUrl> resourcesUrlList;
+			for (const PageRawResource& resource : pageRaw->rawResources)
+			{
+				QString resourceUrlStr = resource.resourceUrl.toDisplayString();
+				
+				if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) && 
+					resource.resourceType != PageRawResource::ResourceHtml)
+				{
+					resourcesUrlList.push_back(resource.resourceUrl);
+				}
+			}
+			m_webCrawlerInternalUrlStorage->saveUrlList(resourcesUrlList, RequestTypeHead);
 		}
 
 #ifdef QT_DEBUG

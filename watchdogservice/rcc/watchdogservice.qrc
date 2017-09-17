@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>images/fatal-error-icon.png</file>
+    </qresource>
+</RCC>

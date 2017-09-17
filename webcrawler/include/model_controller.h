@@ -35,6 +35,7 @@ private:
 
 	void processPageRawHtmlResources(PageRawPtr pageRaw) noexcept;
 	void processPageRawResources(PageRawPtr pageRaw) noexcept;
+	void fixPageRawResourceType(PageRawPtr pageRaw) noexcept;
 
 	bool isUrlExternal(const QUrl& url) const noexcept;
 

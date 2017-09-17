@@ -56,7 +56,7 @@ QString SummaryViewModel::displayData(const QModelIndex& index, const QRect& ite
 	DEBUG_ASSERT(index.model() == static_cast<const QAbstractItemModel*>(model()));
 
 	const QString displayData = index.data(Qt::DisplayRole).toString();
-	QFontMetrics fontMetrics(Application::font());
+	QFontMetrics fontMetrics(font(index));
 	return fontMetrics.elidedText(displayData, Qt::ElideRight, itemVisualRect.width());
 }
 
@@ -84,7 +84,7 @@ const QFont& SummaryViewModel::font(const QModelIndex& index) const noexcept
 {
 	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
 
-	static QFont font;
+	static QFont font("Times", 9);
 
 	font.setBold(false);
 
@@ -113,13 +113,11 @@ void SummaryViewModel::initializeRenderers()
 		IRenderer::SelectionBackgroundRendererType | 
 		IRenderer::BackgroundRendererType
 	);
-
-	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model()->columnCount() * model()->rowCount() * 2));
 }
 
 QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept
 {
-	return QColor(Qt::black);
+	return QColor("#333333");
 }
 
 void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept

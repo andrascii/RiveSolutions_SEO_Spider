@@ -6,6 +6,11 @@ namespace WebCrawler
 
 void HtmlPageMetaParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
+	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	{
+		return;
+	}
+
 	parseMetaContentType(output, pageRaw);
 	parseMetaRefresh(output, pageRaw);
 	parseMetaDescription(output, pageRaw);

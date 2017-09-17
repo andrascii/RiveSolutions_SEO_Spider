@@ -46,6 +46,10 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
+	ASSERT(pageRaw->resourceType >= PageRawResource::ResourceHtml &&
+		pageRaw->resourceType <= PageRawResource::ResourceOther)
+
+	fixPageRawResourceType(pageRaw);
 	processPageRawHtmlResources(pageRaw);
 	processPageRawResources(pageRaw);
 	pageRaw->rawResources.clear();
@@ -394,20 +398,6 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 {
-	const bool external = isUrlExternal(pageRaw->url);
-
-	if (pageRaw->resourceType == PageRawResource::ResourceOther)
-	{
-		PageRawPtr pendingPageRaw = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
-		pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
-
-		DataCollection::StorageType storage = external ? 
-			DataCollection::ExternalOtherResourcesStorageType : DataCollection::OtherResourcesStorageType;
-		
-		m_data->addPageRaw(pageRaw, storage);
-	}
-
-
 	std::map<PageRawResource::ResourceType, DataCollection::StorageType> storageTypes
 	{
 		{ PageRawResource::ResourceImage, DataCollection::ImageResourcesStorageType },
@@ -428,9 +418,28 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		{ PageRawResource::ResourceOther, DataCollection::ExternalOtherResourcesStorageType },
 	};
 
+
+	const bool http = PageRawParserHelpers::isHttpOrHttpsScheme(pageRaw->url.toDisplayString());
+	const bool externalOrNotHttp = isUrlExternal(pageRaw->url) || !http;
+
+	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	{
+		PageRawPtr pendingPageRaw = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
+		pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
+		
+		DataCollection::StorageType storage = externalOrNotHttp ?
+			externalStorageTypes[pageRaw->resourceType] : storageTypes[pageRaw->resourceType];
+		
+		m_data->addPageRaw(pageRaw, storage);
+	}
+
 	for (const PageRawResource& resource : pageRaw->rawResources)
 	{
-		if (resource.resourceType == PageRawResource::ResourceHtml)
+		QString resourceDisplayUrl = resource.resourceUrl.toDisplayString();
+
+		if (resource.resourceType == PageRawResource::ResourceHtml || 
+			resourceDisplayUrl.startsWith("javascript:") ||
+			resourceDisplayUrl.startsWith("#"))
 		{
 			continue;
 		}
@@ -438,18 +447,32 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		PageRawPtr resourceRaw = std::make_shared<PageRaw>();
 		resourceRaw->url = resource.resourceUrl;
 
-		DataCollection::StorageType storage = external ? 
+		bool httpResource = PageRawParserHelpers::isHttpOrHttpsScheme(resourceDisplayUrl);
+		bool externalOrNotHttpResource = isUrlExternal(resourceRaw->url) || !httpResource;
+
+		DataCollection::StorageType storage = externalOrNotHttpResource ?
 			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
 
 		PageRawPtr newOrExistingResource = m_data->pageRaw(resourceRaw, storage);
 		if (!newOrExistingResource)
 		{
 			newOrExistingResource = resourceRaw;
-			m_data->addPageRaw(newOrExistingResource, storage);
+			
+			m_data->addPageRaw(newOrExistingResource, 
+				httpResource ? DataCollection::PendingResourcesStorageType : storage);
 		}
 
 		newOrExistingResource->linksToThisPage.push_back(pageRaw);
 		newOrExistingResource->resourceType = resource.resourceType;
+	}
+}
+
+void ModelController::fixPageRawResourceType(PageRawPtr pageRaw) noexcept
+{
+	PageRawPtr pendingResource = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
+	if (pendingResource && pendingResource->resourceType != PageRawResource::ResourceHtml)
+	{
+		pageRaw->resourceType = pendingResource->resourceType;
 	}
 }
 

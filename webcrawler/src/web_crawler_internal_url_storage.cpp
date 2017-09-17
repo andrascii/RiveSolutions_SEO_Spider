@@ -7,10 +7,10 @@ void WebCrawlerInternalUrlStorage::setHost(const QUrl& url)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
-	m_internalUrlList.insert(url);
+	m_internalUrlList.insert(WebCrawlerRequest{ url, RequestTypeGet });
 }
 
-bool WebCrawlerInternalUrlStorage::extractUrl(QUrl& url) noexcept
+bool WebCrawlerInternalUrlStorage::extractUrl(WebCrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
@@ -28,7 +28,7 @@ bool WebCrawlerInternalUrlStorage::extractUrl(QUrl& url) noexcept
 	return true;
 }
 
-void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList) noexcept
+void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept
 {
 	using VectorIterator = std::vector<QUrl>::const_iterator;
 
@@ -38,9 +38,11 @@ void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList)
 
 	auto insert = [&](VectorIterator iter)
 	{
-		if (m_crawledUrlList.find(*iter) == m_crawledUrlList.end())
+		WebCrawlerRequest item{ *iter, requestType };
+
+		if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
 		{
-			m_internalUrlList.insert(*iter);
+			m_internalUrlList.insert(item);
 			++insertedUrlCounter;
 		}
 	};

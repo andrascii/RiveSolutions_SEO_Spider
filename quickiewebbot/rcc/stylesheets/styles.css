@@ -156,6 +156,15 @@ QuickieWebBot--TableView
 	background: white;
 }
 
+QLabel#SelectFilterLabel
+{
+	color: #D6D6D6;
+	font-size: 48pt;
+	background: white;
+	font-family: "Times";
+	border: 0.01em solid #D6D6D6;
+}
+
 /*/////////////////////////////// Header view ///////////////////////////////*/
 
 QHeaderView
@@ -350,7 +359,6 @@ QSplitter::handle:vertical
 
 QPushButton[groupButton]
 {
-	/*background-color: #d6d6d6;*/
 	padding-left: 0.2em;
 	padding-right: 0.2em;
 }

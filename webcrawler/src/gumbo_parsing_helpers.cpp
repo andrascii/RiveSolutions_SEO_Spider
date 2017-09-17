@@ -1,4 +1,5 @@
 #include "gumbo_parsing_helpers.h"
+#include "page_raw_parser_helpers.h"
 
 namespace WebCrawler
 {
@@ -190,14 +191,24 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage) noexc
 	return decodedHtmlPage;
 }
 
-std::vector<QUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node) noexcept
+std::vector<QUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept
 {
-	auto cond = [](const GumboNode* node)
+	auto cond = [httpOrHttpsOnly](const GumboNode* node)
 	{
-		return node && 
+		bool result = node && 
 			node->type == GUMBO_NODE_ELEMENT && 
 			node->v.element.tag == GUMBO_TAG_A && 
 			gumbo_get_attribute(&node->v.element.attributes, "href");
+
+		if (!result || !httpOrHttpsOnly)
+		{
+			return result;
+		}
+
+		GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
+		QString hrefVal = href->value;
+		
+		return PageRawParserHelpers::isHttpOrHttpsScheme(hrefVal);
 	};
 
 	auto res = [](const GumboNode* node)
@@ -234,32 +245,6 @@ std::vector<QUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node) n
 // 	}
 // 
 // 	return result;
-}
-
-std::vector<const GumboNode*> GumboParsingHelpers::findNodesRecursive(const GumboNode* node, ConditionFunc func) noexcept
-{
-	std::vector<const GumboNode*> result;
-
-	if (func(node))
-	{
-		result.push_back(node);
-	}
-
-
-	if (node->type == GUMBO_NODE_ELEMENT)
-	{
-		const GumboVector* children = &node->v.element.children;
-
-		for (unsigned int i = 0; i < children->length; ++i)
-		{
-			const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
-			std::vector<const GumboNode*> childResult = findNodesRecursive(child, func);
-
-			result.insert(std::end(result), std::begin(childResult), std::end(childResult));
-		}
-	}
-
-	return result;
 }
 
 const GumboNode* GumboParsingHelpers::findChildNode(const GumboNode* node, GumboTag expectedTag, std::map<const char*, const char*> expectedAttributes) noexcept
