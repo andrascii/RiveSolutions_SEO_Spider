@@ -77,12 +77,12 @@ PageLinksStorageAdaptor::PageRawInfoCountAcceptorMethodType PageLinksStorageAdap
 
 	switch (m_pageLinkType)
 	{
-		case PageLinkType::LinkFromThisPageType:
+		case PageLinkType::LinksOnThisPageType:
 		{
 			func = &PageRawInfo::countLinksFromThisPage;
 			break;
 		}
-		case PageLinkType::LinkToThisPageType:
+		case PageLinkType::LinksToThisPageType:
 		{
 			func = &PageRawInfo::countLinksToThisPage;
 			break;
@@ -98,12 +98,12 @@ PageLinksStorageAdaptor::PageRawInfoLinkAcceptorMethodType PageLinksStorageAdapt
 
 	switch (m_pageLinkType)
 	{
-		case PageLinkType::LinkFromThisPageType:
+		case PageLinkType::LinksOnThisPageType:
 		{
 			func = &PageRawInfo::linkFromThisPage;
 			break;
 		}
-		case PageLinkType::LinkToThisPageType:
+		case PageLinkType::LinksToThisPageType:
 		{
 			func = &PageRawInfo::linkToThisPage;
 			break;

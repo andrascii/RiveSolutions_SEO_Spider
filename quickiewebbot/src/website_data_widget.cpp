@@ -4,18 +4,25 @@
 #include "page_view_model.h"
 #include "istorage_adaptor.h"
 #include "storage_adaptor_factory.h"
+#include "page_data_widget.h"
+#include "quickie_web_bot_helpers.h"
 
 
 namespace QuickieWebBot
 {
 
-WebSiteDataWidget::WebSiteDataWidget(QWidget* parent)
+WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* parent)
 	: QFrame(parent)
+	, m_splitter(new QSplitter(this))
 	, m_stackedWidget(new QStackedWidget(this))
+	, m_pageDataWidget(pageDataWidget)
 {
+	m_splitter->setOrientation(Qt::Vertical);
+	m_splitter->setChildrenCollapsible(false);
+
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
-	layout->addWidget(m_stackedWidget);
+	layout->addWidget(m_splitter);
 
 	layout->setMargin(0);
 	layout->setSpacing(0);
@@ -27,6 +34,13 @@ WebSiteDataWidget::WebSiteDataWidget(QWidget* parent)
 
 	m_tables[StorageAdaptorType::StorageAdaptorTypeNone] = m_stackedWidget->addWidget(selectFilterLabel);
 	m_stackedWidget->setCurrentIndex(m_tables[StorageAdaptorType::StorageAdaptorTypeNone]);
+
+	m_splitter->addWidget(m_stackedWidget);
+
+	if (m_pageDataWidget)
+	{
+		m_splitter->addWidget(m_pageDataWidget);
+	}
 }
 
 void WebSiteDataWidget::setStorageAdaptorType(StorageAdaptorType storageAdaptorType)
@@ -54,7 +68,40 @@ void WebSiteDataWidget::setStorageAdaptorType(StorageAdaptorType storageAdaptorT
 	m_stackedWidget->setCurrentIndex(m_tables[storageAdaptorType]);
 
 	VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-		this, SIGNAL(pageViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
+		this, SLOT(pageViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
+}
+
+void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	if (!m_pageDataWidget)
+	{
+		return;
+	}
+
+	const QModelIndex index = selected.size() ? selected.indexes()[0] : QModelIndex();
+	
+	if (const PageModel* storageModel = dynamic_cast<const PageModel*>(index.model()); storageModel)
+	{
+		const IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
+		m_pageDataWidget->setPageRawInfo(storageAdaptor->pageRawInfoPtr(index));
+	}
+}
+
+void WebSiteDataWidget::showEvent(QShowEvent* event)
+{
+	static bool isFirstShow = true;
+
+	if (!isFirstShow)
+	{
+		return;
+	}
+
+	const int mainTableView = QuickieWebBotHelpers::pointsToPixels(700);
+	m_splitter->setSizes(QList<int>() << mainTableView << height() - mainTableView);
+
+	event->ignore();
+
+	isFirstShow = false;
 }
 
 }

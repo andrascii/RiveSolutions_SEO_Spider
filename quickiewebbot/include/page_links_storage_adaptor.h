@@ -8,9 +8,9 @@ namespace QuickieWebBot
 
 enum class PageLinkType
 {
-	LinkFromThisPageType,
-	LinkToThisPageType,
-	ImageFromThisPageType
+	LinksOnThisPageType,
+	LinksToThisPageType,
+	ImagesOnThisPageType
 };
 
 class PageLinksStorageAdaptor : public QObject, public IStorageAdaptor

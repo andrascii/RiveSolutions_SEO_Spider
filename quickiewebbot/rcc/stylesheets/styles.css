@@ -453,7 +453,7 @@ QuickieWebBot--DataPagesWidget
 
 /*/////////////////////////////// QTabWidget ///////////////////////////////*/
 
-QuickieWebBot--AllResourcesWidget QLabel
+QTabWidget QLabel
 {
 	background: white;
 	border: 0.05em solid #D6D6D6;

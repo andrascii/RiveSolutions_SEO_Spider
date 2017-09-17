@@ -11,9 +11,9 @@
 #include "quickie_web_bot_helpers.h"
 #include "titled_widget.h"
 #include "control_panel_widget.h"
-#include "all_resources_widget.h"
 #include "filter_widget.h"
 #include "website_data_widget.h"
+#include "page_data_widget.h"
 
 
 namespace QuickieWebBot
@@ -185,10 +185,16 @@ void DataPagesWidget::initializeStackedWidget()
 {
 	m_stackedWidget = new QStackedWidget(this);
 
-	FilterWidget* errorsFilterWidget = new FilterWidget(new WebSiteDataWidget(m_stackedWidget), m_stackedWidget);
+	FilterWidget* errorsFilterWidget = new FilterWidget(new WebSiteDataWidget(nullptr, m_stackedWidget), m_stackedWidget);
 	errorsFilterWidget->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 
-	AllResourcesWidget* allResourcesPage = new AllResourcesWidget(m_stackedWidget);
+	PageDataWidget* resourceTables = new PageDataWidget(this);
+	resourceTables->setPageDataType(PageDataWidget::LinksOnThisPageType);
+	resourceTables->setPageDataType(PageDataWidget::LinksToThisPageType);
+	resourceTables->setPageDataType(PageDataWidget::ServerResponseForPageType);
+
+	FilterWidget* allResourcesPage = new FilterWidget(new WebSiteDataWidget(resourceTables, m_stackedWidget), m_stackedWidget);
+	allResourcesPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
 
 	TableView* crawlingTableView = new TableView(m_stackedWidget);
 
