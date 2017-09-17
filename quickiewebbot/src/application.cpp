@@ -22,7 +22,7 @@ namespace QuickieWebBot
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_appicationProperties(new ApplicationSettings(this))
+	, m_appicationSettings(new ApplicationSettings(this))
 	, m_webCrawler(new WebCrawler::WebCrawler(Common::g_optimalParserThreadsCount))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
@@ -31,8 +31,6 @@ Application::Application(int& argc, char** argv)
 	WebCrawler::GuiStorage* storage = m_webCrawler->guiStorage();
 	ASSERT(storage->thread() == QThread::currentThread());
 	m_guiStorage = storage;
-
-	loadFromSettings();
 
 	initialize();
 
@@ -56,7 +54,6 @@ Application::Application(int& argc, char** argv)
 
 Application::~Application()
 {
-	saveToSettings();
 }
 
 WebCrawler::WebCrawler* Application::webCrawler() noexcept
@@ -86,41 +83,35 @@ SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() noexcept
 
 ApplicationSettings* Application::properties() noexcept
 {
-	return m_appicationProperties;
+	return m_appicationSettings;
 }
 
-void Application::loadFromSettings() noexcept
+QVariant Application::loadFromSettings(const QByteArray& key, const QVariant& defaultValue) const noexcept
 {
-	const QMetaObject* metaObject = theApp->properties()->metaObject();
-	int propertyCount = metaObject->propertyCount();
-
-	for (int i = 0; i < propertyCount; i++)
-	{
-		QMetaProperty metaPropertry = metaObject->property(i);
-		QByteArray metaPropertryName = metaPropertry.name();
-		QVariant propertyValue = m_appicationProperties->get(metaPropertryName);
-
-		DEBUGLOG << propertyValue.toString();
-		if (propertyValue.isValid())
-		{
-			theApp->properties()->setProperty(metaPropertryName, propertyValue);
-		}
-	}
-
+	QVariant result = m_appicationSettings->getSettings()->value(QLatin1String(key), defaultValue);
+	return result;
 }
 
-void Application::saveToSettings() noexcept
+void Application::saveToSettings(const QByteArray& key, const QVariant& value) noexcept
 {
-	const QMetaObject* metaObject = theApp->properties()->metaObject();
-	int propertyCount = metaObject->propertyCount();
+	m_appicationSettings->getSettings()->setValue(QLatin1String(key), value);
+}
 
-	for (int i = 0; i < propertyCount; i++)
+void Application::removeKeyFromSettings(const QByteArray& key)
+{
+	m_appicationSettings->getSettings()->remove(key);
+}
+
+QList<QByteArray> Application::allKeys() const
+{
+	QList<QByteArray> result;
+	
+	foreach(const QString& key, m_appicationSettings->getSettings()->allKeys())
 	{
-		QMetaProperty metaPropertry = metaObject->property(i);
-		const char* metaPropertryName = metaPropertry.name();
-		m_appicationProperties->set(metaPropertryName, theApp->properties()->property(metaPropertryName));
+		result << key.toLatin1();
 	}
-	m_appicationProperties->saveSettingsToDisk();
+
+	return result;
 }
 
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept

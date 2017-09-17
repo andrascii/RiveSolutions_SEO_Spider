@@ -134,6 +134,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="maximum">
+              <number>300</number>
+             </property>
              <property name="controlKey" stdset="0">
               <string notr="true">minDescriptionLength</string>
              </property>
@@ -163,6 +166,9 @@
                <width>50</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="maximum">
+              <number>300</number>
              </property>
              <property name="controlKey" stdset="0">
               <string notr="true">maxDescriptionLength</string>
@@ -229,6 +235,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="maximum">
+              <number>300</number>
+             </property>
              <property name="controlKey" stdset="0">
               <string notr="true">minTitleLength</string>
              </property>
@@ -258,6 +267,9 @@
                <width>50</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="maximum">
+              <number>300</number>
              </property>
              <property name="controlKey" stdset="0">
               <string notr="true">maxTitleLength</string>
@@ -311,6 +323,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="maximum">
+              <number>300</number>
+             </property>
              <property name="controlKey" stdset="0">
               <string notr="true">maxImageSize</string>
              </property>
@@ -329,6 +344,9 @@
                <width>50</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="maximum">
+              <number>300</number>
              </property>
              <property name="controlKey" stdset="0">
               <string notr="true">maxImageAltTextChars</string>
@@ -349,6 +367,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="maximum">
+              <number>300</number>
+             </property>
              <property name="controlKey" stdset="0">
               <string notr="true">maxH1LengthChars</string>
              </property>
@@ -367,6 +388,9 @@
                <width>50</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="maximum">
+              <number>300</number>
              </property>
              <property name="controlKey" stdset="0">
               <string notr="true">maxH2LengthChars</string>

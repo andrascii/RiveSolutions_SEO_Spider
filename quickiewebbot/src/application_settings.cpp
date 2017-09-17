@@ -21,6 +21,10 @@ ApplicationSettings::~ApplicationSettings()
 	//m_applicationSettings->sync();
 }
 
+QSettings* ApplicationSettings::getSettings() noexcept
+{
+	return m_applicationSettings;
+}
 
 unsigned ApplicationSettings::threadCount() const
 {
@@ -371,19 +375,9 @@ void ApplicationSettings::setUrl(const QUrl& url)
 	emit urlChanged();
 }
 
-QVariant ApplicationSettings::get(const QByteArray& key, SettingsGroup group )
+void ApplicationSettings::registryProperty(const QByteArray& key, QVariant property, QVariant defaultValue) noexcept
 {
-	return m_applicationSettings->value(key, m_defaults[key]);
-}
-
-void ApplicationSettings::set(const QByteArray& key, QVariant value, SettingsGroup group)
-{
-	m_applicationSettings->setValue(key, value);
-}
-
-void ApplicationSettings::saveSettingsToDisk()
-{
-	m_applicationSettings->sync();
+	m_applicationSettings->setValue(key.constData(), m_defaults[key].isValid() ? m_defaults[key] : defaultValue);
 }
 
 void ApplicationSettings::setDefaults(const QString &str)
