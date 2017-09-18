@@ -4,11 +4,10 @@
 namespace WebCrawler
 {
 
-class WebCrawlerInternalUrlStorage
+class CrawlerUrlStorage
 {
 public:
 	// all methods are thread-safe
-
 	void setHost(const QUrl& url);
 
 	// returns random url for crawling (async operation)
@@ -17,6 +16,9 @@ public:
 	bool extractUrl(WebCrawlerRequest& url) noexcept;
 
 	void saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept;
+
+	size_t crawledLinksCount() const noexcept;
+	size_t pendingLinksCount() const noexcept;
 
 private:
 	struct UrlListItemHasher
@@ -32,7 +34,7 @@ private:
 	std::unordered_set<WebCrawlerRequest, UrlListItemHasher> m_internalUrlList;
 	std::unordered_set<WebCrawlerRequest, UrlListItemHasher> m_crawledUrlList;
 
-	std::mutex m_mutex;
+	mutable std::mutex m_mutex;
 };
 
 }

@@ -96,6 +96,13 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="3">
+       <widget class="QuickieWebBot::CrawlerProgressBar" name="progressBar">
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -106,6 +113,11 @@
    <class>QuickieWebBot::UrlLineEdit</class>
    <extends>QLineEdit</extends>
    <header>url_line_edit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QuickieWebBot::CrawlerProgressBar</class>
+   <extends>QProgressBar</extends>
+   <header>crawler_progress_bar.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

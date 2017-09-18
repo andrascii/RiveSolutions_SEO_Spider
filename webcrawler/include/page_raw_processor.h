@@ -9,14 +9,14 @@
 namespace WebCrawler
 {			
 
-class WebCrawlerInternalUrlStorage;
+class CrawlerUrlStorage;
 
 class PageRawProcessor : public AbstractThreadableObject
 {			
 	Q_OBJECT
 			
 public:
-	PageRawProcessor(WebCrawlerInternalUrlStorage* crawlerStorage, 
+	PageRawProcessor(CrawlerUrlStorage* crawlerStorage, 
 		QueuedDownloader* queuedDownloader, QObject* parent = nullptr);
 
 	Q_SIGNAL void webPageParsed(PageRawPtr pageRaw);
@@ -27,7 +27,7 @@ private:
 
 private:
 	HtmlPageParser m_htmlPageParser;
-	WebCrawlerInternalUrlStorage* m_webCrawlerInternalUrlStorage;
+	CrawlerUrlStorage* m_webCrawlerInternalUrlStorage;
 	QueuedDownloader* m_queuedDownloader;
 	std::vector<QUrl> m_pageUrlList;
 	QUrl m_host;

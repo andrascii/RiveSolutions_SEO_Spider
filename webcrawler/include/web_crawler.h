@@ -1,7 +1,7 @@
 #pragma once
 
 #include "page_raw.h"
-#include "web_crawler_internal_url_storage.h"
+#include "crawler_url_storage.h"
 #include "web_crawler_options.h"
 #include "queued_downloader.h"
 
@@ -25,6 +25,8 @@ public:
 
 	GuiStorage* guiStorage() const noexcept;
 
+	const CrawlerUrlStorage* crawlerUrlStorage() const noexcept;
+
 private:
 	Q_SLOT void onPageRawParsed(PageRawPtr pageRaw);
 
@@ -36,7 +38,7 @@ private:
 
 	ModelController* m_modelController;
 	
-	WebCrawlerInternalUrlStorage m_internalUrlStorage;
+	CrawlerUrlStorage m_urlStorage;
 
 	std::vector<std::unique_ptr<PageRawProcessor>> m_workers;
 

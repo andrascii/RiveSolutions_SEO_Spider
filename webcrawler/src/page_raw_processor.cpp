@@ -1,5 +1,5 @@
 #include "page_raw_processor.h"
-#include "web_crawler_internal_url_storage.h"
+#include "crawler_url_storage.h"
 #include "constants.h"
 #include "html_page_title_parser.h"
 #include "html_page_meta_parser.h"
@@ -12,7 +12,7 @@
 namespace WebCrawler
 {
 
-PageRawProcessor::PageRawProcessor(WebCrawlerInternalUrlStorage* crawlerStorage, 
+PageRawProcessor::PageRawProcessor(CrawlerUrlStorage* crawlerStorage, 
 	QueuedDownloader* queuedDownloader, QObject* parent)
 	: AbstractThreadableObject(this, QByteArray("PageRawProcessorThread"))
 	, m_webCrawlerInternalUrlStorage(crawlerStorage)

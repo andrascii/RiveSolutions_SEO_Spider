@@ -1,16 +1,16 @@
-#include "web_crawler_internal_url_storage.h"
+#include "crawler_url_storage.h"
 
 namespace WebCrawler
 {
 
-void WebCrawlerInternalUrlStorage::setHost(const QUrl& url)
+void CrawlerUrlStorage::setHost(const QUrl& url)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
 	m_internalUrlList.insert(WebCrawlerRequest{ url, RequestTypeGet });
 }
 
-bool WebCrawlerInternalUrlStorage::extractUrl(WebCrawlerRequest& url) noexcept
+bool CrawlerUrlStorage::extractUrl(WebCrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
@@ -28,7 +28,7 @@ bool WebCrawlerInternalUrlStorage::extractUrl(WebCrawlerRequest& url) noexcept
 	return true;
 }
 
-void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept
+void CrawlerUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept
 {
 	using VectorIterator = std::vector<QUrl>::const_iterator;
 
@@ -51,6 +51,19 @@ void WebCrawlerInternalUrlStorage::saveUrlList(const std::vector<QUrl>& urlList,
 	{
 		insert(first);
 	}
+}
+
+
+size_t CrawlerUrlStorage::crawledLinksCount() const noexcept
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+	return m_crawledUrlList.size();
+}
+
+size_t CrawlerUrlStorage::pendingLinksCount() const noexcept
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+	return m_internalUrlList.size();
 }
 
 }

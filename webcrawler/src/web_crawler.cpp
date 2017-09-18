@@ -19,7 +19,7 @@ WebCrawler::WebCrawler(unsigned int threadCount)
 
 	for (unsigned i = 0; i < threadCount; ++i)
 	{
-		m_workers.push_back(std::make_unique<PageRawProcessor>(&m_internalUrlStorage, &m_queuedDownloader));
+		m_workers.push_back(std::make_unique<PageRawProcessor>(&m_urlStorage, &m_queuedDownloader));
 		
 		VERIFY(connect(m_workers[i].get(), SIGNAL(webPageParsed(PageRawPtr)),
 			SLOT(onPageRawParsed(PageRawPtr))));
@@ -63,7 +63,7 @@ void WebCrawler::startCrawlingInternal(const WebCrawlerOptions& options)
 	INFOLOG << "crawler started";
 
 	m_queuedDownloader.startExecution();
-	m_internalUrlStorage.setHost(host);
+	m_urlStorage.setHost(host);
 
 	for (std::unique_ptr<PageRawProcessor>& worker : m_workers)
 	{
@@ -88,6 +88,11 @@ void WebCrawler::stopCrawlingInternal()
 GuiStorage* WebCrawler::guiStorage() const noexcept
 {
 	return m_modelController->data()->guiStorage();
+}
+
+const CrawlerUrlStorage* WebCrawler::crawlerUrlStorage() const noexcept
+{
+	return &m_urlStorage;
 }
 
 void WebCrawler::onPageRawParsed(PageRawPtr pageRaw)

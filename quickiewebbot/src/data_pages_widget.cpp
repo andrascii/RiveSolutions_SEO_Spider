@@ -14,7 +14,7 @@
 #include "filter_widget.h"
 #include "website_data_widget.h"
 #include "page_data_widget.h"
-
+#include "crawler_progress_bar.h"
 
 namespace QuickieWebBot
 {

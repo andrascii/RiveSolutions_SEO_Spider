@@ -12,15 +12,17 @@ class ControlPanelWidget : public QFrame
 public:
 	ControlPanelWidget(QWidget* parent);
 
+	const QUrl& url() const noexcept;
+
 private:
 	Q_SLOT void setUrl();
 	Q_SLOT void startCrawling();
-
-private:
-	void initialize();
+	Q_SLOT void stopCrawling();
 
 private:
 	Ui::ControlPanel m_ui;
+
+	QUrl m_url;
 };
 
 }

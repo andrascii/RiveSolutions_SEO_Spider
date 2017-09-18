@@ -10,7 +10,19 @@ namespace QuickieWebBot
 ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	: QFrame(parent)
 {
-	initialize();
+	m_ui.setupUi(this);
+
+	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::startCrawling));
+	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::stopCrawling));
+	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
+
+	m_ui.progressBar->setVisible(false);
+}
+
+
+const QUrl& ControlPanelWidget::url() const noexcept
+{
+	return m_url;
 }
 
 void ControlPanelWidget::setUrl()
@@ -31,17 +43,16 @@ void ControlPanelWidget::startCrawling()
 	}
 
 	ActionRegistry::instance().globalAction(s_startCrawlerAction)->trigger();
+
+	m_ui.progressBar->show();
 }
 
-void ControlPanelWidget::initialize()
+
+void ControlPanelWidget::stopCrawling()
 {
-	m_ui.setupUi(this);
+	ActionRegistry::instance().globalAction(s_stopCrawlerAction)->trigger();
 
-	QAction* stopCrawlerAction = ActionRegistry::instance().globalAction(s_stopCrawlerAction);
-
-	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::startCrawling));
-	VERIFY(connect(m_ui.stopCrawlingButton, SIGNAL(clicked()), stopCrawlerAction, SLOT(trigger())));
-	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
+	m_ui.progressBar->hide();
 }
 
 }

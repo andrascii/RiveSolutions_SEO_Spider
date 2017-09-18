@@ -89,5 +89,7 @@ bool lockExceptionFilter()
 
 extern "C" WATCH_DOG_API_EXPORT void initWatchDogApi()
 {
-	WatchDogApi::watchDogServiceApi()->setThreadExceptionHandlers();
+	//
+	// This is just a helper for linker to load watchdogapi.dll
+	//
 }
