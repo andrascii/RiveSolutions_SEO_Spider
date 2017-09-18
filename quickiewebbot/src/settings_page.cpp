@@ -1,5 +1,5 @@
 #include "application.h"
-#include "application_settings.h"
+#include "preferences.h"
 #include "settings_page.h"
 #include "icontrol_adaptor.h"
 #include "control_adaptor_check_box.h"
@@ -42,8 +42,8 @@ void SettingsPage::applyChanges() noexcept
 			continue;
 		}
 		DEBUGLOG << controlKey.constData() << " " << m_controlAdaptors[controlKey]->value().toString();
-		theApp->properties()->setProperty(controlKey.constData(), m_controlAdaptors[controlKey]->value());
-		DEBUGLOG << theApp->properties()->property(controlKey.constData()).toString();
+		theApp->preferences()->setProperty(controlKey.constData(), m_controlAdaptors[controlKey]->value());
+		DEBUGLOG << theApp->preferences()->property(controlKey.constData()).toString();
 	}
 
 	m_changedSettingsKeys.clear();
@@ -61,7 +61,7 @@ void SettingsPage::reloadSettings() noexcept
 
 	for (auto controlAdaptor : m_controlAdaptors)
 	{
-		QVariant propertyValue = theApp->properties()->property(controlAdaptor.first.toLatin1().constData());
+		QVariant propertyValue = theApp->preferences()->property(controlAdaptor.first.toLatin1().constData());
 		controlAdaptor.second->setValue(propertyValue);
 		DEBUGLOG << controlAdaptor.first << " " << controlAdaptor.second->value().toString();
 	}
@@ -105,7 +105,7 @@ void SettingsPage::init()
 		}
 
 		
-		QVariant propertyValue = theApp->properties()->property(controlKey.constData());
+		QVariant propertyValue = theApp->preferences()->property(controlKey.constData());
 
 		if (!propertyValue.isValid())
 		{

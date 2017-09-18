@@ -1,6 +1,6 @@
 #include "url_line_edit.h"
 #include "application.h"
-#include "application_settings.h"
+#include "preferences.h"
 
 namespace QuickieWebBot
 {

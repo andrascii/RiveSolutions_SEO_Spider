@@ -7,10 +7,9 @@
 #include "web_crawler.h"
 #include "gui_storage.h"
 #include "constants.h"
-#include "application_settings.h"
+#include "preferences.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
-
 #include "ui_crawler_settings.h"
 #include "ui_proxy_settings.h"
 #include "ui_limits_settings.h"
@@ -22,16 +21,13 @@ namespace QuickieWebBot
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
-	, m_appicationSettings(new ApplicationSettings(this))
+	, m_preferences(new Preferences(this, this))
 	, m_webCrawler(new WebCrawler::WebCrawler(Common::g_optimalParserThreadsCount))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
+	, m_settings(nullptr)
 {
-	WebCrawler::GuiStorage* storage = m_webCrawler->guiStorage();
-	ASSERT(storage->thread() == QThread::currentThread());
-	m_guiStorage = storage;
-
 	initialize();
 
 	initializeStyleSheet();
@@ -50,10 +46,6 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 	INFOLOG << "App Version:" << applicationVersion();
-}
-
-Application::~Application()
-{
 }
 
 WebCrawler::WebCrawler* Application::webCrawler() noexcept
@@ -81,32 +73,32 @@ SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() noexcept
 	return m_summaryDataAccessorFactory.get();
 }
 
-ApplicationSettings* Application::properties() noexcept
+Preferences* Application::preferences() noexcept
 {
-	return m_appicationSettings;
+	return m_preferences;
 }
 
 QVariant Application::loadFromSettings(const QByteArray& key, const QVariant& defaultValue) const noexcept
 {
-	QVariant result = m_appicationSettings->getSettings()->value(QLatin1String(key), defaultValue);
+	QVariant result = settings()->value(QLatin1String(key), defaultValue);
 	return result;
 }
 
 void Application::saveToSettings(const QByteArray& key, const QVariant& value) noexcept
 {
-	m_appicationSettings->getSettings()->setValue(QLatin1String(key), value);
+	settings()->setValue(QLatin1String(key), value);
 }
 
 void Application::removeKeyFromSettings(const QByteArray& key)
 {
-	m_appicationSettings->getSettings()->remove(key);
+	settings()->remove(key);
 }
 
 QList<QByteArray> Application::allKeys() const
 {
 	QList<QByteArray> result;
 	
-	foreach(const QString& key, m_appicationSettings->getSettings()->allKeys())
+	foreach(const QString& key, settings()->allKeys())
 	{
 		result << key.toLatin1();
 	}
@@ -139,8 +131,29 @@ void Application::registerServices() const
 	ServiceLocator::instance()->addService<SettingsPageRegistry>(new SettingsPageRegistry);
 }
 
+void Application::initQSettings()
+{
+	m_settings = new QSettings(
+		softwareBrandingOptions()->organizationName(), 
+		softwareBrandingOptions()->productName(),
+		qobject_cast<QObject*>(this));
+}
+
+QSettings* Application::settings() const
+{
+	ASSERT(m_settings);
+
+	return m_settings;
+}
+
 void Application::initialize() noexcept
 {
+	WebCrawler::GuiStorage* storage = m_webCrawler->guiStorage();
+	
+	ASSERT(storage->thread() == QThread::currentThread());
+	
+	m_guiStorage = storage;
+
 	registerServices();
 
 	m_mainFrame.reset(new MainFrame);
@@ -149,6 +162,10 @@ void Application::initialize() noexcept
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
 #endif
+
+	initQSettings();
+
+	preferences()->load();
 
 	registerSettingsPages();
 }

@@ -1,10 +1,11 @@
 #pragma once
-#include "qsettings.h"
 
 namespace QuickieWebBot
 {
 
-class ApplicationSettings : public QObject
+class ISettingsAccessor;
+
+class Preferences : public QObject
 {
 	Q_OBJECT
 
@@ -191,13 +192,12 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 
-	QSettings* getSettings() noexcept;
-	void registryProperty(const QByteArray& key, QVariant property, QVariant defaultValue) noexcept;
 
-	ApplicationSettings(QObject* parent = nullptr);
-	~ApplicationSettings();
+	Preferences(ISettingsAccessor* settingsAccessor, QObject* parent = nullptr);
+	~Preferences();
 
-public:
+	void load();
+
 	enum SettingsGroup
 	{
 		ProjectSettings,
@@ -205,10 +205,12 @@ public:
 		WindowsSettings
 	};
 	
-	void setDefaults(const QString &str);
+private:
+	void readDefaults(const QString& str);
+	void addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept;
 
 private:
-	QSettings* m_applicationSettings;
+	ISettingsAccessor* m_settingsAccessor;
 	std::map<QString, QVariant> m_defaults;
 
 	unsigned m_threadCount;

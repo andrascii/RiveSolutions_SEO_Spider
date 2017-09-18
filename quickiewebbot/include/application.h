@@ -5,11 +5,11 @@
 #include "summary_data_accessor_factory.h"
 #include "storage_adaptor_factory.h"
 #include "isettings_accessor.h"
+#include "web_crawler.h"
 
 namespace WebCrawler
 {
 
-class WebCrawler;
 class GuiStorage;
 
 }
@@ -17,7 +17,7 @@ class GuiStorage;
 namespace QuickieWebBot
 {
 
-class ApplicationSettings;
+class Preferences;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -25,11 +25,10 @@ class Application : public QApplication, public ISettingsAccessor
 
 public:
 	Application(int& argc, char** argv);
-	~Application();
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
-	ApplicationSettings* properties() noexcept;
+	Preferences* preferences() noexcept;
 	MainFrame* mainFrame() noexcept;
 	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
@@ -52,12 +51,15 @@ private:
 	void registerSettingsPages() const;
 	void registerServices() const;
 
+	void initQSettings();
+	QSettings* settings() const;
+
 private:
 	void initialize() noexcept;
 	void showSplashScreen() const noexcept;
 
 private:
-	ApplicationSettings* m_appicationSettings;
+	Preferences* m_preferences;
 	std::unique_ptr<WebCrawler::WebCrawler> m_webCrawler;
 
 	WebCrawler::GuiStorage* m_guiStorage;
@@ -67,6 +69,8 @@ private:
 
 	std::unique_ptr<StorageAdaptorFactory> m_storageAdatpterFactory;
 	std::unique_ptr<SummaryDataAccessorFactory> m_summaryDataAccessorFactory;
+
+	QSettings* m_settings;
 };
 
 }

@@ -1,6 +1,6 @@
 #include "application.h"
 #include "application_settings_widget.h"
-#include "application_settings.h"
+#include "preferences.h"
 #include "main_frame.h"
 #include "model_controller.h"
 #include "data_collection.h"
@@ -113,16 +113,16 @@ void MainFrame::startCrawler()
 {
 	WebCrawler::WebCrawlerOptions options;
 
-	options.url = theApp->properties()->url();
-	options.minTitleLength = theApp->properties()->minTitleLength();
-	options.maxTitleLength = theApp->properties()->maxTitleLength();
-	options.limitMaxUrlLength = theApp->properties()->limitMaxUrlLength();
-	options.maxDescriptionLength = theApp->properties()->maxDescriptionLength();
-	options.minDescriptionLength = theApp->properties()->minDescriptionLength();
-	options.maxH1LengthChars = theApp->properties()->maxH1LengthChars();
-	options.maxH2LengthChars = theApp->properties()->maxH2LengthChars();
-	options.maxImageAltTextChars = theApp->properties()->maxImageAltTextChars();
-	options.maxImageSizeKb = theApp->properties()->maxImageSize();
+	options.url = theApp->preferences()->url();
+	options.minTitleLength = theApp->preferences()->minTitleLength();
+	options.maxTitleLength = theApp->preferences()->maxTitleLength();
+	options.limitMaxUrlLength = theApp->preferences()->limitMaxUrlLength();
+	options.maxDescriptionLength = theApp->preferences()->maxDescriptionLength();
+	options.minDescriptionLength = theApp->preferences()->minDescriptionLength();
+	options.maxH1LengthChars = theApp->preferences()->maxH1LengthChars();
+	options.maxH2LengthChars = theApp->preferences()->maxH2LengthChars();
+	options.maxImageAltTextChars = theApp->preferences()->maxImageAltTextChars();
+	options.maxImageSizeKb = theApp->preferences()->maxImageSize();
 
 	theApp->webCrawler()->startCrawling(options);
 }

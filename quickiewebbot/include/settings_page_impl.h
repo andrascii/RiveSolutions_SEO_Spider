@@ -1,7 +1,7 @@
 #pragma once
 
 #include "isettings_page.h"
-#include "application_settings.h"
+#include "preferences.h"
 #include "application.h"
 #include "service_locator.h"
 #include "settings_page_registry.h"

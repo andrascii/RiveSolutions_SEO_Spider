@@ -1,5 +1,5 @@
 #include "application.h"
-#include "application_settings.h"
+#include "preferences.h"
 #include "control_panel_widget.h"
 #include "action_registry.h"
 #include "action_keys.h"
@@ -20,7 +20,7 @@ void ControlPanelWidget::setUrl()
 		return;
 	}
 
-	theApp->properties()->setUrl(m_ui.urlLineEdit->text());
+	theApp->preferences()->setUrl(m_ui.urlLineEdit->text());
 }
 
 void ControlPanelWidget::startCrawling()
