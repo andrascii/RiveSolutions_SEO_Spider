@@ -25,6 +25,9 @@ public:
 private:
 	virtual void process() override;
 
+	void preprocessRedirectResource(const PageRawPtr& pageRaw, const QUrl& redirectUrl);
+	void schedulePageResourcesLoading(const PageRawPtr& pageRaw);
+
 private:
 	HtmlPageParser m_htmlPageParser;
 	CrawlerUrlStorage* m_webCrawlerInternalUrlStorage;

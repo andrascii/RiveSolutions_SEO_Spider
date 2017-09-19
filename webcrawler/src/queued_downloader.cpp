@@ -74,6 +74,7 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 		return;
 	}
 
+
 	markReplyProcessed(reply);
 	reply->disconnect(this);
 
@@ -95,6 +96,12 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 	if (processBody)
 	{
 		response.responseBody = reply->readAll();
+	}
+
+	QUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	if (!redirectUrl.isEmpty())
+	{
+		response.redirectUrl = redirectUrl;
 	}
 
 	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);

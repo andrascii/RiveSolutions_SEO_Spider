@@ -5,8 +5,31 @@
 namespace WebCrawler
 {
 
+class ResourcesCacheGuard
+{
+public:
+	ResourcesCacheGuard(QSet<QString>& cache, const std::deque<PageRawResource>& resources)
+		: m_cache(cache)
+	{
+		for (const PageRawResource& resource : resources)
+		{
+			m_cache.insert(resource.resourceUrl.toDisplayString());
+		}
+	}
+
+	~ResourcesCacheGuard()
+	{
+		m_cache.clear();
+	}
+
+private:
+	QSet<QString>& m_cache;
+};
+
 void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
+	ResourcesCacheGuard cacheGurad(m_resourcesCache, pageRaw->rawResources);
+
 	parseResourceType(output, pageRaw);
 
 	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
@@ -57,10 +80,13 @@ void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		PageRawResource::ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
-			PageRawResource::ResourceHtml : PageRawResource::ResourceOther;
+		if (!resourceExists(url))
+		{
+			PageRawResource::ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
+				PageRawResource::ResourceHtml : PageRawResource::ResourceOther;
+			pageRaw->rawResources.push_back(PageRawResource{ resourceType, url, pageRaw->url });
+		}
 		
-		pageRaw->rawResources.push_back(PageRawResource{ resourceType, url, pageRaw->url });
 	}
 }
 
@@ -85,7 +111,11 @@ void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, Page
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, url, pageRaw->url });
+		if (!resourceExists(url))
+		{
+			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, url, pageRaw->url });
+		}
+		
 	}
 }
 
@@ -111,7 +141,10 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceStyleSheet, url, pageRaw->url });
+		if (!resourceExists(url))
+		{
+			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceStyleSheet, url, pageRaw->url });
+		}
 	}
 }
 
@@ -136,7 +169,10 @@ void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, PageRawPt
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceImage, url, pageRaw->url });
+		if (!resourceExists(url))
+		{
+			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceImage, url, pageRaw->url });
+		}
 	}
 }
 
@@ -162,7 +198,10 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceVideo, url, pageRaw->url });
+		if (!resourceExists(url))
+		{
+			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceVideo, url, pageRaw->url });
+		}
 	}
 }
 
@@ -191,7 +230,10 @@ void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRaw
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
+		if (!resourceExists(url))
+		{
+			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
+		}
 	}
 }
 
@@ -221,7 +263,10 @@ void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRaw
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
+		if (!resourceExists(url))
+		{
+			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
+		}
 	}
 }
 
@@ -263,8 +308,24 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
+		if (!resourceExists(url))
+		{
+			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, url, pageRaw->url });
+		}
 	}
+}
+
+bool HtmlPageResourcesParser::resourceExists(const QUrl& resourceUrl) const noexcept
+{
+	QString resourceUrlStr = resourceUrl.toDisplayString();
+	
+	if (m_resourcesCache.contains(resourceUrlStr))
+	{
+		return true;
+	}
+	
+	m_resourcesCache.insert(resourceUrlStr);
+	return false;
 }
 
 }

@@ -10,7 +10,6 @@ class HtmlPageResourcesParser : public IPageParser
 public:
 	virtual void parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept override;
 	
-	
 private:
 	void parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 	void parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
@@ -21,6 +20,11 @@ private:
 	void parseFlashResourcesV1(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 	void parseFlashResourcesV2(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
 	void parseFlashResourcesV3(GumboOutput* output, PageRawPtr& pageRaw) noexcept;
+
+	bool resourceExists(const QUrl& resourceUrl) const noexcept;
+
+private:
+	mutable QSet<QString> m_resourcesCache;
 };
 
 }

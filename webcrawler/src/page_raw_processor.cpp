@@ -75,28 +75,10 @@ void PageRawProcessor::process()
 				<< "URL: " << reply.url.toString() << ", "
 				<< "Content-Type: " << contentType;
 		}
-		
+
+		preprocessRedirectResource(pageRaw, reply.redirectUrl);
 		m_htmlPageParser.parsePage(reply.responseBody, pageRaw);
-
-		if (!PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url))
-		{
-			std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
-			urlList = PageRawParserHelpers::resolveUrlList(reply.url, urlList);
-			m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
-
-			std::vector<QUrl> resourcesUrlList;
-			for (const PageRawResource& resource : pageRaw->rawResources)
-			{
-				QString resourceUrlStr = resource.resourceUrl.toDisplayString();
-				
-				if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) && 
-					resource.resourceType != PageRawResource::ResourceHtml)
-				{
-					resourcesUrlList.push_back(resource.resourceUrl);
-				}
-			}
-			m_webCrawlerInternalUrlStorage->saveUrlList(resourcesUrlList, RequestTypeHead);
-		}
+		schedulePageResourcesLoading(pageRaw);
 
 #ifdef QT_DEBUG
 		if (pageRaw->fromUrl.toString().isEmpty())
@@ -110,5 +92,40 @@ void PageRawProcessor::process()
 }
 
 
+
+void PageRawProcessor::preprocessRedirectResource(const PageRawPtr& pageRaw, const QUrl& redirectUrl)
+{
+	if (!redirectUrl.isEmpty())
+	{
+		PageRawResource redirectResource;
+		redirectResource.resourceType = PageRawResource::ResourceHtml;
+		redirectResource.resourceUrl = redirectUrl;
+		QString redirectUrlStr = redirectUrl.toDisplayString();
+		pageRaw->rawResources.push_back(redirectResource);
+	}
+}
+
+void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
+{
+	if (!PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url))
+	{
+		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
+		urlList = PageRawParserHelpers::resolveUrlList(pageRaw->url, urlList);
+		m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
+
+		std::vector<QUrl> resourcesUrlList;
+		for (const PageRawResource& resource : pageRaw->rawResources)
+		{
+			QString resourceUrlStr = resource.resourceUrl.toDisplayString();
+
+			if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
+				resource.resourceType != PageRawResource::ResourceHtml)
+			{
+				resourcesUrlList.push_back(resource.resourceUrl);
+			}
+		}
+		m_webCrawlerInternalUrlStorage->saveUrlList(resourcesUrlList, RequestTypeHead);
+	}
+}
 
 }

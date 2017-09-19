@@ -15,6 +15,7 @@ public:
 	{
 		int statusCode;
 		QUrl url;
+		QUrl redirectUrl;
 		QByteArray responseBody;
 		QByteArray responseHeaderValuePairs;
 		QMap<QByteArray, QByteArray> responseHeaders;
