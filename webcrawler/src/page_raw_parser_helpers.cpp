@@ -80,6 +80,14 @@ std::vector<QUrl> PageRawParserHelpers::resolveUrlList(const QUrl& baseUrl, cons
 	std::vector<QUrl> result;
 	for (const QUrl& url : urlList)
 	{
+		if (url.toDisplayString().startsWith("//"))
+		{
+			QUrl fixedUrl = QString("http:") + url.toDisplayString();
+			result.push_back(fixedUrl);
+
+			continue;
+		}
+
 		if (!url.isRelative())
 		{
 			result.push_back(url);

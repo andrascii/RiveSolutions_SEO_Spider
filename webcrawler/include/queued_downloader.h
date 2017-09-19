@@ -33,6 +33,7 @@ private:
 
 	Q_SLOT void urlDownloaded(QNetworkReply* reply);
 	Q_SLOT void metaDataChanged(QNetworkReply* reply);
+	Q_SLOT void queryError(QNetworkReply* reply, QNetworkReply::NetworkError code);
 
 	void processReply(QNetworkReply* reply);
 
