@@ -9,6 +9,7 @@ CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 	, m_calculatePercentTimer(new QTimer(this))
 {
 	m_calculatePercentTimer->setInterval(150);
+	setMaximum(100);
 
 	VERIFY(connect(m_calculatePercentTimer, &QTimer::timeout, this, &CrawlerProgressBar::calculatePercents));
 }
@@ -33,9 +34,9 @@ void CrawlerProgressBar::calculatePercents()
 	const size_t pendingLinksCount = m_urlStorage->pendingLinksCount();
 	const size_t amountLinksCount = pendingLinksCount + crawledLinksCount;
 
-	const double percents = amountLinksCount / 100.0;
+	const double percents = crawledLinksCount / amountLinksCount * 100;
 
-	setValue(crawledLinksCount / (percents ? percents : percents + 1));
+	setValue(percents ? floor(percents)  : percents + 1);
 }
 
 }
