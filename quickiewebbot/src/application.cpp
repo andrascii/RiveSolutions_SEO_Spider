@@ -10,10 +10,10 @@
 #include "preferences.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
-#include "ui_crawler_settings.h"
-#include "ui_proxy_settings.h"
-#include "ui_limits_settings.h"
-#include "ui_preferences_settings.h"
+#include "ui_crawler_settings_widget.h"
+#include "ui_proxy_settings_widget.h"
+#include "ui_limits_settings_widget.h"
+#include "ui_preferences_settings_widget.h"
 
 
 namespace QuickieWebBot
@@ -120,10 +120,10 @@ void Application::mainFrameIsReadyForShow()
 
 void Application::registerSettingsPages() const
 {
-	SettingsPageImpl<Ui_CrawlerSettings>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettings));
-	SettingsPageImpl<Ui_ProxySettings>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettings));
-	SettingsPageImpl<Ui_LimitsSettings>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettings));
-	SettingsPageImpl<Ui_PreferencesSettings>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettings));
+	SettingsPageImpl<Ui_CrawlerSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettingsWidget));
+	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettingsWidget));
+	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
+	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
 }
 
 void Application::registerServices() const

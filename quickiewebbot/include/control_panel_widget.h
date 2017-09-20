@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_control_panel.h"
+#include "ui_control_panel_widget.h"
 
 namespace QuickieWebBot
 {
@@ -20,7 +20,7 @@ private:
 	Q_SLOT void stopCrawling();
 
 private:
-	Ui::ControlPanel m_ui;
+	Ui::ControlPanelWidget m_ui;
 
 	QUrl m_url;
 };

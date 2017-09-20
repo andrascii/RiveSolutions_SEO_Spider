@@ -9,24 +9,16 @@ namespace QuickieWebBot
 
 ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	: QDialog(parent)
-	, m_stackedWidget(new QStackedWidget(this))
 	, m_somethingChanged(false)
 {
 	initialize();
 
-	VERIFY(connect(m_ui.okButton, SIGNAL(clicked()), 
-		this, SLOT(okButtonClicked())));
-	VERIFY(connect(m_ui.applyButton, SIGNAL(clicked()), 
-		this, SLOT(applyChanges())));
-	VERIFY(connect(m_ui.cancelButton, SIGNAL(clicked()),
-		this, SLOT(cancelButtonClicked())));
-	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)),
-		m_stackedWidget, SLOT(setCurrentIndex(int))));
-	VERIFY(connect(m_stackedWidget, SIGNAL(currentChanged(int)),
-		this, SLOT(reloadSettingsSlot())));
+	VERIFY(connect(m_ui.okButton, SIGNAL(clicked()), this, SLOT(okButtonClicked())));
+	VERIFY(connect(m_ui.applyButton, SIGNAL(clicked()), this, SLOT(applyChanges())));
+	VERIFY(connect(m_ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonClicked())));
+	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
+	VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(reloadSettingsSlot())));
 }
-
-
 
 void ApplicationSettingsWidget::showEvent(QShowEvent* event)
 {
@@ -39,14 +31,13 @@ void ApplicationSettingsWidget::hideEvent(QHideEvent* event)
 	restoreChangedValues();
 }
 
-
 void ApplicationSettingsWidget::restoreChangedValues()
 {
 	m_somethingChanged = false;
 
-	for (int index = 0; index < m_stackedWidget->count(); index++)
+	for (int index = 0; index < m_ui.stackedWidget->count(); index++)
 	{
-		QWidget* widget = m_stackedWidget->widget(index);
+		QWidget* widget = m_ui.stackedWidget->widget(index);
 
 		QuickieWebBotHelpers::safe_runtime_static_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
 	}
@@ -58,9 +49,9 @@ void ApplicationSettingsWidget::applyChanges()
 {
 	m_somethingChanged = false;
 
-	for (int index = 0 ; index < m_stackedWidget->count(); index++)
+	for (int index = 0 ; index < m_ui.stackedWidget->count(); index++)
 	{
-		QWidget* widget = m_stackedWidget->widget(index);
+		QWidget* widget = m_ui.stackedWidget->widget(index);
 
 		QuickieWebBotHelpers::safe_runtime_static_cast<SettingsPage*>(widget)->applyChanges();
 	}
@@ -81,7 +72,7 @@ void ApplicationSettingsWidget::cancelButtonClicked()
 
 void ApplicationSettingsWidget::reloadSettingsSlot()
 {
-	QWidget* widget = m_stackedWidget->currentWidget();
+	QWidget* widget = m_ui.stackedWidget->currentWidget();
 	
 	QuickieWebBotHelpers::safe_runtime_static_cast<SettingsPage*>(widget)->reloadSettings();
 	m_somethingChanged = false;
@@ -89,17 +80,17 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 
 ApplicationSettingsWidget::~ApplicationSettingsWidget()
 {
-	VERIFY(disconnect(m_stackedWidget, SIGNAL(currentChanged(int)),
+	VERIFY(disconnect(m_ui.stackedWidget, SIGNAL(currentChanged(int)),
 		this, SLOT(reloadSettingsSlot())));
 
-	while (m_stackedWidget->count() > 0)
+	while (m_ui.stackedWidget->count() > 0)
 	{
-		const int lastRemovingWidgetIndex = m_stackedWidget->count() - 1;
+		const int lastRemovingWidgetIndex = m_ui.stackedWidget->count() - 1;
 
-		QWidget* widget = m_stackedWidget->widget(lastRemovingWidgetIndex);
+		QWidget* widget = m_ui.stackedWidget->widget(lastRemovingWidgetIndex);
 		widget->setParent(nullptr);
 
-		m_stackedWidget->removeWidget(widget);
+		m_ui.stackedWidget->removeWidget(widget);
 	}
 }
 
@@ -112,8 +103,6 @@ void ApplicationSettingsWidget::somethingChangedSlot()
 void ApplicationSettingsWidget::initialize()
 {
 	m_ui.setupUi(this);
-
-	m_ui.settingsPageWidget->layout()->addWidget(m_stackedWidget);
 
 	m_ui.propGroupsList->setCurrentRow(0);
 
@@ -135,7 +124,7 @@ void ApplicationSettingsWidget::initialize()
 		item->setData(Qt::UserRole, pageId);
 		VERIFY(connect(page, SIGNAL(somethingChangedSignal()), this, SLOT(somethingChangedSlot())));
 
-		m_stackedWidget->addWidget(page);
+		m_ui.stackedWidget->addWidget(page);
 		m_ui.propGroupsList->addItem(item);
 	}
 }

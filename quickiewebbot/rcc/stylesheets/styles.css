@@ -8,6 +8,7 @@ QWidget
 QMainWindow
 {
 	background-color: #546E7A;
+	font-family: "Helvatica";
 }
 
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
@@ -54,8 +55,7 @@ QPushButton,
 QComboBox,
 QSpinBox
 {
-	border-radius: 2px;
-	border: 0.05em solid #c3c3c3;
+	border: 0.05em solid #CCCCCC;
 }
 
 QuickieWebBot--TableView
@@ -198,7 +198,7 @@ QScrollBar:horizontal
 
 QScrollBar::handle:horizontal
 {
-	border: 0.05em solid #c3c3c3;
+	border: 0.05em solid #CCCCCC;
 	
 	background-color: #e7e7e7;
 	min-width: 2em;
@@ -236,17 +236,17 @@ QScrollBar::sub-page:horizontal
 
 QScrollBar:vertical
 {
-	background: #D6D6D6;
-	width: 1em;
+	background: white;
+	width: 0.6em;
 	padding-left: 0.09em;
 	padding-right: 0.09em;
 }
 
 QScrollBar::handle:vertical
 {
-	border: 0.05em solid #c3c3c3;
-	
-	background-color: #e7e7e7;
+	border: 0.05em solid #CCCCCC;
+	border-radius: 3px;
+	background-color: #C0C0C0;
 	min-height: 2em;
 	min-width: 0.8em;
 }
@@ -280,16 +280,17 @@ QScrollBar::sub-page:vertical
 }
 
 /*/////////////////////////////// Settings page Widget ////////////////////////////////*/
+
 QuickieWebBot--SettingsPage
 {
-	background: #343B49;
+	background: white;
 	min-width: 20em;
 }
 
 QuickieWebBot--SettingsPage QLabel,
 QuickieWebBot--SettingsPage QCheckBox
 {
-	color: #494949;
+	color: #333333;
 }
 
 QuickieWebBot--SettingsPage QFrame#headerFrame
@@ -298,30 +299,58 @@ QuickieWebBot--SettingsPage QFrame#headerFrame
 	max-height: 8em;
 	background: white;
 	padding: 0.5em;
-	border: 0.05em solid #c3c3c3;
+	border: 0.05em solid #CCCCCC;
+	border-bottom: none;
 }
 
 QuickieWebBot--SettingsPage QLabel#headerName
 {
 	font-size: 16pt;
-	min-height: 2em;
+	min-height: 1.5em;
 	color: #61a032;
 }
 
 QuickieWebBot--SettingsPage QFrame#settingsFrame
 {
-	background: #e7e7e7;
-	padding: 1em;
-	border: 0.05em solid #c3c3c3;
+	background: #E7E7E7;
+	padding: 0.5em;
+	border: 0.05em solid #CCCCCC;
 }
 
 /*/////////////////////////////// ApplicationSettingsWidget ///////////////////////////*/
+
+QuickieWebBot--ApplicationSettingsWidget
+{
+	background: #E7E7E7;
+}
+
+QuickieWebBot--ApplicationSettingsWidget QListView
+{
+	border: 0.05em solid #CCCCCC;
+	background: white;
+}
+
+QuickieWebBot--ApplicationSettingsWidget QListView::item
+{
+    min-height: 2.5em;
+}
+
+QuickieWebBot--ApplicationSettingsWidget QListView::item:hover
+{
+    background-color: #F3F3F3;
+}
+
+QuickieWebBot--ApplicationSettingsWidget QListView::item:hover
+{
+    background-color: #CCCCCC;
+	color: black;
+}
 
 QuickieWebBot--ApplicationSettingsWidget QLabel,
 QuickieWebBot--ApplicationSettingsWidget QWidget,
 QuickieWebBot--ApplicationSettingsWidget QCheckBox
 {
-	color: #494949;
+	color: #333333;
 }
 
 QuickieWebBot--ApplicationSettingsWidget QPushButton

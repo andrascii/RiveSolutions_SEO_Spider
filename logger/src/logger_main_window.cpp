@@ -9,8 +9,6 @@ LoggerMainWindow::LoggerMainWindow(QWidget* parent) :
 	ui.setupUi(this);
 	m_server = new QTcpServer(this);
 
-	//while (!IsDebuggerPresent());
-
 	if (!m_server->listen(QHostAddress::LocalHost,12345))
 	{
 		QMessageBox::critical(this, tr("Logger Server"), tr("Unable to start the server: %1.").arg(m_server->errorString()));
@@ -26,7 +24,6 @@ LoggerMainWindow::LoggerMainWindow(QWidget* parent) :
 	VERIFY(connect(ui.lineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(slotApplyStringFilter())));	
 	
 	ui.lineEdit->setClearButtonEnabled(true);
-	ui.textBrowser->setFontPointSize(11);
 }
 
 void LoggerMainWindow::slotNewConnection()
