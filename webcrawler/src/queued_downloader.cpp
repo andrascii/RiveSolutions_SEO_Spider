@@ -79,7 +79,6 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 		return;
 	}
 
-
 	markReplyProcessed(reply);
 	reply->disconnect(this);
 

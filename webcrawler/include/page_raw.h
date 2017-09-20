@@ -43,7 +43,7 @@ struct PageRaw
 	QString metaRobots;
 	QString metaDescription;
 	QString metaKeywords;
-	QString redirectedUrl;
+	QUrl redirectedUrl;
 	QString serverResponse;
 	QString firstH1;
 	QString secondH1;

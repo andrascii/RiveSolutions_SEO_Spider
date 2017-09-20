@@ -76,7 +76,7 @@ void PageRawProcessor::process()
 				<< "Content-Type: " << contentType;
 		}
 
-		preprocessRedirectResource(pageRaw, reply.redirectUrl);
+		preprocessRedirect(pageRaw, reply.redirectUrl);
 		m_htmlPageParser.parsePage(reply.responseBody, pageRaw);
 		schedulePageResourcesLoading(pageRaw);
 
@@ -93,15 +93,11 @@ void PageRawProcessor::process()
 
 
 
-void PageRawProcessor::preprocessRedirectResource(const PageRawPtr& pageRaw, const QUrl& redirectUrl)
+void PageRawProcessor::preprocessRedirect(const PageRawPtr& pageRaw, const QUrl& redirectUrl)
 {
 	if (!redirectUrl.isEmpty())
 	{
-		PageRawResource redirectResource;
-		redirectResource.resourceType = PageRawResource::ResourceHtml;
-		redirectResource.resourceUrl = redirectUrl;
-		QString redirectUrlStr = redirectUrl.toDisplayString();
-		pageRaw->rawResources.push_back(redirectResource);
+		pageRaw->redirectedUrl = PageRawParserHelpers::resolveUrlList(pageRaw->url, { redirectUrl }).front();
 	}
 }
 
@@ -112,6 +108,10 @@ void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
 		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 		urlList = PageRawParserHelpers::resolveUrlList(pageRaw->url, urlList);
 		m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
+		if (!pageRaw->redirectedUrl.isEmpty())
+		{
+			m_webCrawlerInternalUrlStorage->saveUrlList({ pageRaw->redirectedUrl }, RequestTypeGet);
+		}
 
 		std::vector<QUrl> resourcesUrlList;
 		for (const PageRawResource& resource : pageRaw->rawResources)

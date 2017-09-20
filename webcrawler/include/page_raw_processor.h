@@ -25,7 +25,7 @@ public:
 private:
 	virtual void process() override;
 
-	void preprocessRedirectResource(const PageRawPtr& pageRaw, const QUrl& redirectUrl);
+	void preprocessRedirect(const PageRawPtr& pageRaw, const QUrl& redirectUrl);
 	void schedulePageResourcesLoading(const PageRawPtr& pageRaw);
 
 private:
