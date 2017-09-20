@@ -48,7 +48,7 @@ struct PageRawHasher : public IPageRawHasher
 			{ IPageRawHasher::ContentItemType, [](const PageRawPtr& el) { return s_stringHasher(el->contentType.toStdString()); } },
 			{ IPageRawHasher::MetaRefreshItemType, [](const PageRawPtr& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
 			{ IPageRawHasher::MetaRobotsItemType, [](const PageRawPtr& el) { return s_stringHasher(el->metaRobots.toStdString()); } },
-			{ IPageRawHasher::RedirectedUrlItemType, [](const PageRawPtr& el) { return s_stringHasher(el->redirectedUrl.toStdString()); } },
+			{ IPageRawHasher::RedirectedUrlItemType, [](const PageRawPtr& el) { return s_stringHasher(el->redirectedUrl.toDisplayString().toStdString()); } },
 			{ IPageRawHasher::ServerResponseItemType, [](const PageRawPtr& el) { return s_stringHasher(el->serverResponse.toStdString()); } },
 			{ IPageRawHasher::TitleItemType, [](const PageRawPtr& el) { return s_stringHasher(el->title.toStdString()); } },
 			{ IPageRawHasher::MetaDescriptionItemType, [](const PageRawPtr& el) { return s_stringHasher(el->metaDescription.toStdString()); } },

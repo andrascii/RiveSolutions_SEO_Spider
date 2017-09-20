@@ -191,7 +191,7 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage) noexc
 	return decodedHtmlPage;
 }
 
-std::vector<QUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept
+std::vector<Link> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept
 {
 	auto cond = [httpOrHttpsOnly](const GumboNode* node)
 	{
@@ -214,10 +214,21 @@ std::vector<QUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, b
 	auto res = [](const GumboNode* node)
 	{
 		GumboAttribute* href = href = gumbo_get_attribute(&node->v.element.attributes, "href");
-		return QUrl(href->value);
+		GumboAttribute* rel = gumbo_get_attribute(&node->v.element.attributes, "rel");
+
+		Link::LinkParameter linkParam = Link::DofollowParameter;
+		if (rel != nullptr)
+		{
+			if (rel->value == "nofollow")
+			{
+				linkParam = Link::NofollowParameter;
+			}
+		}
+
+		return Link{ QUrl(href->value), linkParam };
 	};
 
-	std::vector<QUrl> result = findNodesAndGetResult(node, cond, res);
+	std::vector<Link> result = findNodesAndGetResult(node, cond, res);
 
 	return result;
 

@@ -67,13 +67,17 @@ void QueuedDownloader::metaDataChanged(QNetworkReply* reply)
 	}
 }
 
+void QueuedDownloader::queryError(QNetworkReply* reply, QNetworkReply::NetworkError code)
+{
+	ERRORLOG << "An error occurred while downloading " << reply->url().toDisplayString() << "; code: " << code;
+}
+
 void QueuedDownloader::processReply(QNetworkReply* reply)
 {
 	if (isReplyProcessed(reply))
 	{
 		return;
 	}
-
 
 	markReplyProcessed(reply);
 	reply->disconnect(this);
@@ -169,6 +173,15 @@ void QueuedDownloader::process()
 			&QNetworkReply::metaDataChanged, 
 			this, 
 			[this, reply]() { metaDataChanged(reply); }, 
+			Qt::QueuedConnection
+		));
+
+		using ErrorSignal = void (QNetworkReply::*)(QNetworkReply::NetworkError);
+		VERIFY(QObject::connect(
+			reply,
+			static_cast<ErrorSignal>(&QNetworkReply::error),
+			this,
+			[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); },
 			Qt::QueuedConnection
 		));
 
