@@ -124,7 +124,7 @@ const QColor& PageViewModel::backgroundColor(const QModelIndex&) const noexcept
 
 const QFont& PageViewModel::font(const QModelIndex& index) const noexcept
 {
-	static QFont font("Times", 9);
+	static QFont font("Arial", 9);
 
 	return font;
 }

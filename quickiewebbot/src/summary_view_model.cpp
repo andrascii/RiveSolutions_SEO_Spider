@@ -84,12 +84,14 @@ const QFont& SummaryViewModel::font(const QModelIndex& index) const noexcept
 {
 	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
 
-	static QFont font("Times", 9);
+	static QFont font("Arial", 9);
 
+	font.setPointSize(9);
 	font.setBold(false);
 
 	if (model->dataAccessor()->isHeaderRow(index.row()))
 	{
+		font.setPointSize(11);
 		font.setBold(true);
 	}
 
@@ -117,6 +119,13 @@ void SummaryViewModel::initializeRenderers()
 
 QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept
 {
+	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
+
+	if (model->dataAccessor()->isHeaderRow(index.row()))
+	{
+		return QColor(Qt::black);
+	}
+
 	return QColor("#333333");
 }
 
