@@ -370,7 +370,7 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 			continue;
 		}
 
-		resourcePage->url = resource.resourceUrl;
+		resourcePage->url = resource.resourceLink.url;
 		PageRawPtr existingResource = m_data->pageRaw(resourcePage, DataCollection::CrawledUrlStorageType);
 		if (!existingResource)
 		{
@@ -380,16 +380,16 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		if (existingResource)
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
-			existingResource->linksToThisPage.push_back(pageRaw);
-			pageRaw->linksFromThisPage.push_back(existingResource);
+			existingResource->linksToThisPage.push_back({ pageRaw, resource.resourceLink.linkParameter });
+			pageRaw->linksFromThisPage.push_back({ existingResource, resource.resourceLink.linkParameter });
 
 		}
 		else
 		{
 			PageRawPtr pendingResource = std::make_shared<PageRaw>();
-			pendingResource->url = resource.resourceUrl;
-			pendingResource->linksToThisPage.push_back(pageRaw);
-			pageRaw->linksFromThisPage.push_back(pendingResource);
+			pendingResource->url = resource.resourceLink.url;
+			pendingResource->linksToThisPage.push_back({ pageRaw, resource.resourceLink.linkParameter });
+			pageRaw->linksFromThisPage.push_back({ pendingResource, resource.resourceLink.linkParameter });
 			m_data->addPageRaw(pendingResource, DataCollection::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isPageRawExists(pendingResource, DataCollection::PendingResourcesStorageType));
 		}
@@ -435,7 +435,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 
 	for (const PageRawResource& resource : pageRaw->rawResources)
 	{
-		QString resourceDisplayUrl = resource.resourceUrl.toDisplayString();
+		QString resourceDisplayUrl = resource.resourceLink.url.toDisplayString();
 
 		if (resource.resourceType == PageRawResource::ResourceHtml || 
 			resourceDisplayUrl.startsWith("javascript:") ||
@@ -445,7 +445,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		}
 
 		PageRawPtr resourceRaw = std::make_shared<PageRaw>();
-		resourceRaw->url = resource.resourceUrl;
+		resourceRaw->url = resource.resourceLink.url;
 
 		bool httpResource = PageRawParserHelpers::isHttpOrHttpsScheme(resourceDisplayUrl);
 		bool externalOrNotHttpResource = isUrlExternal(resourceRaw->url) || !httpResource;
@@ -462,7 +462,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 				httpResource ? DataCollection::PendingResourcesStorageType : storage);
 		}
 
-		newOrExistingResource->linksToThisPage.push_back(pageRaw);
+		newOrExistingResource->linksToThisPage.push_back({ pageRaw, resource.resourceLink.linkParameter });
 		newOrExistingResource->resourceType = resource.resourceType;
 	}
 }

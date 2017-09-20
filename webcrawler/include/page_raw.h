@@ -3,6 +3,29 @@
 namespace WebCrawler
 {
 
+struct PageRaw;
+using PageRawWeakPtr = std::weak_ptr<PageRaw>;
+
+struct Link
+{
+	enum LinkParameter
+	{
+		UnknownParameter,
+		NofollowParameter,
+		DofollowParameter
+	};
+
+	QUrl url;
+	LinkParameter linkParameter;
+
+};
+
+struct ResourceLink
+{
+	PageRawWeakPtr resource;
+	Link::LinkParameter linkParameter;
+};
+
 struct PageRawResource
 {
 	enum ResourceType
@@ -17,24 +40,12 @@ struct PageRawResource
 	};
 
 	ResourceType resourceType;
-
-	// !!!!!!!!!!!!!! Must rename fields below corresponding to them sense !!!!!!!!!!!!!!
-	QUrl resourceUrl;
-	QUrl resourcePageUrl;
+	Link resourceLink;
+	QUrl containingThisResourceUrl;
 };
-
-struct PageRaw;
-using PageRawWeakPtr = std::weak_ptr<PageRaw>;
 
 struct PageRaw
 {
-	enum LinkParameter
-	{
-		UnknownParameter,
-		NofollowParameter,
-		DofollowParameter
-	};
-
 	QUrl url;
 	QUrl fromUrl;
 	QString title;
@@ -56,7 +67,7 @@ struct PageRaw
 	int wordCount;
 	size_t pageHash;
 
-	LinkParameter linkParameter;
+	Link::LinkParameter linkParameter;
 
 	bool hasSeveralTitleTags;
 	bool hasSeveralMetaDescriptionTags;
@@ -68,8 +79,8 @@ struct PageRaw
 
 	std::deque<PageRawResource> rawResources; // TODO: move to another structure
 	
-	std::deque<PageRawWeakPtr> linksFromThisPage;
-	std::deque<PageRawWeakPtr> linksToThisPage;
+	std::deque<ResourceLink> linksFromThisPage;
+	std::deque<ResourceLink> linksToThisPage;
 
 #ifdef QT_DEBUG
 

@@ -116,12 +116,12 @@ void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
 		std::vector<QUrl> resourcesUrlList;
 		for (const PageRawResource& resource : pageRaw->rawResources)
 		{
-			QString resourceUrlStr = resource.resourceUrl.toDisplayString();
+			QString resourceUrlStr = resource.resourceLink.url.toDisplayString();
 
 			if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
 				resource.resourceType != PageRawResource::ResourceHtml)
 			{
-				resourcesUrlList.push_back(resource.resourceUrl);
+				resourcesUrlList.push_back(resource.resourceLink.url);
 			}
 		}
 		m_webCrawlerInternalUrlStorage->saveUrlList(resourcesUrlList, RequestTypeHead);

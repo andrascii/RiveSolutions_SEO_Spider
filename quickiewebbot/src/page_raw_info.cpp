@@ -120,7 +120,7 @@ WebCrawler::PageRawWeakPtr PageRawInfo::linkFromThisPage(size_t number)
 {
 	DEBUG_ASSERT(number < countLinksFromThisPage());
 
-	return m_pageRawPtr->linksFromThisPage[number];
+	return m_pageRawPtr->linksFromThisPage[number].resource;
 }
 
 size_t PageRawInfo::countLinksToThisPage() const noexcept
@@ -137,7 +137,7 @@ WebCrawler::PageRawWeakPtr PageRawInfo::linkToThisPage(size_t number)
 {
 	DEBUG_ASSERT(number < countLinksToThisPage());
 
-	return m_pageRawPtr->linksToThisPage[number];
+	return m_pageRawPtr->linksToThisPage[number].resource;
 }
 
 PageRawInfo::MethodAcceptor PageRawInfo::acceptItem(Column column) const
@@ -330,11 +330,11 @@ QVariant PageRawInfo::acceptDofollowNofollow() const
 {
 	switch (m_pageRawPtr->linkParameter)
 	{
-		case WebCrawler::PageRaw::DofollowParameter:
+		case WebCrawler::Link::DofollowParameter:
 		{
 			return QObject::tr("Dofollow");
 		}
-		case WebCrawler::PageRaw::NofollowParameter:
+		case WebCrawler::Link::NofollowParameter:
 		{
 			return QObject::tr("Nofollow");
 		}
