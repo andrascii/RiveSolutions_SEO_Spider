@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>596</width>
-    <height>530</height>
+    <width>452</width>
+    <height>373</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,24 +55,40 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_7">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
       <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="headerName">
-        <property name="text">
-         <string>Crawler settings</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="text">
-        <property name="text">
-         <string>You can set robot preferences, which will be followed by the programs
-during site scanning</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="headerName">
+          <property name="text">
+           <string>Crawler Settings</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="text">
+          <property name="text">
+           <string>You can set robot preferences, which will be followed by the programs
+during site scanning.</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -85,138 +101,154 @@ during site scanning</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="5" column="0">
-       <widget class="QCheckBox" name="checkBox_5">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Follow robots.txt</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">followRobotsTxt</string>
-        </property>
-       </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="checkBox_3">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Check External Links</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">checkExternalUrls</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Follow Internal &quot;nofollow&quot;</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">followInternalNoFollow</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_4">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Follow External &quot;nofollow&quot;</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">followExternalNoFollow</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_2">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Canonicals</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">checkCanonicals</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_6">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Check SubDomains Pages</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">checkSubdomains</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_5">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Follow robots.txt Rules</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">followRobotsTxt</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_9">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Check Images</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">checkImages</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_8">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Check CSS</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">checkCSS</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_10">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Check JavaScript</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">checkJavaScript</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_7">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Check SWF</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">checkSWF</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="checkBox">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Internal &quot;nofollow&quot;</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">followInternalNoFollow</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QCheckBox" name="checkBox_6">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Subdomains</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">checkSubdomains</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="checkBox_2">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Canonicals</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">checkCanonicals</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="checkBox_4">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>External &quot;nofollow&quot;</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">followExternalNoFollow</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBox_3">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Check External links</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">checkExternalUrls</string>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0">
-       <widget class="QCheckBox" name="checkBox_7">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Check SWF</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">checkSWF</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QCheckBox" name="checkBox_8">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Check CSS</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">checkCSS</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QCheckBox" name="checkBox_9">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Check Images</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">checkImages</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QCheckBox" name="checkBox_10">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>Check JavaScript</string>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">checkJavaScript</string>
-        </property>
-       </widget>
-      </item>
-      <item row="10" column="0">
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

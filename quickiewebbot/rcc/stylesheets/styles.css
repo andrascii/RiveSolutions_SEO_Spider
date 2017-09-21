@@ -186,104 +186,10 @@ QHeaderView::section
 	min-height: 2em;
 }
 
-/*/////////////////////////////// Horizontal Scroll Bar ///////////////////////////////*/
-
-QScrollBar:horizontal
-{
-	background: #D6D6D6;
-	height: 1em;
-	padding-top: 0.09em;
-	padding-bottom: 0.09em;
-}
-
-QScrollBar::handle:horizontal
-{
-	border: 0.05em solid #CCCCCC;
-	
-	background-color: #e7e7e7;
-	min-width: 2em;
-}
-
-QScrollBar::add-line:horizontal
-{
-	border: none;
-    background: none;
-}
-
-QScrollBar::sub-line:horizontal
-{
-	border: none;
-	background: none;
-}
-
-QScrollBar:left-arrow:horizontal,
-QScrollBar::right-arrow:horizontal
-{
-	max-width: 0em;
-	max-height: 0em;
-	border: none;
-    background: none;
-    color: none;
-}
-
-QScrollBar::add-page:horizontal,
-QScrollBar::sub-page:horizontal
-{
-	background: none;
-}
-
-/*/////////////////////////////// Vertical Scroll Bar ///////////////////////////////*/
-
-QScrollBar:vertical
-{
-	background: white;
-	width: 0.6em;
-	padding-left: 0.09em;
-	padding-right: 0.09em;
-}
-
-QScrollBar::handle:vertical
-{
-	border: 0.05em solid #CCCCCC;
-	border-radius: 3px;
-	background-color: #C0C0C0;
-	min-height: 2em;
-	min-width: 0.8em;
-}
-
-QScrollBar::add-line:vertical
-{
-	border: none;
-    background: none;
-}
-
-QScrollBar::sub-line:vertical
-{
-	border: none;
-	background: none;
-}
-
-QScrollBar:left-arrow:vertical,
-QScrollBar::right-arrow:vertical
-{
-	max-width: 0em;
-	max-height: 0em;
-	border: none;
-    background: none;
-    color: none;
-}
-
-QScrollBar::add-page:vertical,
-QScrollBar::sub-page:vertical
-{
-	background: none;
-}
-
 /*/////////////////////////////// Settings page Widget ////////////////////////////////*/
 
 QuickieWebBot--SettingsPage
 {
-	background: white;
 	min-width: 20em;
 }
 
@@ -295,9 +201,8 @@ QuickieWebBot--SettingsPage QCheckBox
 
 QuickieWebBot--SettingsPage QFrame#headerFrame
 {
-	min-height: 8em;
-	max-height: 8em;
-	background: white;
+	min-height: 6em;
+	background: #F8F8F8;
 	padding: 0.5em;
 	border: 0.05em solid #CCCCCC;
 	border-bottom: none;
@@ -306,14 +211,13 @@ QuickieWebBot--SettingsPage QFrame#headerFrame
 QuickieWebBot--SettingsPage QLabel#headerName
 {
 	font-size: 16pt;
-	min-height: 1.5em;
 	color: #61a032;
 }
 
 QuickieWebBot--SettingsPage QFrame#settingsFrame
 {
-	background: #E7E7E7;
-	padding: 0.5em;
+	background: #EDEDED;
+	padding: 1em;
 	border: 0.05em solid #CCCCCC;
 }
 
@@ -338,9 +242,10 @@ QuickieWebBot--ApplicationSettingsWidget QListView::item
 QuickieWebBot--ApplicationSettingsWidget QListView::item:hover
 {
     background-color: #F3F3F3;
+	color: black;
 }
 
-QuickieWebBot--ApplicationSettingsWidget QListView::item:hover
+QuickieWebBot--ApplicationSettingsWidget QListView::item:selected
 {
     background-color: #CCCCCC;
 	color: black;

@@ -48,7 +48,6 @@ public:
 private:
 	Q_SLOT void mainFrameIsReadyForShow();
 
-	void registerSettingsPages() const;
 	void registerServices() const;
 
 	void initQSettings();

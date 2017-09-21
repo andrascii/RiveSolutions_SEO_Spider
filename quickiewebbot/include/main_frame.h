@@ -26,6 +26,7 @@ private:
 	void init();
 	void createActions();
 	void createAndSetCentralWidget();
+	void registerSettingsPages() const;
 
 	Q_SLOT void startCrawler();
 	Q_SLOT void stopCrawler();
