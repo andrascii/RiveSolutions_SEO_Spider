@@ -37,8 +37,6 @@ private:
 	void processPageRawResources(PageRawPtr pageRaw) noexcept;
 	void fixPageRawResourceType(PageRawPtr pageRaw) noexcept;
 
-	bool isUrlExternal(const QUrl& url) const noexcept;
-
 private:
 	DataCollection* m_data;
 	WebCrawlerOptions m_webCrawlerOptions;

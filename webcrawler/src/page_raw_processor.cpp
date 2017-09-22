@@ -66,6 +66,7 @@ void PageRawProcessor::process()
 		pageRaw->hasSeveralMetaDescriptionTags = false;
 		pageRaw->hasSeveralMetaKeywordsTags = false;
 		pageRaw->hasSeveralTitleTags = false;
+		pageRaw->isExternal = PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url);
 
 
 		if (sizeKB > 512)
@@ -103,7 +104,7 @@ void PageRawProcessor::preprocessRedirect(const PageRawPtr& pageRaw, const QUrl&
 
 void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
 {
-	if (!PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url))
+	if (!pageRaw->isExternal)
 	{
 		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
 		urlList = PageRawParserHelpers::resolveUrlList(pageRaw->url, urlList);

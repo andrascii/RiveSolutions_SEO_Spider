@@ -97,6 +97,11 @@ void ModelController::processPageRawUrl(PageRawPtr pageRaw) noexcept
 		m_data->addPageRaw(pageRaw, DataCollection::ExternalUrlStorageType);
 	}
 
+	if (pageRaw->isExternal)
+	{
+		return;
+	}
+
 	if (urlStr.toLower() != urlStr)
 	{
 		m_data->addPageRaw(pageRaw, DataCollection::UpperCaseUrlStorageType);
@@ -125,6 +130,11 @@ void ModelController::processPageRawUrl(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawTitle(PageRawPtr pageRaw) noexcept
 {
+	if (pageRaw->isExternal)
+	{
+		return;
+	}
+
 	int statusCode = pageRaw->statusCode;
 	const QString title = pageRaw->title;
 	const QString h1 = pageRaw->firstH1;
@@ -164,7 +174,7 @@ void ModelController::processPageRawTitle(PageRawPtr pageRaw) noexcept
 	{
 		m_data->addPageRaw(pageRaw, DataCollection::DuplicatedH1TitleUrlStorageType);
 	}
-	
+
 	if (pageRaw->hasSeveralTitleTags)
 	{
 		m_data->addPageRaw(pageRaw, DataCollection::SeveralTitleUrlStorageType);
@@ -173,6 +183,11 @@ void ModelController::processPageRawTitle(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawMetaDescription(PageRawPtr pageRaw) noexcept
 {
+	if (pageRaw->isExternal)
+	{
+		return;
+	}
+
 	const int metaDescriptionLength = pageRaw->metaDescription.size();
 
 	if (metaDescriptionLength == 0)
@@ -210,6 +225,11 @@ void ModelController::processPageRawMetaDescription(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawMetaKeywords(PageRawPtr pageRaw) noexcept
 {
+	if (pageRaw->isExternal)
+	{
+		return;
+	}
+
 	const int metaKeywordsLength = pageRaw->metaKeywords.size();
 
 	if (metaKeywordsLength == 0)
@@ -240,6 +260,11 @@ void ModelController::processPageRawMetaKeywords(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawH1(PageRawPtr pageRaw) noexcept
 {
+	if (pageRaw->isExternal)
+	{
+		return;
+	}
+
 	const int h1Length = pageRaw->firstH1.size();
 
 	if (h1Length == 0)
@@ -274,6 +299,11 @@ void ModelController::processPageRawH1(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawH2(PageRawPtr pageRaw) noexcept
 {
+	if (pageRaw->isExternal)
+	{
+		return;
+	}
+
 	const int h2Length = pageRaw->firstH2.size();
 
 	if (h2Length == 0)
@@ -312,7 +342,6 @@ void ModelController::processPageRawImage(PageRawPtr pageRaw) noexcept
 	if (altLength > m_webCrawlerOptions.maxImageAltTextChars)
 	{
 		m_data->addPageRaw(pageRaw, DataCollection::VeryLongAltTextImageStorageType);
-		
 	}
 
 	if (altLength == 0)
@@ -349,14 +378,12 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 	pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
 
 	// 3. add this page to html resources storage
-	const bool external = isUrlExternal(pageRaw->url);
-	
-	DataCollection::StorageType storage = external ?
+	DataCollection::StorageType storage = pageRaw->isExternal ?
 		DataCollection::ExternalHtmlResourcesStorageType : DataCollection::HtmlResourcesStorageType;
 
 	m_data->addPageRaw(pageRaw, storage);
 
-	if (external)
+	if (pageRaw->isExternal)
 	{
 		// do not parse resources from an external one
 		return;
@@ -420,7 +447,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 
 
 	const bool http = PageRawParserHelpers::isHttpOrHttpsScheme(pageRaw->url.toDisplayString());
-	const bool externalOrNotHttp = isUrlExternal(pageRaw->url) || !http;
+	const bool externalOrNotHttp = pageRaw->isExternal || !http;
 
 	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
 	{
@@ -431,6 +458,12 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 			externalStorageTypes[pageRaw->resourceType] : storageTypes[pageRaw->resourceType];
 		
 		m_data->addPageRaw(pageRaw, storage);
+	}
+
+	if (pageRaw->isExternal)
+	{
+		// do not parse resources from an external one
+		return;
 	}
 
 	for (const PageRawResource& resource : pageRaw->rawResources)
@@ -448,7 +481,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		resourceRaw->url = resource.resourceLink.url;
 
 		bool httpResource = PageRawParserHelpers::isHttpOrHttpsScheme(resourceDisplayUrl);
-		bool externalOrNotHttpResource = isUrlExternal(resourceRaw->url) || !httpResource;
+		bool externalOrNotHttpResource = PageRawParserHelpers::isUrlExternal(pageRaw->url, resourceRaw->url) || !httpResource;
 
 		DataCollection::StorageType storage = externalOrNotHttpResource ?
 			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
@@ -474,11 +507,6 @@ void ModelController::fixPageRawResourceType(PageRawPtr pageRaw) noexcept
 	{
 		pageRaw->resourceType = pendingResource->resourceType;
 	}
-}
-
-bool ModelController::isUrlExternal(const QUrl& url) const noexcept
-{
-	return PageRawParserHelpers::isUrlExternal(m_webCrawlerOptions.url, url);
 }
 
 }

@@ -75,6 +75,8 @@ struct PageRaw
 	bool hasSeveralH1Tags;
 	bool hasSeveralH2Tags;
 
+	bool isExternal;
+
 	PageRawResource::ResourceType resourceType;
 
 	std::deque<PageRawResource> rawResources; // TODO: move to another structure
