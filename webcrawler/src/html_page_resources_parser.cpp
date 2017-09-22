@@ -74,7 +74,7 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 
 void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	std::vector<OnPageUrl> links = GumboParsingHelpers::parsePageUrlList(output->root);
+	std::vector<OnPageUrl> links = GumboParsingHelpers::parsePageUrlList(output->root, false);
 
 	std::vector<QUrl> unresolvedUrls;
 
