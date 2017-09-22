@@ -122,12 +122,12 @@ void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
 
 	for (const PageRawResource& resource : pageRaw->allResourcesOnPage)
 	{
-		const QString resourceUrlStr = resource.resourceLink.url.toDisplayString();
+		const QString resourceUrlStr = resource.thisResourceUrl.url.toDisplayString();
 
 		if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
 			resource.resourceType != ResourceType::ResourceHtml)
 		{
-			resourcesUrlList.push_back(resource.resourceLink.url);
+			resourcesUrlList.push_back(resource.thisResourceUrl.url);
 		}
 	}
 

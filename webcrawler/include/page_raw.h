@@ -4,7 +4,9 @@ namespace WebCrawler
 {
 
 struct PageRaw;
+
 using PageRawWeakPtr = std::weak_ptr<PageRaw>;
+
 
 enum class UrlParameter
 {
@@ -27,19 +29,19 @@ enum class ResourceType
 struct OnPageUrl
 {
 	QUrl url;
-	UrlParameter linkParameter;
+	UrlParameter urlParameter;
 };
 
 struct ResourceLink
 {
 	PageRawWeakPtr resource;
-	UrlParameter linkParameter;
+	UrlParameter urlParameter;
 };
 
 struct PageRawResource
 {
 	ResourceType resourceType;
-	OnPageUrl resourceLink;
+	OnPageUrl thisResourceUrl;
 };
 
 struct PageRaw
