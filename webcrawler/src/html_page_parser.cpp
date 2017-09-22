@@ -26,7 +26,9 @@ void HtmlPageParser::parsePage(const QByteArray& htmlPage, PageRawPtr& pageRaw) 
 	}
 
 	m_pageUrlList.clear();
+
 	std::vector<Link> links = GumboParsingHelpers::parsePageUrlList(gumboOutput.output()->root);
+
 	for (const Link& link : links)
 	{
 		m_pageUrlList.push_back(link.url);

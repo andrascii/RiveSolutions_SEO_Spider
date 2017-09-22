@@ -49,7 +49,7 @@ GumboNode* GumboParsingHelpers::findSubNode(const GumboNode* node, GumboTag tag,
 	return searchingNode;
 }
 
-const char* GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
+QByteArray GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
 {
 	if (node->type == GUMBO_NODE_TEXT)
 	{
@@ -65,7 +65,7 @@ const char* GumboParsingHelpers::nodeText(const GumboNode* node) noexcept
 		}
 	}
 	
-	return "";
+	return QByteArray();
 }
 
 std::vector<GumboNode*> GumboParsingHelpers::subNodes(const GumboNode* node, GumboTag tag) noexcept
@@ -128,18 +128,18 @@ QByteArray GumboParsingHelpers::identifyHtmlPageContentType(const QByteArray& ht
 
 	for (unsigned i = 0; i < metaTags.size(); ++i)
 	{
-		GumboAttribute* contentAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "content");
+		const GumboAttribute* contentAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "content");
 
 		if (!contentAttribute)
 		{
 			continue;
 		}
 
-		GumboAttribute* metaHttpEquivAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "http-equiv");
+		const GumboAttribute* metaHttpEquivAttribute = gumbo_get_attribute(&metaTags[i]->v.element.attributes, "http-equiv");
 
 		if (metaHttpEquivAttribute)
 		{
-			QString attributeValue = QString(metaHttpEquivAttribute->value).toLower();
+			const QString attributeValue = QString(metaHttpEquivAttribute->value).toLower();
 
 			if (attributeValue == "content-type")
 			{
@@ -217,45 +217,18 @@ std::vector<Link> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, b
 		GumboAttribute* rel = gumbo_get_attribute(&node->v.element.attributes, "rel");
 
 		Link::LinkParameter linkParam = Link::DofollowParameter;
-		if (rel != nullptr)
+
+		if (rel != nullptr && rel->value == "nofollow")
 		{
-			if (rel->value == "nofollow")
-			{
-				linkParam = Link::NofollowParameter;
-			}
+			linkParam = Link::NofollowParameter;
 		}
 
 		return Link{ QUrl(href->value), linkParam };
 	};
 
-	std::vector<Link> result = findNodesAndGetResult(node, cond, res);
+	const std::vector<Link> result = findNodesAndGetResult(node, cond, res);
 
 	return result;
-
-
-// 	if (!node || (node && node->type != GUMBO_NODE_ELEMENT))
-// 	{
-// 		return result;
-// 	}
-// 
-// 	GumboAttribute* href = nullptr;
-// 
-// 	if (node->v.element.tag == GUMBO_TAG_A && (href = gumbo_get_attribute(&node->v.element.attributes, "href")))
-// 	{
-// 		result.push_back(QUrl(href->value));
-// 	}
-// 
-// 	const GumboVector* children = &node->v.element.children;
-// 
-// 	for (unsigned int i = 0; i < children->length; ++i)
-// 	{
-// 		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
-// 		std::vector<QUrl> childResult = parsePageUrlList(child);
-// 
-// 		result.insert(std::end(result), std::begin(childResult), std::end(childResult));
-// 	}
-// 
-// 	return result;
 }
 
 const GumboNode* GumboParsingHelpers::findChildNode(const GumboNode* node, GumboTag expectedTag, std::map<const char*, const char*> expectedAttributes) noexcept
@@ -270,16 +243,19 @@ const GumboNode* GumboParsingHelpers::findChildNode(const GumboNode* node, Gumbo
 	for (unsigned int i = 0; i < children->length; ++i)
 	{
 		const GumboNode* child = static_cast<const GumboNode*>(children->data[i]);
+
 		if (!child || child->type != GUMBO_NODE_ELEMENT || child->v.element.tag != expectedTag)
 		{
 			continue;
 		}
 
 		bool success = true;
+
 		for (auto attr : expectedAttributes)
 		{
 			GumboAttribute* gumboAttr = gumbo_get_attribute(&child->v.element.attributes, attr.first);
 			success = success && gumboAttr && (strlen(attr.second) == 0 || QString(gumboAttr->value).toLower() == attr.second);
+
 			if (!success)
 			{
 				break;
@@ -315,7 +291,6 @@ void GumboParsingHelpers::cutAllTagsFromNodeHelper(const GumboNode* node, QByteA
 
 	if (node->type == GUMBO_NODE_TEXT)
 	{
-		//result += nodeText(node) % " ";
 		result += QByteArray(nodeText(node)) + " ";
 		return;
 	}

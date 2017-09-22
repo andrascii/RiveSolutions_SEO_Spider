@@ -75,19 +75,17 @@ struct PageRaw
 	bool hasSeveralH1Tags;
 	bool hasSeveralH2Tags;
 
-	bool isExternal;
+	bool isThisExternalPage;
 
 	PageRawResource::ResourceType resourceType;
 
-	std::deque<PageRawResource> rawResources; // TODO: move to another structure
+	std::deque<PageRawResource> allResourcesOnPage; // TODO: move to another structure
 	
 	std::deque<ResourceLink> linksFromThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 
 #ifdef QT_DEBUG
-
 	QByteArray rawHtml;
-
 #endif
 };
 

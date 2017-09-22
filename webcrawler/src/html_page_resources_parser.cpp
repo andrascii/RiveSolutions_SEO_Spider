@@ -28,7 +28,7 @@ private:
 
 void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	ResourcesCacheGuard cacheGurad(m_resourcesCache, pageRaw->rawResources);
+	ResourcesCacheGuard cacheGurad(m_resourcesCache, pageRaw->allResourcesOnPage);
 
 	parseResourceType(output, pageRaw);
 
@@ -91,7 +91,7 @@ void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr
 		{
 			PageRawResource::ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
 				PageRawResource::ResourceHtml : PageRawResource::ResourceOther;
-			pageRaw->rawResources.push_back(PageRawResource{ resourceType, { url, links[i].linkParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ resourceType, { url, links[i].linkParameter }, pageRaw->url });
 		}
 	}
 }
@@ -119,7 +119,7 @@ void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, Page
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, { url, Link::UnknownParameter }, pageRaw->url, });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, { url, Link::UnknownParameter }, pageRaw->url, });
 		}
 		
 	}
@@ -149,7 +149,7 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceStyleSheet, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceStyleSheet, { url, Link::UnknownParameter }, pageRaw->url });
 		}
 	}
 }
@@ -177,7 +177,7 @@ void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, PageRawPt
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceImage, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceImage, { url, Link::UnknownParameter }, pageRaw->url });
 		}
 	}
 }
@@ -206,7 +206,7 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceVideo, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceVideo, { url, Link::UnknownParameter }, pageRaw->url });
 		}
 	}
 }
@@ -238,7 +238,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url});
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url});
 		}
 	}
 }
@@ -271,7 +271,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url });
 		}
 	}
 }
@@ -316,7 +316,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->rawResources.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url });
 		}
 	}
 }

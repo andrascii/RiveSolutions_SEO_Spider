@@ -52,7 +52,7 @@ void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 	fixPageRawResourceType(pageRaw);
 	processPageRawHtmlResources(pageRaw);
 	processPageRawResources(pageRaw);
-	pageRaw->rawResources.clear();
+	pageRaw->allResourcesOnPage.clear();
 
 	processPageRawStatusCode(pageRaw);
 
@@ -97,7 +97,7 @@ void ModelController::processPageRawUrl(PageRawPtr pageRaw) noexcept
 		m_data->addPageRaw(pageRaw, DataCollection::ExternalUrlStorageType);
 	}
 
-	if (pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
 		return;
 	}
@@ -130,7 +130,7 @@ void ModelController::processPageRawUrl(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawTitle(PageRawPtr pageRaw) noexcept
 {
-	if (pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
 		return;
 	}
@@ -183,7 +183,7 @@ void ModelController::processPageRawTitle(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawMetaDescription(PageRawPtr pageRaw) noexcept
 {
-	if (pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
 		return;
 	}
@@ -225,7 +225,7 @@ void ModelController::processPageRawMetaDescription(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawMetaKeywords(PageRawPtr pageRaw) noexcept
 {
-	if (pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
 		return;
 	}
@@ -260,7 +260,7 @@ void ModelController::processPageRawMetaKeywords(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawH1(PageRawPtr pageRaw) noexcept
 {
-	if (pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
 		return;
 	}
@@ -299,7 +299,7 @@ void ModelController::processPageRawH1(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawH2(PageRawPtr pageRaw) noexcept
 {
-	if (pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
 		return;
 	}
@@ -378,19 +378,19 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 	pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
 
 	// 3. add this page to html resources storage
-	DataCollection::StorageType storage = pageRaw->isExternal ?
+	DataCollection::StorageType storage = pageRaw->isThisExternalPage ?
 		DataCollection::ExternalHtmlResourcesStorageType : DataCollection::HtmlResourcesStorageType;
 
 	m_data->addPageRaw(pageRaw, storage);
 
-	if (pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
 		// do not parse resources from an external one
 		return;
 	}
 
 	PageRawPtr resourcePage = std::make_shared<PageRaw>();
-	for (const PageRawResource& resource : pageRaw->rawResources)
+	for (const PageRawResource& resource : pageRaw->allResourcesOnPage)
 	{
 		if (resource.resourceType != PageRawResource::ResourceHtml)
 		{
@@ -447,7 +447,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 
 
 	const bool http = PageRawParserHelpers::isHttpOrHttpsScheme(pageRaw->url.toDisplayString());
-	const bool externalOrNotHttp = pageRaw->isExternal || !http;
+	const bool externalOrNotHttp = pageRaw->isThisExternalPage || !http;
 
 	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
 	{
@@ -460,13 +460,13 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		m_data->addPageRaw(pageRaw, storage);
 	}
 
-	if (pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
 		// do not parse resources from an external one
 		return;
 	}
 
-	for (const PageRawResource& resource : pageRaw->rawResources)
+	for (const PageRawResource& resource : pageRaw->allResourcesOnPage)
 	{
 		QString resourceDisplayUrl = resource.resourceLink.url.toDisplayString();
 

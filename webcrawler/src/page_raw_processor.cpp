@@ -66,7 +66,7 @@ void PageRawProcessor::process()
 		pageRaw->hasSeveralMetaDescriptionTags = false;
 		pageRaw->hasSeveralMetaKeywordsTags = false;
 		pageRaw->hasSeveralTitleTags = false;
-		pageRaw->isExternal = PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url);
+		pageRaw->isThisExternalPage = PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url);
 
 
 		if (sizeKB > 512)
@@ -92,41 +92,46 @@ void PageRawProcessor::process()
 	}
 }
 
-
-
 void PageRawProcessor::preprocessRedirect(const PageRawPtr& pageRaw, const QUrl& redirectUrl)
 {
-	if (!redirectUrl.isEmpty())
+	if (redirectUrl.isEmpty())
 	{
-		pageRaw->redirectedUrl = PageRawParserHelpers::resolveUrlList(pageRaw->url, { redirectUrl }).front();
+		return;
 	}
+
+	pageRaw->redirectedUrl = PageRawParserHelpers::resolveUrlList(pageRaw->url, std::vector<QUrl>{ redirectUrl }).front();
 }
 
 void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
 {
-	if (!pageRaw->isExternal)
+	if (pageRaw->isThisExternalPage)
 	{
-		std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
-		urlList = PageRawParserHelpers::resolveUrlList(pageRaw->url, urlList);
-		m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
-		if (!pageRaw->redirectedUrl.isEmpty())
-		{
-			m_webCrawlerInternalUrlStorage->saveUrlList({ pageRaw->redirectedUrl }, RequestTypeGet);
-		}
-
-		std::vector<QUrl> resourcesUrlList;
-		for (const PageRawResource& resource : pageRaw->rawResources)
-		{
-			QString resourceUrlStr = resource.resourceLink.url.toDisplayString();
-
-			if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
-				resource.resourceType != PageRawResource::ResourceHtml)
-			{
-				resourcesUrlList.push_back(resource.resourceLink.url);
-			}
-		}
-		m_webCrawlerInternalUrlStorage->saveUrlList(resourcesUrlList, RequestTypeHead);
+		return;
 	}
+
+	std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
+	urlList = PageRawParserHelpers::resolveUrlList(pageRaw->url, urlList);
+	m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
+
+	if (!pageRaw->redirectedUrl.isEmpty())
+	{
+		m_webCrawlerInternalUrlStorage->saveUrlList(std::vector<QUrl>{ pageRaw->redirectedUrl }, RequestTypeGet);
+	}
+
+	std::vector<QUrl> resourcesUrlList;
+
+	for (const PageRawResource& resource : pageRaw->allResourcesOnPage)
+	{
+		const QString resourceUrlStr = resource.resourceLink.url.toDisplayString();
+
+		if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
+			resource.resourceType != PageRawResource::ResourceHtml)
+		{
+			resourcesUrlList.push_back(resource.resourceLink.url);
+		}
+	}
+
+	m_webCrawlerInternalUrlStorage->saveUrlList(resourcesUrlList, RequestTypeHead);
 }
 
 }

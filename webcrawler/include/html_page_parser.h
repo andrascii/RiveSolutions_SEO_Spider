@@ -16,12 +16,6 @@ public:
 	const std::vector<QUrl>& pageUrlList() const noexcept;
 
 private:
-	void parsePageUrlList(const GumboNode* node) noexcept;
-
-	QByteArray identifyHtmlPageContentType(const QByteArray& htmlPage) const noexcept;
-	QByteArray decodeHtmlPage(const QByteArray& htmlPage) const noexcept;
-
-private:
 	std::vector<QUrl> m_pageUrlList;
 	std::vector<std::shared_ptr<IPageParser>> m_parserPack;
 };
