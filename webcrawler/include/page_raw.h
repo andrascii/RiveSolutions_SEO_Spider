@@ -6,41 +6,40 @@ namespace WebCrawler
 struct PageRaw;
 using PageRawWeakPtr = std::weak_ptr<PageRaw>;
 
-struct Link
+enum class UrlParameter
 {
-	enum LinkParameter
-	{
-		UnknownParameter,
-		NofollowParameter,
-		DofollowParameter
-	};
+	UnknownParameter,
+	NofollowParameter,
+	DofollowParameter
+};
 
+enum class ResourceType
+{
+	ResourceHtml,
+	ResourceImage,
+	ResourceJavaScript,
+	ResourceStyleSheet,
+	ResourceFlash,
+	ResourceVideo,
+	ResourceOther
+};
+
+struct OnPageUrl
+{
 	QUrl url;
-	LinkParameter linkParameter;
-
+	UrlParameter linkParameter;
 };
 
 struct ResourceLink
 {
 	PageRawWeakPtr resource;
-	Link::LinkParameter linkParameter;
+	UrlParameter linkParameter;
 };
 
 struct PageRawResource
 {
-	enum ResourceType
-	{
-		ResourceHtml,
-		ResourceImage,
-		ResourceJavaScript,
-		ResourceStyleSheet,
-		ResourceFlash,
-		ResourceVideo,
-		ResourceOther
-	};
-
 	ResourceType resourceType;
-	Link resourceLink;
+	OnPageUrl resourceLink;
 };
 
 struct PageRaw
@@ -67,7 +66,7 @@ struct PageRaw
 	int wordCount;
 	size_t pageHash;
 
-	Link::LinkParameter linkParameter;
+	UrlParameter linkParameter;
 
 	bool hasSeveralTitleTags;
 	bool hasSeveralMetaDescriptionTags;
@@ -77,11 +76,10 @@ struct PageRaw
 
 	bool isThisExternalPage;
 
-	PageRawResource::ResourceType resourceType;
+	ResourceType resourceType;
 
-	std::deque<PageRawResource> allResourcesOnPage; // TODO: move to another structure
-	
-	std::deque<ResourceLink> linksFromThisPage;
+	std::deque<PageRawResource> allResourcesOnPage;
+	std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 
 #ifdef QT_DEBUG

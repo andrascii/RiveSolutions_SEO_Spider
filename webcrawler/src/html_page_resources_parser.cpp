@@ -32,7 +32,7 @@ void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) no
 
 	parseResourceType(output, pageRaw);
 
-	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	if (pageRaw->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}
@@ -51,33 +51,33 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 {
 	if (pageRaw->contentType.contains("javascript"))
 	{
-		pageRaw->resourceType = PageRawResource::ResourceJavaScript;
+		pageRaw->resourceType = ResourceType::ResourceJavaScript;
 		return;
 	}
 
 	if (pageRaw->contentType.startsWith("image/"))
 	{
-		pageRaw->resourceType = PageRawResource::ResourceImage;
+		pageRaw->resourceType = ResourceType::ResourceImage;
 		return;
 	}
 
 	if (PageRawParserHelpers::isHtmlContentType(pageRaw->contentType))
 	{
-		pageRaw->resourceType = PageRawResource::ResourceHtml;
+		pageRaw->resourceType = ResourceType::ResourceHtml;
 		return;
 	}
 
 	WARNINGLOG << "Unknown resource type: " << pageRaw->contentType;
 
-	pageRaw->resourceType = PageRawResource::ResourceOther;
+	pageRaw->resourceType = ResourceType::ResourceOther;
 }
 
 void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {
-	std::vector<Link> links = GumboParsingHelpers::parsePageUrlList(output->root);
+	std::vector<OnPageUrl> links = GumboParsingHelpers::parsePageUrlList(output->root);
 
 	std::vector<QUrl> unresolvedUrls;
-	for (const Link& link : links)
+	for (const OnPageUrl& link : links)
 	{
 		unresolvedUrls.push_back(link.url);
 	}
@@ -89,9 +89,10 @@ void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr
 		const QUrl& url = resolvedUrls[i];
 		if (!resourceExists(url))
 		{
-			PageRawResource::ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
-				PageRawResource::ResourceHtml : PageRawResource::ResourceOther;
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ resourceType, Link{ url, links[i].linkParameter } });
+			ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
+				ResourceType::ResourceHtml : ResourceType::ResourceOther;
+
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ resourceType, OnPageUrl{ url, links[i].linkParameter } });
 		}
 	}
 }
@@ -119,7 +120,7 @@ void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, Page
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, Link{ url, Link::UnknownParameter } });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ ResourceType::ResourceJavaScript, OnPageUrl{ url, UrlParameter::UnknownParameter } });
 		}
 		
 	}
@@ -149,7 +150,7 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceStyleSheet, Link{ url, Link::UnknownParameter } });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ ResourceType::ResourceStyleSheet, OnPageUrl{ url, UrlParameter::UnknownParameter } });
 		}
 	}
 }
@@ -177,7 +178,7 @@ void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, PageRawPt
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceImage, Link{ url, Link::UnknownParameter } });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ ResourceType::ResourceImage, OnPageUrl{ url, UrlParameter::UnknownParameter } });
 		}
 	}
 }
@@ -206,7 +207,7 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceVideo, Link{ url, Link::UnknownParameter } });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ ResourceType::ResourceVideo, OnPageUrl{ url, UrlParameter::UnknownParameter } });
 		}
 	}
 }
@@ -238,7 +239,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, Link{ url, Link::UnknownParameter } });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ ResourceType::ResourceFlash, OnPageUrl{ url, UrlParameter::UnknownParameter } });
 		}
 	}
 }
@@ -271,7 +272,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, Link{ url, Link::UnknownParameter } });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ ResourceType::ResourceFlash, OnPageUrl{ url, UrlParameter::UnknownParameter } });
 		}
 	}
 }
@@ -316,7 +317,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, Link{ url, Link::UnknownParameter } });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ ResourceType::ResourceFlash, OnPageUrl{ url, UrlParameter::UnknownParameter } });
 		}
 	}
 }

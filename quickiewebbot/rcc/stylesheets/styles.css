@@ -197,13 +197,22 @@ QuickieWebBot--SettingsPage QLabel,
 QuickieWebBot--SettingsPage QCheckBox
 {
 	color: #333333;
+	font-size: 9pt;
+}
+
+QuickieWebBot--SettingsPage QCheckBox
+{
+	font: bold;
 }
 
 QuickieWebBot--SettingsPage QFrame#headerFrame
 {
 	min-height: 6em;
-	background: #F8F8F8;
 	padding: 0.5em;
+	padding-left: 1.2em;
+	
+	background: #F8F8F8;
+	
 	border: 0.05em solid #CCCCCC;
 	border-bottom: none;
 }
@@ -211,13 +220,15 @@ QuickieWebBot--SettingsPage QFrame#headerFrame
 QuickieWebBot--SettingsPage QLabel#headerName
 {
 	font-size: 16pt;
+	font: bold;
+	
 	color: #61a032;
 }
 
 QuickieWebBot--SettingsPage QFrame#settingsFrame
 {
 	background: #EDEDED;
-	padding: 1em;
+	padding: 0.8em;
 	border: 0.05em solid #CCCCCC;
 }
 
@@ -280,13 +291,13 @@ QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:enabled:pressed
 QSplitter::handle:horizontal
 {
 	image: url(:/images/ui-splitter-horizontal-icon.png);
-    width: 1em;
+    width: 0.8em;
 }
 
 QSplitter::handle:vertical
 {
 	image: url(:/images/ui-splitter-vertical-icon.png);
-    height: 1em;
+    height: 0.8em;
 }
 
 /*/////////////////////////////// Group buttons ///////////////////////////////*/

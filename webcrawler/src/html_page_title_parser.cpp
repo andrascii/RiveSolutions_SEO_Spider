@@ -6,7 +6,7 @@ namespace WebCrawler
 
 void HtmlPageTitleParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 {	
-	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	if (pageRaw->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}

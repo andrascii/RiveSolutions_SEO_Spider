@@ -113,14 +113,14 @@ size_t PageRawInfo::countLinksFromThisPage() const noexcept
 		return 0;
 	}
 
-	return m_pageRawPtr->linksFromThisPage.size();
+	return m_pageRawPtr->linksOnThisPage.size();
 }
 
 WebCrawler::PageRawWeakPtr PageRawInfo::linkFromThisPage(size_t number)
 {
 	DEBUG_ASSERT(number < countLinksFromThisPage());
 
-	return m_pageRawPtr->linksFromThisPage[number].resource;
+	return m_pageRawPtr->linksOnThisPage[number].resource;
 }
 
 size_t PageRawInfo::countLinksToThisPage() const noexcept
@@ -330,11 +330,11 @@ QVariant PageRawInfo::acceptDofollowNofollow() const
 {
 	switch (m_pageRawPtr->linkParameter)
 	{
-		case WebCrawler::Link::DofollowParameter:
+		case WebCrawler::UrlParameter::DofollowParameter:
 		{
 			return QObject::tr("Dofollow");
 		}
-		case WebCrawler::Link::NofollowParameter:
+		case WebCrawler::UrlParameter::NofollowParameter:
 		{
 			return QObject::tr("Nofollow");
 		}

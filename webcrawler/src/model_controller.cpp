@@ -46,8 +46,8 @@ void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
 
 void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 {
-	ASSERT(pageRaw->resourceType >= PageRawResource::ResourceHtml &&
-		pageRaw->resourceType <= PageRawResource::ResourceOther)
+	ASSERT(pageRaw->resourceType >= ResourceType::ResourceHtml &&
+		pageRaw->resourceType <= ResourceType::ResourceOther)
 
 	fixPageRawResourceType(pageRaw);
 	processPageRawHtmlResources(pageRaw);
@@ -365,7 +365,7 @@ void ModelController::processPageRawStatusCode(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 {
-	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	if (pageRaw->resourceType != ResourceType::ResourceHtml)
 	{
 		// if it is not an html resource, just exit
 		return;
@@ -392,7 +392,7 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 	PageRawPtr resourcePage = std::make_shared<PageRaw>();
 	for (const PageRawResource& resource : pageRaw->allResourcesOnPage)
 	{
-		if (resource.resourceType != PageRawResource::ResourceHtml)
+		if (resource.resourceType != ResourceType::ResourceHtml)
 		{
 			continue;
 		}
@@ -408,7 +408,7 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
 			existingResource->linksToThisPage.push_back({ pageRaw, resource.resourceLink.linkParameter });
-			pageRaw->linksFromThisPage.push_back({ existingResource, resource.resourceLink.linkParameter });
+			pageRaw->linksOnThisPage.push_back({ existingResource, resource.resourceLink.linkParameter });
 
 		}
 		else
@@ -416,7 +416,7 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 			PageRawPtr pendingResource = std::make_shared<PageRaw>();
 			pendingResource->url = resource.resourceLink.url;
 			pendingResource->linksToThisPage.push_back({ pageRaw, resource.resourceLink.linkParameter });
-			pageRaw->linksFromThisPage.push_back({ pendingResource, resource.resourceLink.linkParameter });
+			pageRaw->linksOnThisPage.push_back({ pendingResource, resource.resourceLink.linkParameter });
 			m_data->addPageRaw(pendingResource, DataCollection::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isPageRawExists(pendingResource, DataCollection::PendingResourcesStorageType));
 		}
@@ -425,31 +425,31 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 
 void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 {
-	std::map<PageRawResource::ResourceType, DataCollection::StorageType> storageTypes
+	std::map<ResourceType, DataCollection::StorageType> storageTypes
 	{
-		{ PageRawResource::ResourceImage, DataCollection::ImageResourcesStorageType },
-		{ PageRawResource::ResourceJavaScript, DataCollection::JavaScriptResourcesStorageType },
-		{ PageRawResource::ResourceStyleSheet, DataCollection::StyleSheetResourcesStorageType },
-		{ PageRawResource::ResourceFlash, DataCollection::FlashResourcesStorageType },
-		{ PageRawResource::ResourceVideo, DataCollection::VideoResourcesStorageType },
-		{ PageRawResource::ResourceOther, DataCollection::OtherResourcesStorageType },
+		{ ResourceType::ResourceImage, DataCollection::ImageResourcesStorageType },
+		{ ResourceType::ResourceJavaScript, DataCollection::JavaScriptResourcesStorageType },
+		{ ResourceType::ResourceStyleSheet, DataCollection::StyleSheetResourcesStorageType },
+		{ ResourceType::ResourceFlash, DataCollection::FlashResourcesStorageType },
+		{ ResourceType::ResourceVideo, DataCollection::VideoResourcesStorageType },
+		{ ResourceType::ResourceOther, DataCollection::OtherResourcesStorageType },
 	};
 
-	std::map<PageRawResource::ResourceType, DataCollection::StorageType> externalStorageTypes
+	std::map<ResourceType, DataCollection::StorageType> externalStorageTypes
 	{
-		{ PageRawResource::ResourceImage, DataCollection::ExternalImageResourcesStorageType },
-		{ PageRawResource::ResourceJavaScript, DataCollection::ExternalJavaScriptResourcesStorageType },
-		{ PageRawResource::ResourceStyleSheet, DataCollection::ExternalStyleSheetResourcesStorageType },
-		{ PageRawResource::ResourceFlash, DataCollection::ExternalFlashResourcesStorageType },
-		{ PageRawResource::ResourceVideo, DataCollection::ExternalVideoResourcesStorageType },
-		{ PageRawResource::ResourceOther, DataCollection::ExternalOtherResourcesStorageType },
+		{ ResourceType::ResourceImage, DataCollection::ExternalImageResourcesStorageType },
+		{ ResourceType::ResourceJavaScript, DataCollection::ExternalJavaScriptResourcesStorageType },
+		{ ResourceType::ResourceStyleSheet, DataCollection::ExternalStyleSheetResourcesStorageType },
+		{ ResourceType::ResourceFlash, DataCollection::ExternalFlashResourcesStorageType },
+		{ ResourceType::ResourceVideo, DataCollection::ExternalVideoResourcesStorageType },
+		{ ResourceType::ResourceOther, DataCollection::ExternalOtherResourcesStorageType },
 	};
 
 
 	const bool http = PageRawParserHelpers::isHttpOrHttpsScheme(pageRaw->url.toDisplayString());
 	const bool externalOrNotHttp = pageRaw->isThisExternalPage || !http;
 
-	if (pageRaw->resourceType != PageRawResource::ResourceHtml)
+	if (pageRaw->resourceType != ResourceType::ResourceHtml)
 	{
 		PageRawPtr pendingPageRaw = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
 		pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
@@ -470,7 +470,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 	{
 		QString resourceDisplayUrl = resource.resourceLink.url.toDisplayString();
 
-		if (resource.resourceType == PageRawResource::ResourceHtml || 
+		if (resource.resourceType == ResourceType::ResourceHtml ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
 		{
@@ -503,7 +503,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 void ModelController::fixPageRawResourceType(PageRawPtr pageRaw) noexcept
 {
 	PageRawPtr pendingResource = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
-	if (pendingResource && pendingResource->resourceType != PageRawResource::ResourceHtml)
+	if (pendingResource && pendingResource->resourceType != ResourceType::ResourceHtml)
 	{
 		pageRaw->resourceType = pendingResource->resourceType;
 	}
