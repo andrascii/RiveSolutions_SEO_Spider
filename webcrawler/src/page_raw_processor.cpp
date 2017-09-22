@@ -82,7 +82,7 @@ void PageRawProcessor::process()
 		schedulePageResourcesLoading(pageRaw);
 
 #ifdef QT_DEBUG
-		if (pageRaw->fromUrl.toString().isEmpty())
+		if (pageRaw->resourceType == ResourceType::ResourceHtml)
 		{
 			pageRaw->rawHtml = qCompress(GumboParsingHelpers::decodeHtmlPage(reply.responseBody), 9);
 		}
@@ -120,7 +120,7 @@ void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
 
 	std::vector<QUrl> resourcesUrlList;
 
-	for (const PageRawResource& resource : pageRaw->allResourcesOnPage)
+	for (const RawResourceOnPage& resource : pageRaw->allResourcesOnPage)
 	{
 		const QString resourceUrlStr = resource.thisResourceUrl.url.toDisplayString();
 

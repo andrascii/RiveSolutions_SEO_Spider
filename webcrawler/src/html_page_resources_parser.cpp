@@ -8,10 +8,10 @@ namespace WebCrawler
 class ResourcesCacheGuard
 {
 public:
-	ResourcesCacheGuard(QSet<QString>& cache, const std::deque<PageRawResource>& resources)
+	ResourcesCacheGuard(QSet<QString>& cache, const std::deque<RawResourceOnPage>& resources)
 		: m_cache(cache)
 	{
-		for (const PageRawResource& resource : resources)
+		for (const RawResourceOnPage& resource : resources)
 		{
 			m_cache.insert(resource.thisResourceUrl.url.toDisplayString());
 		}
@@ -97,7 +97,7 @@ void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr
 		ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
 			ResourceType::ResourceHtml : ResourceType::ResourceOther;
 
-		pageRaw->allResourcesOnPage.push_back(PageRawResource{ resourceType, OnPageUrl{ url, links[i].urlParameter } });
+		pageRaw->allResourcesOnPage.push_back(RawResourceOnPage{ resourceType, OnPageUrl{ url, links[i].urlParameter } });
 	}
 }
 
@@ -127,7 +127,7 @@ void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, Page
 			continue;
 		}
 		
-		PageRawResource jsResource
+		RawResourceOnPage jsResource
 		{
 			ResourceType::ResourceJavaScript,
 			OnPageUrl{ url, UrlParameter::UnknownParameter }
@@ -164,7 +164,7 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 			continue;
 		}
 
-		PageRawResource cssResource
+		RawResourceOnPage cssResource
 		{
 			ResourceType::ResourceStyleSheet,
 			OnPageUrl{ url, UrlParameter::UnknownParameter }
@@ -200,7 +200,7 @@ void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, PageRawPt
 			continue;
 		}
 
-		PageRawResource imageResource
+		RawResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
 			OnPageUrl{ url, UrlParameter::UnknownParameter }
@@ -237,7 +237,7 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 			continue;
 		}
 
-		PageRawResource videoResource
+		RawResourceOnPage videoResource
 		{
 			ResourceType::ResourceVideo,
 			OnPageUrl{ url, UrlParameter::UnknownParameter }
@@ -277,7 +277,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRaw
 			continue;
 		}
 
-		PageRawResource flashResource
+		RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
 			OnPageUrl{ url, UrlParameter::UnknownParameter }
@@ -318,7 +318,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRaw
 			continue;
 		}
 
-		PageRawResource flashResource
+		RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
 			OnPageUrl{ url, UrlParameter::UnknownParameter }
@@ -371,7 +371,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 			continue;
 		}
 
-		PageRawResource flashResource
+		RawResourceOnPage flashResource
 		{ 
 			ResourceType::ResourceFlash, 
 			OnPageUrl{ url, UrlParameter::UnknownParameter }

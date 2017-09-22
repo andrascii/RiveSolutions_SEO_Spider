@@ -56,7 +56,7 @@ void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
 
 	processPageRawStatusCode(pageRaw);
 
-	if (pageRaw->fromUrl.toString().isEmpty())
+	if (pageRaw->resourceType == ResourceType::ResourceHtml)
 	{
 		// page
 		processPageRawUrl(pageRaw);
@@ -390,7 +390,7 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 	}
 
 	PageRawPtr resourcePage = std::make_shared<PageRaw>();
-	for (const PageRawResource& resource : pageRaw->allResourcesOnPage)
+	for (const RawResourceOnPage& resource : pageRaw->allResourcesOnPage)
 	{
 		if (resource.resourceType != ResourceType::ResourceHtml)
 		{
@@ -466,7 +466,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 		return;
 	}
 
-	for (const PageRawResource& resource : pageRaw->allResourcesOnPage)
+	for (const RawResourceOnPage& resource : pageRaw->allResourcesOnPage)
 	{
 		QString resourceDisplayUrl = resource.thisResourceUrl.url.toDisplayString();
 
@@ -487,6 +487,11 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
 
 		PageRawPtr newOrExistingResource = m_data->pageRaw(resourceRaw, storage);
+		if (!newOrExistingResource)
+		{
+			newOrExistingResource = m_data->pageRaw(resourceRaw, DataCollection::PendingResourcesStorageType);
+		}
+
 		if (!newOrExistingResource)
 		{
 			newOrExistingResource = resourceRaw;

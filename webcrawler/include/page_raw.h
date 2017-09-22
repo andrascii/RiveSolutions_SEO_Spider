@@ -38,7 +38,7 @@ struct ResourceLink
 	UrlParameter urlParameter;
 };
 
-struct PageRawResource
+struct RawResourceOnPage
 {
 	ResourceType resourceType;
 	OnPageUrl thisResourceUrl;
@@ -47,7 +47,6 @@ struct PageRawResource
 struct PageRaw
 {
 	QUrl url;
-	QUrl fromUrl;
 	QUrl redirectedUrl;
 
 	QString title;
@@ -80,7 +79,7 @@ struct PageRaw
 
 	ResourceType resourceType;
 
-	std::deque<PageRawResource> allResourcesOnPage;
+	std::deque<RawResourceOnPage> allResourcesOnPage;
 	std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 

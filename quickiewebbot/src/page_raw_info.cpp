@@ -18,7 +18,6 @@ QString PageRawInfo::itemTypeDescription(Column column)
 	static QMap<Column, QString> s_titles
 	{
 		{ UrlItemType, QObject::tr("Url") },
-		{ FromUrlItemType, QObject::tr("From URL") },
 		{ ContentTypeItemType, QObject::tr("Content") },
 		{ TitleItemType, QObject::tr("Title") },
 		{ MetaRefreshItemType, QObject::tr("Meta Refresh") },
@@ -59,7 +58,6 @@ int PageRawInfo::columnPrefferedSize(Column column)
 	static QMap<Column, int> s_prefferedSizes
 	{
 		{ UrlItemType, QuickieWebBotHelpers::pointsToPixels(300) },
-		{ FromUrlItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ TitleItemType, QuickieWebBotHelpers::pointsToPixels(400) },
 		{ ContentTypeItemType, QuickieWebBotHelpers::pointsToPixels(150) },
 		{ MetaRefreshItemType, QuickieWebBotHelpers::pointsToPixels(100) },
@@ -145,7 +143,6 @@ PageRawInfo::MethodAcceptor PageRawInfo::acceptItem(Column column) const
 	switch (column)
 	{
 		case UrlItemType: return &PageRawInfo::acceptUrl;
-		case FromUrlItemType: return &PageRawInfo::acceptFromUrl;
 		case ContentTypeItemType: return &PageRawInfo::acceptContentType;
 		case TitleItemType: return &PageRawInfo::acceptTitle;
 		case MetaRefreshItemType: return &PageRawInfo::acceptMetaRefresh;
@@ -184,11 +181,6 @@ PageRawInfo::MethodAcceptor PageRawInfo::acceptItem(Column column) const
 QVariant PageRawInfo::acceptUrl() const
 {
 	return m_pageRawPtr->url;
-}
-
-QVariant PageRawInfo::acceptFromUrl() const
-{
-	return m_pageRawPtr->fromUrl;
 }
 
 QVariant PageRawInfo::acceptContentType() const

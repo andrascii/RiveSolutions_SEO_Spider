@@ -14,7 +14,6 @@ public:
 		// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
 
 		UrlItemType,
-		FromUrlItemType,
 		TitleItemType,
 		ContentTypeItemType,
 		MetaRefreshItemType,
@@ -79,7 +78,6 @@ private:
 
 	MethodAcceptor acceptItem(Column item) const;
 	QVariant acceptUrl() const;
-	QVariant acceptFromUrl() const;
 	QVariant acceptContentType() const;
 	QVariant acceptTitle() const;
 	QVariant acceptMetaRefresh() const;
