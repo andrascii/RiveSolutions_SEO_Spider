@@ -34,7 +34,7 @@ void SplashScreen::show()
 
 SplashScreen::SplashScreen()
 	: QWidget(nullptr, Qt::Dialog | Qt::Tool | Qt::FramelessWindowHint)
-	, m_screenContent(new Ui::SplashScreen)
+	, m_screenContent(new Ui::SplashScreenWidget)
 	, m_timer(new QTimer(this))
 {
 	DEBUG_ASSERT(!s_alreadyShown);

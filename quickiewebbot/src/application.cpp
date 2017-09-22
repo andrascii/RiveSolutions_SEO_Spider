@@ -10,10 +10,6 @@
 #include "preferences.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
-#include "ui_crawler_settings.h"
-#include "ui_proxy_settings.h"
-#include "ui_limits_settings.h"
-#include "ui_preferences_settings.h"
 
 
 namespace QuickieWebBot
@@ -118,14 +114,6 @@ void Application::mainFrameIsReadyForShow()
 	INFOLOG << "MainFrame shown";
 }
 
-void Application::registerSettingsPages() const
-{
-	SettingsPageImpl<Ui_CrawlerSettings>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettings));
-	SettingsPageImpl<Ui_ProxySettings>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettings));
-	SettingsPageImpl<Ui_LimitsSettings>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettings));
-	SettingsPageImpl<Ui_PreferencesSettings>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettings));
-}
-
 void Application::registerServices() const
 {
 	ServiceLocator::instance()->addService<SettingsPageRegistry>(new SettingsPageRegistry);
@@ -155,6 +143,10 @@ void Application::initialize() noexcept
 	m_guiStorage = storage;
 
 	registerServices();
+	
+	initQSettings();
+
+	preferences()->load();
 
 	m_mainFrame.reset(new MainFrame);
 
@@ -162,12 +154,6 @@ void Application::initialize() noexcept
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
 	DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
 #endif
-
-	initQSettings();
-
-	preferences()->load();
-
-	registerSettingsPages();
 }
 
 void Application::initializeStyleSheet() noexcept

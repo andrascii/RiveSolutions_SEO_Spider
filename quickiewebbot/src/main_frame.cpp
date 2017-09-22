@@ -14,6 +14,11 @@
 #include "service_locator.h"
 #include "settings_page_registry.h"
 #include "titled_widget.h"
+#include "settings_page_impl.h"
+#include "ui_crawler_settings_widget.h"
+#include "ui_proxy_settings_widget.h"
+#include "ui_limits_settings_widget.h"
+#include "ui_preferences_settings_widget.h"
 
 
 namespace QuickieWebBot
@@ -47,6 +52,7 @@ void MainFrame::init()
 {
 	createActions();
 	createAndSetCentralWidget();
+	registerSettingsPages();
 
 	setWindowIcon(QIcon(QStringLiteral(":/images/robot.ico")));
 
@@ -107,6 +113,14 @@ void MainFrame::createAndSetCentralWidget()
 	centralWidget->setLayout(layout);
 
 	setCentralWidget(centralWidget);
+}
+
+void MainFrame::registerSettingsPages() const
+{
+	SettingsPageImpl<Ui_CrawlerSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettingsWidget));
+	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettingsWidget));
+	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
+	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
 }
 
 void MainFrame::startCrawler()

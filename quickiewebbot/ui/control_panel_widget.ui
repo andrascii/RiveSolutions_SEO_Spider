@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ControlPanel</class>
- <widget class="QWidget" name="ControlPanel">
+ <class>ControlPanelWidget</class>
+ <widget class="QWidget" name="ControlPanelWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>686</width>
+    <width>687</width>
     <height>55</height>
    </rect>
   </property>

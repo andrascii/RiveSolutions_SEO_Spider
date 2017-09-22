@@ -11,9 +11,7 @@ namespace QuickieWebBot
 {
 
 template <typename UiType>
-class SettingsPageImpl
-	: public SettingsPage
-	, protected UiType
+class SettingsPageImpl : public SettingsPage, protected UiType
 {
 public:
 	SettingsPageImpl(bool isAutoApply = false, QWidget* parent = nullptr)

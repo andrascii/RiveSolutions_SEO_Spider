@@ -30,7 +30,6 @@ private:
 	Ui::ApplicationSettingsWidget m_ui;
 
 	QByteArray m_currentPage;
-	QStackedWidget* m_stackedWidget;
 
 	bool m_somethingChanged;
 };

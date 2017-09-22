@@ -16,7 +16,7 @@ namespace QuickieWebBot
 
 PageViewModel::PageViewModel(PageModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectionBgColor("#E6EE9C")
+	, m_selectionBgColor("#F7F0D6") //#E6EE9C
 	, m_hoveredBgColor("#F3F3F3")
 	, m_bgColor(Qt::white)
 	, m_itemRenderer(this)
@@ -124,7 +124,7 @@ const QColor& PageViewModel::backgroundColor(const QModelIndex&) const noexcept
 
 const QFont& PageViewModel::font(const QModelIndex& index) const noexcept
 {
-	static QFont font("Times", 9);
+	static QFont font("Arial", 9);
 
 	return font;
 }
