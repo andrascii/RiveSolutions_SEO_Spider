@@ -41,20 +41,20 @@ struct PageRawResource
 
 	ResourceType resourceType;
 	Link resourceLink;
-	QUrl containingThisResourceUrl;
 };
 
 struct PageRaw
 {
 	QUrl url;
 	QUrl fromUrl;
+	QUrl redirectedUrl;
+
 	QString title;
 	QString contentType;
 	QString metaRefresh;
 	QString metaRobots;
 	QString metaDescription;
 	QString metaKeywords;
-	QUrl redirectedUrl;
 	QString serverResponse;
 	QString firstH1;
 	QString secondH1;

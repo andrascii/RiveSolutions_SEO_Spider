@@ -91,7 +91,7 @@ void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr
 		{
 			PageRawResource::ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
 				PageRawResource::ResourceHtml : PageRawResource::ResourceOther;
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ resourceType, { url, links[i].linkParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ resourceType, Link{ url, links[i].linkParameter } });
 		}
 	}
 }
@@ -119,7 +119,7 @@ void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, Page
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, { url, Link::UnknownParameter }, pageRaw->url, });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceJavaScript, Link{ url, Link::UnknownParameter } });
 		}
 		
 	}
@@ -149,7 +149,7 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceStyleSheet, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceStyleSheet, Link{ url, Link::UnknownParameter } });
 		}
 	}
 }
@@ -177,7 +177,7 @@ void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, PageRawPt
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceImage, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceImage, Link{ url, Link::UnknownParameter } });
 		}
 	}
 }
@@ -206,7 +206,7 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceVideo, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceVideo, Link{ url, Link::UnknownParameter } });
 		}
 	}
 }
@@ -238,7 +238,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url});
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, Link{ url, Link::UnknownParameter } });
 		}
 	}
 }
@@ -271,7 +271,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, Link{ url, Link::UnknownParameter } });
 		}
 	}
 }
@@ -316,7 +316,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 	{
 		if (!resourceExists(url))
 		{
-			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, { url, Link::UnknownParameter }, pageRaw->url });
+			pageRaw->allResourcesOnPage.push_back(PageRawResource{ PageRawResource::ResourceFlash, Link{ url, Link::UnknownParameter } });
 		}
 	}
 }
