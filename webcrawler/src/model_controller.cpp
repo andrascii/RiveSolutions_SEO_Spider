@@ -495,6 +495,7 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 				httpResource ? DataCollection::PendingResourcesStorageType : storage);
 		}
 
+		pageRaw->linksOnThisPage.push_back({ newOrExistingResource , UrlParameter::UnknownParameter });
 		newOrExistingResource->linksToThisPage.push_back({ pageRaw, resource.thisResourceUrl.urlParameter });
 		newOrExistingResource->resourceType = resource.resourceType;
 	}
