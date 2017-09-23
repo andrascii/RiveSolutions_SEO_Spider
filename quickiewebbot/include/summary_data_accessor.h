@@ -11,7 +11,7 @@ class SummaryDataAccessor : public QObject, public ISummaryDataAccessor
 	Q_OBJECT
 
 public:
-	SummaryDataAccessor(WebCrawler::GuiStorage* guiStorage);
+	SummaryDataAccessor(WebCrawler::SequencedDataCollection* guiStorage);
 
 	virtual StorageAdaptorType itemCategory(const QModelIndex& index) const noexcept override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
@@ -26,7 +26,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept override;
 
-	virtual const WebCrawler::GuiStorage* guiStorage() const noexcept override;
+	virtual const WebCrawler::SequencedDataCollection* guiStorage() const noexcept override;
 
 	virtual QObject* qobject() noexcept override;
 
@@ -34,18 +34,18 @@ public:
 
 	virtual const DCStorageDescription* storageDescriptionByRow(int row) const noexcept override;
 	virtual const DCStorageGroupDescription* storageGroupDescriptionByRow(int row) const noexcept override;
-	virtual const DCStorageDescription* storageDescription(WebCrawler::DataCollection::StorageType type) const noexcept override;
+	virtual const DCStorageDescription* storageDescription(WebCrawler::StorageType type) const noexcept override;
 	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept override;
 
 private:
-	int rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept;
+	int rowByStorageType(WebCrawler::StorageType storageType) const noexcept;
 
 	Q_SLOT void emitDataChanged(int, int);
 
 private:
 	static constexpr int s_summaryColumnCount = 2;
 
-	WebCrawler::GuiStorage* m_guiStorage;
+	WebCrawler::SequencedDataCollection* m_guiStorage;
 
 	QVector<DCStorageGroupDescriptionPtr> m_allGroupRows;
 	QMap<int, DCStorageGroupDescriptionPtr> m_groupRows;

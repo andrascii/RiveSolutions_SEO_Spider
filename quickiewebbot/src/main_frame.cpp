@@ -3,8 +3,8 @@
 #include "preferences.h"
 #include "main_frame.h"
 #include "model_controller.h"
-#include "data_collection.h"
-#include "web_crawler.h"
+#include "unordered_data_collection.h"
+#include "crawler.h"
 #include "quickie_web_bot_helpers.h"
 #include "data_pages_widget.h"
 #include "control_panel_widget.h"
@@ -125,7 +125,7 @@ void MainFrame::registerSettingsPages() const
 
 void MainFrame::startCrawler()
 {
-	WebCrawler::WebCrawlerOptions options;
+	WebCrawler::CrawlerOptions options;
 
 	options.url = theApp->preferences()->url();
 	options.minTitleLength = theApp->preferences()->minTitleLength();
@@ -138,12 +138,12 @@ void MainFrame::startCrawler()
 	options.maxImageAltTextChars = theApp->preferences()->maxImageAltTextChars();
 	options.maxImageSizeKb = theApp->preferences()->maxImageSize();
 
-	theApp->webCrawler()->startCrawling(options);
+	theApp->crawler()->startCrawling(options);
 }
 
 void MainFrame::stopCrawler()
 {
-	theApp->webCrawler()->stopCrawling();
+	theApp->crawler()->stopCrawling();
 }
 
 void MainFrame::clearCrawledData()

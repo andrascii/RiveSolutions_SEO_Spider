@@ -1,9 +1,9 @@
-#include "page_raw_parser_helpers.h"
+#include "page_parser_helpers.h"
 
 namespace WebCrawler
 {
 
-QUrl PageRawParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& baseUrl)
+QUrl PageParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& baseUrl)
 {
 	QUrl result = relativeUrl;
 
@@ -75,7 +75,7 @@ QUrl PageRawParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUr
 	return result;
 }
 
-std::vector<QUrl> PageRawParserHelpers::resolveUrlList(const QUrl& baseUrl, const std::vector<QUrl>& urlList) noexcept
+std::vector<QUrl> PageParserHelpers::resolveUrlList(const QUrl& baseUrl, const std::vector<QUrl>& urlList) noexcept
 {
 	std::vector<QUrl> result;
 	for (const QUrl& url : urlList)
@@ -105,7 +105,7 @@ std::vector<QUrl> PageRawParserHelpers::resolveUrlList(const QUrl& baseUrl, cons
 	return result;
 }
 
-bool PageRawParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept
+bool PageParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept
 {
 	// TODO: improve
 	QString baseUrlHost = baseUrl.host().toLower();
@@ -120,7 +120,7 @@ bool PageRawParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) n
 	return !isUrlInternal;
 }
 
-bool PageRawParserHelpers::isHtmlContentType(const QString& contentType) noexcept
+bool PageParserHelpers::isHtmlContentType(const QString& contentType) noexcept
 {
 	return contentType.startsWith("text/html") ||
 		contentType.startsWith("text/xhtml") ||
@@ -128,7 +128,7 @@ bool PageRawParserHelpers::isHtmlContentType(const QString& contentType) noexcep
 		contentType.isEmpty();
 }
 
-bool PageRawParserHelpers::isHttpOrHttpsScheme(const QString& urlStr) noexcept
+bool PageParserHelpers::isHttpOrHttpsScheme(const QString& urlStr) noexcept
 {
 	static QRegularExpression expr("^\\w{0,10}:");
 

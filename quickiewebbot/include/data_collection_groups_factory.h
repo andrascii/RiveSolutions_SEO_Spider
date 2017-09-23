@@ -1,6 +1,6 @@
 #pragma once
 
-#include "data_collection.h"
+#include "unordered_data_collection.h"
 
 namespace QuickieWebBot
 {
@@ -29,7 +29,7 @@ enum class AuditGroup
 
 struct DCStorageDescription
 {
-	WebCrawler::DataCollection::StorageType storageType;
+	WebCrawler::StorageType storageType;
 	QString storageTypeDescriptionName;
 };
 
@@ -45,7 +45,7 @@ using DCStorageGroupDescriptionPtr = std::shared_ptr<DCStorageGroupDescription>;
 class DataCollectionGroupsFactory
 {
 public:
-	DCStorageGroupDescriptionPtr create(/*WebCrawler::GuiStorage* guiStorage, */AuditGroup group);
+	DCStorageGroupDescriptionPtr create(AuditGroup group);
 };
 
 }

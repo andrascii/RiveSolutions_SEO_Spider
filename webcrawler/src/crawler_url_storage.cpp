@@ -7,10 +7,10 @@ void CrawlerUrlStorage::setHost(const QUrl& url)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
-	m_internalUrlList.insert(WebCrawlerRequest{ url, RequestTypeGet });
+	m_internalUrlList.insert(CrawlerRequest{ url, RequestTypeGet });
 }
 
-bool CrawlerUrlStorage::extractUrl(WebCrawlerRequest& url) noexcept
+bool CrawlerUrlStorage::extractUrl(CrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
@@ -38,7 +38,7 @@ void CrawlerUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestTyp
 
 	auto insert = [&](VectorIterator iter)
 	{
-		WebCrawlerRequest item{ *iter, requestType };
+		CrawlerRequest item{ *iter, requestType };
 
 		if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
 		{

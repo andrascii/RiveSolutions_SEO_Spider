@@ -3,12 +3,12 @@
 namespace WebCrawler
 {
 
-struct PageRaw;
+struct ParsedPage;
 
-using PageRawWeakPtr = std::weak_ptr<PageRaw>;
+using ParsedPageWeakPtr = std::weak_ptr<ParsedPage>;
 
 
-enum class UrlParameter
+enum class LinkParameter
 {
 	UnknownParameter,
 	NofollowParameter,
@@ -26,25 +26,25 @@ enum class ResourceType
 	ResourceOther
 };
 
-struct OnPageUrl
+struct LinkInfo
 {
 	QUrl url;
-	UrlParameter urlParameter;
+	LinkParameter urlParameter;
 };
 
 struct ResourceLink
 {
-	PageRawWeakPtr resource;
-	UrlParameter urlParameter;
+	ParsedPageWeakPtr resource;
+	LinkParameter urlParameter;
 };
 
 struct RawResourceOnPage
 {
 	ResourceType resourceType;
-	OnPageUrl thisResourceUrl;
+	LinkInfo thisResourceUrl;
 };
 
-struct PageRaw
+struct ParsedPage
 {
 	QUrl url;
 	QUrl redirectedUrl;
@@ -67,7 +67,7 @@ struct PageRaw
 	int wordCount;
 	size_t pageHash;
 
-	UrlParameter linkParameter;
+	LinkParameter linkParameter;
 
 	bool hasSeveralTitleTags;
 	bool hasSeveralMetaDescriptionTags;
@@ -88,9 +88,9 @@ struct PageRaw
 #endif
 };
 
-using PageRawPtr = std::shared_ptr<PageRaw>;
+using ParsedPagePtr = std::shared_ptr<ParsedPage>;
 
-Q_DECLARE_METATYPE(PageRawPtr);
-Q_DECLARE_METATYPE(PageRawWeakPtr);
+Q_DECLARE_METATYPE(ParsedPagePtr);
+Q_DECLARE_METATYPE(ParsedPageWeakPtr);
 
 }

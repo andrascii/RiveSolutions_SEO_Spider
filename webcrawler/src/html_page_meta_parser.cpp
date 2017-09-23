@@ -4,7 +4,7 @@
 namespace WebCrawler
 {
 
-void HtmlPageMetaParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageMetaParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	if (pageRaw->resourceType != ResourceType::ResourceHtml)
 	{
@@ -18,7 +18,7 @@ void HtmlPageMetaParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcep
 	parseMetaRobots(output, pageRaw);
 }
 
-void HtmlPageMetaParser::parseMetaContentType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageMetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -44,7 +44,7 @@ void HtmlPageMetaParser::parseMetaContentType(GumboOutput* output, PageRawPtr& p
 	}
 }
 
-void HtmlPageMetaParser::parseMetaRefresh(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageMetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -70,7 +70,7 @@ void HtmlPageMetaParser::parseMetaRefresh(GumboOutput* output, PageRawPtr& pageR
 	}
 }
 
-void HtmlPageMetaParser::parseMetaDescription(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageMetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -97,7 +97,7 @@ void HtmlPageMetaParser::parseMetaDescription(GumboOutput* output, PageRawPtr& p
 	pageRaw->hasSeveralMetaDescriptionTags = descriptions.size() > 1;
 }
 
-void HtmlPageMetaParser::parseMetaKeywords(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageMetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -124,7 +124,7 @@ void HtmlPageMetaParser::parseMetaKeywords(GumboOutput* output, PageRawPtr& page
 	pageRaw->hasSeveralMetaKeywordsTags = keywords.size() > 1;
 }
 
-void HtmlPageMetaParser::parseMetaRobots(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageMetaParser::parseMetaRobots(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{

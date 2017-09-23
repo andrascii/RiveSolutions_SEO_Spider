@@ -5,7 +5,7 @@ namespace QuickieWebBot
 
 CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 	: QProgressBar(parent)
-	, m_urlStorage(theApp->webCrawler()->crawlerUrlStorage())
+	, m_urlStorage(theApp->crawler()->crawlerUrlStorage())
 	, m_calculatePercentTimer(new QTimer(this))
 {
 	m_calculatePercentTimer->setInterval(150);

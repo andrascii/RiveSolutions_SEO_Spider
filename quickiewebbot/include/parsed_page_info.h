@@ -1,11 +1,11 @@
 #pragma once
 
-#include "page_raw.h"
+#include "parsed_page.h"
 
 namespace QuickieWebBot
 {
 
-class PageRawInfo
+class ParsedPageInfo
 {
 public:
 	enum Column
@@ -60,7 +60,7 @@ public:
 		EndEnumPageInfoItemType
 	};
 
-	PageRawInfo(WebCrawler::PageRawPtr pageRawPtr);
+	ParsedPageInfo(WebCrawler::ParsedPagePtr pageRawPtr);
 
 	static QString itemTypeDescription(Column column);
 	static int columnPrefferedSize(Column column);
@@ -68,13 +68,13 @@ public:
 	QVariant itemValue(Column column) const;
 
 	size_t countLinksFromThisPage() const noexcept;
-	WebCrawler::PageRawWeakPtr linkFromThisPage(size_t number);
+	WebCrawler::ParsedPageWeakPtr linkFromThisPage(size_t number);
 
 	size_t countLinksToThisPage() const noexcept;
-	WebCrawler::PageRawWeakPtr linkToThisPage(size_t number);
+	WebCrawler::ParsedPageWeakPtr linkToThisPage(size_t number);
 
 private:
-	using MethodAcceptor = QVariant(PageRawInfo::*)() const;
+	using MethodAcceptor = QVariant(ParsedPageInfo::*)() const;
 
 	MethodAcceptor acceptItem(Column item) const;
 	QVariant acceptUrl() const;
@@ -108,13 +108,13 @@ private:
 	QVariant acceptAltText() const;
 	QVariant acceptDofollowNofollow() const;
 
-	static void checkColumnType(PageRawInfo::Column column);
+	static void checkColumnType(ParsedPageInfo::Column column);
 
 private:
-	WebCrawler::PageRawPtr m_pageRawPtr;
+	WebCrawler::ParsedPagePtr m_pageRawPtr;
 };
 
-using PageRawInfoPtr = std::shared_ptr<PageRawInfo>;
+using PageRawInfoPtr = std::shared_ptr<ParsedPageInfo>;
 
 Q_DECLARE_METATYPE(PageRawInfoPtr);
 

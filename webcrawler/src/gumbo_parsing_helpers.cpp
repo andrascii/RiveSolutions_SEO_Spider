@@ -1,5 +1,5 @@
 #include "gumbo_parsing_helpers.h"
-#include "page_raw_parser_helpers.h"
+#include "page_parser_helpers.h"
 
 namespace WebCrawler
 {
@@ -191,7 +191,7 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage) noexc
 	return decodedHtmlPage;
 }
 
-std::vector<OnPageUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept
+std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept
 {
 	auto cond = [httpOrHttpsOnly](const GumboNode* node)
 	{
@@ -208,7 +208,7 @@ std::vector<OnPageUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* no
 		GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
 		QString hrefVal = href->value;
 		
-		return PageRawParserHelpers::isHttpOrHttpsScheme(hrefVal);
+		return PageParserHelpers::isHttpOrHttpsScheme(hrefVal);
 	};
 
 	auto res = [](const GumboNode* node)
@@ -216,17 +216,17 @@ std::vector<OnPageUrl> GumboParsingHelpers::parsePageUrlList(const GumboNode* no
 		GumboAttribute* href = href = gumbo_get_attribute(&node->v.element.attributes, "href");
 		GumboAttribute* rel = gumbo_get_attribute(&node->v.element.attributes, "rel");
 
-		UrlParameter linkParam = UrlParameter::DofollowParameter;
+		LinkParameter linkParam = LinkParameter::DofollowParameter;
 
 		if (rel != nullptr && rel->value == "nofollow")
 		{
-			linkParam = UrlParameter::NofollowParameter;
+			linkParam = LinkParameter::NofollowParameter;
 		}
 
-		return OnPageUrl{ QUrl(href->value), linkParam };
+		return LinkInfo{ QUrl(href->value), linkParam };
 	};
 
-	const std::vector<OnPageUrl> result = findNodesAndGetResult(node, cond, res);
+	const std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);
 
 	return result;
 }

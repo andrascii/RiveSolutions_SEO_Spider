@@ -3,7 +3,7 @@
 namespace WebCrawler
 {
 
-class PageRawParserHelpers
+class PageParserHelpers
 {
 public:
 	static QUrl resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& baseUrl);

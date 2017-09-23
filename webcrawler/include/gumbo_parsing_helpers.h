@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gumbo.h"
-#include "page_raw.h"
+#include "parsed_page.h"
 
 namespace WebCrawler
 {
@@ -36,7 +36,7 @@ public:
 	static QByteArray identifyHtmlPageContentType(const QByteArray& htmlPage) noexcept;
 	static QByteArray decodeHtmlPage(const QByteArray& htmlPage) noexcept;
 
-	static std::vector<OnPageUrl> parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly = true) noexcept;
+	static std::vector<LinkInfo> parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly = true) noexcept;
 
 	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::pair<const char*, const char*> expectedAttributes) noexcept;
 	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::map<const char*, const char*> expectedAttributes) noexcept;

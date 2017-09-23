@@ -1,6 +1,6 @@
 #pragma once
 
-#include "page_raw.h"
+#include "parsed_page.h"
 #include "gumbo.h"
 
 namespace WebCrawler
@@ -9,7 +9,7 @@ namespace WebCrawler
 class IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept = 0;
+	virtual void parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept = 0;
 };
 
 }

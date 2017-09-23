@@ -1,4 +1,4 @@
-#include "page_raw_processor.h"
+#include "crawler_worker_thread.h"
 #include "crawler_url_storage.h"
 #include "constants.h"
 #include "html_page_title_parser.h"
@@ -7,14 +7,14 @@
 #include "html_page_word_count_parser.h"
 #include "html_page_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
-#include "page_raw_parser_helpers.h"
+#include "page_parser_helpers.h"
 
 namespace WebCrawler
 {
 
-PageRawProcessor::PageRawProcessor(CrawlerUrlStorage* crawlerStorage, 
+CrawlerWorkerThread::CrawlerWorkerThread(CrawlerUrlStorage* crawlerStorage, 
 	QueuedDownloader* queuedDownloader, QObject* parent)
-	: AbstractThreadableObject(this, QByteArray("PageRawProcessorThread"))
+	: AbstractThreadableObject(this, QByteArray("CrawlerWorkerThread"))
 	, m_webCrawlerInternalUrlStorage(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
 {
@@ -28,14 +28,14 @@ PageRawProcessor::PageRawProcessor(CrawlerUrlStorage* crawlerStorage,
 	
 }
 
-void PageRawProcessor::setHost(QUrl host)
+void CrawlerWorkerThread::setHost(QUrl host)
 {
 	m_host = host;
 }
 
-void PageRawProcessor::process()
+void CrawlerWorkerThread::process()
 {
-	WebCrawlerRequest url;
+	CrawlerRequest url;
 	QueuedDownloader::Reply reply;
 
 	const bool replyExtracted = m_queuedDownloader->extractReply(reply);
@@ -48,25 +48,25 @@ void PageRawProcessor::process()
 
 	if (replyExtracted)
 	{
-		PageRawPtr pageRaw(new PageRaw);
+		ParsedPagePtr page(new ParsedPage);
 
 		int sizeKB = reply.responseBody.size() / 1024;
-		pageRaw->pageSizeKb = sizeKB;
+		page->pageSizeKb = sizeKB;
 		
 		size_t pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
 		const QByteArray contentType = reply.responseHeaders.value("Content-Type", "");
 
-		pageRaw->url = reply.url;
-		pageRaw->statusCode = reply.statusCode;
-		pageRaw->serverResponse = reply.responseHeaderValuePairs;
-		pageRaw->pageHash = pageHash;
-		pageRaw->contentType = contentType;
-		pageRaw->hasSeveralH1Tags = false;
-		pageRaw->hasSeveralH2Tags = false;
-		pageRaw->hasSeveralMetaDescriptionTags = false;
-		pageRaw->hasSeveralMetaKeywordsTags = false;
-		pageRaw->hasSeveralTitleTags = false;
-		pageRaw->isThisExternalPage = PageRawParserHelpers::isUrlExternal(m_host, pageRaw->url);
+		page->url = reply.url;
+		page->statusCode = reply.statusCode;
+		page->serverResponse = reply.responseHeaderValuePairs;
+		page->pageHash = pageHash;
+		page->contentType = contentType;
+		page->hasSeveralH1Tags = false;
+		page->hasSeveralH2Tags = false;
+		page->hasSeveralMetaDescriptionTags = false;
+		page->hasSeveralMetaKeywordsTags = false;
+		page->hasSeveralTitleTags = false;
+		page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_host, page->url);
 
 
 		if (sizeKB > 512)
@@ -77,32 +77,32 @@ void PageRawProcessor::process()
 				<< "Content-Type: " << contentType;
 		}
 
-		preprocessRedirect(pageRaw, reply.redirectUrl);
-		m_htmlPageParser.parsePage(reply.responseBody, pageRaw);
-		schedulePageResourcesLoading(pageRaw);
+		preprocessRedirect(page, reply.redirectUrl);
+		m_htmlPageParser.parsePage(reply.responseBody, page);
+		schedulePageResourcesLoading(page);
 
 #ifdef QT_DEBUG
-		if (pageRaw->resourceType == ResourceType::ResourceHtml)
+		if (page->resourceType == ResourceType::ResourceHtml)
 		{
-			pageRaw->rawHtml = qCompress(GumboParsingHelpers::decodeHtmlPage(reply.responseBody), 9);
+			page->rawHtml = qCompress(GumboParsingHelpers::decodeHtmlPage(reply.responseBody), 9);
 		}
-#endif // DEBUG
+#endif
 
-		Q_EMIT webPageParsed(pageRaw);
+		Q_EMIT pageParsed(page);
 	}
 }
 
-void PageRawProcessor::preprocessRedirect(const PageRawPtr& pageRaw, const QUrl& redirectUrl)
+void CrawlerWorkerThread::preprocessRedirect(const ParsedPagePtr& pageRaw, const QUrl& redirectUrl)
 {
 	if (redirectUrl.isEmpty())
 	{
 		return;
 	}
 
-	pageRaw->redirectedUrl = PageRawParserHelpers::resolveUrlList(pageRaw->url, std::vector<QUrl>{ redirectUrl }).front();
+	pageRaw->redirectedUrl = PageParserHelpers::resolveUrlList(pageRaw->url, std::vector<QUrl>{ redirectUrl }).front();
 }
 
-void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
+void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pageRaw)
 {
 	if (pageRaw->isThisExternalPage)
 	{
@@ -110,7 +110,7 @@ void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
 	}
 
 	std::vector<QUrl> urlList = m_htmlPageParser.pageUrlList();
-	urlList = PageRawParserHelpers::resolveUrlList(pageRaw->url, urlList);
+	urlList = PageParserHelpers::resolveUrlList(pageRaw->url, urlList);
 	m_webCrawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
 
 	if (!pageRaw->redirectedUrl.isEmpty())
@@ -124,7 +124,7 @@ void PageRawProcessor::schedulePageResourcesLoading(const PageRawPtr& pageRaw)
 	{
 		const QString resourceUrlStr = resource.thisResourceUrl.url.toDisplayString();
 
-		if (PageRawParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
+		if (PageParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
 			resource.resourceType != ResourceType::ResourceHtml)
 		{
 			resourcesUrlList.push_back(resource.thisResourceUrl.url);

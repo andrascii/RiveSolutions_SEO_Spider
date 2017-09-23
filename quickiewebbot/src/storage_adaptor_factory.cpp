@@ -1,19 +1,19 @@
 #include "storage_adaptor_factory.h"
-#include "page_raw_info.h"
-#include "page_raw_info_storage_adaptor.h"
+#include "parsed_page_info.h"
+#include "parsed_page_info_storage_adaptor.h"
 
 namespace QuickieWebBot
 {
 
-IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, WebCrawler::GuiStorage* guiStorage)
+IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, WebCrawler::SequencedDataCollection* guiStorage)
 {
 	ASSERT(type > StorageAdaptorType::StorageAdaptorTypeBegin &&
 		type < StorageAdaptorType::StorageAdaptorTypeEnd);
 
-	WebCrawler::DataCollection::StorageType storageType = 
-		static_cast<WebCrawler::DataCollection::StorageType>(type);
+	WebCrawler::StorageType storageType = 
+		static_cast<WebCrawler::StorageType>(type);
 
-	IStorageAdaptor* storageAdaptor = new PageRawInfoStorageAdaptor(guiStorage->storage(storageType), storageType, guiStorage);
+	IStorageAdaptor* storageAdaptor = new ParsedPageInfoStorageAdaptor(guiStorage->storage(storageType), storageType, guiStorage);
 
 	setupAvailableColumns(storageAdaptor, type);
 
@@ -40,32 +40,32 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeHtmlResources:
 		case StorageAdaptorType::StorageAdaptorTypeExternalHtmlResources:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentTypeItemType
-				<< PageRawInfo::TitleItemType
-				<< PageRawInfo::TitleLengthItemType
-				<< PageRawInfo::MetaRefreshItemType
-				<< PageRawInfo::MetaRobotsItemType
-				<< PageRawInfo::MetaDescriptionItemType
-				<< PageRawInfo::MetaDescriptionLengthItemType
-				<< PageRawInfo::MetaKeywordsItemType
-				<< PageRawInfo::MetaKeywordsLengthItemType
-				<< PageRawInfo::RedirectedUrlItemType
-				<< PageRawInfo::FirstH1ItemType
-				<< PageRawInfo::FirstH1LengthItemType
-				<< PageRawInfo::SecondH1ItemType
-				<< PageRawInfo::SecondH1LengthItemType
-				<< PageRawInfo::FirstH2ItemType
-				<< PageRawInfo::FirstH2LengthItemType
-				<< PageRawInfo::SecondH2ItemType
-				<< PageRawInfo::SecondH2LengthItemType
-				<< PageRawInfo::CanonicalLinkElementItemType
-				<< PageRawInfo::StatusCodeItemType
-				<< PageRawInfo::PageSizeKbItemType
-				<< PageRawInfo::WordCountItemType
-				<< PageRawInfo::PageHashItemType
-				<< PageRawInfo::UrlLengthItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::ContentTypeItemType
+				<< ParsedPageInfo::TitleItemType
+				<< ParsedPageInfo::TitleLengthItemType
+				<< ParsedPageInfo::MetaRefreshItemType
+				<< ParsedPageInfo::MetaRobotsItemType
+				<< ParsedPageInfo::MetaDescriptionItemType
+				<< ParsedPageInfo::MetaDescriptionLengthItemType
+				<< ParsedPageInfo::MetaKeywordsItemType
+				<< ParsedPageInfo::MetaKeywordsLengthItemType
+				<< ParsedPageInfo::RedirectedUrlItemType
+				<< ParsedPageInfo::FirstH1ItemType
+				<< ParsedPageInfo::FirstH1LengthItemType
+				<< ParsedPageInfo::SecondH1ItemType
+				<< ParsedPageInfo::SecondH1LengthItemType
+				<< ParsedPageInfo::FirstH2ItemType
+				<< ParsedPageInfo::FirstH2LengthItemType
+				<< ParsedPageInfo::SecondH2ItemType
+				<< ParsedPageInfo::SecondH2LengthItemType
+				<< ParsedPageInfo::CanonicalLinkElementItemType
+				<< ParsedPageInfo::StatusCodeItemType
+				<< ParsedPageInfo::PageSizeKbItemType
+				<< ParsedPageInfo::WordCountItemType
+				<< ParsedPageInfo::PageHashItemType
+				<< ParsedPageInfo::UrlLengthItemType
 			);
 
 			return;
@@ -87,10 +87,10 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeVideoResources:
 		case StorageAdaptorType::StorageAdaptorTypeExternalVideoResources:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::StatusCodeItemType
-				<< PageRawInfo::UrlLengthItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::StatusCodeItemType
+				<< ParsedPageInfo::UrlLengthItemType
 			);
 
 			return;
@@ -104,11 +104,11 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeVeryLongLinks:
 		case StorageAdaptorType::StorageAdaptorTypeBrokenLinks:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::UrlLengthItemType
-				<< PageRawInfo::ContentTypeItemType
-				<< PageRawInfo::StatusCodeItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::UrlLengthItemType
+				<< ParsedPageInfo::ContentTypeItemType
+				<< ParsedPageInfo::StatusCodeItemType
 			);
 
 			return;
@@ -124,11 +124,11 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeDuplicatedH1Titles:
 		case StorageAdaptorType::StorageAdaptorTypeSeveralTitlesOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentTypeItemType
-				<< PageRawInfo::TitleItemType
-				<< PageRawInfo::TitleLengthItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::ContentTypeItemType
+				<< ParsedPageInfo::TitleItemType
+				<< ParsedPageInfo::TitleLengthItemType
 			);
 
 			return;
@@ -143,11 +143,11 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeVeryShortMetaDescriptions:
 		case StorageAdaptorType::StorageAdaptorTypeSeveralMetaDescriptionsOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentTypeItemType
-				<< PageRawInfo::MetaDescriptionItemType
-				<< PageRawInfo::MetaDescriptionLengthItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::ContentTypeItemType
+				<< ParsedPageInfo::MetaDescriptionItemType
+				<< ParsedPageInfo::MetaDescriptionLengthItemType
 			);
 
 			return;
@@ -160,11 +160,11 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeDuplicatedMetaKeywords:
 		case StorageAdaptorType::StorageAdaptorTypeSeveralMetaKeywordsOnPage:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentTypeItemType
-				<< PageRawInfo::MetaKeywordsItemType
-				<< PageRawInfo::MetaKeywordsLengthItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::ContentTypeItemType
+				<< ParsedPageInfo::MetaKeywordsItemType
+				<< ParsedPageInfo::MetaKeywordsLengthItemType
 			);
 
 			return;
@@ -178,13 +178,13 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeVeryLongH1s:
 		case StorageAdaptorType::StorageAdaptorTypeSeveralH1s:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentTypeItemType
-				<< PageRawInfo::FirstH1ItemType
-				<< PageRawInfo::FirstH1LengthItemType
-				<< PageRawInfo::SecondH1ItemType
-				<< PageRawInfo::SecondH1LengthItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::ContentTypeItemType
+				<< ParsedPageInfo::FirstH1ItemType
+				<< ParsedPageInfo::FirstH1LengthItemType
+				<< ParsedPageInfo::SecondH1ItemType
+				<< ParsedPageInfo::SecondH1LengthItemType
 			);
 
 			return;
@@ -198,13 +198,13 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeVeryLongH2s:
 		case StorageAdaptorType::StorageAdaptorTypeSeveralH2s:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::ContentTypeItemType
-				<< PageRawInfo::FirstH2ItemType
-				<< PageRawInfo::FirstH2LengthItemType
-				<< PageRawInfo::SecondH2ItemType
-				<< PageRawInfo::SecondH2LengthItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::ContentTypeItemType
+				<< ParsedPageInfo::FirstH2ItemType
+				<< ParsedPageInfo::FirstH2LengthItemType
+				<< ParsedPageInfo::SecondH2ItemType
+				<< ParsedPageInfo::SecondH2LengthItemType
 			);
 
 			return;
@@ -217,11 +217,11 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 		case StorageAdaptorType::StorageAdaptorTypeImageMissingAltText:
 		case StorageAdaptorType::StorageAdaptorTypeImagesVeryLongAltText:
 		{
-			storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-				<< PageRawInfo::UrlItemType
-				<< PageRawInfo::AltTextItemType
-				<< PageRawInfo::AltTextLengthItemType
-				<< PageRawInfo::ImageSizeKbItemType
+			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::UrlItemType
+				<< ParsedPageInfo::AltTextItemType
+				<< ParsedPageInfo::AltTextLengthItemType
+				<< ParsedPageInfo::ImageSizeKbItemType
 			);
 
 			return;
@@ -232,11 +232,11 @@ void StorageAdaptorFactory::setupAvailableColumns(IStorageAdaptor* storageAdapto
 
 void StorageAdaptorFactory::setupAvailablePageLinkColumns(IStorageAdaptor* storageAdaptor)
 {
-	storageAdaptor->setAvailableColumns(QList<PageRawInfo::Column>()
-		<< PageRawInfo::UrlItemType
-		<< PageRawInfo::StatusCodeItemType
-		<< PageRawInfo::AltTextItemType
-		<< PageRawInfo::NoFollowDoFollowLinkItemType
+	storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
+		<< ParsedPageInfo::UrlItemType
+		<< ParsedPageInfo::StatusCodeItemType
+		<< ParsedPageInfo::AltTextItemType
+		<< ParsedPageInfo::NoFollowDoFollowLinkItemType
 	);
 }
 

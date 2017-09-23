@@ -5,12 +5,12 @@
 #include "summary_data_accessor_factory.h"
 #include "storage_adaptor_factory.h"
 #include "isettings_accessor.h"
-#include "web_crawler.h"
+#include "crawler.h"
 
 namespace WebCrawler
 {
 
-class GuiStorage;
+class SequencedDataCollection;
 
 }
 
@@ -26,20 +26,19 @@ class Application : public QApplication, public ISettingsAccessor
 public:
 	Application(int& argc, char** argv);
 
-	const SoftwareBranding* softwareBrandingOptions() const noexcept;
-
 	Preferences* preferences() noexcept;
 	MainFrame* mainFrame() noexcept;
 	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
 	
-	WebCrawler::WebCrawler* webCrawler() noexcept;
-	WebCrawler::GuiStorage* guiStorage() noexcept;
+	WebCrawler::Crawler* crawler() noexcept;
+	WebCrawler::SequencedDataCollection* sequencedDataCollection() noexcept;
+
+	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 	void initializeStyleSheet() noexcept;
 
-	QString operatingSystemVersion() const noexcept;
-
+	// ISettingsAccessor implementation
 	virtual void saveToSettings(const QByteArray& key, const QVariant& value) noexcept override;
 	virtual QVariant loadFromSettings(const QByteArray& key, const QVariant& defaultValue = QVariant()) const noexcept override;
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
@@ -50,6 +49,8 @@ private:
 
 	void registerServices() const;
 
+	QString operatingSystemVersion() const noexcept;
+
 	void initQSettings();
 	QSettings* settings() const;
 
@@ -59,9 +60,9 @@ private:
 
 private:
 	Preferences* m_preferences;
-	std::unique_ptr<WebCrawler::WebCrawler> m_webCrawler;
+	std::unique_ptr<WebCrawler::Crawler> m_webCrawler;
 
-	WebCrawler::GuiStorage* m_guiStorage;
+	WebCrawler::SequencedDataCollection* m_guiStorage;
 	
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;

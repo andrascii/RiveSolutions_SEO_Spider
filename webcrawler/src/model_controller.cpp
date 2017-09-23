@@ -1,11 +1,13 @@
 #include "model_controller.h"
-#include "data_collection.h"
-#include "page_raw_parser_helpers.h"
+#include "unordered_data_collection.h"
+#include "page_parser_helpers.h"
 
 namespace
 {
 
-WebCrawler::PageRawPtr mergeTwoPages(WebCrawler::PageRawPtr existingPage, WebCrawler::PageRawPtr newPage)
+using WebCrawler::ParsedPagePtr;
+
+ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr newPage)
 {
 	if (!existingPage)
 	{
@@ -19,7 +21,9 @@ WebCrawler::PageRawPtr mergeTwoPages(WebCrawler::PageRawPtr existingPage, WebCra
 	);
 
 	*existingPage = *newPage;
-	// we should use the original PageRawPtr because there are pages containing links to it
+
+	// we should use the original PageRawPtr 
+	// because there are pages containing links to it
 	return existingPage;
 }
 
@@ -30,7 +34,7 @@ namespace WebCrawler
 
 ModelController::ModelController(QObject* parent)
 	: QObject(parent)
-	, m_data(new DataCollection(this))
+	, m_data(new UnorderedDataCollection(this))
 {
 }
 
@@ -39,77 +43,77 @@ ModelController::~ModelController()
 	
 }
 
-void ModelController::setWebCrawlerOptions(const WebCrawlerOptions& options)
+void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
 {
-	m_webCrawlerOptions = options;
+	m_crawlerOptions = options;
 }
 
-void ModelController::addPageRaw(PageRawPtr pageRaw) noexcept
+void ModelController::addParsedPage(ParsedPagePtr parsedPagePtr) noexcept
 {
-	ASSERT(pageRaw->resourceType >= ResourceType::ResourceHtml &&
-		pageRaw->resourceType <= ResourceType::ResourceOther)
+	ASSERT(parsedPagePtr->resourceType >= ResourceType::ResourceHtml &&
+		parsedPagePtr->resourceType <= ResourceType::ResourceOther)
 
-	fixPageRawResourceType(pageRaw);
-	processPageRawHtmlResources(pageRaw);
-	processPageRawResources(pageRaw);
-	pageRaw->allResourcesOnPage.clear();
+	fixParsedPageResourceType(parsedPagePtr);
+	processParsedPageHtmlResources(parsedPagePtr);
+	processParsedPageResources(parsedPagePtr);
+	parsedPagePtr->allResourcesOnPage.clear();
 
-	processPageRawStatusCode(pageRaw);
+	processParsedPageStatusCode(parsedPagePtr);
 
-	if (pageRaw->resourceType == ResourceType::ResourceHtml)
+	if (parsedPagePtr->resourceType == ResourceType::ResourceHtml)
 	{
 		// page
-		processPageRawUrl(pageRaw);
-		processPageRawTitle(pageRaw);
-		processPageRawMetaDescription(pageRaw);
-		processPageRawMetaKeywords(pageRaw);
-		processPageRawH1(pageRaw);
-		processPageRawH2(pageRaw);
+		processParsedPageUrl(parsedPagePtr);
+		processParsedPageTitle(parsedPagePtr);
+		processParsedPageMetaDescription(parsedPagePtr);
+		processParsedPageMetaKeywords(parsedPagePtr);
+		processParsedPageH1(parsedPagePtr);
+		processParsedPageH2(parsedPagePtr);
 	}
 	else
 	{
 		// image resource
-		processPageRawImage(pageRaw);
+		processParsedPageImage(parsedPagePtr);
 	}
 
-	m_data->removePageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
+	m_data->removeParsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
 }
 
-const DataCollection* ModelController::data() const noexcept
+const UnorderedDataCollection* ModelController::data() const noexcept
 {
 	return m_data;
 }
 
-DataCollection* ModelController::data() noexcept
+UnorderedDataCollection* ModelController::data() noexcept
 {
 	return m_data;
 }
 
-void ModelController::processPageRawUrl(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageUrl(ParsedPagePtr parsedPagePtr) noexcept
 {
-	const QUrl url = pageRaw->url;
+	const QUrl url = parsedPagePtr->url;
 	const QString urlStr = url.toString();
 
-	m_data->addPageRaw(pageRaw, DataCollection::CrawledUrlStorageType);
+	m_data->addParsedPage(parsedPagePtr, StorageType::CrawledUrlStorageType);
 
-	if (url.host() != m_webCrawlerOptions.url.host())
+	if (url.host() != m_crawlerOptions.url.host())
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::ExternalUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::ExternalUrlStorageType);
 	}
 
-	if (pageRaw->isThisExternalPage)
+	if (parsedPagePtr->isThisExternalPage)
 	{
 		return;
 	}
 
 	if (urlStr.toLower() != urlStr)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::UpperCaseUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::UpperCaseUrlStorageType);
 	}
 
-	if (urlStr.size() > m_webCrawlerOptions.limitMaxUrlLength)
+	if (urlStr.size() > m_crawlerOptions.limitMaxUrlLength)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::VeryLongUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongUrlStorageType);
 	}
 
 	bool hasNonAscii = false;
@@ -124,20 +128,20 @@ void ModelController::processPageRawUrl(PageRawPtr pageRaw) noexcept
 
 	if (hasNonAscii)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::NonAsciiCharacterUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::NonAsciiCharacterUrlStorageType);
 	}
 }
 
-void ModelController::processPageRawTitle(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageTitle(ParsedPagePtr parsedPagePtr) noexcept
 {
-	if (pageRaw->isThisExternalPage)
+	if (parsedPagePtr->isThisExternalPage)
 	{
 		return;
 	}
 
-	int statusCode = pageRaw->statusCode;
-	const QString title = pageRaw->title;
-	const QString h1 = pageRaw->firstH1;
+	int statusCode = parsedPagePtr->statusCode;
+	const QString title = parsedPagePtr->title;
+	const QString h1 = parsedPagePtr->firstH1;
 
 	//
 	// Replace 301 and 302 constants
@@ -145,252 +149,252 @@ void ModelController::processPageRawTitle(PageRawPtr pageRaw) noexcept
 	if (title.isEmpty() ||
 		statusCode == 301 || statusCode == 302)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::EmptyTitleUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::EmptyTitleUrlStorageType);
 	}
-	else if (title.size() > m_webCrawlerOptions.maxTitleLength)
+	else if (title.size() > m_crawlerOptions.maxTitleLength)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::VeryLongTitleUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongTitleUrlStorageType);
 	}
-	else if (title.size() < m_webCrawlerOptions.minTitleLength)
+	else if (title.size() < m_crawlerOptions.minTitleLength)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::VeryLongTitleUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongTitleUrlStorageType);
 	}
 
 	if (!title.isEmpty())
 	{
-		if (m_data->isPageRawExists(pageRaw, DataCollection::AllTitlesUrlStorageType))
+		if (m_data->isParsedPageExists(parsedPagePtr, StorageType::AllTitlesUrlStorageType))
 		{
-			PageRawPtr duplicate = m_data->pageRaw(pageRaw, DataCollection::AllTitlesUrlStorageType);
-			m_data->addPageRaw(pageRaw, DataCollection::DuplicatedTitleUrlStorageType);
-			m_data->addPageRaw(duplicate, DataCollection::DuplicatedTitleUrlStorageType);
+			ParsedPagePtr duplicate = m_data->parsedPage(parsedPagePtr, StorageType::AllTitlesUrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::DuplicatedTitleUrlStorageType);
+			m_data->addParsedPage(duplicate, StorageType::DuplicatedTitleUrlStorageType);
 		}
 		else
 		{
-			m_data->addPageRaw(pageRaw, DataCollection::AllTitlesUrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::AllTitlesUrlStorageType);
 		}
 	}
 
 	if (!h1.isEmpty() && h1 == title)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::DuplicatedH1TitleUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::DuplicatedH1TitleUrlStorageType);
 	}
 
-	if (pageRaw->hasSeveralTitleTags)
+	if (parsedPagePtr->hasSeveralTitleTags)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::SeveralTitleUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::SeveralTitleUrlStorageType);
 	}
 }
 
-void ModelController::processPageRawMetaDescription(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageMetaDescription(ParsedPagePtr parsedPagePtr) noexcept
 {
-	if (pageRaw->isThisExternalPage)
+	if (parsedPagePtr->isThisExternalPage)
 	{
 		return;
 	}
 
-	const int metaDescriptionLength = pageRaw->metaDescription.size();
+	const int metaDescriptionLength = parsedPagePtr->metaDescription.size();
 
 	if (metaDescriptionLength == 0)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::EmptyMetaDescriptionUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::EmptyMetaDescriptionUrlStorageType);
 	}
-	else if (metaDescriptionLength > m_webCrawlerOptions.maxDescriptionLength)
+	else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::VeryLongMetaDescriptionUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongMetaDescriptionUrlStorageType);
 	}
-	else if (metaDescriptionLength < m_webCrawlerOptions.minDescriptionLength)
+	else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::VeryShortMetaDescriptionUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryShortMetaDescriptionUrlStorageType);
 	}
 
 	if (metaDescriptionLength > 0)
 	{
-		if (m_data->isPageRawExists(pageRaw, DataCollection::AllMetaDescriptionsUrlStorageType))
+		if (m_data->isParsedPageExists(parsedPagePtr, StorageType::AllMetaDescriptionsUrlStorageType))
 		{
-			PageRawPtr duplicate = m_data->pageRaw(pageRaw, DataCollection::AllMetaDescriptionsUrlStorageType);
-			m_data->addPageRaw(pageRaw, DataCollection::DuplicatedMetaDescriptionUrlStorageType);
-			m_data->addPageRaw(duplicate, DataCollection::DuplicatedMetaDescriptionUrlStorageType);
+			ParsedPagePtr duplicate = m_data->parsedPage(parsedPagePtr, StorageType::AllMetaDescriptionsUrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::DuplicatedMetaDescriptionUrlStorageType);
+			m_data->addParsedPage(duplicate, StorageType::DuplicatedMetaDescriptionUrlStorageType);
 		}
 		else
 		{
-			m_data->addPageRaw(pageRaw, DataCollection::AllMetaDescriptionsUrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::AllMetaDescriptionsUrlStorageType);
 		}
 	}
 
-	if (pageRaw->hasSeveralMetaDescriptionTags)
+	if (parsedPagePtr->hasSeveralMetaDescriptionTags)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::SeveralMetaDescriptionUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::SeveralMetaDescriptionUrlStorageType);
 	}
 }
 
-void ModelController::processPageRawMetaKeywords(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageMetaKeywords(ParsedPagePtr parsedPagePtr) noexcept
 {
-	if (pageRaw->isThisExternalPage)
+	if (parsedPagePtr->isThisExternalPage)
 	{
 		return;
 	}
 
-	const int metaKeywordsLength = pageRaw->metaKeywords.size();
+	const int metaKeywordsLength = parsedPagePtr->metaKeywords.size();
 
 	if (metaKeywordsLength == 0)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::EmptyMetaKeywordsUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::EmptyMetaKeywordsUrlStorageType);
 	}
 
 	if (metaKeywordsLength > 0)
 	{
-		if (m_data->isPageRawExists(pageRaw, DataCollection::AllMetaKeywordsUrlStorageType))
+		if (m_data->isParsedPageExists(parsedPagePtr, StorageType::AllMetaKeywordsUrlStorageType))
 		{
-			PageRawPtr duplicate = m_data->pageRaw(pageRaw, DataCollection::AllMetaKeywordsUrlStorageType);
-			m_data->addPageRaw(pageRaw, DataCollection::DuplicatedMetaKeywordsUrlStorageType);
-			m_data->addPageRaw(duplicate, DataCollection::DuplicatedMetaKeywordsUrlStorageType);
+			ParsedPagePtr duplicate = m_data->parsedPage(parsedPagePtr, StorageType::AllMetaKeywordsUrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::DuplicatedMetaKeywordsUrlStorageType);
+			m_data->addParsedPage(duplicate, StorageType::DuplicatedMetaKeywordsUrlStorageType);
 		}
 		else
 		{
-			m_data->addPageRaw(pageRaw, DataCollection::AllMetaKeywordsUrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::AllMetaKeywordsUrlStorageType);
 		}
 	}
 	
 
-	if (pageRaw->hasSeveralMetaKeywordsTags)
+	if (parsedPagePtr->hasSeveralMetaKeywordsTags)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::SeveralMetaKeywordsUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::SeveralMetaKeywordsUrlStorageType);
 	}
 }
 
-void ModelController::processPageRawH1(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageH1(ParsedPagePtr parsedPagePtr) noexcept
 {
-	if (pageRaw->isThisExternalPage)
+	if (parsedPagePtr->isThisExternalPage)
 	{
 		return;
 	}
 
-	const int h1Length = pageRaw->firstH1.size();
+	const int h1Length = parsedPagePtr->firstH1.size();
 
 	if (h1Length == 0)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::MissingH1UrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::MissingH1UrlStorageType);
 	}
-	else if (h1Length > m_webCrawlerOptions.maxH1LengthChars)
+	else if (h1Length > m_crawlerOptions.maxH1LengthChars)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::VeryLongH1UrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongH1UrlStorageType);
 	}
 
 	if (h1Length > 0)
 	{
-		if (m_data->isPageRawExists(pageRaw, DataCollection::AllH1UrlStorageType))
+		if (m_data->isParsedPageExists(parsedPagePtr, StorageType::AllH1UrlStorageType))
 		{
-			PageRawPtr duplicate = m_data->pageRaw(pageRaw, DataCollection::AllH1UrlStorageType);
-			m_data->addPageRaw(pageRaw, DataCollection::DuplicatedH1UrlStorageType);
-			m_data->addPageRaw(duplicate, DataCollection::DuplicatedH1UrlStorageType);
+			ParsedPagePtr duplicate = m_data->parsedPage(parsedPagePtr, StorageType::AllH1UrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::DuplicatedH1UrlStorageType);
+			m_data->addParsedPage(duplicate, StorageType::DuplicatedH1UrlStorageType);
 		}
 		else
 		{
-			m_data->addPageRaw(pageRaw, DataCollection::AllH1UrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::AllH1UrlStorageType);
 		}
 	}
 
-	if (pageRaw->hasSeveralH1Tags)
+	if (parsedPagePtr->hasSeveralH1Tags)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::SeveralH1UrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::SeveralH1UrlStorageType);
 	}
 
 }
 
-void ModelController::processPageRawH2(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept
 {
-	if (pageRaw->isThisExternalPage)
+	if (parsedPagePtr->isThisExternalPage)
 	{
 		return;
 	}
 
-	const int h2Length = pageRaw->firstH2.size();
+	const int h2Length = parsedPagePtr->firstH2.size();
 
 	if (h2Length == 0)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::MissingH2UrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::MissingH2UrlStorageType);
 	}
-	else if (h2Length > m_webCrawlerOptions.maxH2LengthChars)
+	else if (h2Length > m_crawlerOptions.maxH2LengthChars)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::VeryLongH2UrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongH2UrlStorageType);
 	}
 
 	if (h2Length > 0)
 	{
-		if (m_data->isPageRawExists(pageRaw, DataCollection::AllH2UrlStorageType))
+		if (m_data->isParsedPageExists(parsedPagePtr, StorageType::AllH2UrlStorageType))
 		{
-			PageRawPtr duplicate = m_data->pageRaw(pageRaw, DataCollection::AllH2UrlStorageType);
-			m_data->addPageRaw(pageRaw, DataCollection::DuplicatedH2UrlStorageType);
-			m_data->addPageRaw(duplicate, DataCollection::DuplicatedH2UrlStorageType);
+			ParsedPagePtr duplicate = m_data->parsedPage(parsedPagePtr, StorageType::AllH2UrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::DuplicatedH2UrlStorageType);
+			m_data->addParsedPage(duplicate, StorageType::DuplicatedH2UrlStorageType);
 		}
 		else
 		{
-			m_data->addPageRaw(pageRaw, DataCollection::AllH2UrlStorageType);
+			m_data->addParsedPage(parsedPagePtr, StorageType::AllH2UrlStorageType);
 		}
 	}
 
-	if (pageRaw->hasSeveralH2Tags)
+	if (parsedPagePtr->hasSeveralH2Tags)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::SeveralH2UrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::SeveralH2UrlStorageType);
 	}
 }
 
-void ModelController::processPageRawImage(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept
 {
-	const int altLength = pageRaw->altText.size();
-	const int sizeKB = pageRaw->pageSizeKb;
-	if (altLength > m_webCrawlerOptions.maxImageAltTextChars)
+	const int altLength = parsedPagePtr->altText.size();
+	const int sizeKB = parsedPagePtr->pageSizeKb;
+	if (altLength > m_crawlerOptions.maxImageAltTextChars)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::VeryLongAltTextImageStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongAltTextImageStorageType);
 	}
 
 	if (altLength == 0)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::MissingAltTextImageStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::MissingAltTextImageStorageType);
 	}
 
-	if (sizeKB > m_webCrawlerOptions.maxImageSizeKb)
+	if (sizeKB > m_crawlerOptions.maxImageSizeKb)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::Over100kbImageStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::Over100kbImageStorageType);
 	}
 }
 
-void ModelController::processPageRawStatusCode(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept
 {
-	if (pageRaw->statusCode == 404)
+	if (parsedPagePtr->statusCode == 404)
 	{
-		m_data->addPageRaw(pageRaw, DataCollection::Status404StorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::Status404StorageType);
 	}
 }
 
-void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr) noexcept
 {
-	if (pageRaw->resourceType != ResourceType::ResourceHtml)
+	if (parsedPagePtr->resourceType != ResourceType::ResourceHtml)
 	{
 		// if it is not an html resource, just exit
 		return;
 	}
 
 	// 1. get from pending resources if exists
-	PageRawPtr pendingPageRaw = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
+	ParsedPagePtr pendingPageRaw = m_data->parsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
 
 	// 2. if it's really html resource and pending page exists - merge two pages
-	pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
+	parsedPagePtr = mergeTwoPages(pendingPageRaw, parsedPagePtr);
 
 	// 3. add this page to html resources storage
-	DataCollection::StorageType storage = pageRaw->isThisExternalPage ?
-		DataCollection::ExternalHtmlResourcesStorageType : DataCollection::HtmlResourcesStorageType;
+	StorageType storage = parsedPagePtr->isThisExternalPage ?
+		StorageType::ExternalHtmlResourcesStorageType : StorageType::HtmlResourcesStorageType;
 
-	m_data->addPageRaw(pageRaw, storage);
+	m_data->addParsedPage(parsedPagePtr, storage);
 
-	if (pageRaw->isThisExternalPage)
+	if (parsedPagePtr->isThisExternalPage)
 	{
 		// do not parse resources from an external one
 		return;
 	}
 
-	PageRawPtr resourcePage = std::make_shared<PageRaw>();
-	for (const RawResourceOnPage& resource : pageRaw->allResourcesOnPage)
+	ParsedPagePtr resourcePage = std::make_shared<ParsedPage>();
+	for (const RawResourceOnPage& resource : parsedPagePtr->allResourcesOnPage)
 	{
 		if (resource.resourceType != ResourceType::ResourceHtml)
 		{
@@ -398,75 +402,75 @@ void ModelController::processPageRawHtmlResources(PageRawPtr pageRaw) noexcept
 		}
 
 		resourcePage->url = resource.thisResourceUrl.url;
-		PageRawPtr existingResource = m_data->pageRaw(resourcePage, DataCollection::CrawledUrlStorageType);
+		ParsedPagePtr existingResource = m_data->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 		if (!existingResource)
 		{
-			existingResource = m_data->pageRaw(resourcePage, DataCollection::PendingResourcesStorageType);
+			existingResource = m_data->parsedPage(resourcePage, StorageType::PendingResourcesStorageType);
 		}
 
 		if (existingResource)
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
-			existingResource->linksToThisPage.push_back({ pageRaw, resource.thisResourceUrl.urlParameter });
-			pageRaw->linksOnThisPage.push_back({ existingResource, resource.thisResourceUrl.urlParameter });
+			existingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceUrl.urlParameter });
+			parsedPagePtr->linksOnThisPage.push_back({ existingResource, resource.thisResourceUrl.urlParameter });
 
 		}
 		else
 		{
-			PageRawPtr pendingResource = std::make_shared<PageRaw>();
+			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.thisResourceUrl.url;
-			pendingResource->linksToThisPage.push_back({ pageRaw, resource.thisResourceUrl.urlParameter });
-			pageRaw->linksOnThisPage.push_back({ pendingResource, resource.thisResourceUrl.urlParameter });
-			m_data->addPageRaw(pendingResource, DataCollection::PendingResourcesStorageType);
-			DEBUG_ASSERT(m_data->isPageRawExists(pendingResource, DataCollection::PendingResourcesStorageType));
+			pendingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceUrl.urlParameter });
+			parsedPagePtr->linksOnThisPage.push_back({ pendingResource, resource.thisResourceUrl.urlParameter });
+			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
+			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
 	}
 }
 
-void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
+void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) noexcept
 {
-	std::map<ResourceType, DataCollection::StorageType> storageTypes
+	std::map<ResourceType, StorageType> storageTypes
 	{
-		{ ResourceType::ResourceImage, DataCollection::ImageResourcesStorageType },
-		{ ResourceType::ResourceJavaScript, DataCollection::JavaScriptResourcesStorageType },
-		{ ResourceType::ResourceStyleSheet, DataCollection::StyleSheetResourcesStorageType },
-		{ ResourceType::ResourceFlash, DataCollection::FlashResourcesStorageType },
-		{ ResourceType::ResourceVideo, DataCollection::VideoResourcesStorageType },
-		{ ResourceType::ResourceOther, DataCollection::OtherResourcesStorageType },
+		{ ResourceType::ResourceImage, StorageType::ImageResourcesStorageType },
+		{ ResourceType::ResourceJavaScript, StorageType::JavaScriptResourcesStorageType },
+		{ ResourceType::ResourceStyleSheet, StorageType::StyleSheetResourcesStorageType },
+		{ ResourceType::ResourceFlash, StorageType::FlashResourcesStorageType },
+		{ ResourceType::ResourceVideo, StorageType::VideoResourcesStorageType },
+		{ ResourceType::ResourceOther, StorageType::OtherResourcesStorageType },
 	};
 
-	std::map<ResourceType, DataCollection::StorageType> externalStorageTypes
+	std::map<ResourceType, StorageType> externalStorageTypes
 	{
-		{ ResourceType::ResourceImage, DataCollection::ExternalImageResourcesStorageType },
-		{ ResourceType::ResourceJavaScript, DataCollection::ExternalJavaScriptResourcesStorageType },
-		{ ResourceType::ResourceStyleSheet, DataCollection::ExternalStyleSheetResourcesStorageType },
-		{ ResourceType::ResourceFlash, DataCollection::ExternalFlashResourcesStorageType },
-		{ ResourceType::ResourceVideo, DataCollection::ExternalVideoResourcesStorageType },
-		{ ResourceType::ResourceOther, DataCollection::ExternalOtherResourcesStorageType },
+		{ ResourceType::ResourceImage, StorageType::ExternalImageResourcesStorageType },
+		{ ResourceType::ResourceJavaScript, StorageType::ExternalJavaScriptResourcesStorageType },
+		{ ResourceType::ResourceStyleSheet, StorageType::ExternalStyleSheetResourcesStorageType },
+		{ ResourceType::ResourceFlash, StorageType::ExternalFlashResourcesStorageType },
+		{ ResourceType::ResourceVideo, StorageType::ExternalVideoResourcesStorageType },
+		{ ResourceType::ResourceOther, StorageType::ExternalOtherResourcesStorageType },
 	};
 
 
-	const bool http = PageRawParserHelpers::isHttpOrHttpsScheme(pageRaw->url.toDisplayString());
-	const bool externalOrNotHttp = pageRaw->isThisExternalPage || !http;
+	const bool http = PageParserHelpers::isHttpOrHttpsScheme(parsedPagePtr->url.toDisplayString());
+	const bool externalOrNotHttp = parsedPagePtr->isThisExternalPage || !http;
 
-	if (pageRaw->resourceType != ResourceType::ResourceHtml)
+	if (parsedPagePtr->resourceType != ResourceType::ResourceHtml)
 	{
-		PageRawPtr pendingPageRaw = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
-		pageRaw = mergeTwoPages(pendingPageRaw, pageRaw);
+		ParsedPagePtr pendingPageRaw = m_data->parsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
+		parsedPagePtr = mergeTwoPages(pendingPageRaw, parsedPagePtr);
 		
-		DataCollection::StorageType storage = externalOrNotHttp ?
-			externalStorageTypes[pageRaw->resourceType] : storageTypes[pageRaw->resourceType];
+		StorageType storage = externalOrNotHttp ?
+			externalStorageTypes[parsedPagePtr->resourceType] : storageTypes[parsedPagePtr->resourceType];
 		
-		m_data->addPageRaw(pageRaw, storage);
+		m_data->addParsedPage(parsedPagePtr, storage);
 	}
 
-	if (pageRaw->isThisExternalPage)
+	if (parsedPagePtr->isThisExternalPage)
 	{
 		// do not parse resources from an external one
 		return;
 	}
 
-	for (const RawResourceOnPage& resource : pageRaw->allResourcesOnPage)
+	for (const RawResourceOnPage& resource : parsedPagePtr->allResourcesOnPage)
 	{
 		QString resourceDisplayUrl = resource.thisResourceUrl.url.toDisplayString();
 
@@ -477,41 +481,41 @@ void ModelController::processPageRawResources(PageRawPtr pageRaw) noexcept
 			continue;
 		}
 
-		PageRawPtr resourceRaw = std::make_shared<PageRaw>();
+		ParsedPagePtr resourceRaw = std::make_shared<ParsedPage>();
 		resourceRaw->url = resource.thisResourceUrl.url;
 
-		bool httpResource = PageRawParserHelpers::isHttpOrHttpsScheme(resourceDisplayUrl);
-		bool externalOrNotHttpResource = PageRawParserHelpers::isUrlExternal(pageRaw->url, resourceRaw->url) || !httpResource;
+		bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resourceDisplayUrl);
+		bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(parsedPagePtr->url, resourceRaw->url) || !httpResource;
 
-		DataCollection::StorageType storage = externalOrNotHttpResource ?
+		StorageType storage = externalOrNotHttpResource ?
 			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
 
-		PageRawPtr newOrExistingResource = m_data->pageRaw(resourceRaw, storage);
+		ParsedPagePtr newOrExistingResource = m_data->parsedPage(resourceRaw, storage);
 		if (!newOrExistingResource)
 		{
-			newOrExistingResource = m_data->pageRaw(resourceRaw, DataCollection::PendingResourcesStorageType);
+			newOrExistingResource = m_data->parsedPage(resourceRaw, StorageType::PendingResourcesStorageType);
 		}
 
 		if (!newOrExistingResource)
 		{
 			newOrExistingResource = resourceRaw;
 			
-			m_data->addPageRaw(newOrExistingResource, 
-				httpResource ? DataCollection::PendingResourcesStorageType : storage);
+			m_data->addParsedPage(newOrExistingResource, 
+				httpResource ? StorageType::PendingResourcesStorageType : storage);
 		}
 
-		pageRaw->linksOnThisPage.push_back({ newOrExistingResource, resource.thisResourceUrl.urlParameter });
-		newOrExistingResource->linksToThisPage.push_back({ pageRaw, resource.thisResourceUrl.urlParameter });
+		parsedPagePtr->linksOnThisPage.push_back({ newOrExistingResource, resource.thisResourceUrl.urlParameter });
+		newOrExistingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceUrl.urlParameter });
 		newOrExistingResource->resourceType = resource.resourceType;
 	}
 }
 
-void ModelController::fixPageRawResourceType(PageRawPtr pageRaw) noexcept
+void ModelController::fixParsedPageResourceType(ParsedPagePtr parsedPagePtr) noexcept
 {
-	PageRawPtr pendingResource = m_data->pageRaw(pageRaw, DataCollection::PendingResourcesStorageType);
+	ParsedPagePtr pendingResource = m_data->parsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
 	if (pendingResource && pendingResource->resourceType != ResourceType::ResourceHtml)
 	{
-		pageRaw->resourceType = pendingResource->resourceType;
+		parsedPagePtr->resourceType = pendingResource->resourceType;
 	}
 }
 

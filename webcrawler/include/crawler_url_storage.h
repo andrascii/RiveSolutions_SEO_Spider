@@ -1,5 +1,6 @@
 #pragma once
-#include "web_crawler_request.h"
+
+#include "crawler_request.h"
 
 namespace WebCrawler
 {
@@ -13,7 +14,7 @@ public:
 	// returns random url for crawling (async operation)
 	// returns false if urls queue is empty
 	// otherwise returns true and write url to passed argument
-	bool extractUrl(WebCrawlerRequest& url) noexcept;
+	bool extractUrl(CrawlerRequest& url) noexcept;
 
 	void saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept;
 
@@ -23,7 +24,7 @@ public:
 private:
 	struct UrlListItemHasher
 	{
-		size_t operator()(const WebCrawlerRequest& item) const noexcept
+		size_t operator()(const CrawlerRequest& item) const noexcept
 		{
 			return hasher(item.url.toString().toStdString()) + static_cast<size_t>(item.requestType);
 		}
@@ -31,8 +32,8 @@ private:
 		boost::hash<std::string> hasher;
 	};
 
-	std::unordered_set<WebCrawlerRequest, UrlListItemHasher> m_internalUrlList;
-	std::unordered_set<WebCrawlerRequest, UrlListItemHasher> m_crawledUrlList;
+	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_internalUrlList;
+	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_crawledUrlList;
 
 	mutable std::mutex m_mutex;
 };

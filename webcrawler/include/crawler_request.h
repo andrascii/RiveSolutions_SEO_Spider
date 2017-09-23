@@ -9,12 +9,12 @@ enum RequestType
 	RequestTypeHead
 };
 
-struct WebCrawlerRequest
+struct CrawlerRequest
 {
 	QUrl url;
 	RequestType requestType;
 
-	bool operator==(const WebCrawlerRequest& other) const
+	bool operator==(const CrawlerRequest& other) const
 	{
 		return url == other.url && requestType == other.requestType;
 	}
