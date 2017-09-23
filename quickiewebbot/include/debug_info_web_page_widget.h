@@ -4,7 +4,7 @@
 
 namespace WebCrawler
 {
-	struct PageRaw;
+	struct ParsedPage;
 }
 
 namespace QuickieWebBot
@@ -21,7 +21,7 @@ public:
 		return &s_instance;
 	}
 
-	Q_SIGNAL void pageSelected(WebCrawler::PageRaw* page);
+	Q_SIGNAL void pageSelected(WebCrawler::ParsedPage* page);
 
 private:
 	GlobalWebPageSelectedNotifier() = default;
@@ -34,7 +34,7 @@ class DebugInfoWebPageWidget : public QWidget, public Ui::DebugWebPageInfoWidget
 public:
 	static void attachDebugInfoWebPageWidget();
 
-	Q_SLOT void onPageSelected(WebCrawler::PageRaw* page);
+	Q_SLOT void onPageSelected(WebCrawler::ParsedPage* page);
 
 protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;

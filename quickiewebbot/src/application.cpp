@@ -4,8 +4,8 @@
 #include "software_branding.h"
 #include "splash_screen.h"
 #include "service_locator.h"
-#include "web_crawler.h"
-#include "gui_storage.h"
+#include "crawler.h"
+#include "sequenced_data_collection.h"
 #include "constants.h"
 #include "preferences.h"
 #include "debug_info_web_page_widget.h"
@@ -18,7 +18,7 @@ namespace QuickieWebBot
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_preferences(new Preferences(this, this))
-	, m_webCrawler(new WebCrawler::WebCrawler(Common::g_optimalParserThreadsCount))
+	, m_webCrawler(new WebCrawler::Crawler(Common::g_optimalParserThreadsCount))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
@@ -44,7 +44,7 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "App Version:" << applicationVersion();
 }
 
-WebCrawler::WebCrawler* Application::webCrawler() noexcept
+WebCrawler::Crawler* Application::crawler() noexcept
 {
 	return m_webCrawler.get();
 }
@@ -54,7 +54,7 @@ MainFrame* Application::mainFrame() noexcept
 	return m_mainFrame.get();
 }
 
-WebCrawler::GuiStorage* Application::guiStorage() noexcept
+WebCrawler::SequencedDataCollection* Application::sequencedDataCollection() noexcept
 {
 	return m_guiStorage;
 }
@@ -136,7 +136,7 @@ QSettings* Application::settings() const
 
 void Application::initialize() noexcept
 {
-	WebCrawler::GuiStorage* storage = m_webCrawler->guiStorage();
+	WebCrawler::SequencedDataCollection* storage = m_webCrawler->guiStorage();
 	
 	ASSERT(storage->thread() == QThread::currentThread());
 	

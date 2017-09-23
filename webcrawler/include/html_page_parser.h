@@ -11,7 +11,7 @@ class HtmlPageParser
 public:
 	void addPageRawParser(std::shared_ptr<IPageParser> pageRawParser) noexcept;
 
-	void parsePage(const QByteArray& htmlPage, PageRawPtr& pageRaw) noexcept;
+	void parsePage(const QByteArray& htmlPage, ParsedPagePtr& pageRaw) noexcept;
 
 	const std::vector<QUrl>& pageUrlList() const noexcept;
 

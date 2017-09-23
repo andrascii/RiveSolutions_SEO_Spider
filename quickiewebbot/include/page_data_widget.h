@@ -1,6 +1,6 @@
 #pragma once
 
-#include "page_raw_info.h"
+#include "parsed_page_info.h"
 
 namespace QuickieWebBot
 {

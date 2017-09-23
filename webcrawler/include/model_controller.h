@@ -1,12 +1,12 @@
 #pragma once
 
-#include "page_raw.h"
-#include "web_crawler_options.h"
+#include "parsed_page.h"
+#include "crawler_options.h"
 
 namespace WebCrawler
 {
 
-class DataCollection;
+class UnorderedDataCollection;
 
 class ModelController : public QObject
 {
@@ -16,30 +16,30 @@ public:
 	ModelController(QObject* parent);
 	~ModelController();
 
-	void setWebCrawlerOptions(const WebCrawlerOptions& options);
+	void setWebCrawlerOptions(const CrawlerOptions& options);
 
-	void addPageRaw(PageRawPtr pageRaw) noexcept;
+	void addParsedPage(ParsedPagePtr parsedPagePtr) noexcept;
 
-	const DataCollection* data() const noexcept;
-	DataCollection* data() noexcept;
-
-private:
-	void processPageRawUrl(PageRawPtr pageRaw) noexcept;
-	void processPageRawTitle(PageRawPtr pageRaw) noexcept;
-	void processPageRawMetaDescription(PageRawPtr pageRaw) noexcept;
-	void processPageRawMetaKeywords(PageRawPtr pageRaw) noexcept;
-	void processPageRawH1(PageRawPtr pageRaw) noexcept;
-	void processPageRawH2(PageRawPtr pageRaw) noexcept;
-	void processPageRawImage(PageRawPtr pageRaw) noexcept;
-	void processPageRawStatusCode(PageRawPtr pageRaw) noexcept;
-
-	void processPageRawHtmlResources(PageRawPtr pageRaw) noexcept;
-	void processPageRawResources(PageRawPtr pageRaw) noexcept;
-	void fixPageRawResourceType(PageRawPtr pageRaw) noexcept;
+	const UnorderedDataCollection* data() const noexcept;
+	UnorderedDataCollection* data() noexcept;
 
 private:
-	DataCollection* m_data;
-	WebCrawlerOptions m_webCrawlerOptions;
+	void processParsedPageUrl(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageTitle(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageMetaDescription(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageMetaKeywords(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageH1(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept;
+
+	void processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageResources(ParsedPagePtr parsedPagePtr) noexcept;
+	void fixParsedPageResourceType(ParsedPagePtr parsedPagePtr) noexcept;
+
+private:
+	UnorderedDataCollection* m_data;
+	CrawlerOptions m_crawlerOptions;
 };
 
 }

@@ -2,15 +2,15 @@
 #include "quickie_web_bot_helpers.h"
 #include "application.h"
 #include "model_controller.h"
-#include "gui_storage.h"
+#include "sequenced_data_collection.h"
 
 namespace QuickieWebBot
 {
 
-SummaryDataAccessor::SummaryDataAccessor(WebCrawler::GuiStorage* guiStorage)
+SummaryDataAccessor::SummaryDataAccessor(WebCrawler::SequencedDataCollection* guiStorage)
 	: m_guiStorage(guiStorage)
 {
-	VERIFY(connect(m_guiStorage, &WebCrawler::GuiStorage::pageRawAdded, this, &SummaryDataAccessor::emitDataChanged));
+	VERIFY(connect(m_guiStorage, &WebCrawler::SequencedDataCollection::parsedPageAdded, this, &SummaryDataAccessor::emitDataChanged));
 }
 
 int SummaryDataAccessor::columnCount() const noexcept
@@ -39,7 +39,7 @@ void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
 	}
 }
 
-const WebCrawler::GuiStorage* SummaryDataAccessor::guiStorage() const noexcept
+const WebCrawler::SequencedDataCollection* SummaryDataAccessor::guiStorage() const noexcept
 {
 	return m_guiStorage;
 }
@@ -75,7 +75,7 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescriptionByR
 	return nullptr;
 }
 
-const DCStorageDescription* SummaryDataAccessor::storageDescription(WebCrawler::DataCollection::StorageType type) const noexcept
+const DCStorageDescription* SummaryDataAccessor::storageDescription(WebCrawler::StorageType type) const noexcept
 {
 	foreach(DCStorageDescription* dcStorageDescription, m_itemRows)
 	{
@@ -101,7 +101,7 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(Au
 	return nullptr;
 }
 
-int SummaryDataAccessor::rowByStorageType(WebCrawler::DataCollection::StorageType storageType) const noexcept
+int SummaryDataAccessor::rowByStorageType(WebCrawler::StorageType storageType) const noexcept
 {
 	for (int i = 0; i < rowCount(); ++i)
 	{
@@ -121,7 +121,7 @@ int SummaryDataAccessor::rowByStorageType(WebCrawler::DataCollection::StorageTyp
 
 void SummaryDataAccessor::emitDataChanged(int, int storageType)
 {
-	const int row = rowByStorageType(static_cast<WebCrawler::DataCollection::StorageType>(storageType));
+	const int row = rowByStorageType(static_cast<WebCrawler::StorageType>(storageType));
 
 	if (row == -1)
 	{

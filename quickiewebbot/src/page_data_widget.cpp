@@ -53,7 +53,7 @@ void PageDataWidget::setPageServerResponse(const PageRawInfoPtr& page)
 {
 	m_httpResponseLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-	QString selectedPageServerResponse = page->itemValue(PageRawInfo::ServerResponseItemType).toString().trimmed();
+	QString selectedPageServerResponse = page->itemValue(ParsedPageInfo::ServerResponseItemType).toString().trimmed();
 
 	if (selectedPageServerResponse.isEmpty())
 	{

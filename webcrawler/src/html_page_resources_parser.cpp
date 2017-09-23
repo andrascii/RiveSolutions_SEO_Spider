@@ -1,6 +1,6 @@
 #include "html_page_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
-#include "page_raw_parser_helpers.h"
+#include "page_parser_helpers.h"
 
 namespace WebCrawler
 {
@@ -26,7 +26,7 @@ private:
 	QSet<QString>& m_cache;
 };
 
-void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	ResourcesCacheGuard cacheGurad(m_resourcesCache, pageRaw->allResourcesOnPage);
 
@@ -47,7 +47,7 @@ void HtmlPageResourcesParser::parse(GumboOutput* output, PageRawPtr& pageRaw) no
 	parseFlashResourcesV3(output, pageRaw);
 }
 
-void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	if (pageRaw->contentType.contains("javascript"))
 	{
@@ -61,7 +61,7 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 		return;
 	}
 
-	if (PageRawParserHelpers::isHtmlContentType(pageRaw->contentType))
+	if (PageParserHelpers::isHtmlContentType(pageRaw->contentType))
 	{
 		pageRaw->resourceType = ResourceType::ResourceHtml;
 		return;
@@ -72,18 +72,18 @@ void HtmlPageResourcesParser::parseResourceType(GumboOutput* output, PageRawPtr&
 	pageRaw->resourceType = ResourceType::ResourceOther;
 }
 
-void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
-	std::vector<OnPageUrl> links = GumboParsingHelpers::parsePageUrlList(output->root, false);
+	std::vector<LinkInfo> links = GumboParsingHelpers::parsePageUrlList(output->root, false);
 
 	std::vector<QUrl> unresolvedUrls;
 
-	for (const OnPageUrl& link : links)
+	for (const LinkInfo& link : links)
 	{
 		unresolvedUrls.push_back(link.url);
 	}
 
-	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, unresolvedUrls);
+	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(pageRaw->url, unresolvedUrls);
 
 	for (size_t i = 0; i < resolvedUrls.size(); ++i)
 	{
@@ -94,14 +94,14 @@ void HtmlPageResourcesParser::parseHtmlResources(GumboOutput* output, PageRawPtr
 			continue;
 		}
 
-		ResourceType resourceType = PageRawParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
+		ResourceType resourceType = PageParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
 			ResourceType::ResourceHtml : ResourceType::ResourceOther;
 
-		pageRaw->allResourcesOnPage.push_back(RawResourceOnPage{ resourceType, OnPageUrl{ url, links[i].urlParameter } });
+		pageRaw->allResourcesOnPage.push_back(RawResourceOnPage{ resourceType, LinkInfo{ url, links[i].urlParameter } });
 	}
 }
 
-void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -118,7 +118,7 @@ void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, Page
 	};
 
 	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
@@ -130,14 +130,14 @@ void HtmlPageResourcesParser::parseJavaScriptResources(GumboOutput* output, Page
 		RawResourceOnPage jsResource
 		{
 			ResourceType::ResourceJavaScript,
-			OnPageUrl{ url, UrlParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter }
 		};
 
 		pageRaw->allResourcesOnPage.push_back(jsResource);
 	}
 }
 
-void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -155,7 +155,7 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 	};
 
 	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
@@ -167,14 +167,14 @@ void HtmlPageResourcesParser::parseStyleSheetResources(GumboOutput* output, Page
 		RawResourceOnPage cssResource
 		{
 			ResourceType::ResourceStyleSheet,
-			OnPageUrl{ url, UrlParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter }
 		};
 
 		pageRaw->allResourcesOnPage.push_back(cssResource);
 	}
 }
 
-void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -191,7 +191,7 @@ void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, PageRawPt
 	};
 
 	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
@@ -203,14 +203,14 @@ void HtmlPageResourcesParser::parseImageResources(GumboOutput* output, PageRawPt
 		RawResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
-			OnPageUrl{ url, UrlParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter }
 		};
 
 		pageRaw->allResourcesOnPage.push_back(imageResource);
 	}
 }
 
-void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -228,7 +228,7 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 	};
 
 	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
@@ -240,14 +240,14 @@ void HtmlPageResourcesParser::parseVideoResources(GumboOutput* output, PageRawPt
 		RawResourceOnPage videoResource
 		{
 			ResourceType::ResourceVideo,
-			OnPageUrl{ url, UrlParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter }
 		};
 
 		pageRaw->allResourcesOnPage.push_back(videoResource);
 	}
 }
 
-void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	//<embed type="application/x-shockwave-flash" src="myContent.swf" width="300" height="120" pluginspage="http://www.adobe.com/go/getflashplayer" / >
 	//<noembed>Alternative content</noembed>
@@ -268,7 +268,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRaw
 	};
 
 	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
@@ -280,14 +280,14 @@ void HtmlPageResourcesParser::parseFlashResourcesV1(GumboOutput* output, PageRaw
 		RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
-			OnPageUrl{ url, UrlParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter }
 		};
 
 		pageRaw->allResourcesOnPage.push_back(flashResource);
 	}
 }
 
-void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	// 	<object type="application/x-shockwave-flash" data="myContent.swf" width="300" height="120">
 	// 	<p>Alternative content</p>
@@ -309,7 +309,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRaw
 	};
 
 	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
@@ -321,14 +321,14 @@ void HtmlPageResourcesParser::parseFlashResourcesV2(GumboOutput* output, PageRaw
 		RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
-			OnPageUrl{ url, UrlParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter }
 		};
 
 		pageRaw->allResourcesOnPage.push_back(flashResource);
 	}
 }
 
-void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	// 	<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="300" height="120">
 	// 	<param name="movie" value="myContent.swf" />
@@ -362,7 +362,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 	};
 
 	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageRawParserHelpers::resolveUrlList(pageRaw->url, urls);
+	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(pageRaw->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
@@ -374,7 +374,7 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, PageRaw
 		RawResourceOnPage flashResource
 		{ 
 			ResourceType::ResourceFlash, 
-			OnPageUrl{ url, UrlParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter }
 		};
 
 		pageRaw->allResourcesOnPage.push_back(flashResource);

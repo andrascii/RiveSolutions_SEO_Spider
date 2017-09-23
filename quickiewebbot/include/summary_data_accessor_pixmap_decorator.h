@@ -1,7 +1,7 @@
 #pragma once
 
 #include "summary_data_accessor_decorator.h"
-#include "gui_storage.h"
+#include "sequenced_data_collection.h"
 
 namespace QuickieWebBot
 {
@@ -25,7 +25,7 @@ private:
 
 	ItemStatus itemStatus(int row) const noexcept;
 
-	WebCrawler::GuiStorage::GuiStorageTypePtr storageByRow(int row) const noexcept;
+	WebCrawler::SequencedDataCollection::SequencedStorageTypePtr storageByRow(int row) const noexcept;
 
 	void initializePixmaps();
 

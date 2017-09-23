@@ -1,6 +1,6 @@
 #include "queued_downloader.h"
 #include "constants.h"
-#include "page_raw_parser_helpers.h"
+#include "page_parser_helpers.h"
 
 namespace WebCrawler
 {
@@ -21,7 +21,7 @@ QueuedDownloader::~QueuedDownloader()
 	stopExecution();
 }
 
-void QueuedDownloader::scheduleUrl(const WebCrawlerRequest& url) noexcept
+void QueuedDownloader::scheduleUrl(const CrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
 	//INFOLOG << "Url scheduled: " << url.toDisplayString();
@@ -58,7 +58,7 @@ void QueuedDownloader::metaDataChanged(QNetworkReply* reply)
 		return;
 	}
 
-	bool nonHtmlResponse = !PageRawParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+	bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
 	if (nonHtmlResponse)
 	{
 		processReply(reply);
@@ -82,7 +82,7 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 	markReplyProcessed(reply);
 	reply->disconnect(this);
 
-	bool nonHtmlResponse = !PageRawParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+	bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
 	bool processBody = !nonHtmlResponse;
 	
 
@@ -149,7 +149,7 @@ void QueuedDownloader::process()
 	while (m_requestQueue.size() && requestsThisBatch < s_maxRequestsOneBatch &&
 		m_pendingRequestsCount < s_maxPendingRequests && m_unprocessedRepliesCount < s_maxUnprocessedReplies)
 	{
-		WebCrawlerRequest request = *m_requestQueue.begin();
+		CrawlerRequest request = *m_requestQueue.begin();
 		QNetworkReply* reply = nullptr;
 
 		switch (request.requestType)

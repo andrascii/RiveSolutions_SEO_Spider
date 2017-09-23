@@ -3,11 +3,11 @@
 #include "table_view.h"
 #include "page_model.h"
 #include "page_view_model.h"
-#include "page_raw_info_storage_adaptor.h"
+#include "parsed_page_info_storage_adaptor.h"
 #include "storage_adaptor_factory.h"
 #include "model_controller.h"
 #include "context_menu_data_collection_row.h"
-#include "data_collection.h"
+#include "unordered_data_collection.h"
 #include "quickie_web_bot_helpers.h"
 #include "titled_widget.h"
 #include "control_panel_widget.h"
@@ -201,7 +201,7 @@ void DataPagesWidget::initializeStackedWidget()
 	PageModel* model = new PageModel(this);
 	PageViewModel* modelView = new PageViewModel(model, this);
 
-	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->guiStorage()));
+	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->sequencedDataCollection()));
 
 	crawlingTableView->setModel(model);
 	crawlingTableView->setViewModel(modelView);

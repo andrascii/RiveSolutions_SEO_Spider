@@ -56,7 +56,7 @@ void WebSiteDataWidget::setStorageAdaptorType(StorageAdaptorType storageAdaptorT
 	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 
 	PageModel* pageModel = new PageModel(m_stackedWidget);
-	pageModel->setStorageAdaptor(factory->createPageRawInfoStorage(storageAdaptorType, theApp->guiStorage()));
+	pageModel->setStorageAdaptor(factory->createPageRawInfoStorage(storageAdaptorType, theApp->sequencedDataCollection()));
 
 	PageViewModel* pageViewModel = new PageViewModel(pageModel, pageModel);
 

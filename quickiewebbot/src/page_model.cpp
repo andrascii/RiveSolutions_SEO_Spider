@@ -1,6 +1,6 @@
 #include "page_model.h"
 #include "default_column_resize_policy.h"
-#include "page_raw_info_storage_adaptor.h"
+#include "parsed_page_info_storage_adaptor.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
@@ -57,7 +57,7 @@ void PageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 
 		// set other column widths
 
-		columnsWidth[i] = PageRawInfo::columnPrefferedSize(m_storageAdaptor->availableColumns()[i - 1]);
+		columnsWidth[i] = ParsedPageInfo::columnPrefferedSize(m_storageAdaptor->availableColumns()[i - 1]);
 	}
 
 	std::dynamic_pointer_cast<DefaultColumnResizePolicy>(m_resizePolicy)->setColumnsSize(columnsWidth);
@@ -72,13 +72,13 @@ void PageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 	}
 }
 
-PageRawInfo::Column PageModel::itemType(const QModelIndex& index) const noexcept
+ParsedPageInfo::Column PageModel::itemType(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
 		// just return invalid enum for item number
 
-		return PageRawInfo::BeginEnumPageInfoItemType;
+		return ParsedPageInfo::BeginEnumPageInfoItemType;
 	}
 
 	const QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);

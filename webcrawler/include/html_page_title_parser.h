@@ -8,7 +8,7 @@ namespace WebCrawler
 class HtmlPageTitleParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept override;
+	virtual void parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept override;
 };
 
 }

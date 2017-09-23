@@ -5,7 +5,7 @@
 namespace QuickieWebBot
 {
 
-ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, WebCrawler::GuiStorage* guiStorage) const noexcept
+ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, WebCrawler::SequencedDataCollection* guiStorage) const noexcept
 {
 	ASSERT(accessorType > DataAccessorType::DataAccessorTypeBegin &&
 		accessorType < DataAccessorType::DataAccessorTypeEnd);

@@ -3,7 +3,7 @@
 namespace WebCrawler
 {
 
-struct WebCrawlerOptions
+struct CrawlerOptions
 {
 	QUrl url;
 	
@@ -23,6 +23,6 @@ struct WebCrawlerOptions
 	int maxImageSizeKb;
 };
 
-Q_DECLARE_METATYPE(WebCrawlerOptions);
+Q_DECLARE_METATYPE(CrawlerOptions);
 
 }

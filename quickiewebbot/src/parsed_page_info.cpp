@@ -1,17 +1,17 @@
-#include "page_raw.h"
-#include "page_raw_info.h"
+#include "parsed_page.h"
+#include "parsed_page_info.h"
 #include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
 
-PageRawInfo::PageRawInfo(WebCrawler::PageRawPtr pageRawPtr)
+ParsedPageInfo::ParsedPageInfo(WebCrawler::ParsedPagePtr pageRawPtr)
 	: m_pageRawPtr(pageRawPtr)
 {
 
 }
 
-QString PageRawInfo::itemTypeDescription(Column column)
+QString ParsedPageInfo::itemTypeDescription(Column column)
 {
 	checkColumnType(column);
 
@@ -53,7 +53,7 @@ QString PageRawInfo::itemTypeDescription(Column column)
 	return s_titles.value(column, QString::null);
 }
 
-int PageRawInfo::columnPrefferedSize(Column column)
+int ParsedPageInfo::columnPrefferedSize(Column column)
 {
 	static QMap<Column, int> s_prefferedSizes
 	{
@@ -94,7 +94,7 @@ int PageRawInfo::columnPrefferedSize(Column column)
 	return result;
 }
 
-QVariant PageRawInfo::itemValue(Column column) const
+QVariant ParsedPageInfo::itemValue(Column column) const
 {
 	if (!m_pageRawPtr)
 	{
@@ -104,7 +104,7 @@ QVariant PageRawInfo::itemValue(Column column) const
 	return (this->*acceptItem(column))();
 }
 
-size_t PageRawInfo::countLinksFromThisPage() const noexcept
+size_t ParsedPageInfo::countLinksFromThisPage() const noexcept
 {
 	if (!m_pageRawPtr)
 	{
@@ -114,14 +114,14 @@ size_t PageRawInfo::countLinksFromThisPage() const noexcept
 	return m_pageRawPtr->linksOnThisPage.size();
 }
 
-WebCrawler::PageRawWeakPtr PageRawInfo::linkFromThisPage(size_t number)
+WebCrawler::ParsedPageWeakPtr ParsedPageInfo::linkFromThisPage(size_t number)
 {
 	DEBUG_ASSERT(number < countLinksFromThisPage());
 
 	return m_pageRawPtr->linksOnThisPage[number].resource;
 }
 
-size_t PageRawInfo::countLinksToThisPage() const noexcept
+size_t ParsedPageInfo::countLinksToThisPage() const noexcept
 {
 	if (!m_pageRawPtr)
 	{
@@ -131,202 +131,202 @@ size_t PageRawInfo::countLinksToThisPage() const noexcept
 	return m_pageRawPtr->linksToThisPage.size();
 }
 
-WebCrawler::PageRawWeakPtr PageRawInfo::linkToThisPage(size_t number)
+WebCrawler::ParsedPageWeakPtr ParsedPageInfo::linkToThisPage(size_t number)
 {
 	DEBUG_ASSERT(number < countLinksToThisPage());
 
 	return m_pageRawPtr->linksToThisPage[number].resource;
 }
 
-PageRawInfo::MethodAcceptor PageRawInfo::acceptItem(Column column) const
+ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItem(Column column) const
 {
 	switch (column)
 	{
-		case UrlItemType: return &PageRawInfo::acceptUrl;
-		case ContentTypeItemType: return &PageRawInfo::acceptContentType;
-		case TitleItemType: return &PageRawInfo::acceptTitle;
-		case MetaRefreshItemType: return &PageRawInfo::acceptMetaRefresh;
-		case MetaRobotsItemType: return &PageRawInfo::acceptMetaRobots;
-		case RedirectedUrlItemType: return &PageRawInfo::acceptMetaRobots;
-		case ServerResponseItemType: return &PageRawInfo::acceptServerResponse;
-		case MetaDescriptionItemType: return &PageRawInfo::acceptMetaDescription;
-		case MetaKeywordsItemType: return &PageRawInfo::acceptMetaKeywords;
-		case FirstH1ItemType: return &PageRawInfo::acceptFirstH1;
-		case SecondH1ItemType: return &PageRawInfo::acceptSecondH1;
-		case FirstH2ItemType: return &PageRawInfo::acceptFirstH2;
-		case SecondH2ItemType: return &PageRawInfo::acceptSecondH2;
-		case CanonicalLinkElementItemType: return &PageRawInfo::acceptCanonicalLinkElement;
-		case StatusCodeItemType: return &PageRawInfo::acceptStatusCode;
-		case UrlLengthItemType: return &PageRawInfo::acceptUrlLength;
-		case TitleLengthItemType: return &PageRawInfo::acceptTitleLength;
-		case MetaDescriptionLengthItemType: return &PageRawInfo::acceptMetaDescriptionLength;
-		case MetaKeywordsLengthItemType: return &PageRawInfo::acceptMetaKeywordsLength;
-		case FirstH1LengthItemType: return &PageRawInfo::acceptFirstH1Length;
-		case SecondH1LengthItemType: return &PageRawInfo::acceptSecondH1Length;
-		case FirstH2LengthItemType: return &PageRawInfo::acceptFirstH2Length;
-		case SecondH2LengthItemType: return &PageRawInfo::acceptSecondH2Length;
-		case PageSizeKbItemType: return &PageRawInfo::acceptPageSizeKb;
-		case WordCountItemType: return &PageRawInfo::acceptWordCount;
-		case PageHashItemType: return &PageRawInfo::acceptPageHash;
-		case ImageSizeKbItemType: return &PageRawInfo::acceptImageSizeKb;
-		case AltTextItemType: return &PageRawInfo::acceptAltText;
-		case AltTextLengthItemType: return &PageRawInfo::acceptAltTextLength;
-		case NoFollowDoFollowLinkItemType: return &PageRawInfo::acceptDofollowNofollow;
+		case UrlItemType: return &ParsedPageInfo::acceptUrl;
+		case ContentTypeItemType: return &ParsedPageInfo::acceptContentType;
+		case TitleItemType: return &ParsedPageInfo::acceptTitle;
+		case MetaRefreshItemType: return &ParsedPageInfo::acceptMetaRefresh;
+		case MetaRobotsItemType: return &ParsedPageInfo::acceptMetaRobots;
+		case RedirectedUrlItemType: return &ParsedPageInfo::acceptMetaRobots;
+		case ServerResponseItemType: return &ParsedPageInfo::acceptServerResponse;
+		case MetaDescriptionItemType: return &ParsedPageInfo::acceptMetaDescription;
+		case MetaKeywordsItemType: return &ParsedPageInfo::acceptMetaKeywords;
+		case FirstH1ItemType: return &ParsedPageInfo::acceptFirstH1;
+		case SecondH1ItemType: return &ParsedPageInfo::acceptSecondH1;
+		case FirstH2ItemType: return &ParsedPageInfo::acceptFirstH2;
+		case SecondH2ItemType: return &ParsedPageInfo::acceptSecondH2;
+		case CanonicalLinkElementItemType: return &ParsedPageInfo::acceptCanonicalLinkElement;
+		case StatusCodeItemType: return &ParsedPageInfo::acceptStatusCode;
+		case UrlLengthItemType: return &ParsedPageInfo::acceptUrlLength;
+		case TitleLengthItemType: return &ParsedPageInfo::acceptTitleLength;
+		case MetaDescriptionLengthItemType: return &ParsedPageInfo::acceptMetaDescriptionLength;
+		case MetaKeywordsLengthItemType: return &ParsedPageInfo::acceptMetaKeywordsLength;
+		case FirstH1LengthItemType: return &ParsedPageInfo::acceptFirstH1Length;
+		case SecondH1LengthItemType: return &ParsedPageInfo::acceptSecondH1Length;
+		case FirstH2LengthItemType: return &ParsedPageInfo::acceptFirstH2Length;
+		case SecondH2LengthItemType: return &ParsedPageInfo::acceptSecondH2Length;
+		case PageSizeKbItemType: return &ParsedPageInfo::acceptPageSizeKb;
+		case WordCountItemType: return &ParsedPageInfo::acceptWordCount;
+		case PageHashItemType: return &ParsedPageInfo::acceptPageHash;
+		case ImageSizeKbItemType: return &ParsedPageInfo::acceptImageSizeKb;
+		case AltTextItemType: return &ParsedPageInfo::acceptAltText;
+		case AltTextLengthItemType: return &ParsedPageInfo::acceptAltTextLength;
+		case NoFollowDoFollowLinkItemType: return &ParsedPageInfo::acceptDofollowNofollow;
 	}
 
 	ASSERT(!"Unknown element");
 	return MethodAcceptor();
 }
 
-QVariant PageRawInfo::acceptUrl() const
+QVariant ParsedPageInfo::acceptUrl() const
 {
 	return m_pageRawPtr->url;
 }
 
-QVariant PageRawInfo::acceptContentType() const
+QVariant ParsedPageInfo::acceptContentType() const
 {
 	return m_pageRawPtr->contentType;
 }
 
-QVariant PageRawInfo::acceptTitle() const
+QVariant ParsedPageInfo::acceptTitle() const
 {
 	return m_pageRawPtr->title;
 }
 
-QVariant PageRawInfo::acceptMetaRefresh() const
+QVariant ParsedPageInfo::acceptMetaRefresh() const
 {
 	return m_pageRawPtr->metaRefresh;
 }
 
-QVariant PageRawInfo::acceptMetaRobots() const
+QVariant ParsedPageInfo::acceptMetaRobots() const
 {
 	return m_pageRawPtr->metaRobots;
 }
 
-QVariant PageRawInfo::acceptRedirectedUrl() const
+QVariant ParsedPageInfo::acceptRedirectedUrl() const
 {
 	return m_pageRawPtr->redirectedUrl;
 }
 
-QVariant PageRawInfo::acceptServerResponse() const
+QVariant ParsedPageInfo::acceptServerResponse() const
 {
 	return m_pageRawPtr->serverResponse;
 }
 
-QVariant PageRawInfo::acceptMetaDescription() const
+QVariant ParsedPageInfo::acceptMetaDescription() const
 {
 	return m_pageRawPtr->metaDescription;
 }
 
-QVariant PageRawInfo::acceptMetaKeywords() const
+QVariant ParsedPageInfo::acceptMetaKeywords() const
 {
 	return m_pageRawPtr->metaKeywords;
 }
 
-QVariant PageRawInfo::acceptFirstH1() const
+QVariant ParsedPageInfo::acceptFirstH1() const
 {
 	return m_pageRawPtr->firstH1;
 }
 
-QVariant PageRawInfo::acceptSecondH1() const
+QVariant ParsedPageInfo::acceptSecondH1() const
 {
 	return m_pageRawPtr->secondH1;
 }
 
-QVariant PageRawInfo::acceptFirstH2() const
+QVariant ParsedPageInfo::acceptFirstH2() const
 {
 	return m_pageRawPtr->firstH2;
 }
 
-QVariant PageRawInfo::acceptSecondH2() const
+QVariant ParsedPageInfo::acceptSecondH2() const
 {
 	return m_pageRawPtr->secondH2;
 }
 
-QVariant PageRawInfo::acceptCanonicalLinkElement() const
+QVariant ParsedPageInfo::acceptCanonicalLinkElement() const
 {
 	return m_pageRawPtr->canonicalLinkElement;
 }
 
-QVariant PageRawInfo::acceptStatusCode() const
+QVariant ParsedPageInfo::acceptStatusCode() const
 {
 	return m_pageRawPtr->statusCode;
 }
 
-QVariant PageRawInfo::acceptUrlLength() const
+QVariant ParsedPageInfo::acceptUrlLength() const
 {
 	return m_pageRawPtr->url.toString().length();
 }
 
-QVariant PageRawInfo::acceptTitleLength() const
+QVariant ParsedPageInfo::acceptTitleLength() const
 {
 	return m_pageRawPtr->title.size();
 }
 
-QVariant PageRawInfo::acceptMetaDescriptionLength() const
+QVariant ParsedPageInfo::acceptMetaDescriptionLength() const
 {
 	return m_pageRawPtr->metaDescription.size();
 }
 
-QVariant PageRawInfo::acceptMetaKeywordsLength() const
+QVariant ParsedPageInfo::acceptMetaKeywordsLength() const
 {
 	return m_pageRawPtr->metaKeywords.size();
 }
 
-QVariant PageRawInfo::acceptFirstH1Length() const
+QVariant ParsedPageInfo::acceptFirstH1Length() const
 {
 	return m_pageRawPtr->firstH1.size();
 }
 
-QVariant PageRawInfo::acceptSecondH1Length() const
+QVariant ParsedPageInfo::acceptSecondH1Length() const
 {
 	return m_pageRawPtr->secondH1.size();
 }
 
-QVariant PageRawInfo::acceptFirstH2Length() const
+QVariant ParsedPageInfo::acceptFirstH2Length() const
 {
 	return m_pageRawPtr->firstH2.size();
 }
 
-QVariant PageRawInfo::acceptSecondH2Length() const
+QVariant ParsedPageInfo::acceptSecondH2Length() const
 {
 	return m_pageRawPtr->secondH2.size();
 }
 
-QVariant PageRawInfo::acceptPageSizeKb() const
+QVariant ParsedPageInfo::acceptPageSizeKb() const
 {
 	return m_pageRawPtr->pageSizeKb;
 }
 
-QVariant PageRawInfo::acceptWordCount() const
+QVariant ParsedPageInfo::acceptWordCount() const
 {
 	return m_pageRawPtr->wordCount;
 }
 
-QVariant PageRawInfo::acceptPageHash() const
+QVariant ParsedPageInfo::acceptPageHash() const
 {
 	return m_pageRawPtr->pageHash;
 }
 
-QVariant PageRawInfo::acceptImageSizeKb() const
+QVariant ParsedPageInfo::acceptImageSizeKb() const
 {
 	return m_pageRawPtr->pageSizeKb;
 }
 
-QVariant PageRawInfo::acceptAltText() const
+QVariant ParsedPageInfo::acceptAltText() const
 {
 	return m_pageRawPtr->altText;
 }
 
-QVariant PageRawInfo::acceptDofollowNofollow() const
+QVariant ParsedPageInfo::acceptDofollowNofollow() const
 {
 	switch (m_pageRawPtr->linkParameter)
 	{
-		case WebCrawler::UrlParameter::DofollowParameter:
+		case WebCrawler::LinkParameter::DofollowParameter:
 		{
 			return QObject::tr("Dofollow");
 		}
-		case WebCrawler::UrlParameter::NofollowParameter:
+		case WebCrawler::LinkParameter::NofollowParameter:
 		{
 			return QObject::tr("Nofollow");
 		}
@@ -335,12 +335,12 @@ QVariant PageRawInfo::acceptDofollowNofollow() const
 	return QObject::tr("Unknown link parameter");
 }
 
-QVariant PageRawInfo::acceptAltTextLength() const
+QVariant ParsedPageInfo::acceptAltTextLength() const
 {
 	return m_pageRawPtr->altText.size();
 }
 
-void PageRawInfo::checkColumnType(Column column)
+void ParsedPageInfo::checkColumnType(Column column)
 {
 	ASSERT(column > BeginEnumPageInfoItemType && column < EndEnumPageInfoItemType);
 }

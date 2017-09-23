@@ -4,7 +4,7 @@
 namespace WebCrawler
 {
 
-void HtmlPageHParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageHParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	if (pageRaw->resourceType != ResourceType::ResourceHtml)
 	{
@@ -15,7 +15,7 @@ void HtmlPageHParser::parse(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 	parseH2(output, pageRaw);
 }
 
-void HtmlPageHParser::parseH1(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageHParser::parseH1(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -43,7 +43,7 @@ void HtmlPageHParser::parseH1(GumboOutput* output, PageRawPtr& pageRaw) noexcept
 	}
 }
 
-void HtmlPageHParser::parseH2(GumboOutput* output, PageRawPtr& pageRaw) noexcept
+void HtmlPageHParser::parseH2(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{

@@ -11,7 +11,7 @@ void HtmlPageParser::addPageRawParser(std::shared_ptr<IPageParser> pageRawParser
 	m_parserPack.push_back(std::move(pageRawParser));
 }
 
-void HtmlPageParser::parsePage(const QByteArray& htmlPage, PageRawPtr& pageRaw) noexcept
+void HtmlPageParser::parsePage(const QByteArray& htmlPage, ParsedPagePtr& pageRaw) noexcept
 {
 	//
 	// TODO: optimize this code because for now we need double parsing of the same page
@@ -27,9 +27,9 @@ void HtmlPageParser::parsePage(const QByteArray& htmlPage, PageRawPtr& pageRaw) 
 
 	m_pageUrlList.clear();
 
-	std::vector<OnPageUrl> links = GumboParsingHelpers::parsePageUrlList(gumboOutput.output()->root);
+	std::vector<LinkInfo> links = GumboParsingHelpers::parsePageUrlList(gumboOutput.output()->root);
 
-	for (const OnPageUrl& link : links)
+	for (const LinkInfo& link : links)
 	{
 		m_pageUrlList.push_back(link.url);
 	}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "abstract_table_model.h"
-#include "data_collection.h"
+#include "unordered_data_collection.h"
 #include "isummary_data_accessor.h"
 
 namespace QuickieWebBot

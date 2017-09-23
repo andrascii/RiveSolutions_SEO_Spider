@@ -1,4 +1,4 @@
-#include "page_raw_info.h"
+#include "parsed_page_info.h"
 #include "abstract_table_model.h"
 #include "default_column_resize_policy.h"
 #include "text_renderer.h"
@@ -69,7 +69,7 @@ const QPixmap& PageViewModel::pixmap(const QModelIndex& index) const noexcept
 
 	static QPixmap emptyPixmap;
 
-	if (model->itemType(index) == PageRawInfo::UrlItemType && hoveredIndex().row() == index.row())
+	if (model->itemType(index) == ParsedPageInfo::UrlItemType && hoveredIndex().row() == index.row())
 	{
 		return m_urlIcon;
 	}
@@ -82,7 +82,7 @@ QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemV
 	const PageModel* model =
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
-	if (model->itemType(index) == PageRawInfo::UrlItemType)
+	if (model->itemType(index) == ParsedPageInfo::UrlItemType)
 	{
 		return itemVisualRect.adjusted(itemVisualRect.width() - QuickieWebBotHelpers::pointsToPixels(20), 0, 0, 0);
 	}
@@ -144,7 +144,7 @@ QColor PageViewModel::textColor(const QModelIndex& index) const noexcept
 	const PageModel* model = 
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
-	if (model->itemType(index) == PageRawInfo::UrlItemType)
+	if (model->itemType(index) == ParsedPageInfo::UrlItemType)
 	{
 		return QColor("#1754A8");
 	}

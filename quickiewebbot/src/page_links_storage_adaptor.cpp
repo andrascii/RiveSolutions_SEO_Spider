@@ -9,12 +9,12 @@ PageLinksStorageAdaptor::PageLinksStorageAdaptor(PageRawInfoPtr associatedPageRa
 {
 }
 
-void PageLinksStorageAdaptor::setAvailableColumns(QList<PageRawInfo::Column> availableColumns) noexcept
+void PageLinksStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept
 {
 	m_availableColumns = availableColumns;
 }
 
-QList<PageRawInfo::Column> PageLinksStorageAdaptor::availableColumns() const noexcept
+QList<ParsedPageInfo::Column> PageLinksStorageAdaptor::availableColumns() const noexcept
 {
 	return m_availableColumns;
 }
@@ -23,7 +23,7 @@ QString PageLinksStorageAdaptor::columnDescription(int columnIndex) const noexce
 {
 	DEBUG_ASSERT(columnIndex < m_availableColumns.size());
 
-	return PageRawInfo::itemTypeDescription(m_availableColumns[columnIndex]);
+	return ParsedPageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
 int PageLinksStorageAdaptor::itemCount() const noexcept
@@ -46,15 +46,15 @@ QVariant PageLinksStorageAdaptor::item(const QModelIndex& index) const noexcept
 	}
 
 	PageRawInfoLinkAcceptorMethodType linksAcceptor = link();
-	WebCrawler::PageRawWeakPtr ptr = ((*m_associatedPageRawInfoPtr).*linksAcceptor)(index.row());
+	WebCrawler::ParsedPageWeakPtr ptr = ((*m_associatedPageRawInfoPtr).*linksAcceptor)(index.row());
 
 	DEBUG_ASSERT(index.row() < itemCount());
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
-	return PageRawInfo(ptr.lock()).itemValue(m_availableColumns[index.column()]);
+	return ParsedPageInfo(ptr.lock()).itemValue(m_availableColumns[index.column()]);
 }
 
-PageRawInfo::Column PageLinksStorageAdaptor::itemType(const QModelIndex& index) const noexcept
+ParsedPageInfo::Column PageLinksStorageAdaptor::itemType(const QModelIndex& index) const noexcept
 {
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
@@ -79,12 +79,12 @@ PageLinksStorageAdaptor::PageRawInfoCountAcceptorMethodType PageLinksStorageAdap
 	{
 		case PageLinkType::LinksOnThisPageType:
 		{
-			func = &PageRawInfo::countLinksFromThisPage;
+			func = &ParsedPageInfo::countLinksFromThisPage;
 			break;
 		}
 		case PageLinkType::LinksToThisPageType:
 		{
-			func = &PageRawInfo::countLinksToThisPage;
+			func = &ParsedPageInfo::countLinksToThisPage;
 			break;
 		}
 	}
@@ -100,12 +100,12 @@ PageLinksStorageAdaptor::PageRawInfoLinkAcceptorMethodType PageLinksStorageAdapt
 	{
 		case PageLinkType::LinksOnThisPageType:
 		{
-			func = &PageRawInfo::linkFromThisPage;
+			func = &ParsedPageInfo::linkFromThisPage;
 			break;
 		}
 		case PageLinkType::LinksToThisPageType:
 		{
-			func = &PageRawInfo::linkToThisPage;
+			func = &ParsedPageInfo::linkToThisPage;
 			break;
 		}
 	}

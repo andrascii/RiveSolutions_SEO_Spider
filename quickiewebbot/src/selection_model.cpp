@@ -6,7 +6,7 @@
 #ifdef QT_DEBUG
 #include "debug_info_web_page_widget.h"
 #include "page_model.h"
-#include "page_raw_info_storage_adaptor.h"
+#include "parsed_page_info_storage_adaptor.h"
 #endif // DEBUG
 
 
@@ -94,10 +94,10 @@ void SelectionModel::select(const QItemSelection& selection, QItemSelectionModel
 		return;
 	}
 
-	if (const PageRawInfoStorageAdaptor* storageAdaptor = 
-		dynamic_cast<const PageRawInfoStorageAdaptor*>(storageModel->storageAdaptor()); storageAdaptor)
+	if (const ParsedPageInfoStorageAdaptor* storageAdaptor = 
+		dynamic_cast<const ParsedPageInfoStorageAdaptor*>(storageModel->storageAdaptor()); storageAdaptor)
 	{
-		WebCrawler::PageRaw* pageRaw = storageAdaptor->pageRaw(firstSelectedIndex);
+		WebCrawler::ParsedPage* pageRaw = storageAdaptor->pageRaw(firstSelectedIndex);
 		GlobalWebPageSelectedNotifier::instanse()->pageSelected(pageRaw);
 	}
 
