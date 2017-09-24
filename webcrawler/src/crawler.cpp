@@ -55,7 +55,7 @@ void Crawler::startCrawlingInternal(const CrawlerOptions& options)
 
 	INFOLOG << "crawler started";
 
-	m_queuedDownloader.start();
+	queuedDownloader()->start();
 	m_urlStorage.setHost(options.host);
 
 	for (std::unique_ptr<CrawlerWorkerThread>& worker : m_workers)
