@@ -1,32 +1,24 @@
 #pragma once
 
-#include "abstract_threadable_object.h"
-#include "crawler_request.h"
+#include "iqueued_dowloader.h"
 
 namespace WebCrawler
 {
 
-class QueuedDownloader : public AbstractThreadableObject
+class QueuedDownloader : public AbstractThreadableObject, public IQueuedDownloader
 {
 	Q_OBJECT
 
 public:
-	struct Reply
-	{
-		int statusCode;
-		QUrl url;
-		QUrl redirectUrl;
-		QByteArray responseBody;
-		QByteArray responseHeaderValuePairs;
-		QMap<QByteArray, QByteArray> responseHeaders;
-	};
-	
 	QueuedDownloader();
 	virtual ~QueuedDownloader();
 
-	void scheduleUrl(const CrawlerRequest& url) noexcept;
+	virtual void scheduleUrl(const CrawlerRequest& url) noexcept override;
 
-	bool extractReply(Reply& response) noexcept;
+	virtual bool extractReply(Reply& response) noexcept override;
+
+	virtual void start() noexcept override;
+	virtual void stop() noexcept override;
 
 private:
 	virtual void process() override;

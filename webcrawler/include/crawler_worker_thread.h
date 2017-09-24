@@ -2,7 +2,7 @@
 
 #include "crawler.h"
 #include "parsed_page.h"
-#include "queued_downloader.h"
+#include "iqueued_dowloader.h"
 #include "abstract_threadable_object.h"
 #include "html_page_parser.h"
 
@@ -18,7 +18,7 @@ class CrawlerWorkerThread : public AbstractThreadableObject
 public:
 	CrawlerWorkerThread(
 		CrawlerUrlStorage* crawlerStorage, 
-		QueuedDownloader* queuedDownloader, 
+		IQueuedDownloader* queuedDownloader, 
 		QObject* parent = nullptr
 	);
 
@@ -34,7 +34,7 @@ private:
 private:
 	HtmlPageParser m_htmlPageParser;
 	CrawlerUrlStorage* m_webCrawlerInternalUrlStorage;
-	QueuedDownloader* m_queuedDownloader;
+	IQueuedDownloader* m_queuedDownloader;
 	QUrl m_host;
 };
 

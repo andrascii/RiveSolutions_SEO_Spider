@@ -8,12 +8,13 @@
 #include "html_page_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
+#include "iqueued_dowloader.h"
 
 namespace WebCrawler
 {
 
 CrawlerWorkerThread::CrawlerWorkerThread(CrawlerUrlStorage* crawlerStorage, 
-	QueuedDownloader* queuedDownloader, QObject* parent)
+	IQueuedDownloader* queuedDownloader, QObject* parent)
 	: AbstractThreadableObject(this, QByteArray("CrawlerWorkerThread"))
 	, m_webCrawlerInternalUrlStorage(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
@@ -36,7 +37,7 @@ void CrawlerWorkerThread::setHost(QUrl host)
 void CrawlerWorkerThread::process()
 {
 	CrawlerRequest url;
-	QueuedDownloader::Reply reply;
+	IQueuedDownloader::Reply reply;
 
 	const bool replyExtracted = m_queuedDownloader->extractReply(reply);
 	const bool urlExtracted = m_webCrawlerInternalUrlStorage->extractUrl(url);
