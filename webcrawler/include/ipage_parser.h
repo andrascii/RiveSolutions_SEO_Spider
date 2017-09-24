@@ -9,7 +9,7 @@ namespace WebCrawler
 class IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept = 0;
+	virtual void parse(GumboOutput* output, ParsedPagePtr& page) = 0;
 };
 
 }

@@ -13,7 +13,8 @@ class AbstractThreadableObject : public QObject
 public:
 	template <typename Derived>
 	AbstractThreadableObject(Derived* derivedObjectPtr, const QByteArray& threadName = QByteArray())
-		: m_derivedObjectPtr(derivedObjectPtr)
+		: QObject(nullptr)
+		, m_derivedObjectPtr(derivedObjectPtr)
 		, m_threadName(threadName)
 		, m_thread(m_threadName)
 		, m_isRunning(false)
@@ -26,8 +27,6 @@ public:
 	}
 
 	virtual ~AbstractThreadableObject();
-
-	void moveThisToSeparateThread();
 
 	// all methods below assumed to be thread-safe!
 
@@ -43,6 +42,8 @@ protected:
 	virtual void process() = 0;
 
 	virtual void timerEvent(QTimerEvent* event) override;
+
+	void moveThisToSeparateThread();
 
 	Q_INVOKABLE void startTimer(int interval, Qt::TimerType timerType = Qt::CoarseTimer);
 	Q_INVOKABLE void killTimer(int timerId);

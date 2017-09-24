@@ -23,6 +23,7 @@ Application::Application(int& argc, char** argv)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 	, m_settings(nullptr)
+	, m_translator(new QTranslator(this))
 {
 	initialize();
 
@@ -147,6 +148,9 @@ void Application::initialize() noexcept
 	initQSettings();
 
 	preferences()->load();
+
+	m_translator->load(":/translations/translate_ru_RU");
+	installTranslator(m_translator);
 
 	m_mainFrame.reset(new MainFrame);
 

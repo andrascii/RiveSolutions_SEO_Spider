@@ -63,7 +63,7 @@ struct ParsedPage
 	QString canonicalLinkElement;
 	QString altText;
 	int statusCode;
-	int pageSizeKb;
+	int pageSizeKilobytes;
 	int wordCount;
 	size_t pageHash;
 

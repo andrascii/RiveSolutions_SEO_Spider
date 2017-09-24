@@ -71,6 +71,8 @@ private:
 	std::unique_ptr<SummaryDataAccessorFactory> m_summaryDataAccessorFactory;
 
 	QSettings* m_settings;
+
+	QTranslator* m_translator;
 };
 
 }

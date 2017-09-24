@@ -7,6 +7,11 @@ QUrl PageParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& 
 {
 	QUrl result = relativeUrl;
 
+	if (result.toDisplayString().startsWith("//"))
+	{
+		return QString("http:") + result.toDisplayString();
+	}
+
 	//
 	// see: https://tools.ietf.org/html/rfc1808#section-4
 	//
@@ -78,16 +83,9 @@ QUrl PageParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& 
 std::vector<QUrl> PageParserHelpers::resolveUrlList(const QUrl& baseUrl, const std::vector<QUrl>& urlList) noexcept
 {
 	std::vector<QUrl> result;
+
 	for (const QUrl& url : urlList)
 	{
-		if (url.toDisplayString().startsWith("//"))
-		{
-			QUrl fixedUrl = QString("http:") + url.toDisplayString();
-			result.push_back(fixedUrl);
-
-			continue;
-		}
-
 		if (!url.isRelative())
 		{
 			result.push_back(url);

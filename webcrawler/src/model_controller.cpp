@@ -96,7 +96,7 @@ void ModelController::processParsedPageUrl(ParsedPagePtr parsedPagePtr) noexcept
 
 	m_data->addParsedPage(parsedPagePtr, StorageType::CrawledUrlStorageType);
 
-	if (url.host() != m_crawlerOptions.url.host())
+	if (url.host() != m_crawlerOptions.host.host())
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::ExternalUrlStorageType);
 	}
@@ -342,7 +342,7 @@ void ModelController::processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept
 void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept
 {
 	const int altLength = parsedPagePtr->altText.size();
-	const int sizeKB = parsedPagePtr->pageSizeKb;
+	const int sizeKB = parsedPagePtr->pageSizeKilobytes;
 	if (altLength > m_crawlerOptions.maxImageAltTextChars)
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongAltTextImageStorageType);

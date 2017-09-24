@@ -34,7 +34,7 @@ void CrawlerProgressBar::calculatePercents()
 	const size_t pendingLinksCount = m_urlStorage->pendingLinksCount();
 	const size_t amountLinksCount = pendingLinksCount + crawledLinksCount;
 
-	const double percents = crawledLinksCount / amountLinksCount * 100;
+	const double percents = crawledLinksCount / (amountLinksCount + 1) * 100;
 
 	setValue(percents ? floor(percents)  : percents + 1);
 }
