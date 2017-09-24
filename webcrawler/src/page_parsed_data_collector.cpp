@@ -1,12 +1,13 @@
 #include "page_parsed_data_collector.h"
 #include "crawler_options.h"
 #include "page_parser_helpers.h"
-#include "html_page_title_parser.h"
-#include "html_page_meta_parser.h"
-#include "html_page_h_parser.h"
-#include "html_page_word_count_parser.h"
-#include "html_page_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
+#include "html_resources_parser.h"
+#include "js_resources_parser.h"
+#include "css_resources_parser.h"
+#include "images_resources_parser.h"
+#include "video_resources_parser.h"
+#include "flash_resources_parser.h"
 
 namespace WebCrawler
 {
@@ -69,11 +70,35 @@ void PageParsedDataCollector::applyOptions()
 {
 	m_parser.clear();
 
-	m_parser.addParser(std::make_shared<HtmlPageResourcesParser>());
-	m_parser.addParser(std::make_shared<HtmlPageMetaParser>());
-	m_parser.addParser(std::make_shared<HtmlPageTitleParser>());
-	m_parser.addParser(std::make_shared<HtmlPageHParser>());
-	m_parser.addParser(std::make_shared<HtmlPageWordCountParser>());
+	if (m_options.parserTypeFlags.testFlag(HtmlResourcesParserType))
+	{
+		m_parser.addParser(createParser(HtmlResourcesParserType));
+	}
+	if (m_options.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
+	{
+		m_parser.addParser(createParser(JavaScriptResourcesParserType));
+	}
+	if (m_options.parserTypeFlags.testFlag(CssResourcesParserType))
+	{
+		m_parser.addParser(createParser(CssResourcesParserType));
+	}
+	if (m_options.parserTypeFlags.testFlag(ImagesResourcesParserType))
+	{
+		m_parser.addParser(createParser(ImagesResourcesParserType));
+	}
+	if (m_options.parserTypeFlags.testFlag(VideoResourcesParserType))
+	{
+		m_parser.addParser(createParser(VideoResourcesParserType));
+	}
+	if (m_options.parserTypeFlags.testFlag(FlashResourcesParserType))
+	{
+		m_parser.addParser(createParser(FlashResourcesParserType));
+	}
+}
+
+bool PageParsedDataCollector::isParserEnabled(int flags) const noexcept
+{
+	return true;
 }
 
 QUrl PageParsedDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& reply) const
@@ -86,7 +111,7 @@ QUrl PageParsedDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& 
 	return PageParserHelpers::resolveRelativeUrl(reply.redirectUrl, reply.url);
 }
 
-void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page)
+void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const
 {
 	page->url = reply.url;
 	page->statusCode = reply.statusCode;
@@ -112,6 +137,8 @@ void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& re
 		page->contentType = reply.responseHeaders.value(key);
 		break;
 	}
+
+	setResourceCategory(page);
 }
 
 void PageParsedDataCollector::collectParsedPageData(GumboOutput* output, ParsedPagePtr& page)
@@ -129,6 +156,66 @@ void PageParsedDataCollector::collectUrlList(GumboOutput* output)
 	{
 		m_urlList.push_back(linkInfo.url);
 	}
+}
+
+void PageParsedDataCollector::setResourceCategory(ParsedPagePtr& page) const
+{
+	if (page->contentType.contains("javascript"))
+	{
+		page->resourceType = ResourceType::ResourceJavaScript;
+		return;
+	}
+
+	if (page->contentType.startsWith("image/"))
+	{
+		page->resourceType = ResourceType::ResourceImage;
+		return;
+	}
+
+	if (PageParserHelpers::isHtmlContentType(page->contentType))
+	{
+		page->resourceType = ResourceType::ResourceHtml;
+		return;
+	}
+
+	WARNINGLOG << "Unknown resource type: " << page->contentType;
+
+	page->resourceType = ResourceType::ResourceOther;
+}
+
+std::shared_ptr<WebCrawler::IPageParser> 
+PageParsedDataCollector::createParser(ParserType parserType) const
+{
+	switch (parserType)
+	{
+		case HtmlResourcesParserType:
+		{
+			return std::make_shared<HtmlResourcesParser>();
+		}
+		case JavaScriptResourcesParserType:
+		{
+			return std::make_shared<JsResourcesParser>();
+		}
+		case CssResourcesParserType:
+		{
+			return std::make_shared<CssResourcesParser>();
+		}
+		case ImagesResourcesParserType:
+		{
+			return std::make_shared<ImagesResourcesParser>();
+		}
+		case VideoResourcesParserType:
+		{
+			return std::make_shared<VideoResourcesParser>();
+		}
+		case FlashResourcesParserType:
+		{
+			return std::make_shared<FlashResourcesParser>();
+		}
+	}
+
+	ASSERT(!"Undefined parser type");
+	return std::shared_ptr<IPageParser>(nullptr);
 }
 
 }

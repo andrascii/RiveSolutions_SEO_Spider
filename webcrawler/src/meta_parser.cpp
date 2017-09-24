@@ -1,24 +1,24 @@
-#include "html_page_meta_parser.h"
+#include "meta_parser.h"
 #include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
 
-void HtmlPageMetaParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw)
+void MetaParser::parse(GumboOutput* output, ParsedPagePtr& page)
 {
-	if (pageRaw->resourceType != ResourceType::ResourceHtml)
+	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}
 
-	parseMetaContentType(output, pageRaw);
-	parseMetaRefresh(output, pageRaw);
-	parseMetaDescription(output, pageRaw);
-	parseMetaKeywords(output, pageRaw);
-	parseMetaRobots(output, pageRaw);
+	parseMetaContentType(output, page);
+	parseMetaRefresh(output, page);
+	parseMetaDescription(output, page);
+	parseMetaKeywords(output, page);
+	parseMetaRobots(output, page);
 }
 
-void HtmlPageMetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void MetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -40,11 +40,11 @@ void HtmlPageMetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr
 	std::vector<QString> contentTypes = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	if (!contentTypes.empty())
 	{
-		pageRaw->contentType = contentTypes.front();
+		page->contentType = contentTypes.front();
 	}
 }
 
-void HtmlPageMetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -66,11 +66,11 @@ void HtmlPageMetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& pa
 	std::vector<QString> refreshes = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	if (!refreshes.empty())
 	{
-		pageRaw->metaRefresh = refreshes.front();
+		page->metaRefresh = refreshes.front();
 	}
 }
 
-void HtmlPageMetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void MetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -92,12 +92,12 @@ void HtmlPageMetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr
 	std::vector<QString> descriptions = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	if (!descriptions.empty())
 	{
-		pageRaw->metaDescription = descriptions.front();
+		page->metaDescription = descriptions.front();
 	}
-	pageRaw->hasSeveralMetaDescriptionTags = descriptions.size() > 1;
+	page->hasSeveralMetaDescriptionTags = descriptions.size() > 1;
 }
 
-void HtmlPageMetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -117,14 +117,16 @@ void HtmlPageMetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& p
 	};
 
 	std::vector<QString> keywords = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+
 	if (!keywords.empty())
 	{
-		pageRaw->metaKeywords = keywords.front();
+		page->metaKeywords = keywords.front();
 	}
-	pageRaw->hasSeveralMetaKeywordsTags = keywords.size() > 1;
+
+	page->hasSeveralMetaKeywordsTags = keywords.size() > 1;
 }
 
-void HtmlPageMetaParser::parseMetaRobots(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void MetaParser::parseMetaRobots(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -146,7 +148,7 @@ void HtmlPageMetaParser::parseMetaRobots(GumboOutput* output, ParsedPagePtr& pag
 	std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	if (!robots.empty())
 	{
-		pageRaw->metaRobots = robots.front();
+		page->metaRobots = robots.front();
 	}
 }
 

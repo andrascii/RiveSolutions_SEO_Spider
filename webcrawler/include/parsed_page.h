@@ -41,7 +41,7 @@ struct ResourceLink
 struct RawResourceOnPage
 {
 	ResourceType resourceType;
-	LinkInfo thisResourceUrl;
+	LinkInfo thisResourceLink;
 };
 
 struct ParsedPage

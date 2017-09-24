@@ -1,21 +1,21 @@
-#include "html_page_h_parser.h"
+#include "h_parser.h"
 #include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
 
-void HtmlPageHParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw)
+void HParser::parse(GumboOutput* output, ParsedPagePtr& page)
 {
-	if (pageRaw->resourceType != ResourceType::ResourceHtml)
+	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}
 
-	parseH1(output, pageRaw);
-	parseH2(output, pageRaw);
+	parseH1(output, page);
+	parseH2(output, page);
 }
 
-void HtmlPageHParser::parseH1(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void HParser::parseH1(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -34,16 +34,16 @@ void HtmlPageHParser::parseH1(GumboOutput* output, ParsedPagePtr& pageRaw) noexc
 	std::vector<QString> h1 = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	if (!h1.empty())
 	{
-		pageRaw->firstH1 = h1.front();
+		page->firstH1 = h1.front();
 	}
 	if (h1.size() > 1)
 	{
-		pageRaw->secondH1 = h1[1];
-		pageRaw->hasSeveralH1Tags = true;
+		page->secondH1 = h1[1];
+		page->hasSeveralH1Tags = true;
 	}
 }
 
-void HtmlPageHParser::parseH2(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void HParser::parseH2(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -62,12 +62,12 @@ void HtmlPageHParser::parseH2(GumboOutput* output, ParsedPagePtr& pageRaw) noexc
 	std::vector<QString> h2 = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	if (!h2.empty())
 	{
-		pageRaw->firstH2 = h2.front();
+		page->firstH2 = h2.front();
 	}
 	if (h2.size() > 1)
 	{
-		pageRaw->secondH2 = h2[1];
-		pageRaw->hasSeveralH2Tags = true;
+		page->secondH2 = h2[1];
+		page->hasSeveralH2Tags = true;
 	}
 }
 

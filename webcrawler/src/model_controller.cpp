@@ -401,7 +401,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 			continue;
 		}
 
-		resourcePage->url = resource.thisResourceUrl.url;
+		resourcePage->url = resource.thisResourceLink.url;
 		ParsedPagePtr existingResource = m_data->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 		if (!existingResource)
 		{
@@ -411,16 +411,16 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 		if (existingResource)
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
-			existingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceUrl.urlParameter });
-			parsedPagePtr->linksOnThisPage.push_back({ existingResource, resource.thisResourceUrl.urlParameter });
+			existingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter });
+			parsedPagePtr->linksOnThisPage.push_back({ existingResource, resource.thisResourceLink.urlParameter });
 
 		}
 		else
 		{
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
-			pendingResource->url = resource.thisResourceUrl.url;
-			pendingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceUrl.urlParameter });
-			parsedPagePtr->linksOnThisPage.push_back({ pendingResource, resource.thisResourceUrl.urlParameter });
+			pendingResource->url = resource.thisResourceLink.url;
+			pendingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter });
+			parsedPagePtr->linksOnThisPage.push_back({ pendingResource, resource.thisResourceLink.urlParameter });
 			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
@@ -472,7 +472,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 
 	for (const RawResourceOnPage& resource : parsedPagePtr->allResourcesOnPage)
 	{
-		QString resourceDisplayUrl = resource.thisResourceUrl.url.toDisplayString();
+		QString resourceDisplayUrl = resource.thisResourceLink.url.toDisplayString();
 
 		if (resource.resourceType == ResourceType::ResourceHtml ||
 			resourceDisplayUrl.startsWith("javascript:") ||
@@ -482,7 +482,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 		}
 
 		ParsedPagePtr resourceRaw = std::make_shared<ParsedPage>();
-		resourceRaw->url = resource.thisResourceUrl.url;
+		resourceRaw->url = resource.thisResourceLink.url;
 
 		bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resourceDisplayUrl);
 		bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(parsedPagePtr->url, resourceRaw->url) || !httpResource;
@@ -504,8 +504,8 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 				httpResource ? StorageType::PendingResourcesStorageType : storage);
 		}
 
-		parsedPagePtr->linksOnThisPage.push_back({ newOrExistingResource, resource.thisResourceUrl.urlParameter });
-		newOrExistingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceUrl.urlParameter });
+		parsedPagePtr->linksOnThisPage.push_back({ newOrExistingResource, resource.thisResourceLink.urlParameter });
+		newOrExistingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter });
 		newOrExistingResource->resourceType = resource.resourceType;
 	}
 }

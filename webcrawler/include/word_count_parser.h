@@ -5,7 +5,7 @@
 namespace WebCrawler
 {
 
-class HtmlPageWordCountParser : public IPageParser
+class WordCountParser : public IPageParser
 {
 public:
 	virtual void parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept override;

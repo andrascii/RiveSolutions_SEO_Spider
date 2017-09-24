@@ -5,7 +5,7 @@
 namespace WebCrawler
 {
 
-class HtmlPageMetaParser : public IPageParser
+class MetaParser : public IPageParser
 {
 public:
 	virtual void parse(GumboOutput* output, ParsedPagePtr& pageRaw) override;

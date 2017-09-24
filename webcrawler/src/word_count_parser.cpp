@@ -1,12 +1,12 @@
-#include "html_page_word_count_parser.h"
+#include "word_count_parser.h"
 #include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
 
-void HtmlPageWordCountParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void WordCountParser::parse(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
-	if (pageRaw->resourceType != ResourceType::ResourceHtml)
+	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}
@@ -22,7 +22,7 @@ void HtmlPageWordCountParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw)
 	QByteArray textFromPage = GumboParsingHelpers::cutAllTagsFromNode(body);
 	QList<QByteArray> allWordsFromPage = textFromPage.split(' ');
 
-	pageRaw->wordCount = allWordsFromPage.size();
+	page->wordCount = allWordsFromPage.size();
 }
 
 }
