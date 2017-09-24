@@ -3,7 +3,7 @@
 namespace QuickieWebBot
 {
 
-DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(/*WebCrawler::GuiStorage* guiStorage, */AuditGroup group)
+DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup group)
 {
 	std::shared_ptr<DCStorageGroupDescription> p =
 		std::make_shared<DCStorageGroupDescription>();
@@ -24,7 +24,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(/*WebCrawler::G
 
 		case AuditGroup::TitleAuditGroup:
 		{
-			p->name = QObject::tr("Page's Titles");
+			p->name = QObject::tr("Titles");
 			p->group = AuditGroup::TitleAuditGroup;
 			p->descriptions.push_back({ WebCrawler::StorageType::EmptyTitleUrlStorageType, QObject::tr("Empty Titles") });
 			p->descriptions.push_back({ WebCrawler::StorageType::DuplicatedTitleUrlStorageType, QObject::tr("Duplicated Titles") });
@@ -38,7 +38,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(/*WebCrawler::G
 
 		case AuditGroup::MetaDescriptionAuditGroup:
 		{
-			p->name = QObject::tr("Page's Meta Descriptions");
+			p->name = QObject::tr("Meta Descriptions");
 			p->group = AuditGroup::MetaDescriptionAuditGroup;
 			p->descriptions.push_back({ WebCrawler::StorageType::EmptyMetaDescriptionUrlStorageType, QObject::tr("Empty Meta Descriptions") });
 			p->descriptions.push_back({ WebCrawler::StorageType::DuplicatedMetaDescriptionUrlStorageType, QObject::tr("Duplicated Meta Descriptions") });
@@ -51,7 +51,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(/*WebCrawler::G
 
 		case AuditGroup::MetaKeywordAuditGroup:
 		{
-			p->name = QObject::tr("Page's Meta Keywords");
+			p->name = QObject::tr("Meta Keywords");
 			p->group = AuditGroup::MetaKeywordAuditGroup;
 			p->descriptions.push_back({ WebCrawler::StorageType::EmptyMetaKeywordsUrlStorageType, QObject::tr("Empty  Meta Keywords") });
 			p->descriptions.push_back({ WebCrawler::StorageType::DuplicatedMetaKeywordsUrlStorageType, QObject::tr("Duplicated  Meta Keywords") });
@@ -62,7 +62,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(/*WebCrawler::G
 
 		case AuditGroup::H1AuditGroup:
 		{
-			p->name = QObject::tr("Page's H1");
+			p->name = QObject::tr("H1");
 			p->group = AuditGroup::H1AuditGroup;
 			p->descriptions.push_back({ WebCrawler::StorageType::MissingH1UrlStorageType, QObject::tr("Missing H1") });
 			p->descriptions.push_back({ WebCrawler::StorageType::DuplicatedH1UrlStorageType, QObject::tr("Duplicated H1") });
@@ -74,7 +74,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(/*WebCrawler::G
 
 		case AuditGroup::H2AuditGroup:
 		{
-			p->name = QObject::tr("Page's H2");
+			p->name = QObject::tr("H2");
 			p->group = AuditGroup::H2AuditGroup;
 			p->descriptions.push_back({ WebCrawler::StorageType::MissingH2UrlStorageType, QObject::tr("Missing H2") });
 			p->descriptions.push_back({ WebCrawler::StorageType::DuplicatedH2UrlStorageType, QObject::tr("Duplicated H2") });

@@ -16,9 +16,14 @@ namespace QuickieWebBot
 
 PageViewModel::PageViewModel(PageModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectionBgColor("#F7F0D6") //#E6EE9C
-	, m_hoveredBgColor("#F3F3F3")
-	, m_bgColor(Qt::white)
+	, m_selectionBackgroundColor("#F7F0D6")
+	, m_hoveredBackgroundColor("#F3F3F3")
+	, m_backgroundColor("#FFFFFF")
+	, m_selectedGridLineColor("#E8E0C1")
+	, m_gridLineColor("#F3F3F3")
+	, m_urlTextColor("#1754A8")
+	, m_textColor("#333333")
+	, m_textFont("Helvetica", 9, QFont::Thin)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();
@@ -107,26 +112,24 @@ QRect PageViewModel::displayDataPosition(const QModelIndex&, const QRect& itemVi
 	return itemVisualRect;
 }
 
-const QColor& PageViewModel::selectionBackgroundColor(const QModelIndex&) const noexcept
+const QColor& PageViewModel::selectedBackgroundColor(const QModelIndex&) const noexcept
 {
-	return m_selectionBgColor;
+	return m_selectionBackgroundColor;
 }
 
 const QColor& PageViewModel::hoveredBackgroundColor(const QModelIndex&) const noexcept
 {
-	return m_hoveredBgColor;
+	return m_hoveredBackgroundColor;
 }
 
 const QColor& PageViewModel::backgroundColor(const QModelIndex&) const noexcept
 {
-	return m_bgColor;
+	return m_backgroundColor;
 }
 
 const QFont& PageViewModel::font(const QModelIndex& index) const noexcept
 {
-	static QFont font("Arial", 9);
-
-	return font;
+	return m_textFont;
 }
 
 Qt::AlignmentFlag PageViewModel::textAlignment(const QModelIndex& index) const noexcept
@@ -139,17 +142,27 @@ Qt::AlignmentFlag PageViewModel::textAlignment(const QModelIndex& index) const n
 	return Qt::AlignLeft;
 }
 
-QColor PageViewModel::textColor(const QModelIndex& index) const noexcept
+const QColor& PageViewModel::textColor(const QModelIndex& index) const noexcept
 {
 	const PageModel* model = 
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
 	if (model->itemType(index) == ParsedPageInfo::UrlItemType)
 	{
-		return QColor("#1754A8");
+		return m_urlTextColor;
 	}
 
-	return QColor("#333333");
+	return m_textColor;
+}
+
+const QColor& PageViewModel::selectedGridLineColor(const QModelIndex&) const noexcept
+{
+	return m_selectedGridLineColor;
+}
+
+const QColor& PageViewModel::gridLineColor(const QModelIndex&) const noexcept
+{
+	return m_gridLineColor;
 }
 
 void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept

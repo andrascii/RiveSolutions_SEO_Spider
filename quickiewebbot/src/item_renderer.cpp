@@ -58,7 +58,7 @@ void ItemRenderer::addRenderer(int rendererTypes)
 
 	if (rendererTypes & GridLineRendererType)
 	{
-		m_renderers.append(new GridLineRenderer(m_viewModel, QColor("#f1f1f1")));
+		m_renderers.append(new GridLineRenderer(m_viewModel));
 	}
 
 	if (rendererTypes & PlainTextRendererType)

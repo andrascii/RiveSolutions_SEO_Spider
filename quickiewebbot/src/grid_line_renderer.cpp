@@ -3,9 +3,8 @@
 namespace QuickieWebBot
 {
 
-GridLineRenderer::GridLineRenderer(const IViewModel* viewModel, QColor gridLineColor)
+GridLineRenderer::GridLineRenderer(const IViewModel* viewModel)
 	: m_viewModel(viewModel)
-	, m_gridLineColor(gridLineColor)
 {
 }
 
@@ -24,12 +23,15 @@ void GridLineRenderer::renderThisIfItAboveHoveredHelper(QPainter* painter, const
 	const QPoint secondPointBottomLine(adjustedRect.width() + adjustedRect.x(), adjustedRect.y() + adjustedRect.height());
 
 	const bool isThisRowSelected = isRowSelected(index.row());
+	const bool isBelowRowSelected = isRowSelected(index.row() + 1);
 
-	QColor bottomLineColor = isThisRowSelected ?
-		m_viewModel->selectionBackgroundColor(index) : 
-		m_viewModel->hoveredBackgroundColor(index);
+	QColor bottomLineColor = isThisRowSelected || isBelowRowSelected ?
+		m_viewModel->selectedGridLineColor(index) : 
+		m_viewModel->gridLineColor(index);
 
-	QColor rightVerticalLineColor = isThisRowSelected ? m_viewModel->selectionBackgroundColor(index) : m_gridLineColor;
+	QColor rightVerticalLineColor = isThisRowSelected ?
+		m_viewModel->selectedGridLineColor(index) :
+		m_viewModel->gridLineColor(index);
 
 	const QPoint firstPointRightVerticalLine(adjustedRect.x() + adjustedRect.width(), adjustedRect.y() + adjustedRect.height());
 	const QPoint secondPointRightVerticalLine(adjustedRect.x() + adjustedRect.width(), adjustedRect.y());
@@ -45,20 +47,9 @@ void GridLineRenderer::renderThisIfItAboveHoveredHelper(QPainter* painter, const
 
 void GridLineRenderer::renderHelper(QPainter* painter, const QRect& adjustedRect, const QModelIndex& index) const noexcept
 {
-	QColor rectangleColor = m_gridLineColor;
-	
-	if (isRowSelected(index.row()))
-	{
-		rectangleColor = m_viewModel->selectionBackgroundColor(index);
-	}
-	else if (m_viewModel->hoveredIndex().row() == index.row())
-	{
-		rectangleColor = m_viewModel->hoveredBackgroundColor(index);
-	}
-	else
-	{
-		rectangleColor = m_gridLineColor;
-	}
+	QColor rectangleColor = isRowSelected(index.row()) ? 
+		m_viewModel->selectedGridLineColor(index) : 
+		m_viewModel->gridLineColor(index);
 
 	painter->save();
 	painter->setPen(rectangleColor);

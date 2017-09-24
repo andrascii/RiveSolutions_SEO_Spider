@@ -9,7 +9,7 @@ namespace QuickieWebBot
 class GridLineRenderer : public IRenderer
 {
 public:
-	GridLineRenderer(const IViewModel* viewModel, QColor gridLineColor);
+	GridLineRenderer(const IViewModel* viewModel);
 
 	virtual void draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
@@ -27,8 +27,6 @@ private:
 
 private:
 	const IViewModel* m_viewModel;
-
-	QColor m_gridLineColor;
 };
 
 }

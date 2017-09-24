@@ -20,13 +20,16 @@ public:
 	virtual QString displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept = 0;
 	virtual QRect displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept = 0;
 
-	virtual const QColor& selectionBackgroundColor(const QModelIndex& index) const noexcept = 0;
+	virtual const QColor& selectedBackgroundColor(const QModelIndex& index) const noexcept = 0;
 	virtual const QColor& hoveredBackgroundColor(const QModelIndex& index) const noexcept = 0;
 	virtual const QColor& backgroundColor(const QModelIndex& index) const noexcept = 0;
 
 	virtual const QFont& font(const QModelIndex& index) const noexcept = 0;
 	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept = 0;
-	virtual QColor textColor(const QModelIndex& index) const noexcept = 0;
+	virtual const QColor& textColor(const QModelIndex& index) const noexcept = 0;
+
+	virtual const QColor& selectedGridLineColor(const QModelIndex& index) const noexcept = 0;
+	virtual const QColor& gridLineColor(const QModelIndex& index) const noexcept = 0;
 
 	virtual void invalidateItemViewRendererCache() const noexcept = 0;
 	virtual const IRenderer* itemViewRenderer(const QModelIndex& index) const noexcept = 0;

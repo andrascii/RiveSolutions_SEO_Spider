@@ -101,8 +101,8 @@ void TableView::selectionChanged(const QItemSelection& selected, const QItemSele
 {
 	if (viewModel())
 	{
-		viewModel()->setSelectedIndexes(selected.indexes());
 		viewModel()->setDeselectedIndexes(deselected.indexes());
+		viewModel()->setSelectedIndexes(selected.indexes());
 	}
 
 	QTableView::selectionChanged(selected, deselected);

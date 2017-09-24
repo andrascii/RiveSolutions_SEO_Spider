@@ -56,7 +56,7 @@ void FilterWidget::showEvent(QShowEvent* event)
 		return;
 	}
 
-	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(110);
+	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(150);
 	m_splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
 
 	event->ignore();

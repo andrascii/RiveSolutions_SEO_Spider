@@ -44,12 +44,12 @@
     <message>
         <location filename="ui/control_panel_widget.ui" line="82"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Стоп</translation>
     </message>
     <message>
         <location filename="ui/control_panel_widget.ui" line="95"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Старт</translation>
     </message>
 </context>
 <context>
@@ -64,7 +64,7 @@
         <location filename="ui/crawler_settings_widget.ui" line="86"/>
         <source>You can set robot preferences, which will be followed by the programs
 during site scanning.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Здесь</translation>
     </message>
     <message>
         <location filename="ui/crawler_settings_widget.ui" line="125"/>
@@ -327,92 +327,92 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="15"/>
         <source>Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Ссылки</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="17"/>
         <source>Links With Uppercase Characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Ссылки содержащие символы в верхнем регистре</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="18"/>
         <source>Links With Non-ASCII Characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Ссылки с non-asci символами</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="19"/>
         <source>Too Long Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком длинные ссылки</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="20"/>
         <source>Broken Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Битые ссылки</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="27"/>
         <source>Page&apos;s Titles</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовки Страниц</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="29"/>
         <source>Empty Titles</source>
-        <translation type="unfinished"></translation>
+        <translation>Пустые заголовки страниц</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="30"/>
         <source>Duplicated Titles</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторяющиеся заголовки страниц</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="31"/>
         <source>Too Long Titles</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком длинные заголовки страниц</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="32"/>
         <source>Too Short Titles</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком короткие заголовки страниц</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="33"/>
         <source>Titles Duplicates H1</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовки дублирующие H1</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="34"/>
         <source>Several Title Tags On The Same Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Страницы с несколькими тегами title</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="41"/>
         <source>Page&apos;s Meta Descriptions</source>
-        <translation type="unfinished"></translation>
+        <translation>Мета описания страниц</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="43"/>
         <source>Empty Meta Descriptions</source>
-        <translation type="unfinished"></translation>
+        <translation>Пустые мета описания</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="44"/>
         <source>Duplicated Meta Descriptions</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторяющиеся мета описания</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="45"/>
         <source>Too Long Meta Descriptions</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком длинные мета описания</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="46"/>
         <source>Too Short Meta Descriptions</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком короткие мета описания</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="47"/>
         <source>Several Meta Descriptions</source>
-        <translation type="unfinished"></translation>
+        <translation>Несколько мета описаний на странице</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="54"/>
@@ -422,17 +422,17 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="56"/>
         <source>Empty  Meta Keywords</source>
-        <translation type="unfinished"></translation>
+        <translation>Пустые Meta Kerwords</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="57"/>
         <source>Duplicated  Meta Keywords</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторяющиеся Meta Keywords</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="58"/>
         <source>Several Meta Keywords</source>
-        <translation type="unfinished"></translation>
+        <translation>Несколько тегов Meta Keywords на странице</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="65"/>
@@ -442,22 +442,22 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="67"/>
         <source>Missing H1</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропущенные H1</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="68"/>
         <source>Duplicated H1</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторяющиеся H1</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="69"/>
         <source>Too Long H1</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком длинные H1</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="70"/>
         <source>Several Equal H1</source>
-        <translation type="unfinished"></translation>
+        <translation>Несколько повторяющихся тегов H1 на странице</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="77"/>
@@ -467,94 +467,94 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="79"/>
         <source>Missing H2</source>
-        <translation type="unfinished"></translation>
+        <translation>Пропущенные H2</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="80"/>
         <source>Duplicated H2</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторяющиеся H2</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="81"/>
         <source>Too Long H2</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком длинные H2</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="82"/>
         <source>Several Equal H2</source>
-        <translation type="unfinished"></translation>
+        <translation>Несколько повторяющихся тегов H2 на странице</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="89"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="91"/>
         <source>Images Over 100 KB</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения превышающие 100 Кб</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="92"/>
         <source>Images With Missing Alt Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Изоборажения без Alt Description</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="93"/>
         <source>Too Long Image Alt Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения с длинным Alt Description</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="100"/>
         <source>Internal Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>Внутренние Ресурсы</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="102"/>
         <location filename="src/data_collection_groups_factory.cpp" line="117"/>
         <source>HTML Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML Ресурсы</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="103"/>
         <location filename="src/data_collection_groups_factory.cpp" line="118"/>
         <source>Image Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="104"/>
         <location filename="src/data_collection_groups_factory.cpp" line="119"/>
         <source>JavaScript Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>JavaScript Ресурсы</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="105"/>
         <location filename="src/data_collection_groups_factory.cpp" line="120"/>
         <source>StyleSheet Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>CSS Ресурсы</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="106"/>
         <location filename="src/data_collection_groups_factory.cpp" line="121"/>
         <source>Flash Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>Flash Ресурсы</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="107"/>
         <location filename="src/data_collection_groups_factory.cpp" line="122"/>
         <source>Video Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>Видео Ресурсы</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="108"/>
         <location filename="src/data_collection_groups_factory.cpp" line="123"/>
         <source>Other Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>Другие Ресурсы</translation>
     </message>
     <message>
         <location filename="src/data_collection_groups_factory.cpp" line="115"/>
         <source>External Resources</source>
-        <translation type="unfinished"></translation>
+        <translation>Внешние Ресурсы</translation>
     </message>
     <message>
         <location filename="src/parsed_page_info.cpp" line="20"/>
@@ -732,57 +732,57 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="23"/>
         <source>Open URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть ссылку в браузере</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="24"/>
         <source>Refresh All Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить все страницы</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="25"/>
         <source>Remove Row</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить страницу</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="26"/>
         <source>Check Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверить индекс</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="27"/>
         <source>Check Google Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверить кеш Google</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="28"/>
         <source>Open Robots.txt</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть robots.txt</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="29"/>
         <source>Show Other Domains On IP</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать другие поддомены на этом IP адресе</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="30"/>
         <source>Check HTML With W3C Validator</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверить HTML с помощью W3C валидатора</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="31"/>
         <source>Copy to Clipboard All Columns Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать все колонки</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="32"/>
         <source>Copy to Clipboard All Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать все страницы</translation>
     </message>
     <message>
         <location filename="src/context_menu_data_collection_row.cpp" line="33"/>
         <source>Copy to Clipboard URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать URL</translation>
     </message>
 </context>
 <context>
@@ -790,52 +790,52 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/main_frame.cpp" line="71"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть файл</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="73"/>
         <source>Close File</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть файл</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="76"/>
         <source>Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Недавно открытые файлы</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="79"/>
         <source>Save File</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить файл</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="82"/>
         <source>Save File As</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить файл как...</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="84"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="89"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="92"/>
         <source>Start Crawler</source>
-        <translation type="unfinished"></translation>
+        <translation>Запустить краулер</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="93"/>
         <source>Stop Crawler</source>
-        <translation type="unfinished"></translation>
+        <translation>Остановить краулер</translation>
     </message>
     <message>
         <location filename="src/main_frame.cpp" line="94"/>
         <source>Clear Crawled Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить собранные данные</translation>
     </message>
 </context>
 <context>
@@ -856,22 +856,22 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/page_data_widget.cpp" line="90"/>
         <source>Links To This Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Ссылки на эту страницу</translation>
     </message>
     <message>
         <location filename="src/page_data_widget.cpp" line="94"/>
         <source>Links On This Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Ссылки на этой странице</translation>
     </message>
     <message>
         <location filename="src/page_data_widget.cpp" line="98"/>
         <source>Images To This Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения на этой странице</translation>
     </message>
     <message>
         <location filename="src/page_data_widget.cpp" line="102"/>
         <source>HTTP Response</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовки HTTP ответа </translation>
     </message>
 </context>
 <context>
@@ -879,7 +879,7 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/page_model.cpp" line="147"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation>№</translation>
     </message>
 </context>
 <context>
@@ -887,7 +887,7 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <location filename="src/website_data_widget.cpp" line="32"/>
         <source>Select The Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите Фильтр</translation>
     </message>
 </context>
 <context>

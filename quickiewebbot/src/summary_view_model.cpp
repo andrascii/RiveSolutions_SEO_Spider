@@ -11,9 +11,15 @@ namespace QuickieWebBot
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectionBgColor("#E6EE9C")
-	, m_hoveredBgColor("#F3F3F3")
-	, m_bgColor(Qt::transparent)
+	, m_selectedBackgroundColor("#F7F0D6")
+	, m_hoveredBackgroundColor("#F3F3F3")
+	, m_backgroundColor("#FFFFFF")
+	, m_selectedGridLineColor("#F7F0D6")
+	, m_gridLineColor("#F3F3F3")
+	, m_headerTextColor("#000000")
+	, m_textColor("#333333")
+	, m_headerFont("Helvetica", 10, QFont::Bold)
+	, m_textFont("Helvetica", 9, QFont::Thin)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();
@@ -65,37 +71,31 @@ QRect SummaryViewModel::displayDataPosition(const QModelIndex& index, const QRec
 	return itemVisualRect.adjusted(pixmap(index).width() + QuickieWebBotHelpers::pointsToPixels(3), 0, 0, 0);
 }
 
-const QColor& SummaryViewModel::selectionBackgroundColor(const QModelIndex&) const noexcept
+const QColor& SummaryViewModel::selectedBackgroundColor(const QModelIndex&) const noexcept
 {
-	return m_selectionBgColor;
+	return m_selectedBackgroundColor;
 }
 
 const QColor& SummaryViewModel::hoveredBackgroundColor(const QModelIndex&) const noexcept
 {
-	return m_hoveredBgColor;
+	return m_hoveredBackgroundColor;
 }
 
 const QColor& SummaryViewModel::backgroundColor(const QModelIndex&) const noexcept
 {
-	return m_bgColor;
+	return m_backgroundColor;
 }
 
 const QFont& SummaryViewModel::font(const QModelIndex& index) const noexcept
 {
 	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
 
-	static QFont font("Arial", 9);
-
-	font.setPointSize(9);
-	font.setBold(false);
-
 	if (model->dataAccessor()->isHeaderRow(index.row()))
 	{
-		font.setPointSize(11);
-		font.setBold(true);
+		return m_headerFont;
 	}
 
-	return font;
+	return m_textFont;
 }
 
 Qt::AlignmentFlag SummaryViewModel::textAlignment(const QModelIndex& index) const noexcept
@@ -117,16 +117,26 @@ void SummaryViewModel::initializeRenderers()
 	);
 }
 
-QColor SummaryViewModel::textColor(const QModelIndex& index) const noexcept
+const QColor& SummaryViewModel::textColor(const QModelIndex& index) const noexcept
 {
 	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
 
 	if (model->dataAccessor()->isHeaderRow(index.row()))
 	{
-		return QColor(Qt::black);
+		return m_headerTextColor;
 	}
 
-	return QColor("#333333");
+	return m_textColor;
+}
+
+const QColor& SummaryViewModel::selectedGridLineColor(const QModelIndex&) const noexcept
+{
+	return m_selectedBackgroundColor;
+}
+
+const QColor& SummaryViewModel::gridLineColor(const QModelIndex&) const noexcept
+{
+	return m_gridLineColor;
 }
 
 void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept

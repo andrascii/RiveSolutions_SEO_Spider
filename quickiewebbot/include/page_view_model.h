@@ -26,13 +26,16 @@ public:
 	virtual QString displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
 	virtual QRect displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
 
-	virtual const QColor& selectionBackgroundColor(const QModelIndex& index) const noexcept override;
+	virtual const QColor& selectedBackgroundColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& hoveredBackgroundColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& backgroundColor(const QModelIndex& index) const noexcept override;
 
 	virtual const QFont& font(const QModelIndex& index) const noexcept override;
 	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept override;
-	virtual QColor textColor(const QModelIndex& index) const noexcept override;
+	virtual const QColor& textColor(const QModelIndex& index) const noexcept override;
+
+	virtual const QColor& selectedGridLineColor(const QModelIndex& index) const noexcept override;
+	virtual const QColor& gridLineColor(const QModelIndex& index) const noexcept override;
 
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
 
@@ -43,9 +46,16 @@ private:
 	void initializeRenderers();
 
 private:
-	QColor m_selectionBgColor;
-	QColor m_hoveredBgColor;
-	QColor m_bgColor;
+	QColor m_selectionBackgroundColor;
+	QColor m_hoveredBackgroundColor;
+	QColor m_backgroundColor;
+	QColor m_selectedGridLineColor;
+	QColor m_gridLineColor;
+
+	QColor m_urlTextColor;
+	QColor m_textColor;
+
+	QFont m_textFont;
 
 	QPixmap m_urlIcon;
 

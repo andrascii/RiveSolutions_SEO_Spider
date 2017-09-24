@@ -13,7 +13,7 @@ void SelectionBackgroundRenderer::draw(QPainter* painter, const QStyleOptionView
 {
 	if (option.state & QStyle::State_Selected)
 	{
-		painter->fillRect(option.rect, m_viewModel->selectionBackgroundColor(index));
+		painter->fillRect(option.rect, m_viewModel->selectedBackgroundColor(index));
 	}
 }
 

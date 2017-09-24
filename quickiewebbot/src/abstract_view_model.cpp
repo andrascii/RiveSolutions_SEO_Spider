@@ -22,10 +22,12 @@ void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) 
 {
 	for (int i = 0; i < modelIndexes.size(); ++i)
 	{
-		if (!m_selectedModelIndexes.contains(modelIndexes[i]))
+		if (m_selectedModelIndexes.contains(modelIndexes[i]))
 		{
-			m_selectedModelIndexes.append(modelIndexes[i]);
+			continue;
 		}
+
+		m_selectedModelIndexes.append(modelIndexes[i]);
 	}
 
 	emitNeedToRepaintIndexes(m_selectedModelIndexes);
@@ -40,8 +42,13 @@ void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes
 			m_selectedModelIndexes.removeOne(modelIndexes[i]);
 		}
 	}
+	
+// 	const int row = modelIndexes.at(0);
+// 
+// 	QModelIndexList repaintModelIndexes = modelIndexes;
+// 	repaintModelIndexes.append(model()->modelIndexesForRow())
 
-	emitNeedToRepaintIndexes(m_selectedModelIndexes);
+	emitNeedToRepaintIndexes(modelIndexes);
 }
 
 const QModelIndexList& AbstractViewModel::selectedIndexes() const noexcept
