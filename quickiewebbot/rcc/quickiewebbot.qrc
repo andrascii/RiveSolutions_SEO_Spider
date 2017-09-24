@@ -21,5 +21,6 @@
 		<file>images/click-to-url-icon.png</file>
 		<file>images/oops.jpg</file>
 		<file>config/defaults.cfg</file>
+		<file>translations/translate_ru_RU.qm</file>
     </qresource>
 </RCC>
