@@ -337,13 +337,15 @@ void HtmlPageResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedP
 
 	auto cond = [](const GumboNode* node)
 	{
+		const bool paramTagContainsMovieOrSrcAttribute =
+			GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", "")) ||
+			GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", ""));
+
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_OBJECT &&
 			GumboParsingHelpers::checkAttribute(node, "classid", "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000") &&
-			(!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", "")) ||
-				!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", "")));
-
+			paramTagContainsMovieOrSrcAttribute;
 	};
 
 	auto res = [](const GumboNode* node)

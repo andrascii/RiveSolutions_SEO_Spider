@@ -37,7 +37,7 @@ private:
 
 	void processReply(QNetworkReply* reply);
 
-	void markReplyProcessed(QNetworkReply* reply) const noexcept;
+	void markReplyAsProcessed(QNetworkReply* reply) const noexcept;
 	bool isReplyProcessed(QNetworkReply* reply) const noexcept;
 
 private:

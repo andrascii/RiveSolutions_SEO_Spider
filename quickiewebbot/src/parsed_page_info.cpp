@@ -295,7 +295,7 @@ QVariant ParsedPageInfo::acceptSecondH2Length() const
 
 QVariant ParsedPageInfo::acceptPageSizeKb() const
 {
-	return m_pageRawPtr->pageSizeKb;
+	return m_pageRawPtr->pageSizeKilobytes;
 }
 
 QVariant ParsedPageInfo::acceptWordCount() const
@@ -310,7 +310,7 @@ QVariant ParsedPageInfo::acceptPageHash() const
 
 QVariant ParsedPageInfo::acceptImageSizeKb() const
 {
-	return m_pageRawPtr->pageSizeKb;
+	return m_pageRawPtr->pageSizeKilobytes;
 }
 
 QVariant ParsedPageInfo::acceptAltText() const

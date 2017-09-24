@@ -8,7 +8,7 @@ namespace WebCrawler
 class HtmlPageMetaParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept override;
+	virtual void parse(GumboOutput* output, ParsedPagePtr& pageRaw) override;
 
 private:
 	void parseMetaContentType(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept;

@@ -6,7 +6,7 @@ namespace WebCrawler
 {
 
 QueuedDownloader::QueuedDownloader()
-	: AbstractThreadableObject(this, QByteArray("QueuedDownloaderThread"))
+	: AbstractThreadableObject(this, QByteArray("QueuedDownloader"))
 	, m_networkAccessManager(new QNetworkAccessManager(this))
 	, m_unprocessedRepliesCount(0)
 	, m_pendingRequestsCount(0)
@@ -24,7 +24,7 @@ QueuedDownloader::~QueuedDownloader()
 void QueuedDownloader::scheduleUrl(const CrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
-	//INFOLOG << "Url scheduled: " << url.toDisplayString();
+
 	m_requestQueue.push_back(url);
 }
 
@@ -40,7 +40,6 @@ bool QueuedDownloader::extractReply(Reply& response) noexcept
 	response = std::move(*m_repliesQueue.begin());
 	m_repliesQueue.erase(m_repliesQueue.begin());
 
-	//INFOLOG << "Reply extracted: " << response.url.toDisplayString() << " " << QThread::currentThreadId();
 	m_unprocessedRepliesCount--;
 
 	return true;
@@ -58,7 +57,10 @@ void QueuedDownloader::metaDataChanged(QNetworkReply* reply)
 		return;
 	}
 
-	bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+	const bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(
+		reply->header(QNetworkRequest::ContentTypeHeader).toString()
+	);
+
 	if (nonHtmlResponse)
 	{
 		processReply(reply);
@@ -79,13 +81,12 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 		return;
 	}
 
-	markReplyProcessed(reply);
+	markReplyAsProcessed(reply);
 	reply->disconnect(this);
 
 	bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
 	bool processBody = !nonHtmlResponse;
 	
-
 	QVariant alreadyProcessed = reply->property("processed");
 
 	QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
@@ -103,6 +104,7 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 	}
 
 	QUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+
 	if (!redirectUrl.isEmpty())
 	{
 		response.redirectUrl = redirectUrl;
@@ -110,7 +112,6 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 
 	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);
 
-	//INFOLOG << "Reply added: " << response.url.toDisplayString() << " " << QThread::currentThreadId();
 	m_repliesQueue.push_back(std::move(response));
 
 	m_pendingRequestsCount--;
@@ -119,7 +120,7 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 	reply->deleteLater();
 }
 
-void QueuedDownloader::markReplyProcessed(QNetworkReply* reply) const noexcept
+void QueuedDownloader::markReplyAsProcessed(QNetworkReply* reply) const noexcept
 {
 	ASSERT(reply != nullptr);
 	reply->setProperty("processed", true);
@@ -132,6 +133,7 @@ bool QueuedDownloader::isReplyProcessed(QNetworkReply* reply) const noexcept
 		// was already destroyed by deleteLater()
 		return true;
 	}
+
 	QVariant alreadyProcessed = reply->property("processed");
 	return alreadyProcessed.isValid();
 }
@@ -166,24 +168,13 @@ void QueuedDownloader::process()
 		}
 
 		auto requestIt = m_requestQueue.begin();
-		//INFOLOG << "Request started" << requestIt->url() << " " << QThread::currentThreadId();
 
-		VERIFY(QObject::connect(
-			reply, 
-			&QNetworkReply::metaDataChanged, 
-			this, 
-			[this, reply]() { metaDataChanged(reply); }, 
-			Qt::QueuedConnection
-		));
+		VERIFY(connect(reply, &QNetworkReply::metaDataChanged, this, [this, reply]() { metaDataChanged(reply); }, Qt::QueuedConnection));
 
 		using ErrorSignal = void (QNetworkReply::*)(QNetworkReply::NetworkError);
-		VERIFY(QObject::connect(
-			reply,
-			static_cast<ErrorSignal>(&QNetworkReply::error),
-			this,
-			[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); },
-			Qt::QueuedConnection
-		));
+
+		VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this, 
+			[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
 
 		m_requestQueue.erase(m_requestQueue.begin());
 

@@ -127,7 +127,7 @@ void MainFrame::startCrawler()
 {
 	WebCrawler::CrawlerOptions options;
 
-	options.url = theApp->preferences()->url();
+	options.host = theApp->preferences()->url();
 	options.minTitleLength = theApp->preferences()->minTitleLength();
 	options.maxTitleLength = theApp->preferences()->maxTitleLength();
 	options.limitMaxUrlLength = theApp->preferences()->limitMaxUrlLength();

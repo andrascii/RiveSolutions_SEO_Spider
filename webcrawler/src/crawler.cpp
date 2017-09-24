@@ -15,14 +15,13 @@ Crawler::Crawler(unsigned int threadCount)
 	m_crawlerThread->start();
 
 	m_modelController = new ModelController(this);
-	qRegisterMetaType<ParsedPagePtr>();
+	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 
 	for (unsigned i = 0; i < threadCount; ++i)
 	{
 		m_workers.push_back(std::make_unique<CrawlerWorkerThread>(&m_urlStorage, &m_queuedDownloader));
 		
-		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)),
-			SLOT(onPageParsed(ParsedPagePtr))));
+		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)), SLOT(onPageParsed(ParsedPagePtr))));
 	}
 
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
@@ -56,18 +55,16 @@ void Crawler::startCrawlingInternal(const CrawlerOptions& options)
 {
 	m_modelController->setWebCrawlerOptions(options);
 
-	QUrl host = options.url;
-
-	DEBUG_ASSERT(host.isValid());
+	DEBUG_ASSERT(options.host.isValid());
 
 	INFOLOG << "crawler started";
 
 	m_queuedDownloader.startExecution();
-	m_urlStorage.setHost(host);
+	m_urlStorage.setHost(options.host);
 
 	for (std::unique_ptr<CrawlerWorkerThread>& worker : m_workers)
 	{
-		VERIFY(QMetaObject::invokeMethod(worker.get(), "setHost", Qt::QueuedConnection, Q_ARG(QUrl, host)));
+		VERIFY(QMetaObject::invokeMethod(worker.get(), "applyOptions", Qt::QueuedConnection, Q_ARG(const CrawlerOptions&, options)));
 
 		worker->startExecution();
 	}

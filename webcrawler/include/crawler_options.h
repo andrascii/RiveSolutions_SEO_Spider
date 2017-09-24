@@ -5,7 +5,7 @@ namespace WebCrawler
 
 struct CrawlerOptions
 {
-	QUrl url;
+	QUrl host;
 	
 	int minTitleLength;
 	int maxTitleLength;
