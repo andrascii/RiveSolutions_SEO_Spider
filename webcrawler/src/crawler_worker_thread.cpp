@@ -3,11 +3,12 @@
 #include "constants.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
+#include "iqueued_dowloader.h"
 
 namespace WebCrawler
 {
 
-CrawlerWorkerThread::CrawlerWorkerThread(CrawlerUrlStorage* crawlerStorage, QueuedDownloader* queuedDownloader)
+CrawlerWorkerThread::CrawlerWorkerThread(CrawlerUrlStorage* crawlerStorage, IQueuedDownloader* queuedDownloader)
 	: AbstractThreadableObject(this, QByteArray("CrawlerWorkerThread"))
 	, m_pageParsedDataCollector(new PageParsedDataCollector(this))
 	, m_crawlerInternalUrlStorage(crawlerStorage)
@@ -24,7 +25,7 @@ void CrawlerWorkerThread::applyOptions(const CrawlerOptions& options)
 void CrawlerWorkerThread::process()
 {
 	CrawlerRequest url;
-	QueuedDownloader::Reply reply;
+	IQueuedDownloader::Reply reply;
 
 	const bool replyExtracted = m_queuedDownloader->extractReply(reply);
 	const bool urlExtracted = m_crawlerInternalUrlStorage->extractUrl(url);

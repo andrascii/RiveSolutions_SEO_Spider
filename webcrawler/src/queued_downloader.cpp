@@ -45,6 +45,16 @@ bool QueuedDownloader::extractReply(Reply& response) noexcept
 	return true;
 }
 
+void QueuedDownloader::start() noexcept
+{
+	startExecution();
+}
+
+void QueuedDownloader::stop() noexcept
+{
+	stopExecution();
+}
+
 void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 {
 	processReply(reply);

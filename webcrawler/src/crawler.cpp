@@ -3,12 +3,14 @@
 #include "sequenced_data_collection.h"
 #include "model_controller.h"
 #include "crawler_worker_thread.h"
+#include "queued_downloader.h"
 
 namespace WebCrawler
 {
 
 Crawler::Crawler(unsigned int threadCount)
 	: QObject(nullptr)
+	, m_theradCount(threadCount)
 {
 	m_crawlerThread = new QThread();
 	moveToThread(m_crawlerThread);
@@ -16,13 +18,6 @@ Crawler::Crawler(unsigned int threadCount)
 
 	m_modelController = new ModelController(this);
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
-
-	for (unsigned i = 0; i < threadCount; ++i)
-	{
-		m_workers.push_back(std::make_unique<CrawlerWorkerThread>(&m_urlStorage, &m_queuedDownloader));
-		
-		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)), SLOT(onPageParsed(ParsedPagePtr))));
-	}
 
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
 }
@@ -43,6 +38,7 @@ Crawler::~Crawler()
 
 void Crawler::startCrawling(const CrawlerOptions& options)
 {
+	initCrawlerWorkerThreads();
 	VERIFY(QMetaObject::invokeMethod(this, "startCrawlingInternal", Qt::QueuedConnection, Q_ARG(const CrawlerOptions&, options)));
 }
 
@@ -59,7 +55,7 @@ void Crawler::startCrawlingInternal(const CrawlerOptions& options)
 
 	INFOLOG << "crawler started";
 
-	m_queuedDownloader.startExecution();
+	queuedDownloader()->start();
 	m_urlStorage.setHost(options.host);
 
 	for (std::unique_ptr<CrawlerWorkerThread>& worker : m_workers)
@@ -79,7 +75,37 @@ void Crawler::stopCrawlingInternal()
 		worker->stopExecution();
 	}
 
-	m_queuedDownloader.stopExecution();
+	queuedDownloader()->stop();
+}
+
+void Crawler::initCrawlerWorkerThreads()
+{
+	if (static_cast<unsigned int>(m_workers.size()) == m_theradCount)
+	{
+		return;
+	}
+
+	for (unsigned i = 0; i < m_theradCount; ++i)
+	{
+		m_workers.push_back(std::make_unique<CrawlerWorkerThread>(&m_urlStorage, queuedDownloader()));
+
+		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)),
+			SLOT(onPageParsed(ParsedPagePtr))));
+	}
+}
+
+IQueuedDownloader* Crawler::queuedDownloader() const noexcept
+{
+	if (!m_queuedDownloader)
+	{
+		m_queuedDownloader.reset(createQueuedDownloader());
+	}
+	return m_queuedDownloader.get();
+}
+
+IQueuedDownloader* Crawler::createQueuedDownloader() const noexcept
+{
+	return new QueuedDownloader();
 }
 
 SequencedDataCollection* Crawler::guiStorage() const noexcept

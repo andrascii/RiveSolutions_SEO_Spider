@@ -3,7 +3,6 @@
 #include "parsed_page.h"
 #include "crawler_url_storage.h"
 #include "crawler_options.h"
-#include "queued_downloader.h"
 
 namespace WebCrawler
 {
@@ -11,6 +10,7 @@ namespace WebCrawler
 class CrawlerWorkerThread;
 class ModelController;
 class SequencedDataCollection;
+class IQueuedDownloader;
 
 class Crawler : public QObject
 {
@@ -33,8 +33,14 @@ private:
 	Q_SLOT void startCrawlingInternal(const CrawlerOptions& options);
 	Q_SLOT void stopCrawlingInternal();
 
+	void initCrawlerWorkerThreads();
+
+protected:
+	IQueuedDownloader* queuedDownloader() const noexcept;
+	virtual IQueuedDownloader* createQueuedDownloader() const noexcept;
+
 private:
-	QueuedDownloader m_queuedDownloader;
+	mutable std::unique_ptr<IQueuedDownloader> m_queuedDownloader;
 
 	ModelController* m_modelController;
 	
@@ -43,6 +49,8 @@ private:
 	std::vector<std::unique_ptr<CrawlerWorkerThread>> m_workers;
 
 	QThread* m_crawlerThread;
+
+	unsigned int m_theradCount;
 };
 
 }
