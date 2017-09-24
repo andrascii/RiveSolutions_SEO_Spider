@@ -1,12 +1,12 @@
-#include "html_page_title_parser.h"
+#include "title_parser.h"
 #include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
 
-void HtmlPageTitleParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept
+void TitleParser::parse(GumboOutput* output, ParsedPagePtr& page) noexcept
 {	
-	if (pageRaw->resourceType != ResourceType::ResourceHtml)
+	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}
@@ -28,11 +28,13 @@ void HtmlPageTitleParser::parse(GumboOutput* output, ParsedPagePtr& pageRaw) noe
 	};
 
 	std::vector<QByteArray> titles = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+
 	if (!titles.empty())
 	{
-		pageRaw->title = titles.front();
+		page->title = titles.front();
 	}
-	pageRaw->hasSeveralTitleTags = titles.size() > 1;
+
+	page->hasSeveralTitleTags = titles.size() > 1;
 }
 
 }

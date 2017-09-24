@@ -23,12 +23,17 @@ public:
 
 private:
 	void applyOptions();
+	bool isParserEnabled(int flags) const noexcept;
 
 	QUrl resolveRedirectUrl(const QueuedDownloader::Reply& reply) const;
 
-	void collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page);
+	void collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const;
 	void collectParsedPageData(GumboOutput* output, ParsedPagePtr& page);
 	void collectUrlList(GumboOutput* output);
+
+	void setResourceCategory(ParsedPagePtr& page) const;
+
+	std::shared_ptr<IPageParser> createParser(ParserType parserType) const;
 
 private:
 	CompoundParser m_parser;

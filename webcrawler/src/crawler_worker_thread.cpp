@@ -64,12 +64,12 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 
 	for (const RawResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
-		const QString resourceUrlStr = resource.thisResourceUrl.url.toDisplayString();
+		const QString resourceUrlStr = resource.thisResourceLink.url.toDisplayString();
 
 		if (PageParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
 			resource.resourceType != ResourceType::ResourceHtml)
 		{
-			resourcesUrlList.push_back(resource.thisResourceUrl.url);
+			resourcesUrlList.push_back(resource.thisResourceLink.url);
 		}
 	}
 

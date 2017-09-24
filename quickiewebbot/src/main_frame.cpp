@@ -138,6 +138,13 @@ void MainFrame::startCrawler()
 	options.maxImageAltTextChars = theApp->preferences()->maxImageAltTextChars();
 	options.maxImageSizeKb = theApp->preferences()->maxImageSize();
 
+	options.parserTypeFlags.setFlag(WebCrawler::HtmlResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::JavaScriptResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::CssResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::ImagesResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::VideoResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::FlashResourcesParserType);
+
 	theApp->crawler()->startCrawling(options);
 }
 
