@@ -8,7 +8,7 @@
 namespace WebCrawler
 {
 
-Crawler::Crawler(unsigned int threadCount)
+Crawler::Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThread)
 	: QObject(nullptr)
 	, m_theradCount(threadCount)
 {
@@ -16,7 +16,7 @@ Crawler::Crawler(unsigned int threadCount)
 	moveToThread(m_crawlerThread);
 	m_crawlerThread->start();
 
-	m_modelController = new ModelController(this);
+	m_modelController = new ModelController(this, sequencedDataCollectionThread);
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);

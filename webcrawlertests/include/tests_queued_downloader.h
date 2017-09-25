@@ -12,6 +12,10 @@ class TestsQueudedDownoader : public WebCrawler::IQueuedDownloader
 
 	virtual void start() noexcept override;
 	virtual void stop() noexcept override;
+
+private:
+	std::vector<Reply> m_repliesQueue;
+	std::mutex m_repliesQueueMutex;
 };
 
 }

@@ -19,7 +19,7 @@ protected:
 	using UnorderedStorageTypePtr = std::shared_ptr<UnorderedStorageType>;
 
 public:
-	UnorderedDataCollection(QObject* parent);
+	UnorderedDataCollection(QObject* parent, QThread* sequencedDataCollectionThread);
 	~UnorderedDataCollection();
 
 	bool isParsedPageExists(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;

@@ -13,7 +13,7 @@ class ModelController : public QObject
 	Q_OBJECT
 
 public:
-	ModelController(QObject* parent);
+	ModelController(QObject* parent, QThread* sequencedDataCollectionThread);
 	~ModelController();
 
 	void setWebCrawlerOptions(const CrawlerOptions& options);
