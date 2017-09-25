@@ -156,7 +156,7 @@ void Application::initialize() noexcept
 
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
-	DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
+	//DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
 #endif
 }
 

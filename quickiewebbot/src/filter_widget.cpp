@@ -44,7 +44,7 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, guiStorage);
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
 
-	m_summaryFilterTableView->initSpan();
+	m_summaryFilterTableView->initSpans();
 }
 
 void FilterWidget::showEvent(QShowEvent* event)

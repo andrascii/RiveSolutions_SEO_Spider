@@ -63,6 +63,7 @@ void WebSiteDataWidget::setStorageAdaptorType(StorageAdaptorType storageAdaptorT
 	TableView* tableView = new TableView(m_stackedWidget);
 	tableView->setModel(pageModel);
 	tableView->setViewModel(pageViewModel);
+	tableView->setShowAdditionalGrid(true);
 
 	m_tables[storageAdaptorType] = m_stackedWidget->addWidget(tableView);
 	m_stackedWidget->setCurrentIndex(m_tables[storageAdaptorType]);

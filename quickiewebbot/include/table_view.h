@@ -19,19 +19,25 @@ public:
 
 	virtual void setModel(QAbstractItemModel* model) override;
 
-	void setContextMenu(QMenu* menu) noexcept;
-	void setViewModel(IViewModel* modelView) noexcept;
 	IViewModel* viewModel() const noexcept;
+	void setViewModel(IViewModel* modelView) noexcept;
+	
+	void setContextMenu(QMenu* menu) noexcept;
 
-	Q_SLOT void initSpan();
+	void setShowAdditionalGrid(bool value) noexcept;
+	bool showAdditionalGrid() const noexcept;
+
+	Q_SLOT void initSpans();
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void leaveEvent(QEvent* event) override;
 	virtual void contextMenuEvent(QContextMenuEvent* event) override;
+	virtual void paintEvent(QPaintEvent* event) override;
 
 	virtual void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+	virtual void rowsInserted(const QModelIndex &parent, int start, int end) override;
 
 private:
 	Q_SLOT void adjustColumnSize();
@@ -39,12 +45,11 @@ private:
 
 private:
 	AbstractTableModel* m_model;
-
 	IViewModel* m_viewModel;
-
 	QMenu* m_contextMenu;
 
-	bool m_isCursorOverriden;
+	bool m_showAdditionalGrid;
+	int m_rowHeight;
 };
 
 }

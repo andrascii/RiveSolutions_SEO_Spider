@@ -14,7 +14,8 @@ TableView::TableView(QWidget* parent)
 	, m_model(nullptr)
 	, m_viewModel(nullptr)
 	, m_contextMenu(nullptr)
-	, m_isCursorOverriden(false)
+	, m_showAdditionalGrid(false)
+	, m_rowHeight(QuickieWebBotHelpers::pointsToPixels(25))
 {
 	setMouseTracking(true);
 
@@ -24,6 +25,12 @@ TableView::TableView(QWidget* parent)
 
 	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	setSelectionModel(new SelectionModel(this));
+
+	horizontalHeader()->setSectionsMovable(true);
+
+	//
+	// Use GridLineRenderer in a view model for this
+	//
 	setShowGrid(false);
 }
 
@@ -41,10 +48,10 @@ void TableView::setModel(QAbstractItemModel* model)
 		VERIFY(connect(m_model->resizePolicy()->qobject(), SIGNAL(columnSizeChanged()), this, SLOT(adjustColumnSize())));
 	}
 	
-	initSpan();
+	initSpans();
 	setSelectionModel(new SelectionModel(this));
 
-	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpan())));
+	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpans())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));
 }
 
@@ -97,6 +104,43 @@ void TableView::contextMenuEvent(QContextMenuEvent* event)
 	}
 }
 
+void TableView::paintEvent(QPaintEvent* event)
+{
+	QTableView::paintEvent(event);
+
+	if (!showAdditionalGrid())
+	{
+		return;
+	}
+
+	QPainter painter(viewport());
+	painter.setPen(QColor("#F3F3F3"));
+
+	const QRect viewportRect = viewport()->rect();
+	const int pseudoRowCount = viewportRect.height() / m_rowHeight;
+
+	for (int i = 0; i < pseudoRowCount; ++i)
+	{
+		const int offsetByY = m_rowHeight * i;
+
+		if (rowAt(offsetByY - 1) != -1)
+		{
+			continue;
+		}
+
+		painter.drawLine(QPoint(0, offsetByY), QPoint(width(), offsetByY));
+	}
+
+	for (int i = 0; i < horizontalHeader()->count(); ++i)
+	{
+		const int offsetByX = 
+			horizontalHeader()->sectionViewportPosition(i) + 
+			horizontalHeader()->sectionSize(i) - 1;
+
+		painter.drawLine(QPoint(offsetByX, 0), QPoint(offsetByX, viewportRect.height()));
+	}
+}
+
 void TableView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
 	if (viewModel())
@@ -106,6 +150,16 @@ void TableView::selectionChanged(const QItemSelection& selected, const QItemSele
 	}
 
 	QTableView::selectionChanged(selected, deselected);
+}
+
+void TableView::rowsInserted(const QModelIndex &parent, int start, int end)
+{
+	for (int i = start; i <= end; ++i)
+	{
+		setRowHeight(i, m_rowHeight);
+	}
+
+	QTableView::rowsInserted(parent, start, end);
 }
 
 void TableView::setContextMenu(QMenu* menu) noexcept
@@ -134,7 +188,17 @@ IViewModel* TableView::viewModel() const noexcept
 	return m_viewModel;
 }
 
-void TableView::initSpan()
+void TableView::setShowAdditionalGrid(bool value) noexcept
+{
+	m_showAdditionalGrid = value;
+}
+
+bool TableView::showAdditionalGrid() const noexcept
+{
+	return m_showAdditionalGrid;
+}
+
+void TableView::initSpans()
 {
 	int rows = model()->rowCount();
 	int columns = model()->columnCount();

@@ -206,6 +206,7 @@ void DataPagesWidget::initializeStackedWidget()
 	crawlingTableView->setModel(model);
 	crawlingTableView->setViewModel(modelView);
 	crawlingTableView->setContextMenu(new ContextMenuDataCollectionRow(crawlingTableView));
+	crawlingTableView->setShowAdditionalGrid(true);
 
 	m_pageIndexes[Page::SeoAnalysisPage] = m_stackedWidget->addWidget(errorsFilterWidget);
 	m_pageIndexes[Page::AllResourcesPage] = m_stackedWidget->addWidget(allResourcesPage);
