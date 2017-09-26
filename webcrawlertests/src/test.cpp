@@ -14,7 +14,7 @@ TEST(DummyGroup, DummyName)
 
 	const auto condition = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(1, 10);
+		auto pages = cl->waitForParsedPageReceived(WebCrawler::CrawledUrlStorageType, 1, 10);
 		EXPECT_EQ(1, pages.size());
 	};
 

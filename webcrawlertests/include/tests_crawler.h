@@ -34,7 +34,7 @@ public:
 	TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOptions& options);
 	~TestsCrawler();
 
-	std::vector<WebCrawler::ParsedPagePtr> waitForParsedPageReceived(int count, int seconds) const;
+	std::vector<WebCrawler::ParsedPagePtr> waitForParsedPageReceived(WebCrawler::StorageType storage, int count, int seconds) const;
 	Q_SLOT void startTestCrawler();
 
 	void setCondition(std::function<void()> cond);

@@ -83,11 +83,11 @@ TestsCrawler::~TestsCrawler()
 	m_sequensedCollectionThread->deleteLater();
 }
 
-std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(int count, int seconds) const
+std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(WebCrawler::StorageType storage, int count, int seconds) const
 {
 	ASSERT(m_crawlerThread != QThread::currentThread());
 	ASSERT(m_crawlerThread->isRunning());
-	std::future<std::vector<WebCrawler::ParsedPagePtr>> future = m_receiver->getParsedPages(count, WebCrawler::CrawledUrlStorageType);
+	std::future<std::vector<WebCrawler::ParsedPagePtr>> future = m_receiver->getParsedPages(count, storage);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
@@ -106,7 +106,7 @@ void TestsCrawler::setCondition(std::function<void()> cond)
 {
 	m_cond = cond;
 
-	QTimer::singleShot(1000, [this] { m_cond(); });
+	QTimer::singleShot(50, [this] { m_cond(); });
 }
 
 WebCrawler::IQueuedDownloader* TestsCrawler::createQueuedDownloader() const noexcept
