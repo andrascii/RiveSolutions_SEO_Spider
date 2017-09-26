@@ -5,6 +5,7 @@
 #include "selection_model.h"
 #include "item_view_delegate.h"
 #include "quickie_web_bot_helpers.h"
+#include "summary_model.h"
 
 namespace QuickieWebBot
 {
@@ -152,9 +153,11 @@ void TableView::paintEvent(QPaintEvent* event)
 	// draw horizontal row grid lines
 	//
 
+	const int baseLineYOffset = std::min(rowViewportPosition(rowAt(0)), 0) + m_rowHeight;
+
 	for (int i = 0; i < pseudoRowCount; ++i)
 	{
-		const int offsetByY = m_rowHeight * i - 1;
+		const int offsetByY = m_rowHeight * i + baseLineYOffset;
 
 		const int thisRowLogicalIndex = rowAt(offsetByY);
 		const int nextRowLogicalIndex = rowAt(offsetByY + m_rowHeight);
