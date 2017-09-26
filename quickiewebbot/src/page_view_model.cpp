@@ -174,8 +174,8 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	if (previousHoveredIndex.isValid())
 	{
 		QModelIndexList modelIndexes;
-		modelIndexes.append(model()->modelIndexesForRow(previousHoveredIndex.row()));
-		modelIndexes.append(model()->modelIndexesForRow(previousHoveredIndex.row() - 1));
+		modelIndexes.append(model()->makeModelIndexesForRow(previousHoveredIndex.row()));
+		modelIndexes.append(model()->makeModelIndexesForRow(previousHoveredIndex.row() - 1));
 		
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 
@@ -185,8 +185,8 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	if (hoveredIndex().isValid())
 	{
 		QModelIndexList modelIndexes;
-		modelIndexes.append(model()->modelIndexesForRow(hoveredIndex().row()));
-		modelIndexes.append(model()->modelIndexesForRow(hoveredIndex().row() - 1));
+		modelIndexes.append(model()->makeModelIndexesForRow(hoveredIndex().row()));
+		modelIndexes.append(model()->makeModelIndexesForRow(hoveredIndex().row() - 1));
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}
@@ -212,8 +212,7 @@ void PageViewModel::initializeRenderers()
 	AbstractViewModel::addRenderer(
 		IRenderer::PlainTextRendererType | 
 		IRenderer::SelectionBackgroundRendererType | 
-		IRenderer::BackgroundRendererType | 
-		IRenderer::GridLineRendererType
+		IRenderer::BackgroundRendererType
 	);
 
 	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->columnCount()));

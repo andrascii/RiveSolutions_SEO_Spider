@@ -40,6 +40,11 @@ void TableView::setModel(QAbstractItemModel* model)
 
 	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<AbstractTableModel*>(model);
 
+	for (int i = 0; i < m_model->rowCount(); ++i)
+	{
+		setRowHeight(i, m_rowHeight);
+	}
+
 	if (m_model->resizePolicy())
 	{
 		IResizePolicy* prevPolicy = m_model->resizePolicy();
@@ -98,37 +103,94 @@ void TableView::leaveEvent(QEvent* event)
 
 void TableView::contextMenuEvent(QContextMenuEvent* event)
 {
-	if (m_contextMenu)
+	if (!m_contextMenu)
 	{
-		m_contextMenu->exec(event->globalPos());
+		return;
 	}
+
+	m_contextMenu->exec(event->globalPos());
 }
 
 void TableView::paintEvent(QPaintEvent* event)
 {
 	QTableView::paintEvent(event);
 
-	if (!showAdditionalGrid())
+	if (!showAdditionalGrid() || !viewModel())
 	{
 		return;
 	}
 
+	struct VerticalLineSegment
+	{
+		int firstYCoordinate;
+		int secondYCoordinate;
+	};
+
+	auto makeUniqueSelectedRows = [this]() -> std::vector<int>
+	{
+		std::vector<int> uniqueSelectedRows;
+
+		foreach(const QModelIndex& index, selectedIndexes())
+		{
+			uniqueSelectedRows.push_back(index.row());
+		}
+
+		std::sort(std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows));
+		uniqueSelectedRows.erase(std::unique(std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows)), std::end(uniqueSelectedRows));
+
+		return uniqueSelectedRows;
+	};
+
 	QPainter painter(viewport());
-	painter.setPen(QColor("#F3F3F3"));
 
 	const QRect viewportRect = viewport()->rect();
-	const int pseudoRowCount = viewportRect.height() / m_rowHeight;
+	const int pseudoRowCount = viewportRect.height() / m_rowHeight + 1;
+
+	std::vector<int> uniqueSelectedRows = makeUniqueSelectedRows();
+
+	//
+	// draw horizontal row grid lines
+	//
 
 	for (int i = 0; i < pseudoRowCount; ++i)
 	{
-		const int offsetByY = m_rowHeight * i;
+		const int offsetByY = m_rowHeight * i - 1;
 
-		if (rowAt(offsetByY - 1) != -1)
+		const int thisRowLogicalIndex = rowAt(offsetByY);
+		const int nextRowLogicalIndex = rowAt(offsetByY + m_rowHeight);
+
+		const bool isThisOrNextRowSelected = std::find_if(
+			std::begin(uniqueSelectedRows), 
+			std::end(uniqueSelectedRows), 
+			[&](int selectedRow) { return selectedRow == thisRowLogicalIndex || selectedRow == nextRowLogicalIndex; }) != 
+			std::end(uniqueSelectedRows);
+
+		if (isThisOrNextRowSelected)
 		{
-			continue;
-		}
+			painter.save();
 
-		painter.drawLine(QPoint(0, offsetByY), QPoint(width(), offsetByY));
+			painter.setPen(viewModel()->selectedGridLineColor(QModelIndex()));
+			painter.drawLine(QPoint(0, offsetByY), QPoint(width(), offsetByY));
+
+			painter.restore();
+		}
+		else
+		{
+			painter.drawLine(QPoint(0, offsetByY), QPoint(width(), offsetByY));
+		}
+	}
+
+	//
+	// draw vertical column grid lines
+	//
+
+	std::vector<VerticalLineSegment> verticalLineSegments;
+
+	for (int i = 0, size = static_cast<int>(uniqueSelectedRows.size()); i < size; ++i)
+	{
+		const int topRowLineYCoordinate = m_rowHeight * uniqueSelectedRows[i];
+
+		verticalLineSegments.push_back(VerticalLineSegment{ topRowLineYCoordinate, topRowLineYCoordinate + m_rowHeight });
 	}
 
 	for (int i = 0; i < horizontalHeader()->count(); ++i)
@@ -138,6 +200,17 @@ void TableView::paintEvent(QPaintEvent* event)
 			horizontalHeader()->sectionSize(i) - 1;
 
 		painter.drawLine(QPoint(offsetByX, 0), QPoint(offsetByX, viewportRect.height()));
+
+		painter.save();
+		painter.setPen(viewModel()->selectedGridLineColor(QModelIndex()));
+
+		for (int j = 0, size = static_cast<int>(verticalLineSegments.size()); j < size; ++j)
+		{
+			painter.drawLine(QPoint(offsetByX, verticalLineSegments[j].firstYCoordinate), 
+				QPoint(offsetByX, verticalLineSegments[j].secondYCoordinate));
+		}
+
+		painter.restore();
 	}
 }
 

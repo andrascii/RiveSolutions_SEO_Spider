@@ -20,6 +20,21 @@ const QModelIndex& AbstractViewModel::hoveredIndex() const noexcept
 
 void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept
 {
+	auto topSelectedRow = [this]() -> int
+	{
+		std::vector<int> selectedRows;
+
+		foreach(const QModelIndex& index, selectedIndexes())
+		{
+			selectedRows.push_back(index.row());
+		}
+
+		std::vector<int>::iterator findElement = std::min_element(
+			std::begin(selectedRows), std::end(selectedRows));
+
+		return findElement != std::end(selectedRows) ? *findElement : -1;
+	};
+
 	for (int i = 0; i < modelIndexes.size(); ++i)
 	{
 		if (m_selectedModelIndexes.contains(modelIndexes[i]))
@@ -30,11 +45,64 @@ void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) 
 		m_selectedModelIndexes.append(modelIndexes[i]);
 	}
 
+	const int topSelectedRowIndex = topSelectedRow();
+
+	if (topSelectedRowIndex != -1)
+	{
+		emitNeedToRepaintIndexes(model()->makeModelIndexesForRow(topSelectedRowIndex - 1));
+	}
+
 	emitNeedToRepaintIndexes(m_selectedModelIndexes);
 }
 
 void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept
 {
+	auto rowsForRepaintHelper = [this, &modelIndexes]() -> QVector<int>
+	{
+		if (!m_selectedModelIndexes.size())
+		{
+			return QVector<int>();
+		}
+
+		QVector<int> uniqueSelectedRows;
+
+		foreach(const QModelIndex& index, m_selectedModelIndexes)
+		{
+			uniqueSelectedRows.push_back(index.row());
+		}
+
+		std::sort(std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows));
+		uniqueSelectedRows.erase(std::unique(std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows)), std::end(uniqueSelectedRows));
+
+		QVector<int>::iterator topRowElement = std::min_element(
+			std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows));
+
+		QVector<int>::iterator footRowElement = std::max_element(
+			std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows));
+
+		const int topRow = *topRowElement;
+		const int footRow = *footRowElement;
+
+		QVector<int> rowsForRepaint;
+
+		for (int i = topRow; i <= footRow; ++i)
+		{
+			const bool isNonSelectedRowAboveSelectedRow = 
+				!uniqueSelectedRows.contains(i - 1) && uniqueSelectedRows.contains(i);
+
+			if (!isNonSelectedRowAboveSelectedRow)
+			{
+				continue;
+			}
+
+			rowsForRepaint.push_back(i - 1);
+		}
+
+		return rowsForRepaint;
+	};
+
+	const QVector<int> rowsForRepaint = rowsForRepaintHelper();
+
 	for (int i = 0; i < modelIndexes.size(); ++i)
 	{
 		if (m_selectedModelIndexes.contains(modelIndexes[i]))
@@ -42,11 +110,18 @@ void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes
 			m_selectedModelIndexes.removeOne(modelIndexes[i]);
 		}
 	}
-	
-// 	const int row = modelIndexes.at(0);
-// 
-// 	QModelIndexList repaintModelIndexes = modelIndexes;
-// 	repaintModelIndexes.append(model()->modelIndexesForRow())
+
+	if (rowsForRepaint.size())
+	{
+		QModelIndexList itemsForRepaintAfterDeselect;
+
+		foreach(int row, rowsForRepaint)
+		{
+			itemsForRepaintAfterDeselect.append(model()->makeModelIndexesForRow(row));
+		}
+
+		emitNeedToRepaintIndexes(itemsForRepaintAfterDeselect);
+	}
 
 	emitNeedToRepaintIndexes(modelIndexes);
 }

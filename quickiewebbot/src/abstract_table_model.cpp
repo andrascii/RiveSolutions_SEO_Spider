@@ -3,7 +3,7 @@
 namespace QuickieWebBot
 {
 
-QModelIndexList AbstractTableModel::modelIndexesForRow(int row) const noexcept
+QModelIndexList AbstractTableModel::makeModelIndexesForRow(int row) const noexcept
 {
 	DEBUG_ASSERT(row < rowCount());
 
