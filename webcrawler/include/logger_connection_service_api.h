@@ -82,6 +82,11 @@ public:
 	template<typename ... StringPack>
 	void log(MessageType type, QString func, QString file, int line, const StringPack&... textPack)
 	{
+		if (m_socket == nullptr)
+		{
+			return;
+		}
+
 		if (type == EmptyMessageType)
 		{
 			return;

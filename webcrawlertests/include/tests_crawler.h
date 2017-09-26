@@ -30,15 +30,21 @@ private:
 
 class TestsCrawler : public WebCrawler::Crawler
 {
+	Q_OBJECT
 public:
-	TestsCrawler(unsigned int threadCount);
+	TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOptions& options);
 	~TestsCrawler();
 
 	std::vector<WebCrawler::ParsedPagePtr> waitForParsedPageReceived(int count, int seconds) const;
+	Q_SLOT void startTestCrawler();
+
+	void setCondition(std::function<void()> cond);
 
 protected:
 	virtual WebCrawler::IQueuedDownloader* createQueuedDownloader() const noexcept override;
 	QThread* m_sequensedCollectionThread;
+	WebCrawler::CrawlerOptions m_testCrawlerOptions;
+	std::function<void()> m_cond;
 };
 
 }

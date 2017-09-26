@@ -5,6 +5,7 @@ namespace WebCrawler
 
 LoggerConnectionServiceApi::LoggerConnectionServiceApi(QObject* parent) 
 	: QObject(parent)
+	, m_socket(nullptr)
 {
 	QProcess* loggerProc = new QProcess(this);
 	loggerProc->start("logger.exe", QIODevice::WriteOnly);
@@ -28,7 +29,10 @@ LoggerConnectionServiceApi::LoggerConnectionServiceApi(QObject* parent)
 
 LoggerConnectionServiceApi::~LoggerConnectionServiceApi()
 {
-	m_socket->disconnectFromHost();	
+	if (m_socket != nullptr)
+	{
+		m_socket->disconnectFromHost();
+	}	
 }
 
 LoggerConnectionServiceApi* LoggerConnectionServiceApi::instance()

@@ -20,10 +20,11 @@ ParsedPageReceiver::ParsedPageReceiver(WebCrawler::SequencedDataCollection* sequ
 {
 	m_receiverThread = new QThread();
 	moveToThread(m_receiverThread);
-	m_receiverThread->start();
-
 	QObject::connect(sequencedDataCollection, &WebCrawler::SequencedDataCollection::parsedPageAdded,
 		this, &ParsedPageReceiver::onParsedPageAdded, Qt::QueuedConnection);
+
+
+	m_receiverThread->start();
 }
 
 ParsedPageReceiver::~ParsedPageReceiver()
@@ -67,10 +68,11 @@ std::future<std::vector<WebCrawler::ParsedPagePtr>> ParsedPageReceiver::getParse
 	return m_promise.get_future();
 }
 
-TestsCrawler::TestsCrawler(unsigned int threadCount)
+TestsCrawler::TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOptions& options)
 	: WebCrawler::Crawler(threadCount, (m_sequensedCollectionThread = new QThread()))
+	, m_testCrawlerOptions(options)
 {
-
+	m_sequensedCollectionThread->start();
 }
 
 TestsCrawler::~TestsCrawler()
@@ -87,8 +89,8 @@ std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(i
 	ASSERT(m_crawlerThread != QThread::currentThread());
 	ASSERT(m_crawlerThread->isRunning());
 
-	ParsedPageReceiver receiver(guiStorage());
-	std::future<std::vector<WebCrawler::ParsedPagePtr>> future = receiver.getParsedPages(count, WebCrawler::CrawledUrlStorageType);
+	ParsedPageReceiver* receiver = new ParsedPageReceiver(guiStorage());
+	std::future<std::vector<WebCrawler::ParsedPagePtr>> future = receiver->getParsedPages(count, WebCrawler::CrawledUrlStorageType);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
@@ -96,6 +98,18 @@ std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(i
 	}
 
 	return future.get();
+}
+
+void TestsCrawler::startTestCrawler()
+{
+	startCrawling(m_testCrawlerOptions);
+}
+
+void TestsCrawler::setCondition(std::function<void()> cond)
+{
+	m_cond = cond;
+
+	QTimer::singleShot(1000, [this] { m_cond(); });
 }
 
 WebCrawler::IQueuedDownloader* TestsCrawler::createQueuedDownloader() const noexcept
