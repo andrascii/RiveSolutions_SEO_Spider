@@ -17,7 +17,7 @@ class Crawler : public QObject
 	Q_OBJECT
 
 public:
-	Crawler(unsigned int threadCount);
+	Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThread = nullptr);
 	~Crawler();
 
 	Q_SLOT void startCrawling(const CrawlerOptions& options);
@@ -39,6 +39,10 @@ protected:
 	IQueuedDownloader* queuedDownloader() const noexcept;
 	virtual IQueuedDownloader* createQueuedDownloader() const noexcept;
 
+
+protected:
+	QThread* m_crawlerThread;
+
 private:
 	mutable std::unique_ptr<IQueuedDownloader> m_queuedDownloader;
 
@@ -47,8 +51,6 @@ private:
 	CrawlerUrlStorage m_urlStorage;
 
 	std::vector<std::unique_ptr<CrawlerWorkerThread>> m_workers;
-
-	QThread* m_crawlerThread;
 
 	unsigned int m_theradCount;
 };

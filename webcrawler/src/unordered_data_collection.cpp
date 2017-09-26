@@ -5,13 +5,20 @@
 namespace WebCrawler
 {
 
-UnorderedDataCollection::UnorderedDataCollection(QObject* parent)
+UnorderedDataCollection::UnorderedDataCollection(QObject* parent, QThread* sequencedDataCollectionThread)
 	: QObject(parent)
 	, m_sequencedDataCollection(new SequencedDataCollection)
 {
 	initializeStorages();
 
-	m_sequencedDataCollection->moveToThread(QApplication::instance()->thread());
+	QThread* mainThread = QApplication::instance() != nullptr ? QApplication::instance()->thread() : nullptr;
+
+	sequencedDataCollectionThread = sequencedDataCollectionThread != nullptr ?
+		sequencedDataCollectionThread : mainThread;
+
+	ASSERT(sequencedDataCollectionThread != nullptr);
+	
+	m_sequencedDataCollection->moveToThread(sequencedDataCollectionThread);
 
 	VERIFY(connect(this, &UnorderedDataCollection::parsedPageAdded, m_sequencedDataCollection, 
 		&SequencedDataCollection::addParsedPage, Qt::QueuedConnection));

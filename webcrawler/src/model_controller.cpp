@@ -32,9 +32,9 @@ ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr newPage)
 namespace WebCrawler
 {
 
-ModelController::ModelController(QObject* parent)
+ModelController::ModelController(QObject* parent, QThread* sequencedDataCollectionThread)
 	: QObject(parent)
-	, m_data(new UnorderedDataCollection(this))
+	, m_data(new UnorderedDataCollection(this, sequencedDataCollectionThread))
 {
 }
 
