@@ -16,15 +16,14 @@ public:
 
 private:
 	Q_SLOT void onParsedPageAdded(int row, int storageType);
+	void checkWaitCondition(int storageType);
 
 private:
 	QThread* m_receiverThread;
-	std::vector<WebCrawler::ParsedPagePtr> m_parsedPages;
-	std::promise<std::vector<WebCrawler::ParsedPagePtr>> m_promise;
+	std::map<int, std::vector<WebCrawler::ParsedPagePtr>> m_parsedPages;
+	std::map<int, std::pair<int, std::promise<std::vector<WebCrawler::ParsedPagePtr>>>> m_waitConditions;
 
 	WebCrawler::SequencedDataCollection* m_sequencedDataCollection;
-	int m_count;
-	int m_storageType;
 
 };
 
@@ -45,6 +44,8 @@ protected:
 	QThread* m_sequensedCollectionThread;
 	WebCrawler::CrawlerOptions m_testCrawlerOptions;
 	std::function<void()> m_cond;
+
+	std::unique_ptr<ParsedPageReceiver> m_receiver;
 };
 
 }

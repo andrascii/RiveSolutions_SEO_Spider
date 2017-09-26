@@ -16,7 +16,6 @@ public:
 
 ParsedPageReceiver::ParsedPageReceiver(WebCrawler::SequencedDataCollection* sequencedDataCollection)
 	: m_sequencedDataCollection(sequencedDataCollection)
-	, m_count(10000000)
 {
 	m_receiverThread = new QThread();
 	moveToThread(m_receiverThread);
@@ -38,41 +37,41 @@ ParsedPageReceiver::~ParsedPageReceiver()
 
 void ParsedPageReceiver::onParsedPageAdded(int row, int storageType)
 {
-	// TODO: use storageType
 	const WebCrawler::SequencedDataCollection::SequencedStorageTypePtr& storage = m_sequencedDataCollection->storage(static_cast<WebCrawler::StorageType>(storageType));
-	m_parsedPages.push_back((*storage)[row]);
-	if (static_cast<int>(m_parsedPages.size()) == m_count)
+	m_parsedPages[storageType].push_back((*storage)[row]);
+
+	checkWaitCondition(storageType);
+}
+
+void ParsedPageReceiver::checkWaitCondition(int storageType)
+{
+	for (auto it = m_waitConditions.begin(); it != m_waitConditions.end(); ++it)
 	{
-		m_promise.set_value(m_parsedPages);
+		if (it->first == storageType)
+		{
+			if (static_cast<int>(m_parsedPages[storageType].size()) >= it->second.first)
+			{
+				it->second.second.set_value(m_parsedPages[storageType]);
+			}
+			break;
+		}
 	}
 }
 
 std::future<std::vector<WebCrawler::ParsedPagePtr>> ParsedPageReceiver::getParsedPages(int count, int storageType)
 {
-	m_count = count;
-
-	m_promise = std::promise<std::vector<WebCrawler::ParsedPagePtr>>();
-
-	const WebCrawler::SequencedDataCollection::SequencedStorageTypePtr& storage = m_sequencedDataCollection->storage(static_cast<WebCrawler::StorageType>(storageType));
-	int readyCount = storage->size();
-	for (int row = 0; row < readyCount; ++row)
-	{
-		m_parsedPages.push_back((*storage)[row]);
-	}
-
-	if (static_cast<int>(m_parsedPages.size()) >= m_count)
-	{
-		m_promise.set_value(m_parsedPages);
-	}
-
-	return m_promise.get_future();
+	m_waitConditions[storageType] = std::make_pair(count, std::promise<std::vector<WebCrawler::ParsedPagePtr>>());
+	checkWaitCondition(storageType);
+	return m_waitConditions[storageType].second.get_future();
 }
 
 TestsCrawler::TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOptions& options)
 	: WebCrawler::Crawler(threadCount, (m_sequensedCollectionThread = new QThread()))
 	, m_testCrawlerOptions(options)
+	, m_receiver(std::make_unique<ParsedPageReceiver>(guiStorage()))
 {
 	m_sequensedCollectionThread->start();
+	
 }
 
 TestsCrawler::~TestsCrawler()
@@ -88,9 +87,7 @@ std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(i
 {
 	ASSERT(m_crawlerThread != QThread::currentThread());
 	ASSERT(m_crawlerThread->isRunning());
-
-	ParsedPageReceiver* receiver = new ParsedPageReceiver(guiStorage());
-	std::future<std::vector<WebCrawler::ParsedPagePtr>> future = receiver->getParsedPages(count, WebCrawler::CrawledUrlStorageType);
+	std::future<std::vector<WebCrawler::ParsedPagePtr>> future = m_receiver->getParsedPages(count, WebCrawler::CrawledUrlStorageType);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
