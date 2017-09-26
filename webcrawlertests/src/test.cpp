@@ -11,14 +11,11 @@ namespace WebCrawlerTests
 TEST(DummyGroup, DummyName)
 {
 	TestEnvironment env({ QUrl("dummy.com") });
-
-	const auto condition = [cl = env.crawler()]()
+	env.runTest([cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(WebCrawler::CrawledUrlStorageType, 1, 10);
 		EXPECT_EQ(1, pages.size());
-	};
-
-	env.runTest(condition);
+	});
 }
 
 }
