@@ -19,7 +19,7 @@
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
-
+#include "ui_language_settings_widget.h"
 
 namespace QuickieWebBot
 {
@@ -121,6 +121,7 @@ void MainFrame::registerSettingsPages() const
 	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettingsWidget));
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
+	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
 }
 
 void MainFrame::startCrawler()

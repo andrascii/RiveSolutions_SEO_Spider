@@ -9,6 +9,8 @@ class PageModel;
 
 class PageDataWidget : public QFrame
 {
+	Q_OBJECT
+
 public:
 	enum PageDataType
 	{
