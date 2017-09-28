@@ -7,8 +7,7 @@
 namespace QuickieWebBot
 {
 
-class SettingsPageRegistry 
-	: private QObject
+class SettingsPageRegistry : public QObject
 {
 	Q_OBJECT
 

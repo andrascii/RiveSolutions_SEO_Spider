@@ -10,16 +10,25 @@ public:
 	static double pixelsToPoints(int sizeInPixels, double dpi = 0);
 
 	template <typename DestinationType, typename SourceType>
-	static DestinationType safe_runtime_static_cast(SourceType p)
+	static DestinationType safe_static_cast(SourceType* p)
 	{
-		if constexpr(std::is_pointer<DestinationType>::value && std::is_pointer<SourceType>::value)
+		if constexpr(std::is_pointer<DestinationType>::value)
 		{
 			DEBUG_ASSERT(dynamic_cast<DestinationType>(p));
 			return static_cast<DestinationType>(p);
 		}
-		else if constexpr(std::is_reference<DestinationType>::value && std::is_reference<SourceType>::value)
+		else
 		{
-		#ifdef DEBUG
+			static_assert(!"Destination type must be a pointer");
+		}
+	}
+
+	template <typename DestinationType, typename SourceType>
+	static DestinationType safe_static_cast(SourceType&& p)
+	{
+		if constexpr(std::is_reference<DestinationType>::value)
+		{
+	#ifdef DEBUG
 			try
 			{
 				dynamic_cast<DestinationType>(p);
@@ -28,13 +37,13 @@ public:
 			{
 				DEBUG_ASSERT(!"Actual type differs from DestinationType");
 			}
-		#endif
+	#endif
 
 			return static_cast<DestinationType>(p);
 		}
 		else
 		{
-			static_assert(!"Destination type and source type must be a pointer or a reference");
+			static_assert(!"Destination type must be a reference");
 		}
 	}
 };

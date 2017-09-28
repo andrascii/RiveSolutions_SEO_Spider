@@ -31,6 +31,7 @@ Application::Application(int& argc, char** argv)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
+	, m_settingsPageRegistry(new SettingsPageRegistry(this))
 {
 	initialize();
 
@@ -116,6 +117,11 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 	return m_softwareBrandingOptions.get();
 }
 
+SettingsPageRegistry* Application::settingsPageRegistry() const
+{
+	return m_settingsPageRegistry;
+}
+
 void Application::mainFrameIsReadyForShow()
 {
 	mainFrame()->showMaximized();
@@ -125,7 +131,7 @@ void Application::mainFrameIsReadyForShow()
 
 void Application::registerServices() const
 {
-	ServiceLocator::instance()->addService<SettingsPageRegistry>(new SettingsPageRegistry);
+	//ServiceLocator::instance()->addService<SettingsPageRegistry>(new SettingsPageRegistry);
 	ServiceLocator::instance()->addService<DllLoader>(new DllLoader);
 }
 
@@ -174,7 +180,7 @@ void Application::initialize() noexcept
 
 #if !defined(PRODUCTION)
 	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
-	//DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
+	DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
 #endif
 }
 

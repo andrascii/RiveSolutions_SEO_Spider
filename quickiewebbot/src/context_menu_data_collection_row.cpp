@@ -76,7 +76,7 @@ void ContextMenuDataCollectionRow::openUrlAction()
 	for (QModelIndex index : selectedIndexes())
 	{
 		const PageModel* model = 
-			QuickieWebBotHelpers::safe_runtime_static_cast<const PageModel*>(index.model());
+			QuickieWebBotHelpers::safe_static_cast<const PageModel*>(index.model());
 
 		if (model->itemType(index) != ParsedPageInfo::UrlItemType)
 		{
@@ -109,7 +109,7 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl()
 	foreach(QModelIndex index, selectedIndexes())
 	{
 		const PageModel* model = 
-			QuickieWebBotHelpers::safe_runtime_static_cast<const PageModel*>(index.model());
+			QuickieWebBotHelpers::safe_static_cast<const PageModel*>(index.model());
 
 		if (model->itemType(index) != ParsedPageInfo::UrlItemType)
 		{

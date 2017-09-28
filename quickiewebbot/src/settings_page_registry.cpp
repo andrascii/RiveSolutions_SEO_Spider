@@ -1,8 +1,11 @@
 #include "settings_page_registry.h"
 #include "settings_page.h"
+#include "main_frame.h"
+#include "application.h"
 
 namespace QuickieWebBot
 {
+
 SettingsPageRegistry::SettingsPageRegistry(QObject* parent)
 	: QObject(parent)
 	, m_deleting(false)
@@ -12,20 +15,8 @@ SettingsPageRegistry::SettingsPageRegistry(QObject* parent)
 SettingsPageRegistry::~SettingsPageRegistry()
 {
 	m_deleting = true;
-	
-	//crushes when closing app
-	//qDeleteAll(m_settingsPages.values());
 
-	//for (auto page : m_settingsPages.values())
-	//{
-	//	page->deleteLater();
-	//}
-
-	for (auto a : m_settingsPages.values())
-	{
-		qDebug() << a->windowTitle();
-		delete a;
-	}
+	qDeleteAll(m_settingsPages.values());
 
 	m_pagesKeys.clear();
 }
