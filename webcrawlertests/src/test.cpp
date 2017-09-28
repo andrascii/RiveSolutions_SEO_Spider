@@ -10,7 +10,7 @@ namespace WebCrawlerTests
 
 TEST(DummyGroup, DummyName)
 {
-	TestEnvironment env({ QUrl("http://dummy.com") });
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://dummy.com")));
 	env.runTest([cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(WebCrawler::CrawledUrlStorageType, 1, 1000);

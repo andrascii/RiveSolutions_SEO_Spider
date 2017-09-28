@@ -157,7 +157,7 @@ void ModelController::processParsedPageTitle(ParsedPagePtr parsedPagePtr) noexce
 	}
 	else if (title.size() < m_crawlerOptions.minTitleLength)
 	{
-		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongTitleUrlStorageType);
+		m_data->addParsedPage(parsedPagePtr, StorageType::VeryShortTitleUrlStorageType);
 	}
 
 	if (!title.isEmpty())
