@@ -5,6 +5,7 @@
 #include "control_adaptor_check_box.h"
 #include "control_adaptor_line_edit.h"
 #include "control_adaptor_spin_box.h"
+#include "control_adaptor_combo_box.h"
 
 namespace QuickieWebBot
 {
@@ -131,6 +132,7 @@ void SettingsPage::registerMetaTypes()
 	qRegisterMetaType<ControlAdaptorQCheckBox>();
 	qRegisterMetaType<ControlAdaptorQLineEdit>();
 	qRegisterMetaType<ControlAdaptorQSpinBox>();
+	qRegisterMetaType<ControlAdaptorQComboBox>();
 }
 
 void SettingsPage::somethingChangedSlot()
@@ -162,6 +164,11 @@ std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* con
 	controlAdaptor->connectChangesObserver(this);
 
 	return controlAdaptor;
+}
+
+SettingsPage::~SettingsPage()
+{
+
 }
 
 }

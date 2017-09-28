@@ -1,6 +1,6 @@
 #include "fatal_error_dialog.h"
 
-namespace WatchDogService
+namespace SeoSpiderService
 {
 
 FatalErrorDialog::FatalErrorDialog(QWidget* parent)

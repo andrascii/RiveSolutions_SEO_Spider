@@ -13,6 +13,7 @@ class Preferences : public QObject
 	// App properties
 	//
 	Q_PROPERTY(unsigned threadCount READ threadCount WRITE setThreadCount NOTIFY threadCountChanged);
+	Q_PROPERTY(QString applicationLanguage READ applicationLanguage WRITE setApplicationLanguage NOTIFY applicationLanguageChanged);
 
 	//
 	// Proxy properties
@@ -69,6 +70,10 @@ public:
 	unsigned threadCount() const;
 	Q_SLOT void setThreadCount(unsigned value);
 	Q_SIGNAL void threadCountChanged();
+
+	QString applicationLanguage() const;
+	Q_SLOT void setApplicationLanguage(const QString& value);
+	Q_SIGNAL void applicationLanguageChanged(const QString& newValue);
 
 	bool useProxy() const;
 	Q_SLOT void setUseProxy(bool value);
@@ -214,6 +219,7 @@ private:
 	std::map<QString, QVariant> m_defaults;
 
 	unsigned m_threadCount;
+	QString m_applicationLanguage;
 
 	bool m_useProxy;
 	bool m_proxyNeedAuthorization;

@@ -110,8 +110,10 @@ void ApplicationSettingsWidget::initialize()
 
 	foreach (QByteArray pageId, settingsPageRegistry->pagesKeys())
 	{
-		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);	
 		
+		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);	
+		page->setParent(this);
+
 		if (page->isAutoApply())
 		{
 			INFOLOG << pageId << " is not auto apply settings page. It will be ignored!";

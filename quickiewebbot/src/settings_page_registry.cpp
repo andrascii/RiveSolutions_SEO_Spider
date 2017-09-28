@@ -12,7 +12,21 @@ SettingsPageRegistry::SettingsPageRegistry(QObject* parent)
 SettingsPageRegistry::~SettingsPageRegistry()
 {
 	m_deleting = true;
-	qDeleteAll(m_settingsPages.values());
+	
+	//crushes when closing app
+	//qDeleteAll(m_settingsPages.values());
+
+	//for (auto page : m_settingsPages.values())
+	//{
+	//	page->deleteLater();
+	//}
+
+	for (auto a : m_settingsPages.values())
+	{
+		qDebug() << a->windowTitle();
+		delete a;
+	}
+
 	m_pagesKeys.clear();
 }
 
@@ -21,7 +35,7 @@ void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, Settin
 	DEBUG_ASSERT(m_settingsPages.contains(pageId) == false);
 
 	VERIFY(connect(page, SIGNAL(destroyed(QObject*)), SLOT(settingsPageDestroyed())));
-
+	
 	m_settingsPages[pageId] = page;
 	m_pagesKeys.append(pageId);
 }

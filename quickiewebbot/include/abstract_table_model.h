@@ -16,7 +16,7 @@ public:
 	// signals
 	virtual void internalDataChanged() = 0;
 
-	QModelIndexList modelIndexesForRow(int row) const noexcept;
+	QModelIndexList makeModelIndexesForRow(int row) const noexcept;
 };
 
 }

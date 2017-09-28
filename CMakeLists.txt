@@ -7,13 +7,17 @@ set(GoogleTestLibName googletest/googletest)
 set(WebCrawlerLibTestsName webcrawlertests)
 set(CommonLibName common)
 set(GumboLibName gumbo)
-set(WatchDogApiDllName watchdogapi)
-set(WatchDogServiceAppName watchdogservice)
+set(SeoSpiderServiceApiDllName seospiderserviceapi)
+set(SeoSpiderServiceAppName seospiderservice)
 project(${AppName})
+
+set(CMAKE_INSTALL_PREFIX )
 
 set(GuiBinName ${AppName})
 set(LoggerBinName ${LoggerAppName})
-set(WatchDogServiceName ${WatchDogServiceAppName})
+set(WatchDogServiceName ${SeoSpiderServiceAppName})
+
+set(FILES_TO_TRANSLATE)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -21,7 +25,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 REQUIRED Widgets Network Svg WebEngineWidgets COMPONENTS)
+find_package(Qt5 REQUIRED Widgets Network Svg WebEngineWidgets LinguistTools COMPONENTS)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED system date_time COMPONENTS)
@@ -55,6 +59,20 @@ add_subdirectory(${LoggerAppName})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${CommonLibName})
-add_subdirectory(${WatchDogApiDllName})
-add_subdirectory(${WatchDogServiceAppName})
+add_subdirectory(${SeoSpiderServiceApiDllName})
+add_subdirectory(${SeoSpiderServiceAppName})
 add_subdirectory(${GoogleTestLibName})
+
+file(GLOB TRANSLATIONS_FILES "quickiewebbot/rcc/translations/*.ts")
+	
+
+message(${FILES_TO_TRANSLATE})
+
+qt5_create_translation(TRANSLATION_MESSAGES ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES}) 	
+qt5_add_translation(TRANSALTION_QM ${TRANSLATIONS_FILES})	
+add_custom_target(translations_update DEPENDS ${TRANSLATION_MESSAGES})
+add_custom_target(translations DEPENDS ${TRANSALTION_QM})
+
+message(${CMAKE_BINARY_DIR})
+install(FILES ${TRANSALTION_QM} DESTINATION ${CMAKE_BINARY_DIR}/../quickiewebbot/rcc/translations)
+

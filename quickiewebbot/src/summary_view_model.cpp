@@ -147,14 +147,14 @@ void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 
 	if (previousHoveredIndex.isValid())
 	{
-		const QModelIndexList& modelIndexes = model()->modelIndexesForRow(previousHoveredIndex.row());
+		const QModelIndexList& modelIndexes = model()->makeModelIndexesForRow(previousHoveredIndex.row());
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}
 
 	if (hoveredIndex().isValid())
 	{
-		const QModelIndexList& modelIndexes = model()->modelIndexesForRow(hoveredIndex().row());
+		const QModelIndexList& modelIndexes = model()->makeModelIndexesForRow(hoveredIndex().row());
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}

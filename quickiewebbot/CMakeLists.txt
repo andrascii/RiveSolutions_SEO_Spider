@@ -7,12 +7,14 @@ set(AppHeadersDir include)
 # deps headers
 set(WebCrawlerLibHeadersDir ../webcrawler/include)
 set(CommonLibHeadersDir ../common/include)
-set(WatchDogApiHeadersDir ../watchdogapi/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
+file(GLOB_RECURSE AppCppList "src/*.cpp")
 file(GLOB_RECURSE AppHeadersList "include/*.h")
 file(GLOB_RECURSE AppFormsList "ui/*.ui")
 file(GLOB_RECURSE AppResourcesList "rcc/*.qrc")
+
+set(FILES_TO_TRANSLATE ${FILES_TO_TRANSLATE} ${AppCppList} ${AppHeadersList} ${AppFormsList} PARENT_SCOPE)
 
 qt5_wrap_ui(AppFormsHeadersList ${AppFormsList})
 qt5_wrap_cpp(AppHeadersMocList ${AppFormsHeadersList})
@@ -74,14 +76,12 @@ include_directories(
 	${AppHeadersDir}
 	${WebCrawlerLibHeadersDir}
 	${CommonLibHeadersDir}
-	${WatchDogApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(
 	${AppName}
-	${WatchDogApiDllName}
 	${WebCrawlerLibName}
 	${CommonLibName}
 	${Boost_LIBRARIES}

@@ -10,7 +10,14 @@
 #include "preferences.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
+#include "dll_loader.h"
 
+namespace
+{
+
+const QByteArray s_serviceApiDllName = "seospiderserviceapi.dll";
+
+}
 
 namespace QuickieWebBot
 {
@@ -78,6 +85,7 @@ Preferences* Application::preferences() noexcept
 QVariant Application::loadFromSettings(const QByteArray& key, const QVariant& defaultValue) const noexcept
 {
 	QVariant result = settings()->value(QLatin1String(key), defaultValue);
+	DEBUGLOG << result.toString();
 	return result;
 }
 
@@ -118,6 +126,7 @@ void Application::mainFrameIsReadyForShow()
 void Application::registerServices() const
 {
 	ServiceLocator::instance()->addService<SettingsPageRegistry>(new SettingsPageRegistry);
+	ServiceLocator::instance()->addService<DllLoader>(new DllLoader);
 }
 
 void Application::initQSettings()
@@ -137,19 +146,28 @@ QSettings* Application::settings() const
 
 void Application::initialize() noexcept
 {
+	registerServices();
+
+	DllLoader* dllLoader = ServiceLocator::instance()->service<DllLoader>();
+
+	dllLoader->load(s_serviceApiDllName);
+
+	if (!dllLoader->isLoaded(s_serviceApiDllName))
+	{
+		ERRORLOG << s_serviceApiDllName << "cannot be loaded";
+	}
+
 	WebCrawler::SequencedDataCollection* storage = m_webCrawler->guiStorage();
 	
 	ASSERT(storage->thread() == QThread::currentThread());
 	
 	m_guiStorage = storage;
-
-	registerServices();
 	
 	initQSettings();
 
 	preferences()->load();
 
-	m_translator->load(":/translations/translate_ru_RU");
+	m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());
 	installTranslator(m_translator);
 
 	m_mainFrame.reset(new MainFrame);

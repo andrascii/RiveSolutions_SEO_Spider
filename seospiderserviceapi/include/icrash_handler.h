@@ -1,9 +1,9 @@
 #pragma once
 
-namespace WatchDogApi
+namespace SeoSpiderServiceApi
 {
 
-class IWatchDogServiceApi
+class ICrashHandler
 {
 public:
 	virtual void init() noexcept = 0;

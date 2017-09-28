@@ -3,15 +3,15 @@
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
 
-namespace WatchDogService
+namespace SeoSpiderService
 {
 
-class WatchDogServiceApp : public QApplication
+class SeoSpiderServiceApp : public QApplication
 {
 	Q_OBJECT
 
 public:
-	WatchDogServiceApp(int& argc, char** argv);
+	SeoSpiderServiceApp(int& argc, char** argv);
 
 	Q_SLOT void waitForSignaledEvent() const noexcept;
 
