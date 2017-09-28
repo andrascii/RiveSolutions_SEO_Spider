@@ -4,18 +4,18 @@
 namespace QuickieWebBot
 {
 
-	class ControlAdaptorQComboBox : public IControlAdaptor
-	{
-	public:
-		virtual void setControl(QObject* control) override;
-		virtual QVariant value() const override;
-		virtual void setValue(const QVariant& val) override;
-		virtual void connectChangesObserver(SettingsPage* page) override;
+class ControlAdaptorQComboBox : public IControlAdaptor
+{
+public:
+	virtual void setControl(QObject* control) override;
+	virtual QVariant value() const override;
+	virtual void setValue(const QVariant& val) override;
+	virtual void connectChangesObserver(SettingsPage* page) override;
+	
+private:
+	QPointer<QComboBox> m_control;
+};
 
-	private:
-		QPointer<QComboBox> m_control;
-	};
-
-	Q_DECLARE_METATYPE(ControlAdaptorQComboBox);
+Q_DECLARE_METATYPE(ControlAdaptorQComboBox);
 
 }

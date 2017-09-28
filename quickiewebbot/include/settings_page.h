@@ -15,6 +15,7 @@ class SettingsPage
 
 public:
 	SettingsPage(bool isAutoApply = false, QWidget* parent = nullptr);
+	~SettingsPage();
 
 	virtual void applyChanges() noexcept override;
 	virtual void reloadSettings() noexcept override;

@@ -34,6 +34,17 @@ void Preferences::setThreadCount(unsigned value)
 	emit threadCountChanged();
 }
 
+QString Preferences::applicationLanguage() const
+{
+	return m_applicationLanguage;
+}
+
+void Preferences::setApplicationLanguage(const QString& value)
+{
+	m_applicationLanguage = value;
+	emit applicationLanguageChanged(value);
+}
+
 bool Preferences::useProxy() const
 {
 	return m_useProxy;

@@ -85,6 +85,7 @@ Preferences* Application::preferences() noexcept
 QVariant Application::loadFromSettings(const QByteArray& key, const QVariant& defaultValue) const noexcept
 {
 	QVariant result = settings()->value(QLatin1String(key), defaultValue);
+	DEBUGLOG << result.toString();
 	return result;
 }
 
@@ -166,7 +167,7 @@ void Application::initialize() noexcept
 
 	preferences()->load();
 
-	m_translator->load(":/translations/translate_ru_RU");
+	m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());
 	installTranslator(m_translator);
 
 	m_mainFrame.reset(new MainFrame);
