@@ -1,11 +1,11 @@
-#include "watch_dog_service_app.h"
+#include "seo_spider_service_app.h"
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
 
-namespace WatchDogService
+namespace SeoSpiderService
 {
 
-WatchDogServiceApp::WatchDogServiceApp(int& argc, char** argv)
+SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_dialog(new FatalErrorDialog)
 	, m_dbgHelpDllLoader(new DebugHelpDllLoader)
@@ -20,12 +20,12 @@ WatchDogServiceApp::WatchDogServiceApp(int& argc, char** argv)
 	ASSERT(!m_eventName.isEmpty() && "Event name must be passed!");
 	ASSERT(processIdConvertion && "Process ID must be passed!");
 
-	VERIFY(connect(this, &WatchDogServiceApp::closeServiceApp, this, &WatchDogServiceApp::quit, Qt::QueuedConnection));
+	VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::quit, Qt::QueuedConnection));
 
 	QMetaObject::invokeMethod(this, "waitForSignaledEvent", Qt::QueuedConnection);
 }
 
-QString WatchDogServiceApp::commandLineParameter(int num) const noexcept
+QString SeoSpiderServiceApp::commandLineParameter(int num) const noexcept
 {
 	const QStringList commandLine = qApp->arguments();
 	
@@ -37,7 +37,7 @@ QString WatchDogServiceApp::commandLineParameter(int num) const noexcept
 	return QString();
 }
 
-void WatchDogServiceApp::waitForSignaledEvent() const noexcept
+void SeoSpiderServiceApp::waitForSignaledEvent() const noexcept
 {
 	HANDLE signaledEvent = OpenEvent(SYNCHRONIZE, FALSE, m_eventName.constData());
 	HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE | SYNCHRONIZE, FALSE, m_processId);
@@ -68,7 +68,7 @@ void WatchDogServiceApp::waitForSignaledEvent() const noexcept
 	emit closeServiceApp();
 }
 
-void WatchDogServiceApp::makeCrashDump(HANDLE processHandle) const noexcept
+void SeoSpiderServiceApp::makeCrashDump(HANDLE processHandle) const noexcept
 {
 	const QString dumpFileName = "qwbcrash.dmp";
 
@@ -84,7 +84,7 @@ void WatchDogServiceApp::makeCrashDump(HANDLE processHandle) const noexcept
 }
 
 
-bool WatchDogServiceApp::setSeDebugPrivilege(bool flag) const noexcept
+bool SeoSpiderServiceApp::setSeDebugPrivilege(bool flag) const noexcept
 {
 	HANDLE hThisProcessToken = nullptr;
 

@@ -93,3 +93,13 @@ struct unary_function
 
 using namespace std::chrono_literals;
 using std::size_t;
+
+#define D_FUNCTION_DECL(ClassName) ClassName##Private* d_function() const
+
+#define D_FUNCTION_IMPL(ClassName) static ClassName##Private* d_function() \
+{ \
+	static ClassName##Private d_object; \
+	return &d_object; \
+}
+
+#define D_FUNCTION(ClassName) ClassName##Private* const d = d_function()

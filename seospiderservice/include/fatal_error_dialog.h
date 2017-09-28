@@ -2,7 +2,7 @@
 
 #include "ui_fatal_error_dialog.h"
 
-namespace WatchDogService
+namespace SeoSpiderService
 {
 
 class FatalErrorDialog : public QDialog

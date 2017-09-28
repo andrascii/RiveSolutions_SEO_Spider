@@ -1,6 +1,6 @@
 #include "debug_help_dll_loader.h"
 
-namespace WatchDogService
+namespace SeoSpiderService
 {
 
 DebugHelpDllLoader::DebugHelpDllLoader()

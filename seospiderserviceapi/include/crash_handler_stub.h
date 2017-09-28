@@ -1,11 +1,11 @@
 #pragma once
 
-#include "iwatch_dog_service_api.h"
+#include "icrash_handler.h"
 
-namespace WatchDogApi
+namespace SeoSpiderServiceApi
 {
 
-class WatchDogServiceApiStub : public IWatchDogServiceApi
+class CrashHandlerStub : public ICrashHandler
 {
 public:
 	virtual void init() noexcept override

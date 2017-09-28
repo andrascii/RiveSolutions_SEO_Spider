@@ -7,7 +7,6 @@ set(AppHeadersDir include)
 # deps headers
 set(WebCrawlerLibHeadersDir ../webcrawler/include)
 set(CommonLibHeadersDir ../common/include)
-set(WatchDogApiHeadersDir ../watchdogapi/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppHeadersList "include/*.h")
@@ -74,14 +73,12 @@ include_directories(
 	${AppHeadersDir}
 	${WebCrawlerLibHeadersDir}
 	${CommonLibHeadersDir}
-	${WatchDogApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(
 	${AppName}
-	${WatchDogApiDllName}
 	${WebCrawlerLibName}
 	${CommonLibName}
 	${Boost_LIBRARIES}

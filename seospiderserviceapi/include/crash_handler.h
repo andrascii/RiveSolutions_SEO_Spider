@@ -1,14 +1,14 @@
 #pragma once
 
-#include "iwatch_dog_service_api.h"
+#include "icrash_handler.h"
 
-namespace WatchDogApi
+namespace SeoSpiderServiceApi
 {
 
-class WatchDogServiceApi : public IWatchDogServiceApi
+class CrashHandler : public ICrashHandler
 {
 public:
-	WatchDogServiceApi();
+	CrashHandler();
 
 	virtual void init() noexcept override;
 	virtual void free() const noexcept override;
@@ -20,9 +20,9 @@ public:
 
 private:
 	static LONG WINAPI sehHandler(PEXCEPTION_POINTERS pExceptionPtrs);
+	static void pureCallHandler();
 	static void terminateHandler();
 	static void unexpectedHandler();
-	static void pureCallHandler();
 	static void sigAbortHandler(int);
 	static void sigFpeHandler(int code, int subcode);
 	static void sigIntHandler(int);
@@ -36,9 +36,11 @@ private:
 		const wchar_t* function,
 		const wchar_t* file,
 		unsigned int line, uintptr_t pReserved);
+	
+	static bool lockExceptionFilter();
 
 private:
-	static WatchDogServiceApi* s_self;
+	static CrashHandler* s_self;
 
 	HANDLE m_crashEventHandle;
 	STARTUPINFOW m_startupInfo;

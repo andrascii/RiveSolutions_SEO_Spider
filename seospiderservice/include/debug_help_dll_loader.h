@@ -1,6 +1,6 @@
 #pragma once
 
-namespace WatchDogService
+namespace SeoSpiderService
 {
 
 class DebugHelpDllLoader final
