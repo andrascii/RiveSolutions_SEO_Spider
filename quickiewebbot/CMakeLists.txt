@@ -9,11 +9,12 @@ set(WebCrawlerLibHeadersDir ../webcrawler/include)
 set(CommonLibHeadersDir ../common/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
+file(GLOB_RECURSE AppCppList "src/*.cpp")
 file(GLOB_RECURSE AppHeadersList "include/*.h")
 file(GLOB_RECURSE AppFormsList "ui/*.ui")
 file(GLOB_RECURSE AppResourcesList "rcc/*.qrc")
 
-set(FilesToTranslate ${AppSourcesList} ${AppHeadersList} ${AppFormsList})
+set(FILES_TO_TRANSLATE ${FILES_TO_TRANSLATE} ${AppCppList} ${AppHeadersList} ${AppFormsList} PARENT_SCOPE)
 
 qt5_wrap_ui(AppFormsHeadersList ${AppFormsList})
 qt5_wrap_cpp(AppHeadersMocList ${AppFormsHeadersList})
@@ -91,19 +92,3 @@ target_link_libraries(
 	Qt5::Svg
 	Qt5::WebEngineWidgets
 )
-
-file(GLOB TRANSLATIONS_FILES rcc/translations/*.ts)
-
-option (UPDATE_TRANSLATIONS "Update source translation rcc/translations/*.ts")
-if (UPDATE_TRANSLATIONS)
-  qt5_create_translation(QmFiles ${FilesToTranslate} ${TRANSLATIONS_FILES})
-else (UPDATE_TRANSLATIONS)
-  qt5_add_translation(QmFiles ${TRANSLATIONS_FILES})
-endif (UPDATE_TRANSLATIONS) 
-
-add_custom_target (translations_target DEPENDS ${QmFiles})
-
-file(COPY ${QmFiles} DESTINATION "../../quickiewebbot/rcc/translations")
-
-# prevent the generated files from being deleted during make clean
-set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM true)
