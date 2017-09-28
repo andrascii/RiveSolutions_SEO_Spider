@@ -34,7 +34,7 @@ void MetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& page) 
 	auto res = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).toLower().trimmed();
+		return QString(attr->value).trimmed();
 	};
 
 	std::vector<QString> contentTypes = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
@@ -60,7 +60,7 @@ void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noex
 	auto res = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).toLower().trimmed();
+		return QString(attr->value).trimmed();
 	};
 
 	std::vector<QString> refreshes = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
@@ -86,7 +86,7 @@ void MetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& page) 
 	auto res = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).toLower().trimmed();
+		return QString(attr->value).trimmed();
 	};
 
 	std::vector<QString> descriptions = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
@@ -113,7 +113,7 @@ void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noe
 	auto res = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).toLower().trimmed();
+		return QString(attr->value).trimmed();
 	};
 
 	std::vector<QString> keywords = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
@@ -142,7 +142,7 @@ void MetaParser::parseMetaRobots(GumboOutput* output, ParsedPagePtr& page) noexc
 	auto res = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).toLower().trimmed();
+		return QString(attr->value).trimmed();
 	};
 
 	std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);

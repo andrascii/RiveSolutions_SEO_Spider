@@ -59,8 +59,13 @@
 #include <QDebug>
 #include <QProcess>
 #include <QDateTime>
+#include <QDir>
 
-//#include "application.h"
+// google tests
+#include <gtest/gtest.h>
+
+#include "test_environment.h"
+#include "tests_crawler.h"
 
 #ifdef Q_OS_WIN
 #include <windows.h>

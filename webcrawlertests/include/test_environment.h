@@ -9,7 +9,7 @@ class TestsCrawler;
 class TestEnvironment
 {
 public:
-	TestEnvironment(const WebCrawler::CrawlerOptions& options);
+	TestEnvironment(WebCrawler::CrawlerOptions options);
 	TestsCrawler* crawler() const;
 	void runTest(std::function<void()> condition) const;
 

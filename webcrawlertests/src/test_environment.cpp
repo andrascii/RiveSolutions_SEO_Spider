@@ -4,9 +4,16 @@
 namespace WebCrawlerTests
 {
 
-TestEnvironment::TestEnvironment(const WebCrawler::CrawlerOptions& options)
-	: m_crawler(std::make_unique<TestsCrawler>(1, options))
+TestEnvironment::TestEnvironment(WebCrawler::CrawlerOptions options)
 {
+	options.parserTypeFlags = WebCrawler::ParserTypeFlags(WebCrawler::HtmlResourcesParserType |
+		WebCrawler::JavaScriptResourcesParserType |
+		WebCrawler::CssResourcesParserType |
+		WebCrawler::ImagesResourcesParserType |
+		WebCrawler::VideoResourcesParserType |
+		WebCrawler::FlashResourcesParserType);
+
+	m_crawler = std::make_unique<TestsCrawler>(1, options);
 }
 
 
