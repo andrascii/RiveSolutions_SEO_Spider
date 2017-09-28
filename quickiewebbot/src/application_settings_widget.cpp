@@ -3,6 +3,7 @@
 #include "settings_page_registry.h"
 #include "quickie_web_bot_helpers.h"
 #include "isettings_page.h"
+#include "application.h"
 
 namespace QuickieWebBot
 {
@@ -13,9 +14,10 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 {
 	initialize();
 
-	VERIFY(connect(m_ui.okButton, SIGNAL(clicked()), this, SLOT(okButtonClicked())));
-	VERIFY(connect(m_ui.applyButton, SIGNAL(clicked()), this, SLOT(applyChanges())));
-	VERIFY(connect(m_ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonClicked())));
+	connect(m_ui.okButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::okButtonClicked);
+	connect(m_ui.applyButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::applyChanges);
+	connect(m_ui.cancelButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::cancelButtonClicked);
+
 	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
 	VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(reloadSettingsSlot())));
 }
@@ -39,7 +41,7 @@ void ApplicationSettingsWidget::restoreChangedValues()
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
 
-		QuickieWebBotHelpers::safe_runtime_static_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
+		QuickieWebBotHelpers::safe_static_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
 	}
 
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -53,7 +55,7 @@ void ApplicationSettingsWidget::applyChanges()
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
 
-		QuickieWebBotHelpers::safe_runtime_static_cast<SettingsPage*>(widget)->applyChanges();
+		QuickieWebBotHelpers::safe_static_cast<SettingsPage*>(widget)->applyChanges();
 	}
 		
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -74,7 +76,7 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 {
 	QWidget* widget = m_ui.stackedWidget->currentWidget();
 	
-	QuickieWebBotHelpers::safe_runtime_static_cast<SettingsPage*>(widget)->reloadSettings();
+	QuickieWebBotHelpers::safe_static_cast<SettingsPage*>(widget)->reloadSettings();
 	m_somethingChanged = false;
 }
 
@@ -106,12 +108,12 @@ void ApplicationSettingsWidget::initialize()
 
 	m_ui.propGroupsList->setCurrentRow(0);
 
-	SettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<SettingsPageRegistry>();
+	SettingsPageRegistry* settingsPageRegistry = theApp->settingsPageRegistry();
 
 	foreach (QByteArray pageId, settingsPageRegistry->pagesKeys())
 	{
 		
-		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);	
+		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);
 		page->setParent(this);
 
 		if (page->isAutoApply())

@@ -39,7 +39,7 @@ void TableView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<AbstractTableModel*>(model);
+	m_model = QuickieWebBotHelpers::safe_static_cast<AbstractTableModel*>(model);
 
 	for (int i = 0; i < m_model->rowCount(); ++i)
 	{
@@ -256,7 +256,7 @@ void TableView::setViewModel(IViewModel* modelView) noexcept
 	VERIFY(connect(m_viewModel->qobject(), SIGNAL(repaintItems(const QModelIndexList&)),
 		this, SLOT(onAboutRepaintItems(const QModelIndexList&))));
 
-	QuickieWebBotHelpers::safe_runtime_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
+	QuickieWebBotHelpers::safe_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
 }
 
 IViewModel* TableView::viewModel() const noexcept
@@ -293,7 +293,7 @@ void TableView::initSpans()
 
 void TableView::adjustColumnSize()
 {
-	m_model = QuickieWebBotHelpers::safe_runtime_static_cast<AbstractTableModel*>(model());
+	m_model = QuickieWebBotHelpers::safe_static_cast<AbstractTableModel*>(model());
 
 	if (m_model->resizePolicy())
 	{

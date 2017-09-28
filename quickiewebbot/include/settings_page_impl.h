@@ -7,6 +7,7 @@
 #include "settings_page_registry.h"
 #include "settings_page.h"
 
+
 namespace QuickieWebBot
 {
 
@@ -26,10 +27,7 @@ public:
 	{
 		page->setWindowIcon(icon);
 
-		ServiceLocator* serviceLocator = ServiceLocator::instance();
-		SettingsPageRegistry* settingsPageRegistry = serviceLocator->service<SettingsPageRegistry>();
-
-		settingsPageRegistry->registerSettingsPage(pageId, page);
+		theApp->settingsPageRegistry()->registerSettingsPage(pageId, page);
 	}
 
 	static void registerSettingsPage(const QIcon& icon, const QByteArray& pageId)

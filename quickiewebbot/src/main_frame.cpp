@@ -41,13 +41,6 @@ void MainFrame::showApplicationSettingsWidget()
 	m_applicationSettingsWidget->exec();
 }
 
-void MainFrame::closeEvent(QCloseEvent* event)
-{
-	QMainWindow::closeEvent(event);
-
-	Q_EMIT onAboutMainFrameToClose();
-}
-
 void MainFrame::init()
 {
 	createActions();

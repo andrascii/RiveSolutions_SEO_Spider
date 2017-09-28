@@ -166,9 +166,4 @@ std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* con
 	return controlAdaptor;
 }
 
-SettingsPage::~SettingsPage()
-{
-
-}
-
 }

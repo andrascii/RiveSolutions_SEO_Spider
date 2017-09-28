@@ -7,15 +7,12 @@ namespace QuickieWebBot
 
 class IControlAdaptor;
 
-class SettingsPage 
-	: public QFrame
-	, public ISettingsPage
+class SettingsPage : public QFrame, public ISettingsPage
 {
 	Q_OBJECT
 
 public:
 	SettingsPage(bool isAutoApply = false, QWidget* parent = nullptr);
-	~SettingsPage();
 
 	virtual void applyChanges() noexcept override;
 	virtual void reloadSettings() noexcept override;

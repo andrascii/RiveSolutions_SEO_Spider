@@ -36,6 +36,8 @@ public:
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
+	SettingsPageRegistry* settingsPageRegistry() const;
+
 	void initializeStyleSheet() noexcept;
 
 	// ISettingsAccessor implementation
@@ -73,6 +75,8 @@ private:
 	QSettings* m_settings;
 
 	QTranslator* m_translator;
+
+	SettingsPageRegistry* m_settingsPageRegistry;
 };
 
 }
