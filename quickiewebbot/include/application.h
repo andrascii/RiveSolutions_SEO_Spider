@@ -25,6 +25,7 @@ class Application : public QApplication, public ISettingsAccessor
 
 public:
 	Application(int& argc, char** argv);
+	~Application();
 
 	Preferences* preferences() noexcept;
 	MainFrame* mainFrame() noexcept;
@@ -35,8 +36,6 @@ public:
 	WebCrawler::SequencedDataCollection* sequencedDataCollection() noexcept;
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
-
-	SettingsPageRegistry* settingsPageRegistry() const;
 
 	void initializeStyleSheet() noexcept;
 
@@ -75,8 +74,6 @@ private:
 	QSettings* m_settings;
 
 	QTranslator* m_translator;
-
-	SettingsPageRegistry* m_settingsPageRegistry;
 };
 
 }

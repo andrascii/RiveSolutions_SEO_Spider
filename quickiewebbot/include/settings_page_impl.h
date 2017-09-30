@@ -27,7 +27,9 @@ public:
 	{
 		page->setWindowIcon(icon);
 
-		theApp->settingsPageRegistry()->registerSettingsPage(pageId, page);
+		SettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<SettingsPageRegistry>();
+
+		settingsPageRegistry->registerSettingsPage(pageId, page);
 	}
 
 	static void registerSettingsPage(const QIcon& icon, const QByteArray& pageId)

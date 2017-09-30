@@ -75,6 +75,11 @@ void ApplicationSettingsWidget::cancelButtonClicked()
 void ApplicationSettingsWidget::reloadSettingsSlot()
 {
 	QWidget* widget = m_ui.stackedWidget->currentWidget();
+
+	if (!widget)
+	{
+		return;
+	}
 	
 	QuickieWebBotHelpers::safe_static_cast<SettingsPage*>(widget)->reloadSettings();
 	m_somethingChanged = false;
@@ -108,7 +113,7 @@ void ApplicationSettingsWidget::initialize()
 
 	m_ui.propGroupsList->setCurrentRow(0);
 
-	SettingsPageRegistry* settingsPageRegistry = theApp->settingsPageRegistry();
+	SettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<SettingsPageRegistry>();
 
 	foreach (QByteArray pageId, settingsPageRegistry->pagesKeys())
 	{
