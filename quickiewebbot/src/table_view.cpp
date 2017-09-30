@@ -41,10 +41,7 @@ void TableView::setModel(QAbstractItemModel* model)
 
 	m_model = QuickieWebBotHelpers::safe_static_cast<AbstractTableModel*>(model);
 
-	for (int i = 0; i < m_model->rowCount(); ++i)
-	{
-		setRowHeight(i, m_rowHeight);
-	}
+	applyRowHeight();
 
 	if (m_model->resizePolicy())
 	{
@@ -59,6 +56,7 @@ void TableView::setModel(QAbstractItemModel* model)
 
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpans())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));
+	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(applyRowHeight())));
 }
 
 void TableView::mouseMoveEvent(QMouseEvent* event)
@@ -228,14 +226,11 @@ void TableView::selectionChanged(const QItemSelection& selected, const QItemSele
 	QTableView::selectionChanged(selected, deselected);
 }
 
-void TableView::rowsInserted(const QModelIndex &parent, int start, int end)
+void TableView::rowsInserted(const QModelIndex &parent, int first, int last)
 {
-	for (int i = start; i <= end; ++i)
-	{
-		setRowHeight(i, m_rowHeight);
-	}
+	applyRowHeightToRowRange(first, last);
 
-	QTableView::rowsInserted(parent, start, end);
+	QTableView::rowsInserted(parent, first, last);
 }
 
 void TableView::setContextMenu(QMenu* menu) noexcept
@@ -317,6 +312,19 @@ void TableView::onAboutRepaintItems(const QModelIndexList& modelIndexes)
 		}
 
 		update(index);
+	}
+}
+
+void TableView::applyRowHeight()
+{
+	applyRowHeightToRowRange(0, m_model->rowCount());
+}
+
+void TableView::applyRowHeightToRowRange(int first, int last)
+{
+	for (int i = first; i <= last; ++i)
+	{
+		setRowHeight(i, m_rowHeight);
 	}
 }
 

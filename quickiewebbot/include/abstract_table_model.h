@@ -7,6 +7,8 @@ class IResizePolicy;
 
 class AbstractTableModel : public QAbstractTableModel
 {
+	Q_OBJECT
+
 public:
 	using QAbstractTableModel::QAbstractTableModel;
 	virtual ~AbstractTableModel() = default;

@@ -37,11 +37,15 @@ protected:
 	virtual void paintEvent(QPaintEvent* event) override;
 
 	virtual void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
-	virtual void rowsInserted(const QModelIndex &parent, int start, int end) override;
+	virtual void rowsInserted(const QModelIndex &parent, int first, int last) override;
 
 private:
 	Q_SLOT void adjustColumnSize();
 	Q_SLOT void onAboutRepaintItems(const QModelIndexList& modelIndexes);
+
+	Q_SLOT void applyRowHeight();
+
+	void applyRowHeightToRowRange(int first, int last);
 
 private:
 	AbstractTableModel* m_model;

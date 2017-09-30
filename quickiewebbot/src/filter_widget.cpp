@@ -34,10 +34,6 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
-FilterWidget::~FilterWidget()
-{
-}
-
 void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
 {
 	WebCrawler::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
