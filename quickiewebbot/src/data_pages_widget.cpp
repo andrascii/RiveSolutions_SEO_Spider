@@ -27,7 +27,8 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 
 	TitledWidget* titledStackedWidget = new TitledWidget(this);
 	titledStackedWidget->addTitleWidget(new ControlPanelWidget(this));
-	//titledStackedWidget->addTitleWidget(new CrawlerProgressBar(this));
+	titledStackedWidget->addTitleWidget(new CrawlerProgressBar(this), Qt::AlignLeft, true);
+
 	titledStackedWidget->setContentWidget(m_stackedWidget);
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);

@@ -20,9 +20,14 @@ TitledWidget::TitledWidget(QWidget* parent)
 	m_layout->addWidget(m_titleFrame);
 }
 
-void TitledWidget::addTitleWidget(QWidget* widget, Qt::AlignmentFlag align)
+void TitledWidget::addTitleWidget(QWidget* widget, Qt::AlignmentFlag align, bool last)
 {
 	m_titleLayout->addWidget(widget, 0, align);
+	if (last)
+	{
+		QSpacerItem* spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+		m_titleLayout->addSpacerItem(spacer);
+	}
 }
 
 void TitledWidget::setContentWidget(QWidget* widget)
