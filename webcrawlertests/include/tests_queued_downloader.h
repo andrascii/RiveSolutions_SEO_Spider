@@ -14,8 +14,13 @@ class TestsQueudedDownoader : public WebCrawler::IQueuedDownloader
 	virtual void stop() noexcept override;
 
 private:
+	QDir testsDataDir() const;
+	std::pair<QString, QString> mapUrlToTestDataFiles(const WebCrawler::CrawlerRequest& url) const;
+
+private:
 	std::vector<Reply> m_repliesQueue;
 	std::mutex m_repliesQueueMutex;
+	mutable QString m_testDataPath;
 };
 
 }

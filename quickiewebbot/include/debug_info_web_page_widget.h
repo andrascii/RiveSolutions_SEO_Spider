@@ -32,7 +32,7 @@ class DebugInfoWebPageWidget : public QWidget, public Ui::DebugWebPageInfoWidget
 	Q_OBJECT
 
 public:
-	static void attachDebugInfoWebPageWidget();
+	static void attach();
 
 	Q_SLOT void onPageSelected(WebCrawler::ParsedPage* page);
 

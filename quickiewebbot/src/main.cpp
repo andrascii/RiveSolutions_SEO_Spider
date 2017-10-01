@@ -3,7 +3,8 @@
 
 int main(int argc, char *argv[])
 {
-	QuickieWebBot::Application app(argc, argv);
+	using namespace QuickieWebBot;
 
+	Application app(argc, argv);
 	return app.exec(); 
 }

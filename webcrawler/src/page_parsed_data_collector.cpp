@@ -19,6 +19,8 @@ PageParsedDataCollector::PageParsedDataCollector(QObject* parent)
 
 void PageParsedDataCollector::setOptions(const CrawlerOptions& options) noexcept
 {
+	assert(m_options.minTitleLength <= m_options.maxTitleLength);
+
 	m_options = options;
 
 	applyOptions();

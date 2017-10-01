@@ -25,6 +25,7 @@ class Application : public QApplication, public ISettingsAccessor
 
 public:
 	Application(int& argc, char** argv);
+	~Application();
 
 	Preferences* preferences() noexcept;
 	MainFrame* mainFrame() noexcept;

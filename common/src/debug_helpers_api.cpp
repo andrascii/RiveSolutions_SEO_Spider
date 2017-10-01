@@ -60,16 +60,16 @@ void DebugHelpersApi::debugReport(const char* file, int line, const char* functi
 
 	switch (msgbox.askUser())
 	{
-	case IDRETRY:
-	{
-		DebugBreak();
-		break;
-	}
-	case IDCANCEL:
-	{
-		TerminateProcess(GetCurrentProcess(), EXIT_FAILURE);
-		break;
-	}
+		case IDRETRY:
+		{
+			DebugBreak();
+			break;
+		}
+		case IDCANCEL:
+		{
+			TerminateProcess(GetCurrentProcess(), EXIT_FAILURE);
+			break;
+		}
 	}
 }
 

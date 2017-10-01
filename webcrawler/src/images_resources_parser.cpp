@@ -23,7 +23,9 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	auto res = [](const GumboNode* node)
 	{
 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
-		return QUrl(src->value);
+		GumboAttribute* alt = gumbo_get_attribute(&node->v.element.attributes, "alt");
+		QString altVal = alt == nullptr ? "" : alt->value;
+		return std::make_pair(QUrl(src->value), altVal);
 	};
 
 	auto checkResourceExistence = [&page](const QUrl& url) -> bool
@@ -36,12 +38,11 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		return std::any_of(page->allResourcesOnPage.begin(), page->allResourcesOnPage.end(), pred);
 	};
 
-	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
-
-	for (const QUrl& url : resolvedUrls)
+	std::vector<std::pair<QUrl, QString>> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	for (std::pair<QUrl, QString>& url : urls)
 	{
-		if (checkResourceExistence(url))
+		url.first = PageParserHelpers::resolveUrl(page->url, url.first);
+		if (checkResourceExistence(url.first))
 		{
 			continue;
 		}
@@ -49,11 +50,14 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		RawResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
-			LinkInfo{ url, LinkParameter::UnknownParameter }
+			LinkInfo{ url.first, LinkParameter::UnknownParameter },
+			ResourceSource::SourceTagImg,
+			url.second
 		};
 
 		page->allResourcesOnPage.push_back(imageResource);
 	}
+
 }
 
 }

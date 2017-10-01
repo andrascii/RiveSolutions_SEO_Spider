@@ -4,6 +4,7 @@ namespace QuickieWebBot
 {
 
 class ApplicationSettingsWidget;
+class SettingsPageRegistry;
 
 class MainFrame : public QMainWindow
 {
@@ -12,15 +13,7 @@ class MainFrame : public QMainWindow
 public:
 	MainFrame(QWidget* parent = nullptr);
 
-	//
-	// settings pages
-	//
 	Q_SLOT void showApplicationSettingsWidget();
-
-	Q_SIGNAL void onAboutMainFrameToClose();
-
-protected:
-	virtual void closeEvent(QCloseEvent* event) override;
 
 private:
 	void init();

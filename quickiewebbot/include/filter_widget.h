@@ -17,7 +17,6 @@ class FilterWidget : public QFrame
 
 public:
 	FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent = nullptr);
-	~FilterWidget();
 
 	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
 

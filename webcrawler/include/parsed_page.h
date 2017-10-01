@@ -23,7 +23,16 @@ enum class ResourceType
 	ResourceStyleSheet,
 	ResourceFlash,
 	ResourceVideo,
-	ResourceOther
+	ResourceOther 
+};
+
+enum class ResourceSource
+{
+	SourceTagA,
+	SourceTagImg,
+	SourceTagLink,
+	SourceTagScript,
+	SourceCSS
 };
 
 struct LinkInfo
@@ -36,12 +45,16 @@ struct ResourceLink
 {
 	ParsedPageWeakPtr resource;
 	LinkParameter urlParameter;
+	ResourceSource resourceSource;
+	QString altOrTitle;
 };
 
 struct RawResourceOnPage
 {
 	ResourceType resourceType;
 	LinkInfo thisResourceLink;
+	ResourceSource resourceSource;
+	QString altOrTitle;
 };
 
 struct ParsedPage

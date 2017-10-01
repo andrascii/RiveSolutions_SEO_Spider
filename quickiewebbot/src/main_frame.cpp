@@ -41,13 +41,6 @@ void MainFrame::showApplicationSettingsWidget()
 	m_applicationSettingsWidget->exec();
 }
 
-void MainFrame::closeEvent(QCloseEvent* event)
-{
-	QMainWindow::closeEvent(event);
-
-	Q_EMIT onAboutMainFrameToClose();
-}
-
 void MainFrame::init()
 {
 	createActions();
@@ -107,6 +100,7 @@ void MainFrame::createAndSetCentralWidget()
 
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);
+	layout->setMargin(0);
 
 	layout->addWidget(new DataPagesWidget(centralWidget));
 

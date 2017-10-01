@@ -10,11 +10,15 @@ namespace WebCrawlerTests
 
 TEST(DummyGroup, DummyName)
 {
-	TestEnvironment env({ QUrl("dummy.com") });
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://dummy.com")));
 	env.runTest([cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(WebCrawler::CrawledUrlStorageType, 1, 10);
+		auto pages = cl->waitForParsedPageReceived(WebCrawler::CrawledUrlStorageType, 1, 1000);
 		EXPECT_EQ(1, pages.size());
+		WebCrawler::ParsedPagePtr page = pages[0];
+		EXPECT_EQ(QString("Dummy H1"),  page->firstH1);
+		EXPECT_EQ(QString("Dummy Title"), page->title);
+		EXPECT_EQ(QString("Dummy Description"), page->metaDescription);
 	});
 }
 

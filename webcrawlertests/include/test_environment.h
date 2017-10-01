@@ -9,9 +9,11 @@ class TestsCrawler;
 class TestEnvironment
 {
 public:
-	TestEnvironment(const WebCrawler::CrawlerOptions& options);
+	TestEnvironment(WebCrawler::CrawlerOptions options);
 	TestsCrawler* crawler() const;
 	void runTest(std::function<void()> condition) const;
+
+	static WebCrawler::CrawlerOptions defaultOptions(const QUrl& url);
 
 private:
 	std::unique_ptr<TestsCrawler> m_crawler;
