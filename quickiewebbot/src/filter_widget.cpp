@@ -28,6 +28,8 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	m_splitter->addWidget(m_webSiteDataWidget);
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
+	layout->setSpacing(0);
+	layout->setMargin(0);
 	layout->addWidget(m_splitter);
 
 	VERIFY(connect(m_summaryFilterTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),

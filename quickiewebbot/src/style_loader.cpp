@@ -4,7 +4,7 @@
 namespace QuickieWebBot
 {
 
-void StyleLoader::attachStyleLoader(QString const& filename, QKeySequence const& keySequenceCustomStyleSheet)
+void StyleLoader::attach(QString const& filename, QKeySequence const& keySequenceCustomStyleSheet)
 {
 	StyleLoader* styleLoader = new StyleLoader(theApp, filename, keySequenceCustomStyleSheet);
 	theApp->installEventFilter(styleLoader);

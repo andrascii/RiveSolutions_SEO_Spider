@@ -15,8 +15,6 @@ ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::startCrawling));
 	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::stopCrawling));
 	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
-
-	m_ui.progressBar->setVisible(false);
 }
 
 
@@ -43,16 +41,12 @@ void ControlPanelWidget::startCrawling()
 	}
 
 	ActionRegistry::instance().globalAction(s_startCrawlerAction)->trigger();
-
-	m_ui.progressBar->show();
 }
 
 
 void ControlPanelWidget::stopCrawling()
 {
 	ActionRegistry::instance().globalAction(s_stopCrawlerAction)->trigger();
-
-	m_ui.progressBar->hide();
 }
 
 }

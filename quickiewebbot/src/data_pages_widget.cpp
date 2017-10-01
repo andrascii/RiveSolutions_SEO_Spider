@@ -27,6 +27,7 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 
 	TitledWidget* titledStackedWidget = new TitledWidget(this);
 	titledStackedWidget->addTitleWidget(new ControlPanelWidget(this));
+	//titledStackedWidget->addTitleWidget(new CrawlerProgressBar(this));
 	titledStackedWidget->setContentWidget(m_stackedWidget);
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
@@ -35,8 +36,6 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 
 	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
 	horizontalLayout->addWidget(titledStackedWidget);
-
-	setLayout(horizontalLayout);
 }
 
 void DataPagesWidget::showPage(Page page)
@@ -90,10 +89,6 @@ void DataPagesWidget::handleNavigationPanelButtonClick()
 
 void DataPagesWidget::initializeNavigationPanelWidget()
 {
-	QFont font;
-	font.setBold(true);
-	font.setWeight(75);
-
 	m_navigationPanel.navigationPanelWidget = new QWidget(this);
 	m_navigationPanel.verticalMainLayout = new QVBoxLayout(m_navigationPanel.navigationPanelWidget);
 	m_navigationPanel.verticalMainLayout->setContentsMargins(0, 0, -1, 0);
@@ -104,27 +99,21 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 
 	m_navigationPanel.pushButtons[Page::SiteStructurePanelPage] = 
 		new QPushButton(QStringLiteral("Site Structure"), m_navigationPanel.navigationPanelWidget);
-	m_navigationPanel.pushButtons[Page::SiteStructurePanelPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::SeoAnalysisPage] = 
 		new QPushButton(QStringLiteral("Seo Analysis"), m_navigationPanel.navigationPanelWidget);
-	m_navigationPanel.pushButtons[Page::SeoAnalysisPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::AllPagesPage] = 
 		new QPushButton(QStringLiteral("All Site Pages"), m_navigationPanel.navigationPanelWidget);
-	m_navigationPanel.pushButtons[Page::AllPagesPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::AllResourcesPage] = 
 		new QPushButton(QStringLiteral("All Resources"), m_navigationPanel.navigationPanelWidget);
-	m_navigationPanel.pushButtons[Page::AllResourcesPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::DomainMetricsPage] = 
 		new QPushButton(QStringLiteral("Domain Metrics"), m_navigationPanel.navigationPanelWidget);
-	m_navigationPanel.pushButtons[Page::DomainMetricsPage]->setFont(font);
 
 	m_navigationPanel.pushButtons[Page::ReportsPage] = 
 		new QPushButton(QStringLiteral("Reports"), m_navigationPanel.navigationPanelWidget);
-	m_navigationPanel.pushButtons[Page::ReportsPage]->setFont(font);
 
 
 	m_navigationPanel.pushButtons[Page::SeoAnalysisPage]->setProperty("subButton", true);

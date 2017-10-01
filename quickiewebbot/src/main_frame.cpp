@@ -100,6 +100,7 @@ void MainFrame::createAndSetCentralWidget()
 
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);
+	layout->setMargin(0);
 
 	layout->addWidget(new DataPagesWidget(centralWidget));
 
