@@ -5,11 +5,11 @@
 @set HEADERS_DIR=%CD%\quickiewebbot\include\
 @set TRANSLATIONS_DIR=%CD%\quickiewebbot\rcc\translations\
 @set USER_ITERFACE_DIR=%CD%\quickiewebbot\ui
-@set LUPDATE_EXECUTABELE=%CMAKE_PREFIX_PATH%bin\lupdate.exe
+@set LUPDATE_EXECUTABELE=%CMAKE_PREFIX_PATH%\bin\lupdate.exe
 
 
 
-@IF EXIST %CMAKE_PREFIX_PATH%bin\lupdate.exe ( 
+@IF EXIST %CMAKE_PREFIX_PATH%\bin\lupdate.exe ( 
 @echo lupdate.exe founded at %LUPDATE_EXECUTABELE%
 ) ELSE ( 
 @echo lupdate.exe not found. Be sure that CMAKE_PREFIX_PATH is setted to compiler directory ("qt5/msvc2017" for example) 
