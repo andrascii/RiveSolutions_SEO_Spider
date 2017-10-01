@@ -187,6 +187,14 @@ during site scanning.</source>
         <source>Choose your language.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Russian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LimitsSettingsWidget</name>
@@ -871,6 +879,25 @@ Also if your proxy server requires authorization enter your name and password.</
     <message>
         <source>Select The Filter</source>
         <translation type="obsolete">Выберите Фильтр</translation>
+    </message>
+</context>
+<context>
+    <name>WidgetUnderMouseInfoDialog</name>
+    <message>
+        <source>Widget Under Mouse Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lorem Ipsum Dolor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Class Name:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -47,9 +47,9 @@ void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) 
 
 	const int topSelectedRowIndex = topSelectedRow();
 
-	if (topSelectedRowIndex != -1)
+	if (topSelectedRowIndex != -1 && model()->rowCount() > topSelectedRowIndex + 1)
 	{
-		emitNeedToRepaintIndexes(model()->makeModelIndexesForRow(topSelectedRowIndex - 1));
+		emitNeedToRepaintIndexes(model()->makeModelIndexesForRow(topSelectedRowIndex + 1));
 	}
 
 	emitNeedToRepaintIndexes(m_selectedModelIndexes);
@@ -87,15 +87,15 @@ void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes
 
 		for (int i = topRow; i <= footRow; ++i)
 		{
-			const bool isNonSelectedRowAboveSelectedRow = 
-				!uniqueSelectedRows.contains(i - 1) && uniqueSelectedRows.contains(i);
+			const bool isNonSelectedRowBelowSelectedRow = 
+				!uniqueSelectedRows.contains(i + 1) && uniqueSelectedRows.contains(i);
 
-			if (!isNonSelectedRowAboveSelectedRow)
+			if (!isNonSelectedRowBelowSelectedRow)
 			{
 				continue;
 			}
 
-			rowsForRepaint.push_back(i - 1);
+			rowsForRepaint.push_back(i + 1);
 		}
 
 		return rowsForRepaint;
@@ -117,8 +117,11 @@ void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes
 
 		foreach(int row, rowsForRepaint)
 		{
-			itemsForRepaintAfterDeselect.append(model()->makeModelIndexesForRow(row));
-		}
+			if (row < model()->rowCount())
+			{
+				itemsForRepaintAfterDeselect.append(model()->makeModelIndexesForRow(row));
+			}
+		} 
 
 		emitNeedToRepaintIndexes(itemsForRepaintAfterDeselect);
 	}
