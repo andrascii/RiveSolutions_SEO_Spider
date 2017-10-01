@@ -20,6 +20,8 @@ ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr newPage)
 		std::end(existingPage->linksToThisPage)
 	);
 
+	newPage->altText = existingPage->altText;
+
 	*existingPage = *newPage;
 
 	// we should use the original PageRawPtr 
@@ -70,7 +72,7 @@ void ModelController::addParsedPage(ParsedPagePtr parsedPagePtr) noexcept
 		processParsedPageH1(parsedPagePtr);
 		processParsedPageH2(parsedPagePtr);
 	}
-	else
+	else if (parsedPagePtr->resourceType == ResourceType::ResourceImage)
 	{
 		// image resource
 		processParsedPageImage(parsedPagePtr);
@@ -341,22 +343,33 @@ void ModelController::processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept
 
 void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept
 {
-	const int altLength = parsedPagePtr->altText.size();
+	ParsedPagePtr pendingResource = m_data->parsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
+	parsedPagePtr = mergeTwoPages(pendingResource, parsedPagePtr);
+
 	const int sizeKB = parsedPagePtr->pageSizeKilobytes;
-	if (altLength > m_crawlerOptions.maxImageAltTextChars)
-	{
-		m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongAltTextImageStorageType);
-	}
-
-	if (altLength == 0)
-	{
-		m_data->addParsedPage(parsedPagePtr, StorageType::MissingAltTextImageStorageType);
-	}
-
 	if (sizeKB > m_crawlerOptions.maxImageSizeKb)
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::Over100kbImageStorageType);
 	}
+
+	for (const ResourceLink& linkToThisImage : parsedPagePtr->linksToThisPage)
+	{
+		if (linkToThisImage.resourceSource == ResourceSource::SourceTagImg)
+		{
+			const int altLength = linkToThisImage.altOrTitle.size();
+
+			if (altLength > m_crawlerOptions.maxImageAltTextChars)
+			{
+				m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongAltTextImageStorageType);
+			}
+
+			if (altLength == 0)
+			{
+				m_data->addParsedPage(parsedPagePtr, StorageType::MissingAltTextImageStorageType);
+			}
+		}
+	}
+	
 }
 
 void ModelController::processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept
@@ -411,16 +424,16 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 		if (existingResource)
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
-			existingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter });
-			parsedPagePtr->linksOnThisPage.push_back({ existingResource, resource.thisResourceLink.urlParameter });
+			existingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+			parsedPagePtr->linksOnThisPage.push_back({ existingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 
 		}
 		else
 		{
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.thisResourceLink.url;
-			pendingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter });
-			parsedPagePtr->linksOnThisPage.push_back({ pendingResource, resource.thisResourceLink.urlParameter });
+			pendingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+			parsedPagePtr->linksOnThisPage.push_back({ pendingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
@@ -491,6 +504,11 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
 
 		ParsedPagePtr newOrExistingResource = m_data->parsedPage(resourceRaw, storage);
+		
+		const bool existingImageResource = newOrExistingResource && 
+			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
+			resource.resourceSource == ResourceSource::SourceTagImg;
+
 		if (!newOrExistingResource)
 		{
 			newOrExistingResource = m_data->parsedPage(resourceRaw, StorageType::PendingResourcesStorageType);
@@ -504,9 +522,18 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 				httpResource ? StorageType::PendingResourcesStorageType : storage);
 		}
 
-		parsedPagePtr->linksOnThisPage.push_back({ newOrExistingResource, resource.thisResourceLink.urlParameter });
-		newOrExistingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter });
+		parsedPagePtr->linksOnThisPage.push_back({ newOrExistingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+		newOrExistingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 		newOrExistingResource->resourceType = resource.resourceType;
+
+		// special case: parse image resource again because it can have now empty or too short/long alt text
+		// !!! Wrong realization: altText will have the last value from the current resource link
+		// TODO: fix
+		newOrExistingResource->altText = resource.altOrTitle;
+		if (existingImageResource)
+		{
+			processParsedPageImage(newOrExistingResource);
+		}
 	}
 }
 
