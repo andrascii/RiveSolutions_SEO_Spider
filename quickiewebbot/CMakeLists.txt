@@ -14,7 +14,6 @@ file(GLOB_RECURSE AppHeadersList "include/*.h")
 file(GLOB_RECURSE AppFormsList "ui/*.ui")
 file(GLOB_RECURSE AppResourcesList "rcc/*.qrc")
 
-set(FILES_TO_TRANSLATE ${FILES_TO_TRANSLATE} ${AppCppList} ${AppHeadersList} ${AppFormsList} PARENT_SCOPE)
 
 qt5_wrap_ui(AppFormsHeadersList ${AppFormsList})
 qt5_wrap_cpp(AppHeadersMocList ${AppFormsHeadersList})
