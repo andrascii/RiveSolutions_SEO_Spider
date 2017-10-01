@@ -1,4 +1,6 @@
 #include "crawler_progress_bar.h"
+#include "action_registry.h"
+#include "action_keys.h"
 
 namespace QuickieWebBot
 {
@@ -11,7 +13,13 @@ CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 	m_calculatePercentTimer->setInterval(150);
 	setMaximum(100);
 
+	ActionRegistry* actionRegistry = &ActionRegistry::instance();
+
 	VERIFY(connect(m_calculatePercentTimer, &QTimer::timeout, this, &CrawlerProgressBar::calculatePercents));
+	VERIFY(connect(actionRegistry->globalAction(s_startCrawlerAction), &QAction::triggered, this, &QWidget::show));
+	VERIFY(connect(actionRegistry->globalAction(s_stopCrawlerAction), &QAction::triggered, this, &QWidget::hide));
+
+	hide();
 }
 
 void CrawlerProgressBar::hideEvent(QHideEvent* event)
@@ -36,7 +44,7 @@ void CrawlerProgressBar::calculatePercents()
 
 	const double percents = crawledLinksCount / (amountLinksCount + 1) * 100;
 
-	setValue(percents ? floor(percents)  : percents + 1);
+	setValue(percents ? std::floor(percents)  : percents + 1);
 }
 
 }

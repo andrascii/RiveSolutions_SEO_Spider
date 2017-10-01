@@ -92,7 +92,7 @@ QProgressBar
 	background-color: #ffffff;
 	text-align: center;
 	color: #494949;
-	padding: 0.05em;
+	min-width: 15em;
 }
 
 QProgressBar::chunk
