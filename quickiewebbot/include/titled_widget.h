@@ -14,9 +14,6 @@ public:
 	void setContentWidget(QWidget* widget);
 
 private:
-	void init();
-
-private:
 	QFrame* m_titleFrame;
 	QHBoxLayout* m_titleLayout;
 	QVBoxLayout* m_layout;

@@ -11,6 +11,8 @@
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
 #include "dll_loader.h"
+#include "widget_under_mouse_info.h"
+
 
 namespace
 {
@@ -173,8 +175,9 @@ void Application::initialize() noexcept
 	m_mainFrame.reset(new MainFrame);
 
 #if !defined(PRODUCTION)
-	StyleLoader::attachStyleLoader("styles.css", QStringLiteral("F5"));
-	DebugInfoWebPageWidget::attachDebugInfoWebPageWidget();
+	StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
+	DebugInfoWebPageWidget::attach();
+	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
 #endif
 }
 

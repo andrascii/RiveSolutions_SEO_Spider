@@ -11,8 +11,8 @@ namespace QuickieWebBot
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectedBackgroundColor("#F7F0D6")
-	, m_hoveredBackgroundColor("#F3F3F3")
+	, m_selectedBackgroundColor("#f39c12")
+	, m_hoveredBackgroundColor("#f1c40f")
 	, m_backgroundColor("#FFFFFF")
 	, m_selectedGridLineColor("#F7F0D6")
 	, m_gridLineColor("#F3F3F3")
@@ -37,7 +37,7 @@ int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
 
 int SummaryViewModel::marginLeft(const QModelIndex&) const noexcept
 {
-	return QuickieWebBotHelpers::pointsToPixels(2);
+	return QuickieWebBotHelpers::pointsToPixels(6);
 }
 
 int SummaryViewModel::marginRight(const QModelIndex&) const noexcept

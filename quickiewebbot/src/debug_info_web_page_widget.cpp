@@ -19,7 +19,7 @@ DebugInfoWebPageWidget::DebugInfoWebPageWidget(QWidget* parent)
 }
 
 
-void DebugInfoWebPageWidget::attachDebugInfoWebPageWidget()
+void DebugInfoWebPageWidget::attach()
 {
 	DebugInfoWebPageWidget* debugInfoWebPageWidget = new DebugInfoWebPageWidget(theApp->mainFrame());
 	theApp->installEventFilter(debugInfoWebPageWidget);

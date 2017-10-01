@@ -6,14 +6,22 @@ namespace QuickieWebBot
 
 TitledWidget::TitledWidget(QWidget* parent)
 	: QFrame(parent)
+	, m_titleFrame(new QFrame(this))
+	, m_titleLayout(new QHBoxLayout(m_titleFrame))
+	, m_layout(new QVBoxLayout(this))
 {
-	init();
+	m_titleFrame->setObjectName("TitleFrame");
+
+	m_titleLayout->setSpacing(0); 
+	m_titleLayout->setSpacing(0);
+
+	m_layout->setSpacing(0);
+	m_layout->setMargin(0);
+	m_layout->addWidget(m_titleFrame);
 }
 
 void TitledWidget::addTitleWidget(QWidget* widget, Qt::AlignmentFlag align)
 {
-
-
 	m_titleLayout->addWidget(widget, 0, align);
 }
 
@@ -29,21 +37,6 @@ void TitledWidget::setContentWidget(QWidget* widget)
 	}
 
 	m_layout->addWidget(widget);
-}
-
-void TitledWidget::init()
-{
-	m_titleFrame = new QFrame(this);
-	m_titleFrame->setObjectName("TitleFrame");
-
-	m_titleLayout = new QHBoxLayout(m_titleFrame);
-	m_titleLayout->setMargin(QuickieWebBotHelpers::pointsToPixels(4));
-	m_titleLayout->setSpacing(0);
-
-	m_layout = new QVBoxLayout(this);
-	m_layout->setContentsMargins(0, 0, 0, 0);
-
-	m_layout->addWidget(m_titleFrame);
 }
 
 }

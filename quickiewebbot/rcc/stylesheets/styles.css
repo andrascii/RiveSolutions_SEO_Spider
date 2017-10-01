@@ -7,7 +7,6 @@ QWidget
 
 QMainWindow
 {
-	background-color: #546E7A;
 	font-family: "Helvatica";
 }
 
@@ -17,12 +16,13 @@ QMenuBar
 {	
 	padding-top: 1em;
 	padding-bottom: 1em;
-	background-color: #263238;
+	background-color: #34465d;
+	border-bottom: 0.1em solid #C0C0C0;
 }
 
 QMenuBar::item:selected
 {
-	background: #546E7A;
+	background: #34465d;
 }
 
 QMenu
@@ -35,7 +35,7 @@ QMenu
 QMenu::item
 {
 	color: #ededed;
-	selection-background-color: #546E7A;
+	selection-background-color: #34465d;
 }
 
 /*/////////////////////////////// Status Bar ///////////////////////////////*/
@@ -43,7 +43,8 @@ QMenu::item
 QStatusBar
 {
 	min-height: 2.5em;
-	background-color: #263238;
+	background-color: #34465d;
+	border-top: 0.1em solid #C0C0C0;
 }
 
 
@@ -60,7 +61,7 @@ QSpinBox
 
 QuickieWebBot--TableView
 {
-	border: 0.05em solid #D6D6D6;
+	border: none;
 }
 
 /*////////////////////////////////// Line edit and spin box //////////////////////////*/
@@ -146,7 +147,8 @@ QComboBox::down-arrow
 QuickieWebBot--ControlPanelWidget
 {
 	min-height: 2.5em;
-	min-width: 40em;
+	min-width: 25em;
+	max-width: 25em;
 }
 
 /*/////////////////////////////// TableView ///////////////////////////////*/
@@ -158,11 +160,11 @@ QuickieWebBot--TableView
 
 QLabel#SelectFilterLabel
 {
-	color: #D6D6D6;
+	color: #EFEFEF;
 	font-size: 48pt;
 	background: white;
 	font-family: "Times";
-	border: 0.01em solid #D6D6D6;
+	border: none;
 }
 
 /*/////////////////////////////// Header view ///////////////////////////////*/
@@ -300,71 +302,40 @@ QSplitter::handle:vertical
     height: 0.8em;
 }
 
-/*/////////////////////////////// Group buttons ///////////////////////////////*/
-
-QPushButton[groupButton]
-{
-	padding-left: 0.2em;
-	padding-right: 0.2em;
-}
-
-QPushButton:checked[groupButton]
-{
-	background-color: #d6d6d6;
-}
-
-QPushButton[groupButton="left"]
-{
-	margin-right: 0em;
-	border-top-left-radius: 0.2em;
-	border-top-right-radius: 0em;
-	border-bottom-right-radius: 0em;
-	border-bottom-left-radius: 0.2em;
-	border-right: 0em;
-}
-QPushButton[groupButton="right"]
-{
-	margin-left: 0em;
-	border-top-left-radius: 0em;
-	border-top-right-radius: 0.2em;
-	border-bottom-right-radius: 0.2em;
-	border-bottom-left-radius: 0em;
-} 
-
 /*/////////////////////////////// Navigation Widget ///////////////////////////////*/
 
 
 QWidget#NavigationPanel
 {
-	background-color: #263238;
-	border-right: 0.1em solid #d6d6d6;
+	background-color: #E7E7E7;
+	border-right: 0.1em solid #C0C0C0
 }
 
 QWidget#NavigationPanel QPushButton
 {
-	background-color: #263238;
-	width: 12em;
-	border-radius: 0px;
 	border: none;
-	border-bottom: 0.05em solid #546E7A;
+	border-bottom: 0.05em solid #B0B0B0;
+	
+	background-color: #E7E7E7;
+	
+	width: 12em;
+	
 	text-align: left;
+	color: #4A5459;
+	
 	padding: 0.5em;
-	padding-left: 1em;
-	font-size: 10pt;
-	color: #ededed;
 }
 
 QWidget#NavigationPanel QPushButton[childElement="true"]
 {
 	padding-left: 3em;
-	font-size: 8pt;
 	background-color: #f5f5f5;
 	border: none;
 }
 
 QWidget#NavigationPanel QPushButton[selected="true"]
 {
-	background-color: #546E7A;
+	background-color: #B0B0B0;
 }
 
 /*/////////////////////////////// Web Page Debug Widget ///////////////////////////////*/
@@ -379,21 +350,14 @@ QWidget#DebugWebPageInfoWidget QWidget
 
 QuickieWebBot--TitledWidget
 {
-	background-color: #e7e7e7;
+	background-color: #E7E7E7;
 }
 
 QuickieWebBot--TitledWidget QFrame#TitleFrame
 {
 	min-height: 3em;
-	background-color: #C0C0C0;
-	border-bottom: 0.1em solid #d6d6d6;
-}
-
-/*/////////////////////////////// DataPagesWidget ///////////////////////////////*/
-
-QuickieWebBot--DataPagesWidget
-{
-	padding: 0em;
+	background-color: #E7E7E7;
+	border-bottom: 0.1em solid #C0C0C0;
 }
 
 /*/////////////////////////////// QTabWidget ///////////////////////////////*/
@@ -477,3 +441,8 @@ QTabBar::tab:only-one
 }
 
 /**/
+
+QuickieWebBot--WidgetUnderMouseInfoDialog QLabel
+{
+	color: black;
+}

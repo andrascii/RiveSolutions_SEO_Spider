@@ -230,6 +230,16 @@ during site scanning.</source>
         <source>Choose your language.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../ui/language_settings_widget.ui" line="120"/>
+        <source>Russian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/language_settings_widget.ui" line="125"/>
+        <source>English</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LimitsSettingsWidget</name>
@@ -284,52 +294,52 @@ during site scanning.</source>
 <context>
     <name>MainFrame</name>
     <message>
-        <location filename="../../src/main_frame.cpp" line="71"/>
+        <location filename="../../src/main_frame.cpp" line="64"/>
         <source>Open File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="73"/>
+        <location filename="../../src/main_frame.cpp" line="66"/>
         <source>Close File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="76"/>
+        <location filename="../../src/main_frame.cpp" line="69"/>
         <source>Recent Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="79"/>
+        <location filename="../../src/main_frame.cpp" line="72"/>
         <source>Save File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="82"/>
+        <location filename="../../src/main_frame.cpp" line="75"/>
         <source>Save File As</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="84"/>
+        <location filename="../../src/main_frame.cpp" line="77"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="89"/>
+        <location filename="../../src/main_frame.cpp" line="82"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="92"/>
+        <location filename="../../src/main_frame.cpp" line="85"/>
         <source>Start Crawler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="93"/>
+        <location filename="../../src/main_frame.cpp" line="86"/>
         <source>Stop Crawler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/main_frame.cpp" line="94"/>
+        <location filename="../../src/main_frame.cpp" line="87"/>
         <source>Clear Crawled Data</source>
         <translation type="unfinished"></translation>
     </message>
