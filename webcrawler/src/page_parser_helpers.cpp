@@ -83,10 +83,9 @@ QUrl PageParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& 
 std::vector<QUrl> PageParserHelpers::resolveUrlList(const QUrl& baseUrl, const std::vector<QUrl>& urlList) noexcept
 {
 	std::vector<QUrl> result;
-
 	for (const QUrl& url : urlList)
 	{
-		result.push_back(resolveUrl(url, baseUrl));
+		result.push_back(resolveUrl(baseUrl, url));
 	}
 
 	return result;
@@ -95,9 +94,9 @@ std::vector<QUrl> PageParserHelpers::resolveUrlList(const QUrl& baseUrl, const s
 QUrl PageParserHelpers::resolveUrl(const QUrl& baseUrl, const QUrl& url) noexcept
 {
 	QUrl result = url;
-	if (url.isRelative())
+	if (result.isRelative())
 	{
-		result = resolveRelativeUrl(url, baseUrl);
+		result = resolveRelativeUrl(result, baseUrl);
 	}
 
 	result.setFragment(QString());
