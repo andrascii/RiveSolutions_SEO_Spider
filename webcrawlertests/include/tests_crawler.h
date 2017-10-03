@@ -13,6 +13,7 @@ public:
 	~ParsedPageReceiver();
 
 	std::future<std::vector<WebCrawler::ParsedPagePtr>> getParsedPages(int count, int storageType);
+	std::vector<WebCrawler::ParsedPagePtr> storageItems(WebCrawler::StorageType storage) const;
 
 private:
 	Q_SLOT void onParsedPageAdded(int row, int storageType);
@@ -35,6 +36,7 @@ public:
 	~TestsCrawler();
 
 	std::vector<WebCrawler::ParsedPagePtr> waitForParsedPageReceived(WebCrawler::StorageType storage, int count, int seconds) const;
+	std::vector<WebCrawler::ParsedPagePtr> storageItems(WebCrawler::StorageType storage) const;
 	Q_SLOT void startTestCrawler();
 
 	void setCondition(std::function<void()> cond);

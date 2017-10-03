@@ -65,6 +65,13 @@ std::future<std::vector<WebCrawler::ParsedPagePtr>> ParsedPageReceiver::getParse
 	return m_waitConditions[storageType].second.get_future();
 }
 
+std::vector<WebCrawler::ParsedPagePtr> ParsedPageReceiver::storageItems(WebCrawler::StorageType storage) const
+{
+	auto it = m_parsedPages.find(storage);
+
+	return it != m_parsedPages.end() ? it->second : std::vector<WebCrawler::ParsedPagePtr>();
+}
+
 TestsCrawler::TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOptions& options)
 	: WebCrawler::Crawler(threadCount, (m_sequensedCollectionThread = new QThread()))
 	, m_testCrawlerOptions(options)
@@ -95,6 +102,11 @@ std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(W
 	}
 
 	return future.get();
+}
+
+std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::storageItems(WebCrawler::StorageType storage) const
+{
+	return m_receiver->storageItems(storage);
 }
 
 void TestsCrawler::startTestCrawler()
