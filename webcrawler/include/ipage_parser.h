@@ -10,6 +10,7 @@ class IPageParser
 {
 public:
 	virtual void parse(GumboOutput* output, ParsedPagePtr& page) = 0;
+	virtual void init() {}
 };
 
 }

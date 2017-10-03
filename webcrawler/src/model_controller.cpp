@@ -9,7 +9,9 @@ using WebCrawler::ParsedPagePtr;
 
 ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr newPage)
 {
-	if (!existingPage)
+	WebCrawler::ParsedPage* existingPageRawPtr = existingPage.get();
+	WebCrawler::ParsedPage* newPageRawPtr = newPage.get();
+	if (!existingPage || existingPageRawPtr == newPageRawPtr)
 	{
 		return newPage;
 	}
@@ -343,9 +345,6 @@ void ModelController::processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept
 
 void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept
 {
-	ParsedPagePtr pendingResource = m_data->parsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
-	parsedPagePtr = mergeTwoPages(pendingResource, parsedPagePtr);
-
 	const int sizeKB = parsedPagePtr->pageSizeKilobytes;
 	if (sizeKB > m_crawlerOptions.maxImageSizeKb)
 	{

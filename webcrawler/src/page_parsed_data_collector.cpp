@@ -192,27 +192,27 @@ PageParsedDataCollector::createParser(ParserType parserType) const
 	{
 		case HtmlResourcesParserType:
 		{
-			return std::make_shared<HtmlResourcesParser>();
+			return std::make_shared<HtmlResourcesParser>(&m_resourcesCache);
 		}
 		case JavaScriptResourcesParserType:
 		{
-			return std::make_shared<JsResourcesParser>();
+			return std::make_shared<JsResourcesParser>(&m_resourcesCache);
 		}
 		case CssResourcesParserType:
 		{
-			return std::make_shared<CssResourcesParser>();
+			return std::make_shared<CssResourcesParser>(&m_resourcesCache);
 		}
 		case ImagesResourcesParserType:
 		{
-			return std::make_shared<ImagesResourcesParser>();
+			return std::make_shared<ImagesResourcesParser>(&m_resourcesCache);
 		}
 		case VideoResourcesParserType:
 		{
-			return std::make_shared<VideoResourcesParser>();
+			return std::make_shared<VideoResourcesParser>(&m_resourcesCache);
 		}
 		case FlashResourcesParserType:
 		{
-			return std::make_shared<FlashResourcesParser>();
+			return std::make_shared<FlashResourcesParser>(&m_resourcesCache);
 		}
 	}
 
