@@ -12,9 +12,6 @@ TitledWidget::TitledWidget(QWidget* parent)
 {
 	m_titleFrame->setObjectName("TitleFrame");
 
-	m_titleLayout->setSpacing(0); 
-	m_titleLayout->setSpacing(0);
-
 	m_layout->setSpacing(0);
 	m_layout->setMargin(0);
 	m_layout->addWidget(m_titleFrame);

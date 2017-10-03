@@ -156,16 +156,16 @@ void TableView::paintEvent(QPaintEvent* event)
 	for (int i = 0; i < pseudoRowCount; ++i)
 	{
 		const int offsetByY = m_rowHeight * i + baseLineYOffset;
-
+		
 		const int thisRowLogicalIndex = rowAt(offsetByY);
-		const int nextRowLogicalIndex = rowAt(offsetByY + m_rowHeight);
-
+		const int belowRowLogicalIndex = rowAt(offsetByY - m_rowHeight);
+		
 		const bool isThisOrNextRowSelected = std::find_if(
 			std::begin(uniqueSelectedRows), 
 			std::end(uniqueSelectedRows), 
-			[&](int selectedRow) { return selectedRow == thisRowLogicalIndex || selectedRow == nextRowLogicalIndex; }) != 
+			[&](int selectedRow) {return selectedRow == thisRowLogicalIndex || selectedRow == belowRowLogicalIndex; }) !=
 			std::end(uniqueSelectedRows);
-
+		
 		if (isThisOrNextRowSelected)
 		{
 			painter.save();
