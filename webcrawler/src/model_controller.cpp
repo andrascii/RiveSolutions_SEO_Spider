@@ -53,7 +53,7 @@ void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
 void ModelController::addParsedPage(ParsedPagePtr parsedPagePtr) noexcept
 {
 	ASSERT(parsedPagePtr->resourceType >= ResourceType::ResourceHtml &&
-		parsedPagePtr->resourceType <= ResourceType::ResourceOther)
+		parsedPagePtr->resourceType <= ResourceType::ResourceOther);
 
 	fixParsedPageResourceType(parsedPagePtr);
 	processParsedPageHtmlResources(parsedPagePtr);
@@ -79,6 +79,12 @@ void ModelController::addParsedPage(ParsedPagePtr parsedPagePtr) noexcept
 	}
 
 	m_data->removeParsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
+
+	if (!m_linksToPageChanges.changes.empty())
+	{
+		m_data->parsedPageLinksToThisResourceChanged(m_linksToPageChanges);
+		m_linksToPageChanges.changes.clear();
+	}
 }
 
 const UnorderedDataCollection* ModelController::data() const noexcept
@@ -434,6 +440,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
 			existingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+			m_linksToPageChanges.changes.push_back({ existingResource, existingResource->linksToThisPage.size() - 1 });
 			parsedPagePtr->linksOnThisPage.push_back({ existingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 
 		}
@@ -442,6 +449,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.thisResourceLink.url;
 			pendingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+			m_linksToPageChanges.changes.push_back({ pendingResource, pendingResource->linksToThisPage.size() - 1 }); // do not do it for pending resource?
 			parsedPagePtr->linksOnThisPage.push_back({ pendingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
@@ -533,6 +541,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 
 		parsedPagePtr->linksOnThisPage.push_back({ newOrExistingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 		newOrExistingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+		m_linksToPageChanges.changes.push_back({ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
 		newOrExistingResource->resourceType = resource.resourceType;
 
 		// special case: parse image resource again because it can have now empty or too short/long alt text

@@ -2,6 +2,7 @@
 
 #include "parsed_page.h"
 #include "crawler_options.h"
+#include "sequenced_data_collection_types.h"
 
 namespace WebCrawler
 {
@@ -40,6 +41,8 @@ private:
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptions m_crawlerOptions;
+
+	LinksToThisResourceChanges m_linksToPageChanges;
 };
 
 }
