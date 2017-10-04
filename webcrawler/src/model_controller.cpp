@@ -61,11 +61,11 @@ void ModelController::addParsedPage(ParsedPagePtr parsedPagePtr) noexcept
 	parsedPagePtr->allResourcesOnPage.clear();
 
 	processParsedPageStatusCode(parsedPagePtr);
+	processParsedPageUrl(parsedPagePtr);
 
 	if (parsedPagePtr->resourceType == ResourceType::ResourceHtml)
 	{
 		// page
-		processParsedPageUrl(parsedPagePtr);
 		processParsedPageTitle(parsedPagePtr);
 		processParsedPageMetaDescription(parsedPagePtr);
 		processParsedPageMetaKeywords(parsedPagePtr);

@@ -60,4 +60,19 @@ TEST(ImageTests, Image404)
 	});
 }
 
+TEST(ImageTests, TwoPagesWithTheSameImage)
+{
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/two-pages-with-same-image-1.html")));
+	env.runTest([cl = env.crawler()]()
+	{
+		auto pages = cl->waitForParsedPageReceived(WebCrawler::CrawledUrlStorageType, 3, 10);
+		EXPECT_EQ(3, pages.size());
+
+		auto images = cl->waitForParsedPageReceived(WebCrawler::ImageResourcesStorageType, 1, 10);
+
+		auto changes = cl->waitForLinksToThisResourceChangesReceived(images[0], 2, 10);
+		EXPECT_EQ(2, changes.size());
+	});
+}
+
 }

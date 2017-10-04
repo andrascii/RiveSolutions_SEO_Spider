@@ -19,9 +19,12 @@ ParsedPageReceiver::ParsedPageReceiver(WebCrawler::SequencedDataCollection* sequ
 {
 	m_receiverThread = new QThread();
 	moveToThread(m_receiverThread);
+	
 	QObject::connect(sequencedDataCollection, &WebCrawler::SequencedDataCollection::parsedPageAdded,
 		this, &ParsedPageReceiver::onParsedPageAdded, Qt::QueuedConnection);
 
+	QObject::connect(sequencedDataCollection, &WebCrawler::SequencedDataCollection::parsedPageLinksToThisResourceChanged,
+		this, &ParsedPageReceiver::onParsedPageLinksToThisResourceChanged, Qt::QueuedConnection);
 
 	m_receiverThread->start();
 }
@@ -43,6 +46,16 @@ void ParsedPageReceiver::onParsedPageAdded(int row, int storageType)
 	checkWaitCondition(storageType);
 }
 
+void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(WebCrawler::LinksToThisResourceChanges changes)
+{
+	for (const WebCrawler::LinksToThisResourceChanges::Change& change : changes.changes)
+	{
+		m_linksToThisResourceChanges[change.page].push_back(changes);
+	}
+	
+	checkLinksToThisResourceConditions(WebCrawler::ParsedPagePtr());
+}
+
 void ParsedPageReceiver::checkWaitCondition(int storageType)
 {
 	for (auto it = m_waitConditions.begin(); it != m_waitConditions.end(); ++it)
@@ -52,6 +65,21 @@ void ParsedPageReceiver::checkWaitCondition(int storageType)
 			if (static_cast<int>(m_parsedPages[storageType].size()) >= it->second.first)
 			{
 				it->second.second.set_value(m_parsedPages[storageType]);
+			}
+			break;
+		}
+	}
+}
+
+void ParsedPageReceiver::checkLinksToThisResourceConditions(WebCrawler::ParsedPagePtr page)
+{
+	for (auto it = m_linksToThisResourceConditions.begin(); it != m_linksToThisResourceConditions.end(); ++it)
+	{
+		if (!page || it->first == page)
+		{
+			if (static_cast<int>(m_linksToThisResourceChanges[page].size()) >= it->second.first)
+			{
+				it->second.second.set_value(m_linksToThisResourceChanges[page]);
 			}
 			break;
 		}
@@ -70,6 +98,14 @@ std::vector<WebCrawler::ParsedPagePtr> ParsedPageReceiver::storageItems(WebCrawl
 	auto it = m_parsedPages.find(storage);
 
 	return it != m_parsedPages.end() ? it->second : std::vector<WebCrawler::ParsedPagePtr>();
+}
+
+std::future<std::vector<WebCrawler::LinksToThisResourceChanges>> ParsedPageReceiver::getLinksToThisResourceChanges(WebCrawler::ParsedPagePtr page, int count)
+{
+	m_linksToThisResourceConditions[page] = std::make_pair(count, std::promise<std::vector<WebCrawler::LinksToThisResourceChanges>>());
+	checkLinksToThisResourceConditions(page);
+	return m_linksToThisResourceConditions[page].second.get_future();
+
 }
 
 TestsCrawler::TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOptions& options)
@@ -107,6 +143,20 @@ std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(W
 std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::storageItems(WebCrawler::StorageType storage) const
 {
 	return m_receiver->storageItems(storage);
+}
+
+std::vector<WebCrawler::LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResourceChangesReceived(WebCrawler::ParsedPagePtr page, int count, int seconds) const
+{
+	ASSERT(m_crawlerThread != QThread::currentThread());
+	ASSERT(m_crawlerThread->isRunning());
+	std::future<std::vector<WebCrawler::LinksToThisResourceChanges>> future = m_receiver->getLinksToThisResourceChanges(page, count);
+
+	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
+	{
+		throw TimeOutException("Timeout");
+	}
+
+	return future.get();
 }
 
 void TestsCrawler::startTestCrawler()
