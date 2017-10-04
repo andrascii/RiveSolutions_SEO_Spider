@@ -315,7 +315,17 @@ QVariant ParsedPageInfo::acceptImageSizeKb() const
 
 QVariant ParsedPageInfo::acceptAltText() const
 {
-	return m_pageRawPtr->altText;
+	// !! wrong realization
+	if (!m_pageRawPtr->tooLongAltIndices.empty())
+	{
+		const size_t index = *m_pageRawPtr->tooLongAltIndices.begin();
+		return m_pageRawPtr->linksToThisPage[index].altOrTitle;
+	}
+
+	// or iterate through all resources and find first Image resource
+	// also should be dependent on StorageType (i.e. should return first too long alt text for TooLongAltImageStorageType)
+
+	return QString();
 }
 
 QVariant ParsedPageInfo::acceptDofollowNofollow() const
@@ -337,7 +347,7 @@ QVariant ParsedPageInfo::acceptDofollowNofollow() const
 
 QVariant ParsedPageInfo::acceptAltTextLength() const
 {
-	return m_pageRawPtr->altText.size();
+	return acceptAltText().toString().size();
 }
 
 void ParsedPageInfo::checkColumnType(Column column)

@@ -30,7 +30,7 @@ private:
 	void processParsedPageMetaKeywords(ParsedPagePtr parsedPagePtr) noexcept;
 	void processParsedPageH1(ParsedPagePtr parsedPagePtr) noexcept;
 	void processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageImage(ParsedPagePtr parsedPagePtr, bool checkOnlyLastResource = false) noexcept;
 	void processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept;
 
 	void processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr) noexcept;

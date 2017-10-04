@@ -74,11 +74,13 @@ struct ParsedPage
 	QString firstH2;
 	QString secondH2;
 	QString canonicalLinkElement;
-	QString altText;
 	int statusCode;
 	int pageSizeKilobytes;
 	int wordCount;
 	size_t pageHash;
+
+	std::vector<size_t> missignAltIndices;
+	std::vector<size_t> tooLongAltIndices;
 
 	LinkParameter linkParameter;
 

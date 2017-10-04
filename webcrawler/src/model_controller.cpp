@@ -22,8 +22,6 @@ ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr newPage)
 		std::end(existingPage->linksToThisPage)
 	);
 
-	newPage->altText = existingPage->altText;
-
 	*existingPage = *newPage;
 
 	// we should use the original PageRawPtr 
@@ -343,7 +341,7 @@ void ModelController::processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept
 	}
 }
 
-void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept
+void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr, bool checkOnlyLastResource) noexcept
 {
 	const int sizeKB = parsedPagePtr->pageSizeKilobytes;
 	if (sizeKB > m_crawlerOptions.maxImageSizeKb)
@@ -351,8 +349,17 @@ void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexce
 		m_data->addParsedPage(parsedPagePtr, StorageType::Over100kbImageStorageType);
 	}
 
+	size_t index = 0;
+	const size_t lastIndex = parsedPagePtr->linksToThisPage.size() - 1;
 	for (const ResourceLink& linkToThisImage : parsedPagePtr->linksToThisPage)
 	{
+		if (checkOnlyLastResource && index != lastIndex)
+		{
+			// TODO: optimize
+			index++;
+			continue;
+		}
+
 		if (linkToThisImage.resourceSource == ResourceSource::SourceTagImg)
 		{
 			const int altLength = linkToThisImage.altOrTitle.size();
@@ -360,15 +367,18 @@ void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexce
 			if (altLength > m_crawlerOptions.maxImageAltTextChars)
 			{
 				m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongAltTextImageStorageType);
+				parsedPagePtr->tooLongAltIndices.push_back(index);
 			}
 
 			if (altLength == 0)
 			{
 				m_data->addParsedPage(parsedPagePtr, StorageType::MissingAltTextImageStorageType);
+				parsedPagePtr->missignAltIndices.push_back(index);
 			}
 		}
+
+		index++;
 	}
-	
 }
 
 void ModelController::processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept
@@ -526,12 +536,9 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 		newOrExistingResource->resourceType = resource.resourceType;
 
 		// special case: parse image resource again because it can have now empty or too short/long alt text
-		// !!! Wrong realization: altText will have the last value from the current resource link
-		// TODO: fix
-		newOrExistingResource->altText = resource.altOrTitle;
 		if (existingImageResource)
 		{
-			processParsedPageImage(newOrExistingResource);
+			processParsedPageImage(newOrExistingResource, true);
 		}
 	}
 }

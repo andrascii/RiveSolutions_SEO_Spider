@@ -27,6 +27,8 @@ TEST(ImageTests, NoAlt)
 		auto pages = cl->waitForParsedPageReceived(WebCrawler::MissingAltTextImageStorageType, 1, 10);
 		EXPECT_EQ(1, pages.size());
 		EXPECT_EQ(1, pages[0]->linksToThisPage.size());
+		EXPECT_EQ(1, pages[0]->missignAltIndices.size());
+		EXPECT_EQ(0, pages[0]->missignAltIndices[0]);
 		EXPECT_EQ(QString(""), pages[0]->linksToThisPage[0].altOrTitle);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
 		EXPECT_EQ(200, pages[0]->statusCode);
@@ -45,6 +47,8 @@ TEST(ImageTests, Image404)
 		auto pages = cl->waitForParsedPageReceived(WebCrawler::MissingAltTextImageStorageType, 1, 10);
 		EXPECT_EQ(1, pages.size());
 		EXPECT_EQ(1, pages[0]->linksToThisPage.size());
+		EXPECT_EQ(1, pages[0]->missignAltIndices.size());
+		EXPECT_EQ(0, pages[0]->missignAltIndices[0]);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
 		EXPECT_EQ(404, pages[0]->statusCode);
 
