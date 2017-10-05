@@ -40,11 +40,8 @@ QString ParsedPageInfo::itemTypeDescription(Column column)
 		{ ParsedPageInfo::Column::PageSizeKbColumn, QObject::tr("Page Size Kilobytes") },
 		{ ParsedPageInfo::Column::WordCountColumn, QObject::tr("Word Count") },
 		{ ParsedPageInfo::Column::PageHashColumn, QObject::tr("Page Hash") },
-		{ ParsedPageInfo::Column::AltTextColumn, QObject::tr("Alt Text") },
-		{ ParsedPageInfo::Column::AltTextLengthColumn, QObject::tr("Alt Text Length") },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, QObject::tr("Image Size KB") },
 		{ ParsedPageInfo::Column::NoFollowDoFollowLinkColumn, QObject::tr("Nofollow / Dofollow") },
-		{ ParsedPageInfo::Column::AltTextLinkColumn, QObject::tr("Alt-Text") }
 	};
 
 	checkColumnType(column);
@@ -96,8 +93,6 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::SecondH1LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::FirstH2LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::SecondH2LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::AltTextColumn, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::AltTextLengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::NoFollowDoFollowLinkColumn, QuickieWebBotHelpers::pointsToPixels(150) }
 	};
@@ -373,14 +368,6 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column) c
 		{
 			return &ParsedPageInfo::acceptImageSizeKb;
 		}
-		case Column::AltTextColumn: 
-		{
-			return &ParsedPageInfo::acceptAltText;
-		}
-		case Column::AltTextLengthColumn: 
-		{
-			return &ParsedPageInfo::acceptAltTextLength;
-		}
 		case Column::NoFollowDoFollowLinkColumn: 
 		{
 			return &ParsedPageInfo::acceptDofollowNofollow;
@@ -526,19 +513,9 @@ QVariant ParsedPageInfo::acceptImageSizeKb() const
 	return m_parsedPage->pageSizeKilobytes;
 }
 
-QVariant ParsedPageInfo::acceptAltText() const
-{
-	return m_parsedPage->altText;
-}
-
 QVariant ParsedPageInfo::acceptDofollowNofollow() const
 {
 	return linkParameterDescription(m_parsedPage->linkParameter);
-}
-
-QVariant ParsedPageInfo::acceptAltTextLength() const
-{
-	return m_parsedPage->altText.size();
 }
 
 void ParsedPageInfo::checkColumnType(Column column)

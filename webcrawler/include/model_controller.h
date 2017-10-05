@@ -2,6 +2,7 @@
 
 #include "parsed_page.h"
 #include "crawler_options.h"
+#include "sequenced_data_collection_types.h"
 
 namespace WebCrawler
 {
@@ -30,7 +31,7 @@ private:
 	void processParsedPageMetaKeywords(ParsedPagePtr parsedPagePtr) noexcept;
 	void processParsedPageH1(ParsedPagePtr parsedPagePtr) noexcept;
 	void processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageImage(ParsedPagePtr parsedPagePtr, bool checkOnlyLastResource = false) noexcept;
 	void processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept;
 
 	void processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr) noexcept;
@@ -40,6 +41,8 @@ private:
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptions m_crawlerOptions;
+
+	LinksToThisResourceChanges m_linksToPageChanges;
 };
 
 }

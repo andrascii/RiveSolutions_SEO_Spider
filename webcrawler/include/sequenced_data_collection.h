@@ -23,6 +23,7 @@ public:
 	SequencedStorageTypePtr& storage(StorageType type) noexcept;
 
 	Q_SIGNAL void parsedPageAdded(int row, int storageType);
+	Q_SIGNAL void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 
 private:
 	void addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept;

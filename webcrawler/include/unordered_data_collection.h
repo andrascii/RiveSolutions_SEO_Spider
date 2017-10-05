@@ -4,11 +4,13 @@
 #include "parsed_page_hasher_proxy.h"
 #include "parsed_page_comparator.h"
 #include "storage_type.h"
+#include "sequenced_data_collection_types.h"
 
 namespace WebCrawler
 {
+	struct LinksToThisResourceChanges;
 
-class SequencedDataCollection;
+	class SequencedDataCollection;
 
 class UnorderedDataCollection : public QObject
 {
@@ -30,6 +32,7 @@ public:
 	SequencedDataCollection* sequencedDataCollection() const noexcept;
 
 	Q_SIGNAL void parsedPageAdded(ParsedPagePtr parsedPagePtr, int type);
+	Q_SIGNAL void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 
 protected:
 	UnorderedStorageTypePtr& storage(StorageType type) noexcept;

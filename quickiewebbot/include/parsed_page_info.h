@@ -29,7 +29,6 @@ public:
 		MetaKeywordsColumn,
 		RedirectedUrlColumn,
 		ServerResponseColumn,
-		AltTextColumn,
 
 		FirstH1Column,
 		SecondH1Column,
@@ -45,7 +44,6 @@ public:
 		ImageSizeKbColumn,
 
 		NoFollowDoFollowLinkColumn,
-		AltTextLinkColumn,
 
 		BeginLengthEnumeratorsColumn,
 		// !!!!!!!!!!!!!!!!!!! add length enumerators below this!!!!!!!!!!!!!!!!!!!
@@ -58,7 +56,6 @@ public:
 		SecondH1LengthColumn,
 		FirstH2LengthColumn,
 		SecondH2LengthColumn,
-		AltTextLengthColumn,
 
 		// !!!!!!!!!!!!!!!!!!! add new length enumerators above this!!!!!!!!!!!!!!!!!!!
 		EndLengthEnumeratorsColumn,
@@ -120,12 +117,10 @@ private:
 	QVariant acceptSecondH1Length() const;
 	QVariant acceptFirstH2Length() const;
 	QVariant acceptSecondH2Length() const;
-	QVariant acceptAltTextLength() const;
 	QVariant acceptPageSizeKb() const;
 	QVariant acceptWordCount() const;
 	QVariant acceptPageHash() const;
 	QVariant acceptImageSizeKb() const;
-	QVariant acceptAltText() const;
 	QVariant acceptDofollowNofollow() const;
 
 	static void checkColumnType(ParsedPageInfo::Column column);

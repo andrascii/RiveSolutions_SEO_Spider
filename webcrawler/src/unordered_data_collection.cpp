@@ -22,6 +22,9 @@ UnorderedDataCollection::UnorderedDataCollection(QObject* parent, QThread* seque
 
 	VERIFY(connect(this, &UnorderedDataCollection::parsedPageAdded, m_sequencedDataCollection, 
 		&SequencedDataCollection::addParsedPage, Qt::QueuedConnection));
+
+	VERIFY(connect(this, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, m_sequencedDataCollection,
+		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
 }
 
 UnorderedDataCollection::~UnorderedDataCollection()

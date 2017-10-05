@@ -9,7 +9,9 @@ using WebCrawler::ParsedPagePtr;
 
 ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr newPage)
 {
-	if (!existingPage)
+	WebCrawler::ParsedPage* existingPageRawPtr = existingPage.get();
+	WebCrawler::ParsedPage* newPageRawPtr = newPage.get();
+	if (!existingPage || existingPageRawPtr == newPageRawPtr)
 	{
 		return newPage;
 	}
@@ -19,8 +21,6 @@ ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr newPage)
 		std::begin(existingPage->linksToThisPage),
 		std::end(existingPage->linksToThisPage)
 	);
-
-	newPage->altText = existingPage->altText;
 
 	*existingPage = *newPage;
 
@@ -53,7 +53,7 @@ void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
 void ModelController::addParsedPage(ParsedPagePtr parsedPagePtr) noexcept
 {
 	ASSERT(parsedPagePtr->resourceType >= ResourceType::ResourceHtml &&
-		parsedPagePtr->resourceType <= ResourceType::ResourceOther)
+		parsedPagePtr->resourceType <= ResourceType::ResourceOther);
 
 	fixParsedPageResourceType(parsedPagePtr);
 	processParsedPageHtmlResources(parsedPagePtr);
@@ -61,11 +61,11 @@ void ModelController::addParsedPage(ParsedPagePtr parsedPagePtr) noexcept
 	parsedPagePtr->allResourcesOnPage.clear();
 
 	processParsedPageStatusCode(parsedPagePtr);
+	processParsedPageUrl(parsedPagePtr);
 
 	if (parsedPagePtr->resourceType == ResourceType::ResourceHtml)
 	{
 		// page
-		processParsedPageUrl(parsedPagePtr);
 		processParsedPageTitle(parsedPagePtr);
 		processParsedPageMetaDescription(parsedPagePtr);
 		processParsedPageMetaKeywords(parsedPagePtr);
@@ -79,6 +79,12 @@ void ModelController::addParsedPage(ParsedPagePtr parsedPagePtr) noexcept
 	}
 
 	m_data->removeParsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
+
+	if (!m_linksToPageChanges.changes.empty())
+	{
+		m_data->parsedPageLinksToThisResourceChanged(m_linksToPageChanges);
+		m_linksToPageChanges.changes.clear();
+	}
 }
 
 const UnorderedDataCollection* ModelController::data() const noexcept
@@ -341,19 +347,25 @@ void ModelController::processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept
 	}
 }
 
-void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexcept
+void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr, bool checkOnlyLastResource) noexcept
 {
-	ParsedPagePtr pendingResource = m_data->parsedPage(parsedPagePtr, StorageType::PendingResourcesStorageType);
-	parsedPagePtr = mergeTwoPages(pendingResource, parsedPagePtr);
-
 	const int sizeKB = parsedPagePtr->pageSizeKilobytes;
 	if (sizeKB > m_crawlerOptions.maxImageSizeKb)
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::Over100kbImageStorageType);
 	}
 
+	size_t index = 0;
+	const size_t lastIndex = parsedPagePtr->linksToThisPage.size() - 1;
 	for (const ResourceLink& linkToThisImage : parsedPagePtr->linksToThisPage)
 	{
+		if (checkOnlyLastResource && index != lastIndex)
+		{
+			// TODO: optimize
+			index++;
+			continue;
+		}
+
 		if (linkToThisImage.resourceSource == ResourceSource::SourceTagImg)
 		{
 			const int altLength = linkToThisImage.altOrTitle.size();
@@ -361,15 +373,18 @@ void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr) noexce
 			if (altLength > m_crawlerOptions.maxImageAltTextChars)
 			{
 				m_data->addParsedPage(parsedPagePtr, StorageType::VeryLongAltTextImageStorageType);
+				parsedPagePtr->tooLongAltIndices.push_back(index);
 			}
 
 			if (altLength == 0)
 			{
 				m_data->addParsedPage(parsedPagePtr, StorageType::MissingAltTextImageStorageType);
+				parsedPagePtr->missignAltIndices.push_back(index);
 			}
 		}
+
+		index++;
 	}
-	
 }
 
 void ModelController::processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept
@@ -425,6 +440,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 		{
 			//assert(!m_data->isPageRawExists(resourcePage, DataCollection::HtmlPendingResourcesStorageType));
 			existingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+			m_linksToPageChanges.changes.push_back({ existingResource, existingResource->linksToThisPage.size() - 1 });
 			parsedPagePtr->linksOnThisPage.push_back({ existingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 
 		}
@@ -433,6 +449,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.thisResourceLink.url;
 			pendingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+			m_linksToPageChanges.changes.push_back({ pendingResource, pendingResource->linksToThisPage.size() - 1 }); // do not do it for pending resource?
 			parsedPagePtr->linksOnThisPage.push_back({ pendingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
@@ -524,15 +541,13 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 
 		parsedPagePtr->linksOnThisPage.push_back({ newOrExistingResource, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
 		newOrExistingResource->linksToThisPage.push_back({ parsedPagePtr, resource.thisResourceLink.urlParameter, resource.resourceSource, resource.altOrTitle });
+		m_linksToPageChanges.changes.push_back({ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
 		newOrExistingResource->resourceType = resource.resourceType;
 
 		// special case: parse image resource again because it can have now empty or too short/long alt text
-		// !!! Wrong realization: altText will have the last value from the current resource link
-		// TODO: fix
-		newOrExistingResource->altText = resource.altOrTitle;
 		if (existingImageResource)
 		{
-			processParsedPageImage(newOrExistingResource);
+			processParsedPageImage(newOrExistingResource, true);
 		}
 	}
 }

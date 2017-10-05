@@ -1,9 +1,16 @@
 #include "flash_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
+#include "resources_cache.h"
 
 namespace WebCrawler
 {
+
+FlashResourcesParser::FlashResourcesParser(ResourcesCache* resourcesCache)
+	: m_resourcesCache(resourcesCache)
+{
+
+}
 
 void FlashResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 {
@@ -15,6 +22,11 @@ void FlashResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	parseFlashResourcesV1(output, page);
 	parseFlashResourcesV2(output, page);
 	parseFlashResourcesV3(output, page);
+}
+
+void FlashResourcesParser::init()
+{
+	m_resourcesCache->clear();
 }
 
 void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPagePtr& page) noexcept
@@ -42,7 +54,7 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (isResourceExists(page, url))
+		if (isResourceExists(url))
 		{
 			continue;
 		}
@@ -83,7 +95,7 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (isResourceExists(page, url))
+		if (isResourceExists(url))
 		{
 			continue;
 		}
@@ -138,7 +150,7 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (isResourceExists(page, url))
+		if (isResourceExists(url))
 		{
 			continue;
 		}
@@ -153,14 +165,9 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 	}
 }
 
-bool FlashResourcesParser::isResourceExists(const ParsedPagePtr& page, const QUrl& url) const noexcept
+bool FlashResourcesParser::isResourceExists(const QUrl& url) const noexcept
 {
-	auto pred = [&url](const RawResourceOnPage& resource) -> bool
-	{
-		return resource.thisResourceLink.url == url;
-	};
-
-	return std::any_of(page->allResourcesOnPage.begin(), page->allResourcesOnPage.end(), pred);
+	return m_resourcesCache->isResourceExists(url);
 }
 
 }

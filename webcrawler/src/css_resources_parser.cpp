@@ -1,9 +1,16 @@
 #include "css_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
+#include "resources_cache.h"
 
 namespace WebCrawler
 {
+
+CssResourcesParser::CssResourcesParser(ResourcesCache* resourcesCache)
+	: m_resourcesCache(resourcesCache)
+{
+
+}
 
 void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 {
@@ -27,22 +34,12 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		return QUrl(href->value);
 	};
 
-	auto checkResourceExistence = [&page](const QUrl& url) -> bool
-	{
-		auto pred = [&url](const RawResourceOnPage& resource) -> bool
-		{
-			return resource.thisResourceLink.url == url;
-		};
-
-		return std::any_of(page->allResourcesOnPage.begin(), page->allResourcesOnPage.end(), pred);
-	};
-
 	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (checkResourceExistence(url))
+		if (m_resourcesCache->isResourceExists(url))
 		{
 			continue;
 		}
@@ -55,6 +52,11 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 
 		page->allResourcesOnPage.push_back(cssResource);
 	}
+}
+
+void CssResourcesParser::init()
+{
+	m_resourcesCache->clear();
 }
 
 }

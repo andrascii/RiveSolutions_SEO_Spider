@@ -219,8 +219,6 @@ void StorageAdaptorFactory::setupAvailableColumns(IParsedPageStorageAdaptor* sto
 		{
 			storageAdaptor->setAvailableColumns(QList<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
-				<< ParsedPageInfo::Column::AltTextColumn
-				<< ParsedPageInfo::Column::AltTextLengthColumn
 				<< ParsedPageInfo::Column::ImageSizeKbColumn
 			);
 
