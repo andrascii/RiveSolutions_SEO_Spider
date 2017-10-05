@@ -24,13 +24,13 @@ public:
 
 	PageDataWidget(QWidget* parent = nullptr);
 
-	void setPageRawInfo(const PageRawInfoPtr& pageRawInfoPtr);
+	void setPageRawInfo(const ParsedPageInfoPtr& pageRawInfoPtr);
 	void setPageDataType(PageDataType pageDataType);
 
 private:
-	void setPageServerResponse(const PageRawInfoPtr& page);
+	void setPageServerResponse(const ParsedPageInfoPtr& page);
 	QString tabDescription(PageDataType pageDataType) const;
-	PageLinkType mapType(PageDataType pageDataType) const noexcept;
+	PageLinkContext mapType(PageDataType pageDataType) const noexcept;
 
 private:
 	QTabWidget* m_tabWidget;

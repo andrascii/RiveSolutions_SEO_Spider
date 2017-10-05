@@ -7,7 +7,7 @@
 namespace QuickieWebBot
 {
 
-class ParsedPageInfoStorageAdaptor : public QObject, public IStorageAdaptor
+class ParsedPageInfoStorageAdaptor : public QObject, public IParsedPageStorageAdaptor
 {
 	Q_OBJECT
 
@@ -20,18 +20,22 @@ public:
 	virtual QList<ParsedPageInfo::Column> availableColumns() const noexcept override;
 	virtual QString columnDescription(int columnIndex) const noexcept override;
 
-	virtual int itemCount() const noexcept override;
-	virtual QVariant item(const QModelIndex& index) const noexcept override;
-	virtual ParsedPageInfo::Column itemType(const QModelIndex& index) const noexcept override;
+	virtual int columnWidth(int columnNumber) const noexcept override;
 
-	virtual PageRawInfoPtr pageRawInfoPtr(const QModelIndex& index) const noexcept override;
+	virtual int columnCount() const noexcept override;
+	virtual int itemCount() const noexcept override;
+
+	virtual QVariant item(const QModelIndex& index) const noexcept override;
+	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
+
+	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
 
 	virtual QObject* qobject() noexcept override;
 
-	Q_SIGNAL virtual void pageRawInfoAdded(int rowIndex) const override;
+	Q_SIGNAL virtual void parsedPageInfoAdded(int rowIndex) const override;
 
 #ifdef QT_DEBUG
-	WebCrawler::ParsedPage* pageRaw(const QModelIndex& index) const noexcept;
+	WebCrawler::ParsedPage* parsedPage(const QModelIndex& index) const noexcept;
 #endif
 
 private:

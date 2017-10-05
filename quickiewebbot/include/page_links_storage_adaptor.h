@@ -6,46 +6,36 @@
 namespace QuickieWebBot
 {
 
-enum class PageLinkType
-{
-	LinksOnThisPageType,
-	LinksToThisPageType,
-	ImagesOnThisPageType
-};
-
-class PageLinksStorageAdaptor : public QObject, public IStorageAdaptor
+class PageLinksStorageAdaptor : public QObject, public IPageLinksStorageAdaptor
 {
 	Q_OBJECT
 
 public:
-	PageLinksStorageAdaptor(PageRawInfoPtr associatedPageRaw, PageLinkType pageLinkType);
+	PageLinksStorageAdaptor(ParsedPageInfoPtr associatedPageRaw, PageLinkContext context);
 
-	virtual void setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept override;
-	virtual QList<ParsedPageInfo::Column> availableColumns() const noexcept override;
+	virtual void setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept override;
+	virtual QList<ParsedPageInfo::PageLinksColumn> availableColumns() const noexcept override;
 	virtual QString columnDescription(int columnIndex) const noexcept override;
 
-	virtual int itemCount() const noexcept override;
-	virtual QVariant item(const QModelIndex& index) const noexcept override;
-	virtual ParsedPageInfo::Column itemType(const QModelIndex& index) const noexcept override;
+	virtual int columnWidth(int columnNumber) const noexcept override;
 
-	virtual PageRawInfoPtr pageRawInfoPtr(const QModelIndex& index) const noexcept override;
+	virtual int columnCount() const noexcept override;
+	virtual int itemCount() const noexcept override;
+
+	virtual QVariant item(const QModelIndex& index) const noexcept override;
+	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
+
+	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
 
 	virtual QObject* qobject() noexcept override;
 
-	Q_SIGNAL virtual void pageRawInfoAdded(int rowIndex) const override;
+	Q_SIGNAL virtual void parsedPageInfoAdded(int rowIndex) const override;
 
 private:
-	using PageRawInfoCountAcceptorMethodType = size_t(ParsedPageInfo::*)() const;
-	using PageRawInfoLinkAcceptorMethodType = WebCrawler::ParsedPageWeakPtr(ParsedPageInfo::*)(size_t) ;
+	ParsedPageInfoPtr m_parsedPage; 
+	PageLinkContext m_context;
 
-	PageRawInfoCountAcceptorMethodType countLinks() const noexcept;
-	PageRawInfoLinkAcceptorMethodType link() const noexcept;
-
-private:
-	PageRawInfoPtr m_associatedPageRawInfoPtr; 
-	PageLinkType m_pageLinkType;
-
-	QList<ParsedPageInfo::Column> m_availableColumns;
+	QList<ParsedPageInfo::PageLinksColumn> m_availableColumns;
 };
 
 }

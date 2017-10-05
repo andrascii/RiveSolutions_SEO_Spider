@@ -150,7 +150,6 @@ void MainFrame::stopCrawler()
 
 void MainFrame::clearCrawledData()
 {
-
 }
 
 }

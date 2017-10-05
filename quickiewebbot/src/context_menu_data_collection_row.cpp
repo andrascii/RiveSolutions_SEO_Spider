@@ -78,7 +78,7 @@ void ContextMenuDataCollectionRow::openUrlAction()
 		const PageModel* model = 
 			QuickieWebBotHelpers::safe_static_cast<const PageModel*>(index.model());
 
-		if (model->itemType(index) != ParsedPageInfo::UrlItemType)
+ 		if (model->itemType(index) != IStorageAdaptor::ItemType::UrlItemType)
 		{
 			continue;
 		}
@@ -111,7 +111,7 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl()
 		const PageModel* model = 
 			QuickieWebBotHelpers::safe_static_cast<const PageModel*>(index.model());
 
-		if (model->itemType(index) != ParsedPageInfo::UrlItemType)
+		if (model->itemType(index) != IStorageAdaptor::ItemType::UrlItemType)
 		{
 			continue;
 		}

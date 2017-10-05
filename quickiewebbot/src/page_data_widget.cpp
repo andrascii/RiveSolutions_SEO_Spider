@@ -18,7 +18,7 @@ PageDataWidget::PageDataWidget(QWidget* parent)
 	layout->addWidget(m_tabWidget);
 }
 
-void PageDataWidget::setPageRawInfo(const PageRawInfoPtr& page)
+void PageDataWidget::setPageRawInfo(const ParsedPageInfoPtr& page)
 {
 	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 
@@ -50,11 +50,11 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 	m_tabWidget->addTab(tableView, tabDescription(pageDataType));
 }
 
-void PageDataWidget::setPageServerResponse(const PageRawInfoPtr& page)
+void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page)
 {
 	m_httpResponseLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-	QString selectedPageServerResponse = page->itemValue(ParsedPageInfo::ServerResponseItemType).toString().trimmed();
+	QString selectedPageServerResponse = page->itemValue(ParsedPageInfo::Column::ServerResponseColumn).toString().trimmed();
 
 	if (selectedPageServerResponse.isEmpty())
 	{
@@ -108,26 +108,26 @@ QString PageDataWidget::tabDescription(PageDataType pageDataType) const
 	return QString();
 }
 
-PageLinkType PageDataWidget::mapType(PageDataType pageDataType) const noexcept
+PageLinkContext PageDataWidget::mapType(PageDataType pageDataType) const noexcept
 {
 	switch (pageDataType)
 	{
 		case LinksToThisPageType:
 		{
-			return PageLinkType::LinksToThisPageType;
+			return PageLinkContext::LinksToThisPage;
 		}
 		case LinksOnThisPageType:
 		{
-			return PageLinkType::LinksOnThisPageType;
+			return PageLinkContext::LinksOnThisPage;
 		}
 		case ImagesOnThisPageType:
 		{
-			return PageLinkType::ImagesOnThisPageType;
+			return PageLinkContext::ImagesOnThisPage;
 		}
 	}
 
 	ASSERT(!"Undefined type");
-	return PageLinkType();
+	return PageLinkContext();
 }
 
 }

@@ -84,7 +84,7 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 	if (const PageModel* storageModel = dynamic_cast<const PageModel*>(index.model()); storageModel)
 	{
 		const IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
-		m_pageDataWidget->setPageRawInfo(storageAdaptor->pageRawInfoPtr(index));
+		m_pageDataWidget->setPageRawInfo(storageAdaptor->parsedPageInfoPtr(index));
 	}
 }
 

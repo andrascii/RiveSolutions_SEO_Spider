@@ -13,7 +13,8 @@ ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(const WebCrawler::Seq
 
 	DEBUG_ASSERT(guiStorage);
 
-	QObject::connect(guiStorage, &WebCrawler::SequencedDataCollection::parsedPageAdded, this, &ParsedPageInfoStorageAdaptor::onStorageUpdated);
+	VERIFY(connect(guiStorage, &WebCrawler::SequencedDataCollection::parsedPageAdded, 
+		this, &ParsedPageInfoStorageAdaptor::onStorageUpdated));
 }
 
 void ParsedPageInfoStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept
@@ -33,6 +34,18 @@ QString ParsedPageInfoStorageAdaptor::columnDescription(int columnIndex) const n
 	return ParsedPageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
+int ParsedPageInfoStorageAdaptor::columnWidth(int columnNumber) const noexcept
+{
+	DEBUG_ASSERT(columnNumber < m_availableColumns.size());
+
+	return ParsedPageInfo::columnPrefferedSize(m_availableColumns[columnNumber]);
+}
+
+int ParsedPageInfoStorageAdaptor::columnCount() const noexcept
+{
+	return m_availableColumns.size();
+}
+
 int ParsedPageInfoStorageAdaptor::itemCount() const noexcept
 {
 	return m_associatedStorage->size();
@@ -48,15 +61,17 @@ QVariant ParsedPageInfoStorageAdaptor::item(const QModelIndex& index) const noex
 	return ParsedPageInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
 }
 
-ParsedPageInfo::Column ParsedPageInfoStorageAdaptor::itemType(const QModelIndex& index) const noexcept
+ParsedPageInfoStorageAdaptor::ItemType ParsedPageInfoStorageAdaptor::itemType(const QModelIndex& index) const noexcept
 {
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
-	return m_availableColumns[index.column()];
+	return m_availableColumns[index.column()] == ParsedPageInfo::Column::UrlColumn ?
+		ItemType::UrlItemType :
+		ItemType::PlainItemType;
 }
 
 
-PageRawInfoPtr ParsedPageInfoStorageAdaptor::pageRawInfoPtr(const QModelIndex& index) const noexcept
+ParsedPageInfoPtr ParsedPageInfoStorageAdaptor::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
 	WebCrawler::ParsedPagePtr ptrToPageRawData;
 
@@ -74,12 +89,12 @@ QObject* ParsedPageInfoStorageAdaptor::qobject() noexcept
 }
 
 #ifdef QT_DEBUG
-WebCrawler::ParsedPage* ParsedPageInfoStorageAdaptor::pageRaw(const QModelIndex& index) const noexcept
+WebCrawler::ParsedPage* ParsedPageInfoStorageAdaptor::parsedPage(const QModelIndex& index) const noexcept
 {
 	const WebCrawler::SequencedDataCollection::SequencedStorageType& storage = *m_associatedStorage;
 	return storage[index.row()].get();
 }
-#endif // DEBUG
+#endif
 
 
 void ParsedPageInfoStorageAdaptor::onStorageUpdated(int row, int type)
@@ -89,7 +104,7 @@ void ParsedPageInfoStorageAdaptor::onStorageUpdated(int row, int type)
 		return;
 	}
 
-	Q_EMIT pageRawInfoAdded(row);
+	Q_EMIT parsedPageInfoAdded(row);
 }
 
 }

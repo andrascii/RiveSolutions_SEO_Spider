@@ -28,12 +28,12 @@ public:
 	void setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept;
 	const IStorageAdaptor* storageAdaptor() const;
 	IStorageAdaptor* storageAdaptor();
-	ParsedPageInfo::Column itemType(const QModelIndex& index) const noexcept;
+	IStorageAdaptor::ItemType itemType(const QModelIndex& index) const noexcept;
 	
 	Q_SIGNAL virtual void internalDataChanged() override;
 
 private slots:
-	void onPageRawInfoAdded(int rowIndex);
+	void onParsedPageInfoAdded(int rowIndex);
 	void onPageInfoItemChanged(int row, int column);
 
 private:

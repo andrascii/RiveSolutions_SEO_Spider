@@ -5,78 +5,98 @@
 namespace QuickieWebBot
 {
 
+enum class PageLinkContext
+{
+	LinksOnThisPage,
+	LinksToThisPage,
+	ImagesOnThisPage
+};
+
 class ParsedPageInfo
 {
 public:
-	enum Column
+	enum class Column
 	{
-		BeginEnumPageInfoItemType,
+		BeginEnumPageInfoColumn,
 		// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
 
-		UrlItemType,
-		TitleItemType,
-		ContentTypeItemType,
-		MetaRefreshItemType,
-		MetaRobotsItemType,
-		MetaDescriptionItemType,
-		MetaKeywordsItemType,
-		RedirectedUrlItemType,
-		ServerResponseItemType,
-		AltTextItemType,
+		UrlColumn,
+		TitleColumn,
+		ContentTypeColumn,
+		MetaRefreshColumn,
+		MetaRobotsColumn,
+		MetaDescriptionColumn,
+		MetaKeywordsColumn,
+		RedirectedUrlColumn,
+		ServerResponseColumn,
+		AltTextColumn,
 
-		FirstH1ItemType,
-		SecondH1ItemType,
-		FirstH2ItemType,
-		SecondH2ItemType,
+		FirstH1Column,
+		SecondH1Column,
+		FirstH2Column,
+		SecondH2Column,
 
-		CanonicalLinkElementItemType,
-		StatusCodeItemType,
-		PageSizeKbItemType,
-		WordCountItemType,
-		PageHashItemType,
+		CanonicalLinkElementColumn,
+		StatusCodeColumn,
+		PageSizeKbColumn,
+		WordCountColumn,
+		PageHashColumn,
 
-		ImageSizeKbItemType,
+		ImageSizeKbColumn,
 
-		NoFollowDoFollowLinkItemType,
-		AltTextLinkItemType,
+		NoFollowDoFollowLinkColumn,
+		AltTextLinkColumn,
 
-		BeginLengthEnumeratorsItemType,
+		BeginLengthEnumeratorsColumn,
 		// !!!!!!!!!!!!!!!!!!! add length enumerators below this!!!!!!!!!!!!!!!!!!!
 
-		UrlLengthItemType,
-		TitleLengthItemType,
-		MetaDescriptionLengthItemType,
-		MetaKeywordsLengthItemType,
-		FirstH1LengthItemType,
-		SecondH1LengthItemType,
-		FirstH2LengthItemType,
-		SecondH2LengthItemType,
-		AltTextLengthItemType,
+		UrlLengthColumn,
+		TitleLengthColumn,
+		MetaDescriptionLengthColumn,
+		MetaKeywordsLengthColumn,
+		FirstH1LengthColumn,
+		SecondH1LengthColumn,
+		FirstH2LengthColumn,
+		SecondH2LengthColumn,
+		AltTextLengthColumn,
 
 		// !!!!!!!!!!!!!!!!!!! add new length enumerators above this!!!!!!!!!!!!!!!!!!!
-		EndLengthEnumeratorsItemType,
+		EndLengthEnumeratorsColumn,
 
 		// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
-		EndEnumPageInfoItemType
+		EndEnumPageInfoColumn
+	};
+
+	enum class PageLinksColumn
+	{
+		UrlColumn,
+		AltOrTitleColumn,
+		AltOrTitleLengthColumn,
+		LinkParameterColumn,
+		StatusCodeColumn
 	};
 
 	ParsedPageInfo(WebCrawler::ParsedPagePtr pageRawPtr);
 
 	static QString itemTypeDescription(Column column);
+	static QString itemTypeDescription(PageLinksColumn column);
 	static int columnPrefferedSize(Column column);
+	static int columnPrefferedSize(PageLinksColumn column);
 
 	QVariant itemValue(Column column) const;
-
-	size_t countLinksFromThisPage() const noexcept;
-	WebCrawler::ParsedPageWeakPtr linkFromThisPage(size_t number);
-
-	size_t countLinksToThisPage() const noexcept;
-	WebCrawler::ParsedPageWeakPtr linkToThisPage(size_t number);
+	QVariant itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number);
+	size_t itemCount(PageLinkContext context);
 
 private:
 	using MethodAcceptor = QVariant(ParsedPageInfo::*)() const;
+	using PageLinksPointer = std::deque<WebCrawler::ResourceLink> WebCrawler::ParsedPage::*;
 
-	MethodAcceptor acceptItem(Column item) const;
+	bool isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) const noexcept;
+	Column mapPageLinksColumnToParsedPageColumn(PageLinksColumn pageLinksColumn) const noexcept;
+	PageLinksPointer pointerByContext(PageLinkContext context) const;
+	QString linkParameterDescription(WebCrawler::LinkParameter linkParameter) const;
+
+	MethodAcceptor acceptItemMethod(Column item) const;
 	QVariant acceptUrl() const;
 	QVariant acceptContentType() const;
 	QVariant acceptTitle() const;
@@ -111,11 +131,11 @@ private:
 	static void checkColumnType(ParsedPageInfo::Column column);
 
 private:
-	WebCrawler::ParsedPagePtr m_pageRawPtr;
+	WebCrawler::ParsedPagePtr m_parsedPage;
 };
 
-using PageRawInfoPtr = std::shared_ptr<ParsedPageInfo>;
+using ParsedPageInfoPtr = std::shared_ptr<ParsedPageInfo>;
 
-Q_DECLARE_METATYPE(PageRawInfoPtr);
+Q_DECLARE_METATYPE(ParsedPageInfoPtr);
 
 }

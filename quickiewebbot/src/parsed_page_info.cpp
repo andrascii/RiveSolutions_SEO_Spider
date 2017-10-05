@@ -5,322 +5,248 @@
 namespace QuickieWebBot
 {
 
-ParsedPageInfo::ParsedPageInfo(WebCrawler::ParsedPagePtr pageRawPtr)
-	: m_pageRawPtr(pageRawPtr)
+ParsedPageInfo::ParsedPageInfo(WebCrawler::ParsedPagePtr parsedPage)
+	: m_parsedPage(parsedPage)
 {
-
 }
 
 QString ParsedPageInfo::itemTypeDescription(Column column)
 {
-	checkColumnType(column);
-
-	static QMap<Column, QString> s_titles
+	static QMap<ParsedPageInfo::Column, QString> s_parsedPageColumns =
 	{
-		{ UrlItemType, QObject::tr("Url") },
-		{ ContentTypeItemType, QObject::tr("Content") },
-		{ TitleItemType, QObject::tr("Title") },
-		{ MetaRefreshItemType, QObject::tr("Meta Refresh") },
-		{ MetaRobotsItemType, QObject::tr("Meta Robots") },
-		{ RedirectedUrlItemType, QObject::tr("Redirected URL") },
-		{ ServerResponseItemType, QObject::tr("Server Response") },
-		{ MetaDescriptionItemType, QObject::tr("Meta Description") },
-		{ MetaKeywordsItemType, QObject::tr("Meta Keywords") },
-		{ FirstH1ItemType, QObject::tr("First H1") },
-		{ SecondH1ItemType, QObject::tr("Second H1") },
-		{ FirstH2ItemType, QObject::tr("First H2") },
-		{ SecondH2ItemType, QObject::tr("Second H2") },
-		{ CanonicalLinkElementItemType, QObject::tr("Canonical Link Element") },
-		{ StatusCodeItemType, QObject::tr("Status Code") },
-		{ UrlLengthItemType, QObject::tr("Url Length") },
-		{ TitleLengthItemType, QObject::tr("Title Length") },
-		{ MetaDescriptionLengthItemType, QObject::tr("Meta Description Length") },
-		{ MetaKeywordsLengthItemType, QObject::tr("Meta Keywords Length") },
-		{ FirstH1LengthItemType, QObject::tr("First H1 Length") },
-		{ SecondH1LengthItemType, QObject::tr("Second H1 Length") },
-		{ FirstH2LengthItemType, QObject::tr("First H2 Length") },
-		{ SecondH2LengthItemType, QObject::tr("Second H2 Length") },
-		{ PageSizeKbItemType, QObject::tr("Page Size Kilobytes") },
-		{ WordCountItemType, QObject::tr("Word Count") },
-		{ PageHashItemType, QObject::tr("Page Hash") },
-		{ AltTextItemType, QObject::tr("Alt Text") },
-		{ AltTextLengthItemType, QObject::tr("Alt Text Length") },
-		{ ImageSizeKbItemType, QObject::tr("Image Size KB") },
-		{ NoFollowDoFollowLinkItemType, QObject::tr("Nofollow / Dofollow") },
-		{ AltTextLinkItemType, QObject::tr("Alt-Text") }
+		{ ParsedPageInfo::Column::UrlColumn, QObject::tr("Url") },
+		{ ParsedPageInfo::Column::ContentTypeColumn, QObject::tr("Content") },
+		{ ParsedPageInfo::Column::TitleColumn, QObject::tr("Title") },
+		{ ParsedPageInfo::Column::MetaRefreshColumn, QObject::tr("Meta Refresh") },
+		{ ParsedPageInfo::Column::MetaRobotsColumn, QObject::tr("Meta Robots") },
+		{ ParsedPageInfo::Column::RedirectedUrlColumn, QObject::tr("Redirected URL") },
+		{ ParsedPageInfo::Column::ServerResponseColumn, QObject::tr("Server Response") },
+		{ ParsedPageInfo::Column::MetaDescriptionColumn, QObject::tr("Meta Description") },
+		{ ParsedPageInfo::Column::MetaKeywordsColumn, QObject::tr("Meta Keywords") },
+		{ ParsedPageInfo::Column::FirstH1Column, QObject::tr("First H1") },
+		{ ParsedPageInfo::Column::SecondH1Column, QObject::tr("Second H1") },
+		{ ParsedPageInfo::Column::FirstH2Column, QObject::tr("First H2") },
+		{ ParsedPageInfo::Column::SecondH2Column, QObject::tr("Second H2") },
+		{ ParsedPageInfo::Column::CanonicalLinkElementColumn, QObject::tr("Canonical Link Element") },
+		{ ParsedPageInfo::Column::StatusCodeColumn, QObject::tr("Status Code") },
+		{ ParsedPageInfo::Column::UrlLengthColumn, QObject::tr("Url Length") },
+		{ ParsedPageInfo::Column::TitleLengthColumn, QObject::tr("Title Length") },
+		{ ParsedPageInfo::Column::MetaDescriptionLengthColumn, QObject::tr("Meta Description Length") },
+		{ ParsedPageInfo::Column::MetaKeywordsLengthColumn, QObject::tr("Meta Keywords Length") },
+		{ ParsedPageInfo::Column::FirstH1LengthColumn, QObject::tr("First H1 Length") },
+		{ ParsedPageInfo::Column::SecondH1LengthColumn, QObject::tr("Second H1 Length") },
+		{ ParsedPageInfo::Column::FirstH2LengthColumn, QObject::tr("First H2 Length") },
+		{ ParsedPageInfo::Column::SecondH2LengthColumn, QObject::tr("Second H2 Length") },
+		{ ParsedPageInfo::Column::PageSizeKbColumn, QObject::tr("Page Size Kilobytes") },
+		{ ParsedPageInfo::Column::WordCountColumn, QObject::tr("Word Count") },
+		{ ParsedPageInfo::Column::PageHashColumn, QObject::tr("Page Hash") },
+		{ ParsedPageInfo::Column::AltTextColumn, QObject::tr("Alt Text") },
+		{ ParsedPageInfo::Column::AltTextLengthColumn, QObject::tr("Alt Text Length") },
+		{ ParsedPageInfo::Column::ImageSizeKbColumn, QObject::tr("Image Size KB") },
+		{ ParsedPageInfo::Column::NoFollowDoFollowLinkColumn, QObject::tr("Nofollow / Dofollow") },
+		{ ParsedPageInfo::Column::AltTextLinkColumn, QObject::tr("Alt-Text") }
 	};
 
-	return s_titles.value(column, QString::null);
+	checkColumnType(column);
+
+	return s_parsedPageColumns.value(column, QString::null);
+}
+
+QString ParsedPageInfo::itemTypeDescription(PageLinksColumn column)
+{
+	static QMap<ParsedPageInfo::PageLinksColumn, QString> s_pageLinksColumns =
+	{
+		{ ParsedPageInfo::PageLinksColumn::UrlColumn, QObject::tr("Url") },
+		{ ParsedPageInfo::PageLinksColumn::StatusCodeColumn, QObject::tr("Status Code") },
+		{ ParsedPageInfo::PageLinksColumn::AltOrTitleColumn, QObject::tr("Alt Text") },
+		{ ParsedPageInfo::PageLinksColumn::AltOrTitleLengthColumn, QObject::tr("Alt Text Length") },
+		{ ParsedPageInfo::PageLinksColumn::LinkParameterColumn, QObject::tr("Nofollow / Dofollow") }
+	};
+
+	return s_pageLinksColumns.value(column, QString::null);
 }
 
 int ParsedPageInfo::columnPrefferedSize(Column column)
 {
-	static QMap<Column, int> s_prefferedSizes
+	static QMap<Column, int> s_parsedPageColumnPrefferedSizes =
 	{
-		{ UrlItemType, QuickieWebBotHelpers::pointsToPixels(300) },
-		{ TitleItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ ContentTypeItemType, QuickieWebBotHelpers::pointsToPixels(150) },
-		{ MetaRefreshItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ MetaRobotsItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ MetaDescriptionItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ MetaKeywordsItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ RedirectedUrlItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ ServerResponseItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ FirstH1ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ SecondH1ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ FirstH2ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ SecondH2ItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ CanonicalLinkElementItemType, QuickieWebBotHelpers::pointsToPixels(150) },
-		{ StatusCodeItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ PageSizeKbItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ WordCountItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ PageHashItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ TitleLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ UrlLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ MetaDescriptionLengthItemType, QuickieWebBotHelpers::pointsToPixels(110) },
-		{ MetaKeywordsLengthItemType, QuickieWebBotHelpers::pointsToPixels(110) },
-		{ FirstH1LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ SecondH1LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ FirstH2LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ SecondH2LengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ AltTextItemType, QuickieWebBotHelpers::pointsToPixels(400) },
-		{ AltTextLengthItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ ImageSizeKbItemType, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ NoFollowDoFollowLinkItemType, QuickieWebBotHelpers::pointsToPixels(150) }
+		{ ParsedPageInfo::Column::UrlColumn, QuickieWebBotHelpers::pointsToPixels(300) },
+		{ ParsedPageInfo::Column::TitleColumn, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::ContentTypeColumn, QuickieWebBotHelpers::pointsToPixels(160) },
+		{ ParsedPageInfo::Column::MetaRefreshColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::MetaRobotsColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::MetaDescriptionColumn, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::MetaKeywordsColumn, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::RedirectedUrlColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::ServerResponseColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::FirstH1Column, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::SecondH1Column, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::FirstH2Column, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::SecondH2Column, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::CanonicalLinkElementColumn, QuickieWebBotHelpers::pointsToPixels(150) },
+		{ ParsedPageInfo::Column::StatusCodeColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::PageSizeKbColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::WordCountColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::PageHashColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::TitleLengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::UrlLengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::MetaDescriptionLengthColumn, QuickieWebBotHelpers::pointsToPixels(110) },
+		{ ParsedPageInfo::Column::MetaKeywordsLengthColumn, QuickieWebBotHelpers::pointsToPixels(110) },
+		{ ParsedPageInfo::Column::FirstH1LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::SecondH1LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::FirstH2LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::SecondH2LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::AltTextColumn, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::AltTextLengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::ImageSizeKbColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::NoFollowDoFollowLinkColumn, QuickieWebBotHelpers::pointsToPixels(150) }
 	};
 
-	int result = s_prefferedSizes.value(column, -1);
+	const int result = s_parsedPageColumnPrefferedSizes.value(column, -1);
+
 	ASSERT(result >= 0);
+
+	return result;
+}
+
+
+int ParsedPageInfo::columnPrefferedSize(PageLinksColumn column)
+{
+	static QMap<PageLinksColumn, int> s_pageLinksColumnPrefferedSizes =
+	{
+		{ ParsedPageInfo::PageLinksColumn::UrlColumn, QuickieWebBotHelpers::pointsToPixels(300) },
+		{ ParsedPageInfo::PageLinksColumn::StatusCodeColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::PageLinksColumn::AltOrTitleColumn, QuickieWebBotHelpers::pointsToPixels(400) },
+		{ ParsedPageInfo::PageLinksColumn::AltOrTitleLengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::PageLinksColumn::LinkParameterColumn, QuickieWebBotHelpers::pointsToPixels(150) }
+	};
+
+	const int result = s_pageLinksColumnPrefferedSizes.value(column, -1);
+
+	ASSERT(result >= 0);
+
 	return result;
 }
 
 QVariant ParsedPageInfo::itemValue(Column column) const
 {
-	if (!m_pageRawPtr)
+	if (!m_parsedPage)
 	{
 		return QVariant();
 	}
 
-	return (this->*acceptItem(column))();
+	return (this->*acceptItemMethod(column))();
 }
 
-size_t ParsedPageInfo::countLinksFromThisPage() const noexcept
+QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number)
 {
-	if (!m_pageRawPtr)
+	PageLinksPointer pointer = pointerByContext(context);
+
+	const WebCrawler::ResourceLink& resourceLink = (m_parsedPage.get()->*pointer)[number];
+
+	if (isPageLinksColumnMappedToParsedPageColumn(pageLinksColumn))
+	{
+		//
+		// It looks like a bad solution and need speed optimization
+		//
+		ParsedPageInfo parsedPageInfo(resourceLink.resource.lock());
+
+		return parsedPageInfo.itemValue(mapPageLinksColumnToParsedPageColumn(pageLinksColumn));
+	}
+
+	QVariant value;
+
+	switch (pageLinksColumn)
+	{
+		case PageLinksColumn::AltOrTitleColumn:
+		{
+			value = resourceLink.altOrTitle;
+			break;
+		}
+		case PageLinksColumn::LinkParameterColumn:
+		{
+			value = linkParameterDescription(resourceLink.urlParameter);
+			break;
+		}
+	}
+
+	return value;
+}
+
+size_t ParsedPageInfo::itemCount(PageLinkContext context)
+{
+	if (!m_parsedPage)
 	{
 		return 0;
 	}
 
-	return m_pageRawPtr->linksOnThisPage.size();
+	PageLinksPointer pointer = pointerByContext(context);
+
+	return (m_parsedPage.get()->*pointer).size();
 }
 
-WebCrawler::ParsedPageWeakPtr ParsedPageInfo::linkFromThisPage(size_t number)
+bool ParsedPageInfo::isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) const noexcept
 {
-	DEBUG_ASSERT(number < countLinksFromThisPage());
-
-	return m_pageRawPtr->linksOnThisPage[number].resource;
-}
-
-size_t ParsedPageInfo::countLinksToThisPage() const noexcept
-{
-	if (!m_pageRawPtr)
+	switch (pageLinksColumn)
 	{
-		return 0;
+		case PageLinksColumn::UrlColumn:
+		case PageLinksColumn::StatusCodeColumn:
+		{
+			return true;
+		}
 	}
 
-	return m_pageRawPtr->linksToThisPage.size();
+	return false;
 }
 
-WebCrawler::ParsedPageWeakPtr ParsedPageInfo::linkToThisPage(size_t number)
+ParsedPageInfo::Column ParsedPageInfo::mapPageLinksColumnToParsedPageColumn(PageLinksColumn pageLinksColumn) const noexcept
 {
-	DEBUG_ASSERT(number < countLinksToThisPage());
+	DEBUG_ASSERT(isPageLinksColumnMappedToParsedPageColumn(pageLinksColumn));
 
-	return m_pageRawPtr->linksToThisPage[number].resource;
-}
-
-ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItem(Column column) const
-{
-	switch (column)
+	switch (pageLinksColumn)
 	{
-		case UrlItemType: return &ParsedPageInfo::acceptUrl;
-		case ContentTypeItemType: return &ParsedPageInfo::acceptContentType;
-		case TitleItemType: return &ParsedPageInfo::acceptTitle;
-		case MetaRefreshItemType: return &ParsedPageInfo::acceptMetaRefresh;
-		case MetaRobotsItemType: return &ParsedPageInfo::acceptMetaRobots;
-		case RedirectedUrlItemType: return &ParsedPageInfo::acceptMetaRobots;
-		case ServerResponseItemType: return &ParsedPageInfo::acceptServerResponse;
-		case MetaDescriptionItemType: return &ParsedPageInfo::acceptMetaDescription;
-		case MetaKeywordsItemType: return &ParsedPageInfo::acceptMetaKeywords;
-		case FirstH1ItemType: return &ParsedPageInfo::acceptFirstH1;
-		case SecondH1ItemType: return &ParsedPageInfo::acceptSecondH1;
-		case FirstH2ItemType: return &ParsedPageInfo::acceptFirstH2;
-		case SecondH2ItemType: return &ParsedPageInfo::acceptSecondH2;
-		case CanonicalLinkElementItemType: return &ParsedPageInfo::acceptCanonicalLinkElement;
-		case StatusCodeItemType: return &ParsedPageInfo::acceptStatusCode;
-		case UrlLengthItemType: return &ParsedPageInfo::acceptUrlLength;
-		case TitleLengthItemType: return &ParsedPageInfo::acceptTitleLength;
-		case MetaDescriptionLengthItemType: return &ParsedPageInfo::acceptMetaDescriptionLength;
-		case MetaKeywordsLengthItemType: return &ParsedPageInfo::acceptMetaKeywordsLength;
-		case FirstH1LengthItemType: return &ParsedPageInfo::acceptFirstH1Length;
-		case SecondH1LengthItemType: return &ParsedPageInfo::acceptSecondH1Length;
-		case FirstH2LengthItemType: return &ParsedPageInfo::acceptFirstH2Length;
-		case SecondH2LengthItemType: return &ParsedPageInfo::acceptSecondH2Length;
-		case PageSizeKbItemType: return &ParsedPageInfo::acceptPageSizeKb;
-		case WordCountItemType: return &ParsedPageInfo::acceptWordCount;
-		case PageHashItemType: return &ParsedPageInfo::acceptPageHash;
-		case ImageSizeKbItemType: return &ParsedPageInfo::acceptImageSizeKb;
-		case AltTextItemType: return &ParsedPageInfo::acceptAltText;
-		case AltTextLengthItemType: return &ParsedPageInfo::acceptAltTextLength;
-		case NoFollowDoFollowLinkItemType: return &ParsedPageInfo::acceptDofollowNofollow;
+		case PageLinksColumn::UrlColumn:
+		{
+			return Column::UrlColumn;
+		}
+
+		case PageLinksColumn::StatusCodeColumn:
+		{
+			return Column::StatusCodeColumn;
+		}
 	}
 
-	ASSERT(!"Unknown element");
-	return MethodAcceptor();
+	DEBUG_ASSERT(!"What happens?");
+
+	return Column();
 }
 
-QVariant ParsedPageInfo::acceptUrl() const
+ParsedPageInfo::PageLinksPointer ParsedPageInfo::pointerByContext(PageLinkContext context) const
 {
-	return m_pageRawPtr->url;
+	PageLinksPointer pointer = nullptr;
+
+	switch (context)
+	{
+		case PageLinkContext::LinksOnThisPage:
+		{
+			pointer = &WebCrawler::ParsedPage::linksOnThisPage;
+			break;
+		}
+		case PageLinkContext::LinksToThisPage:
+		{
+			pointer = &WebCrawler::ParsedPage::linksToThisPage;
+			break;
+		}
+	}
+
+	ASSERT(pointer);
+
+	return pointer;
 }
 
-QVariant ParsedPageInfo::acceptContentType() const
+QString ParsedPageInfo::linkParameterDescription(WebCrawler::LinkParameter linkParameter) const
 {
-	return m_pageRawPtr->contentType;
-}
-
-QVariant ParsedPageInfo::acceptTitle() const
-{
-	return m_pageRawPtr->title;
-}
-
-QVariant ParsedPageInfo::acceptMetaRefresh() const
-{
-	return m_pageRawPtr->metaRefresh;
-}
-
-QVariant ParsedPageInfo::acceptMetaRobots() const
-{
-	return m_pageRawPtr->metaRobots;
-}
-
-QVariant ParsedPageInfo::acceptRedirectedUrl() const
-{
-	return m_pageRawPtr->redirectedUrl;
-}
-
-QVariant ParsedPageInfo::acceptServerResponse() const
-{
-	return m_pageRawPtr->serverResponse;
-}
-
-QVariant ParsedPageInfo::acceptMetaDescription() const
-{
-	return m_pageRawPtr->metaDescription;
-}
-
-QVariant ParsedPageInfo::acceptMetaKeywords() const
-{
-	return m_pageRawPtr->metaKeywords;
-}
-
-QVariant ParsedPageInfo::acceptFirstH1() const
-{
-	return m_pageRawPtr->firstH1;
-}
-
-QVariant ParsedPageInfo::acceptSecondH1() const
-{
-	return m_pageRawPtr->secondH1;
-}
-
-QVariant ParsedPageInfo::acceptFirstH2() const
-{
-	return m_pageRawPtr->firstH2;
-}
-
-QVariant ParsedPageInfo::acceptSecondH2() const
-{
-	return m_pageRawPtr->secondH2;
-}
-
-QVariant ParsedPageInfo::acceptCanonicalLinkElement() const
-{
-	return m_pageRawPtr->canonicalLinkElement;
-}
-
-QVariant ParsedPageInfo::acceptStatusCode() const
-{
-	return m_pageRawPtr->statusCode;
-}
-
-QVariant ParsedPageInfo::acceptUrlLength() const
-{
-	return m_pageRawPtr->url.toString().length();
-}
-
-QVariant ParsedPageInfo::acceptTitleLength() const
-{
-	return m_pageRawPtr->title.size();
-}
-
-QVariant ParsedPageInfo::acceptMetaDescriptionLength() const
-{
-	return m_pageRawPtr->metaDescription.size();
-}
-
-QVariant ParsedPageInfo::acceptMetaKeywordsLength() const
-{
-	return m_pageRawPtr->metaKeywords.size();
-}
-
-QVariant ParsedPageInfo::acceptFirstH1Length() const
-{
-	return m_pageRawPtr->firstH1.size();
-}
-
-QVariant ParsedPageInfo::acceptSecondH1Length() const
-{
-	return m_pageRawPtr->secondH1.size();
-}
-
-QVariant ParsedPageInfo::acceptFirstH2Length() const
-{
-	return m_pageRawPtr->firstH2.size();
-}
-
-QVariant ParsedPageInfo::acceptSecondH2Length() const
-{
-	return m_pageRawPtr->secondH2.size();
-}
-
-QVariant ParsedPageInfo::acceptPageSizeKb() const
-{
-	return m_pageRawPtr->pageSizeKilobytes;
-}
-
-QVariant ParsedPageInfo::acceptWordCount() const
-{
-	return m_pageRawPtr->wordCount;
-}
-
-QVariant ParsedPageInfo::acceptPageHash() const
-{
-	return m_pageRawPtr->pageHash;
-}
-
-QVariant ParsedPageInfo::acceptImageSizeKb() const
-{
-	return m_pageRawPtr->pageSizeKilobytes;
-}
-
-QVariant ParsedPageInfo::acceptAltText() const
-{
-	return m_pageRawPtr->altText;
-}
-
-QVariant ParsedPageInfo::acceptDofollowNofollow() const
-{
-	switch (m_pageRawPtr->linkParameter)
+	switch (linkParameter)
 	{
 		case WebCrawler::LinkParameter::DofollowParameter:
 		{
@@ -335,14 +261,289 @@ QVariant ParsedPageInfo::acceptDofollowNofollow() const
 	return QObject::tr("Unknown link parameter");
 }
 
+ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column) const
+{
+	switch (column)
+	{
+		case Column::UrlColumn: 
+		{
+			return &ParsedPageInfo::acceptUrl;
+		}
+		case Column::ContentTypeColumn: 
+		{
+			return &ParsedPageInfo::acceptContentType;
+		}
+		case Column::TitleColumn: 
+		{
+			return &ParsedPageInfo::acceptTitle;
+		}
+		case Column::MetaRefreshColumn: 
+		{
+			return &ParsedPageInfo::acceptMetaRefresh;
+		}
+		case Column::MetaRobotsColumn: 
+		{
+			return &ParsedPageInfo::acceptMetaRobots;
+		}
+		case Column::RedirectedUrlColumn: 
+		{
+			return &ParsedPageInfo::acceptMetaRobots;
+		}
+		case Column::ServerResponseColumn: 
+		{
+			return &ParsedPageInfo::acceptServerResponse;
+		}
+		case Column::MetaDescriptionColumn: 
+		{
+			return &ParsedPageInfo::acceptMetaDescription;
+		}
+		case Column::MetaKeywordsColumn: 
+		{
+			return &ParsedPageInfo::acceptMetaKeywords;
+		}
+		case Column::FirstH1Column: 
+		{
+			return &ParsedPageInfo::acceptFirstH1;
+		}
+		case Column::SecondH1Column: 
+		{
+			return &ParsedPageInfo::acceptSecondH1;
+		}
+		case Column::FirstH2Column: 
+		{
+			return &ParsedPageInfo::acceptFirstH2;
+		}
+		case Column::SecondH2Column: 
+		{
+			return &ParsedPageInfo::acceptSecondH2;
+		}
+		case Column::CanonicalLinkElementColumn: 
+		{
+			return &ParsedPageInfo::acceptCanonicalLinkElement;
+		}
+		case Column::StatusCodeColumn: 
+		{
+			return &ParsedPageInfo::acceptStatusCode;
+		}
+		case Column::UrlLengthColumn: 
+		{
+			return &ParsedPageInfo::acceptUrlLength;
+		}
+		case Column::TitleLengthColumn: 
+		{
+			return &ParsedPageInfo::acceptTitleLength;
+		}
+		case Column::MetaDescriptionLengthColumn: 
+		{
+			return &ParsedPageInfo::acceptMetaDescriptionLength;
+		}
+		case Column::MetaKeywordsLengthColumn: 
+		{
+			return &ParsedPageInfo::acceptMetaKeywordsLength;
+		}
+		case Column::FirstH1LengthColumn: 
+		{
+			return &ParsedPageInfo::acceptFirstH1Length;
+		}
+		case Column::SecondH1LengthColumn: 
+		{
+			return &ParsedPageInfo::acceptSecondH1Length;
+		}
+		case Column::FirstH2LengthColumn: 
+		{
+			return &ParsedPageInfo::acceptFirstH2Length;
+		}
+		case Column::SecondH2LengthColumn: 
+		{
+			return &ParsedPageInfo::acceptSecondH2Length;
+		}
+		case Column::PageSizeKbColumn: 
+		{
+			return &ParsedPageInfo::acceptPageSizeKb;
+		}
+		case Column::WordCountColumn: 
+		{
+			return &ParsedPageInfo::acceptWordCount;
+		}
+		case Column::PageHashColumn: 
+		{
+			return &ParsedPageInfo::acceptPageHash;
+		}
+		case Column::ImageSizeKbColumn: 
+		{
+			return &ParsedPageInfo::acceptImageSizeKb;
+		}
+		case Column::AltTextColumn: 
+		{
+			return &ParsedPageInfo::acceptAltText;
+		}
+		case Column::AltTextLengthColumn: 
+		{
+			return &ParsedPageInfo::acceptAltTextLength;
+		}
+		case Column::NoFollowDoFollowLinkColumn: 
+		{
+			return &ParsedPageInfo::acceptDofollowNofollow;
+		}
+	}
+
+	ASSERT(!"Unknown element");
+	return MethodAcceptor();
+}
+
+QVariant ParsedPageInfo::acceptUrl() const
+{
+	return m_parsedPage->url;
+}
+
+QVariant ParsedPageInfo::acceptContentType() const
+{
+	return m_parsedPage->contentType;
+}
+
+QVariant ParsedPageInfo::acceptTitle() const
+{
+	return m_parsedPage->title;
+}
+
+QVariant ParsedPageInfo::acceptMetaRefresh() const
+{
+	return m_parsedPage->metaRefresh;
+}
+
+QVariant ParsedPageInfo::acceptMetaRobots() const
+{
+	return m_parsedPage->metaRobots;
+}
+
+QVariant ParsedPageInfo::acceptRedirectedUrl() const
+{
+	return m_parsedPage->redirectedUrl;
+}
+
+QVariant ParsedPageInfo::acceptServerResponse() const
+{
+	return m_parsedPage->serverResponse;
+}
+
+QVariant ParsedPageInfo::acceptMetaDescription() const
+{
+	return m_parsedPage->metaDescription;
+}
+
+QVariant ParsedPageInfo::acceptMetaKeywords() const
+{
+	return m_parsedPage->metaKeywords;
+}
+
+QVariant ParsedPageInfo::acceptFirstH1() const
+{
+	return m_parsedPage->firstH1;
+}
+
+QVariant ParsedPageInfo::acceptSecondH1() const
+{
+	return m_parsedPage->secondH1;
+}
+
+QVariant ParsedPageInfo::acceptFirstH2() const
+{
+	return m_parsedPage->firstH2;
+}
+
+QVariant ParsedPageInfo::acceptSecondH2() const
+{
+	return m_parsedPage->secondH2;
+}
+
+QVariant ParsedPageInfo::acceptCanonicalLinkElement() const
+{
+	return m_parsedPage->canonicalLinkElement;
+}
+
+QVariant ParsedPageInfo::acceptStatusCode() const
+{
+	return m_parsedPage->statusCode;
+}
+
+QVariant ParsedPageInfo::acceptUrlLength() const
+{
+	return m_parsedPage->url.toString().length();
+}
+
+QVariant ParsedPageInfo::acceptTitleLength() const
+{
+	return m_parsedPage->title.size();
+}
+
+QVariant ParsedPageInfo::acceptMetaDescriptionLength() const
+{
+	return m_parsedPage->metaDescription.size();
+}
+
+QVariant ParsedPageInfo::acceptMetaKeywordsLength() const
+{
+	return m_parsedPage->metaKeywords.size();
+}
+
+QVariant ParsedPageInfo::acceptFirstH1Length() const
+{
+	return m_parsedPage->firstH1.size();
+}
+
+QVariant ParsedPageInfo::acceptSecondH1Length() const
+{
+	return m_parsedPage->secondH1.size();
+}
+
+QVariant ParsedPageInfo::acceptFirstH2Length() const
+{
+	return m_parsedPage->firstH2.size();
+}
+
+QVariant ParsedPageInfo::acceptSecondH2Length() const
+{
+	return m_parsedPage->secondH2.size();
+}
+
+QVariant ParsedPageInfo::acceptPageSizeKb() const
+{
+	return m_parsedPage->pageSizeKilobytes;
+}
+
+QVariant ParsedPageInfo::acceptWordCount() const
+{
+	return m_parsedPage->wordCount;
+}
+
+QVariant ParsedPageInfo::acceptPageHash() const
+{
+	return m_parsedPage->pageHash;
+}
+
+QVariant ParsedPageInfo::acceptImageSizeKb() const
+{
+	return m_parsedPage->pageSizeKilobytes;
+}
+
+QVariant ParsedPageInfo::acceptAltText() const
+{
+	return m_parsedPage->altText;
+}
+
+QVariant ParsedPageInfo::acceptDofollowNofollow() const
+{
+	return linkParameterDescription(m_parsedPage->linkParameter);
+}
+
 QVariant ParsedPageInfo::acceptAltTextLength() const
 {
-	return m_pageRawPtr->altText.size();
+	return m_parsedPage->altText.size();
 }
 
 void ParsedPageInfo::checkColumnType(Column column)
 {
-	ASSERT(column > BeginEnumPageInfoItemType && column < EndEnumPageInfoItemType);
+	ASSERT(column > Column::BeginEnumPageInfoColumn && column < Column::EndEnumPageInfoColumn);
 }
 
 }

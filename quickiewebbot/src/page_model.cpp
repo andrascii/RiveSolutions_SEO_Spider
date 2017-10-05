@@ -36,16 +36,16 @@ void PageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 
 	if (m_storageAdaptor)
 	{
-		disconnect(m_storageAdaptor->qobject(), SIGNAL(pageRawInfoAdded(int)), this, SLOT(onPageRawInfoAdded(int)));
+		disconnect(m_storageAdaptor->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int)));
 	}
 
-	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(pageRawInfoAdded(int)), this, SLOT(onPageRawInfoAdded(int))));
+	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int))));
 	
 	m_storageAdaptor = storageAdaptor;
 
 	std::map<int, int> columnsWidth;
 
-	for (int i = 0; i < m_storageAdaptor->availableColumns().size() + 1; ++i)
+	for (int i = 0; i < m_storageAdaptor->columnCount() + 1; ++i)
 	{
 		if (i == 0)
 		{
@@ -57,7 +57,7 @@ void PageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 
 		// set other column widths
 
-		columnsWidth[i] = ParsedPageInfo::columnPrefferedSize(m_storageAdaptor->availableColumns()[i - 1]);
+		columnsWidth[i] = m_storageAdaptor->columnWidth(i - 1);
 	}
 
 	std::dynamic_pointer_cast<DefaultColumnResizePolicy>(m_resizePolicy)->setColumnsSize(columnsWidth);
@@ -72,13 +72,13 @@ void PageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 	}
 }
 
-ParsedPageInfo::Column PageModel::itemType(const QModelIndex& index) const noexcept
+IStorageAdaptor::ItemType PageModel::itemType(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
 		// just return invalid enum for item number
 
-		return ParsedPageInfo::BeginEnumPageInfoItemType;
+		return IStorageAdaptor::ItemType::PlainItemType;
 	}
 
 	const QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);
@@ -160,7 +160,7 @@ int PageModel::columnCount(const QModelIndex&) const
 		return 0;
 	}
 
-	return storageAdaptor()->availableColumns().size() + 1;
+	return storageAdaptor()->columnCount() + 1;
 }
 
 int PageModel::rowCount(const QModelIndex& parent) const
@@ -173,7 +173,7 @@ int PageModel::rowCount(const QModelIndex& parent) const
 	return storageAdaptor()->itemCount();
 }
 
-void PageModel::onPageRawInfoAdded(int rowIndex)
+void PageModel::onParsedPageInfoAdded(int rowIndex)
 {
 	beginInsertRows(QModelIndex(), rowIndex, rowIndex);
 	

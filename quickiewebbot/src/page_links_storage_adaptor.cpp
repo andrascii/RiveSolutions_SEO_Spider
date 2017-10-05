@@ -3,18 +3,18 @@
 namespace QuickieWebBot
 {
 
-PageLinksStorageAdaptor::PageLinksStorageAdaptor(PageRawInfoPtr associatedPageRaw, PageLinkType pageLinkType)
-	: m_associatedPageRawInfoPtr(associatedPageRaw)
-	, m_pageLinkType(pageLinkType)
+PageLinksStorageAdaptor::PageLinksStorageAdaptor(ParsedPageInfoPtr associatedPageRaw, PageLinkContext context)
+	: m_parsedPage(associatedPageRaw)
+	, m_context(context)
 {
 }
 
-void PageLinksStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept
+void PageLinksStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept
 {
 	m_availableColumns = availableColumns;
 }
 
-QList<ParsedPageInfo::Column> PageLinksStorageAdaptor::availableColumns() const noexcept
+QList<ParsedPageInfo::PageLinksColumn> PageLinksStorageAdaptor::availableColumns() const noexcept
 {
 	return m_availableColumns;
 }
@@ -26,91 +26,58 @@ QString PageLinksStorageAdaptor::columnDescription(int columnIndex) const noexce
 	return ParsedPageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
+int PageLinksStorageAdaptor::columnWidth(int columnNumber) const noexcept
+{
+	DEBUG_ASSERT(columnNumber < m_availableColumns.size());
+
+	return ParsedPageInfo::columnPrefferedSize(m_availableColumns[columnNumber]);
+}
+
+int PageLinksStorageAdaptor::columnCount() const noexcept
+{
+	return m_availableColumns.size();
+}
+
 int PageLinksStorageAdaptor::itemCount() const noexcept
 {
-	if (!m_associatedPageRawInfoPtr)
+	if (!m_parsedPage)
 	{
 		return 0;
 	}
 
-	PageRawInfoCountAcceptorMethodType countLinksAcceptor = countLinks();
-
-	return static_cast<int>(((*m_associatedPageRawInfoPtr).*countLinksAcceptor)());
+	return static_cast<int>(m_parsedPage->itemCount(m_context));
 }
 
 QVariant PageLinksStorageAdaptor::item(const QModelIndex& index) const noexcept
 {
-	if (!m_associatedPageRawInfoPtr)
+	if (!m_parsedPage)
 	{
 		return QVariant();
 	}
 
-	PageRawInfoLinkAcceptorMethodType linksAcceptor = link();
-	WebCrawler::ParsedPageWeakPtr ptr = ((*m_associatedPageRawInfoPtr).*linksAcceptor)(index.row());
-
-	DEBUG_ASSERT(index.row() < itemCount());
+	DEBUG_ASSERT(index.row() < m_parsedPage->itemCount(m_context));
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
-	return ParsedPageInfo(ptr.lock()).itemValue(m_availableColumns[index.column()]);
+	return m_parsedPage->itemValue(m_availableColumns[index.column()], m_context, index.row());
 }
 
-ParsedPageInfo::Column PageLinksStorageAdaptor::itemType(const QModelIndex& index) const noexcept
+PageLinksStorageAdaptor::ItemType PageLinksStorageAdaptor::itemType(const QModelIndex& index) const noexcept
 {
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
-	return m_availableColumns[index.column()];
+	return m_availableColumns[index.column()] == ParsedPageInfo::PageLinksColumn::UrlColumn ?
+		ItemType::UrlItemType :
+		ItemType::PlainItemType;
 }
 
-PageRawInfoPtr PageLinksStorageAdaptor::pageRawInfoPtr(const QModelIndex& index) const noexcept
+ParsedPageInfoPtr PageLinksStorageAdaptor::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
-	return m_associatedPageRawInfoPtr;
+	return m_parsedPage;
 }
 
 QObject* PageLinksStorageAdaptor::qobject() noexcept
 {
 	return this;
-}
-
-PageLinksStorageAdaptor::PageRawInfoCountAcceptorMethodType PageLinksStorageAdaptor::countLinks() const noexcept
-{
-	PageRawInfoCountAcceptorMethodType func = nullptr;
-
-	switch (m_pageLinkType)
-	{
-		case PageLinkType::LinksOnThisPageType:
-		{
-			func = &ParsedPageInfo::countLinksFromThisPage;
-			break;
-		}
-		case PageLinkType::LinksToThisPageType:
-		{
-			func = &ParsedPageInfo::countLinksToThisPage;
-			break;
-		}
-	}
-
-	return func;
-}
-
-PageLinksStorageAdaptor::PageRawInfoLinkAcceptorMethodType PageLinksStorageAdaptor::link() const noexcept
-{
-	PageRawInfoLinkAcceptorMethodType func = nullptr;
-
-	switch (m_pageLinkType)
-	{
-		case PageLinkType::LinksOnThisPageType:
-		{
-			func = &ParsedPageInfo::linkFromThisPage;
-			break;
-		}
-		case PageLinkType::LinksToThisPageType:
-		{
-			func = &ParsedPageInfo::linkToThisPage;
-			break;
-		}
-	}
-
-	return func;
 }
 
 }
