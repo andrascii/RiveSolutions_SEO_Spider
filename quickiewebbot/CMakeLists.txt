@@ -13,7 +13,6 @@ file(GLOB_RECURSE AppCppList "src/*.cpp")
 file(GLOB_RECURSE AppHeadersList "include/*.h")
 file(GLOB_RECURSE AppFormsList "ui/*.ui")
 file(GLOB_RECURSE AppResourcesList "rcc/*.qrc")
-file(GLOB_RECURSE OpenSSLDllList "deps/openssl/*.dll")
 
 qt5_wrap_ui(AppFormsHeadersList ${AppFormsList})
 qt5_wrap_cpp(AppHeadersMocList ${AppFormsHeadersList})
@@ -61,7 +60,6 @@ if(MSVC)
 	set_target_properties(
 		${AppName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
-		VS_DEBUGGER_WORKING_DIRECTORY $ENV{CMAKE_PREFIX_PATH}/bin
 	)
 	
 	set_target_properties(
@@ -77,6 +75,7 @@ include_directories(
 	${CommonLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
+	${OPENSSL_INCLUDE_DIR}
 )
 
 target_link_libraries(
@@ -86,6 +85,7 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
+	${OPENSSL_LIBRARIES}
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Svg

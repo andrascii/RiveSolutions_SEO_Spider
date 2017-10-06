@@ -55,7 +55,6 @@ if(MSVC)
 	set_target_properties(
 		${LoggerAppName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
-		VS_DEBUGGER_WORKING_DIRECTORY $ENV{CMAKE_PREFIX_PATH}/bin
 	)
 	
 	set_target_properties(
@@ -67,7 +66,7 @@ if(MSVC)
 	set_target_properties(
 		${LoogerAppName}
 		PROPERTIES 
-		RUNTIME_OUTPUT_DIRECTORY "../${AppName}"
+		RUNTIME_OUTPUT_DIRECTORY "../quickiewebbot"
 	)
 endif()
 

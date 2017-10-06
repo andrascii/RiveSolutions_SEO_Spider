@@ -36,7 +36,6 @@ if(MSVC)
 	set_target_properties(
 		${SeoSpiderServiceApiDllName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
-		VS_DEBUGGER_WORKING_DIRECTORY $ENV{CMAKE_PREFIX_PATH}/bin
 		RUNTIME_OUTPUT_DIRECTORY "../quickiewebbot/"
 	)
 

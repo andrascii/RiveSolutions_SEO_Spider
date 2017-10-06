@@ -59,7 +59,6 @@ if(MSVC)
 	set_target_properties(
 		${WebCrawlerLibName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
-		VS_DEBUGGER_WORKING_DIRECTORY $ENV{CMAKE_PREFIX_PATH}/bin
 	)
 
 endif()
