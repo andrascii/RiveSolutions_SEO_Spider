@@ -27,28 +27,20 @@ void HtmlResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	}
 
 	std::vector<LinkInfo> linksInfo = GumboParsingHelpers::parsePageUrlList(output->root, false);
-	std::vector<QUrl> unresolvedUrls;
 
-	for (const LinkInfo& linkInfo : linksInfo)
+	for (LinkInfo& linkInfo : linksInfo)
 	{
-		unresolvedUrls.push_back(linkInfo.url);
-	}
+		linkInfo.url = PageParserHelpers::resolveUrl(page->url, linkInfo.url);
 
-	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, unresolvedUrls);
-
-	for (size_t i = 0; i < resolvedUrls.size(); ++i)
-	{
-		const QUrl& url = resolvedUrls[i];
-
-		if (m_resourcesCache->isResourceExists(url))
+		if (m_resourcesCache->isResourceExists(linkInfo.url))
 		{
 			continue;
 		}
 
-		ResourceType resourceType = PageParserHelpers::isHttpOrHttpsScheme(url.toDisplayString()) ?
+		ResourceType resourceType = PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url.toDisplayString()) ?
 			ResourceType::ResourceHtml : ResourceType::ResourceOther;
 
-		page->allResourcesOnPage.push_back(RawResourceOnPage{ resourceType, LinkInfo{ url, linksInfo[i].urlParameter } });
+		page->allResourcesOnPage.push_back(RawResourceOnPage{ resourceType, linkInfo, ResourceSource::SourceTagA });
 	}
 
 	CompoundParser::parse(output, page);
