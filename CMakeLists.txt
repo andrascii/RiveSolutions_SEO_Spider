@@ -51,6 +51,14 @@ MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(add_msvc_precompiled_header)
 
+file(GLOB_RECURSE OpenSSLDlls "deps/opessl/*.dll")
+
+add_custom_command(
+	TARGET ${AppName} PRE_LINK
+    COMMAND ${CMAKE_COMMAND}
+    -E copy ${OpenSSLDlls} ${CMAKE_PREFIX_PATH}
+)
+
 add_subdirectory(${WebCrawlerLibName})
 add_subdirectory(${WebCrawlerLibTestsName})
 add_subdirectory(${LoggerAppName})
