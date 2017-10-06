@@ -223,7 +223,9 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 			linkParam = LinkParameter::NofollowParameter;
 		}
 
-		return LinkInfo{ QUrl(href->value), linkParam };
+		QString altOrTitle = QString(nodeText(node));
+
+		return LinkInfo{ QUrl(href->value), linkParam, altOrTitle };
 	};
 
 	const std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);

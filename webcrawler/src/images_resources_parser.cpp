@@ -47,9 +47,8 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		RawResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
-			LinkInfo{ url.first, LinkParameter::UnknownParameter },
+			LinkInfo{ url.first, LinkParameter::UnknownParameter, url.second },
 			ResourceSource::SourceTagImg,
-			url.second
 		};
 
 		page->allResourcesOnPage.push_back(imageResource);

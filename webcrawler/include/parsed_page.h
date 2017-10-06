@@ -39,6 +39,7 @@ struct LinkInfo
 {
 	QUrl url;
 	LinkParameter urlParameter;
+	QString altOrTitle;
 };
 
 struct ResourceLink
@@ -54,7 +55,6 @@ struct RawResourceOnPage
 	ResourceType resourceType;
 	LinkInfo thisResourceLink;
 	ResourceSource resourceSource;
-	QString altOrTitle;
 };
 
 struct ParsedPage
