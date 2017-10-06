@@ -7,13 +7,14 @@ set(AppHeadersDir include)
 # deps headers
 set(WebCrawlerLibHeadersDir ../webcrawler/include)
 set(CommonLibHeadersDir ../common/include)
+set(OpenSSLDepsDir ../deps/openssl)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppCppList "src/*.cpp")
 file(GLOB_RECURSE AppHeadersList "include/*.h")
 file(GLOB_RECURSE AppFormsList "ui/*.ui")
 file(GLOB_RECURSE AppResourcesList "rcc/*.qrc")
-
+file(GLOB_RECURSE OpenSSLDllList "../deps/openssl/*.dll")
 
 qt5_wrap_ui(AppFormsHeadersList ${AppFormsList})
 qt5_wrap_cpp(AppHeadersMocList ${AppFormsHeadersList})
@@ -86,6 +87,7 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
+	${OpenSSLDllList}
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Svg
