@@ -20,6 +20,11 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 
 	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
 	VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(reloadSettingsSlot())));
+
+	const int width = QuickieWebBotHelpers::pointsToPixels(750);
+	const int height = QuickieWebBotHelpers::pointsToPixels(550);
+
+	resize(width, height);
 }
 
 void ApplicationSettingsWidget::showEvent(QShowEvent* event)
