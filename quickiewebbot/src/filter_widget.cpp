@@ -4,6 +4,7 @@
 #include "summary_view_model.h"
 #include "website_data_widget.h"
 #include "quickie_web_bot_helpers.h"
+#include "application.h"
 
 
 namespace QuickieWebBot

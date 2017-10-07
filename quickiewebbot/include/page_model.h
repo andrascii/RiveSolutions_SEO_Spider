@@ -3,12 +3,12 @@
 #include "abstract_table_model.h"
 #include "parsed_page_info.h"
 #include "unordered_data_collection.h"
+#include "istorage_adaptor.h"
 
 namespace QuickieWebBot
 {
 
 class IResizePolicy;
-class IStorageAdaptor;
 
 class PageModel : public AbstractTableModel
 {

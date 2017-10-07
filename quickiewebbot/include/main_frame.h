@@ -1,10 +1,11 @@
 #pragma once
 
+#include "message_box_dialog.h"
+
 namespace QuickieWebBot
 {
 
 class ApplicationSettingsWidget;
-class SettingsPageRegistry;
 
 class MainFrame : public QMainWindow
 {
@@ -13,7 +14,13 @@ class MainFrame : public QMainWindow
 public:
 	MainFrame(QWidget* parent = nullptr);
 
-	Q_SLOT void showApplicationSettingsWidget();
+signals:
+	void crawlerStarted();
+	void crawlerStopped();
+
+public slots:
+	void showApplicationSettingsWidget();
+	void showMessageBoxDialog(const QString& message, MessageBoxDialog::Icon icon);
 
 private:
 	void init();
@@ -21,9 +28,10 @@ private:
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
 
-	Q_SLOT void startCrawler();
-	Q_SLOT void stopCrawler();
-	Q_SLOT void clearCrawledData();
+private slots:
+	void startCrawler();
+	void stopCrawler();
+	void clearCrawledData();
 
 private:
 	ApplicationSettingsWidget* m_applicationSettingsWidget;

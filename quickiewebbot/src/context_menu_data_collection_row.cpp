@@ -3,6 +3,7 @@
 #include "table_view.h"
 #include "quickie_web_bot_helpers.h"
 #include "page_model.h"
+#include "application.h"
 
 namespace QuickieWebBot
 {
@@ -78,7 +79,7 @@ void ContextMenuDataCollectionRow::openUrlAction()
 		const PageModel* model = 
 			QuickieWebBotHelpers::safe_static_cast<const PageModel*>(index.model());
 
- 		if (model->itemType(index) != IStorageAdaptor::ItemType::UrlItemType)
+		if (model->itemType(index) != IStorageAdaptor::ItemType::UrlItemType)
 		{
 			continue;
 		}

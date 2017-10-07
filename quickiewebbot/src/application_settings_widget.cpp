@@ -118,9 +118,9 @@ void ApplicationSettingsWidget::initialize()
 
 	m_ui.propGroupsList->setCurrentRow(0);
 
-	SettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<SettingsPageRegistry>();
+	ISettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<ISettingsPageRegistry>();
 
-	foreach (QByteArray pageId, settingsPageRegistry->pagesKeys())
+	foreach (const QByteArray& pageId, settingsPageRegistry->pagesKeys())
 	{
 		
 		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);

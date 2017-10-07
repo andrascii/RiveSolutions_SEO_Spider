@@ -2,6 +2,7 @@
 #include "table_view.h"
 #include "page_model.h"
 #include "page_view_model.h"
+#include "application.h"
 
 namespace QuickieWebBot
 {

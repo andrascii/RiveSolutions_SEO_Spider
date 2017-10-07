@@ -5,7 +5,7 @@
         <file>images/open-file-icon.png</file>
         <file>images/save-as-icon.png</file>
         <file>images/save-icon.png</file>
-		<file>images/setting.png</file>
+		<file>images/settings.png</file>
         <file>stylesheets/styles.css</file>
         <file>images/brand-logo.jpg</file>
         <file>images/ui-splitter-horizontal-icon.png</file>
@@ -22,6 +22,9 @@
 		<file>images/oops.jpg</file>
 		<file>images/up-arrow.png</file>
 		<file>images/down-arrow.png</file>
+		<file>images/information-message-icon.png</file>
+		<file>images/warning-message-icon.png</file>
+		<file>images/critical-error-message-icon.png</file>
 		<file>config/defaults.cfg</file>
 		<file>translations/translate_ru_RU.qm</file>
     </qresource>

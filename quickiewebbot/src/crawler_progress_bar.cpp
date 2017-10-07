@@ -1,6 +1,6 @@
 #include "crawler_progress_bar.h"
-#include "action_registry.h"
-#include "action_keys.h"
+#include "application.h"
+#include "main_frame.h"
 
 namespace QuickieWebBot
 {
@@ -13,11 +13,9 @@ CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 	m_calculatePercentTimer->setInterval(150);
 	setMaximum(100);
 
-	ActionRegistry* actionRegistry = &ActionRegistry::instance();
-
 	VERIFY(connect(m_calculatePercentTimer, &QTimer::timeout, this, &CrawlerProgressBar::calculatePercents));
-	VERIFY(connect(actionRegistry->globalAction(s_startCrawlerAction), &QAction::triggered, this, &QWidget::show));
-	VERIFY(connect(actionRegistry->globalAction(s_stopCrawlerAction), &QAction::triggered, this, &QWidget::hide));
+	connect(theApp->mainFrame(), &MainFrame::crawlerStarted, this, &QWidget::show);
+	connect(theApp->mainFrame(), &MainFrame::crawlerStopped, this, &QWidget::hide);
 
 	hide();
 }

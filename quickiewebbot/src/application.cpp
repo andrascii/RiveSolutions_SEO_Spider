@@ -33,6 +33,7 @@ Application::Application(int& argc, char** argv)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
+	, m_networkAccessManager(new QNetworkAccessManager(this))
 {
 	initialize();
 
@@ -118,6 +119,11 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 	return m_softwareBrandingOptions.get();
 }
 
+QNetworkAccessManager* Application::networkAccessManager() const noexcept
+{
+	return m_networkAccessManager;
+}
+
 void Application::mainFrameIsReadyForShow()
 {
 	mainFrame()->showMaximized();
@@ -127,8 +133,8 @@ void Application::mainFrameIsReadyForShow()
 
 void Application::registerServices() const
 {
-	ServiceLocator::instance()->addService<SettingsPageRegistry>(new SettingsPageRegistry);
-	ServiceLocator::instance()->addService<DllLoader>(new DllLoader);
+	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
+	ServiceLocator::instance()->addService<IDllLoader>(new DllLoader);
 }
 
 void Application::initQSettings()
@@ -150,7 +156,7 @@ void Application::initialize() noexcept
 {
 	registerServices();
 
-	DllLoader* dllLoader = ServiceLocator::instance()->service<DllLoader>();
+	IDllLoader* dllLoader = ServiceLocator::instance()->service<IDllLoader>();
 
 	dllLoader->load(s_serviceApiDllName);
 
@@ -389,7 +395,7 @@ void Application::showSplashScreen() const noexcept
 
 Application::~Application()
 {
-	ServiceLocator::instance()->destroyService<SettingsPageRegistry>();
+	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
 }
 
 }

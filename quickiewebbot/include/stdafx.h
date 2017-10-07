@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 //
 // C/C++
 //
@@ -76,14 +80,6 @@
 #include <QItemSelectionModel>
 #include <QtSvg>
 
-#include "application.h"
-
-#ifdef Q_OS_WIN
-#include <windows.h>
-#else
-#error You compile this code on unsupported platform!
-#endif
-
 #include "logger_connection_service_api.h"
 #include "common_macro_helpers.h"
 
@@ -116,4 +112,30 @@ using std::size_t;
 #define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 #else
 #define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::EmptyMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#endif
+
+#if defined(Q_OS_WIN)
+
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
+#include <ws2tcpip.h>
+#include <mstcpip.h>
+
+#define CANNOT_CREATE_SOCKET INVALID_SOCKET
+
+#endif
+
+#if defined(Q_OS_MACOS) || defined(Q_OS_UNIX)
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/select.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <fcntl.h>
+
+#define SOCKET int
+#define CANNOT_CREATE_SOCKET -1
+
 #endif

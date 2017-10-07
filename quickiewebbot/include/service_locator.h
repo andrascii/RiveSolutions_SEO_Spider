@@ -21,11 +21,14 @@ public:
 	template<typename ServiceType, typename ServiceImpl>
 	void addService(ServiceImpl* service)
 	{
-		static_assert(std::is_base_of<ServiceType, ServiceImpl>::value, "Type of pointer must be the same type or derived from");
+		static_assert(std::is_abstract_v<ServiceType>, "ServiceType must be an interface");
+		static_assert(std::is_base_of_v<ServiceType, ServiceImpl>, "Type of pointer must be the same type or derived from");
+
+		ServiceType* interfaceServicePointer = service;
 
 		DEBUG_ASSERT(m_services.find(typeid(ServiceType).name()) == m_services.end());
 
-		m_services[typeid(ServiceType).name()] = std::make_pair(service, &internalDeleter<ServiceType>);
+		m_services[typeid(ServiceType).name()] = std::make_pair(interfaceServicePointer, &internalDeleter<ServiceType>);
 	}
 
 	template<typename ServiceType>
@@ -52,7 +55,9 @@ public:
 
 		DEBUG_ASSERT(findIterator != m_services.end());
 
-		return static_cast<ServiceType*>(std::get<0>(std::get<1>(*findIterator)));
+		void* pointerToService = std::get<0>(std::get<1>(*findIterator));
+
+		return static_cast<ServiceType*>(pointerToService);
 	}
 
 private:

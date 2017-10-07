@@ -37,6 +37,8 @@ public:
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
+	QNetworkAccessManager* networkAccessManager() const noexcept;
+
 	void initializeStyleSheet() noexcept;
 
 	// ISettingsAccessor implementation
@@ -72,8 +74,8 @@ private:
 	std::unique_ptr<SummaryDataAccessorFactory> m_summaryDataAccessorFactory;
 
 	QSettings* m_settings;
-
 	QTranslator* m_translator;
+	QNetworkAccessManager* m_networkAccessManager;
 };
 
 }

@@ -1,25 +1,19 @@
 #include "application.h"
 #include "application_settings_widget.h"
-#include "preferences.h"
 #include "main_frame.h"
-#include "model_controller.h"
-#include "unordered_data_collection.h"
-#include "crawler.h"
 #include "quickie_web_bot_helpers.h"
 #include "data_pages_widget.h"
-#include "control_panel_widget.h"
 #include "action_keys.h"
 #include "action_registry.h"
 #include "main_frame_menu_bar.h"
-#include "service_locator.h"
-#include "settings_page_registry.h"
-#include "titled_widget.h"
 #include "settings_page_impl.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
+#include "host_info.h"
+
 
 namespace QuickieWebBot
 {
@@ -39,6 +33,17 @@ void MainFrame::showApplicationSettingsWidget()
 	}
 
 	m_applicationSettingsWidget->exec();
+}
+
+void MainFrame::showMessageBoxDialog(const QString& message, MessageBoxDialog::Icon icon)
+{
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog(this);
+	messageBoxDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+	messageBoxDialog->setMessage(message);
+	messageBoxDialog->setIcon(icon);
+
+	messageBoxDialog->exec();
 }
 
 void MainFrame::init()
@@ -79,7 +84,7 @@ void MainFrame::createActions()
 	// settings actions
 
 	actionRegistry.addGlobalAction(s_openSettingsAction,
-		QIcon(QStringLiteral(":/images/setting.png")), tr("Settings"));
+		QIcon(QStringLiteral(":/images/settings.png")), tr("Settings"));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -120,6 +125,18 @@ void MainFrame::registerSettingsPages() const
 
 void MainFrame::startCrawler()
 {
+	HostInfo hostInfo(theApp->preferences()->url().host().toLatin1());
+
+	if (!hostInfo.isValid())
+	{
+		showMessageBoxDialog(
+			"I'm sorry but I cannot to find this website.\n"
+			"Please, be sure that you entered a valid address.", 
+			MessageBoxDialog::WarningIcon);
+
+		return;
+	}
+
 	WebCrawler::CrawlerOptions options;
 
 	options.host = theApp->preferences()->url();
@@ -141,11 +158,15 @@ void MainFrame::startCrawler()
 	options.parserTypeFlags.setFlag(WebCrawler::FlashResourcesParserType);
 
 	theApp->crawler()->startCrawling(options);
+
+	emit crawlerStarted();
 }
 
 void MainFrame::stopCrawler()
 {
 	theApp->crawler()->stopCrawling();
+
+	emit crawlerStopped();
 }
 
 void MainFrame::clearCrawledData()
