@@ -125,21 +125,52 @@ QComboBox
 	min-width: 3em;
 }
 
-QComboBox::item
+QComboBox:hover
 {
-	background: #ffffff;
+	background: #FFFFFF;
 }
 
 QComboBox::drop-down
 {
 	margin-right: 0.4em;
-	background-color: #f5f5f5;
-	color: #494949;
+	background-color: transparent;
 }
 
 QComboBox::down-arrow
 {
-	image: url(:/images/arrow-down-icon.png);
+	image: url(:/images/down-arrow.png);
+	width: 1em;
+	height: 1em;
+	background: transparent;
+}
+
+/*/////////////////////////////// QSpinBox ///////////////////////////////*/
+
+QSpinBox::up-button
+{
+	image: url(:/images/up-arrow.png);
+	border-bottom: 0.05em solid #CCCCCC;
+	border-left: 0.05em solid #CCCCCC;
+	padding-top: 0.03em;
+}
+
+QSpinBox::up-button:pressed
+{
+	background: #CCCCCC;
+}
+
+QSpinBox::down-button
+{
+    image: url(:/images/down-arrow.png);
+	border-left: 0.05em solid #CCCCCC;
+	
+	/* this padding need in order to save image size like in a up-button */
+	padding-top: 0.05em;
+}
+
+QSpinBox::down-button:pressed
+{
+	background: #CCCCCC;
 }
 
 /*/////////////////////////////// Info frame ///////////////////////////////*/
