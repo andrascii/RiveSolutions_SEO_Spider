@@ -11,7 +11,7 @@ TEST(ImageTests, EmptyAlt)
 		EXPECT_EQ(1, pages[0]->linksToThisPage.size());
 		EXPECT_EQ(QString(""), pages[0]->linksToThisPage[0].altOrTitle);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(200, pages[0]->statusCode);
+		EXPECT_EQ(Common::ResponseCode::Ok200, pages[0]->responseCode);
 
 		WebCrawler::ParsedPagePtr sourcePage = pages[0]->linksToThisPage[0].resource.lock();
 		EXPECT_EQ(1, sourcePage->linksOnThisPage.size());
@@ -31,7 +31,7 @@ TEST(ImageTests, NoAlt)
 		EXPECT_EQ(0, pages[0]->missignAltIndices[0]);
 		EXPECT_EQ(QString(""), pages[0]->linksToThisPage[0].altOrTitle);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(200, pages[0]->statusCode);
+		EXPECT_EQ(Common::ResponseCode::Ok200, pages[0]->responseCode);
 
 		WebCrawler::ParsedPagePtr sourcePage = pages[0]->linksToThisPage[0].resource.lock();
 		EXPECT_EQ(1, sourcePage->linksOnThisPage.size());
@@ -50,7 +50,7 @@ TEST(ImageTests, Image404)
 		EXPECT_EQ(1, pages[0]->missignAltIndices.size());
 		EXPECT_EQ(0, pages[0]->missignAltIndices[0]);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(404, pages[0]->statusCode);
+		EXPECT_EQ(Common::ResponseCode::NotFound404, pages[0]->responseCode);
 
 		auto pages404 = cl->waitForParsedPageReceived(WebCrawler::Status404StorageType, 1, 10);
 		EXPECT_EQ(1, pages404.size());
@@ -85,7 +85,7 @@ TEST(ImageTests, ImageAlt)
 		EXPECT_EQ(1, pages[0]->linksToThisPage.size());
 		EXPECT_EQ(0, pages[0]->missignAltIndices.size());
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(200, pages[0]->statusCode);
+		EXPECT_EQ(Common::ResponseCode::Ok200, pages[0]->responseCode);
 
 		QString expectedAlt = QString::fromWCharArray(L"Dummy Alt и чето по русски");
 		EXPECT_EQ(expectedAlt, pages[0]->linksToThisPage[0].altOrTitle);

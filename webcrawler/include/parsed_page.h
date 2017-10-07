@@ -1,5 +1,7 @@
 #pragma once
 
+#include "response_code.h"
+
 namespace WebCrawler
 {
 
@@ -74,7 +76,7 @@ struct ParsedPage
 	QString firstH2;
 	QString secondH2;
 	QString canonicalLinkElement;
-	int statusCode;
+	Common::ResponseCode responseCode;
 	int pageSizeKilobytes;
 	int wordCount;
 	size_t pageHash;

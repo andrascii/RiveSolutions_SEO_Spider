@@ -450,7 +450,7 @@ QVariant ParsedPageInfo::acceptCanonicalLinkElement() const
 
 QVariant ParsedPageInfo::acceptStatusCode() const
 {
-	return m_parsedPage->statusCode;
+	return static_cast<int>(m_parsedPage->responseCode);
 }
 
 QVariant ParsedPageInfo::acceptUrlLength() const
