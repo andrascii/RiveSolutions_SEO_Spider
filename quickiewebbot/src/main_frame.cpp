@@ -35,15 +35,16 @@ void MainFrame::showApplicationSettingsWidget()
 	m_applicationSettingsWidget->exec();
 }
 
-void MainFrame::showMessageBoxDialog(const QString& message, MessageBoxDialog::Icon icon)
+void MainFrame::showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon)
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog(this);
 	messageBoxDialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
+	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setIcon(icon);
 
-	messageBoxDialog->exec();
+	messageBoxDialog->show();
 }
 
 void MainFrame::init()
@@ -129,7 +130,7 @@ void MainFrame::startCrawler()
 
 	if (!hostInfo.isValid())
 	{
-		showMessageBoxDialog(
+		showMessageBoxDialog("Invalid Hostname!",
 			"I'm sorry but I cannot to find this website.\n"
 			"Please, be sure that you entered a valid address.", 
 			MessageBoxDialog::WarningIcon);

@@ -1,12 +1,14 @@
 #pragma once
 
-#include "ui_message_box_dialog.h"
+#include "ui_message_box.h"
 
 namespace QuickieWebBot
 {
 
-class MessageBoxDialog : public QDialog
+class MessageBoxDialog : public QFrame
 {
+	Q_OBJECT
+
 public:
 	enum Icon
 	{
@@ -20,8 +22,20 @@ public:
 	void setMessage(const QString& message);
 	void setIcon(Icon icon);
 
+	int	result() const;
+
+public slots:
+	virtual void accept();
+	virtual void reject();
+	virtual void done(int r);
+
+protected:
+	virtual void showEvent(QShowEvent* event) override;
+
 private:
-	Ui_MessageBoxDialog* m_ui;
+	Ui_MessageBox* m_ui;
+
+	QDialog::DialogCode m_dialogCode;
 };
 
 }

@@ -20,7 +20,7 @@ signals:
 
 public slots:
 	void showApplicationSettingsWidget();
-	void showMessageBoxDialog(const QString& message, MessageBoxDialog::Icon icon);
+	void showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon);
 
 private:
 	void init();
