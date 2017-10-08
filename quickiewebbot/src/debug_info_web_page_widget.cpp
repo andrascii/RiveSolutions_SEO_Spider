@@ -32,9 +32,14 @@ void DebugInfoWebPageWidget::onPageSelected(WebCrawler::ParsedPage* page)
 
 #ifdef QT_DEBUG
 
-	QByteArray rawHtml = qUncompress(page->rawResponse);
-	rawHtmlEdit->setPlainText(rawHtml);
-	webEngineView->setHtml(rawHtml, page->url);
+	if (page->resourceType == WebCrawler::ResourceType::ResourceHtml)
+	{
+		QByteArray rawHtml = qUncompress(page->rawResponse);
+		rawHtmlEdit->setPlainText(rawHtml);
+		webEngineView->setHtml(rawHtml, page->url);
+	}
+	
+	// TODO: process images
 
 #endif
 }
