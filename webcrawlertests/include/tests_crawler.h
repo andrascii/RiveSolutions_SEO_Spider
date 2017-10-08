@@ -43,7 +43,7 @@ public:
 	TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOptions& options);
 	~TestsCrawler();
 
-	std::vector<WebCrawler::ParsedPagePtr> waitForParsedPageReceived(WebCrawler::StorageType storage, int count, int seconds) const;
+	std::vector<WebCrawler::ParsedPagePtr> waitForParsedPageReceived(WebCrawler::StorageType storage, int count, int seconds, const char* timeoutMessage) const;
 	std::vector<WebCrawler::ParsedPagePtr> storageItems(WebCrawler::StorageType storage) const;
 
 	std::vector<WebCrawler::LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(WebCrawler::ParsedPagePtr page, int count, int seconds) const;

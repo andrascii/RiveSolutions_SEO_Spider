@@ -28,6 +28,7 @@ enum class ResourceType
 
 enum class ResourceSource
 {
+	SourceInvalid,
 	SourceTagA,
 	SourceTagImg,
 	SourceTagLink,
@@ -98,9 +99,7 @@ struct ParsedPage
 	std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 
-#ifdef QT_DEBUG
-	QByteArray rawHtml;
-#endif
+	QByteArray rawResponse;
 };
 
 using ParsedPagePtr = std::shared_ptr<ParsedPage>;

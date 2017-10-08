@@ -206,7 +206,7 @@ void UnorderedDataCollection::initializeStorages()
 
 		std::make_pair(StorageType::EmptyTitleUrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageTitleComparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		std::make_pair(StorageType::DuplicatedTitleUrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
@@ -214,11 +214,11 @@ void UnorderedDataCollection::initializeStorages()
 
 		std::make_pair(StorageType::VeryLongTitleUrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageTitleComparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		std::make_pair(StorageType::VeryShortTitleUrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageTitleComparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		std::make_pair(StorageType::DuplicatedH1TitleUrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
@@ -226,7 +226,7 @@ void UnorderedDataCollection::initializeStorages()
 
 		std::make_pair(StorageType::SeveralTitleUrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageTitleComparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		//
 		// Meta Description Storages

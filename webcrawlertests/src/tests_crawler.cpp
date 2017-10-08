@@ -126,7 +126,7 @@ TestsCrawler::~TestsCrawler()
 	m_sequensedCollectionThread->deleteLater();
 }
 
-std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(WebCrawler::StorageType storage, int count, int seconds) const
+std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(WebCrawler::StorageType storage, int count, int seconds, const char* timeoutMessage) const
 {
 	ASSERT(m_crawlerThread != QThread::currentThread());
 	ASSERT(m_crawlerThread->isRunning());
@@ -134,7 +134,7 @@ std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(W
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
-		throw TimeOutException("Timeout");
+		throw TimeOutException(timeoutMessage);
 	}
 
 	return future.get();

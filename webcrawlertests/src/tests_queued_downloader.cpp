@@ -27,10 +27,13 @@ void TestsQueudedDownoader::scheduleUrl(const WebCrawler::CrawlerRequest& url) n
 		}
 		inputFile.close();
 
-		QFile html(files.first);
-		ASSERT(html.open(QIODevice::ReadOnly));
-		reply.responseBody = html.readAll();
-		html.close();
+		if (url.requestType == WebCrawler::RequestTypeGet)
+		{
+			QFile html(files.first);
+			ASSERT(html.open(QIODevice::ReadOnly));
+			reply.responseBody = html.readAll();
+			html.close();
+		}
 	}
 	else
 	{

@@ -32,6 +32,11 @@ void CrawlerUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestTyp
 {
 	using VectorIterator = std::vector<QUrl>::const_iterator;
 
+	if (urlList.empty())
+	{
+		return;
+	}
+
 	std::lock_guard<std::mutex> locker(m_mutex);
 
 	size_t insertedUrlCounter = 0;

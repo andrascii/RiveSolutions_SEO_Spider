@@ -48,4 +48,42 @@ WebCrawler::CrawlerOptions TestEnvironment::defaultOptions(const QUrl& url)
 	return result;
 }
 
+WebCrawler::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(WebCrawler::ParsedPagePtr page, WebCrawler::ResourceType resourceType)
+{
+	for (WebCrawler::ResourceLink& link : page->linksOnThisPage)
+	{
+		if (link.resource.lock()->resourceType == resourceType)
+		{
+			return link;
+		}
+	}
+
+	return WebCrawler::ResourceLink
+	{ 
+		WebCrawler::ParsedPageWeakPtr(), 
+		WebCrawler::LinkParameter::UnknownParameter, 
+		WebCrawler::ResourceSource::SourceInvalid, 
+		QString() 
+	};
+}
+
+WebCrawler::ResourceLink TestEnvironment::firstResourceToThisPageOfType(WebCrawler::ParsedPagePtr page, WebCrawler::ResourceType resourceType)
+{
+	for (WebCrawler::ResourceLink& link : page->linksToThisPage)
+	{
+		if (link.resource.lock()->resourceType == resourceType)
+		{
+			return link;
+		}
+	}
+
+	return WebCrawler::ResourceLink
+	{
+		WebCrawler::ParsedPageWeakPtr(),
+		WebCrawler::LinkParameter::UnknownParameter,
+		WebCrawler::ResourceSource::SourceInvalid,
+		QString()
+	};
+}
+
 }

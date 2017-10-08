@@ -32,7 +32,7 @@ void DebugInfoWebPageWidget::onPageSelected(WebCrawler::ParsedPage* page)
 
 #ifdef QT_DEBUG
 
-	QByteArray rawHtml = qUncompress(page->rawHtml);
+	QByteArray rawHtml = qUncompress(page->rawResponse);
 	rawHtmlEdit->setPlainText(rawHtml);
 	webEngineView->setHtml(rawHtml, page->url);
 
