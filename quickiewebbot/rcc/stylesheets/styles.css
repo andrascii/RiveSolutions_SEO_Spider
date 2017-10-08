@@ -57,6 +57,7 @@ QComboBox,
 QSpinBox
 {
 	border: 0.05em solid #CCCCCC;
+	border-radius: 0.143em;
 }
 
 QuickieWebBot--TableView
@@ -84,7 +85,7 @@ QuickieWebBot--UrlLineEdit:focus[isValidUrl=false]
 	border-color: #cc0000; 
 }
 
-/*////////////////////////////////// Progress Bar //////////////////////////*/
+/*////////////////////////////////// QProgressBar //////////////////////////*/
 
 QProgressBar
 {
@@ -100,19 +101,24 @@ QProgressBar::chunk
 	background-color: #61a032;
 }
 
-/*////////////////////////////////// Push Buttons //////////////////////////*/
+/*////////////////////////////////// QPushButton //////////////////////////*/
 
 QPushButton
 {
-	background-color: #f5f5f5;
 	color: #494949;
+	background-color: #F5F5F5;
 	min-height: 1.5em;
-	min-width: 3em;
+	min-width: 5em;
+}
+
+QPushButton:hover
+{
+	background-color: #FFFFFF;
 }
 
 QPushButton:pressed
 {
-	background-color: #d6d6d6;
+	background-color: #D6D6D6;
 }
 
 /*/////////////////////////////// QComboBox ///////////////////////////////*/
@@ -219,7 +225,7 @@ QHeaderView::section
 	min-height: 2em;
 }
 
-/*/////////////////////////////// Settings page Widget ////////////////////////////////*/
+/*/////////////////////////////// SettingsPage ////////////////////////////////*/
 
 QuickieWebBot--SettingsPage
 {
@@ -302,21 +308,21 @@ QuickieWebBot--ApplicationSettingsWidget QCheckBox
 	color: #333333;
 }
 
-QuickieWebBot--ApplicationSettingsWidget QPushButton
-{
-	padding: 0.05em;
-}
-
 QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:enabled
 {
 	color: white;
-	background-color: #61a032;
-	padding: 0.05em;
+	background-color: #56A433;
+	border-color: #4A9029;
+}
+
+QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:enabled:hover
+{
+	background-color: #67B847;
 }
 
 QuickieWebBot--ApplicationSettingsWidget QPushButton#applyButton:enabled:pressed
 {
-	background-color: #61b012;
+	background-color: #4A9029;
 }
 
 /*/////////////////////////////// Splitters ///////////////////////////////*/
@@ -471,9 +477,37 @@ QTabBar::tab:only-one
     margin: 0; /* if there is only one tab, we don't want overlapping margins */
 }
 
-/**/
+/*/////////////////////////////// WidgetUnderMouseInfoDialog ///////////////////////////////*/
 
 QuickieWebBot--WidgetUnderMouseInfoDialog QLabel
 {
 	color: black;
+}
+
+/*/////////////////////////////// MessageBoxDialog ///////////////////////////////*/
+
+QFrame#MessageBox
+{
+	background: #34465d;
+}
+
+QFrame#MessageBox QPushButton
+{
+	min-height: 1.4em;
+	border-color: #C0C0C0;
+}
+
+QFrame#MessageBox QPushButton:hover
+{
+	border-color: #FFFFFF;
+}
+
+QFrame#MessageBox QPushButton:pressed
+{
+	border-color: #C0C0C0;
+}
+
+QFrame#MessageBox QLabel
+{
+	color: #ededed;
 }
