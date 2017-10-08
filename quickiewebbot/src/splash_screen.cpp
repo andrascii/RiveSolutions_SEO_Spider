@@ -7,8 +7,6 @@ namespace QuickieWebBot
 {
 
 SplashScreen* SplashScreen::s_instance = nullptr;
-bool SplashScreen::s_alreadyShown = false;
-
 
 SplashScreen* SplashScreen::instance()
 {
@@ -20,51 +18,63 @@ SplashScreen* SplashScreen::instance()
 	return s_instance;
 }
 
+void SplashScreen::setMessage(const QString& message)
+{
+	m_ui->messageText->setText(message);
+}
+
 void SplashScreen::show()
 {
-	m_timer->setInterval(3000);
-	m_timer->setSingleShot(true);
+	instance()->QWidget::show();
 
-	VERIFY(connect(m_timer, &QTimer::timeout, this, &QWidget::deleteLater));
+	theApp->processEvents();
+}
 
-	QWidget::show();
+void SplashScreen::finish()
+{
+	instance()->hide();
+	instance()->deleteLater();
 
-	m_timer->start();
+	theApp->processEvents();
+}
+
+void SplashScreen::showMessage(const QString& message)
+{
+	instance()->setMessage(message);
+
+	theApp->processEvents();
 }
 
 SplashScreen::SplashScreen()
-	: QWidget(nullptr, Qt::Dialog | Qt::Tool | Qt::FramelessWindowHint)
-	, m_screenContent(new Ui::SplashScreenWidget)
-	, m_timer(new QTimer(this))
+	: QWidget(nullptr, Qt::Dialog | Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint)
+	, m_ui(new Ui::SplashScreenWidget)
 {
-	DEBUG_ASSERT(!s_alreadyShown);
-
-	s_alreadyShown = true;
-
 	m_brandingLogoImage = theApp->softwareBrandingOptions()->brandingLogoImage();
 
-	m_screenContent->setupUi(this);
+	m_ui->setupUi(this);
 
-	// Temporary hide
-	m_screenContent->versionText->hide();
-	m_screenContent->copyrightText->hide();
-	m_screenContent->label->hide();
-	m_screenContent->label_2->hide();
+	QSize originalImageSize = m_brandingLogoImage.size();
 
-	resize(m_brandingLogoImage.size());
+	resize(originalImageSize);
+
+	QString version;
+
+#ifndef PRODUCTION
+	version = "13.13";
+#else
+	version = theApp->applicationVersion().isEmpty() ? "Developer's version" : theApp->applicationVersion();
+#endif
+
+	m_ui->versionText->setText(version);
 }
 
 SplashScreen::~SplashScreen()
 {
-	emit finished();
-
 	s_instance = nullptr;
 }
 
-void SplashScreen::paintEvent(QPaintEvent* event)
+void SplashScreen::paintEvent(QPaintEvent*)
 {
-	Q_UNUSED(event);
-
 	QPainter painter(this);
 
 	QPen pen(QColor("#D6D6D6"));

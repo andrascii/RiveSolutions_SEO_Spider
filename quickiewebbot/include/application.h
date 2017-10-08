@@ -37,8 +37,6 @@ public:
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
-	QNetworkAccessManager* networkAccessManager() const noexcept;
-
 	void initializeStyleSheet() noexcept;
 
 	// ISettingsAccessor implementation
@@ -48,7 +46,7 @@ public:
 	virtual QList<QByteArray> allKeys() const override;
 
 private:
-	Q_SLOT void mainFrameIsReadyForShow();
+	Q_SLOT void showMainFrame();
 
 	void registerServices() const;
 
@@ -65,7 +63,7 @@ private:
 	Preferences* m_preferences;
 	std::unique_ptr<WebCrawler::Crawler> m_webCrawler;
 
-	WebCrawler::SequencedDataCollection* m_guiStorage;
+	WebCrawler::SequencedDataCollection* m_sequencedDataCollection;
 	
 	std::unique_ptr<MainFrame> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
@@ -75,7 +73,6 @@ private:
 
 	QSettings* m_settings;
 	QTranslator* m_translator;
-	QNetworkAccessManager* m_networkAccessManager;
 };
 
 }

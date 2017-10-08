@@ -34,6 +34,8 @@ private:
 	SummaryViewModel* m_summaryFilterViewModel;
 
 	QSplitter* m_splitter;
+
+	bool m_isFirstShow;
 };
 
 }

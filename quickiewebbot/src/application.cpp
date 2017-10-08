@@ -33,17 +33,14 @@ Application::Application(int& argc, char** argv)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
-	, m_networkAccessManager(new QNetworkAccessManager(this))
 {
+	SplashScreen::show();
+
 	initialize();
 
 	initializeStyleSheet();
 
-#if defined(PRODUCTION)
-	showSplashScreen();
-#else
-	mainFrameIsReadyForShow();
-#endif
+	showMainFrame();
 
 	INFOLOG << QThread::currentThreadId() << "Main thread has been started";
 
@@ -67,7 +64,7 @@ MainFrame* Application::mainFrame() noexcept
 
 WebCrawler::SequencedDataCollection* Application::sequencedDataCollection() noexcept
 {
-	return m_guiStorage;
+	return m_sequencedDataCollection;
 }
 
 StorageAdaptorFactory* Application::storageAdaptorFactory() noexcept
@@ -119,16 +116,11 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 	return m_softwareBrandingOptions.get();
 }
 
-QNetworkAccessManager* Application::networkAccessManager() const noexcept
+void Application::showMainFrame()
 {
-	return m_networkAccessManager;
-}
+	SplashScreen::finish();
 
-void Application::mainFrameIsReadyForShow()
-{
 	mainFrame()->showMaximized();
-
-	INFOLOG << "MainFrame shown";
 }
 
 void Application::registerServices() const
@@ -154,9 +146,16 @@ QSettings* Application::settings() const
 
 void Application::initialize() noexcept
 {
+	SplashScreen::showMessage("Initializing...");
+
+	// let users to show the splash screen
+	std::this_thread::sleep_for(1s);
+
 	registerServices();
 
 	IDllLoader* dllLoader = ServiceLocator::instance()->service<IDllLoader>();
+
+	SplashScreen::showMessage("Loading seospiderservice.dll...");
 
 	dllLoader->load(s_serviceApiDllName);
 
@@ -169,7 +168,7 @@ void Application::initialize() noexcept
 	
 	ASSERT(storage->thread() == QThread::currentThread());
 	
-	m_guiStorage = storage;
+	m_sequencedDataCollection = storage;
 	
 	initQSettings();
 
@@ -177,6 +176,8 @@ void Application::initialize() noexcept
 
 	m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());
 	installTranslator(m_translator);
+
+	SplashScreen::showMessage("Loading main frame...");
 
 	m_mainFrame.reset(new MainFrame);
 
@@ -189,6 +190,8 @@ void Application::initialize() noexcept
 
 void Application::initializeStyleSheet() noexcept
 {
+	SplashScreen::showMessage("Initializing stylesheets...");
+
 	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
 
 	QFile styles(":/stylesheets/styles.css");
@@ -382,15 +385,6 @@ QString Application::operatingSystemVersion() const noexcept
 	}
 
 	return osVersion;
-}
-
-void Application::showSplashScreen() const noexcept
-{
-	SplashScreen* splashScreen = SplashScreen::instance();
-
-	VERIFY(connect(splashScreen, &SplashScreen::finished, this, &Application::mainFrameIsReadyForShow));
-
-	splashScreen->show();
 }
 
 Application::~Application()

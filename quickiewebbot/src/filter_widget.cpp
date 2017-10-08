@@ -17,6 +17,7 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	, m_summaryFilterModel(new SummaryModel(this))
 	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterModel, this))
 	, m_splitter(new QSplitter(this))
+	, m_isFirstShow(true)
 {
 	m_summaryFilterTableView->setModel(m_summaryFilterModel);
 	m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);
@@ -48,19 +49,17 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 
 void FilterWidget::showEvent(QShowEvent* event)
 {
-	static bool isFirstShow = true;
-
-	if (!isFirstShow)
+	if (!m_isFirstShow)
 	{
 		return;
 	}
 
-	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(150);
+	const int summaryViewWidth = QuickieWebBotHelpers::pointsToPixels(130);
 	m_splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
 
 	event->ignore();
 
-	isFirstShow = false;
+	m_isFirstShow = false;
 }
 
 void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
