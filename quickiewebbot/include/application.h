@@ -57,7 +57,6 @@ private:
 
 private:
 	void initialize() noexcept;
-	void showSplashScreen() const noexcept;
 
 private:
 	Preferences* m_preferences;

@@ -148,8 +148,10 @@ void Application::initialize() noexcept
 {
 	SplashScreen::showMessage("Initializing...");
 
+#ifdef PRODUCTION
 	// let users to show the splash screen
-	std::this_thread::sleep_for(1s);
+	std::this_thread::sleep_for(3s);
+#endif
 
 	registerServices();
 

@@ -511,3 +511,10 @@ QFrame#MessageBox QLabel
 {
 	color: #ededed;
 }
+
+/*/////////////////////////////// MessageBoxDialog ///////////////////////////////*/
+
+QuickieWebBot--DataPagesWidget QPushButton
+{
+	border-radius: none;
+}
