@@ -147,13 +147,13 @@ void ModelController::processParsedPageTitle(ParsedPagePtr parsedPagePtr) noexce
 		return;
 	}
 
-	Common::ResponseCode responseCode = parsedPagePtr->responseCode;
+	Common::StatusCode responseCode = parsedPagePtr->statusCode;
 	const QString title = parsedPagePtr->title;
 	const QString h1 = parsedPagePtr->firstH1;
 
 	if (title.isEmpty() ||
-		responseCode == Common::ResponseCode::MovedPermanently301 || 
-		responseCode == Common::ResponseCode::MovedTemporarily302)
+		responseCode == Common::StatusCode::MovedPermanently301 || 
+		responseCode == Common::StatusCode::MovedTemporarily302)
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::EmptyTitleUrlStorageType);
 	}
@@ -387,7 +387,7 @@ void ModelController::processParsedPageImage(ParsedPagePtr parsedPagePtr, bool c
 
 void ModelController::processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept
 {
-	if (parsedPagePtr->responseCode == Common::ResponseCode::NotFound404)
+	if (parsedPagePtr->statusCode == Common::StatusCode::NotFound404)
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::Status404StorageType);
 	}

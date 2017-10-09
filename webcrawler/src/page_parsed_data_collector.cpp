@@ -8,7 +8,7 @@
 #include "images_resources_parser.h"
 #include "video_resources_parser.h"
 #include "flash_resources_parser.h"
-#include "response_code.h"
+#include "status_code.h"
 
 namespace WebCrawler
 {
@@ -120,7 +120,7 @@ QUrl PageParsedDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& 
 void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const
 {
 	page->url = reply.url;
-	page->responseCode = static_cast<Common::ResponseCode>(reply.statusCode);
+	page->statusCode = static_cast<Common::StatusCode>(reply.statusCode);
 	page->pageSizeKilobytes = reply.responseBody.size() / 1024;
 	page->serverResponse = reply.responseHeaderValuePairs;
 	page->pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());

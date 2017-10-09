@@ -41,15 +41,15 @@ int PageViewModel::marginTop(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
-		return QuickieWebBotHelpers::pointsToPixels(4);
+		return QuickieWebBotHelpers::pointsToPixels(0);
 	}
 
-	return QuickieWebBotHelpers::pointsToPixels(6);
+	return QuickieWebBotHelpers::pointsToPixels(0);
 }
 
 int PageViewModel::marginBottom(const QModelIndex&) const noexcept
 {
-	return QuickieWebBotHelpers::pointsToPixels(4);
+	return QuickieWebBotHelpers::pointsToPixels(0);
 }
 
 int PageViewModel::marginLeft(const QModelIndex& index) const noexcept
@@ -132,14 +132,14 @@ const QFont& PageViewModel::font(const QModelIndex& index) const noexcept
 	return m_textFont;
 }
 
-Qt::AlignmentFlag PageViewModel::textAlignment(const QModelIndex& index) const noexcept
+int PageViewModel::textAlignment(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
 		return Qt::AlignCenter;
 	}
 
-	return Qt::AlignLeft;
+	return Qt::AlignVCenter | Qt::AlignLeft;
 }
 
 const QColor& PageViewModel::textColor(const QModelIndex& index) const noexcept

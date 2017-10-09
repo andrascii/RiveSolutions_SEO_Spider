@@ -32,7 +32,7 @@ public:
 	virtual const QColor& backgroundColor(const QModelIndex& index) const noexcept override;
 
 	virtual const QFont& font(const QModelIndex& index) const noexcept override;
-	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept override;
+	virtual int textAlignment(const QModelIndex& index) const noexcept override;
 	virtual const QColor& textColor(const QModelIndex& index) const noexcept override;
 
 	virtual const QColor& selectedGridLineColor(const QModelIndex& index) const noexcept override;

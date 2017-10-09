@@ -3,7 +3,7 @@
 namespace Common
 {
 
-enum class ResponseCode
+enum class StatusCode
 {
 	Continue100 = 100,
 	SwitchingProtocol101,

@@ -98,7 +98,7 @@ const QFont& SummaryViewModel::font(const QModelIndex& index) const noexcept
 	return m_textFont;
 }
 
-Qt::AlignmentFlag SummaryViewModel::textAlignment(const QModelIndex& index) const noexcept
+int SummaryViewModel::textAlignment(const QModelIndex& index) const noexcept
 {
 	if (index.column() != 0)
 	{

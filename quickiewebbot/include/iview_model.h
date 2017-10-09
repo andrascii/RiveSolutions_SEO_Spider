@@ -25,7 +25,7 @@ public:
 	virtual const QColor& backgroundColor(const QModelIndex& index) const noexcept = 0;
 
 	virtual const QFont& font(const QModelIndex& index) const noexcept = 0;
-	virtual Qt::AlignmentFlag textAlignment(const QModelIndex& index) const noexcept = 0;
+	virtual int textAlignment(const QModelIndex& index) const noexcept = 0;
 	virtual const QColor& textColor(const QModelIndex& index) const noexcept = 0;
 
 	virtual const QColor& selectedGridLineColor(const QModelIndex& index) const noexcept = 0;

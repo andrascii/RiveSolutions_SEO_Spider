@@ -16,7 +16,7 @@ TableView::TableView(QWidget* parent)
 	, m_viewModel(nullptr)
 	, m_contextMenu(nullptr)
 	, m_showAdditionalGrid(false)
-	, m_rowHeight(QuickieWebBotHelpers::pointsToPixels(25))
+	, m_rowHeight(QuickieWebBotHelpers::pointsToPixels(18))
 {
 	setMouseTracking(true);
 
