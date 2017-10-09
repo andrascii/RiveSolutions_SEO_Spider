@@ -13,7 +13,7 @@ TEST(DummyGroup, DummyName)
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://dummy.com")));
 	env.runTest([cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(WebCrawler::CrawledUrlStorageType, 1, 1000);
+		auto pages = cl->waitForParsedPageReceived(WebCrawler::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
 		EXPECT_EQ(1, pages.size());
 		WebCrawler::ParsedPagePtr page = pages[0];
 		EXPECT_EQ(QString("Dummy H1"),  page->firstH1);

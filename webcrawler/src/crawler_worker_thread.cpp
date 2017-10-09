@@ -61,7 +61,8 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		m_crawlerInternalUrlStorage->saveUrlList(std::vector<QUrl>{ parsedPage->redirectedUrl }, RequestTypeGet);
 	}
 
-	std::vector<QUrl> resourcesUrlList;
+	std::vector<QUrl> resourcesHeadUrlList;
+	std::vector<QUrl> resourcesGetUrlList;
 
 	for (const RawResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
@@ -70,11 +71,19 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		if (PageParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
 			resource.resourceType != ResourceType::ResourceHtml)
 		{
-			resourcesUrlList.push_back(resource.thisResourceLink.url);
+			if (resource.resourceType == ResourceType::ResourceImage)
+			{
+				resourcesGetUrlList.push_back(resource.thisResourceLink.url);
+			}
+			else
+			{
+				resourcesHeadUrlList.push_back(resource.thisResourceLink.url);
+			}
 		}
 	}
 
-	m_crawlerInternalUrlStorage->saveUrlList(resourcesUrlList, RequestTypeHead);
+	m_crawlerInternalUrlStorage->saveUrlList(resourcesGetUrlList, RequestTypeGet);
+	m_crawlerInternalUrlStorage->saveUrlList(resourcesHeadUrlList, RequestTypeHead);
 }
 
 }

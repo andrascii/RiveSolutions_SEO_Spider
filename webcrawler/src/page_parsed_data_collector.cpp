@@ -46,20 +46,23 @@ ParsedPagePtr PageParsedDataCollector::collectPageDataFromReply(const QueuedDown
 			<< "Content-Type:" << page->contentType;
 	}
 
-	page->redirectedUrl = resolveRedirectUrl(reply);
+	QByteArray decodedHtmlPage;
+	if (page->resourceType == ResourceType::ResourceHtml)
+	{
+		decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(reply.responseBody);
+#ifdef QT_DEBUG
+		page->rawResponse = qCompress(decodedHtmlPage, 9);
+#endif
+	}
+	else if (page->resourceType == ResourceType::ResourceImage)
+	{
+		page->rawResponse = reply.responseBody;
+	}
 
-	const QByteArray decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(reply.responseBody);
 	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
 
 	collectParsedPageData(gumboOutput.output(), page);
 	collectUrlList(gumboOutput.output());
-
-#ifdef QT_DEBUG
-	if (page->resourceType == ResourceType::ResourceHtml)
-	{
-		page->rawHtml = qCompress(decodedHtmlPage, 9);
-	}
-#endif
 
 	return page;
 }
@@ -142,6 +145,8 @@ void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& re
 	}
 
 	setResourceCategory(page);
+
+	page->redirectedUrl = resolveRedirectUrl(reply);
 }
 
 void PageParsedDataCollector::collectParsedPageData(GumboOutput* output, ParsedPagePtr& page)
