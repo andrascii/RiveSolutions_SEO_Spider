@@ -6,6 +6,7 @@
 #include "storage_adaptor_factory.h"
 #include "page_data_widget.h"
 #include "quickie_web_bot_helpers.h"
+#include "application.h"
 
 
 namespace QuickieWebBot

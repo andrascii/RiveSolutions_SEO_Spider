@@ -10,11 +10,9 @@ class SplashScreen : public QWidget
 	Q_OBJECT
 
 public:
-	static SplashScreen* instance();
-
-	void show();
-
-	Q_SIGNAL void finished();
+	static void show();
+	static void finish();
+	static void showMessage(const QString& message);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
@@ -23,14 +21,17 @@ private:
 	SplashScreen();
 	~SplashScreen();
 
+	static SplashScreen* instance();
+
+	using QWidget::show;
+
+	void setMessage(const QString& message);
+
 private:
 	static SplashScreen* s_instance;
-	static bool s_alreadyShown;
 
-	std::unique_ptr<Ui::SplashScreenWidget> m_screenContent;
-
+	Ui_SplashScreenWidget* m_ui;
 	QPixmap m_brandingLogoImage;
-	QTimer* m_timer;
 };
 
 }

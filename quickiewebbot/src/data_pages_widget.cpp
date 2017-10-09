@@ -148,7 +148,7 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::AllPagesPage]);
 	m_navigationPanel.verticalSubbuttonsLayout->addWidget(m_navigationPanel.pushButtons[Page::AllResourcesPage]);
 	m_navigationPanel.verticalSubbuttonsLayout->setSpacing(0);
-	m_navigationPanel.verticalSubbuttonsLayout->setContentsMargins(-1, 0, 0, 0);
+	m_navigationPanel.verticalSubbuttonsLayout->setContentsMargins(0, 0, 0, 0);
 	m_navigationPanel.siteStructurePanelWidget->setLayout(m_navigationPanel.verticalSubbuttonsLayout);
 
 

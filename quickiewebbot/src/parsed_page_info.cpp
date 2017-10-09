@@ -1,6 +1,7 @@
 #include "parsed_page.h"
 #include "parsed_page_info.h"
 #include "quickie_web_bot_helpers.h"
+#include "response_code_description.h"
 
 namespace QuickieWebBot
 {
@@ -450,7 +451,7 @@ QVariant ParsedPageInfo::acceptCanonicalLinkElement() const
 
 QVariant ParsedPageInfo::acceptStatusCode() const
 {
-	return m_parsedPage->statusCode;
+	return Common::ResponseCodeDescription::description(m_parsedPage->responseCode);
 }
 
 QVariant ParsedPageInfo::acceptUrlLength() const

@@ -1,4 +1,5 @@
 #include "parsed_page_info_storage_adaptor.h"
+#include "application.h"
 
 namespace QuickieWebBot
 {

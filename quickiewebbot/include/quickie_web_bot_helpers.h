@@ -9,6 +9,8 @@ public:
 	static int pointsToPixels(double sizeInPoints, double dpi = 0);
 	static double pixelsToPoints(int sizeInPixels, double dpi = 0);
 
+	static void moveWidgetToHostCenter(QWidget* widget, QWidget* host = nullptr);
+
 	template <typename DestinationType, typename SourceType>
 	static DestinationType safe_static_cast(SourceType* p)
 	{

@@ -7,25 +7,35 @@
 namespace QuickieWebBot
 {
 
-class SettingsPageRegistry : public QObject
+class ISettingsPageRegistry
+{
+public:
+	virtual ~ISettingsPageRegistry() = default;
+
+	virtual void registerSettingsPage(const QByteArray& pageId, SettingsPage* page) = 0;
+	virtual SettingsPage* settingsPageById(const QByteArray& pageId) const = 0;
+
+	virtual QList<QByteArray> pagesKeys() const = 0;
+};
+
+class SettingsPageRegistry : public QObject, public ISettingsPageRegistry
 {
 	Q_OBJECT
 
 public: 
 	SettingsPageRegistry(QObject* parent = nullptr);
-	~SettingsPageRegistry();
+	virtual ~SettingsPageRegistry();
 
-	void registerSettingsPage(const QByteArray& pageId, SettingsPage* page);
-	SettingsPage* settingsPageById(const QByteArray& pageId) const;
+	virtual void registerSettingsPage(const QByteArray& pageId, SettingsPage* page) override;
+	virtual SettingsPage* settingsPageById(const QByteArray& pageId) const override;
 
-	const QList<QByteArray>& pagesKeys();
+	virtual QList<QByteArray> pagesKeys() const override;
 
 private:
 	Q_SLOT void settingsPageDestroyed();
 
 private:
 	QMap<QByteArray, SettingsPage*> m_settingsPages;
-	QList<QByteArray> m_pagesKeys;
 
 	bool m_deleting;
 };

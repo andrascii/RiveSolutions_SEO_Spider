@@ -17,7 +17,7 @@ TEST(ImageTests, EmptyAlt)
 		EXPECT_EQ(WebCrawler::ResourceSource::SourceTagImg, linkToThisPage1.resourceSource);
 		EXPECT_EQ(WebCrawler::LinkParameter::UnknownParameter, linkToThisPage1.urlParameter);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(200, pages[0]->statusCode);
+		EXPECT_EQ(Common::ResponseCode::Ok200, pages[0]->responseCode);
 
 		EXPECT_EQ(QString(""), linkToThisPage2.altOrTitle);
 		EXPECT_EQ(WebCrawler::ResourceSource::SourceTagImg, linkToThisPage2.resourceSource);
@@ -61,7 +61,7 @@ TEST(ImageTests, NoAlt)
 		EXPECT_EQ(WebCrawler::ResourceSource::SourceTagImg, linkToThisPage1.resourceSource);
 		EXPECT_EQ(WebCrawler::LinkParameter::UnknownParameter, linkToThisPage1.urlParameter);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(200, pages[0]->statusCode);
+		EXPECT_EQ(Common::ResponseCode::Ok200, pages[0]->responseCode);
 
 		EXPECT_EQ(QString(""), linkToThisPage2.altOrTitle);
 		EXPECT_EQ(WebCrawler::ResourceSource::SourceTagImg, linkToThisPage2.resourceSource);
@@ -105,7 +105,7 @@ TEST(ImageTests, Image404)
 		EXPECT_EQ(WebCrawler::ResourceSource::SourceTagImg, linkToThisPage1.resourceSource);
 		EXPECT_EQ(WebCrawler::LinkParameter::UnknownParameter, linkToThisPage1.urlParameter);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(404, pages[0]->statusCode);
+		EXPECT_EQ(Common::ResponseCode::NotFound404, pages[0]->responseCode);
 
 		EXPECT_EQ(QString(""), linkToThisPage2.altOrTitle);
 		EXPECT_EQ(WebCrawler::ResourceSource::SourceTagImg, linkToThisPage2.resourceSource);
@@ -159,7 +159,7 @@ TEST(ImageTests, ImageAlt)
 		EXPECT_EQ(1, pages[0]->linksToThisPage.size());
 		EXPECT_EQ(0, pages[0]->missignAltIndices.size());
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(200, pages[0]->statusCode);
+		EXPECT_EQ(Common::ResponseCode::Ok200, pages[0]->responseCode);
 
 		QString expectedAlt = QString::fromWCharArray(L"Dummy Alt и чето по русски");
 		EXPECT_EQ(expectedAlt, pages[0]->linksToThisPage[0].altOrTitle);

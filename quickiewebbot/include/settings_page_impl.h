@@ -27,7 +27,7 @@ public:
 	{
 		page->setWindowIcon(icon);
 
-		SettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<SettingsPageRegistry>();
+		ISettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<ISettingsPageRegistry>();
 
 		settingsPageRegistry->registerSettingsPage(pageId, page);
 	}

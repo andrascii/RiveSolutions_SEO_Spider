@@ -11,15 +11,15 @@ namespace QuickieWebBot
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectedBackgroundColor("#f39c12")
-	, m_hoveredBackgroundColor("#f1c40f")
+	, m_selectedBackgroundColor("#D6D6D6")
+	, m_hoveredBackgroundColor("#F3F3F3")
 	, m_backgroundColor("#FFFFFF")
 	, m_selectedGridLineColor("#F7F0D6")
 	, m_gridLineColor("#F3F3F3")
 	, m_headerTextColor("#000000")
-	, m_textColor("#333333")
-	, m_headerFont("Helvetica", 10, QFont::Bold)
-	, m_textFont("Helvetica", 9, QFont::Thin)
+	, m_textColor("#000000")
+	, m_headerFont("Helvetica", 10, QFont::DemiBold)
+	, m_textFont("Helvetica", 9, QFont::Medium)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();

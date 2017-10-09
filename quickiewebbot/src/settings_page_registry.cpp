@@ -17,8 +17,6 @@ SettingsPageRegistry::~SettingsPageRegistry()
 	m_deleting = true;
 
 	qDeleteAll(m_settingsPages.values());
-
-	m_pagesKeys.clear();
 }
 
 void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, SettingsPage* page)
@@ -28,7 +26,6 @@ void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, Settin
 	VERIFY(connect(page, SIGNAL(destroyed(QObject*)), SLOT(settingsPageDestroyed())));
 	
 	m_settingsPages[pageId] = page;
-	m_pagesKeys.append(pageId);
 }
 
 SettingsPage* SettingsPageRegistry::settingsPageById(const QByteArray& pageId) const
@@ -36,9 +33,9 @@ SettingsPage* SettingsPageRegistry::settingsPageById(const QByteArray& pageId) c
 	return m_settingsPages.value(pageId);
 }
 
-const QList<QByteArray>& SettingsPageRegistry::pagesKeys()
+QList<QByteArray> SettingsPageRegistry::pagesKeys() const
 {
-	return m_pagesKeys;
+	return m_settingsPages.keys();
 }
 
 void SettingsPageRegistry::settingsPageDestroyed()
