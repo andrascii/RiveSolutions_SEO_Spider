@@ -22,8 +22,8 @@ PageViewModel::PageViewModel(PageModel* model, QObject* parent)
 	, m_selectedGridLineColor("#E8E0C1")
 	, m_gridLineColor("#F3F3F3")
 	, m_urlTextColor("#1754A8")
-	, m_textColor("#333333")
-	, m_textFont("Helvetica", 9, QFont::Thin)
+	, m_textColor("#000000")
+	, m_textFont("Helvetica", 9, QFont::Medium)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();

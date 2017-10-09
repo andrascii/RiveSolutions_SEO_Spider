@@ -13,7 +13,7 @@ public:
 	enum class Page
 	{
 		SiteStructurePanelPage,
-		SeoAnalysisPage,
+		SiteAuditPage,
 		AllPagesPage,
 		AllResourcesPage,
 		DomainMetricsPage,
@@ -36,10 +36,6 @@ private:
 	{
 		QWidget* navigationPanelWidget;
 		QVBoxLayout* verticalMainLayout;
-
-		QWidget* siteStructurePanelWidget;
-		QVBoxLayout* verticalSubbuttonsLayout;
-
 		std::map<Page, QPushButton*> pushButtons;
 	};
 
