@@ -39,7 +39,14 @@ void HParser::parseH1(GumboOutput* output, ParsedPagePtr& page) noexcept
 	if (h1.size() > 1)
 	{
 		page->secondH1 = h1[1];
-		page->hasSeveralH1Tags = true;
+
+		QSet<QString> set;
+		for (const QString& item : h1)
+		{
+			set.insert(item);
+		}
+
+		page->hasSeveralEqualH1Tags = set.size() != static_cast<int>(h1.size());
 	}
 }
 
@@ -67,7 +74,14 @@ void HParser::parseH2(GumboOutput* output, ParsedPagePtr& page) noexcept
 	if (h2.size() > 1)
 	{
 		page->secondH2 = h2[1];
-		page->hasSeveralH2Tags = true;
+
+		QSet<QString> set;
+		for (const QString& item : h2)
+		{
+			set.insert(item);
+		}
+
+		page->hasSeveralEqualH2Tags = set.size() != static_cast<int>(h2.size());
 	}
 }
 
