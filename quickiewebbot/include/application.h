@@ -1,6 +1,6 @@
 #pragma once
 
-#include "main_frame.h"
+#include "main_window.h"
 #include "software_branding.h"
 #include "summary_data_accessor_factory.h"
 #include "storage_adaptor_factory.h"
@@ -28,7 +28,7 @@ public:
 	~Application();
 
 	Preferences* preferences() noexcept;
-	MainFrame* mainFrame() noexcept;
+	MainWindow* mainWindow() noexcept;
 	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
 	
@@ -64,7 +64,7 @@ private:
 
 	WebCrawler::SequencedDataCollection* m_sequencedDataCollection;
 	
-	std::unique_ptr<MainFrame> m_mainFrame;
+	std::unique_ptr<MainWindow> m_mainFrame;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 
 	std::unique_ptr<StorageAdaptorFactory> m_storageAdatpterFactory;

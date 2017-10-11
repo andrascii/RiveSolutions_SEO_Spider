@@ -12,6 +12,14 @@ class ModelController;
 class SequencedDataCollection;
 class IQueuedDownloader;
 
+struct CrawlingState
+{
+	size_t crawledLinkCount;
+	size_t pendingLinkCount;
+};
+
+Q_DECLARE_METATYPE(CrawlingState)
+
 class Crawler : public QObject
 {
 	Q_OBJECT
@@ -20,25 +28,28 @@ public:
 	Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThread = nullptr);
 	~Crawler();
 
-	Q_SLOT void startCrawling(const CrawlerOptions& options);
-	Q_SLOT void stopCrawling();
-
-	SequencedDataCollection* guiStorage() const noexcept;
-
+	SequencedDataCollection* sequencedDataCollection() const noexcept;
 	const CrawlerUrlStorage* crawlerUrlStorage() const noexcept;
 
-private:
-	Q_SLOT void onPageParsed(ParsedPagePtr pageRaw);
+signals:
+	void crawlingState(CrawlingState state);
 
-	Q_SLOT void startCrawlingInternal(const CrawlerOptions& options);
-	Q_SLOT void stopCrawlingInternal();
+public slots:
+	void startCrawling(const CrawlerOptions& options);
+	void stopCrawling();
 
-	void initCrawlerWorkerThreads();
+private slots:
+	void onPageParsed(ParsedPagePtr pageRaw);
+	void startCrawlingInternal(const CrawlerOptions& options);
+	void stopCrawlingInternal();
+	void onAboutCrawlingState();
 
 protected:
 	IQueuedDownloader* queuedDownloader() const noexcept;
 	virtual IQueuedDownloader* createQueuedDownloader() const noexcept;
 
+private:
+	void initCrawlerWorkerThreads();
 
 protected:
 	QThread* m_crawlerThread;
@@ -46,13 +57,15 @@ protected:
 private:
 	mutable std::unique_ptr<IQueuedDownloader> m_queuedDownloader;
 
-	ModelController* m_modelController;
-	
+	ModelController* m_modelController;	
+
 	CrawlerUrlStorage m_urlStorage;
 
 	std::vector<std::unique_ptr<CrawlerWorkerThread>> m_workers;
 
 	unsigned int m_theradCount;
+
+	QTimer* m_crawlingStateTimer;
 };
 
 }

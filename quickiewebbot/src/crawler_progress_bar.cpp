@@ -1,46 +1,29 @@
 #include "crawler_progress_bar.h"
 #include "application.h"
-#include "main_frame.h"
+#include "main_window.h"
 
 namespace QuickieWebBot
 {
 
 CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 	: QProgressBar(parent)
-	, m_urlStorage(theApp->crawler()->crawlerUrlStorage())
-	, m_calculatePercentTimer(new QTimer(this))
 {
-	m_calculatePercentTimer->setInterval(150);
 	setMaximum(100);
 
-	VERIFY(connect(m_calculatePercentTimer, &QTimer::timeout, this, &CrawlerProgressBar::calculatePercents));
-	connect(theApp->mainFrame(), &MainFrame::crawlerStarted, this, &QWidget::show);
-	connect(theApp->mainFrame(), &MainFrame::crawlerStopped, this, &QWidget::hide);
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::crawlerStarted, this, &QWidget::show));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::crawlerStopped, this, &QWidget::hide));
+
+	VERIFY(connect(theApp->crawler(), SIGNAL(crawlingState(CrawlingState)),
+		this, SLOT(calculatePercents(CrawlingState)), Qt::QueuedConnection));
 
 	hide();
 }
 
-void CrawlerProgressBar::hideEvent(QHideEvent* event)
+void CrawlerProgressBar::calculatePercents(CrawlingState state)
 {
-	m_calculatePercentTimer->stop();
+	const size_t amountLinksCount = state.pendingLinkCount + state.crawledLinkCount;
 
-	event->accept();
-}
-
-void CrawlerProgressBar::showEvent(QShowEvent* event)
-{
-	m_calculatePercentTimer->start();
-
-	event->accept();
-}
-
-void CrawlerProgressBar::calculatePercents()
-{
-	const size_t crawledLinksCount = m_urlStorage->crawledLinksCount();
-	const size_t pendingLinksCount = m_urlStorage->pendingLinksCount();
-	const size_t amountLinksCount = pendingLinksCount + crawledLinksCount;
-
-	const double percents = crawledLinksCount / (amountLinksCount + 1) * 100;
+	const double percents = static_cast<double>(state.crawledLinkCount) / static_cast<double>(amountLinksCount + 1) * 100.0;
 
 	setValue(percents ? std::floor(percents)  : percents + 1);
 }

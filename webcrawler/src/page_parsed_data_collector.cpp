@@ -120,15 +120,15 @@ QUrl PageParsedDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& 
 void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const
 {
 	page->url = reply.url;
+
 	page->statusCode = static_cast<Common::StatusCode>(reply.statusCode);
+
 	page->pageSizeKilobytes = reply.responseBody.size() / 1024;
+
 	page->serverResponse = reply.responseHeaderValuePairs;
+
 	page->pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
-	page->hasSeveralEqualH1Tags = false;
-	page->hasSeveralEqualH2Tags = false;
-	page->hasSeveralMetaDescriptionTags = false;
-	page->hasSeveralMetaKeywordsTags = false;
-	page->hasSeveralTitleTags = false;
+
 	page->isThisExternalPage = PageParserHelpers::isUrlExternal(options().host, page->url);
 
 	page->contentType = QString();

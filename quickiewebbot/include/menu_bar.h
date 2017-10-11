@@ -3,12 +3,12 @@
 namespace QuickieWebBot
 {
 
-class MainFrameMenuBar : public QMenuBar
+class MenuBar : public QMenuBar
 {
 	Q_OBJECT
 
 public:
-	MainFrameMenuBar(QWidget* parent = nullptr);
+	MenuBar(QWidget* parent = nullptr);
 
 private:
 	void init();

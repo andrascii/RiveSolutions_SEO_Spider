@@ -57,7 +57,7 @@ WebCrawler::Crawler* Application::crawler() noexcept
 	return m_webCrawler.get();
 }
 
-MainFrame* Application::mainFrame() noexcept
+MainWindow* Application::mainWindow() noexcept
 {
 	return m_mainFrame.get();
 }
@@ -120,7 +120,7 @@ void Application::showMainFrame()
 {
 	SplashScreen::finish();
 
-	mainFrame()->showMaximized();
+	mainWindow()->showMaximized();
 }
 
 void Application::registerServices() const
@@ -166,7 +166,7 @@ void Application::initialize() noexcept
 		ERRORLOG << s_serviceApiDllName << "cannot be loaded";
 	}
 
-	WebCrawler::SequencedDataCollection* storage = m_webCrawler->guiStorage();
+	WebCrawler::SequencedDataCollection* storage = m_webCrawler->sequencedDataCollection();
 	
 	ASSERT(storage->thread() == QThread::currentThread());
 	
@@ -181,13 +181,15 @@ void Application::initialize() noexcept
 
 	SplashScreen::showMessage("Loading main frame...");
 
-	m_mainFrame.reset(new MainFrame);
+	m_mainFrame.reset(new MainWindow);
 
 #if !defined(PRODUCTION)
 	StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
 	DebugInfoWebPageWidget::attach();
 	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
 #endif
+
+	m_mainFrame->init();
 }
 
 void Application::initializeStyleSheet() noexcept

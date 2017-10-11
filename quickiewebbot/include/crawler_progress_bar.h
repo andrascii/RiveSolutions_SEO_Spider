@@ -1,14 +1,11 @@
 #pragma once
 
-namespace WebCrawler
-{
-
-class CrawlerUrlStorage;
-
-}
+#include "crawler.h"
 
 namespace QuickieWebBot
 {
+
+using namespace WebCrawler;
 
 class CrawlerProgressBar : public QProgressBar
 {
@@ -17,17 +14,8 @@ class CrawlerProgressBar : public QProgressBar
 public:
 	CrawlerProgressBar(QWidget* parent = nullptr);
 
-protected:
-	virtual void hideEvent(QHideEvent* event) override;
-	virtual void showEvent(QShowEvent* event) override;
-
-private:
-	Q_SLOT void calculatePercents();
-
-private:
-	const WebCrawler::CrawlerUrlStorage* m_urlStorage;
-
-	QTimer* m_calculatePercentTimer;
+private slots:
+	void calculatePercents(CrawlingState state);
 };
 
 }

@@ -32,7 +32,7 @@ private:
 		boost::hash<std::string> hasher;
 	};
 
-	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_internalUrlList;
+	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_pendingUrlList;
 	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_crawledUrlList;
 
 	mutable std::mutex m_mutex;

@@ -55,6 +55,13 @@ void QueuedDownloader::stop() noexcept
 	stopExecution();
 }
 
+size_t QueuedDownloader::unprocessedRequestCount() const noexcept
+{
+	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
+
+	return m_requestQueue.size();
+}
+
 void QueuedDownloader::urlDownloaded(QNetworkReply* reply)
 {
 	processReply(reply);
@@ -94,10 +101,8 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 	markReplyAsProcessed(reply);
 	reply->disconnect(this);
 
-	bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
-	bool processBody = !nonHtmlResponse;
-	
-	QVariant alreadyProcessed = reply->property("processed");
+	const bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+	const bool processBody = !nonHtmlResponse;
 
 	QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 	Reply response{ statusCode.isValid() ? statusCode.toInt() : -1, reply->url() };
@@ -113,7 +118,7 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 		response.responseBody = reply->readAll();
 	}
 
-	QUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	const QUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 
 	if (!redirectUrl.isEmpty())
 	{
@@ -144,7 +149,7 @@ bool QueuedDownloader::isReplyProcessed(QNetworkReply* reply) const noexcept
 		return true;
 	}
 
-	QVariant alreadyProcessed = reply->property("processed");
+	const QVariant alreadyProcessed = reply->property("processed");
 	return alreadyProcessed.isValid();
 }
 
@@ -152,9 +157,9 @@ void QueuedDownloader::process()
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
 
-	static const int s_maxUnprocessedReplies = 200;
-	static const int s_maxPendingRequests = 50;
-	static const int s_maxRequestsOneBatch = 100;
+	static constexpr int s_maxUnprocessedReplies = 200;
+	static constexpr int s_maxPendingRequests = 50;
+	static constexpr int s_maxRequestsOneBatch = 100;
 
 	int requestsThisBatch = 0;
 	
@@ -166,15 +171,21 @@ void QueuedDownloader::process()
 
 		switch (request.requestType)
 		{
-		case RequestTypeGet:
-			reply = m_networkAccessManager->get(QNetworkRequest(request.url));
-			break;
-		case RequestTypeHead:
-			reply = m_networkAccessManager->head(QNetworkRequest(request.url));
-			break;
-		default:
-			ASSERT(!"Unsupported request type");
-			break;
+			case RequestTypeGet:
+			{
+				reply = m_networkAccessManager->get(QNetworkRequest(request.url));
+				break;
+			}
+			case RequestTypeHead:
+			{
+				reply = m_networkAccessManager->head(QNetworkRequest(request.url));
+				break;
+			}
+			default:
+			{
+				ASSERT(!"Unsupported request type");
+				break;
+			}
 		}
 
 		auto requestIt = m_requestQueue.begin();

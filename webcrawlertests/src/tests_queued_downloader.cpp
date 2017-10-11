@@ -70,6 +70,12 @@ void TestsQueudedDownoader::stop() noexcept
 	// do nothing
 }
 
+
+size_t TestsQueudedDownoader::unprocessedRequestCount() const noexcept
+{
+	return 0;
+}
+
 QDir TestsQueudedDownoader::testsDataDir() const
 {
 	if (m_testDataPath.isEmpty())

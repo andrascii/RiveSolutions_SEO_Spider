@@ -11,15 +11,21 @@ namespace WebCrawler
 Crawler::Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThread)
 	: QObject(nullptr)
 	, m_theradCount(threadCount)
+	, m_crawlingStateTimer(new QTimer(this))
 {
 	m_crawlerThread = new QThread();
 	moveToThread(m_crawlerThread);
 	m_crawlerThread->start();
 
 	m_modelController = new ModelController(this, sequencedDataCollectionThread);
-	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 
+	ASSERT(qRegisterMetaType<ParsedPagePtr>());
+	ASSERT(qRegisterMetaType<CrawlingState>());
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
+
+	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
+	
+	m_crawlingStateTimer->setInterval(100);
 }
 
 Crawler::~Crawler()
@@ -64,6 +70,8 @@ void Crawler::startCrawlingInternal(const CrawlerOptions& options)
 
 		worker->startExecution();
 	}
+
+	m_crawlingStateTimer->start();
 }
 
 void Crawler::stopCrawlingInternal()
@@ -76,6 +84,19 @@ void Crawler::stopCrawlingInternal()
 	}
 
 	queuedDownloader()->stop();
+
+	m_crawlingStateTimer->stop();
+}
+
+void Crawler::onAboutCrawlingState()
+{
+	CrawlingState state;
+
+	state.crawledLinkCount = crawlerUrlStorage()->crawledLinksCount();
+	state.pendingLinkCount = crawlerUrlStorage()->pendingLinksCount() + 
+		queuedDownloader()->unprocessedRequestCount();
+
+	emit crawlingState(state);
 }
 
 void Crawler::initCrawlerWorkerThreads()
@@ -108,7 +129,7 @@ IQueuedDownloader* Crawler::createQueuedDownloader() const noexcept
 	return new QueuedDownloader();
 }
 
-SequencedDataCollection* Crawler::guiStorage() const noexcept
+SequencedDataCollection* Crawler::sequencedDataCollection() const noexcept
 {
 	return m_modelController->data()->sequencedDataCollection();
 }

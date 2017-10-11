@@ -7,23 +7,23 @@ void CrawlerUrlStorage::setHost(const QUrl& url)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
-	m_internalUrlList.insert(CrawlerRequest{ url, RequestTypeGet });
+	m_pendingUrlList.insert(CrawlerRequest{ url, RequestTypeGet });
 }
 
 bool CrawlerUrlStorage::extractUrl(CrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
-	if (m_internalUrlList.empty())
+	if (m_pendingUrlList.empty())
 	{
 		return false;
 	}
 
-	auto iter = m_internalUrlList.begin();
+	auto iter = m_pendingUrlList.begin();
 	url = *iter;
 
 	m_crawledUrlList.insert(*iter);
-	m_internalUrlList.erase(iter);
+	m_pendingUrlList.erase(iter);
 
 	return true;
 }
@@ -47,7 +47,7 @@ void CrawlerUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestTyp
 
 		if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
 		{
-			m_internalUrlList.insert(item);
+			m_pendingUrlList.insert(item);
 			++insertedUrlCounter;
 		}
 	};
@@ -68,7 +68,7 @@ size_t CrawlerUrlStorage::crawledLinksCount() const noexcept
 size_t CrawlerUrlStorage::pendingLinksCount() const noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
-	return m_internalUrlList.size();
+	return m_pendingUrlList.size();
 }
 
 }
