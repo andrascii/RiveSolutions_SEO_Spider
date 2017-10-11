@@ -286,7 +286,7 @@ void UnorderedDataCollection::initializeStorages()
 
 		std::make_pair(StorageType::MissingH1UrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
-				ParsedPageComparatorProxy(new ParsedPageFirstH1Comparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		std::make_pair(StorageType::DuplicatedH1UrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
@@ -294,11 +294,11 @@ void UnorderedDataCollection::initializeStorages()
 
 		std::make_pair(StorageType::VeryLongH1UrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
-				ParsedPageComparatorProxy(new ParsedPageFirstH1Comparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		std::make_pair(StorageType::SeveralH1UrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
-				ParsedPageComparatorProxy(new ParsedPageFirstH1Comparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		//
 		// H2 Problems Storages
@@ -310,7 +310,7 @@ void UnorderedDataCollection::initializeStorages()
 
 		std::make_pair(StorageType::MissingH2UrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
-				ParsedPageComparatorProxy(new ParsedPageFirstH2Comparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		std::make_pair(StorageType::DuplicatedH2UrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
@@ -318,11 +318,11 @@ void UnorderedDataCollection::initializeStorages()
 
 		std::make_pair(StorageType::VeryLongH2UrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
-				ParsedPageComparatorProxy(new ParsedPageFirstH2Comparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		std::make_pair(StorageType::SeveralH2UrlStorageType, UnorderedStorageTypePtr(
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
-				ParsedPageComparatorProxy(new ParsedPageFirstH2Comparator)))),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 
 		//
 		// Images Problems Storages

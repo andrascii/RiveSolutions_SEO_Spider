@@ -300,7 +300,7 @@ void ModelController::processParsedPageH1(ParsedPagePtr parsedPagePtr) noexcept
 		}
 	}
 
-	if (parsedPagePtr->hasSeveralH1Tags)
+	if (parsedPagePtr->hasSeveralEqualH1Tags)
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::SeveralH1UrlStorageType);
 	}
@@ -339,7 +339,7 @@ void ModelController::processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept
 		}
 	}
 
-	if (parsedPagePtr->hasSeveralH2Tags)
+	if (parsedPagePtr->hasSeveralEqualH2Tags)
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::SeveralH2UrlStorageType);
 	}

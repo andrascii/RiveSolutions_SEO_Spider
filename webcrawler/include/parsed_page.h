@@ -90,8 +90,8 @@ struct ParsedPage
 	bool hasSeveralTitleTags;
 	bool hasSeveralMetaDescriptionTags;
 	bool hasSeveralMetaKeywordsTags;
-	bool hasSeveralH1Tags;
-	bool hasSeveralH2Tags;
+	bool hasSeveralEqualH1Tags;
+	bool hasSeveralEqualH2Tags;
 
 	bool isThisExternalPage;
 

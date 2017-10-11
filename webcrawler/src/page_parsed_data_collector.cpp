@@ -124,8 +124,8 @@ void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& re
 	page->pageSizeKilobytes = reply.responseBody.size() / 1024;
 	page->serverResponse = reply.responseHeaderValuePairs;
 	page->pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
-	page->hasSeveralH1Tags = false;
-	page->hasSeveralH2Tags = false;
+	page->hasSeveralEqualH1Tags = false;
+	page->hasSeveralEqualH2Tags = false;
 	page->hasSeveralMetaDescriptionTags = false;
 	page->hasSeveralMetaKeywordsTags = false;
 	page->hasSeveralTitleTags = false;
