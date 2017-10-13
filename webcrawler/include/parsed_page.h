@@ -25,7 +25,7 @@ enum class ResourceType
 	ResourceStyleSheet,
 	ResourceFlash,
 	ResourceVideo,
-	ResourceOther 
+	ResourceOther
 };
 
 enum class ResourceSource
@@ -78,22 +78,21 @@ struct ParsedPage
 	QString secondH2;
 	QString canonicalLinkElement;
 	Common::StatusCode statusCode;
-	int pageSizeKilobytes;
-	int wordCount;
-	size_t pageHash;
+
+	int pageSizeKilobytes = int();
+	int wordCount = int();
+	size_t pageHash = size_t();
 
 	std::vector<size_t> missignAltIndices;
 	std::vector<size_t> tooLongAltIndices;
 
-	LinkParameter linkParameter;
+	bool hasSeveralTitleTags = bool();
+	bool hasSeveralMetaDescriptionTags = bool();
+	bool hasSeveralMetaKeywordsTags = bool();
+	bool hasSeveralEqualH1Tags = bool();
+	bool hasSeveralEqualH2Tags = bool();
 
-	bool hasSeveralTitleTags;
-	bool hasSeveralMetaDescriptionTags;
-	bool hasSeveralMetaKeywordsTags;
-	bool hasSeveralH1Tags;
-	bool hasSeveralEqualH2Tags;
-
-	bool isThisExternalPage;
+	bool isThisExternalPage = bool();
 
 	ResourceType resourceType;
 

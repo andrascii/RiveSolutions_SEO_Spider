@@ -43,8 +43,6 @@ public:
 
 		ImageSizeKbColumn,
 
-		NoFollowDoFollowLinkColumn,
-
 		BeginLengthEnumeratorsColumn,
 		// !!!!!!!!!!!!!!!!!!! add length enumerators below this!!!!!!!!!!!!!!!!!!!
 
@@ -121,7 +119,6 @@ private:
 	QVariant acceptWordCount() const;
 	QVariant acceptPageHash() const;
 	QVariant acceptImageSizeKb() const;
-	QVariant acceptDofollowNofollow() const;
 
 	static void checkColumnType(ParsedPageInfo::Column column);
 

@@ -34,7 +34,7 @@ bool WidgetUnderMouseInfo::eventFilter(QObject* watched, QEvent* event)
 WidgetUnderMouseInfo::WidgetUnderMouseInfo(QObject* parent, QKeySequence const& keySequence)
 	: QObject(parent)
 	, m_keySequence(keySequence)
-	, m_widgetUnderMouseInfoDialog(new WidgetUnderMouseInfoDialog(theApp->mainFrame()))
+	, m_widgetUnderMouseInfoDialog(new WidgetUnderMouseInfoDialog(theApp->mainWindow()))
 {
 	VERIFY(connect(theApp, SIGNAL(aboutToQuit()), this, SLOT(deleteWidgetOnApplicationQuit())));
 }

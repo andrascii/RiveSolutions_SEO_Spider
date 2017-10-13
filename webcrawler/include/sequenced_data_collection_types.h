@@ -15,4 +15,5 @@ struct LinksToThisResourceChanges
 };
 
 Q_DECLARE_METATYPE(LinksToThisResourceChanges);
+
 }

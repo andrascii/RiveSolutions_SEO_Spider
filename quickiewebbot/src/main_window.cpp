@@ -1,11 +1,11 @@
 #include "application.h"
 #include "application_settings_widget.h"
-#include "main_frame.h"
+#include "main_window.h"
 #include "quickie_web_bot_helpers.h"
 #include "data_pages_widget.h"
 #include "action_keys.h"
 #include "action_registry.h"
-#include "main_frame_menu_bar.h"
+#include "menu_bar.h"
 #include "settings_page_impl.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -18,14 +18,14 @@
 namespace QuickieWebBot
 {
 
-MainFrame::MainFrame(QWidget* parent)
+MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_applicationSettingsWidget(nullptr)
+	, m_initialized(false)
 {
-	init();
 }
 
-void MainFrame::showApplicationSettingsWidget()
+void MainWindow::showApplicationSettingsWidget()
 {
 	if (!m_applicationSettingsWidget)
 	{
@@ -35,7 +35,7 @@ void MainFrame::showApplicationSettingsWidget()
 	m_applicationSettingsWidget->exec();
 }
 
-void MainFrame::showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon)
+void MainWindow::showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon)
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog(this);
 	messageBoxDialog->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -47,19 +47,23 @@ void MainFrame::showMessageBoxDialog(const QString& title, const QString& messag
 	messageBoxDialog->show();
 }
 
-void MainFrame::init()
+void MainWindow::init()
 {
+	DEBUG_ASSERT(!m_initialized);
+
 	createActions();
 	createAndSetCentralWidget();
 	registerSettingsPages();
 
 	setWindowIcon(QIcon(QStringLiteral(":/images/robot.ico")));
 
-	setMenuBar(new MainFrameMenuBar(this));
+	setMenuBar(new MenuBar(this));
 	setStatusBar(new QStatusBar(this));
+
+	m_initialized = true;
 }
 
-void MainFrame::createActions()
+void MainWindow::createActions()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
@@ -100,7 +104,7 @@ void MainFrame::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), this, SLOT(clearCrawledData())));
 }
 
-void MainFrame::createAndSetCentralWidget()
+void MainWindow::createAndSetCentralWidget()
 {
 	QWidget* centralWidget = new QWidget(this);
 
@@ -115,7 +119,7 @@ void MainFrame::createAndSetCentralWidget()
 	setCentralWidget(centralWidget);
 }
 
-void MainFrame::registerSettingsPages() const
+void MainWindow::registerSettingsPages() const
 {
 	SettingsPageImpl<Ui_CrawlerSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettingsWidget));
 	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettingsWidget));
@@ -124,7 +128,7 @@ void MainFrame::registerSettingsPages() const
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
 }
 
-void MainFrame::startCrawler()
+void MainWindow::startCrawler()
 {
 	HostInfo hostInfo(theApp->preferences()->url().host().toLatin1());
 
@@ -163,14 +167,14 @@ void MainFrame::startCrawler()
 	emit crawlerStarted();
 }
 
-void MainFrame::stopCrawler()
+void MainWindow::stopCrawler()
 {
 	theApp->crawler()->stopCrawling();
 
 	emit crawlerStopped();
 }
 
-void MainFrame::clearCrawledData()
+void MainWindow::clearCrawledData()
 {
 }
 

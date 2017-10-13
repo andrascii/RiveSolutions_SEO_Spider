@@ -7,12 +7,14 @@ namespace QuickieWebBot
 
 class ApplicationSettingsWidget;
 
-class MainFrame : public QMainWindow
+class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	MainFrame(QWidget* parent = nullptr);
+	MainWindow(QWidget* parent = nullptr);
+
+	void init();
 
 signals:
 	void crawlerStarted();
@@ -23,7 +25,6 @@ public slots:
 	void showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon);
 
 private:
-	void init();
 	void createActions();
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
@@ -35,6 +36,8 @@ private slots:
 
 private:
 	ApplicationSettingsWidget* m_applicationSettingsWidget;
+
+	bool m_initialized;
 };
 
 }

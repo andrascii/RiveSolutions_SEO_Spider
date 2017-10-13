@@ -1,7 +1,7 @@
 #include "debug_info_web_page_widget.h"
 #include "parsed_page.h"
 #include "application.h"
-#include "main_frame.h"
+#include "main_window.h"
 
 namespace QuickieWebBot
 {
@@ -21,7 +21,7 @@ DebugInfoWebPageWidget::DebugInfoWebPageWidget(QWidget* parent)
 
 void DebugInfoWebPageWidget::attach()
 {
-	DebugInfoWebPageWidget* debugInfoWebPageWidget = new DebugInfoWebPageWidget(theApp->mainFrame());
+	DebugInfoWebPageWidget* debugInfoWebPageWidget = new DebugInfoWebPageWidget(theApp->mainWindow());
 	theApp->installEventFilter(debugInfoWebPageWidget);
 }
 

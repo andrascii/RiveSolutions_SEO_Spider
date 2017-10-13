@@ -1,23 +1,23 @@
-#include "main_frame_menu_bar.h"
+#include "menu_bar.h"
 #include "action_registry.h"
 #include "action_keys.h"
 
 namespace QuickieWebBot
 {
 
-MainFrameMenuBar::MainFrameMenuBar(QWidget* parent)
+MenuBar::MenuBar(QWidget* parent)
 	: QMenuBar(parent)
 {
 	init();
 }
 
-void MainFrameMenuBar::init()
+void MenuBar::init()
 {
 	addMenu(buildMenuFile());
 	addMenu(buildMenuSettings());
 }
 
-QMenu* MainFrameMenuBar::buildMenuFile()
+QMenu* MenuBar::buildMenuFile()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
@@ -33,7 +33,7 @@ QMenu* MainFrameMenuBar::buildMenuFile()
 	return fileMenu;
 }
 
-QMenu* MainFrameMenuBar::buildMenuSettings()
+QMenu* MenuBar::buildMenuSettings()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 

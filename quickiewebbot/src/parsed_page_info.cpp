@@ -42,7 +42,6 @@ QString ParsedPageInfo::itemTypeDescription(Column column)
 		{ ParsedPageInfo::Column::WordCountColumn, QObject::tr("Word Count") },
 		{ ParsedPageInfo::Column::PageHashColumn, QObject::tr("Page Hash") },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, QObject::tr("Image Size KB") },
-		{ ParsedPageInfo::Column::NoFollowDoFollowLinkColumn, QObject::tr("Nofollow / Dofollow") },
 	};
 
 	checkColumnType(column);
@@ -95,7 +94,6 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::FirstH2LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::SecondH2LengthColumn, QuickieWebBotHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, QuickieWebBotHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::NoFollowDoFollowLinkColumn, QuickieWebBotHelpers::pointsToPixels(150) }
 	};
 
 	const int result = s_parsedPageColumnPrefferedSizes.value(column, -1);
@@ -369,10 +367,6 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column) c
 		{
 			return &ParsedPageInfo::acceptImageSizeKb;
 		}
-		case Column::NoFollowDoFollowLinkColumn: 
-		{
-			return &ParsedPageInfo::acceptDofollowNofollow;
-		}
 	}
 
 	ASSERT(!"Unknown element");
@@ -512,11 +506,6 @@ QVariant ParsedPageInfo::acceptPageHash() const
 QVariant ParsedPageInfo::acceptImageSizeKb() const
 {
 	return m_parsedPage->pageSizeKilobytes;
-}
-
-QVariant ParsedPageInfo::acceptDofollowNofollow() const
-{
-	return linkParameterDescription(m_parsedPage->linkParameter);
 }
 
 void ParsedPageInfo::checkColumnType(Column column)

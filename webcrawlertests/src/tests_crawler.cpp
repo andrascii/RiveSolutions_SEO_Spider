@@ -111,7 +111,7 @@ std::future<std::vector<WebCrawler::LinksToThisResourceChanges>> ParsedPageRecei
 TestsCrawler::TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOptions& options)
 	: WebCrawler::Crawler(threadCount, (m_sequensedCollectionThread = new QThread()))
 	, m_testCrawlerOptions(options)
-	, m_receiver(std::make_unique<ParsedPageReceiver>(guiStorage()))
+	, m_receiver(std::make_unique<ParsedPageReceiver>(sequencedDataCollection()))
 {
 	m_sequensedCollectionThread->start();
 	

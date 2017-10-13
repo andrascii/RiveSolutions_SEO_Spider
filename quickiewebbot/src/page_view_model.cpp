@@ -87,12 +87,17 @@ QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemV
 	const PageModel* model =
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
+	const QPixmap& pix = pixmap(index);
+	const int visualRectHeight = itemVisualRect.height();
+
+	const int offsetByY = (visualRectHeight - pix.height()) / 2;
+
 	if (model->itemType(index) == IStorageAdaptor::ItemType::UrlItemType)
 	{
-		return itemVisualRect.adjusted(itemVisualRect.width() - QuickieWebBotHelpers::pointsToPixels(20), 0, 0, 0);
+		return itemVisualRect.adjusted(itemVisualRect.width() - QuickieWebBotHelpers::pointsToPixels(20), offsetByY, 0, 0);
 	}
 
-	return itemVisualRect.adjusted(itemVisualRect.width() + QuickieWebBotHelpers::pointsToPixels(3), 0, 0, 0);
+	return itemVisualRect.adjusted(itemVisualRect.width() + QuickieWebBotHelpers::pointsToPixels(3), offsetByY, 0, 0);
 }
 
 QString PageViewModel::displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
