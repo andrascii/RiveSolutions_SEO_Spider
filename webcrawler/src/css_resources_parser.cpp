@@ -2,6 +2,7 @@
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
 #include "resources_cache.h"
+#include "data_resources_parser.h"
 
 namespace WebCrawler
 {
@@ -9,7 +10,7 @@ namespace WebCrawler
 CssResourcesParser::CssResourcesParser(ResourcesCache* resourcesCache)
 	: m_resourcesCache(resourcesCache)
 {
-
+	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceStyleSheet, resourcesCache));
 }
 
 void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
@@ -44,14 +45,18 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 			continue;
 		}
 
+		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
+
 		RawResourceOnPage cssResource
 		{
 			ResourceType::ResourceStyleSheet,
-			LinkInfo{ url, LinkParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
 		};
 
 		page->allResourcesOnPage.push_back(cssResource);
 	}
+
+	CompoundParser::parse(output, page);
 }
 
 void CssResourcesParser::init()

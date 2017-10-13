@@ -2,6 +2,7 @@
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
 #include "resources_cache.h"
+#include "data_resources_parser.h"
 
 namespace WebCrawler
 {
@@ -9,7 +10,7 @@ namespace WebCrawler
 FlashResourcesParser::FlashResourcesParser(ResourcesCache* resourcesCache)
 	: m_resourcesCache(resourcesCache)
 {
-
+	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceFlash, resourcesCache));
 }
 
 void FlashResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
@@ -22,6 +23,8 @@ void FlashResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	parseFlashResourcesV1(output, page);
 	parseFlashResourcesV2(output, page);
 	parseFlashResourcesV3(output, page);
+
+	CompoundParser::parse(output, page);
 }
 
 void FlashResourcesParser::init()
@@ -59,10 +62,12 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 			continue;
 		}
 
+		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
+
 		RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
-			LinkInfo{ url, LinkParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource},
 		};
 
 		page->allResourcesOnPage.push_back(flashResource);
@@ -100,10 +105,12 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 			continue;
 		}
 
+		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
+
 		RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
-			LinkInfo{ url, LinkParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
 		};
 
 		page->allResourcesOnPage.push_back(flashResource);
@@ -155,10 +162,12 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 			continue;
 		}
 
+		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
+
 		RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
-			LinkInfo{ url, LinkParameter::UnknownParameter }
+			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
 		};
 
 		page->allResourcesOnPage.push_back(flashResource);

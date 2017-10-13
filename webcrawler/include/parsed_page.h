@@ -41,8 +41,9 @@ enum class ResourceSource
 struct LinkInfo
 {
 	QUrl url;
-	LinkParameter urlParameter;
+	LinkParameter urlParameter = LinkParameter::UnknownParameter;
 	QString altOrTitle;
+	bool dataResourceLink = false;
 };
 
 struct ResourceLink
