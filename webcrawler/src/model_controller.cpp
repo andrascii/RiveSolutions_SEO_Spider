@@ -475,8 +475,8 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 			});
 
 #ifdef QT_DEBUG
-			checkResourceLinks(parsedPagePtr);
-			checkResourceLinks(existingResource);
+			//checkResourceLinks(parsedPagePtr);
+			//checkResourceLinks(existingResource);
 #endif // QT_DEBUG
 
 
