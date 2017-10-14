@@ -504,8 +504,8 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 			});
 
 #ifdef QT_DEBUG
-			checkResourceLinks(pendingResource);
-			checkResourceLinks(parsedPagePtr);
+			//checkResourceLinks(pendingResource);
+			//checkResourceLinks(parsedPagePtr);
 #endif // QT_DEBUG
 			
 			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
@@ -613,8 +613,8 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 		});
 
 #ifdef QT_DEBUG
-		checkResourceLinks(parsedPagePtr);
-		checkResourceLinks(newOrExistingResource);
+		//checkResourceLinks(parsedPagePtr);
+		//checkResourceLinks(newOrExistingResource);
 #endif // QT_DEBUG
 		
 		m_linksToPageChanges.changes.push_back({ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
