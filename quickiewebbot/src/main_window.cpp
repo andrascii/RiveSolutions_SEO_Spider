@@ -7,13 +7,14 @@
 #include "action_registry.h"
 #include "menu_bar.h"
 #include "settings_page_impl.h"
+#include "crawler_options.h"
+#include "crawler.h"
+#include "host_info.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
-#include "host_info.h"
-
 
 namespace QuickieWebBot
 {
@@ -134,7 +135,7 @@ void MainWindow::startCrawler()
 
 	if (!hostInfo.isValid())
 	{
-		showMessageBoxDialog("Invalid Hostname!",
+		showMessageBoxDialog("DNS Lookup Failed!",
 			"I'm sorry but I cannot to find this website.\n"
 			"Please, be sure that you entered a valid address.", 
 			MessageBoxDialog::WarningIcon);
@@ -144,6 +145,7 @@ void MainWindow::startCrawler()
 
 	WebCrawler::CrawlerOptions options;
 
+	// preferences
 	options.host = theApp->preferences()->url();
 	options.minTitleLength = theApp->preferences()->minTitleLength();
 	options.maxTitleLength = theApp->preferences()->maxTitleLength();
@@ -154,6 +156,17 @@ void MainWindow::startCrawler()
 	options.maxH2LengthChars = theApp->preferences()->maxH2LengthChars();
 	options.maxImageAltTextChars = theApp->preferences()->maxImageAltTextChars();
 	options.maxImageSizeKb = theApp->preferences()->maxImageSize();
+
+	// crawler settings
+	options.checkExternalLinks = theApp->preferences()->checkExternalUrls();
+	options.followInternalNofollow = theApp->preferences()->followInternalNoFollow();
+	options.followExternalNofollow = theApp->preferences()->followExternalNoFollow();
+	options.checkSubdomains = theApp->preferences()->checkSubdomains();
+	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
+	options.checkImages = theApp->preferences()->checkImages();
+	options.checkCss = theApp->preferences()->checkCSS();
+	options.checkJavaScript = theApp->preferences()->checkJavaScript();
+	options.checkSwf = theApp->preferences()->checkSWF();
 
 	options.parserTypeFlags.setFlag(WebCrawler::HtmlResourcesParserType);
 	options.parserTypeFlags.setFlag(WebCrawler::JavaScriptResourcesParserType);

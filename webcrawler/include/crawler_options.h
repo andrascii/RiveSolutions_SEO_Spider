@@ -19,19 +19,28 @@ struct CrawlerOptions
 {
 	QUrl host;
 	
-	int minTitleLength;
-	int maxTitleLength;
-
 	int limitMaxUrlLength;
 
+	// preferences
+	int minTitleLength;
+	int maxTitleLength;
 	int maxDescriptionLength;
 	int minDescriptionLength;
-
 	int maxH1LengthChars;
 	int maxH2LengthChars;
-
 	int maxImageAltTextChars;
 	int maxImageSizeKb;
+
+	// crawler settings
+	bool checkExternalLinks;
+	bool followInternalNofollow;
+	bool followExternalNofollow;
+	bool checkSubdomains;
+	bool followRobotsTxtRules;
+	bool checkImages;
+	bool checkCss;
+	bool checkJavaScript;
+	bool checkSwf;
 
 	ParserTypeFlags parserTypeFlags;
 };

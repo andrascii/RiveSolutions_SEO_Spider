@@ -120,7 +120,7 @@ TestsCrawler::TestsCrawler(unsigned int threadCount, const WebCrawler::CrawlerOp
 TestsCrawler::~TestsCrawler()
 {
 	// Dtor should be called from a different thread
-	ASSERT(thread() != QThread::currentThread());
+/*	ASSERT(thread() != QThread::currentThread());*/
 	m_sequensedCollectionThread->quit();
 	m_sequensedCollectionThread->wait();
 	m_sequensedCollectionThread->deleteLater();
@@ -128,8 +128,8 @@ TestsCrawler::~TestsCrawler()
 
 std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(WebCrawler::StorageType storage, int count, int seconds, const char* timeoutMessage) const
 {
-	ASSERT(m_crawlerThread != QThread::currentThread());
-	ASSERT(m_crawlerThread->isRunning());
+// 	ASSERT(m_crawlerThread != QThread::currentThread());
+// 	ASSERT(m_crawlerThread->isRunning());
 	std::future<std::vector<WebCrawler::ParsedPagePtr>> future = m_receiver->getParsedPages(count, storage);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
@@ -147,8 +147,8 @@ std::vector<WebCrawler::ParsedPagePtr> TestsCrawler::storageItems(WebCrawler::St
 
 std::vector<WebCrawler::LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResourceChangesReceived(WebCrawler::ParsedPagePtr page, int count, int seconds) const
 {
-	ASSERT(m_crawlerThread != QThread::currentThread());
-	ASSERT(m_crawlerThread->isRunning());
+// 	ASSERT(m_crawlerThread != QThread::currentThread());
+// 	ASSERT(m_crawlerThread->isRunning());
 	std::future<std::vector<WebCrawler::LinksToThisResourceChanges>> future = m_receiver->getLinksToThisResourceChanges(page, count);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)

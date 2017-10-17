@@ -5,6 +5,9 @@ namespace Common
 
 enum class StatusCode
 {
+	Undefined,
+	BlockedByRobotsTxt,
+
 	Continue100 = 100,
 	SwitchingProtocol101,
 	

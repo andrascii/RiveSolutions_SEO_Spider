@@ -12,6 +12,7 @@
 #include "settings_page_impl.h"
 #include "dll_loader.h"
 #include "widget_under_mouse_info.h"
+#include "named_thread.h"
 
 
 namespace
@@ -27,7 +28,7 @@ namespace QuickieWebBot
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_preferences(new Preferences(this, this))
-	, m_webCrawler(new WebCrawler::Crawler(Common::g_optimalParserThreadsCount))
+	, m_crawler(new WebCrawler::Crawler(Common::g_optimalParserThreadsCount))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
@@ -40,7 +41,7 @@ Application::Application(int& argc, char** argv)
 
 	initializeStyleSheet();
 
-	showMainFrame();
+	showMainWindow();
 
 	INFOLOG << QThread::currentThreadId() << "Main thread has been started";
 
@@ -54,12 +55,12 @@ Application::Application(int& argc, char** argv)
 
 WebCrawler::Crawler* Application::crawler() noexcept
 {
-	return m_webCrawler.get();
+	return m_crawler;
 }
 
 MainWindow* Application::mainWindow() noexcept
 {
-	return m_mainFrame.get();
+	return m_mainWindow.get();
 }
 
 WebCrawler::SequencedDataCollection* Application::sequencedDataCollection() noexcept
@@ -116,7 +117,7 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 	return m_softwareBrandingOptions.get();
 }
 
-void Application::showMainFrame()
+void Application::showMainWindow()
 {
 	SplashScreen::finish();
 
@@ -148,6 +149,10 @@ void Application::initialize() noexcept
 {
 	SplashScreen::showMessage("Initializing...");
 
+	Common::NamedThread* thread = new Common::NamedThread("Crawler");
+	m_crawler->moveToThread(thread);
+	thread->start();
+
 #ifdef PRODUCTION
 	// let users to show the splash screen
 	std::this_thread::sleep_for(3s);
@@ -166,7 +171,7 @@ void Application::initialize() noexcept
 		ERRORLOG << s_serviceApiDllName << "cannot be loaded";
 	}
 
-	WebCrawler::SequencedDataCollection* storage = m_webCrawler->sequencedDataCollection();
+	WebCrawler::SequencedDataCollection* storage = m_crawler->sequencedDataCollection();
 	
 	ASSERT(storage->thread() == QThread::currentThread());
 	
@@ -179,9 +184,9 @@ void Application::initialize() noexcept
 	m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());
 	installTranslator(m_translator);
 
-	SplashScreen::showMessage("Loading main frame...");
+	SplashScreen::showMessage("Loading main window...");
 
-	m_mainFrame.reset(new MainWindow);
+	m_mainWindow.reset(new MainWindow);
 
 #if !defined(PRODUCTION)
 	StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
@@ -189,7 +194,7 @@ void Application::initialize() noexcept
 	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
 #endif
 
-	m_mainFrame->init();
+	m_mainWindow->init();
 }
 
 void Application::initializeStyleSheet() noexcept
@@ -394,6 +399,21 @@ QString Application::operatingSystemVersion() const noexcept
 Application::~Application()
 {
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
+
+	// it needs in order to enough that Crawler will be destroyed 
+	// in the same thread where it is living
+	m_crawler->deleteLater();
+	processEvents();
+
+	QThread* crawlerThread = m_crawler->thread();
+
+	if (crawlerThread != QThread::currentThread())
+	{
+		crawlerThread->quit();
+		crawlerThread->wait();
+
+		delete crawlerThread;
+	}
 }
 
 }

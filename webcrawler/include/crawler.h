@@ -11,6 +11,7 @@ class CrawlerWorkerThread;
 class ModelController;
 class SequencedDataCollection;
 class IQueuedDownloader;
+class IRobotsTxtRules;
 
 struct CrawlingState
 {
@@ -29,7 +30,6 @@ public:
 	~Crawler();
 
 	SequencedDataCollection* sequencedDataCollection() const noexcept;
-	const CrawlerUrlStorage* crawlerUrlStorage() const noexcept;
 
 signals:
 	void crawlingState(CrawlingState state);
@@ -40,25 +40,28 @@ public slots:
 
 private slots:
 	void onPageParsed(ParsedPagePtr pageRaw);
-	void startCrawlingInternal(const CrawlerOptions& options);
+
+	void startCrawlingInternal();
 	void stopCrawlingInternal();
+
 	void onAboutCrawlingState();
+
+	void onCrawlingSessionInitialized();
 
 protected:
 	IQueuedDownloader* queuedDownloader() const noexcept;
 	virtual IQueuedDownloader* createQueuedDownloader() const noexcept;
+	const CrawlerUrlStorage* crawlerUrlStorage() const noexcept;
 
 private:
 	void initCrawlerWorkerThreads();
-
-protected:
-	QThread* m_crawlerThread;
+	bool isPreinitialized();
+	void initializeCrawlingSession();
 
 private:
 	mutable std::unique_ptr<IQueuedDownloader> m_queuedDownloader;
 
 	ModelController* m_modelController;	
-
 	CrawlerUrlStorage m_urlStorage;
 
 	std::vector<std::unique_ptr<CrawlerWorkerThread>> m_workers;
@@ -66,6 +69,10 @@ private:
 	unsigned int m_theradCount;
 
 	QTimer* m_crawlingStateTimer;
+	QNetworkAccessManager* m_networkAccessor;
+	IRobotsTxtRules* m_robotsTxtRules;
+
+	CrawlerOptions m_options;
 };
 
 }
