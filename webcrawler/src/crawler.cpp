@@ -4,26 +4,25 @@
 #include "model_controller.h"
 #include "crawler_worker_thread.h"
 #include "queued_downloader.h"
+#include "robots_txt_rules.h"
 
 namespace WebCrawler
 {
 
 Crawler::Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThread)
 	: QObject(nullptr)
+	, m_modelController(new ModelController(this, sequencedDataCollectionThread))
 	, m_theradCount(threadCount)
 	, m_crawlingStateTimer(new QTimer(this))
+	, m_networkAccessor(new QNetworkAccessManager(this))
+	, m_robotsTxtRules(new RobotsTxtRules(m_networkAccessor, this))
 {
-	m_crawlerThread = new QThread();
-	moveToThread(m_crawlerThread);
-	m_crawlerThread->start();
-
-	m_modelController = new ModelController(this, sequencedDataCollectionThread);
-
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 	ASSERT(qRegisterMetaType<CrawlingState>());
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
+	VERIFY(connect(m_robotsTxtRules->qobject(), SIGNAL(initialized()), this, SLOT(onCrawlingSessionInitialized())));
 	
 	m_crawlingStateTimer->setInterval(100);
 }
@@ -34,18 +33,13 @@ Crawler::~Crawler()
 	{
 		worker->stopExecution();
 	}
-
-	// Dtor should be called from a different thread
-	ASSERT(thread() != QThread::currentThread());
-	m_crawlerThread->quit();
-	m_crawlerThread->wait();
-	m_crawlerThread->deleteLater();
 }
 
 void Crawler::startCrawling(const CrawlerOptions& options)
 {
-	initCrawlerWorkerThreads();
-	VERIFY(QMetaObject::invokeMethod(this, "startCrawlingInternal", Qt::QueuedConnection, Q_ARG(const CrawlerOptions&, options)));
+	m_options = options;
+
+	VERIFY(QMetaObject::invokeMethod(this, "startCrawlingInternal", Qt::QueuedConnection));
 }
 
 void Crawler::stopCrawling()
@@ -53,31 +47,13 @@ void Crawler::stopCrawling()
 	VERIFY(QMetaObject::invokeMethod(this, "stopCrawlingInternal", Qt::QueuedConnection));
 }
 
-void Crawler::startCrawlingInternal(const CrawlerOptions& options)
+void Crawler::startCrawlingInternal()
 {
-	m_modelController->setWebCrawlerOptions(options);
-
-	DEBUG_ASSERT(options.host.isValid());
-
-	INFOLOG << "crawler started";
-
-	queuedDownloader()->start();
-	m_urlStorage.setHost(options.host);
-
-	for (std::unique_ptr<CrawlerWorkerThread>& worker : m_workers)
-	{
-		VERIFY(QMetaObject::invokeMethod(worker.get(), "applyOptions", Qt::QueuedConnection, Q_ARG(const CrawlerOptions&, options)));
-
-		worker->startExecution();
-	}
-
-	m_crawlingStateTimer->start();
+	initializeCrawlingSession();
 }
 
 void Crawler::stopCrawlingInternal()
 {
-	INFOLOG << "crawler stopped";
-
 	for (std::unique_ptr<CrawlerWorkerThread>& worker : m_workers)
 	{
 		worker->stopExecution();
@@ -86,6 +62,8 @@ void Crawler::stopCrawlingInternal()
 	queuedDownloader()->stop();
 
 	m_crawlingStateTimer->stop();
+
+	INFOLOG << "crawler stopped";
 }
 
 void Crawler::onAboutCrawlingState()
@@ -97,6 +75,30 @@ void Crawler::onAboutCrawlingState()
 		queuedDownloader()->unprocessedRequestCount();
 
 	emit crawlingState(state);
+}
+
+void Crawler::onCrawlingSessionInitialized()
+{
+	if (!isPreinitialized())
+	{
+		return;
+	}
+
+	m_modelController->setWebCrawlerOptions(m_options);
+	m_urlStorage.setHost(m_options.host);
+
+	queuedDownloader()->start();
+
+	for (std::unique_ptr<CrawlerWorkerThread>& worker : m_workers)
+	{
+		VERIFY(QMetaObject::invokeMethod(worker.get(), "applyOptions", Qt::QueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
+
+		worker->startExecution();
+	}
+
+	m_crawlingStateTimer->start();
+
+	INFOLOG << "crawler started";
 }
 
 void Crawler::initCrawlerWorkerThreads()
@@ -113,6 +115,20 @@ void Crawler::initCrawlerWorkerThreads()
 		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)),
 			SLOT(onPageParsed(ParsedPagePtr))));
 	}
+}
+
+bool Crawler::isPreinitialized()
+{
+	return m_robotsTxtRules->isInitialized();
+}
+
+void Crawler::initializeCrawlingSession()
+{
+	DEBUG_ASSERT(m_options.host.isValid());
+
+	initCrawlerWorkerThreads();
+
+	m_robotsTxtRules->initRobotsTxt(m_options.host);
 }
 
 IQueuedDownloader* Crawler::queuedDownloader() const noexcept

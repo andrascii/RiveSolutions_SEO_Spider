@@ -133,7 +133,6 @@ bool PageParserHelpers::isHttpOrHttpsScheme(const QString& urlStr) noexcept
 
 	if (expr.match(urlStr).hasMatch() && !urlStr.startsWith("https://") && !urlStr.startsWith("http://"))
 	{
-		//DEBUGLOG << "Non-http link: " << urlStr;
 		return false;
 	}
 
