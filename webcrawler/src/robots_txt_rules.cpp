@@ -241,26 +241,6 @@ QObject* RobotsTxtRules::qobject() const
 	return static_cast<QObject*>(const_cast<RobotsTxtRules* const>(this));
 }
 
-QNetworkReply* RobotsTxtRules::loadRobotsTxt(const QUrl& url) const
-{
-	ASSERT(m_networkAccessor->thread() == QThread::currentThread());
-
-	QEventLoop eventLoop;
-
-	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit())));
-
-	const QString robotsTxt = url.scheme() + "://" + url.host() + QStringLiteral("/robots.txt");
-	QNetworkReply* reply = m_networkAccessor->get(QNetworkRequest(robotsTxt));
-
-	INFOLOG << "Loading" << robotsTxt;
-
-	eventLoop.exec();
-
-	disconnect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
-
-	return reply;
-}
-
 void RobotsTxtRules::onLoadingDone(QNetworkReply* reply)
 {
 	AnywayFunctionCall anywayFunctionCall(std::function<void()>(std::bind(&RobotsTxtRules::initialized, this)));

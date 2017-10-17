@@ -54,9 +54,6 @@ public:
 signals:
 	virtual void initialized() override;
 
-private:
-	QNetworkReply* loadRobotsTxt(const QUrl& url) const;
-
 private slots:
 	void onLoadingDone(QNetworkReply* reply);
 
