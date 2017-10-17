@@ -65,6 +65,7 @@ void ParsedPageReceiver::checkWaitCondition(int storageType)
 			if (static_cast<int>(m_parsedPages[storageType].size()) >= it->second.first)
 			{
 				it->second.second.set_value(m_parsedPages[storageType]);
+				// m_waitConditions.erase(storageType);
 			}
 			break;
 		}
@@ -80,6 +81,7 @@ void ParsedPageReceiver::checkLinksToThisResourceConditions(WebCrawler::ParsedPa
 			if (static_cast<int>(m_linksToThisResourceChanges[page].size()) >= it->second.first)
 			{
 				it->second.second.set_value(m_linksToThisResourceChanges[page]);
+				//m_linksToThisResourceConditions.erase(page);
 			}
 			break;
 		}

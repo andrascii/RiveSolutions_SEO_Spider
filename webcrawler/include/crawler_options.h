@@ -10,7 +10,8 @@ enum ParserType
 	CssResourcesParserType = 1 << 2,
 	ImagesResourcesParserType = 1 << 3,
 	VideoResourcesParserType = 1 << 4,
-	FlashResourcesParserType = 1 << 5
+	FlashResourcesParserType = 1 << 5,
+	OtherResourcesParserType = 1 << 6
 };
 
 Q_DECLARE_FLAGS(ParserTypeFlags, ParserType);
