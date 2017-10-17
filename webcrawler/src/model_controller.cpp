@@ -29,6 +29,25 @@ ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr newPage)
 	return existingPage;
 }
 
+void checkResourceLinks(ParsedPagePtr page)
+{
+	QSet<QString> linksToThisPage;
+	QSet<QString> linksOnThisPage;
+
+	for (const WebCrawler::ResourceLink& link : page->linksToThisPage)
+	{
+		linksToThisPage.insert(link.resource.lock()->url.toDisplayString());
+	}
+
+	for (const WebCrawler::ResourceLink& link : page->linksOnThisPage)
+	{
+		linksOnThisPage.insert(link.resource.lock()->url.toDisplayString());
+	}
+
+	ASSERT(page->linksToThisPage.size() == static_cast<size_t>(linksToThisPage.size()));
+	ASSERT(page->linksOnThisPage.size() == static_cast<size_t>(linksOnThisPage.size()));
+}
+
 }
 
 namespace WebCrawler
@@ -300,7 +319,7 @@ void ModelController::processParsedPageH1(ParsedPagePtr parsedPagePtr) noexcept
 		}
 	}
 
-	if (parsedPagePtr->hasSeveralEqualH1Tags)
+	if (parsedPagePtr->hasSeveralH1Tags)
 	{
 		m_data->addParsedPage(parsedPagePtr, StorageType::SeveralH1UrlStorageType);
 	}
@@ -455,6 +474,12 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 				resource.thisResourceLink.altOrTitle 
 			});
 
+#ifdef QT_DEBUG
+			//checkResourceLinks(parsedPagePtr);
+			//checkResourceLinks(existingResource);
+#endif // QT_DEBUG
+
+
 		}
 		else
 		{
@@ -475,7 +500,13 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr
 				pendingResource, 
 				resource.thisResourceLink.urlParameter, 
 				resource.resourceSource, 
-				resource.thisResourceLink.altOrTitle });
+				resource.thisResourceLink.altOrTitle 
+			});
+
+#ifdef QT_DEBUG
+			//checkResourceLinks(pendingResource);
+			//checkResourceLinks(parsedPagePtr);
+#endif // QT_DEBUG
 			
 			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
@@ -580,6 +611,11 @@ void ModelController::processParsedPageResources(ParsedPagePtr parsedPagePtr) no
 			resource.resourceSource, 
 			resource.thisResourceLink.altOrTitle 
 		});
+
+#ifdef QT_DEBUG
+		//checkResourceLinks(parsedPagePtr);
+		//checkResourceLinks(newOrExistingResource);
+#endif // QT_DEBUG
 		
 		m_linksToPageChanges.changes.push_back({ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
 		newOrExistingResource->resourceType = resource.resourceType;

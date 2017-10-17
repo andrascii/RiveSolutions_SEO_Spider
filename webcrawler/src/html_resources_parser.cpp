@@ -6,6 +6,7 @@
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
 #include "resources_cache.h"
+#include "data_resources_parser.h"
 
 namespace WebCrawler
 {
@@ -17,6 +18,7 @@ HtmlResourcesParser::HtmlResourcesParser(ResourcesCache* resourcesCache)
 	addParser(std::make_shared<TitleParser>());
 	addParser(std::make_shared<HParser>());
 	addParser(std::make_shared<WordCountParser>());
+	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceHtml, resourcesCache));
 }
 
 void HtmlResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)

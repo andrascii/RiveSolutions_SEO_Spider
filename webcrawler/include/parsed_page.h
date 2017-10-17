@@ -41,8 +41,9 @@ enum class ResourceSource
 struct LinkInfo
 {
 	QUrl url;
-	LinkParameter urlParameter;
+	LinkParameter urlParameter = LinkParameter::UnknownParameter;
 	QString altOrTitle;
+	bool dataResourceLink = false;
 };
 
 struct ResourceLink
@@ -89,7 +90,7 @@ struct ParsedPage
 	bool hasSeveralTitleTags = bool();
 	bool hasSeveralMetaDescriptionTags = bool();
 	bool hasSeveralMetaKeywordsTags = bool();
-	bool hasSeveralEqualH1Tags = bool();
+	bool hasSeveralH1Tags = bool();
 	bool hasSeveralEqualH2Tags = bool();
 
 	bool isThisExternalPage = bool();

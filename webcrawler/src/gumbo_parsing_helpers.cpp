@@ -224,8 +224,9 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 		}
 
 		QString altOrTitle = QString(nodeText(node));
+		bool dataResource = QString(href->value).startsWith("data:");
 
-		return LinkInfo{ QUrl(href->value), linkParam, altOrTitle };
+		return LinkInfo{ QUrl(href->value), linkParam, altOrTitle, dataResource };
 	};
 
 	const std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);

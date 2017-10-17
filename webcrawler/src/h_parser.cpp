@@ -39,14 +39,7 @@ void HParser::parseH1(GumboOutput* output, ParsedPagePtr& page) noexcept
 	if (h1.size() > 1)
 	{
 		page->secondH1 = h1[1];
-
-		QSet<QString> set;
-		for (const QString& item : h1)
-		{
-			set.insert(item);
-		}
-
-		page->hasSeveralEqualH1Tags = set.size() != static_cast<int>(h1.size());
+		page->hasSeveralH1Tags = true;
 	}
 }
 

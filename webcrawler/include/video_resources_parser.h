@@ -1,13 +1,13 @@
 #pragma once
 
-#include "ipage_parser.h"
+#include "compound_parser.h"
 
 namespace WebCrawler
 {
 
 class ResourcesCache;
 
-class VideoResourcesParser : public IPageParser
+class VideoResourcesParser : public CompoundParser
 {
 public:
 	VideoResourcesParser(ResourcesCache* resourcesCache);
