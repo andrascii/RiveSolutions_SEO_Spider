@@ -5,6 +5,7 @@
 #include "crawler_worker_thread.h"
 #include "queued_downloader.h"
 #include "robots_txt_rules.h"
+#include "robots_txt_loader.h"
 
 namespace WebCrawler
 {
@@ -14,15 +15,13 @@ Crawler::Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThrea
 	, m_modelController(new ModelController(this, sequencedDataCollectionThread))
 	, m_theradCount(threadCount)
 	, m_crawlingStateTimer(new QTimer(this))
-	, m_networkAccessor(new QNetworkAccessManager(this))
-	, m_robotsTxtRules(new RobotsTxtRules(m_networkAccessor, this))
+	, m_robotsTxtRules(nullptr)
 {
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 	ASSERT(qRegisterMetaType<CrawlingState>());
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
-	VERIFY(connect(m_robotsTxtRules->qobject(), SIGNAL(initialized()), this, SLOT(onCrawlingSessionInitialized())));
 	
 	m_crawlingStateTimer->setInterval(100);
 }
@@ -128,6 +127,12 @@ void Crawler::initializeCrawlingSession()
 
 	initCrawlerWorkerThreads();
 
+	if (m_robotsTxtRules == nullptr)
+	{
+		m_robotsTxtRules = new RobotsTxtRules(robotsTxtLoader(), this);
+		VERIFY(connect(m_robotsTxtRules->qobject(), SIGNAL(initialized()), this, SLOT(onCrawlingSessionInitialized())));
+	}
+
 	m_robotsTxtRules->initRobotsTxt(m_options.host);
 }
 
@@ -140,9 +145,24 @@ IQueuedDownloader* Crawler::queuedDownloader() const noexcept
 	return m_queuedDownloader.get();
 }
 
+IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
+{
+	if (!m_robotsTxtLoader)
+	{
+		m_robotsTxtLoader.reset(createRobotsTxtLoader());
+	}
+
+	return m_robotsTxtLoader.get();
+}
+
 IQueuedDownloader* Crawler::createQueuedDownloader() const noexcept
 {
 	return new QueuedDownloader();
+}
+
+IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const noexcept
+{
+	return new RobotsTxtLoader(new QNetworkAccessManager(const_cast<Crawler*>(this)));
 }
 
 SequencedDataCollection* Crawler::sequencedDataCollection() const noexcept

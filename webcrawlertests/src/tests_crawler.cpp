@@ -1,5 +1,6 @@
 #include "tests_crawler.h"
 #include "tests_queued_downloader.h"
+#include "tests_robots_txt_loader.h"
 
 namespace WebCrawlerTests
 {
@@ -176,6 +177,11 @@ void TestsCrawler::setCondition(std::function<void()> cond)
 WebCrawler::IQueuedDownloader* TestsCrawler::createQueuedDownloader() const noexcept
 {
 	return new TestsQueudedDownoader();
+}
+
+WebCrawler::IRobotsTxtLoader* TestsCrawler::createRobotsTxtLoader() const noexcept
+{
+	return new TestsRobotsTxtLoader();
 }
 
 }

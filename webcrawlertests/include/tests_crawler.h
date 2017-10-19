@@ -54,6 +54,7 @@ public:
 
 protected:
 	virtual WebCrawler::IQueuedDownloader* createQueuedDownloader() const noexcept override;
+	virtual WebCrawler::IRobotsTxtLoader* createRobotsTxtLoader() const noexcept override;
 	QThread* m_sequensedCollectionThread;
 	WebCrawler::CrawlerOptions m_testCrawlerOptions;
 	std::function<void()> m_cond;

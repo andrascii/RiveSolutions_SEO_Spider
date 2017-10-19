@@ -2,8 +2,9 @@
 
 namespace WebCrawler
 {
+	class IRobotsTxtLoader;
 
-class RobotsTxtTokenizer;
+	class RobotsTxtTokenizer;
 
 enum class UserAgentType
 {
@@ -40,7 +41,7 @@ class RobotsTxtRules : public QObject, public IRobotsTxtRules
 	Q_OBJECT
 
 public:
-	RobotsTxtRules(QNetworkAccessManager* networkAccessor, QObject* parent = nullptr);
+	RobotsTxtRules(IRobotsTxtLoader* loader, QObject* parent = nullptr);
 
 	virtual bool isValid() const override;
 	virtual bool isInitialized() const override;
@@ -55,21 +56,13 @@ signals:
 	virtual void initialized() override;
 
 private slots:
-	void onLoadingDone(QNetworkReply* reply);
+	void onLoadingDone(const QByteArray& content);
 
 private:
-	QNetworkAccessManager* m_networkAccessor;
-
 	bool m_valid;
 	bool m_initialized;
 
+	IRobotsTxtLoader* m_loader;
 	std::unique_ptr<RobotsTxtTokenizer> m_tokenizer;
 };
-
-class RobotsTxtRulesTestStub : public RobotsTxtRules
-{
-public:
-	virtual void initRobotsTxt(const QUrl& url) override;
-};
-
 }
