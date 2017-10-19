@@ -193,7 +193,7 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage) noexc
 
 std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept
 {
-	auto cond = [httpOrHttpsOnly](const GumboNode* node)
+	const auto cond = [httpOrHttpsOnly](const GumboNode* node)
 	{
 		bool result = node && 
 			node->type == GUMBO_NODE_ELEMENT && 
@@ -211,20 +211,20 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 		return PageParserHelpers::isHttpOrHttpsScheme(hrefVal);
 	};
 
-	auto res = [](const GumboNode* node)
+	const auto res = [](const GumboNode* node)
 	{
-		GumboAttribute* href = href = gumbo_get_attribute(&node->v.element.attributes, "href");
-		GumboAttribute* rel = gumbo_get_attribute(&node->v.element.attributes, "rel");
+		const GumboAttribute* href = href = gumbo_get_attribute(&node->v.element.attributes, "href");
+		const GumboAttribute* rel = gumbo_get_attribute(&node->v.element.attributes, "rel");
 
 		LinkParameter linkParam = LinkParameter::DofollowParameter;
 
-		if (rel != nullptr && rel->value == "nofollow")
+		if (rel != nullptr && std::strstr(rel->value, "nofollow") != nullptr)
 		{
 			linkParam = LinkParameter::NofollowParameter;
 		}
 
-		QString altOrTitle = QString(nodeText(node));
-		bool dataResource = QString(href->value).startsWith("data:");
+		const QString altOrTitle(nodeText(node));
+		const bool dataResource = QByteArray(href->value).startsWith("data:");
 
 		return LinkInfo{ QUrl(href->value), linkParam, altOrTitle, dataResource };
 	};
@@ -254,7 +254,7 @@ const GumboNode* GumboParsingHelpers::findChildNode(const GumboNode* node, Gumbo
 
 		bool success = true;
 
-		for (auto attr : expectedAttributes)
+		for (const auto attr : expectedAttributes)
 		{
 			GumboAttribute* gumboAttr = gumbo_get_attribute(&child->v.element.attributes, attr.first);
 			success = success && gumboAttr && (strlen(attr.second) == 0 || QString(gumboAttr->value).toLower() == attr.second);

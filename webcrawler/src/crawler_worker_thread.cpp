@@ -37,7 +37,7 @@ void CrawlerWorkerThread::process()
 
 	if (replyExtracted)
 	{
-		ParsedPagePtr page = m_pageParsedDataCollector->collectPageDataFromReply(reply);
+		const ParsedPagePtr page = m_pageParsedDataCollector->collectPageDataFromReply(reply);
 
 		schedulePageResourcesLoading(page);
 
@@ -45,7 +45,7 @@ void CrawlerWorkerThread::process()
 	}
 }
 
-void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& parsedPage)
+void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& parsedPage) const
 {
 	if (parsedPage->isThisExternalPage)
 	{

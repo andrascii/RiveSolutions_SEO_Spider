@@ -24,7 +24,7 @@ public:
 private:
 	virtual void process() override;
 
-	void schedulePageResourcesLoading(const ParsedPagePtr& pageRaw);
+	void schedulePageResourcesLoading(const ParsedPagePtr& pageRaw) const;
 
 private:
 	PageParsedDataCollector* m_pageParsedDataCollector;

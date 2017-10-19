@@ -105,7 +105,7 @@ bool PageParsedDataCollector::isParserEnabled(int flags) const noexcept
 	return true;
 }
 
-QUrl PageParsedDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& reply) const
+QUrl PageParsedDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& reply)
 {
 	if (reply.redirectUrl.isEmpty() || !reply.redirectUrl.isRelative())
 	{
