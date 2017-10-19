@@ -5,12 +5,12 @@
 namespace QuickieWebBot
 {
 
-IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, WebCrawler::SequencedDataCollection* guiStorage)
+IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, WebCrawler::SequencedDataCollection* guiStorage) const
 {
 	ASSERT(type > StorageAdaptorType::StorageAdaptorTypeBegin &&
 		type < StorageAdaptorType::StorageAdaptorTypeEnd);
 
-	WebCrawler::StorageType storageType = 
+	const WebCrawler::StorageType storageType =
 		static_cast<WebCrawler::StorageType>(type);
 
 	IParsedPageStorageAdaptor* storageAdaptor = new ParsedPageInfoStorageAdaptor(guiStorage->storage(storageType), storageType, guiStorage);
@@ -23,16 +23,14 @@ IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorT
 
 IStorageAdaptor* StorageAdaptorFactory::createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer)
 {
-	IPageLinksStorageAdaptor* storageAdaptor = nullptr;
-
-	storageAdaptor = new PageLinksStorageAdaptor(associatedPageRawInfoPointer, type);
+	IPageLinksStorageAdaptor* storageAdaptor = new PageLinksStorageAdaptor(associatedPageRawInfoPointer, type);;
 
 	setupAvailablePageLinkColumns(storageAdaptor);
 
 	return storageAdaptor;
 }
 
-void StorageAdaptorFactory::setupAvailableColumns(IParsedPageStorageAdaptor* storageAdaptor, StorageAdaptorType type) const
+void StorageAdaptorFactory::setupAvailableColumns(IParsedPageStorageAdaptor* storageAdaptor, StorageAdaptorType type)
 {
 	switch (type)
 	{

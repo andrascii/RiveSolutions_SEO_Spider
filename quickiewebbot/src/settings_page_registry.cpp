@@ -1,7 +1,6 @@
 #include "settings_page_registry.h"
 #include "settings_page.h"
 #include "main_window.h"
-#include "application.h"
 
 namespace QuickieWebBot
 {

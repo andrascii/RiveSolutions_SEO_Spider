@@ -79,19 +79,19 @@ public:
 	static int columnPrefferedSize(PageLinksColumn column);
 
 	QVariant itemValue(Column column) const;
-	QVariant itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number);
-	size_t itemCount(PageLinkContext context);
+	QVariant itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number) const;
+	size_t itemCount(PageLinkContext context) const;
 
 private:
 	using MethodAcceptor = QVariant(ParsedPageInfo::*)() const;
 	using PageLinksPointer = std::deque<WebCrawler::ResourceLink> WebCrawler::ParsedPage::*;
 
-	bool isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) const noexcept;
-	Column mapPageLinksColumnToParsedPageColumn(PageLinksColumn pageLinksColumn) const noexcept;
-	PageLinksPointer pointerByContext(PageLinkContext context) const;
-	QString linkParameterDescription(WebCrawler::LinkParameter linkParameter) const;
+	static bool isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) noexcept;
+	static PageLinksPointer pointerByContext(PageLinkContext context);
+	static QString linkParameterDescription(WebCrawler::LinkParameter linkParameter);
+	static Column mapPageLinksColumnToParsedPageColumn(PageLinksColumn pageLinksColumn) noexcept;
 
-	MethodAcceptor acceptItemMethod(Column item) const;
+	static MethodAcceptor acceptItemMethod(Column item);
 	QVariant acceptUrl() const;
 	QVariant acceptContentType() const;
 	QVariant acceptTitle() const;

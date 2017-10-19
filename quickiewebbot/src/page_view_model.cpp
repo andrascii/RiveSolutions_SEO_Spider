@@ -1,14 +1,7 @@
-#include "parsed_page_info.h"
 #include "abstract_table_model.h"
-#include "default_column_resize_policy.h"
-#include "text_renderer.h"
-#include "background_renderer.h"
-#include "selection_background_renderer.h"
-#include "grid_line_renderer.h"
 #include "page_model.h"
 #include "page_view_model.h"
 #include "quickie_web_bot_helpers.h"
-#include "table_view.h"
 
 
 namespace QuickieWebBot
@@ -29,7 +22,7 @@ PageViewModel::PageViewModel(PageModel* model, QObject* parent)
 	initializeRenderers();
 
 	QPixmap pixmap;
-	pixmap.fill(backgroundColor(QModelIndex()));
+	pixmap.fill(m_backgroundColor);
 	pixmap.load(":/images/click-to-url-icon.png");
 
 	m_urlIcon = pixmap.scaled(QuickieWebBotHelpers::pointsToPixels(13), QuickieWebBotHelpers::pointsToPixels(13));

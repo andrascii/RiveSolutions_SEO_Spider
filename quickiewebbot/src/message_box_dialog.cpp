@@ -13,7 +13,7 @@ MessageBoxDialog::MessageBoxDialog(QWidget* parent)
 	setWindowFlags(Qt::Dialog);
 	setWindowModality(Qt::WindowModal);
 
-	QSize preferredSize(QuickieWebBotHelpers::pointsToPixels(270), QuickieWebBotHelpers::pointsToPixels(80));
+	const QSize preferredSize(QuickieWebBotHelpers::pointsToPixels(270), QuickieWebBotHelpers::pointsToPixels(80));
 
 	setMinimumSize(preferredSize);
 	setMaximumSize(preferredSize);
@@ -22,12 +22,12 @@ MessageBoxDialog::MessageBoxDialog(QWidget* parent)
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
 }
 
-void MessageBoxDialog::setMessage(const QString& message)
+void MessageBoxDialog::setMessage(const QString& message) const
 {
 	m_ui->messageLabel->setText(message);
 }
 
-void MessageBoxDialog::setIcon(Icon icon)
+void MessageBoxDialog::setIcon(Icon icon) const
 {
 	const QSize pixmapSize(QuickieWebBotHelpers::pointsToPixels(20), QuickieWebBotHelpers::pointsToPixels(20));
 

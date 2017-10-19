@@ -28,9 +28,10 @@ public:
 	void setPageDataType(PageDataType pageDataType);
 
 private:
-	void setPageServerResponse(const ParsedPageInfoPtr& page);
-	QString tabDescription(PageDataType pageDataType) const;
-	PageLinkContext mapType(PageDataType pageDataType) const noexcept;
+	void setPageServerResponse(const ParsedPageInfoPtr& page) const;
+
+	static QString tabDescription(PageDataType pageDataType);
+	static PageLinkContext mapType(PageDataType pageDataType) noexcept;
 
 private:
 	QTabWidget* m_tabWidget;

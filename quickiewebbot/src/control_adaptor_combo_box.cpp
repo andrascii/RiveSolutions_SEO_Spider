@@ -1,5 +1,4 @@
 #include "control_adaptor_combo_box.h"
-#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {

@@ -1,8 +1,6 @@
 #include "application.h"
 #include "text_renderer.h"
 #include "iview_model.h"
-#include "abstract_table_model.h"
-#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -103,7 +101,7 @@ QString TextRenderer::elidedText(const QString& string, const int width, bool) c
 void TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const
 {
 	const QPixmap& pixmap = m_viewModel->pixmap(index);
-	QSize pixmapSize = pixmap.size();
+	const QSize pixmapSize = pixmap.size();
 	painter->drawPixmap(QRect(rect.topLeft(), pixmapSize), pixmap);
 }
 

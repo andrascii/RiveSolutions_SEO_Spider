@@ -23,14 +23,14 @@ void ViewportPercentResizePolicy::init(TableView*, const IResizePolicy*) const n
 
 int ViewportPercentResizePolicy::columnSize(int column, const TableView* view) const noexcept
 {
-	int s_extraWidth = 0; // view border, etc
+	const int s_extraWidth = 0; // view border, etc
 
-	int scrollBarWidth = view->verticalScrollBar()->isVisible() ? view->verticalScrollBar()->width() : 0;
-	int width = view->width() - scrollBarWidth - s_extraWidth;
+	const int scrollBarWidth = view->verticalScrollBar()->isVisible() ? view->verticalScrollBar()->width() : 0;
+	const int width = view->width() - scrollBarWidth - s_extraWidth;
 
 	DEBUG_ASSERT(m_columnsPercentSize.size() > column);
 
-	int columnWidth = m_columnsPercentSize[column] * width / 100;
+	const int columnWidth = m_columnsPercentSize[column] * width / 100;
 
 	return columnWidth;
 }

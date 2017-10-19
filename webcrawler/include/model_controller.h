@@ -19,24 +19,24 @@ public:
 
 	void setWebCrawlerOptions(const CrawlerOptions& options);
 
-	void addParsedPage(ParsedPagePtr parsedPagePtr) noexcept;
+	void addParsedPage(ParsedPagePtr incomingPage) noexcept;
 
 	const UnorderedDataCollection* data() const noexcept;
 	UnorderedDataCollection* data() noexcept;
 
 private:
-	void processParsedPageUrl(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageTitle(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageMetaDescription(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageMetaKeywords(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageH1(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageH2(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageImage(ParsedPagePtr parsedPagePtr, bool checkOnlyLastResource = false) noexcept;
-	void processParsedPageStatusCode(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageUrl(ParsedPagePtr incomingPage) const noexcept;
+	void processParsedPageTitle(ParsedPagePtr incomingPage) const noexcept;
+	void processParsedPageMetaDescription(ParsedPagePtr incomingPage) const noexcept;
+	void processParsedPageMetaKeywords(ParsedPagePtr incomingPage) const noexcept;
+	void processParsedPageH1(ParsedPagePtr incomingPage) const noexcept;
+	void processParsedPageH2(ParsedPagePtr incomingPage) const noexcept;
+	void processParsedPageImage(ParsedPagePtr incomingPage, bool checkOnlyLastResource = false) const noexcept;
+	void processParsedPageStatusCode(ParsedPagePtr incomingPage) const noexcept;
 
-	void processParsedPageHtmlResources(ParsedPagePtr parsedPagePtr) noexcept;
-	void processParsedPageResources(ParsedPagePtr parsedPagePtr) noexcept;
-	void fixParsedPageResourceType(ParsedPagePtr parsedPagePtr) noexcept;
+	void processParsedPageHtmlResources(ParsedPagePtr incomingPage) noexcept;
+	void processParsedPageResources(ParsedPagePtr incomingPage) noexcept;
+	void fixParsedPageResourceType(ParsedPagePtr incomingPage) const noexcept;
 
 private:
 	UnorderedDataCollection* m_data;

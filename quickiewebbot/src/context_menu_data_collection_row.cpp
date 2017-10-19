@@ -1,5 +1,4 @@
 #include "context_menu_data_collection_row.h"
-#include "abstract_table_model.h"
 #include "table_view.h"
 #include "quickie_web_bot_helpers.h"
 #include "page_model.h"
@@ -72,7 +71,7 @@ QModelIndexList ContextMenuDataCollectionRow::selectedIndexes() const noexcept
 	return associatedGridViewSelecionModel->selectedIndexes();
 }
 
-void ContextMenuDataCollectionRow::openUrlAction()
+void ContextMenuDataCollectionRow::openUrlAction() const
 {
 	for (QModelIndex index : selectedIndexes())
 	{
@@ -88,7 +87,7 @@ void ContextMenuDataCollectionRow::openUrlAction()
 	}
 }
 
-void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
+void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData() const
 {
 	QString allColumnsData;
 
@@ -100,12 +99,12 @@ void ContextMenuDataCollectionRow::copyToClipboardAllColumnsData()
 	theApp->clipboard()->setText(allColumnsData);
 }
 
-void ContextMenuDataCollectionRow::copyToClipboardAllPages()
+void ContextMenuDataCollectionRow::copyToClipboardAllPages() const
 {
 
 }
 
-void ContextMenuDataCollectionRow::copyToClipboardUrl()
+void ContextMenuDataCollectionRow::copyToClipboardUrl() const
 {
 	foreach(QModelIndex index, selectedIndexes())
 	{

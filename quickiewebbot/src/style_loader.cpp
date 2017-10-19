@@ -41,15 +41,15 @@ StyleLoader::StyleLoader(QObject* parent, QString const& filename, QKeySequence 
 {
 }
 
-void StyleLoader::loadCustomStyleSheet()
+void StyleLoader::loadCustomStyleSheet() const
 {
-	QString filenamePath = "C:/" + m_filename;
+	const QString filenamePath = "C:/" + m_filename;
 
 	QFile styles(filenamePath);
 
 	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		QString styleSheet = styles.readAll();
+		const QString styleSheet = styles.readAll();
 		qApp->setStyleSheet(styleSheet);
 
 		DEBUGLOG << "StyleLoader" << QString("Debug styles loaded from %1").arg(filenamePath);
@@ -60,7 +60,7 @@ void StyleLoader::loadCustomStyleSheet()
 	}
 }
 
-void StyleLoader::loadStandardStyleSheet()
+void StyleLoader::loadStandardStyleSheet() const
 {
 	DEBUGLOG << "StyleLoader" << QString("Loaded standard stylesheets");
 	theApp->initializeStyleSheet();

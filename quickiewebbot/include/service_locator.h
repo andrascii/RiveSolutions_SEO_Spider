@@ -86,7 +86,7 @@ private:
 
 	struct ServiceLocatorDeleter
 	{
-		void operator()(ServiceLocator* serviceLocator)
+		void operator()(ServiceLocator* serviceLocator) const
 		{
 			delete serviceLocator;
 		}

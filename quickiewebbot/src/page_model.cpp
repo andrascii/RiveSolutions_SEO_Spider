@@ -120,7 +120,7 @@ QVariant PageModel::data(const QModelIndex& index, int role) const
 		}
 	}
 
-	QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);
+	const QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);
 
 	switch (role)
 	{
@@ -182,7 +182,7 @@ void PageModel::onParsedPageInfoAdded(int rowIndex)
 
 void PageModel::onPageInfoItemChanged(int row, int column)
 {
-	QModelIndex indexItemChanged = index(row, column);
+	const QModelIndex indexItemChanged = index(row, column);
 
 	Q_EMIT dataChanged(indexItemChanged, indexItemChanged);
 }

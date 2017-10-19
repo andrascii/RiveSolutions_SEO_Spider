@@ -1,5 +1,4 @@
 #include "titled_widget.h"
-#include "quickie_web_bot_helpers.h"
 
 namespace QuickieWebBot
 {
@@ -17,7 +16,7 @@ TitledWidget::TitledWidget(QWidget* parent)
 	m_layout->addWidget(m_titleFrame);
 }
 
-void TitledWidget::addTitleWidget(QWidget* widget, Qt::AlignmentFlag align, bool last)
+void TitledWidget::addTitleWidget(QWidget* widget, Qt::AlignmentFlag align, bool last) const
 {
 	m_titleLayout->addWidget(widget, 0, align);
 	if (last)
@@ -27,7 +26,7 @@ void TitledWidget::addTitleWidget(QWidget* widget, Qt::AlignmentFlag align, bool
 	}
 }
 
-void TitledWidget::setContentWidget(QWidget* widget)
+void TitledWidget::setContentWidget(QWidget* widget) const
 {
 	if (m_layout->count() > 1)
 	{

@@ -1,13 +1,13 @@
 #include "selection_model.h"
 #include "table_view.h"
-#include "abstract_table_model.h"
-#include "quickie_web_bot_helpers.h"
 
 #ifdef QT_DEBUG
+
 #include "debug_info_web_page_widget.h"
 #include "page_model.h"
 #include "parsed_page_info_storage_adaptor.h"
-#endif // DEBUG
+
+#endif
 
 
 namespace QuickieWebBot

@@ -25,7 +25,7 @@ public:
 
 protected:
 	void init();
-	void registerMetaTypes();
+	void registerMetaTypes() const;
 	std::shared_ptr<IControlAdaptor> createControlAdaptor(QObject* control);
 
 private:

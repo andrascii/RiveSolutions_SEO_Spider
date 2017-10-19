@@ -27,13 +27,13 @@ public:
 	Application(int& argc, char** argv);
 	~Application();
 
-	Preferences* preferences() noexcept;
-	MainWindow* mainWindow() noexcept;
-	StorageAdaptorFactory* storageAdaptorFactory() noexcept;
-	SummaryDataAccessorFactory* summaryDataAccessorFactory() noexcept;
+	Preferences* preferences() const noexcept;
+	MainWindow* mainWindow() const noexcept;
+	StorageAdaptorFactory* storageAdaptorFactory() const noexcept;
+	SummaryDataAccessorFactory* summaryDataAccessorFactory() const noexcept;
 	
-	WebCrawler::Crawler* crawler() noexcept;
-	WebCrawler::SequencedDataCollection* sequencedDataCollection() noexcept;
+	WebCrawler::Crawler* crawler() const noexcept;
+	WebCrawler::SequencedDataCollection* sequencedDataCollection() const noexcept;
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
@@ -48,9 +48,8 @@ public:
 private:
 	Q_SLOT void showMainWindow();
 
-	void registerServices() const;
-
-	QString operatingSystemVersion() const noexcept;
+	static void registerServices();
+	static QString operatingSystemVersion();
 
 	void initQSettings();
 	QSettings* settings() const;

@@ -1,10 +1,7 @@
 #include "summary_view_model.h"
 #include "summary_model.h"
 #include "text_renderer.h"
-#include "background_renderer.h"
-#include "selection_background_renderer.h"
 #include "quickie_web_bot_helpers.h"
-#include "viewport_percent_resize_policy.h"
 
 namespace QuickieWebBot
 {

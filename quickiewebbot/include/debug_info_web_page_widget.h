@@ -34,7 +34,7 @@ class DebugInfoWebPageWidget : public QWidget, public Ui::DebugWebPageInfoWidget
 public:
 	static void attach();
 
-	Q_SLOT void onPageSelected(WebCrawler::ParsedPage* page);
+	Q_SLOT void onPageSelected(WebCrawler::ParsedPage* page) const;
 
 protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;

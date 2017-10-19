@@ -26,7 +26,7 @@ private:
 	void applyOptions();
 	bool isParserEnabled(int flags) const noexcept;
 
-	QUrl resolveRedirectUrl(const QueuedDownloader::Reply& reply) const;
+	static QUrl resolveRedirectUrl(const QueuedDownloader::Reply& reply);
 
 	void collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const;
 	void collectParsedPageData(GumboOutput* output, ParsedPagePtr& page);

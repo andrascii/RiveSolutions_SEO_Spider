@@ -1,6 +1,4 @@
 #include "url_line_edit.h"
-#include "application.h"
-#include "preferences.h"
 
 namespace QuickieWebBot
 {
@@ -31,7 +29,7 @@ void UrlLineEdit::checkUrlCorrectness()
 
 	setProperty("isValidUrl", m_isUrlCorrect);
 
- 	m_isUrlCorrect ? 
+	m_isUrlCorrect ? 
 		DEBUGLOG << text() << "Correct url" : 
 		DEBUGLOG << text() << "Incorrect url";
 

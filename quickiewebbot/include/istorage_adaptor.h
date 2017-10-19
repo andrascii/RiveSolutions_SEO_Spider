@@ -14,6 +14,8 @@ public:
 		PlainItemType
 	};
 
+	virtual ~IStorageAdaptor() = default;
+
 	virtual int columnWidth(int columnNumber) const noexcept = 0;
 
 	virtual int columnCount() const noexcept = 0;

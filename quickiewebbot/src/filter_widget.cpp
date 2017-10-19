@@ -38,7 +38,7 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
-void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
+void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) const
 {
 	WebCrawler::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
 	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, guiStorage);
@@ -62,10 +62,10 @@ void FilterWidget::showEvent(QShowEvent* event)
 	m_isFirstShow = false;
 }
 
-void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const
 {
 	const QModelIndex index = selected.size() ? selected.indexes()[0] : QModelIndex();
-	StorageAdaptorType category = m_summaryFilterModel->storageAdaptorType(index);
+	const StorageAdaptorType category = m_summaryFilterModel->storageAdaptorType(index);
 
 	m_webSiteDataWidget->setStorageAdaptorType(category);
 }

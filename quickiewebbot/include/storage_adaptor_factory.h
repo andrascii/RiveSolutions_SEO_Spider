@@ -13,12 +13,12 @@ class IStorageAdaptor;
 class StorageAdaptorFactory
 {
 public:
-	IStorageAdaptor* createPageRawInfoStorage(StorageAdaptorType type, WebCrawler::SequencedDataCollection* guiStorage);
+	IStorageAdaptor* createPageRawInfoStorage(StorageAdaptorType type, WebCrawler::SequencedDataCollection* guiStorage) const;
 	IStorageAdaptor* createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer);
 
 protected:
-	void setupAvailableColumns(IParsedPageStorageAdaptor* storageAdaptor, StorageAdaptorType type) const;
-	void setupAvailablePageLinkColumns(IPageLinksStorageAdaptor* storageAdaptor);
+	static void setupAvailableColumns(IParsedPageStorageAdaptor* storageAdaptor, StorageAdaptorType type);
+	static void setupAvailablePageLinkColumns(IPageLinksStorageAdaptor* storageAdaptor);
 };
 
 }

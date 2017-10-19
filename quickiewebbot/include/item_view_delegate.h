@@ -3,6 +3,7 @@
 namespace QuickieWebBot
 {
 
+class IViewModel;
 class TableView;
 
 class ItemViewDelegate : public QStyledItemDelegate

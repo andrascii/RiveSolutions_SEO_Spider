@@ -1,6 +1,5 @@
 #include "application.h"
 #include "style_loader.h"
-#include "model_controller.h"
 #include "software_branding.h"
 #include "splash_screen.h"
 #include "service_locator.h"
@@ -53,32 +52,32 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "App Version:" << applicationVersion();
 }
 
-WebCrawler::Crawler* Application::crawler() noexcept
+WebCrawler::Crawler* Application::crawler() const noexcept
 {
 	return m_crawler;
 }
 
-MainWindow* Application::mainWindow() noexcept
+MainWindow* Application::mainWindow() const noexcept
 {
 	return m_mainWindow.get();
 }
 
-WebCrawler::SequencedDataCollection* Application::sequencedDataCollection() noexcept
+WebCrawler::SequencedDataCollection* Application::sequencedDataCollection() const noexcept
 {
 	return m_sequencedDataCollection;
 }
 
-StorageAdaptorFactory* Application::storageAdaptorFactory() noexcept
+StorageAdaptorFactory* Application::storageAdaptorFactory() const noexcept
 {
 	return m_storageAdatpterFactory.get();
 }
 
-SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() noexcept
+SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() const noexcept
 {
 	return m_summaryDataAccessorFactory.get();
 }
 
-Preferences* Application::preferences() noexcept
+Preferences* Application::preferences() const noexcept
 {
 	return m_preferences;
 }
@@ -124,7 +123,7 @@ void Application::showMainWindow()
 	mainWindow()->showMaximized();
 }
 
-void Application::registerServices() const
+void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
 	ServiceLocator::instance()->addService<IDllLoader>(new DllLoader);
@@ -213,7 +212,7 @@ void Application::initializeStyleSheet() noexcept
 	}
 }
 
-QString Application::operatingSystemVersion() const noexcept
+QString Application::operatingSystemVersion()
 {
 	static QString osVersion;
 

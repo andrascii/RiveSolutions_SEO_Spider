@@ -132,9 +132,9 @@ QVariant ParsedPageInfo::itemValue(Column column) const
 	return (this->*acceptItemMethod(column))();
 }
 
-QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number)
+QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number) const
 {
-	PageLinksPointer pointer = pointerByContext(context);
+	const PageLinksPointer pointer = pointerByContext(context);
 
 	const WebCrawler::ResourceLink& resourceLink = (m_parsedPage.get()->*pointer)[number];
 
@@ -167,19 +167,19 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 	return value;
 }
 
-size_t ParsedPageInfo::itemCount(PageLinkContext context)
+size_t ParsedPageInfo::itemCount(PageLinkContext context) const
 {
 	if (!m_parsedPage)
 	{
 		return 0;
 	}
 
-	PageLinksPointer pointer = pointerByContext(context);
+	const PageLinksPointer pointer = pointerByContext(context);
 
 	return (m_parsedPage.get()->*pointer).size();
 }
 
-bool ParsedPageInfo::isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) const noexcept
+bool ParsedPageInfo::isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) noexcept
 {
 	switch (pageLinksColumn)
 	{
@@ -193,7 +193,7 @@ bool ParsedPageInfo::isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn p
 	return false;
 }
 
-ParsedPageInfo::Column ParsedPageInfo::mapPageLinksColumnToParsedPageColumn(PageLinksColumn pageLinksColumn) const noexcept
+ParsedPageInfo::Column ParsedPageInfo::mapPageLinksColumnToParsedPageColumn(PageLinksColumn pageLinksColumn) noexcept
 {
 	DEBUG_ASSERT(isPageLinksColumnMappedToParsedPageColumn(pageLinksColumn));
 
@@ -208,14 +208,16 @@ ParsedPageInfo::Column ParsedPageInfo::mapPageLinksColumnToParsedPageColumn(Page
 		{
 			return Column::StatusCodeColumn;
 		}
+		default:
+		{
+			DEBUG_ASSERT(!"What happens?");
+		}
 	}
-
-	DEBUG_ASSERT(!"What happens?");
 
 	return Column();
 }
 
-ParsedPageInfo::PageLinksPointer ParsedPageInfo::pointerByContext(PageLinkContext context) const
+ParsedPageInfo::PageLinksPointer ParsedPageInfo::pointerByContext(PageLinkContext context)
 {
 	PageLinksPointer pointer = nullptr;
 
@@ -231,14 +233,16 @@ ParsedPageInfo::PageLinksPointer ParsedPageInfo::pointerByContext(PageLinkContex
 			pointer = &WebCrawler::ParsedPage::linksToThisPage;
 			break;
 		}
+		default:
+		{
+			ASSERT(pointer);
+		}
 	}
-
-	ASSERT(pointer);
 
 	return pointer;
 }
 
-QString ParsedPageInfo::linkParameterDescription(WebCrawler::LinkParameter linkParameter) const
+QString ParsedPageInfo::linkParameterDescription(WebCrawler::LinkParameter linkParameter)
 {
 	switch (linkParameter)
 	{
@@ -255,7 +259,7 @@ QString ParsedPageInfo::linkParameterDescription(WebCrawler::LinkParameter linkP
 	return QObject::tr("Unknown link parameter");
 }
 
-ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column) const
+ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column)
 {
 	switch (column)
 	{
@@ -367,9 +371,12 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column) c
 		{
 			return &ParsedPageInfo::acceptImageSizeKb;
 		}
+		default:
+		{
+			ASSERT(!"Unknown element");
+		}
 	}
 
-	ASSERT(!"Unknown element");
 	return MethodAcceptor();
 }
 

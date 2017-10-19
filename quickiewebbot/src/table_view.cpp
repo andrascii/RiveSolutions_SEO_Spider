@@ -5,7 +5,6 @@
 #include "selection_model.h"
 #include "item_view_delegate.h"
 #include "quickie_web_bot_helpers.h"
-#include "summary_model.h"
 
 namespace QuickieWebBot
 {
@@ -125,7 +124,7 @@ void TableView::paintEvent(QPaintEvent* event)
 		int secondYCoordinate;
 	};
 
-	auto makeUniqueSelectedRows = [this]() -> std::vector<int>
+	const auto makeUniqueSelectedRows = [this]() -> std::vector<int>
 	{
 		std::vector<int> uniqueSelectedRows;
 
@@ -271,8 +270,8 @@ bool TableView::showAdditionalGrid() const noexcept
 
 void TableView::initSpans()
 {
-	int rows = model()->rowCount();
-	int columns = model()->columnCount();
+	const int rows = model()->rowCount();
+	const int columns = model()->columnCount();
 
 	for (int row = 0; row < rows; ++row)
 	{

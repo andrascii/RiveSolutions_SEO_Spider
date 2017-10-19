@@ -72,7 +72,7 @@ void HostInfo::determineError()
 {
 #ifdef Q_OS_WIN
 	
-	DWORD error = ::WSAGetLastError();
+	const DWORD error = ::WSAGetLastError();
 
 	switch (error)
 	{

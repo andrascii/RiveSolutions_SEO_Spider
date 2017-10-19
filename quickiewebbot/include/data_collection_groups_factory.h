@@ -45,7 +45,7 @@ using DCStorageGroupDescriptionPtr = std::shared_ptr<DCStorageGroupDescription>;
 class DataCollectionGroupsFactory
 {
 public:
-	DCStorageGroupDescriptionPtr create(AuditGroup group);
+	DCStorageGroupDescriptionPtr create(AuditGroup group) const;
 };
 
 }

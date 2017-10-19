@@ -18,13 +18,13 @@ class FilterWidget : public QFrame
 public:
 	FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent = nullptr);
 
-	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
+	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) const;
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
 
 private:
-	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const;
 
 private:
 	WebSiteDataWidget* m_webSiteDataWidget;
