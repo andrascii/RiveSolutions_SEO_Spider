@@ -272,4 +272,11 @@ void RobotsTxtRules::onLoadingDone(QNetworkReply* reply)
 	m_initialized = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+void RobotsTxtRulesTestStub::initRobotsTxt(const QUrl& url)
+{
+	emit initialized();
+}
+
 }

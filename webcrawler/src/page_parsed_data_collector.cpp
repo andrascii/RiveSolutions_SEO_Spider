@@ -76,10 +76,8 @@ void PageParsedDataCollector::applyOptions()
 {
 	m_parser.clear();
 
-	if (m_options.parserTypeFlags.testFlag(HtmlResourcesParserType))
-	{
-		m_parser.addParser(createParser(HtmlResourcesParserType));
-	}
+	m_parser.addParser(std::make_shared<HtmlResourcesParser>(&m_resourcesCache));
+
 	if (m_options.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{
 		m_parser.addParser(createParser(JavaScriptResourcesParserType));
@@ -196,10 +194,6 @@ PageParsedDataCollector::createParser(ParserType parserType) const
 {
 	switch (parserType)
 	{
-		case HtmlResourcesParserType:
-		{
-			return std::make_shared<HtmlResourcesParser>(&m_resourcesCache);
-		}
 		case JavaScriptResourcesParserType:
 		{
 			return std::make_shared<JsResourcesParser>(&m_resourcesCache);

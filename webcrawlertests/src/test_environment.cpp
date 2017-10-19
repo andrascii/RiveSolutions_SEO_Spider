@@ -35,7 +35,7 @@ void TestEnvironment::runTest(std::function<void()> condition) const
 WebCrawler::CrawlerOptions TestEnvironment::defaultOptions(const QUrl& url)
 {
 	WebCrawler::CrawlerOptions result{ url };
-	result.parserTypeFlags = WebCrawler::ParserTypeFlags(WebCrawler::HtmlResourcesParserType |
+	result.parserTypeFlags = WebCrawler::ParserTypeFlags(
 		WebCrawler::JavaScriptResourcesParserType |
 		WebCrawler::CssResourcesParserType |
 		WebCrawler::ImagesResourcesParserType |

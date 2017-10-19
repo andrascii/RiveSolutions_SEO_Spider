@@ -66,4 +66,10 @@ private:
 	std::unique_ptr<RobotsTxtTokenizer> m_tokenizer;
 };
 
+class RobotsTxtRulesTestStub : public RobotsTxtRules
+{
+public:
+	virtual void initRobotsTxt(const QUrl& url) override;
+};
+
 }

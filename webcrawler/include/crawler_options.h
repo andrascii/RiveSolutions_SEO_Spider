@@ -5,13 +5,12 @@ namespace WebCrawler
 
 enum ParserType
 {
-	HtmlResourcesParserType = 1 << 0,
-	JavaScriptResourcesParserType = 1 << 1,
-	CssResourcesParserType = 1 << 2,
-	ImagesResourcesParserType = 1 << 3,
-	VideoResourcesParserType = 1 << 4,
-	FlashResourcesParserType = 1 << 5,
-	OtherResourcesParserType = 1 << 6
+	JavaScriptResourcesParserType = 1 << 0,
+	CssResourcesParserType = 1 << 1,
+	ImagesResourcesParserType = 1 << 2,
+	VideoResourcesParserType = 1 << 3,
+	FlashResourcesParserType = 1 << 4,
+	OtherResourcesParserType = 1 << 5
 };
 
 Q_DECLARE_FLAGS(ParserTypeFlags, ParserType);
