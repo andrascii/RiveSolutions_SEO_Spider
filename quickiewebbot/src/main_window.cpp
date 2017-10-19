@@ -168,7 +168,6 @@ void MainWindow::startCrawler()
 	options.checkJavaScript = theApp->preferences()->checkJavaScript();
 	options.checkSwf = theApp->preferences()->checkSWF();
 
-	options.parserTypeFlags.setFlag(WebCrawler::HtmlResourcesParserType);
 	options.parserTypeFlags.setFlag(WebCrawler::JavaScriptResourcesParserType);
 	options.parserTypeFlags.setFlag(WebCrawler::CssResourcesParserType);
 	options.parserTypeFlags.setFlag(WebCrawler::ImagesResourcesParserType);
