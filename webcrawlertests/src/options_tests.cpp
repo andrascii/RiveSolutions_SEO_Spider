@@ -4,8 +4,7 @@ namespace WebCrawlerTests
 TEST(OptionsTests, ParseOnlyHtml)
 {
 	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
-	options.parserTypeFlags = WebCrawler::HtmlResourcesParserType;
-	
+		
 	TestEnvironment env(options);
 	env.runTest([cl = env.crawler()]()
 	{
