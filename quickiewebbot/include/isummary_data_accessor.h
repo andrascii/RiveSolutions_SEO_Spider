@@ -9,6 +9,8 @@ namespace QuickieWebBot
 class ISummaryDataAccessor
 {
 public:
+	virtual ~ISummaryDataAccessor() = default;
+
 	virtual StorageAdaptorType itemCategory(const QModelIndex& index) const noexcept = 0;
 
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept = 0;

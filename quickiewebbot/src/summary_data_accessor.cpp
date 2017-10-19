@@ -1,7 +1,5 @@
 #include "summary_data_accessor.h"
-#include "quickie_web_bot_helpers.h"
 #include "application.h"
-#include "model_controller.h"
 #include "sequenced_data_collection.h"
 
 namespace QuickieWebBot

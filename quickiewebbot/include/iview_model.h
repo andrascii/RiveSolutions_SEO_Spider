@@ -9,6 +9,8 @@ class IResizePolicy;
 class IViewModel
 {
 public:
+	virtual ~IViewModel() = default;
+
 	virtual int marginTop(const QModelIndex& index) const noexcept = 0;
 	virtual int marginBottom(const QModelIndex& index) const noexcept = 0;
 	virtual int marginLeft(const QModelIndex& index) const noexcept = 0;

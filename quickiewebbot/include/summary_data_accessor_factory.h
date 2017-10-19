@@ -23,7 +23,7 @@ public:
 		DataAccessorTypeEnd
 	};
 
-	ISummaryDataAccessor* create(DataAccessorType accessorType, WebCrawler::SequencedDataCollection* guiStorage) const noexcept;
+	ISummaryDataAccessor* create(DataAccessorType accessorType, WebCrawler::SequencedDataCollection* guiStorage) const;
 };
 
 }

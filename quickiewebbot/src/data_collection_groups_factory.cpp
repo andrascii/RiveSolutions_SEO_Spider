@@ -3,7 +3,7 @@
 namespace QuickieWebBot
 {
 
-DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup group)
+DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup group) const
 {
 	std::shared_ptr<DCStorageGroupDescription> p =
 		std::make_shared<DCStorageGroupDescription>();

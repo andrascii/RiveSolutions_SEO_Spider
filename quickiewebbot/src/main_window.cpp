@@ -1,7 +1,6 @@
 #include "application.h"
 #include "application_settings_widget.h"
 #include "main_window.h"
-#include "quickie_web_bot_helpers.h"
 #include "data_pages_widget.h"
 #include "action_keys.h"
 #include "action_registry.h"
@@ -10,6 +9,7 @@
 #include "crawler_options.h"
 #include "crawler.h"
 #include "host_info.h"
+#include "preferences.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
@@ -64,7 +64,7 @@ void MainWindow::init()
 	m_initialized = true;
 }
 
-void MainWindow::createActions()
+void MainWindow::createActions() const
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 

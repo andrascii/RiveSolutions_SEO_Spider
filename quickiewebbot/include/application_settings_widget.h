@@ -23,8 +23,8 @@ private:
 private:
 	void initialize();
 	void restoreChangedValues();
-	virtual void showEvent(QShowEvent* event);
-	virtual void hideEvent(QHideEvent* event);
+	virtual void showEvent(QShowEvent* event) override;
+	virtual void hideEvent(QHideEvent* event) override;
 
 private:
 	Ui::ApplicationSettingsWidget m_ui;

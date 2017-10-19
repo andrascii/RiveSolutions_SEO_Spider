@@ -1,10 +1,6 @@
-#include "table_view.h"
 #include "item_view_delegate.h"
 #include "irenderer.h"
-#include "abstract_table_model.h"
 #include "iview_model.h"
-#include "text_renderer.h"
-#include "background_renderer.h"
 
 namespace QuickieWebBot
 {

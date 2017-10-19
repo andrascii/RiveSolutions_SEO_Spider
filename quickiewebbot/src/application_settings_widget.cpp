@@ -2,8 +2,6 @@
 #include "service_locator.h"
 #include "settings_page_registry.h"
 #include "quickie_web_bot_helpers.h"
-#include "isettings_page.h"
-#include "application.h"
 
 namespace QuickieWebBot
 {

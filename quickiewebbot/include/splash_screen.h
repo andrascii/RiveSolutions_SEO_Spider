@@ -25,7 +25,7 @@ private:
 
 	using QWidget::show;
 
-	void setMessage(const QString& message);
+	void setMessage(const QString& message) const;
 
 private:
 	static SplashScreen* s_instance;

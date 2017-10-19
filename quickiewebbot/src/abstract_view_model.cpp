@@ -20,7 +20,7 @@ const QModelIndex& AbstractViewModel::hoveredIndex() const noexcept
 
 void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept
 {
-	auto topSelectedRow = [this]() -> int
+	const auto topSelectedRow = [this]() -> int
 	{
 		std::vector<int> selectedRows;
 
@@ -57,7 +57,7 @@ void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) 
 
 void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept
 {
-	auto rowsForRepaintHelper = [this, &modelIndexes]() -> QVector<int>
+	const auto rowsForRepaintHelper = [this, &modelIndexes]() -> QVector<int>
 	{
 		if (!m_selectedModelIndexes.size())
 		{
@@ -115,7 +115,7 @@ void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes
 	{
 		QModelIndexList itemsForRepaintAfterDeselect;
 
-		foreach(int row, rowsForRepaint)
+		foreach(const int row, rowsForRepaint)
 		{
 			if (row < model()->rowCount())
 			{
@@ -178,7 +178,7 @@ const QModelIndex& AbstractViewModel::previousHoveredIndex() const noexcept
 	return m_previousHoveredIndex;
 }
 
-const void AbstractViewModel::resetPreviousHoveredIndex() noexcept
+void AbstractViewModel::resetPreviousHoveredIndex() noexcept
 {
 	m_previousHoveredIndex = QModelIndex();
 }
@@ -200,7 +200,7 @@ void AbstractViewModel::setItemRendererCacheSize(int cacheSize)
 	m_itemRenderer.setCacheSize(cacheSize);
 }
 
-void AbstractViewModel::invalidateCacheIndexes(const QModelIndexList& modelIndexes) noexcept
+void AbstractViewModel::invalidateCacheIndexes(const QModelIndexList& modelIndexes) const noexcept
 {
 	foreach(const QModelIndex& index, modelIndexes)
 	{
@@ -208,7 +208,7 @@ void AbstractViewModel::invalidateCacheIndexes(const QModelIndexList& modelIndex
 	}
 }
 
-void AbstractViewModel::invalidateCacheIndex(const QModelIndex& index) noexcept
+void AbstractViewModel::invalidateCacheIndex(const QModelIndex& index) const noexcept
 {
 	m_itemRenderer.invalidateCacheIndex(index);
 }

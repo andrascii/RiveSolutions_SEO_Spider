@@ -1,7 +1,6 @@
 #include "debug_info_web_page_widget.h"
 #include "parsed_page.h"
 #include "application.h"
-#include "main_window.h"
 
 namespace QuickieWebBot
 {
@@ -25,7 +24,7 @@ void DebugInfoWebPageWidget::attach()
 	theApp->installEventFilter(debugInfoWebPageWidget);
 }
 
-void DebugInfoWebPageWidget::onPageSelected(WebCrawler::ParsedPage* page)
+void DebugInfoWebPageWidget::onPageSelected(WebCrawler::ParsedPage* page) const
 {
 	responseHeadersEdit->setPlainText(page->serverResponse);
 	requestHeadersEdit->setPlainText("Not Implemented yet");
@@ -34,7 +33,7 @@ void DebugInfoWebPageWidget::onPageSelected(WebCrawler::ParsedPage* page)
 
 	if (page->resourceType == WebCrawler::ResourceType::ResourceHtml)
 	{
-		QByteArray rawHtml = qUncompress(page->rawResponse);
+		const QByteArray rawHtml = qUncompress(page->rawResponse);
 		rawHtmlEdit->setPlainText(rawHtml);
 		webEngineView->setHtml(rawHtml, page->url);
 	}

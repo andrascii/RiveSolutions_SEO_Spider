@@ -23,7 +23,7 @@ const QUrl& ControlPanelWidget::url() const noexcept
 	return m_url;
 }
 
-void ControlPanelWidget::setUrl()
+void ControlPanelWidget::setUrl() const
 {
 	if (!m_ui.urlLineEdit->isUrlCorrect())
 	{
@@ -33,7 +33,7 @@ void ControlPanelWidget::setUrl()
 	theApp->preferences()->setUrl(m_ui.urlLineEdit->text());
 }
 
-void ControlPanelWidget::startCrawling()
+void ControlPanelWidget::startCrawling() const
 {
 	if (!m_ui.urlLineEdit->isUrlCorrect())
 	{
@@ -44,7 +44,7 @@ void ControlPanelWidget::startCrawling()
 }
 
 
-void ControlPanelWidget::stopCrawling()
+void ControlPanelWidget::stopCrawling() const
 {
 	ActionRegistry::instance().globalAction(s_stopCrawlerAction)->trigger();
 }

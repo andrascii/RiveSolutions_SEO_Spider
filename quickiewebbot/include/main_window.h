@@ -25,7 +25,7 @@ public slots:
 	void showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon);
 
 private:
-	void createActions();
+	void createActions() const;
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
 

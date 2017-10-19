@@ -11,9 +11,7 @@ public:
 	virtual void removeKeyFromSettings(const QByteArray& key) = 0;
 	virtual QList<QByteArray> allKeys() const = 0;
 
-	//virtual ~ISettingsAccessor()
-	//{
-	//}
+	virtual ~ISettingsAccessor() = default;
 };
 
 }

@@ -35,15 +35,15 @@ protected:
 	AbstractTableModel* model() noexcept;
 
 	const QModelIndex& previousHoveredIndex() const noexcept;
-	const void resetPreviousHoveredIndex() noexcept;
+	void resetPreviousHoveredIndex() noexcept;
 	void clearSelectedIndexes() noexcept;
 
 	void emitNeedToRepaintIndexes(const QModelIndexList& modelIndexes) noexcept;
 
 	void addRenderer(int rendererTypes);
 	void setItemRendererCacheSize(int cacheSize);
-	void invalidateCacheIndexes(const QModelIndexList& modelIndexes) noexcept;
-	void invalidateCacheIndex(const QModelIndex& index) noexcept;
+	void invalidateCacheIndexes(const QModelIndexList& modelIndexes) const noexcept;
+	void invalidateCacheIndex(const QModelIndex& index) const noexcept;
 
 private:
 	void setPreviousHoveredIndex(const QModelIndex& index);

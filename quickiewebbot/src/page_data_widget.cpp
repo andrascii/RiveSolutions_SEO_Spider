@@ -51,7 +51,7 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 	m_tabWidget->addTab(tableView, tabDescription(pageDataType));
 }
 
-void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page)
+void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page) const
 {
 	m_httpResponseLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
@@ -83,7 +83,7 @@ void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page)
 	m_httpResponseLabel->setText(selectedPageServerResponse);
 }
 
-QString PageDataWidget::tabDescription(PageDataType pageDataType) const
+QString PageDataWidget::tabDescription(PageDataType pageDataType)
 {
 	switch (pageDataType)
 	{
@@ -103,13 +103,16 @@ QString PageDataWidget::tabDescription(PageDataType pageDataType) const
 		{
 			return tr("HTTP Response");
 		}
+		default:
+		{
+			ASSERT(!"Undefined type");
+		}
 	}
 
-	ASSERT(!"Undefined type");
 	return QString();
 }
 
-PageLinkContext PageDataWidget::mapType(PageDataType pageDataType) const noexcept
+PageLinkContext PageDataWidget::mapType(PageDataType pageDataType) noexcept
 {
 	switch (pageDataType)
 	{
@@ -125,9 +128,12 @@ PageLinkContext PageDataWidget::mapType(PageDataType pageDataType) const noexcep
 		{
 			return PageLinkContext::ImagesOnThisPage;
 		}
+		default:
+		{
+			ASSERT(!"Undefined type");
+		}
 	}
 
-	ASSERT(!"Undefined type");
 	return PageLinkContext();
 }
 

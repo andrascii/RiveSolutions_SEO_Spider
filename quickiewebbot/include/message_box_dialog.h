@@ -19,8 +19,8 @@ public:
 
 	MessageBoxDialog(QWidget* parent = nullptr);
 
-	void setMessage(const QString& message);
-	void setIcon(Icon icon);
+	void setMessage(const QString& message) const;
+	void setIcon(Icon icon) const;
 
 	int	result() const;
 

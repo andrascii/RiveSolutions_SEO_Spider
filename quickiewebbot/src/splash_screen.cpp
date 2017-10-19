@@ -18,7 +18,7 @@ SplashScreen* SplashScreen::instance()
 	return s_instance;
 }
 
-void SplashScreen::setMessage(const QString& message)
+void SplashScreen::setMessage(const QString& message) const
 {
 	m_ui->messageText->setText(message);
 }
@@ -53,16 +53,14 @@ SplashScreen::SplashScreen()
 
 	m_ui->setupUi(this);
 
-	QSize originalImageSize = m_brandingLogoImage.size();
+	const QSize originalImageSize = m_brandingLogoImage.size();
 
 	resize(originalImageSize);
 
-	QString version;
-
 #ifndef PRODUCTION
-	version = "13.13";
+	QString version = "13.13";
 #else
-	version = theApp->applicationVersion().isEmpty() ? "Developer's version" : theApp->applicationVersion();
+	QString version = theApp->applicationVersion().isEmpty() ? "Developer's version" : theApp->applicationVersion();
 #endif
 
 	m_ui->versionText->setText(version);
@@ -82,7 +80,7 @@ void SplashScreen::paintEvent(QPaintEvent*)
 
 	painter.setPen(pen);
 
-	QRect adjustedRect = rect().adjusted(0, 0, -1, -1);
+	const QRect adjustedRect = rect().adjusted(0, 0, -1, -1);
 
 	painter.drawPixmap(rect(), m_brandingLogoImage);
 	painter.drawRect(adjustedRect);

@@ -20,7 +20,7 @@ void BackgroundRenderer::draw(QPainter* painter, const QStyleOptionViewItem& opt
 		return;
 	}
 
-	QColor bgColor = m_viewModel->hoveredIndex().row() == index.row() ?
+	const QColor bgColor = m_viewModel->hoveredIndex().row() == index.row() ?
 		m_viewModel->hoveredBackgroundColor(index) :
 		m_viewModel->backgroundColor(index);
 

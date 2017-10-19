@@ -14,8 +14,8 @@ protected:
 private:
 	StyleLoader(QObject* parent, QString const& filename, QKeySequence const& keySequenceCustomStyleSheet);
 
-	void loadCustomStyleSheet();
-	void loadStandardStyleSheet();
+	void loadCustomStyleSheet() const;
+	void loadStandardStyleSheet() const;
 
 private:
 	QString m_filename;

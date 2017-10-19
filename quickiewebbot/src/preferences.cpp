@@ -385,7 +385,7 @@ void Preferences::setUrl(const QUrl& url)
 
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept
 {
-	QVariant valueFromSettings = m_settingsAccessor->loadFromSettings(key, defaultValue);
+	const QVariant valueFromSettings = m_settingsAccessor->loadFromSettings(key, defaultValue);
 	m_settingsAccessor->saveToSettings(key.constData(), valueFromSettings);
 
 	setProperty(key, valueFromSettings);
@@ -405,7 +405,7 @@ void Preferences::load()
 		readDefaults(config.readAll());
 	}
 
-	for(const std::pair<QString, QVariant>& pair : m_defaults)
+	for(const std::pair<const QString, QVariant>& pair : m_defaults)
 	{
 		addDefaultProperty(pair.first.toLatin1(), pair.second);
 	}

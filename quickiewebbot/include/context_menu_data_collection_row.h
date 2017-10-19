@@ -1,7 +1,5 @@
 #pragma once
 
-#include "parsed_page_info.h"
-
 namespace QuickieWebBot
 {
 	
@@ -33,10 +31,10 @@ private:
 	QModelIndexList selectedIndexes() const noexcept;
 
 private slots:
-	void openUrlAction();
-	void copyToClipboardAllColumnsData();
-	void copyToClipboardAllPages();
-	void copyToClipboardUrl();
+	void openUrlAction() const;
+	void copyToClipboardAllColumnsData() const;
+	void copyToClipboardAllPages() const;
+	void copyToClipboardUrl() const;
 
 private:
 	const TableView* m_associatedView;

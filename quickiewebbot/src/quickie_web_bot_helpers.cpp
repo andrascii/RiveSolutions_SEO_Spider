@@ -26,7 +26,7 @@ double QuickieWebBotHelpers::pixelsToPoints(int sizeInPixels, double dpi)
 		dpi = primaryScreenDpi();
 	}
 
-	return (double)sizeInPixels * 72.0 / dpi;
+	return static_cast<double>(sizeInPixels) * 72.0 / dpi;
 }
 
 void QuickieWebBotHelpers::moveWidgetToHostCenter(QWidget* widget, QWidget* host)
@@ -51,8 +51,8 @@ void QuickieWebBotHelpers::moveWidgetToHostCenter(QWidget* widget, QWidget* host
 	INFOLOG << "Move widget to screen center";
 
 	QRect screenGeometry = QApplication::desktop()->screenGeometry();
-	int x = (screenGeometry.width() - widget->width()) / 2;
-	int y = (screenGeometry.height() - widget->height()) / 2;
+	const int x = (screenGeometry.width() - widget->width()) / 2;
+	const int y = (screenGeometry.height() - widget->height()) / 2;
 	widget->move(x, y);
 }
 

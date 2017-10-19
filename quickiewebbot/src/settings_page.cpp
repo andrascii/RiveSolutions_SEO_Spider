@@ -1,6 +1,6 @@
 #include "application.h"
-#include "preferences.h"
 #include "settings_page.h"
+#include "preferences.h"
 #include "icontrol_adaptor.h"
 #include "control_adaptor_check_box.h"
 #include "control_adaptor_line_edit.h"
@@ -62,7 +62,7 @@ void SettingsPage::reloadSettings() noexcept
 
 	for (auto controlAdaptor : m_controlAdaptors)
 	{
-		QVariant propertyValue = theApp->preferences()->property(controlAdaptor.first.toLatin1().constData());
+		const QVariant propertyValue = theApp->preferences()->property(controlAdaptor.first.toLatin1().constData());
 		controlAdaptor.second->setValue(propertyValue);
 		DEBUGLOG << controlAdaptor.first << " " << controlAdaptor.second->value().toString();
 	}
@@ -127,7 +127,7 @@ void SettingsPage::init()
 }
 
 
-void SettingsPage::registerMetaTypes()
+void SettingsPage::registerMetaTypes() const
 {
 	qRegisterMetaType<ControlAdaptorQCheckBox>();
 	qRegisterMetaType<ControlAdaptorQLineEdit>();

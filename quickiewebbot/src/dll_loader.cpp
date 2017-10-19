@@ -20,7 +20,7 @@ void DllLoader::load(const QByteArray& dllName)
 		return;
 	}
 
-	HMODULE module = LoadLibraryA(dllName);
+	const HMODULE module = LoadLibraryA(dllName);
 
 	if (!module)
 	{

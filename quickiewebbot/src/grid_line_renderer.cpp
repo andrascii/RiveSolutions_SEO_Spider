@@ -25,11 +25,11 @@ void GridLineRenderer::renderThisIfItAboveHoveredHelper(QPainter* painter, const
 	const bool isThisRowSelected = isRowSelected(index.row());
 	const bool isBelowRowSelected = isRowSelected(index.row() + 1);
 
-	QColor bottomLineColor = isThisRowSelected || isBelowRowSelected ?
+	const QColor bottomLineColor = isThisRowSelected || isBelowRowSelected ?
 		m_viewModel->selectedGridLineColor(index) : 
 		m_viewModel->gridLineColor(index);
 
-	QColor rightVerticalLineColor = isThisRowSelected ?
+	const QColor rightVerticalLineColor = isThisRowSelected ?
 		m_viewModel->selectedGridLineColor(index) :
 		m_viewModel->gridLineColor(index);
 
@@ -47,7 +47,7 @@ void GridLineRenderer::renderThisIfItAboveHoveredHelper(QPainter* painter, const
 
 void GridLineRenderer::renderHelper(QPainter* painter, const QRect& adjustedRect, const QModelIndex& index) const noexcept
 {
-	QColor rectangleColor = isRowSelected(index.row()) ? 
+	const QColor rectangleColor = isRowSelected(index.row()) ?
 		m_viewModel->selectedGridLineColor(index) : 
 		m_viewModel->gridLineColor(index);
 
@@ -67,7 +67,7 @@ void GridLineRenderer::renderHelper(QPainter* painter, const QRect& adjustedRect
 
 void GridLineRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	QRect rect = option.rect.adjusted(0, 0, -1, -1);
+	const QRect rect = option.rect.adjusted(0, 0, -1, -1);
 
 	const bool isThisItemRowAboveHovered = m_viewModel->hoveredIndex().row() - 1 == index.row() || isRowSelected(index.row() + 1);
 

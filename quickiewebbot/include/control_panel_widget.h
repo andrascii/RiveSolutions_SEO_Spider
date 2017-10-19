@@ -15,9 +15,9 @@ public:
 	const QUrl& url() const noexcept;
 
 private:
-	Q_SLOT void setUrl();
-	Q_SLOT void startCrawling();
-	Q_SLOT void stopCrawling();
+	Q_SLOT void setUrl() const;
+	Q_SLOT void startCrawling() const;
+	Q_SLOT void stopCrawling() const;
 
 private:
 	Ui::ControlPanelWidget m_ui;
