@@ -112,7 +112,7 @@ void Crawler::initCrawlerWorkerThreads()
 		m_workers.push_back(std::make_unique<CrawlerWorkerThread>(&m_urlStorage, queuedDownloader()));
 
 		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)),
-			SLOT(onPageParsed(ParsedPagePtr))));
+			SLOT(onPageParsed(ParsedPagePtr)), Qt::QueuedConnection));
 	}
 }
 

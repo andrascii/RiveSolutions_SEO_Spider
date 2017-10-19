@@ -1,6 +1,7 @@
 #pragma once
 #include "crawler_options.h"
 #include "parsed_page.h"
+#include "named_thread.h"
 
 namespace WebCrawlerTests
 {
@@ -11,6 +12,7 @@ class TestEnvironment
 {
 public:
 	TestEnvironment(WebCrawler::CrawlerOptions options);
+	~TestEnvironment();
 	TestsCrawler* crawler() const;
 	void runTest(std::function<void()> condition) const;
 
@@ -22,5 +24,6 @@ public:
 
 private:
 	std::unique_ptr<TestsCrawler> m_crawler;
+	Common::NamedThread* m_crawlerThread;
 };
 }

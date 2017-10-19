@@ -1,5 +1,6 @@
 #include "test_environment.h"
 #include "tests_crawler.h"
+#include "named_thread.h"
 
 namespace WebCrawlerTests
 {
@@ -7,8 +8,20 @@ namespace WebCrawlerTests
 TestEnvironment::TestEnvironment(WebCrawler::CrawlerOptions options)
 {
 	m_crawler = std::make_unique<TestsCrawler>(1, options);
+
+	m_crawlerThread = new Common::NamedThread("Crawler");
+	m_crawler->moveToThread(m_crawlerThread);
+	m_crawlerThread->start();
 }
 
+
+TestEnvironment::~TestEnvironment()
+{
+	ASSERT(QThread::currentThread() != m_crawlerThread)
+	m_crawlerThread->quit();
+	m_crawlerThread->wait();
+	m_crawlerThread->deleteLater();
+}
 
 TestsCrawler* TestEnvironment::crawler() const
 {
