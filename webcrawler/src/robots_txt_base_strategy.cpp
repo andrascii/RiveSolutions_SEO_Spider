@@ -44,8 +44,57 @@ bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString
 		return value.startsWith(pattern);
 	}
 
-	ASSERT(!"Not implemented yet");
-	return false;
+	if (pattern.contains(QString("$")) && pattern.indexOf("$") != pattern.size() - 1)
+	{
+		// bad pattern
+		return false;
+	}
+
+	QStringList parts = pattern.split(QString("*"), QString::SkipEmptyParts);
+	int index = 0;
+	bool matched = true;
+
+	for (int i = 0; i < parts.size(); i++)
+	{
+		bool lastPart = i == parts.size() - 1;
+		bool strongMatch = false;
+
+		if (lastPart && parts[i].endsWith("$"))
+		{
+			strongMatch = true;
+			ASSERT(!strongMatch || lastPart);
+			parts[i] = parts[i].mid(0, parts[i].size() - 1);
+		}
+
+
+		if (i == 0 || pattern.startsWith(QString("*")))
+		{
+			matched = strongMatch ? value.endsWith(parts[i]) : value.indexOf(parts[i]) != -1;
+			if (!matched)
+			{
+				break;
+			}
+
+			if (!strongMatch)
+			{
+				index = value.indexOf(parts[i]) + parts[i].size();
+			}
+			continue;
+		}
+
+
+		const int matchedIndex = value.indexOf(parts[i], index);
+		matched = strongMatch ? matchedIndex + parts[i].size() == pattern.size() - 1 : matchedIndex != -1;
+
+		if (!matched)
+		{
+			break;
+		}
+
+		index = matchedIndex + parts[i].size();
+	}
+
+	return matched;
 }
 
 UserAgentType RobotsTxtBaseStrategy::availableUserAgent(UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
