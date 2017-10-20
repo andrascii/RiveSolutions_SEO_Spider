@@ -77,7 +77,8 @@ void RobotsTxtTokenizer::tokenize(const QString& robotsTxtContent)
 
 		if (isUserAgentToken)
 		{
-			userAgentType = s_userAgent[tokenValue];
+			auto it = s_userAgent.find(tokenValue);
+			userAgentType = it != s_userAgent.end() ? s_userAgent[tokenValue] : UserAgentType::InvalidBot;
 		}
 		else
 		{
@@ -139,6 +140,50 @@ QPair<QString, QString> RobotsTxtTokenizer::tokenizeRow(const QString& row) cons
 	const QString tokenValue = row.right(row.size() - tokenPartStringDelimeterPosition - 1).trimmed().toLower();
 
 	return qMakePair(token, tokenValue);
+}
+
+bool RobotsTxtTokenizer::hasUserAgentRecord(UserAgentType userAgentType) const
+{
+	return m_userAgentTokens.contains(userAgentType);
+}
+
+QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> RobotsTxtTokenizer::allowAndDisallowTokens(UserAgentType userAgentType) const
+{
+	// TODO: cache
+	QVector<RobotsTxtTokenVauePair> result;
+
+	QList<QString> allowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenAllow);
+	QList<QString> disallowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenDisallow);
+
+	foreach(const QString& allowToken, allowTokens)
+	{
+		result.push_back({ RobotsTxtToken::TokenAllow, allowToken });
+	}
+
+	foreach(const QString& disallowToken, disallowTokens)
+	{
+		result.push_back({ RobotsTxtToken::TokenDisallow, disallowToken });
+	}
+
+	auto sortFunc = [](const RobotsTxtTokenVauePair& first, const RobotsTxtTokenVauePair& second)
+	{
+		if (first.value.size() != second.value.size())
+		{
+			return first.value.size() < second.value.size();
+		}
+
+// 		if (first.value < second.value)
+// 		{
+// 			return true;
+// 		}
+
+		return first.token == RobotsTxtToken::TokenAllow && second.token == RobotsTxtToken::TokenDisallow;
+		
+	};
+
+	std::sort(result.begin(), result.end(), sortFunc);
+
+	return result.toList();
 }
 
 }
