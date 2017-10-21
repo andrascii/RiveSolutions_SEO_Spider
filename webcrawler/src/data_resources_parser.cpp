@@ -1,5 +1,4 @@
 #include "data_resources_parser.h"
-#include "resources_cache.h"
 
 namespace WebCrawler
 {

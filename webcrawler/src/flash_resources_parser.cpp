@@ -1,7 +1,6 @@
 #include "flash_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
-#include "resources_cache.h"
 #include "data_resources_parser.h"
 
 namespace WebCrawler
@@ -143,7 +142,7 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
-		RawResourceOnPage flashResource
+		const RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
 			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }

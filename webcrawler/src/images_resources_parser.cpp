@@ -1,7 +1,6 @@
 #include "images_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
-#include "resources_cache.h"
 #include "data_resources_parser.h"
 
 namespace WebCrawler
@@ -39,14 +38,10 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	for (std::pair<QUrl, QString>& url : urls)
 	{
 		url.first = PageParserHelpers::resolveUrl(page->url, url.first);
-// 		if (m_resourcesCache->isResourceExists(url.first))
-// 		{
-// 			continue;
-// 		}
 
 		const bool dataResource = url.first.toDisplayString().startsWith(QString("data:"));
 
-		RawResourceOnPage imageResource
+		const RawResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
 			LinkInfo{ url.first, LinkParameter::UnknownParameter, url.second, dataResource },

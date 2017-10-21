@@ -5,7 +5,6 @@
 #include "word_count_parser.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
-#include "resources_cache.h"
 #include "data_resources_parser.h"
 
 namespace WebCrawler

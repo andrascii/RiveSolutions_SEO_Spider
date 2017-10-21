@@ -1,7 +1,6 @@
 #include "css_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
-#include "resources_cache.h"
 #include "data_resources_parser.h"
 
 namespace WebCrawler
@@ -39,12 +38,7 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 
 	for (const QUrl& url : resolvedUrls)
 	{
-// 		if (m_resourcesCache->isResourceExists(url))
-// 		{
-// 			continue;
-// 		}
-
-		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
+ 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
 		RawResourceOnPage cssResource
 		{
