@@ -76,7 +76,7 @@ void PageParsedDataCollector::applyOptions()
 {
 	m_parser.clear();
 
-	m_parser.addParser(std::make_shared<HtmlResourcesParser>(&m_resourcesCache));
+	m_parser.addParser(std::make_shared<HtmlResourcesParser>());
 
 	if (m_options.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{
@@ -196,23 +196,23 @@ PageParsedDataCollector::createParser(ParserType parserType) const
 	{
 		case JavaScriptResourcesParserType:
 		{
-			return std::make_shared<JsResourcesParser>(&m_resourcesCache);
+			return std::make_shared<JsResourcesParser>();
 		}
 		case CssResourcesParserType:
 		{
-			return std::make_shared<CssResourcesParser>(&m_resourcesCache);
+			return std::make_shared<CssResourcesParser>();
 		}
 		case ImagesResourcesParserType:
 		{
-			return std::make_shared<ImagesResourcesParser>(&m_resourcesCache);
+			return std::make_shared<ImagesResourcesParser>();
 		}
 		case VideoResourcesParserType:
 		{
-			return std::make_shared<VideoResourcesParser>(&m_resourcesCache);
+			return std::make_shared<VideoResourcesParser>();
 		}
 		case FlashResourcesParserType:
 		{
-			return std::make_shared<FlashResourcesParser>(&m_resourcesCache);
+			return std::make_shared<FlashResourcesParser>();
 		}
 	}
 

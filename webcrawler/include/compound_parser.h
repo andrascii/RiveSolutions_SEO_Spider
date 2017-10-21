@@ -9,7 +9,6 @@ class CompoundParser : public IPageParser
 {
 public:
 	virtual void parse(GumboOutput* output, ParsedPagePtr& page) override;
-	virtual void init() override;
 	void addParser(std::shared_ptr<IPageParser> parser);
 	void clear();
 

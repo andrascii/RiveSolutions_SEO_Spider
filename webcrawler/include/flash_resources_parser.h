@@ -10,9 +10,8 @@ class ResourcesCache;
 class FlashResourcesParser : public CompoundParser
 {
 public:
-	FlashResourcesParser(ResourcesCache* resourcesCache);
+	FlashResourcesParser();
 	virtual void parse(GumboOutput* output, ParsedPagePtr& page) override;
-	virtual void init() override;
 
 private:
 	void parseFlashResourcesV1(GumboOutput* output, ParsedPagePtr& page) noexcept;
@@ -20,9 +19,6 @@ private:
 	void parseFlashResourcesV3(GumboOutput* output, ParsedPagePtr& page) noexcept;
 
 	bool isResourceExists(const QUrl& url) const noexcept;
-
-private:
-	ResourcesCache* m_resourcesCache;
 };
 
 }

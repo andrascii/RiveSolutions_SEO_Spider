@@ -7,10 +7,9 @@
 namespace WebCrawler
 {
 
-ImagesResourcesParser::ImagesResourcesParser(ResourcesCache* resourcesCache)
-	: m_resourcesCache(resourcesCache)
+ImagesResourcesParser::ImagesResourcesParser()
 {
-	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceImage, resourcesCache));
+	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceImage));
 }
 
 void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
@@ -40,10 +39,10 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	for (std::pair<QUrl, QString>& url : urls)
 	{
 		url.first = PageParserHelpers::resolveUrl(page->url, url.first);
-		if (m_resourcesCache->isResourceExists(url.first))
-		{
-			continue;
-		}
+// 		if (m_resourcesCache->isResourceExists(url.first))
+// 		{
+// 			continue;
+// 		}
 
 		const bool dataResource = url.first.toDisplayString().startsWith(QString("data:"));
 
@@ -54,15 +53,10 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 			ResourceSource::SourceTagImg,
 		};
 
-		page->allResourcesOnPage.push_back(imageResource);
+		page->allResourcesOnPage.insert(imageResource);
 	}
 
 	CompoundParser::parse(output, page);
-}
-
-void ImagesResourcesParser::init()
-{
-	m_resourcesCache->clear();
 }
 
 }

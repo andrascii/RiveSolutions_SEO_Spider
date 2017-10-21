@@ -10,12 +10,8 @@ namespace WebCrawler
 class JsResourcesParser : public CompoundParser
 {
 public:
-	JsResourcesParser(ResourcesCache* resourcesCache);
+	JsResourcesParser();
 	virtual void parse(GumboOutput* output, ParsedPagePtr& page) override;
-	virtual void init() override;
-
-private:
-	ResourcesCache* m_resourcesCache;
 };
 
 }

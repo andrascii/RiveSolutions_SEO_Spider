@@ -8,9 +8,9 @@
 
 namespace WebCrawler
 {
-	struct LinksToThisResourceChanges;
 
-	class SequencedDataCollection;
+struct LinksToThisResourceChanges;
+class SequencedDataCollection;
 
 class UnorderedDataCollection : public QObject
 {

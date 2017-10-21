@@ -61,6 +61,11 @@ struct RawResourceOnPage
 	ResourceSource resourceSource;
 };
 
+inline bool operator<(const RawResourceOnPage& lhs, const RawResourceOnPage& rhs)
+{
+	return lhs.thisResourceLink.url.toDisplayString() < rhs.thisResourceLink.url.toDisplayString();
+}
+
 struct ParsedPage
 {
 	QUrl url;
@@ -97,7 +102,7 @@ struct ParsedPage
 
 	ResourceType resourceType;
 
-	std::deque<RawResourceOnPage> allResourcesOnPage;
+	std::set<RawResourceOnPage> allResourcesOnPage;
 	std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 

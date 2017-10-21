@@ -7,10 +7,9 @@
 namespace WebCrawler
 {
 
-CssResourcesParser::CssResourcesParser(ResourcesCache* resourcesCache)
-	: m_resourcesCache(resourcesCache)
+CssResourcesParser::CssResourcesParser()
 {
-	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceStyleSheet, resourcesCache));
+	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceStyleSheet));
 }
 
 void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
@@ -40,10 +39,10 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (m_resourcesCache->isResourceExists(url))
-		{
-			continue;
-		}
+// 		if (m_resourcesCache->isResourceExists(url))
+// 		{
+// 			continue;
+// 		}
 
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
@@ -53,15 +52,10 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
 		};
 
-		page->allResourcesOnPage.push_back(cssResource);
+		page->allResourcesOnPage.insert(cssResource);
 	}
 
 	CompoundParser::parse(output, page);
-}
-
-void CssResourcesParser::init()
-{
-	m_resourcesCache->clear();
 }
 
 }

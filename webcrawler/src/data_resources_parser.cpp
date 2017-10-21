@@ -5,9 +5,7 @@ namespace WebCrawler
 {
 
 
-DataResourcesParser::DataResourcesParser(ResourceType resourceType, ResourcesCache* resourcesCache)
-	: m_resourceType(resourceType)
-	, m_resourcesCache(resourcesCache)
+DataResourcesParser::DataResourcesParser(ResourceType resourceType)
 {
 }
 
@@ -50,11 +48,6 @@ void DataResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	Thus, within the overall URI syntax, a data URI consists of a scheme and a path, with no authority part, query string, or fragment. 
 	The optional media type, the optional base64 indicator, and the data are all parts of the URI path.
 	 */
-}
-
-void DataResourcesParser::init()
-{
-	m_resourcesCache->clear();
 }
 
 }

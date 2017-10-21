@@ -7,10 +7,9 @@
 namespace WebCrawler
 {
 
-VideoResourcesParser::VideoResourcesParser(ResourcesCache* resourcesCache)
-	: m_resourcesCache(resourcesCache)
+VideoResourcesParser::VideoResourcesParser()
 {
-	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceVideo, resourcesCache));
+	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceVideo));
 }
 
 void VideoResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
@@ -40,10 +39,10 @@ void VideoResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (m_resourcesCache->isResourceExists(url))
-		{
-			continue;
-		}
+// 		if (m_resourcesCache->isResourceExists(url))
+// 		{
+// 			continue;
+// 		}
 
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
@@ -53,15 +52,10 @@ void VideoResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
 		};
 
-		page->allResourcesOnPage.push_back(videoResource);
+		page->allResourcesOnPage.insert(videoResource);
 	}
 
 	CompoundParser::parse(output, page);
-}
-
-void VideoResourcesParser::init()
-{
-	m_resourcesCache->clear();
 }
 
 }

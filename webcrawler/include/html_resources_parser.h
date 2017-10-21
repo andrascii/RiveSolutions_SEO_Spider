@@ -9,13 +9,9 @@ class ResourcesCache;
 class HtmlResourcesParser : public CompoundParser
 {
 public:
-	HtmlResourcesParser(ResourcesCache* resourcesCache);
+	HtmlResourcesParser();
 
 	virtual void parse(GumboOutput* output, ParsedPagePtr& page) override;
-	virtual void init() override;
-
-private:
-	ResourcesCache* m_resourcesCache;
 };
 
 }

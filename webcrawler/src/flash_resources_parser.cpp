@@ -7,10 +7,9 @@
 namespace WebCrawler
 {
 
-FlashResourcesParser::FlashResourcesParser(ResourcesCache* resourcesCache)
-	: m_resourcesCache(resourcesCache)
+FlashResourcesParser::FlashResourcesParser()
 {
-	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceFlash, resourcesCache));
+	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceFlash));
 }
 
 void FlashResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
@@ -25,11 +24,6 @@ void FlashResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	parseFlashResourcesV3(output, page);
 
 	CompoundParser::parse(output, page);
-}
-
-void FlashResourcesParser::init()
-{
-	m_resourcesCache->clear();
 }
 
 void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPagePtr& page) noexcept
@@ -57,11 +51,6 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (isResourceExists(url))
-		{
-			continue;
-		}
-
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
 		RawResourceOnPage flashResource
@@ -70,7 +59,7 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource},
 		};
 
-		page->allResourcesOnPage.push_back(flashResource);
+		page->allResourcesOnPage.insert(flashResource);
 	}
 }
 
@@ -100,11 +89,6 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (isResourceExists(url))
-		{
-			continue;
-		}
-
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
 		RawResourceOnPage flashResource
@@ -113,7 +97,7 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
 		};
 
-		page->allResourcesOnPage.push_back(flashResource);
+		page->allResourcesOnPage.insert(flashResource);
 	}
 }
 
@@ -157,11 +141,6 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 
 	for (const QUrl& url : resolvedUrls)
 	{
-		if (isResourceExists(url))
-		{
-			continue;
-		}
-
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
 		RawResourceOnPage flashResource
@@ -170,13 +149,8 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
 		};
 
-		page->allResourcesOnPage.push_back(flashResource);
+		page->allResourcesOnPage.insert(flashResource);
 	}
-}
-
-bool FlashResourcesParser::isResourceExists(const QUrl& url) const noexcept
-{
-	return m_resourcesCache->isResourceExists(url);
 }
 
 }

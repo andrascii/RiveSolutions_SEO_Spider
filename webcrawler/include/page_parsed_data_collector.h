@@ -4,7 +4,6 @@
 #include "compound_parser.h"
 #include "parsed_page.h"
 #include "crawler_options.h"
-#include "resources_cache.h"
 
 namespace WebCrawler
 {
@@ -41,7 +40,6 @@ private:
 	CrawlerOptions m_options;
 
 	std::vector<QUrl> m_urlList;
-	mutable ResourcesCache m_resourcesCache;
 };
 
 }
