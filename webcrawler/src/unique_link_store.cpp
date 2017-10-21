@@ -1,16 +1,16 @@
-#include "crawler_url_storage.h"
+#include "unique_link_store.h"
 
 namespace WebCrawler
 {
 
-void CrawlerUrlStorage::setHost(const QUrl& url)
+void UniqueLinkStore::setHost(const QUrl& url)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
 	m_pendingUrlList.insert(CrawlerRequest{ url, RequestTypeGet });
 }
 
-bool CrawlerUrlStorage::extractUrl(CrawlerRequest& url) noexcept
+bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
@@ -19,7 +19,7 @@ bool CrawlerUrlStorage::extractUrl(CrawlerRequest& url) noexcept
 		return false;
 	}
 
-	auto iter = m_pendingUrlList.begin();
+	const auto iter = m_pendingUrlList.begin();
 	url = *iter;
 
 	m_crawledUrlList.insert(*iter);
@@ -28,7 +28,7 @@ bool CrawlerUrlStorage::extractUrl(CrawlerRequest& url) noexcept
 	return true;
 }
 
-void CrawlerUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept
+void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept
 {
 	using VectorIterator = std::vector<QUrl>::const_iterator;
 
@@ -41,7 +41,7 @@ void CrawlerUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestTyp
 
 	size_t insertedUrlCounter = 0;
 
-	auto insert = [&](VectorIterator iter)
+	const auto insert = [&](VectorIterator iter)
 	{
 		CrawlerRequest item{ *iter, requestType };
 
@@ -59,13 +59,13 @@ void CrawlerUrlStorage::saveUrlList(const std::vector<QUrl>& urlList, RequestTyp
 }
 
 
-size_t CrawlerUrlStorage::crawledLinksCount() const noexcept
+size_t UniqueLinkStore::crawledLinksCount() const noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_crawledUrlList.size();
 }
 
-size_t CrawlerUrlStorage::pendingLinksCount() const noexcept
+size_t UniqueLinkStore::pendingLinksCount() const noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 	return m_pendingUrlList.size();

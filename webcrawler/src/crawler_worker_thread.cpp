@@ -1,5 +1,5 @@
 #include "crawler_worker_thread.h"
-#include "crawler_url_storage.h"
+#include "unique_link_store.h"
 #include "constants.h"
 #include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
@@ -8,10 +8,10 @@
 namespace WebCrawler
 {
 
-CrawlerWorkerThread::CrawlerWorkerThread(CrawlerUrlStorage* crawlerStorage, IQueuedDownloader* queuedDownloader)
+CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader)
 	: AbstractThreadableObject(this, QByteArray("CrawlerWorkerThread"))
 	, m_pageParsedDataCollector(new PageParsedDataCollector(this))
-	, m_crawlerInternalUrlStorage(crawlerStorage)
+	, m_uniqueLinkStore(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
 {
 	moveThisToSeparateThread();
@@ -28,7 +28,7 @@ void CrawlerWorkerThread::process()
 	IQueuedDownloader::Reply reply;
 
 	const bool replyExtracted = m_queuedDownloader->extractReply(reply);
-	const bool urlExtracted = m_crawlerInternalUrlStorage->extractUrl(url);
+	const bool urlExtracted = m_uniqueLinkStore->extractUrl(url);
 
 	if (urlExtracted)
 	{
@@ -54,11 +54,11 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 
 	std::vector<QUrl> urlList = m_pageParsedDataCollector->urlList();
 	urlList = PageParserHelpers::resolveUrlList(parsedPage->url, urlList);
-	m_crawlerInternalUrlStorage->saveUrlList(urlList, RequestTypeGet);
+	m_uniqueLinkStore->saveUrlList(urlList, RequestTypeGet);
 
 	if (!parsedPage->redirectedUrl.isEmpty())
 	{
-		m_crawlerInternalUrlStorage->saveUrlList(std::vector<QUrl>{ parsedPage->redirectedUrl }, RequestTypeGet);
+		m_uniqueLinkStore->saveUrlList(std::vector<QUrl>{ parsedPage->redirectedUrl }, RequestTypeGet);
 	}
 
 	std::vector<QUrl> resourcesHeadUrlList;
@@ -82,8 +82,8 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		}
 	}
 
-	m_crawlerInternalUrlStorage->saveUrlList(resourcesGetUrlList, RequestTypeGet);
-	m_crawlerInternalUrlStorage->saveUrlList(resourcesHeadUrlList, RequestTypeHead);
+	m_uniqueLinkStore->saveUrlList(resourcesGetUrlList, RequestTypeGet);
+	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, RequestTypeHead);
 }
 
 }

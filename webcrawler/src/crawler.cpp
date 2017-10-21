@@ -84,7 +84,7 @@ void Crawler::onCrawlingSessionInitialized()
 	}
 
 	m_modelController->setWebCrawlerOptions(m_options);
-	m_urlStorage.setHost(m_options.host);
+	m_uniqueLinkStore.setHost(m_options.host);
 
 	queuedDownloader()->start();
 
@@ -109,7 +109,7 @@ void Crawler::initCrawlerWorkerThreads()
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
-		m_workers.push_back(std::make_unique<CrawlerWorkerThread>(&m_urlStorage, queuedDownloader()));
+		m_workers.push_back(std::make_unique<CrawlerWorkerThread>(&m_uniqueLinkStore, queuedDownloader()));
 
 		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)),
 			SLOT(onPageParsed(ParsedPagePtr)), Qt::QueuedConnection));
@@ -170,9 +170,9 @@ SequencedDataCollection* Crawler::sequencedDataCollection() const noexcept
 	return m_modelController->data()->sequencedDataCollection();
 }
 
-const CrawlerUrlStorage* Crawler::crawlerUrlStorage() const noexcept
+const UniqueLinkStore* Crawler::crawlerUrlStorage() const noexcept
 {
-	return &m_urlStorage;
+	return &m_uniqueLinkStore;
 }
 
 void Crawler::onPageParsed(ParsedPagePtr pageRaw)

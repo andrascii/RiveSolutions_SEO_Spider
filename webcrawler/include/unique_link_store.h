@@ -5,17 +5,15 @@
 namespace WebCrawler
 {
 
-class CrawlerUrlStorage
+//
+// ATTENTION: all public method must be thread-safe
+//
+
+class UniqueLinkStore
 {
 public:
-	// all methods are thread-safe
 	void setHost(const QUrl& url);
-
-	// returns random url for crawling (async operation)
-	// returns false if urls queue is empty
-	// otherwise returns true and write url to passed argument
 	bool extractUrl(CrawlerRequest& url) noexcept;
-
 	void saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept;
 
 	size_t crawledLinksCount() const noexcept;

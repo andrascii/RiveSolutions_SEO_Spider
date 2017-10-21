@@ -1,7 +1,7 @@
 #pragma once
 
 #include "parsed_page.h"
-#include "crawler_url_storage.h"
+#include "unique_link_store.h"
 #include "crawler_options.h"
 
 namespace WebCrawler
@@ -54,7 +54,7 @@ protected:
 	IRobotsTxtLoader* robotsTxtLoader() const noexcept;
 	virtual IQueuedDownloader* createQueuedDownloader() const noexcept;
 	virtual IRobotsTxtLoader* createRobotsTxtLoader() const noexcept;
-	const CrawlerUrlStorage* crawlerUrlStorage() const noexcept;
+	const UniqueLinkStore* crawlerUrlStorage() const noexcept;
 
 private:
 	void initCrawlerWorkerThreads();
@@ -66,7 +66,7 @@ private:
 	mutable std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
 
 	ModelController* m_modelController;	
-	CrawlerUrlStorage m_urlStorage;
+	UniqueLinkStore m_uniqueLinkStore;
 
 	std::vector<std::unique_ptr<CrawlerWorkerThread>> m_workers;
 

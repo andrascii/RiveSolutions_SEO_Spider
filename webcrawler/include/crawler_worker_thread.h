@@ -9,14 +9,14 @@
 namespace WebCrawler
 {			
 
-class CrawlerUrlStorage;
+class UniqueLinkStore;
 
 class CrawlerWorkerThread : public AbstractThreadableObject
 {			
 	Q_OBJECT
 			
 public:
-	CrawlerWorkerThread(CrawlerUrlStorage* crawlerStorage, IQueuedDownloader* queuedDownloader);
+	CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader);
 
 	Q_SIGNAL void pageParsed(ParsedPagePtr pageRaw);
 	Q_SLOT void applyOptions(const CrawlerOptions& options);
@@ -29,7 +29,7 @@ private:
 private:
 	PageParsedDataCollector* m_pageParsedDataCollector;
 	
-	CrawlerUrlStorage* m_crawlerInternalUrlStorage;
+	UniqueLinkStore* m_uniqueLinkStore;
 
 	IQueuedDownloader* m_queuedDownloader;
 };
