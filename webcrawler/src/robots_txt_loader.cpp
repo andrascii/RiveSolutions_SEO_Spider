@@ -6,7 +6,8 @@ namespace WebCrawler
 {
 
 RobotsTxtLoader::RobotsTxtLoader(QNetworkAccessManager* networkAccessor)
-	: m_networkAccessor(networkAccessor)
+	: m_isReady(false)
+	, m_networkAccessor(networkAccessor)
 {
 }
 
@@ -20,7 +21,17 @@ void RobotsTxtLoader::load(const QUrl& url)
 	QNetworkReply* reply = m_networkAccessor->get(QNetworkRequest(robotsTxt));
 }
 
-QObject* RobotsTxtLoader::qObject()
+const QByteArray& RobotsTxtLoader::content() const noexcept
+{
+	return m_content;
+}
+
+bool RobotsTxtLoader::isReady() const noexcept
+{
+	return m_isReady;
+}
+
+QObject* RobotsTxtLoader::qobject()
 {
 	return this;
 }
@@ -48,7 +59,10 @@ void RobotsTxtLoader::onLoadingDone(QNetworkReply* reply)
 		return;
 	}
 
-	emit ready(reply->readAll());
+	m_content = reply->readAll();
+	m_isReady = true;
+
+	emit ready();
 }
 
 }

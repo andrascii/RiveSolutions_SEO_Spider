@@ -15,8 +15,10 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueue
 	moveThisToSeparateThread();
 }
 
-void CrawlerWorkerThread::applyOptions(const CrawlerOptions& options)
+void CrawlerWorkerThread::applyOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
 {
+	m_optionsLinkFilter.reset(new OptionsLinkFilter(options, robotsTxtRules));
+	
 	m_pageParsedDataCollector->setOptions(options);
 }
 

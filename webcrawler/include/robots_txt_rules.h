@@ -25,46 +25,26 @@ class IRobotsTxtRules
 {
 public:
 	virtual bool isValid() const = 0;
-	virtual bool isInitialized() const = 0;
-	virtual void initRobotsTxt(const QUrl& url) = 0;
 	virtual bool isUrlAllow(const QUrl& url, UserAgentType userAgentType) const = 0;
 	virtual const QUrl& sitemap() const = 0;
 	virtual const QUrl& originalHostMirror() const = 0;
-
-	virtual QObject* qobject() const = 0;
-
-	// signals
-	virtual void initialized() = 0;
 };
 
-class RobotsTxtRules : public QObject, public IRobotsTxtRules
+class RobotsTxtRules : public IRobotsTxtRules
 {
-	Q_OBJECT
-
 public:
-	RobotsTxtRules(IRobotsTxtLoader* loader, QObject* parent = nullptr);
+	RobotsTxtRules();
+	RobotsTxtRules(const QByteArray& content);
 
 	virtual bool isValid() const override;
-	virtual bool isInitialized() const override;
-	virtual void initRobotsTxt(const QUrl& url) override;
 	virtual bool isUrlAllow(const QUrl& url, UserAgentType userAgentType) const override;
 	virtual const QUrl& sitemap() const override;
 	virtual const QUrl& originalHostMirror() const override;
 
-	virtual QObject* qobject() const override;
-
-signals:
-	virtual void initialized() override;
-
-private slots:
-	void onLoadingDone(const QByteArray& content);
-
 private:
-	bool m_valid;
-	bool m_initialized;
-
-	IRobotsTxtLoader* m_loader;
-	std::unique_ptr<RobotsTxtTokenizer> m_tokenizer;
+	std::shared_ptr<RobotsTxtTokenizer> m_tokenizer;
 };
+
+Q_DECLARE_METATYPE(RobotsTxtRules)
 
 }

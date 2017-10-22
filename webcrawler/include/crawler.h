@@ -73,7 +73,6 @@ private:
 	unsigned int m_theradCount;
 
 	QTimer* m_crawlingStateTimer;
-	IRobotsTxtRules* m_robotsTxtRules;
 
 	CrawlerOptions m_options;
 };

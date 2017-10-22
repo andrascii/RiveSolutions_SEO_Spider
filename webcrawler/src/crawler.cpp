@@ -15,11 +15,12 @@ Crawler::Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThrea
 	, m_modelController(new ModelController(this, sequencedDataCollectionThread))
 	, m_theradCount(threadCount)
 	, m_crawlingStateTimer(new QTimer(this))
-	, m_robotsTxtRules(nullptr)
+	, m_robotsTxtLoader(nullptr)
 {
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 	ASSERT(qRegisterMetaType<CrawlingState>());
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
+	ASSERT(qRegisterMetaType<RobotsTxtRules>());
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
 	
@@ -90,7 +91,10 @@ void Crawler::onCrawlingSessionInitialized()
 
 	for (std::unique_ptr<CrawlerWorkerThread>& worker : m_workers)
 	{
-		VERIFY(QMetaObject::invokeMethod(worker.get(), "applyOptions", Qt::QueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
+		VERIFY(QMetaObject::invokeMethod(worker.get(), "applyOptions", Qt::QueuedConnection, 
+			Q_ARG(const CrawlerOptions&, m_options),
+			Q_ARG(RobotsTxtRules, RobotsTxtRules(robotsTxtLoader()->content())))
+		);
 
 		worker->startExecution();
 	}
@@ -118,22 +122,18 @@ void Crawler::initCrawlerWorkerThreads()
 
 bool Crawler::isPreinitialized() const
 {
-	return m_robotsTxtRules->isInitialized();
+	return robotsTxtLoader()->isReady();
 }
 
 void Crawler::initializeCrawlingSession()
 {
 	DEBUG_ASSERT(m_options.host.isValid());
 
+	VERIFY(connect(robotsTxtLoader()->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized())));
+
+	robotsTxtLoader()->load(m_options.host);
+
 	initCrawlerWorkerThreads();
-
-	if (m_robotsTxtRules == nullptr)
-	{
-		m_robotsTxtRules = new RobotsTxtRules(robotsTxtLoader(), this);
-		VERIFY(connect(m_robotsTxtRules->qobject(), SIGNAL(initialized()), this, SLOT(onCrawlingSessionInitialized())));
-	}
-
-	m_robotsTxtRules->initRobotsTxt(m_options.host);
 }
 
 IQueuedDownloader* Crawler::queuedDownloader() const noexcept

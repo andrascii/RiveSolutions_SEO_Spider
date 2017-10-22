@@ -5,34 +5,20 @@
 namespace WebCrawler
 {
 
-//////////////////////////////////////////////////////////////////////////
-
-RobotsTxtRules::RobotsTxtRules(IRobotsTxtLoader* loader, QObject* parent)
-	: QObject(parent)														
-	, m_loader(loader)
-	, m_valid(false)
-	, m_initialized(false)
-	, m_tokenizer(new RobotsTxtTokenizer)
+RobotsTxtRules::RobotsTxtRules()
 {
-	VERIFY(connect(loader->qObject(), SIGNAL(ready(const QByteArray&)), this, SLOT(onLoadingDone(const QByteArray&))));
+	ASSERT(!"This constructor intended only for ensure qRegisterMetatype is working");
+}
+
+RobotsTxtRules::RobotsTxtRules(const QByteArray& content)
+	: m_tokenizer(new RobotsTxtTokenizer)
+{
+	m_tokenizer->tokenize(content);
 }
 
 bool RobotsTxtRules::isValid() const
 {
-	return !m_valid ? false : m_tokenizer->isValid();
-}
-
-bool RobotsTxtRules::isInitialized() const
-{
-	return m_initialized;
-}
-
-void RobotsTxtRules::initRobotsTxt(const QUrl& url)
-{
-	m_valid = false;
-	m_initialized = false;
-
-	m_loader->load(url);
+	return m_tokenizer->isValid();
 }
 
 bool RobotsTxtRules::isUrlAllow(const QUrl& url, UserAgentType userAgentType) const
@@ -48,21 +34,6 @@ const QUrl& RobotsTxtRules::sitemap() const
 const QUrl& RobotsTxtRules::originalHostMirror() const
 {
 	return m_tokenizer->originalHostMirror();
-}
-
-QObject* RobotsTxtRules::qobject() const
-{
-	return static_cast<QObject*>(const_cast<RobotsTxtRules* const>(this));
-}
-
-void RobotsTxtRules::onLoadingDone(const QByteArray& content)
-{
-	m_tokenizer->tokenize(content);
-
-	m_valid = true;
-	m_initialized = true;
-
-	emit initialized();
 }
 
 }
