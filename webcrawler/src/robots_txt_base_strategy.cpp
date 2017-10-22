@@ -14,14 +14,14 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url,
 		return true;
 	}
 
-	userAgentType = availableUserAgent(userAgentType, tokenizer);
-
-	if (userAgentType == UserAgentType::InvalidBot)
+	if (!checkIfSupportedRecordExistsAndCorrectUserAgentType(userAgentType, tokenizer))
 	{
 		return true;
 	}
+	
+	QUrl cleanedUrl = cleanUrl(url, userAgentType, tokenizer);
 
-	const QString urlPath = url.path(QUrl::FullyEncoded) + url.query(QUrl::FullyEncoded);
+	const QString urlPath = cleanedUrl.path(QUrl::FullyEncoded) + cleanedUrl.query(QUrl::FullyEncoded);
 
 	QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> tokens = tokenizer.allowAndDisallowTokens(userAgentType);
 
@@ -35,6 +35,13 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url,
 	}
 
 	return allowed;
+}
+
+QUrl RobotsTxtBaseStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
+{
+	Q_UNUSED(userAgentType);
+	Q_UNUSED(tokenizer);
+	return url;
 }
 
 bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString value) const
@@ -97,14 +104,20 @@ bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString
 	return matched;
 }
 
-UserAgentType RobotsTxtBaseStrategy::availableUserAgent(UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
+bool RobotsTxtBaseStrategy::checkIfSupportedRecordExistsAndCorrectUserAgentType(UserAgentType& userAgentType, const RobotsTxtTokenizer& tokenizer) const
 {
 	if (tokenizer.hasUserAgentRecord(userAgentType))
 	{
-		return userAgentType;
+		return true;
 	}
 
-	return tokenizer.hasUserAgentRecord(UserAgentType::AnyBot) ? UserAgentType::AnyBot : UserAgentType::InvalidBot;
+	if (tokenizer.hasUserAgentRecord(UserAgentType::AnyBot))
+	{
+		userAgentType = UserAgentType::AnyBot;
+		return true;
+	}
+
+	return false;
 }
 
 }

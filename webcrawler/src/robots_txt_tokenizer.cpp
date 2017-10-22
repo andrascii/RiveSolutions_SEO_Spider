@@ -57,6 +57,7 @@ void RobotsTxtTokenizer::tokenize(const QString& robotsTxtContent)
 	QStringList rows = removeCommentaries(robotsTxtContent.split("\n", QString::SkipEmptyParts));
 
 	UserAgentType userAgentType = UserAgentType::AnyBot;
+	bool currentUserAgentIsNotSupported = true;
 
 	for (int i = 0; i < rows.size(); ++i)
 	{
@@ -78,10 +79,22 @@ void RobotsTxtTokenizer::tokenize(const QString& robotsTxtContent)
 		if (isUserAgentToken)
 		{
 			auto it = s_userAgent.find(tokenValue);
-			userAgentType = it != s_userAgent.end() ? s_userAgent[tokenValue] : UserAgentType::InvalidBot;
+			if (it != s_userAgent.end())
+			{
+				userAgentType = s_userAgent[tokenValue];
+				currentUserAgentIsNotSupported = false;
+			}
+			else
+			{
+				currentUserAgentIsNotSupported = true;
+			}
 		}
 		else
 		{
+			if (currentUserAgentIsNotSupported)
+			{
+				continue;
+			}
 			RobotsTxtToken tokenEnumerator = s_stringToToken.value(token, RobotsTxtToken::TokenUnknown);
 
 			Tokens& tokens = m_userAgentTokens[userAgentType];
