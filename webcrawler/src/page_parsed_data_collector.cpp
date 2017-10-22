@@ -9,6 +9,7 @@
 #include "video_resources_parser.h"
 #include "flash_resources_parser.h"
 #include "status_code.h"
+#include "options_link_filter.h"
 
 namespace WebCrawler
 {
@@ -18,18 +19,11 @@ PageParsedDataCollector::PageParsedDataCollector(QObject* parent)
 {
 }
 
-void PageParsedDataCollector::setOptions(const CrawlerOptions& options) noexcept
+void PageParsedDataCollector::setOptions(const CrawlerOptions& crawlerOptions) noexcept
 {
-	assert(m_options.minTitleLength <= m_options.maxTitleLength);
-
-	m_options = options;
+	m_crawlerOptions = crawlerOptions;
 
 	applyOptions();
-}
-
-const CrawlerOptions& PageParsedDataCollector::options() const noexcept
-{
-	return m_options;
 }
 
 ParsedPagePtr PageParsedDataCollector::collectPageDataFromReply(const QueuedDownloader::Reply& reply)
@@ -78,23 +72,23 @@ void PageParsedDataCollector::applyOptions()
 
 	m_parser.addParser(std::make_shared<HtmlResourcesParser>());
 
-	if (m_options.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
+	if (m_crawlerOptions.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{
 		m_parser.addParser(createParser(JavaScriptResourcesParserType));
 	}
-	if (m_options.parserTypeFlags.testFlag(CssResourcesParserType))
+	if (m_crawlerOptions.parserTypeFlags.testFlag(CssResourcesParserType))
 	{
 		m_parser.addParser(createParser(CssResourcesParserType));
 	}
-	if (m_options.parserTypeFlags.testFlag(ImagesResourcesParserType))
+	if (m_crawlerOptions.parserTypeFlags.testFlag(ImagesResourcesParserType))
 	{
 		m_parser.addParser(createParser(ImagesResourcesParserType));
 	}
-	if (m_options.parserTypeFlags.testFlag(VideoResourcesParserType))
+	if (m_crawlerOptions.parserTypeFlags.testFlag(VideoResourcesParserType))
 	{
 		m_parser.addParser(createParser(VideoResourcesParserType));
 	}
-	if (m_options.parserTypeFlags.testFlag(FlashResourcesParserType))
+	if (m_crawlerOptions.parserTypeFlags.testFlag(FlashResourcesParserType))
 	{
 		m_parser.addParser(createParser(FlashResourcesParserType));
 	}
@@ -127,7 +121,7 @@ void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& re
 
 	page->pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
 
-	page->isThisExternalPage = PageParserHelpers::isUrlExternal(options().host, page->url);
+	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, page->url);
 
 	page->contentType = QString();
 

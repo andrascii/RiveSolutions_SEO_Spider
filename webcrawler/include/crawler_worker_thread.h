@@ -5,6 +5,8 @@
 #include "iqueued_dowloader.h"
 #include "abstract_threadable_object.h"
 #include "page_parsed_data_collector.h"
+#include "robots_txt_rules.h"
+#include "options_link_filter.h"
 
 namespace WebCrawler
 {			
@@ -19,7 +21,7 @@ public:
 	CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader);
 
 	Q_SIGNAL void pageParsed(ParsedPagePtr pageRaw);
-	Q_SLOT void applyOptions(const CrawlerOptions& options);
+	Q_SLOT void applyOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules);
 
 private:
 	virtual void process() override;
@@ -28,10 +30,9 @@ private:
 
 private:
 	PageParsedDataCollector* m_pageParsedDataCollector;
-	
 	UniqueLinkStore* m_uniqueLinkStore;
-
 	IQueuedDownloader* m_queuedDownloader;
+	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;
 };
 
 }

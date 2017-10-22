@@ -7,10 +7,20 @@ namespace WebCrawlerTests
 void TestsRobotsTxtLoader::load(const QUrl& url)
 {
 	Q_UNUSED(url);
-	emit ready(QByteArray());
+	emit ready();
 }
 
-QObject* TestsRobotsTxtLoader::qObject()
+const QByteArray& TestsRobotsTxtLoader::content() const noexcept
+{
+	return m_content;
+}
+
+bool TestsRobotsTxtLoader::isReady() const noexcept
+{
+	return true;
+}
+
+QObject* TestsRobotsTxtLoader::qobject()
 {
 	return this;
 }

@@ -33,6 +33,8 @@ void AbstractThreadableObject::startExecution() noexcept
 
 		QMetaObject::invokeMethod(this, "startTimer", Qt::BlockingQueuedConnection,
 			Q_ARG(int, Common::g_minimumRecommendedTimerResolution), Q_ARG(Qt::TimerType, Qt::CoarseTimer));
+
+		onExecutionStarted();
 	}
 }
 
@@ -47,6 +49,8 @@ void AbstractThreadableObject::stopExecution() noexcept
 		m_thread.quit();
 		m_thread.wait(); 
 		m_isRunning.store(false);
+
+		onExecutionStopped();
 	}
 }
 
@@ -60,7 +64,17 @@ const QByteArray& AbstractThreadableObject::threadName() const
 	return m_threadName;
 }
 
-void AbstractThreadableObject::timerEvent(QTimerEvent* event)
+void AbstractThreadableObject::onExecutionStarted()
+{
+	// do nothing
+}
+
+void AbstractThreadableObject::onExecutionStopped()
+{
+	// do nothing
+}
+
+	void AbstractThreadableObject::timerEvent(QTimerEvent* event)
 {
 	process();
 }

@@ -21,11 +21,11 @@ ParsedPageReceiver::ParsedPageReceiver(WebCrawler::SequencedDataCollection* sequ
 	m_receiverThread = new QThread();
 	moveToThread(m_receiverThread);
 	
-	QObject::connect(sequencedDataCollection, &WebCrawler::SequencedDataCollection::parsedPageAdded,
-		this, &ParsedPageReceiver::onParsedPageAdded, Qt::QueuedConnection);
+	VERIFY(connect(sequencedDataCollection, &WebCrawler::SequencedDataCollection::parsedPageAdded,
+		this, &ParsedPageReceiver::onParsedPageAdded, Qt::QueuedConnection));
 
-	QObject::connect(sequencedDataCollection, &WebCrawler::SequencedDataCollection::parsedPageLinksToThisResourceChanged,
-		this, &ParsedPageReceiver::onParsedPageLinksToThisResourceChanged, Qt::QueuedConnection);
+	VERIFY(connect(sequencedDataCollection, &WebCrawler::SequencedDataCollection::parsedPageLinksToThisResourceChanged,
+		this, &ParsedPageReceiver::onParsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
 
 	m_receiverThread->start();
 }

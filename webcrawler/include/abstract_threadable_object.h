@@ -41,6 +41,9 @@ public:
 protected:
 	virtual void process() = 0;
 
+	virtual void onExecutionStarted();
+	virtual void onExecutionStopped();
+
 	virtual void timerEvent(QTimerEvent* event) override;
 
 	void moveThisToSeparateThread();

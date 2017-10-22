@@ -12,14 +12,20 @@ public:
 	RobotsTxtLoader(QNetworkAccessManager* networkAccessor);
 
 	virtual void load(const QUrl& url) override;
-	Q_SIGNAL virtual void ready(const QByteArray& content) override;
-	virtual QObject* qObject() override;
+	virtual const QByteArray& content() const noexcept override;
+	virtual bool isReady() const noexcept override;
+
+	virtual QObject* qobject() override;
+
+signals:
+	virtual void ready() override;
+
+private slots:
+	void onLoadingDone(QNetworkReply* reply);
 
 private:
-
-	Q_SLOT void onLoadingDone(QNetworkReply* reply);
-
-private:
+	bool m_isReady;
+	QByteArray m_content;
 	QNetworkAccessManager* m_networkAccessor;
 };
 
