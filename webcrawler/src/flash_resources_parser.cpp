@@ -52,10 +52,10 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
-		RawResourceOnPage flashResource
+		const RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
-			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource},
+			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource},
 		};
 
 		page->allResourcesOnPage.insert(flashResource);
@@ -90,10 +90,10 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
-		RawResourceOnPage flashResource
+		const RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
-			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
+			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
 		page->allResourcesOnPage.insert(flashResource);
@@ -145,7 +145,7 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 		const RawResourceOnPage flashResource
 		{
 			ResourceType::ResourceFlash,
-			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
+			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
 		page->allResourcesOnPage.insert(flashResource);

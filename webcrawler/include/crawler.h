@@ -58,7 +58,7 @@ protected:
 
 private:
 	void initCrawlerWorkerThreads();
-	bool isPreinitialized();
+	bool isPreinitialized() const;
 	void initializeCrawlingSession();
 
 private:

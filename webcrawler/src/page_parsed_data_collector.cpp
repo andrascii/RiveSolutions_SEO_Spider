@@ -156,9 +156,12 @@ void PageParsedDataCollector::collectUrlList(GumboOutput* output)
 {
 	m_urlList.clear();
 
-	std::vector<LinkInfo> linksOnPage = GumboParsingHelpers::parsePageUrlList(output->root, true);
+	std::vector<LinkInfo> outlinks = GumboParsingHelpers::parsePageUrlList(output->root, true);
 
-	for (const LinkInfo& linkInfo : linksOnPage)
+	outlinks.erase(std::remove_if(outlinks.begin(), outlinks.end(), [](const LinkInfo& linkInfo)
+		{ return linkInfo.urlParameter == LinkParameter::NofollowParameter; }), outlinks.end());
+
+	for (const LinkInfo& linkInfo : outlinks)
 	{
 		m_urlList.push_back(linkInfo.url);
 	}
@@ -189,8 +192,7 @@ void PageParsedDataCollector::setResourceCategory(ParsedPagePtr& page) const
 	page->resourceType = ResourceType::ResourceOther;
 }
 
-std::shared_ptr<WebCrawler::IPageParser> 
-PageParsedDataCollector::createParser(ParserType parserType) const
+std::shared_ptr<IPageParser> PageParsedDataCollector::createParser(ParserType parserType) const
 {
 	switch (parserType)
 	{
@@ -214,9 +216,12 @@ PageParsedDataCollector::createParser(ParserType parserType) const
 		{
 			return std::make_shared<FlashResourcesParser>();
 		}
+		default:
+		{
+			ASSERT(!"Undefined parser type");
+		}
 	}
 
-	ASSERT(!"Undefined parser type");
 	return std::shared_ptr<IPageParser>(nullptr);
 }
 

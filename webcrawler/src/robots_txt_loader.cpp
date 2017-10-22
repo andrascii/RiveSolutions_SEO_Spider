@@ -5,32 +5,9 @@
 namespace WebCrawler
 {
 
-namespace
-{
-
-	class AnywayFunctionCall
-	{
-	public:
-		AnywayFunctionCall(const std::function<void()>& function)
-			: m_function(function)
-		{
-		}
-
-		~AnywayFunctionCall()
-		{
-			m_function();
-		}
-
-	private:
-		std::function<void()> m_function;
-	};
-
-}
-
 RobotsTxtLoader::RobotsTxtLoader(QNetworkAccessManager* networkAccessor)
 	: m_networkAccessor(networkAccessor)
 {
-
 }
 
 void RobotsTxtLoader::load(const QUrl& url)
@@ -50,8 +27,6 @@ QObject* RobotsTxtLoader::qObject()
 
 void RobotsTxtLoader::onLoadingDone(QNetworkReply* reply)
 {
-	//AnywayFunctionCall anywayFunctionCall(std::function<void()>(std::bind(&RobotsTxtRules::initialized, this)));
-
 	const QUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 
 	if (!redirectUrl.isEmpty())

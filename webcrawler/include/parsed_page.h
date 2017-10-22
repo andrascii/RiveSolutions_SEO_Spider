@@ -12,9 +12,8 @@ using ParsedPageWeakPtr = std::weak_ptr<ParsedPage>;
 
 enum class LinkParameter
 {
-	UnknownParameter,
-	NofollowParameter,
-	DofollowParameter
+	DofollowParameter,
+	NofollowParameter
 };
 
 enum class ResourceType
@@ -41,7 +40,7 @@ enum class ResourceSource
 struct LinkInfo
 {
 	QUrl url;
-	LinkParameter urlParameter = LinkParameter::UnknownParameter;
+	LinkParameter urlParameter = LinkParameter::DofollowParameter;
 	QString altOrTitle;
 	bool dataResourceLink = false;
 };

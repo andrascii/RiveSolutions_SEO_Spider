@@ -1,7 +1,5 @@
 #include "crawler_worker_thread.h"
 #include "unique_link_store.h"
-#include "constants.h"
-#include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
 #include "iqueued_dowloader.h"
 

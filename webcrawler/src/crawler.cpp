@@ -116,7 +116,7 @@ void Crawler::initCrawlerWorkerThreads()
 	}
 }
 
-bool Crawler::isPreinitialized()
+bool Crawler::isPreinitialized() const
 {
 	return m_robotsTxtRules->isInitialized();
 }

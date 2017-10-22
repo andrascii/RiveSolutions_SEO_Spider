@@ -74,7 +74,7 @@ WebCrawler::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(WebCrawl
 	return WebCrawler::ResourceLink
 	{ 
 		WebCrawler::ParsedPageWeakPtr(), 
-		WebCrawler::LinkParameter::UnknownParameter, 
+		WebCrawler::LinkParameter::DofollowParameter,
 		WebCrawler::ResourceSource::SourceInvalid, 
 		QString() 
 	};
@@ -93,7 +93,7 @@ WebCrawler::ResourceLink TestEnvironment::firstResourceToThisPageOfType(WebCrawl
 	return WebCrawler::ResourceLink
 	{
 		WebCrawler::ParsedPageWeakPtr(),
-		WebCrawler::LinkParameter::UnknownParameter,
+		WebCrawler::LinkParameter::DofollowParameter,
 		WebCrawler::ResourceSource::SourceInvalid,
 		QString()
 	};

@@ -30,8 +30,6 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 
 void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept
 {
-	using VectorIterator = std::vector<QUrl>::const_iterator;
-
 	if (urlList.empty())
 	{
 		return;
@@ -41,7 +39,7 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, RequestType 
 
 	size_t insertedUrlCounter = 0;
 
-	const auto insert = [&](VectorIterator iter)
+	const auto insert = [&](const auto& iter)
 	{
 		CrawlerRequest item{ *iter, requestType };
 
@@ -52,12 +50,11 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, RequestType 
 		}
 	};
 
-	for (VectorIterator first = urlList.begin(), last = urlList.end(); first != last; ++first)
+	for (auto first = urlList.begin(), last = urlList.end(); first != last; ++first)
 	{
 		insert(first);
 	}
 }
-
 
 size_t UniqueLinkStore::crawledLinksCount() const noexcept
 {

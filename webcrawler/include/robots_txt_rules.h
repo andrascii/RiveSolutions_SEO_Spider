@@ -2,9 +2,9 @@
 
 namespace WebCrawler
 {
-	class IRobotsTxtLoader;
 
-	class RobotsTxtTokenizer;
+class IRobotsTxtLoader;
+class RobotsTxtTokenizer;
 
 enum class UserAgentType
 {
@@ -66,4 +66,5 @@ private:
 	IRobotsTxtLoader* m_loader;
 	std::unique_ptr<RobotsTxtTokenizer> m_tokenizer;
 };
+
 }

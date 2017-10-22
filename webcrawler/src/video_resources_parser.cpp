@@ -43,7 +43,7 @@ void VideoResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		const RawResourceOnPage videoResource
 		{
 			ResourceType::ResourceVideo,
-			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
+			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
 		page->allResourcesOnPage.insert(videoResource);

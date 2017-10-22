@@ -40,10 +40,10 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	{
  		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
-		RawResourceOnPage cssResource
+		const RawResourceOnPage cssResource
 		{
 			ResourceType::ResourceStyleSheet,
-			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
+			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
 		page->allResourcesOnPage.insert(cssResource);

@@ -42,7 +42,7 @@ void JsResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		const RawResourceOnPage jsResource
 		{
 			ResourceType::ResourceJavaScript,
-			LinkInfo{ url, LinkParameter::UnknownParameter, QString(), dataResource }
+			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
 		page->allResourcesOnPage.insert(jsResource);
