@@ -129,7 +129,7 @@ void Crawler::initializeCrawlingSession()
 {
 	DEBUG_ASSERT(m_options.host.isValid());
 
-	VERIFY(connect(robotsTxtLoader()->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized())));
+	VERIFY(connect(robotsTxtLoader()->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
 
 	robotsTxtLoader()->load(m_options.host);
 
