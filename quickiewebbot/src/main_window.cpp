@@ -10,6 +10,7 @@
 #include "crawler.h"
 #include "host_info.h"
 #include "preferences.h"
+#include "robots_txt_rules.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
@@ -162,11 +163,15 @@ void MainWindow::startCrawler()
 	options.followInternalNofollow = theApp->preferences()->followInternalNoFollow();
 	options.followExternalNofollow = theApp->preferences()->followExternalNoFollow();
 	options.checkSubdomains = theApp->preferences()->checkSubdomains();
-	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
 	options.checkImages = theApp->preferences()->checkImages();
 	options.checkCss = theApp->preferences()->checkCSS();
 	options.checkJavaScript = theApp->preferences()->checkJavaScript();
 	options.checkSwf = theApp->preferences()->checkSWF();
+
+	// robots.txt rules
+	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
+	options.userAgentToFollow = WebCrawler::UserAgentType::AnyBot;
+	options.plainUserAgent =  "sTechnologiesBot/1.0 Alpha (+http://www.sTechnologiesSeoSpider.org/)";
 
 	options.parserTypeFlags.setFlag(WebCrawler::JavaScriptResourcesParserType);
 	options.parserTypeFlags.setFlag(WebCrawler::CssResourcesParserType);

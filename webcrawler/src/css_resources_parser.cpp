@@ -1,5 +1,4 @@
 #include "css_resources_parser.h"
-#include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
 
@@ -24,7 +23,7 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_LINK &&
 			gumbo_get_attribute(&node->v.element.attributes, "href") &&
-			GumboParsingHelpers::checkAttribute(node, "rel", "stylesheet");
+			PageParserHelpers::checkAttribute(node, "rel", "stylesheet");
 	};
 
 	auto res = [](const GumboNode* node)
@@ -33,12 +32,12 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		return QUrl(href->value);
 	};
 
-	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QUrl> urls = PageParserHelpers::findNodesAndGetResult(output->root, cond, res);
 	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
 	for (const QUrl& url : resolvedUrls)
 	{
- 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
+		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
 		const RawResourceOnPage cssResource
 		{

@@ -11,9 +11,19 @@ struct LinkInfo;
 class OptionsLinkFilter
 {
 public:
+	enum Permission
+	{
+		PermissionAllowed,
+		PermissionNofollowNotAllowed,
+		PermissionBlockedByRobotsTxtRules
+	};
+
 	OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const RobotsTxtRules& robotsTxtRules);
 
-	bool isLinkAllowed(const LinkInfo& linkInfo) const;
+	Permission linkPermission(const LinkInfo& linkInfo) const;
+
+private:
+	bool isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo) const;
 
 private:
 	CrawlerOptions m_crawlerOptions;

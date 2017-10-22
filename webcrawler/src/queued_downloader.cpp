@@ -21,6 +21,11 @@ QueuedDownloader::~QueuedDownloader()
 	stopExecution();
 }
 
+void QueuedDownloader::setUserAgent(const QByteArray& userAgent)
+{
+	m_userAgent = userAgent;
+}
+
 void QueuedDownloader::scheduleUrl(const CrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
@@ -169,16 +174,19 @@ void QueuedDownloader::process()
 		const CrawlerRequest request = *m_requestQueue.begin();
 		QNetworkReply* reply = nullptr;
 
+		QNetworkRequest networkRequest(request.url);
+		networkRequest.setRawHeader("User-Agent", m_userAgent);
+
 		switch (request.requestType)
 		{
 			case RequestTypeGet:
 			{
-				reply = m_networkAccessManager->get(QNetworkRequest(request.url));
+				reply = m_networkAccessManager->get(networkRequest);
 				break;
 			}
 			case RequestTypeHead:
 			{
-				reply = m_networkAccessManager->head(QNetworkRequest(request.url));
+				reply = m_networkAccessManager->head(networkRequest);
 				break;
 			}
 			default:

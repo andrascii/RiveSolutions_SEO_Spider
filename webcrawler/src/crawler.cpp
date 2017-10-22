@@ -29,10 +29,17 @@ Crawler::Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThrea
 
 Crawler::~Crawler()
 {
+	//
+	// IMPORTANT: First must be stopped workers!!!
+	// Because workers sends requests to queuedDownloader
+	// And it can not be stopped until it finishes processing requests
+	//
 	for (auto& worker : m_workers)
 	{
 		worker->stopExecution();
 	}
+
+	queuedDownloader()->stop();
 }
 
 void Crawler::startCrawling(const CrawlerOptions& options)
@@ -150,6 +157,8 @@ IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
 	if (!m_robotsTxtLoader)
 	{
 		m_robotsTxtLoader.reset(createRobotsTxtLoader());
+
+		m_robotsTxtLoader->setUserAgent(m_options.plainUserAgent);
 	}
 
 	return m_robotsTxtLoader.get();
@@ -157,7 +166,10 @@ IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
 
 IQueuedDownloader* Crawler::createQueuedDownloader() const noexcept
 {
-	return new QueuedDownloader();
+	IQueuedDownloader* queuedDownloader = new QueuedDownloader();
+	queuedDownloader->setUserAgent(m_options.plainUserAgent);
+
+	return queuedDownloader;
 }
 
 IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const noexcept

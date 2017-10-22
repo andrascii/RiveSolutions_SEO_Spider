@@ -1,6 +1,7 @@
 #pragma once
 
 #include "crawler_request.h"
+#include "parsed_page.h"
 
 namespace WebCrawler
 {
@@ -15,6 +16,7 @@ public:
 	void setHost(const QUrl& url);
 	bool extractUrl(CrawlerRequest& url) noexcept;
 	void saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept;
+	void saveLinkList(const std::vector<LinkInfo>& linkList, RequestType requestType) noexcept;
 
 	size_t crawledLinksCount() const noexcept;
 	size_t pendingLinksCount() const noexcept;

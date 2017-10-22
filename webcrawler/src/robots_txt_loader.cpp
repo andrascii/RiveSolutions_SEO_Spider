@@ -11,14 +11,23 @@ RobotsTxtLoader::RobotsTxtLoader(QNetworkAccessManager* networkAccessor)
 {
 }
 
+void RobotsTxtLoader::setUserAgent(const QByteArray& userAgent)
+{
+	m_userAgent = userAgent;
+}
+
 void RobotsTxtLoader::load(const QUrl& url)
 {
 	ASSERT(m_networkAccessor->thread() == QThread::currentThread());
 
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), this, SLOT(onLoadingDone(QNetworkReply*))));
 
-	const QString robotsTxt = url.scheme() + "://" + url.host() + QStringLiteral("/robots.txt");
-	QNetworkReply* reply = m_networkAccessor->get(QNetworkRequest(robotsTxt));
+	const QString robotsTxtUrlString = url.scheme() + "://" + url.host() + QStringLiteral("/robots.txt");
+
+	QNetworkRequest request(robotsTxtUrlString);
+	request.setRawHeader("User-Agent", m_userAgent);
+
+	QNetworkReply* reply = m_networkAccessor->get(request);
 }
 
 const QByteArray& RobotsTxtLoader::content() const noexcept
@@ -42,7 +51,10 @@ void RobotsTxtLoader::onLoadingDone(QNetworkReply* reply)
 
 	if (!redirectUrl.isEmpty())
 	{
-		m_networkAccessor->get(QNetworkRequest(redirectUrl));
+		QNetworkRequest request(redirectUrl);
+		request.setRawHeader("User-Agent", m_userAgent);
+
+		m_networkAccessor->get(request);
 		return;
 	}
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "robots_txt_rules.h"
+
 namespace WebCrawler
 {
 
@@ -36,11 +38,17 @@ struct CrawlerOptions
 	bool followInternalNofollow;
 	bool followExternalNofollow;
 	bool checkSubdomains;
-	bool followRobotsTxtRules;
 	bool checkImages;
 	bool checkCss;
 	bool checkJavaScript;
 	bool checkSwf;
+
+	// robots.txt rules
+	bool followRobotsTxtRules;
+	UserAgentType userAgentToFollow;
+
+	// user agent
+	QByteArray plainUserAgent;
 
 	ParserTypeFlags parserTypeFlags;
 };

@@ -1,5 +1,5 @@
 #include "word_count_parser.h"
-#include "gumbo_parsing_helpers.h"
+#include "page_parser_helpers.h"
 
 namespace WebCrawler
 {
@@ -11,7 +11,7 @@ void WordCountParser::parse(GumboOutput* output, ParsedPagePtr& page) noexcept
 		return;
 	}
 
-	GumboNode* body = GumboParsingHelpers::findSubNode(output->root, GUMBO_TAG_BODY);
+	GumboNode* body = PageParserHelpers::findSubNode(output->root, GUMBO_TAG_BODY);
 	
 	if (!(body && body->type == GUMBO_NODE_ELEMENT && body->v.element.tag == GUMBO_TAG_BODY))
 	{
@@ -19,7 +19,7 @@ void WordCountParser::parse(GumboOutput* output, ParsedPagePtr& page) noexcept
 		return;
 	}
 
-	QByteArray textFromPage = GumboParsingHelpers::cutAllTagsFromNode(body);
+	QByteArray textFromPage = PageParserHelpers::cutAllTagsFromNode(body);
 	QList<QByteArray> allWordsFromPage = textFromPage.split(' ');
 
 	page->wordCount = allWordsFromPage.size();

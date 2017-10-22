@@ -21,7 +21,7 @@ bool RobotsTxtRules::isValid() const
 	return m_tokenizer->isValid();
 }
 
-bool RobotsTxtRules::isUrlAllow(const QUrl& url, UserAgentType userAgentType) const
+bool RobotsTxtRules::isUrlAllowed(const QUrl& url, UserAgentType userAgentType) const
 {
 	return false;
 }

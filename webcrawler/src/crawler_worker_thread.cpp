@@ -52,9 +52,18 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		return;
 	}
 
-	std::vector<QUrl> urlList = m_pageParsedDataCollector->urlList();
-	urlList = PageParserHelpers::resolveUrlList(parsedPage->url, urlList);
-	m_uniqueLinkStore->saveUrlList(urlList, RequestTypeGet);
+	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
+	{
+		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionNofollowNotAllowed;
+	};
+
+	std::vector<LinkInfo> outlinks = m_pageParsedDataCollector->outlinks();
+	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
+	outlinks.erase(std::remove_if(outlinks.begin(), outlinks.end(), isNofollowLinkUnavailable), outlinks.end());
+
+	handlePageLinkList(outlinks);
+
+	m_uniqueLinkStore->saveLinkList(outlinks, RequestTypeGet);
 
 	if (!parsedPage->redirectedUrl.isEmpty())
 	{
@@ -84,6 +93,36 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 
 	m_uniqueLinkStore->saveUrlList(resourcesGetUrlList, RequestTypeGet);
 	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, RequestTypeHead);
+}
+
+void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList) const
+{
+	const auto isLinkBlockedByRobotsTxt = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
+	{
+		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionBlockedByRobotsTxtRules;
+	};
+
+	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
+	{
+		ParsedPagePtr page(new ParsedPage);
+
+		page->url = linkInfo.url;
+		page->title = tr("Blocked by robots.txt rules");
+
+		//
+		// TODO: change it on ResourceType::ResourceUnknown
+		// It adding new type requires rework of ModelController
+		//
+		page->resourceType = ResourceType::ResourceHtml;
+
+		emit pageParsed(page);
+	};
+
+	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
+
+	std::for_each(blockedByRobotsTxtLinksIterator, linkList.end(), emitPageParsedForBlockedPages);
+
+	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
 }
 
 }

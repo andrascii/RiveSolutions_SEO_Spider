@@ -1,5 +1,4 @@
 #include "images_resources_parser.h"
-#include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
 
@@ -34,7 +33,7 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		return std::make_pair(QUrl(src->value), altVal);
 	};
 
-	std::vector<std::pair<QUrl, QString>> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<std::pair<QUrl, QString>> urls = PageParserHelpers::findNodesAndGetResult(output->root, cond, res);
 	for (std::pair<QUrl, QString>& url : urls)
 	{
 		url.first = PageParserHelpers::resolveUrl(page->url, url.first);

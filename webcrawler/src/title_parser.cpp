@@ -1,5 +1,5 @@
 #include "title_parser.h"
-#include "gumbo_parsing_helpers.h"
+#include "page_parser_helpers.h"
 
 namespace WebCrawler
 {
@@ -22,12 +22,12 @@ void TitleParser::parse(GumboOutput* output, ParsedPagePtr& page) noexcept
 
 	auto res = [](const GumboNode* node)
 	{
-		QByteArray titleValue = GumboParsingHelpers::nodeText(node);
+		QByteArray titleValue = PageParserHelpers::nodeText(node);
 		titleValue = titleValue.trimmed().remove('\n', Qt::CaseInsensitive);
 		return titleValue;
 	};
 
-	std::vector<QByteArray> titles = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QByteArray> titles = PageParserHelpers::findNodesAndGetResult(output->root, cond, res);
 
 	if (!titles.empty())
 	{

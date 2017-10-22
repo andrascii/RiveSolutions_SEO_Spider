@@ -1,7 +1,6 @@
 #include "page_parsed_data_collector.h"
 #include "crawler_options.h"
 #include "page_parser_helpers.h"
-#include "gumbo_parsing_helpers.h"
 #include "html_resources_parser.h"
 #include "js_resources_parser.h"
 #include "css_resources_parser.h"
@@ -9,7 +8,6 @@
 #include "video_resources_parser.h"
 #include "flash_resources_parser.h"
 #include "status_code.h"
-#include "options_link_filter.h"
 
 namespace WebCrawler
 {
@@ -43,7 +41,7 @@ ParsedPagePtr PageParsedDataCollector::collectPageDataFromReply(const QueuedDown
 	QByteArray decodedHtmlPage;
 	if (page->resourceType == ResourceType::ResourceHtml)
 	{
-		decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(reply.responseBody);
+		decodedHtmlPage = PageParserHelpers::decodeHtmlPage(reply.responseBody);
 #ifdef QT_DEBUG
 		page->rawResponse = qCompress(decodedHtmlPage, 9);
 #endif
@@ -61,9 +59,9 @@ ParsedPagePtr PageParsedDataCollector::collectPageDataFromReply(const QueuedDown
 	return page;
 }
 
-const std::vector<QUrl>& PageParsedDataCollector::urlList() const noexcept
+const std::vector<LinkInfo>& PageParsedDataCollector::outlinks() const noexcept
 {
-	return m_urlList;
+	return m_outlinks;
 }
 
 void PageParsedDataCollector::applyOptions()
@@ -92,11 +90,6 @@ void PageParsedDataCollector::applyOptions()
 	{
 		m_parser.addParser(createParser(FlashResourcesParserType));
 	}
-}
-
-bool PageParsedDataCollector::isParserEnabled(int flags) const noexcept
-{
-	return true;
 }
 
 QUrl PageParsedDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& reply)
@@ -148,17 +141,8 @@ void PageParsedDataCollector::collectParsedPageData(GumboOutput* output, ParsedP
 
 void PageParsedDataCollector::collectUrlList(GumboOutput* output)
 {
-	m_urlList.clear();
-
-	std::vector<LinkInfo> outlinks = GumboParsingHelpers::parsePageUrlList(output->root, true);
-
-	outlinks.erase(std::remove_if(outlinks.begin(), outlinks.end(), [](const LinkInfo& linkInfo)
-		{ return linkInfo.urlParameter == LinkParameter::NofollowParameter; }), outlinks.end());
-
-	for (const LinkInfo& linkInfo : outlinks)
-	{
-		m_urlList.push_back(linkInfo.url);
-	}
+	m_outlinks.clear();
+	m_outlinks = PageParserHelpers::parsePageUrlList(output->root, true);
 }
 
 void PageParsedDataCollector::setResourceCategory(ParsedPagePtr& page) const

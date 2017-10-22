@@ -20,13 +20,17 @@ class CrawlerWorkerThread : public AbstractThreadableObject
 public:
 	CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader);
 
-	Q_SIGNAL void pageParsed(ParsedPagePtr pageRaw);
-	Q_SLOT void applyOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules);
+signals:
+	void pageParsed(ParsedPagePtr parsedPage) const;
+
+public slots:
+	void applyOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules);
 
 private:
 	virtual void process() override;
 
-	void schedulePageResourcesLoading(const ParsedPagePtr& pageRaw) const;
+	void schedulePageResourcesLoading(const ParsedPagePtr& parsedPage) const;
+	void handlePageLinkList(std::vector<LinkInfo>& linkList) const;
 
 private:
 	PageParsedDataCollector* m_pageParsedDataCollector;

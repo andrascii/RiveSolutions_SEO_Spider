@@ -20,8 +20,9 @@ public:
 
 	virtual ~IQueuedDownloader() = default;
 
-	virtual void scheduleUrl(const CrawlerRequest& url) noexcept = 0;
+	virtual void setUserAgent(const QByteArray& userAgent) = 0;
 
+	virtual void scheduleUrl(const CrawlerRequest& url) noexcept = 0;
 	virtual bool extractReply(Reply& response) noexcept = 0;
 
 	virtual void start() noexcept = 0;

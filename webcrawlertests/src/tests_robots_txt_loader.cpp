@@ -4,6 +4,11 @@
 namespace WebCrawlerTests
 {
 
+void TestsRobotsTxtLoader::setUserAgent(const QByteArray& userAgent)
+{
+	// do nothing
+}
+
 void TestsRobotsTxtLoader::load(const QUrl& url)
 {
 	Q_UNUSED(url);

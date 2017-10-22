@@ -2,7 +2,12 @@
 
 namespace WebCrawlerTests
 {
-	
+
+void TestsQueudedDownoader::setUserAgent(const QByteArray& userAgent)
+{
+	// do nothing
+}
+
 void TestsQueudedDownoader::scheduleUrl(const WebCrawler::CrawlerRequest& url) noexcept
 {
 	std::lock_guard<std::mutex> locker(m_repliesQueueMutex);

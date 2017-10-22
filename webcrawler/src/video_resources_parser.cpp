@@ -1,5 +1,4 @@
 #include "video_resources_parser.h"
-#include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
 
@@ -23,17 +22,17 @@ void VideoResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_VIDEO &&
-			!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
+			!!PageParserHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
 	};
 
 	auto res = [](const GumboNode* node)
 	{
-		const GumboNode* child = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
+		const GumboNode* child = PageParserHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
 		GumboAttribute* src = gumbo_get_attribute(&child->v.element.attributes, "src");
 		return QUrl(src->value);
 	};
 
-	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QUrl> urls = PageParserHelpers::findNodesAndGetResult(output->root, cond, res);
 	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
 	for (const QUrl& url : resolvedUrls)

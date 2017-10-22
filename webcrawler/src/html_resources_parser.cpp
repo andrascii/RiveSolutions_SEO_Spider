@@ -3,7 +3,6 @@
 #include "title_parser.h"
 #include "h_parser.h"
 #include "word_count_parser.h"
-#include "gumbo_parsing_helpers.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
 
@@ -26,7 +25,7 @@ void HtmlResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		return;
 	}
 
-	std::vector<LinkInfo> linksInfo = GumboParsingHelpers::parsePageUrlList(output->root, false);
+	std::vector<LinkInfo> linksInfo = PageParserHelpers::parsePageUrlList(output->root, false);
 
 	for (LinkInfo& linkInfo : linksInfo)
 	{

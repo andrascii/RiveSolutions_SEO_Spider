@@ -6,8 +6,9 @@ namespace WebCrawlerTests
 	
 class TestsQueudedDownoader : public WebCrawler::IQueuedDownloader
 {
-	virtual void scheduleUrl(const WebCrawler::CrawlerRequest& url) noexcept override;
+	virtual void setUserAgent(const QByteArray& userAgent) override;
 
+	virtual void scheduleUrl(const WebCrawler::CrawlerRequest& url) noexcept override;
 	virtual bool extractReply(Reply& response) noexcept override;
 
 	virtual void start() noexcept override;

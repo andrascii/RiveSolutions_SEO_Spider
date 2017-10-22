@@ -15,6 +15,8 @@ public:
 	QueuedDownloader();
 	virtual ~QueuedDownloader();
 
+	virtual void setUserAgent(const QByteArray& userAgent) override;
+
 	virtual void scheduleUrl(const CrawlerRequest& url) noexcept override;
 	virtual bool extractReply(Reply& response) noexcept override;
 
@@ -45,6 +47,8 @@ private:
 
 	std::atomic<int> m_unprocessedRepliesCount;
 	std::atomic<int> m_pendingRequestsCount;
+
+	QByteArray m_userAgent;
 };
 
 }

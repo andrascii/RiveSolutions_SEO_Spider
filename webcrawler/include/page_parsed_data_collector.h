@@ -18,11 +18,10 @@ public:
 	void setOptions(const CrawlerOptions& crawlerOptions) noexcept;
 
 	ParsedPagePtr collectPageDataFromReply(const QueuedDownloader::Reply& reply);
-	const std::vector<QUrl>& urlList() const noexcept;
+	const std::vector<LinkInfo>& outlinks() const noexcept;
 
 private:
 	void applyOptions();
-	bool isParserEnabled(int flags) const noexcept;
 
 	static QUrl resolveRedirectUrl(const QueuedDownloader::Reply& reply);
 
@@ -38,7 +37,7 @@ private:
 	CompoundParser m_parser;
 	CrawlerOptions m_crawlerOptions;
 
-	std::vector<QUrl> m_urlList;
+	std::vector<LinkInfo> m_outlinks;
 };
 
 }

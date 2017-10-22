@@ -11,6 +11,8 @@ class RobotsTxtLoader : public QObject, public IRobotsTxtLoader
 public:
 	RobotsTxtLoader(QNetworkAccessManager* networkAccessor);
 
+	virtual void setUserAgent(const QByteArray& userAgent) override;
+
 	virtual void load(const QUrl& url) override;
 	virtual const QByteArray& content() const noexcept override;
 	virtual bool isReady() const noexcept override;
@@ -27,6 +29,7 @@ private:
 	bool m_isReady;
 	QByteArray m_content;
 	QNetworkAccessManager* m_networkAccessor;
+	QByteArray m_userAgent;
 };
 
 }

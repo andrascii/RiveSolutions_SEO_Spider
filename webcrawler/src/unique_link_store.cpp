@@ -56,6 +56,25 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, RequestType 
 	}
 }
 
+void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, RequestType requestType) noexcept
+{
+	const auto makeUrlList = [&linkList]() -> std::vector<QUrl>
+	{
+		std::vector<QUrl> urlList;
+
+		for(const LinkInfo& link : linkList)
+		{
+			urlList.push_back(link.url);
+		}
+
+		return urlList;
+	};
+
+	const std::vector<QUrl> urlList = makeUrlList();
+
+	saveUrlList(urlList, requestType);
+}
+
 size_t UniqueLinkStore::crawledLinksCount() const noexcept
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
