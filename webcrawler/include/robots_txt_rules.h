@@ -8,7 +8,6 @@ class RobotsTxtTokenizer;
 
 enum class UserAgentType
 {
-	InvalidBot,
 	GoogleBot,
 	YandexBot,
 	MailRuBot,

@@ -39,7 +39,8 @@ TEST(RobotsTxtBaseStrategyTests, RegularExpressionsRobotsTxt)
 		QString("User-agent: *\n") +
 		QString("Disallow : /api*html\n") +
 		QString("Disallow : */api/*/ext$\n") +
-		QString("Disallow : *js$\n");
+		QString("Disallow : *js$\n") + 
+		QString("Disallow: /example*$\n");
 
 	WebCrawler::RobotsTxtTokenizer tokenizer;
 	tokenizer.tokenize(robotsTxt);
@@ -62,6 +63,10 @@ TEST(RobotsTxtBaseStrategyTests, RegularExpressionsRobotsTxt)
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/a/api/a/b/js.htmlext"), WebCrawler::UserAgentType::GoogleBot, tokenizer)); // Disallow : /api*html
 	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl("http://a.com/a/a/b/js.htmlext"), WebCrawler::UserAgentType::GoogleBot, tokenizer)); // Disallow : /api*html
 	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl("http://a.com/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizer)); // Disallow : /api*html
+
+	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl("http://a.com/example/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizer)); // Disallow: /example*$
+	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl("http://a.com/example"), WebCrawler::UserAgentType::GoogleBot, tokenizer)); // Disallow: /example*$
+	
 
 	// TODO: test bad patterns
 	// TODO: test robots txt that has Google Bot record and Any Bot record
