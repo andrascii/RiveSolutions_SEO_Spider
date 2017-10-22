@@ -40,7 +40,7 @@ bool QueuedDownloader::extractReply(Reply& response) noexcept
 	response = std::move(*m_repliesQueue.begin());
 	m_repliesQueue.erase(m_repliesQueue.begin());
 
-	m_unprocessedRepliesCount--;
+	--m_unprocessedRepliesCount;
 
 	return true;
 }
@@ -129,8 +129,8 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 
 	m_repliesQueue.push_back(std::move(response));
 
-	m_pendingRequestsCount--;
-	m_unprocessedRepliesCount++;
+	--m_pendingRequestsCount;
+	++m_unprocessedRepliesCount;
 
 	reply->deleteLater();
 }
@@ -157,16 +157,16 @@ void QueuedDownloader::process()
 {
 	std::lock_guard<std::mutex> locker(m_requestQueueMutex);
 
-	static constexpr int s_maxUnprocessedReplies = 200;
-	static constexpr int s_maxPendingRequests = 50;
-	static constexpr int s_maxRequestsOneBatch = 100;
+	static constexpr auto s_maxUnprocessedReplies = 200;
+	static constexpr auto s_maxPendingRequests = 50;
+	static constexpr auto s_maxRequestsOneBatch = 100;
 
 	int requestsThisBatch = 0;
 	
 	while (m_requestQueue.size() && requestsThisBatch < s_maxRequestsOneBatch &&
 		m_pendingRequestsCount < s_maxPendingRequests && m_unprocessedRepliesCount < s_maxUnprocessedReplies)
 	{
-		CrawlerRequest request = *m_requestQueue.begin();
+		const CrawlerRequest request = *m_requestQueue.begin();
 		QNetworkReply* reply = nullptr;
 
 		switch (request.requestType)
@@ -199,8 +199,8 @@ void QueuedDownloader::process()
 
 		m_requestQueue.erase(m_requestQueue.begin());
 
-		m_pendingRequestsCount++;
-		requestsThisBatch++;
+		++m_pendingRequestsCount;
+		++requestsThisBatch;
 	}
 }
 

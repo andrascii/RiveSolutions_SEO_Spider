@@ -5,6 +5,8 @@
 namespace WebCrawler
 {
 
+// all methods must be a thread-safe
+
 class QueuedDownloader : public AbstractThreadableObject, public IQueuedDownloader
 {
 	Q_OBJECT
