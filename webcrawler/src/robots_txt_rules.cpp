@@ -21,6 +21,11 @@ RobotsTxtRules::RobotsTxtRules(const QByteArray& content)
 	m_strategies[UserAgentType::YahooBot] = new RobotsTxtYandexStrategy();
 }
 
+RobotsTxtRules::~RobotsTxtRules()
+{
+	qDeleteAll(m_strategies.values());
+}
+
 bool RobotsTxtRules::isValid() const
 {
 	return m_tokenizer->isValid();

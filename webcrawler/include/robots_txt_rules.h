@@ -35,6 +35,7 @@ class RobotsTxtRules : public IRobotsTxtRules
 public:
 	RobotsTxtRules();
 	RobotsTxtRules(const QByteArray& content);
+	~RobotsTxtRules();
 
 	virtual bool isValid() const override;
 	virtual bool isUrlAllowed(const QUrl& url, UserAgentType userAgentType) const override;
