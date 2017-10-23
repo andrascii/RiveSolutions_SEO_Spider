@@ -8,6 +8,8 @@ namespace WebCrawler
 class RobotsTxtBaseStrategy
 {
 public:
+	virtual ~RobotsTxtBaseStrategy() = default;
+
 	virtual bool isUrlAllowed(const QUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const;
 	virtual QUrl cleanUrl(const QUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const;
 
