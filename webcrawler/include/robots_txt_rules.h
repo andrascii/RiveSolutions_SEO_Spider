@@ -5,6 +5,7 @@ namespace WebCrawler
 
 class IRobotsTxtLoader;
 class RobotsTxtTokenizer;
+class RobotsTxtBaseStrategy;
 
 enum class UserAgentType
 {
@@ -42,6 +43,7 @@ public:
 
 private:
 	std::shared_ptr<RobotsTxtTokenizer> m_tokenizer;
+	QMap<UserAgentType, RobotsTxtBaseStrategy*> m_strategies;
 };
 
 Q_DECLARE_METATYPE(RobotsTxtRules)
