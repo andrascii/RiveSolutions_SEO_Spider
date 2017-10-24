@@ -527,7 +527,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr incomingPage) noe
 	};
 
 
-	const bool http = PageParserHelpers::isHttpOrHttpsScheme(incomingPage->url.toDisplayString());
+	const bool http = PageParserHelpers::isHttpOrHttpsScheme(incomingPage->url);
 	const bool externalOrNotHttp = incomingPage->isThisExternalPage || !http;
 
 	if (incomingPage->resourceType != ResourceType::ResourceHtml)
@@ -549,7 +549,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr incomingPage) noe
 
 	for (const RawResourceOnPage& resource : incomingPage->allResourcesOnPage)
 	{
-		QString resourceDisplayUrl = resource.thisResourceLink.url.toDisplayString();
+		const QString resourceDisplayUrl = resource.thisResourceLink.url.toDisplayString();
 
 		if (resource.resourceType == ResourceType::ResourceHtml ||
 			resourceDisplayUrl.startsWith("javascript:") ||
@@ -561,7 +561,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr incomingPage) noe
 		ParsedPagePtr resourceRaw = std::make_shared<ParsedPage>();
 		resourceRaw->url = resource.thisResourceLink.url;
 
-		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resourceDisplayUrl);
+		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url);
 		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, resourceRaw->url) || !httpResource;
 
 		const StorageType storage = externalOrNotHttpResource ?

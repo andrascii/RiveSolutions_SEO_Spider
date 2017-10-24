@@ -13,6 +13,8 @@ OptionsLinkFilter::OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const
 
 OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& linkInfo) const
 {
+	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url));
+
 	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, linkInfo.url);
 	const bool isNofollowLink = linkInfo.urlParameter == LinkParameter::NofollowParameter;
 
@@ -24,7 +26,7 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 		return PermissionNofollowNotAllowed;
 	}
 	
-	if (m_crawlerOptions.followRobotsTxtRules && isLinkBlockedByRobotsTxt(linkInfo))
+	if (!isUrlExternal && m_crawlerOptions.followRobotsTxtRules && isLinkBlockedByRobotsTxt(linkInfo))
 	{
 		return PermissionBlockedByRobotsTxtRules;
 	}

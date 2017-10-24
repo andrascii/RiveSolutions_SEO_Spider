@@ -75,9 +75,7 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 
 	for (const RawResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
-		const QString resourceUrlStr = resource.thisResourceLink.url.toDisplayString();
-
-		if (PageParserHelpers::isHttpOrHttpsScheme(resourceUrlStr) &&
+		if (PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) &&
 			resource.resourceType != ResourceType::ResourceHtml)
 		{
 			if (resource.resourceType == ResourceType::ResourceImage)

@@ -5,6 +5,7 @@
 #include "word_count_parser.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
+#include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
@@ -25,13 +26,13 @@ void HtmlResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		return;
 	}
 
-	std::vector<LinkInfo> linksInfo = PageParserHelpers::parsePageUrlList(output->root, false);
+	std::vector<LinkInfo> linksInfo = GumboParsingHelpers::parsePageUrlList(output->root, false);
 
 	for (LinkInfo& linkInfo : linksInfo)
 	{
 		linkInfo.url = PageParserHelpers::resolveUrl(page->url, linkInfo.url);
 
-		const ResourceType resourceType = PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url.toDisplayString()) ?
+		const ResourceType resourceType = PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url) ?
 			ResourceType::ResourceHtml : ResourceType::ResourceOther;
 
 		page->allResourcesOnPage.insert(RawResourceOnPage{ resourceType, linkInfo, ResourceSource::SourceTagA });

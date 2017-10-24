@@ -3,6 +3,7 @@
 #include "irobots_txt_loader.h"
 #include "robots_txt_base_strategy.h"
 #include "robots_txt_yandex_strategy.h"
+#include "page_parser_helpers.h"
 
 namespace WebCrawler
 {
@@ -18,7 +19,7 @@ RobotsTxtRules::RobotsTxtRules(const QByteArray& content)
 	m_tokenizer->tokenize(content);
 
 	m_strategies[UserAgentType::AnyBot] = std::make_shared<RobotsTxtBaseStrategy>();
-	m_strategies[UserAgentType::YahooBot] = std::make_shared<RobotsTxtYandexStrategy>();
+	m_strategies[UserAgentType::YandexBot] = std::make_shared<RobotsTxtYandexStrategy>();
 }
 
 bool RobotsTxtRules::isValid() const
@@ -28,6 +29,9 @@ bool RobotsTxtRules::isValid() const
 
 bool RobotsTxtRules::isUrlAllowed(const QUrl& url, UserAgentType userAgentType) const
 {
+	DEBUG_ASSERT(!url.isRelative());
+	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(url));
+
 	if (m_strategies.find(userAgentType) == m_strategies.cend())
 	{
 		WARNINGLOG << "No appropriate strategy was found";

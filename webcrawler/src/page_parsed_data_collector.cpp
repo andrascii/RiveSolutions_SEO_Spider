@@ -8,6 +8,7 @@
 #include "video_resources_parser.h"
 #include "flash_resources_parser.h"
 #include "status_code.h"
+#include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
@@ -41,7 +42,7 @@ ParsedPagePtr PageParsedDataCollector::collectPageDataFromReply(const QueuedDown
 	QByteArray decodedHtmlPage;
 	if (page->resourceType == ResourceType::ResourceHtml)
 	{
-		decodedHtmlPage = PageParserHelpers::decodeHtmlPage(reply.responseBody);
+		decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(reply.responseBody);
 #ifdef QT_DEBUG
 		page->rawResponse = qCompress(decodedHtmlPage, 9);
 #endif
@@ -142,7 +143,7 @@ void PageParsedDataCollector::collectParsedPageData(GumboOutput* output, ParsedP
 void PageParsedDataCollector::collectUrlList(GumboOutput* output)
 {
 	m_outlinks.clear();
-	m_outlinks = PageParserHelpers::parsePageUrlList(output->root, true);
+	m_outlinks = GumboParsingHelpers::parsePageUrlList(output->root, true);
 }
 
 void PageParsedDataCollector::setResourceCategory(ParsedPagePtr& page) const

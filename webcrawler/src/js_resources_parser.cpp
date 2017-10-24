@@ -1,6 +1,7 @@
 #include "js_resources_parser.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
+#include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
@@ -31,7 +32,7 @@ void JsResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		return QUrl(src->value);
 	};
 
-	std::vector<QUrl> urls = PageParserHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
 	for (const QUrl& url : resolvedUrls)

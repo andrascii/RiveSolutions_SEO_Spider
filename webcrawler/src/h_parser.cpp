@@ -1,5 +1,5 @@
 #include "h_parser.h"
-#include "page_parser_helpers.h"
+#include "gumbo_parsing_helpers.h"
 
 namespace WebCrawler
 {
@@ -26,12 +26,12 @@ void HParser::parseH1(GumboOutput* output, ParsedPagePtr& page) noexcept
 
 	auto res = [](const GumboNode* node)
 	{
-		QString val = PageParserHelpers::nodeText(node);
+		QString val = GumboParsingHelpers::nodeText(node);
 		val = val.trimmed().remove(QChar('\n'), Qt::CaseInsensitive);
 		return val;
 	};
 
-	std::vector<QString> h1 = PageParserHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QString> h1 = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	if (!h1.empty())
 	{
 		page->firstH1 = h1.front();
@@ -54,12 +54,12 @@ void HParser::parseH2(GumboOutput* output, ParsedPagePtr& page) noexcept
 
 	auto res = [](const GumboNode* node)
 	{
-		QString val = PageParserHelpers::nodeText(node);
+		QString val = GumboParsingHelpers::nodeText(node);
 		val = val.trimmed().remove(QChar('\n'), Qt::CaseInsensitive);
 		return val;
 	};
 
-	std::vector<QString> h2 = PageParserHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QString> h2 = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 	if (!h2.empty())
 	{
 		page->firstH2 = h2.front();
