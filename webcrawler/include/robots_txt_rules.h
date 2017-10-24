@@ -35,7 +35,6 @@ class RobotsTxtRules : public IRobotsTxtRules
 public:
 	RobotsTxtRules();
 	RobotsTxtRules(const QByteArray& content);
-	~RobotsTxtRules();
 
 	virtual bool isValid() const override;
 	virtual bool isUrlAllowed(const QUrl& url, UserAgentType userAgentType) const override;
@@ -44,7 +43,7 @@ public:
 
 private:
 	std::shared_ptr<RobotsTxtTokenizer> m_tokenizer;
-	QMap<UserAgentType, RobotsTxtBaseStrategy*> m_strategies;
+	QMap<UserAgentType, std::shared_ptr<RobotsTxtBaseStrategy>> m_strategies;
 };
 
 Q_DECLARE_METATYPE(RobotsTxtRules)

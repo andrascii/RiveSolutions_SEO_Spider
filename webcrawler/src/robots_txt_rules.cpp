@@ -17,13 +17,8 @@ RobotsTxtRules::RobotsTxtRules(const QByteArray& content)
 {
 	m_tokenizer->tokenize(content);
 
-	m_strategies[UserAgentType::AnyBot] = new RobotsTxtBaseStrategy();
-	m_strategies[UserAgentType::YahooBot] = new RobotsTxtYandexStrategy();
-}
-
-RobotsTxtRules::~RobotsTxtRules()
-{
-	qDeleteAll(m_strategies.values());
+	m_strategies[UserAgentType::AnyBot] = std::make_shared<RobotsTxtBaseStrategy>();
+	m_strategies[UserAgentType::YahooBot] = std::make_shared<RobotsTxtYandexStrategy>();
 }
 
 bool RobotsTxtRules::isValid() const
