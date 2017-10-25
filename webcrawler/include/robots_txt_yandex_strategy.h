@@ -4,7 +4,8 @@
 
 namespace WebCrawler
 {
-	
+
+// https://yandex.ru/support/webmaster/controlling-robot/robots-txt.html	
 
 class RobotsTxtYandexStrategy : public RobotsTxtBaseStrategy
 {

@@ -11,7 +11,7 @@ TEST(RobotsTxtBaseStrategyTests, SimpleRobotsTxt)
 		QString("User-agent: *\n") +
 		QString("Disallow: /s/\n") +
 		QString("Allow : /s/cc/\n") +
-		QString("Disallow : /stat/\n") +
+		QString("Disallow : /Stat/\n") +
 		QString("Disallow : /api\n") +
 		QString("Disallow : /editemail\n") +
 		QString("Disallow : /js\n");
@@ -29,6 +29,7 @@ TEST(RobotsTxtBaseStrategyTests, SimpleRobotsTxt)
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/stat/"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/stat/xxx"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/api"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
+	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/API"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/editemail/f/a/g/c/sss"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/js"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 }
@@ -73,4 +74,22 @@ TEST(RobotsTxtBaseStrategyTests, RegularExpressionsRobotsTxt)
 	// TODO: test robots txt that has no required bot record
 	// TODO: test invalid robots txt
 }
+
+TEST(RobotsTxtBaseStrategyTests, NonAsciiSymbolsRobotsTxt)
+{
+	QString robotsTxt =
+		QString("User-agent: *\n") +
+		QString("Disallow : /%D0%BA%D0%BE%D1%80%D0%B7%D0%B8%D0%BD%D0%B0");
+
+	WebCrawler::RobotsTxtTokenizer tokenizer;
+	tokenizer.tokenize(robotsTxt);
+
+	WebCrawler::RobotsTxtBaseStrategy baseStrategy;
+
+	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/%D0%BA%D0%BE%D1%80%D0%B7%D0%B8%D0%BD%D0%B0"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
+	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl(QString::fromWCharArray(L"http://a.com/корзина")), WebCrawler::UserAgentType::GoogleBot, tokenizer));
+	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl(QString::fromWCharArray(L"http://a.com/кќрзина")), WebCrawler::UserAgentType::GoogleBot, tokenizer));
+}
+
+
 }
