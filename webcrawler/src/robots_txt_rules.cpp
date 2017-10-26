@@ -40,7 +40,7 @@ bool RobotsTxtRules::isUrlAllowed(const QUrl& url, UserAgentType userAgentType) 
 	if (m_strategies.find(userAgentType) == m_strategies.cend())
 	{
 		WARNINGLOG << "No appropriate strategy was found";
-		m_strategies[UserAgentType::AnyBot]->isUrlAllowed(url, userAgentType, *m_tokenizer);
+		return m_strategies[UserAgentType::AnyBot]->isUrlAllowed(url, userAgentType, *m_tokenizer);
 	}
 
 	return m_strategies[userAgentType]->isUrlAllowed(url, userAgentType, *m_tokenizer);
