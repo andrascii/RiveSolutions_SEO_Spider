@@ -69,10 +69,81 @@ TEST(RobotsTxtBaseStrategyTests, RegularExpressionsRobotsTxt)
 	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl("http://a.com/example"), WebCrawler::UserAgentType::GoogleBot, tokenizer)); // Disallow: /example*$
 	
 
-	// TODO: test bad patterns
 	// TODO: test robots txt that has Google Bot record and Any Bot record
 	// TODO: test robots txt that has no required bot record
-	// TODO: test invalid robots txt
+}
+
+TEST(RobotsTxtBaseStrategyTests, BadPatternsRobotsTxt)
+{
+	QString robotsTxt =
+		QString("User-agent: *\n") +
+		QString("Disallow : /api*htm$l\n") +
+		QString("Disallow : /корзина");
+
+	WebCrawler::RobotsTxtTokenizer tokenizer;
+	tokenizer.tokenize(robotsTxt);
+
+	WebCrawler::RobotsTxtBaseStrategy baseStrategy;
+
+	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl("http://a.com/api/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizer)); // Disallow : /api*htm$l
+	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl(QString::fromWCharArray(L"http://a.com/корзина")), WebCrawler::UserAgentType::GoogleBot, tokenizer)); // "Disallow : /корзина"
+}
+
+
+TEST(RobotsTxtBaseStrategyTests, DifferentLineSeparatorsRobotsTxt)
+{
+	QString robotsTxtRN =
+		QString("User-agent: *\r\n") +
+		QString("Disallow : /api*html\r\n");
+
+	WebCrawler::RobotsTxtTokenizer tokenizerRN;
+	tokenizerRN.tokenize(robotsTxtRN);
+
+	WebCrawler::RobotsTxtBaseStrategy baseStrategyRN;
+
+	EXPECT_EQ(false, baseStrategyRN.isUrlAllowed(QUrl("http://a.com/api/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizerRN));
+	EXPECT_EQ(true, baseStrategyRN.isUrlAllowed(QUrl("http://a.com/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizerRN));
+
+
+	QString robotsTxtNR =
+		QString("User-agent: *\n\r") +
+		QString("Disallow : /api*html\n\r");
+
+	WebCrawler::RobotsTxtTokenizer tokenizerNR;
+	tokenizerNR.tokenize(robotsTxtNR);
+
+	WebCrawler::RobotsTxtBaseStrategy baseStrategyNR;
+
+	EXPECT_EQ(false, baseStrategyNR.isUrlAllowed(QUrl("http://a.com/api/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizerNR));
+	EXPECT_EQ(true, baseStrategyNR.isUrlAllowed(QUrl("http://a.com/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizerNR));
+
+
+	QString robotsTxtR =
+		QString("User-agent: *\r") +
+		QString("Disallow : /api*html\r");
+
+	WebCrawler::RobotsTxtTokenizer tokenizerR;
+	tokenizerR.tokenize(robotsTxtR);
+
+	WebCrawler::RobotsTxtBaseStrategy baseStrategyR;
+
+	EXPECT_EQ(false, baseStrategyR.isUrlAllowed(QUrl("http://a.com/api/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizerR));
+	EXPECT_EQ(true, baseStrategyR.isUrlAllowed(QUrl("http://a.com/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizerR));
+}
+
+TEST(RobotsTxtBaseStrategyTests, InvalidRobotsTxt)
+{
+	QString robotsTxt =
+		// no user-agent
+		QString("Disallow : /api*html\n");
+
+
+	WebCrawler::RobotsTxtTokenizer tokenizer;
+	tokenizer.tokenize(robotsTxt);
+
+	WebCrawler::RobotsTxtBaseStrategy baseStrategy;
+
+	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl("http://a.com/api/index.html"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 }
 
 TEST(RobotsTxtBaseStrategyTests, NonAsciiSymbolsRobotsTxt)
@@ -89,6 +160,7 @@ TEST(RobotsTxtBaseStrategyTests, NonAsciiSymbolsRobotsTxt)
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl("http://a.com/%D0%BA%D0%BE%D1%80%D0%B7%D0%B8%D0%BD%D0%B0"), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl(QString::fromWCharArray(L"http://a.com/корзина")), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(QUrl(QString::fromWCharArray(L"http://a.com/кќрзина")), WebCrawler::UserAgentType::GoogleBot, tokenizer));
+	EXPECT_EQ(true, baseStrategy.isUrlAllowed(QUrl(QString::fromWCharArray(L"http://a.com/кјрзина")), WebCrawler::UserAgentType::GoogleBot, tokenizer));
 }
 
 
