@@ -28,7 +28,18 @@ void TestsQueudedDownoader::scheduleUrl(const WebCrawler::CrawlerRequest& url) n
 			QStringList headerAndValue = line.split(":");
 			QByteArray header = headerAndValue.first().trimmed().toLatin1();
 			QByteArray value = headerAndValue.last().trimmed().toLatin1();
-			reply.responseHeaders[header] = value;
+
+			if (header.toLower() == "status-code")
+			{
+				bool ok;
+				reply.statusCode = value.toInt(&ok);
+				ASSERT(ok);
+			}
+			else
+			{
+				reply.responseHeaders[header] = value;
+			}
+			
 		}
 		inputFile.close();
 
