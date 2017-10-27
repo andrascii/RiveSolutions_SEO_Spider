@@ -54,7 +54,8 @@ bool RobotsTxtTokenizer::isValid() const noexcept
 
 void RobotsTxtTokenizer::tokenize(const QString& robotsTxtContent)
 {
-	QStringList rows = removeCommentaries(robotsTxtContent.split("\n", QString::SkipEmptyParts));
+	static QRegularExpression s_endOfLine(QString("(\\n|\\r|\\r\\n|\\n\\r)"));
+	QStringList rows = removeCommentaries(robotsTxtContent.split(s_endOfLine, QString::SkipEmptyParts));
 
 	UserAgentType userAgentType = UserAgentType::AnyBot;
 	bool currentUserAgentIsNotSupported = true;

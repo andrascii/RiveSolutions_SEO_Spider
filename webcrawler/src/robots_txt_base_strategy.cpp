@@ -44,20 +44,23 @@ QUrl RobotsTxtBaseStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentTyp
 	return url;
 }
 
-bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString value) const
+bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString& value) const
 {
-	if (!pattern.contains(QString("*")) && !pattern.contains(QString("$")))
+	QString cannonicalPattern = pattern.toLower();
+	QString cannonicalValue = QUrl(QUrl(value).toDisplayString().toLower()).toDisplayString(QUrl::FullyEncoded);
+
+	if (!cannonicalPattern.contains(QString("*")) && !cannonicalPattern.contains(QString("$")))
 	{
-		return value.startsWith(pattern);
+		return cannonicalValue.toLower().startsWith(cannonicalPattern.toLower());
 	}
 
-	if (pattern.contains(QString("$")) && pattern.indexOf("$") != pattern.size() - 1)
+	if (cannonicalPattern.contains(QString("$")) && cannonicalPattern.indexOf("$") != cannonicalPattern.size() - 1)
 	{
 		// bad pattern
 		return false;
 	}
 
-	QStringList parts = pattern.split(QString("*"), QString::SkipEmptyParts);
+	QStringList parts = cannonicalPattern.split(QString("*"), QString::SkipEmptyParts);
 	int index = 0;
 	bool matched = true;
 
@@ -74,9 +77,9 @@ bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString
 		}
 
 
-		if (i == 0 || pattern.startsWith(QString("*")))
+		if (i == 0 || cannonicalPattern.startsWith(QString("*")))
 		{
-			matched = strongMatch ? value.endsWith(parts[i]) : value.indexOf(parts[i]) != -1;
+			matched = strongMatch ? cannonicalValue.endsWith(parts[i]) : cannonicalValue.indexOf(parts[i]) != -1;
 			if (!matched)
 			{
 				break;
@@ -84,14 +87,14 @@ bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString
 
 			if (!strongMatch)
 			{
-				index = value.indexOf(parts[i]) + parts[i].size();
+				index = cannonicalValue.indexOf(parts[i]) + parts[i].size();
 			}
 			continue;
 		}
 
 
-		const int matchedIndex = value.indexOf(parts[i], index);
-		matched = strongMatch ? matchedIndex + parts[i].size() == pattern.size() - 1 : matchedIndex != -1;
+		const int matchedIndex = cannonicalValue.indexOf(parts[i], index);
+		matched = strongMatch ? matchedIndex + parts[i].size() == cannonicalPattern.size() - 1 : matchedIndex != -1;
 
 		if (!matched)
 		{

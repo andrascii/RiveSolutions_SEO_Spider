@@ -49,6 +49,12 @@ void checkResourceLinks(ParsedPagePtr page)
 	ASSERT(page->linksOnThisPage.size() == static_cast<size_t>(linksOnThisPage.size()));
 }
 
+bool successfulCode(const ParsedPagePtr& page)
+{
+	return page->statusCode >= Common::StatusCode::Ok200 &&
+		page->statusCode < Common::StatusCode::MultipleChoices300;
+}
+
 }
 
 namespace WebCrawler
@@ -171,22 +177,24 @@ void ModelController::processParsedPageTitle(ParsedPagePtr incomingPage) const n
 	const QString title = incomingPage->title;
 	const QString h1 = incomingPage->firstH1;
 
-	if (title.isEmpty() ||
+	const bool successfulResponseCode = successfulCode(incomingPage);
+
+	if ((title.isEmpty() && successfulResponseCode) ||
 		responseCode == Common::StatusCode::MovedPermanently301 || 
-		responseCode == Common::StatusCode::MovedTemporarily302)
+		responseCode == Common::StatusCode::MovedTemporarily302) // ??? why???
 	{
 		m_data->addParsedPage(incomingPage, StorageType::EmptyTitleUrlStorageType);
 	}
-	else if (title.size() > m_crawlerOptions.maxTitleLength)
+	else if (title.size() > m_crawlerOptions.maxTitleLength && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::VeryLongTitleUrlStorageType);
 	}
-	else if (title.size() < m_crawlerOptions.minTitleLength)
+	else if (title.size() < m_crawlerOptions.minTitleLength && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::VeryShortTitleUrlStorageType);
 	}
 
-	if (!title.isEmpty())
+	if (!title.isEmpty() && successfulResponseCode)
 	{
 		if (m_data->isParsedPageExists(incomingPage, StorageType::AllTitlesUrlStorageType))
 		{
@@ -200,12 +208,12 @@ void ModelController::processParsedPageTitle(ParsedPagePtr incomingPage) const n
 		}
 	}
 
-	if (!h1.isEmpty() && h1 == title)
+	if (!h1.isEmpty() && h1 == title && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::DuplicatedH1TitleUrlStorageType);
 	}
 
-	if (incomingPage->hasSeveralTitleTags)
+	if (incomingPage->hasSeveralTitleTags && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::SeveralTitleUrlStorageType);
 	}
@@ -218,22 +226,24 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr incomingPag
 		return;
 	}
 
+	const bool successfulResponseCode = successfulCode(incomingPage);
+
 	const int metaDescriptionLength = incomingPage->metaDescription.size();
 
-	if (metaDescriptionLength == 0)
+	if (metaDescriptionLength == 0 && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::EmptyMetaDescriptionUrlStorageType);
 	}
-	else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength)
+	else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::VeryLongMetaDescriptionUrlStorageType);
 	}
-	else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength)
+	else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::VeryShortMetaDescriptionUrlStorageType);
 	}
 
-	if (metaDescriptionLength > 0)
+	if (metaDescriptionLength > 0 && successfulResponseCode)
 	{
 		if (m_data->isParsedPageExists(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType))
 		{
@@ -247,7 +257,7 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr incomingPag
 		}
 	}
 
-	if (incomingPage->hasSeveralMetaDescriptionTags)
+	if (incomingPage->hasSeveralMetaDescriptionTags && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::SeveralMetaDescriptionUrlStorageType);
 	}
@@ -260,14 +270,16 @@ void ModelController::processParsedPageMetaKeywords(ParsedPagePtr incomingPage) 
 		return;
 	}
 
+	const bool successfulResponseCode = successfulCode(incomingPage);
+
 	const int metaKeywordsLength = incomingPage->metaKeywords.size();
 
-	if (metaKeywordsLength == 0)
+	if (metaKeywordsLength == 0 && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::EmptyMetaKeywordsUrlStorageType);
 	}
 
-	if (metaKeywordsLength > 0)
+	if (metaKeywordsLength > 0 && successfulResponseCode)
 	{
 		if (m_data->isParsedPageExists(incomingPage, StorageType::AllMetaKeywordsUrlStorageType))
 		{
@@ -282,7 +294,7 @@ void ModelController::processParsedPageMetaKeywords(ParsedPagePtr incomingPage) 
 	}
 	
 
-	if (incomingPage->hasSeveralMetaKeywordsTags)
+	if (incomingPage->hasSeveralMetaKeywordsTags && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::SeveralMetaKeywordsUrlStorageType);
 	}
@@ -295,18 +307,20 @@ void ModelController::processParsedPageH1(ParsedPagePtr incomingPage) const noex
 		return;
 	}
 
+	const bool successfulResponseCode = successfulCode(incomingPage);
+
 	const int h1Length = incomingPage->firstH1.size();
 
-	if (h1Length == 0)
+	if (h1Length == 0 && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::MissingH1UrlStorageType);
 	}
-	else if (h1Length > m_crawlerOptions.maxH1LengthChars)
+	else if (h1Length > m_crawlerOptions.maxH1LengthChars && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::VeryLongH1UrlStorageType);
 	}
 
-	if (h1Length > 0)
+	if (h1Length > 0 && successfulResponseCode)
 	{
 		if (m_data->isParsedPageExists(incomingPage, StorageType::AllH1UrlStorageType))
 		{
@@ -320,7 +334,7 @@ void ModelController::processParsedPageH1(ParsedPagePtr incomingPage) const noex
 		}
 	}
 
-	if (incomingPage->hasSeveralH1Tags)
+	if (incomingPage->hasSeveralH1Tags && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::SeveralH1UrlStorageType);
 	}
@@ -334,18 +348,20 @@ void ModelController::processParsedPageH2(ParsedPagePtr incomingPage) const noex
 		return;
 	}
 
+	const bool successfulResponseCode = successfulCode(incomingPage);
+
 	const int h2Length = incomingPage->firstH2.size();
 
-	if (h2Length == 0)
+	if (h2Length == 0 && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::MissingH2UrlStorageType);
 	}
-	else if (h2Length > m_crawlerOptions.maxH2LengthChars)
+	else if (h2Length > m_crawlerOptions.maxH2LengthChars && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::VeryLongH2UrlStorageType);
 	}
 
-	if (h2Length > 0)
+	if (h2Length > 0 && successfulResponseCode)
 	{
 		if (m_data->isParsedPageExists(incomingPage, StorageType::AllH2UrlStorageType))
 		{
@@ -359,7 +375,7 @@ void ModelController::processParsedPageH2(ParsedPagePtr incomingPage) const noex
 		}
 	}
 
-	if (incomingPage->hasSeveralEqualH2Tags)
+	if (incomingPage->hasSeveralEqualH2Tags && successfulResponseCode)
 	{
 		m_data->addParsedPage(incomingPage, StorageType::SeveralH2UrlStorageType);
 	}
