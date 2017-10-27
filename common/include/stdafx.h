@@ -75,7 +75,7 @@
 #error You compile this code on unsupported platform!
 #endif
 
-#include "debug_helpers_api.h"
+#include "common_macro_helpers.h"
 
 using namespace std::chrono_literals;
 using std::size_t;

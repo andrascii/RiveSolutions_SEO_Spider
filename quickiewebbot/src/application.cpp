@@ -12,7 +12,8 @@
 #include "dll_loader.h"
 #include "widget_under_mouse_info.h"
 #include "named_thread.h"
-
+#include "load_response.h"
+#include "load_request.h"
 
 namespace
 {
@@ -33,7 +34,13 @@ Application::Application(int& argc, char** argv)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
+	, m_loader(new Common::Loader)
 {
+	Common::LoadRequest loadRequest(QUrl("http://www.cyberforum.ru/"));
+
+	m_requester = std::make_shared<Common::Requester>(loadRequest);
+	m_requester->addCallback(this, &Application::testLoaderCallback);
+
 	SplashScreen::show();
 
 	initialize();
@@ -121,6 +128,8 @@ void Application::showMainWindow()
 	SplashScreen::finish();
 
 	mainWindow()->showMaximized();
+
+	//m_requester->start();
 }
 
 void Application::registerServices()
@@ -210,6 +219,11 @@ void Application::initializeStyleSheet() noexcept
 
 		INFOLOG << "Stylesheets loaded";
 	}
+}
+
+void Application::testLoaderCallback(Common::Requester* requester, const Common::LoadResponse& response)
+{
+	QMessageBox::information(nullptr, tr("Success"), tr("Successful loaded url"), QDialogButtonBox::Ok);
 }
 
 QString Application::operatingSystemVersion()

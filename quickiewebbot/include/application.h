@@ -5,6 +5,16 @@
 #include "summary_data_accessor_factory.h"
 #include "storage_adaptor_factory.h"
 #include "isettings_accessor.h"
+#include "requester.h"
+#include "iresponse.h"
+#include "loader.h"
+
+namespace Common
+{
+
+class LoadResponse;
+
+}
 
 namespace WebCrawler
 {
@@ -39,6 +49,8 @@ public:
 
 	void initializeStyleSheet() noexcept;
 
+	void testLoaderCallback(Common::Requester* requester, const Common::LoadResponse& response);
+
 	// ISettingsAccessor implementation
 	virtual void saveToSettings(const QByteArray& key, const QVariant& value) noexcept override;
 	virtual QVariant loadFromSettings(const QByteArray& key, const QVariant& defaultValue = QVariant()) const noexcept override;
@@ -71,6 +83,9 @@ private:
 
 	QSettings* m_settings;
 	QTranslator* m_translator;
+
+	std::unique_ptr<Common::Loader> m_loader;
+	Common::RequesterSharedPtr m_requester;
 };
 
 }
