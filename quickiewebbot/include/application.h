@@ -8,6 +8,7 @@
 #include "requester.h"
 #include "iresponse.h"
 #include "loader.h"
+#include "requester_wrapper.h"
 
 namespace Common
 {
@@ -85,7 +86,7 @@ private:
 	QTranslator* m_translator;
 
 	std::unique_ptr<Common::Loader> m_loader;
-	Common::RequesterSharedPtr m_requester;
+	Common::RequesterWrapper m_requester;
 };
 
 }

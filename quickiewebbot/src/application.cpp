@@ -37,9 +37,7 @@ Application::Application(int& argc, char** argv)
 	, m_loader(new Common::Loader)
 {
 	Common::LoadRequest loadRequest(QUrl("http://www.cyberforum.ru/"));
-
-	m_requester = std::make_shared<Common::Requester>(loadRequest);
-	m_requester->addCallback(this, &Application::testLoaderCallback);
+	m_requester.reset(loadRequest, this, &Application::testLoaderCallback);
 
 	SplashScreen::show();
 
@@ -129,7 +127,7 @@ void Application::showMainWindow()
 
 	mainWindow()->showMaximized();
 
-	//m_requester->start();
+//	m_requester->start();
 }
 
 void Application::registerServices()
