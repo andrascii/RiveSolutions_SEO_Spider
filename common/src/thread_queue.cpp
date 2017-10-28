@@ -2,6 +2,7 @@
 #include "common_macro_helpers.h"
 #include "constants.h"
 #include "requester.h"
+#include "handler_registry.h"
 
 namespace Common
 {
@@ -135,32 +136,40 @@ void ThreadQueue::execute()
 
 	Message message = messageQueue().extractMessage();
 
+	if (message.requester()->thread() != thread())
+	{
+		return;
+	}
+
+	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+
+	if (!handlerRegistry.isHandlerExists(message.handler()))
+	{
+		return;
+	}
+
 	switch(message.type())
 	{
 		case Message::MessageTypeStartRequest:
 		{
-			if (message.requester()->thread() != thread())
-			{
-				break;
-			}
-
 			RequesterSharedPtr requesterPtr = std::make_shared<Requester>(*message.requester());
 
-			VERIFY(QMetaObject::invokeMethod(message.handler(), "handleRequest", Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requesterPtr)));
+			VERIFY(QMetaObject::invokeMethod(message.handler(), "handleRequest", 
+				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requesterPtr)));
 
 			break;
 		}
 		case Message::MessageTypeStopRequest:
 		{
+			RequesterSharedPtr requesterPtr = std::make_shared<Requester>(*message.requester());
+
+			VERIFY(QMetaObject::invokeMethod(message.handler(), "stopRequestHandling",
+				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requesterPtr)));
+
 			break;
 		}
 		case Message::MessageTypePostResponse:
 		{
-			if (message.requester()->thread() != thread())
-			{
-				break;
-			}
-
 			message.requester()->processResponse(*message.response());
 
 			break;
@@ -168,6 +177,7 @@ void ThreadQueue::execute()
 		case Message::MessageTypeUndefined:
 		{
 			ASSERT(!"Undefined message type");
+
 			break;
 		}
 	}

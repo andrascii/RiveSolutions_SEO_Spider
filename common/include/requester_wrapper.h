@@ -22,8 +22,16 @@ public:
 	template <typename ObjectType, typename... ResponseTypes>
 	void reset(const IRequest& request, ObjectType* object, void(ObjectType::*...callback)(Requester*, const ResponseTypes))
 	{
+		static_assert(sizeof...(callback), "Must be at least one callback");
+
 		m_requesterPtr.reset(new Requester(request));
-		const int dummy[] = { (m_requesterPtr->addCallback(object, callback), 0)... };
+		addCallbackHelper((m_requesterPtr->addCallback(object, callback), 0)...);
+	}
+
+private:
+	template <typename... Args>
+	static void addCallbackHelper(Args...)
+	{
 	}
 
 private:

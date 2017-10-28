@@ -14,12 +14,21 @@ class Requester : public QObject, public std::enable_shared_from_this<Requester>
 	Q_OBJECT
 
 public:
+	enum State
+	{
+		StateClear,
+		StateWorking,
+		StateStopped
+	};
+
 	Requester() = default;
 	Requester(const Requester& other);
 	Requester(const IRequest& request);
 
 	QObject* handler() const noexcept;
 	IRequest* request() const noexcept;
+
+	State state() const noexcept;
 
 	void start();
 	void stop();
@@ -63,6 +72,8 @@ private:
 	Delegate m_delegate;
 
 	QObject* m_handler;
+
+	State m_state;
 };
 
 using RequesterSharedPtr = std::shared_ptr<Requester>;

@@ -17,6 +17,8 @@ public:
 
 	QObject* handlerForRequest(const IRequest& request);
 
+	bool isHandlerExists(QObject* handler) const;
+
 private:
 	HandlerRegistry() = default;
 	HandlerRegistry(const HandlerRegistry&) = delete;

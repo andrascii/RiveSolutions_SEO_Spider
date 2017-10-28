@@ -3,6 +3,11 @@
 namespace Common
 {
 
+void Delegate::clear()
+{
+	m_callbacks.clear();
+}
+
 void Delegate::add(const Callback& callback)
 {
 	m_callbacks.push_back(callback);

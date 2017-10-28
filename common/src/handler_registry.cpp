@@ -41,6 +41,17 @@ QObject* HandlerRegistry::handlerForRequest(const IRequest& request)
 	return handlerIterator == m_handlers.end() ? nullptr : handlerIterator->second;
 }
 
+bool HandlerRegistry::isHandlerExists(QObject* handler) const
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+
+	const auto& [result, requestType] = requestTypeForValue(handler);
+
+	Q_UNUSED(requestType);
+
+	return result;
+}
+
 std::pair<bool, RequestType> HandlerRegistry::requestTypeForValue(QObject* handler) const
 {
 	for (const auto& [key, value] : m_handlers)
