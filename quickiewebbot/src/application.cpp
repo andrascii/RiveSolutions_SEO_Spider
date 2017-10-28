@@ -11,9 +11,8 @@
 #include "settings_page_impl.h"
 #include "dll_loader.h"
 #include "widget_under_mouse_info.h"
-#include "load_response.h"
-#include "load_request.h"
 #include "move_to_thread_service.h"
+#include "host_info_provider.h"
 
 namespace
 {
@@ -34,11 +33,7 @@ Application::Application(int& argc, char** argv)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
-	, m_loader(new Common::Loader)
 {
-	Common::LoadRequest loadRequest(QUrl("http://www.cyberforum.ru/"));
-	m_requester.reset(loadRequest, this, &Application::testLoaderCallback);
-
 	SplashScreen::show();
 
 	initialize();
@@ -126,8 +121,6 @@ void Application::showMainWindow()
 	SplashScreen::finish();
 
 	mainWindow()->showMaximized();
-
-//	m_requester->start();
 }
 
 void Application::registerServices()
@@ -163,8 +156,11 @@ void Application::initialize() noexcept
 
 	registerServices();
 
+	HostInfoProvider* hostInfoProvider = new HostInfoProvider;
+
 	IMoveToThreadService* moveToThreadService = ServiceLocator::instance()->service<IMoveToThreadService>();
-	moveToThreadService->moveObjectToThread(m_crawler, "CrawlerThread");
+	moveToThreadService->moveObjectToThread(m_crawler, "BackgroundThread");
+	moveToThreadService->moveObjectToThread(hostInfoProvider, "BackgroundThread");
 
 	IDllLoader* dllLoader = ServiceLocator::instance()->service<IDllLoader>();
 
@@ -217,11 +213,6 @@ void Application::initializeStyleSheet() noexcept
 
 		INFOLOG << "Stylesheets loaded";
 	}
-}
-
-void Application::testLoaderCallback(Common::Requester* requester, const Common::LoadResponse& response)
-{
-	QMessageBox::information(nullptr, tr("Success"), tr("Successful loaded url"), QDialogButtonBox::Ok);
 }
 
 QString Application::operatingSystemVersion()

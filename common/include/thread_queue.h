@@ -5,7 +5,7 @@
 namespace Common
 {
 
-class IResponse;
+struct IResponse;
 class Requester;
 
 class ThreadQueue : public QObject
