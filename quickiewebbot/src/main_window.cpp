@@ -39,7 +39,7 @@ void MainWindow::showApplicationSettingsWidget()
 	m_applicationSettingsWidget->exec();
 }
 
-void MainWindow::showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon)
+void MainWindow::showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon, QDialogButtonBox::StandardButtons buttons)
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog(this);
 	messageBoxDialog->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -47,6 +47,7 @@ void MainWindow::showMessageBoxDialog(const QString& title, const QString& messa
 	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setIcon(icon);
+	messageBoxDialog->setStandardButtons(buttons);
 
 	messageBoxDialog->show();
 }
@@ -143,7 +144,8 @@ void MainWindow::onHostInfoResponse(Common::Requester* requester, const GetHostI
 		showMessageBoxDialog("DNS Lookup Failed!",
 			"I'm sorry but I cannot to find this website.\n"
 			"Please, be sure that you entered a valid address.",
-			MessageBoxDialog::WarningIcon);
+			MessageBoxDialog::WarningIcon,
+			QDialogButtonBox::Ok);
 
 		return;
 	}
