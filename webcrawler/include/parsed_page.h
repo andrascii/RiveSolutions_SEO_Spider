@@ -37,6 +37,24 @@ enum class ResourceSource
 	SourceCSS
 };
 
+enum MetaRobotsItem
+{
+	MetaRobotsEmpty = 0,
+	MetaRobotsAll = 1,
+	MetaRobotsNoIndex = 1 << 1,
+	MetaRobotsNoFollow = 1 << 2,
+	MetaRobotsNone = 1 << 3,
+	MetaRobotsNoArchive = 1 << 4,
+	MetaRobotsNoSnippet = 1 << 5,
+	MetaRobotsNoODP = 1 << 6,
+	MetaRobotsNoTranslate = 1 << 7,
+	MetaRobotsNoImageIndex = 1 << 8,
+	MetaRobotsIndex = 1 << 9,
+	MetaRobotsFollow = 1 << 10
+};
+
+Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem);
+
 struct LinkInfo
 {
 	QUrl url;
@@ -73,7 +91,7 @@ struct ParsedPage
 	QString title;
 	QString contentType;
 	QString metaRefresh;
-	QString metaRobots;
+	//QString metaRobots;
 	QString metaDescription;
 	QString metaKeywords;
 	QString serverResponse;
@@ -83,6 +101,7 @@ struct ParsedPage
 	QString secondH2;
 	QString canonicalLinkElement;
 	Common::StatusCode statusCode;
+	MetaRobotsFlags metaRobotsFlags = MetaRobotsEmpty;
 
 	int pageSizeKilobytes = int();
 	int wordCount = int();

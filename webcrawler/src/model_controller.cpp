@@ -179,9 +179,7 @@ void ModelController::processParsedPageTitle(ParsedPagePtr incomingPage) const n
 
 	const bool successfulResponseCode = successfulCode(incomingPage);
 
-	if ((title.isEmpty() && successfulResponseCode) ||
-		responseCode == Common::StatusCode::MovedPermanently301 || 
-		responseCode == Common::StatusCode::MovedTemporarily302) // ??? why???
+	if ((title.isEmpty() && successfulResponseCode))
 	{
 		m_data->addParsedPage(incomingPage, StorageType::EmptyTitleUrlStorageType);
 	}

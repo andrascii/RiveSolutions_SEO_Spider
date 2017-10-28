@@ -47,7 +47,7 @@ struct ParsedPageHasher : public IParsedPageHasher
 			{ IParsedPageHasher::UrlItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->url.toDisplayString().toStdString()); } },
 			{ IParsedPageHasher::ContentItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->contentType.toStdString()); } },
 			{ IParsedPageHasher::MetaRefreshItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
-			{ IParsedPageHasher::MetaRobotsItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->metaRobots.toStdString()); } },
+			{ IParsedPageHasher::MetaRobotsItemType, [](const ParsedPagePtr& el) { return s_intHasher(el->metaRobotsFlags); } },
 			{ IParsedPageHasher::RedirectedUrlItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->redirectedUrl.toDisplayString().toStdString()); } },
 			{ IParsedPageHasher::ServerResponseItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->serverResponse.toStdString()); } },
 			{ IParsedPageHasher::TitleItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->title.toStdString()); } },

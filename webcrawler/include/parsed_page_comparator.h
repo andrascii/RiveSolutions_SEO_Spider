@@ -64,7 +64,7 @@ struct ParsedPageMetaRobotsComparator : IParsedPageComparator
 {
 	virtual bool operator()(const ParsedPagePtr& lhs, const ParsedPagePtr& rhs) const noexcept override
 	{
-		return lhs->metaRobots == rhs->metaRobots;
+		return lhs->metaRobotsFlags == rhs->metaRobotsFlags;
 	}
 };
 
