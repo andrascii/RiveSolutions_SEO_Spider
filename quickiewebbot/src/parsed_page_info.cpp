@@ -432,6 +432,8 @@ QVariant ParsedPageInfo::acceptMetaRobots() const
 	addFlag(WebCrawler::MetaRobotsNoImageIndex, QString("noimageindex"));
 	addFlag(WebCrawler::MetaRobotsIndex, QString("index"));
 	addFlag(WebCrawler::MetaRobotsFollow, QString("follow"));
+	addFlag(WebCrawler::MetaRobotsNoYaCa, QString("noyaca"));
+	addFlag(WebCrawler::MetaRobotsNoYDir, QString("noydir"));
 
 	s_cache[flags] = result;
 	return result;

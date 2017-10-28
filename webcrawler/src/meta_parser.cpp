@@ -161,6 +161,8 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 		{ QString("noimageindex"), MetaRobotsNoImageIndex },
 		{ QString("index"), MetaRobotsIndex },
 		{ QString("follow"), MetaRobotsFollow },
+		{ QString("noyaca"), MetaRobotsNoYaCa },
+		{ QString("noydir"), MetaRobotsNoYDir },
 	};
 
 	for (const QString& robotsItem : robots)
