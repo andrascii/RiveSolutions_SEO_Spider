@@ -26,7 +26,7 @@ public:
 
 	MessageType type() const noexcept;
 	QThread* targetThread() const noexcept;
-	Requester* requester() const noexcept;
+	RequesterSharedPtr requester() const noexcept;
 	IResponse* response() const noexcept;
 	IRequest* request() const noexcept;
 	QObject* handler() const noexcept;
@@ -37,7 +37,7 @@ private:
 private:
 	MessageType m_type;
 	QThread* m_targetThread;
-	RequesterSharedPtr m_requester;
+	RequesterWeakPtr m_requester;
 	IResponseSharedPtr m_response;
 };
 

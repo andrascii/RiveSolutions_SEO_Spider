@@ -135,15 +135,10 @@ void ThreadQueue::execute()
 	}
 
 	Message message = messageQueue().extractMessage();
-
-	if (message.requester()->thread() != thread())
-	{
-		return;
-	}
-
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+	RequesterSharedPtr requester = message.requester();
 
-	if (!handlerRegistry.isHandlerExists(message.handler()))
+	if (!requester || requester->thread() != thread() || !handlerRegistry.isHandlerExists(message.handler()))
 	{
 		return;
 	}
@@ -152,25 +147,21 @@ void ThreadQueue::execute()
 	{
 		case Message::MessageTypeStartRequest:
 		{
-			RequesterSharedPtr requesterPtr = std::make_shared<Requester>(*message.requester());
-
 			VERIFY(QMetaObject::invokeMethod(message.handler(), "handleRequest", 
-				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requesterPtr)));
+				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requester)));
 
 			break;
 		}
 		case Message::MessageTypeStopRequest:
 		{
-			RequesterSharedPtr requesterPtr = std::make_shared<Requester>(*message.requester());
-
 			VERIFY(QMetaObject::invokeMethod(message.handler(), "stopRequestHandling",
-				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requesterPtr)));
+				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requester)));
 
 			break;
 		}
 		case Message::MessageTypePostResponse:
 		{
-			message.requester()->processResponse(*message.response());
+			requester->processResponse(*message.response());
 
 			break;
 		}

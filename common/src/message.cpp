@@ -34,9 +34,9 @@ QThread* Message::targetThread() const noexcept
 	return m_targetThread;
 }
 
-Requester* Message::requester() const noexcept
+RequesterSharedPtr Message::requester() const noexcept
 {
-	return m_requester.get();
+	return m_requester.lock();
 }
 
 IResponse* Message::response() const noexcept

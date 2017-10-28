@@ -22,6 +22,8 @@ public:
 	void setMessage(const QString& message) const;
 	void setIcon(Icon icon) const;
 
+	void setStandardButtons(QDialogButtonBox::StandardButtons buttons);
+
 	int	result() const;
 
 public slots:

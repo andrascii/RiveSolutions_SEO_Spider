@@ -19,6 +19,11 @@ public:
 		return get();
 	}
 
+	void reset()
+	{
+		m_requesterPtr.reset();
+	}
+
 	template <typename ObjectType, typename... ResponseTypes>
 	void reset(const IRequest& request, ObjectType* object, void(ObjectType::*...callback)(Requester*, const ResponseTypes))
 	{

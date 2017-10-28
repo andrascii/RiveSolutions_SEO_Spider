@@ -31,7 +31,10 @@ signals:
 
 public slots:
 	void showApplicationSettingsWidget();
-	void showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon);
+	void showMessageBoxDialog(const QString& title, 
+		const QString& message, 
+		MessageBoxDialog::Icon icon, 
+		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
 private:
 	void createActions() const;

@@ -58,6 +58,11 @@ void MessageBoxDialog::setIcon(Icon icon) const
 	}
 }
 
+void MessageBoxDialog::setStandardButtons(QDialogButtonBox::StandardButtons buttons)
+{
+	m_ui->buttonBox->setStandardButtons(buttons);
+}
+
 int MessageBoxDialog::result() const
 {
 	return m_dialogCode;
