@@ -77,6 +77,7 @@ private:
 };
 
 using RequesterSharedPtr = std::shared_ptr<Requester>;
+using RequesterWeakPtr = std::weak_ptr<Requester>;
 
 }
 
