@@ -54,7 +54,7 @@ ParsedPagePtr PageParsedDataCollector::collectPageDataFromReply(const QueuedDown
 
 	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
 
-	collectParsedPageData(gumboOutput.output(), page);
+	collectParsedPageData(gumboOutput.output(), reply.responseHeaders, page);
 	collectUrlList(gumboOutput.output());
 
 	return page;
@@ -119,14 +119,14 @@ void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& re
 
 	page->contentType = QString();
 
-	foreach(QByteArray key, reply.responseHeaders.keys())
+	for (auto it = std::cbegin(reply.responseHeaders); it != std::cend(reply.responseHeaders); ++it)
 	{
-		if (key.toLower() != "content-type")
+		if (it->first.toLower() != "content-type")
 		{
 			continue;
 		}
 
-		page->contentType = reply.responseHeaders.value(key);
+		page->contentType = it->second;
 		break;
 	}
 
@@ -135,9 +135,9 @@ void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& re
 	page->redirectedUrl = resolveRedirectUrl(reply);
 }
 
-void PageParsedDataCollector::collectParsedPageData(GumboOutput* output, ParsedPagePtr& page)
+void PageParsedDataCollector::collectParsedPageData(GumboOutput* output, const IPageParser::ResponseHeaders& headers, ParsedPagePtr& page)
 {
-	m_parser.parse(output, page);
+	m_parser.parse(output, headers, page);
 }
 
 void PageParsedDataCollector::collectUrlList(GumboOutput* output)

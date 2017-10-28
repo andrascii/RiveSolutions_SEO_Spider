@@ -19,7 +19,7 @@ HtmlResourcesParser::HtmlResourcesParser()
 	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceHtml));
 }
 
-void HtmlResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
+void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
@@ -38,7 +38,7 @@ void HtmlResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		page->allResourcesOnPage.insert(RawResourceOnPage{ resourceType, linkInfo, ResourceSource::SourceTagA });
 	}
 
-	CompoundParser::parse(output, page);
+	CompoundParser::parse(output, headers, page);
 }
 
 }

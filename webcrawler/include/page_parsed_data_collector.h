@@ -26,7 +26,7 @@ private:
 	static QUrl resolveRedirectUrl(const QueuedDownloader::Reply& reply);
 
 	void collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const;
-	void collectParsedPageData(GumboOutput* output, ParsedPagePtr& page);
+	void collectParsedPageData(GumboOutput* output, const IPageParser::ResponseHeaders& headers, ParsedPagePtr& page);
 	void collectUrlList(GumboOutput* output);
 
 	void setResourceCategory(ParsedPagePtr& page) const;

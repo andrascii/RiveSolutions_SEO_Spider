@@ -5,7 +5,7 @@
 namespace WebCrawler
 {
 
-void MetaParser::parse(GumboOutput* output, ParsedPagePtr& page)
+void MetaParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
@@ -16,7 +16,7 @@ void MetaParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	parseMetaRefresh(output, page);
 	parseMetaDescription(output, page);
 	parseMetaKeywords(output, page);
-	parseMetaRobots(output, page);
+	parseMetaRobots(output, headers, page);
 }
 
 void MetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& page) noexcept
@@ -127,7 +127,7 @@ void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noe
 	page->hasSeveralMetaKeywordsTags = keywords.size() > 1;
 }
 
-void MetaParser::parseMetaRobots(GumboOutput* output, ParsedPagePtr& page) noexcept
+void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) noexcept
 {
 	auto cond = [](const GumboNode* node)
 	{
@@ -166,6 +166,23 @@ void MetaParser::parseMetaRobots(GumboOutput* output, ParsedPagePtr& page) noexc
 	for (const QString& robotsItem : robots)
 	{
 		const QStringList parts = robotsItem.split(QLatin1Char(','), QString::SkipEmptyParts);
+		for (const QString& part : parts)
+		{
+			auto it = metaRobotsMapping.find(part.trimmed().toLower());
+			if (it != metaRobotsMapping.cend())
+			{
+				page->metaRobotsFlags.setFlag(it->second);
+			}
+		}
+	}
+
+	for (auto it = std::cbegin(headers); it != std::cend(headers); ++it)
+	{
+		if (it->first.toLower() != QString("x-robots-tag"))
+		{
+			continue;
+		}
+		const QStringList parts = QString(it->second).split(QLatin1Char(','), QString::SkipEmptyParts);
 		for (const QString& part : parts)
 		{
 			auto it = metaRobotsMapping.find(part.trimmed().toLower());

@@ -11,7 +11,7 @@ CssResourcesParser::CssResourcesParser()
 	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceStyleSheet));
 }
 
-void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
+void CssResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
@@ -49,7 +49,7 @@ void CssResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		page->allResourcesOnPage.insert(cssResource);
 	}
 
-	CompoundParser::parse(output, page);
+	CompoundParser::parse(output, headers, page);
 }
 
 }

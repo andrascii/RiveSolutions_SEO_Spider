@@ -8,7 +8,7 @@ DataResourcesParser::DataResourcesParser(ResourceType resourceType)
 {
 }
 
-void DataResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
+void DataResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	Q_UNUSED(output);
 	Q_UNUSED(page);

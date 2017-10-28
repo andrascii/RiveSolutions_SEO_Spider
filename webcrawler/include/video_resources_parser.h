@@ -11,7 +11,7 @@ class VideoResourcesParser : public CompoundParser
 {
 public:
 	VideoResourcesParser();
-	virtual void parse(GumboOutput* output, ParsedPagePtr& page) override;
+	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
 };
 
 }
