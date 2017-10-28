@@ -1,6 +1,8 @@
 #include "loader.h"
 #include "load_response.h"
 #include "load_request.h"
+#include "thread_queue.h"
+#include "handler_registry.h"
 
 namespace Common
 {
@@ -20,13 +22,6 @@ Loader::Loader(QObject* parent)
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), this, SLOT(onLoadingDone(QNetworkReply*))));
 }
 
-
-Loader::Loader(const Loader& other)
-	: m_networkAccessor(other.m_networkAccessor)
-	, m_requester(other.m_requester)
-{
-}
-
 void Loader::handleRequest(RequesterSharedPtr requester)
 {
 	ASSERT(requester->request()->requestType() == RequestType::RequestTypeLoad);
@@ -35,6 +30,12 @@ void Loader::handleRequest(RequesterSharedPtr requester)
 	m_requester = requester;
 
 	m_networkAccessor->get(QNetworkRequest(loadRequest->url()));
+}
+
+Loader::Loader(const Loader& other)
+	: m_networkAccessor(other.m_networkAccessor)
+	, m_requester(other.m_requester)
+{
 }
 
 void Loader::stopRequestHandling(RequesterSharedPtr requester)

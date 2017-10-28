@@ -9,15 +9,6 @@ HandlerRegistry& HandlerRegistry::instance()
 	return *s_handlerRegistry.get();
 }
 
-void HandlerRegistry::registrateHandler(QObject* handler, RequestType requestType)
-{
-	std::lock_guard<std::mutex> locker(m_mutex);
-
-	ASSERT(m_handlers.find(requestType) == m_handlers.end());
-
-	m_handlers[requestType] = handler;
-}
-
 void HandlerRegistry::unregistrateHandler(QObject* handler)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "handler_registry.h"
 #include "irequest.h"
 #include "iresponse.h"
-#include "thread_queue.h"
+#include "requester.h"
 
 namespace Common
 {

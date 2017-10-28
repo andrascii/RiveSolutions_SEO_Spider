@@ -11,9 +11,9 @@
 #include "settings_page_impl.h"
 #include "dll_loader.h"
 #include "widget_under_mouse_info.h"
-#include "named_thread.h"
 #include "load_response.h"
 #include "load_request.h"
+#include "move_to_thread_service.h"
 
 namespace
 {
@@ -134,6 +134,7 @@ void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
 	ServiceLocator::instance()->addService<IDllLoader>(new DllLoader);
+	ServiceLocator::instance()->addService<IMoveToThreadService>(new MoveToThreadService);
 }
 
 void Application::initQSettings()
@@ -155,16 +156,15 @@ void Application::initialize() noexcept
 {
 	SplashScreen::showMessage("Initializing...");
 
-	Common::NamedThread* thread = new Common::NamedThread("Crawler");
-	m_crawler->moveToThread(thread);
-	thread->start();
-
 #ifdef PRODUCTION
 	// let users to show the splash screen
 	std::this_thread::sleep_for(3s);
 #endif
 
 	registerServices();
+
+	IMoveToThreadService* moveToThreadService = ServiceLocator::instance()->service<IMoveToThreadService>();
+	moveToThreadService->moveObjectToThread(m_crawler, "CrawlerThread");
 
 	IDllLoader* dllLoader = ServiceLocator::instance()->service<IDllLoader>();
 
@@ -410,21 +410,7 @@ QString Application::operatingSystemVersion()
 Application::~Application()
 {
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
-
-	// it needs in order to enough that Crawler will be destroyed 
-	// in the same thread where it is living
-	m_crawler->deleteLater();
-	processEvents();
-
-	QThread* crawlerThread = m_crawler->thread();
-
-	if (crawlerThread != QThread::currentThread())
-	{
-		crawlerThread->quit();
-		crawlerThread->wait();
-
-		delete crawlerThread;
-	}
+	ServiceLocator::instance()->destroyService<IMoveToThreadService>();
 }
 
 }
