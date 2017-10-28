@@ -1,14 +1,6 @@
 #pragma once
 
-namespace MetaHelpers
-{
-
-using YesType = char;
-using NoType = char[2];
-
-}
-
-#define DEFINE_METHOD_CHECK(Method)																							\
+#define DEFINE_METHOD_CHECK(Method)																								\
 namespace MetaHelpers {																											\
 template <typename ObjectType, typename... ParamTypes>																			\
 YesType& hasMethodHelper_##Method(decltype(std::declval<ObjectType&>().Method(std::declval<ParamTypes&>()...))* p);				\
@@ -22,3 +14,11 @@ struct HasMethod_##Method																										\
 {																																\
 };																																\
 }																																
+
+namespace MetaHelpers
+{
+
+using YesType = char;
+using NoType = char[2];
+
+}
