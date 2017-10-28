@@ -4,8 +4,10 @@
 namespace WebCrawler
 {
 
-void TitleParser::parse(GumboOutput* output, ParsedPagePtr& page) noexcept
-{	
+void TitleParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) noexcept
+{
+	Q_UNUSED(headers);
+
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;

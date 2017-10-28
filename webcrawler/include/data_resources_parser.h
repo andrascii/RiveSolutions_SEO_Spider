@@ -10,7 +10,7 @@ class DataResourcesParser : public IPageParser
 {
 public:
 	DataResourcesParser(ResourceType resourceType);
-	virtual void parse(GumboOutput* output, ParsedPagePtr& page) override;
+	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
 
 private:
 	ResourceType m_resourceType;

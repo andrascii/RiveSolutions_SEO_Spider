@@ -9,7 +9,7 @@ namespace WebCrawler
 class HParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, ParsedPagePtr& pageRaw) override;
+	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& pageRaw) override;
 
 private:
 	void parseH1(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept;

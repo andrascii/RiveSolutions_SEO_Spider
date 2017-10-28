@@ -11,7 +11,7 @@ JsResourcesParser::JsResourcesParser()
 	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceJavaScript));
 }
 
-void JsResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
+void JsResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
@@ -48,7 +48,7 @@ void JsResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		page->allResourcesOnPage.insert(jsResource);
 	}
 
-	CompoundParser::parse(output, page);
+	CompoundParser::parse(output, headers, page);
 }
 
 }

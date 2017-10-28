@@ -11,7 +11,7 @@ FlashResourcesParser::FlashResourcesParser()
 	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceFlash));
 }
 
-void FlashResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
+void FlashResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
@@ -22,7 +22,7 @@ void FlashResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 	parseFlashResourcesV2(output, page);
 	parseFlashResourcesV3(output, page);
 
-	CompoundParser::parse(output, page);
+	CompoundParser::parse(output, headers, page);
 }
 
 void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPagePtr& page) noexcept

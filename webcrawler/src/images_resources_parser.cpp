@@ -11,7 +11,7 @@ ImagesResourcesParser::ImagesResourcesParser()
 	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceImage));
 }
 
-void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
+void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
@@ -51,7 +51,7 @@ void ImagesResourcesParser::parse(GumboOutput* output, ParsedPagePtr& page)
 		page->allResourcesOnPage.insert(imageResource);
 	}
 
-	CompoundParser::parse(output, page);
+	CompoundParser::parse(output, headers, page);
 }
 
 }

@@ -11,7 +11,7 @@ class FlashResourcesParser : public CompoundParser
 {
 public:
 	FlashResourcesParser();
-	virtual void parse(GumboOutput* output, ParsedPagePtr& page) override;
+	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
 
 private:
 	void parseFlashResourcesV1(GumboOutput* output, ParsedPagePtr& page) noexcept;

@@ -112,10 +112,11 @@ void QueuedDownloader::processReply(QNetworkReply* reply)
 	QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 	Reply response{ statusCode.isValid() ? statusCode.toInt() : -1, reply->url() };
 
+	response.responseHeaders = reply->rawHeaderPairs();
 	for (const QPair<QByteArray, QByteArray>& headerValuePair : reply->rawHeaderPairs())
 	{
 		response.responseHeaderValuePairs += headerValuePair.first + ": " + headerValuePair.second + "\n";
-		response.responseHeaders[headerValuePair.first] = headerValuePair.second;
+		
 	}
 
 	if (processBody)

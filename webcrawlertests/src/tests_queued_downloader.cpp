@@ -37,7 +37,7 @@ void TestsQueudedDownoader::scheduleUrl(const WebCrawler::CrawlerRequest& url) n
 			}
 			else
 			{
-				reply.responseHeaders[header] = value;
+				reply.responseHeaders.push_back(QPair<QByteArray, QByteArray>(header, value));
 			}
 			
 		}

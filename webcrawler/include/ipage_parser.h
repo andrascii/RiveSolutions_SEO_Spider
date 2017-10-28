@@ -9,7 +9,9 @@ namespace WebCrawler
 class IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, ParsedPagePtr& page) = 0;
+	using ResponseHeaders = QList<QPair<QByteArray, QByteArray>>;
+
+	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) = 0;
 };
 
 }

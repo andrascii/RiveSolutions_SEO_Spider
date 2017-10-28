@@ -4,8 +4,10 @@
 namespace WebCrawler
 {
 
-void WordCountParser::parse(GumboOutput* output, ParsedPagePtr& page) noexcept
+void WordCountParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) noexcept
 {
+	Q_UNUSED(headers);
+
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;

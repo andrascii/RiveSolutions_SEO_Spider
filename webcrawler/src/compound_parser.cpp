@@ -3,11 +3,11 @@
 namespace WebCrawler
 {
 
-void CompoundParser::parse(GumboOutput* output, ParsedPagePtr& page)
+void CompoundParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	for (const std::shared_ptr<IPageParser>& parser : m_parsers)
 	{
-		parser->parse(output, page);
+		parser->parse(output, headers, page);
 	}
 }
 

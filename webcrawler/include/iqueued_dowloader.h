@@ -15,7 +15,7 @@ public:
 		QUrl redirectUrl;
 		QByteArray responseBody;
 		QByteArray responseHeaderValuePairs;
-		QMap<QByteArray, QByteArray> responseHeaders;
+		QList<QPair<QByteArray, QByteArray>> responseHeaders;
 	};
 
 	virtual ~IQueuedDownloader() = default;
