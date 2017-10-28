@@ -144,7 +144,13 @@ std::pair<QString, QString> TestsQueudedDownoader::mapUrlToTestDataFiles(const W
 
 	QString requestedFilePath = QDir::cleanPath(testsDir.absolutePath() + "/" + hostPath + "/" + path);
 	QString metadataFilePath = requestedFilePath + ".meta";
-	if (!QFileInfo::exists(metadataFilePath) || !QFileInfo::exists(requestedFilePath))
+
+	const bool metaFileExists = QFileInfo::exists(metadataFilePath);
+	const bool requestedFileExists = QFileInfo::exists(requestedFilePath);
+
+	ASSERT(metaFileExists && requestedFileExists || !metaFileExists && !requestedFileExists);
+
+	if (!metaFileExists || !requestedFileExists)
 	{
 		return std::make_pair(QString::null, QString::null);
 	}

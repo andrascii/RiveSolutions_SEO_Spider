@@ -402,7 +402,39 @@ QVariant ParsedPageInfo::acceptMetaRefresh() const
 
 QVariant ParsedPageInfo::acceptMetaRobots() const
 {
-	return m_parsedPage->metaRobots;
+	static std::map<int, QString> s_cache;
+
+	const WebCrawler::MetaRobotsFlags flags = m_parsedPage->metaRobotsFlags;
+
+	auto it = s_cache.find(flags);
+	if (it != s_cache.end())
+	{
+		return it->second;
+	}
+	
+	QString result;
+	auto addFlag = [&flags, &result](WebCrawler::MetaRobotsItem flag, const QString& flagStr)
+	{
+		if (flags.testFlag(flag))
+		{
+			result += result.isEmpty() ? flagStr : QString(", ") + flagStr;
+		}
+	};
+	
+	addFlag(WebCrawler::MetaRobotsAll, QString("all"));
+	addFlag(WebCrawler::MetaRobotsNoIndex, QString("noindex"));
+	addFlag(WebCrawler::MetaRobotsNoFollow, QString("nofollow"));
+	addFlag(WebCrawler::MetaRobotsNone, QString("none"));
+	addFlag(WebCrawler::MetaRobotsNoArchive, QString("noarchive"));
+	addFlag(WebCrawler::MetaRobotsNoSnippet, QString("nosnippet"));
+	addFlag(WebCrawler::MetaRobotsNoODP, QString("noodp"));
+	addFlag(WebCrawler::MetaRobotsNoTranslate, QString("notranslate"));
+	addFlag(WebCrawler::MetaRobotsNoImageIndex, QString("noimageindex"));
+	addFlag(WebCrawler::MetaRobotsIndex, QString("index"));
+	addFlag(WebCrawler::MetaRobotsFollow, QString("follow"));
+
+	s_cache[flags] = result;
+	return result;
 }
 
 QVariant ParsedPageInfo::acceptRedirectedUrl() const

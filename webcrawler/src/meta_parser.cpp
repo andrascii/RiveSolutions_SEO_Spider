@@ -147,9 +147,33 @@ void MetaParser::parseMetaRobots(GumboOutput* output, ParsedPagePtr& page) noexc
 	};
 
 	std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	if (!robots.empty())
+
+	const std::map<QString, MetaRobotsItem> metaRobotsMapping
 	{
-		page->metaRobots = robots.front();
+		{ QString("all"), MetaRobotsAll },
+		{ QString("noindex"), MetaRobotsNoIndex },
+		{ QString("nofollow"), MetaRobotsNoFollow },
+		{ QString("none"), MetaRobotsNone },
+		{ QString("noarchive"), MetaRobotsNoArchive },
+		{ QString("nosnippet"), MetaRobotsNoSnippet },
+		{ QString("noodp"), MetaRobotsNoODP },
+		{ QString("notranslate"), MetaRobotsNoTranslate },
+		{ QString("noimageindex"), MetaRobotsNoImageIndex },
+		{ QString("index"), MetaRobotsIndex },
+		{ QString("follow"), MetaRobotsFollow },
+	};
+
+	for (const QString& robotsItem : robots)
+	{
+		const QStringList parts = robotsItem.split(QLatin1Char(','), QString::SkipEmptyParts);
+		for (const QString& part : parts)
+		{
+			auto it = metaRobotsMapping.find(part.trimmed().toLower());
+			if (it != metaRobotsMapping.cend())
+			{
+				page->metaRobotsFlags.setFlag(it->second);
+			}
+		}
 	}
 }
 
