@@ -16,6 +16,8 @@
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
+#include "get_host_info_request.h"
+#include "get_host_info_response.h"
 
 namespace QuickieWebBot
 {
@@ -130,15 +132,17 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
 }
 
-void MainWindow::startCrawler()
+void MainWindow::onHostInfoResponse(Common::Requester* requester, const GetHostInfoResponse& response)
 {
-	HostInfo hostInfo(theApp->preferences()->url().host().toLatin1());
+	statusBar()->clearMessage();
 
-	if (!hostInfo.isValid())
+	m_requester->stop();
+
+	if (!response.hostInfo.isValid())
 	{
 		showMessageBoxDialog("DNS Lookup Failed!",
 			"I'm sorry but I cannot to find this website.\n"
-			"Please, be sure that you entered a valid address.", 
+			"Please, be sure that you entered a valid address.",
 			MessageBoxDialog::WarningIcon);
 
 		return;
@@ -171,7 +175,7 @@ void MainWindow::startCrawler()
 	// robots.txt rules
 	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
 	options.userAgentToFollow = WebCrawler::UserAgentType::AnyBot;
-	options.plainUserAgent =  "sTechnologiesBot/1.0 Alpha (+http://www.sTechnologiesSeoSpider.org/)";
+	options.plainUserAgent = "sTechnologiesBot/1.0 Alpha (+http://www.sTechnologiesSeoSpider.org/)";
 
 	options.parserTypeFlags.setFlag(WebCrawler::JavaScriptResourcesParserType);
 	options.parserTypeFlags.setFlag(WebCrawler::CssResourcesParserType);
@@ -182,6 +186,15 @@ void MainWindow::startCrawler()
 	theApp->crawler()->startCrawling(options);
 
 	emit crawlerStarted();
+}
+
+void MainWindow::startCrawler()
+{
+	GetHostInfoRequest request(theApp->preferences()->url().host().toLatin1());
+	m_requester.reset(request, this, &MainWindow::onHostInfoResponse);
+	m_requester->start();
+
+	statusBar()->showMessage("Checking host info...");
 }
 
 void MainWindow::stopCrawler()

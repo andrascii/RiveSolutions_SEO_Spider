@@ -3,7 +3,7 @@
 namespace Common
 {
 
-class IResponse;
+struct IResponse;
 
 class Delegate
 {

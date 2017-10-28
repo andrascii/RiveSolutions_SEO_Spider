@@ -6,21 +6,27 @@ namespace Common
 enum class ResponseType
 {
 	ResponseTypeUnknown,
-	LoadResponseType
+	LoadResponseType,
+	GetHostInfoResponseType
 };
 
 #define DECLARE_RESPONSE_STATIC_TYPE(Type) \
-	static ResponseType responseStaticType();
+	static Common::ResponseType responseStaticType();
 
 #define DEFINE_RESPONSE_STATIC_TYPE(ObjectType, Type) \
-	ResponseType ObjectType::responseStaticType() \
+	Common::ResponseType ObjectType::responseStaticType() \
 	{ \
 		return Type; \
 	}
 
-class IResponse
+#define DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(Type) \
+	static Common::ResponseType responseStaticType() \
+	{ \
+		return Type; \
+	}
+
+struct IResponse
 {
-public:
 	virtual ResponseType type() const noexcept = 0;
 };
 

@@ -5,12 +5,12 @@ namespace Common
 
 enum class RequestType
 {
-	RequestTypeLoad
+	RequestTypeLoad,
+	RequestGetHostInfo
 };
 
-class IRequest
+struct IRequest
 {
-public:
 	virtual IRequest* clone() const = 0;
 	virtual RequestType requestType() const noexcept = 0;
 };

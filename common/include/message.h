@@ -6,7 +6,7 @@
 namespace Common
 {
 
-class IRequest;
+struct IRequest;
 
 class Message
 {
