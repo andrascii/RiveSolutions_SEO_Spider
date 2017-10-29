@@ -18,7 +18,7 @@ public:
 
 	void startRequester(RequesterSharedPtr requester);
 	void stopRequester(RequesterSharedPtr requester);
-	void postResponse(RequesterSharedPtr requester, std::shared_ptr<IResponse> response);
+	void postResponse(RequesterSharedPtr requester, IResponseSharedPtr response);
 
 protected:
 	virtual void timerEvent(QTimerEvent* event) override;
@@ -37,8 +37,6 @@ private:
 
 private:
 	int m_dispatchTimerId;
-
-	std::mutex m_postResponseMutex;
 
 	MessageQueue m_messageQueue;
 };

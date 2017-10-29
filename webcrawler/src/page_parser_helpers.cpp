@@ -148,4 +148,66 @@ bool PageParserHelpers::isHttpOrHttpsScheme(const QUrl& url) noexcept
 	return url.isRelative() || url.scheme() == QString("http") || url.scheme() == QString("https");
 }
 
+
+bool PageParserHelpers::isSubdomain(const QUrl& baseUrl, const QUrl& url)
+{
+	static const QRegularExpression s_regExp("(?:([a-z0-9\\.]+)*?\\.)?([a-z0-9]+\\.[a-z\\.]+){1,1}", 
+		QRegularExpression::CaseInsensitiveOption);
+
+	if (baseUrl.isRelative() || url.isRelative() || baseUrl == url)
+	{
+		return false;
+	}
+
+	QUrl baseUrlWithoutScheme = baseUrl;
+	QUrl targetUrlWithoutScheme = url;
+
+	baseUrlWithoutScheme.setScheme(QString::null);
+	targetUrlWithoutScheme.setScheme(QString::null);
+
+	const QRegularExpressionMatch baseUrlMatch = s_regExp.match(baseUrlWithoutScheme.host());
+	const QRegularExpressionMatch targetUrlMatch = s_regExp.match(targetUrlWithoutScheme.host());
+
+	const QStringList baseUrlCapturedTexts = baseUrlMatch.capturedTexts();
+	const QStringList targetUrlCapturedTexts = targetUrlMatch.capturedTexts();
+
+	if (targetUrlCapturedTexts.isEmpty() || baseUrlCapturedTexts.isEmpty())
+	{
+		WARNINGLOG << "Can't parse links";
+		WARNINGLOG << "Base link:" << baseUrlWithoutScheme.host();
+		WARNINGLOG << "Checking link:" << targetUrlWithoutScheme.host();
+
+		return false;
+	}
+
+	QStringList baseUrlSubdomains = baseUrlCapturedTexts[1].split(".", QString::SkipEmptyParts);
+	QStringList targetUrlSubdomains = targetUrlCapturedTexts[1].split(".", QString::SkipEmptyParts);
+
+	baseUrlSubdomains.removeOne("www");
+	targetUrlSubdomains.removeOne("www");
+
+	if (baseUrlSubdomains.size() > targetUrlSubdomains.size() ||
+		baseUrlSubdomains.isEmpty() && targetUrlSubdomains.isEmpty())
+	{
+		return false;
+	}
+
+	bool equal = false;
+	
+	for (int i = baseUrlSubdomains.size(), j = targetUrlSubdomains.size(); i && j; --i, --j)
+	{
+		if (baseUrlSubdomains[i] == targetUrlSubdomains[j])
+		{
+			equal = true;
+		}
+		else
+		{
+			equal = false;
+			break;
+		}
+	}
+
+	return !equal;
+}
+
 }

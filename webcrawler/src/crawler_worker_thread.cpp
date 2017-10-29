@@ -59,7 +59,6 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 
 	std::vector<LinkInfo> outlinks = m_pageParsedDataCollector->outlinks();
 	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
-	outlinks.erase(std::remove_if(outlinks.begin(), outlinks.end(), isNofollowLinkUnavailable), outlinks.end());
 
 	handlePageLinkList(outlinks);
 
@@ -95,10 +94,23 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 
 void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList) const
 {
+	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
+	{
+		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionNofollowNotAllowed;
+	};
+
 	const auto isLinkBlockedByRobotsTxt = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
 	{
 		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionBlockedByRobotsTxtRules;
 	};
+
+	const auto isSubdomainLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
+	{
+		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionSubdomainNotAllowed;
+	};
+
+	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
+	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
 	{
@@ -117,9 +129,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList) co
 	};
 
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
-
 	std::for_each(blockedByRobotsTxtLinksIterator, linkList.end(), emitPageParsedForBlockedPages);
-
 	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
 }
 
