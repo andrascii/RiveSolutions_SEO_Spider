@@ -13,6 +13,8 @@
 #include "widget_under_mouse_info.h"
 #include "move_to_thread_service.h"
 #include "host_info_provider.h"
+#include "get_host_info_request.h"
+#include "get_host_info_response.h"
 
 namespace
 {
@@ -116,6 +118,26 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 	return m_softwareBrandingOptions.get();
 }
 
+void Application::startCrawler()
+{
+	GetHostInfoRequest request(preferences()->url().host().toLatin1());
+	m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
+	m_hostInfoRequester->start();
+
+	mainWindow()->statusBar()->showMessage("Checking host info...");
+}
+
+void Application::stopCrawler()
+{
+	crawler()->stopCrawling();
+	emit crawlerStopped();
+}
+
+void Application::clearCrawledData()
+{
+
+}
+
 void Application::showMainWindow()
 {
 	SplashScreen::finish();
@@ -143,6 +165,63 @@ QSettings* Application::settings() const
 	ASSERT(m_settings);
 
 	return m_settings;
+}
+
+void Application::onHostInfoResponse(Common::Requester* requester, const GetHostInfoResponse& response)
+{
+	mainWindow()->statusBar()->clearMessage();
+
+	m_hostInfoRequester->stop();
+
+	if (!response.hostInfo.isValid())
+	{
+		mainWindow()->showMessageBoxDialog("DNS Lookup Failed!",
+			"I'm sorry but I cannot to find this website.\n"
+			"Please, be sure that you entered a valid address.",
+			MessageBoxDialog::WarningIcon,
+			QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	WebCrawler::CrawlerOptions options;
+
+	// preferences
+	options.host = preferences()->url();
+	options.minTitleLength = preferences()->minTitleLength();
+	options.maxTitleLength = preferences()->maxTitleLength();
+	options.limitMaxUrlLength = preferences()->limitMaxUrlLength();
+	options.maxDescriptionLength = preferences()->maxDescriptionLength();
+	options.minDescriptionLength = preferences()->minDescriptionLength();
+	options.maxH1LengthChars = preferences()->maxH1LengthChars();
+	options.maxH2LengthChars = preferences()->maxH2LengthChars();
+	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
+	options.maxImageSizeKb = preferences()->maxImageSize();
+
+	// crawler settings
+	options.checkExternalLinks = preferences()->checkExternalUrls();
+	options.followInternalNofollow = preferences()->followInternalNoFollow();
+	options.followExternalNofollow = preferences()->followExternalNoFollow();
+	options.checkSubdomains = preferences()->checkSubdomains();
+	options.checkImages = preferences()->checkImages();
+	options.checkCss = preferences()->checkCSS();
+	options.checkJavaScript = preferences()->checkJavaScript();
+	options.checkSwf = preferences()->checkSWF();
+
+	// robots.txt rules
+	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
+	options.userAgentToFollow = WebCrawler::UserAgentType::AnyBot;
+	options.plainUserAgent = "sTechnologiesBot/1.0 Alpha (+http://www.sTechnologiesSeoSpider.org/)";
+
+	options.parserTypeFlags.setFlag(WebCrawler::JavaScriptResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::CssResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::ImagesResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::VideoResourcesParserType);
+	options.parserTypeFlags.setFlag(WebCrawler::FlashResourcesParserType);
+
+	crawler()->startCrawling(options);
+
+	emit crawlerStarted();
 }
 
 void Application::initialize() noexcept

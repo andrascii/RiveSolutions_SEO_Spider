@@ -48,14 +48,24 @@ public:
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
 	virtual QList<QByteArray> allKeys() const override;
 
-private:
-	Q_SLOT void showMainWindow();
+signals:
+	void crawlerStarted();
+	void crawlerStopped();
 
+private:
 	static void registerServices();
 	static QString operatingSystemVersion();
 
 	void initQSettings();
 	QSettings* settings() const;
+
+	void onHostInfoResponse(Common::Requester* requester, const GetHostInfoResponse& response);
+
+private slots:
+	void startCrawler();
+	void stopCrawler();
+	void clearCrawledData();
+	void showMainWindow();
 
 private:
 	void initialize() noexcept;
@@ -74,6 +84,8 @@ private:
 
 	QSettings* m_settings;
 	QTranslator* m_translator;
+
+	Common::RequesterWrapper m_hostInfoRequester;
 };
 
 }

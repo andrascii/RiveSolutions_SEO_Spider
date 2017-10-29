@@ -25,10 +25,6 @@ public:
 
 	void init();
 
-signals:
-	void crawlerStarted();
-	void crawlerStopped();
-
 public slots:
 	void showApplicationSettingsWidget();
 	void showMessageBoxDialog(const QString& title, 
@@ -40,13 +36,6 @@ private:
 	void createActions() const;
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
-
-	void onHostInfoResponse(Common::Requester* requester, const GetHostInfoResponse& response);
-
-private slots:
-	void startCrawler();
-	void stopCrawler();
-	void clearCrawledData();
 
 private:
 	ApplicationSettingsWidget* m_applicationSettingsWidget;

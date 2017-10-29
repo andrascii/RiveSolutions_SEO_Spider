@@ -16,8 +16,6 @@
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
-#include "get_host_info_request.h"
-#include "get_host_info_response.h"
 
 namespace QuickieWebBot
 {
@@ -89,10 +87,9 @@ void MainWindow::createActions() const
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, 
 		QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
 
-	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Close"));
+	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
 
 	// settings actions
-
 	actionRegistry.addGlobalAction(s_openSettingsAction,
 		QIcon(QStringLiteral(":/images/settings.png")), tr("Settings"));
 
@@ -101,12 +98,12 @@ void MainWindow::createActions() const
 	actionRegistry.addGlobalAction(s_stopCrawlerAction, tr("Stop Crawler"));
 	actionRegistry.addGlobalAction(s_clearCrawledDataAction, tr("Clear Crawled Data"));
 
-
 	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), this, SLOT(showApplicationSettingsWidget())));
+	VERIFY(connect(actionRegistry.globalAction(s_startCrawlerAction), SIGNAL(triggered()), theApp, SLOT(startCrawler())));
+	VERIFY(connect(actionRegistry.globalAction(s_stopCrawlerAction), SIGNAL(triggered()), theApp, SLOT(stopCrawler())));
+	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
 
-	VERIFY(connect(actionRegistry.globalAction(s_startCrawlerAction), SIGNAL(triggered()), this, SLOT(startCrawler())));
-	VERIFY(connect(actionRegistry.globalAction(s_stopCrawlerAction), SIGNAL(triggered()), this, SLOT(stopCrawler())));
-	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), this, SLOT(clearCrawledData())));
+	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(quit())));
 }
 
 void MainWindow::createAndSetCentralWidget()
@@ -116,11 +113,9 @@ void MainWindow::createAndSetCentralWidget()
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);
 	layout->setMargin(0);
-
 	layout->addWidget(new DataPagesWidget(centralWidget));
 
 	centralWidget->setLayout(layout);
-
 	setCentralWidget(centralWidget);
 }
 
@@ -131,83 +126,6 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
-}
-
-void MainWindow::onHostInfoResponse(Common::Requester* requester, const GetHostInfoResponse& response)
-{
-	statusBar()->clearMessage();
-
-	m_requester->stop();
-
-	if (!response.hostInfo.isValid())
-	{
-		showMessageBoxDialog("DNS Lookup Failed!",
-			"I'm sorry but I cannot to find this website.\n"
-			"Please, be sure that you entered a valid address.",
-			MessageBoxDialog::WarningIcon,
-			QDialogButtonBox::Ok);
-
-		return;
-	}
-
-	WebCrawler::CrawlerOptions options;
-
-	// preferences
-	options.host = theApp->preferences()->url();
-	options.minTitleLength = theApp->preferences()->minTitleLength();
-	options.maxTitleLength = theApp->preferences()->maxTitleLength();
-	options.limitMaxUrlLength = theApp->preferences()->limitMaxUrlLength();
-	options.maxDescriptionLength = theApp->preferences()->maxDescriptionLength();
-	options.minDescriptionLength = theApp->preferences()->minDescriptionLength();
-	options.maxH1LengthChars = theApp->preferences()->maxH1LengthChars();
-	options.maxH2LengthChars = theApp->preferences()->maxH2LengthChars();
-	options.maxImageAltTextChars = theApp->preferences()->maxImageAltTextChars();
-	options.maxImageSizeKb = theApp->preferences()->maxImageSize();
-
-	// crawler settings
-	options.checkExternalLinks = theApp->preferences()->checkExternalUrls();
-	options.followInternalNofollow = theApp->preferences()->followInternalNoFollow();
-	options.followExternalNofollow = theApp->preferences()->followExternalNoFollow();
-	options.checkSubdomains = theApp->preferences()->checkSubdomains();
-	options.checkImages = theApp->preferences()->checkImages();
-	options.checkCss = theApp->preferences()->checkCSS();
-	options.checkJavaScript = theApp->preferences()->checkJavaScript();
-	options.checkSwf = theApp->preferences()->checkSWF();
-
-	// robots.txt rules
-	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
-	options.userAgentToFollow = WebCrawler::UserAgentType::AnyBot;
-	options.plainUserAgent = "sTechnologiesBot/1.0 Alpha (+http://www.sTechnologiesSeoSpider.org/)";
-
-	options.parserTypeFlags.setFlag(WebCrawler::JavaScriptResourcesParserType);
-	options.parserTypeFlags.setFlag(WebCrawler::CssResourcesParserType);
-	options.parserTypeFlags.setFlag(WebCrawler::ImagesResourcesParserType);
-	options.parserTypeFlags.setFlag(WebCrawler::VideoResourcesParserType);
-	options.parserTypeFlags.setFlag(WebCrawler::FlashResourcesParserType);
-
-	theApp->crawler()->startCrawling(options);
-
-	emit crawlerStarted();
-}
-
-void MainWindow::startCrawler()
-{
-	GetHostInfoRequest request(theApp->preferences()->url().host().toLatin1());
-	m_requester.reset(request, this, &MainWindow::onHostInfoResponse);
-	m_requester->start();
-
-	statusBar()->showMessage("Checking host info...");
-}
-
-void MainWindow::stopCrawler()
-{
-	theApp->crawler()->stopCrawling();
-
-	emit crawlerStopped();
-}
-
-void MainWindow::clearCrawledData()
-{
 }
 
 }

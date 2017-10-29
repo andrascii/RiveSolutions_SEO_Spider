@@ -29,6 +29,8 @@ QMenu* MenuBar::buildMenuFile()
 	fileMenu->addAction(actionRegistry.globalAction(s_saveFileAction));
 	fileMenu->addAction(actionRegistry.globalAction(s_saveFileAsAction));
 	fileMenu->addAction(actionRegistry.globalAction(s_closeFileAction));
+	fileMenu->addSeparator();
+	fileMenu->addAction(actionRegistry.globalAction(s_exitProgramAction));
 
 	return fileMenu;
 }

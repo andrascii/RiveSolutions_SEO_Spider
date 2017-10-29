@@ -10,8 +10,8 @@ CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 {
 	setMaximum(100);
 
-	VERIFY(connect(theApp->mainWindow(), &MainWindow::crawlerStarted, this, &QWidget::show));
-	VERIFY(connect(theApp->mainWindow(), &MainWindow::crawlerStopped, this, &QWidget::hide));
+	VERIFY(connect(theApp, &Application::crawlerStarted, this, &QWidget::show));
+	VERIFY(connect(theApp, &Application::crawlerStopped, this, &QWidget::hide));
 
 	VERIFY(connect(theApp->crawler(), SIGNAL(crawlingState(CrawlingState)),
 		this, SLOT(calculatePercents(CrawlingState)), Qt::QueuedConnection));
