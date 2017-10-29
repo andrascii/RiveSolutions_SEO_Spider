@@ -36,7 +36,7 @@ if(MSVC)
 	set_target_properties(
 		${SeoSpiderServiceApiDllName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
-		RUNTIME_OUTPUT_DIRECTORY "../quickiewebbot/"
+		RUNTIME_OUTPUT_DIRECTORY "../seospider/"
 	)
 
 endif()

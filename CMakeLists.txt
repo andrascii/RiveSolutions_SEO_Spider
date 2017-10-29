@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-set(AppName quickiewebbot)
+set(AppName seospider)
 set(LoggerAppName logger)
 set(WebCrawlerLibName webcrawler)
 set(GoogleTestLibName googletest/googletest)
