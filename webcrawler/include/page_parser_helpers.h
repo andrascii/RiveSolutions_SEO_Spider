@@ -16,6 +16,7 @@ public:
 	static bool isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept;
 	static bool isHtmlContentType(const QString& contentType) noexcept;
 	static bool isHttpOrHttpsScheme(const QUrl& url) noexcept;
+	static bool isSubdomain(const QUrl& baseUrl, const QUrl& url);
 };
 
 }

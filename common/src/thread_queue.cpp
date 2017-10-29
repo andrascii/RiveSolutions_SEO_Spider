@@ -97,8 +97,6 @@ void ThreadQueue::stopRequester(RequesterSharedPtr requester)
 
 void ThreadQueue::postResponse(RequesterSharedPtr requester, IResponseSharedPtr response)
 {
-	std::lock_guard<std::mutex> locker(m_postResponseMutex);
-
 	messageQueue().addMessage(Message::postResponseMessage(requester, response));
 }
 
