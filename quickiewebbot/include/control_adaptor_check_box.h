@@ -12,6 +12,8 @@ public:
 	virtual void setValue(const QVariant& val) override;
 	virtual void connectChangesObserver(SettingsPage* page) override;
 
+	virtual QObject* qobject() override;
+
 private:
 	QPointer<QCheckBox> m_control;
 };

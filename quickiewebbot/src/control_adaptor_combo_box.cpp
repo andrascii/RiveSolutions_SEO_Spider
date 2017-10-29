@@ -27,4 +27,9 @@ void ControlAdaptorQComboBox::connectChangesObserver(SettingsPage* page)
 	VERIFY(QObject::connect(m_control.data(), SIGNAL(currentTextChanged(const QString&)), page, SLOT(somethingChangedSlot())));
 }
 
+QObject* ControlAdaptorQComboBox::qobject()
+{
+	return m_control.data();
+}
+
 }

@@ -27,4 +27,9 @@ void ControlAdaptorQCheckBox::connectChangesObserver(SettingsPage* page)
 	VERIFY(QObject::connect(m_control.data(), SIGNAL(stateChanged(int)), page, SLOT(somethingChangedSlot())));
 }
 
+QObject* ControlAdaptorQCheckBox::qobject()
+{
+	return m_control.data();
+}
+
 }

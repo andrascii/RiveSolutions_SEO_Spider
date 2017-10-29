@@ -120,6 +120,8 @@ void SettingsPage::init()
 
 		std::shared_ptr<IControlAdaptor> controlAdaptor = createControlAdaptor(control);
 
+		const QSignalBlocker blocker(controlAdaptor->qobject());
+
 		controlAdaptor->setValue(propertyValue);
 
 		m_controlAdaptors[controlKeyString] = controlAdaptor;

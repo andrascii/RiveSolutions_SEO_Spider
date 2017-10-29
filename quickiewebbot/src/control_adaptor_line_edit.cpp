@@ -30,4 +30,9 @@ void ControlAdaptorQLineEdit::connectChangesObserver(SettingsPage* page)
 	VERIFY(QObject::connect(m_control.data(), SIGNAL(textChanged(QString)), page, SLOT(somethingChangedSlot())));
 }
 
+QObject* ControlAdaptorQLineEdit::qobject()
+{
+	return m_control.data();
+}
+
 }
