@@ -50,7 +50,9 @@ enum MetaRobotsItem
 	MetaRobotsNoTranslate = 1 << 7,
 	MetaRobotsNoImageIndex = 1 << 8,
 	MetaRobotsIndex = 1 << 9,
-	MetaRobotsFollow = 1 << 10
+	MetaRobotsFollow = 1 << 10,
+	MetaRobotsNoYaCa = 1 << 11,
+	MetaRobotsNoYDir = 1 << 12
 };
 
 Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem);

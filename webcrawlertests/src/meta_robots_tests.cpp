@@ -20,6 +20,8 @@ TEST(MetaRobotsTests, TestSeveralTags)
 		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsNoImageIndex));		
 		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsIndex));
 		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsFollow));
+		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsNoYaCa));
+		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsNoYDir));
 	});
 }
 
@@ -42,6 +44,8 @@ TEST(MetaRobotsTests, TestXRobotsTag)
 		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsNoImageIndex));
 		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsIndex));
 		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsFollow));
+		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsNoYaCa));
+		EXPECT_EQ(true, pages[0]->metaRobotsFlags.testFlag(WebCrawler::MetaRobotsNoYDir));
 	});
 }
 
