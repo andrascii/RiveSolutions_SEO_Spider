@@ -7,6 +7,7 @@
 #include "images_resources_parser.h"
 #include "video_resources_parser.h"
 #include "flash_resources_parser.h"
+#include "other_resources_parser.h"
 #include "status_code.h"
 #include "gumbo_parsing_helpers.h"
 
@@ -90,6 +91,10 @@ void PageParsedDataCollector::applyOptions()
 	if (m_crawlerOptions.parserTypeFlags.testFlag(FlashResourcesParserType))
 	{
 		m_parser.addParser(createParser(FlashResourcesParserType));
+	}
+	if (m_crawlerOptions.parserTypeFlags.testFlag(OtherResourcesParserType))
+	{
+		m_parser.addParser(createParser(OtherResourcesParserType));
 	}
 }
 
@@ -194,6 +199,10 @@ std::shared_ptr<IPageParser> PageParsedDataCollector::createParser(ParserType pa
 		case FlashResourcesParserType:
 		{
 			return std::make_shared<FlashResourcesParser>();
+		}
+		case OtherResourcesParserType:
+		{
+			return std::make_shared<OtherResourcesParser>();
 		}
 		default:
 		{

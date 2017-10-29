@@ -4,7 +4,6 @@
 
 namespace WebCrawler
 {
-class ResourcesCache;
 
 class HtmlResourcesParser : public CompoundParser
 {

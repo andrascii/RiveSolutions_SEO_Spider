@@ -38,6 +38,8 @@ private:
 	void processParsedPageResources(ParsedPagePtr incomingPage) noexcept;
 	void fixParsedPageResourceType(ParsedPagePtr incomingPage) const noexcept;
 
+	bool resourceShouldBeProcessed(ResourceType resourceType) const noexcept;
+
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptions m_crawlerOptions;

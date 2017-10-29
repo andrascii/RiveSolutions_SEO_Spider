@@ -5,8 +5,6 @@
 namespace WebCrawler
 {
 
-class ResourcesCache;
-
 class FlashResourcesParser : public CompoundParser
 {
 public:

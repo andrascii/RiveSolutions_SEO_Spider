@@ -5,14 +5,10 @@
 namespace WebCrawler
 {
 
-class DataResourcesParser : public IPageParser
+class OtherResourcesParser : public IPageParser
 {
 public:
-	DataResourcesParser(ResourceType resourceType);
 	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
-
-private:
-	ResourceType m_resourceType;
 };
 
 }

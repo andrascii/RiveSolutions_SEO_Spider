@@ -82,6 +82,13 @@ void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 		incomingPage->resourceType <= ResourceType::ResourceOther);
 
 	fixParsedPageResourceType(incomingPage);
+
+	if (!resourceShouldBeProcessed(incomingPage->resourceType))
+	{
+		m_data->removeParsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+		return;
+	}
+
 	processParsedPageHtmlResources(incomingPage);
 	processParsedPageResources(incomingPage);
 	incomingPage->allResourcesOnPage.clear();
@@ -634,6 +641,32 @@ void ModelController::fixParsedPageResourceType(ParsedPagePtr incomingPage) cons
 	{
 		incomingPage->resourceType = pendingResource->resourceType;
 	}
+}
+
+bool ModelController::resourceShouldBeProcessed(ResourceType resourceType) const noexcept
+{
+	switch (resourceType)
+	{
+	case ResourceType::ResourceHtml:
+		return true;
+	case ResourceType::ResourceImage:
+		return m_crawlerOptions.parserTypeFlags.testFlag(ImagesResourcesParserType);
+	case ResourceType::ResourceJavaScript:
+		return m_crawlerOptions.parserTypeFlags.testFlag(JavaScriptResourcesParserType);
+	case ResourceType::ResourceStyleSheet:
+		return m_crawlerOptions.parserTypeFlags.testFlag(CssResourcesParserType);
+	case ResourceType::ResourceFlash:
+		return m_crawlerOptions.parserTypeFlags.testFlag(FlashResourcesParserType);
+	case ResourceType::ResourceVideo:
+		return m_crawlerOptions.parserTypeFlags.testFlag(VideoResourcesParserType);
+	case ResourceType::ResourceOther:
+		return m_crawlerOptions.parserTypeFlags.testFlag(OtherResourcesParserType);
+	default:
+		ASSERT(!"Unexpected resource type");
+		break;
+	}
+
+	return false;
 }
 
 }

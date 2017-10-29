@@ -4,6 +4,7 @@ namespace WebCrawlerTests
 TEST(OptionsTests, ParseOnlyHtml)
 {
 	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	options.parserTypeFlags = WebCrawler::ParserTypeFlags();
 		
 	TestEnvironment env(options);
 	env.runTest([cl = env.crawler()]()
@@ -11,28 +12,22 @@ TEST(OptionsTests, ParseOnlyHtml)
 		cl->thread()->msleep(800);
 
 		auto htmlResources = cl->storageItems(WebCrawler::HtmlResourcesStorageType);
-		EXPECT_EQ(2, htmlResources.size());
-
 		auto jsResources = cl->storageItems(WebCrawler::JavaScriptResourcesStorageType);
-		EXPECT_EQ(0, jsResources.size());
-
 		auto cssResources = cl->storageItems(WebCrawler::StyleSheetResourcesStorageType);
-		EXPECT_EQ(0, cssResources.size());
-
 		auto imageResources = cl->storageItems(WebCrawler::ImageResourcesStorageType);
-		EXPECT_EQ(0, imageResources.size());
-
 		auto videoResources = cl->storageItems(WebCrawler::VideoResourcesStorageType);
-		EXPECT_EQ(0, videoResources.size());
-
 		auto flashResources = cl->storageItems(WebCrawler::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(WebCrawler::ExternalOtherResourcesStorageType);
+
+		EXPECT_EQ(2, htmlResources.size());
+		EXPECT_EQ(0, jsResources.size());
+		EXPECT_EQ(0, cssResources.size());
+		EXPECT_EQ(0, imageResources.size());
+		EXPECT_EQ(0, videoResources.size());
 		EXPECT_EQ(0, flashResources.size());
-
-		// TODO: fix
-
-		//auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
-		//EXPECT_EQ(0, otherResources.size());
-
+		EXPECT_EQ(0, otherResources.size());
+		EXPECT_EQ(0, externalOtherResources.size());
 	});
 }
 
@@ -46,31 +41,175 @@ TEST(OptionsTests, ParseOnlyJs)
 	{
 		cl->thread()->msleep(300);
 
-		// TODO: fix
-
-		//auto htmlResources = cl->storageItems(WebCrawler::HtmlResourcesStorageType);
-		//EXPECT_EQ(0, htmlResources.size());
-
+		auto htmlResources = cl->storageItems(WebCrawler::HtmlResourcesStorageType);
 		auto jsResources = cl->storageItems(WebCrawler::JavaScriptResourcesStorageType);
-		EXPECT_EQ(2, jsResources.size());
-
 		auto cssResources = cl->storageItems(WebCrawler::StyleSheetResourcesStorageType);
-		EXPECT_EQ(0, cssResources.size());
-
 		auto imageResources = cl->storageItems(WebCrawler::ImageResourcesStorageType);
-		EXPECT_EQ(0, imageResources.size());
-
 		auto videoResources = cl->storageItems(WebCrawler::VideoResourcesStorageType);
-		EXPECT_EQ(0, videoResources.size());
-
 		auto flashResources = cl->storageItems(WebCrawler::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(WebCrawler::ExternalOtherResourcesStorageType);
+		
+		EXPECT_EQ(2, htmlResources.size());
+		EXPECT_EQ(2, jsResources.size());
+		EXPECT_EQ(0, cssResources.size());
+		EXPECT_EQ(0, imageResources.size());
+		EXPECT_EQ(0, videoResources.size());
 		EXPECT_EQ(0, flashResources.size());
+		EXPECT_EQ(0, otherResources.size());
+		EXPECT_EQ(0, externalOtherResources.size());
 
-		// TODO: fix
+	});
+}
 
-		//auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
-		//EXPECT_EQ(0, otherResources.size());
+TEST(OptionsTests, ParseOnlyCSS)
+{
+	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	options.parserTypeFlags = WebCrawler::CssResourcesParserType;
 
+	TestEnvironment env(options);
+	env.runTest([cl = env.crawler()]()
+	{
+		cl->thread()->msleep(300);
+
+		auto htmlResources = cl->storageItems(WebCrawler::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(WebCrawler::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(WebCrawler::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(WebCrawler::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(WebCrawler::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(WebCrawler::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(WebCrawler::ExternalOtherResourcesStorageType);
+
+		EXPECT_EQ(2, htmlResources.size());
+		EXPECT_EQ(0, jsResources.size());
+		EXPECT_EQ(2, cssResources.size());
+		EXPECT_EQ(0, imageResources.size());
+		EXPECT_EQ(0, videoResources.size());
+		EXPECT_EQ(0, flashResources.size());
+		EXPECT_EQ(0, otherResources.size());
+		EXPECT_EQ(0, externalOtherResources.size());
+
+	});
+}
+
+TEST(OptionsTests, ParseOnlyImages)
+{
+	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	options.parserTypeFlags = WebCrawler::ImagesResourcesParserType;
+
+	TestEnvironment env(options);
+	env.runTest([cl = env.crawler()]()
+	{
+		cl->thread()->msleep(300);
+
+		auto htmlResources = cl->storageItems(WebCrawler::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(WebCrawler::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(WebCrawler::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(WebCrawler::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(WebCrawler::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(WebCrawler::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(WebCrawler::ExternalOtherResourcesStorageType);
+
+		EXPECT_EQ(2, htmlResources.size());
+		EXPECT_EQ(0, jsResources.size());
+		EXPECT_EQ(0, cssResources.size());
+		EXPECT_EQ(2, imageResources.size());
+		EXPECT_EQ(0, videoResources.size());
+		EXPECT_EQ(0, flashResources.size());
+		EXPECT_EQ(0, otherResources.size());
+		EXPECT_EQ(0, externalOtherResources.size());
+	});
+}
+
+TEST(OptionsTests, ParseOnlyVideo)
+{
+	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	options.parserTypeFlags = WebCrawler::VideoResourcesParserType;
+
+	TestEnvironment env(options);
+	env.runTest([cl = env.crawler()]()
+	{
+		cl->thread()->msleep(300);
+
+		auto htmlResources = cl->storageItems(WebCrawler::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(WebCrawler::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(WebCrawler::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(WebCrawler::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(WebCrawler::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(WebCrawler::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(WebCrawler::ExternalOtherResourcesStorageType);
+
+		EXPECT_EQ(2, htmlResources.size());
+		EXPECT_EQ(0, jsResources.size());
+		EXPECT_EQ(0, cssResources.size());
+		EXPECT_EQ(0, imageResources.size());
+		EXPECT_EQ(2, videoResources.size());
+		EXPECT_EQ(0, flashResources.size());
+		EXPECT_EQ(0, otherResources.size());
+		EXPECT_EQ(0, externalOtherResources.size());
+	});
+}
+
+TEST(OptionsTests, ParseOnlyFlash)
+{
+	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	options.parserTypeFlags = WebCrawler::FlashResourcesParserType;
+
+	TestEnvironment env(options);
+	env.runTest([cl = env.crawler()]()
+	{
+		cl->thread()->msleep(300);
+
+		auto htmlResources = cl->storageItems(WebCrawler::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(WebCrawler::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(WebCrawler::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(WebCrawler::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(WebCrawler::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(WebCrawler::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(WebCrawler::ExternalOtherResourcesStorageType);
+
+		EXPECT_EQ(2, htmlResources.size());
+		EXPECT_EQ(0, jsResources.size());
+		EXPECT_EQ(0, cssResources.size());
+		EXPECT_EQ(0, imageResources.size());
+		EXPECT_EQ(0, videoResources.size());
+		EXPECT_EQ(2, flashResources.size());
+		EXPECT_EQ(0, otherResources.size());
+		EXPECT_EQ(0, externalOtherResources.size());
+	});
+}
+
+TEST(OptionsTests, ParseOnlyOther)
+{
+	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	options.parserTypeFlags = WebCrawler::OtherResourcesParserType;
+
+	TestEnvironment env(options);
+	env.runTest([cl = env.crawler()]()
+	{
+		cl->thread()->msleep(300);
+
+		auto htmlResources = cl->storageItems(WebCrawler::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(WebCrawler::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(WebCrawler::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(WebCrawler::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(WebCrawler::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(WebCrawler::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(WebCrawler::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(WebCrawler::ExternalOtherResourcesStorageType);
+
+		EXPECT_EQ(2, htmlResources.size());
+		EXPECT_EQ(0, jsResources.size());
+		EXPECT_EQ(0, cssResources.size());
+		EXPECT_EQ(0, imageResources.size());
+		EXPECT_EQ(0, videoResources.size());
+		EXPECT_EQ(0, flashResources.size());
+		EXPECT_EQ(2, otherResources.size());
+		EXPECT_EQ(1, externalOtherResources.size());
 	});
 }
 

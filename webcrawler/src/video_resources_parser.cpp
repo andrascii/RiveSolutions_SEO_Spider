@@ -23,13 +23,18 @@ void VideoResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_VIDEO &&
-			!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
+			(!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", "")) ||
+				gumbo_get_attribute(&node->v.element.attributes, "src"));
 	};
 
 	auto res = [](const GumboNode* node)
 	{
 		const GumboNode* child = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
-		GumboAttribute* src = gumbo_get_attribute(&child->v.element.attributes, "src");
+
+		GumboAttribute* src = child != nullptr
+			? gumbo_get_attribute(&child->v.element.attributes, "src")
+			: gumbo_get_attribute(&node->v.element.attributes, "src");
+		
 		return QUrl(src->value);
 	};
 

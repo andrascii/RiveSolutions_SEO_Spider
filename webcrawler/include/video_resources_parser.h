@@ -5,8 +5,6 @@
 namespace WebCrawler
 {
 
-class ResourcesCache;
-
 class VideoResourcesParser : public CompoundParser
 {
 public:
