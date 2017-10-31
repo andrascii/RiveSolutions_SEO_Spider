@@ -8,12 +8,12 @@
 namespace WebCrawler
 {
 
-class PageParsedDataCollector : public QObject
+class ParsedPageDataCollector : public QObject
 {
 	Q_OBJECT
 
 public:
-	PageParsedDataCollector(QObject* parent = nullptr);
+	ParsedPageDataCollector(QObject* parent = nullptr);
 
 	void setOptions(const CrawlerOptions& crawlerOptions) noexcept;
 

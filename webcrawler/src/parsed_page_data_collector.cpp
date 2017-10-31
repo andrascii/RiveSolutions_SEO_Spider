@@ -1,4 +1,4 @@
-#include "page_parsed_data_collector.h"
+#include "parsed_page_data_collector.h"
 #include "crawler_options.h"
 #include "page_parser_helpers.h"
 #include "html_resources_parser.h"
@@ -14,19 +14,19 @@
 namespace WebCrawler
 {
 
-PageParsedDataCollector::PageParsedDataCollector(QObject* parent)
+ParsedPageDataCollector::ParsedPageDataCollector(QObject* parent)
 	: QObject(parent)
 {
 }
 
-void PageParsedDataCollector::setOptions(const CrawlerOptions& crawlerOptions) noexcept
+void ParsedPageDataCollector::setOptions(const CrawlerOptions& crawlerOptions) noexcept
 {
 	m_crawlerOptions = crawlerOptions;
 
 	applyOptions();
 }
 
-ParsedPagePtr PageParsedDataCollector::collectPageDataFromReply(const QueuedDownloader::Reply& reply)
+ParsedPagePtr ParsedPageDataCollector::collectPageDataFromReply(const QueuedDownloader::Reply& reply)
 {
 	ParsedPagePtr page(new ParsedPage);
 
@@ -61,12 +61,12 @@ ParsedPagePtr PageParsedDataCollector::collectPageDataFromReply(const QueuedDown
 	return page;
 }
 
-const std::vector<LinkInfo>& PageParsedDataCollector::outlinks() const noexcept
+const std::vector<LinkInfo>& ParsedPageDataCollector::outlinks() const noexcept
 {
 	return m_outlinks;
 }
 
-void PageParsedDataCollector::applyOptions()
+void ParsedPageDataCollector::applyOptions()
 {
 	m_parser.clear();
 
@@ -98,17 +98,25 @@ void PageParsedDataCollector::applyOptions()
 	}
 }
 
-QUrl PageParsedDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& reply)
+QUrl ParsedPageDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& reply)
 {
+	QUrl redirectUrl;
+
 	if (reply.redirectUrl.isEmpty() || !reply.redirectUrl.isRelative())
 	{
-		return reply.redirectUrl;
+		redirectUrl = reply.redirectUrl;
+	}
+	else
+	{
+		PageParserHelpers::resolveRelativeUrl(reply.redirectUrl, reply.url);
 	}
 
-	return PageParserHelpers::resolveRelativeUrl(reply.redirectUrl, reply.url);
+	PageParserHelpers::removeUrlLastSlashIfExists(redirectUrl);
+
+	return redirectUrl;
 }
 
-void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const
+void ParsedPageDataCollector::collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const
 {
 	page->url = reply.url;
 
@@ -140,18 +148,18 @@ void PageParsedDataCollector::collectReplyData(const QueuedDownloader::Reply& re
 	page->redirectedUrl = resolveRedirectUrl(reply);
 }
 
-void PageParsedDataCollector::collectParsedPageData(GumboOutput* output, const IPageParser::ResponseHeaders& headers, ParsedPagePtr& page)
+void ParsedPageDataCollector::collectParsedPageData(GumboOutput* output, const IPageParser::ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	m_parser.parse(output, headers, page);
 }
 
-void PageParsedDataCollector::collectUrlList(GumboOutput* output)
+void ParsedPageDataCollector::collectUrlList(GumboOutput* output)
 {
 	m_outlinks.clear();
 	m_outlinks = GumboParsingHelpers::parsePageUrlList(output->root, true);
 }
 
-void PageParsedDataCollector::setResourceCategory(ParsedPagePtr& page) const
+void ParsedPageDataCollector::setResourceCategory(ParsedPagePtr& page) const
 {
 	if (page->contentType.contains("javascript"))
 	{
@@ -176,7 +184,7 @@ void PageParsedDataCollector::setResourceCategory(ParsedPagePtr& page) const
 	page->resourceType = ResourceType::ResourceOther;
 }
 
-std::shared_ptr<IPageParser> PageParsedDataCollector::createParser(ParserType parserType) const
+std::shared_ptr<IPageParser> ParsedPageDataCollector::createParser(ParserType parserType) const
 {
 	switch (parserType)
 	{

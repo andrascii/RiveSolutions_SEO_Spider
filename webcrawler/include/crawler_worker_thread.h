@@ -1,17 +1,17 @@
 #pragma once
 
-#include "crawler.h"
 #include "parsed_page.h"
-#include "iqueued_dowloader.h"
 #include "abstract_threadable_object.h"
-#include "page_parsed_data_collector.h"
 #include "robots_txt_rules.h"
-#include "options_link_filter.h"
 
 namespace WebCrawler
-{			
+{
 
+class IQueuedDownloader;
 class UniqueLinkStore;
+class OptionsLinkFilter;
+class ParsedPageDataCollector;
+struct CrawlerOptions;
 
 class CrawlerWorkerThread : public AbstractThreadableObject
 {			
@@ -33,7 +33,7 @@ private:
 	void handlePageLinkList(std::vector<LinkInfo>& linkList) const;
 
 private:
-	PageParsedDataCollector* m_pageParsedDataCollector;
+	ParsedPageDataCollector* m_pageParsedDataCollector;
 	UniqueLinkStore* m_uniqueLinkStore;
 	IQueuedDownloader* m_queuedDownloader;
 	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;

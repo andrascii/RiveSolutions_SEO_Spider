@@ -243,7 +243,7 @@ void Application::initialize() noexcept
 
 	IDllLoader* dllLoader = ServiceLocator::instance()->service<IDllLoader>();
 
-	SplashScreen::showMessage("Loading seospiderservice.dll...");
+	SplashScreen::showMessage("Loading seospiderserviceapi.dll...");
 
 	dllLoader->load(s_serviceApiDllName);
 
