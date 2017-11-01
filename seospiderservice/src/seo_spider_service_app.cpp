@@ -82,7 +82,6 @@ void SeoSpiderServiceApp::makeCrashDump(HANDLE processHandle) const noexcept
 	CloseHandle(dumpFileHandle);
 }
 
-
 bool SeoSpiderServiceApp::setSeDebugPrivilege(bool flag) const noexcept
 {
 	HANDLE hThisProcessToken = nullptr;

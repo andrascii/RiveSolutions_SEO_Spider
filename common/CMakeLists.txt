@@ -51,7 +51,6 @@ include_directories(
 
 target_link_libraries(
 	${CommonLibName}
-	${SeoSpiderServiceApiDllName}
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Svg

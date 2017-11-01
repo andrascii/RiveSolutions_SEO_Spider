@@ -80,7 +80,6 @@ include_directories(
 
 target_link_libraries(
 	${LoggerAppName}
-	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}
 	Qt5::Widgets
 	Qt5::Network

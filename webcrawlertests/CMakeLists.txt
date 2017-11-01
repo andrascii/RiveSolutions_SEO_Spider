@@ -87,7 +87,6 @@ target_link_libraries(
 	${WebCrawlerLibName}
 	gtest
 	${CommonLibName}
-	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
