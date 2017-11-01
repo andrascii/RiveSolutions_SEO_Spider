@@ -6,6 +6,7 @@ set(CommonHeadersDir include)
 # deps headers
 aux_source_directory(${CommonSourcesDir} CommonSourcesList)
 file(GLOB_RECURSE CommonHeadersList "include/*.h")
+set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 
 list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
 
@@ -45,10 +46,12 @@ endif()
 
 include_directories(
 	${CommonHeadersDir}
+	${SeoSpiderServiceApiHeadersDir}
 )
 
 target_link_libraries(
 	${CommonLibName}
+	${SeoSpiderServiceApiDllName}
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Svg

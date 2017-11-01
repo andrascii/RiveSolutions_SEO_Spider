@@ -241,17 +241,6 @@ void Application::initialize() noexcept
 	moveToThreadService->moveObjectToThread(m_crawler, "BackgroundThread");
 	moveToThreadService->moveObjectToThread(hostInfoProvider, "BackgroundThread");
 
-	IDllLoader* dllLoader = ServiceLocator::instance()->service<IDllLoader>();
-
-	SplashScreen::showMessage("Loading seospiderserviceapi.dll...");
-
-	dllLoader->load(s_serviceApiDllName);
-
-	if (!dllLoader->isLoaded(s_serviceApiDllName))
-	{
-		ERRORLOG << s_serviceApiDllName << "cannot be loaded";
-	}
-
 	WebCrawler::SequencedDataCollection* storage = m_crawler->sequencedDataCollection();
 	
 	ASSERT(storage->thread() == QThread::currentThread());

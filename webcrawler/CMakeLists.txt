@@ -7,6 +7,7 @@ set(WebCrawlerHeadersDir include)
 # deps headers
 set(GumboLibHeadersDir ../gumbo)
 set(CommonLibHeadersDir ../common/include)
+set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 
 aux_source_directory(${WebCrawlerSourcesDir} WebCrawlerSourcesList)
 file(GLOB_RECURSE WebCrawlerHeadersList "include/*.h")
@@ -67,6 +68,7 @@ include_directories(
 	${WebCrawlerHeadersDir}
 	${GumboLibHeadersDir}
 	${CommonLibHeadersDir}
+	${SeoSpiderServiceApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -75,6 +77,7 @@ target_link_libraries(
 	${WebCrawlerLibName}
 	${GumboLibName}
 	${CommonLibName}
+	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}

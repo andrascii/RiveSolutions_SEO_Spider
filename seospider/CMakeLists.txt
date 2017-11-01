@@ -7,6 +7,7 @@ set(AppHeadersDir include)
 # deps headers
 set(WebCrawlerLibHeadersDir ../webcrawler/include)
 set(CommonLibHeadersDir ../common/include)
+set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppCppList "src/*.cpp")
@@ -73,6 +74,7 @@ include_directories(
 	${AppHeadersDir}
 	${WebCrawlerLibHeadersDir}
 	${CommonLibHeadersDir}
+	${SeoSpiderServiceApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 	${OPENSSL_INCLUDE_DIR}
@@ -82,6 +84,7 @@ target_link_libraries(
 	${AppName}
 	${WebCrawlerLibName}
 	${CommonLibName}
+	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}

@@ -1,14 +1,14 @@
 #pragma once
 
-#include "icrash_handler.h"
+#include "iseo_spider_service_api.h"
 
 namespace SeoSpiderServiceApi
 {
 
-class CrashHandler : public ICrashHandler
+class SeoSpiderServiceApiImpl : public ISeoSpiderServiceApi
 {
 public:
-	CrashHandler();
+	SeoSpiderServiceApiImpl();
 
 	virtual void init() noexcept override;
 	virtual void free() const noexcept override;
@@ -17,6 +17,9 @@ public:
 
 	virtual void setProcessExceptionHandlers() const noexcept override;
 	virtual void setThreadExceptionHandlers() const noexcept override;
+
+	virtual void doAssert(const char* file, int line, const char* function, const char* expression) const noexcept override;
+	virtual void debugReport(const char* file, int line, const char* function, const char* expression) const noexcept override;
 
 private:
 	static LONG WINAPI sehHandler(PEXCEPTION_POINTERS pExceptionPtrs);
@@ -40,7 +43,7 @@ private:
 	static bool lockExceptionFilter();
 
 private:
-	static CrashHandler* s_self;
+	static SeoSpiderServiceApiImpl* s_self;
 
 	HANDLE m_crashEventHandle;
 	STARTUPINFOW m_startupInfo;

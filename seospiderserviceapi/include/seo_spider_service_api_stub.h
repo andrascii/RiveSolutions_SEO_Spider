@@ -1,11 +1,11 @@
 #pragma once
 
-#include "icrash_handler.h"
+#include "iseo_spider_service_api.h"
 
 namespace SeoSpiderServiceApi
 {
 
-class CrashHandlerStub : public ICrashHandler
+class SeoSpiderServiceApiStub : public ISeoSpiderServiceApi
 {
 public:
 	virtual void init() noexcept override
@@ -21,6 +21,12 @@ public:
 	{
 	}
 	virtual void setThreadExceptionHandlers() const noexcept override
+	{
+	}
+	virtual void doAssert(const char*, int, const char*, const char*) const noexcept override
+	{
+	}
+	virtual void debugReport(const char*, int, const char*, const char*) const noexcept override
 	{
 	}
 };
