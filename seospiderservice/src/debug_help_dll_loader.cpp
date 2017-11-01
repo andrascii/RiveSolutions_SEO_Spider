@@ -47,7 +47,7 @@ void DebugHelpDllLoader::writeDump(
 	PMINIDUMP_USER_STREAM_INFORMATION userStreamInformation, 
 	PMINIDUMP_CALLBACK_INFORMATION callbackInformation) const noexcept
 {
-	DEBUG_ASSERT(isLoaded() && "Attempt to write dump with unloaded dbghelp.dll");
+	Q_ASSERT(isLoaded() && "Attempt to write dump with unloaded dbghelp.dll");
 
 	if (!isLoaded())
 	{

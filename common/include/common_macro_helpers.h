@@ -1,8 +1,9 @@
 #pragma once
 
-#include "debug_helpers_api.h"
+#include "seo_spider_service_api_export.h"
 
-#define ASSERT(condition) if((condition) == false) Common::DebugHelpersApi::doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
+#define ASSERT(condition) if((condition) == false) \
+SeoSpiderServiceApi::seoSpiderServiceApi()->doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
 
 #ifdef QT_DEBUG
 #define DEBUG_ASSERT(condition) ASSERT(condition)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-set(AppName quickiewebbot)
+set(AppName seospider)
 set(LoggerAppName logger)
 set(WebCrawlerLibName webcrawler)
 set(GoogleTestLibName googletest/googletest)
@@ -15,7 +15,6 @@ set(CMAKE_INSTALL_PREFIX )
 
 set(GuiBinName ${AppName})
 set(LoggerBinName ${LoggerAppName})
-set(WatchDogServiceName ${SeoSpiderServiceAppName})
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -56,7 +55,7 @@ add_subdirectory(${WebCrawlerLibTestsName})
 add_subdirectory(${LoggerAppName})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
-add_subdirectory(${CommonLibName})
 add_subdirectory(${SeoSpiderServiceApiDllName})
 add_subdirectory(${SeoSpiderServiceAppName})
+add_subdirectory(${CommonLibName})
 add_subdirectory(${GoogleTestLibName})

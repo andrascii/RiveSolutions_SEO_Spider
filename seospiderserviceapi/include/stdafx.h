@@ -103,3 +103,11 @@ using std::size_t;
 }
 
 #define D_FUNCTION(ClassName) ClassName##Private* const d = d_function()
+
+#ifndef QT_DEBUG
+#define PRODUCTION
+#endif
+
+#ifndef PRODUCTION
+#define DEBUG
+#endif

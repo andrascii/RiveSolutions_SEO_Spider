@@ -11,17 +11,32 @@ Message Message::undefinedMessage()
 
 Message Message::startRequestMessage(RequesterSharedPtr requester)
 {
-	return Message(MessageTypeStartRequest, requester->handler()->thread(), requester, IResponseSharedPtr());
+	if (requester)
+	{
+		return Message(MessageTypeStartRequest, requester->handler()->thread(), requester, IResponseSharedPtr());
+	}
+
+	return undefinedMessage();
 }
 
 Message Message::stopRequestMessage(RequesterSharedPtr requester)
 {
-	return Message(MessageTypeStopRequest, requester->handler()->thread(), requester, IResponseSharedPtr());
+	if (requester)
+	{
+		return Message(MessageTypeStopRequest, requester->handler()->thread(), requester, IResponseSharedPtr());
+	}
+
+	return undefinedMessage();
 }
 
 Message Message::postResponseMessage(RequesterSharedPtr requester, IResponseSharedPtr response)
 {
-	return Message(MessageTypePostResponse, requester->thread(), requester, response);
+	if (requester)
+	{
+		return Message(MessageTypePostResponse, requester->thread(), requester, response);
+	}
+	
+	return undefinedMessage();
 }
 
 Message::MessageType Message::type() const noexcept

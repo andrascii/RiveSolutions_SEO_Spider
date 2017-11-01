@@ -3,6 +3,7 @@ project(${LoggerAppName})
 
 set(LoggerAppSourcesDir src)
 set(LoggerAppHeadersDir include)
+set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../${AppName})
 
 aux_source_directory(${LoggerAppSourcesDir} LoggerAppSourcesList)
@@ -72,6 +73,7 @@ endif()
 
 include_directories(
 	${LoggerAppHeadersDir}
+	${SeoSpiderServiceApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )

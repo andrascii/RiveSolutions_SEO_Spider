@@ -120,6 +120,18 @@ QUrl PageParserHelpers::resolveUrl(const QUrl& baseUrl, const QUrl& url) noexcep
 	return result;
 }
 
+void PageParserHelpers::removeUrlLastSlashIfExists(QUrl& url)
+{
+	QString urlString = url.toDisplayString();
+
+	if (urlString.endsWith("/"))
+	{
+		urlString = urlString.left(urlString.size() - 1);
+	}
+
+	url = QUrl(urlString);
+}
+
 bool PageParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept
 {
 	// TODO: improve

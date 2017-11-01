@@ -2,13 +2,15 @@
 #include "unique_link_store.h"
 #include "page_parser_helpers.h"
 #include "iqueued_dowloader.h"
+#include "page_data_collector.h"
+#include "options_link_filter.h"
 
 namespace WebCrawler
 {
 
 CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader)
 	: AbstractThreadableObject(this, QByteArray("CrawlerWorkerThread"))
-	, m_pageParsedDataCollector(new PageParsedDataCollector(this))
+	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
 {
@@ -19,7 +21,7 @@ void CrawlerWorkerThread::applyOptions(const CrawlerOptions& options, RobotsTxtR
 {
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(options, robotsTxtRules));
 	
-	m_pageParsedDataCollector->setOptions(options);
+	m_pageDataCollector->setOptions(options);
 }
 
 void CrawlerWorkerThread::process()
@@ -37,7 +39,7 @@ void CrawlerWorkerThread::process()
 
 	if (replyExtracted)
 	{
-		const ParsedPagePtr page = m_pageParsedDataCollector->collectPageDataFromReply(reply);
+		const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromReply(reply);
 
 		schedulePageResourcesLoading(page);
 
@@ -58,7 +60,7 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		return optionsLinkFilter->linkPermission(linkInfo, flags) == OptionsLinkFilter::PermissionNofollowNotAllowed;
 	};
 
-	std::vector<LinkInfo> outlinks = m_pageParsedDataCollector->outlinks();
+	std::vector<LinkInfo> outlinks = m_pageDataCollector->outlinks();
 	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
 
 	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags);
@@ -110,6 +112,11 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, Me
 		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionSubdomainNotAllowed;
 	};
 
+	const auto removeUrlLastSlashIfExists = [](LinkInfo& link)
+	{
+		PageParserHelpers::removeUrlLastSlashIfExists(link.url);
+	};
+
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 
@@ -132,6 +139,8 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, Me
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
 	std::for_each(blockedByRobotsTxtLinksIterator, linkList.end(), emitPageParsedForBlockedPages);
 	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
+
+	std::for_each(linkList.begin(), linkList.end(), removeUrlLastSlashIfExists);
 }
 
 }

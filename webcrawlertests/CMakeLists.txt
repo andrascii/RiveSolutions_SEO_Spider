@@ -9,6 +9,7 @@ set(WebCrawlerLibHeadersDir ../webcrawler/include)
 set(CommonLibHeadersDir ../common/include)
 set(WatchDogApiHeadersDir ../watchdogapi/include)
 set(GoogleTestHeadersDir ../googletest/googletest/include)
+set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 
 aux_source_directory(${WebCrawlerTestsSourceDir} WebCrawlerTestsSourcesList)
 file(GLOB_RECURSE WebCrawlerTestsHeaderList "include/*.h")
@@ -75,6 +76,7 @@ include_directories(
 	${WebCrawlerLibHeadersDir}
 	${CommonLibHeadersDir}
 	${WatchDogApiHeadersDir}
+	${SeoSpiderServiceApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
