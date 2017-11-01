@@ -10,7 +10,7 @@ namespace WebCrawler
 class IQueuedDownloader;
 class UniqueLinkStore;
 class OptionsLinkFilter;
-class ParsedPageDataCollector;
+class PageDataCollector;
 struct CrawlerOptions;
 
 class CrawlerWorkerThread : public AbstractThreadableObject
@@ -33,7 +33,7 @@ private:
 	void handlePageLinkList(std::vector<LinkInfo>& linkList) const;
 
 private:
-	ParsedPageDataCollector* m_pageParsedDataCollector;
+	PageDataCollector* m_pageDataCollector;
 	UniqueLinkStore* m_uniqueLinkStore;
 	IQueuedDownloader* m_queuedDownloader;
 	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;

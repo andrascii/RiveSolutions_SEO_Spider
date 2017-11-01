@@ -2,7 +2,7 @@
 #include "unique_link_store.h"
 #include "page_parser_helpers.h"
 #include "iqueued_dowloader.h"
-#include "parsed_page_data_collector.h"
+#include "page_data_collector.h"
 #include "options_link_filter.h"
 
 namespace WebCrawler
@@ -10,7 +10,7 @@ namespace WebCrawler
 
 CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader)
 	: AbstractThreadableObject(this, QByteArray("CrawlerWorkerThread"))
-	, m_pageParsedDataCollector(new ParsedPageDataCollector(this))
+	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
 {
@@ -21,7 +21,7 @@ void CrawlerWorkerThread::applyOptions(const CrawlerOptions& options, RobotsTxtR
 {
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(options, robotsTxtRules));
 	
-	m_pageParsedDataCollector->setOptions(options);
+	m_pageDataCollector->setOptions(options);
 }
 
 void CrawlerWorkerThread::process()
@@ -39,7 +39,7 @@ void CrawlerWorkerThread::process()
 
 	if (replyExtracted)
 	{
-		const ParsedPagePtr page = m_pageParsedDataCollector->collectPageDataFromReply(reply);
+		const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromReply(reply);
 
 		schedulePageResourcesLoading(page);
 
@@ -59,7 +59,7 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionNofollowNotAllowed;
 	};
 
-	std::vector<LinkInfo> outlinks = m_pageParsedDataCollector->outlinks();
+	std::vector<LinkInfo> outlinks = m_pageDataCollector->outlinks();
 	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
 
 	handlePageLinkList(outlinks);
