@@ -6,8 +6,8 @@ namespace Common
 enum class ResponseType
 {
 	ResponseTypeUnknown,
-	LoadResponseType,
-	GetHostInfoResponseType
+	ResponseTypeDownload,
+	ResponseTypeGetHostInfo
 };
 
 #define DECLARE_RESPONSE_STATIC_TYPE(Type) \

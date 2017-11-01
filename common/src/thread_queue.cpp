@@ -163,12 +163,6 @@ void ThreadQueue::execute()
 
 			break;
 		}
-		case Message::MessageTypeUndefined:
-		{
-			ASSERT(!"Undefined message type");
-
-			break;
-		}
 	}
 }
 

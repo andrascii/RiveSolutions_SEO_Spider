@@ -5,7 +5,7 @@ namespace Common
 
 enum class RequestType
 {
-	RequestTypeLoad,
+	RequestTypeDownload,
 	RequestGetHostInfo
 };
 

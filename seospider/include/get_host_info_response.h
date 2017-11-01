@@ -13,11 +13,11 @@ struct GetHostInfoResponse : Common::IResponse
 	{
 	}
 
-	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(Common::ResponseType::GetHostInfoResponseType)
+	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(Common::ResponseType::ResponseTypeGetHostInfo)
 
 	virtual Common::ResponseType type() const noexcept override
 	{
-		return Common::ResponseType::GetHostInfoResponseType;
+		return Common::ResponseType::ResponseTypeGetHostInfo;
 	}
 
 	HostInfo hostInfo;
