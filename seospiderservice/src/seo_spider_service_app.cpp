@@ -17,8 +17,8 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	m_eventName = commandLineParameter(1).toLatin1();
 	m_processId = commandLineParameter(2).toInt(&processIdConvertion);
 
-	ASSERT(!m_eventName.isEmpty() && "Event name must be passed!");
-	ASSERT(processIdConvertion && "Process ID must be passed!");
+	Q_ASSERT(!m_eventName.isEmpty() && "Event name must be passed!");
+	Q_ASSERT(processIdConvertion && "Process ID must be passed!");
 
 	VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::quit, Qt::QueuedConnection));
 
@@ -41,7 +41,6 @@ void SeoSpiderServiceApp::waitForSignaledEvent() const noexcept
 {
 	HANDLE signaledEvent = OpenEvent(SYNCHRONIZE, FALSE, m_eventName.constData());
 	HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE | SYNCHRONIZE, FALSE, m_processId);
-
 	HANDLE waitableHandles[] = { processHandle, signaledEvent };
 
 	DWORD awakenedObject = WaitForMultipleObjects(sizeof(waitableHandles) / sizeof(HANDLE), waitableHandles, FALSE, INFINITE);
@@ -70,7 +69,7 @@ void SeoSpiderServiceApp::waitForSignaledEvent() const noexcept
 
 void SeoSpiderServiceApp::makeCrashDump(HANDLE processHandle) const noexcept
 {
-	const QString dumpFileName = "qwbcrash.dmp";
+	const QString dumpFileName = "crash.dmp";
 
 	HANDLE dumpFileHandle = CreateFileW(dumpFileName.toStdWString().c_str(),
 		GENERIC_WRITE, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,

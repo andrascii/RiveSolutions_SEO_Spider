@@ -66,8 +66,11 @@
 #error You compile this code on unsupported platform!
 #endif
 
-#include "common_macro_helpers.h"
-
+#ifdef QT_DEBUG
+#define VERIFY(Connection) Q_ASSERT(Connection)
+#else
+#define VERIFY(Connection) Connection
+#endif
 
 using namespace std::chrono_literals;
 using std::size_t;
