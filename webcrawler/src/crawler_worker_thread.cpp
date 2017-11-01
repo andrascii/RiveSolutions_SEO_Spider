@@ -52,15 +52,16 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		return;
 	}
 
-	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
+	const MetaRobotsFlags flags = parsedPage->metaRobotsFlags;
+	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), flags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionNofollowNotAllowed;
+		return optionsLinkFilter->linkPermission(linkInfo, flags) == OptionsLinkFilter::PermissionNofollowNotAllowed;
 	};
 
 	std::vector<LinkInfo> outlinks = m_pageParsedDataCollector->outlinks();
 	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
 
-	handlePageLinkList(outlinks);
+	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags);
 
 	m_uniqueLinkStore->saveLinkList(outlinks, RequestTypeGet);
 
@@ -92,21 +93,21 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, RequestTypeHead);
 }
 
-void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList) const
+void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, MetaRobotsFlags metaRobotsFlags) const
 {
-	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
+	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionNofollowNotAllowed;
+		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionNofollowNotAllowed;
 	};
 
-	const auto isLinkBlockedByRobotsTxt = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
+	const auto isLinkBlockedByRobotsTxt = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionBlockedByRobotsTxtRules;
+		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionBlockedByRobotsTxtRules;
 	};
 
-	const auto isSubdomainLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get()](const LinkInfo& linkInfo)
+	const auto isSubdomainLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->linkPermission(linkInfo) == OptionsLinkFilter::PermissionSubdomainNotAllowed;
+		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionSubdomainNotAllowed;
 	};
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());

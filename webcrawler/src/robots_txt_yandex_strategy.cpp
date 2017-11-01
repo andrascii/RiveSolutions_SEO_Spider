@@ -81,5 +81,13 @@ QUrl RobotsTxtYandexStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentT
 	return result;
 }
 
+bool RobotsTxtYandexStrategy::isUrlAllowed(MetaRobotsFlags metaRobotsFlags) const
+{
+	return metaRobotsFlags.testFlag(MetaRobotsAll) ||
+		metaRobotsFlags.testFlag(MetaRobotsFollow) ||
+		(!metaRobotsFlags.testFlag(MetaRobotsNone) &&
+		!metaRobotsFlags.testFlag(MetaRobotsNoFollow));
+}
+
 }
 

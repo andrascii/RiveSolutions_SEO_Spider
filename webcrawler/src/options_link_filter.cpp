@@ -11,7 +11,7 @@ OptionsLinkFilter::OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const
 {
 }
 
-OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& linkInfo) const
+OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& linkInfo, MetaRobotsFlags metaRobotsFlags) const
 {
 	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url));
 
@@ -26,7 +26,7 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 		return PermissionNofollowNotAllowed;
 	}
 	
-	if (!isUrlExternal && m_crawlerOptions.followRobotsTxtRules && isLinkBlockedByRobotsTxt(linkInfo))
+	if (!isUrlExternal && m_crawlerOptions.followRobotsTxtRules && isLinkBlockedByRobotsTxt(linkInfo, metaRobotsFlags))
 	{
 		return PermissionBlockedByRobotsTxtRules;
 	}
@@ -41,9 +41,9 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 	return PermissionAllowed;
 }
 
-bool OptionsLinkFilter::isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo) const
+bool OptionsLinkFilter::isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo, MetaRobotsFlags metaRobotsFlags) const
 {
-	return !m_robotsTxtRules.isUrlAllowed(linkInfo.url, m_crawlerOptions.userAgentToFollow);
+	return !m_robotsTxtRules.isUrlAllowed(linkInfo.url, metaRobotsFlags, m_crawlerOptions.userAgentToFollow);
 }
 
 }

@@ -6,7 +6,7 @@
 namespace WebCrawler
 {
 
-bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url, 
+bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url,
 	UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
 {
 	if (!tokenizer.isValid())
@@ -35,6 +35,13 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url,
 	}
 
 	return allowed;
+}
+
+bool RobotsTxtBaseStrategy::isUrlAllowed(MetaRobotsFlags metaRobotsFlags) const
+{
+	// all and follow are not supported (???)
+	return !metaRobotsFlags.testFlag(MetaRobotsNone) &&
+		!metaRobotsFlags.testFlag(MetaRobotsNoFollow);
 }
 
 QUrl RobotsTxtBaseStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const

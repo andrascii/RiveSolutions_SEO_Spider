@@ -6,6 +6,7 @@
 #include "robots_txt_mail_ru_strategy.h"
 #include "robots_txt_yahoo_strategy.h"
 #include "robots_txt_msn_strategy.h"
+#include "robots_txt_google_strategy.h"
 
 namespace WebCrawler
 {
@@ -25,6 +26,7 @@ RobotsTxtRules::RobotsTxtRules(const QByteArray& content)
 	m_strategies[UserAgentType::MailRuBot] = std::make_shared<RobotsTxtMailRuStrategy>();
 	m_strategies[UserAgentType::YahooBot] = std::make_shared<RobotsTxtYahooStrategy>();
 	m_strategies[UserAgentType::MsnBot] = std::make_shared<RobotsTxtMsnStrategy>();
+	m_strategies[UserAgentType::GoogleBot] = std::make_shared<RobotsTxtGoogleStrategy>();
 }
 
 bool RobotsTxtRules::isValid() const
@@ -32,7 +34,7 @@ bool RobotsTxtRules::isValid() const
 	return m_tokenizer->isValid();
 }
 
-bool RobotsTxtRules::isUrlAllowed(const QUrl& url, UserAgentType userAgentType) const
+bool RobotsTxtRules::isUrlAllowed(const QUrl& url, MetaRobotsFlags metaRobotsFlags, UserAgentType userAgentType) const
 {
 	DEBUG_ASSERT(!url.isRelative());
 	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(url));
@@ -40,10 +42,11 @@ bool RobotsTxtRules::isUrlAllowed(const QUrl& url, UserAgentType userAgentType) 
 	if (m_strategies.find(userAgentType) == m_strategies.cend())
 	{
 		WARNINGLOG << "No appropriate strategy was found";
-		return m_strategies[UserAgentType::AnyBot]->isUrlAllowed(url, userAgentType, *m_tokenizer);
+		userAgentType = UserAgentType::AnyBot;
 	}
 
-	return m_strategies[userAgentType]->isUrlAllowed(url, userAgentType, *m_tokenizer);
+	return m_strategies[userAgentType]->isUrlAllowed(url, userAgentType, *m_tokenizer) ||
+		m_strategies[userAgentType]->isUrlAllowed(metaRobotsFlags);
 }
 
 const QUrl& RobotsTxtRules::sitemap() const

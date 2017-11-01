@@ -30,7 +30,7 @@ private:
 	virtual void process() override;
 
 	void schedulePageResourcesLoading(const ParsedPagePtr& parsedPage) const;
-	void handlePageLinkList(std::vector<LinkInfo>& linkList) const;
+	void handlePageLinkList(std::vector<LinkInfo>& linkList, MetaRobotsFlags metaRobotsFlags) const;
 
 private:
 	PageParsedDataCollector* m_pageParsedDataCollector;

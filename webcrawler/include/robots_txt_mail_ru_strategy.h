@@ -6,10 +6,11 @@ namespace WebCrawler
 {
 	
 // https://help.mail.ru/webmaster/indexing/robots.txt/rules/user-agent
+// https://help.mail.ru/webmaster/indexing/robots/management_methods/meta_tags
 
 class RobotsTxtMailRuStrategy : public RobotsTxtYandexStrategy
 {
-	// the same as yandex
+	virtual bool isUrlAllowed(MetaRobotsFlags metaRobotsFlags) const override;
 };
 
 }

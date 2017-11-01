@@ -5,11 +5,12 @@
 namespace WebCrawler
 {
 
+// Slurp
 // https://help.yahoo.com/kb/guide-meta-tags-robotstxt-slurp-sln2213.html
 	
 class RobotsTxtYahooStrategy : public RobotsTxtBaseStrategy
 {
-	// no special rules for this strategy
+	virtual bool isUrlAllowed(MetaRobotsFlags metaRobotsFlags) const override;
 };
 
 }
