@@ -16,13 +16,6 @@
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
 
-namespace
-{
-
-const QByteArray s_serviceApiDllName = "seospiderserviceapi.dll";
-
-}
-
 namespace SeoSpider
 {
 
@@ -148,7 +141,6 @@ void Application::showMainWindow()
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
-	ServiceLocator::instance()->addService<IDllLoader>(new DllLoader);
 	ServiceLocator::instance()->addService<IMoveToThreadService>(new MoveToThreadService);
 }
 

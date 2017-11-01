@@ -37,7 +37,7 @@ protected:
 
 	virtual void run() override
 	{
-		m_result = MessageBoxA(0, m_text.c_str(), "QuickieWebBot Debug Library!",
+		m_result = MessageBoxA(0, m_text.c_str(), "SeoSpiderServiceApi Debug Library!",
 #if defined(QT_DEBUG)
 			MB_RETRYCANCEL
 #else
@@ -134,7 +134,11 @@ void SeoSpiderServiceApiImpl::setThreadExceptionHandlers() const noexcept
 
 void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression) const noexcept
 {
+#ifndef PRODUCTION
 	debugReport(file, line, function, expression);
+#else
+	setProcessSignaledState();
+#endif
 }
 
 void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const noexcept
