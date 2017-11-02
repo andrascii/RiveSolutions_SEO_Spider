@@ -69,6 +69,12 @@ if(MSVC)
 		PROPERTIES WIN32_EXECUTABLE YES
 		LINK_FLAGS "/ENTRY:mainCRTStartup"
 	)
+
+	set_target_properties(
+		${WebCrawlerLibTestsName}
+		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
+		RUNTIME_OUTPUT_DIRECTORY "../seospider/"
+	)
 endif()
 
 include_directories(
@@ -87,6 +93,7 @@ target_link_libraries(
 	${WebCrawlerLibName}
 	gtest
 	${CommonLibName}
+	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
