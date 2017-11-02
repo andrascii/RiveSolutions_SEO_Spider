@@ -11,9 +11,9 @@
 #include "settings_page_impl.h"
 #include "widget_under_mouse_info.h"
 #include "move_to_thread_service.h"
-#include "host_info_provider.h"
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
+#include "host_info_provider.h"
 
 namespace SeoSpider
 {
@@ -112,7 +112,7 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 
 void Application::startCrawler()
 {
-	GetHostInfoRequest request(preferences()->url().host().toLatin1());
+	WebCrawler::GetHostInfoRequest request(preferences()->url().host().toLatin1());
 	m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
 	m_hostInfoRequester->start();
 
@@ -157,7 +157,7 @@ QSettings* Application::settings() const
 	return m_settings;
 }
 
-void Application::onHostInfoResponse(Common::Requester* requester, const GetHostInfoResponse& response)
+void Application::onHostInfoResponse(Common::Requester* requester, const WebCrawler::GetHostInfoResponse& response)
 {
 	mainWindow()->statusBar()->clearMessage();
 
@@ -223,7 +223,7 @@ void Application::initialize() noexcept
 
 	registerServices();
 
-	HostInfoProvider* hostInfoProvider = new HostInfoProvider;
+	WebCrawler::HostInfoProvider* hostInfoProvider = new WebCrawler::HostInfoProvider;
 
 	IMoveToThreadService* moveToThreadService = ServiceLocator::instance()->service<IMoveToThreadService>();
 	moveToThreadService->moveObjectToThread(m_crawler, "BackgroundThread");

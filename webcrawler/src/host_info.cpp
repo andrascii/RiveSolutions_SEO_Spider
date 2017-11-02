@@ -1,6 +1,17 @@
 #include "host_info.h"
 
-namespace SeoSpider
+#if defined Q_OS_WIN
+
+//
+// May be these libs need to link using CMake...
+//
+
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "windowsapp.lib")
+
+#endif
+
+namespace WebCrawler
 {
 
 HostInfo::HostInfo(const QByteArray& hostname)

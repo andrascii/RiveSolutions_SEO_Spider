@@ -1,6 +1,6 @@
 #pragma once
 
-namespace SeoSpider
+namespace WebCrawler
 {
 
 enum class AddressFamily

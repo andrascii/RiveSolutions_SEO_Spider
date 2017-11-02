@@ -6,12 +6,12 @@
 #include "storage_adaptor_factory.h"
 #include "isettings_accessor.h"
 #include "requester.h"
-#include "iresponse.h"
 #include "requester_wrapper.h"
 
 namespace WebCrawler
 {
 
+struct GetHostInfoResponse;
 class SequencedDataCollection;
 class Crawler;
 
@@ -55,7 +55,7 @@ private:
 	void initQSettings();
 	QSettings* settings() const;
 
-	void onHostInfoResponse(Common::Requester* requester, const GetHostInfoResponse& response);
+	void onHostInfoResponse(Common::Requester* requester, const WebCrawler::GetHostInfoResponse& response);
 
 private slots:
 	void startCrawler();

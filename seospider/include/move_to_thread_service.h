@@ -13,7 +13,7 @@ public:
 class MoveToThreadService : public IMoveToThreadService
 {
 public:
-	~MoveToThreadService();
+	virtual ~MoveToThreadService();
 
 	virtual void moveObjectToThread(QObject* object, const QByteArray& threadName) override;
 

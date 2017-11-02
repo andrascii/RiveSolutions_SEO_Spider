@@ -66,11 +66,6 @@ ModelController::ModelController(QObject* parent, QThread* sequencedDataCollecti
 {
 }
 
-ModelController::~ModelController()
-{
-	
-}
-
 void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
 {
 	m_crawlerOptions = options;

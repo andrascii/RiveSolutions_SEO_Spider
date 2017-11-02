@@ -54,12 +54,6 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		return;
 	}
 
-	const MetaRobotsFlags flags = parsedPage->metaRobotsFlags;
-	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), flags](const LinkInfo& linkInfo)
-	{
-		return optionsLinkFilter->linkPermission(linkInfo, flags) == OptionsLinkFilter::PermissionNofollowNotAllowed;
-	};
-
 	std::vector<LinkInfo> outlinks = m_pageDataCollector->outlinks();
 	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
 

@@ -15,10 +15,8 @@ class ModelController : public QObject
 
 public:
 	ModelController(QObject* parent, QThread* sequencedDataCollectionThread);
-	~ModelController();
 
 	void setWebCrawlerOptions(const CrawlerOptions& options);
-
 	void addParsedPage(ParsedPagePtr incomingPage) noexcept;
 
 	const UnorderedDataCollection* data() const noexcept;

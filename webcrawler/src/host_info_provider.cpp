@@ -5,7 +5,7 @@
 #include "get_host_info_response.h"
 #include "thread_queue.h"
 
-namespace SeoSpider
+namespace WebCrawler
 {
 
 HostInfoProvider::HostInfoProvider()

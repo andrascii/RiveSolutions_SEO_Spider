@@ -2,7 +2,7 @@
 
 #include "irequest.h"
 
-namespace SeoSpider
+namespace WebCrawler
 {
 
 struct GetHostInfoRequest : Common::IRequest

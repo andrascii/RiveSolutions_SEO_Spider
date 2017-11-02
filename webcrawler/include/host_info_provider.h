@@ -2,7 +2,7 @@
 
 #include "requester.h"
 
-namespace SeoSpider
+namespace WebCrawler
 {
 
 class HostInfoProvider : public QObject

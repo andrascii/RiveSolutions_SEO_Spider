@@ -3,7 +3,7 @@
 #include "iresponse.h"
 #include "host_info.h"
 
-namespace SeoSpider
+namespace WebCrawler
 {
 
 struct GetHostInfoResponse : Common::IResponse
