@@ -14,7 +14,6 @@ namespace SeoSpider
 {
 
 struct GetHostInfoResponse;
-class ApplicationSettingsWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -26,20 +25,18 @@ public:
 	void init();
 
 public slots:
-	void showApplicationSettingsWidget();
+	void showApplicationSettingsWidget(const QByteArray& settingsPageName = QByteArray());
 	void showMessageBoxDialog(const QString& title, 
 		const QString& message, 
 		MessageBoxDialog::Icon icon, 
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
 private:
-	void createActions() const;
+	void createActions();
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
 
 private:
-	ApplicationSettingsWidget* m_applicationSettingsWidget;
-
 	bool m_initialized;
 
 	Common::RequesterWrapper m_requester;

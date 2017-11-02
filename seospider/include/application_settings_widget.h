@@ -13,6 +13,8 @@ public:
 	ApplicationSettingsWidget(QWidget* parent = nullptr);
 	~ApplicationSettingsWidget();
 
+	void setCurrentPage(const QByteArray& settingsPageName);
+
 private:
 	Q_SLOT void applyChanges();
 	Q_SLOT void okButtonClicked();
@@ -28,9 +30,7 @@ private:
 
 private:
 	Ui::ApplicationSettingsWidget m_ui;
-
-	QByteArray m_currentPage;
-
+	QMap<QByteArray, int> m_pageIndex;
 	bool m_somethingChanged;
 };
 

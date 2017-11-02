@@ -6,11 +6,7 @@
 #include "action_registry.h"
 #include "menu_bar.h"
 #include "settings_page_impl.h"
-#include "crawler_options.h"
 #include "crawler.h"
-#include "host_info.h"
-#include "preferences.h"
-#include "robots_txt_rules.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
@@ -22,31 +18,29 @@ namespace SeoSpider
 
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
-	, m_applicationSettingsWidget(nullptr)
 	, m_initialized(false)
 {
 }
 
-void MainWindow::showApplicationSettingsWidget()
+void MainWindow::showApplicationSettingsWidget(const QByteArray& settingsPageName)
 {
-	if (!m_applicationSettingsWidget)
-	{
-		m_applicationSettingsWidget = new ApplicationSettingsWidget(this);
-	}
-
-	m_applicationSettingsWidget->exec();
+	ApplicationSettingsWidget* applicationSettingsWidget = new ApplicationSettingsWidget(this);
+	applicationSettingsWidget->setCurrentPage(settingsPageName);
+	applicationSettingsWidget->exec();
+	applicationSettingsWidget->deleteLater();
 }
 
-void MainWindow::showMessageBoxDialog(const QString& title, const QString& message, MessageBoxDialog::Icon icon, QDialogButtonBox::StandardButtons buttons)
+void MainWindow::showMessageBoxDialog(const QString& title, 
+	const QString& message, 
+	MessageBoxDialog::Icon icon, 
+	QDialogButtonBox::StandardButtons buttons)
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog(this);
 	messageBoxDialog->setAttribute(Qt::WA_DeleteOnClose, true);
-
 	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setIcon(icon);
 	messageBoxDialog->setStandardButtons(buttons);
-
 	messageBoxDialog->show();
 }
 
@@ -66,7 +60,7 @@ void MainWindow::init()
 	m_initialized = true;
 }
 
-void MainWindow::createActions() const
+void MainWindow::createActions()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
@@ -90,27 +84,55 @@ void MainWindow::createActions() const
 	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
 
 	// settings actions
-	actionRegistry.addGlobalAction(s_openSettingsAction,
-		QIcon(QStringLiteral(":/images/settings.png")), tr("Settings"));
+	actionRegistry.addActionGroup(s_settingsActionGroup);
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openSettingsAction, tr("Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerSettingsAction, tr("Crawler Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLanguageSettingsAction, tr("Language Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPreferencesSettingsAction, tr("Preferences Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction, tr("Limit Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction, tr("Proxy Settings"));
+
+	VERIFY(connect(theApp->crawler(), &WebCrawler::Crawler::crawlerStarted,
+		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
+
+	VERIFY(connect(theApp->crawler(), &WebCrawler::Crawler::crawlerStopped,
+		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(true); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), 
+		this, SLOT(showApplicationSettingsWidget())));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_CrawlerSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openLanguageSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_LanguageSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openPreferencesSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_PreferencesSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openLimitsSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_LimitsSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openProxySettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_ProxySettingsWidget)); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
 	actionRegistry.addGlobalAction(s_stopCrawlerAction, tr("Stop Crawler"));
 	actionRegistry.addGlobalAction(s_clearCrawledDataAction, tr("Clear Crawled Data"));
 
-	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), this, SLOT(showApplicationSettingsWidget())));
 	VERIFY(connect(actionRegistry.globalAction(s_startCrawlerAction), SIGNAL(triggered()), theApp, SLOT(startCrawler())));
 	VERIFY(connect(actionRegistry.globalAction(s_stopCrawlerAction), SIGNAL(triggered()), theApp, SLOT(stopCrawler())));
 	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
-
 	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(quit())));
 }
 
 void MainWindow::createAndSetCentralWidget()
 {
 	QWidget* centralWidget = new QWidget(this);
-
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
+
 	layout->setSpacing(0);
 	layout->setMargin(0);
 	layout->addWidget(new DataPagesWidget(centralWidget));

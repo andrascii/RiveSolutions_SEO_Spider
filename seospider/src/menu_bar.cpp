@@ -38,10 +38,14 @@ QMenu* MenuBar::buildMenuFile()
 QMenu* MenuBar::buildMenuSettings()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
-
 	QMenu* settingsMenu = new QMenu(tr("Settings"), this);
 
 	settingsMenu->addAction(actionRegistry.globalAction(s_openSettingsAction));
+	settingsMenu->addAction(actionRegistry.globalAction(s_openCrawlerSettingsAction));
+	settingsMenu->addAction(actionRegistry.globalAction(s_openLanguageSettingsAction));
+	settingsMenu->addAction(actionRegistry.globalAction(s_openPreferencesSettingsAction));
+	settingsMenu->addAction(actionRegistry.globalAction(s_openLimitsSettingsAction));
+	settingsMenu->addAction(actionRegistry.globalAction(s_openProxySettingsAction));
 
 	return settingsMenu;
 }

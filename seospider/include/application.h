@@ -48,10 +48,6 @@ public:
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
 	virtual QList<QByteArray> allKeys() const override;
 
-signals:
-	void crawlerStarted();
-	void crawlerStopped();
-
 private:
 	static void registerServices();
 	static QString operatingSystemVersion();

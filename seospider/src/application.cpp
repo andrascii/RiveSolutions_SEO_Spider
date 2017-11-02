@@ -9,7 +9,6 @@
 #include "preferences.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
-#include "dll_loader.h"
 #include "widget_under_mouse_info.h"
 #include "move_to_thread_service.h"
 #include "host_info_provider.h"
@@ -123,7 +122,6 @@ void Application::startCrawler()
 void Application::stopCrawler()
 {
 	crawler()->stopCrawling();
-	emit crawlerStopped();
 }
 
 void Application::clearCrawledData()
@@ -212,8 +210,6 @@ void Application::onHostInfoResponse(Common::Requester* requester, const GetHost
 	options.parserTypeFlags.setFlag(WebCrawler::FlashResourcesParserType);
 
 	crawler()->startCrawling(options);
-
-	emit crawlerStarted();
 }
 
 void Application::initialize() noexcept

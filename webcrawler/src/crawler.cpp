@@ -70,6 +70,8 @@ void Crawler::stopCrawlingInternal()
 
 	m_crawlingStateTimer->stop();
 
+	emit crawlerStopped();
+
 	INFOLOG << "crawler stopped";
 }
 
@@ -107,6 +109,8 @@ void Crawler::onCrawlingSessionInitialized()
 	}
 
 	m_crawlingStateTimer->start();
+
+	emit crawlerStarted();
 
 	INFOLOG << "crawler started";
 }

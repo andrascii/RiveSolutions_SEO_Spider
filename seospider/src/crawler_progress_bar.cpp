@@ -1,6 +1,7 @@
 #include "crawler_progress_bar.h"
 #include "application.h"
 #include "main_window.h"
+#include "crawler.h"
 
 namespace SeoSpider
 {
@@ -10,8 +11,8 @@ CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 {
 	setMaximum(100);
 
-	VERIFY(connect(theApp, &Application::crawlerStarted, this, &QWidget::show));
-	VERIFY(connect(theApp, &Application::crawlerStopped, this, &QWidget::hide));
+	VERIFY(connect(theApp->crawler(), &WebCrawler::Crawler::crawlerStarted, this, &QWidget::show));
+	VERIFY(connect(theApp->crawler(), &WebCrawler::Crawler::crawlerStopped, this, &QWidget::hide));
 
 	VERIFY(connect(theApp->crawler(), SIGNAL(crawlingState(CrawlingState)),
 		this, SLOT(calculatePercents(CrawlingState)), Qt::QueuedConnection));

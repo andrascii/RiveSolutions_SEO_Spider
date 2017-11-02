@@ -34,6 +34,8 @@ public:
 
 signals:
 	void crawlingState(CrawlingState state);
+	void crawlerStarted();
+	void crawlerStopped();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);

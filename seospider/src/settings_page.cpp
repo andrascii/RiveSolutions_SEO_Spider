@@ -71,7 +71,6 @@ void SettingsPage::reloadSettings() noexcept
 	INFOLOG << "Settings reloaded for " << this->windowTitle();
 }
 
-
 bool SettingsPage::isAutoApply() const noexcept
 {
 	return m_isAutoApply;

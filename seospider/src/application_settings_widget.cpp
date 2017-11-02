@@ -104,6 +104,18 @@ ApplicationSettingsWidget::~ApplicationSettingsWidget()
 	}
 }
 
+void ApplicationSettingsWidget::setCurrentPage(const QByteArray& settingsPageName)
+{
+	if (settingsPageName.isEmpty())
+	{
+		m_ui.propGroupsList->setCurrentRow(0);
+		return;
+	}
+
+	DEBUG_ASSERT(m_pageIndex.contains(settingsPageName));
+	m_ui.propGroupsList->setCurrentRow(m_pageIndex[settingsPageName]);
+}
+
 void ApplicationSettingsWidget::somethingChangedSlot()
 {
 	m_somethingChanged = true;
@@ -118,9 +130,10 @@ void ApplicationSettingsWidget::initialize()
 
 	ISettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<ISettingsPageRegistry>();
 
+	int pageIndex = 0;
+
 	foreach (const QByteArray& pageId, settingsPageRegistry->pagesKeys())
 	{
-		
 		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);
 		page->setParent(this);
 
@@ -138,7 +151,11 @@ void ApplicationSettingsWidget::initialize()
 
 		m_ui.stackedWidget->addWidget(page);
 		m_ui.propGroupsList->addItem(item);
+
+		m_pageIndex[pageId] = pageIndex++;
 	}
+
+	m_ui.propGroupsList->setCurrentRow(0);
 }
 
 }
