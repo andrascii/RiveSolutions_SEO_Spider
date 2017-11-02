@@ -5,7 +5,7 @@ set(AppSourcesDir src)
 set(AppHeadersDir include)
 
 # deps headers
-set(WebCrawlerLibHeadersDir ../webcrawler/include)
+set(CrawlerEngineLibHeadersDir ../crawlerengine/include)
 set(CommonLibHeadersDir ../common/include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 
@@ -72,7 +72,7 @@ endif()
 
 include_directories(
 	${AppHeadersDir}
-	${WebCrawlerLibHeadersDir}
+	${CrawlerEngineLibHeadersDir}
 	${CommonLibHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
@@ -82,7 +82,7 @@ include_directories(
 
 target_link_libraries(
 	${AppName}
-	${WebCrawlerLibName}
+	${CrawlerEngineLibName}
 	${CommonLibName}
 	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}

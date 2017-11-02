@@ -26,13 +26,13 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept = 0;
 
-	virtual const WebCrawler::SequencedDataCollection* guiStorage() const noexcept = 0;
+	virtual const CrawlerEngine::SequencedDataCollection* guiStorage() const noexcept = 0;
 
 	virtual QObject* qobject() noexcept = 0;
 
 	virtual const DCStorageDescription* storageDescriptionByRow(int row) const noexcept = 0;
 	virtual const DCStorageGroupDescription* storageGroupDescriptionByRow(int row) const noexcept = 0;
-	virtual const DCStorageDescription* storageDescription(WebCrawler::StorageType type) const noexcept = 0;
+	virtual const DCStorageDescription* storageDescription(CrawlerEngine::StorageType type) const noexcept = 0;
 	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept = 0;
 
 	// signals

@@ -5,10 +5,10 @@
 namespace SeoSpider
 {
 
-SummaryDataAccessor::SummaryDataAccessor(WebCrawler::SequencedDataCollection* guiStorage)
+SummaryDataAccessor::SummaryDataAccessor(CrawlerEngine::SequencedDataCollection* guiStorage)
 	: m_guiStorage(guiStorage)
 {
-	VERIFY(connect(m_guiStorage, &WebCrawler::SequencedDataCollection::parsedPageAdded, this, &SummaryDataAccessor::emitDataChanged));
+	VERIFY(connect(m_guiStorage, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, this, &SummaryDataAccessor::emitDataChanged));
 }
 
 int SummaryDataAccessor::columnCount() const noexcept
@@ -37,7 +37,7 @@ void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
 	}
 }
 
-const WebCrawler::SequencedDataCollection* SummaryDataAccessor::guiStorage() const noexcept
+const CrawlerEngine::SequencedDataCollection* SummaryDataAccessor::guiStorage() const noexcept
 {
 	return m_guiStorage;
 }
@@ -73,7 +73,7 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescriptionByR
 	return nullptr;
 }
 
-const DCStorageDescription* SummaryDataAccessor::storageDescription(WebCrawler::StorageType type) const noexcept
+const DCStorageDescription* SummaryDataAccessor::storageDescription(CrawlerEngine::StorageType type) const noexcept
 {
 	foreach(DCStorageDescription* dcStorageDescription, m_itemRows)
 	{
@@ -99,7 +99,7 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(Au
 	return nullptr;
 }
 
-int SummaryDataAccessor::rowByStorageType(WebCrawler::StorageType storageType) const noexcept
+int SummaryDataAccessor::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
 {
 	for (int i = 0; i < rowCount(); ++i)
 	{
@@ -119,7 +119,7 @@ int SummaryDataAccessor::rowByStorageType(WebCrawler::StorageType storageType) c
 
 void SummaryDataAccessor::emitDataChanged(int, int storageType)
 {
-	const int row = rowByStorageType(static_cast<WebCrawler::StorageType>(storageType));
+	const int row = rowByStorageType(static_cast<CrawlerEngine::StorageType>(storageType));
 
 	if (row == -1)
 	{

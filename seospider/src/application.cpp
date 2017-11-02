@@ -21,7 +21,7 @@ namespace SeoSpider
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_preferences(new Preferences(this, this))
-	, m_crawler(new WebCrawler::Crawler(Common::g_optimalParserThreadsCount))
+	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount))
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
@@ -46,7 +46,7 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "App Version:" << applicationVersion();
 }
 
-WebCrawler::Crawler* Application::crawler() const noexcept
+CrawlerEngine::Crawler* Application::crawler() const noexcept
 {
 	return m_crawler;
 }
@@ -56,7 +56,7 @@ MainWindow* Application::mainWindow() const noexcept
 	return m_mainWindow.get();
 }
 
-WebCrawler::SequencedDataCollection* Application::sequencedDataCollection() const noexcept
+CrawlerEngine::SequencedDataCollection* Application::sequencedDataCollection() const noexcept
 {
 	return m_sequencedDataCollection;
 }
@@ -112,7 +112,7 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 
 void Application::startCrawler()
 {
-	WebCrawler::GetHostInfoRequest request(preferences()->url().host().toLatin1());
+	CrawlerEngine::GetHostInfoRequest request(preferences()->url().host().toLatin1());
 	m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
 	m_hostInfoRequester->start();
 
@@ -157,7 +157,7 @@ QSettings* Application::settings() const
 	return m_settings;
 }
 
-void Application::onHostInfoResponse(Common::Requester* requester, const WebCrawler::GetHostInfoResponse& response)
+void Application::onHostInfoResponse(Common::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response)
 {
 	mainWindow()->statusBar()->clearMessage();
 
@@ -174,7 +174,7 @@ void Application::onHostInfoResponse(Common::Requester* requester, const WebCraw
 		return;
 	}
 
-	WebCrawler::CrawlerOptions options;
+	CrawlerEngine::CrawlerOptions options;
 
 	// preferences
 	options.host = preferences()->url();
@@ -200,14 +200,14 @@ void Application::onHostInfoResponse(Common::Requester* requester, const WebCraw
 
 	// robots.txt rules
 	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
-	options.userAgentToFollow = WebCrawler::UserAgentType::AnyBot;
+	options.userAgentToFollow = CrawlerEngine::UserAgentType::AnyBot;
 	options.plainUserAgent = "sTechnologiesBot/1.0 Alpha (+http://www.sTechnologiesSeoSpider.org/)";
 
-	options.parserTypeFlags.setFlag(WebCrawler::JavaScriptResourcesParserType);
-	options.parserTypeFlags.setFlag(WebCrawler::CssResourcesParserType);
-	options.parserTypeFlags.setFlag(WebCrawler::ImagesResourcesParserType);
-	options.parserTypeFlags.setFlag(WebCrawler::VideoResourcesParserType);
-	options.parserTypeFlags.setFlag(WebCrawler::FlashResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType);
 
 	crawler()->startCrawling(options);
 }
@@ -223,13 +223,13 @@ void Application::initialize() noexcept
 
 	registerServices();
 
-	WebCrawler::HostInfoProvider* hostInfoProvider = new WebCrawler::HostInfoProvider;
+	CrawlerEngine::HostInfoProvider* hostInfoProvider = new CrawlerEngine::HostInfoProvider;
 
 	IMoveToThreadService* moveToThreadService = ServiceLocator::instance()->service<IMoveToThreadService>();
 	moveToThreadService->moveObjectToThread(m_crawler, "BackgroundThread");
 	moveToThreadService->moveObjectToThread(hostInfoProvider, "BackgroundThread");
 
-	WebCrawler::SequencedDataCollection* storage = m_crawler->sequencedDataCollection();
+	CrawlerEngine::SequencedDataCollection* storage = m_crawler->sequencedDataCollection();
 	
 	ASSERT(storage->thread() == QThread::currentThread());
 	

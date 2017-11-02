@@ -8,7 +8,7 @@
 #include "requester.h"
 #include "requester_wrapper.h"
 
-namespace WebCrawler
+namespace CrawlerEngine
 {
 
 struct GetHostInfoResponse;
@@ -35,8 +35,8 @@ public:
 	StorageAdaptorFactory* storageAdaptorFactory() const noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() const noexcept;
 	
-	WebCrawler::Crawler* crawler() const noexcept;
-	WebCrawler::SequencedDataCollection* sequencedDataCollection() const noexcept;
+	CrawlerEngine::Crawler* crawler() const noexcept;
+	CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept;
 
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
@@ -55,7 +55,7 @@ private:
 	void initQSettings();
 	QSettings* settings() const;
 
-	void onHostInfoResponse(Common::Requester* requester, const WebCrawler::GetHostInfoResponse& response);
+	void onHostInfoResponse(Common::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
 
 private slots:
 	void startCrawler();
@@ -68,9 +68,9 @@ private:
 
 private:
 	Preferences* m_preferences;
-	WebCrawler::Crawler* m_crawler;
+	CrawlerEngine::Crawler* m_crawler;
 
-	WebCrawler::SequencedDataCollection* m_sequencedDataCollection;
+	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
 	
 	std::unique_ptr<MainWindow> m_mainWindow;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;

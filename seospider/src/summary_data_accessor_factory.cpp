@@ -5,7 +5,7 @@
 namespace SeoSpider
 {
 
-ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, WebCrawler::SequencedDataCollection* guiStorage) const
+ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, CrawlerEngine::SequencedDataCollection* guiStorage) const
 {
 	ASSERT(accessorType > DataAccessorType::DataAccessorTypeBegin &&
 		accessorType < DataAccessorType::DataAccessorTypeEnd);

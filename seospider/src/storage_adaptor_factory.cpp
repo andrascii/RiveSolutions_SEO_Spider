@@ -5,13 +5,13 @@
 namespace SeoSpider
 {
 
-IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, WebCrawler::SequencedDataCollection* guiStorage) const
+IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, CrawlerEngine::SequencedDataCollection* guiStorage) const
 {
 	ASSERT(type > StorageAdaptorType::StorageAdaptorTypeBegin &&
 		type < StorageAdaptorType::StorageAdaptorTypeEnd);
 
-	const WebCrawler::StorageType storageType =
-		static_cast<WebCrawler::StorageType>(type);
+	const CrawlerEngine::StorageType storageType =
+		static_cast<CrawlerEngine::StorageType>(type);
 
 	IParsedPageStorageAdaptor* storageAdaptor = new ParsedPageInfoStorageAdaptor(guiStorage->storage(storageType), storageType, guiStorage);
 

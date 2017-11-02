@@ -4,17 +4,17 @@
 namespace SeoSpider
 {
 
-ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(const WebCrawler::SequencedDataCollection::SequencedStorageTypePtr& associatedStorage,
-	WebCrawler::StorageType storageType, QObject* parent)
+ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(const CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr& associatedStorage,
+	CrawlerEngine::StorageType storageType, QObject* parent)
 	: QObject(parent)
 	, m_associatedStorage(associatedStorage)
 	, m_storageType(storageType)
 {
-	WebCrawler::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
+	CrawlerEngine::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
 
 	DEBUG_ASSERT(guiStorage);
 
-	VERIFY(connect(guiStorage, &WebCrawler::SequencedDataCollection::parsedPageAdded, 
+	VERIFY(connect(guiStorage, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, 
 		this, &ParsedPageInfoStorageAdaptor::onStorageUpdated));
 }
 
@@ -54,7 +54,7 @@ int ParsedPageInfoStorageAdaptor::itemCount() const noexcept
 
 QVariant ParsedPageInfoStorageAdaptor::item(const QModelIndex& index) const noexcept
 {
-	const WebCrawler::SequencedDataCollection::SequencedStorageType& storage = *m_associatedStorage;
+	const CrawlerEngine::SequencedDataCollection::SequencedStorageType& storage = *m_associatedStorage;
 
 	DEBUG_ASSERT(index.row() < storage.size());
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
@@ -74,7 +74,7 @@ ParsedPageInfoStorageAdaptor::ItemType ParsedPageInfoStorageAdaptor::itemType(co
 
 ParsedPageInfoPtr ParsedPageInfoStorageAdaptor::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
-	WebCrawler::ParsedPagePtr ptrToPageRawData;
+	CrawlerEngine::ParsedPagePtr ptrToPageRawData;
 
 	if (itemCount() > index.row())
 	{
@@ -90,9 +90,9 @@ QObject* ParsedPageInfoStorageAdaptor::qobject() noexcept
 }
 
 #ifdef QT_DEBUG
-WebCrawler::ParsedPage* ParsedPageInfoStorageAdaptor::parsedPage(const QModelIndex& index) const noexcept
+CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdaptor::parsedPage(const QModelIndex& index) const noexcept
 {
-	const WebCrawler::SequencedDataCollection::SequencedStorageType& storage = *m_associatedStorage;
+	const CrawlerEngine::SequencedDataCollection::SequencedStorageType& storage = *m_associatedStorage;
 	return storage[index.row()].get();
 }
 #endif

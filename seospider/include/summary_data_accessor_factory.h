@@ -1,6 +1,6 @@
 #pragma once
 
-namespace WebCrawler
+namespace CrawlerEngine
 {
 class SequencedDataCollection;
 }
@@ -23,7 +23,7 @@ public:
 		DataAccessorTypeEnd
 	};
 
-	ISummaryDataAccessor* create(DataAccessorType accessorType, WebCrawler::SequencedDataCollection* guiStorage) const;
+	ISummaryDataAccessor* create(DataAccessorType accessorType, CrawlerEngine::SequencedDataCollection* guiStorage) const;
 };
 
 }

@@ -29,7 +29,7 @@ enum class AuditGroup
 
 struct DCStorageDescription
 {
-	WebCrawler::StorageType storageType;
+	CrawlerEngine::StorageType storageType;
 	QString storageTypeDescriptionName;
 };
 

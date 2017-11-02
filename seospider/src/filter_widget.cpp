@@ -40,7 +40,7 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 
 void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) const
 {
-	WebCrawler::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
+	CrawlerEngine::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
 	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, guiStorage);
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
 

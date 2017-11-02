@@ -7,67 +7,67 @@ namespace SeoSpider
 
 enum class StorageAdaptorType
 {
-	StorageAdaptorTypeBegin = WebCrawler::StorageType::BeginEnumStorageType,
+	StorageAdaptorTypeBegin = CrawlerEngine::StorageType::BeginEnumStorageType,
 
 	StorageAdaptorTypeNone,
 
-	StorageAdaptorTypeAllPages = WebCrawler::StorageType::CrawledUrlStorageType,
+	StorageAdaptorTypeAllPages = CrawlerEngine::StorageType::CrawledUrlStorageType,
 
-	StorageAdaptorTypeUpperCaseLinks = WebCrawler::StorageType::UpperCaseUrlStorageType,
-	StorageAdaptorTypeNonAsciiLinks = WebCrawler::StorageType::NonAsciiCharacterUrlStorageType,
-	StorageAdaptorTypeVeryLongLinks = WebCrawler::StorageType::VeryLongUrlStorageType,
-	StorageAdaptorTypeBrokenLinks = WebCrawler::StorageType::Status404StorageType,
+	StorageAdaptorTypeUpperCaseLinks = CrawlerEngine::StorageType::UpperCaseUrlStorageType,
+	StorageAdaptorTypeNonAsciiLinks = CrawlerEngine::StorageType::NonAsciiCharacterUrlStorageType,
+	StorageAdaptorTypeVeryLongLinks = CrawlerEngine::StorageType::VeryLongUrlStorageType,
+	StorageAdaptorTypeBrokenLinks = CrawlerEngine::StorageType::Status404StorageType,
 
-	StorageAdaptorTypeEmptyTitles = WebCrawler::StorageType::EmptyTitleUrlStorageType,
-	StorageAdaptorTypeDuplicatedTitles = WebCrawler::StorageType::DuplicatedTitleUrlStorageType,
-	StorageAdaptorTypeVeryLongTitles = WebCrawler::StorageType::VeryLongTitleUrlStorageType,
-	StorageAdaptorTypeVeryShortTitles = WebCrawler::StorageType::VeryShortTitleUrlStorageType,
-	StorageAdaptorTypeDuplicatedH1Titles = WebCrawler::StorageType::DuplicatedH1TitleUrlStorageType,
-	StorageAdaptorTypeSeveralTitlesOnPage = WebCrawler::StorageType::SeveralTitleUrlStorageType,
+	StorageAdaptorTypeEmptyTitles = CrawlerEngine::StorageType::EmptyTitleUrlStorageType,
+	StorageAdaptorTypeDuplicatedTitles = CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType,
+	StorageAdaptorTypeVeryLongTitles = CrawlerEngine::StorageType::VeryLongTitleUrlStorageType,
+	StorageAdaptorTypeVeryShortTitles = CrawlerEngine::StorageType::VeryShortTitleUrlStorageType,
+	StorageAdaptorTypeDuplicatedH1Titles = CrawlerEngine::StorageType::DuplicatedH1TitleUrlStorageType,
+	StorageAdaptorTypeSeveralTitlesOnPage = CrawlerEngine::StorageType::SeveralTitleUrlStorageType,
 
-	StorageAdaptorTypeEmptyMetaDescriptions = WebCrawler::StorageType::EmptyMetaDescriptionUrlStorageType,
-	StorageAdaptorTypeDuplicatedMetaDescriptions = WebCrawler::StorageType::DuplicatedMetaDescriptionUrlStorageType,
-	StorageAdaptorTypeVeryLongMetaDescriptions = WebCrawler::StorageType::VeryLongMetaDescriptionUrlStorageType,
-	StorageAdaptorTypeVeryShortMetaDescriptions = WebCrawler::StorageType::VeryShortMetaDescriptionUrlStorageType,
-	StorageAdaptorTypeSeveralMetaDescriptionsOnPage = WebCrawler::StorageType::SeveralMetaDescriptionUrlStorageType,
+	StorageAdaptorTypeEmptyMetaDescriptions = CrawlerEngine::StorageType::EmptyMetaDescriptionUrlStorageType,
+	StorageAdaptorTypeDuplicatedMetaDescriptions = CrawlerEngine::StorageType::DuplicatedMetaDescriptionUrlStorageType,
+	StorageAdaptorTypeVeryLongMetaDescriptions = CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType,
+	StorageAdaptorTypeVeryShortMetaDescriptions = CrawlerEngine::StorageType::VeryShortMetaDescriptionUrlStorageType,
+	StorageAdaptorTypeSeveralMetaDescriptionsOnPage = CrawlerEngine::StorageType::SeveralMetaDescriptionUrlStorageType,
 
-	StorageAdaptorTypeEmptyMetaKeywords = WebCrawler::StorageType::EmptyMetaKeywordsUrlStorageType,
-	StorageAdaptorTypeDuplicatedMetaKeywords = WebCrawler::StorageType::DuplicatedMetaKeywordsUrlStorageType,
-	StorageAdaptorTypeSeveralMetaKeywordsOnPage = WebCrawler::StorageType::SeveralMetaKeywordsUrlStorageType,
+	StorageAdaptorTypeEmptyMetaKeywords = CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType,
+	StorageAdaptorTypeDuplicatedMetaKeywords = CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType,
+	StorageAdaptorTypeSeveralMetaKeywordsOnPage = CrawlerEngine::StorageType::SeveralMetaKeywordsUrlStorageType,
 
-	StorageAdaptorTypeMissingH1s = WebCrawler::StorageType::MissingH1UrlStorageType,
-	StorageAdaptorTypeDuplicatedH1s = WebCrawler::StorageType::DuplicatedH1UrlStorageType,
-	StorageAdaptorTypeVeryLongH1s = WebCrawler::StorageType::VeryLongH1UrlStorageType,
-	StorageAdaptorTypeSeveralH1s = WebCrawler::StorageType::SeveralH1UrlStorageType,
+	StorageAdaptorTypeMissingH1s = CrawlerEngine::StorageType::MissingH1UrlStorageType,
+	StorageAdaptorTypeDuplicatedH1s = CrawlerEngine::StorageType::DuplicatedH1UrlStorageType,
+	StorageAdaptorTypeVeryLongH1s = CrawlerEngine::StorageType::VeryLongH1UrlStorageType,
+	StorageAdaptorTypeSeveralH1s = CrawlerEngine::StorageType::SeveralH1UrlStorageType,
 
-	StorageAdaptorTypeMissingH2s = WebCrawler::StorageType::MissingH2UrlStorageType,
-	StorageAdaptorTypeDuplicatedH2s = WebCrawler::StorageType::DuplicatedH2UrlStorageType,
-	StorageAdaptorTypeVeryLongH2s = WebCrawler::StorageType::VeryLongH2UrlStorageType,
-	StorageAdaptorTypeSeveralH2s = WebCrawler::StorageType::SeveralH2UrlStorageType,
+	StorageAdaptorTypeMissingH2s = CrawlerEngine::StorageType::MissingH2UrlStorageType,
+	StorageAdaptorTypeDuplicatedH2s = CrawlerEngine::StorageType::DuplicatedH2UrlStorageType,
+	StorageAdaptorTypeVeryLongH2s = CrawlerEngine::StorageType::VeryLongH2UrlStorageType,
+	StorageAdaptorTypeSeveralH2s = CrawlerEngine::StorageType::SeveralH2UrlStorageType,
 
-	StorageAdaptorTypeImagesOver100kb = WebCrawler::StorageType::Over100kbImageStorageType,
-	StorageAdaptorTypeImageMissingAltText = WebCrawler::StorageType::MissingAltTextImageStorageType,
-	StorageAdaptorTypeImagesVeryLongAltText = WebCrawler::StorageType::VeryLongAltTextImageStorageType,
+	StorageAdaptorTypeImagesOver100kb = CrawlerEngine::StorageType::Over100kbImageStorageType,
+	StorageAdaptorTypeImageMissingAltText = CrawlerEngine::StorageType::MissingAltTextImageStorageType,
+	StorageAdaptorTypeImagesVeryLongAltText = CrawlerEngine::StorageType::VeryLongAltTextImageStorageType,
 
 	// internal resources enum mappers
-	StorageAdaptorTypeHtmlResources = WebCrawler::StorageType::HtmlResourcesStorageType,
-	StorageAdaptorTypeImageResources = WebCrawler::StorageType::ImageResourcesStorageType,
-	StorageAdaptorTypeJavaScriptResources = WebCrawler::StorageType::JavaScriptResourcesStorageType,
-	StorageAdaptorTypeStyleSheetResources = WebCrawler::StorageType::StyleSheetResourcesStorageType,
-	StorageAdaptorTypeFlashResources = WebCrawler::StorageType::FlashResourcesStorageType,
-	StorageAdaptorTypeVideoResources = WebCrawler::StorageType::VideoResourcesStorageType,
-	StorageAdaptorTypeOtherResources = WebCrawler::StorageType::OtherResourcesStorageType,
+	StorageAdaptorTypeHtmlResources = CrawlerEngine::StorageType::HtmlResourcesStorageType,
+	StorageAdaptorTypeImageResources = CrawlerEngine::StorageType::ImageResourcesStorageType,
+	StorageAdaptorTypeJavaScriptResources = CrawlerEngine::StorageType::JavaScriptResourcesStorageType,
+	StorageAdaptorTypeStyleSheetResources = CrawlerEngine::StorageType::StyleSheetResourcesStorageType,
+	StorageAdaptorTypeFlashResources = CrawlerEngine::StorageType::FlashResourcesStorageType,
+	StorageAdaptorTypeVideoResources = CrawlerEngine::StorageType::VideoResourcesStorageType,
+	StorageAdaptorTypeOtherResources = CrawlerEngine::StorageType::OtherResourcesStorageType,
 
 	// external resources enum mappers
-	StorageAdaptorTypeExternalHtmlResources = WebCrawler::StorageType::ExternalHtmlResourcesStorageType,
-	StorageAdaptorTypeExternalImageResources = WebCrawler::StorageType::ExternalImageResourcesStorageType,
-	StorageAdaptorTypeExternalJavaScriptResources = WebCrawler::StorageType::ExternalJavaScriptResourcesStorageType,
-	StorageAdaptorTypeExternalStyleSheetResources = WebCrawler::StorageType::ExternalStyleSheetResourcesStorageType,
-	StorageAdaptorTypeExternalFlashResources = WebCrawler::StorageType::ExternalFlashResourcesStorageType,
-	StorageAdaptorTypeExternalVideoResources = WebCrawler::StorageType::ExternalVideoResourcesStorageType,
-	StorageAdaptorTypeExternalOtherResources = WebCrawler::StorageType::ExternalOtherResourcesStorageType,
+	StorageAdaptorTypeExternalHtmlResources = CrawlerEngine::StorageType::ExternalHtmlResourcesStorageType,
+	StorageAdaptorTypeExternalImageResources = CrawlerEngine::StorageType::ExternalImageResourcesStorageType,
+	StorageAdaptorTypeExternalJavaScriptResources = CrawlerEngine::StorageType::ExternalJavaScriptResourcesStorageType,
+	StorageAdaptorTypeExternalStyleSheetResources = CrawlerEngine::StorageType::ExternalStyleSheetResourcesStorageType,
+	StorageAdaptorTypeExternalFlashResources = CrawlerEngine::StorageType::ExternalFlashResourcesStorageType,
+	StorageAdaptorTypeExternalVideoResources = CrawlerEngine::StorageType::ExternalVideoResourcesStorageType,
+	StorageAdaptorTypeExternalOtherResources = CrawlerEngine::StorageType::ExternalOtherResourcesStorageType,
 
-	StorageAdaptorTypeEnd = WebCrawler::StorageType::EndEnumStorageType
+	StorageAdaptorTypeEnd = CrawlerEngine::StorageType::EndEnumStorageType
 };
 
 }

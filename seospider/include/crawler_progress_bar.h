@@ -5,7 +5,7 @@
 namespace SeoSpider
 {
 
-using namespace WebCrawler;
+using namespace CrawlerEngine;
 
 class CrawlerProgressBar : public QProgressBar
 {

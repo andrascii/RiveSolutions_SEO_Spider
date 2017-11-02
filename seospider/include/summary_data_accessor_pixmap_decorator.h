@@ -25,7 +25,7 @@ private:
 
 	ItemStatus itemStatus(int row) const noexcept;
 
-	WebCrawler::SequencedDataCollection::SequencedStorageTypePtr storageByRow(int row) const noexcept;
+	CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr storageByRow(int row) const noexcept;
 
 	void initializePixmaps();
 

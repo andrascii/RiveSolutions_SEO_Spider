@@ -24,14 +24,14 @@ void DebugInfoWebPageWidget::attach()
 	theApp->installEventFilter(debugInfoWebPageWidget);
 }
 
-void DebugInfoWebPageWidget::onPageSelected(WebCrawler::ParsedPage* page) const
+void DebugInfoWebPageWidget::onPageSelected(CrawlerEngine::ParsedPage* page) const
 {
 	responseHeadersEdit->setPlainText(page->serverResponse);
 	requestHeadersEdit->setPlainText("Not Implemented yet");
 
 #ifdef QT_DEBUG
 
-	if (page->resourceType == WebCrawler::ResourceType::ResourceHtml)
+	if (page->resourceType == CrawlerEngine::ResourceType::ResourceHtml)
 	{
 		const QByteArray rawHtml = qUncompress(page->rawResponse);
 		rawHtmlEdit->setPlainText(rawHtml);

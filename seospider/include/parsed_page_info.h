@@ -71,7 +71,7 @@ public:
 		StatusCodeColumn
 	};
 
-	ParsedPageInfo(WebCrawler::ParsedPagePtr pageRawPtr);
+	ParsedPageInfo(CrawlerEngine::ParsedPagePtr pageRawPtr);
 
 	static QString itemTypeDescription(Column column);
 	static QString itemTypeDescription(PageLinksColumn column);
@@ -84,11 +84,11 @@ public:
 
 private:
 	using MethodAcceptor = QVariant(ParsedPageInfo::*)() const;
-	using PageLinksPointer = std::deque<WebCrawler::ResourceLink> WebCrawler::ParsedPage::*;
+	using PageLinksPointer = std::deque<CrawlerEngine::ResourceLink> CrawlerEngine::ParsedPage::*;
 
 	static bool isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) noexcept;
 	static PageLinksPointer pointerByContext(PageLinkContext context);
-	static QString linkParameterDescription(WebCrawler::LinkParameter linkParameter);
+	static QString linkParameterDescription(CrawlerEngine::LinkParameter linkParameter);
 	static Column mapPageLinksColumnToParsedPageColumn(PageLinksColumn pageLinksColumn) noexcept;
 
 	static MethodAcceptor acceptItemMethod(Column item);
@@ -123,7 +123,7 @@ private:
 	static void checkColumnType(ParsedPageInfo::Column column);
 
 private:
-	WebCrawler::ParsedPagePtr m_parsedPage;
+	CrawlerEngine::ParsedPagePtr m_parsedPage;
 };
 
 using ParsedPageInfoPtr = std::shared_ptr<ParsedPageInfo>;

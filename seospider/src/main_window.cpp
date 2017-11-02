@@ -93,10 +93,10 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction, tr("Limit Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction, tr("Proxy Settings"));
 
-	VERIFY(connect(theApp->crawler(), &WebCrawler::Crawler::crawlerStarted,
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
 
-	VERIFY(connect(theApp->crawler(), &WebCrawler::Crawler::crawlerStopped,
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStopped,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(true); }));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), 

@@ -54,7 +54,7 @@ void SummaryDataAccessorDecorator::addGroup(AuditGroup group) noexcept
 	return m_summaryDataAccessor->addGroup(group);
 }
 
-const WebCrawler::SequencedDataCollection* SummaryDataAccessorDecorator::guiStorage() const noexcept
+const CrawlerEngine::SequencedDataCollection* SummaryDataAccessorDecorator::guiStorage() const noexcept
 {
 	return m_summaryDataAccessor->guiStorage();
 }
@@ -74,7 +74,7 @@ const DCStorageGroupDescription* SummaryDataAccessorDecorator::storageGroupDescr
 	return m_summaryDataAccessor->storageGroupDescriptionByRow(row);
 }
 
-const DCStorageDescription* SummaryDataAccessorDecorator::storageDescription(WebCrawler::StorageType type) const noexcept
+const DCStorageDescription* SummaryDataAccessorDecorator::storageDescription(CrawlerEngine::StorageType type) const noexcept
 {
 	return m_summaryDataAccessor->storageDescription(type);
 }

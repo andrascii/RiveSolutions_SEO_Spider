@@ -104,14 +104,14 @@ using std::size_t;
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define INFOLOG		WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define WARNINGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define ERRORLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define INFOLOG		CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define WARNINGLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define ERRORLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 
 #ifdef DEBUG
-#define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define DEBUGLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 #else
-#define DEBUGLOG	WebCrawler::LoggerConnectionServiceApi::instance()->log(WebCrawler::LoggerConnectionServiceApi::EmptyMessageType,__FUNCTION__,__FILENAME__,__LINE__)
+#define DEBUGLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::EmptyMessageType,__FUNCTION__,__FILENAME__,__LINE__)
 #endif
 
 #if defined(Q_OS_WIN)

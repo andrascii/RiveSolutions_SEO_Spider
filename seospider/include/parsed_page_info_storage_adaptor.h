@@ -12,8 +12,8 @@ class ParsedPageInfoStorageAdaptor : public QObject, public IParsedPageStorageAd
 	Q_OBJECT
 
 public:
-	ParsedPageInfoStorageAdaptor(const WebCrawler::SequencedDataCollection::SequencedStorageTypePtr& associatedStorage,
-		WebCrawler::StorageType storageType,
+	ParsedPageInfoStorageAdaptor(const CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr& associatedStorage,
+		CrawlerEngine::StorageType storageType,
 		QObject* parent = nullptr);
 
 	virtual void setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept override;
@@ -35,16 +35,16 @@ public:
 	Q_SIGNAL virtual void parsedPageInfoAdded(int rowIndex) const override;
 
 #ifdef QT_DEBUG
-	WebCrawler::ParsedPage* parsedPage(const QModelIndex& index) const noexcept;
+	CrawlerEngine::ParsedPage* parsedPage(const QModelIndex& index) const noexcept;
 #endif
 
 private:
 	Q_SLOT void onStorageUpdated(int row, int type);
 
 private:
-	WebCrawler::SequencedDataCollection::SequencedStorageTypePtr m_associatedStorage;
+	CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr m_associatedStorage;
 	QList<ParsedPageInfo::Column> m_availableColumns;
-	WebCrawler::StorageType m_storageType;
+	CrawlerEngine::StorageType m_storageType;
 };
 
 }

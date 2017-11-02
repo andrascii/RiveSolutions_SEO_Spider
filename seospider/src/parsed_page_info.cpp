@@ -6,7 +6,7 @@
 namespace SeoSpider
 {
 
-ParsedPageInfo::ParsedPageInfo(WebCrawler::ParsedPagePtr parsedPage)
+ParsedPageInfo::ParsedPageInfo(CrawlerEngine::ParsedPagePtr parsedPage)
 	: m_parsedPage(parsedPage)
 {
 }
@@ -136,7 +136,7 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 {
 	const PageLinksPointer pointer = pointerByContext(context);
 
-	const WebCrawler::ResourceLink& resourceLink = (m_parsedPage.get()->*pointer)[number];
+	const CrawlerEngine::ResourceLink& resourceLink = (m_parsedPage.get()->*pointer)[number];
 
 	if (isPageLinksColumnMappedToParsedPageColumn(pageLinksColumn))
 	{
@@ -225,12 +225,12 @@ ParsedPageInfo::PageLinksPointer ParsedPageInfo::pointerByContext(PageLinkContex
 	{
 		case PageLinkContext::LinksOnThisPage:
 		{
-			pointer = &WebCrawler::ParsedPage::linksOnThisPage;
+			pointer = &CrawlerEngine::ParsedPage::linksOnThisPage;
 			break;
 		}
 		case PageLinkContext::LinksToThisPage:
 		{
-			pointer = &WebCrawler::ParsedPage::linksToThisPage;
+			pointer = &CrawlerEngine::ParsedPage::linksToThisPage;
 			break;
 		}
 		default:
@@ -242,15 +242,15 @@ ParsedPageInfo::PageLinksPointer ParsedPageInfo::pointerByContext(PageLinkContex
 	return pointer;
 }
 
-QString ParsedPageInfo::linkParameterDescription(WebCrawler::LinkParameter linkParameter)
+QString ParsedPageInfo::linkParameterDescription(CrawlerEngine::LinkParameter linkParameter)
 {
 	switch (linkParameter)
 	{
-		case WebCrawler::LinkParameter::DofollowParameter:
+		case CrawlerEngine::LinkParameter::DofollowParameter:
 		{
 			return QObject::tr("Dofollow");
 		}
-		case WebCrawler::LinkParameter::NofollowParameter:
+		case CrawlerEngine::LinkParameter::NofollowParameter:
 		{
 			return QObject::tr("Nofollow");
 		}
@@ -404,7 +404,7 @@ QVariant ParsedPageInfo::acceptMetaRobots() const
 {
 	static std::map<int, QString> s_cache;
 
-	const WebCrawler::MetaRobotsFlags flags = m_parsedPage->metaRobotsFlags;
+	const CrawlerEngine::MetaRobotsFlags flags = m_parsedPage->metaRobotsFlags;
 
 	auto it = s_cache.find(flags);
 	if (it != s_cache.end())
@@ -413,7 +413,7 @@ QVariant ParsedPageInfo::acceptMetaRobots() const
 	}
 	
 	QString result;
-	auto addFlag = [&flags, &result](WebCrawler::MetaRobotsItem flag, const QString& flagStr)
+	auto addFlag = [&flags, &result](CrawlerEngine::MetaRobotsItem flag, const QString& flagStr)
 	{
 		if (flags.testFlag(flag))
 		{
@@ -421,19 +421,19 @@ QVariant ParsedPageInfo::acceptMetaRobots() const
 		}
 	};
 	
-	addFlag(WebCrawler::MetaRobotsAll, QString("all"));
-	addFlag(WebCrawler::MetaRobotsNoIndex, QString("noindex"));
-	addFlag(WebCrawler::MetaRobotsNoFollow, QString("nofollow"));
-	addFlag(WebCrawler::MetaRobotsNone, QString("none"));
-	addFlag(WebCrawler::MetaRobotsNoArchive, QString("noarchive"));
-	addFlag(WebCrawler::MetaRobotsNoSnippet, QString("nosnippet"));
-	addFlag(WebCrawler::MetaRobotsNoODP, QString("noodp"));
-	addFlag(WebCrawler::MetaRobotsNoTranslate, QString("notranslate"));
-	addFlag(WebCrawler::MetaRobotsNoImageIndex, QString("noimageindex"));
-	addFlag(WebCrawler::MetaRobotsIndex, QString("index"));
-	addFlag(WebCrawler::MetaRobotsFollow, QString("follow"));
-	addFlag(WebCrawler::MetaRobotsNoYaCa, QString("noyaca"));
-	addFlag(WebCrawler::MetaRobotsNoYDir, QString("noydir"));
+	addFlag(CrawlerEngine::MetaRobotsAll, QString("all"));
+	addFlag(CrawlerEngine::MetaRobotsNoIndex, QString("noindex"));
+	addFlag(CrawlerEngine::MetaRobotsNoFollow, QString("nofollow"));
+	addFlag(CrawlerEngine::MetaRobotsNone, QString("none"));
+	addFlag(CrawlerEngine::MetaRobotsNoArchive, QString("noarchive"));
+	addFlag(CrawlerEngine::MetaRobotsNoSnippet, QString("nosnippet"));
+	addFlag(CrawlerEngine::MetaRobotsNoODP, QString("noodp"));
+	addFlag(CrawlerEngine::MetaRobotsNoTranslate, QString("notranslate"));
+	addFlag(CrawlerEngine::MetaRobotsNoImageIndex, QString("noimageindex"));
+	addFlag(CrawlerEngine::MetaRobotsIndex, QString("index"));
+	addFlag(CrawlerEngine::MetaRobotsFollow, QString("follow"));
+	addFlag(CrawlerEngine::MetaRobotsNoYaCa, QString("noyaca"));
+	addFlag(CrawlerEngine::MetaRobotsNoYDir, QString("noydir"));
 
 	s_cache[flags] = result;
 	return result;
