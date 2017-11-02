@@ -19,7 +19,7 @@ const SequencedDataCollection::SequencedStorageTypePtr& SequencedDataCollection:
 	return storage;
 }
 
-void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept
+void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type)
 {
 	StorageType storageType = static_cast<StorageType>(type);
 

@@ -26,7 +26,7 @@ public:
 	Q_SIGNAL void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 
 private:
-	void addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept;
+	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePtr, int type);
 	void initializeStorages();
 
 private:
