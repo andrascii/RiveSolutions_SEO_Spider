@@ -11,7 +11,7 @@ OptionsLinkFilter::OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const
 {
 }
 
-OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& linkInfo, MetaRobotsFlags metaRobotsFlags) const
+OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const
 {
 	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url));
 
@@ -41,7 +41,7 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 	return PermissionAllowed;
 }
 
-bool OptionsLinkFilter::isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo, MetaRobotsFlags metaRobotsFlags) const
+bool OptionsLinkFilter::isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const
 {
 	return !m_robotsTxtRules.isUrlAllowed(linkInfo.url, metaRobotsFlags, m_crawlerOptions.userAgentToFollow);
 }

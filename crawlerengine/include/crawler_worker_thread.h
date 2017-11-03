@@ -36,7 +36,7 @@ private slots:
 private:
 	void schedulePageResourcesLoading(const ParsedPagePtr& parsedPage) const;
 
-	void handlePageLinkList(std::vector<LinkInfo>& linkList, MetaRobotsFlags metaRobotsFlags) const;
+	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags) const;
 
 	void onLoadingDone(Common::Requester* requester, const DownloadResponse& response);
 

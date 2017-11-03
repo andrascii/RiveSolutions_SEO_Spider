@@ -57,6 +57,23 @@ enum MetaRobotsItem
 
 Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem);
 
+enum class UserAgentType
+{
+	Unknown,
+	GoogleBot,
+	YandexBot,
+	MailRuBot,
+	YahooBot,
+	MsnBot,
+	AltaVistaBot,
+	RamblerBot,
+	AportBot,
+	WebAltaBot,
+	AnyBot // used for all robots
+};
+
+using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
+
 struct LinkInfo
 {
 	QUrl url;
@@ -93,7 +110,6 @@ struct ParsedPage
 	QString title;
 	QString contentType;
 	QString metaRefresh;
-	//QString metaRobots;
 	QString metaDescription;
 	QString metaKeywords;
 	QString serverResponse;
@@ -103,7 +119,7 @@ struct ParsedPage
 	QString secondH2;
 	QString canonicalLinkElement;
 	Common::StatusCode statusCode;
-	MetaRobotsFlags metaRobotsFlags = MetaRobotsEmpty;
+	MetaRobotsFlagsSet metaRobotsFlags;
 
 	int pageSizeKilobytes = int();
 	int wordCount = int();

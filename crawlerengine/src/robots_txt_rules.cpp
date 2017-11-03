@@ -34,7 +34,7 @@ bool RobotsTxtRules::isValid() const
 	return m_tokenizer->isValid();
 }
 
-bool RobotsTxtRules::isUrlAllowed(const QUrl& url, MetaRobotsFlags metaRobotsFlags, UserAgentType userAgentType) const
+bool RobotsTxtRules::isUrlAllowed(const QUrl& url, const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
 {
 	DEBUG_ASSERT(!url.isRelative());
 	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(url));
@@ -46,7 +46,7 @@ bool RobotsTxtRules::isUrlAllowed(const QUrl& url, MetaRobotsFlags metaRobotsFla
 	}
 
 	return m_strategies[userAgentType]->isUrlAllowed(url, userAgentType, *m_tokenizer) ||
-		m_strategies[userAgentType]->isUrlAllowed(metaRobotsFlags);
+		m_strategies[userAgentType]->isUrlAllowed(metaRobotsFlags, userAgentType);
 }
 
 const QUrl& RobotsTxtRules::sitemap() const
