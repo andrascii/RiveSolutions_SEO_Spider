@@ -15,6 +15,12 @@ HostInfoProvider::HostInfoProvider()
 	handlerRegistry.registrateHandler(this, Common::RequestType::RequestGetHostInfo);
 }
 
+HostInfoProvider::~HostInfoProvider()
+{
+	Common::HandlerRegistry& handlerRegistry = Common::HandlerRegistry::instance();
+	handlerRegistry.unregistrateHandler(this);
+}
+
 void HostInfoProvider::handleRequest(Common::RequesterSharedPtr requester)
 {
 	ASSERT(requester->request()->requestType() == Common::RequestType::RequestGetHostInfo);

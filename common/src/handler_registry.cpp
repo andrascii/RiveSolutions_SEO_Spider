@@ -23,6 +23,11 @@ void HandlerRegistry::unregistrateHandler(QObject* handler)
 	m_handlers.erase(requestType);
 }
 
+void HandlerRegistry::unregisterAll()
+{
+	m_handlers.clear();
+}
+
 QObject* HandlerRegistry::handlerForRequest(const IRequest& request)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);

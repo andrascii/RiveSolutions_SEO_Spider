@@ -6,16 +6,18 @@
 #include "queued_downloader.h"
 #include "robots_txt_rules.h"
 #include "robots_txt_loader.h"
+#include "thread_manager.h"
 
 namespace CrawlerEngine
 {
 
-Crawler::Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThread)
+Crawler::Crawler(unsigned int threadCount)
 	: QObject(nullptr)
-	, m_modelController(new ModelController(this, sequencedDataCollectionThread))
+	, m_robotsTxtLoader(nullptr)
+	, m_modelController(nullptr)
 	, m_theradCount(threadCount)
 	, m_crawlingStateTimer(new QTimer(this))
-	, m_robotsTxtLoader(nullptr)
+	, m_sequencedDataCollection(nullptr)
 {
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 	ASSERT(qRegisterMetaType<CrawlingState>());
@@ -25,6 +27,11 @@ Crawler::Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThrea
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
 	
 	m_crawlingStateTimer->setInterval(100);
+
+	m_modelController = new ModelController;
+
+	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
+	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
 }
 
 Crawler::~Crawler()
@@ -40,26 +47,18 @@ Crawler::~Crawler()
 	}
 
 	queuedDownloader()->stop();
+
+	ThreadManager::destroy();
 }
 
 void Crawler::startCrawling(const CrawlerOptions& options)
 {
 	m_options = options;
 
-	VERIFY(QMetaObject::invokeMethod(this, "startCrawlingInternal", Qt::QueuedConnection));
-}
-
-void Crawler::stopCrawling()
-{
-	VERIFY(QMetaObject::invokeMethod(this, "stopCrawlingInternal", Qt::QueuedConnection));
-}
-
-void Crawler::startCrawlingInternal()
-{
 	initializeCrawlingSession();
 }
 
-void Crawler::stopCrawlingInternal()
+void Crawler::stopCrawling()
 {
 	for (std::unique_ptr<CrawlerWorkerThread>& worker : m_workers)
 	{
@@ -93,7 +92,9 @@ void Crawler::onCrawlingSessionInitialized()
 		return;
 	}
 
-	m_modelController->setWebCrawlerOptions(m_options);
+	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
+		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
+
 	m_uniqueLinkStore.setHost(m_options.host);
 
 	queuedDownloader()->start();
@@ -126,8 +127,8 @@ void Crawler::initCrawlerWorkerThreads()
 	{
 		m_workers.push_back(std::make_unique<CrawlerWorkerThread>(&m_uniqueLinkStore, queuedDownloader()));
 
-		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)),
-			SLOT(onPageParsed(ParsedPagePtr)), Qt::QueuedConnection));
+		VERIFY(connect(m_workers[i].get(), SIGNAL(pageParsed(ParsedPagePtr)), 
+			m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
 	}
 }
 
@@ -145,6 +146,11 @@ void Crawler::initializeCrawlingSession()
 	robotsTxtLoader()->load(m_options.host);
 
 	initCrawlerWorkerThreads();
+}
+
+void Crawler::createSequencedDataCollection(QThread* targetThread)
+{
+	m_sequencedDataCollection.reset(m_modelController->data()->createSequencedDataCollection(targetThread));
 }
 
 IQueuedDownloader* Crawler::queuedDownloader() const noexcept
@@ -181,19 +187,19 @@ IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const noexcept
 	return new RobotsTxtLoader(new QNetworkAccessManager(const_cast<Crawler*>(this)));
 }
 
-SequencedDataCollection* Crawler::sequencedDataCollection() const noexcept
+SequencedDataCollection* Crawler::sequencedDataCollection()
 {
-	return m_modelController->data()->sequencedDataCollection();
+	if(!m_sequencedDataCollection)
+	{
+		createSequencedDataCollection(QThread::currentThread());
+	}
+
+	return m_sequencedDataCollection.get();
 }
 
 const UniqueLinkStore* Crawler::crawlerUrlStorage() const noexcept
 {
 	return &m_uniqueLinkStore;
-}
-
-void Crawler::onPageParsed(ParsedPagePtr pageRaw)
-{
-	m_modelController->addParsedPage(pageRaw);
 }
 
 }

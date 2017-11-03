@@ -34,7 +34,7 @@ public:
 	MainWindow* mainWindow() const noexcept;
 	StorageAdaptorFactory* storageAdaptorFactory() const noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() const noexcept;
-	
+
 	CrawlerEngine::Crawler* crawler() const noexcept;
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept;
 
@@ -57,7 +57,7 @@ private:
 
 	void onHostInfoResponse(Common::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
 
-private slots:
+	private slots:
 	void startCrawler();
 	void stopCrawler();
 	void clearCrawledData();
@@ -71,7 +71,7 @@ private:
 	CrawlerEngine::Crawler* m_crawler;
 
 	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
-	
+
 	std::unique_ptr<MainWindow> m_mainWindow;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 

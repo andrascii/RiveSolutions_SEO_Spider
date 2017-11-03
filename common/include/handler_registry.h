@@ -29,6 +29,8 @@ public:
 	}
 
 	void unregistrateHandler(QObject* handler);
+	void unregisterAll();
+
 	QObject* handlerForRequest(const IRequest& request);
 	bool isHandlerExists(QObject* handler) const;
 

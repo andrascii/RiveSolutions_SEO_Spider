@@ -1,26 +1,18 @@
 #include "test_environment.h"
 #include "tests_crawler.h"
-#include "named_thread.h"
+#include "handler_registry.h"
 
 namespace CrawlerEngineTests
 {
 
 TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)
+	: m_crawler(std::make_unique<TestsCrawler>(1, options))
 {
-	m_crawler = std::make_unique<TestsCrawler>(1, options);
-
-	m_crawlerThread = new Common::NamedThread("Crawler");
-	m_crawler->moveToThread(m_crawlerThread);
-	m_crawlerThread->start();
 }
-
 
 TestEnvironment::~TestEnvironment()
 {
-	ASSERT(QThread::currentThread() != m_crawlerThread)
-	m_crawlerThread->quit();
-	m_crawlerThread->wait();
-	m_crawlerThread->deleteLater();
+	Common::HandlerRegistry::instance().unregisterAll();
 }
 
 TestsCrawler* TestEnvironment::crawler() const
@@ -41,8 +33,8 @@ void TestEnvironment::runTest(std::function<void()> condition) const
 
 	crawler()->setCondition(extCond);
 	QTimer::singleShot(0, crawler(), SLOT(startTestCrawler()));
+
 	app.exec();
-	
 }
 
 CrawlerEngine::CrawlerOptions TestEnvironment::defaultOptions(const QUrl& url)

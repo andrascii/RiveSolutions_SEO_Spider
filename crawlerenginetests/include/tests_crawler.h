@@ -55,8 +55,8 @@ public:
 protected:
 	virtual CrawlerEngine::IQueuedDownloader* createQueuedDownloader() const noexcept override;
 	virtual CrawlerEngine::IRobotsTxtLoader* createRobotsTxtLoader() const noexcept override;
-	QThread* m_sequensedCollectionThread;
 	CrawlerEngine::CrawlerOptions m_testCrawlerOptions;
+	QThread* m_sequencedDataCollectionThread;
 	std::function<void()> m_cond;
 
 	std::unique_ptr<ParsedPageReceiver> m_receiver;

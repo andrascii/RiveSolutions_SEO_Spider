@@ -60,9 +60,9 @@ bool successfulCode(const ParsedPagePtr& page)
 namespace CrawlerEngine
 {
 
-ModelController::ModelController(QObject* parent, QThread* sequencedDataCollectionThread)
-	: QObject(parent)
-	, m_data(new UnorderedDataCollection(this, sequencedDataCollectionThread))
+ModelController::ModelController()
+	: QObject(nullptr)
+	, m_data(new UnorderedDataCollection(this))
 {
 }
 

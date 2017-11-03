@@ -66,7 +66,6 @@ void ParsedPageReceiver::checkWaitCondition(int storageType)
 			if (static_cast<int>(m_parsedPages[storageType].size()) >= it->second.first)
 			{
 				it->second.second.set_value(m_parsedPages[storageType]);
-				// m_waitConditions.erase(storageType);
 			}
 			break;
 		}
@@ -82,7 +81,6 @@ void ParsedPageReceiver::checkLinksToThisResourceConditions(CrawlerEngine::Parse
 			if (static_cast<int>(m_linksToThisResourceChanges[page].size()) >= it->second.first)
 			{
 				it->second.second.set_value(m_linksToThisResourceChanges[page]);
-				//m_linksToThisResourceConditions.erase(page);
 			}
 			break;
 		}
@@ -108,32 +106,31 @@ std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> ParsedPageRe
 	m_linksToThisResourceConditions[page] = std::make_pair(count, std::promise<std::vector<CrawlerEngine::LinksToThisResourceChanges>>());
 	checkLinksToThisResourceConditions(page);
 	return m_linksToThisResourceConditions[page].second.get_future();
-
 }
 
 TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerEngine::CrawlerOptions& options)
-	: CrawlerEngine::Crawler(threadCount, (m_sequensedCollectionThread = new QThread()))
+	: CrawlerEngine::Crawler(threadCount)
 	, m_testCrawlerOptions(options)
-	, m_receiver(std::make_unique<ParsedPageReceiver>(sequencedDataCollection()))
 {
-	m_sequensedCollectionThread->start();
-	
+	m_sequencedDataCollectionThread = new QThread;
+
+	createSequencedDataCollection(m_sequencedDataCollectionThread);
+	m_receiver = std::make_unique<ParsedPageReceiver>(sequencedDataCollection());
+
+	m_sequencedDataCollectionThread->start();
 }
 
 TestsCrawler::~TestsCrawler()
 {
-	// Dtor should be called from a different thread
-/*	ASSERT(thread() != QThread::currentThread());*/
-	m_sequensedCollectionThread->quit();
-	m_sequensedCollectionThread->wait();
-	m_sequensedCollectionThread->deleteLater();
+	m_sequencedDataCollectionThread->quit();
+	m_sequencedDataCollectionThread->wait();
+	m_sequencedDataCollectionThread->deleteLater();
 }
 
 std::vector<CrawlerEngine::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const
 {
-// 	ASSERT(m_crawlerThread != QThread::currentThread());
-// 	ASSERT(m_crawlerThread->isRunning());
-	std::future<std::vector<CrawlerEngine::ParsedPagePtr>> future = m_receiver->getParsedPages(count, storage);
+	std::future<std::vector<CrawlerEngine::ParsedPagePtr>> future = 
+		m_receiver->getParsedPages(count, storage);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
@@ -150,9 +147,8 @@ std::vector<CrawlerEngine::ParsedPagePtr> TestsCrawler::storageItems(CrawlerEngi
 
 std::vector<CrawlerEngine::LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResourceChangesReceived(CrawlerEngine::ParsedPagePtr page, int count, int seconds) const
 {
-// 	ASSERT(m_crawlerThread != QThread::currentThread());
-// 	ASSERT(m_crawlerThread->isRunning());
-	std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> future = m_receiver->getLinksToThisResourceChanges(page, count);
+	std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> future = 
+		m_receiver->getLinksToThisResourceChanges(page, count);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{

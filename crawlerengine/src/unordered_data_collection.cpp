@@ -5,31 +5,10 @@
 namespace CrawlerEngine
 {
 
-UnorderedDataCollection::UnorderedDataCollection(QObject* parent, QThread* sequencedDataCollectionThread)
+UnorderedDataCollection::UnorderedDataCollection(QObject* parent)
 	: QObject(parent)
-	, m_sequencedDataCollection(new SequencedDataCollection)
 {
 	initializeStorages();
-
-	QThread* mainThread = QApplication::instance() != nullptr ? QApplication::instance()->thread() : nullptr;
-
-	sequencedDataCollectionThread = sequencedDataCollectionThread != nullptr ?
-		sequencedDataCollectionThread : mainThread;
-
-	ASSERT(sequencedDataCollectionThread != nullptr);
-	
-	m_sequencedDataCollection->moveToThread(sequencedDataCollectionThread);
-
-	VERIFY(connect(this, &UnorderedDataCollection::parsedPageAdded, m_sequencedDataCollection, 
-		&SequencedDataCollection::addParsedPage, Qt::QueuedConnection));
-
-	VERIFY(connect(this, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, m_sequencedDataCollection,
-		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
-}
-
-UnorderedDataCollection::~UnorderedDataCollection()
-{
-	m_sequencedDataCollection->deleteLater();
 }
 
 bool UnorderedDataCollection::isParsedPageExists(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept
@@ -50,9 +29,25 @@ const ParsedPagePtr UnorderedDataCollection::parsedPage(const ParsedPagePtr& par
 	return iter != unorderedStorage->end() ? *iter : ParsedPagePtr();
 }
 
-CrawlerEngine::SequencedDataCollection* UnorderedDataCollection::sequencedDataCollection() const noexcept
+CrawlerEngine::SequencedDataCollection* UnorderedDataCollection::createSequencedDataCollection(QThread* targetThread) const
 {
-	return m_sequencedDataCollection;
+	SequencedDataCollection* sequencedDataCollection = new SequencedDataCollection;
+	sequencedDataCollection->initializeStorages();
+
+	QThread* mainThread = QApplication::instance() != nullptr ? QApplication::instance()->thread() : nullptr;
+	targetThread = targetThread != nullptr ? targetThread : mainThread;
+
+	ASSERT(targetThread != nullptr);
+
+	sequencedDataCollection->moveToThread(targetThread);
+
+	VERIFY(connect(this, &UnorderedDataCollection::parsedPageAdded, sequencedDataCollection,
+		&SequencedDataCollection::addParsedPage, Qt::QueuedConnection));
+
+	VERIFY(connect(this, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, sequencedDataCollection,
+		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
+
+	return sequencedDataCollection;
 }
 
 void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
@@ -405,8 +400,6 @@ void UnorderedDataCollection::initializeStorages()
 			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
 	};
-
-	m_sequencedDataCollection->initializeStorages();
 }
 
 }

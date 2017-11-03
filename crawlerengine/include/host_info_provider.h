@@ -11,6 +11,7 @@ class HostInfoProvider : public QObject
 
 public:
 	HostInfoProvider();
+	~HostInfoProvider();
 
 	Q_INVOKABLE void handleRequest(Common::RequesterSharedPtr requester);
 	Q_INVOKABLE void stopRequestHandling(Common::RequesterSharedPtr requester);

@@ -21,15 +21,14 @@ protected:
 	using UnorderedStorageTypePtr = std::shared_ptr<UnorderedStorageType>;
 
 public:
-	UnorderedDataCollection(QObject* parent, QThread* sequencedDataCollectionThread);
-	~UnorderedDataCollection();
+	UnorderedDataCollection(QObject* parent);
 
 	bool isParsedPageExists(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 	void addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 
-	SequencedDataCollection* sequencedDataCollection() const noexcept;
+	SequencedDataCollection* createSequencedDataCollection(QThread* targetThread) const;
 
 	Q_SIGNAL void parsedPageAdded(ParsedPagePtr parsedPagePtr, int type);
 	Q_SIGNAL void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
@@ -44,7 +43,6 @@ private:
 
 private:
 	std::unordered_map<int, UnorderedStorageTypePtr> m_unorderedStorageMap;
-	SequencedDataCollection* m_sequencedDataCollection;
 };
 
 }

@@ -26,4 +26,5 @@ private:
 	std::unique_ptr<TestsCrawler> m_crawler;
 	Common::NamedThread* m_crawlerThread;
 };
+
 }

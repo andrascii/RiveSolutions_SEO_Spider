@@ -13,7 +13,6 @@
 #include "move_to_thread_service.h"
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
-#include "host_info_provider.h"
 
 namespace SeoSpider
 {
@@ -22,6 +21,7 @@ Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_preferences(new Preferences(this, this))
 	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount))
+	, m_sequencedDataCollection(m_crawler->sequencedDataCollection())
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
@@ -222,12 +222,6 @@ void Application::initialize() noexcept
 #endif
 
 	registerServices();
-
-	CrawlerEngine::HostInfoProvider* hostInfoProvider = new CrawlerEngine::HostInfoProvider;
-
-	IMoveToThreadService* moveToThreadService = ServiceLocator::instance()->service<IMoveToThreadService>();
-	moveToThreadService->moveObjectToThread(m_crawler, "BackgroundThread");
-	moveToThreadService->moveObjectToThread(hostInfoProvider, "BackgroundThread");
 
 	CrawlerEngine::SequencedDataCollection* storage = m_crawler->sequencedDataCollection();
 	

@@ -3,6 +3,8 @@
 #include "parsed_page.h"
 #include "unique_link_store.h"
 #include "crawler_options.h"
+#include "host_info_provider.h"
+#include "auto_delete_later_ptr.h"
 
 namespace CrawlerEngine
 {
@@ -27,10 +29,10 @@ class Crawler : public QObject
 	Q_OBJECT
 
 public:
-	Crawler(unsigned int threadCount, QThread* sequencedDataCollectionThread = nullptr);
+	Crawler(unsigned int threadCount);
 	~Crawler();
 
-	SequencedDataCollection* sequencedDataCollection() const noexcept;
+	SequencedDataCollection* sequencedDataCollection();
 
 signals:
 	void crawlingState(CrawlingState state);
@@ -42,20 +44,17 @@ public slots:
 	void stopCrawling();
 
 private slots:
-	void onPageParsed(ParsedPagePtr pageRaw);
-
-	void startCrawlingInternal();
-	void stopCrawlingInternal();
-
 	void onAboutCrawlingState();
-
 	void onCrawlingSessionInitialized();
 
 protected:
 	IQueuedDownloader* queuedDownloader() const noexcept;
 	IRobotsTxtLoader* robotsTxtLoader() const noexcept;
+
 	virtual IQueuedDownloader* createQueuedDownloader() const noexcept;
 	virtual IRobotsTxtLoader* createRobotsTxtLoader() const noexcept;
+	void createSequencedDataCollection(QThread* targetThread);
+
 	const UniqueLinkStore* crawlerUrlStorage() const noexcept;
 
 private:
@@ -67,16 +66,15 @@ private:
 	mutable std::unique_ptr<IQueuedDownloader> m_queuedDownloader;
 	mutable std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
 
-	ModelController* m_modelController;	
+	ModelController* m_modelController;
 	UniqueLinkStore m_uniqueLinkStore;
-
-	std::vector<std::unique_ptr<CrawlerWorkerThread>> m_workers;
+	CrawlerOptions m_options;
 
 	unsigned int m_theradCount;
-
 	QTimer* m_crawlingStateTimer;
 
-	CrawlerOptions m_options;
+	std::vector<std::unique_ptr<CrawlerWorkerThread>> m_workers;
+	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
 };
 
 }
