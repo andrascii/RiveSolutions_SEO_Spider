@@ -38,7 +38,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 
 	for(unsigned i = 0; i < threadCount; ++i)
 	{
-		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore, queuedDownloader()));
+		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
 
 		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)),
 			m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));

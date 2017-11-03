@@ -19,8 +19,7 @@ class CrawlerWorkerThread : public QObject
 	Q_OBJECT
 			
 public:
-	CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader);
-	~CrawlerWorkerThread();
+	CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore);
 
 signals:
 	void pageParsed(ParsedPagePtr parsedPage) const;
@@ -44,8 +43,6 @@ private:
 	PageDataCollector* m_pageDataCollector;
 
 	UniqueLinkStore* m_uniqueLinkStore;
-
-	IQueuedDownloader* m_queuedDownloader;
 
 	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;
 
