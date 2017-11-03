@@ -32,6 +32,8 @@ public:
 	Crawler(unsigned int threadCount, QObject* parent = nullptr);
 	virtual ~Crawler();
 
+	void initialize();
+
 	SequencedDataCollection* sequencedDataCollection();
 
 signals:

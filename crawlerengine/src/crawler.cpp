@@ -29,23 +29,6 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
 	
 	m_crawlingStateTimer->setInterval(100);
-
-	m_modelController = new ModelController;
-
-	ThreadManager::instance().moveObjectToThread(new Downloader, "DownloaderThread");
-	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
-	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
-
-	for(unsigned i = 0; i < threadCount; ++i)
-	{
-		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
-
-		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)),
-			m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
-
-		ThreadManager::instance().moveObjectToThread(m_workers.back(),
-			QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
-	}
 }
 
 Crawler::~Crawler()
@@ -61,6 +44,26 @@ Crawler::~Crawler()
 	}
 
 	ThreadManager::destroy();
+}
+
+void Crawler::initialize()
+{
+	m_modelController = new ModelController;
+
+	ThreadManager::instance().moveObjectToThread(new Downloader, "DownloaderThread");
+	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
+	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
+
+	for (unsigned i = 0; i < m_theradCount; ++i)
+	{
+		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
+
+		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)),
+			m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
+
+		ThreadManager::instance().moveObjectToThread(m_workers.back(),
+			QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
+	}
 }
 
 void Crawler::startCrawling(const CrawlerOptions& options)

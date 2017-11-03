@@ -10,7 +10,6 @@
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
 #include "widget_under_mouse_info.h"
-#include "move_to_thread_service.h"
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
 
@@ -21,7 +20,7 @@ Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_preferences(new Preferences(this, this))
 	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
-	, m_sequencedDataCollection(m_crawler->sequencedDataCollection())
+	, m_sequencedDataCollection(nullptr)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
@@ -139,7 +138,6 @@ void Application::showMainWindow()
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
-	ServiceLocator::instance()->addService<IMoveToThreadService>(new MoveToThreadService);
 }
 
 void Application::initQSettings()
@@ -214,6 +212,9 @@ void Application::onHostInfoResponse(Common::Requester* requester, const Crawler
 
 void Application::initialize() noexcept
 {
+	m_crawler->initialize();
+	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
+
 	SplashScreen::showMessage("Initializing...");
 
 #ifdef PRODUCTION
@@ -222,9 +223,7 @@ void Application::initialize() noexcept
 #endif
 
 	registerServices();
-	
 	initQSettings();
-
 	preferences()->load();
 
 	m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());
@@ -445,7 +444,6 @@ QString Application::operatingSystemVersion()
 Application::~Application()
 {
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
-	ServiceLocator::instance()->destroyService<IMoveToThreadService>();
 }
 
 }
