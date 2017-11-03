@@ -10,6 +10,7 @@
 #include "other_resources_parser.h"
 #include "status_code.h"
 #include "gumbo_parsing_helpers.h"
+#include "download_response.h"
 
 namespace CrawlerEngine
 {
@@ -26,36 +27,36 @@ void PageDataCollector::setOptions(const CrawlerOptions& crawlerOptions) noexcep
 	applyOptions();
 }
 
-ParsedPagePtr PageDataCollector::collectPageDataFromReply(const QueuedDownloader::Reply& reply)
+ParsedPagePtr PageDataCollector::collectPageDataFromResponse(const DownloadResponse& response)
 {
 	ParsedPagePtr page(new ParsedPage);
 
-	collectReplyData(reply, page);
+	collectReplyData(response, page);
 
 	if (page->pageSizeKilobytes > 512)
 	{
 		WARNINGLOG << "Page size is greater than 512 KB,"
 			<< "size:" << page->pageSizeKilobytes << "KB,"
-			<< "URL:" << reply.url.toString() << ","
+			<< "URL:" << response.url.toString() << ","
 			<< "Content-Type:" << page->contentType;
 	}
 
 	QByteArray decodedHtmlPage;
 	if (page->resourceType == ResourceType::ResourceHtml)
 	{
-		decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(reply.responseBody);
+		decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(response.responseBody);
 #ifdef QT_DEBUG
 		page->rawResponse = qCompress(decodedHtmlPage, 9);
 #endif
 	}
 	else if (page->resourceType == ResourceType::ResourceImage)
 	{
-		page->rawResponse = reply.responseBody;
+		page->rawResponse = response.responseBody;
 	}
 
 	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
 
-	collectParsedPageData(gumboOutput.output(), reply.responseHeaders, page);
+	collectParsedPageData(gumboOutput.output(), response.responseHeaders, page);
 	collectUrlList(gumboOutput.output());
 
 	return page;
@@ -98,17 +99,17 @@ void PageDataCollector::applyOptions()
 	}
 }
 
-QUrl PageDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& reply)
+QUrl PageDataCollector::resolveRedirectUrl(const DownloadResponse& response)
 {
 	QUrl redirectUrl;
 
-	if (reply.redirectUrl.isEmpty() || !reply.redirectUrl.isRelative())
+	if (response.redirectUrl.isEmpty() || !response.redirectUrl.isRelative())
 	{
-		redirectUrl = reply.redirectUrl;
+		redirectUrl = response.redirectUrl;
 	}
 	else
 	{
-		PageParserHelpers::resolveRelativeUrl(reply.redirectUrl, reply.url);
+		PageParserHelpers::resolveRelativeUrl(response.redirectUrl, response.url);
 	}
 
 	PageParserHelpers::removeUrlLastSlashIfExists(redirectUrl);
@@ -116,23 +117,23 @@ QUrl PageDataCollector::resolveRedirectUrl(const QueuedDownloader::Reply& reply)
 	return redirectUrl;
 }
 
-void PageDataCollector::collectReplyData(const QueuedDownloader::Reply& reply, ParsedPagePtr& page) const
+void PageDataCollector::collectReplyData(const DownloadResponse& response, ParsedPagePtr& page) const
 {
-	page->url = reply.url;
+	page->url = response.url;
 
-	page->statusCode = static_cast<Common::StatusCode>(reply.statusCode);
+	page->statusCode = static_cast<Common::StatusCode>(response.statusCode);
 
-	page->pageSizeKilobytes = reply.responseBody.size() / 1024;
+	page->pageSizeKilobytes = response.responseBody.size() / 1024;
 
-	page->serverResponse = reply.responseHeaderValuePairs;
+	page->serverResponse = response.responseHeaderValuePairs;
 
-	page->pageHash = std::hash<std::string>()(reply.responseBody.toStdString().c_str());
+	page->pageHash = std::hash<std::string>()(response.responseBody.toStdString().c_str());
 
 	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, page->url);
 
 	page->contentType = QString();
 
-	for (auto it = std::cbegin(reply.responseHeaders); it != std::cend(reply.responseHeaders); ++it)
+	for (auto it = std::cbegin(response.responseHeaders); it != std::cend(response.responseHeaders); ++it)
 	{
 		if (it->first.toLower() != "content-type")
 		{
@@ -145,7 +146,7 @@ void PageDataCollector::collectReplyData(const QueuedDownloader::Reply& reply, P
 
 	setResourceCategory(page);
 
-	page->redirectedUrl = resolveRedirectUrl(reply);
+	page->redirectedUrl = resolveRedirectUrl(response);
 }
 
 void PageDataCollector::collectParsedPageData(GumboOutput* output, const IPageParser::ResponseHeaders& headers, ParsedPagePtr& page)

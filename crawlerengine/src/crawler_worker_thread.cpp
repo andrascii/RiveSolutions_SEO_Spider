@@ -15,6 +15,7 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueue
 	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
+	, m_isRunning(false)
 {
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
@@ -165,16 +166,7 @@ void CrawlerWorkerThread::onLoadingDone(Common::Requester* requester, const Down
 {
 	m_downloadRequester.reset();
 
-	IQueuedDownloader::Reply reply;
-
-	reply.statusCode = response.statusCode;
-	reply.url = response.url;
-	reply.redirectUrl = response.redirectUrl;
-	reply.responseBody = response.responseBody;
-	reply.responseHeaderValuePairs = response.responseHeaderValuePairs;
-	reply.responseHeaders = response.responseHeaders;
-
-	const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromReply(reply);
+	const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromResponse(response);
 
 	schedulePageResourcesLoading(page);
  

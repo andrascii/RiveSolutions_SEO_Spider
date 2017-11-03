@@ -18,7 +18,7 @@ public:
 ParsedPageReceiver::ParsedPageReceiver(CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
 	: m_sequencedDataCollection(sequencedDataCollection)
 {
-	m_receiverThread = new QThread();
+	m_receiverThread = new Common::NamedThread("ParsedPageReceiverThread");
 	moveToThread(m_receiverThread);
 	
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
@@ -41,7 +41,9 @@ ParsedPageReceiver::~ParsedPageReceiver()
 
 void ParsedPageReceiver::onParsedPageAdded(int row, int storageType)
 {
-	const CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr& storage = m_sequencedDataCollection->storage(static_cast<CrawlerEngine::StorageType>(storageType));
+	const CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr& storage = 
+		m_sequencedDataCollection->storage(static_cast<CrawlerEngine::StorageType>(storageType));
+
 	m_parsedPages[storageType].push_back((*storage)[row]);
 
 	checkWaitCondition(storageType);
