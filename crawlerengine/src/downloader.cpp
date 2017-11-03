@@ -24,7 +24,9 @@ void Downloader::handleRequest(Common::RequesterSharedPtr requester)
 	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
 
 	QNetworkReply* reply = nullptr;
+
 	QNetworkRequest networkRequest(request->requestInfo.url);
+	networkRequest.setAttribute(QNetworkRequest::User, RequestTypeGet);
 
 	switch (request->requestInfo.requestType)
 	{
@@ -52,12 +54,12 @@ void Downloader::handleRequest(Common::RequesterSharedPtr requester)
 	VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this,
 		[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
 
-	m_requesterWeakPtr = requester;
+	m_requesters[request->requestInfo] = requester;
 }
 
 void Downloader::stopRequestHandling(Common::RequesterSharedPtr requester)
 {
-
+	requester;
 }
 
 void Downloader::urlDownloaded(QNetworkReply* reply)
@@ -102,7 +104,7 @@ void Downloader::processReply(QNetworkReply* reply)
 	const bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
 	const bool processBody = !nonHtmlResponse;
 
-	QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+	const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 
 	std::shared_ptr<DownloadResponse> response = std::make_shared<DownloadResponse>();
 
@@ -129,7 +131,20 @@ void Downloader::processReply(QNetworkReply* reply)
 
 	reply->deleteLater();
 
-	Common::RequesterSharedPtr requester = m_requesterWeakPtr.lock();
+	const CrawlerRequest key{ response->url, static_cast<RequestType>(reply->attribute(QNetworkRequest::User).toInt()) };
+	const auto requesterIterator = m_requesters.find(key);
+
+	if (requesterIterator == m_requesters.end())
+	{
+		return;
+	}
+
+	const Common::RequesterSharedPtr requester = m_requesters[key].lock();
+
+	if (!requester)
+	{
+		return;
+	}
 
 	Common::ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
 }
@@ -143,12 +158,14 @@ bool Downloader::isReplyProcessed(QNetworkReply* reply) const noexcept
 	}
 
 	const QVariant alreadyProcessed = reply->property("processed");
+
 	return alreadyProcessed.isValid();
 }
 
 void Downloader::markReplyAsProcessed(QNetworkReply* reply) const noexcept
 {
 	ASSERT(reply != nullptr);
+
 	reply->setProperty("processed", true);
 }
 

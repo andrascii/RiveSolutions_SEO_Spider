@@ -8,6 +8,11 @@ namespace CrawlerEngine
 
 struct DownloadRequest : public Common::IRequest
 {
+	DownloadRequest(const CrawlerRequest& requestInfo)
+		: requestInfo(requestInfo)
+	{
+	}
+
 	virtual Common::IRequest* clone() const override
 	{
 		return new DownloadRequest(*this);

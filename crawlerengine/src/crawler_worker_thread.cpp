@@ -4,17 +4,20 @@
 #include "iqueued_dowloader.h"
 #include "page_data_collector.h"
 #include "options_link_filter.h"
+#include "download_request.h"
+#include "download_response.h"
 
 namespace CrawlerEngine
 {
 
 CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader)
-	: AbstractThreadableObject(this, QByteArray("CrawlerWorkerThread"))
+	: QObject(nullptr)
 	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(crawlerStorage)
 	, m_queuedDownloader(queuedDownloader)
 {
-	moveThisToSeparateThread();
+	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
+		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
 }
 
 void CrawlerWorkerThread::applyOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
@@ -24,26 +27,41 @@ void CrawlerWorkerThread::applyOptions(const CrawlerOptions& options, RobotsTxtR
 	m_pageDataCollector->setOptions(options);
 }
 
-void CrawlerWorkerThread::process()
+void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
 {
-	CrawlerRequest url;
-	IQueuedDownloader::Reply reply;
+	ASSERT(thread() == QThread::currentThread());
 
-	const bool replyExtracted = m_queuedDownloader->extractReply(reply);
-	const bool urlExtracted = m_uniqueLinkStore->extractUrl(url);
+	m_isRunning = true;
 
-	if (urlExtracted)
+	m_optionsLinkFilter.reset(new OptionsLinkFilter(options, robotsTxtRules));
+
+	m_pageDataCollector->setOptions(options);
+
+	extractUrlAndDownload();
+}
+
+void CrawlerWorkerThread::stop()
+{
+	ASSERT(thread() == QThread::currentThread());
+
+	m_isRunning = false;
+}
+
+void CrawlerWorkerThread::extractUrlAndDownload()
+{
+	if(!m_isRunning)
 	{
-		m_queuedDownloader->scheduleUrl(url);
+		return;
 	}
 
-	if (replyExtracted)
+	CrawlerRequest url;
+	const bool isUrlExtracted = m_uniqueLinkStore->extractUrl(url);
+
+	if (isUrlExtracted)
 	{
-		const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromReply(reply);
-
-		schedulePageResourcesLoading(page);
-
-		emit pageParsed(page);
+		DownloadRequest request(url);
+		m_downloadRequester.reset(request, this, &CrawlerWorkerThread::onLoadingDone);
+		m_downloadRequester->start();
 	}
 }
 
@@ -86,6 +104,7 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 	}
 
 	m_uniqueLinkStore->saveUrlList(resourcesGetUrlList, RequestTypeGet);
+
 	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, RequestTypeHead);
 }
 
@@ -112,6 +131,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, Me
 	};
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
+
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
@@ -131,10 +151,32 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, Me
 	};
 
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
+
 	std::for_each(blockedByRobotsTxtLinksIterator, linkList.end(), emitPageParsedForBlockedPages);
+
 	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
 
 	std::for_each(linkList.begin(), linkList.end(), removeUrlLastSlashIfExists);
+}
+
+void CrawlerWorkerThread::onLoadingDone(Common::Requester* requester, const DownloadResponse& response)
+{
+	IQueuedDownloader::Reply reply;
+
+	reply.statusCode = response.statusCode;
+	reply.url = response.url;
+	reply.redirectUrl = response.redirectUrl;
+	reply.responseBody = response.responseBody;
+	reply.responseHeaderValuePairs = response.responseHeaderValuePairs;
+	reply.responseHeaders = response.responseHeaders;
+
+	const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromReply(reply);
+
+ 	schedulePageResourcesLoading(page);
+ 
+ 	emit pageParsed(page);
+
+	extractUrlAndDownload();
 }
 
 }

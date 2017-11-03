@@ -3,11 +3,18 @@
 namespace CrawlerEngine
 {
 
-void UniqueLinkStore::setHost(const QUrl& url)
+UniqueLinkStore::UniqueLinkStore(QObject* parent)
+	: QObject(parent)
+{
+}
+
+void UniqueLinkStore::addUrl(const QUrl& url, RequestType requestType)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
-	m_pendingUrlList.insert(CrawlerRequest{ url, RequestTypeGet });
+	m_pendingUrlList.insert(CrawlerRequest{ url, requestType });
+
+	emit urlAdded();
 }
 
 bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
@@ -54,6 +61,8 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, RequestType 
 	{
 		insert(first);
 	}
+
+	emit urlAdded();
 }
 
 void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, RequestType requestType) noexcept

@@ -18,6 +18,13 @@ struct CrawlerRequest
 	{
 		return url == other.url && requestType == other.requestType;
 	}
+
+	friend bool operator<(const CrawlerRequest& lhs, const CrawlerRequest& rhs)
+	{
+		return lhs.url < rhs.url;
+	}
 };
+
+bool operator<(const CrawlerRequest& lhs, const CrawlerRequest& rhs);
 
 }

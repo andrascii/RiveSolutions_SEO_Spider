@@ -55,7 +55,7 @@ protected:
 	virtual IRobotsTxtLoader* createRobotsTxtLoader() const noexcept;
 	void createSequencedDataCollection(QThread* targetThread);
 
-	const UniqueLinkStore* crawlerUrlStorage() const noexcept;
+	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
 	void initCrawlerWorkerThreads();
@@ -67,13 +67,13 @@ private:
 	mutable std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
 
 	ModelController* m_modelController;
-	UniqueLinkStore m_uniqueLinkStore;
+	UniqueLinkStore* m_uniqueLinkStore;
 	CrawlerOptions m_options;
 
 	unsigned int m_theradCount;
 	QTimer* m_crawlingStateTimer;
 
-	std::vector<std::unique_ptr<CrawlerWorkerThread>> m_workers;
+	std::vector<CrawlerWorkerThread*> m_workers;
 	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
 };
 

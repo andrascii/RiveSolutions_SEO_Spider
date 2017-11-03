@@ -10,16 +10,27 @@ namespace CrawlerEngine
 // ATTENTION: all public method must be thread-safe
 //
 
-class UniqueLinkStore
+class UniqueLinkStore : public QObject
 {
+	Q_OBJECT
+
 public:
-	void setHost(const QUrl& url);
+	UniqueLinkStore(QObject* parent);
+
+	void addUrl(const QUrl& url, RequestType requestType);
+
 	bool extractUrl(CrawlerRequest& url) noexcept;
+
 	void saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept;
+
 	void saveLinkList(const std::vector<LinkInfo>& linkList, RequestType requestType) noexcept;
 
 	size_t crawledLinksCount() const noexcept;
+
 	size_t pendingLinksCount() const noexcept;
+
+signals:
+	void urlAdded();
 
 private:
 	struct UrlListItemHasher
@@ -33,6 +44,7 @@ private:
 	};
 
 	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_pendingUrlList;
+
 	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_crawledUrlList;
 
 	mutable std::mutex m_mutex;
