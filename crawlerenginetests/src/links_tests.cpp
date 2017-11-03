@@ -3,8 +3,10 @@ namespace CrawlerEngineTests
 	
 TEST(LinksTests, LinkAlt)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/link-with-title.html")));
-	env.runTest([cl = env.crawler()]()
+	int argc = 0;
+	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://links.com/link-with-title.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 		EXPECT_EQ(2, pages.size());
@@ -14,7 +16,10 @@ TEST(LinksTests, LinkAlt)
 
 		QString expectedTitle = QString::fromWCharArray(L"This is a broken link и чето по русски");
 		EXPECT_EQ(expectedTitle, pages[0]->linksOnThisPage[0].altOrTitle);
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 }

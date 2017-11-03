@@ -20,7 +20,7 @@ namespace SeoSpider
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_preferences(new Preferences(this, this))
-	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount))
+	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
 	, m_sequencedDataCollection(m_crawler->sequencedDataCollection())
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdaptorFactory)
@@ -48,7 +48,7 @@ Application::Application(int& argc, char** argv)
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
 {
-	return m_crawler.get();
+	return m_crawler;
 }
 
 MainWindow* Application::mainWindow() const noexcept

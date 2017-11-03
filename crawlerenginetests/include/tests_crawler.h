@@ -33,31 +33,39 @@ private:
 	std::map<CrawlerEngine::ParsedPagePtr, std::pair<int, std::promise<std::vector<CrawlerEngine::LinksToThisResourceChanges>>>> m_linksToThisResourceConditions;
 
 	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
-
 };
 
 class TestsCrawler : public CrawlerEngine::Crawler
 {
 	Q_OBJECT
 public:
-	TestsCrawler(unsigned int threadCount, const CrawlerEngine::CrawlerOptions& options);
+	TestsCrawler(
+		unsigned int threadCount, 
+		const CrawlerEngine::CrawlerOptions& options, 
+		QObject* parent = nullptr
+	);
+
 	~TestsCrawler();
 
-	std::vector<CrawlerEngine::ParsedPagePtr> waitForParsedPageReceived(CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const;
+	std::vector<CrawlerEngine::ParsedPagePtr> waitForParsedPageReceived(
+		CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const;
+
 	std::vector<CrawlerEngine::ParsedPagePtr> storageItems(CrawlerEngine::StorageType storage) const;
 
-	std::vector<CrawlerEngine::LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(CrawlerEngine::ParsedPagePtr page, int count, int seconds) const;
+	std::vector<CrawlerEngine::LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(
+		CrawlerEngine::ParsedPagePtr page, int count, int seconds) const;
 
 	Q_SLOT void startTestCrawler();
 
-	void setCondition(std::function<void()> cond);
-
 protected:
-	virtual CrawlerEngine::IQueuedDownloader* createQueuedDownloader() const noexcept override;
-	virtual CrawlerEngine::IRobotsTxtLoader* createRobotsTxtLoader() const noexcept override;
+	virtual CrawlerEngine::IQueuedDownloader* createQueuedDownloader() const override;
+	virtual CrawlerEngine::IRobotsTxtLoader* createRobotsTxtLoader() const override;
+
+private:
+
 	CrawlerEngine::CrawlerOptions m_testCrawlerOptions;
+
 	QThread* m_sequencedDataCollectionThread;
-	std::function<void()> m_cond;
 
 	std::unique_ptr<ParsedPageReceiver> m_receiver;
 };

@@ -12,8 +12,8 @@
 namespace CrawlerEngine
 {
 
-Crawler::Crawler(unsigned int threadCount)
-	: QObject(nullptr)
+Crawler::Crawler(unsigned int threadCount, QObject* parent)
+	: QObject(parent)
 	, m_robotsTxtLoader(nullptr)
 	, m_modelController(nullptr)
 	, m_uniqueLinkStore(new UniqueLinkStore(this))
@@ -161,7 +161,7 @@ IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
 	return m_robotsTxtLoader.get();
 }
 
-IQueuedDownloader* Crawler::createQueuedDownloader() const noexcept
+IQueuedDownloader* Crawler::createQueuedDownloader() const
 {
 	IQueuedDownloader* queuedDownloader = new QueuedDownloader();
 	queuedDownloader->setUserAgent(m_options.plainUserAgent);
@@ -169,7 +169,7 @@ IQueuedDownloader* Crawler::createQueuedDownloader() const noexcept
 	return queuedDownloader;
 }
 
-IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const noexcept
+IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const
 {
 	return new RobotsTxtLoader(new QNetworkAccessManager(const_cast<Crawler*>(this)));
 }

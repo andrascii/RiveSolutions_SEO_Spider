@@ -3,7 +3,8 @@ namespace CrawlerEngineTests
 
 TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 {
-	auto options = TestEnvironment::defaultOptions(QUrl("http://status.com/too-short.html"));
+	int argc = 0;
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://status.com/too-short.html"));
 	options.maxTitleLength = 10;
 	options.minTitleLength = 9;
 
@@ -13,8 +14,9 @@ TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 	options.maxH1LengthChars = 10;
 	options.maxH2LengthChars = 10;
 
-	TestEnvironment env(options);
-	env.runTest([cl = env.crawler()]()
+	TestEnvironment env(argc, options);
+
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
 
@@ -44,7 +46,10 @@ TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::DuplicatedH2UrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::VeryLongH2UrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::SeveralH2UrlStorageType).size());
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 }

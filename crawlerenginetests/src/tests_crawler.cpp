@@ -108,8 +108,8 @@ std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> ParsedPageRe
 	return m_linksToThisResourceConditions[page].second.get_future();
 }
 
-TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerEngine::CrawlerOptions& options)
-	: CrawlerEngine::Crawler(threadCount)
+TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerEngine::CrawlerOptions& options, QObject* parent)
+	: CrawlerEngine::Crawler(threadCount, parent)
 	, m_testCrawlerOptions(options)
 {
 	m_sequencedDataCollectionThread = new QThread;
@@ -163,19 +163,12 @@ void TestsCrawler::startTestCrawler()
 	startCrawling(m_testCrawlerOptions);
 }
 
-void TestsCrawler::setCondition(std::function<void()> cond)
-{
-	m_cond = cond;
-
-	QTimer::singleShot(50, [this] { m_cond(); });
-}
-
-CrawlerEngine::IQueuedDownloader* TestsCrawler::createQueuedDownloader() const noexcept
+CrawlerEngine::IQueuedDownloader* TestsCrawler::createQueuedDownloader() const
 {
 	return new TestsQueudedDownoader();
 }
 
-CrawlerEngine::IRobotsTxtLoader* TestsCrawler::createRobotsTxtLoader() const noexcept
+CrawlerEngine::IRobotsTxtLoader* TestsCrawler::createRobotsTxtLoader() const
 {
 	return new TestsRobotsTxtLoader();
 }
