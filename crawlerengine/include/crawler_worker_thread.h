@@ -20,6 +20,7 @@ class CrawlerWorkerThread : public QObject
 			
 public:
 	CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader);
+	~CrawlerWorkerThread();
 
 signals:
 	void pageParsed(ParsedPagePtr parsedPage) const;

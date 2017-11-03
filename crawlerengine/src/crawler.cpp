@@ -55,7 +55,7 @@ Crawler::~Crawler()
 	// Because workers sends requests to queuedDownloader
 	// And it can not be stopped until it finishes processing requests
 	//
-	for (auto& worker : m_workers)
+	for (CrawlerWorkerThread* worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "stop", Qt::BlockingQueuedConnection));
 	}

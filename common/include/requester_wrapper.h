@@ -9,6 +9,11 @@ namespace Common
 class RequesterWrapper
 {
 public:
+	~RequesterWrapper()
+	{
+		reset();
+	}
+
 	Requester* get() const noexcept
 	{
 		return m_requesterPtr.get();

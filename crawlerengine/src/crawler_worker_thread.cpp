@@ -20,6 +20,10 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueue
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
 }
 
+CrawlerWorkerThread::~CrawlerWorkerThread()
+{
+}
+
 void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
 {
 	ASSERT(thread() == QThread::currentThread());

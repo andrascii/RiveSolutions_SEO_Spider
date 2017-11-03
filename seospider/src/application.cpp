@@ -48,7 +48,7 @@ Application::Application(int& argc, char** argv)
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
 {
-	return m_crawler;
+	return m_crawler.get();
 }
 
 MainWindow* Application::mainWindow() const noexcept
