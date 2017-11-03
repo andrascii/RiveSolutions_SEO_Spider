@@ -6,25 +6,39 @@
 namespace CrawlerEngineTests
 {
 
+class TestRunner;
 class TestsCrawler;
 
-class TestEnvironment
+class TestEnvironment : public QCoreApplication
 {
+	Q_OBJECT
+
 public:
-	TestEnvironment(CrawlerEngine::CrawlerOptions options);
+	TestEnvironment(int& argc, CrawlerEngine::CrawlerOptions options);
+
 	~TestEnvironment();
+
 	TestsCrawler* crawler() const;
-	void runTest(std::function<void()> condition) const;
+
+	void initializeTest(const std::function<void()>& testFunction);
 
 	static CrawlerEngine::CrawlerOptions defaultOptions(const QUrl& url);
 
-	// helper functions, move to a separate class?
 	static CrawlerEngine::ResourceLink firstResourceOnThisPageOfType(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::ResourceType resourceType);
+
 	static CrawlerEngine::ResourceLink firstResourceToThisPageOfType(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::ResourceType resourceType);
 
+signals:
+	void testInitialized(const std::function<void()>& testFunction);
+
 private:
-	std::unique_ptr<TestsCrawler> m_crawler;
+	TestRunner * m_testRunner;
+
+	TestsCrawler* m_crawler;
+
 	Common::NamedThread* m_crawlerThread;
+
+	std::function<void()> m_testFunction;
 };
 
 }

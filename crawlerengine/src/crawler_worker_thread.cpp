@@ -1,7 +1,6 @@
 #include "crawler_worker_thread.h"
 #include "unique_link_store.h"
 #include "page_parser_helpers.h"
-#include "iqueued_dowloader.h"
 #include "page_data_collector.h"
 #include "options_link_filter.h"
 #include "download_request.h"
@@ -10,18 +9,14 @@
 namespace CrawlerEngine
 {
 
-CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueuedDownloader* queuedDownloader)
+CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	: QObject(nullptr)
 	, m_pageDataCollector(new PageDataCollector(this))
-	, m_uniqueLinkStore(crawlerStorage)
-	, m_queuedDownloader(queuedDownloader)
+	, m_uniqueLinkStore(uniqueLinkStore)
+	, m_isRunning(false)
 {
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
-}
-
-CrawlerWorkerThread::~CrawlerWorkerThread()
-{
 }
 
 void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
@@ -165,16 +160,7 @@ void CrawlerWorkerThread::onLoadingDone(Common::Requester* requester, const Down
 {
 	m_downloadRequester.reset();
 
-	IQueuedDownloader::Reply reply;
-
-	reply.statusCode = response.statusCode;
-	reply.url = response.url;
-	reply.redirectUrl = response.redirectUrl;
-	reply.responseBody = response.responseBody;
-	reply.responseHeaderValuePairs = response.responseHeaderValuePairs;
-	reply.responseHeaders = response.responseHeaders;
-
-	const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromReply(reply);
+	const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromResponse(response);
 
 	schedulePageResourcesLoading(page);
  

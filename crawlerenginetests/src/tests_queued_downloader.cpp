@@ -56,8 +56,6 @@ void TestsQueudedDownoader::scheduleUrl(const CrawlerEngine::CrawlerRequest& url
 		reply.statusCode = 404;
 	}
 
-	
-
 	m_repliesQueue.push_back(reply);
 }
 
@@ -100,7 +98,7 @@ QDir TestsQueudedDownoader::testsDataDir() const
 		QDir dir = QFileInfo(__FILE__).absoluteDir();
 		while (m_testDataPath.isEmpty())
 		{
-			QString testsDataPath1 = QDir::cleanPath(dir.absolutePath() + "/webcrawlertests/testsdata");
+			QString testsDataPath1 = QDir::cleanPath(dir.absolutePath() + "/crawlerenginetests/testsdata");
 			QDir testsDataDir1 = QDir(testsDataPath1);
 
 			QString testsDataPath2 = QDir::cleanPath(dir.absolutePath() + "/testsdata");

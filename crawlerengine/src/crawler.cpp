@@ -12,8 +12,8 @@
 namespace CrawlerEngine
 {
 
-Crawler::Crawler(unsigned int threadCount)
-	: QObject(nullptr)
+Crawler::Crawler(unsigned int threadCount, QObject* parent)
+	: QObject(parent)
 	, m_robotsTxtLoader(nullptr)
 	, m_modelController(nullptr)
 	, m_uniqueLinkStore(new UniqueLinkStore(this))
@@ -29,23 +29,6 @@ Crawler::Crawler(unsigned int threadCount)
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
 	
 	m_crawlingStateTimer->setInterval(100);
-
-	m_modelController = new ModelController;
-
-	ThreadManager::instance().moveObjectToThread(new Downloader, "DownloaderThread");
-	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
-	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
-
-	for(unsigned i = 0; i < threadCount; ++i)
-	{
-		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore, queuedDownloader()));
-
-		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)),
-			m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
-
-		ThreadManager::instance().moveObjectToThread(m_workers.back(),
-			QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
-	}
 }
 
 Crawler::~Crawler()
@@ -61,6 +44,26 @@ Crawler::~Crawler()
 	}
 
 	ThreadManager::destroy();
+}
+
+void Crawler::initialize()
+{
+	m_modelController = new ModelController;
+
+	ThreadManager::instance().moveObjectToThread(new Downloader, "DownloaderThread");
+	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
+	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
+
+	for (unsigned i = 0; i < m_theradCount; ++i)
+	{
+		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
+
+		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)),
+			m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
+
+		ThreadManager::instance().moveObjectToThread(m_workers.back(),
+			QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
+	}
 }
 
 void Crawler::startCrawling(const CrawlerOptions& options)
@@ -161,7 +164,7 @@ IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
 	return m_robotsTxtLoader.get();
 }
 
-IQueuedDownloader* Crawler::createQueuedDownloader() const noexcept
+IQueuedDownloader* Crawler::createQueuedDownloader() const
 {
 	IQueuedDownloader* queuedDownloader = new QueuedDownloader();
 	queuedDownloader->setUserAgent(m_options.plainUserAgent);
@@ -169,7 +172,7 @@ IQueuedDownloader* Crawler::createQueuedDownloader() const noexcept
 	return queuedDownloader;
 }
 
-IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const noexcept
+IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const
 {
 	return new RobotsTxtLoader(new QNetworkAccessManager(const_cast<Crawler*>(this)));
 }

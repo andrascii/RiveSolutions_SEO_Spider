@@ -3,11 +3,12 @@ namespace CrawlerEngineTests
 
 TEST(OptionsTests, ParseOnlyHtml)
 {
-	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	int argc = 0;
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ParserTypeFlags();
-		
-	TestEnvironment env(options);
-	env.runTest([cl = env.crawler()]()
+	TestEnvironment env(argc, options);
+
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->thread()->msleep(800);
 
@@ -28,16 +29,20 @@ TEST(OptionsTests, ParseOnlyHtml)
 		EXPECT_EQ(0, flashResources.size());
 		EXPECT_EQ(0, otherResources.size());
 		EXPECT_EQ(0, externalOtherResources.size());
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 TEST(OptionsTests, ParseOnlyJs)
 {
-	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	int argc = 0;
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::JavaScriptResourcesParserType;
+	TestEnvironment env(argc, options);
 
-	TestEnvironment env(options);
-	env.runTest([cl = env.crawler()]()
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->thread()->msleep(300);
 
@@ -49,7 +54,7 @@ TEST(OptionsTests, ParseOnlyJs)
 		auto flashResources = cl->storageItems(CrawlerEngine::FlashResourcesStorageType);
 		auto otherResources = cl->storageItems(CrawlerEngine::OtherResourcesStorageType);
 		auto externalOtherResources = cl->storageItems(CrawlerEngine::ExternalOtherResourcesStorageType);
-		
+
 		EXPECT_EQ(2, htmlResources.size());
 		EXPECT_EQ(2, jsResources.size());
 		EXPECT_EQ(0, cssResources.size());
@@ -58,17 +63,20 @@ TEST(OptionsTests, ParseOnlyJs)
 		EXPECT_EQ(0, flashResources.size());
 		EXPECT_EQ(0, otherResources.size());
 		EXPECT_EQ(0, externalOtherResources.size());
+	};
 
-	});
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 TEST(OptionsTests, ParseOnlyCSS)
 {
-	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	int argc = 0;
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::CssResourcesParserType;
+	TestEnvironment env(argc, options);
 
-	TestEnvironment env(options);
-	env.runTest([cl = env.crawler()]()
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->thread()->msleep(300);
 
@@ -90,16 +98,20 @@ TEST(OptionsTests, ParseOnlyCSS)
 		EXPECT_EQ(0, otherResources.size());
 		EXPECT_EQ(0, externalOtherResources.size());
 
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 TEST(OptionsTests, ParseOnlyImages)
 {
-	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	int argc = 0;
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	TestEnvironment env(argc, options);
 
-	TestEnvironment env(options);
-	env.runTest([cl = env.crawler()]()
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->thread()->msleep(300);
 
@@ -120,16 +132,20 @@ TEST(OptionsTests, ParseOnlyImages)
 		EXPECT_EQ(0, flashResources.size());
 		EXPECT_EQ(0, otherResources.size());
 		EXPECT_EQ(0, externalOtherResources.size());
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 TEST(OptionsTests, ParseOnlyVideo)
 {
-	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	int argc = 0;
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::VideoResourcesParserType;
+	TestEnvironment env(argc, options);
 
-	TestEnvironment env(options);
-	env.runTest([cl = env.crawler()]()
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->thread()->msleep(300);
 
@@ -150,16 +166,20 @@ TEST(OptionsTests, ParseOnlyVideo)
 		EXPECT_EQ(0, flashResources.size());
 		EXPECT_EQ(0, otherResources.size());
 		EXPECT_EQ(0, externalOtherResources.size());
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 TEST(OptionsTests, ParseOnlyFlash)
 {
-	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	int argc = 0;
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::FlashResourcesParserType;
+	TestEnvironment env(argc, options);
 
-	TestEnvironment env(options);
-	env.runTest([cl = env.crawler()]()
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->thread()->msleep(300);
 
@@ -180,16 +200,20 @@ TEST(OptionsTests, ParseOnlyFlash)
 		EXPECT_EQ(2, flashResources.size());
 		EXPECT_EQ(0, otherResources.size());
 		EXPECT_EQ(0, externalOtherResources.size());
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 TEST(OptionsTests, ParseOnlyOther)
 {
-	auto options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	int argc = 0;
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::OtherResourcesParserType;
+	TestEnvironment env(argc, options);
 
-	TestEnvironment env(options);
-	env.runTest([cl = env.crawler()]()
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->thread()->msleep(300);
 
@@ -210,7 +234,10 @@ TEST(OptionsTests, ParseOnlyOther)
 		EXPECT_EQ(0, flashResources.size());
 		EXPECT_EQ(2, otherResources.size());
 		EXPECT_EQ(1, externalOtherResources.size());
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 }

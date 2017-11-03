@@ -1,40 +1,51 @@
 #include "test_environment.h"
 #include "tests_crawler.h"
 #include "handler_registry.h"
+#include "test_runner.h"
+
+namespace
+{
+
+constexpr int s_threadCount = 1;
+
+}
 
 namespace CrawlerEngineTests
 {
 
-TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)
-	: m_crawler(std::make_unique<TestsCrawler>(1, options))
+TestEnvironment::TestEnvironment(int& argc, CrawlerEngine::CrawlerOptions options)
+	: QCoreApplication(argc, nullptr)
+	, m_testRunner(new TestRunner)
+	, m_crawler(new TestsCrawler(s_threadCount, options, nullptr))
 {
+	m_crawlerThread = new Common::NamedThread("CrawlerTestsThread");
+	m_crawlerThread->start();
+
+	m_crawler->initialize();
+	m_crawler->moveToThread(m_crawlerThread);
 }
 
 TestEnvironment::~TestEnvironment()
 {
 	Common::HandlerRegistry::instance().unregisterAll();
+
+	m_crawler->deleteLater();
+	processEvents();
+
+	m_crawlerThread->quit();
+	m_crawlerThread->wait();
 }
 
 TestsCrawler* TestEnvironment::crawler() const
 {
-	return m_crawler.get();
+	return m_crawler;
 }
 
-void TestEnvironment::runTest(std::function<void()> condition) const
+void TestEnvironment::initializeTest(const std::function<void()>& testFunction)
 {
-	int argc = 0;
-	QCoreApplication app(argc, nullptr);
+	m_testFunction = testFunction;
 
-	auto extCond = [&app, &condition]
-	{
-		condition();
-		app.quit();
-	};
-
-	crawler()->setCondition(extCond);
-	QTimer::singleShot(0, crawler(), SLOT(startTestCrawler()));
-
-	app.exec();
+	emit testInitialized(m_testFunction);
 }
 
 CrawlerEngine::CrawlerOptions TestEnvironment::defaultOptions(const QUrl& url)
@@ -63,13 +74,15 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(Crawl
 		}
 	}
 
-	return CrawlerEngine::ResourceLink
-	{ 
-		CrawlerEngine::ParsedPageWeakPtr(), 
+	CrawlerEngine::ResourceLink resourceLink
+	{
+		CrawlerEngine::ParsedPageWeakPtr(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
-		CrawlerEngine::ResourceSource::SourceInvalid, 
-		QString() 
+		CrawlerEngine::ResourceSource::SourceInvalid,
+		QString::null
 	};
+
+	return resourceLink;
 }
 
 CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::ResourceType resourceType)
@@ -82,13 +95,15 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(Crawl
 		}
 	}
 
-	return CrawlerEngine::ResourceLink
+	CrawlerEngine::ResourceLink resourceLink
 	{
 		CrawlerEngine::ParsedPageWeakPtr(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
-		QString()
+		QString::null
 	};
+
+	return resourceLink;
 }
 
 }

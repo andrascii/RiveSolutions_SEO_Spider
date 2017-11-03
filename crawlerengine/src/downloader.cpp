@@ -15,7 +15,7 @@ Downloader::Downloader()
 	Common::HandlerRegistry& handlerRegistry = Common::HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, Common::RequestType::RequestTypeDownload);
 
-	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*))));
+	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*)), Qt::DirectConnection));
 }
 
 void Downloader::handleRequest(Common::RequesterSharedPtr requester)

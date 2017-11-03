@@ -68,7 +68,7 @@ private:
 
 private:
 	Preferences* m_preferences;
-	std::unique_ptr<CrawlerEngine::Crawler> m_crawler;
+	CrawlerEngine::Crawler* m_crawler;
 
 	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
 

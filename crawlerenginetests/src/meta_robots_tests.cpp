@@ -3,8 +3,10 @@ namespace CrawlerEngineTests
 	
 TEST(MetaRobotsTests, TestSeveralTags)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://metarobots.com/index.html")));
-	env.runTest([cl = env.crawler()]()
+	int argc = 0;
+	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://metarobots.com/index.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
 
@@ -24,13 +26,18 @@ TEST(MetaRobotsTests, TestSeveralTags)
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsFollow));
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsNoYaCa));
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsNoYDir));
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 TEST(MetaRobotsTests, TestXRobotsTag)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://metarobots.com/x-robots-tag.html")));
-	env.runTest([cl = env.crawler()]()
+	int argc = 0;
+	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://metarobots.com/x-robots-tag.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
 
@@ -50,7 +57,10 @@ TEST(MetaRobotsTests, TestXRobotsTag)
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsFollow));
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsNoYaCa));
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsNoYDir));
-	});
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
 }
 
 }

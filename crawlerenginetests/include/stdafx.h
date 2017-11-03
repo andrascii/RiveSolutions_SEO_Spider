@@ -79,6 +79,8 @@
 using namespace std::chrono_literals;
 using std::size_t;
 
+#define testEnv static_cast<TestEnvironment*>(TestEnvironment::instance())
+
 #ifdef Q_OS_WIN
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else

@@ -29,8 +29,10 @@ class Crawler : public QObject
 	Q_OBJECT
 
 public:
-	Crawler(unsigned int threadCount);
-	~Crawler();
+	Crawler(unsigned int threadCount, QObject* parent = nullptr);
+	virtual ~Crawler();
+
+	void initialize();
 
 	SequencedDataCollection* sequencedDataCollection();
 
@@ -51,14 +53,13 @@ protected:
 	IQueuedDownloader* queuedDownloader() const noexcept;
 	IRobotsTxtLoader* robotsTxtLoader() const noexcept;
 
-	virtual IQueuedDownloader* createQueuedDownloader() const noexcept;
-	virtual IRobotsTxtLoader* createRobotsTxtLoader() const noexcept;
+	virtual IQueuedDownloader* createQueuedDownloader() const;
+	virtual IRobotsTxtLoader* createRobotsTxtLoader() const;
 	void createSequencedDataCollection(QThread* targetThread);
 
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
-	void initCrawlerWorkerThreads();
 	bool isPreinitialized() const;
 	void initializeCrawlingSession();
 
