@@ -74,7 +74,7 @@ void Crawler::stopCrawling()
 {
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
-		worker->stop();
+		VERIFY(QMetaObject::invokeMethod(worker, "stop", Qt::BlockingQueuedConnection));
 	}
 
 	m_crawlingStateTimer->stop();

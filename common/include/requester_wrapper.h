@@ -19,6 +19,11 @@ public:
 		return get();
 	}
 
+	operator bool() const noexcept
+	{
+		return static_cast<bool>(m_requesterPtr);
+	}
+
 	void reset()
 	{
 		m_requesterPtr.reset();

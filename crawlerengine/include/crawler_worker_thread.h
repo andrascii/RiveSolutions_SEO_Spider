@@ -25,8 +25,6 @@ signals:
 	void pageParsed(ParsedPagePtr parsedPage) const;
 
 public slots:
-	void applyOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules);
-
 	void startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules);
 
 	void stop();

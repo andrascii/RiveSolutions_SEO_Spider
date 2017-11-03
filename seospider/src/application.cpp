@@ -222,12 +222,6 @@ void Application::initialize() noexcept
 #endif
 
 	registerServices();
-
-	CrawlerEngine::SequencedDataCollection* storage = m_crawler->sequencedDataCollection();
-	
-	ASSERT(storage->thread() == QThread::currentThread());
-	
-	m_sequencedDataCollection = storage;
 	
 	initQSettings();
 

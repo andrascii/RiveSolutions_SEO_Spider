@@ -20,13 +20,6 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* crawlerStorage, IQueue
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
 }
 
-void CrawlerWorkerThread::applyOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
-{
-	m_optionsLinkFilter.reset(new OptionsLinkFilter(options, robotsTxtRules));
-	
-	m_pageDataCollector->setOptions(options);
-}
-
 void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
 {
 	ASSERT(thread() == QThread::currentThread());
@@ -49,7 +42,12 @@ void CrawlerWorkerThread::stop()
 
 void CrawlerWorkerThread::extractUrlAndDownload()
 {
-	if(!m_isRunning)
+	if (!m_isRunning)
+	{
+		return;
+	}
+
+	if (m_downloadRequester)
 	{
 		return;
 	}
@@ -161,6 +159,8 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, Me
 
 void CrawlerWorkerThread::onLoadingDone(Common::Requester* requester, const DownloadResponse& response)
 {
+	m_downloadRequester.reset();
+
 	IQueuedDownloader::Reply reply;
 
 	reply.statusCode = response.statusCode;
@@ -172,9 +172,9 @@ void CrawlerWorkerThread::onLoadingDone(Common::Requester* requester, const Down
 
 	const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromReply(reply);
 
- 	schedulePageResourcesLoading(page);
+	schedulePageResourcesLoading(page);
  
- 	emit pageParsed(page);
+	emit pageParsed(page);
 
 	extractUrlAndDownload();
 }
