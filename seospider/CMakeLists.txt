@@ -56,6 +56,7 @@ if(MSVC)
 		/MP
 		/permissive-
 		/std:c++latest
+		/Zi
 	)
 	
 	set_target_properties(
@@ -66,7 +67,8 @@ if(MSVC)
 	set_target_properties(
 		${AppName} 
 		PROPERTIES WIN32_EXECUTABLE YES
-		LINK_FLAGS "/ENTRY:mainCRTStartup"
+		LINK_FLAGS "/ENTRY:mainCRTStartup" 
+		LINK_FLAGS /DEBUG
 	)
 endif()
 

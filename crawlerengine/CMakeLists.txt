@@ -55,11 +55,13 @@ if(MSVC)
 		/MP
 		/permissive-
 		/std:c++latest
+		/Zi
 	)
 	
 	set_target_properties(
 		${CrawlerEngineLibName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
+		LINK_FLAGS /DEBUG
 	)
 
 endif()

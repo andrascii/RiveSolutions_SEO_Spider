@@ -31,12 +31,14 @@ if(MSVC)
 		/permissive-
 		/std:c++latest
 		/D EXPORT
+		/Zi
 	)
 	
 	set_target_properties(
 		${SeoSpiderServiceApiDllName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
 		RUNTIME_OUTPUT_DIRECTORY "../seospider/"
+		LINK_FLAGS /DEBUG
 	)
 
 endif()
