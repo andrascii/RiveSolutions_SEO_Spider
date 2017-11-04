@@ -24,21 +24,33 @@ public:
 	UnorderedDataCollection(QObject* parent);
 
 	bool isParsedPageExists(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
+
 	void addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
+
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
+
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
+
 
 	SequencedDataCollection* createSequencedDataCollection(QThread* targetThread) const;
 
-	Q_SIGNAL void parsedPageAdded(ParsedPagePtr parsedPagePtr, int type);
-	Q_SIGNAL void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
+	void clearData();
+
+signals:
+	void parsedPageAdded(ParsedPagePtr parsedPagePtr, int type);
+	
+	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
+
+	void dataCleared();
 
 protected:
 	UnorderedStorageTypePtr& storage(StorageType type) noexcept;
+
 	const UnorderedStorageTypePtr& storage(StorageType type) const noexcept;
 	
 private:
 	void checkStorageType(StorageType type) const noexcept;
+
 	void initializeStorages();
 
 private:

@@ -1,12 +1,20 @@
 #include "page_links_storage_adaptor.h"
+#include "application.h"
 
 namespace SeoSpider
 {
 
-PageLinksStorageAdaptor::PageLinksStorageAdaptor(ParsedPageInfoPtr associatedPageRaw, PageLinkContext context)
-	: m_parsedPage(associatedPageRaw)
+PageLinksStorageAdaptor::PageLinksStorageAdaptor(ParsedPageInfoPtr associatedParsedPage, PageLinkContext context)
+	: m_parsedPage(associatedParsedPage)
 	, m_context(context)
 {
+	CrawlerEngine::SequencedDataCollection* sequencedDataCollection = theApp->sequencedDataCollection();
+
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
+		this, &PageLinksStorageAdaptor::beginClearData));
+
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::endClearData,
+		this, &PageLinksStorageAdaptor::endClearData));
 }
 
 void PageLinksStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept

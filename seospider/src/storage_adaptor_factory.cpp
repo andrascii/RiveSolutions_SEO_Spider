@@ -5,7 +5,8 @@
 namespace SeoSpider
 {
 
-IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, CrawlerEngine::SequencedDataCollection* guiStorage) const
+IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorType type, 
+	CrawlerEngine::SequencedDataCollection* sequencedDataCollection) const
 {
 	ASSERT(type > StorageAdaptorType::StorageAdaptorTypeBegin &&
 		type < StorageAdaptorType::StorageAdaptorTypeEnd);
@@ -13,7 +14,8 @@ IStorageAdaptor* StorageAdaptorFactory::createPageRawInfoStorage(StorageAdaptorT
 	const CrawlerEngine::StorageType storageType =
 		static_cast<CrawlerEngine::StorageType>(type);
 
-	IParsedPageStorageAdaptor* storageAdaptor = new ParsedPageInfoStorageAdaptor(guiStorage->storage(storageType), storageType, guiStorage);
+	IParsedPageStorageAdaptor* storageAdaptor = new ParsedPageInfoStorageAdaptor(
+		sequencedDataCollection->storage(storageType), storageType, sequencedDataCollection);
 
 	setupAvailableColumns(storageAdaptor, type);
 

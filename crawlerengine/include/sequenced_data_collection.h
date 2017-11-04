@@ -20,13 +20,23 @@ public:
 	SequencedDataCollection();
 
 	const SequencedStorageTypePtr& storage(StorageType type) const noexcept;
+
 	SequencedStorageTypePtr& storage(StorageType type) noexcept;
 
-	Q_SIGNAL void parsedPageAdded(int row, int storageType);
-	Q_SIGNAL void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
+signals:
+	void parsedPageAdded(int row, int storageType);
+
+	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
+
+	void beginClearData();
+	void endClearData();
+
+private slots:
+	void addParsedPage(ParsedPagePtr parsedPagePtr, int type);
+
+	void onDataCleared();
 
 private:
-	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePtr, int type);
 	void initializeStorages();
 
 private:

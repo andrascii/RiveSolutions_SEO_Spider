@@ -37,9 +37,13 @@ void PageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 	if (m_storageAdaptor)
 	{
 		disconnect(m_storageAdaptor->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int)));
+		disconnect(m_storageAdaptor->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData()));
+		disconnect(m_storageAdaptor->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData()));
 	}
 
 	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int))));
+	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData())));
+	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData())));
 	
 	m_storageAdaptor = storageAdaptor;
 
@@ -184,7 +188,17 @@ void PageModel::onPageInfoItemChanged(int row, int column)
 {
 	const QModelIndex indexItemChanged = index(row, column);
 
-	Q_EMIT dataChanged(indexItemChanged, indexItemChanged);
+	emit dataChanged(indexItemChanged, indexItemChanged);
+}
+
+void PageModel::onAboutBeginClearingData()
+{
+	beginResetModel();
+}
+
+void PageModel::onAboutEndClearingData()
+{
+	endResetModel();
 }
 
 }

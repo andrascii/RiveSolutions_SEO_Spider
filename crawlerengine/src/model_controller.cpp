@@ -71,6 +71,11 @@ void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
 	m_crawlerOptions = options;
 }
 
+void ModelController::clearData()
+{
+	data()->clearData();
+}
+
 void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 {
 	ASSERT(incomingPage->resourceType >= ResourceType::ResourceHtml &&

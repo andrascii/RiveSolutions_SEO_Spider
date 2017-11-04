@@ -20,9 +20,10 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_theradCount(threadCount)
 	, m_crawlingStateTimer(new QTimer(this))
 	, m_sequencedDataCollection(nullptr)
+	, m_state(StatePending)
 {
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
-	ASSERT(qRegisterMetaType<CrawlingState>());
+	ASSERT(qRegisterMetaType<CrawlingProgress>());
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
 	ASSERT(qRegisterMetaType<RobotsTxtRules>());
 
@@ -33,11 +34,6 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 
 Crawler::~Crawler()
 {
-	//
-	// IMPORTANT: First must be stopped workers!!!
-	// Because workers sends requests to queuedDownloader
-	// And it can not be stopped until it finishes processing requests
-	//
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "stop", Qt::BlockingQueuedConnection));
@@ -66,15 +62,44 @@ void Crawler::initialize()
 	}
 }
 
+void Crawler::clearData()
+{
+	ASSERT(m_state == StatePending || m_state == StatePause);
+
+	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
+
+	m_uniqueLinkStore->clear();
+
+	m_state = StatePending;
+
+	emit stateChanged(m_state);
+}
+
+CrawlerEngine::Crawler::State Crawler::state() const noexcept
+{
+	return m_state;
+}
+
 void Crawler::startCrawling(const CrawlerOptions& options)
 {
 	m_options = options;
 
+	m_state = StateWorking;
+
 	initializeCrawlingSession();
+
+	emit stateChanged(m_state);
 }
 
 void Crawler::stopCrawling()
 {
+	if (m_state == StatePause || m_state == StatePending)
+	{
+		return;
+	}
+
+	m_state = StatePause;
+
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "stop", Qt::BlockingQueuedConnection));
@@ -83,18 +108,19 @@ void Crawler::stopCrawling()
 	m_crawlingStateTimer->stop();
 
 	emit crawlerStopped();
+	emit stateChanged(m_state);
 
 	INFOLOG << "crawler stopped";
 }
 
 void Crawler::onAboutCrawlingState()
 {
-	CrawlingState state;
+	CrawlingProgress progress;
 
-	state.crawledLinkCount = uniqueLinkStore()->crawledLinksCount();
-	state.pendingLinkCount = uniqueLinkStore()->pendingLinksCount();
+	progress.crawledLinkCount = uniqueLinkStore()->crawledLinksCount();
+	progress.pendingLinkCount = uniqueLinkStore()->pendingLinksCount();
 
-	emit crawlingState(state);
+	emit crawlingProgress(progress);
 }
 
 void Crawler::onCrawlingSessionInitialized()

@@ -5,11 +5,13 @@ namespace CrawlerEngine
 
 SequencedDataCollection::SequencedDataCollection()
 {
+	initializeStorages();
 }
 
 SequencedDataCollection::SequencedStorageTypePtr& SequencedDataCollection::storage(StorageType type) noexcept
 {
 	ASSERT(m_sequencedStorageMap.find(type) != m_sequencedStorageMap.end());
+
 	return m_sequencedStorageMap.find(type)->second;
 }
 
@@ -28,8 +30,23 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int typ
 	if (storageIterator != m_sequencedStorageMap.end())
 	{
 		storageIterator->second->push_back(parsedPagePtr);
-		Q_EMIT parsedPageAdded(storage(storageType)->size() - 1, static_cast<int>(storageType));
+
+		emit parsedPageAdded(storage(storageType)->size() - 1, static_cast<int>(storageType));
 	}
+}
+
+void SequencedDataCollection::onDataCleared()
+{
+	emit beginClearData();
+
+	for (const auto& [storageType, collection] : m_sequencedStorageMap)
+	{
+		Q_UNUSED(storageType);
+
+		collection->clear();
+	}
+
+	emit endClearData();
 }
 
 void SequencedDataCollection::initializeStorages()

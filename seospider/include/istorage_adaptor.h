@@ -19,9 +19,11 @@ public:
 	virtual int columnWidth(int columnNumber) const noexcept = 0;
 
 	virtual int columnCount() const noexcept = 0;
+
 	virtual int itemCount() const noexcept = 0;
 
 	virtual QVariant item(const QModelIndex& index) const noexcept = 0;
+
 	virtual ItemType itemType(const QModelIndex& index) const noexcept = 0;
 
 	virtual QString columnDescription(int columnIndex) const noexcept = 0;
@@ -32,6 +34,10 @@ public:
 
 	// signal
 	virtual void parsedPageInfoAdded(int rowIndex) const = 0;
+
+	virtual void beginClearData() const = 0;
+
+	virtual void endClearData() const = 0;
 };
 
 class IParsedPageStorageAdaptor : public IStorageAdaptor

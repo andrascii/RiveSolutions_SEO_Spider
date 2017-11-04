@@ -4,18 +4,25 @@
 namespace SeoSpider
 {
 
-ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(const CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr& associatedStorage,
+ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(
+	const CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr& associatedStorage,
 	CrawlerEngine::StorageType storageType, QObject* parent)
 	: QObject(parent)
 	, m_associatedStorage(associatedStorage)
 	, m_storageType(storageType)
 {
-	CrawlerEngine::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
+	CrawlerEngine::SequencedDataCollection* sequencedDataCollection = theApp->sequencedDataCollection();
 
-	DEBUG_ASSERT(guiStorage);
+	DEBUG_ASSERT(sequencedDataCollection);
 
-	VERIFY(connect(guiStorage, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, 
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, 
 		this, &ParsedPageInfoStorageAdaptor::onStorageUpdated));
+
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
+		this, &ParsedPageInfoStorageAdaptor::beginClearData));
+
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::endClearData,
+		this, &ParsedPageInfoStorageAdaptor::endClearData));
 }
 
 void ParsedPageInfoStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept

@@ -125,7 +125,7 @@ void Application::stopCrawler()
 
 void Application::clearCrawledData()
 {
-
+	crawler()->clearData();
 }
 
 void Application::showMainWindow()

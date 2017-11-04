@@ -3,7 +3,7 @@
 #define DEFINE_METHOD_CHECK(Method)																								\
 namespace MetaHelpers {																											\
 template <typename ObjectType, typename... ParamTypes>																			\
-YesType& hasMethodHelper_##Method(decltype(std::declval<ObjectType&>().Method(std::declval<ParamTypes&>()...))* p);				\
+YesType& hasMethodHelper_##Method(decltype(std::declval<ObjectType&>().Method(std::declval<ParamTypes>()...))* p);				\
 																																\
 template <typename...>																											\
 NoType& hasMethodHelper_##Method(...);																							\

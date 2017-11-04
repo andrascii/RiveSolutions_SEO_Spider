@@ -13,7 +13,7 @@ class IStorageAdaptor;
 class StorageAdaptorFactory
 {
 public:
-	IStorageAdaptor* createPageRawInfoStorage(StorageAdaptorType type, CrawlerEngine::SequencedDataCollection* guiStorage) const;
+	IStorageAdaptor* createPageRawInfoStorage(StorageAdaptorType type, CrawlerEngine::SequencedDataCollection* sequencedDataCollection) const;
 	IStorageAdaptor* createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer);
 
 protected:

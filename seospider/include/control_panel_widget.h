@@ -14,10 +14,12 @@ public:
 
 	const QUrl& url() const noexcept;
 
-private:
-	Q_SLOT void setUrl() const;
-	Q_SLOT void startCrawling() const;
-	Q_SLOT void stopCrawling() const;
+private slots:
+	void setUrl() const;
+	void startCrawling() const;
+	void stopCrawling() const;
+	void clearCrawlingData() const;
+	void onCrawlerStateChanged(int state);
 
 private:
 	Ui::ControlPanelWidget m_ui;

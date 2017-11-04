@@ -121,6 +121,11 @@ QPushButton:pressed
 	background-color: #D6D6D6;
 }
 
+QPushButton:disabled
+{
+	background-color: #D6D6D6;
+}
+
 /*/////////////////////////////// QComboBox ///////////////////////////////*/
 
 QComboBox

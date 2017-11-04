@@ -5,7 +5,10 @@ namespace SeoSpider
 
 QModelIndexList AbstractTableModel::makeModelIndexesForRow(int row) const noexcept
 {
-	DEBUG_ASSERT(row < rowCount());
+	if (!rowCount())
+	{
+		return QModelIndexList();
+	}
 
 	QModelIndexList modelIndexes;
 

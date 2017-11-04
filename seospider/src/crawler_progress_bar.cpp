@@ -14,17 +14,17 @@ CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted, this, &QWidget::show));
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStopped, this, &QWidget::hide));
 
-	VERIFY(connect(theApp->crawler(), SIGNAL(crawlingState(CrawlingState)),
-		this, SLOT(calculatePercents(CrawlingState)), Qt::QueuedConnection));
+	VERIFY(connect(theApp->crawler(), SIGNAL(crawlingProgress(CrawlingProgress)),
+		this, SLOT(calculatePercents(CrawlingProgress)), Qt::QueuedConnection));
 
 	hide();
 }
 
-void CrawlerProgressBar::calculatePercents(CrawlingState state)
+void CrawlerProgressBar::calculatePercents(CrawlingProgress progress)
 {
-	const size_t amountLinksCount = state.pendingLinkCount + state.crawledLinkCount;
+	const size_t amountLinksCount = progress.pendingLinkCount + progress.crawledLinkCount;
 
-	const double percents = static_cast<double>(state.crawledLinkCount) / static_cast<double>(amountLinksCount + 1) * 100.0;
+	const double percents = static_cast<double>(progress.crawledLinkCount) / static_cast<double>(amountLinksCount + 1) * 100.0;
 
 	setValue(percents ? std::floor(percents)  : percents + 1);
 }

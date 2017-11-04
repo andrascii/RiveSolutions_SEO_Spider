@@ -18,6 +18,7 @@ public:
 
 	Q_SLOT void addParsedPage(ParsedPagePtr incomingPage) noexcept;
 	Q_SLOT void setWebCrawlerOptions(const CrawlerOptions& options);
+	Q_SLOT void clearData();
 
 	const UnorderedDataCollection* data() const noexcept;
 	UnorderedDataCollection* data() noexcept;

@@ -96,4 +96,12 @@ size_t UniqueLinkStore::pendingLinksCount() const noexcept
 	return m_pendingUrlList.size();
 }
 
+void UniqueLinkStore::clear()
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+
+	m_pendingUrlList.clear();
+	m_crawledUrlList.clear();
+}
+
 }

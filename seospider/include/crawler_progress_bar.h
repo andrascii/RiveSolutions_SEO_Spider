@@ -15,7 +15,7 @@ public:
 	CrawlerProgressBar(QWidget* parent = nullptr);
 
 private slots:
-	void calculatePercents(CrawlingState state);
+	void calculatePercents(CrawlingProgress progress);
 };
 
 }

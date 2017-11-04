@@ -29,6 +29,8 @@ public:
 
 	size_t pendingLinksCount() const noexcept;
 
+	void clear();
+
 signals:
 	void urlAdded();
 
