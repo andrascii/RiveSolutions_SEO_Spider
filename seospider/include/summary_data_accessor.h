@@ -26,7 +26,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept override;
 
-	virtual const CrawlerEngine::SequencedDataCollection* guiStorage() const noexcept override;
+	virtual CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept override;
 
 	virtual QObject* qobject() noexcept override;
 
@@ -45,7 +45,7 @@ private:
 private:
 	static constexpr int s_summaryColumnCount = 2;
 
-	CrawlerEngine::SequencedDataCollection* m_guiStorage;
+	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
 
 	QVector<DCStorageGroupDescriptionPtr> m_allGroupRows;
 	QMap<int, DCStorageGroupDescriptionPtr> m_groupRows;

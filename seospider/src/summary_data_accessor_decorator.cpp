@@ -54,9 +54,9 @@ void SummaryDataAccessorDecorator::addGroup(AuditGroup group) noexcept
 	return m_summaryDataAccessor->addGroup(group);
 }
 
-const CrawlerEngine::SequencedDataCollection* SummaryDataAccessorDecorator::guiStorage() const noexcept
+CrawlerEngine::SequencedDataCollection* SummaryDataAccessorDecorator::sequencedDataCollection() const noexcept
 {
-	return m_summaryDataAccessor->guiStorage();
+	return m_summaryDataAccessor->sequencedDataCollection();
 }
 
 QObject* SummaryDataAccessorDecorator::qobject() noexcept

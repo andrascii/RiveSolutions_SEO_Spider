@@ -15,9 +15,9 @@ class OptionsLinkFilter;
 class PageDataCollector;
 
 class CrawlerWorkerThread : public QObject
-{			
+{
 	Q_OBJECT
-			
+
 public:
 	CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore);
 
@@ -32,12 +32,16 @@ public slots:
 private slots:
 	void extractUrlAndDownload();
 
+	void onCrawlerClearData();
+
 private:
 	void schedulePageResourcesLoading(const ParsedPagePtr& parsedPage) const;
 
 	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags) const;
 
 	void onLoadingDone(Common::Requester* requester, const DownloadResponse& response);
+
+	void onStart();
 
 private:
 	PageDataCollector* m_pageDataCollector;
@@ -49,6 +53,8 @@ private:
 	Common::RequesterWrapper m_downloadRequester;
 
 	bool m_isRunning;
+
+	std::vector<ParsedPagePtr> m_pagesAcceptedAfterStop;
 };
 
 }

@@ -6,9 +6,9 @@ namespace SeoSpider
 {
 
 SummaryDataAccessor::SummaryDataAccessor(CrawlerEngine::SequencedDataCollection* guiStorage)
-	: m_guiStorage(guiStorage)
+	: m_sequencedDataCollection(guiStorage)
 {
-	VERIFY(connect(m_guiStorage, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, this, &SummaryDataAccessor::emitDataChanged));
+	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, this, &SummaryDataAccessor::emitDataChanged));
 }
 
 int SummaryDataAccessor::columnCount() const noexcept
@@ -37,9 +37,9 @@ void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
 	}
 }
 
-const CrawlerEngine::SequencedDataCollection* SummaryDataAccessor::guiStorage() const noexcept
+CrawlerEngine::SequencedDataCollection* SummaryDataAccessor::sequencedDataCollection() const noexcept
 {
-	return m_guiStorage;
+	return m_sequencedDataCollection;
 }
 
 QObject* SummaryDataAccessor::qobject() noexcept
@@ -160,7 +160,7 @@ QVariant SummaryDataAccessor::item(const QModelIndex& index) const noexcept
 		return itemIterator.value()->storageTypeDescriptionName;
 	}
 
-	return m_guiStorage->storage(itemIterator.value()->storageType)->size();
+	return m_sequencedDataCollection->storage(itemIterator.value()->storageType)->size();
 }
 
 bool SummaryDataAccessor::isHeaderRow(int row) const noexcept

@@ -15,13 +15,15 @@ class SequencedDataCollection : public QObject
 
 public:
 	using SequencedStorageType = QVector<ParsedPagePtr>;
+
+private:
 	using SequencedStorageTypePtr = std::shared_ptr<SequencedStorageType>;
 
+public:
 	SequencedDataCollection();
 
-	const SequencedStorageTypePtr& storage(StorageType type) const noexcept;
-
-	SequencedStorageTypePtr& storage(StorageType type) noexcept;
+	const SequencedStorageType* storage(StorageType type) const noexcept;
+	SequencedStorageType* storage(StorageType type) noexcept;
 
 signals:
 	void parsedPageAdded(int row, int storageType);
@@ -29,6 +31,7 @@ signals:
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 
 	void beginClearData();
+
 	void endClearData();
 
 private slots:

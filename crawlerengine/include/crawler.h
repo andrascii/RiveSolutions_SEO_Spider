@@ -34,54 +34,82 @@ public:
 		StatePending
 	};
 
+	static Crawler& instance();
+
 	Crawler(unsigned int threadCount, QObject* parent = nullptr);
 
 	virtual ~Crawler();
 
+	
 	void initialize();
+	
 	void clearData();
+	
 	State state() const noexcept;
+	
 	SequencedDataCollection* sequencedDataCollection();
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
+	
 	void crawlerStarted();
+	
 	void crawlerStopped();
+
 	void stateChanged(int state);
+
+	void onAboutClearData();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);
+	
 	void stopCrawling();
 
 private slots:
 	void onAboutCrawlingState();
+	
 	void onCrawlingSessionInitialized();
 
 protected:
 	IRobotsTxtLoader* robotsTxtLoader() const;
 
+	
 	virtual IDownloader* createDownloader() const;
+	
 	virtual IRobotsTxtLoader* createRobotsTxtLoader() const;
+	
 	void createSequencedDataCollection(QThread* targetThread);
 
+	
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
 	bool isPreinitialized() const;
+	
 	void initializeCrawlingSession();
 
 private:
+	static Crawler* s_instance;
+
 	mutable std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
 
+	
 	ModelController* m_modelController;
+	
 	UniqueLinkStore* m_uniqueLinkStore;
+	
 	CrawlerOptions m_options;
 
+	
 	unsigned int m_theradCount;
 
+	
 	QTimer* m_crawlingStateTimer;
+	
 	std::vector<CrawlerWorkerThread*> m_workers;
+	
 	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
+	
 	State m_state;
 };
 

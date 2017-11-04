@@ -24,7 +24,8 @@ public:
 
 	PageDataWidget(QWidget* parent = nullptr);
 
-	void setPageRawInfo(const ParsedPageInfoPtr& pageRawInfoPtr);
+	void setParsedPageInfo(const ParsedPageInfoPtr& pageRawInfoPtr);
+
 	void setPageDataType(PageDataType pageDataType);
 
 private:
@@ -35,6 +36,7 @@ private:
 
 private:
 	QTabWidget* m_tabWidget;
+
 	QLabel* m_httpResponseLabel;
 
 	QMap<PageDataType, PageModel*> m_models;

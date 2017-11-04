@@ -27,8 +27,11 @@ protected:
 
 private:
 	QSplitter* m_splitter;
+
 	QStackedWidget* m_stackedWidget;
+
 	QMap<StorageAdaptorType, int> m_tables;
+
 	PageDataWidget* m_pageDataWidget;
 };
 

@@ -8,17 +8,21 @@ SequencedDataCollection::SequencedDataCollection()
 	initializeStorages();
 }
 
-SequencedDataCollection::SequencedStorageTypePtr& SequencedDataCollection::storage(StorageType type) noexcept
+SequencedDataCollection::SequencedStorageType* SequencedDataCollection::storage(StorageType type) noexcept
+{
+	SequencedStorageType* storage = const_cast<SequencedStorageType*>(static_cast<const SequencedDataCollection* const>(this)->storage(type));
+	return storage;
+}
+
+const SequencedDataCollection::SequencedStorageType* SequencedDataCollection::storage(StorageType type) const noexcept
 {
 	ASSERT(m_sequencedStorageMap.find(type) != m_sequencedStorageMap.end());
 
-	return m_sequencedStorageMap.find(type)->second;
-}
+	const auto&[storageType, storage] = *m_sequencedStorageMap.find(type);
 
-const SequencedDataCollection::SequencedStorageTypePtr& SequencedDataCollection::storage(StorageType type) const noexcept
-{
-	const SequencedStorageTypePtr& storage = const_cast<SequencedDataCollection* const>(this)->storage(type);
-	return storage;
+	Q_UNUSED(storageType);
+
+	return storage.get();
 }
 
 void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type)

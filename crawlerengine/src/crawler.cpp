@@ -12,6 +12,13 @@
 namespace CrawlerEngine
 {
 
+Crawler* Crawler::s_instance = nullptr;
+
+Crawler& Crawler::instance()
+{
+	return *s_instance;
+}
+
 Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	: QObject(parent)
 	, m_robotsTxtLoader(nullptr)
@@ -22,6 +29,8 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_sequencedDataCollection(nullptr)
 	, m_state(StatePending)
 {
+	ASSERT(s_instance == nullptr && "Allowed only one instance of Crawler");
+
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 	ASSERT(qRegisterMetaType<CrawlingProgress>());
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
@@ -30,6 +39,8 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
 	
 	m_crawlingStateTimer->setInterval(100);
+
+	s_instance = this;
 }
 
 Crawler::~Crawler()
@@ -40,6 +51,8 @@ Crawler::~Crawler()
 	}
 
 	ThreadManager::destroy();
+
+	s_instance = nullptr;
 }
 
 void Crawler::initialize()
@@ -73,6 +86,7 @@ void Crawler::clearData()
 	m_state = StatePending;
 
 	emit stateChanged(m_state);
+	emit onAboutClearData();
 }
 
 CrawlerEngine::Crawler::State Crawler::state() const noexcept

@@ -41,7 +41,7 @@ ParsedPageReceiver::~ParsedPageReceiver()
 
 void ParsedPageReceiver::onParsedPageAdded(int row, int storageType)
 {
-	const CrawlerEngine::SequencedDataCollection::SequencedStorageTypePtr& storage = 
+	const CrawlerEngine::SequencedDataCollection::SequencedStorageType* storage = 
 		m_sequencedDataCollection->storage(static_cast<CrawlerEngine::StorageType>(storageType));
 
 	m_parsedPages[storageType].push_back((*storage)[row]);

@@ -19,7 +19,7 @@ PageDataWidget::PageDataWidget(QWidget* parent)
 	layout->addWidget(m_tabWidget);
 }
 
-void PageDataWidget::setPageRawInfo(const ParsedPageInfoPtr& page)
+void PageDataWidget::setParsedPageInfo(const ParsedPageInfoPtr& page)
 {
 	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
 

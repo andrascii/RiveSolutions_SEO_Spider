@@ -5,6 +5,7 @@
 #include "options_link_filter.h"
 #include "download_request.h"
 #include "download_response.h"
+#include "crawler.h"
 
 namespace CrawlerEngine
 {
@@ -17,6 +18,9 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 {
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
+
+	VERIFY(connect(&Crawler::instance(), &Crawler::onAboutClearData, 
+		this, &CrawlerWorkerThread::onCrawlerClearData, Qt::QueuedConnection));
 }
 
 void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
@@ -24,11 +28,10 @@ void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, Robots
 	ASSERT(thread() == QThread::currentThread());
 
 	m_isRunning = true;
-
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(options, robotsTxtRules));
-
 	m_pageDataCollector->setOptions(options);
 
+	onStart();
 	extractUrlAndDownload();
 }
 
@@ -60,6 +63,11 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 		m_downloadRequester.reset(request, this, &CrawlerWorkerThread::onLoadingDone);
 		m_downloadRequester->start();
 	}
+}
+
+void CrawlerWorkerThread::onCrawlerClearData()
+{
+	m_pagesAcceptedAfterStop.clear();
 }
 
 void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& parsedPage) const
@@ -163,10 +171,29 @@ void CrawlerWorkerThread::onLoadingDone(Common::Requester* requester, const Down
 	const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromResponse(response);
 
 	schedulePageResourcesLoading(page);
+
+	if (!m_isRunning)
+	{
+		m_pagesAcceptedAfterStop.push_back(page);
+		return;
+	}
  
 	emit pageParsed(page);
 
 	extractUrlAndDownload();
+}
+
+void CrawlerWorkerThread::onStart()
+{
+	if (!m_pagesAcceptedAfterStop.empty())
+	{
+		for (const ParsedPagePtr& page : m_pagesAcceptedAfterStop)
+		{
+			emit pageParsed(page);
+		}
+	}
+
+	m_pagesAcceptedAfterStop.clear();
 }
 
 }
