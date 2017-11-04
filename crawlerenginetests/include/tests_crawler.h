@@ -58,7 +58,7 @@ public:
 	Q_SLOT void startTestCrawler();
 
 protected:
-	virtual CrawlerEngine::IQueuedDownloader* createQueuedDownloader() const override;
+	virtual CrawlerEngine::IDownloader* createDownloader() const override;
 	virtual CrawlerEngine::IRobotsTxtLoader* createRobotsTxtLoader() const override;
 
 private:

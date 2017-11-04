@@ -12,8 +12,8 @@ TEST(MetaDescriptionTests, EmptyMetaDescription)
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::EmptyMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 empty meta description pages");
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QString::null, pages[0]->metaDescription);
-		EXPECT_EQ(QString::null, pages[1]->metaDescription);
+		EXPECT_EQ(QString(), pages[0]->metaDescription);
+		EXPECT_EQ(QString(), pages[1]->metaDescription);
 		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 

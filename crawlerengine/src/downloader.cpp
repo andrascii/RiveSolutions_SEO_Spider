@@ -62,6 +62,11 @@ void Downloader::stopRequestHandling(Common::RequesterSharedPtr requester)
 	requester;
 }
 
+QObject* Downloader::qobject()
+{
+	return this;
+}
+
 void Downloader::urlDownloaded(QNetworkReply* reply)
 {
 	processReply(reply);

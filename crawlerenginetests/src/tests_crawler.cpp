@@ -1,5 +1,5 @@
 #include "tests_crawler.h"
-#include "tests_queued_downloader.h"
+#include "tests_downloader.h"
 #include "tests_robots_txt_loader.h"
 
 namespace CrawlerEngineTests
@@ -114,6 +114,8 @@ TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerEngine::Crawle
 	: CrawlerEngine::Crawler(threadCount, parent)
 	, m_testCrawlerOptions(options)
 {
+	initialize();
+
 	m_sequencedDataCollectionThread = new QThread;
 
 	createSequencedDataCollection(m_sequencedDataCollectionThread);
@@ -165,9 +167,9 @@ void TestsCrawler::startTestCrawler()
 	startCrawling(m_testCrawlerOptions);
 }
 
-CrawlerEngine::IQueuedDownloader* TestsCrawler::createQueuedDownloader() const
+CrawlerEngine::IDownloader* TestsCrawler::createDownloader() const
 {
-	return new TestsQueudedDownoader();
+	return new TestsDownloader();
 }
 
 CrawlerEngine::IRobotsTxtLoader* TestsCrawler::createRobotsTxtLoader() const

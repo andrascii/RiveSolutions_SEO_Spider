@@ -50,7 +50,7 @@ void Crawler::initialize()
 {
 	m_modelController = new ModelController;
 
-	ThreadManager::instance().moveObjectToThread(new Downloader, "DownloaderThread");
+	ThreadManager::instance().moveObjectToThread(createDownloader()->qobject(), "DownloaderThread");
 	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
 	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
 
@@ -92,8 +92,7 @@ void Crawler::onAboutCrawlingState()
 	CrawlingState state;
 
 	state.crawledLinkCount = uniqueLinkStore()->crawledLinksCount();
-	state.pendingLinkCount = uniqueLinkStore()->pendingLinksCount() + 
-		queuedDownloader()->unprocessedRequestCount();
+	state.pendingLinkCount = uniqueLinkStore()->pendingLinksCount();
 
 	emit crawlingState(state);
 }
@@ -143,16 +142,7 @@ void Crawler::createSequencedDataCollection(QThread* targetThread)
 	m_sequencedDataCollection.reset(m_modelController->data()->createSequencedDataCollection(targetThread));
 }
 
-IQueuedDownloader* Crawler::queuedDownloader() const noexcept
-{
-	if (!m_queuedDownloader)
-	{
-		m_queuedDownloader.reset(createQueuedDownloader());
-	}
-	return m_queuedDownloader.get();
-}
-
-IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
+IRobotsTxtLoader* Crawler::robotsTxtLoader() const
 {
 	if (!m_robotsTxtLoader)
 	{
@@ -164,10 +154,11 @@ IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
 	return m_robotsTxtLoader.get();
 }
 
-IQueuedDownloader* Crawler::createQueuedDownloader() const
+IDownloader* Crawler::createDownloader() const
 {
-	IQueuedDownloader* queuedDownloader = new QueuedDownloader();
-	queuedDownloader->setUserAgent(m_options.plainUserAgent);
+	IDownloader* queuedDownloader = new Downloader;
+
+	//queuedDownloader->setUserAgent(m_options.plainUserAgent);
 
 	return queuedDownloader;
 }

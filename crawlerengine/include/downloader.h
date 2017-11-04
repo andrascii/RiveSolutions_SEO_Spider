@@ -2,20 +2,23 @@
 
 #include "requester.h"
 #include "crawler_request.h"
+#include "idownloader.h"
 
 namespace CrawlerEngine
 {
 	
-class Downloader : public QObject
+class Downloader : public QObject, public IDownloader
 {
 	Q_OBJECT
 
 public:
 	Downloader();
 
-	Q_INVOKABLE void handleRequest(Common::RequesterSharedPtr requester);
+	Q_INVOKABLE virtual void handleRequest(Common::RequesterSharedPtr requester) override;
 
-	Q_INVOKABLE void stopRequestHandling(Common::RequesterSharedPtr requester);
+	Q_INVOKABLE virtual void stopRequestHandling(Common::RequesterSharedPtr requester) override;
+
+	virtual QObject* qobject() override;
 
 private slots:
 	void urlDownloaded(QNetworkReply* reply);

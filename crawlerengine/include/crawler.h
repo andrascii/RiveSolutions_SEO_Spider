@@ -12,9 +12,9 @@ namespace CrawlerEngine
 class CrawlerWorkerThread;
 class ModelController;
 class SequencedDataCollection;
-class IQueuedDownloader;
 class IRobotsTxtLoader;
 class IRobotsTxtRules;
+class IDownloader;
 
 struct CrawlingState
 {
@@ -50,10 +50,9 @@ private slots:
 	void onCrawlingSessionInitialized();
 
 protected:
-	IQueuedDownloader* queuedDownloader() const noexcept;
-	IRobotsTxtLoader* robotsTxtLoader() const noexcept;
+	IRobotsTxtLoader* robotsTxtLoader() const;
 
-	virtual IQueuedDownloader* createQueuedDownloader() const;
+	virtual IDownloader* createDownloader() const;
 	virtual IRobotsTxtLoader* createRobotsTxtLoader() const;
 	void createSequencedDataCollection(QThread* targetThread);
 
@@ -64,7 +63,6 @@ private:
 	void initializeCrawlingSession();
 
 private:
-	mutable std::unique_ptr<IQueuedDownloader> m_queuedDownloader;
 	mutable std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
 
 	ModelController* m_modelController;

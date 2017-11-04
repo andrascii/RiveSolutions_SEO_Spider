@@ -21,7 +21,6 @@ TestEnvironment::TestEnvironment(int& argc, CrawlerEngine::CrawlerOptions option
 	m_crawlerThread = new Common::NamedThread("CrawlerTestsThread");
 	m_crawlerThread->start();
 
-	m_crawler->initialize();
 	m_crawler->moveToThread(m_crawlerThread);
 }
 

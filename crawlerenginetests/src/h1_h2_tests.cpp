@@ -12,8 +12,8 @@ TEST(H1AndH2Tests, EmptyH1)
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QString::null, pages[0]->firstH1);
-		EXPECT_EQ(QString::null, pages[1]->firstH1);
+		EXPECT_EQ(QString(), pages[0]->firstH1);
+		EXPECT_EQ(QString(), pages[1]->firstH1);
 		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 
 		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType).size());
@@ -34,8 +34,8 @@ TEST(H1AndH2Tests, NoH1)
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QString::null, pages[0]->firstH1);
-		EXPECT_EQ(QString::null, pages[1]->firstH1);
+		EXPECT_EQ(QString(), pages[0]->firstH1);
+		EXPECT_EQ(QString(), pages[1]->firstH1);
 		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 
 		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType).size());
