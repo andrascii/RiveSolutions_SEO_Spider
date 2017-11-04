@@ -1,5 +1,7 @@
 #pragma once
 
+#include "requester.h"
+
 namespace CrawlerEngine
 {
 

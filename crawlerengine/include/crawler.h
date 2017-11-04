@@ -3,8 +3,6 @@
 #include "parsed_page.h"
 #include "unique_link_store.h"
 #include "crawler_options.h"
-#include "host_info_provider.h"
-#include "auto_delete_later_ptr.h"
 
 namespace CrawlerEngine
 {

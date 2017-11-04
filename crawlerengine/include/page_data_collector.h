@@ -1,6 +1,5 @@
 #pragma once
 
-#include "queued_downloader.h"
 #include "compound_parser.h"
 #include "parsed_page.h"
 #include "crawler_options.h"

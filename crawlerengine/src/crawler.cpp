@@ -3,11 +3,11 @@
 #include "sequenced_data_collection.h"
 #include "model_controller.h"
 #include "crawler_worker_thread.h"
-#include "queued_downloader.h"
 #include "robots_txt_rules.h"
 #include "robots_txt_loader.h"
 #include "thread_manager.h"
 #include "downloader.h"
+#include "host_info_provider.h"
 
 namespace CrawlerEngine
 {
