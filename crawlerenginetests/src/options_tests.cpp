@@ -10,7 +10,11 @@ TEST(OptionsTests, ParseOnlyHtml)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->thread()->msleep(800);
+		//
+		// TODO: Add signal from crawler about crawwling ended
+		//
+
+		testEnv->thread()->msleep(800);
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
 		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
@@ -44,7 +48,11 @@ TEST(OptionsTests, ParseOnlyJs)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->thread()->msleep(300);
+		//
+		// TODO: Add signal from crawler about crawwling ended
+		//
+
+		testEnv->thread()->msleep(500);
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
 		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
@@ -78,7 +86,11 @@ TEST(OptionsTests, ParseOnlyCSS)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->thread()->msleep(300);
+		//
+		// TODO: Add signal from crawler about crawwling ended
+		//
+
+		testEnv->thread()->msleep(500);
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
 		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
@@ -113,7 +125,11 @@ TEST(OptionsTests, ParseOnlyImages)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->thread()->msleep(300);
+		//
+		// TODO: Add signal from crawler about crawwling ended
+		//
+
+		testEnv->thread()->msleep(500);
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
 		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
@@ -147,7 +163,11 @@ TEST(OptionsTests, ParseOnlyVideo)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->thread()->msleep(300);
+		//
+		// TODO: Add signal from crawler about crawwling ended
+		//
+
+		testEnv->thread()->msleep(500);
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
 		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
@@ -181,7 +201,11 @@ TEST(OptionsTests, ParseOnlyFlash)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->thread()->msleep(300);
+		//
+		// TODO: Add signal from crawler about crawwling ended
+		//
+
+		testEnv->thread()->msleep(500);
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
 		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
@@ -215,7 +239,11 @@ TEST(OptionsTests, ParseOnlyOther)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->thread()->msleep(300);
+		//
+		// TODO: Add signal from crawler about crawwling ended
+		//
+
+		testEnv->thread()->msleep(300);
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
 		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
