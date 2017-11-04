@@ -1,5 +1,6 @@
 #include "robots_txt_yandex_strategy.h"
 #include "robots_txt_tokenizer.h"
+#include "meta_robots_helpers.h"
 
 
 namespace CrawlerEngine
@@ -7,7 +8,7 @@ namespace CrawlerEngine
 
 QUrl RobotsTxtYandexStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
 {
-	if (!checkIfSupportedRecordExistsAndCorrectUserAgentType(userAgentType, tokenizer))
+	if (!MetaRobotsHelpers::checkIfSupportedRecordExistsAndCorrectUserAgentType(userAgentType, tokenizer))
 	{
 		return url;
 	}
@@ -81,12 +82,19 @@ QUrl RobotsTxtYandexStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentT
 	return result;
 }
 
-bool RobotsTxtYandexStrategy::isUrlAllowed(MetaRobotsFlags metaRobotsFlags) const
+bool RobotsTxtYandexStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
 {
-	return metaRobotsFlags.testFlag(MetaRobotsAll) ||
-		metaRobotsFlags.testFlag(MetaRobotsFollow) ||
-		(!metaRobotsFlags.testFlag(MetaRobotsNone) &&
-		!metaRobotsFlags.testFlag(MetaRobotsNoFollow));
+	if (!MetaRobotsHelpers::checkIfSupportedMetaRobotsExistAndCorrectUserAgentType(userAgentType, metaRobotsFlags))
+	{
+		return true;
+	}
+
+	const MetaRobotsFlags& flags = metaRobotsFlags.find(userAgentType)->second;
+
+	return flags.testFlag(MetaRobotsAll) ||
+		flags.testFlag(MetaRobotsFollow) ||
+		(!flags.testFlag(MetaRobotsNone) &&
+		!flags.testFlag(MetaRobotsNoFollow));
 }
 
 }

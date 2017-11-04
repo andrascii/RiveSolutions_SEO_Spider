@@ -404,16 +404,23 @@ QVariant ParsedPageInfo::acceptMetaRobots() const
 {
 	static std::map<int, QString> s_cache;
 
-	const CrawlerEngine::MetaRobotsFlags flags = m_parsedPage->metaRobotsFlags;
+	// TODO: use userAgent from the preferences?
+	const auto anyBotIt = m_parsedPage->metaRobotsFlags.find(CrawlerEngine::UserAgentType::AnyBot);
+	if (anyBotIt == m_parsedPage->metaRobotsFlags.end())
+	{
+		return QString();
+	}
 
-	auto it = s_cache.find(flags);
+	const CrawlerEngine::MetaRobotsFlags& flags = anyBotIt->second;
+
+	const auto it = s_cache.find(flags);
 	if (it != s_cache.end())
 	{
 		return it->second;
 	}
 	
 	QString result;
-	auto addFlag = [&flags, &result](CrawlerEngine::MetaRobotsItem flag, const QString& flagStr)
+	const auto addFlag = [&flags, &result](CrawlerEngine::MetaRobotsItem flag, const QString& flagStr)
 	{
 		if (flags.testFlag(flag))
 		{

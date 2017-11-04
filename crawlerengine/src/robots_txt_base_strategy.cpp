@@ -1,7 +1,7 @@
 #include "robots_txt_base_strategy.h"
 #include "robots_txt_tokenizer.h"
 #include "robots_txt_rules.h"
-#include "page_parser_helpers.h"
+#include "meta_robots_helpers.h"
 
 namespace CrawlerEngine
 {
@@ -14,7 +14,7 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url,
 		return true;
 	}
 
-	if (!checkIfSupportedRecordExistsAndCorrectUserAgentType(userAgentType, tokenizer))
+	if (!MetaRobotsHelpers::checkIfSupportedRecordExistsAndCorrectUserAgentType(userAgentType, tokenizer))
 	{
 		return true;
 	}
@@ -37,11 +37,18 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url,
 	return allowed;
 }
 
-bool RobotsTxtBaseStrategy::isUrlAllowed(MetaRobotsFlags metaRobotsFlags) const
+bool RobotsTxtBaseStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
 {
+	if (!MetaRobotsHelpers::checkIfSupportedMetaRobotsExistAndCorrectUserAgentType(userAgentType, metaRobotsFlags))
+	{
+		return true;
+	}
+
+	const MetaRobotsFlags& flags = metaRobotsFlags.find(userAgentType)->second;
+
 	// all and follow are not supported (???)
-	return !metaRobotsFlags.testFlag(MetaRobotsNone) &&
-		!metaRobotsFlags.testFlag(MetaRobotsNoFollow);
+	return !flags.testFlag(MetaRobotsNone) &&
+		!flags.testFlag(MetaRobotsNoFollow);
 }
 
 QUrl RobotsTxtBaseStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
@@ -112,22 +119,6 @@ bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString
 	}
 
 	return matched;
-}
-
-bool RobotsTxtBaseStrategy::checkIfSupportedRecordExistsAndCorrectUserAgentType(UserAgentType& userAgentType, const RobotsTxtTokenizer& tokenizer) const
-{
-	if (tokenizer.hasUserAgentRecord(userAgentType))
-	{
-		return true;
-	}
-
-	if (tokenizer.hasUserAgentRecord(UserAgentType::AnyBot))
-	{
-		userAgentType = UserAgentType::AnyBot;
-		return true;
-	}
-
-	return false;
 }
 
 }

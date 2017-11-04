@@ -10,7 +10,7 @@ namespace CrawlerEngine
 
 class RobotsTxtMailRuStrategy : public RobotsTxtYandexStrategy
 {
-	virtual bool isUrlAllowed(MetaRobotsFlags metaRobotsFlags) const override;
+	virtual bool isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const override;
 };
 
 }

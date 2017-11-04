@@ -1,6 +1,7 @@
 #include "meta_parser.h"
 #include "page_parser_helpers.h"
 #include "gumbo_parsing_helpers.h"
+#include "meta_robots_helpers.h"
 
 namespace CrawlerEngine
 {
@@ -129,25 +130,6 @@ void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noe
 
 void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) noexcept
 {
-	auto cond = [](const GumboNode* node)
-	{
-		return node &&
-			node->type == GUMBO_NODE_ELEMENT &&
-			node->v.element.tag == GUMBO_TAG_META &&
-			node->parent &&
-			node->parent->v.element.tag == GUMBO_TAG_HEAD &&
-			GumboParsingHelpers::checkAttribute(node, "name", "robots") &&
-			GumboParsingHelpers::checkAttribute(node, "content", "");
-	};
-
-	auto res = [](const GumboNode* node)
-	{
-		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).trimmed();
-	};
-
-	std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-
 	const std::map<QString, MetaRobotsItem> metaRobotsMapping
 	{
 		{ QString("all"), MetaRobotsAll },
@@ -165,35 +147,64 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 		{ QString("noydir"), MetaRobotsNoYDir },
 	};
 
-	for (const QString& robotsItem : robots)
+
+	const QStringList supportedUserAgents = MetaRobotsHelpers::supportedUserAgents(true);
+
+	foreach(const QString& userAgentStr, supportedUserAgents)
 	{
-		const QStringList parts = robotsItem.split(QLatin1Char(','), QString::SkipEmptyParts);
-		for (const QString& part : parts)
+		auto cond = [nameValue = userAgentStr](const GumboNode* node)
 		{
-			auto it = metaRobotsMapping.find(part.trimmed().toLower());
-			if (it != metaRobotsMapping.cend())
+			return node &&
+				node->type == GUMBO_NODE_ELEMENT &&
+				node->v.element.tag == GUMBO_TAG_META &&
+				node->parent &&
+				node->parent->v.element.tag == GUMBO_TAG_HEAD &&
+				GumboParsingHelpers::checkAttribute(node, "name", nameValue.toLatin1().constData()) &&
+				GumboParsingHelpers::checkAttribute(node, "content", "");
+		};
+
+		auto res = [](const GumboNode* node)
+		{
+			const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
+			return QString(attr->value).trimmed();
+		};
+
+		std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+		const UserAgentType userAgentType = MetaRobotsHelpers::userAgent(userAgentStr);
+		ASSERT(userAgentType != UserAgentType::Unknown);
+
+		for (const QString& robotsItem : robots)
+		{
+			const QStringList parts = robotsItem.split(QLatin1Char(','), QString::SkipEmptyParts);
+			for (const QString& part : parts)
 			{
-				page->metaRobotsFlags.setFlag(it->second);
+				auto it = metaRobotsMapping.find(part.trimmed().toLower());
+				if (it != metaRobotsMapping.cend())
+				{
+					page->metaRobotsFlags[userAgentType].setFlag(it->second);
+				}
+			}
+		}
+
+		for (auto it = std::cbegin(headers); it != std::cend(headers); ++it)
+		{
+			if (it->first.toLower() != QString("x-robots-tag"))
+			{
+				continue;
+			}
+			const QStringList parts = QString(it->second).split(QLatin1Char(','), QString::SkipEmptyParts);
+			for (const QString& part : parts)
+			{
+				auto it = metaRobotsMapping.find(part.trimmed().toLower());
+				if (it != metaRobotsMapping.cend())
+				{
+					page->metaRobotsFlags[userAgentType].setFlag(it->second);
+				}
 			}
 		}
 	}
 
-	for (auto it = std::cbegin(headers); it != std::cend(headers); ++it)
-	{
-		if (it->first.toLower() != QString("x-robots-tag"))
-		{
-			continue;
-		}
-		const QStringList parts = QString(it->second).split(QLatin1Char(','), QString::SkipEmptyParts);
-		for (const QString& part : parts)
-		{
-			auto it = metaRobotsMapping.find(part.trimmed().toLower());
-			if (it != metaRobotsMapping.cend())
-			{
-				page->metaRobotsFlags.setFlag(it->second);
-			}
-		}
-	}
+	
 }
 
 }

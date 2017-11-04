@@ -1,5 +1,5 @@
 #include "robots_txt_tokenizer.h"
-#include "robots_txt_rules.h"
+#include "meta_robots_helpers.h"
 
 namespace CrawlerEngine
 {
@@ -30,15 +30,6 @@ namespace
 		{ "clean-param", RobotsTxtToken::TokenCleanParam },
 		{ "#", RobotsTxtToken::TokenCommentary },
 		{ ":", RobotsTxtToken::TokenStringDelimeter }
-	};
-
-	const QMap<QString, UserAgentType> s_userAgent =
-	{
-		{ "googlebot", UserAgentType::GoogleBot },
-		{ "yandex", UserAgentType::YandexBot },
-		{ "mail.ru", UserAgentType::MailRuBot },
-		{ "msnbot", UserAgentType::MsnBot },
-		{ "*", UserAgentType::AnyBot }
 	};
 }
 
@@ -79,20 +70,11 @@ void RobotsTxtTokenizer::tokenize(const QString& robotsTxtContent)
 
 		if (isUserAgentToken)
 		{
-			auto it = s_userAgent.find(tokenValue);
-			if (it != s_userAgent.end())
-			{
-				userAgentType = s_userAgent[tokenValue];
-				currentUserAgentIsNotSupported = false;
-			}
-			else
-			{
-				currentUserAgentIsNotSupported = true;
-			}
+			userAgentType = MetaRobotsHelpers::userAgent(tokenValue);
 		}
 		else
 		{
-			if (currentUserAgentIsNotSupported)
+			if (userAgentType == UserAgentType::Unknown)
 			{
 				continue;
 			}
