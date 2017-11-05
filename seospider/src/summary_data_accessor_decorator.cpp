@@ -54,7 +54,7 @@ void SummaryDataAccessorDecorator::addGroup(AuditGroup group) noexcept
 	return m_summaryDataAccessor->addGroup(group);
 }
 
-CrawlerEngine::SequencedDataCollection* SummaryDataAccessorDecorator::sequencedDataCollection() const noexcept
+const CrawlerEngine::SequencedDataCollection* SummaryDataAccessorDecorator::sequencedDataCollection() const noexcept
 {
 	return m_summaryDataAccessor->sequencedDataCollection();
 }

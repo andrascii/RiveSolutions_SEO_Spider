@@ -15,7 +15,7 @@ public:
 	}
 };
 
-ParsedPageReceiver::ParsedPageReceiver(CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
+ParsedPageReceiver::ParsedPageReceiver(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
 	: m_sequencedDataCollection(sequencedDataCollection)
 {
 	m_receiverThread = new Common::NamedThread("ParsedPageReceiverThread");
@@ -39,12 +39,13 @@ ParsedPageReceiver::~ParsedPageReceiver()
 	m_receiverThread->deleteLater();
 }
 
-void ParsedPageReceiver::onParsedPageAdded(int row, int storageType)
+void ParsedPageReceiver::onParsedPageAdded(int row, int type)
 {
-	const CrawlerEngine::SequencedDataCollection::SequencedStorageType* storage = 
-		m_sequencedDataCollection->storage(static_cast<CrawlerEngine::StorageType>(storageType));
+	CrawlerEngine::StorageType storageType = static_cast<CrawlerEngine::StorageType>(type);
 
-	m_parsedPages[storageType].push_back((*storage)[row]);
+	const CrawlerEngine::SequencedStorage& storage = *m_sequencedDataCollection->storage(storageType);
+
+	m_parsedPages[storageType].push_back(storage[row]);
 
 	checkWaitCondition(storageType);
 }
@@ -53,10 +54,10 @@ void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(CrawlerEngine::L
 {
 	for (const CrawlerEngine::LinksToThisResourceChanges::Change& change : changes.changes)
 	{
-		m_linksToThisResourceChanges[change.page].push_back(changes);
+		m_linksToThisResourceChanges[change.page.get()].push_back(changes);
 	}
 	
-	checkLinksToThisResourceConditions(CrawlerEngine::ParsedPagePtr());
+	checkLinksToThisResourceConditions(nullptr);
 }
 
 void ParsedPageReceiver::checkWaitCondition(int storageType)
@@ -74,7 +75,7 @@ void ParsedPageReceiver::checkWaitCondition(int storageType)
 	}
 }
 
-void ParsedPageReceiver::checkLinksToThisResourceConditions(CrawlerEngine::ParsedPagePtr page)
+void ParsedPageReceiver::checkLinksToThisResourceConditions(const CrawlerEngine::ParsedPage* page)
 {
 	for (auto it = m_linksToThisResourceConditions.begin(); it != m_linksToThisResourceConditions.end(); ++it)
 	{
@@ -89,21 +90,21 @@ void ParsedPageReceiver::checkLinksToThisResourceConditions(CrawlerEngine::Parse
 	}
 }
 
-std::future<std::vector<CrawlerEngine::ParsedPagePtr>> ParsedPageReceiver::getParsedPages(int count, int storageType)
+std::future<std::vector<const CrawlerEngine::ParsedPage*>> ParsedPageReceiver::getParsedPages(int count, int storageType)
 {
-	m_waitConditions[storageType] = std::make_pair(count, std::promise<std::vector<CrawlerEngine::ParsedPagePtr>>());
+	m_waitConditions[storageType] = std::make_pair(count, std::promise<std::vector<const CrawlerEngine::ParsedPage*>>());
 	checkWaitCondition(storageType);
 	return m_waitConditions[storageType].second.get_future();
 }
 
-std::vector<CrawlerEngine::ParsedPagePtr> ParsedPageReceiver::storageItems(CrawlerEngine::StorageType storage) const
+std::vector<const CrawlerEngine::ParsedPage*> ParsedPageReceiver::storageItems(CrawlerEngine::StorageType storage) const
 {
 	auto it = m_parsedPages.find(storage);
 
-	return it != m_parsedPages.end() ? it->second : std::vector<CrawlerEngine::ParsedPagePtr>();
+	return it != m_parsedPages.end() ? it->second : std::vector<const CrawlerEngine::ParsedPage*>();
 }
 
-std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> ParsedPageReceiver::getLinksToThisResourceChanges(CrawlerEngine::ParsedPagePtr page, int count)
+std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> ParsedPageReceiver::getLinksToThisResourceChanges(const CrawlerEngine::ParsedPage* page, int count)
 {
 	m_linksToThisResourceConditions[page] = std::make_pair(count, std::promise<std::vector<CrawlerEngine::LinksToThisResourceChanges>>());
 	checkLinksToThisResourceConditions(page);
@@ -131,10 +132,9 @@ TestsCrawler::~TestsCrawler()
 	m_sequencedDataCollectionThread->deleteLater();
 }
 
-std::vector<CrawlerEngine::ParsedPagePtr> TestsCrawler::waitForParsedPageReceived(CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const
+std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::waitForParsedPageReceived(CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const
 {
-	std::future<std::vector<CrawlerEngine::ParsedPagePtr>> future = 
-		m_receiver->getParsedPages(count, storage);
+	std::future<std::vector<const CrawlerEngine::ParsedPage*>> future = m_receiver->getParsedPages(count, storage);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
@@ -144,12 +144,12 @@ std::vector<CrawlerEngine::ParsedPagePtr> TestsCrawler::waitForParsedPageReceive
 	return future.get();
 }
 
-std::vector<CrawlerEngine::ParsedPagePtr> TestsCrawler::storageItems(CrawlerEngine::StorageType storage) const
+std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::storageItems(CrawlerEngine::StorageType storage) const
 {
 	return m_receiver->storageItems(storage);
 }
 
-std::vector<CrawlerEngine::LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResourceChangesReceived(CrawlerEngine::ParsedPagePtr page, int count, int seconds) const
+std::vector<CrawlerEngine::LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResourceChangesReceived(const CrawlerEngine::ParsedPage* page, int count, int seconds) const
 {
 	std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> future = 
 		m_receiver->getLinksToThisResourceChanges(page, count);

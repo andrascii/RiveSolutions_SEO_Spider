@@ -26,7 +26,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept = 0;
 
-	virtual CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept = 0;
+	virtual const CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept = 0;
 
 	virtual QObject* qobject() noexcept = 0;
 

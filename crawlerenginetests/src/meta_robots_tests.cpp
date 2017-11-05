@@ -11,7 +11,12 @@ TEST(MetaRobotsTests, TestSeveralTags)
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
 
 		EXPECT_EQ(1, pages.size());
-		const CrawlerEngine::MetaRobotsFlags flags = pages[0]->metaRobotsFlags[CrawlerEngine::UserAgentType::AnyBot];
+
+		const auto metaRobotsFlagsIterator = pages[0]->metaRobotsFlags.find(CrawlerEngine::UserAgentType::AnyBot);
+
+		EXPECT_NE(pages[0]->metaRobotsFlags.end(), metaRobotsFlagsIterator);
+
+		const CrawlerEngine::MetaRobotsFlags flags = metaRobotsFlagsIterator->second;
 
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsAll));
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsNoIndex));
@@ -42,7 +47,12 @@ TEST(MetaRobotsTests, TestXRobotsTag)
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
 
 		EXPECT_EQ(1, pages.size());
-		const CrawlerEngine::MetaRobotsFlags flags = pages[0]->metaRobotsFlags[CrawlerEngine::UserAgentType::AnyBot];
+
+		const auto metaRobotsFlagsIterator = pages[0]->metaRobotsFlags.find(CrawlerEngine::UserAgentType::AnyBot);
+
+		EXPECT_NE(pages[0]->metaRobotsFlags.end(), metaRobotsFlagsIterator);
+
+		const CrawlerEngine::MetaRobotsFlags flags = metaRobotsFlagsIterator->second;
 
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsAll));
 		EXPECT_EQ(true, flags.testFlag(CrawlerEngine::MetaRobotsNoIndex));

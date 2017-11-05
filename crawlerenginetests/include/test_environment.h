@@ -24,9 +24,9 @@ public:
 
 	static CrawlerEngine::CrawlerOptions defaultOptions(const QUrl& url);
 
-	static CrawlerEngine::ResourceLink firstResourceOnThisPageOfType(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::ResourceType resourceType);
+	static CrawlerEngine::ResourceLink firstResourceOnThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType);
 
-	static CrawlerEngine::ResourceLink firstResourceToThisPageOfType(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::ResourceType resourceType);
+	static CrawlerEngine::ResourceLink firstResourceToThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType);
 
 signals:
 	void testInitialized(const std::function<void()>& testFunction);

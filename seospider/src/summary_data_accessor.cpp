@@ -5,8 +5,8 @@
 namespace SeoSpider
 {
 
-SummaryDataAccessor::SummaryDataAccessor(CrawlerEngine::SequencedDataCollection* guiStorage)
-	: m_sequencedDataCollection(guiStorage)
+SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
+	: m_sequencedDataCollection(sequencedDataCollection)
 {
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, this, &SummaryDataAccessor::emitDataChanged));
 }
@@ -37,7 +37,7 @@ void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
 	}
 }
 
-CrawlerEngine::SequencedDataCollection* SummaryDataAccessor::sequencedDataCollection() const noexcept
+const CrawlerEngine::SequencedDataCollection* SummaryDataAccessor::sequencedDataCollection() const noexcept
 {
 	return m_sequencedDataCollection;
 }

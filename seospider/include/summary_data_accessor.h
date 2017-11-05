@@ -11,7 +11,7 @@ class SummaryDataAccessor : public QObject, public ISummaryDataAccessor
 	Q_OBJECT
 
 public:
-	SummaryDataAccessor(CrawlerEngine::SequencedDataCollection* guiStorage);
+	SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
 
 	virtual StorageAdaptorType itemCategory(const QModelIndex& index) const noexcept override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
@@ -26,7 +26,7 @@ public:
 
 	virtual void addGroup(AuditGroup group) noexcept override;
 
-	virtual CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept override;
+	virtual const CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept override;
 
 	virtual QObject* qobject() noexcept override;
 
@@ -45,7 +45,7 @@ private:
 private:
 	static constexpr int s_summaryColumnCount = 2;
 
-	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
+	const CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
 
 	QVector<DCStorageGroupDescriptionPtr> m_allGroupRows;
 	QMap<int, DCStorageGroupDescriptionPtr> m_groupRows;

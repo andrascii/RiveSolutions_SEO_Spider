@@ -28,8 +28,8 @@ TEST(ImageTests, EmptyAlt)
 		EXPECT_EQ(0, pages[1]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[1]->statusCode);
 
-		CrawlerEngine::ParsedPagePtr sourcePage1 = linkToThisPage1.resource.lock();
-		CrawlerEngine::ParsedPagePtr sourcePage2 = linkToThisPage2.resource.lock();
+		const CrawlerEngine::ParsedPage* sourcePage1 = linkToThisPage1.resource.lock().get();
+		const CrawlerEngine::ParsedPage* sourcePage2 = linkToThisPage2.resource.lock().get();
 
 		CrawlerEngine::ResourceLink linkOnThisPage1 = TestEnvironment::firstResourceOnThisPageOfType(sourcePage1, CrawlerEngine::ResourceType::ResourceImage);
 		CrawlerEngine::ResourceLink linkOnThisPage2 = TestEnvironment::firstResourceOnThisPageOfType(sourcePage2, CrawlerEngine::ResourceType::ResourceImage);
@@ -77,8 +77,8 @@ TEST(ImageTests, NoAlt)
 		EXPECT_EQ(0, pages[1]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[1]->statusCode);
 
-		CrawlerEngine::ParsedPagePtr sourcePage1 = linkToThisPage1.resource.lock();
-		CrawlerEngine::ParsedPagePtr sourcePage2 = linkToThisPage2.resource.lock();
+		const CrawlerEngine::ParsedPage* sourcePage1 = linkToThisPage1.resource.lock().get();
+		const CrawlerEngine::ParsedPage* sourcePage2 = linkToThisPage2.resource.lock().get();
 
 		CrawlerEngine::ResourceLink linkOnThisPage1 = TestEnvironment::firstResourceOnThisPageOfType(sourcePage1, CrawlerEngine::ResourceType::ResourceImage);
 		CrawlerEngine::ResourceLink linkOnThisPage2 = TestEnvironment::firstResourceOnThisPageOfType(sourcePage2, CrawlerEngine::ResourceType::ResourceImage);
@@ -127,8 +127,8 @@ TEST(ImageTests, Image404)
 		EXPECT_EQ(0, pages[1]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::NotFound404, pages[1]->statusCode);
 
-		CrawlerEngine::ParsedPagePtr sourcePage1 = linkToThisPage1.resource.lock();
-		CrawlerEngine::ParsedPagePtr sourcePage2 = linkToThisPage2.resource.lock();
+		const CrawlerEngine::ParsedPage* sourcePage1 = linkToThisPage1.resource.lock().get();
+		const CrawlerEngine::ParsedPage* sourcePage2 = linkToThisPage2.resource.lock().get();
 
 		CrawlerEngine::ResourceLink linkOnThisPage1 = TestEnvironment::firstResourceOnThisPageOfType(sourcePage1, CrawlerEngine::ResourceType::ResourceImage);
 		CrawlerEngine::ResourceLink linkOnThisPage2 = TestEnvironment::firstResourceOnThisPageOfType(sourcePage2, CrawlerEngine::ResourceType::ResourceImage);

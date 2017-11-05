@@ -63,9 +63,9 @@ CrawlerEngine::CrawlerOptions TestEnvironment::defaultOptions(const QUrl& url)
 	return result;
 }
 
-CrawlerEngine::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::ResourceType resourceType)
+CrawlerEngine::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType)
 {
-	for (CrawlerEngine::ResourceLink& link : page->linksOnThisPage)
+	for (const CrawlerEngine::ResourceLink& link : page->linksOnThisPage)
 	{
 		if (link.resource.lock()->resourceType == resourceType)
 		{
@@ -84,9 +84,9 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(Crawl
 	return resourceLink;
 }
 
-CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::ResourceType resourceType)
+CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType)
 {
-	for (CrawlerEngine::ResourceLink& link : page->linksToThisPage)
+	for (const CrawlerEngine::ResourceLink& link : page->linksToThisPage)
 	{
 		if (link.resource.lock()->resourceType == resourceType)
 		{

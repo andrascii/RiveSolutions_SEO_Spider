@@ -3,18 +3,49 @@
 namespace CrawlerEngine
 {
 
+int SequencedStorage::size() const noexcept
+{
+	return m_pages.size();
+}
+
+void SequencedStorage::clear()
+{
+	m_pages.clear();
+}
+
+void SequencedStorage::pushBack(const ParsedPagePtr& page)
+{
+	m_pages.push_back(page);
+}
+
+const ParsedPage* SequencedStorage::operator[](int idx) const noexcept
+{
+	ASSERT(idx >= 0 && idx < m_pages.size());
+
+	return m_pages[idx].get();
+}
+
+ParsedPage* SequencedStorage::operator[](int idx) noexcept
+{
+	const SequencedStorage& thisConst = *static_cast<SequencedStorage const * const>(this);
+
+	return const_cast<ParsedPage*>(thisConst[idx]);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 SequencedDataCollection::SequencedDataCollection()
 {
 	initializeStorages();
 }
 
-SequencedDataCollection::SequencedStorageType* SequencedDataCollection::storage(StorageType type) noexcept
+SequencedStorage* SequencedDataCollection::storage(StorageType type) noexcept
 {
-	SequencedStorageType* storage = const_cast<SequencedStorageType*>(static_cast<const SequencedDataCollection* const>(this)->storage(type));
+	SequencedStorage* storage = const_cast<SequencedStorage*>(static_cast<const SequencedDataCollection* const>(this)->storage(type));
 	return storage;
 }
 
-const SequencedDataCollection::SequencedStorageType* SequencedDataCollection::storage(StorageType type) const noexcept
+const SequencedStorage* SequencedDataCollection::storage(StorageType type) const noexcept
 {
 	ASSERT(m_sequencedStorageMap.find(type) != m_sequencedStorageMap.end());
 
@@ -22,7 +53,7 @@ const SequencedDataCollection::SequencedStorageType* SequencedDataCollection::st
 
 	Q_UNUSED(storageType);
 
-	return storage.get();
+	return &storage;
 }
 
 void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type)
@@ -33,7 +64,10 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int typ
 
 	if (storageIterator != m_sequencedStorageMap.end())
 	{
-		storageIterator->second->push_back(parsedPagePtr);
+		auto&[storageTypeFromIterator, collection] = *storageIterator;
+		Q_UNUSED(storageTypeFromIterator);
+
+		collection.pushBack(parsedPagePtr);
 
 		emit parsedPageAdded(storage(storageType)->size() - 1, static_cast<int>(storageType));
 	}
@@ -43,11 +77,11 @@ void SequencedDataCollection::onDataCleared()
 {
 	emit beginClearData();
 
-	for (const auto& [storageType, collection] : m_sequencedStorageMap)
+	for (auto& [storageType, collection] : m_sequencedStorageMap)
 	{
 		Q_UNUSED(storageType);
 
-		collection->clear();
+		collection.clear();
 	}
 
 	emit endClearData();
@@ -55,62 +89,62 @@ void SequencedDataCollection::onDataCleared()
 
 void SequencedDataCollection::initializeStorages()
 {
-	m_sequencedStorageMap = std::initializer_list<std::pair<const int, SequencedStorageTypePtr>>
+	m_sequencedStorageMap = std::initializer_list<std::pair<const int, SequencedStorage>>
 	{
-		std::make_pair(StorageType::CrawledUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::ExternalUrlStorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::CrawledUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::ExternalUrlStorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::UpperCaseUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::NonAsciiCharacterUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VeryLongUrlStorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::UpperCaseUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::NonAsciiCharacterUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VeryLongUrlStorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::EmptyTitleUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::DuplicatedTitleUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VeryLongTitleUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VeryShortTitleUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::DuplicatedH1TitleUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::SeveralTitleUrlStorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::EmptyTitleUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::DuplicatedTitleUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VeryLongTitleUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VeryShortTitleUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::DuplicatedH1TitleUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::SeveralTitleUrlStorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::EmptyMetaDescriptionUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::DuplicatedMetaDescriptionUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VeryLongMetaDescriptionUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VeryShortMetaDescriptionUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::SeveralMetaDescriptionUrlStorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::EmptyMetaDescriptionUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::DuplicatedMetaDescriptionUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VeryLongMetaDescriptionUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VeryShortMetaDescriptionUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::SeveralMetaDescriptionUrlStorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::EmptyMetaKeywordsUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::DuplicatedMetaKeywordsUrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::SeveralMetaKeywordsUrlStorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::EmptyMetaKeywordsUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::DuplicatedMetaKeywordsUrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::SeveralMetaKeywordsUrlStorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::MissingH1UrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::DuplicatedH1UrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VeryLongH1UrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::SeveralH1UrlStorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::MissingH1UrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::DuplicatedH1UrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VeryLongH1UrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::SeveralH1UrlStorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::MissingH2UrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::DuplicatedH2UrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VeryLongH2UrlStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::SeveralH2UrlStorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::MissingH2UrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::DuplicatedH2UrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VeryLongH2UrlStorageType, SequencedStorage()),
+		std::make_pair(StorageType::SeveralH2UrlStorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::Over100kbImageStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::MissingAltTextImageStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VeryLongAltTextImageStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::Status404StorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::Over100kbImageStorageType, SequencedStorage()),
+		std::make_pair(StorageType::MissingAltTextImageStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VeryLongAltTextImageStorageType, SequencedStorage()),
+		std::make_pair(StorageType::Status404StorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::HtmlResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::ImageResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::JavaScriptResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::StyleSheetResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::FlashResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::VideoResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::OtherResourcesStorageType, std::make_shared<SequencedStorageType>()),
+		std::make_pair(StorageType::HtmlResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::ImageResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::JavaScriptResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::StyleSheetResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::FlashResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::VideoResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::OtherResourcesStorageType, SequencedStorage()),
 
-		std::make_pair(StorageType::ExternalHtmlResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::ExternalImageResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::ExternalJavaScriptResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::ExternalStyleSheetResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::ExternalFlashResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::ExternalVideoResourcesStorageType, std::make_shared<SequencedStorageType>()),
-		std::make_pair(StorageType::ExternalOtherResourcesStorageType, std::make_shared<SequencedStorageType>())
+		std::make_pair(StorageType::ExternalHtmlResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::ExternalImageResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::ExternalJavaScriptResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::ExternalStyleSheetResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::ExternalFlashResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::ExternalVideoResourcesStorageType, SequencedStorage()),
+		std::make_pair(StorageType::ExternalOtherResourcesStorageType, SequencedStorage())
 	};
 }
 

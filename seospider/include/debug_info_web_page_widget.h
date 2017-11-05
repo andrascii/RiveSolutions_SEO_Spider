@@ -21,7 +21,7 @@ public:
 		return &s_instance;
 	}
 
-	Q_SIGNAL void pageSelected(CrawlerEngine::ParsedPage* page);
+	Q_SIGNAL void pageSelected(const CrawlerEngine::ParsedPage* page);
 
 private:
 	GlobalWebPageSelectedNotifier() = default;
@@ -34,7 +34,7 @@ class DebugInfoWebPageWidget : public QWidget, public Ui::DebugWebPageInfoWidget
 public:
 	static void attach();
 
-	Q_SLOT void onPageSelected(CrawlerEngine::ParsedPage* page) const;
+	Q_SLOT void onPageSelected(const CrawlerEngine::ParsedPage* page) const;
 
 protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;

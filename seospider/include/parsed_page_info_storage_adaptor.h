@@ -13,7 +13,7 @@ class ParsedPageInfoStorageAdaptor : public QObject, public IParsedPageStorageAd
 
 public:
 	ParsedPageInfoStorageAdaptor(
-		const CrawlerEngine::SequencedDataCollection::SequencedStorageType* associatedStorage,
+		const CrawlerEngine::SequencedStorage* associatedStorage,
 		CrawlerEngine::StorageType storageType,
 		QObject* parent = nullptr
 	);
@@ -39,7 +39,7 @@ public:
 	virtual QObject* qobject() noexcept override;
 
 #ifdef QT_DEBUG
-	CrawlerEngine::ParsedPage* parsedPage(const QModelIndex& index) const noexcept;
+	const CrawlerEngine::ParsedPage* parsedPage(const QModelIndex& index) const noexcept;
 #endif
 
 signals:
@@ -53,7 +53,7 @@ private slots:
 	void onStorageUpdated(int row, int type);
 
 private:
-	const CrawlerEngine::SequencedDataCollection::SequencedStorageType* m_associatedStorage;
+	const CrawlerEngine::SequencedStorage* m_associatedStorage;
 
 	QList<ParsedPageInfo::Column> m_availableColumns;
 

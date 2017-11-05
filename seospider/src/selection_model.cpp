@@ -97,8 +97,8 @@ void SelectionModel::select(const QItemSelection& selection, QItemSelectionModel
 	if (const ParsedPageInfoStorageAdaptor* storageAdaptor = 
 		dynamic_cast<const ParsedPageInfoStorageAdaptor*>(storageModel->storageAdaptor()); storageAdaptor)
 	{
-		CrawlerEngine::ParsedPage* pageRaw = storageAdaptor->parsedPage(firstSelectedIndex);
-		GlobalWebPageSelectedNotifier::instanse()->pageSelected(pageRaw);
+		const CrawlerEngine::ParsedPage* parsedPage = storageAdaptor->parsedPage(firstSelectedIndex);
+		GlobalWebPageSelectedNotifier::instanse()->pageSelected(parsedPage);
 	}
 
 #endif

@@ -155,7 +155,7 @@ void DataPagesWidget::initializeStackedWidget()
 	PageModel* model = new PageModel(this);
 	PageViewModel* modelView = new PageViewModel(model, this);
 
-	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createPageRawInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->sequencedDataCollection()));
+	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createParsedPageInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->sequencedDataCollection()));
 
 	crawlingTableView->setModel(model);
 	crawlingTableView->setViewModel(modelView);

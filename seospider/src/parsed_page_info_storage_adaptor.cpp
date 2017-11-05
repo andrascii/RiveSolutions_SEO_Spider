@@ -5,7 +5,7 @@ namespace SeoSpider
 {
 
 ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(
-	const CrawlerEngine::SequencedDataCollection::SequencedStorageType* associatedStorage,
+	const CrawlerEngine::SequencedStorage* associatedStorage,
 	CrawlerEngine::StorageType storageType, QObject* parent)
 	: QObject(parent)
 	, m_associatedStorage(associatedStorage)
@@ -61,7 +61,7 @@ int ParsedPageInfoStorageAdaptor::itemCount() const noexcept
 
 QVariant ParsedPageInfoStorageAdaptor::item(const QModelIndex& index) const noexcept
 {
-	const CrawlerEngine::SequencedDataCollection::SequencedStorageType& storage = *m_associatedStorage;
+	const CrawlerEngine::SequencedStorage& storage = *m_associatedStorage;
 
 	DEBUG_ASSERT(index.row() < storage.size());
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
@@ -81,14 +81,14 @@ ParsedPageInfoStorageAdaptor::ItemType ParsedPageInfoStorageAdaptor::itemType(co
 
 ParsedPageInfoPtr ParsedPageInfoStorageAdaptor::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
-	CrawlerEngine::ParsedPagePtr ptrToParsedPage;
+	const CrawlerEngine::ParsedPage* parsedPage;
 
 	if (itemCount() > index.row())
 	{
-		ptrToParsedPage = (*m_associatedStorage)[index.row()];
+		parsedPage = (*m_associatedStorage)[index.row()];
 	}
 
-	return std::make_shared<ParsedPageInfo>(ptrToParsedPage);
+	return std::make_shared<ParsedPageInfo>(parsedPage);
 }
 
 QObject* ParsedPageInfoStorageAdaptor::qobject() noexcept
@@ -97,10 +97,10 @@ QObject* ParsedPageInfoStorageAdaptor::qobject() noexcept
 }
 
 #ifdef QT_DEBUG
-CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdaptor::parsedPage(const QModelIndex& index) const noexcept
+const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdaptor::parsedPage(const QModelIndex& index) const noexcept
 {
-	const CrawlerEngine::SequencedDataCollection::SequencedStorageType& storage = *m_associatedStorage;
-	return storage[index.row()].get();
+	const CrawlerEngine::SequencedStorage& storage = *m_associatedStorage;
+	return storage[index.row()];
 }
 #endif
 

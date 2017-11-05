@@ -43,8 +43,11 @@ signals:
 
 	virtual void endClearData() const override;
 
+private slots:
+	void onBeginClearData();
+
 private:
-	ParsedPageInfoPtr m_parsedPage; 
+	ParsedPageInfoPtr m_parsedPageInfo; 
 
 	PageLinkContext m_context;
 

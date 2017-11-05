@@ -6,7 +6,7 @@
 namespace SeoSpider
 {
 
-ParsedPageInfo::ParsedPageInfo(CrawlerEngine::ParsedPagePtr parsedPage)
+ParsedPageInfo::ParsedPageInfo(const CrawlerEngine::ParsedPage* parsedPage)
 	: m_parsedPage(parsedPage)
 {
 }
@@ -136,14 +136,14 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 {
 	const PageLinksPointer pointer = pointerByContext(context);
 
-	const CrawlerEngine::ResourceLink& resourceLink = (m_parsedPage.get()->*pointer)[number];
+	const CrawlerEngine::ResourceLink& resourceLink = (m_parsedPage->*pointer)[number];
 
 	if (isPageLinksColumnMappedToParsedPageColumn(pageLinksColumn))
 	{
 		//
 		// It looks like a bad solution and need speed optimization
 		//
-		ParsedPageInfo parsedPageInfo(resourceLink.resource.lock());
+		ParsedPageInfo parsedPageInfo(resourceLink.resource.lock().get());
 
 		return parsedPageInfo.itemValue(mapPageLinksColumnToParsedPageColumn(pageLinksColumn));
 	}
@@ -176,7 +176,7 @@ size_t ParsedPageInfo::itemCount(PageLinkContext context) const
 
 	const PageLinksPointer pointer = pointerByContext(context);
 
-	return (m_parsedPage.get()->*pointer).size();
+	return (m_parsedPage->*pointer).size();
 }
 
 bool ParsedPageInfo::isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) noexcept

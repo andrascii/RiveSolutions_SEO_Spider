@@ -71,7 +71,7 @@ public:
 		StatusCodeColumn
 	};
 
-	ParsedPageInfo(CrawlerEngine::ParsedPagePtr pageRawPtr);
+	ParsedPageInfo(const CrawlerEngine::ParsedPage* parsedPage);
 
 	static QString itemTypeDescription(Column column);
 	static QString itemTypeDescription(PageLinksColumn column);
@@ -123,7 +123,7 @@ private:
 	static void checkColumnType(ParsedPageInfo::Column column);
 
 private:
-	CrawlerEngine::ParsedPagePtr m_parsedPage;
+	const CrawlerEngine::ParsedPage* m_parsedPage;
 };
 
 using ParsedPageInfoPtr = std::shared_ptr<ParsedPageInfo>;

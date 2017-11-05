@@ -5,13 +5,16 @@ namespace SeoSpider
 {
 
 PageLinksStorageAdaptor::PageLinksStorageAdaptor(ParsedPageInfoPtr associatedParsedPage, PageLinkContext context)
-	: m_parsedPage(associatedParsedPage)
+	: m_parsedPageInfo(associatedParsedPage)
 	, m_context(context)
 {
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection = theApp->sequencedDataCollection();
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
 		this, &PageLinksStorageAdaptor::beginClearData));
+
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
+		this, &PageLinksStorageAdaptor::onBeginClearData));
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::endClearData,
 		this, &PageLinksStorageAdaptor::endClearData));
@@ -48,25 +51,25 @@ int PageLinksStorageAdaptor::columnCount() const noexcept
 
 int PageLinksStorageAdaptor::itemCount() const noexcept
 {
-	if (!m_parsedPage)
+	if (!m_parsedPageInfo)
 	{
 		return 0;
 	}
 
-	return static_cast<int>(m_parsedPage->itemCount(m_context));
+	return static_cast<int>(m_parsedPageInfo->itemCount(m_context));
 }
 
 QVariant PageLinksStorageAdaptor::item(const QModelIndex& index) const noexcept
 {
-	if (!m_parsedPage)
+	if (!m_parsedPageInfo)
 	{
 		return QVariant();
 	}
 
-	DEBUG_ASSERT(index.row() < m_parsedPage->itemCount(m_context));
+	DEBUG_ASSERT(index.row() < m_parsedPageInfo->itemCount(m_context));
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
-	return m_parsedPage->itemValue(m_availableColumns[index.column()], m_context, index.row());
+	return m_parsedPageInfo->itemValue(m_availableColumns[index.column()], m_context, index.row());
 }
 
 PageLinksStorageAdaptor::ItemType PageLinksStorageAdaptor::itemType(const QModelIndex& index) const noexcept
@@ -80,12 +83,19 @@ PageLinksStorageAdaptor::ItemType PageLinksStorageAdaptor::itemType(const QModel
 
 ParsedPageInfoPtr PageLinksStorageAdaptor::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
-	return m_parsedPage;
+	return m_parsedPageInfo;
 }
 
 QObject* PageLinksStorageAdaptor::qobject() noexcept
 {
 	return this;
+}
+
+void PageLinksStorageAdaptor::onBeginClearData()
+{
+	emit beginClearData();
+
+	m_parsedPageInfo.reset();
 }
 
 }

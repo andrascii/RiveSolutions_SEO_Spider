@@ -24,7 +24,7 @@ void DebugInfoWebPageWidget::attach()
 	theApp->installEventFilter(debugInfoWebPageWidget);
 }
 
-void DebugInfoWebPageWidget::onPageSelected(CrawlerEngine::ParsedPage* page) const
+void DebugInfoWebPageWidget::onPageSelected(const CrawlerEngine::ParsedPage* page) const
 {
 	responseHeadersEdit->setPlainText(page->serverResponse);
 	requestHeadersEdit->setPlainText("Not Implemented yet");
