@@ -39,8 +39,10 @@ public:
 
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
 
-private:
-	Q_SLOT void onAttachedModelInternalDataChanged();
+private slots:
+	void onAttachedModelInternalDataChanged();
+
+	void onModelDataWasReset();
 
 private:
 	void initializeRenderers();

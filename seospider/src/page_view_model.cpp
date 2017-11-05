@@ -27,7 +27,8 @@ PageViewModel::PageViewModel(PageModel* model, QObject* parent)
 
 	m_urlIcon = pixmap.scaled(SeoSpiderHelpers::pointsToPixels(13), SeoSpiderHelpers::pointsToPixels(13));
 
-	VERIFY(connect(model, SIGNAL(internalDataChanged()), this, SLOT(onAttachedModelInternalDataChanged())));
+	VERIFY(connect(model, &PageModel::internalDataChanged, this, &PageViewModel::onAttachedModelInternalDataChanged));
+	VERIFY(connect(model, &PageModel::modelReset, this, &PageViewModel::onModelDataWasReset));
 }
 
 int PageViewModel::marginTop(const QModelIndex& index) const noexcept
@@ -200,6 +201,11 @@ void PageViewModel::onAttachedModelInternalDataChanged()
 	invalidateItemViewRendererCache();
 
 	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->columnCount()));
+}
+
+void PageViewModel::onModelDataWasReset()
+{
+	invalidateItemViewRendererCache();
 }
 
 void PageViewModel::initializeRenderers()
