@@ -36,6 +36,9 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 			SeoSpiderServiceApi::seoSpiderServiceApi()->init();
 			SeoSpiderServiceApi::seoSpiderServiceApi()->setProcessExceptionHandlers();
 
+			// for main thread
+			SeoSpiderServiceApi::seoSpiderServiceApi()->setThreadExceptionHandlers();
+
 			break;
 		}
 		case DLL_THREAD_ATTACH:

@@ -62,6 +62,7 @@
 #include <QDebug>
 #include <QProcess>
 #include <QDateTime>
+#include <QAbstractNetworkCache>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

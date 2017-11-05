@@ -79,7 +79,6 @@ target_link_libraries(
 	${CrawlerEngineLibName}
 	${GumboLibName}
 	${CommonLibName}
-	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
