@@ -25,6 +25,10 @@ public:
 	const ParsedPage* operator[](int idx) const noexcept;
 	ParsedPage* operator[](int idx) noexcept;
 
+	const ParsedPagePtr& p(int i) const;
+
+	bool containsPointersWithUseCountGreaterThanOne() const noexcept;
+
 private:
 	QVector<ParsedPagePtr> m_pages;
 };
@@ -32,12 +36,6 @@ private:
 class SequencedDataCollection : public QObject
 {
 	Q_OBJECT
-
-public:
-	using SequencedStorageType = QVector<ParsedPagePtr>;
-
-private:
-	using SequencedStorageTypePtr = std::shared_ptr<SequencedStorageType>;
 
 public:
 	SequencedDataCollection();

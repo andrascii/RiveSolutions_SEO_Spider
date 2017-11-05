@@ -32,6 +32,24 @@ ParsedPage* SequencedStorage::operator[](int idx) noexcept
 	return const_cast<ParsedPage*>(thisConst[idx]);
 }
 
+const CrawlerEngine::ParsedPagePtr& SequencedStorage::p(int i) const
+{
+	return m_pages[i];
+}
+
+bool SequencedStorage::containsPointersWithUseCountGreaterThanOne() const noexcept
+{
+	for (const ParsedPagePtr& pagePointer : m_pages)
+	{
+		if (pagePointer.use_count() > 1)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 SequencedDataCollection::SequencedDataCollection()
@@ -79,10 +97,19 @@ void SequencedDataCollection::onDataCleared()
 
 	for (auto& [storageType, collection] : m_sequencedStorageMap)
 	{
-		Q_UNUSED(storageType);
+		if (storageType == StorageType::CrawledUrlStorageType)
+		{
+			continue;
+		}
 
 		collection.clear();
 	}
+
+	SequencedStorage& sequencedStorage = m_sequencedStorageMap[StorageType::CrawledUrlStorageType];
+
+	ASSERT(!sequencedStorage.containsPointersWithUseCountGreaterThanOne());
+
+	sequencedStorage.clear();
 
 	emit endClearData();
 }
