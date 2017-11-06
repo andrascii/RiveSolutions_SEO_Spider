@@ -1,5 +1,4 @@
 #include "gumbo_parsing_helpers.h"
-
 #include "page_parser_helpers.h"
 
 namespace CrawlerEngine
@@ -153,29 +152,38 @@ QByteArray GumboParsingHelpers::identifyHtmlPageContentType(const QByteArray& ht
 }
 
 
-QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage) noexcept
+QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers) noexcept
 {
 	QByteArray decodedHtmlPage = htmlPage;
-	QByteArray contentType = GumboParsingHelpers::identifyHtmlPageContentType(htmlPage);
 
-	QByteArray charset = contentType.right(contentType.size() - contentType.lastIndexOf("=") - 1);
+	const QByteArray contentType = GumboParsingHelpers::identifyHtmlPageContentType(htmlPage);
+	const QByteArray charsetFromHtmlPage = contentType.right(contentType.size() - contentType.lastIndexOf("=") - 1);
 
-	if (charset.isEmpty())
+	std::vector<QString> contentTypeValues = headers.valueOf("content-type");
+
+	if (!contentTypeValues.empty())
 	{
-		QTextCodec* codecForHtml = QTextCodec::codecForHtml(decodedHtmlPage.data());
+		for (const QString& contentTypeValue : contentTypeValues)
+		{
+			const QByteArray charsetFromHttpResponse = contentTypeValue.right(contentTypeValue.size() - contentTypeValue.lastIndexOf("=") - 1).toLatin1();
+			const QTextCodec* codecForCharset = QTextCodec::codecForName(charsetFromHttpResponse);
 
-		if (codecForHtml)
-		{
-			decodedHtmlPage = codecForHtml->toUnicode(decodedHtmlPage).toStdString().data();
+			if (!codecForCharset)
+			{
+				continue;
+			}
+
+			decodedHtmlPage = codecForCharset->toUnicode(decodedHtmlPage).toStdString().data();
+
+			return decodedHtmlPage;
 		}
-		else
-		{
-			ERRORLOG << "Cannot identify page encoding";
-		}
+
+		ERRORLOG << "Content-Type header exists but for specified charsets cannot be found special codec";
 	}
-	else
+
+	if (!charsetFromHtmlPage.isEmpty())
 	{
-		QTextCodec* codecForCharset = QTextCodec::codecForName(charset);
+		QTextCodec* codecForCharset = QTextCodec::codecForName(charsetFromHtmlPage);
 
 		if (codecForCharset)
 		{
@@ -185,7 +193,20 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage) noexc
 		{
 			ERRORLOG << "Cannot find QTextCodec for page encoding";
 			ERRORLOG << "content-type:" << contentType;
-			ERRORLOG << "charset:" << charset;
+			ERRORLOG << "charset:" << charsetFromHtmlPage;
+		}
+	}
+	else
+	{
+		QTextCodec* codecForHtml = QTextCodec::codecForHtml(decodedHtmlPage);
+
+		if (codecForHtml)
+		{
+			decodedHtmlPage = codecForHtml->toUnicode(decodedHtmlPage).toStdString().data();
+		}
+		else
+		{
+			ERRORLOG << "Cannot identify page encoding";
 		}
 	}
 

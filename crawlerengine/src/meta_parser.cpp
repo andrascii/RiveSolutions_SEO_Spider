@@ -147,12 +147,11 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 		{ QString("noydir"), MetaRobotsNoYDir },
 	};
 
-
 	const QStringList supportedUserAgents = MetaRobotsHelpers::supportedUserAgents(true);
 
 	foreach(const QString& userAgentStr, supportedUserAgents)
 	{
-		auto cond = [nameValue = userAgentStr](const GumboNode* node)
+		const auto cond = [nameValue = userAgentStr](const GumboNode* node)
 		{
 			return node &&
 				node->type == GUMBO_NODE_ELEMENT &&
@@ -163,22 +162,25 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 				GumboParsingHelpers::checkAttribute(node, "content", "");
 		};
 
-		auto res = [](const GumboNode* node)
+		const auto res = [](const GumboNode* node)
 		{
 			const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
 			return QString(attr->value).trimmed();
 		};
 
-		std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+		const std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 		const UserAgentType userAgentType = MetaRobotsHelpers::userAgent(userAgentStr);
+
 		ASSERT(userAgentType != UserAgentType::Unknown);
 
 		for (const QString& robotsItem : robots)
 		{
 			const QStringList parts = robotsItem.split(QLatin1Char(','), QString::SkipEmptyParts);
+
 			for (const QString& part : parts)
 			{
-				auto it = metaRobotsMapping.find(part.trimmed().toLower());
+				const auto it = metaRobotsMapping.find(part.trimmed().toLower());
+
 				if (it != metaRobotsMapping.cend())
 				{
 					page->metaRobotsFlags[userAgentType].setFlag(it->second);
@@ -186,16 +188,16 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 			}
 		}
 
-		for (auto it = std::cbegin(headers); it != std::cend(headers); ++it)
+		std::vector<QString> xRobotsTagValues = headers.valueOf("x-robots-tag");
+
+		for (size_t i = 0; i < xRobotsTagValues.size(); ++i)
 		{
-			if (it->first.toLower() != QString("x-robots-tag"))
-			{
-				continue;
-			}
-			const QStringList parts = QString(it->second).split(QLatin1Char(','), QString::SkipEmptyParts);
+			const QStringList parts = xRobotsTagValues[i].split(QLatin1Char(','), QString::SkipEmptyParts);
+
 			for (const QString& part : parts)
 			{
 				auto it = metaRobotsMapping.find(part.trimmed().toLower());
+
 				if (it != metaRobotsMapping.cend())
 				{
 					page->metaRobotsFlags[userAgentType].setFlag(it->second);
@@ -203,8 +205,6 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 			}
 		}
 	}
-
-	
 }
 
 }

@@ -8,6 +8,7 @@ namespace CrawlerEngine
 {
 
 struct DownloadResponse;
+class ResponseHeaders;
 
 class PageDataCollector : public QObject
 {
@@ -29,7 +30,7 @@ private:
 
 	void collectReplyData(const DownloadResponse& response, ParsedPagePtr& page) const;
 
-	void collectParsedPageData(GumboOutput* output, const IPageParser::ResponseHeaders& headers, ParsedPagePtr& page);
+	void collectParsedPageData(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page);
 
 	void collectUrlList(GumboOutput* output);
 
