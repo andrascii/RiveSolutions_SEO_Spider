@@ -3,7 +3,7 @@
 namespace CrawlerEngine
 {
 
-enum DownloadRequestType
+enum class DownloadRequestType
 {
 	RequestTypeGet,
 	RequestTypeHead

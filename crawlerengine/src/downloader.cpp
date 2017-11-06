@@ -33,7 +33,7 @@ void Downloader::handleRequest(RequesterSharedPtr requester)
 	QNetworkReply* reply = nullptr;
 
 	QNetworkRequest networkRequest(request->requestInfo.url);
-	networkRequest.setAttribute(QNetworkRequest::User, DownloadRequestType::RequestTypeGet);
+	networkRequest.setAttribute(QNetworkRequest::User, static_cast<int>(DownloadRequestType::RequestTypeGet));
 	networkRequest.setRawHeader("User-Agent", m_userAgent);
 
 	switch (request->requestInfo.requestType)

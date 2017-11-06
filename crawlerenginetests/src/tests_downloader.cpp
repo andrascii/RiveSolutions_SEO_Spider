@@ -67,7 +67,7 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 
 		inputFile.close();
 
-		if (request->requestInfo.requestType == CrawlerEngine::RequestTypeGet)
+		if (request->requestInfo.requestType == CrawlerEngine::DownloadRequestType::RequestTypeGet)
 		{
 			QFile html(files.first);
 
