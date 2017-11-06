@@ -15,6 +15,7 @@ void MenuBar::init()
 {
 	addMenu(buildMenuFile());
 	addMenu(buildMenuSettings());
+	addMenu(buildMenuSitemap());
 }
 
 QMenu* MenuBar::buildMenuFile()
@@ -48,6 +49,16 @@ QMenu* MenuBar::buildMenuSettings()
 	settingsMenu->addAction(actionRegistry.globalAction(s_openProxySettingsAction));
 
 	return settingsMenu;
+}
+
+QMenu* MenuBar::buildMenuSitemap()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+	QMenu* sitemapMenu = new QMenu(tr("Sitemap"), this);
+
+	sitemapMenu->addAction(actionRegistry.globalAction(s_createXMLSitemapAction));
+
+	return sitemapMenu;
 }
 
 }
