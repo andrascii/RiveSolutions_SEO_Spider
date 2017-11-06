@@ -4,7 +4,7 @@
 #include "requester.h"
 #include "handler_registry.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 struct ThreadMetaData : public QObjectUserData
@@ -26,7 +26,7 @@ struct ThreadMetaData : public QObjectUserData
 namespace
 {
 
-using namespace Common;
+using namespace CrawlerEngine;
 
 int metaDataIndex()
 {
@@ -62,7 +62,7 @@ std::mutex s_mutex;
 
 }
 
-namespace Common
+namespace CrawlerEngine
 {
 
 std::shared_ptr<ThreadQueue> ThreadQueue::forThread(QThread* thread)

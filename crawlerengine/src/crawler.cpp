@@ -148,7 +148,7 @@ void Crawler::onCrawlingSessionInitialized()
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
 		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
 
-	m_uniqueLinkStore->addUrl(m_options.host, RequestTypeGet);
+	m_uniqueLinkStore->addUrl(m_options.host, DownloadRequestType::RequestTypeGet);
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{

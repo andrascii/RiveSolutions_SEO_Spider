@@ -5,20 +5,20 @@
 namespace CrawlerEngine
 {
 
-struct GetHostInfoRequest : Common::IRequest
+struct GetHostInfoRequest : IRequest
 {
 	GetHostInfoRequest(const QByteArray& hostname)
 		: hostname(hostname)
 	{
 	}
 
-	virtual Common::IRequest* clone() const override
+	virtual IRequest* clone() const override
 	{
 		return new GetHostInfoRequest(*this);
 	}
-	virtual Common::RequestType requestType() const noexcept override
+	virtual RequestType requestType() const noexcept override
 	{
-		return Common::RequestType::RequestGetHostInfo;
+		return RequestType::RequestGetHostInfo;
 	}
 
 	QByteArray hostname;

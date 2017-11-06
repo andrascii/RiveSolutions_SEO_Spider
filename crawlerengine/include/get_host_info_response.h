@@ -6,18 +6,18 @@
 namespace CrawlerEngine
 {
 
-struct GetHostInfoResponse : Common::IResponse
+struct GetHostInfoResponse : IResponse
 {
 	GetHostInfoResponse(HostInfo hostInfo)
 		: hostInfo(hostInfo)
 	{
 	}
 
-	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(Common::ResponseType::ResponseTypeGetHostInfo)
+	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeGetHostInfo)
 
-	virtual Common::ResponseType type() const noexcept override
+	virtual ResponseType type() const noexcept override
 	{
-		return Common::ResponseType::ResponseTypeGetHostInfo;
+		return ResponseType::ResponseTypeGetHostInfo;
 	}
 
 	HostInfo hostInfo;

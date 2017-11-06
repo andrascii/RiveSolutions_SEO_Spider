@@ -89,6 +89,10 @@
         <source>http://www.example.com</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CrawlerSettingsWidget</name>
@@ -286,6 +290,21 @@ during site scanning.</source>
     </message>
 </context>
 <context>
+    <name>MessageBox</name>
+    <message>
+        <source>Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will be an image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is a simple message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PageDataWidget</name>
     <message>
         <source>Links To This Page</source>
@@ -322,43 +341,39 @@ during site scanning.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Meta desciption length</source>
+        <source>Page Title Length</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Characters</source>
+        <source>Meta Description Length</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Min</source>
+        <source>Other Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Max</source>
+        <source>Max Image Alt Text Chars:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Page title length</source>
+        <source>Min:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Other preferences</source>
+        <source>Max:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Max Image Size Bytes</source>
+        <source>Max Image Size Bytes:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Max Image Alt Text Chars</source>
+        <source>Max H1 Tag Chars:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Max H1 Tag Chars</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Max H2 Tag Chars</source>
+        <source>Max H2 Tag Chars:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -709,10 +724,6 @@ Also if your proxy server requires authorization enter your name and password.</
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Alt-Text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Dofollow</source>
         <translation type="unfinished"></translation>
     </message>
@@ -729,94 +740,259 @@ Also if your proxy server requires authorization enter your name and password.</
     <name>QuickieWebBot::ContextMenuDataCollectionRow</name>
     <message>
         <source>Open URL</source>
-        <translation>Открыть ссылку в браузере</translation>
+        <translation type="vanished">Открыть ссылку в браузере</translation>
     </message>
     <message>
         <source>Refresh All Results</source>
-        <translation>Обновить все страницы</translation>
+        <translation type="vanished">Обновить все страницы</translation>
     </message>
     <message>
         <source>Remove Row</source>
-        <translation>Удалить страницу</translation>
+        <translation type="vanished">Удалить страницу</translation>
     </message>
     <message>
         <source>Check Index</source>
-        <translation>Проверить индекс</translation>
+        <translation type="vanished">Проверить индекс</translation>
     </message>
     <message>
         <source>Check Google Cache</source>
-        <translation>Проверить кеш Google</translation>
+        <translation type="vanished">Проверить кеш Google</translation>
     </message>
     <message>
         <source>Open Robots.txt</source>
-        <translation>Открыть robots.txt</translation>
+        <translation type="vanished">Открыть robots.txt</translation>
     </message>
     <message>
         <source>Show Other Domains On IP</source>
-        <translation>Показать другие поддомены на этом IP адресе</translation>
+        <translation type="vanished">Показать другие поддомены на этом IP адресе</translation>
     </message>
     <message>
         <source>Check HTML With W3C Validator</source>
-        <translation>Проверить HTML с помощью W3C валидатора</translation>
+        <translation type="vanished">Проверить HTML с помощью W3C валидатора</translation>
     </message>
     <message>
         <source>Copy to Clipboard All Columns Data</source>
-        <translation>Копировать все колонки</translation>
+        <translation type="vanished">Копировать все колонки</translation>
     </message>
     <message>
         <source>Copy to Clipboard All Pages</source>
-        <translation>Копировать все страницы</translation>
+        <translation type="vanished">Копировать все страницы</translation>
     </message>
     <message>
         <source>Copy to Clipboard URL</source>
-        <translation>Копировать URL</translation>
+        <translation type="vanished">Копировать URL</translation>
     </message>
 </context>
 <context>
     <name>QuickieWebBot::MainFrame</name>
     <message>
         <source>Open File</source>
-        <translation>Открыть файл</translation>
+        <translation type="vanished">Открыть файл</translation>
     </message>
     <message>
         <source>Close File</source>
-        <translation>Закрыть файл</translation>
+        <translation type="vanished">Закрыть файл</translation>
     </message>
     <message>
         <source>Recent Files</source>
-        <translation>Недавно открытые файлы</translation>
+        <translation type="vanished">Недавно открытые файлы</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation>Сохранить файл</translation>
+        <translation type="vanished">Сохранить файл</translation>
     </message>
     <message>
         <source>Save File As</source>
-        <translation>Сохранить файл как...</translation>
+        <translation type="vanished">Сохранить файл как...</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Закрыть</translation>
+        <translation type="vanished">Закрыть</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation>Настройки</translation>
+        <translation type="vanished">Настройки</translation>
     </message>
     <message>
         <source>Start Crawler</source>
-        <translation>Запустить краулер</translation>
+        <translation type="vanished">Запустить краулер</translation>
     </message>
     <message>
         <source>Stop Crawler</source>
-        <translation>Остановить краулер</translation>
+        <translation type="vanished">Остановить краулер</translation>
     </message>
     <message>
         <source>Clear Crawled Data</source>
-        <translation>Очистить собранные данные</translation>
+        <translation type="vanished">Очистить собранные данные</translation>
     </message>
 </context>
 <context>
     <name>QuickieWebBot::MainFrameMenuBar</name>
+    <message>
+        <source>Settings</source>
+        <translation type="obsolete">Настройки</translation>
+    </message>
+</context>
+<context>
+    <name>QuickieWebBot::PageDataWidget</name>
+    <message>
+        <source>Links To This Page</source>
+        <translation type="vanished">Ссылки на эту страницу</translation>
+    </message>
+    <message>
+        <source>Links On This Page</source>
+        <translation type="vanished">Ссылки на этой странице</translation>
+    </message>
+    <message>
+        <source>Images To This Page</source>
+        <translation type="vanished">Изображения на этой странице</translation>
+    </message>
+    <message>
+        <source>HTTP Response</source>
+        <translation type="vanished">Заголовки HTTP ответа </translation>
+    </message>
+</context>
+<context>
+    <name>QuickieWebBot::PageModel</name>
+    <message>
+        <source>#</source>
+        <translation type="vanished">№</translation>
+    </message>
+</context>
+<context>
+    <name>QuickieWebBot::WebSiteDataWidget</name>
+    <message>
+        <source>Select The Filter</source>
+        <translation type="vanished">Выберите Фильтр</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::ContextMenuDataCollectionRow</name>
+    <message>
+        <source>Open URL</source>
+        <translation type="unfinished">Открыть ссылку в браузере</translation>
+    </message>
+    <message>
+        <source>Refresh All Results</source>
+        <translation type="unfinished">Обновить все страницы</translation>
+    </message>
+    <message>
+        <source>Remove Row</source>
+        <translation type="unfinished">Удалить страницу</translation>
+    </message>
+    <message>
+        <source>Check Index</source>
+        <translation type="unfinished">Проверить индекс</translation>
+    </message>
+    <message>
+        <source>Check Google Cache</source>
+        <translation type="unfinished">Проверить кеш Google</translation>
+    </message>
+    <message>
+        <source>Open Robots.txt</source>
+        <translation type="unfinished">Открыть robots.txt</translation>
+    </message>
+    <message>
+        <source>Show Other Domains On IP</source>
+        <translation type="unfinished">Показать другие поддомены на этом IP адресе</translation>
+    </message>
+    <message>
+        <source>Check HTML With W3C Validator</source>
+        <translation type="unfinished">Проверить HTML с помощью W3C валидатора</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard All Columns Data</source>
+        <translation type="unfinished">Копировать все колонки</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard All Pages</source>
+        <translation type="unfinished">Копировать все страницы</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard URL</source>
+        <translation type="unfinished">Копировать URL</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::ControlPanelWidget</name>
+    <message>
+        <source>Continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation type="unfinished">Старт</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::MainWindow</name>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished">Открыть файл</translation>
+    </message>
+    <message>
+        <source>Close File</source>
+        <translation type="unfinished">Закрыть файл</translation>
+    </message>
+    <message>
+        <source>Recent Files</source>
+        <translation type="unfinished">Недавно открытые файлы</translation>
+    </message>
+    <message>
+        <source>Save File</source>
+        <translation type="unfinished">Сохранить файл</translation>
+    </message>
+    <message>
+        <source>Save File As</source>
+        <translation type="unfinished">Сохранить файл как...</translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished">Настройки</translation>
+    </message>
+    <message>
+        <source>Crawler Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Language Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preferences Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Limit Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Crawler</source>
+        <translation type="unfinished">Запустить краулер</translation>
+    </message>
+    <message>
+        <source>Stop Crawler</source>
+        <translation type="unfinished">Остановить краулер</translation>
+    </message>
+    <message>
+        <source>Clear Crawled Data</source>
+        <translation type="unfinished">Очистить собранные данные</translation>
+    </message>
+    <message>
+        <source>Create XML Sitemap</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::MenuBar</name>
     <message>
         <source>File</source>
         <translation type="unfinished"></translation>
@@ -825,38 +1001,42 @@ Also if your proxy server requires authorization enter your name and password.</
         <source>Settings</source>
         <translation type="unfinished">Настройки</translation>
     </message>
+    <message>
+        <source>Sitemap</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>QuickieWebBot::PageDataWidget</name>
+    <name>SeoSpider::PageDataWidget</name>
     <message>
         <source>Links To This Page</source>
-        <translation>Ссылки на эту страницу</translation>
+        <translation type="unfinished">Ссылки на эту страницу</translation>
     </message>
     <message>
         <source>Links On This Page</source>
-        <translation>Ссылки на этой странице</translation>
+        <translation type="unfinished">Ссылки на этой странице</translation>
     </message>
     <message>
         <source>Images To This Page</source>
-        <translation>Изображения на этой странице</translation>
+        <translation type="unfinished">Изображения на этой странице</translation>
     </message>
     <message>
         <source>HTTP Response</source>
-        <translation>Заголовки HTTP ответа </translation>
+        <translation type="unfinished">Заголовки HTTP ответа </translation>
     </message>
 </context>
 <context>
-    <name>QuickieWebBot::PageModel</name>
+    <name>SeoSpider::PageModel</name>
     <message>
         <source>#</source>
-        <translation>№</translation>
+        <translation type="unfinished">№</translation>
     </message>
 </context>
 <context>
-    <name>QuickieWebBot::WebSiteDataWidget</name>
+    <name>SeoSpider::WebSiteDataWidget</name>
     <message>
         <source>Select The Filter</source>
-        <translation>Выберите Фильтр</translation>
+        <translation type="unfinished">Выберите Фильтр</translation>
     </message>
 </context>
 <context>
@@ -867,10 +1047,6 @@ Also if your proxy server requires authorization enter your name and password.</
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copyright:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -5,11 +5,6 @@ QWidget
 	color: #ededed;
 }
 
-QMainWindow
-{
-	font-family: "Helvetica";
-}
-
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
 
 QMenuBar
@@ -189,8 +184,8 @@ QSpinBox::down-button:pressed
 SeoSpider--ControlPanelWidget
 {
 	min-height: 2.5em;
-	min-width: 25em;
-	max-width: 25em;
+	min-width: 35em;
+	max-width: 35em;
 }
 
 /*/////////////////////////////// TableView ///////////////////////////////*/
@@ -246,7 +241,14 @@ SeoSpider--SettingsPage QCheckBox
 
 SeoSpider--SettingsPage QCheckBox
 {
-	font: bold;
+	margin-top: 0.5em;
+	margin-bottom: 0.2em;
+}
+
+SeoSpider--SettingsPage QSpinBox
+{
+	max-width: 15em;
+	min-width: 15em;
 }
 
 SeoSpider--SettingsPage QFrame#headerFrame
@@ -271,7 +273,7 @@ SeoSpider--SettingsPage QLabel#headerName
 
 SeoSpider--SettingsPage QFrame#settingsFrame
 {
-	background: #EDEDED;
+	background: #F5F5F5;
 	padding: 0.8em;
 	border: 0.05em solid #CCCCCC;
 }
@@ -286,7 +288,7 @@ SeoSpider--ApplicationSettingsWidget
 SeoSpider--ApplicationSettingsWidget QListView
 {
 	border: 0.05em solid #CCCCCC;
-	background: white;
+	background: #F8F8F8;
 }
 
 SeoSpider--ApplicationSettingsWidget QListView::item

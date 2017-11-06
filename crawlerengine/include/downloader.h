@@ -16,9 +16,9 @@ public:
 
 	virtual void setUserAgent(const QByteArray& userAgent) override;
 
-	Q_INVOKABLE virtual void handleRequest(Common::RequesterSharedPtr requester) override;
+	Q_INVOKABLE virtual void handleRequest(RequesterSharedPtr requester) override;
 
-	Q_INVOKABLE virtual void stopRequestHandling(Common::RequesterSharedPtr requester) override;
+	Q_INVOKABLE virtual void stopRequestHandling(RequesterSharedPtr requester) override;
 
 	virtual QObject* qobject() override;
 
@@ -39,7 +39,7 @@ private:
 private:
 	QNetworkAccessManager* m_networkAccessor;
 
-	std::map<CrawlerRequest, Common::RequesterWeakPtr> m_requesters;
+	std::map<CrawlerRequest, RequesterWeakPtr> m_requesters;
 
 	QByteArray m_userAgent;
 };

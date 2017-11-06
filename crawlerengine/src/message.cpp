@@ -1,7 +1,7 @@
 #include "message.h"
 #include "requester.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 Message Message::undefinedMessage()

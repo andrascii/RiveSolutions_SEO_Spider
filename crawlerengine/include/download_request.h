@@ -6,20 +6,20 @@
 namespace CrawlerEngine
 {
 
-struct DownloadRequest : public Common::IRequest
+struct DownloadRequest : public IRequest
 {
 	DownloadRequest(const CrawlerRequest& requestInfo)
 		: requestInfo(requestInfo)
 	{
 	}
 
-	virtual Common::IRequest* clone() const override
+	virtual IRequest* clone() const override
 	{
 		return new DownloadRequest(*this);
 	}
-	virtual Common::RequestType requestType() const noexcept override
+	virtual RequestType requestType() const noexcept override
 	{
-		return Common::RequestType::RequestTypeDownload;
+		return RequestType::RequestTypeDownload;
 	}
 
 	CrawlerRequest requestInfo;

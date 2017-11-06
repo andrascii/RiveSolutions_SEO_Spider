@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Common
+namespace CrawlerEngine
 {
 
 struct IResponse;

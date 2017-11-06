@@ -1,6 +1,6 @@
 #include "handler_registry.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 HandlerRegistry& HandlerRegistry::instance()

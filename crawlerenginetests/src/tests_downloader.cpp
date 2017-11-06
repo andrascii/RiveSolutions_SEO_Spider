@@ -9,8 +9,8 @@ namespace CrawlerEngineTests
 
 TestsDownloader::TestsDownloader()
 {
-	Common::HandlerRegistry& handlerRegistry = Common::HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, Common::RequestType::RequestTypeDownload);
+	CrawlerEngine::HandlerRegistry& handlerRegistry = CrawlerEngine::HandlerRegistry::instance();
+	handlerRegistry.registrateHandler(this, CrawlerEngine::RequestType::RequestTypeDownload);
 }
 
 TestsDownloader::~TestsDownloader()
@@ -22,7 +22,7 @@ void TestsDownloader::setUserAgent(const QByteArray& userAgent)
 {
 }
 
-void TestsDownloader::handleRequest(Common::RequesterSharedPtr requester)
+void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 {
 	std::shared_ptr<CrawlerEngine::DownloadResponse> response = 
 		std::make_shared<CrawlerEngine::DownloadResponse>();
@@ -67,7 +67,7 @@ void TestsDownloader::handleRequest(Common::RequesterSharedPtr requester)
 
 		inputFile.close();
 
-		if (request->requestInfo.requestType == CrawlerEngine::RequestTypeGet)
+		if (request->requestInfo.requestType == CrawlerEngine::DownloadRequestType::RequestTypeGet)
 		{
 			QFile html(files.first);
 
@@ -83,10 +83,10 @@ void TestsDownloader::handleRequest(Common::RequesterSharedPtr requester)
 		response->statusCode = 404;
 	}
 
-	Common::ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
+	CrawlerEngine::ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
 }
 
-void TestsDownloader::stopRequestHandling(Common::RequesterSharedPtr requester)
+void TestsDownloader::stopRequestHandling(CrawlerEngine::RequesterSharedPtr requester)
 {
 	requester;
 }

@@ -12,8 +12,8 @@ Downloader::Downloader()
 	: QObject(nullptr)
 	, m_networkAccessor(new QNetworkAccessManager(this))
 {
-	Common::HandlerRegistry& handlerRegistry = Common::HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, Common::RequestType::RequestTypeDownload);
+	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
 
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*)), Qt::DirectConnection));
 }
@@ -25,25 +25,25 @@ void Downloader::setUserAgent(const QByteArray& userAgent)
 	m_userAgent = userAgent;
 }
 
-void Downloader::handleRequest(Common::RequesterSharedPtr requester)
+void Downloader::handleRequest(RequesterSharedPtr requester)
 {
-	ASSERT(requester->request()->requestType() == Common::RequestType::RequestTypeDownload);
+	ASSERT(requester->request()->requestType() == RequestType::RequestTypeDownload);
 	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
 
 	QNetworkReply* reply = nullptr;
 
 	QNetworkRequest networkRequest(request->requestInfo.url);
-	networkRequest.setAttribute(QNetworkRequest::User, RequestTypeGet);
+	networkRequest.setAttribute(QNetworkRequest::User, static_cast<int>(DownloadRequestType::RequestTypeGet));
 	networkRequest.setRawHeader("User-Agent", m_userAgent);
 
 	switch (request->requestInfo.requestType)
 	{
-		case RequestTypeGet:
+		case DownloadRequestType::RequestTypeGet:
 		{
 			reply = m_networkAccessor->get(networkRequest);
 			break;
 		}
-		case RequestTypeHead:
+		case DownloadRequestType::RequestTypeHead:
 		{
 			reply = m_networkAccessor->head(networkRequest);
 			break;
@@ -65,7 +65,7 @@ void Downloader::handleRequest(Common::RequesterSharedPtr requester)
 	m_requesters[request->requestInfo] = requester;
 }
 
-void Downloader::stopRequestHandling(Common::RequesterSharedPtr requester)
+void Downloader::stopRequestHandling(RequesterSharedPtr requester)
 {
 	requester;
 }
@@ -123,11 +123,7 @@ void Downloader::processReply(QNetworkReply* reply)
 
 	response->statusCode = statusCode.isValid() ? statusCode.toInt() : -1;
 	response->url = reply->url();
-
-	foreach(const QNetworkReply::RawHeaderPair& pair, reply->rawHeaderPairs())
-	{
-		response->responseHeaders.addHeaderValue(pair.first, pair.second);
-	}
+	response->responseHeaders.addHeaderValues(reply->rawHeaderPairs());;
 
 	if (processBody)
 	{
@@ -143,7 +139,7 @@ void Downloader::processReply(QNetworkReply* reply)
 
 	reply->deleteLater();
 
-	const CrawlerRequest key{ response->url, static_cast<RequestType>(reply->attribute(QNetworkRequest::User).toInt()) };
+	const CrawlerRequest key{ response->url, static_cast<DownloadRequestType>(reply->attribute(QNetworkRequest::User).toInt()) };
 	const auto requesterIterator = m_requesters.find(key);
 
 	if (requesterIterator == m_requesters.end())
@@ -151,14 +147,14 @@ void Downloader::processReply(QNetworkReply* reply)
 		return;
 	}
 
-	const Common::RequesterSharedPtr requester = m_requesters[key].lock();
+	const RequesterSharedPtr requester = m_requesters[key].lock();
 
 	if (!requester)
 	{
 		return;
 	}
 
-	Common::ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
+	ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
 }
 
 bool Downloader::isReplyProcessed(QNetworkReply* reply) const noexcept

@@ -3,7 +3,7 @@
 namespace CrawlerEngine
 {
 
-enum RequestType
+enum class DownloadRequestType
 {
 	RequestTypeGet,
 	RequestTypeHead
@@ -12,7 +12,7 @@ enum RequestType
 struct CrawlerRequest
 {
 	QUrl url;
-	RequestType requestType;
+	DownloadRequestType requestType;
 
 	bool operator==(const CrawlerRequest& other) const
 	{

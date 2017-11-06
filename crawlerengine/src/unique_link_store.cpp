@@ -8,7 +8,7 @@ UniqueLinkStore::UniqueLinkStore(QObject* parent)
 {
 }
 
-void UniqueLinkStore::addUrl(const QUrl& url, RequestType requestType)
+void UniqueLinkStore::addUrl(const QUrl& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
@@ -35,7 +35,7 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 	return true;
 }
 
-void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept
+void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, DownloadRequestType requestType) noexcept
 {
 	if (urlList.empty())
 	{
@@ -65,7 +65,7 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, RequestType 
 	emit urlAdded();
 }
 
-void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, RequestType requestType) noexcept
+void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType) noexcept
 {
 	const auto makeUrlList = [&linkList]() -> std::vector<QUrl>
 	{

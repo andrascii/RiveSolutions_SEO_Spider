@@ -82,11 +82,11 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 
 	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags);
 
-	m_uniqueLinkStore->saveLinkList(outlinks, RequestTypeGet);
+	m_uniqueLinkStore->saveLinkList(outlinks, DownloadRequestType::RequestTypeGet);
 
 	if (!parsedPage->redirectedUrl.isEmpty())
 	{
-		m_uniqueLinkStore->saveUrlList(std::vector<QUrl>{ parsedPage->redirectedUrl }, RequestTypeGet);
+		m_uniqueLinkStore->saveUrlList(std::vector<QUrl>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
 	}
 
 	std::vector<QUrl> resourcesHeadUrlList;
@@ -108,9 +108,9 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 		}
 	}
 
-	m_uniqueLinkStore->saveUrlList(resourcesGetUrlList, RequestTypeGet);
+	m_uniqueLinkStore->saveUrlList(resourcesGetUrlList, DownloadRequestType::RequestTypeGet);
 
-	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, RequestTypeHead);
+	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, DownloadRequestType::RequestTypeHead);
 }
 
 void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags) const
@@ -164,7 +164,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 	std::for_each(linkList.begin(), linkList.end(), removeUrlLastSlashIfExists);
 }
 
-void CrawlerWorkerThread::onLoadingDone(Common::Requester* requester, const DownloadResponse& response)
+void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
 	m_downloadRequester.reset();
 

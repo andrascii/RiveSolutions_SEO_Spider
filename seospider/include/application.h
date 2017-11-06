@@ -55,7 +55,7 @@ private:
 	void initQSettings();
 	QSettings* settings() const;
 
-	void onHostInfoResponse(Common::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
+	void onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
 
 	private slots:
 	void startCrawler();
@@ -81,7 +81,7 @@ private:
 	QSettings* m_settings;
 	QTranslator* m_translator;
 
-	Common::RequesterWrapper m_hostInfoRequester;
+	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
 };
 
 }

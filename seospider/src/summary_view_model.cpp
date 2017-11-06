@@ -24,12 +24,12 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 
 int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
 {
-	return SeoSpiderHelpers::pointsToPixels(4);
+	return SeoSpiderHelpers::pointsToPixels(5);
 }
 
 int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
 {
-	return SeoSpiderHelpers::pointsToPixels(4);
+	return SeoSpiderHelpers::pointsToPixels(0);
 }
 
 int SummaryViewModel::marginLeft(const QModelIndex&) const noexcept

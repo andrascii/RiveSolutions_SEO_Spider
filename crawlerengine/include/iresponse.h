@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Common
+namespace CrawlerEngine
 {
 
 enum class ResponseType
@@ -11,16 +11,16 @@ enum class ResponseType
 };
 
 #define DECLARE_RESPONSE_STATIC_TYPE(Type) \
-	static Common::ResponseType responseStaticType();
+	static CrawlerEngine::ResponseType responseStaticType();
 
 #define DEFINE_RESPONSE_STATIC_TYPE(ObjectType, Type) \
-	Common::ResponseType ObjectType::responseStaticType() \
+	CrawlerEngine::ResponseType ObjectType::responseStaticType() \
 	{ \
 		return Type; \
 	}
 
 #define DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(Type) \
-	static Common::ResponseType responseStaticType() \
+	static CrawlerEngine::ResponseType responseStaticType() \
 	{ \
 		return Type; \
 	}
