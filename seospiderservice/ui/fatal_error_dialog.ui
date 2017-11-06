@@ -6,21 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>270</width>
-    <height>118</height>
+    <width>314</width>
+    <height>114</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>270</width>
-    <height>118</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>270</width>
-    <height>118</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Fatal Error</string>
@@ -33,7 +21,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Something was wrong and application were crashed. 
+      <string>Something was wrong and the application as been crashed. 
 Please send the generated report to our server
 in order to we can analyze it and fix.</string>
      </property>
