@@ -126,6 +126,9 @@ void MainWindow::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_stopCrawlerAction), SIGNAL(triggered()), theApp, SLOT(stopCrawler())));
 	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
 	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(quit())));
+
+	// sitemap actions
+	actionRegistry.addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
 }
 
 void MainWindow::createAndSetCentralWidget()

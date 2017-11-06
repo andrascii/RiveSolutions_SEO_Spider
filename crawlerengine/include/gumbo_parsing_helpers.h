@@ -1,7 +1,8 @@
 #pragma once
 
-#include "parsed_page.h"
 #include "gumbo.h"
+#include "parsed_page.h"
+#include "ipage_parser.h"
 
 namespace CrawlerEngine
 {
@@ -34,7 +35,7 @@ public:
 	static unsigned countChildren(const GumboNode* node, GumboTag tag) noexcept;
 	static QByteArray cutAllTagsFromNode(const GumboNode* node) noexcept;
 	static QByteArray identifyHtmlPageContentType(const QByteArray& htmlPage) noexcept;
-	static QByteArray decodeHtmlPage(const QByteArray& htmlPage) noexcept;
+	static QByteArray decodeHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers) noexcept;
 
 	static std::vector<LinkInfo> parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept;
 

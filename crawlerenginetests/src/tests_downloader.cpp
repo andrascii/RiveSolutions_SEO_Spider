@@ -61,7 +61,7 @@ void TestsDownloader::handleRequest(Common::RequesterSharedPtr requester)
 			}
 			else
 			{
-				response->responseHeaders.push_back(QPair<QByteArray, QByteArray>(header, value));
+				response->responseHeaders.addHeaderValue(header, value);
 			}
 		}
 

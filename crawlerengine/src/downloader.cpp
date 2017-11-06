@@ -123,11 +123,10 @@ void Downloader::processReply(QNetworkReply* reply)
 
 	response->statusCode = statusCode.isValid() ? statusCode.toInt() : -1;
 	response->url = reply->url();
-	response->responseHeaders = reply->rawHeaderPairs();
 
-	for (const QPair<QByteArray, QByteArray>& headerValuePair : reply->rawHeaderPairs())
+	foreach(const QNetworkReply::RawHeaderPair& pair, reply->rawHeaderPairs())
 	{
-		response->responseHeaderValuePairs += headerValuePair.first + ": " + headerValuePair.second + "\n";
+		response->responseHeaders.addHeaderValue(pair.first, pair.second);
 	}
 
 	if (processBody)

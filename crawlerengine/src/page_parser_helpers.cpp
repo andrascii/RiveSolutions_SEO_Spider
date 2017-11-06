@@ -206,7 +206,7 @@ bool PageParserHelpers::isSubdomain(const QUrl& baseUrl, const QUrl& url)
 
 	bool equal = false;
 	
-	for (int i = baseUrlSubdomains.size(), j = targetUrlSubdomains.size(); i && j; --i, --j)
+	for (int i = baseUrlSubdomains.size() - 1, j = targetUrlSubdomains.size() - 1; i >= 0 && j >= 0; --i, --j)
 	{
 		if (baseUrlSubdomains[i] == targetUrlSubdomains[j])
 		{

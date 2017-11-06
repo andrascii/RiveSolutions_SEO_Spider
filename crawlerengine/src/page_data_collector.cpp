@@ -44,7 +44,7 @@ ParsedPagePtr PageDataCollector::collectPageDataFromResponse(const DownloadRespo
 	QByteArray decodedHtmlPage;
 	if (page->resourceType == ResourceType::ResourceHtml)
 	{
-		decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(response.responseBody);
+		decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(response.responseBody, response.responseHeaders);
 #ifdef QT_DEBUG
 		page->rawResponse = qCompress(decodedHtmlPage, 9);
 #endif
@@ -125,23 +125,18 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 
 	page->pageSizeKilobytes = response.responseBody.size() / 1024;
 
-	page->serverResponse = response.responseHeaderValuePairs;
+	page->serverResponse = response.responseHeaders.makeString();
 
 	page->pageHash = std::hash<std::string>()(response.responseBody.toStdString().c_str());
 
 	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, page->url);
 
-	page->contentType = QString();
+	std::vector<QString> contentTypeValues = response.responseHeaders.valueOf("content-type");
+	page->contentType = contentTypeValues.empty() ? QString() : contentTypeValues.front();
 
-	for (auto it = std::cbegin(response.responseHeaders); it != std::cend(response.responseHeaders); ++it)
+	if (contentTypeValues.size() > 1)
 	{
-		if (it->first.toLower() != "content-type")
-		{
-			continue;
-		}
-
-		page->contentType = it->second;
-		break;
+		WARNINGLOG << page->url.toDisplayString() << "contains several content-type headers from HTTP response";
 	}
 
 	setResourceCategory(page);
@@ -149,7 +144,7 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 	page->redirectedUrl = resolveRedirectUrl(response);
 }
 
-void PageDataCollector::collectParsedPageData(GumboOutput* output, const IPageParser::ResponseHeaders& headers, ParsedPagePtr& page)
+void PageDataCollector::collectParsedPageData(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	m_parser.parse(output, headers, page);
 }

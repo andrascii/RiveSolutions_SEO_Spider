@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iresponse.h"
+#include "response_headers.h"
 
 namespace CrawlerEngine
 {
@@ -18,8 +19,7 @@ struct DownloadResponse : public Common::IResponse
 	QUrl url;
 	QUrl redirectUrl;
 	QByteArray responseBody;
-	QByteArray responseHeaderValuePairs;
-	QList<QPair<QByteArray, QByteArray>> responseHeaders;
+	ResponseHeaders responseHeaders;
 };
 
 }
