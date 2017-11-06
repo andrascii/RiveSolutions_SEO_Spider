@@ -2,7 +2,7 @@
 
 #include "message_queue.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 struct IResponse;

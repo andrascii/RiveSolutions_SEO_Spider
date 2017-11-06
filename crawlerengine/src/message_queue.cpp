@@ -1,6 +1,6 @@
 #include "message_queue.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 void MessageQueue::addMessage(const Message& message)

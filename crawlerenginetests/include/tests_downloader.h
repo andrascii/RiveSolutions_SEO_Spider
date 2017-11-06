@@ -23,9 +23,9 @@ public:
 
 	virtual void setUserAgent(const QByteArray& userAgent) override;
 
-	Q_INVOKABLE virtual void handleRequest(Common::RequesterSharedPtr requester) override;
+	Q_INVOKABLE virtual void handleRequest(CrawlerEngine::RequesterSharedPtr requester) override;
 
-	Q_INVOKABLE virtual void stopRequestHandling(Common::RequesterSharedPtr requester) override;
+	Q_INVOKABLE virtual void stopRequestHandling(CrawlerEngine::RequesterSharedPtr requester) override;
 
 	virtual QObject* qobject() override;
 

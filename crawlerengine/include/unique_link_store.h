@@ -17,13 +17,13 @@ class UniqueLinkStore : public QObject
 public:
 	UniqueLinkStore(QObject* parent);
 
-	void addUrl(const QUrl& url, RequestType requestType);
+	void addUrl(const QUrl& url, DownloadRequestType requestType);
 
 	bool extractUrl(CrawlerRequest& url) noexcept;
 
-	void saveUrlList(const std::vector<QUrl>& urlList, RequestType requestType) noexcept;
+	void saveUrlList(const std::vector<QUrl>& urlList, DownloadRequestType requestType) noexcept;
 
-	void saveLinkList(const std::vector<LinkInfo>& linkList, RequestType requestType) noexcept;
+	void saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType) noexcept;
 
 	size_t crawledLinksCount() const noexcept;
 

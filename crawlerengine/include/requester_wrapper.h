@@ -3,7 +3,7 @@
 #include "irequest.h"
 #include "requester.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 class RequesterWrapper

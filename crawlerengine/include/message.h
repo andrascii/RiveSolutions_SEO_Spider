@@ -3,7 +3,7 @@
 #include "iresponse.h"
 #include "requester.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 struct IRequest;

@@ -164,7 +164,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 	std::for_each(linkList.begin(), linkList.end(), removeUrlLastSlashIfExists);
 }
 
-void CrawlerWorkerThread::onLoadingDone(Common::Requester* requester, const DownloadResponse& response)
+void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
 	m_downloadRequester.reset();
 

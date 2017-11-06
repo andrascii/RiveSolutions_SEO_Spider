@@ -2,7 +2,7 @@
 
 #include "message.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 	
 class MessageQueue

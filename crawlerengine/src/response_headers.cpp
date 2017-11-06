@@ -13,6 +13,16 @@ void ResponseHeaders::addHeaderValue(const QString& header, const QString& value
 	m_responseHeaders.push_back(std::make_pair(header, value));
 }
 
+void ResponseHeaders::addHeaderValues(const QList<QNetworkReply::RawHeaderPair>& headerValues)
+{
+	m_responseHeaders.reserve(m_responseHeaders.size() + headerValues.size());
+
+	for (const QNetworkReply::RawHeaderPair& rawHeaderPair : headerValues)
+	{
+		addHeaderValue(rawHeaderPair.first, rawHeaderPair.second);
+	}
+}
+
 std::vector<QString> ResponseHeaders::valueOf(const QString& header) const noexcept
 {
 	std::vector<QString> values;

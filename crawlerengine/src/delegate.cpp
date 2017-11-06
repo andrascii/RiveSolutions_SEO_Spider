@@ -1,6 +1,6 @@
 #include "delegate.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 void Delegate::clear()

@@ -6,7 +6,7 @@
 DEFINE_METHOD_CHECK(handleRequest)
 DEFINE_METHOD_CHECK(stopRequestHandling)
 
-namespace Common
+namespace CrawlerEngine
 {
 	
 class HandlerRegistry

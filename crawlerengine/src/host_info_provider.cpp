@@ -11,26 +11,26 @@ namespace CrawlerEngine
 HostInfoProvider::HostInfoProvider()
 	: QObject(nullptr)
 {
-	Common::HandlerRegistry& handlerRegistry = Common::HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, Common::RequestType::RequestGetHostInfo);
+	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+	handlerRegistry.registrateHandler(this, RequestType::RequestGetHostInfo);
 }
 
 HostInfoProvider::~HostInfoProvider()
 {
-	Common::HandlerRegistry& handlerRegistry = Common::HandlerRegistry::instance();
+	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.unregistrateHandler(this);
 }
 
-void HostInfoProvider::handleRequest(Common::RequesterSharedPtr requester)
+void HostInfoProvider::handleRequest(RequesterSharedPtr requester)
 {
-	ASSERT(requester->request()->requestType() == Common::RequestType::RequestGetHostInfo);
+	ASSERT(requester->request()->requestType() == RequestType::RequestGetHostInfo);
 	GetHostInfoRequest* request = static_cast<GetHostInfoRequest*>(requester->request());
 	std::shared_ptr<GetHostInfoResponse> response = std::make_shared<GetHostInfoResponse>(HostInfo(request->hostname));
 
-	Common::ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
+	ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
 }
 
-void HostInfoProvider::stopRequestHandling(Common::RequesterSharedPtr requester)
+void HostInfoProvider::stopRequestHandling(RequesterSharedPtr requester)
 {
 	requester;
 }

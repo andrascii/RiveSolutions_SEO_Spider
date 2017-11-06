@@ -155,7 +155,7 @@ QSettings* Application::settings() const
 	return m_settings;
 }
 
-void Application::onHostInfoResponse(Common::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response)
+void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response)
 {
 	mainWindow()->statusBar()->clearMessage();
 

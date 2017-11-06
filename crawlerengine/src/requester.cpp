@@ -2,7 +2,7 @@
 #include "handler_registry.h"
 #include "thread_queue.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 Requester::Requester(const IRequest& request)

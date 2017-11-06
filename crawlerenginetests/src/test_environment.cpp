@@ -26,7 +26,7 @@ TestEnvironment::TestEnvironment(int& argc, CrawlerEngine::CrawlerOptions option
 
 TestEnvironment::~TestEnvironment()
 {
-	Common::HandlerRegistry::instance().unregisterAll();
+	CrawlerEngine::HandlerRegistry::instance().unregisterAll();
 
 	m_crawler->deleteLater();
 	processEvents();

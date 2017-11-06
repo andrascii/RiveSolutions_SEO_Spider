@@ -6,14 +6,14 @@
 namespace CrawlerEngine
 {
 
-struct DownloadResponse : public Common::IResponse
+struct DownloadResponse : public IResponse
 {
-	virtual Common::ResponseType type() const noexcept override
+	virtual ResponseType type() const noexcept override
 	{
-		return Common::ResponseType::ResponseTypeDownload;
+		return ResponseType::ResponseTypeDownload;
 	}
 
-	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(Common::ResponseType::ResponseTypeDownload)
+	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeDownload)
 
 	int statusCode;
 	QUrl url;

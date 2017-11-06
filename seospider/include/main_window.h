@@ -30,7 +30,7 @@ private:
 private:
 	bool m_initialized;
 
-	Common::RequesterWrapper m_requester;
+	CrawlerEngine::RequesterWrapper m_requester;
 };
 
 }

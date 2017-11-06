@@ -4,7 +4,7 @@
 #include "iresponse.h"
 #include "delegate.h"
 
-namespace Common
+namespace CrawlerEngine
 {
 
 class Requester;
@@ -81,5 +81,5 @@ using RequesterWeakPtr = std::weak_ptr<Requester>;
 
 }
 
-Q_DECLARE_METATYPE(Common::RequesterSharedPtr);
-Q_DECLARE_METATYPE(Common::Requester)
+Q_DECLARE_METATYPE(CrawlerEngine::RequesterSharedPtr);
+Q_DECLARE_METATYPE(CrawlerEngine::Requester)

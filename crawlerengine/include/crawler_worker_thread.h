@@ -39,7 +39,7 @@ private:
 
 	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags) const;
 
-	void onLoadingDone(Common::Requester* requester, const DownloadResponse& response);
+	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 
 	void onStart();
 
@@ -50,7 +50,7 @@ private:
 
 	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;
 
-	Common::RequesterWrapper m_downloadRequester;
+	RequesterWrapper m_downloadRequester;
 
 	bool m_isRunning;
 
