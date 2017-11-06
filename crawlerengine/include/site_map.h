@@ -46,8 +46,10 @@ enum class SitemapChangeFreq
 struct SiteMapSettings
 {
 	SiteMapIncludeSettingsFlags flags;
+	SiteMapLastModTagMode lastModifiedMode;
 	QDateTime lastModifiedDate;
 	double priorityLevelSettings[6];
+	SiteMapChangeFreqTagMode changeFreqMode;
 	SitemapChangeFreq changeFreqLevelSettings[6];
 };
 
@@ -55,8 +57,6 @@ struct SiteMapSettings
 class SiteMap
 {
 public:
-	
-
 	SiteMap();
 	QString xml(const SequencedStorage& crawledPages, const SiteMapSettings& settings);
 
