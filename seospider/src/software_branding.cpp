@@ -10,7 +10,7 @@ QString SoftwareBranding::organizationName() const noexcept
 
 QString SoftwareBranding::productName() const noexcept
 {
-	return "SEO Spider";
+	return "Seo Spider";
 }
 
 QPixmap SoftwareBranding::brandingLogoImage() const noexcept

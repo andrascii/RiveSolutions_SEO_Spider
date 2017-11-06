@@ -20,7 +20,10 @@ MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_initialized(false)
 {
-	setWindowTitle(QStringLiteral("sTechnologies Seo Spider"));
+	setWindowTitle(
+		theApp->softwareBrandingOptions()->organizationName() + QStringLiteral(" ") +
+		theApp->softwareBrandingOptions()->productName()
+	);
 }
 
 void MainWindow::showApplicationSettingsWidget(const QByteArray& settingsPageName)
