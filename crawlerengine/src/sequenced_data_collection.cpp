@@ -32,11 +32,6 @@ ParsedPage* SequencedStorage::operator[](int idx) noexcept
 	return const_cast<ParsedPage*>(thisConst[idx]);
 }
 
-const CrawlerEngine::ParsedPagePtr& SequencedStorage::p(int i) const
-{
-	return m_pages[i];
-}
-
 bool SequencedStorage::containsPointersWithUseCountGreaterThanOne() const noexcept
 {
 	for (const ParsedPagePtr& pagePointer : m_pages)
