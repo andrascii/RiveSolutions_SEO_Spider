@@ -5,8 +5,7 @@ TEST(ImageTests, EmptyAlt)
 {
 	// empty-alt.html(btclogo.png) -> empty-alt-2.html(btclogo-2.png)
 
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://image.com/empty-alt.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/empty-alt.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -55,7 +54,7 @@ TEST(ImageTests, NoAlt)
 {
 	// no-alt.html(btclogo.png) -> no-alt-2.html(btclogo-2.png)
 	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://image.com/no-alt.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/no-alt.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -104,8 +103,7 @@ TEST(ImageTests, Image404)
 {
 	// image-404.html -> image-404-2.html
 
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://image.com/image-404.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/image-404.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -154,7 +152,7 @@ TEST(ImageTests, Image404)
 TEST(ImageTests, TwoPagesWithTheSameImage)
 {
 	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://image.com/two-pages-with-same-image-1.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/two-pages-with-same-image-1.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -172,8 +170,7 @@ TEST(ImageTests, TwoPagesWithTheSameImage)
 
 TEST(ImageTests, ImageAlt)
 {
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://image.com/image-alt.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/image-alt.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -197,11 +194,10 @@ TEST(ImageTests, TooBigImage)
 {
 	// too-big-image.html -> too-big-image-2.html
 
-	int argc = 0;
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://image.com/too-big-image.html"));
 	options.maxImageSizeKb = 0;
 
-	TestEnvironment env(argc, options);
+	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

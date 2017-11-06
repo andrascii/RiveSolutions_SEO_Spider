@@ -7,8 +7,7 @@ namespace CrawlerEngineTests
 
 TEST(DummyGroup, DummyName)
 {
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://dummy.com")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://dummy.com")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

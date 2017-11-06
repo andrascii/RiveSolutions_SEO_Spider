@@ -14,7 +14,7 @@ class TestEnvironment : public QCoreApplication
 	Q_OBJECT
 
 public:
-	TestEnvironment(int& argc, CrawlerEngine::CrawlerOptions options);
+	TestEnvironment(CrawlerEngine::CrawlerOptions options);
 
 	~TestEnvironment();
 

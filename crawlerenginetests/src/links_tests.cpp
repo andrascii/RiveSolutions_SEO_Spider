@@ -3,8 +3,7 @@ namespace CrawlerEngineTests
 	
 TEST(LinksTests, LinkAlt)
 {
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://links.com/link-with-title.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/link-with-title.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

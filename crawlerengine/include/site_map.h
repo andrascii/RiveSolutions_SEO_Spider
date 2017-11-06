@@ -1,4 +1,5 @@
 #pragma once
+#include "parsed_page.h"
 
 namespace CrawlerEngine
 {
@@ -57,29 +58,14 @@ struct SiteMapSettings
 class SiteMap
 {
 public:
-	SiteMap();
-	QString xml(const SequencedStorage& crawledPages, const SiteMapSettings& settings);
+	QString xml(const SequencedStorage& crawledPages, const SiteMapSettings& settings) const;
 
 private:
-	struct Node;
-	using NodePtr = std::shared_ptr<Node>;
-	struct Node
-	{
-		QString path;
-		QUrl originalUrl;
-		std::map<QString, NodePtr> children;
-	};
-
-
-	void clear();
-	QString xml() const;
-	NodePtr root() const;
-	void addUrl(const QUrl& url);
-	NodePtr createNodeIfRequired(const QUrl& url);
-	NodePtr createHostNodeIfRequired(const QUrl& url);
-
-private:
-	NodePtr m_root;
+	bool includeInSiteMap(const ParsedPage* page, const SiteMapSettings& settings) const;
+	bool discardByNoIndex(const ParsedPage* page, const SiteMapSettings& settings) const;
+	bool discardByResourceType(const ParsedPage* page, const SiteMapSettings& settings) const;
+	bool discardByStatusCode(const ParsedPage* page) const;
+	
 };
 
 }

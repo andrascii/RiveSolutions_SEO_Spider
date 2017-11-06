@@ -3,7 +3,6 @@ namespace CrawlerEngineTests
 
 TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 {
-	int argc = 0;
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://status.com/too-short.html"));
 	options.maxTitleLength = 10;
 	options.minTitleLength = 9;
@@ -14,7 +13,7 @@ TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 	options.maxH1LengthChars = 10;
 	options.maxH2LengthChars = 10;
 
-	TestEnvironment env(argc, options);
+	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

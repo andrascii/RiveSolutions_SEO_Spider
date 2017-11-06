@@ -63,6 +63,7 @@
 #include <QProcess>
 #include <QDateTime>
 #include <QAbstractNetworkCache>
+#include <QStringBuilder>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

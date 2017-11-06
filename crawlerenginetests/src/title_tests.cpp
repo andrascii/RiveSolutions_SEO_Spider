@@ -5,8 +5,7 @@ TEST(TitleTests, EmptyTitle)
 {
 	// empty-title.html -> empty-title-2.html
 
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions({ QUrl("http://title.com/empty-title.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://title.com/empty-title.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -26,8 +25,7 @@ TEST(TitleTests, NoTitle)
 {
 	// no-title.html -> no-title-2.html
 
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions({ QUrl("http://title.com/no-title.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://title.com/no-title.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -47,10 +45,9 @@ TEST(TitleTests, TooLongTitle)
 {
 	// too-long-title.html -> too-long-title-2.html
 
-	int argc = 0;
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/too-long-title.html"));
 	options.maxTitleLength = 10;
-	TestEnvironment env(argc, options);
+	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -69,11 +66,10 @@ TEST(TitleTests, TooShortTitle)
 {
 	// too-short-title.html -> too-short-title-2.html
 
-	int argc = 0;
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/too-short-title.html"));
 	options.minTitleLength = 24;
 	options.maxTitleLength = 100;
-	TestEnvironment env(argc, options);
+	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -92,11 +88,10 @@ TEST(TitleTests, DuplicatedTitles)
 {
 	// duplicated-titles-1.html -> duplicated-titles-2.html
 
-	int argc = 0;
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/duplicated-titles-1.html"));
 	options.minTitleLength = 24;
 	options.maxTitleLength = 100;
-	TestEnvironment env(argc, options);
+	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -116,8 +111,7 @@ TEST(TitleTests, DuplicatedH1Title)
 {
 	// duplicated-h1-title.html -> duplicated-h1-title-2.html
 
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://title.com/duplicated-h1-title.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://title.com/duplicated-h1-title.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -140,8 +134,7 @@ TEST(TitleTests, SeveralTitles)
 {
 	// several-titles.html -> several-titles-2.html
 
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://title.com/several-titles.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://title.com/several-titles.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

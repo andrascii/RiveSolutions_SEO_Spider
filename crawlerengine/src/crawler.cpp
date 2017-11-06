@@ -8,6 +8,7 @@
 #include "thread_manager.h"
 #include "downloader.h"
 #include "host_info_provider.h"
+#include "site_map.h"
 
 namespace CrawlerEngine
 {
@@ -177,7 +178,7 @@ void Crawler::initializeCrawlingSession()
 	robotsTxtLoader()->load(m_options.host);
 }
 
-void Crawler::createSequencedDataCollection(QThread* targetThread)
+void Crawler::createSequencedDataCollection(QThread* targetThread) const
 {
 	m_sequencedDataCollection.reset(m_modelController->data()->createSequencedDataCollection(targetThread));
 }
@@ -208,7 +209,7 @@ IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const
 	return new RobotsTxtLoader(new QNetworkAccessManager(const_cast<Crawler*>(this)));
 }
 
-SequencedDataCollection* Crawler::sequencedDataCollection()
+SequencedDataCollection* Crawler::sequencedDataCollection() const
 {
 	if(!m_sequencedDataCollection)
 	{
@@ -216,6 +217,14 @@ SequencedDataCollection* Crawler::sequencedDataCollection()
 	}
 
 	return m_sequencedDataCollection.get();
+}
+
+QString Crawler::siteMapXml(const SiteMapSettings& settings) const
+{
+	SiteMap siteMap;
+	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();;
+	const SequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
+	return siteMap.xml(*storage, settings);
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept

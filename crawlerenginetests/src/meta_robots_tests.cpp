@@ -3,8 +3,7 @@ namespace CrawlerEngineTests
 	
 TEST(MetaRobotsTests, TestSeveralTags)
 {
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://metarobots.com/index.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://metarobots.com/index.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -39,8 +38,7 @@ TEST(MetaRobotsTests, TestSeveralTags)
 
 TEST(MetaRobotsTests, TestXRobotsTag)
 {
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://metarobots.com/x-robots-tag.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://metarobots.com/x-robots-tag.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
