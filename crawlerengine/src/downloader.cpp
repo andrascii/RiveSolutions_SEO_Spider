@@ -18,6 +18,13 @@ Downloader::Downloader()
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*)), Qt::DirectConnection));
 }
 
+void Downloader::setUserAgent(const QByteArray& userAgent)
+{
+	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
+
+	m_userAgent = userAgent;
+}
+
 void Downloader::handleRequest(Common::RequesterSharedPtr requester)
 {
 	ASSERT(requester->request()->requestType() == Common::RequestType::RequestTypeDownload);
@@ -27,6 +34,7 @@ void Downloader::handleRequest(Common::RequesterSharedPtr requester)
 
 	QNetworkRequest networkRequest(request->requestInfo.url);
 	networkRequest.setAttribute(QNetworkRequest::User, RequestTypeGet);
+	networkRequest.setRawHeader("User-Agent", m_userAgent);
 
 	switch (request->requestInfo.requestType)
 	{

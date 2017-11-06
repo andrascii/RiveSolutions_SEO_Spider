@@ -234,9 +234,11 @@ void Application::initialize() noexcept
 	m_mainWindow.reset(new MainWindow);
 
 #if !defined(PRODUCTION)
+
 	StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
 	DebugInfoWebPageWidget::attach();
 	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
+
 #endif
 
 	m_mainWindow->init();

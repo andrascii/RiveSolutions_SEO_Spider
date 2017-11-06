@@ -18,6 +18,10 @@ TestsDownloader::~TestsDownloader()
 
 }
 
+void TestsDownloader::setUserAgent(const QByteArray& userAgent)
+{
+}
+
 void TestsDownloader::handleRequest(Common::RequesterSharedPtr requester)
 {
 	std::shared_ptr<CrawlerEngine::DownloadResponse> response = 

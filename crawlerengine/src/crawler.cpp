@@ -196,11 +196,11 @@ IRobotsTxtLoader* Crawler::robotsTxtLoader() const
 
 IDownloader* Crawler::createDownloader() const
 {
-	IDownloader* queuedDownloader = new Downloader;
+	IDownloader* downloader = new Downloader;
 
-	//queuedDownloader->setUserAgent(m_options.plainUserAgent);
+	downloader->setUserAgent(m_options.plainUserAgent);
 
-	return queuedDownloader;
+	return downloader;
 }
 
 IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const

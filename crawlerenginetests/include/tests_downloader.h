@@ -21,6 +21,8 @@ public:
 
 	~TestsDownloader();
 
+	virtual void setUserAgent(const QByteArray& userAgent) override;
+
 	Q_INVOKABLE virtual void handleRequest(Common::RequesterSharedPtr requester) override;
 
 	Q_INVOKABLE virtual void stopRequestHandling(Common::RequesterSharedPtr requester) override;
