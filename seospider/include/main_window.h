@@ -3,17 +3,8 @@
 #include "message_box_dialog.h"
 #include "requester_wrapper.h"
 
-namespace Common
-{
-
-class Requester;
-
-}
-
 namespace SeoSpider
 {
-
-struct GetHostInfoResponse;
 
 class MainWindow : public QMainWindow
 {

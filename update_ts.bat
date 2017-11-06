@@ -1,10 +1,10 @@
 @echo Updating translation files (.ts) via LUPDATE.EXE
 
 @set BAT_ROOT_DIR=%CD%
-@set SOURCE_DIR=%CD%\quickiewebbot\src
-@set HEADERS_DIR=%CD%\quickiewebbot\include\
-@set TRANSLATIONS_DIR=%CD%\quickiewebbot\rcc\translations\
-@set USER_ITERFACE_DIR=%CD%\quickiewebbot\ui
+@set SOURCE_DIR=%CD%\seospider\src
+@set HEADERS_DIR=%CD%\seospider\include\
+@set TRANSLATIONS_DIR=%CD%\seospider\rcc\translations\
+@set USER_ITERFACE_DIR=%CD%\seospider\ui
 @set LUPDATE_EXECUTABELE=%CMAKE_PREFIX_PATH%\bin\lupdate.exe
 
 

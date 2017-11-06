@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_initialized(false)
 {
+	setWindowTitle(QStringLiteral("sTechnologies Seo Spider"));
 }
 
 void MainWindow::showApplicationSettingsWidget(const QByteArray& settingsPageName)
@@ -67,19 +68,11 @@ void MainWindow::createActions()
 	// file actions
 	actionRegistry.addActionGroup(s_fileActionGroup);
 
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, 
-		QIcon(QStringLiteral(":/images/open-file-icon.png")), tr("Open File"));
-
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, QIcon(QStringLiteral(":/images/open-file-icon.png")), tr("Open File"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, tr("Close File"));
-
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, 
-		QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")), tr("Recent Files"));
-
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, 
-		QIcon(QStringLiteral(":/images/save-icon.png")), tr("Save File"));
-
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, 
-		QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")), tr("Recent Files"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, QIcon(QStringLiteral(":/images/save-icon.png")), tr("Save File"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
 
 	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
 
