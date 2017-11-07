@@ -15,18 +15,18 @@ bool UnorderedDataCollection::isParsedPageExists(const ParsedPagePtr& parsedPage
 {
 	checkStorageType(type);
 
-	const UnorderedStorageTypePtr& unorderedStorage = storage(type);
-	return unorderedStorage->find(parsedPagePtr) != unorderedStorage->end();
+	const UnorderedStorageType& unorderedStorage = storage(type);
+	return unorderedStorage.find(parsedPagePtr) != unorderedStorage.end();
 }
 
 const ParsedPagePtr UnorderedDataCollection::parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept
 {
 	checkStorageType(type);
 
-	const UnorderedStorageTypePtr& unorderedStorage = storage(type);
-	auto iter = unorderedStorage->find(parsedPagePtr);
+	const UnorderedStorageType& unorderedStorage = storage(type);
+	auto iter = unorderedStorage.find(parsedPagePtr);
 
-	return iter != unorderedStorage->end() ? *iter : ParsedPagePtr();
+	return iter != unorderedStorage.end() ? *iter : ParsedPagePtr();
 }
 
 CrawlerEngine::SequencedDataCollection* UnorderedDataCollection::createSequencedDataCollection(QThread* targetThread) const
@@ -54,11 +54,11 @@ CrawlerEngine::SequencedDataCollection* UnorderedDataCollection::createSequenced
 
 void UnorderedDataCollection::clearData()
 {
-	for (const auto&[storageType, collection] : m_unorderedStorageMap)
+	for (auto&[storageType, collection] : m_unorderedStorageMap)
 	{
 		Q_UNUSED(storageType);
 
-		collection->clear();
+		collection.clear();
 	}
 
 	emit dataCleared();
@@ -68,12 +68,15 @@ void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, 
 {
 	if (isParsedPageExists(parsedPagePtr, type))
 	{
-		ASSERT(storage(type)->size() > 0);
-		auto iter = storage(type)->find(parsedPagePtr);
+		ASSERT(storage(type).size() > 0);
+
+		auto iter = storage(type).find(parsedPagePtr);
+
 		return;
 	}
 
-	storage(type)->insert(parsedPagePtr);
+	storage(type).insert(parsedPagePtr);
+
 	emit parsedPageAdded(parsedPagePtr, static_cast<int>(type));
 }
 
@@ -81,29 +84,34 @@ ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& par
 {
 	checkStorageType(type);
 
-	const UnorderedStorageTypePtr& unorderedStorage = storage(type);
-	auto iter = unorderedStorage->find(parsedPagePtr);
+	UnorderedStorageType& unorderedStorage = storage(type);
 
-	if (iter != unorderedStorage->end())
+	auto iter = unorderedStorage.find(parsedPagePtr);
+
+	if (iter != unorderedStorage.end())
 	{
-		ParsedPagePtr result = *iter;
-		unorderedStorage->erase(iter);
+		ParsedPagePtr result = std::move(*iter);
+
+		unorderedStorage.erase(iter);
+
 		return result;
 	}
 
 	return ParsedPagePtr();
 }
 
-UnorderedDataCollection::UnorderedStorageTypePtr& UnorderedDataCollection::storage(StorageType type) noexcept
+UnorderedDataCollection::UnorderedStorageType& UnorderedDataCollection::storage(StorageType type) noexcept
 {
-	ASSERT(m_unorderedStorageMap.find(type) != m_unorderedStorageMap.end());
-	return m_unorderedStorageMap.find(type)->second;
+	const UnorderedStorageType& storage = static_cast<const UnorderedDataCollection* const>(this)->storage(type);
+
+	return const_cast<UnorderedStorageType&>(storage);
 }
 
-const UnorderedDataCollection::UnorderedStorageTypePtr& UnorderedDataCollection::storage(StorageType type) const noexcept
+const UnorderedDataCollection::UnorderedStorageType& UnorderedDataCollection::storage(StorageType type) const noexcept
 {
-	const UnorderedStorageTypePtr& storage = const_cast<UnorderedDataCollection* const>(this)->storage(type);
-	return storage;
+	ASSERT(m_unorderedStorageMap.find(type) != m_unorderedStorageMap.end());
+
+	return m_unorderedStorageMap.find(type)->second;
 }
 
 void UnorderedDataCollection::checkStorageType(StorageType type) const noexcept
@@ -175,244 +183,244 @@ void UnorderedDataCollection::checkStorageType(StorageType type) const noexcept
 
 void UnorderedDataCollection::initializeStorages()
 {
-	m_unorderedStorageMap = std::initializer_list<std::pair<const int, UnorderedStorageTypePtr>>
+	m_unorderedStorageMap = std::initializer_list<std::pair<const int, UnorderedStorageType>>
 	{
-		std::make_pair(StorageType::CrawledUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::CrawledUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		//
 		// Link Problems Storages
 		//
 
-		std::make_pair(StorageType::ExternalUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ExternalUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::UpperCaseUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::UpperCaseUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::NonAsciiCharacterUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::NonAsciiCharacterUrlStorageType, 
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VeryLongUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VeryLongUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::Status404StorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::Status404StorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		//
 		// Title Storages
 		//
 
-		std::make_pair(StorageType::AllTitlesUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageTitleComparator)))),
+		std::make_pair(StorageType::AllTitlesUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
+				ParsedPageComparatorProxy(new ParsedPageTitleComparator))),
 
-		std::make_pair(StorageType::EmptyTitleUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::EmptyTitleUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::DuplicatedTitleUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::DuplicatedTitleUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VeryLongTitleUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VeryLongTitleUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VeryShortTitleUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VeryShortTitleUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::DuplicatedH1TitleUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::DuplicatedH1TitleUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::SeveralTitleUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::SeveralTitleUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherTitle), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		//
 		// Meta Description Storages
 		//
 
-		std::make_pair(StorageType::AllMetaDescriptionsUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
-				ParsedPageComparatorProxy(new ParsedPageMetaDescriptionComparator)))),
+		std::make_pair(StorageType::AllMetaDescriptionsUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
+				ParsedPageComparatorProxy(new ParsedPageMetaDescriptionComparator))),
 
-		std::make_pair(StorageType::EmptyMetaDescriptionUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::EmptyMetaDescriptionUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::DuplicatedMetaDescriptionUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::DuplicatedMetaDescriptionUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VeryLongMetaDescriptionUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VeryLongMetaDescriptionUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VeryShortMetaDescriptionUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VeryShortMetaDescriptionUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::SeveralMetaDescriptionUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::SeveralMetaDescriptionUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaDescription), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		//
 		// Meta Keywords Problems Storages
 		//
 
-		std::make_pair(StorageType::AllMetaKeywordsUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaKeywords), 
-				ParsedPageComparatorProxy(new ParsedPageMetaKeywordsComparator)))),
+		std::make_pair(StorageType::AllMetaKeywordsUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaKeywords), 
+				ParsedPageComparatorProxy(new ParsedPageMetaKeywordsComparator))),
 
-		std::make_pair(StorageType::EmptyMetaKeywordsUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaKeywords), 
-				ParsedPageComparatorProxy(new ParsedPageMetaKeywordsComparator)))),
+		std::make_pair(StorageType::EmptyMetaKeywordsUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaKeywords), 
+				ParsedPageComparatorProxy(new ParsedPageMetaKeywordsComparator))),
 
-		std::make_pair(StorageType::DuplicatedMetaKeywordsUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::DuplicatedMetaKeywordsUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::SeveralMetaKeywordsUrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaKeywords), 
-				ParsedPageComparatorProxy(new ParsedPageMetaKeywordsComparator)))),
+		std::make_pair(StorageType::SeveralMetaKeywordsUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherMetaKeywords), 
+				ParsedPageComparatorProxy(new ParsedPageMetaKeywordsComparator))),
 
 		//
 		// H1 Problems Storages
 		//
 
-		std::make_pair(StorageType::AllH1UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
-				ParsedPageComparatorProxy(new ParsedPageFirstH1Comparator)))),
+		std::make_pair(StorageType::AllH1UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
+				ParsedPageComparatorProxy(new ParsedPageFirstH1Comparator))),
 
-		std::make_pair(StorageType::MissingH1UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::MissingH1UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::DuplicatedH1UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::DuplicatedH1UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VeryLongH1UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VeryLongH1UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::SeveralH1UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::SeveralH1UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH1), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		//
 		// H2 Problems Storages
 		//
 
-		std::make_pair(StorageType::AllH2UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
-				ParsedPageComparatorProxy(new ParsedPageFirstH2Comparator)))),
+		std::make_pair(StorageType::AllH2UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
+				ParsedPageComparatorProxy(new ParsedPageFirstH2Comparator))),
 
-		std::make_pair(StorageType::MissingH2UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::MissingH2UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::DuplicatedH2UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::DuplicatedH2UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VeryLongH2UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VeryLongH2UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::SeveralH2UrlStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::SeveralH2UrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherFirstH2), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		//
 		// Images Problems Storages
 		//
 
-		std::make_pair(StorageType::Over100kbImageStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::Over100kbImageStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::MissingAltTextImageStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::MissingAltTextImageStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VeryLongAltTextImageStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VeryLongAltTextImageStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		//
 		// Resources Types Storages
 		//
 
-		std::make_pair(StorageType::PendingResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::PendingResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::HtmlResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::HtmlResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::ImageResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ImageResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::JavaScriptResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::JavaScriptResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::StyleSheetResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::StyleSheetResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::FlashResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::FlashResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::VideoResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::VideoResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::OtherResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::OtherResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 
-		std::make_pair(StorageType::ExternalHtmlResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ExternalHtmlResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::ExternalImageResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ExternalImageResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::ExternalJavaScriptResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ExternalJavaScriptResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::ExternalStyleSheetResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ExternalStyleSheetResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::ExternalFlashResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ExternalFlashResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::ExternalVideoResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ExternalVideoResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::ExternalOtherResourcesStorageType, UnorderedStorageTypePtr(
-			new UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
-				ParsedPageComparatorProxy(new ParsedPageUrlComparator)))),
+		std::make_pair(StorageType::ExternalOtherResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 	};
 }
 

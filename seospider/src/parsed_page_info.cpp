@@ -143,7 +143,10 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 		//
 		// It looks like a bad solution and need speed optimization
 		//
-		ParsedPageInfo parsedPageInfo(resourceLink.resource.lock().get());
+
+		CrawlerEngine::ParsedPagePtr pagePointer = resourceLink.resource.lock();
+
+		ParsedPageInfo parsedPageInfo(pagePointer.get());
 
 		return parsedPageInfo.itemValue(mapPageLinksColumnToParsedPageColumn(pageLinksColumn));
 	}
