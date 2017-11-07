@@ -5,7 +5,7 @@
 #include "website_data_widget.h"
 #include "seo_spider_helpers.h"
 #include "application.h"
-
+#include "deferred_call.h"
 
 namespace SeoSpider
 {
@@ -36,6 +36,8 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 
 	VERIFY(connect(m_summaryFilterTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
+
+	VERIFY(connect(theApp, &Application::mainWindowShown, this, &FilterWidget::adjustSize));
 }
 
 void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) const
@@ -47,19 +49,17 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	m_summaryFilterTableView->initSpans();
 }
 
-void FilterWidget::showEvent(QShowEvent* event)
+void FilterWidget::adjustSize()
 {
-	if (!m_isFirstShow)
-	{
-		return;
-	}
+	QWidget* parentWidget = qobject_cast<QWidget*>(parent());
 
-	const int summaryViewWidth = SeoSpiderHelpers::pointsToPixels(130);
-	m_splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
+	ASSERT(parentWidget);
 
-	event->ignore();
+	const int summaryViewWidth = SeoSpiderHelpers::pointsToPixels(100);
 
-	m_isFirstShow = false;
+	const int parentWidgetWidth = parentWidget->width();
+
+	m_splitter->setSizes(QList<int>() << summaryViewWidth << parentWidgetWidth - summaryViewWidth);
 }
 
 void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const

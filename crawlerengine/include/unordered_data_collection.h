@@ -18,7 +18,6 @@ class UnorderedDataCollection : public QObject
 
 protected:
 	using UnorderedStorageType = std::unordered_multiset<ParsedPagePtr, ParsedPageHasherProxy, ParsedPageComparatorProxy>;
-	using UnorderedStorageTypePtr = std::shared_ptr<UnorderedStorageType>;
 
 public:
 	UnorderedDataCollection(QObject* parent);
@@ -44,9 +43,9 @@ signals:
 	void dataCleared();
 
 protected:
-	UnorderedStorageTypePtr& storage(StorageType type) noexcept;
+	UnorderedStorageType& storage(StorageType type) noexcept;
 
-	const UnorderedStorageTypePtr& storage(StorageType type) const noexcept;
+	const UnorderedStorageType& storage(StorageType type) const noexcept;
 	
 private:
 	void checkStorageType(StorageType type) const noexcept;
@@ -54,7 +53,7 @@ private:
 	void initializeStorages();
 
 private:
-	std::unordered_map<int, UnorderedStorageTypePtr> m_unorderedStorageMap;
+	std::unordered_map<int, UnorderedStorageType> m_unorderedStorageMap;
 };
 
 }

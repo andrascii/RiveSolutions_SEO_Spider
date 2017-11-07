@@ -48,6 +48,9 @@ public:
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
 	virtual QList<QByteArray> allKeys() const override;
 
+signals:
+	void mainWindowShown();
+
 private:
 	static void registerServices();
 	static QString operatingSystemVersion();
@@ -57,7 +60,7 @@ private:
 
 	void onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
 
-	private slots:
+private slots:
 	void startCrawler();
 	void stopCrawler();
 	void clearCrawledData();

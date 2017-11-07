@@ -12,6 +12,7 @@
 #include "widget_under_mouse_info.h"
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
+#include "deferred_call.h"
 
 namespace SeoSpider
 {
@@ -133,6 +134,8 @@ void Application::showMainWindow()
 	SplashScreen::finish();
 
 	mainWindow()->showMaximized();
+
+	emit mainWindowShown();
 }
 
 void Application::registerServices()
@@ -212,6 +215,8 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 
 void Application::initialize() noexcept
 {
+	DeferredCallProcessor::init();
+
 	m_crawler->initialize();
 	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
 
@@ -446,6 +451,8 @@ QString Application::operatingSystemVersion()
 Application::~Application()
 {
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
+
+	DeferredCallProcessor::term();
 }
 
 }

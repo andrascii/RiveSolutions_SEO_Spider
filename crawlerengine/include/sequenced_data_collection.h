@@ -25,8 +25,6 @@ public:
 	const ParsedPage* operator[](int idx) const noexcept;
 	ParsedPage* operator[](int idx) noexcept;
 
-	const ParsedPagePtr& p(int i) const;
-
 	bool containsPointersWithUseCountGreaterThanOne() const noexcept;
 
 private:
