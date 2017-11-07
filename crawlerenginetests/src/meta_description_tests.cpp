@@ -4,9 +4,7 @@ namespace CrawlerEngineTests
 TEST(MetaDescriptionTests, EmptyMetaDescription)
 {
 	// empty-meta.html -> empty-meta-2.html
-
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions({ QUrl("http://meta-desc.com/empty-meta.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://meta-desc.com/empty-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -26,8 +24,7 @@ TEST(MetaDescriptionTests, NoMetaDescription)
 {
 	// no-meta.html -> no-meta-2.html
 
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions({ QUrl("http://meta-desc.com/no-meta.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://meta-desc.com/no-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -47,10 +44,9 @@ TEST(MetaDescriptionTests, TooLongMetaDescription)
 {
 	// too-long-meta.html -> too-long-meta-2.html
 
-	int argc = 0;
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/too-long-meta.html"));
 	options.maxDescriptionLength = 10;
-	TestEnvironment env(argc, options);
+	TestEnvironment env( options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -69,11 +65,10 @@ TEST(MetaDescriptionTests, TooShortMetaDescription)
 {
 	// too-short-meta.html -> too-short-meta-2.html
 
-	int argc = 0;
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/too-short-meta.html"));
 	options.minDescriptionLength = 50;
 	options.maxDescriptionLength = 100;
-	TestEnvironment env(argc, options);
+	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -92,9 +87,8 @@ TEST(MetaDescriptionTests, DuplicatedMetaDescriptions)
 {
 	// duplicated-meta-1.html -> duplicated-meta-2.html
 
-	int argc = 0;
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/duplicated-meta-1.html"));
-	TestEnvironment env(argc, options);
+	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -113,8 +107,7 @@ TEST(MetaDescriptionTests, SeveralMetaDescriptions)
 {
 	// several-titles.html -> several-titles-2.html
 
-	int argc = 0;
-	TestEnvironment env(argc, TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/several-meta.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/several-meta.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

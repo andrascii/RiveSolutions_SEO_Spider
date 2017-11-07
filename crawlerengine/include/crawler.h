@@ -7,6 +7,7 @@
 namespace CrawlerEngine
 {
 
+struct SiteMapSettings;
 class CrawlerWorkerThread;
 class ModelController;
 class SequencedDataCollection;
@@ -47,7 +48,9 @@ public:
 	
 	State state() const noexcept;
 	
-	SequencedDataCollection* sequencedDataCollection();
+	SequencedDataCollection* sequencedDataCollection() const;
+
+	QString siteMapXml(const SiteMapSettings& settings) const;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -78,7 +81,7 @@ protected:
 	
 	virtual IRobotsTxtLoader* createRobotsTxtLoader() const;
 	
-	void createSequencedDataCollection(QThread* targetThread);
+	void createSequencedDataCollection(QThread* targetThread) const;
 
 	
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
@@ -108,7 +111,7 @@ private:
 	
 	std::vector<CrawlerWorkerThread*> m_workers;
 	
-	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
+	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
 	
 	State m_state;
 };

@@ -13,8 +13,10 @@ constexpr int s_threadCount = 1;
 namespace CrawlerEngineTests
 {
 
-TestEnvironment::TestEnvironment(int& argc, CrawlerEngine::CrawlerOptions options)
-	: QCoreApplication(argc, nullptr)
+static int s_argc = 0;
+
+TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)
+	: QCoreApplication(s_argc, nullptr)
 	, m_testRunner(new TestRunner)
 	, m_crawler(new TestsCrawler(s_threadCount, options, nullptr))
 {
