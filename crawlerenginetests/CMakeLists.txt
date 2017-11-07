@@ -99,6 +99,6 @@ target_link_libraries(
 	${Boost_ASIO_LIBRARY}
 	Qt5::Widgets
 	Qt5::Network
-	Qt5::Svg
-	Qt5::WebEngineWidgets
+	Qt5::Xml
+	Qt5::XmlPatterns
 )

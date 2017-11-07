@@ -84,4 +84,6 @@ target_link_libraries(
 	${Boost_ASIO_LIBRARY}
 	${Boost_REGEX_LIBRARY}
 	Qt5::Network
+	Qt5::Xml
+	Qt5::XmlPatterns
 )

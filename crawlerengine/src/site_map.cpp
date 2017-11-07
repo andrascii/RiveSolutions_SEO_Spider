@@ -5,22 +5,30 @@
 namespace CrawlerEngine
 {
 
+namespace
+{
+	static const QString header = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	static const QString endLine = QString("\r\n");
+	static const QString tab = QString("\t");
+
+	static const QString urlSetOpenTag = QString("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+	static const QString urlSetCloseTag = QString("</urlset>");
+
+	static const QString urlOpenTag = QString("<url>");
+	static const QString urlCloseTag = QString("</url>");
+
+	static const QString locOpenTag = QString("<loc>");
+	static const QString locCloseTag = QString("</loc>");
+
+	static const QString lastModOpenTag = QString("<lastmod>");
+	static const QString lastModCloseTag = QString("</lastmod>");
+}
+
 QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings& settings) const
 {
 	Q_UNUSED(settings); // TODO: use settings
 	
-	const QString header = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	const QString endLine = QString("\r\n");
-	const QString tab = QString("\t");
-
-	const QString urlSetOpenTag = QString("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-	const QString urlSetCloseTag = QString("</urlset>");
-
-	const QString urlOpenTag = QString("<url>");
-	const QString urlCloseTag = QString("</url>");
-
-	const QString locOpenTag = QString("<loc>");
-	const QString locCloseTag = QString("</loc>");
+	
 
 	QString result = header % endLine % urlSetOpenTag % endLine;
 
@@ -32,16 +40,26 @@ QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings
 			continue;
 		}
 
-		result = result % tab % urlOpenTag % endLine % tab % tab % locOpenTag;
-		result = result %  page->url.toDisplayString(QUrl::FullyEncoded);
-		result = result % locCloseTag % endLine;
+		result = result % tab % urlOpenTag % endLine;
+		result = result % tab % tab % locOpenTag %  page->url.toDisplayString(QUrl::FullyEncoded) % locCloseTag % endLine;
 
 		if (settings.flags.testFlag(IncludeLastModTag))
+		{
+			const QString date = settings.lastModifiedMode == SiteMapLastModTagMode::Manual
+				? formatDate(settings.lastModifiedDate) : responseDate(page);
+
+			if (!date.isEmpty())
+			{
+				result = result % tab % tab % lastModOpenTag %  date % lastModCloseTag % endLine;
+			}
+		}
+
+		if (settings.flags.testFlag(IncludePriorityTag))
 		{
 			// TODO: implement
 		}
 
-		if (settings.flags.testFlag(IncludePriorityTag))
+		if (settings.flags.testFlag(IncludeChangeFreqTag))
 		{
 			// TODO: implement
 		}
@@ -75,7 +93,6 @@ bool SiteMap::discardByNoIndex(const ParsedPage* page, const SiteMapSettings& se
 	}
 
 	return it->second.testFlag(MetaRobotsNoIndex) || it->second.testFlag(MetaRobotsNone);
-
 }
 
 bool SiteMap::discardByResourceType(const ParsedPage* page, const SiteMapSettings& settings) const
@@ -104,6 +121,16 @@ bool SiteMap::discardByResourceType(const ParsedPage* page, const SiteMapSetting
 bool SiteMap::discardByStatusCode(const ParsedPage* page) const
 {
 	return page->statusCode != Common::StatusCode::Ok200;
+}
+
+QString SiteMap::responseDate(const ParsedPage* page) const
+{
+	return formatDate(page->responseDate);
+}
+
+QString SiteMap::formatDate(const QDateTime& dateTime) const
+{
+	return dateTime.isValid() ? dateTime.toString(QString("yyyy-MM-dd")) : QString();
 }
 
 }
