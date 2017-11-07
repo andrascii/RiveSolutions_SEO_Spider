@@ -23,6 +23,8 @@ public:
 protected:
 	virtual void showEvent(QShowEvent* event) override;
 
+	void adjustSize();
+
 private:
 	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const;
 

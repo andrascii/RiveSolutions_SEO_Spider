@@ -5,7 +5,7 @@
 #include "website_data_widget.h"
 #include "seo_spider_helpers.h"
 #include "application.h"
-
+#include "deferred_call.h"
 
 namespace SeoSpider
 {
@@ -54,12 +54,23 @@ void FilterWidget::showEvent(QShowEvent* event)
 		return;
 	}
 
-	const int summaryViewWidth = SeoSpiderHelpers::pointsToPixels(130);
-	m_splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
+	const auto adjustSizeCallback = [this]()
+	{
+		const int summaryViewWidth = SeoSpiderHelpers::pointsToPixels(130);
+		m_splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
+	};
+
+	//DeferredCall::call(this, adjustSizeCallback);
 
 	event->ignore();
 
 	m_isFirstShow = false;
+}
+
+void FilterWidget::adjustSize()
+{
+	const int summaryViewWidth = SeoSpiderHelpers::pointsToPixels(130);
+	m_splitter->setSizes(QList<int>() << summaryViewWidth << width() - summaryViewWidth);
 }
 
 void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const
