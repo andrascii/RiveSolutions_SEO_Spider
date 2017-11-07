@@ -20,13 +20,10 @@ public:
 
 	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) const;
 
-protected:
-	virtual void showEvent(QShowEvent* event) override;
-
-	void adjustSize();
-
 private:
 	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const;
+
+	Q_SLOT void adjustSize();
 
 private:
 	WebSiteDataWidget* m_webSiteDataWidget;

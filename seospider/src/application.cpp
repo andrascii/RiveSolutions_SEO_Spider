@@ -134,6 +134,8 @@ void Application::showMainWindow()
 	SplashScreen::finish();
 
 	mainWindow()->showMaximized();
+
+	emit mainWindowShown();
 }
 
 void Application::registerServices()
