@@ -119,10 +119,10 @@ TEST(SiteMapTests, FrequencyByHeader)
 
 		const QString xml = cl->siteMapXml(settings);
 		const QString result = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
-			QString("/urlset/url[1]/changefreq/text()"), QString("always"));
+			QString("/urlset/url[1]/changefreq/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
 
 
-		EXPECT_EQ(QString("2017-11-07"), result);
+		EXPECT_EQ(QString("always"), result);
 
 	};
 

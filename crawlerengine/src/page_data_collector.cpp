@@ -158,7 +158,7 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 	if (!lastModifiedHeaders.empty())
 	{
 		const QString lastModifiedHeader = lastModifiedHeaders[0];
-		page->responseDate = QDateTime::fromString(lastModifiedHeader, Qt::RFC2822Date);
+		page->lastModifiedDate = QDateTime::fromString(lastModifiedHeader, Qt::RFC2822Date);
 		if (!page->lastModifiedDate.isValid())
 		{
 			INFOLOG << "Unable to convert date" << lastModifiedHeader;
