@@ -47,10 +47,10 @@ enum class SitemapChangeFreq
 struct SiteMapSettings
 {
 	SiteMapIncludeSettingsFlags flags;
-	SiteMapLastModTagMode lastModifiedMode;
+	SiteMapLastModTagMode lastModifiedMode = SiteMapLastModTagMode::Calculated;
 	QDateTime lastModifiedDate;
 	double priorityLevelSettings[6];
-	SiteMapChangeFreqTagMode changeFreqMode;
+	SiteMapChangeFreqTagMode changeFreqMode = SiteMapChangeFreqTagMode::CalculatedFromLastModifiedHeader;
 	SitemapChangeFreq changeFreqLevelSettings[6];
 };
 
@@ -65,6 +65,9 @@ private:
 	bool discardByNoIndex(const ParsedPage* page, const SiteMapSettings& settings) const;
 	bool discardByResourceType(const ParsedPage* page, const SiteMapSettings& settings) const;
 	bool discardByStatusCode(const ParsedPage* page) const;
+
+	QString responseDate(const ParsedPage* page) const;
+	QString formatDate(const QDateTime& dateTime) const;
 	
 };
 

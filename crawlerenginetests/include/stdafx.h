@@ -60,6 +60,7 @@
 #include <QProcess>
 #include <QDateTime>
 #include <QDir>
+#include <QXmlQuery>
 
 // google tests
 #include <gtest/gtest.h>

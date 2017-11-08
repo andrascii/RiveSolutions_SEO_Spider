@@ -47,10 +47,14 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 		while (!in.atEnd())
 		{
 			const QString line = in.readLine();
-			const QStringList headerAndValue = line.split(":");
+			const int separatorIndex = line.indexOf(":");
+			if (separatorIndex == -1)
+			{
+				continue;
+			}
 
-			const QByteArray header = headerAndValue.first().trimmed().toLatin1();
-			const QByteArray value = headerAndValue.last().trimmed().toLatin1();
+			const QByteArray header = line.mid(0, separatorIndex).trimmed().toLatin1();
+			const QByteArray value = line.mid(separatorIndex + 1).trimmed().toLatin1();
 
 			if (header.toLower() == "status-code")
 			{

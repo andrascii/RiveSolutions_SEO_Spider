@@ -142,6 +142,17 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 	setResourceCategory(page);
 
 	page->redirectedUrl = resolveRedirectUrl(response);
+
+	const std::vector<QString> dateHeaders = response.responseHeaders.valueOf(QString("Date"));
+	if (!dateHeaders.empty())
+	{
+		QString dateHeader = dateHeaders[0];
+		page->responseDate = QDateTime::fromString(dateHeader, Qt::RFC2822Date);
+		if (!page->responseDate.isValid())
+		{
+			INFOLOG << "Unable to convert date" << dateHeader;
+		}
+	}
 }
 
 void PageDataCollector::collectParsedPageData(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)

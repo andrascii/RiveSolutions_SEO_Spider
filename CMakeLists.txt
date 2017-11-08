@@ -22,7 +22,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 REQUIRED Widgets Network Svg WebEngineWidgets COMPONENTS)
+find_package(Qt5 REQUIRED Widgets Network Svg WebEngineWidgets Xml XmlPatterns COMPONENTS)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED system date_time COMPONENTS)

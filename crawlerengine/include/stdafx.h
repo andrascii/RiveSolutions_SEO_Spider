@@ -64,6 +64,7 @@
 #include <QDateTime>
 #include <QAbstractNetworkCache>
 #include <QStringBuilder>
+#include <QXmlQuery>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
