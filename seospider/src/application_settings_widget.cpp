@@ -19,8 +19,8 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
 	VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(reloadSettingsSlot())));
 
-	const int width = SeoSpiderHelpers::pointsToPixels(600);
-	const int height = SeoSpiderHelpers::pointsToPixels(400);
+	const int width = SeoSpiderHelpers::pointsToPixels(800);
+	const int height = SeoSpiderHelpers::pointsToPixels(500);
 
 	resize(width, height);
 }

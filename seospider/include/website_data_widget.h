@@ -21,9 +21,10 @@ public:
 	void setStorageAdaptorType(StorageAdaptorType storageAdaptorType);
 
 protected:
-	Q_SLOT void pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-
 	virtual void showEvent(QShowEvent* event) override;
+
+private slots:
+	void pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
 	QSplitter* m_splitter;
@@ -33,6 +34,8 @@ private:
 	QMap<StorageAdaptorType, int> m_tables;
 
 	PageDataWidget* m_pageDataWidget;
+
+	bool m_wasShown;
 };
 
 }

@@ -17,20 +17,26 @@ QMenuBar
 
 QMenuBar::item:selected
 {
-	background: #34465d;
+	background: #23354c;
+	color: #EDEDED;
 }
 
 QMenu
 {
 	padding: 0.1em;
 	border: 0.05em solid #1f2530;
-	background-color: #263238;
+	background-color: #E8E8E8;
 }
 
 QMenu::item
 {
-	color: #ededed;
-	selection-background-color: #34465d;
+	color: #333333;
+}
+
+QMenu::item:selected
+{
+	color: #EDEDED;
+	background: #34465d;
 }
 
 /*/////////////////////////////// Status Bar ///////////////////////////////*/
@@ -232,6 +238,13 @@ SeoSpider--SettingsPage
 	min-width: 20em;
 }
 
+SeoSpider--SettingsPage QSpinBox,
+SeoSpider--SettingsPage QComboBox,
+SeoSpider--SettingsPage QLineEdit
+{
+	border-radius: 0;
+}
+
 SeoSpider--SettingsPage QLabel,
 SeoSpider--SettingsPage QCheckBox
 {
@@ -243,12 +256,7 @@ SeoSpider--SettingsPage QCheckBox
 {
 	margin-top: 0.5em;
 	margin-bottom: 0.2em;
-}
-
-SeoSpider--SettingsPage QSpinBox
-{
-	max-width: 15em;
-	min-width: 15em;
+	font: bold;
 }
 
 SeoSpider--SettingsPage QFrame#headerFrame
@@ -263,19 +271,19 @@ SeoSpider--SettingsPage QFrame#headerFrame
 	border-bottom: none;
 }
 
+SeoSpider--SettingsPage QFrame#settingsFrame
+{
+	background: #E7E7E7;
+	padding: 0.8em;
+	border: 0.05em solid #CCCCCC;
+}
+
 SeoSpider--SettingsPage QLabel#headerName
 {
 	font-size: 16pt;
 	font: bold;
 	
 	color: #61a032;
-}
-
-SeoSpider--SettingsPage QFrame#settingsFrame
-{
-	background: #F5F5F5;
-	padding: 0.8em;
-	border: 0.05em solid #CCCCCC;
 }
 
 /*/////////////////////////////// ApplicationSettingsWidget ///////////////////////////*/
@@ -288,12 +296,13 @@ SeoSpider--ApplicationSettingsWidget
 SeoSpider--ApplicationSettingsWidget QListView
 {
 	border: 0.05em solid #CCCCCC;
-	background: #F8F8F8;
+	background: #FFFFFF;
+	min-width: 10em;
 }
 
 SeoSpider--ApplicationSettingsWidget QListView::item
 {
-    min-height: 2.5em;
+    min-height: 2em;
 }
 
 SeoSpider--ApplicationSettingsWidget QListView::item:hover
@@ -416,7 +425,7 @@ SeoSpider--TitledWidget QFrame#TitleFrame
 QTabWidget QLabel
 {
 	background: white;
-	border: 0.05em solid #D6D6D6;
+	border: none;
 	color: black;
 	font-family: Arial;
 	font-size: 11pt;
