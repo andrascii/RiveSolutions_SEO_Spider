@@ -17,7 +17,7 @@ QString XPathHelpers::evaluateXPath(const QString& xml, const QString& query, co
 	fullQuery = fullQuery % query;
 	xmlQuery.setQuery(fullQuery);
 
-	DEBUG_ASSERT(query.isValid());
+	DEBUG_ASSERT(xmlQuery.isValid());
 
 	QString result;
 	xmlQuery.evaluateTo(&result);
