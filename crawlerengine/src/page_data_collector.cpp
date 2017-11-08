@@ -146,11 +146,22 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 	const std::vector<QString> dateHeaders = response.responseHeaders.valueOf(QString("Date"));
 	if (!dateHeaders.empty())
 	{
-		QString dateHeader = dateHeaders[0];
+		const QString dateHeader = dateHeaders[0];
 		page->responseDate = QDateTime::fromString(dateHeader, Qt::RFC2822Date);
 		if (!page->responseDate.isValid())
 		{
 			INFOLOG << "Unable to convert date" << dateHeader;
+		}
+	}
+
+	const std::vector<QString> lastModifiedHeaders = response.responseHeaders.valueOf(QString("Last-Modified"));
+	if (!lastModifiedHeaders.empty())
+	{
+		const QString lastModifiedHeader = lastModifiedHeaders[0];
+		page->responseDate = QDateTime::fromString(lastModifiedHeader, Qt::RFC2822Date);
+		if (!page->lastModifiedDate.isValid())
+		{
+			INFOLOG << "Unable to convert date" << lastModifiedHeader;
 		}
 	}
 }

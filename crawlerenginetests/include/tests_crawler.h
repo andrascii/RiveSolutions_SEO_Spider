@@ -5,6 +5,8 @@
 namespace CrawlerEngineTests
 {
 
+class TestsDownloader;
+
 class ParsedPageReceiver: public QObject
 {
 	Q_OBJECT
@@ -57,6 +59,8 @@ public:
 
 	Q_SLOT void startTestCrawler();
 
+	TestsDownloader* testDownloader() const;
+
 protected:
 	virtual CrawlerEngine::IDownloader* createDownloader() const override;
 	virtual CrawlerEngine::IRobotsTxtLoader* createRobotsTxtLoader() const override;
@@ -68,6 +72,8 @@ private:
 	QThread* m_sequencedDataCollectionThread;
 
 	std::unique_ptr<ParsedPageReceiver> m_receiver;
+
+	mutable TestsDownloader* m_downloader;
 };
 
 }

@@ -11,6 +11,8 @@ TestsDownloader::TestsDownloader()
 {
 	CrawlerEngine::HandlerRegistry& handlerRegistry = CrawlerEngine::HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, CrawlerEngine::RequestType::RequestTypeDownload);
+
+	m_responsePostProcessor = [](CrawlerEngine::DownloadResponse&) {};
 }
 
 TestsDownloader::~TestsDownloader()
@@ -87,6 +89,8 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 		response->statusCode = 404;
 	}
 
+	m_responsePostProcessor(*(response.get()));
+
 	CrawlerEngine::ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
 }
 
@@ -98,6 +102,11 @@ void TestsDownloader::stopRequestHandling(CrawlerEngine::RequesterSharedPtr requ
 QObject* TestsDownloader::qobject()
 {
 	return this;
+}
+
+void TestsDownloader::setPostProcessor(PostProcessorFunc postProcessor)
+{
+	m_responsePostProcessor = postProcessor;
 }
 
 QDir TestsDownloader::testsDataDir() const

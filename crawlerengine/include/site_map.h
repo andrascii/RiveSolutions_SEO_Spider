@@ -68,6 +68,22 @@ private:
 
 	QString responseDate(const ParsedPage* page) const;
 	QString formatDate(const QDateTime& dateTime) const;
+
+private:
+	enum PageLevel
+	{
+		Level1 = 1,
+		Level2 = 2,
+		Level3 = 3,
+		Level4 = 4,
+		Level5 = 5,
+		Level5Plus = 6
+	};
+
+	PageLevel pageLevel(const ParsedPage* root, const ParsedPage* page) const;
+	PageLevel pageLevelImpl(int currentLevel, const ParsedPage* root, const ParsedPage* page) const;
+
+	SitemapChangeFreq frequencyByDate(const QDateTime& now, const QDateTime& pageDate) const;
 	
 };
 

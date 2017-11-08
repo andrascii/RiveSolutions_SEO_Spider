@@ -167,9 +167,15 @@ void TestsCrawler::startTestCrawler()
 	startCrawling(m_testCrawlerOptions);
 }
 
+TestsDownloader* TestsCrawler::testDownloader() const
+{
+	return m_downloader;
+}
+
 CrawlerEngine::IDownloader* TestsCrawler::createDownloader() const
 {
-	return new TestsDownloader();
+	m_downloader = new TestsDownloader();
+	return m_downloader;
 }
 
 CrawlerEngine::IRobotsTxtLoader* TestsCrawler::createRobotsTxtLoader() const

@@ -22,13 +22,29 @@ namespace
 
 	static const QString lastModOpenTag = QString("<lastmod>");
 	static const QString lastModCloseTag = QString("</lastmod>");
+
+	static const QString changeFreqOpenTag = QString("<changefreq>");
+	static const QString changeFreqCloseTag = QString("</changefreq>");
+
+	static const QMap<SitemapChangeFreq, QString> changeFrequencies
+	{
+		{ SitemapChangeFreq::Always, QString("always") },
+		{ SitemapChangeFreq::Hourly, QString("hourly") },
+		{ SitemapChangeFreq::Daily, QString("daily") },
+		{ SitemapChangeFreq::Weekly, QString("weekly") },
+		{ SitemapChangeFreq::Monthly, QString("monthly") },
+		{ SitemapChangeFreq::Yearly, QString("yearly") },
+		{ SitemapChangeFreq::Never, QString("never") }
+	};
 }
 
 QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings& settings) const
 {
 	Q_UNUSED(settings); // TODO: use settings
 	
-	
+	const bool includePriority = settings.flags.testFlag(IncludePriorityTag);
+	const bool includeChangeFreq = settings.flags.testFlag(IncludeChangeFreqTag);
+	const QDateTime now = QDateTime::currentDateTime();
 
 	QString result = header % endLine % urlSetOpenTag % endLine;
 
@@ -54,14 +70,35 @@ QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings
 			}
 		}
 
-		if (settings.flags.testFlag(IncludePriorityTag))
+		const int level = includePriority ||
+			includeChangeFreq && settings.changeFreqMode == SiteMapChangeFreqTagMode::UseLevelSettings
+			? pageLevel(crawledPages[0], page) : 0;
+
+
+		if (includePriority)
 		{
 			// TODO: implement
 		}
 
-		if (settings.flags.testFlag(IncludeChangeFreqTag))
+		if (includeChangeFreq)
 		{
-			// TODO: implement
+			QString frequencyStr;
+			if (settings.changeFreqMode == SiteMapChangeFreqTagMode::UseLevelSettings)
+			{
+				const SitemapChangeFreq frequency = settings.changeFreqLevelSettings[level];
+				ASSERT(frequency >= SitemapChangeFreq::Always && frequency <= SitemapChangeFreq::Never);
+				frequencyStr = changeFrequencies.value(frequency, QString());
+			}
+			else if (page->lastModifiedDate.isValid())
+			{
+				const SitemapChangeFreq frequency = frequencyByDate(now, page->lastModifiedDate);
+				frequencyStr = changeFrequencies.value(frequency, QString());
+			}
+
+			if (!frequencyStr.isEmpty())
+			{
+				result = result % tab % tab % changeFreqOpenTag % frequencyStr % changeFreqCloseTag % endLine;
+			}
 		}
 
 		result = result % tab % urlCloseTag % endLine;
@@ -125,12 +162,86 @@ bool SiteMap::discardByStatusCode(const ParsedPage* page) const
 
 QString SiteMap::responseDate(const ParsedPage* page) const
 {
-	return formatDate(page->responseDate);
+	return formatDate(page->lastModifiedDate.isValid() ? page->lastModifiedDate : QDateTime::currentDateTime());
 }
 
 QString SiteMap::formatDate(const QDateTime& dateTime) const
 {
 	return dateTime.isValid() ? dateTime.toString(QString("yyyy-MM-dd")) : QString();
+}
+
+SiteMap::PageLevel SiteMap::pageLevel(const ParsedPage* root,  const ParsedPage* page) const
+{
+	if (root == page)
+	{
+		return Level1;
+	}
+
+	return pageLevelImpl(1, root, page);
+}
+
+SiteMap::PageLevel SiteMap::pageLevelImpl(int currentLevel, const ParsedPage* root, const ParsedPage* page) const
+{
+	if (currentLevel == Level5Plus)
+	{
+		return static_cast<PageLevel>(currentLevel);
+	}
+
+	int result = Level5Plus;
+
+	const size_t childCount = root->linksOnThisPage.size();
+	for (size_t index = 0; index < childCount; ++index)
+	{
+		const ParsedPageWeakPtr& child = root->linksOnThisPage[index].resource;
+		DEBUG_ASSERT(!child.expired());
+		const ParsedPage* childPtr = child.lock().get();
+		if (childPtr == page)
+		{
+			return static_cast<PageLevel>(currentLevel);
+		}
+
+		const PageLevel childResult = pageLevelImpl(currentLevel + 1, childPtr, page);
+		if (childResult < result)
+		{
+			result = childResult;
+		}
+
+	}
+
+	return static_cast<PageLevel>(result);
+}
+
+SitemapChangeFreq SiteMap::frequencyByDate(const QDateTime& now, const QDateTime& pageDate) const
+{
+	constexpr qint64 second = 1000;
+	constexpr qint64 hour = second * 60 * 60;
+	constexpr qint64 day = hour * 24;
+	constexpr qint64 week = day * 7;
+	constexpr qint64 month = day * 30;
+	constexpr qint64 year = month * 12;
+
+	static const QMap<qint64, SitemapChangeFreq> s_mapping
+	{
+		{ hour / 4, SitemapChangeFreq::Always },
+		{ day / 2, SitemapChangeFreq::Hourly },
+		{ week / 2, SitemapChangeFreq::Daily },
+		{ month / 2, SitemapChangeFreq::Weekly },
+		{ year / 2, SitemapChangeFreq::Monthly },
+		{ year * 5, SitemapChangeFreq::Yearly }
+	};
+
+	ASSERT(now.isValid());
+	ASSERT(pageDate.isValid());
+	const qint64 msecs = pageDate.msecsTo(pageDate);
+
+	const QList<qint64> keys = s_mapping.keys();
+	auto it = qLowerBound(keys, msecs);
+	if (it == keys.cend())
+	{
+		return SitemapChangeFreq::Never;
+	}
+
+	return s_mapping[*it];
 }
 
 }

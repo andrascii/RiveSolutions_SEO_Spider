@@ -121,6 +121,7 @@ struct ParsedPage
 	Common::StatusCode statusCode;
 	MetaRobotsFlagsSet metaRobotsFlags;
 	QDateTime responseDate;
+	QDateTime lastModifiedDate;
 
 	int pageSizeKilobytes = int();
 	int wordCount = int();

@@ -6,6 +6,7 @@ namespace CrawlerEngine
 {
 
 struct CrawlerRequest;
+struct DownloadResponse;
 
 }
 
@@ -17,6 +18,8 @@ class TestsDownloader : public QObject, public CrawlerEngine::IDownloader
 	Q_OBJECT
 
 public:
+	using PostProcessorFunc = std::function<void(CrawlerEngine::DownloadResponse&)>;
+
 	TestsDownloader();
 
 	~TestsDownloader();
@@ -29,6 +32,8 @@ public:
 
 	virtual QObject* qobject() override;
 
+	void setPostProcessor(PostProcessorFunc postProcessor);
+
 private:
 	QDir testsDataDir() const;
 
@@ -36,6 +41,7 @@ private:
 
 private:
 	mutable QString m_testDataPath;
+	PostProcessorFunc m_responsePostProcessor;
 };
 
 }
