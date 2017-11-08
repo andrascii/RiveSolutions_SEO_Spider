@@ -7,7 +7,7 @@
 #include "page_data_widget.h"
 #include "seo_spider_helpers.h"
 #include "application.h"
-
+#include "deferred_call.h"
 
 namespace SeoSpider
 {
@@ -17,6 +17,7 @@ WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* pa
 	, m_splitter(new QSplitter(this))
 	, m_stackedWidget(new QStackedWidget(this))
 	, m_pageDataWidget(pageDataWidget)
+	, m_wasShown(false)
 {
 	m_splitter->setOrientation(Qt::Vertical);
 	m_splitter->setChildrenCollapsible(false);
@@ -73,6 +74,26 @@ void WebSiteDataWidget::setStorageAdaptorType(StorageAdaptorType storageAdaptorT
 		this, SLOT(pageViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
+void WebSiteDataWidget::showEvent(QShowEvent*)
+{
+	if (m_wasShown)
+	{
+		return;
+	}
+
+	QWidget* parentWidget = qobject_cast<QWidget*>(parent());
+
+	ASSERT(parentWidget);
+
+	const int parentWidgetHeight = parentWidget->height();
+
+	const int mainTableView = SeoSpiderHelpers::pointsToPixels(400);
+
+	m_splitter->setSizes(QList<int>() << mainTableView << parentWidgetHeight - mainTableView);
+
+	m_wasShown = true;
+}
+
 void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
 	if (!m_pageDataWidget)
@@ -87,23 +108,6 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 		const IStorageAdaptor* storageAdaptor = storageModel->storageAdaptor();
 		m_pageDataWidget->setParsedPageInfo(storageAdaptor->parsedPageInfoPtr(index));
 	}
-}
-
-void WebSiteDataWidget::showEvent(QShowEvent* event)
-{
-	static bool isFirstShow = true;
-
-	if (!isFirstShow)
-	{
-		return;
-	}
-
-	const int mainTableView = SeoSpiderHelpers::pointsToPixels(700);
-	m_splitter->setSizes(QList<int>() << mainTableView << height() - mainTableView);
-
-	event->ignore();
-
-	isFirstShow = false;
 }
 
 }
