@@ -16,7 +16,10 @@ public:
 	void init();
 
 public slots:
-	void showApplicationSettingsWidget(const QByteArray& settingsPageName = QByteArray());
+	void showSitemapCreatorDialog();
+
+	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
+
 	void showMessageBoxDialog(const QString& title, 
 		const QString& message, 
 		MessageBoxDialog::Icon icon, 
