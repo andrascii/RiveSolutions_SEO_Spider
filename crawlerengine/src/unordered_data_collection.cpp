@@ -66,16 +66,17 @@ void UnorderedDataCollection::clearData()
 
 void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
 {
-	if (isParsedPageExists(parsedPagePtr, type))
-	{
-		ASSERT(storage(type).size() > 0);
-
-		auto iter = storage(type).find(parsedPagePtr);
-
-		return;
-	}
+// 	if (isParsedPageExists(parsedPagePtr, type))
+// 	{
+// 		ASSERT(storage(type).size() > 0);
+// 
+// 		auto iter = storage(type).find(parsedPagePtr);
+// 
+// 		return;
+// 	}
 
 	storage(type).insert(parsedPagePtr);
+	DEBUG_ASSERT(isParsedPageExists(parsedPagePtr, type));
 
 	emit parsedPageAdded(parsedPagePtr, static_cast<int>(type));
 }

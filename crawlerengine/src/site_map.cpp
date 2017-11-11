@@ -85,7 +85,7 @@ QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings
 			QString frequencyStr;
 			if (settings.changeFreqMode == SiteMapChangeFreqTagMode::UseLevelSettings)
 			{
-				const SitemapChangeFreq frequency = settings.changeFreqLevelSettings[level];
+				const SitemapChangeFreq frequency = settings.changeFreqLevelSettings[level - 1];
 				ASSERT(frequency >= SitemapChangeFreq::Always && frequency <= SitemapChangeFreq::Never);
 				frequencyStr = changeFrequencies.value(frequency, QString());
 			}
@@ -232,7 +232,7 @@ SitemapChangeFreq SiteMap::frequencyByDate(const QDateTime& now, const QDateTime
 
 	ASSERT(now.isValid());
 	ASSERT(pageDate.isValid());
-	const qint64 msecs = pageDate.msecsTo(pageDate);
+	const qint64 msecs = pageDate.msecsTo(now);
 
 	const QList<qint64> keys = s_mapping.keys();
 	auto it = qLowerBound(keys, msecs);

@@ -10,6 +10,7 @@ TEST(H1AndH2Tests, EmptyH1)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString(), pages[0]->firstH1);
 		EXPECT_EQ(QString(), pages[1]->firstH1);
@@ -31,6 +32,7 @@ TEST(H1AndH2Tests, NoH1)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString(), pages[0]->firstH1);
 		EXPECT_EQ(QString(), pages[1]->firstH1);
@@ -52,6 +54,7 @@ TEST(H1AndH2Tests, EmptyH2)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH2UrlStorageType, 2, 10, "Waiting for 2 empty h2 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString::null, pages[0]->firstH1);
 		EXPECT_EQ(QString::null, pages[1]->firstH1);
@@ -73,6 +76,7 @@ TEST(H1AndH2Tests, NoH2)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH2UrlStorageType, 2, 10, "Waiting for 2 empty h2 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString::null, pages[0]->firstH1);
 		EXPECT_EQ(QString::null, pages[1]->firstH1);
@@ -94,6 +98,7 @@ TEST(H1AndH2Tests, DuplicateH1)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::DuplicatedH1UrlStorageType, 2, 10, "Waiting for 2 duplicate h1 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Duplicate H1"), pages[0]->firstH1);
 		EXPECT_EQ(QString("Duplicate H1"), pages[1]->firstH1);
@@ -113,6 +118,7 @@ TEST(H1AndH2Tests, DuplicateH2)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::DuplicatedH2UrlStorageType, 2, 10, "Waiting for 2 duplicate h2 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Duplicate H2"), pages[0]->firstH2);
 		EXPECT_EQ(QString("Duplicate H2"), pages[1]->firstH2);
@@ -135,6 +141,7 @@ TEST(H1AndH2Tests, TooLongH1)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::VeryLongH1UrlStorageType, 2, 10, "Waiting for 2 too long h1 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Too Long H1"), pages[0]->firstH1);
 		EXPECT_EQ(QString("Another Long H1"), pages[1]->firstH1);
@@ -157,6 +164,7 @@ TEST(H1AndH2Tests, TooLongH2)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::VeryLongH2UrlStorageType, 2, 10, "Waiting for 2 too long h2 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Too Long H2"), pages[0]->firstH2);
 		EXPECT_EQ(QString("Another Long H2"), pages[1]->firstH2);
@@ -176,6 +184,7 @@ TEST(H1AndH2Tests, SeveralEqualH1)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::SeveralH1UrlStorageType, 2, 10, "Waiting for 2 several equal h1 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("First H1"), pages[0]->firstH1);
 		EXPECT_EQ(QString("First H1-2"), pages[1]->firstH1);
@@ -195,6 +204,7 @@ TEST(H1AndH2Tests, SeveralEqual2)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::SeveralH2UrlStorageType, 2, 10, "Waiting for 2 several equal h2 pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("First H2"), pages[0]->firstH2);
 		EXPECT_EQ(QString("First H2-2"), pages[1]->firstH2);

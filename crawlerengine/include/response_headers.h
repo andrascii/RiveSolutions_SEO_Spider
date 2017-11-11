@@ -12,6 +12,8 @@ public:
 
 	void addHeaderValue(const QString& header, const QString& value);
 
+	bool removeHeaderValues(const QString& header);
+
 	std::vector<QString> valueOf(const QString& header) const noexcept;
 
 	QString makeString() const;

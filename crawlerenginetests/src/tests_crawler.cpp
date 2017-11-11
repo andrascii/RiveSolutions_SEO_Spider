@@ -1,6 +1,7 @@
 #include "tests_crawler.h"
 #include "tests_downloader.h"
 #include "tests_robots_txt_loader.h"
+#include "page_parser_helpers.h"
 
 namespace CrawlerEngineTests
 {
@@ -170,6 +171,40 @@ void TestsCrawler::startTestCrawler()
 TestsDownloader* TestsCrawler::testDownloader() const
 {
 	return m_downloader;
+}
+
+void TestsCrawler::checkSequencedDataCollectionConsistency()
+{
+	std::vector<const CrawlerEngine::ParsedPage*> crawledPages = m_receiver->storageItems(CrawlerEngine::CrawledUrlStorageType);
+
+	for (int i = CrawlerEngine::BeginEnumStorageType + 1; i < CrawlerEngine::EndEnumStorageType; ++i)
+	{
+		std::vector<const CrawlerEngine::ParsedPage*> storagePages = 
+			m_receiver->storageItems(static_cast<CrawlerEngine::StorageType>(i));
+
+		for (const CrawlerEngine::ParsedPage* page : storagePages)
+		{
+			auto pageIt = std::find(std::begin(crawledPages), std::end(crawledPages), page);
+
+			const bool pageExists = pageIt != std::end(crawledPages);
+			EXPECT_EQ(true, pageExists);
+
+			for (const CrawlerEngine::ResourceLink& resource : page->linksOnThisPage)
+			{
+				CrawlerEngine::ParsedPage* resourcePage = resource.resource.lock().get();
+
+				if (!CrawlerEngine::PageParserHelpers::isHttpOrHttpsScheme(resourcePage->url))
+				{
+					continue;
+				}
+
+				auto resourceIt = std::find(std::begin(crawledPages), std::end(crawledPages), resourcePage);
+
+				const bool resourceExists = resourceIt != std::end(crawledPages);
+				EXPECT_EQ(true, resourceExists);
+			}
+		}
+	}
 }
 
 CrawlerEngine::IDownloader* TestsCrawler::createDownloader() const

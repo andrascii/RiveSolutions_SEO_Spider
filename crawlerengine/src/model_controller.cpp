@@ -130,7 +130,7 @@ UnorderedDataCollection* ModelController::data() noexcept
 	return m_data;
 }
 
-void ModelController::processParsedPageUrl(ParsedPagePtr incomingPage) const noexcept
+void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage) const noexcept
 {
 	const QUrl url = incomingPage->url;
 	const QString urlStr = url.toString();
@@ -173,7 +173,7 @@ void ModelController::processParsedPageUrl(ParsedPagePtr incomingPage) const noe
 	}
 }
 
-void ModelController::processParsedPageTitle(ParsedPagePtr incomingPage) const noexcept
+void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage) const noexcept
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -224,7 +224,7 @@ void ModelController::processParsedPageTitle(ParsedPagePtr incomingPage) const n
 	}
 }
 
-void ModelController::processParsedPageMetaDescription(ParsedPagePtr incomingPage) const noexcept
+void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPage) const noexcept
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -268,7 +268,7 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr incomingPag
 	}
 }
 
-void ModelController::processParsedPageMetaKeywords(ParsedPagePtr incomingPage) const noexcept
+void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage) const noexcept
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -305,7 +305,7 @@ void ModelController::processParsedPageMetaKeywords(ParsedPagePtr incomingPage) 
 	}
 }
 
-void ModelController::processParsedPageH1(ParsedPagePtr incomingPage) const noexcept
+void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage) const noexcept
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -346,7 +346,7 @@ void ModelController::processParsedPageH1(ParsedPagePtr incomingPage) const noex
 
 }
 
-void ModelController::processParsedPageH2(ParsedPagePtr incomingPage) const noexcept
+void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage) const noexcept
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -386,7 +386,7 @@ void ModelController::processParsedPageH2(ParsedPagePtr incomingPage) const noex
 	}
 }
 
-void ModelController::processParsedPageImage(ParsedPagePtr incomingPage, bool checkOnlyLastResource) const noexcept
+void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool checkOnlyLastResource) const noexcept
 {
 	const int sizeKB = incomingPage->pageSizeKilobytes;
 
@@ -428,7 +428,7 @@ void ModelController::processParsedPageImage(ParsedPagePtr incomingPage, bool ch
 	}
 }
 
-void ModelController::processParsedPageStatusCode(ParsedPagePtr incomingPage) const noexcept
+void ModelController::processParsedPageStatusCode(ParsedPagePtr& incomingPage) const noexcept
 {
 	if (incomingPage->statusCode == Common::StatusCode::NotFound404)
 	{
@@ -436,7 +436,7 @@ void ModelController::processParsedPageStatusCode(ParsedPagePtr incomingPage) co
 	}
 }
 
-void ModelController::processParsedPageHtmlResources(ParsedPagePtr incomingPage) noexcept
+void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage) noexcept
 {
 	if (incomingPage->resourceType != ResourceType::ResourceHtml)
 	{
@@ -525,7 +525,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr incomingPage)
 	}
 }
 
-void ModelController::processParsedPageResources(ParsedPagePtr incomingPage) noexcept
+void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) noexcept
 {
 	std::map<ResourceType, StorageType> storageTypes
 	{
@@ -572,7 +572,8 @@ void ModelController::processParsedPageResources(ParsedPagePtr incomingPage) noe
 	{
 		const QString resourceDisplayUrl = resource.thisResourceLink.url.toDisplayString();
 
-		if (resource.resourceType == ResourceType::ResourceHtml ||
+		if (!resourceShouldBeProcessed(resource.resourceType) || 
+			resource.resourceType == ResourceType::ResourceHtml ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
 		{
@@ -634,7 +635,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr incomingPage) noe
 	}
 }
 
-void ModelController::fixParsedPageResourceType(ParsedPagePtr incomingPage) const noexcept
+void ModelController::fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept
 {
 	ParsedPagePtr pendingResource = m_data->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
 	if (pendingResource && pendingResource->resourceType != ResourceType::ResourceHtml)

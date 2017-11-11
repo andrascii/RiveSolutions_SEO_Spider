@@ -10,6 +10,7 @@ TEST(ImageTests, EmptyAlt)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingAltTextImageStorageType, 2, 10, "Waiting for 2 missing alt pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 
 		CrawlerEngine::ResourceLink linkToThisPage1 = TestEnvironment::firstResourceToThisPageOfType(pages[0], CrawlerEngine::ResourceType::ResourceHtml);
@@ -59,6 +60,7 @@ TEST(ImageTests, NoAlt)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingAltTextImageStorageType, 2, 10, "Waiting for 2 missing alt pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 
 		CrawlerEngine::ResourceLink linkToThisPage1 = TestEnvironment::firstResourceToThisPageOfType(pages[0], CrawlerEngine::ResourceType::ResourceHtml);
@@ -108,6 +110,7 @@ TEST(ImageTests, Image404)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingAltTextImageStorageType, 2, 10, "Waiting for 2 missing alt pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 
 		CrawlerEngine::ResourceLink linkToThisPage1 = TestEnvironment::firstResourceToThisPageOfType(pages[0], CrawlerEngine::ResourceType::ResourceHtml);
@@ -157,6 +160,7 @@ TEST(ImageTests, TwoPagesWithTheSameImage)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(3, pages.size());
 
 		auto images = cl->waitForParsedPageReceived(CrawlerEngine::ImageResourcesStorageType, 1, 10, "Waiting for 1 image page");
@@ -174,7 +178,9 @@ TEST(ImageTests, ImageAlt)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::ImageResourcesStorageType, 1, 10, "Waiting for 1 image page");
+		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 1000, "Waiting for 2 crawled pages");
+		auto pages = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(1, pages.size());
 		EXPECT_EQ(1, pages[0]->linksToThisPage.size());
 		EXPECT_EQ(0, pages[0]->missignAltIndices.size());
@@ -202,6 +208,7 @@ TEST(ImageTests, TooBigImage)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::Over100kbImageStorageType, 2, 100, "Waiting for 2 too big image page");
+		cl->checkSequencedDataCollectionConsistency();
 
 		EXPECT_EQ(2076, pages[0]->rawResponse.size());
 		EXPECT_EQ(2076, pages[1]->rawResponse.size());

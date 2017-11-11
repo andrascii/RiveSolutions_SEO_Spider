@@ -34,12 +34,19 @@ ParsedPage* SequencedStorage::operator[](int idx) noexcept
 
 bool SequencedStorage::containsPointersWithUseCountGreaterThanOne() const noexcept
 {
+	int pagesWithUseCountGreaterThanOne = 0;
 	for (const ParsedPagePtr& pagePointer : m_pages)
 	{
 		if (pagePointer.use_count() > 1)
 		{
-			return true;
+			pagesWithUseCountGreaterThanOne++;
 		}
+	}
+
+	if (pagesWithUseCountGreaterThanOne > 0)
+	{
+		ERRORLOG << "Some pages will not be destroyed, count: " << pagesWithUseCountGreaterThanOne;
+		return true;
 	}
 
 	return false;

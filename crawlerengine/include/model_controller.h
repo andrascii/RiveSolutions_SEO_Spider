@@ -24,18 +24,18 @@ public:
 	UnorderedDataCollection* data() noexcept;
 
 private:
-	void processParsedPageUrl(ParsedPagePtr incomingPage) const noexcept;
-	void processParsedPageTitle(ParsedPagePtr incomingPage) const noexcept;
-	void processParsedPageMetaDescription(ParsedPagePtr incomingPage) const noexcept;
-	void processParsedPageMetaKeywords(ParsedPagePtr incomingPage) const noexcept;
-	void processParsedPageH1(ParsedPagePtr incomingPage) const noexcept;
-	void processParsedPageH2(ParsedPagePtr incomingPage) const noexcept;
-	void processParsedPageImage(ParsedPagePtr incomingPage, bool checkOnlyLastResource = false) const noexcept;
-	void processParsedPageStatusCode(ParsedPagePtr incomingPage) const noexcept;
+	void processParsedPageUrl(ParsedPagePtr& incomingPage) const noexcept;
+	void processParsedPageTitle(ParsedPagePtr& incomingPage) const noexcept;
+	void processParsedPageMetaDescription(ParsedPagePtr& incomingPage) const noexcept;
+	void processParsedPageMetaKeywords(ParsedPagePtr& incomingPage) const noexcept;
+	void processParsedPageH1(ParsedPagePtr& incomingPage) const noexcept;
+	void processParsedPageH2(ParsedPagePtr& incomingPage) const noexcept;
+	void processParsedPageImage(ParsedPagePtr& incomingPage, bool checkOnlyLastResource = false) const noexcept;
+	void processParsedPageStatusCode(ParsedPagePtr& incomingPage) const noexcept;
 
-	void processParsedPageHtmlResources(ParsedPagePtr incomingPage) noexcept;
-	void processParsedPageResources(ParsedPagePtr incomingPage) noexcept;
-	void fixParsedPageResourceType(ParsedPagePtr incomingPage) const noexcept;
+	void processParsedPageHtmlResources(ParsedPagePtr& incomingPage) noexcept;
+	void processParsedPageResources(ParsedPagePtr& incomingPage) noexcept;
+	void fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept;
 
 	bool resourceShouldBeProcessed(ResourceType resourceType) const noexcept;
 

@@ -61,6 +61,8 @@ public:
 
 	TestsDownloader* testDownloader() const;
 
+	void checkSequencedDataCollectionConsistency();
+
 protected:
 	virtual CrawlerEngine::IDownloader* createDownloader() const override;
 	virtual CrawlerEngine::IRobotsTxtLoader* createRobotsTxtLoader() const override;

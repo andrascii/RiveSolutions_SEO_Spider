@@ -13,6 +13,18 @@ void ResponseHeaders::addHeaderValue(const QString& header, const QString& value
 	m_responseHeaders.push_back(std::make_pair(header, value));
 }
 
+bool ResponseHeaders::removeHeaderValues(const QString& header)
+{
+	auto it = std::remove_if(std::begin(m_responseHeaders), std::end(m_responseHeaders),
+		[&header](const std::pair<QString, QString>& item) { return header == item.first; });
+
+	const bool result = it != std::end(m_responseHeaders);
+
+	m_responseHeaders.erase(it, std::end(m_responseHeaders));
+
+	return result;
+}
+
 void ResponseHeaders::addHeaderValues(const QList<QNetworkReply::RawHeaderPair>& headerValues)
 {
 	m_responseHeaders.reserve(m_responseHeaders.size() + headerValues.size());

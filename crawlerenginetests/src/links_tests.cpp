@@ -8,6 +8,7 @@ TEST(LinksTests, LinkAlt)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(0, pages[0]->linksToThisPage.size());
 		EXPECT_EQ(1, pages[0]->linksOnThisPage.size());
