@@ -55,7 +55,8 @@ QLineEdit,
 QProgressBar,
 QPushButton,
 QComboBox,
-QSpinBox
+QSpinBox,
+QDoubleSpinBox
 {
 	border: 0.05em solid #CCCCCC;
 	border-radius: 0.143em;
@@ -348,10 +349,56 @@ SeoSpider--SitemapCreatorWidget
 	background: #E7E7E7;
 }
 
-QFrame#ControlsFrame QWidget
+QFrame#ControlsFrame
+{
+	background: #E7E7E7;
+	padding: 0.8em;
+	border: 0.05em solid #CCCCCC;
+}
+
+QFrame#ControlsFrame QCheckBox,
+QFrame#ControlsFrame QLabel
 {
 	color: #333333;
 	font-size: 9pt;
+}
+
+QFrame#ControlsFrame QSpinBox,
+QFrame#ControlsFrame QDoubleSpinBox,
+QFrame#ControlsFrame QComboBox,
+QFrame#ControlsFrame QLineEdit
+{
+	border-radius: 0;
+}
+
+QFrame#ControlsFrame QCheckBox
+{
+	font: bold;
+}
+
+QFrame#HeaderFrame
+{
+	min-height: 6em;
+	padding: 0.5em;
+	padding-left: 1.2em;
+	
+	background: #F8F8F8;
+	
+	border: 0.05em solid #CCCCCC;
+	border-bottom: none;
+}
+
+QFrame#HeaderFrame QLabel
+{
+	color: #333333;
+	font-size: 9pt;
+}
+
+QFrame#HeaderFrame QLabel#headerName
+{
+	font-size: 16pt;
+	font: bold;
+	color: #61a032;
 }
 
 /*/////////////////////////////// QSplitter ///////////////////////////////*/
