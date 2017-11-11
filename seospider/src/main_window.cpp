@@ -7,6 +7,7 @@
 #include "menu_bar.h"
 #include "settings_page_impl.h"
 #include "crawler.h"
+#include "site_map_creator_widget.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
@@ -26,7 +27,14 @@ MainWindow::MainWindow(QWidget* parent)
 	);
 }
 
-void MainWindow::showApplicationSettingsWidget(const QByteArray& settingsPageName)
+void MainWindow::showSitemapCreatorDialog()
+{
+	SitemapCreatorWidget* sitemapCreatorWidget = new SitemapCreatorWidget(this);
+	sitemapCreatorWidget->exec();
+	sitemapCreatorWidget->deleteLater();
+}
+
+void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
 {
 	ApplicationSettingsWidget* applicationSettingsWidget = new ApplicationSettingsWidget(this);
 	applicationSettingsWidget->setCurrentPage(settingsPageName);
@@ -96,22 +104,22 @@ void MainWindow::createActions()
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(true); }));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), 
-		this, SLOT(showApplicationSettingsWidget())));
+		this, SLOT(showApplicationSettingsDialog())));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_CrawlerSettingsWidget)); }));
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CrawlerSettingsWidget)); }));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openLanguageSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_LanguageSettingsWidget)); }));
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_LanguageSettingsWidget)); }));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openPreferencesSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_PreferencesSettingsWidget)); }));
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_PreferencesSettingsWidget)); }));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openLimitsSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_LimitsSettingsWidget)); }));
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_LimitsSettingsWidget)); }));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openProxySettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsWidget(TYPE_STRING(Ui_ProxySettingsWidget)); }));
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_ProxySettingsWidget)); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -125,6 +133,8 @@ void MainWindow::createActions()
 
 	// sitemap actions
 	actionRegistry.addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
+
+	VERIFY(connect(actionRegistry.globalAction(s_createXMLSitemapAction), SIGNAL(triggered()), this, SLOT(showSitemapCreatorDialog())));
 }
 
 void MainWindow::createAndSetCentralWidget()

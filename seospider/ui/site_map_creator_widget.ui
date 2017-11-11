@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SitemapCreatorWidget</class>
+ <widget class="QWidget" name="SitemapCreatorWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>526</width>
+    <height>570</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QFrame" name="ControlsFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>XML Sitemap Creator</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Here you can configure sitemap settings and create it</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Pages</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Priority</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="checkBox">
+          <property name="text">
+           <string>Include Noindex Pages</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="checkBox_6">
+          <property name="text">
+           <string>Include &lt;priority&gt; tag</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="checkBox_2">
+          <property name="text">
+           <string>Include Canonicolised</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Crawl Depth 0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="checkBox_3">
+          <property name="text">
+           <string>Include Painted Urls</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Crawl Depth 1</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="checkBox_4">
+          <property name="text">
+           <string>Include PDFs</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Crawl Depth 2</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+          </item>
+         </layout>
+        </item>
+        <item row="5" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Crawl Depth 3</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+          </item>
+         </layout>
+        </item>
+        <item row="6" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Crawl Depth 4</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_5"/>
+          </item>
+         </layout>
+        </item>
+        <item row="7" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Crawl Depth 5+</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_6"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Change Frequency</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_7">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Images</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="checkBox_7">
+          <property name="text">
+           <string>Include &lt;changefreq&gt; tag</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="checkBox_8">
+          <property name="text">
+           <string>Include Images</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QComboBox" name="comboBox_2"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="checkBox_9">
+          <property name="text">
+           <string>Include Noindex Images</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <item>
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Crawl Depth 0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_3"/>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QCheckBox" name="checkBox_10">
+            <property name="text">
+             <string>Include Only Relevant Images with up to</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_20">
+            <property name="text">
+             <string>inlinks</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <item>
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Crawl Depth 1</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_4"/>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="label_4">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Last Modified</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item>
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>Crawl Depth 2</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_5"/>
+          </item>
+         </layout>
+        </item>
+        <item row="5" column="1">
+         <widget class="QCheckBox" name="checkBox_5">
+          <property name="text">
+           <string>Include &lt;lastmod&gt; tag</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>Crawl Depth 3</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_7"/>
+          </item>
+         </layout>
+        </item>
+        <item row="6" column="1">
+         <widget class="QComboBox" name="comboBox"/>
+        </item>
+        <item row="7" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="label_18">
+            <property name="text">
+             <string>Crawl Depth 4</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_6"/>
+          </item>
+         </layout>
+        </item>
+        <item row="8" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="label_19">
+            <property name="text">
+             <string>Crawl Depth 5+</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBox_8"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
