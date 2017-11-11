@@ -376,19 +376,24 @@ QFrame#ControlsFrame QLineEdit
 	border-radius: 0;
 }
 
-QFrame#ControlsFrame QCheckBox
+QFrame#ControlsFrame QSpinBox,
+QFrame#ControlsFrame QDoubleSpinBox
 {
-	font: bold;
+	max-width: 10em;
+}
+
+QFrame#ControlsFrame QComboBox
+{
+	min-width: 10em;
 }
 
 QFrame#HeaderFrame
 {
 	min-height: 6em;
+	max-height: 6em;
 	padding: 0.5em;
 	padding-left: 1.2em;
-	
 	background: #F8F8F8;
-	
 	border: 0.05em solid #CCCCCC;
 	border-bottom: none;
 }
@@ -404,6 +409,37 @@ QFrame#HeaderFrame QLabel#headerName
 	font-size: 16pt;
 	font: bold;
 	color: #61a032;
+}
+
+QFrame#ButtonsFrame
+{
+	background: #F8F8F8;
+	border: 0.05em solid #CCCCCC;
+	border-top: none;
+	padding: 0.5em;
+	padding-right: 1.2em;
+}
+
+QFrame#ButtonsFrame QPushButton
+{
+	font: bold;
+}
+
+QFrame#ButtonsFrame QPushButton#createButton:enabled
+{
+	color: white;
+	background-color: #56A433;
+	border-color: #4A9029;
+}
+
+QFrame#ButtonsFrame QPushButton#createButton:enabled:hover
+{
+	background-color: #67B847;
+}
+
+QFrame#ButtonsFrame QPushButton#createButton:enabled:pressed
+{
+	background-color: #4A9029;
 }
 
 /*/////////////////////////////// QSplitter ///////////////////////////////*/
