@@ -1,4 +1,5 @@
 #include "summary_data_accessor_decorator.h"
+#include "summary_data_accessor.h"
 
 namespace SeoSpider
 {
@@ -6,7 +7,12 @@ namespace SeoSpider
 SummaryDataAccessorDecorator::SummaryDataAccessorDecorator(ISummaryDataAccessor* dataAccessor)
 	: m_summaryDataAccessor(dataAccessor)
 {
-	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), this, SIGNAL(dataChanged(int, int, Qt::ItemDataRole))));
+	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), 
+		this, SIGNAL(dataChanged(int, int, Qt::ItemDataRole))));
+
+	VERIFY(connect(dataAccessor->qobject(), SIGNAL(beginClearData()), this, SIGNAL(beginClearData())));
+
+	VERIFY(connect(dataAccessor->qobject(), SIGNAL(endClearData()), this, SIGNAL(endClearData())));
 }
 
 StorageAdaptorType SummaryDataAccessorDecorator::itemCategory(const QModelIndex& index) const noexcept

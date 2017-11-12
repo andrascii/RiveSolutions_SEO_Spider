@@ -8,7 +8,14 @@ namespace SeoSpider
 SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
 	: m_sequencedDataCollection(sequencedDataCollection)
 {
-	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, this, &SummaryDataAccessor::emitDataChanged));
+	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, 
+		this, &SummaryDataAccessor::emitDataChanged));
+
+	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
+		this, &SummaryDataAccessor::beginClearData));
+
+	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::endClearData,
+		this, &SummaryDataAccessor::endClearData));
 }
 
 int SummaryDataAccessor::columnCount() const noexcept
