@@ -24,7 +24,7 @@ int SummaryDataAccessor::rowCount() const noexcept
 void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
 {
 	DataCollectionGroupsFactory dcGroupsFactory;
-	m_allGroupRows.push_back(dcGroupsFactory.create(/*m_guiStorage, */group));
+	m_allGroupRows.push_back(dcGroupsFactory.create(group));
 
 	int modelRowIndex = rowCount();
 	m_groupRows[modelRowIndex++] = m_allGroupRows.last();

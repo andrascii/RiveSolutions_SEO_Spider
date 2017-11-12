@@ -10,6 +10,9 @@ SitemapCreatorWidget::SitemapCreatorWidget(QWidget* parent)
 	m_ui->setupUi(this);
 
 	setWindowTitle("XML Sitemap Creator");
+	setWindowModality(Qt::WindowModal);
+
+	VERIFY(connect(m_ui->cancelButton, &QPushButton::clicked, this, &SitemapCreatorWidget::accept));
 }
 
 }

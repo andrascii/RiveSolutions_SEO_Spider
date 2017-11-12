@@ -507,14 +507,14 @@ QWidget#DebugWebPageInfoWidget QWidget
 	color: black;
 }
 
-/*/////////////////////////////// TitledWidget ///////////////////////////////*/
+/*/////////////////////////////// HeaderDecorationWidget ///////////////////////////////*/
 
-SeoSpider--TitledWidget
+SeoSpider--HeaderDecorationWidget
 {
 	background-color: #E8E8E8;
 }
 
-SeoSpider--TitledWidget QFrame#TitleFrame
+SeoSpider--HeaderDecorationWidget QFrame#TitleFrame
 {
 	min-height: 3em;
 	background-color: #E8E8E8;

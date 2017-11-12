@@ -1,9 +1,9 @@
-#include "titled_widget.h"
+#include "header_decoration_widget.h"
 
 namespace SeoSpider
 {
 
-TitledWidget::TitledWidget(QWidget* parent)
+HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_titleFrame(new QFrame(this))
 	, m_titleLayout(new QHBoxLayout(m_titleFrame))
@@ -16,7 +16,7 @@ TitledWidget::TitledWidget(QWidget* parent)
 	m_layout->addWidget(m_titleFrame);
 }
 
-void TitledWidget::addTitleWidget(QWidget* widget, Qt::AlignmentFlag align, bool last) const
+void HeaderDecorationWidget::addWidgetToHeader(QWidget* widget, Qt::AlignmentFlag align, bool last) const
 {
 	m_titleLayout->addWidget(widget, 0, align);
 	if (last)
@@ -26,7 +26,7 @@ void TitledWidget::addTitleWidget(QWidget* widget, Qt::AlignmentFlag align, bool
 	}
 }
 
-void TitledWidget::setContentWidget(QWidget* widget) const
+void HeaderDecorationWidget::setContentWidget(QWidget* widget) const
 {
 	if (m_layout->count() > 1)
 	{

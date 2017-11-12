@@ -29,9 +29,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 void MainWindow::showSitemapCreatorDialog()
 {
-	SitemapCreatorWidget* sitemapCreatorWidget = new SitemapCreatorWidget(this);
-	sitemapCreatorWidget->exec();
-	sitemapCreatorWidget->deleteLater();
+	SitemapCreatorWidget* titledWindow = new SitemapCreatorWidget(this);
+	titledWindow->exec();
+	titledWindow->deleteLater();
 }
 
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)

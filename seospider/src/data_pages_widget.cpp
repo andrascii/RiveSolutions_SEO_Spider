@@ -6,7 +6,7 @@
 #include "storage_adaptor_factory.h"
 #include "context_menu_data_collection_row.h"
 #include "seo_spider_helpers.h"
-#include "titled_widget.h"
+#include "header_decoration_widget.h"
 #include "control_panel_widget.h"
 #include "filter_widget.h"
 #include "website_data_widget.h"
@@ -22,18 +22,18 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 	initializeNavigationPanelWidget();
 	initializeStackedWidget();
 
-	TitledWidget* titledStackedWidget = new TitledWidget(this);
-	titledStackedWidget->addTitleWidget(new ControlPanelWidget(this));
-	titledStackedWidget->addTitleWidget(new CrawlerProgressBar(this), Qt::AlignLeft, true);
+	HeaderDecorationWidget* widget = new HeaderDecorationWidget(this);
+	widget->addWidgetToHeader(new ControlPanelWidget(this));
+	widget->addWidgetToHeader(new CrawlerProgressBar(this), Qt::AlignLeft, true);
 
-	titledStackedWidget->setContentWidget(m_stackedWidget);
+	widget->setContentWidget(m_stackedWidget);
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
 	horizontalLayout->setSpacing(0);
 	horizontalLayout->setMargin(0);
 
 	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
-	horizontalLayout->addWidget(titledStackedWidget);
+	horizontalLayout->addWidget(widget);
 }
 
 void DataPagesWidget::showPage(Page page)
