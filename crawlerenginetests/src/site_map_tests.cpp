@@ -206,4 +206,60 @@ TEST(SiteMapTests, FrequencyByLevel)
 	env.exec();
 }
 
+TEST(SiteMapTests, PriorityTag)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/index.html") });
+	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& resp)
+		{
+			resp.statusCode = static_cast<int>(Common::StatusCode::Ok200);
+		});
+
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 1000, "Waiting for 8 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
+
+		CrawlerEngine::SiteMapSettings settings;
+		settings.flags.setFlag(CrawlerEngine::IncludeChangeFreqTag);
+		settings.flags.setFlag(CrawlerEngine::IncludeNoIndexPages);
+		settings.flags.setFlag(CrawlerEngine::IncludePriorityTag);
+
+		settings.priorityLevelSettings[0] = 0.9;
+		settings.priorityLevelSettings[1] = 0.8;
+		settings.priorityLevelSettings[2] = 0.7;
+		settings.priorityLevelSettings[3] = 0.6;
+		settings.priorityLevelSettings[4] = 0.5;
+		settings.priorityLevelSettings[5] = 0.4;
+
+		const QString xml = cl->siteMapXml(settings);
+		const QString result1 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url[1]/priority/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+		const QString result2 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url[2]/priority/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+		const QString result3 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url[3]/priority/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+		const QString result4 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url[4]/priority/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+		const QString result5 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url[5]/priority/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+		const QString result6 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url[6]/priority/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+
+
+		EXPECT_EQ(QString("0.9"), result1); // level 1
+		EXPECT_EQ(QString("0.9"), result2); // level 1
+		EXPECT_EQ(QString("0.8"), result3); // level 2
+		EXPECT_EQ(QString("0.7"), result4); // level 3
+		EXPECT_EQ(QString("0.6"), result5); // level 4
+		EXPECT_EQ(QString("0.5"), result6); // level 5
+
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }

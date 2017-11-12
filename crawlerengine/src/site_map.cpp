@@ -26,6 +26,9 @@ namespace
 	static const QString changeFreqOpenTag = QString("<changefreq>");
 	static const QString changeFreqCloseTag = QString("</changefreq>");
 
+	static const QString priorityOpenTag = QString("<priority>");
+	static const QString priorityCloseTag = QString("</priority>");
+
 	static const QMap<SitemapChangeFreq, QString> changeFrequencies
 	{
 		{ SitemapChangeFreq::Always, QString("always") },
@@ -77,7 +80,10 @@ QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings
 
 		if (includePriority)
 		{
-			// TODO: implement
+			const double priority = settings.priorityLevelSettings[level - 1];
+			DEBUG_ASSERT(priority > 0.0 && priority <= 1.0)
+			const QString prioritySr = QString::number(priority);
+			result = result % tab % tab % priorityOpenTag % prioritySr % priorityCloseTag % endLine;
 		}
 
 		if (includeChangeFreq)
