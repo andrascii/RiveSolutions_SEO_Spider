@@ -24,7 +24,7 @@ void OtherResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 			continue;
 		}
 
-		page->allResourcesOnPage.insert(RawResourceOnPage{ ResourceType::ResourceOther, linkInfo, ResourceSource::SourceTagA });
+		page->allResourcesOnPage.insert(RawResourceOnPage{ ResourceType::ResourceOther, linkInfo });
 	}
 
 }

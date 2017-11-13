@@ -483,7 +483,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			{ 
 				incomingPage, 
 				resource.thisResourceLink.urlParameter, 
-				resource.resourceSource, 
+				resource.thisResourceLink.resourceSource,
 				resource.thisResourceLink.altOrTitle 
 			});
 			
@@ -493,7 +493,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			{ 
 				existingResource, 
 				resource.thisResourceLink.urlParameter, 
-				resource.resourceSource, 
+				resource.thisResourceLink.resourceSource,
 				resource.thisResourceLink.altOrTitle 
 			});
 		}
@@ -505,7 +505,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			{ 
 				incomingPage, 
 				resource.thisResourceLink.urlParameter, 
-				resource.resourceSource, 
+				resource.thisResourceLink.resourceSource,
 				resource.thisResourceLink.altOrTitle 
 			});
 			
@@ -515,7 +515,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			{ 
 				pendingResource, 
 				resource.thisResourceLink.urlParameter, 
-				resource.resourceSource, 
+				resource.thisResourceLink.resourceSource,
 				resource.thisResourceLink.altOrTitle 
 			});
 			
@@ -593,7 +593,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) no
 		
 		const bool existingImageResource = newOrExistingResource && 
 			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
-			resource.resourceSource == ResourceSource::SourceTagImg;
+			resource.thisResourceLink.resourceSource == ResourceSource::SourceTagImg;
 
 		if (!newOrExistingResource)
 		{
@@ -612,7 +612,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) no
 		{ 
 			newOrExistingResource, 
 			resource.thisResourceLink.urlParameter, 
-			resource.resourceSource, 
+			resource.thisResourceLink.resourceSource, 
 			resource.thisResourceLink.altOrTitle 
 		});
 		
@@ -620,7 +620,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) no
 		{ 
 			incomingPage, 
 			resource.thisResourceLink.urlParameter, 
-			resource.resourceSource, 
+			resource.thisResourceLink.resourceSource,
 			resource.thisResourceLink.altOrTitle 
 		});
 		

@@ -235,7 +235,7 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 
 	const auto res = [](const GumboNode* node)
 	{
-		const GumboAttribute* href = href = gumbo_get_attribute(&node->v.element.attributes, "href");
+		const GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
 		const GumboAttribute* rel = gumbo_get_attribute(&node->v.element.attributes, "rel");
 
 		LinkParameter linkParam = LinkParameter::DofollowParameter;
@@ -248,10 +248,28 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 		const QString altOrTitle(nodeText(node));
 		const bool dataResource = QByteArray(href->value).startsWith("data:");
 
-		return LinkInfo{ QUrl(href->value), linkParam, altOrTitle, dataResource };
+		return LinkInfo{ QUrl(href->value), linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA };
 	};
 
-	const std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);
+	std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);
+
+	const LinkInfo canonical = getLinkRelUrl(node, "canonical", ResourceSource::SourceTagLinkRelCanonical);
+	if (canonical.resourceSource != ResourceSource::SourceInvalid)
+	{
+		result.push_back(canonical);
+	}
+
+	const LinkInfo next = getLinkRelUrl(node, "next", ResourceSource::SourceTagLinkRelNext);
+	if (next.resourceSource != ResourceSource::SourceInvalid)
+	{
+		result.push_back(next);
+	}
+
+	const LinkInfo prev = getLinkRelUrl(node, "prev", ResourceSource::SourceTagLinkRelPrev);
+	if (prev.resourceSource != ResourceSource::SourceInvalid)
+	{
+		result.push_back(prev);
+	}
 
 	return result;
 }
@@ -333,6 +351,35 @@ void GumboParsingHelpers::cutAllTagsFromNodeHelper(const GumboNode* node, QByteA
 	}
 }
 
+LinkInfo GumboParsingHelpers::getLinkRelUrl(const GumboNode* node, const char* relValue, ResourceSource source) noexcept
+{
+	const auto cond = [relValue](const GumboNode* node)
+	{
+		bool result = node &&
+			node->type == GUMBO_NODE_ELEMENT &&
+			node->v.element.tag == GUMBO_TAG_LINK &&
+			GumboParsingHelpers::checkAttribute(node, "rel", relValue) &&
+			gumbo_get_attribute(&node->v.element.attributes, "href");
+		return result;
+	};
 
+	const auto res = [source](const GumboNode* node)
+	{
+		const GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
+		const LinkParameter linkParam = LinkParameter::DofollowParameter;
+		const bool dataResource = QByteArray(href->value).startsWith("data:");
+
+		return LinkInfo{ QUrl(href->value), linkParam, QString(), dataResource, source };
+	};
+
+	std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);
+
+	if (!result.empty())
+	{
+		return result[0];
+	}
+
+	return LinkInfo{ QUrl(), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceInvalid };
+}
 
 }

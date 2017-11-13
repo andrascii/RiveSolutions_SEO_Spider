@@ -22,4 +22,31 @@ TEST(LinksTests, LinkAlt)
 	env.exec();
 }
 
+TEST(LinksTests, CanonicalNextPrev)
+{
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/canonical-next-prev.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
+		EXPECT_EQ(4, pages.size());
+
+		auto canonical = pages[0]->linksOnThisPage[0];
+		auto next = pages[0]->linksOnThisPage[1];
+		auto prev = pages[0]->linksOnThisPage[2];
+
+		EXPECT_EQ(QString("http://links.com/next-prev-canonical.html"), canonical.resource.lock()->url.toDisplayString());
+		EXPECT_EQ(QString("http://links.com/next.html"), next.resource.lock()->url.toDisplayString());
+		EXPECT_EQ(QString("http://links.com/prev.html"), prev.resource.lock()->url.toDisplayString());
+
+		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagLinkRelCanonical, canonical.resourceSource);
+		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagLinkRelNext, next.resourceSource);
+		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagLinkRelPrev, prev.resourceSource);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }
