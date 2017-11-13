@@ -9,7 +9,8 @@ SummaryDataAccessorPixmapDecorator::SummaryDataAccessorPixmapDecorator(ISummaryD
 {
 	initializePixmaps();
 
-	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), this, SLOT(interceptDecoratingObjectSignal(int, int, Qt::ItemDataRole))));
+	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), this, 
+		SLOT(interceptDecoratingObjectSignal(int, int, Qt::ItemDataRole))));
 }
 
 const QPixmap& SummaryDataAccessorPixmapDecorator::pixmap(const QModelIndex& index) const noexcept

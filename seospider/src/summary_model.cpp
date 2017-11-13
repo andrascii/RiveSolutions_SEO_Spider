@@ -29,12 +29,18 @@ void SummaryModel::setDataAccessor(ISummaryDataAccessor* accessor) noexcept
 	{
 		disconnect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)),
 			this, SLOT(formActualUpdateDataSignal(int, int, Qt::ItemDataRole)));
+
+		disconnect(dataAccessor()->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData()));
+		disconnect(dataAccessor()->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData()));
 	}
 
 	m_dataAccessor = accessor;
 
 	VERIFY(connect(dataAccessor()->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)),
 		this, SLOT(formActualUpdateDataSignal(int, int, Qt::ItemDataRole))));
+
+	VERIFY(connect(dataAccessor()->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData())));
+	VERIFY(connect(dataAccessor()->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData())));
 
 	endResetModel();
 }
@@ -57,6 +63,16 @@ StorageAdaptorType SummaryModel::storageAdaptorType(const QModelIndex& index) co
 void SummaryModel::formActualUpdateDataSignal(int row, int column, Qt::ItemDataRole role)
 {
 	Q_EMIT dataChanged(createIndex(row, column), createIndex(row, column), QVector<int>() << role);
+}
+
+void SummaryModel::onAboutBeginClearingData()
+{
+	beginResetModel();
+}
+
+void SummaryModel::onAboutEndClearingData()
+{
+	endResetModel();
 }
 
 QSize SummaryModel::span(const QModelIndex& index) const

@@ -25,6 +25,10 @@
 		<file>images/information-message-icon.png</file>
 		<file>images/warning-message-icon.png</file>
 		<file>images/critical-error-message-icon.png</file>
+		<file>images/close-window.png</file>
+		<file>images/minimize-window.png</file>
+		<file>images/maximize-window.png</file>
+		<file>images/restore-window.png</file>
 		<file>config/defaults.cfg</file>
 		<file>translations/translate_ru_RU.qm</file>
     </qresource>

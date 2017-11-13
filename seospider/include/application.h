@@ -7,6 +7,7 @@
 #include "isettings_accessor.h"
 #include "requester.h"
 #include "requester_wrapper.h"
+#include "titled_window.h"
 
 namespace CrawlerEngine
 {
@@ -21,6 +22,7 @@ namespace SeoSpider
 {
 
 class Preferences;
+class WinEventFilter;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -51,6 +53,11 @@ public:
 signals:
 	void mainWindowShown();
 
+protected:
+	bool winEventFilter(MSG* msg, long* result);
+
+	friend class WinEventFilter;
+
 private:
 	static void registerServices();
 	static QString operatingSystemVersion();
@@ -60,6 +67,14 @@ private:
 
 	void onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
 
+	void minMaxInfo(MINMAXINFO* mmi, HWND winId) const;
+	bool monitorInfo(HWND hwnd, MONITORINFO& info) const;
+	QRect taskBarRect(int& edge) const;
+	QRect adjustScreenAreaForFixedMargin(const QRect& screen, const QRect& toolbar, int edge, int margin) const;
+	bool checkNeedScreenAreaAdjustmentForToolbar(const QRect& screen, const QRect& toolbar, int edge) const;
+	QRect adjustScreenAreaForToolbar(const QRect& screen, const QRect& toolbar, int edge) const;
+	bool tabBarAutohides() const;
+
 private slots:
 	void startCrawler();
 	void stopCrawler();
@@ -67,7 +82,7 @@ private slots:
 	void showMainWindow();
 
 private:
-	void initialize() noexcept;
+	void initialize();
 
 private:
 	Preferences* m_preferences;
@@ -85,6 +100,10 @@ private:
 	QTranslator* m_translator;
 
 	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+	WinEventFilter* m_windowsEventFilter;
+#endif
 };
 
 }

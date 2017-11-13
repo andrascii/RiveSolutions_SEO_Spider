@@ -3,14 +3,14 @@
 namespace SeoSpider
 {
 	
-class TitledWidget : public QFrame
+class HeaderDecorationWidget : public QFrame
 {
 	Q_OBJECT
 
 public:
-	TitledWidget(QWidget* parent = nullptr);
+	HeaderDecorationWidget(QWidget* parent = nullptr);
 
-	void addTitleWidget(QWidget* widget, Qt::AlignmentFlag align = Qt::AlignLeft, bool last = false) const;
+	void addWidgetToHeader(QWidget* widget, Qt::AlignmentFlag align = Qt::AlignLeft, bool last = false) const;
 	void setContentWidget(QWidget* widget) const;
 
 private:
