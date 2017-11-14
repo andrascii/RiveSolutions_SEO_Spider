@@ -18,6 +18,14 @@ PageLinksStorageAdaptor::PageLinksStorageAdaptor(ParsedPageInfoPtr associatedPar
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::endClearData,
 		this, &PageLinksStorageAdaptor::endClearData));
+
+	if (m_context == PageLinkContext::LinksToThisPage)
+	{
+		qRegisterMetaType<LinksToThisResourceChanges>("LinksToThisResourceChanges");
+
+		VERIFY(connect(sequencedDataCollection, SIGNAL(parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges)),
+			this, SLOT(onParsedPageAdded(LinksToThisResourceChanges))));
+	}
 }
 
 void PageLinksStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept
@@ -96,6 +104,47 @@ void PageLinksStorageAdaptor::onBeginClearData()
 	emit beginClearData();
 
 	m_parsedPageInfo.reset();
+}
+
+void PageLinksStorageAdaptor::onParsedPageAdded(LinksToThisResourceChanges changes)
+{
+	if (!m_parsedPageInfo)
+	{
+		return;
+	}
+
+	std::vector<size_t> newRowIndices;
+
+	for (const auto&[parsedPageSharedPointer, fromIndex] : changes.changes)
+	{
+		if (parsedPageSharedPointer.get() != m_parsedPageInfo->associatedParsedPage())
+		{
+			continue;
+		}
+
+		newRowIndices.push_back(fromIndex);
+	}
+
+	if (newRowIndices.empty())
+	{
+		return;
+	}
+
+	const auto findMinMaxIndex = [](size_t lhs, size_t rhs)
+	{
+		return lhs < rhs;
+	};
+
+	const auto minElementIter = std::min_element(newRowIndices.begin(), newRowIndices.end(), findMinMaxIndex);
+	const auto maxElementIter = std::max_element(newRowIndices.begin(), newRowIndices.end(), findMinMaxIndex);
+
+	ASSERT(minElementIter != newRowIndices.end());
+	ASSERT(maxElementIter != newRowIndices.end());
+
+	for (size_t i = *minElementIter, maxElement = *maxElementIter; i <= maxElement; ++i)
+	{
+		emit parsedPageInfoAdded(static_cast<int>(i));
+	}
 }
 
 }

@@ -2,9 +2,12 @@
 
 #include "parsed_page_info.h"
 #include "parsed_page_info_storage_adaptor.h"
+#include "sequenced_data_collection_types.h"
 
 namespace SeoSpider
 {
+
+using namespace CrawlerEngine;
 
 class PageLinksStorageAdaptor : public QObject, public IPageLinksStorageAdaptor
 {
@@ -45,6 +48,8 @@ signals:
 
 private slots:
 	void onBeginClearData();
+
+	void onParsedPageAdded(LinksToThisResourceChanges changes);
 
 private:
 	ParsedPageInfoPtr m_parsedPageInfo; 
