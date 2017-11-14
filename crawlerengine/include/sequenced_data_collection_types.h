@@ -8,7 +8,7 @@ struct LinksToThisResourceChanges
 {
 	struct Change
 	{
-		ParsedPagePtr page;
+		ParsedPageWeakPtr page;
 		size_t fromIndex;
 	};
 	std::vector<Change> changes;

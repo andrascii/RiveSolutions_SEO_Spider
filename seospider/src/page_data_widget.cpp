@@ -45,7 +45,7 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 	m_models[pageDataType] = new PageModel(this);
 
 	tableView->setModel(m_models[pageDataType]);
-	tableView->setViewModel(new PageViewModel(m_models[pageDataType], this));
+	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], this));
 	tableView->setShowAdditionalGrid(true);
 
 	m_tabWidget->addTab(tableView, tabDescription(pageDataType));

@@ -82,6 +82,8 @@ public:
 	QVariant itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number) const;
 	size_t itemCount(PageLinkContext context) const;
 
+	const CrawlerEngine::ParsedPage* associatedParsedPage() const noexcept;
+
 private:
 	using MethodAcceptor = QVariant(ParsedPageInfo::*)() const;
 	using PageLinksPointer = std::deque<CrawlerEngine::ResourceLink> CrawlerEngine::ParsedPage::*;

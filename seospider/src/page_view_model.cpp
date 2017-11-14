@@ -2,13 +2,16 @@
 #include "page_model.h"
 #include "page_view_model.h"
 #include "seo_spider_helpers.h"
+#include "table_view.h"
+#include "deferred_call.h"
 
 
 namespace SeoSpider
 {
 
-PageViewModel::PageViewModel(PageModel* model, QObject* parent)
+PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
+	, m_view(view)
 	, m_selectionBackgroundColor("#F7F0D6")
 	, m_hoveredBackgroundColor("#F3F3F3")
 	, m_backgroundColor("#FFFFFF")
@@ -219,7 +222,16 @@ void PageViewModel::initializeRenderers()
 		IRenderer::BackgroundRendererType
 	);
 
-	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->columnCount()));
+	//
+	// It is not a reliable way to calculate cache
+	// Potentially may work wrong
+	//
+	const auto setCacheCallback = [this, model]()
+	{
+		AbstractViewModel::setItemRendererCacheSize(m_view->viewportRowCapacity() * static_cast<int>(model->columnCount()) * 2);
+	};
+
+	DeferredCall::call(setCacheCallback);
 }
 
 }

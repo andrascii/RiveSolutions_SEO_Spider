@@ -182,6 +182,11 @@ size_t ParsedPageInfo::itemCount(PageLinkContext context) const
 	return (m_parsedPage->*pointer).size();
 }
 
+const CrawlerEngine::ParsedPage* ParsedPageInfo::associatedParsedPage() const noexcept
+{
+	return m_parsedPage;
+}
+
 bool ParsedPageInfo::isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn pageLinksColumn) noexcept
 {
 	switch (pageLinksColumn)

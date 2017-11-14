@@ -6,6 +6,7 @@
 namespace SeoSpider
 {
 
+class IView;
 class PageModel;
 
 class PageViewModel : public AbstractViewModel
@@ -13,7 +14,7 @@ class PageViewModel : public AbstractViewModel
 	Q_OBJECT
 
 public:
-	PageViewModel(PageModel* model, QObject* parent = nullptr);
+	PageViewModel(IView* view, PageModel* model, QObject* parent = nullptr);
 
 	virtual int marginTop(const QModelIndex& index) const noexcept override;
 	virtual int marginBottom(const QModelIndex& index) const noexcept override;
@@ -48,6 +49,8 @@ private:
 	void initializeRenderers();
 
 private:
+	IView* m_view;
+
 	QColor m_selectionBackgroundColor;
 	QColor m_hoveredBackgroundColor;
 	QColor m_backgroundColor;

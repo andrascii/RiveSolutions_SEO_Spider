@@ -10,7 +10,13 @@ class ContextMenuDataCollectionRow;
 class IRenderer;
 class IViewModel;
 
-class TableView : public QTableView
+class IView
+{
+public:
+	virtual int viewportRowCapacity() const noexcept = 0;
+};
+
+class TableView : public QTableView, public IView
 {
 	Q_OBJECT
 
@@ -28,6 +34,9 @@ public:
 	bool showAdditionalGrid() const noexcept;
 
 	Q_SLOT void initSpans();
+
+	// IView impl
+	virtual int viewportRowCapacity() const noexcept override;
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
