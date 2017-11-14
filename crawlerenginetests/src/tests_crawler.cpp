@@ -55,7 +55,7 @@ void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(CrawlerEngine::L
 {
 	for (const CrawlerEngine::LinksToThisResourceChanges::Change& change : changes.changes)
 	{
-		m_linksToThisResourceChanges[change.page.get()].push_back(changes);
+		m_linksToThisResourceChanges[change.page.lock().get()].push_back(changes);
 	}
 	
 	checkLinksToThisResourceConditions(nullptr);

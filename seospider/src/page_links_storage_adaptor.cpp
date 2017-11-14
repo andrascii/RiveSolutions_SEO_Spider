@@ -115,9 +115,15 @@ void PageLinksStorageAdaptor::onParsedPageAdded(LinksToThisResourceChanges chang
 
 	std::vector<size_t> newRowIndices;
 
-	for (const auto&[parsedPageSharedPointer, fromIndex] : changes.changes)
+	for (const auto&[parsedPageWeakPointer, fromIndex] : changes.changes)
 	{
-		if (parsedPageSharedPointer.get() != m_parsedPageInfo->associatedParsedPage())
+		if (parsedPageWeakPointer.expired())
+		{
+			WARNINGLOG << "pointer expired";
+			continue;
+		}
+
+		if (parsedPageWeakPointer.lock().get() != m_parsedPageInfo->associatedParsedPage())
 		{
 			continue;
 		}
