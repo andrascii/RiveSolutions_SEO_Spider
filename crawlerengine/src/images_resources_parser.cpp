@@ -44,8 +44,7 @@ void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& he
 		const RawResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
-			LinkInfo{ url.first, LinkParameter::DofollowParameter, url.second, dataResource },
-			ResourceSource::SourceTagImg,
+			LinkInfo{ url.first, LinkParameter::DofollowParameter, url.second, dataResource, ResourceSource::SourceTagImg },
 		};
 
 		page->allResourcesOnPage.insert(imageResource);

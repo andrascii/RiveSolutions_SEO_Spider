@@ -38,7 +38,7 @@ void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& head
 			continue;
 		}
 
-		page->allResourcesOnPage.insert(RawResourceOnPage{ ResourceType::ResourceHtml, linkInfo, ResourceSource::SourceTagA });
+		page->allResourcesOnPage.insert(RawResourceOnPage{ ResourceType::ResourceHtml, linkInfo });
 	}
 
 	CompoundParser::parse(output, headers, page);

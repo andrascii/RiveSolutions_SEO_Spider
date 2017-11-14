@@ -87,6 +87,7 @@ public:
 
 private:
 	static void cutAllTagsFromNodeHelper(const GumboNode* node, QByteArray& result) noexcept;
+	static LinkInfo getLinkRelUrl(const GumboNode* node, const char* relValue, ResourceSource source) noexcept;
 };
 
 }

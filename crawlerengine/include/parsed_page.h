@@ -32,7 +32,9 @@ enum class ResourceSource
 	SourceInvalid,
 	SourceTagA,
 	SourceTagImg,
-	SourceTagLink,
+	SourceTagLinkRelCanonical,
+	SourceTagLinkRelNext,
+	SourceTagLinkRelPrev,
 	SourceTagScript,
 	SourceCSS
 };
@@ -80,6 +82,7 @@ struct LinkInfo
 	LinkParameter urlParameter = LinkParameter::DofollowParameter;
 	QString altOrTitle;
 	bool dataResourceLink = false;
+	ResourceSource resourceSource;
 };
 
 struct ResourceLink
@@ -94,7 +97,7 @@ struct RawResourceOnPage
 {
 	ResourceType resourceType;
 	LinkInfo thisResourceLink;
-	ResourceSource resourceSource;
+	//ResourceSource resourceSource;
 };
 
 inline bool operator<(const RawResourceOnPage& lhs, const RawResourceOnPage& rhs)

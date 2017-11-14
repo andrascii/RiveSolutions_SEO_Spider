@@ -445,7 +445,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 	}
 
 	// 1. get from pending resources if exists
-	const ParsedPagePtr pendingPageRaw = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+	const ParsedPagePtr pendingPageRaw = m_data->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
 
 	// 2. if it's really html resource and pending page exists - merge two pages
 	incomingPage = mergeTwoPages(pendingPageRaw, incomingPage);
@@ -454,7 +454,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 	const StorageType storage = incomingPage->isThisExternalPage ?
 		StorageType::ExternalHtmlResourcesStorageType : StorageType::HtmlResourcesStorageType;
 
-	data()->addParsedPage(incomingPage, storage);
+	m_data->addParsedPage(incomingPage, storage);
 
 	if (incomingPage->isThisExternalPage)
 	{
@@ -471,41 +471,56 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 		}
 
 		resourcePage->url = resource.thisResourceLink.url;
-		ParsedPagePtr existingResource = data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
-
+		ParsedPagePtr existingResource = m_data->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 		if (!existingResource)
 		{
-			existingResource = data()->parsedPage(resourcePage, StorageType::PendingResourcesStorageType);
+			existingResource = m_data->parsedPage(resourcePage, StorageType::PendingResourcesStorageType);
 		}
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink{ incomingPage, resource.thisResourceLink.urlParameter,
-				resource.resourceSource, resource.thisResourceLink.altOrTitle });
-
-			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ 
-				existingResource, existingResource->linksToThisPage.size() - 1 });
+			existingResource->linksToThisPage.push_back(
+			{ 
+				incomingPage, 
+				resource.thisResourceLink.urlParameter, 
+				resource.thisResourceLink.resourceSource,
+				resource.thisResourceLink.altOrTitle 
+			});
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink{ existingResource, resource.thisResourceLink.urlParameter,
-				resource.resourceSource, resource.thisResourceLink.altOrTitle });
+			m_linksToPageChanges.changes.push_back({ existingResource, existingResource->linksToThisPage.size() - 1 });
+			
+			incomingPage->linksOnThisPage.push_back(
+			{ 
+				existingResource, 
+				resource.thisResourceLink.urlParameter, 
+				resource.thisResourceLink.resourceSource,
+				resource.thisResourceLink.altOrTitle 
+			});
 		}
 		else
 		{
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.thisResourceLink.url;
-
-			pendingResource->linksToThisPage.emplace_back(ResourceLink{ incomingPage, resource.thisResourceLink.urlParameter,
-				resource.resourceSource, resource.thisResourceLink.altOrTitle });
+			pendingResource->linksToThisPage.push_back(
+			{ 
+				incomingPage, 
+				resource.thisResourceLink.urlParameter, 
+				resource.thisResourceLink.resourceSource,
+				resource.thisResourceLink.altOrTitle 
+			});
 			
-			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{
-				pendingResource, pendingResource->linksToThisPage.size() - 1 }); // do not do it for pending resource?
+			m_linksToPageChanges.changes.push_back({ pendingResource, pendingResource->linksToThisPage.size() - 1 }); // do not do it for pending resource?
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink{ pendingResource, resource.thisResourceLink.urlParameter,
-				resource.resourceSource, resource.thisResourceLink.altOrTitle });
+			incomingPage->linksOnThisPage.push_back(
+			{ 
+				pendingResource, 
+				resource.thisResourceLink.urlParameter, 
+				resource.thisResourceLink.resourceSource,
+				resource.thisResourceLink.altOrTitle 
+			});
 			
-			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
-
-			DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
+			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
+			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
 	}
 }
@@ -578,7 +593,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) no
 		
 		const bool existingImageResource = newOrExistingResource && 
 			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
-			resource.resourceSource == ResourceSource::SourceTagImg;
+			resource.thisResourceLink.resourceSource == ResourceSource::SourceTagImg;
 
 		if (!newOrExistingResource)
 		{
@@ -597,7 +612,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) no
 		{ 
 			newOrExistingResource, 
 			resource.thisResourceLink.urlParameter, 
-			resource.resourceSource, 
+			resource.thisResourceLink.resourceSource, 
 			resource.thisResourceLink.altOrTitle 
 		});
 		
@@ -605,7 +620,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) no
 		{ 
 			incomingPage, 
 			resource.thisResourceLink.urlParameter, 
-			resource.resourceSource, 
+			resource.thisResourceLink.resourceSource,
 			resource.thisResourceLink.altOrTitle 
 		});
 		
