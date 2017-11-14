@@ -142,7 +142,7 @@ void TableView::paintEvent(QPaintEvent* event)
 	QPainter painter(viewport());
 
 	const QRect viewportRect = viewport()->rect();
-	const int pseudoRowCount = viewportRect.height() / m_rowHeight + 1;
+	const int maxViewportRowCount = viewportRowCapacity();
 
 	std::vector<int> uniqueSelectedRows = makeUniqueSelectedRows();
 
@@ -152,7 +152,7 @@ void TableView::paintEvent(QPaintEvent* event)
 
 	const int baseLineYOffset = std::min(rowViewportPosition(rowAt(0)), 0) + m_rowHeight;
 
-	for (int i = 0; i < pseudoRowCount; ++i)
+	for (int i = 0; i < maxViewportRowCount; ++i)
 	{
 		const int offsetByY = m_rowHeight * i + baseLineYOffset;
 		
@@ -283,6 +283,14 @@ void TableView::initSpans()
 			column += colSpan.width();
 		}
 	}
+}
+
+int TableView::viewportRowCapacity() const noexcept
+{
+	const QRect viewportRect = viewport()->rect();
+	const int viewportRowCountCapacity = viewportRect.height() / m_rowHeight + 1;
+
+	return viewportRowCountCapacity;
 }
 
 void TableView::adjustColumnSize()

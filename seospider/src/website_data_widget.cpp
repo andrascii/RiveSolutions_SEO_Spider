@@ -60,9 +60,10 @@ void WebSiteDataWidget::setStorageAdaptorType(StorageAdaptorType storageAdaptorT
 	PageModel* pageModel = new PageModel(m_stackedWidget);
 	pageModel->setStorageAdaptor(factory->createParsedPageInfoStorage(storageAdaptorType, theApp->sequencedDataCollection()));
 
-	PageViewModel* pageViewModel = new PageViewModel(pageModel, pageModel);
 
 	TableView* tableView = new TableView(m_stackedWidget);
+	PageViewModel* pageViewModel = new PageViewModel(tableView, pageModel, pageModel);
+
 	tableView->setModel(pageModel);
 	tableView->setViewModel(pageViewModel);
 	tableView->setShowAdditionalGrid(true);
