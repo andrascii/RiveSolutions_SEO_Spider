@@ -163,7 +163,7 @@ TEST(SiteMapTests, FrequencyByLevel)
 			resp.statusCode = static_cast<int>(Common::StatusCode::Ok200);
 		});
 
-		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 1000, "Waiting for 8 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 10, "Waiting for 8 crawled pages");
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -219,7 +219,7 @@ TEST(SiteMapTests, PriorityTag)
 			resp.statusCode = static_cast<int>(Common::StatusCode::Ok200);
 		});
 
-		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 1000, "Waiting for 8 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 10, "Waiting for 8 crawled pages");
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -256,6 +256,127 @@ TEST(SiteMapTests, PriorityTag)
 		EXPECT_EQ(QString("0.6"), result5); // level 4
 		EXPECT_EQ(QString("0.5"), result6); // level 5
 
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SiteMapTests, DiscardCanonical)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/canonical/index.html") });
+	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
+
+		CrawlerEngine::SiteMapSettings settings;
+
+		const QString xml = cl->siteMapXml(settings);
+		const QString result1 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url/loc/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+
+
+		// index-canonical.html is discarded, but index-1-canonical.html is not cause there is a link <a> to it
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/canonical/index.html")));
+		EXPECT_EQ(false, result1.contains(QString("http://sitemap.com/canonical/index-canonical.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/canonical/index-1.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/canonical/index-1-canonical.html")));
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SiteMapTests, DontDiscardCanonical)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/canonical/index.html") });
+	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
+
+		CrawlerEngine::SiteMapSettings settings;
+		settings.flags.setFlag(CrawlerEngine::IncludeCanonicalised);
+
+		const QString xml = cl->siteMapXml(settings);
+		const QString result1 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url/loc/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+
+
+		// index-canonical.html is not discarded because we use CrawlerEngine::IncludeCanonicalised
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/canonical/index.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/canonical/index-canonical.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/canonical/index-1.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/canonical/index-1-canonical.html")));
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SiteMapTests, DiscardNextPrev)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/nextprev/index.html") });
+	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
+
+		CrawlerEngine::SiteMapSettings settings;
+
+		const QString xml = cl->siteMapXml(settings);
+		const QString result1 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url/loc/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+
+
+		// index-next.html/index-prev.html are discarded, but index-1-next.html/index-1-next.html are not cause there are the links <a> to them
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index.html")));
+		EXPECT_EQ(false, result1.contains(QString("http://sitemap.com/nextprev/index-next.html")));
+		EXPECT_EQ(false, result1.contains(QString("http://sitemap.com/nextprev/index-prev.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index-1.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index-1-next.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index-1-prev.html")));
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SiteMapTests, DoNotDiscardNextPrev)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/nextprev/index.html") });
+	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
+
+		CrawlerEngine::SiteMapSettings settings;
+		settings.flags.setFlag(CrawlerEngine::IncludePaginatedUrls);
+
+		const QString xml = cl->siteMapXml(settings);
+		const QString result1 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url/loc/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+
+		// index-next.html/index-prev.html are not discarded because we use CrawlerEngine::IncludePaginatedUrls
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index-next.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index-prev.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index-1.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index-1-next.html")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/nextprev/index-1-prev.html")));
 	};
 
 	env.initializeTest(testFunction);

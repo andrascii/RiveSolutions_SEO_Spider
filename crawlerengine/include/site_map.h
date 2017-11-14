@@ -65,6 +65,7 @@ private:
 	bool discardByNoIndex(const ParsedPage* page, const SiteMapSettings& settings) const;
 	bool discardByResourceType(const ParsedPage* page, const SiteMapSettings& settings) const;
 	bool discardByStatusCode(const ParsedPage* page) const;
+	bool discardByCanonicalNextPrev(const ParsedPage* page, const SiteMapSettings& settings) const;
 
 	QString responseDate(const ParsedPage* page) const;
 	QString formatDate(const QDateTime& dateTime) const;

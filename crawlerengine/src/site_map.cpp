@@ -119,7 +119,8 @@ bool SiteMap::includeInSiteMap(const ParsedPage* page, const SiteMapSettings& se
 {
 	return !discardByStatusCode(page) &&
 		!discardByResourceType(page, settings) && 
-		!discardByNoIndex(page, settings);
+		!discardByNoIndex(page, settings) &&
+		!discardByCanonicalNextPrev(page, settings);
 }
 
 bool SiteMap::discardByNoIndex(const ParsedPage* page, const SiteMapSettings& settings) const
@@ -164,6 +165,56 @@ bool SiteMap::discardByResourceType(const ParsedPage* page, const SiteMapSetting
 bool SiteMap::discardByStatusCode(const ParsedPage* page) const
 {
 	return page->statusCode != Common::StatusCode::Ok200;
+}
+
+bool SiteMap::discardByCanonicalNextPrev(const ParsedPage* page, const SiteMapSettings& settings) const
+{
+	bool canonical = false;
+	bool nextOrPrev = false;
+	bool other = page->linksToThisPage.empty();
+
+	for (const ResourceLink& link : page->linksToThisPage)
+	{
+		switch (link.resourceSource)
+		{
+		case ResourceSource::SourceTagLinkRelCanonical:
+			canonical = true;
+			break;
+		case ResourceSource::SourceTagLinkRelNext:
+		case ResourceSource::SourceTagLinkRelPrev:
+			nextOrPrev = true;
+			break;
+		default:
+			other = true;
+		}
+
+		if (other)
+		{
+			break;
+		}
+
+		if (nextOrPrev && canonical)
+		{
+			break;
+		}
+	}
+
+	if (other)
+	{
+		return false;
+	}
+
+	if (settings.flags.testFlag(IncludeCanonicalised) && canonical)
+	{
+		return false;
+	}
+	
+	if (settings.flags.testFlag(IncludePaginatedUrls) && nextOrPrev)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 QString SiteMap::responseDate(const ParsedPage* page) const
