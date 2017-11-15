@@ -150,7 +150,7 @@ bool SiteMap::discardByResourceType(const ParsedPage* page, const SiteMapSetting
 
 	if (settings.flags.testFlag(IncludeImages) && resourceType == ResourceType::ResourceImage)
 	{
-		return false;
+		return discardImageByNoImageIndex(page, settings);
 	}
 
 	if (settings.flags.testFlag(IncludePDFs) && 
@@ -212,6 +212,39 @@ bool SiteMap::discardByCanonicalNextPrev(const ParsedPage* page, const SiteMapSe
 	if (settings.flags.testFlag(IncludePaginatedUrls) && nextOrPrev)
 	{
 		return false;
+	}
+
+	return true;
+}
+
+bool SiteMap::discardImageByNoImageIndex(const ParsedPage* page, const SiteMapSettings& settings) const
+{
+	if (settings.flags.testFlag(IncludeNoIndexImages))
+	{
+		return false;
+	}
+
+	auto it = page->metaRobotsFlags.find(UserAgentType::AnyBot);
+	if (it != page->metaRobotsFlags.end() && it->second.testFlag(MetaRobotsNoImageIndex))
+	{
+		return true;
+	}
+
+	if (page->linksToThisPage.empty())
+	{
+		return false;
+	}
+
+	for (const ResourceLink& link : page->linksToThisPage)
+	{
+		const MetaRobotsFlagsSet& pageMetaFlags = link.resource.lock()->metaRobotsFlags;
+		auto it = pageMetaFlags.find(UserAgentType::AnyBot);
+		if (it == pageMetaFlags.end() || !it->second.testFlag(MetaRobotsNoImageIndex))
+		{
+			// do not discard image if at least one page that 
+			// contains this image doesn't have noimageindex
+			return false;
+		}
 	}
 
 	return true;

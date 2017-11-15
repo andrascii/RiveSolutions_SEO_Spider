@@ -383,4 +383,61 @@ TEST(SiteMapTests, DoNotDiscardNextPrev)
 	env.exec();
 }
 
+TEST(SiteMapTests, DiscardNoImageIndex)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/images/index.html") });
+	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 7, 10, "Waiting for 7 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
+
+		CrawlerEngine::SiteMapSettings settings;
+		settings.flags.setFlag(CrawlerEngine::IncludeImages);
+
+		const QString xml = cl->siteMapXml(settings);
+		const QString result1 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url/loc/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/images/btclogo.png")));
+		EXPECT_EQ(false, result1.contains(QString("http://sitemap.com/images/btclogo-1.png")));
+		EXPECT_EQ(false, result1.contains(QString("http://sitemap.com/images/btclogo-2.png")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/images/btclogo-3.png")));
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SiteMapTests, DoNotDiscardNoImageIndex)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/images/index.html") });
+	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 7, 10, "Waiting for 7 crawled pages");
+		cl->checkSequencedDataCollectionConsistency();
+
+		CrawlerEngine::SiteMapSettings settings;
+		settings.flags.setFlag(CrawlerEngine::IncludeImages);
+		settings.flags.setFlag(CrawlerEngine::IncludeNoIndexImages);
+
+		const QString xml = cl->siteMapXml(settings);
+		const QString result1 = CrawlerEngine::XPathHelpers::evaluateXPath(xml,
+			QString("/urlset/url/loc/text()"), QString("http://www.sitemaps.org/schemas/sitemap/0.9"));
+
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/images/btclogo.png")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/images/btclogo-1.png")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/images/btclogo-2.png")));
+		EXPECT_EQ(true, result1.contains(QString("http://sitemap.com/images/btclogo-3.png")));
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }

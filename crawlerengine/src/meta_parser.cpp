@@ -10,6 +10,7 @@ void MetaParser::parse(GumboOutput* output, const ResponseHeaders& headers, Pars
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
+		parseMetaRobots(output, headers, page);
 		return;
 	}
 
@@ -147,6 +148,30 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 		{ QString("noydir"), MetaRobotsNoYDir },
 	};
 
+
+	std::vector<QString> xRobotsTagValues = headers.valueOf("x-robots-tag");
+
+	for (size_t i = 0; i < xRobotsTagValues.size(); ++i)
+	{
+		const QStringList parts = xRobotsTagValues[i].split(QLatin1Char(','), QString::SkipEmptyParts);
+
+		for (const QString& part : parts)
+		{
+			auto it = metaRobotsMapping.find(part.trimmed().toLower());
+
+			if (it != metaRobotsMapping.cend())
+			{
+				page->metaRobotsFlags[UserAgentType::AnyBot].setFlag(it->second);
+			}
+		}
+	}
+
+	if (page->resourceType != ResourceType::ResourceHtml)
+	{
+		// non-html, process only headers
+		return;
+	}
+
 	const QStringList supportedUserAgents = MetaRobotsHelpers::supportedUserAgents(true);
 
 	foreach(const QString& userAgentStr, supportedUserAgents)
@@ -188,22 +213,7 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 			}
 		}
 
-		std::vector<QString> xRobotsTagValues = headers.valueOf("x-robots-tag");
-
-		for (size_t i = 0; i < xRobotsTagValues.size(); ++i)
-		{
-			const QStringList parts = xRobotsTagValues[i].split(QLatin1Char(','), QString::SkipEmptyParts);
-
-			for (const QString& part : parts)
-			{
-				auto it = metaRobotsMapping.find(part.trimmed().toLower());
-
-				if (it != metaRobotsMapping.cend())
-				{
-					page->metaRobotsFlags[userAgentType].setFlag(it->second);
-				}
-			}
-		}
+		
 	}
 }
 

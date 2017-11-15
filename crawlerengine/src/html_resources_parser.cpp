@@ -23,6 +23,7 @@ void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& head
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
+		CompoundParser::parse(output, headers, page);
 		return;
 	}
 
