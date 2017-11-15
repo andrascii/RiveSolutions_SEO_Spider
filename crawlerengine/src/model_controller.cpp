@@ -472,6 +472,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 		resourcePage->url = resource.thisResourceLink.url;
 		ParsedPagePtr existingResource = m_data->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
+
 		if (!existingResource)
 		{
 			existingResource = m_data->parsedPage(resourcePage, StorageType::PendingResourcesStorageType);
@@ -479,45 +480,27 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.push_back(
-			{ 
-				incomingPage, 
-				resource.thisResourceLink.urlParameter, 
-				resource.thisResourceLink.resourceSource,
-				resource.thisResourceLink.altOrTitle 
-			});
+			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
-			m_linksToPageChanges.changes.push_back({ existingResource, existingResource->linksToThisPage.size() - 1 });
+			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			incomingPage->linksOnThisPage.push_back(
-			{ 
-				existingResource, 
-				resource.thisResourceLink.urlParameter, 
-				resource.thisResourceLink.resourceSource,
-				resource.thisResourceLink.altOrTitle 
-			});
+			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, resource.thisResourceLink.urlParameter, 
+				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		}
 		else
 		{
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.thisResourceLink.url;
-			pendingResource->linksToThisPage.push_back(
-			{ 
-				incomingPage, 
-				resource.thisResourceLink.urlParameter, 
-				resource.thisResourceLink.resourceSource,
-				resource.thisResourceLink.altOrTitle 
-			});
+
+			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
-			m_linksToPageChanges.changes.push_back({ pendingResource, pendingResource->linksToThisPage.size() - 1 }); // do not do it for pending resource?
+			// do not do it for pending resource?
+			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ pendingResource, pendingResource->linksToThisPage.size() - 1 });
 			
-			incomingPage->linksOnThisPage.push_back(
-			{ 
-				pendingResource, 
-				resource.thisResourceLink.urlParameter, 
-				resource.thisResourceLink.resourceSource,
-				resource.thisResourceLink.altOrTitle 
-			});
+			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, resource.thisResourceLink.urlParameter, 
+				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
 			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
@@ -608,23 +591,14 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) no
 				httpResource ? StorageType::PendingResourcesStorageType : storage);
 		}
 
-		incomingPage->linksOnThisPage.push_back(
-		{ 
-			newOrExistingResource, 
-			resource.thisResourceLink.urlParameter, 
-			resource.thisResourceLink.resourceSource, 
-			resource.thisResourceLink.altOrTitle 
-		});
+		incomingPage->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, resource.thisResourceLink.urlParameter, 
+			resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.push_back(
-		{ 
-			incomingPage, 
-			resource.thisResourceLink.urlParameter, 
-			resource.thisResourceLink.resourceSource,
-			resource.thisResourceLink.altOrTitle 
-		});
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+			resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		
-		m_linksToPageChanges.changes.push_back({ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
+		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
+
 		newOrExistingResource->resourceType = resource.resourceType;
 
 		// special case: parse image resource again because it can have now empty or too short/long alt text

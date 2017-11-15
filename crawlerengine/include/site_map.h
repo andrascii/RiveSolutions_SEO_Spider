@@ -90,3 +90,6 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::SiteMapChangeFreqTagMode);
+Q_DECLARE_METATYPE(CrawlerEngine::SitemapChangeFreq);
