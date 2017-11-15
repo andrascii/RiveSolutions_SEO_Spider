@@ -38,7 +38,7 @@ void TableView::setModel(QAbstractItemModel* model)
 {
 	QTableView::setModel(model);
 
-	m_model = SeoSpiderHelpers::safe_static_cast<AbstractTableModel*>(model);
+	m_model = SeoSpiderHelpers::fast_cast<AbstractTableModel*>(model);
 
 	applyRowHeight();
 
@@ -250,7 +250,7 @@ void TableView::setViewModel(IViewModel* modelView) noexcept
 	VERIFY(connect(m_viewModel->qobject(), SIGNAL(repaintItems(const QModelIndexList&)),
 		this, SLOT(onAboutRepaintItems(const QModelIndexList&))));
 
-	SeoSpiderHelpers::safe_static_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
+	SeoSpiderHelpers::fast_cast<ItemViewDelegate*>(itemDelegate())->setViewModel(m_viewModel);
 }
 
 IViewModel* TableView::viewModel() const noexcept
@@ -295,7 +295,7 @@ int TableView::viewportRowCapacity() const noexcept
 
 void TableView::adjustColumnSize()
 {
-	m_model = SeoSpiderHelpers::safe_static_cast<AbstractTableModel*>(model());
+	m_model = SeoSpiderHelpers::fast_cast<AbstractTableModel*>(model());
 
 	if (m_model->resizePolicy())
 	{

@@ -120,16 +120,6 @@ void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 	}
 }
 
-const UnorderedDataCollection* ModelController::data() const noexcept
-{
-	return m_data;
-}
-
-UnorderedDataCollection* ModelController::data() noexcept
-{
-	return m_data;
-}
-
 void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage) const noexcept
 {
 	const QUrl url = incomingPage->url;
@@ -496,13 +486,11 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
-			// do not do it for pending resource?
-			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ pendingResource, pendingResource->linksToThisPage.size() - 1 });
-			
 			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, resource.thisResourceLink.urlParameter, 
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
 			m_data->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
+
 			DEBUG_ASSERT(m_data->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
 	}
