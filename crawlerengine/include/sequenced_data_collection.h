@@ -21,6 +21,7 @@ public:
 	void clear();
 
 	void pushBack(const ParsedPagePtr& page);
+	void emplaceBack(ParsedPagePtr&& page);
 
 	const ParsedPage* operator[](int idx) const noexcept;
 	ParsedPage* operator[](int idx) noexcept;
@@ -28,7 +29,7 @@ public:
 	bool containsPointersWithUseCountGreaterThanOne() const noexcept;
 
 private:
-	QVector<ParsedPagePtr> m_pages;
+	std::vector<ParsedPagePtr> m_pages;
 };
 
 class SequencedDataCollection : public QObject

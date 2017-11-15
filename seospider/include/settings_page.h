@@ -1,7 +1,6 @@
 #pragma once
 
 #include "isettings_page.h"
-
 namespace SeoSpider
 {
 

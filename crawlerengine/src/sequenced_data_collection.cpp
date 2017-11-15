@@ -1,11 +1,13 @@
 #include "sequenced_data_collection.h"
 
+#undef max
+
 namespace CrawlerEngine
 {
 
 int SequencedStorage::size() const noexcept
 {
-	return m_pages.size();
+	return static_cast<int>(m_pages.size());
 }
 
 void SequencedStorage::clear()
@@ -15,7 +17,16 @@ void SequencedStorage::clear()
 
 void SequencedStorage::pushBack(const ParsedPagePtr& page)
 {
+	DEBUG_ASSERT(m_pages.size() < std::numeric_limits<int>::max());
+
 	m_pages.push_back(page);
+}
+
+void SequencedStorage::emplaceBack(ParsedPagePtr&& page)
+{
+	DEBUG_ASSERT(m_pages.size() < std::numeric_limits<int>::max());
+
+	m_pages.emplace_back(std::move(page));
 }
 
 const ParsedPage* SequencedStorage::operator[](int idx) const noexcept
@@ -87,7 +98,7 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int typ
 		auto&[storageTypeFromIterator, collection] = *storageIterator;
 		Q_UNUSED(storageTypeFromIterator);
 
-		collection.pushBack(parsedPagePtr);
+		collection.emplaceBack(std::move(parsedPagePtr));
 
 		emit parsedPageAdded(storage(storageType)->size() - 1, static_cast<int>(storageType));
 	}

@@ -44,7 +44,7 @@ void ApplicationSettingsWidget::restoreChangedValues()
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
 
-		SeoSpiderHelpers::safe_static_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
+		SeoSpiderHelpers::fast_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
 	}
 
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -58,7 +58,7 @@ void ApplicationSettingsWidget::applyChanges()
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
 
-		SeoSpiderHelpers::safe_static_cast<SettingsPage*>(widget)->applyChanges();
+		SeoSpiderHelpers::fast_cast<SettingsPage*>(widget)->applyChanges();
 	}
 		
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -84,7 +84,7 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 		return;
 	}
 	
-	SeoSpiderHelpers::safe_static_cast<SettingsPage*>(widget)->reloadSettings();
+	SeoSpiderHelpers::fast_cast<SettingsPage*>(widget)->reloadSettings();
 	m_somethingChanged = false;
 }
 

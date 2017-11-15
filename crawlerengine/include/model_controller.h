@@ -20,8 +20,15 @@ public:
 	Q_SLOT void setWebCrawlerOptions(const CrawlerOptions& options);
 	Q_SLOT void clearData();
 
-	const UnorderedDataCollection* data() const noexcept;
-	UnorderedDataCollection* data() noexcept;
+	const UnorderedDataCollection* data() const noexcept
+	{
+		return m_data;
+	}
+
+	UnorderedDataCollection * data() noexcept
+	{
+		return m_data;
+	}
 
 private:
 	void processParsedPageUrl(ParsedPagePtr& incomingPage) const noexcept;

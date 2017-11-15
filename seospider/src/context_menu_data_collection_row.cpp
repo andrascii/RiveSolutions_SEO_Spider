@@ -76,7 +76,7 @@ void ContextMenuDataCollectionRow::openUrlAction() const
 	for (QModelIndex index : selectedIndexes())
 	{
 		const PageModel* model = 
-			SeoSpiderHelpers::safe_static_cast<const PageModel*>(index.model());
+			SeoSpiderHelpers::fast_cast<const PageModel*>(index.model());
 
 		if (model->itemType(index) != IStorageAdaptor::ItemType::UrlItemType)
 		{
@@ -109,7 +109,7 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl() const
 	foreach(QModelIndex index, selectedIndexes())
 	{
 		const PageModel* model = 
-			SeoSpiderHelpers::safe_static_cast<const PageModel*>(index.model());
+			SeoSpiderHelpers::fast_cast<const PageModel*>(index.model());
 
 		if (model->itemType(index) != IStorageAdaptor::ItemType::UrlItemType)
 		{

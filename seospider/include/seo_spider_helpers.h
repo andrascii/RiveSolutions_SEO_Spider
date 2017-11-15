@@ -12,7 +12,7 @@ public:
 	static void moveWidgetToHostCenter(QWidget* widget, QWidget* host = nullptr);
 
 	template <typename DestinationType, typename SourceType>
-	static DestinationType safe_static_cast(SourceType* p)
+	static DestinationType fast_cast(SourceType* p)
 	{
 		if constexpr(std::is_pointer<DestinationType>::value)
 		{
@@ -26,7 +26,7 @@ public:
 	}
 
 	template <typename DestinationType, typename SourceType>
-	static DestinationType safe_static_cast(SourceType&& p)
+	static DestinationType fast_cast(SourceType&& p)
 	{
 		if constexpr(std::is_reference<DestinationType>::value)
 		{
