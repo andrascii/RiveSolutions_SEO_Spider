@@ -23,6 +23,7 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);
 	m_summaryFilterTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_summaryFilterTableView->horizontalHeader()->hide();
+	m_summaryFilterTableView->setObjectName("FilterWidgetTableView");
 
 	m_splitter->setOrientation(Qt::Horizontal);
 	m_splitter->setChildrenCollapsible(false);

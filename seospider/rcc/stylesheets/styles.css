@@ -2,7 +2,7 @@ QWidget
 {
 	font-family: Arial;
 	font-size: 10pt;
-	color: #ededed;
+	color: #22252D;
 }
 
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
@@ -11,8 +11,13 @@ QMenuBar
 {	
 	padding-top: 1em;
 	padding-bottom: 1em;
-	background-color: #34465d;
+	background-color: #22252D;
 	border-bottom: 0.05em solid #C0C0C0;
+}
+
+QMenuBar::item
+{
+	color: #EDEDED;
 }
 
 QMenuBar::item:selected
@@ -30,13 +35,13 @@ QMenu
 
 QMenu::item
 {
-	color: #333333;
+	color: #22252D;
 }
 
 QMenu::item:selected
 {
 	color: #EDEDED;
-	background: #34465d;
+	background: #22252D;
 }
 
 /*/////////////////////////////// Status Bar ///////////////////////////////*/
@@ -44,7 +49,7 @@ QMenu::item:selected
 QStatusBar
 {
 	min-height: 2.5em;
-	background-color: #34465d;
+	background-color: #22252D;
 	border-top: 0.05em solid #C0C0C0;
 }
 
@@ -56,7 +61,8 @@ QProgressBar,
 QPushButton,
 QComboBox,
 QSpinBox,
-QDoubleSpinBox
+QDoubleSpinBox,
+QDateEdit
 {
 	border: 0.05em solid #CCCCCC;
 	border-radius: 0.143em;
@@ -67,16 +73,24 @@ SeoSpider--TableView
 	border: none;
 }
 
-/*////////////////////////////////// Line edit and spin box //////////////////////////*/
+/*////////////////////////////////// QLineEdit, QSpinBox, QDoubleSpinBox, QDateEdit, QCheckBox ////////////////////////////////*/
 
 QLineEdit,
 QSpinBox,
-QDoubleSpinBox
+QDoubleSpinBox,
+QDateEdit
 {
 	min-height: 1.5em;
 	background-color: #ffffff;
 	color: #494949;
 }
+
+QCheckBox
+{
+	min-height: 1.5em;
+}
+
+/*////////////////////////////////// UrlLineEdit //////////////////////////*/
 
 SeoSpider--UrlLineEdit:focus[isValidUrl=true]
 {
@@ -158,10 +172,11 @@ QComboBox::down-arrow
 	background: transparent;
 }
 
-/*/////////////////////////////// QSpinBox, QDoubleSpinBox ///////////////////////////////*/
+/*/////////////////////////////// QSpinBox, QDoubleSpinBox, QDateEdit ///////////////////////////////*/
 
 QSpinBox::up-button,
-QDoubleSpinBox::up-button
+QDoubleSpinBox::up-button,
+QDateEdit::up-button
 {
 	image: url(:/images/up-arrow.png);
 	border-bottom: 0.05em solid #CCCCCC;
@@ -170,13 +185,15 @@ QDoubleSpinBox::up-button
 }
 
 QSpinBox::up-button:pressed,
-QDoubleSpinBox::up-button:pressed
+QDoubleSpinBox::up-button:pressed,
+QDateEdit::up-button:pressed
 {
 	background: #CCCCCC;
 }
 
 QSpinBox::down-button,
-QDoubleSpinBox::down-button
+QDoubleSpinBox::down-button,
+QDateEdit::down-button
 {
     image: url(:/images/down-arrow.png);
 	border-left: 0.05em solid #CCCCCC;
@@ -186,9 +203,16 @@ QDoubleSpinBox::down-button
 }
 
 QSpinBox::down-button:pressed,
-QDoubleSpinBox::down-button:pressed
+QDoubleSpinBox::down-button:pressed,
+QDateEdit::down-button:pressed
 {
 	background: #CCCCCC;
+}
+
+QDateEdit::up-button,
+QDateEdit::down-button
+{
+	background: #FFFFFF;
 }
 
 /*/////////////////////////////// Info frame ///////////////////////////////*/
@@ -226,7 +250,7 @@ QHeaderView
 QHeaderView::section
 {
 	font-size: 8pt;
-	color: black;
+	color: #22252D;
 	
 	border: 0.05em solid white;
 	border-top: none;
@@ -371,7 +395,8 @@ QFrame#ControlsFrame QLabel
 QFrame#ControlsFrame QSpinBox,
 QFrame#ControlsFrame QDoubleSpinBox,
 QFrame#ControlsFrame QComboBox,
-QFrame#ControlsFrame QLineEdit
+QFrame#ControlsFrame QLineEdit,
+QFrame#ControlsFrame QDateEdit
 {
 	border-radius: 0;
 }
@@ -382,9 +407,11 @@ QFrame#ControlsFrame QDoubleSpinBox
 	max-width: 10em;
 }
 
-QFrame#ControlsFrame QComboBox
+QFrame#ControlsFrame QComboBox,
+QFrame#ControlsFrame QDateEdit
 {
 	min-width: 10em;
+	max-width: 22em;
 }
 
 QFrame#HeaderFrame
@@ -504,7 +531,7 @@ QWidget#NavigationPanel QPushButton[selected="true"]
 QWidget#DebugWebPageInfoWidget,
 QWidget#DebugWebPageInfoWidget QWidget
 {
-	color: black;
+	color: #22252D;
 }
 
 /*/////////////////////////////// HeaderDecorationWidget ///////////////////////////////*/
@@ -518,7 +545,7 @@ SeoSpider--HeaderDecorationWidget QFrame#TitleFrame
 {
 	min-height: 3em;
 	background-color: #E8E8E8;
-	border-bottom: 0.05em solid #C0C0C0;
+	border-bottom: 0.05em solid #CCCCCC;
 }
 
 /*/////////////////////////////// QTabWidget ///////////////////////////////*/
@@ -634,10 +661,4 @@ QFrame#MessageBox QPushButton:pressed
 QFrame#MessageBox QLabel
 {
 	color: #ededed;
-}
-
-/*/////////////////////////////// DataPagesWidget ///////////////////////////////*/
-
-SeoSpider--DataPagesWidget QPushButton
-{
 }

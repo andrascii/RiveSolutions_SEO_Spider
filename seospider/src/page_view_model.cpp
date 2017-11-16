@@ -5,6 +5,12 @@
 #include "table_view.h"
 #include "deferred_call.h"
 
+namespace
+{
+
+constexpr int s_preferredCacheSize = 500;
+
+}
 
 namespace SeoSpider
 {
@@ -18,8 +24,8 @@ PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
 	, m_selectedGridLineColor("#E8E0C1")
 	, m_gridLineColor("#F3F3F3")
 	, m_urlTextColor("#1754A8")
-	, m_textColor("#000000")
-	, m_textFont("Helvetica", 9, QFont::Medium)
+	, m_textColor("#22252D")
+	, m_textFont("Arial", 9, QFont::Medium)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();
@@ -222,16 +228,7 @@ void PageViewModel::initializeRenderers()
 		IRenderer::BackgroundRendererType
 	);
 
-	//
-	// It is not a reliable way to calculate cache
-	// Potentially may work wrong
-	//
-	const auto setCacheCallback = [this, model]()
-	{
-		AbstractViewModel::setItemRendererCacheSize(m_view->viewportRowCapacity() * static_cast<int>(model->columnCount()) * 2);
-	};
-
-	DeferredCall::call(setCacheCallback);
+	AbstractViewModel::setItemRendererCacheSize(s_preferredCacheSize);
 }
 
 }

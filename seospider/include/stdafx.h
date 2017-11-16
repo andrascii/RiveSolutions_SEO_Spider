@@ -81,6 +81,7 @@
 #include <QScreen>
 #include <QItemSelectionModel>
 #include <QtSvg>
+#include <QFontDatabase>
 
 #include "logger_connection_service_api.h"
 #include "common_macro_helpers.h"

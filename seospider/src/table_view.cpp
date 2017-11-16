@@ -141,6 +141,8 @@ void TableView::paintEvent(QPaintEvent* event)
 
 	QPainter painter(viewport());
 
+	painter.setPen(viewModel()->gridLineColor(QModelIndex()));
+
 	const QRect viewportRect = viewport()->rect();
 	const int maxViewportRowCount = viewportRowCapacity();
 
