@@ -20,6 +20,8 @@ public:
 	int size() const noexcept;
 	void clear();
 
+	bool empty() const noexcept;
+
 	void pushBack(const ParsedPagePtr& page);
 	void emplaceBack(ParsedPagePtr&& page);
 
@@ -38,6 +40,8 @@ class SequencedDataCollection : public QObject
 
 public:
 	SequencedDataCollection();
+
+	bool empty() const noexcept;
 
 	const SequencedStorage* storage(StorageType type) const noexcept;
 

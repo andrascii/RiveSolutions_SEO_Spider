@@ -90,6 +90,11 @@ void Crawler::clearData()
 	emit onAboutClearData();
 }
 
+bool Crawler::isNoData() const noexcept
+{
+	return m_sequencedDataCollection->empty();
+}
+
 CrawlerEngine::Crawler::State Crawler::state() const noexcept
 {
 	return m_state;

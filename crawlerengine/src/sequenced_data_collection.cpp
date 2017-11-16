@@ -15,6 +15,11 @@ void SequencedStorage::clear()
 	m_pages.clear();
 }
 
+bool SequencedStorage::empty() const noexcept
+{
+	return m_pages.empty();
+}
+
 void SequencedStorage::pushBack(const ParsedPagePtr& page)
 {
 	DEBUG_ASSERT(m_pages.size() < std::numeric_limits<int>::max());
@@ -68,6 +73,11 @@ bool SequencedStorage::containsPointersWithUseCountGreaterThanOne() const noexce
 SequencedDataCollection::SequencedDataCollection()
 {
 	initializeStorages();
+}
+
+bool SequencedDataCollection::empty() const noexcept
+{
+	return storage(StorageType::CrawledUrlStorageType)->empty();
 }
 
 SequencedStorage* SequencedDataCollection::storage(StorageType type) noexcept

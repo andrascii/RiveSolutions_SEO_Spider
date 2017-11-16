@@ -2,19 +2,7 @@
 #include "application.h"
 #include "main_window.h"
 #include "site_map.h"
-
-namespace
-{
-
-using namespace SeoSpider;
-
-// const std::map<std::string_view, SiteMapChangeFreqTagMode> s_stringValue = 
-// {
-// 	{ "Calculate from Last Modified Header", SiteMapChangeFreqTagMode::CalculatedFromLastModifiedHeader },
-// 	{ "Use Crawl Depth Settings", SiteMapChangeFreqTagMode::UseLevelSettings }
-// };
-
-}
+#include "crawler.h"
 
 namespace SeoSpider
 {
@@ -96,12 +84,98 @@ SitemapCreatorWidget::SitemapCreatorWidget(QWidget* parent)
 	m_ui->changefreqCrawlDepth5PlusComboBox->addItem(tr("Never"), QVariant::fromValue(SitemapChangeFreq::Never));
 	m_ui->changefreqCrawlDepth5PlusComboBox->setCurrentIndex(static_cast<int>(SitemapChangeFreq::Daily));
 
+	m_ui->lastmodDateComboBox->addItem(tr("User Server Response Headers"), QVariant::fromValue(SiteMapLastModTagMode::Calculated));
+	m_ui->lastmodDateComboBox->addItem(tr("User Server Response Headers"), QVariant::fromValue(SiteMapLastModTagMode::Manual));
+	m_ui->lastmodDateComboBox->setCurrentIndex(static_cast<int>(SiteMapLastModTagMode::Calculated));
+	m_ui->customDateEdit->setDate(QDate::currentDate());
+
+	VERIFY(connect(m_ui->lastmodDateComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(controlStateChanged())));
+
 	controlStateChanged();
 }
 
 void SitemapCreatorWidget::showSaveFileDialog() const
 {
-	QFileDialog::getSaveFileName(theApp->mainWindow());
+	if (theApp->crawler()->state() == Crawler::StateWorking)
+	{
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot create site map when crawler is working!"), 
+			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	if (theApp->crawler()->isNoData())
+	{
+		theApp->mainWindow()->showMessageBoxDialog(tr("What?"), 
+			tr("Crawler does not contain any data.\nIt does not make sense to create empty site map.\nAre you agree? ;)"),
+			MessageBoxDialog::InformationIcon, QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow());
+
+	SiteMapSettings sitemapSettings;
+
+	if (m_ui->includeNoindexPagesCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludeNoIndexPages);
+	}
+	if (m_ui->includeCanonicolisedCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludeCanonicalised);
+	}
+	if (m_ui->includePaintedUrlsCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludePaginatedUrls);
+	}
+	if (m_ui->includePdfsCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludePDFs);
+	}
+	if (m_ui->includeLastmodTagCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludeLastModTag);
+	}
+	if (m_ui->includePriorityTagCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludePriorityTag);
+	}
+	if (m_ui->includeChangefreqTagCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludeChangeFreqTag);
+	}
+	if (m_ui->includeImagesCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludeImages);
+	}
+	if (m_ui->includeNoindexImagesCheckBox->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludeNoIndexImages);
+	}
+
+	sitemapSettings.lastModifiedMode = static_cast<SiteMapLastModTagMode>(m_ui->lastmodDateComboBox->currentData().toInt());
+	sitemapSettings.lastModifiedDate = m_ui->customDateEdit->dateTime();
+
+	sitemapSettings.priorityLevelSettings[0] = m_ui->priorityCrawlDepth0SpinBox->value();
+	sitemapSettings.priorityLevelSettings[1] = m_ui->priorityCrawlDepth1SpinBox->value();
+	sitemapSettings.priorityLevelSettings[2] = m_ui->priorityCrawlDepth2SpinBox->value();
+	sitemapSettings.priorityLevelSettings[3] = m_ui->priorityCrawlDepth3SpinBox->value();
+	sitemapSettings.priorityLevelSettings[4] = m_ui->priorityCrawlDepth4SpinBox->value();
+	sitemapSettings.priorityLevelSettings[5] = m_ui->priorityCrawlDepth5PlusSpinBox->value();
+
+	sitemapSettings.changeFreqMode = static_cast<SiteMapChangeFreqTagMode>(m_ui->changefreqComboBox->currentData().toInt());
+
+	sitemapSettings.changeFreqLevelSettings[0] = static_cast<SitemapChangeFreq>(m_ui->changefreqCrawlDepth0ComboBox->currentData().toInt());
+	sitemapSettings.changeFreqLevelSettings[1] = static_cast<SitemapChangeFreq>(m_ui->changefreqCrawlDepth1ComboBox->currentData().toInt());
+	sitemapSettings.changeFreqLevelSettings[2] = static_cast<SitemapChangeFreq>(m_ui->changefreqCrawlDepth2ComboBox->currentData().toInt());
+	sitemapSettings.changeFreqLevelSettings[3] = static_cast<SitemapChangeFreq>(m_ui->changefreqCrawlDepth3ComboBox->currentData().toInt());
+	sitemapSettings.changeFreqLevelSettings[4] = static_cast<SitemapChangeFreq>(m_ui->changefreqCrawlDepth4ComboBox->currentData().toInt());
+	sitemapSettings.changeFreqLevelSettings[5] = static_cast<SitemapChangeFreq>(m_ui->changefreqCrawlDepth5PlusComboBox->currentData().toInt());
+
+	std::ofstream siteMapXmlFile(path.toStdString());
+
+	siteMapXmlFile << theApp->crawler()->siteMapXml(sitemapSettings).toStdString();
 }
 
 void SitemapCreatorWidget::controlStateChanged() const
@@ -114,12 +188,14 @@ void SitemapCreatorWidget::controlStateChanged() const
 	//
 	// Include lastmod tag
 	//
+	SiteMapLastModTagMode lastmodTagMode = static_cast<SiteMapLastModTagMode>(m_ui->lastmodDateComboBox->currentData().toInt());
 	m_ui->lastmodDateComboBox->setEnabled(isIncludeLastModTagChecked);
+	m_ui->customDateEdit->setEnabled(isIncludeLastModTagChecked && lastmodTagMode == SiteMapLastModTagMode::Manual);
 
 	//
 	// Include changefreq tag
 	//
-	SiteMapChangeFreqTagMode changeFreqMode = static_cast<SiteMapChangeFreqTagMode>(m_ui->changefreqComboBox->currentData(Qt::UserRole).toInt());
+	SiteMapChangeFreqTagMode changeFreqMode = static_cast<SiteMapChangeFreqTagMode>(m_ui->changefreqComboBox->currentData().toInt());
 
 	m_ui->changefreqComboBox->setEnabled(isIncludeChangefreqTagChecked);
 	m_ui->changefreqCrawlDepth0ComboBox->setEnabled(isIncludeChangefreqTagChecked && changeFreqMode == SiteMapChangeFreqTagMode::UseLevelSettings);
@@ -158,8 +234,6 @@ void SitemapCreatorWidget::controlStateChanged() const
 	m_ui->label_11->setEnabled(isIncludePriorityTagChecked);
 	m_ui->label_12->setEnabled(isIncludePriorityTagChecked);
 	m_ui->label_13->setEnabled(isIncludePriorityTagChecked);
-
-
 }
 
 }

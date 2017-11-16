@@ -1,4 +1,5 @@
 #pragma once
+
 #include "parsed_page.h"
 
 namespace CrawlerEngine
@@ -54,7 +55,6 @@ struct SiteMapSettings
 	SitemapChangeFreq changeFreqLevelSettings[6];
 };
 
-
 class SiteMap
 {
 public:
@@ -93,3 +93,4 @@ private:
 
 Q_DECLARE_METATYPE(CrawlerEngine::SiteMapChangeFreqTagMode);
 Q_DECLARE_METATYPE(CrawlerEngine::SitemapChangeFreq);
+Q_DECLARE_METATYPE(CrawlerEngine::SiteMapLastModTagMode);

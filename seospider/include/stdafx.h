@@ -31,6 +31,7 @@
 #include <sstream>
 #include <csignal>
 #include <limits>
+#include <fstream>
 
 //
 // boost

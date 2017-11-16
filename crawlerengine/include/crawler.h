@@ -45,6 +45,8 @@ public:
 	void initialize();
 	
 	void clearData();
+
+	bool isNoData() const noexcept;
 	
 	State state() const noexcept;
 	
