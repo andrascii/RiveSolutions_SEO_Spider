@@ -664,7 +664,7 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 	}
 
 
-	const bool updateChildren = incomingPage->pageLevel < level;
+	const bool updateChildren = incomingPage->pageLevel > level;
 	ASSERT(level != invalidPageLevel);
 	incomingPage->pageLevel = level;
 
