@@ -105,6 +105,8 @@ inline bool operator<(const RawResourceOnPage& lhs, const RawResourceOnPage& rhs
 	return lhs.thisResourceLink.url.toDisplayString() < rhs.thisResourceLink.url.toDisplayString();
 }
 
+constexpr int invalidPageLevel = 100000000;
+
 struct ParsedPage
 {
 	QUrl url;
@@ -148,6 +150,7 @@ struct ParsedPage
 	std::deque<ResourceLink> linksToThisPage;
 
 	QByteArray rawResponse;
+	int pageLevel = invalidPageLevel;
 };
 
 using ParsedPagePtr = std::shared_ptr<ParsedPage>;

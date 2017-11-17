@@ -46,6 +46,9 @@ private:
 
 	bool resourceShouldBeProcessed(ResourceType resourceType) const noexcept;
 
+	void calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept;
+	void setPageLevel(ParsedPagePtr& page, int level) const noexcept;
+
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptions m_crawlerOptions;

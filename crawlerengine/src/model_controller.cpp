@@ -126,6 +126,7 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage) const no
 	const QString urlStr = url.toString();
 
 	m_data->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
+	calculatePageLevel(incomingPage);
 
 	if (url.host() != m_crawlerOptions.host.host())
 	{
@@ -630,6 +631,79 @@ bool ModelController::resourceShouldBeProcessed(ResourceType resourceType) const
 	}
 
 	return false;
+}
+
+void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept
+{
+	int level = 1;
+	bool hasParentResources = false;
+	for (const ResourceLink& link : incomingPage->linksToThisPage)
+	{
+		if (link.resource.expired())
+		{
+			continue;
+		}
+
+		ParsedPagePtr parent = link.resource.lock();
+		if (parent->statusCode != Common::StatusCode::Ok200)
+		{
+			continue;
+		}
+		
+		if (!hasParentResources)
+		{
+			hasParentResources = true;
+			level = invalidPageLevel;
+		}
+
+		if (parent->pageLevel + 1 < level)
+		{
+			level = parent->pageLevel == 1 && parent->url == m_crawlerOptions.host 
+				? 1 : parent->pageLevel + 1;
+		}
+	}
+
+
+	const bool updateChildren = incomingPage->pageLevel < level;
+	ASSERT(level != invalidPageLevel);
+	incomingPage->pageLevel = level;
+
+	if (!updateChildren)
+	{
+		return;
+	}
+
+	for (const ResourceLink& link : incomingPage->linksOnThisPage)
+	{
+		if (link.resource.expired())
+		{
+			continue;
+		}
+
+		ParsedPagePtr child = link.resource.lock();
+		setPageLevel(child, level + 1);
+	}
+}
+
+void ModelController::setPageLevel(ParsedPagePtr& page, int level) const noexcept
+{
+	if (page->pageLevel <= level)
+	{
+		return;
+	}
+
+	page->pageLevel = level;
+
+	for (const ResourceLink& link : page->linksOnThisPage)
+	{
+		if (link.resource.expired())
+		{
+			continue;
+		}
+
+		ParsedPagePtr child = link.resource.lock();
+		setPageLevel(child, level + 1);
+	}
 }
 
 }

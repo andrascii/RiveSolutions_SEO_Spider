@@ -43,8 +43,6 @@ namespace
 
 QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings& settings) const
 {
-	Q_UNUSED(settings); // TODO: use settings
-	
 	const bool includePriority = settings.flags.testFlag(IncludePriorityTag);
 	const bool includeChangeFreq = settings.flags.testFlag(IncludeChangeFreqTag);
 	const QDateTime now = QDateTime::currentDateTime();
@@ -73,10 +71,7 @@ QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings
 			}
 		}
 
-		const int level = includePriority ||
-			includeChangeFreq && settings.changeFreqMode == SiteMapChangeFreqTagMode::UseLevelSettings
-			? pageLevel(crawledPages[0], page) : 0;
-
+		const int level = pageLevel(page);
 
 		if (includePriority)
 		{
@@ -237,6 +232,13 @@ bool SiteMap::discardImageByNoImageIndex(const ParsedPage* page, const SiteMapSe
 
 	for (const ResourceLink& link : page->linksToThisPage)
 	{
+		//DEBUG_ASSERT(!link.resource.expired());
+
+		if (link.resource.expired())
+		{
+			continue;
+		}
+
 		const MetaRobotsFlagsSet& pageMetaFlags = link.resource.lock()->metaRobotsFlags;
 		auto it = pageMetaFlags.find(UserAgentType::AnyBot);
 		if (it == pageMetaFlags.end() || !it->second.testFlag(MetaRobotsNoImageIndex))
@@ -260,45 +262,9 @@ QString SiteMap::formatDate(const QDateTime& dateTime) const
 	return dateTime.isValid() ? dateTime.toString(QString("yyyy-MM-dd")) : QString();
 }
 
-SiteMap::PageLevel SiteMap::pageLevel(const ParsedPage* root,  const ParsedPage* page) const
+SiteMap::PageLevel SiteMap::pageLevel(const ParsedPage* page) const
 {
-	if (root == page)
-	{
-		return Level1;
-	}
-
-	return pageLevelImpl(1, root, page);
-}
-
-SiteMap::PageLevel SiteMap::pageLevelImpl(int currentLevel, const ParsedPage* root, const ParsedPage* page) const
-{
-	if (currentLevel == Level5Plus)
-	{
-		return static_cast<PageLevel>(currentLevel);
-	}
-
-	int result = Level5Plus;
-
-	const size_t childCount = root->linksOnThisPage.size();
-	for (size_t index = 0; index < childCount; ++index)
-	{
-		const ParsedPageWeakPtr& child = root->linksOnThisPage[index].resource;
-		DEBUG_ASSERT(!child.expired());
-		const ParsedPage* childPtr = child.lock().get();
-		if (childPtr == page)
-		{
-			return static_cast<PageLevel>(currentLevel);
-		}
-
-		const PageLevel childResult = pageLevelImpl(currentLevel + 1, childPtr, page);
-		if (childResult < result)
-		{
-			result = childResult;
-		}
-
-	}
-
-	return static_cast<PageLevel>(result);
+	return page->pageLevel < static_cast<int>(Level5Plus) ? static_cast<PageLevel>(page->pageLevel) : Level5Plus;
 }
 
 SitemapChangeFreq SiteMap::frequencyByDate(const QDateTime& now, const QDateTime& pageDate) const

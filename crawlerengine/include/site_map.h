@@ -82,11 +82,16 @@ private:
 		Level5Plus = 6
 	};
 
-	PageLevel pageLevel(const ParsedPage* root, const ParsedPage* page) const;
-	PageLevel pageLevelImpl(int currentLevel, const ParsedPage* root, const ParsedPage* page) const;
+	struct FastPageImpl
+	{
+		const ParsedPage* page;
+		std::deque<ParsedPage*> linksOnThisPage;
+		std::deque<ParsedPage*> linksToThisPage;
+	};
+
+	PageLevel pageLevel(const ParsedPage* page) const;
 
 	SitemapChangeFreq frequencyByDate(const QDateTime& now, const QDateTime& pageDate) const;
-	
 };
 
 }
