@@ -118,14 +118,18 @@ void SequencedDataCollection::onDataCleared()
 {
 	emit beginClearData();
 
-	for (auto& [storageType, collection] : m_sequencedStorageMap)
+	for (std::pair<const int, SequencedStorage>& item : m_sequencedStorageMap)
 	{
+		int storageType = item.first;
+		SequencedStorage& collection = item.second;
 		if (storageType == StorageType::CrawledUrlStorageType)
 		{
 			continue;
 		}
 
 		collection.clear();
+
+		DEBUG_ASSERT(m_sequencedStorageMap[storageType].empty());
 	}
 
 	SequencedStorage& sequencedStorage = m_sequencedStorageMap[StorageType::CrawledUrlStorageType];
