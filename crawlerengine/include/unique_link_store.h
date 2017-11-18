@@ -22,6 +22,7 @@ public:
 	bool extractUrl(CrawlerRequest& url) noexcept;
 
 	void saveUrlList(const std::vector<QUrl>& urlList, DownloadRequestType requestType) noexcept;
+	void saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestType requestType) noexcept;
 
 	void saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType) noexcept;
 

@@ -25,7 +25,7 @@ PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
 	, m_gridLineColor("#F3F3F3")
 	, m_urlTextColor("#1754A8")
 	, m_textColor("#22252D")
-	, m_textFont("Arial", 9, QFont::Medium)
+	, m_textFont("Arial", 10, QFont::Normal)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();

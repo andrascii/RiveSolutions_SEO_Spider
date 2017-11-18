@@ -35,9 +35,9 @@ private slots:
 	void onCrawlerClearData();
 
 private:
-	void schedulePageResourcesLoading(const ParsedPagePtr& parsedPage) const;
+	void schedulePageResourcesLoading(ParsedPagePtr& parsedPage) const;
 
-	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags) const;
+	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage) const;
 
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 

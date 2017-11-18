@@ -124,6 +124,8 @@ using std::size_t;
 #include <ws2tcpip.h>
 #include <mstcpip.h>
 #include <shellapi.h>
+#include <ipexport.h>
+#include <icmpapi.h>
 
 #define CANNOT_CREATE_SOCKET INVALID_SOCKET
 
