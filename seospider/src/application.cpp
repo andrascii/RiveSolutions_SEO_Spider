@@ -13,49 +13,10 @@
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
 #include "deferred_call.h"
-
-namespace
-{
-	
-const QByteArray s_eventTypeWindowsGeneric = "windows_generic_MSG";
-const QByteArray s_eventTypeWindowsDispatcher = "windows_dispatcher_MSG";
-
-}
+#include "internet_connection_inspector.h"
 
 namespace SeoSpider
 {
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-
-class WinEventFilter : public QAbstractNativeEventFilter
-{
-public:
-	WinEventFilter(Application* app)
-		: m_app(app)
-	{
-	}
-
-protected:
-	virtual bool nativeEventFilter(const QByteArray& eventType, void* message, long* result) override
-	{
-		// generic - is all about windows
-		// dispatcher - is all, including keyboard, mouse, etc
-
-		if (eventType == s_eventTypeWindowsGeneric || eventType == s_eventTypeWindowsDispatcher)
-		{
-			return m_app->winEventFilter((MSG*)message, result);
-		}
-
-		ASSERT(0);
-
-		return false;
-	}
-
-private:
-	Application* m_app;
-};
-
-#endif
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
@@ -67,7 +28,6 @@ Application::Application(int& argc, char** argv)
 	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
-	, m_windowsEventFilter(new WinEventFilter(this))
 {
 	SplashScreen::show();
 
@@ -179,96 +139,6 @@ void Application::showMainWindow()
 	emit mainWindowShown();
 }
 
-bool Application::winEventFilter(MSG* msg, long* result)
-{
-	if (WM_GETMINMAXINFO == msg->message)
-	{
-		// See https://bugreports.qt.io/browse/QTBUG-4362
-		minMaxInfo((MINMAXINFO*)(msg->lParam), msg->hwnd);
-		*result = 0;
-
-		return true;
-	}
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-	return false;
-#else
-	return QCoreApplication::winEventFilter(msg, result);
-#endif
-}
-
-void Application::minMaxInfo(MINMAXINFO* mmi, HWND winId) const
-{
-	MONITORINFO monitorInfoData = {};
-
-	QRect result;
-
-	if (monitorInfo(winId, monitorInfoData))
-	{
-		const QRect screenRect(monitorInfoData.rcMonitor.left, monitorInfoData.rcMonitor.top,
-			monitorInfoData.rcMonitor.right - monitorInfoData.rcMonitor.left,
-			monitorInfoData.rcMonitor.bottom - monitorInfoData.rcMonitor.top);
-
-		const bool isAutoHiding = tabBarAutohides();
-
-		int taskBarEdge = ABE_BOTTOM;
-
-		QRect taskBarRectData = taskBarRect(taskBarEdge);
-
-		if (screenRect.intersects(taskBarRectData))
-		{
-			// 	Remarks
-			//  http://msdn.microsoft.com/en-us/library/windows/desktop/ms632605(v=vs.85).aspx
-			// 	Thus, if the user leaves ptMaxSize untouched, a window on a monitor larger
-			// 	than the primary monitor maximizes to the size of the larger monitor.
-
-			QRect intersectRect = screenRect.intersected(taskBarRectData).normalized();
-
-			// is it real intersectRect or just edge crossing?
-			if (intersectRect.width() * intersectRect.height() * 2 < taskBarRectData.width() * taskBarRectData.height())
-			{
-				// no, consider no intersection
-				return;
-			}
-		}
-		else
-		{
-			return;
-		}
-
-		if (isAutoHiding)
-		{
-			result = adjustScreenAreaForFixedMargin(
-				screenRect, screenRect.intersected(taskBarRectData), taskBarEdge, 2);
-		}
-		else
-		{
-			result = adjustScreenAreaForToolbar(
-				screenRect, screenRect.intersected(taskBarRectData), taskBarEdge);
-		}
-
-		mmi->ptMaxPosition.x = screenRect.left() - result.left();
-		mmi->ptMaxPosition.y = screenRect.top() - result.top();
-		mmi->ptMaxSize.x = result.width();
-		mmi->ptMaxSize.y = result.height();
-	}
-}
-
-bool Application::monitorInfo(HWND hwnd, MONITORINFO& info) const
-{
-	if (HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY))
-	{
-		info.cbSize = sizeof(MONITORINFO);
-
-		if (GetMonitorInfo(monitor, &info))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
@@ -346,11 +216,8 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 
 void Application::initialize()
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-	installNativeEventFilter(m_windowsEventFilter);
-#endif
-
 	DeferredCallProcessor::init();
+	InternetConnectionInspector::init();
 
 	m_crawler->initialize();
 	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
@@ -376,7 +243,7 @@ void Application::initialize()
 #if !defined(PRODUCTION)
 
 	StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
-	DebugInfoWebPageWidget::attach();
+	//DebugInfoWebPageWidget::attach();
 	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
 
 #endif
@@ -588,164 +455,8 @@ Application::~Application()
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
 
 	DeferredCallProcessor::term();
-}
 
-QRect Application::taskBarRect(int& edge) const
-{
-	APPBARDATA appBarData = { sizeof(APPBARDATA), 0 };
-
-	appBarData.hWnd = FindWindowW(L"Shell_TrayWnd", NULL);
-
-	SHAppBarMessage(ABM_GETTASKBARPOS, &appBarData);
-
-	edge = appBarData.uEdge;
-
-	return QRect(QPoint(appBarData.rc.left, appBarData.rc.top),
-		QPoint(appBarData.rc.right - 1, appBarData.rc.bottom - 1));
-}
-
-QRect Application::adjustScreenAreaForFixedMargin(const QRect& screen, const QRect& toolbar, int edge, int margin) const
-{
-	if (checkNeedScreenAreaAdjustmentForToolbar(screen, toolbar, edge))
-	{
-		switch (edge)
-		{
-			case ABE_TOP:
-			{
-				return screen.adjusted(0, -margin, 0, -2 * margin);
-			}
-
-			case ABE_BOTTOM:
-			{
-				return screen.adjusted(0, 0, 0, -margin);
-			}
-
-			case ABE_LEFT:
-			{
-				return screen.adjusted(-margin, 0, -2 * margin, 0);
-			}
-
-			case ABE_RIGHT:
-			{
-				return screen.adjusted(0, 0, -margin, 0);
-			}
-		}
-	}
-
-	return screen;
-}
-
-bool Application::checkNeedScreenAreaAdjustmentForToolbar(const QRect& screen, const QRect& toolbar, int edge) const
-{
-	// Due to peculiarities of tool bar implementation in Explorer,
-	// tool bar area may overlap other screen areas by 1-2 pixels. This
-	// makes impossible use of simple QRect::intersect() and requires more 
-	// complicated algorithms for finding out "true" intersections.
-
-	switch (edge)
-	{
-		case ABE_TOP:
-		{
-			if (toolbar.left() > screen.left() || toolbar.right() < screen.right())
-			{
-				return false;
-			}
-
-			if (toolbar.top() > screen.top() || toolbar.bottom() < screen.top())
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		case ABE_BOTTOM:
-		{
-			if (toolbar.left() > screen.left() || toolbar.right() < screen.right())
-			{
-				return false;
-			}
-
-			if (toolbar.top() > screen.bottom() || toolbar.bottom() < screen.bottom())
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		case ABE_LEFT:
-		{
-			if (toolbar.top() > screen.top() || toolbar.bottom() < screen.bottom())
-			{
-				return false;
-			}
-
-			if (toolbar.left() > screen.left() || toolbar.right() < screen.left())
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		case ABE_RIGHT:
-		{
-			if (toolbar.top() > screen.top() || toolbar.bottom() < screen.bottom())
-			{
-				return false;
-			}
-
-			if (toolbar.left() > screen.right() || toolbar.right() < screen.right())
-			{
-				return false;
-			}
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-QRect Application::adjustScreenAreaForToolbar(const QRect& screen, const QRect& toolbar, int edge) const
-{
-	if (checkNeedScreenAreaAdjustmentForToolbar(screen, toolbar, edge))
-	{
-		switch (edge)
-		{
-			case ABE_TOP:
-			{
-				return screen.adjusted(0, -toolbar.height(), 0, -2 * toolbar.height());
-			}
-
-			case ABE_BOTTOM:
-			{
-				return screen.adjusted(0, 0, 0, -toolbar.height());
-			}
-
-			case ABE_LEFT:
-			{
-				return screen.adjusted(-toolbar.width(), 0, -2 * toolbar.width(), 0);
-			}
-
-			case ABE_RIGHT:
-			{
-				return screen.adjusted(0, 0, -toolbar.width(), 0);
-			}
-		}
-	}
-
-	return screen;
-}
-
-bool Application::tabBarAutohides() const
-{
-	APPBARDATA appBarData = { sizeof(APPBARDATA), 0 };
-
-	appBarData.hWnd = FindWindowW(L"Shell_TrayWnd", NULL);
-
-	return (SHAppBarMessage(ABM_GETSTATE, &appBarData) & ABS_AUTOHIDE) != 0;
+	InternetConnectionInspector::term();
 }
 
 }

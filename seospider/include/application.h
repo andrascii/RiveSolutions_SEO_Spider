@@ -53,11 +53,6 @@ public:
 signals:
 	void mainWindowShown();
 
-protected:
-	bool winEventFilter(MSG* msg, long* result);
-
-	friend class WinEventFilter;
-
 private:
 	static void registerServices();
 	static QString operatingSystemVersion();
@@ -66,14 +61,6 @@ private:
 	QSettings* settings() const;
 
 	void onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
-
-	void minMaxInfo(MINMAXINFO* mmi, HWND winId) const;
-	bool monitorInfo(HWND hwnd, MONITORINFO& info) const;
-	QRect taskBarRect(int& edge) const;
-	QRect adjustScreenAreaForFixedMargin(const QRect& screen, const QRect& toolbar, int edge, int margin) const;
-	bool checkNeedScreenAreaAdjustmentForToolbar(const QRect& screen, const QRect& toolbar, int edge) const;
-	QRect adjustScreenAreaForToolbar(const QRect& screen, const QRect& toolbar, int edge) const;
-	bool tabBarAutohides() const;
 
 private slots:
 	void startCrawler();
@@ -100,10 +87,6 @@ private:
 	QTranslator* m_translator;
 
 	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-	WinEventFilter* m_windowsEventFilter;
-#endif
 };
 
 }

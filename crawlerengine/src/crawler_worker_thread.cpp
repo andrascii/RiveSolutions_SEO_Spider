@@ -7,6 +7,27 @@
 #include "download_response.h"
 #include "crawler.h"
 
+namespace
+{
+
+template <typename T, typename Pred>
+void associative_container_erase_if(std::set<T>& container, Pred&& pred)
+{
+	for (auto iter = container.begin(); iter != container.end();)
+	{
+		if (pred(*iter))
+		{
+			iter = container.erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
+	}
+}
+
+}
+
 namespace CrawlerEngine
 {
 
@@ -70,7 +91,7 @@ void CrawlerWorkerThread::onCrawlerClearData()
 	m_pagesAcceptedAfterStop.clear();
 }
 
-void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& parsedPage) const
+void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage) const
 {
 	if (parsedPage->isThisExternalPage)
 	{
@@ -80,9 +101,9 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 	std::vector<LinkInfo> outlinks = m_pageDataCollector->outlinks();
 	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
 
-	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags);
+	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
 
-	m_uniqueLinkStore->saveLinkList(outlinks, DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->saveLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
 
 	if (!parsedPage->redirectedUrl.isEmpty())
 	{
@@ -113,7 +134,7 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(const ParsedPagePtr& pars
 	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, DownloadRequestType::RequestTypeHead);
 }
 
-void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags) const
+void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage) const
 {
 	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
@@ -135,9 +156,27 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		PageParserHelpers::removeUrlLastSlashIfExists(link.url);
 	};
 
-	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
+	const auto isNofollowLinkUnavailableWrapper = [&isNofollowLinkUnavailable](const RawResourceOnPage& resource)
+	{
+		return isNofollowLinkUnavailable(resource.thisResourceLink);
+	};
 
+	const auto isSubdomainLinkUnavailableWrapper = [&isSubdomainLinkUnavailable](const RawResourceOnPage& resource)
+	{
+		return isSubdomainLinkUnavailable(resource.thisResourceLink);
+	};
+
+	const auto isLinkBlockedByRobotsTxtWrapper = [&isLinkBlockedByRobotsTxt](const RawResourceOnPage& resource)
+	{
+		return isLinkBlockedByRobotsTxt(resource.thisResourceLink);
+	};
+
+	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
+
+	associative_container_erase_if(parsedPage->allResourcesOnPage, isNofollowLinkUnavailableWrapper);
+	associative_container_erase_if(parsedPage->allResourcesOnPage, isSubdomainLinkUnavailableWrapper);
+	associative_container_erase_if(parsedPage->allResourcesOnPage, isLinkBlockedByRobotsTxtWrapper);
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
 	{
@@ -168,7 +207,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResp
 {
 	m_downloadRequester.reset();
 
-	const ParsedPagePtr page = m_pageDataCollector->collectPageDataFromResponse(response);
+	ParsedPagePtr page = m_pageDataCollector->collectPageDataFromResponse(response);
 
 	schedulePageResourcesLoading(page);
 

@@ -65,6 +65,36 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, DownloadRequ
 	emit urlAdded();
 }
 
+void UniqueLinkStore::saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestType requestType) noexcept
+{
+	if (urlList.empty())
+	{
+		return;
+	}
+
+	std::lock_guard<std::mutex> locker(m_mutex);
+
+	size_t insertedUrlCounter = 0;
+
+	const auto insert = [&](const auto& iter)
+	{
+		CrawlerRequest item{ std::move(*iter), requestType };
+
+		if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
+		{
+			m_pendingUrlList.insert(item);
+			++insertedUrlCounter;
+		}
+	};
+
+	for (auto first = urlList.begin(); first != urlList.end(); ++first)
+	{
+		insert(first);
+	}
+
+	emit urlAdded();
+}
+
 void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType) noexcept
 {
 	const auto makeUrlList = [&linkList]() -> std::vector<QUrl>
@@ -79,9 +109,9 @@ void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, Downlo
 		return urlList;
 	};
 
-	const std::vector<QUrl> urlList = makeUrlList();
+	std::vector<QUrl> urlList = makeUrlList();
 
-	saveUrlList(urlList, requestType);
+	saveUrlList(std::move(urlList), requestType);
 }
 
 size_t UniqueLinkStore::crawledLinksCount() const noexcept
