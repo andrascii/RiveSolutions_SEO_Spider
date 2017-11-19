@@ -7,6 +7,8 @@ namespace CrawlerEngineTests
 	
 TEST(RobotsTxtYandexStrategyTests, CleanParam)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	QString robotsTxt =
 		QString("User-agent: *\n") +
 		QString("Clean-param: p1&p2&p3\n") +

@@ -13,6 +13,8 @@ constexpr int s_threadCount = 1;
 namespace CrawlerEngineTests
 {
 
+std::mutex g_mutex;
+
 static int s_argc = 0;
 
 TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)
@@ -28,13 +30,13 @@ TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)
 
 TestEnvironment::~TestEnvironment()
 {
-	CrawlerEngine::HandlerRegistry::instance().unregisterAll();
-
 	m_crawler->deleteLater();
 	processEvents();
 
 	m_crawlerThread->quit();
 	m_crawlerThread->wait();
+
+	CrawlerEngine::HandlerRegistry::instance().unregisterAll();
 }
 
 TestsCrawler* TestEnvironment::crawler() const

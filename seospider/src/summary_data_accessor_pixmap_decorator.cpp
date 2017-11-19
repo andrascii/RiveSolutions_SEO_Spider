@@ -31,7 +31,7 @@ const QPixmap& SummaryDataAccessorPixmapDecorator::pixmap(const QModelIndex& ind
 
 SummaryDataAccessorPixmapDecorator::ItemStatus SummaryDataAccessorPixmapDecorator::itemStatus(int row) const noexcept
 {
-	const CrawlerEngine::SequencedStorage* storage = storageByRow(row);
+	const CrawlerEngine::ISequencedStorage* storage = storageByRow(row);
 
 	ASSERT(storage);
 
@@ -48,7 +48,7 @@ SummaryDataAccessorPixmapDecorator::ItemStatus SummaryDataAccessorPixmapDecorato
 	return StatusOK;
 }
 
-const CrawlerEngine::SequencedStorage* SummaryDataAccessorPixmapDecorator::storageByRow(int row) const noexcept
+const CrawlerEngine::ISequencedStorage* SummaryDataAccessorPixmapDecorator::storageByRow(int row) const noexcept
 {
 	DEBUG_ASSERT(row < SummaryDataAccessorDecorator::rowCount());
 

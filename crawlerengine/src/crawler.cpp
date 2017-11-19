@@ -228,7 +228,7 @@ QString Crawler::siteMapXml(const SiteMapSettings& settings) const
 {
 	SiteMap siteMap;
 	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();;
-	const SequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
+	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
 	return siteMap.xml(*storage, settings);
 }
 

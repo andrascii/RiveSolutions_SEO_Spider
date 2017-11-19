@@ -5,7 +5,7 @@
 namespace CrawlerEngine
 {
 
-class SequencedStorage;
+class ISequencedStorage;
 
 enum SiteMapIncludeSettings
 {
@@ -58,7 +58,7 @@ struct SiteMapSettings
 class SiteMap
 {
 public:
-	QString xml(const SequencedStorage& crawledPages, const SiteMapSettings& settings) const;
+	QString xml(const ISequencedStorage& crawledPages, const SiteMapSettings& settings) const;
 
 private:
 	bool includeInSiteMap(const ParsedPage* page, const SiteMapSettings& settings) const;

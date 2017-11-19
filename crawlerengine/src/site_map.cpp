@@ -41,7 +41,7 @@ namespace
 	};
 }
 
-QString SiteMap::xml(const SequencedStorage& crawledPages, const SiteMapSettings& settings) const
+QString SiteMap::xml(const ISequencedStorage& crawledPages, const SiteMapSettings& settings) const
 {
 	const bool includePriority = settings.flags.testFlag(IncludePriorityTag);
 	const bool includeChangeFreq = settings.flags.testFlag(IncludeChangeFreqTag);

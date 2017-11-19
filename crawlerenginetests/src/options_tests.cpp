@@ -3,6 +3,8 @@ namespace CrawlerEngineTests
 
 TEST(OptionsTests, ParseOnlyHtml)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ParserTypeFlags();
 	TestEnvironment env(options);
@@ -41,6 +43,8 @@ TEST(OptionsTests, ParseOnlyHtml)
 
 TEST(OptionsTests, ParseOnlyJs)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::JavaScriptResourcesParserType;
 	TestEnvironment env(options);
@@ -79,6 +83,8 @@ TEST(OptionsTests, ParseOnlyJs)
 
 TEST(OptionsTests, ParseOnlyCSS)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::CssResourcesParserType;
 	TestEnvironment env(options);
@@ -118,6 +124,8 @@ TEST(OptionsTests, ParseOnlyCSS)
 
 TEST(OptionsTests, ParseOnlyImages)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -156,6 +164,8 @@ TEST(OptionsTests, ParseOnlyImages)
 
 TEST(OptionsTests, ParseOnlyVideo)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::VideoResourcesParserType;
 	TestEnvironment env(options);
@@ -194,6 +204,8 @@ TEST(OptionsTests, ParseOnlyVideo)
 
 TEST(OptionsTests, ParseOnlyFlash)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::FlashResourcesParserType;
 	TestEnvironment env(options);
@@ -232,6 +244,8 @@ TEST(OptionsTests, ParseOnlyFlash)
 
 TEST(OptionsTests, ParseOnlyOther)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::OtherResourcesParserType;
 	TestEnvironment env(options);

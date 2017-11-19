@@ -5,34 +5,10 @@
 #include "parsed_page_comparator.h"
 #include "unordered_data_collection.h"
 #include "storage_type.h"
+#include "isequenced_storage.h"
 
 namespace CrawlerEngine
 {
-
-class SequencedStorage
-{
-public:
-
-	//
-	// This wrapper returns only plain pointers
-	//
-
-	int size() const noexcept;
-	void clear();
-
-	bool empty() const noexcept;
-
-	void pushBack(const ParsedPagePtr& page);
-	void emplaceBack(ParsedPagePtr&& page);
-
-	const ParsedPage* operator[](int idx) const noexcept;
-	ParsedPage* operator[](int idx) noexcept;
-
-	bool containsPointersWithUseCountGreaterThanOne() const noexcept;
-
-private:
-	std::vector<ParsedPagePtr> m_pages;
-};
 
 class SequencedDataCollection : public QObject
 {
@@ -43,7 +19,7 @@ public:
 
 	bool empty() const noexcept;
 
-	const SequencedStorage* storage(StorageType type) const noexcept;
+	const ISequencedStorage* storage(StorageType type) const noexcept;
 
 signals:
 	void parsedPageAdded(int row, int storageType);
@@ -54,18 +30,21 @@ signals:
 
 	void endClearData();
 
-private slots:
+protected:
+	virtual std::shared_ptr<ISequencedStorage> createSequencedStorage() const;
+
+	void initializeStorages();
+
+protected slots:
 	void addParsedPage(ParsedPagePtr parsedPagePtr, int type);
 
 	void onDataCleared();
 
 private:
-	void initializeStorages();
-
-	SequencedStorage* storage(StorageType type) noexcept;
+	ISequencedStorage* storage(StorageType type) noexcept;
 
 private:
-	std::unordered_map<int, SequencedStorage> m_sequencedStorageMap;
+	std::unordered_map<int, std::shared_ptr<ISequencedStorage>> m_sequencedStorageMap;
 
 	friend class UnorderedDataCollection;
 };

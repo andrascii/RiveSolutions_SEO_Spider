@@ -25,7 +25,7 @@ private:
 
 	ItemStatus itemStatus(int row) const noexcept;
 
-	const CrawlerEngine::SequencedStorage* storageByRow(int row) const noexcept;
+	const CrawlerEngine::ISequencedStorage* storageByRow(int row) const noexcept;
 
 	void initializePixmaps();
 

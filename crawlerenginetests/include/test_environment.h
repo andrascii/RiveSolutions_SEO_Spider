@@ -9,6 +9,8 @@ namespace CrawlerEngineTests
 class TestRunner;
 class TestsCrawler;
 
+extern std::mutex g_mutex;
+
 class TestEnvironment : public QCoreApplication
 {
 	Q_OBJECT
@@ -32,7 +34,7 @@ signals:
 	void testInitialized(const std::function<void()>& testFunction);
 
 private:
-	TestRunner * m_testRunner;
+	TestRunner* m_testRunner;
 
 	TestsCrawler* m_crawler;
 

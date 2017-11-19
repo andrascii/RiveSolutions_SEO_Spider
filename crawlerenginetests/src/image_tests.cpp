@@ -5,6 +5,8 @@ TEST(ImageTests, EmptyAlt)
 {
 	// empty-alt.html(btclogo.png) -> empty-alt-2.html(btclogo-2.png)
 
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/empty-alt.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -53,6 +55,8 @@ TEST(ImageTests, EmptyAlt)
 
 TEST(ImageTests, NoAlt)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	// no-alt.html(btclogo.png) -> no-alt-2.html(btclogo-2.png)
 	int argc = 0;
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/no-alt.html")));
@@ -105,6 +109,8 @@ TEST(ImageTests, Image404)
 {
 	// image-404.html -> image-404-2.html
 
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/image-404.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -154,6 +160,8 @@ TEST(ImageTests, Image404)
 
 TEST(ImageTests, TwoPagesWithTheSameImage)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	int argc = 0;
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/two-pages-with-same-image-1.html")));
 
@@ -174,6 +182,8 @@ TEST(ImageTests, TwoPagesWithTheSameImage)
 
 TEST(ImageTests, ImageAlt)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://image.com/image-alt.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -199,6 +209,8 @@ TEST(ImageTests, ImageAlt)
 TEST(ImageTests, TooBigImage)
 {
 	// too-big-image.html -> too-big-image-2.html
+
+	std::lock_guard<std::mutex> locker(g_mutex);
 
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://image.com/too-big-image.html"));
 	options.maxImageSizeKb = 0;

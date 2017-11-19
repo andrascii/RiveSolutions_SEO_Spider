@@ -7,6 +7,8 @@ namespace CrawlerEngineTests
 	
 TEST(RobotsTxtBaseStrategyTests, SimpleRobotsTxt)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	QString robotsTxt =
 		QString("User-agent: *\n") +
 		QString("Disallow: /s/\n") +
@@ -36,6 +38,8 @@ TEST(RobotsTxtBaseStrategyTests, SimpleRobotsTxt)
 
 TEST(RobotsTxtBaseStrategyTests, RegularExpressionsRobotsTxt)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	QString robotsTxt =
 		QString("User-agent: *\n") +
 		QString("Disallow : /api*html\n") +
@@ -75,6 +79,8 @@ TEST(RobotsTxtBaseStrategyTests, RegularExpressionsRobotsTxt)
 
 TEST(RobotsTxtBaseStrategyTests, BadPatternsRobotsTxt)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	QString robotsTxt =
 		QString("User-agent: *\n") +
 		QString("Disallow : /api*htm$l\n") +
@@ -92,6 +98,8 @@ TEST(RobotsTxtBaseStrategyTests, BadPatternsRobotsTxt)
 
 TEST(RobotsTxtBaseStrategyTests, DifferentLineSeparatorsRobotsTxt)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	QString robotsTxtRN =
 		QString("User-agent: *\r\n") +
 		QString("Disallow : /api*html\r\n");
@@ -133,6 +141,8 @@ TEST(RobotsTxtBaseStrategyTests, DifferentLineSeparatorsRobotsTxt)
 
 TEST(RobotsTxtBaseStrategyTests, InvalidRobotsTxt)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	QString robotsTxt =
 		// no user-agent
 		QString("Disallow : /api*html\n");
@@ -148,6 +158,8 @@ TEST(RobotsTxtBaseStrategyTests, InvalidRobotsTxt)
 
 TEST(RobotsTxtBaseStrategyTests, NonAsciiSymbolsRobotsTxt)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	QString robotsTxt =
 		QString("User-agent: *\n") +
 		QString("Disallow : /%D0%BA%D0%BE%D1%80%D0%B7%D0%B8%D0%BD%D0%B0");

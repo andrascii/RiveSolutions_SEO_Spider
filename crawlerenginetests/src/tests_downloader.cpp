@@ -17,7 +17,8 @@ TestsDownloader::TestsDownloader()
 
 TestsDownloader::~TestsDownloader()
 {
-
+	CrawlerEngine::HandlerRegistry& handlerRegistry = CrawlerEngine::HandlerRegistry::instance();
+	handlerRegistry.unregistrateHandler(this);
 }
 
 void TestsDownloader::setUserAgent(const QByteArray& userAgent)

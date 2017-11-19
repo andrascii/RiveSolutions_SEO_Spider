@@ -30,7 +30,6 @@ public:
 
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 
-
 	SequencedDataCollection* createSequencedDataCollection(QThread* targetThread) const;
 
 	void clearData();

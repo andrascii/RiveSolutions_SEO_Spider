@@ -56,65 +56,49 @@ public:
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
-	
 	void crawlerStarted();
-	
 	void crawlerStopped();
-
 	void stateChanged(int state);
-
 	void onAboutClearData();
 
 public slots:
-	void startCrawling(const CrawlerOptions& options);
-	
+	void startCrawling(const CrawlerOptions& options);	
 	void stopCrawling();
 
 private slots:
 	void onAboutCrawlingState();
-	
 	void onCrawlingSessionInitialized();
 
 protected:
 	IRobotsTxtLoader* robotsTxtLoader() const;
 
-	
-	virtual IDownloader* createDownloader() const;
-	
-	virtual IRobotsTxtLoader* createRobotsTxtLoader() const;
-	
+	virtual IDownloader* createDownloader() const;	
+	virtual IRobotsTxtLoader* createRobotsTxtLoader() const;	
 	void createSequencedDataCollection(QThread* targetThread) const;
-
 	
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
-	bool isPreinitialized() const;
-	
+	bool isPreinitialized() const;	
 	void initializeCrawlingSession();
+
+protected:
+	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
+
+	ModelController* m_modelController;
 
 private:
 	static Crawler* s_instance;
 
 	mutable std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
 
-	
-	ModelController* m_modelController;
-	
 	UniqueLinkStore* m_uniqueLinkStore;
-	
 	CrawlerOptions m_options;
 
-	
 	unsigned int m_theradCount;
-
 	
-	QTimer* m_crawlingStateTimer;
-	
-	std::vector<CrawlerWorkerThread*> m_workers;
-	
-	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
-	
+	QTimer* m_crawlingStateTimer;	
+	std::vector<CrawlerWorkerThread*> m_workers;	
 	State m_state;
 };
 

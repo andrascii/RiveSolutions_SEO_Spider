@@ -8,6 +8,8 @@ namespace CrawlerEngineTests
 
 QString toRFC2822Date(const QDateTime& time)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	static QMap<int, QString> s_dayOfWeek
 	{
 		{ 1, "Mon" },
@@ -47,6 +49,8 @@ QString toRFC2822Date(const QDateTime& time)
 
 TEST(SiteMapTests, SimpleSiteMap)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -73,6 +77,8 @@ TEST(SiteMapTests, SimpleSiteMap)
 
 TEST(SiteMapTests, LastModified)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -100,6 +106,8 @@ TEST(SiteMapTests, LastModified)
 
 TEST(SiteMapTests, FrequencyByHeader)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -152,6 +160,8 @@ TEST(SiteMapTests, FrequencyByHeader)
 
 TEST(SiteMapTests, FrequencyByLevel)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -208,6 +218,8 @@ TEST(SiteMapTests, FrequencyByLevel)
 
 TEST(SiteMapTests, PriorityTag)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -264,6 +276,8 @@ TEST(SiteMapTests, PriorityTag)
 
 TEST(SiteMapTests, DiscardCanonical)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/canonical/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -293,6 +307,8 @@ TEST(SiteMapTests, DiscardCanonical)
 
 TEST(SiteMapTests, DontDiscardCanonical)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/canonical/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -323,6 +339,8 @@ TEST(SiteMapTests, DontDiscardCanonical)
 
 TEST(SiteMapTests, DiscardNextPrev)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/nextprev/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -354,6 +372,8 @@ TEST(SiteMapTests, DiscardNextPrev)
 
 TEST(SiteMapTests, DoNotDiscardNextPrev)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/nextprev/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -385,6 +405,8 @@ TEST(SiteMapTests, DoNotDiscardNextPrev)
 
 TEST(SiteMapTests, DiscardNoImageIndex)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/images/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
@@ -413,6 +435,8 @@ TEST(SiteMapTests, DiscardNoImageIndex)
 
 TEST(SiteMapTests, DoNotDiscardNoImageIndex)
 {
+	std::lock_guard<std::mutex> locker(g_mutex);
+
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/images/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);

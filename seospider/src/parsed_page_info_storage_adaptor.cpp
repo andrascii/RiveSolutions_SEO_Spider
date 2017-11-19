@@ -5,7 +5,7 @@ namespace SeoSpider
 {
 
 ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(
-	const CrawlerEngine::SequencedStorage* associatedStorage,
+	const CrawlerEngine::ISequencedStorage* associatedStorage,
 	CrawlerEngine::StorageType storageType, QObject* parent)
 	: QObject(parent)
 	, m_associatedStorage(associatedStorage)
@@ -61,7 +61,7 @@ int ParsedPageInfoStorageAdaptor::itemCount() const noexcept
 
 QVariant ParsedPageInfoStorageAdaptor::item(const QModelIndex& index) const noexcept
 {
-	const CrawlerEngine::SequencedStorage& storage = *m_associatedStorage;
+	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 
 	DEBUG_ASSERT(index.row() < storage.size());
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
@@ -99,7 +99,7 @@ QObject* ParsedPageInfoStorageAdaptor::qobject() noexcept
 #ifdef QT_DEBUG
 const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdaptor::parsedPage(const QModelIndex& index) const noexcept
 {
-	const CrawlerEngine::SequencedStorage& storage = *m_associatedStorage;
+	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 	return storage[index.row()];
 }
 #endif

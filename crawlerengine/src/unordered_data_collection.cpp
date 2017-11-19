@@ -49,6 +49,8 @@ CrawlerEngine::SequencedDataCollection* UnorderedDataCollection::createSequenced
 	VERIFY(connect(this, &UnorderedDataCollection::dataCleared, sequencedDataCollection,
 		&SequencedDataCollection::onDataCleared, Qt::QueuedConnection));
 
+	sequencedDataCollection->initializeStorages();
+
 	return sequencedDataCollection;
 }
 
