@@ -56,12 +56,7 @@ CrawlerEngine::SequencedDataCollection* UnorderedDataCollection::createSequenced
 
 void UnorderedDataCollection::clearData()
 {
-	for (auto&[storageType, collection] : m_unorderedStorageMap)
-	{
-		Q_UNUSED(storageType);
-
-		collection.clear();
-	}
+	initializeStorages();
 
 	emit dataCleared();
 }
