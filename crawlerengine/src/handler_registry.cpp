@@ -41,7 +41,7 @@ bool HandlerRegistry::isHandlerExists(QObject* handler) const
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
-	const auto& [result, requestType] = requestTypeForValue(handler);
+	const auto&& [result, requestType] = requestTypeForValue(handler);
 
 	Q_UNUSED(requestType);
 
