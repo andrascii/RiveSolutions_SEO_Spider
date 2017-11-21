@@ -196,7 +196,10 @@ void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage) const 
 		{
 			const ParsedPagePtr duplicate = m_data->parsedPage(incomingPage, StorageType::AllTitlesUrlStorageType);
 			m_data->addParsedPage(incomingPage, StorageType::DuplicatedTitleUrlStorageType);
-			m_data->addParsedPage(duplicate, StorageType::DuplicatedTitleUrlStorageType);
+			if (!m_data->isParsedPageExists(incomingPage, StorageType::DuplicatedTitleUrlStorageType))
+			{
+				m_data->addParsedPage(duplicate, StorageType::DuplicatedTitleUrlStorageType);
+			}
 		}
 		else
 		{
@@ -245,7 +248,10 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPa
 		{
 			const ParsedPagePtr duplicate = m_data->parsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
 			m_data->addParsedPage(incomingPage, StorageType::DuplicatedMetaDescriptionUrlStorageType);
-			m_data->addParsedPage(duplicate, StorageType::DuplicatedMetaDescriptionUrlStorageType);
+			if (!m_data->isParsedPageExists(duplicate, StorageType::DuplicatedMetaDescriptionUrlStorageType))
+			{
+				m_data->addParsedPage(duplicate, StorageType::DuplicatedMetaDescriptionUrlStorageType);
+			}
 		}
 		else
 		{
@@ -281,7 +287,10 @@ void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
 		{
 			ParsedPagePtr duplicate = m_data->parsedPage(incomingPage, StorageType::AllMetaKeywordsUrlStorageType);
 			m_data->addParsedPage(incomingPage, StorageType::DuplicatedMetaKeywordsUrlStorageType);
-			m_data->addParsedPage(duplicate, StorageType::DuplicatedMetaKeywordsUrlStorageType);
+			if (!m_data->isParsedPageExists(duplicate, StorageType::DuplicatedMetaKeywordsUrlStorageType))
+			{
+				m_data->addParsedPage(duplicate, StorageType::DuplicatedMetaKeywordsUrlStorageType);
+			}
 		}
 		else
 		{
@@ -322,7 +331,10 @@ void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage) const noe
 		{
 			const ParsedPagePtr duplicate = m_data->parsedPage(incomingPage, StorageType::AllH1UrlStorageType);
 			m_data->addParsedPage(incomingPage, StorageType::DuplicatedH1UrlStorageType);
-			m_data->addParsedPage(duplicate, StorageType::DuplicatedH1UrlStorageType);
+			if (!m_data->isParsedPageExists(duplicate, StorageType::DuplicatedH1UrlStorageType))
+			{
+				m_data->addParsedPage(duplicate, StorageType::DuplicatedH1UrlStorageType);
+			}
 		}
 		else
 		{
@@ -363,7 +375,10 @@ void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage) const noe
 		{
 			const ParsedPagePtr duplicate = m_data->parsedPage(incomingPage, StorageType::AllH2UrlStorageType);
 			m_data->addParsedPage(incomingPage, StorageType::DuplicatedH2UrlStorageType);
-			m_data->addParsedPage(duplicate, StorageType::DuplicatedH2UrlStorageType);
+			if (!m_data->isParsedPageExists(incomingPage, StorageType::DuplicatedH2UrlStorageType))
+			{
+				m_data->addParsedPage(duplicate, StorageType::DuplicatedH2UrlStorageType);
+			}
 		}
 		else
 		{
