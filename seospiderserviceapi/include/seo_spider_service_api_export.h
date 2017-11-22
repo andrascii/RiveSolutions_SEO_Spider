@@ -4,7 +4,7 @@
 
 namespace SeoSpiderServiceApi
 {
-	
+
 extern "C" Q_DECL_EXPORT ISeoSpiderServiceApi* seoSpiderServiceApi();
 
 }
