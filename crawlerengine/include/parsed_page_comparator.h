@@ -120,7 +120,8 @@ struct ParsedPageCanonicalLinkElementComparator : IParsedPageComparator
 {
 	virtual bool operator()(const ParsedPagePtr& lhs, const ParsedPagePtr& rhs) const noexcept override
 	{
-		return lhs->canonicalLinkElement == rhs->canonicalLinkElement;
+		return PageParserHelpers::removeUrlLastSlashIfExists(lhs->canonicalUrl) == 
+			PageParserHelpers::removeUrlLastSlashIfExists(rhs->canonicalUrl);
 	}
 };
 

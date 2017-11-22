@@ -105,4 +105,21 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 	env.exec();
 }
 
+TEST(LinksTests, Canonical)
+{
+	std::lock_guard<std::mutex> locker(g_mutex);
+
+	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/canonical.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(2, pages.size());
+		EXPECT_EQ(QUrl("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }

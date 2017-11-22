@@ -496,7 +496,7 @@ QVariant ParsedPageInfo::acceptSecondH2() const
 
 QVariant ParsedPageInfo::acceptCanonicalLinkElement() const
 {
-	return m_parsedPage->canonicalLinkElement;
+	return m_parsedPage->canonicalUrl.toDisplayString();
 }
 
 QVariant ParsedPageInfo::acceptStatusCode() const

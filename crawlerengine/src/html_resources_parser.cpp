@@ -39,6 +39,11 @@ void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& head
 			continue;
 		}
 
+		if (linkInfo.resourceSource == ResourceSource::SourceTagLinkRelCanonical)
+		{
+			page->canonicalUrl = linkInfo.url;
+		}
+
 		page->allResourcesOnPage.insert(RawResourceOnPage{ ResourceType::ResourceHtml, linkInfo });
 	}
 
