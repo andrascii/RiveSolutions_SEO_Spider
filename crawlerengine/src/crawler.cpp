@@ -137,23 +137,19 @@ void Crawler::onAboutCrawlingState()
 {
 	CrawlingProgress progress;
 
-	const size_t sequencedCollectionCrawledStorageSize = m_sequencedDataCollection->crawledStorageSize();
-	const size_t modelControllerCrawledStorageSize = m_modelController->crawledStorageSize();
-	const size_t modelControllerAcceptedStorageSize = m_modelController->acceptedCrawledStorageSize();
+	const size_t seqCollCount = m_sequencedDataCollection->crawledStorageSize();
+	const size_t controllerCrawled = m_modelController->crawledStorageSize();
+	const size_t controllerAccepted = m_modelController->acceptedCrawledStorageSize();
 
-	progress.crawledLinkCount = uniqueLinkStore()->crawledLinksCount();
-	progress.pendingLinkCount = uniqueLinkStore()->pendingLinksCount();
+	const size_t linkStoreCrawled = uniqueLinkStore()->crawledLinksCount();
+	const size_t linkStorePending = uniqueLinkStore()->pendingLinksCount();
 
-	const size_t modelControllerPending = progress.crawledLinkCount - modelControllerCrawledStorageSize;
-	const size_t sequencedCollectionPending = modelControllerAcceptedStorageSize - sequencedCollectionCrawledStorageSize;
+	const size_t controllerPending = qMax(linkStoreCrawled, controllerCrawled) - controllerCrawled;
+	const size_t seqCollPending = qMax(controllerAccepted, seqCollCount) - seqCollCount;
+	const size_t additionalPendingCount = controllerPending + seqCollPending;
 
-	const size_t additionalPendingCount = modelControllerPending + sequencedCollectionPending;
-
-	ASSERT(progress.crawledLinkCount >= modelControllerCrawledStorageSize);
-	ASSERT(modelControllerAcceptedStorageSize >= sequencedCollectionCrawledStorageSize);
-
-	progress.crawledLinkCount -=  additionalPendingCount;
-	progress.pendingLinkCount += additionalPendingCount;
+	progress.crawledLinkCount = linkStoreCrawled - additionalPendingCount;
+	progress.pendingLinkCount = linkStorePending + additionalPendingCount;
 
 	emit crawlingProgress(progress);
 }
