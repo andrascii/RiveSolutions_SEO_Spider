@@ -89,7 +89,6 @@ include_directories(
 
 target_link_libraries(
 	${CrawlerEngineLibTestsName}
-	${WatchDogApiDllName}
 	${CrawlerEngineLibName}
 	gtest
 	${CommonLibName}

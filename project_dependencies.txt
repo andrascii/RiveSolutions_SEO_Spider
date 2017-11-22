@@ -1,0 +1,31 @@
+seospider
+type: exe
+deps: crawlerengine.lib, common.lib, seospiderserviceapi.dll
+
+crawlerenginetests
+type: exe
+deps: crawlerengine.lib, common.lib, seospiderserviceapi.dll
+
+crawlerengine
+type: lib
+deps: gumbo.lib, common.lib
+
+gumbo
+type: lib
+deps: none
+
+gtest
+type: exe
+deps: none
+
+logger
+type: exe
+deps: none
+
+seospiderservice
+type: exe
+deps: none
+
+seospiderserviceapi
+type: dll
+deps: none
