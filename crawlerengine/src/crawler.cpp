@@ -137,8 +137,23 @@ void Crawler::onAboutCrawlingState()
 {
 	CrawlingProgress progress;
 
+	const size_t sequencedCollectionCrawledStorageSize = m_sequencedDataCollection->crawledStorageSize();
+	const size_t modelControllerCrawledStorageSize = m_modelController->crawledStorageSize();
+	const size_t modelControllerAcceptedStorageSize = m_modelController->acceptedCrawledStorageSize();
+
 	progress.crawledLinkCount = uniqueLinkStore()->crawledLinksCount();
 	progress.pendingLinkCount = uniqueLinkStore()->pendingLinksCount();
+
+	const size_t modelControllerPending = progress.crawledLinkCount - modelControllerCrawledStorageSize;
+	const size_t sequencedCollectionPending = modelControllerAcceptedStorageSize - sequencedCollectionCrawledStorageSize;
+
+	const size_t additionalPendingCount = modelControllerPending + sequencedCollectionPending;
+
+	ASSERT(progress.crawledLinkCount >= modelControllerCrawledStorageSize);
+	ASSERT(modelControllerAcceptedStorageSize >= sequencedCollectionCrawledStorageSize);
+
+	progress.crawledLinkCount -=  additionalPendingCount;
+	progress.pendingLinkCount += additionalPendingCount;
 
 	emit crawlingProgress(progress);
 }

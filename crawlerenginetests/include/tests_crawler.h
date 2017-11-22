@@ -25,6 +25,9 @@ public:
 	std::vector<const CrawlerEngine::ParsedPage*> waitForParsedPageReceived(
 		CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const;
 
+	std::vector<const CrawlerEngine::ParsedPage*> waitForAllCrawledPageReceived(int seconds, 
+		const char* timeoutMessage = "Waiting for all pages received") const;
+
 	std::vector<const CrawlerEngine::ParsedPage*> storageItems(CrawlerEngine::StorageType storage) const;
 
 	std::vector<CrawlerEngine::LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(

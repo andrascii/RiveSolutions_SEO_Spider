@@ -152,17 +152,20 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 	const auto isNofollowLinkUnavailableWrapper = [&isNofollowLinkUnavailable](const RawResourceOnPage& resource)
 	{
-		return isNofollowLinkUnavailable(resource.thisResourceLink);
+		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
+			isNofollowLinkUnavailable(resource.thisResourceLink);
 	};
 
 	const auto isSubdomainLinkUnavailableWrapper = [&isSubdomainLinkUnavailable](const RawResourceOnPage& resource)
 	{
-		return isSubdomainLinkUnavailable(resource.thisResourceLink);
+		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
+			isSubdomainLinkUnavailable(resource.thisResourceLink);
 	};
 
 	const auto isLinkBlockedByRobotsTxtWrapper = [&isLinkBlockedByRobotsTxt](const RawResourceOnPage& resource)
 	{
-		return isLinkBlockedByRobotsTxt(resource.thisResourceLink);
+		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
+			isLinkBlockedByRobotsTxt(resource.thisResourceLink);
 	};
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());

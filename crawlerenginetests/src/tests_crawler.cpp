@@ -31,7 +31,7 @@ TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerEngine::Crawle
 	m_sequencedDataCollectionThread = new QThread;
 
 	createSequencedDataCollection(m_sequencedDataCollectionThread);
-	m_receiver = std::make_unique<ParsedPageReceiver>(sequencedDataCollection());
+	m_receiver = std::make_unique<ParsedPageReceiver>(this, sequencedDataCollection());
 
 	m_sequencedDataCollectionThread->start();
 }
@@ -47,6 +47,18 @@ std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::waitForParsedPageRec
 	CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const
 {
 	std::future<std::vector<const CrawlerEngine::ParsedPage*>> future = m_receiver->getParsedPages(count, storage);
+
+	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
+	{
+		throw TimeOutException(timeoutMessage);
+	}
+
+	return future.get();
+}
+
+std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::waitForAllCrawledPageReceived(int seconds, const char* timeoutMessage) const
+{
+	std::future<std::vector<const CrawlerEngine::ParsedPage*>> future = m_receiver->getAllCrawledPages();
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{

@@ -20,7 +20,7 @@ public:
 	void addUrl(const QUrl& url, DownloadRequestType requestType);
 	void addUrl(QUrl&& url, DownloadRequestType requestType);
 
-	bool extractUrl(CrawlerRequest& url);
+	bool extractUrl(CrawlerRequest& url) noexcept;
 
 	void saveUrlList(const std::vector<QUrl>& urlList, DownloadRequestType requestType);
 	void saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestType requestType);
@@ -37,7 +37,7 @@ signals:
 private:
 	struct UrlListItemHasher
 	{
-		size_t operator()(const CrawlerRequest& item) const
+		size_t operator()(const CrawlerRequest& item) const noexcept
 		{
 			return hasher(item.url.toString().toStdString()) + static_cast<size_t>(item.requestType);
 		}
@@ -53,10 +53,42 @@ private:
 		}
 	};
 
-	std::unordered_set<CrawlerRequest, UrlListItemHasher, UrlListItemComparator> m_pendingUrlList;
-	std::unordered_set<CrawlerRequest, UrlListItemHasher, UrlListItemComparator> m_crawledUrlList;
+	using UrlList = std::unordered_set<CrawlerRequest, UrlListItemHasher, UrlListItemComparator>;
 
-	mutable std::mutex m_mutex;
+	struct IncrementGuard
+	{
+		IncrementGuard(std::atomic<size_t>& size, const UrlList& storage)
+			: size(size)
+			, storage(storage)
+			, oldSize(storage.size())
+		{
+		}
+
+		~IncrementGuard()
+		{
+			const size_t newSize = storage.size();
+			if (newSize > oldSize)
+			{
+				++size;
+			} 
+			else if (newSize < oldSize)
+			{
+				--size;
+			}
+		}
+
+		std::atomic<size_t>& size;
+		size_t oldSize;
+		const UrlList& storage;
+	};
+
+	UrlList m_pendingUrlList;
+	UrlList m_crawledUrlList;
+
+	mutable std::recursive_mutex m_mutex;
+
+	std::atomic<size_t> m_crawledSize;
+	std::atomic<size_t> m_pendingSize;
 };
 
 }

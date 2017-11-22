@@ -8,10 +8,11 @@ class ParsedPageReceiver : public QObject
 	Q_OBJECT
 
 public:
-	ParsedPageReceiver(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
+	ParsedPageReceiver(const CrawlerEngine::Crawler* crawler, const CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
 	~ParsedPageReceiver();
 
 	std::future<std::vector<const CrawlerEngine::ParsedPage*>> getParsedPages(int count, int storageType);
+	std::future<std::vector<const CrawlerEngine::ParsedPage*>> getAllCrawledPages();
 	std::vector<const CrawlerEngine::ParsedPage*> storageItems(CrawlerEngine::StorageType storage) const;
 
 	std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> getLinksToThisResourceChanges(const CrawlerEngine::ParsedPage* page, int count);
@@ -19,6 +20,7 @@ public:
 private:
 	Q_SLOT void onParsedPageAdded(int row, int type);
 	Q_SLOT void onParsedPageLinksToThisResourceChanged(CrawlerEngine::LinksToThisResourceChanges changes);
+	Q_SLOT void onCrawlingProgress(CrawlerEngine::CrawlingProgress state);
 
 	void checkWaitCondition(int storageType);
 	void checkLinksToThisResourceConditions(const CrawlerEngine::ParsedPage* page);
@@ -32,6 +34,9 @@ private:
 	std::map<const CrawlerEngine::ParsedPage*, std::pair<int, std::promise<std::vector<CrawlerEngine::LinksToThisResourceChanges>>>> m_linksToThisResourceConditions;
 
 	const CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
+
+	std::promise<std::vector<const CrawlerEngine::ParsedPage*>> m_allPagesReceivedPromise;
+	bool m_allPagesReceived;
 };
 
 }

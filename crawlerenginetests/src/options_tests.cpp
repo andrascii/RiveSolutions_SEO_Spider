@@ -11,11 +11,7 @@ TEST(OptionsTests, ParseOnlyHtml)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		//
-		// TODO: Add signal from crawler about crawwling ended
-		//
-
-		testEnv->thread()->msleep(500);
+		cl->waitForAllCrawledPageReceived(10);
 		//cl->checkSequencedDataCollectionConsistency();
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
@@ -51,11 +47,7 @@ TEST(OptionsTests, ParseOnlyJs)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		//
-		// TODO: Add signal from crawler about crawwling ended
-		//
-
-		testEnv->thread()->msleep(500);
+		cl->waitForAllCrawledPageReceived(10);
 		//cl->checkSequencedDataCollectionConsistency();
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
@@ -91,11 +83,7 @@ TEST(OptionsTests, ParseOnlyCSS)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		//
-		// TODO: Add signal from crawler about crawwling ended
-		//
-
-		testEnv->thread()->msleep(500);
+		cl->waitForAllCrawledPageReceived(10);
 		//cl->checkSequencedDataCollectionConsistency();
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
@@ -132,11 +120,7 @@ TEST(OptionsTests, ParseOnlyImages)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		//
-		// TODO: Add signal from crawler about crawwling ended
-		//
-
-		testEnv->thread()->msleep(500);
+		cl->waitForAllCrawledPageReceived(10);
 		//cl->checkSequencedDataCollectionConsistency();
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
@@ -172,11 +156,7 @@ TEST(OptionsTests, ParseOnlyVideo)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		//
-		// TODO: Add signal from crawler about crawwling ended
-		//
-
-		testEnv->thread()->msleep(500);
+		cl->waitForAllCrawledPageReceived(10);
 		//cl->checkSequencedDataCollectionConsistency();
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
@@ -212,11 +192,7 @@ TEST(OptionsTests, ParseOnlyFlash)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		//
-		// TODO: Add signal from crawler about crawling ended
-		//
-
-		testEnv->thread()->msleep(500);
+		cl->waitForAllCrawledPageReceived(10);
 		//cl->checkSequencedDataCollectionConsistency();
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
@@ -252,11 +228,7 @@ TEST(OptionsTests, ParseOnlyOther)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		//
-		// TODO: Add signal from crawler about crawling ended
-		//
-
-		testEnv->thread()->msleep(300);
+		cl->waitForAllCrawledPageReceived(10);
 		//cl->checkSequencedDataCollectionConsistency();
 
 		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);

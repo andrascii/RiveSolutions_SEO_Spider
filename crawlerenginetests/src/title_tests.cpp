@@ -96,7 +96,7 @@ TEST(TitleTests, DuplicatedTitles)
 {
 	// duplicated-titles-1.html -> duplicated-titles-2.html
 
-	std::lock_guard<std::mutex> locker(g_mutex);
+	//std::lock_guard<std::mutex> locker(g_mutex);
 
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/duplicated-titles-1.html"));
 	options.minTitleLength = 24;
@@ -105,7 +105,8 @@ TEST(TitleTests, DuplicatedTitles)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::DuplicatedTitleUrlStorageType, 2, 10, "Waiting for 2 duplicated title pages");
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedTitleUrlStorageType);
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Duplicated Title"), pages[0]->title);
 		EXPECT_EQ(QString("Duplicated Title"), pages[1]->title);
@@ -121,7 +122,7 @@ TEST(TitleTests, DuplicatedH1Title)
 {
 	// duplicated-h1-title.html -> duplicated-h1-title-2.html
 
-	std::lock_guard<std::mutex> locker(g_mutex);
+	//std::lock_guard<std::mutex> locker(g_mutex);
 
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://title.com/duplicated-h1-title.html")));
 

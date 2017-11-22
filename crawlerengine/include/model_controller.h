@@ -30,6 +30,9 @@ public:
 		return m_data;
 	}
 
+	size_t crawledStorageSize() const;
+	size_t acceptedCrawledStorageSize() const;
+
 private:
 	void processParsedPageUrl(ParsedPagePtr& incomingPage) const noexcept;
 	void processParsedPageTitle(ParsedPagePtr& incomingPage) const noexcept;
@@ -54,6 +57,9 @@ private:
 	CrawlerOptions m_crawlerOptions;
 
 	LinksToThisResourceChanges m_linksToPageChanges;
+
+	mutable std::atomic<size_t> m_crawledStorageSize;
+	mutable std::atomic<size_t> m_acceptedCrawledStorageSize;
 };
 
 }
