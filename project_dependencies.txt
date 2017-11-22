@@ -7,11 +7,11 @@ type: exe
 deps: crawlerengine.lib, common.lib, seospiderserviceapi.dll
 
 crawlerengine
-type: lib
+type: static lib
 deps: gumbo.lib, common.lib
 
 gumbo
-type: lib
+type: static lib
 deps: none
 
 gtest
@@ -28,4 +28,8 @@ deps: none
 
 seospiderserviceapi
 type: dll
+deps: none
+
+common
+type: static lib
 deps: none
