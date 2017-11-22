@@ -3,8 +3,9 @@
 namespace CrawlerEngineTests
 {
 
-ParsedPageReceiver::ParsedPageReceiver(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
+ParsedPageReceiver::ParsedPageReceiver(const CrawlerEngine::Crawler* crawler, const CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
 	: m_sequencedDataCollection(sequencedDataCollection)
+	, m_allPagesReceived(false)
 {
 	m_receiverThread = new Common::NamedThread("ParsedPageReceiverThread");
 	moveToThread(m_receiverThread);
@@ -14,6 +15,9 @@ ParsedPageReceiver::ParsedPageReceiver(const CrawlerEngine::SequencedDataCollect
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageLinksToThisResourceChanged,
 		this, &ParsedPageReceiver::onParsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
+
+	VERIFY(connect(crawler, &CrawlerEngine::Crawler::crawlingProgress,
+		this, &ParsedPageReceiver::onCrawlingProgress, Qt::QueuedConnection));
 
 	m_receiverThread->start();
 }
@@ -46,6 +50,16 @@ void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(CrawlerEngine::L
 	}
 
 	checkLinksToThisResourceConditions(nullptr);
+}
+
+
+void ParsedPageReceiver::onCrawlingProgress(CrawlerEngine::CrawlingProgress state)
+{
+	if (!m_allPagesReceived && state.crawledLinkCount > 0 && state.pendingLinkCount == 0)
+	{
+		m_allPagesReceivedPromise.set_value(m_parsedPages[CrawlerEngine::StorageType::CrawledUrlStorageType]);
+		m_allPagesReceived = true;
+	}
 }
 
 void ParsedPageReceiver::checkWaitCondition(int storageType)
@@ -83,6 +97,12 @@ std::future<std::vector<const CrawlerEngine::ParsedPage*>> ParsedPageReceiver::g
 	m_waitConditions[storageType] = std::make_pair(count, std::promise<std::vector<const CrawlerEngine::ParsedPage*>>());
 	checkWaitCondition(storageType);
 	return m_waitConditions[storageType].second.get_future();
+}
+
+
+std::future<std::vector<const CrawlerEngine::ParsedPage*>> ParsedPageReceiver::getAllCrawledPages()
+{
+	return m_allPagesReceivedPromise.get_future();
 }
 
 std::vector<const CrawlerEngine::ParsedPage*> ParsedPageReceiver::storageItems(CrawlerEngine::StorageType storage) const

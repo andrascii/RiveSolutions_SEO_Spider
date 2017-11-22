@@ -5,6 +5,7 @@ namespace CrawlerEngine
 {
 
 SequencedDataCollection::SequencedDataCollection()
+	: m_crawledStorageSize(0)
 {
 }
 
@@ -29,6 +30,11 @@ const ISequencedStorage* SequencedDataCollection::storage(StorageType type) cons
 }
 
 
+size_t SequencedDataCollection::crawledStorageSize() const
+{
+	return m_crawledStorageSize;
+}
+
 std::shared_ptr<CrawlerEngine::ISequencedStorage> SequencedDataCollection::createSequencedStorage() const
 {
 	return std::static_pointer_cast<ISequencedStorage>(std::make_shared<SequencedStorage>());
@@ -39,6 +45,12 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int typ
 	StorageType storageType = static_cast<StorageType>(type);
 
 	auto storageIterator = m_sequencedStorageMap.find(storageType);
+
+	if (type == StorageType::CrawledUrlStorageType)
+	{
+		++m_crawledStorageSize;
+	}
+
 
 	if (storageIterator != m_sequencedStorageMap.end())
 	{
@@ -69,6 +81,8 @@ void SequencedDataCollection::onDataCleared()
 	ASSERT(!sequencedStorage->containsPointersWithUseCountGreaterThanOne());
 
 	sequencedStorage->clear();
+
+	m_crawledStorageSize.store(0);
 
 	emit endClearData();
 }

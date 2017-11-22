@@ -5,6 +5,8 @@ namespace CrawlerEngine
 
 UniqueLinkStore::UniqueLinkStore(QObject* parent)
 	: QObject(parent)
+	, m_crawledSize(0)
+	, m_pendingSize(0)
 {
 }
 
@@ -13,6 +15,7 @@ void UniqueLinkStore::addUrl(const QUrl& url, DownloadRequestType requestType)
 	std::lock_guard<std::mutex> locker(m_mutex);
 
 	m_pendingUrlList.insert(CrawlerRequest{ url, requestType });
+	++m_pendingSize;
 
 	emit urlAdded();
 }
@@ -31,6 +34,9 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 
 	m_crawledUrlList.insert(*iter);
 	m_pendingUrlList.erase(iter);
+
+	++m_crawledSize;
+	--m_pendingSize;
 
 	return true;
 }
@@ -53,6 +59,7 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, DownloadRequ
 		if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
 		{
 			m_pendingUrlList.insert(item);
+			++m_pendingSize;
 			++insertedUrlCounter;
 		}
 	};
@@ -83,6 +90,7 @@ void UniqueLinkStore::saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestTy
 		if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
 		{
 			m_pendingUrlList.insert(item);
+			++m_pendingSize;
 			++insertedUrlCounter;
 		}
 	};
@@ -116,14 +124,12 @@ void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, Downlo
 
 size_t UniqueLinkStore::crawledLinksCount() const noexcept
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
-	return m_crawledUrlList.size();
+	return m_crawledSize;
 }
 
 size_t UniqueLinkStore::pendingLinksCount() const noexcept
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
-	return m_pendingUrlList.size();
+	return m_pendingSize;
 }
 
 void UniqueLinkStore::clear()
@@ -132,6 +138,9 @@ void UniqueLinkStore::clear()
 
 	m_pendingUrlList.clear();
 	m_crawledUrlList.clear();
+
+	m_crawledSize.store(0);
+	m_pendingSize.store(0);
 }
 
 }

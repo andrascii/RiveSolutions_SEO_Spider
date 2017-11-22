@@ -129,11 +129,11 @@ TEST(H1AndH2Tests, DuplicateH2)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::DuplicatedH2UrlStorageType, 2, 10, "Waiting for 2 duplicate h2 pages");
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedH2UrlStorageType);
 		cl->checkSequencedDataCollectionConsistency();
-		EXPECT_EQ(2, pages.size());
+		EXPECT_EQ(1, pages.size());
 		EXPECT_EQ(QString("Duplicate H2"), pages[0]->firstH2);
-		EXPECT_EQ(QString("Duplicate H2"), pages[1]->firstH2);
 		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 

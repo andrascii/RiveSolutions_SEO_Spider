@@ -63,6 +63,8 @@ namespace CrawlerEngine
 ModelController::ModelController()
 	: QObject(nullptr)
 	, m_data(new UnorderedDataCollection(this))
+	, m_crawledStorageSize(0)
+	, m_acceptedCrawledStorageSize(0)
 {
 }
 
@@ -74,12 +76,26 @@ void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
 void ModelController::clearData()
 {
 	data()->clearData();
+	m_crawledStorageSize.store(0);
+	m_acceptedCrawledStorageSize.store(0);
+}
+
+size_t ModelController::crawledStorageSize() const
+{
+	return m_crawledStorageSize;
+}
+
+size_t ModelController::acceptedCrawledStorageSize() const
+{
+	return m_acceptedCrawledStorageSize;
 }
 
 void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 {
 	ASSERT(incomingPage->resourceType >= ResourceType::ResourceHtml &&
 		incomingPage->resourceType <= ResourceType::ResourceOther);
+
+	++m_crawledStorageSize;
 
 	fixParsedPageResourceType(incomingPage);
 
@@ -118,14 +134,18 @@ void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 		m_data->parsedPageLinksToThisResourceChanged(m_linksToPageChanges);
 		m_linksToPageChanges.changes.clear();
 	}
+
+	//m_data->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
+	//calculatePageLevel(incomingPage);
+	//++m_acceptedCrawledStorageSize;
 }
 
 void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage) const noexcept
 {
 	const QUrl url = incomingPage->url;
 	const QString urlStr = url.toString();
-
 	m_data->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
+	++m_acceptedCrawledStorageSize;
 	calculatePageLevel(incomingPage);
 
 	if (url.host() != m_crawlerOptions.host.host())
@@ -196,7 +216,7 @@ void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage) const 
 		{
 			const ParsedPagePtr duplicate = m_data->parsedPage(incomingPage, StorageType::AllTitlesUrlStorageType);
 			m_data->addParsedPage(incomingPage, StorageType::DuplicatedTitleUrlStorageType);
-			if (!m_data->isParsedPageExists(incomingPage, StorageType::DuplicatedTitleUrlStorageType))
+			if (!m_data->isParsedPageExists(duplicate, StorageType::DuplicatedTitleUrlStorageType))
 			{
 				m_data->addParsedPage(duplicate, StorageType::DuplicatedTitleUrlStorageType);
 			}
@@ -369,21 +389,9 @@ void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage) const noe
 		m_data->addParsedPage(incomingPage, StorageType::VeryLongH2UrlStorageType);
 	}
 
-	if (h2Length > 0 && successfulResponseCode)
+	if (h2Length > 0 && successfulResponseCode && incomingPage->hasSeveralEqualH2Tags)
 	{
-		if (m_data->isParsedPageExists(incomingPage, StorageType::AllH2UrlStorageType))
-		{
-			const ParsedPagePtr duplicate = m_data->parsedPage(incomingPage, StorageType::AllH2UrlStorageType);
-			m_data->addParsedPage(incomingPage, StorageType::DuplicatedH2UrlStorageType);
-			if (!m_data->isParsedPageExists(incomingPage, StorageType::DuplicatedH2UrlStorageType))
-			{
-				m_data->addParsedPage(duplicate, StorageType::DuplicatedH2UrlStorageType);
-			}
-		}
-		else
-		{
-			m_data->addParsedPage(incomingPage, StorageType::AllH2UrlStorageType);
-		}
+		m_data->addParsedPage(incomingPage, StorageType::DuplicatedH2UrlStorageType);
 	}
 
 	if (incomingPage->hasSeveralEqualH2Tags && successfulResponseCode)

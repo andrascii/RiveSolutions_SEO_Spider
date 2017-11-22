@@ -51,6 +51,9 @@ private:
 	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_crawledUrlList;
 
 	mutable std::mutex m_mutex;
+
+	std::atomic<size_t> m_crawledSize;
+	std::atomic<size_t> m_pendingSize;
 };
 
 }
