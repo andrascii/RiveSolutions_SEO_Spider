@@ -140,7 +140,7 @@ void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 	//++m_acceptedCrawledStorageSize;
 }
 
-void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage) const noexcept
+void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 {
 	const QUrl url = incomingPage->url;
 	const QString urlStr = url.toString();
@@ -184,7 +184,7 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage) const no
 	}
 }
 
-void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage) const noexcept
+void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage)
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -238,7 +238,7 @@ void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage) const 
 	}
 }
 
-void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPage) const noexcept
+void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPage)
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -285,7 +285,7 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPa
 	}
 }
 
-void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage) const noexcept
+void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -325,7 +325,7 @@ void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
 	}
 }
 
-void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage) const noexcept
+void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage)
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -369,7 +369,7 @@ void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage) const noe
 
 }
 
-void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage) const noexcept
+void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage)
 {
 	if (incomingPage->isThisExternalPage)
 	{
@@ -400,7 +400,7 @@ void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage) const noe
 	}
 }
 
-void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool checkOnlyLastResource) const noexcept
+void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool checkOnlyLastResource)
 {
 	const int sizeKB = incomingPage->pageSizeKilobytes;
 
@@ -442,7 +442,7 @@ void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool c
 	}
 }
 
-void ModelController::processParsedPageStatusCode(ParsedPagePtr& incomingPage) const noexcept
+void ModelController::processParsedPageStatusCode(ParsedPagePtr& incomingPage)
 {
 	if (incomingPage->statusCode == Common::StatusCode::NotFound404)
 	{
@@ -450,7 +450,7 @@ void ModelController::processParsedPageStatusCode(ParsedPagePtr& incomingPage) c
 	}
 }
 
-void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage) noexcept
+void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage)
 {
 	if (incomingPage->resourceType != ResourceType::ResourceHtml)
 	{
@@ -520,7 +520,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 	}
 }
 
-void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage) noexcept
+void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 {
 	std::map<ResourceType, StorageType> storageTypes
 	{
