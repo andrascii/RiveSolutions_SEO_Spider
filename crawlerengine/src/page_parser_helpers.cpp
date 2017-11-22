@@ -120,7 +120,7 @@ QUrl PageParserHelpers::resolveUrl(const QUrl& baseUrl, const QUrl& url) noexcep
 	return result;
 }
 
-void PageParserHelpers::removeUrlLastSlashIfExists(QUrl& url)
+QUrl PageParserHelpers::removeUrlLastSlashIfExists(const QUrl& url)
 {
 	QString urlString = url.toDisplayString();
 
@@ -129,7 +129,7 @@ void PageParserHelpers::removeUrlLastSlashIfExists(QUrl& url)
 		urlString = urlString.left(urlString.size() - 1);
 	}
 
-	url = QUrl(urlString);
+	return QUrl(urlString);
 }
 
 bool PageParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept

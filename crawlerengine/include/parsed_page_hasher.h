@@ -1,6 +1,7 @@
 #pragma once
 
 #include "parsed_page.h"
+#include "page_parser_helpers.h"
 
 namespace CrawlerEngine
 {
@@ -25,13 +26,13 @@ struct IParsedPageHasher
 		CanonicalLinkElementItemType
 	};
 
-	virtual size_t operator()(const ParsedPagePtr& pageRaw) const noexcept = 0;
+	virtual size_t operator()(const ParsedPagePtr& parsedPage) const noexcept = 0;
 };
 
 template <int ItemType>
 struct ParsedPageHasher : public IParsedPageHasher
 {
-	virtual size_t operator()(const ParsedPagePtr& pageRaw) const noexcept override
+	virtual size_t operator()(const ParsedPagePtr& parsedPage) const noexcept override
 	{
 		static_assert(
 			ItemType >= IParsedPageHasher::UrlItemType &&
@@ -44,7 +45,9 @@ struct ParsedPageHasher : public IParsedPageHasher
 
 		static std::map<int, std::function<size_t(const ParsedPagePtr&)>> s_hashFuncs
 		{
-			{ IParsedPageHasher::UrlItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->url.toDisplayString().toStdString()); } },
+			{ IParsedPageHasher::UrlItemType, [](const ParsedPagePtr& el) 
+				{ return s_stringHasher(PageParserHelpers::removeUrlLastSlashIfExists(el->url).toDisplayString().toStdString()); } },
+
 			{ IParsedPageHasher::ContentItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->contentType.toStdString()); } },
 			{ IParsedPageHasher::MetaRefreshItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
 			{ IParsedPageHasher::RedirectedUrlItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->redirectedUrl.toDisplayString().toStdString()); } },
@@ -59,7 +62,7 @@ struct ParsedPageHasher : public IParsedPageHasher
 			{ IParsedPageHasher::CanonicalLinkElementItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->canonicalLinkElement.toStdString()); } }
 		};
 
-		return s_hashFuncs[ItemType](pageRaw);
+		return s_hashFuncs[ItemType](parsedPage);
 	}
 };
 

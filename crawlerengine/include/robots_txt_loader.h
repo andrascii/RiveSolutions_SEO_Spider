@@ -30,6 +30,7 @@ private:
 	QByteArray m_content;
 	QNetworkAccessManager* m_networkAccessor;
 	QByteArray m_userAgent;
+	QUrl m_currentLoadedUrl;
 };
 
 }

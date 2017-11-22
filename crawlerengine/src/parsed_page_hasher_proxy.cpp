@@ -8,9 +8,9 @@ ParsedPageHasherProxy::ParsedPageHasherProxy(IParsedPageHasher* hasher)
 {
 }
 
-size_t ParsedPageHasherProxy::operator()(const ParsedPagePtr& pageRaw) const noexcept
+size_t ParsedPageHasherProxy::operator()(const ParsedPagePtr& parsedPage) const noexcept
 {
-	return (*m_hasher)(pageRaw);
+	return (*m_hasher)(parsedPage);
 }
 
 }

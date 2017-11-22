@@ -20,6 +20,11 @@ void RobotsTxtLoader::load(const QUrl& url)
 {
 	ASSERT(m_networkAccessor->thread() == QThread::currentThread());
 
+	if (m_currentLoadedUrl == url)
+	{
+		return;
+	}
+
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), this, SLOT(onLoadingDone(QNetworkReply*))));
 
 	const QString robotsTxtUrlString = url.scheme() + "://" + url.host() + QStringLiteral("/robots.txt");
@@ -73,6 +78,8 @@ void RobotsTxtLoader::onLoadingDone(QNetworkReply* reply)
 
 	m_content = reply->readAll();
 	m_isReady = true;
+
+	m_currentLoadedUrl = reply->url();
 
 	emit ready();
 }

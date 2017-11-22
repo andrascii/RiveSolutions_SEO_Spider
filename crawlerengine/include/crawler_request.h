@@ -1,5 +1,7 @@
 #pragma once
 
+#include "page_parser_helpers.h"
+
 namespace CrawlerEngine
 {
 
@@ -16,7 +18,8 @@ struct CrawlerRequest
 
 	bool operator==(const CrawlerRequest& other) const
 	{
-		return url == other.url && requestType == other.requestType;
+		return requestType == other.requestType && 
+			PageParserHelpers::removeUrlLastSlashIfExists(url) == PageParserHelpers::removeUrlLastSlashIfExists(other.url);
 	}
 
 	friend bool operator<(const CrawlerRequest& lhs, const CrawlerRequest& rhs)

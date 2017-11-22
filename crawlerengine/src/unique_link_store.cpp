@@ -12,12 +12,29 @@ void UniqueLinkStore::addUrl(const QUrl& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
-	m_pendingUrlList.insert(CrawlerRequest{ url, requestType });
+	CrawlerRequest item{ url, requestType };
 
-	emit urlAdded();
+	if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
+	{
+		m_pendingUrlList.insert(item);
+		emit urlAdded();
+	}
 }
 
-bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
+void UniqueLinkStore::addUrl(QUrl&& url, DownloadRequestType requestType)
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+
+	CrawlerRequest item{ std::move(url), requestType };
+
+	if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
+	{
+		m_pendingUrlList.insert(item);
+		emit urlAdded();
+	}
+}
+
+bool UniqueLinkStore::extractUrl(CrawlerRequest& url)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
@@ -35,7 +52,7 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 	return true;
 }
 
-void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, DownloadRequestType requestType) noexcept
+void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -43,29 +60,14 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, DownloadRequ
 	}
 
 	std::lock_guard<std::mutex> locker(m_mutex);
-
-	size_t insertedUrlCounter = 0;
-
-	const auto insert = [&](const auto& iter)
-	{
-		CrawlerRequest item{ *iter, requestType };
-
-		if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
-		{
-			m_pendingUrlList.insert(item);
-			++insertedUrlCounter;
-		}
-	};
 
 	for (auto first = urlList.begin(), last = urlList.end(); first != last; ++first)
 	{
-		insert(first);
+		addUrl(*first, requestType);
 	}
-
-	emit urlAdded();
 }
 
-void UniqueLinkStore::saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestType requestType) noexcept
+void UniqueLinkStore::saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -74,28 +76,13 @@ void UniqueLinkStore::saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestTy
 
 	std::lock_guard<std::mutex> locker(m_mutex);
 
-	size_t insertedUrlCounter = 0;
-
-	const auto insert = [&](const auto& iter)
-	{
-		CrawlerRequest item{ std::move(*iter), requestType };
-
-		if (m_crawledUrlList.find(item) == m_crawledUrlList.end())
-		{
-			m_pendingUrlList.insert(item);
-			++insertedUrlCounter;
-		}
-	};
-
 	for (auto first = urlList.begin(); first != urlList.end(); ++first)
 	{
-		insert(first);
+		addUrl(std::move(*first), requestType);
 	}
-
-	emit urlAdded();
 }
 
-void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType) noexcept
+void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType)
 {
 	const auto makeUrlList = [&linkList]() -> std::vector<QUrl>
 	{

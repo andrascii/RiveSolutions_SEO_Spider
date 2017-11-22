@@ -112,8 +112,6 @@ QUrl PageDataCollector::resolveRedirectUrl(const DownloadResponse& response)
 		PageParserHelpers::resolveRelativeUrl(response.redirectUrl, response.url);
 	}
 
-	PageParserHelpers::removeUrlLastSlashIfExists(redirectUrl);
-
 	return redirectUrl;
 }
 
@@ -131,7 +129,7 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 
 	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, page->url);
 
-	std::vector<QString> contentTypeValues = response.responseHeaders.valueOf("content-type");
+	const std::vector<QString> contentTypeValues = response.responseHeaders.valueOf("content-type");
 	page->contentType = contentTypeValues.empty() ? QString() : contentTypeValues.front();
 
 	if (contentTypeValues.size() > 1)
