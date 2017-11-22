@@ -25,10 +25,20 @@ add_definitions(
 )
 
 if(MSVC)
+
+###########################################################################
+#
+# This project must be configured without /permissive- flag
+# because we use Boost.Log lib and that lib includes typeof.hpp file
+# that also includes typeof_impl.hpp which uses old Visual Studio bugs.
+# These bugs were fixed with /permissive- flag and therefore with it
+# project will not compile.
+#
+###########################################################################
+
 	add_definitions(
 		/EHsc
 		/MP
-		/permissive-
 		/std:c++latest
 		/D EXPORT
 		/Zi
