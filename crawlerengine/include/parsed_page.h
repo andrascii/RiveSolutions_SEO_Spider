@@ -111,6 +111,7 @@ struct ParsedPage
 {
 	QUrl url;
 	QUrl redirectedUrl;
+	QUrl canonicalUrl;
 
 	QString title;
 	QString contentType;
@@ -122,7 +123,6 @@ struct ParsedPage
 	QString secondH1;
 	QString firstH2;
 	QString secondH2;
-	QString canonicalLinkElement;
 	Common::StatusCode statusCode;
 	MetaRobotsFlagsSet metaRobotsFlags;
 	QDateTime responseDate;
