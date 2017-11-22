@@ -46,9 +46,38 @@ private:
 		boost::hash<std::string> hasher;
 	};
 
-	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_pendingUrlList;
+	using UrlList = std::unordered_set<CrawlerRequest, UrlListItemHasher>;
 
-	std::unordered_set<CrawlerRequest, UrlListItemHasher> m_crawledUrlList;
+	struct IncrementGuard
+	{
+		IncrementGuard(std::atomic<size_t>& size, const UrlList& storage)
+			: size(size)
+			, storage(storage)
+			, oldSize(storage.size())
+		{
+		}
+
+		~IncrementGuard()
+		{
+			const size_t newSize = storage.size();
+			if (newSize > oldSize)
+			{
+				++size;
+			} 
+			else if (newSize < oldSize)
+			{
+				--size;
+			}
+		}
+
+		std::atomic<size_t>& size;
+		size_t oldSize;
+		const UrlList& storage;
+	};
+
+	UrlList m_pendingUrlList;
+
+	UrlList m_crawledUrlList;
 
 	mutable std::mutex m_mutex;
 
