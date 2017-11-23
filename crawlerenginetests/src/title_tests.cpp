@@ -154,6 +154,22 @@ TEST(TitleTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 	env.exec();
 }
 
+TEST(TitleTests, DoNotIncludeEveryPageInDuplicates)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/single-page.html"));
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedTitleUrlStorageType);
+		EXPECT_EQ(0, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(TitleTests, DuplicatedH1Title)
 {
 	// duplicated-h1-title.html -> duplicated-h1-title-2.html

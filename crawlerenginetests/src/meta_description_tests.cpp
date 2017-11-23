@@ -155,6 +155,22 @@ TEST(MetaDescriptionTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 	env.exec();
 }
 
+TEST(MetaDescriptionTests, DoNotIncludeEveryPageInDuplicates)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/single-page.html"));
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedMetaDescriptionUrlStorageType);
+		EXPECT_EQ(0, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(MetaDescriptionTests, SeveralMetaDescriptions)
 {
 	// several-titles.html -> several-titles-2.html

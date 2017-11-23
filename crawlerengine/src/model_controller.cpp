@@ -212,8 +212,8 @@ void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage)
 
 	if (!title.isEmpty() && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::AllTitlesUrlStorageType);
 		addDuplicates(incomingPage, StorageType::AllTitlesUrlStorageType, StorageType::DuplicatedTitleUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::AllTitlesUrlStorageType);
 	}
 
 	if (!h1.isEmpty() && h1 == title && successfulResponseCode)
@@ -253,8 +253,8 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPa
 
 	if (metaDescriptionLength > 0 && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
 		addDuplicates(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
 	}
 
 	if (incomingPage->hasSeveralMetaDescriptionTags && successfulResponseCode)
@@ -281,8 +281,8 @@ void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
 
 	if (metaKeywordsLength > 0 && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::AllMetaKeywordsUrlStorageType);
 		addDuplicates(incomingPage, StorageType::AllMetaKeywordsUrlStorageType, StorageType::DuplicatedMetaKeywordsUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::AllMetaKeywordsUrlStorageType);
 	}
 	
 
@@ -314,8 +314,8 @@ void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage)
 
 	if (h1Length > 0 && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::AllH1UrlStorageType);
 		addDuplicates(incomingPage, StorageType::AllH1UrlStorageType, StorageType::DuplicatedH1UrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::AllH1UrlStorageType);
 	}
 
 	if (incomingPage->hasSeveralH1Tags && successfulResponseCode)

@@ -155,6 +155,22 @@ TEST(TitleTests, IncludeDuplicatedH1IfThereAreSeveralCanonical)
 	env.exec();
 }
 
+TEST(H1AndH2Tests, DoNotIncludeEveryPageInDuplicates)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://h1h2.com/single-page.html"));
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType);
+		EXPECT_EQ(0, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(H1AndH2Tests, DuplicateH2)
 {
 	// duplicate-h2.html -> duplicate-h2-2.html

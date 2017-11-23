@@ -99,6 +99,22 @@ TEST(MetaKeywordsTests, IncludeDuplicatedKeywordsIfThereAreSeveralCanonical)
 	env.exec();
 }
 
+TEST(MetaKeywordsTests, DoNotIncludeEveryPageInDuplicates)
+{
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-keywords.com/single-page.html"));
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedMetaKeywordsUrlStorageType);
+		EXPECT_EQ(0, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(MetaKeywordsTests, SeveralMetaKeywords)
 {
 	// several-titles.html -> several-titles-2.html
