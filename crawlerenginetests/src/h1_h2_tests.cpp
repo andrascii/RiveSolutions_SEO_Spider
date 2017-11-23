@@ -119,6 +119,42 @@ TEST(H1AndH2Tests, DuplicateH1)
 	env.exec();
 }
 
+TEST(H1AndH2Tests, DoNotIncludeCanonicalDuplicatedH1)
+{
+	// canonical-duplicated-h1.html -> canonical-duplicated-h1-1.html
+
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://h1h2.com/canonical-duplicated-h1.html"));
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType);
+		EXPECT_EQ(0, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(TitleTests, IncludeDuplicatedH1IfThereAreSeveralCanonical)
+{
+	// canonical-duplicated-h1-another.html -> canonical-duplicated-h1.html -> canonical-duplicated-h1-1.html
+
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://h1h2.com/canonical-duplicated-h1-another.html"));
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType);
+		EXPECT_EQ(3, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(H1AndH2Tests, DuplicateH2)
 {
 	// duplicate-h2.html -> duplicate-h2-2.html

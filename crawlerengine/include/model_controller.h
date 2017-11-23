@@ -52,6 +52,8 @@ private:
 	void calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept;
 	void setPageLevel(ParsedPagePtr& page, int level) const noexcept;
 
+	void addDuplicates(const ParsedPagePtr& incomingPage, int lookupStorage, int destStorage);
+
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptions m_crawlerOptions;

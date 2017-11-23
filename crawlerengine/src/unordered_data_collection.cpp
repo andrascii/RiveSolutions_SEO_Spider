@@ -151,6 +151,7 @@ void UnorderedDataCollection::checkStorageType(StorageType type) const noexcept
 		type == Status404StorageType ||
 
 		type == PendingResourcesStorageType ||
+		type == CanonicalResourcesStorageType ||
 		type == HtmlResourcesStorageType ||
 		type == ImageResourcesStorageType ||
 		type == JavaScriptResourcesStorageType ||
@@ -353,6 +354,10 @@ void UnorderedDataCollection::initializeStorages()
 		std::make_pair(StorageType::PendingResourcesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::CanonicalResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherCanonicalLinkElement),
+				ParsedPageComparatorProxy(new ParsedPageCanonicalLinkElementComparator))),
 
 		std::make_pair(StorageType::HtmlResourcesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 

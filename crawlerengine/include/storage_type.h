@@ -85,6 +85,7 @@ enum StorageType
 	// Resources
 	//
 	PendingResourcesStorageType,
+	CanonicalResourcesStorageType,
 	HtmlResourcesStorageType,
 	ImageResourcesStorageType,
 	JavaScriptResourcesStorageType,

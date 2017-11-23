@@ -119,6 +119,42 @@ TEST(MetaDescriptionTests, DuplicatedMetaDescriptions)
 	env.exec();
 }
 
+TEST(MetaDescriptionTests, DoNotIncludeCanonicalDuplicatedTitles)
+{
+	// canonical-duplicated-desc.html -> canonical-duplicated-desc.html
+
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/canonical-duplicated-desc.html"));
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedMetaDescriptionUrlStorageType);
+		EXPECT_EQ(0, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(MetaDescriptionTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
+{
+	// canonical-duplicated-desc-another.html -> canonical-desc-title.html -> canonical-duplicated-desc.html
+
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/canonical-duplicated-desc-another.html"));
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->storageItems(CrawlerEngine::DuplicatedMetaDescriptionUrlStorageType);
+		EXPECT_EQ(3, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(MetaDescriptionTests, SeveralMetaDescriptions)
 {
 	// several-titles.html -> several-titles-2.html

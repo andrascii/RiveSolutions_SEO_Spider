@@ -34,6 +34,26 @@ public:
 
 	void clearData();
 
+	template <class TPredicate>
+	std::vector<ParsedPagePtr> allParsedPages(const ParsedPagePtr& parsedPagePtr, StorageType type, const TPredicate& unaryPredicate) const
+	{
+		std::vector<ParsedPagePtr> result;
+		checkStorageType(type);
+
+		const UnorderedStorageType& unorderedStorage = storage(type);
+		const auto rangeIterators = unorderedStorage.equal_range(parsedPagePtr);
+
+		for (auto it = rangeIterators.first; it != rangeIterators.second; ++it)
+		{
+			if (unaryPredicate(*it))
+			{
+				result.push_back(*it);
+			}
+		}
+
+		return result;
+	}
+
 signals:
 	void parsedPageAdded(ParsedPagePtr parsedPagePtr, int type);
 	

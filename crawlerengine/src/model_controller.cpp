@@ -212,19 +212,8 @@ void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage)
 
 	if (!title.isEmpty() && successfulResponseCode)
 	{
-		if (data()->isParsedPageExists(incomingPage, StorageType::AllTitlesUrlStorageType))
-		{
-			const ParsedPagePtr duplicate = data()->parsedPage(incomingPage, StorageType::AllTitlesUrlStorageType);
-			data()->addParsedPage(incomingPage, StorageType::DuplicatedTitleUrlStorageType);
-			if (!data()->isParsedPageExists(duplicate, StorageType::DuplicatedTitleUrlStorageType))
-			{
-				data()->addParsedPage(duplicate, StorageType::DuplicatedTitleUrlStorageType);
-			}
-		}
-		else
-		{
-			data()->addParsedPage(incomingPage, StorageType::AllTitlesUrlStorageType);
-		}
+		data()->addParsedPage(incomingPage, StorageType::AllTitlesUrlStorageType);
+		addDuplicates(incomingPage, StorageType::AllTitlesUrlStorageType, StorageType::DuplicatedTitleUrlStorageType);
 	}
 
 	if (!h1.isEmpty() && h1 == title && successfulResponseCode)
@@ -264,19 +253,8 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPa
 
 	if (metaDescriptionLength > 0 && successfulResponseCode)
 	{
-		if (data()->isParsedPageExists(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType))
-		{
-			const ParsedPagePtr duplicate = data()->parsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
-			data()->addParsedPage(incomingPage, StorageType::DuplicatedMetaDescriptionUrlStorageType);
-			if (!data()->isParsedPageExists(duplicate, StorageType::DuplicatedMetaDescriptionUrlStorageType))
-			{
-				data()->addParsedPage(duplicate, StorageType::DuplicatedMetaDescriptionUrlStorageType);
-			}
-		}
-		else
-		{
-			data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
-		}
+		data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
+		addDuplicates(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
 	}
 
 	if (incomingPage->hasSeveralMetaDescriptionTags && successfulResponseCode)
@@ -303,19 +281,8 @@ void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
 
 	if (metaKeywordsLength > 0 && successfulResponseCode)
 	{
-		if (data()->isParsedPageExists(incomingPage, StorageType::AllMetaKeywordsUrlStorageType))
-		{
-			ParsedPagePtr duplicate = data()->parsedPage(incomingPage, StorageType::AllMetaKeywordsUrlStorageType);
-			data()->addParsedPage(incomingPage, StorageType::DuplicatedMetaKeywordsUrlStorageType);
-			if (!data()->isParsedPageExists(duplicate, StorageType::DuplicatedMetaKeywordsUrlStorageType))
-			{
-				data()->addParsedPage(duplicate, StorageType::DuplicatedMetaKeywordsUrlStorageType);
-			}
-		}
-		else
-		{
-			data()->addParsedPage(incomingPage, StorageType::AllMetaKeywordsUrlStorageType);
-		}
+		data()->addParsedPage(incomingPage, StorageType::AllMetaKeywordsUrlStorageType);
+		addDuplicates(incomingPage, StorageType::AllMetaKeywordsUrlStorageType, StorageType::DuplicatedMetaKeywordsUrlStorageType);
 	}
 	
 
@@ -347,19 +314,8 @@ void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage)
 
 	if (h1Length > 0 && successfulResponseCode)
 	{
-		if (data()->isParsedPageExists(incomingPage, StorageType::AllH1UrlStorageType))
-		{
-			const ParsedPagePtr duplicate = data()->parsedPage(incomingPage, StorageType::AllH1UrlStorageType);
-			data()->addParsedPage(incomingPage, StorageType::DuplicatedH1UrlStorageType);
-			if (!data()->isParsedPageExists(duplicate, StorageType::DuplicatedH1UrlStorageType))
-			{
-				data()->addParsedPage(duplicate, StorageType::DuplicatedH1UrlStorageType);
-			}
-		}
-		else
-		{
-			data()->addParsedPage(incomingPage, StorageType::AllH1UrlStorageType);
-		}
+		data()->addParsedPage(incomingPage, StorageType::AllH1UrlStorageType);
+		addDuplicates(incomingPage, StorageType::AllH1UrlStorageType, StorageType::DuplicatedH1UrlStorageType);
 	}
 
 	if (incomingPage->hasSeveralH1Tags && successfulResponseCode)
@@ -726,6 +682,31 @@ void ModelController::setPageLevel(ParsedPagePtr& page, int level) const noexcep
 
 		ParsedPagePtr child = link.resource.lock();
 		setPageLevel(child, level + 1);
+	}
+}
+
+void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int lookupStorage, int destStorage)
+{
+	const StorageType lookupStorageType = static_cast<StorageType>(lookupStorage);
+	const StorageType destStorageType = static_cast<StorageType>(destStorage);
+
+	const auto predicate = [&canonicalUrl = incomingPage->canonicalUrl](const ParsedPagePtr& candidatePage)
+	{
+		return !candidatePage->canonicalUrl.isValid() || candidatePage->canonicalUrl != canonicalUrl;
+	};
+
+	const std::vector<ParsedPagePtr> duplicates = data()->allParsedPages(incomingPage, lookupStorageType, predicate);
+	if (!duplicates.empty())
+	{
+		data()->addParsedPage(incomingPage, destStorageType);
+
+		for (const ParsedPagePtr& duplicate : duplicates)
+		{
+			if (!data()->isParsedPageExists(duplicate, destStorageType))
+			{
+				data()->addParsedPage(duplicate, destStorageType);
+			}
+		}
 	}
 }
 
