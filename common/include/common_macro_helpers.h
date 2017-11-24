@@ -18,7 +18,8 @@ SeoSpiderServiceApi::seoSpiderServiceApi()->doAssert(__FILE__, __LINE__, __FUNCT
 #define VERIFY(Connection) Connection
 #endif
 
-#define INFOLOG  SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::ILogger::InfoLevel)
-#define DEBUGLOG SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::ILogger::DebugLevel)
-#define WARNLOG  SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::ILogger::WarningLevel)
-#define ERRLOG   SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::ILogger::ErrorLevel)
+#define TRACELOG SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::TraceLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
+#define DEBUGLOG SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::DebugLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
+#define INFOLOG  SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::InfoLevel)    << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
+#define WARNLOG  SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::WarningLevel) << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
+#define ERRLOG   SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::ErrorLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "

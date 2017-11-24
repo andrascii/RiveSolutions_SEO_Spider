@@ -193,9 +193,9 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
     }
 }
 
-void SeoSpiderServiceApiImpl::logMessage(const char* message, ILogger::SeverityLevel severityLevel)
+void SeoSpiderServiceApiImpl::logMessage(const char* message, SeverityLevel level)
 {
-    Logger::instance()->logMessage(message, severityLevel);
+    Logger::instance()->logMessage(message, level);
 }
 
 LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS pExceptionPtrs)

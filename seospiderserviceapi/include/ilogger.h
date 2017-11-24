@@ -3,20 +3,32 @@
 namespace SeoSpiderServiceApi
 {
 
+class ILoggerFilter;
+
+enum class SeverityLevel
+{
+    TraceLevel,
+    DebugLevel,
+    InfoLevel,
+    WarningLevel,
+    ErrorLevel
+};
+
 class ILogger
 {
 public:
-    enum SeverityLevel
+    enum CallType
     {
-        TraceLevel,
-        DebugLevel,
-        InfoLevel,
-        WarningLevel,
-        ErrorLevel
+        CallAsync,
+        CallSync
     };
 
-    virtual void logMessage(const std::string& message, SeverityLevel severityLevel) = 0;
-    virtual void flush() = 0;
+    // takes ownership of a pointer to filter
+    virtual void setFilter(ILoggerFilter* filter) noexcept = 0;
+
+    virtual void logMessage(const QString& message, SeverityLevel severityLevel, CallType callType = CallAsync) = 0;
+
+    virtual void flush(CallType callType = CallAsync) = 0;
 };
 
 }

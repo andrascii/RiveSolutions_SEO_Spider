@@ -1,12 +1,15 @@
 #pragma once
 
 #include "ilogger.h"
+#include "log_writer_thread.h"
 
 namespace SeoSpiderServiceApi
 {
 
-class Logger : public ILogger
+class Logger : public QObject, public ILogger
 {
+    Q_OBJECT
+
 private:
     template <typename T>
     class DefaultLoggerDeleter;
@@ -27,18 +30,23 @@ public:
 
     ~Logger();
 
-    virtual void logMessage(const std::string& message, SeverityLevel severityLevel) override;
-    virtual void flush() override;
+    virtual void setFilter(ILoggerFilter* filter) noexcept override;
+
+    virtual void logMessage(const QString& message, SeverityLevel level, CallType callType = CallAsync) override;
+
+    virtual void flush(CallType callType = CallAsync) override;
 
 private:
     Logger();
 
-private:
-    boost::shared_ptr<boost::log::core> m_loggingCore;
+    bool messageTypeAvailable(SeverityLevel level) const noexcept;
 
+private:
     bool m_deleting;
 
-    static thread_local boost::log::sources::severity_logger<boost::log::trivial::severity_level> s_logger;
+    LogWriterThread m_logWriterThread;
+
+    std::unique_ptr<ILoggerFilter> m_filter;
 };
 
 }

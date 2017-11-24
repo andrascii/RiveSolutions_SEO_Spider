@@ -10,20 +10,20 @@ namespace SeoSpiderServiceApi
 class LogMessageBuffer
 {
 public:
-    LogMessageBuffer(ILogger::SeverityLevel severityLevel)
-        : m_severityLevel(severityLevel)
+    LogMessageBuffer(SeverityLevel level)
+        : m_level(level)
     {
     }
 
     ~LogMessageBuffer()
     {
-        seoSpiderServiceApi()->logMessage(m_stream.str().c_str(), m_severityLevel);
+        seoSpiderServiceApi()->logMessage(m_stream.str().c_str(), m_level);
     }
 
     template <typename T>
     LogMessageBuffer& operator<<(const T& t)
     {
-        m_stream << t << " ";
+        m_stream << t;
 
         return *this;
     }
@@ -41,7 +41,7 @@ public:
     }
 
 private:
-    ILogger::SeverityLevel m_severityLevel;
+    SeverityLevel m_level;
 
     std::stringstream m_stream;
 };

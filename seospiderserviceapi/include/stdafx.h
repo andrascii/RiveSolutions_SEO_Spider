@@ -27,6 +27,7 @@
 #include <functional>
 #include <optional>
 #include <csignal>
+#include <fstream>
 
 namespace std
 {
@@ -57,15 +58,6 @@ namespace std
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/log/core.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/log/expressions.hpp>
-#include <boost/log/sinks/text_file_backend.hpp>
-#include <boost/log/utility/setup/file.hpp>
-#include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/sources/severity_logger.hpp>
-#include <boost/log/sources/record_ostream.hpp>
-#include <boost/shared_ptr.hpp>
 
 //
 // Qt
@@ -94,6 +86,8 @@ namespace std
 #include <QDebug>
 #include <QProcess>
 #include <QDateTime>
+#include <QFile>
+#include <QDataStream>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -103,17 +97,6 @@ namespace std
 #endif
 
 using namespace std::chrono_literals;
-using std::size_t;
-
-#define D_FUNCTION_DECL(ClassName) ClassName##Private* d_function() const
-
-#define D_FUNCTION_IMPL(ClassName) static ClassName##Private* d_function() \
-{ \
-    static ClassName##Private d_object; \
-    return &d_object; \
-}
-
-#define D_FUNCTION(ClassName) ClassName##Private* const d = d_function()
 
 #ifndef QT_DEBUG
 #define PRODUCTION
@@ -122,6 +105,3 @@ using std::size_t;
 #ifndef PRODUCTION
 #define DEBUG
 #endif
-
-#define SEO_SPIDER_SERVICE_API_NAMESPACE_BEGIN namespace SeoSpiderServiceApi {
-#define SEO_SPIDER_SERVICE_API_NAMESPACE_END }

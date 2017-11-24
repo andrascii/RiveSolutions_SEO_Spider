@@ -41,6 +41,7 @@ if(MSVC)
 		/MP
 		/std:c++latest
 		/D EXPORT
+		/permissive-
 		/Zi
 	)
 	
@@ -55,12 +56,14 @@ endif()
 
 include_directories(
 	${SeoSpiderServiceApiDllNameHeadersDir}
+	${CommonLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(
 	${SeoSpiderServiceApiDllName}
+	${CommonLibName}
 	${Boost_LIBRARIES}
 	Qt5::Network
 )

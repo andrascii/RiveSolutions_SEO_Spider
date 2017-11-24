@@ -29,7 +29,7 @@ public:
     virtual void debugReport(const char*, int, const char*, const char*) const noexcept override
     {
     }
-    virtual void logMessage(const char*, ILogger::SeverityLevel) override
+    virtual void logMessage(const char*, SeverityLevel) override
     {
     }
 };

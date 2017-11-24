@@ -1,9 +1,9 @@
 #include "logger.h"
+#include "default_logger_filter.h"
+#include "iseo_spider_service_api.h"
 
 namespace SeoSpiderServiceApi
 {
-
-thread_local boost::log::sources::severity_logger<boost::log::trivial::severity_level> Logger::s_logger;
 
 SeoSpiderServiceApi::ILogger* Logger::instance()
 {
@@ -19,54 +19,41 @@ SeoSpiderServiceApi::ILogger* Logger::instance()
 
 Logger::~Logger()
 {
-    using namespace std::literals::string_literals;
-
     if (!m_deleting)
     {
         // this already deleted
-        terminate();
+        abort();
     }
 }
 
-void Logger::logMessage(const std::string& message, SeverityLevel severityLevel)
+void Logger::setFilter(ILoggerFilter* filter) noexcept
 {
-    boost::log::record record = s_logger.open_record(boost::log::keywords::severity = 
-        static_cast<boost::log::trivial::severity_level>(severityLevel));
-
-    if (record)
-    {
-        boost::log::record_ostream stream(record);
-        stream << message;
-        stream.flush();
-
-        s_logger.push_record(boost::move(record));
-    }
+    m_filter.reset(filter);
 }
 
-void Logger::flush()
+void Logger::logMessage(const QString& message, SeverityLevel level, ILogger::CallType callType)
 {
-    m_loggingCore->flush();
+    Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
+
+    QMetaObject::invokeMethod(&m_logWriterThread, "logMessage", connectionType, Q_ARG(const QString&, message));
+}
+
+void Logger::flush(ILogger::CallType callType)
+{
+    Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
+
+    QMetaObject::invokeMethod(&m_logWriterThread, "flush", connectionType);
 }
 
 Logger::Logger()
-    : m_loggingCore(boost::log::core::get())
-    , m_deleting(false)
+    : m_deleting(false)
 {
-    boost::shared_ptr<boost::log::sinks::text_file_backend> backend =
-        boost::make_shared<boost::log::sinks::text_file_backend>(
-            boost::log::keywords::file_name = "logs.log",
-            boost::log::keywords::rotation_size = 5 * 1024 * 1024,
-            boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(12, 0, 0)
-        );
+    setFilter(new DefaultLoggerFilter);
+}
 
-    typedef boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend> sink_t;
-    boost::shared_ptr<sink_t> sink = boost::make_shared<sink_t>(backend);
-
-    m_loggingCore->add_sink(sink);
-
-    m_loggingCore->set_filter(boost::log::trivial::severity >= ILogger::SeverityLevel::InfoLevel);
-    m_loggingCore->add_global_attribute("time_stamp", boost::log::attributes::local_clock());
-    m_loggingCore->add_global_attribute("current_thread_id", boost::log::attributes::current_thread_id());
+bool Logger::messageTypeAvailable(SeverityLevel level) const noexcept
+{
+    return m_filter ? (*m_filter)(level) : true;
 }
 
 }
