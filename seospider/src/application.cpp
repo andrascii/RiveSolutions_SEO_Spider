@@ -60,8 +60,6 @@ Application::Application(int& argc, char** argv)
 
     showMainWindow();
 
-    INFOLOG << QThread::currentThreadId() << "Main thread has been started";
-
     INFOLOG << "Started application under OS" << operatingSystemVersion();
     INFOLOG << "Kernel type:" << QSysInfo::kernelType();
     INFOLOG << "Kernel version:" << QSysInfo::kernelVersion();
@@ -226,7 +224,7 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
     // robots.txt rules
     options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
     options.userAgentToFollow = CrawlerEngine::UserAgentType::AnyBot;
-    options.plainUserAgent = "sTechnologiesBot/1.0 Alpha (+http://www.sTechnologiesSeoSpider.org/)";
+    options.plainUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
 
     options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType);
     options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType);
