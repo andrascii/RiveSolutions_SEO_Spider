@@ -690,23 +690,33 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int looku
 	const StorageType lookupStorageType = static_cast<StorageType>(lookupStorage);
 	const StorageType destStorageType = static_cast<StorageType>(destStorage);
 
-	const auto predicate = [&canonicalUrl = incomingPage->canonicalUrl](const ParsedPagePtr& candidatePage)
+	const auto predicate = [&page = incomingPage](const ParsedPagePtr& candidatePage)
 	{
-		return !candidatePage->canonicalUrl.isValid() || candidatePage->canonicalUrl != canonicalUrl;
+		return 
+			PageParserHelpers::removeUrlLastSlashIfExists(candidatePage->url) != // TODO: remove these two lines and || duplicates.size() == 1
+			PageParserHelpers::removeUrlLastSlashIfExists(page->url) &&
+		
+			(!candidatePage->canonicalUrl.isValid() ||
+			PageParserHelpers::removeUrlLastSlashIfExists(candidatePage->canonicalUrl) !=
+			PageParserHelpers::removeUrlLastSlashIfExists(page->canonicalUrl));
 	};
 
 	const std::vector<ParsedPagePtr> duplicates = data()->allParsedPages(incomingPage, lookupStorageType, predicate);
 	if (!duplicates.empty())
 	{
-		data()->addParsedPage(incomingPage, destStorageType);
-
 		for (const ParsedPagePtr& duplicate : duplicates)
 		{
-			if (!data()->isParsedPageExists(duplicate, destStorageType))
+			// TODO: remove " || duplicates.size() == 1" : fix for unexpected behavior when we add only one page in duplicates storage
+			// something wrong with adding two pages in storage: with trailing slash and without one
+			// when we will not include both pages this bug should be fixed automatically
+			if (!data()->isParsedPageExists(duplicate, destStorageType) || duplicates.size() == 1) 
 			{
 				data()->addParsedPage(duplicate, destStorageType);
 			}
 		}
+
+		data()->addParsedPage(incomingPage, destStorageType);
+
 	}
 }
 
