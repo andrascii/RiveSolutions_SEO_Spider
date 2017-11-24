@@ -68,7 +68,7 @@ QUrl PageParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& 
 		int prevSlashPos = fixedPath.left(doublePointsPos).lastIndexOf("/");
 		if (prevSlashPos == -1)
 		{
-			WARNINGLOG << "Can't resolve absolute path: " << fixedPath;
+			WARNLOG << "Can't resolve absolute path: " << fixedPath;
 			break;
 		}
 		
@@ -185,9 +185,9 @@ bool PageParserHelpers::isSubdomain(const QUrl& baseUrl, const QUrl& url)
 
 	if (targetUrlCapturedTexts.isEmpty() || baseUrlCapturedTexts.isEmpty())
 	{
-		WARNINGLOG << "Can't parse links";
-		WARNINGLOG << "Base link:" << baseUrlWithoutScheme.host();
-		WARNINGLOG << "Checking link:" << targetUrlWithoutScheme.host();
+		WARNLOG << "Can't parse links";
+		WARNLOG << "Base link:" << baseUrlWithoutScheme.host();
+		WARNLOG << "Checking link:" << targetUrlWithoutScheme.host();
 
 		return false;
 	}

@@ -398,7 +398,7 @@ void Preferences::load()
 
 	if (!config.isOpen())
 	{
-		ERRORLOG << "Can't read defaults!";
+		ERRLOG << "Can't read defaults!";
 	}
 	else
 	{

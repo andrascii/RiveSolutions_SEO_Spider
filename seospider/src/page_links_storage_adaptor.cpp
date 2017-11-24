@@ -119,7 +119,7 @@ void PageLinksStorageAdaptor::onParsedPageAdded(LinksToThisResourceChanges chang
 	{
 		if (parsedPageWeakPointer.expired())
 		{
-			WARNINGLOG << "pointer expired";
+			WARNLOG << "pointer expired";
 			continue;
 		}
 

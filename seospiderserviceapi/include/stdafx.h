@@ -122,3 +122,6 @@ using std::size_t;
 #ifndef PRODUCTION
 #define DEBUG
 #endif
+
+#define SEO_SPIDER_SERVICE_API_NAMESPACE_BEGIN namespace SeoSpiderServiceApi {
+#define SEO_SPIDER_SERVICE_API_NAMESPACE_END }

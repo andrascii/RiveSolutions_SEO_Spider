@@ -101,7 +101,7 @@ void Downloader::metaDataChanged(QNetworkReply* reply)
 
 void Downloader::queryError(QNetworkReply* reply, QNetworkReply::NetworkError code)
 {
-	ERRORLOG << "An error occurred while downloading " << reply->url().toDisplayString() << "; code: " << code;
+	ERRLOG << "An error occurred while downloading " << reply->url().toDisplayString() << "; code: " << code;
 }
 
 void Downloader::processReply(QNetworkReply* reply)

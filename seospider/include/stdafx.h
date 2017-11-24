@@ -107,16 +107,6 @@ using std::size_t;
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define INFOLOG		CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define WARNINGLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define ERRORLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-
-#ifdef DEBUG
-#define DEBUGLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#else
-#define DEBUGLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::EmptyMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#endif
-
 #if defined(Q_OS_WIN)
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS

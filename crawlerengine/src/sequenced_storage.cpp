@@ -16,7 +16,7 @@ bool SequencedStorage::containsPointersWithUseCountGreaterThanOne() const noexce
 
 	if (pagesWithUseCountGreaterThanOne > 0)
 	{
-		ERRORLOG << "Some pages will not be destroyed, count: " << pagesWithUseCountGreaterThanOne;
+		ERRLOG << "Some pages will not be destroyed, count: " << pagesWithUseCountGreaterThanOne;
 		return true;
 	}
 

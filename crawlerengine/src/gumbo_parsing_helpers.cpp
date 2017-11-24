@@ -191,9 +191,9 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage, const
 		}
 		else
 		{
-			ERRORLOG << "Cannot find QTextCodec for page encoding";
-			ERRORLOG << "content-type:" << contentType;
-			ERRORLOG << "charset:" << charsetFromHtmlPage;
+			ERRLOG << "Cannot find QTextCodec for page encoding";
+			ERRLOG << "content-type:" << contentType;
+			ERRLOG << "charset:" << charsetFromHtmlPage;
 		}
 	}
 	else
@@ -206,7 +206,7 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage, const
 		}
 		else
 		{
-			ERRORLOG << "Cannot identify page encoding";
+			ERRLOG << "Cannot identify page encoding";
 		}
 	}
 

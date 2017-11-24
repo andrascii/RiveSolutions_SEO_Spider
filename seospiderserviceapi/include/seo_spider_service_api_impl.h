@@ -21,7 +21,7 @@ public:
     virtual void doAssert(const char* file, int line, const char* function, const char* expression) const noexcept override;
     virtual void debugReport(const char* file, int line, const char* function, const char* expression) const noexcept override;
 
-    virtual void logMessage(const std::string& message) override;
+    virtual void logMessage(const char* message, ILogger::SeverityLevel severityLevel) override;
 
 private:
     static LONG WINAPI sehHandler(PEXCEPTION_POINTERS pExceptionPtrs);

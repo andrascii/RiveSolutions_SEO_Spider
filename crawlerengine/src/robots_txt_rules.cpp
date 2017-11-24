@@ -41,7 +41,7 @@ bool RobotsTxtRules::isUrlAllowed(const QUrl& url, const MetaRobotsFlagsSet& met
 
 	if (m_strategies.find(userAgentType) == m_strategies.cend())
 	{
-		WARNINGLOG << "No appropriate strategy was found";
+		WARNLOG << "No appropriate strategy was found";
 		userAgentType = UserAgentType::AnyBot;
 	}
 

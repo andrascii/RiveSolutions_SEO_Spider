@@ -87,8 +87,3 @@ using std::size_t;
 #else
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
-
-#define INFOLOG		CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::InformationMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define DEBUGLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::DebugMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define WARNINGLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::WarningMessageType,__FUNCTION__,__FILENAME__,__LINE__)
-#define ERRORLOG	CrawlerEngine::LoggerConnectionServiceApi::instance()->log(CrawlerEngine::LoggerConnectionServiceApi::ErrorMessageType,__FUNCTION__,__FILENAME__,__LINE__)>

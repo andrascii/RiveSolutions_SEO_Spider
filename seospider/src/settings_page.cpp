@@ -109,7 +109,7 @@ void SettingsPage::init()
 
 		if (!propertyValue.isValid())
 		{
-			ERRORLOG << controlKey.constData() 
+			ERRLOG << controlKey.constData() 
 				<< "which appears in the" 
 				<< control->objectName() 
 				<< "is not exists in the ApplicationProperties! It will be ignored!";

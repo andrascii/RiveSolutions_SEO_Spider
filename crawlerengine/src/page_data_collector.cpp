@@ -35,7 +35,7 @@ ParsedPagePtr PageDataCollector::collectPageDataFromResponse(const DownloadRespo
 
 	if (page->pageSizeKilobytes > 512)
 	{
-		WARNINGLOG << "Page size is greater than 512 KB,"
+		WARNLOG << "Page size is greater than 512 KB,"
 			<< "size:" << page->pageSizeKilobytes << "KB,"
 			<< "URL:" << response.url.toString() << ","
 			<< "Content-Type:" << page->contentType;
@@ -134,7 +134,7 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 
 	if (contentTypeValues.size() > 1)
 	{
-		WARNINGLOG << page->url.toDisplayString() << "contains several content-type headers from HTTP response";
+		WARNLOG << page->url.toDisplayString() << "contains several content-type headers from HTTP response";
 	}
 
 	setResourceCategory(page);
@@ -195,7 +195,7 @@ void PageDataCollector::setResourceCategory(ParsedPagePtr& page) const
 		return;
 	}
 
-	WARNINGLOG << "Unknown resource type: " << page->contentType;
+	WARNLOG << "Unknown resource type: " << page->contentType;
 
 	page->resourceType = ResourceType::ResourceOther;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ilogger.h"
+
 namespace SeoSpiderServiceApi
 {
 
@@ -16,7 +18,7 @@ public:
     virtual void doAssert(const char* file, int line, const char* function, const char* expression) const noexcept = 0;
     virtual void debugReport(const char* file, int line, const char* function, const char* expression) const noexcept = 0;
 
-    virtual void logMessage(const std::string& message) = 0;
+    virtual void logMessage(const char* message, ILogger::SeverityLevel severityLevel) = 0;
 };
 
 }

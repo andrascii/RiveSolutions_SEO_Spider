@@ -7,7 +7,7 @@ thread_local boost::log::sources::severity_logger<boost::log::trivial::severity_
 
 SeoSpiderServiceApi::ILogger* Logger::instance()
 {
-    static std::unique_ptr<Logger> s_instance;
+    static std::unique_ptr<Logger, DefaultLoggerDeleter<Logger>> s_instance;
 
     if (!s_instance)
     {
@@ -15,6 +15,17 @@ SeoSpiderServiceApi::ILogger* Logger::instance()
     }
 
     return s_instance.get();
+}
+
+Logger::~Logger()
+{
+    using namespace std::literals::string_literals;
+
+    if (!m_deleting)
+    {
+        // this already deleted
+        terminate();
+    }
 }
 
 void Logger::logMessage(const std::string& message, SeverityLevel severityLevel)
@@ -32,8 +43,14 @@ void Logger::logMessage(const std::string& message, SeverityLevel severityLevel)
     }
 }
 
+void Logger::flush()
+{
+    m_loggingCore->flush();
+}
+
 Logger::Logger()
     : m_loggingCore(boost::log::core::get())
+    , m_deleting(false)
 {
     boost::shared_ptr<boost::log::sinks::text_file_backend> backend =
         boost::make_shared<boost::log::sinks::text_file_backend>(
@@ -46,6 +63,10 @@ Logger::Logger()
     boost::shared_ptr<sink_t> sink = boost::make_shared<sink_t>(backend);
 
     m_loggingCore->add_sink(sink);
+
+    m_loggingCore->set_filter(boost::log::trivial::severity >= ILogger::SeverityLevel::InfoLevel);
+    m_loggingCore->add_global_attribute("time_stamp", boost::log::attributes::local_clock());
+    m_loggingCore->add_global_attribute("current_thread_id", boost::log::attributes::current_thread_id());
 }
 
 }

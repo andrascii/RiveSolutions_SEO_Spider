@@ -17,7 +17,7 @@ const std::uint8_t s_interceptFunctionOpcodes[] =
 #endif
 };
 
-class MessageBoxThread : public QThread
+class MessageBoxThread final
 {
 public:
     MessageBoxThread(const std::string& text)
@@ -28,23 +28,26 @@ public:
 
     int askUser()
     {
-        Q_ASSERT(!isRunning());
-        QThread::start();
-        QThread::wait();
+        std::thread messageBoxThread = std::thread(&MessageBoxThread::run, this);
+        messageBoxThread.join();
+
         return m_result;
     }
 
 protected:
 
-    virtual void run() override
+    void run()
     {
-        m_result = MessageBoxA(0, m_text.c_str(), "SeoSpiderServiceApi Debug Library!",
+        
 #if defined(QT_DEBUG)
-            MB_RETRYCANCEL
+        long messageBoxType = MB_RETRYCANCEL;
 #else
-            MB_OK
+        long messageBoxType = MB_OK;
 #endif
-            | MB_ICONSTOP | MB_TOPMOST);
+
+        messageBoxType = messageBoxType | MB_ICONSTOP | MB_TOPMOST;
+
+        m_result = MessageBoxA(0, m_text.c_str(), "SeoSpiderServiceApi Debug Library!", messageBoxType);
     }
 
 private:
@@ -117,6 +120,8 @@ void SeoSpiderServiceApiImpl::setProcessSignaledState() const noexcept
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
+    Logger::instance()->flush();
+
     SetEvent(m_crashEventHandle);
 
     Sleep(INFINITE);
@@ -188,9 +193,9 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
     }
 }
 
-void SeoSpiderServiceApiImpl::logMessage(const std::string& message)
+void SeoSpiderServiceApiImpl::logMessage(const char* message, ILogger::SeverityLevel severityLevel)
 {
-    Logger::instance()->logMessage(message, ILogger::InfoLevel);
+    Logger::instance()->logMessage(message, severityLevel);
 }
 
 LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS pExceptionPtrs)
