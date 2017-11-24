@@ -18,6 +18,29 @@
 namespace SeoSpider
 {
 
+static void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
+{
+    switch (type)
+    {
+    case QtDebugMsg:
+        DEBUGLOG << msg;
+        break;
+
+    case QtWarningMsg:
+        WARNLOG << msg;
+        break;
+
+    case QtCriticalMsg:
+        ERRLOG << msg;
+        break;
+
+    case QtFatalMsg:
+		ERRLOG << msg;
+        abort();
+        break;
+    }
+}
+
 Application::Application(int& argc, char** argv)
     : QApplication(argc, argv)
     , m_preferences(new Preferences(this, this))
@@ -216,6 +239,8 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 
 void Application::initialize()
 {
+	qInstallMessageHandler(qtMsgHandler);
+
     DeferredCallProcessor::init();
     InternetConnectionInspector::init();
 
