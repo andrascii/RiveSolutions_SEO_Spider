@@ -13,8 +13,6 @@ constexpr int s_threadCount = 1;
 namespace CrawlerEngineTests
 {
 
-std::mutex g_mutex;
-
 static int s_argc = 0;
 
 TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)

@@ -9,8 +9,6 @@ std::mutex TestRunner::s_mutex;
 TestRunner::TestRunner(QObject* parent)
 	: QObject(parent)
 {
-	s_mutex.lock();
-
 	qRegisterMetaType<std::function<void()>>("std::function<void()>");
 
 	//
@@ -26,8 +24,6 @@ void TestRunner::runTest(const std::function<void()>& testFunction)
 	testFunction();
 
 	testEnv->quit();
-
-	s_mutex.unlock();
 }
 
 }

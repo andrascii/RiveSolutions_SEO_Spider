@@ -113,11 +113,14 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 			const bool pageExists = pageIt != std::end(crawledPages);
 			EXPECT_EQ(true, pageExists);
 
-			for (const CrawlerEngine::ResourceLink& resource : page->linksOnThisPage)
+			for (const CrawlerEngine::ResourceLink& link : page->linksOnThisPage)
 			{
-				CrawlerEngine::ParsedPage* resourcePage = resource.resource.lock().get();
+				CrawlerEngine::ParsedPage* resourcePage = link.resource.lock().get();
 
-				if (!CrawlerEngine::PageParserHelpers::isHttpOrHttpsScheme(resourcePage->url))
+                // it may be already expired. check it
+                EXPECT_EQ(true, resourcePage != nullptr);
+
+				if (!resourcePage || !CrawlerEngine::PageParserHelpers::isHttpOrHttpsScheme(resourcePage->url))
 				{
 					continue;
 				}
@@ -133,13 +136,13 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 
 CrawlerEngine::IDownloader* TestsCrawler::createDownloader() const
 {
-	m_downloader = new TestsDownloader();
+    m_downloader = new TestsDownloader;
 	return m_downloader;
 }
 
 CrawlerEngine::IRobotsTxtLoader* TestsCrawler::createRobotsTxtLoader() const
 {
-	return new TestsRobotsTxtLoader();
+    return new TestsRobotsTxtLoader;
 }
 
 void TestsCrawler::createSequencedDataCollection(QThread* targetThread) const

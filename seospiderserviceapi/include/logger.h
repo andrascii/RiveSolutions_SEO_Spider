@@ -22,8 +22,6 @@ private:
         }
     };
 
-    friend class DefaultLoggerDeleter<Logger>;
-
 public:
     static ILogger* instance();
 

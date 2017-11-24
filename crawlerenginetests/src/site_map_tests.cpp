@@ -49,8 +49,6 @@ QString toRFC2822Date(const QDateTime& time)
 
 TEST(SiteMapTests, SimpleSiteMap)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);

@@ -3,8 +3,6 @@ namespace CrawlerEngineTests
 	
 TEST(LinksTests, LinkAlt)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/link-with-title.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -26,8 +24,6 @@ TEST(LinksTests, LinkAlt)
 
 TEST(LinksTests, CanonicalNextPrev)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/canonical-next-prev.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -55,8 +51,6 @@ TEST(LinksTests, CanonicalNextPrev)
 
 TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://nofollowlinks.com"));
 	options.followInternalNofollow = false;
 
@@ -64,7 +58,7 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 3, 10, "Waiting for 1 crawled pages");
+		auto pages = cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
 		std::vector<const CrawlerEngine::ParsedPage*> crawledPages = cl->storageItems(CrawlerEngine::CrawledUrlStorageType);
@@ -77,8 +71,6 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 
 TEST(LinksTests, SubdomainsMustNotBeLoaded)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://subdomains.com")));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -92,8 +84,6 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 
 TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://blockedbyrobotstxt.com")));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -107,8 +97,6 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 
 TEST(LinksTests, Canonical)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/canonical.html")));
 
 	const auto testFunction = [cl = env.crawler()]()

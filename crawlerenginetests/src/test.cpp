@@ -7,8 +7,6 @@ namespace CrawlerEngineTests
 
 TEST(DummyGroup, DummyName)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://dummy.com")));
 
 	const auto testFunction = [cl = env.crawler()]()

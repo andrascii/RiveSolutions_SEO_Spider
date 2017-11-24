@@ -3,8 +3,6 @@ namespace CrawlerEngineTests
 
 TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 {
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://status.com/too-short.html"));
 	options.maxTitleLength = 10;
 	options.minTitleLength = 9;

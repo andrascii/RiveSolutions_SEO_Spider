@@ -4,9 +4,6 @@ namespace CrawlerEngineTests
 TEST(MetaDescriptionTests, EmptyMetaDescription)
 {
 	// empty-meta.html -> empty-meta-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://meta-desc.com/empty-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -27,9 +24,6 @@ TEST(MetaDescriptionTests, EmptyMetaDescription)
 TEST(MetaDescriptionTests, NoMetaDescription)
 {
 	// no-meta.html -> no-meta-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://meta-desc.com/no-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -50,9 +44,6 @@ TEST(MetaDescriptionTests, NoMetaDescription)
 TEST(MetaDescriptionTests, TooLongMetaDescription)
 {
 	// too-long-meta.html -> too-long-meta-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/too-long-meta.html"));
 	options.maxDescriptionLength = 10;
 	TestEnvironment env( options);
@@ -74,9 +65,6 @@ TEST(MetaDescriptionTests, TooLongMetaDescription)
 TEST(MetaDescriptionTests, TooShortMetaDescription)
 {
 	// too-short-meta.html -> too-short-meta-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/too-short-meta.html"));
 	options.minDescriptionLength = 50;
 	options.maxDescriptionLength = 100;
@@ -99,9 +87,6 @@ TEST(MetaDescriptionTests, TooShortMetaDescription)
 TEST(MetaDescriptionTests, DuplicatedMetaDescriptions)
 {
 	// duplicated-meta-1.html -> duplicated-meta-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/duplicated-meta-1.html"));
 	TestEnvironment env(options);
 
@@ -174,8 +159,6 @@ TEST(MetaDescriptionTests, DoNotIncludeEveryPageInDuplicates)
 TEST(MetaDescriptionTests, SeveralMetaDescriptions)
 {
 	// several-titles.html -> several-titles-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
 
 	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://meta-desc.com/several-meta.html")));
 

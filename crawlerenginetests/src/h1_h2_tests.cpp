@@ -4,9 +4,6 @@ namespace CrawlerEngineTests
 TEST(H1AndH2Tests, EmptyH1)
 {
 	// empty-h1.html -> empty-h1-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/empty-h1.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -28,9 +25,6 @@ TEST(H1AndH2Tests, EmptyH1)
 TEST(H1AndH2Tests, NoH1)
 {
 	// no-h1.html -> no-h1-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/no-h1.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -52,9 +46,6 @@ TEST(H1AndH2Tests, NoH1)
 TEST(H1AndH2Tests, EmptyH2)
 {
 	// empty-h2.html -> empty-h2-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/empty-h2.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -76,9 +67,6 @@ TEST(H1AndH2Tests, EmptyH2)
 TEST(H1AndH2Tests, NoH2)
 {
 	// no-h2.html -> no-h2-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/no-h2.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -100,9 +88,6 @@ TEST(H1AndH2Tests, NoH2)
 TEST(H1AndH2Tests, DuplicateH1)
 {
 	// duplicate-h1.html -> duplicate-h1-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/duplicate-h1.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -174,9 +159,6 @@ TEST(H1AndH2Tests, DoNotIncludeEveryPageInDuplicates)
 TEST(H1AndH2Tests, DuplicateH2)
 {
 	// duplicate-h2.html -> duplicate-h2-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/duplicate-h2.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -196,9 +178,6 @@ TEST(H1AndH2Tests, DuplicateH2)
 TEST(H1AndH2Tests, TooLongH1)
 {
 	// too-long-h1.html -> too-long-h1-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/too-long-h1.html") });
 	options.maxH1LengthChars = 10;
 
@@ -221,9 +200,6 @@ TEST(H1AndH2Tests, TooLongH1)
 TEST(H1AndH2Tests, TooLongH2)
 {
 	// too-long-h2.html -> too-long-h2-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/too-long-h2.html") });
 	options.maxH2LengthChars = 10;
 
@@ -246,9 +222,6 @@ TEST(H1AndH2Tests, TooLongH2)
 TEST(H1AndH2Tests, SeveralEqualH1)
 {
 	// several-equal-h1.html -> several-equal-h1-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/several-equal-h1.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -268,9 +241,6 @@ TEST(H1AndH2Tests, SeveralEqualH1)
 TEST(H1AndH2Tests, SeveralEqual2)
 {
 	// several-equal-h2.html -> several-equal-h2-2.html
-
-	std::lock_guard<std::mutex> locker(g_mutex);
-
 	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://h1h2.com/several-equal-h2.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()

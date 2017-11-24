@@ -9,8 +9,6 @@ namespace CrawlerEngineTests
 class TestRunner;
 class TestsCrawler;
 
-extern std::mutex g_mutex;
-
 class TestEnvironment : public QCoreApplication
 {
 	Q_OBJECT
