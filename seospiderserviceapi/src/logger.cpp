@@ -61,9 +61,11 @@ void Logger::logMessage(const QString& message, SeverityLevel level, ILogger::Ca
         return;
     }
 
+    QString messageWithTimeStamp = QDateTime::currentDateTime().toString(Qt::RFC2822Date) + "|" + message;
+
     Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
 
-    QMetaObject::invokeMethod(&m_logWriterThread, "logMessage", connectionType, Q_ARG(const QString&, message));
+    QMetaObject::invokeMethod(&m_logWriterThread, "logMessage", connectionType, Q_ARG(const QString&, messageWithTimeStamp));
 }
 
 void Logger::flush(ILogger::CallType callType)
