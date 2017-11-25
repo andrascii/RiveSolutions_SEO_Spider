@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ilogger.h"
+#include "ilogger_filter.h"
 #include "log_writer_thread.h"
 
 namespace SeoSpiderServiceApi
@@ -30,7 +31,7 @@ public:
 
     ~Logger();
 
-    virtual void setFilter(ILoggerFilter* filter) noexcept override;
+    virtual void setFilter(bool(f)(SeverityLevel level)) noexcept override;
 
     virtual void logMessage(const QString& message, SeverityLevel level, CallType callType = CallAsync) override;
 

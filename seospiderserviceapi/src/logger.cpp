@@ -2,6 +2,29 @@
 #include "default_logger_filter.h"
 #include "iseo_spider_service_api.h"
 
+namespace
+{
+
+template <typename F>
+class CustomLoggerFilter : public SeoSpiderServiceApi::ILoggerFilter
+{
+public:
+    CustomLoggerFilter(F f)
+        : m_f(f)
+    {
+    }
+
+    virtual bool operator()(SeoSpiderServiceApi::SeverityLevel level) const noexcept override
+    {
+        return m_f(level);
+    }
+
+private:
+    std::decay_t<F> m_f;
+};
+
+}
+
 namespace SeoSpiderServiceApi
 {
 
@@ -26,13 +49,18 @@ Logger::~Logger()
     }
 }
 
-void Logger::setFilter(ILoggerFilter* filter) noexcept
+void Logger::setFilter(bool(f)(SeverityLevel level)) noexcept
 {
-    m_filter.reset(filter);
+    m_filter.reset(new CustomLoggerFilter<bool(SeverityLevel level)>(f));
 }
 
 void Logger::logMessage(const QString& message, SeverityLevel level, ILogger::CallType callType)
 {
+    if (!messageTypeAvailable(level))
+    {
+        return;
+    }
+
     Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
 
     QMetaObject::invokeMethod(&m_logWriterThread, "logMessage", connectionType, Q_ARG(const QString&, message));
@@ -48,7 +76,7 @@ void Logger::flush(ILogger::CallType callType)
 Logger::Logger()
     : m_deleting(false)
 {
-    setFilter(new DefaultLoggerFilter);
+    m_filter.reset(new DefaultLoggerFilter);
 }
 
 bool Logger::messageTypeAvailable(SeverityLevel level) const noexcept

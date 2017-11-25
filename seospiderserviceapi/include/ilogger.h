@@ -3,8 +3,6 @@
 namespace SeoSpiderServiceApi
 {
 
-class ILoggerFilter;
-
 enum class SeverityLevel
 {
     TraceLevel,
@@ -23,8 +21,7 @@ public:
         CallSync
     };
 
-    // takes ownership of a pointer to filter
-    virtual void setFilter(ILoggerFilter* filter) noexcept = 0;
+    virtual void setFilter(bool(SeverityLevel level)) noexcept = 0;
 
     virtual void logMessage(const QString& message, SeverityLevel severityLevel, CallType callType = CallAsync) = 0;
 
