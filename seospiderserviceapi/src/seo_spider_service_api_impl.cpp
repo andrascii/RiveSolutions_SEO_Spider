@@ -175,8 +175,8 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
     text << std::string("Expression: ") << expression << std::endl << std::endl;
     text << std::string("Press Retry to debug the application");
 
-    MessageBoxThread msgbox(text.str());
     // Run message box in background thread to stop main thread message pump
+    MessageBoxThread msgbox(text.str());
 
     switch (msgbox.askUser())
     {

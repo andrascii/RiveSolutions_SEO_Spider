@@ -13,8 +13,9 @@ public:
     LogWriterThread();
     ~LogWriterThread();
 
-    Q_SLOT void logMessage(const QString& message);
-    Q_SLOT void flush();
+private slots:
+    void logMessage(const QString& message, SeverityLevel severityLevel);
+    void flush();
 
 private:
     inline void abortIfCallFromAnotherThread() const
@@ -33,9 +34,14 @@ private:
         }
     }
 
+    void ensureEstablishedConnectionWithServiceAppServer();
+
+    void sendMessageToServiceAppServer(const QString& message, SeverityLevel severityLevel);
+
 private:
     QFile m_outputFile;
     QTextStream m_outputStream;
+    QLocalSocket* m_socket;
 };
 
 }

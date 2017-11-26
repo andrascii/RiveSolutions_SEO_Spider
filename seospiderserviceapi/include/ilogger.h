@@ -22,10 +22,10 @@ public:
     };
 
     virtual void setFilter(bool(SeverityLevel level)) noexcept = 0;
-
     virtual void logMessage(const QString& message, SeverityLevel severityLevel, CallType callType = CallAsync) = 0;
-
     virtual void flush(CallType callType = CallAsync) = 0;
 };
 
 }
+
+Q_DECLARE_METATYPE(SeoSpiderServiceApi::SeverityLevel)

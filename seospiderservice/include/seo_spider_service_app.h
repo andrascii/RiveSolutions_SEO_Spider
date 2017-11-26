@@ -2,33 +2,44 @@
 
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
+#include "logger_debug_window.h"
 
 namespace SeoSpiderService
 {
 
 class SeoSpiderServiceApp : public QApplication
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	SeoSpiderServiceApp(int& argc, char** argv);
+    SeoSpiderServiceApp(int& argc, char** argv);
+    ~SeoSpiderServiceApp();
 
-	Q_SLOT void waitForSignaledEvent() const noexcept;
-
-private:
-	QString commandLineParameter(int num) const noexcept;
-
-	void makeCrashDump(HANDLE processHandle) const noexcept;
-	bool setSeDebugPrivilege(bool flag) const noexcept;
-
-	Q_SIGNAL void closeServiceApp() const;
+protected:
+    virtual void timerEvent(QTimerEvent*) override;
 
 private:
-	std::unique_ptr<FatalErrorDialog> m_dialog;
-	std::unique_ptr<DebugHelpDllLoader> m_dbgHelpDllLoader;
+    void init();
 
-	QByteArray m_eventName;
-	DWORD m_processId;
+    QString commandLineParameter(int num) const noexcept;
+
+    void makeDump(HANDLE processHandle) const noexcept;
+
+    Q_SIGNAL void closeServiceApp() const;
+
+private:
+    std::unique_ptr<FatalErrorDialog> m_dialog;
+    std::unique_ptr<DebugHelpDllLoader> m_dbgHelpDllLoader;
+
+    QByteArray m_eventName;
+    DWORD m_processId;
+
+    std::unique_ptr<LoggerDebugWindow> m_loggerDebugWindow;
+
+    HANDLE m_signaledEvent;
+    HANDLE m_processHandle;
+
+    int m_timerId;
 };
 
 }

@@ -58,6 +58,10 @@
 #include <QUuid>
 #include <QDialog>
 #include <QMessageBox>
+#include <QLocalServer>
+#include <QLocalSocket>
+#include <QTcpServer>
+#include <QTcpSocket>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -71,6 +75,3 @@
 #else
 #define VERIFY(Connection) Connection
 #endif
-
-using namespace std::chrono_literals;
-using std::size_t;
