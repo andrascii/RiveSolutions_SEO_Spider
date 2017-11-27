@@ -2,6 +2,7 @@
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
 #include "log_message_receiver.h"
+#include "ipc_signaled_object_creator.h"
 
 namespace SeoSpiderService
 {
@@ -11,6 +12,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
     , m_dialog(new FatalErrorDialog)
     , m_dbgHelpDllLoader(new DebugHelpDllLoader)
     , m_loggerDebugWindow(new LoggerDebugWindow)
+    , m_appInitializedIpcSignal(Common::creator()())
 {
     init();
 

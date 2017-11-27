@@ -4,6 +4,7 @@ project(${SeoSpiderServiceAppName})
 set(SeoSpiderServiceSourcesDir src)
 set(SeoSpiderServiceHeadersDir include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include/)
+set(CommonLibHeadersDir ../common/include)
 
 aux_source_directory(${SeoSpiderServiceSourcesDir} SeoSpiderServiceSourcesList)
 file(GLOB_RECURSE SeoSpiderServiceHeadersList "include/*.h")
@@ -63,12 +64,14 @@ endif()
 include_directories(
 	${SeoSpiderServiceHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
+	${CommonLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(
 	${SeoSpiderServiceAppName}
+	${CommonLibName}
 	${Boost_LIBRARIES}
 	Qt5::Widgets
 	Qt5::Network
