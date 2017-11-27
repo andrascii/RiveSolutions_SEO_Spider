@@ -2,7 +2,6 @@
 #include "tests_downloader.h"
 #include "tests_robots_txt_loader.h"
 #include "page_parser_helpers.h"
-#include "handler_registry.h"
 #include "test_sequenced_data_collection.h"
 #include "unordered_data_collection.h"
 #include "model_controller.h"
@@ -10,20 +9,17 @@
 namespace CrawlerEngineTests
 {
 
-std::mutex TestsCrawler::s_mutex;
-
 class TimeOutException: public std::exception
 {
 public:
 	TimeOutException(const char* message)
 		: std::exception(message)
 	{
-		
 	}
 };
 
-TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerEngine::CrawlerOptions& options, QObject* parent)
-	: CrawlerEngine::Crawler(threadCount, parent)
+TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerOptions& options, QObject* parent)
+	: Crawler(threadCount, parent)
 	, m_testCrawlerOptions(options)
 {
 	initialize();
@@ -43,10 +39,10 @@ TestsCrawler::~TestsCrawler()
 	m_sequencedDataCollectionThread->deleteLater();
 }
 
-std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::waitForParsedPageReceived(
-	CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const
+std::vector<const ParsedPage*> TestsCrawler::waitForParsedPageReceived(
+	StorageType storage, int count, int seconds, const char* timeoutMessage) const
 {
-	std::future<std::vector<const CrawlerEngine::ParsedPage*>> future = m_receiver->getParsedPages(count, storage);
+	std::future<std::vector<const ParsedPage*>> future = m_receiver->getParsedPages(count, storage);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
@@ -56,9 +52,9 @@ std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::waitForParsedPageRec
 	return future.get();
 }
 
-std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::waitForAllCrawledPageReceived(int seconds, const char* timeoutMessage) const
+std::vector<const ParsedPage*> TestsCrawler::waitForAllCrawledPageReceived(int seconds, const char* timeoutMessage) const
 {
-	std::future<std::vector<const CrawlerEngine::ParsedPage*>> future = m_receiver->getAllCrawledPages();
+	std::future<std::vector<const ParsedPage*>> future = m_receiver->getAllCrawledPages();
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
@@ -68,15 +64,15 @@ std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::waitForAllCrawledPag
 	return future.get();
 }
 
-std::vector<const CrawlerEngine::ParsedPage*> TestsCrawler::storageItems(CrawlerEngine::StorageType storage) const
+std::vector<const ParsedPage*> TestsCrawler::storageItems(StorageType storage) const
 {
 	return m_receiver->storageItems(storage);
 }
 
-std::vector<CrawlerEngine::LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResourceChangesReceived(
-	const CrawlerEngine::ParsedPage* page, int count, int seconds) const
+std::vector<LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResourceChangesReceived(
+	const ParsedPage* page, int count, int seconds) const
 {
-	std::future<std::vector<CrawlerEngine::LinksToThisResourceChanges>> future = 
+	std::future<std::vector<LinksToThisResourceChanges>> future = 
 		m_receiver->getLinksToThisResourceChanges(page, count);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
@@ -99,28 +95,28 @@ TestsDownloader* TestsCrawler::testDownloader() const
 
 void TestsCrawler::checkSequencedDataCollectionConsistency()
 {
-	std::vector<const CrawlerEngine::ParsedPage*> crawledPages = m_receiver->storageItems(CrawlerEngine::CrawledUrlStorageType);
+	std::vector<const ParsedPage*> crawledPages = m_receiver->storageItems(CrawledUrlStorageType);
 
-	for (int i = CrawlerEngine::BeginEnumStorageType + 1; i < CrawlerEngine::EndEnumStorageType; ++i)
+	for (int i = BeginEnumStorageType + 1; i < EndEnumStorageType; ++i)
 	{
-		std::vector<const CrawlerEngine::ParsedPage*> storagePages = 
-			m_receiver->storageItems(static_cast<CrawlerEngine::StorageType>(i));
+		std::vector<const ParsedPage*> storagePages = 
+			m_receiver->storageItems(static_cast<StorageType>(i));
 
-		for (const CrawlerEngine::ParsedPage* page : storagePages)
+		for (const ParsedPage* page : storagePages)
 		{
 			auto pageIt = std::find(std::begin(crawledPages), std::end(crawledPages), page);
 
 			const bool pageExists = pageIt != std::end(crawledPages);
 			EXPECT_EQ(true, pageExists);
 
-			for (const CrawlerEngine::ResourceLink& link : page->linksOnThisPage)
+			for (const ResourceLink& link : page->linksOnThisPage)
 			{
-				CrawlerEngine::ParsedPage* resourcePage = link.resource.lock().get();
+				ParsedPage* resourcePage = link.resource.lock().get();
 
                 // it may be already expired. check it
                 EXPECT_EQ(true, resourcePage != nullptr);
 
-				if (!resourcePage || !CrawlerEngine::PageParserHelpers::isHttpOrHttpsScheme(resourcePage->url))
+				if (!resourcePage || !PageParserHelpers::isHttpOrHttpsScheme(resourcePage->url))
 				{
 					continue;
 				}
@@ -134,13 +130,18 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 	}
 }
 
-CrawlerEngine::IDownloader* TestsCrawler::createDownloader() const
+const UnorderedDataCollection* TestsCrawler::unorderedDataCollection() const
+{
+	return m_modelController->data();
+}
+
+IDownloader* TestsCrawler::createDownloader() const
 {
     m_downloader = new TestsDownloader;
 	return m_downloader;
 }
 
-CrawlerEngine::IRobotsTxtLoader* TestsCrawler::createRobotsTxtLoader() const
+IRobotsTxtLoader* TestsCrawler::createRobotsTxtLoader() const
 {
     return new TestsRobotsTxtLoader;
 }
@@ -156,13 +157,13 @@ void TestsCrawler::createSequencedDataCollection(QThread* targetThread) const
 
 	m_sequencedDataCollection->moveToThread(targetThread);
 
-	VERIFY(connect(m_modelController->data(), &CrawlerEngine::UnorderedDataCollection::parsedPageAdded, m_sequencedDataCollection.get(),
+	VERIFY(connect(m_modelController->data(), &UnorderedDataCollection::parsedPageAdded, m_sequencedDataCollection.get(),
 		&TestSequencedDataCollection::addParsedPage, Qt::QueuedConnection));
 
-	VERIFY(connect(m_modelController->data(), &CrawlerEngine::UnorderedDataCollection::parsedPageLinksToThisResourceChanged, m_sequencedDataCollection.get(),
+	VERIFY(connect(m_modelController->data(), &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, m_sequencedDataCollection.get(),
 		&TestSequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
 
-	VERIFY(connect(m_modelController->data(), &CrawlerEngine::UnorderedDataCollection::dataCleared, m_sequencedDataCollection.get(),
+	VERIFY(connect(m_modelController->data(), &UnorderedDataCollection::dataCleared, m_sequencedDataCollection.get(),
 		&TestSequencedDataCollection::onDataCleared, Qt::QueuedConnection));
 
 	static_cast<TestSequencedDataCollection*>(m_sequencedDataCollection.get())->initializeStorages();

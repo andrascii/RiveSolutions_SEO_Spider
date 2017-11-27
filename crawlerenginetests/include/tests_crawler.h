@@ -7,31 +7,26 @@
 namespace CrawlerEngineTests
 {
 
+using namespace CrawlerEngine;
+
 class TestsDownloader;
 
-class TestsCrawler : public CrawlerEngine::Crawler
+class TestsCrawler : public Crawler
 {
 	Q_OBJECT
 
 public:
-	TestsCrawler(
-		unsigned int threadCount, 
-		const CrawlerEngine::CrawlerOptions& options, 
-		QObject* parent = nullptr
-	);
+	TestsCrawler(unsigned int threadCount, const CrawlerOptions& options, QObject* parent = nullptr);
 
 	~TestsCrawler();
 
-	std::vector<const CrawlerEngine::ParsedPage*> waitForParsedPageReceived(
-		CrawlerEngine::StorageType storage, int count, int seconds, const char* timeoutMessage) const;
+	std::vector<const ParsedPage*> waitForParsedPageReceived(StorageType storage, int count, int seconds, const char* timeoutMessage) const;
 
-	std::vector<const CrawlerEngine::ParsedPage*> waitForAllCrawledPageReceived(int seconds, 
-		const char* timeoutMessage = "Waiting for all pages received") const;
+	std::vector<const ParsedPage*> waitForAllCrawledPageReceived(int seconds, const char* timeoutMessage = "Waiting for all pages received") const;
 
-	std::vector<const CrawlerEngine::ParsedPage*> storageItems(CrawlerEngine::StorageType storage) const;
+	std::vector<const ParsedPage*> storageItems(StorageType storage) const;
 
-	std::vector<CrawlerEngine::LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(
-		const CrawlerEngine::ParsedPage* page, int count, int seconds) const;
+	std::vector<LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(const ParsedPage* page, int count, int seconds) const;
 
 	Q_SLOT void startTestCrawler();
 
@@ -39,16 +34,18 @@ public:
 
 	void checkSequencedDataCollectionConsistency();
 
+	const UnorderedDataCollection* unorderedDataCollection() const;
+
 protected:
-	virtual CrawlerEngine::IDownloader* createDownloader() const override;
-	virtual CrawlerEngine::IRobotsTxtLoader* createRobotsTxtLoader() const override;
+	virtual IDownloader* createDownloader() const override;
+	virtual IRobotsTxtLoader* createRobotsTxtLoader() const override;
 	void createSequencedDataCollection(QThread* targetThread) const;
 
 private:
-	static std::mutex s_mutex;
+	CrawlerOptions m_testCrawlerOptions;
 
-	CrawlerEngine::CrawlerOptions m_testCrawlerOptions;
 	QThread* m_sequencedDataCollectionThread;
+
 	std::unique_ptr<ParsedPageReceiver> m_receiver;
 
 	mutable TestsDownloader* m_downloader;
