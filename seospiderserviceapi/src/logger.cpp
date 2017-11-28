@@ -1,6 +1,7 @@
 #include "logger.h"
 #include "default_logger_filter.h"
 #include "iseo_spider_service_api.h"
+#include "named_thread.h"
 
 namespace
 {
@@ -74,6 +75,9 @@ Logger::~Logger()
         // this already deleted
         abort();
     }
+
+    m_logWriterThread->deleteLater();
+    qApp->processEvents();
 }
 
 void Logger::setFilter(bool(f)(SeverityLevel level)) noexcept
@@ -92,7 +96,7 @@ void Logger::logMessage(const QString& message, SeverityLevel level, ILogger::Ca
 
     Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
 
-    QMetaObject::invokeMethod(&m_logWriterThread, "logMessage", connectionType,
+    QMetaObject::invokeMethod(m_logWriterThread, "logMessage", connectionType,
         Q_ARG(const QString&, messageWithTimeStamp), Q_ARG(SeverityLevel, level));
 }
 
@@ -100,12 +104,21 @@ void Logger::flush(ILogger::CallType callType)
 {
     Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
 
-    QMetaObject::invokeMethod(&m_logWriterThread, "flush", connectionType);
+    QMetaObject::invokeMethod(m_logWriterThread, "flush", connectionType);
 }
 
 Logger::Logger()
     : m_deleting(false)
+    , m_logWriterThread(new LogWriterThread)
 {
+    Common::NamedThread* thread = new Common::NamedThread("LogWriterThread");
+    m_logWriterThread->moveToThread(thread);
+
+    VERIFY(connect(qApp, &QApplication::aboutToQuit, m_logWriterThread, &LogWriterThread::flush, Qt::BlockingQueuedConnection));
+    VERIFY(connect(thread, &QThread::finished, m_logWriterThread, &LogWriterThread::flush, Qt::QueuedConnection));
+
+    thread->start();
+
     qInstallMessageHandler(qtMsgHandler);
 
     m_filter.reset(new DefaultLoggerFilter);

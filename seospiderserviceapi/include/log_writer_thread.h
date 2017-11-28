@@ -5,6 +5,8 @@
 namespace SeoSpiderServiceApi
 {
 
+class LogServerDataAccumulator;
+
 class LogWriterThread : public QObject
 {
     Q_OBJECT
@@ -13,35 +15,24 @@ public:
     LogWriterThread();
     ~LogWriterThread();
 
-private slots:
-    void logMessage(const QString& message, SeverityLevel severityLevel);
+public slots:
     void flush();
 
+private slots:
+    void logMessage(const QString& message, SeverityLevel severityLevel);
+
 private:
-    inline void abortIfCallFromAnotherThread() const
+    inline void assertIfCallFromAnotherThread() const
     {
-        if (thread() != QThread::currentThread())
-        {
-            abort();
-        }
+        DEBUG_ASSERT(thread() == QThread::currentThread());
     }
-
-    inline void abortIfCallFromThisThread() const
-    {
-        if (thread() == QThread::currentThread())
-        {
-            abort();
-        }
-    }
-
-    void ensureEstablishedConnectionWithServiceAppServer();
-
-    void sendMessageToServiceAppServer(const QString& message, SeverityLevel severityLevel);
 
 private:
     QFile m_outputFile;
+    
     QTextStream m_outputStream;
-    QLocalSocket* m_socket;
+
+    LogServerDataAccumulator* m_serverDataAccumulator;
 };
 
 }

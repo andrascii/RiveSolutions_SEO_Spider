@@ -19,17 +19,24 @@ class LogMessageReceiver : public QObject
 public:
     LogMessageReceiver(QObject* parent = nullptr);
 
-    Q_SIGNAL void messageReceived(Message msg);
+
+
+signals:
+    void messageReceived(Message msg);
+
+protected:
+    virtual void timerEvent(QTimerEvent* event) override;
+
+private slots:
+    void readMessage();
+    void onConnectionClosed();
 
 private:
-    Q_SLOT void onNewConnection();
-    Q_SLOT void readMessage();
-    Q_SLOT void onConnectionClosed();
-
-private:
-    QLocalServer* m_server;
-    QLocalSocket* m_currentConnectionSocket;
+    QLocalSocket* m_socket;
+    
     Message m_message;
+
+    int m_connectionTimerId;
 };
 
 }

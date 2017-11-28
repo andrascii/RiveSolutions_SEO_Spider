@@ -12,7 +12,6 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
     , m_dialog(new FatalErrorDialog)
     , m_dbgHelpDllLoader(new DebugHelpDllLoader)
     , m_loggerDebugWindow(new LoggerDebugWindow)
-    , m_appInitializedIpcSignal(Common::creator()())
 {
     init();
 

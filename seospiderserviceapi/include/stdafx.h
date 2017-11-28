@@ -89,6 +89,8 @@ struct unary_function
 #include <QFile>
 #include <QDataStream>
 #include <QLocalSocket>
+#include <QLocalServer>
+#include <QMessageBox>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -104,3 +106,5 @@ struct unary_function
 #ifndef PRODUCTION
 #define DEBUG
 #endif
+
+#include "common_macro_helpers.h"

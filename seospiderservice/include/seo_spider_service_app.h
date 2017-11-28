@@ -3,12 +3,9 @@
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
 #include "logger_debug_window.h"
-#include "iipc_signaled_object.h"
 
 namespace SeoSpiderService
 {
-
-using namespace Common;
 
 class SeoSpiderServiceApp : public QApplication
 {
@@ -43,8 +40,6 @@ private:
     HANDLE m_processHandle;
 
     int m_timerId;
-
-    std::unique_ptr<IIpcSignaledObject> m_appInitializedIpcSignal;
 };
 
 }
