@@ -21,6 +21,8 @@ private:
     void sendMessageToRemoteProcess(const QString& message, SeverityLevel severityLevel);
     void sendAllDataToRemoteProcess();
 
+    void writeDataToChannel(const QString& message, SeverityLevel severityLevel);
+
 private:
     std::vector<std::pair<SeverityLevel, QString>> m_logs;
 

@@ -39,6 +39,32 @@ void LogServerDataAccumulator::sendMessageToRemoteProcess(const QString& message
         return;
     }
 
+    writeDataToChannel(message, severityLevel);
+
+    //
+    // TODO: handle possible errors
+    //
+
+    m_currentConnectionSocket->flush();
+}
+
+void LogServerDataAccumulator::sendAllDataToRemoteProcess()
+{
+    if (!m_currentConnectionSocket)
+    {
+        return;
+    }
+
+    for (const auto&[severityLevel, message] : m_logs)
+    {
+        writeDataToChannel(message, severityLevel);
+    }
+
+    m_currentConnectionSocket->flush();
+}
+
+void LogServerDataAccumulator::writeDataToChannel(const QString& message, SeverityLevel severityLevel)
+{
     QByteArray messageBlock;
     QDataStream sendDataStream(&messageBlock, QIODevice::WriteOnly);
     sendDataStream.setVersion(QDataStream::Qt_4_0);
@@ -52,20 +78,6 @@ void LogServerDataAccumulator::sendMessageToRemoteProcess(const QString& message
 
     const qint64 bytesWritten = m_currentConnectionSocket->write(messageBlock);
     m_currentConnectionSocket->waitForBytesWritten();
-
-    //
-    // TODO: handle possible errors
-    //
-
-    m_currentConnectionSocket->flush();
-}
-
-void LogServerDataAccumulator::sendAllDataToRemoteProcess()
-{
-    for (const auto&[severityLevel, message] : m_logs)
-    {
-        sendMessageToRemoteProcess(message, static_cast<SeverityLevel>(severityLevel));
-    }
 }
 
 void LogServerDataAccumulator::storeLog(const QString& message, SeverityLevel severityLevel)
