@@ -22,12 +22,7 @@ private:
     void sendAllDataToRemoteProcess();
 
 private:
-    enum
-    {
-        AllLevels = -1
-    };
-
-    std::map<int, std::vector<QString>> m_logs;
+    std::vector<std::pair<SeverityLevel, QString>> m_logs;
 
     QLocalServer* m_server;
     QLocalSocket* m_currentConnectionSocket;
