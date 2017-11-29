@@ -68,6 +68,8 @@
 #include <QScreen>
 #include <QItemSelectionModel>
 #include <QtSvg>
+#include <QBuffer>
+#include <QStack>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

@@ -9,6 +9,8 @@
 #include "downloader.h"
 #include "host_info_provider.h"
 #include "site_map.h"
+#include "json_parser_stream_writer.h"
+#include "serializer.h"
 
 namespace CrawlerEngine
 {
@@ -241,6 +243,72 @@ QString Crawler::siteMapXml(const SiteMapSettings& settings) const
 	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();;
 	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
 	return siteMap.xml(*storage, settings);
+}
+
+void Crawler::saveToFile(const QString& fileName)
+{
+	QFileInfo fileInfo(fileName);
+
+	const QString fileDirPath = fileInfo.absolutePath();
+
+	const QString baseFilename = fileInfo.completeBaseName();
+
+	const QString fileSuffix = fileInfo.suffix();
+
+	const QString additionalString = QDateTime::currentDateTime().toString(QString("yyyyMMdd_hhmmsszzz"));
+
+	const QString tempFileName = QString("%1/%2_tmp_%3.%4")
+		.arg(fileDirPath)
+		.arg(baseFilename)
+		.arg(additionalString)
+		.arg(fileSuffix);
+
+	const QString oldFileName = QString("%1/%2_old_%3.%4")
+		.arg(fileDirPath)
+		.arg(baseFilename)
+		.arg(additionalString)
+		.arg(fileSuffix);
+
+	try
+	{
+		QFile file(tempFileName);
+
+		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			throw std::runtime_error(file.errorString().toStdString());
+		}
+
+		Serializer serializer; // TODO: provide all required data into the constructor
+		Common::JsonParserStreamWriter writer(file);
+		serializer.saveToJsonStream(writer);
+
+		file.close();
+
+		QFile oldFile(fileName);
+
+		const bool oldFileExisits = oldFile.exists();
+
+		if (oldFileExisits)
+		{
+			if (!oldFile.rename(oldFileName))
+			{
+				throw std::runtime_error(oldFile.errorString().toStdString());
+			}
+		}
+		QFile::rename(tempFileName, fileName);
+
+		if (oldFileExisits)
+		{
+			oldFile.remove();
+		}
+	}
+	catch (const std::exception& e)
+	{
+		Q_UNUSED(e);
+		// TODO: notify a user about the error
+
+		return;
+	}
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
