@@ -26,10 +26,19 @@ public:
     virtual void doAssert(const char*, int, const char*, const char*) const noexcept override
     {
     }
-    virtual void debugReport(const char*, int, const char*, const char*) const noexcept override
+    virtual void traceLogMessage(const char* message) override
     {
     }
-    virtual void logMessage(const char*, SeverityLevel) override
+    virtual void debugLogMessage(const char* message) override
+    {
+    }
+    virtual void infoLogMessage(const char* message) override
+    {
+    }
+    virtual void warningLogMessage(const char* message) override
+    {
+    }
+    virtual void errorLogMessage(const char* message) override
     {
     }
 };
