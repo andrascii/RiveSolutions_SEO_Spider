@@ -9,8 +9,8 @@ LogMessageReceiver::LogMessageReceiver(QObject* parent)
     , m_message{}
     , m_connectionTimerId{}
 {
-	VERIFY(connect(m_socket, &QLocalSocket::disconnected, this, &LogMessageReceiver::onConnectionClosed));
-	VERIFY(connect(m_socket, &QLocalSocket::readyRead, this, &LogMessageReceiver::readMessage));
+    VERIFY(connect(m_socket, &QLocalSocket::disconnected, this, &LogMessageReceiver::onConnectionClosed));
+    VERIFY(connect(m_socket, &QLocalSocket::readyRead, this, &LogMessageReceiver::readMessage));
 
     m_socket->connectToServer("LogServerDataAccumulator");
     m_socket->waitForConnected();
@@ -41,42 +41,43 @@ void LogMessageReceiver::readMessage()
     QDataStream stream(m_socket);
     stream.setVersion(QDataStream::Qt_4_0);
 
-    if (m_message.messageSize == 0)
+    for (;;)
     {
-        if (m_socket->bytesAvailable() < static_cast<int>(sizeof(std::uint64_t) * 2))
+        if (m_message.messageSize == 0)
         {
-            return;
+            if (m_socket->bytesAvailable() < static_cast<int>(sizeof(std::uint64_t) * 2))
+            {
+                break;
+            }
+
+            stream >> m_message.messageSize;
+
+            std::uint64_t severetyLevel = 0;
+            stream >> severetyLevel;
+
+            m_message.severityLevel = static_cast<SeoSpiderServiceApi::SeverityLevel>(severetyLevel);
         }
 
-        stream >> m_message.messageSize;
+        if (m_socket->bytesAvailable() < m_message.messageSize || stream.atEnd())
+        {
+            continue;
+        }
 
-        std::uint64_t severetyLevel = 0;
-        stream >> severetyLevel;
+        char* buffer = new char[m_message.messageSize + 1];
 
-        m_message.severityLevel = static_cast<SeoSpiderServiceApi::SeverityLevel>(severetyLevel);
+        uint length = static_cast<uint>(m_message.messageSize);
+
+        stream.readBytes(buffer, length);
+        buffer[m_message.messageSize] = 0;
+
+        m_message.message = buffer;
+
+        delete[] buffer;
+
+        emit messageReceived(m_message);
+
+        m_message = Message{};
     }
-
-    const int allMessageSize = static_cast<int>(m_message.messageSize + sizeof(std::uint64_t) * 2);
-
-    if (m_socket->bytesAvailable() < allMessageSize || stream.atEnd())
-    {
-        return;
-    }
-
-    char* buffer = new char[m_message.messageSize + 1];
-
-    uint length = static_cast<uint>(m_message.messageSize);
-
-    stream.readBytes(buffer, length);
-    buffer[m_message.messageSize] = 0;
-
-    m_message.message = buffer;
-
-    delete[] buffer;
-
-    emit messageReceived(m_message);
-
-    m_message = Message{};
 }
 
 void LogMessageReceiver::onConnectionClosed()

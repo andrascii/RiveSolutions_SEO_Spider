@@ -83,9 +83,9 @@ void SeoSpiderServiceApiImpl::init() noexcept
 #ifndef PRODUCTION
     const std::wstring crashHandlerEventName = L"seospidercrashevent";
 
-	uuid;
+    uuid;
 #else
-	const std::wstring crashHandlerEventName = boost::lexical_cast<std::wstring>(uuid);
+    const std::wstring crashHandlerEventName = boost::lexical_cast<std::wstring>(uuid);
 #endif
 
     std::wstring commandLine = L"seospiderservice.exe " + crashHandlerEventName + L" " + std::to_wstring(GetCurrentProcessId());

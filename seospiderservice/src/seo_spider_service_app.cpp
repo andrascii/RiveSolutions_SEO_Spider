@@ -12,7 +12,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
     , m_dbgHelpDllLoader(new DebugHelpDllLoader)
     , m_loggerDebugWindow(new LoggerDebugWindow)
 {
-	while (!IsDebuggerPresent());
+    //while (!IsDebuggerPresent());
 
     init();
 
@@ -23,7 +23,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 
     if(m_eventName.isEmpty())
     {
-		m_eventName = "seospidercrashevent";
+        m_eventName = "seospidercrashevent";
     }
 
     Q_ASSERT(processIdConvertion && "Process ID must be passed!");
