@@ -9,11 +9,11 @@ LogMessageReceiver::LogMessageReceiver(QObject* parent)
     , m_message{}
     , m_connectionTimerId{}
 {
+	VERIFY(connect(m_socket, &QLocalSocket::disconnected, this, &LogMessageReceiver::onConnectionClosed));
+	VERIFY(connect(m_socket, &QLocalSocket::readyRead, this, &LogMessageReceiver::readMessage));
+
     m_socket->connectToServer("LogServerDataAccumulator");
     m_socket->waitForConnected();
-
-    VERIFY(connect(m_socket, &QLocalSocket::disconnected, this, &LogMessageReceiver::onConnectionClosed));
-    VERIFY(connect(m_socket, &QLocalSocket::readyRead, this, &LogMessageReceiver::readMessage));
 
     qRegisterMetaType<Message>("Message");
 
@@ -40,7 +40,6 @@ void LogMessageReceiver::readMessage()
 {
     QDataStream stream(m_socket);
     stream.setVersion(QDataStream::Qt_4_0);
-    stream.device()->seek(0);
 
     if (m_message.messageSize == 0)
     {

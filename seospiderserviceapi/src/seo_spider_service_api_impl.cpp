@@ -79,7 +79,14 @@ void SeoSpiderServiceApiImpl::init() noexcept
     }
 
     const boost::uuids::uuid uuid = boost::uuids::random_generator()();
-    const std::wstring crashHandlerEventName = boost::lexical_cast<std::wstring>(uuid);
+
+#ifndef PRODUCTION
+    const std::wstring crashHandlerEventName = L"seospidercrashevent";
+
+	uuid;
+#else
+	const std::wstring crashHandlerEventName = boost::lexical_cast<std::wstring>(uuid);
+#endif
 
     std::wstring commandLine = L"seospiderservice.exe " + crashHandlerEventName + L" " + std::to_wstring(GetCurrentProcessId());
 
