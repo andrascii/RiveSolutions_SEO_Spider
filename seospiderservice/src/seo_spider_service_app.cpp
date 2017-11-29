@@ -2,7 +2,6 @@
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
 #include "log_message_receiver.h"
-#include "ipc_signaled_object_creator.h"
 
 namespace SeoSpiderService
 {
@@ -12,8 +11,9 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
     , m_dialog(new FatalErrorDialog)
     , m_dbgHelpDllLoader(new DebugHelpDllLoader)
     , m_loggerDebugWindow(new LoggerDebugWindow)
-    , m_appInitializedIpcSignal(Common::creator()())
 {
+    //while (!IsDebuggerPresent());
+
     init();
 
     bool processIdConvertion = false;
@@ -21,7 +21,11 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
     m_eventName = commandLineParameter(1).toLatin1();
     m_processId = commandLineParameter(2).toInt(&processIdConvertion);
 
-    Q_ASSERT(!m_eventName.isEmpty() && "Event name must be passed!");
+    if(m_eventName.isEmpty())
+    {
+        m_eventName = "seospidercrashevent";
+    }
+
     Q_ASSERT(processIdConvertion && "Process ID must be passed!");
 
     VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::quit, Qt::QueuedConnection));
@@ -40,7 +44,7 @@ SeoSpiderServiceApp::~SeoSpiderServiceApp()
 
 void SeoSpiderServiceApp::init()
 {
-#ifndef PRODUCTION
+#ifdef QT_DEBUG
     LogMessageReceiver* logMessageReceiver = new LogMessageReceiver;
 
     QThread* thread = new QThread;

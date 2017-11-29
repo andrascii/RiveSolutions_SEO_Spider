@@ -5,84 +5,87 @@ namespace SeoSpiderService
 
 LogMessageReceiver::LogMessageReceiver(QObject* parent)
     : QObject(parent)
-    , m_server(new QLocalServer(this))
-    , m_currentConnectionSocket(nullptr)
+    , m_socket(new QLocalSocket(this))
     , m_message{}
+    , m_connectionTimerId{}
 {
-    VERIFY(connect(m_server, &QLocalServer::newConnection, this, &LogMessageReceiver::onNewConnection));
+    VERIFY(connect(m_socket, &QLocalSocket::disconnected, this, &LogMessageReceiver::onConnectionClosed));
+    VERIFY(connect(m_socket, &QLocalSocket::readyRead, this, &LogMessageReceiver::readMessage));
 
-    if (!m_server->listen(QStringLiteral("LogMessageReceiver")))
-    {
-        QMessageBox::critical(nullptr, tr("Logger Server"), 
-            tr("Unable to start the server: %1.").arg(m_server->errorString()), QMessageBox::Ok);
-    }
+    m_socket->connectToServer("LogServerDataAccumulator");
+    m_socket->waitForConnected();
 
     qRegisterMetaType<Message>("Message");
+
+    if (m_socket->state() != QLocalSocket::ConnectedState)
+    {
+        m_connectionTimerId = startTimer(1000);
+
+        Q_ASSERT(m_connectionTimerId);
+    }
 }
 
-void LogMessageReceiver::onNewConnection()
+void LogMessageReceiver::timerEvent(QTimerEvent*)
 {
-    if (m_currentConnectionSocket)
+    m_socket->connectToServer("LogServerDataAccumulator");
+    m_socket->waitForConnected();
+
+    if (m_socket->state() == QLocalSocket::ConnectedState)
     {
-        m_currentConnectionSocket->abort();
+        killTimer(m_connectionTimerId);
     }
-
-    m_currentConnectionSocket = m_server->nextPendingConnection();
-
-    connect(m_currentConnectionSocket, &QLocalSocket::disconnected, this, &LogMessageReceiver::onConnectionClosed);
-    connect(m_currentConnectionSocket, &QLocalSocket::readyRead, this, &LogMessageReceiver::readMessage);
 }
 
 void LogMessageReceiver::readMessage()
 {
-    QDataStream stream(m_currentConnectionSocket);
+    QDataStream stream(m_socket);
     stream.setVersion(QDataStream::Qt_4_0);
-    stream.device()->seek(0);
 
-    if (m_message.messageSize == 0)
+    for (;;)
     {
-        if (m_currentConnectionSocket->bytesAvailable() < static_cast<int>(sizeof(std::uint64_t) * 2))
+        if (m_message.messageSize == 0)
         {
-            return;
+            if (m_socket->bytesAvailable() < static_cast<int>(sizeof(std::uint64_t) * 2))
+            {
+                break;
+            }
+
+            stream >> m_message.messageSize;
+
+            std::uint64_t severetyLevel = 0;
+            stream >> severetyLevel;
+
+            m_message.severityLevel = static_cast<SeoSpiderServiceApi::SeverityLevel>(severetyLevel);
         }
 
-        stream >> m_message.messageSize;
+        if (m_socket->bytesAvailable() < m_message.messageSize || stream.atEnd())
+        {
+            continue;
+        }
 
-        std::uint64_t severetyLevel = 0;
-        stream >> severetyLevel;
+        char* buffer = new char[m_message.messageSize + 1];
 
-        m_message.severityLevel = static_cast<SeoSpiderServiceApi::SeverityLevel>(severetyLevel);
+        uint length = static_cast<uint>(m_message.messageSize);
+
+        stream.readBytes(buffer, length);
+        buffer[m_message.messageSize] = 0;
+
+        m_message.message = buffer;
+
+        delete[] buffer;
+
+        emit messageReceived(m_message);
+
+        m_message = Message{};
     }
-
-    const int allMessageSize = static_cast<int>(m_message.messageSize + sizeof(std::uint64_t) * 2);
-
-    if (m_currentConnectionSocket->bytesAvailable() < allMessageSize || stream.atEnd())
-    {
-        return;
-    }
-
-    char* buffer = new char[m_message.messageSize + 1];
-
-    uint length = static_cast<uint>(m_message.messageSize);
-
-    stream.readBytes(buffer, length);
-    buffer[m_message.messageSize] = 0;
-
-    m_message.message = buffer;
-
-    delete[] buffer;
-
-    emit messageReceived(m_message);
-
-    m_message = Message{};
 }
 
 void LogMessageReceiver::onConnectionClosed()
 {
-    if (m_currentConnectionSocket)
+    if (m_socket)
     {
-        m_currentConnectionSocket->deleteLater();
-        m_currentConnectionSocket = nullptr;
+        m_socket->deleteLater();
+        m_socket = nullptr;
     }
 }
 

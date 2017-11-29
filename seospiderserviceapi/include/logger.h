@@ -45,7 +45,7 @@ private:
 private:
     bool m_deleting;
 
-    LogWriterThread m_logWriterThread;
+    LogWriterThread* m_logWriterThread;
 
     std::unique_ptr<ILoggerFilter> m_filter;
 };
