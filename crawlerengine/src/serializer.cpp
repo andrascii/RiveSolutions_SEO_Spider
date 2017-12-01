@@ -73,7 +73,7 @@ public:
 
 			QVariantMap linkValue;
 			linkValue["resourceIndex"] = it->second;
-			linkValue["urlParameter"] = static_cast<int>(link.urlParameter);
+			linkValue["linkParameter"] = static_cast<int>(link.linkParameter);
 			linkValue["resourceSource"] = static_cast<int>(link.resourceSource);
 			linkValue["altOrTitle"] = link.altOrTitle;
 			linksOnThisPage.append(linkValue);
@@ -95,7 +95,7 @@ public:
 
 			QVariantMap linkValue;
 			linkValue["resourceIndex"] = it->second;
-			linkValue["urlParameter"] = static_cast<int>(link.urlParameter);
+			linkValue["linkParameter"] = static_cast<int>(link.linkParameter);
 			linkValue["resourceSource"] = static_cast<int>(link.resourceSource);
 			linkValue["altOrTitle"] = link.altOrTitle;
 			linksToThisPage.append(linkValue);
