@@ -132,9 +132,6 @@ struct ParsedPage
 	int wordCount = int();
 	size_t pageHash = size_t();
 
-	std::vector<size_t> missignAltIndices;
-	std::vector<size_t> tooLongAltIndices;
-
 	bool hasSeveralTitleTags = bool();
 	bool hasSeveralMetaDescriptionTags = bool();
 	bool hasSeveralMetaKeywordsTags = bool();

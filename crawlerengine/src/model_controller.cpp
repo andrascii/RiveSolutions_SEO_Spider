@@ -384,13 +384,11 @@ void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool c
 			if (altLength > m_crawlerOptions.maxImageAltTextChars)
 			{
 				data()->addParsedPage(incomingPage, StorageType::VeryLongAltTextImageStorageType);
-				incomingPage->tooLongAltIndices.push_back(index);
 			}
 
 			if (altLength == 0)
 			{
 				data()->addParsedPage(incomingPage, StorageType::MissingAltTextImageStorageType);
-				incomingPage->missignAltIndices.push_back(index);
 			}
 		}
 

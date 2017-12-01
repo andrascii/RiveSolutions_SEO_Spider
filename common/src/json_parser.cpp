@@ -468,7 +468,7 @@ namespace Common
 		default:
 			{
 				qWarning() << "Cannot serialize QVariant of type " << v.typeName() << " in JSON";
-				ASSERT(false);
+				ASSERT(!"Unable to serialize provided QVariant: unsupported type");
 			}
 		}
 	}

@@ -54,7 +54,7 @@ namespace Common
 	{
 	public:
 		JsonStreamMapValue(JsonStreamMapElement& stream, const QString& key);
-		JsonStreamMapValue(const JsonStreamMapValue& other);
+		//JsonStreamMapValue(const JsonStreamMapValue& other);
 		~JsonStreamMapValue();		
 	};
 

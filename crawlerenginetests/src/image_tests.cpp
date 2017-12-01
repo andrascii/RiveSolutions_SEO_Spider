@@ -177,14 +177,13 @@ TEST(ImageTests, ImageAlt)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 1000, "Waiting for 2 crawled pages");
-		auto pages = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
+		auto pages = cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(1, pages.size());
 		EXPECT_EQ(1, pages[0]->linksToThisPage.size());
-		EXPECT_EQ(0, pages[0]->missignAltIndices.size());
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[0]->statusCode);
+		EXPECT_EQ(0, cl->storageItems(StorageType::MissingAltTextImageStorageType).size());
 
 		QString expectedAlt = QString::fromWCharArray(L"Dummy Alt и чето по русски");
 		EXPECT_EQ(expectedAlt, pages[0]->linksToThisPage[0].altOrTitle);
