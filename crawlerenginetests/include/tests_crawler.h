@@ -13,42 +13,44 @@ class TestsDownloader;
 
 class TestsCrawler : public Crawler
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	TestsCrawler(unsigned int threadCount, const CrawlerOptions& options, QObject* parent = nullptr);
+    TestsCrawler(unsigned int threadCount, const CrawlerOptions& options, QObject* parent = nullptr);
 
-	~TestsCrawler();
+    ~TestsCrawler();
 
-	std::vector<const ParsedPage*> waitForParsedPageReceived(StorageType storage, int count, int seconds, const char* timeoutMessage) const;
+    std::vector<const ParsedPage*> waitForParsedPageReceived(StorageType storage, int count, int seconds, const char* timeoutMessage) const;
 
-	std::vector<const ParsedPage*> waitForAllCrawledPageReceived(int seconds, const char* timeoutMessage = "Waiting for all pages received") const;
+    std::vector<const ParsedPage*> waitForAllCrawledPageReceived(int seconds, const char* timeoutMessage = "Waiting for all pages received") const;
 
-	std::vector<const ParsedPage*> storageItems(StorageType storage) const;
+    std::vector<const ParsedPage*> storageItems(StorageType storage) const;
 
-	std::vector<LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(const ParsedPage* page, int count, int seconds) const;
+    std::vector<LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(const ParsedPage* page, int count, int seconds) const;
 
-	Q_SLOT void startTestCrawler();
+    std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(int type) const;
 
-	TestsDownloader* testDownloader() const;
+    Q_SLOT void startTestCrawler();
 
-	void checkSequencedDataCollectionConsistency();
+    TestsDownloader* testDownloader() const;
 
-	const UnorderedDataCollection* unorderedDataCollection() const;
+    void checkSequencedDataCollectionConsistency();
+
+    const UnorderedDataCollection* unorderedDataCollection() const;
 
 protected:
-	virtual IDownloader* createDownloader() const override;
-	virtual IRobotsTxtLoader* createRobotsTxtLoader() const override;
-	void createSequencedDataCollection(QThread* targetThread) const;
+    virtual IDownloader* createDownloader() const override;
+    virtual IRobotsTxtLoader* createRobotsTxtLoader() const override;
+    virtual void createSequencedDataCollection(QThread* targetThread) const override;
 
 private:
-	CrawlerOptions m_testCrawlerOptions;
+    CrawlerOptions m_testCrawlerOptions;
 
-	QThread* m_sequencedDataCollectionThread;
+    QThread* m_sequencedDataCollectionThread;
 
-	std::unique_ptr<ParsedPageReceiver> m_receiver;
+    std::unique_ptr<ParsedPageReceiver> m_receiver;
 
-	mutable TestsDownloader* m_downloader;
+    mutable TestsDownloader* m_downloader;
 };
 
 }

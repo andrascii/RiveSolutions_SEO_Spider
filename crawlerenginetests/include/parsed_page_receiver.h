@@ -9,41 +9,47 @@ class TestsCrawler;
 
 class ParsedPageReceiver : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ParsedPageReceiver(const TestsCrawler* crawler, const SequencedDataCollection* sequencedDataCollection);
-	~ParsedPageReceiver();
+    ParsedPageReceiver(const TestsCrawler* crawler, const SequencedDataCollection* sequencedDataCollection);
+    ~ParsedPageReceiver();
 
-	std::future<std::vector<const ParsedPage*>> getParsedPages(int count, int storageType);
-	std::future<std::vector<const ParsedPage*>> getAllCrawledPages();
-	std::vector<const ParsedPage*> storageItems(StorageType storage) const;
+    std::future<std::vector<const ParsedPage*>> getParsedPages(int count, int storageType);
+    std::future<std::vector<const ParsedPage*>> getAllCrawledPages();
+    std::vector<const ParsedPage*> storageItems(StorageType storage) const;
 
-	std::future<std::vector<LinksToThisResourceChanges>> getLinksToThisResourceChanges(const ParsedPage* page, int count);
+    std::future<std::vector<LinksToThisResourceChanges>> getLinksToThisResourceChanges(const ParsedPage* page, int count);
 
-private:
-	Q_SLOT void onParsedPageAdded(int row, int type);
-	Q_SLOT void onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
-	Q_SLOT void onCrawlingProgress(CrawlingProgress state);
-	Q_SLOT void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, int type);
-
-	void checkWaitCondition(int storageType);
-	void checkLinksToThisResourceConditions(const ParsedPage* page);
+    std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(int type) const;
 
 private:
-	QThread * m_receiverThread;
-	std::map<int, std::vector<const ParsedPage*>> m_parsedPages;
-	std::map<int, std::pair<int, std::promise<std::vector<const ParsedPage*>>>> m_waitConditions;
+    Q_SLOT void onParsedPageAdded(int row, int type);
+    Q_SLOT void onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
+    Q_SLOT void onCrawlingProgress(CrawlingProgress state);
+    Q_SLOT void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, int type);
 
-	std::map<const ParsedPage*, std::vector<LinksToThisResourceChanges>> m_linksToThisResourceChanges;
-	std::map<const ParsedPage*, std::pair<int, std::promise<std::vector<LinksToThisResourceChanges>>>> m_linksToThisResourceConditions;
+    void checkWaitCondition(int storageType);
+    void checkLinksToThisResourceConditions(const ParsedPage* page);
 
-	const SequencedDataCollection* m_sequencedDataCollection;
+private:
+    QThread * m_receiverThread;
 
-	std::promise<std::vector<const ParsedPage*>> m_allPagesReceivedPromise;
-	bool m_allPagesReceived;
+    std::map<int, std::vector<const ParsedPage*>> m_parsedPages;
+    
+    std::map<int, std::pair<int, std::promise<std::vector<const ParsedPage*>>>> m_waitConditions;
 
-	std::map<int, std::vector<const ParsedPage*>> m_unorderedDataCollectionPages;
+    std::map<const ParsedPage*, std::vector<LinksToThisResourceChanges>> m_linksToThisResourceChanges;
+    
+    std::map<const ParsedPage*, std::pair<int, std::promise<std::vector<LinksToThisResourceChanges>>>> m_linksToThisResourceConditions;
+
+    const SequencedDataCollection* m_sequencedDataCollection;
+
+    std::promise<std::vector<const ParsedPage*>> m_allPagesReceivedPromise;
+    
+    std::atomic_bool m_allPagesReceived;
+
+    std::map<int, std::vector<const ParsedPage*>> m_unorderedDataCollectionPages;
 };
 
 }

@@ -18,13 +18,13 @@ TEST(ImageTests, EmptyAlt)
 
 		EXPECT_EQ(QString(), linkToThisPage1.altOrTitle);
 		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagImg, linkToThisPage1.resourceSource);
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage1.urlParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage1.linkParameter);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[0]->statusCode);
 
 		EXPECT_EQ(QString(), linkToThisPage2.altOrTitle);
 		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagImg, linkToThisPage2.resourceSource);
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage2.urlParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage2.linkParameter);
 		EXPECT_EQ(0, pages[1]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[1]->statusCode);
 
@@ -41,8 +41,8 @@ TEST(ImageTests, EmptyAlt)
 		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagImg, linkOnThisPage2.resourceSource);
 
 
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkOnThisPage1.urlParameter);
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkOnThisPage2.urlParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkOnThisPage1.linkParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkOnThisPage2.linkParameter);
 
 		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
 	};
@@ -68,13 +68,13 @@ TEST(ImageTests, NoAlt)
 
 		EXPECT_EQ(QString(), linkToThisPage1.altOrTitle);
 		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagImg, linkToThisPage1.resourceSource);
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage1.urlParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage1.linkParameter);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[0]->statusCode);
 
 		EXPECT_EQ(QString(), linkToThisPage2.altOrTitle);
 		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagImg, linkToThisPage2.resourceSource);
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage2.urlParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage2.linkParameter);
 		EXPECT_EQ(0, pages[1]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[1]->statusCode);
 
@@ -91,8 +91,8 @@ TEST(ImageTests, NoAlt)
 		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagImg, linkOnThisPage2.resourceSource);
 
 
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkOnThisPage1.urlParameter);
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkOnThisPage2.urlParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkOnThisPage1.linkParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkOnThisPage2.linkParameter);
 
 		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
 	};
@@ -117,13 +117,13 @@ TEST(ImageTests, Image404)
 
 		EXPECT_EQ(QString(), linkToThisPage1.altOrTitle);
 		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagImg, linkToThisPage1.resourceSource);
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage1.urlParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage1.linkParameter);
 		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::NotFound404, pages[0]->statusCode);
 
 		EXPECT_EQ(QString(), linkToThisPage2.altOrTitle);
 		EXPECT_EQ(CrawlerEngine::ResourceSource::SourceTagImg, linkToThisPage2.resourceSource);
-		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage2.urlParameter);
+		EXPECT_EQ(CrawlerEngine::LinkParameter::DofollowParameter, linkToThisPage2.linkParameter);
 		EXPECT_EQ(0, pages[1]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::NotFound404, pages[1]->statusCode);
 
