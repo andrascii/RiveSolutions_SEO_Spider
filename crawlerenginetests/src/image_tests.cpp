@@ -179,14 +179,14 @@ TEST(ImageTests, ImageAlt)
 	{
 		auto pages = cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
-		EXPECT_EQ(1, pages.size());
-		EXPECT_EQ(1, pages[0]->linksToThisPage.size());
-		EXPECT_EQ(0, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(Common::StatusCode::Ok200, pages[0]->statusCode);
+		EXPECT_EQ(2, pages.size());
+		EXPECT_EQ(1, pages[1]->linksToThisPage.size());
+		EXPECT_EQ(0, pages[1]->linksOnThisPage.size());
+		EXPECT_EQ(Common::StatusCode::Ok200, pages[1]->statusCode);
 		EXPECT_EQ(0, cl->storageItems(StorageType::MissingAltTextImageStorageType).size());
 
 		QString expectedAlt = QString::fromWCharArray(L"Dummy Alt и чето по русски");
-		EXPECT_EQ(expectedAlt, pages[0]->linksToThisPage[0].altOrTitle);
+		EXPECT_EQ(expectedAlt, pages[1]->linksToThisPage[0].altOrTitle);
 	};
 
 	env.initializeTest(testFunction);

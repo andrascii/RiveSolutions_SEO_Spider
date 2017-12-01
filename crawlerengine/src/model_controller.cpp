@@ -691,7 +691,7 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int looku
 	const auto predicate = [&page = incomingPage](const ParsedPagePtr& candidatePage)
 	{
 		return 
-			PageParserHelpers::removeUrlLastSlashIfExists(candidatePage->url) != // TODO: remove these two lines and || duplicates.size() == 1
+			PageParserHelpers::removeUrlLastSlashIfExists(candidatePage->url) != // TODO: remove these two lines
 			PageParserHelpers::removeUrlLastSlashIfExists(page->url) &&
 		
 			(!candidatePage->canonicalUrl.isValid() ||
@@ -699,22 +699,21 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int looku
 			PageParserHelpers::removeUrlLastSlashIfExists(page->canonicalUrl));
 	};
 
-	const std::vector<ParsedPagePtr> duplicates = data()->allParsedPages(incomingPage, lookupStorageType, predicate);
-	if (!duplicates.empty())
+	const auto alwaysTruePredicate = [](const ParsedPagePtr&) { return true; };
+
+	const std::vector<ParsedPagePtr> duplicatesWithDifferentCanonical = data()->allParsedPages(incomingPage, lookupStorageType, predicate);
+	if (!duplicatesWithDifferentCanonical.empty())
 	{
-		for (const ParsedPagePtr& duplicate : duplicates)
+		const std::vector<ParsedPagePtr> allDuplicates = data()->allParsedPages(incomingPage, lookupStorageType, alwaysTruePredicate);
+		for (const ParsedPagePtr& duplicate : allDuplicates)
 		{
-			// TODO: remove " || duplicates.size() == 1" : fix for unexpected behavior when we add only one page in duplicates storage
-			// something wrong with adding two pages in storage: with trailing slash and without one
-			// when we will not include both pages this bug should be fixed automatically
-			if (!data()->isParsedPageExists(duplicate, destStorageType) || duplicates.size() == 1) 
+			if (!data()->isParsedPageExists(duplicate, destStorageType)) 
 			{
 				data()->addParsedPage(duplicate, destStorageType);
 			}
 		}
 
 		data()->addParsedPage(incomingPage, destStorageType);
-
 	}
 }
 
