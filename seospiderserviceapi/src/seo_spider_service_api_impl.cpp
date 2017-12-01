@@ -200,9 +200,29 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
     }
 }
 
-void SeoSpiderServiceApiImpl::logMessage(const char* message, SeverityLevel level)
+void SeoSpiderServiceApiImpl::traceLogMessage(const char* message)
 {
-    Logger::instance()->logMessage(message, level);
+    Logger::instance()->logMessage(message, SeverityLevel::TraceLevel);
+}
+
+void SeoSpiderServiceApiImpl::debugLogMessage(const char* message)
+{
+    Logger::instance()->logMessage(message, SeverityLevel::DebugLevel);
+}
+
+void SeoSpiderServiceApiImpl::infoLogMessage(const char* message)
+{
+    Logger::instance()->logMessage(message, SeverityLevel::InfoLevel);
+}
+
+void SeoSpiderServiceApiImpl::warningLogMessage(const char* message)
+{
+    Logger::instance()->logMessage(message, SeverityLevel::WarningLevel);
+}
+
+void SeoSpiderServiceApiImpl::errorLogMessage(const char* message)
+{
+    Logger::instance()->logMessage(message, SeverityLevel::ErrorLevel);
 }
 
 LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS pExceptionPtrs)

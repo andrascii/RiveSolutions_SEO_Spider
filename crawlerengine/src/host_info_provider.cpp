@@ -9,30 +9,49 @@ namespace CrawlerEngine
 {
 
 HostInfoProvider::HostInfoProvider()
-	: QObject(nullptr)
+    : QObject(nullptr)
 {
-	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, RequestType::RequestGetHostInfo);
+#ifdef Q_OS_WIN
+
+    int error = WSAStartup(MAKEWORD(2, 2), &m_wsadata);
+
+    if (error != 0)
+    {
+        DEBUGLOG << error;
+
+        DEBUG_ASSERT(!"WSAStartup failed with error");
+    }
+
+#endif
+
+    HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+    handlerRegistry.registrateHandler(this, RequestType::RequestGetHostInfo);
 }
 
 HostInfoProvider::~HostInfoProvider()
 {
-	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
-	handlerRegistry.unregistrateHandler(this);
+#ifdef Q_OS_WIN
+
+    WSACleanup();
+
+#endif
+
+    HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+    handlerRegistry.unregistrateHandler(this);
 }
 
 void HostInfoProvider::handleRequest(RequesterSharedPtr requester)
 {
-	ASSERT(requester->request()->requestType() == RequestType::RequestGetHostInfo);
-	GetHostInfoRequest* request = static_cast<GetHostInfoRequest*>(requester->request());
-	std::shared_ptr<GetHostInfoResponse> response = std::make_shared<GetHostInfoResponse>(HostInfo(request->hostname));
+    ASSERT(requester->request()->requestType() == RequestType::RequestGetHostInfo);
+    GetHostInfoRequest* request = static_cast<GetHostInfoRequest*>(requester->request());
+    std::shared_ptr<GetHostInfoResponse> response = std::make_shared<GetHostInfoResponse>(HostInfo(request->hostname));
 
-	ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
+    ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
 }
 
 void HostInfoProvider::stopRequestHandling(RequesterSharedPtr requester)
 {
-	requester;
+    requester;
 }
 
 }

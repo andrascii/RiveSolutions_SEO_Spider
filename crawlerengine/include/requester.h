@@ -37,7 +37,7 @@ public:
 	template <typename ResponseType>
 	void addCallback(void(*function)(Requester*, const ResponseType&))
 	{
-		const auto callback = [this, object, function](const IResponse& response)
+		const auto callback = [this, function](const IResponse& response)
 		{
 			if (response.type() != ResponseType::responseStaticType())
 			{

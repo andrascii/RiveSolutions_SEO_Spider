@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 set(AppName seospider)
-set(LoggerAppName logger)
 set(CrawlerEngineLibName crawlerengine)
 set(GoogleTestLibName googletest/googletest)
 set(CrawlerEngineLibTestsName crawlerenginetests)
@@ -52,7 +51,6 @@ ENDMACRO(add_msvc_precompiled_header)
 
 add_subdirectory(${CrawlerEngineLibName})
 add_subdirectory(${CrawlerEngineLibTestsName})
-add_subdirectory(${LoggerAppName})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${SeoSpiderServiceApiDllName})

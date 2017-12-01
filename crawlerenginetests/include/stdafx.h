@@ -74,7 +74,6 @@
 #error You compile this code on unsupported platform!
 #endif
 
-#include "logger_connection_service_api.h"
 #include "common_macro_helpers.h"
 
 using namespace std::chrono_literals;

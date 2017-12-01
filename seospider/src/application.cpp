@@ -236,7 +236,7 @@ void Application::initialize()
 
     SplashScreen::showMessage("Loading main window...");
 
-	m_mainWindow.reset(new MainWindow);
+    m_mainWindow.reset(new MainWindow);
 
 #if !defined(PRODUCTION)
 

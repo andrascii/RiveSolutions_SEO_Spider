@@ -76,7 +76,7 @@ protected:
 
 	virtual IDownloader* createDownloader() const;	
 	virtual IRobotsTxtLoader* createRobotsTxtLoader() const;	
-	void createSequencedDataCollection(QThread* targetThread) const;
+	virtual void createSequencedDataCollection(QThread* targetThread) const;
 	
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 

@@ -21,13 +21,10 @@ private:
     void sendMessageToRemoteProcess(const QString& message, SeverityLevel severityLevel);
     void sendAllDataToRemoteProcess();
 
-private:
-    enum
-    {
-        AllLevels = -1
-    };
+    void writeDataToChannel(const QString& message, SeverityLevel severityLevel);
 
-    std::map<int, std::vector<QString>> m_logs;
+private:
+    std::vector<std::pair<SeverityLevel, QString>> m_logs;
 
     QLocalServer* m_server;
     QLocalSocket* m_currentConnectionSocket;

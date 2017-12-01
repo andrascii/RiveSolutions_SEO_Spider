@@ -19,11 +19,16 @@ public:
     virtual void setThreadExceptionHandlers() const noexcept override;
 
     virtual void doAssert(const char* file, int line, const char* function, const char* expression) const noexcept override;
-    virtual void debugReport(const char* file, int line, const char* function, const char* expression) const noexcept override;
 
-    virtual void logMessage(const char* message, SeverityLevel level) override;
+    virtual void traceLogMessage(const char* message) override;
+    virtual void debugLogMessage(const char* message) override;
+    virtual void infoLogMessage(const char* message) override;
+    virtual void warningLogMessage(const char* message) override;
+    virtual void errorLogMessage(const char* message) override;
 
 private:
+    void debugReport(const char* file, int line, const char* function, const char* expression) const noexcept;
+
     static LONG WINAPI sehHandler(PEXCEPTION_POINTERS pExceptionPtrs);
     static void pureCallHandler();
     static void terminateHandler();

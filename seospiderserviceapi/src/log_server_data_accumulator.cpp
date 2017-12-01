@@ -39,6 +39,32 @@ void LogServerDataAccumulator::sendMessageToRemoteProcess(const QString& message
         return;
     }
 
+    writeDataToChannel(message, severityLevel);
+
+    //
+    // TODO: handle possible errors
+    //
+
+    m_currentConnectionSocket->flush();
+}
+
+void LogServerDataAccumulator::sendAllDataToRemoteProcess()
+{
+    if (!m_currentConnectionSocket)
+    {
+        return;
+    }
+
+    for (const auto&[severityLevel, message] : m_logs)
+    {
+        writeDataToChannel(message, severityLevel);
+    }
+
+    m_currentConnectionSocket->flush();
+}
+
+void LogServerDataAccumulator::writeDataToChannel(const QString& message, SeverityLevel severityLevel)
+{
     QByteArray messageBlock;
     QDataStream sendDataStream(&messageBlock, QIODevice::WriteOnly);
     sendDataStream.setVersion(QDataStream::Qt_4_0);
@@ -52,35 +78,11 @@ void LogServerDataAccumulator::sendMessageToRemoteProcess(const QString& message
 
     const qint64 bytesWritten = m_currentConnectionSocket->write(messageBlock);
     m_currentConnectionSocket->waitForBytesWritten();
-
-//     if (bytesWritten == -1 || bytesWritten < messageBlock.size())
-//     {
-//         m_outputStream << QString("Cannot send data to remote process or not all data were send. Error code: %1\n").arg(m_currentConnectionSocket->error());
-//     }
-
-    m_currentConnectionSocket->flush();
-}
-
-void LogServerDataAccumulator::sendAllDataToRemoteProcess()
-{
-    for (const auto&[severityLevel, logDataRange] : m_logs)
-    {
-        if (severityLevel == -1)
-        {
-            continue;
-        }
-
-        for (const QString& message : logDataRange)
-        {
-            sendMessageToRemoteProcess(message, static_cast<SeverityLevel>(severityLevel));
-        }
-    }
 }
 
 void LogServerDataAccumulator::storeLog(const QString& message, SeverityLevel severityLevel)
 {
-    m_logs[AllLevels].push_back(message);
-    m_logs[static_cast<int>(severityLevel)].push_back(message);
+    m_logs.emplace_back(std::make_pair(severityLevel, message));
 
     sendMessageToRemoteProcess(message, severityLevel);
 }

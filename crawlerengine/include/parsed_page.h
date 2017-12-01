@@ -88,7 +88,7 @@ struct LinkInfo
 struct ResourceLink
 {
 	ParsedPageWeakPtr resource;
-	LinkParameter urlParameter;
+	LinkParameter linkParameter;
 	ResourceSource resourceSource;
 	QString altOrTitle;
 };

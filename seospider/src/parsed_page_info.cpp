@@ -162,7 +162,7 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 		}
 		case PageLinksColumn::LinkParameterColumn:
 		{
-			value = linkParameterDescription(resourceLink.urlParameter);
+			value = linkParameterDescription(resourceLink.linkParameter);
 			break;
 		}
 	}
