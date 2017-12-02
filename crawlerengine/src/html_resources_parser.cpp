@@ -44,7 +44,7 @@ void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& head
 			page->canonicalUrl = linkInfo.url;
 		}
 
-		page->allResourcesOnPage.insert(RawResourceOnPage{ ResourceType::ResourceHtml, linkInfo });
+		page->allResourcesOnPage.emplace_back(RawResourceOnPage{ ResourceType::ResourceHtml, std::move(linkInfo) });
 	}
 
 	CompoundParser::parse(output, headers, page);

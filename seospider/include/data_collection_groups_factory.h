@@ -1,6 +1,6 @@
 #pragma once
 
-#include "unordered_data_collection.h"
+#include "storage_type.h"
 
 namespace SeoSpider
 {

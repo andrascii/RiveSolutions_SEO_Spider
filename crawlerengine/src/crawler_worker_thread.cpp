@@ -150,30 +150,20 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionSubdomainNotAllowed;
 	};
 
-	const auto isNofollowLinkUnavailableWrapper = [&isNofollowLinkUnavailable](const RawResourceOnPage& resource)
+	const auto setLinkLoadAvailability = [&](RawResourceOnPage& resource)
 	{
-		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
-			isNofollowLinkUnavailable(resource.thisResourceLink);
-	};
+		const bool loadAvailability = PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) &&
+			!isNofollowLinkUnavailable(resource.thisResourceLink) &&
+			!isSubdomainLinkUnavailable(resource.thisResourceLink) &&
+			!isLinkBlockedByRobotsTxt(resource.thisResourceLink);
 
-	const auto isSubdomainLinkUnavailableWrapper = [&isSubdomainLinkUnavailable](const RawResourceOnPage& resource)
-	{
-		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
-			isSubdomainLinkUnavailable(resource.thisResourceLink);
-	};
-
-	const auto isLinkBlockedByRobotsTxtWrapper = [&isLinkBlockedByRobotsTxt](const RawResourceOnPage& resource)
-	{
-		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
-			isLinkBlockedByRobotsTxt(resource.thisResourceLink);
+		resource.loadAvailability = loadAvailability;
 	};
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 
-	associative_container_erase_if(parsedPage->allResourcesOnPage, isNofollowLinkUnavailableWrapper);
-	associative_container_erase_if(parsedPage->allResourcesOnPage, isSubdomainLinkUnavailableWrapper);
-	associative_container_erase_if(parsedPage->allResourcesOnPage, isLinkBlockedByRobotsTxtWrapper);
+	std::for_each(parsedPage->allResourcesOnPage.begin(), parsedPage->allResourcesOnPage.end(), setLinkLoadAvailability);
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
 	{

@@ -64,7 +64,7 @@ signals:
 	void onAboutClearData();
 
 public slots:
-	void startCrawling(const CrawlerOptions& options);	
+	void startCrawling(const CrawlerOptions& options);
 	void stopCrawling();
 
 private slots:

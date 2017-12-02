@@ -75,15 +75,14 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(const
 		}
 	}
 
-	CrawlerEngine::ResourceLink resourceLink
+	return CrawlerEngine::ResourceLink
 	{
 		CrawlerEngine::ParsedPageWeakPtr(),
+		QUrl(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
 		QString::null
 	};
-
-	return resourceLink;
 }
 
 CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType)
@@ -96,15 +95,14 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(const
 		}
 	}
 
-	CrawlerEngine::ResourceLink resourceLink
+	return CrawlerEngine::ResourceLink
 	{
 		CrawlerEngine::ParsedPageWeakPtr(),
+		QUrl(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
 		QString::null
 	};
-
-	return resourceLink;
 }
 
 }

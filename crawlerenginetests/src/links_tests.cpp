@@ -102,11 +102,51 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 
 TEST(LinksTests, SubdomainsMustNotBeLoaded)
 {
-    TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://subdomains.com")));
+    const QUrl baseUrl("http://subdomains.com");
+    CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(baseUrl);
 
-    const auto testFunction = [cl = env.crawler()]()
+    TestEnvironment env(options);
+
+    const auto testFunction = [cl = env.crawler(), &baseUrl]()
     {
-        
+        auto pages = cl->waitForAllCrawledPageReceived(10);
+        cl->checkSequencedDataCollectionConsistency();
+
+        std::vector<const CrawlerEngine::ParsedPage*> crawledPages = cl->storageItems(CrawlerEngine::CrawledUrlStorageType);
+        std::vector<const CrawlerEngine::ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(CrawlerEngine::PendingResourcesStorageType);
+
+        std::vector<QUrl> subdomainLinks;
+
+        const auto addSubdomainLink = [&subdomainLinks, &baseUrl](const auto& resourceLink)
+        {
+            if (!PageParserHelpers::isSubdomain(baseUrl, resourceLink.url))
+            {
+                return;
+            }
+
+            subdomainLinks.push_back(resourceLink.url);
+        };
+
+        const auto collectSubdomainLinks = [&addSubdomainLink](auto* page)
+        {
+            std::for_each(page->linksOnThisPage.begin(), page->linksOnThisPage.end(), addSubdomainLink);
+        };
+
+        // collect subdomain links
+        std::for_each(crawledPages.begin(), crawledPages.end(), collectSubdomainLinks);
+
+        EXPECT_EQ(true, !subdomainLinks.empty());
+
+        // check that pending does not contain subdomain links
+        const auto checkPendingLinks = [&subdomainLinks](auto* page)
+        {
+            for (const QUrl& subdomainLink : subdomainLinks)
+            {
+                EXPECT_NE(subdomainLink, page->url);
+            }
+        };
+
+        std::for_each(pendingPages.begin(), pendingPages.end(), checkPendingLinks);
     };
 
     env.initializeTest(testFunction);

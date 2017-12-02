@@ -46,8 +46,8 @@ public:
 			metaRobots[QString::number(static_cast<int>(flags.first))] = static_cast<int>(flags.second);
 		}
 		pageMap[QString("metaRobotsFlags")] = metaRobots;
-		pageMap[QString("responseDate")] = static_cast<unsigned long long>(m_page->responseDate.toSecsSinceEpoch());
-		pageMap[QString("lastModifiedDate")] = static_cast<unsigned long long>(m_page->lastModifiedDate.toSecsSinceEpoch());
+		//pageMap[QString("responseDate")] = static_cast<unsigned long long>(m_page->responseDate.toSecsSinceEpoch());
+		//pageMap[QString("lastModifiedDate")] = static_cast<unsigned long long>(m_page->lastModifiedDate.toSecsSinceEpoch());
 		pageMap[QString("pageSizeKilobytes")] = m_page->pageSizeKilobytes;
 		pageMap[QString("wordCount")] = m_page->wordCount;
 		pageMap[QString("pageHash")] = m_page->pageHash;

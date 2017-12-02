@@ -448,12 +448,12 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, resource.thisResourceLink.urlParameter, 
+			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		}
 		else
@@ -461,12 +461,17 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.thisResourceLink.url;
 
-			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, resource.thisResourceLink.urlParameter, 
+			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
+			if (!resource.loadAvailability)
+			{
+				return;
+			}
+
 			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 
 			DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
@@ -529,16 +534,16 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 			continue;
 		}
 
-		ParsedPagePtr resourceRaw = std::make_shared<ParsedPage>();
-		resourceRaw->url = resource.thisResourceLink.url;
+		ParsedPagePtr temporaryResource = std::make_shared<ParsedPage>();
+		temporaryResource->url = resource.thisResourceLink.url;
 
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url);
-		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, resourceRaw->url) || !httpResource;
+		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, temporaryResource->url) || !httpResource;
 
 		const StorageType storage = externalOrNotHttpResource ?
 			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
 
-		ParsedPagePtr newOrExistingResource = data()->parsedPage(resourceRaw, storage);
+		ParsedPagePtr newOrExistingResource = data()->parsedPage(temporaryResource, storage);
 		
 		const bool existingImageResource = newOrExistingResource && 
 			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
@@ -546,21 +551,24 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 
 		if (!newOrExistingResource)
 		{
-			newOrExistingResource = data()->parsedPage(resourceRaw, StorageType::PendingResourcesStorageType);
+			newOrExistingResource = data()->parsedPage(temporaryResource, StorageType::PendingResourcesStorageType);
 		}
 
 		if (!newOrExistingResource)
 		{
-			newOrExistingResource = resourceRaw;
-			
-			data()->addParsedPage(newOrExistingResource, 
-				httpResource ? StorageType::PendingResourcesStorageType : storage);
+			newOrExistingResource = temporaryResource;
+
+			if (resource.loadAvailability)
+			{
+				data()->addParsedPage(newOrExistingResource,
+					httpResource ? StorageType::PendingResourcesStorageType : storage);
+			}
 		}
 
-		incomingPage->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, resource.thisResourceLink.urlParameter, 
+		incomingPage->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.thisResourceLink.urlParameter,
 			resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
 			resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
