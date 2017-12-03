@@ -164,7 +164,7 @@ bool PageParserHelpers::isHttpOrHttpsScheme(const QUrl& url) noexcept
 
 bool PageParserHelpers::isSubdomain(const QUrl& baseUrl, const QUrl& url)
 {
-	static const QRegularExpression s_regExp("(?:([a-z0-9\\.]+)*?\\.)?([a-z0-9]+\\.[a-z\\.]+){1,1}", 
+	static const QRegularExpression s_regExp("(?:([a-z0-9\\.-]+)?\\.)?([a-z0-9]+\\.[a-z\\.]+){1,1}", 
 		QRegularExpression::CaseInsensitiveOption);
 
 	if (baseUrl.isRelative() || url.isRelative() || baseUrl == url)
