@@ -117,9 +117,6 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
             {
                 ParsedPage* resourcePage = link.resource.lock().get();
 
-                // it may be already expired. check it
-                EXPECT_EQ(true, resourcePage != nullptr);
-
                 if (!resourcePage || !PageParserHelpers::isHttpOrHttpsScheme(resourcePage->url))
                 {
                     continue;
