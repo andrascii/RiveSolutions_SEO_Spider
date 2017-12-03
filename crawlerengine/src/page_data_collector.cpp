@@ -189,7 +189,7 @@ void PageDataCollector::setResourceCategory(ParsedPagePtr& page) const
 		return;
 	}
 
-	if (PageParserHelpers::isHtmlContentType(page->contentType))
+	if (PageParserHelpers::isHtmlOrPlainContentType(page->contentType))
 	{
 		page->resourceType = ResourceType::ResourceHtml;
 		return;

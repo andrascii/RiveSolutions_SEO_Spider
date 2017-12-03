@@ -14,9 +14,6 @@ public:
 
 public slots:
 	void runTest(const std::function<void()>& testFunction);
-
-private:
-	static std::mutex s_mutex;
 };
 
 }

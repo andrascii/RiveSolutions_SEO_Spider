@@ -102,8 +102,8 @@ void ThreadQueue::postResponse(RequesterSharedPtr requester, IResponseSharedPtr 
 
 ThreadQueue::ThreadQueue(QThread* thread)
 {
-	startDispatchTimer();
 	moveToThread(thread);
+	startDispatchTimer();
 	VERIFY(connect(thread, SIGNAL(finished()), this, SLOT(shutdown()), Qt::DirectConnection)); 
 }
 

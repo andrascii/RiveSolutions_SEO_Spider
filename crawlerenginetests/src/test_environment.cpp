@@ -21,9 +21,10 @@ TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)
 	, m_crawler(new TestsCrawler(s_threadCount, options, nullptr))
 {
 	m_crawlerThread = new Common::NamedThread("CrawlerTestsThread");
+	m_crawler->moveToThread(m_crawlerThread);
 	m_crawlerThread->start();
 
-	m_crawler->moveToThread(m_crawlerThread);
+	QMetaObject::invokeMethod(m_crawler, "initialize", Qt::BlockingQueuedConnection);
 }
 
 TestEnvironment::~TestEnvironment()

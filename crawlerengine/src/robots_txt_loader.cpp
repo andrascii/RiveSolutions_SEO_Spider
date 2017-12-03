@@ -1,13 +1,14 @@
-
 #include "robots_txt_loader.h"
 #include "status_code.h"
+#include "download_request.h"
+#include "download_response.h"
 
 namespace CrawlerEngine
 {
 
-RobotsTxtLoader::RobotsTxtLoader(QNetworkAccessManager* networkAccessor)
-	: m_isReady(false)
-	, m_networkAccessor(networkAccessor)
+RobotsTxtLoader::RobotsTxtLoader(QObject* parent)
+	: QObject(parent)
+	, m_isReady(false)
 {
 }
 
@@ -18,21 +19,18 @@ void RobotsTxtLoader::setUserAgent(const QByteArray& userAgent)
 
 void RobotsTxtLoader::load(const QUrl& url)
 {
-	ASSERT(m_networkAccessor->thread() == QThread::currentThread());
-
 	if (m_currentLoadedUrl == url)
 	{
 		return;
 	}
 
-	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), this, SLOT(onLoadingDone(QNetworkReply*))));
-
 	const QString robotsTxtUrlString = url.scheme() + "://" + url.host() + QStringLiteral("/robots.txt");
 
-	QNetworkRequest request(robotsTxtUrlString);
-	request.setRawHeader("User-Agent", m_userAgent);
+	CrawlerRequest requestInfo{ QUrl(robotsTxtUrlString), DownloadRequestType::RequestTypeGet };
 
-	QNetworkReply* reply = m_networkAccessor->get(request);
+	DownloadRequest request(requestInfo);
+	m_downloadRequester.reset(request, this, &RobotsTxtLoader::onLoadingDone);
+	m_downloadRequester->start();
 }
 
 const QByteArray& RobotsTxtLoader::content() const noexcept
@@ -50,36 +48,27 @@ QObject* RobotsTxtLoader::qobject()
 	return this;
 }
 
-void RobotsTxtLoader::onLoadingDone(QNetworkReply* reply)
+void RobotsTxtLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
-	const QUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	m_downloadRequester.reset();
 
-	if (!redirectUrl.isEmpty())
+	if (!response.redirectUrl.isEmpty())
 	{
-		QNetworkRequest request(redirectUrl);
-		request.setRawHeader("User-Agent", m_userAgent);
+		CrawlerRequest requestInfo{ response.redirectUrl, DownloadRequestType::RequestTypeGet };
 
-		m_networkAccessor->get(request);
+		DownloadRequest request(requestInfo);
+		m_downloadRequester.reset(request, this, &RobotsTxtLoader::onLoadingDone);
+		m_downloadRequester->start();
+
 		return;
 	}
 
-	disconnect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), this, SLOT(onLoadingDone(QNetworkReply*)));
+	const Common::StatusCode statusCode = static_cast<Common::StatusCode>(response.statusCode);
 
-	const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-
-	const Common::StatusCode statusCodeValue = statusCode.isValid() ?
-		static_cast<Common::StatusCode>(statusCode.toInt()) :
-		Common::StatusCode::Undefined;
-
-	if (statusCodeValue == Common::StatusCode::Undefined)
-	{
-		return;
-	}
-
-	m_content = reply->readAll();
+	m_content = response.responseBody;
 	m_isReady = true;
 
-	m_currentLoadedUrl = reply->url();
+	m_currentLoadedUrl = response.url;
 
 	emit ready();
 }

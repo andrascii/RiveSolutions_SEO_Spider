@@ -1,15 +1,19 @@
 #pragma once
+
 #include "irobots_txt_loader.h"
+#include "requester_wrapper.h"
 
 namespace CrawlerEngine
 {
+
+struct DownloadResponse;
 
 class RobotsTxtLoader : public QObject, public IRobotsTxtLoader
 {
 	Q_OBJECT
 
 public:
-	RobotsTxtLoader(QNetworkAccessManager* networkAccessor);
+	RobotsTxtLoader(QObject* parent = nullptr);
 
 	virtual void setUserAgent(const QByteArray& userAgent) override;
 
@@ -23,14 +27,14 @@ signals:
 	virtual void ready() override;
 
 private slots:
-	void onLoadingDone(QNetworkReply* reply);
+	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 
 private:
 	bool m_isReady;
 	QByteArray m_content;
-	QNetworkAccessManager* m_networkAccessor;
 	QByteArray m_userAgent;
 	QUrl m_currentLoadedUrl;
+	RequesterWrapper m_downloadRequester;
 };
 
 }

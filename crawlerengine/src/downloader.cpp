@@ -87,7 +87,7 @@ void Downloader::metaDataChanged(QNetworkReply* reply)
 		return;
 	}
 
-	const bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(
+	const bool nonHtmlResponse = !PageParserHelpers::isHtmlOrPlainContentType(
 		reply->header(QNetworkRequest::ContentTypeHeader).toString()
 	);
 
@@ -114,7 +114,7 @@ void Downloader::processReply(QNetworkReply* reply)
 	markReplyAsProcessed(reply);
 	reply->disconnect(this);
 
-	const bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+	const bool nonHtmlResponse = !PageParserHelpers::isHtmlOrPlainContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
 	const bool processBody = !nonHtmlResponse;
 
 	const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);

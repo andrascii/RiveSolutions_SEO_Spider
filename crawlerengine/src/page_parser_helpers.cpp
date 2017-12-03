@@ -147,11 +147,12 @@ bool PageParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) noex
 	return !isUrlInternal;
 }
 
-bool PageParserHelpers::isHtmlContentType(const QString& contentType) noexcept
+bool PageParserHelpers::isHtmlOrPlainContentType(const QString& contentType) noexcept
 {
 	return contentType.startsWith("text/html") ||
 		contentType.startsWith("text/xhtml") ||
 		contentType.startsWith("application/xhtml") ||
+		contentType.startsWith("text/plain") ||
 		contentType.isEmpty();
 }
 

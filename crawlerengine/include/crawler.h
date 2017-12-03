@@ -45,13 +45,10 @@ public:
 	void initialize();
 	
 	void clearData();
-
 	bool isNoData() const noexcept;
-	
 	State state() const noexcept;
 	
 	SequencedDataCollection* sequencedDataCollection() const;
-
 	QString siteMapXml(const SiteMapSettings& settings) const;
 
 	void saveToFile(const QString& fileName);
@@ -72,10 +69,9 @@ private slots:
 	void onCrawlingSessionInitialized();
 
 protected:
-	IRobotsTxtLoader* robotsTxtLoader() const;
+	IRobotsTxtLoader* robotsTxtLoader();
 
-	virtual IDownloader* createDownloader() const;	
-	virtual IRobotsTxtLoader* createRobotsTxtLoader() const;	
+	virtual IDownloader* createDownloader() const;
 	virtual void createSequencedDataCollection(QThread* targetThread) const;
 	
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
@@ -92,7 +88,7 @@ protected:
 private:
 	static Crawler* s_instance;
 
-	mutable std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
+	std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
 
 	UniqueLinkStore* m_uniqueLinkStore;
 	CrawlerOptions m_options;
