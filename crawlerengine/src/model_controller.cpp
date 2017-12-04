@@ -358,22 +358,40 @@ void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage)
 
 void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool checkOnlyLastResource)
 {
+	class CounterIncrementor final
+	{
+	public:
+		CounterIncrementor(std::size_t& ref)
+			: m_ref(ref)
+		{
+		}
+
+		~CounterIncrementor()
+		{
+			++m_ref;
+		}
+
+	private:
+		std::size_t& m_ref;
+	};
+
 	const int sizeKB = incomingPage->pageSizeKilobytes;
 
-	if (sizeKB > m_crawlerOptions.maxImageSizeKb)
+	if (sizeKB > m_crawlerOptions.maxImageSizeKb &&
+		!data()->isParsedPageExists(incomingPage, StorageType::Over100kbImageStorageType))
 	{
 		data()->addParsedPage(incomingPage, StorageType::Over100kbImageStorageType);
 	}
 
-	size_t index = 0;
-	const size_t lastIndex = incomingPage->linksToThisPage.size() - 1;
+	std::size_t index = 0;
+	const std::size_t lastIndex = incomingPage->linksToThisPage.size() - 1;
 
 	for (const ResourceLink& linkToThisImage : incomingPage->linksToThisPage)
 	{
+		CounterIncrementor incrementor(index);
+
 		if (checkOnlyLastResource && index != lastIndex)
 		{
-			// TODO: optimize
-			++index;
 			continue;
 		}
 
@@ -381,18 +399,17 @@ void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool c
 		{
 			const int altLength = linkToThisImage.altOrTitle.size();
 
-			if (altLength > m_crawlerOptions.maxImageAltTextChars)
+			if (altLength > m_crawlerOptions.maxImageAltTextChars && 
+				!data()->isParsedPageExists(incomingPage, StorageType::VeryLongAltTextImageStorageType))
 			{
 				data()->addParsedPage(incomingPage, StorageType::VeryLongAltTextImageStorageType);
 			}
 
-			if (altLength == 0)
+			if (altLength == 0 && !data()->isParsedPageExists(incomingPage, StorageType::MissingAltTextImageStorageType))
 			{
 				data()->addParsedPage(incomingPage, StorageType::MissingAltTextImageStorageType);
 			}
 		}
-
-		++index;
 	}
 }
 
@@ -483,12 +500,12 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 {
 	constexpr int storageTypes[][1]
 	{
-		static_cast<int>(ResourceType::ResourceImage),{ StorageType::ImageResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceJavaScript),{ StorageType::JavaScriptResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceStyleSheet),{ StorageType::StyleSheetResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceFlash),{ StorageType::FlashResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceVideo),{ StorageType::VideoResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceOther),{ StorageType::OtherResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceImage), { StorageType::ImageResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceJavaScript), { StorageType::JavaScriptResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceStyleSheet), { StorageType::StyleSheetResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceFlash), { StorageType::FlashResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceVideo), { StorageType::VideoResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceOther), { StorageType::OtherResourcesStorageType },
 	};
 
 	constexpr int externalStorageTypes[][1]
