@@ -7,27 +7,6 @@
 #include "download_response.h"
 #include "crawler.h"
 
-namespace
-{
-
-template <typename T, typename Pred>
-void associative_container_erase_if(std::set<T>& container, Pred&& pred)
-{
-	for (auto iter = container.begin(); iter != container.end();)
-	{
-		if (pred(*iter))
-		{
-			iter = container.erase(iter);
-		}
-		else
-		{
-			++iter;
-		}
-	}
-}
-
-}
-
 namespace CrawlerEngine
 {
 
