@@ -13,8 +13,8 @@ struct ThreadMetaData : public QObjectUserData
 	{
 	}
 
-	ThreadMetaData(std::shared_ptr<ThreadMessageDispatcher> queue)
-		: queue(queue)
+	ThreadMetaData(std::shared_ptr<ThreadMessageDispatcher> dispatcher)
+		: dispatcher(dispatcher)
 	{
 	}
 
