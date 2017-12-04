@@ -136,7 +136,7 @@ void ThreadMessageDispatcher::execute()
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	RequesterSharedPtr requester = message.requester();
 
-	if (!requester || requester->thread() != thread() || !handlerRegistry.isHandlerExists(message.handler()))
+	if (!requester || !handlerRegistry.isHandlerExists(message.handler()))
 	{
 		return;
 	}
@@ -159,6 +159,8 @@ void ThreadMessageDispatcher::execute()
 		}
 		case Message::MessageTypePostResponse:
 		{
+			ASSERT(requester->thread() == thread());
+
 			requester->processResponse(*message.response());
 
 			break;
