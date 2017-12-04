@@ -18,7 +18,7 @@ struct ThreadMetaData : public QObjectUserData
 	{
 	}
 
-	std::shared_ptr<ThreadMessageDispatcher> queue;
+	std::shared_ptr<ThreadMessageDispatcher> dispatcher;
 };
 
 }
@@ -34,9 +34,9 @@ int metaDataIndex()
 	return s_metaDataIndex;
 }
 
-void registerThreadQueue(QThread* thread, std::shared_ptr<ThreadMessageDispatcher> controller)
+void registerThreadQueue(QThread* thread, std::shared_ptr<ThreadMessageDispatcher> dispatcher)
 {
-	thread->setUserData(metaDataIndex(), new ThreadMetaData(controller));
+	thread->setUserData(metaDataIndex(), new ThreadMetaData(dispatcher));
 }
 
 void unregisterThreadQueue(QThread* thread)
@@ -55,7 +55,7 @@ std::shared_ptr<ThreadMessageDispatcher> threadQueue(QThread* thread)
 		return std::shared_ptr<ThreadMessageDispatcher>();
 	}
 
-	return static_cast<ThreadMetaData*>(metaData)->queue;
+	return static_cast<ThreadMetaData*>(metaData)->dispatcher;
 }
 
 std::mutex s_mutex;
