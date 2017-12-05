@@ -19,6 +19,9 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	VERIFY(connect(crawler, &Crawler::crawlingProgress,
 		this, &ParsedPageReceiver::onCrawlingProgress, Qt::QueuedConnection));
 
+	VERIFY(connect(crawler, &Crawler::onAboutClearData,
+		this, &ParsedPageReceiver::onAboutClearData, Qt::QueuedConnection));
+
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, int)), 
 		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, int))));
 
@@ -63,6 +66,15 @@ void ParsedPageReceiver::onCrawlingProgress(CrawlingProgress state)
 		m_allPagesReceivedPromise.set_value(m_parsedPages[StorageType::CrawledUrlStorageType]);
 		m_allPagesReceived = true;
 	}
+}
+
+void ParsedPageReceiver::onAboutClearData()
+{
+	m_waitConditions.clear();
+	m_parsedPages.clear();
+
+	m_linksToThisResourceChanges.clear();
+	m_linksToThisResourceConditions.clear();
 }
 
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, int type)

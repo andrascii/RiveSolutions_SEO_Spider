@@ -159,10 +159,9 @@ public:
 				LinkInfo{ it->second->url, linkParameter, altOrTitle, false, resourceSource }
 			};
 
-			m_page->allResourcesOnPage.insert(resource);
+			m_page->allResourcesOnPage.push_back(resource);
 		}
 	}
-
 
 	void fromJson(const QVariantMap& pageMap)
 	{
