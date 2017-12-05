@@ -24,7 +24,7 @@ Application::Application(int& argc, char** argv)
     , m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
     , m_sequencedDataCollection(nullptr)
     , m_softwareBrandingOptions(new SoftwareBranding)
-    , m_storageAdatpterFactory(new StorageAdaptorFactory)
+    , m_storageAdatpterFactory(new StorageAdapterFactory)
     , m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
     , m_settings(nullptr)
     , m_translator(new QTranslator(this))
@@ -60,7 +60,7 @@ CrawlerEngine::SequencedDataCollection* Application::sequencedDataCollection() c
     return m_sequencedDataCollection;
 }
 
-StorageAdaptorFactory* Application::storageAdaptorFactory() const noexcept
+StorageAdapterFactory* Application::storageAdapterFactory() const noexcept
 {
     return m_storageAdatpterFactory.get();
 }

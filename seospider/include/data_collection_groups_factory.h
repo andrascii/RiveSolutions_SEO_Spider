@@ -11,9 +11,7 @@ enum class AuditGroup
 	// Problem groups
 	//
 	LinkAuditGroup,
-	TitleAuditGroup,
-	MetaDescriptionAuditGroup,
-	MetaKeywordAuditGroup,
+	OnPageAuditGroup,
 	H1AuditGroup,
 	H2AuditGroup,
 	ImageAuditGroup,

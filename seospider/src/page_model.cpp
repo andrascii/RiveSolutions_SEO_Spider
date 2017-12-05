@@ -1,6 +1,6 @@
 #include "page_model.h"
 #include "default_column_resize_policy.h"
-#include "parsed_page_info_storage_adaptor.h"
+#include "parsed_page_info_storage_adapter.h"
 #include "seo_spider_helpers.h"
 
 namespace SeoSpider
@@ -23,9 +23,9 @@ Qt::ItemFlags PageModel::flags(const QModelIndex& index) const
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-void PageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
+void PageModel::setStorageAdaptor(IStorageAdapter* storageAdaptor) noexcept
 {
-	IStorageAdaptor* oldStorageAdaptor = m_storageAdaptor;
+	IStorageAdapter* oldStorageAdaptor = m_storageAdaptor;
 
 	if (m_storageAdaptor == storageAdaptor)
 	{
@@ -76,13 +76,13 @@ void PageModel::setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept
 	}
 }
 
-IStorageAdaptor::ItemType PageModel::itemType(const QModelIndex& index) const noexcept
+IStorageAdapter::ItemType PageModel::itemType(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
 		// just return invalid enum for item number
 
-		return IStorageAdaptor::ItemType::PlainItemType;
+		return IStorageAdapter::ItemType::PlainItemType;
 	}
 
 	const QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);
@@ -95,12 +95,12 @@ IResizePolicy* PageModel::resizePolicy() const noexcept
 	return m_resizePolicy.get();
 }
 
-const IStorageAdaptor* PageModel::storageAdaptor() const
+const IStorageAdapter* PageModel::storageAdaptor() const
 {
 	return m_storageAdaptor;
 }
 
-IStorageAdaptor* PageModel::storageAdaptor()
+IStorageAdapter* PageModel::storageAdaptor()
 {
 	return m_storageAdaptor;
 }

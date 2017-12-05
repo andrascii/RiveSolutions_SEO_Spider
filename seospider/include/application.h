@@ -3,7 +3,7 @@
 #include "main_window.h"
 #include "software_branding.h"
 #include "summary_data_accessor_factory.h"
-#include "storage_adaptor_factory.h"
+#include "storage_adapter_factory.h"
 #include "isettings_accessor.h"
 #include "requester.h"
 #include "requester_wrapper.h"
@@ -34,7 +34,7 @@ public:
 
 	Preferences* preferences() const noexcept;
 	MainWindow* mainWindow() const noexcept;
-	StorageAdaptorFactory* storageAdaptorFactory() const noexcept;
+	StorageAdapterFactory* storageAdapterFactory() const noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() const noexcept;
 
 	CrawlerEngine::Crawler* crawler() const noexcept;
@@ -80,7 +80,7 @@ private:
 	std::unique_ptr<MainWindow> m_mainWindow;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 
-	std::unique_ptr<StorageAdaptorFactory> m_storageAdatpterFactory;
+	std::unique_ptr<StorageAdapterFactory> m_storageAdatpterFactory;
 	std::unique_ptr<SummaryDataAccessorFactory> m_summaryDataAccessorFactory;
 
 	QSettings* m_settings;

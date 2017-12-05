@@ -21,7 +21,7 @@ PageDataWidget::PageDataWidget(QWidget* parent)
 
 void PageDataWidget::setParsedPageInfo(const ParsedPageInfoPtr& page)
 {
-	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
+	StorageAdapterFactory* factory = theApp->storageAdapterFactory();
 
 	for(auto beg = m_models.begin(); beg != m_models.end(); ++beg)
 	{

@@ -5,7 +5,7 @@
 
 #include "debug_info_web_page_widget.h"
 #include "page_model.h"
-#include "parsed_page_info_storage_adaptor.h"
+#include "parsed_page_info_storage_adapter.h"
 
 #endif
 
@@ -94,8 +94,8 @@ void SelectionModel::select(const QItemSelection& selection, QItemSelectionModel
 		return;
 	}
 
-	if (const ParsedPageInfoStorageAdaptor* storageAdaptor = 
-		dynamic_cast<const ParsedPageInfoStorageAdaptor*>(storageModel->storageAdaptor()); storageAdaptor)
+	if (const ParsedPageInfoStorageAdapter* storageAdaptor = 
+		dynamic_cast<const ParsedPageInfoStorageAdapter*>(storageModel->storageAdaptor()); storageAdaptor)
 	{
 		const CrawlerEngine::ParsedPage* parsedPage = storageAdaptor->parsedPage(firstSelectedIndex);
 		GlobalWebPageSelectedNotifier::instanse()->pageSelected(parsedPage);

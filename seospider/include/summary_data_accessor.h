@@ -14,7 +14,7 @@ public:
 	SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
 
 
-	virtual StorageAdaptorType itemCategory(const QModelIndex& index) const noexcept override;
+	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept override;
 
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 

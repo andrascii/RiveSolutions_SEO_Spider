@@ -11,7 +11,7 @@ QMenuBar
 {	
 	padding-top: 1em;
 	padding-bottom: 1em;
-	background-color: #22252D;
+	background-color: #34465D;
 	border-bottom: 0.05em solid #C0C0C0;
 }
 
@@ -49,7 +49,7 @@ QMenu::item:selected
 QStatusBar
 {
 	min-height: 2.5em;
-	background-color: #22252D;
+	background-color: #34465D;
 	border-top: 0.05em solid #C0C0C0;
 	color: #EDEDED;
 }

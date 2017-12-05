@@ -1,10 +1,10 @@
-#include "parsed_page_info_storage_adaptor.h"
+#include "parsed_page_info_storage_adapter.h"
 #include "application.h"
 
 namespace SeoSpider
 {
 
-ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(
+ParsedPageInfoStorageAdapter::ParsedPageInfoStorageAdapter(
 	const CrawlerEngine::ISequencedStorage* associatedStorage,
 	CrawlerEngine::StorageType storageType, QObject* parent)
 	: QObject(parent)
@@ -16,50 +16,50 @@ ParsedPageInfoStorageAdaptor::ParsedPageInfoStorageAdaptor(
 	DEBUG_ASSERT(sequencedDataCollection);
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, 
-		this, &ParsedPageInfoStorageAdaptor::onStorageUpdated));
+		this, &ParsedPageInfoStorageAdapter::onStorageUpdated));
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
-		this, &ParsedPageInfoStorageAdaptor::beginClearData));
+		this, &ParsedPageInfoStorageAdapter::beginClearData));
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::endClearData,
-		this, &ParsedPageInfoStorageAdaptor::endClearData));
+		this, &ParsedPageInfoStorageAdapter::endClearData));
 }
 
-void ParsedPageInfoStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept
+void ParsedPageInfoStorageAdapter::setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept
 {
 	m_availableColumns = availableColumns;
 }
 
-QList<ParsedPageInfo::Column> ParsedPageInfoStorageAdaptor::availableColumns() const noexcept
+QList<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::availableColumns() const noexcept
 {
 	return m_availableColumns;
 }
 
-QString ParsedPageInfoStorageAdaptor::columnDescription(int columnIndex) const noexcept
+QString ParsedPageInfoStorageAdapter::columnDescription(int columnIndex) const noexcept
 {
 	DEBUG_ASSERT(columnIndex < m_availableColumns.size());
 
 	return ParsedPageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
-int ParsedPageInfoStorageAdaptor::columnWidth(int columnNumber) const noexcept
+int ParsedPageInfoStorageAdapter::columnWidth(int columnNumber) const noexcept
 {
 	DEBUG_ASSERT(columnNumber < m_availableColumns.size());
 
 	return ParsedPageInfo::columnPrefferedSize(m_availableColumns[columnNumber]);
 }
 
-int ParsedPageInfoStorageAdaptor::columnCount() const noexcept
+int ParsedPageInfoStorageAdapter::columnCount() const noexcept
 {
 	return m_availableColumns.size();
 }
 
-int ParsedPageInfoStorageAdaptor::itemCount() const noexcept
+int ParsedPageInfoStorageAdapter::itemCount() const noexcept
 {
 	return m_associatedStorage->size();
 }
 
-QVariant ParsedPageInfoStorageAdaptor::item(const QModelIndex& index) const noexcept
+QVariant ParsedPageInfoStorageAdapter::item(const QModelIndex& index) const noexcept
 {
 	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 
@@ -69,7 +69,7 @@ QVariant ParsedPageInfoStorageAdaptor::item(const QModelIndex& index) const noex
 	return ParsedPageInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
 }
 
-ParsedPageInfoStorageAdaptor::ItemType ParsedPageInfoStorageAdaptor::itemType(const QModelIndex& index) const noexcept
+ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(const QModelIndex& index) const noexcept
 {
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
@@ -79,7 +79,7 @@ ParsedPageInfoStorageAdaptor::ItemType ParsedPageInfoStorageAdaptor::itemType(co
 }
 
 
-ParsedPageInfoPtr ParsedPageInfoStorageAdaptor::parsedPageInfoPtr(const QModelIndex& index) const noexcept
+ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
 	const CrawlerEngine::ParsedPage* parsedPage;
 
@@ -91,13 +91,13 @@ ParsedPageInfoPtr ParsedPageInfoStorageAdaptor::parsedPageInfoPtr(const QModelIn
 	return std::make_shared<ParsedPageInfo>(parsedPage);
 }
 
-QObject* ParsedPageInfoStorageAdaptor::qobject() noexcept
+QObject* ParsedPageInfoStorageAdapter::qobject() noexcept
 {
 	return this;
 }
 
 #ifdef QT_DEBUG
-const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdaptor::parsedPage(const QModelIndex& index) const noexcept
+const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdapter::parsedPage(const QModelIndex& index) const noexcept
 {
 	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 	return storage[index.row()];
@@ -105,7 +105,7 @@ const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdaptor::parsedPage(const 
 #endif
 
 
-void ParsedPageInfoStorageAdaptor::onStorageUpdated(int row, int type)
+void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, int type)
 {
 	if (type != m_storageType)
 	{

@@ -22,10 +22,10 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			return p;
 		}
 
-		case AuditGroup::TitleAuditGroup:
+		case AuditGroup::OnPageAuditGroup:
 		{
-			p->name = QObject::tr("Titles");
-			p->group = AuditGroup::TitleAuditGroup;
+			p->name = QObject::tr("On Page");
+			p->group = AuditGroup::OnPageAuditGroup;
 			p->descriptions.push_back({ CrawlerEngine::StorageType::EmptyTitleUrlStorageType, QObject::tr("Empty Titles") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType, QObject::tr("Duplicated Titles") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::VeryLongTitleUrlStorageType, QObject::tr("Too Long Titles") });
@@ -33,26 +33,12 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.push_back({ CrawlerEngine::StorageType::DuplicatedH1TitleUrlStorageType, QObject::tr("Titles Duplicates H1") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralTitleUrlStorageType, QObject::tr("Several Title Tags On The Same Page") });
 
-			return p;
-		}
-
-		case AuditGroup::MetaDescriptionAuditGroup:
-		{
-			p->name = QObject::tr("Meta Descriptions");
-			p->group = AuditGroup::MetaDescriptionAuditGroup;
 			p->descriptions.push_back({ CrawlerEngine::StorageType::EmptyMetaDescriptionUrlStorageType, QObject::tr("Empty Meta Descriptions") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::DuplicatedMetaDescriptionUrlStorageType, QObject::tr("Duplicated Meta Descriptions") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType, QObject::tr("Too Long Meta Descriptions") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::VeryShortMetaDescriptionUrlStorageType, QObject::tr("Too Short Meta Descriptions") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralMetaDescriptionUrlStorageType, QObject::tr("Several Meta Descriptions") });
 
-			return p;
-		}
-
-		case AuditGroup::MetaKeywordAuditGroup:
-		{
-			p->name = QObject::tr("Meta Keywords");
-			p->group = AuditGroup::MetaKeywordAuditGroup;
 			p->descriptions.push_back({ CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType, QObject::tr("Empty  Meta Keywords") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType, QObject::tr("Duplicated  Meta Keywords") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralMetaKeywordsUrlStorageType, QObject::tr("Several Meta Keywords") });

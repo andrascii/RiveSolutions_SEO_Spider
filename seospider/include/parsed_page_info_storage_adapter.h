@@ -1,18 +1,18 @@
 #pragma once
 
-#include "istorage_adaptor.h"
+#include "istorage_adapter.h"
 #include "parsed_page_info.h"
 #include "sequenced_data_collection.h"
 
 namespace SeoSpider
 {
 
-class ParsedPageInfoStorageAdaptor : public QObject, public IParsedPageStorageAdaptor
+class ParsedPageInfoStorageAdapter : public QObject, public IParsedPageStorageAdapter
 {
 	Q_OBJECT
 
 public:
-	ParsedPageInfoStorageAdaptor(
+	ParsedPageInfoStorageAdapter(
 		const CrawlerEngine::ISequencedStorage* associatedStorage,
 		CrawlerEngine::StorageType storageType,
 		QObject* parent = nullptr

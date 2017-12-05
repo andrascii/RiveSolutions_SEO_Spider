@@ -1,23 +1,23 @@
-#include "page_links_storage_adaptor.h"
+#include "page_links_storage_adapter.h"
 #include "application.h"
 
 namespace SeoSpider
 {
 
-PageLinksStorageAdaptor::PageLinksStorageAdaptor(ParsedPageInfoPtr associatedParsedPage, PageLinkContext context)
+PageLinksStorageAdapter::PageLinksStorageAdapter(ParsedPageInfoPtr associatedParsedPage, PageLinkContext context)
 	: m_parsedPageInfo(associatedParsedPage)
 	, m_context(context)
 {
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection = theApp->sequencedDataCollection();
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
-		this, &PageLinksStorageAdaptor::beginClearData));
+		this, &PageLinksStorageAdapter::beginClearData));
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
-		this, &PageLinksStorageAdaptor::onBeginClearData));
+		this, &PageLinksStorageAdapter::onBeginClearData));
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::endClearData,
-		this, &PageLinksStorageAdaptor::endClearData));
+		this, &PageLinksStorageAdapter::endClearData));
 
 	if (m_context == PageLinkContext::LinksToThisPage)
 	{
@@ -28,36 +28,36 @@ PageLinksStorageAdaptor::PageLinksStorageAdaptor(ParsedPageInfoPtr associatedPar
 	}
 }
 
-void PageLinksStorageAdaptor::setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept
+void PageLinksStorageAdapter::setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept
 {
 	m_availableColumns = availableColumns;
 }
 
-QList<ParsedPageInfo::PageLinksColumn> PageLinksStorageAdaptor::availableColumns() const noexcept
+QList<ParsedPageInfo::PageLinksColumn> PageLinksStorageAdapter::availableColumns() const noexcept
 {
 	return m_availableColumns;
 }
 
-QString PageLinksStorageAdaptor::columnDescription(int columnIndex) const noexcept
+QString PageLinksStorageAdapter::columnDescription(int columnIndex) const noexcept
 {
 	DEBUG_ASSERT(columnIndex < m_availableColumns.size());
 
 	return ParsedPageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
-int PageLinksStorageAdaptor::columnWidth(int columnNumber) const noexcept
+int PageLinksStorageAdapter::columnWidth(int columnNumber) const noexcept
 {
 	DEBUG_ASSERT(columnNumber < m_availableColumns.size());
 
 	return ParsedPageInfo::columnPrefferedSize(m_availableColumns[columnNumber]);
 }
 
-int PageLinksStorageAdaptor::columnCount() const noexcept
+int PageLinksStorageAdapter::columnCount() const noexcept
 {
 	return m_availableColumns.size();
 }
 
-int PageLinksStorageAdaptor::itemCount() const noexcept
+int PageLinksStorageAdapter::itemCount() const noexcept
 {
 	if (!m_parsedPageInfo)
 	{
@@ -67,7 +67,7 @@ int PageLinksStorageAdaptor::itemCount() const noexcept
 	return static_cast<int>(m_parsedPageInfo->itemCount(m_context));
 }
 
-QVariant PageLinksStorageAdaptor::item(const QModelIndex& index) const noexcept
+QVariant PageLinksStorageAdapter::item(const QModelIndex& index) const noexcept
 {
 	if (!m_parsedPageInfo)
 	{
@@ -80,7 +80,7 @@ QVariant PageLinksStorageAdaptor::item(const QModelIndex& index) const noexcept
 	return m_parsedPageInfo->itemValue(m_availableColumns[index.column()], m_context, index.row());
 }
 
-PageLinksStorageAdaptor::ItemType PageLinksStorageAdaptor::itemType(const QModelIndex& index) const noexcept
+PageLinksStorageAdapter::ItemType PageLinksStorageAdapter::itemType(const QModelIndex& index) const noexcept
 {
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
@@ -89,24 +89,24 @@ PageLinksStorageAdaptor::ItemType PageLinksStorageAdaptor::itemType(const QModel
 		ItemType::PlainItemType;
 }
 
-ParsedPageInfoPtr PageLinksStorageAdaptor::parsedPageInfoPtr(const QModelIndex& index) const noexcept
+ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
 	return m_parsedPageInfo;
 }
 
-QObject* PageLinksStorageAdaptor::qobject() noexcept
+QObject* PageLinksStorageAdapter::qobject() noexcept
 {
 	return this;
 }
 
-void PageLinksStorageAdaptor::onBeginClearData()
+void PageLinksStorageAdapter::onBeginClearData()
 {
 	emit beginClearData();
 
 	m_parsedPageInfo.reset();
 }
 
-void PageLinksStorageAdaptor::onParsedPageAdded(LinksToThisResourceChanges changes)
+void PageLinksStorageAdapter::onParsedPageAdded(LinksToThisResourceChanges changes)
 {
 	if (!m_parsedPageInfo)
 	{
