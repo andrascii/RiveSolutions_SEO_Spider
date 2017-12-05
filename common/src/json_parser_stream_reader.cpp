@@ -233,7 +233,7 @@ JsonParserStreamReader::ElementType JsonParserStreamReader::nextElementType()
 	return End;
 }
 
-QVariant JsonParserStreamReader::readCompount()
+QVariant JsonParserStreamReader::readCompound()
 {
 	QVariant result = JsonParser::parseJson(d()->input);
 	d()->skipComma();
@@ -410,7 +410,7 @@ JsonStreamMapReader::ElementType JsonStreamListReader::nextElementType()
 
 QVariant JsonStreamListReader::readValue()
 {
-	QVariant result = readCompount();
+	QVariant result = readCompound();
 
 	ASSERT(result.type() != QMetaType::QVariantMap && result.type() != QMetaType::QVariantList);
 

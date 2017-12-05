@@ -11,6 +11,7 @@
 #include "site_map.h"
 #include "json_parser_stream_writer.h"
 #include "serializer.h"
+#include "json_parser_stream_reader.h"
 
 namespace CrawlerEngine
 {
@@ -35,6 +36,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	ASSERT(s_instance == nullptr && "Allowed only one instance of Crawler");
 
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
+	ASSERT(qRegisterMetaType<std::vector<ParsedPagePtr>>());
 	ASSERT(qRegisterMetaType<CrawlingProgress>());
 	ASSERT(qRegisterMetaType<CrawlerOptions>() > -1);
 	ASSERT(qRegisterMetaType<RobotsTxtRules>());
@@ -314,7 +316,42 @@ void Crawler::saveToFile(const QString& fileName)
 	}
 }
 
-const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
+void Crawler::loadFromFile(const QString& fileName)
+{
+	clearData();
+	try
+	{
+		QFile file(fileName);
+
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		{
+			throw std::runtime_error(file.errorString().toStdString());
+		}
+
+		Serializer serializer; // TODO: provide all required data into the constructor
+		Common::JsonParserStreamReader reader(file);
+		serializer.readFromJsonStream(reader);
+
+		const std::vector<ParsedPage*>& pages = serializer.deserializedPages();
+		std::vector<ParsedPagePtr> incomingPages;
+		incomingPages.reserve(pages.size());
+		for (ParsedPage* page : pages)
+		{
+			incomingPages.emplace_back(page);
+		}
+
+		VERIFY(QMetaObject::invokeMethod(m_modelController, "addParsedPages",
+			Qt::BlockingQueuedConnection, Q_ARG(std::vector<ParsedPagePtr>, incomingPages)));
+
+	}
+	catch (const std::exception& e)
+	{
+		Q_UNUSED(e);
+		// TODO: notify a user about the error
+	}
+}
+
+	const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 {
 	return m_uniqueLinkStore;
 }

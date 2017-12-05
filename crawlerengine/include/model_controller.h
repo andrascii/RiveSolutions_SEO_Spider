@@ -17,6 +17,7 @@ public:
 	ModelController();
 
 	Q_SLOT void addParsedPage(ParsedPagePtr incomingPage) noexcept;
+	Q_SLOT void addParsedPages(std::vector<ParsedPagePtr> incomingPages) noexcept;
 	Q_SLOT void setWebCrawlerOptions(const CrawlerOptions& options);
 	Q_SLOT void clearData();
 

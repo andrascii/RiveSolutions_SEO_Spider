@@ -27,6 +27,7 @@ private:
     Q_SLOT void onParsedPageAdded(int row, int type);
     Q_SLOT void onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
     Q_SLOT void onCrawlingProgress(CrawlingProgress state);
+	Q_SLOT void onAboutClearData();
     Q_SLOT void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, int type);
 
     void checkWaitCondition(int storageType);

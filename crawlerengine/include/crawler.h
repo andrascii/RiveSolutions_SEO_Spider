@@ -55,6 +55,7 @@ public:
 	QString siteMapXml(const SiteMapSettings& settings) const;
 
 	void saveToFile(const QString& fileName);
+	void loadFromFile(const QString& fileName);
 
 signals:
 	void crawlingProgress(CrawlingProgress state);

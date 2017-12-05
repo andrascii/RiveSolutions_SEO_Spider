@@ -22,7 +22,7 @@ namespace Common
 
 		virtual ElementType nextElementType();		
 
-		QVariant readCompount();
+		QVariant readCompound();
 
 	protected:
 		JsonParserStreamReaderData* d();

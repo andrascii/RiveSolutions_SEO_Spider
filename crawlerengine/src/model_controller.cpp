@@ -140,6 +140,14 @@ void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 	//++m_acceptedCrawledStorageSize;
 }
 
+void ModelController::addParsedPages(std::vector<ParsedPagePtr> incomingPages) noexcept
+{
+	for (ParsedPagePtr page : incomingPages)
+	{
+		addParsedPage(page);
+	}
+}
+
 void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 {
 	const QUrl url = incomingPage->url;
