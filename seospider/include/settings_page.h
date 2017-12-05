@@ -25,13 +25,13 @@ public:
 protected:
 	void init();
 	void registerMetaTypes() const;
-	std::shared_ptr<IControlAdapter> createControlAdaptor(QObject* control);
+	std::shared_ptr<IControlAdapter> createControlAdapter(QObject* control);
 
 private:
 	const bool m_isAutoApply;
 	bool m_somethingChanged;
 
-	std::map<QString, std::shared_ptr<IControlAdapter>> m_controlAdaptors;
+	std::map<QString, std::shared_ptr<IControlAdapter>> m_controlAdapters;
 	QStringList m_changedSettingsKeys;
 };
 

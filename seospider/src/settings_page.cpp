@@ -42,8 +42,8 @@ void SettingsPage::applyChanges() noexcept
 		{
 			continue;
 		}
-		DEBUGLOG << controlKey.constData() << " " << m_controlAdaptors[controlKey]->value().toString();
-		theApp->preferences()->setProperty(controlKey.constData(), m_controlAdaptors[controlKey]->value());
+		DEBUGLOG << controlKey.constData() << " " << m_controlAdapters[controlKey]->value().toString();
+		theApp->preferences()->setProperty(controlKey.constData(), m_controlAdapters[controlKey]->value());
 		DEBUGLOG << theApp->preferences()->property(controlKey.constData()).toString();
 	}
 
@@ -60,11 +60,11 @@ void SettingsPage::reloadSettings() noexcept
 		return;
 	}
 
-	for (auto controlAdaptor : m_controlAdaptors)
+	for (auto controlAdapter : m_controlAdapters)
 	{
-		const QVariant propertyValue = theApp->preferences()->property(controlAdaptor.first.toLatin1().constData());
-		controlAdaptor.second->setValue(propertyValue);
-		DEBUGLOG << controlAdaptor.first << " " << controlAdaptor.second->value().toString();
+		const QVariant propertyValue = theApp->preferences()->property(controlAdapter.first.toLatin1().constData());
+		controlAdapter.second->setValue(propertyValue);
+		DEBUGLOG << controlAdapter.first << " " << controlAdapter.second->value().toString();
 	}
 		
 	setSomethingChanged(false);
@@ -117,13 +117,13 @@ void SettingsPage::init()
 			continue;
 		}
 
-		std::shared_ptr<IControlAdapter> controlAdaptor = createControlAdaptor(control);
+		std::shared_ptr<IControlAdapter> controlAdapter = createControlAdapter(control);
 
-		const QSignalBlocker blocker(controlAdaptor->qobject());
+		const QSignalBlocker blocker(controlAdapter->qobject());
 
-		controlAdaptor->setValue(propertyValue);
+		controlAdapter->setValue(propertyValue);
 
-		m_controlAdaptors[controlKeyString] = controlAdaptor;
+		m_controlAdapters[controlKeyString] = controlAdapter;
 	}
 }
 
@@ -150,7 +150,7 @@ void SettingsPage::somethingChangedSlot()
 	emit somethingChangedSignal();
 }
 
-std::shared_ptr<IControlAdapter> SettingsPage::createControlAdaptor(QObject* control)
+std::shared_ptr<IControlAdapter> SettingsPage::createControlAdapter(QObject* control)
 {
 	const QMetaObject* metaObject = control->metaObject();
 	const char* className = metaObject->className();
@@ -159,7 +159,7 @@ std::shared_ptr<IControlAdapter> SettingsPage::createControlAdaptor(QObject* con
 
 	std::shared_ptr<IControlAdapter> controlAdapter{ static_cast<IControlAdapter*>(QMetaType::create(type)) };
 
-	DEBUG_ASSERT((controlAdapter != nullptr) && "Non registered control adaptor type.");
+	DEBUG_ASSERT((controlAdapter != nullptr) && "Non registered control adapter type.");
 
 	controlAdapter->setControl(control);
 	controlAdapter->connectChangesObserver(this);

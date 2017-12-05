@@ -40,7 +40,7 @@ public:
 	ISummaryDataAccessor* dataAccessor() const noexcept;
 
 
-	StorageAdapterType storageAdaptorType(const QModelIndex& index) const noexcept;
+	StorageAdapterType storageAdapterType(const QModelIndex& index) const noexcept;
 
 signals:
 	virtual void internalDataChanged() override;

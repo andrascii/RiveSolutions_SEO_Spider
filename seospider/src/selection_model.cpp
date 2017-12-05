@@ -94,10 +94,10 @@ void SelectionModel::select(const QItemSelection& selection, QItemSelectionModel
 		return;
 	}
 
-	if (const ParsedPageInfoStorageAdapter* storageAdaptor = 
-		dynamic_cast<const ParsedPageInfoStorageAdapter*>(storageModel->storageAdaptor()); storageAdaptor)
+	if (const ParsedPageInfoStorageAdapter* storageAdapter = 
+		dynamic_cast<const ParsedPageInfoStorageAdapter*>(storageModel->storageAdapter()); storageAdapter)
 	{
-		const CrawlerEngine::ParsedPage* parsedPage = storageAdaptor->parsedPage(firstSelectedIndex);
+		const CrawlerEngine::ParsedPage* parsedPage = storageAdapter->parsedPage(firstSelectedIndex);
 		GlobalWebPageSelectedNotifier::instanse()->pageSelected(parsedPage);
 	}
 

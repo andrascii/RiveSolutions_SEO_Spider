@@ -50,7 +50,7 @@ ISummaryDataAccessor* SummaryModel::dataAccessor() const noexcept
 	return m_dataAccessor;
 }
 
-StorageAdapterType SummaryModel::storageAdaptorType(const QModelIndex& index) const noexcept
+StorageAdapterType SummaryModel::storageAdapterType(const QModelIndex& index) const noexcept
 {
 	if (!dataAccessor())
 	{

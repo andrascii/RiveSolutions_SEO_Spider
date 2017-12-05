@@ -66,9 +66,9 @@ void FilterWidget::adjustSize()
 void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const
 {
 	const QModelIndex index = selected.size() ? selected.indexes()[0] : QModelIndex();
-	const StorageAdapterType category = m_summaryFilterModel->storageAdaptorType(index);
+	const StorageAdapterType category = m_summaryFilterModel->storageAdapterType(index);
 
-	m_webSiteDataWidget->setStorageAdaptorType(category);
+	m_webSiteDataWidget->setStorageAdapterType(category);
 }
 
 }

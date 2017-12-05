@@ -45,9 +45,9 @@ WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* pa
 	}
 }
 
-void WebSiteDataWidget::setStorageAdaptorType(StorageAdapterType storageAdaptorType)
+void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterType)
 {
-	auto tableIndexIterator = m_tables.find(storageAdaptorType);
+	auto tableIndexIterator = m_tables.find(storageAdapterType);
 
 	if (tableIndexIterator != m_tables.end())
 	{
@@ -58,7 +58,7 @@ void WebSiteDataWidget::setStorageAdaptorType(StorageAdapterType storageAdaptorT
 	StorageAdapterFactory* factory = theApp->storageAdapterFactory();
 
 	PageModel* pageModel = new PageModel(m_stackedWidget);
-	pageModel->setStorageAdaptor(factory->createParsedPageInfoStorage(storageAdaptorType, theApp->sequencedDataCollection()));
+	pageModel->setStorageAdapter(factory->createParsedPageInfoStorage(storageAdapterType, theApp->sequencedDataCollection()));
 
 
 	TableView* tableView = new TableView(m_stackedWidget);
@@ -68,8 +68,8 @@ void WebSiteDataWidget::setStorageAdaptorType(StorageAdapterType storageAdaptorT
 	tableView->setViewModel(pageViewModel);
 	tableView->setShowAdditionalGrid(true);
 
-	m_tables[storageAdaptorType] = m_stackedWidget->addWidget(tableView);
-	m_stackedWidget->setCurrentIndex(m_tables[storageAdaptorType]);
+	m_tables[storageAdapterType] = m_stackedWidget->addWidget(tableView);
+	m_stackedWidget->setCurrentIndex(m_tables[storageAdapterType]);
 
 	VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(pageViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
@@ -106,8 +106,8 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 	
 	if (const PageModel* storageModel = dynamic_cast<const PageModel*>(index.model()); storageModel)
 	{
-		const IStorageAdapter* storageAdaptor = storageModel->storageAdaptor();
-		m_pageDataWidget->setParsedPageInfo(storageAdaptor->parsedPageInfoPtr(index));
+		const IStorageAdapter* storageAdapter = storageModel->storageAdapter();
+		m_pageDataWidget->setParsedPageInfo(storageAdapter->parsedPageInfoPtr(index));
 	}
 }
 

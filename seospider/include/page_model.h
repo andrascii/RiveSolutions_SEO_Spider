@@ -29,11 +29,11 @@ public:
 	virtual IResizePolicy* resizePolicy() const noexcept override;
 
 
-	void setStorageAdaptor(IStorageAdapter* storageAdaptor) noexcept;
+	void setStorageAdapter(IStorageAdapter* storageAdapter) noexcept;
 
-	const IStorageAdapter* storageAdaptor() const;
+	const IStorageAdapter* storageAdapter() const;
 
-	IStorageAdapter* storageAdaptor();
+	IStorageAdapter* storageAdapter();
 
 	IStorageAdapter::ItemType itemType(const QModelIndex& index) const noexcept;
 	
@@ -51,7 +51,7 @@ private slots:
 	void onAboutEndClearingData();
 
 private:
-	IStorageAdapter* m_storageAdaptor;
+	IStorageAdapter* m_storageAdapter;
 
 	std::shared_ptr<IResizePolicy> m_resizePolicy;
 };

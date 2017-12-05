@@ -8,14 +8,14 @@ namespace SeoSpider
 
 PageModel::PageModel(QObject* parent)
 	: AbstractTableModel(parent)
-	, m_storageAdaptor(nullptr)
+	, m_storageAdapter(nullptr)
 	, m_resizePolicy(std::make_shared<DefaultColumnResizePolicy>())
 {
 }
 
 Qt::ItemFlags PageModel::flags(const QModelIndex& index) const
 {
-	if (!m_storageAdaptor)
+	if (!m_storageAdapter)
 	{
 		return Qt::NoItemFlags;
 	}
@@ -23,33 +23,33 @@ Qt::ItemFlags PageModel::flags(const QModelIndex& index) const
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-void PageModel::setStorageAdaptor(IStorageAdapter* storageAdaptor) noexcept
+void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 {
-	IStorageAdapter* oldStorageAdaptor = m_storageAdaptor;
+	IStorageAdapter* oldStorageAdapter = m_storageAdapter;
 
-	if (m_storageAdaptor == storageAdaptor)
+	if (m_storageAdapter == storageAdapter)
 	{
 		return;
 	}
 
 	beginResetModel();
 
-	if (m_storageAdaptor)
+	if (m_storageAdapter)
 	{
-		disconnect(m_storageAdaptor->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int)));
-		disconnect(m_storageAdaptor->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData()));
-		disconnect(m_storageAdaptor->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData()));
+		disconnect(m_storageAdapter->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int)));
+		disconnect(m_storageAdapter->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData()));
+		disconnect(m_storageAdapter->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData()));
 	}
 
-	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int))));
-	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData())));
-	VERIFY(connect(storageAdaptor->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData())));
+	VERIFY(connect(storageAdapter->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int))));
+	VERIFY(connect(storageAdapter->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData())));
+	VERIFY(connect(storageAdapter->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData())));
 	
-	m_storageAdaptor = storageAdaptor;
+	m_storageAdapter = storageAdapter;
 
 	std::map<int, int> columnsWidth;
 
-	for (int i = 0; i < m_storageAdaptor->columnCount() + 1; ++i)
+	for (int i = 0; i < m_storageAdapter->columnCount() + 1; ++i)
 	{
 		if (i == 0)
 		{
@@ -61,7 +61,7 @@ void PageModel::setStorageAdaptor(IStorageAdapter* storageAdaptor) noexcept
 
 		// set other column widths
 
-		columnsWidth[i] = m_storageAdaptor->columnWidth(i - 1);
+		columnsWidth[i] = m_storageAdapter->columnWidth(i - 1);
 	}
 
 	std::dynamic_pointer_cast<DefaultColumnResizePolicy>(m_resizePolicy)->setColumnsSize(columnsWidth);
@@ -70,9 +70,9 @@ void PageModel::setStorageAdaptor(IStorageAdapter* storageAdaptor) noexcept
 
 	emit internalDataChanged();
 
-	if (oldStorageAdaptor)
+	if (oldStorageAdapter)
 	{
-		oldStorageAdaptor->qobject()->deleteLater();
+		oldStorageAdapter->qobject()->deleteLater();
 	}
 }
 
@@ -87,7 +87,7 @@ IStorageAdapter::ItemType PageModel::itemType(const QModelIndex& index) const no
 
 	const QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);
 
-	return storageAdaptor()->itemType(validatedIndex);
+	return storageAdapter()->itemType(validatedIndex);
 }
 
 IResizePolicy* PageModel::resizePolicy() const noexcept
@@ -95,19 +95,19 @@ IResizePolicy* PageModel::resizePolicy() const noexcept
 	return m_resizePolicy.get();
 }
 
-const IStorageAdapter* PageModel::storageAdaptor() const
+const IStorageAdapter* PageModel::storageAdapter() const
 {
-	return m_storageAdaptor;
+	return m_storageAdapter;
 }
 
-IStorageAdapter* PageModel::storageAdaptor()
+IStorageAdapter* PageModel::storageAdapter()
 {
-	return m_storageAdaptor;
+	return m_storageAdapter;
 }
 
 QVariant PageModel::data(const QModelIndex& index, int role) const
 {
-	if (!storageAdaptor() && !index.isValid())
+	if (!storageAdapter() && !index.isValid())
 	{
 		return QVariant();
 	}
@@ -130,7 +130,7 @@ QVariant PageModel::data(const QModelIndex& index, int role) const
 	{
 		case Qt::DisplayRole:
 		{
-			return storageAdaptor()->item(validatedIndex);
+			return storageAdapter()->item(validatedIndex);
 		}
 	}
 
@@ -139,7 +139,7 @@ QVariant PageModel::data(const QModelIndex& index, int role) const
 
 QVariant PageModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (!storageAdaptor())
+	if (!storageAdapter())
 	{
 		return QVariant();
 	}
@@ -151,7 +151,7 @@ QVariant PageModel::headerData(int section, Qt::Orientation orientation, int rol
 			return QString(tr("#"));
 		}
 
-		return storageAdaptor()->columnDescription(section - 1);
+		return storageAdapter()->columnDescription(section - 1);
 	}
 
 	return QVariant();
@@ -159,22 +159,22 @@ QVariant PageModel::headerData(int section, Qt::Orientation orientation, int rol
 
 int PageModel::columnCount(const QModelIndex&) const
 {
-	if (!storageAdaptor())
+	if (!storageAdapter())
 	{
 		return 0;
 	}
 
-	return storageAdaptor()->columnCount() + 1;
+	return storageAdapter()->columnCount() + 1;
 }
 
 int PageModel::rowCount(const QModelIndex& parent) const
 {
-	if (!storageAdaptor())
+	if (!storageAdapter())
 	{
 		return 0;
 	}
 
-	return storageAdaptor()->itemCount();
+	return storageAdapter()->itemCount();
 }
 
 void PageModel::onParsedPageInfoAdded(int rowIndex)

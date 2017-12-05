@@ -17,8 +17,8 @@ public:
 	IStorageAdapter* createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer);
 
 protected:
-	static void setupAvailableColumns(IParsedPageStorageAdapter* storageAdaptor, StorageAdapterType type);
-	static void setupAvailablePageLinkColumns(IPageLinksStorageAdapter* storageAdaptor);
+	static void setupAvailableColumns(IParsedPageStorageAdapter* storageAdapter, StorageAdapterType type);
+	static void setupAvailablePageLinkColumns(IPageLinksStorageAdapter* storageAdapter);
 };
 
 }

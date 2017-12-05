@@ -18,7 +18,7 @@ class WebSiteDataWidget : public QFrame
 public:
 	WebSiteDataWidget(PageDataWidget* pageDataWidget = nullptr, QWidget* parent = nullptr);
 
-	void setStorageAdaptorType(StorageAdapterType storageAdaptorType);
+	void setStorageAdapterType(StorageAdapterType storageAdapterType);
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
