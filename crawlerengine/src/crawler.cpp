@@ -270,7 +270,7 @@ void Crawler::saveToFile(const QString& fileName)
 		const SequencedDataCollection* sequencedCollection = sequencedDataCollection();;
 		const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
 
-		Serializer serializer(storage); // TODO: provide all required data into the constructor
+		Serializer serializer(storage, m_uniqueLinkStore); // TODO: provide all required data into the constructor
 		Common::JsonParserStreamWriter writer(file);
 		serializer.saveToJsonStream(writer);
 
@@ -338,7 +338,7 @@ void Crawler::loadFromFile(const QString& fileName)
 	}
 }
 
-	const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
+const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 {
 	return m_uniqueLinkStore;
 }

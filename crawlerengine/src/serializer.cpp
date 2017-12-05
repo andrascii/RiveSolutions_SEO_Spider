@@ -2,6 +2,7 @@
 #include "json_parser_stream_writer.h"
 #include "isequenced_storage.h"
 #include "json_parser_stream_reader.h"
+#include "unique_link_store.h"
 
 namespace CrawlerEngine
 {
@@ -47,6 +48,9 @@ namespace
 	const QString resourceSourceKey = QLatin1String("resourceSource");
 	const QString altOrTitleKey = QLatin1String("altOrTitle");
 	const QString resourceIndexKey = QLatin1String("resourceIndex");
+	const QString requestTypeKey = QLatin1String("requestType");
+	const QString crawledUrlsKey = QLatin1String("crawledUrls");
+	const QString pendingUrlsKey = QLatin1String("pendingUrls");
 }
 
 class ParsedPageSerializer
@@ -219,11 +223,13 @@ private:
 
 Serializer::Serializer()
 	: m_crawledPages(nullptr)
+	, m_linkStore(nullptr)
 {
 }
 
-Serializer::Serializer(const ISequencedStorage* crawledPages)
+Serializer::Serializer(const ISequencedStorage* crawledPages, const UniqueLinkStore* linkStore)
 	: m_crawledPages(crawledPages)
+	, m_linkStore(linkStore)
 {
 }
 
@@ -234,8 +240,20 @@ void Serializer::saveToJsonStream(Common::JsonParserStreamWriter& stream)
 	map.writeMapValue(serializerVersionKey, serializerVersion);
 	map.writeMapValue(pagesCountKey, m_crawledPages->size());
 
-	Common::JsonStreamMapValue pagesNode(map, pagesKey);
-	savePagesToJsonStream(pagesNode);
+	{
+		Common::JsonStreamMapValue pagesNode(map, pagesKey);
+		savePagesToJsonStream(pagesNode);
+	}
+	
+	{
+		Common::JsonStreamMapValue crawledLinksNode(map, crawledUrlsKey);
+		saveLinksToJsonStream(crawledLinksNode, m_linkStore->crawledUrls());
+	}
+	
+	{
+		Common::JsonStreamMapValue pendingLinksNode(map, pendingUrlsKey);
+		saveLinksToJsonStream(pendingLinksNode, m_linkStore->pendingUrls());
+	}
 }
 
 void Serializer::readFromJsonStream(Common::JsonParserStreamReader& stream)
@@ -290,6 +308,18 @@ void Serializer::readPagesFromJsonStream(Common::JsonParserStreamReader& stream,
 	{
 		wrapper.resolveLinks();
 		m_deserializedPages.push_back(wrapper.page());
+	}
+}
+void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const
+{
+	Common::JsonStreamListElement linksListElement(stream);
+	for (const CrawlerRequest& link : links)
+	{
+		QVariantMap linkMap;
+		linkMap[urlKey] = link.url.toDisplayString();
+		linkMap[requestTypeKey] = static_cast<int>(link.requestType);
+
+		linksListElement.writeCompound(linkMap);
 	}
 }
 }

@@ -119,6 +119,34 @@ size_t UniqueLinkStore::pendingLinksCount() const noexcept
 	return m_pendingSize;
 }
 
+std::vector<CrawlerRequest> UniqueLinkStore::crawledUrls() const noexcept
+{
+	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::vector<CrawlerRequest> result;
+	result.reserve(m_crawledUrlList.size());
+
+	for (auto it = m_crawledUrlList.begin(); it != m_crawledUrlList.end(); ++it)
+	{
+		result.emplace_back(*it);
+	}
+
+	return result;
+}
+
+std::vector<CrawlerRequest> UniqueLinkStore::pendingUrls() const noexcept
+{
+	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::vector<CrawlerRequest> result;
+	result.reserve(m_pendingUrlList.size());
+
+	for (auto it = m_pendingUrlList.begin(); it != m_pendingUrlList.end(); ++it)
+	{
+		result.emplace_back(*it);
+	}
+
+	return result;
+}
+
 void UniqueLinkStore::clear()
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
