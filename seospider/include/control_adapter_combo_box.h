@@ -1,10 +1,10 @@
 #pragma once
-#include "icontrol_adaptor.h"
+#include "icontrol_adapter.h"
 
 namespace SeoSpider
 {
 
-class ControlAdaptorQSpinBox : public IControlAdaptor
+class ControlAdapterQComboBox : public IControlAdapter
 {
 public:
 	virtual void setControl(QObject* control) override;
@@ -13,11 +13,11 @@ public:
 	virtual void connectChangesObserver(SettingsPage* page) override;
 
 	virtual QObject* qobject() override;
-
+	
 private:
-	QPointer<QSpinBox> m_control;
+	QPointer<QComboBox> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdaptorQSpinBox);
+Q_DECLARE_METATYPE(ControlAdapterQComboBox);
 
 }

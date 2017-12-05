@@ -244,31 +244,31 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPa
 
 	const bool successfulResponseCode = successfulCode(incomingPage);
 
-	const int metaDescriptionLength = incomingPage->metaDescription.size();
+const int metaDescriptionLength = incomingPage->metaDescription.size();
 
-	if (metaDescriptionLength == 0 && successfulResponseCode)
-	{
-		data()->addParsedPage(incomingPage, StorageType::EmptyMetaDescriptionUrlStorageType);
-	}
-	else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength && successfulResponseCode)
-	{
-		data()->addParsedPage(incomingPage, StorageType::VeryLongMetaDescriptionUrlStorageType);
-	}
-	else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength && successfulResponseCode)
-	{
-		data()->addParsedPage(incomingPage, StorageType::VeryShortMetaDescriptionUrlStorageType);
-	}
+if (metaDescriptionLength == 0 && successfulResponseCode)
+{
+	data()->addParsedPage(incomingPage, StorageType::EmptyMetaDescriptionUrlStorageType);
+}
+else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength && successfulResponseCode)
+{
+	data()->addParsedPage(incomingPage, StorageType::VeryLongMetaDescriptionUrlStorageType);
+}
+else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength && successfulResponseCode)
+{
+	data()->addParsedPage(incomingPage, StorageType::VeryShortMetaDescriptionUrlStorageType);
+}
 
-	if (metaDescriptionLength > 0 && successfulResponseCode)
-	{
-		addDuplicates(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
-		data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
-	}
+if (metaDescriptionLength > 0 && successfulResponseCode)
+{
+	addDuplicates(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
+	data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
+}
 
-	if (incomingPage->hasSeveralMetaDescriptionTags && successfulResponseCode)
-	{
-		data()->addParsedPage(incomingPage, StorageType::SeveralMetaDescriptionUrlStorageType);
-	}
+if (incomingPage->hasSeveralMetaDescriptionTags && successfulResponseCode)
+{
+	data()->addParsedPage(incomingPage, StorageType::SeveralMetaDescriptionUrlStorageType);
+}
 }
 
 void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
@@ -292,7 +292,7 @@ void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
 		addDuplicates(incomingPage, StorageType::AllMetaKeywordsUrlStorageType, StorageType::DuplicatedMetaKeywordsUrlStorageType);
 		data()->addParsedPage(incomingPage, StorageType::AllMetaKeywordsUrlStorageType);
 	}
-	
+
 
 	if (incomingPage->hasSeveralMetaKeywordsTags && successfulResponseCode)
 	{
@@ -309,24 +309,29 @@ void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage)
 
 	const bool successfulResponseCode = successfulCode(incomingPage);
 
+	if (!successfulResponseCode)
+	{
+		return;
+	}
+
 	const int h1Length = incomingPage->firstH1.size();
 
-	if (h1Length == 0 && successfulResponseCode)
+	if (!h1Length)
 	{
 		data()->addParsedPage(incomingPage, StorageType::MissingH1UrlStorageType);
 	}
-	else if (h1Length > m_crawlerOptions.maxH1LengthChars && successfulResponseCode)
+	else if (h1Length > m_crawlerOptions.maxH1LengthChars)
 	{
 		data()->addParsedPage(incomingPage, StorageType::VeryLongH1UrlStorageType);
 	}
 
-	if (h1Length > 0 && successfulResponseCode)
+	if (h1Length > 0)
 	{
 		addDuplicates(incomingPage, StorageType::AllH1UrlStorageType, StorageType::DuplicatedH1UrlStorageType);
 		data()->addParsedPage(incomingPage, StorageType::AllH1UrlStorageType);
 	}
 
-	if (incomingPage->hasSeveralH1Tags && successfulResponseCode)
+	if (incomingPage->hasSeveralH1Tags)
 	{
 		data()->addParsedPage(incomingPage, StorageType::SeveralH1UrlStorageType);
 	}
@@ -342,23 +347,28 @@ void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage)
 
 	const bool successfulResponseCode = successfulCode(incomingPage);
 
+	if (!successfulResponseCode)
+	{
+		return;
+	}
+
 	const int h2Length = incomingPage->firstH2.size();
 
-	if (h2Length == 0 && successfulResponseCode)
+	if (!h2Length)
 	{
 		data()->addParsedPage(incomingPage, StorageType::MissingH2UrlStorageType);
 	}
-	else if (h2Length > m_crawlerOptions.maxH2LengthChars && successfulResponseCode)
+	else if (h2Length > m_crawlerOptions.maxH2LengthChars)
 	{
 		data()->addParsedPage(incomingPage, StorageType::VeryLongH2UrlStorageType);
 	}
 
-	if (h2Length > 0 && successfulResponseCode && incomingPage->hasSeveralEqualH2Tags)
+	if (h2Length > 0 && incomingPage->hasSeveralEqualH2Tags)
 	{
 		data()->addParsedPage(incomingPage, StorageType::DuplicatedH2UrlStorageType);
 	}
 
-	if (incomingPage->hasSeveralEqualH2Tags && successfulResponseCode)
+	if (incomingPage->hasSeveralEqualH2Tags)
 	{
 		data()->addParsedPage(incomingPage, StorageType::SeveralH2UrlStorageType);
 	}

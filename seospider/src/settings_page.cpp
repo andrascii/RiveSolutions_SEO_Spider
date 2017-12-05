@@ -1,11 +1,11 @@
 #include "application.h"
 #include "settings_page.h"
 #include "preferences.h"
-#include "icontrol_adaptor.h"
-#include "control_adaptor_check_box.h"
-#include "control_adaptor_line_edit.h"
-#include "control_adaptor_spin_box.h"
-#include "control_adaptor_combo_box.h"
+#include "icontrol_adapter.h"
+#include "control_adapter_check_box.h"
+#include "control_adapter_line_edit.h"
+#include "control_adapter_spin_box.h"
+#include "control_adapter_combo_box.h"
 
 namespace SeoSpider
 {
@@ -117,7 +117,7 @@ void SettingsPage::init()
 			continue;
 		}
 
-		std::shared_ptr<IControlAdaptor> controlAdaptor = createControlAdaptor(control);
+		std::shared_ptr<IControlAdapter> controlAdaptor = createControlAdaptor(control);
 
 		const QSignalBlocker blocker(controlAdaptor->qobject());
 
@@ -130,10 +130,10 @@ void SettingsPage::init()
 
 void SettingsPage::registerMetaTypes() const
 {
-	qRegisterMetaType<ControlAdaptorQCheckBox>();
-	qRegisterMetaType<ControlAdaptorQLineEdit>();
-	qRegisterMetaType<ControlAdaptorQSpinBox>();
-	qRegisterMetaType<ControlAdaptorQComboBox>();
+	qRegisterMetaType<ControlAdapterQCheckBox>();
+	qRegisterMetaType<ControlAdapterQLineEdit>();
+	qRegisterMetaType<ControlAdapterQSpinBox>();
+	qRegisterMetaType<ControlAdapterQComboBox>();
 }
 
 void SettingsPage::somethingChangedSlot()
@@ -150,21 +150,21 @@ void SettingsPage::somethingChangedSlot()
 	emit somethingChangedSignal();
 }
 
-std::shared_ptr<IControlAdaptor> SettingsPage::createControlAdaptor(QObject* control)
+std::shared_ptr<IControlAdapter> SettingsPage::createControlAdaptor(QObject* control)
 {
 	const QMetaObject* metaObject = control->metaObject();
 	const char* className = metaObject->className();
-	const QByteArray controlStringType = QString{ "%1%2" }.arg("ControlAdaptor").arg(className).toLatin1();
+	const QByteArray controlStringType = QString{ "%1%2" }.arg("ControlAdapter").arg(className).toLatin1();
 	const int type = QMetaType::type(controlStringType);
 
-	std::shared_ptr<IControlAdaptor> controlAdaptor{ static_cast<IControlAdaptor*>(QMetaType::create(type)) };
+	std::shared_ptr<IControlAdapter> controlAdapter{ static_cast<IControlAdapter*>(QMetaType::create(type)) };
 
-	DEBUG_ASSERT((controlAdaptor != nullptr) && "Non registered control adaptor type.");
+	DEBUG_ASSERT((controlAdapter != nullptr) && "Non registered control adaptor type.");
 
-	controlAdaptor->setControl(control);
-	controlAdaptor->connectChangesObserver(this);
+	controlAdapter->setControl(control);
+	controlAdapter->connectChangesObserver(this);
 
-	return controlAdaptor;
+	return controlAdapter;
 }
 
 }

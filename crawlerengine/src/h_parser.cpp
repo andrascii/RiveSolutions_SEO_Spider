@@ -34,6 +34,7 @@ void HParser::parseH1(GumboOutput* output, ParsedPagePtr& page) noexcept
 	};
 
 	std::vector<QString> h1 = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+
 	if (!h1.empty())
 	{
 		page->firstH1 = h1.front();
@@ -62,15 +63,18 @@ void HParser::parseH2(GumboOutput* output, ParsedPagePtr& page) noexcept
 	};
 
 	std::vector<QString> h2 = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+
 	if (!h2.empty())
 	{
 		page->firstH2 = h2.front();
 	}
+
 	if (h2.size() > 1)
 	{
 		page->secondH2 = h2[1];
 
 		QSet<QString> set;
+		
 		for (const QString& item : h2)
 		{
 			set.insert(item);

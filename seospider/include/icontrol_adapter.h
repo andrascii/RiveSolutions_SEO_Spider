@@ -4,10 +4,10 @@
 namespace SeoSpider
 {
 
-class IControlAdaptor
+class IControlAdapter
 {
 public:
-	virtual ~IControlAdaptor() = default;
+	virtual ~IControlAdapter() = default;
 	
 	virtual void setControl(QObject* control) = 0;
 	virtual QVariant value() const = 0;

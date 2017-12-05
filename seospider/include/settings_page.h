@@ -4,7 +4,7 @@
 namespace SeoSpider
 {
 
-class IControlAdaptor;
+class IControlAdapter;
 
 class SettingsPage : public QFrame, public ISettingsPage
 {
@@ -25,13 +25,13 @@ public:
 protected:
 	void init();
 	void registerMetaTypes() const;
-	std::shared_ptr<IControlAdaptor> createControlAdaptor(QObject* control);
+	std::shared_ptr<IControlAdapter> createControlAdaptor(QObject* control);
 
 private:
 	const bool m_isAutoApply;
 	bool m_somethingChanged;
 
-	std::map<QString, std::shared_ptr<IControlAdaptor>> m_controlAdaptors;
+	std::map<QString, std::shared_ptr<IControlAdapter>> m_controlAdaptors;
 	QStringList m_changedSettingsKeys;
 };
 

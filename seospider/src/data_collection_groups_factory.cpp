@@ -53,7 +53,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.push_back({ CrawlerEngine::StorageType::MissingH1UrlStorageType, QObject::tr("Missing H1") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::DuplicatedH1UrlStorageType, QObject::tr("Duplicated H1") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::VeryLongH1UrlStorageType, QObject::tr("Too Long H1") });
-			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralH1UrlStorageType, QObject::tr("Several Equal H1") });
+			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralH1UrlStorageType, QObject::tr("Several Equal H1 On Page") });
 
 			return p;
 		}
@@ -65,7 +65,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.push_back({ CrawlerEngine::StorageType::MissingH2UrlStorageType, QObject::tr("Missing H2") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::DuplicatedH2UrlStorageType, QObject::tr("Duplicated H2") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::VeryLongH2UrlStorageType, QObject::tr("Too Long H2") });
-			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralH2UrlStorageType, QObject::tr("Several Equal H2") });
+			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralH2UrlStorageType, QObject::tr("Several Equal H2 On Page") });
 
 			return p;
 		}
