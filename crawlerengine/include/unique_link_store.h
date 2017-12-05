@@ -29,6 +29,9 @@ public:
 	size_t crawledLinksCount() const noexcept;
 	size_t pendingLinksCount() const noexcept;
 
+	std::vector<CrawlerRequest> crawledUrls() const noexcept;
+	std::vector<CrawlerRequest> pendingUrls() const noexcept;
+
 	void clear();
 
 signals:

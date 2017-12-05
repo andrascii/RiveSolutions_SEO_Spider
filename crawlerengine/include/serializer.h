@@ -1,4 +1,5 @@
 #pragma once
+#include "crawler_request.h"
 
 namespace Common 
 {
@@ -8,6 +9,7 @@ class JsonParserStreamReader;
 
 namespace CrawlerEngine
 {
+class UniqueLinkStore;
 class ISequencedStorage;
 struct ParsedPage;
 
@@ -15,7 +17,7 @@ class Serializer
 {
 public:
 	Serializer();
-	Serializer(const ISequencedStorage* crawledPages);
+	Serializer(const ISequencedStorage* crawledPages, const UniqueLinkStore* linkStore);
 	void saveToJsonStream(Common::JsonParserStreamWriter& stream);
 	void readFromJsonStream(Common::JsonParserStreamReader& stream);
 
@@ -25,8 +27,11 @@ private:
 	void savePagesToJsonStream(Common::JsonParserStreamWriter& stream) const;
 	void readPagesFromJsonStream(Common::JsonParserStreamReader& stream, int pagesCount);
 
+	void saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const;
+
 private:
 	const ISequencedStorage* m_crawledPages;
+	const UniqueLinkStore* m_linkStore;
 	std::vector<ParsedPage*> m_deserializedPages;
 };
 
