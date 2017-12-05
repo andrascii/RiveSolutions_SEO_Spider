@@ -4,23 +4,19 @@
 namespace CrawlerEngineTests
 {
 
-std::mutex TestRunner::s_mutex;
-
 TestRunner::TestRunner(QObject* parent)
 	: QObject(parent)
 {
 	qRegisterMetaType<std::function<void()>>("std::function<void()>");
 
-	//
-	// Qt::QueuedConnection important
-	//
 	VERIFY(connect(testEnv, SIGNAL(testInitialized(const std::function<void()>&)), 
 		this, SLOT(runTest(const std::function<void()>&)), Qt::QueuedConnection));
 }
 
 void TestRunner::runTest(const std::function<void()>& testFunction)
 {
-	testEnv->crawler()->startTestCrawler();
+	QMetaObject::invokeMethod(testEnv->crawler(), "startTestCrawler", Qt::QueuedConnection);
+
 	testFunction();
 
 	testEnv->quit();

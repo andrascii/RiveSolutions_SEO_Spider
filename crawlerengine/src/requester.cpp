@@ -1,6 +1,6 @@
 #include "requester.h"
 #include "handler_registry.h"
-#include "thread_queue.h"
+#include "thread_message_dispatcher.h"
 
 namespace CrawlerEngine
 {
@@ -45,14 +45,14 @@ void Requester::start()
 {
 	m_state = StateWorking;
 
-	ThreadQueue::forCurrentThread()->startRequester(shared_from_this());
+	ThreadMessageDispatcher::forCurrentThread()->startRequester(shared_from_this());
 }
 
 void Requester::stop()
 {
 	m_state = StateStopped;
 
-	ThreadQueue::forCurrentThread()->stopRequester(shared_from_this());
+	ThreadMessageDispatcher::forCurrentThread()->stopRequester(shared_from_this());
 }
 
 void Requester::processResponse(const IResponse& response) const

@@ -46,7 +46,7 @@ void CssResourcesParser::parse(GumboOutput* output, const ResponseHeaders& heade
 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
-		page->allResourcesOnPage.insert(cssResource);
+		page->allResourcesOnPage.emplace_back(std::move(cssResource));
 	}
 
 	CompoundParser::parse(output, headers, page);

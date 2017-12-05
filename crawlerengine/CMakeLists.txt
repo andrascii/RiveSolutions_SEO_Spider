@@ -11,12 +11,9 @@ set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 
 aux_source_directory(${CrawlerEngineSourcesDir} CrawlerEngineSourcesList)
 file(GLOB_RECURSE CrawlerEngineHeadersList "include/*.h")
-file(GLOB_RECURSE CrawlerEngineFormsList "ui/*.ui")
 file(GLOB_RECURSE CrawlerEngineResourcesList "rcc/*.qrc")
 
-qt5_wrap_ui(CrawlerEngineFormsHeadersList ${CrawlerEngineFormsList})
 qt5_wrap_cpp(CrawlerEngineHeadersMocList ${CrawlerEngineFormsHeadersList})
-qt5_add_resources(CrawlerEngineResourcesListAdded ${CrawlerEngineResourcesList})
 
 list(REMOVE_ITEM CrawlerEngineSourcesList src/stdafx.cpp)
 
@@ -26,20 +23,15 @@ source_group(
 	"Generated Files" FILES 
 	${CrawlerEngineHeadersMocList} 
 	${CrawlerEngineResourcesListAdded} 
-	${CrawlerEngineResourcesList} 
 	${CrawlerEngineFormsHeadersList}
 )
 
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
-source_group(Ui FILES ${CrawlerEngineFormsList})
-source_group(Qrc FILES ${CrawlerEngineResourcesList})
 
 add_library(
  	${CrawlerEngineLibName} 
  	${CrawlerEngineSourcesList} 
  	${CrawlerEngineHeadersList} 
- 	${CrawlerEngineFormsList} 
- 	${CrawlerEngineResourcesList}
  	${CrawlerEngineFormsHeadersList}
  	${CrawlerEngineHeadersMocList}
  	${CrawlerEngineResourcesListAdded}

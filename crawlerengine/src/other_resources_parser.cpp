@@ -24,7 +24,9 @@ void OtherResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 			continue;
 		}
 
-		page->allResourcesOnPage.insert(RawResourceOnPage{ ResourceType::ResourceOther, linkInfo });
+		RawResourceOnPage resource{ ResourceType::ResourceOther, std::move(linkInfo) };
+
+		page->allResourcesOnPage.emplace_back(std::move(resource));
 	}
 
 }

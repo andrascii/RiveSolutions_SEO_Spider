@@ -45,7 +45,7 @@ bool RobotsTxtRules::isUrlAllowed(const QUrl& url, const MetaRobotsFlagsSet& met
 		userAgentType = UserAgentType::AnyBot;
 	}
 
-	return m_strategies[userAgentType]->isUrlAllowed(url, userAgentType, *m_tokenizer) ||
+	return m_strategies[userAgentType]->isUrlAllowed(url, userAgentType, *m_tokenizer) &&
 		m_strategies[userAgentType]->isUrlAllowed(metaRobotsFlags, userAgentType);
 }
 

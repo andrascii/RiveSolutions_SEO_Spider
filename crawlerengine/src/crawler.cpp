@@ -25,7 +25,7 @@ Crawler& Crawler::instance()
 
 Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	: QObject(parent)
-	, m_robotsTxtLoader(nullptr)
+	, m_robotsTxtLoader(new RobotsTxtLoader(this))
 	, m_modelController(nullptr)
 	, m_uniqueLinkStore(new UniqueLinkStore(this))
 	, m_theradCount(threadCount)
@@ -78,6 +78,9 @@ void Crawler::initialize()
 		ThreadManager::instance().moveObjectToThread(m_workers.back(),
 			QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
 	}
+
+	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()),
+		this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
 }
 
 void Crawler::clearData()
@@ -173,7 +176,7 @@ void Crawler::onCrawlingSessionInitialized()
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "startWithOptions", Qt::QueuedConnection, 
-			Q_ARG(const CrawlerOptions&, m_options), Q_ARG(RobotsTxtRules, RobotsTxtRules(robotsTxtLoader()->content()))));
+			Q_ARG(const CrawlerOptions&, m_options), Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content()))));
 	}
 
 	m_crawlingStateTimer->start();
@@ -185,34 +188,20 @@ void Crawler::onCrawlingSessionInitialized()
 
 bool Crawler::isPreinitialized() const
 {
-	return robotsTxtLoader()->isReady();
+	return m_robotsTxtLoader->isReady();
 }
 
 void Crawler::initializeCrawlingSession()
 {
 	DEBUG_ASSERT(m_options.host.isValid());
 
-	VERIFY(connect(robotsTxtLoader()->qobject(), SIGNAL(ready()), 
-		this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
-
-	robotsTxtLoader()->load(m_options.host);
+	m_robotsTxtLoader->setUserAgent(m_options.plainUserAgent);
+	m_robotsTxtLoader->load(m_options.host);
 }
 
 void Crawler::createSequencedDataCollection(QThread* targetThread) const
 {
 	m_sequencedDataCollection.reset(m_modelController->data()->createSequencedDataCollection(targetThread));
-}
-
-IRobotsTxtLoader* Crawler::robotsTxtLoader() const
-{
-	if (!m_robotsTxtLoader)
-	{
-		m_robotsTxtLoader.reset(createRobotsTxtLoader());
-
-		m_robotsTxtLoader->setUserAgent(m_options.plainUserAgent);
-	}
-
-	return m_robotsTxtLoader.get();
 }
 
 IDownloader* Crawler::createDownloader() const
@@ -222,11 +211,6 @@ IDownloader* Crawler::createDownloader() const
 	downloader->setUserAgent(m_options.plainUserAgent);
 
 	return downloader;
-}
-
-IRobotsTxtLoader* Crawler::createRobotsTxtLoader() const
-{
-	return new RobotsTxtLoader(new QNetworkAccessManager(const_cast<Crawler*>(this)));
 }
 
 SequencedDataCollection* Crawler::sequencedDataCollection() const
@@ -242,8 +226,11 @@ SequencedDataCollection* Crawler::sequencedDataCollection() const
 QString Crawler::siteMapXml(const SiteMapSettings& settings) const
 {
 	SiteMap siteMap;
-	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();;
+
+	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();
+
 	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
+
 	return siteMap.xml(*storage, settings);
 }
 

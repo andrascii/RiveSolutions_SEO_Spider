@@ -88,6 +88,7 @@ struct LinkInfo
 struct ResourceLink
 {
 	ParsedPageWeakPtr resource;
+	QUrl url;
 	LinkParameter linkParameter;
 	ResourceSource resourceSource;
 	QString altOrTitle;
@@ -95,8 +96,23 @@ struct ResourceLink
 
 struct RawResourceOnPage
 {
+	RawResourceOnPage(ResourceType resourceType, const LinkInfo& linkInfo, bool loadAvailability = true)
+		: resourceType(resourceType)
+		, thisResourceLink(linkInfo)
+		, loadAvailability(loadAvailability)
+	{
+	}
+
+	RawResourceOnPage(ResourceType resourceType, LinkInfo&& linkInfo, bool loadAvailability = true)
+		: resourceType(resourceType)
+		, thisResourceLink(std::move(linkInfo))
+		, loadAvailability(loadAvailability)
+	{
+	}
+
 	ResourceType resourceType;
 	LinkInfo thisResourceLink;
+	bool loadAvailability;
 	//ResourceSource resourceSource;
 };
 
@@ -142,7 +158,7 @@ struct ParsedPage
 
 	ResourceType resourceType;
 
-	std::set<RawResourceOnPage> allResourcesOnPage;
+	std::deque<RawResourceOnPage> allResourcesOnPage;
 	std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 

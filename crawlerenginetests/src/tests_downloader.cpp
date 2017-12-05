@@ -1,7 +1,7 @@
 #include "tests_downloader.h"
 #include "download_response.h"
 #include "download_request.h"
-#include "thread_queue.h"
+#include "thread_message_dispatcher.h"
 #include "handler_registry.h"
 
 namespace CrawlerEngineTests
@@ -92,7 +92,7 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 
 	m_responsePostProcessor(*(response.get()));
 
-	CrawlerEngine::ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
+	CrawlerEngine::ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
 
 void TestsDownloader::stopRequestHandling(CrawlerEngine::RequesterSharedPtr requester)

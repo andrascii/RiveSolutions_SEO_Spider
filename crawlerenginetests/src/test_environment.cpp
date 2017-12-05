@@ -21,9 +21,10 @@ TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)
 	, m_crawler(new TestsCrawler(s_threadCount, options, nullptr))
 {
 	m_crawlerThread = new Common::NamedThread("CrawlerTestsThread");
+	m_crawler->moveToThread(m_crawlerThread);
 	m_crawlerThread->start();
 
-	m_crawler->moveToThread(m_crawlerThread);
+	QMetaObject::invokeMethod(m_crawler, "initialize", Qt::BlockingQueuedConnection);
 }
 
 TestEnvironment::~TestEnvironment()
@@ -75,15 +76,14 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(const
 		}
 	}
 
-	CrawlerEngine::ResourceLink resourceLink
+	return CrawlerEngine::ResourceLink
 	{
 		CrawlerEngine::ParsedPageWeakPtr(),
+		QUrl(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
 		QString::null
 	};
-
-	return resourceLink;
 }
 
 CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType)
@@ -96,15 +96,14 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(const
 		}
 	}
 
-	CrawlerEngine::ResourceLink resourceLink
+	return CrawlerEngine::ResourceLink
 	{
 		CrawlerEngine::ParsedPageWeakPtr(),
+		QUrl(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
 		QString::null
 	};
-
-	return resourceLink;
 }
 
 }

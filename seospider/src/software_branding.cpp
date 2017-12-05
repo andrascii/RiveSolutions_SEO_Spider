@@ -5,7 +5,7 @@ namespace SeoSpider
 
 QString SoftwareBranding::organizationName() const noexcept
 {
-	return "sTechnologies";
+	return "Rive Solutions";
 }
 
 QString SoftwareBranding::productName() const noexcept

@@ -1,4 +1,4 @@
-#include "thread_queue.h"
+#include "thread_message_dispatcher.h"
 #include "common_macro_helpers.h"
 #include "constants.h"
 #include "requester.h"
@@ -13,12 +13,12 @@ struct ThreadMetaData : public QObjectUserData
 	{
 	}
 
-	ThreadMetaData(std::shared_ptr<ThreadQueue> queue)
-		: queue(queue)
+	ThreadMetaData(std::shared_ptr<ThreadMessageDispatcher> dispatcher)
+		: dispatcher(dispatcher)
 	{
 	}
 
-	std::shared_ptr<ThreadQueue> queue;
+	std::shared_ptr<ThreadMessageDispatcher> dispatcher;
 };
 
 }
@@ -34,9 +34,9 @@ int metaDataIndex()
 	return s_metaDataIndex;
 }
 
-void registerThreadQueue(QThread* thread, std::shared_ptr<ThreadQueue> controller)
+void registerThreadQueue(QThread* thread, std::shared_ptr<ThreadMessageDispatcher> dispatcher)
 {
-	thread->setUserData(metaDataIndex(), new ThreadMetaData(controller));
+	thread->setUserData(metaDataIndex(), new ThreadMetaData(dispatcher));
 }
 
 void unregisterThreadQueue(QThread* thread)
@@ -46,16 +46,16 @@ void unregisterThreadQueue(QThread* thread)
 	thread->setUserData(metaDataIndex(), nullptr);
 }
 
-std::shared_ptr<ThreadQueue> threadQueue(QThread* thread)
+std::shared_ptr<ThreadMessageDispatcher> threadQueue(QThread* thread)
 {
 	QObjectUserData* metaData = thread->userData(metaDataIndex());
 
 	if (metaData == nullptr)
 	{
-		return std::shared_ptr<ThreadQueue>();
+		return std::shared_ptr<ThreadMessageDispatcher>();
 	}
 
-	return static_cast<ThreadMetaData*>(metaData)->queue;
+	return static_cast<ThreadMetaData*>(metaData)->dispatcher;
 }
 
 std::mutex s_mutex;
@@ -65,67 +65,67 @@ std::mutex s_mutex;
 namespace CrawlerEngine
 {
 
-std::shared_ptr<ThreadQueue> ThreadQueue::forThread(QThread* thread)
+std::shared_ptr<ThreadMessageDispatcher> ThreadMessageDispatcher::forThread(QThread* thread)
 {
 	std::lock_guard<std::mutex> locker(s_mutex);
 
-	std::shared_ptr<ThreadQueue> threadQueuePtr = threadQueue(thread);
+	std::shared_ptr<ThreadMessageDispatcher> threadQueuePtr = threadQueue(thread);
 
 	if (!threadQueuePtr)
 	{
-		threadQueuePtr.reset(new ThreadQueue(thread));
+		threadQueuePtr.reset(new ThreadMessageDispatcher(thread));
 		registerThreadQueue(thread, threadQueuePtr);
 	}
 
 	return threadQueuePtr;
 }
 
-std::shared_ptr<ThreadQueue> ThreadQueue::forCurrentThread()
+std::shared_ptr<ThreadMessageDispatcher> ThreadMessageDispatcher::forCurrentThread()
 {
-	return ThreadQueue::forThread(QThread::currentThread());
+	return ThreadMessageDispatcher::forThread(QThread::currentThread());
 }
 
-void ThreadQueue::startRequester(RequesterSharedPtr requester)
+void ThreadMessageDispatcher::startRequester(RequesterSharedPtr requester)
 {
 	messageQueue().addMessage(Message::startRequestMessage(requester));
 }
 
-void ThreadQueue::stopRequester(RequesterSharedPtr requester)
+void ThreadMessageDispatcher::stopRequester(RequesterSharedPtr requester)
 {
 	messageQueue().addMessage(Message::stopRequestMessage(requester));
 }
 
-void ThreadQueue::postResponse(RequesterSharedPtr requester, IResponseSharedPtr response)
+void ThreadMessageDispatcher::postResponse(RequesterSharedPtr requester, IResponseSharedPtr response)
 {
 	messageQueue().addMessage(Message::postResponseMessage(requester, response));
 }
 
-ThreadQueue::ThreadQueue(QThread* thread)
+ThreadMessageDispatcher::ThreadMessageDispatcher(QThread* thread)
 {
-	startDispatchTimer();
 	moveToThread(thread);
+	startDispatchTimer();
 	VERIFY(connect(thread, SIGNAL(finished()), this, SLOT(shutdown()), Qt::DirectConnection)); 
 }
 
-Q_SLOT void ThreadQueue::shutdown()
+Q_SLOT void ThreadMessageDispatcher::shutdown()
 {
 	stopDispatchTimer();
 	unregisterThreadQueue(thread());
 }
 
-void ThreadQueue::startDispatchTimer()
+void ThreadMessageDispatcher::startDispatchTimer()
 {
 	m_dispatchTimerId = startTimer(Common::g_minimumRecommendedTimerResolution);
 	ASSERT(m_dispatchTimerId);
 }
 
-void ThreadQueue::stopDispatchTimer()
+void ThreadMessageDispatcher::stopDispatchTimer()
 {
 	ASSERT(m_dispatchTimerId);
 	killTimer(m_dispatchTimerId);
 }
 
-void ThreadQueue::execute()
+void ThreadMessageDispatcher::execute()
 {
 	if (messageQueue().isEmpty())
 	{
@@ -136,7 +136,7 @@ void ThreadQueue::execute()
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	RequesterSharedPtr requester = message.requester();
 
-	if (!requester || requester->thread() != thread() || !handlerRegistry.isHandlerExists(message.handler()))
+	if (!requester || !handlerRegistry.isHandlerExists(message.handler()))
 	{
 		return;
 	}
@@ -159,6 +159,8 @@ void ThreadQueue::execute()
 		}
 		case Message::MessageTypePostResponse:
 		{
+			ASSERT(requester->thread() == thread());
+
 			requester->processResponse(*message.response());
 
 			break;
@@ -166,12 +168,12 @@ void ThreadQueue::execute()
 	}
 }
 
-MessageQueue& ThreadQueue::messageQueue() noexcept
+MessageQueue& ThreadMessageDispatcher::messageQueue() noexcept
 {
 	return m_messageQueue;
 }
 
-void ThreadQueue::timerEvent(QTimerEvent* event)
+void ThreadMessageDispatcher::timerEvent(QTimerEvent* event)
 {
 	execute();
 }

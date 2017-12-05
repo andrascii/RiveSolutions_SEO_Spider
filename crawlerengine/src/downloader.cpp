@@ -2,7 +2,7 @@
 #include "handler_registry.h"
 #include "download_request.h"
 #include "download_response.h"
-#include "thread_queue.h"
+#include "thread_message_dispatcher.h"
 #include "page_parser_helpers.h"
 
 namespace CrawlerEngine
@@ -87,7 +87,7 @@ void Downloader::metaDataChanged(QNetworkReply* reply)
 		return;
 	}
 
-	const bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(
+	const bool nonHtmlResponse = !PageParserHelpers::isHtmlOrPlainContentType(
 		reply->header(QNetworkRequest::ContentTypeHeader).toString()
 	);
 
@@ -114,7 +114,7 @@ void Downloader::processReply(QNetworkReply* reply)
 	markReplyAsProcessed(reply);
 	reply->disconnect(this);
 
-	const bool nonHtmlResponse = !PageParserHelpers::isHtmlContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
+	const bool nonHtmlResponse = !PageParserHelpers::isHtmlOrPlainContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
 	const bool processBody = !nonHtmlResponse;
 
 	const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
@@ -154,7 +154,7 @@ void Downloader::processReply(QNetworkReply* reply)
 		return;
 	}
 
-	ThreadQueue::forThread(requester->thread())->postResponse(requester, response);
+	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
 
 bool Downloader::isReplyProcessed(QNetworkReply* reply) const noexcept

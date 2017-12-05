@@ -8,13 +8,13 @@ namespace CrawlerEngine
 struct IResponse;
 class Requester;
 
-class ThreadQueue : public QObject
+class ThreadMessageDispatcher : public QObject
 {
 	Q_OBJECT
 
 public:
-	static std::shared_ptr<ThreadQueue> forThread(QThread* thread);
-	static std::shared_ptr<ThreadQueue> forCurrentThread();
+	static std::shared_ptr<ThreadMessageDispatcher> forThread(QThread* thread);
+	static std::shared_ptr<ThreadMessageDispatcher> forCurrentThread();
 
 	void startRequester(RequesterSharedPtr requester);
 	void stopRequester(RequesterSharedPtr requester);
@@ -24,7 +24,7 @@ protected:
 	virtual void timerEvent(QTimerEvent* event) override;
 
 private:
-	ThreadQueue(QThread* thread);
+	ThreadMessageDispatcher(QThread* thread);
 
 	Q_SLOT void shutdown();
 

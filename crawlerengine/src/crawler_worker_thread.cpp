@@ -7,27 +7,6 @@
 #include "download_response.h"
 #include "crawler.h"
 
-namespace
-{
-
-template <typename T, typename Pred>
-void associative_container_erase_if(std::set<T>& container, Pred&& pred)
-{
-	for (auto iter = container.begin(); iter != container.end();)
-	{
-		if (pred(*iter))
-		{
-			iter = container.erase(iter);
-		}
-		else
-		{
-			++iter;
-		}
-	}
-}
-
-}
-
 namespace CrawlerEngine
 {
 
@@ -150,30 +129,20 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionSubdomainNotAllowed;
 	};
 
-	const auto isNofollowLinkUnavailableWrapper = [&isNofollowLinkUnavailable](const RawResourceOnPage& resource)
+	const auto setLinkLoadAvailability = [&](RawResourceOnPage& resource)
 	{
-		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
-			isNofollowLinkUnavailable(resource.thisResourceLink);
-	};
+		const bool loadAvailability = PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) &&
+			!isNofollowLinkUnavailable(resource.thisResourceLink) &&
+			!isSubdomainLinkUnavailable(resource.thisResourceLink) &&
+			!isLinkBlockedByRobotsTxt(resource.thisResourceLink);
 
-	const auto isSubdomainLinkUnavailableWrapper = [&isSubdomainLinkUnavailable](const RawResourceOnPage& resource)
-	{
-		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
-			isSubdomainLinkUnavailable(resource.thisResourceLink);
-	};
-
-	const auto isLinkBlockedByRobotsTxtWrapper = [&isLinkBlockedByRobotsTxt](const RawResourceOnPage& resource)
-	{
-		return PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) && 
-			isLinkBlockedByRobotsTxt(resource.thisResourceLink);
+		resource.loadAvailability = loadAvailability;
 	};
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 
-	associative_container_erase_if(parsedPage->allResourcesOnPage, isNofollowLinkUnavailableWrapper);
-	associative_container_erase_if(parsedPage->allResourcesOnPage, isSubdomainLinkUnavailableWrapper);
-	associative_container_erase_if(parsedPage->allResourcesOnPage, isLinkBlockedByRobotsTxtWrapper);
+	std::for_each(parsedPage->allResourcesOnPage.begin(), parsedPage->allResourcesOnPage.end(), setLinkLoadAvailability);
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
 	{

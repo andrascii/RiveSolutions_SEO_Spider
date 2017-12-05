@@ -366,22 +366,40 @@ void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage)
 
 void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool checkOnlyLastResource)
 {
+	class CounterIncrementor final
+	{
+	public:
+		CounterIncrementor(std::size_t& ref)
+			: m_ref(ref)
+		{
+		}
+
+		~CounterIncrementor()
+		{
+			++m_ref;
+		}
+
+	private:
+		std::size_t& m_ref;
+	};
+
 	const int sizeKB = incomingPage->pageSizeKilobytes;
 
-	if (sizeKB > m_crawlerOptions.maxImageSizeKb)
+	if (sizeKB > m_crawlerOptions.maxImageSizeKb &&
+		!data()->isParsedPageExists(incomingPage, StorageType::Over100kbImageStorageType))
 	{
 		data()->addParsedPage(incomingPage, StorageType::Over100kbImageStorageType);
 	}
 
-	size_t index = 0;
-	const size_t lastIndex = incomingPage->linksToThisPage.size() - 1;
+	std::size_t index = 0;
+	const std::size_t lastIndex = incomingPage->linksToThisPage.size() - 1;
 
 	for (const ResourceLink& linkToThisImage : incomingPage->linksToThisPage)
 	{
+		CounterIncrementor incrementor(index);
+
 		if (checkOnlyLastResource && index != lastIndex)
 		{
-			// TODO: optimize
-			++index;
 			continue;
 		}
 
@@ -389,18 +407,17 @@ void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool c
 		{
 			const int altLength = linkToThisImage.altOrTitle.size();
 
-			if (altLength > m_crawlerOptions.maxImageAltTextChars)
+			if (altLength > m_crawlerOptions.maxImageAltTextChars && 
+				!data()->isParsedPageExists(incomingPage, StorageType::VeryLongAltTextImageStorageType))
 			{
 				data()->addParsedPage(incomingPage, StorageType::VeryLongAltTextImageStorageType);
 			}
 
-			if (altLength == 0)
+			if (altLength == 0 && !data()->isParsedPageExists(incomingPage, StorageType::MissingAltTextImageStorageType))
 			{
 				data()->addParsedPage(incomingPage, StorageType::MissingAltTextImageStorageType);
 			}
 		}
-
-		++index;
 	}
 }
 
@@ -456,12 +473,12 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, resource.thisResourceLink.urlParameter, 
+			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		}
 		else
@@ -469,12 +486,17 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.thisResourceLink.url;
 
-			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, resource.thisResourceLink.urlParameter, 
+			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 			
+			if (!resource.loadAvailability)
+			{
+				return;
+			}
+
 			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 
 			DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
@@ -484,26 +506,25 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 {
-	std::map<ResourceType, StorageType> storageTypes
+	constexpr int storageTypes[][1]
 	{
-		{ ResourceType::ResourceImage, StorageType::ImageResourcesStorageType },
-		{ ResourceType::ResourceJavaScript, StorageType::JavaScriptResourcesStorageType },
-		{ ResourceType::ResourceStyleSheet, StorageType::StyleSheetResourcesStorageType },
-		{ ResourceType::ResourceFlash, StorageType::FlashResourcesStorageType },
-		{ ResourceType::ResourceVideo, StorageType::VideoResourcesStorageType },
-		{ ResourceType::ResourceOther, StorageType::OtherResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceImage), { StorageType::ImageResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceJavaScript), { StorageType::JavaScriptResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceStyleSheet), { StorageType::StyleSheetResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceFlash), { StorageType::FlashResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceVideo), { StorageType::VideoResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceOther), { StorageType::OtherResourcesStorageType },
 	};
 
-	std::map<ResourceType, StorageType> externalStorageTypes
+	constexpr int externalStorageTypes[][1]
 	{
-		{ ResourceType::ResourceImage, StorageType::ExternalImageResourcesStorageType },
-		{ ResourceType::ResourceJavaScript, StorageType::ExternalJavaScriptResourcesStorageType },
-		{ ResourceType::ResourceStyleSheet, StorageType::ExternalStyleSheetResourcesStorageType },
-		{ ResourceType::ResourceFlash, StorageType::ExternalFlashResourcesStorageType },
-		{ ResourceType::ResourceVideo, StorageType::ExternalVideoResourcesStorageType },
-		{ ResourceType::ResourceOther, StorageType::ExternalOtherResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceImage), { StorageType::ExternalImageResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceJavaScript), { StorageType::ExternalJavaScriptResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceStyleSheet), { StorageType::ExternalStyleSheetResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceFlash), { StorageType::ExternalFlashResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceVideo), { StorageType::ExternalVideoResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceOther), { StorageType::ExternalOtherResourcesStorageType },
 	};
-
 
 	const bool http = PageParserHelpers::isHttpOrHttpsScheme(incomingPage->url);
 	const bool externalOrNotHttp = incomingPage->isThisExternalPage || !http;
@@ -513,15 +534,18 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		const ParsedPagePtr pendingPageRaw = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
 		incomingPage = mergeTwoPages(pendingPageRaw, incomingPage);
 		
-		StorageType storage = externalOrNotHttp ?
-			externalStorageTypes[incomingPage->resourceType] : storageTypes[incomingPage->resourceType];
+		const int resourceType = static_cast<int>(incomingPage->resourceType);
+
+		const StorageType storage = static_cast<StorageType>(externalOrNotHttp ?
+			externalStorageTypes[resourceType][0] : 
+			storageTypes[resourceType][0]
+		);
 		
 		data()->addParsedPage(incomingPage, storage);
 	}
 
 	if (incomingPage->isThisExternalPage)
 	{
-		// do not parse resources from an external one
 		return;
 	}
 
@@ -537,16 +561,20 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 			continue;
 		}
 
-		ParsedPagePtr resourceRaw = std::make_shared<ParsedPage>();
-		resourceRaw->url = resource.thisResourceLink.url;
+		ParsedPagePtr temporaryResource = std::make_shared<ParsedPage>();
+		temporaryResource->url = resource.thisResourceLink.url;
 
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url);
-		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, resourceRaw->url) || !httpResource;
+		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, temporaryResource->url) || !httpResource;
 
-		const StorageType storage = externalOrNotHttpResource ?
-			externalStorageTypes[resource.resourceType] : storageTypes[resource.resourceType];
+		const int resourceType = static_cast<int>(resource.resourceType);
 
-		ParsedPagePtr newOrExistingResource = data()->parsedPage(resourceRaw, storage);
+		const StorageType storage = static_cast<StorageType>(externalOrNotHttpResource ?
+			externalStorageTypes[resourceType][0] : 
+			storageTypes[resourceType][0]
+		);
+
+		ParsedPagePtr newOrExistingResource = data()->parsedPage(temporaryResource, storage);
 		
 		const bool existingImageResource = newOrExistingResource && 
 			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
@@ -554,21 +582,24 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 
 		if (!newOrExistingResource)
 		{
-			newOrExistingResource = data()->parsedPage(resourceRaw, StorageType::PendingResourcesStorageType);
+			newOrExistingResource = data()->parsedPage(temporaryResource, StorageType::PendingResourcesStorageType);
 		}
 
 		if (!newOrExistingResource)
 		{
-			newOrExistingResource = resourceRaw;
-			
-			data()->addParsedPage(newOrExistingResource, 
-				httpResource ? StorageType::PendingResourcesStorageType : storage);
+			newOrExistingResource = temporaryResource;
+
+			if (resource.loadAvailability)
+			{
+				data()->addParsedPage(newOrExistingResource,
+					httpResource ? StorageType::PendingResourcesStorageType : storage);
+			}
 		}
 
-		incomingPage->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, resource.thisResourceLink.urlParameter, 
+		incomingPage->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.thisResourceLink.urlParameter,
 			resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, resource.thisResourceLink.urlParameter, 
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
 			resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
@@ -596,23 +627,39 @@ bool ModelController::resourceShouldBeProcessed(ResourceType resourceType) const
 {
 	switch (resourceType)
 	{
-	case ResourceType::ResourceHtml:
-		return true;
-	case ResourceType::ResourceImage:
-		return m_crawlerOptions.parserTypeFlags.testFlag(ImagesResourcesParserType);
-	case ResourceType::ResourceJavaScript:
-		return m_crawlerOptions.parserTypeFlags.testFlag(JavaScriptResourcesParserType);
-	case ResourceType::ResourceStyleSheet:
-		return m_crawlerOptions.parserTypeFlags.testFlag(CssResourcesParserType);
-	case ResourceType::ResourceFlash:
-		return m_crawlerOptions.parserTypeFlags.testFlag(FlashResourcesParserType);
-	case ResourceType::ResourceVideo:
-		return m_crawlerOptions.parserTypeFlags.testFlag(VideoResourcesParserType);
-	case ResourceType::ResourceOther:
-		return m_crawlerOptions.parserTypeFlags.testFlag(OtherResourcesParserType);
-	default:
-		ASSERT(!"Unexpected resource type");
-		break;
+		case ResourceType::ResourceHtml:
+		{
+			return true;
+		}
+		case ResourceType::ResourceImage:
+		{
+			return m_crawlerOptions.parserTypeFlags.testFlag(ImagesResourcesParserType);
+		}
+		case ResourceType::ResourceJavaScript:
+		{
+			return m_crawlerOptions.parserTypeFlags.testFlag(JavaScriptResourcesParserType);
+		}
+		case ResourceType::ResourceStyleSheet:
+		{
+			return m_crawlerOptions.parserTypeFlags.testFlag(CssResourcesParserType);
+		}
+		case ResourceType::ResourceFlash:
+		{
+			return m_crawlerOptions.parserTypeFlags.testFlag(FlashResourcesParserType);
+		}
+		case ResourceType::ResourceVideo:
+		{
+			return m_crawlerOptions.parserTypeFlags.testFlag(VideoResourcesParserType);
+		}
+		case ResourceType::ResourceOther:
+		{
+			return m_crawlerOptions.parserTypeFlags.testFlag(OtherResourcesParserType);
+		}
+		default:
+		{
+			ASSERT(!"Unexpected resource type");
+			break;
+		}
 	}
 
 	return false;
