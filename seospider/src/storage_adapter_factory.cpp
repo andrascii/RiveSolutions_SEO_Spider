@@ -174,14 +174,14 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		// H1 available columns
 		//
 		case StorageAdapterType::StorageAdapterTypeMissingH1s:
-		{
-			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
-				<< ParsedPageInfo::Column::UrlColumn
-				<< ParsedPageInfo::Column::ContentTypeColumn
-			);
-
-			return;
-		}
+// 		{
+// 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
+// 				<< ParsedPageInfo::Column::UrlColumn
+// 				<< ParsedPageInfo::Column::ContentTypeColumn
+// 			);
+// 
+// 			return;
+// 		}
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH1s:
 		case StorageAdapterType::StorageAdapterTypeVeryLongH1s:
 		case StorageAdapterType::StorageAdapterTypeSeveralH1s:
@@ -202,14 +202,14 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		// H2 available columns
 		//
 		case StorageAdapterType::StorageAdapterTypeMissingH2s:
-		{
-			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
-				<< ParsedPageInfo::Column::UrlColumn
-				<< ParsedPageInfo::Column::ContentTypeColumn
-			);
-
-			return;
-		}
+// 		{
+// 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
+// 				<< ParsedPageInfo::Column::UrlColumn
+// 				<< ParsedPageInfo::Column::ContentTypeColumn
+// 			);
+// 
+// 			return;
+// 		}
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH2s:
 		case StorageAdapterType::StorageAdapterTypeVeryLongH2s:
 		case StorageAdapterType::StorageAdapterTypeSeveralH2s:
