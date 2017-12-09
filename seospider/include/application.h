@@ -22,7 +22,7 @@ namespace SeoSpider
 {
 
 class Preferences;
-class WinEventFilter;
+class InternetConnectionNotificationManager;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -43,12 +43,13 @@ public:
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 	void initializeStyleSheet() noexcept;
+	bool internetAvailable() const noexcept;
 
 	// ISettingsAccessor implementation
 	virtual void saveToSettings(const QByteArray& key, const QVariant& value) noexcept override;
 	virtual QVariant loadFromSettings(const QByteArray& key, const QVariant& defaultValue = QVariant()) const noexcept override;
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
-	virtual QList<QByteArray> allKeys() const override;
+	virtual QStringList allKeys() const override;
 
 signals:
 	void mainWindowShown();
@@ -87,6 +88,8 @@ private:
 	QTranslator* m_translator;
 
 	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
+
+	InternetConnectionNotificationManager* m_internetNotificationManager;
 };
 
 }

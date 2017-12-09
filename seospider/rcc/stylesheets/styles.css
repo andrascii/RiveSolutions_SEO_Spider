@@ -1,6 +1,6 @@
 QWidget
 {
-	font-family: Arial;
+	font-family: Helvetica;
 	font-size: 10pt;
 	color: #22252D;
 }
@@ -9,9 +9,9 @@ QWidget
 
 QMenuBar
 {	
-	padding-top: 1em;
-	padding-bottom: 1em;
-	background-color: #34465D;
+	padding-top: 0.8em;
+	padding-bottom: 0.8em;
+	background-color: #4D626E;
 	border-bottom: 0.05em solid #C0C0C0;
 }
 
@@ -30,7 +30,7 @@ QMenu
 {
 	padding: 0.1em;
 	border: 0.05em solid #1f2530;
-	background-color: #E8E8E8;
+	background-color: #F2F2F2;
 }
 
 QMenu::item
@@ -49,11 +49,15 @@ QMenu::item:selected
 QStatusBar
 {
 	min-height: 2.5em;
-	background-color: #34465D;
+	background-color: #4D626E;
 	border-top: 0.05em solid #C0C0C0;
-	color: #EDEDED;
 }
 
+SeoSpider--CrawlerStatusInfo QLabel
+{
+	color: #EDEDED;
+	border: none;
+}
 
 /*/////////////////////////////////// Border ////////////////////////////*/
 
@@ -72,6 +76,7 @@ QDateEdit
 SeoSpider--TableView
 {
 	border: none;
+	background-color: #FCFDFE;
 }
 
 /*////////////////////////////////// QLineEdit, QSpinBox, QDoubleSpinBox, QDateEdit, QCheckBox ////////////////////////////////*/
@@ -234,18 +239,17 @@ SeoSpider--TableView
 
 QLabel#SelectFilterLabel
 {
-	color: #EFEFEF;
+	color: #D0D0D0;
 	font-size: 48pt;
-	background: white;
-	font-family: "Times";
-	border: none;
+	background: #FCFDFE;
+	font-family: Helvetica;
 }
 
 /*/////////////////////////////// Header view ///////////////////////////////*/
 
 QHeaderView
 {
-	background: #e0e0e0;
+	background: #EAEAEA;
 }
 
 QHeaderView::section
@@ -258,7 +262,7 @@ QHeaderView::section
 	border-left: none;
 	border-bottom: none;
 	
-	background: #e0e0e0;
+	background: #EAEAEA;
 	min-height: 2em;
 }
 
@@ -489,22 +493,22 @@ QSplitter::handle:vertical
 
 QWidget#NavigationPanel
 {
-	background-color: #E8E8E8;
+	background-color: #F2F2F2;
 	border-right: 0.05em solid #C0C0C0;
 }
 
 QWidget#NavigationPanel QPushButton
 {
 	border: none;
-	border-bottom: 0.05em solid #E8E8E8;
+	border-bottom: 0.05em solid #F2F2F2;
 	border-radius: none;
 	
-	background-color: #E8E8E8;
+	background-color: #F2F2F2;
 	
 	width: 12em;
 	
 	text-align: left;
-	color: #34465d;
+	color: #4D626E;
 	
 	font-size: 9pt;
 	font: bold;
@@ -519,12 +523,12 @@ QWidget#NavigationPanel QPushButton
 
 QWidget#NavigationPanel QPushButton:hover
 {
-	background-color: #E0E0E0;
+	background-color: #D0D0D0;
 }
 
 QWidget#NavigationPanel QPushButton[selected="true"]
 {
-	background-color: #C0C0C0;
+	background-color: #D0D0D0;
 }
 
 /*/////////////////////////////// DebugWebPageInfoWidget ///////////////////////////////*/
@@ -539,13 +543,13 @@ QWidget#DebugWebPageInfoWidget QWidget
 
 SeoSpider--HeaderDecorationWidget
 {
-	background-color: #E8E8E8;
+	background-color: #F2F2F2;
 }
 
 SeoSpider--HeaderDecorationWidget QFrame#TitleFrame
 {
 	min-height: 3em;
-	background-color: #E8E8E8;
+	background-color: #F2F2F2;
 	border-bottom: 0.05em solid #CCCCCC;
 }
 
@@ -556,7 +560,7 @@ QTabWidget QLabel
 	background: white;
 	border: none;
 	color: black;
-	font-family: Arial;
+	font-family: Helvetica;
 	font-size: 11pt;
 	padding: 0.7em;
 }

@@ -244,31 +244,31 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPa
 
 	const bool successfulResponseCode = successfulCode(incomingPage);
 
-const int metaDescriptionLength = incomingPage->metaDescription.size();
+	const int metaDescriptionLength = incomingPage->metaDescription.size();
 
-if (metaDescriptionLength == 0 && successfulResponseCode)
-{
-	data()->addParsedPage(incomingPage, StorageType::EmptyMetaDescriptionUrlStorageType);
-}
-else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength && successfulResponseCode)
-{
-	data()->addParsedPage(incomingPage, StorageType::VeryLongMetaDescriptionUrlStorageType);
-}
-else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength && successfulResponseCode)
-{
-	data()->addParsedPage(incomingPage, StorageType::VeryShortMetaDescriptionUrlStorageType);
-}
+	if (metaDescriptionLength == 0 && successfulResponseCode)
+	{
+		data()->addParsedPage(incomingPage, StorageType::EmptyMetaDescriptionUrlStorageType);
+	}
+	else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength && successfulResponseCode)
+	{
+		data()->addParsedPage(incomingPage, StorageType::VeryLongMetaDescriptionUrlStorageType);
+	}
+	else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength && successfulResponseCode)
+	{
+		data()->addParsedPage(incomingPage, StorageType::VeryShortMetaDescriptionUrlStorageType);
+	}
 
-if (metaDescriptionLength > 0 && successfulResponseCode)
-{
-	addDuplicates(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
-	data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
-}
+	if (metaDescriptionLength > 0 && successfulResponseCode)
+	{
+		addDuplicates(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
+	}
 
-if (incomingPage->hasSeveralMetaDescriptionTags && successfulResponseCode)
-{
-	data()->addParsedPage(incomingPage, StorageType::SeveralMetaDescriptionUrlStorageType);
-}
+	if (incomingPage->hasSeveralMetaDescriptionTags && successfulResponseCode)
+	{
+		data()->addParsedPage(incomingPage, StorageType::SeveralMetaDescriptionUrlStorageType);
+	}
 }
 
 void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
@@ -335,7 +335,6 @@ void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage)
 	{
 		data()->addParsedPage(incomingPage, StorageType::SeveralH1UrlStorageType);
 	}
-
 }
 
 void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage)

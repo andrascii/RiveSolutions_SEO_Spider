@@ -13,21 +13,21 @@ MessageBoxDialog::MessageBoxDialog(QWidget* parent)
 	setWindowFlags(Qt::Dialog);
 	setWindowModality(Qt::WindowModal);
 
-	const QSize preferredSize(SeoSpiderHelpers::pointsToPixels(270), SeoSpiderHelpers::pointsToPixels(80));
-
-	setMinimumSize(preferredSize);
-	setMaximumSize(preferredSize);
-
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
 }
 
-void MessageBoxDialog::setMessage(const QString& message) const
+void MessageBoxDialog::setMessage(const QString& message)
 {
 	m_ui->messageLabel->setText(message);
+
+	adjustSize();
+
+	setMinimumSize(size());
+	setMaximumSize(size());
 }
 
-void MessageBoxDialog::setIcon(Icon icon) const
+void MessageBoxDialog::setIcon(Icon icon)
 {
 	const QSize pixmapSize(SeoSpiderHelpers::pointsToPixels(20), SeoSpiderHelpers::pointsToPixels(20));
 
