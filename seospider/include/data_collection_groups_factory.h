@@ -35,7 +35,7 @@ struct DCStorageGroupDescription
 {
 	QString name;
 	AuditGroup group;
-	QVector<DCStorageDescription> descriptions;
+	std::vector<DCStorageDescription> descriptions;
 };
 
 using DCStorageGroupDescriptionPtr = std::shared_ptr<DCStorageGroupDescription>;
