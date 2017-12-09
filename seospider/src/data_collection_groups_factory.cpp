@@ -39,8 +39,8 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.push_back({ CrawlerEngine::StorageType::VeryShortMetaDescriptionUrlStorageType, QObject::tr("Too Short Meta Descriptions") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralMetaDescriptionUrlStorageType, QObject::tr("Several Meta Descriptions") });
 
-			p->descriptions.push_back({ CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType, QObject::tr("Empty  Meta Keywords") });
-			p->descriptions.push_back({ CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType, QObject::tr("Duplicated  Meta Keywords") });
+			p->descriptions.push_back({ CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType, QObject::tr("Empty Meta Keywords") });
+			p->descriptions.push_back({ CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType, QObject::tr("Duplicated Meta Keywords") });
 			p->descriptions.push_back({ CrawlerEngine::StorageType::SeveralMetaKeywordsUrlStorageType, QObject::tr("Several Meta Keywords") });
 
 			return p;

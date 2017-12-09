@@ -24,7 +24,7 @@ PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
 	, m_selectedGridLineColor("#E8E0C1")
 	, m_gridLineColor("#F3F3F3")
 	, m_urlTextColor("#1C51AF") // 1754A8
-	, m_textColor("#22252D")
+	, m_textColor("#4D626E")
 	, m_textFont("Helvetica", 10, QFont::Normal)
 	, m_itemRenderer(this)
 {
