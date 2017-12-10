@@ -3,7 +3,7 @@
 #include "table_view.h"
 #include "page_model.h"
 #include "page_view_model.h"
-#include "storage_adaptor_factory.h"
+#include "storage_adapter_factory.h"
 #include "context_menu_data_collection_row.h"
 #include "seo_spider_helpers.h"
 #include "header_decoration_widget.h"
@@ -18,25 +18,50 @@ namespace SeoSpider
 
 DataPagesWidget::DataPagesWidget(QWidget* parent)
 	: QFrame(parent)
+	, m_decorationWidget(new HeaderDecorationWidget(this))
 {
 	initializeNavigationPanelWidget();
-	initializeStackedWidget();
 
-	HeaderDecorationWidget* widget = new HeaderDecorationWidget(this);
-	widget->addWidgetToHeader(new ControlPanelWidget(this));
-	widget->addWidgetToHeader(new CrawlerProgressBar(this), Qt::AlignLeft, true);
+	m_stackedWidget = new QStackedWidget(this);
 
-	widget->setContentWidget(m_stackedWidget);
+	m_decorationWidget->addWidgetToHeader(new ControlPanelWidget(this));
+	m_decorationWidget->addWidgetToHeader(new CrawlerProgressBar(this), Qt::AlignLeft, true);
+	m_decorationWidget->setContentWidget(m_stackedWidget);
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
 	horizontalLayout->setSpacing(0);
 	horizontalLayout->setMargin(0);
 
 	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
-	horizontalLayout->addWidget(widget);
+	horizontalLayout->addWidget(m_decorationWidget);
 }
 
-void DataPagesWidget::showPage(Page page)
+void DataPagesWidget::addPage(PageFactory::Page page, QWidget* widget, const QString& buttonText, const QIcon& buttonIcon, bool setSelected)
+{
+	m_pageIndexes[page] = m_stackedWidget->addWidget(widget);
+
+	m_navigationPanel.pushButtons[page] = new QPushButton(buttonText, m_navigationPanel.navigationPanelWidget);
+
+	VERIFY(connect(m_navigationPanel.pushButtons[page], &QPushButton::clicked,
+		this, &DataPagesWidget::handleNavigationPanelButtonClick));
+
+	const int insertPosition = m_navigationPanel.navigationPanelWidget->layout()->count() - 1;
+
+	QBoxLayout* layout = qobject_cast<QBoxLayout*>(m_navigationPanel.navigationPanelWidget->layout());
+
+	ASSERT(layout);
+
+	layout->insertWidget(insertPosition, m_navigationPanel.pushButtons[page]);
+
+	m_navigationPanel.pushButtons[page]->setProperty("selected", setSelected);
+
+	if (setSelected)
+	{
+		m_prevButton = m_navigationPanel.pushButtons[page];
+	}
+}
+
+void DataPagesWidget::showPage(PageFactory::Page page)
 {
 	m_stackedWidget->setCurrentIndex(m_pageIndexes[page]);
 }
@@ -79,92 +104,22 @@ void DataPagesWidget::handleNavigationPanelButtonClick()
 void DataPagesWidget::initializeNavigationPanelWidget()
 {
 	m_navigationPanel.navigationPanelWidget = new QWidget(this);
-	m_navigationPanel.verticalMainLayout = new QVBoxLayout(m_navigationPanel.navigationPanelWidget);
-	m_navigationPanel.verticalMainLayout->setContentsMargins(0, 0, SeoSpiderHelpers::pointsToPixels(0.6), 0);
+	
+	QVBoxLayout* layout = new QVBoxLayout(m_navigationPanel.navigationPanelWidget);
+	
+	layout->setContentsMargins(0, 0, SeoSpiderHelpers::pointsToPixels(0.6), 0);
 
-	m_navigationPanel.pushButtons[Page::SiteAuditPage] = 
-		new QPushButton(QStringLiteral("Audit Info"), m_navigationPanel.navigationPanelWidget);
+	layout->setSpacing(0);
 
-	m_navigationPanel.pushButtons[Page::AllPagesPage] = 
-		new QPushButton(QStringLiteral("All Site Pages"), m_navigationPanel.navigationPanelWidget);
-
-	m_navigationPanel.pushButtons[Page::AllResourcesPage] = 
-		new QPushButton(QStringLiteral("All Resources"), m_navigationPanel.navigationPanelWidget);
-
-	m_navigationPanel.pushButtons[Page::DomainMetricsPage] = 
-		new QPushButton(QStringLiteral("Domain Metrics"), m_navigationPanel.navigationPanelWidget);
-
-	m_navigationPanel.pushButtons[Page::ReportsPage] = 
-		new QPushButton(QStringLiteral("Reports"), m_navigationPanel.navigationPanelWidget);
-
-	m_navigationPanel.pushButtons[Page::SiteAuditPage]->setProperty("selected", true);
-	m_prevButton = m_navigationPanel.pushButtons[Page::SiteAuditPage];
-
-	VERIFY(connect(m_navigationPanel.pushButtons[Page::SiteAuditPage], &QPushButton::clicked,
-		this, &DataPagesWidget::handleNavigationPanelButtonClick));
-
-	VERIFY(connect(m_navigationPanel.pushButtons[Page::AllPagesPage], &QPushButton::clicked,
-		this, &DataPagesWidget::handleNavigationPanelButtonClick));
-
-	VERIFY(connect(m_navigationPanel.pushButtons[Page::AllResourcesPage], &QPushButton::clicked,
-		this, &DataPagesWidget::handleNavigationPanelButtonClick));
-
-	VERIFY(connect(m_navigationPanel.pushButtons[Page::DomainMetricsPage], &QPushButton::clicked,
-		this, &DataPagesWidget::handleNavigationPanelButtonClick));
-
-	VERIFY(connect(m_navigationPanel.pushButtons[Page::ReportsPage], &QPushButton::clicked,
-		this, &DataPagesWidget::handleNavigationPanelButtonClick));
-
-	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::SiteAuditPage]);
-	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::AllPagesPage]);
-	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::AllResourcesPage]);
-	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::DomainMetricsPage]);
-	m_navigationPanel.verticalMainLayout->addWidget(m_navigationPanel.pushButtons[Page::ReportsPage]);
-	m_navigationPanel.verticalMainLayout->setSpacing(0);
-
-	m_navigationPanel.verticalMainLayout->addItem(
+	layout->addItem(
 		new QSpacerItem(
 			SeoSpiderHelpers::pointsToPixels(15),
 			SeoSpiderHelpers::pointsToPixels(30), 
 			QSizePolicy::Minimum, QSizePolicy::Expanding)
 	);
 
-	m_navigationPanel.navigationPanelWidget->setLayout(m_navigationPanel.verticalMainLayout);
-
 	// use this name for customize style through stylesheets
 	m_navigationPanel.navigationPanelWidget->setObjectName(QStringLiteral("NavigationPanel"));
-}
-
-void DataPagesWidget::initializeStackedWidget()
-{
-	m_stackedWidget = new QStackedWidget(this);
-
-	FilterWidget* errorsFilterWidget = new FilterWidget(new WebSiteDataWidget(nullptr, m_stackedWidget), m_stackedWidget);
-	errorsFilterWidget->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
-
-	PageDataWidget* resourceTables = new PageDataWidget(this);
-	resourceTables->setPageDataType(PageDataWidget::LinksOnThisPageType);
-	resourceTables->setPageDataType(PageDataWidget::LinksToThisPageType);
-	resourceTables->setPageDataType(PageDataWidget::ServerResponseForPageType);
-
-	FilterWidget* allResourcesPage = new FilterWidget(new WebSiteDataWidget(resourceTables, m_stackedWidget), m_stackedWidget);
-	allResourcesPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
-
-	TableView* crawlingTableView = new TableView(m_stackedWidget);
-
-	PageModel* model = new PageModel(this);
-	PageViewModel* modelView = new PageViewModel(crawlingTableView, model, this);
-
-	model->setStorageAdaptor(theApp->storageAdaptorFactory()->createParsedPageInfoStorage(StorageAdaptorType::StorageAdaptorTypeAllPages, theApp->sequencedDataCollection()));
-
-	crawlingTableView->setModel(model);
-	crawlingTableView->setViewModel(modelView);
-	crawlingTableView->setContextMenu(new ContextMenuDataCollectionRow(crawlingTableView));
-	crawlingTableView->setShowAdditionalGrid(true);
-
-	m_pageIndexes[Page::SiteAuditPage] = m_stackedWidget->addWidget(errorsFilterWidget);
-	m_pageIndexes[Page::AllResourcesPage] = m_stackedWidget->addWidget(allResourcesPage);
-	m_pageIndexes[Page::AllPagesPage] = m_stackedWidget->addWidget(crawlingTableView);
 }
 
 }

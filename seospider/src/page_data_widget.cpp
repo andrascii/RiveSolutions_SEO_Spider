@@ -21,11 +21,11 @@ PageDataWidget::PageDataWidget(QWidget* parent)
 
 void PageDataWidget::setParsedPageInfo(const ParsedPageInfoPtr& page)
 {
-	StorageAdaptorFactory* factory = theApp->storageAdaptorFactory();
+	StorageAdapterFactory* factory = theApp->storageAdapterFactory();
 
 	for(auto beg = m_models.begin(); beg != m_models.end(); ++beg)
 	{
-		beg.value()->setStorageAdaptor(factory->createPageLinksStorage(mapType(beg.key()), page));
+		beg.value()->setStorageAdapter(factory->createPageLinksStorage(mapType(beg.key()), page));
 	}
 
 	setPageServerResponse(page);

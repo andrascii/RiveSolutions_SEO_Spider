@@ -1,6 +1,6 @@
 #pragma once
 
-#include "storage_adaptor_type.h"
+#include "storage_adapter_type.h"
 
 namespace SeoSpider
 {
@@ -8,7 +8,7 @@ namespace SeoSpider
 class TableView;
 class PageModel;
 class PageViewModel;
-class IStorageAdaptor;
+class IStorageAdapter;
 class PageDataWidget;
 
 class WebSiteDataWidget : public QFrame
@@ -18,7 +18,7 @@ class WebSiteDataWidget : public QFrame
 public:
 	WebSiteDataWidget(PageDataWidget* pageDataWidget = nullptr, QWidget* parent = nullptr);
 
-	void setStorageAdaptorType(StorageAdaptorType storageAdaptorType);
+	void setStorageAdapterType(StorageAdapterType storageAdapterType);
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
@@ -31,7 +31,7 @@ private:
 
 	QStackedWidget* m_stackedWidget;
 
-	QMap<StorageAdaptorType, int> m_tables;
+	QMap<StorageAdapterType, int> m_tables;
 
 	PageDataWidget* m_pageDataWidget;
 

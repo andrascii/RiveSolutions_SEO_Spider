@@ -7,19 +7,20 @@ class InternetConnectionInspector : public QObject
 {
 	Q_OBJECT
 
-public:
+private:
+	friend class InternetConnectionNotificationManager;
+
 	static InternetConnectionInspector* instance();
 
 	static void init();
 	static void term();
 
-	bool internetAvailable() const noexcept;
-
-	Q_SLOT void start();
-	Q_SLOT void stop();
+private slots:
+	void start();
+	void stop();
 
 signals:
-	void statusChanged();
+	void statusChanged(bool);
 
 protected:
 	virtual void timerEvent(QTimerEvent* event) override;

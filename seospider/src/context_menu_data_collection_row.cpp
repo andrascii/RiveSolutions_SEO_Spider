@@ -78,7 +78,7 @@ void ContextMenuDataCollectionRow::openUrlAction() const
 		const PageModel* model = 
 			SeoSpiderHelpers::fast_cast<const PageModel*>(index.model());
 
-		if (model->itemType(index) != IStorageAdaptor::ItemType::UrlItemType)
+		if (model->itemType(index) != IStorageAdapter::ItemType::UrlItemType)
 		{
 			continue;
 		}
@@ -111,7 +111,7 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl() const
 		const PageModel* model = 
 			SeoSpiderHelpers::fast_cast<const PageModel*>(index.model());
 
-		if (model->itemType(index) != IStorageAdaptor::ItemType::UrlItemType)
+		if (model->itemType(index) != IStorageAdapter::ItemType::UrlItemType)
 		{
 			continue;
 		}

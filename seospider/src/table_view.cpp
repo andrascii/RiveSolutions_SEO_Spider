@@ -15,7 +15,7 @@ TableView::TableView(QWidget* parent)
 	, m_viewModel(nullptr)
 	, m_contextMenu(nullptr)
 	, m_showAdditionalGrid(false)
-	, m_rowHeight(SeoSpiderHelpers::pointsToPixels(18))
+	, m_rowHeight(SeoSpiderHelpers::pointsToPixels(22))
 {
 	setMouseTracking(true);
 
@@ -190,9 +190,9 @@ void TableView::paintEvent(QPaintEvent* event)
 
 	for (int i = 0, size = static_cast<int>(uniqueSelectedRows.size()); i < size; ++i)
 	{
-		const int topRowLineYCoordinate = m_rowHeight * uniqueSelectedRows[i];
+		const int topRowLineYCoordinate = rowViewportPosition(uniqueSelectedRows[i]);
 
-		verticalLineSegments.push_back(VerticalLineSegment{ topRowLineYCoordinate, topRowLineYCoordinate + m_rowHeight });
+		verticalLineSegments.emplace_back(VerticalLineSegment{ topRowLineYCoordinate, topRowLineYCoordinate + m_rowHeight });
 	}
 
 	for (int i = 0; i < horizontalHeader()->count(); ++i)

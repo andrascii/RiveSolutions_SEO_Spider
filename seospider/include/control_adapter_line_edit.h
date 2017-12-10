@@ -1,10 +1,10 @@
 #pragma once
-#include "icontrol_adaptor.h"
+#include "icontrol_adapter.h"
 
 namespace SeoSpider
 {
 
-class ControlAdaptorQLineEdit : public IControlAdaptor
+class ControlAdapterQLineEdit : public IControlAdapter
 {
 public:
 	virtual void setControl(QObject* control) override;
@@ -18,6 +18,6 @@ private:
 	QPointer<QLineEdit> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdaptorQLineEdit);
+Q_DECLARE_METATYPE(ControlAdapterQLineEdit);
 
 }

@@ -19,13 +19,13 @@ PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
 	, m_view(view)
 	, m_selectionBackgroundColor("#F7F0D6")
-	, m_hoveredBackgroundColor("#F3F3F3")
-	, m_backgroundColor("#FFFFFF")
+	, m_hoveredBackgroundColor("#F2F2F2")
+	, m_backgroundColor("#FCFDFE")
 	, m_selectedGridLineColor("#E8E0C1")
 	, m_gridLineColor("#F3F3F3")
-	, m_urlTextColor("#1754A8")
-	, m_textColor("#22252D")
-	, m_textFont("Arial", 10, QFont::Normal)
+	, m_urlTextColor("#1C51AF") // 1754A8
+	, m_textColor("#4D626E")
+	, m_textFont("Helvetica", 10, QFont::Normal)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();
@@ -77,7 +77,7 @@ const QPixmap& PageViewModel::pixmap(const QModelIndex& index) const noexcept
 
 	static QPixmap emptyPixmap;
 
-	if (model->itemType(index) == IStorageAdaptor::ItemType::UrlItemType && hoveredIndex().row() == index.row())
+	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType && hoveredIndex().row() == index.row())
 	{
 		return m_urlIcon;
 	}
@@ -95,7 +95,7 @@ QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemV
 
 	const int offsetByY = (visualRectHeight - pix.height()) / 2;
 
-	if (model->itemType(index) == IStorageAdaptor::ItemType::UrlItemType)
+	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
 	{
 		return itemVisualRect.adjusted(itemVisualRect.width() - SeoSpiderHelpers::pointsToPixels(20), offsetByY, 0, 0);
 	}
@@ -155,7 +155,7 @@ const QColor& PageViewModel::textColor(const QModelIndex& index) const noexcept
 	const PageModel* model = 
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
-	if (model->itemType(index) == IStorageAdaptor::ItemType::UrlItemType)
+	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
 	{
 		return m_urlTextColor;
 	}

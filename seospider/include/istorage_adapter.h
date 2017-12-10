@@ -5,7 +5,7 @@
 namespace SeoSpider
 {
 
-class IStorageAdaptor
+class IStorageAdapter
 {
 public:
 	enum class ItemType
@@ -14,7 +14,7 @@ public:
 		PlainItemType
 	};
 
-	virtual ~IStorageAdaptor() = default;
+	virtual ~IStorageAdapter() = default;
 
 	virtual int columnWidth(int columnNumber) const noexcept = 0;
 
@@ -40,7 +40,7 @@ public:
 	virtual void endClearData() const = 0;
 };
 
-class IParsedPageStorageAdaptor : public IStorageAdaptor
+class IParsedPageStorageAdapter : public IStorageAdapter
 {
 public:
 	virtual void setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept = 0;
@@ -48,7 +48,7 @@ public:
 	virtual QList<ParsedPageInfo::Column> availableColumns() const noexcept = 0;
 };
 
-class IPageLinksStorageAdaptor : public IStorageAdaptor
+class IPageLinksStorageAdapter : public IStorageAdapter
 {
 public:
 	virtual void setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept = 0;

@@ -13,448 +13,454 @@
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
 #include "deferred_call.h"
-#include "internet_connection_inspector.h"
+#include "internet_connection_notification_manager.h"
 
 namespace SeoSpider
 {
 
 Application::Application(int& argc, char** argv)
-    : QApplication(argc, argv)
-    , m_preferences(new Preferences(this, this))
-    , m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
-    , m_sequencedDataCollection(nullptr)
-    , m_softwareBrandingOptions(new SoftwareBranding)
-    , m_storageAdatpterFactory(new StorageAdaptorFactory)
-    , m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
-    , m_settings(nullptr)
-    , m_translator(new QTranslator(this))
+	: QApplication(argc, argv)
+	, m_preferences(new Preferences(this, this))
+	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
+	, m_sequencedDataCollection(nullptr)
+	, m_softwareBrandingOptions(new SoftwareBranding)
+	, m_storageAdatpterFactory(new StorageAdapterFactory)
+	, m_summaryDataAccessorFactory(new SummaryDataAccessorFactory)
+	, m_settings(nullptr)
+	, m_translator(new QTranslator(this))
+	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
 {
-    SplashScreen::show();
+	SplashScreen::show();
 
-    initialize();
+	initialize();
 
-    initializeStyleSheet();
+	initializeStyleSheet();
 
-    showMainWindow();
+	showMainWindow();
 
-    INFOLOG << "Started application under OS" << operatingSystemVersion();
-    INFOLOG << "Kernel type:" << QSysInfo::kernelType();
-    INFOLOG << "Kernel version:" << QSysInfo::kernelVersion();
-    INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
-    INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
-    INFOLOG << "App Version:" << applicationVersion();
+	INFOLOG << "Started application under OS" << operatingSystemVersion();
+	INFOLOG << "Kernel type:" << QSysInfo::kernelType();
+	INFOLOG << "Kernel version:" << QSysInfo::kernelVersion();
+	INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
+	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
+	INFOLOG << "App Version:" << applicationVersion();
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
 {
-    return m_crawler;
+	return m_crawler;
 }
 
 MainWindow* Application::mainWindow() const noexcept
 {
-    return m_mainWindow.get();
+	return m_mainWindow.get();
 }
 
 CrawlerEngine::SequencedDataCollection* Application::sequencedDataCollection() const noexcept
 {
-    return m_sequencedDataCollection;
+	return m_sequencedDataCollection;
 }
 
-StorageAdaptorFactory* Application::storageAdaptorFactory() const noexcept
+StorageAdapterFactory* Application::storageAdapterFactory() const noexcept
 {
-    return m_storageAdatpterFactory.get();
+	return m_storageAdatpterFactory.get();
 }
 
 SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() const noexcept
 {
-    return m_summaryDataAccessorFactory.get();
+	return m_summaryDataAccessorFactory.get();
 }
 
 Preferences* Application::preferences() const noexcept
 {
-    return m_preferences;
+	return m_preferences;
 }
 
 QVariant Application::loadFromSettings(const QByteArray& key, const QVariant& defaultValue) const noexcept
 {
-    QVariant result = settings()->value(QLatin1String(key), defaultValue);
-    DEBUGLOG << result.toString();
-    return result;
+	QVariant result = settings()->value(QLatin1String(key), defaultValue);
+	DEBUGLOG << result.toString();
+	return result;
 }
 
 void Application::saveToSettings(const QByteArray& key, const QVariant& value) noexcept
 {
-    settings()->setValue(QLatin1String(key), value);
+	settings()->setValue(QLatin1String(key), value);
 }
 
 void Application::removeKeyFromSettings(const QByteArray& key)
 {
-    settings()->remove(key);
+	settings()->remove(key);
 }
 
-QList<QByteArray> Application::allKeys() const
+QStringList Application::allKeys() const
 {
-    QList<QByteArray> result;
-    
-    foreach(const QString& key, settings()->allKeys())
-    {
-        result << key.toLatin1();
-    }
-
-    return result;
+	return settings()->allKeys();
 }
 
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 {
-    return m_softwareBrandingOptions.get();
+	return m_softwareBrandingOptions.get();
 }
 
 void Application::startCrawler()
 {
-    CrawlerEngine::GetHostInfoRequest request(preferences()->url().host().toLatin1());
-    m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
-    m_hostInfoRequester->start();
+	if (!internetAvailable())
+	{
+		mainWindow()->showMessageBoxDialog("Internet connection problem!",
+			"It seems that you have some problems with internet connection.\n"
+			"Please, check the connection and try again.",
+			MessageBoxDialog::CriticalErrorIcon,
+			QDialogButtonBox::Ok);
 
-    mainWindow()->statusBar()->showMessage("Checking host info...");
+		return;
+	}
+
+	CrawlerEngine::GetHostInfoRequest request(preferences()->url().host().toLatin1());
+	m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
+	m_hostInfoRequester->start();
+
+	mainWindow()->statusBar()->showMessage("Checking host info...");
 }
 
 void Application::stopCrawler()
 {
-    crawler()->stopCrawling();
+	crawler()->stopCrawling();
 }
 
 void Application::clearCrawledData()
 {
-    crawler()->clearData();
+	crawler()->clearData();
 }
 
 void Application::showMainWindow()
 {
-    SplashScreen::finish();
+	SplashScreen::finish();
 
-    m_mainWindow->showMaximized();
+	m_mainWindow->showMaximized();
 
-    emit mainWindowShown();
+	emit mainWindowShown();
 }
 
 void Application::registerServices()
 {
-    ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
+	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
 }
 
 void Application::initQSettings()
 {
-    m_settings = new QSettings(
-        softwareBrandingOptions()->organizationName(), 
-        softwareBrandingOptions()->productName(),
-        qobject_cast<QObject*>(this));
+	m_settings = new QSettings(
+		softwareBrandingOptions()->organizationName(), 
+		softwareBrandingOptions()->productName(),
+		qobject_cast<QObject*>(this));
 }
 
 QSettings* Application::settings() const
 {
-    ASSERT(m_settings);
+	ASSERT(m_settings);
 
-    return m_settings;
+	return m_settings;
 }
 
 void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response)
 {
-    mainWindow()->statusBar()->clearMessage();
+	mainWindow()->statusBar()->clearMessage();
 
-    m_hostInfoRequester->stop();
+	m_hostInfoRequester->stop();
 
-    if (!response.hostInfo.isValid())
-    {
-        mainWindow()->showMessageBoxDialog("DNS Lookup Failed!",
-            "I'm sorry but I cannot to find this website.\n"
-            "Please, be sure that you entered a valid address.",
-            MessageBoxDialog::WarningIcon,
-            QDialogButtonBox::Ok);
+	if (!response.hostInfo.isValid())
+	{
+		mainWindow()->showMessageBoxDialog("DNS Lookup Failed!",
+			"I'm sorry but I cannot to find this website.\n"
+			"Please, be sure that you entered a valid address.",
+			MessageBoxDialog::WarningIcon,
+			QDialogButtonBox::Ok);
 
-        return;
-    }
+		return;
+	}
 
-    CrawlerEngine::CrawlerOptions options;
+	CrawlerEngine::CrawlerOptions options;
 
-    // preferences
-    options.host = preferences()->url();
-    options.minTitleLength = preferences()->minTitleLength();
-    options.maxTitleLength = preferences()->maxTitleLength();
-    options.limitMaxUrlLength = preferences()->limitMaxUrlLength();
-    options.maxDescriptionLength = preferences()->maxDescriptionLength();
-    options.minDescriptionLength = preferences()->minDescriptionLength();
-    options.maxH1LengthChars = preferences()->maxH1LengthChars();
-    options.maxH2LengthChars = preferences()->maxH2LengthChars();
-    options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
-    options.maxImageSizeKb = preferences()->maxImageSize();
+	// preferences
+	options.host = preferences()->url();
+	options.minTitleLength = preferences()->minTitleLength();
+	options.maxTitleLength = preferences()->maxTitleLength();
+	options.limitMaxUrlLength = preferences()->limitMaxUrlLength();
+	options.maxDescriptionLength = preferences()->maxDescriptionLength();
+	options.minDescriptionLength = preferences()->minDescriptionLength();
+	options.maxH1LengthChars = preferences()->maxH1LengthChars();
+	options.maxH2LengthChars = preferences()->maxH2LengthChars();
+	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
+	options.maxImageSizeKb = preferences()->maxImageSize();
 
-    // crawler settings
-    options.checkExternalLinks = preferences()->checkExternalUrls();
-    options.followInternalNofollow = preferences()->followInternalNoFollow();
-    options.followExternalNofollow = preferences()->followExternalNoFollow();
-    options.checkSubdomains = preferences()->checkSubdomains();
-    options.checkImages = preferences()->checkImages();
-    options.checkCss = preferences()->checkCSS();
-    options.checkJavaScript = preferences()->checkJavaScript();
-    options.checkSwf = preferences()->checkSWF();
+	// crawler settings
+	options.checkExternalLinks = preferences()->checkExternalUrls();
+	options.followInternalNofollow = preferences()->followInternalNoFollow();
+	options.followExternalNofollow = preferences()->followExternalNoFollow();
+	options.checkSubdomains = preferences()->checkSubdomains();
+	options.checkImages = preferences()->checkImages();
+	options.checkCss = preferences()->checkCSS();
+	options.checkJavaScript = preferences()->checkJavaScript();
+	options.checkSwf = preferences()->checkSWF();
 
-    // robots.txt rules
-    options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
-    options.userAgentToFollow = CrawlerEngine::UserAgentType::AnyBot;
-    options.plainUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
+	// robots.txt rules
+	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
+	options.userAgentToFollow = CrawlerEngine::UserAgentType::AnyBot;
+	options.plainUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
 
-    options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType);
-    options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType);
-    options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType);
-    options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType);
-    options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType);
 
-    crawler()->startCrawling(options);
+	crawler()->startCrawling(options);
 }
 
 void Application::initialize()
 {
-    DeferredCallProcessor::init();
-    InternetConnectionInspector::init();
+	DeferredCallProcessor::init();
 
-    m_crawler->initialize();
-    m_sequencedDataCollection = m_crawler->sequencedDataCollection();
+	m_crawler->initialize();
+	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
 
-    SplashScreen::showMessage("Initializing...");
+	SplashScreen::showMessage("Initializing...");
 
 #ifdef PRODUCTION
-    // let users to show the splash screen
-    std::this_thread::sleep_for(3s);
+	// let users to see the splash screen
+	std::this_thread::sleep_for(3s);
 #endif
 
-    registerServices();
-    initQSettings();
-    preferences()->load();
+	registerServices();
+	initQSettings();
+	preferences()->load();
 
-    m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());
-    installTranslator(m_translator);
+	m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());
+	installTranslator(m_translator);
 
-    SplashScreen::showMessage("Loading main window...");
+	SplashScreen::showMessage("Loading main window...");
 
-    m_mainWindow.reset(new MainWindow);
+	m_mainWindow.reset(new MainWindow);
 
 #if !defined(PRODUCTION)
 
-    StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
-    //DebugInfoWebPageWidget::attach();
-    WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
+	StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
+	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
 
 #endif
 
-    mainWindow()->init();
+	mainWindow()->init();
 }
 
 void Application::initializeStyleSheet() noexcept
 {
-    SplashScreen::showMessage("Initializing stylesheets...");
+	SplashScreen::showMessage("Initializing stylesheets...");
 
-    QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
+	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
 
-    QFile styles(":/stylesheets/styles.css");
+	QFile styles(":/stylesheets/styles.css");
 
-    if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        setStyleSheet(styles.readAll());
+	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		setStyleSheet(styles.readAll());
 
-        INFOLOG << "Stylesheets loaded";
-    }
+		INFOLOG << "Stylesheets loaded";
+	}
+}
+
+bool Application::internetAvailable() const noexcept
+{
+	return m_internetNotificationManager->internetAvailable();
 }
 
 QString Application::operatingSystemVersion()
 {
-    static QString osVersion;
+	static QString osVersion;
 
-    if (osVersion.isEmpty())
-    {
+	if (osVersion.isEmpty())
+	{
 #if defined(Q_OS_MACOS)
-        switch (QSysInfo::MacintoshVersion)
-        {
-            case QSysInfo::MV_LEOPARD:
-            {
-                osVersion = QLatin1String("MacOS 10.5(Leopard)");
-                break;
-            }
-            case QSysInfo::MV_TIGER:
-            {
-                osVersion = QLatin1String("MacOS 10.4(Tiger)");
-                break;
-            }
-            case QSysInfo::MV_PANTHER:
-            {
-                osVersion = QLatin1String("MacOS 10.3(Panther)");
-                break;
-            }
-            case QSysInfo::MV_JAGUAR:
-            {
-                osVersion = QLatin1String("MacOS 10.2(Jaguar)");
-                break;
-            }
-            case QSysInfo::MV_PUMA:
-            {
-                osVersion = QLatin1String("MacOS 10.1(Puma)");
-                break;
-            }
-            case QSysInfo::MV_CHEETAH:
-            {
-                osVersion = QLatin1String("MacOS 10.0(Cheetah)");
-                break;
-            }
-            case QSysInfo::MV_9:
-            {
-                osVersion = QLatin1String("MacOS 9");
-                break;
-            }
+		switch (QSysInfo::MacintoshVersion)
+		{
+			case QSysInfo::MV_LEOPARD:
+			{
+				osVersion = QLatin1String("MacOS 10.5(Leopard)");
+				break;
+			}
+			case QSysInfo::MV_TIGER:
+			{
+				osVersion = QLatin1String("MacOS 10.4(Tiger)");
+				break;
+			}
+			case QSysInfo::MV_PANTHER:
+			{
+				osVersion = QLatin1String("MacOS 10.3(Panther)");
+				break;
+			}
+			case QSysInfo::MV_JAGUAR:
+			{
+				osVersion = QLatin1String("MacOS 10.2(Jaguar)");
+				break;
+			}
+			case QSysInfo::MV_PUMA:
+			{
+				osVersion = QLatin1String("MacOS 10.1(Puma)");
+				break;
+			}
+			case QSysInfo::MV_CHEETAH:
+			{
+				osVersion = QLatin1String("MacOS 10.0(Cheetah)");
+				break;
+			}
+			case QSysInfo::MV_9:
+			{
+				osVersion = QLatin1String("MacOS 9");
+				break;
+			}
 
-            case QSysInfo::MV_Unknown:
-            default:
-            {
-                osVersion = QLatin1String("MacOS(unknown)");
-                break;
-            }
-        }
+			case QSysInfo::MV_Unknown:
+			default:
+			{
+				osVersion = QLatin1String("MacOS(unknown)");
+				break;
+			}
+		}
 #elif defined(Q_OS_UNIX)
-        utsname buf;
-        if (uname(&buf) != -1)
-        {
-            osVersion.append(buf.release).append(QLatin1Char(' '));
-            osVersion.append(buf.sysname).append(QLatin1Char(' '));
-            osVersion.append(buf.machine).append(QLatin1Char(' '));
-            osVersion.append(QLatin1String(" (")).append(buf.machine).append(QLatin1Char(')'));
-        }
-        else
-        {
-            osVersion = QLatin1String("Linux/Unix(unknown)");
-        }
+		utsname buf;
+		if (uname(&buf) != -1)
+		{
+			osVersion.append(buf.release).append(QLatin1Char(' '));
+			osVersion.append(buf.sysname).append(QLatin1Char(' '));
+			osVersion.append(buf.machine).append(QLatin1Char(' '));
+			osVersion.append(QLatin1String(" (")).append(buf.machine).append(QLatin1Char(')'));
+		}
+		else
+		{
+			osVersion = QLatin1String("Linux/Unix(unknown)");
+		}
 #elif defined(Q_OS_WIN) || defined(Q_OS_CYGWIN)
-        switch (QSysInfo::WindowsVersion)
-        {
-            case QSysInfo::WV_CE_6:
-            {
-                osVersion = QLatin1String("Windows CE 6.x");
-                break;
-            }
-            case QSysInfo::WV_CE_5:
-            {
-                osVersion = QLatin1String("Windows CE 5.x");
-                break;
-            }
-            case QSysInfo::WV_CENET:
-            {
-                osVersion = QLatin1String("Windows CE .NET");
-                break;
-            }
-            case QSysInfo::WV_CE:
-            {
-                osVersion = QLatin1String("Windows CE");
-                break;
-            }
+		switch (QSysInfo::WindowsVersion)
+		{
+			case QSysInfo::WV_CE_6:
+			{
+				osVersion = QLatin1String("Windows CE 6.x");
+				break;
+			}
+			case QSysInfo::WV_CE_5:
+			{
+				osVersion = QLatin1String("Windows CE 5.x");
+				break;
+			}
+			case QSysInfo::WV_CENET:
+			{
+				osVersion = QLatin1String("Windows CE .NET");
+				break;
+			}
+			case QSysInfo::WV_CE:
+			{
+				osVersion = QLatin1String("Windows CE");
+				break;
+			}
 
-            case QSysInfo::WV_WINDOWS10:
-            {
-                osVersion = QLatin1String("Windows 10");
-                break;
-            }
-            case QSysInfo::WV_WINDOWS8_1:
-            {
-                osVersion = QLatin1String("Windows 8.1");
-                break;
-            }
-            case QSysInfo::WV_WINDOWS8:
-            {
-                osVersion = QLatin1String("Windows 8");
-                break;
-            }
-            case QSysInfo::WV_WINDOWS7:
-            {
-                osVersion = QLatin1String("Windows 7");
-                break;
-            }
-            case QSysInfo::WV_VISTA:
-            {
-                osVersion = QLatin1String("Windows Vista");
-                break;
-            }
-            case QSysInfo::WV_2003:
-            {
-                osVersion = QLatin1String("Windows Server 2003");
-                break;
-            }
-            case QSysInfo::WV_XP:
-            {
-                osVersion = QLatin1String("Windows XP");
-                break;
-            }
-            case QSysInfo::WV_2000:
-            {
-                osVersion = QLatin1String("Windows 2000");
-                break;
-            }
-            case QSysInfo::WV_NT:
-            {
-                osVersion = QLatin1String("Windows NT");
-                break;
-            }
+			case QSysInfo::WV_WINDOWS10:
+			{
+				osVersion = QLatin1String("Windows 10");
+				break;
+			}
+			case QSysInfo::WV_WINDOWS8_1:
+			{
+				osVersion = QLatin1String("Windows 8.1");
+				break;
+			}
+			case QSysInfo::WV_WINDOWS8:
+			{
+				osVersion = QLatin1String("Windows 8");
+				break;
+			}
+			case QSysInfo::WV_WINDOWS7:
+			{
+				osVersion = QLatin1String("Windows 7");
+				break;
+			}
+			case QSysInfo::WV_VISTA:
+			{
+				osVersion = QLatin1String("Windows Vista");
+				break;
+			}
+			case QSysInfo::WV_2003:
+			{
+				osVersion = QLatin1String("Windows Server 2003");
+				break;
+			}
+			case QSysInfo::WV_XP:
+			{
+				osVersion = QLatin1String("Windows XP");
+				break;
+			}
+			case QSysInfo::WV_2000:
+			{
+				osVersion = QLatin1String("Windows 2000");
+				break;
+			}
+			case QSysInfo::WV_NT:
+			{
+				osVersion = QLatin1String("Windows NT");
+				break;
+			}
 
-            case QSysInfo::WV_Me:
-            {
-                osVersion = QLatin1String("Windows Me");
-                break;
-            }
-            case QSysInfo::WV_98:
-            {
-                osVersion = QLatin1String("Windows 98");
-                break;
-            }
-            case QSysInfo::WV_95:
-            {
-                osVersion = QLatin1String("Windows 95");
-                break;
-            }
-            case QSysInfo::WV_32s:
-            {
-                osVersion = QLatin1String("Windows 3.1 with Win32s");
-                break;
-            }
+			case QSysInfo::WV_Me:
+			{
+				osVersion = QLatin1String("Windows Me");
+				break;
+			}
+			case QSysInfo::WV_98:
+			{
+				osVersion = QLatin1String("Windows 98");
+				break;
+			}
+			case QSysInfo::WV_95:
+			{
+				osVersion = QLatin1String("Windows 95");
+				break;
+			}
+			case QSysInfo::WV_32s:
+			{
+				osVersion = QLatin1String("Windows 3.1 with Win32s");
+				break;
+			}
 
-            default:
-            {
-                osVersion = QLatin1String("Windows(unknown)");
-                break;
-            }
-        }
+			default:
+			{
+				osVersion = QLatin1String("Windows(unknown)");
+				break;
+			}
+		}
 
-        if (QSysInfo::WindowsVersion & QSysInfo::WV_CE_based)
-        {
-            osVersion.append(QLatin1String(" (CE-based)"));
-        }
-        else if (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)
-        {
-            osVersion.append(QLatin1String(" (NT-based)"));
-        }
-        else if (QSysInfo::WindowsVersion & QSysInfo::WV_DOS_based)
-        {
-            osVersion.append(QLatin1String(" (MS-DOS-based)"));
-        }
+		if (QSysInfo::WindowsVersion & QSysInfo::WV_CE_based)
+		{
+			osVersion.append(QLatin1String(" (CE-based)"));
+		}
+		else if (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)
+		{
+			osVersion.append(QLatin1String(" (NT-based)"));
+		}
+		else if (QSysInfo::WindowsVersion & QSysInfo::WV_DOS_based)
+		{
+			osVersion.append(QLatin1String(" (MS-DOS-based)"));
+		}
 #else
-        return QLatin1String("Unknown");
+		return QLatin1String("Unknown");
 #endif
-    }
+	}
 
-    return osVersion;
+	return osVersion;
 }
 
 Application::~Application()
 {
-    ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
+	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
 
-    DeferredCallProcessor::term();
-
-    InternetConnectionInspector::term();
+	DeferredCallProcessor::term();
 }
 
 }

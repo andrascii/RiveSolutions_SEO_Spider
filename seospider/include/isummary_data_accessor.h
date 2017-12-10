@@ -1,6 +1,6 @@
 #pragma once
 
-#include "storage_adaptor_type.h"
+#include "storage_adapter_type.h"
 #include "data_collection_groups_factory.h"
 
 namespace SeoSpider
@@ -12,7 +12,7 @@ public:
 	virtual ~ISummaryDataAccessor() = default;
 
 
-	virtual StorageAdaptorType itemCategory(const QModelIndex& index) const noexcept = 0;
+	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept = 0;
 
 
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept = 0;

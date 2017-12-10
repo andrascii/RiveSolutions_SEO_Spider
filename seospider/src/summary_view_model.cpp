@@ -8,15 +8,15 @@ namespace SeoSpider
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectedBackgroundColor("#D6D6D6")
-	, m_hoveredBackgroundColor("#F3F3F3")
-	, m_backgroundColor("#FFFFFF")
+	, m_selectedBackgroundColor("#F7F0D6")
+	, m_hoveredBackgroundColor("#F2F2F2")
+	, m_backgroundColor("#FCFDFE")
 	, m_selectedGridLineColor("#F7F0D6")
 	, m_gridLineColor("#F3F3F3")
-	, m_headerTextColor("#22252D")
-	, m_textColor("#22252D")
-	, m_headerFont("Arial", 10, QFont::DemiBold)
-	, m_textFont("Arial", 10, QFont::Normal)
+	, m_headerTextColor("#4D626E")
+	, m_textColor("#4D626E")
+	, m_headerFont("Helvetica", 10, QFont::DemiBold)
+	, m_textFont("Helvetica", 10, QFont::Normal)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();

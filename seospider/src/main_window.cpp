@@ -8,6 +8,8 @@
 #include "settings_page_impl.h"
 #include "crawler.h"
 #include "site_map_creator_widget.h"
+#include "crawler_status_info.h"
+#include "page_factory.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
@@ -104,7 +106,11 @@ void MainWindow::init()
 	setWindowIcon(QIcon(QStringLiteral(":/images/robot.ico")));
 
 	setMenuBar(new MenuBar(this));
-	setStatusBar(new QStatusBar(this));
+
+	QStatusBar* statusBar = new QStatusBar(this);
+	statusBar->addWidget(new CrawlerStatusInfo(statusBar));
+
+	setStatusBar(statusBar);
 
 	m_initialized = true;
 }
@@ -180,11 +186,18 @@ void MainWindow::createActions()
 void MainWindow::createAndSetCentralWidget()
 {
 	QWidget* centralWidget = new QWidget(this);
-	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
+	DataPagesWidget* dataPagesWidget = new DataPagesWidget(centralWidget);
 
+	PageFactory pageFactory;
+
+	dataPagesWidget->addPage(PageFactory::SiteAuditPage, pageFactory.createPage(PageFactory::SiteAuditPage), tr("Audit Info"), QIcon(), true);
+	dataPagesWidget->addPage(PageFactory::AllPagesPage, pageFactory.createPage(PageFactory::AllPagesPage), tr("All Site Pages"));
+	dataPagesWidget->addPage(PageFactory::AllResourcesPage, pageFactory.createPage(PageFactory::AllResourcesPage), tr("All Resources"));
+
+	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);
 	layout->setMargin(0);
-	layout->addWidget(new DataPagesWidget(centralWidget));
+	layout->addWidget(dataPagesWidget);
 
 	centralWidget->setLayout(layout);
 	setCentralWidget(centralWidget);

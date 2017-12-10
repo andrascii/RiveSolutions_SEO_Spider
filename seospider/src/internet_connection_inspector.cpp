@@ -29,6 +29,7 @@ void InternetConnectionInspector::init()
 		s_internetConnectionInspector = new InternetConnectionInspector;
 
 		s_internetConnectionInspector->moveToThread(thread);
+		thread->start();
 
 		VERIFY(QMetaObject::invokeMethod(s_internetConnectionInspector, "start", Qt::QueuedConnection));
 	}
@@ -46,11 +47,6 @@ void InternetConnectionInspector::term()
 	thread->wait();
 
 	s_internetConnectionInspector = nullptr;
-}
-
-bool InternetConnectionInspector::internetAvailable() const noexcept
-{
-	return m_internetAvailable;
 }
 
 void InternetConnectionInspector::start()
@@ -71,7 +67,7 @@ void InternetConnectionInspector::timerEvent(QTimerEvent*)
 	if (internetAvailable != m_internetAvailable)
 	{
 		m_internetAvailable = internetAvailable;
-		emit statusChanged();
+		emit statusChanged(m_internetAvailable);
 	}
 }
 

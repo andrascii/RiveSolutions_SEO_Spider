@@ -221,6 +221,17 @@ void Preferences::setFollowRobotsTxt(bool value)
 	emit followRobotsTxtChanged();
 }
 
+bool Preferences::crawlOutsideOfStartFolder() const
+{
+	return m_crawlOutsideOfStartFolder;
+}
+
+void Preferences::setCrawlOutsideOfStartFolder(bool value)
+{
+	m_crawlOutsideOfStartFolder = value;
+	emit crawlOutsideOfStartFolderChanged();
+}
+
 const QString& Preferences::userAgent() const
 {
 	return m_userAgent;

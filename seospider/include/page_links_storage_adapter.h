@@ -1,7 +1,7 @@
 #pragma once
 
 #include "parsed_page_info.h"
-#include "parsed_page_info_storage_adaptor.h"
+#include "parsed_page_info_storage_adapter.h"
 #include "sequenced_data_collection_types.h"
 
 namespace SeoSpider
@@ -9,12 +9,12 @@ namespace SeoSpider
 
 using namespace CrawlerEngine;
 
-class PageLinksStorageAdaptor : public QObject, public IPageLinksStorageAdaptor
+class PageLinksStorageAdapter : public QObject, public IPageLinksStorageAdapter
 {
 	Q_OBJECT
 
 public:
-	PageLinksStorageAdaptor(ParsedPageInfoPtr associatedParsedPage, PageLinkContext context);
+	PageLinksStorageAdapter(ParsedPageInfoPtr associatedParsedPage, PageLinkContext context);
 
 	virtual void setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept override;
 

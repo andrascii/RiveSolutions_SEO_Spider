@@ -1,10 +1,10 @@
 #pragma once
-#include "icontrol_adaptor.h"
+#include "icontrol_adapter.h"
 
 namespace SeoSpider
 {
 
-class ControlAdaptorQCheckBox : public IControlAdaptor
+class ControlAdapterQCheckBox : public IControlAdapter
 {
 public:
 	virtual void setControl(QObject* control) override;
@@ -18,6 +18,6 @@ private:
 	QPointer<QCheckBox> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdaptorQCheckBox);
+Q_DECLARE_METATYPE(ControlAdapterQCheckBox);
 
 }

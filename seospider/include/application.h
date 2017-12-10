@@ -3,7 +3,7 @@
 #include "main_window.h"
 #include "software_branding.h"
 #include "summary_data_accessor_factory.h"
-#include "storage_adaptor_factory.h"
+#include "storage_adapter_factory.h"
 #include "isettings_accessor.h"
 #include "requester.h"
 #include "requester_wrapper.h"
@@ -22,7 +22,7 @@ namespace SeoSpider
 {
 
 class Preferences;
-class WinEventFilter;
+class InternetConnectionNotificationManager;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -34,7 +34,7 @@ public:
 
 	Preferences* preferences() const noexcept;
 	MainWindow* mainWindow() const noexcept;
-	StorageAdaptorFactory* storageAdaptorFactory() const noexcept;
+	StorageAdapterFactory* storageAdapterFactory() const noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() const noexcept;
 
 	CrawlerEngine::Crawler* crawler() const noexcept;
@@ -43,12 +43,13 @@ public:
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 	void initializeStyleSheet() noexcept;
+	bool internetAvailable() const noexcept;
 
 	// ISettingsAccessor implementation
 	virtual void saveToSettings(const QByteArray& key, const QVariant& value) noexcept override;
 	virtual QVariant loadFromSettings(const QByteArray& key, const QVariant& defaultValue = QVariant()) const noexcept override;
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
-	virtual QList<QByteArray> allKeys() const override;
+	virtual QStringList allKeys() const override;
 
 signals:
 	void mainWindowShown();
@@ -80,13 +81,15 @@ private:
 	std::unique_ptr<MainWindow> m_mainWindow;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
 
-	std::unique_ptr<StorageAdaptorFactory> m_storageAdatpterFactory;
+	std::unique_ptr<StorageAdapterFactory> m_storageAdatpterFactory;
 	std::unique_ptr<SummaryDataAccessorFactory> m_summaryDataAccessorFactory;
 
 	QSettings* m_settings;
 	QTranslator* m_translator;
 
 	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
+
+	InternetConnectionNotificationManager* m_internetNotificationManager;
 };
 
 }

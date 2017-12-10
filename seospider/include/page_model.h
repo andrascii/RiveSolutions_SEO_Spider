@@ -1,7 +1,7 @@
 #pragma once
 
 #include "abstract_table_model.h"
-#include "istorage_adaptor.h"
+#include "istorage_adapter.h"
 
 namespace SeoSpider
 {
@@ -29,13 +29,13 @@ public:
 	virtual IResizePolicy* resizePolicy() const noexcept override;
 
 
-	void setStorageAdaptor(IStorageAdaptor* storageAdaptor) noexcept;
+	void setStorageAdapter(IStorageAdapter* storageAdapter) noexcept;
 
-	const IStorageAdaptor* storageAdaptor() const;
+	const IStorageAdapter* storageAdapter() const;
 
-	IStorageAdaptor* storageAdaptor();
+	IStorageAdapter* storageAdapter();
 
-	IStorageAdaptor::ItemType itemType(const QModelIndex& index) const noexcept;
+	IStorageAdapter::ItemType itemType(const QModelIndex& index) const noexcept;
 	
 
 	Q_SIGNAL virtual void internalDataChanged() override;
@@ -51,7 +51,7 @@ private slots:
 	void onAboutEndClearingData();
 
 private:
-	IStorageAdaptor* m_storageAdaptor;
+	IStorageAdapter* m_storageAdapter;
 
 	std::shared_ptr<IResizePolicy> m_resizePolicy;
 };

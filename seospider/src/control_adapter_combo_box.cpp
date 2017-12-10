@@ -1,33 +1,33 @@
-#include "control_adaptor_combo_box.h"
+#include "control_adapter_combo_box.h"
 
 namespace SeoSpider
 {
 
-void ControlAdaptorQComboBox::setControl(QObject* control)
+void ControlAdapterQComboBox::setControl(QObject* control)
 {
 	DEBUG_ASSERT(qobject_cast<QComboBox*>(control));
 
 	m_control = qobject_cast<QComboBox*>(control);
 }
 
-QVariant ControlAdaptorQComboBox::value() const
+QVariant ControlAdapterQComboBox::value() const
 {
 	return m_control->currentText();
 }
 
-void ControlAdaptorQComboBox::setValue(const QVariant& val)
+void ControlAdapterQComboBox::setValue(const QVariant& val)
 {
 	DEBUG_ASSERT(val.type() == QVariant::String);
 
 	m_control->setEditText(val.toString());
 }
 
-void ControlAdaptorQComboBox::connectChangesObserver(SettingsPage* page)
+void ControlAdapterQComboBox::connectChangesObserver(SettingsPage* page)
 {
 	VERIFY(QObject::connect(m_control.data(), SIGNAL(currentTextChanged(const QString&)), page, SLOT(somethingChangedSlot())));
 }
 
-QObject* ControlAdaptorQComboBox::qobject()
+QObject* ControlAdapterQComboBox::qobject()
 {
 	return m_control.data();
 }

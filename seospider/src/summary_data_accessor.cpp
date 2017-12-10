@@ -175,14 +175,14 @@ bool SummaryDataAccessor::isHeaderRow(int row) const noexcept
 	return m_groupRows.find(row) != m_groupRows.end();
 }
 
-StorageAdaptorType SummaryDataAccessor::itemCategory(const QModelIndex& index) const noexcept
+StorageAdapterType SummaryDataAccessor::itemCategory(const QModelIndex& index) const noexcept
 {
 	if (isHeaderRow(index.row()) || !index.isValid())
 	{
-		return StorageAdaptorType::StorageAdaptorTypeNone;
+		return StorageAdapterType::StorageAdapterTypeNone;
 	}
 
-	return StorageAdaptorType{ m_itemRows[index.row()]->storageType };
+	return StorageAdapterType{ m_itemRows[index.row()]->storageType };
 }
 
 const QPixmap& SummaryDataAccessor::pixmap(const QModelIndex& index) const noexcept
