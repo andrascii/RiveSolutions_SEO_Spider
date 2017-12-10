@@ -38,7 +38,9 @@ class Preferences : public QObject
 	Q_PROPERTY(bool checkSubdomains READ checkSubdomains WRITE setCheckSubdomains NOTIFY checkSubdomainsChanged);
 	Q_PROPERTY(bool checkCanonicals READ checkCanonicals WRITE setCheckCanonicals NOTIFY checkCanonicalsChanged);
 	Q_PROPERTY(bool followRobotsTxt READ followRobotsTxt WRITE setFollowRobotsTxt NOTIFY followRobotsTxtChanged);
+	Q_PROPERTY(bool crawlOutsideOfStartFolder READ crawlOutsideOfStartFolder WRITE setCrawlOutsideOfStartFolder NOTIFY crawlOutsideOfStartFolderChanged);
 	Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged);
+	
 
 	//
 	// Limits properties
@@ -139,6 +141,10 @@ public:
 	Q_SLOT void setFollowRobotsTxt(bool value);
 	Q_SIGNAL void followRobotsTxtChanged();
 
+	bool crawlOutsideOfStartFolder() const;
+	Q_SLOT void setCrawlOutsideOfStartFolder(bool value);
+	Q_SIGNAL void crawlOutsideOfStartFolderChanged();
+
 	const QString& userAgent() const;
 	Q_SLOT void setUserAgent(const QString& value);
 	Q_SIGNAL void userAgentChanged();
@@ -238,6 +244,7 @@ private:
 	bool m_checkSubdomains;
 	bool m_checkCanonicals;
 	bool m_followRobotsTxt;
+	bool m_crawlOutsideOfStartFolder;
 	QString m_userAgent;
 
 	int m_limitSearchTotal;

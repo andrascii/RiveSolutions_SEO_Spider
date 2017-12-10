@@ -246,6 +246,16 @@ during site scanning.</string>
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_11">
+          <property name="text">
+           <string>Crawl Outside of Start Folder</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">crawlOutsideOfStartFolder</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
