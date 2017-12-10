@@ -1,49 +1,47 @@
 #pragma once
 
+#include "page_factory.h"
+
 namespace SeoSpider
 {
 
-class SummaryFilterWidget;
+class HeaderDecorationWidget;
 
 class DataPagesWidget : public QFrame
 {
 	Q_OBJECT
 
 public:
-	enum class Page
-	{
-		SiteStructurePanelPage,
-		SiteAuditPage,
-		AllPagesPage,
-		AllResourcesPage,
-		DomainMetricsPage,
-		ReportsPage
-	};
-
 	DataPagesWidget(QWidget* parent = nullptr);
 
-	Q_SLOT void showPage(Page page);
+	void addPage(PageFactory::Page page, QWidget* widget, const QString& buttonText, const QIcon& buttonIcon = QIcon(), bool setSelected = false);
 
-private:
-	Q_SLOT void handleNavigationPanelButtonClick();
+public slots:
+	void showPage(PageFactory::Page page);
+
+private slots:
+	void handleNavigationPanelButtonClick();
 
 private:
 	void initializeNavigationPanelWidget();
-	void initializeStackedWidget();
 
 private:
 	struct NavigationPanelControls
 	{
 		QWidget* navigationPanelWidget;
-		QVBoxLayout* verticalMainLayout;
-		std::map<Page, QPushButton*> pushButtons;
+
+		std::map<PageFactory::Page, QPushButton*> pushButtons;
 	};
 
 	QStackedWidget* m_stackedWidget;
-	std::map<Page, int> m_pageIndexes;
+	
+	std::map<PageFactory::Page, int> m_pageIndexes;
 
 	NavigationPanelControls m_navigationPanel;
+
 	QPushButton* m_prevButton;
+
+	HeaderDecorationWidget* m_decorationWidget;
 };
 
 }
