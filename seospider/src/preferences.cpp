@@ -232,6 +232,39 @@ void Preferences::setCrawlOutsideOfStartFolder(bool value)
 	emit crawlOutsideOfStartFolderChanged();
 }
 
+bool Preferences::useCustomUserAgent() const
+{
+	return m_useCustomUserAgent;
+}
+
+void Preferences::setUseCustomUserAgent(bool value)
+{
+	m_useCustomUserAgent = value;
+	emit useCustomUserAgentChanged();
+}
+
+bool Preferences::useDesktopUserAgent() const
+{
+	return m_useDesktopUserAgent;
+}
+
+void Preferences::setUseDesktopUserAgent(bool value)
+{
+	m_useDesktopUserAgent = value;
+	emit useDesktopUserAgentChanged();
+}
+
+bool Preferences::useMobileUserAgent() const
+{
+	return m_useMobileUserAgent;
+}
+
+void Preferences::setUseMobileUserAgent(bool value)
+{
+	m_useMobileUserAgent = value;
+	emit useMobileUserAgentChanged();
+}
+
 const QString& Preferences::userAgent() const
 {
 	return m_userAgent;

@@ -6,6 +6,7 @@
 #include "control_adapter_line_edit.h"
 #include "control_adapter_spin_box.h"
 #include "control_adapter_combo_box.h"
+#include "control_adapter_radio_button.h"
 
 namespace SeoSpider
 {
@@ -110,6 +111,7 @@ void SettingsPage::registerMetaTypes() const
 	qRegisterMetaType<ControlAdapterQLineEdit>();
 	qRegisterMetaType<ControlAdapterQSpinBox>();
 	qRegisterMetaType<ControlAdapterQComboBox>();
+	qRegisterMetaType<ControlAdapterQRadioButton>();
 }
 
 void SettingsPage::somethingChangedSlot()

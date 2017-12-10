@@ -15,6 +15,7 @@
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
+#include "ui_user_agent_settings_widget.h"
 
 namespace SeoSpider
 {
@@ -102,6 +103,7 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPreferencesSettingsAction, tr("Preferences Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction, tr("Limit Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction, tr("Proxy Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction, tr("User Agent Settings"));
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
@@ -126,6 +128,9 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_openProxySettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_ProxySettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openUserAgentSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_UserAgentSettingsWidget)); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -170,6 +175,7 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
+	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_UserAgentSettingsWidget));
 }
 
 }

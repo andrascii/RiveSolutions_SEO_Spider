@@ -30,6 +30,8 @@
 		<file>images/maximize-window.png</file>
 		<file>images/restore-window.png</file>
 		<file>config/defaults.cfg</file>
+		<file>config/desktopUserAgents.cfg</file>
+		<file>config/mobileUserAgents.cfg</file>
 		<file>translations/translate_ru_RU.qm</file>
     </qresource>
 </RCC>
