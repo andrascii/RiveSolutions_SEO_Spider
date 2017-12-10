@@ -19,31 +19,21 @@ SettingsPage::SettingsPage(bool isAutoApply, QWidget* parent)
 
 void SettingsPage::applyChanges() noexcept
 {
-	foreach(QObject* control, findChildren<QObject*>())
+	foreach(QObject* control, m_controls)
 	{
-		if (!control->property("controlKey").isValid())
-		{
-			continue;
-		}
-
 		const QString controlKeyString = qvariant_cast<QString>(control->property("controlKey"));
-
-		DEBUG_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
-		DEBUG_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
-
-		const QByteArray controlKey = controlKeyString.toLatin1();
-
-		if (controlKey.isEmpty())
-		{
-			continue;
-		}
 
 		if (!m_changedSettingsKeys.contains(controlKeyString))
 		{
 			continue;
 		}
+
+		const QByteArray controlKey = controlKeyString.toLatin1();
+
 		DEBUGLOG << controlKey.constData() << " " << m_controlAdapters[controlKey]->value().toString();
+
 		theApp->preferences()->setProperty(controlKey.constData(), m_controlAdapters[controlKey]->value());
+
 		DEBUGLOG << theApp->preferences()->property(controlKey.constData()).toString();
 	}
 
@@ -85,26 +75,13 @@ void SettingsPage::init()
 {
 	registerMetaTypes();
 
-	foreach(QObject* control, findChildren<QObject*>())
+	initControlsWithProperty();
+
+	foreach(QObject* control, m_controls)
 	{
-		if (!control->property("controlKey").isValid())
-		{
-			continue;
-		}
-
 		const QString controlKeyString = qvariant_cast<QString>(control->property("controlKey"));
-
-		DEBUG_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
-		DEBUG_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
-
 		const QByteArray controlKey = controlKeyString.toLatin1();
 
-		if (controlKey.isEmpty())
-		{
-			continue;
-		}
-
-		
 		QVariant propertyValue = theApp->preferences()->property(controlKey.constData());
 
 		if (!propertyValue.isValid())
@@ -126,7 +103,6 @@ void SettingsPage::init()
 		m_controlAdapters[controlKeyString] = controlAdapter;
 	}
 }
-
 
 void SettingsPage::registerMetaTypes() const
 {
@@ -165,6 +141,31 @@ std::shared_ptr<IControlAdapter> SettingsPage::createControlAdapter(QObject* con
 	controlAdapter->connectChangesObserver(this);
 
 	return controlAdapter;
+}
+
+void SettingsPage::initControlsWithProperty()
+{
+	foreach(QObject* control, findChildren<QObject*>())
+	{
+		if (!control->property("controlKey").isValid())
+		{
+			continue;
+		}
+
+		const QString controlKeyString = qvariant_cast<QString>(control->property("controlKey"));
+
+		DEBUG_ASSERT(control->property("controlKey").toByteArray() == controlKeyString.toLatin1());
+		DEBUG_ASSERT(controlKeyString.toUtf8() == controlKeyString.toLatin1());
+
+		const QByteArray controlKey = controlKeyString.toLatin1();
+
+		if (controlKey.isEmpty())
+		{
+			continue;
+		}
+
+		m_controls.push_back(control);
+	}
 }
 
 }
