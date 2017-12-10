@@ -12,8 +12,9 @@ TEST(SerializationTests, PagesSerialization)
 		auto pages = cl->waitForParsedPageReceived(CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
 		cl->checkSequencedDataCollectionConsistency();
 
-		cl->saveToFile(QString("pages.json"));
 		cl->stopCrawling();
+		cl->saveToFile(QString("pages.json"));
+		cl->clearData();
 		cl->loadFromFile(QString("pages.json"));
 		
 		auto deserializedPages = cl->waitForParsedPageReceived(CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
@@ -28,7 +29,7 @@ TEST(SerializationTests, PagesSerialization)
 			//EXPECT_EQ(page->linksToThisPage.size(), deserializedPage->linksToThisPage.size());
 
 		}
-		// TODO: compare pages and deserializedPages
+		// TODO: compare pages and pages
 	};
 
 	env.initializeTest(testFunction);

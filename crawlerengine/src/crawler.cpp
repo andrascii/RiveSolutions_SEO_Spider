@@ -236,6 +236,8 @@ QString Crawler::siteMapXml(const SiteMapSettings& settings) const
 
 void Crawler::saveToFile(const QString& fileName)
 {
+	ASSERT(state() != State::StateWorking);
+
 	QFileInfo fileInfo(fileName);
 
 	const QString fileDirPath = fileInfo.absolutePath();
@@ -269,8 +271,27 @@ void Crawler::saveToFile(const QString& fileName)
 
 		const SequencedDataCollection* sequencedCollection = sequencedDataCollection();;
 		const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
+		std::vector<ParsedPage*> pages;
+		const int pagesCount = storage->size();
+		pages.reserve(pagesCount);
+		for (int i = 0; i < pagesCount; ++i)
+		{
+			const ParsedPage* page = (*storage)[i];
+			pages.push_back(const_cast<ParsedPage*>(page));
+		}
 
-		Serializer serializer(storage, m_uniqueLinkStore); // TODO: provide all required data into the constructor
+		std::vector<CrawlerRequest> pendingUrls;
+		for (CrawlerWorkerThread* worker : m_workers)
+		{
+			const std::vector<CrawlerRequest> workerPendingUrls = worker->pendingUrls();
+			pendingUrls.insert(pendingUrls.end(), workerPendingUrls.begin(), workerPendingUrls.end());
+		}
+		std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
+		pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
+
+		std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
+
+		Serializer serializer(std::move(pages), std::move(crawledUrls), std::move(pendingUrls)); // TODO: provide all required data into the constructor
 		Common::JsonParserStreamWriter writer(file);
 		serializer.saveToJsonStream(writer);
 
@@ -305,6 +326,7 @@ void Crawler::saveToFile(const QString& fileName)
 
 void Crawler::loadFromFile(const QString& fileName)
 {
+	ASSERT(state() != State::StateWorking);
 	clearData();
 	try
 	{
@@ -319,7 +341,7 @@ void Crawler::loadFromFile(const QString& fileName)
 		Common::JsonParserStreamReader reader(file);
 		serializer.readFromJsonStream(reader);
 
-		const std::vector<ParsedPage*>& pages = serializer.deserializedPages();
+		const std::vector<ParsedPage*>& pages = serializer.pages();
 		std::vector<ParsedPagePtr> incomingPages;
 		incomingPages.reserve(pages.size());
 		for (ParsedPage* page : pages)
@@ -329,6 +351,9 @@ void Crawler::loadFromFile(const QString& fileName)
 
 		VERIFY(QMetaObject::invokeMethod(m_modelController, "addParsedPages",
 			Qt::BlockingQueuedConnection, Q_ARG(std::vector<ParsedPagePtr>, incomingPages)));
+
+		m_uniqueLinkStore->setCrawledUrls(serializer.crawledLinks());
+		m_uniqueLinkStore->setPendingUrls(serializer.pendingLinks());
 
 	}
 	catch (const std::exception& e)

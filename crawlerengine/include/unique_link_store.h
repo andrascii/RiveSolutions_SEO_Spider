@@ -32,6 +32,9 @@ public:
 	std::vector<CrawlerRequest> crawledUrls() const noexcept;
 	std::vector<CrawlerRequest> pendingUrls() const noexcept;
 
+	void setCrawledUrls(const std::vector<CrawlerRequest>& urls);
+	void setPendingUrls(const std::vector<CrawlerRequest>& urls);
+
 	void clear();
 
 signals:
