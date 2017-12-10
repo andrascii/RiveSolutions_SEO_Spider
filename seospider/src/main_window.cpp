@@ -82,8 +82,8 @@ void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageNam
 }
 
 void MainWindow::showMessageBoxDialog(const QString& title, 
-	const QString& message, 
-	MessageBoxDialog::Icon icon, 
+	const QString& message,
+	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons)
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog(this);
