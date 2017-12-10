@@ -68,8 +68,6 @@ QWidget* PageFactory::createPage(Page page) const
 		}
 	}
 
-
-
 	return widget;
 }
 

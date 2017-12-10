@@ -88,7 +88,7 @@ QDateEdit
 {
 	min-height: 1.5em;
 	background-color: #ffffff;
-	color: #494949;
+	color: #4D626E;
 }
 
 QCheckBox
@@ -115,7 +115,7 @@ QProgressBar
 	min-height: 1.5em;
 	background-color: #ffffff;
 	text-align: center;
-	color: #494949;
+	color: #4D626E;
 	min-width: 15em;
 }
 
@@ -128,25 +128,25 @@ QProgressBar::chunk
 
 QPushButton
 {
-	color: #494949;
-	background-color: #F5F5F5;
+	color: #4D626E;
+	background-color: #F2F2F2;
 	min-height: 1.5em;
 	min-width: 5em;
 }
 
 QPushButton:hover
 {
-	background-color: #FFFFFF;
+	background-color: #FCFDFE;
 }
 
 QPushButton:pressed
 {
-	background-color: #D6D6D6;
+	background-color: #D0D0D0;
 }
 
 QPushButton:disabled
 {
-	background-color: #D6D6D6;
+	background-color: #D0D0D0;
 }
 
 /*/////////////////////////////// QComboBox ///////////////////////////////*/
@@ -234,7 +234,7 @@ SeoSpider--ControlPanelWidget
 
 SeoSpider--TableView
 {
-	background: white;
+	background: #FCFDFE;
 }
 
 QLabel#SelectFilterLabel
@@ -298,17 +298,15 @@ SeoSpider--SettingsPage QFrame#headerFrame
 {
 	min-height: 6em;
 	padding: 0.5em;
-	padding-left: 1.2em;
-	
-	background: #F8F8F8;
-	
+	padding-left: 1.2em;	
+	background: #F2F2F2;
 	border: 0.05em solid #CCCCCC;
 	border-bottom: none;
 }
 
 SeoSpider--SettingsPage QFrame#settingsFrame
 {
-	background: #E7E7E7;
+	background: #FCFDFE;
 	padding: 0.8em;
 	border: 0.05em solid #CCCCCC;
 }
@@ -325,13 +323,13 @@ SeoSpider--SettingsPage QLabel#headerName
 
 SeoSpider--ApplicationSettingsWidget
 {
-	background: #E7E7E7;
+	background: #F2F2F2;
 }
 
 SeoSpider--ApplicationSettingsWidget QListView
 {
 	border: 0.05em solid #CCCCCC;
-	background: #FFFFFF;
+	background: #FCFDFE;
 	min-width: 10em;
 }
 
@@ -342,13 +340,13 @@ SeoSpider--ApplicationSettingsWidget QListView::item
 
 SeoSpider--ApplicationSettingsWidget QListView::item:hover
 {
-    background-color: #F3F3F3;
+    background-color: #F2F2F2;
 	color: black;
 }
 
 SeoSpider--ApplicationSettingsWidget QListView::item:selected
 {
-    background-color: #CCCCCC;
+    background-color: #F7F0D6;
 	color: black;
 }
 
@@ -356,7 +354,7 @@ SeoSpider--ApplicationSettingsWidget QLabel,
 SeoSpider--ApplicationSettingsWidget QWidget,
 SeoSpider--ApplicationSettingsWidget QCheckBox
 {
-	color: #333333;
+	color: #4D626E;
 }
 
 SeoSpider--ApplicationSettingsWidget QPushButton#applyButton:enabled
@@ -380,12 +378,12 @@ SeoSpider--ApplicationSettingsWidget QPushButton#applyButton:enabled:pressed
 
 SeoSpider--SitemapCreatorWidget
 {
-	background: #E7E7E7;
+	background: #F2F2F2;
 }
 
 QFrame#ControlsFrame
 {
-	background: #E7E7E7;
+	background: #FCFDFE;
 	padding: 0.8em;
 	border: 0.05em solid #CCCCCC;
 }
@@ -393,7 +391,7 @@ QFrame#ControlsFrame
 QFrame#ControlsFrame QCheckBox,
 QFrame#ControlsFrame QLabel
 {
-	color: #333333;
+	color: #4D626E;
 	font-size: 9pt;
 }
 
@@ -425,14 +423,14 @@ QFrame#HeaderFrame
 	max-height: 6em;
 	padding: 0.5em;
 	padding-left: 1.2em;
-	background: #F8F8F8;
+	background: #F2F2F2;
 	border: 0.05em solid #CCCCCC;
 	border-bottom: none;
 }
 
 QFrame#HeaderFrame QLabel
 {
-	color: #333333;
+	color: #4D626E;
 	font-size: 9pt;
 }
 
@@ -655,12 +653,12 @@ QFrame#MessageBox QPushButton
 
 QFrame#MessageBox QPushButton:hover
 {
-	border-color: #FFFFFF;
+	border-color: #FCFDFE;
 }
 
 QFrame#MessageBox QPushButton:pressed
 {
-	border-color: #C0C0C0;
+	border-color: #F2F2F2;
 }
 
 QFrame#MessageBox QLabel

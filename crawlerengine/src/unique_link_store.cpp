@@ -147,6 +147,30 @@ std::vector<CrawlerRequest> UniqueLinkStore::pendingUrls() const noexcept
 	return result;
 }
 
+void UniqueLinkStore::setCrawledUrls(const std::vector<CrawlerRequest>& urls)
+{
+	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	m_crawledUrlList.clear();
+	m_crawledSize.store(0);
+
+	for (auto it = std::cbegin(urls); it != std::cend(urls); ++it)
+	{
+		m_crawledUrlList.insert(*it);
+	}
+}
+
+void UniqueLinkStore::setPendingUrls(const std::vector<CrawlerRequest>& urls)
+{
+	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	m_pendingUrlList.clear();
+	m_pendingSize.store(0);
+
+	for (auto it = std::cbegin(urls); it != std::cend(urls); ++it)
+	{
+		m_pendingUrlList.insert(*it);
+	}
+}
+
 void UniqueLinkStore::clear()
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
