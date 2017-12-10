@@ -3,6 +3,7 @@
 #include "parsed_page.h"
 #include "robots_txt_rules.h"
 #include "requester_wrapper.h"
+#include "crawler_request.h"
 
 namespace CrawlerEngine
 {
@@ -21,6 +22,8 @@ class CrawlerWorkerThread : public QObject
 public:
 	CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore);
 
+	std::vector<CrawlerRequest> pendingUrls() const;
+
 signals:
 	void pageParsed(ParsedPagePtr parsedPage) const;
 
@@ -35,9 +38,9 @@ private slots:
 	void onCrawlerClearData();
 
 private:
-	void schedulePageResourcesLoading(ParsedPagePtr& parsedPage) const;
+	void schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
 
-	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage) const;
+	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
 
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 
@@ -55,6 +58,7 @@ private:
 	bool m_isRunning;
 
 	std::vector<ParsedPagePtr> m_pagesAcceptedAfterStop;
+	std::map<QUrl, CrawlerRequest> m_pendingUrls;
 };
 
 }

@@ -17,6 +17,8 @@ public:
 
 public slots:
 	void showSitemapCreatorDialog();
+	void showSaveFileDialog();
+	void showOpenFileDialog();
 
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 

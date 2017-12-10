@@ -34,6 +34,43 @@ void MainWindow::showSitemapCreatorDialog()
 	titledWindow->deleteLater();
 }
 
+void MainWindow::showSaveFileDialog()
+{
+	if (theApp->crawler()->state() == Crawler::StateWorking)
+	{
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot save the document while crawler is working!"),
+			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	if (theApp->crawler()->isNoData())
+	{
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
+			tr("Crawler does not contain any data."),
+			MessageBoxDialog::InformationIcon, QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow());
+	theApp->crawler()->saveToFile(path);
+}
+
+void MainWindow::showOpenFileDialog()
+{
+	if (theApp->crawler()->state() == Crawler::StateWorking)
+	{
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open a document while crawler is working!"),
+			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow());
+	theApp->crawler()->loadFromFile(path);
+}
+
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
 {
 	ApplicationSettingsWidget* applicationSettingsWidget = new ApplicationSettingsWidget(this);
@@ -135,6 +172,9 @@ void MainWindow::createActions()
 	actionRegistry.addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
 
 	VERIFY(connect(actionRegistry.globalAction(s_createXMLSitemapAction), SIGNAL(triggered()), this, SLOT(showSitemapCreatorDialog())));
+	
+	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(showSaveFileDialog())));
+	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(showOpenFileDialog())));
 }
 
 void MainWindow::createAndSetCentralWidget()

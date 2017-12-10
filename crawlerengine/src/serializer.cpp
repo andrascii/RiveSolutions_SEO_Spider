@@ -109,10 +109,13 @@ public:
 
 			const ParsedPage* linkPage = link.resource.lock().get();
 			auto it = m_pagesByIndex.find(linkPage);
-			ASSERT(it != m_pagesByIndex.end());
 
+			// seems like the page can be pending and can be no found in m_pagesByIndex
+			// probably we should somehow store the pending pages too
+			// TODO: implement what is described above
 			QVariantMap linkValue;
-			linkValue[resourceIndexKey] = it->second;
+			linkValue[resourceIndexKey] = it != m_pagesByIndex.end() ? it->second : -1;
+			linkValue[urlKey] = link.url.toDisplayString();
 			linkValue[linkParameterKey] = static_cast<int>(link.linkParameter);
 			linkValue[resourceSourceKey] = static_cast<int>(link.resourceSource);
 			linkValue[altOrTitleKey] = link.altOrTitle;
@@ -151,16 +154,22 @@ public:
 			const LinkParameter linkParameter = static_cast<LinkParameter>(linkMap[linkParameterKey].toInt());
 			const ResourceSource resourceSource = static_cast<ResourceSource>(linkMap[resourceSourceKey].toInt());
 			const QString altOrTitle = linkMap[altOrTitleKey].toString();
+			const QUrl url = QUrl(linkMap[urlKey].toString());
 
 			const int resourceIndex = linkMap[resourceIndexKey].toInt();
 
-			auto it = m_pagesByIndex.find(resourceIndex);
-			ASSERT(it != m_pagesByIndex.end());
+			ResourceType resourceType = ResourceType::ResourceHtml;
+			if (resourceIndex != -1)
+			{
+				auto it = m_pagesByIndex.find(resourceIndex);
+				ASSERT(it != m_pagesByIndex.end());
+				resourceType = it->second->resourceType;
+			}
 
 			const RawResourceOnPage resource
 			{
-				it->second->resourceType,
-				LinkInfo{ it->second->url, linkParameter, altOrTitle, false, resourceSource }
+				resourceType,
+				LinkInfo{ url, linkParameter, altOrTitle, false, resourceSource }
 			};
 
 			m_page->allResourcesOnPage.push_back(resource);
@@ -222,14 +231,13 @@ private:
 };
 
 Serializer::Serializer()
-	: m_crawledPages(nullptr)
-	, m_linkStore(nullptr)
 {
 }
 
-Serializer::Serializer(const ISequencedStorage* crawledPages, const UniqueLinkStore* linkStore)
-	: m_crawledPages(crawledPages)
-	, m_linkStore(linkStore)
+Serializer::Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, std::vector<CrawlerRequest>&& pendingUrls)
+	: m_pages(std::move(pages))
+	, m_crawledLinks(std::move(crawledUrls))
+	, m_pendingLinks(std::move(pendingUrls))
 {
 }
 
@@ -238,7 +246,7 @@ void Serializer::saveToJsonStream(Common::JsonParserStreamWriter& stream)
 	Common::JsonStreamMapElement map(stream);
 
 	map.writeMapValue(serializerVersionKey, serializerVersion);
-	map.writeMapValue(pagesCountKey, m_crawledPages->size());
+	map.writeMapValue(pagesCountKey, m_pages.size());
 
 	{
 		Common::JsonStreamMapValue pagesNode(map, pagesKey);
@@ -247,12 +255,12 @@ void Serializer::saveToJsonStream(Common::JsonParserStreamWriter& stream)
 	
 	{
 		Common::JsonStreamMapValue crawledLinksNode(map, crawledUrlsKey);
-		saveLinksToJsonStream(crawledLinksNode, m_linkStore->crawledUrls());
+		saveLinksToJsonStream(crawledLinksNode, m_crawledLinks);
 	}
 	
 	{
 		Common::JsonStreamMapValue pendingLinksNode(map, pendingUrlsKey);
-		saveLinksToJsonStream(pendingLinksNode, m_linkStore->pendingUrls());
+		saveLinksToJsonStream(pendingLinksNode, m_pendingLinks);
 	}
 }
 
@@ -261,26 +269,39 @@ void Serializer::readFromJsonStream(Common::JsonParserStreamReader& stream)
 	Common::JsonStreamMapReader map(stream);
 	const int pagesCount = map.readValue(pagesCountKey).toInt();
 	readPagesFromJsonStream(map.value(pagesKey), pagesCount);
+
+	readLinksFromJsonStream(map.value(crawledUrlsKey), m_crawledLinks);
+	readLinksFromJsonStream(map.value(pendingUrlsKey), m_pendingLinks);
 }
 
-const std::vector<ParsedPage*>& CrawlerEngine::Serializer::deserializedPages() const
+const std::vector<ParsedPage*>& CrawlerEngine::Serializer::pages() const
 {
-	return m_deserializedPages;
+	return m_pages;
+}
+
+const std::vector<CrawlerRequest>& Serializer::crawledLinks() const
+{
+	return m_crawledLinks;
+}
+
+const std::vector<CrawlerRequest>& CrawlerEngine::Serializer::pendingLinks() const
+{
+	return m_pendingLinks;
 }
 
 void Serializer::savePagesToJsonStream(Common::JsonParserStreamWriter& stream) const
 {
 	Common::JsonStreamListElement pagesElement(stream);
 	std::vector<ParsedPageSerializer> pageWrappers;
-	pageWrappers.reserve(m_crawledPages->size());
+	pageWrappers.reserve(m_pages.size());
 	std::map<const ParsedPage*, int> pagesByIndex;
-	for (int i = 0; i < m_crawledPages->size(); ++i)
+	for (int i = 0; i < m_pages.size(); ++i)
 	{
-		const ParsedPage* page = (*m_crawledPages)[i];
+		const ParsedPage* page = m_pages[i];
 		pageWrappers.emplace_back(page, i, pagesByIndex);
 	}
 
-	for (int i = 0; i < m_crawledPages->size(); ++i)
+	for (int i = 0; i < m_pages.size(); ++i)
 	{
 		ParsedPageSerializer& wrapper = pageWrappers[i];
 		pagesElement.writeCompound(wrapper.toJson());
@@ -307,7 +328,7 @@ void Serializer::readPagesFromJsonStream(Common::JsonParserStreamReader& stream,
 	for (ParsedPageDeserializer& wrapper: pageWrappers)
 	{
 		wrapper.resolveLinks();
-		m_deserializedPages.push_back(wrapper.page());
+		m_pages.push_back(wrapper.page());
 	}
 }
 void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const
@@ -320,6 +341,19 @@ void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, c
 		linkMap[requestTypeKey] = static_cast<int>(link.requestType);
 
 		linksListElement.writeCompound(linkMap);
+	}
+}
+void CrawlerEngine::Serializer::readLinksFromJsonStream(Common::JsonParserStreamReader& stream, std::vector<CrawlerRequest>& links)
+{
+	Common::JsonStreamListReader reader(stream);
+
+	while (!reader.endOfList())
+	{
+		QVariantMap linkMap = reader.readCompound().toMap();
+		CrawlerRequest request;
+		request.url = QUrl(linkMap[urlKey].toString());
+		request.requestType = static_cast<DownloadRequestType>(linkMap[requestTypeKey].toInt());
+		links.push_back(request);
 	}
 }
 }
