@@ -137,11 +137,11 @@ void MainWindow::createActions()
 	actionRegistry.addActionGroup(s_settingsActionGroup);
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openSettingsAction, tr("Settings"));
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerSettingsAction, tr("Crawler Settings"));
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLanguageSettingsAction, tr("Language Settings"));
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPreferencesSettingsAction, tr("Preferences Settings"));
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction, tr("Limit Settings"));
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction, tr("Proxy Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerSettingsAction, QIcon(QStringLiteral(":/images/crawler-settings.png")), tr("Crawler Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLanguageSettingsAction, QIcon(QStringLiteral(":/images/lang-settings.png")), tr("Language Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPreferencesSettingsAction, QIcon(QStringLiteral(":/images/preferences-settings-icon.png")), tr("Preferences Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction, QIcon(QStringLiteral(":/images/limits-settings.png")), tr("Limit Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction, QIcon(QStringLiteral(":/images/proxy-settings.png")), tr("Proxy Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction, tr("User Agent Settings"));
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
