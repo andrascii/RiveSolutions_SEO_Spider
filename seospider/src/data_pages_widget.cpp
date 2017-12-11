@@ -12,6 +12,7 @@
 #include "website_data_widget.h"
 #include "page_data_widget.h"
 #include "crawler_progress_bar.h"
+#include "custom_push_button.h"
 
 namespace SeoSpider
 {
@@ -40,7 +41,7 @@ void DataPagesWidget::addPage(PageFactory::Page page, QWidget* widget, const QSt
 {
 	m_pageIndexes[page] = m_stackedWidget->addWidget(widget);
 
-	m_navigationPanel.pushButtons[page] = new QPushButton(buttonText, m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.pushButtons[page] = new CustomPushButton(buttonIcon, buttonText, m_navigationPanel.navigationPanelWidget);
 
 	VERIFY(connect(m_navigationPanel.pushButtons[page], &QPushButton::clicked,
 		this, &DataPagesWidget::handleNavigationPanelButtonClick));

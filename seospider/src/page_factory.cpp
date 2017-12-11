@@ -71,4 +71,33 @@ QWidget* PageFactory::createPage(Page page) const
 	return widget;
 }
 
+QIcon PageFactory::createPageIcon(Page page) const
+{
+	switch (page)
+	{
+		case SiteAuditPage:
+		{
+			return QIcon(":/images/audit-info.png");
+		}
+		case AllPagesPage:
+		{
+			return QIcon(":/images/all-pages.png");
+		}
+		case AllResourcesPage:
+		{
+			return QIcon(":/images/all-resources.png");
+		}
+		case DomainMetricsPage:
+		{
+
+		}
+		case ReportsPage:
+		{
+
+		}
+	}
+
+	return QIcon();
+}
+
 }

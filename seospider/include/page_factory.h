@@ -16,6 +16,8 @@ public:
 	};
 
 	QWidget* createPage(Page page) const;
+
+	QIcon createPageIcon(Page page) const;
 };
 
 }
