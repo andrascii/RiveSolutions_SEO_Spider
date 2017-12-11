@@ -10,12 +10,14 @@
 #include "site_map_creator_widget.h"
 #include "crawler_status_info.h"
 #include "page_factory.h"
+#include "settings_page.h"
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
 #include "ui_user_agent_settings_widget.h"
+#include "user_agent_settings_widget.h"
 
 namespace SeoSpider
 {
@@ -215,7 +217,7 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
-	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_UserAgentSettingsWidget));
+	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(), TYPE_STRING(Ui_UserAgentSettingsWidget), new UserAgentSettingsWidget());
 }
 
 }

@@ -265,6 +265,28 @@ void Preferences::setUseMobileUserAgent(bool value)
 	emit useMobileUserAgentChanged();
 }
 
+const QString& Preferences::desktopUserAgent() const
+{
+	return m_desktopUserAgent;
+}
+
+void Preferences::setDesktopUserAgent(const QString& value)
+{
+	m_desktopUserAgent = value;
+	emit desktopUserAgentChanged();
+}
+
+const QString& Preferences::mobileUserAgent() const
+{
+	return m_mobileUserAgent;
+}
+
+void Preferences::setMobileUserAgent(const QString& value)
+{
+	m_mobileUserAgent = value;
+	emit mobileUserAgentChanged();
+}
+
 const QString& Preferences::userAgent() const
 {
 	return m_userAgent;

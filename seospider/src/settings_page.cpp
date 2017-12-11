@@ -35,7 +35,7 @@ void SettingsPage::applyChanges() noexcept
 
 		theApp->preferences()->setProperty(controlKey.constData(), m_controlAdapters[controlKey]->value());
 
-		DEBUGLOG << theApp->preferences()->property(controlKey.constData()).toString();
+		DEBUGLOG << controlKey.constData() << " " << theApp->preferences()->property(controlKey.constData()).toString();
 	}
 
 	m_changedSettingsKeys.clear();
@@ -103,6 +103,7 @@ void SettingsPage::init()
 
 		m_controlAdapters[controlKeyString] = controlAdapter;
 	}
+
 }
 
 void SettingsPage::registerMetaTypes() const
