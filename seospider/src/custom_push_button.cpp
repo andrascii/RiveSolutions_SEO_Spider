@@ -16,7 +16,6 @@ CustomPushButton::CustomPushButton(const QString& text, QWidget* parent)
 CustomPushButton::CustomPushButton(const QIcon& icon, const QString& text, QWidget* parent)
 	: QPushButton(icon, text, parent)
 	, m_isInFocus(false)
-	, m_isActive(false)
 {
 }
 
@@ -38,20 +37,9 @@ void CustomPushButton::paintEvent(QPaintEvent*)
 	QStyleOptionButton option;
 	initStyleOption(&option);
 
-	if (m_isInFocus)
+	if (m_isInFocus || isSelected())
 	{
 		option.state |= QStyle::State_On | QStyle::State_HasFocus;
-	}
-
-	if (isSelected())
-	{
-		option.state &= ~QStyle::State_Raised;
-		option.state |= QStyle::State_Active | QStyle::State_HasFocus;
-	}
-	else
-	{
-		option.state |= QStyle::State_Raised;
-		option.state &= ~QStyle::State_Active | QStyle::State_HasFocus;
 	}
 
 	p.drawControl(QStyle::CE_PushButton, option);

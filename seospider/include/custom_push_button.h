@@ -22,7 +22,6 @@ private:
 
 private:
 	bool m_isInFocus;
-	bool m_isActive;
 };
 
 }
