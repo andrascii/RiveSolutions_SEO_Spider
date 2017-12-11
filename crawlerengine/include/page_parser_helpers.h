@@ -14,6 +14,7 @@ public:
 	static QUrl resolveUrl(const QUrl& baseUrl, const QUrl& url) noexcept;
 
 	static QUrl removeUrlLastSlashIfExists(const QUrl& url);
+	static bool checkUrlIdentity(const QUrl& lhs, const QUrl& rhs);
 
 	static bool isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept;
 	static bool isHtmlOrPlainContentType(const QString& contentType) noexcept;
