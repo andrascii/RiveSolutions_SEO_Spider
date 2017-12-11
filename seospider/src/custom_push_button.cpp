@@ -20,12 +20,6 @@ CustomPushButton::CustomPushButton(const QIcon& icon, const QString& text, QWidg
 {
 }
 
-void CustomPushButton::setActive(bool active)
-{
-	m_isActive = active;
-	update();
-}
-
 void CustomPushButton::leaveEvent(QEvent* ev)
 {
 	m_isInFocus = false;
@@ -44,23 +38,35 @@ void CustomPushButton::paintEvent(QPaintEvent*)
 	QStyleOptionButton option;
 	initStyleOption(&option);
 
-	if (m_isInFocus || m_isActive)
+	if (m_isInFocus)
 	{
 		option.state |= QStyle::State_On | QStyle::State_HasFocus;
 	}
 
-	if (m_isActive)
+	if (isSelected())
 	{
 		option.state &= ~QStyle::State_Raised;
-		option.state |= QStyle::State_Sunken;
+		option.state |= QStyle::State_Active | QStyle::State_HasFocus;
 	}
 	else
 	{
 		option.state |= QStyle::State_Raised;
-		option.state &= ~QStyle::State_Sunken;
+		option.state &= ~QStyle::State_Active | QStyle::State_HasFocus;
 	}
 
 	p.drawControl(QStyle::CE_PushButton, option);
+}
+
+bool CustomPushButton::isSelected() const
+{
+	const QVariant selectedProperty = property("selected");
+
+	if (selectedProperty.isValid() && selectedProperty.toBool())
+	{
+		return true;
+	}
+
+	return false;
 }
 
 }

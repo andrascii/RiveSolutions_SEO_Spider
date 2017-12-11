@@ -73,19 +73,36 @@ QWidget* PageFactory::createPage(Page page) const
 
 QIcon PageFactory::createPageIcon(Page page) const
 {
+	QIcon icon;
+
 	switch (page)
 	{
 		case SiteAuditPage:
 		{
-			return QIcon(":/images/audit-info.png");
+			icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Normal, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Active, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Active, QIcon::Off);
+			icon.addFile(QStringLiteral(":/images/audit-info-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+			break;
 		}
 		case AllPagesPage:
 		{
-			return QIcon(":/images/all-pages.png");
+			icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Normal, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Active, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Active, QIcon::Off);
+			icon.addFile(QStringLiteral(":/images/all-pages-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+			break;
 		}
 		case AllResourcesPage:
 		{
-			return QIcon(":/images/all-resources.png");
+			icon.addFile(QStringLiteral(":/images/all-resources-active.png"), QSize(), QIcon::Normal, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/all-resources-active.png"), QSize(), QIcon::Active, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/all-resources-active.png"), QSize(), QIcon::Active, QIcon::Off);
+			icon.addFile(QStringLiteral(":/images/all-resources-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+			break;
 		}
 		case DomainMetricsPage:
 		{
@@ -97,7 +114,7 @@ QIcon PageFactory::createPageIcon(Page page) const
 		}
 	}
 
-	return QIcon();
+	return icon;
 }
 
 }

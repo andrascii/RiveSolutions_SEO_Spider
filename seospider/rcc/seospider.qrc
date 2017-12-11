@@ -29,9 +29,12 @@
 		<file>images/minimize-window.png</file>
 		<file>images/maximize-window.png</file>
 		<file>images/restore-window.png</file>
-		<file>images/all-pages.png</file>
-		<file>images/all-resources.png</file>
-		<file>images/audit-info.png</file>
+		<file>images/all-pages-active.png</file>
+		<file>images/all-pages-normal.png</file>
+		<file>images/all-resources-active.png</file>
+		<file>images/all-resources-normal.png</file>
+		<file>images/audit-info-active.png</file>
+		<file>images/audit-info-normal.png</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>

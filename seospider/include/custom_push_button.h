@@ -12,12 +12,13 @@ public:
 	CustomPushButton(const QString& text, QWidget* parent = nullptr);
 	CustomPushButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
 
-	void setActive(bool active);
-
 protected:
 	virtual void leaveEvent(QEvent*) override;
 	virtual void enterEvent(QEvent*) override;
 	virtual void paintEvent(QPaintEvent*) override;
+
+private:
+	bool isSelected() const;
 
 private:
 	bool m_isInFocus;
