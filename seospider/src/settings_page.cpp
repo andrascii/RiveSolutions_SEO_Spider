@@ -46,7 +46,7 @@ void SettingsPage::reloadSettings() noexcept
 {
 	INFOLOG << "Trying reload settings for " << this->windowTitle();
 
-	if (m_somethingChanged)
+	if (!m_somethingChanged)
 	{
 		return;
 	}
@@ -57,7 +57,7 @@ void SettingsPage::reloadSettings() noexcept
 		controlAdapter.second->setValue(propertyValue);
 		DEBUGLOG << controlAdapter.first << " " << controlAdapter.second->value().toString();
 	}
-		
+	
 	setSomethingChanged(false);
 	INFOLOG << "Settings reloaded for " << this->windowTitle();
 }
@@ -70,6 +70,12 @@ bool SettingsPage::isAutoApply() const noexcept
 void SettingsPage::setSomethingChanged(bool val) noexcept
 {
 	m_somethingChanged = val;
+}
+
+void SeoSpider::SettingsPage::clearChangedKeys() noexcept
+{
+	m_changedSettingsKeys.clear();
+	m_somethingChanged = false;
 }
 
 void SettingsPage::init()

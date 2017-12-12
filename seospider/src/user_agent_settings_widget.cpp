@@ -17,6 +17,8 @@ UserAgentSettingsWidget::UserAgentSettingsWidget(QWidget* parent)
 
 	VERIFY(connect(m_ui.userAgentTypeButtonGroup, SIGNAL(buttonToggled(int, bool)), 
 		this, SLOT(groupButtonStateChanged())));
+
+	applyChanges();
 }
 
 void UserAgentSettingsWidget::checkBoxStateChanged(bool state)

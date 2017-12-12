@@ -21,6 +21,8 @@ public:
 
 	void setSomethingChanged(bool val) noexcept;
 
+	void clearChangedKeys() noexcept;
+
 	Q_SLOT void somethingChangedSlot();
 	
 	Q_SIGNAL void somethingChangedSignal();

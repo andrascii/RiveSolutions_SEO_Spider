@@ -157,6 +157,9 @@ Also if your proxy server requires authorization enter your name and password.</
           <property name="text">
            <string>Use Desktop User Agent</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
           <property name="controlKey" stdset="0">
            <string notr="true">useDesktopUserAgent</string>
           </property>
