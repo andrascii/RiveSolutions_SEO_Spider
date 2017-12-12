@@ -203,8 +203,11 @@ void MainWindow::createAndSetCentralWidget()
 	dataPagesWidget->addPage(PageFactory::AllPagesPage, pageFactory.createPage(PageFactory::AllPagesPage), 
 		tr("All Site Pages"), pageFactory.createPageIcon(PageFactory::AllPagesPage));
 
-	dataPagesWidget->addPage(PageFactory::AllResourcesPage, pageFactory.createPage(PageFactory::AllResourcesPage), 
+	dataPagesWidget->addPage(PageFactory::AllResourcesPage, pageFactory.createPage(PageFactory::AllResourcesPage),
 		tr("All Resources"), pageFactory.createPageIcon(PageFactory::AllResourcesPage));
+
+	dataPagesWidget->addPage(PageFactory::AuditReportPage, pageFactory.createPage(PageFactory::AuditReportPage),
+		tr("Audit Report"), pageFactory.createPageIcon(PageFactory::AuditReportPage));
 
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);

@@ -83,6 +83,7 @@
 #include <QtSvg>
 #include <QFontDatabase>
 #include <QtGlobal>
+#include <QWebEngineView>
 
 #include "common_macro_helpers.h"
 

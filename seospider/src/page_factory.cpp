@@ -7,13 +7,14 @@
 #include "table_view.h"
 #include "context_menu_data_collection_row.h"
 #include "application.h"
+#include "reports_page.h"
 
 namespace SeoSpider
 {
 
 QWidget* PageFactory::createPage(Page page) const
 {
-	DEBUG_ASSERT(page >= SiteAuditPage && page <= ReportsPage);
+	DEBUG_ASSERT(page >= SiteAuditPage && page <= AuditReportPage);
 
 	QWidget* widget = nullptr;
 
@@ -62,9 +63,11 @@ QWidget* PageFactory::createPage(Page page) const
 		{
 			
 		}
-		case ReportsPage:
+		case AuditReportPage:
 		{
+			widget = new ReportsPage;
 
+			break;
 		}
 	}
 
@@ -108,7 +111,7 @@ QIcon PageFactory::createPageIcon(Page page) const
 		{
 
 		}
-		case ReportsPage:
+		case AuditReportPage:
 		{
 
 		}
