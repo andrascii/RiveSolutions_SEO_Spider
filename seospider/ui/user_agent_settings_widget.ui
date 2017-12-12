@@ -113,6 +113,9 @@ Also if your proxy server requires authorization enter your name and password.</
       </property>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="verticalSpacing">
+         <number>9</number>
+        </property>
         <item row="0" column="2">
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
@@ -130,6 +133,9 @@ Also if your proxy server requires authorization enter your name and password.</
          <widget class="QLabel" name="label">
           <property name="text">
            <string>Use Custom User Agent</string>
+          </property>
+          <property name="buddy">
+           <cstring>useCustomUserAgentCheckBox</cstring>
           </property>
          </widget>
         </item>
