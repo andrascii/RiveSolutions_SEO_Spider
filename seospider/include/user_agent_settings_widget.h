@@ -15,6 +15,10 @@ public:
 	virtual void applyChanges() noexcept override;
 
 	Q_SLOT void checkBoxStateChanged(bool state);
+	Q_SLOT void groupButtonStateChanged();
+
+protected:
+	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private:
 	void initialize();
@@ -22,6 +26,7 @@ private:
 
 private:
 	Ui::UserAgentSettingsWidget m_ui;
+		
 };
 
 }
