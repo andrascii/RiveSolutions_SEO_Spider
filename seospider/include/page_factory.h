@@ -12,7 +12,7 @@ public:
 		AllPagesPage,
 		AllResourcesPage,
 		DomainMetricsPage,
-		ReportsPage
+		AuditReportPage
 	};
 
 	QWidget* createPage(Page page) const;
