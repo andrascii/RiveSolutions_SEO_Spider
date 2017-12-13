@@ -51,6 +51,7 @@ namespace
 	const QString requestTypeKey = QLatin1String("requestType");
 	const QString crawledUrlsKey = QLatin1String("crawledUrls");
 	const QString pendingUrlsKey = QLatin1String("pendingUrls");
+	const QString storagesKey = QLatin1String("storages");
 }
 
 class ParsedPageSerializer
@@ -102,29 +103,40 @@ public:
 		QVariantList linksOnThisPage;
 		for (const ResourceLink& link : m_page->linksOnThisPage)
 		{
-			if (link.resource.expired())
-			{
-				continue;
-			}
-
-			const ParsedPage* linkPage = link.resource.lock().get();
-			auto it = m_pagesByIndex.find(linkPage);
-
-			// seems like the page can be pending and can be no found in m_pagesByIndex
-			// probably we should somehow store the pending pages too
-			// TODO: implement what is described above
 			QVariantMap linkValue;
-			linkValue[resourceIndexKey] = it != m_pagesByIndex.end() ? it->second : -1;
 			linkValue[urlKey] = link.url.toDisplayString();
 			linkValue[linkParameterKey] = static_cast<int>(link.linkParameter);
 			linkValue[resourceSourceKey] = static_cast<int>(link.resourceSource);
 			linkValue[altOrTitleKey] = link.altOrTitle;
+
+
+			if (!link.resource.expired())
+			{
+				const ParsedPage* linkPage = link.resource.lock().get();
+				auto it = m_pagesByIndex.find(linkPage);
+				ASSERT(it != m_pagesByIndex.end());
+
+				linkValue[resourceIndexKey] = it->second;
+			}
+			else
+			{
+				linkValue[resourceIndexKey] = -1;
+			}
+
 			linksOnThisPage.append(linkValue);
 		}
 		pageMap[linksOnThisPageKey] = linksOnThisPage;
 
 		pageMap[rawResponseKey] = m_page->rawResponse.toBase64();
 		pageMap[pageLevelKey] = m_page->pageLevel;
+
+		QString storagesStr;
+		for (int i = 0; i < m_page->storages.size(); ++i)
+		{
+			storagesStr = storagesStr % ( m_page->storages[i] ? QLatin1Char('1') : QLatin1Char('0'));
+		}
+
+		pageMap[storagesKey] = storagesStr;
 
 		return pageMap;
 	}
@@ -138,7 +150,7 @@ private:
 class ParsedPageDeserializer
 {
 public:
-	ParsedPageDeserializer(int index, std::map<int, ParsedPage*>& pagesByIndex)
+	ParsedPageDeserializer(int index, std::map<int, ParsedPagePtr>& pagesByIndex)
 		: m_page(new ParsedPage())
 		, m_index(index)
 		, m_pagesByIndex(pagesByIndex)
@@ -158,21 +170,32 @@ public:
 
 			const int resourceIndex = linkMap[resourceIndexKey].toInt();
 
-			ResourceType resourceType = ResourceType::ResourceHtml;
+			//ResourceType resourceType = ResourceType::ResourceHtml;
+
+			ResourceLink resourceLinOnPage
+			{
+				ParsedPageWeakPtr(),
+				url,
+				linkParameter,
+				resourceSource,
+				altOrTitle
+			};
+
+
 			if (resourceIndex != -1)
 			{
 				auto it = m_pagesByIndex.find(resourceIndex);
 				ASSERT(it != m_pagesByIndex.end());
-				resourceType = it->second->resourceType;
+				resourceLinOnPage.resource = it->second;
+				
+				ResourceLink resourceLinkToPage = resourceLinOnPage;
+				resourceLinkToPage.resource = m_page;
+				resourceLinkToPage.url = m_page->url;
+				
+				it->second->linksToThisPage.push_back(resourceLinkToPage);
 			}
 
-			const RawResourceOnPage resource
-			{
-				resourceType,
-				LinkInfo{ url, linkParameter, altOrTitle, false, resourceSource }
-			};
-
-			m_page->allResourcesOnPage.push_back(resource);
+			m_page->linksOnThisPage.push_back(resourceLinOnPage);
 		}
 	}
 
@@ -216,17 +239,24 @@ public:
 		m_page->pageLevel = pageMap[pageLevelKey].toInt();
 
 		m_linksOnThisPage = pageMap[linksOnThisPageKey].toList();
+
+		QString storagesStr = pageMap[storagesKey].toString();
+		m_page->storages.resize(storagesStr.size());
+		for (int i = 0; i < storagesStr.size(); ++i)
+		{
+			m_page->storages[i] = storagesStr[i] == QLatin1Char('1');
+		}
 	}
 
-	ParsedPage* page() const
+	ParsedPagePtr page() const
 	{
 		return m_page;
 	}
 
 private:
-	ParsedPage* m_page;
+	ParsedPagePtr m_page;
 	int m_index;
-	std::map<int, ParsedPage*>& m_pagesByIndex;
+	std::map<int, ParsedPagePtr>& m_pagesByIndex;
 	QVariantList m_linksOnThisPage;
 };
 
@@ -274,9 +304,9 @@ void Serializer::readFromJsonStream(Common::JsonParserStreamReader& stream)
 	readLinksFromJsonStream(map.value(pendingUrlsKey), m_pendingLinks);
 }
 
-const std::vector<ParsedPage*>& CrawlerEngine::Serializer::pages() const
+const std::vector<ParsedPagePtr>& CrawlerEngine::Serializer::pages() const
 {
-	return m_pages;
+	return m_deserializedPages;
 }
 
 const std::vector<CrawlerRequest>& Serializer::crawledLinks() const
@@ -314,7 +344,7 @@ void Serializer::readPagesFromJsonStream(Common::JsonParserStreamReader& stream,
 	
 	std::vector<ParsedPageDeserializer> pageWrappers;
 	pageWrappers.reserve(pagesCount);
-	std::map<int, ParsedPage*> pagesByIndex;
+	std::map<int, ParsedPagePtr> pagesByIndex;
 
 	int index = 0;
 	while (!reader.endOfList())
@@ -328,7 +358,7 @@ void Serializer::readPagesFromJsonStream(Common::JsonParserStreamReader& stream,
 	for (ParsedPageDeserializer& wrapper: pageWrappers)
 	{
 		wrapper.resolveLinks();
-		m_pages.push_back(wrapper.page());
+		m_deserializedPages.push_back(wrapper.page());
 	}
 }
 void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const

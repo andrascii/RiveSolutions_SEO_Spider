@@ -19,7 +19,7 @@ public:
 	void saveToJsonStream(Common::JsonParserStreamWriter& stream);
 	void readFromJsonStream(Common::JsonParserStreamReader& stream);
 
-	const std::vector<ParsedPage*>& pages() const;
+	const std::vector<ParsedPagePtr>& pages() const;
 	const std::vector<CrawlerRequest>& crawledLinks() const;
 	const std::vector<CrawlerRequest>& pendingLinks() const;
 
@@ -32,6 +32,7 @@ private:
 
 private:
 	std::vector<ParsedPage*> m_pages;
+	std::vector<ParsedPagePtr> m_deserializedPages;
 	std::vector<CrawlerRequest> m_crawledLinks;
 	std::vector<CrawlerRequest> m_pendingLinks;
 };

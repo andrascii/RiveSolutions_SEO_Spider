@@ -164,6 +164,8 @@ struct ParsedPage
 
 	QByteArray rawResponse;
 	int pageLevel = invalidPageLevel;
+
+	std::vector<bool> storages;
 };
 
 using ParsedPagePtr = std::shared_ptr<ParsedPage>;

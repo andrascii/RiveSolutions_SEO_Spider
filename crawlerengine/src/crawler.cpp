@@ -269,15 +269,23 @@ void Crawler::saveToFile(const QString& fileName)
 			throw std::runtime_error(file.errorString().toStdString());
 		}
 
-		const SequencedDataCollection* sequencedCollection = sequencedDataCollection();;
+		const SequencedDataCollection* sequencedCollection = sequencedDataCollection();
 		const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
+		std::vector<ParsedPagePtr> pendingPages = m_modelController->data()->allParsedPages(StorageType::PendingResourcesStorageType);
+
 		std::vector<ParsedPage*> pages;
-		const int pagesCount = storage->size();
+		const int pagesCount = storage->size() + static_cast<int>(pendingPages.size());
 		pages.reserve(pagesCount);
-		for (int i = 0; i < pagesCount; ++i)
+		for (int i = 0; i < storage->size(); ++i)
 		{
 			const ParsedPage* page = (*storage)[i];
 			pages.push_back(const_cast<ParsedPage*>(page));
+		}
+		
+		for (int i = 0; i < pendingPages.size(); ++i)
+		{
+			ParsedPage* page = pendingPages[i].get();
+			pages.push_back(page);
 		}
 
 		std::vector<CrawlerRequest> pendingUrls;
@@ -341,16 +349,22 @@ void Crawler::loadFromFile(const QString& fileName)
 		Common::JsonParserStreamReader reader(file);
 		serializer.readFromJsonStream(reader);
 
-		const std::vector<ParsedPage*>& pages = serializer.pages();
-		std::vector<ParsedPagePtr> incomingPages;
-		incomingPages.reserve(pages.size());
-		for (ParsedPage* page : pages)
+		const std::vector<ParsedPagePtr>& pages = serializer.pages();
+
+		for (const ParsedPagePtr& page : pages)
 		{
-			incomingPages.emplace_back(page);
+			for (int i = 0; i < page->storages.size(); ++i)
+			{
+				if (page->storages[i])
+				{
+					m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
+				}
+			}
+			
 		}
 
-		VERIFY(QMetaObject::invokeMethod(m_modelController, "addParsedPages",
-			Qt::BlockingQueuedConnection, Q_ARG(std::vector<ParsedPagePtr>, incomingPages)));
+//		VERIFY(QMetaObject::invokeMethod(m_modelController, "addParsedPages",
+			//Qt::BlockingQueuedConnection, Q_ARG(std::vector<ParsedPagePtr>, incomingPages)));
 
 		m_uniqueLinkStore->setCrawledUrls(serializer.crawledLinks());
 		m_uniqueLinkStore->setPendingUrls(serializer.pendingLinks());

@@ -34,6 +34,8 @@ public:
 
 	void clearData();
 
+	std::vector<ParsedPagePtr> allParsedPages(StorageType type) const;
+
 	template <class TPredicate>
 	std::vector<ParsedPagePtr> allParsedPages(const ParsedPagePtr& parsedPagePtr, StorageType type, const TPredicate& unaryPredicate) const
 	{

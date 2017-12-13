@@ -61,8 +61,30 @@ void UnorderedDataCollection::clearData()
 	emit dataCleared();
 }
 
+std::vector<ParsedPagePtr> UnorderedDataCollection::allParsedPages(StorageType type) const
+{
+	const UnorderedStorageType& container = storage(type);
+
+	std::vector<ParsedPagePtr> result;
+	result.reserve(container.size());
+
+	for (auto it = container.begin(); it != container.end(); ++it)
+	{
+		result.push_back(*it);
+	}
+
+	return result;
+}
+
 void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
 {
+	std::vector<bool>& pageStoragesFlags = parsedPagePtr->storages;
+	if (pageStoragesFlags.size() < static_cast<size_t>(EndEnumStorageType))
+	{
+		pageStoragesFlags.resize(static_cast<size_t>(EndEnumStorageType), false);
+	}
+
+	pageStoragesFlags[static_cast<size_t>(type)] = true;
 	storage(type).insert(parsedPagePtr);
 	DEBUG_ASSERT(isParsedPageExists(parsedPagePtr, type));
 
@@ -80,6 +102,7 @@ ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& par
 	if (iter != unorderedStorage.end())
 	{
 		ParsedPagePtr result = std::move(*iter);
+		result->storages[static_cast<size_t>(type)] = false;;
 
 		unorderedStorage.erase(iter);
 
