@@ -11,8 +11,7 @@ public:
 	{
 		PlainTextRendererType			= 1 << 0,
 		BackgroundRendererType			= 1 << 1,
-		SelectionBackgroundRendererType	= 1 << 2,
-		GridLineRendererType			= 1 << 3, // deprecated, use setShowAdditionalGrid of TableView instead
+		SelectionBackgroundRendererType	= 1 << 2
 	};
 
 	virtual ~IRenderer() = default;

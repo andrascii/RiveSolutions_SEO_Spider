@@ -2,7 +2,6 @@
 #include "text_renderer.h"
 #include "background_renderer.h"
 #include "selection_background_renderer.h"
-#include "grid_line_renderer.h"
 
 namespace SeoSpider
 {
@@ -14,34 +13,22 @@ ItemRenderer::ItemRenderer(const IViewModel* viewModel)
 
 void ItemRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	for (IRenderer* renderer : m_renderers)
-	{
-		renderer->draw(painter, option, index);
-	}
+	std::for_each(m_renderers.begin(), m_renderers.end(), [&](IRenderer* renderer) { renderer->draw(painter, option, index); });
 }
 
 void ItemRenderer::invalidateCacheIndex(const QModelIndex& index) const
 {
-	for (IRenderer* renderer : m_renderers)
-	{
-		renderer->invalidateCacheIndex(index);
-	}
+	std::for_each(m_renderers.begin(), m_renderers.end(), [&](IRenderer* renderer) { renderer->invalidateCacheIndex(index); });
 }
 
 void ItemRenderer::invalidateCache() const
 {
-	for (IRenderer* renderer : m_renderers)
-	{
-		renderer->invalidateCache();
-	}
+	std::for_each(m_renderers.begin(), m_renderers.end(), [](IRenderer* renderer) { renderer->invalidateCache(); });
 }
 
 void ItemRenderer::setCacheSize(int cacheSize)
 {
-	for (IRenderer* renderer : m_renderers)
-	{
-		renderer->setCacheSize(cacheSize);
-	}
+	std::for_each(m_renderers.begin(), m_renderers.end(), [cacheSize](IRenderer* renderer) { renderer->setCacheSize(cacheSize); });
 }
 
 void ItemRenderer::addRenderer(int rendererTypes)
@@ -54,11 +41,6 @@ void ItemRenderer::addRenderer(int rendererTypes)
 	if (rendererTypes & SelectionBackgroundRendererType)
 	{
 		m_renderers.append(new SelectionBackgroundRenderer(m_viewModel));
-	}
-
-	if (rendererTypes & GridLineRendererType)
-	{
-		m_renderers.append(new GridLineRenderer(m_viewModel));
 	}
 
 	if (rendererTypes & PlainTextRendererType)
