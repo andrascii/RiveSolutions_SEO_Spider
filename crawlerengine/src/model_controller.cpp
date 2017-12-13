@@ -752,6 +752,12 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int looku
 	const StorageType lookupStorageType = static_cast<StorageType>(lookupStorage);
 	const StorageType destStorageType = static_cast<StorageType>(destStorage);
 
+	if (data()->isParsedPageExists(incomingPage, destStorageType))
+	{
+		data()->addParsedPage(incomingPage, destStorageType);
+		return;
+	}
+
 	const auto predicate = [&page = incomingPage](const ParsedPagePtr& candidatePage)
 	{
 		return 
@@ -771,10 +777,10 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int looku
 		const std::vector<ParsedPagePtr> allDuplicates = data()->allParsedPages(incomingPage, lookupStorageType, alwaysTruePredicate);
 		for (const ParsedPagePtr& duplicate : allDuplicates)
 		{
-			if (!data()->isParsedPageExists(duplicate, destStorageType)) 
-			{
-				data()->addParsedPage(duplicate, destStorageType);
-			}
+			DEBUG_ASSERT(duplicate->storages[destStorageType] == false);
+			DEBUG_ASSERT(data()->isParsedPageExists(duplicate, destStorageType) == false);
+			
+			data()->addParsedPage(duplicate, destStorageType);
 		}
 
 		data()->addParsedPage(incomingPage, destStorageType);

@@ -296,12 +296,15 @@ void Serializer::saveToJsonStream(Common::JsonParserStreamWriter& stream)
 
 void Serializer::readFromJsonStream(Common::JsonParserStreamReader& stream)
 {
+	INFOLOG << "Deserialization...";
 	Common::JsonStreamMapReader map(stream);
 	const int pagesCount = map.readValue(pagesCountKey).toInt();
 	readPagesFromJsonStream(map.value(pagesKey), pagesCount);
 
 	readLinksFromJsonStream(map.value(crawledUrlsKey), m_crawledLinks);
 	readLinksFromJsonStream(map.value(pendingUrlsKey), m_pendingLinks);
+
+	INFOLOG << "Deserialization has been finished";
 }
 
 const std::vector<ParsedPagePtr>& CrawlerEngine::Serializer::pages() const
@@ -340,6 +343,7 @@ void Serializer::savePagesToJsonStream(Common::JsonParserStreamWriter& stream) c
 
 void Serializer::readPagesFromJsonStream(Common::JsonParserStreamReader& stream, int pagesCount)
 {
+	INFOLOG << "Deserialization (pages)....";
 	Common::JsonStreamListReader reader(stream);
 	
 	std::vector<ParsedPageDeserializer> pageWrappers;
@@ -355,11 +359,15 @@ void Serializer::readPagesFromJsonStream(Common::JsonParserStreamReader& stream,
 		++index;
 	}
 
+	INFOLOG << "Deserialization (resolving links)....";
+
 	for (ParsedPageDeserializer& wrapper: pageWrappers)
 	{
 		wrapper.resolveLinks();
 		m_deserializedPages.push_back(wrapper.page());
 	}
+
+	INFOLOG << "Deserialization (pages) has been finished";
 }
 void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const
 {
