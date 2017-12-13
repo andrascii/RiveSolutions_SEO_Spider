@@ -26,6 +26,8 @@ void ReportsPage::setReportType(ReportType reportType)
 
 bool ReportsPage::eventFilter(QObject* object, QEvent* event)
 {
+#ifndef PRODUCTION
+
 	if (event->type() == QEvent::KeyPress)
 	{
 		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
@@ -37,6 +39,8 @@ bool ReportsPage::eventFilter(QObject* object, QEvent* event)
 			return true;
 		}
 	}
+
+#endif
 
 	return false;
 }
