@@ -17,7 +17,7 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	connect(m_ui.cancelButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::cancelButtonClicked);
 
 	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
-	VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(reloadSettingsSlot())));
+	//VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(reloadSettingsSlot())));
 
 	const int width = SeoSpiderHelpers::pointsToPixels(800);
 	const int height = SeoSpiderHelpers::pointsToPixels(500);
@@ -72,6 +72,17 @@ void ApplicationSettingsWidget::okButtonClicked()
 
 void ApplicationSettingsWidget::cancelButtonClicked()
 {
+	ISettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<ISettingsPageRegistry>();
+	
+	foreach(const QByteArray& pageId, settingsPageRegistry->pagesKeys())
+	{
+		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);
+		page->reloadSettings();
+		page->clearChangedKeys();
+	}
+	
+	m_somethingChanged = false;
+	m_ui.applyButton->setEnabled(m_somethingChanged);
 	close();
 }
 
@@ -90,8 +101,8 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 
 ApplicationSettingsWidget::~ApplicationSettingsWidget()
 {
-	VERIFY(disconnect(m_ui.stackedWidget, SIGNAL(currentChanged(int)),
-		this, SLOT(reloadSettingsSlot())));
+	//VERIFY(disconnect(m_ui.stackedWidget, SIGNAL(currentChanged(int)),
+	//	this, SLOT(reloadSettingsSlot())));
 
 	while (m_ui.stackedWidget->count() > 0)
 	{

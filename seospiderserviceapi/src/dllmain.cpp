@@ -1,10 +1,7 @@
 #include "seo_spider_service_api_impl.h"
 #include "seo_spider_service_api_stub.h"
 
-namespace SeoSpiderServiceApi
-{
-
-extern "C" Q_DECL_EXPORT ISeoSpiderServiceApi* seoSpiderServiceApi()
+extern "C" Q_DECL_EXPORT SeoSpiderServiceApi::ISeoSpiderServiceApi* seoSpiderServiceApi()
 {
     static std::unique_ptr<SeoSpiderServiceApi::ISeoSpiderServiceApi> s_serviceApi;
 
@@ -22,8 +19,6 @@ extern "C" Q_DECL_EXPORT ISeoSpiderServiceApi* seoSpiderServiceApi()
     return s_serviceApi.get();
 }
 
-}
-
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
     Q_UNUSED(hinstDLL);
@@ -33,22 +28,22 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
     {
         case DLL_PROCESS_ATTACH:
         {
-            SeoSpiderServiceApi::seoSpiderServiceApi()->init();
-            SeoSpiderServiceApi::seoSpiderServiceApi()->setProcessExceptionHandlers();
+            seoSpiderServiceApi()->init();
+            seoSpiderServiceApi()->setProcessExceptionHandlers();
 
             // for main thread
-            SeoSpiderServiceApi::seoSpiderServiceApi()->setThreadExceptionHandlers();
+            seoSpiderServiceApi()->setThreadExceptionHandlers();
 
             break;
         }
         case DLL_THREAD_ATTACH:
         {
-            SeoSpiderServiceApi::seoSpiderServiceApi()->setThreadExceptionHandlers();
+            seoSpiderServiceApi()->setThreadExceptionHandlers();
             break;
         }
         case DLL_PROCESS_DETACH:
         {
-            SeoSpiderServiceApi::seoSpiderServiceApi()->free();
+            seoSpiderServiceApi()->free();
         }
     }
 

@@ -4,7 +4,7 @@
 #include "log_message_buffer.h"
 
 #define ASSERT(condition) if((condition) == false) \
-SeoSpiderServiceApi::seoSpiderServiceApi()->doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
+seoSpiderServiceApi()->doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
 
 #ifdef QT_DEBUG
 #define DEBUG_ASSERT(condition) ASSERT(condition)

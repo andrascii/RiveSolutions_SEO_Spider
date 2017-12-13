@@ -16,6 +16,7 @@ public:
 
 private slots:
 	void calculatePercents(CrawlingProgress progress);
+	void onCrawlerStateChanged(int state);
 };
 
 }

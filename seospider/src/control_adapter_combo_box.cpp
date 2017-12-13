@@ -19,12 +19,15 @@ void ControlAdapterQComboBox::setValue(const QVariant& val)
 {
 	DEBUG_ASSERT(val.type() == QVariant::String);
 
-	m_control->setEditText(val.toString());
+	int textIndex = m_control->findData(val, static_cast<Qt::MatchFlags>(Qt::CaseInsensitive));
+	m_control->setCurrentIndex(textIndex == -1 ? 0 : textIndex);
+
+	//m_control->setEditText(val.toString());
 }
 
 void ControlAdapterQComboBox::connectChangesObserver(SettingsPage* page)
 {
-	VERIFY(QObject::connect(m_control.data(), SIGNAL(currentTextChanged(const QString&)), page, SLOT(somethingChangedSlot())));
+	VERIFY(QObject::connect(m_control.data(), SIGNAL(currentIndexChanged(const QString&)), page, SLOT(somethingChangedSlot())));
 }
 
 QObject* ControlAdapterQComboBox::qobject()

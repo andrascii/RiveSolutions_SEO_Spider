@@ -7,13 +7,14 @@
 #include "table_view.h"
 #include "context_menu_data_collection_row.h"
 #include "application.h"
+#include "reports_page.h"
 
 namespace SeoSpider
 {
 
 QWidget* PageFactory::createPage(Page page) const
 {
-	DEBUG_ASSERT(page >= SiteAuditPage && page <= ReportsPage);
+	DEBUG_ASSERT(page >= SiteAuditPage && page <= AuditReportPage);
 
 	QWidget* widget = nullptr;
 
@@ -62,15 +63,61 @@ QWidget* PageFactory::createPage(Page page) const
 		{
 			
 		}
-		case ReportsPage:
+		case AuditReportPage:
+		{
+			widget = new ReportsPage;
+
+			break;
+		}
+	}
+
+	return widget;
+}
+
+QIcon PageFactory::createPageIcon(Page page) const
+{
+	QIcon icon;
+
+	switch (page)
+	{
+		case SiteAuditPage:
+		{
+			icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Normal, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Active, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Active, QIcon::Off);
+			icon.addFile(QStringLiteral(":/images/audit-info-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+			break;
+		}
+		case AllPagesPage:
+		{
+			icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Normal, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Active, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Active, QIcon::Off);
+			icon.addFile(QStringLiteral(":/images/all-pages-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+			break;
+		}
+		case AllResourcesPage:
+		{
+			icon.addFile(QStringLiteral(":/images/all-resources-active.png"), QSize(), QIcon::Normal, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/all-resources-active.png"), QSize(), QIcon::Active, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/all-resources-active.png"), QSize(), QIcon::Active, QIcon::Off);
+			icon.addFile(QStringLiteral(":/images/all-resources-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+
+			break;
+		}
+		case DomainMetricsPage:
+		{
+
+		}
+		case AuditReportPage:
 		{
 
 		}
 	}
 
-
-
-	return widget;
+	return icon;
 }
 
 }

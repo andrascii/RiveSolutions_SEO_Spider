@@ -16,6 +16,7 @@ public:
 
 private slots:
 	void onAboutCrawlerProgressChanged(CrawlingProgress progress);
+	void onCrawlerStateChanged(int state);
 
 private:
 	QLabel* m_crawledLinksLabel;

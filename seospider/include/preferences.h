@@ -39,8 +39,6 @@ class Preferences : public QObject
 	Q_PROPERTY(bool checkCanonicals READ checkCanonicals WRITE setCheckCanonicals NOTIFY checkCanonicalsChanged);
 	Q_PROPERTY(bool followRobotsTxt READ followRobotsTxt WRITE setFollowRobotsTxt NOTIFY followRobotsTxtChanged);
 	Q_PROPERTY(bool crawlOutsideOfStartFolder READ crawlOutsideOfStartFolder WRITE setCrawlOutsideOfStartFolder NOTIFY crawlOutsideOfStartFolderChanged);
-	Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged);
-	
 
 	//
 	// Limits properties
@@ -49,6 +47,16 @@ class Preferences : public QObject
 	Q_PROPERTY(int limitMaxUrlLength READ limitMaxUrlLength WRITE setLimitMaxUrlLength NOTIFY limitMaxUrlLengthChanged);
 	Q_PROPERTY(int limitTimeout READ limitTimeout WRITE setLimitTimeout NOTIFY limitTimeoutChanged);
 	Q_PROPERTY(int maxRedirectCount READ maxRedirectCount WRITE setMaxRedirectCount NOTIFY maxRedirectCountChanged);
+
+	//
+	// User agent properties
+	//
+	Q_PROPERTY(bool useCustomUserAgent READ useCustomUserAgent WRITE setUseCustomUserAgent NOTIFY useCustomUserAgentChanged);
+	Q_PROPERTY(bool useDesktopUserAgent READ useDesktopUserAgent WRITE setUseDesktopUserAgent NOTIFY useDesktopUserAgentChanged);
+	Q_PROPERTY(bool useMobileUserAgent READ useMobileUserAgent WRITE setUseMobileUserAgent NOTIFY useMobileUserAgentChanged);
+	Q_PROPERTY(QString desktopUserAgent READ desktopUserAgent WRITE setDesktopUserAgent NOTIFY desktopUserAgentChanged);
+	Q_PROPERTY(QString mobileUserAgent READ mobileUserAgent WRITE setMobileUserAgent NOTIFY mobileUserAgentChanged);
+	Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged);
 
 	//
 	// Preferences
@@ -145,6 +153,26 @@ public:
 	Q_SLOT void setCrawlOutsideOfStartFolder(bool value);
 	Q_SIGNAL void crawlOutsideOfStartFolderChanged();
 
+	bool useCustomUserAgent() const;
+	Q_SLOT void setUseCustomUserAgent(bool value);
+	Q_SIGNAL void useCustomUserAgentChanged();
+
+	bool useDesktopUserAgent() const;
+	Q_SLOT void setUseDesktopUserAgent(bool value);
+	Q_SIGNAL void useDesktopUserAgentChanged();
+
+	bool useMobileUserAgent() const;
+	Q_SLOT void setUseMobileUserAgent(bool value);
+	Q_SIGNAL void useMobileUserAgentChanged();
+
+	const QString& desktopUserAgent() const;
+	Q_SLOT void setDesktopUserAgent(const QString& value);
+	Q_SIGNAL void desktopUserAgentChanged();
+
+	const QString& mobileUserAgent() const;
+	Q_SLOT void setMobileUserAgent(const QString& value);
+	Q_SIGNAL void mobileUserAgentChanged();
+
 	const QString& userAgent() const;
 	Q_SLOT void setUserAgent(const QString& value);
 	Q_SIGNAL void userAgentChanged();
@@ -215,6 +243,12 @@ public:
 		General,
 		WindowsSettings
 	};
+
+	enum UserAgentType
+	{
+		Desktop,
+		Mobile
+	};
 	
 private:
 	void readDefaults(const QString& str);
@@ -245,6 +279,12 @@ private:
 	bool m_checkCanonicals;
 	bool m_followRobotsTxt;
 	bool m_crawlOutsideOfStartFolder;
+
+	bool m_useCustomUserAgent;
+	bool m_useDesktopUserAgent;
+	bool m_useMobileUserAgent;
+	QString m_desktopUserAgent;
+	QString m_mobileUserAgent;
 	QString m_userAgent;
 
 	int m_limitSearchTotal;

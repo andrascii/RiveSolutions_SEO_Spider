@@ -6,6 +6,7 @@
 #include "control_adapter_line_edit.h"
 #include "control_adapter_spin_box.h"
 #include "control_adapter_combo_box.h"
+#include "control_adapter_radio_button.h"
 
 namespace SeoSpider
 {
@@ -34,7 +35,7 @@ void SettingsPage::applyChanges() noexcept
 
 		theApp->preferences()->setProperty(controlKey.constData(), m_controlAdapters[controlKey]->value());
 
-		DEBUGLOG << theApp->preferences()->property(controlKey.constData()).toString();
+		DEBUGLOG << controlKey.constData() << " " << theApp->preferences()->property(controlKey.constData()).toString();
 	}
 
 	m_changedSettingsKeys.clear();
@@ -45,7 +46,7 @@ void SettingsPage::reloadSettings() noexcept
 {
 	INFOLOG << "Trying reload settings for " << this->windowTitle();
 
-	if (m_somethingChanged)
+	if (!m_somethingChanged)
 	{
 		return;
 	}
@@ -56,7 +57,7 @@ void SettingsPage::reloadSettings() noexcept
 		controlAdapter.second->setValue(propertyValue);
 		DEBUGLOG << controlAdapter.first << " " << controlAdapter.second->value().toString();
 	}
-		
+	
 	setSomethingChanged(false);
 	INFOLOG << "Settings reloaded for " << this->windowTitle();
 }
@@ -69,6 +70,12 @@ bool SettingsPage::isAutoApply() const noexcept
 void SettingsPage::setSomethingChanged(bool val) noexcept
 {
 	m_somethingChanged = val;
+}
+
+void SeoSpider::SettingsPage::clearChangedKeys() noexcept
+{
+	m_changedSettingsKeys.clear();
+	m_somethingChanged = false;
 }
 
 void SettingsPage::init()
@@ -102,6 +109,7 @@ void SettingsPage::init()
 
 		m_controlAdapters[controlKeyString] = controlAdapter;
 	}
+
 }
 
 void SettingsPage::registerMetaTypes() const
@@ -110,6 +118,7 @@ void SettingsPage::registerMetaTypes() const
 	qRegisterMetaType<ControlAdapterQLineEdit>();
 	qRegisterMetaType<ControlAdapterQSpinBox>();
 	qRegisterMetaType<ControlAdapterQComboBox>();
+	qRegisterMetaType<ControlAdapterQRadioButton>();
 }
 
 void SettingsPage::somethingChangedSlot()

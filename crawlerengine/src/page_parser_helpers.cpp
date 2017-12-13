@@ -132,6 +132,24 @@ QUrl PageParserHelpers::removeUrlLastSlashIfExists(const QUrl& url)
 	return QUrl(urlString);
 }
 
+bool PageParserHelpers::checkUrlIdentity(const QUrl& lhs, const QUrl& rhs)
+{
+	QString&& lhsString = lhs.toDisplayString();
+	QString&& rhsString = rhs.toDisplayString();
+
+	if (lhsString.endsWith("/"))
+	{
+		lhsString = lhsString.left(lhsString.size() - 1);
+	}
+
+	if (rhsString.endsWith("/"))
+	{
+		rhsString = rhsString.left(rhsString.size() - 1);
+	}
+
+	return lhsString == rhsString;
+}
+
 bool PageParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept
 {
 	// TODO: improve

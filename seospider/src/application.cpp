@@ -79,7 +79,7 @@ Preferences* Application::preferences() const noexcept
 QVariant Application::loadFromSettings(const QByteArray& key, const QVariant& defaultValue) const noexcept
 {
 	QVariant result = settings()->value(QLatin1String(key), defaultValue);
-	DEBUGLOG << result.toString();
+	DEBUGLOG << key << " " << result.toString();
 	return result;
 }
 

@@ -11,8 +11,7 @@ CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 {
 	setMaximum(100);
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted, this, &QWidget::show));
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStopped, this, &QWidget::hide));
+	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
 
 	VERIFY(connect(theApp->crawler(), SIGNAL(crawlingProgress(CrawlingProgress)),
 		this, SLOT(calculatePercents(CrawlingProgress)), Qt::QueuedConnection));
@@ -27,6 +26,19 @@ void CrawlerProgressBar::calculatePercents(CrawlingProgress progress)
 	const double percents = static_cast<double>(progress.crawledLinkCount) / static_cast<double>(amountLinksCount + 1) * 100.0;
 
 	setValue(percents ? std::floor(percents)  : percents + 1);
+}
+
+void CrawlerProgressBar::onCrawlerStateChanged(int state)
+{
+	if (state == CrawlerEngine::Crawler::StatePending)
+	{
+		hide();
+	}
+
+	if (state == CrawlerEngine::Crawler::StateWorking)
+	{
+		show();
+	}
 }
 
 }

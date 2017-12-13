@@ -121,7 +121,6 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		case StorageAdapterType::StorageAdapterTypeDuplicatedTitles:
 		case StorageAdapterType::StorageAdapterTypeVeryLongTitles:
 		case StorageAdapterType::StorageAdapterTypeVeryShortTitles:
-		case StorageAdapterType::StorageAdapterTypeDuplicatedH1Titles:
 		case StorageAdapterType::StorageAdapterTypeSeveralTitlesOnPage:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -129,6 +128,19 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::TitleColumn
 				<< ParsedPageInfo::Column::TitleLengthColumn
+			);
+
+			return;
+		}
+		case StorageAdapterType::StorageAdapterTypeDuplicatedH1Titles:
+		{
+			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::ContentTypeColumn
+				<< ParsedPageInfo::Column::TitleColumn
+				<< ParsedPageInfo::Column::TitleLengthColumn
+				<< ParsedPageInfo::Column::FirstH1Column
+				<< ParsedPageInfo::Column::FirstH1LengthColumn
 			);
 
 			return;

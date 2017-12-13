@@ -12,10 +12,12 @@ public:
 		AllPagesPage,
 		AllResourcesPage,
 		DomainMetricsPage,
-		ReportsPage
+		AuditReportPage
 	};
 
 	QWidget* createPage(Page page) const;
+
+	QIcon createPageIcon(Page page) const;
 };
 
 }

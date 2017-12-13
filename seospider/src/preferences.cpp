@@ -232,6 +232,61 @@ void Preferences::setCrawlOutsideOfStartFolder(bool value)
 	emit crawlOutsideOfStartFolderChanged();
 }
 
+bool Preferences::useCustomUserAgent() const
+{
+	return m_useCustomUserAgent;
+}
+
+void Preferences::setUseCustomUserAgent(bool value)
+{
+	m_useCustomUserAgent = value;
+	emit useCustomUserAgentChanged();
+}
+
+bool Preferences::useDesktopUserAgent() const
+{
+	return m_useDesktopUserAgent;
+}
+
+void Preferences::setUseDesktopUserAgent(bool value)
+{
+	m_useDesktopUserAgent = value;
+	emit useDesktopUserAgentChanged();
+}
+
+bool Preferences::useMobileUserAgent() const
+{
+	return m_useMobileUserAgent;
+}
+
+void Preferences::setUseMobileUserAgent(bool value)
+{
+	m_useMobileUserAgent = value;
+	emit useMobileUserAgentChanged();
+}
+
+const QString& Preferences::desktopUserAgent() const
+{
+	return m_desktopUserAgent;
+}
+
+void Preferences::setDesktopUserAgent(const QString& value)
+{
+	m_desktopUserAgent = value;
+	emit desktopUserAgentChanged();
+}
+
+const QString& Preferences::mobileUserAgent() const
+{
+	return m_mobileUserAgent;
+}
+
+void Preferences::setMobileUserAgent(const QString& value)
+{
+	m_mobileUserAgent = value;
+	emit mobileUserAgentChanged();
+}
+
 const QString& Preferences::userAgent() const
 {
 	return m_userAgent;

@@ -61,8 +61,8 @@ private:
 
 	LinksToThisResourceChanges m_linksToPageChanges;
 
-	mutable std::atomic<size_t> m_crawledStorageSize;
-	mutable std::atomic<size_t> m_acceptedCrawledStorageSize;
+	std::atomic<std::size_t> m_crawledStorageSize;
+	std::atomic<std::size_t> m_acceptedCrawledStorageSize;
 };
 
 }
