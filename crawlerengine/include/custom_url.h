@@ -10,8 +10,6 @@ public:
 	using QUrl::operator=;
 
 	bool compareWith(const CustomUrl& url) const;
-	
-private:
 	const QString& canonizedUrlStr() const;
 
 private:

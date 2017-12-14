@@ -464,7 +464,6 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 		return;
 	}
 
-	ParsedPagePtr resourcePage = std::make_shared<ParsedPage>();
 	for (const RawResourceOnPage& resource : incomingPage->allResourcesOnPage)
 	{
 		if (resource.resourceType != ResourceType::ResourceHtml)
@@ -472,6 +471,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			continue;
 		}
 
+		ParsedPagePtr resourcePage = std::make_shared<ParsedPage>();
 		resourcePage->url = resource.thisResourceLink.url;
 		ParsedPagePtr existingResource = data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 

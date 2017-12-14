@@ -45,8 +45,13 @@ struct ParsedPageHasher : public IParsedPageHasher
 
 		static std::map<int, std::function<size_t(const ParsedPagePtr&)>> s_hashFuncs
 		{
-			{ IParsedPageHasher::UrlItemType, [](const ParsedPagePtr& el) 
-				{ return s_stringHasher(PageParserHelpers::removeUrlLastSlashIfExists(el->url).toDisplayString().toStdString()); } },
+			{ IParsedPageHasher::UrlItemType, 
+				[](const ParsedPagePtr& el)
+				{
+					//return s_stringHasher(PageParserHelpers::removeUrlLastSlashIfExists(el->url).toDisplayString().toStdString());
+					return s_stringHasher(el->url.canonizedUrlStr().toStdString());
+				}
+			},
 
 			{ IParsedPageHasher::ContentItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->contentType.toStdString()); } },
 			{ IParsedPageHasher::MetaRefreshItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->metaRefresh.toStdString()); } },
