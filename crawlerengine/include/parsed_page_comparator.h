@@ -32,7 +32,8 @@ struct ParsedPageUrlComparator : IParsedPageComparator
 {
 	virtual bool operator()(const ParsedPagePtr& lhs, const ParsedPagePtr& rhs) const noexcept override
 	{
-		return PageParserHelpers::checkUrlIdentity(lhs->url, rhs->url);
+		return lhs->url.compareWith(rhs->url);
+		//return PageParserHelpers::checkUrlIdentity(lhs->url, rhs->url);
 	}
 };
 
