@@ -36,8 +36,10 @@ private:
 	void saveToXmlStream(QIODevice& device);
 	void loadFromXmlStream(QIODevice& device);
 	void savePagesToXmlStream(QXmlStreamWriter& writer) const;
+	void loadPagesFromXmlStream(QXmlStreamReader& reader, int pagesCount);
 
 	void saveLinksToXmlStream(QXmlStreamWriter& writer, const std::vector<CrawlerRequest>& links) const;
+	void loadLinksFromXmlStream(QXmlStreamReader& reader, std::vector<CrawlerRequest>& links, const QString& xmlElementName);
 private:
 	std::vector<ParsedPage*> m_pages;
 	std::vector<ParsedPagePtr> m_deserializedPages;

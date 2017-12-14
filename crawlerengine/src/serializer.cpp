@@ -9,6 +9,8 @@ namespace CrawlerEngine
 
 namespace
 {
+	const QString contentKey = QLatin1String("content");
+
 	const QString pagesCountKey = QLatin1String("pagesCount");
 	const QString pagesKey = QLatin1String("pages");
 	const QString pageKey = QLatin1String("page");
@@ -254,42 +256,23 @@ public:
 
 	void resolveLinks()
 	{
-		foreach(const QVariant& link, m_linksOnThisPage)
+		for (int i = 0; i < m_linksOnThisPageIndices.size(); ++i)
 		{
-			QVariantMap linkMap = link.toMap();
-			const LinkParameter linkParameter = static_cast<LinkParameter>(linkMap[linkParameterKey].toInt());
-			const ResourceSource resourceSource = static_cast<ResourceSource>(linkMap[resourceSourceKey].toInt());
-			const QString altOrTitle = linkMap[altOrTitleKey].toString();
-			const QUrl url = QUrl(linkMap[urlKey].toString());
-
-			const int resourceIndex = linkMap[resourceIndexKey].toInt();
-
-			//ResourceType resourceType = ResourceType::ResourceHtml;
-
-			ResourceLink resourceLinOnPage
-			{
-				ParsedPageWeakPtr(),
-				url,
-				linkParameter,
-				resourceSource,
-				altOrTitle
-			};
-
+			ResourceLink& resourceLinkOnPage = m_page->linksOnThisPage[i];
+			const int resourceIndex = m_linksOnThisPageIndices[i];
 
 			if (resourceIndex != -1)
 			{
 				auto it = m_pagesByIndex.find(resourceIndex);
 				ASSERT(it != m_pagesByIndex.end());
-				resourceLinOnPage.resource = it->second;
-				
-				ResourceLink resourceLinkToPage = resourceLinOnPage;
+				resourceLinkOnPage.resource = it->second;
+
+				ResourceLink resourceLinkToPage = resourceLinkOnPage;
 				resourceLinkToPage.resource = m_page;
 				resourceLinkToPage.url = m_page->url;
-				
+
 				it->second->linksToThisPage.push_back(resourceLinkToPage);
 			}
-
-			m_page->linksOnThisPage.push_back(resourceLinOnPage);
 		}
 	}
 
@@ -332,13 +315,195 @@ public:
 		m_page->rawResponse = QByteArray::fromBase64(pageMap[rawResponseKey].toByteArray());
 		m_page->pageLevel = pageMap[pageLevelKey].toInt();
 
-		m_linksOnThisPage = pageMap[linksOnThisPageKey].toList();
+		const QVariantList linksOnThisPage = pageMap[linksOnThisPageKey].toList();
+		foreach(const QVariant& linkOnThisPage, linksOnThisPage)
+		{
+			QVariantMap linkMap = linkOnThisPage.toMap();
+			const LinkParameter linkParameter = static_cast<LinkParameter>(linkMap[linkParameterKey].toInt());
+			const ResourceSource source = static_cast<ResourceSource>(linkMap[resourceSourceKey].toInt());
+			const QString altOrTitle = linkMap[altOrTitleKey].toString();
+			const QUrl url = QUrl(linkMap[urlKey].toString());
+			const int resourceIndex = linkMap[resourceIndexKey].toInt();
+
+			m_page->linksOnThisPage.push_back(ResourceLink{ ParsedPageWeakPtr(), url, linkParameter, source, altOrTitle });
+			m_linksOnThisPageIndices.push_back(resourceIndex);
+		}
+
 
 		QString storagesStr = pageMap[storagesKey].toString();
 		m_page->storages.resize(storagesStr.size());
 		for (int i = 0; i < storagesStr.size(); ++i)
 		{
 			m_page->storages[i] = storagesStr[i] == QLatin1Char('1');
+		}
+	}
+
+	void fromXml(QXmlStreamReader& reader)
+	{
+		while (!reader.isEndElement() || reader.qualifiedName() != pageKey)
+		{
+			reader.readNext();
+
+			if (!reader.isStartElement())
+			{
+				continue;
+			}
+
+			if (reader.qualifiedName() == urlKey)
+			{
+				m_page->url = QUrl(reader.readElementText());
+			}
+			else if (reader.qualifiedName() == redirectedUrlKey)
+			{
+				m_page->redirectedUrl = QUrl(reader.readElementText());
+			}
+			else if (reader.qualifiedName() == canonicalUrlKey)
+			{
+				m_page->canonicalUrl = QUrl(reader.readElementText());
+			}
+			else if (reader.qualifiedName() == titleKey)
+			{
+				m_page->title = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == contentTypeKey)
+			{
+				m_page->contentType = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == metaRefreshKey)
+			{
+				m_page->metaRefresh = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == metaDescriptionKey)
+			{
+				m_page->metaDescription = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == metaKeywordsKey)
+			{
+				m_page->metaKeywords = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == serverResponseKey)
+			{
+				m_page->serverResponse = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == firstH1Key)
+			{
+				m_page->firstH1 = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == secondH1Key)
+			{
+				m_page->secondH1 = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == firstH2Key)
+			{
+				m_page->firstH2 = reader.readElementText();
+			}
+			else if (reader.qualifiedName() == statusCodeKey)
+			{
+				m_page->statusCode = static_cast<Common::StatusCode>(reader.readElementText().toInt());
+			}
+			else if (reader.qualifiedName() == metaRobotsFlagsKey)
+			{
+				while (!reader.isEndElement() || reader.qualifiedName() != metaRobotsFlagsKey)
+				{
+					reader.readNext();
+
+					if (reader.isStartElement() && reader.qualifiedName() == metaRobotsFlagsItemKey)
+					{
+						QXmlStreamAttributes attributes = reader.attributes();
+
+						const UserAgentType userAgentType = static_cast<UserAgentType>(attributes.value(userAgentKey).toInt());
+						const MetaRobotsFlags flags = MetaRobotsFlags(attributes.value(metaRobotsValueKey).toInt());
+						m_page->metaRobotsFlags[userAgentType] = flags;
+					}
+
+				}
+			}
+			else if (reader.qualifiedName() == responseDateKey)
+			{
+				m_page->responseDate = QDateTime::fromMSecsSinceEpoch(reader.readElementText().toULongLong());
+			}
+			else if (reader.qualifiedName() == lastModifiedDateKey)
+			{
+				m_page->lastModifiedDate = QDateTime::fromMSecsSinceEpoch(reader.readElementText().toULongLong());
+			}
+			else if (reader.qualifiedName() == pageSizeKilobytesKey)
+			{
+				m_page->pageSizeKilobytes = reader.readElementText().toInt();
+			}
+			else if (reader.qualifiedName() == wordCountKey)
+			{
+				m_page->wordCount = reader.readElementText().toInt();
+			}
+			else if (reader.qualifiedName() == pageHashKey)
+			{
+				m_page->pageHash = reader.readElementText().toULong(); // TODO: check
+			}
+			else if (reader.qualifiedName() == hasSeveralTitleTagsKey)
+			{
+				m_page->hasSeveralTitleTags = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == hasSeveralMetaDescriptionTagsKey)
+			{
+				m_page->hasSeveralMetaDescriptionTags = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == hasSeveralMetaKeywordsTagsKey)
+			{
+				m_page->hasSeveralMetaKeywordsTags = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == hasSeveralH1TagsKey)
+			{
+				m_page->hasSeveralH1Tags = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == hasSeveralEqualH2TagsKey)
+			{
+				m_page->hasSeveralEqualH2Tags = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == isThisExternalPageKey)
+			{
+				m_page->isThisExternalPage = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == resourceTypeKey)
+			{
+				m_page->resourceType = static_cast<ResourceType>(reader.readElementText().toInt());
+			}
+			else if (reader.qualifiedName() == rawResponseKey)
+			{
+				m_page->rawResponse = QByteArray::fromBase64(reader.readElementText().toUtf8()); // toLocal8Bit ???
+			}
+			else if (reader.qualifiedName() == pageLevelKey)
+			{
+				m_page->pageLevel = reader.readElementText().toInt();
+			}
+			else if (reader.qualifiedName() == linksOnThisPageKey)
+			{
+				while (!reader.isEndElement() || reader.qualifiedName() != linksOnThisPageKey)
+				{
+					reader.readNext();
+
+					if (reader.isStartElement() && reader.qualifiedName() == linksOnThisPageItemKey)
+					{
+						QXmlStreamAttributes attributes = reader.attributes();
+
+						const QUrl url = QUrl(attributes.value(urlKey).toString());
+						const LinkParameter linkParameter = static_cast<LinkParameter>(attributes.value(linkParameterKey).toInt());
+						const ResourceSource source = static_cast<ResourceSource>(attributes.value(resourceSourceKey).toInt());
+						const QString altOrTitle = attributes.value(altOrTitleKey).toString();
+						const int resourceIndex = attributes.value(resourceIndexKey).toInt();
+
+						m_page->linksOnThisPage.push_back(ResourceLink { ParsedPageWeakPtr(), url, linkParameter, source, altOrTitle });
+						m_linksOnThisPageIndices.push_back(resourceIndex);
+					}
+				}
+			}
+			else if (reader.qualifiedName() == storagesKey)
+			{
+				QString storagesStr = reader.readElementText();
+				m_page->storages.resize(storagesStr.size());
+				for (int i = 0; i < storagesStr.size(); ++i)
+				{
+					m_page->storages[i] = storagesStr[i] == QLatin1Char('1');
+				}
+			}
 		}
 	}
 
@@ -351,7 +516,7 @@ private:
 	ParsedPagePtr m_page;
 	int m_index;
 	std::map<int, ParsedPagePtr>& m_pagesByIndex;
-	QVariantList m_linksOnThisPage;
+	std::vector<int> m_linksOnThisPageIndices;
 };
 
 Serializer::Serializer()
@@ -492,7 +657,7 @@ void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, c
 	}
 }
 
-void CrawlerEngine::Serializer::readLinksFromJsonStream(Common::JsonParserStreamReader& stream, std::vector<CrawlerRequest>& links)
+void Serializer::readLinksFromJsonStream(Common::JsonParserStreamReader& stream, std::vector<CrawlerRequest>& links)
 {
 	Common::JsonStreamListReader reader(stream);
 
@@ -512,8 +677,8 @@ void Serializer::saveToXmlStream(QIODevice& device)
 
 	xmlWriter.setAutoFormatting(true);
 	xmlWriter.writeStartDocument();
+	xmlWriter.writeStartElement(contentKey);
 
-	xmlWriter.writeStartDocument();
 	xmlWriter.writeTextElement(serializerVersionKey, serializerVersion);
 	xmlWriter.writeTextElement(pagesCountKey, QString::number(m_pages.size()));
 
@@ -526,12 +691,52 @@ void Serializer::saveToXmlStream(QIODevice& device)
 	xmlWriter.writeStartElement(pendingUrlsKey);
 	saveLinksToXmlStream(xmlWriter, m_pendingLinks);
 	xmlWriter.writeEndElement();
+
+	xmlWriter.writeEndElement();
+	xmlWriter.writeEndDocument();
 }
 
 void Serializer::loadFromXmlStream(QIODevice& device)
 {
-	// TODO: implement
-	Q_UNUSED(device);
+	QXmlStreamReader xmlReader(&device);
+
+	INFOLOG << "Deserialization...";
+
+	int pagesCount = -1;
+
+	while (!xmlReader.atEnd())
+	{
+		xmlReader.readNext();
+
+		if (!xmlReader.isStartElement())
+		{
+			continue;
+		}
+
+		if (xmlReader.qualifiedName() == pagesCountKey)
+		{
+			pagesCount = xmlReader.readElementText().toInt();
+		}
+
+		if (xmlReader.qualifiedName() == pagesKey)
+		{
+			ASSERT(pagesCount != -1);
+			loadPagesFromXmlStream(xmlReader, pagesCount);
+		}
+
+		if (xmlReader.qualifiedName() == crawledUrlsKey)
+		{
+			loadLinksFromXmlStream(xmlReader, m_crawledLinks, crawledUrlsKey);
+		}
+
+		if (xmlReader.qualifiedName() == pendingUrlsKey)
+		{
+			loadLinksFromXmlStream(xmlReader, m_pendingLinks, pendingUrlsKey);
+		}
+
+	}
+
+	INFOLOG << "Deserialization has been finished";
 }
 
 void Serializer::savePagesToXmlStream(QXmlStreamWriter& writer) const
@@ -556,6 +761,38 @@ void Serializer::savePagesToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeEndElement(); // end pagesKey
 }
 
+void Serializer::loadPagesFromXmlStream(QXmlStreamReader& reader, int pagesCount)
+{
+	INFOLOG << "Deserialization (pages)....";
+
+	std::vector<ParsedPageDeserializer> pageWrappers;
+	pageWrappers.reserve(pagesCount);
+	std::map<int, ParsedPagePtr> pagesByIndex;
+	int index = 0;
+
+	while (!reader.isEndElement() || reader.qualifiedName() != pagesKey)
+	{
+		reader.readNext();
+
+		if (reader.isStartElement() && reader.qualifiedName() == pageKey)
+		{
+			ParsedPageDeserializer& wrapper = pageWrappers.emplace_back(index, pagesByIndex);
+			wrapper.fromXml(reader);
+			++index;
+		}
+	}
+
+	INFOLOG << "Deserialization (resolving links)....";
+
+	for (ParsedPageDeserializer& wrapper : pageWrappers)
+	{
+		wrapper.resolveLinks();
+		m_deserializedPages.push_back(wrapper.page());
+	}
+
+	INFOLOG << "Deserialization (pages) has been finished";
+}
+
 void Serializer::saveLinksToXmlStream(QXmlStreamWriter& writer, const std::vector<CrawlerRequest>& links) const
 {
 	for (const CrawlerRequest& link : links)
@@ -565,6 +802,23 @@ void Serializer::saveLinksToXmlStream(QXmlStreamWriter& writer, const std::vecto
 		writer.writeAttribute(requestTypeKey, QString::number(static_cast<int>(link.requestType)));
 		writer.writeEndElement();
 	}
+}
+
+void Serializer::loadLinksFromXmlStream(QXmlStreamReader& reader, std::vector<CrawlerRequest>& links, const QString& xmlElementName)
+{
+	while (!reader.isEndElement() || reader.qualifiedName() != xmlElementName)
+	{
+		reader.readNext();
+		if (reader.isStartElement() && reader.qualifiedName() == urlItemKey)
+		{
+			QXmlStreamAttributes attributes = reader.attributes();
+			const QUrl url = QUrl(attributes.value(urlKey).toString());
+			const DownloadRequestType requestType = static_cast<DownloadRequestType>(attributes.value(requestTypeKey).toInt());
+
+			links.push_back(CrawlerRequest{ url, requestType });
+		}
+	}
+
 }
 
 }
