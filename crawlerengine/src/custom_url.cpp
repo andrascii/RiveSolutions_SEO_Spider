@@ -3,29 +3,23 @@
 namespace CrawlerEngine
 {
 
-bool CustomUrl::compareWith(const QUrl& url) const
+bool CustomUrl::compareWith(const CustomUrl& url) const
 {
-	QString&& thisPath = path();
-	QString&& urlPath = url.path();
+	return canonizedUrlStr() == url.canonizedUrlStr();
+}
 
-	if (thisPath.endsWith("/"))
+const QString& CustomUrl::canonizedUrlStr() const
+{
+	if (m_canonizedUrlStr.isEmpty())
 	{
-		thisPath = thisPath.left(thisPath.size() - 1);
+		m_canonizedUrlStr = toDisplayString();
+		if (m_canonizedUrlStr.endsWith(QString("/")))
+		{
+			m_canonizedUrlStr = m_canonizedUrlStr.left(m_canonizedUrlStr.size() - 1);
+		}
 	}
 
-	if (urlPath.endsWith("/"))
-	{
-		urlPath = urlPath.left(urlPath.size() - 1);
-	}
-
-	return scheme() == url.scheme() &&
-		userName() == url.userName() &&
-		password() == url.password() &&
-		host() == url.host() &&
-		port() == url.port() &&
-		thisPath == urlPath &&
-		query() == url.query() &&
-		fragment() == url.fragment();
+	return m_canonizedUrlStr;
 }
 
 }

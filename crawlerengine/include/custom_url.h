@@ -9,7 +9,13 @@ public:
 	using QUrl::QUrl;
 	using QUrl::operator=;
 
-	bool compareWith(const QUrl& url) const;
+	bool compareWith(const CustomUrl& url) const;
+	
+private:
+	const QString& canonizedUrlStr() const;
+
+private:
+	mutable QString m_canonizedUrlStr;
 };
 
 }
