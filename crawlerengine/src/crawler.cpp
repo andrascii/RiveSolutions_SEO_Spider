@@ -9,9 +9,7 @@
 #include "downloader.h"
 #include "host_info_provider.h"
 #include "site_map.h"
-#include "json_parser_stream_writer.h"
 #include "serializer.h"
-#include "json_parser_stream_reader.h"
 
 namespace CrawlerEngine
 {
@@ -300,8 +298,7 @@ void Crawler::saveToFile(const QString& fileName)
 		std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
 
 		Serializer serializer(std::move(pages), std::move(crawledUrls), std::move(pendingUrls)); // TODO: provide all required data into the constructor
-		Common::JsonParserStreamWriter writer(file);
-		serializer.saveToJsonStream(writer);
+		serializer.saveToStream(file);
 
 		file.close();
 
@@ -346,8 +343,7 @@ void Crawler::loadFromFile(const QString& fileName)
 		}
 
 		Serializer serializer; // TODO: provide all required data into the constructor
-		Common::JsonParserStreamReader reader(file);
-		serializer.readFromJsonStream(reader);
+		serializer.loadFromStream(file);
 
 		const std::vector<ParsedPagePtr>& pages = serializer.pages();
 

@@ -271,8 +271,10 @@ Serializer::Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequ
 {
 }
 
-void Serializer::saveToJsonStream(Common::JsonParserStreamWriter& stream)
+void Serializer::saveToStream(QIODevice& device)
 {
+	Common::JsonParserStreamWriter stream(device);
+
 	Common::JsonStreamMapElement map(stream);
 
 	map.writeMapValue(serializerVersionKey, serializerVersion);
@@ -294,8 +296,9 @@ void Serializer::saveToJsonStream(Common::JsonParserStreamWriter& stream)
 	}
 }
 
-void Serializer::readFromJsonStream(Common::JsonParserStreamReader& stream)
+void Serializer::loadFromStream(QIODevice& device)
 {
+	Common::JsonParserStreamReader stream(device);
 	INFOLOG << "Deserialization...";
 	Common::JsonStreamMapReader map(stream);
 	const int pagesCount = map.readValue(pagesCountKey).toInt();

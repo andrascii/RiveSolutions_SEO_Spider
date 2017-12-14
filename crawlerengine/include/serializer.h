@@ -16,8 +16,8 @@ class Serializer
 public:
 	Serializer();
 	Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, std::vector<CrawlerRequest>&& pendingUrls);
-	void saveToJsonStream(Common::JsonParserStreamWriter& stream);
-	void readFromJsonStream(Common::JsonParserStreamReader& stream);
+	void saveToStream(QIODevice& device);
+	void loadFromStream(QIODevice& device);
 
 	const std::vector<ParsedPagePtr>& pages() const;
 	const std::vector<CrawlerRequest>& crawledLinks() const;
