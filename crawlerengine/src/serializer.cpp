@@ -11,6 +11,7 @@ namespace
 {
 	const QString pagesCountKey = QLatin1String("pagesCount");
 	const QString pagesKey = QLatin1String("pages");
+	const QString pageKey = QLatin1String("page");
 
 	const QString serializerVersionKey = QLatin1String("serializer_version");
 	const QString serializerVersion = QLatin1String("1");
@@ -29,6 +30,9 @@ namespace
 	const QString firstH2Key = QLatin1String("firstH2");
 	const QString statusCodeKey = QLatin1String("statusCode");
 	const QString metaRobotsFlagsKey = QLatin1String("metaRobotsFlags");
+	const QString metaRobotsFlagsItemKey = QLatin1String("metaRobotsItem");
+	const QString metaRobotsValueKey = QLatin1String("metaRobotsValue");
+	const QString userAgentKey = QLatin1String("userAgent");
 	const QString responseDateKey = QLatin1String("responseDate");
 	const QString lastModifiedDateKey = QLatin1String("lastModifiedDate");
 	const QString pageSizeKilobytesKey = QLatin1String("pageSizeKilobytes");
@@ -44,6 +48,7 @@ namespace
 	const QString rawResponseKey = QLatin1String("rawResponse");
 	const QString pageLevelKey = QLatin1String("pageLevel");
 	const QString linksOnThisPageKey = QLatin1String("linksOnThisPage");
+	const QString linksOnThisPageItemKey = QLatin1String("link");
 	const QString linkParameterKey = QLatin1String("linkParameter");
 	const QString resourceSourceKey = QLatin1String("resourceSource");
 	const QString altOrTitleKey = QLatin1String("altOrTitle");
@@ -51,6 +56,7 @@ namespace
 	const QString requestTypeKey = QLatin1String("requestType");
 	const QString crawledUrlsKey = QLatin1String("crawledUrls");
 	const QString pendingUrlsKey = QLatin1String("pendingUrls");
+	const QString urlItemKey = QLatin1String("urlItem");
 	const QString storagesKey = QLatin1String("storages");
 }
 
@@ -139,6 +145,94 @@ public:
 		pageMap[storagesKey] = storagesStr;
 
 		return pageMap;
+	}
+
+	void writeXml(QXmlStreamWriter& writer)
+	{
+		writer.writeStartElement(pageKey);
+
+		writer.writeTextElement(urlKey, m_page->url.toDisplayString());
+		writer.writeTextElement(redirectedUrlKey, m_page->redirectedUrl.toDisplayString());
+		writer.writeTextElement(canonicalUrlKey, m_page->canonicalUrl.toDisplayString());
+		writer.writeTextElement(titleKey, m_page->title);
+		writer.writeTextElement(contentTypeKey, m_page->contentType);
+		writer.writeTextElement(metaRefreshKey, m_page->metaRefresh);
+		writer.writeTextElement(metaDescriptionKey, m_page->metaDescription);
+		writer.writeTextElement(metaKeywordsKey, m_page->metaKeywords);
+		writer.writeTextElement(serverResponseKey, m_page->serverResponse);
+		writer.writeTextElement(firstH1Key, m_page->firstH1);
+		writer.writeTextElement(secondH1Key, m_page->secondH1);
+		writer.writeTextElement(firstH2Key, m_page->firstH2);
+		writer.writeTextElement(statusCodeKey, QString::number(static_cast<int>(m_page->statusCode)));
+	
+		{
+			writer.writeStartElement(metaRobotsFlagsKey);
+			for (const std::pair<const UserAgentType, MetaRobotsFlags>& flags : m_page->metaRobotsFlags)
+			{
+				writer.writeStartElement(metaRobotsFlagsItemKey);
+				writer.writeAttribute(userAgentKey, QString::number(static_cast<int>(flags.first)));
+				writer.writeAttribute(metaRobotsValueKey, QString::number(static_cast<int>(flags.second)));
+				writer.writeEndElement();
+			}
+
+			writer.writeEndElement();
+		}
+		
+
+		writer.writeTextElement(responseDateKey, QString::number(static_cast<unsigned long long>(m_page->responseDate.toMSecsSinceEpoch())));
+		writer.writeTextElement(lastModifiedDateKey, QString::number(static_cast<unsigned long long>(m_page->lastModifiedDate.toMSecsSinceEpoch())));
+		writer.writeTextElement(pageSizeKilobytesKey, QString::number(m_page->pageSizeKilobytes));
+		writer.writeTextElement(wordCountKey, QString::number(m_page->wordCount));
+		writer.writeTextElement(hasSeveralTitleTagsKey, QString::number(m_page->hasSeveralTitleTags));
+		writer.writeTextElement(hasSeveralMetaDescriptionTagsKey, QString::number(m_page->hasSeveralMetaDescriptionTags));
+		writer.writeTextElement(hasSeveralMetaKeywordsTagsKey, QString::number(m_page->hasSeveralMetaKeywordsTags));
+		writer.writeTextElement(hasSeveralH1TagsKey, QString::number(m_page->hasSeveralH1Tags));
+		writer.writeTextElement(hasSeveralEqualH2TagsKey, QString::number(m_page->hasSeveralEqualH2Tags));
+		writer.writeTextElement(isThisExternalPageKey, QString::number(m_page->isThisExternalPage));
+		writer.writeTextElement(resourceTypeKey, QString::number(static_cast<int>(m_page->resourceType)));
+		
+		{
+			writer.writeStartElement(linksOnThisPageKey);
+
+			for (const ResourceLink& link : m_page->linksOnThisPage)
+			{
+				writer.writeStartElement(linksOnThisPageItemKey);
+				
+				writer.writeAttribute(urlKey, link.url.toDisplayString());
+				writer.writeAttribute(linkParameterKey, QString::number(static_cast<int>(link.linkParameter)));
+				writer.writeAttribute(resourceSourceKey, QString::number(static_cast<int>(link.resourceSource)));
+				writer.writeAttribute(altOrTitleKey, link.altOrTitle);
+
+				if (!link.resource.expired())
+				{
+					const ParsedPage* linkPage = link.resource.lock().get();
+					auto it = m_pagesByIndex.find(linkPage);
+					ASSERT(it != m_pagesByIndex.end());
+
+					writer.writeAttribute(resourceIndexKey, QString::number(it->second));
+				}
+				else
+				{
+					writer.writeAttribute(resourceIndexKey, QString::number(-1));
+				}
+
+				writer.writeEndElement();
+			}
+
+			writer.writeEndElement();
+		}
+
+		writer.writeTextElement(rawResponseKey, m_page->rawResponse.toBase64());
+		writer.writeTextElement(pageLevelKey, QString::number(m_page->pageLevel));
+
+		QString storagesStr;
+		for (int i = 0; i < m_page->storages.size(); ++i)
+		{
+			storagesStr = storagesStr % (m_page->storages[i] ? QLatin1Char('1') : QLatin1Char('0'));
+		}
+
+		writer.writeTextElement(storagesKey, storagesStr);
+		writer.writeEndElement(); // end page
 	}
 
 private:
@@ -273,41 +367,14 @@ Serializer::Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequ
 
 void Serializer::saveToStream(QIODevice& device)
 {
-	Common::JsonParserStreamWriter stream(device);
-
-	Common::JsonStreamMapElement map(stream);
-
-	map.writeMapValue(serializerVersionKey, serializerVersion);
-	map.writeMapValue(pagesCountKey, m_pages.size());
-
-	{
-		Common::JsonStreamMapValue pagesNode(map, pagesKey);
-		savePagesToJsonStream(pagesNode);
-	}
-	
-	{
-		Common::JsonStreamMapValue crawledLinksNode(map, crawledUrlsKey);
-		saveLinksToJsonStream(crawledLinksNode, m_crawledLinks);
-	}
-	
-	{
-		Common::JsonStreamMapValue pendingLinksNode(map, pendingUrlsKey);
-		saveLinksToJsonStream(pendingLinksNode, m_pendingLinks);
-	}
+	//saveToJsonStream(device);
+	saveToXmlStream(device);
 }
 
 void Serializer::loadFromStream(QIODevice& device)
 {
-	Common::JsonParserStreamReader stream(device);
-	INFOLOG << "Deserialization...";
-	Common::JsonStreamMapReader map(stream);
-	const int pagesCount = map.readValue(pagesCountKey).toInt();
-	readPagesFromJsonStream(map.value(pagesKey), pagesCount);
-
-	readLinksFromJsonStream(map.value(crawledUrlsKey), m_crawledLinks);
-	readLinksFromJsonStream(map.value(pendingUrlsKey), m_pendingLinks);
-
-	INFOLOG << "Deserialization has been finished";
+	//loadFromJsonStream(device);
+	loadFromXmlStream(device);
 }
 
 const std::vector<ParsedPagePtr>& CrawlerEngine::Serializer::pages() const
@@ -323,6 +390,45 @@ const std::vector<CrawlerRequest>& Serializer::crawledLinks() const
 const std::vector<CrawlerRequest>& CrawlerEngine::Serializer::pendingLinks() const
 {
 	return m_pendingLinks;
+}
+
+void Serializer::saveToJsonStream(QIODevice& device)
+{
+	Common::JsonParserStreamWriter stream(device);
+
+	Common::JsonStreamMapElement map(stream);
+
+	map.writeMapValue(serializerVersionKey, serializerVersion);
+	map.writeMapValue(pagesCountKey, m_pages.size());
+
+	{
+		Common::JsonStreamMapValue pagesNode(map, pagesKey);
+		savePagesToJsonStream(pagesNode);
+	}
+
+	{
+		Common::JsonStreamMapValue crawledLinksNode(map, crawledUrlsKey);
+		saveLinksToJsonStream(crawledLinksNode, m_crawledLinks);
+	}
+
+	{
+		Common::JsonStreamMapValue pendingLinksNode(map, pendingUrlsKey);
+		saveLinksToJsonStream(pendingLinksNode, m_pendingLinks);
+	}
+}
+
+void Serializer::loadFromJsonStream(QIODevice& device)
+{
+	Common::JsonParserStreamReader stream(device);
+	INFOLOG << "Deserialization...";
+	Common::JsonStreamMapReader map(stream);
+	const int pagesCount = map.readValue(pagesCountKey).toInt();
+	readPagesFromJsonStream(map.value(pagesKey), pagesCount);
+
+	readLinksFromJsonStream(map.value(crawledUrlsKey), m_crawledLinks);
+	readLinksFromJsonStream(map.value(pendingUrlsKey), m_pendingLinks);
+
+	INFOLOG << "Deserialization has been finished";
 }
 
 void Serializer::savePagesToJsonStream(Common::JsonParserStreamWriter& stream) const
@@ -372,6 +478,7 @@ void Serializer::readPagesFromJsonStream(Common::JsonParserStreamReader& stream,
 
 	INFOLOG << "Deserialization (pages) has been finished";
 }
+
 void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const
 {
 	Common::JsonStreamListElement linksListElement(stream);
@@ -384,6 +491,7 @@ void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, c
 		linksListElement.writeCompound(linkMap);
 	}
 }
+
 void CrawlerEngine::Serializer::readLinksFromJsonStream(Common::JsonParserStreamReader& stream, std::vector<CrawlerRequest>& links)
 {
 	Common::JsonStreamListReader reader(stream);
@@ -397,6 +505,68 @@ void CrawlerEngine::Serializer::readLinksFromJsonStream(Common::JsonParserStream
 		links.push_back(request);
 	}
 }
+
+void Serializer::saveToXmlStream(QIODevice& device)
+{
+	QXmlStreamWriter xmlWriter(&device);
+
+	xmlWriter.setAutoFormatting(true);
+	xmlWriter.writeStartDocument();
+
+	xmlWriter.writeStartDocument();
+	xmlWriter.writeTextElement(serializerVersionKey, serializerVersion);
+	xmlWriter.writeTextElement(pagesCountKey, QString::number(m_pages.size()));
+
+	savePagesToXmlStream(xmlWriter);
+
+	xmlWriter.writeStartElement(crawledUrlsKey);
+	saveLinksToXmlStream(xmlWriter, m_crawledLinks);
+	xmlWriter.writeEndElement();
+
+	xmlWriter.writeStartElement(pendingUrlsKey);
+	saveLinksToXmlStream(xmlWriter, m_pendingLinks);
+	xmlWriter.writeEndElement();
+}
+
+void Serializer::loadFromXmlStream(QIODevice& device)
+{
+	// TODO: implement
+	Q_UNUSED(device);
+}
+
+void Serializer::savePagesToXmlStream(QXmlStreamWriter& writer) const
+{
+	writer.writeStartElement(pagesKey);
+
+	std::vector<ParsedPageSerializer> pageWrappers;
+	pageWrappers.reserve(m_pages.size());
+	std::map<const ParsedPage*, int> pagesByIndex;
+	for (int i = 0; i < m_pages.size(); ++i)
+	{
+		const ParsedPage* page = m_pages[i];
+		pageWrappers.emplace_back(page, i, pagesByIndex);
+	}
+
+	for (int i = 0; i < m_pages.size(); ++i)
+	{
+		ParsedPageSerializer& wrapper = pageWrappers[i];
+		wrapper.writeXml(writer);
+	}
+
+	writer.writeEndElement(); // end pagesKey
+}
+
+void Serializer::saveLinksToXmlStream(QXmlStreamWriter& writer, const std::vector<CrawlerRequest>& links) const
+{
+	for (const CrawlerRequest& link : links)
+	{
+		writer.writeStartElement(urlItemKey);
+		writer.writeAttribute(urlKey, link.url.toDisplayString());
+		writer.writeAttribute(requestTypeKey, QString::number(static_cast<int>(link.requestType)));
+		writer.writeEndElement();
+	}
+}
+
 }
 
 

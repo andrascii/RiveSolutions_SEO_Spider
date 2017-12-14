@@ -24,12 +24,20 @@ public:
 	const std::vector<CrawlerRequest>& pendingLinks() const;
 
 private:
+	void saveToJsonStream(QIODevice& device);
+	void loadFromJsonStream(QIODevice& device);
 	void savePagesToJsonStream(Common::JsonParserStreamWriter& stream) const;
 	void readPagesFromJsonStream(Common::JsonParserStreamReader& stream, int pagesCount);
 
 	void saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const;
 	void readLinksFromJsonStream(Common::JsonParserStreamReader& stream, std::vector<CrawlerRequest>& links);
 
+private:
+	void saveToXmlStream(QIODevice& device);
+	void loadFromXmlStream(QIODevice& device);
+	void savePagesToXmlStream(QXmlStreamWriter& writer) const;
+
+	void saveLinksToXmlStream(QXmlStreamWriter& writer, const std::vector<CrawlerRequest>& links) const;
 private:
 	std::vector<ParsedPage*> m_pages;
 	std::vector<ParsedPagePtr> m_deserializedPages;
