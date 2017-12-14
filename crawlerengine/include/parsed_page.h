@@ -1,6 +1,7 @@
 #pragma once
 
 #include "status_code.h"
+#include "custom_url.h"
 
 namespace CrawlerEngine
 {
@@ -125,7 +126,7 @@ constexpr int invalidPageLevel = 100000000;
 
 struct ParsedPage
 {
-	QUrl url;
+	CustomUrl url;
 	QUrl redirectedUrl;
 	QUrl canonicalUrl;
 

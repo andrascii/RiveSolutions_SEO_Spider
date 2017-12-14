@@ -19,7 +19,7 @@ struct CrawlerRequest
 	bool operator==(const CrawlerRequest& other) const
 	{
 		return requestType == other.requestType && 
-			PageParserHelpers::removeUrlLastSlashIfExists(url) == PageParserHelpers::removeUrlLastSlashIfExists(other.url);
+			PageParserHelpers::checkUrlIdentity(url, other.url);
 	}
 
 	friend bool operator<(const CrawlerRequest& lhs, const CrawlerRequest& rhs)
