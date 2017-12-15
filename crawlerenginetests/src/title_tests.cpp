@@ -4,7 +4,7 @@ namespace CrawlerEngineTests
 TEST(TitleTests, EmptyTitle)
 {
 	// empty-title.html -> empty-title-2.html
-	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://title.com/empty-title.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ CustomUrl("http://title.com/empty-title.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -23,7 +23,7 @@ TEST(TitleTests, EmptyTitle)
 TEST(TitleTests, NoTitle)
 {
 	// no-title.html -> no-title-2.html
-	TestEnvironment env(TestEnvironment::defaultOptions({ QUrl("http://title.com/no-title.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ CustomUrl("http://title.com/no-title.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -42,7 +42,7 @@ TEST(TitleTests, NoTitle)
 TEST(TitleTests, TooLongTitle)
 {
 	// too-long-title.html -> too-long-title-2.html
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/too-long-title.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://title.com/too-long-title.html"));
 	options.maxTitleLength = 10;
 	TestEnvironment env(options);
 
@@ -62,7 +62,7 @@ TEST(TitleTests, TooLongTitle)
 TEST(TitleTests, TooShortTitle)
 {
 	// too-short-title.html -> too-short-title-2.html
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/too-short-title.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://title.com/too-short-title.html"));
 	options.minTitleLength = 24;
 	options.maxTitleLength = 100;
 	TestEnvironment env(options);
@@ -86,7 +86,7 @@ TEST(TitleTests, DuplicatedTitles)
 
 	//std::lock_guard<std::mutex> locker(g_mutex);
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/duplicated-titles-1.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://title.com/duplicated-titles-1.html"));
 	options.minTitleLength = 24;
 	options.maxTitleLength = 100;
 	TestEnvironment env(options);
@@ -110,7 +110,7 @@ TEST(TitleTests, DoNotIncludeCanonicalDuplicatedTitles)
 {
 	// canonical-duplicated-title.html -> canonical-duplicated-title.html
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/canonical-duplicated-title.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://title.com/canonical-duplicated-title.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -128,7 +128,7 @@ TEST(TitleTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 {
 	// canonical-duplicated-title-another.html -> canonical-duplicated-title.html -> canonical-duplicated-title.html
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/canonical-duplicated-title-another.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://title.com/canonical-duplicated-title-another.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -144,7 +144,7 @@ TEST(TitleTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 
 TEST(TitleTests, DoNotIncludeEveryPageInDuplicates)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://title.com/single-page.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://title.com/single-page.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -161,7 +161,7 @@ TEST(TitleTests, DoNotIncludeEveryPageInDuplicates)
 TEST(TitleTests, DuplicatedH1Title)
 {
 	// duplicated-h1-title.html -> duplicated-h1-title-2.html
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://title.com/duplicated-h1-title.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://title.com/duplicated-h1-title.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -183,7 +183,7 @@ TEST(TitleTests, DuplicatedH1Title)
 TEST(TitleTests, SeveralTitles)
 {
 	// several-titles.html -> several-titles-2.html
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://title.com/several-titles.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://title.com/several-titles.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

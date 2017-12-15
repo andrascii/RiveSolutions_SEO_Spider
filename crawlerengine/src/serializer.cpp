@@ -278,9 +278,9 @@ public:
 
 	void fromJson(const QVariantMap& pageMap)
 	{
-		m_page->url = QUrl(pageMap[urlKey].toString());
+		m_page->url = CustomUrl(pageMap[urlKey].toString());
 		m_page->redirectedUrl = QUrl(pageMap[redirectedUrlKey].toString());
-		m_page->canonicalUrl = QUrl(pageMap[canonicalUrlKey].toString());
+		m_page->canonicalUrl = CustomUrl(pageMap[canonicalUrlKey].toString());
 		m_page->title = pageMap[titleKey].toString();
 		m_page->contentType = pageMap[contentTypeKey].toString();
 		m_page->metaRefresh = pageMap[metaRefreshKey].toString();
@@ -351,7 +351,7 @@ public:
 
 			if (reader.qualifiedName() == urlKey)
 			{
-				m_page->url = QUrl(reader.readElementText());
+				m_page->url = CustomUrl(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == redirectedUrlKey)
 			{
@@ -359,7 +359,7 @@ public:
 			}
 			else if (reader.qualifiedName() == canonicalUrlKey)
 			{
-				m_page->canonicalUrl = QUrl(reader.readElementText());
+				m_page->canonicalUrl = CustomUrl(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == titleKey)
 			{

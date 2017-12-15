@@ -699,7 +699,7 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 
 		if (parent->pageLevel + 1 < level)
 		{
-			level = parent->pageLevel == 1 && parent->url == m_crawlerOptions.host 
+			level = parent->pageLevel == 1 && parent->url.compareWith(m_crawlerOptions.host)
 				? 1 : parent->pageLevel + 1;
 		}
 	}
@@ -761,12 +761,11 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int looku
 	const auto predicate = [&page = incomingPage](const ParsedPagePtr& candidatePage)
 	{
 		return 
-			PageParserHelpers::removeUrlLastSlashIfExists(candidatePage->url) != // TODO: remove these two lines
-			PageParserHelpers::removeUrlLastSlashIfExists(page->url) &&
+			candidatePage->url.canonizedUrlStr() != // TODO: remove these two lines
+			page->url.canonizedUrlStr() &&
 		
-			(!candidatePage->canonicalUrl.isValid() ||
-			PageParserHelpers::removeUrlLastSlashIfExists(candidatePage->canonicalUrl) !=
-			PageParserHelpers::removeUrlLastSlashIfExists(page->canonicalUrl));
+			(candidatePage->canonicalUrl.canonizedUrlStr().isEmpty() ||
+			candidatePage->canonicalUrl.canonizedUrlStr() != page->canonicalUrl.canonizedUrlStr());
 	};
 
 	const auto alwaysTruePredicate = [](const ParsedPagePtr&) { return true; };

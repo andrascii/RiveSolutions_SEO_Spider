@@ -3,7 +3,7 @@ namespace CrawlerEngineTests
 
 TEST(OptionsTests, ParseOnlyHtml)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ParserTypeFlags();
 	TestEnvironment env(options);
 
@@ -37,7 +37,7 @@ TEST(OptionsTests, ParseOnlyHtml)
 
 TEST(OptionsTests, ParseOnlyJs)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::JavaScriptResourcesParserType;
 	TestEnvironment env(options);
 
@@ -71,7 +71,7 @@ TEST(OptionsTests, ParseOnlyJs)
 
 TEST(OptionsTests, ParseOnlyCSS)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::CssResourcesParserType;
 	TestEnvironment env(options);
 
@@ -106,7 +106,7 @@ TEST(OptionsTests, ParseOnlyCSS)
 
 TEST(OptionsTests, ParseOnlyImages)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
 
@@ -140,7 +140,7 @@ TEST(OptionsTests, ParseOnlyImages)
 
 TEST(OptionsTests, ParseOnlyVideo)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::VideoResourcesParserType;
 	TestEnvironment env(options);
 
@@ -174,7 +174,7 @@ TEST(OptionsTests, ParseOnlyVideo)
 
 TEST(OptionsTests, ParseOnlyFlash)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::FlashResourcesParserType;
 	TestEnvironment env(options);
 
@@ -208,7 +208,7 @@ TEST(OptionsTests, ParseOnlyFlash)
 
 TEST(OptionsTests, ParseOnlyOther)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://options.com/index.html") });
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::OtherResourcesParserType;
 	TestEnvironment env(options);
 

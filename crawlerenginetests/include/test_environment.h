@@ -22,7 +22,7 @@ public:
 
 	void initializeTest(const std::function<void()>& testFunction);
 
-	static CrawlerEngine::CrawlerOptions defaultOptions(const QUrl& url);
+	static CrawlerEngine::CrawlerOptions defaultOptions(const CrawlerEngine::CustomUrl& url);
 
 	static CrawlerEngine::ResourceLink firstResourceOnThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType);
 

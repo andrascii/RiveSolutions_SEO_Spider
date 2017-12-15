@@ -3,7 +3,7 @@ namespace CrawlerEngineTests
 	
 TEST(LinksTests, LinkAlt)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/link-with-title.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://links.com/link-with-title.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -24,7 +24,7 @@ TEST(LinksTests, LinkAlt)
 
 TEST(LinksTests, CanonicalNextPrev)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/canonical-next-prev.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://links.com/canonical-next-prev.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -51,7 +51,7 @@ TEST(LinksTests, CanonicalNextPrev)
 
 TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://nofollowlinks.com"));
+	CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://nofollowlinks.com"));
 	options.followInternalNofollow = false;
 
 	TestEnvironment env(options);
@@ -101,7 +101,7 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 
 TEST(LinksTests, SubdomainsMustNotBeLoaded)
 {
-	const QUrl baseUrl("http://subdomains.com");
+	const CustomUrl baseUrl("http://subdomains.com");
 	CrawlerOptions options = TestEnvironment::defaultOptions(baseUrl);
 
 	TestEnvironment env(options);
@@ -153,7 +153,7 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 
 TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(QUrl("http://blockedbyrobotstxt.com"));
+	CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://blockedbyrobotstxt.com"));
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
 
@@ -184,7 +184,7 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 
 TEST(LinksTests, Canonical)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://links.com/canonical.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://links.com/canonical.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

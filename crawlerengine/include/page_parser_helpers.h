@@ -12,8 +12,6 @@ public:
 	static std::vector<QUrl> resolveUrlList(const QUrl& baseUrl, const std::vector<QUrl>& urlList) noexcept;
 	static std::vector<LinkInfo> resolveUrlList(const QUrl& baseUrl, const std::vector<LinkInfo>& linkList) noexcept;
 	static QUrl resolveUrl(const QUrl& baseUrl, const QUrl& url) noexcept;
-
-	static QUrl removeUrlLastSlashIfExists(const QUrl& url);
 	static bool checkUrlIdentity(const QUrl& lhs, const QUrl& rhs);
 
 	static bool isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept;

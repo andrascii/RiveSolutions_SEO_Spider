@@ -128,7 +128,7 @@ struct ParsedPage
 {
 	CustomUrl url;
 	QUrl redirectedUrl;
-	QUrl canonicalUrl;
+	CustomUrl canonicalUrl;
 
 	QString title;
 	QString contentType;

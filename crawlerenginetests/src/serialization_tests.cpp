@@ -3,7 +3,7 @@ namespace CrawlerEngineTests
 
 TEST(SerializationTests, PagesSerialization)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ QUrl("http://sitemap.com/page-1.html") });
+	CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = ImagesResourcesParserType;
 	TestEnvironment env(options);
 

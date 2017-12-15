@@ -7,7 +7,7 @@ namespace CrawlerEngineTests
 
 TEST(DummyGroup, DummyName)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(QUrl("http://dummy.com")));
+	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://dummy.com")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
