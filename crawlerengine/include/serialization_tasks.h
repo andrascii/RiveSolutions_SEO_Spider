@@ -29,4 +29,17 @@ private:
 	QString m_fileName;
 };
 
+
+class DeserializatoinTask: public ITask
+{
+public:
+	DeserializatoinTask(std::shared_ptr<Serializer> serializer, const QString& fileName);
+	virtual void run() override;
+	virtual std::shared_ptr<TaskResponseResult> result() override;
+
+private:
+	std::shared_ptr<SerializationTaskResponseResult> m_result;
+	QString m_fileName;
+};
+
 }

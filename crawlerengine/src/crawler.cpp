@@ -201,16 +201,42 @@ void Crawler::initializeCrawlingSession()
 	m_robotsTxtLoader->load(m_options.host);
 }
 
-void Crawler::onTaskDone(Requester* requester, const TaskResponse& response)
+void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& response)
 {
 	Q_UNUSED(requester);
 
 	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
-	if (result != nullptr)
+	ASSERT(result != nullptr);
+	m_state = m_prevState;
+	emit stateChanged(m_state);
+}
+
+void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse& response)
+{
+	Q_UNUSED(requester);
+
+	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
+	ASSERT(result != nullptr);
+
+	const std::vector<ParsedPagePtr>& pages = result->serializer->pages();
+
+	for (const ParsedPagePtr& page : pages)
 	{
-		m_state = m_prevState;
-		emit stateChanged(m_state);
+		for (int i = 0; i < page->storages.size(); ++i)
+		{
+			if (page->storages[i])
+			{
+				m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
+			}
+		}
+
 	}
+
+	m_uniqueLinkStore->setCrawledUrls(result->serializer->crawledLinks());
+	m_uniqueLinkStore->setPendingUrls(result->serializer->pendingLinks());
+
+	m_state = m_prevState;
+	emit stateChanged(m_state);
 }
 
 void Crawler::createSequencedDataCollection(QThread* targetThread) const
@@ -294,7 +320,7 @@ void Crawler::saveToFile(const QString& fileName)
 	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(serializer, fileName);
 
 	TaskRequest request(task);
-	m_serializationRequester.reset(request, this, &Crawler::onTaskDone);
+	m_serializationRequester.reset(request, this, &Crawler::onSerializationTaskDone);
 	m_serializationRequester->start();
 
 	m_prevState = state();
@@ -306,44 +332,19 @@ void Crawler::loadFromFile(const QString& fileName)
 {
 	ASSERT(state() != State::StateWorking);
 	clearData();
-	try
-	{
-		QFile file(fileName);
 
-		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-		{
-			throw std::runtime_error(file.errorString().toStdString());
-		}
+	std::shared_ptr<Serializer> serializer = std::make_shared<Serializer>();
 
-		Serializer serializer; // TODO: provide all required data into the constructor
-		serializer.loadFromStream(file);
 
-		const std::vector<ParsedPagePtr>& pages = serializer.pages();
+	std::shared_ptr<ITask> task = std::make_shared<DeserializatoinTask>(serializer, fileName);
 
-		for (const ParsedPagePtr& page : pages)
-		{
-			for (int i = 0; i < page->storages.size(); ++i)
-			{
-				if (page->storages[i])
-				{
-					m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
-				}
-			}
-			
-		}
+	TaskRequest request(task);
+	m_deSerializationRequester.reset(request, this, &Crawler::onDeserializationTaskDone);
+	m_deSerializationRequester->start();
 
-//		VERIFY(QMetaObject::invokeMethod(m_modelController, "addParsedPages",
-			//Qt::BlockingQueuedConnection, Q_ARG(std::vector<ParsedPagePtr>, incomingPages)));
-
-		m_uniqueLinkStore->setCrawledUrls(serializer.crawledLinks());
-		m_uniqueLinkStore->setPendingUrls(serializer.pendingLinks());
-
-	}
-	catch (const std::exception& e)
-	{
-		Q_UNUSED(e);
-		// TODO: notify a user about the error
-	}
+	m_prevState = state();
+	m_state = StateSerializaton;
+	emit stateChanged(m_state);
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept

@@ -87,7 +87,8 @@ protected:
 private:
 	bool isPreinitialized() const;	
 	void initializeCrawlingSession();
-	void onTaskDone(Requester* requester, const TaskResponse& response);
+	void onSerializationTaskDone(Requester* requester, const TaskResponse& response);
+	void onDeserializationTaskDone(Requester* requester, const TaskResponse& response);
 
 protected:
 	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
@@ -110,6 +111,7 @@ private:
 	State m_prevState;
 
 	RequesterWrapper m_serializationRequester;
+	RequesterWrapper m_deSerializationRequester;
 };
 
 }

@@ -77,4 +77,37 @@ std::shared_ptr<TaskResponseResult> SerializationTask::result()
 	return m_result;
 }
 
+DeserializatoinTask::DeserializatoinTask(std::shared_ptr<Serializer> serializer, const QString& fileName)
+	: m_result(std::make_shared<SerializationTaskResponseResult>(serializer))
+	, m_fileName(fileName)
+{
+}
+
+void DeserializatoinTask::run()
+{
+	try
+	{
+		QFile file(m_fileName);
+
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		{
+			throw std::runtime_error(file.errorString().toStdString());
+		}
+
+		m_result->serializer->loadFromStream(file);
+
+	}
+	catch (const std::exception& e)
+	{
+		Q_UNUSED(e);
+		// TODO: notify a user about the error
+	}
+
+}
+
+std::shared_ptr<TaskResponseResult> DeserializatoinTask::result()
+{
+	return m_result;
+}
+
 }
