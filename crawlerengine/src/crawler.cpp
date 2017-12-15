@@ -209,6 +209,8 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	ASSERT(result != nullptr);
 	m_state = m_prevState;
 	emit stateChanged(m_state);
+
+	m_serializationRequester.reset();
 }
 
 void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse& response)
@@ -237,6 +239,8 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 
 	m_state = m_prevState;
 	emit stateChanged(m_state);
+
+	m_deSerializationRequester.reset();
 }
 
 void Crawler::createSequencedDataCollection(QThread* targetThread) const
