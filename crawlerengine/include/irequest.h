@@ -6,7 +6,8 @@ namespace CrawlerEngine
 enum class RequestType
 {
 	RequestTypeDownload,
-	RequestGetHostInfo
+	RequestGetHostInfo,
+	RequestTypeRunTask
 };
 
 struct IRequest

@@ -665,3 +665,11 @@ QFrame#MessageBox QLabel
 {
 	color: #ededed;
 }
+
+
+/*/////////////////////////////// Loading Widget ///////////////////////////////*/
+
+QStackedWidget QLabel#LoadingWidget
+{
+	font-size: 20em;
+}

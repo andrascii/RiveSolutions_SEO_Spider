@@ -21,6 +21,7 @@ public slots:
 
 private slots:
 	void handleNavigationPanelButtonClick();
+	void onStateChanged(int state);
 
 private:
 	void initializeNavigationPanelWidget();
@@ -42,6 +43,8 @@ private:
 	QPushButton* m_prevButton;
 
 	HeaderDecorationWidget* m_decorationWidget;
+
+	PageFactory::Page m_activePage;
 };
 
 }

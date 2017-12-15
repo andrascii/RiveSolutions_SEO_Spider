@@ -7,7 +7,8 @@ enum class ResponseType
 {
 	ResponseTypeUnknown,
 	ResponseTypeDownload,
-	ResponseTypeGetHostInfo
+	ResponseTypeGetHostInfo,
+	ResponseTypeTaskResult
 };
 
 #define DECLARE_RESPONSE_STATIC_TYPE(Type) \
@@ -27,6 +28,7 @@ enum class ResponseType
 
 struct IResponse
 {
+	virtual ~IResponse() = default;
 	virtual ResponseType type() const noexcept = 0;
 };
 

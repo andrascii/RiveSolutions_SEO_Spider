@@ -3,6 +3,7 @@
 #include "parsed_page.h"
 #include "unique_link_store.h"
 #include "crawler_options.h"
+#include "requester_wrapper.h"
 
 namespace CrawlerEngine
 {
@@ -14,6 +15,9 @@ class SequencedDataCollection;
 class IRobotsTxtLoader;
 class IRobotsTxtRules;
 class IDownloader;
+class ITaskProcessor;
+class Requester;
+struct TaskResponse;
 
 struct CrawlingProgress
 {
@@ -32,7 +36,8 @@ public:
 	{
 		StateWorking,
 		StatePause,
-		StatePending
+		StatePending,
+		StateSerializaton
 	};
 
 	static Crawler& instance();
@@ -73,6 +78,8 @@ protected:
 	IRobotsTxtLoader* robotsTxtLoader();
 
 	virtual IDownloader* createDownloader() const;
+	virtual ITaskProcessor* createTaskProcessor() const;
+
 	virtual void createSequencedDataCollection(QThread* targetThread) const;
 	
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
@@ -80,6 +87,7 @@ protected:
 private:
 	bool isPreinitialized() const;	
 	void initializeCrawlingSession();
+	void onTaskDone(Requester* requester, const TaskResponse& response);
 
 protected:
 	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
@@ -99,6 +107,9 @@ private:
 	QTimer* m_crawlingStateTimer;	
 	std::vector<CrawlerWorkerThread*> m_workers;	
 	State m_state;
+	State m_prevState;
+
+	RequesterWrapper m_serializationRequester;
 };
 
 }

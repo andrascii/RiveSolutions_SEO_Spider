@@ -35,6 +35,21 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 
 	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
 	horizontalLayout->addWidget(m_decorationWidget);
+
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::stateChanged,
+		this, &DataPagesWidget::onStateChanged));
+
+	QWidget* loadingWidget = new QWidget(this);
+	QHBoxLayout* loadingWidgetLayout = new QHBoxLayout(this);
+	loadingWidget->setLayout(loadingWidgetLayout);
+	loadingWidgetLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
+	QLabel* label = new QLabel(this);
+	label->setText(tr("Please wait..."));
+	label->setObjectName("LoadingWidget");
+	loadingWidgetLayout->addWidget(label);
+	loadingWidgetLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
+	
+	m_stackedWidget->addWidget(loadingWidget);
 }
 
 void DataPagesWidget::addPage(PageFactory::Page page, QWidget* widget, const QString& buttonText, const QIcon& buttonIcon, bool setSelected)
@@ -59,12 +74,14 @@ void DataPagesWidget::addPage(PageFactory::Page page, QWidget* widget, const QSt
 	if (setSelected)
 	{
 		m_prevButton = m_navigationPanel.pushButtons[page];
+		showPage(page);
 	}
 }
 
 void DataPagesWidget::showPage(PageFactory::Page page)
 {
 	m_stackedWidget->setCurrentIndex(m_pageIndexes[page]);
+	m_activePage = page;
 }
 
 void DataPagesWidget::handleNavigationPanelButtonClick()
@@ -100,6 +117,24 @@ void DataPagesWidget::handleNavigationPanelButtonClick()
 	DEBUG_ASSERT(pushButtonsIterator != std::end(m_navigationPanel.pushButtons));
 
 	showPage(pushButtonsIterator->first);
+}
+
+void DataPagesWidget::onStateChanged(int state)
+{
+	if (state == CrawlerEngine::Crawler::State::StateSerializaton)
+	{
+		m_stackedWidget->setCurrentIndex(0);
+		m_stackedWidget->setEnabled(false);
+		m_decorationWidget->setEnabled(false);
+		m_navigationPanel.navigationPanelWidget->setEnabled(false);
+	}
+	else
+	{
+		m_stackedWidget->setEnabled(true);
+		m_decorationWidget->setEnabled(true);
+		m_navigationPanel.navigationPanelWidget->setEnabled(true);
+		showPage(m_activePage);
+	}
 }
 
 void DataPagesWidget::initializeNavigationPanelWidget()

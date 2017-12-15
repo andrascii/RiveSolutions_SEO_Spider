@@ -91,6 +91,14 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 
 			break;
 		}
+		case CrawlerEngine::Crawler::StateSerializaton:
+		{
+			m_ui.clearCrawlingDataButton->setDisabled(true);
+
+			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
+
+			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
+		}
 	}
 }
 

@@ -10,6 +10,8 @@
 #include "host_info_provider.h"
 #include "site_map.h"
 #include "serializer.h"
+#include "task_processor.h"
+#include "serialization_tasks.h"
 
 namespace CrawlerEngine
 {
@@ -65,6 +67,8 @@ void Crawler::initialize()
 	ThreadManager::instance().moveObjectToThread(createDownloader()->qobject(), "DownloaderThread");
 	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
 	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
+	ThreadManager::instance().moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
+
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
@@ -197,6 +201,18 @@ void Crawler::initializeCrawlingSession()
 	m_robotsTxtLoader->load(m_options.host);
 }
 
+void Crawler::onTaskDone(Requester* requester, const TaskResponse& response)
+{
+	Q_UNUSED(requester);
+
+	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
+	if (result != nullptr)
+	{
+		m_state = m_prevState;
+		emit stateChanged(m_state);
+	}
+}
+
 void Crawler::createSequencedDataCollection(QThread* targetThread) const
 {
 	m_sequencedDataCollection.reset(m_modelController->data()->createSequencedDataCollection(targetThread));
@@ -209,6 +225,12 @@ IDownloader* Crawler::createDownloader() const
 	downloader->setUserAgent(m_options.plainUserAgent);
 
 	return downloader;
+}
+
+ITaskProcessor* Crawler::createTaskProcessor() const
+{
+	ITaskProcessor* processor = new TaskProcessor();
+	return processor;
 }
 
 SequencedDataCollection* Crawler::sequencedDataCollection() const
@@ -236,97 +258,48 @@ void Crawler::saveToFile(const QString& fileName)
 {
 	ASSERT(state() != State::StateWorking);
 
-	QFileInfo fileInfo(fileName);
+	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();
+	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
+	std::vector<ParsedPagePtr> pendingPages = m_modelController->data()->allParsedPages(StorageType::PendingResourcesStorageType);
 
-	const QString fileDirPath = fileInfo.absolutePath();
-
-	const QString baseFilename = fileInfo.completeBaseName();
-
-	const QString fileSuffix = fileInfo.suffix();
-
-	const QString additionalString = QDateTime::currentDateTime().toString(QString("yyyyMMdd_hhmmsszzz"));
-
-	const QString tempFileName = QString("%1/%2_tmp_%3.%4")
-		.arg(fileDirPath)
-		.arg(baseFilename)
-		.arg(additionalString)
-		.arg(fileSuffix);
-
-	const QString oldFileName = QString("%1/%2_old_%3.%4")
-		.arg(fileDirPath)
-		.arg(baseFilename)
-		.arg(additionalString)
-		.arg(fileSuffix);
-
-	try
+	std::vector<ParsedPage*> pages;
+	const int pagesCount = storage->size() + static_cast<int>(pendingPages.size());
+	pages.reserve(pagesCount);
+	for (int i = 0; i < storage->size(); ++i)
 	{
-		QFile file(tempFileName);
-
-		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-		{
-			throw std::runtime_error(file.errorString().toStdString());
-		}
-
-		const SequencedDataCollection* sequencedCollection = sequencedDataCollection();
-		const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
-		std::vector<ParsedPagePtr> pendingPages = m_modelController->data()->allParsedPages(StorageType::PendingResourcesStorageType);
-
-		std::vector<ParsedPage*> pages;
-		const int pagesCount = storage->size() + static_cast<int>(pendingPages.size());
-		pages.reserve(pagesCount);
-		for (int i = 0; i < storage->size(); ++i)
-		{
-			const ParsedPage* page = (*storage)[i];
-			pages.push_back(const_cast<ParsedPage*>(page));
-		}
+		const ParsedPage* page = (*storage)[i];
+		pages.push_back(const_cast<ParsedPage*>(page));
+	}
 		
-		for (int i = 0; i < pendingPages.size(); ++i)
-		{
-			ParsedPage* page = pendingPages[i].get();
-			pages.push_back(page);
-		}
-
-		std::vector<CrawlerRequest> pendingUrls;
-		for (CrawlerWorkerThread* worker : m_workers)
-		{
-			const std::vector<CrawlerRequest> workerPendingUrls = worker->pendingUrls();
-			pendingUrls.insert(pendingUrls.end(), workerPendingUrls.begin(), workerPendingUrls.end());
-		}
-		std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
-		pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
-
-		std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
-
-		Serializer serializer(std::move(pages), std::move(crawledUrls), std::move(pendingUrls)); // TODO: provide all required data into the constructor
-		serializer.saveToStream(file);
-
-		file.close();
-
-		QFile oldFile(fileName);
-
-		const bool oldFileExisits = oldFile.exists();
-
-		if (oldFileExisits)
-		{
-			if (!oldFile.rename(oldFileName))
-			{
-				throw std::runtime_error(oldFile.errorString().toStdString());
-			}
-		}
-		QFile::rename(tempFileName, fileName);
-
-		if (oldFileExisits)
-		{
-			oldFile.remove();
-		}
-	}
-	catch (const std::exception& e)
+	for (int i = 0; i < pendingPages.size(); ++i)
 	{
-		Q_UNUSED(e);
-		// TODO: notify a user about the error
-
-		return;
+		ParsedPage* page = pendingPages[i].get();
+		pages.push_back(page);
 	}
+
+	std::vector<CrawlerRequest> pendingUrls;
+	for (CrawlerWorkerThread* worker : m_workers)
+	{
+		const std::vector<CrawlerRequest> workerPendingUrls = worker->pendingUrls();
+		pendingUrls.insert(pendingUrls.end(), workerPendingUrls.begin(), workerPendingUrls.end());
+	}
+	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
+	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
+
+	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
+
+	std::shared_ptr<Serializer> serializer = 
+		std::make_shared<Serializer>(std::move(pages), std::move(crawledUrls), std::move(pendingUrls)); 
+
+	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(serializer, fileName);
+
+	TaskRequest request(task);
+	m_serializationRequester.reset(request, this, &Crawler::onTaskDone);
+	m_serializationRequester->start();
+
+	m_prevState = state();
+	m_state = StateSerializaton;
+	emit stateChanged(m_state);
 }
 
 void Crawler::loadFromFile(const QString& fileName)
