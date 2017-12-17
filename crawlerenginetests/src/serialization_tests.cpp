@@ -14,7 +14,6 @@ TEST(SerializationTests, PagesSerialization)
 
 		cl->stopCrawling();
 		cl->saveToFile(QString("pages.json"));
-		cl->clearData();
 		cl->loadFromFile(QString("pages.json"));
 		
 		auto deserializedPages = cl->waitForParsedPageReceived(CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
