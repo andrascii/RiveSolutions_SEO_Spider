@@ -15,12 +15,19 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(uniqueLinkStore)
 	, m_isRunning(false)
+	, m_defferedProcessingTimer(new QTimer(this))
 {
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
 
 	VERIFY(connect(&Crawler::instance(), &Crawler::onAboutClearData, 
 		this, &CrawlerWorkerThread::onCrawlerClearData, Qt::QueuedConnection));
+
+	VERIFY(connect(m_defferedProcessingTimer, &QTimer::timeout, 
+		this, &CrawlerWorkerThread::extractUrlAndDownload));
+	
+	m_defferedProcessingTimer->setInterval(1000);
+	m_defferedProcessingTimer->setSingleShot(true);
 }
 
 std::vector<CrawlerRequest> CrawlerWorkerThread::pendingUrls() const
@@ -66,6 +73,19 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 		return;
 	}
 
+	const CrawlerSharedState* state = CrawlerSharedState::instance();
+	const int workersProcessedLinksCount = state->workersProcessedLinksCount();
+	const int modelControllerCrawledLinksCount = state->modelControllerCrawledLinksCount();
+
+	const int pendingLinksCount = workersProcessedLinksCount - modelControllerCrawledLinksCount;
+	const int maxPendingLinksCount = 15;
+
+	if (pendingLinksCount > maxPendingLinksCount)
+	{
+		m_defferedProcessingTimer->start();
+		return;
+	}
+
 	CrawlerRequest url;
 	const bool isUrlExtracted = m_uniqueLinkStore->extractUrl(url);
 
@@ -82,6 +102,7 @@ void CrawlerWorkerThread::onCrawlerClearData()
 {
 	m_pagesAcceptedAfterStop.clear();
 	m_pendingUrls.clear();
+	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);
 }
 
 void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage)
@@ -173,6 +194,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 		emit pageParsed(page);
 		m_pendingUrls.erase(page->url);
+		CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 	};
 
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
@@ -196,7 +218,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResp
 	}
  
 	emit pageParsed(page);
-
+	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 	m_pendingUrls.erase(page->url);
 
 	extractUrlAndDownload();
@@ -209,6 +231,7 @@ void CrawlerWorkerThread::onStart()
 		for (const ParsedPagePtr& page : m_pagesAcceptedAfterStop)
 		{
 			emit pageParsed(page);
+			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 			m_pendingUrls.erase(page->url);
 		}
 	}

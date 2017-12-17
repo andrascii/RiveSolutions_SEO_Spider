@@ -121,7 +121,8 @@ void DataPagesWidget::handleNavigationPanelButtonClick()
 
 void DataPagesWidget::onStateChanged(int state)
 {
-	if (state == CrawlerEngine::Crawler::State::StateSerializaton)
+	if (state == CrawlerEngine::Crawler::State::StateSerializaton ||
+		state == CrawlerEngine::Crawler::State::StateDeserializaton)
 	{
 		m_stackedWidget->setCurrentIndex(0);
 		m_stackedWidget->setEnabled(false);

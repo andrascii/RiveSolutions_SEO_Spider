@@ -59,6 +59,8 @@ private:
 
 	std::vector<ParsedPagePtr> m_pagesAcceptedAfterStop;
 	std::map<QUrl, CrawlerRequest> m_pendingUrls;
+
+	QTimer* m_defferedProcessingTimer;
 };
 
 }

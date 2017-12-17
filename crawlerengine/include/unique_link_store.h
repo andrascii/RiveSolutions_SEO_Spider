@@ -2,6 +2,7 @@
 
 #include "crawler_request.h"
 #include "parsed_page.h"
+#include "crawler_shared_state.h"
 
 namespace CrawlerEngine
 {
@@ -25,9 +26,6 @@ public:
 	void saveUrlList(const std::vector<QUrl>& urlList, DownloadRequestType requestType);
 	void saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestType requestType);
 	void saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType);
-
-	size_t crawledLinksCount() const noexcept;
-	size_t pendingLinksCount() const noexcept;
 
 	std::vector<CrawlerRequest> crawledUrls() const noexcept;
 	std::vector<CrawlerRequest> pendingUrls() const noexcept;
@@ -60,30 +58,15 @@ private:
 	};
 
 	using UrlList = std::unordered_set<CrawlerRequest, UrlListItemHasher, UrlListItemComparator>;
+	using IncrementFunc = void(CrawlerSharedState::*)() noexcept;
 
-	struct IncrementGuard
+	struct IncrementGuardExt
 	{
-		IncrementGuard(std::atomic<size_t>& size, const UrlList& storage)
-			: size(size)
-			, storage(storage)
-			, oldSize(storage.size())
-		{
-		}
+		IncrementGuardExt(IncrementFunc inc, IncrementFunc decr, const UrlList& storage);
+		~IncrementGuardExt();
 
-		~IncrementGuard()
-		{
-			const size_t newSize = storage.size();
-			if (newSize > oldSize)
-			{
-				++size;
-			} 
-			else if (newSize < oldSize)
-			{
-				--size;
-			}
-		}
-
-		std::atomic<size_t>& size;
+		IncrementFunc inc;
+		IncrementFunc decr;
 		size_t oldSize;
 		const UrlList& storage;
 	};
@@ -92,9 +75,6 @@ private:
 	UrlList m_crawledUrlList;
 
 	mutable std::recursive_mutex m_mutex;
-
-	std::atomic<size_t> m_crawledSize;
-	std::atomic<size_t> m_pendingSize;
 };
 
 }

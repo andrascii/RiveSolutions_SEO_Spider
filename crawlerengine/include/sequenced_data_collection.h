@@ -21,8 +21,6 @@ public:
 
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 
-	size_t crawledStorageSize() const;
-
 signals:
 	void parsedPageAdded(int row, int storageType);
 
@@ -49,8 +47,6 @@ private:
 	std::unordered_map<int, std::shared_ptr<ISequencedStorage>> m_sequencedStorageMap;
 
 	friend class UnorderedDataCollection;
-
-	std::atomic<size_t> m_crawledStorageSize;
 };
 
 }

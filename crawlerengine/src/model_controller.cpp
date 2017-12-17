@@ -1,6 +1,7 @@
 #include "model_controller.h"
 #include "unordered_data_collection.h"
 #include "page_parser_helpers.h"
+#include "crawler_shared_state.h"
 
 namespace
 {
@@ -63,8 +64,6 @@ namespace CrawlerEngine
 ModelController::ModelController()
 	: QObject(nullptr)
 	, m_data(new UnorderedDataCollection(this))
-	, m_crawledStorageSize(0)
-	, m_acceptedCrawledStorageSize(0)
 {
 }
 
@@ -76,18 +75,9 @@ void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
 void ModelController::clearData()
 {
 	data()->clearData();
-	m_crawledStorageSize.store(0);
-	m_acceptedCrawledStorageSize.store(0);
-}
 
-size_t ModelController::crawledStorageSize() const
-{
-	return m_crawledStorageSize;
-}
-
-size_t ModelController::acceptedCrawledStorageSize() const
-{
-	return m_acceptedCrawledStorageSize;
+	CrawlerSharedState::instance()->setModelControllerAcceptedLinksCount(0);
+	CrawlerSharedState::instance()->setModelControllerCrawledLinksCount(0);
 }
 
 void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
@@ -95,7 +85,7 @@ void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 	ASSERT(incomingPage->resourceType >= ResourceType::ResourceHtml &&
 		incomingPage->resourceType <= ResourceType::ResourceOther);
 
-	++m_crawledStorageSize;
+	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 
 	fixParsedPageResourceType(incomingPage);
 
@@ -153,7 +143,7 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 	const QUrl url = incomingPage->url;
 	const QString urlStr = url.toString();
 	data()->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
-	++m_acceptedCrawledStorageSize;
+	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
 	calculatePageLevel(incomingPage);
 
 	if (url.host() != m_crawlerOptions.host.host())
@@ -777,7 +767,6 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int looku
 		for (const ParsedPagePtr& duplicate : allDuplicates)
 		{
 			DEBUG_ASSERT(duplicate->storages[destStorageType] == false);
-			DEBUG_ASSERT(data()->isParsedPageExists(duplicate, destStorageType) == false);
 			
 			data()->addParsedPage(duplicate, destStorageType);
 		}

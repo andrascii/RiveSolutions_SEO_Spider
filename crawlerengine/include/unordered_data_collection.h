@@ -25,6 +25,7 @@ public:
 	bool isParsedPageExists(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 
 	void addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
+	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept;
 
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
 

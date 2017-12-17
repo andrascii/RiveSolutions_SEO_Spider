@@ -3,17 +3,42 @@
 namespace CrawlerEngine
 {
 
+UniqueLinkStore::IncrementGuardExt::IncrementGuardExt(IncrementFunc inc, IncrementFunc decr, const UrlList& storage)
+	: inc(inc)
+	, decr(decr)
+	, storage(storage)
+	, oldSize(storage.size())
+{
+}
+
+UniqueLinkStore::IncrementGuardExt::~IncrementGuardExt()
+{
+	CrawlerSharedState* state = CrawlerSharedState::instance();
+
+	const size_t newSize = storage.size();
+	if (newSize > oldSize)
+	{
+		(state->*inc)();
+
+	}
+	else if (newSize < oldSize)
+	{
+		ASSERT(decr != nullptr);
+		(state->*decr)();
+	}
+}
+
+
 UniqueLinkStore::UniqueLinkStore(QObject* parent)
 	: QObject(parent)
-	, m_crawledSize(0)
-	, m_pendingSize(0)
 {
 }
 
 void UniqueLinkStore::addUrl(const QUrl& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
-	IncrementGuard guard(m_pendingSize, m_pendingUrlList);
+	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
+		&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList);
 
 	CrawlerRequest request{ url, requestType };
 
@@ -28,7 +53,8 @@ void UniqueLinkStore::addUrl(const QUrl& url, DownloadRequestType requestType)
 void UniqueLinkStore::addUrl(QUrl&& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
-	IncrementGuard guard(m_pendingSize, m_pendingUrlList);
+	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
+		&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList);
 
 	CrawlerRequest request{ std::move(url), requestType };
 
@@ -52,8 +78,10 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 	const auto iter = m_pendingUrlList.begin();
 	url = *iter;
 
-	IncrementGuard guardCrawled(m_crawledSize, m_crawledUrlList);
-	IncrementGuard guardPending(m_pendingSize, m_pendingUrlList);
+	IncrementGuardExt guardCrawledExt(&CrawlerSharedState::incrementDownloaderCrawledLinksCount, nullptr, m_crawledUrlList);
+	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount, 
+		&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList);
+
 	m_crawledUrlList.insert(std::move(*iter));
 	m_pendingUrlList.erase(iter);
 
@@ -109,16 +137,6 @@ void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, Downlo
 	saveUrlList(std::move(urlList), requestType);
 }
 
-size_t UniqueLinkStore::crawledLinksCount() const noexcept
-{
-	return m_crawledSize;
-}
-
-size_t UniqueLinkStore::pendingLinksCount() const noexcept
-{
-	return m_pendingSize;
-}
-
 std::vector<CrawlerRequest> UniqueLinkStore::crawledUrls() const noexcept
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
@@ -151,7 +169,6 @@ void UniqueLinkStore::setCrawledUrls(const std::vector<CrawlerRequest>& urls)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 	m_crawledUrlList.clear();
-	m_crawledSize.store(0);
 
 	for (auto it = std::cbegin(urls); it != std::cend(urls); ++it)
 	{
@@ -163,7 +180,6 @@ void UniqueLinkStore::setPendingUrls(const std::vector<CrawlerRequest>& urls)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 	m_pendingUrlList.clear();
-	m_pendingSize.store(0);
 
 	for (auto it = std::cbegin(urls); it != std::cend(urls); ++it)
 	{
@@ -178,8 +194,8 @@ void UniqueLinkStore::clear()
 	m_pendingUrlList.clear();
 	m_crawledUrlList.clear();
 
-	m_crawledSize.store(0);
-	m_pendingSize.store(0);
+	CrawlerSharedState::instance()->setDownloaderCrawledLinksCount(0);
+	CrawlerSharedState::instance()->setDownloaderPendingLinksCount(0);
 }
 
 }

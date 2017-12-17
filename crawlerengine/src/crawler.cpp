@@ -30,6 +30,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_uniqueLinkStore(new UniqueLinkStore(this))
 	, m_theradCount(threadCount)
 	, m_crawlingStateTimer(new QTimer(this))
+	, m_serializatonRedyStateCheckerTimer(new QTimer(this))
 	, m_sequencedDataCollection(nullptr)
 	, m_state(StatePending)
 {
@@ -42,8 +43,10 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	ASSERT(qRegisterMetaType<RobotsTxtRules>());
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
+	VERIFY(connect(m_serializatonRedyStateCheckerTimer, &QTimer::timeout, this, &Crawler::checkSerialiationReadyState));
 	
 	m_crawlingStateTimer->setInterval(100);
+	m_serializatonRedyStateCheckerTimer->setInterval(200);
 
 	s_instance = this;
 }
@@ -89,14 +92,19 @@ void Crawler::clearData()
 {
 	ASSERT(m_state == StatePending || m_state == StatePause);
 
+	clearDataImpl();
+
+	emit stateChanged(m_state);
+	emit onAboutClearData();
+}
+
+void Crawler::clearDataImpl()
+{
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
 
 	m_uniqueLinkStore->clear();
 
 	m_state = StatePending;
-
-	emit stateChanged(m_state);
-	emit onAboutClearData();
 }
 
 bool Crawler::isNoData() const noexcept
@@ -146,12 +154,13 @@ void Crawler::onAboutCrawlingState()
 {
 	CrawlingProgress progress;
 
-	const size_t seqCollCount = m_sequencedDataCollection->crawledStorageSize();
-	const size_t controllerCrawled = m_modelController->crawledStorageSize();
-	const size_t controllerAccepted = m_modelController->acceptedCrawledStorageSize();
+	const CrawlerSharedState* state = CrawlerSharedState::instance();
 
-	const size_t linkStoreCrawled = uniqueLinkStore()->crawledLinksCount();
-	const size_t linkStorePending = uniqueLinkStore()->pendingLinksCount();
+	const int seqCollCount = state->sequencedDataCollectionLinksCount();
+	const int controllerCrawled = state->modelControllerCrawledLinksCount();
+	const int controllerAccepted = state->modelControllerAcceptedLinksCount();
+	const int linkStoreCrawled = state->downloaderCrawledLinksCount();
+	const int linkStorePending = state->downloaderPendingLinksCount();
 
 	const size_t controllerPending = qMax(linkStoreCrawled, controllerCrawled) - controllerCrawled;
 	const size_t seqCollPending = qMax(controllerAccepted, seqCollCount) - seqCollCount;
@@ -161,6 +170,28 @@ void Crawler::onAboutCrawlingState()
 	progress.pendingLinkCount = linkStorePending + additionalPendingCount;
 
 	emit crawlingProgress(progress);
+}
+
+void Crawler::checkSerialiationReadyState()
+{
+	const CrawlerSharedState* state = CrawlerSharedState::instance();
+
+	if ((m_state == StateSerializaton || m_state == StateDeserializaton) &&
+		!m_fileName.isEmpty() &&
+		state->workersProcessedLinksCount() == state->modelControllerCrawledLinksCount() &&
+		state->modelControllerAcceptedLinksCount() == state->sequencedDataCollectionLinksCount())
+	{
+		if (m_state == StateSerializaton)
+		{
+			onSerializationReadyToBeStarted();
+		}
+		else if (m_state == StateDeserializaton)
+		{
+			onDeserializationReadyToBeStarted();
+		}
+
+		m_serializatonRedyStateCheckerTimer->stop();
+	}
 }
 
 void Crawler::onCrawlingSessionInitialized()
@@ -222,16 +253,25 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 
 	const std::vector<ParsedPagePtr>& pages = result->serializer->pages();
 
+	int crawledLinksCount = 0;
 	for (const ParsedPagePtr& page : pages)
 	{
 		for (int i = 0; i < page->storages.size(); ++i)
 		{
 			if (page->storages[i])
 			{
+				const StorageType storage = static_cast<StorageType>(i);
+
+				if (storage == StorageType::CrawledUrlStorageType)
+				{
+					++crawledLinksCount;
+				}
+
 				m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
+				//VERIFY(QMetaObject::invokeMethod(m_modelController->data(), "addParsedPage", Qt::QueuedConnection,
+					//Q_ARG(const ParsedPagePtr&, page), Q_ARG(int, i)));
 			}
 		}
-
 	}
 
 	m_uniqueLinkStore->setCrawledUrls(result->serializer->crawledLinks());
@@ -240,7 +280,74 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	m_state = m_prevState;
 	emit stateChanged(m_state);
 
+	CrawlerSharedState* state = CrawlerSharedState::instance();
+	state->setDownloaderCrawledLinksCount(static_cast<int>(result->serializer->crawledLinks().size()));
+	state->setDownloaderPendingLinksCount(static_cast<int>(result->serializer->pendingLinks().size()));
+	state->setWorkersProcessedLinksCount(crawledLinksCount);
+	state->setModelControllerAcceptedLinksCount(crawledLinksCount);
+	state->setModelControllerCrawledLinksCount(crawledLinksCount);
+
 	m_deSerializationRequester.reset();
+}
+
+void Crawler::onSerializationReadyToBeStarted()
+{
+	ASSERT(state() == StateSerializaton);
+	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();
+	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
+	std::vector<ParsedPagePtr> pendingPages = m_modelController->data()->allParsedPages(StorageType::PendingResourcesStorageType);
+
+	std::vector<ParsedPage*> pages;
+	const int pagesCount = storage->size() + static_cast<int>(pendingPages.size());
+	pages.reserve(pagesCount);
+	for (int i = 0; i < storage->size(); ++i)
+	{
+		const ParsedPage* page = (*storage)[i];
+		pages.push_back(const_cast<ParsedPage*>(page));
+	}
+
+	for (int i = 0; i < pendingPages.size(); ++i)
+	{
+		ParsedPage* page = pendingPages[i].get();
+		pages.push_back(page);
+	}
+
+	std::vector<CrawlerRequest> pendingUrls;
+	for (CrawlerWorkerThread* worker : m_workers)
+	{
+		const std::vector<CrawlerRequest> workerPendingUrls = worker->pendingUrls();
+		pendingUrls.insert(pendingUrls.end(), workerPendingUrls.begin(), workerPendingUrls.end());
+	}
+	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
+	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
+
+	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
+
+	std::shared_ptr<Serializer> serializer =
+		std::make_shared<Serializer>(std::move(pages), std::move(crawledUrls), std::move(pendingUrls));
+
+	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(serializer, m_fileName);
+	m_fileName = QString();
+
+	TaskRequest request(task);
+	m_serializationRequester.reset(request, this, &Crawler::onSerializationTaskDone);
+	m_serializationRequester->start();
+}
+
+void Crawler::onDeserializationReadyToBeStarted()
+{
+	ASSERT(state() == StateDeserializaton);
+
+	clearDataImpl();
+
+	std::shared_ptr<Serializer> serializer = std::make_shared<Serializer>();
+
+	std::shared_ptr<ITask> task = std::make_shared<DeserializatoinTask>(serializer, m_fileName);
+	m_fileName = QString();
+
+	TaskRequest request(task);
+	m_deSerializationRequester.reset(request, this, &Crawler::onDeserializationTaskDone);
+	m_deSerializationRequester->start();
 }
 
 void Crawler::createSequencedDataCollection(QThread* targetThread) const
@@ -288,67 +395,24 @@ void Crawler::saveToFile(const QString& fileName)
 {
 	ASSERT(state() != State::StateWorking);
 
-	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();
-	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
-	std::vector<ParsedPagePtr> pendingPages = m_modelController->data()->allParsedPages(StorageType::PendingResourcesStorageType);
-
-	std::vector<ParsedPage*> pages;
-	const int pagesCount = storage->size() + static_cast<int>(pendingPages.size());
-	pages.reserve(pagesCount);
-	for (int i = 0; i < storage->size(); ++i)
-	{
-		const ParsedPage* page = (*storage)[i];
-		pages.push_back(const_cast<ParsedPage*>(page));
-	}
-		
-	for (int i = 0; i < pendingPages.size(); ++i)
-	{
-		ParsedPage* page = pendingPages[i].get();
-		pages.push_back(page);
-	}
-
-	std::vector<CrawlerRequest> pendingUrls;
-	for (CrawlerWorkerThread* worker : m_workers)
-	{
-		const std::vector<CrawlerRequest> workerPendingUrls = worker->pendingUrls();
-		pendingUrls.insert(pendingUrls.end(), workerPendingUrls.begin(), workerPendingUrls.end());
-	}
-	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
-	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
-
-	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
-
-	std::shared_ptr<Serializer> serializer = 
-		std::make_shared<Serializer>(std::move(pages), std::move(crawledUrls), std::move(pendingUrls)); 
-
-	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(serializer, fileName);
-
-	TaskRequest request(task);
-	m_serializationRequester.reset(request, this, &Crawler::onSerializationTaskDone);
-	m_serializationRequester->start();
-
+	m_fileName = fileName;
 	m_prevState = state();
 	m_state = StateSerializaton;
 	emit stateChanged(m_state);
+
+	m_serializatonRedyStateCheckerTimer->start();
 }
 
 void Crawler::loadFromFile(const QString& fileName)
 {
 	ASSERT(state() != State::StateWorking);
-	clearData();
-
-	std::shared_ptr<Serializer> serializer = std::make_shared<Serializer>();
-
-
-	std::shared_ptr<ITask> task = std::make_shared<DeserializatoinTask>(serializer, fileName);
-
-	TaskRequest request(task);
-	m_deSerializationRequester.reset(request, this, &Crawler::onDeserializationTaskDone);
-	m_deSerializationRequester->start();
-
+	
+	m_fileName = fileName;
 	m_prevState = state();
-	m_state = StateSerializaton;
+	m_state = StateDeserializaton;
 	emit stateChanged(m_state);
+
+	m_serializatonRedyStateCheckerTimer->start();
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept

@@ -91,6 +91,12 @@ void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, 
 	emit parsedPageAdded(parsedPagePtr, static_cast<int>(type));
 }
 
+void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept
+{
+	const StorageType storage = static_cast<StorageType>(type);
+	addParsedPage(parsedPagePtr, storage);
+}
+
 ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
 {
 	checkStorageType(type);

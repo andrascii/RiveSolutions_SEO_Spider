@@ -92,6 +92,7 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 			break;
 		}
 		case CrawlerEngine::Crawler::StateSerializaton:
+		case CrawlerEngine::Crawler::StateDeserializaton:
 		{
 			m_ui.clearCrawlingDataButton->setDisabled(true);
 

@@ -1,11 +1,11 @@
 #include "sequenced_data_collection.h"
 #include "sequenced_storage.h"
+#include "crawler_shared_state.h"
 
 namespace CrawlerEngine
 {
 
 SequencedDataCollection::SequencedDataCollection()
-	: m_crawledStorageSize(0)
 {
 }
 
@@ -29,12 +29,6 @@ const ISequencedStorage* SequencedDataCollection::storage(StorageType type) cons
 	return iter != m_sequencedStorageMap.end() ? iter->second.get() : nullptr;
 }
 
-
-size_t SequencedDataCollection::crawledStorageSize() const
-{
-	return m_crawledStorageSize;
-}
-
 std::shared_ptr<CrawlerEngine::ISequencedStorage> SequencedDataCollection::createSequencedStorage() const
 {
 	return std::static_pointer_cast<ISequencedStorage>(std::make_shared<SequencedStorage>());
@@ -48,7 +42,7 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int typ
 
 	if (type == StorageType::CrawledUrlStorageType)
 	{
-		++m_crawledStorageSize;
+		CrawlerSharedState::instance()->incrementSequencedDataCollectionLinksCount();
 	}
 
 
@@ -82,7 +76,7 @@ void SequencedDataCollection::onDataCleared()
 
 	sequencedStorage->clear();
 
-	m_crawledStorageSize.store(0);
+	CrawlerSharedState::instance()->setSequencedDataCollectionLinksCount(0);
 
 	emit endClearData();
 }

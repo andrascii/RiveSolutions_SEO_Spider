@@ -26,13 +26,10 @@ public:
 		return m_data;
 	}
 
-	UnorderedDataCollection * data() noexcept
+	UnorderedDataCollection* data() noexcept
 	{
 		return m_data;
 	}
-
-	size_t crawledStorageSize() const;
-	size_t acceptedCrawledStorageSize() const;
 
 private:
 	void processParsedPageUrl(ParsedPagePtr& incomingPage);
@@ -60,9 +57,6 @@ private:
 	CrawlerOptions m_crawlerOptions;
 
 	LinksToThisResourceChanges m_linksToPageChanges;
-
-	std::atomic<std::size_t> m_crawledStorageSize;
-	std::atomic<std::size_t> m_acceptedCrawledStorageSize;
 };
 
 }

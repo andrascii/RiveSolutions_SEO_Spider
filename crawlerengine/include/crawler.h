@@ -37,7 +37,9 @@ public:
 		StateWorking,
 		StatePause,
 		StatePending,
-		StateSerializaton
+		StateSerializaton,
+		StateDeserializaton
+
 	};
 
 	static Crawler& instance();
@@ -72,6 +74,7 @@ public slots:
 
 private slots:
 	void onAboutCrawlingState();
+	void checkSerialiationReadyState();
 	void onCrawlingSessionInitialized();
 
 protected:
@@ -90,6 +93,11 @@ private:
 	void onSerializationTaskDone(Requester* requester, const TaskResponse& response);
 	void onDeserializationTaskDone(Requester* requester, const TaskResponse& response);
 
+	void onSerializationReadyToBeStarted();
+	void onDeserializationReadyToBeStarted();
+
+	void clearDataImpl();
+
 protected:
 	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
 
@@ -105,10 +113,12 @@ private:
 
 	unsigned int m_theradCount;
 	
-	QTimer* m_crawlingStateTimer;	
+	QTimer* m_crawlingStateTimer;
+	QTimer* m_serializatonRedyStateCheckerTimer;
 	std::vector<CrawlerWorkerThread*> m_workers;	
 	State m_state;
 	State m_prevState;
+	QString m_fileName;
 
 	RequesterWrapper m_serializationRequester;
 	RequesterWrapper m_deSerializationRequester;
