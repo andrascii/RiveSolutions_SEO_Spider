@@ -65,8 +65,7 @@ void SerializationTask::run()
 	}
 	catch (const std::exception& e)
 	{
-		Q_UNUSED(e);
-		// TODO: notify a user about the error
+		ERRLOG << e.what();
 
 		return;
 	}
@@ -99,8 +98,7 @@ void DeserializatoinTask::run()
 	}
 	catch (const std::exception& e)
 	{
-		Q_UNUSED(e);
-		// TODO: notify a user about the error
+		ERRLOG << e.what();
 	}
 
 }

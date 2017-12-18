@@ -125,14 +125,12 @@ void DataPagesWidget::onStateChanged(int state)
 		state == CrawlerEngine::Crawler::State::StateDeserializaton)
 	{
 		m_stackedWidget->setCurrentIndex(0);
-		m_stackedWidget->setEnabled(false);
-		m_decorationWidget->setEnabled(false);
+		theApp->mainWindow()->setEnabled(false);
 		m_navigationPanel.navigationPanelWidget->setEnabled(false);
 	}
 	else
 	{
-		m_stackedWidget->setEnabled(true);
-		m_decorationWidget->setEnabled(true);
+		theApp->mainWindow()->setEnabled(true);
 		m_navigationPanel.navigationPanelWidget->setEnabled(true);
 		showPage(m_activePage);
 	}
