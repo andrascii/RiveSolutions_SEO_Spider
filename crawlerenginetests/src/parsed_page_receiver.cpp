@@ -1,4 +1,5 @@
 #include "parsed_page_receiver.h"
+#include "crawler_shared_state.h"
 
 namespace CrawlerEngineTests
 {
@@ -61,8 +62,17 @@ void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(LinksToThisResou
 
 void ParsedPageReceiver::onCrawlingProgress(CrawlingProgress state)
 {
-	if (!m_allPagesReceived && state.crawledLinkCount > 0 && state.pendingLinkCount == 0)
+	Q_UNUSED(state);
+	CrawlerSharedState* sharedState = CrawlerSharedState::instance();
+	if (!m_allPagesReceived &&
+		sharedState->downloaderPendingLinksCount() == 0 &&
+		sharedState->sequencedDataCollectionLinksCount() > 0 &&
+		sharedState->downloaderCrawledLinksCount() == sharedState->workersProcessedLinksCount() &&
+		sharedState->workersProcessedLinksCount() == sharedState->modelControllerCrawledLinksCount() &&
+		sharedState->modelControllerAcceptedLinksCount() == sharedState->sequencedDataCollectionLinksCount())
 	{
+		//qDebug() << sharedState->sequencedDataCollectionLinksCount();
+		INFOLOG << sharedState->sequencedDataCollectionLinksCount() << m_parsedPages[StorageType::CrawledUrlStorageType].size();
 		m_allPagesReceivedPromise.set_value(m_parsedPages[StorageType::CrawledUrlStorageType]);
 		m_allPagesReceived = true;
 	}

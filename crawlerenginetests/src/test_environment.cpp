@@ -45,6 +45,14 @@ TestsCrawler* TestEnvironment::crawler() const
 
 void TestEnvironment::initializeTest(const std::function<void()>& testFunction)
 {
+	CrawlerSharedState* state = CrawlerSharedState::instance();
+	state->setDownloaderCrawledLinksCount(0);
+	state->setDownloaderPendingLinksCount(0);
+	state->setWorkersProcessedLinksCount(0);
+	state->setModelControllerAcceptedLinksCount(0);
+	state->setModelControllerCrawledLinksCount(0);
+	state->setSequencedDataCollectionLinksCount(0);
+
 	m_testFunction = testFunction;
 
 	emit testInitialized(m_testFunction);

@@ -126,8 +126,7 @@ void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 	}
 
 	//data()->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
-	//calculatePageLevel(incomingPage);
-	//++m_acceptedCrawledStorageSize;
+	//CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
 }
 
 void ModelController::addParsedPages(std::vector<ParsedPagePtr> incomingPages) noexcept
@@ -140,13 +139,13 @@ void ModelController::addParsedPages(std::vector<ParsedPagePtr> incomingPages) n
 
 void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 {
-	const QUrl url = incomingPage->url;
+	const CustomUrl url = incomingPage->url;
 	const QString urlStr = url.toString();
 	data()->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
 	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
 	calculatePageLevel(incomingPage);
 
-	if (url.host() != m_crawlerOptions.host.host())
+	if (url.host() != m_crawlerOptions.host.host()) // incomingPage->isThisExternalPage ???
 	{
 		data()->addParsedPage(incomingPage, StorageType::ExternalUrlStorageType);
 	}
