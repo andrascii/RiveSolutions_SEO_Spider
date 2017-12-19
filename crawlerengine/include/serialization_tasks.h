@@ -14,6 +14,7 @@ struct SerializationTaskResponseResult : public TaskResponseResult
 		
 	}
 	std::shared_ptr<Serializer> serializer;
+	QString error;
 };
 
 

@@ -72,7 +72,7 @@ void ApplicationSettingsWidget::okButtonClicked()
 
 void ApplicationSettingsWidget::cancelButtonClicked()
 {
-	ISettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<ISettingsPageRegistry>();
+	ISettingsPageRegistry* settingsPageRegistry = CrawlerEngine::ServiceLocator::instance()->service<ISettingsPageRegistry>();
 	
 	foreach(const QByteArray& pageId, settingsPageRegistry->pagesKeys())
 	{
@@ -139,7 +139,7 @@ void ApplicationSettingsWidget::initialize()
 
 	m_ui.propGroupsList->setCurrentRow(0);
 
-	ISettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<ISettingsPageRegistry>();
+	ISettingsPageRegistry* settingsPageRegistry = CrawlerEngine::ServiceLocator::instance()->service<ISettingsPageRegistry>();
 
 	int pageIndex = 0;
 

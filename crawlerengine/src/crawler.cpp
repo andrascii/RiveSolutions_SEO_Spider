@@ -12,6 +12,8 @@
 #include "serializer.h"
 #include "task_processor.h"
 #include "serialization_tasks.h"
+#include "service_locator.h"
+#include "inotification_service.h"
 
 namespace CrawlerEngine
 {
@@ -241,6 +243,16 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	m_state = m_prevState;
 	emit stateChanged(m_state);
 
+	if (!result->error.isEmpty())
+	{
+		ServiceLocator* locator = ServiceLocator::instance();
+		if (locator->isRegistered<INotificationService>())
+		{
+			locator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
+		}
+
+	}
+
 	m_serializationRequester.reset();
 }
 
@@ -251,41 +263,52 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
 	ASSERT(result != nullptr);
 
-	const std::vector<ParsedPagePtr>& pages = result->serializer->pages();
-
-	int crawledLinksCount = 0;
-	for (const ParsedPagePtr& page : pages)
+	if (!result->error.isEmpty())
 	{
-		for (int i = 0; i < page->storages.size(); ++i)
+		ServiceLocator* locator = ServiceLocator::instance();
+		if (locator->isRegistered<INotificationService>())
 		{
-			if (page->storages[i])
-			{
-				const StorageType storage = static_cast<StorageType>(i);
-
-				if (storage == StorageType::CrawledUrlStorageType)
-				{
-					++crawledLinksCount;
-				}
-
-				m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
-				//VERIFY(QMetaObject::invokeMethod(m_modelController->data(), "addParsedPage", Qt::QueuedConnection,
-					//Q_ARG(const ParsedPagePtr&, page), Q_ARG(int, i)));
-			}
+			locator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
 		}
 	}
+	else
+	{
+		const std::vector<ParsedPagePtr>& pages = result->serializer->pages();
 
-	m_uniqueLinkStore->setCrawledUrls(result->serializer->crawledLinks());
-	m_uniqueLinkStore->setPendingUrls(result->serializer->pendingLinks());
+		int crawledLinksCount = 0;
+		for (const ParsedPagePtr& page : pages)
+		{
+			for (int i = 0; i < page->storages.size(); ++i)
+			{
+				if (page->storages[i])
+				{
+					const StorageType storage = static_cast<StorageType>(i);
+
+					if (storage == StorageType::CrawledUrlStorageType)
+					{
+						++crawledLinksCount;
+					}
+
+					m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
+					//VERIFY(QMetaObject::invokeMethod(m_modelController->data(), "addParsedPage", Qt::QueuedConnection,
+					//Q_ARG(const ParsedPagePtr&, page), Q_ARG(int, i)));
+				}
+			}
+		}
+
+		m_uniqueLinkStore->setCrawledUrls(result->serializer->crawledLinks());
+		m_uniqueLinkStore->setPendingUrls(result->serializer->pendingLinks());
+
+		CrawlerSharedState* state = CrawlerSharedState::instance();
+		state->setDownloaderCrawledLinksCount(static_cast<int>(result->serializer->crawledLinks().size()));
+		state->setDownloaderPendingLinksCount(static_cast<int>(result->serializer->pendingLinks().size()));
+		state->setWorkersProcessedLinksCount(crawledLinksCount);
+		state->setModelControllerAcceptedLinksCount(crawledLinksCount);
+		state->setModelControllerCrawledLinksCount(crawledLinksCount);
+	}
 
 	m_state = m_prevState;
 	emit stateChanged(m_state);
-
-	CrawlerSharedState* state = CrawlerSharedState::instance();
-	state->setDownloaderCrawledLinksCount(static_cast<int>(result->serializer->crawledLinks().size()));
-	state->setDownloaderPendingLinksCount(static_cast<int>(result->serializer->pendingLinks().size()));
-	state->setWorkersProcessedLinksCount(crawledLinksCount);
-	state->setModelControllerAcceptedLinksCount(crawledLinksCount);
-	state->setModelControllerCrawledLinksCount(crawledLinksCount);
 
 	m_deSerializationRequester.reset();
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace SeoSpider
+namespace CrawlerEngine
 {
 
 class ServiceLocator
@@ -58,6 +58,14 @@ public:
 		void* pointerToService = std::get<0>(std::get<1>(*findIterator));
 
 		return static_cast<ServiceType*>(pointerToService);
+	}
+
+	template<typename ServiceType>
+	bool isRegistered() const
+	{
+		auto findIterator = m_services.find(typeid(ServiceType).name());
+
+		return findIterator != m_services.end();
 	}
 
 private:
