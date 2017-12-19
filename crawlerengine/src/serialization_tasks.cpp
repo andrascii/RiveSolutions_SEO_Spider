@@ -65,6 +65,7 @@ void SerializationTask::run()
 	}
 	catch (const std::exception& e)
 	{
+		ERRLOG << e.what();
 		m_result->error = QString(e.what());
 	}
 }
@@ -96,6 +97,7 @@ void DeserializatoinTask::run()
 	}
 	catch (const std::exception& e)
 	{
+		ERRLOG << e.what();
 		m_result->error = QString(e.what());
 	}
 
