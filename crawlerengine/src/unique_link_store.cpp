@@ -34,9 +34,10 @@ UniqueLinkStore::UniqueLinkStore(QObject* parent)
 {
 }
 
-void UniqueLinkStore::addUrl(const QUrl& url, DownloadRequestType requestType)
+void UniqueLinkStore::addUrl(const CustomUrl& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+
 	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 		&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList);
 
@@ -50,7 +51,7 @@ void UniqueLinkStore::addUrl(const QUrl& url, DownloadRequestType requestType)
 	}
 }
 
-void UniqueLinkStore::addUrl(QUrl&& url, DownloadRequestType requestType)
+void UniqueLinkStore::addUrl(CustomUrl&& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
@@ -88,7 +89,7 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 	return true;
 }
 
-void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, DownloadRequestType requestType)
+void UniqueLinkStore::saveUrlList(const std::vector<CustomUrl>& urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -103,7 +104,7 @@ void UniqueLinkStore::saveUrlList(const std::vector<QUrl>& urlList, DownloadRequ
 	}
 }
 
-void UniqueLinkStore::saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestType requestType)
+void UniqueLinkStore::saveUrlList(std::vector<CustomUrl>&& urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -120,9 +121,9 @@ void UniqueLinkStore::saveUrlList(std::vector<QUrl>&& urlList, DownloadRequestTy
 
 void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType)
 {
-	const auto makeUrlList = [&linkList]() -> std::vector<QUrl>
+	const auto makeUrlList = [&linkList]() -> std::vector<CustomUrl>
 	{
-		std::vector<QUrl> urlList;
+		std::vector<CustomUrl> urlList;
 
 		for(const LinkInfo& link : linkList)
 		{
@@ -132,7 +133,7 @@ void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, Downlo
 		return urlList;
 	};
 
-	std::vector<QUrl> urlList = makeUrlList();
+	std::vector<CustomUrl> urlList = makeUrlList();
 
 	saveUrlList(std::move(urlList), requestType);
 }

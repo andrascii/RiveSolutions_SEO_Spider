@@ -121,11 +121,11 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 
 	if (!parsedPage->redirectedUrl.isEmpty())
 	{
-		m_uniqueLinkStore->saveUrlList(std::vector<QUrl>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
+		m_uniqueLinkStore->saveUrlList(std::vector<CustomUrl>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
 	}
 
-	std::vector<QUrl> resourcesHeadUrlList;
-	std::vector<QUrl> resourcesGetUrlList;
+	std::vector<CustomUrl> resourcesHeadUrlList;
+	std::vector<CustomUrl> resourcesGetUrlList;
 
 	for (const RawResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{

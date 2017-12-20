@@ -3,7 +3,12 @@
 namespace CrawlerEngine
 {
 
-bool CustomUrl::compareWith(const CustomUrl& url) const
+CustomUrl::CustomUrl(const QUrl& url)
+	: QUrl(url)
+{
+}
+
+bool CustomUrl::compare(const CustomUrl& url) const
 {
 	return canonizedUrlStr() == url.canonizedUrlStr();
 }

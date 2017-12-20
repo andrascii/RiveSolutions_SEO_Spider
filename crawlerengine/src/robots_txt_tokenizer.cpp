@@ -94,12 +94,12 @@ QList<QString> RobotsTxtTokenizer::tokenValues(UserAgentType userAgentType, Robo
 		m_userAgentTokens.value(userAgentType).values(token) : QList<QString>();
 }
 
-const QUrl& RobotsTxtTokenizer::sitemap() const
+const CustomUrl& RobotsTxtTokenizer::sitemap() const
 {
 	return m_sitemapUrl;
 }
 
-const QUrl& RobotsTxtTokenizer::originalHostMirror() const
+const CustomUrl& RobotsTxtTokenizer::originalHostMirror() const
 {
 	return m_originalHostMirrorUrl;
 }

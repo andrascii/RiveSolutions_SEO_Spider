@@ -130,7 +130,7 @@ void Downloader::processReply(QNetworkReply* reply)
 		response->responseBody = reply->readAll();
 	}
 
-	const QUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	const CustomUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 
 	if (!redirectUrl.isEmpty())
 	{

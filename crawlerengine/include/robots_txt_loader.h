@@ -2,6 +2,7 @@
 
 #include "irobots_txt_loader.h"
 #include "requester_wrapper.h"
+#include "custom_url.h"
 
 namespace CrawlerEngine
 {
@@ -17,8 +18,10 @@ public:
 
 	virtual void setUserAgent(const QByteArray& userAgent) override;
 
-	virtual void load(const QUrl& url) override;
+	virtual void load(const CustomUrl& url) override;
+
 	virtual const QByteArray& content() const noexcept override;
+
 	virtual bool isReady() const noexcept override;
 
 	virtual QObject* qobject() override;
@@ -31,9 +34,13 @@ private slots:
 
 private:
 	bool m_isReady;
+
 	QByteArray m_content;
+
 	QByteArray m_userAgent;
-	QUrl m_currentLoadedUrl;
+
+	CustomUrl m_currentLoadedUrl;
+
 	RequesterWrapper m_downloadRequester;
 };
 

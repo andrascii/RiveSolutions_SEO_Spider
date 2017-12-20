@@ -3,9 +3,9 @@
 namespace CrawlerEngine
 {
 
-QUrl PageParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& baseUrl)
+CustomUrl PageParserHelpers::resolveRelativeUrl(const CustomUrl& relativeUrl, const CustomUrl& baseUrl)
 {
-	QUrl result = relativeUrl;
+	CustomUrl result = relativeUrl;
 
 	if (result.toDisplayString().startsWith("//"))
 	{
@@ -42,7 +42,7 @@ QUrl PageParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& 
 	else
 	{
 		//
-		// Make path starts with slash for ensure valid QUrl behavior
+		// Make path starts with slash for ensure valid CustomUrl behavior
 		//
 		result.setPath("/" + result.path());
 	}
@@ -80,12 +80,12 @@ QUrl PageParserHelpers::resolveRelativeUrl(const QUrl& relativeUrl, const QUrl& 
 	return result;
 }
 
-std::vector<QUrl> PageParserHelpers::resolveUrlList(const QUrl& baseUrl, 
-	const std::vector<QUrl>& urlList) noexcept
+std::vector<CustomUrl> PageParserHelpers::resolveUrlList(const CustomUrl& baseUrl, 
+	const std::vector<CustomUrl>& urlList) noexcept
 {
-	std::vector<QUrl> result;
+	std::vector<CustomUrl> result;
 
-	for (const QUrl& url : urlList)
+	for (const CustomUrl& url : urlList)
 	{
 		result.push_back(resolveUrl(baseUrl, url));
 	}
@@ -93,7 +93,7 @@ std::vector<QUrl> PageParserHelpers::resolveUrlList(const QUrl& baseUrl,
 	return result;
 }
 
-std::vector<LinkInfo> PageParserHelpers::resolveUrlList(const QUrl& baseUrl,
+std::vector<LinkInfo> PageParserHelpers::resolveUrlList(const CustomUrl& baseUrl,
 	const std::vector<LinkInfo>& linkList) noexcept
 {
 	std::vector<LinkInfo> result = linkList;
@@ -106,9 +106,9 @@ std::vector<LinkInfo> PageParserHelpers::resolveUrlList(const QUrl& baseUrl,
 	return result;
 }
 
-QUrl PageParserHelpers::resolveUrl(const QUrl& baseUrl, const QUrl& url) noexcept
+CustomUrl PageParserHelpers::resolveUrl(const CustomUrl& baseUrl, const CustomUrl& url) noexcept
 {
-	QUrl result = url;
+	CustomUrl result = url;
 
 	if (result.isRelative())
 	{
@@ -120,7 +120,7 @@ QUrl PageParserHelpers::resolveUrl(const QUrl& baseUrl, const QUrl& url) noexcep
 	return result;
 }
 
-bool PageParserHelpers::checkUrlIdentity(const QUrl& lhs, const QUrl& rhs)
+bool PageParserHelpers::checkUrlIdentity(const CustomUrl& lhs, const CustomUrl& rhs)
 {
 	QString&& lhsString = lhs.toDisplayString();
 	QString&& rhsString = rhs.toDisplayString();
@@ -138,7 +138,7 @@ bool PageParserHelpers::checkUrlIdentity(const QUrl& lhs, const QUrl& rhs)
 	return lhsString == rhsString;
 }
 
-bool PageParserHelpers::isUrlExternal(const QUrl& baseUrl, const QUrl& url) noexcept
+bool PageParserHelpers::isUrlExternal(const CustomUrl& baseUrl, const CustomUrl& url) noexcept
 {
 	// TODO: improve
 	QString baseUrlHost = baseUrl.host().toLower();
@@ -162,24 +162,24 @@ bool PageParserHelpers::isHtmlOrPlainContentType(const QString& contentType) noe
 		contentType.isEmpty();
 }
 
-bool PageParserHelpers::isHttpOrHttpsScheme(const QUrl& url) noexcept
+bool PageParserHelpers::isHttpOrHttpsScheme(const CustomUrl& url) noexcept
 {
 	return url.isRelative() || url.scheme() == QString("http") || url.scheme() == QString("https");
 }
 
 
-bool PageParserHelpers::isSubdomain(const QUrl& baseUrl, const QUrl& url)
+bool PageParserHelpers::isSubdomain(const CustomUrl& baseUrl, const CustomUrl& url)
 {
 	static const QRegularExpression s_regExp("(?:([a-z0-9\\.-]+)?\\.)?([a-z0-9]+\\.[a-z\\.]+){1,1}", 
 		QRegularExpression::CaseInsensitiveOption);
 
-	if (baseUrl.isRelative() || url.isRelative() || baseUrl == url)
+	if (baseUrl.isRelative() || url.isRelative() || baseUrl.compare(url))
 	{
 		return false;
 	}
 
-	QUrl baseUrlWithoutScheme = baseUrl;
-	QUrl targetUrlWithoutScheme = url;
+	CustomUrl baseUrlWithoutScheme = baseUrl;
+	CustomUrl targetUrlWithoutScheme = url;
 
 	baseUrlWithoutScheme.setScheme(QString::null);
 	targetUrlWithoutScheme.setScheme(QString::null);

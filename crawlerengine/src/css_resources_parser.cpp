@@ -30,13 +30,13 @@ void CssResourcesParser::parse(GumboOutput* output, const ResponseHeaders& heade
 	auto res = [](const GumboNode* node)
 	{
 		GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
-		return QUrl(href->value);
+		return CustomUrl(href->value);
 	};
 
-	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	std::vector<CustomUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<CustomUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
-	for (const QUrl& url : resolvedUrls)
+	for (const CustomUrl& url : resolvedUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

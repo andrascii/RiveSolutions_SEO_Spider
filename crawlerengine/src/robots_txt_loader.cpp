@@ -2,6 +2,7 @@
 #include "status_code.h"
 #include "download_request.h"
 #include "download_response.h"
+#include "custom_url.h"
 
 namespace CrawlerEngine
 {
@@ -17,16 +18,16 @@ void RobotsTxtLoader::setUserAgent(const QByteArray& userAgent)
 	m_userAgent = userAgent;
 }
 
-void RobotsTxtLoader::load(const QUrl& url)
+void RobotsTxtLoader::load(const CustomUrl& url)
 {
-	if (m_currentLoadedUrl == url)
+	if (m_currentLoadedUrl.compare(url))
 	{
 		return;
 	}
 
 	const QString robotsTxtUrlString = url.scheme() + "://" + url.host() + QStringLiteral("/robots.txt");
 
-	CrawlerRequest requestInfo{ QUrl(robotsTxtUrlString), DownloadRequestType::RequestTypeGet };
+	CrawlerRequest requestInfo{ CustomUrl(robotsTxtUrlString), DownloadRequestType::RequestTypeGet };
 
 	DownloadRequest request(requestInfo);
 	m_downloadRequester.reset(request, this, &RobotsTxtLoader::onLoadingDone);

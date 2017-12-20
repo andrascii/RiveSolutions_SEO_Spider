@@ -1,8 +1,12 @@
 #pragma once
 
+#include "custom_url.h"
+
 namespace CrawlerEngine
 {
+
 enum class UserAgentType;
+
 enum class RobotsTxtToken
 {
 	TokenUserAgent,
@@ -16,7 +20,6 @@ enum class RobotsTxtToken
 	TokenStringDelimeter,
 	TokenUnknown
 };
-
 
 class RobotsTxtTokenizer final
 {
@@ -35,8 +38,8 @@ public:
 	bool hasUserAgentRecord(UserAgentType userAgentType) const;
 
 	QList<QString> tokenValues(UserAgentType userAgentType, RobotsTxtToken token) const;
-	const QUrl& sitemap() const;
-	const QUrl& originalHostMirror() const;
+	const CustomUrl& sitemap() const;
+	const CustomUrl& originalHostMirror() const;
 
 	QList<RobotsTxtTokenVauePair> allowAndDisallowTokens(UserAgentType userAgentType) const;
 
@@ -47,8 +50,8 @@ private:
 private:
 	using Tokens = QMultiMap<RobotsTxtToken, QString>;
 
-	QUrl m_sitemapUrl;
-	QUrl m_originalHostMirrorUrl;
+	CustomUrl m_sitemapUrl;
+	CustomUrl m_originalHostMirrorUrl;
 	QMap<UserAgentType, Tokens> m_userAgentTokens;
 	bool m_validRobotsTxt;
 };

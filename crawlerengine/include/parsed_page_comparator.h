@@ -32,7 +32,7 @@ struct ParsedPageUrlComparator : IParsedPageComparator
 {
 	virtual bool operator()(const ParsedPagePtr& lhs, const ParsedPagePtr& rhs) const noexcept override
 	{
-		return lhs->url.compareWith(rhs->url);
+		return lhs->url.compare(rhs->url);
 		//return PageParserHelpers::checkUrlIdentity(lhs->url, rhs->url);
 	}
 };
@@ -81,7 +81,7 @@ struct ParsedPageRedirectedUrlComparator : IParsedPageComparator
 {
 	virtual bool operator()(const ParsedPagePtr& lhs, const ParsedPagePtr& rhs) const noexcept override
 	{
-		return lhs->redirectedUrl == rhs->redirectedUrl;
+		return lhs->redirectedUrl.compare(rhs->redirectedUrl);
 	}
 };
 
@@ -121,7 +121,7 @@ struct ParsedPageCanonicalLinkElementComparator : IParsedPageComparator
 {
 	virtual bool operator()(const ParsedPagePtr& lhs, const ParsedPagePtr& rhs) const noexcept override
 	{
-		return lhs->canonicalUrl.compareWith(rhs->canonicalUrl);
+		return lhs->canonicalUrl.compare(rhs->canonicalUrl);
 	}
 };
 

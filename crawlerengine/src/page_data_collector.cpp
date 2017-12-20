@@ -99,9 +99,9 @@ void PageDataCollector::applyOptions()
 	}
 }
 
-QUrl PageDataCollector::resolveRedirectUrl(const DownloadResponse& response)
+CustomUrl PageDataCollector::resolveRedirectUrl(const DownloadResponse& response)
 {
-	QUrl redirectUrl;
+	CustomUrl redirectUrl;
 
 	if (response.redirectUrl.isEmpty() || !response.redirectUrl.isRelative())
 	{

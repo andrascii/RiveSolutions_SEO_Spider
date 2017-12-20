@@ -58,7 +58,7 @@ QString SiteMap::xml(const ISequencedStorage& crawledPages, const SiteMapSetting
 		}
 
 		result = result % tab % urlOpenTag % endLine;
-		result = result % tab % tab % locOpenTag %  page->url.toDisplayString(QUrl::FullyEncoded) % locCloseTag % endLine;
+		result = result % tab % tab % locOpenTag %  page->url.toDisplayString(CustomUrl::FullyEncoded) % locCloseTag % endLine;
 
 		if (settings.flags.testFlag(IncludeLastModTag))
 		{

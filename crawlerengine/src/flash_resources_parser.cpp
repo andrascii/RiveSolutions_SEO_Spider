@@ -42,13 +42,13 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 	auto res = [](const GumboNode* node)
 	{
 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
-		return QUrl(src->value);
+		return CustomUrl(src->value);
 	};
 
-	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	std::vector<CustomUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<CustomUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
-	for (const QUrl& url : resolvedUrls)
+	for (const CustomUrl& url : resolvedUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
@@ -80,13 +80,13 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 	auto res = [](const GumboNode* node)
 	{
 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "data");
-		return QUrl(src->value);
+		return CustomUrl(src->value);
 	};
 
-	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	std::vector<CustomUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<CustomUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
-	for (const QUrl& url : resolvedUrls)
+	for (const CustomUrl& url : resolvedUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
@@ -126,19 +126,19 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 		if (childNode)
 		{
 			GumboAttribute* movie = gumbo_get_attribute(&childNode->v.element.attributes, "movie");
-			return QUrl(movie->value);
+			return CustomUrl(movie->value);
 		}
 
 		childNode = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", ""));
 
 		GumboAttribute* src = gumbo_get_attribute(&childNode->v.element.attributes, "src");
-		return QUrl(src->value);
+		return CustomUrl(src->value);
 	};
 
-	std::vector<QUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<QUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	std::vector<CustomUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<CustomUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
-	for (const QUrl& url : resolvedUrls)
+	for (const CustomUrl& url : resolvedUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

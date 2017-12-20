@@ -6,7 +6,7 @@
 namespace CrawlerEngine
 {
 
-bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url,
+bool RobotsTxtBaseStrategy::isUrlAllowed(const CustomUrl& url,
 	UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
 {
 	if (!tokenizer.isValid())
@@ -19,9 +19,9 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const QUrl& url,
 		return true;
 	}
 	
-	QUrl cleanedUrl = cleanUrl(url, userAgentType, tokenizer);
+	CustomUrl cleanedUrl = cleanUrl(url, userAgentType, tokenizer);
 
-	const QString urlPath = cleanedUrl.path(QUrl::FullyEncoded) + cleanedUrl.query(QUrl::FullyEncoded);
+	const QString urlPath = cleanedUrl.path(CustomUrl::FullyEncoded) + cleanedUrl.query(CustomUrl::FullyEncoded);
 
 	QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> tokens = tokenizer.allowAndDisallowTokens(userAgentType);
 
@@ -51,7 +51,7 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFla
 		!flags.testFlag(MetaRobotsNoFollow);
 }
 
-QUrl RobotsTxtBaseStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
+CustomUrl RobotsTxtBaseStrategy::cleanUrl(const CustomUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
 {
 	Q_UNUSED(userAgentType);
 	Q_UNUSED(tokenizer);
@@ -61,7 +61,7 @@ QUrl RobotsTxtBaseStrategy::cleanUrl(const QUrl& url, UserAgentType userAgentTyp
 bool RobotsTxtBaseStrategy::patternMatched(const QString& pattern, const QString& value) const
 {
 	QString cannonicalPattern = pattern.toLower();
-	QString cannonicalValue = QUrl(QUrl(value).toDisplayString().toLower()).toDisplayString(QUrl::FullyEncoded);
+	QString cannonicalValue = CustomUrl(CustomUrl(value).toDisplayString().toLower()).toDisplayString(CustomUrl::FullyEncoded);
 
 	if (!cannonicalPattern.contains(QString("*")) && !cannonicalPattern.contains(QString("$")))
 	{

@@ -688,7 +688,7 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 
 		if (parent->pageLevel + 1 < level)
 		{
-			level = parent->pageLevel == 1 && parent->url.compareWith(m_crawlerOptions.host)
+			level = parent->pageLevel == 1 && parent->url.compare(m_crawlerOptions.host)
 				? 1 : parent->pageLevel + 1;
 		}
 	}

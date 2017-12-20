@@ -26,7 +26,7 @@ public:
 private:
 	void applyOptions();
 
-	static QUrl resolveRedirectUrl(const DownloadResponse& response);
+	static CustomUrl resolveRedirectUrl(const DownloadResponse& response);
 
 	void collectReplyData(const DownloadResponse& response, ParsedPagePtr& page) const;
 
