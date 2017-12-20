@@ -1,4 +1,118 @@
-.ticket_header
-{
-	background-color: red;
+body {
+	box-sizing: border-box;
+	background-color: #F3F3F3;
 }
+
+p {
+	margin:0;
+}
+section {
+	margin: 1rem 5rem;
+}
+
+.col-2 {
+	width: 16.66%;
+	float: left;
+}
+
+.col-3 {
+	width: 25%;
+	float: left;
+}
+
+.col-4 {
+	width: 33.33%;
+	float: left;
+}
+
+.col-5 {
+	width: 41.66%;
+	float: left;
+}
+
+.col-6 {
+	width: 47%;
+	float: left;
+}
+
+.left {
+	margin-left: 1rem;
+	margin-right: 2rem;
+}
+
+.summary {
+	border: 1px solid #dde0ee;
+	background-color: white;
+}
+
+.summary:before {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.summary:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.summary-body {
+	padding-bottom: 2rem;
+}
+
+.summary-body-title{
+	margin:0;
+	padding: 0.7rem 1rem 0.7rem 1rem;
+	background-color: #F3F3F3;
+	color: #7C7C7C;
+}
+
+.summary-block {
+	margin-top: 1.5rem;
+}
+
+.summary-title {
+	color: #656565;
+	border-bottom: 1px solid #dde0ee;
+}
+
+.summary-body {
+
+}
+
+.criteria {
+	margin-top: 1rem;
+}
+
+.criteria:before {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.criteria:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+
+
+.criteria-icon {
+	float: left;
+	padding-right: 1rem;
+}
+
+
+.criteria-title {
+	float: left;
+	/*width: 95%;*/
+}
+
+.criteria-count {
+	float:right;
+}
+
+
+
