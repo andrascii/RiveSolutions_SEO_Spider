@@ -51,6 +51,7 @@ void UserAgentSettingsWidget::initialize()
 	loadUserAgentsFromFile(":/config/desktopUserAgents.cfg", m_ui.desktopUserAgentComboBox);
 	loadUserAgentsFromFile(":/config/mobileUserAgents.cfg", m_ui.mobileUserAgentComboBox);
 	groupButtonStateChanged();
+	checkBoxStateChanged(m_ui.useCustomUserAgentCheckBox->isChecked());
 }
 
 void UserAgentSettingsWidget::applyChanges() noexcept
