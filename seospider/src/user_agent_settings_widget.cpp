@@ -23,16 +23,16 @@ UserAgentSettingsWidget::UserAgentSettingsWidget(QWidget* parent)
 
 void UserAgentSettingsWidget::checkBoxStateChanged(bool state)
 {
-	m_ui.desktopUserAgentComboBox->setEnabled(state & m_ui.radioButton->isChecked());
-	m_ui.mobileUserAgentComboBox->setEnabled(state & m_ui.radioButton_2->isChecked());
-	m_ui.radioButton->setEnabled(state);
-	m_ui.radioButton_2->setEnabled(state);
+	m_ui.desktopUserAgentComboBox->setEnabled(state & m_ui.useDesktopUserAgentRadioButton->isChecked());
+	m_ui.mobileUserAgentComboBox->setEnabled(state & m_ui.useMobileUserAgentRadioButton->isChecked());
+	m_ui.useDesktopUserAgentRadioButton->setEnabled(state);
+	m_ui.useMobileUserAgentRadioButton->setEnabled(state);
 }
 
 void UserAgentSettingsWidget::groupButtonStateChanged()
 {
-	m_ui.desktopUserAgentComboBox->setEnabled(m_ui.radioButton->isChecked() & m_ui.useCustomUserAgentCheckBox->isChecked());
-	m_ui.mobileUserAgentComboBox->setEnabled(m_ui.radioButton_2->isChecked() & m_ui.useCustomUserAgentCheckBox->isChecked());
+	m_ui.desktopUserAgentComboBox->setEnabled(m_ui.useDesktopUserAgentRadioButton->isChecked() & m_ui.useCustomUserAgentCheckBox->isChecked());
+	m_ui.mobileUserAgentComboBox->setEnabled(m_ui.useMobileUserAgentRadioButton->isChecked() & m_ui.useCustomUserAgentCheckBox->isChecked());
 }
 
 bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)
