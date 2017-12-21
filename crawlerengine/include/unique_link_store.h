@@ -50,7 +50,7 @@ private:
 	};
 
 	using UrlList = std::unordered_set<CrawlerRequest, UrlListItemHasher>;
-	using IncrementFunc = void(CrawlerSharedState::*)();
+	using IncrementFunc = void(CrawlerSharedState::*)() noexcept;
 
 	struct IncrementGuardExt
 	{
