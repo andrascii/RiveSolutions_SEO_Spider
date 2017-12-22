@@ -1,5 +1,10 @@
 #include "report_data_provider.h"
 #include "seo_spider_helpers.h"
+#include "application.h"
+#include "crawler.h"
+#include "irobots_txt_loader.h"
+#include "isequenced_storage.h"
+#include "storage_type.h"
 
 namespace
 {
@@ -190,7 +195,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ConfiguredCorrectly404Count:
 		{
-			return QObject::tr("Yes");
+			return QObject::tr("TO DO check validness");
 		}
 		case ReportDataKeys::RobotsTxt:
 		{
@@ -202,7 +207,11 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RobotsTxtCount:
 		{
-			return QObject::tr("Yes");
+			CrawlerEngine::Crawler* crawler = theApp->crawler();
+
+			return crawler->robotsTxtLoader()->isValid() ? 
+				QObject::tr("Yes") : 
+				QObject::tr("No");
 		}
 		case ReportDataKeys::XmlSitemap:
 		{
@@ -214,7 +223,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::XmlSitemapCount:
 		{
-			return QObject::tr("Yes");
+			return QObject::tr("TO DO checking existness");
 		}
 
 		// Redirections
@@ -228,7 +237,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::WwwFixedVersionCount:
 		{
-			return QObject::tr("Yes");
+			return QObject::tr("TO DO check validness");
 		}
 		case ReportDataKeys::Redirections302:
 		{
@@ -302,7 +311,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::BrokenLinksCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage = 
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::Status404StorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::PagesWithLargeAmountOfLinks:
 		{

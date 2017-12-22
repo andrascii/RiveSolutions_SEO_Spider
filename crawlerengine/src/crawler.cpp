@@ -229,7 +229,6 @@ void Crawler::initializeCrawlingSession()
 {
 	DEBUG_ASSERT(m_options.host.isValid());
 
-	m_robotsTxtLoader->setUserAgent(m_options.plainUserAgent);
 	m_robotsTxtLoader->load(m_options.host);
 }
 
@@ -441,6 +440,11 @@ void Crawler::loadFromFile(const QString& fileName)
 	emit stateChanged(m_state);
 
 	m_serializatonRedyStateCheckerTimer->start();
+}
+
+const IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
+{
+	return m_robotsTxtLoader.get();
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept

@@ -10,12 +10,8 @@ namespace CrawlerEngine
 RobotsTxtLoader::RobotsTxtLoader(QObject* parent)
 	: QObject(parent)
 	, m_isReady(false)
+	, m_isValid(false)
 {
-}
-
-void RobotsTxtLoader::setUserAgent(const QByteArray& userAgent)
-{
-	m_userAgent = userAgent;
 }
 
 void RobotsTxtLoader::load(const CustomUrl& url)
@@ -44,6 +40,11 @@ bool RobotsTxtLoader::isReady() const noexcept
 	return m_isReady;
 }
 
+bool RobotsTxtLoader::isValid() const noexcept
+{
+	return m_isValid;
+}
+
 QObject* RobotsTxtLoader::qobject()
 {
 	return this;
@@ -65,6 +66,8 @@ void RobotsTxtLoader::onLoadingDone(Requester* requester, const DownloadResponse
 	}
 
 	const Common::StatusCode statusCode = static_cast<Common::StatusCode>(response.statusCode);
+
+	m_isValid = statusCode == Common::StatusCode::Ok200;
 
 	m_content = response.responseBody;
 	m_isReady = true;

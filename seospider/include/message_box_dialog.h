@@ -17,7 +17,7 @@ public:
 		CriticalErrorIcon
 	};
 
-	MessageBoxDialog(QWidget* parent = nullptr);
+	MessageBoxDialog();
 
 	void setMessage(const QString& message);
 	void setIcon(Icon icon);
@@ -33,6 +33,7 @@ public slots:
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
+	virtual void hideEvent(QHideEvent* event) override;
 
 private:
 	Ui_MessageBox* m_ui;

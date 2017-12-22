@@ -20,6 +20,9 @@ public:
 
 protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;
+	virtual void timerEvent(QTimerEvent* event) override;
+	virtual void showEvent(QShowEvent* event) override;
+	virtual void hideEvent(QHideEvent* event) override;
 
 private:
 	QByteArray reportMaketContent(ReportType reportType) const;
@@ -37,6 +40,7 @@ private:
 	QWebEngineView* m_webEngineView;
 	ReportType m_reportType;
 	ReportDataProvider m_reportDataProvider;
+	int m_updateTimerId;
 };
 
 }

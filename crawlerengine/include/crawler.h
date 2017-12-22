@@ -39,7 +39,6 @@ public:
 		StatePending,
 		StateSerializaton,
 		StateDeserializaton
-
 	};
 
 	static Crawler& instance();
@@ -61,6 +60,8 @@ public:
 	void saveToFile(const QString& fileName);
 	void loadFromFile(const QString& fileName);
 
+	const IRobotsTxtLoader* robotsTxtLoader() const noexcept;
+
 signals:
 	void crawlingProgress(CrawlingProgress state);
 	void crawlerStarted();
@@ -78,8 +79,6 @@ private slots:
 	void onCrawlingSessionInitialized();
 
 protected:
-	IRobotsTxtLoader* robotsTxtLoader();
-
 	virtual IDownloader* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
 

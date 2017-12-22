@@ -9,6 +9,7 @@ ReportsPage::ReportsPage(QWidget* parent)
 	: QFrame(parent)
 	, m_webEngineView(new QWebEngineView(this))
 	, m_reportDataProvider(theApp->crawler()->sequencedDataCollection())
+	, m_updateTimerId(0)
 {
 	theApp->installEventFilter(this);
 
@@ -45,6 +46,27 @@ bool ReportsPage::eventFilter(QObject* object, QEvent* event)
 #endif
 
 	return false;
+}
+
+void ReportsPage::timerEvent(QTimerEvent* event)
+{
+	setReportType(m_reportType);
+}
+
+void ReportsPage::showEvent(QShowEvent* event)
+{
+	m_updateTimerId = startTimer(500);
+	DEBUG_ASSERT(m_updateTimerId);
+
+	QFrame::showEvent(event);
+}
+
+void ReportsPage::hideEvent(QHideEvent* event)
+{
+	killTimer(m_updateTimerId);
+	m_updateTimerId = 0;
+
+	QFrame::hideEvent(event);
 }
 
 QByteArray ReportsPage::reportMaketContent(ReportType reportType) const

@@ -58,7 +58,13 @@ void MainWindow::showSaveFileDialog()
 		return;
 	}
 
-	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow());
+	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), QString(), QString("*.sxr"));
+	
+	if (path.isEmpty())
+	{
+		return;
+	}
+
 	theApp->crawler()->saveToFile(path);
 }
 
@@ -72,7 +78,13 @@ void MainWindow::showOpenFileDialog()
 		return;
 	}
 
-	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow());
+	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), QString(), QString("*.sxr"));
+
+	if (path.isEmpty())
+	{
+		return;
+	}
+
 	theApp->crawler()->loadFromFile(path);
 }
 
@@ -89,8 +101,7 @@ void MainWindow::showMessageBoxDialog(const QString& title,
 	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons)
 {
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog(this);
-	messageBoxDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setIcon(icon);

@@ -15,19 +15,14 @@ class SequencedDataCollection : public QObject
 	Q_OBJECT
 
 public:
-	SequencedDataCollection();
-
 	bool empty() const noexcept;
 
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 
 signals:
 	void parsedPageAdded(int row, int storageType);
-
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
-
 	void beginClearData();
-
 	void endClearData();
 
 protected:
@@ -37,7 +32,6 @@ protected:
 
 protected slots:
 	void addParsedPage(ParsedPagePtr parsedPagePtr, int type);
-
 	void onDataCleared();
 
 private:

@@ -1,17 +1,20 @@
 #include "message_box_dialog.h"
 #include "seo_spider_helpers.h"
+#include "application.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {
 
-MessageBoxDialog::MessageBoxDialog(QWidget* parent)
-	: QFrame(parent)
+MessageBoxDialog::MessageBoxDialog()
+	: QFrame(nullptr)
 	, m_ui(new Ui_MessageBox)
 {
 	m_ui->setupUi(this);
 
 	setWindowFlags(Qt::Dialog);
-	setWindowModality(Qt::WindowModal);
+	setWindowModality(Qt::ApplicationModal);
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
@@ -88,7 +91,17 @@ void MessageBoxDialog::done(int r)
 void MessageBoxDialog::showEvent(QShowEvent* event)
 {
 	SeoSpiderHelpers::moveWidgetToHostCenter(this);
+
+	theApp->mainWindow()->setDisabled(true);
+
 	QFrame::showEvent(event);
+}
+
+void MessageBoxDialog::hideEvent(QHideEvent* event)
+{
+	theApp->mainWindow()->setDisabled(false);
+
+	QFrame::hideEvent(event);
 }
 
 }

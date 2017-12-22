@@ -132,7 +132,7 @@ private:
 	};
 
 private:
-	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
+	const CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
 
 	QMap<ItemStatus, QPixmap> m_pixmaps;
 };

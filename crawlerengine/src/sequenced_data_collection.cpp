@@ -5,10 +5,6 @@
 namespace CrawlerEngine
 {
 
-SequencedDataCollection::SequencedDataCollection()
-{
-}
-
 bool SequencedDataCollection::empty() const noexcept
 {
 	return storage(StorageType::CrawledUrlStorageType)->empty();
