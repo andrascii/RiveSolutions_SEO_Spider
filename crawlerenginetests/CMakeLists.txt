@@ -68,6 +68,7 @@ if(MSVC)
 		${CrawlerEngineLibTestsName} 
 		PROPERTIES WIN32_EXECUTABLE YES
 		LINK_FLAGS "/ENTRY:mainCRTStartup"
+		LINK_FLAGS "/SUBSYSTEM:CONSOLE"
 	)
 
 	set_target_properties(

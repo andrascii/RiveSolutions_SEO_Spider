@@ -78,7 +78,7 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 	const int modelControllerCrawledLinksCount = state->modelControllerCrawledLinksCount();
 
 	const int pendingLinksCount = workersProcessedLinksCount - modelControllerCrawledLinksCount;
-	const int maxPendingLinksCount = 15;
+	constexpr int maxPendingLinksCount = 15;
 
 	if (pendingLinksCount > maxPendingLinksCount)
 	{

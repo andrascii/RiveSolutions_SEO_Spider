@@ -53,8 +53,6 @@ private:
     static SeoSpiderServiceApiImpl* s_self;
 
     HANDLE m_crashEventHandle;
-    STARTUPINFOW m_startupInfo;
-    PROCESS_INFORMATION m_processInfo;
 
     mutable std::mutex m_mutex;
 
