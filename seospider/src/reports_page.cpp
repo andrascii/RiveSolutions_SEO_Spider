@@ -1,5 +1,6 @@
 #include "reports_page.h"
 #include "application.h"
+#include "crawler.h"
 
 namespace SeoSpider
 {
@@ -7,6 +8,7 @@ namespace SeoSpider
 ReportsPage::ReportsPage(QWidget* parent)
 	: QFrame(parent)
 	, m_webEngineView(new QWebEngineView(this))
+	, m_reportDataProvider(theApp->crawler()->sequencedDataCollection())
 {
 	theApp->installEventFilter(this);
 
@@ -81,14 +83,60 @@ QByteArray ReportsPage::reportMaketContent(ReportType reportType) const
 	}
 
 	QByteArray maketContent = reportMaket.readAll();
-	changeMarkerInContent("stylesheet", maketStyle.readAll(), maketContent);
+	changePlaceholderInContent("stylesheet", maketStyle.readAll(), maketContent);
+
+	foreach(ReportDataKeys key, m_reportDataProvider.allKeys())
+	{
+		changePlaceholderInContent(m_reportDataProvider.placeholder(key), m_reportDataProvider.data(key), maketContent);
+	}
 
 	return maketContent;
 }
 
-void ReportsPage::changeMarkerInContent(const QByteArray& marker, const QByteArray& value, QByteArray& content) const
+void ReportsPage::changePlaceholderInContent(const QByteArray& placeholder, const QVariant& value, QByteArray& content) const
 {
-	content.replace("((" + marker + "))", value);
+	if (!value.isValid())
+	{
+		ERRLOG << placeholder << "provided invalid data";
+		return;
+	}
+
+	switch (value.type())
+	{
+		case QVariant::String:
+		case QVariant::ByteArray:
+		{
+			content.replace("((" + placeholder + "))", value.toString().toLatin1());
+			break;
+		}
+		case QVariant::Pixmap:
+		{
+			QByteArray pixmapData;
+			QBuffer buffer(&pixmapData);
+
+			const QPixmap& pixmap = qvariant_cast<QPixmap>(value);
+			pixmap.save(&buffer, "PNG");
+
+			const QByteArray imgTag("<img src=\"data:image/png;base64," + pixmapData.toBase64() + "\"/>");
+
+			content.replace("((" + placeholder + "))", imgTag);
+
+			break;
+		}
+		case QVariant::Int:
+		case QVariant::UInt:
+		case QVariant::LongLong:
+		case QVariant::ULongLong:
+		{
+			content.replace("((" + placeholder + "))", QByteArray::number(value.toULongLong()));
+
+			break;
+		}
+		default:
+		{
+			DEBUG_ASSERT(!"Unexpected QVariant type");
+		}
+	}
 }
 
 #ifndef PRODUCTION
@@ -134,7 +182,7 @@ QByteArray ReportsPage::debugReportMaketContent(ReportType reportType) const
 	}
 
 	QByteArray maketContent = reportMaket.readAll();
-	changeMarkerInContent("stylesheet", maketStyle.readAll(), maketContent);
+	changePlaceholderInContent("stylesheet", maketStyle.readAll(), maketContent);
 
 	return maketContent;
 }

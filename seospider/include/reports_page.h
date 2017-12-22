@@ -1,5 +1,7 @@
 #pragma once
 
+#include "report_data_provider.h"
+
 namespace SeoSpider
 {
 
@@ -22,7 +24,7 @@ protected:
 private:
 	QByteArray reportMaketContent(ReportType reportType) const;
 
-	void changeMarkerInContent(const QByteArray& marker, const QByteArray& value, QByteArray& content) const;
+	void changePlaceholderInContent(const QByteArray& placeholder, const QVariant& value, QByteArray& content) const;
 
 #ifndef PRODUCTION
 
@@ -34,6 +36,7 @@ private:
 private:
 	QWebEngineView* m_webEngineView;
 	ReportType m_reportType;
+	ReportDataProvider m_reportDataProvider;
 };
 
 }

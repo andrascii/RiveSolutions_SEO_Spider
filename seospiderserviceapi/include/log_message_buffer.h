@@ -72,7 +72,7 @@ public:
     template <typename T>
     LogMessageBuffer& operator<<(const T& t)
     {
-        m_stream << t;
+        m_stream << t << " ";
 
         return *this;
     }
