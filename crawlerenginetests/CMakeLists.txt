@@ -13,12 +13,8 @@ set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 
 aux_source_directory(${CrawlerEngineTestsSourceDir} CrawlerEngineTestsSourcesList)
 file(GLOB_RECURSE CrawlerEngineTestsHeaderList "include/*.h")
-file(GLOB_RECURSE CrawlerEngineTestsFormsList "ui/*.ui")
-file(GLOB_RECURSE CrawlerEngineTestsResourcesList "rcc/*.qrc")
 
-qt5_wrap_ui(CrawlerEngineTestsFormsHeadersList ${CrawlerEngineTestsFormsList})
 qt5_wrap_cpp(CrawlerEngineTestsHeadersMocList ${CrawlerEngineTestsFormsHeadersList})
-qt5_add_resources(CrawlerEngineTestsResourcesListAdded ${CrawlerEngineTestsResourcesList})
 
 list(REMOVE_ITEM CrawlerEngineTestsSourcesList src/stdafx.cpp)
 
@@ -28,20 +24,15 @@ source_group(
 	"Generated Files" FILES 
 	${CrawlerEngineTestsHeadersMocList} 
 	${CrawlerEngineTestsResourcesListAdded} 
-	${CrawlerEngineTestsResourcesList} 
 	${CrawlerEngineTestsFormsHeadersList}
 )
 
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
-source_group(Ui FILES ${CrawlerEngineTestsFormsList})
-source_group(Qrc FILES ${CrawlerEngineTestsResourcesList})
 
 add_executable(
 	${CrawlerEngineLibTestsName} 
 	${CrawlerEngineTestsSourcesList} 
 	${CrawlerEngineTestsHeaderList} 
-	${CrawlerEngineTestsFormsList} 
-	${CrawlerEngineTestsResourcesList}
 	${CrawlerEngineTestsFormsHeadersList}
 	${CrawlerEngineTestsHeadersMocList}
 	${CrawlerEngineTestsResourcesListAdded}

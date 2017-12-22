@@ -108,7 +108,7 @@ void SeoSpiderServiceApp::makeDump(HANDLE processHandle) const noexcept
         GENERIC_WRITE, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
         NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
-    MINIDUMP_TYPE miniDumpType = MINIDUMP_TYPE::MiniDumpWithFullMemory;
+    MINIDUMP_TYPE miniDumpType = MINIDUMP_TYPE::MiniDumpNormal;
 
     m_dbgHelpDllLoader->writeDump(processHandle, m_processId, dumpFileHandle, miniDumpType, NULL, NULL, NULL);
 

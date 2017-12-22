@@ -63,9 +63,10 @@ namespace SeoSpiderServiceApi
 SeoSpiderServiceApiImpl* SeoSpiderServiceApiImpl::s_self = nullptr;
 
 SeoSpiderServiceApiImpl::SeoSpiderServiceApiImpl()
-	: m_initialized(false)
+	: m_startupInfo{ sizeof(m_startupInfo) }
+	, m_initialized(false)
 {
-	Q_ASSERT(s_self == nullptr && "Double CrashHandler instances detected!");
+	ASSERT(s_self == nullptr && "Double instances detected!");
 
 	s_self = this;
 }
@@ -79,19 +80,29 @@ void SeoSpiderServiceApiImpl::init() noexcept
 
 	const boost::uuids::uuid uuid = boost::uuids::random_generator()();
 
-	const std::string crashHandlerEventName = boost::lexical_cast<std::string>(uuid);
+	const std::wstring crashHandlerEventName = boost::lexical_cast<std::wstring>(uuid);
 
-	m_crashEventHandle = CreateEvent(nullptr, TRUE, FALSE, crashHandlerEventName.c_str());
+	std::wstring commandLine = L"seospiderservice.exe " + crashHandlerEventName + L" " + std::to_wstring(GetCurrentProcessId());
 
-	QStringList arguments;
+	m_crashEventHandle = CreateEventW(nullptr, TRUE, FALSE, crashHandlerEventName.c_str());
 
-	arguments.append(crashHandlerEventName.c_str());
-	arguments.append(QStringLiteral("%1").arg(GetCurrentProcessId()));
-
-	m_initialized = QProcess::startDetached("seospiderservice.exe", arguments);
+	m_initialized = CreateProcessW(
+		NULL,
+		commandLine.data(),
+		NULL,
+		NULL,
+		TRUE,
+		CREATE_NO_WINDOW,
+		NULL,
+		NULL,
+		&m_startupInfo,
+		&m_processInfo
+	);
 
 	if (!m_initialized)
 	{
+		CloseHandle(m_processInfo.hThread);
+		CloseHandle(m_processInfo.hProcess);
 		CloseHandle(m_crashEventHandle);
 	}
 }
