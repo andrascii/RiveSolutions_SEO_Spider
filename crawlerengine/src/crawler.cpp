@@ -74,7 +74,6 @@ void Crawler::initialize()
 	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
 	ThreadManager::instance().moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
 
-
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
 		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
@@ -239,18 +238,21 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	Q_UNUSED(requester);
 
 	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
-	ASSERT(result != nullptr);
+
+	ASSERT(result);
+
 	m_state = m_prevState;
+
 	emit stateChanged(m_state);
 
 	if (!result->error.isEmpty())
 	{
 		ServiceLocator* locator = ServiceLocator::instance();
+
 		if (locator->isRegistered<INotificationService>())
 		{
 			locator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
 		}
-
 	}
 
 	m_serializationRequester.reset();
@@ -261,11 +263,13 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	Q_UNUSED(requester);
 
 	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
-	ASSERT(result != nullptr);
+
+	ASSERT(result);
 
 	if (!result->error.isEmpty())
 	{
 		ServiceLocator* locator = ServiceLocator::instance();
+
 		if (locator->isRegistered<INotificationService>())
 		{
 			locator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
@@ -276,6 +280,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 		const std::vector<ParsedPagePtr>& pages = result->serializer->pages();
 
 		int crawledLinksCount = 0;
+
 		for (const ParsedPagePtr& page : pages)
 		{
 			for (int i = 0; i < page->storages.size(); ++i)
