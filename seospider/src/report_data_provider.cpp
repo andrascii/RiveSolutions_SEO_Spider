@@ -2,7 +2,7 @@
 #include "seo_spider_helpers.h"
 #include "application.h"
 #include "crawler.h"
-#include "irobots_txt_loader.h"
+#include "ispecific_loader.h"
 #include "isequenced_storage.h"
 #include "storage_type.h"
 

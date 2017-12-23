@@ -1,20 +1,22 @@
 #pragma once
 
 #include "ispecific_loader.h"
-#include "requester_wrapper.h"
 #include "custom_url.h"
+#include "requester_wrapper.h"
 
 namespace CrawlerEngine
 {
 
 struct DownloadResponse;
+class RobotsTxtLoader;
+class Requester;
 
-class RobotsTxtLoader : public QObject, public ISpecificLoader
+class XmlSitemapLoader : public QObject, public ISpecificLoader
 {
 	Q_OBJECT
 
 public:
-	RobotsTxtLoader(QObject* parent = nullptr);
+	XmlSitemapLoader(RobotsTxtLoader* robotsTxtLoader, QObject* parent = nullptr);
 
 	virtual void load(const CustomUrl& host) override;
 	virtual const QByteArray& content() const noexcept override;
@@ -25,6 +27,9 @@ public:
 signals:
 	virtual void ready() override;
 
+private slots:
+	void onRobotsTxtLoaderReady();
+
 private:
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 
@@ -34,6 +39,7 @@ private:
 	QByteArray m_content;
 	CustomUrl m_currentLoadedUrl;
 	RequesterWrapper m_downloadRequester;
+	RobotsTxtLoader* m_robotsTxtLoader;
 };
 
 }

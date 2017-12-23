@@ -14,14 +14,14 @@ RobotsTxtLoader::RobotsTxtLoader(QObject* parent)
 {
 }
 
-void RobotsTxtLoader::load(const CustomUrl& url)
+void RobotsTxtLoader::load(const CustomUrl& host)
 {
-	if (m_currentLoadedUrl.compare(url))
+	if (m_currentLoadedUrl.compare(host))
 	{
 		return;
 	}
 
-	const QString robotsTxtUrlString = url.scheme() + "://" + url.host() + QStringLiteral("/robots.txt");
+	const QString robotsTxtUrlString = host.scheme() + "://" + host.host() + QStringLiteral("/robots.txt");
 
 	CrawlerRequest requestInfo{ CustomUrl(robotsTxtUrlString), DownloadRequestType::RequestTypeGet };
 
@@ -72,7 +72,7 @@ void RobotsTxtLoader::onLoadingDone(Requester* requester, const DownloadResponse
 	m_content = response.responseBody;
 	m_isReady = true;
 
-	m_currentLoadedUrl = response.url;
+	m_currentLoadedUrl = response.url.host();
 
 	emit ready();
 }

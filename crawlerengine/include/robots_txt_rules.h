@@ -4,7 +4,7 @@
 namespace CrawlerEngine
 {
 
-class IRobotsTxtLoader;
+class ISpecificLoader;
 class RobotsTxtTokenizer;
 class RobotsTxtBaseStrategy;
 

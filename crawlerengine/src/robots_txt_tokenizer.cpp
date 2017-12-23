@@ -78,10 +78,21 @@ void RobotsTxtTokenizer::tokenize(const QString& robotsTxtContent)
 			{
 				continue;
 			}
-			RobotsTxtToken tokenEnumerator = s_stringToToken.value(token, RobotsTxtToken::TokenUnknown);
 
+			RobotsTxtToken tokenEnumerator = s_stringToToken.value(token, RobotsTxtToken::TokenUnknown);
 			Tokens& tokens = m_userAgentTokens[userAgentType];
 			tokens.insert(tokenEnumerator, tokenValue);
+
+			if (tokenEnumerator == RobotsTxtToken::TokenSitemap)
+			{
+				if (m_sitemapUrl.isValid())
+				{
+					WARNLOG << "Seems that robots.txt file has several sitemaps";
+					continue;
+				}
+
+				m_sitemapUrl = tokenValue;
+			}
 		}
 	}
 

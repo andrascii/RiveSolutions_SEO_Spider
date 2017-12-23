@@ -5,10 +5,10 @@ namespace CrawlerEngine
 
 class CustomUrl;
 
-class IRobotsTxtLoader
+class ISpecificLoader
 {
 public:
-	virtual ~IRobotsTxtLoader() = default;
+	virtual ~ISpecificLoader() = default;
 
 	virtual void load(const CustomUrl& url) = 0;
 	virtual const QByteArray& content() const noexcept = 0;

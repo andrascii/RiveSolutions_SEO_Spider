@@ -114,8 +114,9 @@ void Downloader::processReply(QNetworkReply* reply)
 	markReplyAsProcessed(reply);
 	reply->disconnect(this);
 
-	const bool nonHtmlResponse = !PageParserHelpers::isHtmlOrPlainContentType(reply->header(QNetworkRequest::ContentTypeHeader).toString());
-	const bool processBody = !nonHtmlResponse;
+	const bool processBody = PageParserHelpers::isHtmlOrPlainContentType(
+		reply->header(QNetworkRequest::ContentTypeHeader).toString()
+	);
 
 	const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 

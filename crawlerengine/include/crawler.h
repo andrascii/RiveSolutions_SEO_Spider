@@ -12,7 +12,7 @@ struct SiteMapSettings;
 class CrawlerWorkerThread;
 class ModelController;
 class SequencedDataCollection;
-class IRobotsTxtLoader;
+class ISpecificLoader;
 class IRobotsTxtRules;
 class IDownloader;
 class ITaskProcessor;
@@ -44,12 +44,9 @@ public:
 	static Crawler& instance();
 
 	Crawler(unsigned int threadCount, QObject* parent = nullptr);
+	~Crawler();
 
-	virtual ~Crawler();
-
-	
 	void initialize();
-	
 	void clearData();
 	bool isNoData() const noexcept;
 	State state() const noexcept;
@@ -60,7 +57,7 @@ public:
 	void saveToFile(const QString& fileName);
 	void loadFromFile(const QString& fileName);
 
-	const IRobotsTxtLoader* robotsTxtLoader() const noexcept;
+	const ISpecificLoader* robotsTxtLoader() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -105,7 +102,8 @@ protected:
 private:
 	static Crawler* s_instance;
 
-	std::unique_ptr<IRobotsTxtLoader> m_robotsTxtLoader;
+	ISpecificLoader* m_robotsTxtLoader;
+	ISpecificLoader* m_xmlSitemapLoader;
 
 	UniqueLinkStore* m_uniqueLinkStore;
 	CrawlerOptions m_options;
@@ -114,7 +112,7 @@ private:
 	
 	QTimer* m_crawlingStateTimer;
 	QTimer* m_serializatonRedyStateCheckerTimer;
-	std::vector<CrawlerWorkerThread*> m_workers;	
+	std::vector<CrawlerWorkerThread*> m_workers;
 	State m_state;
 	State m_prevState;
 	QString m_fileName;

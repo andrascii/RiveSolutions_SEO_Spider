@@ -75,12 +75,10 @@ private:
 private:
 	Preferences* m_preferences;
 	CrawlerEngine::Crawler* m_crawler;
-
 	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
 
 	std::unique_ptr<MainWindow> m_mainWindow;
 	std::unique_ptr<SoftwareBranding> m_softwareBrandingOptions;
-
 	std::unique_ptr<StorageAdapterFactory> m_storageAdatpterFactory;
 	std::unique_ptr<SummaryDataAccessorFactory> m_summaryDataAccessorFactory;
 
@@ -88,7 +86,6 @@ private:
 	QTranslator* m_translator;
 
 	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
-
 	InternetConnectionNotificationManager* m_internetNotificationManager;
 };
 

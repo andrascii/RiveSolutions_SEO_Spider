@@ -14,6 +14,7 @@
 #include "serialization_tasks.h"
 #include "service_locator.h"
 #include "inotification_service.h"
+#include "xml_sitemap_loader.h"
 
 namespace CrawlerEngine
 {
@@ -28,6 +29,7 @@ Crawler& Crawler::instance()
 Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	: QObject(parent)
 	, m_robotsTxtLoader(new RobotsTxtLoader(this))
+	, m_xmlSitemapLoader(new XmlSitemapLoader(static_cast<RobotsTxtLoader*>(m_robotsTxtLoader), this))
 	, m_modelController(nullptr)
 	, m_uniqueLinkStore(new UniqueLinkStore(this))
 	, m_theradCount(threadCount)
@@ -86,6 +88,9 @@ void Crawler::initialize()
 	}
 
 	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()),
+		this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
+
+	VERIFY(connect(m_xmlSitemapLoader->qobject(), SIGNAL(ready()),
 		this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
 }
 
@@ -180,7 +185,8 @@ void Crawler::checkSerialiationReadyState()
 	if ((m_state == StateSerializaton || m_state == StateDeserializaton) &&
 		!m_fileName.isEmpty() &&
 		state->workersProcessedLinksCount() == state->modelControllerCrawledLinksCount() &&
-		state->modelControllerAcceptedLinksCount() == state->sequencedDataCollectionLinksCount())
+		state->modelControllerAcceptedLinksCount() == state->sequencedDataCollectionLinksCount() &&
+		m_prevState == StatePause)
 	{
 		if (m_state == StateSerializaton)
 		{
@@ -222,7 +228,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 bool Crawler::isPreinitialized() const
 {
-	return m_robotsTxtLoader->isReady();
+	return m_robotsTxtLoader->isReady() && m_xmlSitemapLoader->isReady();
 }
 
 void Crawler::initializeCrawlingSession()
@@ -230,6 +236,7 @@ void Crawler::initializeCrawlingSession()
 	DEBUG_ASSERT(m_options.host.isValid());
 
 	m_robotsTxtLoader->load(m_options.host);
+	m_xmlSitemapLoader->load(m_options.host);
 }
 
 void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& response)
@@ -327,6 +334,7 @@ void Crawler::onSerializationReadyToBeStarted()
 	std::vector<ParsedPage*> pages;
 	const int pagesCount = storage->size() + static_cast<int>(pendingPages.size());
 	pages.reserve(pagesCount);
+
 	for (int i = 0; i < storage->size(); ++i)
 	{
 		const ParsedPage* page = (*storage)[i];
@@ -340,11 +348,13 @@ void Crawler::onSerializationReadyToBeStarted()
 	}
 
 	std::vector<CrawlerRequest> pendingUrls;
+
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
 		const std::vector<CrawlerRequest> workerPendingUrls = worker->pendingUrls();
 		pendingUrls.insert(pendingUrls.end(), workerPendingUrls.begin(), workerPendingUrls.end());
 	}
+
 	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
 	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
 
@@ -442,9 +452,9 @@ void Crawler::loadFromFile(const QString& fileName)
 	m_serializatonRedyStateCheckerTimer->start();
 }
 
-const IRobotsTxtLoader* Crawler::robotsTxtLoader() const noexcept
+const ISpecificLoader* Crawler::robotsTxtLoader() const noexcept
 {
-	return m_robotsTxtLoader.get();
+	return m_robotsTxtLoader;
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
