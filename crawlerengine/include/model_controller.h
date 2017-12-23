@@ -3,6 +3,7 @@
 #include "parsed_page.h"
 #include "crawler_options.h"
 #include "sequenced_data_collection_types.h"
+#include "storage_type.h"
 
 namespace CrawlerEngine
 {
@@ -50,7 +51,7 @@ private:
 	void calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept;
 	void setPageLevel(ParsedPagePtr& page, int level) const noexcept;
 
-	void addDuplicates(const ParsedPagePtr& incomingPage, int lookupStorage, int destStorage);
+	void addDuplicates(const ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage);
 
 private:
 	UnorderedDataCollection* m_data;

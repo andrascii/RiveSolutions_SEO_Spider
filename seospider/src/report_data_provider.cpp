@@ -312,7 +312,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		case ReportDataKeys::BrokenLinksCount:
 		{
 			const CrawlerEngine::ISequencedStorage* storage = 
-				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::Status404StorageType);
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::Status4xxStorageType);
 
 			return storage->size();
 		}

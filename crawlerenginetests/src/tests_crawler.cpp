@@ -86,7 +86,7 @@ std::vector<LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResource
 	return future.get();
 }
 
-std::vector<const ParsedPage*> TestsCrawler::getLinksFromUnorderedDataCollection(int type) const
+std::vector<const ParsedPage*> TestsCrawler::getLinksFromUnorderedDataCollection(StorageType type) const
 {
 	return m_receiver->getLinksFromUnorderedDataCollection(type);
 }
@@ -103,9 +103,9 @@ TestsDownloader* TestsCrawler::testDownloader() const
 
 void TestsCrawler::checkSequencedDataCollectionConsistency()
 {
-	std::vector<const ParsedPage*> crawledPages = m_receiver->storageItems(CrawledUrlStorageType);
+	std::vector<const ParsedPage*> crawledPages = m_receiver->storageItems(StorageType::CrawledUrlStorageType);
 
-	for (int i = BeginEnumStorageType + 1; i < EndEnumStorageType; ++i)
+	for (int i = static_cast<int>(StorageType::BeginEnumStorageType) + 1; i < static_cast<int>(StorageType::EndEnumStorageType); ++i)
 	{
 		std::vector<const ParsedPage*> storagePages = 
 			m_receiver->storageItems(static_cast<StorageType>(i));

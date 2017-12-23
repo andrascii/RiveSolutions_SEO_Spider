@@ -16,7 +16,11 @@ enum class StorageAdapterType
 	StorageAdapterTypeUpperCaseLinks = CrawlerEngine::StorageType::UpperCaseUrlStorageType,
 	StorageAdapterTypeNonAsciiLinks = CrawlerEngine::StorageType::NonAsciiCharacterUrlStorageType,
 	StorageAdapterTypeVeryLongLinks = CrawlerEngine::StorageType::VeryLongUrlStorageType,
-	StorageAdapterTypeBrokenLinks = CrawlerEngine::StorageType::Status404StorageType,
+	StorageAdapterTypeBrokenLinks = CrawlerEngine::StorageType::BrokenLinks,
+	StorageAdapterTypeStatus4xx = CrawlerEngine::StorageType::Status4xxStorageType,
+	StorageAdapterTypeStatus5xx = CrawlerEngine::StorageType::Status5xxStorageType,
+	StorageAdapterTypeStatus302 = CrawlerEngine::StorageType::Status302StorageType,
+	StorageAdapterTypeStatus301 = CrawlerEngine::StorageType::Status301StorageType,
 
 	StorageAdapterTypeEmptyTitles = CrawlerEngine::StorageType::EmptyTitleUrlStorageType,
 	StorageAdapterTypeDuplicatedTitles = CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType,

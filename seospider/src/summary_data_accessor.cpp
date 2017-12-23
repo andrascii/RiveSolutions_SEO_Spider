@@ -124,9 +124,9 @@ int SummaryDataAccessor::rowByStorageType(CrawlerEngine::StorageType storageType
 	return -1;
 }
 
-void SummaryDataAccessor::emitDataChanged(int, int storageType)
+void SummaryDataAccessor::emitDataChanged(int, StorageType storageType)
 {
-	const int row = rowByStorageType(static_cast<CrawlerEngine::StorageType>(storageType));
+	const int row = rowByStorageType(storageType);
 
 	if (row == -1)
 	{

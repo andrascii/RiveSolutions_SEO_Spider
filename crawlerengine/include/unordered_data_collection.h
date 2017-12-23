@@ -58,7 +58,7 @@ public:
 	}
 
 signals:
-	void parsedPageAdded(ParsedPagePtr parsedPagePtr, int type);
+	void parsedPageAdded(ParsedPagePtr parsedPagePtr, StorageType type);
 	
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 
@@ -75,7 +75,7 @@ private:
 	void initializeStorages();
 
 private:
-	std::unordered_map<int, UnorderedStorageType> m_unorderedStorageMap;
+	std::unordered_map<StorageType, UnorderedStorageType> m_unorderedStorageMap;
 };
 
 }

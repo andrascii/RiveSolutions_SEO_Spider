@@ -423,7 +423,29 @@ void ModelController::processParsedPageStatusCode(ParsedPagePtr& incomingPage)
 {
 	if (incomingPage->statusCode == Common::StatusCode::NotFound404)
 	{
-		data()->addParsedPage(incomingPage, StorageType::Status404StorageType);
+		data()->addParsedPage(incomingPage, StorageType::BrokenLinks);
+	}
+
+	if (incomingPage->statusCode >= Common::StatusCode::BadRequest400 &&
+		incomingPage->statusCode <= Common::StatusCode::UnsupportedMediaType415)
+	{
+		data()->addParsedPage(incomingPage, StorageType::Status4xxStorageType);
+	}
+
+	if (incomingPage->statusCode >= Common::StatusCode::InternalServerError500 &&
+		incomingPage->statusCode <= Common::StatusCode::HttpVersionNotSupported505)
+	{
+		data()->addParsedPage(incomingPage, StorageType::Status5xxStorageType);
+	}
+
+	if (incomingPage->statusCode == Common::StatusCode::MovedPermanently301)
+	{
+		data()->addParsedPage(incomingPage, StorageType::Status301StorageType);
+	}
+
+	if (incomingPage->statusCode == Common::StatusCode::MovedTemporarily302)
+	{
+		data()->addParsedPage(incomingPage, StorageType::Status302StorageType);
 	}
 }
 
@@ -506,22 +528,22 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 {
 	constexpr int storageTypes[][1]
 	{
-		static_cast<int>(ResourceType::ResourceImage), { StorageType::ImageResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceJavaScript), { StorageType::JavaScriptResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceStyleSheet), { StorageType::StyleSheetResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceFlash), { StorageType::FlashResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceVideo), { StorageType::VideoResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceOther), { StorageType::OtherResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceImage), { static_cast<int>(StorageType::ImageResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceJavaScript), { static_cast<int>(StorageType::JavaScriptResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceStyleSheet), { static_cast<int>(StorageType::StyleSheetResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceFlash), { static_cast<int>(StorageType::FlashResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceVideo), { static_cast<int>(StorageType::VideoResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceOther), { static_cast<int>(StorageType::OtherResourcesStorageType) },
 	};
 
 	constexpr int externalStorageTypes[][1]
 	{
-		static_cast<int>(ResourceType::ResourceImage), { StorageType::ExternalImageResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceJavaScript), { StorageType::ExternalJavaScriptResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceStyleSheet), { StorageType::ExternalStyleSheetResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceFlash), { StorageType::ExternalFlashResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceVideo), { StorageType::ExternalVideoResourcesStorageType },
-		static_cast<int>(ResourceType::ResourceOther), { StorageType::ExternalOtherResourcesStorageType },
+		static_cast<int>(ResourceType::ResourceImage), { static_cast<int>(StorageType::ExternalImageResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceJavaScript), { static_cast<int>(StorageType::ExternalJavaScriptResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceStyleSheet), { static_cast<int>(StorageType::ExternalStyleSheetResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceFlash), { static_cast<int>(StorageType::ExternalFlashResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceVideo), { static_cast<int>(StorageType::ExternalVideoResourcesStorageType) },
+		static_cast<int>(ResourceType::ResourceOther), { static_cast<int>(StorageType::ExternalOtherResourcesStorageType) },
 	};
 
 	const bool http = PageParserHelpers::isHttpOrHttpsScheme(incomingPage->url);
@@ -736,14 +758,11 @@ void ModelController::setPageLevel(ParsedPagePtr& page, int level) const noexcep
 	}
 }
 
-void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int lookupStorage, int destStorage)
+void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage)
 {
-	const StorageType lookupStorageType = static_cast<StorageType>(lookupStorage);
-	const StorageType destStorageType = static_cast<StorageType>(destStorage);
-
-	if (data()->isParsedPageExists(incomingPage, destStorageType))
+	if (data()->isParsedPageExists(incomingPage, destStorage))
 	{
-		data()->addParsedPage(incomingPage, destStorageType);
+		data()->addParsedPage(incomingPage, destStorage);
 		return;
 	}
 
@@ -759,18 +778,22 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, int looku
 
 	const auto alwaysTruePredicate = [](const ParsedPagePtr&) { return true; };
 
-	const std::vector<ParsedPagePtr> duplicatesWithDifferentCanonical = data()->allParsedPages(incomingPage, lookupStorageType, predicate);
+	const std::vector<ParsedPagePtr> duplicatesWithDifferentCanonical = 
+		data()->allParsedPages(incomingPage, lookupStorage, predicate);
+
 	if (!duplicatesWithDifferentCanonical.empty())
 	{
-		const std::vector<ParsedPagePtr> allDuplicates = data()->allParsedPages(incomingPage, lookupStorageType, alwaysTruePredicate);
+		const std::vector<ParsedPagePtr> allDuplicates = 
+			data()->allParsedPages(incomingPage, lookupStorage, alwaysTruePredicate);
+
 		for (const ParsedPagePtr& duplicate : allDuplicates)
 		{
-			DEBUG_ASSERT(duplicate->storages[destStorageType] == false);
+			DEBUG_ASSERT(!duplicate->storages[static_cast<std::size_t>(destStorage)]);
 			
-			data()->addParsedPage(duplicate, destStorageType);
+			data()->addParsedPage(duplicate, destStorage);
 		}
 
-		data()->addParsedPage(incomingPage, destStorageType);
+		data()->addParsedPage(incomingPage, destStorage);
 	}
 }
 

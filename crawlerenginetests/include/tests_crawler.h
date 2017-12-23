@@ -30,7 +30,7 @@ public:
 
 	std::vector<LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(const ParsedPage* page, int count, int seconds) const;
 
-	std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(int type) const;
+	std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(StorageType type) const;
 
 	Q_SLOT void startTestCrawler();
 

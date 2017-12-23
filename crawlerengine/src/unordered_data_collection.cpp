@@ -8,6 +8,8 @@ namespace CrawlerEngine
 UnorderedDataCollection::UnorderedDataCollection(QObject* parent)
 	: QObject(parent)
 {
+	qRegisterMetaType<StorageType>("StorageType");
+
 	initializeStorages();
 }
 
@@ -79,16 +81,18 @@ std::vector<ParsedPagePtr> UnorderedDataCollection::allParsedPages(StorageType t
 void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
 {
 	std::vector<bool>& pageStoragesFlags = parsedPagePtr->storages;
-	if (pageStoragesFlags.size() < static_cast<size_t>(EndEnumStorageType))
+
+	if (pageStoragesFlags.size() < static_cast<size_t>(StorageType::EndEnumStorageType))
 	{
-		pageStoragesFlags.resize(static_cast<size_t>(EndEnumStorageType), false);
+		pageStoragesFlags.resize(static_cast<size_t>(StorageType::EndEnumStorageType), false);
 	}
 
 	pageStoragesFlags[static_cast<size_t>(type)] = true;
 	storage(type).insert(parsedPagePtr);
+
 	DEBUG_ASSERT(isParsedPageExists(parsedPagePtr, type));
 
-	emit parsedPageAdded(parsedPagePtr, static_cast<int>(type));
+	emit parsedPageAdded(parsedPagePtr, type);
 }
 
 void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept
@@ -134,75 +138,12 @@ const UnorderedDataCollection::UnorderedStorageType& UnorderedDataCollection::st
 
 void UnorderedDataCollection::checkStorageType(StorageType type) const noexcept
 {
-	ASSERT(
-		type == CrawledUrlStorageType ||
-		type == ExternalUrlStorageType ||
-		type == UpperCaseUrlStorageType ||
-		type == NonAsciiCharacterUrlStorageType ||
-		type == VeryLongUrlStorageType ||
-
-		type == AllTitlesUrlStorageType ||
-		type == EmptyTitleUrlStorageType ||
-		type == DuplicatedTitleUrlStorageType ||
-		type == VeryLongTitleUrlStorageType ||
-		type == VeryShortTitleUrlStorageType ||
-		type == DuplicatedH1TitleUrlStorageType ||
-		type == SeveralTitleUrlStorageType ||
-
-		type == AllMetaDescriptionsUrlStorageType ||
-		type == EmptyMetaDescriptionUrlStorageType ||
-		type == DuplicatedMetaDescriptionUrlStorageType ||
-		type == VeryLongMetaDescriptionUrlStorageType ||
-		type == VeryShortMetaDescriptionUrlStorageType ||
-		type == SeveralMetaDescriptionUrlStorageType ||
-
-		type == AllMetaKeywordsUrlStorageType ||
-		type == EmptyMetaKeywordsUrlStorageType ||
-		type == DuplicatedMetaKeywordsUrlStorageType ||
-		type == SeveralMetaKeywordsUrlStorageType ||
-
-		type == AllH1UrlStorageType ||
-		type == MissingH1UrlStorageType ||
-		type == DuplicatedH1UrlStorageType ||
-		type == VeryLongH1UrlStorageType ||
-		type == SeveralH1UrlStorageType ||
-
-		type == AllH2UrlStorageType ||
-		type == MissingH2UrlStorageType ||
-		type == DuplicatedH2UrlStorageType ||
-		type == VeryLongH2UrlStorageType ||
-		type == SeveralH2UrlStorageType ||
-
-		type == Over100kbImageStorageType ||
-		type == MissingAltTextImageStorageType ||
-		type == VeryLongAltTextImageStorageType ||
-
-		type == Status404StorageType ||
-
-		type == PendingResourcesStorageType ||
-		type == CanonicalResourcesStorageType ||
-		type == HtmlResourcesStorageType ||
-		type == ImageResourcesStorageType ||
-		type == JavaScriptResourcesStorageType ||
-		type == StyleSheetResourcesStorageType ||
-		type == FlashResourcesStorageType ||
-		type == VideoResourcesStorageType ||
-		type == OtherResourcesStorageType ||
-
-		type == ExternalHtmlResourcesStorageType ||
-		type == ExternalImageResourcesStorageType ||
-		type == ExternalJavaScriptResourcesStorageType ||
-		type == ExternalStyleSheetResourcesStorageType ||
-		type == ExternalFlashResourcesStorageType ||
-		type == ExternalVideoResourcesStorageType ||
-		type == ExternalOtherResourcesStorageType
-	);
+	ASSERT(type > StorageType::BeginEnumStorageType && type < StorageType::EndEnumStorageType);
 }
-
 
 void UnorderedDataCollection::initializeStorages()
 {
-	m_unorderedStorageMap = std::initializer_list<std::pair<const int, UnorderedStorageType>>
+	m_unorderedStorageMap = std::initializer_list<std::pair<const StorageType, UnorderedStorageType>>
 	{
 		std::make_pair(StorageType::CrawledUrlStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
@@ -228,8 +169,24 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::Status404StorageType,
-			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+		std::make_pair(StorageType::BrokenLinks,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::Status4xxStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::Status5xxStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::Status302StorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::Status301StorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		//
@@ -415,7 +372,6 @@ void UnorderedDataCollection::initializeStorages()
 		std::make_pair(StorageType::OtherResourcesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
-
 
 		std::make_pair(StorageType::ExternalHtmlResourcesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),

@@ -9,12 +9,12 @@ TEST(MetaKeywordsTests, EmptyMetaKeywords)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::EmptyMetaKeywordsUrlStorageType, 2, 10, "Waiting for 2 empty meta keywords pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType, 2, 10, "Waiting for 2 empty meta keywords pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString(), pages[0]->metaKeywords);
 		EXPECT_EQ(QString(), pages[1]->metaKeywords);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
@@ -30,12 +30,12 @@ TEST(MetaKeywordsTests, NoMetaKeywords)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::EmptyMetaKeywordsUrlStorageType, 2, 10, "Waiting for 2 empty meta keywords pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType, 2, 10, "Waiting for 2 empty meta keywords pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString::null, pages[0]->metaKeywords);
 		EXPECT_EQ(QString::null, pages[1]->metaKeywords);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
@@ -51,12 +51,12 @@ TEST(MetaKeywordsTests, DuplicatedMetaKeywords)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::DuplicatedMetaKeywordsUrlStorageType, 2, 10, "Waiting for 2 duplicated meta keywords pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType, 2, 10, "Waiting for 2 duplicated meta keywords pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("keyword1 keyword2"), pages[0]->metaKeywords);
 		EXPECT_EQ(QString("keyword1 keyword2"), pages[1]->metaKeywords);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
@@ -73,7 +73,7 @@ TEST(MetaKeywordsTests, DoNotIncludeCanonicalDuplicatedKeywords)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForAllCrawledPageReceived(10);
-		auto pages = cl->storageItems(CrawlerEngine::DuplicatedMetaKeywordsUrlStorageType);
+		auto pages = cl->storageItems(CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType);
 		EXPECT_EQ(0, pages.size());
 	};
 
@@ -91,7 +91,7 @@ TEST(MetaKeywordsTests, IncludeDuplicatedKeywordsIfThereAreSeveralCanonical)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForAllCrawledPageReceived(10);
-		auto pages = cl->storageItems(CrawlerEngine::DuplicatedMetaKeywordsUrlStorageType);
+		auto pages = cl->storageItems(CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType);
 		EXPECT_EQ(3, pages.size());
 	};
 
@@ -107,7 +107,7 @@ TEST(MetaKeywordsTests, DoNotIncludeEveryPageInDuplicates)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForAllCrawledPageReceived(10);
-		auto pages = cl->storageItems(CrawlerEngine::DuplicatedMetaKeywordsUrlStorageType);
+		auto pages = cl->storageItems(CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType);
 		EXPECT_EQ(0, pages.size());
 	};
 
@@ -123,12 +123,12 @@ TEST(MetaKeywordsTests, SeveralMetaKeywords)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::SeveralMetaKeywordsUrlStorageType, 2, 10, "Waiting for 2 several meta keywords pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::SeveralMetaKeywordsUrlStorageType, 2, 10, "Waiting for 2 several meta keywords pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("keyword1 keyword2"), pages[0]->metaKeywords);
 		EXPECT_EQ(QString("keyword1 keyword2"), pages[1]->metaKeywords);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);

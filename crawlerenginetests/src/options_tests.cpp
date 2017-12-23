@@ -1,10 +1,12 @@
 namespace CrawlerEngineTests
 {
 
+using namespace CrawlerEngine;
+
 TEST(OptionsTests, ParseOnlyHtml)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
-	options.parserTypeFlags = CrawlerEngine::ParserTypeFlags();
+	CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
+	options.parserTypeFlags = ParserTypeFlags();
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -12,14 +14,14 @@ TEST(OptionsTests, ParseOnlyHtml)
 		cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
-		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
-		auto cssResources = cl->storageItems(CrawlerEngine::StyleSheetResourcesStorageType);
-		auto imageResources = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
-		auto videoResources = cl->storageItems(CrawlerEngine::VideoResourcesStorageType);
-		auto flashResources = cl->storageItems(CrawlerEngine::FlashResourcesStorageType);
-		auto otherResources = cl->storageItems(CrawlerEngine::OtherResourcesStorageType);
-		auto externalOtherResources = cl->storageItems(CrawlerEngine::ExternalOtherResourcesStorageType);
+		auto htmlResources = cl->storageItems(StorageType::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(StorageType::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(StorageType::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(StorageType::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(StorageType::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(StorageType::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(StorageType::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(StorageType::ExternalOtherResourcesStorageType);
 
 		EXPECT_EQ(2, htmlResources.size());
 		EXPECT_EQ(0, jsResources.size());
@@ -37,8 +39,8 @@ TEST(OptionsTests, ParseOnlyHtml)
 
 TEST(OptionsTests, ParseOnlyJs)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
-	options.parserTypeFlags = CrawlerEngine::JavaScriptResourcesParserType;
+	CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
+	options.parserTypeFlags = JavaScriptResourcesParserType;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -46,14 +48,14 @@ TEST(OptionsTests, ParseOnlyJs)
 		cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
-		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
-		auto cssResources = cl->storageItems(CrawlerEngine::StyleSheetResourcesStorageType);
-		auto imageResources = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
-		auto videoResources = cl->storageItems(CrawlerEngine::VideoResourcesStorageType);
-		auto flashResources = cl->storageItems(CrawlerEngine::FlashResourcesStorageType);
-		auto otherResources = cl->storageItems(CrawlerEngine::OtherResourcesStorageType);
-		auto externalOtherResources = cl->storageItems(CrawlerEngine::ExternalOtherResourcesStorageType);
+		auto htmlResources = cl->storageItems(StorageType::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(StorageType::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(StorageType::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(StorageType::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(StorageType::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(StorageType::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(StorageType::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(StorageType::ExternalOtherResourcesStorageType);
 
 		EXPECT_EQ(2, htmlResources.size());
 		EXPECT_EQ(2, jsResources.size());
@@ -71,8 +73,8 @@ TEST(OptionsTests, ParseOnlyJs)
 
 TEST(OptionsTests, ParseOnlyCSS)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
-	options.parserTypeFlags = CrawlerEngine::CssResourcesParserType;
+	CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
+	options.parserTypeFlags = CssResourcesParserType;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -80,14 +82,14 @@ TEST(OptionsTests, ParseOnlyCSS)
 		cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
-		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
-		auto cssResources = cl->storageItems(CrawlerEngine::StyleSheetResourcesStorageType);
-		auto imageResources = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
-		auto videoResources = cl->storageItems(CrawlerEngine::VideoResourcesStorageType);
-		auto flashResources = cl->storageItems(CrawlerEngine::FlashResourcesStorageType);
-		auto otherResources = cl->storageItems(CrawlerEngine::OtherResourcesStorageType);
-		auto externalOtherResources = cl->storageItems(CrawlerEngine::ExternalOtherResourcesStorageType);
+		auto htmlResources = cl->storageItems(StorageType::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(StorageType::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(StorageType::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(StorageType::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(StorageType::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(StorageType::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(StorageType::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(StorageType::ExternalOtherResourcesStorageType);
 
 		EXPECT_EQ(2, htmlResources.size());
 		EXPECT_EQ(0, jsResources.size());
@@ -106,8 +108,8 @@ TEST(OptionsTests, ParseOnlyCSS)
 
 TEST(OptionsTests, ParseOnlyImages)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
-	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
+	CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
+	options.parserTypeFlags = ImagesResourcesParserType;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -115,14 +117,14 @@ TEST(OptionsTests, ParseOnlyImages)
 		cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
-		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
-		auto cssResources = cl->storageItems(CrawlerEngine::StyleSheetResourcesStorageType);
-		auto imageResources = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
-		auto videoResources = cl->storageItems(CrawlerEngine::VideoResourcesStorageType);
-		auto flashResources = cl->storageItems(CrawlerEngine::FlashResourcesStorageType);
-		auto otherResources = cl->storageItems(CrawlerEngine::OtherResourcesStorageType);
-		auto externalOtherResources = cl->storageItems(CrawlerEngine::ExternalOtherResourcesStorageType);
+		auto htmlResources = cl->storageItems(StorageType::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(StorageType::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(StorageType::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(StorageType::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(StorageType::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(StorageType::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(StorageType::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(StorageType::ExternalOtherResourcesStorageType);
 
 		EXPECT_EQ(2, htmlResources.size());
 		EXPECT_EQ(0, jsResources.size());
@@ -140,8 +142,8 @@ TEST(OptionsTests, ParseOnlyImages)
 
 TEST(OptionsTests, ParseOnlyVideo)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
-	options.parserTypeFlags = CrawlerEngine::VideoResourcesParserType;
+	CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
+	options.parserTypeFlags = VideoResourcesParserType;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -149,14 +151,14 @@ TEST(OptionsTests, ParseOnlyVideo)
 		cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
-		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
-		auto cssResources = cl->storageItems(CrawlerEngine::StyleSheetResourcesStorageType);
-		auto imageResources = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
-		auto videoResources = cl->storageItems(CrawlerEngine::VideoResourcesStorageType);
-		auto flashResources = cl->storageItems(CrawlerEngine::FlashResourcesStorageType);
-		auto otherResources = cl->storageItems(CrawlerEngine::OtherResourcesStorageType);
-		auto externalOtherResources = cl->storageItems(CrawlerEngine::ExternalOtherResourcesStorageType);
+		auto htmlResources = cl->storageItems(StorageType::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(StorageType::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(StorageType::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(StorageType::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(StorageType::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(StorageType::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(StorageType::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(StorageType::ExternalOtherResourcesStorageType);
 
 		EXPECT_EQ(2, htmlResources.size());
 		EXPECT_EQ(0, jsResources.size());
@@ -174,8 +176,8 @@ TEST(OptionsTests, ParseOnlyVideo)
 
 TEST(OptionsTests, ParseOnlyFlash)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
-	options.parserTypeFlags = CrawlerEngine::FlashResourcesParserType;
+	CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
+	options.parserTypeFlags = FlashResourcesParserType;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -183,14 +185,14 @@ TEST(OptionsTests, ParseOnlyFlash)
 		cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
-		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
-		auto cssResources = cl->storageItems(CrawlerEngine::StyleSheetResourcesStorageType);
-		auto imageResources = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
-		auto videoResources = cl->storageItems(CrawlerEngine::VideoResourcesStorageType);
-		auto flashResources = cl->storageItems(CrawlerEngine::FlashResourcesStorageType);
-		auto otherResources = cl->storageItems(CrawlerEngine::OtherResourcesStorageType);
-		auto externalOtherResources = cl->storageItems(CrawlerEngine::ExternalOtherResourcesStorageType);
+		auto htmlResources = cl->storageItems(StorageType::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(StorageType::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(StorageType::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(StorageType::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(StorageType::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(StorageType::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(StorageType::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(StorageType::ExternalOtherResourcesStorageType);
 
 		EXPECT_EQ(2, htmlResources.size());
 		EXPECT_EQ(0, jsResources.size());
@@ -208,8 +210,8 @@ TEST(OptionsTests, ParseOnlyFlash)
 
 TEST(OptionsTests, ParseOnlyOther)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
-	options.parserTypeFlags = CrawlerEngine::OtherResourcesParserType;
+	CrawlerOptions options = TestEnvironment::defaultOptions({ CustomUrl("http://options.com/index.html") });
+	options.parserTypeFlags = OtherResourcesParserType;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -217,14 +219,14 @@ TEST(OptionsTests, ParseOnlyOther)
 		cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		auto htmlResources = cl->storageItems(CrawlerEngine::HtmlResourcesStorageType);
-		auto jsResources = cl->storageItems(CrawlerEngine::JavaScriptResourcesStorageType);
-		auto cssResources = cl->storageItems(CrawlerEngine::StyleSheetResourcesStorageType);
-		auto imageResources = cl->storageItems(CrawlerEngine::ImageResourcesStorageType);
-		auto videoResources = cl->storageItems(CrawlerEngine::VideoResourcesStorageType);
-		auto flashResources = cl->storageItems(CrawlerEngine::FlashResourcesStorageType);
-		auto otherResources = cl->storageItems(CrawlerEngine::OtherResourcesStorageType);
-		auto externalOtherResources = cl->storageItems(CrawlerEngine::ExternalOtherResourcesStorageType);
+		auto htmlResources = cl->storageItems(StorageType::HtmlResourcesStorageType);
+		auto jsResources = cl->storageItems(StorageType::JavaScriptResourcesStorageType);
+		auto cssResources = cl->storageItems(StorageType::StyleSheetResourcesStorageType);
+		auto imageResources = cl->storageItems(StorageType::ImageResourcesStorageType);
+		auto videoResources = cl->storageItems(StorageType::VideoResourcesStorageType);
+		auto flashResources = cl->storageItems(StorageType::FlashResourcesStorageType);
+		auto otherResources = cl->storageItems(StorageType::OtherResourcesStorageType);
+		auto externalOtherResources = cl->storageItems(StorageType::ExternalOtherResourcesStorageType);
 
 		EXPECT_EQ(2, htmlResources.size());
 		EXPECT_EQ(0, jsResources.size());

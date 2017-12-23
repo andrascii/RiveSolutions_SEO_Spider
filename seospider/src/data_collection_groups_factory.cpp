@@ -17,7 +17,11 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::UpperCaseUrlStorageType, QObject::tr("Links With Uppercase Characters") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links With Non-ASCII Characters") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::VeryLongUrlStorageType, QObject::tr("Too Long Links") });
-			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status404StorageType, QObject::tr("Broken Links") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BrokenLinks, QObject::tr("Broken Links") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status4xxStorageType, QObject::tr("Status Code 4xx") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status5xxStorageType, QObject::tr("Status Code 5xx") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status302StorageType, QObject::tr("Moved Temporarily 302") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status301StorageType, QObject::tr("Moved Permanently 301") });
 
 			return p;
 		}

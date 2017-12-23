@@ -7,7 +7,7 @@ TEST(LinksTests, LinkAlt)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(0, pages[0]->linksToThisPage.size());
@@ -28,7 +28,7 @@ TEST(LinksTests, CanonicalNextPrev)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
+		auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(4, pages.size());
 
@@ -61,8 +61,8 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 		auto pages = cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		std::vector<const ParsedPage*> crawledPages = cl->storageItems(CrawledUrlStorageType);
-		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(PendingResourcesStorageType);
+		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
+		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
 		std::vector<QUrl> nofollowLinks;
 
@@ -111,8 +111,8 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 		auto pages = cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		std::vector<const ParsedPage*> crawledPages = cl->storageItems(CrawledUrlStorageType);
-		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(PendingResourcesStorageType);
+		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
+		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
 		std::vector<QUrl> subdomainLinks;
 
@@ -164,8 +164,8 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 		auto pages = cl->waitForAllCrawledPageReceived(10);
 		cl->checkSequencedDataCollectionConsistency();
 
-		std::vector<const ParsedPage*> crawledPages = cl->storageItems(CrawledUrlStorageType);
-		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(PendingResourcesStorageType);
+		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
+		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
 		const QUrl blockedByRobotsUrl("http://blockedbyrobotstxt.com/blocked.html");
 

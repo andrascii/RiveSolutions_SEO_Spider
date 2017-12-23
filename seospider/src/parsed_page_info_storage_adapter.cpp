@@ -73,9 +73,12 @@ ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(co
 {
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
-	return m_availableColumns[index.column()] == ParsedPageInfo::Column::UrlColumn ?
-		ItemType::UrlItemType :
-		ItemType::PlainItemType;
+	const bool isIndexMappedToUrl = 
+		m_availableColumns[index.column()] == ParsedPageInfo::Column::UrlColumn ||
+		m_availableColumns[index.column()] == ParsedPageInfo::Column::RedirectedUrlColumn ||
+		m_availableColumns[index.column()] == ParsedPageInfo::Column::CanonicalLinkElementColumn;
+
+	return isIndexMappedToUrl ? ItemType::UrlItemType : ItemType::PlainItemType;
 }
 
 
@@ -105,7 +108,7 @@ const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdapter::parsedPage(const 
 #endif
 
 
-void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, int type)
+void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, StorageType type)
 {
 	if (type != m_storageType)
 	{

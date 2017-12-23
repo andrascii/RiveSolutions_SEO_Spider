@@ -74,14 +74,14 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::MetaRobotsColumn, SeoSpiderHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::MetaDescriptionColumn, SeoSpiderHelpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::MetaKeywordsColumn, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::RedirectedUrlColumn, SeoSpiderHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::RedirectedUrlColumn, SeoSpiderHelpers::pointsToPixels(300) },
 		{ ParsedPageInfo::Column::ServerResponseColumn, SeoSpiderHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::FirstH1Column, SeoSpiderHelpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::SecondH1Column, SeoSpiderHelpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::FirstH2Column, SeoSpiderHelpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::SecondH2Column, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::CanonicalLinkElementColumn, SeoSpiderHelpers::pointsToPixels(150) },
-		{ ParsedPageInfo::Column::StatusCodeColumn, SeoSpiderHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::CanonicalLinkElementColumn, SeoSpiderHelpers::pointsToPixels(300) },
+		{ ParsedPageInfo::Column::StatusCodeColumn, SeoSpiderHelpers::pointsToPixels(150) },
 		{ ParsedPageInfo::Column::PageSizeKbColumn, SeoSpiderHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::WordCountColumn, SeoSpiderHelpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::PageHashColumn, SeoSpiderHelpers::pointsToPixels(100) },
@@ -293,7 +293,7 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column)
 		}
 		case Column::RedirectedUrlColumn: 
 		{
-			return &ParsedPageInfo::acceptMetaRobots;
+			return &ParsedPageInfo::acceptRedirectedUrl;
 		}
 		case Column::ServerResponseColumn: 
 		{

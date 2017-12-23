@@ -7,7 +7,7 @@ TEST(MetaRobotsTests, TestSeveralTags)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
 
 		EXPECT_EQ(1, pages.size());
 
@@ -42,7 +42,7 @@ TEST(MetaRobotsTests, TestXRobotsTag)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 1, 10, "Waiting for 1 crawled page");
 
 		EXPECT_EQ(1, pages.size());
 

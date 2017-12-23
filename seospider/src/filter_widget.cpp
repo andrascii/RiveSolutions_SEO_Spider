@@ -56,7 +56,7 @@ void FilterWidget::adjustSize()
 
 	ASSERT(parentWidget);
 
-	const int summaryViewWidth = SeoSpiderHelpers::pointsToPixels(100);
+	const int summaryViewWidth = SeoSpiderHelpers::pointsToPixels(150);
 
 	const int parentWidgetWidth = parentWidget->width();
 

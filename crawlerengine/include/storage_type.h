@@ -3,7 +3,7 @@
 namespace CrawlerEngine
 {
 
-enum StorageType
+enum class StorageType
 {
 	BeginEnumStorageType,
 	// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
@@ -20,6 +20,11 @@ enum StorageType
 	UpperCaseUrlStorageType,
 	NonAsciiCharacterUrlStorageType,
 	VeryLongUrlStorageType,
+	BrokenLinks,
+	Status4xxStorageType,
+	Status5xxStorageType,
+	Status302StorageType,
+	Status301StorageType,
 
 	//
 	// Title problems
@@ -76,12 +81,6 @@ enum StorageType
 	VeryLongAltTextImageStorageType,
 
 	//
-	// Statuses
-	//
-	Status404StorageType,
-
-
-	//
 	// Resources
 	//
 	PendingResourcesStorageType,
@@ -110,3 +109,5 @@ enum StorageType
 };
 
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::StorageType)

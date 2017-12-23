@@ -23,8 +23,8 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	VERIFY(connect(crawler, &Crawler::onAboutClearData,
 		this, &ParsedPageReceiver::onAboutClearData, Qt::QueuedConnection));
 
-	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, int)), 
-		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, int))));
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)), 
+		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType))));
 
 	m_receiverThread->start();
 }
@@ -38,15 +38,13 @@ ParsedPageReceiver::~ParsedPageReceiver()
 	m_receiverThread->deleteLater();
 }
 
-void ParsedPageReceiver::onParsedPageAdded(int row, int type)
+void ParsedPageReceiver::onParsedPageAdded(int row, StorageType type)
 {
-	StorageType storageType = static_cast<StorageType>(type);
+	const ISequencedStorage& storage = *m_sequencedDataCollection->storage(type);
 
-	const ISequencedStorage& storage = *m_sequencedDataCollection->storage(storageType);
+	m_parsedPages[type].push_back(storage[row]);
 
-	m_parsedPages[storageType].push_back(storage[row]);
-
-	checkWaitCondition(storageType);
+	checkWaitCondition(type);
 }
 
 void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes)
@@ -87,12 +85,12 @@ void ParsedPageReceiver::onAboutClearData()
 	m_linksToThisResourceConditions.clear();
 }
 
-void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, int type)
+void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
 {
 	m_unorderedDataCollectionPages[type].push_back(page.get());
 }
 
-std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataCollection(int type) const
+std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataCollection(StorageType type) const
 {
 	ASSERT(m_allPagesReceived.load());
 
@@ -101,7 +99,7 @@ std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataColl
 	return iterator != m_unorderedDataCollectionPages.end() ? iterator->second : std::vector<const ParsedPage*>();
 }
 
-void ParsedPageReceiver::checkWaitCondition(int storageType)
+void ParsedPageReceiver::checkWaitCondition(StorageType storageType)
 {
 	for (auto it = m_waitConditions.begin(); it != m_waitConditions.end(); ++it)
 	{
@@ -131,7 +129,7 @@ void ParsedPageReceiver::checkLinksToThisResourceConditions(const ParsedPage* pa
 	}
 }
 
-std::future<std::vector<const ParsedPage*>> ParsedPageReceiver::getParsedPages(int count, int storageType)
+std::future<std::vector<const ParsedPage*>> ParsedPageReceiver::getParsedPages(int count, StorageType storageType)
 {
 	m_waitConditions[storageType] = std::make_pair(count, std::promise<std::vector<const ParsedPage*>>());
 	checkWaitCondition(storageType);

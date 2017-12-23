@@ -79,7 +79,7 @@ using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
 
 struct LinkInfo
 {
-    CustomUrl url;
+	CustomUrl url;
 	LinkParameter urlParameter = LinkParameter::DofollowParameter;
 	QString altOrTitle;
 	bool dataResourceLink = false;
@@ -89,7 +89,7 @@ struct LinkInfo
 struct ResourceLink
 {
 	ParsedPageWeakPtr resource;
-    CustomUrl url;
+	CustomUrl url;
 	LinkParameter linkParameter;
 	ResourceSource resourceSource;
 	QString altOrTitle;

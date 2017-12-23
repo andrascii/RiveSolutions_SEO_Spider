@@ -8,14 +8,14 @@ TEST(H1AndH2Tests, EmptyH1)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString(), pages[0]->firstH1);
 		EXPECT_EQ(QString(), pages[1]->firstH1);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 
-		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::StorageType::DuplicatedH1UrlStorageType).size());
 	};
 
 	env.initializeTest(testFunction);
@@ -29,14 +29,14 @@ TEST(H1AndH2Tests, NoH1)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString(), pages[0]->firstH1);
 		EXPECT_EQ(QString(), pages[1]->firstH1);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 
-		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::StorageType::DuplicatedH1UrlStorageType).size());
 	};
 
 	env.initializeTest(testFunction);
@@ -50,14 +50,14 @@ TEST(H1AndH2Tests, EmptyH2)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH2UrlStorageType, 2, 10, "Waiting for 2 empty h2 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::MissingH2UrlStorageType, 2, 10, "Waiting for 2 empty h2 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString::null, pages[0]->firstH1);
 		EXPECT_EQ(QString::null, pages[1]->firstH1);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 
-		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::DuplicatedH2UrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::StorageType::DuplicatedH2UrlStorageType).size());
 	};
 
 	env.initializeTest(testFunction);
@@ -71,14 +71,14 @@ TEST(H1AndH2Tests, NoH2)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::MissingH2UrlStorageType, 2, 10, "Waiting for 2 empty h2 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::MissingH2UrlStorageType, 2, 10, "Waiting for 2 empty h2 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString::null, pages[0]->firstH1);
 		EXPECT_EQ(QString::null, pages[1]->firstH1);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 
-		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::DuplicatedH2UrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(CrawlerEngine::StorageType::DuplicatedH2UrlStorageType).size());
 	};
 
 	env.initializeTest(testFunction);
@@ -92,12 +92,12 @@ TEST(H1AndH2Tests, DuplicateH1)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::DuplicatedH1UrlStorageType, 2, 10, "Waiting for 2 duplicate h1 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::DuplicatedH1UrlStorageType, 2, 10, "Waiting for 2 duplicate h1 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Duplicate H1"), pages[0]->firstH1);
 		EXPECT_EQ(QString("Duplicate H1"), pages[1]->firstH1);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
@@ -114,7 +114,7 @@ TEST(H1AndH2Tests, DoNotIncludeCanonicalDuplicatedH1)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForAllCrawledPageReceived(10);
-		auto pages = cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType);
+		auto pages = cl->storageItems(CrawlerEngine::StorageType::DuplicatedH1UrlStorageType);
 		EXPECT_EQ(0, pages.size());
 	};
 
@@ -132,7 +132,7 @@ TEST(TitleTests, IncludeDuplicatedH1IfThereAreSeveralCanonical)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForAllCrawledPageReceived(10);
-		auto pages = cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType);
+		auto pages = cl->storageItems(CrawlerEngine::StorageType::DuplicatedH1UrlStorageType);
 		EXPECT_EQ(3, pages.size());
 	};
 
@@ -148,7 +148,7 @@ TEST(H1AndH2Tests, DoNotIncludeEveryPageInDuplicates)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForAllCrawledPageReceived(10);
-		auto pages = cl->storageItems(CrawlerEngine::DuplicatedH1UrlStorageType);
+		auto pages = cl->storageItems(CrawlerEngine::StorageType::DuplicatedH1UrlStorageType);
 		EXPECT_EQ(0, pages.size());
 	};
 
@@ -164,11 +164,11 @@ TEST(H1AndH2Tests, DuplicateH2)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForAllCrawledPageReceived(10);
-		auto pages = cl->storageItems(CrawlerEngine::DuplicatedH2UrlStorageType);
+		auto pages = cl->storageItems(CrawlerEngine::StorageType::DuplicatedH2UrlStorageType);
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(1, pages.size());
 		EXPECT_EQ(QString("Duplicate H2"), pages[0]->firstH2);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
@@ -185,12 +185,12 @@ TEST(H1AndH2Tests, TooLongH1)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::VeryLongH1UrlStorageType, 2, 10, "Waiting for 2 too long h1 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::VeryLongH1UrlStorageType, 2, 10, "Waiting for 2 too long h1 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Too Long H1"), pages[0]->firstH1);
 		EXPECT_EQ(QString("Another Long H1"), pages[1]->firstH1);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
@@ -207,12 +207,12 @@ TEST(H1AndH2Tests, TooLongH2)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::VeryLongH2UrlStorageType, 2, 10, "Waiting for 2 too long h2 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::VeryLongH2UrlStorageType, 2, 10, "Waiting for 2 too long h2 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Too Long H2"), pages[0]->firstH2);
 		EXPECT_EQ(QString("Another Long H2"), pages[1]->firstH2);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
@@ -226,12 +226,12 @@ TEST(H1AndH2Tests, SeveralEqualH1)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::SeveralH1UrlStorageType, 2, 10, "Waiting for 2 several equal h1 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::SeveralH1UrlStorageType, 2, 10, "Waiting for 2 several equal h1 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("First H1"), pages[0]->firstH1);
 		EXPECT_EQ(QString("First H1-2"), pages[1]->firstH1);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
@@ -245,12 +245,12 @@ TEST(H1AndH2Tests, SeveralEqual2)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::SeveralH2UrlStorageType, 2, 10, "Waiting for 2 several equal h2 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::SeveralH2UrlStorageType, 2, 10, "Waiting for 2 several equal h2 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("First H2"), pages[0]->firstH2);
 		EXPECT_EQ(QString("First H2-2"), pages[1]->firstH2);
-		cl->waitForParsedPageReceived(CrawlerEngine::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
 	env.initializeTest(testFunction);
