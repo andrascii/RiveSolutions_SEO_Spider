@@ -55,7 +55,7 @@ void ReportsPage::timerEvent(QTimerEvent* event)
 
 void ReportsPage::showEvent(QShowEvent* event)
 {
-	m_updateTimerId = startTimer(500);
+	m_updateTimerId = startTimer(1000);
 	DEBUG_ASSERT(m_updateTimerId);
 
 	QFrame::showEvent(event);
@@ -205,6 +205,11 @@ QByteArray ReportsPage::debugReportMaketContent(ReportType reportType) const
 
 	QByteArray maketContent = reportMaket.readAll();
 	changePlaceholderInContent("stylesheet", maketStyle.readAll(), maketContent);
+
+	foreach(ReportDataKeys key, m_reportDataProvider.allKeys())
+	{
+		changePlaceholderInContent(m_reportDataProvider.placeholder(key), m_reportDataProvider.data(key), maketContent);
+	}
 
 	return maketContent;
 }

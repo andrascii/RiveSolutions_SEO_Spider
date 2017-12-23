@@ -138,12 +138,13 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 
 	const CrawlerEngine::ResourceLink& resourceLink = (m_parsedPage->*pointer)[number];
 
+	if (resourceLink.resource.expired() && pageLinksColumn == PageLinksColumn::StatusCodeColumn)
+	{
+		return QObject::tr("Not loaded");
+	}
+
 	if (isPageLinksColumnMappedToParsedPageColumn(pageLinksColumn))
 	{
-		//
-		// It looks like a bad solution and need speed optimization
-		//
-
 		CrawlerEngine::ParsedPagePtr pagePointer = resourceLink.resource.lock();
 
 		ParsedPageInfo parsedPageInfo(pagePointer.get());
@@ -163,6 +164,11 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 		case PageLinksColumn::LinkParameterColumn:
 		{
 			value = linkParameterDescription(resourceLink.linkParameter);
+			break;
+		}
+		case PageLinksColumn::UrlColumn:
+		{
+			value = resourceLink.url;
 			break;
 		}
 	}
@@ -191,7 +197,6 @@ bool ParsedPageInfo::isPageLinksColumnMappedToParsedPageColumn(PageLinksColumn p
 {
 	switch (pageLinksColumn)
 	{
-		case PageLinksColumn::UrlColumn:
 		case PageLinksColumn::StatusCodeColumn:
 		{
 			return true;
@@ -207,11 +212,6 @@ ParsedPageInfo::Column ParsedPageInfo::mapPageLinksColumnToParsedPageColumn(Page
 
 	switch (pageLinksColumn)
 	{
-		case PageLinksColumn::UrlColumn:
-		{
-			return Column::UrlColumn;
-		}
-
 		case PageLinksColumn::StatusCodeColumn:
 		{
 			return Column::StatusCodeColumn;

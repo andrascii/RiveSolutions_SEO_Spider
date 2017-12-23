@@ -350,7 +350,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongUrlAddressesCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::VeryLongUrlStorageType);
+
+			return storage->size();
 		}
 
 		// Technical factors
@@ -438,7 +441,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ImagesWithEmptyAltTextCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::MissingAltTextImageStorageType);
+
+			return storage->size();
 		}
 
 		// On Page
@@ -452,7 +458,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::EmptyTitlesCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::EmptyTitleUrlStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::DuplicatedTitles:
 		{
@@ -464,7 +473,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::DuplicatedTitlesCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::TooLongTitles:
 		{
@@ -476,7 +488,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongTitlesCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::VeryLongTitleUrlStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::EmptyMetaDescriptions:
 		{
@@ -488,7 +503,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::EmptyMetaDescriptionsCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::EmptyMetaDescriptionUrlStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::DuplicatedMetaDescriptions:
 		{
@@ -500,7 +518,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::DuplicatedMetaDescriptionsCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::DuplicatedMetaDescriptionUrlStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::TooLongMetaDescriptions:
 		{
@@ -512,7 +533,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongMetaDescriptionsCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType);
+
+			return storage->size();
 		}
 	}
 
