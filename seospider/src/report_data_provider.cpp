@@ -159,7 +159,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::StatusCode4xxCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::Status4xxStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::StatusCode5xx:
 		{
@@ -171,7 +174,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::StatusCode5xxCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::Status5xxStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::NotIndexedPages:
 		{
@@ -249,7 +255,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::Redirections302Count:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::Status302StorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::Redirections301:
 		{
@@ -261,7 +270,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::Redirections301Count:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::Status301StorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::LargeAmountRedirects:
 		{
@@ -312,7 +324,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		case ReportDataKeys::BrokenLinksCount:
 		{
 			const CrawlerEngine::ISequencedStorage* storage = 
-				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::Status4xxStorageType);
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::BrokenLinks);
 
 			return storage->size();
 		}
