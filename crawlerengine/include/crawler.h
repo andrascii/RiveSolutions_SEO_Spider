@@ -58,6 +58,7 @@ public:
 	void loadFromFile(const QString& fileName);
 
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
+	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);

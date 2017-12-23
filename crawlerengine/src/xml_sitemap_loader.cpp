@@ -15,7 +15,10 @@ XmlSitemapLoader::XmlSitemapLoader(RobotsTxtLoader* robotsTxtLoader, QObject* pa
 	, m_isValid(false)
 	, m_robotsTxtLoader(robotsTxtLoader)
 {
-	VERIFY(connect(m_robotsTxtLoader, &RobotsTxtLoader::ready, this, &XmlSitemapLoader::onRobotsTxtLoaderReady));
+	if (m_robotsTxtLoader)
+	{
+		VERIFY(connect(m_robotsTxtLoader, &RobotsTxtLoader::ready, this, &XmlSitemapLoader::onRobotsTxtLoaderReady));
+	}
 }
 
 void XmlSitemapLoader::load(const CustomUrl& host)
@@ -27,14 +30,14 @@ void XmlSitemapLoader::load(const CustomUrl& host)
 
 	m_currentLoadedUrl = host;
 
-	if (!m_robotsTxtLoader->isReady())
+	if (m_robotsTxtLoader && !m_robotsTxtLoader->isReady())
 	{
 		return;
 	}
 
 	CustomUrl sitemapUrl;
 
-	if (m_robotsTxtLoader->isValid())
+	if (m_robotsTxtLoader && m_robotsTxtLoader->isValid())
 	{
 		RobotsTxtRules robotsTxtRules(m_robotsTxtLoader->content());
 

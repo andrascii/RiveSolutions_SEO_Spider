@@ -457,6 +457,11 @@ const ISpecificLoader* Crawler::robotsTxtLoader() const noexcept
 	return m_robotsTxtLoader;
 }
 
+const CrawlerEngine::ISpecificLoader* Crawler::xmlSitemapLoader() const noexcept
+{
+	return m_xmlSitemapLoader;
+}
+
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 {
 	return m_uniqueLinkStore;

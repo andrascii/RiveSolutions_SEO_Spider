@@ -229,7 +229,11 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::XmlSitemapCount:
 		{
-			return QObject::tr("TO DO checking existness");
+			CrawlerEngine::Crawler* crawler = theApp->crawler();
+
+			return crawler->xmlSitemapLoader()->isValid() ?
+				QObject::tr("Yes") :
+				QObject::tr("No");
 		}
 
 		// Redirections
