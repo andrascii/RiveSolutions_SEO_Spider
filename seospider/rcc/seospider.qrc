@@ -38,6 +38,7 @@
 		<file>images/audit-info-normal.png</file>
 		<file>images/report-normal.png</file>
 		<file>images/report-active.png</file>
+		<file>images/user-agent.png</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>
