@@ -9,7 +9,7 @@ SummaryDataAccessorPixmapDecorator::SummaryDataAccessorPixmapDecorator(ISummaryD
 {
 	initializePixmaps();
 
-	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), this, 
+	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), this,
 		SLOT(interceptDecoratingObjectSignal(int, int, Qt::ItemDataRole))));
 }
 
@@ -22,66 +22,61 @@ const QPixmap& SummaryDataAccessorPixmapDecorator::pixmap(const QModelIndex& ind
 		return emptyPixmap;
 	}
 
-	auto pixmapIterator = m_pixmaps.find(itemStatus(index.row()));
+	auto pixmapIterator = m_pixmaps.find(errorCategoryLevel(index.row()));
 
 	DEBUG_ASSERT(pixmapIterator != m_pixmaps.end());
 
 	return *pixmapIterator;
 }
 
-SummaryDataAccessorPixmapDecorator::ItemStatus SummaryDataAccessorPixmapDecorator::itemStatus(int row) const noexcept
+ErrorCategory::ErrorCategoryLevel SummaryDataAccessorPixmapDecorator::errorCategoryLevel(int row) const noexcept
 {
-	const CrawlerEngine::ISequencedStorage* storage = storageByRow(row);
+	StorageType storageType = storageTypeByRow(row);
 
-	ASSERT(storage);
+	ASSERT(storageType != StorageType::BeginEnumStorageType && 
+		storageType != StorageType::EndEnumStorageType);
 
-	if (storage->size() > 10)
-	{
-		return StatusError;
-	}
-
-	if (storage->size())
-	{
-		return StatusWarning;
-	}
-
-	return StatusOK;
+	return ErrorCategory::level(storageType);
 }
 
-const CrawlerEngine::ISequencedStorage* SummaryDataAccessorPixmapDecorator::storageByRow(int row) const noexcept
+StorageType SummaryDataAccessorPixmapDecorator::storageTypeByRow(int row) const noexcept
 {
 	DEBUG_ASSERT(row < SummaryDataAccessorDecorator::rowCount());
 
-	const DCStorageDescription* storageDesc = 
+	const DCStorageDescription* storageDesc =
 		SummaryDataAccessorDecorator::storageDescriptionByRow(row);
 
 	if (!storageDesc)
 	{
-		return nullptr;
+		return StorageType::BeginEnumStorageType;
 	}
 
-	return SummaryDataAccessorDecorator::sequencedDataCollection()->storage(storageDesc->storageType);
+	return storageDesc->storageType;
 }
 
 void SummaryDataAccessorPixmapDecorator::initializePixmaps()
 {
 	QVector<QString> paths
 	{
+		{ QStringLiteral(":/images/icon-info.svg") },
 		{ QStringLiteral(":/images/icon-ok.svg") },
 		{ QStringLiteral(":/images/icon-warning.svg") },
 		{ QStringLiteral(":/images/icon-error.svg") },
 	};
 
-	m_pixmaps[ItemStatus::StatusOK] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
-	m_pixmaps[ItemStatus::StatusWarning] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
-	m_pixmaps[ItemStatus::StatusError] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelInfo] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelNotError] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelWarning] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelError] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
 
 	QSvgRenderer svgRenderer;
 
 	for (int i = 0; i < paths.size(); ++i)
 	{
-		m_pixmaps[static_cast<ItemStatus>(i)].fill(Qt::transparent);
-		QPainter painterPixmap(&m_pixmaps[static_cast<ItemStatus>(i)]);
+		const ErrorCategory::ErrorCategoryLevel level = static_cast<ErrorCategory::ErrorCategoryLevel>(i);
+
+		m_pixmaps[level].fill(Qt::transparent);
+		QPainter painterPixmap(&m_pixmaps[level]);
 
 		svgRenderer.load(paths[i]);
 		svgRenderer.render(&painterPixmap);

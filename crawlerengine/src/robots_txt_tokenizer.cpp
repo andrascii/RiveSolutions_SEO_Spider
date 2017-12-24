@@ -6,31 +6,33 @@ namespace CrawlerEngine
 
 namespace
 {
-	const QMap<RobotsTxtToken, QString> s_tokenToString =
-	{
-		{ RobotsTxtToken::TokenUserAgent, "user-agent" },
-		{ RobotsTxtToken::TokenAllow, "allow" },
-		{ RobotsTxtToken::TokenDisallow, "disallow" },
-		{ RobotsTxtToken::TokenSitemap, "sitemap" },
-		{ RobotsTxtToken::TokenHost, "host" },
-		{ RobotsTxtToken::TokenCrawlDelay, "crawl-delay" },
-		{ RobotsTxtToken::TokenCleanParam, "clean-param" },
-		{ RobotsTxtToken::TokenCommentary, "#" },
-		{ RobotsTxtToken::TokenStringDelimeter, ":" }
-	};
 
-	const QMap<QString, RobotsTxtToken> s_stringToToken =
-	{
-		{ "user-agent", RobotsTxtToken::TokenUserAgent },
-		{ "allow", RobotsTxtToken::TokenAllow },
-		{ "disallow", RobotsTxtToken::TokenDisallow },
-		{ "sitemap", RobotsTxtToken::TokenSitemap },
-		{ "host", RobotsTxtToken::TokenHost },
-		{ "crawl-delay", RobotsTxtToken::TokenCrawlDelay },
-		{ "clean-param", RobotsTxtToken::TokenCleanParam },
-		{ "#", RobotsTxtToken::TokenCommentary },
-		{ ":", RobotsTxtToken::TokenStringDelimeter }
-	};
+const QMap<RobotsTxtToken, QString> s_tokenToString =
+{
+	{ RobotsTxtToken::TokenUserAgent, "user-agent" },
+	{ RobotsTxtToken::TokenAllow, "allow" },
+	{ RobotsTxtToken::TokenDisallow, "disallow" },
+	{ RobotsTxtToken::TokenSitemap, "sitemap" },
+	{ RobotsTxtToken::TokenHost, "host" },
+	{ RobotsTxtToken::TokenCrawlDelay, "crawl-delay" },
+	{ RobotsTxtToken::TokenCleanParam, "clean-param" },
+	{ RobotsTxtToken::TokenCommentary, "#" },
+	{ RobotsTxtToken::TokenStringDelimeter, ":" }
+};
+
+const QMap<QString, RobotsTxtToken> s_stringToToken =
+{
+	{ "user-agent", RobotsTxtToken::TokenUserAgent },
+	{ "allow", RobotsTxtToken::TokenAllow },
+	{ "disallow", RobotsTxtToken::TokenDisallow },
+	{ "sitemap", RobotsTxtToken::TokenSitemap },
+	{ "host", RobotsTxtToken::TokenHost },
+	{ "crawl-delay", RobotsTxtToken::TokenCrawlDelay },
+	{ "clean-param", RobotsTxtToken::TokenCleanParam },
+	{ "#", RobotsTxtToken::TokenCommentary },
+	{ ":", RobotsTxtToken::TokenStringDelimeter }
+};
+
 }
 
 RobotsTxtTokenizer::RobotsTxtTokenizer()
@@ -156,11 +158,9 @@ bool RobotsTxtTokenizer::hasUserAgentRecord(UserAgentType userAgentType) const
 
 QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> RobotsTxtTokenizer::allowAndDisallowTokens(UserAgentType userAgentType) const
 {
-	// TODO: cache
 	QVector<RobotsTxtTokenVauePair> result;
-
-	QList<QString> allowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenAllow);
-	QList<QString> disallowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenDisallow);
+	const QList<QString> allowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenAllow);
+	const QList<QString> disallowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenDisallow);
 
 	foreach(const QString& allowToken, allowTokens)
 	{
@@ -178,11 +178,6 @@ QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> RobotsTxtTokenizer::allowAndDi
 		{
 			return first.value.size() < second.value.size();
 		}
-
-// 		if (first.value < second.value)
-// 		{
-// 			return true;
-// 		}
 
 		return first.token == RobotsTxtToken::TokenAllow && second.token == RobotsTxtToken::TokenDisallow;
 		

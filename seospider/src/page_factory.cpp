@@ -35,7 +35,10 @@ QWidget* PageFactory::createPage(Page page) const
 			PageModel* model = new PageModel;
 			PageViewModel* modelView = new PageViewModel(crawlingTableView, model);
 
-			model->setStorageAdapter(theApp->storageAdapterFactory()->createParsedPageInfoStorage(StorageAdapterType::StorageAdapterTypeAllPages, theApp->sequencedDataCollection()));
+			model->setStorageAdapter(theApp->storageAdapterFactory()->createParsedPageInfoStorage(
+				StorageAdapterType::StorageAdapterTypeAllPages, theApp->sequencedDataCollection())
+			);
+
 			crawlingTableView->setModel(model);
 			crawlingTableView->setViewModel(modelView);
 			crawlingTableView->setContextMenu(new ContextMenuDataCollectionRow(crawlingTableView));
@@ -113,7 +116,12 @@ QIcon PageFactory::createPageIcon(Page page) const
 		}
 		case AuditReportPage:
 		{
+			icon.addFile(QStringLiteral(":/images/report-active.png"), QSize(), QIcon::Normal, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/report-active.png"), QSize(), QIcon::Active, QIcon::On);
+			icon.addFile(QStringLiteral(":/images/report-active.png"), QSize(), QIcon::Active, QIcon::Off);
+			icon.addFile(QStringLiteral(":/images/report-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
 
+			break;
 		}
 	}
 

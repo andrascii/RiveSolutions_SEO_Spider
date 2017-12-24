@@ -11,6 +11,7 @@
         <file>images/ui-splitter-horizontal-icon.png</file>
         <file>images/ui-splitter-vertical-icon.png</file>
         <file>images/icon-ok.svg</file>
+		<file>images/icon-info.svg</file>
         <file>images/icon-warning.svg</file>
         <file>images/icon-error.svg</file>
 		<file>images/crawler-settings.png</file>
@@ -35,6 +36,8 @@
 		<file>images/all-resources-normal.png</file>
 		<file>images/audit-info-active.png</file>
 		<file>images/audit-info-normal.png</file>
+		<file>images/report-normal.png</file>
+		<file>images/report-active.png</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>

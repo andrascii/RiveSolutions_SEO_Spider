@@ -1,5 +1,7 @@
 #pragma once
 
+#include "error_category.h"
+
 namespace CrawlerEngine
 {
 
@@ -124,17 +126,9 @@ public:
 	QByteArray placeholder(ReportDataKeys reportDataKey) const noexcept;
 
 private:
-	enum ItemStatus
-	{
-		StatusOK,
-		StatusWarning,
-		StatusError
-	};
-
-private:
 	const CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
 
-	QMap<ItemStatus, QPixmap> m_pixmaps;
+	QMap<CrawlerEngine::ErrorCategory::ErrorCategoryLevel, QPixmap> m_pixmaps;
 };
 
 }

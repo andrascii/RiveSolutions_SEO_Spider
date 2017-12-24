@@ -123,21 +123,25 @@ ReportDataProvider::ReportDataProvider(CrawlerEngine::SequencedDataCollection* s
 {
 	QVector<QString> paths
 	{
+		{ QStringLiteral(":/images/icon-info.svg") },
 		{ QStringLiteral(":/images/icon-ok.svg") },
 		{ QStringLiteral(":/images/icon-warning.svg") },
 		{ QStringLiteral(":/images/icon-error.svg") },
 	};
 
-	m_pixmaps[ItemStatus::StatusOK] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
-	m_pixmaps[ItemStatus::StatusWarning] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
-	m_pixmaps[ItemStatus::StatusError] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelInfo] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelNotError] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelWarning] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelError] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
 
 	QSvgRenderer svgRenderer;
 
 	for (int i = 0; i < paths.size(); ++i)
 	{
-		m_pixmaps[static_cast<ItemStatus>(i)].fill(Qt::transparent);
-		QPainter painterPixmap(&m_pixmaps[static_cast<ItemStatus>(i)]);
+		const ErrorCategory::ErrorCategoryLevel level = static_cast<ErrorCategory::ErrorCategoryLevel>(i);
+
+		m_pixmaps[level].fill(Qt::transparent);
+		QPainter painterPixmap(&m_pixmaps[level]);
 
 		svgRenderer.load(paths[i]);
 		svgRenderer.render(&painterPixmap);
@@ -155,7 +159,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::StatusCode4xxImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::Status4xxStorageType)];
 		}
 		case ReportDataKeys::StatusCode4xxCount:
 		{
@@ -170,7 +174,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::StatusCode5xxImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::Status5xxStorageType)];
 		}
 		case ReportDataKeys::StatusCode5xxCount:
 		{
@@ -185,7 +189,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::NotIndexedPagesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::NotIndexedPagesCount:
 		{
@@ -197,7 +201,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ConfiguredCorrectly404Image:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::ConfiguredCorrectly404Count:
 		{
@@ -209,7 +213,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RobotsTxtImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::RobotsTxtCount:
 		{
@@ -225,7 +229,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::XmlSitemapImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::XmlSitemapCount:
 		{
@@ -243,7 +247,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::WwwFixedVersionImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::WwwFixedVersionCount:
 		{
@@ -255,7 +259,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::Redirections302Image:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::Status302StorageType)];
 		}
 		case ReportDataKeys::Redirections302Count:
 		{
@@ -270,7 +274,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::Redirections301Image:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::Status301StorageType)];
 		}
 		case ReportDataKeys::Redirections301Count:
 		{
@@ -285,7 +289,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::LargeAmountRedirectsImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::LargeAmountRedirectsCount:
 		{
@@ -297,7 +301,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RefreshMetaTagImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::RefreshMetaTagCount:
 		{
@@ -309,7 +313,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RelCanonicalPagesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::RelCanonicalPagesCount:
 		{
@@ -323,7 +327,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::BrokenLinksImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::BrokenLinks)];
 		}
 		case ReportDataKeys::BrokenLinksCount:
 		{
@@ -338,7 +342,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesWithLargeAmountOfLinksImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::PagesWithLargeAmountOfLinksCount:
 		{
@@ -350,7 +354,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ExternalDofollowLinksImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::ExternalDofollowLinksCount:
 		{
@@ -362,7 +366,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongUrlAddressesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::VeryLongUrlStorageType)];
 		}
 		case ReportDataKeys::TooLongUrlAddressesCount:
 		{
@@ -379,7 +383,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesWithDuplicatedRelCanonicalImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::PagesWithDuplicatedRelCanonicalCount:
 		{
@@ -391,7 +395,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesContainsFramesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::PagesContainsFramesCount:
 		{
@@ -403,7 +407,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesWithHtmlErrorsImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::PagesWithHtmlErrorsCount:
 		{
@@ -415,7 +419,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesWithCssErrorsWarningsImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::PagesWithCssErrorsWarningsCount:
 		{
@@ -427,7 +431,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLargePagesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::TooLargePagesCount:
 		{
@@ -441,7 +445,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::BrokenImagesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
 		}
 		case ReportDataKeys::BrokenImagesCount:
 		{
@@ -453,7 +457,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ImagesWithEmptyAltTextImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::MissingAltTextImageStorageType)];
 		}
 		case ReportDataKeys::ImagesWithEmptyAltTextCount:
 		{
@@ -470,7 +474,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::EmptyTitlesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::EmptyTitleUrlStorageType)];
 		}
 		case ReportDataKeys::EmptyTitlesCount:
 		{
@@ -485,7 +489,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::DuplicatedTitlesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType)];
 		}
 		case ReportDataKeys::DuplicatedTitlesCount:
 		{
@@ -500,7 +504,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongTitlesImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::VeryLongTitleUrlStorageType)];
 		}
 		case ReportDataKeys::TooLongTitlesCount:
 		{
@@ -515,7 +519,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::EmptyMetaDescriptionsImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::EmptyMetaDescriptionUrlStorageType)];
 		}
 		case ReportDataKeys::EmptyMetaDescriptionsCount:
 		{
@@ -530,7 +534,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::DuplicatedMetaDescriptionsImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::DuplicatedMetaDescriptionUrlStorageType)];
 		}
 		case ReportDataKeys::DuplicatedMetaDescriptionsCount:
 		{
@@ -545,7 +549,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongMetaDescriptionsImage:
 		{
-			return m_pixmaps[ItemStatus::StatusOK];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType)];
 		}
 		case ReportDataKeys::TooLongMetaDescriptionsCount:
 		{
