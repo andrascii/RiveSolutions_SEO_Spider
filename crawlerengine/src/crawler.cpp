@@ -185,8 +185,7 @@ void Crawler::checkSerialiationReadyState()
 	if ((m_state == StateSerializaton || m_state == StateDeserializaton) &&
 		!m_fileName.isEmpty() &&
 		state->workersProcessedLinksCount() == state->modelControllerCrawledLinksCount() &&
-		state->modelControllerAcceptedLinksCount() == state->sequencedDataCollectionLinksCount() &&
-		m_prevState == StatePause)
+		state->modelControllerAcceptedLinksCount() == state->sequencedDataCollectionLinksCount())
 	{
 		if (m_state == StateSerializaton)
 		{

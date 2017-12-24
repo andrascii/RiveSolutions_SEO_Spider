@@ -55,8 +55,11 @@ void ReportsPage::timerEvent(QTimerEvent* event)
 
 void ReportsPage::showEvent(QShowEvent* event)
 {
-	m_updateTimerId = startTimer(1000);
-	DEBUG_ASSERT(m_updateTimerId);
+	if (theApp->crawler()->state() == CrawlerEngine::Crawler::StateWorking)
+	{
+		m_updateTimerId = startTimer(1000);
+		DEBUG_ASSERT(m_updateTimerId);
+	}
 
 	QFrame::showEvent(event);
 }
