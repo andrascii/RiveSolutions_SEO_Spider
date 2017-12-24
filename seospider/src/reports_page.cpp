@@ -55,6 +55,8 @@ void ReportsPage::timerEvent(QTimerEvent* event)
 
 void ReportsPage::showEvent(QShowEvent* event)
 {
+	setReportType(m_reportType);
+
 	if (theApp->crawler()->state() == CrawlerEngine::Crawler::StateWorking)
 	{
 		m_updateTimerId = startTimer(1000);
