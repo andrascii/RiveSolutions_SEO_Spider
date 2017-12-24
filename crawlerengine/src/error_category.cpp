@@ -181,4 +181,64 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 	return ErrorCategoryLevel();
 }
 
+int ErrorCategory::infoCount() noexcept
+{
+	const SequencedDataCollection* sequencedDataCollection = Crawler::instance().sequencedDataCollection();
+
+	const int infoCounter =
+		sequencedDataCollection->storage(StorageType::VeryLongUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::Status301StorageType)->size() +
+		sequencedDataCollection->storage(StorageType::MissingH1UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::VeryLongH1UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::MissingH2UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::VeryLongH2UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::Over100kbImageStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::MissingAltTextImageStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::VeryLongAltTextImageStorageType)->size();
+
+	return infoCounter;
+}
+
+int ErrorCategory::warningCount() noexcept
+{
+	const SequencedDataCollection* sequencedDataCollection = Crawler::instance().sequencedDataCollection();
+
+	const int infoCounter =
+		sequencedDataCollection->storage(StorageType::UpperCaseUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::NonAsciiCharacterUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::EmptyTitleUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::VeryLongTitleUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::VeryShortTitleUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::EmptyMetaDescriptionUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::VeryLongMetaDescriptionUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::VeryShortMetaDescriptionUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::EmptyMetaKeywordsUrlStorageType)->size() + 
+		sequencedDataCollection->storage(StorageType::SeveralH1UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::SeveralH2UrlStorageType)->size();
+
+	return infoCounter;
+}
+
+int ErrorCategory::errorCount() noexcept
+{
+	const SequencedDataCollection* sequencedDataCollection = Crawler::instance().sequencedDataCollection();
+
+	const int infoCounter =
+		sequencedDataCollection->storage(StorageType::BrokenLinks)->size() +
+		sequencedDataCollection->storage(StorageType::Status4xxStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::Status5xxStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::Status302StorageType)->size() +
+		sequencedDataCollection->storage(StorageType::DuplicatedTitleUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::DuplicatedH1TitleUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::SeveralTitleUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::DuplicatedMetaDescriptionUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::SeveralMetaDescriptionUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::DuplicatedMetaKeywordsUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::SeveralMetaKeywordsUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::DuplicatedH1UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::DuplicatedH2UrlStorageType)->size();
+
+	return infoCounter;
+}
+
 }

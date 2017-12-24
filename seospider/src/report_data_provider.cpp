@@ -5,6 +5,7 @@
 #include "ispecific_loader.h"
 #include "isequenced_storage.h"
 #include "storage_type.h"
+#include "software_branding.h"
 
 namespace
 {
@@ -13,6 +14,25 @@ using namespace SeoSpider;
 
 const QMap<ReportDataKeys, QByteArray> s_placeHolders
 {
+	// report header
+	{ ReportDataKeys::SiteShortImage, "site_short_image" },
+	{ ReportDataKeys::SiteLink, "site_link" },
+	{ ReportDataKeys::FoundProblems, "problems"},
+	{ ReportDataKeys::FoundProblemsCount, "problems_count" },
+	{ ReportDataKeys::Errors, "errors" },
+	{ ReportDataKeys::ErrorsImage, "errors_image" },
+	{ ReportDataKeys::ErrorsCount, "errors_count" },
+	{ ReportDataKeys::Warnings, "warnings" },
+	{ ReportDataKeys::WarningsImage, "warnings_image" },
+	{ ReportDataKeys::WarningsCount, "warnings_count" },
+	{ ReportDataKeys::Info, "info" },
+	{ ReportDataKeys::InfoImage, "info_image" },
+	{ ReportDataKeys::InfoCount, "info_count" },
+	{ ReportDataKeys::Date, "date" },
+
+	// Signature
+	{ ReportDataKeys::CompanyName, "company_name" },
+
 	// Indexing and Page Scanning
 	{ ReportDataKeys::StatusCode4xx, "stat_code_4xx" },
 	{ ReportDataKeys::StatusCode4xxImage, "stat_code_4xx_image" },
@@ -152,6 +172,72 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 {
 	switch (dataKey)
 	{
+		// report header
+		case ReportDataKeys::SiteShortImage:
+		{
+			return QPixmap();
+		}
+		case ReportDataKeys::SiteLink:
+		{
+			return QStringLiteral("");
+		}
+		case ReportDataKeys::FoundProblems:
+		{
+			return QObject::tr("Found problems");
+		}
+		case ReportDataKeys::FoundProblemsCount:
+		{
+			return CrawlerEngine::ErrorCategory::infoCount() +
+				CrawlerEngine::ErrorCategory::warningCount() +
+				CrawlerEngine::ErrorCategory::errorCount();
+		}
+		case ReportDataKeys::Errors:
+		{
+			return QObject::tr("Errors");
+		}
+		case ReportDataKeys::ErrorsImage:
+		{
+			return m_pixmaps[CrawlerEngine::ErrorCategory::ErrorCategoryLevel::LevelError];
+		}
+		case ReportDataKeys::ErrorsCount:
+		{
+			return CrawlerEngine::ErrorCategory::errorCount();
+		}
+		case ReportDataKeys::Warnings:
+		{
+			return QObject::tr("Warnings");
+		}
+		case ReportDataKeys::WarningsImage:
+		{
+			return m_pixmaps[CrawlerEngine::ErrorCategory::ErrorCategoryLevel::LevelWarning];
+		}
+		case ReportDataKeys::WarningsCount:
+		{
+			return CrawlerEngine::ErrorCategory::warningCount();
+		}
+		case ReportDataKeys::Info:
+		{
+			return QObject::tr("Info");
+		}
+		case ReportDataKeys::InfoImage:
+		{
+			return m_pixmaps[CrawlerEngine::ErrorCategory::ErrorCategoryLevel::LevelInfo];
+		}
+		case ReportDataKeys::InfoCount:
+		{
+			return CrawlerEngine::ErrorCategory::infoCount();
+		}
+		case ReportDataKeys::Date:
+		{
+			return QDate::currentDate().toString(Qt::RFC2822Date);
+		}
+
+		// Signature
+		case ReportDataKeys::CompanyName:
+		{
+			return theApp->softwareBrandingOptions()->organizationName();
+		}
+
 		// Indexing and Page Scanning
 		case ReportDataKeys::StatusCode4xx:
 		{

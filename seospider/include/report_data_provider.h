@@ -14,6 +14,26 @@ namespace SeoSpider
 
 enum class ReportDataKeys
 {
+	// report header
+	SiteShortImage,
+	SiteLink,
+	FoundProblems,
+	FoundProblemsCount,
+	Errors,
+	ErrorsImage,
+	ErrorsCount,
+	Warnings,
+	WarningsImage,
+	WarningsCount,
+	Info,
+	InfoImage,
+	InfoCount,
+	Date,
+
+	// Signature
+	CompanyName,
+
+
 	// Indexing and Page Scanning
 	StatusCode4xx,
 	StatusCode4xxImage,

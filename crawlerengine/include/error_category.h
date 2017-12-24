@@ -17,6 +17,9 @@ public:
 	};
 
 	static ErrorCategoryLevel level(StorageType type) noexcept;
+	static int infoCount() noexcept;
+	static int warningCount() noexcept;
+	static int errorCount() noexcept;
 };
 
 }
