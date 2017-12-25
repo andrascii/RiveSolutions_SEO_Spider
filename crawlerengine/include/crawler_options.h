@@ -21,36 +21,40 @@ struct CrawlerOptions
 {
 	CustomUrl host;
 	
-	int limitMaxUrlLength;
+	int limitMaxUrlLength = int();
 
 	// preferences
-	int minTitleLength;
-	int maxTitleLength;
-	int maxDescriptionLength;
-	int minDescriptionLength;
-	int maxH1LengthChars;
-	int maxH2LengthChars;
-	int maxImageAltTextChars;
-	int maxImageSizeKb;
+	int minTitleLength = int();
+	int maxTitleLength = int();
+	int maxDescriptionLength = int();
+	int minDescriptionLength = int();
+	int maxH1LengthChars = int();
+	int maxH2LengthChars = int();
+	int maxImageAltTextChars = int();
+	int maxImageSizeKb = int();
 
 	// crawler settings
-	bool checkExternalLinks;
-	bool followInternalNofollow;
-	bool followExternalNofollow;
-	bool checkSubdomains;
-	bool checkImages;
-	bool checkCss;
-	bool checkJavaScript;
-	bool checkSwf;
+	bool checkExternalLinks = int();
+	bool followInternalNofollow = int();
+	bool followExternalNofollow = int();
+	bool checkSubdomains = int();
+	bool checkImages = int();
+	bool checkCss = int();
+	bool checkJavaScript = int();
+	bool checkSwf = int();
 
 	// robots.txt rules
-	bool followRobotsTxtRules;
+	bool followRobotsTxtRules = bool();
 	UserAgentType userAgentToFollow;
 
 	// user agent
 	QByteArray plainUserAgent;
 
 	ParserTypeFlags parserTypeFlags;
+
+	// pause between requests
+	int pauseRangeFrom = int();
+	int pauseRangeTo = int();
 };
 
 Q_DECLARE_METATYPE(CrawlerOptions);

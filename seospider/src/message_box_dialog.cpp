@@ -1,5 +1,5 @@
 #include "message_box_dialog.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 #include "application.h"
 #include "main_window.h"
 
@@ -32,7 +32,7 @@ void MessageBoxDialog::setMessage(const QString& message)
 
 void MessageBoxDialog::setIcon(Icon icon)
 {
-	const QSize pixmapSize(SeoSpiderHelpers::pointsToPixels(20), SeoSpiderHelpers::pointsToPixels(20));
+	const QSize pixmapSize(Common::Helpers::pointsToPixels(20), Common::Helpers::pointsToPixels(20));
 
 	switch (icon)
 	{
@@ -90,7 +90,7 @@ void MessageBoxDialog::done(int r)
 
 void MessageBoxDialog::showEvent(QShowEvent* event)
 {
-	SeoSpiderHelpers::moveWidgetToHostCenter(this);
+	Common::Helpers::moveWidgetToHostCenter(this);
 
 	theApp->mainWindow()->setDisabled(true);
 

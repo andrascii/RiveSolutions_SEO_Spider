@@ -1,7 +1,7 @@
 #include "page_model.h"
 #include "default_column_resize_policy.h"
 #include "parsed_page_info_storage_adapter.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -55,7 +55,7 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 		{
 			// set first column width which shows row number
 
-			columnsWidth[0] = SeoSpiderHelpers::pointsToPixels(30);
+			columnsWidth[0] = Common::Helpers::pointsToPixels(30);
 			continue;
 		}
 

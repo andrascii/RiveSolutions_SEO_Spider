@@ -21,22 +21,20 @@ public:
 	using PostProcessorFunc = std::function<void(CrawlerEngine::DownloadResponse&)>;
 
 	TestsDownloader();
-
 	~TestsDownloader();
 
+	virtual void setPauseRange(int from, int to) override;
+	virtual void resetPauseRange() override;
 	virtual void setUserAgent(const QByteArray& userAgent) override;
 
 	Q_INVOKABLE virtual void handleRequest(CrawlerEngine::RequesterSharedPtr requester) override;
-
 	Q_INVOKABLE virtual void stopRequestHandling(CrawlerEngine::RequesterSharedPtr requester) override;
 
 	virtual QObject* qobject() override;
-
 	void setPostProcessor(PostProcessorFunc postProcessor);
 
 private:
 	QDir testsDataDir() const;
-
 	std::pair<QString, QString> mapUrlToTestDataFiles(const CrawlerEngine::CrawlerRequest& url) const;
 
 private:

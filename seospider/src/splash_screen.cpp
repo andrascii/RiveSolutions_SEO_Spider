@@ -1,7 +1,7 @@
 #include "application.h"
 #include "software_branding.h"
 #include "splash_screen.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -76,7 +76,7 @@ void SplashScreen::paintEvent(QPaintEvent*)
 	QPainter painter(this);
 
 	QPen pen(QColor("#D6D6D6"));
-	pen.setWidth(SeoSpiderHelpers::pointsToPixels(2));
+	pen.setWidth(Common::Helpers::pointsToPixels(2));
 
 	painter.setPen(pen);
 

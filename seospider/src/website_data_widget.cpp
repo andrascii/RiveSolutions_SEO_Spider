@@ -5,7 +5,7 @@
 #include "istorage_adapter.h"
 #include "storage_adapter_factory.h"
 #include "page_data_widget.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 #include "application.h"
 #include "deferred_call.h"
 
@@ -88,7 +88,7 @@ void WebSiteDataWidget::showEvent(QShowEvent*)
 
 	const int parentWidgetHeight = parentWidget->height();
 
-	const int mainTableView = SeoSpiderHelpers::pointsToPixels(400);
+	const int mainTableView = Common::Helpers::pointsToPixels(400);
 
 	m_splitter->setSizes(QList<int>() << mainTableView << parentWidgetHeight - mainTableView);
 

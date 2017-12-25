@@ -11,58 +11,48 @@ namespace CrawlerEngine
 Downloader::Downloader()
 	: QObject(nullptr)
 	, m_networkAccessor(new QNetworkAccessManager(this))
+	, m_randomIntervalRangeTimer(new Common::RandomIntervalRangeTimer(this))
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
 
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*)), Qt::DirectConnection));
+
+	VERIFY(connect(m_randomIntervalRangeTimer, &Common::RandomIntervalRangeTimer::timerTicked, 
+		this, &Downloader::onTimerTicked, Qt::DirectConnection));
+}
+
+void Downloader::setPauseRange(int from, int to)
+{
+	resetPauseRange();
+	m_randomIntervalRangeTimer->setRange(from, to);
+	m_randomIntervalRangeTimer->start();
+}
+
+void Downloader::resetPauseRange()
+{
+	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
+	m_randomIntervalRangeTimer->reset();
 }
 
 void Downloader::setUserAgent(const QByteArray& userAgent)
 {
 	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
-
 	m_userAgent = userAgent;
 }
 
 void Downloader::handleRequest(RequesterSharedPtr requester)
 {
 	ASSERT(requester->request()->requestType() == RequestType::RequestTypeDownload);
-	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
-
-	QNetworkReply* reply = nullptr;
-
-	QNetworkRequest networkRequest(request->requestInfo.url);
-	networkRequest.setAttribute(QNetworkRequest::User, static_cast<int>(DownloadRequestType::RequestTypeGet));
-	networkRequest.setRawHeader("User-Agent", m_userAgent);
-
-	switch (request->requestInfo.requestType)
+	
+	if (m_randomIntervalRangeTimer->isValid())
 	{
-		case DownloadRequestType::RequestTypeGet:
-		{
-			reply = m_networkAccessor->get(networkRequest);
-			break;
-		}
-		case DownloadRequestType::RequestTypeHead:
-		{
-			reply = m_networkAccessor->head(networkRequest);
-			break;
-		}
-		default:
-		{
-			ASSERT(!"Unsupported request type");
-			break;
-		}
+		m_requesterQueue.push(std::move(requester));
 	}
-
-	VERIFY(connect(reply, &QNetworkReply::metaDataChanged, this, [this, reply]() { metaDataChanged(reply); }, Qt::QueuedConnection));
-
-	using ErrorSignal = void (QNetworkReply::*)(QNetworkReply::NetworkError);
-
-	VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this,
-		[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
-
-	m_requesters[request->requestInfo] = requester;
+	else
+	{
+		load(requester);
+	}
 }
 
 void Downloader::stopRequestHandling(RequesterSharedPtr requester)
@@ -73,6 +63,18 @@ void Downloader::stopRequestHandling(RequesterSharedPtr requester)
 QObject* Downloader::qobject()
 {
 	return this;
+}
+
+void Downloader::onTimerTicked()
+{
+	if (m_requesterQueue.empty())
+	{
+		return;
+	}
+
+	RequesterSharedPtr requester = m_requesterQueue.back();
+	m_requesterQueue.pop();
+	load(requester);
 }
 
 void Downloader::urlDownloaded(QNetworkReply* reply)
@@ -176,6 +178,45 @@ void Downloader::markReplyAsProcessed(QNetworkReply* reply) const noexcept
 	ASSERT(reply != nullptr);
 
 	reply->setProperty("processed", true);
+}
+
+void Downloader::load(RequesterSharedPtr requester)
+{
+	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
+
+	QNetworkReply* reply = nullptr;
+
+	QNetworkRequest networkRequest(request->requestInfo.url);
+	networkRequest.setAttribute(QNetworkRequest::User, static_cast<int>(DownloadRequestType::RequestTypeGet));
+	networkRequest.setRawHeader("User-Agent", m_userAgent);
+
+	switch (request->requestInfo.requestType)
+	{
+		case DownloadRequestType::RequestTypeGet:
+		{
+			reply = m_networkAccessor->get(networkRequest);
+			break;
+		}
+		case DownloadRequestType::RequestTypeHead:
+		{
+			reply = m_networkAccessor->head(networkRequest);
+			break;
+		}
+		default:
+		{
+			DEBUG_ASSERT(!"Unsupported request type");
+			break;
+		}
+	}
+
+	VERIFY(connect(reply, &QNetworkReply::metaDataChanged, this, [this, reply]() { metaDataChanged(reply); }, Qt::QueuedConnection));
+
+	using ErrorSignal = void (QNetworkReply::*)(QNetworkReply::NetworkError);
+
+	VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this,
+		[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
+
+	m_requesters[request->requestInfo] = requester;
 }
 
 }

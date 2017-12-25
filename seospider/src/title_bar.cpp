@@ -1,13 +1,13 @@
 #include "title_bar.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
 
 TitleBar::TitleBar(QWidget* parent)
 	: QFrame(parent)
-	, m_pixmapWidthHeight(SeoSpiderHelpers::pointsToPixels(10))
-	, m_pixmapLeftMargin(SeoSpiderHelpers::pointsToPixels(4))
+	, m_pixmapWidthHeight(Common::Helpers::pointsToPixels(10))
+	, m_pixmapLeftMargin(Common::Helpers::pointsToPixels(4))
 	, m_minimizePixmap(":/images/minimize-window.png")
 	, m_maximizePixmap(":/images/maximize-window.png")
 	, m_restorePixmap(":/images/restore-window.png")

@@ -1,6 +1,6 @@
 #include "parsed_page.h"
 #include "parsed_page_info.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 #include "status_code_description.h"
 
 namespace SeoSpider
@@ -67,33 +67,33 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 {
 	static QMap<Column, int> s_parsedPageColumnPrefferedSizes =
 	{
-		{ ParsedPageInfo::Column::UrlColumn, SeoSpiderHelpers::pointsToPixels(300) },
-		{ ParsedPageInfo::Column::TitleColumn, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::ContentTypeColumn, SeoSpiderHelpers::pointsToPixels(160) },
-		{ ParsedPageInfo::Column::MetaRefreshColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::MetaRobotsColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::MetaDescriptionColumn, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::MetaKeywordsColumn, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::RedirectedUrlColumn, SeoSpiderHelpers::pointsToPixels(300) },
-		{ ParsedPageInfo::Column::ServerResponseColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::FirstH1Column, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::SecondH1Column, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::FirstH2Column, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::SecondH2Column, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::Column::CanonicalLinkElementColumn, SeoSpiderHelpers::pointsToPixels(300) },
-		{ ParsedPageInfo::Column::StatusCodeColumn, SeoSpiderHelpers::pointsToPixels(150) },
-		{ ParsedPageInfo::Column::PageSizeKbColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::WordCountColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::PageHashColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::TitleLengthColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::UrlLengthColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::MetaDescriptionLengthColumn, SeoSpiderHelpers::pointsToPixels(110) },
-		{ ParsedPageInfo::Column::MetaKeywordsLengthColumn, SeoSpiderHelpers::pointsToPixels(110) },
-		{ ParsedPageInfo::Column::FirstH1LengthColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::SecondH1LengthColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::FirstH2LengthColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::SecondH2LengthColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::ImageSizeKbColumn, SeoSpiderHelpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::UrlColumn, Common::Helpers::pointsToPixels(300) },
+		{ ParsedPageInfo::Column::TitleColumn, Common::Helpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::ContentTypeColumn, Common::Helpers::pointsToPixels(160) },
+		{ ParsedPageInfo::Column::MetaRefreshColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::MetaRobotsColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::MetaDescriptionColumn, Common::Helpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::MetaKeywordsColumn, Common::Helpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::RedirectedUrlColumn, Common::Helpers::pointsToPixels(300) },
+		{ ParsedPageInfo::Column::ServerResponseColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::FirstH1Column, Common::Helpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::SecondH1Column, Common::Helpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::FirstH2Column, Common::Helpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::SecondH2Column, Common::Helpers::pointsToPixels(400) },
+		{ ParsedPageInfo::Column::CanonicalLinkElementColumn, Common::Helpers::pointsToPixels(300) },
+		{ ParsedPageInfo::Column::StatusCodeColumn, Common::Helpers::pointsToPixels(150) },
+		{ ParsedPageInfo::Column::PageSizeKbColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::WordCountColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::PageHashColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::TitleLengthColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::UrlLengthColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::MetaDescriptionLengthColumn, Common::Helpers::pointsToPixels(110) },
+		{ ParsedPageInfo::Column::MetaKeywordsLengthColumn, Common::Helpers::pointsToPixels(110) },
+		{ ParsedPageInfo::Column::FirstH1LengthColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::SecondH1LengthColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::FirstH2LengthColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::SecondH2LengthColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::ImageSizeKbColumn, Common::Helpers::pointsToPixels(100) },
 	};
 
 	const int result = s_parsedPageColumnPrefferedSizes.value(column, -1);
@@ -108,11 +108,11 @@ int ParsedPageInfo::columnPrefferedSize(PageLinksColumn column)
 {
 	static QMap<PageLinksColumn, int> s_pageLinksColumnPrefferedSizes =
 	{
-		{ ParsedPageInfo::PageLinksColumn::UrlColumn, SeoSpiderHelpers::pointsToPixels(300) },
-		{ ParsedPageInfo::PageLinksColumn::StatusCodeColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::PageLinksColumn::AltOrTitleColumn, SeoSpiderHelpers::pointsToPixels(400) },
-		{ ParsedPageInfo::PageLinksColumn::AltOrTitleLengthColumn, SeoSpiderHelpers::pointsToPixels(100) },
-		{ ParsedPageInfo::PageLinksColumn::LinkParameterColumn, SeoSpiderHelpers::pointsToPixels(150) }
+		{ ParsedPageInfo::PageLinksColumn::UrlColumn, Common::Helpers::pointsToPixels(300) },
+		{ ParsedPageInfo::PageLinksColumn::StatusCodeColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::PageLinksColumn::AltOrTitleColumn, Common::Helpers::pointsToPixels(400) },
+		{ ParsedPageInfo::PageLinksColumn::AltOrTitleLengthColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::PageLinksColumn::LinkParameterColumn, Common::Helpers::pointsToPixels(150) }
 	};
 
 	const int result = s_pageLinksColumnPrefferedSizes.value(column, -1);

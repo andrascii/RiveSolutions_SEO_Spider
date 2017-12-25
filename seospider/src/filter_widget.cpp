@@ -3,7 +3,7 @@
 #include "summary_model.h"
 #include "summary_view_model.h"
 #include "website_data_widget.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 #include "application.h"
 #include "deferred_call.h"
 
@@ -56,7 +56,7 @@ void FilterWidget::adjustSize()
 
 	ASSERT(parentWidget);
 
-	const int summaryViewWidth = SeoSpiderHelpers::pointsToPixels(140);
+	const int summaryViewWidth = Common::Helpers::pointsToPixels(140);
 
 	const int parentWidgetWidth = parentWidget->width();
 

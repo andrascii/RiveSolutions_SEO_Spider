@@ -1,6 +1,6 @@
 #include "context_menu_data_collection_row.h"
 #include "table_view.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 #include "page_model.h"
 #include "application.h"
 
@@ -76,7 +76,7 @@ void ContextMenuDataCollectionRow::openUrlAction() const
 	for (QModelIndex index : selectedIndexes())
 	{
 		const PageModel* model = 
-			SeoSpiderHelpers::fast_cast<const PageModel*>(index.model());
+			Common::Helpers::fast_cast<const PageModel*>(index.model());
 
 		if (model->itemType(index) != IStorageAdapter::ItemType::UrlItemType)
 		{
@@ -109,7 +109,7 @@ void ContextMenuDataCollectionRow::copyToClipboardUrl() const
 	foreach(QModelIndex index, selectedIndexes())
 	{
 		const PageModel* model = 
-			SeoSpiderHelpers::fast_cast<const PageModel*>(index.model());
+			Common::Helpers::fast_cast<const PageModel*>(index.model());
 
 		if (model->itemType(index) != IStorageAdapter::ItemType::UrlItemType)
 		{

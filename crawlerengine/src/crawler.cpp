@@ -37,6 +37,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_serializatonRedyStateCheckerTimer(new QTimer(this))
 	, m_sequencedDataCollection(nullptr)
 	, m_state(StatePending)
+	, m_downloader(nullptr)
 {
 	ASSERT(s_instance == nullptr && "Allowed only one instance of Crawler");
 
@@ -70,8 +71,9 @@ Crawler::~Crawler()
 void Crawler::initialize()
 {
 	m_modelController = new ModelController;
+	m_downloader = createDownloader();
 
-	ThreadManager::instance().moveObjectToThread(createDownloader()->qobject(), "DownloaderThread");
+	ThreadManager::instance().moveObjectToThread(m_downloader->qobject(), "DownloaderThread");
 	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
 	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
 	ThreadManager::instance().moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
@@ -79,19 +81,12 @@ void Crawler::initialize()
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
 		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
-
-		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)),
-			m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
-
-		ThreadManager::instance().moveObjectToThread(m_workers.back(),
-			QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
+		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)), m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
+		ThreadManager::instance().moveObjectToThread(m_workers.back(), QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
 	}
 
-	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()),
-		this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
-
-	VERIFY(connect(m_xmlSitemapLoader->qobject(), SIGNAL(ready()),
-		this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
+	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
+	VERIFY(connect(m_xmlSitemapLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
 }
 
 void Crawler::clearData()
@@ -209,6 +204,16 @@ void Crawler::onCrawlingSessionInitialized()
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
 		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
+
+	if (!m_options.pauseRangeFrom && !m_options.pauseRangeTo)
+	{
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
+	}
+	else
+	{
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setPauseRange",
+			Qt::BlockingQueuedConnection, Q_ARG(int, m_options.pauseRangeFrom), Q_ARG(int, m_options.pauseRangeTo)));
+	}
 
 	m_uniqueLinkStore->addUrl(m_options.host, DownloadRequestType::RequestTypeGet);
 

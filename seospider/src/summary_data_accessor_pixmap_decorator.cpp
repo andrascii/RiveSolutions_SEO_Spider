@@ -1,5 +1,5 @@
 #include "summary_data_accessor_pixmap_decorator.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -64,10 +64,10 @@ void SummaryDataAccessorPixmapDecorator::initializePixmaps()
 		{ QStringLiteral(":/images/icon-error.svg") },
 	};
 
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelInfo] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelNotError] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelWarning] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelError] = QPixmap(SeoSpiderHelpers::pointsToPixels(13.5), SeoSpiderHelpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelInfo] = QPixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelNotError] = QPixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelWarning] = QPixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelError] = QPixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
 
 	QSvgRenderer svgRenderer;
 

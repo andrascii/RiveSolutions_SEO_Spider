@@ -21,6 +21,14 @@ TestsDownloader::~TestsDownloader()
 	handlerRegistry.unregistrateHandler(this);
 }
 
+void TestsDownloader::setPauseRange(int, int)
+{
+}
+
+void TestsDownloader::resetPauseRange()
+{
+}
+
 void TestsDownloader::setUserAgent(const QByteArray& userAgent)
 {
 }

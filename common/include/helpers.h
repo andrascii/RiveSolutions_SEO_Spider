@@ -1,14 +1,13 @@
 #pragma once
 
-namespace SeoSpider
+namespace Common
 {
 
-class SeoSpiderHelpers
+class Helpers
 {
 public:
 	static int pointsToPixels(double sizeInPoints, double dpi = 0);
 	static double pixelsToPoints(int sizeInPixels, double dpi = 0);
-
 	static void moveWidgetToHostCenter(QWidget* widget, QWidget* host = nullptr);
 
 	template <typename DestinationType, typename SourceType>
@@ -30,7 +29,7 @@ public:
 	{
 		if constexpr(std::is_reference<DestinationType>::value)
 		{
-	#ifdef DEBUG
+#ifdef DEBUG
 			try
 			{
 				dynamic_cast<DestinationType>(p);
@@ -39,7 +38,7 @@ public:
 			{
 				DEBUG_ASSERT(!"Actual type differs from DestinationType");
 			}
-	#endif
+#endif
 
 			return static_cast<DestinationType>(p);
 		}

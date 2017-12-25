@@ -120,6 +120,8 @@ private:
 
 	RequesterWrapper m_serializationRequester;
 	RequesterWrapper m_deSerializationRequester;
+
+	IDownloader* m_downloader;
 };
 
 }

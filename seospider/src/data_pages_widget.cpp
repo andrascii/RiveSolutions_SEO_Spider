@@ -5,7 +5,7 @@
 #include "page_view_model.h"
 #include "storage_adapter_factory.h"
 #include "context_menu_data_collection_row.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 #include "header_decoration_widget.h"
 #include "control_panel_widget.h"
 #include "filter_widget.h"
@@ -142,14 +142,14 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 	
 	QVBoxLayout* layout = new QVBoxLayout(m_navigationPanel.navigationPanelWidget);
 	
-	layout->setContentsMargins(0, 0, SeoSpiderHelpers::pointsToPixels(0.6), 0);
+	layout->setContentsMargins(0, 0, Common::Helpers::pointsToPixels(0.6), 0);
 
 	layout->setSpacing(0);
 
 	layout->addItem(
 		new QSpacerItem(
-			SeoSpiderHelpers::pointsToPixels(15),
-			SeoSpiderHelpers::pointsToPixels(30), 
+			Common::Helpers::pointsToPixels(15),
+			Common::Helpers::pointsToPixels(30), 
 			QSizePolicy::Minimum, QSizePolicy::Expanding)
 	);
 

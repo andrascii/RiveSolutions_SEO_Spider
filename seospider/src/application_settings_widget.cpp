@@ -1,7 +1,7 @@
 #include "application_settings_widget.h"
 #include "service_locator.h"
 #include "settings_page_registry.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -19,8 +19,8 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
 	//VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(reloadSettingsSlot())));
 
-	const int width = SeoSpiderHelpers::pointsToPixels(800);
-	const int height = SeoSpiderHelpers::pointsToPixels(500);
+	const int width = Common::Helpers::pointsToPixels(800);
+	const int height = Common::Helpers::pointsToPixels(500);
 
 	resize(width, height);
 }
@@ -44,7 +44,7 @@ void ApplicationSettingsWidget::restoreChangedValues()
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
 
-		SeoSpiderHelpers::fast_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
+		Common::Helpers::fast_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
 	}
 
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -58,7 +58,7 @@ void ApplicationSettingsWidget::applyChanges()
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
 
-		SeoSpiderHelpers::fast_cast<SettingsPage*>(widget)->applyChanges();
+		Common::Helpers::fast_cast<SettingsPage*>(widget)->applyChanges();
 	}
 		
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -95,7 +95,7 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 		return;
 	}
 	
-	SeoSpiderHelpers::fast_cast<SettingsPage*>(widget)->reloadSettings();
+	Common::Helpers::fast_cast<SettingsPage*>(widget)->reloadSettings();
 	m_somethingChanged = false;
 }
 

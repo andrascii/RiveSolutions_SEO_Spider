@@ -1,7 +1,7 @@
 #include "summary_view_model.h"
 #include "summary_model.h"
 #include "text_renderer.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -24,22 +24,22 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 
 int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
 {
-	return SeoSpiderHelpers::pointsToPixels(5);
+	return Common::Helpers::pointsToPixels(5);
 }
 
 int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
 {
-	return SeoSpiderHelpers::pointsToPixels(0);
+	return Common::Helpers::pointsToPixels(0);
 }
 
 int SummaryViewModel::marginLeft(const QModelIndex&) const noexcept
 {
-	return SeoSpiderHelpers::pointsToPixels(6);
+	return Common::Helpers::pointsToPixels(6);
 }
 
 int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
 {
-	return SeoSpiderHelpers::pointsToPixels(2);
+	return Common::Helpers::pointsToPixels(2);
 }
 
 const QPixmap& SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
@@ -65,7 +65,7 @@ QString SummaryViewModel::displayData(const QModelIndex& index, const QRect& ite
 
 QRect SummaryViewModel::displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	return itemVisualRect.adjusted(pixmap(index).width() + SeoSpiderHelpers::pointsToPixels(3), 0, 0, 0);
+	return itemVisualRect.adjusted(pixmap(index).width() + Common::Helpers::pointsToPixels(3), 0, 0, 0);
 }
 
 const QColor& SummaryViewModel::selectedBackgroundColor(const QModelIndex&) const noexcept

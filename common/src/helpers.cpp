@@ -1,6 +1,6 @@
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 
-namespace SeoSpider
+namespace
 {
 
 qreal primaryScreenDpi()
@@ -8,7 +8,12 @@ qreal primaryScreenDpi()
 	return QApplication::screens().at(0)->logicalDotsPerInch();
 }
 
-int SeoSpiderHelpers::pointsToPixels(double sizeInPoints, double dpi)
+}
+
+namespace Common
+{
+
+int Helpers::pointsToPixels(double sizeInPoints, double dpi)
 {
 	if (dpi == 0)
 	{
@@ -19,7 +24,7 @@ int SeoSpiderHelpers::pointsToPixels(double sizeInPoints, double dpi)
 	return qRound(sizeInPoints * pointSizeInPixels);
 }
 
-double SeoSpiderHelpers::pixelsToPoints(int sizeInPixels, double dpi)
+double Helpers::pixelsToPoints(int sizeInPixels, double dpi)
 {
 	if (dpi == 0)
 	{
@@ -29,26 +34,20 @@ double SeoSpiderHelpers::pixelsToPoints(int sizeInPixels, double dpi)
 	return static_cast<double>(sizeInPixels) * 72.0 / dpi;
 }
 
-void SeoSpiderHelpers::moveWidgetToHostCenter(QWidget* widget, QWidget* host)
+void Helpers::moveWidgetToHostCenter(QWidget* widget, QWidget* host)
 {
 	if (!host)
 	{
-		INFOLOG << "Assume host as a parent";
-
 		host = widget->parentWidget();
 	}
 
 	if (host)
 	{
-		INFOLOG << "Move widget to host center";
-
 		QRect hostRect = host->geometry();
 		widget->move(hostRect.center() - widget->rect().center());
 
 		return;
 	}
-
-	INFOLOG << "Move widget to screen center";
 
 	QRect screenGeometry = QApplication::desktop()->screenGeometry();
 	const int x = (screenGeometry.width() - widget->width()) / 2;

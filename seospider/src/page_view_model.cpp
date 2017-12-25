@@ -1,7 +1,7 @@
 #include "abstract_table_model.h"
 #include "page_model.h"
 #include "page_view_model.h"
-#include "seo_spider_helpers.h"
+#include "helpers.h"
 #include "table_view.h"
 #include "deferred_call.h"
 
@@ -34,7 +34,7 @@ PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
 	pixmap.fill(m_backgroundColor);
 	pixmap.load(":/images/click-to-url-icon.png");
 
-	m_urlIcon = pixmap.scaled(SeoSpiderHelpers::pointsToPixels(13), SeoSpiderHelpers::pointsToPixels(13));
+	m_urlIcon = pixmap.scaled(Common::Helpers::pointsToPixels(13), Common::Helpers::pointsToPixels(13));
 
 	VERIFY(connect(model, &PageModel::internalDataChanged, this, &PageViewModel::onAttachedModelInternalDataChanged));
 	VERIFY(connect(model, &PageModel::modelReset, this, &PageViewModel::onModelDataWasReset));
@@ -44,30 +44,30 @@ int PageViewModel::marginTop(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
-		return SeoSpiderHelpers::pointsToPixels(0);
+		return Common::Helpers::pointsToPixels(0);
 	}
 
-	return SeoSpiderHelpers::pointsToPixels(0);
+	return Common::Helpers::pointsToPixels(0);
 }
 
 int PageViewModel::marginBottom(const QModelIndex&) const noexcept
 {
-	return SeoSpiderHelpers::pointsToPixels(0);
+	return Common::Helpers::pointsToPixels(0);
 }
 
 int PageViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
-		return SeoSpiderHelpers::pointsToPixels(2);
+		return Common::Helpers::pointsToPixels(2);
 	}
 
-	return SeoSpiderHelpers::pointsToPixels(6);
+	return Common::Helpers::pointsToPixels(6);
 }
 
 int PageViewModel::marginRight(const QModelIndex&) const noexcept
 {
-	return SeoSpiderHelpers::pointsToPixels(2);
+	return Common::Helpers::pointsToPixels(2);
 }
 
 const QPixmap& PageViewModel::pixmap(const QModelIndex& index) const noexcept
@@ -97,10 +97,10 @@ QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemV
 
 	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
 	{
-		return itemVisualRect.adjusted(itemVisualRect.width() - SeoSpiderHelpers::pointsToPixels(20), offsetByY, 0, 0);
+		return itemVisualRect.adjusted(itemVisualRect.width() - Common::Helpers::pointsToPixels(20), offsetByY, 0, 0);
 	}
 
-	return itemVisualRect.adjusted(itemVisualRect.width() + SeoSpiderHelpers::pointsToPixels(3), offsetByY, 0, 0);
+	return itemVisualRect.adjusted(itemVisualRect.width() + Common::Helpers::pointsToPixels(3), offsetByY, 0, 0);
 }
 
 QString PageViewModel::displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
