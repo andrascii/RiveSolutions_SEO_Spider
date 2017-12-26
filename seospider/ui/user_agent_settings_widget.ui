@@ -70,15 +70,14 @@
         <item>
          <widget class="QLabel" name="headerName">
           <property name="text">
-           <string>Proxy Settings</string>
+           <string>User Agent Settings</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="text">
           <property name="text">
-           <string>If you want to use proxy server please enter the address of proxy server and its port.
-Also if your proxy server requires authorization enter your name and password.</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can choose one of the custom User Agent.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
