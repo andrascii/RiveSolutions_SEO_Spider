@@ -157,6 +157,7 @@ bool PageParserHelpers::isHtmlOrPlainContentType(const QString& contentType) noe
 {
 	return contentType.startsWith("text/html") ||
 		contentType.startsWith("text/xhtml") ||
+		contentType.startsWith("text/xml") ||
 		contentType.startsWith("application/xhtml") ||
 		contentType.startsWith("text/plain") ||
 		contentType.isEmpty();
