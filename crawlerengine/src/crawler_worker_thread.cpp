@@ -185,11 +185,6 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 		page->url = linkInfo.url;
 		page->title = tr("Blocked by robots.txt rules");
-
-		//
-		// TODO: change it on ResourceType::ResourceUnknown
-		// It adding new type requires rework of ModelController
-		//
 		page->resourceType = ResourceType::ResourceHtml;
 
 		emit pageParsed(page);

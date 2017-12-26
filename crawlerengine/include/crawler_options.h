@@ -34,27 +34,29 @@ struct CrawlerOptions
 	int maxImageSizeKb = int();
 
 	// crawler settings
-	bool checkExternalLinks = int();
-	bool followInternalNofollow = int();
-	bool followExternalNofollow = int();
-	bool checkSubdomains = int();
-	bool checkImages = int();
-	bool checkCss = int();
-	bool checkJavaScript = int();
-	bool checkSwf = int();
+	bool checkExternalLinks = bool();
+	bool followInternalNofollow = bool();
+	bool followExternalNofollow = bool();
+	bool checkCanonicals = bool();
+	bool checkSubdomains = bool();
+	bool checkImages = bool();
+	bool checkCss = bool();
+	bool checkSwf = bool();
+	bool checkJavaScript = bool();
+	bool crawlOutsideOfStartFolder = bool();
 
 	// robots.txt rules
 	bool followRobotsTxtRules = bool();
 	UserAgentType userAgentToFollow;
-
-	// user agent
-	QByteArray plainUserAgent;
 
 	ParserTypeFlags parserTypeFlags;
 
 	// pause between requests
 	int pauseRangeFrom = int();
 	int pauseRangeTo = int();
+
+	// user agent
+	QByteArray userAgent;
 };
 
 Q_DECLARE_METATYPE(CrawlerOptions);

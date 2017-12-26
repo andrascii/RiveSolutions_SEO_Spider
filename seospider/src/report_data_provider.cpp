@@ -28,7 +28,7 @@ const QMap<ReportDataKeys, QByteArray> s_placeHolders
 	{ ReportDataKeys::Info, "info" },
 	{ ReportDataKeys::InfoImage, "info_image" },
 	{ ReportDataKeys::InfoCount, "info_count" },
-	{ ReportDataKeys::Date, "date" },
+	{ ReportDataKeys::Date, "creation_date" },
 
 	// Signature
 	{ ReportDataKeys::CompanyName, "company_name" },

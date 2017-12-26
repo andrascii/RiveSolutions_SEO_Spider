@@ -197,22 +197,37 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	options.checkExternalLinks = preferences()->checkExternalUrls();
 	options.followInternalNofollow = preferences()->followInternalNoFollow();
 	options.followExternalNofollow = preferences()->followExternalNoFollow();
+	options.checkCanonicals = preferences()->checkCanonicals();
 	options.checkSubdomains = preferences()->checkSubdomains();
+	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
 	options.checkImages = preferences()->checkImages();
 	options.checkCss = preferences()->checkCSS();
-	options.checkJavaScript = preferences()->checkJavaScript();
 	options.checkSwf = preferences()->checkSWF();
+	options.checkJavaScript = preferences()->checkJavaScript();
+	options.crawlOutsideOfStartFolder = preferences()->crawlOutsideOfStartFolder();
 
 	// robots.txt rules
-	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
 	options.userAgentToFollow = CrawlerEngine::UserAgentType::AnyBot;
-	options.plainUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
 
 	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType);
 	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType);
 	options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType);
 	options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType);
 	options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType);
+
+	// User agent settings
+	if (preferences()->useCustomUserAgent() && preferences()->useDesktopUserAgent())
+	{
+		options.userAgent = preferences()->desktopUserAgent().toLatin1();
+	}
+	else if (preferences()->useCustomUserAgent() && preferences()->useMobileUserAgent())
+	{
+		options.userAgent = preferences()->mobileUserAgent().toLatin1();
+	}
+	else
+	{
+		options.userAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
+	}
 
 	crawler()->startCrawling(options);
 }

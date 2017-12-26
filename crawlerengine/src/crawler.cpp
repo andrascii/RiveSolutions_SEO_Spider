@@ -215,6 +215,9 @@ void Crawler::onCrawlingSessionInitialized()
 			Qt::BlockingQueuedConnection, Q_ARG(int, m_options.pauseRangeFrom), Q_ARG(int, m_options.pauseRangeTo)));
 	}
 
+	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
+		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, m_options.userAgent)));
+
 	m_uniqueLinkStore->addUrl(m_options.host, DownloadRequestType::RequestTypeGet);
 
 	for (CrawlerWorkerThread* worker : m_workers)
@@ -399,8 +402,6 @@ void Crawler::createSequencedDataCollection(QThread* targetThread) const
 IDownloader* Crawler::createDownloader() const
 {
 	IDownloader* downloader = new Downloader;
-
-	downloader->setUserAgent(m_options.plainUserAgent);
 
 	return downloader;
 }
