@@ -3,6 +3,27 @@
 #include "settings_page_registry.h"
 #include "helpers.h"
 
+
+
+class ListItemProxyStyle : public QProxyStyle
+{
+
+public:
+	virtual void drawPrimitive(PrimitiveElement element, const QStyleOption* option,
+		QPainter* painter, const QWidget* widget = nullptr) const
+	{
+		if (PE_FrameFocusRect == element)
+		{
+			return;
+		}
+
+		QProxyStyle::drawPrimitive(element, option, painter, widget);
+	}
+};
+
+
+
+
 namespace SeoSpider
 {
 
@@ -137,8 +158,9 @@ void ApplicationSettingsWidget::initialize()
 {
 	m_ui.setupUi(this);
 
+	m_ui.propGroupsList->setStyle(new ListItemProxyStyle());
 	m_ui.propGroupsList->setCurrentRow(0);
-
+	
 	ISettingsPageRegistry* settingsPageRegistry = CrawlerEngine::ServiceLocator::instance()->service<ISettingsPageRegistry>();
 
 	int pageIndex = 0;
