@@ -3,12 +3,13 @@
 #include "settings_page_registry.h"
 #include "helpers.h"
 
-
+namespace
+{
 
 class ListItemProxyStyle : public QProxyStyle
 {
-
 public:
+
 	virtual void drawPrimitive(PrimitiveElement element, const QStyleOption* option,
 		QPainter* painter, const QWidget* widget = nullptr) const
 	{
@@ -21,8 +22,7 @@ public:
 	}
 };
 
-
-
+}
 
 namespace SeoSpider
 {
