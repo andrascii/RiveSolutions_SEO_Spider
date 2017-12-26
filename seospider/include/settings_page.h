@@ -28,7 +28,7 @@ public:
 	Q_SIGNAL void somethingChangedSignal();
 
 protected:
-	void init();
+	virtual void init();
 	
 	void registerMetaTypes() const;
 	

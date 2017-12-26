@@ -9,8 +9,8 @@ UserAgentSettingsWidget::UserAgentSettingsWidget(QWidget* parent)
 	: SettingsPage(parent)
 {
 	m_ui.setupUi(this);
+
 	init();
-	initialize();
 	
 	VERIFY(connect(m_ui.useCustomUserAgentCheckBox, &QCheckBox::toggled, 
 		this, &UserAgentSettingsWidget::checkBoxStateChanged));
@@ -45,12 +45,14 @@ bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)
 	return false;
 }
 
-void UserAgentSettingsWidget::initialize()
+void UserAgentSettingsWidget::init()
 {
 	m_ui.label->installEventFilter(this);
 	loadUserAgentsFromFile(":/config/desktopUserAgents.cfg", m_ui.desktopUserAgentComboBox);
 	loadUserAgentsFromFile(":/config/mobileUserAgents.cfg", m_ui.mobileUserAgentComboBox);
-	groupButtonStateChanged();
+
+	SettingsPage::init();
+
 	checkBoxStateChanged(m_ui.useCustomUserAgentCheckBox->isChecked());
 }
 

@@ -287,17 +287,6 @@ void Preferences::setMobileUserAgent(const QString& value)
 	emit mobileUserAgentChanged();
 }
 
-const QString& Preferences::userAgent() const
-{
-	return m_userAgent;
-}
-
-void Preferences::setUserAgent(const QString& value)
-{
-	m_userAgent = value;
-	emit userAgentChanged();
-}
-
 int Preferences::limitSearchTotal() const
 {
 	return m_limitSearchTotal;

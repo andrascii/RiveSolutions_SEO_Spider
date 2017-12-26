@@ -122,8 +122,8 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 
 ApplicationSettingsWidget::~ApplicationSettingsWidget()
 {
-	//VERIFY(disconnect(m_ui.stackedWidget, SIGNAL(currentChanged(int)),
-	//	this, SLOT(reloadSettingsSlot())));
+// 	VERIFY(disconnect(m_ui.stackedWidget, SIGNAL(currentChanged(int)),
+// 		this, SLOT(reloadSettingsSlot())));
 
 	while (m_ui.stackedWidget->count() > 0)
 	{

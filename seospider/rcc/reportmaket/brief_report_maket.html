@@ -7,7 +7,38 @@
 </head>
 <body>
 	<section class="summary summary-header">
-		Kek
+		<div class="col-6 left">
+			((site_short_image))
+		</div>
+
+		<div class="col-4">
+			<a class="site-ref" href="((site_link))">((site_link))</a>
+			<div class="summary-criteria">
+				<p class="problems-count">((problems_count))</p> problems found
+			</div>
+		</div>
+
+	</section>
+
+	<section class="summary-stats">
+		<div class="summary-stat stat-error col-3">
+			((errors_image))
+			((errors))
+			((errors_count))
+		</div>
+		<div class="summary-stat stat-warn col-3">
+			((warnings_image))
+			((warnings))
+			((warnings_count))
+		</div>
+		<div class="summary-stat stat-info col-3">
+			((info_image))
+			((info))
+			((info_count))
+		</div>
+		<div class="summary-stat col-3">
+			((creation_date))
+		</div>
 	</section>
 
 	<section class="summary summary-body">
@@ -27,7 +58,7 @@
 						</div>
 						<p class="criteria-title">
 							((stat_code_4xx))
-
+						</p>
 						<div class="criteria-count">
 							((stat_code_4xx_count))
 						</div>
@@ -383,6 +414,10 @@
 			</div>
 		</div>
 
+	</section>
+	<section class="summary summary-footer">
+		((creation_date))
+		((company_name))
 	</section>
 
 </body>

@@ -14,14 +14,15 @@ public:
 	UserAgentSettingsWidget(QWidget* parent = nullptr);
 	virtual void applyChanges() noexcept override;
 
-	Q_SLOT void checkBoxStateChanged(bool state);
-	Q_SLOT void groupButtonStateChanged();
-
 protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
+private slots:
+	void checkBoxStateChanged(bool state);
+	void groupButtonStateChanged();
+
 private:
-	void initialize();
+	virtual void init() override;
 	void loadUserAgentsFromFile(const QString& fileName, QComboBox* targetComboBox);
 
 private:

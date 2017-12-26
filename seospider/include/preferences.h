@@ -56,7 +56,6 @@ class Preferences : public QObject
 	Q_PROPERTY(bool useMobileUserAgent READ useMobileUserAgent WRITE setUseMobileUserAgent NOTIFY useMobileUserAgentChanged);
 	Q_PROPERTY(QString desktopUserAgent READ desktopUserAgent WRITE setDesktopUserAgent NOTIFY desktopUserAgentChanged);
 	Q_PROPERTY(QString mobileUserAgent READ mobileUserAgent WRITE setMobileUserAgent NOTIFY mobileUserAgentChanged);
-	Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged);
 
 	//
 	// Preferences
@@ -173,10 +172,6 @@ public:
 	Q_SLOT void setMobileUserAgent(const QString& value);
 	Q_SIGNAL void mobileUserAgentChanged();
 
-	const QString& userAgent() const;
-	Q_SLOT void setUserAgent(const QString& value);
-	Q_SIGNAL void userAgentChanged();
-
 	int limitSearchTotal() const;
 	Q_SLOT void setLimitSearchTotal(int value);
 	Q_SIGNAL void limitSearchTotalChanged();
@@ -285,7 +280,6 @@ private:
 	bool m_useMobileUserAgent;
 	QString m_desktopUserAgent;
 	QString m_mobileUserAgent;
-	QString m_userAgent;
 
 	int m_limitSearchTotal;
 	int m_limitMaxUrlLength;
