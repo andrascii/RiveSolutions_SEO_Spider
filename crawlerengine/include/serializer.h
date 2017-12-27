@@ -1,5 +1,6 @@
 #pragma once
 #include "crawler_request.h"
+#include "crawler_options.h"
 
 namespace Common 
 {
@@ -15,13 +16,15 @@ class Serializer
 {
 public:
 	Serializer();
-	Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, std::vector<CrawlerRequest>&& pendingUrls);
+	Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, 
+		std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptions& options);
 	void saveToStream(QIODevice& device);
 	void loadFromStream(QIODevice& device);
 
 	const std::vector<ParsedPagePtr>& pages() const;
 	const std::vector<CrawlerRequest>& crawledLinks() const;
 	const std::vector<CrawlerRequest>& pendingLinks() const;
+	const CrawlerOptions& crawlerOptions() const;
 
 private:
 	void saveToJsonStream(QIODevice& device);
@@ -40,11 +43,15 @@ private:
 
 	void saveLinksToXmlStream(QXmlStreamWriter& writer, const std::vector<CrawlerRequest>& links) const;
 	void loadLinksFromXmlStream(QXmlStreamReader& reader, std::vector<CrawlerRequest>& links, const QString& xmlElementName);
+
+	void saveOptionsToXmlStream(QXmlStreamWriter& writer) const;
+	void loadOptionsFromXmlStream(QXmlStreamReader& reader);
 private:
 	std::vector<ParsedPage*> m_pages;
 	std::vector<ParsedPagePtr> m_deserializedPages;
 	std::vector<CrawlerRequest> m_crawledLinks;
 	std::vector<CrawlerRequest> m_pendingLinks;
+	CrawlerOptions m_options;
 };
 
 }
