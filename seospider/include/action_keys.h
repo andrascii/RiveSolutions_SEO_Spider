@@ -25,6 +25,7 @@ static const QByteArray s_openPreferencesSettingsAction = "openPreferencesSettin
 static const QByteArray s_openLimitsSettingsAction = "openLimitsSettingsAction";
 static const QByteArray s_openProxySettingsAction = "openProxySettingsAction";
 static const QByteArray s_openUserAgentSettingsAction = "openUserAgentSettingsAction";
+static const QByteArray s_openCrawlerPauseTimerSettingsAction = "openCrawlerPauseTimerSettingsAction";
 
 // crawler actions
 static const QByteArray s_startCrawlerAction = "startCrawlerAction";

@@ -41,6 +41,13 @@ class Preferences : public QObject
 	Q_PROPERTY(bool crawlOutsideOfStartFolder READ crawlOutsideOfStartFolder WRITE setCrawlOutsideOfStartFolder NOTIFY crawlOutsideOfStartFolderChanged);
 
 	//
+	// Crawler pause-timer properties
+	//
+	Q_PROPERTY(bool usePauseTimer READ usePauseTimer WRITE setUsePauseTimer NOTIFY usePauseTimerChanged);
+	Q_PROPERTY(int fromPauseTimer READ fromPauseTimer WRITE setFromPauseTimer NOTIFY fromPauseTimerChanged);
+	Q_PROPERTY(int toPauseTimer READ toPauseTimer WRITE setToPauseTimer NOTIFY toPauseTimerChanged);
+
+	//
 	// Limits properties
 	//
 	Q_PROPERTY(int limitSearchTotal READ limitSearchTotal WRITE setLimitSearchTotal NOTIFY limitSearchTotalChanged);
@@ -151,6 +158,18 @@ public:
 	bool crawlOutsideOfStartFolder() const;
 	Q_SLOT void setCrawlOutsideOfStartFolder(bool value);
 	Q_SIGNAL void crawlOutsideOfStartFolderChanged();
+
+	bool usePauseTimer() const;
+	Q_SLOT void setUsePauseTimer(bool value);
+	Q_SIGNAL void usePauseTimerChanged();
+
+	int fromPauseTimer() const;
+	Q_SLOT void setFromPauseTimer(int value);
+	Q_SIGNAL void fromPauseTimerChanged();
+
+	int toPauseTimer() const;
+	Q_SLOT void setToPauseTimer(int value);
+	Q_SIGNAL void toPauseTimerChanged();
 
 	bool useCustomUserAgent() const;
 	Q_SLOT void setUseCustomUserAgent(bool value);
@@ -274,6 +293,10 @@ private:
 	bool m_checkCanonicals;
 	bool m_followRobotsTxt;
 	bool m_crawlOutsideOfStartFolder;
+
+	bool m_usePauseTimer;
+	int m_fromPauseTimer;
+	int m_toPauseTimer;
 
 	bool m_useCustomUserAgent;
 	bool m_useDesktopUserAgent;

@@ -17,6 +17,7 @@
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
 #include "ui_user_agent_settings_widget.h"
+#include "ui_crawler_pause_settings_widget.h"
 #include "user_agent_settings_widget.h"
 
 namespace SeoSpider
@@ -154,6 +155,7 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction, QIcon(QStringLiteral(":/images/limits-settings.png")), tr("Limit Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction, QIcon(QStringLiteral(":/images/proxy-settings.png")), tr("Proxy Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction, QIcon(QStringLiteral(":/images/user-agent.png")), tr("User Agent Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction, QIcon(QStringLiteral(":/images/crawler-settings.png")), tr("Crawler Pause Timer Settings"));
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
@@ -181,6 +183,9 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_openUserAgentSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_UserAgentSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerPauseTimerSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CrawlerPauseSettingsWidget)); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -237,6 +242,7 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
 	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(":/images/user-agent.png"), TYPE_STRING(Ui_UserAgentSettingsWidget), new UserAgentSettingsWidget());
+	SettingsPageImpl<Ui_CrawlerPauseSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerPauseSettingsWidget));
 }
 
 }
