@@ -232,6 +232,39 @@ void Preferences::setCrawlOutsideOfStartFolder(bool value)
 	emit crawlOutsideOfStartFolderChanged();
 }
 
+bool Preferences::usePauseTimer() const
+{
+	return m_usePauseTimer;
+}
+
+void Preferences::setUsePauseTimer(bool value)
+{
+	m_usePauseTimer = value;
+	emit usePauseTimerChanged();
+}
+
+int Preferences::fromPauseTimer() const
+{
+	return m_fromPauseTimer;
+}
+
+void Preferences::setFromPauseTimer(int value)
+{
+	m_fromPauseTimer = value;
+	emit fromPauseTimerChanged();
+}
+
+int Preferences::toPauseTimer() const
+{
+	return m_toPauseTimer;
+}
+
+void Preferences::setToPauseTimer(int value)
+{
+	m_toPauseTimer = value;
+	emit toPauseTimerChanged();
+}
+
 bool Preferences::useCustomUserAgent() const
 {
 	return m_useCustomUserAgent;

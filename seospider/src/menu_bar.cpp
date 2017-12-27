@@ -48,6 +48,7 @@ QMenu* MenuBar::buildMenuSettings()
 	settingsMenu->addAction(actionRegistry.globalAction(s_openLimitsSettingsAction));
 	settingsMenu->addAction(actionRegistry.globalAction(s_openProxySettingsAction));
 	settingsMenu->addAction(actionRegistry.globalAction(s_openUserAgentSettingsAction));
+	settingsMenu->addAction(actionRegistry.globalAction(s_openCrawlerPauseTimerSettingsAction));
 
 	return settingsMenu;
 }
