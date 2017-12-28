@@ -8,6 +8,7 @@
 #include "requester.h"
 #include "requester_wrapper.h"
 #include "titled_window.h"
+#include "crawler_options.h"
 
 namespace CrawlerEngine
 {
@@ -68,6 +69,7 @@ private slots:
 	void stopCrawler();
 	void clearCrawledData();
 	void showMainWindow();
+	void onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options);
 
 private:
 	void initialize();

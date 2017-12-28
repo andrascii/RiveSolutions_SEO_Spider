@@ -18,6 +18,11 @@
 namespace SeoSpider
 {
 
+namespace
+{
+	const QByteArray riveSolutionsUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
+}
+
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_preferences(new Preferences(this, this))
@@ -142,6 +147,59 @@ void Application::showMainWindow()
 	emit mainWindowShown();
 }
 
+void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
+{
+	// preferences
+	preferences()->setUrl(options.host);
+	preferences()->setMinTitleLength(options.minTitleLength);
+	preferences()->setMaxTitleLength(options.maxTitleLength);
+	preferences()->setLimitMaxUrlLength(options.limitMaxUrlLength);
+	preferences()->setMaxDescriptionLength(options.maxDescriptionLength);
+	preferences()->setMinDescriptionLength(options.minDescriptionLength);
+	preferences()->setMaxH1LengthChars(options.maxH1LengthChars);
+	preferences()->setMaxH2LengthChars(options.maxH2LengthChars);
+	preferences()->setMaxImageAltTextChars(options.maxImageAltTextChars);
+	preferences()->setMaxImageSize(options.maxImageSizeKb);
+
+	// crawler settings
+	preferences()->setCheckExternalUrls(options.checkExternalLinks);
+	preferences()->setFollowInternalNoFollow(options.followInternalNofollow);
+	preferences()->setFollowExternalNoFollow(options.followExternalNofollow);
+	preferences()->setCheckCanonicals(options.checkCanonicals);
+	preferences()->setCheckSubdomains(options.checkSubdomains);
+	preferences()->setFollowRobotsTxt(options.followRobotsTxtRules);
+	preferences()->setCrawlOutsideOfStartFolder(options.crawlOutsideOfStartFolder);
+
+	// robots.txt rules
+	//prefs->setUserAgentToFollow(options.userAgentToFollow);
+
+	preferences()->setCheckJavaScript(options.parserTypeFlags.testFlag(CrawlerEngine::JavaScriptResourcesParserType));
+	preferences()->setCheckCSS(options.parserTypeFlags.testFlag(CrawlerEngine::CssResourcesParserType));
+	preferences()->setCheckImages(options.parserTypeFlags.testFlag(CrawlerEngine::ImagesResourcesParserType));
+	preferences()->setCheckSWF(options.parserTypeFlags.testFlag(CrawlerEngine::VideoResourcesParserType));
+	preferences()->setCheckSWF(options.parserTypeFlags.testFlag(CrawlerEngine::FlashResourcesParserType));
+
+	// User agent settings
+	if (options.userAgent == riveSolutionsUserAgent)
+	{
+		preferences()->setUseCustomUserAgent(false);
+	}
+	else
+	{
+		preferences()->setUseCustomUserAgent(true);
+
+		if (preferences()->useMobileUserAgent())
+		{
+			preferences()->setMobileUserAgent(QString::fromLatin1(options.userAgent));
+		}
+		else
+		{
+			preferences()->setUseDesktopUserAgent(true);
+			preferences()->setDesktopUserAgent(QString::fromLatin1(options.userAgent));
+		}
+	}
+}
+
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
@@ -171,7 +229,7 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	if (!response.hostInfo.isValid())
 	{
 		mainWindow()->showMessageBoxDialog("DNS Lookup Failed!",
-			"I'm sorry but I cannot to find this website.\n"
+			"I'm sorry but I cannot find this website.\n"
 			"Please, be sure that you entered a valid address.",
 			MessageBoxDialog::WarningIcon,
 			QDialogButtonBox::Ok);
@@ -200,20 +258,16 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	options.checkCanonicals = preferences()->checkCanonicals();
 	options.checkSubdomains = preferences()->checkSubdomains();
 	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
-	options.checkImages = preferences()->checkImages();
-	options.checkCss = preferences()->checkCSS();
-	options.checkSwf = preferences()->checkSWF();
-	options.checkJavaScript = preferences()->checkJavaScript();
 	options.crawlOutsideOfStartFolder = preferences()->crawlOutsideOfStartFolder();
 
 	// robots.txt rules
 	options.userAgentToFollow = CrawlerEngine::UserAgentType::AnyBot;
 
-	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType);
-	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType);
-	options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType);
-	options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType);
-	options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType);
+	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType, preferences()->checkJavaScript());
+	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType, preferences()->checkCSS());
+	options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType, preferences()->checkImages());
+	options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType, preferences()->checkSWF());
+	options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType, preferences()->checkSWF());
 
 	// User agent settings
 	if (preferences()->useCustomUserAgent() && preferences()->useDesktopUserAgent())
@@ -226,7 +280,7 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	}
 	else
 	{
-		options.userAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
+		options.userAgent = riveSolutionsUserAgent;
 	}
 
 	crawler()->startCrawling(options);
@@ -263,6 +317,8 @@ void Application::initialize()
 	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
 
 #endif
+
+	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsChanged, this, &Application::onCrawlerOptionsChanged));
 
 	mainWindow()->init();
 }

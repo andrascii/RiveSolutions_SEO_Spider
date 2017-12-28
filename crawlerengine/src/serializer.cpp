@@ -60,6 +60,30 @@ namespace
 	const QString pendingUrlsKey = QLatin1String("pendingUrls");
 	const QString urlItemKey = QLatin1String("urlItem");
 	const QString storagesKey = QLatin1String("storages");
+
+	const QString optionsKey = QLatin1String("options");
+	const QString hostKey = QLatin1String("host");
+	const QString limitMaxUrlLengthKey = QLatin1String("limitMaxUrlLength");
+	const QString minTitleLengthKey = QLatin1String("minTitleLength");
+	const QString maxTitleLengthKey = QLatin1String("maxTitleLength");
+	const QString maxDescriptionLengthKey = QLatin1String("maxDescriptionLength");
+	const QString minDescriptionLengthKey = QLatin1String("minDescriptionLength");
+	const QString maxH1LengthCharsKey = QLatin1String("maxH1LengthChars");
+	const QString maxH2LengthCharsKey = QLatin1String("maxH2LengthChars");
+	const QString maxImageAltTextCharsKey = QLatin1String("maxImageAltTextChars");
+	const QString maxImageSizeKbKey = QLatin1String("maxImageSizeKb");
+	const QString checkExternalLinksKey = QLatin1String("checkExternalLinks");
+	const QString followInternalNofollowKey = QLatin1String("followInternalNofollow");
+	const QString followExternalNofollowKey = QLatin1String("followExternalNofollow");
+	const QString checkCanonicalsKey = QLatin1String("checkCanonicals");
+	const QString checkSubdomainsKey = QLatin1String("checkSubdomains");
+	const QString crawlOutsideOfStartFolderKey = QLatin1String("crawlOutsideOfStartFolder");
+	const QString followRobotsTxtRulesKey = QLatin1String("followRobotsTxtRules");
+	const QString userAgentToFollowKey = QLatin1String("userAgentToFollow");
+	const QString parserTypeFlagsKey = QLatin1String("parserTypeFlags");
+	const QString pauseRangeFromKey = QLatin1String("pauseRangeFrom");
+	const QString pauseRangeToKey = QLatin1String("pauseRangeTo");
+
 }
 
 class ParsedPageSerializer
@@ -523,10 +547,12 @@ Serializer::Serializer()
 {
 }
 
-Serializer::Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, std::vector<CrawlerRequest>&& pendingUrls)
+Serializer::Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, 
+	std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptions& options)
 	: m_pages(std::move(pages))
 	, m_crawledLinks(std::move(crawledUrls))
 	, m_pendingLinks(std::move(pendingUrls))
+	, m_options(options)
 {
 }
 
@@ -555,6 +581,11 @@ const std::vector<CrawlerRequest>& Serializer::crawledLinks() const
 const std::vector<CrawlerRequest>& CrawlerEngine::Serializer::pendingLinks() const
 {
 	return m_pendingLinks;
+}
+
+const CrawlerOptions& Serializer::crawlerOptions() const
+{
+	return m_options;
 }
 
 void Serializer::saveToJsonStream(QIODevice& device)
@@ -682,6 +713,7 @@ void Serializer::saveToXmlStream(QIODevice& device)
 	xmlWriter.writeTextElement(serializerVersionKey, serializerVersion);
 	xmlWriter.writeTextElement(pagesCountKey, QString::number(m_pages.size()));
 
+	saveOptionsToXmlStream(xmlWriter);
 	savePagesToXmlStream(xmlWriter);
 
 	xmlWriter.writeStartElement(crawledUrlsKey);
@@ -711,6 +743,11 @@ void Serializer::loadFromXmlStream(QIODevice& device)
 		if (!xmlReader.isStartElement())
 		{
 			continue;
+		}
+
+		if (xmlReader.qualifiedName() == optionsKey)
+		{
+			loadOptionsFromXmlStream(xmlReader);
 		}
 
 		if (xmlReader.qualifiedName() == pagesCountKey)
@@ -818,7 +855,138 @@ void Serializer::loadLinksFromXmlStream(QXmlStreamReader& reader, std::vector<Cr
 			links.push_back(CrawlerRequest{ url, requestType });
 		}
 	}
+}
 
+void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
+{
+	writer.writeStartElement(optionsKey);
+
+	writer.writeTextElement(hostKey, m_options.host.toDisplayString());
+	writer.writeTextElement(limitMaxUrlLengthKey, QString::number(m_options.limitMaxUrlLength));
+	writer.writeTextElement(minTitleLengthKey, QString::number(m_options.minTitleLength));
+	writer.writeTextElement(maxTitleLengthKey, QString::number(m_options.maxTitleLength));
+	writer.writeTextElement(maxDescriptionLengthKey, QString::number(m_options.maxDescriptionLength));
+	writer.writeTextElement(minDescriptionLengthKey, QString::number(m_options.minDescriptionLength));
+	writer.writeTextElement(maxH1LengthCharsKey, QString::number(m_options.maxH1LengthChars));
+	writer.writeTextElement(maxH2LengthCharsKey, QString::number(m_options.maxH2LengthChars));
+	writer.writeTextElement(maxImageAltTextCharsKey, QString::number(m_options.maxImageAltTextChars));
+	writer.writeTextElement(maxImageSizeKbKey, QString::number(m_options.maxImageSizeKb));
+	writer.writeTextElement(checkExternalLinksKey, QString::number(m_options.checkExternalLinks));
+	writer.writeTextElement(followInternalNofollowKey, QString::number(m_options.followInternalNofollow));
+	writer.writeTextElement(followExternalNofollowKey, QString::number(m_options.followExternalNofollow));
+	writer.writeTextElement(checkCanonicalsKey, QString::number(m_options.checkCanonicals));
+	writer.writeTextElement(checkSubdomainsKey, QString::number(m_options.checkSubdomains));
+	writer.writeTextElement(crawlOutsideOfStartFolderKey, QString::number(m_options.crawlOutsideOfStartFolder));
+	writer.writeTextElement(followRobotsTxtRulesKey, QString::number(m_options.followRobotsTxtRules));
+	writer.writeTextElement(userAgentToFollowKey, QString::number(static_cast<int>(m_options.userAgentToFollow)));
+	writer.writeTextElement(parserTypeFlagsKey, QString::number(static_cast<int>(m_options.parserTypeFlags)));
+	writer.writeTextElement(pauseRangeFromKey, QString::number(m_options.pauseRangeFrom));
+	writer.writeTextElement(pauseRangeToKey, QString::number(m_options.pauseRangeTo));
+	writer.writeTextElement(userAgentKey, m_options.userAgent);
+
+	writer.writeEndElement();
+}
+
+void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
+{
+	while (!reader.isEndElement() || reader.qualifiedName() != optionsKey)
+	{
+		reader.readNext();
+
+		if (!reader.isStartElement())
+		{
+			continue;
+		}
+
+		if (reader.qualifiedName() == hostKey)
+		{
+			m_options.host = CustomUrl(reader.readElementText());
+		}
+		else if (reader.qualifiedName() == limitMaxUrlLengthKey)
+		{
+			m_options.limitMaxUrlLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == minTitleLengthKey)
+		{
+			m_options.minTitleLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxTitleLengthKey)
+		{
+			m_options.maxTitleLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxDescriptionLengthKey)
+		{
+			m_options.maxDescriptionLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == minDescriptionLengthKey)
+		{
+			m_options.minDescriptionLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxH1LengthCharsKey)
+		{
+			m_options.maxH1LengthChars = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxH2LengthCharsKey)
+		{
+			m_options.maxH2LengthChars = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxImageAltTextCharsKey)
+		{
+			m_options.maxImageAltTextChars = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxImageSizeKbKey)
+		{
+			m_options.maxImageSizeKb = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == checkExternalLinksKey)
+		{
+			m_options.checkExternalLinks = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == followInternalNofollowKey)
+		{
+			m_options.followInternalNofollow = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == followExternalNofollowKey)
+		{
+			m_options.followExternalNofollow = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == checkCanonicalsKey)
+		{
+			m_options.checkCanonicals = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == checkSubdomainsKey)
+		{
+			m_options.checkSubdomains = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == crawlOutsideOfStartFolderKey)
+		{
+			m_options.crawlOutsideOfStartFolder = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == followRobotsTxtRulesKey)
+		{
+			m_options.followRobotsTxtRules = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == userAgentToFollowKey)
+		{
+			m_options.userAgentToFollow = static_cast<UserAgentType>(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == parserTypeFlagsKey)
+		{
+			m_options.parserTypeFlags = ParserTypeFlags(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == pauseRangeFromKey)
+		{
+			m_options.pauseRangeFrom = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == pauseRangeToKey)
+		{
+			m_options.pauseRangeTo = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == userAgentKey)
+		{
+			m_options.userAgent = reader.readElementText().toUtf8();
+		}
+	}
 }
 
 }

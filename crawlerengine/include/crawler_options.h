@@ -39,10 +39,6 @@ struct CrawlerOptions
 	bool followExternalNofollow = bool();
 	bool checkCanonicals = bool();
 	bool checkSubdomains = bool();
-	bool checkImages = bool();
-	bool checkCss = bool();
-	bool checkSwf = bool();
-	bool checkJavaScript = bool();
 	bool crawlOutsideOfStartFolder = bool();
 
 	// robots.txt rules

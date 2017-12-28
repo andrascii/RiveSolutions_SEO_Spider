@@ -67,6 +67,7 @@ signals:
 	void crawlerStopped();
 	void stateChanged(int state);
 	void onAboutClearData();
+	void crawlerOptionsChanged(CrawlerOptions options);
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);

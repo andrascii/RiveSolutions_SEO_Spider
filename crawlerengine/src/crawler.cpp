@@ -315,6 +315,9 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 		m_uniqueLinkStore->setCrawledUrls(result->serializer->crawledLinks());
 		m_uniqueLinkStore->setPendingUrls(result->serializer->pendingLinks());
 
+		m_options = result->serializer->crawlerOptions();
+		emit crawlerOptionsChanged(m_options);
+
 		CrawlerSharedState* state = CrawlerSharedState::instance();
 		state->setDownloaderCrawledLinksCount(static_cast<int>(result->serializer->crawledLinks().size()));
 		state->setDownloaderPendingLinksCount(static_cast<int>(result->serializer->pendingLinks().size()));
@@ -366,7 +369,7 @@ void Crawler::onSerializationReadyToBeStarted()
 	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
 
 	std::shared_ptr<Serializer> serializer =
-		std::make_shared<Serializer>(std::move(pages), std::move(crawledUrls), std::move(pendingUrls));
+		std::make_shared<Serializer>(std::move(pages), std::move(crawledUrls), std::move(pendingUrls), m_options);
 
 	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(serializer, m_fileName);
 	m_fileName = QString();
