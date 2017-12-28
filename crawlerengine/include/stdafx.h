@@ -69,6 +69,8 @@
 #include <QFileInfo>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
+#include <QWebEngineView>
+#include <QWebEnginePage>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

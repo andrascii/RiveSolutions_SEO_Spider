@@ -121,9 +121,7 @@ CrawlerEngine::Crawler::State Crawler::state() const noexcept
 void Crawler::startCrawling(const CrawlerOptions& options)
 {
 	m_options = options;
-
 	m_state = StateWorking;
-
 	initializeCrawlingSession();
 
 	emit stateChanged(m_state);
