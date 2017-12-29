@@ -153,15 +153,23 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 {
 	// preferences
 	preferences()->setUrl(options.host);
-	preferences()->setMinTitleLength(options.minTitleLength);
-	preferences()->setMaxTitleLength(options.maxTitleLength);
+
+	// limit settings
 	preferences()->setLimitMaxUrlLength(options.limitMaxUrlLength);
+	preferences()->setLimitSearchTotal(options.limitSearchTotal);
+	preferences()->setLimitTimeout(options.limitTimeout);
+	preferences()->setMaxRedirectCount(options.maxRedirectsToFollow);
+	preferences()->setMaxLinksCountOnPage(options.maxLinksCountOnPage);
+
+	// preferences settings
 	preferences()->setMaxDescriptionLength(options.maxDescriptionLength);
 	preferences()->setMinDescriptionLength(options.minDescriptionLength);
+	preferences()->setMinTitleLength(options.minTitleLength);
+	preferences()->setMaxTitleLength(options.maxTitleLength);
+	preferences()->setMaxImageSize(options.maxImageSizeKb);
+	preferences()->setMaxImageAltTextChars(options.maxImageAltTextChars);
 	preferences()->setMaxH1LengthChars(options.maxH1LengthChars);
 	preferences()->setMaxH2LengthChars(options.maxH2LengthChars);
-	preferences()->setMaxImageAltTextChars(options.maxImageAltTextChars);
-	preferences()->setMaxImageSize(options.maxImageSizeKb);
 
 	// crawler settings
 	preferences()->setCheckExternalUrls(options.checkExternalLinks);
@@ -200,6 +208,14 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 			preferences()->setDesktopUserAgent(QString::fromLatin1(options.userAgent));
 		}
 	}
+
+	// pause range settings
+	if (options.pauseRangeFrom && options.pauseRangeTo)
+	{
+		preferences()->setUsePauseTimer(true);
+		preferences()->setFromPauseTimer(options.pauseRangeFrom);
+		preferences()->setToPauseTimer(options.pauseRangeTo);
+	}
 }
 
 void Application::registerServices()
@@ -218,7 +234,6 @@ void Application::initQSettings()
 QSettings* Application::settings() const
 {
 	ASSERT(m_settings);
-
 	return m_settings;
 }
 
@@ -241,17 +256,24 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 
 	CrawlerEngine::CrawlerOptions options;
 
-	// preferences
 	options.host = preferences()->url();
-	options.minTitleLength = preferences()->minTitleLength();
-	options.maxTitleLength = preferences()->maxTitleLength();
+
+	// limit settings
 	options.limitMaxUrlLength = preferences()->limitMaxUrlLength();
+	options.limitSearchTotal = preferences()->limitSearchTotal();
+	options.limitTimeout = preferences()->limitTimeout();
+	options.maxRedirectsToFollow = preferences()->maxRedirectCount();
+	options.maxLinksCountOnPage = preferences()->maxLinksCountOnPage();
+
+	// preferences settings
 	options.maxDescriptionLength = preferences()->maxDescriptionLength();
 	options.minDescriptionLength = preferences()->minDescriptionLength();
+	options.minTitleLength = preferences()->minTitleLength();
+	options.maxTitleLength = preferences()->maxTitleLength();
+	options.maxImageSizeKb = preferences()->maxImageSize();
+	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
 	options.maxH1LengthChars = preferences()->maxH1LengthChars();
 	options.maxH2LengthChars = preferences()->maxH2LengthChars();
-	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
-	options.maxImageSizeKb = preferences()->maxImageSize();
 
 	// crawler settings
 	options.checkExternalLinks = preferences()->checkExternalUrls();
@@ -285,6 +307,13 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 		options.userAgent = s_riveSolutionsUserAgent;
 	}
 
+	// pause range settings
+	if (preferences()->usePauseTimer())
+	{
+		options.pauseRangeFrom = preferences()->fromPauseTimer();
+		options.pauseRangeTo = preferences()->toPauseTimer();
+	}
+
 	crawler()->startCrawling(options);
 }
 
@@ -298,7 +327,6 @@ void Application::initialize()
 	SplashScreen::showMessage("Initializing...");
 
 #ifdef PRODUCTION
-	// let users to see the splash screen
 	std::this_thread::sleep_for(3s);
 #endif
 
@@ -328,16 +356,12 @@ void Application::initialize()
 void Application::initializeStyleSheet() noexcept
 {
 	SplashScreen::showMessage("Initializing stylesheets...");
-
 	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
-
 	QFile styles(":/stylesheets/styles.css");
 
 	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		setStyleSheet(styles.readAll());
-
-		INFOLOG << "Stylesheets loaded";
 	}
 }
 
@@ -532,7 +556,6 @@ QString Application::operatingSystemVersion()
 Application::~Application()
 {
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
-
 	DeferredCallProcessor::term();
 }
 
