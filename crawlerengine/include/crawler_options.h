@@ -32,6 +32,8 @@ struct CrawlerOptions
 	int maxH2LengthChars = int();
 	int maxImageAltTextChars = int();
 	int maxImageSizeKb = int();
+	int maxRedirectsToFollow = int();
+	int maxLinksCountOnPage = int();
 
 	// crawler settings
 	bool checkExternalLinks = bool();

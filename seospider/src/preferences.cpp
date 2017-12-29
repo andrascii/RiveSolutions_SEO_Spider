@@ -375,6 +375,16 @@ void Preferences::setMaxH1LengthChars(int value)
 	emit maxH1LengthCharsChanged();
 }
 
+int Preferences::maxLinksCountOnPage() const
+{
+	return m_maxLinksCountOnPage;
+}
+
+void Preferences::setMaxLinksCountOnPage(int value)
+{
+	m_maxLinksCountOnPage = value;
+}
+
 int Preferences::maxH2LengthChars() const
 {
 	return m_maxH2LengthChars;

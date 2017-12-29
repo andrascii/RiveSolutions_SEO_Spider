@@ -18,7 +18,6 @@ class IDownloader;
 class ITaskProcessor;
 class Requester;
 struct TaskResponse;
-class HtmlPageScreenshotMaker;
 
 struct CrawlingProgress
 {
