@@ -6,7 +6,7 @@
 namespace CrawlerEngine
 {
 
-CustomUrl RobotsTxtYandexStrategy::cleanUrl(const CustomUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
+Url RobotsTxtYandexStrategy::cleanUrl(const Url& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const
 {
 	if (!MetaRobotsHelpers::checkIfSupportedRecordExistsAndCorrectUserAgentType(userAgentType, tokenizer))
 	{
@@ -19,8 +19,8 @@ CustomUrl RobotsTxtYandexStrategy::cleanUrl(const CustomUrl& url, UserAgentType 
 		return url;
 	}
 
-	QString query = url.query(CustomUrl::FullyEncoded);
-	QString path = url.path(CustomUrl::FullyEncoded);
+	QString query = url.query(Url::FullyEncoded);
+	QString path = url.path(Url::FullyEncoded);
 
 	QStringList params = query.split(QString("&"), QString::SkipEmptyParts);
 	QMap<QString, QString> paramValuesByName;
@@ -77,7 +77,7 @@ CustomUrl RobotsTxtYandexStrategy::cleanUrl(const CustomUrl& url, UserAgentType 
 		}
 	}
 
-	CustomUrl result = url;
+	Url result = url;
 	result.setQuery(query);
 	return result;
 }

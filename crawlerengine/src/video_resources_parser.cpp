@@ -35,13 +35,13 @@ void VideoResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 			? gumbo_get_attribute(&child->v.element.attributes, "src")
 			: gumbo_get_attribute(&node->v.element.attributes, "src");
 		
-		return CustomUrl(src->value);
+		return Url(src->value);
 	};
 
-	std::vector<CustomUrl> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<CustomUrl> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
 
-	for (const CustomUrl& url : resolvedUrls)
+	for (const Url& url : resolvedUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

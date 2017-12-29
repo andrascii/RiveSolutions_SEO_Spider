@@ -8,16 +8,16 @@ namespace CrawlerEngine
 class PageParserHelpers
 {
 public:
-	static CustomUrl resolveRelativeUrl(const CustomUrl& relativeUrl, const CustomUrl& baseUrl);
-	static std::vector<CustomUrl> resolveUrlList(const CustomUrl& baseUrl, const std::vector<CustomUrl>& urlList) noexcept;
-	static std::vector<LinkInfo> resolveUrlList(const CustomUrl& baseUrl, const std::vector<LinkInfo>& linkList) noexcept;
-	static CustomUrl resolveUrl(const CustomUrl& baseUrl, const CustomUrl& url) noexcept;
-	static bool checkUrlIdentity(const CustomUrl& lhs, const CustomUrl& rhs);
+	static Url resolveRelativeUrl(const Url& relativeUrl, const Url& baseUrl);
+	static std::vector<Url> resolveUrlList(const Url& baseUrl, const std::vector<Url>& urlList) noexcept;
+	static std::vector<LinkInfo> resolveUrlList(const Url& baseUrl, const std::vector<LinkInfo>& linkList) noexcept;
+	static Url resolveUrl(const Url& baseUrl, const Url& url) noexcept;
+	static bool checkUrlIdentity(const Url& lhs, const Url& rhs);
 
-	static bool isUrlExternal(const CustomUrl& baseUrl, const CustomUrl& url) noexcept;
+	static bool isUrlExternal(const Url& baseUrl, const Url& url) noexcept;
 	static bool isHtmlOrPlainContentType(const QString& contentType) noexcept;
-	static bool isHttpOrHttpsScheme(const CustomUrl& url) noexcept;
-	static bool isSubdomain(const CustomUrl& baseUrl, const CustomUrl& url);
+	static bool isHttpOrHttpsScheme(const Url& url) noexcept;
+	static bool isSubdomain(const Url& baseUrl, const Url& url);
 };
 
 }

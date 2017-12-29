@@ -7,22 +7,36 @@
 #include "ipc_signaled_object_unix_like.h"
 #endif
 
-namespace Common
+namespace
 {
+
+using namespace Common;
+
+using SignaledObjectCreator = std::function<std::unique_ptr<IIpcSignaledObject>()>;
 
 SignaledObjectCreator creator()
 {
 #if defined(Q_OS_WIN)
 
-    return SignaledObjectCreator([] { return std::unique_ptr<IIpcSignaledObject>(new IpcSignaledObjectWindows); });
+	return SignaledObjectCreator([] { return std::unique_ptr<IIpcSignaledObject>(new IpcSignaledObjectWindows); });
 
 #elif defined(Q_OS_UNIX) || defined(Q_OS_LINUX) || defined(Q_OS_MAC)
 
-    return SignaledObjectCreator([] { return std::unique_ptr<IIpcSignaledObject>(new IpcSignaledObjectUnixLike); });
+	return SignaledObjectCreator([] { return std::unique_ptr<IIpcSignaledObject>(new IpcSignaledObjectUnixLike); });
 
 #endif
 
-    return SignaledObjectCreator([] { return std::unique_ptr<IIpcSignaledObject>(nullptr); });
+	return SignaledObjectCreator([] { return std::unique_ptr<IIpcSignaledObject>(nullptr); });
+}
+
+}
+
+namespace Common
+{
+
+std::shared_ptr<Common::IIpcSignaledObject> createSignaledObjectInstance()
+{
+	return creator()();
 }
 
 }

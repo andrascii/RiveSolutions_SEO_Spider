@@ -18,7 +18,6 @@ class IDownloader;
 class ITaskProcessor;
 class Requester;
 struct TaskResponse;
-class HtmlPageScreenshotMaker;
 
 struct CrawlingProgress
 {
@@ -68,6 +67,8 @@ signals:
 	void stateChanged(int state);
 	void onAboutClearData();
 	void crawlerOptionsChanged(CrawlerOptions options);
+	void serializationProcessDone();
+	void deserializationProcessDone();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);

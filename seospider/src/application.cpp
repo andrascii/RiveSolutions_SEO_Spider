@@ -20,7 +20,9 @@ namespace SeoSpider
 
 namespace
 {
-	const QByteArray riveSolutionsUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
+
+const QByteArray s_riveSolutionsUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
+
 }
 
 Application::Application(int& argc, char** argv)
@@ -180,7 +182,7 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 	preferences()->setCheckSWF(options.parserTypeFlags.testFlag(CrawlerEngine::FlashResourcesParserType));
 
 	// User agent settings
-	if (options.userAgent == riveSolutionsUserAgent)
+	if (options.userAgent == s_riveSolutionsUserAgent)
 	{
 		preferences()->setUseCustomUserAgent(false);
 	}
@@ -280,7 +282,7 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	}
 	else
 	{
-		options.userAgent = riveSolutionsUserAgent;
+		options.userAgent = s_riveSolutionsUserAgent;
 	}
 
 	crawler()->startCrawling(options);

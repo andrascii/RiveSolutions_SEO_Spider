@@ -9,15 +9,11 @@ class Preferences : public QObject
 {
 	Q_OBJECT
 
-	//
 	// App properties
-	//
 	Q_PROPERTY(unsigned threadCount READ threadCount WRITE setThreadCount NOTIFY threadCountChanged);
 	Q_PROPERTY(QString applicationLanguage READ applicationLanguage WRITE setApplicationLanguage NOTIFY applicationLanguageChanged);
 
-	//
 	// Proxy properties
-	//
 	Q_PROPERTY(bool useProxy READ useProxy WRITE setUseProxy NOTIFY useProxyChanged);
 	Q_PROPERTY(bool proxyNeedAuthorization READ proxyNeedAuthorization WRITE setProxyNeedAuthorization NOTIFY proxyNeedAuthorizationChanged);
 	Q_PROPERTY(QString proxyUsername READ proxyUsername WRITE setProxyUsername NOTIFY proxyUsernameChanged);
@@ -25,9 +21,7 @@ class Preferences : public QObject
 	Q_PROPERTY(QString proxyAddress READ proxyAddress WRITE setProxyAddress NOTIFY proxyAddressChanged);
 	Q_PROPERTY(int proxyPort READ proxyPort WRITE setProxyPort NOTIFY proxyPortChanged);
 
-	//
 	// Web crawler properties
-	//
 	Q_PROPERTY(bool checkImages READ checkImages WRITE setCheckImages NOTIFY checkImagesChanged);
 	Q_PROPERTY(bool checkCSS READ checkCSS WRITE setCheckCSS NOTIFY checkCSSChanged);
 	Q_PROPERTY(bool checkJavaScript READ checkJavaScript WRITE setCheckJavaScript NOTIFY checkJavaScriptChanged);
@@ -40,33 +34,26 @@ class Preferences : public QObject
 	Q_PROPERTY(bool followRobotsTxt READ followRobotsTxt WRITE setFollowRobotsTxt NOTIFY followRobotsTxtChanged);
 	Q_PROPERTY(bool crawlOutsideOfStartFolder READ crawlOutsideOfStartFolder WRITE setCrawlOutsideOfStartFolder NOTIFY crawlOutsideOfStartFolderChanged);
 
-	//
 	// Crawler pause-timer properties
-	//
 	Q_PROPERTY(bool usePauseTimer READ usePauseTimer WRITE setUsePauseTimer NOTIFY usePauseTimerChanged);
 	Q_PROPERTY(int fromPauseTimer READ fromPauseTimer WRITE setFromPauseTimer NOTIFY fromPauseTimerChanged);
 	Q_PROPERTY(int toPauseTimer READ toPauseTimer WRITE setToPauseTimer NOTIFY toPauseTimerChanged);
 
-	//
 	// Limits properties
-	//
 	Q_PROPERTY(int limitSearchTotal READ limitSearchTotal WRITE setLimitSearchTotal NOTIFY limitSearchTotalChanged);
 	Q_PROPERTY(int limitMaxUrlLength READ limitMaxUrlLength WRITE setLimitMaxUrlLength NOTIFY limitMaxUrlLengthChanged);
 	Q_PROPERTY(int limitTimeout READ limitTimeout WRITE setLimitTimeout NOTIFY limitTimeoutChanged);
 	Q_PROPERTY(int maxRedirectCount READ maxRedirectCount WRITE setMaxRedirectCount NOTIFY maxRedirectCountChanged);
+	Q_PROPERTY(int maxLinksCountOnPage READ maxLinksCountOnPage WRITE setMaxLinksCountOnPage NOTIFY maxLinksCountOnPageChanged)
 
-	//
 	// User agent properties
-	//
 	Q_PROPERTY(bool useCustomUserAgent READ useCustomUserAgent WRITE setUseCustomUserAgent NOTIFY useCustomUserAgentChanged);
 	Q_PROPERTY(bool useDesktopUserAgent READ useDesktopUserAgent WRITE setUseDesktopUserAgent NOTIFY useDesktopUserAgentChanged);
 	Q_PROPERTY(bool useMobileUserAgent READ useMobileUserAgent WRITE setUseMobileUserAgent NOTIFY useMobileUserAgentChanged);
 	Q_PROPERTY(QString desktopUserAgent READ desktopUserAgent WRITE setDesktopUserAgent NOTIFY desktopUserAgentChanged);
 	Q_PROPERTY(QString mobileUserAgent READ mobileUserAgent WRITE setMobileUserAgent NOTIFY mobileUserAgentChanged);
 
-	//
 	// Preferences
-	//
 	Q_PROPERTY(int maxH1LengthChars READ maxH1LengthChars WRITE setMaxH1LengthChars NOTIFY maxH1LengthCharsChanged);
 	Q_PROPERTY(int maxH2LengthChars READ maxH2LengthChars WRITE setMaxH2LengthChars NOTIFY maxH2LengthCharsChanged);
 	Q_PROPERTY(int maxImageAltTextChars READ maxImageAltTextChars WRITE setMaxImageAltTextChars NOTIFY maxImageAltTextCharsChanged);
@@ -76,9 +63,7 @@ class Preferences : public QObject
 	Q_PROPERTY(int maxTitleLength READ maxTitleLength WRITE setMaxTitleLength NOTIFY maxTitleLengthChanged);
 	Q_PROPERTY(int minTitleLength READ minTitleLength WRITE setMinTitleLength NOTIFY minTitleLengthChanged);
 
-	//
 	// Crawler start
-	//
 	Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged);
 
 public:
@@ -211,6 +196,10 @@ public:
 	Q_SLOT void setMaxH1LengthChars(int value);
 	Q_SIGNAL void maxH1LengthCharsChanged();
 
+	int maxLinksCountOnPage() const;
+	Q_SLOT void setMaxLinksCountOnPage(int value);
+	Q_SIGNAL void maxLinksCountOnPageChanged();
+
 	int maxH2LengthChars() const;
 	Q_SLOT void setMaxH2LengthChars(int value);
 	Q_SIGNAL void maxH2LengthCharsChanged();
@@ -308,6 +297,7 @@ private:
 	int m_limitMaxUrlLength;
 	int m_limitTimeout;
 	int m_maxRedirectCount;
+	int m_maxLinksCountOnPage;
 
 	int m_maxH1LengthChars;
 	int m_maxH2LengthChars;

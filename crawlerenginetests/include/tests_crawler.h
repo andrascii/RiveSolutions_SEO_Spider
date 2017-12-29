@@ -23,21 +23,15 @@ public:
 	Q_INVOKABLE void initialize();
 
 	std::vector<const ParsedPage*> waitForParsedPageReceived(StorageType storage, int count, int seconds, const char* timeoutMessage) const;
-
 	std::vector<const ParsedPage*> waitForAllCrawledPageReceived(int seconds, const char* timeoutMessage = "Waiting for all pages received") const;
-
 	std::vector<const ParsedPage*> storageItems(StorageType storage) const;
-
 	std::vector<LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(const ParsedPage* page, int count, int seconds) const;
-
 	std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(StorageType type) const;
 
 	Q_SLOT void startTestCrawler();
 
 	TestsDownloader* testDownloader() const;
-
 	void checkSequencedDataCollectionConsistency();
-
 	const UnorderedDataCollection* unorderedDataCollection() const;
 
 protected:
@@ -46,9 +40,7 @@ protected:
 
 private:
 	CrawlerOptions m_testCrawlerOptions;
-
 	QThread* m_sequencedDataCollectionThread;
-
 	std::unique_ptr<ParsedPageReceiver> m_receiver;
 
 	mutable TestsDownloader* m_downloader;

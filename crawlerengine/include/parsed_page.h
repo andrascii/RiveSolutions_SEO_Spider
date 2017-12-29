@@ -1,7 +1,7 @@
 #pragma once
 
 #include "status_code.h"
-#include "custom_url.h"
+#include "url.h"
 
 namespace CrawlerEngine
 {
@@ -79,7 +79,7 @@ using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
 
 struct LinkInfo
 {
-	CustomUrl url;
+	Url url;
 	LinkParameter urlParameter = LinkParameter::DofollowParameter;
 	QString altOrTitle;
 	bool dataResourceLink = false;
@@ -89,7 +89,7 @@ struct LinkInfo
 struct ResourceLink
 {
 	ParsedPageWeakPtr resource;
-	CustomUrl url;
+	Url url;
 	LinkParameter linkParameter;
 	ResourceSource resourceSource;
 	QString altOrTitle;
@@ -125,9 +125,9 @@ constexpr int invalidPageLevel = 100000000;
 
 struct ParsedPage
 {
-	CustomUrl url;
-	CustomUrl redirectedUrl;
-	CustomUrl canonicalUrl;
+	Url url;
+	Url redirectedUrl;
+	Url canonicalUrl;
 
 	QString title;
 	QString contentType;

@@ -139,7 +139,7 @@ void ModelController::addParsedPages(std::vector<ParsedPagePtr> incomingPages) n
 
 void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 {
-	const CustomUrl url = incomingPage->url;
+	const Url url = incomingPage->url;
 	const QString urlStr = url.toString();
 	data()->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
 	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();

@@ -80,9 +80,7 @@ void SequencedDataCollection::initializeStorages()
 	{
 		std::make_pair(StorageType::CrawledUrlStorageType, createSequencedStorage()),
 
-		//
 		// Link Problems Storages
-		//
 		std::make_pair(StorageType::ExternalUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::UpperCaseUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::NonAsciiCharacterUrlStorageType, createSequencedStorage()),
@@ -93,9 +91,7 @@ void SequencedDataCollection::initializeStorages()
 		std::make_pair(StorageType::Status302StorageType, createSequencedStorage()),
 		std::make_pair(StorageType::Status301StorageType, createSequencedStorage()),
 
-		//
 		// Title Storages
-		//
 		std::make_pair(StorageType::EmptyTitleUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::DuplicatedTitleUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::VeryLongTitleUrlStorageType, createSequencedStorage()),
@@ -103,48 +99,36 @@ void SequencedDataCollection::initializeStorages()
 		std::make_pair(StorageType::DuplicatedH1TitleUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::SeveralTitleUrlStorageType, createSequencedStorage()),
 
-		//
 		// Meta Description Storages
-		//
 		std::make_pair(StorageType::EmptyMetaDescriptionUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::DuplicatedMetaDescriptionUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::VeryLongMetaDescriptionUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::VeryShortMetaDescriptionUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::SeveralMetaDescriptionUrlStorageType, createSequencedStorage()),
 
-		//
 		// Meta Keywords Problems Storages
-		//
 		std::make_pair(StorageType::EmptyMetaKeywordsUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::DuplicatedMetaKeywordsUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::SeveralMetaKeywordsUrlStorageType, createSequencedStorage()),
 		
-		//
 		// H1 Problems Storages
-		//
 		std::make_pair(StorageType::MissingH1UrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::DuplicatedH1UrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::VeryLongH1UrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::SeveralH1UrlStorageType, createSequencedStorage()),
 
-		//
 		// H2 Problems Storages
-		//
 		std::make_pair(StorageType::MissingH2UrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::DuplicatedH2UrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::VeryLongH2UrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::SeveralH2UrlStorageType, createSequencedStorage()),
 
-		//
 		// Images Problems Storages
-		//
 		std::make_pair(StorageType::Over100kbImageStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::MissingAltTextImageStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::VeryLongAltTextImageStorageType, createSequencedStorage()),
 
-		//
 		// Resources Types Storages
-		//
 		std::make_pair(StorageType::HtmlResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ImageResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::JavaScriptResourcesStorageType, createSequencedStorage()),

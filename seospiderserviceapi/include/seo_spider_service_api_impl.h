@@ -2,6 +2,13 @@
 
 #include "iseo_spider_service_api.h"
 
+namespace Common
+{
+
+class IIpcSignaledObject;
+
+}
+
 namespace SeoSpiderServiceApi
 {
 
@@ -12,14 +19,10 @@ public:
 
 	virtual void init() noexcept override;
 	virtual void free() const noexcept override;
-	
 	virtual void setProcessSignaledState() const noexcept override;
-
 	virtual void setProcessExceptionHandlers() const noexcept override;
 	virtual void setThreadExceptionHandlers() const noexcept override;
-
 	virtual void doAssert(const char* file, int line, const char* function, const char* expression) const noexcept override;
-
 	virtual void traceLogMessage(const char* message) override;
 	virtual void debugLogMessage(const char* message) override;
 	virtual void infoLogMessage(const char* message) override;
@@ -52,13 +55,11 @@ private:
 private:
 	static SeoSpiderServiceApiImpl* s_self;
 
-	HANDLE m_crashEventHandle;
 	STARTUPINFOW m_startupInfo;
 	PROCESS_INFORMATION m_processInfo;
-
 	mutable std::mutex m_mutex;
-
 	bool m_initialized;
+	std::shared_ptr<Common::IIpcSignaledObject> m_crashEventSignaledObject;
 };
 
 }
