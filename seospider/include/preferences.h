@@ -63,6 +63,11 @@ class Preferences : public QObject
 	Q_PROPERTY(int maxTitleLength READ maxTitleLength WRITE setMaxTitleLength NOTIFY maxTitleLengthChanged);
 	Q_PROPERTY(int minTitleLength READ minTitleLength WRITE setMinTitleLength NOTIFY minTitleLengthChanged);
 
+	// Company profile
+	Q_PROPERTY(QString companyName READ companyName WRITE setCompanyName NOTIFY companyNameChanged);
+	Q_PROPERTY(QString companyEmail READ companyEmail WRITE setCompanyEmail NOTIFY companyEmailChanged);
+	Q_PROPERTY(QString companyWebSite READ companyWebSite WRITE setCompanyWebSite NOTIFY companyWebSiteChanged);
+
 	// Crawler start
 	Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged);
 
@@ -228,6 +233,18 @@ public:
 	Q_SLOT void setMinTitleLength(int value);
 	Q_SIGNAL void minTitleLengthChanged();
 
+	QString companyName() const;
+	Q_SLOT void setCompanyName(QString value);
+	Q_SIGNAL void companyNameChanged();
+
+	QString companyEmail() const;
+	Q_SLOT void setCompanyEmail(QString value);
+	Q_SIGNAL void companyEmailChanged();
+
+	QString companyWebSite() const;
+	Q_SLOT void setCompanyWebSite(QString value);
+	Q_SIGNAL void companyWebSiteChanged();
+
 	const QUrl& url() const;
 	Q_SLOT void setUrl(const QUrl& url);
 	Q_SIGNAL void urlChanged();
@@ -307,6 +324,10 @@ private:
 	int m_minDescriptionLength;
 	int m_maxTitleLength;
 	int m_minTitleLength;
+
+	QString m_companyName;
+	QString m_companyEmail;
+	QString m_companyWebSite;
 
 	QUrl m_url;
 };

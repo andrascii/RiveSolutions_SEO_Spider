@@ -23,8 +23,12 @@ namespace SeoSpider
 
 		SettingsPage::init();
 
+		fromCrawlerPauseSpinBoxChanged(m_ui.fromPauseTimerSpinBox->value());
+		toCrawlerPauseSpinBoxChanged(m_ui.toPauseTimerSpinBox->value());
+
 		m_ui.fromPauseTimerSpinBox->setEnabled(m_ui.usePauseTimerCheckBox->isChecked());
 		m_ui.toPauseTimerSpinBox->setEnabled(m_ui.usePauseTimerCheckBox->isChecked());
+
 	}
 
 	void CrawlerPauseSettingsWidget::fromCrawlerPauseSpinBoxChanged(int value)
