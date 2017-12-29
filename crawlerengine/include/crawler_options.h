@@ -22,6 +22,10 @@ struct CrawlerOptions
 	Url host;
 	
 	int limitMaxUrlLength = int();
+	int limitSearchTotal = int();
+	int limitTimeout = int();
+	int maxRedirectsToFollow = int();
+	int maxLinksCountOnPage = int();
 
 	// preferences
 	int minTitleLength = int();
@@ -32,8 +36,6 @@ struct CrawlerOptions
 	int maxH2LengthChars = int();
 	int maxImageAltTextChars = int();
 	int maxImageSizeKb = int();
-	int maxRedirectsToFollow = int();
-	int maxLinksCountOnPage = int();
 
 	// crawler settings
 	bool checkExternalLinks = bool();
