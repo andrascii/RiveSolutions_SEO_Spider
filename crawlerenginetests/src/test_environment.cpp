@@ -58,7 +58,7 @@ void TestEnvironment::initializeTest(const std::function<void()>& testFunction)
 	emit testInitialized(m_testFunction);
 }
 
-CrawlerEngine::CrawlerOptions TestEnvironment::defaultOptions(const CustomUrl& url)
+CrawlerEngine::CrawlerOptions TestEnvironment::defaultOptions(const Url& url)
 {
 	CrawlerEngine::CrawlerOptions result{ url };
 	result.parserTypeFlags = CrawlerEngine::ParserTypeFlags(

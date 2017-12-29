@@ -58,7 +58,7 @@ private:
 	bool m_isRunning;
 
 	std::vector<ParsedPagePtr> m_pagesAcceptedAfterStop;
-	std::map<CustomUrl, CrawlerRequest> m_pendingUrls;
+	std::map<Url, CrawlerRequest> m_pendingUrls;
 
 	QTimer* m_defferedProcessingTimer;
 };

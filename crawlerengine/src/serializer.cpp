@@ -302,9 +302,9 @@ public:
 
 	void fromJson(const QVariantMap& pageMap)
 	{
-		m_page->url = CustomUrl(pageMap[urlKey].toString());
-		m_page->redirectedUrl = CustomUrl(pageMap[redirectedUrlKey].toString());
-		m_page->canonicalUrl = CustomUrl(pageMap[canonicalUrlKey].toString());
+		m_page->url = Url(pageMap[urlKey].toString());
+		m_page->redirectedUrl = Url(pageMap[redirectedUrlKey].toString());
+		m_page->canonicalUrl = Url(pageMap[canonicalUrlKey].toString());
 		m_page->title = pageMap[titleKey].toString();
 		m_page->contentType = pageMap[contentTypeKey].toString();
 		m_page->metaRefresh = pageMap[metaRefreshKey].toString();
@@ -346,7 +346,7 @@ public:
 			const LinkParameter linkParameter = static_cast<LinkParameter>(linkMap[linkParameterKey].toInt());
 			const ResourceSource source = static_cast<ResourceSource>(linkMap[resourceSourceKey].toInt());
 			const QString altOrTitle = linkMap[altOrTitleKey].toString();
-			const CustomUrl url = CustomUrl(linkMap[urlKey].toString());
+			const Url url = Url(linkMap[urlKey].toString());
 			const int resourceIndex = linkMap[resourceIndexKey].toInt();
 
 			m_page->linksOnThisPage.push_back(ResourceLink{ ParsedPageWeakPtr(), url, linkParameter, source, altOrTitle });
@@ -375,15 +375,15 @@ public:
 
 			if (reader.qualifiedName() == urlKey)
 			{
-				m_page->url = CustomUrl(reader.readElementText());
+				m_page->url = Url(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == redirectedUrlKey)
 			{
-				m_page->redirectedUrl = CustomUrl(reader.readElementText());
+				m_page->redirectedUrl = Url(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == canonicalUrlKey)
 			{
-				m_page->canonicalUrl = CustomUrl(reader.readElementText());
+				m_page->canonicalUrl = Url(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == titleKey)
 			{
@@ -508,7 +508,7 @@ public:
 					{
 						QXmlStreamAttributes attributes = reader.attributes();
 
-						const CustomUrl url = CustomUrl(attributes.value(urlKey).toString());
+						const Url url = Url(attributes.value(urlKey).toString());
 						const LinkParameter linkParameter = static_cast<LinkParameter>(attributes.value(linkParameterKey).toInt());
 						const ResourceSource source = static_cast<ResourceSource>(attributes.value(resourceSourceKey).toInt());
 						const QString altOrTitle = attributes.value(altOrTitleKey).toString();
@@ -696,7 +696,7 @@ void Serializer::readLinksFromJsonStream(Common::JsonParserStreamReader& stream,
 	{
 		QVariantMap linkMap = reader.readCompound().toMap();
 		CrawlerRequest request;
-		request.url = CustomUrl(linkMap[urlKey].toString());
+		request.url = Url(linkMap[urlKey].toString());
 		request.requestType = static_cast<DownloadRequestType>(linkMap[requestTypeKey].toInt());
 		links.push_back(request);
 	}
@@ -849,7 +849,7 @@ void Serializer::loadLinksFromXmlStream(QXmlStreamReader& reader, std::vector<Cr
 		if (reader.isStartElement() && reader.qualifiedName() == urlItemKey)
 		{
 			QXmlStreamAttributes attributes = reader.attributes();
-			const CustomUrl url = CustomUrl(attributes.value(urlKey).toString());
+			const Url url = Url(attributes.value(urlKey).toString());
 			const DownloadRequestType requestType = static_cast<DownloadRequestType>(attributes.value(requestTypeKey).toInt());
 
 			links.push_back(CrawlerRequest{ url, requestType });
@@ -900,7 +900,7 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 
 		if (reader.qualifiedName() == hostKey)
 		{
-			m_options.host = CustomUrl(reader.readElementText());
+			m_options.host = Url(reader.readElementText());
 		}
 		else if (reader.qualifiedName() == limitMaxUrlLengthKey)
 		{

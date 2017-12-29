@@ -2,7 +2,7 @@
 #include "download_response.h"
 #include "download_request.h"
 #include "robots_txt_rules.h"
-#include "custom_url.h"
+#include "url.h"
 #include "crawler_request.h"
 #include "robots_txt_loader.h"
 
@@ -21,7 +21,7 @@ XmlSitemapLoader::XmlSitemapLoader(RobotsTxtLoader* robotsTxtLoader, QObject* pa
 	}
 }
 
-void XmlSitemapLoader::load(const CustomUrl& host)
+void XmlSitemapLoader::load(const Url& host)
 {
 	if (m_isValid && m_currentLoadedUrl.compare(host))
 	{
@@ -35,7 +35,7 @@ void XmlSitemapLoader::load(const CustomUrl& host)
 		return;
 	}
 
-	CustomUrl sitemapUrl;
+	Url sitemapUrl;
 
 	if (m_robotsTxtLoader && m_robotsTxtLoader->isValid())
 	{

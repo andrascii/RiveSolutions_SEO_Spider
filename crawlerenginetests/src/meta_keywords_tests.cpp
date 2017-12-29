@@ -5,7 +5,7 @@ TEST(MetaKeywordsTests, EmptyMetaKeywords)
 {
 	// empty-meta.html -> empty-meta-2.html
 
-	TestEnvironment env(TestEnvironment::defaultOptions({ CustomUrl("http://meta-keywords.com/empty-meta.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://meta-keywords.com/empty-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -26,7 +26,7 @@ TEST(MetaKeywordsTests, NoMetaKeywords)
 {
 	// no-meta.html -> no-meta-2.html
 
-	TestEnvironment env(TestEnvironment::defaultOptions({ CustomUrl("http://meta-keywords.com/no-meta.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://meta-keywords.com/no-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -46,7 +46,7 @@ TEST(MetaKeywordsTests, DuplicatedMetaKeywords)
 {
 	// duplicated-meta-1.html -> duplicated-meta-2.html
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-keywords.com/duplicated-meta-1.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-keywords.com/duplicated-meta-1.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -67,7 +67,7 @@ TEST(MetaKeywordsTests, DoNotIncludeCanonicalDuplicatedKeywords)
 {
 	// canonical-duplicated-key.html -> canonical-duplicated-key.html
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-keywords.com/canonical-duplicated-key.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-keywords.com/canonical-duplicated-key.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -85,7 +85,7 @@ TEST(MetaKeywordsTests, IncludeDuplicatedKeywordsIfThereAreSeveralCanonical)
 {
 	// canonical-duplicated-key-another.html -> canonical-desc-key.html -> canonical-duplicated-key.html
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-keywords.com/canonical-duplicated-key-another.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-keywords.com/canonical-duplicated-key-another.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -101,7 +101,7 @@ TEST(MetaKeywordsTests, IncludeDuplicatedKeywordsIfThereAreSeveralCanonical)
 
 TEST(MetaKeywordsTests, DoNotIncludeEveryPageInDuplicates)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-keywords.com/single-page.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-keywords.com/single-page.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -119,7 +119,7 @@ TEST(MetaKeywordsTests, SeveralMetaKeywords)
 {
 	// several-titles.html -> several-titles-2.html
 
-	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://meta-keywords.com/several-meta.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://meta-keywords.com/several-meta.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

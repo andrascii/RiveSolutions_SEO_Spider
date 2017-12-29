@@ -1,19 +1,19 @@
-#include "custom_url.h"
+#include "url.h"
 
 namespace CrawlerEngine
 {
 
-CustomUrl::CustomUrl(const QUrl& url)
+Url::Url(const QUrl& url)
 	: QUrl(url)
 {
 }
 
-bool CustomUrl::compare(const CustomUrl& url) const
+bool Url::compare(const Url& url) const
 {
 	return canonizedUrlStr() == url.canonizedUrlStr();
 }
 
-const QString& CustomUrl::canonizedUrlStr() const
+const QString& Url::canonizedUrlStr() const
 {
 	if (m_canonizedUrlStr.isEmpty())
 	{

@@ -34,7 +34,7 @@ UniqueLinkStore::UniqueLinkStore(QObject* parent)
 {
 }
 
-void UniqueLinkStore::addUrl(const CustomUrl& url, DownloadRequestType requestType)
+void UniqueLinkStore::addUrl(const Url& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 
@@ -51,7 +51,7 @@ void UniqueLinkStore::addUrl(const CustomUrl& url, DownloadRequestType requestTy
 	}
 }
 
-void UniqueLinkStore::addUrl(CustomUrl&& url, DownloadRequestType requestType)
+void UniqueLinkStore::addUrl(Url&& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
@@ -89,7 +89,7 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 	return true;
 }
 
-void UniqueLinkStore::saveUrlList(const std::vector<CustomUrl>& urlList, DownloadRequestType requestType)
+void UniqueLinkStore::saveUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -104,7 +104,7 @@ void UniqueLinkStore::saveUrlList(const std::vector<CustomUrl>& urlList, Downloa
 	}
 }
 
-void UniqueLinkStore::saveUrlList(std::vector<CustomUrl>&& urlList, DownloadRequestType requestType)
+void UniqueLinkStore::saveUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -121,9 +121,9 @@ void UniqueLinkStore::saveUrlList(std::vector<CustomUrl>&& urlList, DownloadRequ
 
 void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType)
 {
-	const auto makeUrlList = [&linkList]() -> std::vector<CustomUrl>
+	const auto makeUrlList = [&linkList]() -> std::vector<Url>
 	{
-		std::vector<CustomUrl> urlList;
+		std::vector<Url> urlList;
 
 		for(const LinkInfo& link : linkList)
 		{
@@ -133,7 +133,7 @@ void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, Downlo
 		return urlList;
 	};
 
-	std::vector<CustomUrl> urlList = makeUrlList();
+	std::vector<Url> urlList = makeUrlList();
 
 	saveUrlList(std::move(urlList), requestType);
 }

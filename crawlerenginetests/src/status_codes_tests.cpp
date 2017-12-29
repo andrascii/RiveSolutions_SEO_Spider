@@ -5,7 +5,7 @@ using namespace CrawlerEngine;
 
 TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://status.com/too-short.html"));
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://status.com/too-short.html"));
 	options.maxTitleLength = 10;
 	options.minTitleLength = 9;
 

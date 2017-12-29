@@ -19,7 +19,7 @@ Q_DECLARE_FLAGS(ParserTypeFlags, ParserType);
 
 struct CrawlerOptions
 {
-	CustomUrl host;
+	Url host;
 	
 	int limitMaxUrlLength = int();
 

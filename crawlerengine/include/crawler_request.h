@@ -1,7 +1,7 @@
 #pragma once
 
 #include "page_parser_helpers.h"
-#include "custom_url.h"
+#include "url.h"
 
 namespace CrawlerEngine
 {
@@ -14,7 +14,7 @@ enum class DownloadRequestType
 
 struct CrawlerRequest
 {
-	CustomUrl url;
+	Url url;
 	DownloadRequestType requestType;
 
 	bool operator==(const CrawlerRequest& other) const

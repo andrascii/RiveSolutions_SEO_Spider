@@ -23,10 +23,9 @@ public:
 	TestsDownloader();
 	~TestsDownloader();
 
-	virtual void setPauseRange(int from, int to) override;
-	virtual void resetPauseRange() override;
-	virtual void setUserAgent(const QByteArray& userAgent) override;
-
+	Q_INVOKABLE virtual void setPauseRange(int from, int to) override;
+	Q_INVOKABLE virtual void resetPauseRange() override;
+	Q_INVOKABLE virtual void setUserAgent(const QByteArray& userAgent) override;
 	Q_INVOKABLE virtual void handleRequest(CrawlerEngine::RequesterSharedPtr requester) override;
 	Q_INVOKABLE virtual void stopRequestHandling(CrawlerEngine::RequesterSharedPtr requester) override;
 

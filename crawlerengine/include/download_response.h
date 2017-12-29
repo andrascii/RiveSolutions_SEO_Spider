@@ -16,8 +16,8 @@ struct DownloadResponse : public IResponse
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeDownload)
 
 	int statusCode;
-	CustomUrl url;
-	CustomUrl redirectUrl;
+	Url url;
+	Url redirectUrl;
 	QByteArray responseBody;
 	ResponseHeaders responseHeaders;
 };
