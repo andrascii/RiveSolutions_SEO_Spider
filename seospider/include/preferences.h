@@ -31,7 +31,6 @@ class Preferences : public QObject
 	Q_PROPERTY(bool followExternalNoFollow READ followExternalNoFollow WRITE setFollowExternalNoFollow NOTIFY followExternalNoFollowChanged);
 	Q_PROPERTY(bool checkSubdomains READ checkSubdomains WRITE setCheckSubdomains NOTIFY checkSubdomainsChanged);
 	Q_PROPERTY(bool checkCanonicals READ checkCanonicals WRITE setCheckCanonicals NOTIFY checkCanonicalsChanged);
-	Q_PROPERTY(bool followRobotsTxt READ followRobotsTxt WRITE setFollowRobotsTxt NOTIFY followRobotsTxtChanged);
 	Q_PROPERTY(bool crawlOutsideOfStartFolder READ crawlOutsideOfStartFolder WRITE setCrawlOutsideOfStartFolder NOTIFY crawlOutsideOfStartFolderChanged);
 
 	// Crawler pause-timer properties
@@ -47,6 +46,8 @@ class Preferences : public QObject
 	Q_PROPERTY(int maxLinksCountOnPage READ maxLinksCountOnPage WRITE setMaxLinksCountOnPage NOTIFY maxLinksCountOnPageChanged)
 
 	// User agent properties
+	Q_PROPERTY(bool followRobotsTxt READ followRobotsTxt WRITE setFollowRobotsTxt NOTIFY followRobotsTxtChanged);
+	Q_PROPERTY(QString robotsTxt READ robotsTxt WRITE setRobotsTxt NOTIFY robotsTxtChanged);
 	Q_PROPERTY(bool useCustomUserAgent READ useCustomUserAgent WRITE setUseCustomUserAgent NOTIFY useCustomUserAgentChanged);
 	Q_PROPERTY(bool useDesktopUserAgent READ useDesktopUserAgent WRITE setUseDesktopUserAgent NOTIFY useDesktopUserAgentChanged);
 	Q_PROPERTY(bool useMobileUserAgent READ useMobileUserAgent WRITE setUseMobileUserAgent NOTIFY useMobileUserAgentChanged);
@@ -141,10 +142,6 @@ public:
 	Q_SLOT void setCheckCanonicals(bool value);
 	Q_SIGNAL void checkCanonicalsChanged();
 
-	bool followRobotsTxt() const;
-	Q_SLOT void setFollowRobotsTxt(bool value);
-	Q_SIGNAL void followRobotsTxtChanged();
-
 	bool crawlOutsideOfStartFolder() const;
 	Q_SLOT void setCrawlOutsideOfStartFolder(bool value);
 	Q_SIGNAL void crawlOutsideOfStartFolderChanged();
@@ -160,6 +157,14 @@ public:
 	int toPauseTimer() const;
 	Q_SLOT void setToPauseTimer(int value);
 	Q_SIGNAL void toPauseTimerChanged();
+
+	bool followRobotsTxt() const;
+	Q_SLOT void setFollowRobotsTxt(bool value);
+	Q_SIGNAL void followRobotsTxtChanged();
+
+	QString robotsTxt() const;
+	Q_SLOT void setRobotsTxt(QString value);
+	Q_SIGNAL void robotsTxtChanged();
 
 	bool useCustomUserAgent() const;
 	Q_SLOT void setUseCustomUserAgent(bool value);
@@ -297,13 +302,14 @@ private:
 	bool m_followExternalNoFollow;
 	bool m_checkSubdomains;
 	bool m_checkCanonicals;
-	bool m_followRobotsTxt;
 	bool m_crawlOutsideOfStartFolder;
 
 	bool m_usePauseTimer;
 	int m_fromPauseTimer;
 	int m_toPauseTimer;
 
+	bool m_followRobotsTxt;
+	QString m_robotsTxt;
 	bool m_useCustomUserAgent;
 	bool m_useDesktopUserAgent;
 	bool m_useMobileUserAgent;
