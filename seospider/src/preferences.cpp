@@ -210,17 +210,6 @@ void Preferences::setCheckCanonicals(bool value)
 	emit checkCanonicalsChanged();
 }
 
-bool Preferences::followRobotsTxt() const
-{
-	return m_followRobotsTxt;
-}
-
-void Preferences::setFollowRobotsTxt(bool value)
-{
-	m_followRobotsTxt = value;
-	emit followRobotsTxtChanged();
-}
-
 bool Preferences::crawlOutsideOfStartFolder() const
 {
 	return m_crawlOutsideOfStartFolder;
@@ -268,6 +257,29 @@ void Preferences::setToPauseTimer(int value)
 bool Preferences::useCustomUserAgent() const
 {
 	return m_useCustomUserAgent;
+}
+
+bool Preferences::followRobotsTxt() const
+{
+	return m_followRobotsTxt;
+}
+
+void Preferences::setFollowRobotsTxt(bool value)
+{
+	m_followRobotsTxt = value;
+	emit followRobotsTxtChanged();
+}
+
+
+QString Preferences::robotsTxt() const
+{
+	return m_robotsTxt;
+}
+
+void Preferences::setRobotsTxt(QString value)
+{
+	m_robotsTxt = value;
+	emit robotsTxtChanged();
 }
 
 void Preferences::setUseCustomUserAgent(bool value)
