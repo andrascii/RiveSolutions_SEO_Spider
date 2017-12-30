@@ -32,6 +32,8 @@ enum class ReportDataKeys
 
 	// Signature
 	CompanyName,
+	CompanyEmail,
+	CompanyWebSite,
 
 
 	// Indexing and Page Scanning

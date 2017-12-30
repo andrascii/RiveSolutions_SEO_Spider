@@ -33,6 +33,8 @@ const QMap<ReportDataKeys, QByteArray> s_placeHolders
 
 	// Signature
 	{ ReportDataKeys::CompanyName, "company_name" },
+	{ ReportDataKeys::CompanyEmail, "company_email" },
+	{ ReportDataKeys::CompanyWebSite, "company_website" },
 
 	// Indexing and Page Scanning
 	{ ReportDataKeys::StatusCode4xx, "stat_code_4xx" },
@@ -242,6 +244,14 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 			}
 
 			return theApp->softwareBrandingOptions()->organizationName();
+		}
+		case ReportDataKeys::CompanyEmail:
+		{
+			return theApp->preferences()->companyEmail().trimmed();
+		}
+		case ReportDataKeys::CompanyWebSite:
+		{
+			return theApp->preferences()->companyWebSite().trimmed();
 		}
 
 		// Indexing and Page Scanning
