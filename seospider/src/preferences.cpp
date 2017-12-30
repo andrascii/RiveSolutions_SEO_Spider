@@ -462,6 +462,39 @@ void Preferences::setMinTitleLength(int value)
 	emit minTitleLengthChanged();
 }
 
+QString Preferences::companyName() const
+{
+	return m_companyName;
+}
+
+void Preferences::setCompanyName(QString value)
+{
+	m_companyName = value;
+	emit companyNameChanged();
+}
+
+QString Preferences::companyEmail() const
+{
+	return m_companyEmail;
+}
+
+void Preferences::setCompanyEmail(QString value)
+{
+	m_companyEmail = value;
+	emit companyEmailChanged();
+}
+
+QString Preferences::companyWebSite() const
+{
+	return m_companyWebSite;
+}
+
+void Preferences::setCompanyWebSite(QString value)
+{
+	m_companyWebSite = value;
+	emit companyWebSiteChanged();
+}
+
 const QUrl& Preferences::url() const
 {
 	return m_url;

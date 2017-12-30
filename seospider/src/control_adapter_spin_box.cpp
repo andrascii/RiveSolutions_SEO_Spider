@@ -12,7 +12,7 @@ void ControlAdapterQSpinBox::setControl(QObject* control)
 
 QVariant ControlAdapterQSpinBox::value() const
 {
-	return m_control->text();
+	return m_control->value();
 }
 
 void ControlAdapterQSpinBox::setValue(const QVariant& val)

@@ -1,6 +1,7 @@
 #include "report_data_provider.h"
 #include "helpers.h"
 #include "application.h"
+#include "preferences.h"
 #include "crawler.h"
 #include "ispecific_loader.h"
 #include "isequenced_storage.h"
@@ -235,6 +236,11 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		// Signature
 		case ReportDataKeys::CompanyName:
 		{
+			if (!theApp->preferences()->companyName().trimmed().isEmpty())
+			{
+				return theApp->preferences()->companyName().trimmed();
+			}
+
 			return theApp->softwareBrandingOptions()->organizationName();
 		}
 
