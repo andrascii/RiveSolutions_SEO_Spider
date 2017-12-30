@@ -50,7 +50,7 @@ TEST(MetaDescriptionTests, TooLongMetaDescription)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 too long meta desc pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::TooLongMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 too long meta desc pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("This is too long meta description"), pages[0]->metaDescription);
@@ -72,7 +72,7 @@ TEST(MetaDescriptionTests, TooShortMetaDescription)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::VeryShortMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 too short meta desc pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::TooShortMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 too short meta desc pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("This is too short meta description"), pages[0]->metaDescription);

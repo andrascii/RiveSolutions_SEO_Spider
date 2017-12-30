@@ -23,15 +23,15 @@ TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 
 		EXPECT_EQ(0, cl->storageItems(StorageType::EmptyTitleUrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::DuplicatedTitleUrlStorageType).size());
-		EXPECT_EQ(0, cl->storageItems(StorageType::VeryLongTitleUrlStorageType).size());
-		EXPECT_EQ(0, cl->storageItems(StorageType::VeryShortTitleUrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(StorageType::TooLongTitleUrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(StorageType::TooShortTitleUrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::DuplicatedH1TitleUrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::SeveralTitleUrlStorageType).size());
 
 		EXPECT_EQ(0, cl->storageItems(StorageType::EmptyMetaDescriptionUrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::DuplicatedMetaDescriptionUrlStorageType).size());
-		EXPECT_EQ(0, cl->storageItems(StorageType::VeryLongMetaDescriptionUrlStorageType).size());
-		EXPECT_EQ(0, cl->storageItems(StorageType::VeryShortMetaDescriptionUrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(StorageType::TooLongMetaDescriptionUrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(StorageType::TooShortMetaDescriptionUrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::SeveralMetaDescriptionUrlStorageType).size());
 
 		EXPECT_EQ(0, cl->storageItems(StorageType::EmptyMetaKeywordsUrlStorageType).size());
@@ -40,12 +40,12 @@ TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 
 		EXPECT_EQ(0, cl->storageItems(StorageType::MissingH1UrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::DuplicatedH1UrlStorageType).size());
-		EXPECT_EQ(0, cl->storageItems(StorageType::VeryLongH1UrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(StorageType::TooLongH1UrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::SeveralH1UrlStorageType).size());
 
 		EXPECT_EQ(0, cl->storageItems(StorageType::MissingH2UrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::DuplicatedH2UrlStorageType).size());
-		EXPECT_EQ(0, cl->storageItems(StorageType::VeryLongH2UrlStorageType).size());
+		EXPECT_EQ(0, cl->storageItems(StorageType::TooLongH2UrlStorageType).size());
 		EXPECT_EQ(0, cl->storageItems(StorageType::SeveralH2UrlStorageType).size());
 	};
 

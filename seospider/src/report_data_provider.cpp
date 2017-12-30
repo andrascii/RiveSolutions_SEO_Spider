@@ -428,11 +428,14 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesWithLargeAmountOfLinksImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::TooManyLinksOnPage)];;
 		}
 		case ReportDataKeys::PagesWithLargeAmountOfLinksCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::TooManyLinksOnPage);
+
+			return storage->size();
 		}
 		case ReportDataKeys::ExternalDofollowLinks:
 		{
@@ -452,12 +455,12 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongUrlAddressesImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::VeryLongUrlStorageType)];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::TooLongUrlStorageType)];
 		}
 		case ReportDataKeys::TooLongUrlAddressesCount:
 		{
 			const CrawlerEngine::ISequencedStorage* storage =
-				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::VeryLongUrlStorageType);
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::TooLongUrlStorageType);
 
 			return storage->size();
 		}
@@ -590,12 +593,12 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongTitlesImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::VeryLongTitleUrlStorageType)];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::TooLongTitleUrlStorageType)];
 		}
 		case ReportDataKeys::TooLongTitlesCount:
 		{
 			const CrawlerEngine::ISequencedStorage* storage =
-				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::VeryLongTitleUrlStorageType);
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::TooLongTitleUrlStorageType);
 
 			return storage->size();
 		}
@@ -635,12 +638,12 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLongMetaDescriptionsImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType)];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::TooLongMetaDescriptionUrlStorageType)];
 		}
 		case ReportDataKeys::TooLongMetaDescriptionsCount:
 		{
 			const CrawlerEngine::ISequencedStorage* storage =
-				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType);
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::TooLongMetaDescriptionUrlStorageType);
 
 			return storage->size();
 		}

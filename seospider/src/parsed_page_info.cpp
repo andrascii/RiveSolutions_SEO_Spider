@@ -42,6 +42,7 @@ QString ParsedPageInfo::itemTypeDescription(Column column)
 		{ ParsedPageInfo::Column::WordCountColumn, QObject::tr("Word Count") },
 		{ ParsedPageInfo::Column::PageHashColumn, QObject::tr("Page Hash") },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, QObject::tr("Image Size KB") },
+		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, QObject::tr("Links Count On This Page") },
 	};
 
 	checkColumnType(column);
@@ -94,6 +95,7 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::FirstH2LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::SecondH2LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, Common::Helpers::pointsToPixels(100) },
 	};
 
 	const int result = s_parsedPageColumnPrefferedSizes.value(column, -1);
@@ -375,9 +377,13 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column)
 		{
 			return &ParsedPageInfo::acceptPageHash;
 		}
-		case Column::ImageSizeKbColumn: 
+		case Column::ImageSizeKbColumn:
 		{
 			return &ParsedPageInfo::acceptImageSizeKb;
+		}
+		case Column::LinksOnThisPageCountColumn:
+		{
+			return &ParsedPageInfo::acceptLinksOnThisPageCount;
 		}
 		default:
 		{
@@ -562,6 +568,12 @@ QVariant ParsedPageInfo::acceptPageHash() const
 QVariant ParsedPageInfo::acceptImageSizeKb() const
 {
 	return m_parsedPage->pageSizeKilobytes;
+}
+
+
+QVariant ParsedPageInfo::acceptLinksOnThisPageCount() const
+{
+	return m_parsedPage->linksOnThisPage.size();
 }
 
 void ParsedPageInfo::checkColumnType(Column column)

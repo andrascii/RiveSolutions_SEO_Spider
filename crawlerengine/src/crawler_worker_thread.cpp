@@ -176,7 +176,6 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
-
 	std::for_each(parsedPage->allResourcesOnPage.begin(), parsedPage->allResourcesOnPage.end(), setLinkLoadAvailability);
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
@@ -193,7 +192,6 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 	};
 
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
-
 	std::for_each(blockedByRobotsTxtLinksIterator, linkList.end(), emitPageParsedForBlockedPages);
 	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
 }

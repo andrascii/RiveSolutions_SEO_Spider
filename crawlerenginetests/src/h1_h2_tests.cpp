@@ -185,7 +185,7 @@ TEST(H1AndH2Tests, TooLongH1)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::VeryLongH1UrlStorageType, 2, 10, "Waiting for 2 too long h1 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::TooLongH1UrlStorageType, 2, 10, "Waiting for 2 too long h1 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Too Long H1"), pages[0]->firstH1);
@@ -207,7 +207,7 @@ TEST(H1AndH2Tests, TooLongH2)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::VeryLongH2UrlStorageType, 2, 10, "Waiting for 2 too long h2 pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::TooLongH2UrlStorageType, 2, 10, "Waiting for 2 too long h2 pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Too Long H2"), pages[0]->firstH2);

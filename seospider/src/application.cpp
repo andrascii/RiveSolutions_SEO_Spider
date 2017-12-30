@@ -281,7 +281,7 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	options.followExternalNofollow = preferences()->followExternalNoFollow();
 	options.checkCanonicals = preferences()->checkCanonicals();
 	options.checkSubdomains = preferences()->checkSubdomains();
-	options.followRobotsTxtRules = theApp->preferences()->followRobotsTxt();
+	options.followRobotsTxtRules = preferences()->followRobotsTxt();
 	options.crawlOutsideOfStartFolder = preferences()->crawlOutsideOfStartFolder();
 
 	// robots.txt rules

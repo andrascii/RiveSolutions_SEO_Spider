@@ -101,7 +101,7 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		//
 		case StorageAdapterType::StorageAdapterTypeUpperCaseLinks:
 		case StorageAdapterType::StorageAdapterTypeNonAsciiLinks:
-		case StorageAdapterType::StorageAdapterTypeVeryLongLinks:
+		case StorageAdapterType::StorageAdapterTypeTooLongLinks:
 		case StorageAdapterType::StorageAdapterTypeBrokenLinks:
 		case StorageAdapterType::StorageAdapterTypeStatus4xx:
 		case StorageAdapterType::StorageAdapterTypeStatus5xx:
@@ -133,8 +133,8 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		//
 		case StorageAdapterType::StorageAdapterTypeEmptyTitles:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedTitles:
-		case StorageAdapterType::StorageAdapterTypeVeryLongTitles:
-		case StorageAdapterType::StorageAdapterTypeVeryShortTitles:
+		case StorageAdapterType::StorageAdapterTypeTooLongTitles:
+		case StorageAdapterType::StorageAdapterTypeTooShortTitles:
 		case StorageAdapterType::StorageAdapterTypeSeveralTitlesOnPage:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -165,8 +165,8 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		//
 		case StorageAdapterType::StorageAdapterTypeEmptyMetaDescriptions:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedMetaDescriptions:
-		case StorageAdapterType::StorageAdapterTypeVeryLongMetaDescriptions:
-		case StorageAdapterType::StorageAdapterTypeVeryShortMetaDescriptions:
+		case StorageAdapterType::StorageAdapterTypeTooLongMetaDescriptions:
+		case StorageAdapterType::StorageAdapterTypeTooShortMetaDescriptions:
 		case StorageAdapterType::StorageAdapterTypeSeveralMetaDescriptionsOnPage:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -201,7 +201,7 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		//
 		case StorageAdapterType::StorageAdapterTypeMissingH1s:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH1s:
-		case StorageAdapterType::StorageAdapterTypeVeryLongH1s:
+		case StorageAdapterType::StorageAdapterTypeTooLongH1s:
 		case StorageAdapterType::StorageAdapterTypeSeveralH1s:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -221,7 +221,7 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		//
 		case StorageAdapterType::StorageAdapterTypeMissingH2s:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH2s:
-		case StorageAdapterType::StorageAdapterTypeVeryLongH2s:
+		case StorageAdapterType::StorageAdapterTypeTooLongH2s:
 		case StorageAdapterType::StorageAdapterTypeSeveralH2s:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -241,11 +241,21 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		//
 		case StorageAdapterType::StorageAdapterTypeImagesOver100kb:
 		case StorageAdapterType::StorageAdapterTypeImageMissingAltText:
-		case StorageAdapterType::StorageAdapterTypeImagesVeryLongAltText:
+		case StorageAdapterType::StorageAdapterTypeImagesTooLongAltText:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::ImageSizeKbColumn
+			);
+
+			return;
+		}
+
+		case StorageAdapterType::StorageAdapterTypeImagesTooManyLinksOnPage:
+		{
+			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::LinksOnThisPageCountColumn
 			);
 
 			return;

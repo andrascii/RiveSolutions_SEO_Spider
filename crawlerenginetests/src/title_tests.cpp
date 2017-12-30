@@ -50,7 +50,7 @@ TEST(TitleTests, TooLongTitle)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(StorageType::VeryLongTitleUrlStorageType, 2, 10, "Waiting for 2 too long title pages");
+		auto pages = cl->waitForParsedPageReceived(StorageType::TooLongTitleUrlStorageType, 2, 10, "Waiting for 2 too long title pages");
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("This is too long title"), pages[0]->title);
 		EXPECT_EQ(QString("This is too long title"), pages[1]->title);
@@ -71,7 +71,7 @@ TEST(TitleTests, TooShortTitle)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(StorageType::VeryShortTitleUrlStorageType, 2, 10, "Waiting for 2 too short title pages");
+		auto pages = cl->waitForParsedPageReceived(StorageType::TooShortTitleUrlStorageType, 2, 10, "Waiting for 2 too short title pages");
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("This is too short title"), pages[0]->title);
 		EXPECT_EQ(QString("This is too short title"), pages[1]->title);
@@ -101,7 +101,7 @@ TEST(TitleTests, DuplicatedTitles)
 		EXPECT_EQ(QString("Duplicated Title"), pages[0]->title);
 		EXPECT_EQ(QString("Duplicated Title"), pages[1]->title);
 		cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
-		cl->waitForParsedPageReceived(StorageType::VeryShortTitleUrlStorageType, 2, 10, "Waiting for 2 too short title pages");
+		cl->waitForParsedPageReceived(StorageType::TooShortTitleUrlStorageType, 2, 10, "Waiting for 2 too short title pages");
 	};
 
 	env.initializeTest(testFunction);
