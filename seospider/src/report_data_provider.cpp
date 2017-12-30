@@ -175,7 +175,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		// report header
 		case ReportDataKeys::SiteShortImage:
 		{
-			return QPixmap();
+			return theApp->crawledSitePixmap();
 		}
 		case ReportDataKeys::SiteLink:
 		{
