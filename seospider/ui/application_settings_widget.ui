@@ -52,6 +52,9 @@
         <property name="currentRow">
          <number>-1</number>
         </property>
+        <property name="sortingEnabled">
+         <bool>false</bool>
+        </property>
        </widget>
        <widget class="QStackedWidget" name="stackedWidget"/>
       </widget>

@@ -210,17 +210,6 @@ void Preferences::setCheckCanonicals(bool value)
 	emit checkCanonicalsChanged();
 }
 
-bool Preferences::followRobotsTxt() const
-{
-	return m_followRobotsTxt;
-}
-
-void Preferences::setFollowRobotsTxt(bool value)
-{
-	m_followRobotsTxt = value;
-	emit followRobotsTxtChanged();
-}
-
 bool Preferences::crawlOutsideOfStartFolder() const
 {
 	return m_crawlOutsideOfStartFolder;
@@ -268,6 +257,29 @@ void Preferences::setToPauseTimer(int value)
 bool Preferences::useCustomUserAgent() const
 {
 	return m_useCustomUserAgent;
+}
+
+bool Preferences::followRobotsTxt() const
+{
+	return m_followRobotsTxt;
+}
+
+void Preferences::setFollowRobotsTxt(bool value)
+{
+	m_followRobotsTxt = value;
+	emit followRobotsTxtChanged();
+}
+
+
+QString Preferences::robotsTxt() const
+{
+	return m_robotsTxt;
+}
+
+void Preferences::setRobotsTxt(QString value)
+{
+	m_robotsTxt = value;
+	emit robotsTxtChanged();
 }
 
 void Preferences::setUseCustomUserAgent(bool value)
@@ -375,6 +387,16 @@ void Preferences::setMaxH1LengthChars(int value)
 	emit maxH1LengthCharsChanged();
 }
 
+int Preferences::maxLinksCountOnPage() const
+{
+	return m_maxLinksCountOnPage;
+}
+
+void Preferences::setMaxLinksCountOnPage(int value)
+{
+	m_maxLinksCountOnPage = value;
+}
+
 int Preferences::maxH2LengthChars() const
 {
 	return m_maxH2LengthChars;
@@ -450,6 +472,39 @@ void Preferences::setMinTitleLength(int value)
 {
 	m_minTitleLength = value;
 	emit minTitleLengthChanged();
+}
+
+QString Preferences::companyName() const
+{
+	return m_companyName;
+}
+
+void Preferences::setCompanyName(QString value)
+{
+	m_companyName = value;
+	emit companyNameChanged();
+}
+
+QString Preferences::companyEmail() const
+{
+	return m_companyEmail;
+}
+
+void Preferences::setCompanyEmail(QString value)
+{
+	m_companyEmail = value;
+	emit companyEmailChanged();
+}
+
+QString Preferences::companyWebSite() const
+{
+	return m_companyWebSite;
+}
+
+void Preferences::setCompanyWebSite(QString value)
+{
+	m_companyWebSite = value;
+	emit companyWebSiteChanged();
 }
 
 const QUrl& Preferences::url() const

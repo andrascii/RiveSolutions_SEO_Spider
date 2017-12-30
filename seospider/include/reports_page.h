@@ -7,6 +7,8 @@ namespace SeoSpider
 
 class ReportsPage : public QFrame
 {
+	Q_OBJECT
+
 public:
 	enum ReportType
 	{
@@ -28,6 +30,8 @@ private:
 	QByteArray reportMaketContent(ReportType reportType) const;
 
 	void changePlaceholderInContent(const QByteArray& placeholder, const QVariant& value, QByteArray& content) const;
+
+	Q_SLOT void updateContent();
 
 #ifndef PRODUCTION
 

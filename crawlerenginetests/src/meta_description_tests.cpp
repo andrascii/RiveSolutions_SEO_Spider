@@ -4,7 +4,7 @@ namespace CrawlerEngineTests
 TEST(MetaDescriptionTests, EmptyMetaDescription)
 {
 	// empty-meta.html -> empty-meta-2.html
-	TestEnvironment env(TestEnvironment::defaultOptions({ CustomUrl("http://meta-desc.com/empty-meta.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://meta-desc.com/empty-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -24,7 +24,7 @@ TEST(MetaDescriptionTests, EmptyMetaDescription)
 TEST(MetaDescriptionTests, NoMetaDescription)
 {
 	// no-meta.html -> no-meta-2.html
-	TestEnvironment env(TestEnvironment::defaultOptions({ CustomUrl("http://meta-desc.com/no-meta.html") }));
+	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://meta-desc.com/no-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -44,13 +44,13 @@ TEST(MetaDescriptionTests, NoMetaDescription)
 TEST(MetaDescriptionTests, TooLongMetaDescription)
 {
 	// too-long-meta.html -> too-long-meta-2.html
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-desc.com/too-long-meta.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/too-long-meta.html"));
 	options.maxDescriptionLength = 10;
 	TestEnvironment env( options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 too long meta desc pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::TooLongMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 too long meta desc pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("This is too long meta description"), pages[0]->metaDescription);
@@ -65,14 +65,14 @@ TEST(MetaDescriptionTests, TooLongMetaDescription)
 TEST(MetaDescriptionTests, TooShortMetaDescription)
 {
 	// too-short-meta.html -> too-short-meta-2.html
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-desc.com/too-short-meta.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/too-short-meta.html"));
 	options.minDescriptionLength = 50;
 	options.maxDescriptionLength = 100;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::VeryShortMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 too short meta desc pages");
+		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::TooShortMetaDescriptionUrlStorageType, 2, 10, "Waiting for 2 too short meta desc pages");
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("This is too short meta description"), pages[0]->metaDescription);
@@ -87,7 +87,7 @@ TEST(MetaDescriptionTests, TooShortMetaDescription)
 TEST(MetaDescriptionTests, DuplicatedMetaDescriptions)
 {
 	// duplicated-meta-1.html -> duplicated-meta-2.html
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-desc.com/duplicated-meta-1.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/duplicated-meta-1.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -108,7 +108,7 @@ TEST(MetaDescriptionTests, DoNotIncludeCanonicalDuplicatedTitles)
 {
 	// canonical-duplicated-desc.html -> canonical-duplicated-desc.html
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-desc.com/canonical-duplicated-desc.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/canonical-duplicated-desc.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -126,7 +126,7 @@ TEST(MetaDescriptionTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 {
 	// canonical-duplicated-desc-another.html -> canonical-desc-title.html -> canonical-duplicated-desc.html
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-desc.com/canonical-duplicated-desc-another.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/canonical-duplicated-desc-another.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -142,7 +142,7 @@ TEST(MetaDescriptionTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 
 TEST(MetaDescriptionTests, DoNotIncludeEveryPageInDuplicates)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(CustomUrl("http://meta-desc.com/single-page.html"));
+	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/single-page.html"));
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -160,7 +160,7 @@ TEST(MetaDescriptionTests, SeveralMetaDescriptions)
 {
 	// several-titles.html -> several-titles-2.html
 
-	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://meta-desc.com/several-meta.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://meta-desc.com/several-meta.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

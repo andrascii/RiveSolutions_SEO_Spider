@@ -12,6 +12,7 @@ Downloader::Downloader()
 	: QObject(nullptr)
 	, m_networkAccessor(new QNetworkAccessManager(this))
 	, m_randomIntervalRangeTimer(new Common::RandomIntervalRangeTimer(this))
+	, m_uniquenessChecker(createUniquenessChecker())
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
@@ -133,7 +134,7 @@ void Downloader::processReply(QNetworkReply* reply)
 		response->responseBody = reply->readAll();
 	}
 
-	const CustomUrl redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	const Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 
 	if (!redirectUrl.isEmpty())
 	{
@@ -184,8 +185,10 @@ void Downloader::load(RequesterSharedPtr requester)
 {
 	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
 
-	QNetworkReply* reply = nullptr;
+	ASSERT(!m_uniquenessChecker->hasRequest(request->requestInfo));
+	m_uniquenessChecker->registrateRequest(request->requestInfo);
 
+	QNetworkReply* reply = nullptr;
 	QNetworkRequest networkRequest(request->requestInfo.url);
 	networkRequest.setAttribute(QNetworkRequest::User, static_cast<int>(DownloadRequestType::RequestTypeGet));
 	networkRequest.setRawHeader("User-Agent", m_userAgent);

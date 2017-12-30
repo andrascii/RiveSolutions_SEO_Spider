@@ -1,7 +1,7 @@
 #pragma once
 
 #include "page_parser_helpers.h"
-#include "custom_url.h"
+#include "url.h"
 
 namespace CrawlerEngine
 {
@@ -14,7 +14,7 @@ enum class DownloadRequestType
 
 struct CrawlerRequest
 {
-	CustomUrl url;
+	Url url;
 	DownloadRequestType requestType;
 
 	bool operator==(const CrawlerRequest& other) const
@@ -26,6 +26,16 @@ struct CrawlerRequest
 	{
 		return lhs.url < rhs.url;
 	}
+};
+
+struct CrawlerRequestHasher
+{
+	size_t operator()(const CrawlerRequest& item) const noexcept
+	{
+		return hasher(item.url.toString().toStdString()) + static_cast<size_t>(item.requestType);
+	}
+
+	boost::hash<std::string> hasher;
 };
 
 bool operator<(const CrawlerRequest& lhs, const CrawlerRequest& rhs);

@@ -6,6 +6,7 @@
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
 #include "gumbo_parsing_helpers.h"
+#include "frames_detector_parser.h"
 
 namespace CrawlerEngine
 {
@@ -13,6 +14,7 @@ namespace CrawlerEngine
 HtmlResourcesParser::HtmlResourcesParser()
 {
 	addParser(std::make_shared<MetaParser>());
+	addParser(std::make_shared<FramesDetectorParser>());
 	addParser(std::make_shared<TitleParser>());
 	addParser(std::make_shared<HParser>());
 	addParser(std::make_shared<WordCountParser>());

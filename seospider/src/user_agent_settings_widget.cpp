@@ -42,18 +42,26 @@ bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)
 		m_ui.useCustomUserAgentCheckBox->toggle();
 	}
 
+	if (object == m_ui.label_2 && event->type() == QEvent::MouseButtonRelease)
+	{
+		m_ui.followRobotsTxtCheckBox->toggle();
+	}
+
 	return false;
 }
 
 void UserAgentSettingsWidget::init()
 {
 	m_ui.label->installEventFilter(this);
+	m_ui.label_2->installEventFilter(this);
 	loadUserAgentsFromFile(":/config/desktopUserAgents.cfg", m_ui.desktopUserAgentComboBox);
 	loadUserAgentsFromFile(":/config/mobileUserAgents.cfg", m_ui.mobileUserAgentComboBox);
+	loadUserAgentsFromFile(":/config/robotsTxt.cfg", m_ui.robotsTxtComboBox);
 
 	SettingsPage::init();
 
 	checkBoxStateChanged(m_ui.useCustomUserAgentCheckBox->isChecked());
+	m_ui.robotsTxtComboBox->setEnabled(m_ui.followRobotsTxtCheckBox->isChecked());
 }
 
 void UserAgentSettingsWidget::applyChanges() noexcept

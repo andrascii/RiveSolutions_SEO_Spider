@@ -18,7 +18,9 @@
 #include "ui_language_settings_widget.h"
 #include "ui_user_agent_settings_widget.h"
 #include "ui_crawler_pause_settings_widget.h"
+#include "ui_company_profile_settings_widget.h"
 #include "user_agent_settings_widget.h"
+#include "crawler_pause_settings_widget.h"
 
 namespace SeoSpider
 {
@@ -155,7 +157,8 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction, QIcon(QStringLiteral(":/images/limits-settings.png")), tr("Limit Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction, QIcon(QStringLiteral(":/images/proxy-settings.png")), tr("Proxy Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction, QIcon(QStringLiteral(":/images/user-agent.png")), tr("User Agent Settings"));
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction, QIcon(QStringLiteral(":/images/crawler-settings.png")), tr("Crawler Pause Timer Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction, QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Timer Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
@@ -186,6 +189,9 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerPauseTimerSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CrawlerPauseSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openCompanyProfileSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CompanyProfileSettingsWidget)); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -242,7 +248,8 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
 	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(":/images/user-agent.png"), TYPE_STRING(Ui_UserAgentSettingsWidget), new UserAgentSettingsWidget());
-	SettingsPageImpl<Ui_CrawlerPauseSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerPauseSettingsWidget));
+	SettingsPageImpl<Ui_CrawlerPauseSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-pause.png"), TYPE_STRING(Ui_CrawlerPauseSettingsWidget), new CrawlerPauseSettingsWidget());
+	SettingsPageImpl<Ui_CompanyProfileSettingsWidget>::registerSettingsPage(QIcon(":/images/company-profile.png"), TYPE_STRING(Ui_CompanyProfileSettingsWidget));
 }
 
 }

@@ -15,7 +15,7 @@ enum class StorageAdapterType
 
 	StorageAdapterTypeUpperCaseLinks = CrawlerEngine::StorageType::UpperCaseUrlStorageType,
 	StorageAdapterTypeNonAsciiLinks = CrawlerEngine::StorageType::NonAsciiCharacterUrlStorageType,
-	StorageAdapterTypeVeryLongLinks = CrawlerEngine::StorageType::VeryLongUrlStorageType,
+	StorageAdapterTypeTooLongLinks = CrawlerEngine::StorageType::TooLongUrlStorageType,
 	StorageAdapterTypeBrokenLinks = CrawlerEngine::StorageType::BrokenLinks,
 	StorageAdapterTypeStatus4xx = CrawlerEngine::StorageType::Status4xxStorageType,
 	StorageAdapterTypeStatus5xx = CrawlerEngine::StorageType::Status5xxStorageType,
@@ -24,15 +24,15 @@ enum class StorageAdapterType
 
 	StorageAdapterTypeEmptyTitles = CrawlerEngine::StorageType::EmptyTitleUrlStorageType,
 	StorageAdapterTypeDuplicatedTitles = CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType,
-	StorageAdapterTypeVeryLongTitles = CrawlerEngine::StorageType::VeryLongTitleUrlStorageType,
-	StorageAdapterTypeVeryShortTitles = CrawlerEngine::StorageType::VeryShortTitleUrlStorageType,
+	StorageAdapterTypeTooLongTitles = CrawlerEngine::StorageType::TooLongTitleUrlStorageType,
+	StorageAdapterTypeTooShortTitles = CrawlerEngine::StorageType::TooShortTitleUrlStorageType,
 	StorageAdapterTypeDuplicatedH1Titles = CrawlerEngine::StorageType::DuplicatedH1TitleUrlStorageType,
 	StorageAdapterTypeSeveralTitlesOnPage = CrawlerEngine::StorageType::SeveralTitleUrlStorageType,
 
 	StorageAdapterTypeEmptyMetaDescriptions = CrawlerEngine::StorageType::EmptyMetaDescriptionUrlStorageType,
 	StorageAdapterTypeDuplicatedMetaDescriptions = CrawlerEngine::StorageType::DuplicatedMetaDescriptionUrlStorageType,
-	StorageAdapterTypeVeryLongMetaDescriptions = CrawlerEngine::StorageType::VeryLongMetaDescriptionUrlStorageType,
-	StorageAdapterTypeVeryShortMetaDescriptions = CrawlerEngine::StorageType::VeryShortMetaDescriptionUrlStorageType,
+	StorageAdapterTypeTooLongMetaDescriptions = CrawlerEngine::StorageType::TooLongMetaDescriptionUrlStorageType,
+	StorageAdapterTypeTooShortMetaDescriptions = CrawlerEngine::StorageType::TooShortMetaDescriptionUrlStorageType,
 	StorageAdapterTypeSeveralMetaDescriptionsOnPage = CrawlerEngine::StorageType::SeveralMetaDescriptionUrlStorageType,
 
 	StorageAdapterTypeEmptyMetaKeywords = CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType,
@@ -41,17 +41,23 @@ enum class StorageAdapterType
 
 	StorageAdapterTypeMissingH1s = CrawlerEngine::StorageType::MissingH1UrlStorageType,
 	StorageAdapterTypeDuplicatedH1s = CrawlerEngine::StorageType::DuplicatedH1UrlStorageType,
-	StorageAdapterTypeVeryLongH1s = CrawlerEngine::StorageType::VeryLongH1UrlStorageType,
+	StorageAdapterTypeTooLongH1s = CrawlerEngine::StorageType::TooLongH1UrlStorageType,
 	StorageAdapterTypeSeveralH1s = CrawlerEngine::StorageType::SeveralH1UrlStorageType,
 
 	StorageAdapterTypeMissingH2s = CrawlerEngine::StorageType::MissingH2UrlStorageType,
 	StorageAdapterTypeDuplicatedH2s = CrawlerEngine::StorageType::DuplicatedH2UrlStorageType,
-	StorageAdapterTypeVeryLongH2s = CrawlerEngine::StorageType::VeryLongH2UrlStorageType,
+	StorageAdapterTypeTooLongH2s = CrawlerEngine::StorageType::TooLongH2UrlStorageType,
 	StorageAdapterTypeSeveralH2s = CrawlerEngine::StorageType::SeveralH2UrlStorageType,
 
+	// images enum mappers
 	StorageAdapterTypeImagesOver100kb = CrawlerEngine::StorageType::Over100kbImageStorageType,
 	StorageAdapterTypeImageMissingAltText = CrawlerEngine::StorageType::MissingAltTextImageStorageType,
-	StorageAdapterTypeImagesVeryLongAltText = CrawlerEngine::StorageType::VeryLongAltTextImageStorageType,
+	StorageAdapterTypeImagesTooLongAltText = CrawlerEngine::StorageType::TooLongAltTextImageStorageType,
+
+	// page problems enum mappers
+	StorageAdapterTypeTooManyLinksOnPage = CrawlerEngine::StorageType::TooManyLinksOnPageStorageType,
+	StorageAdapterTypeContainsMetaRefreshTag = CrawlerEngine::StorageType::ContainsMetaRefreshTagStorageType,
+	StorageAdapterTypeContainsFrames = CrawlerEngine::StorageType::ContainsFramesStorageType,
 
 	// internal resources enum mappers
 	StorageAdapterTypeHtmlResources = CrawlerEngine::StorageType::HtmlResourcesStorageType,

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>447</width>
-    <height>379</height>
+    <width>469</width>
+    <height>335</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,7 +70,7 @@
         <item>
          <widget class="QLabel" name="headerName">
           <property name="text">
-           <string>Crawler pause timer setiings</string>
+           <string>Crawler pause timer settings</string>
           </property>
          </widget>
         </item>
@@ -94,7 +94,10 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -107,13 +110,93 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <property name="horizontalSpacing">
-       <number>6</number>
-      </property>
-      <property name="verticalSpacing">
-       <number>0</number>
-      </property>
-      <item row="2" column="1">
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="horizontalSpacing">
+         <number>0</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>6</number>
+        </property>
+        <item row="0" column="4">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1" colspan="2">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>From:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="usePauseTimerCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">usePauseTimer</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="3">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Use pause timer</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>To:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3" colspan="2">
+         <widget class="QSpinBox" name="fromPauseTimerSpinBox">
+          <property name="suffix">
+           <string>ms</string>
+          </property>
+          <property name="prefix">
+           <string/>
+          </property>
+          <property name="maximum">
+           <number>30000</number>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">fromPauseTimer</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3" colspan="2">
+         <widget class="QSpinBox" name="toPauseTimerSpinBox">
+          <property name="suffix">
+           <string>ms</string>
+          </property>
+          <property name="maximum">
+           <number>30000</number>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">toPauseTimer</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -126,106 +209,6 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="usePauseTimerCheckBox">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <property name="controlKey" stdset="0">
-         <string notr="true">usePauseTimer</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Use pause timer</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="spacing">
-         <number>12</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>From:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="fromPauseTimerSpinBox">
-          <property name="suffix">
-           <string>ms</string>
-          </property>
-          <property name="prefix">
-           <string/>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">fromPauseTimer</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="2">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="spacing">
-         <number>12</number>
-        </property>
-        <property name="leftMargin">
-         <number>6</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>To:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="toPauseTimerSpinBox">
-          <property name="suffix">
-           <string>ms</string>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">toPauseTimer</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
      </layout>
     </widget>
    </item>
@@ -233,22 +216,6 @@
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>usePauseTimerCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>fromPauseTimerSpinBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>7</x>
-     <y>43</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>75</x>
-     <y>60</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>usePauseTimerCheckBox</sender>
    <signal>toggled(bool)</signal>
@@ -261,6 +228,22 @@
     </hint>
     <hint type="destinationlabel">
      <x>279</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>usePauseTimerCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fromPauseTimerSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>7</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
      <y>60</y>
     </hint>
    </hints>

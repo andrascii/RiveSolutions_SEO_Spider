@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ispecific_loader.h"
-#include "custom_url.h"
+#include "url.h"
 #include "requester_wrapper.h"
 
 namespace CrawlerEngine
@@ -18,7 +18,7 @@ class XmlSitemapLoader : public QObject, public ISpecificLoader
 public:
 	XmlSitemapLoader(RobotsTxtLoader* robotsTxtLoader, QObject* parent = nullptr);
 
-	virtual void load(const CustomUrl& host) override;
+	virtual void load(const Url& host) override;
 	virtual const QByteArray& content() const noexcept override;
 	virtual bool isReady() const noexcept override;
 	virtual bool isValid() const noexcept override;
@@ -37,7 +37,7 @@ private:
 	bool m_isReady;
 	bool m_isValid;
 	QByteArray m_content;
-	CustomUrl m_currentLoadedUrl;
+	Url m_currentLoadedUrl;
 	RequesterWrapper m_downloadRequester;
 	RobotsTxtLoader* m_robotsTxtLoader;
 };

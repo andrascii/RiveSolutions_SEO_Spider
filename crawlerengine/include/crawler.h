@@ -67,6 +67,8 @@ signals:
 	void stateChanged(int state);
 	void onAboutClearData();
 	void crawlerOptionsChanged(CrawlerOptions options);
+	void serializationProcessDone();
+	void deserializationProcessDone();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);
@@ -106,22 +108,17 @@ private:
 
 	ISpecificLoader* m_robotsTxtLoader;
 	ISpecificLoader* m_xmlSitemapLoader;
-
 	UniqueLinkStore* m_uniqueLinkStore;
 	CrawlerOptions m_options;
-
 	unsigned int m_theradCount;
-	
 	QTimer* m_crawlingStateTimer;
 	QTimer* m_serializatonRedyStateCheckerTimer;
 	std::vector<CrawlerWorkerThread*> m_workers;
 	State m_state;
 	State m_prevState;
 	QString m_fileName;
-
 	RequesterWrapper m_serializationRequester;
 	RequesterWrapper m_deSerializationRequester;
-
 	IDownloader* m_downloader;
 };
 

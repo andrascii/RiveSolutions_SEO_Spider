@@ -25,6 +25,8 @@ Qt::ItemFlags PageModel::flags(const QModelIndex& index) const
 
 void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 {
+	DEBUG_ASSERT(storageAdapter->columnCount());
+
 	IStorageAdapter* oldStorageAdapter = m_storageAdapter;
 
 	if (m_storageAdapter == storageAdapter)

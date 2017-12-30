@@ -16,9 +16,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 
 	switch (type)
 	{
-		//
 		// Url problems
-		//
 		case StorageType::UpperCaseUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
@@ -27,7 +25,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
-		case StorageType::VeryLongUrlStorageType:
+		case StorageType::TooLongUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
 		}
@@ -52,9 +50,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelInfo;
 		}
 
-		//
 		// Title problems
-		//
 		case StorageType::EmptyTitleUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
@@ -63,11 +59,11 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 		{
 			return !storageSize ? LevelNotError : LevelError;
 		}
-		case StorageType::VeryLongTitleUrlStorageType:
+		case StorageType::TooLongTitleUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
-		case StorageType::VeryShortTitleUrlStorageType:
+		case StorageType::TooShortTitleUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
@@ -80,9 +76,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelError;
 		}
 
-		//
 		// Meta description problems
-		//
 		case StorageType::EmptyMetaDescriptionUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
@@ -91,11 +85,11 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 		{
 			return !storageSize ? LevelNotError : LevelError;
 		}
-		case StorageType::VeryLongMetaDescriptionUrlStorageType:
+		case StorageType::TooLongMetaDescriptionUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
-		case StorageType::VeryShortMetaDescriptionUrlStorageType:
+		case StorageType::TooShortMetaDescriptionUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
@@ -104,9 +98,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelError;
 		}
 
-		//
 		// Meta keywords problems
-		//
 		case StorageType::EmptyMetaKeywordsUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
@@ -120,9 +112,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelError;
 		}
 
-		//
 		// H1 problems
-		//
 		case StorageType::MissingH1UrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
@@ -131,7 +121,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 		{
 			return !storageSize ? LevelNotError : LevelError;
 		}
-		case StorageType::VeryLongH1UrlStorageType:
+		case StorageType::TooLongH1UrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
 		}
@@ -140,9 +130,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
 
-		//
 		// H2 problems
-		//
 		case StorageType::MissingH2UrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
@@ -151,7 +139,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 		{
 			return !storageSize ? LevelNotError : LevelError;
 		}
-		case StorageType::VeryLongH2UrlStorageType:
+		case StorageType::TooLongH2UrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
 		}
@@ -160,9 +148,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
 
-		//
 		// Images problems
-		//
 		case StorageType::Over100kbImageStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
@@ -171,9 +157,23 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
 		}
-		case StorageType::VeryLongAltTextImageStorageType:
+		case StorageType::TooLongAltTextImageStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
+		}
+
+		// page problems
+		case StorageType::TooManyLinksOnPageStorageType:
+		{
+			return !storageSize ? LevelNotError : LevelWarning;
+		}
+		case StorageType::ContainsMetaRefreshTagStorageType:
+		{
+			return !storageSize ? LevelNotError : LevelWarning;
+		}
+		case StorageType::ContainsFramesStorageType:
+		{
+			return !storageSize ? LevelNotError : LevelWarning;
 		}
 	}
 
@@ -186,15 +186,15 @@ int ErrorCategory::infoCount() noexcept
 	const SequencedDataCollection* sequencedDataCollection = Crawler::instance().sequencedDataCollection();
 
 	const int infoCounter =
-		sequencedDataCollection->storage(StorageType::VeryLongUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::TooLongUrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::Status301StorageType)->size() +
 		sequencedDataCollection->storage(StorageType::MissingH1UrlStorageType)->size() +
-		sequencedDataCollection->storage(StorageType::VeryLongH1UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::TooLongH1UrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::MissingH2UrlStorageType)->size() +
-		sequencedDataCollection->storage(StorageType::VeryLongH2UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::TooLongH2UrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::Over100kbImageStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::MissingAltTextImageStorageType)->size() +
-		sequencedDataCollection->storage(StorageType::VeryLongAltTextImageStorageType)->size();
+		sequencedDataCollection->storage(StorageType::TooLongAltTextImageStorageType)->size();
 
 	return infoCounter;
 }
@@ -207,11 +207,11 @@ int ErrorCategory::warningCount() noexcept
 		sequencedDataCollection->storage(StorageType::UpperCaseUrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::NonAsciiCharacterUrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::EmptyTitleUrlStorageType)->size() +
-		sequencedDataCollection->storage(StorageType::VeryLongTitleUrlStorageType)->size() +
-		sequencedDataCollection->storage(StorageType::VeryShortTitleUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::TooLongTitleUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::TooShortTitleUrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::EmptyMetaDescriptionUrlStorageType)->size() +
-		sequencedDataCollection->storage(StorageType::VeryLongMetaDescriptionUrlStorageType)->size() +
-		sequencedDataCollection->storage(StorageType::VeryShortMetaDescriptionUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::TooLongMetaDescriptionUrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::TooShortMetaDescriptionUrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::EmptyMetaKeywordsUrlStorageType)->size() + 
 		sequencedDataCollection->storage(StorageType::SeveralH1UrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::SeveralH2UrlStorageType)->size();

@@ -1,5 +1,7 @@
 #include "seo_spider_service_api_impl.h"
 #include "logger.h"
+#include "iipc_signaled_object.h"
+#include "ipc_signaled_object_creator.h"
 
 namespace
 {
@@ -79,12 +81,13 @@ void SeoSpiderServiceApiImpl::init() noexcept
 	}
 
 	const boost::uuids::uuid uuid = boost::uuids::random_generator()();
-
 	const std::wstring crashHandlerEventName = boost::lexical_cast<std::wstring>(uuid);
-
 	std::wstring commandLine = L"seospiderservice.exe " + crashHandlerEventName + L" " + std::to_wstring(GetCurrentProcessId());
 
-	m_crashEventHandle = CreateEventW(nullptr, TRUE, FALSE, crashHandlerEventName.c_str());
+	m_crashEventSignaledObject = Common::createSignaledObjectInstance();
+	const bool creationResult = m_crashEventSignaledObject->create(crashHandlerEventName);
+
+	ASSERT(creationResult);
 
 	m_initialized = CreateProcessW(
 		NULL,
@@ -103,7 +106,6 @@ void SeoSpiderServiceApiImpl::init() noexcept
 	{
 		CloseHandle(m_processInfo.hThread);
 		CloseHandle(m_processInfo.hProcess);
-		CloseHandle(m_crashEventHandle);
 	}
 }
 
@@ -113,18 +115,13 @@ void SeoSpiderServiceApiImpl::free() const noexcept
 	{
 		return;
 	}
-
-	CloseHandle(m_crashEventHandle);
 }
 
 void SeoSpiderServiceApiImpl::setProcessSignaledState() const noexcept
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
-
 	Logger::instance()->flush();
-
-	SetEvent(m_crashEventHandle);
-
+	m_crashEventSignaledObject->setSignaledState();
 	Sleep(INFINITE);
 }
 

@@ -3,7 +3,7 @@ namespace CrawlerEngineTests
 	
 TEST(MetaRobotsTests, TestSeveralTags)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://metarobots.com/index.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://metarobots.com/index.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -38,7 +38,7 @@ TEST(MetaRobotsTests, TestSeveralTags)
 
 TEST(MetaRobotsTests, TestXRobotsTag)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(CustomUrl("http://metarobots.com/x-robots-tag.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://metarobots.com/x-robots-tag.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

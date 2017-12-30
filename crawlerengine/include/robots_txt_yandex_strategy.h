@@ -11,7 +11,7 @@ namespace CrawlerEngine
 class RobotsTxtYandexStrategy : public RobotsTxtBaseStrategy
 {
 public:
-	virtual CustomUrl cleanUrl(const CustomUrl& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const override;
+	virtual Url cleanUrl(const Url& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const override;
 	virtual bool isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const override;
 };
 

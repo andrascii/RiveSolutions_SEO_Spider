@@ -1,5 +1,6 @@
 #include "reports_page.h"
 #include "application.h"
+#include "preferences.h"
 #include "crawler.h"
 
 namespace SeoSpider
@@ -16,8 +17,10 @@ ReportsPage::ReportsPage(QWidget* parent)
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->addWidget(m_webEngineView);
 	layout->setMargin(0);
-
+		
 	setReportType(ReportTypeBrief);
+
+	VERIFY(connect(theApp->preferences(), &Preferences::companyNameChanged, this, &ReportsPage::updateContent));
 }
 
 void ReportsPage::setReportType(ReportType reportType)
@@ -164,6 +167,11 @@ void ReportsPage::changePlaceholderInContent(const QByteArray& placeholder, cons
 			DEBUG_ASSERT(!"Unexpected QVariant type");
 		}
 	}
+}
+
+void ReportsPage::updateContent()
+{
+	setReportType(m_reportType);
 }
 
 #ifndef PRODUCTION

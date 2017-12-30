@@ -39,9 +39,12 @@
 		<file>images/report-normal.png</file>
 		<file>images/report-active.png</file>
 		<file>images/user-agent.png</file>
+		<file>images/crawler-pause.png</file>
+		<file>images/company-profile.png</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>
+		<file>config/robotsTxt.cfg</file>
 		<file>translations/translate_ru_RU.qm</file>
 		<file>reportmaket/brief_report_maket.html</file>
 		<file>reportmaket/maket_style.css</file>

@@ -71,9 +71,7 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 			return;
 		}
 		
-		//
 		// Resources columns
-		//
 		case StorageAdapterType::StorageAdapterTypeImageResources:
 		case StorageAdapterType::StorageAdapterTypeExternalImageResources:
 		case StorageAdapterType::StorageAdapterTypeJavaScriptResources:
@@ -96,12 +94,10 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 			return;
 		}
 
-		//
 		// Links available columns
-		//
 		case StorageAdapterType::StorageAdapterTypeUpperCaseLinks:
 		case StorageAdapterType::StorageAdapterTypeNonAsciiLinks:
-		case StorageAdapterType::StorageAdapterTypeVeryLongLinks:
+		case StorageAdapterType::StorageAdapterTypeTooLongLinks:
 		case StorageAdapterType::StorageAdapterTypeBrokenLinks:
 		case StorageAdapterType::StorageAdapterTypeStatus4xx:
 		case StorageAdapterType::StorageAdapterTypeStatus5xx:
@@ -128,13 +124,11 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 			return;
 		}
 
-		//
 		// Title available columns
-		//
 		case StorageAdapterType::StorageAdapterTypeEmptyTitles:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedTitles:
-		case StorageAdapterType::StorageAdapterTypeVeryLongTitles:
-		case StorageAdapterType::StorageAdapterTypeVeryShortTitles:
+		case StorageAdapterType::StorageAdapterTypeTooLongTitles:
+		case StorageAdapterType::StorageAdapterTypeTooShortTitles:
 		case StorageAdapterType::StorageAdapterTypeSeveralTitlesOnPage:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -160,13 +154,11 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 			return;
 		}
 
-		//
 		// Meta description available columns
-		//
 		case StorageAdapterType::StorageAdapterTypeEmptyMetaDescriptions:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedMetaDescriptions:
-		case StorageAdapterType::StorageAdapterTypeVeryLongMetaDescriptions:
-		case StorageAdapterType::StorageAdapterTypeVeryShortMetaDescriptions:
+		case StorageAdapterType::StorageAdapterTypeTooLongMetaDescriptions:
+		case StorageAdapterType::StorageAdapterTypeTooShortMetaDescriptions:
 		case StorageAdapterType::StorageAdapterTypeSeveralMetaDescriptionsOnPage:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -179,9 +171,7 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 			return;
 		}
 
-		//
 		// Meta keywords available columns
-		// 
 		case StorageAdapterType::StorageAdapterTypeEmptyMetaKeywords:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedMetaKeywords:
 		case StorageAdapterType::StorageAdapterTypeSeveralMetaKeywordsOnPage:
@@ -196,12 +186,10 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 			return;
 		}
 
-		//
 		// H1 available columns
-		//
 		case StorageAdapterType::StorageAdapterTypeMissingH1s:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH1s:
-		case StorageAdapterType::StorageAdapterTypeVeryLongH1s:
+		case StorageAdapterType::StorageAdapterTypeTooLongH1s:
 		case StorageAdapterType::StorageAdapterTypeSeveralH1s:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -216,12 +204,10 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 			return;
 		}
 
-		//
 		// H2 available columns
-		//
 		case StorageAdapterType::StorageAdapterTypeMissingH2s:
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH2s:
-		case StorageAdapterType::StorageAdapterTypeVeryLongH2s:
+		case StorageAdapterType::StorageAdapterTypeTooLongH2s:
 		case StorageAdapterType::StorageAdapterTypeSeveralH2s:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
@@ -236,16 +222,45 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 			return;
 		}
 
-		//
 		// Images available columns
-		//
 		case StorageAdapterType::StorageAdapterTypeImagesOver100kb:
 		case StorageAdapterType::StorageAdapterTypeImageMissingAltText:
-		case StorageAdapterType::StorageAdapterTypeImagesVeryLongAltText:
+		case StorageAdapterType::StorageAdapterTypeImagesTooLongAltText:
 		{
 			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::ImageSizeKbColumn
+			);
+
+			return;
+		}
+
+		// page problems
+		case StorageAdapterType::StorageAdapterTypeTooManyLinksOnPage:
+		{
+			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::UrlLengthColumn
+				<< ParsedPageInfo::Column::LinksOnThisPageCountColumn
+			);
+
+			return;
+		}
+		case StorageAdapterType::StorageAdapterTypeContainsMetaRefreshTag:
+		{
+			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::UrlLengthColumn
+				<< ParsedPageInfo::Column::MetaRefreshColumn
+			);
+
+			return;
+		}
+		case StorageAdapterType::StorageAdapterTypeContainsFrames:
+		{
+			storageAdapter->setAvailableColumns(QList<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::UrlLengthColumn
 			);
 
 			return;

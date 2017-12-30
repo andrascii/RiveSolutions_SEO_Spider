@@ -139,13 +139,13 @@ void ModelController::addParsedPages(std::vector<ParsedPagePtr> incomingPages) n
 
 void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 {
-	const CustomUrl url = incomingPage->url;
+	const Url url = incomingPage->url;
 	const QString urlStr = url.toString();
 	data()->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
 	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
 	calculatePageLevel(incomingPage);
 
-	if (url.host() != m_crawlerOptions.host.host()) // incomingPage->isThisExternalPage ???
+	if (url.host() != m_crawlerOptions.host.host())
 	{
 		data()->addParsedPage(incomingPage, StorageType::ExternalUrlStorageType);
 	}
@@ -162,10 +162,26 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 
 	if (urlStr.size() > m_crawlerOptions.limitMaxUrlLength)
 	{
-		data()->addParsedPage(incomingPage, StorageType::VeryLongUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::TooLongUrlStorageType);
+	}
+
+	if (incomingPage->linksOnThisPage.size() > m_crawlerOptions.maxLinksCountOnPage)
+	{
+		data()->addParsedPage(incomingPage, StorageType::TooManyLinksOnPageStorageType);
+	}
+
+	if (incomingPage->hasMetaRefreshTag)
+	{
+		data()->addParsedPage(incomingPage, StorageType::ContainsMetaRefreshTagStorageType);
+	}
+
+	if (incomingPage->hasFrames)
+	{
+		data()->addParsedPage(incomingPage, StorageType::ContainsFramesStorageType);
 	}
 
 	bool hasNonAscii = false;
+
 	for (int i = 0; i < urlStr.size(); ++i)
 	{
 		if (urlStr.at(i).unicode() > 127)
@@ -200,11 +216,11 @@ void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage)
 	}
 	else if (title.size() > m_crawlerOptions.maxTitleLength && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::VeryLongTitleUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::TooLongTitleUrlStorageType);
 	}
 	else if (title.size() < m_crawlerOptions.minTitleLength && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::VeryShortTitleUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::TooShortTitleUrlStorageType);
 	}
 
 	if (!title.isEmpty() && successfulResponseCode)
@@ -241,11 +257,11 @@ void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPa
 	}
 	else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::VeryLongMetaDescriptionUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::TooLongMetaDescriptionUrlStorageType);
 	}
 	else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::VeryShortMetaDescriptionUrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::TooShortMetaDescriptionUrlStorageType);
 	}
 
 	if (metaDescriptionLength > 0 && successfulResponseCode)
@@ -311,7 +327,7 @@ void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage)
 	}
 	else if (h1Length > m_crawlerOptions.maxH1LengthChars)
 	{
-		data()->addParsedPage(incomingPage, StorageType::VeryLongH1UrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::TooLongH1UrlStorageType);
 	}
 
 	if (h1Length > 0)
@@ -348,7 +364,7 @@ void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage)
 	}
 	else if (h2Length > m_crawlerOptions.maxH2LengthChars)
 	{
-		data()->addParsedPage(incomingPage, StorageType::VeryLongH2UrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::TooLongH2UrlStorageType);
 	}
 
 	if (h2Length > 0 && incomingPage->hasSeveralEqualH2Tags)
@@ -406,9 +422,9 @@ void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool c
 			const int altLength = linkToThisImage.altOrTitle.size();
 
 			if (altLength > m_crawlerOptions.maxImageAltTextChars && 
-				!data()->isParsedPageExists(incomingPage, StorageType::VeryLongAltTextImageStorageType))
+				!data()->isParsedPageExists(incomingPage, StorageType::TooLongAltTextImageStorageType))
 			{
-				data()->addParsedPage(incomingPage, StorageType::VeryLongAltTextImageStorageType);
+				data()->addParsedPage(incomingPage, StorageType::TooLongAltTextImageStorageType);
 			}
 
 			if (altLength == 0 && !data()->isParsedPageExists(incomingPage, StorageType::MissingAltTextImageStorageType))

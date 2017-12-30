@@ -117,15 +117,15 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 
 	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
 
-	m_uniqueLinkStore->saveLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->addLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
 
 	if (!parsedPage->redirectedUrl.isEmpty())
 	{
-		m_uniqueLinkStore->saveUrlList(std::vector<CustomUrl>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
+		m_uniqueLinkStore->addUrlList(std::vector<Url>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
 	}
 
-	std::vector<CustomUrl> resourcesHeadUrlList;
-	std::vector<CustomUrl> resourcesGetUrlList;
+	std::vector<Url> resourcesHeadUrlList;
+	std::vector<Url> resourcesGetUrlList;
 
 	for (const RawResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
@@ -143,8 +143,8 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 		}
 	}
 
-	m_uniqueLinkStore->saveUrlList(resourcesGetUrlList, DownloadRequestType::RequestTypeGet);
-	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, DownloadRequestType::RequestTypeHead);
+	m_uniqueLinkStore->addUrlList(resourcesGetUrlList, DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->addUrlList(resourcesHeadUrlList, DownloadRequestType::RequestTypeHead);
 }
 
 void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
@@ -176,7 +176,6 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
-
 	std::for_each(parsedPage->allResourcesOnPage.begin(), parsedPage->allResourcesOnPage.end(), setLinkLoadAvailability);
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
@@ -193,7 +192,6 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 	};
 
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
-
 	std::for_each(blockedByRobotsTxtLinksIterator, linkList.end(), emitPageParsedForBlockedPages);
 	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
 }

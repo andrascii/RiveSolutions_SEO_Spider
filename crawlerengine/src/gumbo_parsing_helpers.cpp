@@ -230,7 +230,7 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 		GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
 		QString hrefVal = href->value;
 
-		return PageParserHelpers::isHttpOrHttpsScheme(CustomUrl(hrefVal));
+		return PageParserHelpers::isHttpOrHttpsScheme(Url(hrefVal));
 	};
 
 	const auto res = [](const GumboNode* node)
@@ -248,7 +248,7 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 		const QString altOrTitle(nodeText(node));
 		const bool dataResource = QByteArray(href->value).startsWith("data:");
 
-		return LinkInfo{ CustomUrl(href->value), linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA };
+		return LinkInfo{ Url(href->value), linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA };
 	};
 
 	std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);
@@ -369,7 +369,7 @@ LinkInfo GumboParsingHelpers::getLinkRelUrl(const GumboNode* node, const char* r
 		const LinkParameter linkParam = LinkParameter::DofollowParameter;
 		const bool dataResource = QByteArray(href->value).startsWith("data:");
 
-		return LinkInfo{ CustomUrl(href->value), linkParam, QString(), dataResource, source };
+		return LinkInfo{ Url(href->value), linkParam, QString(), dataResource, source };
 	};
 
 	std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);
@@ -379,7 +379,7 @@ LinkInfo GumboParsingHelpers::getLinkRelUrl(const GumboNode* node, const char* r
 		return result[0];
 	}
 
-	return LinkInfo{ CustomUrl(), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceInvalid };
+	return LinkInfo{ Url(), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceInvalid };
 }
 
 }

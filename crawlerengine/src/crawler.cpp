@@ -121,9 +121,7 @@ CrawlerEngine::Crawler::State Crawler::state() const noexcept
 void Crawler::startCrawling(const CrawlerOptions& options)
 {
 	m_options = options;
-
 	m_state = StateWorking;
-
 	initializeCrawlingSession();
 
 	emit stateChanged(m_state);
@@ -269,6 +267,8 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	}
 
 	m_serializationRequester.reset();
+
+	emit serializationProcessDone();
 }
 
 void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse& response)
@@ -332,6 +332,8 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	emit stateChanged(m_state);
 
 	m_deSerializationRequester.reset();
+
+	emit deserializationProcessDone();
 }
 
 void Crawler::onSerializationReadyToBeStarted()

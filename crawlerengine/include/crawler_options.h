@@ -19,9 +19,13 @@ Q_DECLARE_FLAGS(ParserTypeFlags, ParserType);
 
 struct CrawlerOptions
 {
-	CustomUrl host;
+	Url host;
 	
 	int limitMaxUrlLength = int();
+	int limitSearchTotal = int();
+	int limitTimeout = int();
+	int maxRedirectsToFollow = int();
+	int maxLinksCountOnPage = int();
 
 	// preferences
 	int minTitleLength = int();

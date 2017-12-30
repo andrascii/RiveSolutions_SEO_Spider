@@ -99,9 +99,9 @@ void PageDataCollector::applyOptions()
 	}
 }
 
-CustomUrl PageDataCollector::resolveRedirectUrl(const DownloadResponse& response)
+Url PageDataCollector::resolveRedirectUrl(const DownloadResponse& response)
 {
-	CustomUrl redirectUrl;
+	Url redirectUrl;
 
 	if (response.redirectUrl.isEmpty() || !response.redirectUrl.isRelative())
 	{
@@ -118,15 +118,10 @@ CustomUrl PageDataCollector::resolveRedirectUrl(const DownloadResponse& response
 void PageDataCollector::collectReplyData(const DownloadResponse& response, ParsedPagePtr& page) const
 {
 	page->url = response.url;
-
 	page->statusCode = static_cast<Common::StatusCode>(response.statusCode);
-
 	page->pageSizeKilobytes = response.responseBody.size() / 1024;
-
 	page->serverResponse = response.responseHeaders.makeString();
-
 	page->pageHash = std::hash<std::string>()(response.responseBody.toStdString().c_str());
-
 	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, page->url);
 
 	const std::vector<QString> contentTypeValues = response.responseHeaders.valueOf("content-type");
@@ -142,10 +137,12 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 	page->redirectedUrl = resolveRedirectUrl(response);
 
 	const std::vector<QString> dateHeaders = response.responseHeaders.valueOf(QString("Date"));
+
 	if (!dateHeaders.empty())
 	{
 		const QString dateHeader = dateHeaders[0];
 		page->responseDate = QDateTime::fromString(dateHeader, Qt::RFC2822Date);
+
 		if (!page->responseDate.isValid())
 		{
 			INFOLOG << "Unable to convert date" << dateHeader;
@@ -153,10 +150,12 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 	}
 
 	const std::vector<QString> lastModifiedHeaders = response.responseHeaders.valueOf(QString("Last-Modified"));
+
 	if (!lastModifiedHeaders.empty())
 	{
 		const QString lastModifiedHeader = lastModifiedHeaders[0];
 		page->lastModifiedDate = QDateTime::fromString(lastModifiedHeader, Qt::RFC2822Date);
+
 		if (!page->lastModifiedDate.isValid())
 		{
 			INFOLOG << "Unable to convert date" << lastModifiedHeader;

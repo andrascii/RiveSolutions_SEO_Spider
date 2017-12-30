@@ -2,13 +2,14 @@ body {
 	font-family: 'Helvetica', sans-serif;
 	box-sizing: border-box;
 	background-color: #F3F3F3;
+	font-size: 0.9em;
 }
 
 p {
 	margin:0;
 }
 section {
-	margin: 1rem 5rem;
+	margin: 0 14rem;
 }
 
 section:before{
@@ -27,6 +28,18 @@ a {
 	text-decoration: none !important;
 }
 
+
+.row::before {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.row::after{
+	content: "";
+	display: table;
+	clear: both;
+}
 
 .col-2 {
 	width: 16.66%;
@@ -49,17 +62,17 @@ a {
 }
 
 .col-6 {
-	width: 47%;
+	width: 49.3%;
 	float: left;
 }
 
 .left {
-	margin-left: 1rem;
-	margin-right: 2rem;
+	/*margin-left: 1rem;*/
+	margin-right: 1rem;
 }
 
 .summary {
-	border: 1px solid #dde0ee;
+	/*border: 1px solid #dde0ee;*/
 	background-color: white;
 }
 
@@ -75,9 +88,8 @@ a {
 	clear: both;
 }
 
-
 .summary-header {
-	padding: 1.5rem 0;
+	padding: 1rem;
 }
 
 .summary-center {
@@ -91,38 +103,58 @@ a {
 
 .problems-count {
 	display: inline-block;
-	font-size: 52px;
+	font-size: 3rem
 }
 
-.summary-stats {
-	margin-bottom: 1rem;
+.summary-overview {
+	background-color: #F3F3F3;
 }
 
-.summary-stat {
+.summary-overview-criteria {
+	margin-top: 1.5rem;
+	margin-right: 2.5rem;
+	padding: 0.3rem;
 	background-color: white;
-	padding: 0.6rem;
-	margin-right: 0.8rem;
-	border: 1px solid #dde0ee;
-
 }
+
+.summary-overview-icon {
+	margin-right: 0.5rem;
+	float: left;
+}
+
+.summary-overview-count {
+	font-size: 1.7rem;
+	float: right;
+}
+
+.summary-detail {
+	background-color: #F3F3F3;
+}
+
 .summary-body {
-	padding-bottom: 2rem;
+	/*padding-bottom: 2rem;*/
 }
 
 .summary-body-title{
-	margin:0;
+	margin: 0;
 	padding: 0.7rem 1rem 0.7rem 1rem;
 	background-color: #F3F3F3;
 	color: #7C7C7C;
+	/*font-weight: bold;*/
 }
 
 .summary-block {
 	margin-top: 1.5rem;
+	padding: 1rem;
+	background-color: white;
+	/*margin-bottom: 2.5rem;*/
 }
 
 .summary-title {
 	color: #656565;
-	border-bottom: 1px solid #dde0ee;
+	/*font-size: 1.1rem;*/
+	font-weight: bold;
+	/*border-bottom: 1px solid #dde0ee;*/
 }
 
 .summary-body {
@@ -161,5 +193,10 @@ a {
 	float:right;
 }
 
+.summary-footer {
+	margin-top: 1rem;
+	padding: 1rem;
+	background-color: white;
+}
 
 
