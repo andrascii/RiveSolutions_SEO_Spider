@@ -65,7 +65,9 @@ enum class StorageType
 	TooLongAltTextImageStorageType,
 
 	// page problems
-	TooManyLinksOnPage,
+	TooManyLinksOnPageStorageType,
+	ContainsMetaRefreshTagStorageType,
+	ContainsFramesStorageType,
 
 	// Resources
 	PendingResourcesStorageType,

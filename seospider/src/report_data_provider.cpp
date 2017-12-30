@@ -444,12 +444,12 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesWithLargeAmountOfLinksImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::TooManyLinksOnPage)];;
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::TooManyLinksOnPageStorageType)];;
 		}
 		case ReportDataKeys::PagesWithLargeAmountOfLinksCount:
 		{
 			const CrawlerEngine::ISequencedStorage* storage =
-				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::TooManyLinksOnPage);
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::TooManyLinksOnPageStorageType);
 
 			return storage->size();
 		}

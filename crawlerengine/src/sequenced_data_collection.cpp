@@ -129,7 +129,9 @@ void SequencedDataCollection::initializeStorages()
 		std::make_pair(StorageType::TooLongAltTextImageStorageType, createSequencedStorage()),
 
 		// Page problems
-		std::make_pair(StorageType::TooManyLinksOnPage, createSequencedStorage()),
+		std::make_pair(StorageType::TooManyLinksOnPageStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::ContainsMetaRefreshTagStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::ContainsFramesStorageType, createSequencedStorage()),
 
 		// Resources Types Storages
 		std::make_pair(StorageType::HtmlResourcesStorageType, createSequencedStorage()),

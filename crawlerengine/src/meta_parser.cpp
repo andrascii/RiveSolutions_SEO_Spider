@@ -66,10 +66,12 @@ void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noex
 		return QString(attr->value).trimmed();
 	};
 
-	std::vector<QString> refreshes = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	const std::vector<QString> refreshes = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+
 	if (!refreshes.empty())
 	{
 		page->metaRefresh = refreshes.front();
+		page->hasMetaRefreshTag = true;
 	}
 }
 
@@ -92,11 +94,13 @@ void MetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& page) 
 		return QString(attr->value).trimmed();
 	};
 
-	std::vector<QString> descriptions = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	const std::vector<QString> descriptions = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+
 	if (!descriptions.empty())
 	{
 		page->metaDescription = descriptions.front();
 	}
+
 	page->hasSeveralMetaDescriptionTags = descriptions.size() > 1;
 }
 

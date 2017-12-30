@@ -170,22 +170,14 @@ void UniqueLinkStore::setCrawledUrls(const std::vector<CrawlerRequest>& urls)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 	m_crawledUrlList.clear();
-
-	for (auto it = std::cbegin(urls); it != std::cend(urls); ++it)
-	{
-		m_crawledUrlList.insert(*it);
-	}
+	m_crawledUrlList.insert(urls.begin(), urls.end());
 }
 
 void UniqueLinkStore::setPendingUrls(const std::vector<CrawlerRequest>& urls)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 	m_pendingUrlList.clear();
-
-	for (auto it = std::cbegin(urls); it != std::cend(urls); ++it)
-	{
-		m_pendingUrlList.insert(*it);
-	}
+	m_pendingUrlList.insert(urls.begin(), urls.end());
 }
 
 void UniqueLinkStore::clear()

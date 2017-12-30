@@ -16,9 +16,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 
 	switch (type)
 	{
-		//
 		// Url problems
-		//
 		case StorageType::UpperCaseUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
@@ -52,9 +50,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelInfo;
 		}
 
-		//
 		// Title problems
-		//
 		case StorageType::EmptyTitleUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
@@ -80,9 +76,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelError;
 		}
 
-		//
 		// Meta description problems
-		//
 		case StorageType::EmptyMetaDescriptionUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
@@ -104,9 +98,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelError;
 		}
 
-		//
 		// Meta keywords problems
-		//
 		case StorageType::EmptyMetaKeywordsUrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
@@ -120,9 +112,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelError;
 		}
 
-		//
 		// H1 problems
-		//
 		case StorageType::MissingH1UrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
@@ -140,9 +130,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
 
-		//
 		// H2 problems
-		//
 		case StorageType::MissingH2UrlStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
@@ -160,9 +148,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 			return !storageSize ? LevelNotError : LevelWarning;
 		}
 
-		//
 		// Images problems
-		//
 		case StorageType::Over100kbImageStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
@@ -175,7 +161,17 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 		{
 			return !storageSize ? LevelNotError : LevelInfo;
 		}
-		case StorageType::TooManyLinksOnPage:
+
+		// page problems
+		case StorageType::TooManyLinksOnPageStorageType:
+		{
+			return !storageSize ? LevelNotError : LevelWarning;
+		}
+		case StorageType::ContainsMetaRefreshTagStorageType:
+		{
+			return !storageSize ? LevelNotError : LevelWarning;
+		}
+		case StorageType::ContainsFramesStorageType:
 		{
 			return !storageSize ? LevelNotError : LevelWarning;
 		}

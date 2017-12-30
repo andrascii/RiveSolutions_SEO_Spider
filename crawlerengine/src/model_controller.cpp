@@ -167,7 +167,17 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 
 	if (incomingPage->linksOnThisPage.size() > m_crawlerOptions.maxLinksCountOnPage)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooManyLinksOnPage);
+		data()->addParsedPage(incomingPage, StorageType::TooManyLinksOnPageStorageType);
+	}
+
+	if (incomingPage->hasMetaRefreshTag)
+	{
+		data()->addParsedPage(incomingPage, StorageType::ContainsMetaRefreshTagStorageType);
+	}
+
+	if (incomingPage->hasFrames)
+	{
+		data()->addParsedPage(incomingPage, StorageType::ContainsFramesStorageType);
 	}
 
 	bool hasNonAscii = false;

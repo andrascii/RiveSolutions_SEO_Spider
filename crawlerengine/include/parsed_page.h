@@ -153,6 +153,8 @@ struct ParsedPage
 	bool hasSeveralMetaKeywordsTags = bool();
 	bool hasSeveralH1Tags = bool();
 	bool hasSeveralEqualH2Tags = bool();
+	bool hasMetaRefreshTag = bool();
+	bool hasFrames = bool();
 
 	bool isThisExternalPage = bool();
 

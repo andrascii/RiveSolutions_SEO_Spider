@@ -321,7 +321,15 @@ void UnorderedDataCollection::initializeStorages()
 
 		// Page problems
 
-		std::make_pair(StorageType::TooManyLinksOnPage,
+		std::make_pair(StorageType::TooManyLinksOnPageStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::ContainsMetaRefreshTagStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::ContainsFramesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 

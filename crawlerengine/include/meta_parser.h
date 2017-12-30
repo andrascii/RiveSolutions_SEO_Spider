@@ -8,7 +8,7 @@ namespace CrawlerEngine
 class MetaParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& pageRaw) override;
+	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
 
 private:
 	void parseMetaContentType(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept;

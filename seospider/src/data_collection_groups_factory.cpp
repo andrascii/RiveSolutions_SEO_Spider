@@ -14,7 +14,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 	{
 		case AuditGroup::LinkAuditGroup:
 		{
-			p->name = QObject::tr("Links");
+			p->name = QObject::tr("Link Problems");
 			p->group = AuditGroup::LinkAuditGroup;
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::UpperCaseUrlStorageType, QObject::tr("Links With Uppercase Characters") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links With Non-ASCII Characters") });
@@ -30,7 +30,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 
 		case AuditGroup::OnPageAuditGroup:
 		{
-			p->name = QObject::tr("On Page");
+			p->name = QObject::tr("On Page Problems");
 			p->group = AuditGroup::OnPageAuditGroup;
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::EmptyTitleUrlStorageType, QObject::tr("Empty Titles") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType, QObject::tr("Duplicated Titles") });
@@ -46,14 +46,24 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType, QObject::tr("Empty Meta Keywords") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType, QObject::tr("Duplicated Meta Keywords") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::SeveralMetaKeywordsUrlStorageType, QObject::tr("Several Meta Keywords") });
-			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooManyLinksOnPage, QObject::tr("Too Many Links On Page (max %1)").arg(theApp->preferences()->maxLinksCountOnPage()) });
+
+			return p;
+		}
+
+		case AuditGroup::PageProblemsAuditGroup:
+		{
+			p->name = QObject::tr("Page Problems");
+			p->group = AuditGroup::OnPageAuditGroup;
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooManyLinksOnPageStorageType, QObject::tr("Too Many Links On Page (max %1)").arg(theApp->preferences()->maxLinksCountOnPage()) });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::ContainsMetaRefreshTagStorageType, QObject::tr("Pages Contain Meta Refresh Tag") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::ContainsFramesStorageType, QObject::tr("Pages Contain Frames") });
 
 			return p;
 		}
 
 		case AuditGroup::H1AuditGroup:
 		{
-			p->name = QObject::tr("H1");
+			p->name = QObject::tr("H1 Problems");
 			p->group = AuditGroup::H1AuditGroup;
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::MissingH1UrlStorageType, QObject::tr("Missing H1") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedH1UrlStorageType, QObject::tr("Duplicated H1") });
@@ -65,7 +75,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 
 		case AuditGroup::H2AuditGroup:
 		{
-			p->name = QObject::tr("H2");
+			p->name = QObject::tr("H2 Problems");
 			p->group = AuditGroup::H2AuditGroup;
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::MissingH2UrlStorageType, QObject::tr("Missing H2") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedH2UrlStorageType, QObject::tr("Duplicated H2") });
@@ -77,7 +87,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 
 		case AuditGroup::ImageAuditGroup:
 		{
-			p->name = QObject::tr("Images");
+			p->name = QObject::tr("Image Problems");
 			p->group = AuditGroup::ImageAuditGroup;
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Over100kbImageStorageType, QObject::tr("Images Over 100 KB") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::MissingAltTextImageStorageType, QObject::tr("Images With Missing Alt Description") });

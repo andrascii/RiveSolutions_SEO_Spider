@@ -19,6 +19,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(guiStorage));
 
 			summaryDataAccessor->addGroup(AuditGroup::LinkAuditGroup);
+			summaryDataAccessor->addGroup(AuditGroup::PageProblemsAuditGroup);
 			summaryDataAccessor->addGroup(AuditGroup::OnPageAuditGroup);
 			summaryDataAccessor->addGroup(AuditGroup::H1AuditGroup);
 			summaryDataAccessor->addGroup(AuditGroup::H2AuditGroup);

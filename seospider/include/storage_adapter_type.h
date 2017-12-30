@@ -55,7 +55,9 @@ enum class StorageAdapterType
 	StorageAdapterTypeImagesTooLongAltText = CrawlerEngine::StorageType::TooLongAltTextImageStorageType,
 
 	// page problems enum mappers
-	StorageAdapterTypeImagesTooManyLinksOnPage = CrawlerEngine::StorageType::TooManyLinksOnPage,
+	StorageAdapterTypeTooManyLinksOnPage = CrawlerEngine::StorageType::TooManyLinksOnPageStorageType,
+	StorageAdapterTypeContainsMetaRefreshTag = CrawlerEngine::StorageType::ContainsMetaRefreshTagStorageType,
+	StorageAdapterTypeContainsFrames = CrawlerEngine::StorageType::ContainsFramesStorageType,
 
 	// internal resources enum mappers
 	StorageAdapterTypeHtmlResources = CrawlerEngine::StorageType::HtmlResourcesStorageType,

@@ -29,37 +29,26 @@ signals:
 
 public slots:
 	void startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules);
-
 	void stop();
 
 private slots:
 	void extractUrlAndDownload();
-
 	void onCrawlerClearData();
 
 private:
 	void schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
-
 	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
-
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
-
 	void onStart();
 
 private:
 	PageDataCollector* m_pageDataCollector;
-
 	UniqueLinkStore* m_uniqueLinkStore;
-
 	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;
-
 	RequesterWrapper m_downloadRequester;
-
 	bool m_isRunning;
-
 	std::vector<ParsedPagePtr> m_pagesAcceptedAfterStop;
 	std::map<Url, CrawlerRequest> m_pendingUrls;
-
 	QTimer* m_defferedProcessingTimer;
 };
 

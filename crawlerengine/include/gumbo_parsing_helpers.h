@@ -36,14 +36,10 @@ public:
 	static QByteArray cutAllTagsFromNode(const GumboNode* node) noexcept;
 	static QByteArray identifyHtmlPageContentType(const QByteArray& htmlPage) noexcept;
 	static QByteArray decodeHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers) noexcept;
-
 	static std::vector<LinkInfo> parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept;
-
 	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::pair<const char*, const char*> expectedAttributes) noexcept;
 	static const GumboNode* findChildNode(const GumboNode* node, GumboTag expectedTag, std::map<const char*, const char*> expectedAttributes) noexcept;
-
 	static bool checkAttribute(const GumboNode* node, const char* attribute, const char* expectedValue) noexcept;
-
 
 	template <class UnaryPredicate>
 	static std::vector<const GumboNode*> findNodesRecursive(const GumboNode* node, UnaryPredicate predicate) noexcept
@@ -75,8 +71,8 @@ public:
 	static auto findNodesAndGetResult(const GumboNode* node, UnaryPredicate predicate, MapFunc mapFunc)
 	{
 		std::vector<const GumboNode*> nodes = findNodesRecursive(node, predicate);
-
 		std::vector<decltype(mapFunc(node))> result;
+
 		for (const GumboNode* node : nodes)
 		{
 			result.push_back(mapFunc(node));
