@@ -4,6 +4,7 @@
 #include "crawler_request.h"
 #include "idownloader.h"
 #include "random_interval_range_timer.h"
+#include "iuniqueness_checker.h"
 
 namespace CrawlerEngine
 {
@@ -41,6 +42,7 @@ private:
 	QByteArray m_userAgent;
 	Common::RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	std::queue<RequesterSharedPtr> m_requesterQueue;
+	std::unique_ptr<IUniquenessChecker> m_uniquenessChecker;
 };
 
 }

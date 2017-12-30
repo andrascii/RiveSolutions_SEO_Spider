@@ -18,21 +18,18 @@ class UniqueLinkStore : public QObject
 public:
 	UniqueLinkStore(QObject* parent);
 
-	void addUrl(const Url& url, DownloadRequestType requestType);
-	void addUrl(Url&& url, DownloadRequestType requestType);
-
 	bool extractUrl(CrawlerRequest& url) noexcept;
 
-	void saveUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType);
-	void saveUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType);
-	void saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType);
+	void addUrl(const Url& url, DownloadRequestType requestType);
+	void addUrl(Url&& url, DownloadRequestType requestType);
+	void addUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType);
+	void addUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType);
+	void addLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType);
 
 	std::vector<CrawlerRequest> crawledUrls() const noexcept;
 	std::vector<CrawlerRequest> pendingUrls() const noexcept;
-
 	void setCrawledUrls(const std::vector<CrawlerRequest>& urls);
 	void setPendingUrls(const std::vector<CrawlerRequest>& urls);
-
 	void clear();
 
 signals:
