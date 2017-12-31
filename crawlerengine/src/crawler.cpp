@@ -95,6 +95,8 @@ void Crawler::clearData()
 
 	clearDataImpl();
 
+	m_state = StatePending;
+
 	emit stateChanged(m_state);
 	emit onAboutClearData();
 }
@@ -104,8 +106,6 @@ void Crawler::clearDataImpl()
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
 
 	m_uniqueLinkStore->clear();
-
-	m_state = StatePending;
 }
 
 bool Crawler::isNoData() const noexcept
@@ -448,6 +448,7 @@ void Crawler::saveToFile(const QString& fileName)
 	emit stateChanged(m_state);
 
 	m_serializatonRedyStateCheckerTimer->start();
+	checkSerialiationReadyState();
 }
 
 void Crawler::loadFromFile(const QString& fileName)
@@ -460,6 +461,7 @@ void Crawler::loadFromFile(const QString& fileName)
 	emit stateChanged(m_state);
 
 	m_serializatonRedyStateCheckerTimer->start();
+	checkSerialiationReadyState();
 }
 
 const ISpecificLoader* Crawler::robotsTxtLoader() const noexcept

@@ -68,6 +68,42 @@ std::vector<const ParsedPage*> TestsCrawler::waitForAllCrawledPageReceived(int s
 	return future.get();
 }
 
+void TestsCrawler::waitForSerializationDone(int seconds, const char* timeoutMessage) const
+{
+	QDateTime elapsed = QDateTime::currentDateTime();
+	elapsed = elapsed.addSecs(seconds);
+
+	while (QDateTime::currentDateTime() < elapsed)
+	{
+		if (state() != StateSerializaton)
+		{
+			return;
+		}
+		
+		QApplication::instance()->processEvents();
+	}
+
+	throw TimeOutException(timeoutMessage);
+}
+
+void TestsCrawler::waitForDeserializationDone(int seconds, const char * timeoutMessage) const
+{
+	QDateTime elapsed = QDateTime::currentDateTime();
+	elapsed = elapsed.addSecs(seconds);
+
+	while (QDateTime::currentDateTime() < elapsed)
+	{
+		if (state() != StateDeserializaton)
+		{
+			return;
+		}
+
+		QApplication::instance()->processEvents();
+	}
+
+	throw TimeOutException(timeoutMessage);
+}
+
 std::vector<const ParsedPage*> TestsCrawler::storageItems(StorageType storage) const
 {
 	return m_receiver->storageItems(storage);
@@ -89,6 +125,11 @@ std::vector<LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResource
 std::vector<const ParsedPage*> TestsCrawler::getLinksFromUnorderedDataCollection(StorageType type) const
 {
 	return m_receiver->getLinksFromUnorderedDataCollection(type);
+}
+
+void TestsCrawler::clearReceivedData()
+{
+	m_receiver->clearReceivedData();
 }
 
 void TestsCrawler::startTestCrawler()
