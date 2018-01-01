@@ -190,7 +190,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		ParsedPagePtr page(new ParsedPage);
 
 		page->url = linkInfo.url;
-		page->title = tr("Blocked by robots.txt rules");
+		page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
 		page->resourceType = ResourceType::ResourceHtml;
 
 		emit pageParsed(page);

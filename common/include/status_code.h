@@ -6,7 +6,6 @@ namespace Common
 enum class StatusCode
 {
 	Undefined,
-	BlockedByRobotsTxt,
 
 	Continue100 = 100,
 	SwitchingProtocol101,
@@ -48,7 +47,10 @@ enum class StatusCode
 	BadGateway502,
 	ServiceUnavailable503,
 	GatewayTimeout504,
-	HttpVersionNotSupported505
+	HttpVersionNotSupported505,
+
+	// custom
+	BlockedByRobotsTxt,
 };
 
 }
