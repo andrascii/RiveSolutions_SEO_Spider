@@ -230,21 +230,21 @@ void Downloader::loadHelper(const CrawlerRequest& request)
 
 	switch (request.requestType)
 	{
-	case DownloadRequestType::RequestTypeGet:
-	{
-		reply = m_networkAccessor->get(networkRequest);
-		break;
-	}
-	case DownloadRequestType::RequestTypeHead:
-	{
-		reply = m_networkAccessor->head(networkRequest);
-		break;
-	}
-	default:
-	{
-		DEBUG_ASSERT(!"Unsupported request type");
-		break;
-	}
+		case DownloadRequestType::RequestTypeGet:
+		{
+			reply = m_networkAccessor->get(networkRequest);
+			break;
+		}
+		case DownloadRequestType::RequestTypeHead:
+		{
+			reply = m_networkAccessor->head(networkRequest);
+			break;
+		}
+		default:
+		{
+			DEBUG_ASSERT(!"Unsupported request type");
+			break;
+		}
 	}
 
 	VERIFY(connect(reply, &QNetworkReply::metaDataChanged, this, [this, reply]() { metaDataChanged(reply); }, Qt::QueuedConnection));
