@@ -83,6 +83,14 @@
 using namespace std::chrono_literals;
 using std::size_t;
 
+#ifndef QT_DEBUG
+#define PRODUCTION
+#endif
+
+#ifndef PRODUCTION
+#define DEBUG
+#endif
+
 #ifdef Q_OS_WIN
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #else
