@@ -104,30 +104,28 @@ TEST(SiteMapTests, LastModified)
 
 TEST(SiteMapTests, FrequencyByHeader)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
-
 	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& resp)
+		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& response)
 		{
 			QDateTime time = QDateTime::currentDateTime().toUTC();
-			//QString path = resp.url.path();
-			if (resp.url.path() == QString("/page-2.html"))
+
+			if (response.hopsChain.back().url().path() == QString("/page-2.html"))
 			{
 				time = time.addMSecs(-1000 * 60 * 15 - 1); // -15 minutes 
 			}
-			if (resp.url.path() == QString("/page-3.html"))
+			if (response.hopsChain.back().url().path() == QString("/page-3.html"))
 			{
 				time = time.addMSecs(-1000 * 60 * 60 * 12 - 1); // -12 hours
 			}
 
 			const QString dateTIme = toRFC2822Date(time);
-			resp.responseHeaders.removeHeaderValues(QString("Last-Modified"));
-			resp.responseHeaders.addHeaderValue(QString("Last-Modified"), dateTIme);
+			response.hopsChain.back().responseHeaders().removeHeaderValues(QString("Last-Modified"));
+			response.hopsChain.back().responseHeaders().addHeaderValue(QString("Last-Modified"), dateTIme);
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
@@ -166,9 +164,9 @@ TEST(SiteMapTests, FrequencyByLevel)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& resp)
+		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& response)
 		{
-			resp.statusCode = static_cast<int>(Common::StatusCode::Ok200);
+			response.hopsChain.back().setStatusCode(Common::StatusCode::Ok200);
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 10, "Waiting for 8 crawled pages");
@@ -224,9 +222,9 @@ TEST(SiteMapTests, PriorityTag)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& resp)
+		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& response)
 		{
-			resp.statusCode = static_cast<int>(Common::StatusCode::Ok200);
+			response.hopsChain.back().setStatusCode(Common::StatusCode::Ok200);
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 10, "Waiting for 8 crawled pages");

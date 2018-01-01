@@ -9,6 +9,7 @@ namespace CrawlerEngine
 
 struct DownloadResponse;
 class ResponseHeaders;
+class Hop;
 
 class PageDataCollector : public QObject
 {
@@ -18,17 +19,15 @@ public:
 	PageDataCollector(QObject* parent = nullptr);
 
 	void setOptions(const CrawlerOptions& crawlerOptions) noexcept;
-	ParsedPagePtr collectPageDataFromResponse(const DownloadResponse& response);
+	std::vector<ParsedPagePtr> collectPageDataFromResponse(const DownloadResponse& response);
 	const std::vector<LinkInfo>& outlinks() const noexcept;
 
 private:
+	static Url resolveRedirectUrl(const Hop& hop);
+
 	void applyOptions();
-
-	static Url resolveRedirectUrl(const DownloadResponse& response);
-
-	void collectReplyData(const DownloadResponse& response, ParsedPagePtr& page) const;
+	void collectReplyData(const Hop& hop, ParsedPagePtr& page) const;
 	void collectParsedPageData(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page);
-	void collectUrlList(GumboOutput* output);
 	void setResourceCategory(ParsedPagePtr& page) const;
 	std::shared_ptr<IPageParser> createParser(ParserType parserType) const;
 

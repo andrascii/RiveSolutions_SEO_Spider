@@ -200,19 +200,22 @@ void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResp
 {
 	m_downloadRequester.reset();
 
-	ParsedPagePtr page = m_pageDataCollector->collectPageDataFromResponse(response);
+	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
 
-	schedulePageResourcesLoading(page);
-
-	if (!m_isRunning)
+	std::for_each(pages.begin(), pages.end(), [this](ParsedPagePtr& page)
 	{
-		m_pagesAcceptedAfterStop.push_back(page);
-		return;
-	}
- 
-	emit pageParsed(page);
-	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
-	m_pendingUrls.erase(page->url);
+		schedulePageResourcesLoading(page);
+
+		if (!m_isRunning)
+		{
+			m_pagesAcceptedAfterStop.push_back(page);
+			return;
+		}
+
+		emit pageParsed(page);
+		CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+		m_pendingUrls.erase(page->url);
+	});
 
 	extractUrlAndDownload();
 }

@@ -9,6 +9,8 @@
 namespace CrawlerEngine
 {
 	
+struct DownloadResponse;
+
 class Downloader : public QObject, public IDownloader
 {
 	Q_OBJECT
@@ -35,10 +37,12 @@ private:
 	bool isReplyProcessed(QNetworkReply* reply) const noexcept;
 	void markReplyAsProcessed(QNetworkReply* reply) const noexcept;
 	void load(RequesterSharedPtr requester);
+	void loadHelper(const CrawlerRequest& request);
 
 private:
 	QNetworkAccessManager* m_networkAccessor;
-	std::map<CrawlerRequest, RequesterWeakPtr> m_requesters;
+	QMap<CrawlerRequest, RequesterWeakPtr> m_requesters;
+	QMap<CrawlerRequest, std::shared_ptr<DownloadResponse>> m_responses;
 	QByteArray m_userAgent;
 	Common::RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	std::queue<RequesterSharedPtr> m_requesterQueue;

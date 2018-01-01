@@ -42,8 +42,9 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 
 	const QUrl requestedUrl = request->requestInfo.url;
 
-	response->statusCode = 200;
-	response->url = requestedUrl;
+	Hop hop;
+	hop.setStatusCode(Common::StatusCode::Ok200);
+	hop.setUrl(requestedUrl);
 
 	std::pair<QString, QString> files = mapUrlToTestDataFiles(request->requestInfo);
 
@@ -54,6 +55,8 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 		ASSERT(inputFile.open(QIODevice::ReadOnly));
 
 		QTextStream in(&inputFile);
+
+		ResponseHeaders responseHeaders;
 
 		while (!in.atEnd())
 		{
@@ -70,15 +73,17 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 			if (header.toLower() == "status-code")
 			{
 				bool ok;
-				response->statusCode = value.toInt(&ok);
+				hop.setStatusCode(static_cast<Common::StatusCode>(value.toInt(&ok)));
 
 				ASSERT(ok);
 			}
 			else
 			{
-				response->responseHeaders.addHeaderValue(header, value);
+				responseHeaders.addHeaderValue(header, value);
 			}
 		}
+
+		hop.setResponseHeaders(responseHeaders);
 
 		inputFile.close();
 
@@ -88,16 +93,17 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 
 			ASSERT(html.open(QIODevice::ReadOnly));
 
-			response->responseBody = html.readAll();
+			hop.setBody(html.readAll());
 
 			html.close();
 		}
 	}
 	else
 	{
-		response->statusCode = 404;
+		hop.setStatusCode(Common::StatusCode::NotFound404);
 	}
 
+	response->hopsChain.addHop(hop);
 	m_responsePostProcessor(*(response.get()));
 
 	CrawlerEngine::ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);

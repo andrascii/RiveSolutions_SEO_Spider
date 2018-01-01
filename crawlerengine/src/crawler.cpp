@@ -240,8 +240,10 @@ void Crawler::initializeCrawlingSession()
 {
 	DEBUG_ASSERT(m_options.host.isValid());
 
-	m_robotsTxtLoader->load(m_options.host);
-	m_xmlSitemapLoader->load(m_options.host);
+	m_robotsTxtLoader->setHost(m_options.host);
+	m_xmlSitemapLoader->setHost(m_options.host);
+	m_robotsTxtLoader->load();
+	m_xmlSitemapLoader->load();
 }
 
 void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& response)
