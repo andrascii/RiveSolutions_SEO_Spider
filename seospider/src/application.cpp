@@ -14,6 +14,7 @@
 #include "get_host_info_response.h"
 #include "deferred_call.h"
 #include "internet_connection_notification_manager.h"
+#include "web_screenshot.h"
 
 namespace SeoSpider
 {
@@ -36,6 +37,7 @@ Application::Application(int& argc, char** argv)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
+	, m_webScreenShot(new WebScreenShot(this))
 {
 	SplashScreen::show();
 
@@ -105,6 +107,11 @@ QStringList Application::allKeys() const
 	return settings()->allKeys();
 }
 
+const QPixmap& Application::crawledSitePixmap() const
+{
+	return m_webScreenShot->result();
+}
+
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 {
 	return m_softwareBrandingOptions.get();
@@ -126,6 +133,7 @@ void Application::startCrawler()
 	CrawlerEngine::GetHostInfoRequest request(preferences()->url().host().toLatin1());
 	m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
 	m_hostInfoRequester->start();
+	m_webScreenShot->load(preferences()->url());
 
 	mainWindow()->statusBar()->showMessage("Checking host info...");
 }

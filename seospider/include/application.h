@@ -24,6 +24,7 @@ namespace SeoSpider
 
 class Preferences;
 class InternetConnectionNotificationManager;
+class WebScreenShot;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -51,6 +52,8 @@ public:
 	virtual QVariant loadFromSettings(const QByteArray& key, const QVariant& defaultValue = QVariant()) const noexcept override;
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
 	virtual QStringList allKeys() const override;
+
+	const QPixmap& crawledSitePixmap() const;
 
 signals:
 	void mainWindowShown();
@@ -89,6 +92,7 @@ private:
 
 	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
 	InternetConnectionNotificationManager* m_internetNotificationManager;
+	WebScreenShot* m_webScreenShot;
 };
 
 }

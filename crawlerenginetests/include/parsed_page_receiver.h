@@ -22,6 +22,8 @@ public:
 	std::future<std::vector<LinksToThisResourceChanges>> getLinksToThisResourceChanges(const ParsedPage* page, int count);
 	std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(StorageType type) const;
 
+	void clearReceivedData();
+
 private:
 	Q_SLOT void onParsedPageAdded(int row, StorageType type);
 	Q_SLOT void onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
@@ -46,7 +48,7 @@ private:
 	const SequencedDataCollection* m_sequencedDataCollection;
 
 	std::promise<std::vector<const ParsedPage*>> m_allPagesReceivedPromise;
-	
+
 	std::atomic_bool m_allPagesReceived;
 
 	std::map<StorageType, std::vector<const ParsedPage*>> m_unorderedDataCollectionPages;

@@ -83,6 +83,8 @@ void ParsedPageReceiver::onAboutClearData()
 
 	m_linksToThisResourceChanges.clear();
 	m_linksToThisResourceConditions.clear();
+
+	m_allPagesReceivedPromise = std::promise<std::vector<const ParsedPage*>>();
 }
 
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
@@ -97,6 +99,11 @@ std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataColl
 	auto iterator = m_unorderedDataCollectionPages.find(type);
 
 	return iterator != m_unorderedDataCollectionPages.end() ? iterator->second : std::vector<const ParsedPage*>();
+}
+
+void ParsedPageReceiver::clearReceivedData()
+{
+	onAboutClearData();
 }
 
 void ParsedPageReceiver::checkWaitCondition(StorageType storageType)
