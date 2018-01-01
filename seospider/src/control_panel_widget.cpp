@@ -24,7 +24,7 @@ ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
 }
 
-const QUrl& ControlPanelWidget::url() const noexcept
+const Url& ControlPanelWidget::url() const noexcept
 {
 	return m_url;
 }

@@ -64,7 +64,7 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
 		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
-		std::vector<QUrl> nofollowLinks;
+		std::vector<Url> nofollowLinks;
 
 		const auto addNofollowLink = [&nofollowLinks](const auto& resourceLink)
 		{
@@ -85,7 +85,7 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 
 		const auto checkLinks = [&nofollowLinks](auto* page)
 		{
-			for (const QUrl& nofollowLink : nofollowLinks)
+			for (const Url& nofollowLink : nofollowLinks)
 			{
 				EXPECT_NE(nofollowLink, page->url);
 			}
@@ -114,7 +114,7 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
 		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
-		std::vector<QUrl> subdomainLinks;
+		std::vector<Url> subdomainLinks;
 
 		const auto addSubdomainLink = [&subdomainLinks, &baseUrl](const auto& resourceLink)
 		{
@@ -137,7 +137,7 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 
 		const auto checkLinks = [&subdomainLinks](auto* page)
 		{
-			for (const QUrl& subdomainLink : subdomainLinks)
+			for (const Url& subdomainLink : subdomainLinks)
 			{
 				EXPECT_NE(subdomainLink, page->url);
 			}
@@ -167,7 +167,7 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
 		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
-		const QUrl blockedByRobotsUrl("http://blockedbyrobotstxt.com/blocked.html");
+		const Url blockedByRobotsUrl("http://blockedbyrobotstxt.com/blocked.html");
 
 		const auto checkLinks = [&blockedByRobotsUrl](auto* page)
 		{
@@ -190,7 +190,7 @@ TEST(LinksTests, Canonical)
 	{
 		auto pages = cl->waitForAllCrawledPageReceived(10);
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QUrl("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
+		EXPECT_EQ(Url("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
 	};
 
 	env.initializeTest(testFunction);

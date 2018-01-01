@@ -87,7 +87,7 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(const
 	return CrawlerEngine::ResourceLink
 	{
 		CrawlerEngine::ParsedPageWeakPtr(),
-		QUrl(),
+		Url(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
 		QString::null
@@ -107,7 +107,7 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(const
 	return CrawlerEngine::ResourceLink
 	{
 		CrawlerEngine::ParsedPageWeakPtr(),
-		QUrl(),
+		Url(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
 		QString::null

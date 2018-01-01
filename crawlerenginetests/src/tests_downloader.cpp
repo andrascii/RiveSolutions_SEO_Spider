@@ -40,7 +40,7 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 
 	CrawlerEngine::DownloadRequest* request = static_cast<CrawlerEngine::DownloadRequest*>(requester->request());
 
-	const QUrl requestedUrl = request->requestInfo.url;
+	const Url requestedUrl = request->requestInfo.url;
 
 	Hop hop;
 	hop.setStatusCode(Common::StatusCode::Ok200);
@@ -167,7 +167,7 @@ std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const Crawler
 	const QDir testsDir = testsDataDir();
 	const QString hostPath = url.url.host();
 
-	QString path = url.url.path(QUrl::FullyEncoded);
+	QString path = url.url.path(Url::FullyEncoded);
 
 	if (path.isEmpty())
 	{

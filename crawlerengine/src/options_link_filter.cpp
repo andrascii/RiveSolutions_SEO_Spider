@@ -26,21 +26,21 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 		return PermissionNofollowNotAllowed;
 	}
 
-	if (isUrlExternal && !isExternalNofollowNotAllowed && !m_crawlerOptions.checkExternalLinks)
-	{
-		return PermissionExternalLinksAllowed;
-	}
-	
-	if (!isUrlExternal && m_crawlerOptions.followRobotsTxtRules && isLinkBlockedByRobotsTxt(linkInfo, metaRobotsFlags))
-	{
-		return PermissionBlockedByRobotsTxtRules;
-	}
-
 	const bool isSubdomain = PageParserHelpers::isSubdomain(m_crawlerOptions.host, linkInfo.url);
 
 	if (isSubdomain && !m_crawlerOptions.checkSubdomains)
 	{
 		return PermissionSubdomainNotAllowed;
+	}
+
+	if (isUrlExternal && !isExternalNofollowNotAllowed && !m_crawlerOptions.checkExternalLinks)
+	{
+		return PermissionExternalLinksNotAllowed;
+	}
+	
+	if (!isUrlExternal && m_crawlerOptions.followRobotsTxtRules && isLinkBlockedByRobotsTxt(linkInfo, metaRobotsFlags))
+	{
+		return PermissionBlockedByRobotsTxtRules;
 	}
 
 	return PermissionAllowed;
