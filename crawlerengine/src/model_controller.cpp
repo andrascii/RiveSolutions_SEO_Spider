@@ -625,7 +625,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		{
 			newOrExistingResource = temporaryResource;
 
-			//if (resource.loadAvailability)
+			if (resource.loadAvailability)
 			{
 				data()->addParsedPage(newOrExistingResource,
 					httpResource ? StorageType::PendingResourcesStorageType : storage);
