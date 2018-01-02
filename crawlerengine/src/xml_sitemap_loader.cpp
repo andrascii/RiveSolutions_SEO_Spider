@@ -21,14 +21,17 @@ XmlSitemapLoader::XmlSitemapLoader(RobotsTxtLoader* robotsTxtLoader, QObject* pa
 	}
 }
 
-void XmlSitemapLoader::load(const Url& host)
+void XmlSitemapLoader::setHost(const Url& url)
 {
-	if (m_isValid && m_currentLoadedUrl.compare(host))
+	m_host = url;
+}
+
+void XmlSitemapLoader::load()
+{
+	if (m_isValid && m_hopsChain.hasHopTo(m_host))
 	{
 		return;
 	}
-
-	m_currentLoadedUrl = host;
 
 	if (m_robotsTxtLoader && !m_robotsTxtLoader->isReady())
 	{
@@ -49,7 +52,7 @@ void XmlSitemapLoader::load(const Url& host)
 
 	if (!sitemapUrl.isValid())
 	{
-		sitemapUrl = host.scheme() + "://" + host.host() + QStringLiteral("/sitemap.xml");
+		sitemapUrl = m_host.scheme() + "://" + m_host.host() + QStringLiteral("/sitemap.xml");
 	}
 
 	CrawlerRequest requestInfo{ sitemapUrl, DownloadRequestType::RequestTypeGet };
@@ -81,32 +84,19 @@ QObject* XmlSitemapLoader::qobject()
 
 void XmlSitemapLoader::onRobotsTxtLoaderReady()
 {
-	load(m_currentLoadedUrl);
+	load();
 }
 
 void XmlSitemapLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
-	m_downloadRequester.reset();
-
-	if (!response.redirectUrl.isEmpty())
-	{
-		CrawlerRequest requestInfo{ response.redirectUrl, DownloadRequestType::RequestTypeGet };
-
-		DownloadRequest request(requestInfo);
-		m_downloadRequester.reset(request, this, &XmlSitemapLoader::onLoadingDone);
-		m_downloadRequester->start();
-
-		return;
-	}
-
-	const Common::StatusCode statusCode = static_cast<Common::StatusCode>(response.statusCode);
+	const Common::StatusCode statusCode = response.hopsChain.back().statusCode();
 
 	m_isValid = statusCode == Common::StatusCode::Ok200;
 
-	m_content = response.responseBody;
+	m_content = response.hopsChain.back().body();
 	m_isReady = true;
 
-	m_currentLoadedUrl = response.url.host();
+	m_hopsChain = response.hopsChain;
 
 	emit ready();
 }

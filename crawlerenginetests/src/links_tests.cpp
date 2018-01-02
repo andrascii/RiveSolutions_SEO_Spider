@@ -64,7 +64,7 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
 		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
-		std::vector<QUrl> nofollowLinks;
+		std::vector<Url> nofollowLinks;
 
 		const auto addNofollowLink = [&nofollowLinks](const auto& resourceLink)
 		{
@@ -85,7 +85,7 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 
 		const auto checkLinks = [&nofollowLinks](auto* page)
 		{
-			for (const QUrl& nofollowLink : nofollowLinks)
+			for (const Url& nofollowLink : nofollowLinks)
 			{
 				EXPECT_NE(nofollowLink, page->url);
 			}
@@ -114,37 +114,13 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
 		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
-		std::vector<QUrl> subdomainLinks;
-
-		const auto addSubdomainLink = [&subdomainLinks, &baseUrl](const auto& resourceLink)
+		const auto check = [&](const ParsedPage* page)
 		{
-			if (!PageParserHelpers::isSubdomain(baseUrl, resourceLink.url))
-			{
-				return;
-			}
-
-			subdomainLinks.push_back(resourceLink.url);
+			EXPECT_EQ(false, PageParserHelpers::isSubdomain(baseUrl, page->url));
 		};
 
-		const auto collectSubdomainLinks = [&addSubdomainLink](auto* page)
-		{
-			std::for_each(page->linksOnThisPage.begin(), page->linksOnThisPage.end(), addSubdomainLink);
-		};
-
-		std::for_each(crawledPages.begin(), crawledPages.end(), collectSubdomainLinks);
-
-		EXPECT_EQ(true, !subdomainLinks.empty());
-
-		const auto checkLinks = [&subdomainLinks](auto* page)
-		{
-			for (const QUrl& subdomainLink : subdomainLinks)
-			{
-				EXPECT_NE(subdomainLink, page->url);
-			}
-		};
-
-		std::for_each(pendingPages.begin(), pendingPages.end(), checkLinks);
-		std::for_each(crawledPages.begin(), crawledPages.end(), checkLinks);
+		std::for_each(crawledPages.begin(), crawledPages.end(), check);
+		std::for_each(pendingPages.begin(), pendingPages.end(), check);
 	};
 
 	env.initializeTest(testFunction);
@@ -161,21 +137,28 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForAllCrawledPageReceived(10);
+		auto pages = cl->waitForAllCrawledPageReceived(30);
 		cl->checkSequencedDataCollectionConsistency();
 
 		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
 		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
-		const QUrl blockedByRobotsUrl("http://blockedbyrobotstxt.com/blocked.html");
+		const Url blockedByRobotsUrl("http://blockedbyrobotstxt.com/blocked.html");
 
-		const auto checkLinks = [&blockedByRobotsUrl](auto* page)
+		for (std::size_t i = 0; i < crawledPages.size(); ++i)
 		{
-			EXPECT_NE(blockedByRobotsUrl, page->url);
-		};
+			if (crawledPages[i]->url != blockedByRobotsUrl)
+			{
+				continue;
+			}
 
-		std::for_each(pendingPages.begin(), pendingPages.end(), checkLinks);
-		std::for_each(crawledPages.begin(), crawledPages.end(), checkLinks);
+			EXPECT_EQ(true, crawledPages[i]->statusCode == Common::StatusCode::BlockedByRobotsTxt);
+		}
+
+		const auto findIterator = std::find_if(pendingPages.begin(), pendingPages.end(), 
+			[&blockedByRobotsUrl](const ParsedPage* page) { return page->url == blockedByRobotsUrl; });
+
+		EXPECT_EQ(true, findIterator == pendingPages.end());
 	};
 
 	env.initializeTest(testFunction);
@@ -190,7 +173,7 @@ TEST(LinksTests, Canonical)
 	{
 		auto pages = cl->waitForAllCrawledPageReceived(10);
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QUrl("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
+		EXPECT_EQ(Url("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
 	};
 
 	env.initializeTest(testFunction);

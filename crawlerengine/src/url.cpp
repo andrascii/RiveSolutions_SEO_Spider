@@ -27,4 +27,14 @@ const QString& Url::canonizedUrlStr() const
 	return m_canonizedUrlStr;
 }
 
+bool Url::operator==(const Url& url) const
+{
+	return compare(url);
+}
+
+bool Url::operator!=(const Url& url) const
+{
+	return !(*this == url);
+}
+
 }

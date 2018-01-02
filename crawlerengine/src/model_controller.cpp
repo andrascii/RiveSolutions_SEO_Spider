@@ -527,10 +527,10 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			
 			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.thisResourceLink.urlParameter,
 				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
-			
+
 			if (!resource.loadAvailability)
 			{
-				return;
+				continue;
 			}
 
 			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);

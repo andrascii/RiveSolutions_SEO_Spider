@@ -2,6 +2,7 @@
 
 #include "iresponse.h"
 #include "response_headers.h"
+#include "hops_chain.h"
 
 namespace CrawlerEngine
 {
@@ -15,11 +16,7 @@ struct DownloadResponse : public IResponse
 
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeDownload)
 
-	int statusCode;
-	Url url;
-	Url redirectUrl;
-	QByteArray responseBody;
-	ResponseHeaders responseHeaders;
+	HopsChain hopsChain;
 };
 
 }

@@ -47,7 +47,9 @@ QMap<StatusCode, QString> s_statusCodeDescriptions
 	{ StatusCode::BadGateway502, "502 Bad Gateway" },
 	{ StatusCode::ServiceUnavailable503, "503 Service Unavailable" },
 	{ StatusCode::GatewayTimeout504, "504 Gateway Timeout" },
-	{ StatusCode::HttpVersionNotSupported505, "505 Http Version Not Supported" }
+	{ StatusCode::HttpVersionNotSupported505, "505 Http Version Not Supported" },
+
+	{ StatusCode::BlockedByRobotsTxt, "Blocked By robots.txt" }
 };
 
 }

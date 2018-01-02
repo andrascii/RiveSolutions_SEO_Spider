@@ -15,6 +15,7 @@ public:
 	enum Permission
 	{
 		PermissionAllowed,
+		PermissionExternalLinksNotAllowed,
 		PermissionNofollowNotAllowed,
 		PermissionBlockedByRobotsTxtRules,
 		PermissionSubdomainNotAllowed
