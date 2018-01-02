@@ -56,7 +56,32 @@ void ControlPanelWidget::stopCrawling() const
 
 void ControlPanelWidget::clearCrawlingData() const
 {
-	ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+	messageBoxDialog->setWindowTitle(tr("Warning"));
+	
+	const QString message = tr("You have not saved the results of the scanning your site.") + QString("\n") +
+		tr("Would you like to save the results and have the ability to start next time from this point?");
+	
+	messageBoxDialog->setMessage(message);
+	messageBoxDialog->setIcon(MessageBoxDialog::WarningIcon);
+	messageBoxDialog->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
+	messageBoxDialog->show();
+
+	auto onDialogClosed = [messageBoxDialog](int result)
+	{
+		if (result == QDialogButtonBox::YesRole)
+		{
+			ActionRegistry::instance().globalAction(s_saveFileAndClearDataAction)->trigger();
+		}
+		else
+		{
+			ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
+		}
+
+		messageBoxDialog->deleteLater();
+	};
+
+	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
 }
 
 void ControlPanelWidget::onCrawlerStateChanged(int state)
