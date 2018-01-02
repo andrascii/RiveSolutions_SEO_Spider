@@ -21,7 +21,7 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 	const bool isExternalNofollowNotAllowed = isNofollowLink && isUrlExternal && !m_crawlerOptions.followExternalNofollow;
 	const bool isInternalNofollowNotAllowed = isNofollowLink && !isUrlExternal && !m_crawlerOptions.followInternalNofollow;
 
-	if (isExternalNofollowNotAllowed || isInternalNofollowNotAllowed)
+	if (isInternalNofollowNotAllowed || isExternalNofollowNotAllowed)
 	{
 		return PermissionNofollowNotAllowed;
 	}
@@ -33,7 +33,7 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 		return PermissionSubdomainNotAllowed;
 	}
 
-	if (isUrlExternal && !isExternalNofollowNotAllowed && !m_crawlerOptions.checkExternalLinks)
+	if (!isNofollowLink && !isSubdomain && isUrlExternal && !m_crawlerOptions.checkExternalLinks)
 	{
 		return PermissionExternalLinksNotAllowed;
 	}
