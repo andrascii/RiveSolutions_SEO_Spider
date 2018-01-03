@@ -37,6 +37,7 @@ enum class ResourceSource
 	SourceTagLinkRelNext,
 	SourceTagLinkRelPrev,
 	SourceTagScript,
+	SourceTagMetaRefresh,
 	SourceCSS
 };
 
@@ -95,30 +96,30 @@ struct ResourceLink
 	QString altOrTitle;
 };
 
-struct RawResourceOnPage
+struct ResourceOnPage
 {
-	RawResourceOnPage(ResourceType resourceType, const LinkInfo& linkInfo, bool loadAvailability = true)
+	ResourceOnPage(ResourceType resourceType, const LinkInfo& linkInfo, bool loadAvailability = true)
 		: resourceType(resourceType)
-		, thisResourceLink(linkInfo)
+		, link(linkInfo)
 		, loadAvailability(loadAvailability)
 	{
 	}
 
-	RawResourceOnPage(ResourceType resourceType, LinkInfo&& linkInfo, bool loadAvailability = true)
+	ResourceOnPage(ResourceType resourceType, LinkInfo&& linkInfo, bool loadAvailability = true)
 		: resourceType(resourceType)
-		, thisResourceLink(std::move(linkInfo))
+		, link(std::move(linkInfo))
 		, loadAvailability(loadAvailability)
 	{
 	}
 
 	ResourceType resourceType;
-	LinkInfo thisResourceLink;
+	LinkInfo link;
 	bool loadAvailability;
 };
 
-inline bool operator<(const RawResourceOnPage& lhs, const RawResourceOnPage& rhs)
+inline bool operator<(const ResourceOnPage& lhs, const ResourceOnPage& rhs)
 {
-	return lhs.thisResourceLink.url.toDisplayString() < rhs.thisResourceLink.url.toDisplayString();
+	return lhs.link.url.toDisplayString() < rhs.link.url.toDisplayString();
 }
 
 constexpr int invalidPageLevel = 100000000;
@@ -146,6 +147,7 @@ struct ParsedPage
 
 	int pageSizeKilobytes = int();
 	int wordCount = int();
+	int secondsToRefresh = -1;
 	size_t pageHash = size_t();
 
 	bool hasSeveralTitleTags = bool();
@@ -155,12 +157,10 @@ struct ParsedPage
 	bool hasSeveralEqualH2Tags = bool();
 	bool hasMetaRefreshTag = bool();
 	bool hasFrames = bool();
-
 	bool isThisExternalPage = bool();
 
 	ResourceType resourceType;
-
-	std::deque<RawResourceOnPage> allResourcesOnPage;
+	std::deque<ResourceOnPage> allResourcesOnPage;
 	std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 

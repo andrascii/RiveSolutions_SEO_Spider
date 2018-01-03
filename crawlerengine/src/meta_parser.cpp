@@ -6,6 +6,11 @@
 namespace CrawlerEngine
 {
 
+MetaParser::MetaParser()
+{
+	m_metaRefreshContentPattern = QRegularExpression("[0-9]+;[[:space:]]*url[[:space:]]*=[[:space:]]*([a-z0-9.\\-:/]+)");
+}
+
 void MetaParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
@@ -56,8 +61,7 @@ void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noex
 			node->v.element.tag == GUMBO_TAG_META &&
 			node->parent &&
 			node->parent->v.element.tag == GUMBO_TAG_HEAD &&
-			GumboParsingHelpers::checkAttribute(node, "http-equiv", "refresh") &&
-			GumboParsingHelpers::checkAttribute(node, "content", "");
+			GumboParsingHelpers::checkAttribute(node, "http-equiv", "refresh");
 	};
 
 	auto res = [](const GumboNode* node)
@@ -66,12 +70,33 @@ void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noex
 		return QString(attr->value).trimmed();
 	};
 
-	const std::vector<QString> refreshes = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	const std::vector<QString> contents = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
 
-	if (!refreshes.empty())
+	if (!contents.empty())
 	{
-		page->metaRefresh = refreshes.front();
+		page->metaRefresh = contents.back();
 		page->hasMetaRefreshTag = true;
+	}
+
+	foreach (const QString& content, contents)
+	{
+		const QRegularExpressionMatch match = m_metaRefreshContentPattern.match(content);
+		const QStringList matchParts = match.capturedTexts();
+
+		if (matchParts.size() < 2)
+		{
+			continue;
+		}
+
+		Url contentUrl(matchParts[1]);
+
+		if (contentUrl == page->url)
+		{
+			continue;
+		}
+
+		LinkInfo link{ std::move(contentUrl), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceTagMetaRefresh };
+		page->allResourcesOnPage.emplace_back(ResourceOnPage(ResourceType::ResourceHtml, std::move(link)));
 	}
 }
 

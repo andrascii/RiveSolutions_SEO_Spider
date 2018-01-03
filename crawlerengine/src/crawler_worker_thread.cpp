@@ -127,18 +127,18 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 	std::vector<Url> resourcesHeadUrlList;
 	std::vector<Url> resourcesGetUrlList;
 
-	for (const RawResourceOnPage& resource : parsedPage->allResourcesOnPage)
+	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
-		if (PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) &&
+		if (PageParserHelpers::isHttpOrHttpsScheme(resource.link.url) &&
 			resource.resourceType != ResourceType::ResourceHtml)
 		{
 			if (resource.resourceType == ResourceType::ResourceImage)
 			{
-				resourcesGetUrlList.push_back(resource.thisResourceLink.url);
+				resourcesGetUrlList.push_back(resource.link.url);
 			}
 			else
 			{
-				resourcesHeadUrlList.push_back(resource.thisResourceLink.url);
+				resourcesHeadUrlList.push_back(resource.link.url);
 			}
 		}
 	}
@@ -169,13 +169,13 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionExternalLinksNotAllowed;
 	};
 
-	const auto setLinkLoadAvailability = [&](RawResourceOnPage& resource)
+	const auto setLinkLoadAvailability = [&](ResourceOnPage& resource)
 	{
-		const bool loadAvailability = PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) &&
-			!isNofollowLinkUnavailable(resource.thisResourceLink) &&
-			!isSubdomainLinkUnavailable(resource.thisResourceLink) &&
-			!isLinkBlockedByRobotsTxt(resource.thisResourceLink) &&
-			!isExternalLinkUnavailable(resource.thisResourceLink);
+		const bool loadAvailability = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url) &&
+			!isNofollowLinkUnavailable(resource.link) &&
+			!isSubdomainLinkUnavailable(resource.link) &&
+			!isLinkBlockedByRobotsTxt(resource.link) &&
+			!isExternalLinkUnavailable(resource.link);
 
 		resource.loadAvailability = loadAvailability;
 	};

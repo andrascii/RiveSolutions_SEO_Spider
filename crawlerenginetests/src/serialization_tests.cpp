@@ -20,7 +20,7 @@ TEST(SerializationTests, PagesSerialization)
 		firstPage->title = QString("Title");
 		firstPage->contentType = QString("text/html");
 		firstPage->metaRefresh = QString("meta-refresh");
-		firstPage->metaRefresh = QString("meta-description");
+		firstPage->metaDescription = QString("meta-description");
 		firstPage->metaKeywords = QString("meta-keywords");
 		firstPage->serverResponse = QString("server-response");
 		firstPage->firstH1 = QString("first-h1");

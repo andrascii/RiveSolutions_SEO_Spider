@@ -13,8 +13,7 @@ void FramesDetectorParser::parse(GumboOutput* output, const ResponseHeaders& hea
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			(node->v.element.tag == GUMBO_TAG_FRAME || node->v.element.tag == GUMBO_TAG_FRAMESET) &&
-			node->parent &&
-			node->parent->v.element.tag == GUMBO_TAG_BODY;
+			node->parent;
 	};
 
 	const std::vector<const GumboNode*> frames = GumboParsingHelpers::findNodesRecursive(output->root, findPredicate);

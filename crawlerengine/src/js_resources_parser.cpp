@@ -39,7 +39,7 @@ void JsResourcesParser::parse(GumboOutput* output, const ResponseHeaders& header
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
-		const RawResourceOnPage jsResource
+		const ResourceOnPage jsResource
 		{
 			ResourceType::ResourceJavaScript,
 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
