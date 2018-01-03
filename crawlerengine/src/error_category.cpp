@@ -173,7 +173,7 @@ ErrorCategory::ErrorCategoryLevel ErrorCategory::level(StorageType type) noexcep
 		}
 		case StorageType::ContainsFramesStorageType:
 		{
-			return !storageSize ? LevelNotError : LevelWarning;
+			return !storageSize ? LevelNotError : LevelError;
 		}
 	}
 
@@ -236,6 +236,7 @@ int ErrorCategory::errorCount() noexcept
 		sequencedDataCollection->storage(StorageType::DuplicatedMetaKeywordsUrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::SeveralMetaKeywordsUrlStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::DuplicatedH1UrlStorageType)->size() +
+		sequencedDataCollection->storage(StorageType::ContainsFramesStorageType)->size() +
 		sequencedDataCollection->storage(StorageType::DuplicatedH2UrlStorageType)->size();
 
 	return infoCounter;

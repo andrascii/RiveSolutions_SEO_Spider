@@ -30,6 +30,7 @@ const QMap<ReportDataKeys, QByteArray> s_placeHolders
 	{ ReportDataKeys::InfoImage, "info_image" },
 	{ ReportDataKeys::InfoCount, "info_count" },
 	{ ReportDataKeys::Date, "creation_date" },
+	{ ReportDataKeys::DateImage, "creation_date_image" },
 
 	// Signature
 	{ ReportDataKeys::CompanyName, "company_name" },
@@ -234,6 +235,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		{
 			return QDate::currentDate().toString(Qt::RFC2822Date);
 		}
+		case ReportDataKeys::DateImage:
+		{
+			return m_pixmaps[CrawlerEngine::ErrorCategory::ErrorCategoryLevel::LevelNotError];
+		}
 
 		// Signature
 		case ReportDataKeys::CompanyName:
@@ -403,11 +408,14 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RefreshMetaTagImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::ContainsMetaRefreshTagStorageType)];
 		}
 		case ReportDataKeys::RefreshMetaTagCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::ContainsMetaRefreshTagStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::RelCanonicalPages:
 		{
@@ -500,11 +508,14 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesContainsFramesImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::ContainsFramesStorageType)];
 		}
 		case ReportDataKeys::PagesContainsFramesCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::ContainsFramesStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::PagesWithHtmlErrors:
 		{
