@@ -167,7 +167,12 @@ void Downloader::processReply(QNetworkReply* reply)
 	std::shared_ptr<DownloadResponse> response = m_responses[key];
 
 	const QByteArray body = processBody ? reply->readAll() : QByteArray();
-	const Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+
+	if (redirectUrl.isRelative())
+	{
+		redirectUrl = PageParserHelpers::resolveRelativeUrl(redirectUrl, reply->url());
+	}
 
 	if (statusCode == Common::StatusCode::MovedPermanently301 ||
 		statusCode == Common::StatusCode::MovedTemporarily302)
