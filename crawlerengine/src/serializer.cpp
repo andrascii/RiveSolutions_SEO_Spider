@@ -628,7 +628,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 {
 	writer.writeStartElement(optionsKey);
 
-	writer.writeTextElement(hostKey, m_options.host.toDisplayString());
+	writer.writeTextElement(hostKey, m_options.startCrawlingPage.toDisplayString());
 	writer.writeTextElement(limitMaxUrlLengthKey, QString::number(m_options.limitMaxUrlLength));
 	writer.writeTextElement(minTitleLengthKey, QString::number(m_options.minTitleLength));
 	writer.writeTextElement(maxTitleLengthKey, QString::number(m_options.maxTitleLength));
@@ -667,7 +667,7 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 
 		if (reader.qualifiedName() == hostKey)
 		{
-			m_options.host = Url(reader.readElementText());
+			m_options.startCrawlingPage = Url(reader.readElementText());
 		}
 		else if (reader.qualifiedName() == limitMaxUrlLengthKey)
 		{

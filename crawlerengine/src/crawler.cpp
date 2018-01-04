@@ -216,7 +216,7 @@ void Crawler::onCrawlingSessionInitialized()
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
 		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, m_options.userAgent)));
 
-	m_uniqueLinkStore->addUrl(m_options.host, DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->addUrl(m_options.startCrawlingPage, DownloadRequestType::RequestTypeGet);
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
@@ -238,10 +238,10 @@ bool Crawler::isPreinitialized() const
 
 void Crawler::initializeCrawlingSession()
 {
-	DEBUG_ASSERT(m_options.host.isValid());
+	DEBUG_ASSERT(m_options.startCrawlingPage.isValid());
 
-	m_robotsTxtLoader->setHost(m_options.host);
-	m_xmlSitemapLoader->setHost(m_options.host);
+	m_robotsTxtLoader->setHost(m_options.startCrawlingPage);
+	m_xmlSitemapLoader->setHost(m_options.startCrawlingPage);
 	m_robotsTxtLoader->load();
 	m_xmlSitemapLoader->load();
 }

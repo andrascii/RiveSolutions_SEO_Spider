@@ -129,8 +129,8 @@ void PageDataCollector::collectReplyData(const Hop& hop, ParsedPagePtr& page) co
 	page->statusCode = static_cast<Common::StatusCode>(hop.statusCode());
 	page->pageSizeKilobytes = hop.body().size() / 1024;
 	page->serverResponse = hop.responseHeaders().makeString();
-	page->pageHash = std::hash<std::string>()(hop.body().toStdString().c_str());
-	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, page->url);
+	page->pageHash = std::hash<std::string>()(hop.body().toStdString());
+	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.startCrawlingPage, page->url);
 
 	const std::vector<QString> contentTypeValues = hop.responseHeaders().valueOf("content-type");
 	page->contentType = contentTypeValues.empty() ? QString() : contentTypeValues.front();

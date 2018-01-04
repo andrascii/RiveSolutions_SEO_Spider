@@ -507,25 +507,6 @@ void Preferences::setCompanyWebSite(QString value)
 	emit companyWebSiteChanged();
 }
 
-const QUrl& Preferences::url() const
-{
-	return m_url;
-}
-
-void Preferences::setUrl(const QUrl& url)
-{
-	m_url = url;
-
-	if (m_url.scheme().isEmpty())
-	{
-		DEBUGLOG << "Corrected scheme of passed URL";
-
-		m_url.setUrl("http://" + url.toString());
-	}
-
-	emit urlChanged();
-}
-
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept
 {
 	const QVariant valueFromSettings = m_settingsAccessor->loadFromSettings(key, defaultValue);

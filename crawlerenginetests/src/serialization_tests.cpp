@@ -151,7 +151,7 @@ TEST(SerializationTests, OptionsSerialization)
 			crawler->loadFromFile(QString("options.json"));
 			crawler->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
 
-			EXPECT_EQ(true, options.host.compare(newOptions.host));
+			EXPECT_EQ(true, options.startCrawlingPage.compare(newOptions.startCrawlingPage));
 			EXPECT_EQ(options.limitMaxUrlLength, newOptions.limitMaxUrlLength);
 			EXPECT_EQ(options.minTitleLength, newOptions.minTitleLength);
 			EXPECT_EQ(options.maxTitleLength, newOptions.maxTitleLength);

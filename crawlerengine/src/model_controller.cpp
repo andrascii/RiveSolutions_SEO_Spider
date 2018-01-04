@@ -145,7 +145,7 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
 	calculatePageLevel(incomingPage);
 
-	if (url.host() != m_crawlerOptions.host.host())
+	if (url.host() != m_crawlerOptions.startCrawlingPage.host())
 	{
 		data()->addParsedPage(incomingPage, StorageType::ExternalUrlStorageType);
 	}
@@ -726,7 +726,7 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 
 		if (parent->pageLevel + 1 < level)
 		{
-			level = parent->pageLevel == 1 && parent->url.compare(m_crawlerOptions.host)
+			level = parent->pageLevel == 1 && parent->url.compare(m_crawlerOptions.startCrawlingPage)
 				? 1 : parent->pageLevel + 1;
 		}
 	}

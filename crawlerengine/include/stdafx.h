@@ -50,6 +50,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkProxy>
 #include <QTimer>
 #include <QTcpSocket>
 #include <QTcpServer>

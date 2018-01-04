@@ -14,19 +14,45 @@ ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	m_ui.setupUi(this);
 
 	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::startCrawling));
-
 	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::stopCrawling));
-
 	VERIFY(connect(m_ui.clearCrawlingDataButton, &QPushButton::clicked, this, &ControlPanelWidget::clearCrawlingData));
-
 	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
-
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
+
+	m_ui.urlLineEdit->installEventFilter(this);
 }
 
 const Url& ControlPanelWidget::url() const noexcept
 {
 	return m_url;
+}
+
+bool ControlPanelWidget::eventFilter(QObject* object, QEvent* event)
+{
+	if (object != qobject_cast<QObject*>(m_ui.urlLineEdit))
+	{
+		return false;
+	}
+
+	if (event->type() != QEvent::KeyPress)
+	{
+		return false;
+	}
+
+	QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+
+	if (keyEvent->key() != Qt::Key_Return)
+	{
+		return false;
+	}
+
+	if (m_ui.startOrConrinueCrawlingButton->isEnabled())
+	{
+		setUrl();
+		startCrawling();
+	}
+
+	return false;
 }
 
 void ControlPanelWidget::setUrl() const
@@ -36,7 +62,16 @@ void ControlPanelWidget::setUrl() const
 		return;
 	}
 
-	theApp->preferences()->setUrl(m_ui.urlLineEdit->text());
+	Url url(Url(m_ui.urlLineEdit->text()));
+
+	if (url.scheme().isEmpty())
+	{
+		DEBUGLOG << "Corrected scheme of passed URL";
+
+		url.setUrl("http://" + url.toString());
+	}
+
+	ActionRegistry::instance().globalAction(s_startCrawlerAction)->setData(url);
 }
 
 void ControlPanelWidget::startCrawling() const
@@ -91,7 +126,6 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 		case CrawlerEngine::Crawler::StateWorking:
 		{
 			m_ui.clearCrawlingDataButton->setDisabled(true);
-
 			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
 
 			break;
@@ -99,9 +133,7 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 		case CrawlerEngine::Crawler::StatePause:
 		{
 			m_ui.clearCrawlingDataButton->setDisabled(false); 
-
 			m_ui.startOrConrinueCrawlingButton->setDisabled(false);
-
 			m_ui.startOrConrinueCrawlingButton->setText(tr("Continue"));
 
 			break;
@@ -109,9 +141,7 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 		case CrawlerEngine::Crawler::StatePending:
 		{
 			m_ui.clearCrawlingDataButton->setDisabled(false);
-
 			m_ui.startOrConrinueCrawlingButton->setDisabled(false);
-
 			m_ui.startOrConrinueCrawlingButton->setText(tr("Start"));
 
 			break;
@@ -120,9 +150,7 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 		case CrawlerEngine::Crawler::StateDeserializaton:
 		{
 			m_ui.clearCrawlingDataButton->setDisabled(true);
-
 			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
-
 			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
 		}
 	}

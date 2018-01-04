@@ -1,14 +1,15 @@
 #pragma once
 
 #include "irequest.h"
+#include "url.h"
 
 namespace CrawlerEngine
 {
 
 struct GetHostInfoRequest : IRequest
 {
-	GetHostInfoRequest(const QByteArray& hostname)
-		: hostname(hostname)
+	GetHostInfoRequest(const Url& webpage)
+		: webpage(webpage)
 	{
 	}
 
@@ -21,7 +22,7 @@ struct GetHostInfoRequest : IRequest
 		return RequestType::RequestGetHostInfo;
 	}
 
-	QByteArray hostname;
+	Url webpage;
 };
 
 }

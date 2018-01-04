@@ -59,6 +59,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkProxy>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPainter>

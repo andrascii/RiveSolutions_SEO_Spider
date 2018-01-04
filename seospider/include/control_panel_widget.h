@@ -14,6 +14,9 @@ public:
 
 	const Url& url() const noexcept;
 
+protected:
+	virtual bool eventFilter(QObject* object, QEvent* event) override;
+
 private slots:
 	void setUrl() const;
 	void startCrawling() const;
@@ -23,7 +26,6 @@ private slots:
 
 private:
 	Ui::ControlPanelWidget m_ui;
-
 	Url m_url;
 };
 
