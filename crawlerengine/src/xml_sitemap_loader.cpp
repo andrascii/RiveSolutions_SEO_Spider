@@ -28,11 +28,6 @@ void XmlSitemapLoader::setHost(const Url& url)
 
 void XmlSitemapLoader::load()
 {
-	if (m_isValid && m_hopsChain.hasHopTo(m_host))
-	{
-		return;
-	}
-
 	if (m_robotsTxtLoader && !m_robotsTxtLoader->isReady())
 	{
 		return;
@@ -53,6 +48,11 @@ void XmlSitemapLoader::load()
 	if (!sitemapUrl.isValid())
 	{
 		sitemapUrl = m_host.scheme() + "://" + m_host.host() + QStringLiteral("/sitemap.xml");
+	}
+
+	if (m_isValid && m_hopsChain.hasHopTo(sitemapUrl))
+	{
+		return;
 	}
 
 	CrawlerRequest requestInfo{ sitemapUrl, DownloadRequestType::RequestTypeGet };
