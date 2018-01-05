@@ -181,7 +181,7 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 	preferences()->setCrawlOutsideOfStartFolder(options.crawlOutsideOfStartFolder);
 
 	// robots.txt rules
-	//prefs->setUserAgentToFollow(options.userAgentToFollow);
+	preferences()->setRobotSignature(static_cast<int>(options.userAgentToFollow));
 
 	preferences()->setCheckJavaScript(options.parserTypeFlags.testFlag(CrawlerEngine::JavaScriptResourcesParserType));
 	preferences()->setCheckCSS(options.parserTypeFlags.testFlag(CrawlerEngine::CssResourcesParserType));
@@ -285,7 +285,7 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	options.crawlOutsideOfStartFolder = preferences()->crawlOutsideOfStartFolder();
 
 	// robots.txt rules
-	options.userAgentToFollow = CrawlerEngine::UserAgentType::AnyBot;
+	options.userAgentToFollow = static_cast<UserAgentType>(preferences()->robotSignature());
 
 	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType, preferences()->checkJavaScript());
 	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType, preferences()->checkCSS());
