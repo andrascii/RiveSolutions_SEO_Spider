@@ -29,7 +29,7 @@ void TestsDownloader::resetPauseRange()
 {
 }
 
-void TestsDownloader::setUserAgent(const QByteArray& userAgent)
+void TestsDownloader::setUserAgent(const QByteArray&)
 {
 }
 

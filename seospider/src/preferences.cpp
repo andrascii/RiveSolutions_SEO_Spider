@@ -16,7 +16,7 @@ Preferences::~Preferences()
 	{
 		const QMetaProperty property = metaObject()->property(i);
 
-		if (!property.isUser() && property.name() != "objectName")
+		if (!property.isUser() && std::strcmp(property.name(), "objectName"))
 		{
 			m_settingsAccessor->saveToSettings(property.name(), property.read(this));
 		}

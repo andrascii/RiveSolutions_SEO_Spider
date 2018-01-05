@@ -205,6 +205,8 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
+	Q_UNUSED(requester);
+
 	m_downloadRequester.reset();
 
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);

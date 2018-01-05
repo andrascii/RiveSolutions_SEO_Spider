@@ -8,6 +8,8 @@ namespace CrawlerEngine
 
 void FramesDetectorParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
+	Q_UNUSED(headers);
+
 	auto findPredicate = [](const GumboNode* node)
 	{
 		return node &&

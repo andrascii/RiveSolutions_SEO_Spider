@@ -15,6 +15,8 @@ PageModel::PageModel(QObject* parent)
 
 Qt::ItemFlags PageModel::flags(const QModelIndex& index) const
 {
+	Q_UNUSED(index);
+
 	if (!m_storageAdapter)
 	{
 		return Qt::NoItemFlags;
@@ -171,6 +173,8 @@ int PageModel::columnCount(const QModelIndex&) const
 
 int PageModel::rowCount(const QModelIndex& parent) const
 {
+	Q_UNUSED(parent);
+
 	if (!storageAdapter())
 	{
 		return 0;

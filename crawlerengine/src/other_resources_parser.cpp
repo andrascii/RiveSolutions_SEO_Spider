@@ -8,6 +8,8 @@ namespace CrawlerEngine
 	
 void OtherResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
+	Q_UNUSED(headers);
+
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;

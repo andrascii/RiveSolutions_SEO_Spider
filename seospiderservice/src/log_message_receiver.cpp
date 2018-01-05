@@ -58,7 +58,7 @@ void LogMessageReceiver::readMessage()
 			m_message.severityLevel = static_cast<SeoSpiderServiceApi::SeverityLevel>(severetyLevel);
 		}
 
-		if (m_socket->bytesAvailable() < m_message.messageSize || stream.atEnd())
+		if (m_socket->bytesAvailable() < static_cast<int>(m_message.messageSize) || stream.atEnd())
 		{
 			continue;
 		}

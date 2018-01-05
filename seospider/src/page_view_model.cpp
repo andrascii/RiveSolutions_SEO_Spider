@@ -139,6 +139,8 @@ const QColor& PageViewModel::backgroundColor(const QModelIndex&) const noexcept
 
 const QFont& PageViewModel::font(const QModelIndex& index) const noexcept
 {
+	Q_UNUSED(index);
+
 	return m_textFont;
 }
 
@@ -221,9 +223,6 @@ void PageViewModel::onModelDataWasReset()
 
 void PageViewModel::initializeRenderers()
 {
-	const PageModel* model =
-		static_cast<const PageModel*>(AbstractViewModel::model());
-
 	AbstractViewModel::addRenderer(
 		IRenderer::PlainTextRendererType | 
 		IRenderer::SelectionBackgroundRendererType | 

@@ -216,7 +216,7 @@ void SeoSpiderServiceApiImpl::errorLogMessage(const char* message)
 	Logger::instance()->logMessage(message, SeverityLevel::ErrorLevel);
 }
 
-LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS pExceptionPtrs)
+LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS)
 {
 	s_self->setProcessSignaledState();
 	return EXCEPTION_EXECUTE_HANDLER;
@@ -244,6 +244,9 @@ void SeoSpiderServiceApiImpl::sigAbortHandler(int)
 
 void SeoSpiderServiceApiImpl::sigFpeHandler(int code, int subcode)
 {
+	Q_UNUSED(code);
+	Q_UNUSED(subcode);
+
 	s_self->setProcessSignaledState();
 }
 
@@ -280,6 +283,12 @@ void SeoSpiderServiceApiImpl::invalidParameterHandler(
 	unsigned int line,
 	uintptr_t pReserved)
 {
+	Q_UNUSED(expression);
+	Q_UNUSED(function);
+	Q_UNUSED(file);
+	Q_UNUSED(line);
+	Q_UNUSED(pReserved);
+
 	s_self->setProcessSignaledState();
 }
 

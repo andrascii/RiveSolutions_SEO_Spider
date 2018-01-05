@@ -37,7 +37,7 @@ void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& head
 
 		if (!PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url))
 		{
-			DEBUG_ASSERT(false);
+			DEBUG_ASSERT(!"This url leads to a not html resources");
 			continue;
 		}
 

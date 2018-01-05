@@ -48,6 +48,8 @@ if(MSVC)
 		/permissive-
 		/std:c++latest
 		/Zi
+		/W4
+		/WX
 	)
 	
 	set_target_properties(
