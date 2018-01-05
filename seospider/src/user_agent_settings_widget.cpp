@@ -54,7 +54,7 @@ void UserAgentSettingsWidget::loadUserAgentsFromFile(const QString& fileName, QC
 		targetComboBox->addItem(line, line);
 	}
 
-	ERRLOG << "UserAgents loaded";
+	INFOLOG << "UserAgents loaded";
 
 }
 
