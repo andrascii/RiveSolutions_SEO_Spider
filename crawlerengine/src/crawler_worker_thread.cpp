@@ -169,13 +169,19 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionExternalLinksNotAllowed;
 	};
 
+	const auto isOutsideFolderLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
+	{
+		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionBlockedByFolder;
+	};
+
 	const auto setLinkLoadAvailability = [&](ResourceOnPage& resource)
 	{
 		const bool loadAvailability = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url) &&
 			!isNofollowLinkUnavailable(resource.link) &&
 			!isSubdomainLinkUnavailable(resource.link) &&
 			!isLinkBlockedByRobotsTxt(resource.link) &&
-			!isExternalLinkUnavailable(resource.link);
+			!isExternalLinkUnavailable(resource.link) &&
+			!isOutsideFolderLinkUnavailable(resource.link);
 
 		resource.loadAvailability = loadAvailability;
 	};
@@ -183,6 +189,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isExternalLinkUnavailable), linkList.end());
+	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isOutsideFolderLinkUnavailable), linkList.end());
 	std::for_each(parsedPage->allResourcesOnPage.begin(), parsedPage->allResourcesOnPage.end(), setLinkLoadAvailability);
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)

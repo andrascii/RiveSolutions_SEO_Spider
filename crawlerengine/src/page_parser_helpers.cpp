@@ -166,11 +166,21 @@ bool PageParserHelpers::isUrlInsideBaseUrlFolder(const Url& baseUrl, const Url& 
 		return true;
 	}
 
-	const int lastSlashIndex = baseUrlPath.lastIndexOf(QChar('/'));
-	const QString folder = lastSlashIndex != -1
-		? baseUrlPath.mid(0, lastSlashIndex -1) : baseUrlPath;
+	const QString urlPath = url.path().toLower();
+	if (baseUrlPath.size() > urlPath.size())
+	{
+		return false;
+	}
 
-	return url.path().toLower().startsWith(folder);
+	if (baseUrlPath.size() == urlPath.size())
+	{
+		return baseUrlPath == urlPath.size();
+	}
+
+	const QString folder = baseUrlPath.endsWith(QChar('/'))
+		? baseUrlPath : baseUrlPath + QChar('/');
+
+	return urlPath.startsWith(folder);
 }
 
 bool PageParserHelpers::isHtmlOrPlainContentType(const QString& contentType) noexcept

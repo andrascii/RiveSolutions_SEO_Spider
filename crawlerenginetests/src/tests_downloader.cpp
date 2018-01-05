@@ -175,6 +175,14 @@ std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const Crawler
 	}
 
 	QString requestedFilePath = QDir::cleanPath(testsDir.absolutePath() + "/" + hostPath + "/" + path);
+
+	if (QFileInfo(requestedFilePath).isDir())
+	{
+		requestedFilePath = requestedFilePath.endsWith(QChar('/'))
+			? requestedFilePath + QString("index.html")
+			: requestedFilePath + QString("/index.html");
+	}
+
 	QString metadataFilePath = requestedFilePath + ".meta";
 
 	const bool metaFileExists = QFileInfo::exists(metadataFilePath);

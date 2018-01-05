@@ -153,7 +153,7 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 
 TEST(LinksTests, BlockedByOutsideFolderLinksMustNotBeLoaded)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://links.com/folder1/folder2/index.html"));
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://links.com/folder1/folder2/"));
 	options.crawlOutsideOfStartFolder = false;
 
 	TestEnvironment env(options);
