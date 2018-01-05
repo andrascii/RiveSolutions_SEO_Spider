@@ -25,10 +25,13 @@ bool ResponseHeaders::removeHeaderValues(const QString& header)
 	return result;
 }
 
+ResponseHeaders::ResponseHeaders(const QList<QNetworkReply::RawHeaderPair>& headerValues)
+{
+	addHeaderValues(headerValues);
+}
+
 void ResponseHeaders::addHeaderValues(const QList<QNetworkReply::RawHeaderPair>& headerValues)
 {
-	m_responseHeaders.reserve(m_responseHeaders.size() + headerValues.size());
-
 	for (const QNetworkReply::RawHeaderPair& rawHeaderPair : headerValues)
 	{
 		addHeaderValue(rawHeaderPair.first, rawHeaderPair.second);

@@ -30,6 +30,7 @@ namespace
 	const QString firstH1Key = QLatin1String("firstH1");
 	const QString secondH1Key = QLatin1String("secondH1");
 	const QString firstH2Key = QLatin1String("firstH2");
+	const QString secondH2Key = QLatin1String("secondH2");
 	const QString statusCodeKey = QLatin1String("statusCode");
 	const QString metaRobotsFlagsKey = QLatin1String("metaRobotsFlags");
 	const QString metaRobotsFlagsItemKey = QLatin1String("metaRobotsItem");
@@ -45,6 +46,8 @@ namespace
 	const QString hasSeveralMetaKeywordsTagsKey = QLatin1String("hasSeveralMetaKeywordsTags");
 	const QString hasSeveralH1TagsKey = QLatin1String("hasSeveralH1Tags");
 	const QString hasSeveralEqualH2TagsKey = QLatin1String("hasSeveralEqualH2Tags");
+	const QString hasMetaRefreshKey = QLatin1String("hasMetaRefreshKey");
+	const QString hasFramesKey = QLatin1String("hasFramesKey");
 	const QString isThisExternalPageKey = QLatin1String("isThisExternalPage");
 	const QString resourceTypeKey = QLatin1String("resourceType");
 	const QString rawResponseKey = QLatin1String("rawResponse");
@@ -96,82 +99,6 @@ public:
 	{
 		m_pagesByIndex[page] = index;
 	}
-	QVariantMap toJson()
-	{
-		QVariantMap pageMap;
-		pageMap[urlKey] = m_page->url.toDisplayString();
-		pageMap[redirectedUrlKey] = m_page->redirectedUrl.toDisplayString();
-		pageMap[canonicalUrlKey] = m_page->canonicalUrl.toDisplayString();
-		pageMap[titleKey] = m_page->title;
-		pageMap[contentTypeKey] = m_page->contentType;
-		pageMap[metaRefreshKey] = m_page->metaRefresh;
-		pageMap[metaDescriptionKey] = m_page->metaDescription;
-		pageMap[metaKeywordsKey] = m_page->metaKeywords;
-		pageMap[serverResponseKey] = m_page->serverResponse;
-		pageMap[firstH1Key] = m_page->firstH1;
-		pageMap[secondH1Key] = m_page->secondH1;
-		pageMap[firstH2Key] = m_page->firstH2;
-		pageMap[statusCodeKey] = static_cast<int>(m_page->statusCode);
-		
-		QVariantMap metaRobots;
-		for (const std::pair<const UserAgentType, MetaRobotsFlags>& flags : m_page->metaRobotsFlags)
-		{
-			metaRobots[QString::number(static_cast<int>(flags.first))] = static_cast<int>(flags.second);
-		}
-		pageMap[metaRobotsFlagsKey] = metaRobots;
-		pageMap[responseDateKey] = static_cast<unsigned long long>(m_page->responseDate.toMSecsSinceEpoch());
-		pageMap[lastModifiedDateKey] = static_cast<unsigned long long>(m_page->lastModifiedDate.toMSecsSinceEpoch());
-		pageMap[pageSizeKilobytesKey] = m_page->pageSizeKilobytes;
-		pageMap[wordCountKey] = m_page->wordCount;
-		pageMap[pageHashKey] = m_page->pageHash;
-		pageMap[hasSeveralTitleTagsKey] = m_page->hasSeveralTitleTags;
-		pageMap[hasSeveralMetaDescriptionTagsKey] = m_page->hasSeveralMetaDescriptionTags;
-		pageMap[hasSeveralMetaKeywordsTagsKey] = m_page->hasSeveralMetaKeywordsTags;
-		pageMap[hasSeveralH1TagsKey] = m_page->hasSeveralH1Tags;
-		pageMap[hasSeveralEqualH2TagsKey] = m_page->hasSeveralEqualH2Tags;
-		pageMap[isThisExternalPageKey] = m_page->isThisExternalPage;
-		pageMap[resourceTypeKey] = static_cast<int>(m_page->resourceType);
-
-		QVariantList linksOnThisPage;
-		for (const ResourceLink& link : m_page->linksOnThisPage)
-		{
-			QVariantMap linkValue;
-			linkValue[urlKey] = link.url.toDisplayString();
-			linkValue[linkParameterKey] = static_cast<int>(link.linkParameter);
-			linkValue[resourceSourceKey] = static_cast<int>(link.resourceSource);
-			linkValue[altOrTitleKey] = link.altOrTitle;
-
-
-			if (!link.resource.expired())
-			{
-				const ParsedPage* linkPage = link.resource.lock().get();
-				auto it = m_pagesByIndex.find(linkPage);
-				ASSERT(it != m_pagesByIndex.end());
-
-				linkValue[resourceIndexKey] = it->second;
-			}
-			else
-			{
-				linkValue[resourceIndexKey] = -1;
-			}
-
-			linksOnThisPage.append(linkValue);
-		}
-		pageMap[linksOnThisPageKey] = linksOnThisPage;
-
-		pageMap[rawResponseKey] = m_page->rawResponse.toBase64();
-		pageMap[pageLevelKey] = m_page->pageLevel;
-
-		QString storagesStr;
-		for (int i = 0; i < m_page->storages.size(); ++i)
-		{
-			storagesStr = storagesStr % ( m_page->storages[i] ? QLatin1Char('1') : QLatin1Char('0'));
-		}
-
-		pageMap[storagesKey] = storagesStr;
-
-		return pageMap;
-	}
 
 	void writeXml(QXmlStreamWriter& writer)
 	{
@@ -189,6 +116,7 @@ public:
 		writer.writeTextElement(firstH1Key, m_page->firstH1);
 		writer.writeTextElement(secondH1Key, m_page->secondH1);
 		writer.writeTextElement(firstH2Key, m_page->firstH2);
+		writer.writeTextElement(secondH2Key, m_page->secondH2);
 		writer.writeTextElement(statusCodeKey, QString::number(static_cast<int>(m_page->statusCode)));
 	
 		{
@@ -203,17 +131,20 @@ public:
 
 			writer.writeEndElement();
 		}
-		
 
 		writer.writeTextElement(responseDateKey, QString::number(static_cast<unsigned long long>(m_page->responseDate.toMSecsSinceEpoch())));
 		writer.writeTextElement(lastModifiedDateKey, QString::number(static_cast<unsigned long long>(m_page->lastModifiedDate.toMSecsSinceEpoch())));
 		writer.writeTextElement(pageSizeKilobytesKey, QString::number(m_page->pageSizeKilobytes));
 		writer.writeTextElement(wordCountKey, QString::number(m_page->wordCount));
+		writer.writeTextElement(pageHashKey, QString::number(m_page->pageHash));
 		writer.writeTextElement(hasSeveralTitleTagsKey, QString::number(m_page->hasSeveralTitleTags));
 		writer.writeTextElement(hasSeveralMetaDescriptionTagsKey, QString::number(m_page->hasSeveralMetaDescriptionTags));
 		writer.writeTextElement(hasSeveralMetaKeywordsTagsKey, QString::number(m_page->hasSeveralMetaKeywordsTags));
 		writer.writeTextElement(hasSeveralH1TagsKey, QString::number(m_page->hasSeveralH1Tags));
 		writer.writeTextElement(hasSeveralEqualH2TagsKey, QString::number(m_page->hasSeveralEqualH2Tags));
+		writer.writeTextElement(hasMetaRefreshKey, QString::number(m_page->hasMetaRefreshTag));
+		writer.writeTextElement(hasFramesKey, QString::number(m_page->hasFrames));
+
 		writer.writeTextElement(isThisExternalPageKey, QString::number(m_page->isThisExternalPage));
 		writer.writeTextElement(resourceTypeKey, QString::number(static_cast<int>(m_page->resourceType)));
 		
@@ -300,68 +231,6 @@ public:
 		}
 	}
 
-	void fromJson(const QVariantMap& pageMap)
-	{
-		m_page->url = Url(pageMap[urlKey].toString());
-		m_page->redirectedUrl = Url(pageMap[redirectedUrlKey].toString());
-		m_page->canonicalUrl = Url(pageMap[canonicalUrlKey].toString());
-		m_page->title = pageMap[titleKey].toString();
-		m_page->contentType = pageMap[contentTypeKey].toString();
-		m_page->metaRefresh = pageMap[metaRefreshKey].toString();
-		m_page->metaDescription = pageMap[metaDescriptionKey].toString();
-		m_page->metaKeywords = pageMap[metaKeywordsKey].toString();
-		m_page->serverResponse = pageMap[serverResponseKey].toString();
-		m_page->firstH1 = pageMap[firstH1Key].toString();
-		m_page->secondH1 = pageMap[secondH1Key].toString();
-		m_page->firstH2 = pageMap[firstH2Key].toString();
-		m_page->statusCode = static_cast<Common::StatusCode>(pageMap[statusCodeKey].toInt());
-
-		QVariantMap metaRobots = pageMap[metaRobotsFlagsKey].toMap();
-		foreach(const QString& userAgentStr, metaRobots.keys())
-		{
-			const UserAgentType userAgentType = static_cast<UserAgentType>(userAgentStr.toInt());
-			const MetaRobotsFlags flags = MetaRobotsFlags(metaRobots[userAgentStr].toInt());
-			m_page->metaRobotsFlags[userAgentType] = flags;
-		}
-
-		m_page->responseDate = QDateTime::fromMSecsSinceEpoch(qvariant_cast<unsigned long long>(pageMap[responseDateKey]));
-		m_page->lastModifiedDate = QDateTime::fromMSecsSinceEpoch(qvariant_cast<unsigned long long>(pageMap[lastModifiedDateKey]));
-		m_page->pageSizeKilobytes = pageMap[pageSizeKilobytesKey].toInt();
-		m_page->wordCount = pageMap[wordCountKey].toInt();
-		m_page->pageHash = qvariant_cast<size_t>(pageMap[pageHashKey]);
-		m_page->hasSeveralTitleTags = pageMap[hasSeveralTitleTagsKey].toBool();
-		m_page->hasSeveralMetaDescriptionTags = pageMap[hasSeveralMetaDescriptionTagsKey].toBool();
-		m_page->hasSeveralMetaKeywordsTags = pageMap[hasSeveralMetaKeywordsTagsKey].toBool();
-		m_page->hasSeveralH1Tags = pageMap[hasSeveralH1TagsKey].toBool();
-		m_page->hasSeveralEqualH2Tags = pageMap[hasSeveralEqualH2TagsKey].toBool();
-		m_page->isThisExternalPage = pageMap[isThisExternalPageKey].toBool();
-		m_page->resourceType = static_cast<ResourceType>(pageMap[resourceTypeKey].toInt());
-		m_page->rawResponse = QByteArray::fromBase64(pageMap[rawResponseKey].toByteArray());
-		m_page->pageLevel = pageMap[pageLevelKey].toInt();
-
-		const QVariantList linksOnThisPage = pageMap[linksOnThisPageKey].toList();
-		foreach(const QVariant& linkOnThisPage, linksOnThisPage)
-		{
-			QVariantMap linkMap = linkOnThisPage.toMap();
-			const LinkParameter linkParameter = static_cast<LinkParameter>(linkMap[linkParameterKey].toInt());
-			const ResourceSource source = static_cast<ResourceSource>(linkMap[resourceSourceKey].toInt());
-			const QString altOrTitle = linkMap[altOrTitleKey].toString();
-			const Url url = Url(linkMap[urlKey].toString());
-			const int resourceIndex = linkMap[resourceIndexKey].toInt();
-
-			m_page->linksOnThisPage.push_back(ResourceLink{ ParsedPageWeakPtr(), url, linkParameter, source, altOrTitle });
-			m_linksOnThisPageIndices.push_back(resourceIndex);
-		}
-
-
-		QString storagesStr = pageMap[storagesKey].toString();
-		m_page->storages.resize(storagesStr.size());
-		for (int i = 0; i < storagesStr.size(); ++i)
-		{
-			m_page->storages[i] = storagesStr[i] == QLatin1Char('1');
-		}
-	}
-
 	void fromXml(QXmlStreamReader& reader)
 	{
 		while (!reader.isEndElement() || reader.qualifiedName() != pageKey)
@@ -421,6 +290,10 @@ public:
 			{
 				m_page->firstH2 = reader.readElementText();
 			}
+			else if (reader.qualifiedName() == secondH2Key)
+			{
+				m_page->secondH2 = reader.readElementText();
+			}
 			else if (reader.qualifiedName() == statusCodeKey)
 			{
 				m_page->statusCode = static_cast<Common::StatusCode>(reader.readElementText().toInt());
@@ -460,7 +333,7 @@ public:
 			}
 			else if (reader.qualifiedName() == pageHashKey)
 			{
-				m_page->pageHash = reader.readElementText().toULong(); // TODO: check
+				m_page->pageHash = static_cast<size_t>(reader.readElementText().toULong());
 			}
 			else if (reader.qualifiedName() == hasSeveralTitleTagsKey)
 			{
@@ -481,6 +354,14 @@ public:
 			else if (reader.qualifiedName() == hasSeveralEqualH2TagsKey)
 			{
 				m_page->hasSeveralEqualH2Tags = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == hasMetaRefreshKey)
+			{
+				m_page->hasMetaRefreshTag = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == hasFramesKey)
+			{
+				m_page->hasFrames = reader.readElementText().toInt() == 1;
 			}
 			else if (reader.qualifiedName() == isThisExternalPageKey)
 			{
@@ -586,120 +467,6 @@ const std::vector<CrawlerRequest>& CrawlerEngine::Serializer::pendingLinks() con
 const CrawlerOptions& Serializer::crawlerOptions() const
 {
 	return m_options;
-}
-
-void Serializer::saveToJsonStream(QIODevice& device)
-{
-	Common::JsonParserStreamWriter stream(device);
-
-	Common::JsonStreamMapElement map(stream);
-
-	map.writeMapValue(serializerVersionKey, serializerVersion);
-	map.writeMapValue(pagesCountKey, m_pages.size());
-
-	{
-		Common::JsonStreamMapValue pagesNode(map, pagesKey);
-		savePagesToJsonStream(pagesNode);
-	}
-
-	{
-		Common::JsonStreamMapValue crawledLinksNode(map, crawledUrlsKey);
-		saveLinksToJsonStream(crawledLinksNode, m_crawledLinks);
-	}
-
-	{
-		Common::JsonStreamMapValue pendingLinksNode(map, pendingUrlsKey);
-		saveLinksToJsonStream(pendingLinksNode, m_pendingLinks);
-	}
-}
-
-void Serializer::loadFromJsonStream(QIODevice& device)
-{
-	Common::JsonParserStreamReader stream(device);
-	INFOLOG << "Deserialization...";
-	Common::JsonStreamMapReader map(stream);
-	const int pagesCount = map.readValue(pagesCountKey).toInt();
-	readPagesFromJsonStream(map.value(pagesKey), pagesCount);
-
-	readLinksFromJsonStream(map.value(crawledUrlsKey), m_crawledLinks);
-	readLinksFromJsonStream(map.value(pendingUrlsKey), m_pendingLinks);
-
-	INFOLOG << "Deserialization has been finished";
-}
-
-void Serializer::savePagesToJsonStream(Common::JsonParserStreamWriter& stream) const
-{
-	Common::JsonStreamListElement pagesElement(stream);
-	std::vector<ParsedPageSerializer> pageWrappers;
-	pageWrappers.reserve(m_pages.size());
-	std::map<const ParsedPage*, int> pagesByIndex;
-	for (int i = 0; i < m_pages.size(); ++i)
-	{
-		const ParsedPage* page = m_pages[i];
-		pageWrappers.emplace_back(page, i, pagesByIndex);
-	}
-
-	for (int i = 0; i < m_pages.size(); ++i)
-	{
-		ParsedPageSerializer& wrapper = pageWrappers[i];
-		pagesElement.writeCompound(wrapper.toJson());
-	}
-}
-
-void Serializer::readPagesFromJsonStream(Common::JsonParserStreamReader& stream, int pagesCount)
-{
-	INFOLOG << "Deserialization (pages)....";
-	Common::JsonStreamListReader reader(stream);
-	
-	std::vector<ParsedPageDeserializer> pageWrappers;
-	pageWrappers.reserve(pagesCount);
-	std::map<int, ParsedPagePtr> pagesByIndex;
-
-	int index = 0;
-	while (!reader.endOfList())
-	{
-		QVariantMap pageMap = reader.readCompound().toMap();
-		ParsedPageDeserializer& wrapper = pageWrappers.emplace_back(index, pagesByIndex);
-		wrapper.fromJson(pageMap);
-		++index;
-	}
-
-	INFOLOG << "Deserialization (resolving links)....";
-
-	for (ParsedPageDeserializer& wrapper: pageWrappers)
-	{
-		wrapper.resolveLinks();
-		m_deserializedPages.push_back(wrapper.page());
-	}
-
-	INFOLOG << "Deserialization (pages) has been finished";
-}
-
-void Serializer::saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const
-{
-	Common::JsonStreamListElement linksListElement(stream);
-	for (const CrawlerRequest& link : links)
-	{
-		QVariantMap linkMap;
-		linkMap[urlKey] = link.url.toDisplayString();
-		linkMap[requestTypeKey] = static_cast<int>(link.requestType);
-
-		linksListElement.writeCompound(linkMap);
-	}
-}
-
-void Serializer::readLinksFromJsonStream(Common::JsonParserStreamReader& stream, std::vector<CrawlerRequest>& links)
-{
-	Common::JsonStreamListReader reader(stream);
-
-	while (!reader.endOfList())
-	{
-		QVariantMap linkMap = reader.readCompound().toMap();
-		CrawlerRequest request;
-		request.url = Url(linkMap[urlKey].toString());
-		request.requestType = static_cast<DownloadRequestType>(linkMap[requestTypeKey].toInt());
-		links.push_back(request);
-	}
 }
 
 void Serializer::saveToXmlStream(QIODevice& device)
@@ -861,7 +628,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 {
 	writer.writeStartElement(optionsKey);
 
-	writer.writeTextElement(hostKey, m_options.host.toDisplayString());
+	writer.writeTextElement(hostKey, m_options.startCrawlingPage.toDisplayString());
 	writer.writeTextElement(limitMaxUrlLengthKey, QString::number(m_options.limitMaxUrlLength));
 	writer.writeTextElement(minTitleLengthKey, QString::number(m_options.minTitleLength));
 	writer.writeTextElement(maxTitleLengthKey, QString::number(m_options.maxTitleLength));
@@ -900,7 +667,7 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 
 		if (reader.qualifiedName() == hostKey)
 		{
-			m_options.host = Url(reader.readElementText());
+			m_options.startCrawlingPage = Url(reader.readElementText());
 		}
 		else if (reader.qualifiedName() == limitMaxUrlLengthKey)
 		{

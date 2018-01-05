@@ -57,11 +57,11 @@ void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(LinksToThisResou
 	checkLinksToThisResourceConditions(nullptr);
 }
 
-
 void ParsedPageReceiver::onCrawlingProgress(CrawlingProgress state)
 {
 	Q_UNUSED(state);
 	CrawlerSharedState* sharedState = CrawlerSharedState::instance();
+
 	if (!m_allPagesReceived &&
 		sharedState->downloaderPendingLinksCount() == 0 &&
 		sharedState->sequencedDataCollectionLinksCount() > 0 &&
@@ -69,7 +69,6 @@ void ParsedPageReceiver::onCrawlingProgress(CrawlingProgress state)
 		sharedState->workersProcessedLinksCount() == sharedState->modelControllerCrawledLinksCount() &&
 		sharedState->modelControllerAcceptedLinksCount() == sharedState->sequencedDataCollectionLinksCount())
 	{
-		//qDebug() << sharedState->sequencedDataCollectionLinksCount();
 		INFOLOG << sharedState->sequencedDataCollectionLinksCount() << m_parsedPages[StorageType::CrawledUrlStorageType].size();
 		m_allPagesReceivedPromise.set_value(m_parsedPages[StorageType::CrawledUrlStorageType]);
 		m_allPagesReceived = true;
@@ -83,6 +82,8 @@ void ParsedPageReceiver::onAboutClearData()
 
 	m_linksToThisResourceChanges.clear();
 	m_linksToThisResourceConditions.clear();
+
+	m_allPagesReceivedPromise = std::promise<std::vector<const ParsedPage*>>();
 }
 
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
@@ -97,6 +98,11 @@ std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataColl
 	auto iterator = m_unorderedDataCollectionPages.find(type);
 
 	return iterator != m_unorderedDataCollectionPages.end() ? iterator->second : std::vector<const ParsedPage*>();
+}
+
+void ParsedPageReceiver::clearReceivedData()
+{
+	onAboutClearData();
 }
 
 void ParsedPageReceiver::checkWaitCondition(StorageType storageType)
@@ -135,7 +141,6 @@ std::future<std::vector<const ParsedPage*>> ParsedPageReceiver::getParsedPages(i
 	checkWaitCondition(storageType);
 	return m_waitConditions[storageType].second.get_future();
 }
-
 
 std::future<std::vector<const ParsedPage*>> ParsedPageReceiver::getAllCrawledPages()
 {

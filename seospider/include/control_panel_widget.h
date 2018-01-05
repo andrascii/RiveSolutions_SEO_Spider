@@ -12,7 +12,10 @@ class ControlPanelWidget : public QFrame
 public:
 	ControlPanelWidget(QWidget* parent);
 
-	const QUrl& url() const noexcept;
+	const Url& url() const noexcept;
+
+protected:
+	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private slots:
 	void setUrl() const;
@@ -23,8 +26,7 @@ private slots:
 
 private:
 	Ui::ControlPanelWidget m_ui;
-
-	QUrl m_url;
+	Url m_url;
 };
 
 }

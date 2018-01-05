@@ -54,6 +54,7 @@ void UniqueLinkStore::addUrl(const Url& url, DownloadRequestType requestType)
 void UniqueLinkStore::addUrl(Url&& url, DownloadRequestType requestType)
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+
 	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 		&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList);
 
@@ -89,7 +90,7 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 	return true;
 }
 
-void UniqueLinkStore::saveUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType)
+void UniqueLinkStore::addUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -104,7 +105,7 @@ void UniqueLinkStore::saveUrlList(const std::vector<Url>& urlList, DownloadReque
 	}
 }
 
-void UniqueLinkStore::saveUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType)
+void UniqueLinkStore::addUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -119,7 +120,7 @@ void UniqueLinkStore::saveUrlList(std::vector<Url>&& urlList, DownloadRequestTyp
 	}
 }
 
-void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType)
+void UniqueLinkStore::addLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType)
 {
 	const auto makeUrlList = [&linkList]() -> std::vector<Url>
 	{
@@ -135,7 +136,7 @@ void UniqueLinkStore::saveLinkList(const std::vector<LinkInfo>& linkList, Downlo
 
 	std::vector<Url> urlList = makeUrlList();
 
-	saveUrlList(std::move(urlList), requestType);
+	addUrlList(std::move(urlList), requestType);
 }
 
 std::vector<CrawlerRequest> UniqueLinkStore::crawledUrls() const noexcept

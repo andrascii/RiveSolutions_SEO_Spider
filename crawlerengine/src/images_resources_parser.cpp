@@ -41,7 +41,7 @@ void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& he
 
 		const bool dataResource = url.first.toDisplayString().startsWith(QString("data:"));
 
-		const RawResourceOnPage imageResource
+		const ResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
 			LinkInfo{ url.first, LinkParameter::DofollowParameter, url.second, dataResource, ResourceSource::SourceTagImg },

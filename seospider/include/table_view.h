@@ -24,12 +24,9 @@ public:
 	explicit TableView(QWidget* parent = nullptr);
 
 	virtual void setModel(QAbstractItemModel* model) override;
-
 	IViewModel* viewModel() const noexcept;
 	void setViewModel(IViewModel* modelView) noexcept;
-	
 	void setContextMenu(QMenu* menu) noexcept;
-
 	void setShowAdditionalGrid(bool value) noexcept;
 	bool showAdditionalGrid() const noexcept;
 
@@ -51,7 +48,6 @@ protected:
 private:
 	Q_SLOT void adjustColumnSize();
 	Q_SLOT void onAboutRepaintItems(const QModelIndexList& modelIndexes);
-
 	Q_SLOT void applyRowHeight();
 
 	void applyRowHeightToRowRange(int first, int last);

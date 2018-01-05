@@ -51,12 +51,16 @@ if(MSVC)
 		/MP
 		/permissive-
 		/std:c++latest
+		/Zi
+		/W4
+		/WX
 	)
 	
 	set_target_properties(
 		${SeoSpiderServiceAppName}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
 		RUNTIME_OUTPUT_DIRECTORY "../seospider/"
+		LINK_FLAGS /DEBUG
 	)
 	
 endif()

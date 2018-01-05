@@ -15,8 +15,8 @@ public:
 	bool compare(const Url& url) const;
 	const QString& canonizedUrlStr() const;
 
-	bool operator==(const Url& url) const = delete;
-	bool operator!=(const Url& url) const = delete;
+	bool operator==(const Url& url) const;
+	bool operator!=(const Url& url) const;
 
 private:
 	mutable QString m_canonizedUrlStr;

@@ -8,6 +8,8 @@ namespace CrawlerEngine
 	
 void OtherResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
+	Q_UNUSED(headers);
+
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
@@ -24,7 +26,7 @@ void OtherResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 			continue;
 		}
 
-		RawResourceOnPage resource{ ResourceType::ResourceOther, std::move(linkInfo) };
+		ResourceOnPage resource{ ResourceType::ResourceOther, std::move(linkInfo) };
 
 		page->allResourcesOnPage.emplace_back(std::move(resource));
 	}

@@ -117,34 +117,34 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 
 	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
 
-	m_uniqueLinkStore->saveLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->addLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
 
 	if (!parsedPage->redirectedUrl.isEmpty())
 	{
-		m_uniqueLinkStore->saveUrlList(std::vector<Url>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
+		m_uniqueLinkStore->addUrlList(std::vector<Url>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
 	}
 
 	std::vector<Url> resourcesHeadUrlList;
 	std::vector<Url> resourcesGetUrlList;
 
-	for (const RawResourceOnPage& resource : parsedPage->allResourcesOnPage)
+	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
-		if (PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) &&
+		if (PageParserHelpers::isHttpOrHttpsScheme(resource.link.url) &&
 			resource.resourceType != ResourceType::ResourceHtml)
 		{
 			if (resource.resourceType == ResourceType::ResourceImage)
 			{
-				resourcesGetUrlList.push_back(resource.thisResourceLink.url);
+				resourcesGetUrlList.push_back(resource.link.url);
 			}
 			else
 			{
-				resourcesHeadUrlList.push_back(resource.thisResourceLink.url);
+				resourcesHeadUrlList.push_back(resource.link.url);
 			}
 		}
 	}
 
-	m_uniqueLinkStore->saveUrlList(resourcesGetUrlList, DownloadRequestType::RequestTypeGet);
-	m_uniqueLinkStore->saveUrlList(resourcesHeadUrlList, DownloadRequestType::RequestTypeHead);
+	m_uniqueLinkStore->addUrlList(resourcesGetUrlList, DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->addUrlList(resourcesHeadUrlList, DownloadRequestType::RequestTypeHead);
 }
 
 void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
@@ -164,18 +164,25 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionSubdomainNotAllowed;
 	};
 
-	const auto setLinkLoadAvailability = [&](RawResourceOnPage& resource)
+	const auto isExternalLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		const bool loadAvailability = PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url) &&
-			!isNofollowLinkUnavailable(resource.thisResourceLink) &&
-			!isSubdomainLinkUnavailable(resource.thisResourceLink) &&
-			!isLinkBlockedByRobotsTxt(resource.thisResourceLink);
+		return optionsLinkFilter->linkPermission(linkInfo, metaRobotsFlags) == OptionsLinkFilter::PermissionExternalLinksNotAllowed;
+	};
+
+	const auto setLinkLoadAvailability = [&](ResourceOnPage& resource)
+	{
+		const bool loadAvailability = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url) &&
+			!isNofollowLinkUnavailable(resource.link) &&
+			!isSubdomainLinkUnavailable(resource.link) &&
+			!isLinkBlockedByRobotsTxt(resource.link) &&
+			!isExternalLinkUnavailable(resource.link);
 
 		resource.loadAvailability = loadAvailability;
 	};
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
+	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isExternalLinkUnavailable), linkList.end());
 	std::for_each(parsedPage->allResourcesOnPage.begin(), parsedPage->allResourcesOnPage.end(), setLinkLoadAvailability);
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
@@ -183,7 +190,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		ParsedPagePtr page(new ParsedPage);
 
 		page->url = linkInfo.url;
-		page->title = tr("Blocked by robots.txt rules");
+		page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
 		page->resourceType = ResourceType::ResourceHtml;
 
 		emit pageParsed(page);
@@ -198,21 +205,26 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
+	Q_UNUSED(requester);
+
 	m_downloadRequester.reset();
 
-	ParsedPagePtr page = m_pageDataCollector->collectPageDataFromResponse(response);
+	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
 
-	schedulePageResourcesLoading(page);
-
-	if (!m_isRunning)
+	std::for_each(pages.begin(), pages.end(), [this](ParsedPagePtr& page)
 	{
-		m_pagesAcceptedAfterStop.push_back(page);
-		return;
-	}
- 
-	emit pageParsed(page);
-	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
-	m_pendingUrls.erase(page->url);
+		schedulePageResourcesLoading(page);
+
+		if (!m_isRunning)
+		{
+			m_pagesAcceptedAfterStop.push_back(page);
+			return;
+		}
+
+		emit pageParsed(page);
+		CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+		m_pendingUrls.erase(page->url);
+	});
 
 	extractUrlAndDownload();
 }

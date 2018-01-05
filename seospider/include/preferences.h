@@ -69,9 +69,6 @@ class Preferences : public QObject
 	Q_PROPERTY(QString companyEmail READ companyEmail WRITE setCompanyEmail NOTIFY companyEmailChanged);
 	Q_PROPERTY(QString companyWebSite READ companyWebSite WRITE setCompanyWebSite NOTIFY companyWebSiteChanged);
 
-	// Crawler start
-	Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged);
-
 public:
 
 	unsigned threadCount() const;
@@ -250,10 +247,6 @@ public:
 	Q_SLOT void setCompanyWebSite(QString value);
 	Q_SIGNAL void companyWebSiteChanged();
 
-	const QUrl& url() const;
-	Q_SLOT void setUrl(const QUrl& url);
-	Q_SIGNAL void urlChanged();
-
 	//////////////////////////////////////////////////////////////////////////
 
 
@@ -334,8 +327,6 @@ private:
 	QString m_companyName;
 	QString m_companyEmail;
 	QString m_companyWebSite;
-
-	QUrl m_url;
 };
 
 }

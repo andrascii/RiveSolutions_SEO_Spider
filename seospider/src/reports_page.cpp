@@ -34,7 +34,7 @@ bool ReportsPage::eventFilter(QObject* object, QEvent* event)
 {
 #ifndef PRODUCTION
 
-	if (event->type() == QEvent::KeyPress)
+	if (object == qobject_cast<QObject*>(this) && event->type() == QEvent::KeyPress)
 	{
 		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 
@@ -53,6 +53,8 @@ bool ReportsPage::eventFilter(QObject* object, QEvent* event)
 
 void ReportsPage::timerEvent(QTimerEvent* event)
 {
+	Q_UNUSED(event);
+
 	setReportType(m_reportType);
 }
 

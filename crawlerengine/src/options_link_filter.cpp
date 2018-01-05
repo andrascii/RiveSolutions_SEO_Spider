@@ -15,27 +15,32 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 {
 	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url));
 
-	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, linkInfo.url);
+	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptions.startCrawlingPage, linkInfo.url);
 	const bool isNofollowLink = linkInfo.urlParameter == LinkParameter::NofollowParameter;
 
 	const bool isExternalNofollowNotAllowed = isNofollowLink && isUrlExternal && !m_crawlerOptions.followExternalNofollow;
 	const bool isInternalNofollowNotAllowed = isNofollowLink && !isUrlExternal && !m_crawlerOptions.followInternalNofollow;
 
-	if (isExternalNofollowNotAllowed || isInternalNofollowNotAllowed)
+	if (isInternalNofollowNotAllowed || isExternalNofollowNotAllowed)
 	{
 		return PermissionNofollowNotAllowed;
+	}
+
+	const bool isSubdomain = PageParserHelpers::isSubdomain(m_crawlerOptions.startCrawlingPage, linkInfo.url);
+
+	if (isSubdomain && !m_crawlerOptions.checkSubdomains)
+	{
+		return PermissionSubdomainNotAllowed;
+	}
+
+	if (!isNofollowLink && !isSubdomain && isUrlExternal && !m_crawlerOptions.checkExternalLinks)
+	{
+		return PermissionExternalLinksNotAllowed;
 	}
 	
 	if (!isUrlExternal && m_crawlerOptions.followRobotsTxtRules && isLinkBlockedByRobotsTxt(linkInfo, metaRobotsFlags))
 	{
 		return PermissionBlockedByRobotsTxtRules;
-	}
-
-	const bool isSubdomain = PageParserHelpers::isSubdomain(m_crawlerOptions.host, linkInfo.url);
-
-	if (isSubdomain && !m_crawlerOptions.checkSubdomains)
-	{
-		return PermissionSubdomainNotAllowed;
 	}
 
 	return PermissionAllowed;

@@ -187,8 +187,9 @@ StorageAdapterType SummaryDataAccessor::itemCategory(const QModelIndex& index) c
 
 const QPixmap& SummaryDataAccessor::pixmap(const QModelIndex& index) const noexcept
 {
-	static QPixmap emptyPixmap;
+	Q_UNUSED(index);
 
+	static QPixmap emptyPixmap;
 	return emptyPixmap;
 }
 

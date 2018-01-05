@@ -4,6 +4,8 @@
 #include "download_response.h"
 #include "thread_message_dispatcher.h"
 #include "page_parser_helpers.h"
+#include "status_code.h"
+#include "hop.h"
 
 namespace CrawlerEngine
 {
@@ -12,6 +14,7 @@ Downloader::Downloader()
 	: QObject(nullptr)
 	, m_networkAccessor(new QNetworkAccessManager(this))
 	, m_randomIntervalRangeTimer(new Common::RandomIntervalRangeTimer(this))
+	, m_uniquenessChecker(createUniquenessChecker())
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
@@ -108,10 +111,29 @@ void Downloader::queryError(QNetworkReply* reply, QNetworkReply::NetworkError co
 
 void Downloader::processReply(QNetworkReply* reply)
 {
+	class ReplyDeferredDeleterGuard final
+	{
+	public:
+		ReplyDeferredDeleterGuard(QNetworkReply* reply)
+			: m_reply(reply)
+		{
+		}
+
+		~ReplyDeferredDeleterGuard()
+		{
+			m_reply->deleteLater();
+		}
+
+	private:
+		QNetworkReply* m_reply;
+	};
+
 	if (isReplyProcessed(reply))
 	{
 		return;
 	}
+
+	ReplyDeferredDeleterGuard guard(reply);
 
 	markReplyAsProcessed(reply);
 	reply->disconnect(this);
@@ -120,33 +142,13 @@ void Downloader::processReply(QNetworkReply* reply)
 		reply->header(QNetworkRequest::ContentTypeHeader).toString()
 	);
 
-	const QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+	const DownloadRequestType requestType = static_cast<DownloadRequestType>(reply->attribute(QNetworkRequest::User).toInt());
+	const Common::StatusCode statusCode = static_cast<Common::StatusCode>(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+	const CrawlerRequest key{ reply->url(), requestType };
 
-	std::shared_ptr<DownloadResponse> response = std::make_shared<DownloadResponse>();
-
-	response->statusCode = statusCode.isValid() ? statusCode.toInt() : -1;
-	response->url = reply->url();
-	response->responseHeaders.addHeaderValues(reply->rawHeaderPairs());;
-
-	if (processBody)
+	if (!m_requesters.contains(key))
 	{
-		response->responseBody = reply->readAll();
-	}
-
-	const Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-
-	if (!redirectUrl.isEmpty())
-	{
-		response->redirectUrl = redirectUrl;
-	}
-
-	reply->deleteLater();
-
-	const CrawlerRequest key{ response->url, static_cast<DownloadRequestType>(reply->attribute(QNetworkRequest::User).toInt()) };
-	const auto requesterIterator = m_requesters.find(key);
-
-	if (requesterIterator == m_requesters.end())
-	{
+		m_responses.remove(key);
 		return;
 	}
 
@@ -157,6 +159,38 @@ void Downloader::processReply(QNetworkReply* reply)
 		return;
 	}
 
+	if (!m_responses.contains(key))
+	{
+		m_responses[key] = std::make_shared<DownloadResponse>();
+	}
+
+	std::shared_ptr<DownloadResponse> response = m_responses[key];
+
+	const QByteArray body = processBody ? reply->readAll() : QByteArray();
+	Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+
+	if (redirectUrl.isRelative())
+	{
+		redirectUrl = PageParserHelpers::resolveRelativeUrl(redirectUrl, reply->url());
+	}
+
+	if (statusCode == Common::StatusCode::MovedPermanently301 ||
+		statusCode == Common::StatusCode::MovedTemporarily302)
+	{
+		const CrawlerRequest redirectKey{ redirectUrl, requestType };
+
+		m_requesters[redirectKey] = m_requesters[key];
+		m_responses[redirectKey] = response;
+
+		m_requesters.remove(key);
+		m_responses.remove(key);
+
+		response->hopsChain.addHop(Hop{ reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs() });
+		loadHelper(redirectKey);
+		return;
+	}
+	
+	response->hopsChain.addHop(Hop(reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs()));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
 
@@ -184,13 +218,22 @@ void Downloader::load(RequesterSharedPtr requester)
 {
 	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
 
-	QNetworkReply* reply = nullptr;
+	ASSERT(!m_uniquenessChecker->hasRequest(request->requestInfo));
+	m_uniquenessChecker->registrateRequest(request->requestInfo);
 
-	QNetworkRequest networkRequest(request->requestInfo.url);
+	loadHelper(request->requestInfo);
+
+	m_requesters[request->requestInfo] = requester;
+}
+
+void Downloader::loadHelper(const CrawlerRequest& request)
+{
+	QNetworkReply* reply = nullptr;
+	QNetworkRequest networkRequest(request.url);
 	networkRequest.setAttribute(QNetworkRequest::User, static_cast<int>(DownloadRequestType::RequestTypeGet));
 	networkRequest.setRawHeader("User-Agent", m_userAgent);
 
-	switch (request->requestInfo.requestType)
+	switch (request.requestType)
 	{
 		case DownloadRequestType::RequestTypeGet:
 		{
@@ -215,8 +258,6 @@ void Downloader::load(RequesterSharedPtr requester)
 
 	VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this,
 		[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
-
-	m_requesters[request->requestInfo] = requester;
 }
 
 }

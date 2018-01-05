@@ -30,6 +30,10 @@ void ItemViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
 bool ItemViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
+	Q_UNUSED(event);
+	Q_UNUSED(option);
+	Q_UNUSED(index);
+
 	return false;
 }
 

@@ -85,6 +85,8 @@ void SummaryDataAccessorPixmapDecorator::initializePixmaps()
 
 void SummaryDataAccessorPixmapDecorator::interceptDecoratingObjectSignal(int row, int column, Qt::ItemDataRole)
 {
+	Q_UNUSED(column);
+
 	Q_EMIT dataChanged(row, 0, Qt::DecorationRole);
 }
 

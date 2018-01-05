@@ -139,7 +139,7 @@ void AbstractViewModel::invalidateItemViewRendererCache() const noexcept
 	m_itemRenderer.invalidateCache();
 }
 
-const IRenderer* AbstractViewModel::itemViewRenderer(const QModelIndex& index) const noexcept
+const IRenderer* AbstractViewModel::itemViewRenderer(const QModelIndex&) const noexcept
 {
 	return &m_itemRenderer;
 }

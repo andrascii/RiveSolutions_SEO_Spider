@@ -91,6 +91,8 @@ PageLinksStorageAdapter::ItemType PageLinksStorageAdapter::itemType(const QModel
 
 ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
+	Q_UNUSED(index);
+
 	return m_parsedPageInfo;
 }
 

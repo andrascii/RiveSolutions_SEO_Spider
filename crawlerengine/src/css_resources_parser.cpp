@@ -40,7 +40,7 @@ void CssResourcesParser::parse(GumboOutput* output, const ResponseHeaders& heade
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
-		const RawResourceOnPage cssResource
+		const ResourceOnPage cssResource
 		{
 			ResourceType::ResourceStyleSheet,
 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }

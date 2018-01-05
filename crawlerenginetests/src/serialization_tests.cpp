@@ -11,20 +11,89 @@ TEST(SerializationTests, PagesSerialization)
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
 		cl->checkSequencedDataCollectionConsistency();
-
 		cl->stopCrawling();
+
+		ParsedPage* firstPage = const_cast<ParsedPage*>(pages[0]);
+
+		firstPage->redirectedUrl = Url("http://redirected-url.com");
+		firstPage->canonicalUrl = Url("http://canonical-url.com");
+		firstPage->title = QString("Title");
+		firstPage->contentType = QString("text/html");
+		firstPage->metaRefresh = QString("meta-refresh");
+		firstPage->metaDescription = QString("meta-description");
+		firstPage->metaKeywords = QString("meta-keywords");
+		firstPage->serverResponse = QString("server-response");
+		firstPage->firstH1 = QString("first-h1");
+		firstPage->secondH1 = QString("second-h1");
+		firstPage->firstH2 = QString("first-h2");
+		firstPage->secondH2 = QString("second-h2");
+		firstPage->statusCode = Common::StatusCode::Forbidden403;
+		firstPage->metaRobotsFlags = { { UserAgentType::AnyBot, MetaRobotsFlags(MetaRobotsNoFollow) } };
+		firstPage->responseDate = QDateTime::currentDateTimeUtc();
+		firstPage->lastModifiedDate = QDateTime::currentDateTimeUtc();
+		firstPage->pageSizeKilobytes = 42;
+		firstPage->wordCount = 99;
+		firstPage->pageHash = 9999999;
+		firstPage->hasSeveralTitleTags = true;
+		firstPage->hasSeveralMetaDescriptionTags = false;
+		firstPage->hasSeveralMetaKeywordsTags = true;
+		firstPage->hasSeveralH1Tags = false;
+		firstPage->hasSeveralEqualH2Tags = true;
+		firstPage->hasMetaRefreshTag = false;
+		firstPage->hasFrames = true;
+		firstPage->isThisExternalPage = true;
+		firstPage->resourceType = ResourceType::ResourceHtml;
+		firstPage->rawResponse = "<html>...ÀÁÂÃÄ</html>";
+		firstPage->pageLevel = 3;
+
+
+		ParsedPage etalon = *firstPage;
+		
 		cl->saveToFile(QString("pages.json"));
+		cl->waitForSerializationDone(25);
+		cl->clearReceivedData();
 		cl->loadFromFile(QString("pages.json"));
+		cl->waitForDeserializationDone(25);
 		
 		auto deserializedPages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
 
 		EXPECT_EQ(pages.size(), deserializedPages.size());
+		const ParsedPage* newFirstPage = deserializedPages[0];
 
-		for (size_t i = 0; i < pages.size(); ++i)
-		{
-			const ParsedPage* page = pages[i];
-			const ParsedPage* deserializedPage = deserializedPages[i];
-		}
+		//EXPECT_NE(firstPage, newFirstPage);
+
+		EXPECT_EQ(true, etalon.url.compare(newFirstPage->url));
+		EXPECT_EQ(true, etalon.redirectedUrl.compare(newFirstPage->redirectedUrl));
+		EXPECT_EQ(true, etalon.canonicalUrl.compare(newFirstPage->canonicalUrl));
+		EXPECT_EQ(etalon.title, newFirstPage->title);
+		EXPECT_EQ(etalon.contentType, newFirstPage->contentType);
+		EXPECT_EQ(etalon.metaRefresh, newFirstPage->metaRefresh);
+		EXPECT_EQ(etalon.metaDescription, newFirstPage->metaDescription);
+		EXPECT_EQ(etalon.metaKeywords, newFirstPage->metaKeywords);
+		EXPECT_EQ(etalon.serverResponse, newFirstPage->serverResponse);
+		EXPECT_EQ(etalon.firstH1, newFirstPage->firstH1);
+		EXPECT_EQ(etalon.secondH1, newFirstPage->secondH1);
+		EXPECT_EQ(etalon.firstH2, newFirstPage->firstH2);
+		EXPECT_EQ(etalon.secondH2, newFirstPage->secondH2);
+		EXPECT_EQ(etalon.statusCode, newFirstPage->statusCode);
+		EXPECT_EQ(etalon.metaRobotsFlags, newFirstPage->metaRobotsFlags);
+		EXPECT_EQ(etalon.responseDate, newFirstPage->responseDate);
+		EXPECT_EQ(etalon.lastModifiedDate, newFirstPage->lastModifiedDate);
+		EXPECT_EQ(etalon.pageSizeKilobytes, newFirstPage->pageSizeKilobytes);
+		EXPECT_EQ(etalon.wordCount, newFirstPage->wordCount);
+		EXPECT_EQ(etalon.pageHash, newFirstPage->pageHash);
+		EXPECT_EQ(etalon.hasSeveralTitleTags, newFirstPage->hasSeveralTitleTags);
+		EXPECT_EQ(etalon.hasSeveralMetaDescriptionTags, newFirstPage->hasSeveralMetaDescriptionTags);
+		EXPECT_EQ(etalon.hasSeveralMetaKeywordsTags, newFirstPage->hasSeveralMetaKeywordsTags);
+		EXPECT_EQ(etalon.hasSeveralH1Tags, newFirstPage->hasSeveralH1Tags);
+		EXPECT_EQ(etalon.hasSeveralEqualH2Tags, newFirstPage->hasSeveralEqualH2Tags);
+		EXPECT_EQ(etalon.hasMetaRefreshTag, newFirstPage->hasMetaRefreshTag);
+		EXPECT_EQ(etalon.hasFrames, newFirstPage->hasFrames);
+		EXPECT_EQ(etalon.isThisExternalPage, newFirstPage->isThisExternalPage);
+		EXPECT_EQ(etalon.resourceType, newFirstPage->resourceType);
+		EXPECT_EQ(etalon.rawResponse, newFirstPage->rawResponse);
+		EXPECT_EQ(etalon.pageLevel, newFirstPage->pageLevel);
+		EXPECT_EQ(etalon.storages, newFirstPage->storages);
 	};
 
 	env.initializeTest(testFunction);
@@ -82,7 +151,7 @@ TEST(SerializationTests, OptionsSerialization)
 			crawler->loadFromFile(QString("options.json"));
 			crawler->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
 
-			EXPECT_EQ(true, options.host.compare(newOptions.host));
+			EXPECT_EQ(true, options.startCrawlingPage.compare(newOptions.startCrawlingPage));
 			EXPECT_EQ(options.limitMaxUrlLength, newOptions.limitMaxUrlLength);
 			EXPECT_EQ(options.minTitleLength, newOptions.minTitleLength);
 			EXPECT_EQ(options.maxTitleLength, newOptions.maxTitleLength);

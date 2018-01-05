@@ -10,7 +10,8 @@ class ISpecificLoader
 public:
 	virtual ~ISpecificLoader() = default;
 
-	virtual void load(const Url& url) = 0;
+	virtual void setHost(const Url& url) = 0;
+	virtual void load() = 0;
 	virtual const QByteArray& content() const noexcept = 0;
 	virtual bool isReady() const noexcept = 0;
 	virtual bool isValid() const noexcept = 0;

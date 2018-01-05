@@ -27,39 +27,47 @@ void PageDataCollector::setOptions(const CrawlerOptions& crawlerOptions) noexcep
 	applyOptions();
 }
 
-ParsedPagePtr PageDataCollector::collectPageDataFromResponse(const DownloadResponse& response)
+std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const DownloadResponse& response)
 {
-	ParsedPagePtr page(new ParsedPage);
+	std::vector<ParsedPagePtr> pages(response.hopsChain.length());
+	std::generate(pages.begin(), pages.end(), [] { return std::make_shared<ParsedPage>(); });
 
-	collectReplyData(response, page);
-
-	if (page->pageSizeKilobytes > 512)
+	for (std::size_t i = 0; i < pages.size(); ++i)
 	{
-		WARNLOG << "Page size is greater than 512 KB,"
-			<< "size:" << page->pageSizeKilobytes << "KB,"
-			<< "URL:" << response.url.toString() << ","
-			<< "Content-Type:" << page->contentType;
+		collectReplyData(response.hopsChain[i], pages[i]);
 	}
 
-	QByteArray decodedHtmlPage;
-	if (page->resourceType == ResourceType::ResourceHtml)
+	const auto collectEachPageData = [&](const Hop& hop, ParsedPagePtr& page)
 	{
-		decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(response.responseBody, response.responseHeaders);
-#ifdef QT_DEBUG
-		page->rawResponse = qCompress(decodedHtmlPage, 9);
-#endif
-	}
-	else if (page->resourceType == ResourceType::ResourceImage)
+		QByteArray decodedHtmlPage;
+
+		if (page->resourceType == ResourceType::ResourceHtml)
+		{
+			decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(hop.body(), hop.responseHeaders());
+
+		#ifdef QT_DEBUG
+			page->rawResponse = qCompress(decodedHtmlPage, 9);
+		#endif
+
+		}
+		else if (page->resourceType == ResourceType::ResourceImage)
+		{
+			page->rawResponse = hop.body();
+		}
+
+		GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
+		collectParsedPageData(gumboOutput.output(), hop.responseHeaders(), page);
+		m_outlinks = GumboParsingHelpers::parsePageUrlList(gumboOutput.output()->root, true);
+	};
+
+	m_outlinks.clear();
+
+	for (std::size_t i = 0; i < pages.size(); ++i)
 	{
-		page->rawResponse = response.responseBody;
+		collectEachPageData(response.hopsChain[i], pages[i]);
 	}
 
-	GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
-
-	collectParsedPageData(gumboOutput.output(), response.responseHeaders, page);
-	collectUrlList(gumboOutput.output());
-
-	return page;
+	return pages;
 }
 
 const std::vector<LinkInfo>& PageDataCollector::outlinks() const noexcept
@@ -99,32 +107,32 @@ void PageDataCollector::applyOptions()
 	}
 }
 
-Url PageDataCollector::resolveRedirectUrl(const DownloadResponse& response)
+Url PageDataCollector::resolveRedirectUrl(const Hop& hop)
 {
 	Url redirectUrl;
 
-	if (response.redirectUrl.isEmpty() || !response.redirectUrl.isRelative())
+	if (hop.redirectUrl().isEmpty() || !hop.redirectUrl().isRelative())
 	{
-		redirectUrl = response.redirectUrl;
+		redirectUrl = hop.redirectUrl();
 	}
 	else
 	{
-		PageParserHelpers::resolveRelativeUrl(response.redirectUrl, response.url);
+		PageParserHelpers::resolveRelativeUrl(hop.redirectUrl(), hop.url());
 	}
 
 	return redirectUrl;
 }
 
-void PageDataCollector::collectReplyData(const DownloadResponse& response, ParsedPagePtr& page) const
+void PageDataCollector::collectReplyData(const Hop& hop, ParsedPagePtr& page) const
 {
-	page->url = response.url;
-	page->statusCode = static_cast<Common::StatusCode>(response.statusCode);
-	page->pageSizeKilobytes = response.responseBody.size() / 1024;
-	page->serverResponse = response.responseHeaders.makeString();
-	page->pageHash = std::hash<std::string>()(response.responseBody.toStdString().c_str());
-	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.host, page->url);
+	page->url = hop.url();
+	page->statusCode = static_cast<Common::StatusCode>(hop.statusCode());
+	page->pageSizeKilobytes = hop.body().size() / 1024;
+	page->serverResponse = hop.responseHeaders().makeString();
+	page->pageHash = std::hash<std::string>()(hop.body().toStdString());
+	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.startCrawlingPage, page->url);
 
-	const std::vector<QString> contentTypeValues = response.responseHeaders.valueOf("content-type");
+	const std::vector<QString> contentTypeValues = hop.responseHeaders().valueOf("content-type");
 	page->contentType = contentTypeValues.empty() ? QString() : contentTypeValues.front();
 
 	if (contentTypeValues.size() > 1)
@@ -134,9 +142,9 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 
 	setResourceCategory(page);
 
-	page->redirectedUrl = resolveRedirectUrl(response);
+	page->redirectedUrl = resolveRedirectUrl(hop);
 
-	const std::vector<QString> dateHeaders = response.responseHeaders.valueOf(QString("Date"));
+	const std::vector<QString> dateHeaders = hop.responseHeaders().valueOf(QString("Date"));
 
 	if (!dateHeaders.empty())
 	{
@@ -149,7 +157,7 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 		}
 	}
 
-	const std::vector<QString> lastModifiedHeaders = response.responseHeaders.valueOf(QString("Last-Modified"));
+	const std::vector<QString> lastModifiedHeaders = hop.responseHeaders().valueOf(QString("Last-Modified"));
 
 	if (!lastModifiedHeaders.empty())
 	{
@@ -166,12 +174,6 @@ void PageDataCollector::collectReplyData(const DownloadResponse& response, Parse
 void PageDataCollector::collectParsedPageData(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	m_parser.parse(output, headers, page);
-}
-
-void PageDataCollector::collectUrlList(GumboOutput* output)
-{
-	m_outlinks.clear();
-	m_outlinks = GumboParsingHelpers::parsePageUrlList(output->root, true);
 }
 
 void PageDataCollector::setResourceCategory(ParsedPagePtr& page) const

@@ -97,6 +97,8 @@ void WebSiteDataWidget::showEvent(QShowEvent*)
 
 void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
+	Q_UNUSED(deselected);
+
 	if (!m_pageDataWidget)
 	{
 		return;

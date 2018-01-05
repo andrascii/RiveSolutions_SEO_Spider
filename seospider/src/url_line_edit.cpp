@@ -14,9 +14,7 @@ UrlLineEdit::UrlLineEdit(QWidget* parent)
 		"((?:[a-z]{3}\\.[a-z]{2})|(?:[a-z]{2}\\.[a-z]{3})|(?:[a-z]{2}\\.[a-z]{2})|[a-z]{2,6})(:\\d+)?(.*)?");
 	
 	urlRegExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
-
-	QRegularExpressionValidator* urlValidator = new QRegularExpressionValidator(urlRegExp, this);
-	setValidator(urlValidator);
+	setValidator(new QRegularExpressionValidator(urlRegExp, this));
 }
 
 void UrlLineEdit::checkUrlCorrectness()

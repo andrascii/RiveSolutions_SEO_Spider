@@ -16,7 +16,7 @@ Preferences::~Preferences()
 	{
 		const QMetaProperty property = metaObject()->property(i);
 
-		if (!property.isUser() && property.name() != "objectName")
+		if (!property.isUser() && std::strcmp(property.name(), "objectName"))
 		{
 			m_settingsAccessor->saveToSettings(property.name(), property.read(this));
 		}
@@ -510,25 +510,6 @@ void Preferences::setCompanyWebSite(QString value)
 {
 	m_companyWebSite = value;
 	emit companyWebSiteChanged();
-}
-
-const QUrl& Preferences::url() const
-{
-	return m_url;
-}
-
-void Preferences::setUrl(const QUrl& url)
-{
-	m_url = url;
-
-	if (m_url.scheme().isEmpty())
-	{
-		DEBUGLOG << "Corrected scheme of passed URL";
-
-		m_url.setUrl("http://" + url.toString());
-	}
-
-	emit urlChanged();
 }
 
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept

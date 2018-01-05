@@ -30,6 +30,9 @@ if(MSVC)
 		/MP
 		/permissive-
 		/std:c++latest
+		/Zi
+		/W4
+		/WX
 	)
 	
 	set_target_properties(
@@ -40,7 +43,7 @@ if(MSVC)
 	set_target_properties(
 		${CommonLibName} 
 		PROPERTIES WIN32_EXECUTABLE YES
-		LINK_FLAGS "/ENTRY:mainCRTStartup"
+		LINK_FLAGS "/DEBUG /ENTRY:mainCRTStartup"
 	)
 endif()
 

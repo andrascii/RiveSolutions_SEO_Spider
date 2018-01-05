@@ -18,19 +18,12 @@ TableView::TableView(QWidget* parent)
 	, m_rowHeight(Common::Helpers::pointsToPixels(22))
 {
 	setMouseTracking(true);
-
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-
 	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	setSelectionModel(new SelectionModel(this));
-
 	horizontalHeader()->setSectionsMovable(true);
-
-	//
-	// Use GridLineRenderer in a view model for this
-	//
 	setShowGrid(false);
 }
 

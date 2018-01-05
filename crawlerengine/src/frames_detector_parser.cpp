@@ -8,13 +8,14 @@ namespace CrawlerEngine
 
 void FramesDetectorParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
 {
+	Q_UNUSED(headers);
+
 	auto findPredicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			(node->v.element.tag == GUMBO_TAG_FRAME || node->v.element.tag == GUMBO_TAG_FRAMESET) &&
-			node->parent &&
-			node->parent->v.element.tag == GUMBO_TAG_BODY;
+			node->parent;
 	};
 
 	const std::vector<const GumboNode*> frames = GumboParsingHelpers::findNodesRecursive(output->root, findPredicate);

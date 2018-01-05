@@ -8,6 +8,7 @@ body {
 p {
 	margin:0;
 }
+
 section {
 	margin: 0 14rem;
 }
@@ -28,6 +29,10 @@ a {
 	text-decoration: none !important;
 }
 
+img {
+	max-width: 100%;
+	height: auto;
+}
 
 .row::before {
 	content: "";
@@ -47,7 +52,7 @@ a {
 }
 
 .col-3 {
-	width: 22.6%;
+	width: 25%;
 	float: left;
 }
 
@@ -66,20 +71,35 @@ a {
 	float: left;
 }
 
+.col-7 {
+	width: 58.33%;
+	float: left;
+}
+.col-8 {
+	width: 66.66%;
+	float: left;
+}
+.col-9 {
+	width: 75%;
+}
+.col-10 {
+	width: 83.33%;
+}
+.col-11 {
+	width: 91.66%;
+}
+.col-12 {
+	width: 100%;
+}
+
+
 .left {
-	/*margin-left: 1rem;*/
 	margin-right: 1rem;
 }
 
 .summary {
-	/*border: 1px solid #dde0ee;*/
 	background-color: white;
-}
-
-.summary:before {
-	content: "";
-	display: table;
-	clear: both;
+	margin-bottom: 1rem;
 }
 
 .summary:after {
@@ -92,29 +112,31 @@ a {
 	padding: 1rem;
 }
 
-.summary-center {
-	text-align: center;
+.summary-header .stats {
+	margin-left: 2rem;
 }
 
 .site-ref {
-	font-size: 32px;
+	font-size: 36px;
+}
+
+.site-ref a {
 	color: #456A81;
+}
+
+.summary-problems {
+	margin-top: 9rem;
+	color: #656565;
 }
 
 .problems-count {
 	display: inline-block;
-	font-size: 3rem
+	font-size: 3rem;
+	color: black;
 }
 
 .summary-overview {
-	background-color: #F3F3F3;
-}
-
-.summary-overview-criteria {
-	margin-top: 1.5rem;
-	margin-right: 2.5rem;
-	padding: 0.3rem;
-	background-color: white;
+	padding: 0.5rem 1rem 0.5rem 1rem;
 }
 
 .summary-overview-icon {
@@ -122,47 +144,39 @@ a {
 	float: left;
 }
 
-.summary-overview-count {
-	font-size: 1.7rem;
-	float: right;
+.summary-overview-title {
+	color: #656565;
 }
 
-.summary-detail {
-	background-color: #F3F3F3;
+.summary-overview-count {
+	font-size: 1.7rem;
 }
 
 .summary-body {
-	/*padding-bottom: 2rem;*/
+	margin-top: 1.5rem;
 }
 
 .summary-body-title{
 	margin: 0;
 	padding: 0.7rem 1rem 0.7rem 1rem;
-	background-color: #F3F3F3;
+	/*background-color: #F3F3F3;*/
 	color: #7C7C7C;
 	/*font-weight: bold;*/
 }
 
 .summary-block {
-	margin-top: 1.5rem;
 	padding: 1rem;
 	background-color: white;
-	/*margin-bottom: 2.5rem;*/
 }
 
 .summary-title {
 	color: #656565;
-	/*font-size: 1.1rem;*/
 	font-weight: bold;
-	/*border-bottom: 1px solid #dde0ee;*/
-}
-
-.summary-body {
-
+	/*border-bottom: 1px solid #D8D8D8;*/
 }
 
 .criteria {
-	margin-top: 1rem;
+	margin-top: 0.6rem;
 }
 
 .criteria:before {
@@ -186,7 +200,6 @@ a {
 
 .criteria-title {
 	float: left;
-	/*width: 95%;*/
 }
 
 .criteria-count {
@@ -194,7 +207,6 @@ a {
 }
 
 .summary-footer {
-	margin-top: 1rem;
 	padding: 1rem;
 	background-color: white;
 }

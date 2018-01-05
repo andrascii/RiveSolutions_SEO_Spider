@@ -173,7 +173,7 @@ MessageQueue& ThreadMessageDispatcher::messageQueue() noexcept
 	return m_messageQueue;
 }
 
-void ThreadMessageDispatcher::timerEvent(QTimerEvent* event)
+void ThreadMessageDispatcher::timerEvent(QTimerEvent*)
 {
 	execute();
 }

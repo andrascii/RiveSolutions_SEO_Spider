@@ -35,6 +35,17 @@
 //
 #include <boost/functional/hash.hpp>
 
+
+#pragma warning(disable:4127)
+#pragma warning(disable:745)
+#pragma warning(disable:749)
+#pragma warning(disable:333)
+#pragma warning(disable:317)
+#pragma warning(disable:597)
+#pragma warning(disable:4251)
+#pragma warning(disable:4702)
+#pragma warning(disable:4456)
+
 //
 // Qt
 //
@@ -50,6 +61,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkProxy>
 #include <QTimer>
 #include <QTcpSocket>
 #include <QTcpServer>
@@ -82,6 +94,14 @@
 
 using namespace std::chrono_literals;
 using std::size_t;
+
+#ifndef QT_DEBUG
+#define PRODUCTION
+#endif
+
+#ifndef PRODUCTION
+#define DEBUG
+#endif
 
 #ifdef Q_OS_WIN
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)

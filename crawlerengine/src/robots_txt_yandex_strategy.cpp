@@ -39,7 +39,7 @@ Url RobotsTxtYandexStrategy::cleanUrl(const Url& url, UserAgentType userAgentTyp
 
 	foreach(const QString& cleanParamToken, cleanParamTokens)
 	{
- 		QStringList parts = cleanParamToken.split(QRegExp(QString("\\s")), QString::SkipEmptyParts);
+		QStringList parts = cleanParamToken.split(QRegExp(QString("\\s")), QString::SkipEmptyParts);
 		if (parts.empty() || parts.size() > 2)
 		{
 			continue;
@@ -54,6 +54,7 @@ Url RobotsTxtYandexStrategy::cleanUrl(const Url& url, UserAgentType userAgentTyp
 		}
 
 		QStringList paramsToClean = parts.front().split(QString("&"), QString::SkipEmptyParts);
+
 		foreach(const QString& paramToClean, paramsToClean)
 		{
 			paramValuesByName.remove(paramToClean.toLower());

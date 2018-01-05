@@ -51,7 +51,6 @@ void RobotsTxtTokenizer::tokenize(const QString& robotsTxtContent)
 	QStringList rows = removeCommentaries(robotsTxtContent.split(s_endOfLine, QString::SkipEmptyParts));
 
 	UserAgentType userAgentType = UserAgentType::AnyBot;
-	bool currentUserAgentIsNotSupported = true;
 
 	for (int i = 0; i < rows.size(); ++i)
 	{

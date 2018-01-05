@@ -56,7 +56,7 @@ TEST(ImageTests, EmptyAlt)
 TEST(ImageTests, NoAlt)
 {
 	// no-alt.html(btclogo.png) -> no-alt-2.html(btclogo-2.png)
-	int argc = 0;
+
 	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://image.com/no-alt.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
@@ -155,7 +155,6 @@ TEST(ImageTests, Image404)
 
 TEST(ImageTests, TwoPagesWithTheSameImage)
 {
-	int argc = 0;
 	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://image.com/two-pages-with-same-image-1.html")));
 
 	const auto testFunction = [cl = env.crawler()]()

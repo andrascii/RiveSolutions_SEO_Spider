@@ -27,15 +27,6 @@ public:
 	const CrawlerOptions& crawlerOptions() const;
 
 private:
-	void saveToJsonStream(QIODevice& device);
-	void loadFromJsonStream(QIODevice& device);
-	void savePagesToJsonStream(Common::JsonParserStreamWriter& stream) const;
-	void readPagesFromJsonStream(Common::JsonParserStreamReader& stream, int pagesCount);
-
-	void saveLinksToJsonStream(Common::JsonParserStreamWriter& stream, const std::vector<CrawlerRequest>& links) const;
-	void readLinksFromJsonStream(Common::JsonParserStreamReader& stream, std::vector<CrawlerRequest>& links);
-
-private:
 	void saveToXmlStream(QIODevice& device);
 	void loadFromXmlStream(QIODevice& device);
 	void savePagesToXmlStream(QXmlStreamWriter& writer) const;
