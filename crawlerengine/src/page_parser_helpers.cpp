@@ -153,6 +153,26 @@ bool PageParserHelpers::isUrlExternal(const Url& baseUrl, const Url& url) noexce
 	return !isUrlInternal;
 }
 
+bool PageParserHelpers::isUrlInsideBaseUrlFolder(const Url& baseUrl, const Url& url) noexcept
+{
+	if (PageParserHelpers::isUrlExternal(baseUrl, url))
+	{
+		return false;
+	}
+
+	const QString baseUrlPath = baseUrl.path().toLower();
+	if (baseUrlPath.isEmpty() || baseUrlPath == QString("/"))
+	{
+		return true;
+	}
+
+	const int lastSlashIndex = baseUrlPath.lastIndexOf(QChar('/'));
+	const QString folder = lastSlashIndex != -1
+		? baseUrlPath.mid(0, lastSlashIndex -1) : baseUrlPath;
+
+	return url.path().toLower().startsWith(folder);
+}
+
 bool PageParserHelpers::isHtmlOrPlainContentType(const QString& contentType) noexcept
 {
 	return contentType.startsWith("text/html") ||

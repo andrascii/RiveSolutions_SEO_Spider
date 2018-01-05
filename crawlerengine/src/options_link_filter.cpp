@@ -31,6 +31,12 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 		return PermissionBlockedByRobotsTxtRules;
 	}
 
+	if (!m_crawlerOptions.crawlOutsideOfStartFolder &&
+		!PageParserHelpers::isUrlInsideBaseUrlFolder(m_crawlerOptions.host, linkInfo.url))
+	{
+		return PermissionBlockedByFolder;
+	}
+
 	const bool isSubdomain = PageParserHelpers::isSubdomain(m_crawlerOptions.host, linkInfo.url);
 
 	if (isSubdomain && !m_crawlerOptions.checkSubdomains)

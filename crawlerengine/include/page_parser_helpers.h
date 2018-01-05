@@ -15,6 +15,7 @@ public:
 	static bool checkUrlIdentity(const Url& lhs, const Url& rhs);
 
 	static bool isUrlExternal(const Url& baseUrl, const Url& url) noexcept;
+	static bool isUrlInsideBaseUrlFolder(const Url& baseUrl, const Url& url) noexcept;
 	static bool isHtmlOrPlainContentType(const QString& contentType) noexcept;
 	static bool isHttpOrHttpsScheme(const Url& url) noexcept;
 	static bool isSubdomain(const Url& baseUrl, const Url& url);

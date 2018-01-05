@@ -17,7 +17,8 @@ public:
 		PermissionAllowed,
 		PermissionNofollowNotAllowed,
 		PermissionBlockedByRobotsTxtRules,
-		PermissionSubdomainNotAllowed
+		PermissionSubdomainNotAllowed,
+		PermissionBlockedByFolder
 	};
 
 	OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const RobotsTxtRules& robotsTxtRules);

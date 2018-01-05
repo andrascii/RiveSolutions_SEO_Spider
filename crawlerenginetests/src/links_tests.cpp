@@ -151,6 +151,38 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 	env.exec();
 }
 
+TEST(LinksTests, BlockedByOutsideFolderLinksMustNotBeLoaded)
+{
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://links.com/folder1/folder2/index.html"));
+	options.crawlOutsideOfStartFolder = false;
+
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		cl->checkSequencedDataCollectionConsistency();
+
+		EXPECT_EQ(pages.size(), 2);
+
+		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
+		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
+
+		const QUrl blockedByOutsideFolderUrl("http://links.com/folder1/index.html");
+
+		const auto checkLinks = [&blockedByOutsideFolderUrl](auto* page)
+		{
+			EXPECT_NE(blockedByOutsideFolderUrl, page->url);
+		};
+
+		std::for_each(pendingPages.begin(), pendingPages.end(), checkLinks);
+		std::for_each(crawledPages.begin(), crawledPages.end(), checkLinks);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 {
 	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://blockedbyrobotstxt.com"));
