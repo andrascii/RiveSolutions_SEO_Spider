@@ -2,7 +2,7 @@
 
 namespace CrawlerEngine
 {
-	
+
 class INotificationService
 {
 public:
@@ -11,6 +11,5 @@ public:
 	virtual void warning(const QString& header, const QString& message) = 0;
 	virtual void error(const QString& header, const QString& message) = 0;
 };
-
 
 }

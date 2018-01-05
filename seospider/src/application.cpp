@@ -82,6 +82,11 @@ SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() const noex
 	return m_summaryDataAccessorFactory.get();
 }
 
+InternetConnectionNotificationManager* Application::internetConnectionNotificationManager() const noexcept
+{
+	return m_internetNotificationManager;
+}
+
 Preferences* Application::preferences() const noexcept
 {
 	return m_preferences;

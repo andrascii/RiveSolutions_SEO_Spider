@@ -310,8 +310,6 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 					}
 
 					m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
-					//VERIFY(QMetaObject::invokeMethod(m_modelController->data(), "addParsedPage", Qt::QueuedConnection,
-					//Q_ARG(const ParsedPagePtr&, page), Q_ARG(int, i)));
 				}
 			}
 		}

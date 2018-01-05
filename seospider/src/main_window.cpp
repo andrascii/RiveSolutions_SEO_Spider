@@ -1,12 +1,12 @@
 #include "application.h"
 #include "application_settings_widget.h"
 #include "main_window.h"
+#include "crawler.h"
 #include "data_pages_widget.h"
 #include "action_keys.h"
 #include "action_registry.h"
 #include "menu_bar.h"
 #include "settings_page_impl.h"
-#include "crawler.h"
 #include "site_map_creator_widget.h"
 #include "crawler_status_info.h"
 #include "page_factory.h"
@@ -21,6 +21,7 @@
 #include "ui_company_profile_settings_widget.h"
 #include "user_agent_settings_widget.h"
 #include "crawler_pause_settings_widget.h"
+#include "internet_connection_state_widget.h"
 
 namespace SeoSpider
 {
@@ -122,6 +123,7 @@ void MainWindow::init()
 	setMenuBar(new MenuBar(this));
 
 	QStatusBar* statusBar = new QStatusBar(this);
+	statusBar->addPermanentWidget(new InternetConnectionStateWidget(this));
 	statusBar->addWidget(new CrawlerStatusInfo(statusBar));
 
 	setStatusBar(statusBar);
