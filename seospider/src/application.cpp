@@ -15,6 +15,8 @@
 #include "deferred_call.h"
 #include "internet_connection_notification_manager.h"
 #include "web_screenshot.h"
+#include "action_registry.h"
+#include "action_keys.h"
 
 namespace SeoSpider
 {
@@ -80,6 +82,11 @@ SummaryDataAccessorFactory* Application::summaryDataAccessorFactory() const noex
 	return m_summaryDataAccessorFactory.get();
 }
 
+InternetConnectionNotificationManager* Application::internetConnectionNotificationManager() const noexcept
+{
+	return m_internetNotificationManager;
+}
+
 Preferences* Application::preferences() const noexcept
 {
 	return m_preferences;
@@ -119,6 +126,14 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 
 void Application::startCrawler()
 {
+	QAction* action = qobject_cast<QAction*>(sender());
+	ASSERT(action && "This method must be called using QAction");
+
+	const QVariant data = action->data();
+	ASSERT(data.isValid() && "No data passed");
+
+	const Url url = data.toUrl();
+
 	if (!internetAvailable())
 	{
 		mainWindow()->showMessageBoxDialog("Internet connection problem!",
@@ -130,10 +145,10 @@ void Application::startCrawler()
 		return;
 	}
 
-	CrawlerEngine::GetHostInfoRequest request(preferences()->url().host().toLatin1());
+	GetHostInfoRequest request(url);
 	m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
 	m_hostInfoRequester->start();
-	m_webScreenShot->load(preferences()->url());
+	m_webScreenShot->load(url);
 
 	mainWindow()->statusBar()->showMessage("Checking host info...");
 }
@@ -159,9 +174,6 @@ void Application::showMainWindow()
 
 void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 {
-	// preferences
-	preferences()->setUrl(options.host);
-
 	// limit settings
 	preferences()->setLimitMaxUrlLength(options.limitMaxUrlLength);
 	preferences()->setLimitSearchTotal(options.limitSearchTotal);
@@ -189,7 +201,7 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 	preferences()->setCrawlOutsideOfStartFolder(options.crawlOutsideOfStartFolder);
 
 	// robots.txt rules
-	//prefs->setUserAgentToFollow(options.userAgentToFollow);
+	preferences()->setRobotSignature(static_cast<int>(options.userAgentToFollow));
 
 	preferences()->setCheckJavaScript(options.parserTypeFlags.testFlag(CrawlerEngine::JavaScriptResourcesParserType));
 	preferences()->setCheckCSS(options.parserTypeFlags.testFlag(CrawlerEngine::CssResourcesParserType));
@@ -262,9 +274,10 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 		return;
 	}
 
-	CrawlerEngine::CrawlerOptions options;
+	CrawlerOptions options;
 
-	options.host = preferences()->url();
+	GetHostInfoRequest* request = static_cast<GetHostInfoRequest*>(requester->request());
+	options.startCrawlingPage = Url(request->webpage);
 
 	// limit settings
 	options.limitMaxUrlLength = preferences()->limitMaxUrlLength();
@@ -293,7 +306,7 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	options.crawlOutsideOfStartFolder = preferences()->crawlOutsideOfStartFolder();
 
 	// robots.txt rules
-	options.userAgentToFollow = CrawlerEngine::UserAgentType::AnyBot;
+	options.userAgentToFollow = static_cast<UserAgentType>(preferences()->robotSignature());
 
 	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType, preferences()->checkJavaScript());
 	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType, preferences()->checkCSS());

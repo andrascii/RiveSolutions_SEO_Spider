@@ -39,7 +39,7 @@ void setThreadName(DWORD threadID, const QByteArray& threadName)
 
 void setCurrentThreadName(const QByteArray& threadName)
 {
-	setThreadName(-1, threadName);
+	setThreadName(static_cast<DWORD>(-1), threadName);
 }
 
 }

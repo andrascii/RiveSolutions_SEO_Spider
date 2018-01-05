@@ -240,7 +240,7 @@
         <item row="1" column="1" colspan="2">
          <widget class="QComboBox" name="robotsTxtComboBox">
           <property name="controlKey" stdset="0">
-           <string notr="true">robotsTxt</string>
+           <string notr="true">robotSignature</string>
           </property>
          </widget>
         </item>

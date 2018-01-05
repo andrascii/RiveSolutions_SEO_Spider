@@ -9,6 +9,7 @@ namespace SeoSpider
 MessageBoxDialog::MessageBoxDialog()
 	: QFrame(nullptr)
 	, m_ui(new Ui_MessageBox)
+	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
 {
 	m_ui->setupUi(this);
 
@@ -18,6 +19,7 @@ MessageBoxDialog::MessageBoxDialog()
 
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+	VERIFY(connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, &MessageBoxDialog::onButtonClicked));
 }
 
 void MessageBoxDialog::setMessage(const QString& message)
@@ -88,6 +90,11 @@ void MessageBoxDialog::done(int r)
 	hide();
 }
 
+void MessageBoxDialog::onButtonClicked(QAbstractButton* button)
+{
+	m_clickedButtonRole = m_ui->buttonBox->buttonRole(button);
+}
+
 void MessageBoxDialog::showEvent(QShowEvent* event)
 {
 	Common::Helpers::moveWidgetToHostCenter(this);
@@ -102,6 +109,8 @@ void MessageBoxDialog::hideEvent(QHideEvent* event)
 	theApp->mainWindow()->setDisabled(false);
 
 	QFrame::hideEvent(event);
+
+	emit dialogClosed(m_clickedButtonRole);
 }
 
 }

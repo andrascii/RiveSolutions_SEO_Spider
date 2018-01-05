@@ -17,8 +17,9 @@ public:
 
 public slots:
 	void showSitemapCreatorDialog();
-	void showSaveFileDialog();
-	void showOpenFileDialog();
+	void saveFileAs();
+	void openFile();
+	void saveFileAndClearData();
 
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 
@@ -31,6 +32,9 @@ private:
 	void createActions();
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
+
+	QString getSaveFilePath() const;
+	void clearDataOnSerializationDone();
 
 private:
 	bool m_initialized;

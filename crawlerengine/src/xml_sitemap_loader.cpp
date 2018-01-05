@@ -28,11 +28,6 @@ void XmlSitemapLoader::setHost(const Url& url)
 
 void XmlSitemapLoader::load()
 {
-	if (m_isValid && m_hopsChain.hasHopTo(m_host))
-	{
-		return;
-	}
-
 	if (m_robotsTxtLoader && !m_robotsTxtLoader->isReady())
 	{
 		return;
@@ -53,6 +48,11 @@ void XmlSitemapLoader::load()
 	if (!sitemapUrl.isValid())
 	{
 		sitemapUrl = m_host.scheme() + "://" + m_host.host() + QStringLiteral("/sitemap.xml");
+	}
+
+	if (m_isValid && m_hopsChain.hasHopTo(sitemapUrl))
+	{
+		return;
 	}
 
 	CrawlerRequest requestInfo{ sitemapUrl, DownloadRequestType::RequestTypeGet };
@@ -89,6 +89,8 @@ void XmlSitemapLoader::onRobotsTxtLoaderReady()
 
 void XmlSitemapLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
+	Q_UNUSED(requester);
+
 	const Common::StatusCode statusCode = response.hopsChain.back().statusCode();
 
 	m_isValid = statusCode == Common::StatusCode::Ok200;

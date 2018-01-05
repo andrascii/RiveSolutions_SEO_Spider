@@ -16,7 +16,7 @@ Preferences::~Preferences()
 	{
 		const QMetaProperty property = metaObject()->property(i);
 
-		if (!property.isUser() && property.name() != "objectName")
+		if (!property.isUser() && std::strcmp(property.name(), "objectName"))
 		{
 			m_settingsAccessor->saveToSettings(property.name(), property.read(this));
 		}
@@ -270,16 +270,17 @@ void Preferences::setFollowRobotsTxt(bool value)
 	emit followRobotsTxtChanged();
 }
 
-
-QString Preferences::robotsTxt() const
+int Preferences::robotSignature() const
 {
-	return m_robotsTxt;
+	return m_robotSignature;
 }
 
-void Preferences::setRobotsTxt(QString value)
+void Preferences::setRobotSignature(const QVariant& value)
 {
-	m_robotsTxt = value;
-	emit robotsTxtChanged();
+	DEBUG_ASSERT(value.type() == QVariant::Int || value.type() == QVariant::String);
+
+	m_robotSignature = value.toInt();
+	emit robotSignatureChanged();
 }
 
 void Preferences::setUseCustomUserAgent(bool value)
@@ -315,9 +316,11 @@ const QString& Preferences::desktopUserAgent() const
 	return m_desktopUserAgent;
 }
 
-void Preferences::setDesktopUserAgent(const QString& value)
+void Preferences::setDesktopUserAgent(const QVariant& value)
 {
-	m_desktopUserAgent = value;
+	DEBUG_ASSERT(value.type() == QVariant::String); 
+
+	m_desktopUserAgent = value.toString();
 	emit desktopUserAgentChanged();
 }
 
@@ -326,9 +329,11 @@ const QString& Preferences::mobileUserAgent() const
 	return m_mobileUserAgent;
 }
 
-void Preferences::setMobileUserAgent(const QString& value)
+void Preferences::setMobileUserAgent(const QVariant& value)
 {
-	m_mobileUserAgent = value;
+	DEBUG_ASSERT(value.type() == QVariant::String);
+
+	m_mobileUserAgent = value.toString();
 	emit mobileUserAgentChanged();
 }
 
@@ -505,25 +510,6 @@ void Preferences::setCompanyWebSite(QString value)
 {
 	m_companyWebSite = value;
 	emit companyWebSiteChanged();
-}
-
-const QUrl& Preferences::url() const
-{
-	return m_url;
-}
-
-void Preferences::setUrl(const QUrl& url)
-{
-	m_url = url;
-
-	if (m_url.scheme().isEmpty())
-	{
-		DEBUGLOG << "Corrected scheme of passed URL";
-
-		m_url.setUrl("http://" + url.toString());
-	}
-
-	emit urlChanged();
 }
 
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept

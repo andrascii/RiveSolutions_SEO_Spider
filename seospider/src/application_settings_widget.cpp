@@ -46,13 +46,13 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	resize(width, height);
 }
 
-void ApplicationSettingsWidget::showEvent(QShowEvent* event)
+void ApplicationSettingsWidget::showEvent(QShowEvent*)
 {
 	reloadSettingsSlot();
 	m_ui.applyButton->setEnabled(m_somethingChanged);
 }
 
-void ApplicationSettingsWidget::hideEvent(QHideEvent* event)
+void ApplicationSettingsWidget::hideEvent(QHideEvent*)
 {
 	restoreChangedValues();
 }

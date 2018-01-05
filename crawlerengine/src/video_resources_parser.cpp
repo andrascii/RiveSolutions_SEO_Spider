@@ -45,7 +45,7 @@ void VideoResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
-		const RawResourceOnPage videoResource
+		const ResourceOnPage videoResource
 		{
 			ResourceType::ResourceVideo,
 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }

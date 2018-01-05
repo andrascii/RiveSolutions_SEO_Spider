@@ -29,6 +29,7 @@ enum class ReportDataKeys
 	InfoImage,
 	InfoCount,
 	Date,
+	DateImage,
 
 	// Signature
 	CompanyName,

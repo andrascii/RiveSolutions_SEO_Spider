@@ -30,9 +30,10 @@ if(MSVC)
 		/EHsc
 		/MP
 		/std:c++latest
-		/D EXPORT
 		/permissive-
 		/Zi
+		/W4
+		/WX
 	)
 	
 	set_target_properties(

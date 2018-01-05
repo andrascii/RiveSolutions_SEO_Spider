@@ -32,8 +32,6 @@ ResponseHeaders::ResponseHeaders(const QList<QNetworkReply::RawHeaderPair>& head
 
 void ResponseHeaders::addHeaderValues(const QList<QNetworkReply::RawHeaderPair>& headerValues)
 {
-	m_responseHeaders.reserve(m_responseHeaders.size() + headerValues.size());
-
 	for (const QNetworkReply::RawHeaderPair& rawHeaderPair : headerValues)
 	{
 		addHeaderValue(rawHeaderPair.first, rawHeaderPair.second);

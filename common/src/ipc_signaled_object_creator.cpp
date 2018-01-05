@@ -25,8 +25,6 @@ SignaledObjectCreator creator()
 	return SignaledObjectCreator([] { return std::unique_ptr<IIpcSignaledObject>(new IpcSignaledObjectUnixLike); });
 
 #endif
-
-	return SignaledObjectCreator([] { return std::unique_ptr<IIpcSignaledObject>(nullptr); });
 }
 
 }

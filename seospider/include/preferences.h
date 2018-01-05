@@ -43,11 +43,11 @@ class Preferences : public QObject
 	Q_PROPERTY(int limitMaxUrlLength READ limitMaxUrlLength WRITE setLimitMaxUrlLength NOTIFY limitMaxUrlLengthChanged);
 	Q_PROPERTY(int limitTimeout READ limitTimeout WRITE setLimitTimeout NOTIFY limitTimeoutChanged);
 	Q_PROPERTY(int maxRedirectCount READ maxRedirectCount WRITE setMaxRedirectCount NOTIFY maxRedirectCountChanged);
-	Q_PROPERTY(int maxLinksCountOnPage READ maxLinksCountOnPage WRITE setMaxLinksCountOnPage NOTIFY maxLinksCountOnPageChanged)
+	Q_PROPERTY(int maxLinksCountOnPage READ maxLinksCountOnPage WRITE setMaxLinksCountOnPage NOTIFY maxLinksCountOnPageChanged);
 
 	// User agent properties
 	Q_PROPERTY(bool followRobotsTxt READ followRobotsTxt WRITE setFollowRobotsTxt NOTIFY followRobotsTxtChanged);
-	Q_PROPERTY(QString robotsTxt READ robotsTxt WRITE setRobotsTxt NOTIFY robotsTxtChanged);
+	Q_PROPERTY(int robotSignature READ robotSignature WRITE setRobotSignature NOTIFY robotSignatureChanged);
 	Q_PROPERTY(bool useCustomUserAgent READ useCustomUserAgent WRITE setUseCustomUserAgent NOTIFY useCustomUserAgentChanged);
 	Q_PROPERTY(bool useDesktopUserAgent READ useDesktopUserAgent WRITE setUseDesktopUserAgent NOTIFY useDesktopUserAgentChanged);
 	Q_PROPERTY(bool useMobileUserAgent READ useMobileUserAgent WRITE setUseMobileUserAgent NOTIFY useMobileUserAgentChanged);
@@ -68,9 +68,6 @@ class Preferences : public QObject
 	Q_PROPERTY(QString companyName READ companyName WRITE setCompanyName NOTIFY companyNameChanged);
 	Q_PROPERTY(QString companyEmail READ companyEmail WRITE setCompanyEmail NOTIFY companyEmailChanged);
 	Q_PROPERTY(QString companyWebSite READ companyWebSite WRITE setCompanyWebSite NOTIFY companyWebSiteChanged);
-
-	// Crawler start
-	Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged);
 
 public:
 
@@ -162,9 +159,9 @@ public:
 	Q_SLOT void setFollowRobotsTxt(bool value);
 	Q_SIGNAL void followRobotsTxtChanged();
 
-	QString robotsTxt() const;
-	Q_SLOT void setRobotsTxt(QString value);
-	Q_SIGNAL void robotsTxtChanged();
+	int robotSignature() const;
+	Q_SLOT void setRobotSignature(const QVariant& value);
+	Q_SIGNAL void robotSignatureChanged();
 
 	bool useCustomUserAgent() const;
 	Q_SLOT void setUseCustomUserAgent(bool value);
@@ -179,11 +176,11 @@ public:
 	Q_SIGNAL void useMobileUserAgentChanged();
 
 	const QString& desktopUserAgent() const;
-	Q_SLOT void setDesktopUserAgent(const QString& value);
+	Q_SLOT void setDesktopUserAgent(const QVariant& value);
 	Q_SIGNAL void desktopUserAgentChanged();
 
 	const QString& mobileUserAgent() const;
-	Q_SLOT void setMobileUserAgent(const QString& value);
+	Q_SLOT void setMobileUserAgent(const QVariant& value);
 	Q_SIGNAL void mobileUserAgentChanged();
 
 	int limitSearchTotal() const;
@@ -250,10 +247,6 @@ public:
 	Q_SLOT void setCompanyWebSite(QString value);
 	Q_SIGNAL void companyWebSiteChanged();
 
-	const QUrl& url() const;
-	Q_SLOT void setUrl(const QUrl& url);
-	Q_SIGNAL void urlChanged();
-
 	//////////////////////////////////////////////////////////////////////////
 
 
@@ -309,7 +302,7 @@ private:
 	int m_toPauseTimer;
 
 	bool m_followRobotsTxt;
-	QString m_robotsTxt;
+	int m_robotSignature;
 	bool m_useCustomUserAgent;
 	bool m_useDesktopUserAgent;
 	bool m_useMobileUserAgent;
@@ -334,8 +327,6 @@ private:
 	QString m_companyName;
 	QString m_companyEmail;
 	QString m_companyWebSite;
-
-	QUrl m_url;
 };
 
 }

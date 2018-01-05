@@ -436,10 +436,10 @@ namespace Common
 				const QVariantList l = v.toList();
 				for (int i=0; i<l.size(); ++i)
 				{
-					const QVariant& v = l.at(i);
+					const QVariant& nextv = l.at(i);
 
 					const bool notFirstValue = i != 0;;
-					writeListItem(output, v, notFirstValue, indentLevel + 1, useIndentation);
+					writeListItem(output, nextv, notFirstValue, indentLevel + 1, useIndentation);
 				}
 
 				endList(output, indentLevel, useIndentation);

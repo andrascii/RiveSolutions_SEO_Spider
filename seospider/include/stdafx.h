@@ -39,6 +39,16 @@
 #include <boost/functional/hash.hpp>
 #include <boost/any.hpp>
 
+#pragma warning(disable:4127)
+#pragma warning(disable:745)
+#pragma warning(disable:749)
+#pragma warning(disable:333)
+#pragma warning(disable:317)
+#pragma warning(disable:597)
+#pragma warning(disable:4251)
+#pragma warning(disable:4702)
+#pragma warning(disable:4456)
+
 //
 // Qt
 //
@@ -59,6 +69,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkProxy>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPainter>

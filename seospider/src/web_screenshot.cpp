@@ -13,7 +13,7 @@ WebScreenShot::WebScreenShot(QObject* parent)
 }
 
 void WebScreenShot::load(const QUrl& url)
-{	
+{
 	ASSERT(!m_webView);
 	m_webView.reset(new QWebEngineView);
 	VERIFY(connect(m_webView->page(), &QWebEnginePage::loadFinished, this, &WebScreenShot::onLoadingDone));

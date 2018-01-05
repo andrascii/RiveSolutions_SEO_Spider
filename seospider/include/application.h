@@ -38,6 +38,7 @@ public:
 	MainWindow* mainWindow() const noexcept;
 	StorageAdapterFactory* storageAdapterFactory() const noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() const noexcept;
+	InternetConnectionNotificationManager* internetConnectionNotificationManager() const noexcept;
 
 	CrawlerEngine::Crawler* crawler() const noexcept;
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept;

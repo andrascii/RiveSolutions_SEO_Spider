@@ -68,10 +68,10 @@ public:
 	}
 
 	template <class UnaryPredicate, class MapFunc>
-	static auto findNodesAndGetResult(const GumboNode* node, UnaryPredicate predicate, MapFunc mapFunc)
+	static auto findNodesAndGetResult(const GumboNode* parentNode, UnaryPredicate predicate, MapFunc mapFunc)
 	{
-		std::vector<const GumboNode*> nodes = findNodesRecursive(node, predicate);
-		std::vector<decltype(mapFunc(node))> result;
+		std::vector<const GumboNode*> nodes = findNodesRecursive(parentNode, predicate);
+		std::vector<decltype(mapFunc(parentNode))> result;
 
 		for (const GumboNode* node : nodes)
 		{

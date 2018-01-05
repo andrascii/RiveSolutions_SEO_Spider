@@ -222,7 +222,7 @@ TEST(LinksTests, Canonical)
 	{
 		auto pages = cl->waitForAllCrawledPageReceived(10);
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QUrl("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
+		EXPECT_EQ(Url("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
 	};
 
 	env.initializeTest(testFunction);

@@ -112,11 +112,17 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 
 QVariant SummaryModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+	Q_UNUSED(section);
+	Q_UNUSED(orientation);
+	Q_UNUSED(role);
+
 	return QVariant();
 }
 
 int SummaryModel::columnCount(const QModelIndex& parent) const
 {
+	Q_UNUSED(parent);
+
 	if (!dataAccessor())
 	{
 		return 0;
@@ -127,6 +133,8 @@ int SummaryModel::columnCount(const QModelIndex& parent) const
 
 int SummaryModel::rowCount(const QModelIndex& parent) const
 {
+	Q_UNUSED(parent);
+
 	if (!dataAccessor())
 	{
 		return 0;

@@ -8,6 +8,8 @@ namespace CrawlerEngine
 class MetaParser : public IPageParser
 {
 public:
+	MetaParser();
+
 	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
 
 private:
@@ -16,6 +18,9 @@ private:
 	void parseMetaDescription(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept;
 	void parseMetaKeywords(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept;
 	void parseMetaRobots(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& pageRaw) noexcept;
+
+private:
+	QRegularExpression m_metaRefreshContentPattern;
 };
 
 }

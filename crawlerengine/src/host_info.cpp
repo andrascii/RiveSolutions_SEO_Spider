@@ -14,11 +14,11 @@
 namespace CrawlerEngine
 {
 
-HostInfo::HostInfo(const QByteArray& hostname)
+HostInfo::HostInfo(const QByteArray& webpage)
 	: m_valid(true)
 	, m_error("No error")
 {
-	hostent* remoteHost = ::gethostbyname(hostname.constData());
+	hostent* remoteHost = ::gethostbyname(webpage.constData());
 
 	if (!remoteHost)
 	{

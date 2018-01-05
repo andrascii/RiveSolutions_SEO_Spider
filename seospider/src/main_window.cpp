@@ -1,12 +1,12 @@
 #include "application.h"
 #include "application_settings_widget.h"
 #include "main_window.h"
+#include "crawler.h"
 #include "data_pages_widget.h"
 #include "action_keys.h"
 #include "action_registry.h"
 #include "menu_bar.h"
 #include "settings_page_impl.h"
-#include "crawler.h"
 #include "site_map_creator_widget.h"
 #include "crawler_status_info.h"
 #include "page_factory.h"
@@ -21,6 +21,7 @@
 #include "ui_company_profile_settings_widget.h"
 #include "user_agent_settings_widget.h"
 #include "crawler_pause_settings_widget.h"
+#include "internet_connection_state_widget.h"
 
 namespace SeoSpider
 {
@@ -42,26 +43,9 @@ void MainWindow::showSitemapCreatorDialog()
 	titledWindow->deleteLater();
 }
 
-void MainWindow::showSaveFileDialog()
+void MainWindow::saveFileAs()
 {
-	if (theApp->crawler()->state() == Crawler::StateWorking)
-	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot save the document while crawler is working!"),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
-
-		return;
-	}
-
-	if (theApp->crawler()->isNoData())
-	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
-			tr("Crawler does not contain any data."),
-			MessageBoxDialog::InformationIcon, QDialogButtonBox::Ok);
-
-		return;
-	}
-
-	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), QString(), QString("*.sxr"));
+	const QString path = getSaveFilePath();
 	
 	if (path.isEmpty())
 	{
@@ -71,7 +55,7 @@ void MainWindow::showSaveFileDialog()
 	theApp->crawler()->saveToFile(path);
 }
 
-void MainWindow::showOpenFileDialog()
+void MainWindow::openFile()
 {
 	if (theApp->crawler()->state() == Crawler::StateWorking)
 	{
@@ -89,6 +73,20 @@ void MainWindow::showOpenFileDialog()
 	}
 
 	theApp->crawler()->loadFromFile(path);
+}
+
+void MainWindow::saveFileAndClearData()
+{
+	const QString path = getSaveFilePath();
+
+	if (path.isEmpty())
+	{
+		return;
+	}
+
+	VERIFY(connect(theApp->crawler(), &Crawler::serializationProcessDone, this, &MainWindow::clearDataOnSerializationDone));
+
+	theApp->crawler()->saveToFile(path);
 }
 
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
@@ -125,6 +123,7 @@ void MainWindow::init()
 	setMenuBar(new MenuBar(this));
 
 	QStatusBar* statusBar = new QStatusBar(this);
+	statusBar->addPermanentWidget(new InternetConnectionStateWidget(this));
 	statusBar->addWidget(new CrawlerStatusInfo(statusBar));
 
 	setStatusBar(statusBar);
@@ -146,6 +145,7 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
 
 	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
+	actionRegistry.addGlobalAction(s_saveFileAndClearDataAction, tr("Save To File And Clear Data"));
 
 	// settings actions
 	actionRegistry.addActionGroup(s_settingsActionGroup);
@@ -208,8 +208,9 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_createXMLSitemapAction), SIGNAL(triggered()), this, SLOT(showSitemapCreatorDialog())));
 	
-	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(showSaveFileDialog())));
-	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(showOpenFileDialog())));
+	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
+	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
+	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
 }
 
 void MainWindow::createAndSetCentralWidget()
@@ -250,6 +251,36 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(":/images/user-agent.png"), TYPE_STRING(Ui_UserAgentSettingsWidget), new UserAgentSettingsWidget());
 	SettingsPageImpl<Ui_CrawlerPauseSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-pause.png"), TYPE_STRING(Ui_CrawlerPauseSettingsWidget), new CrawlerPauseSettingsWidget());
 	SettingsPageImpl<Ui_CompanyProfileSettingsWidget>::registerSettingsPage(QIcon(":/images/company-profile.png"), TYPE_STRING(Ui_CompanyProfileSettingsWidget));
+}
+
+QString MainWindow::getSaveFilePath() const
+{
+	if (theApp->crawler()->state() == Crawler::StateWorking)
+	{
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot save the document while crawler is working!"),
+			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+
+		return QString();
+	}
+
+	if (theApp->crawler()->isNoData())
+	{
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
+			tr("Crawler does not contain any data."),
+			MessageBoxDialog::InformationIcon, QDialogButtonBox::Ok);
+
+		return QString();
+	}
+
+	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), QString(), QString("*.sxr"));
+
+	return path;
+}
+
+void MainWindow::clearDataOnSerializationDone()
+{
+	VERIFY(disconnect(theApp->crawler(), &Crawler::serializationProcessDone, this, &MainWindow::clearDataOnSerializationDone));
+	theApp->crawler()->clearData();
 }
 
 }

@@ -15,6 +15,8 @@ QObject* DefaultColumnResizePolicy::qobject() noexcept
 
 void DefaultColumnResizePolicy::init(TableView* view, const IResizePolicy* prev) const noexcept
 {
+	Q_UNUSED(prev);
+
 	for (auto it = m_columnsSize.begin(); it != m_columnsSize.end(); ++it)
 	{
 		view->setColumnWidth(it->first, it->second);
@@ -23,6 +25,8 @@ void DefaultColumnResizePolicy::init(TableView* view, const IResizePolicy* prev)
 
 int DefaultColumnResizePolicy::columnSize(int column, const TableView* view) const noexcept
 {
+	Q_UNUSED(view);
+
 	auto it = m_columnsSize.find(column);
 	DEBUG_ASSERT(it != m_columnsSize.end());
 

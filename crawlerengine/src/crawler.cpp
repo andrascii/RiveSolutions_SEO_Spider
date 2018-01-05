@@ -14,6 +14,7 @@
 #include "serialization_tasks.h"
 #include "service_locator.h"
 #include "inotification_service.h"
+#include "notification_service.h"
 #include "xml_sitemap_loader.h"
 
 namespace CrawlerEngine
@@ -39,8 +40,10 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_state(StatePending)
 	, m_downloader(nullptr)
 {
-	ASSERT(s_instance == nullptr && "Allowed only one instance of Crawler");
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	serviceLocator->addService<INotificationService>(new NotificationService);
 
+	ASSERT(s_instance == nullptr && "Allowed only one instance of Crawler");
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 	ASSERT(qRegisterMetaType<std::vector<ParsedPagePtr>>());
 	ASSERT(qRegisterMetaType<CrawlingProgress>());
@@ -66,6 +69,8 @@ Crawler::~Crawler()
 	ThreadManager::destroy();
 
 	s_instance = nullptr;
+
+	ServiceLocator::instance()->destroyService<INotificationService>();
 }
 
 void Crawler::initialize()
@@ -104,7 +109,6 @@ void Crawler::clearData()
 void Crawler::clearDataImpl()
 {
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
-
 	m_uniqueLinkStore->clear();
 }
 
@@ -216,7 +220,7 @@ void Crawler::onCrawlingSessionInitialized()
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
 		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, m_options.userAgent)));
 
-	m_uniqueLinkStore->addUrl(m_options.host, DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->addUrl(m_options.startCrawlingPage, DownloadRequestType::RequestTypeGet);
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
@@ -238,10 +242,10 @@ bool Crawler::isPreinitialized() const
 
 void Crawler::initializeCrawlingSession()
 {
-	DEBUG_ASSERT(m_options.host.isValid());
+	DEBUG_ASSERT(m_options.startCrawlingPage.isValid());
 
-	m_robotsTxtLoader->setHost(m_options.host);
-	m_xmlSitemapLoader->setHost(m_options.host);
+	m_robotsTxtLoader->setHost(m_options.startCrawlingPage);
+	m_xmlSitemapLoader->setHost(m_options.startCrawlingPage);
 	m_robotsTxtLoader->load();
 	m_xmlSitemapLoader->load();
 }
@@ -260,16 +264,12 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 
 	if (!result->error.isEmpty())
 	{
-		ServiceLocator* locator = ServiceLocator::instance();
-
-		if (locator->isRegistered<INotificationService>())
-		{
-			locator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
-		}
+		ServiceLocator* serviceLocator = ServiceLocator::instance();
+		ASSERT(serviceLocator->isRegistered<INotificationService>());
+		serviceLocator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
 	}
 
 	m_serializationRequester.reset();
-
 	emit serializationProcessDone();
 }
 
@@ -283,12 +283,9 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 
 	if (!result->error.isEmpty())
 	{
-		ServiceLocator* locator = ServiceLocator::instance();
-
-		if (locator->isRegistered<INotificationService>())
-		{
-			locator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
-		}
+		ServiceLocator* serviceLocator = ServiceLocator::instance();
+		ASSERT(serviceLocator->isRegistered<INotificationService>());
+		serviceLocator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
 	}
 	else
 	{
@@ -310,8 +307,6 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 					}
 
 					m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
-					//VERIFY(QMetaObject::invokeMethod(m_modelController->data(), "addParsedPage", Qt::QueuedConnection,
-					//Q_ARG(const ParsedPagePtr&, page), Q_ARG(int, i)));
 				}
 			}
 		}
@@ -392,7 +387,6 @@ void Crawler::onDeserializationReadyToBeStarted()
 	clearDataImpl();
 
 	std::shared_ptr<Serializer> serializer = std::make_shared<Serializer>();
-
 	std::shared_ptr<ITask> task = std::make_shared<DeserializatoinTask>(serializer, m_fileName);
 	m_fileName = QString();
 
@@ -434,7 +428,6 @@ QString Crawler::siteMapXml(const SiteMapSettings& settings) const
 	SiteMap siteMap;
 
 	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();
-
 	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
 
 	return siteMap.xml(*storage, settings);

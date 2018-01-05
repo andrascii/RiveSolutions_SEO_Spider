@@ -56,6 +56,8 @@ QObject* RobotsTxtLoader::qobject()
 
 void RobotsTxtLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
+	Q_UNUSED(requester);
+
 	const Common::StatusCode statusCode = response.hopsChain.back().statusCode();
 
 	m_isValid = statusCode == Common::StatusCode::Ok200;

@@ -8,53 +8,47 @@
 <body>
 	<section class="summary summary-header">
 		<div class="row">
-			<div class="col-4">
-				<a class="site-ref" href="((site_link))">keks.ru</a>
-				<div class="summary-criteria">
+			<div class="col-3">
+				<div class="site-short-image">((site_short_image))</div>
+			</div>
+			<div class="col-8 stats">
+				<div class="site-ref">
+					<a href="((site_link))">((site_link))</a>
+				</div>
+				<div class="summary-problems">
 					<p class="problems-count">((problems_count))</p> problems found
 				</div>
-
-			</div>
-
-			<div class="col-6">
-				((site_short_image))
 			</div>
 		</div>
-
 	</section>
 
-	<section class="summary summary-body">
-		<!--<h3 class="summary-body-title">-->
-			<!--Summary-->
-		<!--</h3>-->
+	<section class="summary summary-overview">
+			<div class="summary-overview-criteria col-3">
+				<div class="summary-overview-icon">((errors_image))</div>
+				<div class="summary-overview-title">((errors))</div>
+				<div class="summary-overview-count">((errors_count))</div>
+			</div>
+			<div class="summary-overview-criteria col-3">
+				<div class="summary-overview-icon">((warnings_image))</div>
+				<div class="summary-overview-title">((warnings))</div>
+				<div class="summary-overview-count">((warnings_count))</div>
+			</div>
 
-		<div class="summary-overview row">
-			<div class="col-6 left">
-				<div class="summary-overview-criteria col-5">
-					<div class="summary-overview-icon">((errors_image))</div>
-					<div class="summary-overview-title">((errors))</div>
-					<div class="summary-overview-count">((errors_count))</div>
-				</div>
-				<div class="summary-overview-criteria col-5">
-					<div class="summary-overview-icon">((warnings_image))</div>
-					<div class="summary-overview-title">((warnings))</div>
-					<div class="summary-overview-count">((warnings_count))</div>
-				</div>
+			<div class="summary-overview-criteria col-3">
+				<div class="summary-overview-icon">((info_image))</div>
+				<div class="summary-overview-title">((info))</div>
+				<div class="summary-overview-count">((info_count))</div>
 			</div>
+			<div class="summary-overview-criteria col-3">
+				<!--<div class="summary-overview-icon">((stat_code_4xx_image))</div>-->
+				<div class="summary-overview-icon">((creation_date_image))</div>
+				<div class="summary-overview-title">Report Date</div>
+				<div class="summary-overview-count">((creation_date))</div>
+			</div>
+	</section>
+	<section class="summary summary-body">
+		<div class="row">
 			<div class="col-6">
-				<div class="summary-overview-criteria col-5">
-					<div class="summary-overview-icon">((info_image))</div>
-					<div class="summary-overview-title">((info))</div>
-					<div class="summary-overview-count">((info_count))</div>
-				</div>
-				<div class="summary-overview-criteria col-5">
-					<div class="summary-overview-title">Report Date</div>
-					<div class="summary-overview-count">((creation_date))</div>
-				</div>
-			</div>
-		</div>
-		<div class="summary-detail row">
-			<div class="col-6 left">
 				<div class="summary-block">
 					<p class="summary-title">
 						Indexing and Page Scanning
@@ -128,6 +122,74 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="col-6">
+				<div class="summary-block">
+					<p class="summary-title">
+						Technical factors
+					</p>
+					<div class="summary-inner">
+						<div class="criteria">
+							<div class="criteria-icon">
+								((duplicated_rel_canonical_image))
+							</div>
+							<p class="criteria-title">
+								((duplicated_rel_canonical))
+							</p>
+							<div class="criteria-count">
+								((duplicated_rel_canonical_count))
+							</div>
+						</div>
+						<div class="criteria">
+							<div class="criteria-icon">
+								((pages_contains_frames_image))
+							</div>
+							<p class="criteria-title">
+								((pages_contains_frames))
+							</p>
+							<div class="criteria-count">
+								((pages_contains_frames_count))
+							</div>
+						</div>
+						<div class="criteria">
+							<div class="criteria-icon">
+								((pages_error_html_image))
+							</div>
+							<p class="criteria-title">
+								((pages_error_html))
+							</p>
+							<div class="criteria-count">
+								((pages_error_html_count))
+							</div>
+						</div>
+						<div class="criteria">
+							<div class="criteria-icon">
+								((pages_error_css_image))
+							</div>
+							<p class="criteria-title">
+								((pages_error_css))
+							</p>
+							<div class="criteria-count">
+								((pages_error_css_count))
+							</div>
+						</div>
+						<div class="criteria">
+							<div class="criteria-icon">
+								((too_large_pages_image))
+							</div>
+							<p class="criteria-title">
+								((too_large_pages))
+							</p>
+							<div class="criteria-count">
+								((too_large_pages_count))
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6">
 				<div class="summary-block">
 					<p class="summary-title">
 						Redirections
@@ -201,6 +263,41 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="col-6">
+				<div class="summary-block">
+					<p class="summary-title">
+						Images
+					</p>
+					<div class="summary-inner">
+						<div class="criteria">
+							<div class="criteria-icon">
+								((broken_images_image))
+							</div>
+							<p class="criteria-title">
+								((broken_images))
+							</p>
+							<div class="criteria-count">
+								((broken_images_count))
+							</div>
+						</div>
+						<div class="criteria">
+							<div class="criteria-icon">
+								((img_empty_alt_image))
+							</div>
+							<p class="criteria-title">
+								((img_empty_alt))
+							</p>
+							<div class="criteria-count">
+								((img_empty_alt_count))
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6">
 				<div class="summary-block">
 					<p class="summary-title">
 						Links
@@ -253,100 +350,7 @@
 					</div>
 				</div>
 			</div>
-
-
 			<div class="col-6">
-				<div class="summary-block">
-					<p class="summary-title">
-						Technical factors
-					</p>
-					<div class="summary-inner">
-						<div class="criteria">
-							<div class="criteria-icon">
-								((duplicated_rel_canonical_image))
-							</div>
-							<p class="criteria-title">
-								((duplicated_rel_canonical))
-							</p>
-							<div class="criteria-count">
-								((duplicated_rel_canonical_count))
-							</div>
-						</div>
-						<div class="criteria">
-							<div class="criteria-icon">
-								((pages_contains_frames_image))
-							</div>
-							<p class="criteria-title">
-								((pages_contains_frames))
-							</p>
-							<div class="criteria-count">
-								((pages_contains_frames_count))
-							</div>
-						</div>
-						<div class="criteria">
-							<div class="criteria-icon">
-								((pages_error_html_image))
-							</div>
-							<p class="criteria-title">
-								((pages_error_html))
-							</p>
-							<div class="criteria-count">
-								((pages_error_html_count))
-							</div>
-						</div>
-						<div class="criteria">
-							<div class="criteria-icon">
-								((pages_error_css_image))
-							</div>
-							<p class="criteria-title">
-								((pages_error_css))
-							</p>
-							<div class="criteria-count">
-								((pages_error_css_count))
-							</div>
-						</div>
-						<div class="criteria">
-							<div class="criteria-icon">
-								((too_large_pages_image))
-							</div>
-							<p class="criteria-title">
-								((too_large_pages))
-							</p>
-							<div class="criteria-count">
-								((too_large_pages_count))
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="summary-block">
-					<p class="summary-title">
-						Images
-					</p>
-					<div class="summary-inner">
-						<div class="criteria">
-							<div class="criteria-icon">
-								((broken_images_image))
-							</div>
-							<p class="criteria-title">
-								((broken_images))
-							</p>
-							<div class="criteria-count">
-								((broken_images_count))
-							</div>
-						</div>
-						<div class="criteria">
-							<div class="criteria-icon">
-								((img_empty_alt_image))
-							</div>
-							<p class="criteria-title">
-								((img_empty_alt))
-							</p>
-							<div class="criteria-count">
-								((img_empty_alt_count))
-							</div>
-						</div>
-					</div>
-				</div>
 				<div class="summary-block">
 					<p class="summary-title">
 						On Page
@@ -422,7 +426,7 @@
 				</div>
 			</div>
 		</div>
-	</section>
+</section>
 
 	<section class="summary-footer">
 		((creation_date))

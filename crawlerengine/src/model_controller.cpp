@@ -145,7 +145,7 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
 	calculatePageLevel(incomingPage);
 
-	if (url.host() != m_crawlerOptions.host.host())
+	if (url.host() != m_crawlerOptions.startCrawlingPage.host())
 	{
 		data()->addParsedPage(incomingPage, StorageType::ExternalUrlStorageType);
 	}
@@ -491,7 +491,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 		return;
 	}
 
-	for (const RawResourceOnPage& resource : incomingPage->allResourcesOnPage)
+	for (const ResourceOnPage& resource : incomingPage->allResourcesOnPage)
 	{
 		if (resource.resourceType != ResourceType::ResourceHtml)
 		{
@@ -499,7 +499,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 		}
 
 		ParsedPagePtr resourcePage = std::make_shared<ParsedPage>();
-		resourcePage->url = resource.thisResourceLink.url;
+		resourcePage->url = resource.link.url;
 		ParsedPagePtr existingResource = data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 
 		if (!existingResource)
@@ -509,28 +509,28 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
-				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
+			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.link.urlParameter,
+				resource.link.resourceSource, resource.link.altOrTitle });
 			
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.thisResourceLink.urlParameter,
-				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
+			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.urlParameter,
+				resource.link.resourceSource, resource.link.altOrTitle });
 		}
 		else
 		{
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
-			pendingResource->url = resource.thisResourceLink.url;
+			pendingResource->url = resource.link.url;
 
-			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
-				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
+			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.link.urlParameter,
+				resource.link.resourceSource, resource.link.altOrTitle });
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.thisResourceLink.urlParameter,
-				resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
-			
+			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
+				resource.link.resourceSource, resource.link.altOrTitle });
+
 			if (!resource.loadAvailability)
 			{
-				return;
+				continue;
 			}
 
 			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
@@ -585,9 +585,9 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		return;
 	}
 
-	for (const RawResourceOnPage& resource : incomingPage->allResourcesOnPage)
+	for (const ResourceOnPage& resource : incomingPage->allResourcesOnPage)
 	{
-		const QString resourceDisplayUrl = resource.thisResourceLink.url.toDisplayString();
+		const QString resourceDisplayUrl = resource.link.url.toDisplayString();
 
 		if (!resourceShouldBeProcessed(resource.resourceType) || 
 			resource.resourceType == ResourceType::ResourceHtml ||
@@ -598,9 +598,9 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		}
 
 		ParsedPagePtr temporaryResource = std::make_shared<ParsedPage>();
-		temporaryResource->url = resource.thisResourceLink.url;
+		temporaryResource->url = resource.link.url;
 
-		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.thisResourceLink.url);
+		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url);
 		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, temporaryResource->url) || !httpResource;
 
 		const int resourceType = static_cast<int>(resource.resourceType);
@@ -614,7 +614,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		
 		const bool existingImageResource = newOrExistingResource && 
 			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
-			resource.thisResourceLink.resourceSource == ResourceSource::SourceTagImg;
+			resource.link.resourceSource == ResourceSource::SourceTagImg;
 
 		if (!newOrExistingResource)
 		{
@@ -632,11 +632,11 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 			}
 		}
 
-		incomingPage->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.thisResourceLink.urlParameter,
-			resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
+		incomingPage->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.urlParameter,
+			resource.link.resourceSource, resource.link.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.thisResourceLink.urlParameter,
-			resource.thisResourceLink.resourceSource, resource.thisResourceLink.altOrTitle });
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.link.urlParameter,
+			resource.link.resourceSource, resource.link.altOrTitle });
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
 
@@ -726,7 +726,7 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 
 		if (parent->pageLevel + 1 < level)
 		{
-			level = parent->pageLevel == 1 && parent->url.compare(m_crawlerOptions.host)
+			level = parent->pageLevel == 1 && parent->url.compare(m_crawlerOptions.startCrawlingPage)
 				? 1 : parent->pageLevel + 1;
 		}
 	}

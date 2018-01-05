@@ -17,29 +17,29 @@ TEST(RobotsTxtYandexStrategyTests, CleanParam)
 
 	CrawlerEngine::RobotsTxtYandexStrategy yandexStrategy;
 
-	QString result = yandexStrategy.cleanUrl(QUrl("http://a.com/index.html?p4=6&p1=2"), 
+	QString result = yandexStrategy.cleanUrl(Url("http://a.com/index.html?p4=6&p1=2"), 
 		CrawlerEngine::UserAgentType::AnyBot, tokenizer).toDisplayString();
 	EXPECT_EQ(QString("http://a.com/index.html?p4=6"), result);
 
-	result = yandexStrategy.cleanUrl(QUrl("http://a.com/index.html?P4=6&P1=2"),
+	result = yandexStrategy.cleanUrl(Url("http://a.com/index.html?P4=6&P1=2"),
 		CrawlerEngine::UserAgentType::AnyBot, tokenizer).toDisplayString();
 	EXPECT_EQ(QString("http://a.com/index.html?P4=6"), result);
 
-	result = yandexStrategy.cleanUrl(QUrl("http://a.com/index.html?P1=2"),
+	result = yandexStrategy.cleanUrl(Url("http://a.com/index.html?P1=2"),
 		CrawlerEngine::UserAgentType::AnyBot, tokenizer).toDisplayString();
 	EXPECT_EQ(QString("http://a.com/index.html"), result);
 
-	result = yandexStrategy.cleanUrl(QUrl("http://a.com/index.html?P10=2"),
+	result = yandexStrategy.cleanUrl(Url("http://a.com/index.html?P10=2"),
 		CrawlerEngine::UserAgentType::AnyBot, tokenizer).toDisplayString();
 	EXPECT_EQ(QString("http://a.com/index.html?P10=2"), result);
 
 
 
-	result = yandexStrategy.cleanUrl(QUrl("http://a.com/path1/index.html?P10=2"),
+	result = yandexStrategy.cleanUrl(Url("http://a.com/path1/index.html?P10=2"),
 		CrawlerEngine::UserAgentType::AnyBot, tokenizer).toDisplayString();
 	EXPECT_EQ(QString("http://a.com/path1/index.html"), result);
 
-	result = yandexStrategy.cleanUrl(QUrl("http://a.com/path2/path1/index.html?P10=2"),
+	result = yandexStrategy.cleanUrl(Url("http://a.com/path2/path1/index.html?P10=2"),
 		CrawlerEngine::UserAgentType::AnyBot, tokenizer).toDisplayString();
 	EXPECT_EQ(QString("http://a.com/path2/path1/index.html?P10=2"), result);
 	
