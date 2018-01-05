@@ -33,6 +33,12 @@ OptionsLinkFilter::Permission OptionsLinkFilter::linkPermission(const LinkInfo& 
 		return PermissionSubdomainNotAllowed;
 	}
 
+	if (!m_crawlerOptions.crawlOutsideOfStartFolder &&
+		!PageParserHelpers::isUrlInsideBaseUrlFolder(m_crawlerOptions.startCrawlingPage, linkInfo.url))
+	{
+		return PermissionBlockedByFolder;
+	}
+
 	if (!isNofollowLink && !isSubdomain && isUrlExternal && !m_crawlerOptions.checkExternalLinks)
 	{
 		return PermissionExternalLinksNotAllowed;
