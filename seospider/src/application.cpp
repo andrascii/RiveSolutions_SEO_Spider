@@ -134,6 +134,18 @@ void Application::startCrawler()
 
 	const Url url = data.toUrl();
 
+	if (!preferences()->crawlOutsideOfStartFolder() && 
+		!url.path().isEmpty() && !url.path().endsWith(QChar('/')))
+	{
+		mainWindow()->showMessageBoxDialog("Invalid URL!",
+			"The option \"Crawl outside of start folder\" is disabled.\n"
+			"In this case the URL should be ended with '/'.",
+			MessageBoxDialog::CriticalErrorIcon,
+			QDialogButtonBox::Ok);
+
+		return;
+	}
+
 	if (!internetAvailable())
 	{
 		mainWindow()->showMessageBoxDialog("Internet connection problem!",
