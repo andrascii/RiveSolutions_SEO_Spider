@@ -20,7 +20,7 @@ public:
 	virtual QObject* qobject() = 0;
 
 	// signal
-	virtual void addedNotification(NotificationStatus status, const QString& header, const QString& message) = 0;
+	virtual void addedNotification(int status, const QString& header, const QString& message) = 0;
 };
 
 }
