@@ -1,5 +1,5 @@
 #include "titled_window.h"
-#include "title_bar.h"
+#include "titlebar.h"
 
 namespace SeoSpider
 {

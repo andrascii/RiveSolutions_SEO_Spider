@@ -1,5 +1,7 @@
 #include "style_loader.h"
 #include "application.h"
+#include "service_locator.h"
+#include "inotification_service.h"
 
 namespace SeoSpider
 {
@@ -47,22 +49,33 @@ void StyleLoader::loadCustomStyleSheet() const
 
 	QFile styles(filenamePath);
 
+	CrawlerEngine::ServiceLocator* serviceLocator = CrawlerEngine::ServiceLocator::instance();
+	CrawlerEngine::INotificationService* notificationService = serviceLocator->service<CrawlerEngine::INotificationService>();
+
+	ASSERT(notificationService);
+
 	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		const QString styleSheet = styles.readAll();
 		qApp->setStyleSheet(styleSheet);
 
-		DEBUGLOG << "StyleLoader" << QString("Debug styles loaded from %1").arg(filenamePath);
+		notificationService->info(QStringLiteral("StyleLoader"), QStringLiteral("Debug styles loaded from %1").arg(filenamePath));
 	}
 	else
 	{
-		DEBUGLOG << "StyleLoader" << QString("Debug styles cannot be loaded from %1").arg(filenamePath);
+		notificationService->info(QStringLiteral("StyleLoader"), QStringLiteral("Debug styles cannot be loaded from %1").arg(filenamePath));
 	}
 }
 
 void StyleLoader::loadStandardStyleSheet() const
 {
-	DEBUGLOG << "StyleLoader" << QString("Loaded standard stylesheets");
+	CrawlerEngine::ServiceLocator* serviceLocator = CrawlerEngine::ServiceLocator::instance();
+	CrawlerEngine::INotificationService* notificationService = serviceLocator->service<CrawlerEngine::INotificationService>();
+
+	ASSERT(notificationService);
+
+	notificationService->info(QStringLiteral("StyleLoader"), QStringLiteral("Loaded standard stylesheets"));
+
 	theApp->initializeStyleSheet();
 }
 
