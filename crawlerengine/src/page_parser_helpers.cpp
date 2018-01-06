@@ -174,7 +174,7 @@ bool PageParserHelpers::isUrlInsideBaseUrlFolder(const Url& baseUrl, const Url& 
 
 	if (baseUrlPath.size() == urlPath.size())
 	{
-		return baseUrlPath == urlPath.size();
+		return baseUrlPath == urlPath;
 	}
 
 	const QString folder = baseUrlPath.endsWith(QChar('/'))
