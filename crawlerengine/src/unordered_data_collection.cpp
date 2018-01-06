@@ -187,6 +187,18 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
+		std::make_pair(StorageType::CanonicalUrlResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherCanonicalLinkElement),
+				ParsedPageComparatorProxy(new ParsedPageCanonicalLinkElementComparator))),
+
+		std::make_pair(StorageType::UniqueCanonicalUrlResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherCanonicalLinkElement),
+				ParsedPageComparatorProxy(new ParsedPageCanonicalLinkElementComparator))),
+
+		std::make_pair(StorageType::ExternalDoFollowUrlResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
 		// Title Storages
 
 		std::make_pair(StorageType::AllTitlesUrlStorageType,
@@ -338,10 +350,6 @@ void UnorderedDataCollection::initializeStorages()
 		std::make_pair(StorageType::PendingResourcesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
-
-		std::make_pair(StorageType::CanonicalResourcesStorageType,
-			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherCanonicalLinkElement),
-				ParsedPageComparatorProxy(new ParsedPageCanonicalLinkElementComparator))),
 
 		std::make_pair(StorageType::HtmlResourcesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 

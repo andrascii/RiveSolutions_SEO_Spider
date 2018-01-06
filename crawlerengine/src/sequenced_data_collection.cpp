@@ -147,7 +147,10 @@ void SequencedDataCollection::initializeStorages()
 		std::make_pair(StorageType::ExternalStyleSheetResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ExternalFlashResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ExternalVideoResourcesStorageType, createSequencedStorage()),
-		std::make_pair(StorageType::ExternalOtherResourcesStorageType, createSequencedStorage())
+		std::make_pair(StorageType::ExternalOtherResourcesStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::CanonicalUrlResourcesStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::UniqueCanonicalUrlResourcesStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::ExternalDoFollowUrlResourcesStorageType, createSequencedStorage()),
 	};
 }
 

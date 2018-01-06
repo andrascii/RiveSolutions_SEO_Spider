@@ -427,7 +427,11 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RelCanonicalPagesCount:
 		{
-			return 0;
+			// or UniqueCanonicalUrlResourcesStorageType ???
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::CanonicalUrlResourcesStorageType);
+
+			return storage->size();
 		}
 
 		// Links
@@ -471,7 +475,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ExternalDofollowLinksCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::ExternalDoFollowUrlResourcesStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::TooLongUrlAddresses:
 		{

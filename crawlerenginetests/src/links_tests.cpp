@@ -216,13 +216,38 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 
 TEST(LinksTests, Canonical)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://links.com/canonical.html")));
+	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://links.com/canonical-other.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ(Url("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
+
+		auto uniqueCanonicalPages = cl->storageItems(StorageType::UniqueCanonicalUrlResourcesStorageType);
+		EXPECT_EQ(1, uniqueCanonicalPages.size());
+
+		auto pagesWithValidCanonical = cl->storageItems(StorageType::CanonicalUrlResourcesStorageType);
+		EXPECT_EQ(2, pagesWithValidCanonical.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, ExternalDoFollow)
+{
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/external-do-follow.html"));
+	options.checkExternalLinks = true;
+	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForAllCrawledPageReceived(10);
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(Url("http://links.com/canonical-canonical.html"), pages[0]->canonicalUrl);
+
+		auto externalDoFollowPages = cl->storageItems(StorageType::ExternalDoFollowUrlResourcesStorageType);
+		EXPECT_EQ(1, externalDoFollowPages.size());
 	};
 
 	env.initializeTest(testFunction);

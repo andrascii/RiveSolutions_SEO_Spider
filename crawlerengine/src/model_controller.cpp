@@ -487,8 +487,26 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 	if (incomingPage->isThisExternalPage)
 	{
+		const bool doFollow = std::any_of(incomingPage->linksToThisPage.begin(), incomingPage->linksToThisPage.end(),
+			[](const ResourceLink& link) { return link.linkParameter == LinkParameter::DofollowParameter; });
+
+		if (doFollow)
+		{
+			DEBUG_ASSERT(!data()->isParsedPageExists(incomingPage, StorageType::ExternalDoFollowUrlResourcesStorageType));
+			data()->addParsedPage(incomingPage, StorageType::ExternalDoFollowUrlResourcesStorageType);
+		}
+
 		// do not parse resources from an external one
 		return;
+	}
+
+	if (incomingPage->canonicalUrl.isValid())
+	{
+		data()->addParsedPage(incomingPage, StorageType::CanonicalUrlResourcesStorageType);
+		if (!data()->isParsedPageExists(incomingPage, StorageType::UniqueCanonicalUrlResourcesStorageType))
+		{
+			data()->addParsedPage(incomingPage, StorageType::UniqueCanonicalUrlResourcesStorageType);
+		}
 	}
 
 	for (const ResourceOnPage& resource : incomingPage->allResourcesOnPage)

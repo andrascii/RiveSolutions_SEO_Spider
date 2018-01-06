@@ -71,7 +71,6 @@ enum class StorageType
 
 	// Resources
 	PendingResourcesStorageType,
-	CanonicalResourcesStorageType,
 	HtmlResourcesStorageType,
 	ImageResourcesStorageType,
 	JavaScriptResourcesStorageType,
@@ -79,6 +78,9 @@ enum class StorageType
 	FlashResourcesStorageType,
 	VideoResourcesStorageType,
 	OtherResourcesStorageType,
+	CanonicalUrlResourcesStorageType,
+	UniqueCanonicalUrlResourcesStorageType,
+	ExternalDoFollowUrlResourcesStorageType,
 
 	// ExternalResources
 	ExternalHtmlResourcesStorageType,
