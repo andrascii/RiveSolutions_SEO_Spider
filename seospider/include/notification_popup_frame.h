@@ -3,7 +3,7 @@
 namespace SeoSpider
 {
 
-class NotificationPopupWidget : public QFrame
+class NotificationPopupFrame : public QFrame
 {
 	Q_OBJECT
 
@@ -15,7 +15,7 @@ public:
 		Error
 	};
 
-	NotificationPopupWidget(Status status, const QString& header, const QString& message, QWidget* relativePosition);
+	NotificationPopupFrame(Status status, const QString& header, const QString& message, QWidget* relativePosition);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;

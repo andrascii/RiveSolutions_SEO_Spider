@@ -1,5 +1,5 @@
 #include "notifications_container_widget.h"
-#include "notification_popup_widget.h"
+#include "notification_popup_frame.h"
 #include "service_locator.h"
 
 namespace SeoSpider
@@ -27,7 +27,7 @@ NotificationsContainerWidget::NotificationsContainerWidget(QWidget* parent)
 	VERIFY(connect(notificationService->qobject(), SIGNAL(addedNotification(int, const QString&, const QString&)),
 		this, SLOT(onNotificationAdded(int, const QString&, const QString&)), Qt::QueuedConnection));
 
-	m_notifications.emplace_back(NotificationData{ NotificationPopupWidget::Info, tr("Has no notifications"), tr("Has no notifications") });
+	m_notifications.emplace_back(NotificationData{ NotificationPopupFrame::Info, tr("Has no notifications"), tr("Has no notifications") });
 
 	changeState();
 }
@@ -56,17 +56,17 @@ void NotificationsContainerWidget::onNotificationAdded(int status, const QString
 	{
 		case INotificationService::NotificationStatusInformation:
 		{
-			notificationData.status = NotificationPopupWidget::Info;
+			notificationData.status = NotificationPopupFrame::Info;
 			break;
 		}
 		case INotificationService::NotificationStatusWarning:
 		{
-			notificationData.status = NotificationPopupWidget::Warning;
+			notificationData.status = NotificationPopupFrame::Warning;
 			break;
 		}
 		case INotificationService::NotificationStatusError:
 		{
-			notificationData.status = NotificationPopupWidget::Error;
+			notificationData.status = NotificationPopupFrame::Error;
 			break;
 		}
 		default:
@@ -100,15 +100,21 @@ void NotificationsContainerWidget::changeState()
 
 		if (m_notificationPopup)
 		{
+			disconnect(m_notificationPopup, &NotificationPopupFrame::destroyed,
+				this, &NotificationsContainerWidget::onNotificationFrameDestroyed);
+
 			m_notificationPopup->close();
 		}
 
-		m_notificationPopup = new NotificationPopupWidget(
-			static_cast<NotificationPopupWidget::Status>(currentNotificationData.status),
+		m_notificationPopup = new NotificationPopupFrame(
+			static_cast<NotificationPopupFrame::Status>(currentNotificationData.status),
 			currentNotificationData.header, 
 			currentNotificationData.message, 
 			this
 		);
+
+		VERIFY(connect(m_notificationPopup, &NotificationPopupFrame::destroyed, 
+			this, &NotificationsContainerWidget::onNotificationFrameDestroyed));
 
 		m_notificationPopup->setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -125,6 +131,12 @@ void NotificationsContainerWidget::changeState()
 
 		m_label->setPixmap(m_normalPixmap);
 	}
+}
+
+void NotificationsContainerWidget::onNotificationFrameDestroyed()
+{
+	m_active = false;
+	changeState();
 }
 
 }

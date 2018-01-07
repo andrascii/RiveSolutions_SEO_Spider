@@ -7,7 +7,7 @@ namespace SeoSpider
 
 using namespace CrawlerEngine;
 
-class NotificationPopupWidget;
+class NotificationPopupFrame;
 
 class NotificationsContainerWidget : public QWidget
 {
@@ -22,6 +22,7 @@ protected:
 
 private slots:
 	void onNotificationAdded(int status, const QString& header, const QString& message);
+	void onNotificationFrameDestroyed();
 
 private:
 	void changeState();
@@ -41,7 +42,7 @@ private:
 	
 	bool m_active;
 	
-	NotificationPopupWidget* m_notificationPopup;
+	QPointer<NotificationPopupFrame> m_notificationPopup;
 
 	std::vector<NotificationData> m_notifications;
 	std::size_t m_currentNotificationIndex;

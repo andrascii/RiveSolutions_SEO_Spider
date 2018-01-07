@@ -676,7 +676,7 @@ QStackedWidget QLabel#LoadingWidget
 
 /*/////////////////////////////// Notification Popup Widget ///////////////////////////////*/
 
-SeoSpider--NotificationPopupWidget QToolButton
+SeoSpider--NotificationPopupFrame QToolButton
 {
 	border: none;
 }

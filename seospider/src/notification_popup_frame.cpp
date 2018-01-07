@@ -1,4 +1,4 @@
-#include "notification_popup_widget.h"
+#include "notification_popup_frame.h"
 #include "custom_push_button.h"
 #include "application.h"
 #include "helpers.h"
@@ -6,7 +6,7 @@
 namespace SeoSpider
 {
 
-NotificationPopupWidget::NotificationPopupWidget(Status status, const QString& header, const QString& message, QWidget* relativePosition)
+NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& header, const QString& message, QWidget* relativePosition)
 	: QFrame(relativePosition, Qt::Dialog | Qt::FramelessWindowHint)
 	, m_parentRect(relativePosition->geometry())
 	, m_borderWidth(Common::Helpers::pointsToPixels(2))
@@ -55,18 +55,18 @@ NotificationPopupWidget::NotificationPopupWidget(Status status, const QString& h
 
 	layout->addSpacerItem(verticalSpacer);
 
-	VERIFY(connect(theApp->mainWindow(), &MainWindow::resized, this, &NotificationPopupWidget::setPosition));
-	VERIFY(connect(theApp->mainWindow(), &MainWindow::moved, this, &NotificationPopupWidget::setPosition));
-	VERIFY(connect(closeButton, &QToolButton::clicked, this, &NotificationPopupWidget::close));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::resized, this, &NotificationPopupFrame::setPosition));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::moved, this, &NotificationPopupFrame::setPosition));
+	VERIFY(connect(closeButton, &QToolButton::clicked, this, &NotificationPopupFrame::close));
 }
 
-void NotificationPopupWidget::paintEvent(QPaintEvent*)
+void NotificationPopupFrame::paintEvent(QPaintEvent*)
 {
 	QPainter painter(this);
 	painter.drawPixmap(rect(), m_pixmap);
 }
 
-void NotificationPopupWidget::showEvent(QShowEvent* event)
+void NotificationPopupFrame::showEvent(QShowEvent* event)
 {
 	const QRect adjustedRect = rect().adjusted(-m_borderWidth, -m_borderWidth, m_borderWidth, m_borderWidth + m_angleHeight);
 
@@ -100,7 +100,7 @@ void NotificationPopupWidget::showEvent(QShowEvent* event)
 	QFrame::showEvent(event);
 }
 
-QWidget* NotificationPopupWidget::createStatusPixmapWidget(Status status)
+QWidget* NotificationPopupFrame::createStatusPixmapWidget(Status status)
 {
 	QLabel* pixmapLabel = new QLabel(this);
 	QPixmap pixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
@@ -144,7 +144,7 @@ QWidget* NotificationPopupWidget::createStatusPixmapWidget(Status status)
 	return pixmapLabel;
 }
 
-void NotificationPopupWidget::setPosition()
+void NotificationPopupFrame::setPosition()
 {
 	const QRect appRect = theApp->mainWindow()->geometry();
 	QRect thisRect = geometry();
