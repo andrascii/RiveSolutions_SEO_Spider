@@ -3,7 +3,7 @@
 namespace SeoSpider
 {
 
-class NotificationPopupWidget : public QWidget
+class NotificationPopupWidget : public QFrame
 {
 	Q_OBJECT
 
@@ -17,18 +17,23 @@ public:
 
 	NotificationPopupWidget(Status status, const QString& header, const QString& message, QWidget* relativePosition);
 
-	void setStatus(Status status);
-	void setHeader(const QString& header);
-	void setMessage(const QString& message);
-
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
+	virtual void showEvent(QShowEvent* event) override;
 
 private:
-	Status m_status;
-	QString m_header;
-	QString m_message;
+	QWidget* createStatusPixmapWidget(Status status);
+
+private slots:
+	void setPosition();
+
+private:
 	QRect m_parentRect;
+	const int m_borderWidth;
+	const int m_angleWidth;
+	const int m_angleHeight;
+
+	QPixmap m_pixmap;
 };
 
 }

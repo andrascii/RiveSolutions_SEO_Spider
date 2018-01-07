@@ -79,6 +79,7 @@ void NotificationsContainerWidget::onNotificationAdded(int status, const QString
 	notificationData.message = message;
 
 	m_notifications.emplace_back(std::move(notificationData));
+	m_currentNotificationIndex = m_notifications.size() - 1;
 
 	m_active = true;
 	changeState();
@@ -97,21 +98,19 @@ void NotificationsContainerWidget::changeState()
 
 		const NotificationData& currentNotificationData = m_notifications[m_currentNotificationIndex];
 
-		if (!m_notificationPopup)
+		if (m_notificationPopup)
 		{
-			m_notificationPopup = new NotificationPopupWidget(
-				static_cast<NotificationPopupWidget::Status>(currentNotificationData.status),
-				currentNotificationData.header, 
-				currentNotificationData.message, 
-				this
-			);
+			m_notificationPopup->close();
 		}
-		else
-		{
-			m_notificationPopup->setStatus(static_cast<NotificationPopupWidget::Status>(currentNotificationData.status));
-			m_notificationPopup->setHeader(currentNotificationData.header);
-			m_notificationPopup->setMessage(currentNotificationData.message);
-		}
+
+		m_notificationPopup = new NotificationPopupWidget(
+			static_cast<NotificationPopupWidget::Status>(currentNotificationData.status),
+			currentNotificationData.header, 
+			currentNotificationData.message, 
+			this
+		);
+
+		m_notificationPopup->setAttribute(Qt::WA_DeleteOnClose, true);
 
 		m_notificationPopup->show();
 		m_label->setPixmap(m_activePixmap);
@@ -120,7 +119,8 @@ void NotificationsContainerWidget::changeState()
 	{
 		if (m_notificationPopup)
 		{
-			m_notificationPopup->hide();
+			m_notificationPopup->close();
+			m_notificationPopup = nullptr;
 		}
 
 		m_label->setPixmap(m_normalPixmap);

@@ -63,7 +63,7 @@ void StyleLoader::loadCustomStyleSheet() const
 	}
 	else
 	{
-		notificationService->info(QStringLiteral("StyleLoader"), QStringLiteral("Debug styles cannot be loaded from %1").arg(filenamePath));
+		notificationService->error(QStringLiteral("StyleLoader"), QStringLiteral("Debug styles cannot be loaded from %1").arg(filenamePath));
 	}
 }
 

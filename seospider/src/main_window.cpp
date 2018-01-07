@@ -111,6 +111,20 @@ void MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->show();
 }
 
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+	QMainWindow::resizeEvent(event);
+
+	emit resized();
+}
+
+void MainWindow::moveEvent(QMoveEvent* event)
+{
+	QMainWindow::moveEvent(event);
+
+	emit moved();
+}
+
 void MainWindow::init()
 {
 	DEBUG_ASSERT(!m_initialized);

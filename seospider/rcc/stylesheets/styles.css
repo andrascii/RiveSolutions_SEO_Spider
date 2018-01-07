@@ -673,3 +673,10 @@ QStackedWidget QLabel#LoadingWidget
 {
 	font-size: 20em;
 }
+
+/*/////////////////////////////// Notification Popup Widget ///////////////////////////////*/
+
+SeoSpider--NotificationPopupWidget QToolButton
+{
+	border: none;
+}
