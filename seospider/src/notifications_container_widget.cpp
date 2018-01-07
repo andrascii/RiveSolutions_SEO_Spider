@@ -36,7 +36,8 @@ NotificationsContainerWidget::~NotificationsContainerWidget()
 {
 	if (m_notificationPopup)
 	{
-		m_notificationPopup->hide();
+		disconnect(m_notificationPopup, &NotificationPopupFrame::destroyed,
+			this, &NotificationsContainerWidget::onNotificationFrameDestroyed);
 	}
 }
 
