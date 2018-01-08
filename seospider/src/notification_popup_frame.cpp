@@ -15,9 +15,11 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	, m_borderColor("#4D626E")
 	, m_backgroundColor("#F2F2F2")
 {
+	QSize minimumSize(Common::Helpers::pointsToPixels(250), Common::Helpers::pointsToPixels(120));
+	setMinimumSize(minimumSize);
+
 	setFocusPolicy(Qt::StrongFocus);
 	setWindowModality(Qt::NonModal);
-
 	setAttribute(Qt::WA_TranslucentBackground, true);
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -160,14 +162,10 @@ QWidget* NotificationPopupFrame::createStatusPixmapWidget(Status status)
 void NotificationPopupFrame::setPosition()
 {
 	const QRect appRect = theApp->mainWindow()->geometry();
-	QRect thisRect = geometry();
-
-	QPoint parentWidgetTopLeft = parentWidget()->mapToGlobal(thisRect.topLeft());
-	parentWidgetTopLeft.setX(appRect.right() - thisRect.width() - Common::Helpers::pointsToPixels(10));
-	parentWidgetTopLeft.setY(parentWidgetTopLeft.y() - thisRect.height() + Common::Helpers::pointsToPixels(5));
-
-	thisRect.moveTopLeft(parentWidgetTopLeft);
-	move(thisRect.topLeft());
+	QPoint parentWidgetTopLeft = parentWidget()->mapToGlobal(QPoint(0, 0));
+	parentWidgetTopLeft.setX(appRect.right() - width() - Common::Helpers::pointsToPixels(10));
+	parentWidgetTopLeft.setY(parentWidgetTopLeft.y() - height() + Common::Helpers::pointsToPixels(5));
+	move(parentWidgetTopLeft);
 }
 
 void NotificationPopupFrame::redrawPixmap()

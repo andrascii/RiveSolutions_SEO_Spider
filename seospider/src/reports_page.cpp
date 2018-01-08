@@ -48,6 +48,9 @@ bool ReportsPage::eventFilter(QObject* object, QEvent* event)
 
 #endif
 
+	Q_UNUSED(object);
+	Q_UNUSED(event);
+
 	return false;
 }
 
