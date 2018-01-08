@@ -29,12 +29,25 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	notificationTitleBarLayout->addWidget(createStatusPixmapWidget(status));
 	notificationTitleBarLayout->addWidget(headerLabel);
 	notificationTitleBarLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
-	
+
 	QIcon closeNotificationIcon;
-	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-normal.png"), QSize(), QIcon::Normal, QIcon::On);
-	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-active.png"), QSize(), QIcon::Active, QIcon::On);
-	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-active.png"), QSize(), QIcon::Active, QIcon::Off);
-	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-active.png"), QSize(), QIcon::Normal, QIcon::Off);
+	QSize closePixmapSize(Common::Helpers::pointsToPixels(6), Common::Helpers::pointsToPixels(6));
+	QPixmap activeClosePixmap(closePixmapSize);
+	QPixmap normalClosePixmap(closePixmapSize);
+	QSvgRenderer renderer;
+	QPainter painterActive(&activeClosePixmap);
+	QPainter painterNormal(&normalClosePixmap);
+
+	renderer.load(QStringLiteral(":/images/close-notification-active.svg"));
+	renderer.render(&painterActive);
+
+	renderer.load(QStringLiteral(":/images/close-notification-normal.svg"));
+	renderer.render(&painterNormal);
+
+	closeNotificationIcon.addPixmap(normalClosePixmap.scaled(closePixmapSize), QIcon::Normal, QIcon::On);
+	closeNotificationIcon.addPixmap(activeClosePixmap.scaled(closePixmapSize), QIcon::Active, QIcon::On);
+	closeNotificationIcon.addPixmap(activeClosePixmap.scaled(closePixmapSize), QIcon::Active, QIcon::Off);
+	closeNotificationIcon.addPixmap(normalClosePixmap.scaled(closePixmapSize), QIcon::Normal, QIcon::Off);
 
 	QToolButton* closeButton = new QToolButton(this);
 	closeButton->setIcon(closeNotificationIcon);
@@ -49,7 +62,7 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	layout->addWidget(line);
 	layout->addWidget(new QLabel(message));
 
-	QSpacerItem* verticalSpacer = new QSpacerItem(0, 10, QSizePolicy::Expanding, QSizePolicy::Expanding);
+	QSpacerItem* verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
 	layout->addSpacerItem(verticalSpacer);
 

@@ -150,7 +150,8 @@ void Crawler::stopCrawling()
 	emit crawlerStopped();
 	emit stateChanged(m_state);
 
-	INFOLOG << "crawler stopped";
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler stopped"));
 }
 
 void Crawler::onAboutCrawlingState()
@@ -232,7 +233,8 @@ void Crawler::onCrawlingSessionInitialized()
 
 	emit crawlerStarted();
 
-	INFOLOG << "crawler started";
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler started"));
 }
 
 bool Crawler::isPreinitialized() const
