@@ -14,29 +14,25 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	, m_angleHeight(Common::Helpers::pointsToPixels(10))
 {
 	setFocusPolicy(Qt::StrongFocus);
-	setMinimumWidth(Common::Helpers::pointsToPixels(320));
-	setMaximumWidth(Common::Helpers::pointsToPixels(320));
-	setMinimumHeight(Common::Helpers::pointsToPixels(180));
-	setMaximumHeight(Common::Helpers::pointsToPixels(180));
 	setWindowModality(Qt::NonModal);
 
 	setAttribute(Qt::WA_TranslucentBackground, true);
-	setPosition();
-
-	setContentsMargins(m_borderWidth, m_borderWidth, m_borderWidth, m_borderWidth + m_angleHeight);
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
+	QLabel* headerLabel = new QLabel(header, this);
+	headerLabel->setObjectName("NotificationHeaderLabel");
+
 	QHBoxLayout* notificationTitleBarLayout = new QHBoxLayout;
 	notificationTitleBarLayout->addWidget(createStatusPixmapWidget(status));
-	notificationTitleBarLayout->addWidget(new QLabel(header));
+	notificationTitleBarLayout->addWidget(headerLabel);
 	notificationTitleBarLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
 	
 	QIcon closeNotificationIcon;
 	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-normal.png"), QSize(), QIcon::Normal, QIcon::On);
 	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-active.png"), QSize(), QIcon::Active, QIcon::On);
 	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-active.png"), QSize(), QIcon::Active, QIcon::Off);
-	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+	closeNotificationIcon.addFile(QStringLiteral(":/images/close-notification-active.png"), QSize(), QIcon::Normal, QIcon::Off);
 
 	QToolButton* closeButton = new QToolButton(this);
 	closeButton->setIcon(closeNotificationIcon);
@@ -58,6 +54,9 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	VERIFY(connect(theApp->mainWindow(), &MainWindow::resized, this, &NotificationPopupFrame::setPosition));
 	VERIFY(connect(theApp->mainWindow(), &MainWindow::moved, this, &NotificationPopupFrame::setPosition));
 	VERIFY(connect(closeButton, &QToolButton::clicked, this, &NotificationPopupFrame::close));
+
+	adjustSize();
+	setPosition();
 }
 
 void NotificationPopupFrame::paintEvent(QPaintEvent*)
@@ -69,8 +68,10 @@ void NotificationPopupFrame::paintEvent(QPaintEvent*)
 void NotificationPopupFrame::showEvent(QShowEvent* event)
 {
 	const QRect adjustedRect = rect().adjusted(-m_borderWidth, -m_borderWidth, m_borderWidth, m_borderWidth + m_angleHeight);
+	const QRect adjustedRectBorder = adjustedRect.adjusted(m_borderWidth, m_borderWidth, -m_borderWidth, -m_borderWidth);
 
 	m_pixmap = QPixmap(adjustedRect.size());
+	m_pixmap.fill(Qt::transparent);
 	QPainter painter(&m_pixmap);
 	painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
 
@@ -83,19 +84,26 @@ void NotificationPopupFrame::showEvent(QShowEvent* event)
 	const int h = height();
 
 	const QPoint leftTopAngle = QPoint(m_borderWidth, m_borderWidth);
-	const QPoint rightTopAngle(leftTopAngle.x() + w, leftTopAngle.y());
-	const QPoint rightBottomAngle(leftTopAngle.x() + w, leftTopAngle.y() + h);
-	const QPoint leftBottomAngle(leftTopAngle.x(), leftTopAngle.y() + h);
+	const QPoint rightTopAngle(leftTopAngle.x() + w - m_borderWidth, leftTopAngle.y());
+	const QPoint rightBottomAngle(leftTopAngle.x() + w - m_borderWidth, leftTopAngle.y() + h - m_borderWidth);
+	const QPoint leftBottomAngle(leftTopAngle.x(), leftTopAngle.y() + h - m_borderWidth);
+
+	const int parentWidgetTopLeft = mapFromParent(m_parentRect.topLeft()).x();
+	const int parentWidgetCenter = Common::Helpers::pointsToPixels(1) + m_borderWidth + parentWidgetTopLeft + m_parentRect.width() / 2;
 
 	QPainterPath path(leftTopAngle);
 	path.lineTo(rightTopAngle);
 	path.lineTo(rightBottomAngle);
-	path.lineTo(rightBottomAngle.x() - w / 2, rightBottomAngle.y());
-	path.lineTo(rightBottomAngle.x() - w / 2, rightBottomAngle.y() + m_angleHeight);
-	path.lineTo(rightBottomAngle.x() - w / 2 - m_angleWidth, rightBottomAngle.y());
+	path.lineTo(parentWidgetCenter, rightBottomAngle.y());
+	path.lineTo(parentWidgetCenter, rightBottomAngle.y() + m_angleHeight);
+	path.lineTo(parentWidgetCenter - m_angleWidth, rightBottomAngle.y());
 	path.lineTo(leftBottomAngle);
+	path.lineTo(leftTopAngle);
 	painter.drawPath(path);
+
 	painter.fillPath(path, QColor("#f2f2f2"));
+
+	m_pixmap.save("notificationpixmap.png");;
 
 	QFrame::showEvent(event);
 }
@@ -151,7 +159,7 @@ void NotificationPopupFrame::setPosition()
 
 	QPoint parentWidgetTopLeft = parentWidget()->mapToGlobal(thisRect.topLeft());
 	parentWidgetTopLeft.setX(appRect.right() - thisRect.width() - Common::Helpers::pointsToPixels(10));
-	parentWidgetTopLeft.setY(parentWidgetTopLeft.y() - thisRect.height() - Common::Helpers::pointsToPixels(10));
+	parentWidgetTopLeft.setY(parentWidgetTopLeft.y() - thisRect.height() + Common::Helpers::pointsToPixels(5));
 
 	thisRect.moveTopLeft(parentWidgetTopLeft);
 	move(thisRect.topLeft());

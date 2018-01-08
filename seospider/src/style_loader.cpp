@@ -59,11 +59,11 @@ void StyleLoader::loadCustomStyleSheet() const
 		const QString styleSheet = styles.readAll();
 		qApp->setStyleSheet(styleSheet);
 
-		notificationService->info(QStringLiteral("StyleLoader"), QStringLiteral("Debug styles loaded from %1").arg(filenamePath));
+		notificationService->info(QStringLiteral("Debug style loader"), QStringLiteral("Debug styles loaded from %1").arg(filenamePath));
 	}
 	else
 	{
-		notificationService->error(QStringLiteral("StyleLoader"), QStringLiteral("Debug styles cannot be loaded from %1").arg(filenamePath));
+		notificationService->error(QStringLiteral("Debug style loader"), QStringLiteral("Debug styles cannot be loaded from %1").arg(filenamePath));
 	}
 }
 
@@ -74,7 +74,7 @@ void StyleLoader::loadStandardStyleSheet() const
 
 	ASSERT(notificationService);
 
-	notificationService->info(QStringLiteral("StyleLoader"), QStringLiteral("Loaded standard stylesheets"));
+	notificationService->info(QStringLiteral("Debug style loader"), QStringLiteral("Loaded standard stylesheets"));
 
 	theApp->initializeStyleSheet();
 }
