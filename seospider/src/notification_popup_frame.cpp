@@ -12,6 +12,8 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	, m_borderWidth(Common::Helpers::pointsToPixels(2))
 	, m_angleWidth(Common::Helpers::pointsToPixels(12))
 	, m_angleHeight(Common::Helpers::pointsToPixels(10))
+	, m_borderColor("#4D626E")
+	, m_backgroundColor("#F2F2F2")
 {
 	setFocusPolicy(Qt::StrongFocus);
 	setWindowModality(Qt::NonModal);
@@ -57,6 +59,33 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 
 	adjustSize();
 	setPosition();
+
+	VERIFY(connect(this, &NotificationPopupFrame::borderColorChanged, this, &NotificationPopupFrame::redrawPixmap));
+	VERIFY(connect(this, &NotificationPopupFrame::backgroundColorChanged, this, &NotificationPopupFrame::redrawPixmap));
+}
+
+const QColor& NotificationPopupFrame::borderColor() const noexcept
+{
+	return m_borderColor;
+}
+
+void NotificationPopupFrame::setBorderColor(const QColor& color) noexcept
+{
+	m_borderColor = color;
+
+	emit borderColorChanged();
+}
+
+const QColor& NotificationPopupFrame::backgroundColor() const noexcept
+{
+	return m_backgroundColor;
+}
+
+void NotificationPopupFrame::setBackgroundColor(const QColor& color) noexcept
+{
+	m_backgroundColor = color;
+
+	emit backgroundColorChanged();
 }
 
 void NotificationPopupFrame::paintEvent(QPaintEvent*)
@@ -67,44 +96,7 @@ void NotificationPopupFrame::paintEvent(QPaintEvent*)
 
 void NotificationPopupFrame::showEvent(QShowEvent* event)
 {
-	const QRect adjustedRect = rect().adjusted(-m_borderWidth, -m_borderWidth, m_borderWidth, m_borderWidth + m_angleHeight);
-	const QRect adjustedRectBorder = adjustedRect.adjusted(m_borderWidth, m_borderWidth, -m_borderWidth, -m_borderWidth);
-
-	m_pixmap = QPixmap(adjustedRect.size());
-	m_pixmap.fill(Qt::transparent);
-	QPainter painter(&m_pixmap);
-	painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
-
-	QPen pen(QColor("#D0D0D0"));
-	pen.setWidth(m_borderWidth);
-	pen.setJoinStyle(Qt::RoundJoin);
-	painter.setPen(pen);
-
-	const int w = width();
-	const int h = height();
-
-	const QPoint leftTopAngle = QPoint(m_borderWidth, m_borderWidth);
-	const QPoint rightTopAngle(leftTopAngle.x() + w - m_borderWidth, leftTopAngle.y());
-	const QPoint rightBottomAngle(leftTopAngle.x() + w - m_borderWidth, leftTopAngle.y() + h - m_borderWidth);
-	const QPoint leftBottomAngle(leftTopAngle.x(), leftTopAngle.y() + h - m_borderWidth);
-
-	const int parentWidgetTopLeft = mapFromParent(m_parentRect.topLeft()).x();
-	const int parentWidgetCenter = Common::Helpers::pointsToPixels(1) + m_borderWidth + parentWidgetTopLeft + m_parentRect.width() / 2;
-
-	QPainterPath path(leftTopAngle);
-	path.lineTo(rightTopAngle);
-	path.lineTo(rightBottomAngle);
-	path.lineTo(parentWidgetCenter, rightBottomAngle.y());
-	path.lineTo(parentWidgetCenter, rightBottomAngle.y() + m_angleHeight);
-	path.lineTo(parentWidgetCenter - m_angleWidth, rightBottomAngle.y());
-	path.lineTo(leftBottomAngle);
-	path.lineTo(leftTopAngle);
-	painter.drawPath(path);
-
-	painter.fillPath(path, QColor("#f2f2f2"));
-
-	m_pixmap.save("notificationpixmap.png");;
-
+	redrawPixmap();
 	QFrame::showEvent(event);
 }
 
@@ -163,6 +155,45 @@ void NotificationPopupFrame::setPosition()
 
 	thisRect.moveTopLeft(parentWidgetTopLeft);
 	move(thisRect.topLeft());
+}
+
+void NotificationPopupFrame::redrawPixmap()
+{
+	const QRect adjustedRect = rect().adjusted(-m_borderWidth, -m_borderWidth, m_borderWidth, m_borderWidth + m_angleHeight);
+	const QRect adjustedRectBorder = adjustedRect.adjusted(m_borderWidth, m_borderWidth, -m_borderWidth, -m_borderWidth);
+
+	m_pixmap = QPixmap(adjustedRect.size());
+	m_pixmap.fill(Qt::transparent);
+	QPainter painter(&m_pixmap);
+	painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
+
+	QPen pen(borderColor());
+	pen.setWidth(m_borderWidth);
+	pen.setJoinStyle(Qt::RoundJoin);
+	painter.setPen(pen);
+
+	const int w = width();
+	const int h = height();
+
+	const QPoint leftTopAngle = QPoint(m_borderWidth, m_borderWidth);
+	const QPoint rightTopAngle(leftTopAngle.x() + w - m_borderWidth, leftTopAngle.y());
+	const QPoint rightBottomAngle(leftTopAngle.x() + w - m_borderWidth, leftTopAngle.y() + h - m_borderWidth);
+	const QPoint leftBottomAngle(leftTopAngle.x(), leftTopAngle.y() + h - m_borderWidth);
+
+	const int parentWidgetTopLeft = mapFromParent(m_parentRect.topLeft()).x();
+	const int parentWidgetCenter = Common::Helpers::pointsToPixels(1) + m_borderWidth + parentWidgetTopLeft + m_parentRect.width() / 2;
+
+	QPainterPath path(leftTopAngle);
+	path.lineTo(rightTopAngle);
+	path.lineTo(rightBottomAngle);
+	path.lineTo(parentWidgetCenter, rightBottomAngle.y());
+	path.lineTo(parentWidgetCenter, rightBottomAngle.y() + m_angleHeight);
+	path.lineTo(parentWidgetCenter - m_angleWidth, rightBottomAngle.y());
+	path.lineTo(leftBottomAngle);
+	path.lineTo(leftTopAngle);
+
+	painter.drawPath(path);
+	painter.fillPath(path, backgroundColor());
 }
 
 }

@@ -676,7 +676,24 @@ QStackedWidget QLabel#LoadingWidget
 
 /*/////////////////////////////// Notification Popup Widget ///////////////////////////////*/
 
+SeoSpider--NotificationPopupFrame
+{
+	qproperty-borderColor: #4D626E;
+	qproperty-backgroundColor: #F2F2F2;
+}
+
 SeoSpider--NotificationPopupFrame QToolButton
 {
 	border: none;
+}
+
+SeoSpider--NotificationPopupFrame QLabel
+{
+	color: #4D626E;
+}
+
+SeoSpider--NotificationPopupFrame QLabel#NotificationHeaderLabel
+{
+	font-size: 10pt;
+	font: bold;
 }
