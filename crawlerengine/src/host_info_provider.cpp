@@ -4,6 +4,7 @@
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
 #include "thread_message_dispatcher.h"
+#include "download_response.h"
 
 namespace CrawlerEngine
 {
@@ -43,15 +44,39 @@ HostInfoProvider::~HostInfoProvider()
 void HostInfoProvider::handleRequest(RequesterSharedPtr requester)
 {
 	ASSERT(requester->request()->requestType() == RequestType::RequestGetHostInfo);
+	m_requester = requester;
 	GetHostInfoRequest* request = static_cast<GetHostInfoRequest*>(requester->request());
-	std::shared_ptr<GetHostInfoResponse> response = std::make_shared<GetHostInfoResponse>(HostInfo(request->webpage.host().toLatin1()));
+	m_pendingResponse.reset(new GetHostInfoResponse(HostInfo(request->webpage.host().toLatin1())));
 
-	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, m_pendingResponse);
+
+	/*DownloadRequest downloadRequest(CrawlerRequest{ request->webpage, DownloadRequestType::RequestTypeHead });
+	m_downloadRequester.reset(downloadRequest, this, &HostInfoProvider::onLoadingDone);
+	m_downloadRequester->start();*/
 }
 
 void HostInfoProvider::stopRequestHandling(RequesterSharedPtr requester)
 {
 	requester;
+}
+
+void HostInfoProvider::onLoadingDone(Requester* requester, const DownloadResponse& response)
+{
+	const Hop& hop = response.hopsChain.front();
+	
+	if (hop.redirectUrl().isValid())
+	{
+		m_pendingResponse->url = hop.redirectUrl();
+	}
+	else
+	{
+		m_pendingResponse->url = hop.url();
+	}
+	
+	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(m_requester, m_pendingResponse);
+	m_pendingResponse.reset();
+	m_downloadRequester.reset();
+	m_requester.reset();
 }
 
 }

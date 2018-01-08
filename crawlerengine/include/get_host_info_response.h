@@ -21,6 +21,7 @@ struct GetHostInfoResponse : IResponse
 	}
 
 	HostInfo hostInfo;
+	Url url;
 };
 
 }
