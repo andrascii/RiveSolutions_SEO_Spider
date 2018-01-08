@@ -1,5 +1,5 @@
 #include "notifications_container_widget.h"
-#include "notification_popup_widget.h"
+#include "notification_popup_frame.h"
 #include "service_locator.h"
 
 namespace SeoSpider
@@ -27,7 +27,7 @@ NotificationsContainerWidget::NotificationsContainerWidget(QWidget* parent)
 	VERIFY(connect(notificationService->qobject(), SIGNAL(addedNotification(int, const QString&, const QString&)),
 		this, SLOT(onNotificationAdded(int, const QString&, const QString&)), Qt::QueuedConnection));
 
-	m_notifications.emplace_back(NotificationData{ NotificationPopupWidget::Info, tr("Has no notifications"), tr("Has no notifications") });
+	m_notifications.emplace_back(NotificationData{ NotificationPopupFrame::Info, tr("Has no notifications"), tr("Has no notifications") });
 
 	changeState();
 }
@@ -36,7 +36,8 @@ NotificationsContainerWidget::~NotificationsContainerWidget()
 {
 	if (m_notificationPopup)
 	{
-		m_notificationPopup->hide();
+		disconnect(m_notificationPopup, &NotificationPopupFrame::destroyed,
+			this, &NotificationsContainerWidget::onNotificationFrameDestroyed);
 	}
 }
 
@@ -56,17 +57,17 @@ void NotificationsContainerWidget::onNotificationAdded(int status, const QString
 	{
 		case INotificationService::NotificationStatusInformation:
 		{
-			notificationData.status = NotificationPopupWidget::Info;
+			notificationData.status = NotificationPopupFrame::Info;
 			break;
 		}
 		case INotificationService::NotificationStatusWarning:
 		{
-			notificationData.status = NotificationPopupWidget::Warning;
+			notificationData.status = NotificationPopupFrame::Warning;
 			break;
 		}
 		case INotificationService::NotificationStatusError:
 		{
-			notificationData.status = NotificationPopupWidget::Error;
+			notificationData.status = NotificationPopupFrame::Error;
 			break;
 		}
 		default:
@@ -79,6 +80,7 @@ void NotificationsContainerWidget::onNotificationAdded(int status, const QString
 	notificationData.message = message;
 
 	m_notifications.emplace_back(std::move(notificationData));
+	m_currentNotificationIndex = m_notifications.size() - 1;
 
 	m_active = true;
 	changeState();
@@ -97,21 +99,25 @@ void NotificationsContainerWidget::changeState()
 
 		const NotificationData& currentNotificationData = m_notifications[m_currentNotificationIndex];
 
-		if (!m_notificationPopup)
+		if (m_notificationPopup)
 		{
-			m_notificationPopup = new NotificationPopupWidget(
-				static_cast<NotificationPopupWidget::Status>(currentNotificationData.status),
-				currentNotificationData.header, 
-				currentNotificationData.message, 
-				this
-			);
+			disconnect(m_notificationPopup, &NotificationPopupFrame::destroyed,
+				this, &NotificationsContainerWidget::onNotificationFrameDestroyed);
+
+			m_notificationPopup->close();
 		}
-		else
-		{
-			m_notificationPopup->setStatus(static_cast<NotificationPopupWidget::Status>(currentNotificationData.status));
-			m_notificationPopup->setHeader(currentNotificationData.header);
-			m_notificationPopup->setMessage(currentNotificationData.message);
-		}
+
+		m_notificationPopup = new NotificationPopupFrame(
+			static_cast<NotificationPopupFrame::Status>(currentNotificationData.status),
+			currentNotificationData.header, 
+			currentNotificationData.message, 
+			this
+		);
+
+		VERIFY(connect(m_notificationPopup, &NotificationPopupFrame::destroyed, 
+			this, &NotificationsContainerWidget::onNotificationFrameDestroyed));
+
+		m_notificationPopup->setAttribute(Qt::WA_DeleteOnClose, true);
 
 		m_notificationPopup->show();
 		m_label->setPixmap(m_activePixmap);
@@ -120,11 +126,18 @@ void NotificationsContainerWidget::changeState()
 	{
 		if (m_notificationPopup)
 		{
-			m_notificationPopup->hide();
+			m_notificationPopup->close();
+			m_notificationPopup = nullptr;
 		}
 
 		m_label->setPixmap(m_normalPixmap);
 	}
+}
+
+void NotificationsContainerWidget::onNotificationFrameDestroyed()
+{
+	m_active = false;
+	changeState();
 }
 
 }

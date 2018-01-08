@@ -45,6 +45,8 @@
 		<file>images/internet-connection.png</file>
 		<file>images/notifications-normal.png</file>
 		<file>images/notifications-active.png</file>
+		<file>images/close-notification-normal.png</file>
+		<file>images/close-notification-active.png</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>
