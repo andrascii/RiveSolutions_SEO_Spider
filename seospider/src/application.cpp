@@ -271,6 +271,8 @@ QSettings* Application::settings() const
 
 void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response)
 {
+	Q_UNUSED(requester);
+
 	mainWindow()->statusBar()->clearMessage();
 
 	m_hostInfoRequester->stop();
@@ -287,9 +289,9 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	}
 
 	CrawlerOptions options;
+	options.startCrawlingPage = response.url;
 
-	GetHostInfoRequest* request = static_cast<GetHostInfoRequest*>(requester->request());
-	options.startCrawlingPage = Url(request->webpage);
+	INFOLOG << "Start crawling:" << options.startCrawlingPage.toDisplayString();
 
 	// limit settings
 	options.limitMaxUrlLength = preferences()->limitMaxUrlLength();

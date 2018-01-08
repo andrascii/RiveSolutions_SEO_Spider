@@ -192,6 +192,7 @@ void Downloader::processReply(QNetworkReply* reply)
 	
 	response->hopsChain.addHop(Hop(reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs()));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+	m_responses.remove(key);
 }
 
 bool Downloader::isReplyProcessed(QNetworkReply* reply) const noexcept
