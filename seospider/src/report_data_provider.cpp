@@ -7,6 +7,7 @@
 #include "isequenced_storage.h"
 #include "storage_type.h"
 #include "software_branding.h"
+#include "svg_renderer.h"
 
 namespace
 {
@@ -145,31 +146,12 @@ namespace SeoSpider
 ReportDataProvider::ReportDataProvider(CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
 	: m_sequencedDataCollection(sequencedDataCollection)
 {
-	QVector<QString> paths
-	{
-		{ QStringLiteral(":/images/icon-info.svg") },
-		{ QStringLiteral(":/images/icon-ok.svg") },
-		{ QStringLiteral(":/images/icon-warning.svg") },
-		{ QStringLiteral(":/images/icon-error.svg") },
-	};
+	const QSize pixmapSize(13.5, 13.5);
 
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelInfo] = QPixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelNotError] = QPixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelWarning] = QPixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelError] = QPixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
-
-	QSvgRenderer svgRenderer;
-
-	for (int i = 0; i < paths.size(); ++i)
-	{
-		const ErrorCategory::ErrorCategoryLevel level = static_cast<ErrorCategory::ErrorCategoryLevel>(i);
-
-		m_pixmaps[level].fill(Qt::transparent);
-		QPainter painterPixmap(&m_pixmaps[level]);
-
-		svgRenderer.load(paths[i]);
-		svgRenderer.render(&painterPixmap);
-	}
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelInfo] = SvgRenderer::render(QStringLiteral(":/images/icon-info.svg"), pixmapSize);
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelNotError] = SvgRenderer::render(QStringLiteral(":/images/icon-ok.svg"), pixmapSize);
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelWarning] = SvgRenderer::render(QStringLiteral(":/images/icon-warning.svg"), pixmapSize);
+	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelError] = SvgRenderer::render(QStringLiteral(":/images/icon-error.svg"), pixmapSize);
 }
 
 QVariant ReportDataProvider::data(ReportDataKeys dataKey) const

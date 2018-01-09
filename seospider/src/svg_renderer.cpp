@@ -11,7 +11,16 @@ QPixmap SvgRenderer::render(const QString& filepath, const QSize& sizeInPoints)
 		Common::Helpers::pointsToPixels(sizeInPoints.height())
 	);
 
+	const QString key = QStringLiteral("%1%2%3").arg(filepath).arg(sizeInPixels.width()).arg(sizeInPixels.height());
+
 	QPixmap pixmap(sizeInPixels);
+
+	if (QPixmapCache::find(key, pixmap))
+	{
+		return pixmap;
+	}
+
+	pixmap.fill(Qt::transparent);
 
 	QPainter painter(&pixmap);
 	QSvgRenderer renderer;
