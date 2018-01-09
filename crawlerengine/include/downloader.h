@@ -47,8 +47,6 @@ private:
 	QMap<CrawlerRequest, RequesterWeakPtr> m_requesters;
 	QMap<CrawlerRequest, std::shared_ptr<DownloadResponse>> m_responses;
 	QByteArray m_userAgent;
-	QString m_proxyUser;
-	QString m_proxyPassword;
 	Common::RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	std::queue<RequesterSharedPtr> m_requesterQueue;
 	std::unique_ptr<IUniquenessChecker> m_uniquenessChecker;

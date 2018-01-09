@@ -28,7 +28,6 @@ Downloader::Downloader()
 
 	VERIFY(connect(m_randomIntervalRangeTimer, &Common::RandomIntervalRangeTimer::timerTicked, 
 		this, &Downloader::onTimerTicked, Qt::DirectConnection));
-
 }
 
 void Downloader::setPauseRange(int from, int to)
@@ -53,9 +52,6 @@ void Downloader::setUserAgent(const QByteArray& userAgent)
 void Downloader::setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser,
 	const QString& proxyPassword)
 {
-	Q_UNUSED(proxyUser);
-	Q_UNUSED(proxyPassword);
-
 	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
 
 	QNetworkProxy proxy;
