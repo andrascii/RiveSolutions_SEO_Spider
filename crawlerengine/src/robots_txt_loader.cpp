@@ -25,6 +25,7 @@ void RobotsTxtLoader::load()
 
 	if (m_hopsChain.hasHopTo(robotsTxtUrl))
 	{
+		emit ready();
 		return;
 	}
 

@@ -26,6 +26,8 @@ public:
 	Q_INVOKABLE virtual void setPauseRange(int from, int to) override;
 	Q_INVOKABLE virtual void resetPauseRange() override;
 	Q_INVOKABLE virtual void setUserAgent(const QByteArray& userAgent) override;
+	Q_INVOKABLE virtual void setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword) override;
+	Q_INVOKABLE virtual void resetProxy() override;
 	Q_INVOKABLE virtual void handleRequest(CrawlerEngine::RequesterSharedPtr requester) override;
 	Q_INVOKABLE virtual void stopRequestHandling(CrawlerEngine::RequesterSharedPtr requester) override;
 
