@@ -6,6 +6,8 @@
 #include "page_parser_helpers.h"
 #include "status_code.h"
 #include "hop.h"
+#include "service_locator.h"
+#include "inotification_service.h"
 
 namespace CrawlerEngine
 {
@@ -20,6 +22,9 @@ Downloader::Downloader()
 	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
 
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*)), Qt::DirectConnection));
+
+	VERIFY(connect(m_networkAccessor, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
+		this, SLOT(proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenticator*)), Qt::DirectConnection));
 
 	VERIFY(connect(m_randomIntervalRangeTimer, &Common::RandomIntervalRangeTimer::timerTicked, 
 		this, &Downloader::onTimerTicked, Qt::DirectConnection));
@@ -42,6 +47,30 @@ void Downloader::setUserAgent(const QByteArray& userAgent)
 {
 	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
 	m_userAgent = userAgent;
+}
+
+void Downloader::setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser,
+	const QString& proxyPassword)
+{
+	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
+
+	QNetworkProxy proxy;
+	proxy.setType(QNetworkProxy::HttpProxy);
+	proxy.setHostName(proxyHostName);
+	proxy.setPort(proxyPort);
+
+	if(!(proxyUser.isEmpty() && proxyPassword.isEmpty()))
+	{
+		proxy.setUser(proxyUser);
+		proxy.setPassword(proxyPassword);
+	}
+
+	m_networkAccessor->setProxy(proxy);
+}
+
+void Downloader::resetProxy()
+{
+	m_networkAccessor->setProxy(QNetworkProxy::DefaultProxy);
 }
 
 void Downloader::handleRequest(RequesterSharedPtr requester)
@@ -78,6 +107,13 @@ void Downloader::onTimerTicked()
 	RequesterSharedPtr requester = m_requesterQueue.back();
 	m_requesterQueue.pop();
 	load(requester);
+}
+
+void Downloader::proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenticator*) const
+{
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	ASSERT(serviceLocator->isRegistered<INotificationService>());
+	serviceLocator->service<INotificationService>()->error(tr("Proxy error"), tr("Proxy authentication failed."));
 }
 
 void Downloader::urlDownloaded(QNetworkReply* reply)

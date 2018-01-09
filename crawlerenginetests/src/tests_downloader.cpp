@@ -33,6 +33,14 @@ void TestsDownloader::setUserAgent(const QByteArray&)
 {
 }
 
+void TestsDownloader::setProxy(const QString&, int, const QString&, const QString&)
+{
+}
+
+void TestsDownloader::resetProxy()
+{
+}
+
 void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 {
 	std::shared_ptr<CrawlerEngine::DownloadResponse> response = 
