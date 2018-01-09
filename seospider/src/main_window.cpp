@@ -5,7 +5,7 @@
 #include "data_pages_widget.h"
 #include "action_keys.h"
 #include "action_registry.h"
-#include "menu_bar.h"
+#include "menubar.h"
 #include "settings_page_impl.h"
 #include "site_map_creator_widget.h"
 #include "crawler_status_info.h"
@@ -22,6 +22,7 @@
 #include "user_agent_settings_widget.h"
 #include "crawler_pause_settings_widget.h"
 #include "internet_connection_state_widget.h"
+#include "notifications_container_widget.h"
 
 namespace SeoSpider
 {
@@ -110,6 +111,20 @@ void MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->show();
 }
 
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+	QMainWindow::resizeEvent(event);
+
+	emit resized();
+}
+
+void MainWindow::moveEvent(QMoveEvent* event)
+{
+	QMainWindow::moveEvent(event);
+
+	emit moved();
+}
+
 void MainWindow::init()
 {
 	DEBUG_ASSERT(!m_initialized);
@@ -117,13 +132,12 @@ void MainWindow::init()
 	createActions();
 	createAndSetCentralWidget();
 	registerSettingsPages();
-
 	setWindowIcon(QIcon(QStringLiteral(":/images/robot.ico")));
-
 	setMenuBar(new MenuBar(this));
 
 	QStatusBar* statusBar = new QStatusBar(this);
-	statusBar->addPermanentWidget(new InternetConnectionStateWidget(this));
+	statusBar->addPermanentWidget(new NotificationsContainerWidget(statusBar));
+	statusBar->addPermanentWidget(new InternetConnectionStateWidget(statusBar));
 	statusBar->addWidget(new CrawlerStatusInfo(statusBar));
 
 	setStatusBar(statusBar);

@@ -157,6 +157,11 @@ void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* f
 #ifndef PRODUCTION
 	debugReport(file, line, function, expression);
 #else
+	Q_UNUSED(file);
+	Q_UNUSED(line);
+	Q_UNUSED(function);
+	Q_UNUSED(expression);
+
 	setProcessSignaledState();
 #endif
 }

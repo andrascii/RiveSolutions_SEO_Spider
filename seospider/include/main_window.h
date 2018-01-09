@@ -15,6 +15,10 @@ public:
 
 	void init();
 
+signals:
+	void resized();
+	void moved();
+
 public slots:
 	void showSitemapCreatorDialog();
 	void saveFileAs();
@@ -27,6 +31,10 @@ public slots:
 		const QString& message, 
 		MessageBoxDialog::Icon icon, 
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+protected:
+	virtual void resizeEvent(QResizeEvent* event) override;
+	virtual void moveEvent(QMoveEvent* event) override;
 
 private:
 	void createActions();

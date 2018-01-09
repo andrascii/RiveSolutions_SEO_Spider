@@ -16,7 +16,7 @@ public:
 	virtual QObject* qobject() override;
 
 signals:
-	virtual void addedNotification(NotificationStatus status, const QString& header, const QString& message) override;
+	virtual void addedNotification(int, const QString& header, const QString& message) override;
 };
 
 }
