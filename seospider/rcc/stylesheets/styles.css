@@ -53,10 +53,14 @@ QStatusBar
 	border-top: 0.05em solid #C0C0C0;
 }
 
+QStatusBar::item
+{
+	border: none;
+}
+
 SeoSpider--CrawlerStatusInfo QLabel
 {
 	color: #EDEDED;
-	border: none;
 }
 
 /*/////////////////////////////////// Border ////////////////////////////*/
@@ -500,19 +504,13 @@ QWidget#NavigationPanel QPushButton
 	border: none;
 	border-bottom: 0.05em solid #F2F2F2;
 	border-radius: none;
-	
 	background-color: #F2F2F2;
-	
-	width: 12em;
-	
+	width: 12em;	
 	text-align: left;
-	color: #4D626E;
-	
-	font-size: 9pt;
-	font: bold;
-	
-	padding-left: 1em;
-	
+	color: #4D626E;	
+	font-size: 10pt;
+	font: bold;	
+	padding-left: 1em;	
 	min-width: 10em;
 	max-width: 10em;
 	min-height: 2.5em;
@@ -548,7 +546,7 @@ SeoSpider--HeaderDecorationWidget QFrame#TitleFrame
 {
 	min-height: 3em;
 	background-color: #F2F2F2;
-	border-bottom: 0.05em solid #CCCCCC;
+	border-bottom: 0.1em solid #CCCCCC;
 }
 
 /*/////////////////////////////// QTabWidget ///////////////////////////////*/
@@ -689,7 +687,7 @@ SeoSpider--NotificationPopupFrame QToolButton
 
 SeoSpider--NotificationPopupFrame QLabel
 {
-	color: #4D626E;
+	color: #000000;
 }
 
 SeoSpider--NotificationPopupFrame QLabel#NotificationHeaderLabel

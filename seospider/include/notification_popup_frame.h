@@ -40,7 +40,6 @@ private slots:
 	void redrawPixmap();
 
 private:
-	QRect m_parentRect;
 	const int m_borderWidth;
 	const int m_angleWidth;
 	const int m_angleHeight;
