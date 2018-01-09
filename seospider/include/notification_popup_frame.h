@@ -38,14 +38,13 @@ private:
 private slots:
 	void setPosition();
 	void redrawPixmap();
+	void onMainWindowStateChanged();
 
 private:
 	const int m_borderWidth;
 	const int m_angleWidth;
 	const int m_angleHeight;
-
 	QPixmap m_pixmap;
-
 	QColor m_borderColor;
 	QColor m_backgroundColor;
 };

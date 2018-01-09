@@ -3,6 +3,7 @@
 #include "application.h"
 #include "helpers.h"
 #include "svg_renderer.h"
+#include "deferred_call.h"
 
 namespace SeoSpider
 {
@@ -59,6 +60,8 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	VERIFY(connect(closeButton, &QToolButton::clicked, this, &NotificationPopupFrame::close));
 	VERIFY(connect(theApp->mainWindow(), &MainWindow::resized, this, &NotificationPopupFrame::setPosition));
 	VERIFY(connect(theApp->mainWindow(), &MainWindow::moved, this, &NotificationPopupFrame::setPosition));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::windowStateChanged, this, &NotificationPopupFrame::onMainWindowStateChanged));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::windowStateChanged, this, &NotificationPopupFrame::onMainWindowStateChanged));
 	VERIFY(connect(this, &NotificationPopupFrame::borderColorChanged, this, &NotificationPopupFrame::redrawPixmap));
 	VERIFY(connect(this, &NotificationPopupFrame::backgroundColorChanged, this, &NotificationPopupFrame::redrawPixmap));
 }
@@ -183,6 +186,13 @@ void NotificationPopupFrame::redrawPixmap()
 
 	painter.drawPath(path);
 	painter.fillPath(path, backgroundColor());
+
+	update();
+}
+
+void NotificationPopupFrame::onMainWindowStateChanged()
+{
+	DeferredCall::call(this, [this] { redrawPixmap(); });
 }
 
 }
