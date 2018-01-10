@@ -63,10 +63,30 @@ void HostInfoProvider::stopRequestHandling(RequesterSharedPtr requester)
 void HostInfoProvider::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
 	Q_UNUSED(requester);
-	const Hop& hop = response.hopsChain.back();
-	
-	m_pendingResponse->url = hop.redirectUrl().isValid()
-		? hop.redirectUrl() : hop.url();
+	m_pendingResponse->url = response.hopsChain.front().url();
+
+	if (response.hopsChain.length() > 1)
+	{
+		const Hop& hop = response.hopsChain.back();
+		const QUrl& originalUrl = m_pendingResponse->url;
+		const QUrl& redirectedUrl = hop.url();
+
+		const QString originalHost = originalUrl.host().toLower();
+		const QString redirectedHost = redirectedUrl.host().toLower();
+
+		if ((QString("www.") + originalHost) == redirectedHost ||
+			(QString("www.") + redirectedHost) == originalHost)
+		{
+			const QString originalPath = originalUrl.path().toLower();
+			const QString redirectedPath = redirectedUrl.path().toLower();
+			if (originalPath == redirectedPath || 
+				redirectedPath == QString("/") && originalPath.isEmpty() ||
+				originalPath == QString("/") && redirectedPath.isEmpty())
+			{
+				m_pendingResponse->url = redirectedUrl;
+			}
+		}
+	}
 	
 	ThreadMessageDispatcher::forThread(m_requester->thread())->postResponse(m_requester, m_pendingResponse);
 	m_pendingResponse.reset();
