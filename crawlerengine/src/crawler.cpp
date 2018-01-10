@@ -221,6 +221,20 @@ void Crawler::onCrawlingSessionInitialized()
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
 		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, m_options.userAgent)));
 
+	if (m_options.useProxy)
+	{
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setProxy",
+			Qt::BlockingQueuedConnection,
+			Q_ARG(const QString&, m_options.proxyHostName),
+			Q_ARG(int, m_options.proxyPort),
+			Q_ARG(const QString&, m_options.proxyUser),
+			Q_ARG(const QString&, m_options.proxyPassword)));
+	}
+	else
+	{
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetProxy",	Qt::BlockingQueuedConnection));
+	}
+
 	m_uniqueLinkStore->addUrl(m_options.startCrawlingPage, DownloadRequestType::RequestTypeGet);
 
 	for (CrawlerWorkerThread* worker : m_workers)

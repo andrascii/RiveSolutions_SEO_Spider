@@ -52,6 +52,7 @@ void XmlSitemapLoader::load()
 
 	if (m_isValid && m_hopsChain.hasHopTo(sitemapUrl))
 	{
+		emit ready();
 		return;
 	}
 

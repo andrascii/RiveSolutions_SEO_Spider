@@ -160,7 +160,7 @@ void Application::startCrawler()
 	GetHostInfoRequest request(url);
 	m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
 	m_hostInfoRequester->start();
-	m_webScreenShot->load(url);
+	//m_webScreenShot->load(url);
 
 	mainWindow()->statusBar()->showMessage("Checking host info...");
 }
@@ -202,6 +202,13 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 	preferences()->setMaxImageAltTextChars(options.maxImageAltTextChars);
 	preferences()->setMaxH1LengthChars(options.maxH1LengthChars);
 	preferences()->setMaxH2LengthChars(options.maxH2LengthChars);
+
+	// proxy settings
+	preferences()->setUseProxy(options.useProxy);
+	preferences()->setProxyAddress(options.proxyHostName);
+	preferences()->setProxyPort(options.proxyPort);
+	preferences()->setProxyUsername(options.proxyUser);
+	preferences()->setProxyPassword(options.proxyPassword);
 
 	// crawler settings
 	preferences()->setCheckExternalUrls(options.checkExternalLinks);
@@ -309,6 +316,13 @@ void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const 
 	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
 	options.maxH1LengthChars = preferences()->maxH1LengthChars();
 	options.maxH2LengthChars = preferences()->maxH2LengthChars();
+
+	// proxy settings
+	options.useProxy = preferences()->useProxy();
+	options.proxyHostName = preferences()->proxyAddress();
+	options.proxyPort = preferences()->proxyPort();
+	options.proxyUser = preferences()->proxyUsername();
+	options.proxyPassword = preferences()->proxyPassword();
 
 	// crawler settings
 	options.checkExternalLinks = preferences()->checkExternalUrls();

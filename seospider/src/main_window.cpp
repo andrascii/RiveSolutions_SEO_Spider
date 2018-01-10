@@ -125,6 +125,21 @@ void MainWindow::moveEvent(QMoveEvent* event)
 	emit moved();
 }
 
+void MainWindow::changeEvent(QEvent* event)
+{
+	QMainWindow::changeEvent(event);
+
+	if (event->type() == QEvent::WindowStateChange)
+	{
+		if (static_cast<QWindowStateChangeEvent*>(event)->oldState() == windowState())
+		{
+			return;
+		}
+
+		emit windowStateChanged();
+	}
+}
+
 void MainWindow::init()
 {
 	DEBUG_ASSERT(!m_initialized);
@@ -139,7 +154,6 @@ void MainWindow::init()
 	statusBar->addPermanentWidget(new NotificationsContainerWidget(statusBar));
 	statusBar->addPermanentWidget(new InternetConnectionStateWidget(statusBar));
 	statusBar->addWidget(new CrawlerStatusInfo(statusBar));
-
 	setStatusBar(statusBar);
 
 	m_initialized = true;

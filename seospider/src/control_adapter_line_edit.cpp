@@ -19,10 +19,7 @@ void ControlAdapterQLineEdit::setValue(const QVariant& val)
 {
 	DEBUG_ASSERT((val.type() == QVariant::String) || (val.type() == QVariant::ByteArray));
 
-	if (m_control->text() != val.toString())
-	{
-		m_control->setText(val.toString());
-	}
+	m_control->setText(val.toString());
 }
 
 void ControlAdapterQLineEdit::connectChangesObserver(SettingsPage* page)

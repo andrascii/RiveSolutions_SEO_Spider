@@ -5,46 +5,48 @@ namespace SeoSpiderServiceApi
 {
 
 LogWriterThread::LogWriterThread()
-    : m_serverDataAccumulator(nullptr)
+	: m_serverDataAccumulator(nullptr)
 {
-    qRegisterMetaType<SeverityLevel>("SeverityLevel");
+	qRegisterMetaType<SeverityLevel>("SeverityLevel");
 
-    m_outputFile.setFileName(QStringLiteral("log_data.log"));
-    m_outputFile.open(QIODevice::WriteOnly);
-    m_outputStream.setDevice(&m_outputFile);
+	m_outputFile.setFileName(QStringLiteral("log_data.log"));
+	m_outputFile.open(QIODevice::WriteOnly);
+	m_outputStream.setDevice(&m_outputFile);
 
 #ifndef PRODUCTION
 
-    m_serverDataAccumulator = new LogServerDataAccumulator(this);
+	m_serverDataAccumulator = new LogServerDataAccumulator(this);
 
 #endif
 }
 
 LogWriterThread::~LogWriterThread()
 {
-    assertIfCallFromAnotherThread();
+	assertIfCallFromAnotherThread();
 
-    m_outputStream.flush();
+	m_outputStream.flush();
 }
 
 void LogWriterThread::logMessage(const QString& message, SeverityLevel severityLevel)
 {
-    assertIfCallFromAnotherThread();
+	Q_UNUSED(severityLevel);
 
-    m_outputStream << message << "\n";
+	assertIfCallFromAnotherThread();
+
+	m_outputStream << message << "\n";
 
 #ifndef PRODUCTION
 
-    m_serverDataAccumulator->storeLog(message, severityLevel);
+	m_serverDataAccumulator->storeLog(message, severityLevel);
 
 #endif
 }
 
 void LogWriterThread::flush()
 {
-    assertIfCallFromAnotherThread();
+	assertIfCallFromAnotherThread();
 
-    m_outputStream.flush();
+	m_outputStream.flush();
 }
 
 }

@@ -2,22 +2,25 @@
 #include "custom_push_button.h"
 #include "application.h"
 #include "helpers.h"
+#include "svg_renderer.h"
+#include "deferred_call.h"
 
 namespace SeoSpider
 {
 
 NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& header, const QString& message, QWidget* relativePosition)
 	: QFrame(relativePosition, Qt::Dialog | Qt::FramelessWindowHint)
-	, m_parentRect(relativePosition->geometry())
 	, m_borderWidth(Common::Helpers::pointsToPixels(2))
 	, m_angleWidth(Common::Helpers::pointsToPixels(12))
 	, m_angleHeight(Common::Helpers::pointsToPixels(10))
 	, m_borderColor("#4D626E")
 	, m_backgroundColor("#F2F2F2")
 {
+	QSize minimumSize(Common::Helpers::pointsToPixels(250), Common::Helpers::pointsToPixels(120));
+	setMinimumSize(minimumSize);
+
 	setFocusPolicy(Qt::StrongFocus);
 	setWindowModality(Qt::NonModal);
-
 	setAttribute(Qt::WA_TranslucentBackground, true);
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -30,24 +33,9 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	notificationTitleBarLayout->addWidget(headerLabel);
 	notificationTitleBarLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
 
+	QPixmap normalClosePixmap = SvgRenderer::render(QStringLiteral(":/images/close-notification.svg"), 6, 6);
 	QIcon closeNotificationIcon;
-	QSize closePixmapSize(Common::Helpers::pointsToPixels(6), Common::Helpers::pointsToPixels(6));
-	QPixmap activeClosePixmap(closePixmapSize);
-	QPixmap normalClosePixmap(closePixmapSize);
-	QSvgRenderer renderer;
-	QPainter painterActive(&activeClosePixmap);
-	QPainter painterNormal(&normalClosePixmap);
-
-	renderer.load(QStringLiteral(":/images/close-notification-active.svg"));
-	renderer.render(&painterActive);
-
-	renderer.load(QStringLiteral(":/images/close-notification-normal.svg"));
-	renderer.render(&painterNormal);
-
-	closeNotificationIcon.addPixmap(normalClosePixmap.scaled(closePixmapSize), QIcon::Normal, QIcon::On);
-	closeNotificationIcon.addPixmap(activeClosePixmap.scaled(closePixmapSize), QIcon::Active, QIcon::On);
-	closeNotificationIcon.addPixmap(activeClosePixmap.scaled(closePixmapSize), QIcon::Active, QIcon::Off);
-	closeNotificationIcon.addPixmap(normalClosePixmap.scaled(closePixmapSize), QIcon::Normal, QIcon::Off);
+	closeNotificationIcon.addPixmap(normalClosePixmap, QIcon::Normal, QIcon::On);
 
 	QToolButton* closeButton = new QToolButton(this);
 	closeButton->setIcon(closeNotificationIcon);
@@ -66,13 +54,14 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 
 	layout->addSpacerItem(verticalSpacer);
 
-	VERIFY(connect(theApp->mainWindow(), &MainWindow::resized, this, &NotificationPopupFrame::setPosition));
-	VERIFY(connect(theApp->mainWindow(), &MainWindow::moved, this, &NotificationPopupFrame::setPosition));
-	VERIFY(connect(closeButton, &QToolButton::clicked, this, &NotificationPopupFrame::close));
-
 	adjustSize();
 	setPosition();
 
+	VERIFY(connect(closeButton, &QToolButton::clicked, this, &NotificationPopupFrame::close));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::resized, this, &NotificationPopupFrame::setPosition));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::moved, this, &NotificationPopupFrame::setPosition));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::windowStateChanged, this, &NotificationPopupFrame::onMainWindowStateChanged));
+	VERIFY(connect(theApp->mainWindow(), &MainWindow::windowStateChanged, this, &NotificationPopupFrame::onMainWindowStateChanged));
 	VERIFY(connect(this, &NotificationPopupFrame::borderColorChanged, this, &NotificationPopupFrame::redrawPixmap));
 	VERIFY(connect(this, &NotificationPopupFrame::backgroundColorChanged, this, &NotificationPopupFrame::redrawPixmap));
 }
@@ -116,34 +105,25 @@ void NotificationPopupFrame::showEvent(QShowEvent* event)
 QWidget* NotificationPopupFrame::createStatusPixmapWidget(Status status)
 {
 	QLabel* pixmapLabel = new QLabel(this);
-	QPixmap pixmap(Common::Helpers::pointsToPixels(13.5), Common::Helpers::pointsToPixels(13.5));
 
-	pixmap.fill(Qt::transparent);
-
-	QSvgRenderer svgRenderer;
-	QPainter painter(&pixmap);
+	QPixmap pixmap;
+	const QSize size(13.5, 13.5);
 
 	switch (status)
 	{
 		case Info:
 		{
-			svgRenderer.load(QStringLiteral(":/images/icon-ok.svg"));
-			svgRenderer.render(&painter);
-
+			pixmap = SvgRenderer::render(QStringLiteral(":/images/icon-ok.svg"), size);
 			break;
 		}
 		case Warning:
 		{
-			svgRenderer.load(QStringLiteral(":/images/icon-warning.svg"));
-			svgRenderer.render(&painter);
-
+			pixmap = SvgRenderer::render(QStringLiteral(":/images/icon-warning.svg"), size);
 			break;
 		}
 		case Error:
 		{
-			svgRenderer.load(QStringLiteral(":/images/icon-error.svg"));
-			svgRenderer.render(&painter);
-
+			pixmap = SvgRenderer::render(QStringLiteral(":/images/icon-error.svg"), size);
 			break;
 		}
 		default:
@@ -153,21 +133,16 @@ QWidget* NotificationPopupFrame::createStatusPixmapWidget(Status status)
 	}
 
 	pixmapLabel->setPixmap(pixmap);
-
 	return pixmapLabel;
 }
 
 void NotificationPopupFrame::setPosition()
 {
 	const QRect appRect = theApp->mainWindow()->geometry();
-	QRect thisRect = geometry();
-
-	QPoint parentWidgetTopLeft = parentWidget()->mapToGlobal(thisRect.topLeft());
-	parentWidgetTopLeft.setX(appRect.right() - thisRect.width() - Common::Helpers::pointsToPixels(10));
-	parentWidgetTopLeft.setY(parentWidgetTopLeft.y() - thisRect.height() + Common::Helpers::pointsToPixels(5));
-
-	thisRect.moveTopLeft(parentWidgetTopLeft);
-	move(thisRect.topLeft());
+	QPoint parentWidgetTopLeft = parentWidget()->mapToGlobal(QPoint(0, 0));
+	parentWidgetTopLeft.setX(appRect.right() - width() - Common::Helpers::pointsToPixels(10));
+	parentWidgetTopLeft.setY(parentWidgetTopLeft.y() - height() + Common::Helpers::pointsToPixels(5));
+	move(parentWidgetTopLeft);
 }
 
 void NotificationPopupFrame::redrawPixmap()
@@ -193,8 +168,12 @@ void NotificationPopupFrame::redrawPixmap()
 	const QPoint rightBottomAngle(leftTopAngle.x() + w - m_borderWidth, leftTopAngle.y() + h - m_borderWidth);
 	const QPoint leftBottomAngle(leftTopAngle.x(), leftTopAngle.y() + h - m_borderWidth);
 
-	const int parentWidgetTopLeft = mapFromParent(m_parentRect.topLeft()).x();
-	const int parentWidgetCenter = Common::Helpers::pointsToPixels(1) + m_borderWidth + parentWidgetTopLeft + m_parentRect.width() / 2;
+	const QPoint parentWidgetTopLeftGlobalPoint = parentWidget()->mapToGlobal(QPoint(0, 0));
+	const QPoint parentWidgetTopLeftMappedToThisPoint = mapFromGlobal(parentWidgetTopLeftGlobalPoint);
+
+	const QRect parentRect = parentWidget()->geometry();
+	const int point = Common::Helpers::pointsToPixels(1);
+	const int parentWidgetCenter = point + m_borderWidth + parentWidgetTopLeftMappedToThisPoint.x() + parentRect.width() / 2;
 
 	QPainterPath path(leftTopAngle);
 	path.lineTo(rightTopAngle);
@@ -207,6 +186,13 @@ void NotificationPopupFrame::redrawPixmap()
 
 	painter.drawPath(path);
 	painter.fillPath(path, backgroundColor());
+
+	update();
+}
+
+void NotificationPopupFrame::onMainWindowStateChanged()
+{
+	DeferredCall::call(this, [this] { redrawPixmap(); });
 }
 
 }

@@ -18,6 +18,7 @@ public:
 signals:
 	void resized();
 	void moved();
+	void windowStateChanged();
 
 public slots:
 	void showSitemapCreatorDialog();
@@ -35,6 +36,7 @@ public slots:
 protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void moveEvent(QMoveEvent* event) override;
+	virtual void changeEvent(QEvent* event) override;
 
 private:
 	void createActions();

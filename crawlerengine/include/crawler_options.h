@@ -37,6 +37,13 @@ struct CrawlerOptions
 	int maxImageAltTextChars = int();
 	int maxImageSizeKb = int();
 
+	// proxy settings
+	bool useProxy = bool();
+	QString proxyHostName;
+	int proxyPort = int();
+	QString proxyUser;
+	QString proxyPassword;
+
 	// crawler settings
 	bool checkExternalLinks = bool();
 	bool followInternalNofollow = bool();
