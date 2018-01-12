@@ -25,6 +25,7 @@ public:
 	void addUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType);
 	void addUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType);
 	void addLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType);
+	bool addCrawledUrl(const Url& url, DownloadRequestType requestType);
 
 	std::vector<CrawlerRequest> crawledUrls() const noexcept;
 	std::vector<CrawlerRequest> pendingUrls() const noexcept;
@@ -40,7 +41,7 @@ private:
 	{
 		size_t operator()(const CrawlerRequest& item) const noexcept
 		{
-			return hasher(item.url.toString().toStdString()) + static_cast<size_t>(item.requestType);
+			return hasher(item.url.canonizedUrlStr().toStdString()) + static_cast<size_t>(item.requestType);
 		}
 
 		boost::hash<std::string> hasher;
@@ -51,19 +52,22 @@ private:
 
 	struct IncrementGuardExt
 	{
-		IncrementGuardExt(IncrementFunc inc, IncrementFunc decr, const UrlList& storage);
+		IncrementGuardExt(IncrementFunc inc, IncrementFunc decr, const UrlList& storage, int* change = nullptr);
 		~IncrementGuardExt();
 
 		IncrementFunc inc;
 		IncrementFunc decr;
 		size_t oldSize;
 		const UrlList& storage;
+		int* change;
 	};
 
 	UrlList m_pendingUrlList;
 	UrlList m_crawledUrlList;
 
 	mutable std::recursive_mutex m_mutex;
+	int m_lastPendingSizeChange;
+	int m_lastCrawledSizeChange;
 };
 
 }

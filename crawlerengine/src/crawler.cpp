@@ -85,7 +85,7 @@ void Crawler::initialize()
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
-		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
+		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore, static_cast<int>(i)));
 		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)), m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
 		ThreadManager::instance().moveObjectToThread(m_workers.back(), QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
 	}

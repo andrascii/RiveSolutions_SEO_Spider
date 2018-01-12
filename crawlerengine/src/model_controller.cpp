@@ -85,8 +85,20 @@ void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
 	ASSERT(incomingPage->resourceType >= ResourceType::ResourceHtml &&
 		incomingPage->resourceType <= ResourceType::ResourceOther);
 
-	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
+#ifdef QT_DEBUG
+	const ParsedPagePtr existingPage = data()->parsedPage(incomingPage, StorageType::CrawledUrlStorageType);
+	if (existingPage)
+	{
+		ERRLOG << "Unexpected page:" << incomingPage->url.toDisplayString()
+			<< existingPage->url.toDisplayString()
+			<< ". This page was already crawled.";
 
+		DEBUG_ASSERT(!existingPage);
+	}
+#endif
+
+	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
+	
 	fixParsedPageResourceType(incomingPage);
 
 	if (!resourceShouldBeProcessed(incomingPage->resourceType))

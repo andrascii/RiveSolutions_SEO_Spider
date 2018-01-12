@@ -51,7 +51,10 @@ void VideoResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
-		page->allResourcesOnPage.emplace_back(std::move(videoResource));
+		if (page->allResourcesOnPage.find(videoResource) == page->allResourcesOnPage.end())
+		{
+			page->allResourcesOnPage.insert(std::move(videoResource));
+		}
 	}
 
 	CompoundParser::parse(output, headers, page);

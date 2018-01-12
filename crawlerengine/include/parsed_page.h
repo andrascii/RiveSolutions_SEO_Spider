@@ -117,9 +117,27 @@ struct ResourceOnPage
 	bool loadAvailability;
 };
 
+struct ResourcesOnPageListItemHasher
+{
+	size_t operator()(const ResourceOnPage& resource) const noexcept
+	{
+		return hasher(resource.link.url.canonizedUrlStr().toStdString());
+		// TODO: make it more clever
+	}
+
+	boost::hash<std::string> hasher;
+};
+
+inline bool operator==(const ResourceOnPage& first, const ResourceOnPage& second)
+{
+	return first.link.url == second.link.url;
+}
+
+using ResourcesOnPageList = std::unordered_set<ResourceOnPage, ResourcesOnPageListItemHasher>;
+
 inline bool operator<(const ResourceOnPage& lhs, const ResourceOnPage& rhs)
 {
-	return lhs.link.url.toDisplayString() < rhs.link.url.toDisplayString();
+	return lhs.link.url.canonizedUrlStr() < rhs.link.url.canonizedUrlStr();
 }
 
 constexpr int invalidPageLevel = 100000000;
@@ -160,7 +178,7 @@ struct ParsedPage
 	bool isThisExternalPage = bool();
 
 	ResourceType resourceType;
-	std::deque<ResourceOnPage> allResourcesOnPage;
+	ResourcesOnPageList allResourcesOnPage;
 	std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 

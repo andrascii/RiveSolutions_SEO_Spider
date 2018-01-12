@@ -46,7 +46,12 @@ void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& head
 			page->canonicalUrl = linkInfo.url;
 		}
 
-		page->allResourcesOnPage.emplace_back(ResourceOnPage{ ResourceType::ResourceHtml, std::move(linkInfo) });
+		ResourceOnPage resource{ ResourceType::ResourceHtml, std::move(linkInfo) };
+
+		if (page->allResourcesOnPage.find(resource) == page->allResourcesOnPage.end())
+		{
+			page->allResourcesOnPage.insert(std::move(resource));
+		}
 	}
 
 	CompoundParser::parse(output, headers, page);

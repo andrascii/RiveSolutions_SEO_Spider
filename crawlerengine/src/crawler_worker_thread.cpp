@@ -190,7 +190,16 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isExternalLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isOutsideFolderLinkUnavailable), linkList.end());
-	std::for_each(parsedPage->allResourcesOnPage.begin(), parsedPage->allResourcesOnPage.end(), setLinkLoadAvailability);
+
+	ResourcesOnPageList resources;
+	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
+	{
+		ResourceOnPage fixedResource = resource;
+		setLinkLoadAvailability(fixedResource);
+		resources.insert(fixedResource);
+	}
+	
+	parsedPage->allResourcesOnPage = resources;
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
 	{
@@ -218,20 +227,30 @@ void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResp
 
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
 
-	std::for_each(pages.begin(), pages.end(), [this](ParsedPagePtr& page)
+	const DownloadRequestType requestType = m_pendingUrls[pages.front()->url].requestType;
+	bool checkUrl = false;
+
+	for (ParsedPagePtr& page : pages)
 	{
 		schedulePageResourcesLoading(page);
 
 		if (!m_isRunning)
 		{
 			m_pagesAcceptedAfterStop.push_back(page);
-			return;
+			continue;
 		}
 
-		emit pageParsed(page);
-		CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
-		m_pendingUrls.erase(page->url);
-	});
+		const bool urlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
+
+		if (urlAdded)
+		{
+			emit pageParsed(page);
+			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+			m_pendingUrls.erase(page->url);
+		}
+
+		checkUrl = true;
+	}
 
 	extractUrlAndDownload();
 }

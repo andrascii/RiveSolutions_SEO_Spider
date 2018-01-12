@@ -58,7 +58,10 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource},
 		};
 
-		page->allResourcesOnPage.emplace_back(std::move(flashResource));
+		if (page->allResourcesOnPage.find(flashResource) == page->allResourcesOnPage.end())
+		{
+			page->allResourcesOnPage.insert(std::move(flashResource));
+		}
 	}
 }
 
@@ -96,7 +99,10 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
-		page->allResourcesOnPage.emplace_back(std::move(flashResource));
+		if (page->allResourcesOnPage.find(flashResource) == page->allResourcesOnPage.end())
+		{
+			page->allResourcesOnPage.insert(std::move(flashResource));
+		}
 	}
 }
 
@@ -148,7 +154,10 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
 		};
 
-		page->allResourcesOnPage.emplace_back(std::move(flashResource));
+		if (page->allResourcesOnPage.find(flashResource) == page->allResourcesOnPage.end())
+		{
+			page->allResourcesOnPage.insert(std::move(flashResource));
+		}
 	}
 }
 

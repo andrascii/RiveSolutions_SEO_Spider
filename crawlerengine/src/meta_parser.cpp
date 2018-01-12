@@ -96,7 +96,13 @@ void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noex
 		}
 
 		LinkInfo link{ std::move(contentUrl), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceTagMetaRefresh };
-		page->allResourcesOnPage.emplace_back(ResourceOnPage(ResourceType::ResourceHtml, std::move(link)));
+		
+		ResourceOnPage resource(ResourceType::ResourceHtml, std::move(link));
+
+		if (page->allResourcesOnPage.find(resource) == page->allResourcesOnPage.end())
+		{
+			page->allResourcesOnPage.insert(std::move(resource));
+		}
 	}
 }
 

@@ -47,7 +47,10 @@ void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& he
 			LinkInfo{ url.first, LinkParameter::DofollowParameter, url.second, dataResource, ResourceSource::SourceTagImg },
 		};
 
-		page->allResourcesOnPage.emplace_back(std::move(imageResource));
+		if (page->allResourcesOnPage.find(imageResource) == page->allResourcesOnPage.end())
+		{
+			page->allResourcesOnPage.insert(std::move(imageResource));
+		}
 	}
 
 	CompoundParser::parse(output, headers, page);
