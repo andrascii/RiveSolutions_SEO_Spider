@@ -203,7 +203,8 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 
 		const auto checkLinks = [&blockedByRobotsUrl](auto* page)
 		{
-			EXPECT_NE(blockedByRobotsUrl, page->url);
+			const bool valid = blockedByRobotsUrl != page->url || page->statusCode == Common::StatusCode::BlockedByRobotsTxt;
+			EXPECT_EQ(true, valid);
 		};
 
 		std::for_each(pendingPages.begin(), pendingPages.end(), checkLinks);

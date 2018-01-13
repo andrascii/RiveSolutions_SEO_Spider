@@ -203,15 +203,19 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 	const auto emitPageParsedForBlockedPages = [this](const LinkInfo& linkInfo)
 	{
-		ParsedPagePtr page(new ParsedPage);
+		if (m_uniqueLinkStore->addCrawledUrl(linkInfo.url, DownloadRequestType::RequestTypeGet))
+		{
+			ParsedPagePtr page(new ParsedPage);
 
-		page->url = linkInfo.url;
-		page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
-		page->resourceType = ResourceType::ResourceHtml;
+			page->url = linkInfo.url;
+			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
+			page->resourceType = ResourceType::ResourceHtml;
 
-		emit pageParsed(page);
-		m_pendingUrls.erase(page->url);
-		CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+
+			emit pageParsed(page);
+			m_pendingUrls.erase(page->url);
+			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+		}
 	};
 
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
