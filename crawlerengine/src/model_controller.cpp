@@ -572,24 +572,25 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 {
-	constexpr int storageTypes[][1]
+	static const QMap<ResourceType, StorageType> s_storageTypes
 	{
-		static_cast<int>(ResourceType::ResourceImage), { static_cast<int>(StorageType::ImageResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceJavaScript), { static_cast<int>(StorageType::JavaScriptResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceStyleSheet), { static_cast<int>(StorageType::StyleSheetResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceFlash), { static_cast<int>(StorageType::FlashResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceVideo), { static_cast<int>(StorageType::VideoResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceOther), { static_cast<int>(StorageType::OtherResourcesStorageType) },
+		{ ResourceType::ResourceImage, StorageType::ImageResourcesStorageType },
+		{ ResourceType::ResourceJavaScript, StorageType::JavaScriptResourcesStorageType },
+		{ ResourceType::ResourceStyleSheet, StorageType::StyleSheetResourcesStorageType },
+		{ ResourceType::ResourceFlash, StorageType::FlashResourcesStorageType },
+		{ ResourceType::ResourceVideo, StorageType::VideoResourcesStorageType },
+		{ ResourceType::ResourceOther, StorageType::OtherResourcesStorageType },
 	};
 
-	constexpr int externalStorageTypes[][1]
+	static const QMap<ResourceType, StorageType> s_externalStorageTypes
 	{
-		static_cast<int>(ResourceType::ResourceImage), { static_cast<int>(StorageType::ExternalImageResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceJavaScript), { static_cast<int>(StorageType::ExternalJavaScriptResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceStyleSheet), { static_cast<int>(StorageType::ExternalStyleSheetResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceFlash), { static_cast<int>(StorageType::ExternalFlashResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceVideo), { static_cast<int>(StorageType::ExternalVideoResourcesStorageType) },
-		static_cast<int>(ResourceType::ResourceOther), { static_cast<int>(StorageType::ExternalOtherResourcesStorageType) },
+		{ ResourceType::ResourceImage, StorageType::ExternalImageResourcesStorageType },
+		{ ResourceType::ResourceJavaScript, StorageType::ExternalJavaScriptResourcesStorageType },
+		{ ResourceType::ResourceStyleSheet, StorageType::ExternalStyleSheetResourcesStorageType },
+		{ ResourceType::ResourceFlash, StorageType::ExternalFlashResourcesStorageType },
+		{ ResourceType::ResourceVideo, StorageType::ExternalVideoResourcesStorageType },
+		{ ResourceType::ResourceOther, StorageType::ExternalOtherResourcesStorageType },
+
 	};
 
 	const bool http = PageParserHelpers::isHttpOrHttpsScheme(incomingPage->url);
@@ -599,13 +600,12 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 	{
 		const ParsedPagePtr pendingPageRaw = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
 		incomingPage = mergeTwoPages(pendingPageRaw, incomingPage);
-		
-		const int resourceType = static_cast<int>(incomingPage->resourceType);
 
-		const StorageType storage = static_cast<StorageType>(externalOrNotHttp ?
-			externalStorageTypes[resourceType][0] : 
-			storageTypes[resourceType][0]
-		);
+		const ResourceType resourceType = incomingPage->resourceType;
+
+		const StorageType storage = externalOrNotHttp
+			? s_externalStorageTypes[resourceType]
+			: s_storageTypes[resourceType];
 		
 		data()->addParsedPage(incomingPage, storage);
 	}
@@ -633,12 +633,11 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url);
 		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, temporaryResource->url) || !httpResource;
 
-		const int resourceType = static_cast<int>(resource.resourceType);
+		const ResourceType resourceType = resource.resourceType;
 
-		const StorageType storage = static_cast<StorageType>(externalOrNotHttpResource ?
-			externalStorageTypes[resourceType][0] : 
-			storageTypes[resourceType][0]
-		);
+		const StorageType storage = externalOrNotHttpResource ?
+			s_externalStorageTypes[resourceType] : 
+			s_storageTypes[resourceType];
 
 		ParsedPagePtr newOrExistingResource = data()->parsedPage(temporaryResource, storage);
 		
@@ -659,6 +658,10 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 			{
 				data()->addParsedPage(newOrExistingResource,
 					httpResource ? StorageType::PendingResourcesStorageType : storage);
+			}
+			else if (!httpResource)
+			{
+				data()->addParsedPage(newOrExistingResource, storage);
 			}
 		}
 

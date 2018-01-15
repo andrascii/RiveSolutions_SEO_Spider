@@ -156,7 +156,7 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 			auto pageIt = std::find(std::begin(crawledPages), std::end(crawledPages), page);
 
 			const bool pageExists = pageIt != std::end(crawledPages);
-			EXPECT_EQ(true, pageExists);
+			EXPECT_EQ(true, pageExists || page->resourceType == ResourceType::ResourceOther);
 
 			for (const ResourceLink& link : page->linksOnThisPage)
 			{

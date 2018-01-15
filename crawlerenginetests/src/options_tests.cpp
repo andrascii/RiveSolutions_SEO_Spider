@@ -212,6 +212,7 @@ TEST(OptionsTests, ParseOnlyOther)
 {
 	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.parserTypeFlags = OtherResourcesParserType;
+	options.checkExternalLinks = true;
 	TestEnvironment env(options);
 
 	const auto testFunction = [cl = env.crawler()]()
