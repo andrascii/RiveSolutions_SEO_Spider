@@ -90,4 +90,10 @@ const SeoSpider::DCStorageGroupDescription* SummaryDataAccessorDecorator::storag
 	return m_summaryDataAccessor->storageGroupDescription(group);
 }
 
+std::vector<ICommandPointer> SummaryDataAccessorDecorator::commandsFor(const QModelIndex& index) const
+{
+	index;
+	return std::vector<ICommandPointer>();
+}
+
 }

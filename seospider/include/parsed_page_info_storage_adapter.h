@@ -13,13 +13,13 @@ class ParsedPageInfoStorageAdapter : public QObject, public IParsedPageStorageAd
 
 public:
 	ParsedPageInfoStorageAdapter(
-		const CrawlerEngine::ISequencedStorage* associatedStorage,
+		CrawlerEngine::ISequencedStorage* associatedStorage,
 		CrawlerEngine::StorageType storageType,
 		QObject* parent = nullptr
 	);
 
-	virtual void setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept override;
-	virtual QList<ParsedPageInfo::Column> availableColumns() const noexcept override;
+	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept override;
+	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept override;
 	virtual QString columnDescription(int columnIndex) const noexcept override;
 	virtual int columnWidth(int columnNumber) const noexcept override;
 	virtual int columnCount() const noexcept override;
@@ -27,6 +27,7 @@ public:
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
+	virtual std::vector<ICommandPointer> commandsFor(const QModelIndex& index) const override;
 	virtual QObject* qobject() noexcept override;
 
 #ifdef QT_DEBUG
@@ -42,8 +43,8 @@ private slots:
 	void onStorageUpdated(int row, CrawlerEngine::StorageType type);
 
 private:
-	const CrawlerEngine::ISequencedStorage* m_associatedStorage;
-	QList<ParsedPageInfo::Column> m_availableColumns;
+	CrawlerEngine::ISequencedStorage* m_associatedStorage;
+	QVector<ParsedPageInfo::Column> m_availableColumns;
 	CrawlerEngine::StorageType m_storageType;
 };
 

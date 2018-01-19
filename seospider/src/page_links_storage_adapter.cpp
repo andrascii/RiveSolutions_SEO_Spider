@@ -28,12 +28,12 @@ PageLinksStorageAdapter::PageLinksStorageAdapter(ParsedPageInfoPtr associatedPar
 	}
 }
 
-void PageLinksStorageAdapter::setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept
+void PageLinksStorageAdapter::setAvailableColumns(QVector<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept
 {
 	m_availableColumns = availableColumns;
 }
 
-QList<ParsedPageInfo::PageLinksColumn> PageLinksStorageAdapter::availableColumns() const noexcept
+QVector<ParsedPageInfo::PageLinksColumn> PageLinksStorageAdapter::availableColumns() const noexcept
 {
 	return m_availableColumns;
 }
@@ -94,6 +94,24 @@ ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex& 
 	Q_UNUSED(index);
 
 	return m_parsedPageInfo;
+}
+
+std::vector<ICommandPointer> PageLinksStorageAdapter::commandsFor(const QModelIndex& index) const
+{
+	std::vector<ICommandPointer> commands;
+
+	const auto urlColumnIterator = std::find(m_availableColumns.begin(), m_availableColumns.end(), ParsedPageInfo::PageLinksColumn::UrlColumn);
+
+	if (urlColumnIterator != m_availableColumns.end())
+	{
+		const QVariant urlItem = m_parsedPageInfo->itemValue(*urlColumnIterator, m_context, index.row());
+		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
+
+		const Url url = urlItem.toUrl();
+		commands.push_back(std::make_shared<OpenUrlCommand>(url));
+	}
+
+	return commands;
 }
 
 QObject* PageLinksStorageAdapter::qobject() noexcept

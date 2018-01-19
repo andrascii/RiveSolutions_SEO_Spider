@@ -16,18 +16,16 @@ class PageLinksStorageAdapter : public QObject, public IPageLinksStorageAdapter
 public:
 	PageLinksStorageAdapter(ParsedPageInfoPtr associatedParsedPage, PageLinkContext context);
 
-	virtual void setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept override;
-	virtual QList<ParsedPageInfo::PageLinksColumn> availableColumns() const noexcept override;
+	virtual void setAvailableColumns(QVector<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept override;
+	virtual QVector<ParsedPageInfo::PageLinksColumn> availableColumns() const noexcept override;
 	virtual QString columnDescription(int columnIndex) const noexcept override;
-
 	virtual int columnWidth(int columnNumber) const noexcept override;
 	virtual int columnCount() const noexcept override;
-
 	virtual int itemCount() const noexcept override;
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
-
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
+	virtual std::vector<ICommandPointer> commandsFor(const QModelIndex& index) const override;
 	virtual QObject* qobject() noexcept override;
 
 signals:
@@ -42,7 +40,7 @@ private slots:
 private:
 	ParsedPageInfoPtr m_parsedPageInfo; 
 	PageLinkContext m_context;
-	QList<ParsedPageInfo::PageLinksColumn> m_availableColumns;
+	QVector<ParsedPageInfo::PageLinksColumn> m_availableColumns;
 };
 
 }

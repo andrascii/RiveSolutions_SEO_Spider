@@ -106,6 +106,12 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(Au
 	return nullptr;
 }
 
+std::vector<ICommandPointer> SummaryDataAccessor::commandsFor(const QModelIndex& index) const
+{
+	index;
+	return std::vector<ICommandPointer>();
+}
+
 int SummaryDataAccessor::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
 {
 	for (int i = 0; i < rowCount(); ++i)

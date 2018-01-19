@@ -58,8 +58,8 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 	StorageAdapterFactory* factory = theApp->storageAdapterFactory();
 
 	PageModel* pageModel = new PageModel(m_stackedWidget);
-	pageModel->setStorageAdapter(factory->createParsedPageInfoStorage(storageAdapterType, theApp->sequencedDataCollection()));
-
+	IStorageAdapter* storageAdapter = factory->createParsedPageInfoStorage(storageAdapterType, theApp->sequencedDataCollection());
+	pageModel->setStorageAdapter(storageAdapter);
 
 	TableView* tableView = new TableView(m_stackedWidget);
 	PageViewModel* pageViewModel = new PageViewModel(tableView, pageModel, pageModel);
@@ -67,6 +67,7 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 	tableView->setModel(pageModel);
 	tableView->setViewModel(pageViewModel);
 	tableView->setShowAdditionalGrid(true);
+	//tableView->setContextMenu(storageAdapter->availableCommands());
 
 	m_tables[storageAdapterType] = m_stackedWidget->addWidget(tableView);
 	m_stackedWidget->setCurrentIndex(m_tables[storageAdapterType]);

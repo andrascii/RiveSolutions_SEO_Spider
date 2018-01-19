@@ -5,6 +5,7 @@
 #include "selection_model.h"
 #include "item_view_delegate.h"
 #include "helpers.h"
+#include "command_menu.h"
 
 namespace SeoSpider
 {
@@ -99,7 +100,7 @@ void TableView::contextMenuEvent(QContextMenuEvent* event)
 		return;
 	}
 
-	m_contextMenu->exec(event->globalPos());
+	m_contextMenu->execFor(event->globalPos(), indexAt(event->globalPos()));
 }
 
 void TableView::paintEvent(QPaintEvent* event)
@@ -227,7 +228,7 @@ void TableView::rowsInserted(const QModelIndex &parent, int first, int last)
 	QTableView::rowsInserted(parent, first, last);
 }
 
-void TableView::setContextMenu(QMenu* menu) noexcept
+void TableView::setContextMenu(CommandMenu* menu) noexcept
 {
 	m_contextMenu = menu;
 }

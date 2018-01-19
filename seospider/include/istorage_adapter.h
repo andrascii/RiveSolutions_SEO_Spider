@@ -1,11 +1,12 @@
 #pragma once
 
 #include "parsed_page_info.h"
+#include "idata_commands_provider.h"
 
 namespace SeoSpider
 {
 
-class IStorageAdapter
+class IStorageAdapter : public IDataCommandsProvider
 {
 public:
 	enum class ItemType
@@ -34,17 +35,17 @@ public:
 class IParsedPageStorageAdapter : public IStorageAdapter
 {
 public:
-	virtual void setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept = 0;
+	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept = 0;
 
-	virtual QList<ParsedPageInfo::Column> availableColumns() const noexcept = 0;
+	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept = 0;
 };
 
 class IPageLinksStorageAdapter : public IStorageAdapter
 {
 public:
-	virtual void setAvailableColumns(QList<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept = 0;
+	virtual void setAvailableColumns(QVector<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept = 0;
 
-	virtual QList<ParsedPageInfo::PageLinksColumn> availableColumns() const noexcept = 0;
+	virtual QVector<ParsedPageInfo::PageLinksColumn> availableColumns() const noexcept = 0;
 };
 
 }

@@ -46,7 +46,6 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	CrawlerEngine::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
 	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, guiStorage);
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
-
 	m_summaryFilterTableView->initSpans();
 }
 
@@ -57,9 +56,7 @@ void FilterWidget::adjustSize()
 	ASSERT(parentWidget);
 
 	const int summaryViewWidth = Common::Helpers::pointsToPixels(140);
-
 	const int parentWidgetWidth = parentWidget->width();
-
 	m_splitter->setSizes(QList<int>() << summaryViewWidth << parentWidgetWidth - summaryViewWidth);
 }
 
@@ -69,7 +66,6 @@ void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected,
 
 	const QModelIndex index = selected.size() ? selected.indexes()[0] : QModelIndex();
 	const StorageAdapterType category = m_summaryFilterModel->storageAdapterType(index);
-
 	m_webSiteDataWidget->setStorageAdapterType(category);
 }
 
