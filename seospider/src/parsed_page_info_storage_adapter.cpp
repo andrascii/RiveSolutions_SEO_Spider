@@ -5,7 +5,7 @@ namespace SeoSpider
 {
 
 ParsedPageInfoStorageAdapter::ParsedPageInfoStorageAdapter(
-	const CrawlerEngine::ISequencedStorage* associatedStorage,
+	CrawlerEngine::ISequencedStorage* associatedStorage,
 	CrawlerEngine::StorageType storageType, QObject* parent)
 	: QObject(parent)
 	, m_associatedStorage(associatedStorage)
@@ -25,12 +25,12 @@ ParsedPageInfoStorageAdapter::ParsedPageInfoStorageAdapter(
 		this, &ParsedPageInfoStorageAdapter::endClearData));
 }
 
-void ParsedPageInfoStorageAdapter::setAvailableColumns(QList<ParsedPageInfo::Column> availableColumns) noexcept
+void ParsedPageInfoStorageAdapter::setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept
 {
 	m_availableColumns = availableColumns;
 }
 
-QList<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::availableColumns() const noexcept
+QVector<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::availableColumns() const noexcept
 {
 	return m_availableColumns;
 }
@@ -81,7 +81,6 @@ ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(co
 	return isIndexMappedToUrl ? ItemType::UrlItemType : ItemType::PlainItemType;
 }
 
-
 ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
 	const CrawlerEngine::ParsedPage* parsedPage;
@@ -92,6 +91,31 @@ ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIn
 	}
 
 	return std::make_shared<ParsedPageInfo>(parsedPage);
+}
+
+std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QModelIndex& index) const
+{
+	std::vector<ICommandPointer> commands;
+
+	if (!index.isValid())
+	{
+		return commands;
+	}
+
+	const auto urlColumnIterator = std::find(m_availableColumns.begin(), m_availableColumns.end(), ParsedPageInfo::Column::UrlColumn);
+
+	if (urlColumnIterator != m_availableColumns.end())
+	{
+		const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
+
+		const QVariant urlItem = ParsedPageInfo(storage[index.row()]).itemValue(*urlColumnIterator);
+		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
+
+		const Url url = urlItem.toUrl();
+		commands.push_back(std::make_shared<OpenUrlCommand>(url));
+	}
+
+	return commands;
 }
 
 QObject* ParsedPageInfoStorageAdapter::qobject() noexcept
@@ -115,7 +139,7 @@ void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, StorageType type)
 		return;
 	}
 
-	Q_EMIT parsedPageInfoAdded(row);
+	emit parsedPageInfoAdded(row);
 }
 
 }

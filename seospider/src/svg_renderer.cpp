@@ -28,6 +28,8 @@ QPixmap SvgRenderer::render(const QString& filepath, const QSize& sizeInPoints)
 	renderer.load(filepath);
 	renderer.render(&painter);
 
+	QPixmapCache::insert(key, pixmap);
+
 	return pixmap;
 }
 

@@ -18,6 +18,7 @@ public:
 	bool empty() const noexcept;
 
 	const ISequencedStorage* storage(StorageType type) const noexcept;
+	ISequencedStorage* storage(StorageType type) noexcept;
 
 signals:
 	void parsedPageAdded(int row, StorageType storageType);
@@ -33,9 +34,6 @@ protected:
 protected slots:
 	void addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type);
 	void onDataCleared();
-
-private:
-	ISequencedStorage* storage(StorageType type) noexcept;
 
 private:
 	std::unordered_map<StorageType, std::shared_ptr<ISequencedStorage>> m_sequencedStorageMap;

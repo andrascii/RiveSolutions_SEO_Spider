@@ -5,7 +5,7 @@
 namespace SeoSpider
 {
 
-ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, CrawlerEngine::SequencedDataCollection* guiStorage) const
+ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType accessorType, CrawlerEngine::SequencedDataCollection* dataCollection) const
 {
 	ASSERT(accessorType > DataAccessorType::DataAccessorTypeBegin &&
 		accessorType < DataAccessorType::DataAccessorTypeEnd);
@@ -16,7 +16,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 	{
 		case DataAccessorType::ErrorsFilterPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(guiStorage));
+			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection));
 
 			summaryDataAccessor->addGroup(AuditGroup::LinkAuditGroup);
 			summaryDataAccessor->addGroup(AuditGroup::PageProblemsAuditGroup);
@@ -30,7 +30,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 
 		case DataAccessorType::AllResourcesPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessor(guiStorage);
+			summaryDataAccessor = new SummaryDataAccessor(dataCollection);
 
 			summaryDataAccessor->addGroup(AuditGroup::InternalResourcesGroup);
 			summaryDataAccessor->addGroup(AuditGroup::ExternalResourcesGroup);

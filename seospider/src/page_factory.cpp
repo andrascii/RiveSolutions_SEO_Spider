@@ -41,7 +41,6 @@ QWidget* PageFactory::createPage(Page page) const
 
 			crawlingTableView->setModel(model);
 			crawlingTableView->setViewModel(modelView);
-			crawlingTableView->setContextMenu(new ContextMenuDataCollectionRow(crawlingTableView));
 			crawlingTableView->setShowAdditionalGrid(true);
 
 			widget = crawlingTableView;

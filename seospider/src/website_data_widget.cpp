@@ -7,7 +7,7 @@
 #include "page_data_widget.h"
 #include "helpers.h"
 #include "application.h"
-#include "deferred_call.h"
+#include "command_menu.h"
 
 namespace SeoSpider
 {
@@ -58,8 +58,8 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 	StorageAdapterFactory* factory = theApp->storageAdapterFactory();
 
 	PageModel* pageModel = new PageModel(m_stackedWidget);
-	pageModel->setStorageAdapter(factory->createParsedPageInfoStorage(storageAdapterType, theApp->sequencedDataCollection()));
-
+	IStorageAdapter* storageAdapter = factory->createParsedPageInfoStorage(storageAdapterType, theApp->sequencedDataCollection());
+	pageModel->setStorageAdapter(storageAdapter);
 
 	TableView* tableView = new TableView(m_stackedWidget);
 	PageViewModel* pageViewModel = new PageViewModel(tableView, pageModel, pageModel);
@@ -67,6 +67,7 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 	tableView->setModel(pageModel);
 	tableView->setViewModel(pageViewModel);
 	tableView->setShowAdditionalGrid(true);
+	tableView->setContextMenu(new CommandMenu(storageAdapter));
 
 	m_tables[storageAdapterType] = m_stackedWidget->addWidget(tableView);
 	m_stackedWidget->setCurrentIndex(m_tables[storageAdapterType]);
@@ -87,11 +88,9 @@ void WebSiteDataWidget::showEvent(QShowEvent*)
 	ASSERT(parentWidget);
 
 	const int parentWidgetHeight = parentWidget->height();
-
 	const int mainTableView = Common::Helpers::pointsToPixels(400);
 
 	m_splitter->setSizes(QList<int>() << mainTableView << parentWidgetHeight - mainTableView);
-
 	m_wasShown = true;
 }
 
