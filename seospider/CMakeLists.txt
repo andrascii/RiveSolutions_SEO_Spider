@@ -1,13 +1,16 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.2)
 project(${AppName})
 
 set(AppSourcesDir src)
 set(AppHeadersDir include)
 
+find_package(QtXlsxWriter REQUIRED)
+
 # deps headers
 set(CrawlerEngineLibHeadersDir ../crawlerengine/include)
 set(CommonLibHeadersDir ../common/include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
+set(QtXlsxWriterHeadersDir ../qtxlsxwriter/src/xlsx)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppCppList "src/*.cpp")
@@ -37,8 +40,8 @@ source_group(Qrc FILES ${AppResourcesList})
 
 add_executable(
 	${AppName} 
-	${AppSourcesList} 
-	${AppHeadersList} 
+	${AppSourcesList}
+	${AppHeadersList}
 	${AppFormsList} 
 	${AppResourcesList}
 	${AppFormsHeadersList}
@@ -78,6 +81,8 @@ include_directories(
 	${CrawlerEngineLibHeadersDir}
 	${CommonLibHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
+	${QtXlsxWriterHeadersDir}
+	${QtXlsxWriter_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 	${OPENSSL_INCLUDE_DIR}
@@ -87,7 +92,8 @@ target_link_libraries(
 	${AppName}
 	${CrawlerEngineLibName}
 	${CommonLibName}
-	${SeoSpiderServiceApiDllName}
+	${SeoSpiderServiceApiDllName}	
+	${QtXlsxWriter_LIBS}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}

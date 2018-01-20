@@ -13,7 +13,7 @@ file(
 	GLOB
 	QtXlsxWriter_SOURCE_FILES 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/xlsx/*.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/QtXlsxWriterTest_automoc.cpp
+	${CMAKE_CURRENT_BINARY_DIR}/QtXlsxWriterTest_automoc.cpp
 )
 
 find_package(Qt5 5.5 REQUIRED Core Gui Test)
@@ -22,15 +22,46 @@ include_directories(
 	${Qt5Core_INCLUDE_DIRS} 
 	${Qt5Gui_INCLUDE_DIRS}
 	${Qt5Gui_PRIVATE_INCLUDE_DIRS} )
+	
+SET(QtXlsxWriter_INCLUDE_FILES 
+  src/xlsx/xlsxabstractooxmlfile.h
+  src/xlsx/xlsxabstractsheet.h
+  src/xlsx/xlsxcell.h
+  src/xlsx/xlsxcellformula.h
+  src/xlsx/xlsxcellrange.h
+  src/xlsx/xlsxcellreference.h
+  src/xlsx/xlsxchart.h
+  src/xlsx/xlsxchartsheet.h
+  src/xlsx/xlsxconditionalformatting.h
+  src/xlsx/xlsxdatavalidation.h
+  src/xlsx/xlsxdocument.h
+  src/xlsx/xlsxformat.h
+  src/xlsx/xlsxglobal.h
+  src/xlsx/xlsxrichstring.h
+  src/xlsx/xlsxworkbook.h
+  src/xlsx/xlsxworksheet.h
+)
 
-add_library(QtXlsxWriter SHARED "${QtXlsxWriter_SOURCE_FILES}")
+if(MSVC)
+
+	add_definitions(
+		/EHsc
+		/MP
+		/std:c++latest
+		/permissive-
+		/Zi
+	)
+
+endif()
+
+add_library(QtXlsxWriter SHARED ${QtXlsxWriter_SOURCE_FILES} ${QtXlsxWriter_INCLUDE_FILES})
 
 # automatically add C++11 support with GCC
 if(NOT MSVC)
     target_compile_features(QtXlsxWriter PRIVATE cxx_range_for)
 endif()
 
-set_target_properties(QtXlsxWriter PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties(QtXlsxWriter PROPERTIES DEBUG_POSTFIX "d" LINK_FLAGS /DEBUG)
 target_link_libraries(QtXlsxWriter ${Qt5Core_LIBRARIES})
 target_link_libraries(QtXlsxWriter ${Qt5Gui_LIBRARIES})
 
@@ -65,24 +96,5 @@ INSTALL(TARGETS QtXlsxWriter
 )
 
 INSTALL(FILES  ${CMAKE_CURRENT_BINARY_DIR}/QtXlsxWriterConfig.cmake DESTINATION lib/cmake/${PROJECT_NAME})
-
-SET(INCLUDE_FILES 
-  src/xlsx/xlsxabstractooxmlfile.h
-  src/xlsx/xlsxabstractsheet.h
-  src/xlsx/xlsxcell.h
-  src/xlsx/xlsxcellformula.h
-  src/xlsx/xlsxcellrange.h
-  src/xlsx/xlsxcellreference.h
-  src/xlsx/xlsxchart.h
-  src/xlsx/xlsxchartsheet.h
-  src/xlsx/xlsxconditionalformatting.h
-  src/xlsx/xlsxdatavalidation.h
-  src/xlsx/xlsxdocument.h
-  src/xlsx/xlsxformat.h
-  src/xlsx/xlsxglobal.h
-  src/xlsx/xlsxrichstring.h
-  src/xlsx/xlsxworkbook.h
-  src/xlsx/xlsxworksheet.h
-)
-INSTALL(FILES ${INCLUDE_FILES} DESTINATION include)
+INSTALL(FILES ${QtXlsxWriter_INCLUDE_FILES} DESTINATION include)
 
