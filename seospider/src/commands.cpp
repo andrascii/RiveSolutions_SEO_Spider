@@ -8,6 +8,11 @@ OpenUrlCommand::OpenUrlCommand(const QUrl& url)
 {
 }
 
+QIcon OpenUrlCommand::icon() const
+{
+	return QIcon();
+}
+
 const char* OpenUrlCommand::description() const noexcept
 {
 	return "Open URL";
@@ -29,6 +34,11 @@ RemoveRowCommand::RemoveRowCommand(int row)
 	: m_row(row)
 {
 	ASSERT(m_row > 0);
+}
+
+QIcon RemoveRowCommand::icon() const
+{
+	return QIcon();
 }
 
 const char* RemoveRowCommand::description() const noexcept

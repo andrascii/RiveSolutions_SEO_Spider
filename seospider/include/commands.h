@@ -21,6 +21,7 @@ public:
 		CopyToClipboardUrlCommandType
 	};
 
+	virtual QIcon icon() const = 0;
 	virtual const char* description() const noexcept = 0;
 	virtual void execute() = 0;
 	virtual CommandType type() const noexcept = 0;
@@ -33,6 +34,7 @@ class OpenUrlCommand : public ICommand
 public:
 	OpenUrlCommand(const QUrl& url);
 
+	virtual QIcon icon() const override;
 	virtual const char* description() const noexcept override;
 	virtual void execute() override;
 	virtual CommandType type() const noexcept override;
@@ -46,6 +48,7 @@ class RemoveRowCommand : public ICommand
 public:
 	RemoveRowCommand(int row);
 
+	virtual QIcon icon() const override;
 	virtual const char* description() const noexcept override;
 	virtual void execute() override;
 	virtual CommandType type() const noexcept override;

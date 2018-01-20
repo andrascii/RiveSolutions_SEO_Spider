@@ -7,7 +7,7 @@
 #include "page_data_widget.h"
 #include "helpers.h"
 #include "application.h"
-#include "deferred_call.h"
+#include "command_menu.h"
 
 namespace SeoSpider
 {
@@ -67,7 +67,7 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 	tableView->setModel(pageModel);
 	tableView->setViewModel(pageViewModel);
 	tableView->setShowAdditionalGrid(true);
-	//tableView->setContextMenu(storageAdapter->availableCommands());
+	tableView->setContextMenu(new CommandMenu(storageAdapter));
 
 	m_tables[storageAdapterType] = m_stackedWidget->addWidget(tableView);
 	m_stackedWidget->setCurrentIndex(m_tables[storageAdapterType]);
@@ -88,11 +88,9 @@ void WebSiteDataWidget::showEvent(QShowEvent*)
 	ASSERT(parentWidget);
 
 	const int parentWidgetHeight = parentWidget->height();
-
 	const int mainTableView = Common::Helpers::pointsToPixels(400);
 
 	m_splitter->setSizes(QList<int>() << mainTableView << parentWidgetHeight - mainTableView);
-
 	m_wasShown = true;
 }
 

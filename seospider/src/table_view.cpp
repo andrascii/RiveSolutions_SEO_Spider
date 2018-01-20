@@ -100,7 +100,7 @@ void TableView::contextMenuEvent(QContextMenuEvent* event)
 		return;
 	}
 
-	m_contextMenu->execFor(event->globalPos(), indexAt(event->globalPos()));
+	m_contextMenu->execFor(event->globalPos(), indexAt(event->pos()));
 }
 
 void TableView::paintEvent(QPaintEvent* event)
@@ -230,7 +230,7 @@ void TableView::rowsInserted(const QModelIndex &parent, int first, int last)
 
 void TableView::setContextMenu(CommandMenu* menu) noexcept
 {
-	m_contextMenu = menu;
+	m_contextMenu.reset(menu);
 }
 
 void TableView::setViewModel(IViewModel* modelView) noexcept

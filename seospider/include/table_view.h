@@ -56,7 +56,7 @@ private:
 private:
 	AbstractTableModel* m_model;
 	IViewModel* m_viewModel;
-	CommandMenu* m_contextMenu;
+	std::unique_ptr<CommandMenu> m_contextMenu;
 
 	bool m_showAdditionalGrid;
 	int m_rowHeight;

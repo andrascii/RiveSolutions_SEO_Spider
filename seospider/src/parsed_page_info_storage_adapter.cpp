@@ -97,13 +97,18 @@ std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QMo
 {
 	std::vector<ICommandPointer> commands;
 
+	if (!index.isValid())
+	{
+		return commands;
+	}
+
 	const auto urlColumnIterator = std::find(m_availableColumns.begin(), m_availableColumns.end(), ParsedPageInfo::Column::UrlColumn);
 
 	if (urlColumnIterator != m_availableColumns.end())
 	{
 		const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 
-		const QVariant urlItem = ParsedPageInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
+		const QVariant urlItem = ParsedPageInfo(storage[index.row()]).itemValue(*urlColumnIterator);
 		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
 
 		const Url url = urlItem.toUrl();

@@ -25,6 +25,33 @@
     </message>
 </context>
 <context>
+    <name>CompanyProfileSettingsWidget</name>
+    <message>
+        <source>Company Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Company profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Here you can fill out your company data for Audit Report tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Company Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Company Email:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Company WebSite:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ContextMenuDataCollectionRow</name>
     <message>
         <source>Open URL</source>
@@ -95,6 +122,37 @@
     </message>
 </context>
 <context>
+    <name>CrawlerPauseSettingsWidget</name>
+    <message>
+        <source>Crawler Pause Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawler pause timer settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Here you can assign crawler to use pause timer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use pause timer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ms</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CrawlerSettingsWidget</name>
     <message>
         <source>You can set robot preferences, which will be followed by the programs
@@ -143,6 +201,10 @@ during site scanning.</source>
     </message>
     <message>
         <source>Check SWF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawl Outside of Start Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -211,22 +273,6 @@ during site scanning.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Limit Search Total</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Limit Max URI Length to Crawl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Limit Max Response Timeout In Milliseconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Max Redirects to Follow</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Scan Only Pages Which Contains Words In Url</source>
         <translation type="unfinished"></translation>
     </message>
@@ -236,6 +282,26 @@ during site scanning.</source>
     </message>
     <message>
         <source>Type in here the words using whitespace as a separator...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max Redirects to Follow:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Limit Max Response Timeout In Milliseconds:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Limit Search Total:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Limit Max URI Length to Crawl:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max Links Count on Page:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -296,10 +362,6 @@ during site scanning.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This will be an image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>This is a simple message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -357,14 +419,6 @@ during site scanning.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Min:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Max:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Max Image Size Bytes:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -374,6 +428,14 @@ during site scanning.</source>
     </message>
     <message>
         <source>Max H2 Tag Chars:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimum:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -421,7 +483,7 @@ Also if your proxy server requires authorization enter your name and password.</
     <name>QObject</name>
     <message>
         <source>Links</source>
-        <translation>Ссылки</translation>
+        <translation type="vanished">Ссылки</translation>
     </message>
     <message>
         <source>Links With Uppercase Characters</source>
@@ -493,11 +555,11 @@ Also if your proxy server requires authorization enter your name and password.</
     </message>
     <message>
         <source>Empty  Meta Keywords</source>
-        <translation>Пустые Meta Kerwords</translation>
+        <translation type="vanished">Пустые Meta Kerwords</translation>
     </message>
     <message>
         <source>Duplicated  Meta Keywords</source>
-        <translation>Повторяющиеся Meta Keywords</translation>
+        <translation type="vanished">Повторяющиеся Meta Keywords</translation>
     </message>
     <message>
         <source>Several Meta Keywords</source>
@@ -517,7 +579,7 @@ Also if your proxy server requires authorization enter your name and password.</
     </message>
     <message>
         <source>Several Equal H1</source>
-        <translation>Несколько повторяющихся тегов H1 на странице</translation>
+        <translation type="vanished">Несколько повторяющихся тегов H1 на странице</translation>
     </message>
     <message>
         <source>Missing H2</source>
@@ -533,11 +595,11 @@ Also if your proxy server requires authorization enter your name and password.</
     </message>
     <message>
         <source>Several Equal H2</source>
-        <translation>Несколько повторяющихся тегов H2 на странице</translation>
+        <translation type="vanished">Несколько повторяющихся тегов H2 на странице</translation>
     </message>
     <message>
         <source>Images</source>
-        <translation>Изображения</translation>
+        <translation type="vanished">Изображения</translation>
     </message>
     <message>
         <source>Images Over 100 KB</source>
@@ -588,23 +650,7 @@ Also if your proxy server requires authorization enter your name and password.</
         <translation>Внешние Ресурсы</translation>
     </message>
     <message>
-        <source>Titles</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Meta Descriptions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Meta Keywords</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>H1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>H2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -733,6 +779,226 @@ Also if your proxy server requires authorization enter your name and password.</
     </message>
     <message>
         <source>Unknown link parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Link Problems</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status Code 4xx</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status Code 5xx</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Moved Temporarily 302</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Moved Permanently 301</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On Page Problems</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Empty Meta Keywords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicated Meta Keywords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page Problems</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too Many Links On Page (max %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages Contain Meta Refresh Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages Contain Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>H1 Problems</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Several Equal H1 On Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>H2 Problems</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Several Equal H2 On Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image Problems</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Links Count On This Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Found problems</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Errors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warnings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resources with status code 4xx</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resources with status code 5xx</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not indexed pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>404 page configured correctly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TO DO check validness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Has robots.txt file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Has .xml sitemap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed www version and without www</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>302 redirection pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>301 redirection pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with large amount of redirects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with refresh meta tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with rel=&quot;canonical&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Broken links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with large amount of links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>External dofollow links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too long url addresses</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with duplicated rel=&quot;canonical&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages that contain frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with errors in HTML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with warnings and errors in CSS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too large pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Broken images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Images with empty alt text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with empty titles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with duplicated titles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too long titles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with empty meta descriptions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with duplicated meta descriptions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too long meta descriptions</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -923,6 +1189,36 @@ Also if your proxy server requires authorization enter your name and password.</
         <source>Start</source>
         <translation type="unfinished">Старт</translation>
     </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have not saved the results of the scanning your site.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Would you like to save the results and have the ability to start next time from this point?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::DataPagesWidget</name>
+    <message>
+        <source>Please wait...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::InternetConnectionStateWidget</name>
+    <message>
+        <source>Has internet connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Has no internet connection</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::MainWindow</name>
@@ -990,6 +1286,54 @@ Also if your proxy server requires authorization enter your name and password.</
         <source>Create XML Sitemap</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open a document while crawler is working!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save To File And Clear Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Agent Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawler Pause Timer Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Company Profile Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audit Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Site Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Resources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audit Report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot save the document while crawler is working!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawler does not contain any data.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::MenuBar</name>
@@ -1003,6 +1347,13 @@ Also if your proxy server requires authorization enter your name and password.</
     </message>
     <message>
         <source>Sitemap</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::NotificationsContainerWidget</name>
+    <message>
+        <source>Has no notifications</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1033,10 +1384,182 @@ Also if your proxy server requires authorization enter your name and password.</
     </message>
 </context>
 <context>
+    <name>SeoSpider::SitemapCreatorWidget</name>
+    <message>
+        <source>Calculate from Last Modified Header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Crawl Depth Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hourly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Daily</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Weekly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Monthly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yearly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Never</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Server Response Headers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create site map when crawler is working!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>What?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawler does not contain any data.
+It does not make sense to create empty site map.
+Are you agree? ;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SeoSpider::WebSiteDataWidget</name>
     <message>
         <source>Select The Filter</source>
         <translation type="unfinished">Выберите Фильтр</translation>
+    </message>
+</context>
+<context>
+    <name>SitemapCreatorWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XML Sitemap Creator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Here you can configure sitemap settings and create it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawl Depth 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include Canonicolised</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include &lt;priority&gt; tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawl Depth 5+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include &lt;changefreq&gt; tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawl Depth 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include Painted Urls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include PDFs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include Noindex Images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawl Depth 0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawl Depth 4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crawl Depth 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include Noindex Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include Only Relevant Images with up to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>inlinks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include Images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change Frequency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include &lt;lastmod&gt; tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation type="unfinished">Изображения</translation>
+    </message>
+    <message>
+        <source>Last Modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Отмена</translation>
     </message>
 </context>
 <context>
@@ -1047,6 +1570,33 @@ Also if your proxy server requires authorization enter your name and password.</
     </message>
     <message>
         <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UserAgentSettingsWidget</name>
+    <message>
+        <source>User Agent Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can choose one of the custom User Agent.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Desktop User Agent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Mobile User Agent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Follow robots.txt instuctions for: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Custom User Agent</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -8,13 +8,18 @@ namespace SeoSpider
 	
 class CommandMenu : public QMenu
 {
+	Q_OBJECT
+
 public:
 	CommandMenu(IDataCommandsProvider* dataCommandsProvider);
+	void execFor(const QPoint& pos, const QModelIndex& index);
 
-	void execFor(const QPoint& pos, const QModelIndex& index) const;
+private slots:
+	void onActionTriggered();
 
 private:
 	IDataCommandsProvider* m_dataCommandsProvider;
+	QMap<QAction*, ICommandPointer> m_currentCommandActions;
 };
 
 }
