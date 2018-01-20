@@ -139,7 +139,7 @@ void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, StorageType type)
 		return;
 	}
 
-	Q_EMIT parsedPageInfoAdded(row);
+	emit parsedPageInfoAdded(row);
 }
 
 }

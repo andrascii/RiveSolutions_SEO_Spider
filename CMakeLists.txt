@@ -11,16 +11,17 @@ set(SeoSpiderServiceAppName seospiderservice)
 set(QtXlsxWriter qtxlsxwriter)
 project(${AppName})
 
-set(CMAKE_INSTALL_PREFIX )
-
 set(GuiBinName ${AppName})
-set(LoggerBinName ${LoggerAppName})
+
+set(CMAKE_INSTALL_PREFIX)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
+
+set(QtXlsxWriter_DIR ${CMAKE_CURRENT_BINARY_DIR}/${QtXlsxWriter})
 
 find_package(Qt5 REQUIRED Widgets Network Svg WebEngineWidgets Xml XmlPatterns COMPONENTS)
 
@@ -52,10 +53,10 @@ ENDMACRO(add_msvc_precompiled_header)
 
 add_subdirectory(${CrawlerEngineLibName})
 add_subdirectory(${CrawlerEngineLibTestsName})
+add_subdirectory(${QtXlsxWriter})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${SeoSpiderServiceApiDllName})
 add_subdirectory(${SeoSpiderServiceAppName})
 add_subdirectory(${CommonLibName})
 add_subdirectory(${GoogleTestLibName})
-add_subdirectory(${QtXlsxWriter})
