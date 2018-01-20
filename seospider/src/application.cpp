@@ -17,6 +17,7 @@
 #include "web_screenshot.h"
 #include "action_registry.h"
 #include "action_keys.h"
+#include "header_controls_container.h"
 
 namespace SeoSpider
 {
@@ -40,6 +41,7 @@ Application::Application(int& argc, char** argv)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
 	, m_webScreenShot(new WebScreenShot(this))
+	, m_headerControlsContainer(new HeaderControlsContainer())
 {
 	SplashScreen::show();
 
@@ -117,6 +119,11 @@ QStringList Application::allKeys() const
 const QPixmap& Application::crawledSitePixmap() const
 {
 	return m_webScreenShot->result();
+}
+
+HeaderControlsContainer* Application::headerControlsContainer() const
+{
+	return m_headerControlsContainer.get();
 }
 
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept

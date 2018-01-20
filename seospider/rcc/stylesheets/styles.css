@@ -234,6 +234,12 @@ SeoSpider--ControlPanelWidget
 	max-width: 35em;
 }
 
+SeoSpider--ControlPanelWidget QLineEdit
+{
+	min-width: 16em;
+	max-width: 16em;
+}
+
 /*/////////////////////////////// TableView ///////////////////////////////*/
 
 SeoSpider--TableView

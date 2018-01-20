@@ -13,6 +13,7 @@
 #include "page_data_widget.h"
 #include "crawler_progress_bar.h"
 #include "custom_push_button.h"
+#include "header_controls_container.h"
 
 namespace SeoSpider
 {
@@ -82,6 +83,7 @@ void DataPagesWidget::showPage(PageFactory::Page page)
 {
 	m_stackedWidget->setCurrentIndex(m_pageIndexes[page]);
 	m_activePage = page;
+	theApp->headerControlsContainer()->setActivePage(page);
 }
 
 void DataPagesWidget::handleNavigationPanelButtonClick()

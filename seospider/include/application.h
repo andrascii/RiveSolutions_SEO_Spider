@@ -25,6 +25,7 @@ namespace SeoSpider
 class Preferences;
 class InternetConnectionNotificationManager;
 class WebScreenShot;
+class HeaderControlsContainer;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -55,6 +56,8 @@ public:
 	virtual QStringList allKeys() const override;
 
 	const QPixmap& crawledSitePixmap() const;
+
+	HeaderControlsContainer* headerControlsContainer() const;
 
 signals:
 	void mainWindowShown();
@@ -94,6 +97,8 @@ private:
 	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
 	InternetConnectionNotificationManager* m_internetNotificationManager;
 	WebScreenShot* m_webScreenShot;
+
+	std::unique_ptr<HeaderControlsContainer> m_headerControlsContainer;
 };
 
 }

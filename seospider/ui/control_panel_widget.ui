@@ -47,53 +47,20 @@
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="1">
-         <widget class="QPushButton" name="startOrConrinueCrawlingButton">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-          <property name="text">
-           <string>Start</string>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="stopCrawlingButton">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Stop</string>
-          </property>
-         </widget>
+         </spacer>
         </item>
         <item row="0" column="0">
-         <widget class="SeoSpider::UrlLineEdit" name="urlLineEdit">
-          <property name="placeholderText">
-           <string>http://www.example.com</string>
-          </property>
-          <property name="isValidUrl" stdset="0">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="clearCrawlingDataButton">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Reset</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="actionsLayout"/>
         </item>
        </layout>
       </item>
@@ -102,13 +69,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>SeoSpider::UrlLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>url_line_edit.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
