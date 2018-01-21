@@ -1,5 +1,14 @@
 #pragma once
 
+#include "data_collection_groups_factory.h"
+
+namespace CrawlerEngine
+{
+
+class SequencedDataCollection;
+
+}
+
 namespace SeoSpider
 {
 
@@ -18,7 +27,8 @@ public:
 		CheckHtmlCommandType,
 		CopyToClipboardAllColumnsCommandType,
 		CopyToClipboardAllPagesCommandType,
-		CopyToClipboardUrlCommandType
+		CopyToClipboardUrlCommandType,
+		ExportDataToXlsxCommandType
 	};
 
 	virtual QIcon icon() const = 0;
@@ -55,6 +65,22 @@ public:
 
 private:
 	int m_row;
+};
+
+class ExportDataToXlsxCommand : public ICommand
+{
+public:
+	ExportDataToXlsxCommand(const CrawlerEngine::SequencedDataCollection* dataCollection,
+		const std::vector<DCStorageDescription>& storageDescriptions);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+	virtual CommandType type() const noexcept override;
+
+private:
+	const CrawlerEngine::SequencedDataCollection* m_dataCollection;
+	std::vector<DCStorageDescription> m_storageDescriptions;
 };
 
 }
