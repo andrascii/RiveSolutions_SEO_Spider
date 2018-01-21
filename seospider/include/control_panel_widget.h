@@ -5,8 +5,6 @@
 namespace SeoSpider
 {
 
-class UrlLineEdit;
-
 class ControlPanelWidget : public QFrame
 {
 	Q_OBJECT
@@ -25,18 +23,10 @@ private slots:
 	void stopCrawling() const;
 	void clearCrawlingData() const;
 	void onCrawlerStateChanged(int state);
-	void onControlsChanged(int page);
 
 private:
 	Ui::ControlPanelWidget m_ui;
-	Url m_url;
-
-	UrlLineEdit* m_urlLineEdit;
-
-	QAction* m_startOrConrinueCrawlingAction;
-	QAction* m_stopCrawlingAction;
-	QAction* m_clearCrawlingDataAction;
-	
+	Url m_url;	
 };
 
 }

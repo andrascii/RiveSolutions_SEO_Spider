@@ -36,6 +36,11 @@ void HeaderControlsContainer::addWidget(QWidget* widget, PageFactory::Page page,
 		m_controls[page].insert(position, widget);
 	}
 
+	if (!m_controls[m_activePage].contains(widget))
+	{
+		widget->hide();
+	}
+
 	if (m_activePage == page)
 	{
 		emit currentControlsChanged(static_cast<int>(page));

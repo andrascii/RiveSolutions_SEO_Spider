@@ -5,43 +5,20 @@
 #include "action_keys.h"
 #include "crawler.h"
 #include "url_line_edit.h"
-#include "page_factory.h"
-#include "header_controls_container.h"
 
 namespace SeoSpider
 {
 
 ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	: QFrame(parent)
-	, m_startOrConrinueCrawlingAction(new QAction(tr("Start"), this))
-	, m_stopCrawlingAction(new QAction(tr("Stop"), this))
-	, m_clearCrawlingDataAction(new QAction(tr("Reset"), this))
 {
 	m_ui.setupUi(this);
 
-	m_urlLineEdit = new UrlLineEdit(this);
-	m_urlLineEdit->setObjectName(QStringLiteral("urlLineEdit"));
-	m_urlLineEdit->setProperty("isValidUrl", QVariant(false));
-	m_urlLineEdit->setPlaceholderText(QString("http://example.com"));
-
-	VERIFY(connect(m_startOrConrinueCrawlingAction, &QAction::triggered, this, &ControlPanelWidget::startCrawling));
-	VERIFY(connect(m_stopCrawlingAction, &QAction::triggered, this, &ControlPanelWidget::stopCrawling));
-	VERIFY(connect(m_clearCrawlingDataAction, &QAction::triggered, this, &ControlPanelWidget::clearCrawlingData));
-	VERIFY(connect(m_urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
+	VERIFY(connect(m_ui.startOrConrinueCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::startCrawling));
+	VERIFY(connect(m_ui.stopCrawlingButton, &QPushButton::clicked, this, &ControlPanelWidget::stopCrawling));
+	VERIFY(connect(m_ui.clearCrawlingDataButton, &QPushButton::clicked, this, &ControlPanelWidget::clearCrawlingData));
+	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
-
-	HeaderControlsContainer* store = theApp->headerControlsContainer();
-
-	store->addWidget(m_urlLineEdit, PageFactory::SiteAuditPage);
-
-	store->addAction(m_startOrConrinueCrawlingAction, PageFactory::SiteAuditPage);
-	store->addAction(m_stopCrawlingAction, PageFactory::SiteAuditPage);
-	store->addAction(m_clearCrawlingDataAction, PageFactory::SiteAuditPage);
-
-	m_urlLineEdit->installEventFilter(this);
-
-	VERIFY(connect(theApp->headerControlsContainer(), &HeaderControlsContainer::currentControlsChanged, 
-		this, &ControlPanelWidget::onControlsChanged));
 }
 
 const Url& ControlPanelWidget::url() const noexcept
@@ -51,7 +28,7 @@ const Url& ControlPanelWidget::url() const noexcept
 
 bool ControlPanelWidget::eventFilter(QObject* object, QEvent* event)
 {
-	if (object != qobject_cast<QObject*>(m_urlLineEdit))
+	if (object != qobject_cast<QObject*>(m_ui.urlLineEdit))
 	{
 		return false;
 	}
@@ -68,7 +45,7 @@ bool ControlPanelWidget::eventFilter(QObject* object, QEvent* event)
 		return false;
 	}
 
-	if (m_startOrConrinueCrawlingAction->isEnabled())
+	if (m_ui.startOrConrinueCrawlingButton->isEnabled())
 	{
 		setUrl();
 		startCrawling();
@@ -79,12 +56,12 @@ bool ControlPanelWidget::eventFilter(QObject* object, QEvent* event)
 
 void ControlPanelWidget::setUrl() const
 {
-	if (!m_urlLineEdit->isUrlCorrect())
+	if (!m_ui.urlLineEdit->isUrlCorrect())
 	{
 		return;
 	}
 
-	Url url(Url(m_urlLineEdit->text()));
+	Url url(Url(m_ui.urlLineEdit->text()));
 
 	if (url.scheme().isEmpty())
 	{
@@ -98,7 +75,7 @@ void ControlPanelWidget::setUrl() const
 
 void ControlPanelWidget::startCrawling() const
 {
-	if (!m_urlLineEdit->isUrlCorrect())
+	if (!m_ui.urlLineEdit->isUrlCorrect())
 	{
 		return;
 	}
@@ -147,59 +124,34 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 	{
 		case CrawlerEngine::Crawler::StateWorking:
 		{
-			m_clearCrawlingDataAction->setDisabled(true);
-			m_startOrConrinueCrawlingAction->setDisabled(true);
+			m_ui.clearCrawlingDataButton->setDisabled(true);
+			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
 
 			break;
 		}
 		case CrawlerEngine::Crawler::StatePause:
 		{
-			m_clearCrawlingDataAction->setDisabled(false); 
-			m_startOrConrinueCrawlingAction->setDisabled(false);
-			m_startOrConrinueCrawlingAction->setText(tr("Continue"));
+			m_ui.clearCrawlingDataButton->setDisabled(false); 
+			m_ui.startOrConrinueCrawlingButton->setDisabled(false);
+			m_ui.startOrConrinueCrawlingButton->setText(tr("Continue"));
 
 			break;
 		}
 		case CrawlerEngine::Crawler::StatePending:
 		{
-			m_clearCrawlingDataAction->setDisabled(false);
-			m_startOrConrinueCrawlingAction->setDisabled(false);
-			m_startOrConrinueCrawlingAction->setText(tr("Start"));
+			m_ui.clearCrawlingDataButton->setDisabled(false);
+			m_ui.startOrConrinueCrawlingButton->setDisabled(false);
+			m_ui.startOrConrinueCrawlingButton->setText(tr("Start"));
 
 			break;
 		}
 		case CrawlerEngine::Crawler::StateSerializaton:
 		case CrawlerEngine::Crawler::StateDeserializaton:
 		{
-			m_clearCrawlingDataAction->setDisabled(true);
-			m_startOrConrinueCrawlingAction->setDisabled(true);
+			m_ui.clearCrawlingDataButton->setDisabled(true);
+			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
 		}
 	}
 }
 
-void ControlPanelWidget::onControlsChanged(int page)
-{
-	PageFactory::Page currentPage = static_cast<PageFactory::Page>(page);
-	QList<QWidget*> controls = theApp->headerControlsContainer()->controls(currentPage);
-
-	QLayoutItem *item;
-	while ((item = m_ui.actionsLayout->itemAt(0))) 
-	{
-		if (item->widget())
-		{
-			item->widget()->hide();
-		}
-
-		m_ui.actionsLayout->removeItem(item);
-		delete item;
-	}
-
-	foreach(QWidget* control, controls)
-	{
-		m_ui.actionsLayout->addWidget(control);
-		control->show();
-	}
-
-	m_ui.gridLayout->update();
-}
 }
