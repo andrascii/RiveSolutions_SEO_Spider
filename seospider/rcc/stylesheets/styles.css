@@ -227,7 +227,7 @@ QDateEdit::down-button
 
 /*/////////////////////////////// Info frame ///////////////////////////////*/
 
-SeoSpider--ControlPanelWidget
+SeoSpider--ControlPanelWidget, QWidget#DynamicControls
 {
 	min-height: 2.5em;
 	min-width: 35em;
@@ -238,6 +238,13 @@ SeoSpider--ControlPanelWidget QLineEdit
 {
 	min-width: 16em;
 	max-width: 16em;
+}
+
+QWidget#DynamicControls QPushButton
+{
+	min-width: 10em;
+	max-width: 10em;
+	margin: 0px;
 }
 
 /*/////////////////////////////// TableView ///////////////////////////////*/
