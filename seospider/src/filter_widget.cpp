@@ -5,7 +5,7 @@
 #include "website_data_widget.h"
 #include "helpers.h"
 #include "application.h"
-#include "deferred_call.h"
+#include "command_menu.h"
 
 namespace SeoSpider
 {
@@ -47,6 +47,7 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, guiStorage);
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
 	m_summaryFilterTableView->initSpans();
+	m_summaryFilterTableView->setContextMenu(new CommandMenu(summaryDataAccessor));
 }
 
 void FilterWidget::adjustSize()

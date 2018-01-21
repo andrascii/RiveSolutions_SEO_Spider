@@ -17,6 +17,12 @@ void CommandMenu::execFor(const QPoint& pos, const QModelIndex& index)
 
 	std::vector<ICommandPointer> commands = m_dataCommandsProvider->commandsFor(index);
 
+	if (commands.empty())
+	{
+		DEBUGLOG << "This Data Commands Provider does not contain any commands";
+		return;
+	}
+
 	for (const ICommandPointer& command : commands)
 	{
 		QAction* action = new QAction(command->icon(), command->description(), this);
