@@ -1,10 +1,60 @@
 #include "commands.h"
 #include "xlsxdocument.h"
+#include "xlsxformat.h"
+#include "xlsxrichstring.h"
 #include "sequenced_data_collection.h"
 #include "application.h"
+#include "storage_adapter_factory.h"
+#include "parsed_page_info.h"
 
 namespace SeoSpider
 {
+
+bool ICommand::isCompound() const noexcept
+{
+	return false;
+}
+
+/*=============================================================================================*/
+
+CompoundCommand::CompoundCommand(const char* description, const QIcon& icon)
+	: m_description(description)
+	, m_icon(icon)
+{
+}
+
+const std::vector<SeoSpider::ICommandPointer>& CompoundCommand::commands() const noexcept
+{
+	return m_commands;
+}
+
+void CompoundCommand::addCommand(ICommandPointer commandPointer)
+{
+	m_commands.push_back(commandPointer);
+}
+
+QIcon CompoundCommand::icon() const
+{
+	return m_icon;
+}
+
+const char* CompoundCommand::description() const noexcept
+{
+	return m_description;
+}
+
+void CompoundCommand::execute()
+{
+	for (ICommandPointer command : m_commands)
+	{
+		command->execute();
+	}
+}
+
+bool CompoundCommand::isCompound() const noexcept
+{
+	return true;
+}
 
 /*=============================================================================================*/
 
@@ -28,11 +78,6 @@ void OpenUrlCommand::execute()
 	QDesktopServices::openUrl(m_url);
 }
 
-ICommand::CommandType OpenUrlCommand::type() const noexcept
-{
-	return OpenUrlCommandType;
-}
-
 /*=============================================================================================*/
 
 RemoveRowCommand::RemoveRowCommand(int row)
@@ -54,11 +99,6 @@ const char* RemoveRowCommand::description() const noexcept
 void RemoveRowCommand::execute()
 {
 
-}
-
-ICommand::CommandType RemoveRowCommand::type() const noexcept
-{
-	return RemoveRowCommandType;
 }
 
 /*=============================================================================================*/
@@ -94,30 +134,50 @@ void ExportDataToXlsxCommand::execute()
 		return;
 	}
 
-	QXlsx::Document xlsx(path);
+	QXlsx::Document xlsxDocument(path);
 
 	std::size_t rowNumber = 1;
 
-	for (std::size_t i = 0, sz = m_storageDescriptions.size(); i < sz; ++i)
+	for (int i = 0, sz = (int)m_storageDescriptions.size(); i < sz; ++i)
 	{
+		QXlsx::Format headerFormat;
+		headerFormat.setFontColor(Qt::red);
+		headerFormat.setFontSize(13);
+
 		const CrawlerEngine::StorageType storageType = m_storageDescriptions[i].storageType;
-		const std::size_t storageSize = m_dataCollection->storage(storageType)->size();
+		const int storageSize = m_dataCollection->storage(storageType)->size();
+		
+		QXlsx::RichString headerRichString;
+		headerRichString.addFragment(m_storageDescriptions[i].storageTypeDescriptionName + QStringLiteral(" (%1 items)").arg(storageSize), headerFormat);
 
-		xlsx.write(QStringLiteral("A%1").arg(rowNumber++), 
-			m_storageDescriptions[i].storageTypeDescriptionName + QStringLiteral("(%1 items)").arg(storageSize));
+		xlsxDocument.write(QStringLiteral("A%1").arg(rowNumber++), headerRichString);
 
-		for (std::size_t j = 0; j < storageSize; ++j)
+		for (int j = 0; j < storageSize; ++j)
 		{
-			xlsx.write(QStringLiteral("A%1").arg(rowNumber++), (*m_dataCollection->storage(storageType))[(int)j]->url);
+			const ISequencedStorage& sequencedStorage = *m_dataCollection->storage(storageType);
+			ParsedPageInfo parsedPageInfoProvider(sequencedStorage[j]);
+
+			QVector<ParsedPageInfo::Column> columnsForType =
+				StorageAdapterFactory::parsedPageAvailableColumns(static_cast<StorageAdapterType>(storageType));
+
+			foreach (ParsedPageInfo::Column column, columnsForType)
+			{
+				column;
+				xlsxDocument.write(QStringLiteral("A%1").arg(rowNumber++), (*m_dataCollection->storage(storageType))[(int)j]->url);
+			}
+
+			xlsxDocument.write(QStringLiteral("A%1").arg(rowNumber++), (*m_dataCollection->storage(storageType))[(int)j]->url);
 		}
 	}
 
-	xlsx.save();
+	xlsxDocument.save();
 }
 
-ICommand::CommandType ExportDataToXlsxCommand::type() const noexcept
+QString ExportDataToXlsxCommand::columnLetter(int columnNumber) const
 {
-	return ExportDataToXlsxCommandType;
+	// 65 - 90
+	columnNumber;
+	return QString();
 }
 
 }

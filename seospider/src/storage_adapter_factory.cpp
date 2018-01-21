@@ -17,7 +17,7 @@ IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapt
 	IParsedPageStorageAdapter* storageAdapter = new ParsedPageInfoStorageAdapter(
 		sequencedDataCollection->storage(storageType), storageType);
 
-	setupAvailableColumns(storageAdapter, type);
+	storageAdapter->setAvailableColumns(parsedPageAvailableColumns(type));
 
 	return storageAdapter;
 }
@@ -32,7 +32,7 @@ IStorageAdapter* StorageAdapterFactory::createPageLinksStorage(PageLinkContext t
 	return storageAdapter;
 }
 
-void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* storageAdapter, StorageAdapterType type)
+QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumns(StorageAdapterType type)
 {
 	switch (type)
 	{
@@ -40,7 +40,7 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		case StorageAdapterType::StorageAdapterTypeHtmlResources:
 		case StorageAdapterType::StorageAdapterTypeExternalHtmlResources:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
@@ -65,12 +65,9 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 				<< ParsedPageInfo::Column::CanonicalLinkElementColumn
 				<< ParsedPageInfo::Column::PageSizeKbColumn
 				<< ParsedPageInfo::Column::WordCountColumn
-				<< ParsedPageInfo::Column::PageHashColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::PageHashColumn;
 		}
-		
+
 		// Resources columns
 		case StorageAdapterType::StorageAdapterTypeImageResources:
 		case StorageAdapterType::StorageAdapterTypeExternalImageResources:
@@ -85,13 +82,10 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		case StorageAdapterType::StorageAdapterTypeVideoResources:
 		case StorageAdapterType::StorageAdapterTypeExternalVideoResources:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
-				<< ParsedPageInfo::Column::StatusCodeColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::StatusCodeColumn;
 		}
 
 		// Links available columns
@@ -102,26 +96,20 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		case StorageAdapterType::StorageAdapterTypeStatus4xx:
 		case StorageAdapterType::StorageAdapterTypeStatus5xx:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
-				<< ParsedPageInfo::Column::StatusCodeColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::StatusCodeColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeStatus301:
 		case StorageAdapterType::StorageAdapterTypeStatus302:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
-				<< ParsedPageInfo::Column::RedirectedUrlColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::RedirectedUrlColumn;
 		}
 
 		// Title available columns
@@ -131,29 +119,23 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		case StorageAdapterType::StorageAdapterTypeTooShortTitles:
 		case StorageAdapterType::StorageAdapterTypeSeveralTitlesOnPage:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::TitleColumn
-				<< ParsedPageInfo::Column::TitleLengthColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::TitleLengthColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH1Titles:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::TitleColumn
 				<< ParsedPageInfo::Column::TitleLengthColumn
 				<< ParsedPageInfo::Column::FirstH1Column
-				<< ParsedPageInfo::Column::FirstH1LengthColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::FirstH1LengthColumn;
 		}
 
 		// Meta description available columns
@@ -163,15 +145,12 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		case StorageAdapterType::StorageAdapterTypeTooShortMetaDescriptions:
 		case StorageAdapterType::StorageAdapterTypeSeveralMetaDescriptionsOnPage:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::MetaDescriptionColumn
-				<< ParsedPageInfo::Column::MetaDescriptionLengthColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::MetaDescriptionLengthColumn;
 		}
 
 		// Meta keywords available columns
@@ -179,71 +158,56 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		case StorageAdapterType::StorageAdapterTypeDuplicatedMetaKeywords:
 		case StorageAdapterType::StorageAdapterTypeSeveralMetaKeywordsOnPage:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::MetaKeywordsColumn
-				<< ParsedPageInfo::Column::MetaKeywordsLengthColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::MetaKeywordsLengthColumn;
 		}
 
 		// H1 available columns
 		case StorageAdapterType::StorageAdapterTypeMissingH1s:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
-				<< ParsedPageInfo::Column::ContentTypeColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::ContentTypeColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH1s:
 		case StorageAdapterType::StorageAdapterTypeTooLongH1s:
 		case StorageAdapterType::StorageAdapterTypeSeveralH1s:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::FirstH1Column
 				<< ParsedPageInfo::Column::FirstH1LengthColumn
 				<< ParsedPageInfo::Column::SecondH1Column
-				<< ParsedPageInfo::Column::SecondH1LengthColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::SecondH1LengthColumn;
 		}
 
 		// H2 available columns
 		case StorageAdapterType::StorageAdapterTypeMissingH2s:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
-				<< ParsedPageInfo::Column::ContentTypeColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::ContentTypeColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeDuplicatedH2s:
 		case StorageAdapterType::StorageAdapterTypeTooLongH2s:
 		case StorageAdapterType::StorageAdapterTypeSeveralH2s:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::FirstH2Column
 				<< ParsedPageInfo::Column::FirstH2LengthColumn
 				<< ParsedPageInfo::Column::SecondH2Column
-				<< ParsedPageInfo::Column::SecondH2LengthColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::SecondH2LengthColumn;
 		}
 
 		// Images available columns
@@ -251,48 +215,38 @@ void StorageAdapterFactory::setupAvailableColumns(IParsedPageStorageAdapter* sto
 		case StorageAdapterType::StorageAdapterTypeImageMissingAltText:
 		case StorageAdapterType::StorageAdapterTypeImagesTooLongAltText:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
-				<< ParsedPageInfo::Column::ImageSizeKbColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::ImageSizeKbColumn;
 		}
 
 		// page problems
 		case StorageAdapterType::StorageAdapterTypeTooManyLinksOnPage:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
-				<< ParsedPageInfo::Column::LinksOnThisPageCountColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::LinksOnThisPageCountColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeContainsMetaRefreshTag:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
-				<< ParsedPageInfo::Column::MetaRefreshColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::MetaRefreshColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeContainsFrames:
 		{
-			storageAdapter->setAvailableColumns(QVector<ParsedPageInfo::Column>()
+			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
-				<< ParsedPageInfo::Column::UrlLengthColumn
-			);
-
-			return;
+				<< ParsedPageInfo::Column::UrlLengthColumn;
 		}
 	}
-}
 
+	ASSERT(!"Invalid type");
+	return QVector<ParsedPageInfo::Column>();
+}
 
 void StorageAdapterFactory::setupAvailablePageLinkColumns(IPageLinksStorageAdapter* storageAdapter)
 {

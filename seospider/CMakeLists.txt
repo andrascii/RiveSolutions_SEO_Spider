@@ -92,7 +92,7 @@ target_link_libraries(
 	${AppName}
 	${CrawlerEngineLibName}
 	${CommonLibName}
-	${SeoSpiderServiceApiDllName}	
+	${SeoSpiderServiceApiDllName}
 	${QtXlsxWriter_LIBS}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}

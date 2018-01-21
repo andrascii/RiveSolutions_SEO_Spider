@@ -61,7 +61,7 @@ if(NOT MSVC)
     target_compile_features(QtXlsxWriter PRIVATE cxx_range_for)
 endif()
 
-set_target_properties(QtXlsxWriter PROPERTIES DEBUG_POSTFIX "d" LINK_FLAGS /DEBUG)
+set_target_properties(QtXlsxWriter PROPERTIES DEBUG_POSTFIX "d" RUNTIME_OUTPUT_DIRECTORY "../seospider/" LINK_FLAGS /DEBUG)
 target_link_libraries(QtXlsxWriter ${Qt5Core_LIBRARIES})
 target_link_libraries(QtXlsxWriter ${Qt5Gui_LIBRARIES})
 

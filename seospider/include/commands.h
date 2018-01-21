@@ -15,29 +15,31 @@ namespace SeoSpider
 class ICommand
 {
 public:
-	enum CommandType
-	{
-		OpenUrlCommandType,
-		RefreshAllResultsCommandType,
-		RemoveRowCommandType,
-		CheckIndexCommandType,
-		CheckGoogleCommandType,
-		OpenRobotsTxtCommandType,
-		ShowOtherDomainsOnIpCommandType,
-		CheckHtmlCommandType,
-		CopyToClipboardAllColumnsCommandType,
-		CopyToClipboardAllPagesCommandType,
-		CopyToClipboardUrlCommandType,
-		ExportDataToXlsxCommandType
-	};
-
 	virtual QIcon icon() const = 0;
 	virtual const char* description() const noexcept = 0;
 	virtual void execute() = 0;
-	virtual CommandType type() const noexcept = 0;
+	virtual bool isCompound() const noexcept;
 };
 
 using ICommandPointer = std::shared_ptr<ICommand>;
+
+class CompoundCommand : public ICommand
+{
+public:
+	CompoundCommand(const char* description, const QIcon& icon = QIcon());
+
+	const std::vector<ICommandPointer>& commands() const noexcept;
+	void addCommand(ICommandPointer commandPointer);
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+	virtual bool isCompound() const noexcept;
+
+private:
+	const char* m_description;
+	QIcon m_icon;
+	std::vector<ICommandPointer> m_commands;
+};
 
 class OpenUrlCommand : public ICommand
 {
@@ -47,7 +49,6 @@ public:
 	virtual QIcon icon() const override;
 	virtual const char* description() const noexcept override;
 	virtual void execute() override;
-	virtual CommandType type() const noexcept override;
 
 private:
 	QUrl m_url;
@@ -61,7 +62,6 @@ public:
 	virtual QIcon icon() const override;
 	virtual const char* description() const noexcept override;
 	virtual void execute() override;
-	virtual CommandType type() const noexcept override;
 
 private:
 	int m_row;
@@ -76,7 +76,9 @@ public:
 	virtual QIcon icon() const override;
 	virtual const char* description() const noexcept override;
 	virtual void execute() override;
-	virtual CommandType type() const noexcept override;
+
+private:
+	QString columnLetter(int columnNumber) const;
 
 private:
 	const CrawlerEngine::SequencedDataCollection* m_dataCollection;
