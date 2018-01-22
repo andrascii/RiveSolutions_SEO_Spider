@@ -1,6 +1,7 @@
 #include "debug_info_web_page_widget.h"
 #include "parsed_page.h"
 #include "application.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {

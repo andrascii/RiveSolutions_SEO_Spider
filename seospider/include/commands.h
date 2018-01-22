@@ -173,4 +173,17 @@ private:
 	QUrl m_url;
 };
 
+class ShowOtherDomainsOnIpCommand : public ICommand
+{
+public:
+	ShowOtherDomainsOnIpCommand(const QByteArray& ipv4);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	QByteArray m_ipAddress;
+};
+
 }

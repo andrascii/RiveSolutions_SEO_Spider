@@ -8,6 +8,7 @@
 #include "application.h"
 #include "reports_page.h"
 #include "command_menu.h"
+#include "storage_adapter_factory.h"
 
 namespace SeoSpider
 {

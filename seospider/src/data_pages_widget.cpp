@@ -13,6 +13,7 @@
 #include "crawler_progress_bar.h"
 #include "custom_push_button.h"
 #include "header_controls_container.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {

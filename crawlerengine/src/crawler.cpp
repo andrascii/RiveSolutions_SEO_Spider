@@ -534,6 +534,21 @@ const QPixmap& Crawler::currentCrawledSitePixmap() const noexcept
 	return m_webScreenShot->result();
 }
 
+QByteArray Crawler::currentCrawledSiteIPv4() const
+{
+	if (m_hostInfo)
+	{
+		QList<QByteArray> ipv4Addresses = m_hostInfo->stringAddressesIPv4();
+
+		if (!ipv4Addresses.isEmpty())
+		{
+			return ipv4Addresses.front();
+		}
+	}
+
+	return QByteArray();
+}
+
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 {
 	return m_uniqueLinkStore;

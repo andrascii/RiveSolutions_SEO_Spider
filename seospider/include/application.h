@@ -1,13 +1,6 @@
 #pragma once
 
-#include "main_window.h"
-#include "software_branding.h"
-#include "summary_data_accessor_factory.h"
-#include "storage_adapter_factory.h"
 #include "isettings_accessor.h"
-#include "requester.h"
-#include "requester_wrapper.h"
-#include "titled_window.h"
 #include "crawler_options.h"
 
 namespace CrawlerEngine
@@ -22,8 +15,12 @@ namespace SeoSpider
 {
 
 class Preferences;
-class InternetConnectionNotificationManager;
+class MainWindow;
+class SoftwareBranding;
+class StorageAdapterFactory;
+class SummaryDataAccessorFactory;
 class HeaderControlsContainer;
+class InternetConnectionNotificationManager;
 
 class Application : public QApplication, public ISettingsAccessor
 {

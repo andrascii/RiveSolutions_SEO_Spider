@@ -8,6 +8,7 @@
 #include "storage_type.h"
 #include "software_branding.h"
 #include "svg_renderer.h"
+#include "sequenced_data_collection.h"
 
 namespace
 {
@@ -148,10 +149,10 @@ ReportDataProvider::ReportDataProvider(CrawlerEngine::SequencedDataCollection* s
 {
 	const QSize pixmapSize(13.5, 13.5);
 
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelInfo] = SvgRenderer::render(QStringLiteral(":/images/icon-info.svg"), pixmapSize);
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelNotError] = SvgRenderer::render(QStringLiteral(":/images/icon-ok.svg"), pixmapSize);
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelWarning] = SvgRenderer::render(QStringLiteral(":/images/icon-warning.svg"), pixmapSize);
-	m_pixmaps[ErrorCategory::ErrorCategoryLevel::LevelError] = SvgRenderer::render(QStringLiteral(":/images/icon-error.svg"), pixmapSize);
+	m_pixmaps[CrawlerEngine::ErrorCategory::ErrorCategoryLevel::LevelInfo] = SvgRenderer::render(QStringLiteral(":/images/icon-info.svg"), pixmapSize);
+	m_pixmaps[CrawlerEngine::ErrorCategory::ErrorCategoryLevel::LevelNotError] = SvgRenderer::render(QStringLiteral(":/images/icon-ok.svg"), pixmapSize);
+	m_pixmaps[CrawlerEngine::ErrorCategory::ErrorCategoryLevel::LevelWarning] = SvgRenderer::render(QStringLiteral(":/images/icon-warning.svg"), pixmapSize);
+	m_pixmaps[CrawlerEngine::ErrorCategory::ErrorCategoryLevel::LevelError] = SvgRenderer::render(QStringLiteral(":/images/icon-error.svg"), pixmapSize);
 }
 
 QVariant ReportDataProvider::data(ReportDataKeys dataKey) const

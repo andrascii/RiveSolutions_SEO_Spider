@@ -6,6 +6,7 @@
 #include "application.h"
 #include "storage_adapter_factory.h"
 #include "parsed_page_info.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {
@@ -360,6 +361,31 @@ void OpenInWaybackMachineCommand::execute()
 	// TODO: move this link to .cfg file
 	//
 	QDesktopServices::openUrl(QStringLiteral("http://web.archive.org/web/*/%1").arg(m_url.toDisplayString()));
+}
+
+
+
+ShowOtherDomainsOnIpCommand::ShowOtherDomainsOnIpCommand(const QByteArray& ipAddress)
+	: m_ipAddress(ipAddress)
+{
+}
+
+QIcon ShowOtherDomainsOnIpCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* ShowOtherDomainsOnIpCommand::description() const noexcept
+{
+	return "Show Other Domains on IP";
+}
+
+void ShowOtherDomainsOnIpCommand::execute()
+{
+	//
+	// TODO: move this link to .cfg file
+	//
+	QDesktopServices::openUrl(QStringLiteral("https://www.bing.com/search?q=%1").arg(QString(m_ipAddress)));
 }
 
 }

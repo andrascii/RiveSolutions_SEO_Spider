@@ -11,6 +11,12 @@
 #include "crawler_status_info.h"
 #include "page_factory.h"
 #include "settings_page.h"
+#include "user_agent_settings_widget.h"
+#include "crawler_pause_settings_widget.h"
+#include "internet_connection_state_widget.h"
+#include "notifications_container_widget.h"
+#include "software_branding.h"
+
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
@@ -19,10 +25,6 @@
 #include "ui_user_agent_settings_widget.h"
 #include "ui_crawler_pause_settings_widget.h"
 #include "ui_company_profile_settings_widget.h"
-#include "user_agent_settings_widget.h"
-#include "crawler_pause_settings_widget.h"
-#include "internet_connection_state_widget.h"
-#include "notifications_container_widget.h"
 
 namespace SeoSpider
 {

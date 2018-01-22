@@ -15,6 +15,11 @@
 #include "action_registry.h"
 #include "action_keys.h"
 #include "header_controls_container.h"
+#include "main_window.h"
+#include "software_branding.h"
+#include "storage_adapter_factory.h"
+#include "summary_data_accessor_factory.h"
+#include "crawler_options.h"
 
 namespace SeoSpider
 {

@@ -64,6 +64,7 @@ public:
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 
 	const QPixmap& currentCrawledSitePixmap() const noexcept;
+	QByteArray currentCrawledSiteIPv4() const;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
