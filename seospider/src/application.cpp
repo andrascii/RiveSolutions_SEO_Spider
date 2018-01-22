@@ -10,11 +10,8 @@
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
 #include "widget_under_mouse_info.h"
-#include "get_host_info_request.h"
-#include "get_host_info_response.h"
 #include "deferred_call.h"
 #include "internet_connection_notification_manager.h"
-#include "web_screenshot.h"
 #include "action_registry.h"
 #include "action_keys.h"
 #include "header_controls_container.h"
@@ -40,7 +37,6 @@ Application::Application(int& argc, char** argv)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
-	, m_webScreenShot(new WebScreenShot(this))
 	, m_headerControlsContainer(new HeaderControlsContainer())
 {
 	SplashScreen::show();
@@ -116,11 +112,6 @@ QStringList Application::allKeys() const
 	return settings()->allKeys();
 }
 
-const QPixmap& Application::crawledSitePixmap() const
-{
-	return m_webScreenShot->result();
-}
-
 HeaderControlsContainer* Application::headerControlsContainer() const
 {
 	return m_headerControlsContainer.get();
@@ -164,12 +155,75 @@ void Application::startCrawler()
 		return;
 	}
 
-	GetHostInfoRequest request(url);
-	m_hostInfoRequester.reset(request, this, &Application::onHostInfoResponse);
-	m_hostInfoRequester->start();
-	//m_webScreenShot->load(url);
+	CrawlerOptions options;
+	options.startCrawlingPage = url;
 
-	mainWindow()->statusBar()->showMessage("Checking host info...");
+	INFOLOG << "Start crawling:" << options.startCrawlingPage.toDisplayString();
+
+	// limit settings
+	options.limitMaxUrlLength = preferences()->limitMaxUrlLength();
+	options.limitSearchTotal = preferences()->limitSearchTotal();
+	options.limitTimeout = preferences()->limitTimeout();
+	options.maxRedirectsToFollow = preferences()->maxRedirectCount();
+	options.maxLinksCountOnPage = preferences()->maxLinksCountOnPage();
+
+	// preferences settings
+	options.maxDescriptionLength = preferences()->maxDescriptionLength();
+	options.minDescriptionLength = preferences()->minDescriptionLength();
+	options.minTitleLength = preferences()->minTitleLength();
+	options.maxTitleLength = preferences()->maxTitleLength();
+	options.maxImageSizeKb = preferences()->maxImageSize();
+	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
+	options.maxH1LengthChars = preferences()->maxH1LengthChars();
+	options.maxH2LengthChars = preferences()->maxH2LengthChars();
+
+	// proxy settings
+	options.useProxy = preferences()->useProxy();
+	options.proxyHostName = preferences()->proxyAddress();
+	options.proxyPort = preferences()->proxyPort();
+	options.proxyUser = preferences()->proxyUsername();
+	options.proxyPassword = preferences()->proxyPassword();
+
+	// crawler settings
+	options.checkExternalLinks = preferences()->checkExternalUrls();
+	options.followInternalNofollow = preferences()->followInternalNoFollow();
+	options.followExternalNofollow = preferences()->followExternalNoFollow();
+	options.checkCanonicals = preferences()->checkCanonicals();
+	options.checkSubdomains = preferences()->checkSubdomains();
+	options.followRobotsTxtRules = preferences()->followRobotsTxt();
+	options.crawlOutsideOfStartFolder = preferences()->crawlOutsideOfStartFolder();
+
+	// robots.txt rules
+	options.userAgentToFollow = static_cast<UserAgentType>(preferences()->robotSignature());
+
+	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType, preferences()->checkJavaScript());
+	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType, preferences()->checkCSS());
+	options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType, preferences()->checkImages());
+	options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType, preferences()->checkSWF());
+	options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType, preferences()->checkSWF());
+
+	// User agent settings
+	if (preferences()->useCustomUserAgent() && preferences()->useDesktopUserAgent())
+	{
+		options.userAgent = preferences()->desktopUserAgent().toLatin1();
+	}
+	else if (preferences()->useCustomUserAgent() && preferences()->useMobileUserAgent())
+	{
+		options.userAgent = preferences()->mobileUserAgent().toLatin1();
+	}
+	else
+	{
+		options.userAgent = s_riveSolutionsUserAgent;
+	}
+
+	// pause range settings
+	if (preferences()->usePauseTimer())
+	{
+		options.pauseRangeFrom = preferences()->fromPauseTimer();
+		options.pauseRangeTo = preferences()->toPauseTimer();
+	}
+
+	crawler()->startCrawling(options);
 }
 
 void Application::stopCrawler()
@@ -281,96 +335,6 @@ QSettings* Application::settings() const
 {
 	ASSERT(m_settings);
 	return m_settings;
-}
-
-void Application::onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response)
-{
-	Q_UNUSED(requester);
-
-	mainWindow()->statusBar()->clearMessage();
-
-	m_hostInfoRequester->stop();
-
-	if (!response.hostInfo.isValid())
-	{
-		mainWindow()->showMessageBoxDialog("DNS Lookup Failed!",
-			"I'm sorry but I cannot find this website.\n"
-			"Please, be sure that you entered a valid address.",
-			MessageBoxDialog::WarningIcon,
-			QDialogButtonBox::Ok);
-
-		return;
-	}
-
-	CrawlerOptions options;
-	options.startCrawlingPage = response.url;
-
-	INFOLOG << "Start crawling:" << options.startCrawlingPage.toDisplayString();
-
-	// limit settings
-	options.limitMaxUrlLength = preferences()->limitMaxUrlLength();
-	options.limitSearchTotal = preferences()->limitSearchTotal();
-	options.limitTimeout = preferences()->limitTimeout();
-	options.maxRedirectsToFollow = preferences()->maxRedirectCount();
-	options.maxLinksCountOnPage = preferences()->maxLinksCountOnPage();
-
-	// preferences settings
-	options.maxDescriptionLength = preferences()->maxDescriptionLength();
-	options.minDescriptionLength = preferences()->minDescriptionLength();
-	options.minTitleLength = preferences()->minTitleLength();
-	options.maxTitleLength = preferences()->maxTitleLength();
-	options.maxImageSizeKb = preferences()->maxImageSize();
-	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
-	options.maxH1LengthChars = preferences()->maxH1LengthChars();
-	options.maxH2LengthChars = preferences()->maxH2LengthChars();
-
-	// proxy settings
-	options.useProxy = preferences()->useProxy();
-	options.proxyHostName = preferences()->proxyAddress();
-	options.proxyPort = preferences()->proxyPort();
-	options.proxyUser = preferences()->proxyUsername();
-	options.proxyPassword = preferences()->proxyPassword();
-
-	// crawler settings
-	options.checkExternalLinks = preferences()->checkExternalUrls();
-	options.followInternalNofollow = preferences()->followInternalNoFollow();
-	options.followExternalNofollow = preferences()->followExternalNoFollow();
-	options.checkCanonicals = preferences()->checkCanonicals();
-	options.checkSubdomains = preferences()->checkSubdomains();
-	options.followRobotsTxtRules = preferences()->followRobotsTxt();
-	options.crawlOutsideOfStartFolder = preferences()->crawlOutsideOfStartFolder();
-
-	// robots.txt rules
-	options.userAgentToFollow = static_cast<UserAgentType>(preferences()->robotSignature());
-
-	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType, preferences()->checkJavaScript());
-	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType, preferences()->checkCSS());
-	options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType, preferences()->checkImages());
-	options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType, preferences()->checkSWF());
-	options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType, preferences()->checkSWF());
-
-	// User agent settings
-	if (preferences()->useCustomUserAgent() && preferences()->useDesktopUserAgent())
-	{
-		options.userAgent = preferences()->desktopUserAgent().toLatin1();
-	}
-	else if (preferences()->useCustomUserAgent() && preferences()->useMobileUserAgent())
-	{
-		options.userAgent = preferences()->mobileUserAgent().toLatin1();
-	}
-	else
-	{
-		options.userAgent = s_riveSolutionsUserAgent;
-	}
-
-	// pause range settings
-	if (preferences()->usePauseTimer())
-	{
-		options.pauseRangeFrom = preferences()->fromPauseTimer();
-		options.pauseRangeTo = preferences()->toPauseTimer();
-	}
-
-	crawler()->startCrawling(options);
 }
 
 void Application::initialize()

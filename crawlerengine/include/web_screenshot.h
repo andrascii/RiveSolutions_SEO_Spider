@@ -1,6 +1,6 @@
 #pragma once
 
-namespace SeoSpider
+namespace CrawlerEngine
 {
 	
 class WebScreenShot : public QObject

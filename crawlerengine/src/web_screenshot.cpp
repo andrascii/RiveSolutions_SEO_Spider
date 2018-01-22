@@ -1,6 +1,6 @@
 #include "web_screenshot.h"
 
-namespace SeoSpider
+namespace CrawlerEngine
 {
 
 WebScreenShot::WebScreenShot(QObject* parent)

@@ -13,7 +13,6 @@
 namespace CrawlerEngine
 {
 
-struct GetHostInfoResponse;
 class SequencedDataCollection;
 class Crawler;
 
@@ -24,7 +23,6 @@ namespace SeoSpider
 
 class Preferences;
 class InternetConnectionNotificationManager;
-class WebScreenShot;
 class HeaderControlsContainer;
 
 class Application : public QApplication, public ISettingsAccessor
@@ -55,8 +53,6 @@ public:
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
 	virtual QStringList allKeys() const override;
 
-	const QPixmap& crawledSitePixmap() const;
-
 	HeaderControlsContainer* headerControlsContainer() const;
 
 signals:
@@ -68,8 +64,6 @@ private:
 
 	void initQSettings();
 	QSettings* settings() const;
-
-	void onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
 
 private slots:
 	void startCrawler();
@@ -94,10 +88,7 @@ private:
 	QSettings* m_settings;
 	QTranslator* m_translator;
 
-	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
 	InternetConnectionNotificationManager* m_internetNotificationManager;
-	WebScreenShot* m_webScreenShot;
-
 	std::unique_ptr<HeaderControlsContainer> m_headerControlsContainer;
 };
 
