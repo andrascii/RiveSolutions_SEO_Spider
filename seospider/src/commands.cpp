@@ -136,48 +136,54 @@ void ExportDataToXlsxCommand::execute()
 
 	QXlsx::Document xlsxDocument(path);
 
-	std::size_t rowNumber = 1;
+	int rowNumber = 1;
+
+	QXlsx::Format headerFormat;
+	headerFormat.setFontColor(Qt::red);
+	headerFormat.setFontSize(13);
+
+	QXlsx::Format columnFormat;
+	columnFormat.setFontColor(Qt::red);
+	columnFormat.setFontSize(13);
 
 	for (int i = 0, sz = (int)m_storageDescriptions.size(); i < sz; ++i)
 	{
-		QXlsx::Format headerFormat;
-		headerFormat.setFontColor(Qt::red);
-		headerFormat.setFontSize(13);
-
 		const CrawlerEngine::StorageType storageType = m_storageDescriptions[i].storageType;
-		const int storageSize = m_dataCollection->storage(storageType)->size();
+		const ISequencedStorage& sequencedStorage = *m_dataCollection->storage(storageType);
+		const int storageSize = sequencedStorage.size();
 		
 		QXlsx::RichString headerRichString;
 		headerRichString.addFragment(m_storageDescriptions[i].storageTypeDescriptionName + QStringLiteral(" (%1 items)").arg(storageSize), headerFormat);
 
-		xlsxDocument.write(QStringLiteral("A%1").arg(rowNumber++), headerRichString);
+		xlsxDocument.write(rowNumber++, 1, headerRichString);
 
-		for (int j = 0; j < storageSize; ++j)
+		QVector<ParsedPageInfo::Column> columnsForType =
+			StorageAdapterFactory::parsedPageAvailableColumns(static_cast<StorageAdapterType>(storageType));
+
+		for (int k = 1; k <= columnsForType.size(); ++k)
 		{
-			const ISequencedStorage& sequencedStorage = *m_dataCollection->storage(storageType);
+			QXlsx::RichString columnRichString;
+			columnRichString.addFragment(ParsedPageInfo::itemTypeDescription(columnsForType[k - 1]), columnFormat);
+
+			xlsxDocument.write(rowNumber, k, columnRichString);
+		}
+
+		++rowNumber;
+
+		for (int j = 0; j < storageSize; ++j, ++rowNumber)
+		{
 			ParsedPageInfo parsedPageInfoProvider(sequencedStorage[j]);
 
-			QVector<ParsedPageInfo::Column> columnsForType =
-				StorageAdapterFactory::parsedPageAvailableColumns(static_cast<StorageAdapterType>(storageType));
-
-			foreach (ParsedPageInfo::Column column, columnsForType)
+			for (int k = 1; k <= columnsForType.size(); ++k)
 			{
-				column;
-				xlsxDocument.write(QStringLiteral("A%1").arg(rowNumber++), (*m_dataCollection->storage(storageType))[(int)j]->url);
+				xlsxDocument.write(rowNumber, k, parsedPageInfoProvider.itemValue(columnsForType[k - 1]));
 			}
-
-			xlsxDocument.write(QStringLiteral("A%1").arg(rowNumber++), (*m_dataCollection->storage(storageType))[(int)j]->url);
 		}
+
+		++rowNumber;
 	}
 
 	xlsxDocument.save();
-}
-
-QString ExportDataToXlsxCommand::columnLetter(int columnNumber) const
-{
-	// 65 - 90
-	columnNumber;
-	return QString();
 }
 
 }
