@@ -112,7 +112,14 @@ std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QMo
 		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
 
 		const Url url = urlItem.toUrl();
+
 		commands.push_back(std::make_shared<OpenUrlCommand>(url));
+		commands.push_back(std::make_shared<CheckGoogleCacheCommand>(url));
+		commands.push_back(std::make_shared<CheckHTMLWithW3CValidatorCommand>(url));
+		commands.push_back(std::make_shared<OpenInWaybackMachineCommand>(url));
+		commands.push_back(std::make_shared<CopyToClipboardAllPagesCommand>(m_associatedStorage));
+		commands.push_back(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, index.row()));
+		commands.push_back(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row()));
 	}
 
 	return commands;

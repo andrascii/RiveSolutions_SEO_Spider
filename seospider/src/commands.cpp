@@ -15,7 +15,7 @@ bool ICommand::isCompound() const noexcept
 	return false;
 }
 
-/*=============================================================================================*/
+
 
 CompoundCommand::CompoundCommand(const char* description, const QIcon& icon)
 	: m_description(description)
@@ -56,7 +56,7 @@ bool CompoundCommand::isCompound() const noexcept
 	return true;
 }
 
-/*=============================================================================================*/
+
 
 OpenUrlCommand::OpenUrlCommand(const QUrl& url)
 	: m_url(url)
@@ -78,7 +78,7 @@ void OpenUrlCommand::execute()
 	QDesktopServices::openUrl(m_url);
 }
 
-/*=============================================================================================*/
+
 
 RemoveRowCommand::RemoveRowCommand(int row)
 	: m_row(row)
@@ -101,7 +101,7 @@ void RemoveRowCommand::execute()
 
 }
 
-/*=============================================================================================*/
+
 
 ExportDataToXlsxCommand::ExportDataToXlsxCommand(const CrawlerEngine::SequencedDataCollection* dataCollection,
 	const std::vector<DCStorageDescription>& storageDescriptions)
@@ -184,6 +184,182 @@ void ExportDataToXlsxCommand::execute()
 	}
 
 	xlsxDocument.save();
+}
+
+
+
+CopyToClipboardAllPagesCommand::CopyToClipboardAllPagesCommand(const CrawlerEngine::ISequencedStorage* storage)
+	: m_storage(storage)
+{
+}
+
+QIcon CopyToClipboardAllPagesCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* CopyToClipboardAllPagesCommand::description() const noexcept
+{
+	return "Copy to Clipboard All Pages";
+}
+
+void CopyToClipboardAllPagesCommand::execute()
+{
+	QClipboard* clipboard = QApplication::clipboard();
+
+	QString clipboardText;
+
+	for (int i = 0, sz = m_storage->size(); i < sz; ++i)
+	{
+		ParsedPageInfo parsedPageInfoProvider((*m_storage)[i]);
+
+		clipboardText += parsedPageInfoProvider.itemValue(ParsedPageInfo::Column::UrlColumn).toString() + "\n";
+	}
+
+	clipboard->setText(clipboardText);
+}
+
+
+
+CopyToClipboardAllColumnsDataCommand::CopyToClipboardAllColumnsDataCommand(
+	const CrawlerEngine::ISequencedStorage* storage, 
+	CrawlerEngine::StorageType storageType, 
+	int pageIndex)
+	: m_storage(storage)
+	, m_storageType(storageType)
+	, m_pageIndex(pageIndex)
+{
+}
+
+QIcon CopyToClipboardAllColumnsDataCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* CopyToClipboardAllColumnsDataCommand::description() const noexcept
+{
+	return "Copy to Clipboard All Columns Data";
+}
+
+void CopyToClipboardAllColumnsDataCommand::execute()
+{
+	ASSERT(m_pageIndex < m_storage->size());
+
+	QClipboard* clipboard = QApplication::clipboard();
+	QString clipboardText;
+	ParsedPageInfo parsedPageInfoProvider((*m_storage)[m_pageIndex]);
+
+	QVector<ParsedPageInfo::Column> columnsForType =
+		StorageAdapterFactory::parsedPageAvailableColumns(static_cast<StorageAdapterType>(m_storageType));
+
+	for (int i = 0, sz = columnsForType.size(); i < sz; ++i)
+	{
+		clipboardText += parsedPageInfoProvider.itemValue(columnsForType[i]).toString() + " ";
+	}
+
+	clipboard->setText(clipboardText);
+}
+
+
+
+CopyToClipboardUrlCommand::CopyToClipboardUrlCommand(const CrawlerEngine::ISequencedStorage* storage, int pageIndex)
+	: m_storage(storage)
+	, m_pageIndex(pageIndex)
+{
+}
+
+QIcon CopyToClipboardUrlCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* CopyToClipboardUrlCommand::description() const noexcept
+{
+	return "Copy to Clipboard Url";
+}
+
+void CopyToClipboardUrlCommand::execute()
+{
+	ASSERT(m_pageIndex < m_storage->size());
+
+	QClipboard* clipboard = QApplication::clipboard();
+
+	clipboard->setText((*m_storage)[m_pageIndex]->url.toDisplayString());
+}
+
+
+
+CheckGoogleCacheCommand::CheckGoogleCacheCommand(const QUrl& url)
+	: m_url(url)
+{
+}
+
+QIcon CheckGoogleCacheCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* CheckGoogleCacheCommand::description() const noexcept
+{
+	return "Check Google Cache";
+}
+
+void CheckGoogleCacheCommand::execute()
+{
+	//
+	// TODO: move this link to .cfg file
+	//
+	QDesktopServices::openUrl(QStringLiteral("http://webcache.googleusercontent.com/search?q=cache:%1").arg(m_url.toDisplayString()));
+}
+
+
+
+CheckHTMLWithW3CValidatorCommand::CheckHTMLWithW3CValidatorCommand(const QUrl& url)
+	: m_url(url)
+{
+}
+
+QIcon CheckHTMLWithW3CValidatorCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* CheckHTMLWithW3CValidatorCommand::description() const noexcept
+{
+	return "Check HTML with W3C Validator";
+}
+
+void CheckHTMLWithW3CValidatorCommand::execute()
+{
+	//
+	// TODO: move this link to .cfg file
+	//
+	QDesktopServices::openUrl(QStringLiteral("https://validator.w3.org/check?uri=%1").arg(m_url.toDisplayString()));
+}
+
+
+
+OpenInWaybackMachineCommand::OpenInWaybackMachineCommand(const QUrl& url)
+	: m_url(url)
+{
+}
+
+QIcon OpenInWaybackMachineCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* OpenInWaybackMachineCommand::description() const noexcept
+{
+	return "Open in Wayback Machine";
+}
+
+void OpenInWaybackMachineCommand::execute()
+{
+	//
+	// TODO: move this link to .cfg file
+	//
+	QDesktopServices::openUrl(QStringLiteral("http://web.archive.org/web/*/%1").arg(m_url.toDisplayString()));
 }
 
 }

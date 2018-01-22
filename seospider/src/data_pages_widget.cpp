@@ -4,7 +4,6 @@
 #include "page_model.h"
 #include "page_view_model.h"
 #include "storage_adapter_factory.h"
-#include "context_menu_data_collection_row.h"
 #include "helpers.h"
 #include "header_decoration_widget.h"
 #include "control_panel_widget.h"

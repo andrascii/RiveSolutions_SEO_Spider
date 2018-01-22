@@ -6,6 +6,7 @@ namespace CrawlerEngine
 {
 
 class SequencedDataCollection;
+class ISequencedStorage;
 
 }
 
@@ -70,19 +71,106 @@ private:
 class ExportDataToXlsxCommand : public ICommand
 {
 public:
-	ExportDataToXlsxCommand(const CrawlerEngine::SequencedDataCollection* dataCollection,
-		const std::vector<DCStorageDescription>& storageDescriptions);
+	ExportDataToXlsxCommand(
+		const CrawlerEngine::SequencedDataCollection* dataCollection,
+		const std::vector<DCStorageDescription>& storageDescriptions
+	);
 
 	virtual QIcon icon() const override;
 	virtual const char* description() const noexcept override;
 	virtual void execute() override;
 
 private:
-	QString columnLetter(int columnNumber) const;
-
-private:
 	const CrawlerEngine::SequencedDataCollection* m_dataCollection;
 	std::vector<DCStorageDescription> m_storageDescriptions;
+};
+
+class CopyToClipboardAllPagesCommand : public ICommand
+{
+public:
+	CopyToClipboardAllPagesCommand(const CrawlerEngine::ISequencedStorage* storage);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	const CrawlerEngine::ISequencedStorage* m_storage;
+};
+
+class CopyToClipboardAllColumnsDataCommand : public ICommand
+{
+public:
+	CopyToClipboardAllColumnsDataCommand(
+		const CrawlerEngine::ISequencedStorage* storage,
+		CrawlerEngine::StorageType storageType,
+		int pageIndex
+	);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	const CrawlerEngine::ISequencedStorage* m_storage;
+	CrawlerEngine::StorageType m_storageType;
+	int m_pageIndex;
+};
+
+class CopyToClipboardUrlCommand : public ICommand
+{
+public:
+	CopyToClipboardUrlCommand(
+		const CrawlerEngine::ISequencedStorage* storage,
+		int pageIndex
+	);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	const CrawlerEngine::ISequencedStorage* m_storage;
+	int m_pageIndex;
+};
+
+class CheckGoogleCacheCommand : public ICommand
+{
+public:
+	CheckGoogleCacheCommand(const QUrl& url);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	QUrl m_url;
+};
+
+class CheckHTMLWithW3CValidatorCommand : public ICommand
+{
+public:
+	CheckHTMLWithW3CValidatorCommand(const QUrl& url);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	QUrl m_url;
+};
+
+class OpenInWaybackMachineCommand : public ICommand
+{
+public:
+	OpenInWaybackMachineCommand(const QUrl& url);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	QUrl m_url;
 };
 
 }
