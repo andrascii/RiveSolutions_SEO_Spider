@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+	<Name>Seo Spider</Name>
+	<Version>1.0.0</Version>
+	<Title>Seo Spider Installer</Title>
+	<Publisher>Rive Solutions</Publisher>
+	<StartMenuDir>Seo Spider</StartMenuDir>
+	<TargetDir>@HomeDir@/SeoSpider</TargetDir>
+</Installer>
