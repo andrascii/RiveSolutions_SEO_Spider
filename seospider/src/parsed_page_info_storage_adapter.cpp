@@ -1,5 +1,6 @@
 #include "parsed_page_info_storage_adapter.h"
 #include "application.h"
+#include "crawler.h"
 
 namespace SeoSpider
 {
@@ -103,16 +104,27 @@ std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QMo
 	}
 
 	const auto urlColumnIterator = std::find(m_availableColumns.begin(), m_availableColumns.end(), ParsedPageInfo::Column::UrlColumn);
+	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 
 	if (urlColumnIterator != m_availableColumns.end())
 	{
-		const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
-
 		const QVariant urlItem = ParsedPageInfo(storage[index.row()]).itemValue(*urlColumnIterator);
 		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
 
-		const Url url = urlItem.toUrl();
+		const CrawlerEngine::Url url = urlItem.toUrl();
+
 		commands.push_back(std::make_shared<OpenUrlCommand>(url));
+		commands.push_back(std::make_shared<CheckGoogleCacheCommand>(url));
+		commands.push_back(std::make_shared<CheckHTMLWithW3CValidatorCommand>(url));
+		commands.push_back(std::make_shared<OpenInWaybackMachineCommand>(url));
+		commands.push_back(std::make_shared<CopyToClipboardAllPagesCommand>(m_associatedStorage));
+		commands.push_back(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, index.row()));
+		commands.push_back(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row()));
+	}
+
+	if (!storage.empty())
+	{
+		commands.push_back(std::make_shared<ShowOtherDomainsOnIpCommand>(theApp->crawler()->currentCrawledSiteIPv4()));
 	}
 
 	return commands;
@@ -132,7 +144,7 @@ const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdapter::parsedPage(const 
 #endif
 
 
-void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, StorageType type)
+void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, CrawlerEngine::StorageType type)
 {
 	if (type != m_storageType)
 	{

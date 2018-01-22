@@ -2,6 +2,13 @@
 
 #include "ui_control_panel_widget.h"
 
+namespace CrawlerEngine
+{
+	
+class Url;
+
+}
+
 namespace SeoSpider
 {
 
@@ -12,7 +19,7 @@ class ControlPanelWidget : public QFrame
 public:
 	ControlPanelWidget(QWidget* parent);
 
-	const Url& url() const noexcept;
+	const CrawlerEngine::Url& url() const noexcept;
 
 protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;
@@ -26,7 +33,7 @@ private slots:
 
 private:
 	Ui::ControlPanelWidget m_ui;
-	Url m_url;
+	CrawlerEngine::Url m_url;
 };
 
 }

@@ -4,7 +4,6 @@
 #include "page_model.h"
 #include "page_view_model.h"
 #include "storage_adapter_factory.h"
-#include "context_menu_data_collection_row.h"
 #include "helpers.h"
 #include "header_decoration_widget.h"
 #include "control_panel_widget.h"
@@ -13,6 +12,8 @@
 #include "page_data_widget.h"
 #include "crawler_progress_bar.h"
 #include "custom_push_button.h"
+#include "header_controls_container.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {
@@ -26,7 +27,20 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 	m_stackedWidget = new QStackedWidget(this);
 
 	m_decorationWidget->addWidgetToHeader(new ControlPanelWidget(this));
-	m_decorationWidget->addWidgetToHeader(new CrawlerProgressBar(this), Qt::AlignLeft, true);
+	m_decorationWidget->addWidgetToHeader(new CrawlerProgressBar(this), Qt::AlignLeft);
+
+	QHBoxLayout* dynamicControlsLayoutWithSpacer = new QHBoxLayout(this);
+	dynamicControlsLayoutWithSpacer->setMargin(0);
+	m_dynamicControlsLayout = new QHBoxLayout(this);
+	m_dynamicControlsLayout->setMargin(0);
+	QWidget* dynamicControlsWidget = new QWidget(this);
+	dynamicControlsWidget->setContentsMargins(0, 0, 0, 0);
+	dynamicControlsWidget->setObjectName(QStringLiteral("DynamicControls"));
+	dynamicControlsWidget->setLayout(dynamicControlsLayoutWithSpacer);
+	dynamicControlsLayoutWithSpacer->addLayout(m_dynamicControlsLayout);
+	dynamicControlsLayoutWithSpacer->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum));
+	m_decorationWidget->addWidgetToHeader(dynamicControlsWidget, Qt::AlignLeft, true);
+
 	m_decorationWidget->setContentWidget(m_stackedWidget);
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
@@ -50,6 +64,15 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 	loadingWidgetLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
 	
 	m_stackedWidget->addWidget(loadingWidget);
+
+
+	HeaderControlsContainer* store = theApp->headerControlsContainer();
+
+	// just test
+	store->addWidget(new QPushButton(tr("Export to PDF"), this), PageFactory::AuditReportPage);
+
+	VERIFY(connect(theApp->headerControlsContainer(), &HeaderControlsContainer::currentControlsChanged, 
+		this, &DataPagesWidget::onDynamicControlsChanged));
 }
 
 void DataPagesWidget::addPage(PageFactory::Page page, QWidget* widget, const QString& buttonText, const QIcon& buttonIcon, bool setSelected)
@@ -82,6 +105,7 @@ void DataPagesWidget::showPage(PageFactory::Page page)
 {
 	m_stackedWidget->setCurrentIndex(m_pageIndexes[page]);
 	m_activePage = page;
+	theApp->headerControlsContainer()->setActivePage(page);
 }
 
 void DataPagesWidget::handleNavigationPanelButtonClick()
@@ -155,6 +179,30 @@ void DataPagesWidget::initializeNavigationPanelWidget()
 
 	// use this name for customize style through stylesheets
 	m_navigationPanel.navigationPanelWidget->setObjectName(QStringLiteral("NavigationPanel"));
+}
+
+void DataPagesWidget::onDynamicControlsChanged(int page)
+{
+	const PageFactory::Page currentPage = static_cast<PageFactory::Page>(page);
+	QList<QWidget*> controls = theApp->headerControlsContainer()->controls(currentPage);
+
+	QLayoutItem *item;
+	while ((item = m_dynamicControlsLayout->itemAt(0))) 
+	{
+		if (item->widget())
+		{
+			item->widget()->hide();
+		}
+
+		m_dynamicControlsLayout->removeItem(item);
+		delete item;
+	}
+
+	foreach(QWidget* control, controls)
+	{
+		m_dynamicControlsLayout->addWidget(control);
+		control->show();
+	}
 }
 
 }

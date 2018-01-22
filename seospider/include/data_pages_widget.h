@@ -22,6 +22,7 @@ public slots:
 private slots:
 	void handleNavigationPanelButtonClick();
 	void onStateChanged(int state);
+	void onDynamicControlsChanged(int page);
 
 private:
 	void initializeNavigationPanelWidget();
@@ -45,6 +46,8 @@ private:
 	HeaderDecorationWidget* m_decorationWidget;
 
 	PageFactory::Page m_activePage;
+
+	QHBoxLayout* m_dynamicControlsLayout;
 };
 
 }

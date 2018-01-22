@@ -1,19 +1,11 @@
 #pragma once
 
-#include "main_window.h"
-#include "software_branding.h"
-#include "summary_data_accessor_factory.h"
-#include "storage_adapter_factory.h"
 #include "isettings_accessor.h"
-#include "requester.h"
-#include "requester_wrapper.h"
-#include "titled_window.h"
 #include "crawler_options.h"
 
 namespace CrawlerEngine
 {
 
-struct GetHostInfoResponse;
 class SequencedDataCollection;
 class Crawler;
 
@@ -23,8 +15,12 @@ namespace SeoSpider
 {
 
 class Preferences;
+class MainWindow;
+class SoftwareBranding;
+class StorageAdapterFactory;
+class SummaryDataAccessorFactory;
+class HeaderControlsContainer;
 class InternetConnectionNotificationManager;
-class WebScreenShot;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -54,7 +50,7 @@ public:
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
 	virtual QStringList allKeys() const override;
 
-	const QPixmap& crawledSitePixmap() const;
+	HeaderControlsContainer* headerControlsContainer() const;
 
 signals:
 	void mainWindowShown();
@@ -65,8 +61,6 @@ private:
 
 	void initQSettings();
 	QSettings* settings() const;
-
-	void onHostInfoResponse(CrawlerEngine::Requester* requester, const CrawlerEngine::GetHostInfoResponse& response);
 
 private slots:
 	void startCrawler();
@@ -91,9 +85,8 @@ private:
 	QSettings* m_settings;
 	QTranslator* m_translator;
 
-	CrawlerEngine::RequesterWrapper m_hostInfoRequester;
 	InternetConnectionNotificationManager* m_internetNotificationManager;
-	WebScreenShot* m_webScreenShot;
+	std::unique_ptr<HeaderControlsContainer> m_headerControlsContainer;
 };
 
 }

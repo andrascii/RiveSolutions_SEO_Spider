@@ -16,6 +16,10 @@
 #include "inotification_service.h"
 #include "notification_service.h"
 #include "xml_sitemap_loader.h"
+#include "get_host_info_request.h"
+#include "get_host_info_response.h"
+#include "web_screenshot.h"
+#include "host_info.h"
 
 namespace CrawlerEngine
 {
@@ -39,6 +43,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_sequencedDataCollection(nullptr)
 	, m_state(StatePending)
 	, m_downloader(nullptr)
+	, m_webScreenShot(new WebScreenShot(this))
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->addService<INotificationService>(new NotificationService);
@@ -232,7 +237,7 @@ void Crawler::onCrawlingSessionInitialized()
 	}
 	else
 	{
-		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetProxy",	Qt::BlockingQueuedConnection));
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetProxy", Qt::BlockingQueuedConnection));
 	}
 
 	m_uniqueLinkStore->addUrl(m_options.startCrawlingPage, DownloadRequestType::RequestTypeGet);
@@ -258,12 +263,15 @@ bool Crawler::isPreinitialized() const
 
 void Crawler::initializeCrawlingSession()
 {
-	DEBUG_ASSERT(m_options.startCrawlingPage.isValid());
+	if (m_hostInfo)
+	{
+		tryToLoadCrawlingDependencies();
+		return;
+	}
 
-	m_robotsTxtLoader->setHost(m_options.startCrawlingPage);
-	m_xmlSitemapLoader->setHost(m_options.startCrawlingPage);
-	m_robotsTxtLoader->load();
-	m_xmlSitemapLoader->load();
+	GetHostInfoRequest request(m_options.startCrawlingPage);
+	m_hostInfoRequester.reset(request, this, &Crawler::onHostInfoResponse);
+	m_hostInfoRequester->start();
 }
 
 void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& response)
@@ -349,6 +357,31 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	emit deserializationProcessDone();
 }
 
+void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response)
+{
+	m_hostInfoRequester->stop();
+
+	if (!response.hostInfo.isValid())
+	{
+		ServiceLocator* serviceLocator = ServiceLocator::instance();
+
+		serviceLocator->service<INotificationService>()->error(
+			tr("DNS Lookup Failed!"), 
+			tr("I'm sorry but I cannot find this website.\n"
+				"Please, be sure that you entered a valid address.")
+		);
+
+		return;
+	}
+
+	m_hostInfo.reset(new HostInfo(response.hostInfo));
+	m_options.startCrawlingPage = response.url;
+
+	m_webScreenShot->load(m_options.startCrawlingPage);
+
+	tryToLoadCrawlingDependencies();
+}
+
 void Crawler::onSerializationReadyToBeStarted()
 {
 	ASSERT(state() == StateSerializaton);
@@ -409,6 +442,17 @@ void Crawler::onDeserializationReadyToBeStarted()
 	TaskRequest request(task);
 	m_deSerializationRequester.reset(request, this, &Crawler::onDeserializationTaskDone);
 	m_deSerializationRequester->start();
+}
+
+
+void Crawler::tryToLoadCrawlingDependencies() const
+{
+	DEBUG_ASSERT(m_options.startCrawlingPage.isValid());
+
+	m_robotsTxtLoader->setHost(m_options.startCrawlingPage);
+	m_xmlSitemapLoader->setHost(m_options.startCrawlingPage);
+	m_robotsTxtLoader->load();
+	m_xmlSitemapLoader->load();
 }
 
 void Crawler::createSequencedDataCollection(QThread* targetThread) const
@@ -483,6 +527,26 @@ const ISpecificLoader* Crawler::robotsTxtLoader() const noexcept
 const CrawlerEngine::ISpecificLoader* Crawler::xmlSitemapLoader() const noexcept
 {
 	return m_xmlSitemapLoader;
+}
+
+const QPixmap& Crawler::currentCrawledSitePixmap() const noexcept
+{
+	return m_webScreenShot->result();
+}
+
+QByteArray Crawler::currentCrawledSiteIPv4() const
+{
+	if (m_hostInfo)
+	{
+		QList<QByteArray> ipv4Addresses = m_hostInfo->stringAddressesIPv4();
+
+		if (!ipv4Addresses.isEmpty())
+		{
+			return ipv4Addresses.front();
+		}
+	}
+
+	return QByteArray();
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept

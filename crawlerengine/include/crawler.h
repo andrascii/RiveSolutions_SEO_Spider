@@ -9,6 +9,8 @@ namespace CrawlerEngine
 {
 
 struct SiteMapSettings;
+struct TaskResponse;
+struct GetHostInfoResponse;
 class CrawlerWorkerThread;
 class ModelController;
 class SequencedDataCollection;
@@ -17,7 +19,8 @@ class IRobotsTxtRules;
 class IDownloader;
 class ITaskProcessor;
 class Requester;
-struct TaskResponse;
+class WebScreenShot;
+class HostInfo;
 
 struct CrawlingProgress
 {
@@ -60,6 +63,9 @@ public:
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 
+	const QPixmap& currentCrawledSitePixmap() const noexcept;
+	QByteArray currentCrawledSiteIPv4() const;
+
 signals:
 	void crawlingProgress(CrawlingProgress state);
 	void crawlerStarted();
@@ -82,9 +88,7 @@ private slots:
 protected:
 	virtual IDownloader* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
-
 	virtual void createSequencedDataCollection(QThread* targetThread) const;
-	
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
@@ -92,10 +96,12 @@ private:
 	void initializeCrawlingSession();
 	void onSerializationTaskDone(Requester* requester, const TaskResponse& response);
 	void onDeserializationTaskDone(Requester* requester, const TaskResponse& response);
+	void onHostInfoResponse(Requester* requester, const GetHostInfoResponse& response);
 
 	void onSerializationReadyToBeStarted();
 	void onDeserializationReadyToBeStarted();
 
+	void tryToLoadCrawlingDependencies() const;
 	void clearDataImpl();
 
 protected:
@@ -109,17 +115,27 @@ private:
 	ISpecificLoader* m_robotsTxtLoader;
 	ISpecificLoader* m_xmlSitemapLoader;
 	UniqueLinkStore* m_uniqueLinkStore;
+
 	CrawlerOptions m_options;
 	unsigned int m_theradCount;
+
 	QTimer* m_crawlingStateTimer;
 	QTimer* m_serializatonRedyStateCheckerTimer;
+
 	std::vector<CrawlerWorkerThread*> m_workers;
+
 	State m_state;
 	State m_prevState;
 	QString m_fileName;
+
 	RequesterWrapper m_serializationRequester;
 	RequesterWrapper m_deSerializationRequester;
+
 	IDownloader* m_downloader;
+
+	RequesterWrapper m_hostInfoRequester;
+	WebScreenShot* m_webScreenShot;
+	std::unique_ptr<HostInfo> m_hostInfo;
 };
 
 }

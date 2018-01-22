@@ -4,6 +4,8 @@
 #include "action_registry.h"
 #include "action_keys.h"
 #include "crawler.h"
+#include "url_line_edit.h"
+#include "message_box_dialog.h"
 
 namespace SeoSpider
 {
@@ -18,11 +20,9 @@ ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	VERIFY(connect(m_ui.clearCrawlingDataButton, &QPushButton::clicked, this, &ControlPanelWidget::clearCrawlingData));
 	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
-
-	m_ui.urlLineEdit->installEventFilter(this);
 }
 
-const Url& ControlPanelWidget::url() const noexcept
+const CrawlerEngine::Url& ControlPanelWidget::url() const noexcept
 {
 	return m_url;
 }
@@ -62,7 +62,7 @@ void ControlPanelWidget::setUrl() const
 		return;
 	}
 
-	Url url(Url(m_ui.urlLineEdit->text()));
+	CrawlerEngine::Url url(CrawlerEngine::Url(m_ui.urlLineEdit->text()));
 
 	if (url.scheme().isEmpty())
 	{
@@ -150,7 +150,6 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 		case CrawlerEngine::Crawler::StateDeserializaton:
 		{
 			m_ui.clearCrawlingDataButton->setDisabled(true);
-			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
 			m_ui.startOrConrinueCrawlingButton->setDisabled(true);
 		}
 	}
