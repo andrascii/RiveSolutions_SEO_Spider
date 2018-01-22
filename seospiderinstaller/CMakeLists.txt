@@ -15,7 +15,6 @@ get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
 find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
 
 find_program(BinaryCreator_executable binarycreator HINTS "${_qt_bin_dir}/../../")
-get_filename_component(BinaryCreator_dir ${BinaryCreator_executable} DIRECTORY)
 
 list(APPEND PackageFileList 
 		${ReleasePackageDir}/seospider.exe
@@ -100,10 +99,13 @@ add_custom_command(
     COMMENT "Running windeployqt..."
 )
 
-if(NOT(${BinaryCreator_executable} EQUAL <VAR>-NOTFOUND))
 message(${BinaryCreator_executable})
-message(${BinaryCreator_dir})
 
+if(${BinaryCreator_executable})
+
+message(${BinaryCreator_executable})
+
+elseif(NOT ${BinaryCreator_executable})
 	add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
@@ -111,4 +113,5 @@ message(${BinaryCreator_dir})
            -f -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller.exe
     COMMENT "Running binarycreator..."
 	)
+	
 endif()
