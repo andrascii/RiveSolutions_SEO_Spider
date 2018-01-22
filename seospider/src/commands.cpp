@@ -385,7 +385,7 @@ void ShowOtherDomainsOnIpCommand::execute()
 	//
 	// TODO: move this link to .cfg file
 	//
-	QDesktopServices::openUrl(QStringLiteral("https://www.bing.com/search?q=%1").arg(QString(m_ipAddress)));
+	QDesktopServices::openUrl(QStringLiteral("https://www.bing.com/search?q=ip:%1").arg(QString(m_ipAddress)));
 }
 
 }
