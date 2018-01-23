@@ -1,3 +1,5 @@
+IDI_ICON1 ICON DISCARDABLE "images/robot.ico"
+
 #include <windows.h>
 
 #define VER_FILEVERSION             1,0,0,0
