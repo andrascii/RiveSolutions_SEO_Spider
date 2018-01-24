@@ -3,6 +3,10 @@
 namespace CrawlerEngine
 {
 
+//
+// Deleting objects stored in ThreadManager is in responsibilities of ThreadManager
+//
+
 class ThreadManager final
 {
 public:

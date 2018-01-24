@@ -4,6 +4,8 @@
 #include "test_sequenced_data_collection.h"
 #include "unordered_data_collection.h"
 #include "model_controller.h"
+#include "tests_web_screenshot.h"
+#include "tests_host_info_provider.h"
 
 namespace CrawlerEngineTests
 {
@@ -208,6 +210,16 @@ void TestsCrawler::createSequencedDataCollection(QThread* targetThread) const
 		&TestSequencedDataCollection::onDataCleared, Qt::QueuedConnection));
 
 	static_cast<TestSequencedDataCollection*>(m_sequencedDataCollection.get())->initializeStorages();
+}
+
+IHostInfoProvider* TestsCrawler::createHostInfoProvider() const
+{
+	return new TestsHostInfoProvider;
+}
+
+IWebScreenShot* TestsCrawler::createWebScreenShot()
+{
+	return new TestsWebScreenShot(this);
 }
 
 }

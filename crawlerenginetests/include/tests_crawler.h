@@ -4,6 +4,13 @@
 #include "sequenced_data_collection.h"
 #include "parsed_page_receiver.h"
 
+namespace CrawlerEngine
+{
+
+class IHostInfoProvider;
+
+}
+
 namespace CrawlerEngineTests
 {
 
@@ -39,6 +46,8 @@ public:
 	const UnorderedDataCollection* unorderedDataCollection() const;
 
 protected:
+	virtual IHostInfoProvider* createHostInfoProvider() const override;
+	virtual IWebScreenShot* createWebScreenShot() override;
 	virtual IDownloader* createDownloader() const override;
 	virtual void createSequencedDataCollection(QThread* targetThread) const override;
 

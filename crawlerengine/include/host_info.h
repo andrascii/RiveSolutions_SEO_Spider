@@ -26,6 +26,12 @@ public:
 	QList<QByteArray> stringAddressesIPv6() const;
 	AddressFamily addressFamily() const noexcept;
 
+protected:
+	//
+	// Creates fake valid host info pair [localhost; 127.0.0.1]
+	//
+	HostInfo();
+
 private:
 	void determineError();
 	void setAddressFamily(hostent* remoteHost);

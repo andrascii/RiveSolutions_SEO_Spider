@@ -122,9 +122,11 @@ std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QMo
 		commands.push_back(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row()));
 	}
 
-	if (!storage.empty())
+	const QByteArray ipv4Address = theApp->crawler()->currentCrawledSiteIPv4();
+
+	if (!storage.empty() && !ipv4Address.isEmpty())
 	{
-		commands.push_back(std::make_shared<ShowOtherDomainsOnIpCommand>(theApp->crawler()->currentCrawledSiteIPv4()));
+		commands.push_back(std::make_shared<ShowOtherDomainsOnIpCommand>(ipv4Address));
 	}
 
 	return commands;
@@ -142,7 +144,6 @@ const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdapter::parsedPage(const 
 	return storage[index.row()];
 }
 #endif
-
 
 void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, CrawlerEngine::StorageType type)
 {
