@@ -34,3 +34,6 @@ Also you need to set up CMAKE_PREFIX_PATH to the folder where you have installed
 For example:
 
 CMAKE_PREFIX_PATH = D:\program-files\Qt\Qt5.7.0\5.7\msvc2015_64
+
+For compiling installer you should Downoad and Setup Qt Intaller Framework https://blog.qt.io/blog/2017/12/15/qt-installer-framework-3-0-2-released/
+and set new system variable IFW_BIN_DIR to *\Qt Installer Framework 3.0.2\bin
