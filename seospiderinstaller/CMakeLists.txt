@@ -6,9 +6,8 @@ set(PackageFileList)
 set(TargetInstallerPath installer)
 set(TargetPackagePath ${TargetInstallerPath}/packages/com.rivesolutions.seospider)
 
-set(InstallerConfigFile ../../seospiderinstaller/config/config.xml)
-set(PackageConfigFile ../../seospiderinstaller/packages/com.rivesolutions.seospider/meta/package.xml)
-set(PackageLicenseFile ../../seospiderinstaller/packages/com.rivesolutions.seospider/meta/license.txt)
+set(InstallerConfigDir ../../seospiderinstaller/config)
+set(PackageMetaDir ../../seospiderinstaller/packages/com.rivesolutions.seospider/meta)
 
 get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
@@ -23,6 +22,8 @@ list(APPEND PackageFileList
 		${ReleasePackageDir}/seospiderservice.pdb
 		${ReleasePackageDir}/seospiderserviceapi.dll
 		${ReleasePackageDir}/seospiderserviceapi.pdb
+		${ReleasePackageDir}/QtXlsxWriter.dll
+		${ReleasePackageDir}/QtXlsxWriter.pdb
 )
 
 #add_custom_target(${SeoSpiderInstallerName} ALL)
@@ -58,8 +59,8 @@ add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy 
-	${InstallerConfigFile}
+	ARGS -E copy_directory
+	${InstallerConfigDir}
 	${TargetInstallerPath}/config
 )
 
@@ -76,17 +77,8 @@ add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy 
-	${PackageConfigFile}
-	${TargetPackagePath}/meta/
-)
-
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy 
-	${PackageLicenseFile}
+	ARGS -E copy_directory
+	${PackageMetaDir}
 	${TargetPackagePath}/meta/
 )
 
@@ -95,7 +87,7 @@ add_custom_command(
 	POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E
         env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}"
-           "${TargetPackagePath}/data/"
+          --release --no-translations "${TargetPackagePath}/data/"
     COMMENT "Running windeployqt..."
 )
 
@@ -115,3 +107,9 @@ elseif(NOT ${BinaryCreator_executable})
 	)
 	
 endif()
+
+add_custom_command(
+	TARGET ${SeoSpiderInstallerName} 
+	POST_BUILD
+    COMMAND start explorer.exe /n,/e,/select, ${TargetInstallerPath}\\seospiderinstaller.exe
+)
