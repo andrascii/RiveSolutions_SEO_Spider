@@ -8,19 +8,24 @@
 namespace CrawlerEngine
 {
 
-struct SiteMapSettings;
-struct TaskResponse;
-struct GetHostInfoResponse;
-class CrawlerWorkerThread;
-class ModelController;
-class SequencedDataCollection;
+
 class ISpecificLoader;
 class IRobotsTxtRules;
 class IDownloader;
 class ITaskProcessor;
+class IWebScreenShot;
+class IHostInfoProvider;
+
+class CrawlerWorkerThread;
+class ModelController;
+class SequencedDataCollection;
 class Requester;
-class WebScreenShot;
 class HostInfo;
+
+struct SiteMapSettings;
+struct TaskResponse;
+struct GetHostInfoResponse;
+
 
 struct CrawlingProgress
 {
@@ -47,7 +52,7 @@ public:
 	static Crawler& instance();
 
 	Crawler(unsigned int threadCount, QObject* parent = nullptr);
-	~Crawler();
+	virtual ~Crawler();
 
 	void initialize();
 	void clearData();
@@ -86,13 +91,15 @@ private slots:
 	void onCrawlingSessionInitialized();
 
 protected:
+	virtual IHostInfoProvider* createHostInfoProvider() const;
+	virtual IWebScreenShot* createWebScreenShot();
 	virtual IDownloader* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
 	virtual void createSequencedDataCollection(QThread* targetThread) const;
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
-	bool isPreinitialized() const;	
+	bool isPreinitialized() const;
 	void initializeCrawlingSession();
 	void onSerializationTaskDone(Requester* requester, const TaskResponse& response);
 	void onDeserializationTaskDone(Requester* requester, const TaskResponse& response);
@@ -103,6 +110,8 @@ private:
 
 	void tryToLoadCrawlingDependencies() const;
 	void clearDataImpl();
+
+	void setState(State state);
 
 protected:
 	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
@@ -134,7 +143,7 @@ private:
 	IDownloader* m_downloader;
 
 	RequesterWrapper m_hostInfoRequester;
-	WebScreenShot* m_webScreenShot;
+	IWebScreenShot* m_webScreenShot;
 	std::unique_ptr<HostInfo> m_hostInfo;
 };
 

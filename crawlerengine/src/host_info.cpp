@@ -18,7 +18,7 @@ HostInfo::HostInfo(const QByteArray& webpage)
 	: m_valid(true)
 	, m_error("No error")
 {
-	hostent* remoteHost = ::gethostbyname(webpage.constData());
+	hostent* remoteHost = gethostbyname(webpage.constData());
 
 	if (!remoteHost)
 	{
@@ -32,6 +32,23 @@ HostInfo::HostInfo(const QByteArray& webpage)
 	setAliases(remoteHost);
 	setAddressFamily(remoteHost);
 	setIpAddresses(remoteHost);
+}
+
+HostInfo::HostInfo()
+	: m_officialHostname("localhost")
+	, m_valid(true)
+	, m_error("No error")
+	, m_addressFamily(AddressFamily::IPv4)
+{
+	in_addr fakeAddress;
+	
+#ifdef Q_OS_WIN
+	inet_pton(AF_INET, "127.0.0.1", &fakeAddress);
+#else
+	inet_aton("127.0.0.1", &fakeAddress);
+#endif
+
+	m_ipv4Addresses[m_officialHostname] = fakeAddress;
 }
 
 bool HostInfo::isValid() const noexcept

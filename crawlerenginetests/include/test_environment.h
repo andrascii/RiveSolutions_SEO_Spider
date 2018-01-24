@@ -15,17 +15,13 @@ class TestEnvironment : public QCoreApplication
 
 public:
 	TestEnvironment(CrawlerEngine::CrawlerOptions options);
-
 	~TestEnvironment();
 
 	TestsCrawler* crawler() const;
-
 	void initializeTest(const std::function<void()>& testFunction);
 
 	static CrawlerEngine::CrawlerOptions defaultOptions(const CrawlerEngine::Url& url);
-
 	static CrawlerEngine::ResourceLink firstResourceOnThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType);
-
 	static CrawlerEngine::ResourceLink firstResourceToThisPageOfType(const CrawlerEngine::ParsedPage* page, CrawlerEngine::ResourceType resourceType);
 
 signals:
@@ -33,11 +29,8 @@ signals:
 
 private:
 	TestRunner* m_testRunner;
-
 	TestsCrawler* m_crawler;
-
 	Common::NamedThread* m_crawlerThread;
-
 	std::function<void()> m_testFunction;
 };
 

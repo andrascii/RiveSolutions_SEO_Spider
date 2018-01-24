@@ -94,4 +94,9 @@ void HostInfoProvider::onLoadingDone(Requester* requester, const DownloadRespons
 	m_requester.reset();
 }
 
+QObject* HostInfoProvider::qobject()
+{
+	return this;
+}
+
 }

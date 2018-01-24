@@ -36,7 +36,7 @@ void WebScreenShot::onLoadingDone(bool ok)
 	}
 
 	m_webView->showMinimized();
-	m_timer->start();	
+	m_timer->start();
 }
 
 void WebScreenShot::onReadyToRenderPixmap()
@@ -46,4 +46,5 @@ void WebScreenShot::onReadyToRenderPixmap()
 	emit loaded(m_webView->url(), m_result);
 	m_webView.reset();
 }
+
 }

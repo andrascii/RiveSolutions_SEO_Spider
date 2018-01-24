@@ -1,18 +1,22 @@
 #pragma once
 
+#include "iweb_screenshot.h"
+
 namespace CrawlerEngine
 {
 	
-class WebScreenShot : public QObject
+class WebScreenShot : public QObject, public IWebScreenShot
 {
 	Q_OBJECT
+
 public:
-	WebScreenShot(QObject* parent = nullptr);
-	void load(const QUrl& url);
-	const QPixmap& result() const;
+	WebScreenShot(QObject* parent);
+
+	virtual void load(const QUrl& url) override;
+	virtual const QPixmap& result() const override;
 
 signals:
-	void loaded(const QUrl& url, const QPixmap& pixmap);
+	virtual void loaded(const QUrl& url, const QPixmap& pixmap) override;
 
 private slots:
 	void onLoadingDone(bool ok);
