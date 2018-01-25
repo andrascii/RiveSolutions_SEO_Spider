@@ -30,16 +30,9 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	m_defferedProcessingTimer->setSingleShot(true);
 }
 
-std::vector<CrawlerRequest> CrawlerWorkerThread::pendingUrls() const
+std::future<std::vector<CrawlerRequest>> CrawlerWorkerThread::pendingUrls() const
 {
-	std::vector<CrawlerRequest> result;
-	result.reserve(m_pendingUrls.size());
-	for (auto it = m_pendingUrls.begin(); it != m_pendingUrls.end(); ++it)
-	{
-		result.push_back(it->second);
-	}
-
-	return result;
+	return m_pagesAcceptedAfterStop.pagesAcceptedPromise.get_future();
 }
 
 void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
@@ -59,10 +52,29 @@ void CrawlerWorkerThread::stop()
 	ASSERT(thread() == QThread::currentThread());
 
 	m_isRunning = false;
+
+	if (!m_downloadRequester)
+	{
+		try
+		{
+			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(preparePagesAfterStop());
+
+			INFOLOG << "set value to promise after stop crawling";
+		}
+		catch (const std::future_error& error)
+		{
+			if (error.code() != std::make_error_condition(std::future_errc::promise_already_satisfied))
+			{
+				throw;
+			}
+		}
+	}
 }
 
 void CrawlerWorkerThread::extractUrlAndDownload()
 {
+	ASSERT(thread() == QThread::currentThread());
+
 	if (!m_isRunning)
 	{
 		return;
@@ -86,13 +98,13 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 		return;
 	}
 
-	CrawlerRequest url;
-	const bool isUrlExtracted = m_uniqueLinkStore->extractUrl(url);
+	CrawlerRequest crawlerRequest;
+	const bool isUrlExtracted = m_uniqueLinkStore->extractUrl(crawlerRequest);
 
 	if (isUrlExtracted)
 	{
-		DownloadRequest request(url);
-		m_pendingUrls[url.url] = url;
+		DownloadRequest request(crawlerRequest);
+		m_currentRequest = crawlerRequest;
 		m_downloadRequester.reset(request, this, &CrawlerWorkerThread::onLoadingDone);
 		m_downloadRequester->start();
 	}
@@ -100,8 +112,8 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 
 void CrawlerWorkerThread::onCrawlerClearData()
 {
-	m_pagesAcceptedAfterStop.clear();
-	m_pendingUrls.clear();
+	m_pagesAcceptedAfterStop.pages.clear();
+	m_currentRequest.reset();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);
 }
 
@@ -211,9 +223,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
 			page->resourceType = ResourceType::ResourceHtml;
 
-
 			emit pageParsed(page);
-			m_pendingUrls.erase(page->url);
 			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 		}
 	};
@@ -231,29 +241,36 @@ void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResp
 
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
 
-	const DownloadRequestType requestType = m_pendingUrls[pages.front()->url].requestType;
+	ASSERT(m_currentRequest.has_value());
+	const DownloadRequestType requestType = m_currentRequest.value().requestType;
+
 	bool checkUrl = false;
 
 	for (ParsedPagePtr& page : pages)
 	{
 		schedulePageResourcesLoading(page);
 
-		if (!m_isRunning)
+		const bool urlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
+
+		if (urlAdded && !m_isRunning)
 		{
-			m_pagesAcceptedAfterStop.push_back(page);
+			m_pagesAcceptedAfterStop.pages.push_back(std::make_pair(m_currentRequest.value().requestType, page));
+
 			continue;
 		}
-
-		const bool urlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
 		if (urlAdded)
 		{
 			emit pageParsed(page);
 			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
-			m_pendingUrls.erase(page->url);
 		}
 
 		checkUrl = true;
+	}
+
+	if (!m_isRunning)
+	{
+		m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(preparePagesAfterStop());
 	}
 
 	extractUrlAndDownload();
@@ -261,17 +278,31 @@ void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResp
 
 void CrawlerWorkerThread::onStart()
 {
-	if (!m_pagesAcceptedAfterStop.empty())
+	if (!m_pagesAcceptedAfterStop.pages.empty())
 	{
-		for (const ParsedPagePtr& page : m_pagesAcceptedAfterStop)
+		for (const PagesAcceptedAfterStop::PageRequestPair& pair : m_pagesAcceptedAfterStop.pages)
 		{
-			emit pageParsed(page);
+			emit pageParsed(pair.second);
 			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
-			m_pendingUrls.erase(page->url);
 		}
 	}
 
-	m_pagesAcceptedAfterStop.clear();
+	m_pagesAcceptedAfterStop.pages.clear();
+
+	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::vector<CrawlerRequest>>();
+}
+
+std::vector<CrawlerRequest> CrawlerWorkerThread::preparePagesAfterStop() const
+{
+	std::vector<CrawlerRequest> result;
+	result.reserve(m_pagesAcceptedAfterStop.pages.size());
+
+	for (const PagesAcceptedAfterStop::PageRequestPair& pair : m_pagesAcceptedAfterStop.pages)
+	{
+		result.emplace_back(CrawlerRequest{ pair.second->url, pair.first });
+	}
+
+	return result;
 }
 
 }

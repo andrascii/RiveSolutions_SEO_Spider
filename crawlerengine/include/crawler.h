@@ -69,7 +69,7 @@ public:
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 
 	const QPixmap& currentCrawledSitePixmap() const noexcept;
-	QByteArray currentCrawledSiteIPv4() const;
+	std::optional<QByteArray> currentCrawledSiteIPv4() const;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -87,7 +87,7 @@ public slots:
 
 private slots:
 	void onAboutCrawlingState();
-	void checkSerialiationReadyState();
+	void checkSerializationReadyState();
 	void onCrawlingSessionInitialized();
 
 protected:
@@ -129,7 +129,7 @@ private:
 	unsigned int m_theradCount;
 
 	QTimer* m_crawlingStateTimer;
-	QTimer* m_serializatonRedyStateCheckerTimer;
+	QTimer* m_serializatonReadyStateCheckerTimer;
 
 	std::vector<CrawlerWorkerThread*> m_workers;
 

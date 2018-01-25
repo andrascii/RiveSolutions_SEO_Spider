@@ -122,11 +122,11 @@ std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QMo
 		commands.push_back(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row()));
 	}
 
-	const QByteArray ipv4Address = theApp->crawler()->currentCrawledSiteIPv4();
+	const std::optional<QByteArray> ipv4Address = theApp->crawler()->currentCrawledSiteIPv4();
 
-	if (!storage.empty() && !ipv4Address.isEmpty())
+	if (!storage.empty() && ipv4Address.has_value())
 	{
-		commands.push_back(std::make_shared<ShowOtherDomainsOnIpCommand>(ipv4Address));
+		commands.push_back(std::make_shared<ShowOtherDomainsOnIpCommand>(ipv4Address.value()));
 	}
 
 	return commands;

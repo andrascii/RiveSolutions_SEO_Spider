@@ -9,45 +9,45 @@ namespace SeoSpiderServiceApi
 
 class Logger : public QObject, public ILogger
 {
-    Q_OBJECT
+	Q_OBJECT
 
 private:
-    template <typename T>
-    class DefaultLoggerDeleter;
+	template <typename T>
+	class DefaultLoggerDeleter;
 
-    template <>
-    class DefaultLoggerDeleter<Logger>
-    {
-    public:
-        void operator()(Logger* pointer)
-        {
-            pointer->m_deleting = true;
-            delete pointer;
-        }
-    };
+	template <>
+	class DefaultLoggerDeleter<Logger>
+	{
+	public:
+		void operator()(Logger* pointer)
+		{
+			pointer->m_deleting = true;
+			delete pointer;
+		}
+	};
 
 public:
-    static ILogger* instance();
+	static ILogger* instance();
 
-    ~Logger();
+	~Logger();
 
-    virtual void setFilter(bool(f)(SeverityLevel level)) noexcept override;
+	virtual void setFilter(bool(f)(SeverityLevel level)) noexcept override;
 
-    virtual void logMessage(const QString& message, SeverityLevel level, CallType callType = CallAsync) override;
+	virtual void logMessage(const QString& message, SeverityLevel level, CallType callType = CallAsync) override;
 
-    virtual void flush(CallType callType = CallAsync) override;
-
-private:
-    Logger();
-
-    bool messageTypeAvailable(SeverityLevel level) const noexcept;
+	virtual void flush(CallType callType = CallAsync) override;
 
 private:
-    bool m_deleting;
+	Logger();
 
-    LogWriterThread* m_logWriterThread;
+	bool messageTypeAvailable(SeverityLevel level) const noexcept;
 
-    std::unique_ptr<ILoggerFilter> m_filter;
+private:
+	bool m_deleting;
+
+	LogWriterThread* m_logWriterThread;
+
+	std::unique_ptr<ILoggerFilter> m_filter;
 };
 
 }
