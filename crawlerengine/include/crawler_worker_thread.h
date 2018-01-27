@@ -14,6 +14,7 @@ class IQueuedDownloader;
 class UniqueLinkStore;
 class OptionsLinkFilter;
 class PageDataCollector;
+class IUniquenessChecker;
 
 class CrawlerWorkerThread : public QObject
 {
@@ -39,6 +40,7 @@ private:
 	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 	void onStart();
+	void onPageParsed(const ParsedPagePtr& parsedPage) const noexcept;
 
 	std::vector<CrawlerRequest> preparePagesAfterStop() const;
 
@@ -54,15 +56,18 @@ private:
 
 	PageDataCollector* m_pageDataCollector;
 	UniqueLinkStore* m_uniqueLinkStore;
+
 	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;
 	RequesterWrapper m_downloadRequester;
+
 	bool m_isRunning;
 
 	PagesAcceptedAfterStop m_pagesAcceptedAfterStop;
-
 	std::optional<CrawlerRequest> m_currentRequest;
 
 	QTimer* m_defferedProcessingTimer;
+
+	std::unique_ptr<IUniquenessChecker> m_uniquenessChecker;
 };
 
 }

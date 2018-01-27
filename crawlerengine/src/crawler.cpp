@@ -138,7 +138,19 @@ CrawlerEngine::Crawler::State Crawler::state() const noexcept
 void Crawler::startCrawling(const CrawlerOptions& options)
 {
 	m_options = options;
+
 	setState(StateWorking);
+
+	if (!m_options.pauseRangeFrom && !m_options.pauseRangeTo)
+	{
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
+	}
+	else
+	{
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setPauseRange",
+			Qt::BlockingQueuedConnection, Q_ARG(int, m_options.pauseRangeFrom), Q_ARG(int, m_options.pauseRangeTo)));
+	}
+
 	initializeCrawlingSession();
 }
 
@@ -195,7 +207,7 @@ void Crawler::onAboutCrawlingState()
 		setState(StatePending);
 
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
-		serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler has ended crawling."));
+		serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Program has ended crawling."));
 	}
 }
 
@@ -230,16 +242,6 @@ void Crawler::onCrawlingSessionInitialized()
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
 		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
-
-	if (!m_options.pauseRangeFrom && !m_options.pauseRangeTo)
-	{
-		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
-	}
-	else
-	{
-		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setPauseRange",
-			Qt::BlockingQueuedConnection, Q_ARG(int, m_options.pauseRangeFrom), Q_ARG(int, m_options.pauseRangeTo)));
-	}
 
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
 		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, m_options.userAgent)));
@@ -387,6 +389,8 @@ void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response
 			tr("I'm sorry but I cannot find this website.\n"
 				"Please, be sure that you entered a valid address.")
 		);
+
+		setState(StatePending);
 
 		return;
 	}
