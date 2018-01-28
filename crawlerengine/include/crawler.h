@@ -8,16 +8,24 @@
 namespace CrawlerEngine
 {
 
-struct SiteMapSettings;
-class CrawlerWorkerThread;
-class ModelController;
-class SequencedDataCollection;
+
 class ISpecificLoader;
 class IRobotsTxtRules;
 class IDownloader;
 class ITaskProcessor;
+class IWebScreenShot;
+class IHostInfoProvider;
+
+class CrawlerWorkerThread;
+class ModelController;
+class SequencedDataCollection;
 class Requester;
+class HostInfo;
+
+struct SiteMapSettings;
 struct TaskResponse;
+struct GetHostInfoResponse;
+
 
 struct CrawlingProgress
 {
@@ -44,7 +52,7 @@ public:
 	static Crawler& instance();
 
 	Crawler(unsigned int threadCount, QObject* parent = nullptr);
-	~Crawler();
+	virtual ~Crawler();
 
 	void initialize();
 	void clearData();
@@ -59,6 +67,9 @@ public:
 
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
+
+	const QPixmap& currentCrawledSitePixmap() const noexcept;
+	std::optional<QByteArray> currentCrawledSiteIPv4() const;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -76,27 +87,31 @@ public slots:
 
 private slots:
 	void onAboutCrawlingState();
-	void checkSerialiationReadyState();
+	void checkSerializationReadyState();
 	void onCrawlingSessionInitialized();
 
 protected:
+	virtual IHostInfoProvider* createHostInfoProvider() const;
+	virtual IWebScreenShot* createWebScreenShot();
 	virtual IDownloader* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
-
 	virtual void createSequencedDataCollection(QThread* targetThread) const;
-	
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
-	bool isPreinitialized() const;	
+	bool isPreinitialized() const;
 	void initializeCrawlingSession();
 	void onSerializationTaskDone(Requester* requester, const TaskResponse& response);
 	void onDeserializationTaskDone(Requester* requester, const TaskResponse& response);
+	void onHostInfoResponse(Requester* requester, const GetHostInfoResponse& response);
 
 	void onSerializationReadyToBeStarted();
 	void onDeserializationReadyToBeStarted();
 
+	void tryToLoadCrawlingDependencies() const;
 	void clearDataImpl();
+
+	void setState(State state);
 
 protected:
 	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
@@ -109,17 +124,27 @@ private:
 	ISpecificLoader* m_robotsTxtLoader;
 	ISpecificLoader* m_xmlSitemapLoader;
 	UniqueLinkStore* m_uniqueLinkStore;
+
 	CrawlerOptions m_options;
 	unsigned int m_theradCount;
+
 	QTimer* m_crawlingStateTimer;
-	QTimer* m_serializatonRedyStateCheckerTimer;
+	QTimer* m_serializatonReadyStateCheckerTimer;
+
 	std::vector<CrawlerWorkerThread*> m_workers;
+
 	State m_state;
 	State m_prevState;
 	QString m_fileName;
+
 	RequesterWrapper m_serializationRequester;
 	RequesterWrapper m_deSerializationRequester;
+
 	IDownloader* m_downloader;
+
+	RequesterWrapper m_hostInfoRequester;
+	IWebScreenShot* m_webScreenShot;
+	std::unique_ptr<HostInfo> m_hostInfo;
 };
 
 }

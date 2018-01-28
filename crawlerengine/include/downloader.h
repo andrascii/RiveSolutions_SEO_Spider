@@ -4,11 +4,11 @@
 #include "crawler_request.h"
 #include "idownloader.h"
 #include "random_interval_range_timer.h"
-#include "iuniqueness_checker.h"
 
 namespace CrawlerEngine
 {
-	
+
+class IUniquenessChecker;
 struct DownloadResponse;
 
 class Downloader : public QObject, public IDownloader

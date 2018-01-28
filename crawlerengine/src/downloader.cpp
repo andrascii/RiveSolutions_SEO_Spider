@@ -8,6 +8,7 @@
 #include "hop.h"
 #include "service_locator.h"
 #include "inotification_service.h"
+#include "iuniqueness_checker.h"
 
 namespace CrawlerEngine
 {
@@ -39,20 +40,20 @@ void Downloader::setPauseRange(int from, int to)
 
 void Downloader::resetPauseRange()
 {
-	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
+	DEBUG_ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
 	m_randomIntervalRangeTimer->reset();
 }
 
 void Downloader::setUserAgent(const QByteArray& userAgent)
 {
-	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
+	DEBUG_ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
 	m_userAgent = userAgent;
 }
 
 void Downloader::setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser,
 	const QString& proxyPassword)
 {
-	ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
+	DEBUG_ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
 
 	QNetworkProxy proxy;
 	proxy.setType(QNetworkProxy::HttpProxy);
@@ -75,8 +76,10 @@ void Downloader::resetProxy()
 
 void Downloader::handleRequest(RequesterSharedPtr requester)
 {
+	DEBUG_ASSERT(thread() == QThread::currentThread());
+
 	ASSERT(requester->request()->requestType() == RequestType::RequestTypeDownload);
-	
+
 	if (m_randomIntervalRangeTimer->isValid())
 	{
 		m_requesterQueue.push(std::move(requester));
@@ -89,6 +92,10 @@ void Downloader::handleRequest(RequesterSharedPtr requester)
 
 void Downloader::stopRequestHandling(RequesterSharedPtr requester)
 {
+	//
+	// TODO: reset loading link
+	//
+
 	requester;
 }
 
@@ -99,20 +106,26 @@ QObject* Downloader::qobject()
 
 void Downloader::onTimerTicked()
 {
+	DEBUG_ASSERT(thread() == QThread::currentThread());
+
 	if (m_requesterQueue.empty())
 	{
 		return;
 	}
 
-	RequesterSharedPtr requester = m_requesterQueue.back();
+	RequesterSharedPtr requester(std::move(m_requesterQueue.front()));
+
 	m_requesterQueue.pop();
+
 	load(requester);
 }
 
 void Downloader::proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenticator*) const
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
+
 	ASSERT(serviceLocator->isRegistered<INotificationService>());
+
 	serviceLocator->service<INotificationService>()->error(tr("Proxy error"), tr("Proxy authentication failed."));
 }
 

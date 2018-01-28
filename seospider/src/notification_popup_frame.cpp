@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "svg_renderer.h"
 #include "deferred_call.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {

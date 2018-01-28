@@ -3,6 +3,7 @@
 #include "page_model.h"
 #include "page_view_model.h"
 #include "application.h"
+#include "storage_adapter_factory.h"
 
 namespace SeoSpider
 {

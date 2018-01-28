@@ -8,7 +8,7 @@ namespace CrawlerEngine
 {
 
 //
-// ATTENTION: all public method must be thread-safe
+// ATTENTION: all public methods must be thread-safe
 //
 
 class UniqueLinkStore : public QObject

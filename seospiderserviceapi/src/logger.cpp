@@ -10,42 +10,42 @@ template <typename F>
 class CustomLoggerFilter : public SeoSpiderServiceApi::ILoggerFilter
 {
 public:
-    CustomLoggerFilter(F f)
-        : m_f(f)
-    {
-    }
+	CustomLoggerFilter(F f)
+		: m_f(f)
+	{
+	}
 
-    virtual bool operator()(SeoSpiderServiceApi::SeverityLevel level) const noexcept override
-    {
-        return m_f(level);
-    }
+	virtual bool operator()(SeoSpiderServiceApi::SeverityLevel level) const noexcept override
+	{
+		return m_f(level);
+	}
 
 private:
-    std::decay_t<F> m_f;
+	std::decay_t<F> m_f;
 };
 
 
 void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
 {
-    switch (type)
-    {
-    case QtDebugMsg:
-        SeoSpiderServiceApi::Logger::instance()->logMessage(msg, SeoSpiderServiceApi::SeverityLevel::DebugLevel);
-        break;
+	switch (type)
+	{
+	case QtDebugMsg:
+		SeoSpiderServiceApi::Logger::instance()->logMessage(msg, SeoSpiderServiceApi::SeverityLevel::DebugLevel);
+		break;
 
-    case QtWarningMsg:
-        SeoSpiderServiceApi::Logger::instance()->logMessage(msg, SeoSpiderServiceApi::SeverityLevel::WarningLevel);
-        break;
+	case QtWarningMsg:
+		SeoSpiderServiceApi::Logger::instance()->logMessage(msg, SeoSpiderServiceApi::SeverityLevel::WarningLevel);
+		break;
 
-    case QtCriticalMsg:
-        SeoSpiderServiceApi::Logger::instance()->logMessage(msg, SeoSpiderServiceApi::SeverityLevel::ErrorLevel);
-        break;
+	case QtCriticalMsg:
+		SeoSpiderServiceApi::Logger::instance()->logMessage(msg, SeoSpiderServiceApi::SeverityLevel::ErrorLevel);
+		break;
 
-    case QtFatalMsg:
-        SeoSpiderServiceApi::Logger::instance()->logMessage(msg, SeoSpiderServiceApi::SeverityLevel::ErrorLevel);
-        abort();
-        break;
-    }
+	case QtFatalMsg:
+		SeoSpiderServiceApi::Logger::instance()->logMessage(msg, SeoSpiderServiceApi::SeverityLevel::ErrorLevel);
+		abort();
+		break;
+	}
 }
 
 }
@@ -55,78 +55,78 @@ namespace SeoSpiderServiceApi
 
 SeoSpiderServiceApi::ILogger* Logger::instance()
 {
-    static std::mutex s_mutex;
-    static std::unique_ptr<Logger, DefaultLoggerDeleter<Logger>> s_instance;
+	static std::mutex s_mutex;
+	static std::unique_ptr<Logger, DefaultLoggerDeleter<Logger>> s_instance;
 
-    std::lock_guard<std::mutex> locker(s_mutex);
+	std::lock_guard<std::mutex> locker(s_mutex);
 
-    if (!s_instance)
-    {
-        s_instance.reset(new Logger);
-    }
+	if (!s_instance)
+	{
+		s_instance.reset(new Logger);
+	}
 
-    return s_instance.get();
+	return s_instance.get();
 }
 
 Logger::~Logger()
 {
-    if (!m_deleting)
-    {
-        // this already deleted
-        abort();
-    }
+	if (!m_deleting)
+	{
+		// this already deleted
+		abort();
+	}
 
-    m_logWriterThread->deleteLater();
-    qApp->processEvents();
+	m_logWriterThread->deleteLater();
+	qApp->processEvents();
 }
 
 void Logger::setFilter(bool(f)(SeverityLevel level)) noexcept
 {
-    m_filter.reset(new CustomLoggerFilter<bool(SeverityLevel level)>(f));
+	m_filter.reset(new CustomLoggerFilter<bool(SeverityLevel level)>(f));
 }
 
 void Logger::logMessage(const QString& message, SeverityLevel level, ILogger::CallType callType)
 {
-    if (!messageTypeAvailable(level))
-    {
-        return;
-    }
+	if (!messageTypeAvailable(level))
+	{
+		return;
+	}
 
-    QString messageWithTimeStamp = QDateTime::currentDateTime().toString(Qt::RFC2822Date) + "|" + message;
+	QString messageWithTimeStamp = QDateTime::currentDateTime().toString(Qt::RFC2822Date) + "|" + message;
 
-    Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
+	Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
 
-    QMetaObject::invokeMethod(m_logWriterThread, "logMessage", connectionType,
-        Q_ARG(const QString&, messageWithTimeStamp), Q_ARG(SeverityLevel, level));
+	QMetaObject::invokeMethod(m_logWriterThread, "logMessage", connectionType,
+		Q_ARG(const QString&, messageWithTimeStamp), Q_ARG(SeverityLevel, level));
 }
 
 void Logger::flush(ILogger::CallType callType)
 {
-    Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
+	Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
 
-    QMetaObject::invokeMethod(m_logWriterThread, "flush", connectionType);
+	QMetaObject::invokeMethod(m_logWriterThread, "flush", connectionType);
 }
 
 Logger::Logger()
-    : m_deleting(false)
-    , m_logWriterThread(new LogWriterThread)
+	: m_deleting(false)
+	, m_logWriterThread(new LogWriterThread)
 {
-    Common::NamedThread* thread = new Common::NamedThread("LogWriterThread");
-    m_logWriterThread->moveToThread(thread);
+	Common::NamedThread* thread = new Common::NamedThread("LogWriterThread");
+	m_logWriterThread->moveToThread(thread);
 
-    VERIFY(connect(qApp, &QApplication::aboutToQuit, m_logWriterThread, &LogWriterThread::flush, Qt::BlockingQueuedConnection));
-    VERIFY(connect(thread, &QThread::finished, m_logWriterThread, &LogWriterThread::flush, Qt::QueuedConnection));
+	VERIFY(connect(qApp, &QApplication::aboutToQuit, m_logWriterThread, &LogWriterThread::flush, Qt::BlockingQueuedConnection));
+	VERIFY(connect(thread, &QThread::finished, m_logWriterThread, &LogWriterThread::flush, Qt::QueuedConnection));
 
-    thread->start();
+	thread->start();
 
-    qInstallMessageHandler(qtMsgHandler);
+	qInstallMessageHandler(qtMsgHandler);
 
-    m_filter.reset(new DefaultLoggerFilter);
+	m_filter.reset(new DefaultLoggerFilter);
 }
 
 bool Logger::messageTypeAvailable(SeverityLevel level) const noexcept
 {
-    return m_filter ? (*m_filter)(level) : true;
+	return m_filter ? (*m_filter)(level) : true;
 }
 
 }

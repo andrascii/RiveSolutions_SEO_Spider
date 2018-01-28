@@ -56,7 +56,7 @@ void FilterWidget::adjustSize()
 
 	ASSERT(parentWidget);
 
-	const int summaryViewWidth = Common::Helpers::pointsToPixels(140);
+	const int summaryViewWidth = Common::Helpers::pointsToPixels(180);
 	const int parentWidgetWidth = parentWidget->width();
 	m_splitter->setSizes(QList<int>() << summaryViewWidth << parentWidgetWidth - summaryViewWidth);
 }

@@ -5,9 +5,10 @@
 #include "page_model.h"
 #include "page_view_model.h"
 #include "table_view.h"
-#include "context_menu_data_collection_row.h"
 #include "application.h"
 #include "reports_page.h"
+#include "command_menu.h"
+#include "storage_adapter_factory.h"
 
 namespace SeoSpider
 {
@@ -35,13 +36,15 @@ QWidget* PageFactory::createPage(Page page) const
 			PageModel* model = new PageModel;
 			PageViewModel* modelView = new PageViewModel(crawlingTableView, model);
 
-			model->setStorageAdapter(theApp->storageAdapterFactory()->createParsedPageInfoStorage(
-				StorageAdapterType::StorageAdapterTypeAllPages, theApp->sequencedDataCollection())
-			);
+			IStorageAdapter* storageAdapter = theApp->storageAdapterFactory()->createParsedPageInfoStorage(
+				StorageAdapterType::StorageAdapterTypeAllPages, theApp->sequencedDataCollection());
+
+			model->setStorageAdapter(storageAdapter);
 
 			crawlingTableView->setModel(model);
 			crawlingTableView->setViewModel(modelView);
 			crawlingTableView->setShowAdditionalGrid(true);
+			crawlingTableView->setContextMenu(new CommandMenu(storageAdapter));
 
 			widget = crawlingTableView;
 

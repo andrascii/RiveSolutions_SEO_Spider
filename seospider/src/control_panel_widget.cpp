@@ -5,6 +5,7 @@
 #include "action_keys.h"
 #include "crawler.h"
 #include "url_line_edit.h"
+#include "message_box_dialog.h"
 
 namespace SeoSpider
 {
@@ -21,7 +22,7 @@ ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
 }
 
-const Url& ControlPanelWidget::url() const noexcept
+const CrawlerEngine::Url& ControlPanelWidget::url() const noexcept
 {
 	return m_url;
 }
@@ -61,7 +62,7 @@ void ControlPanelWidget::setUrl() const
 		return;
 	}
 
-	Url url(Url(m_ui.urlLineEdit->text()));
+	CrawlerEngine::Url url(CrawlerEngine::Url(m_ui.urlLineEdit->text()));
 
 	if (url.scheme().isEmpty())
 	{

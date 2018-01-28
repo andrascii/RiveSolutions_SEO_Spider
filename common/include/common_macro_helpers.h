@@ -18,8 +18,8 @@ seoSpiderServiceApi()->doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
 #define VERIFY(Connection) Connection
 #endif
 
-#define TRACELOG SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::TraceLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
-#define DEBUGLOG SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::DebugLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
-#define INFOLOG  SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::InfoLevel)    << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
-#define WARNLOG  SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::WarningLevel) << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
-#define ERRLOG   SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::ErrorLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << " "
+#define TRACELOG SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::TraceLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << "| thread_id(" << std::this_thread::get_id() << ")"
+#define DEBUGLOG SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::DebugLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << "| thread_id(" << std::this_thread::get_id() << ")"
+#define INFOLOG  SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::InfoLevel)    << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << "| thread_id(" << std::this_thread::get_id() << ")"
+#define WARNLOG  SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::WarningLevel) << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << "| thread_id(" << std::this_thread::get_id() << ")"
+#define ERRLOG   SeoSpiderServiceApi::LogMessageBuffer(SeoSpiderServiceApi::SeverityLevel::ErrorLevel)   << __FILENAME__ << "|" << __LINE__ << "|" << __FUNCTION__ << "| thread_id(" << std::this_thread::get_id() << ")"

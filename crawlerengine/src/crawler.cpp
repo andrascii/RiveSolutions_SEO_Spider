@@ -16,6 +16,10 @@
 #include "inotification_service.h"
 #include "notification_service.h"
 #include "xml_sitemap_loader.h"
+#include "get_host_info_request.h"
+#include "get_host_info_response.h"
+#include "web_screenshot.h"
+#include "host_info.h"
 
 namespace CrawlerEngine
 {
@@ -35,10 +39,11 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_uniqueLinkStore(new UniqueLinkStore(this))
 	, m_theradCount(threadCount)
 	, m_crawlingStateTimer(new QTimer(this))
-	, m_serializatonRedyStateCheckerTimer(new QTimer(this))
+	, m_serializatonReadyStateCheckerTimer(new QTimer(this))
 	, m_sequencedDataCollection(nullptr)
 	, m_state(StatePending)
 	, m_downloader(nullptr)
+	, m_webScreenShot(nullptr)
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->addService<INotificationService>(new NotificationService);
@@ -51,10 +56,10 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	ASSERT(qRegisterMetaType<RobotsTxtRules>());
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
-	VERIFY(connect(m_serializatonRedyStateCheckerTimer, &QTimer::timeout, this, &Crawler::checkSerialiationReadyState));
+	VERIFY(connect(m_serializatonReadyStateCheckerTimer, &QTimer::timeout, this, &Crawler::checkSerializationReadyState));
 	
 	m_crawlingStateTimer->setInterval(100);
-	m_serializatonRedyStateCheckerTimer->setInterval(200);
+	m_serializatonReadyStateCheckerTimer->setInterval(200);
 
 	s_instance = this;
 }
@@ -76,10 +81,12 @@ Crawler::~Crawler()
 void Crawler::initialize()
 {
 	m_modelController = new ModelController;
+
 	m_downloader = createDownloader();
+	m_webScreenShot = createWebScreenShot();
 
 	ThreadManager::instance().moveObjectToThread(m_downloader->qobject(), "DownloaderThread");
-	ThreadManager::instance().moveObjectToThread(new HostInfoProvider, "BackgroundThread");
+	ThreadManager::instance().moveObjectToThread(createHostInfoProvider()->qobject(), "BackgroundThread");
 	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
 	ThreadManager::instance().moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
 
@@ -100,9 +107,8 @@ void Crawler::clearData()
 
 	clearDataImpl();
 
-	m_state = StatePending;
+	setState(StatePending);
 
-	emit stateChanged(m_state);
 	emit onAboutClearData();
 }
 
@@ -110,6 +116,13 @@ void Crawler::clearDataImpl()
 {
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
 	m_uniqueLinkStore->clear();
+}
+
+void Crawler::setState(State state)
+{
+	m_prevState = m_state;
+	m_state = state;
+	emit stateChanged(state);
 }
 
 bool Crawler::isNoData() const noexcept
@@ -125,10 +138,20 @@ CrawlerEngine::Crawler::State Crawler::state() const noexcept
 void Crawler::startCrawling(const CrawlerOptions& options)
 {
 	m_options = options;
-	m_state = StateWorking;
-	initializeCrawlingSession();
 
-	emit stateChanged(m_state);
+	setState(StateWorking);
+
+	if (!m_options.pauseRangeFrom && !m_options.pauseRangeTo)
+	{
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
+	}
+	else
+	{
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setPauseRange",
+			Qt::BlockingQueuedConnection, Q_ARG(int, m_options.pauseRangeFrom), Q_ARG(int, m_options.pauseRangeTo)));
+	}
+
+	initializeCrawlingSession();
 }
 
 void Crawler::stopCrawling()
@@ -138,7 +161,7 @@ void Crawler::stopCrawling()
 		return;
 	}
 
-	m_state = StatePause;
+	setState(StatePause);
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
@@ -148,7 +171,6 @@ void Crawler::stopCrawling()
 	m_crawlingStateTimer->stop();
 
 	emit crawlerStopped();
-	emit stateChanged(m_state);
 
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler stopped"));
@@ -174,9 +196,22 @@ void Crawler::onAboutCrawlingState()
 	progress.pendingLinkCount = linkStorePending + additionalPendingCount;
 
 	emit crawlingProgress(progress);
+
+	if (linkStorePending == 0 &&
+		seqCollCount > 0 &&
+		linkStoreCrawled == state->workersProcessedLinksCount() &&
+		state->modelControllerCrawledLinksCount() == state->workersProcessedLinksCount() &&
+		controllerAccepted == seqCollCount)
+	{
+		stopCrawling();
+		setState(StatePending);
+
+		ServiceLocator* serviceLocator = ServiceLocator::instance();
+		serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Program has ended crawling."));
+	}
 }
 
-void Crawler::checkSerialiationReadyState()
+void Crawler::checkSerializationReadyState()
 {
 	const CrawlerSharedState* state = CrawlerSharedState::instance();
 
@@ -194,7 +229,7 @@ void Crawler::checkSerialiationReadyState()
 			onDeserializationReadyToBeStarted();
 		}
 
-		m_serializatonRedyStateCheckerTimer->stop();
+		m_serializatonReadyStateCheckerTimer->stop();
 	}
 }
 
@@ -207,16 +242,6 @@ void Crawler::onCrawlingSessionInitialized()
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
 		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
-
-	if (!m_options.pauseRangeFrom && !m_options.pauseRangeTo)
-	{
-		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
-	}
-	else
-	{
-		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setPauseRange",
-			Qt::BlockingQueuedConnection, Q_ARG(int, m_options.pauseRangeFrom), Q_ARG(int, m_options.pauseRangeTo)));
-	}
 
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
 		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, m_options.userAgent)));
@@ -232,7 +257,7 @@ void Crawler::onCrawlingSessionInitialized()
 	}
 	else
 	{
-		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetProxy",	Qt::BlockingQueuedConnection));
+		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetProxy", Qt::BlockingQueuedConnection));
 	}
 
 	m_uniqueLinkStore->addUrl(m_options.startCrawlingPage, DownloadRequestType::RequestTypeGet);
@@ -258,12 +283,15 @@ bool Crawler::isPreinitialized() const
 
 void Crawler::initializeCrawlingSession()
 {
-	DEBUG_ASSERT(m_options.startCrawlingPage.isValid());
+	if (m_hostInfo)
+	{
+		tryToLoadCrawlingDependencies();
+		return;
+	}
 
-	m_robotsTxtLoader->setHost(m_options.startCrawlingPage);
-	m_xmlSitemapLoader->setHost(m_options.startCrawlingPage);
-	m_robotsTxtLoader->load();
-	m_xmlSitemapLoader->load();
+	GetHostInfoRequest request(m_options.startCrawlingPage);
+	m_hostInfoRequester.reset(request, this, &Crawler::onHostInfoResponse);
+	m_hostInfoRequester->start();
 }
 
 void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& response)
@@ -275,7 +303,6 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	ASSERT(result);
 
 	m_state = m_prevState;
-
 	emit stateChanged(m_state);
 
 	if (!result->error.isEmpty())
@@ -349,15 +376,45 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	emit deserializationProcessDone();
 }
 
+void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response)
+{
+	m_hostInfoRequester->stop();
+
+	if (!response.hostInfo.isValid())
+	{
+		ServiceLocator* serviceLocator = ServiceLocator::instance();
+
+		serviceLocator->service<INotificationService>()->error(
+			tr("DNS Lookup Failed!"), 
+			tr("I'm sorry but I cannot find this website.\n"
+				"Please, be sure that you entered a valid address.")
+		);
+
+		setState(StatePending);
+
+		return;
+	}
+
+	m_hostInfo.reset(new HostInfo(response.hostInfo));
+	m_options.startCrawlingPage = response.url;
+
+	m_webScreenShot->load(m_options.startCrawlingPage);
+
+	tryToLoadCrawlingDependencies();
+}
+
 void Crawler::onSerializationReadyToBeStarted()
 {
 	ASSERT(state() == StateSerializaton);
+
 	const SequencedDataCollection* sequencedCollection = sequencedDataCollection();
+
 	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
 	std::vector<ParsedPagePtr> pendingPages = m_modelController->data()->allParsedPages(StorageType::PendingResourcesStorageType);
 
-	std::vector<ParsedPage*> pages;
 	const int pagesCount = storage->size() + static_cast<int>(pendingPages.size());
+
+	std::vector<ParsedPage*> pages;
 	pages.reserve(pagesCount);
 
 	for (int i = 0; i < storage->size(); ++i)
@@ -376,7 +433,9 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
-		const std::vector<CrawlerRequest> workerPendingUrls = worker->pendingUrls();
+		std::future<std::vector<CrawlerRequest>> pendingUrlsFuture = worker->pendingUrls();
+		const std::vector<CrawlerRequest> workerPendingUrls = pendingUrlsFuture.get();
+
 		pendingUrls.insert(pendingUrls.end(), workerPendingUrls.begin(), workerPendingUrls.end());
 	}
 
@@ -411,9 +470,31 @@ void Crawler::onDeserializationReadyToBeStarted()
 	m_deSerializationRequester->start();
 }
 
+
+void Crawler::tryToLoadCrawlingDependencies() const
+{
+	DEBUG_ASSERT(m_options.startCrawlingPage.isValid());
+
+	m_robotsTxtLoader->setHost(m_options.startCrawlingPage);
+	m_xmlSitemapLoader->setHost(m_options.startCrawlingPage);
+	m_robotsTxtLoader->load();
+	m_xmlSitemapLoader->load();
+}
+
 void Crawler::createSequencedDataCollection(QThread* targetThread) const
 {
 	m_sequencedDataCollection.reset(m_modelController->data()->createSequencedDataCollection(targetThread));
+}
+
+
+IHostInfoProvider* Crawler::createHostInfoProvider() const
+{
+	return new HostInfoProvider;
+}
+
+CrawlerEngine::IWebScreenShot* Crawler::createWebScreenShot()
+{
+	return new WebScreenShot(this);
 }
 
 IDownloader* Crawler::createDownloader() const
@@ -454,12 +535,10 @@ void Crawler::saveToFile(const QString& fileName)
 	ASSERT(state() != State::StateWorking);
 
 	m_fileName = fileName;
-	m_prevState = state();
-	m_state = StateSerializaton;
-	emit stateChanged(m_state);
+	setState(StateSerializaton);
 
-	m_serializatonRedyStateCheckerTimer->start();
-	checkSerialiationReadyState();
+	m_serializatonReadyStateCheckerTimer->start();
+	checkSerializationReadyState();
 }
 
 void Crawler::loadFromFile(const QString& fileName)
@@ -467,12 +546,10 @@ void Crawler::loadFromFile(const QString& fileName)
 	ASSERT(state() != State::StateWorking);
 	
 	m_fileName = fileName;
-	m_prevState = state();
-	m_state = StateDeserializaton;
-	emit stateChanged(m_state);
+	setState(StateDeserializaton);
 
-	m_serializatonRedyStateCheckerTimer->start();
-	checkSerialiationReadyState();
+	m_serializatonReadyStateCheckerTimer->start();
+	checkSerializationReadyState();
 }
 
 const ISpecificLoader* Crawler::robotsTxtLoader() const noexcept
@@ -483,6 +560,26 @@ const ISpecificLoader* Crawler::robotsTxtLoader() const noexcept
 const CrawlerEngine::ISpecificLoader* Crawler::xmlSitemapLoader() const noexcept
 {
 	return m_xmlSitemapLoader;
+}
+
+const QPixmap& Crawler::currentCrawledSitePixmap() const noexcept
+{
+	return m_webScreenShot->result();
+}
+
+std::optional<QByteArray> Crawler::currentCrawledSiteIPv4() const
+{
+	if (m_hostInfo)
+	{
+		QList<QByteArray> ipv4Addresses = m_hostInfo->stringAddressesIPv4();
+
+		if (!ipv4Addresses.isEmpty())
+		{
+			return ipv4Addresses.front();
+		}
+	}
+
+	return std::make_optional<QByteArray>();
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept

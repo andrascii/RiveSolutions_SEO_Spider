@@ -4,7 +4,6 @@
 #include "page_model.h"
 #include "page_view_model.h"
 #include "storage_adapter_factory.h"
-#include "context_menu_data_collection_row.h"
 #include "helpers.h"
 #include "header_decoration_widget.h"
 #include "control_panel_widget.h"
@@ -14,6 +13,7 @@
 #include "crawler_progress_bar.h"
 #include "custom_push_button.h"
 #include "header_controls_container.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {
