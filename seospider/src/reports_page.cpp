@@ -2,6 +2,12 @@
 #include "application.h"
 #include "preferences.h"
 #include "crawler.h"
+#include "page_factory.h"
+#include "header_controls_container.h"
+#include "helpers.h"
+#include "inotification_service.h"
+#include "service_locator.h"
+#include "pdf_report_exporter.h"
 
 namespace SeoSpider
 {
@@ -11,6 +17,7 @@ ReportsPage::ReportsPage(QWidget* parent)
 	, m_webEngineView(new QWebEngineView(this))
 	, m_reportDataProvider(theApp->crawler()->sequencedDataCollection())
 	, m_updateTimerId(0)
+	, m_saveToPdfAction(new QAction(tr("Export to PDF"), this))
 {
 	theApp->installEventFilter(this);
 
@@ -21,6 +28,10 @@ ReportsPage::ReportsPage(QWidget* parent)
 	setReportType(ReportTypeBrief);
 
 	VERIFY(connect(theApp->preferences(), &Preferences::companyNameChanged, this, &ReportsPage::updateContent));
+	VERIFY(connect(m_saveToPdfAction, &QAction::triggered, this, &ReportsPage::exportToPdf));
+
+	HeaderControlsContainer* store = theApp->headerControlsContainer();
+	store->addAction(m_saveToPdfAction, PageFactory::AuditReportPage);
 }
 
 void ReportsPage::setReportType(ReportType reportType)
@@ -177,6 +188,35 @@ void ReportsPage::changePlaceholderInContent(const QByteArray& placeholder, cons
 void ReportsPage::updateContent()
 {
 	setReportType(m_reportType);
+}
+
+void ReportsPage::exportToPdf()
+{
+	PdfReportExporter exporter;
+	doExport(&exporter);
+}
+
+void ReportsPage::doExport(IReportExporter* exporter) const
+{
+	const QString fileName = QFileDialog::getSaveFileName(0, exporter->description(), ".", exporter->fileMask());
+
+	if (fileName.isEmpty())
+	{
+		return;
+	}
+
+	QFile file(fileName);
+
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	if (!file.open(QIODevice::WriteOnly))
+	{
+		serviceLocator->service<INotificationService>()->error(tr("Export"), tr("Export failed"));
+	}
+
+	exporter->doExport(&file, m_reportType, &m_reportDataProvider);
+	serviceLocator->service<INotificationService>()->info(tr("Export"), tr("Export has been finished"));
+
+	file.close();
 }
 
 #ifndef PRODUCTION

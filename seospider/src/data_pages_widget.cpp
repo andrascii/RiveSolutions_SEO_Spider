@@ -65,12 +65,6 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 	
 	m_stackedWidget->addWidget(loadingWidget);
 
-
-	HeaderControlsContainer* store = theApp->headerControlsContainer();
-
-	// just test
-	store->addWidget(new QPushButton(tr("Export to PDF"), this), PageFactory::AuditReportPage);
-
 	VERIFY(connect(theApp->headerControlsContainer(), &HeaderControlsContainer::currentControlsChanged, 
 		this, &DataPagesWidget::onDynamicControlsChanged));
 }
