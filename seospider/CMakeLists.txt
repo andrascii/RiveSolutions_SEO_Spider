@@ -119,4 +119,5 @@ target_link_libraries(
 	Qt5::Network
 	Qt5::Svg
 	Qt5::WebEngineWidgets
+	Qt5::PrintSupport
 )

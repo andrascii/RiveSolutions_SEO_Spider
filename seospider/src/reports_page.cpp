@@ -12,6 +12,8 @@
 namespace SeoSpider
 {
 
+using namespace CrawlerEngine;
+
 ReportsPage::ReportsPage(QWidget* parent)
 	: QFrame(parent)
 	, m_webEngineView(new QWebEngineView(this))

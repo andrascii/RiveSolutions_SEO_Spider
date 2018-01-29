@@ -85,16 +85,20 @@ void Crawler::initialize()
 	m_downloader = createDownloader();
 	m_webScreenShot = createWebScreenShot();
 
-	ThreadManager::instance().moveObjectToThread(m_downloader->qobject(), "DownloaderThread");
-	ThreadManager::instance().moveObjectToThread(createHostInfoProvider()->qobject(), "BackgroundThread");
-	ThreadManager::instance().moveObjectToThread(m_modelController, "BackgroundThread");
-	ThreadManager::instance().moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
+	ThreadManager& threadManager = ThreadManager::instance();
+
+	threadManager.moveObjectToThread(m_downloader->qobject(), "DownloaderThread");
+	threadManager.moveObjectToThread(m_modelController, "BackgroundThread");
+	threadManager.moveObjectToThread(createHostInfoProvider()->qobject(), "BackgroundThread");
+	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
 		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
+
 		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)), m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
-		ThreadManager::instance().moveObjectToThread(m_workers.back(), QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
+
+		threadManager.moveObjectToThread(m_workers.back(), QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
 	}
 
 	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
