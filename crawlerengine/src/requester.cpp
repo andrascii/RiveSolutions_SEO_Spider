@@ -45,14 +45,14 @@ void Requester::start()
 {
 	m_state = StateWorking;
 
-	ThreadMessageDispatcher::forCurrentThread()->startRequester(shared_from_this());
+	ThreadMessageDispatcher::forCurrentThread()->startRequest(shared_from_this());
 }
 
 void Requester::stop()
 {
 	m_state = StateStopped;
 
-	ThreadMessageDispatcher::forCurrentThread()->stopRequester(shared_from_this());
+	ThreadMessageDispatcher::forCurrentThread()->stopRequest(shared_from_this());
 }
 
 void Requester::processResponse(const IResponse& response) const

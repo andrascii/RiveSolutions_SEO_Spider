@@ -8,7 +8,6 @@
 #include "crawler.h"
 #include "iuniqueness_checker.h"
 
-
 namespace CrawlerEngine
 {
 
@@ -278,9 +277,12 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 		}
 		catch (const std::future_error& error)
 		{
-			if (error.code() != std::make_error_condition(std::future_errc::promise_already_satisfied))
+			if (error.code() == std::make_error_condition(std::future_errc::promise_already_satisfied))
 			{
 				DEBUG_ASSERT(!"At this stage promise must not be valid! Possibly problem in downloader!");
+			}
+			else
+			{
 				throw;
 			}
 		}

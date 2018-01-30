@@ -218,7 +218,7 @@ void Downloader::processReply(QNetworkReply* reply)
 	const QByteArray body = processBody ? reply->readAll() : QByteArray();
 	Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 
-	if (redirectUrl.isRelative())
+	if (redirectUrl.isValid() && redirectUrl.isRelative())
 	{
 		redirectUrl = PageParserHelpers::resolveRelativeUrl(redirectUrl, reply->url());
 	}

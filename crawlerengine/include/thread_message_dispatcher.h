@@ -16,8 +16,8 @@ public:
 	static std::shared_ptr<ThreadMessageDispatcher> forThread(QThread* thread);
 	static std::shared_ptr<ThreadMessageDispatcher> forCurrentThread();
 
-	void startRequester(RequesterSharedPtr requester);
-	void stopRequester(RequesterSharedPtr requester);
+	void startRequest(RequesterSharedPtr requester);
+	void stopRequest(RequesterSharedPtr requester);
 	void postResponse(RequesterSharedPtr requester, IResponseSharedPtr response);
 
 protected:
