@@ -4,6 +4,12 @@
     <Description>Install Seo Spider.</Description>
     <Version>1.0.0</Version>
     <ReleaseDate>2018-01-20</ReleaseDate>
+	<Default>true</Default>
+	<Script>installscript.qs</Script>
+	<UserInterfaces>
+		<UserInterface>registerfilecheckboxform.ui</UserInterface>
+		<UserInterface>openfilecheckboxform.ui</UserInterface>
+	</UserInterfaces>
     <Licenses>
         <License name="Rive Solutions License" file="license.txt" />
     </Licenses>

@@ -5,14 +5,15 @@
 	<Title>Seo Spider Setup</Title>
 	<Publisher>Rive Solutions</Publisher>
 	<ProductUrl>http://j775420.myjino.ru/seospider/</ProductUrl>
-	<!--<Background>brand-logo-best-png.png</Background>-->
-	<Logo>brand-logo-best-png.png</Logo>
+	<InstallerWindowIcon>robot</InstallerWindowIcon>
 	<InstallerApplicationIcon>robot</InstallerApplicationIcon>
-	<WizardStyle>Mac</WizardStyle>
-	<StyleSheet>styles.qss</StyleSheet>
+	<Logo>brand-logo-best-png.png</Logo>
+	<WizardStyle>Modern</WizardStyle>
+	<!--<StyleSheet>styles.qss</StyleSheet>-->
 	<RunProgram>@TargetDir@/seospider.exe</RunProgram>
 	<StartMenuDir>Seo Spider</StartMenuDir>
 	<MaintenanceToolName>Uninstall SeoSpider</MaintenanceToolName>
 	<AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
+	<Background>background.png</Background>
 	<TargetDir>@HomeDir@/SeoSpider</TargetDir>
 </Installer>
