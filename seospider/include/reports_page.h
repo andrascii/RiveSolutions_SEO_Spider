@@ -5,6 +5,8 @@
 namespace SeoSpider
 {
 
+class IReportExporter;
+
 class ReportsPage : public QFrame
 {
 	Q_OBJECT
@@ -33,6 +35,10 @@ private:
 
 	Q_SLOT void updateContent();
 
+	Q_SLOT void exportToPdf();
+
+	void doExport(IReportExporter* exporter) const;
+
 #ifndef PRODUCTION
 
 	void setDebugReportType(ReportType reportType);
@@ -45,6 +51,8 @@ private:
 	ReportType m_reportType;
 	ReportDataProvider m_reportDataProvider;
 	int m_updateTimerId;
+
+	QAction* m_saveToPdfAction;
 };
 
 }

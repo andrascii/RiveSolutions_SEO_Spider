@@ -95,6 +95,7 @@
 #include <QFontDatabase>
 #include <QtGlobal>
 #include <QWebEngineView>
+#include <QPrinter>
 
 #include "common_macro_helpers.h"
 

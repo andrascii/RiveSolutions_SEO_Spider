@@ -6,6 +6,8 @@
 #include "download_request.h"
 #include "download_response.h"
 #include "crawler.h"
+#include "iuniqueness_checker.h"
+
 
 namespace CrawlerEngine
 {
@@ -16,6 +18,7 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	, m_uniqueLinkStore(uniqueLinkStore)
 	, m_isRunning(false)
 	, m_defferedProcessingTimer(new QTimer(this))
+	, m_uniquenessChecker(createUniquenessChecker())
 {
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
@@ -37,7 +40,7 @@ std::future<std::vector<CrawlerRequest>> CrawlerWorkerThread::pendingUrls() cons
 
 void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
 {
-	ASSERT(thread() == QThread::currentThread());
+	DEBUG_ASSERT(thread() == QThread::currentThread());
 
 	m_isRunning = true;
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(options, robotsTxtRules));
@@ -49,7 +52,7 @@ void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, Robots
 
 void CrawlerWorkerThread::stop()
 {
-	ASSERT(thread() == QThread::currentThread());
+	DEBUG_ASSERT(thread() == QThread::currentThread());
 
 	m_isRunning = false;
 
@@ -57,9 +60,9 @@ void CrawlerWorkerThread::stop()
 	{
 		try
 		{
-			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(preparePagesAfterStop());
+			DEBUGLOG << "Set value to promise";
 
-			INFOLOG << "set value to promise after stop crawling";
+			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(preparePagesAfterStop());
 		}
 		catch (const std::future_error& error)
 		{
@@ -73,8 +76,6 @@ void CrawlerWorkerThread::stop()
 
 void CrawlerWorkerThread::extractUrlAndDownload()
 {
-	ASSERT(thread() == QThread::currentThread());
-
 	if (!m_isRunning)
 	{
 		return;
@@ -103,6 +104,9 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 
 	if (isUrlExtracted)
 	{
+		ASSERT(!m_uniquenessChecker->hasRequest(crawlerRequest));
+		m_uniquenessChecker->registrateRequest(crawlerRequest);
+
 		DownloadRequest request(crawlerRequest);
 		m_currentRequest = crawlerRequest;
 		m_downloadRequester.reset(request, this, &CrawlerWorkerThread::onLoadingDone);
@@ -223,8 +227,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
 			page->resourceType = ResourceType::ResourceHtml;
 
-			emit pageParsed(page);
-			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+			onPageParsed(page);
 		}
 	};
 
@@ -233,10 +236,8 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
 }
 
-void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResponse& response)
+void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& response)
 {
-	Q_UNUSED(requester);
-
 	m_downloadRequester.reset();
 
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
@@ -261,8 +262,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResp
 
 		if (urlAdded)
 		{
-			emit pageParsed(page);
-			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+			onPageParsed(page);
 		}
 
 		checkUrl = true;
@@ -270,7 +270,20 @@ void CrawlerWorkerThread::onLoadingDone(Requester* requester, const DownloadResp
 
 	if (!m_isRunning)
 	{
-		m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(preparePagesAfterStop());
+		DEBUGLOG << "Set value to promise";
+
+		try
+		{
+			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(preparePagesAfterStop());
+		}
+		catch (const std::future_error& error)
+		{
+			if (error.code() != std::make_error_condition(std::future_errc::promise_already_satisfied))
+			{
+				DEBUG_ASSERT(!"At this stage promise must not be valid! Possibly problem in downloader!");
+				throw;
+			}
+		}
 	}
 
 	extractUrlAndDownload();
@@ -282,14 +295,20 @@ void CrawlerWorkerThread::onStart()
 	{
 		for (const PagesAcceptedAfterStop::PageRequestPair& pair : m_pagesAcceptedAfterStop.pages)
 		{
-			emit pageParsed(pair.second);
-			CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+			onPageParsed(pair.second);
 		}
 	}
 
 	m_pagesAcceptedAfterStop.pages.clear();
 
 	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::vector<CrawlerRequest>>();
+}
+
+void CrawlerWorkerThread::onPageParsed(const ParsedPagePtr& parsedPage) const noexcept
+{
+	emit pageParsed(parsedPage);
+
+	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 }
 
 std::vector<CrawlerRequest> CrawlerWorkerThread::preparePagesAfterStop() const

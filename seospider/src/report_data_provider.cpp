@@ -166,7 +166,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::SiteLink:
 		{
-			return QStringLiteral("");
+			return QStringLiteral("http://example.com");
 		}
 		case ReportDataKeys::FoundProblems:
 		{

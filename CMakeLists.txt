@@ -24,7 +24,7 @@ set(CMAKE_AUTOMOC ON)
 
 set(QtXlsxWriter_DIR ${CMAKE_CURRENT_BINARY_DIR}/${QtXlsxWriter})
 
-find_package(Qt5 REQUIRED Widgets Network Svg WebEngineWidgets Xml XmlPatterns COMPONENTS)
+find_package(Qt5 REQUIRED PrintSupport Widgets Network Svg WebEngineWidgets Xml XmlPatterns COMPONENTS)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED system date_time COMPONENTS)
