@@ -40,12 +40,13 @@ private:
 	bool isReplyProcessed(QNetworkReply* reply) const noexcept;
 	void markReplyAsProcessed(QNetworkReply* reply) const noexcept;
 	void load(RequesterSharedPtr requester);
-	void loadHelper(const CrawlerRequest& request);
+	int loadHelper(const CrawlerRequest& request, int parentRequestId = -1);
 
 private:
 	QNetworkAccessManager* m_networkAccessor;
-	QMap<CrawlerRequest, RequesterWeakPtr> m_requesters;
-	QMap<CrawlerRequest, std::shared_ptr<DownloadResponse>> m_responses;
+	QMap<int, RequesterWeakPtr> m_requesters;
+	QVector<int> m_activeRequests;
+	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
 	QByteArray m_userAgent;
 	Common::RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	std::queue<RequesterSharedPtr> m_requesterQueue;

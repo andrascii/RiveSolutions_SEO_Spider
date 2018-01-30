@@ -191,29 +191,29 @@ void Downloader::processReply(QNetworkReply* reply)
 		reply->header(QNetworkRequest::ContentTypeHeader).toString()
 	);
 
-	const DownloadRequestType requestType = static_cast<DownloadRequestType>(reply->attribute(QNetworkRequest::User).toInt());
+	const DownloadRequestType requestType = static_cast<DownloadRequestType>(reply->property("crawlerRequestType").toInt());
 	const Common::StatusCode statusCode = static_cast<Common::StatusCode>(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
-	const CrawlerRequest key{ reply->url(), requestType };
+	const int requestId = reply->property("requestId").toInt();
 
-	if (!m_requesters.contains(key))
+	if (!m_requesters.contains(requestId))
 	{
-		m_responses.remove(key);
+		m_responses.remove(requestId);
 		return;
 	}
 
-	const RequesterSharedPtr requester = m_requesters[key].lock();
+	const RequesterSharedPtr requester = m_requesters[requestId].lock();
 
 	if (!requester)
 	{
 		return;
 	}
 
-	if (!m_responses.contains(key))
+	if (!m_responses.contains(requestId))
 	{
-		m_responses[key] = std::make_shared<DownloadResponse>();
+		m_responses[requestId] = std::make_shared<DownloadResponse>();
 	}
 
-	std::shared_ptr<DownloadResponse> response = m_responses[key];
+	std::shared_ptr<DownloadResponse> response = m_responses[requestId];
 
 	const QByteArray body = processBody ? reply->readAll() : QByteArray();
 	Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
@@ -227,21 +227,20 @@ void Downloader::processReply(QNetworkReply* reply)
 		statusCode == Common::StatusCode::MovedTemporarily302)
 	{
 		const CrawlerRequest redirectKey{ redirectUrl, requestType };
-
-		m_requesters[redirectKey] = m_requesters[key];
-		m_responses[redirectKey] = response;
-
-		m_requesters.remove(key);
-		m_responses.remove(key);
+		loadHelper(redirectKey, requestId);
 
 		response->hopsChain.addHop(Hop{ reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs() });
-		loadHelper(redirectKey);
+		
 		return;
 	}
 	
 	response->hopsChain.addHop(Hop(reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs()));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
-	m_responses.remove(key);
+
+	m_responses.remove(requestId);
+	m_requesters.remove(requestId);
+
+	ASSERT(m_activeRequests.removeOne(requestId));
 }
 
 bool Downloader::isReplyProcessed(QNetworkReply* reply) const noexcept
@@ -271,16 +270,16 @@ void Downloader::load(RequesterSharedPtr requester)
 	ASSERT(!m_uniquenessChecker->hasRequest(request->requestInfo));
 	m_uniquenessChecker->registrateRequest(request->requestInfo);
 
-	loadHelper(request->requestInfo);
+	const int requestId = loadHelper(request->requestInfo);
 
-	m_requesters[request->requestInfo] = requester;
+	m_requesters[requestId] = requester;
 }
 
-void Downloader::loadHelper(const CrawlerRequest& request)
+int Downloader::loadHelper(const CrawlerRequest& request, int parentRequestId)
 {
+	static int s_request_id = 0;
 	QNetworkReply* reply = nullptr;
 	QNetworkRequest networkRequest(request.url);
-	networkRequest.setAttribute(QNetworkRequest::User, static_cast<int>(DownloadRequestType::RequestTypeGet));
 	networkRequest.setRawHeader("User-Agent", m_userAgent);
 
 	switch (request.requestType)
@@ -297,10 +296,22 @@ void Downloader::loadHelper(const CrawlerRequest& request)
 		}
 		default:
 		{
-			DEBUG_ASSERT(!"Unsupported request type");
+			ASSERT(!"Unsupported request type");
 			break;
 		}
 	}
+
+	reply->setProperty("crawlerRequestType", static_cast<int>(request.requestType));
+	
+	const int resultRequestId = parentRequestId == -1 ? s_request_id : parentRequestId;
+	reply->setProperty("requestId", resultRequestId);
+
+	if (parentRequestId == -1)
+	{
+		m_activeRequests.push_back(resultRequestId);
+	}
+
+	++s_request_id;
 
 	VERIFY(connect(reply, &QNetworkReply::metaDataChanged, this, [this, reply]() { metaDataChanged(reply); }, Qt::QueuedConnection));
 
@@ -308,6 +319,8 @@ void Downloader::loadHelper(const CrawlerRequest& request)
 
 	VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this,
 		[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
+
+	return resultRequestId;
 }
 
 }
