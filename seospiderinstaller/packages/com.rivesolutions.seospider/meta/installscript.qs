@@ -20,7 +20,7 @@ Component.prototype.createOperations = function()
 
     var isRegisterFileChecked = component.userInterface("RegisterFileCheckBoxForm").RegisterFileCheckBox.checked;
     if (installer.value("os") === "win") {
-        var iconId = 1;
+        var iconId = 0;
         var seoSpiderPath =  "@TargetDir@\\seospider.exe";
         component.addOperation("RegisterFileType",
                                component.unusualFileType,
