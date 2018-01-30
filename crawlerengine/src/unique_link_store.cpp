@@ -97,7 +97,7 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 		m_crawledUrlList.insert(std::move(*iter));
 		m_pendingUrlList.erase(iter);
 	}
-	
+
 	ASSERT(m_lastPendingSizeChange == -1);
 
 	return true;

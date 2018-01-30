@@ -85,12 +85,12 @@ std::shared_ptr<ThreadMessageDispatcher> ThreadMessageDispatcher::forCurrentThre
 	return ThreadMessageDispatcher::forThread(QThread::currentThread());
 }
 
-void ThreadMessageDispatcher::startRequester(RequesterSharedPtr requester)
+void ThreadMessageDispatcher::startRequest(RequesterSharedPtr requester)
 {
 	messageQueue().addMessage(Message::startRequestMessage(requester));
 }
 
-void ThreadMessageDispatcher::stopRequester(RequesterSharedPtr requester)
+void ThreadMessageDispatcher::stopRequest(RequesterSharedPtr requester)
 {
 	messageQueue().addMessage(Message::stopRequestMessage(requester));
 }

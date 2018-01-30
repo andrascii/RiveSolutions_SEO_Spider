@@ -45,7 +45,6 @@ private:
 	std::atomic<int> m_modelControllerAcceptedLinksCount;
 	std::atomic<int> m_modelControllerCrawledLinksCount;
 	std::atomic<int> m_sequencedDataCollectionLinksCount;
-
 };
 
 }
