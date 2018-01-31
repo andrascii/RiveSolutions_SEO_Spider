@@ -97,6 +97,7 @@ struct unary_function
 #include <QProcess>
 #include <QDateTime>
 #include <QFile>
+#include <QDir>
 #include <QDataStream>
 #include <QLocalSocket>
 #include <QLocalServer>
