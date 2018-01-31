@@ -64,7 +64,7 @@ int PageLinksStorageAdapter::itemCount() const noexcept
 		return 0;
 	}
 
-	return static_cast<int>(m_parsedPageInfo->itemCount(m_context));
+	return static_cast<int>(m_parsedPageInfo->linksCount(m_context));
 }
 
 QVariant PageLinksStorageAdapter::item(const QModelIndex& index) const noexcept
@@ -74,7 +74,7 @@ QVariant PageLinksStorageAdapter::item(const QModelIndex& index) const noexcept
 		return QVariant();
 	}
 
-	DEBUG_ASSERT(index.row() < m_parsedPageInfo->itemCount(m_context));
+	DEBUG_ASSERT(index.row() < m_parsedPageInfo->linksCount(m_context));
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
 	return m_parsedPageInfo->itemValue(m_availableColumns[index.column()], m_context, index.row());

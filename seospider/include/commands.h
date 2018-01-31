@@ -1,6 +1,7 @@
 #pragma once
 
 #include "data_collection_groups_factory.h"
+#include "parsed_page_info.h"
 
 namespace CrawlerEngine
 {
@@ -16,6 +17,8 @@ namespace SeoSpider
 class ICommand
 {
 public:
+	virtual ~ICommand() = default;
+
 	virtual QIcon icon() const = 0;
 	virtual const char* description() const noexcept = 0;
 	virtual void execute() = 0;
@@ -84,6 +87,55 @@ private:
 	const CrawlerEngine::SequencedDataCollection* m_dataCollection;
 	std::vector<DCStorageDescription> m_storageDescriptions;
 };
+
+class ExportUrlInfoToXlsxCommand : public ICommand
+{
+public:
+	ExportUrlInfoToXlsxCommand(const CrawlerEngine::ISequencedStorage* storage,
+		const QVector<ParsedPageInfo::Column>& columns,
+		int row
+	);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	const CrawlerEngine::ISequencedStorage* m_storage;
+	QVector<ParsedPageInfo::Column> m_availableColumns;
+	int m_row;
+};
+
+
+class ExportUrlOutlinksToXlsxCommand : public ICommand
+{
+public:
+	ExportUrlOutlinksToXlsxCommand(const CrawlerEngine::ISequencedStorage* storage, int row);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	const CrawlerEngine::ISequencedStorage* m_storage;
+	int m_row;
+};
+
+
+class ExportUrlInlinksToXlsxCommand : public ICommand
+{
+public:
+	ExportUrlInlinksToXlsxCommand(const CrawlerEngine::ISequencedStorage* storage, int row);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	const CrawlerEngine::ISequencedStorage* m_storage;
+	int m_row;
+};
+
 
 class CopyToClipboardAllPagesCommand : public ICommand
 {

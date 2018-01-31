@@ -27,7 +27,7 @@ set(QtXlsxWriter_DIR ${CMAKE_CURRENT_BINARY_DIR}/${QtXlsxWriter})
 find_package(Qt5 REQUIRED PrintSupport Widgets Network Svg WebEngineWidgets Xml XmlPatterns COMPONENTS)
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost REQUIRED system date_time COMPONENTS)
+find_package(Boost REQUIRED system date_time program_options COMPONENTS)
 
 MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
   IF(MSVC)

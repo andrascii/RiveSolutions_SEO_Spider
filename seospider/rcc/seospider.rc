@@ -1,4 +1,5 @@
 IDI_ICON1 ICON DISCARDABLE "images/robot.ico"
+IDI_ICON2 ICON DISCARDABLE "images/xml-file.ico"
 
 #include <windows.h>
 

@@ -43,6 +43,18 @@ public:
 		return m_sequencedStorage[idx];
 	}
 
+	virtual const ParsedPage* get(int idx) const noexcept override
+	{
+		std::lock_guard<std::mutex> locker(m_mutex);
+		return m_sequencedStorage[idx];
+	}
+
+	virtual ParsedPage* get(int idx) noexcept override
+	{
+		std::lock_guard<std::mutex> locker(m_mutex);
+		return m_sequencedStorage[idx];
+	}
+
 protected:
 	inline virtual void pushBack(const ParsedPagePtr& page) override
 	{

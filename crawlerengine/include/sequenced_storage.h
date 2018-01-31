@@ -42,6 +42,20 @@ public:
 		return const_cast<ParsedPage*>(thisConst[idx]);
 	}
 
+	virtual const ParsedPage* get(int idx) const noexcept override
+	{
+		ASSERT(idx >= 0 && idx < m_pages.size());
+
+		return m_pages[idx].get();
+	}
+
+	virtual ParsedPage* get(int idx) noexcept override
+	{
+		const SequencedStorage& thisConst = *static_cast<SequencedStorage const * const>(this);
+
+		return const_cast<ParsedPage*>(thisConst[idx]);
+	}
+
 protected:
 	inline virtual void pushBack(const ParsedPagePtr& page) override
 	{

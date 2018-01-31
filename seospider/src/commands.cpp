@@ -5,7 +5,6 @@
 #include "sequenced_data_collection.h"
 #include "application.h"
 #include "storage_adapter_factory.h"
-#include "parsed_page_info.h"
 #include "main_window.h"
 
 namespace SeoSpider
@@ -182,6 +181,154 @@ void ExportDataToXlsxCommand::execute()
 		}
 
 		++rowNumber;
+	}
+
+	xlsxDocument.save();
+}
+
+
+ExportUrlInfoToXlsxCommand::ExportUrlInfoToXlsxCommand(const CrawlerEngine::ISequencedStorage* storage,
+	const QVector<ParsedPageInfo::Column>& columns,
+	int row)
+	: m_storage(storage)
+	, m_availableColumns(columns)
+	, m_row(row)
+{
+	DEBUG_ASSERT(m_row >= 0);
+}
+
+QIcon ExportUrlInfoToXlsxCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* ExportUrlInfoToXlsxCommand::description() const noexcept
+{
+	return "Export Url Info to Xlsx";
+}
+
+void ExportUrlInfoToXlsxCommand::execute()
+{
+	const QString path = QFileDialog::getSaveFileName(
+		theApp->mainWindow(),
+		QObject::tr("Save To Excel"),
+		QString(),
+		QString("*.xlsx")
+	);
+
+	if (path.isEmpty())
+	{
+		return;
+	}
+
+	QXlsx::Document xlsxDocument(path);
+
+	ParsedPageInfo parsedPageInfoProvider(m_storage->get(m_row));
+
+	int rowNumber = 1;
+
+	for (ParsedPageInfo::Column column : m_availableColumns)
+	{
+		xlsxDocument.write(rowNumber, 1, ParsedPageInfo::itemTypeDescription(column));
+		xlsxDocument.write(rowNumber, 2, parsedPageInfoProvider.itemValue(column));
+
+		++rowNumber;
+	}
+
+	xlsxDocument.save();
+}
+
+
+
+ExportUrlOutlinksToXlsxCommand::ExportUrlOutlinksToXlsxCommand(const CrawlerEngine::ISequencedStorage* storage, int row)
+	: m_storage(storage)
+	, m_row(row)
+{
+}
+
+QIcon ExportUrlOutlinksToXlsxCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* ExportUrlOutlinksToXlsxCommand::description() const noexcept
+{
+	return "Export Url Outlinks to Xlsx";
+}
+
+void ExportUrlOutlinksToXlsxCommand::execute()
+{
+	const QString path = QFileDialog::getSaveFileName(
+		theApp->mainWindow(),
+		QObject::tr("Save To Excel"),
+		QString(),
+		QString("*.xlsx")
+	);
+
+	if (path.isEmpty())
+	{
+		return;
+	}
+
+	QXlsx::Document xlsxDocument(path);
+
+	ParsedPageInfo parsedPageInfoProvider(m_storage->get(m_row));
+
+	int rowNumber = 1;
+
+	xlsxDocument.write(rowNumber++, 1, QString("Outlinks for ") + parsedPageInfoProvider.itemValue(ParsedPageInfo::Column::UrlColumn).toString());
+
+	for (std::size_t i = 0; i < parsedPageInfoProvider.linksCount(PageLinkContext::LinksOnThisPage); ++i)
+	{
+		xlsxDocument.write(rowNumber++, 1, parsedPageInfoProvider.itemValue(ParsedPageInfo::PageLinksColumn::UrlColumn, PageLinkContext::LinksOnThisPage, i));
+	}
+
+	xlsxDocument.save();
+}
+
+
+
+ExportUrlInlinksToXlsxCommand::ExportUrlInlinksToXlsxCommand(const CrawlerEngine::ISequencedStorage* storage, int row)
+	: m_storage(storage)
+	, m_row(row)
+{
+}
+
+QIcon ExportUrlInlinksToXlsxCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* ExportUrlInlinksToXlsxCommand::description() const noexcept
+{
+	return "Export Url Inlinks to Xlsx";
+}
+
+void ExportUrlInlinksToXlsxCommand::execute()
+{
+	const QString path = QFileDialog::getSaveFileName(
+		theApp->mainWindow(),
+		QObject::tr("Save To Excel"),
+		QString(),
+		QString("*.xlsx")
+	);
+
+	if (path.isEmpty())
+	{
+		return;
+	}
+
+	QXlsx::Document xlsxDocument(path);
+
+	ParsedPageInfo parsedPageInfoProvider(m_storage->get(m_row));
+
+	int rowNumber = 1;
+
+	xlsxDocument.write(rowNumber++, 1, QString("Inlinks for ") + parsedPageInfoProvider.itemValue(ParsedPageInfo::Column::UrlColumn).toString());
+
+	for (std::size_t i = 0; i < parsedPageInfoProvider.linksCount(PageLinkContext::LinksToThisPage); ++i)
+	{
+		xlsxDocument.write(rowNumber++, 1, parsedPageInfoProvider.itemValue(ParsedPageInfo::PageLinksColumn::UrlColumn, PageLinkContext::LinksToThisPage, i));
 	}
 
 	xlsxDocument.save();
