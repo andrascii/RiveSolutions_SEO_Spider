@@ -120,6 +120,9 @@ std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QMo
 		commands.push_back(std::make_shared<CopyToClipboardAllPagesCommand>(m_associatedStorage));
 		commands.push_back(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, index.row()));
 		commands.push_back(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row()));
+		commands.push_back(std::make_shared<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, index.row()));
+		commands.push_back(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, index.row()));
+		commands.push_back(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, index.row()));
 	}
 
 	const std::optional<QByteArray> ipv4Address = theApp->crawler()->currentCrawledSiteIPv4();

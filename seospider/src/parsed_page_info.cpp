@@ -178,7 +178,7 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 	return value;
 }
 
-size_t ParsedPageInfo::itemCount(PageLinkContext context) const
+size_t ParsedPageInfo::linksCount(PageLinkContext context) const
 {
 	if (!m_parsedPage)
 	{
