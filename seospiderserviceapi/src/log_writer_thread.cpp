@@ -10,7 +10,7 @@ LogWriterThread::LogWriterThread()
 	qRegisterMetaType<SeverityLevel>("SeverityLevel");
 
 	QDir::setCurrent(qApp->applicationDirPath());
-	m_outputFile.setFileName("log_data.log");
+	m_outputFile.setFileName(QStringLiteral("log_data.log"));
 	m_outputFile.open(QIODevice::WriteOnly);
 	m_outputStream.setDevice(&m_outputFile);
 
