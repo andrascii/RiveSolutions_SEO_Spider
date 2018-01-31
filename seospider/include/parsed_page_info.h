@@ -81,7 +81,7 @@ public:
 
 	QVariant itemValue(Column column) const;
 	QVariant itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number) const;
-	size_t itemCount(PageLinkContext context) const;
+	size_t linksCount(PageLinkContext context) const;
 
 	const CrawlerEngine::ParsedPage* associatedParsedPage() const noexcept;
 
