@@ -547,7 +547,13 @@ void Crawler::saveToFile(const QString& fileName)
 
 void Crawler::loadFromFile(const QString& fileName)
 {
-	ASSERT(state() != State::StateWorking);
+	if (state() == Crawler::StateWorking)
+	{
+		ServiceLocator* serviceLocator = ServiceLocator::instance();
+		serviceLocator->service<INotificationService>()->info(tr("Error"), tr("Cannot open a document while crawler is working!"));
+
+		return;
+	}
 	
 	m_fileName = fileName;
 	setState(StateDeserializaton);

@@ -20,6 +20,8 @@
 #include "storage_adapter_factory.h"
 #include "summary_data_accessor_factory.h"
 #include "crawler_options.h"
+#include "command_line_handler.h"
+#include "command_line_keys.h"
 
 namespace SeoSpider
 {
@@ -33,6 +35,7 @@ const QByteArray s_riveSolutionsUserAgent = "RiveSolutionsBot/1.0 Alpha (+http:/
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
+	, m_commandLineHandler(new CommandLineHandler(argc, argv))
 	, m_preferences(new Preferences(this, this))
 	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
 	, m_sequencedDataCollection(nullptr)
@@ -51,13 +54,15 @@ Application::Application(int& argc, char** argv)
 	initializeStyleSheet();
 
 	showMainWindow();
-
+	
 	INFOLOG << "Started application under OS" << operatingSystemVersion();
 	INFOLOG << "Kernel type:" << QSysInfo::kernelType();
 	INFOLOG << "Kernel version:" << QSysInfo::kernelVersion();
 	INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 	INFOLOG << "App Version:" << applicationVersion();
+
+	mainWindow()->openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept

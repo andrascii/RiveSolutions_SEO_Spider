@@ -60,18 +60,24 @@ void MainWindow::saveFileAs()
 
 void MainWindow::openFile()
 {
-	if (theApp->crawler()->state() == Crawler::StateWorking)
-	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open a document while crawler is working!"),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
-
-		return;
-	}
-
-	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), QString(), QString("*.sxr"));
+	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*.sxr"));
 
 	if (path.isEmpty())
 	{
+		return;
+	}
+
+	theApp->crawler()->loadFromFile(path);
+}
+
+void MainWindow::openFileThroughCmd(QString path)
+{
+	if(!path.endsWith(".sxr"))
+	{
+		ERRLOG << path;
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
+			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+
 		return;
 	}
 
@@ -302,7 +308,7 @@ QString MainWindow::getSaveFilePath() const
 		return QString();
 	}
 
-	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), QString(), QString("*.sxr"));
+	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath(), QString("*.sxr"));
 
 	return path;
 }
