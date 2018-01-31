@@ -17,6 +17,7 @@ enum class StorageType
 	NonAsciiCharacterUrlStorageType,
 	TooLongUrlStorageType,
 	BrokenLinks,
+	WwwRedirectionsUrlStorageType,
 	Status4xxStorageType,
 	Status5xxStorageType,
 	Status302StorageType,
