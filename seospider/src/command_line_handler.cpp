@@ -5,7 +5,7 @@
 namespace SeoSpider
 {
 
-SeoSpider::CommandLineHandler::CommandLineHandler(int& argc, char** argv)
+CommandLineHandler::CommandLineHandler(int& argc, char** argv)
 {
 	m_optionsDescription.add_options()
 		(s_openSerializedFileKey, boost::program_options::value<std::string>(), s_openSerializedFileDescription)

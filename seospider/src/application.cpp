@@ -62,7 +62,10 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 	INFOLOG << "App Version:" << applicationVersion();
 
-	mainWindow()->openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
+	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
+	{
+		mainWindow()->openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
+	}
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
