@@ -49,7 +49,7 @@ protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const override;
 	virtual IWebScreenShot* createWebScreenShot() override;
 	virtual IDownloader* createDownloader() const override;
-	virtual void createSequencedDataCollection(QThread* targetThread) const override;
+	virtual void initSequencedDataCollection() override;
 
 private:
 	CrawlerOptions m_testCrawlerOptions;

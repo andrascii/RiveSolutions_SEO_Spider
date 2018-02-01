@@ -1,9 +1,25 @@
 #include "sequenced_data_collection.h"
+#include "unordered_data_collection.h"
 #include "sequenced_storage.h"
 #include "crawler_shared_state.h"
+#include "isequenced_storage.h"
 
 namespace CrawlerEngine
 {
+
+SequencedDataCollection::SequencedDataCollection(const UnorderedDataCollection* collection)
+{
+	ASSERT(collection);
+
+	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageAdded, this,
+		&SequencedDataCollection::addParsedPage, Qt::QueuedConnection));
+
+	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, this,
+		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
+
+	VERIFY(connect(collection, &UnorderedDataCollection::dataCleared, this,
+		&SequencedDataCollection::onDataCleared, Qt::QueuedConnection));
+}
 
 bool SequencedDataCollection::empty() const noexcept
 {
@@ -25,7 +41,7 @@ const ISequencedStorage* SequencedDataCollection::storage(StorageType type) cons
 	return iter != m_sequencedStorageMap.end() ? iter->second.get() : nullptr;
 }
 
-std::shared_ptr<CrawlerEngine::ISequencedStorage> SequencedDataCollection::createSequencedStorage() const
+std::shared_ptr<ISequencedStorage> SequencedDataCollection::createSequencedStorage() const
 {
 	return std::static_pointer_cast<ISequencedStorage>(std::make_shared<SequencedStorage>());
 }
@@ -74,7 +90,7 @@ void SequencedDataCollection::onDataCleared()
 	emit endClearData();
 }
 
-void SequencedDataCollection::initializeStorages()
+void SequencedDataCollection::initialize()
 {
 	m_sequencedStorageMap = std::initializer_list<std::pair<const StorageType, std::shared_ptr<ISequencedStorage>>>
 	{

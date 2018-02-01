@@ -28,10 +28,7 @@ public:
 	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept;
 
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
-
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
-
-	SequencedDataCollection* createSequencedDataCollection(QThread* targetThread) const;
 
 	void clearData();
 
@@ -59,19 +56,15 @@ public:
 
 signals:
 	void parsedPageAdded(ParsedPagePtr parsedPagePtr, StorageType type);
-	
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
-
 	void dataCleared();
 
 protected:
 	UnorderedStorageType& storage(StorageType type) noexcept;
-
 	const UnorderedStorageType& storage(StorageType type) const noexcept;
-	
+
 private:
 	void checkStorageType(StorageType type) const noexcept;
-
 	void initializeStorages();
 
 private:

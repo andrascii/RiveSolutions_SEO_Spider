@@ -6,6 +6,7 @@
 #include "application.h"
 #include "storage_adapter_factory.h"
 #include "main_window.h"
+#include "isequenced_storage.h"
 
 namespace SeoSpider
 {

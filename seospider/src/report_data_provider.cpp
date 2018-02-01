@@ -303,7 +303,16 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RobotsTxtImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			CrawlerEngine::Crawler* crawler = theApp->crawler();
+
+			CrawlerEngine::ErrorCategory::ErrorCategoryLevel level = CrawlerEngine::ErrorCategory::LevelNotError;
+
+			if (!crawler->robotsTxtLoader()->isValid())
+			{
+				level = CrawlerEngine::ErrorCategory::LevelError;
+			}
+
+			return m_pixmaps[level];
 		}
 		case ReportDataKeys::RobotsTxtCount:
 		{
@@ -319,7 +328,16 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::XmlSitemapImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			CrawlerEngine::Crawler* crawler = theApp->crawler();
+
+			CrawlerEngine::ErrorCategory::ErrorCategoryLevel level = CrawlerEngine::ErrorCategory::LevelNotError;
+
+			if (!crawler->xmlSitemapLoader()->isValid())
+			{
+				level = CrawlerEngine::ErrorCategory::LevelError;
+			}
+
+			return m_pixmaps[level];
 		}
 		case ReportDataKeys::XmlSitemapCount:
 		{

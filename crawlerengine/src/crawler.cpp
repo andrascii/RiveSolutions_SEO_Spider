@@ -20,6 +20,8 @@
 #include "get_host_info_response.h"
 #include "web_screenshot.h"
 #include "host_info.h"
+#include "isequenced_storage.h"
+
 
 namespace CrawlerEngine
 {
@@ -81,6 +83,8 @@ Crawler::~Crawler()
 void Crawler::initialize()
 {
 	m_modelController = new ModelController;
+
+	initSequencedDataCollection();
 
 	m_downloader = createDownloader();
 	m_webScreenShot = createWebScreenShot();
@@ -474,7 +478,6 @@ void Crawler::onDeserializationReadyToBeStarted()
 	m_deSerializationRequester->start();
 }
 
-
 void Crawler::tryToLoadCrawlingDependencies() const
 {
 	DEBUG_ASSERT(m_options.startCrawlingPage.isValid());
@@ -485,11 +488,11 @@ void Crawler::tryToLoadCrawlingDependencies() const
 	m_xmlSitemapLoader->load();
 }
 
-void Crawler::createSequencedDataCollection(QThread* targetThread) const
+void Crawler::initSequencedDataCollection()
 {
-	m_sequencedDataCollection.reset(m_modelController->data()->createSequencedDataCollection(targetThread));
+	m_sequencedDataCollection = std::make_unique<SequencedDataCollection>(m_modelController->data());
+	m_sequencedDataCollection->initialize();
 }
-
 
 IHostInfoProvider* Crawler::createHostInfoProvider() const
 {
@@ -516,11 +519,6 @@ ITaskProcessor* Crawler::createTaskProcessor() const
 
 SequencedDataCollection* Crawler::sequencedDataCollection() const
 {
-	if(!m_sequencedDataCollection)
-	{
-		createSequencedDataCollection(QThread::currentThread());
-	}
-
 	return m_sequencedDataCollection.get();
 }
 

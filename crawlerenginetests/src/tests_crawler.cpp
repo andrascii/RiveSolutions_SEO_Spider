@@ -36,12 +36,7 @@ TestsCrawler::~TestsCrawler()
 void TestsCrawler::initialize()
 {
 	Crawler::initialize();
-
-	m_sequencedDataCollectionThread = new QThread;
-
-	createSequencedDataCollection(m_sequencedDataCollectionThread);
 	m_receiver = std::make_unique<ParsedPageReceiver>(this, sequencedDataCollection());
-
 	m_sequencedDataCollectionThread->start();
 }
 
@@ -189,27 +184,12 @@ IDownloader* TestsCrawler::createDownloader() const
 	return m_downloader;
 }
 
-void TestsCrawler::createSequencedDataCollection(QThread* targetThread) const
+void TestsCrawler::initSequencedDataCollection()
 {
-	m_sequencedDataCollection.reset(new TestSequencedDataCollection);
-
-	QThread* mainThread = QApplication::instance() != nullptr ? QApplication::instance()->thread() : nullptr;
-	targetThread = targetThread != nullptr ? targetThread : mainThread;
-
-	ASSERT(targetThread != nullptr);
-
-	m_sequencedDataCollection->moveToThread(targetThread);
-
-	VERIFY(connect(m_modelController->data(), &UnorderedDataCollection::parsedPageAdded, m_sequencedDataCollection.get(),
-		&TestSequencedDataCollection::addParsedPage, Qt::QueuedConnection));
-
-	VERIFY(connect(m_modelController->data(), &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, m_sequencedDataCollection.get(),
-		&TestSequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
-
-	VERIFY(connect(m_modelController->data(), &UnorderedDataCollection::dataCleared, m_sequencedDataCollection.get(),
-		&TestSequencedDataCollection::onDataCleared, Qt::QueuedConnection));
-
-	static_cast<TestSequencedDataCollection*>(m_sequencedDataCollection.get())->initializeStorages();
+	m_sequencedDataCollectionThread = new QThread;
+	m_sequencedDataCollection = std::make_unique<TestSequencedDataCollection>(m_modelController->data());
+	m_sequencedDataCollection->initialize();
+	m_sequencedDataCollection->moveToThread(m_sequencedDataCollectionThread);
 }
 
 IHostInfoProvider* TestsCrawler::createHostInfoProvider() const

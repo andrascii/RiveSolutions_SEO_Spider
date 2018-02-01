@@ -1,6 +1,7 @@
 #include "summary_data_accessor.h"
 #include "application.h"
 #include "sequenced_data_collection.h"
+#include "isequenced_storage.h"
 
 namespace SeoSpider
 {

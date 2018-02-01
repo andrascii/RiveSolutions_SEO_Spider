@@ -31,31 +31,6 @@ const ParsedPagePtr UnorderedDataCollection::parsedPage(const ParsedPagePtr& par
 	return iter != unorderedStorage.end() ? *iter : ParsedPagePtr();
 }
 
-CrawlerEngine::SequencedDataCollection* UnorderedDataCollection::createSequencedDataCollection(QThread* targetThread) const
-{
-	SequencedDataCollection* sequencedDataCollection = new SequencedDataCollection;
-
-	QThread* mainThread = QApplication::instance() != nullptr ? QApplication::instance()->thread() : nullptr;
-	targetThread = targetThread != nullptr ? targetThread : mainThread;
-
-	ASSERT(targetThread != nullptr);
-
-	sequencedDataCollection->moveToThread(targetThread);
-
-	VERIFY(connect(this, &UnorderedDataCollection::parsedPageAdded, sequencedDataCollection,
-		&SequencedDataCollection::addParsedPage, Qt::QueuedConnection));
-
-	VERIFY(connect(this, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, sequencedDataCollection,
-		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
-
-	VERIFY(connect(this, &UnorderedDataCollection::dataCleared, sequencedDataCollection,
-		&SequencedDataCollection::onDataCleared, Qt::QueuedConnection));
-
-	sequencedDataCollection->initializeStorages();
-
-	return sequencedDataCollection;
-}
-
 void UnorderedDataCollection::clearData()
 {
 	initializeStorages();
