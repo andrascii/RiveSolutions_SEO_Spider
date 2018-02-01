@@ -15,6 +15,7 @@ const QMap<StorageType, ErrorCategory::ErrorCategoryLevel> s_storageTypeToLevel
 	{ StorageType::NonAsciiCharacterUrlStorageType, ErrorCategory::LevelWarning },
 	{ StorageType::TooLongUrlStorageType, ErrorCategory::LevelInfo },
 	{ StorageType::BrokenLinks, ErrorCategory::LevelError },
+	{ StorageType::WwwRedirectionsUrlStorageType, ErrorCategory::LevelWarning },
 	{ StorageType::Status4xxStorageType, ErrorCategory::LevelError },
 	{ StorageType::Status5xxStorageType, ErrorCategory::LevelError },
 	{ StorageType::Status302StorageType, ErrorCategory::LevelError },

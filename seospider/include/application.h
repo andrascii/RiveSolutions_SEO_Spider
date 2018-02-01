@@ -21,6 +21,7 @@ class StorageAdapterFactory;
 class SummaryDataAccessorFactory;
 class HeaderControlsContainer;
 class InternetConnectionNotificationManager;
+class CommandLineHandler;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -73,6 +74,8 @@ private:
 	void initialize();
 
 private:
+	std::unique_ptr<CommandLineHandler> m_commandLineHandler;
+
 	Preferences* m_preferences;
 	CrawlerEngine::Crawler* m_crawler;
 	CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;

@@ -359,7 +359,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::WwwFixedVersionCount:
 		{
-			return QObject::tr("TO DO check validness");
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::WwwRedirectionsUrlStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::Redirections302:
 		{

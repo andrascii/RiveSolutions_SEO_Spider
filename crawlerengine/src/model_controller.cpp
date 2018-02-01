@@ -207,6 +207,21 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 	{
 		data()->addParsedPage(incomingPage, StorageType::NonAsciiCharacterUrlStorageType);
 	}
+
+	if (incomingPage->redirectedUrl.isValid())
+	{
+		const QString host = incomingPage->url.host().toLower();
+		const QString redirectedHost = incomingPage->redirectedUrl.host().toLower();
+
+		if (host != redirectedHost)
+		{
+			const QString www = QString("www.");
+			if (www + host == redirectedHost || www + redirectedHost == host)
+			{
+				data()->addParsedPage(incomingPage, StorageType::WwwRedirectionsUrlStorageType);
+			}
+		}
+	}
 }
 
 void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage)
