@@ -24,6 +24,8 @@ public:
 	virtual bool isValid() const noexcept override;
 	virtual QObject* qobject() override;
 
+	Url robotsTxtUrl() const;
+
 signals:
 	virtual void ready() override;
 

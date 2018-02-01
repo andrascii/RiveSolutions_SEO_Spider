@@ -124,6 +124,7 @@ std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QMo
 		commands.push_back(std::make_shared<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, index.row()));
 		commands.push_back(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, index.row()));
 		commands.push_back(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, index.row()));
+		commands.push_back(std::make_shared<OpenRobotsTxtFileCommand>());
 	}
 
 	const std::optional<QByteArray> ipv4Address = theApp->crawler()->currentCrawledSiteIPv4();

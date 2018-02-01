@@ -8,24 +8,20 @@
 namespace CrawlerEngine
 {
 
-
 class ISpecificLoader;
 class IRobotsTxtRules;
 class IDownloader;
 class ITaskProcessor;
 class IWebScreenShot;
 class IHostInfoProvider;
-
 class CrawlerWorkerThread;
 class ModelController;
 class SequencedDataCollection;
 class Requester;
 class HostInfo;
-
 struct SiteMapSettings;
 struct TaskResponse;
 struct GetHostInfoResponse;
-
 
 struct CrawlingProgress
 {

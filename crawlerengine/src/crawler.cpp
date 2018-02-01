@@ -190,26 +190,26 @@ void Crawler::onAboutCrawlingState()
 
 	const CrawlerSharedState* state = CrawlerSharedState::instance();
 
-	const int seqCollCount = state->sequencedDataCollectionLinksCount();
-	const int controllerCrawled = state->modelControllerCrawledLinksCount();
-	const int controllerAccepted = state->modelControllerAcceptedLinksCount();
-	const int linkStoreCrawled = state->downloaderCrawledLinksCount();
-	const int linkStorePending = state->downloaderPendingLinksCount();
+	const int sequencedDataCollectionCount = state->sequencedDataCollectionLinksCount();
+	const int modelControllerCrawledLinksCount = state->modelControllerCrawledLinksCount();
+	const int modelControllerAcceptedLinksCount = state->modelControllerAcceptedLinksCount();
+	const int uniqueLinkStoreCrawledCount = state->downloaderCrawledLinksCount();
+	const int uniqueLinkStorePendingCount = state->downloaderPendingLinksCount();
 
-	const size_t controllerPending = qMax(linkStoreCrawled, controllerCrawled) - controllerCrawled;
-	const size_t seqCollPending = qMax(controllerAccepted, seqCollCount) - seqCollCount;
+	const size_t controllerPending = qMax(uniqueLinkStoreCrawledCount, modelControllerCrawledLinksCount) - modelControllerCrawledLinksCount;
+	const size_t seqCollPending = qMax(modelControllerAcceptedLinksCount, sequencedDataCollectionCount) - sequencedDataCollectionCount;
 	const size_t additionalPendingCount = controllerPending + seqCollPending;
 
-	progress.crawledLinkCount = linkStoreCrawled - additionalPendingCount;
-	progress.pendingLinkCount = linkStorePending + additionalPendingCount;
+	progress.crawledLinkCount = uniqueLinkStoreCrawledCount - additionalPendingCount;
+	progress.pendingLinkCount = uniqueLinkStorePendingCount + additionalPendingCount;
 
 	emit crawlingProgress(progress);
 
-	if (linkStorePending == 0 &&
-		seqCollCount > 0 &&
-		linkStoreCrawled == state->workersProcessedLinksCount() &&
+	if (uniqueLinkStorePendingCount == 0 &&
+		sequencedDataCollectionCount > 0 &&
+		uniqueLinkStoreCrawledCount == state->workersProcessedLinksCount() &&
 		state->modelControllerCrawledLinksCount() == state->workersProcessedLinksCount() &&
-		controllerAccepted == seqCollCount)
+		modelControllerAcceptedLinksCount == sequencedDataCollectionCount)
 	{
 		stopCrawling();
 		setState(StatePending);
@@ -317,7 +317,7 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
-		serviceLocator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
+		serviceLocator->service<INotificationService>()->error(tr("Serialization error"), tr("The operation has not been successful"));
 	}
 
 	m_serializationRequester.reset();
@@ -336,7 +336,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
-		serviceLocator->service<INotificationService>()->error(tr("Error"), tr("The operation has not been successful"));
+		serviceLocator->service<INotificationService>()->error(tr("Deserialization error"), tr("The operation has not been successful"));
 	}
 	else
 	{

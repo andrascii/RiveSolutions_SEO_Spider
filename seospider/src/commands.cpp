@@ -7,6 +7,9 @@
 #include "storage_adapter_factory.h"
 #include "main_window.h"
 #include "isequenced_storage.h"
+#include "robots_txt_loader.h"
+#include "helpers.h"
+#include "crawler.h"
 
 namespace SeoSpider
 {
@@ -512,7 +515,6 @@ void OpenInWaybackMachineCommand::execute()
 }
 
 
-
 ShowOtherDomainsOnIpCommand::ShowOtherDomainsOnIpCommand(const QByteArray& ipAddress)
 	: m_ipAddress(ipAddress)
 {
@@ -534,6 +536,31 @@ void ShowOtherDomainsOnIpCommand::execute()
 	// TODO: move this link to .cfg file
 	//
 	QDesktopServices::openUrl(QStringLiteral("https://www.bing.com/search?q=ip:%1").arg(QString(m_ipAddress)));
+}
+
+
+
+QIcon OpenRobotsTxtFileCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* OpenRobotsTxtFileCommand::description() const noexcept
+{
+	return "Open robots.txt File";
+}
+
+void OpenRobotsTxtFileCommand::execute()
+{
+	const CrawlerEngine::RobotsTxtLoader* loader = 
+		Common::Helpers::fast_cast<const CrawlerEngine::RobotsTxtLoader*>(theApp->crawler()->robotsTxtLoader());
+
+	const CrawlerEngine::Url url = loader->robotsTxtUrl();
+
+	if (loader->isValid() && url.isValid())
+	{
+		QDesktopServices::openUrl(url);
+	}
 }
 
 }

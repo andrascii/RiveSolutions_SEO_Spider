@@ -238,4 +238,12 @@ private:
 	QByteArray m_ipAddress;
 };
 
+class OpenRobotsTxtFileCommand : public ICommand
+{
+public:
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+};
+
 }

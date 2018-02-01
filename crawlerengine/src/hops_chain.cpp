@@ -58,4 +58,9 @@ const Hop& HopsChain::operator[](std::size_t idx) const noexcept
 	return m_hopsChain[idx];
 }
 
+bool HopsChain::empty() const noexcept
+{
+	return m_hopsChain.empty();
+}
+
 }
