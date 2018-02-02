@@ -3,22 +3,28 @@
 #include "parsed_page.h"
 #include "parsed_page_hasher_proxy.h"
 #include "parsed_page_comparator.h"
-#include "unordered_data_collection.h"
 #include "storage_type.h"
-#include "isequenced_storage.h"
+#include "sequenced_data_collection_types.h"
 
 namespace CrawlerEngine
 {
+
+class ISequencedStorage;
+class UnorderedDataCollection;
 
 class SequencedDataCollection : public QObject
 {
 	Q_OBJECT
 
 public:
+	SequencedDataCollection(const UnorderedDataCollection* collection);
+
 	bool empty() const noexcept;
 
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 	ISequencedStorage* storage(StorageType type) noexcept;
+
+	void initialize();
 
 signals:
 	void parsedPageAdded(int row, StorageType storageType);
@@ -28,8 +34,6 @@ signals:
 
 protected:
 	virtual std::shared_ptr<ISequencedStorage> createSequencedStorage() const;
-
-	void initializeStorages();
 
 protected slots:
 	void addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type);

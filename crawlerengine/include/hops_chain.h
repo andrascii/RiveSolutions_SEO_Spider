@@ -25,6 +25,8 @@ public:
 	Hop& operator[](std::size_t idx) noexcept;
 	const Hop& operator[](std::size_t idx) const noexcept;
 
+	bool empty() const noexcept;
+
 private:
 	std::vector<Hop> m_hopsChain;
 };

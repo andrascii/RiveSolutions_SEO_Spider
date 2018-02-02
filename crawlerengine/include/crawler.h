@@ -9,24 +9,20 @@
 namespace CrawlerEngine
 {
 
-
 class ISpecificLoader;
 class IRobotsTxtRules;
 class IDownloader;
 class ITaskProcessor;
 class IWebScreenShot;
 class IHostInfoProvider;
-
 class CrawlerWorkerThread;
 class ModelController;
 class SequencedDataCollection;
 class Requester;
 class HostInfo;
-
 struct SiteMapSettings;
 struct TaskResponse;
 struct GetHostInfoResponse;
-
 
 struct CrawlingProgress
 {
@@ -96,7 +92,7 @@ protected:
 	virtual IWebScreenShot* createWebScreenShot();
 	virtual IDownloader* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
-	virtual void createSequencedDataCollection(QThread* targetThread) const;
+	virtual void initSequencedDataCollection();
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
@@ -115,8 +111,7 @@ private:
 	void setState(State state);
 
 protected:
-	mutable std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
-
+	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
 	ModelController* m_modelController;
 
 private:

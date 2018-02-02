@@ -55,6 +55,11 @@ QObject* RobotsTxtLoader::qobject()
 	return this;
 }
 
+CrawlerEngine::Url RobotsTxtLoader::robotsTxtUrl() const
+{
+	return !m_hopsChain.empty() ? m_hopsChain.back().url() : Url();
+}
+
 void RobotsTxtLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
 	Q_UNUSED(requester);
