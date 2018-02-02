@@ -208,7 +208,7 @@ QIcon ExportUrlInfoToXlsxCommand::icon() const
 
 const char* ExportUrlInfoToXlsxCommand::description() const noexcept
 {
-	return "Export Url Info to Xlsx";
+	return "Export Url Info to .xlsx";
 }
 
 void ExportUrlInfoToXlsxCommand::execute()
@@ -257,7 +257,7 @@ QIcon ExportUrlOutlinksToXlsxCommand::icon() const
 
 const char* ExportUrlOutlinksToXlsxCommand::description() const noexcept
 {
-	return "Export Url Outlinks to Xlsx";
+	return "Export Url Outlinks to .xlsx";
 }
 
 void ExportUrlOutlinksToXlsxCommand::execute()
@@ -305,7 +305,7 @@ QIcon ExportUrlInlinksToXlsxCommand::icon() const
 
 const char* ExportUrlInlinksToXlsxCommand::description() const noexcept
 {
-	return "Export Url Inlinks to Xlsx";
+	return "Export Url Inlinks to .xlsx";
 }
 
 void ExportUrlInlinksToXlsxCommand::execute()

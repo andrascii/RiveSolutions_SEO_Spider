@@ -5,7 +5,7 @@
 
 namespace SeoSpider
 {
-	
+
 class CommandMenu : public QMenu
 {
 	Q_OBJECT
@@ -16,6 +16,9 @@ public:
 
 private slots:
 	void onActionTriggered();
+
+private:
+	void initMenu(QMenu& editingMenu, const Menu& menu);
 
 private:
 	IDataCommandsProvider* m_dataCommandsProvider;

@@ -25,7 +25,7 @@ public:
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
-	virtual std::vector<ICommandPointer> commandsFor(const QModelIndex& index) const override;
+	virtual Menu commandsFor(const QModelIndex& index) const override;
 	virtual QObject* qobject() noexcept override;
 
 signals:

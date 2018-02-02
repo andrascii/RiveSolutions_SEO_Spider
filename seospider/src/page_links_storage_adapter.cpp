@@ -96,9 +96,9 @@ ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex& 
 	return m_parsedPageInfo;
 }
 
-std::vector<ICommandPointer> PageLinksStorageAdapter::commandsFor(const QModelIndex& index) const
+Menu PageLinksStorageAdapter::commandsFor(const QModelIndex& index) const
 {
-	std::vector<ICommandPointer> commands;
+	Menu menu;
 
 	const auto urlColumnIterator = std::find(m_availableColumns.begin(), m_availableColumns.end(), ParsedPageInfo::PageLinksColumn::UrlColumn);
 
@@ -108,10 +108,11 @@ std::vector<ICommandPointer> PageLinksStorageAdapter::commandsFor(const QModelIn
 		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
 
 		const Url url = urlItem.toUrl();
-		commands.push_back(std::make_shared<OpenUrlCommand>(url));
+
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenUrlCommand>(url)));
 	}
 
-	return commands;
+	return menu;
 }
 
 QObject* PageLinksStorageAdapter::qobject() noexcept

@@ -95,13 +95,13 @@ ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIn
 	return std::make_shared<ParsedPageInfo>(parsedPage);
 }
 
-std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QModelIndex& index) const
+Menu ParsedPageInfoStorageAdapter::commandsFor(const QModelIndex& index) const
 {
-	std::vector<ICommandPointer> commands;
+	Menu menu;
 
 	if (!index.isValid())
 	{
-		return commands;
+		return menu;
 	}
 
 	const auto urlColumnIterator = std::find(m_availableColumns.begin(), m_availableColumns.end(), ParsedPageInfo::Column::UrlColumn);
@@ -114,27 +114,33 @@ std::vector<ICommandPointer> ParsedPageInfoStorageAdapter::commandsFor(const QMo
 
 		const CrawlerEngine::Url url = urlItem.toUrl();
 
-		commands.push_back(std::make_shared<OpenUrlCommand>(url));
-		commands.push_back(std::make_shared<CheckGoogleCacheCommand>(url));
-		commands.push_back(std::make_shared<CheckHTMLWithW3CValidatorCommand>(url));
-		commands.push_back(std::make_shared<OpenInWaybackMachineCommand>(url));
-		commands.push_back(std::make_shared<CopyToClipboardAllPagesCommand>(m_associatedStorage));
-		commands.push_back(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, index.row()));
-		commands.push_back(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row()));
-		commands.push_back(std::make_shared<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, index.row()));
-		commands.push_back(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, index.row()));
-		commands.push_back(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, index.row()));
-		commands.push_back(std::make_shared<OpenRobotsTxtFileCommand>());
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenUrlCommand>(url)));
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<CheckGoogleCacheCommand>(url)));
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<CheckHTMLWithW3CValidatorCommand>(url)));
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenInWaybackMachineCommand>(url)));
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenRobotsTxtFileCommand>()));
+
+		std::shared_ptr<Menu> copySubMenu = std::make_shared<Menu>(tr("Copy"));
+		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllPagesCommand>(m_associatedStorage)));
+		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, index.row())));
+		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row())));
+		menu.addItem(copySubMenu);
+
+		std::shared_ptr<Menu> exportSubMenu = std::make_shared<Menu>(tr("Export"));
+		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, index.row())));
+		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, index.row())));
+		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, index.row())));
+		menu.addItem(exportSubMenu);
 	}
 
 	const std::optional<QByteArray> ipv4Address = theApp->crawler()->currentCrawledSiteIPv4();
 
 	if (!storage.empty() && ipv4Address.has_value())
 	{
-		commands.push_back(std::make_shared<ShowOtherDomainsOnIpCommand>(ipv4Address.value()));
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<ShowOtherDomainsOnIpCommand>(ipv4Address.value())));
 	}
 
-	return commands;
+	return menu;
 }
 
 QObject* ParsedPageInfoStorageAdapter::qobject() noexcept
