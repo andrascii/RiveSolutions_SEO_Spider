@@ -29,7 +29,7 @@ public:
 	virtual const DCStorageGroupDescription* storageGroupDescriptionByRow(int row) const noexcept override;
 	virtual const DCStorageDescription* storageDescription(CrawlerEngine::StorageType type) const noexcept override;
 	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept override;
-	virtual Menu commandsFor(const QModelIndex& index) const override;
+	virtual Menu menuFor(const QModelIndex& index) const override;
 
 signals:
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;

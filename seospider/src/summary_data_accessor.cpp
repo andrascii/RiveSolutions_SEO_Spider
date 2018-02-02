@@ -107,7 +107,7 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(Au
 	return nullptr;
 }
 
-Menu SummaryDataAccessor::commandsFor(const QModelIndex& index) const
+Menu SummaryDataAccessor::menuFor(const QModelIndex& index) const
 {
 	Menu menu;
 

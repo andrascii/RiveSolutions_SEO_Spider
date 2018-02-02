@@ -54,18 +54,15 @@ public:
 	void clearData();
 	bool isNoData() const noexcept;
 	State state() const noexcept;
-	
 	SequencedDataCollection* sequencedDataCollection() const;
 	QString siteMapXml(const SiteMapSettings& settings) const;
-
 	void saveToFile(const QString& fileName);
 	void loadFromFile(const QString& fileName);
-
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
-
 	const QPixmap& currentCrawledSitePixmap() const noexcept;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
+	void refreshPage(ParsedPage* page);
 
 signals:
 	void crawlingProgress(CrawlingProgress state);

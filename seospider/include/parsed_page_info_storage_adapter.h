@@ -27,7 +27,7 @@ public:
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
-	virtual Menu commandsFor(const QModelIndex& index) const override;
+	virtual Menu menuFor(const QModelIndex& index) const override;
 	virtual QObject* qobject() noexcept override;
 
 #ifdef QT_DEBUG

@@ -590,6 +590,11 @@ std::optional<QByteArray> Crawler::currentCrawledSiteIPv4() const
 	return std::make_optional<QByteArray>();
 }
 
+void Crawler::refreshPage(ParsedPage* page)
+{
+	page;
+}
+
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 {
 	return m_uniqueLinkStore;

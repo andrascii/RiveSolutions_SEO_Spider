@@ -95,7 +95,7 @@ ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIn
 	return std::make_shared<ParsedPageInfo>(parsedPage);
 }
 
-Menu ParsedPageInfoStorageAdapter::commandsFor(const QModelIndex& index) const
+Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 {
 	Menu menu;
 

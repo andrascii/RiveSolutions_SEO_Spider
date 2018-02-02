@@ -5,8 +5,8 @@
 namespace SeoSpider
 {
 
-CommandMenu::CommandMenu(IDataCommandsProvider* dataCommandsProvider)
-	: m_dataCommandsProvider(dataCommandsProvider)
+CommandMenu::CommandMenu(IMenuDataProvider* menuDataProvider)
+	: m_menuDataProvider(menuDataProvider)
 {
 }
 
@@ -15,7 +15,7 @@ void CommandMenu::execFor(const QPoint& pos, const QModelIndex& index)
 	clear();
 	m_currentCommandActions.clear();
 
-	Menu menuData = m_dataCommandsProvider->commandsFor(index);
+	Menu menuData = m_menuDataProvider->menuFor(index);
 
 	initMenu(*this, menuData);
 	exec(pos);

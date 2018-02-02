@@ -96,7 +96,7 @@ ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex& 
 	return m_parsedPageInfo;
 }
 
-Menu PageLinksStorageAdapter::commandsFor(const QModelIndex& index) const
+Menu PageLinksStorageAdapter::menuFor(const QModelIndex& index) const
 {
 	Menu menu;
 

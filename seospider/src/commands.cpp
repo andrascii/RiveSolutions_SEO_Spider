@@ -20,7 +20,6 @@ bool ICommand::isCompound() const noexcept
 }
 
 
-
 CompoundCommand::CompoundCommand(const char* description, const QIcon& icon)
 	: m_description(description)
 	, m_icon(icon)
@@ -537,7 +536,6 @@ void ShowOtherDomainsOnIpCommand::execute()
 	//
 	QDesktopServices::openUrl(QStringLiteral("https://www.bing.com/search?q=ip:%1").arg(QString(m_ipAddress)));
 }
-
 
 
 QIcon OpenRobotsTxtFileCommand::icon() const

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "parsed_page_info.h"
-#include "idata_commands_provider.h"
+#include "imenu_data_provider.h"
 
 namespace SeoSpider
 {
 
-class IStorageAdapter : public IDataCommandsProvider
+class IStorageAdapter : public IMenuDataProvider
 {
 public:
 	enum class ItemType

@@ -2,12 +2,12 @@
 
 #include "storage_adapter_type.h"
 #include "data_collection_groups_factory.h"
-#include "idata_commands_provider.h"
+#include "imenu_data_provider.h"
 
 namespace SeoSpider
 {
 
-class ISummaryDataAccessor : public IDataCommandsProvider
+class ISummaryDataAccessor : public IMenuDataProvider
 {
 public:
 	virtual ~ISummaryDataAccessor() = default;
