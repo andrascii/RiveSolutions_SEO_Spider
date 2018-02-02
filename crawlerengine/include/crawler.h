@@ -4,6 +4,7 @@
 #include "unique_link_store.h"
 #include "crawler_options.h"
 #include "requester_wrapper.h"
+#include "web_host_info.h"
 
 namespace CrawlerEngine
 {
@@ -68,7 +69,7 @@ public:
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 
-	const QPixmap& currentCrawledSitePixmap() const noexcept;
+	const WebHostInfo* webHostInfo() const;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
 
 signals:
@@ -143,7 +144,7 @@ private:
 	IDownloader* m_downloader;
 
 	RequesterWrapper m_hostInfoRequester;
-	IWebScreenShot* m_webScreenShot;
+	WebHostInfo* m_webHostInfo;
 	std::unique_ptr<HostInfo> m_hostInfo;
 };
 

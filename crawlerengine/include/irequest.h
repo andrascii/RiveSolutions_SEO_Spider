@@ -7,7 +7,8 @@ enum class RequestType
 {
 	RequestTypeDownload,
 	RequestGetHostInfo,
-	RequestTypeRunTask
+	RequestTypeRunTask,
+	RequestCheck404IsProper
 };
 
 struct IRequest

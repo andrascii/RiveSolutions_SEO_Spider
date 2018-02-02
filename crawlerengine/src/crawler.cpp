@@ -43,7 +43,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_sequencedDataCollection(nullptr)
 	, m_state(StatePending)
 	, m_downloader(nullptr)
-	, m_webScreenShot(nullptr)
+	, m_webHostInfo(nullptr)
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->addService<INotificationService>(new NotificationService);
@@ -83,7 +83,7 @@ void Crawler::initialize()
 	m_modelController = new ModelController;
 
 	m_downloader = createDownloader();
-	m_webScreenShot = createWebScreenShot();
+	m_webHostInfo = new WebHostInfo(this, createWebScreenShot());
 
 	ThreadManager& threadManager = ThreadManager::instance();
 
@@ -91,6 +91,7 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(m_modelController, "BackgroundThread");
 	threadManager.moveObjectToThread(createHostInfoProvider()->qobject(), "BackgroundThread");
 	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
+	threadManager.moveObjectToThread(new Proper404Checker(), "BackgroundThread");
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
@@ -401,8 +402,7 @@ void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response
 
 	m_hostInfo.reset(new HostInfo(response.hostInfo));
 	m_options.startCrawlingPage = response.url;
-
-	m_webScreenShot->load(m_options.startCrawlingPage);
+	m_webHostInfo->reset(m_options.startCrawlingPage);
 
 	tryToLoadCrawlingDependencies();
 }
@@ -572,9 +572,9 @@ const CrawlerEngine::ISpecificLoader* Crawler::xmlSitemapLoader() const noexcept
 	return m_xmlSitemapLoader;
 }
 
-const QPixmap& Crawler::currentCrawledSitePixmap() const noexcept
+const WebHostInfo * Crawler::webHostInfo() const
 {
-	return m_webScreenShot->result();
+	return m_webHostInfo;
 }
 
 std::optional<QByteArray> Crawler::currentCrawledSiteIPv4() const

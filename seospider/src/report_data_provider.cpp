@@ -162,7 +162,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		// report header
 		case ReportDataKeys::SiteShortImage:
 		{
-			return theApp->crawler()->currentCrawledSitePixmap();
+			return theApp->crawler()->webHostInfo()->image();
 		}
 		case ReportDataKeys::SiteLink:
 		{
@@ -295,7 +295,13 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ConfiguredCorrectly404Count:
 		{
-			return QObject::tr("TO DO check validness");
+			const std::optional<bool> result = theApp->crawler()->webHostInfo()->is404PagesSetupRight();
+			if (result == std::nullopt)
+			{
+				return QObject::tr("n/a");
+			}
+
+			return result.value() ? QObject::tr("Yes") : QObject::tr("No");
 		}
 		case ReportDataKeys::RobotsTxt:
 		{
