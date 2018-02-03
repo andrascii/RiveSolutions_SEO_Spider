@@ -17,8 +17,14 @@ ParsedPageInfoStorageAdapter::ParsedPageInfoStorageAdapter(
 
 	DEBUG_ASSERT(sequencedDataCollection);
 
-	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, 
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
 		this, &ParsedPageInfoStorageAdapter::onStorageUpdated));
+
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageRemoved,
+		this, &ParsedPageInfoStorageAdapter::onPageRemoved));
+
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::indicesRangeInvalidated,
+		this, &ParsedPageInfoStorageAdapter::onRepaintIndicesRange));
 
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
 		this, &ParsedPageInfoStorageAdapter::beginClearData));
@@ -119,14 +125,15 @@ Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<CheckHTMLWithW3CValidatorCommand>(url)));
 		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenInWaybackMachineCommand>(url)));
 		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenRobotsTxtFileCommand>()));
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<RefreshPageCommand>(m_storageType, index.row())));
 
-		std::shared_ptr<Menu> copySubMenu = std::make_shared<Menu>(tr("Copy"));
+		std::shared_ptr<Menu> copySubMenu = std::make_shared<Menu>(tr("Copy..."));
 		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllPagesCommand>(m_associatedStorage)));
 		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, index.row())));
 		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row())));
 		menu.addItem(copySubMenu);
 
-		std::shared_ptr<Menu> exportSubMenu = std::make_shared<Menu>(tr("Export"));
+		std::shared_ptr<Menu> exportSubMenu = std::make_shared<Menu>(tr("Export..."));
 		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, index.row())));
 		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, index.row())));
 		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, index.row())));
@@ -154,6 +161,7 @@ const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdapter::parsedPage(const 
 	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 	return storage[index.row()];
 }
+
 #endif
 
 void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, CrawlerEngine::StorageType type)
@@ -164,6 +172,26 @@ void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, CrawlerEngine::Stor
 	}
 
 	emit parsedPageInfoAdded(row);
+}
+
+void ParsedPageInfoStorageAdapter::onPageRemoved(int row, CrawlerEngine::StorageType type)
+{
+	if (type != m_storageType)
+	{
+		return;
+	}
+
+	emit parsedPageInfoRemoved(row);
+}
+
+void ParsedPageInfoStorageAdapter::onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type) const
+{
+	if (type != m_storageType)
+	{
+		return;
+	}
+
+	emit repaintIndicesRange(indicesRange);
 }
 
 }

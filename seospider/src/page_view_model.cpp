@@ -36,7 +36,8 @@ PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
 
 	m_urlIcon = pixmap.scaled(Common::Helpers::pointsToPixels(13), Common::Helpers::pointsToPixels(13));
 
-	VERIFY(connect(model, &PageModel::internalDataChanged, this, &PageViewModel::onAttachedModelInternalDataChanged));
+	VERIFY(connect(model, &PageModel::internalDataChanged, this, &PageViewModel::onAttachedModelStorageAdapterChanged));
+	VERIFY(connect(model, &PageModel::dataChanged, this, &PageViewModel::onAttachedModelDataChanged));
 	VERIFY(connect(model, &PageModel::modelReset, this, &PageViewModel::onModelDataWasReset));
 }
 
@@ -190,7 +191,6 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 		modelIndexes.append(model()->makeModelIndexesForRow(previousHoveredIndex.row() - 1));
 		
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
-
 		AbstractViewModel::resetPreviousHoveredIndex();
 	}
 
@@ -204,16 +204,30 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	}
 }
 
-void PageViewModel::onAttachedModelInternalDataChanged()
+void PageViewModel::onAttachedModelStorageAdapterChanged()
 {
 	const PageModel* model =
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
 	AbstractViewModel::clearSelectedIndexes();
-
-	invalidateItemViewRendererCache();
-
+	AbstractViewModel::invalidateItemViewRendererCache();
 	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->columnCount()));
+}
+
+void PageViewModel::onAttachedModelDataChanged(const QModelIndex& startIndex, const QModelIndex& endIndex, const QVector<int>& roles)
+{
+	Q_UNUSED(roles);
+
+	ASSERT(startIndex.row() <= endIndex.row());
+
+	QModelIndexList modelIndexes;
+
+	for (int i = startIndex.row(); i <= endIndex.row(); ++i)
+	{
+		modelIndexes.append(model()->makeModelIndexesForRow(i));
+	}
+
+	AbstractViewModel::invalidateCacheIndexes(modelIndexes);
 }
 
 void PageViewModel::onModelDataWasReset()

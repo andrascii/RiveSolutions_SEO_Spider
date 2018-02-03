@@ -87,7 +87,7 @@ ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& par
 	if (iter != unorderedStorage.end())
 	{
 		ParsedPagePtr result = std::move(*iter);
-		result->storages[static_cast<size_t>(type)] = false;;
+		result->storages[static_cast<size_t>(type)] = false;
 
 		unorderedStorage.erase(iter);
 

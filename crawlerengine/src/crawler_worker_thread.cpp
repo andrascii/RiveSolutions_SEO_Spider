@@ -6,7 +6,31 @@
 #include "download_request.h"
 #include "download_response.h"
 #include "crawler.h"
-#include "iuniqueness_checker.h"
+
+namespace
+{
+
+template <typename T>
+class StoreValueGuard final
+{
+public:
+	StoreValueGuard(T& ref, T newValue)
+		: m_ref(ref)
+		, m_newValue(newValue)
+	{
+	}
+
+	~StoreValueGuard()
+	{
+		m_ref = m_newValue;
+	}
+
+private:
+	T& m_ref;
+	T m_newValue;
+};
+
+}
 
 namespace CrawlerEngine
 {
@@ -16,8 +40,8 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(uniqueLinkStore)
 	, m_isRunning(false)
+	, m_reloadPage(false)
 	, m_defferedProcessingTimer(new QTimer(this))
-	, m_uniquenessChecker(createUniquenessChecker())
 {
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
@@ -75,7 +99,7 @@ void CrawlerWorkerThread::stop()
 
 void CrawlerWorkerThread::extractUrlAndDownload()
 {
-	if (!m_isRunning)
+	if (!m_isRunning && !m_uniqueLinkStore->hasRefreshUrls())
 	{
 		return;
 	}
@@ -99,13 +123,19 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 	}
 
 	CrawlerRequest crawlerRequest;
-	const bool isUrlExtracted = m_uniqueLinkStore->extractUrl(crawlerRequest);
+	bool isUrlExtracted = false;
+	
+	if (m_isRunning)
+	{
+		isUrlExtracted = m_uniqueLinkStore->extractUrl(crawlerRequest);
+	}
+	else
+	{
+		m_reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(crawlerRequest);
+	}
 
 	if (isUrlExtracted)
 	{
-		ASSERT(!m_uniquenessChecker->hasRequest(crawlerRequest));
-		m_uniquenessChecker->registrateRequest(crawlerRequest);
-
 		DownloadRequest request(crawlerRequest);
 		m_currentRequest = crawlerRequest;
 		m_downloadRequester.reset(request, this, &CrawlerWorkerThread::onLoadingDone);
@@ -237,6 +267,8 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 
 void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& response)
 {
+	StoreValueGuard<bool> reloadGuard(m_reloadPage, false);
+
 	m_downloadRequester.reset();
 
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
@@ -252,7 +284,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 		const bool urlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
-		if (urlAdded && !m_isRunning)
+		if (urlAdded && !m_isRunning && !m_reloadPage)
 		{
 			m_pagesAcceptedAfterStop.pages.push_back(std::make_pair(m_currentRequest.value().requestType, page));
 
@@ -267,7 +299,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 		checkUrl = true;
 	}
 
-	if (!m_isRunning)
+	if (!m_isRunning && !m_reloadPage)
 	{
 		DEBUGLOG << "Set value to promise";
 
@@ -308,7 +340,7 @@ void CrawlerWorkerThread::onStart()
 
 void CrawlerWorkerThread::onPageParsed(const ParsedPagePtr& parsedPage) const noexcept
 {
-	emit pageParsed(parsedPage);
+	emit workerResult(WorkerResult{ parsedPage, m_reloadPage });
 
 	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 }

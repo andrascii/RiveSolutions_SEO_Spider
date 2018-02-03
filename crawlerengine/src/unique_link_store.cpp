@@ -74,7 +74,7 @@ void UniqueLinkStore::addUrl(Url&& url, DownloadRequestType requestType)
 	}
 }
 
-bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
+bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 
@@ -83,9 +83,6 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 		return false;
 	}
 
-	const auto iter = m_pendingUrlList.begin();
-	url = *iter;
-
 	{
 		IncrementGuardExt guardCrawledExt(&CrawlerSharedState::incrementDownloaderCrawledLinksCount, 
 			nullptr, m_crawledUrlList, &m_lastCrawledSizeChange);
@@ -93,7 +90,10 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 		IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 			&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList, &m_lastPendingSizeChange);
 
-		DEBUG_ASSERT(m_crawledUrlList.find(url) == m_crawledUrlList.end());
+		const auto iter = m_pendingUrlList.begin();
+		crawlerRequest = *iter;
+
+		DEBUG_ASSERT(m_crawledUrlList.find(crawlerRequest) == m_crawledUrlList.end());
 		m_crawledUrlList.insert(std::move(*iter));
 		m_pendingUrlList.erase(iter);
 	}
@@ -101,6 +101,31 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& url) noexcept
 	ASSERT(m_lastPendingSizeChange == -1);
 
 	return true;
+}
+
+bool UniqueLinkStore::extractRefreshUrl(CrawlerRequest& crawlerRequest) noexcept
+{
+	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+
+	if (m_refreshUrlQueue.empty())
+	{
+		return false;
+	}
+
+	crawlerRequest = std::move(m_refreshUrlQueue.front());
+
+	m_refreshUrlQueue.pop();
+
+	return true;
+}
+
+void UniqueLinkStore::addRefreshUrl(const Url& url, DownloadRequestType requestType)
+{
+	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+
+	m_refreshUrlQueue.emplace(CrawlerRequest{ url, requestType });
+
+	emit urlAdded();
 }
 
 void UniqueLinkStore::addUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType)
@@ -225,6 +250,12 @@ void UniqueLinkStore::clear()
 
 	CrawlerSharedState::instance()->setDownloaderCrawledLinksCount(0);
 	CrawlerSharedState::instance()->setDownloaderPendingLinksCount(0);
+}
+
+bool UniqueLinkStore::hasRefreshUrls() const noexcept
+{
+	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	return !m_refreshUrlQueue.empty();
 }
 
 }

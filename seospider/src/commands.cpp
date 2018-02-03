@@ -105,7 +105,6 @@ void RemoveRowCommand::execute()
 }
 
 
-
 ExportDataToXlsxCommand::ExportDataToXlsxCommand(const CrawlerEngine::SequencedDataCollection* dataCollection,
 	const std::vector<DCStorageDescription>& storageDescriptions)
 	: m_dataCollection(dataCollection)
@@ -120,7 +119,7 @@ QIcon ExportDataToXlsxCommand::icon() const
 
 const char* ExportDataToXlsxCommand::description() const noexcept
 {
-	return "Export Data To .xlsx File";
+	return "Export Data to .xlsx File";
 }
 
 void ExportDataToXlsxCommand::execute()
@@ -559,6 +558,28 @@ void OpenRobotsTxtFileCommand::execute()
 	{
 		QDesktopServices::openUrl(url);
 	}
+}
+
+
+RefreshPageCommand::RefreshPageCommand(CrawlerEngine::StorageType storageType, int index)
+	: m_storageType(storageType)
+	, m_index(index)
+{
+}
+
+QIcon RefreshPageCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* RefreshPageCommand::description() const noexcept
+{
+	return "Refresh Page";
+}
+
+void RefreshPageCommand::execute()
+{
+	theApp->crawler()->refreshPage(m_storageType, m_index);
 }
 
 }

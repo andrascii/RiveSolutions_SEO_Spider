@@ -246,4 +246,18 @@ public:
 	virtual void execute() override;
 };
 
+class RefreshPageCommand : public ICommand
+{
+public:
+	RefreshPageCommand(CrawlerEngine::StorageType storageType, int index);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	CrawlerEngine::StorageType m_storageType;
+	int m_index;
+};
+
 }

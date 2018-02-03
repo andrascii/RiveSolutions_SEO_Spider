@@ -80,116 +80,132 @@ void ModelController::clearData()
 	CrawlerSharedState::instance()->setModelControllerCrawledLinksCount(0);
 }
 
-void ModelController::addParsedPage(ParsedPagePtr incomingPage) noexcept
+void ModelController::preparePageForRefresh(ParsedPage* parsedPage)
 {
-	ASSERT(incomingPage->resourceType >= ResourceType::ResourceHtml &&
-		incomingPage->resourceType <= ResourceType::ResourceOther);
+	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
+	{
+		if (type == StorageType::CrawledUrlStorageType ||
+			type == StorageType::PendingResourcesStorageType)
+		{
+			continue;
+		}
+
+		const auto fakeDeleter = [](ParsedPage*) noexcept {};
+		ParsedPagePtr pointer(parsedPage, fakeDeleter);
+
+		data()->removeParsedPage(pointer, type);
+	}
+}
+
+void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
+{
+	ASSERT(workerResult.incomingPage()->resourceType >= ResourceType::ResourceHtml &&
+		workerResult.incomingPage()->resourceType <= ResourceType::ResourceOther);
 
 #ifdef QT_DEBUG
-	const ParsedPagePtr existingPage = data()->parsedPage(incomingPage, StorageType::CrawledUrlStorageType);
-	if (existingPage)
-	{
-		ERRLOG << "Unexpected page:" << incomingPage->url.toDisplayString()
-			<< existingPage->url.toDisplayString()
-			<< ". This page was already crawled.";
 
-		DEBUG_ASSERT(!existingPage);
+	if (!workerResult.isRefreshResult())
+	{
+		const ParsedPagePtr existingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
+
+		if (existingPage)
+		{
+			ERRLOG << "Unexpected page:" << workerResult.incomingPage()->url.toDisplayString()
+				<< existingPage->url.toDisplayString()
+				<< ". This page was already crawled.";
+
+			DEBUG_ASSERT(!existingPage);
+		}
 	}
+
 #endif
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 	
-	fixParsedPageResourceType(incomingPage);
+	fixParsedPageResourceType(workerResult.incomingPage());
 
-	if (!resourceShouldBeProcessed(incomingPage->resourceType))
+	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType))
 	{
-		data()->removeParsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+		data()->removeParsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
 		return;
 	}
 
-	processParsedPageHtmlResources(incomingPage);
-	processParsedPageResources(incomingPage);
-	incomingPage->allResourcesOnPage.clear();
+	processParsedPageHtmlResources(workerResult.incomingPage());
+	processParsedPageResources(workerResult.incomingPage());
+	workerResult.incomingPage()->allResourcesOnPage.clear();
 
-	processParsedPageStatusCode(incomingPage);
-	processParsedPageUrl(incomingPage);
+	processParsedPageStatusCode(workerResult.incomingPage());
+	processParsedPageUrl(workerResult);
 
-	if (incomingPage->resourceType == ResourceType::ResourceHtml)
+	if (workerResult.incomingPage()->resourceType == ResourceType::ResourceHtml)
 	{
-		// page
-		processParsedPageTitle(incomingPage);
-		processParsedPageMetaDescription(incomingPage);
-		processParsedPageMetaKeywords(incomingPage);
-		processParsedPageH1(incomingPage);
-		processParsedPageH2(incomingPage);
+		processParsedPageTitle(workerResult.incomingPage());
+		processParsedPageMetaDescription(workerResult.incomingPage());
+		processParsedPageMetaKeywords(workerResult.incomingPage());
+		processParsedPageH1(workerResult.incomingPage());
+		processParsedPageH2(workerResult.incomingPage());
 	}
-	else if (incomingPage->resourceType == ResourceType::ResourceImage)
+	else if (workerResult.incomingPage()->resourceType == ResourceType::ResourceImage)
 	{
-		// image resource
-		processParsedPageImage(incomingPage);
+		processParsedPageImage(workerResult.incomingPage());
 	}
 
-	data()->removeParsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+	data()->removeParsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
 
 	if (!m_linksToPageChanges.changes.empty())
 	{
 		data()->parsedPageLinksToThisResourceChanged(m_linksToPageChanges);
 		m_linksToPageChanges.changes.clear();
 	}
-
-	//data()->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
-	//CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
 }
 
-void ModelController::addParsedPages(std::vector<ParsedPagePtr> incomingPages) noexcept
+void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 {
-	for (ParsedPagePtr page : incomingPages)
-	{
-		addParsedPage(page);
-	}
-}
-
-void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
-{
-	const Url url = incomingPage->url;
+	const Url url = workerResult.incomingPage()->url;
 	const QString urlStr = url.toString();
-	data()->addParsedPage(incomingPage, StorageType::CrawledUrlStorageType);
+	
+	if (!workerResult.isRefreshResult())
+	{
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
+	}
+	
 	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
-	calculatePageLevel(incomingPage);
+
+	calculatePageLevel(workerResult.incomingPage());
 
 	if (url.host() != m_crawlerOptions.startCrawlingPage.host())
 	{
-		data()->addParsedPage(incomingPage, StorageType::ExternalUrlStorageType);
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::ExternalUrlStorageType);
 	}
 
-	if (incomingPage->isThisExternalPage)
+	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
 	}
 
 	if (urlStr.toLower() != urlStr)
 	{
-		data()->addParsedPage(incomingPage, StorageType::UpperCaseUrlStorageType);
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::UpperCaseUrlStorageType);
 	}
 
 	if (urlStr.size() > m_crawlerOptions.limitMaxUrlLength)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooLongUrlStorageType);
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::TooLongUrlStorageType);
 	}
 
-	if (incomingPage->linksOnThisPage.size() > m_crawlerOptions.maxLinksCountOnPage)
+	if (workerResult.incomingPage()->linksOnThisPage.size() > m_crawlerOptions.maxLinksCountOnPage)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooManyLinksOnPageStorageType);
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::TooManyLinksOnPageStorageType);
 	}
 
-	if (incomingPage->hasMetaRefreshTag)
+	if (workerResult.incomingPage()->hasMetaRefreshTag)
 	{
-		data()->addParsedPage(incomingPage, StorageType::ContainsMetaRefreshTagStorageType);
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::ContainsMetaRefreshTagStorageType);
 	}
 
-	if (incomingPage->hasFrames)
+	if (workerResult.incomingPage()->hasFrames)
 	{
-		data()->addParsedPage(incomingPage, StorageType::ContainsFramesStorageType);
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::ContainsFramesStorageType);
 	}
 
 	bool hasNonAscii = false;
@@ -205,20 +221,20 @@ void ModelController::processParsedPageUrl(ParsedPagePtr& incomingPage)
 
 	if (hasNonAscii)
 	{
-		data()->addParsedPage(incomingPage, StorageType::NonAsciiCharacterUrlStorageType);
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::NonAsciiCharacterUrlStorageType);
 	}
 
-	if (incomingPage->redirectedUrl.isValid())
+	if (workerResult.incomingPage()->redirectedUrl.isValid())
 	{
-		const QString host = incomingPage->url.host().toLower();
-		const QString redirectedHost = incomingPage->redirectedUrl.host().toLower();
+		const QString host = workerResult.incomingPage()->url.host().toLower();
+		const QString redirectedHost = workerResult.incomingPage()->redirectedUrl.host().toLower();
 
 		if (host != redirectedHost)
 		{
 			const QString www = QString("www.");
 			if (www + host == redirectedHost || www + redirectedHost == host)
 			{
-				data()->addParsedPage(incomingPage, StorageType::WwwRedirectionsUrlStorageType);
+				data()->addParsedPage(workerResult.incomingPage(), StorageType::WwwRedirectionsUrlStorageType);
 			}
 		}
 	}
@@ -496,17 +512,13 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 {
 	if (incomingPage->resourceType != ResourceType::ResourceHtml)
 	{
-		// if it is not an html resource, just exit
 		return;
 	}
 
-	// 1. get from pending resources if exists
 	const ParsedPagePtr pendingPageRaw = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
 
-	// 2. if it's really html resource and pending page exists - merge two pages
 	incomingPage = mergeTwoPages(pendingPageRaw, incomingPage);
 
-	// 3. add this page to html resources storage
 	const StorageType storage = incomingPage->isThisExternalPage ?
 		StorageType::ExternalHtmlResourcesStorageType : StorageType::HtmlResourcesStorageType;
 
@@ -556,7 +568,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 		{
 			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
-			
+
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
 			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.urlParameter,

@@ -34,11 +34,29 @@ ISequencedStorage* SequencedDataCollection::storage(StorageType type) noexcept
 
 const ISequencedStorage* SequencedDataCollection::storage(StorageType type) const noexcept
 {
-	ASSERT(m_sequencedStorageMap.find(type) != m_sequencedStorageMap.end());
-
 	auto iter = m_sequencedStorageMap.find(type);
 
 	return iter != m_sequencedStorageMap.end() ? iter->second.get() : nullptr;
+}
+
+void SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType type)
+{
+	const auto fakeDeleter = [](ParsedPage*) noexcept {};
+
+	ParsedPagePtr pointer(parsedPage, fakeDeleter);
+
+	ISequencedStorage* sequencedStorage = storage(type); 
+	
+	if (sequencedStorage)
+	{
+		const RemoveEffects removeEffects = sequencedStorage->remove(pointer);
+
+		if (removeEffects.removedIndex != -1)
+		{
+			emit parsedPageRemoved(removeEffects.removedIndex, type);
+			emit indicesRangeInvalidated(removeEffects.invalidatedIndicesRange, type);
+		}
+	}
 }
 
 std::shared_ptr<ISequencedStorage> SequencedDataCollection::createSequencedStorage() const

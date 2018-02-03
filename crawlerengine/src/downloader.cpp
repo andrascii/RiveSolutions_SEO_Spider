@@ -267,7 +267,7 @@ void Downloader::load(RequesterSharedPtr requester)
 {
 	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
 
-	ASSERT(!m_uniquenessChecker->hasRequest(request->requestInfo));
+	//ASSERT(!m_uniquenessChecker->hasRequest(request->requestInfo));
 	m_uniquenessChecker->registrateRequest(request->requestInfo);
 
 	const int requestId = loadHelper(request->requestInfo);

@@ -4,6 +4,7 @@
 #include "unique_link_store.h"
 #include "crawler_options.h"
 #include "requester_wrapper.h"
+#include "storage_type.h"
 
 namespace CrawlerEngine
 {
@@ -62,7 +63,7 @@ public:
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 	const QPixmap& currentCrawledSitePixmap() const noexcept;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
-	void refreshPage(ParsedPage* page);
+	void refreshPage(StorageType storageType, int index);
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -73,6 +74,7 @@ signals:
 	void crawlerOptionsChanged(CrawlerOptions options);
 	void serializationProcessDone();
 	void deserializationProcessDone();
+	void pageRefreshed();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);
@@ -80,7 +82,7 @@ public slots:
 
 private slots:
 	void onAboutCrawlingState();
-	void checkSerializationReadyState();
+	void waitSerializationReadyState();
 	void onCrawlingSessionInitialized();
 
 protected:

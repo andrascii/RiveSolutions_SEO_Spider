@@ -20,14 +20,15 @@ public:
 	SequencedDataCollection(const UnorderedDataCollection* collection);
 
 	bool empty() const noexcept;
-
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 	ISequencedStorage* storage(StorageType type) noexcept;
-
+	void removePage(ParsedPage* parsedPage, StorageType type);
 	void initialize();
 
 signals:
-	void parsedPageAdded(int row, StorageType storageType);
+	void parsedPageAdded(int row, StorageType type);
+	void parsedPageRemoved(int row, StorageType type);
+	void indicesRangeInvalidated(std::pair<int, int> indicesRange, StorageType type);
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void beginClearData();
 	void endClearData();

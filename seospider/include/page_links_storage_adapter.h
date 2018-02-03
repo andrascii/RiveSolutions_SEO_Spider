@@ -30,6 +30,8 @@ public:
 
 signals:
 	virtual void parsedPageInfoAdded(int rowIndex) const override;
+	virtual void parsedPageInfoRemoved(int rowIndex) const override;
+	virtual void repaintIndicesRange(std::pair<int, int> indicesRange) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
 

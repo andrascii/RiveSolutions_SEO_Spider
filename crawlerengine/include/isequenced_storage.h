@@ -5,6 +5,12 @@
 namespace CrawlerEngine
 {
 
+struct RemoveEffects
+{
+	int removedIndex;
+	std::pair<int, int> invalidatedIndicesRange;
+};
+
 class ISequencedStorage
 {
 public:
@@ -23,6 +29,7 @@ public:
 protected:
 	virtual void pushBack(const ParsedPagePtr& page) = 0;
 	virtual void emplaceBack(ParsedPagePtr&& page) = 0;
+	virtual RemoveEffects remove(const ParsedPagePtr& page) = 0;
 	virtual bool containsPointersWithUseCountGreaterThanOne() const noexcept = 0;
 };
 
