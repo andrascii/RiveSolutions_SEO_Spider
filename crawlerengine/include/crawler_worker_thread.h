@@ -4,6 +4,7 @@
 #include "robots_txt_rules.h"
 #include "requester_wrapper.h"
 #include "crawler_request.h"
+#include "worker_result.h"
 
 namespace CrawlerEngine
 {
@@ -14,7 +15,6 @@ class IQueuedDownloader;
 class UniqueLinkStore;
 class OptionsLinkFilter;
 class PageDataCollector;
-class IUniquenessChecker;
 
 class CrawlerWorkerThread : public QObject
 {
@@ -25,7 +25,7 @@ public:
 	std::future<std::vector<CrawlerRequest>> pendingUrls() const;
 
 signals:
-	void pageParsed(ParsedPagePtr parsedPage) const;
+	void workerResult(WorkerResult workerResult) const;
 
 public slots:
 	void startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules);
@@ -61,13 +61,12 @@ private:
 	RequesterWrapper m_downloadRequester;
 
 	bool m_isRunning;
+	bool m_reloadPage;
 
 	PagesAcceptedAfterStop m_pagesAcceptedAfterStop;
 	std::optional<CrawlerRequest> m_currentRequest;
 
 	QTimer* m_defferedProcessingTimer;
-
-	std::unique_ptr<IUniquenessChecker> m_uniquenessChecker;
 };
 
 }

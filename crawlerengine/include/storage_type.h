@@ -96,6 +96,17 @@ enum class StorageType
 	EndEnumStorageType
 };
 
+inline StorageType operator++(StorageType value)
+{
+	if (value == StorageType::EndEnumStorageType)
+	{
+		return StorageType::BeginEnumStorageType;
+	}
+
+	unsigned int x = static_cast<unsigned int>(value);
+	return static_cast<StorageType>(++x);
+}
+
 }
 
 Q_DECLARE_METATYPE(CrawlerEngine::StorageType)

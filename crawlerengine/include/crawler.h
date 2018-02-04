@@ -4,6 +4,7 @@
 #include "unique_link_store.h"
 #include "crawler_options.h"
 #include "requester_wrapper.h"
+#include "storage_type.h"
 #include "web_host_info.h"
 
 namespace CrawlerEngine
@@ -55,18 +56,17 @@ public:
 	void clearData();
 	bool isNoData() const noexcept;
 	State state() const noexcept;
-	
 	SequencedDataCollection* sequencedDataCollection() const;
 	QString siteMapXml(const SiteMapSettings& settings) const;
-
 	void saveToFile(const QString& fileName);
 	void loadFromFile(const QString& fileName);
-
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 
 	const WebHostInfo* webHostInfo() const;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
+	void refreshPage(StorageType storageType, int index);
+	bool canRefreshPage() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -84,8 +84,9 @@ public slots:
 
 private slots:
 	void onAboutCrawlingState();
-	void checkSerializationReadyState();
+	void waitSerializationReadyState();
 	void onCrawlingSessionInitialized();
+	void onRefreshPageDone();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;

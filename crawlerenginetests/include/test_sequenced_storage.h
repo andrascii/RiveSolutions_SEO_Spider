@@ -13,31 +13,31 @@ namespace CrawlerEngine
 class TestSequencedStorage : public ISequencedStorage
 {
 public:
-	inline virtual int size() const noexcept override
+	virtual int size() const noexcept override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);
 		return m_sequencedStorage.size();
 	}
 
-	inline virtual void clear() override
+	virtual void clear() override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);
 		m_sequencedStorage.clear();
 	}
 
-	inline virtual bool empty() const noexcept override
+	virtual bool empty() const noexcept override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);
 		return m_sequencedStorage.empty();
 	}
 
-	inline virtual const ParsedPage* operator[](int idx) const noexcept override
+	virtual const ParsedPage* operator[](int idx) const noexcept override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);
 		return m_sequencedStorage[idx];
 	}
 
-	inline virtual ParsedPage* operator[](int idx) noexcept override
+	virtual ParsedPage* operator[](int idx) noexcept override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);
 		return m_sequencedStorage[idx];
@@ -56,16 +56,28 @@ public:
 	}
 
 protected:
-	inline virtual void pushBack(const ParsedPagePtr& page) override
+	virtual void pushBack(const ParsedPagePtr& page) override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);
 		m_sequencedStorage.pushBack(page);
 	}
 
-	inline virtual void emplaceBack(ParsedPagePtr&& page) override
+	virtual void emplaceBack(ParsedPagePtr&& page) override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);
 		m_sequencedStorage.emplaceBack(std::move(page));
+	}
+
+	virtual RemoveEffects remove(const ParsedPagePtr& page) override
+	{
+		std::lock_guard<std::mutex> locker(m_mutex);
+		return m_sequencedStorage.remove(page);
+	}
+
+	virtual int replace(ParsedPagePtr&& oldPage, ParsedPagePtr&& newPage) override
+	{
+		std::lock_guard<std::mutex> locker(m_mutex);
+		return m_sequencedStorage.replace(std::move(oldPage), std::move(newPage));
 	}
 
 	inline virtual bool containsPointersWithUseCountGreaterThanOne() const noexcept override

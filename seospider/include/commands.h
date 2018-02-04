@@ -22,6 +22,7 @@ public:
 	virtual QIcon icon() const = 0;
 	virtual const char* description() const noexcept = 0;
 	virtual void execute() = 0;
+	virtual bool canExecute() const noexcept;
 	virtual bool isCompound() const noexcept;
 };
 
@@ -244,6 +245,21 @@ public:
 	virtual QIcon icon() const override;
 	virtual const char* description() const noexcept override;
 	virtual void execute() override;
+};
+
+class RefreshPageCommand : public ICommand
+{
+public:
+	RefreshPageCommand(CrawlerEngine::StorageType storageType, int index);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+	virtual bool canExecute() const noexcept override;
+
+private:
+	CrawlerEngine::StorageType m_storageType;
+	int m_index;
 };
 
 }

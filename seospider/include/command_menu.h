@@ -1,24 +1,27 @@
 #pragma once
 
 #include "commands.h"
-#include "idata_commands_provider.h"
+#include "imenu_data_provider.h"
 
 namespace SeoSpider
 {
-	
+
 class CommandMenu : public QMenu
 {
 	Q_OBJECT
 
 public:
-	CommandMenu(IDataCommandsProvider* dataCommandsProvider);
+	CommandMenu(IMenuDataProvider* menuDataProvider);
 	void execFor(const QPoint& pos, const QModelIndex& index);
 
 private slots:
 	void onActionTriggered();
 
 private:
-	IDataCommandsProvider* m_dataCommandsProvider;
+	void initMenu(QMenu& editingMenu, const Menu& menu);
+
+private:
+	IMenuDataProvider* m_menuDataProvider;
 	QMap<QAction*, ICommandPointer> m_currentCommandActions;
 };
 

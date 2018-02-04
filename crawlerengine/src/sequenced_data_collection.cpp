@@ -14,6 +14,9 @@ SequencedDataCollection::SequencedDataCollection(const UnorderedDataCollection* 
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageAdded, this,
 		&SequencedDataCollection::addParsedPage, Qt::QueuedConnection));
 
+	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageReplaced, this,
+		&SequencedDataCollection::replaceParsedPage, Qt::QueuedConnection));
+
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, this,
 		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
 
@@ -34,11 +37,29 @@ ISequencedStorage* SequencedDataCollection::storage(StorageType type) noexcept
 
 const ISequencedStorage* SequencedDataCollection::storage(StorageType type) const noexcept
 {
-	ASSERT(m_sequencedStorageMap.find(type) != m_sequencedStorageMap.end());
-
 	auto iter = m_sequencedStorageMap.find(type);
 
 	return iter != m_sequencedStorageMap.end() ? iter->second.get() : nullptr;
+}
+
+void SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType type)
+{
+	const auto fakeDeleter = [](ParsedPage*) noexcept {};
+
+	ParsedPagePtr pointer(parsedPage, fakeDeleter);
+
+	ISequencedStorage* sequencedStorage = storage(type); 
+	
+	if (sequencedStorage)
+	{
+		const RemoveEffects removeEffects = sequencedStorage->remove(pointer);
+
+		if (removeEffects.removedIndex != -1)
+		{
+			emit parsedPageRemoved(removeEffects.removedIndex, type);
+			emit indicesRangeInvalidated(removeEffects.invalidatedIndicesRange, type);
+		}
+	}
 }
 
 std::shared_ptr<ISequencedStorage> SequencedDataCollection::createSequencedStorage() const
@@ -62,6 +83,20 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 		collection->emplaceBack(std::move(parsedPagePtr));
 
 		emit parsedPageAdded(collection->size() - 1, storageType);
+	}
+}
+
+void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type)
+{
+	auto storageIterator = m_sequencedStorageMap.find(type);
+
+	if (storageIterator != m_sequencedStorageMap.end())
+	{
+		auto&[storageType, collection] = *storageIterator;
+
+		const int replacedIndex = collection->replace(std::move(oldParsedPagePtr), std::move(newParsedPagePtr));
+
+		emit parsedPageReplaced(replacedIndex, storageType);
 	}
 }
 

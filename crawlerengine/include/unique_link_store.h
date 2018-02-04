@@ -18,8 +18,9 @@ class UniqueLinkStore : public QObject
 public:
 	UniqueLinkStore(QObject* parent);
 
-	bool extractUrl(CrawlerRequest& url) noexcept;
-
+	bool extractUrl(CrawlerRequest& crawlerRequest) noexcept;
+	bool extractRefreshUrl(CrawlerRequest& crawlerRequest) noexcept;
+	void addRefreshUrl(const Url& url, DownloadRequestType requestType);
 	void addUrl(const Url& url, DownloadRequestType requestType);
 	void addUrl(Url&& url, DownloadRequestType requestType);
 	void addUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType);
@@ -32,6 +33,7 @@ public:
 	void setCrawledUrls(const std::vector<CrawlerRequest>& urls);
 	void setPendingUrls(const std::vector<CrawlerRequest>& urls);
 	void clear();
+	bool hasRefreshUrls() const noexcept;
 
 signals:
 	void urlAdded();
@@ -64,6 +66,7 @@ private:
 
 	UrlList m_pendingUrlList;
 	UrlList m_crawledUrlList;
+	std::queue<CrawlerRequest> m_refreshUrlQueue;
 
 	mutable std::recursive_mutex m_mutex;
 	int m_lastPendingSizeChange;

@@ -14,11 +14,15 @@
 namespace SeoSpider
 {
 
+bool ICommand::canExecute() const noexcept
+{
+	return true;
+}
+
 bool ICommand::isCompound() const noexcept
 {
 	return false;
 }
-
 
 
 CompoundCommand::CompoundCommand(const char* description, const QIcon& icon)
@@ -106,7 +110,6 @@ void RemoveRowCommand::execute()
 }
 
 
-
 ExportDataToXlsxCommand::ExportDataToXlsxCommand(const CrawlerEngine::SequencedDataCollection* dataCollection,
 	const std::vector<DCStorageDescription>& storageDescriptions)
 	: m_dataCollection(dataCollection)
@@ -121,7 +124,7 @@ QIcon ExportDataToXlsxCommand::icon() const
 
 const char* ExportDataToXlsxCommand::description() const noexcept
 {
-	return "Export Data To .xlsx File";
+	return "Export Data to .xlsx File";
 }
 
 void ExportDataToXlsxCommand::execute()
@@ -208,7 +211,7 @@ QIcon ExportUrlInfoToXlsxCommand::icon() const
 
 const char* ExportUrlInfoToXlsxCommand::description() const noexcept
 {
-	return "Export Url Info to Xlsx";
+	return "Export Url Info to .xlsx";
 }
 
 void ExportUrlInfoToXlsxCommand::execute()
@@ -257,7 +260,7 @@ QIcon ExportUrlOutlinksToXlsxCommand::icon() const
 
 const char* ExportUrlOutlinksToXlsxCommand::description() const noexcept
 {
-	return "Export Url Outlinks to Xlsx";
+	return "Export Url Outlinks to .xlsx";
 }
 
 void ExportUrlOutlinksToXlsxCommand::execute()
@@ -305,7 +308,7 @@ QIcon ExportUrlInlinksToXlsxCommand::icon() const
 
 const char* ExportUrlInlinksToXlsxCommand::description() const noexcept
 {
-	return "Export Url Inlinks to Xlsx";
+	return "Export Url Inlinks to .xlsx";
 }
 
 void ExportUrlInlinksToXlsxCommand::execute()
@@ -411,7 +414,6 @@ void CopyToClipboardAllColumnsDataCommand::execute()
 
 	clipboard->setText(clipboardText);
 }
-
 
 
 CopyToClipboardUrlCommand::CopyToClipboardUrlCommand(const CrawlerEngine::ISequencedStorage* storage, int pageIndex)
@@ -539,7 +541,6 @@ void ShowOtherDomainsOnIpCommand::execute()
 }
 
 
-
 QIcon OpenRobotsTxtFileCommand::icon() const
 {
 	return QIcon();
@@ -561,6 +562,33 @@ void OpenRobotsTxtFileCommand::execute()
 	{
 		QDesktopServices::openUrl(url);
 	}
+}
+
+
+RefreshPageCommand::RefreshPageCommand(CrawlerEngine::StorageType storageType, int index)
+	: m_storageType(storageType)
+	, m_index(index)
+{
+}
+
+QIcon RefreshPageCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* RefreshPageCommand::description() const noexcept
+{
+	return "Refresh Page";
+}
+
+void RefreshPageCommand::execute()
+{
+	theApp->crawler()->refreshPage(m_storageType, m_index);
+}
+
+bool RefreshPageCommand::canExecute() const noexcept
+{
+	return theApp->crawler()->canRefreshPage();
 }
 
 }

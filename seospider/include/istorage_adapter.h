@@ -1,12 +1,12 @@
 #pragma once
 
 #include "parsed_page_info.h"
-#include "idata_commands_provider.h"
+#include "imenu_data_provider.h"
 
 namespace SeoSpider
 {
 
-class IStorageAdapter : public IDataCommandsProvider
+class IStorageAdapter : public IMenuDataProvider
 {
 public:
 	enum class ItemType
@@ -28,6 +28,9 @@ public:
 
 	// signal
 	virtual void parsedPageInfoAdded(int rowIndex) const = 0;
+	virtual void parsedPageInfoRemoved(int rowIndex) const = 0;
+	virtual void parsedPageInfoReplaced(int rowIndex) const = 0;
+	virtual void repaintIndicesRange(std::pair<int, int> indicesRange) const = 0;
 	virtual void beginClearData() const = 0;
 	virtual void endClearData() const = 0;
 };
@@ -36,7 +39,6 @@ class IParsedPageStorageAdapter : public IStorageAdapter
 {
 public:
 	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept = 0;
-
 	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept = 0;
 };
 
@@ -44,7 +46,6 @@ class IPageLinksStorageAdapter : public IStorageAdapter
 {
 public:
 	virtual void setAvailableColumns(QVector<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept = 0;
-
 	virtual QVector<ParsedPageInfo::PageLinksColumn> availableColumns() const noexcept = 0;
 };
 

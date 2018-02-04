@@ -51,6 +51,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	serviceLocator->addService<INotificationService>(new NotificationService);
 
 	ASSERT(s_instance == nullptr && "Allowed only one instance of Crawler");
+	ASSERT(qRegisterMetaType<WorkerResult>());
 	ASSERT(qRegisterMetaType<ParsedPagePtr>());
 	ASSERT(qRegisterMetaType<std::vector<ParsedPagePtr>>());
 	ASSERT(qRegisterMetaType<CrawlingProgress>());
@@ -58,7 +59,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	ASSERT(qRegisterMetaType<RobotsTxtRules>());
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
-	VERIFY(connect(m_serializatonReadyStateCheckerTimer, &QTimer::timeout, this, &Crawler::checkSerializationReadyState));
+	VERIFY(connect(m_serializatonReadyStateCheckerTimer, &QTimer::timeout, this, &Crawler::waitSerializationReadyState));
 	
 	m_crawlingStateTimer->setInterval(100);
 	m_serializatonReadyStateCheckerTimer->setInterval(200);
@@ -84,6 +85,8 @@ void Crawler::initialize()
 {
 	m_modelController = new ModelController;
 
+	VERIFY(connect(m_modelController, &ModelController::refreshPageDone, this, &Crawler::onRefreshPageDone));
+
 	initSequencedDataCollection();
 
 	m_downloader = createDownloader();
@@ -101,7 +104,7 @@ void Crawler::initialize()
 	{
 		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
 
-		VERIFY(connect(m_workers.back(), SIGNAL(pageParsed(ParsedPagePtr)), m_modelController, SLOT(addParsedPage(ParsedPagePtr)), Qt::QueuedConnection));
+		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(WorkerResult)), m_modelController, SLOT(handleWorkerResult(WorkerResult)), Qt::QueuedConnection));
 
 		threadManager.moveObjectToThread(m_workers.back(), QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
 	}
@@ -182,7 +185,7 @@ void Crawler::stopCrawling()
 	emit crawlerStopped();
 
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
-	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler stopped"));
+	serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler stopped."));
 }
 
 void Crawler::onAboutCrawlingState()
@@ -216,11 +219,11 @@ void Crawler::onAboutCrawlingState()
 		setState(StatePending);
 
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
-		serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Program has ended crawling."));
+		serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Program has ended crawling."));
 	}
 }
 
-void Crawler::checkSerializationReadyState()
+void Crawler::waitSerializationReadyState()
 {
 	const CrawlerSharedState* state = CrawlerSharedState::instance();
 
@@ -282,7 +285,13 @@ void Crawler::onCrawlingSessionInitialized()
 	emit crawlerStarted();
 
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
-	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler started"));
+	serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler started."));
+}
+
+void Crawler::onRefreshPageDone()
+{
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	serviceLocator->service<INotificationService>()->info(tr("Refreshing page"), tr("Page refresh completed."));
 }
 
 bool Crawler::isPreinitialized() const
@@ -318,7 +327,7 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
-		serviceLocator->service<INotificationService>()->error(tr("Serialization error"), tr("The operation has not been successful"));
+		serviceLocator->service<INotificationService>()->error(tr("Serialization error"), tr("The operation has not been successful."));
 	}
 
 	m_serializationRequester.reset();
@@ -337,7 +346,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
-		serviceLocator->service<INotificationService>()->error(tr("Deserialization error"), tr("The operation has not been successful"));
+		serviceLocator->service<INotificationService>()->error(tr("Deserialization error"), tr("The operation has not been successful."));
 	}
 	else
 	{
@@ -540,7 +549,7 @@ void Crawler::saveToFile(const QString& fileName)
 	setState(StateSerializaton);
 
 	m_serializatonReadyStateCheckerTimer->start();
-	checkSerializationReadyState();
+	waitSerializationReadyState();
 }
 
 void Crawler::loadFromFile(const QString& fileName)
@@ -557,7 +566,7 @@ void Crawler::loadFromFile(const QString& fileName)
 	setState(StateDeserializaton);
 
 	m_serializatonReadyStateCheckerTimer->start();
-	checkSerializationReadyState();
+	waitSerializationReadyState();
 }
 
 const ISpecificLoader* Crawler::robotsTxtLoader() const noexcept
@@ -590,9 +599,37 @@ std::optional<QByteArray> Crawler::currentCrawledSiteIPv4() const
 	return std::make_optional<QByteArray>();
 }
 
+void Crawler::refreshPage(StorageType storageType, int index)
+{
+	ASSERT(state() == StatePause || state() == StatePending);
+	ASSERT(!m_workers.empty());
+
+	ParsedPage* parsedPage = m_sequencedDataCollection->storage(storageType)->get(index);
+
+	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
+	{
+		if (type == StorageType::CrawledUrlStorageType)
+		{
+			continue;
+		}
+
+		m_sequencedDataCollection->removePage(parsedPage, type);
+	}
+
+	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh", 
+		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));
+
+	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet);
+}
+
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 {
 	return m_uniqueLinkStore;
+}
+
+bool Crawler::canRefreshPage() const noexcept
+{
+	return state() == StatePause || state() == StatePending;
 }
 
 }

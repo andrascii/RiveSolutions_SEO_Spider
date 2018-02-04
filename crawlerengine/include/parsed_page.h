@@ -183,6 +183,7 @@ struct ParsedPage
 	std::deque<ResourceLink> linksToThisPage;
 
 	QByteArray rawResponse;
+
 	int pageLevel = invalidPageLevel;
 
 	std::vector<bool> storages;

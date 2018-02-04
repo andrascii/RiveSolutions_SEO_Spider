@@ -27,7 +27,7 @@ public:
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
-	virtual std::vector<ICommandPointer> commandsFor(const QModelIndex& index) const override;
+	virtual Menu menuFor(const QModelIndex& index) const override;
 	virtual QObject* qobject() noexcept override;
 
 #ifdef QT_DEBUG
@@ -36,11 +36,17 @@ public:
 
 signals:
 	virtual void parsedPageInfoAdded(int rowIndex) const override;
+	virtual void parsedPageInfoRemoved(int rowIndex) const override;
+	virtual void parsedPageInfoReplaced(int rowIndex) const override;
+	virtual void repaintIndicesRange(std::pair<int, int> indicesRange) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
 
 private slots:
 	void onStorageUpdated(int row, CrawlerEngine::StorageType type);
+	void onPageRemoved(int row, CrawlerEngine::StorageType type);
+	void onPageReplaced(int row, CrawlerEngine::StorageType type);
+	void onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type) const;
 
 private:
 	CrawlerEngine::ISequencedStorage* m_associatedStorage;
