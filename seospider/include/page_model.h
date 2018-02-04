@@ -32,7 +32,7 @@ signals:
 private slots:
 	void onParsedPageInfoAdded(int rowIndex);
 	void onParsedPageInfoRemoved(int rowIndex);
-	void onPageInfoItemChanged(int row, int column);
+	void onParsedPageInfoReplaced(int rowIndex);
 	void onRepaintIndicesRange(std::pair<int, int> indicesRange);
 	void onAboutBeginClearingData();
 	void onAboutEndClearingData();

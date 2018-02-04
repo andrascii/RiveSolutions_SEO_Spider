@@ -164,11 +164,19 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 	const Url url = workerResult.incomingPage()->url;
 	const QString urlStr = url.toString();
 	
-	if (!workerResult.isRefreshResult())
+	if (workerResult.isRefreshResult())
+	{
+		ParsedPagePtr oldPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
+
+		DEBUG_ASSERT(oldPage);
+
+		data()->replaceParsedPage(oldPage, workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
+	}
+	else
 	{
 		data()->addParsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
 	}
-	
+
 	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
 
 	calculatePageLevel(workerResult.incomingPage());

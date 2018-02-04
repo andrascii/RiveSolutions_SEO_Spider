@@ -73,7 +73,7 @@ protected:
 
 	virtual RemoveEffects remove(const ParsedPagePtr& page) override
 	{
-		auto pageIterator =  std::find(m_pages.begin(), m_pages.end(), page);
+		const auto pageIterator =  std::find(m_pages.begin(), m_pages.end(), page);
 
 		RemoveEffects removeEffects;
 
@@ -98,6 +98,21 @@ protected:
 		removeEffects.invalidatedIndicesRange.second = static_cast<int>(upperBound);
 
 		return removeEffects;
+	}
+
+	virtual int replace(ParsedPagePtr&& oldPage, ParsedPagePtr&& newPage) override
+	{
+		const auto pageIterator = std::find(m_pages.begin(), m_pages.end(), oldPage);
+
+		if (pageIterator == m_pages.end())
+		{
+			return -1;
+		}
+
+		const int replacedIndex = std::distance(m_pages.begin(), pageIterator);
+		*pageIterator = std::move(newPage);
+
+		return replacedIndex;
 	}
 
 	virtual bool containsPointersWithUseCountGreaterThanOne() const noexcept override;

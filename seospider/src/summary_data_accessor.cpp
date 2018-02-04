@@ -15,6 +15,9 @@ SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataColle
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageRemoved,
 		this, &SummaryDataAccessor::emitDataChanged));
 
+	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageReplaced,
+		this, &SummaryDataAccessor::emitDataChanged));
+
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
 		this, &SummaryDataAccessor::beginClearData));
 

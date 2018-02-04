@@ -42,7 +42,7 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 	{
 		disconnect(m_storageAdapter->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int)));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(parsedPageInfoRemoved(int)), this, SLOT(onParsedPageInfoRemoved(int)));
-
+		disconnect(m_storageAdapter->qobject(), SIGNAL(parsedPageInfoReplaced(int)), this, SLOT(onParsedPageInfoReplaced(int)));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(repaintIndicesRange(std::pair<int, int>)), this, SLOT(onRepaintIndicesRange(std::pair<int, int>)));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData()));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData()));
@@ -50,10 +50,11 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int))));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(parsedPageInfoRemoved(int)), this, SLOT(onParsedPageInfoRemoved(int))));
+	VERIFY(connect(storageAdapter->qobject(), SIGNAL(parsedPageInfoReplaced(int)), this, SLOT(onParsedPageInfoReplaced(int))));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(repaintIndicesRange(std::pair<int, int>)), this, SLOT(onRepaintIndicesRange(std::pair<int, int>))));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData())));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData())));
-	
+
 	m_storageAdapter = storageAdapter;
 
 	std::map<int, int> columnsWidth;
@@ -200,10 +201,12 @@ void PageModel::onParsedPageInfoRemoved(int rowIndex)
 	endRemoveRows();
 }
 
-void PageModel::onPageInfoItemChanged(int row, int column)
+void PageModel::onParsedPageInfoReplaced(int rowIndex)
 {
-	const QModelIndex indexItemChanged = index(row, column);
-	emit dataChanged(indexItemChanged, indexItemChanged);
+	const QModelIndex startIndexChanged = index(rowIndex, 0);
+	const QModelIndex endIndexChanged = index(rowIndex, storageAdapter()->columnCount() - 1);
+
+	emit dataChanged(startIndexChanged, endIndexChanged);
 }
 
 void PageModel::onRepaintIndicesRange(std::pair<int, int> indicesRange)

@@ -64,6 +64,7 @@ public:
 	const QPixmap& currentCrawledSitePixmap() const noexcept;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
 	void refreshPage(StorageType storageType, int index);
+	bool canRefreshPage() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -74,7 +75,6 @@ signals:
 	void crawlerOptionsChanged(CrawlerOptions options);
 	void serializationProcessDone();
 	void deserializationProcessDone();
-	void pageRefreshed();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);

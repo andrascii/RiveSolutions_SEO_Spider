@@ -21,6 +21,30 @@ bool UnorderedDataCollection::isParsedPageExists(const ParsedPagePtr& parsedPage
 	return unorderedStorage.find(parsedPagePtr) != unorderedStorage.end();
 }
 
+void UnorderedDataCollection::replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type)
+{
+	checkStorageType(type);
+
+	std::vector<bool>& pageStoragesFlags = newPage->storages;
+
+	if (pageStoragesFlags.size() < static_cast<size_t>(StorageType::EndEnumStorageType))
+	{
+		pageStoragesFlags.resize(static_cast<size_t>(StorageType::EndEnumStorageType), false);
+	}
+
+	pageStoragesFlags[static_cast<size_t>(type)] = true;
+
+	const auto removedItemsCount = storage(type).erase(oldPage);
+
+	DEBUG_ASSERT(removedItemsCount == 1);
+
+	storage(type).insert(newPage);
+
+	DEBUG_ASSERT(isParsedPageExists(newPage, type));
+
+	emit parsedPageReplaced(oldPage, newPage, type);
+}
+
 const ParsedPagePtr UnorderedDataCollection::parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept
 {
 	checkStorageType(type);
@@ -53,7 +77,7 @@ std::vector<ParsedPagePtr> UnorderedDataCollection::allParsedPages(StorageType t
 	return result;
 }
 
-void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
+void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type)
 {
 	std::vector<bool>& pageStoragesFlags = parsedPagePtr->storages;
 
@@ -70,7 +94,7 @@ void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, 
 	emit parsedPageAdded(parsedPagePtr, type);
 }
 
-void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept
+void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type)
 {
 	const StorageType storage = static_cast<StorageType>(type);
 	addParsedPage(parsedPagePtr, storage);

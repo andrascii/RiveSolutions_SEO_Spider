@@ -29,6 +29,7 @@ public:
 	// signal
 	virtual void parsedPageInfoAdded(int rowIndex) const = 0;
 	virtual void parsedPageInfoRemoved(int rowIndex) const = 0;
+	virtual void parsedPageInfoReplaced(int rowIndex) const = 0;
 	virtual void repaintIndicesRange(std::pair<int, int> indicesRange) const = 0;
 	virtual void beginClearData() const = 0;
 	virtual void endClearData() const = 0;

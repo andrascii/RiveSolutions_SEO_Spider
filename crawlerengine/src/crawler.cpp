@@ -619,4 +619,9 @@ const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 	return m_uniqueLinkStore;
 }
 
+bool Crawler::canRefreshPage() const noexcept
+{
+	return state() == StatePause || state() == StatePending;
+}
+
 }
