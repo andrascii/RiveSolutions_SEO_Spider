@@ -85,6 +85,8 @@ void Crawler::initialize()
 {
 	m_modelController = new ModelController;
 
+	VERIFY(connect(m_modelController, &ModelController::refreshPageDone, this, &Crawler::onRefreshPageDone));
+
 	initSequencedDataCollection();
 
 	m_downloader = createDownloader();
@@ -182,7 +184,7 @@ void Crawler::stopCrawling()
 	emit crawlerStopped();
 
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
-	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler stopped"));
+	serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler stopped."));
 }
 
 void Crawler::onAboutCrawlingState()
@@ -216,7 +218,7 @@ void Crawler::onAboutCrawlingState()
 		setState(StatePending);
 
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
-		serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Program has ended crawling."));
+		serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Program has ended crawling."));
 	}
 }
 
@@ -282,7 +284,13 @@ void Crawler::onCrawlingSessionInitialized()
 	emit crawlerStarted();
 
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
-	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler started"));
+	serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler started."));
+}
+
+void Crawler::onRefreshPageDone()
+{
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	serviceLocator->service<INotificationService>()->info(tr("Refreshing page"), tr("Page refresh completed."));
 }
 
 bool Crawler::isPreinitialized() const

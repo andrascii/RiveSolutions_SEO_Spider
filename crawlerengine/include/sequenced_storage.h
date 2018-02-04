@@ -15,7 +15,11 @@ public:
 
 	virtual int size() const noexcept override
 	{
-		return static_cast<int>(m_pages.size());
+		const auto size = m_pages.size();
+
+		ASSERT(size <= std::numeric_limits<int>::max() && "Integer overflow");
+
+		return static_cast<int>(size);
 	}
 
 	virtual void clear() override

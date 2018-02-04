@@ -157,6 +157,11 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		data()->parsedPageLinksToThisResourceChanged(m_linksToPageChanges);
 		m_linksToPageChanges.changes.clear();
 	}
+
+	if (workerResult.isRefreshResult())
+	{
+		emit refreshPageDone();
+	}
 }
 
 void ModelController::processParsedPageUrl(WorkerResult& workerResult)

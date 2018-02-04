@@ -84,6 +84,7 @@ private slots:
 	void onAboutCrawlingState();
 	void waitSerializationReadyState();
 	void onCrawlingSessionInitialized();
+	void onRefreshPageDone();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;
