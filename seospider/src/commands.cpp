@@ -738,4 +738,94 @@ void GoToLinksOnThisPageCommand::execute()
 	}
 }
 
+
+GoToLinksToThisPageCommand::GoToLinksToThisPageCommand(
+	const CrawlerEngine::SequencedDataCollection* dataCollection,
+	const CrawlerEngine::ISequencedStorage* storage,
+	CrawlerEngine::StorageType storageType,
+	int index)
+	: m_dataCollection(dataCollection)
+	, m_storage(storage)
+	, m_storageType(storageType)
+	, m_index(index)
+{
+}
+
+QIcon GoToLinksToThisPageCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* GoToLinksToThisPageCommand::description() const noexcept
+{
+	return "Go to \"Links to this Page\"";
+}
+
+void GoToLinksToThisPageCommand::execute()
+{
+	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+
+	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+
+	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
+
+	filterWidget->selectFilter(type);
+	filterWidget->selectTab(PageDataWidget::PageDataType::LinksToThisPageType);
+
+	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
+	{
+		filterWidget->selectParsedPage(index);
+	}
+	else
+	{
+		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
+	}
+}
+
+
+GoToHTTPResponseCommand::GoToHTTPResponseCommand(
+	const CrawlerEngine::SequencedDataCollection* dataCollection,
+	const CrawlerEngine::ISequencedStorage* storage,
+	CrawlerEngine::StorageType storageType,
+	int index)
+	: m_dataCollection(dataCollection)
+	, m_storage(storage)
+	, m_storageType(storageType)
+	, m_index(index)
+{
+}
+
+QIcon GoToHTTPResponseCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* GoToHTTPResponseCommand::description() const noexcept
+{
+	return "Go to \"HTTP Response\"";
+}
+
+void GoToHTTPResponseCommand::execute()
+{
+	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+
+	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+
+	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
+
+	filterWidget->selectFilter(type);
+	filterWidget->selectTab(PageDataWidget::PageDataType::ServerResponseForPageType);
+
+	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
+	{
+		filterWidget->selectParsedPage(index);
+	}
+	else
+	{
+		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
+	}
+}
+
 }
