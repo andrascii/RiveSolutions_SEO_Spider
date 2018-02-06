@@ -91,8 +91,15 @@ protected:
 		}
 
 		removeEffects.removedIndex = std::distance(m_pages.begin(), pageIterator);
-
 		const auto nextElement = m_pages.erase(pageIterator);
+
+		if (!removeEffects.removedIndex)
+		{
+			removeEffects.invalidatedIndicesRange.first = 0;
+			removeEffects.invalidatedIndicesRange.second = 0;
+			
+			return removeEffects;
+		}
 
 		removeEffects.invalidatedIndicesRange.first = std::distance(m_pages.begin(), nextElement);
 

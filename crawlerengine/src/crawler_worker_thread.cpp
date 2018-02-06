@@ -125,13 +125,16 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 	CrawlerRequest crawlerRequest;
 	bool isUrlExtracted = false;
 	
-	if (m_isRunning)
+	m_reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(crawlerRequest);
+
+	if (!m_isRunning && !m_reloadPage)
+	{
+		return;
+	}
+
+	if (!isUrlExtracted)
 	{
 		isUrlExtracted = m_uniqueLinkStore->extractUrl(crawlerRequest);
-	}
-	else
-	{
-		m_reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(crawlerRequest);
 	}
 
 	if (isUrlExtracted)
@@ -256,7 +259,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
 			page->resourceType = ResourceType::ResourceHtml;
 
-			onPageParsed(page);
+			onPageParsed(WorkerResult{ page, false });
 		}
 	};
 
@@ -293,7 +296,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 		if (urlAdded)
 		{
-			onPageParsed(page);
+			onPageParsed(WorkerResult{ page, m_reloadPage });
 		}
 
 		checkUrl = true;
@@ -329,7 +332,7 @@ void CrawlerWorkerThread::onStart()
 	{
 		for (const PagesAcceptedAfterStop::PageRequestPair& pair : m_pagesAcceptedAfterStop.pages)
 		{
-			onPageParsed(pair.second);
+			onPageParsed(WorkerResult{ pair.second, false });
 		}
 	}
 
@@ -338,9 +341,9 @@ void CrawlerWorkerThread::onStart()
 	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::vector<CrawlerRequest>>();
 }
 
-void CrawlerWorkerThread::onPageParsed(const ParsedPagePtr& parsedPage) const noexcept
+void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcept
 {
-	emit workerResult(WorkerResult{ parsedPage, m_reloadPage });
+	emit workerResult(result);
 
 	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 }

@@ -601,10 +601,14 @@ std::optional<QByteArray> Crawler::currentCrawledSiteIPv4() const
 
 void Crawler::refreshPage(StorageType storageType, int index)
 {
+	INFOLOG << "Refresh page. index = " << index << "; storageType = " << static_cast<int>(storageType) << ";";
+
 	ASSERT(state() == StatePause || state() == StatePending);
 	ASSERT(!m_workers.empty());
 
 	ParsedPage* parsedPage = m_sequencedDataCollection->storage(storageType)->get(index);
+
+	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
 	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
 	{
