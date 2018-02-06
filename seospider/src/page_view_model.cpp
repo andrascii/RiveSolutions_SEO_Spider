@@ -217,17 +217,10 @@ void PageViewModel::onAttachedModelStorageAdapterChanged()
 void PageViewModel::onAttachedModelDataChanged(const QModelIndex& startIndex, const QModelIndex& endIndex, const QVector<int>& roles)
 {
 	Q_UNUSED(roles);
+	Q_UNUSED(startIndex);
+	Q_UNUSED(endIndex);
 
-	ASSERT(startIndex.row() <= endIndex.row());
-
-	QModelIndexList modelIndexes;
-
-	for (int i = startIndex.row(); i <= endIndex.row(); ++i)
-	{
-		modelIndexes.append(model()->makeModelIndexesForRow(i));
-	}
-
-	AbstractViewModel::invalidateCacheIndexes(modelIndexes);
+	AbstractViewModel::invalidateItemViewRendererCache();
 }
 
 void PageViewModel::onModelDataWasReset()

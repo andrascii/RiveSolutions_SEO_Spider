@@ -5,6 +5,7 @@
 #include "crawler_options.h"
 #include "requester_wrapper.h"
 #include "storage_type.h"
+#include "web_host_info.h"
 
 namespace CrawlerEngine
 {
@@ -61,9 +62,11 @@ public:
 	void loadFromFile(const QString& fileName);
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
-	const QPixmap& currentCrawledSitePixmap() const noexcept;
+
+	const WebHostInfo* webHostInfo() const;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
 	void refreshPage(StorageType storageType, int index);
+	bool canRefreshPage() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -74,7 +77,6 @@ signals:
 	void crawlerOptionsChanged(CrawlerOptions options);
 	void serializationProcessDone();
 	void deserializationProcessDone();
-	void pageRefreshed();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);
@@ -84,6 +86,7 @@ private slots:
 	void onAboutCrawlingState();
 	void waitSerializationReadyState();
 	void onCrawlingSessionInitialized();
+	void onRefreshPageDone();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;
@@ -137,7 +140,7 @@ private:
 	IDownloader* m_downloader;
 
 	RequesterWrapper m_hostInfoRequester;
-	IWebScreenShot* m_webScreenShot;
+	WebHostInfo* m_webHostInfo;
 	std::unique_ptr<HostInfo> m_hostInfo;
 };
 

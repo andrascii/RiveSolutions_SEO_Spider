@@ -27,6 +27,7 @@ public:
 
 signals:
 	void parsedPageAdded(int row, StorageType type);
+	void parsedPageReplaced(int row, StorageType type);
 	void parsedPageRemoved(int row, StorageType type);
 	void indicesRangeInvalidated(std::pair<int, int> indicesRange, StorageType type);
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
@@ -38,6 +39,7 @@ protected:
 
 protected slots:
 	void addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type);
+	void replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
 	void onDataCleared();
 
 private:

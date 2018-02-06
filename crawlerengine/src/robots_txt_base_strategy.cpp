@@ -21,7 +21,8 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const Url& url,
 	
 	Url cleanedUrl = cleanUrl(url, userAgentType, tokenizer);
 
-	const QString urlPath = cleanedUrl.path(Url::FullyEncoded) + cleanedUrl.query(Url::FullyEncoded);
+	const QString urlPath = cleanedUrl.path(Url::FullyEncoded) + 
+		(cleanedUrl.query().isEmpty() ? QString() : QString("?") + cleanedUrl.query(Url::FullyEncoded));
 
 	QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> tokens = tokenizer.allowAndDisallowTokens(userAgentType);
 

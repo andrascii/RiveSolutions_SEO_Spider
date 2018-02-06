@@ -40,7 +40,7 @@ private:
 	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 	void onStart();
-	void onPageParsed(const ParsedPagePtr& parsedPage) const noexcept;
+	void onPageParsed(const WorkerResult& result) const noexcept;
 
 	std::vector<CrawlerRequest> preparePagesAfterStop() const;
 

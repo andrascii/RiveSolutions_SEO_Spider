@@ -24,8 +24,10 @@ public:
 
 	bool isParsedPageExists(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 
-	void addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
-	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePtr, int type) noexcept;
+	void replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type);
+
+	void addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type);
+	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePtr, int type);
 
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
@@ -56,6 +58,7 @@ public:
 
 signals:
 	void parsedPageAdded(ParsedPagePtr parsedPagePtr, StorageType type);
+	void parsedPageReplaced(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void dataCleared();
 

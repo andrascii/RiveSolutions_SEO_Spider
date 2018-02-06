@@ -8,7 +8,8 @@ enum class ResponseType
 	ResponseTypeUnknown,
 	ResponseTypeDownload,
 	ResponseTypeGetHostInfo,
-	ResponseTypeTaskResult
+	ResponseTypeTaskResult,
+	ResponseTypeCheck404IsProper
 };
 
 #define DECLARE_RESPONSE_STATIC_TYPE(Type) \

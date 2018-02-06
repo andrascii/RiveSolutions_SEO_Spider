@@ -29,6 +29,7 @@
 #include <functional>
 #include <optional>
 #include <csignal>
+#include <optional>
 
 //
 // boost

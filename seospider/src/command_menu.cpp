@@ -31,7 +31,7 @@ void CommandMenu::initMenu(QMenu& editingMenu, const Menu& menuData)
 {
 	if (menuData.empty())
 	{
-		DEBUGLOG << "This Data Commands Provider does not contain any commands";
+		DEBUGLOG << "This Menu Data Provider does not contain any commands";
 		return;
 	}
 
@@ -44,6 +44,8 @@ void CommandMenu::initMenu(QMenu& editingMenu, const Menu& menuData)
 				ICommandPointer command = Common::Helpers::fast_cast<const CommandMenuItem*>(menuItem.get())->command();
 
 				QAction* action = new QAction(command->icon(), command->description(), this);
+				action->setEnabled(command->canExecute());
+
 				m_currentCommandActions[action] = command;
 				editingMenu.addAction(action);
 

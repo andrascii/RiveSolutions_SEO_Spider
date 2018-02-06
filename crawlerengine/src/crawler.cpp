@@ -45,7 +45,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_sequencedDataCollection(nullptr)
 	, m_state(StatePending)
 	, m_downloader(nullptr)
-	, m_webScreenShot(nullptr)
+	, m_webHostInfo(nullptr)
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->addService<INotificationService>(new NotificationService);
@@ -85,10 +85,12 @@ void Crawler::initialize()
 {
 	m_modelController = new ModelController;
 
+	VERIFY(connect(m_modelController, &ModelController::refreshPageDone, this, &Crawler::onRefreshPageDone));
+
 	initSequencedDataCollection();
 
 	m_downloader = createDownloader();
-	m_webScreenShot = createWebScreenShot();
+	m_webHostInfo = new WebHostInfo(this, createWebScreenShot());
 
 	ThreadManager& threadManager = ThreadManager::instance();
 
@@ -96,6 +98,7 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(m_modelController, "BackgroundThread");
 	threadManager.moveObjectToThread(createHostInfoProvider()->qobject(), "BackgroundThread");
 	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
+	threadManager.moveObjectToThread(new Proper404Checker(), "BackgroundThread");
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
@@ -182,7 +185,7 @@ void Crawler::stopCrawling()
 	emit crawlerStopped();
 
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
-	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler stopped"));
+	serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler stopped."));
 }
 
 void Crawler::onAboutCrawlingState()
@@ -216,7 +219,7 @@ void Crawler::onAboutCrawlingState()
 		setState(StatePending);
 
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
-		serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Program has ended crawling."));
+		serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Program has ended crawling."));
 	}
 }
 
@@ -282,7 +285,13 @@ void Crawler::onCrawlingSessionInitialized()
 	emit crawlerStarted();
 
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
-	serviceLocator->service<INotificationService>()->info(tr("Crawler"), tr("Crawler started"));
+	serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler started."));
+}
+
+void Crawler::onRefreshPageDone()
+{
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	serviceLocator->service<INotificationService>()->info(tr("Refreshing page"), tr("Page refresh completed."));
 }
 
 bool Crawler::isPreinitialized() const
@@ -406,8 +415,7 @@ void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response
 
 	m_hostInfo.reset(new HostInfo(response.hostInfo));
 	m_options.startCrawlingPage = response.url;
-
-	m_webScreenShot->load(m_options.startCrawlingPage);
+	m_webHostInfo->reset(m_options.startCrawlingPage);
 
 	tryToLoadCrawlingDependencies();
 }
@@ -571,9 +579,9 @@ const CrawlerEngine::ISpecificLoader* Crawler::xmlSitemapLoader() const noexcept
 	return m_xmlSitemapLoader;
 }
 
-const QPixmap& Crawler::currentCrawledSitePixmap() const noexcept
+const WebHostInfo * Crawler::webHostInfo() const
 {
-	return m_webScreenShot->result();
+	return m_webHostInfo;
 }
 
 std::optional<QByteArray> Crawler::currentCrawledSiteIPv4() const
@@ -593,10 +601,14 @@ std::optional<QByteArray> Crawler::currentCrawledSiteIPv4() const
 
 void Crawler::refreshPage(StorageType storageType, int index)
 {
+	INFOLOG << "Refresh page. index = " << index << "; storageType = " << static_cast<int>(storageType) << ";";
+
 	ASSERT(state() == StatePause || state() == StatePending);
 	ASSERT(!m_workers.empty());
 
 	ParsedPage* parsedPage = m_sequencedDataCollection->storage(storageType)->get(index);
+
+	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
 	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
 	{
@@ -617,6 +629,11 @@ void Crawler::refreshPage(StorageType storageType, int index)
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 {
 	return m_uniqueLinkStore;
+}
+
+bool Crawler::canRefreshPage() const noexcept
+{
+	return state() == StatePause || state() == StatePending;
 }
 
 }
