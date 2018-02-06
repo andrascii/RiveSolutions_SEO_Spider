@@ -15,7 +15,11 @@ public:
 
 	virtual int size() const noexcept override
 	{
-		return static_cast<int>(m_pages.size());
+		const auto size = m_pages.size();
+
+		ASSERT(size <= std::numeric_limits<int>::max() && "Integer overflow");
+
+		return static_cast<int>(size);
 	}
 
 	virtual void clear() override
@@ -89,7 +93,7 @@ protected:
 
 	virtual RemoveEffects remove(const ParsedPagePtr& page) override
 	{
-		auto pageIterator =  std::find(m_pages.begin(), m_pages.end(), page);
+		const auto pageIterator =  std::find(m_pages.begin(), m_pages.end(), page);
 
 		RemoveEffects removeEffects;
 
@@ -103,8 +107,15 @@ protected:
 		}
 
 		removeEffects.removedIndex = std::distance(m_pages.begin(), pageIterator);
-
 		const auto nextElement = m_pages.erase(pageIterator);
+
+		if (!removeEffects.removedIndex)
+		{
+			removeEffects.invalidatedIndicesRange.first = 0;
+			removeEffects.invalidatedIndicesRange.second = 0;
+			
+			return removeEffects;
+		}
 
 		removeEffects.invalidatedIndicesRange.first = std::distance(m_pages.begin(), nextElement);
 
@@ -114,6 +125,21 @@ protected:
 		removeEffects.invalidatedIndicesRange.second = static_cast<int>(upperBound);
 
 		return removeEffects;
+	}
+
+	virtual int replace(ParsedPagePtr&& oldPage, ParsedPagePtr&& newPage) override
+	{
+		const auto pageIterator = std::find(m_pages.begin(), m_pages.end(), oldPage);
+
+		if (pageIterator == m_pages.end())
+		{
+			return -1;
+		}
+
+		const int replacedIndex = std::distance(m_pages.begin(), pageIterator);
+		*pageIterator = std::move(newPage);
+
+		return replacedIndex;
 	}
 
 	virtual bool containsPointersWithUseCountGreaterThanOne() const noexcept override;

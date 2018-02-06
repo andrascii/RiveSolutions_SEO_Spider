@@ -30,6 +30,7 @@ public:
 protected:
 	virtual void pushBack(const ParsedPagePtr& page) = 0;
 	virtual void emplaceBack(ParsedPagePtr&& page) = 0;
+	virtual int replace(ParsedPagePtr&& oldPage, ParsedPagePtr&& newPage) = 0;
 	virtual RemoveEffects remove(const ParsedPagePtr& page) = 0;
 	virtual bool containsPointersWithUseCountGreaterThanOne() const noexcept = 0;
 };

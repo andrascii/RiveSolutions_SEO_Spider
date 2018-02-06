@@ -80,6 +80,12 @@ protected:
 		return m_sequencedStorage.remove(page);
 	}
 
+	virtual int replace(ParsedPagePtr&& oldPage, ParsedPagePtr&& newPage) override
+	{
+		std::lock_guard<std::mutex> locker(m_mutex);
+		return m_sequencedStorage.replace(std::move(oldPage), std::move(newPage));
+	}
+
 	inline virtual bool containsPointersWithUseCountGreaterThanOne() const noexcept override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);

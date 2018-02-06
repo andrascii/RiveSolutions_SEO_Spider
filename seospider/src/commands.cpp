@@ -117,6 +117,11 @@ StorageType getPageStorageType(const ParsedPage* page)
 namespace SeoSpider
 {
 
+bool ICommand::canExecute() const noexcept
+{
+	return true;
+}
+
 bool ICommand::isCompound() const noexcept
 {
 	return false;
@@ -514,7 +519,6 @@ void CopyToClipboardAllColumnsDataCommand::execute()
 }
 
 
-
 CopyToClipboardUrlCommand::CopyToClipboardUrlCommand(const CrawlerEngine::ISequencedStorage* storage, int pageIndex)
 	: m_storage(storage)
 	, m_pageIndex(pageIndex)
@@ -685,6 +689,11 @@ void RefreshPageCommand::execute()
 	theApp->crawler()->refreshPage(m_storageType, m_index);
 }
 
+bool RefreshPageCommand::canExecute() const noexcept
+{
+	return theApp->crawler()->canRefreshPage();
+}
+
 GoToLinksOnThisPageCommand::GoToLinksOnThisPageCommand(
 	const CrawlerEngine::SequencedDataCollection* dataCollection,
 	const CrawlerEngine::ISequencedStorage* storage, 
@@ -728,6 +737,5 @@ void GoToLinksOnThisPageCommand::execute()
 		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
 	}
 }
-
 
 }

@@ -25,6 +25,9 @@ ParsedPageInfoStorageAdapter::ParsedPageInfoStorageAdapter(
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageRemoved,
 		this, &ParsedPageInfoStorageAdapter::onPageRemoved));
 
+	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageReplaced,
+		this, &ParsedPageInfoStorageAdapter::onPageReplaced));
+
 	VERIFY(connect(sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::indicesRangeInvalidated,
 		this, &ParsedPageInfoStorageAdapter::onRepaintIndicesRange));
 
@@ -188,6 +191,16 @@ void ParsedPageInfoStorageAdapter::onPageRemoved(int row, CrawlerEngine::Storage
 	}
 
 	emit parsedPageInfoRemoved(row);
+}
+
+void ParsedPageInfoStorageAdapter::onPageReplaced(int row, CrawlerEngine::StorageType type)
+{
+	if (type != m_storageType)
+	{
+		return;
+	}
+
+	emit parsedPageInfoReplaced(row);
 }
 
 void ParsedPageInfoStorageAdapter::onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type) const
