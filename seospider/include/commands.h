@@ -260,4 +260,24 @@ private:
 	int m_index;
 };
 
+class GoToLinksOnThisPageCommand : public ICommand
+{
+public:
+	GoToLinksOnThisPageCommand(
+		const CrawlerEngine::SequencedDataCollection* dataCollection, 
+		const CrawlerEngine::ISequencedStorage* storage,
+		CrawlerEngine::StorageType storageType, 
+		int index);
+
+	virtual QIcon icon() const override;
+	virtual const char* description() const noexcept override;
+	virtual void execute() override;
+
+private:
+	const CrawlerEngine::SequencedDataCollection* m_dataCollection;
+	const CrawlerEngine::ISequencedStorage* m_storage;
+	CrawlerEngine::StorageType m_storageType;
+	int m_index;
+};
+
 }

@@ -20,6 +20,10 @@ public:
 
 	void setStorageAdapterType(StorageAdapterType storageAdapterType);
 
+	PageDataWidget* pageDataWidget() const noexcept;
+
+	void selectParsedPage(int row) const noexcept;
+
 protected:
 	virtual void showEvent(QShowEvent* event) override;
 

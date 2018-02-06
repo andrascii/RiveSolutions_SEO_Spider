@@ -31,6 +31,12 @@ public:
 		return m_sequencedStorage.empty();
 	}
 
+	virtual int find(const ParsedPage* page) const noexcept override
+	{
+		std::lock_guard<std::mutex> locker(m_mutex);
+		return m_sequencedStorage.find(page);
+	}
+
 	virtual const ParsedPage* operator[](int idx) const noexcept override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);

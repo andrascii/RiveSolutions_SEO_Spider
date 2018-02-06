@@ -76,6 +76,11 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 		this, SLOT(pageViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
+PageDataWidget* WebSiteDataWidget::pageDataWidget() const noexcept
+{
+	return m_pageDataWidget;
+}
+
 void WebSiteDataWidget::showEvent(QShowEvent*)
 {
 	if (m_wasShown)
@@ -110,6 +115,19 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 		const IStorageAdapter* storageAdapter = storageModel->storageAdapter();
 		m_pageDataWidget->setParsedPageInfo(storageAdapter->parsedPageInfoPtr(index));
 	}
+}
+
+void WebSiteDataWidget::selectParsedPage(int row) const noexcept
+{
+	TableView* currentTableView = dynamic_cast<TableView*>(m_stackedWidget->currentWidget());
+	if(!currentTableView)
+	{
+		ERRLOG << "Cannot cast to TableView";
+		return;
+	}
+
+	currentTableView->selectionModel()->select(currentTableView->model()->index(row, 0), 
+		QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
 
 }

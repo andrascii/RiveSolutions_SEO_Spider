@@ -119,6 +119,11 @@ void MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->show();
 }
 
+void MainWindow::showDataPagesWidget(PageFactory::Page page)
+{
+	emit showDataPage(page);
+}
+
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
 	QMainWindow::resizeEvent(event);
@@ -275,6 +280,8 @@ void MainWindow::createAndSetCentralWidget()
 
 	centralWidget->setLayout(layout);
 	setCentralWidget(centralWidget);
+
+	m_dataPagesWidget = dataPagesWidget;
 }
 
 void MainWindow::registerSettingsPages() const
@@ -317,6 +324,11 @@ void MainWindow::clearDataOnSerializationDone()
 {
 	VERIFY(disconnect(theApp->crawler(), &Crawler::serializationProcessDone, this, &MainWindow::clearDataOnSerializationDone));
 	theApp->crawler()->clearData();
+}
+
+DataPagesWidget* MainWindow::dataPagesWidget() const noexcept
+{
+	return m_dataPagesWidget;
 }
 
 }

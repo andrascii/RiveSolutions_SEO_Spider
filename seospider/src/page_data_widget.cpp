@@ -38,18 +38,25 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 
 	if (pageDataType == ServerResponseForPageType)
 	{
-		m_tabWidget->addTab(m_httpResponseLabel, tabDescription(pageDataType));
+		m_pageIndices[pageDataType] = m_tabWidget->addTab(m_httpResponseLabel, tabDescription(pageDataType));
 		return;
 	}
 
 	TableView* tableView = new TableView(this);
 	m_models[pageDataType] = new PageModel(this);
-
+	
 	tableView->setModel(m_models[pageDataType]);
 	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], this));
 	tableView->setShowAdditionalGrid(true);
 
-	m_tabWidget->addTab(tableView, tabDescription(pageDataType));
+	m_pageIndices[pageDataType] = m_tabWidget->addTab(tableView, tabDescription(pageDataType));
+}
+
+void PageDataWidget::selectTab(PageDataType pageDataType)
+{
+	ASSERT(pageDataType > BeginType && pageDataType < EndType);
+
+	m_tabWidget->setCurrentIndex(m_pageIndices[pageDataType]);
 }
 
 void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page) const

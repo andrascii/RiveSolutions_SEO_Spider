@@ -28,6 +28,7 @@ public:
 
 	void setPageDataType(PageDataType pageDataType);
 
+	void selectTab(PageDataType pageDataType);
 private:
 	void setPageServerResponse(const ParsedPageInfoPtr& page) const;
 
@@ -40,6 +41,7 @@ private:
 	QLabel* m_httpResponseLabel;
 
 	QMap<PageDataType, PageModel*> m_models;
+	QMap<PageDataType, int> m_pageIndices;
 };
 
 }

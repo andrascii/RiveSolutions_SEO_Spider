@@ -14,7 +14,7 @@ IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapt
 	const CrawlerEngine::StorageType storageType =
 		static_cast<CrawlerEngine::StorageType>(type);
 
-	IParsedPageStorageAdapter* storageAdapter = new ParsedPageInfoStorageAdapter(
+	IParsedPageStorageAdapter* storageAdapter = new ParsedPageInfoStorageAdapter(sequencedDataCollection,
 		sequencedDataCollection->storage(storageType), storageType);
 
 	storageAdapter->setAvailableColumns(parsedPageAvailableColumns(type));

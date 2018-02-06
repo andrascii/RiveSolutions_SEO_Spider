@@ -30,15 +30,14 @@ public:
 	virtual const DCStorageDescription* storageDescription(CrawlerEngine::StorageType type) const noexcept override;
 	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept override;
 	virtual Menu menuFor(const QModelIndex& index) const override;
+	virtual int rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept override;
 
 signals:
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
-
+		
 private:
-	int rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept;
-
 	Q_SLOT void emitDataChanged(int, CrawlerEngine::StorageType);
 
 private:

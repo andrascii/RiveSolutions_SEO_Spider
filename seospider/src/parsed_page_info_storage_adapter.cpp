@@ -7,9 +7,11 @@ namespace SeoSpider
 {
 
 ParsedPageInfoStorageAdapter::ParsedPageInfoStorageAdapter(
+	CrawlerEngine::SequencedDataCollection* dataCollection,
 	CrawlerEngine::ISequencedStorage* associatedStorage,
 	CrawlerEngine::StorageType storageType, QObject* parent)
 	: QObject(parent)
+	, m_dataCollection(dataCollection)
 	, m_associatedStorage(associatedStorage)
 	, m_storageType(storageType)
 {
@@ -138,6 +140,10 @@ Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, index.row())));
 		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, index.row())));
 		menu.addItem(exportSubMenu);
+
+		std::shared_ptr<Menu> goToSubMenu = std::make_shared<Menu>(tr("Go to..."));
+		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksOnThisPageCommand>(m_dataCollection, m_associatedStorage, m_storageType, index.row())));
+		menu.addItem(goToSubMenu);
 	}
 
 	const std::optional<QByteArray> ipv4Address = theApp->crawler()->currentCrawledSiteIPv4();

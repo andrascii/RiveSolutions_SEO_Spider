@@ -56,7 +56,7 @@ QWidget* PageFactory::createPage(Page page) const
 			resourceTables->setPageDataType(PageDataWidget::LinksOnThisPageType);
 			resourceTables->setPageDataType(PageDataWidget::LinksToThisPageType);
 			resourceTables->setPageDataType(PageDataWidget::ServerResponseForPageType);
-
+			
 			FilterWidget* allResourcesPage = new FilterWidget(new WebSiteDataWidget(resourceTables));
 			allResourcesPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
 

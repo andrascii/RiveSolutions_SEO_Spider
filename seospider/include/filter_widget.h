@@ -2,6 +2,10 @@
 
 #include "summary_data_accessor_factory.h"
 
+namespace CrawlerEngine {
+	enum class StorageType;
+}
+
 namespace SeoSpider
 {
 
@@ -19,6 +23,9 @@ public:
 	FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent = nullptr);
 
 	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) const;
+	void selectFilter(CrawlerEngine::StorageType type);
+	void selectParsedPage(int row);
+	void selectTab(int pageDataType);
 
 private:
 	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const;

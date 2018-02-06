@@ -21,6 +21,7 @@ public:
 	virtual int size() const noexcept = 0;
 	virtual void clear() = 0;
 	virtual bool empty() const noexcept = 0;
+	virtual int find(const ParsedPage*) const noexcept = 0;
 	virtual const ParsedPage* operator[](int idx) const noexcept = 0;
 	virtual ParsedPage* operator[](int idx) noexcept = 0;
 	virtual const ParsedPage* get(int idx) const noexcept = 0;

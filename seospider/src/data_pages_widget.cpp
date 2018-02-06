@@ -1,19 +1,11 @@
 #include "data_pages_widget.h"
 #include "application.h"
-#include "table_view.h"
-#include "page_model.h"
-#include "page_view_model.h"
-#include "storage_adapter_factory.h"
 #include "helpers.h"
 #include "header_decoration_widget.h"
 #include "control_panel_widget.h"
-#include "filter_widget.h"
-#include "website_data_widget.h"
-#include "page_data_widget.h"
 #include "crawler_progress_bar.h"
 #include "custom_push_button.h"
 #include "header_controls_container.h"
-#include "main_window.h"
 
 namespace SeoSpider
 {
@@ -52,6 +44,9 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::stateChanged,
 		this, &DataPagesWidget::onStateChanged));
+
+	VERIFY(connect(theApp->mainWindow(), SIGNAL(showDataPage(PageFactory::Page)),
+		this, SLOT(showPage(PageFactory::Page))));
 
 	QWidget* loadingWidget = new QWidget(this);
 	QHBoxLayout* loadingWidgetLayout = new QHBoxLayout(this);
@@ -95,8 +90,29 @@ void DataPagesWidget::addPage(PageFactory::Page page, QWidget* widget, const QSt
 	}
 }
 
+QWidget* DataPagesWidget::page(PageFactory::Page page) const noexcept
+{
+	return m_stackedWidget->widget(m_pageIndexes[page]);
+}
+
 void DataPagesWidget::showPage(PageFactory::Page page)
 {
+	if (m_prevButton)
+	{
+		m_prevButton->setProperty("selected", false);
+		m_prevButton->repaint();
+		m_prevButton->style()->unpolish(m_prevButton);
+		m_prevButton->style()->polish(m_prevButton);
+	}
+
+	QPushButton* button = m_navigationPanel.pushButtons[page];
+
+	button->setProperty("selected", true);
+	button->style()->unpolish(button);
+	button->style()->polish(button);
+
+	m_prevButton = button;
+
 	m_stackedWidget->setCurrentIndex(m_pageIndexes[page]);
 	m_activePage = page;
 	theApp->headerControlsContainer()->setActivePage(page);
@@ -111,20 +127,6 @@ void DataPagesWidget::handleNavigationPanelButtonClick()
 	{
 		return;
 	}
-
-	if (m_prevButton)
-	{
-		m_prevButton->setProperty("selected", false);
-		m_prevButton->repaint();
-		m_prevButton->style()->unpolish(m_prevButton);
-		m_prevButton->style()->polish(m_prevButton);
-	}
-
-	button->setProperty("selected", true);
-	button->style()->unpolish(button);
-	button->style()->polish(button);
-
-	m_prevButton = button;
 
 	auto pushButtonsIterator = std::find_if(
 		std::begin(m_navigationPanel.pushButtons),
