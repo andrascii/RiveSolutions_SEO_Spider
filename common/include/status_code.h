@@ -51,6 +51,7 @@ enum class StatusCode
 
 	// custom
 	BlockedByRobotsTxt,
+	BlockedByMetaRobots
 };
 
 }

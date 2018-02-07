@@ -600,6 +600,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 			if (!resource.loadAvailability)
 			{
+				// what if this resource is unavailable not from all pages?
 				continue;
 			}
 
@@ -696,6 +697,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 
 			if (resource.loadAvailability)
 			{
+				// what if this resource is unavailable not from all pages?
 				data()->addParsedPage(newOrExistingResource,
 					httpResource ? StorageType::PendingResourcesStorageType : storage);
 			}
