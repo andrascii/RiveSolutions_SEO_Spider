@@ -10,6 +10,109 @@
 #include "robots_txt_loader.h"
 #include "helpers.h"
 #include "crawler.h"
+#include "filter_widget.h"
+#include "data_pages_widget.h"
+#include "page_data_widget.h"
+
+namespace
+{
+using namespace CrawlerEngine;
+
+StorageType getPageStorageType(const ParsedPage* page)
+{
+	StorageType type = StorageType();
+
+	if (!page->isThisExternalPage)
+	{
+		switch (page->resourceType)
+		{
+		case ResourceType::ResourceHtml:
+		{
+			type = StorageType::HtmlResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceImage:
+		{
+			type = StorageType::ImageResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceJavaScript:
+		{
+			type = StorageType::JavaScriptResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceStyleSheet:
+		{
+			type = StorageType::StyleSheetResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceFlash:
+		{
+			type = StorageType::FlashResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceVideo:
+		{
+			type = StorageType::VideoResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceOther:
+		{
+			type = StorageType::OtherResourcesStorageType;
+			break;
+		}
+		default:
+			DEBUG_ASSERT(!"Unknown resource type");
+		}
+	}
+	else
+	{
+		switch (page->resourceType)
+		{
+		case ResourceType::ResourceHtml:
+		{
+			type = StorageType::ExternalHtmlResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceImage:
+		{
+			type = StorageType::ExternalImageResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceJavaScript:
+		{
+			type = StorageType::ExternalJavaScriptResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceStyleSheet:
+		{
+			type = StorageType::ExternalStyleSheetResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceFlash:
+		{
+			type = StorageType::ExternalFlashResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceVideo:
+		{
+			type = StorageType::ExternalVideoResourcesStorageType;
+			break;
+		}
+		case ResourceType::ResourceOther:
+		{
+			type = StorageType::ExternalOtherResourcesStorageType;
+			break;
+		}
+		default:
+			DEBUG_ASSERT(!"Unknown resource type");
+		}
+	}
+
+	return type;
+}
+
+}
 
 namespace SeoSpider
 {
@@ -589,6 +692,140 @@ void RefreshPageCommand::execute()
 bool RefreshPageCommand::canExecute() const noexcept
 {
 	return theApp->crawler()->canRefreshPage();
+}
+
+GoToLinksOnThisPageCommand::GoToLinksOnThisPageCommand(
+	const CrawlerEngine::SequencedDataCollection* dataCollection,
+	const CrawlerEngine::ISequencedStorage* storage, 
+	CrawlerEngine::StorageType storageType, 
+	int index)
+	: m_dataCollection(dataCollection)
+	, m_storage(storage)
+	, m_storageType(storageType)
+	, m_index(index)
+{	
+}
+
+QIcon GoToLinksOnThisPageCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* GoToLinksOnThisPageCommand::description() const noexcept
+{
+	return "Go to \"Links on this Page\"";
+}
+
+void GoToLinksOnThisPageCommand::execute()
+{
+	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+	
+	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+
+	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
+	
+	filterWidget->selectFilter(type);
+	filterWidget->selectTab(PageDataWidget::PageDataType::LinksOnThisPageType);
+	
+	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
+	{
+		filterWidget->selectParsedPage(index);
+	}
+	else
+	{
+		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
+	}
+}
+
+
+GoToLinksToThisPageCommand::GoToLinksToThisPageCommand(
+	const CrawlerEngine::SequencedDataCollection* dataCollection,
+	const CrawlerEngine::ISequencedStorage* storage,
+	CrawlerEngine::StorageType storageType,
+	int index)
+	: m_dataCollection(dataCollection)
+	, m_storage(storage)
+	, m_storageType(storageType)
+	, m_index(index)
+{
+}
+
+QIcon GoToLinksToThisPageCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* GoToLinksToThisPageCommand::description() const noexcept
+{
+	return "Go to \"Links to this Page\"";
+}
+
+void GoToLinksToThisPageCommand::execute()
+{
+	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+
+	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+
+	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
+
+	filterWidget->selectFilter(type);
+	filterWidget->selectTab(PageDataWidget::PageDataType::LinksToThisPageType);
+
+	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
+	{
+		filterWidget->selectParsedPage(index);
+	}
+	else
+	{
+		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
+	}
+}
+
+
+GoToHTTPResponseCommand::GoToHTTPResponseCommand(
+	const CrawlerEngine::SequencedDataCollection* dataCollection,
+	const CrawlerEngine::ISequencedStorage* storage,
+	CrawlerEngine::StorageType storageType,
+	int index)
+	: m_dataCollection(dataCollection)
+	, m_storage(storage)
+	, m_storageType(storageType)
+	, m_index(index)
+{
+}
+
+QIcon GoToHTTPResponseCommand::icon() const
+{
+	return QIcon();
+}
+
+const char* GoToHTTPResponseCommand::description() const noexcept
+{
+	return "Go to \"HTTP Response\"";
+}
+
+void GoToHTTPResponseCommand::execute()
+{
+	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+
+	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+
+	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
+
+	filterWidget->selectFilter(type);
+	filterWidget->selectTab(PageDataWidget::PageDataType::ServerResponseForPageType);
+
+	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
+	{
+		filterWidget->selectParsedPage(index);
+	}
+	else
+	{
+		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
+	}
 }
 
 }

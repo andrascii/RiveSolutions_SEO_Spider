@@ -15,6 +15,7 @@ public:
 	DataPagesWidget(QWidget* parent = nullptr);
 
 	void addPage(PageFactory::Page page, QWidget* widget, const QString& buttonText, const QIcon& buttonIcon = QIcon(), bool setSelected = false);
+	QWidget* page(PageFactory::Page page) const noexcept;
 
 public slots:
 	void showPage(PageFactory::Page page);
@@ -37,7 +38,7 @@ private:
 
 	QStackedWidget* m_stackedWidget;
 	
-	std::map<PageFactory::Page, int> m_pageIndexes;
+	QMap<PageFactory::Page, int> m_pageIndexes;
 
 	NavigationPanelControls m_navigationPanel;
 

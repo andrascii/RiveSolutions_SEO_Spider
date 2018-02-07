@@ -85,7 +85,7 @@ const DCStorageDescription* SummaryDataAccessorDecorator::storageDescription(Cra
 	return m_summaryDataAccessor->storageDescription(type);
 }
 
-const SeoSpider::DCStorageGroupDescription* SummaryDataAccessorDecorator::storageGroupDescription(AuditGroup group) const noexcept
+const DCStorageGroupDescription* SummaryDataAccessorDecorator::storageGroupDescription(AuditGroup group) const noexcept
 {
 	return m_summaryDataAccessor->storageGroupDescription(group);
 }
@@ -93,6 +93,11 @@ const SeoSpider::DCStorageGroupDescription* SummaryDataAccessorDecorator::storag
 Menu SummaryDataAccessorDecorator::menuFor(const QModelIndex& index) const
 {
 	return m_summaryDataAccessor->menuFor(index);
+}
+
+int SummaryDataAccessorDecorator::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
+{
+	return m_summaryDataAccessor->rowByStorageType(storageType);
 }
 
 }

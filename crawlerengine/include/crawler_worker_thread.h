@@ -22,7 +22,7 @@ class CrawlerWorkerThread : public QObject
 
 public:
 	CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore);
-	std::future<std::vector<CrawlerRequest>> pendingUrls() const;
+	std::future<std::optional<CrawlerRequest>> pendingUrls() const;
 
 signals:
 	void workerResult(WorkerResult workerResult) const;
@@ -40,9 +40,9 @@ private:
 	void handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 	void onStart();
-	void onPageParsed(const ParsedPagePtr& parsedPage) const noexcept;
+	void onPageParsed(const WorkerResult& result) const noexcept;
 
-	std::vector<CrawlerRequest> preparePagesAfterStop() const;
+	std::optional<CrawlerRequest> prepareUnloadedPage() const;
 
 private:
 	struct PagesAcceptedAfterStop
@@ -51,7 +51,7 @@ private:
 		using PageRequestPairs = std::vector<PageRequestPair>;
 
 		PageRequestPairs pages;
-		mutable std::promise<std::vector<CrawlerRequest>> pagesAcceptedPromise;
+		mutable std::promise<std::optional<CrawlerRequest>> pagesAcceptedPromise;
 	};
 
 	PageDataCollector* m_pageDataCollector;

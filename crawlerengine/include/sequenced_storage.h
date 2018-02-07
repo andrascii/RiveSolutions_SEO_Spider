@@ -32,6 +32,22 @@ public:
 		return m_pages.empty();
 	}
 
+	virtual int find(const ParsedPage* page) const noexcept override
+	{
+		auto pageIterator = std::find_if(m_pages.begin(), m_pages.end(), 
+			[&page](ParsedPagePtr pagePtr)
+		{
+			return pagePtr.get() == page;
+		});
+
+		if(pageIterator == m_pages.end())
+		{
+			return -1;
+		}
+
+		return std::distance(m_pages.begin(), pageIterator);
+	}
+
 	virtual const ParsedPage* operator[](int idx) const noexcept override
 	{
 		ASSERT(idx >= 0 && idx < m_pages.size());
@@ -91,8 +107,15 @@ protected:
 		}
 
 		removeEffects.removedIndex = std::distance(m_pages.begin(), pageIterator);
-
 		const auto nextElement = m_pages.erase(pageIterator);
+
+		if (!removeEffects.removedIndex)
+		{
+			removeEffects.invalidatedIndicesRange.first = 0;
+			removeEffects.invalidatedIndicesRange.second = 0;
+			
+			return removeEffects;
+		}
 
 		removeEffects.invalidatedIndicesRange.first = std::distance(m_pages.begin(), nextElement);
 

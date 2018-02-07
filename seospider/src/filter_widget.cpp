@@ -6,6 +6,7 @@
 #include "helpers.h"
 #include "application.h"
 #include "command_menu.h"
+#include "page_data_widget.h"
 
 namespace SeoSpider
 {
@@ -48,6 +49,30 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
 	m_summaryFilterTableView->initSpans();
 	m_summaryFilterTableView->setContextMenu(new CommandMenu(summaryDataAccessor));
+}
+
+void FilterWidget::selectFilter(CrawlerEngine::StorageType type)
+{
+	const int row = m_summaryFilterModel->dataAccessor()->rowByStorageType(type);
+	m_summaryFilterTableView->selectionModel()->select(m_summaryFilterModel->index(row, 0), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+}
+
+void FilterWidget::selectParsedPage(int row)
+{
+	m_webSiteDataWidget->selectParsedPage(row);
+}
+
+void FilterWidget::selectTab(int pageDataType)
+{
+	ASSERT(pageDataType > PageDataWidget::BeginType && 
+		pageDataType < PageDataWidget::EndType)
+	
+	if(!m_webSiteDataWidget->pageDataWidget())
+	{
+		return;
+	}
+
+	m_webSiteDataWidget->pageDataWidget()->selectTab(static_cast<PageDataWidget::PageDataType>(pageDataType));
 }
 
 void FilterWidget::adjustSize()

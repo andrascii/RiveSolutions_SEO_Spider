@@ -13,6 +13,7 @@ class ParsedPageInfoStorageAdapter : public QObject, public IParsedPageStorageAd
 
 public:
 	ParsedPageInfoStorageAdapter(
+		CrawlerEngine::SequencedDataCollection* dataCollection,
 		CrawlerEngine::ISequencedStorage* associatedStorage,
 		CrawlerEngine::StorageType storageType,
 		QObject* parent = nullptr
@@ -49,6 +50,7 @@ private slots:
 	void onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type) const;
 
 private:
+	CrawlerEngine::SequencedDataCollection* m_dataCollection;
 	CrawlerEngine::ISequencedStorage* m_associatedStorage;
 	QVector<ParsedPageInfo::Column> m_availableColumns;
 	CrawlerEngine::StorageType m_storageType;
