@@ -168,6 +168,8 @@ void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* f
 
 void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const noexcept
 {
+	Logger::instance()->logMessage(QStringLiteral("ASSERTION FAILURE: ") + expression, SeverityLevel::ErrorLevel);
+
 	std::stringstream text;
 
 	text << std::string("Debug Assertion") << std::endl << std::endl;

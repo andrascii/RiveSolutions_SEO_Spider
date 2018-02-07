@@ -66,7 +66,7 @@ private:
 
 	UrlList m_pendingUrlList;
 	UrlList m_crawledUrlList;
-	std::queue<CrawlerRequest> m_refreshUrlQueue;
+	std::deque<CrawlerRequest> m_refreshUrlList;
 
 	mutable std::recursive_mutex m_mutex;
 	int m_lastPendingSizeChange;

@@ -56,7 +56,7 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	m_defferedProcessingTimer->setSingleShot(true);
 }
 
-std::future<std::vector<CrawlerRequest>> CrawlerWorkerThread::pendingUrls() const
+std::future<std::optional<CrawlerRequest>> CrawlerWorkerThread::pendingUrls() const
 {
 	return m_pagesAcceptedAfterStop.pagesAcceptedPromise.get_future();
 }
@@ -85,7 +85,7 @@ void CrawlerWorkerThread::stop()
 		{
 			DEBUGLOG << "Set value to promise";
 
-			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(preparePagesAfterStop());
+			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}
 		catch (const std::future_error& error)
 		{
@@ -149,6 +149,7 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 void CrawlerWorkerThread::onCrawlerClearData()
 {
 	m_pagesAcceptedAfterStop.pages.clear();
+	m_downloadRequester.reset();
 	m_currentRequest.reset();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);
 }
@@ -308,7 +309,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 		try
 		{
-			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(preparePagesAfterStop());
+			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}
 		catch (const std::future_error& error)
 		{
@@ -338,7 +339,7 @@ void CrawlerWorkerThread::onStart()
 
 	m_pagesAcceptedAfterStop.pages.clear();
 
-	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::vector<CrawlerRequest>>();
+	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
 }
 
 void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcept
@@ -348,17 +349,18 @@ void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcep
 	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 }
 
-std::vector<CrawlerRequest> CrawlerWorkerThread::preparePagesAfterStop() const
+std::optional<CrawlerRequest> CrawlerWorkerThread::prepareUnloadedPage() const
 {
-	std::vector<CrawlerRequest> result;
-	result.reserve(m_pagesAcceptedAfterStop.pages.size());
-
-	for (const PagesAcceptedAfterStop::PageRequestPair& pair : m_pagesAcceptedAfterStop.pages)
+	CrawlerRequest result;
+	
+	if (!m_pagesAcceptedAfterStop.pages.empty())
 	{
-		result.emplace_back(CrawlerRequest{ pair.second->url, pair.first });
+		PagesAcceptedAfterStop::PageRequestPair pair = m_pagesAcceptedAfterStop.pages.front();
+
+		return CrawlerRequest{ pair.second->url, pair.first };
 	}
 
-	return result;
+	return std::nullopt;
 }
 
 }
