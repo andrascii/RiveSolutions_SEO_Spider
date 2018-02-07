@@ -36,20 +36,34 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 {
 	DEBUG_ASSERT(pageDataType > BeginType && pageDataType < EndType);
 
+	QLabel* selectPageLabel = new QLabel(this);
+	selectPageLabel->setObjectName(QStringLiteral("TablePlaseholderLabel"));
+	selectPageLabel->setText(tr("Select The Page"));
+	selectPageLabel->setAlignment(Qt::AlignCenter);
+	QStackedWidget* stackedWidget = new QStackedWidget(this);
+	stackedWidget->addWidget(selectPageLabel);
+
 	if (pageDataType == ServerResponseForPageType)
 	{
-		m_pageIndices[pageDataType] = m_tabWidget->addTab(m_httpResponseLabel, tabDescription(pageDataType));
+		m_pageIndices[pageDataType] = m_tabWidget->addTab(stackedWidget, tabDescription(pageDataType));
+		stackedWidget->addWidget(m_httpResponseLabel);
+		stackedWidget->setCurrentIndex(0);
+		m_stackedWidgets[pageDataType] = stackedWidget;
 		return;
 	}
 
-	TableView* tableView = new TableView(this);
+	TableView* tableView = new TableView(stackedWidget);
 	m_models[pageDataType] = new PageModel(this);
 	
 	tableView->setModel(m_models[pageDataType]);
 	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], this));
 	tableView->setShowAdditionalGrid(true);
-
-	m_pageIndices[pageDataType] = m_tabWidget->addTab(tableView, tabDescription(pageDataType));
+	
+	stackedWidget->addWidget(tableView);
+	stackedWidget->setCurrentIndex(0);
+		
+	m_pageIndices[pageDataType] = m_tabWidget->addTab(stackedWidget, tabDescription(pageDataType));
+	m_stackedWidgets[pageDataType] = stackedWidget;
 }
 
 void PageDataWidget::selectTab(PageDataType pageDataType)
@@ -105,7 +119,7 @@ QString PageDataWidget::tabDescription(PageDataType pageDataType)
 		}
 		case ImagesOnThisPageType:
 		{
-			return tr("Images To This Page");
+			return tr("Images On This Page");
 		}
 		case ServerResponseForPageType:
 		{
@@ -143,6 +157,30 @@ PageLinkContext PageDataWidget::mapType(PageDataType pageDataType) noexcept
 	}
 
 	return PageLinkContext();
+}
+
+void PageDataWidget::pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	Q_UNUSED(selected);
+	Q_UNUSED(deselected);
+	
+	QItemSelectionModel* itemSelectionModel = qobject_cast<QItemSelectionModel*>(sender());
+	DEBUG_ASSERT(itemSelectionModel);
+
+	if(itemSelectionModel->hasSelection())
+	{
+		for(auto stackedWidget: m_stackedWidgets)
+		{
+			stackedWidget->setCurrentIndex(1);
+		}
+
+		return;
+	}
+
+	for (auto stackedWidget : m_stackedWidgets)
+	{
+		stackedWidget->setCurrentIndex(0);
+	}
 }
 
 }

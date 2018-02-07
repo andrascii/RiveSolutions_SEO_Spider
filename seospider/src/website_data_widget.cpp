@@ -30,7 +30,7 @@ WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* pa
 	layout->setSpacing(0);
 
 	QLabel* selectFilterLabel = new QLabel(this);
-	selectFilterLabel->setObjectName(QStringLiteral("SelectFilterLabel"));
+	selectFilterLabel->setObjectName(QStringLiteral("TablePlaseholderLabel"));
 	selectFilterLabel->setText(tr("Select The Filter"));
 	selectFilterLabel->setAlignment(Qt::AlignCenter);
 
@@ -74,6 +74,12 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 
 	VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(pageViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
+
+	if (m_pageDataWidget)
+	{
+		VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+			m_pageDataWidget, SLOT(pageViewSelectionChangedSlot(const QItemSelection&, const QItemSelection&))));
+	}
 }
 
 PageDataWidget* WebSiteDataWidget::pageDataWidget() const noexcept
@@ -101,6 +107,7 @@ void WebSiteDataWidget::showEvent(QShowEvent*)
 
 void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
+	Q_UNUSED(selected);
 	Q_UNUSED(deselected);
 
 	if (!m_pageDataWidget)
@@ -108,7 +115,10 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 		return;
 	}
 
-	const QModelIndex index = selected.size() ? selected.indexes()[0] : QModelIndex();
+	QItemSelectionModel* itemSelectionModel = qobject_cast<QItemSelectionModel*>(sender());
+	DEBUG_ASSERT(itemSelectionModel);
+	
+	const QModelIndex index = itemSelectionModel->selectedRows().last();
 	
 	if (const PageModel* storageModel = dynamic_cast<const PageModel*>(index.model()); storageModel)
 	{

@@ -738,6 +738,22 @@ void GoToLinksOnThisPageCommand::execute()
 	}
 }
 
+bool GoToLinksOnThisPageCommand::canExecute() const noexcept
+{
+	CrawlerEngine::ResourceType type = m_storage->get(m_index)->resourceType;
+
+	switch(type)
+	{
+	case CrawlerEngine::ResourceType::ResourceImage:
+	case CrawlerEngine::ResourceType::ResourceVideo:
+	case CrawlerEngine::ResourceType::ResourceFlash:
+	case CrawlerEngine::ResourceType::ResourceOther:
+		return false;
+	default:
+		return true;
+	}
+}
+
 
 GoToLinksToThisPageCommand::GoToLinksToThisPageCommand(
 	const CrawlerEngine::SequencedDataCollection* dataCollection,
