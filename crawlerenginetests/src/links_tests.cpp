@@ -255,4 +255,23 @@ TEST(LinksTests, ExternalDoFollow)
 	env.exec();
 }
 
+TEST(LinksTests, BlockedResourcesByMetaRobots)
+{
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/metarobots/index.html"));
+	options.followRobotsTxtRules = true;
+	options.userAgentToFollow = UserAgentType::AnyBot;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(1, pages.size());
+		EXPECT_EQ(1, pages[0]->linksOnThisPage.size());
+		EXPECT_EQ(true, pages[0]->linksOnThisPage.front().resource.expired());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }

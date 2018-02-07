@@ -14,7 +14,8 @@ class IRobotsTxtRules
 {
 public:
 	virtual bool isValid() const = 0;
-	virtual bool isUrlAllowed(const Url& url, const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const = 0;
+	virtual bool isUrlAllowedByRobotsTxt(const Url& url, UserAgentType userAgentType) const = 0;
+	virtual bool isUrlAllowedByMetaRobots(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const = 0;
 	virtual const Url& sitemap() const = 0;
 	virtual const Url& originalHostMirror() const = 0;
 };
@@ -26,7 +27,8 @@ public:
 	RobotsTxtRules(const QByteArray& content);
 
 	virtual bool isValid() const override;
-	virtual bool isUrlAllowed(const Url& url, const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const override;
+	virtual bool isUrlAllowedByRobotsTxt(const Url& url, UserAgentType userAgentType) const override;
+	virtual bool isUrlAllowedByMetaRobots(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const override;
 	virtual const Url& sitemap() const override;
 	virtual const Url& originalHostMirror() const override;
 

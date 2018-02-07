@@ -18,16 +18,18 @@ public:
 		PermissionExternalLinksNotAllowed,
 		PermissionNofollowNotAllowed,
 		PermissionBlockedByRobotsTxtRules,
+		PermissionBlockedByMetaRobotsRules,
 		PermissionSubdomainNotAllowed,
 		PermissionBlockedByFolder
 	};
 
 	OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const RobotsTxtRules& robotsTxtRules);
 
-	Permission linkPermission(const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
+	bool checkPermissionNotAllowed(Permission permission, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
 
 private:
-	bool isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
+	bool isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo) const;
+	bool isLinkBlockedByMetaRobots(const MetaRobotsFlagsSet& metaRobotsFlags) const;
 
 private:
 	CrawlerOptions m_crawlerOptions;
