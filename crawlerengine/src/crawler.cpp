@@ -450,10 +450,15 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
-		std::future<std::vector<CrawlerRequest>> pendingUrlsFuture = worker->pendingUrls();
-		const std::vector<CrawlerRequest> workerPendingUrls = pendingUrlsFuture.get();
+		std::future<std::optional<CrawlerRequest>> pendingUrlFuture = worker->pendingUrls();
+		const std::optional<CrawlerRequest> workerPendingUrls = pendingUrlFuture.get();
 
-		pendingUrls.insert(pendingUrls.end(), workerPendingUrls.begin(), workerPendingUrls.end());
+		if (!workerPendingUrls.has_value())
+		{
+			continue;
+		}
+
+		pendingUrls.push_back(workerPendingUrls.value());
 	}
 
 	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
@@ -574,7 +579,7 @@ const ISpecificLoader* Crawler::robotsTxtLoader() const noexcept
 	return m_robotsTxtLoader;
 }
 
-const CrawlerEngine::ISpecificLoader* Crawler::xmlSitemapLoader() const noexcept
+const ISpecificLoader* Crawler::xmlSitemapLoader() const noexcept
 {
 	return m_xmlSitemapLoader;
 }

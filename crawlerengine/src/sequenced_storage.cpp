@@ -10,7 +10,7 @@ bool SequencedStorage::containsPointersWithUseCountGreaterThanOne() const noexce
 	{
 		if (pagePointer.use_count() > 1)
 		{
-			pagesWithUseCountGreaterThanOne++;
+			++pagesWithUseCountGreaterThanOne;
 		}
 	}
 

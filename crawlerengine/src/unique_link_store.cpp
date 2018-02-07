@@ -107,14 +107,13 @@ bool UniqueLinkStore::extractRefreshUrl(CrawlerRequest& crawlerRequest) noexcept
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 
-	if (m_refreshUrlQueue.empty())
+	if (m_refreshUrlList.empty())
 	{
 		return false;
 	}
 
-	crawlerRequest = std::move(m_refreshUrlQueue.front());
-
-	m_refreshUrlQueue.pop();
+	crawlerRequest = std::move(m_refreshUrlList.front());
+	m_refreshUrlList.pop_front();
 
 	return true;
 }
@@ -123,7 +122,7 @@ void UniqueLinkStore::addRefreshUrl(const Url& url, DownloadRequestType requestT
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
 
-	m_refreshUrlQueue.emplace(CrawlerRequest{ url, requestType });
+	m_refreshUrlList.emplace_back(CrawlerRequest{ url, requestType });
 
 	emit urlAdded();
 }
@@ -247,6 +246,7 @@ void UniqueLinkStore::clear()
 
 	m_pendingUrlList.clear();
 	m_crawledUrlList.clear();
+	m_refreshUrlList.clear();
 
 	CrawlerSharedState::instance()->setDownloaderCrawledLinksCount(0);
 	CrawlerSharedState::instance()->setDownloaderPendingLinksCount(0);
@@ -255,7 +255,7 @@ void UniqueLinkStore::clear()
 bool UniqueLinkStore::hasRefreshUrls() const noexcept
 {
 	std::lock_guard<std::recursive_mutex> locker(m_mutex);
-	return !m_refreshUrlQueue.empty();
+	return !m_refreshUrlList.empty();
 }
 
 }

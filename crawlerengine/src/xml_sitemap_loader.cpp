@@ -50,7 +50,7 @@ void XmlSitemapLoader::load()
 		sitemapUrl = m_host.scheme() + "://" + m_host.host() + QStringLiteral("/sitemap.xml");
 	}
 
-	if (m_isValid && m_hopsChain.hasHopTo(sitemapUrl))
+	if (m_isValid || m_hopsChain.hasHopTo(sitemapUrl))
 	{
 		emit ready();
 		return;

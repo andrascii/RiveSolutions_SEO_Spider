@@ -4,9 +4,69 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+#pragma warning(disable:4127)
+#pragma warning(disable:745)
+#pragma warning(disable:749)
+#pragma warning(disable:333)
+#pragma warning(disable:317)
+#pragma warning(disable:597)
+#pragma warning(disable:4251)
+#pragma warning(disable:4702)
+#pragma warning(disable:4456)
+
+//
+// Qt
+//
+#include <QObject>
+#include <QThread>
+#include <QWidget>
+#include <QDialog>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QTableView>
+#include <QMessageBox>
+#include <QTextCodec>
+#include <QAbstractListModel>
+#include <QKeyEvent>
+#include <QMetaObject>
+#include <QMetaMethod>
+#include <QMetaType>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkProxy>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPainter>
+#include <QTimer>
+#include <QTcpSocket>
+#include <QTcpServer>
+#include <QAbstractItemDelegate>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QReadWriteLock>
+#include <QSemaphore>
+#include <QWaitCondition>
+#include <QQueue>
+#include <QDebug>
+#include <QStyledItemDelegate>
+#include <QProcess>
+#include <QDateTime>
+#include <QLineEdit>
+#include <QScrollBar>
+#include <QScreen>
+#include <QItemSelectionModel>
+#include <QtSvg>
+#include <QFontDatabase>
+#include <QtGlobal>
+#include <QWebEngineView>
+#include <QPrinter>
+
 //
 // C/C++
 //
+#include <cstdlib>
+#include <crtdbg.h>
 #include <vector>
 #include <deque>
 #include <queue>
@@ -71,64 +131,6 @@ struct unary_function
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/positional_options.hpp>
-
-#pragma warning(disable:4127)
-#pragma warning(disable:745)
-#pragma warning(disable:749)
-#pragma warning(disable:333)
-#pragma warning(disable:317)
-#pragma warning(disable:597)
-#pragma warning(disable:4251)
-#pragma warning(disable:4702)
-#pragma warning(disable:4456)
-
-//
-// Qt
-//
-#include <QObject>
-#include <QThread>
-#include <QWidget>
-#include <QDialog>
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QTableView>
-#include <QMessageBox>
-#include <QTextCodec>
-#include <QAbstractListModel>
-#include <QKeyEvent>
-#include <QMetaObject>
-#include <QMetaMethod>
-#include <QMetaType>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkProxy>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPainter>
-#include <QTimer>
-#include <QTcpSocket>
-#include <QTcpServer>
-#include <QAbstractItemDelegate>
-#include <QMutex>
-#include <QMutexLocker>
-#include <QReadWriteLock>
-#include <QSemaphore>
-#include <QWaitCondition>
-#include <QQueue>
-#include <QDebug>
-#include <QStyledItemDelegate>
-#include <QProcess>
-#include <QDateTime>
-#include <QLineEdit>
-#include <QScrollBar>
-#include <QScreen>
-#include <QItemSelectionModel>
-#include <QtSvg>
-#include <QFontDatabase>
-#include <QtGlobal>
-#include <QWebEngineView>
-#include <QPrinter>
 
 #include "common_macro_helpers.h"
 
