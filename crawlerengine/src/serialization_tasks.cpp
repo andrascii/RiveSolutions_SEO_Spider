@@ -2,8 +2,8 @@
 
 namespace CrawlerEngine
 {
-SerializationTask::SerializationTask(std::shared_ptr<Serializer> serializer, const QString& fileName)
-	: m_result(std::make_shared<SerializationTaskResponseResult>(serializer))
+SerializationTask::SerializationTask(std::unique_ptr<Serializer> serializer, const QString& fileName)
+	: m_result(std::make_unique<SerializationTaskResponseResult>(std::move(serializer)))
 	, m_fileName(fileName)
 {
 }
@@ -70,13 +70,13 @@ void SerializationTask::run()
 	}
 }
 
-std::shared_ptr<TaskResponseResult> SerializationTask::result()
+std::unique_ptr<TaskResponseResult> SerializationTask::result()
 {
-	return m_result;
+	return std::move(m_result);
 }
 
-DeserializatoinTask::DeserializatoinTask(std::shared_ptr<Serializer> serializer, const QString& fileName)
-	: m_result(std::make_shared<SerializationTaskResponseResult>(serializer))
+DeserializatoinTask::DeserializatoinTask(std::unique_ptr<Serializer> serializer, const QString& fileName)
+	: m_result(std::make_unique<SerializationTaskResponseResult>(std::move(serializer)))
 	, m_fileName(fileName)
 {
 }
@@ -103,9 +103,9 @@ void DeserializatoinTask::run()
 
 }
 
-std::shared_ptr<TaskResponseResult> DeserializatoinTask::result()
+std::unique_ptr<TaskResponseResult> DeserializatoinTask::result()
 {
-	return m_result;
+	return std::move(m_result);
 }
 
 }

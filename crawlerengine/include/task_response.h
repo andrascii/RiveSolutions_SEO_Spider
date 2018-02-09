@@ -16,7 +16,11 @@ struct TaskResponse : public IResponse
 		: result(result)
 	{
 	}
-
+	
+	~TaskResponse()
+	{
+	}
+	
 	virtual ResponseType type() const noexcept override
 	{
 		return ResponseType::ResponseTypeTaskResult;
