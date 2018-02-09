@@ -37,4 +37,7 @@ static const QByteArray s_clearCrawledDataAction = "clearCrawledDataAction";
 // sitemap actions
 static const QByteArray s_createXMLSitemapAction = "createXMLSitemapAction";
 
+// export data actions
+static const QByteArray s_exportStorages = "exportStoragesAction";
+
 }

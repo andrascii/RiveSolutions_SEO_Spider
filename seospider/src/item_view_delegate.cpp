@@ -36,6 +36,11 @@ bool ItemViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QSt
 	{
 		auto mouseEvent = static_cast<QMouseEvent*>(event);
 
+		if (mouseEvent->button() != Qt::LeftButton)
+		{
+			return false;
+		}
+
 		TableView* tableView = qobject_cast<TableView*>(parent());
 
 		if(!tableView)

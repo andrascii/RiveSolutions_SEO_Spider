@@ -12,7 +12,7 @@ class ITask
 public:
 	virtual ~ITask() = default;
 	virtual void run() = 0;
-	virtual std::shared_ptr<TaskResponseResult> result() = 0;
+	virtual std::unique_ptr<TaskResponseResult> result() = 0;
 };
 
 struct TaskRequest : public IRequest
