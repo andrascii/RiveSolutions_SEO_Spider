@@ -59,7 +59,7 @@ QWidget* PageFactory::createPage(Page page) const
 			
 			FilterWidget* allResourcesPage = new FilterWidget(new WebSiteDataWidget(resourceTables));
 			allResourcesPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
-
+		
 			widget = allResourcesPage;
 
 			break;

@@ -15,6 +15,7 @@ NotificationsContainerWidget::NotificationsContainerWidget(QWidget* parent)
 	, m_active(false)
 	, m_notificationPopup(nullptr)
 	, m_currentNotificationIndex(0)
+	, m_timeOut(5000)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->addWidget(m_label);
@@ -84,6 +85,7 @@ void NotificationsContainerWidget::onNotificationAdded(int status, const QString
 
 	m_active = true;
 	changeState();
+	QTimer::singleShot(m_timeOut, this, [&](){m_active = false; changeState();});
 }
 
 void NotificationsContainerWidget::changeState()

@@ -29,6 +29,10 @@ public:
 	void setPageDataType(PageDataType pageDataType);
 
 	void selectTab(PageDataType pageDataType);
+
+public slots:
+	void pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected);
+
 private:
 	void setPageServerResponse(const ParsedPageInfoPtr& page) const;
 
@@ -38,10 +42,11 @@ private:
 private:
 	QTabWidget* m_tabWidget;
 
-	QLabel* m_httpResponseLabel;
+	QTextEdit* m_httpResponseLabel;
 
 	QMap<PageDataType, PageModel*> m_models;
 	QMap<PageDataType, int> m_pageIndices;
+	QMap<PageDataType, QStackedWidget*> m_stackedWidgets;
 };
 
 }

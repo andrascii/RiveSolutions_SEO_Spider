@@ -34,7 +34,7 @@ bool RobotsTxtRules::isValid() const
 	return m_tokenizer->isValid();
 }
 
-bool RobotsTxtRules::isUrlAllowed(const Url& url, const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
+bool RobotsTxtRules::isUrlAllowedByRobotsTxt(const Url& url, UserAgentType userAgentType) const
 {
 	DEBUG_ASSERT(!url.isRelative());
 	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(url));
@@ -45,8 +45,18 @@ bool RobotsTxtRules::isUrlAllowed(const Url& url, const MetaRobotsFlagsSet& meta
 		userAgentType = UserAgentType::AnyBot;
 	}
 
-	return m_strategies[userAgentType]->isUrlAllowed(url, userAgentType, *m_tokenizer) &&
-		m_strategies[userAgentType]->isUrlAllowed(metaRobotsFlags, userAgentType);
+	return m_strategies[userAgentType]->isUrlAllowed(url, userAgentType, *m_tokenizer);
+}
+
+bool RobotsTxtRules::isUrlAllowedByMetaRobots(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
+{
+	if (m_strategies.find(userAgentType) == m_strategies.cend())
+	{
+		WARNLOG << "No appropriate strategy was found";
+		userAgentType = UserAgentType::AnyBot;
+	}
+	
+	return m_strategies[userAgentType]->isUrlAllowed(metaRobotsFlags, userAgentType);
 }
 
 const Url& RobotsTxtRules::sitemap() const

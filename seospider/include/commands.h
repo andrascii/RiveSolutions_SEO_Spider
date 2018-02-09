@@ -271,6 +271,7 @@ public:
 	virtual QIcon icon() const override;
 	virtual const char* description() const noexcept override;
 	virtual void execute() override;
+	virtual bool canExecute() const noexcept override;
 
 private:
 	const CrawlerEngine::SequencedDataCollection* m_dataCollection;

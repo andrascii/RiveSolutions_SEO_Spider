@@ -11,13 +11,14 @@ namespace SeoSpider
 PageDataWidget::PageDataWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_tabWidget(new QTabWidget(this))
-	, m_httpResponseLabel(new QLabel(this))
+	, m_httpResponseLabel(new QTextEdit(this))
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->setMargin(0);
 	layout->setSpacing(0);
 
 	layout->addWidget(m_tabWidget);
+	m_httpResponseLabel->setReadOnly(true);
 }
 
 void PageDataWidget::setParsedPageInfo(const ParsedPageInfoPtr& page)
@@ -36,20 +37,34 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 {
 	DEBUG_ASSERT(pageDataType > BeginType && pageDataType < EndType);
 
+	QLabel* selectPageLabel = new QLabel(this);
+	selectPageLabel->setObjectName(QStringLiteral("TablePlaseholderLabel"));
+	selectPageLabel->setText(tr("Select The Page"));
+	selectPageLabel->setAlignment(Qt::AlignCenter);
+	QStackedWidget* stackedWidget = new QStackedWidget(this);
+	stackedWidget->addWidget(selectPageLabel);
+
 	if (pageDataType == ServerResponseForPageType)
 	{
-		m_pageIndices[pageDataType] = m_tabWidget->addTab(m_httpResponseLabel, tabDescription(pageDataType));
+		m_pageIndices[pageDataType] = m_tabWidget->addTab(stackedWidget, tabDescription(pageDataType));
+		stackedWidget->addWidget(m_httpResponseLabel);
+		stackedWidget->setCurrentIndex(0);
+		m_stackedWidgets[pageDataType] = stackedWidget;
 		return;
 	}
 
-	TableView* tableView = new TableView(this);
+	TableView* tableView = new TableView(stackedWidget);
 	m_models[pageDataType] = new PageModel(this);
 	
 	tableView->setModel(m_models[pageDataType]);
 	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], this));
 	tableView->setShowAdditionalGrid(true);
-
-	m_pageIndices[pageDataType] = m_tabWidget->addTab(tableView, tabDescription(pageDataType));
+	
+	stackedWidget->addWidget(tableView);
+	stackedWidget->setCurrentIndex(0);
+		
+	m_pageIndices[pageDataType] = m_tabWidget->addTab(stackedWidget, tabDescription(pageDataType));
+	m_stackedWidgets[pageDataType] = stackedWidget;
 }
 
 void PageDataWidget::selectTab(PageDataType pageDataType)
@@ -67,13 +82,11 @@ void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page) const
 
 	if (selectedPageServerResponse.isEmpty())
 	{
-		QPixmap oopsPixmap(":/images/oops.jpg");
-
-		m_httpResponseLabel->setPixmap(oopsPixmap.scaled(QSize(oopsPixmap.width() / 3, oopsPixmap.height() / 3)));
+		m_httpResponseLabel->setText("There is no response for this page.");
 		return;
 	}
 
-	QStringList serverResponseHeaders = selectedPageServerResponse.split("\n");
+	QStringList serverResponseHeaders = selectedPageServerResponse.split("\r\n");
 
 	for (int i = 0; i < serverResponseHeaders.size(); ++i)
 	{
@@ -105,7 +118,7 @@ QString PageDataWidget::tabDescription(PageDataType pageDataType)
 		}
 		case ImagesOnThisPageType:
 		{
-			return tr("Images To This Page");
+			return tr("Images On This Page");
 		}
 		case ServerResponseForPageType:
 		{
@@ -143,6 +156,30 @@ PageLinkContext PageDataWidget::mapType(PageDataType pageDataType) noexcept
 	}
 
 	return PageLinkContext();
+}
+
+void PageDataWidget::pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	Q_UNUSED(selected);
+	Q_UNUSED(deselected);
+	
+	QItemSelectionModel* itemSelectionModel = qobject_cast<QItemSelectionModel*>(sender());
+	DEBUG_ASSERT(itemSelectionModel);
+
+	if(itemSelectionModel->hasSelection())
+	{
+		for(auto stackedWidget: m_stackedWidgets)
+		{
+			stackedWidget->setCurrentIndex(1);
+		}
+
+		return;
+	}
+
+	for (auto stackedWidget : m_stackedWidgets)
+	{
+		stackedWidget->setCurrentIndex(0);
+	}
 }
 
 }
