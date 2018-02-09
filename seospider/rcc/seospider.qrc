@@ -46,6 +46,8 @@
 		<file>images/notifications-normal.png</file>
 		<file>images/notifications-active.png</file>
 		<file>images/close-notification.svg</file>
+		<file>images/excel.svg</file>
+		<file>images/pdf.svg</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>

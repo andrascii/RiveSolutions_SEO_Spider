@@ -74,6 +74,6 @@ void HeaderControlsContainer::setActivePage(PageFactory::Page page)
 {
 	m_activePage = page;
 	emit currentControlsChanged(static_cast<int>(page));
-
 }
+
 }

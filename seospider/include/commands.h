@@ -107,7 +107,6 @@ private:
 	int m_row;
 };
 
-
 class ExportUrlOutlinksToXlsxCommand : public ICommand
 {
 public:
@@ -122,7 +121,6 @@ private:
 	int m_row;
 };
 
-
 class ExportUrlInlinksToXlsxCommand : public ICommand
 {
 public:
@@ -136,7 +134,6 @@ private:
 	const CrawlerEngine::ISequencedStorage* m_storage;
 	int m_row;
 };
-
 
 class CopyToClipboardAllPagesCommand : public ICommand
 {

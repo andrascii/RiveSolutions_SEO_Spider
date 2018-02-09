@@ -8,6 +8,7 @@
 #include "inotification_service.h"
 #include "service_locator.h"
 #include "pdf_report_exporter.h"
+#include "svg_renderer.h"
 
 namespace SeoSpider
 {
@@ -29,11 +30,13 @@ ReportsPage::ReportsPage(QWidget* parent)
 		
 	setReportType(ReportTypeBrief);
 
+	m_saveToPdfAction->setIcon(SvgRenderer::render(QStringLiteral(":/images/pdf.svg"), 25, 25));
+
 	VERIFY(connect(theApp->preferences(), &Preferences::companyNameChanged, this, &ReportsPage::updateContent));
 	VERIFY(connect(m_saveToPdfAction, &QAction::triggered, this, &ReportsPage::exportToPdf));
 
-	HeaderControlsContainer* store = theApp->headerControlsContainer();
-	store->addAction(m_saveToPdfAction, PageFactory::AuditReportPage);
+	HeaderControlsContainer* controlsContainer = theApp->headerControlsContainer();
+	controlsContainer->addAction(m_saveToPdfAction, PageFactory::AuditReportPage);
 }
 
 void ReportsPage::setReportType(ReportType reportType)

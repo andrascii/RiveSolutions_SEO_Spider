@@ -16,6 +16,8 @@
 #include "internet_connection_state_widget.h"
 #include "notifications_container_widget.h"
 #include "software_branding.h"
+#include "svg_renderer.h"
+#include "header_controls_container.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -178,19 +180,16 @@ void MainWindow::createActions()
 
 	// file actions
 	actionRegistry.addActionGroup(s_fileActionGroup);
-
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, QIcon(QStringLiteral(":/images/open-file-icon.png")), tr("Open File"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, tr("Close File"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")), tr("Recent Files"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, QIcon(QStringLiteral(":/images/save-icon.png")), tr("Save File"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
-
 	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
 	actionRegistry.addGlobalAction(s_saveFileAndClearDataAction, tr("Save To File And Clear Data"));
 
 	// settings actions
 	actionRegistry.addActionGroup(s_settingsActionGroup);
-
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openSettingsAction, tr("Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerSettingsAction, QIcon(QStringLiteral(":/images/crawler-settings.png")), tr("Crawler Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLanguageSettingsAction, QIcon(QStringLiteral(":/images/lang-settings.png")), tr("Language Settings"));
@@ -248,10 +247,16 @@ void MainWindow::createActions()
 	actionRegistry.addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
 
 	VERIFY(connect(actionRegistry.globalAction(s_createXMLSitemapAction), SIGNAL(triggered()), this, SLOT(showSitemapCreatorDialog())));
-	
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
 	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
+
+	// export actions
+	QAction* exportStoragesAction = actionRegistry.addGlobalAction(s_exportStorages, 
+		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export Storages"));
+
+	theApp->headerControlsContainer()->addAction(exportStoragesAction, PageFactory::Page::AllResourcesPage);
+	theApp->headerControlsContainer()->addAction(exportStoragesAction, PageFactory::Page::SiteAuditPage);
 }
 
 void MainWindow::createAndSetCentralWidget()

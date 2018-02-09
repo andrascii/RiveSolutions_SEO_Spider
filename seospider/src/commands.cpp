@@ -13,6 +13,7 @@
 #include "filter_widget.h"
 #include "data_pages_widget.h"
 #include "page_data_widget.h"
+#include "svg_renderer.h"
 
 namespace
 {
@@ -261,7 +262,7 @@ void ExportDataToXlsxCommand::execute()
 		const CrawlerEngine::StorageType storageType = m_storageDescriptions[i].storageType;
 		const ISequencedStorage& sequencedStorage = *m_dataCollection->storage(storageType);
 		const int storageSize = sequencedStorage.size();
-		
+
 		QXlsx::RichString headerRichString;
 		headerRichString.addFragment(m_storageDescriptions[i].storageTypeDescriptionName + QStringLiteral(" (%1 items)").arg(storageSize), headerFormat);
 
@@ -309,7 +310,7 @@ ExportUrlInfoToXlsxCommand::ExportUrlInfoToXlsxCommand(const CrawlerEngine::ISeq
 
 QIcon ExportUrlInfoToXlsxCommand::icon() const
 {
-	return QIcon();
+	return SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 15, 15);
 }
 
 const char* ExportUrlInfoToXlsxCommand::description() const noexcept
@@ -358,7 +359,7 @@ ExportUrlOutlinksToXlsxCommand::ExportUrlOutlinksToXlsxCommand(const CrawlerEngi
 
 QIcon ExportUrlOutlinksToXlsxCommand::icon() const
 {
-	return QIcon();
+	return SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 15, 15);
 }
 
 const char* ExportUrlOutlinksToXlsxCommand::description() const noexcept
@@ -406,7 +407,7 @@ ExportUrlInlinksToXlsxCommand::ExportUrlInlinksToXlsxCommand(const CrawlerEngine
 
 QIcon ExportUrlInlinksToXlsxCommand::icon() const
 {
-	return QIcon();
+	return SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 15, 15);
 }
 
 const char* ExportUrlInlinksToXlsxCommand::description() const noexcept
