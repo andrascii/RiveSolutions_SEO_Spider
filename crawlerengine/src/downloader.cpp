@@ -8,7 +8,6 @@
 #include "hop.h"
 #include "service_locator.h"
 #include "inotification_service.h"
-#include "iuniqueness_checker.h"
 
 namespace CrawlerEngine
 {
@@ -17,7 +16,6 @@ Downloader::Downloader()
 	: QObject(nullptr)
 	, m_networkAccessor(new QNetworkAccessManager(this))
 	, m_randomIntervalRangeTimer(new Common::RandomIntervalRangeTimer(this))
-	, m_uniquenessChecker(createUniquenessChecker())
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
@@ -266,9 +264,6 @@ void Downloader::markReplyAsProcessed(QNetworkReply* reply) const noexcept
 void Downloader::load(RequesterSharedPtr requester)
 {
 	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
-
-	ASSERT(!m_uniquenessChecker->hasRequest(request->requestInfo));
-	m_uniquenessChecker->registrateRequest(request->requestInfo);
 
 	const int requestId = loadHelper(request->requestInfo);
 

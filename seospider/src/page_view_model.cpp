@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "table_view.h"
 #include "url.h"
+#include "svg_renderer.h"
 
 namespace
 {
@@ -30,11 +31,7 @@ PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
 {
 	initializeRenderers();
 
-	QPixmap pixmap;
-	pixmap.fill(m_backgroundColor);
-	pixmap.load(":/images/click-to-url-icon.png");
-
-	m_urlIcon = pixmap.scaled(Common::Helpers::pointsToPixels(13), Common::Helpers::pointsToPixels(13));
+	m_urlIcon = SvgRenderer::render(QStringLiteral(":/images/go-to-url.svg"), 13, 13);
 
 	VERIFY(connect(model, &PageModel::internalDataChanged, this, &PageViewModel::onAttachedModelStorageAdapterChanged));
 	VERIFY(connect(model, &PageModel::dataChanged, this, &PageViewModel::onAttachedModelDataChanged));

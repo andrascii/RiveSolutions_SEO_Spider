@@ -42,7 +42,7 @@ private:
 private:
 	QTabWidget* m_tabWidget;
 
-	QLabel* m_httpResponseLabel;
+	QTextEdit* m_httpResponseLabel;
 
 	QMap<PageDataType, PageModel*> m_models;
 	QMap<PageDataType, int> m_pageIndices;

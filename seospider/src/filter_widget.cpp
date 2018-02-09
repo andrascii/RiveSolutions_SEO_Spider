@@ -49,9 +49,10 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
 	m_summaryFilterTableView->initSpans();
 	m_summaryFilterTableView->setContextMenu(new CommandMenu(summaryDataAccessor));
+	selectFilter(CrawlerEngine::StorageType::HtmlResourcesStorageType);
 }
 
-void FilterWidget::selectFilter(CrawlerEngine::StorageType type)
+void FilterWidget::selectFilter(CrawlerEngine::StorageType type) const
 {
 	const int row = m_summaryFilterModel->dataAccessor()->rowByStorageType(type);
 	m_summaryFilterTableView->selectionModel()->select(m_summaryFilterModel->index(row, 0), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);

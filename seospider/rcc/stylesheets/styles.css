@@ -564,7 +564,7 @@ SeoSpider--HeaderDecorationWidget QFrame#TitleFrame
 
 /*/////////////////////////////// QTabWidget ///////////////////////////////*/
 
-QTabWidget QLabel
+QTabWidget QTextEdit
 {
 	background: white;
 	border: none;

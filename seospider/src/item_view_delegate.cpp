@@ -1,6 +1,8 @@
 #include "item_view_delegate.h"
 #include "irenderer.h"
 #include "iview_model.h"
+#include "page_model.h"
+#include "table_view.h"
 
 namespace SeoSpider
 {
@@ -30,9 +32,35 @@ void ItemViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 
 bool ItemViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
-	Q_UNUSED(event);
-	Q_UNUSED(option);
-	Q_UNUSED(index);
+	if (event->type() == QEvent::MouseButtonRelease)
+	{
+		auto mouseEvent = static_cast<QMouseEvent*>(event);
+
+		if (mouseEvent->button() != Qt::LeftButton)
+		{
+			return false;
+		}
+
+		TableView* tableView = qobject_cast<TableView*>(parent());
+
+		if(!tableView)
+		{
+			return false;
+		}
+
+		PageModel* pageModel = qobject_cast<PageModel*>(tableView->model());
+
+		if (pageModel && pageModel->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
+		{					
+			if(m_itemView->pixmapPosition(index, option.rect).contains(mouseEvent->pos()))
+			{
+				QVariant itemData = index.data();
+				DEBUG_ASSERT(itemData.type() == QVariant::Url);
+				QDesktopServices::openUrl(itemData.toUrl());
+			}
+			return true;
+		}
+	}
 
 	return false;
 }

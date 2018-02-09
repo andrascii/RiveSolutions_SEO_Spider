@@ -24,7 +24,7 @@ private slots:
 	void onNotificationAdded(int status, const QString& header, const QString& message);
 	void onNotificationFrameDestroyed();
 
-private:
+private slots:
 	void changeState();
 
 private:
@@ -46,6 +46,8 @@ private:
 
 	std::vector<NotificationData> m_notifications;
 	std::size_t m_currentNotificationIndex;
+
+	int m_timeOut;
 };
 
 }

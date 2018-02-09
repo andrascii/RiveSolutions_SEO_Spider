@@ -23,7 +23,7 @@ public:
 	FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent = nullptr);
 
 	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) const;
-	void selectFilter(CrawlerEngine::StorageType type);
+	void selectFilter(CrawlerEngine::StorageType type) const;
 	void selectParsedPage(int row);
 	void selectTab(int pageDataType);
 

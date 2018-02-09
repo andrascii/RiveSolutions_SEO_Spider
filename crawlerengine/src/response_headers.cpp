@@ -59,11 +59,11 @@ QString ResponseHeaders::makeString() const
 
 	for (const auto& [headerName, value] : m_responseHeaders)
 	{
-		serverResponse += headerName + QStringLiteral(": ") + value + QStringLiteral("\n\r");
+		serverResponse += headerName + QStringLiteral(": ") + value + QStringLiteral("\r\n");
 	}
 
 	// finalize string
-	serverResponse += QStringLiteral("\n\r");
+	serverResponse += QStringLiteral("\r\n");
 
 	return serverResponse;
 }

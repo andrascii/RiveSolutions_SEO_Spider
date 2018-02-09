@@ -11,13 +11,14 @@ namespace SeoSpider
 PageDataWidget::PageDataWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_tabWidget(new QTabWidget(this))
-	, m_httpResponseLabel(new QLabel(this))
+	, m_httpResponseLabel(new QTextEdit(this))
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->setMargin(0);
 	layout->setSpacing(0);
 
 	layout->addWidget(m_tabWidget);
+	m_httpResponseLabel->setReadOnly(true);
 }
 
 void PageDataWidget::setParsedPageInfo(const ParsedPageInfoPtr& page)
@@ -81,13 +82,11 @@ void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page) const
 
 	if (selectedPageServerResponse.isEmpty())
 	{
-		QPixmap oopsPixmap(":/images/oops.jpg");
-
-		m_httpResponseLabel->setPixmap(oopsPixmap.scaled(QSize(oopsPixmap.width() / 3, oopsPixmap.height() / 3)));
+		m_httpResponseLabel->setText("There is no response for this page.");
 		return;
 	}
 
-	QStringList serverResponseHeaders = selectedPageServerResponse.split("\n");
+	QStringList serverResponseHeaders = selectedPageServerResponse.split("\r\n");
 
 	for (int i = 0; i < serverResponseHeaders.size(); ++i)
 	{
