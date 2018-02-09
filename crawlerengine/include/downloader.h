@@ -50,7 +50,6 @@ private:
 	QByteArray m_userAgent;
 	Common::RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	std::queue<RequesterSharedPtr> m_requesterQueue;
-	std::unique_ptr<IUniquenessChecker> m_uniquenessChecker;
 };
 
 }
