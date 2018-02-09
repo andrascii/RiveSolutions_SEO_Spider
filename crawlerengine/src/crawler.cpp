@@ -315,7 +315,7 @@ void Crawler::initializeCrawlingSession()
 void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& response)
 {
 	Q_UNUSED(requester);
-
+	
 	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
 
 	ASSERT(result);
