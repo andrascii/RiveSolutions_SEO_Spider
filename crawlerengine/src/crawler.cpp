@@ -466,10 +466,10 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
 
-	std::shared_ptr<Serializer> serializer =
-		std::make_shared<Serializer>(std::move(pages), std::move(crawledUrls), std::move(pendingUrls), m_options);
+	std::unique_ptr<Serializer> serializer =
+		std::make_unique<Serializer>(std::move(pages), std::move(crawledUrls), std::move(pendingUrls), m_options);
 
-	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(serializer, m_fileName);
+	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(std::move(serializer), m_fileName);
 	m_fileName = QString();
 
 	TaskRequest request(task);
@@ -483,8 +483,8 @@ void Crawler::onDeserializationReadyToBeStarted()
 
 	clearDataImpl();
 
-	std::shared_ptr<Serializer> serializer = std::make_shared<Serializer>();
-	std::shared_ptr<ITask> task = std::make_shared<DeserializatoinTask>(serializer, m_fileName);
+	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>();
+	std::shared_ptr<ITask> task = std::make_shared<DeserializatoinTask>(std::move(serializer), m_fileName);
 	m_fileName = QString();
 
 	TaskRequest request(task);

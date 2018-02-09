@@ -21,12 +21,12 @@ struct SerializationTaskResponseResult : public TaskResponseResult
 class SerializationTask: public ITask
 {
 public:
-	SerializationTask(std::shared_ptr<Serializer> serializer, const QString& fileName);
+	SerializationTask(std::unique_ptr<Serializer> serializer, const QString& fileName);
 	virtual void run() override;
-	virtual std::shared_ptr<TaskResponseResult> result() override;
+	virtual std::unique_ptr<TaskResponseResult> result() override;
 
 private:
-	std::shared_ptr<SerializationTaskResponseResult> m_result;
+	std::unique_ptr<SerializationTaskResponseResult> m_result;
 	QString m_fileName;
 };
 
@@ -34,12 +34,12 @@ private:
 class DeserializatoinTask: public ITask
 {
 public:
-	DeserializatoinTask(std::shared_ptr<Serializer> serializer, const QString& fileName);
+	DeserializatoinTask(std::unique_ptr<Serializer> serializer, const QString& fileName);
 	virtual void run() override;
-	virtual std::shared_ptr<TaskResponseResult> result() override;
+	virtual std::unique_ptr<TaskResponseResult> result() override;
 
 private:
-	std::shared_ptr<SerializationTaskResponseResult> m_result;
+	std::unique_ptr<SerializationTaskResponseResult> m_result;
 	QString m_fileName;
 };
 
