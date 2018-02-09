@@ -19,7 +19,6 @@
 		<file>images/limits-settings.png</file>
 		<file>images/preferences-settings-icon.png</file>
 		<file>images/lang-settings.png</file>
-		<file>images/click-to-url-icon.png</file>
 		<file>images/oops.jpg</file>
 		<file>images/up-arrow.png</file>
 		<file>images/down-arrow.png</file>
@@ -48,6 +47,7 @@
 		<file>images/close-notification.svg</file>
 		<file>images/excel.svg</file>
 		<file>images/pdf.svg</file>
+		<file>images/go-to-url.svg</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>
