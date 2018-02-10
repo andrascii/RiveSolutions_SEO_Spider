@@ -12,11 +12,27 @@ public:
 	Url() = default;
 	Url(const QUrl& url);
 
-	bool compare(const Url& url) const;
-	const QString& canonizedUrlStr() const;
+	inline bool compare(const Url& url) const
+	{
+		return urlStr() == url.urlStr();
+	}
 
-	bool operator==(const Url& url) const;
-	bool operator!=(const Url& url) const;
+	QString urlStr() const
+	{
+		return toDisplayString();
+	}
+	
+	inline bool operator==(const Url& url) const
+	{
+		return compare(url);
+	}
+	
+	inline bool operator!=(const Url& url) const
+	{
+		return !compare(url);
+	}
+
+	const QString& canonizedUrlStr() const;
 
 private:
 	mutable QString m_canonizedUrlStr;

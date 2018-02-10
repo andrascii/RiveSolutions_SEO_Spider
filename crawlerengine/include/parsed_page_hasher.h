@@ -49,7 +49,7 @@ struct ParsedPageHasher : public IParsedPageHasher
 				[](const ParsedPagePtr& el)
 				{
 					//return s_stringHasher(PageParserHelpers::removeUrlLastSlashIfExists(el->url).toDisplayString().toStdString());
-					return s_stringHasher(el->url.canonizedUrlStr().toStdString());
+					return s_stringHasher(el->url.urlStr().toStdString());
 				}
 			},
 
@@ -65,7 +65,7 @@ struct ParsedPageHasher : public IParsedPageHasher
 			{ IParsedPageHasher::FirstH2ItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->firstH2.toStdString()); } },
 			{ IParsedPageHasher::SecondH2ItemType, [](const ParsedPagePtr& el) { return s_stringHasher(el->secondH2.toStdString()); } },
 			{ IParsedPageHasher::CanonicalLinkElementItemType, [](const ParsedPagePtr& el) 
-				{ return s_stringHasher(el->canonicalUrl.canonizedUrlStr().toStdString()); } }
+				{ return s_stringHasher(el->canonicalUrl.urlStr().toStdString()); } }
 		};
 
 		return s_hashFuncs[ItemType](parsedPage);

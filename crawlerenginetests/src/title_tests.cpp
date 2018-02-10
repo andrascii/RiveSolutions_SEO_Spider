@@ -128,7 +128,7 @@ TEST(TitleTests, DoNotIncludeCanonicalDuplicatedTitles)
 
 TEST(TitleTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 {
-	// canonical-duplicated-title-another.html -> canonical-duplicated-title.html -> canonical-duplicated-title.html
+	// canonical-duplicated-title-another.html -> canonical-duplicated-title-another-1.html -> canonical-duplicated-title.html -> canonical-duplicated-title.html
 
 	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://title.com/canonical-duplicated-title-another.html"));
 	TestEnvironment env(options);
@@ -137,7 +137,7 @@ TEST(TitleTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 	{
 		cl->waitForAllCrawledPageReceived(10);
 		auto pages = cl->storageItems(StorageType::DuplicatedTitleUrlStorageType);
-		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ(4, pages.size());
 	};
 
 	env.initializeTest(testFunction);
