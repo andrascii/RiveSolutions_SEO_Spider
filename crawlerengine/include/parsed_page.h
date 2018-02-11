@@ -187,6 +187,12 @@ struct ParsedPage
 	int pageLevel = invalidPageLevel;
 
 	std::vector<bool> storages;
+
+	bool canRefresh() const noexcept
+	{
+		return Common::StatusCode::BlockedByRobotsTxt != statusCode &&
+			Common::StatusCode::BlockedByRobotsTxt != statusCode;
+	}
 };
 
 using ParsedPagePtr = std::shared_ptr<ParsedPage>;

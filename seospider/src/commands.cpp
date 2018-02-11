@@ -692,7 +692,8 @@ void RefreshPageCommand::execute()
 
 bool RefreshPageCommand::canExecute() const noexcept
 {
-	return theApp->crawler()->canRefreshPage();
+	const ParsedPage* parsedPage = theApp->crawler()->sequencedDataCollection()->storage(m_storageType)->get(m_index);
+	return theApp->crawler()->readyForRefreshPage() && parsedPage->canRefresh();
 }
 
 GoToLinksOnThisPageCommand::GoToLinksOnThisPageCommand(

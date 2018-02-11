@@ -66,7 +66,7 @@ public:
 	const WebHostInfo* webHostInfo() const;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
 	void refreshPage(StorageType storageType, int index);
-	bool canRefreshPage() const noexcept;
+	bool readyForRefreshPage() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);

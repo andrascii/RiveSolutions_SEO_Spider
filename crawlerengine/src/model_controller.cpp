@@ -173,7 +173,7 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 	{
 		ParsedPagePtr oldPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
 
-		DEBUG_ASSERT(oldPage);
+		ASSERT(oldPage);
 
 		data()->replaceParsedPage(oldPage, workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
 	}

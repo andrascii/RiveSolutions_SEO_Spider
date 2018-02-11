@@ -608,10 +608,17 @@ void Crawler::refreshPage(StorageType storageType, int index)
 {
 	INFOLOG << "Refresh page. index = " << index << "; storageType = " << static_cast<int>(storageType) << ";";
 
-	ASSERT(state() == StatePause || state() == StatePending);
+	if (!readyForRefreshPage())
+	{
+		WARNLOG << "Crawler is not ready for refresh pages";
+		return;
+	}
+
 	ASSERT(!m_workers.empty());
 
 	ParsedPage* parsedPage = m_sequencedDataCollection->storage(storageType)->get(index);
+
+	ASSERT(parsedPage->canRefresh());
 
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
@@ -636,7 +643,7 @@ const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 	return m_uniqueLinkStore;
 }
 
-bool Crawler::canRefreshPage() const noexcept
+bool Crawler::readyForRefreshPage() const noexcept
 {
 	return state() == StatePause || state() == StatePending;
 }
