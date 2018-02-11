@@ -43,7 +43,7 @@ private:
 	{
 		size_t operator()(const CrawlerRequest& item) const noexcept
 		{
-			return hasher(item.url.canonizedUrlStr().toStdString()) + static_cast<size_t>(item.requestType);
+			return hasher(item.url.urlStr().toStdString()) + static_cast<size_t>(item.requestType);
 		}
 
 		boost::hash<std::string> hasher;

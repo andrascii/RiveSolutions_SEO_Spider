@@ -166,7 +166,7 @@ TEST(H1AndH2Tests, DuplicateH2)
 		cl->waitForAllCrawledPageReceived(10);
 		auto pages = cl->storageItems(CrawlerEngine::StorageType::DuplicatedH2UrlStorageType);
 		cl->checkSequencedDataCollectionConsistency();
-		EXPECT_EQ(1, pages.size());
+		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString("Duplicate H2"), pages[0]->firstH2);
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};

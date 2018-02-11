@@ -8,11 +8,6 @@ Url::Url(const QUrl& url)
 {
 }
 
-bool Url::compare(const Url& url) const
-{
-	return canonizedUrlStr() == url.canonizedUrlStr();
-}
-
 const QString& Url::canonizedUrlStr() const
 {
 	if (m_canonizedUrlStr.isEmpty())
@@ -25,16 +20,6 @@ const QString& Url::canonizedUrlStr() const
 	}
 
 	return m_canonizedUrlStr;
-}
-
-bool Url::operator==(const Url& url) const
-{
-	return compare(url);
-}
-
-bool Url::operator!=(const Url& url) const
-{
-	return !(*this == url);
 }
 
 }

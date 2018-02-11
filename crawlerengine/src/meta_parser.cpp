@@ -33,10 +33,11 @@ void MetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& page) 
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_META &&
-			node->parent &&
-			node->parent->v.element.tag == GUMBO_TAG_HEAD &&
+			/*node->parent &&
+			node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
 			GumboParsingHelpers::checkAttribute(node, "http-equiv", "content-type") &&
 			GumboParsingHelpers::checkAttribute(node, "content", "");
+		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
 	auto res = [](const GumboNode* node)
@@ -59,9 +60,10 @@ void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noex
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_META &&
-			node->parent &&
-			node->parent->v.element.tag == GUMBO_TAG_HEAD &&
+			/*node->parent &&
+			node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
 			GumboParsingHelpers::checkAttribute(node, "http-equiv", "refresh");
+		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
 	auto res = [](const GumboNode* node)
@@ -113,10 +115,11 @@ void MetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& page) 
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_META &&
-			node->parent &&
-			node->parent->v.element.tag == GUMBO_TAG_HEAD &&
+			/*node->parent &&
+			node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
 			GumboParsingHelpers::checkAttribute(node, "name", "description") &&
 			GumboParsingHelpers::checkAttribute(node, "content", "");
+		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
 	auto res = [](const GumboNode* node)
@@ -142,10 +145,11 @@ void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noe
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_META &&
-			node->parent &&
-			node->parent->v.element.tag == GUMBO_TAG_HEAD &&
+			/*node->parent &&
+			node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
 			GumboParsingHelpers::checkAttribute(node, "name", "keywords") &&
 			GumboParsingHelpers::checkAttribute(node, "content", "");
+		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
 	auto res = [](const GumboNode* node)
@@ -216,10 +220,11 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 			return node &&
 				node->type == GUMBO_NODE_ELEMENT &&
 				node->v.element.tag == GUMBO_TAG_META &&
-				node->parent &&
-				node->parent->v.element.tag == GUMBO_TAG_HEAD &&
+				/*node->parent &&
+				node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
 				GumboParsingHelpers::checkAttribute(node, "name", nameValue.toLatin1().constData()) &&
 				GumboParsingHelpers::checkAttribute(node, "content", "");
+			// TODO: uncomment when this error will be fixed in Gumbo
 		};
 
 		const auto res = [](const GumboNode* node)

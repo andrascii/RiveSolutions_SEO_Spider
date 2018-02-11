@@ -423,9 +423,10 @@ void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage)
 		data()->addParsedPage(incomingPage, StorageType::TooLongH2UrlStorageType);
 	}
 
-	if (h2Length > 0 && incomingPage->hasSeveralEqualH2Tags)
+	if (h2Length > 0)
 	{
-		data()->addParsedPage(incomingPage, StorageType::DuplicatedH2UrlStorageType);
+		addDuplicates(incomingPage, StorageType::AllH2UrlStorageType, StorageType::DuplicatedH2UrlStorageType);
+		data()->addParsedPage(incomingPage, StorageType::AllH2UrlStorageType);
 	}
 
 	if (incomingPage->hasSeveralEqualH2Tags)
@@ -860,9 +861,11 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, StorageTy
 	const auto predicate = [&page = incomingPage](const ParsedPagePtr& candidatePage)
 	{
 		return 
-			candidatePage->url.canonizedUrlStr() != // TODO: remove these two lines
+			// discard pages that are different only by trailing slash
+			candidatePage->url.canonizedUrlStr() != 
 			page->url.canonizedUrlStr() &&
 		
+			// and discard pages with the same canonical url
 			(candidatePage->canonicalUrl.canonizedUrlStr().isEmpty() ||
 			candidatePage->canonicalUrl.canonizedUrlStr() != page->canonicalUrl.canonizedUrlStr());
 	};

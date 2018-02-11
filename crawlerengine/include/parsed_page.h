@@ -121,7 +121,7 @@ struct ResourcesOnPageListItemHasher
 {
 	size_t operator()(const ResourceOnPage& resource) const noexcept
 	{
-		return hasher(resource.link.url.canonizedUrlStr().toStdString());
+		return hasher(resource.link.url.urlStr().toStdString());
 		// TODO: make it more clever
 	}
 
@@ -137,7 +137,7 @@ using ResourcesOnPageList = std::unordered_set<ResourceOnPage, ResourcesOnPageLi
 
 inline bool operator<(const ResourceOnPage& lhs, const ResourceOnPage& rhs)
 {
-	return lhs.link.url.canonizedUrlStr() < rhs.link.url.canonizedUrlStr();
+	return lhs.link.url.urlStr() < rhs.link.url.urlStr();
 }
 
 constexpr int invalidPageLevel = 100000000;

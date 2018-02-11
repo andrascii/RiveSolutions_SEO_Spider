@@ -17,9 +17,10 @@ void TitleParser::parse(GumboOutput* output, const ResponseHeaders& headers, Par
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
-			node->v.element.tag == GUMBO_TAG_TITLE &&
+			node->v.element.tag == GUMBO_TAG_TITLE /*&&
 			node->parent &&
-			node->parent->v.element.tag == GUMBO_TAG_HEAD;
+			node->parent->v.element.tag == GUMBO_TAG_HEAD*/;
+		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
 	auto res = [](const GumboNode* node)
