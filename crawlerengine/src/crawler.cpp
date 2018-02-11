@@ -85,8 +85,6 @@ void Crawler::initialize()
 {
 	m_modelController = new ModelController;
 
-	VERIFY(connect(m_modelController, &ModelController::refreshPageDone, this, &Crawler::onRefreshPageDone));
-
 	initSequencedDataCollection();
 
 	m_downloader = createDownloader();
@@ -292,6 +290,8 @@ void Crawler::onRefreshPageDone()
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->service<INotificationService>()->info(tr("Refreshing page"), tr("Page refresh completed."));
+
+	emit refreshPageDone();
 }
 
 bool Crawler::isPreinitialized() const
@@ -367,7 +367,10 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 						++crawledLinksCount;
 					}
 
-					m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
+					//
+					// This adding might be UNSAFE!
+					//
+					m_modelController->data()->addParsedPage(page, i);
 				}
 			}
 		}
@@ -506,6 +509,9 @@ void Crawler::initSequencedDataCollection()
 {
 	m_sequencedDataCollection = std::make_unique<SequencedDataCollection>(m_modelController->data());
 	m_sequencedDataCollection->initialize();
+
+	VERIFY(connect(m_sequencedDataCollection.get(), &SequencedDataCollection::refreshPageDone,
+		this, &Crawler::onRefreshPageDone));
 }
 
 IHostInfoProvider* Crawler::createHostInfoProvider() const

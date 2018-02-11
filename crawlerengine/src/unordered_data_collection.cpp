@@ -77,27 +77,30 @@ std::vector<ParsedPagePtr> UnorderedDataCollection::allParsedPages(StorageType t
 	return result;
 }
 
-void UnorderedDataCollection::addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type)
+void UnorderedDataCollection::addParsedPage(WorkerResult& workerResult, StorageType type)
 {
-	std::vector<bool>& pageStoragesFlags = parsedPagePtr->storages;
+	addParsedPageInternal(workerResult.incomingPage(), type);
 
-	if (pageStoragesFlags.size() < static_cast<size_t>(StorageType::EndEnumStorageType))
-	{
-		pageStoragesFlags.resize(static_cast<size_t>(StorageType::EndEnumStorageType), false);
-	}
-
-	pageStoragesFlags[static_cast<size_t>(type)] = true;
-	storage(type).insert(parsedPagePtr);
-
-	DEBUG_ASSERT(isParsedPageExists(parsedPagePtr, type));
-
-	emit parsedPageAdded(parsedPagePtr, type);
+	emit parsedPageAdded(workerResult, type);
 }
 
-void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, int type)
+void UnorderedDataCollection::addParsedPage(WorkerResult workerResult, int type)
 {
 	const StorageType storage = static_cast<StorageType>(type);
-	addParsedPage(parsedPagePtr, storage);
+	addParsedPage(workerResult, storage);
+}
+
+void UnorderedDataCollection::addParsedPage(ParsedPagePtr& parsedPagePointer, StorageType type)
+{
+	addParsedPageInternal(parsedPagePointer, type);
+
+	emit parsedPageAdded(parsedPagePointer, type);
+}
+
+void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePointer, int type)
+{
+	const StorageType storage = static_cast<StorageType>(type);
+	addParsedPage(parsedPagePointer, storage);
 }
 
 ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
@@ -410,6 +413,22 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 	};
+}
+
+
+void UnorderedDataCollection::addParsedPageInternal(ParsedPagePtr& parsedPagePointer, StorageType type)
+{
+	std::vector<bool>& pageStoragesFlags = parsedPagePointer->storages;
+
+	if (pageStoragesFlags.size() < static_cast<size_t>(StorageType::EndEnumStorageType))
+	{
+		pageStoragesFlags.resize(static_cast<size_t>(StorageType::EndEnumStorageType), false);
+	}
+
+	pageStoragesFlags[static_cast<size_t>(type)] = true;
+	storage(type).insert(parsedPagePointer);
+
+	DEBUG_ASSERT(isParsedPageExists(parsedPagePointer, type));
 }
 
 }

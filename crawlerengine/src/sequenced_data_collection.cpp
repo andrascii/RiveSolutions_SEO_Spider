@@ -11,8 +11,11 @@ SequencedDataCollection::SequencedDataCollection(const UnorderedDataCollection* 
 {
 	ASSERT(collection);
 
-	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageAdded, this,
-		&SequencedDataCollection::addParsedPage, Qt::QueuedConnection));
+	VERIFY(connect(collection, SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)), this,
+		SLOT(addParsedPage(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
+
+	VERIFY(connect(collection, SIGNAL(parsedPageAdded(WorkerResult, StorageType)), this,
+		SLOT(addParsedPage(WorkerResult, StorageType)), Qt::QueuedConnection));
 
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageReplaced, this,
 		&SequencedDataCollection::replaceParsedPage, Qt::QueuedConnection));
@@ -83,6 +86,16 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 		collection->emplaceBack(std::move(parsedPagePtr));
 
 		emit parsedPageAdded(collection->size() - 1, storageType);
+	}
+}
+
+void SequencedDataCollection::addParsedPage(WorkerResult workerResult, StorageType type)
+{
+	addParsedPage(workerResult.incomingPage(), type);
+
+	if (workerResult.isRefreshResult())
+	{
+		emit refreshPageDone();
 	}
 }
 

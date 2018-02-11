@@ -28,9 +28,6 @@ public:
 		return m_data;
 	}
 
-signals:
-	void refreshPageDone();
-
 public slots:
 	void handleWorkerResult(WorkerResult workerResult) noexcept;
 	void setWebCrawlerOptions(const CrawlerOptions& options);
@@ -39,20 +36,20 @@ public slots:
 
 private:
 	void processParsedPageUrl(WorkerResult& workerResult);
-	void processParsedPageTitle(ParsedPagePtr& incomingPage);
-	void processParsedPageMetaDescription(ParsedPagePtr& incomingPage);
-	void processParsedPageMetaKeywords(ParsedPagePtr& incomingPage);
-	void processParsedPageH1(ParsedPagePtr& incomingPage);
-	void processParsedPageH2(ParsedPagePtr& incomingPage);
-	void processParsedPageImage(ParsedPagePtr& incomingPage, bool checkOnlyLastResource = false);
-	void processParsedPageStatusCode(ParsedPagePtr& incomingPage);
-	void processParsedPageHtmlResources(ParsedPagePtr& incomingPage);
-	void processParsedPageResources(ParsedPagePtr& incomingPage);
+	void processParsedPageTitle(WorkerResult& workerResult);
+	void processParsedPageMetaDescription(WorkerResult& workerResult);
+	void processParsedPageMetaKeywords(WorkerResult& workerResult);
+	void processParsedPageH1(WorkerResult& workerResult);
+	void processParsedPageH2(WorkerResult& workerResult);
+	void processParsedPageImage(WorkerResult& workerResult, bool checkOnlyLastResource = false);
+	void processParsedPageStatusCode(WorkerResult& workerResult);
+	void processParsedPageHtmlResources(WorkerResult& workerResult);
+	void processParsedPageResources(WorkerResult& workerResult);
 	void fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept;
 	bool resourceShouldBeProcessed(ResourceType resourceType) const noexcept;
 	void calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept;
 	void setPageLevel(ParsedPagePtr& page, int level) const noexcept;
-	void addDuplicates(const ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage);
+	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage);
 
 private:
 	UnorderedDataCollection* m_data;

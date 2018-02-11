@@ -77,6 +77,7 @@ signals:
 	void crawlerOptionsChanged(CrawlerOptions options);
 	void serializationProcessDone();
 	void deserializationProcessDone();
+	void refreshPageDone();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);
