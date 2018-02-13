@@ -69,6 +69,10 @@ class Preferences : public QObject
 	Q_PROPERTY(QString companyEmail READ companyEmail WRITE setCompanyEmail NOTIFY companyEmailChanged);
 	Q_PROPERTY(QString companyWebSite READ companyWebSite WRITE setCompanyWebSite NOTIFY companyWebSiteChanged);
 
+	// Page visual properties
+	Q_PROPERTY(bool useCustomColorForNotIndexedPages READ useCustomColorForNotIndexedPages WRITE setUseCustomColorForNotIndexedPages NOTIFY useCustomColorForNotIndexedPagesChanged);
+	Q_PROPERTY(QColor notIndexedPagesColor READ notIndexedPagesColor WRITE setNotIndexedPagesColor NOTIFY notIndexedPagesColorChanged);
+
 public:
 
 	unsigned threadCount() const;
@@ -247,6 +251,14 @@ public:
 	Q_SLOT void setCompanyWebSite(QString value);
 	Q_SIGNAL void companyWebSiteChanged();
 
+	bool useCustomColorForNotIndexedPages() const;
+	Q_SLOT void setUseCustomColorForNotIndexedPages(bool value);
+	Q_SIGNAL void useCustomColorForNotIndexedPagesChanged();
+
+	QColor notIndexedPagesColor() const;
+	Q_SLOT void setNotIndexedPagesColor(QColor value);
+	Q_SIGNAL void notIndexedPagesColorChanged();
+
 	//////////////////////////////////////////////////////////////////////////
 
 
@@ -327,6 +339,9 @@ private:
 	QString m_companyName;
 	QString m_companyEmail;
 	QString m_companyWebSite;
+
+	bool m_useCustomColorForNotIndexedPages;
+	QColor m_notIndexedPagesColor;
 };
 
 }

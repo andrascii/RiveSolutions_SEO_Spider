@@ -7,6 +7,7 @@
 #include "control_adapter_spin_box.h"
 #include "control_adapter_combo_box.h"
 #include "control_adapter_radio_button.h"
+#include "control_adapter_color_selector.h"
 
 namespace SeoSpider
 {
@@ -119,6 +120,7 @@ void SettingsPage::registerMetaTypes() const
 	qRegisterMetaType<ControlAdapterQSpinBox>();
 	qRegisterMetaType<ControlAdapterQComboBox>();
 	qRegisterMetaType<ControlAdapterQRadioButton>();
+	qRegisterMetaType<ControlAdapterColorSelector>("ControlAdapterSeoSpider::ColorSelector");
 }
 
 void SettingsPage::somethingChangedSlot()
