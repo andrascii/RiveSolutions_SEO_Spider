@@ -54,7 +54,7 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 	hop.setStatusCode(Common::StatusCode::Ok200);
 	hop.setUrl(requestedUrl);
 
-	std::pair<QString, QString> files = mapUrlToTestDataFiles(request->requestInfo);
+	std::pair<QString, QString> files = mapUrlToTestDataFiles(*request);
 
 	if (!files.first.isEmpty())
 	{
@@ -170,12 +170,12 @@ QDir TestsDownloader::testsDataDir() const
 	return QDir(m_testDataPath);
 }
 
-std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const CrawlerEngine::CrawlerRequest& url) const
+std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const CrawlerEngine::DownloadRequest& downloadRequest) const
 {
 	const QDir testsDir = testsDataDir();
-	const QString hostPath = url.url.host();
+	const QString hostPath = downloadRequest.requestInfo.url.host();
 
-	QString path = url.url.path(Url::FullyEncoded);
+	QString path = downloadRequest.requestInfo.url.path(Url::FullyEncoded);
 
 	if (path.isEmpty())
 	{
@@ -186,9 +186,21 @@ std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const Crawler
 
 	if (QFileInfo(requestedFilePath).isDir())
 	{
-		requestedFilePath = requestedFilePath.endsWith(QChar('/'))
-			? requestedFilePath + QString("index.html")
-			: requestedFilePath + QString("/index.html");
+		requestedFilePath = requestedFilePath.endsWith(QChar('/')) ? 
+			requestedFilePath + QString("index.html") : 
+			requestedFilePath + QString("/index.html");
+	}
+
+	QString filename = downloadRequest.requestInfo.url.fileName();
+
+	if (downloadRequest.isReloadAlreadyLoaded)
+	{
+		const int lastDotIndex = filename.lastIndexOf(".");
+		filename.insert(lastDotIndex, "_fixed");
+
+		const int lastPathSlashIndex = requestedFilePath.lastIndexOf("/");
+		requestedFilePath.remove(lastPathSlashIndex + 1, requestedFilePath.size() - lastPathSlashIndex + 1);
+		requestedFilePath.append(filename);
 	}
 
 	QString metadataFilePath = requestedFilePath + ".meta";

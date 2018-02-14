@@ -291,6 +291,8 @@ void Crawler::onRefreshPageDone()
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->service<INotificationService>()->info(tr("Refreshing page"), tr("Page refresh completed."));
 
+	setState(m_prevState);
+
 	emit refreshPageDone();
 }
 
@@ -642,6 +644,8 @@ void Crawler::refreshPage(StorageType storageType, int index)
 		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));
 
 	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet);
+
+	setState(StatePageRefresh);
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
