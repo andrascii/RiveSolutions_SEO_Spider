@@ -707,3 +707,10 @@ SeoSpider--NotificationPopupFrame QLabel#NotificationHeaderLabel
 	font-size: 10pt;
 	font: bold;
 }
+
+/*////////////////////////////// QColorDialog //////////////////////////////////////////////*/
+
+QColorDialog QSpinBox
+{
+	max-width: 5em;
+}

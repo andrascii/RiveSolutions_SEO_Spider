@@ -201,6 +201,7 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction, QIcon(QStringLiteral(":/images/user-agent.png")), tr("User Agent Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction, QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Timer Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction, QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
@@ -234,6 +235,9 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_openCompanyProfileSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CompanyProfileSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openPageVisualSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_PageVisualSettingsWidget)); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
