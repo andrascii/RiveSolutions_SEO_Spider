@@ -48,6 +48,7 @@
 		<file>images/excel.svg</file>
 		<file>images/pdf.svg</file>
 		<file>images/go-to-url.svg</file>
+		<file>images/color.png</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>
