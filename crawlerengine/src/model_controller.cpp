@@ -550,16 +550,17 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult)
 			data()->addParsedPage(workerResult, StorageType::ExternalDoFollowUrlResourcesStorageType);
 		}
 
-		DEBUG_ASSERT(!incomingPage->redirectedUrl.isValid() || incomingPage->allResourcesOnPage.size() == 1);
+		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() || 
+			workerResult.incomingPage()->allResourcesOnPage.size() == 1);
 
-		if (!incomingPage->redirectedUrl.isValid())
+		if (!workerResult.incomingPage()->redirectedUrl.isValid())
 		{
 			// do not parse resources from an external one
 			return;
 		}		
 	}
 
-	if (incomingPage->canonicalUrl.isValid() && !incomingPage->isThisExternalPage)
+	if (workerResult.incomingPage()->canonicalUrl.isValid() && !workerResult.incomingPage()->isThisExternalPage)
 	{
 		data()->addParsedPage(workerResult, StorageType::CanonicalUrlResourcesStorageType);
 		if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::UniqueCanonicalUrlResourcesStorageType))
@@ -575,7 +576,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult)
 			continue;
 		}
 
-		if (incomingPage->isThisExternalPage && 
+		if (workerResult.incomingPage()->isThisExternalPage && 
 			resource.link.resourceSource != ResourceSource::SourceRedirectUrl)
 		{
 			continue;
@@ -664,7 +665,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult)
 		data()->addParsedPage(workerResult, storage);
 	}
 
-	if (incomingPage->isThisExternalPage && !incomingPage->redirectedUrl.isValid())
+	if (workerResult.incomingPage()->isThisExternalPage && !workerResult.incomingPage()->redirectedUrl.isValid())
 	{
 		return;
 	}
@@ -672,8 +673,8 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult)
 	for (const ResourceOnPage& resource : workerResult.incomingPage()->allResourcesOnPage)
 	{
 		const QString resourceDisplayUrl = resource.link.url.toDisplayString();
-		const ResourceType resourceType = incomingPage->resourceType != ResourceType::ResourceHtml
-			? incomingPage->resourceType : resource.resourceType;
+		const ResourceType resourceType = workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml
+			? workerResult.incomingPage()->resourceType : resource.resourceType;
 
 		if ((!resourceShouldBeProcessed(resource.resourceType) && 
 				resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
@@ -684,7 +685,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult)
 			continue;
 		}
 
-		if (incomingPage->isThisExternalPage &&
+		if (workerResult.incomingPage()->isThisExternalPage &&
 			resource.link.resourceSource != ResourceSource::SourceRedirectUrl)
 		{
 			continue;
@@ -740,7 +741,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult)
 		// special case: parse image resource again because it can have now empty or too short/long alt text
 		if (existingImageResource)
 		{
-			WorkerResult result(newOrExistingResource, workerResult.isRefreshResult());
+			WorkerResult result(newOrExistingResource, workerResult.isRefreshResult(), workerResult.requestType());
 			processParsedPageImage(result, true);
 		}
 	}
