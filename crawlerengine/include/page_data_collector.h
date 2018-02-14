@@ -20,7 +20,6 @@ public:
 
 	void setOptions(const CrawlerOptions& crawlerOptions) noexcept;
 	std::vector<ParsedPagePtr> collectPageDataFromResponse(const DownloadResponse& response);
-	const std::vector<LinkInfo>& outlinks() const noexcept;
 
 private:
 	static Url resolveRedirectUrl(const Hop& hop);
@@ -34,7 +33,6 @@ private:
 private:
 	CompoundParser m_parser;
 	CrawlerOptions m_crawlerOptions;
-	std::vector<LinkInfo> m_outlinks;
 };
 
 }

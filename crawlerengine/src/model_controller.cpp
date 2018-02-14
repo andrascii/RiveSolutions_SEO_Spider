@@ -102,23 +102,22 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	ASSERT(workerResult.incomingPage()->resourceType >= ResourceType::ResourceHtml &&
 		workerResult.incomingPage()->resourceType <= ResourceType::ResourceOther);
 
-#ifdef QT_DEBUG
-
 	if (!workerResult.isRefreshResult())
 	{
+		// This is possible that the same page is loaded twice: once by a HEAD request and once by a GET request
+		// TODO: make more proper merging if the second request is a GET request
 		const ParsedPagePtr existingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
 
 		if (existingPage)
 		{
-			ERRLOG << "Unexpected page:" << workerResult.incomingPage()->url.toDisplayString()
-				<< existingPage->url.toDisplayString()
-				<< ". This page was already crawled.";
-
-			DEBUG_ASSERT(!existingPage);
+			// WRONG
+			// TODO: implement correct processing a page second time
+			// we should not append this page in storages second time if it is already there
+			return;
 		}
+		
+		//workerResult.incomingPage() = mergeTwoPages(existingPage, workerResult.incomingPage());
 	}
-
-#endif
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 	
@@ -132,7 +131,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 	processParsedPageHtmlResources(workerResult.incomingPage());
 	processParsedPageResources(workerResult.incomingPage());
-	workerResult.incomingPage()->allResourcesOnPage.clear();
+	//workerResult.incomingPage()->allResourcesOnPage.clear();
 
 	processParsedPageStatusCode(workerResult.incomingPage());
 	processParsedPageUrl(workerResult);
@@ -162,6 +161,13 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	{
 		emit refreshPageDone();
 	}
+
+	DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
+		data()->size(StorageType::CrawledUrlStorageType) == 1);
+
+	DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
+		workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
+		!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
 }
 
 void ModelController::processParsedPageUrl(WorkerResult& workerResult)
@@ -549,11 +555,16 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			data()->addParsedPage(incomingPage, StorageType::ExternalDoFollowUrlResourcesStorageType);
 		}
 
-		// do not parse resources from an external one
-		return;
+		DEBUG_ASSERT(!incomingPage->redirectedUrl.isValid() || incomingPage->allResourcesOnPage.size() == 1);
+
+		if (!incomingPage->redirectedUrl.isValid())
+		{
+			// do not parse resources from an external one
+			return;
+		}		
 	}
 
-	if (incomingPage->canonicalUrl.isValid())
+	if (incomingPage->canonicalUrl.isValid() && !incomingPage->isThisExternalPage)
 	{
 		data()->addParsedPage(incomingPage, StorageType::CanonicalUrlResourcesStorageType);
 		if (!data()->isParsedPageExists(incomingPage, StorageType::UniqueCanonicalUrlResourcesStorageType))
@@ -565,6 +576,12 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 	for (const ResourceOnPage& resource : incomingPage->allResourcesOnPage)
 	{
 		if (resource.resourceType != ResourceType::ResourceHtml)
+		{
+			continue;
+		}
+
+		if (incomingPage->isThisExternalPage && 
+			resource.link.resourceSource != ResourceSource::SourceRedirectUrl)
 		{
 			continue;
 		}
@@ -652,7 +669,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		data()->addParsedPage(incomingPage, storage);
 	}
 
-	if (incomingPage->isThisExternalPage)
+	if (incomingPage->isThisExternalPage && !incomingPage->redirectedUrl.isValid())
 	{
 		return;
 	}
@@ -660,11 +677,20 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 	for (const ResourceOnPage& resource : incomingPage->allResourcesOnPage)
 	{
 		const QString resourceDisplayUrl = resource.link.url.toDisplayString();
+		const ResourceType resourceType = incomingPage->resourceType != ResourceType::ResourceHtml
+			? incomingPage->resourceType : resource.resourceType;
 
-		if (!resourceShouldBeProcessed(resource.resourceType) || 
-			resource.resourceType == ResourceType::ResourceHtml ||
+		if ((!resourceShouldBeProcessed(resource.resourceType) && 
+				resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
+			resourceType == ResourceType::ResourceHtml ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
+		{
+			continue;
+		}
+
+		if (incomingPage->isThisExternalPage &&
+			resource.link.resourceSource != ResourceSource::SourceRedirectUrl)
 		{
 			continue;
 		}
@@ -674,8 +700,6 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url);
 		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, temporaryResource->url) || !httpResource;
-
-		const ResourceType resourceType = resource.resourceType;
 
 		const StorageType storage = externalOrNotHttpResource ?
 			s_externalStorageTypes[resourceType] : 
@@ -716,7 +740,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
 
-		newOrExistingResource->resourceType = resource.resourceType;
+		newOrExistingResource->resourceType = resourceType;
 
 		// special case: parse image resource again because it can have now empty or too short/long alt text
 		if (existingImageResource)
@@ -732,6 +756,12 @@ void ModelController::fixParsedPageResourceType(ParsedPagePtr& incomingPage) con
 	if (pendingResource && pendingResource->resourceType != ResourceType::ResourceHtml)
 	{
 		incomingPage->resourceType = pendingResource->resourceType;
+		if (pendingResource->linksToThisPage.size() == 1 && 
+			pendingResource->linksToThisPage.begin()->resourceSource == ResourceSource::SourceRedirectUrl &&
+			pendingResource->linksToThisPage.begin()->resource.expired())
+		{
+			incomingPage->resourceType = pendingResource->linksToThisPage.begin()->resource.lock()->resourceType;
+		}
 	}
 }
 

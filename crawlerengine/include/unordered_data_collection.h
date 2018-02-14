@@ -23,6 +23,7 @@ public:
 	UnorderedDataCollection(QObject* parent);
 
 	bool isParsedPageExists(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
+	size_t size(StorageType type) const noexcept;
 
 	void replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type);
 
