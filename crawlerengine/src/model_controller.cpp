@@ -129,24 +129,24 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		return;
 	}
 
-	processParsedPageHtmlResources(workerResult.incomingPage());
-	processParsedPageResources(workerResult.incomingPage());
-	//workerResult.incomingPage()->allResourcesOnPage.clear();
+	processParsedPageHtmlResources(workerResult);
+	processParsedPageResources(workerResult);
+	workerResult.incomingPage()->allResourcesOnPage.clear();
 
-	processParsedPageStatusCode(workerResult.incomingPage());
+	processParsedPageStatusCode(workerResult);
 	processParsedPageUrl(workerResult);
 
 	if (workerResult.incomingPage()->resourceType == ResourceType::ResourceHtml)
 	{
-		processParsedPageTitle(workerResult.incomingPage());
-		processParsedPageMetaDescription(workerResult.incomingPage());
-		processParsedPageMetaKeywords(workerResult.incomingPage());
-		processParsedPageH1(workerResult.incomingPage());
-		processParsedPageH2(workerResult.incomingPage());
+		processParsedPageTitle(workerResult);
+		processParsedPageMetaDescription(workerResult);
+		processParsedPageMetaKeywords(workerResult);
+		processParsedPageH1(workerResult);
+		processParsedPageH2(workerResult);
 	}
 	else if (workerResult.incomingPage()->resourceType == ResourceType::ResourceImage)
 	{
-		processParsedPageImage(workerResult.incomingPage());
+		processParsedPageImage(workerResult);
 	}
 
 	data()->removeParsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
@@ -155,11 +155,6 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	{
 		data()->parsedPageLinksToThisResourceChanged(m_linksToPageChanges);
 		m_linksToPageChanges.changes.clear();
-	}
-
-	if (workerResult.isRefreshResult())
-	{
-		emit refreshPageDone();
 	}
 
 	DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
@@ -179,13 +174,13 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 	{
 		ParsedPagePtr oldPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
 
-		DEBUG_ASSERT(oldPage);
+		ASSERT(oldPage);
 
 		data()->replaceParsedPage(oldPage, workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
 	}
 	else
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::CrawledUrlStorageType);
 	}
 
 	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
@@ -194,7 +189,7 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 
 	if (url.host() != m_crawlerOptions.startCrawlingPage.host())
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::ExternalUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::ExternalUrlStorageType);
 	}
 
 	if (workerResult.incomingPage()->isThisExternalPage)
@@ -204,27 +199,27 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 
 	if (urlStr.toLower() != urlStr)
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::UpperCaseUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::UpperCaseUrlStorageType);
 	}
 
 	if (urlStr.size() > m_crawlerOptions.limitMaxUrlLength)
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::TooLongUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooLongUrlStorageType);
 	}
 
 	if (workerResult.incomingPage()->linksOnThisPage.size() > m_crawlerOptions.maxLinksCountOnPage)
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::TooManyLinksOnPageStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooManyLinksOnPageStorageType);
 	}
 
 	if (workerResult.incomingPage()->hasMetaRefreshTag)
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::ContainsMetaRefreshTagStorageType);
+		data()->addParsedPage(workerResult, StorageType::ContainsMetaRefreshTagStorageType);
 	}
 
 	if (workerResult.incomingPage()->hasFrames)
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::ContainsFramesStorageType);
+		data()->addParsedPage(workerResult, StorageType::ContainsFramesStorageType);
 	}
 
 	bool hasNonAscii = false;
@@ -240,7 +235,7 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 
 	if (hasNonAscii)
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::NonAsciiCharacterUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::NonAsciiCharacterUrlStorageType);
 	}
 
 	if (workerResult.incomingPage()->redirectedUrl.isValid())
@@ -253,195 +248,195 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 			const QString www = QString("www.");
 			if (www + host == redirectedHost || www + redirectedHost == host)
 			{
-				data()->addParsedPage(workerResult.incomingPage(), StorageType::WwwRedirectionsUrlStorageType);
+				data()->addParsedPage(workerResult, StorageType::WwwRedirectionsUrlStorageType);
 			}
 		}
 	}
 }
 
-void ModelController::processParsedPageTitle(ParsedPagePtr& incomingPage)
+void ModelController::processParsedPageTitle(WorkerResult& workerResult)
 {
-	if (incomingPage->isThisExternalPage)
+	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
 	}
 
-	const Common::StatusCode responseCode = incomingPage->statusCode;
-	const QString title = incomingPage->title;
-	const QString h1 = incomingPage->firstH1;
+	const Common::StatusCode responseCode = workerResult.incomingPage()->statusCode;
+	const QString title = workerResult.incomingPage()->title;
+	const QString h1 = workerResult.incomingPage()->firstH1;
 
-	const bool successfulResponseCode = successfulCode(incomingPage);
+	const bool successfulResponseCode = successfulCode(workerResult.incomingPage());
 
 	if ((title.isEmpty() && successfulResponseCode))
 	{
-		data()->addParsedPage(incomingPage, StorageType::EmptyTitleUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::EmptyTitleUrlStorageType);
 	}
 	else if (title.size() > m_crawlerOptions.maxTitleLength && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooLongTitleUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooLongTitleUrlStorageType);
 	}
 	else if (title.size() < m_crawlerOptions.minTitleLength && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooShortTitleUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooShortTitleUrlStorageType);
 	}
 
 	if (!title.isEmpty() && successfulResponseCode)
 	{
-		addDuplicates(incomingPage, StorageType::AllTitlesUrlStorageType, StorageType::DuplicatedTitleUrlStorageType);
-		data()->addParsedPage(incomingPage, StorageType::AllTitlesUrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllTitlesUrlStorageType, StorageType::DuplicatedTitleUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::AllTitlesUrlStorageType);
 	}
 
 	if (!h1.isEmpty() && h1 == title && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::DuplicatedH1TitleUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::DuplicatedH1TitleUrlStorageType);
 	}
 
-	if (incomingPage->hasSeveralTitleTags && successfulResponseCode)
+	if (workerResult.incomingPage()->hasSeveralTitleTags && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::SeveralTitleUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::SeveralTitleUrlStorageType);
 	}
 }
 
-void ModelController::processParsedPageMetaDescription(ParsedPagePtr& incomingPage)
+void ModelController::processParsedPageMetaDescription(WorkerResult& workerResult)
 {
-	if (incomingPage->isThisExternalPage)
+	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
 	}
 
-	const bool successfulResponseCode = successfulCode(incomingPage);
+	const bool successfulResponseCode = successfulCode(workerResult.incomingPage());
 
-	const int metaDescriptionLength = incomingPage->metaDescription.size();
+	const int metaDescriptionLength = workerResult.incomingPage()->metaDescription.size();
 
 	if (metaDescriptionLength == 0 && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::EmptyMetaDescriptionUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::EmptyMetaDescriptionUrlStorageType);
 	}
 	else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooLongMetaDescriptionUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooLongMetaDescriptionUrlStorageType);
 	}
 	else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooShortMetaDescriptionUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooShortMetaDescriptionUrlStorageType);
 	}
 
 	if (metaDescriptionLength > 0 && successfulResponseCode)
 	{
-		addDuplicates(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
-		data()->addParsedPage(incomingPage, StorageType::AllMetaDescriptionsUrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::AllMetaDescriptionsUrlStorageType);
 	}
 
-	if (incomingPage->hasSeveralMetaDescriptionTags && successfulResponseCode)
+	if (workerResult.incomingPage()->hasSeveralMetaDescriptionTags && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::SeveralMetaDescriptionUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::SeveralMetaDescriptionUrlStorageType);
 	}
 }
 
-void ModelController::processParsedPageMetaKeywords(ParsedPagePtr& incomingPage)
+void ModelController::processParsedPageMetaKeywords(WorkerResult& workerResult)
 {
-	if (incomingPage->isThisExternalPage)
+	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
 	}
 
-	const bool successfulResponseCode = successfulCode(incomingPage);
+	const bool successfulResponseCode = successfulCode(workerResult.incomingPage());
 
-	const int metaKeywordsLength = incomingPage->metaKeywords.size();
+	const int metaKeywordsLength = workerResult.incomingPage()->metaKeywords.size();
 
 	if (metaKeywordsLength == 0 && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::EmptyMetaKeywordsUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::EmptyMetaKeywordsUrlStorageType);
 	}
 
 	if (metaKeywordsLength > 0 && successfulResponseCode)
 	{
-		addDuplicates(incomingPage, StorageType::AllMetaKeywordsUrlStorageType, StorageType::DuplicatedMetaKeywordsUrlStorageType);
-		data()->addParsedPage(incomingPage, StorageType::AllMetaKeywordsUrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllMetaKeywordsUrlStorageType, StorageType::DuplicatedMetaKeywordsUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::AllMetaKeywordsUrlStorageType);
 	}
 
 
-	if (incomingPage->hasSeveralMetaKeywordsTags && successfulResponseCode)
+	if (workerResult.incomingPage()->hasSeveralMetaKeywordsTags && successfulResponseCode)
 	{
-		data()->addParsedPage(incomingPage, StorageType::SeveralMetaKeywordsUrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::SeveralMetaKeywordsUrlStorageType);
 	}
 }
 
-void ModelController::processParsedPageH1(ParsedPagePtr& incomingPage)
+void ModelController::processParsedPageH1(WorkerResult& workerResult)
 {
-	if (incomingPage->isThisExternalPage)
+	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
 	}
 
-	const bool successfulResponseCode = successfulCode(incomingPage);
+	const bool successfulResponseCode = successfulCode(workerResult.incomingPage());
 
 	if (!successfulResponseCode)
 	{
 		return;
 	}
 
-	const int h1Length = incomingPage->firstH1.size();
+	const int h1Length = workerResult.incomingPage()->firstH1.size();
 
 	if (!h1Length)
 	{
-		data()->addParsedPage(incomingPage, StorageType::MissingH1UrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::MissingH1UrlStorageType);
 	}
 	else if (h1Length > m_crawlerOptions.maxH1LengthChars)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooLongH1UrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooLongH1UrlStorageType);
 	}
 
 	if (h1Length > 0)
 	{
-		addDuplicates(incomingPage, StorageType::AllH1UrlStorageType, StorageType::DuplicatedH1UrlStorageType);
-		data()->addParsedPage(incomingPage, StorageType::AllH1UrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllH1UrlStorageType, StorageType::DuplicatedH1UrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::AllH1UrlStorageType);
 	}
 
-	if (incomingPage->hasSeveralH1Tags)
+	if (workerResult.incomingPage()->hasSeveralH1Tags)
 	{
-		data()->addParsedPage(incomingPage, StorageType::SeveralH1UrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::SeveralH1UrlStorageType);
 	}
 }
 
-void ModelController::processParsedPageH2(ParsedPagePtr& incomingPage)
+void ModelController::processParsedPageH2(WorkerResult& workerResult)
 {
-	if (incomingPage->isThisExternalPage)
+	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
 	}
 
-	const bool successfulResponseCode = successfulCode(incomingPage);
+	const bool successfulResponseCode = successfulCode(workerResult.incomingPage());
 
 	if (!successfulResponseCode)
 	{
 		return;
 	}
 
-	const int h2Length = incomingPage->firstH2.size();
+	const int h2Length = workerResult.incomingPage()->firstH2.size();
 
 	if (!h2Length)
 	{
-		data()->addParsedPage(incomingPage, StorageType::MissingH2UrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::MissingH2UrlStorageType);
 	}
 	else if (h2Length > m_crawlerOptions.maxH2LengthChars)
 	{
-		data()->addParsedPage(incomingPage, StorageType::TooLongH2UrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooLongH2UrlStorageType);
 	}
 
 	if (h2Length > 0)
 	{
-		addDuplicates(incomingPage, StorageType::AllH2UrlStorageType, StorageType::DuplicatedH2UrlStorageType);
-		data()->addParsedPage(incomingPage, StorageType::AllH2UrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllH2UrlStorageType, StorageType::DuplicatedH2UrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::AllH2UrlStorageType);
 	}
 
-	if (incomingPage->hasSeveralEqualH2Tags)
+	if (workerResult.incomingPage()->hasSeveralEqualH2Tags)
 	{
-		data()->addParsedPage(incomingPage, StorageType::SeveralH2UrlStorageType);
+		data()->addParsedPage(workerResult, StorageType::SeveralH2UrlStorageType);
 	}
 }
 
-void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool checkOnlyLastResource)
+void ModelController::processParsedPageImage(WorkerResult& workerResult, bool checkOnlyLastResource)
 {
 	class CounterIncrementor final
 	{
@@ -460,18 +455,18 @@ void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool c
 		std::size_t& m_ref;
 	};
 
-	const int sizeKB = incomingPage->pageSizeKilobytes;
+	const int sizeKB = workerResult.incomingPage()->pageSizeKilobytes;
 
 	if (sizeKB > m_crawlerOptions.maxImageSizeKb &&
-		!data()->isParsedPageExists(incomingPage, StorageType::Over100kbImageStorageType))
+		!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::Over100kbImageStorageType))
 	{
-		data()->addParsedPage(incomingPage, StorageType::Over100kbImageStorageType);
+		data()->addParsedPage(workerResult, StorageType::Over100kbImageStorageType);
 	}
 
 	std::size_t index = 0;
-	const std::size_t lastIndex = incomingPage->linksToThisPage.size() - 1;
+	const std::size_t lastIndex = workerResult.incomingPage()->linksToThisPage.size() - 1;
 
-	for (const ResourceLink& linkToThisImage : incomingPage->linksToThisPage)
+	for (const ResourceLink& linkToThisImage : workerResult.incomingPage()->linksToThisPage)
 	{
 		CounterIncrementor incrementor(index);
 
@@ -485,74 +480,74 @@ void ModelController::processParsedPageImage(ParsedPagePtr& incomingPage, bool c
 			const int altLength = linkToThisImage.altOrTitle.size();
 
 			if (altLength > m_crawlerOptions.maxImageAltTextChars && 
-				!data()->isParsedPageExists(incomingPage, StorageType::TooLongAltTextImageStorageType))
+				!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::TooLongAltTextImageStorageType))
 			{
-				data()->addParsedPage(incomingPage, StorageType::TooLongAltTextImageStorageType);
+				data()->addParsedPage(workerResult, StorageType::TooLongAltTextImageStorageType);
 			}
 
-			if (altLength == 0 && !data()->isParsedPageExists(incomingPage, StorageType::MissingAltTextImageStorageType))
+			if (altLength == 0 && !data()->isParsedPageExists(workerResult.incomingPage(), StorageType::MissingAltTextImageStorageType))
 			{
-				data()->addParsedPage(incomingPage, StorageType::MissingAltTextImageStorageType);
+				data()->addParsedPage(workerResult, StorageType::MissingAltTextImageStorageType);
 			}
 		}
 	}
 }
 
-void ModelController::processParsedPageStatusCode(ParsedPagePtr& incomingPage)
+void ModelController::processParsedPageStatusCode(WorkerResult& workerResult)
 {
-	if (incomingPage->statusCode == Common::StatusCode::NotFound404)
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::NotFound404)
 	{
-		data()->addParsedPage(incomingPage, StorageType::BrokenLinks);
+		data()->addParsedPage(workerResult, StorageType::BrokenLinks);
 	}
 
-	if (incomingPage->statusCode >= Common::StatusCode::BadRequest400 &&
-		incomingPage->statusCode <= Common::StatusCode::UnsupportedMediaType415)
+	if (workerResult.incomingPage()->statusCode >= Common::StatusCode::BadRequest400 &&
+		workerResult.incomingPage()->statusCode <= Common::StatusCode::UnsupportedMediaType415)
 	{
-		data()->addParsedPage(incomingPage, StorageType::Status4xxStorageType);
+		data()->addParsedPage(workerResult, StorageType::Status4xxStorageType);
 	}
 
-	if (incomingPage->statusCode >= Common::StatusCode::InternalServerError500 &&
-		incomingPage->statusCode <= Common::StatusCode::HttpVersionNotSupported505)
+	if (workerResult.incomingPage()->statusCode >= Common::StatusCode::InternalServerError500 &&
+		workerResult.incomingPage()->statusCode <= Common::StatusCode::HttpVersionNotSupported505)
 	{
-		data()->addParsedPage(incomingPage, StorageType::Status5xxStorageType);
+		data()->addParsedPage(workerResult, StorageType::Status5xxStorageType);
 	}
 
-	if (incomingPage->statusCode == Common::StatusCode::MovedPermanently301)
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::MovedPermanently301)
 	{
-		data()->addParsedPage(incomingPage, StorageType::Status301StorageType);
+		data()->addParsedPage(workerResult, StorageType::Status301StorageType);
 	}
 
-	if (incomingPage->statusCode == Common::StatusCode::MovedTemporarily302)
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::MovedTemporarily302)
 	{
-		data()->addParsedPage(incomingPage, StorageType::Status302StorageType);
+		data()->addParsedPage(workerResult, StorageType::Status302StorageType);
 	}
 }
 
-void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage)
+void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult)
 {
-	if (incomingPage->resourceType != ResourceType::ResourceHtml)
+	if (workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}
 
-	const ParsedPagePtr pendingPageRaw = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+	const ParsedPagePtr pendingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
 
-	incomingPage = mergeTwoPages(pendingPageRaw, incomingPage);
+	workerResult.incomingPage() = mergeTwoPages(pendingPage, workerResult.incomingPage());
 
-	const StorageType storage = incomingPage->isThisExternalPage ?
+	const StorageType storage = workerResult.incomingPage()->isThisExternalPage ?
 		StorageType::ExternalHtmlResourcesStorageType : StorageType::HtmlResourcesStorageType;
 
-	data()->addParsedPage(incomingPage, storage);
+	data()->addParsedPage(workerResult, storage);
 
-	if (incomingPage->isThisExternalPage)
+	if (workerResult.incomingPage()->isThisExternalPage)
 	{
-		const bool doFollow = std::any_of(incomingPage->linksToThisPage.begin(), incomingPage->linksToThisPage.end(),
+		const bool doFollow = std::any_of(workerResult.incomingPage()->linksToThisPage.begin(), workerResult.incomingPage()->linksToThisPage.end(),
 			[](const ResourceLink& link) { return link.linkParameter == LinkParameter::DofollowParameter; });
 
 		if (doFollow)
 		{
-			DEBUG_ASSERT(!data()->isParsedPageExists(incomingPage, StorageType::ExternalDoFollowUrlResourcesStorageType));
-			data()->addParsedPage(incomingPage, StorageType::ExternalDoFollowUrlResourcesStorageType);
+			DEBUG_ASSERT(!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::ExternalDoFollowUrlResourcesStorageType));
+			data()->addParsedPage(workerResult, StorageType::ExternalDoFollowUrlResourcesStorageType);
 		}
 
 		DEBUG_ASSERT(!incomingPage->redirectedUrl.isValid() || incomingPage->allResourcesOnPage.size() == 1);
@@ -566,14 +561,14 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 	if (incomingPage->canonicalUrl.isValid() && !incomingPage->isThisExternalPage)
 	{
-		data()->addParsedPage(incomingPage, StorageType::CanonicalUrlResourcesStorageType);
-		if (!data()->isParsedPageExists(incomingPage, StorageType::UniqueCanonicalUrlResourcesStorageType))
+		data()->addParsedPage(workerResult, StorageType::CanonicalUrlResourcesStorageType);
+		if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::UniqueCanonicalUrlResourcesStorageType))
 		{
-			data()->addParsedPage(incomingPage, StorageType::UniqueCanonicalUrlResourcesStorageType);
+			data()->addParsedPage(workerResult, StorageType::UniqueCanonicalUrlResourcesStorageType);
 		}
 	}
 
-	for (const ResourceOnPage& resource : incomingPage->allResourcesOnPage)
+	for (const ResourceOnPage& resource : workerResult.incomingPage()->allResourcesOnPage)
 	{
 		if (resource.resourceType != ResourceType::ResourceHtml)
 		{
@@ -597,12 +592,12 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.link.urlParameter,
+			existingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.urlParameter,
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 		}
 		else
@@ -610,10 +605,10 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
 			pendingResource->url = resource.link.url;
 
-			pendingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.link.urlParameter,
+			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 			
-			incomingPage->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
 			if (!resource.loadAvailability)
@@ -629,7 +624,7 @@ void ModelController::processParsedPageHtmlResources(ParsedPagePtr& incomingPage
 	}
 }
 
-void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
+void ModelController::processParsedPageResources(WorkerResult& workerResult)
 {
 	static const QMap<ResourceType, StorageType> s_storageTypes
 	{
@@ -652,21 +647,21 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 
 	};
 
-	const bool http = PageParserHelpers::isHttpOrHttpsScheme(incomingPage->url);
-	const bool externalOrNotHttp = incomingPage->isThisExternalPage || !http;
+	const bool http = PageParserHelpers::isHttpOrHttpsScheme(workerResult.incomingPage()->url);
+	const bool externalOrNotHttp = workerResult.incomingPage()->isThisExternalPage || !http;
 
-	if (incomingPage->resourceType != ResourceType::ResourceHtml)
+	if (workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml)
 	{
-		const ParsedPagePtr pendingPageRaw = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
-		incomingPage = mergeTwoPages(pendingPageRaw, incomingPage);
+		const ParsedPagePtr pendingPageRaw = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
+		workerResult.incomingPage() = mergeTwoPages(pendingPageRaw, workerResult.incomingPage());
 
-		const ResourceType resourceType = incomingPage->resourceType;
+		const ResourceType resourceType = workerResult.incomingPage()->resourceType;
 
 		const StorageType storage = externalOrNotHttp
 			? s_externalStorageTypes[resourceType]
 			: s_storageTypes[resourceType];
 		
-		data()->addParsedPage(incomingPage, storage);
+		data()->addParsedPage(workerResult, storage);
 	}
 
 	if (incomingPage->isThisExternalPage && !incomingPage->redirectedUrl.isValid())
@@ -674,7 +669,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		return;
 	}
 
-	for (const ResourceOnPage& resource : incomingPage->allResourcesOnPage)
+	for (const ResourceOnPage& resource : workerResult.incomingPage()->allResourcesOnPage)
 	{
 		const QString resourceDisplayUrl = resource.link.url.toDisplayString();
 		const ResourceType resourceType = incomingPage->resourceType != ResourceType::ResourceHtml
@@ -699,7 +694,7 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		temporaryResource->url = resource.link.url;
 
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url);
-		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(incomingPage->url, temporaryResource->url) || !httpResource;
+		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(workerResult.incomingPage()->url, temporaryResource->url) || !httpResource;
 
 		const StorageType storage = externalOrNotHttpResource ?
 			s_externalStorageTypes[resourceType] : 
@@ -732,10 +727,10 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 			}
 		}
 
-		incomingPage->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.urlParameter,
+		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.urlParameter,
 			resource.link.resourceSource, resource.link.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { incomingPage, incomingPage->url, resource.link.urlParameter,
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
 			resource.link.resourceSource, resource.link.altOrTitle });
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
@@ -745,7 +740,8 @@ void ModelController::processParsedPageResources(ParsedPagePtr& incomingPage)
 		// special case: parse image resource again because it can have now empty or too short/long alt text
 		if (existingImageResource)
 		{
-			processParsedPageImage(newOrExistingResource, true);
+			WorkerResult result(newOrExistingResource, workerResult.isRefreshResult());
+			processParsedPageImage(result, true);
 		}
 	}
 }
@@ -880,7 +876,7 @@ void ModelController::setPageLevel(ParsedPagePtr& page, int level) const noexcep
 	}
 }
 
-void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage)
+void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage)
 {
 	if (data()->isParsedPageExists(incomingPage, destStorage))
 	{
@@ -907,10 +903,10 @@ void ModelController::addDuplicates(const ParsedPagePtr& incomingPage, StorageTy
 
 	if (!duplicatesWithDifferentCanonical.empty())
 	{
-		const std::vector<ParsedPagePtr> allDuplicates = 
+		std::vector<ParsedPagePtr> allDuplicates = 
 			data()->allParsedPages(incomingPage, lookupStorage, alwaysTruePredicate);
 
-		for (const ParsedPagePtr& duplicate : allDuplicates)
+		for (ParsedPagePtr& duplicate : allDuplicates)
 		{
 			DEBUG_ASSERT(!duplicate->storages[static_cast<std::size_t>(destStorage)]);
 			

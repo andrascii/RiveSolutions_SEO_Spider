@@ -5,6 +5,7 @@
 #include "parsed_page_comparator.h"
 #include "storage_type.h"
 #include "sequenced_data_collection_types.h"
+#include "worker_result.h"
 
 namespace CrawlerEngine
 {
@@ -33,12 +34,14 @@ signals:
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void beginClearData();
 	void endClearData();
+	void refreshPageDone();
 
 protected:
 	virtual std::shared_ptr<ISequencedStorage> createSequencedStorage() const;
 
 protected slots:
 	void addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type);
+	void addParsedPage(WorkerResult workerResult, StorageType type);
 	void replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
 	void onDataCleared();
 

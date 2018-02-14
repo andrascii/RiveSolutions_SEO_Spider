@@ -50,6 +50,7 @@ QMenu* MenuBar::buildMenuSettings()
 	settingsMenu->addAction(actionRegistry.globalAction(s_openUserAgentSettingsAction));
 	settingsMenu->addAction(actionRegistry.globalAction(s_openCrawlerPauseTimerSettingsAction));
 	settingsMenu->addAction(actionRegistry.globalAction(s_openCompanyProfileSettingsAction));
+	settingsMenu->addAction(actionRegistry.globalAction(s_openPageVisualSettingsAction));
 
 	return settingsMenu;
 }

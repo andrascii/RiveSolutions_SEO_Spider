@@ -8,8 +8,9 @@ namespace CrawlerEngine
 
 struct DownloadRequest : public IRequest
 {
-	DownloadRequest(const CrawlerRequest& requestInfo)
+	DownloadRequest(const CrawlerRequest& requestInfo, bool isReloadAlreadyLoaded = false)
 		: requestInfo(requestInfo)
+		, isReloadAlreadyLoaded(isReloadAlreadyLoaded)
 	{
 	}
 
@@ -23,6 +24,7 @@ struct DownloadRequest : public IRequest
 	}
 
 	CrawlerRequest requestInfo;
+	bool isReloadAlreadyLoaded;
 };
 
 }

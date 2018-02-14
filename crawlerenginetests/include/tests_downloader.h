@@ -7,6 +7,7 @@ namespace CrawlerEngine
 
 struct CrawlerRequest;
 struct DownloadResponse;
+struct DownloadRequest;
 
 }
 
@@ -36,7 +37,7 @@ public:
 
 private:
 	QDir testsDataDir() const;
-	std::pair<QString, QString> mapUrlToTestDataFiles(const CrawlerEngine::CrawlerRequest& url) const;
+	std::pair<QString, QString> mapUrlToTestDataFiles(const CrawlerEngine::DownloadRequest& downloadRequest) const;
 
 private:
 	mutable QString m_testDataPath;

@@ -13,6 +13,7 @@
 #include "settings_page.h"
 #include "user_agent_settings_widget.h"
 #include "crawler_pause_settings_widget.h"
+#include "page_visual_settings_widget.h"
 #include "internet_connection_state_widget.h"
 #include "notifications_container_widget.h"
 #include "software_branding.h"
@@ -27,6 +28,7 @@
 #include "ui_user_agent_settings_widget.h"
 #include "ui_crawler_pause_settings_widget.h"
 #include "ui_company_profile_settings_widget.h"
+#include "ui_page_visual_settings_widget.h"
 
 namespace SeoSpider
 {
@@ -199,6 +201,7 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction, QIcon(QStringLiteral(":/images/user-agent.png")), tr("User Agent Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction, QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Timer Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction, QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
@@ -232,6 +235,9 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_openCompanyProfileSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CompanyProfileSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openPageVisualSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_PageVisualSettingsWidget)); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -299,6 +305,7 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(":/images/user-agent.png"), TYPE_STRING(Ui_UserAgentSettingsWidget), new UserAgentSettingsWidget());
 	SettingsPageImpl<Ui_CrawlerPauseSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-pause.png"), TYPE_STRING(Ui_CrawlerPauseSettingsWidget), new CrawlerPauseSettingsWidget());
 	SettingsPageImpl<Ui_CompanyProfileSettingsWidget>::registerSettingsPage(QIcon(":/images/company-profile.png"), TYPE_STRING(Ui_CompanyProfileSettingsWidget));
+	SettingsPageImpl<Ui_PageVisualSettingsWidget>::registerSettingsPage(QIcon(":/images/color.png"), TYPE_STRING(Ui_PageVisualSettingsWidget), new PageVisualSettingsWidget());
 }
 
 QString MainWindow::getSaveFilePath() const

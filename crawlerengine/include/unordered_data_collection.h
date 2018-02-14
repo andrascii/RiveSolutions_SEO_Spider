@@ -5,6 +5,7 @@
 #include "parsed_page_comparator.h"
 #include "storage_type.h"
 #include "sequenced_data_collection_types.h"
+#include "worker_result.h"
 
 namespace CrawlerEngine
 {
@@ -27,8 +28,10 @@ public:
 
 	void replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type);
 
-	void addParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type);
-	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePtr, int type);
+	void addParsedPage(WorkerResult& workerResult, StorageType type);
+	void addParsedPage(ParsedPagePtr& parsedPagePointer, StorageType type);
+	Q_SLOT void addParsedPage(WorkerResult workerResult, int type);
+	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePointer, int type);
 
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
@@ -58,7 +61,8 @@ public:
 	}
 
 signals:
-	void parsedPageAdded(ParsedPagePtr parsedPagePtr, StorageType type);
+	void parsedPageAdded(WorkerResult workerResult, StorageType type);
+	void parsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type);
 	void parsedPageReplaced(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void dataCleared();
@@ -70,6 +74,8 @@ protected:
 private:
 	void checkStorageType(StorageType type) const noexcept;
 	void initializeStorages();
+
+	void addParsedPageInternal(ParsedPagePtr& parsedPagePointer, StorageType type);
 
 private:
 	std::unordered_map<StorageType, UnorderedStorageType> m_unorderedStorageMap;

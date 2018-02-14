@@ -85,8 +85,6 @@ void Crawler::initialize()
 {
 	m_modelController = new ModelController;
 
-	VERIFY(connect(m_modelController, &ModelController::refreshPageDone, this, &Crawler::onRefreshPageDone));
-
 	initSequencedDataCollection();
 
 	m_downloader = createDownloader();
@@ -292,6 +290,10 @@ void Crawler::onRefreshPageDone()
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->service<INotificationService>()->info(tr("Refreshing page"), tr("Page refresh completed."));
+
+	setState(m_prevState);
+
+	emit refreshPageDone();
 }
 
 bool Crawler::isPreinitialized() const
@@ -367,7 +369,10 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 						++crawledLinksCount;
 					}
 
-					m_modelController->data()->addParsedPage(page, static_cast<StorageType>(i));
+					//
+					// This adding might be UNSAFE!
+					//
+					m_modelController->data()->addParsedPage(page, i);
 				}
 			}
 		}
@@ -506,6 +511,9 @@ void Crawler::initSequencedDataCollection()
 {
 	m_sequencedDataCollection = std::make_unique<SequencedDataCollection>(m_modelController->data());
 	m_sequencedDataCollection->initialize();
+
+	VERIFY(connect(m_sequencedDataCollection.get(), &SequencedDataCollection::refreshPageDone,
+		this, &Crawler::onRefreshPageDone));
 }
 
 IHostInfoProvider* Crawler::createHostInfoProvider() const
@@ -608,10 +616,17 @@ void Crawler::refreshPage(StorageType storageType, int index)
 {
 	INFOLOG << "Refresh page. index = " << index << "; storageType = " << static_cast<int>(storageType) << ";";
 
-	ASSERT(state() == StatePause || state() == StatePending);
+	if (!readyForRefreshPage())
+	{
+		WARNLOG << "Crawler is not ready for refresh pages";
+		return;
+	}
+
 	ASSERT(!m_workers.empty());
 
 	ParsedPage* parsedPage = m_sequencedDataCollection->storage(storageType)->get(index);
+
+	ASSERT(parsedPage->canRefresh());
 
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
@@ -629,6 +644,8 @@ void Crawler::refreshPage(StorageType storageType, int index)
 		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));
 
 	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet);
+
+	setState(StatePageRefresh);
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
@@ -636,7 +653,7 @@ const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 	return m_uniqueLinkStore;
 }
 
-bool Crawler::canRefreshPage() const noexcept
+bool Crawler::readyForRefreshPage() const noexcept
 {
 	return state() == StatePause || state() == StatePending;
 }

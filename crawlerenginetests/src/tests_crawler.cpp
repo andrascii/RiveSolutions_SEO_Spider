@@ -83,7 +83,7 @@ void TestsCrawler::waitForSerializationDone(int seconds, const char* timeoutMess
 	throw TimeOutException(timeoutMessage);
 }
 
-void TestsCrawler::waitForDeserializationDone(int seconds, const char * timeoutMessage) const
+void TestsCrawler::waitForDeserializationDone(int seconds, const char* timeoutMessage) const
 {
 	QDateTime elapsed = QDateTime::currentDateTime();
 	elapsed = elapsed.addSecs(seconds);
@@ -91,6 +91,24 @@ void TestsCrawler::waitForDeserializationDone(int seconds, const char * timeoutM
 	while (QDateTime::currentDateTime() < elapsed)
 	{
 		if (state() != StateDeserializaton)
+		{
+			return;
+		}
+
+		QApplication::instance()->processEvents();
+	}
+
+	throw TimeOutException(timeoutMessage);
+}
+
+void TestsCrawler::waitForRefreshPageDone(int seconds, const char* timeoutMessage) const
+{
+	QDateTime elapsed = QDateTime::currentDateTime();
+	elapsed = elapsed.addSecs(seconds);
+
+	while (QDateTime::currentDateTime() < elapsed)
+	{
+		if (state() != StatePageRefresh)
 		{
 			return;
 		}
@@ -190,6 +208,9 @@ void TestsCrawler::initSequencedDataCollection()
 	m_sequencedDataCollection = std::make_unique<TestSequencedDataCollection>(m_modelController->data());
 	m_sequencedDataCollection->initialize();
 	m_sequencedDataCollection->moveToThread(m_sequencedDataCollectionThread);
+
+	VERIFY(connect(m_sequencedDataCollection.get(), &SequencedDataCollection::refreshPageDone,
+		this, &TestsCrawler::onRefreshPageDone, Qt::QueuedConnection));
 }
 
 IHostInfoProvider* TestsCrawler::createHostInfoProvider() const

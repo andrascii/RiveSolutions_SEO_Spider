@@ -512,6 +512,28 @@ void Preferences::setCompanyWebSite(QString value)
 	emit companyWebSiteChanged();
 }
 
+bool Preferences::useCustomColorForNotIndexedPages() const
+{
+	return m_useCustomColorForNotIndexedPages;
+}
+
+void Preferences::setUseCustomColorForNotIndexedPages(bool value)
+{
+	m_useCustomColorForNotIndexedPages = value;
+	emit useCustomColorForNotIndexedPagesChanged();
+}
+
+QColor Preferences::notIndexedPagesColor() const
+{
+	return m_notIndexedPagesColor;
+}
+
+void Preferences::setNotIndexedPagesColor(QColor value)
+{
+	m_notIndexedPagesColor = value;
+	emit notIndexedPagesColorChanged();
+}
+
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept
 {
 	const QVariant valueFromSettings = m_settingsAccessor->loadFromSettings(key, defaultValue);

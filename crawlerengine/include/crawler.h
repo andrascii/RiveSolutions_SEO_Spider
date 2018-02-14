@@ -44,7 +44,8 @@ public:
 		StatePause,
 		StatePending,
 		StateSerializaton,
-		StateDeserializaton
+		StateDeserializaton,
+		StatePageRefresh
 	};
 
 	static Crawler& instance();
@@ -65,8 +66,7 @@ public:
 
 	const WebHostInfo* webHostInfo() const;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
-	void refreshPage(StorageType storageType, int index);
-	bool canRefreshPage() const noexcept;
+	bool readyForRefreshPage() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -77,16 +77,20 @@ signals:
 	void crawlerOptionsChanged(CrawlerOptions options);
 	void serializationProcessDone();
 	void deserializationProcessDone();
+	void refreshPageDone();
 
 public slots:
 	void startCrawling(const CrawlerOptions& options);
 	void stopCrawling();
+	void refreshPage(StorageType storageType, int index);
+
+protected slots:
+	void onRefreshPageDone();
 
 private slots:
 	void onAboutCrawlingState();
 	void waitSerializationReadyState();
 	void onCrawlingSessionInitialized();
-	void onRefreshPageDone();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;

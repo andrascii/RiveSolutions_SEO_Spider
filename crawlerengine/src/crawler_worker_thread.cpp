@@ -139,7 +139,7 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 
 	if (isUrlExtracted)
 	{
-		DownloadRequest request(crawlerRequest);
+		DownloadRequest request(crawlerRequest, m_reloadPage);
 		m_currentRequest = crawlerRequest;
 		m_downloadRequester.reset(request, this, &CrawlerWorkerThread::onLoadingDone);
 		m_downloadRequester->start();
