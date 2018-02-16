@@ -633,31 +633,31 @@ void Crawler::refreshPage(StorageType storageType, int index)
 	const auto titleDuplicatesPredicate = [parsedPage](const ParsedPage* page)
 	{
 		return parsedPage->title == page->title &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
+			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
 	};
 
 	const auto metaDescriptionDuplicatesPredicate = [parsedPage](const ParsedPage* page)
 	{
 		return parsedPage->metaDescription == page->metaDescription &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
+			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
 	};
 
 	const auto metaKeywordsDuplicatesPredicate = [parsedPage](const ParsedPage* page)
 	{
 		return parsedPage->metaKeywords == page->metaKeywords &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
+			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
 	};
 
 	const auto h1DuplicatesPredicate = [parsedPage](const ParsedPage* page)
 	{
 		return parsedPage->firstH1 == page->firstH1 &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
+			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
 	};
 
 	const auto h2DuplicatesPredicate = [parsedPage](const ParsedPage* page)
 	{
 		return parsedPage->firstH2 == page->firstH2 &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
+			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
 	};
 
 	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
