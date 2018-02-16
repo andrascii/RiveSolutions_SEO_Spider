@@ -28,6 +28,7 @@ static const QByteArray s_openProxySettingsAction = "openProxySettingsAction";
 static const QByteArray s_openUserAgentSettingsAction = "openUserAgentSettingsAction";
 static const QByteArray s_openCrawlerPauseTimerSettingsAction = "openCrawlerPauseTimerSettingsAction";
 static const QByteArray s_openCompanyProfileSettingsAction = "openCompanyProfileSettingsAction";
+static const QByteArray s_openPageVisualSettingsAction = "openPageVisualSettingsAction";
 
 // crawler actions
 static const QByteArray s_startCrawlerAction = "startCrawlerAction";

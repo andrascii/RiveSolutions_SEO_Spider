@@ -21,6 +21,14 @@ bool UnorderedDataCollection::isParsedPageExists(const ParsedPagePtr& parsedPage
 	return unorderedStorage.find(parsedPagePtr) != unorderedStorage.end();
 }
 
+size_t UnorderedDataCollection::size(StorageType type) const noexcept
+{
+	checkStorageType(type);
+
+	const UnorderedStorageType& unorderedStorage = storage(type);
+	return unorderedStorage.size();
+}
+
 void UnorderedDataCollection::replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type)
 {
 	checkStorageType(type);

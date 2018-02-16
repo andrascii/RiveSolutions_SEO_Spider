@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
-    <height>362</height>
+    <width>769</width>
+    <height>503</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -95,9 +95,6 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
-      <property name="spacing">
-       <number>0</number>
-      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -112,32 +109,41 @@
       </property>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="horizontalSpacing">
+         <number>0</number>
+        </property>
         <property name="verticalSpacing">
          <number>9</number>
         </property>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Use Custom Background for Not Indexed Pages</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="UseCustomBackgroundForNotIndexPagesCheckBox">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">useCustomColorForNotIndexedPages</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
-         <widget class="QPushButton" name="SelectColorPushButton">
-          <property name="text">
-           <string>Select color</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Not indexed pages color:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="SeoSpider::ColorSelector" name="colorSelector" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">notIndexedPagesColor</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item row="0" column="2">
          <spacer name="horizontalSpacer">
@@ -152,6 +158,13 @@
           </property>
          </spacer>
         </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Use Custom Background for Not Indexed Pages</string>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="1">
          <spacer name="verticalSpacer">
           <property name="orientation">
@@ -165,6 +178,16 @@
           </property>
          </spacer>
         </item>
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="useCustomBackgroundForNotIndexPagesCheckBox">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">useCustomColorForNotIndexedPages</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -172,12 +195,20 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeoSpider::ColorSelector</class>
+   <extends>QWidget</extends>
+   <header>color_selector.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>UseCustomBackgroundForNotIndexPagesCheckBox</sender>
+   <sender>useCustomBackgroundForNotIndexPagesCheckBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>SelectColorPushButton</receiver>
+   <receiver>colorSelector</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -185,8 +216,8 @@
      <y>47</y>
     </hint>
     <hint type="destinationlabel">
-     <x>134</x>
-     <y>78</y>
+     <x>221</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>

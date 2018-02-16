@@ -13,8 +13,8 @@ class PageVisualSettingsWidget : public SettingsPage
 public:
 	PageVisualSettingsWidget(QWidget* parent = nullptr);
 
-private slots:
-	void selectColorButtonClicked();
+protected:
+	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private:
 	virtual void init() override;
@@ -22,8 +22,6 @@ private:
 private:
 	Ui::PageVisualSettingsWidget m_ui;
 	QColor m_notIndexedPagesColor;
-	ColorSelector m_colorSelector;
-
 };
 
 }
