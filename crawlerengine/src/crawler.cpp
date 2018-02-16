@@ -135,7 +135,7 @@ void Crawler::setState(State state)
 	emit stateChanged(state);
 }
 
-bool Crawler::isNoData() const noexcept
+bool Crawler::hasNoData() const noexcept
 {
 	return m_sequencedDataCollection->empty();
 }
