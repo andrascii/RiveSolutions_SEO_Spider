@@ -57,10 +57,7 @@ std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const 
 
 		GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
 		collectParsedPageData(gumboOutput.output(), hop.responseHeaders(), page);
-		m_outlinks = GumboParsingHelpers::parsePageUrlList(gumboOutput.output()->root, true);
 	};
-
-	m_outlinks.clear();
 
 	for (std::size_t i = 0; i < pages.size(); ++i)
 	{
@@ -68,11 +65,6 @@ std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const 
 	}
 
 	return pages;
-}
-
-const std::vector<LinkInfo>& PageDataCollector::outlinks() const noexcept
-{
-	return m_outlinks;
 }
 
 void PageDataCollector::applyOptions()

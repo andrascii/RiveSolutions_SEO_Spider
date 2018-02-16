@@ -46,11 +46,14 @@ TEST(RefreshTests, DuplicatesMustBeRemovedAfterRefresh)
 
 		const auto onPageRefreshed = [&]
 		{
-			EXPECT_EQ(2, titleDuplicates.size());
-			EXPECT_EQ(2, metaDescriptionDuplicates.size());
+			const auto titleDuplicatesAfterRefresh = cl->storageItems(StorageType::DuplicatedTitleUrlStorageType);
+			const auto metaDescriptionDuplicatesAfterRefresh = cl->storageItems(StorageType::DuplicatedMetaDescriptionUrlStorageType);
 
-			EXPECT_EQ(true, std::all_of(titleDuplicates.begin(), titleDuplicates.end(), secondTimeDuplicateTitle));
-			EXPECT_EQ(true, std::all_of(metaDescriptionDuplicates.begin(), metaDescriptionDuplicates.end(), secondTimeDuplicateMetaDescription));
+			EXPECT_EQ(2, titleDuplicatesAfterRefresh.size());
+			EXPECT_EQ(2, metaDescriptionDuplicatesAfterRefresh.size());
+
+			EXPECT_EQ(true, std::all_of(titleDuplicatesAfterRefresh.begin(), titleDuplicatesAfterRefresh.end(), secondTimeDuplicateTitle));
+			EXPECT_EQ(true, std::all_of(metaDescriptionDuplicatesAfterRefresh.begin(), metaDescriptionDuplicatesAfterRefresh.end(), secondTimeDuplicateMetaDescription));
 		};
 
 		const Url refreshUrl("http://refresh.com/refresh_page.html");
@@ -65,6 +68,12 @@ TEST(RefreshTests, DuplicatesMustBeRemovedAfterRefresh)
 		cl->refreshPage(StorageType::CrawledUrlStorageType, refreshPageIndex);
 
 		cl->waitForRefreshPageDone(10);
+
+		//
+		// This delay is not reliable solution for waiting 
+		// until results is not received by sequenced data collection
+		//
+		std::this_thread::sleep_for(std::chrono::seconds(3));
 
 		onPageRefreshed();
 	};

@@ -38,7 +38,8 @@ enum class ResourceSource
 	SourceTagLinkRelPrev,
 	SourceTagScript,
 	SourceTagMetaRefresh,
-	SourceCSS
+	SourceCSS,
+	SourceRedirectUrl
 };
 
 enum MetaRobotsItem

@@ -18,12 +18,37 @@ class SequencedDataCollection : public QObject
 	Q_OBJECT
 
 public:
+	friend class UnorderedDataCollection;
+
 	SequencedDataCollection(const UnorderedDataCollection* collection);
 
 	bool empty() const noexcept;
+	
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 	ISequencedStorage* storage(StorageType type) noexcept;
-	void removePage(ParsedPage* parsedPage, StorageType type);
+
+	bool removePage(ParsedPage* parsedPage, StorageType type);
+
+	template <typename F>
+	void removePageIf(StorageType type, F predicate)
+	{
+		ISequencedStorage* sequencedStorage = storage(type);
+
+		for (int i = 0; i < sequencedStorage->size();)
+		{
+			if (!predicate(sequencedStorage->get(i)))
+			{
+				++i;
+				continue;
+			}
+
+			if (!removePage(sequencedStorage->get(i), type))
+			{
+				++i;
+			}
+		}
+	}
+
 	void initialize();
 
 signals:
@@ -47,8 +72,6 @@ protected slots:
 
 private:
 	std::unordered_map<StorageType, std::shared_ptr<ISequencedStorage>> m_sequencedStorageMap;
-
-	friend class UnorderedDataCollection;
 };
 
 }

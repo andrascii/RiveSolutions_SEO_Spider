@@ -158,19 +158,40 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 {
 	if (parsedPage->isThisExternalPage)
 	{
+		if (parsedPage->redirectedUrl.isValid())
+		{
+			const LinkInfo redirectLinkInfo{ parsedPage->redirectedUrl, LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceRedirectUrl };
+			const ResourceOnPage redirectedResource(parsedPage->resourceType, redirectLinkInfo, true);
+			parsedPage->allResourcesOnPage.clear();
+			parsedPage->allResourcesOnPage.insert(redirectedResource);
+		}
+
 		return;
 	}
 
-	std::vector<LinkInfo> outlinks = m_pageDataCollector->outlinks();
+	std::vector<LinkInfo> outlinks;
+	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
+	{
+		if (resource.resourceType == ResourceType::ResourceHtml)
+		{
+			outlinks.push_back(resource.link);
+		}
+	}
+
 	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
 
 	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
 
 	m_uniqueLinkStore->addLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
 
-	if (!parsedPage->redirectedUrl.isEmpty())
+	if (parsedPage->redirectedUrl.isValid())
 	{
-		m_uniqueLinkStore->addUrlList(std::vector<Url>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
+		// m_uniqueLinkStore->addUrlList(std::vector<Url>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
+
+		const LinkInfo redirectLinkInfo{ parsedPage->redirectedUrl, LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceRedirectUrl };
+		const ResourceOnPage redirectedResource(parsedPage->resourceType, redirectLinkInfo, true);
+		parsedPage->allResourcesOnPage.erase(redirectedResource);
+		parsedPage->allResourcesOnPage.insert(redirectedResource);
 	}
 
 	std::vector<Url> resourcesHeadUrlList;
@@ -268,7 +289,7 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
 			page->resourceType = ResourceType::ResourceHtml;
 
-			onPageParsed(WorkerResult{ page, false });
+			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead });
 		}
 	};
 
@@ -305,7 +326,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 		if (urlAdded)
 		{
-			onPageParsed(WorkerResult{ page, m_reloadPage });
+			onPageParsed(WorkerResult{ page, m_reloadPage, requestType });
 		}
 
 		checkUrl = true;
@@ -341,7 +362,7 @@ void CrawlerWorkerThread::onStart()
 	{
 		for (const PagesAcceptedAfterStop::PageRequestPair& pair : m_pagesAcceptedAfterStop.pages)
 		{
-			onPageParsed(WorkerResult{ pair.second, false });
+			onPageParsed(WorkerResult{ pair.second, false, pair.first });
 		}
 	}
 
@@ -352,6 +373,12 @@ void CrawlerWorkerThread::onStart()
 
 void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcept
 {
+	if (result.incomingPageConstRef()->redirectedUrl.isValid())
+	{
+		DEBUG_ASSERT(result.incomingPageConstRef()->allResourcesOnPage.size() == 1 &&
+			result.incomingPageConstRef()->allResourcesOnPage.begin()->loadAvailability);
+	}
+
 	emit workerResult(result);
 
 	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
