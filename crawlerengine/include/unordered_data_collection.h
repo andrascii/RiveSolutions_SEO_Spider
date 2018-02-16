@@ -32,6 +32,54 @@ public:
 	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePointer, int type);
 
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
+
+	template <typename F>
+	ParsedPagePtr removeParsedPageFromRangeIf(const ParsedPagePtr& parsedPagePtr, StorageType type, F predicate) noexcept
+	{
+		checkStorageType(type);
+
+		UnorderedStorageType& unorderedStorage = storage(type);
+
+		auto rangeIterators = unorderedStorage.equal_range(parsedPagePtr);
+
+		ParsedPagePtr result;
+
+		for (auto it = rangeIterators.first; it != rangeIterators.second; ++it)
+		{
+			if (!predicate(*it))
+			{
+				continue;
+			}
+
+			result = std::move(*it);
+
+			unorderedStorage.erase(it);
+
+			return result;
+		}
+
+		return ParsedPagePtr();
+	}
+
+	template <typename F>
+	void removeParsedPageIf(StorageType type, F predicate) noexcept
+	{
+		checkStorageType(type);
+
+		UnorderedStorageType& unorderedStorage = storage(type);
+
+		for (auto start = unorderedStorage.begin(); start != unorderedStorage.end();)
+		{
+			if (!predicate(*start))
+			{
+				++start;
+				continue;
+			}
+
+			start = removeParsedPageInternal(*start, type).second;
+		}
+	}
+
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 
 	void clearData();
@@ -72,8 +120,8 @@ protected:
 private:
 	void checkStorageType(StorageType type) const noexcept;
 	void initializeStorages();
-
 	void addParsedPageInternal(ParsedPagePtr& parsedPagePointer, StorageType type);
+	std::pair<ParsedPagePtr, UnorderedStorageType::iterator> removeParsedPageInternal(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
 
 private:
 	std::unordered_map<StorageType, UnorderedStorageType> m_unorderedStorageMap;

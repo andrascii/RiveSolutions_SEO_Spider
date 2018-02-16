@@ -45,7 +45,7 @@ const ISequencedStorage* SequencedDataCollection::storage(StorageType type) cons
 	return iter != m_sequencedStorageMap.end() ? iter->second.get() : nullptr;
 }
 
-void SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType type)
+bool SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType type)
 {
 	const auto fakeDeleter = [](ParsedPage*) noexcept {};
 
@@ -61,8 +61,14 @@ void SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType typ
 		{
 			emit parsedPageRemoved(removeEffects.removedIndex, type);
 			emit indicesRangeInvalidated(removeEffects.invalidatedIndicesRange, type);
+
+			return true;
 		}
+		
+		return false;
 	}
+
+	return false;
 }
 
 std::shared_ptr<ISequencedStorage> SequencedDataCollection::createSequencedStorage() const
