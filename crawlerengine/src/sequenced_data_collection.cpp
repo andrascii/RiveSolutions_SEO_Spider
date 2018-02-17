@@ -331,7 +331,12 @@ void SequencedDataCollection::prepareCollectionForRefreshPage(ParsedPage* pageFo
 
 			std::shared_ptr<IRemovePredicate> predicate = std::make_shared<RemovePredicate>(&duplicates);
 
-			storage->removeIf(predicate);
+			const int removedPagesCount = storage->removeIf(std::move(predicate));
+
+			if (removedPagesCount)
+			{
+				emit parsedPagesRemoved(removedPagesCount, type);
+			}
 		}
 	}
 }

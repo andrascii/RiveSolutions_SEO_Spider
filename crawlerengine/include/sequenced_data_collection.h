@@ -18,8 +18,6 @@ class SequencedDataCollection : public QObject
 	Q_OBJECT
 
 public:
-	friend class UnorderedDataCollection;
-
 	SequencedDataCollection(const UnorderedDataCollection* collection);
 
 	void initialize();
@@ -34,6 +32,7 @@ signals:
 	void parsedPageAdded(int row, StorageType type);
 	void parsedPageReplaced(int row, StorageType type);
 	void parsedPageRemoved(int row, StorageType type);
+	void parsedPagesRemoved(int count, StorageType type);
 	void indicesRangeInvalidated(std::pair<int, int> indicesRange, StorageType type);
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void beginClearData();
