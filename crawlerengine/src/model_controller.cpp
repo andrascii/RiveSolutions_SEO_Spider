@@ -82,90 +82,10 @@ void ModelController::clearData()
 
 void ModelController::preparePageForRefresh(ParsedPage* parsedPage)
 {
-	const auto titleDuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->title == page->title &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
+	const auto fakeDeleter = [](ParsedPage*) noexcept {};
+	ParsedPagePtr pointer(parsedPage, fakeDeleter);
 
-	const auto metaDescriptionDuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->metaDescription == page->metaDescription &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
-
-	const auto metaKeywordsDuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->metaKeywords == page->metaKeywords &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
-
-	const auto h1DuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->firstH1 == page->firstH1 &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
-
-	const auto h2DuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->firstH2 == page->firstH2 &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
-
-	const auto fromRangeRemovingPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return page.get() == parsedPage;
-	};
-
-	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
-	{
-		if (type == StorageType::CrawledUrlStorageType ||
-			type == StorageType::PendingResourcesStorageType)
-		{
-			continue;
-		}
-
-		const auto fakeDeleter = [](ParsedPage*) noexcept {};
-		ParsedPagePtr pointer(parsedPage, fakeDeleter);
-
-		if (type == StorageType::DuplicatedTitleUrlStorageType)
-		{
-			data()->removeParsedPageIf(type, titleDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedMetaDescriptionUrlStorageType)
-		{
-			data()->removeParsedPageIf(type, metaDescriptionDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedMetaKeywordsUrlStorageType)
-		{
-			data()->removeParsedPageIf(type, metaKeywordsDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedH1UrlStorageType)
-		{
-			data()->removeParsedPageIf(type, h1DuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedH2UrlStorageType)
-		{
-			data()->removeParsedPageIf(type, h2DuplicatesPredicate);
-		}
-
-		if (type == StorageType::AllTitlesUrlStorageType ||
-			type == StorageType::AllMetaDescriptionsUrlStorageType ||
-			type == StorageType::AllMetaKeywordsUrlStorageType ||
-			type == StorageType::AllH1UrlStorageType ||
-			type == StorageType::AllH2UrlStorageType)
-		{
-			data()->removeParsedPageFromRangeIf(pointer, type, fromRangeRemovingPredicate);
-		}
-		else
-		{
-			data()->removeParsedPage(pointer, type);
-		}
-	}
+	data()->prepareCollectionForRefreshPage(pointer);
 }
 
 void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept

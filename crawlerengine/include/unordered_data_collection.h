@@ -30,58 +30,11 @@ public:
 
 	void addParsedPage(WorkerResult& workerResult, StorageType type);
 	void addParsedPage(ParsedPagePtr& parsedPagePointer, StorageType type);
+
 	Q_SLOT void addParsedPage(WorkerResult workerResult, int type);
 	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePointer, int type);
 
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
-
-	template <typename F>
-	ParsedPagePtr removeParsedPageFromRangeIf(const ParsedPagePtr& parsedPagePtr, StorageType type, F predicate) noexcept
-	{
-		checkStorageType(type);
-
-		UnorderedStorageType& unorderedStorage = storage(type);
-
-		auto rangeIterators = unorderedStorage.equal_range(parsedPagePtr);
-
-		ParsedPagePtr result;
-
-		for (auto it = rangeIterators.first; it != rangeIterators.second; ++it)
-		{
-			if (!predicate(*it))
-			{
-				continue;
-			}
-
-			result = std::move(*it);
-
-			unorderedStorage.erase(it);
-
-			return result;
-		}
-
-		return ParsedPagePtr();
-	}
-
-	template <typename F>
-	void removeParsedPageIf(StorageType type, F predicate) noexcept
-	{
-		checkStorageType(type);
-
-		UnorderedStorageType& unorderedStorage = storage(type);
-
-		for (auto start = unorderedStorage.begin(); start != unorderedStorage.end();)
-		{
-			if (!predicate(*start))
-			{
-				++start;
-				continue;
-			}
-
-			start = removeParsedPageInternal(*start, type).second;
-		}
-	}
-
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 
 	void clearData();
@@ -107,6 +60,8 @@ public:
 
 		return result;
 	}
+
+	void prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh);
 
 signals:
 	void parsedPageAdded(WorkerResult workerResult, StorageType type);

@@ -85,6 +85,79 @@ std::vector<ParsedPagePtr> UnorderedDataCollection::allParsedPages(StorageType t
 	return result;
 }
 
+void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh)
+{
+	using ItemIterator = UnorderedStorageType::iterator;
+
+	const auto binaryRemove = [&](UnorderedStorageType& storage, const std::pair<ItemIterator, ItemIterator>& range)
+	{
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (pageForRefresh != *it)
+			{
+				continue;
+			}
+
+			storage.erase(it);
+			break;
+		}
+	};
+
+	const auto removeItemsIfAll = [](UnorderedStorageType& storage, const std::pair<ItemIterator, ItemIterator>& range, auto&& predicate)
+	{
+		if (!std::distance(range.first, range.second))
+		{
+			return;
+		}
+
+		bool needToRemove = true;
+
+		auto last = range.first;
+		++last;
+
+		for (auto first = range.first; last != range.second; ++first, ++last)
+		{
+			if (!predicate(*first, *last))
+			{
+				needToRemove = false;
+				break;
+			}
+		}
+
+		if (needToRemove)
+		{
+			storage.erase(range.first, range.second);
+		}
+	};
+
+	for (auto&[type, storage] : m_unorderedStorageMap)
+	{
+		if (type == StorageType::CrawledUrlStorageType ||
+			type == StorageType::PendingResourcesStorageType)
+		{
+			continue;
+		}
+
+		const std::pair<ItemIterator, ItemIterator> range = storage.equal_range(pageForRefresh);
+
+		binaryRemove(storage, range);
+
+		if (type == StorageType::DuplicatedTitleUrlStorageType ||
+			type == StorageType::DuplicatedMetaDescriptionUrlStorageType ||
+			type == StorageType::DuplicatedMetaKeywordsUrlStorageType ||
+			type == StorageType::DuplicatedH1UrlStorageType ||
+			type == StorageType::DuplicatedH2UrlStorageType)
+		{
+			const auto canonicalUrlComparator = [](const ParsedPagePtr& first, const ParsedPagePtr& second)
+			{
+				return first->canonicalUrl.canonizedUrlStr() == second->canonicalUrl.canonizedUrlStr();
+			};
+
+			removeItemsIfAll(storage, range, canonicalUrlComparator);
+		}
+	}
+}
+
 void UnorderedDataCollection::addParsedPage(WorkerResult& workerResult, StorageType type)
 {
 	addParsedPageInternal(workerResult.incomingPage(), type);

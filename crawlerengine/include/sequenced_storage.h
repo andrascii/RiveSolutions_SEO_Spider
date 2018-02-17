@@ -127,6 +127,21 @@ protected:
 		return removeEffects;
 	}
 
+	virtual int removeIf(std::shared_ptr<IRemovePredicate> predicate) override
+	{
+		const auto predicateWrapper = [&predicate](const ParsedPagePtr& page)
+		{
+			return predicate->call(page);
+		};
+
+		const auto newEndIterator = std::remove_if(m_pages.begin(), m_pages.end(), predicateWrapper);
+		const int removedCount = std::distance(newEndIterator, m_pages.end());
+
+		m_pages.erase(newEndIterator, m_pages.end());
+
+		return removedCount;
+	}
+
 	virtual int replace(ParsedPagePtr&& oldPage, ParsedPagePtr&& newPage) override
 	{
 		const auto pageIterator = std::find(m_pages.begin(), m_pages.end(), oldPage);
