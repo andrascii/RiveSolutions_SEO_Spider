@@ -20,16 +20,19 @@ class SequencedDataCollection : public QObject
 public:
 	SequencedDataCollection(const UnorderedDataCollection* collection);
 
+	void initialize();
 	bool empty() const noexcept;
+	
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 	ISequencedStorage* storage(StorageType type) noexcept;
-	void removePage(ParsedPage* parsedPage, StorageType type);
-	void initialize();
+	bool removePage(ParsedPage* parsedPage, StorageType type);
+	void prepareCollectionForRefreshPage(ParsedPage* pageForRefresh);
 
 signals:
 	void parsedPageAdded(int row, StorageType type);
 	void parsedPageReplaced(int row, StorageType type);
 	void parsedPageRemoved(int row, StorageType type);
+	void parsedPagesRemoved(int count, StorageType type);
 	void indicesRangeInvalidated(std::pair<int, int> indicesRange, StorageType type);
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void beginClearData();
@@ -47,8 +50,6 @@ protected slots:
 
 private:
 	std::unordered_map<StorageType, std::shared_ptr<ISequencedStorage>> m_sequencedStorageMap;
-
-	friend class UnorderedDataCollection;
 };
 
 }

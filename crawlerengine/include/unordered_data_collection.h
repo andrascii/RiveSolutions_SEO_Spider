@@ -30,6 +30,7 @@ public:
 
 	void addParsedPage(WorkerResult& workerResult, StorageType type);
 	void addParsedPage(ParsedPagePtr& parsedPagePointer, StorageType type);
+
 	Q_SLOT void addParsedPage(WorkerResult workerResult, int type);
 	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePointer, int type);
 
@@ -60,6 +61,8 @@ public:
 		return result;
 	}
 
+	void prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh);
+
 signals:
 	void parsedPageAdded(WorkerResult workerResult, StorageType type);
 	void parsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type);
@@ -75,8 +78,8 @@ protected:
 private:
 	void checkStorageType(StorageType type) const noexcept;
 	void initializeStorages();
-
 	void addParsedPageInternal(ParsedPagePtr& parsedPagePointer, StorageType type);
+	std::pair<ParsedPagePtr, UnorderedStorageType::iterator> removeParsedPageInternal(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
 
 private:
 	std::unordered_map<StorageType, UnorderedStorageType> m_unorderedStorageMap;

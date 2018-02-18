@@ -85,6 +85,79 @@ std::vector<ParsedPagePtr> UnorderedDataCollection::allParsedPages(StorageType t
 	return result;
 }
 
+void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh)
+{
+	using ItemIterator = UnorderedStorageType::iterator;
+
+	const auto binaryRemove = [&](UnorderedStorageType& storage, const std::pair<ItemIterator, ItemIterator>& range)
+	{
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			if (pageForRefresh != *it)
+			{
+				continue;
+			}
+
+			storage.erase(it);
+			break;
+		}
+	};
+
+	const auto removeItemsIfAll = [](UnorderedStorageType& storage, const std::pair<ItemIterator, ItemIterator>& range, auto&& predicate)
+	{
+		if (!std::distance(range.first, range.second))
+		{
+			return;
+		}
+
+		bool needToRemove = true;
+
+		auto last = range.first;
+		++last;
+
+		for (auto first = range.first; last != range.second; ++first, ++last)
+		{
+			if (!predicate(*first, *last))
+			{
+				needToRemove = false;
+				break;
+			}
+		}
+
+		if (needToRemove)
+		{
+			storage.erase(range.first, range.second);
+		}
+	};
+
+	for (auto&[type, storage] : m_unorderedStorageMap)
+	{
+		if (type == StorageType::CrawledUrlStorageType ||
+			type == StorageType::PendingResourcesStorageType)
+		{
+			continue;
+		}
+
+		const std::pair<ItemIterator, ItemIterator> range = storage.equal_range(pageForRefresh);
+
+		binaryRemove(storage, range);
+
+		if (type == StorageType::DuplicatedTitleUrlStorageType ||
+			type == StorageType::DuplicatedMetaDescriptionUrlStorageType ||
+			type == StorageType::DuplicatedMetaKeywordsUrlStorageType ||
+			type == StorageType::DuplicatedH1UrlStorageType ||
+			type == StorageType::DuplicatedH2UrlStorageType)
+		{
+			const auto canonicalUrlComparator = [](const ParsedPagePtr& first, const ParsedPagePtr& second)
+			{
+				return first->canonicalUrl.canonizedUrlStr() == second->canonicalUrl.canonizedUrlStr();
+			};
+
+			removeItemsIfAll(storage, range, canonicalUrlComparator);
+		}
+	}
+}
+
 void UnorderedDataCollection::addParsedPage(WorkerResult& workerResult, StorageType type)
 {
 	addParsedPageInternal(workerResult.incomingPage(), type);
@@ -113,25 +186,7 @@ void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePointer, int
 
 ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
 {
-	checkStorageType(type);
-
-	UnorderedStorageType& unorderedStorage = storage(type);
-
-	auto iter = unorderedStorage.find(parsedPagePtr);
-
-	if (iter != unorderedStorage.end())
-	{
-		ParsedPagePtr result = std::move(*iter);
-		result->storages[static_cast<size_t>(type)] = false;
-
-		unorderedStorage.erase(iter);
-
-		emit parsedPageRemoved(result, type);
-
-		return result;
-	}
-
-	return ParsedPagePtr();
+	return removeParsedPageInternal(parsedPagePtr, type).first;
 }
 
 UnorderedDataCollection::UnorderedStorageType& UnorderedDataCollection::storage(StorageType type) noexcept
@@ -439,6 +494,29 @@ void UnorderedDataCollection::addParsedPageInternal(ParsedPagePtr& parsedPagePoi
 	storage(type).insert(parsedPagePointer);
 
 	DEBUG_ASSERT(isParsedPageExists(parsedPagePointer, type));
+}
+
+
+std::pair<ParsedPagePtr, UnorderedDataCollection::UnorderedStorageType::iterator> 
+UnorderedDataCollection::removeParsedPageInternal(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
+{
+	checkStorageType(type);
+
+	UnorderedStorageType& unorderedStorage = storage(type);
+
+	auto iter = unorderedStorage.find(parsedPagePtr);
+
+	if (iter != unorderedStorage.end())
+	{
+		ParsedPagePtr result = std::move(*iter);
+		result->storages[static_cast<size_t>(type)] = false;
+
+		const auto nextItem = unorderedStorage.erase(iter);
+
+		return std::make_pair(result, nextItem);
+	}
+
+	return std::make_pair(ParsedPagePtr(), unorderedStorage.end());
 }
 
 }

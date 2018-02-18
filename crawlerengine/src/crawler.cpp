@@ -135,7 +135,7 @@ void Crawler::setState(State state)
 	emit stateChanged(state);
 }
 
-bool Crawler::isNoData() const noexcept
+bool Crawler::hasNoData() const noexcept
 {
 	return m_sequencedDataCollection->empty();
 }
@@ -630,15 +630,7 @@ void Crawler::refreshPage(StorageType storageType, int index)
 
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
-	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
-	{
-		if (type == StorageType::CrawledUrlStorageType)
-		{
-			continue;
-		}
-
-		m_sequencedDataCollection->removePage(parsedPage, type);
-	}
+	m_sequencedDataCollection->prepareCollectionForRefreshPage(parsedPage);
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh", 
 		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));

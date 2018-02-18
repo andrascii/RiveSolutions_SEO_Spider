@@ -25,6 +25,8 @@ public:
 
 private slots:
 	void onParsedPageAdded(int row, StorageType type);
+	void onParsedPageRemoved(int row, StorageType type);
+	void onParsedPagesRemoved(int count, StorageType type);
 	void onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void onCrawlingProgress(CrawlingProgress state);
 	void onAboutClearData();
@@ -37,13 +39,18 @@ private:
 
 private:
 	QThread * m_receiverThread;
+
 	std::map<StorageType, std::vector<const ParsedPage*>> m_parsedPages;
 	std::map<StorageType, std::pair<int, std::promise<std::vector<const ParsedPage*>>>> m_waitConditions;
+
 	std::map<const ParsedPage*, std::vector<LinksToThisResourceChanges>> m_linksToThisResourceChanges;
 	std::map<const ParsedPage*, std::pair<int, std::promise<std::vector<LinksToThisResourceChanges>>>> m_linksToThisResourceConditions;
+
 	const SequencedDataCollection* m_sequencedDataCollection;
+
 	std::promise<std::vector<const ParsedPage*>> m_allPagesReceivedPromise;
 	std::atomic_bool m_allPagesReceived;
+
 	std::map<StorageType, std::vector<const ParsedPage*>> m_unorderedDataCollectionPages;
 };
 

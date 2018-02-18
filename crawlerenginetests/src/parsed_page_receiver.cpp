@@ -16,6 +16,12 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageAdded,
 		this, &ParsedPageReceiver::onParsedPageAdded, Qt::QueuedConnection));
 
+	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageRemoved,
+		this, &ParsedPageReceiver::onParsedPageRemoved, Qt::QueuedConnection));
+
+	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPagesRemoved,
+		this, &ParsedPageReceiver::onParsedPagesRemoved, Qt::QueuedConnection));
+
 	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageLinksToThisResourceChanged,
 		this, &ParsedPageReceiver::onParsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
 
@@ -50,6 +56,30 @@ void ParsedPageReceiver::onParsedPageAdded(int row, StorageType type)
 	m_parsedPages[type].push_back(storage[row]);
 
 	checkWaitCondition(type);
+}
+
+void ParsedPageReceiver::onParsedPageRemoved(int row, StorageType type)
+{
+	std::vector<const ParsedPage*>& destinationStorage = m_parsedPages[type];
+	const auto removingItemIterator = destinationStorage.begin() + row;
+	destinationStorage.erase(removingItemIterator);
+
+	checkWaitCondition(type);
+}
+
+void ParsedPageReceiver::onParsedPagesRemoved(int count, StorageType type)
+{
+	Q_UNUSED(count);
+
+	const ISequencedStorage& storage = *m_sequencedDataCollection->storage(type);
+	std::vector<const ParsedPage*>& data = m_parsedPages[type];
+
+	data.clear();
+	
+	for (int i = 0; i < storage.size(); ++i)
+	{
+		data.push_back(storage[i]);
+	}
 }
 
 void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes)

@@ -82,19 +82,10 @@ void ModelController::clearData()
 
 void ModelController::preparePageForRefresh(ParsedPage* parsedPage)
 {
-	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
-	{
-		if (type == StorageType::CrawledUrlStorageType ||
-			type == StorageType::PendingResourcesStorageType)
-		{
-			continue;
-		}
+	const auto fakeDeleter = [](ParsedPage*) noexcept {};
+	ParsedPagePtr pointer(parsedPage, fakeDeleter);
 
-		const auto fakeDeleter = [](ParsedPage*) noexcept {};
-		ParsedPagePtr pointer(parsedPage, fakeDeleter);
-
-		data()->removeParsedPage(pointer, type);
-	}
+	data()->prepareCollectionForRefreshPage(pointer);
 }
 
 void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
@@ -843,7 +834,9 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 
 
 	const bool updateChildren = incomingPage->pageLevel > level;
-	//ASSERT(level != invalidPageLevel);
+
+	ASSERT(level != invalidPageLevel);
+
 	incomingPage->pageLevel = level;
 
 	if (!updateChildren)
