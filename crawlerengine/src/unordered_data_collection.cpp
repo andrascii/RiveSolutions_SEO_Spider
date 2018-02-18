@@ -513,6 +513,8 @@ UnorderedDataCollection::removeParsedPageInternal(const ParsedPagePtr& parsedPag
 
 		const auto nextItem = unorderedStorage.erase(iter);
 
+		emit parsedPageRemoved(result, type);
+
 		return std::make_pair(result, nextItem);
 	}
 
