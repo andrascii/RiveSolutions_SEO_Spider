@@ -77,6 +77,18 @@ enum class UserAgentType
 	AnyBot // used for all robots
 };
 
+enum class Permission
+{
+	PermissionAllowed,
+	PermissionExternalLinksNotAllowed,
+	PermissionNofollowNotAllowed,
+	PermissionBlockedByRobotsTxtRules,
+	PermissionBlockedByMetaRobotsRules,
+	PermissionSubdomainNotAllowed,
+	PermissionBlockedByFolder,
+	PermissionNotHttpLinkNotAllowed
+};
+
 using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
 
 struct LinkInfo
@@ -99,23 +111,25 @@ struct ResourceLink
 
 struct ResourceOnPage
 {
-	ResourceOnPage(ResourceType resourceType, const LinkInfo& linkInfo, bool loadAvailability = true)
+	ResourceOnPage(ResourceType resourceType, const LinkInfo& linkInfo, 
+		Permission permission = Permission::PermissionAllowed)
 		: resourceType(resourceType)
 		, link(linkInfo)
-		, loadAvailability(loadAvailability)
+		, permission(permission)
 	{
 	}
 
-	ResourceOnPage(ResourceType resourceType, LinkInfo&& linkInfo, bool loadAvailability = true)
+	ResourceOnPage(ResourceType resourceType, LinkInfo&& linkInfo, 
+		Permission permission = Permission::PermissionAllowed)
 		: resourceType(resourceType)
 		, link(std::move(linkInfo))
-		, loadAvailability(loadAvailability)
+		, permission(permission)
 	{
 	}
 
 	ResourceType resourceType;
 	LinkInfo link;
-	bool loadAvailability;
+	Permission permission;
 };
 
 struct ResourcesOnPageListItemHasher

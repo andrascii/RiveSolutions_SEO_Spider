@@ -157,12 +157,15 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		m_linksToPageChanges.changes.clear();
 	}
 
-	DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
-		data()->size(StorageType::CrawledUrlStorageType) == 1);
+	if (!workerResult.isRefreshResult())
+	{
+		DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
+			data()->size(StorageType::CrawledUrlStorageType) == 1);
 
-	DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
-		workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
-		!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
+		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
+			workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
+			!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
+	}
 }
 
 void ModelController::processParsedPageUrl(WorkerResult& workerResult)
@@ -612,7 +615,9 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult)
 			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
-			if (!resource.loadAvailability)
+			if (resource.permission != Permission::PermissionAllowed &&
+				resource.permission != Permission::PermissionBlockedByRobotsTxtRules &&
+				resource.permission != Permission::PermissionNotHttpLinkNotAllowed)
 			{
 				// what if this resource is unavailable not from all pages?
 				continue;
@@ -716,7 +721,9 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult)
 		{
 			newOrExistingResource = temporaryResource;
 
-			if (resource.loadAvailability)
+			if (httpResource &&
+				(resource.permission == Permission::PermissionAllowed ||
+				resource.permission == Permission::PermissionBlockedByRobotsTxtRules))
 			{
 				// what if this resource is unavailable not from all pages?
 				data()->addParsedPage(newOrExistingResource,

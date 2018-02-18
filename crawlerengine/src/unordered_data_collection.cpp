@@ -126,6 +126,8 @@ ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& par
 
 		unorderedStorage.erase(iter);
 
+		emit parsedPageRemoved(result, type);
+
 		return result;
 	}
 
