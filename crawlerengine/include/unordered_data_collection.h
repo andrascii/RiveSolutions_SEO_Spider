@@ -66,6 +66,7 @@ public:
 signals:
 	void parsedPageAdded(WorkerResult workerResult, StorageType type);
 	void parsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type);
+	void parsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type);
 	void parsedPageReplaced(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void dataCleared();

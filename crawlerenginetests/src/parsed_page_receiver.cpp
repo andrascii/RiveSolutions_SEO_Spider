@@ -34,6 +34,9 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)), 
 		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType))));
 
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType)),
+		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType))));
+
 	m_receiverThread->start();
 }
 
@@ -121,6 +124,14 @@ void ParsedPageReceiver::onAboutClearData()
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
 {
 	m_unorderedDataCollectionPages[type].push_back(page.get());
+}
+
+void ParsedPageReceiver::onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type)
+{
+	auto it = std::find_if(std::begin(m_unorderedDataCollectionPages[type]), std::end(m_unorderedDataCollectionPages[type]), 
+		[pagePointer = page.get()](const ParsedPage* item) { return item == pagePointer; });
+	ASSERT(it != std::end(m_unorderedDataCollectionPages[type]));
+	m_unorderedDataCollectionPages[type].erase(it);
 }
 
 std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataCollection(StorageType type) const

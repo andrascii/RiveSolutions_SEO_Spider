@@ -31,6 +31,7 @@ private slots:
 	void onCrawlingProgress(CrawlingProgress state);
 	void onAboutClearData();
 	void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type);
+	void onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type);
 
 private:
 	void checkWaitCondition(StorageType storageType);

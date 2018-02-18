@@ -154,19 +154,19 @@ void CrawlerWorkerThread::onCrawlerClearData()
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);
 }
 
-void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage)
+std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage)
 {
 	if (parsedPage->isThisExternalPage)
 	{
 		if (parsedPage->redirectedUrl.isValid())
 		{
 			const LinkInfo redirectLinkInfo{ parsedPage->redirectedUrl, LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceRedirectUrl };
-			const ResourceOnPage redirectedResource(parsedPage->resourceType, redirectLinkInfo, true);
+			const ResourceOnPage redirectedResource(parsedPage->resourceType, redirectLinkInfo, Permission::PermissionAllowed);
 			parsedPage->allResourcesOnPage.clear();
 			parsedPage->allResourcesOnPage.insert(redirectedResource);
 		}
 
-		return;
+		return std::vector<LinkInfo>();
 	}
 
 	std::vector<LinkInfo> outlinks;
@@ -180,7 +180,7 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 
 	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
 
-	handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
+	std::vector<LinkInfo> blockedByRobotsTxtLinks = handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
 
 	m_uniqueLinkStore->addLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
 
@@ -189,7 +189,7 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 		// m_uniqueLinkStore->addUrlList(std::vector<Url>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
 
 		const LinkInfo redirectLinkInfo{ parsedPage->redirectedUrl, LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceRedirectUrl };
-		const ResourceOnPage redirectedResource(parsedPage->resourceType, redirectLinkInfo, true);
+		const ResourceOnPage redirectedResource(parsedPage->resourceType, redirectLinkInfo, Permission::PermissionAllowed);
 		parsedPage->allResourcesOnPage.erase(redirectedResource);
 		parsedPage->allResourcesOnPage.insert(redirectedResource);
 	}
@@ -201,7 +201,7 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 	{
 		if (PageParserHelpers::isHttpOrHttpsScheme(resource.link.url) &&
 			resource.resourceType != ResourceType::ResourceHtml &&
-			resource.loadAvailability)
+			resource.permission == Permission::PermissionAllowed)
 		{
 			if (resource.resourceType == ResourceType::ResourceImage)
 			{
@@ -216,51 +216,78 @@ void CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPagePtr& parsedPage
 
 	m_uniqueLinkStore->addUrlList(resourcesGetUrlList, DownloadRequestType::RequestTypeGet);
 	m_uniqueLinkStore->addUrlList(resourcesHeadUrlList, DownloadRequestType::RequestTypeHead);
+
+	return blockedByRobotsTxtLinks;
 }
 
-void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
+std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
 {
+	std::vector<LinkInfo> blockedByRobotsTxtLinks;
+
 	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->checkPermissionNotAllowed(OptionsLinkFilter::PermissionNofollowNotAllowed, linkInfo, metaRobotsFlags);
+		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionNofollowNotAllowed, linkInfo, metaRobotsFlags);
 	};
 
 	const auto isLinkBlockedByRobotsTxt = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->checkPermissionNotAllowed(OptionsLinkFilter::PermissionBlockedByRobotsTxtRules, linkInfo, metaRobotsFlags);
+		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionBlockedByRobotsTxtRules, linkInfo, metaRobotsFlags);
 	};
 
 	const auto isLinkBlockedByMetaRobots = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->checkPermissionNotAllowed(OptionsLinkFilter::PermissionBlockedByMetaRobotsRules, linkInfo, metaRobotsFlags);
+		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionBlockedByMetaRobotsRules, linkInfo, metaRobotsFlags);
 	};
 
 	const auto isSubdomainLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->checkPermissionNotAllowed(OptionsLinkFilter::PermissionSubdomainNotAllowed, linkInfo, metaRobotsFlags);
+		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionSubdomainNotAllowed, linkInfo, metaRobotsFlags);
 	};
 
 	const auto isExternalLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->checkPermissionNotAllowed(OptionsLinkFilter::PermissionExternalLinksNotAllowed, linkInfo, metaRobotsFlags);
+		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionExternalLinksNotAllowed, linkInfo, metaRobotsFlags);
 	};
 
 	const auto isOutsideFolderLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
-		return optionsLinkFilter->checkPermissionNotAllowed(OptionsLinkFilter::PermissionBlockedByFolder, linkInfo, metaRobotsFlags);
+		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionBlockedByFolder, linkInfo, metaRobotsFlags);
 	};
 
 	const auto setLinkLoadAvailability = [&](ResourceOnPage& resource)
 	{
-		const bool loadAvailability = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url) &&
-			!isLinkBlockedByMetaRobots(resource.link) &&
-			!isNofollowLinkUnavailable(resource.link) &&
-			!isSubdomainLinkUnavailable(resource.link) &&
-			!isLinkBlockedByRobotsTxt(resource.link) &&
-			!isExternalLinkUnavailable(resource.link) &&
-			!isOutsideFolderLinkUnavailable(resource.link);
-
-		resource.loadAvailability = loadAvailability;
+		if (!PageParserHelpers::isHttpOrHttpsScheme(resource.link.url))
+		{
+			resource.permission = Permission::PermissionNotHttpLinkNotAllowed;
+		}
+		else if (isLinkBlockedByRobotsTxt(resource.link))
+		{
+			resource.permission = Permission::PermissionBlockedByRobotsTxtRules;
+		}
+		else if (isLinkBlockedByMetaRobots(resource.link))
+		{
+			resource.permission = Permission::PermissionBlockedByMetaRobotsRules;
+		}
+		else if (isNofollowLinkUnavailable(resource.link))
+		{
+			resource.permission = Permission::PermissionNofollowNotAllowed;
+		}
+		else if (isSubdomainLinkUnavailable(resource.link))
+		{
+			resource.permission = Permission::PermissionSubdomainNotAllowed;
+		}
+		else if (isExternalLinkUnavailable(resource.link))
+		{
+			resource.permission = Permission::PermissionExternalLinksNotAllowed;
+		}
+		else if (isOutsideFolderLinkUnavailable(resource.link))
+		{
+			resource.permission = Permission::PermissionBlockedByFolder;
+		}
+		else
+		{
+			resource.permission = Permission::PermissionAllowed;
+		}
 	};
 
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByMetaRobots), linkList.end());
@@ -279,6 +306,25 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 	
 	parsedPage->allResourcesOnPage = resources;
 
+	
+
+	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
+	std::copy(blockedByRobotsTxtLinksIterator, linkList.end(), std::back_inserter(blockedByRobotsTxtLinks));
+	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
+	return blockedByRobotsTxtLinks;
+}
+
+void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& response)
+{
+	StoreValueGuard<bool> reloadGuard(m_reloadPage, false);
+
+	m_downloadRequester.reset();
+
+	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
+
+	ASSERT(m_currentRequest.has_value());
+	const DownloadRequestType requestType = m_currentRequest.value().requestType;
+
 	const auto emitBlockedByRobotsTxtPages = [this](const LinkInfo& linkInfo)
 	{
 		if (m_uniqueLinkStore->addCrawledUrl(linkInfo.url, DownloadRequestType::RequestTypeGet))
@@ -293,27 +339,11 @@ void CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, co
 		}
 	};
 
-	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
-	std::for_each(blockedByRobotsTxtLinksIterator, linkList.end(), emitBlockedByRobotsTxtPages);
-	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
-}
-
-void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& response)
-{
-	StoreValueGuard<bool> reloadGuard(m_reloadPage, false);
-
-	m_downloadRequester.reset();
-
-	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
-
-	ASSERT(m_currentRequest.has_value());
-	const DownloadRequestType requestType = m_currentRequest.value().requestType;
-
 	bool checkUrl = false;
 
 	for (ParsedPagePtr& page : pages)
 	{
-		schedulePageResourcesLoading(page);
+		std::vector<LinkInfo> blockedByRobotsTxtLinks = schedulePageResourcesLoading(page);
 
 		const bool urlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
@@ -328,6 +358,8 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 		{
 			onPageParsed(WorkerResult{ page, m_reloadPage, requestType });
 		}
+
+		std::for_each(blockedByRobotsTxtLinks.begin(), blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
 
 		checkUrl = true;
 	}
@@ -376,7 +408,7 @@ void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcep
 	if (result.incomingPageConstRef()->redirectedUrl.isValid())
 	{
 		DEBUG_ASSERT(result.incomingPageConstRef()->allResourcesOnPage.size() == 1 &&
-			result.incomingPageConstRef()->allResourcesOnPage.begin()->loadAvailability);
+			result.incomingPageConstRef()->allResourcesOnPage.begin()->permission == Permission::PermissionAllowed);
 	}
 
 	emit workerResult(result);
