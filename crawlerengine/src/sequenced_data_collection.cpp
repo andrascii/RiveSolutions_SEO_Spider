@@ -333,7 +333,7 @@ void SequencedDataCollection::prepareCollectionForRefreshPage(ParsedPage* pageFo
 
 			const int removedPagesCount = storage->removeIf(std::move(predicate));
 
-			if (removedPagesCount)
+			if (removedPagesCount > 0)
 			{
 				emit parsedPagesRemoved(removedPagesCount, type);
 			}

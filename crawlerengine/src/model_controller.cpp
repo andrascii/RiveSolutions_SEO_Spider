@@ -148,12 +148,12 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		m_linksToPageChanges.changes.clear();
 	}
 
-	DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
-		data()->size(StorageType::CrawledUrlStorageType) == 1);
-
-	DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
-		workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
-		!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
+// 	DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
+// 		data()->size(StorageType::CrawledUrlStorageType) == 1);
+// 
+// 	DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
+// 		workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
+// 		!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
 }
 
 void ModelController::processParsedPageUrl(WorkerResult& workerResult)
