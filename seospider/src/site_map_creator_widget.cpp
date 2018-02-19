@@ -104,7 +104,7 @@ void SitemapCreatorWidget::showSaveFileDialog() const
 		return;
 	}
 
-	if (theApp->crawler()->isNoData())
+	if (theApp->crawler()->hasNoData())
 	{
 		theApp->mainWindow()->showMessageBoxDialog(tr("What?"), 
 			tr("Crawler does not contain any data.\nIt does not make sense to create empty site map.\nAre you agree? ;)"),

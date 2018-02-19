@@ -80,6 +80,12 @@ protected:
 		return m_sequencedStorage.remove(page);
 	}
 
+	virtual int removeIf(std::shared_ptr<IRemovePredicate> predicate) override
+	{
+		std::lock_guard<std::mutex> locker(m_mutex);
+		return m_sequencedStorage.removeIf(predicate);
+	}
+
 	virtual int replace(ParsedPagePtr&& oldPage, ParsedPagePtr&& newPage) override
 	{
 		std::lock_guard<std::mutex> locker(m_mutex);

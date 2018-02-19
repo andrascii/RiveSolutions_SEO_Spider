@@ -19,6 +19,9 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageRemoved,
 		this, &ParsedPageReceiver::onParsedPageRemoved, Qt::QueuedConnection));
 
+	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPagesRemoved,
+		this, &ParsedPageReceiver::onParsedPagesRemoved, Qt::QueuedConnection));
+
 	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageLinksToThisResourceChanged,
 		this, &ParsedPageReceiver::onParsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
 
@@ -30,6 +33,9 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)), 
 		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType))));
+
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType)),
+		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType))));
 
 	m_receiverThread->start();
 }
@@ -59,6 +65,21 @@ void ParsedPageReceiver::onParsedPageRemoved(int row, StorageType type)
 	destinationStorage.erase(removingItemIterator);
 
 	checkWaitCondition(type);
+}
+
+void ParsedPageReceiver::onParsedPagesRemoved(int count, StorageType type)
+{
+	Q_UNUSED(count);
+
+	const ISequencedStorage& storage = *m_sequencedDataCollection->storage(type);
+	std::vector<const ParsedPage*>& data = m_parsedPages[type];
+
+	data.clear();
+	
+	for (int i = 0; i < storage.size(); ++i)
+	{
+		data.push_back(storage[i]);
+	}
 }
 
 void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes)
@@ -103,6 +124,14 @@ void ParsedPageReceiver::onAboutClearData()
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
 {
 	m_unorderedDataCollectionPages[type].push_back(page.get());
+}
+
+void ParsedPageReceiver::onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type)
+{
+	auto it = std::find_if(std::begin(m_unorderedDataCollectionPages[type]), std::end(m_unorderedDataCollectionPages[type]), 
+		[pagePointer = page.get()](const ParsedPage* item) { return item == pagePointer; });
+	ASSERT(it != std::end(m_unorderedDataCollectionPages[type]));
+	m_unorderedDataCollectionPages[type].erase(it);
 }
 
 std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataCollection(StorageType type) const

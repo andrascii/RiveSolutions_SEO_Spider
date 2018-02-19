@@ -49,9 +49,9 @@ bool SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType typ
 {
 	const auto fakeDeleter = [](ParsedPage*) noexcept {};
 
-	ParsedPagePtr pointer(parsedPage, fakeDeleter);
+	const ParsedPagePtr pointer(parsedPage, fakeDeleter);
 
-	ISequencedStorage* sequencedStorage = storage(type); 
+	ISequencedStorage* sequencedStorage = storage(type);
 	
 	if (sequencedStorage)
 	{
@@ -64,7 +64,7 @@ bool SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType typ
 
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -223,6 +223,122 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::UniqueCanonicalUrlResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ExternalDoFollowUrlResourcesStorageType, createSequencedStorage()),
 	};
+}
+
+void SequencedDataCollection::prepareCollectionForRefreshPage(ParsedPage* pageForRefresh)
+{
+	const auto duplicateComparator = [](StorageType type, const ParsedPage* lhs, const ParsedPage* rhs) noexcept
+	{
+		switch (type)
+		{
+			case StorageType::DuplicatedTitleUrlStorageType:
+			{
+				return lhs->title == rhs->title;
+			}
+			case StorageType::DuplicatedMetaDescriptionUrlStorageType:
+			{
+				return lhs->metaDescription == rhs->metaDescription;
+			}
+			case StorageType::DuplicatedMetaKeywordsUrlStorageType:
+			{
+				return lhs->metaKeywords == rhs->metaKeywords;
+			}
+			case StorageType::DuplicatedH1UrlStorageType:
+			{
+				return lhs->firstH1 == rhs->firstH1;
+			}
+			case StorageType::DuplicatedH2UrlStorageType:
+			{
+				return lhs->firstH2 == rhs->firstH2;
+			}
+			default:
+			{
+				ASSERT(!"Undefined storage type");
+			}
+		}
+
+		return false;
+	};
+
+	class RemovePredicate : public IRemovePredicate
+	{
+	public:
+		RemovePredicate(std::vector<ParsedPage*>* duplicates)
+			: m_duplicates(duplicates)
+		{
+		}
+
+		virtual bool call(const ParsedPagePtr& page) const noexcept override
+		{
+			const auto iter = std::find_if(m_duplicates->begin(), m_duplicates->end(), 
+				[&](ParsedPage* duplicate) { return duplicate == page.get(); });
+
+			return iter != m_duplicates->end();
+		}
+
+	private:
+		std::vector<ParsedPage*>* m_duplicates;
+	};
+
+	for (auto&[type, storage] : m_sequencedStorageMap)
+	{
+		if (type == StorageType::CrawledUrlStorageType)
+		{
+			continue;
+		}
+
+		removePage(pageForRefresh, type);
+
+		if (type == StorageType::DuplicatedTitleUrlStorageType ||
+			type == StorageType::DuplicatedMetaDescriptionUrlStorageType ||
+			type == StorageType::DuplicatedMetaKeywordsUrlStorageType ||
+			type == StorageType::DuplicatedH1UrlStorageType ||
+			type == StorageType::DuplicatedH2UrlStorageType)
+		{
+			std::vector<ParsedPage*> duplicates;
+			duplicates.reserve(storage->size());
+
+			for (int i = 0, sz = storage->size(); i < sz; ++i)
+			{
+				ParsedPage* duplicate = storage->get(i);
+
+				if (!duplicateComparator(type, duplicate, pageForRefresh))
+				{
+					continue;
+				}
+
+				duplicates.push_back(duplicate);
+			}
+
+			if (duplicates.empty())
+			{
+				continue;
+			}
+
+			const Url& firstPageCanonicalUrl = duplicates.front()->canonicalUrl;
+
+			const auto canonicalUrlComparator = [&firstPageCanonicalUrl](const ParsedPage* page)
+			{
+				return page->canonicalUrl.canonizedUrlStr() == firstPageCanonicalUrl.canonizedUrlStr();
+			};
+
+			const bool result = std::all_of(duplicates.begin() + 1, duplicates.end(), canonicalUrlComparator);
+
+			if (!result)
+			{
+				continue;
+			}
+
+			std::shared_ptr<IRemovePredicate> predicate = std::make_shared<RemovePredicate>(&duplicates);
+
+			const int removedPagesCount = storage->removeIf(std::move(predicate));
+
+			if (removedPagesCount > 0)
+			{
+				emit parsedPagesRemoved(removedPagesCount, type);
+			}
+		}
+	}
 }
 
 }

@@ -318,7 +318,7 @@ QString MainWindow::getSaveFilePath() const
 		return QString();
 	}
 
-	if (theApp->crawler()->isNoData())
+	if (theApp->crawler()->hasNoData())
 	{
 		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
 			tr("Crawler does not contain any data."),

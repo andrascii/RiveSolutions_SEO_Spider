@@ -11,6 +11,12 @@ struct RemoveEffects
 	std::pair<int, int> invalidatedIndicesRange;
 };
 
+class IRemovePredicate
+{
+public:
+	virtual bool call(const ParsedPagePtr&) const noexcept = 0;
+};
+
 class ISequencedStorage
 {
 public:
@@ -32,6 +38,7 @@ protected:
 	virtual void emplaceBack(ParsedPagePtr&& page) = 0;
 	virtual int replace(ParsedPagePtr&& oldPage, ParsedPagePtr&& newPage) = 0;
 	virtual RemoveEffects remove(const ParsedPagePtr& page) = 0;
+	virtual int removeIf(std::shared_ptr<IRemovePredicate> predicate) = 0;
 	virtual bool containsPointersWithUseCountGreaterThanOne() const noexcept = 0;
 };
 

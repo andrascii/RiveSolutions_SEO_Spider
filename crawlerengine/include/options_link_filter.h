@@ -12,16 +12,7 @@ struct LinkInfo;
 class OptionsLinkFilter
 {
 public:
-	enum Permission
-	{
-		PermissionAllowed,
-		PermissionExternalLinksNotAllowed,
-		PermissionNofollowNotAllowed,
-		PermissionBlockedByRobotsTxtRules,
-		PermissionBlockedByMetaRobotsRules,
-		PermissionSubdomainNotAllowed,
-		PermissionBlockedByFolder
-	};
+	
 
 	OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const RobotsTxtRules& robotsTxtRules);
 

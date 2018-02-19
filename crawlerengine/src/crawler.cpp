@@ -135,7 +135,7 @@ void Crawler::setState(State state)
 	emit stateChanged(state);
 }
 
-bool Crawler::isNoData() const noexcept
+bool Crawler::hasNoData() const noexcept
 {
 	return m_sequencedDataCollection->empty();
 }
@@ -635,70 +635,7 @@ void Crawler::refreshPage(StorageType storageType, int index)
 
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
-	const auto titleDuplicatesPredicate = [parsedPage](const ParsedPage* page)
-	{
-		return parsedPage->title == page->title &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
-	};
-
-	const auto metaDescriptionDuplicatesPredicate = [parsedPage](const ParsedPage* page)
-	{
-		return parsedPage->metaDescription == page->metaDescription &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
-	};
-
-	const auto metaKeywordsDuplicatesPredicate = [parsedPage](const ParsedPage* page)
-	{
-		return parsedPage->metaKeywords == page->metaKeywords &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
-	};
-
-	const auto h1DuplicatesPredicate = [parsedPage](const ParsedPage* page)
-	{
-		return parsedPage->firstH1 == page->firstH1 &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
-	};
-
-	const auto h2DuplicatesPredicate = [parsedPage](const ParsedPage* page)
-	{
-		return parsedPage->firstH2 == page->firstH2 &&
-			parsedPage->canonicalUrl == page->canonicalUrl;
-	};
-
-	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
-	{
-		if (type == StorageType::CrawledUrlStorageType)
-		{
-			continue;
-		}
-
-		if (type == StorageType::DuplicatedTitleUrlStorageType)
-		{
-			m_sequencedDataCollection->removePageIf(type, titleDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedMetaDescriptionUrlStorageType)
-		{
-			m_sequencedDataCollection->removePageIf(type, metaDescriptionDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedMetaKeywordsUrlStorageType)
-		{
-			m_sequencedDataCollection->removePageIf(type, metaKeywordsDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedH1UrlStorageType)
-		{
-			m_sequencedDataCollection->removePageIf(type, h1DuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedH2UrlStorageType)
-		{
-			m_sequencedDataCollection->removePageIf(type, h2DuplicatesPredicate);
-		}
-
-		m_sequencedDataCollection->removePage(parsedPage, type);
-	}
+	m_sequencedDataCollection->prepareCollectionForRefreshPage(parsedPage);
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh", 
 		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));

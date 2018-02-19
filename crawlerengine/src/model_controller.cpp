@@ -82,90 +82,10 @@ void ModelController::clearData()
 
 void ModelController::preparePageForRefresh(ParsedPage* parsedPage)
 {
-	const auto titleDuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->title == page->title &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
+	const auto fakeDeleter = [](ParsedPage*) noexcept {};
+	ParsedPagePtr pointer(parsedPage, fakeDeleter);
 
-	const auto metaDescriptionDuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->metaDescription == page->metaDescription &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
-
-	const auto metaKeywordsDuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->metaKeywords == page->metaKeywords &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
-
-	const auto h1DuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->firstH1 == page->firstH1 &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
-
-	const auto h2DuplicatesPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return parsedPage->firstH2 == page->firstH2 &&
-			parsedPage->canonicalUrl.canonizedUrlStr() == page->canonicalUrl.canonizedUrlStr();
-	};
-
-	const auto fromRangeRemovingPredicate = [parsedPage](const ParsedPagePtr& page)
-	{
-		return page.get() == parsedPage;
-	};
-
-	for (StorageType type = StorageType::CrawledUrlStorageType; type < StorageType::EndEnumStorageType; type = ++type)
-	{
-		if (type == StorageType::CrawledUrlStorageType ||
-			type == StorageType::PendingResourcesStorageType)
-		{
-			continue;
-		}
-
-		const auto fakeDeleter = [](ParsedPage*) noexcept {};
-		ParsedPagePtr pointer(parsedPage, fakeDeleter);
-
-		if (type == StorageType::DuplicatedTitleUrlStorageType)
-		{
-			data()->removeParsedPageIf(type, titleDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedMetaDescriptionUrlStorageType)
-		{
-			data()->removeParsedPageIf(type, metaDescriptionDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedMetaKeywordsUrlStorageType)
-		{
-			data()->removeParsedPageIf(type, metaKeywordsDuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedH1UrlStorageType)
-		{
-			data()->removeParsedPageIf(type, h1DuplicatesPredicate);
-		}
-
-		if (type == StorageType::DuplicatedH2UrlStorageType)
-		{
-			data()->removeParsedPageIf(type, h2DuplicatesPredicate);
-		}
-
-		if (type == StorageType::AllTitlesUrlStorageType ||
-			type == StorageType::AllMetaDescriptionsUrlStorageType ||
-			type == StorageType::AllMetaKeywordsUrlStorageType ||
-			type == StorageType::AllH1UrlStorageType ||
-			type == StorageType::AllH2UrlStorageType)
-		{
-			data()->removeParsedPageFromRangeIf(pointer, type, fromRangeRemovingPredicate);
-		}
-		else
-		{
-			data()->removeParsedPage(pointer, type);
-		}
-	}
+	data()->prepareCollectionForRefreshPage(pointer);
 }
 
 void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
@@ -228,12 +148,15 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		m_linksToPageChanges.changes.clear();
 	}
 
-	DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
-		data()->size(StorageType::CrawledUrlStorageType) == 1);
-	
-	DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
-		workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
-		!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
+	if (!workerResult.isRefreshResult())
+	{
+		DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
+			data()->size(StorageType::CrawledUrlStorageType) == 1);
+
+		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
+			workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
+			!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
+	}
 }
 
 void ModelController::processParsedPageUrl(WorkerResult& workerResult)
@@ -683,7 +606,9 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult)
 			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
-			if (!resource.loadAvailability)
+			if (resource.permission != Permission::PermissionAllowed &&
+				resource.permission != Permission::PermissionBlockedByRobotsTxtRules &&
+				resource.permission != Permission::PermissionNotHttpLinkNotAllowed)
 			{
 				// what if this resource is unavailable not from all pages?
 				continue;
@@ -787,7 +712,9 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult)
 		{
 			newOrExistingResource = temporaryResource;
 
-			if (resource.loadAvailability)
+			if (httpResource &&
+				(resource.permission == Permission::PermissionAllowed ||
+				resource.permission == Permission::PermissionBlockedByRobotsTxtRules))
 			{
 				// what if this resource is unavailable not from all pages?
 				data()->addParsedPage(newOrExistingResource,
@@ -907,7 +834,9 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 
 
 	const bool updateChildren = incomingPage->pageLevel > level;
-	//ASSERT(level != invalidPageLevel);
+
+	ASSERT(level != invalidPageLevel);
+
 	incomingPage->pageLevel = level;
 
 	if (!updateChildren)

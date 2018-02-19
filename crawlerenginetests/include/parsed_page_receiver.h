@@ -26,10 +26,12 @@ public:
 private slots:
 	void onParsedPageAdded(int row, StorageType type);
 	void onParsedPageRemoved(int row, StorageType type);
+	void onParsedPagesRemoved(int count, StorageType type);
 	void onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void onCrawlingProgress(CrawlingProgress state);
 	void onAboutClearData();
 	void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type);
+	void onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type);
 
 private:
 	void checkWaitCondition(StorageType storageType);

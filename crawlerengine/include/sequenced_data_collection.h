@@ -18,43 +18,21 @@ class SequencedDataCollection : public QObject
 	Q_OBJECT
 
 public:
-	friend class UnorderedDataCollection;
-
 	SequencedDataCollection(const UnorderedDataCollection* collection);
 
+	void initialize();
 	bool empty() const noexcept;
 	
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 	ISequencedStorage* storage(StorageType type) noexcept;
-
 	bool removePage(ParsedPage* parsedPage, StorageType type);
-
-	template <typename F>
-	void removePageIf(StorageType type, F predicate)
-	{
-		ISequencedStorage* sequencedStorage = storage(type);
-
-		for (int i = 0; i < sequencedStorage->size();)
-		{
-			if (!predicate(sequencedStorage->get(i)))
-			{
-				++i;
-				continue;
-			}
-
-			if (!removePage(sequencedStorage->get(i), type))
-			{
-				++i;
-			}
-		}
-	}
-
-	void initialize();
+	void prepareCollectionForRefreshPage(ParsedPage* pageForRefresh);
 
 signals:
 	void parsedPageAdded(int row, StorageType type);
 	void parsedPageReplaced(int row, StorageType type);
 	void parsedPageRemoved(int row, StorageType type);
+	void parsedPagesRemoved(int count, StorageType type);
 	void indicesRangeInvalidated(std::pair<int, int> indicesRange, StorageType type);
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void beginClearData();

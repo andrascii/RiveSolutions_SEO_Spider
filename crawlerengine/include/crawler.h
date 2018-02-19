@@ -55,7 +55,7 @@ public:
 
 	void initialize();
 	void clearData();
-	bool isNoData() const noexcept;
+	bool hasNoData() const noexcept;
 	State state() const noexcept;
 	SequencedDataCollection* sequencedDataCollection() const;
 	QString siteMapXml(const SiteMapSettings& settings) const;
