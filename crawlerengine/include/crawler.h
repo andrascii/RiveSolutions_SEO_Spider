@@ -66,6 +66,7 @@ public:
 
 	const WebHostInfo* webHostInfo() const;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
+	QString currentCrawledUrl() const noexcept;
 	bool readyForRefreshPage() const noexcept;
 
 signals:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iweb_screenshot.h"
+#include "url.h"
 
 namespace CrawlerEngine
 {
@@ -24,7 +25,7 @@ private slots:
 
 private:
 	std::unique_ptr<QWebEngineView> m_webView;
-	QPixmap m_result;
+	QPair<Url, QPixmap> m_result;
 	QTimer* m_timer;
 };
 

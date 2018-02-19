@@ -714,3 +714,10 @@ QColorDialog QSpinBox
 {
 	max-width: 5em;
 }
+
+/*////////////////////////////// ColorSelectorWidget //////////////////////////////////////////////*/
+SeoSpider--ColorSelectorWidget
+{
+	qproperty-borderColor: #4D626E;
+}
+

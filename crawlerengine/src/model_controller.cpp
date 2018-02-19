@@ -230,7 +230,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 	DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
 		data()->size(StorageType::CrawledUrlStorageType) == 1);
-
+	
 	DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
 		workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
 		!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
