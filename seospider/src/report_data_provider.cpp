@@ -166,7 +166,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::SiteLink:
 		{
-			return QStringLiteral("http://example.com");
+			return theApp->crawler()->currentCrawledUrl();
 		}
 		case ReportDataKeys::FoundProblems:
 		{

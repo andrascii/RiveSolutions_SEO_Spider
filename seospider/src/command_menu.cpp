@@ -17,6 +17,11 @@ void CommandMenu::execFor(const QPoint& pos, const QModelIndex& index)
 
 	Menu menuData = m_menuDataProvider->menuFor(index);
 
+	if (menuData.empty())
+	{
+		return;
+	}
+
 	initMenu(*this, menuData);
 	exec(pos);
 }

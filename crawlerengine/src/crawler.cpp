@@ -420,8 +420,7 @@ void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response
 
 	m_hostInfo.reset(new HostInfo(response.hostInfo));
 	m_options.startCrawlingPage = response.url;
-	m_webHostInfo->reset(m_options.startCrawlingPage);
-
+	
 	tryToLoadCrawlingDependencies();
 }
 
@@ -503,6 +502,7 @@ void Crawler::tryToLoadCrawlingDependencies() const
 
 	m_robotsTxtLoader->setHost(m_options.startCrawlingPage);
 	m_xmlSitemapLoader->setHost(m_options.startCrawlingPage);
+	m_webHostInfo->reset(m_options.startCrawlingPage);
 	m_robotsTxtLoader->load();
 	m_xmlSitemapLoader->load();
 }
@@ -610,6 +610,11 @@ std::optional<QByteArray> Crawler::currentCrawledSiteIPv4() const
 	}
 
 	return std::make_optional<QByteArray>();
+}
+
+QString Crawler::currentCrawledUrl() const noexcept
+{
+	return m_options.startCrawlingPage.urlStr();
 }
 
 void Crawler::refreshPage(StorageType storageType, int index)

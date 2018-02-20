@@ -117,6 +117,11 @@ Menu SummaryDataAccessor::menuFor(const QModelIndex& index) const
 {
 	Menu menu;
 
+	if (!index.isValid())
+	{
+		return menu;
+	}
+
 	std::vector<ICommandPointer> commands;
 
 	if (isHeaderRow(index.row()))

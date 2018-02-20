@@ -89,7 +89,7 @@ void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePt
 {
 	using ItemIterator = UnorderedStorageType::iterator;
 
-	const auto binaryRemove = [&](UnorderedStorageType& storage, const std::pair<ItemIterator, ItemIterator>& range)
+	const auto binaryRemove = [&](UnorderedStorageType& storage, StorageType type, const std::pair<ItemIterator, ItemIterator>& range)
 	{
 		for (auto it = range.first; it != range.second; ++it)
 		{
@@ -98,12 +98,15 @@ void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePt
 				continue;
 			}
 
+			DEBUG_ASSERT((*it)->storages[static_cast<size_t>(type)]);
+			(*it)->storages[static_cast<size_t>(type)] = false;
+
 			storage.erase(it);
 			break;
 		}
 	};
 
-	const auto removeItemsIfAll = [](UnorderedStorageType& storage, const std::pair<ItemIterator, ItemIterator>& range, auto&& predicate)
+	const auto removeItemsIfAll = [](UnorderedStorageType& storage, StorageType type, const std::pair<ItemIterator, ItemIterator>& range, auto&& predicate)
 	{
 		if (!std::distance(range.first, range.second))
 		{
@@ -124,10 +127,18 @@ void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePt
 			}
 		}
 
-		if (needToRemove)
+		if (!needToRemove)
 		{
-			storage.erase(range.first, range.second);
+			return;
 		}
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			DEBUG_ASSERT((*it)->storages[static_cast<size_t>(type)]);
+			(*it)->storages[static_cast<size_t>(type)] = false;
+		}
+
+		storage.erase(range.first, range.second);
 	};
 
 	for (auto&[type, storage] : m_unorderedStorageMap)
@@ -140,7 +151,7 @@ void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePt
 
 		const std::pair<ItemIterator, ItemIterator> range = storage.equal_range(pageForRefresh);
 
-		binaryRemove(storage, range);
+		binaryRemove(storage, type, range);
 
 		if (type == StorageType::DuplicatedTitleUrlStorageType ||
 			type == StorageType::DuplicatedMetaDescriptionUrlStorageType ||
@@ -153,7 +164,7 @@ void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePt
 				return first->canonicalUrl.canonizedUrlStr() == second->canonicalUrl.canonizedUrlStr();
 			};
 
-			removeItemsIfAll(storage, range, canonicalUrlComparator);
+			removeItemsIfAll(storage, type, range, canonicalUrlComparator);
 		}
 	}
 }
