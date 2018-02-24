@@ -27,6 +27,7 @@ private:
 	QParallelAnimationGroup* m_collapseAnimation;
 	bool m_animationFinished;
 	bool m_titleFrameCollapsed;
+	QVector<QWidget*> m_hiddenWidgets;
 };
 
 }

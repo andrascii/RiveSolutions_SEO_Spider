@@ -83,16 +83,6 @@ void HeaderDecorationWidget::mouseReleaseEvent(QMouseEvent* event)
 	titleFrameAnimation->setStartValue(titleFrameSourceGeometry);
 	titleFrameAnimation->setEndValue(titleFrameFinalGeometry);
 
-	for (int i = 0; i < m_titleLayout->count(); ++i)
-	{
-		QWidget* widget = m_titleLayout->itemAt(i)->widget();
-
-		if (widget)
-		{
-			widget->setVisible(m_titleFrameCollapsed);
-		}
-	}
-
 	m_collapseAnimation = new QParallelAnimationGroup(this);
 	m_collapseAnimation->addAnimation(titleFrameAnimation);
 	m_collapseAnimation->addAnimation(contentFrameAnimation);
@@ -106,6 +96,29 @@ void HeaderDecorationWidget::mouseReleaseEvent(QMouseEvent* event)
 
 void HeaderDecorationWidget::onAnimationFinished()
 {
+	if (m_titleFrameCollapsed)
+	{
+		for (int i = 0; i < m_titleLayout->count(); ++i)
+		{
+			QWidget* widget = m_titleLayout->itemAt(i)->widget();
+
+			if (widget && widget->isVisible())
+			{
+				m_hiddenWidgets.push_back(widget);
+				widget->hide();
+			}
+		}
+	}
+	else
+	{
+		foreach(QWidget* widget, m_hiddenWidgets)
+		{
+			widget->show();
+		}
+
+		m_hiddenWidgets.clear();
+	}
+
 	m_animationFinished = true;
 
 	update();
