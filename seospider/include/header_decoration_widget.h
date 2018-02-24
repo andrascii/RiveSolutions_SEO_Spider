@@ -24,8 +24,7 @@ private:
 	QHBoxLayout* m_titleLayout;
 	QVBoxLayout* m_layout;
 	QWidget* m_contentWidget;
-	QPropertyAnimation* m_titleFrameAnimation;
-	QPropertyAnimation* m_contentFrameAnimation;
+	QParallelAnimationGroup* m_collapseAnimation;
 	bool m_animationFinished;
 	bool m_titleFrameCollapsed;
 };
