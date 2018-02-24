@@ -10,8 +10,10 @@ UrlLineEdit::UrlLineEdit(QWidget* parent)
 	VERIFY(connect(this, SIGNAL(textEdited(const QString&)), this, SLOT(checkUrlCorrectness())));
 
 	QRegularExpression urlRegExp(
-		"(https?://|//)?(www\\.)?(?:((?:[\\.\\w-]+?\\.)*))?([\\w-]+)\\."
-		"((?:[a-z]{3}\\.[a-z]{2})|(?:[a-z]{2}\\.[a-z]{3})|(?:[a-z]{2}\\.[a-z]{2})|[a-z]{2,6})(:\\d+)?(.*)?");
+			"^(?:(?:https?):\\/\\/)?(?:\\S+(?::\\S*)?@|\\d{1,3}(?:\\.\\d{1,3}){3}|(?:(?:[a-z\\d\\x{00a1}-\\x{ffff}]+-?)*"
+			"[a-z\\d\\x{00a1}-\\x{ffff}]+)(?:\\.(?:[a-z\\d\\x{00a1}-\\x{ffff}]+-?)*[a-z\\d\\x{00a1}-\\x{ffff}]+)*"
+			"(?:\\.[a-z\\x{00a1}-\\x{ffff}]{2,6}))(?::\\d+)?(?:[^\\s]*)?$"
+			);
 	
 	urlRegExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 	setValidator(new QRegularExpressionValidator(urlRegExp, this));
