@@ -48,7 +48,7 @@ void HostInfoProvider::handleRequest(RequesterSharedPtr requester)
 	ASSERT(requester->request()->requestType() == RequestType::RequestGetHostInfo);
 	m_requester = requester;
 	GetHostInfoRequest* request = static_cast<GetHostInfoRequest*>(requester->request());
-	m_pendingResponse.reset(new GetHostInfoResponse(HostInfo(request->webpage.host().toLatin1())));
+	m_pendingResponse.reset(new GetHostInfoResponse(HostInfo(request->webpage.host(QUrl::FullyEncoded).toLatin1())));
 
 	DownloadRequest downloadRequest(CrawlerRequest{ request->webpage, DownloadRequestType::RequestTypeHead });
 	m_downloadRequester.reset(downloadRequest, this, &HostInfoProvider::onLoadingDone);
