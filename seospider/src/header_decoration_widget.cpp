@@ -10,8 +10,7 @@ HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	, m_titleLayout(new QHBoxLayout(m_titleFrame))
 	, m_layout(new QVBoxLayout(this))
 	, m_contentWidget(nullptr)
-	, m_titleFrameAnimation(nullptr)
-	, m_contentFrameAnimation(nullptr)
+	, m_collapseAnimation(nullptr)
 	, m_animationFinished(true)
 	, m_titleFrameCollapsed(false)
 {
@@ -74,37 +73,52 @@ void HeaderDecorationWidget::mouseReleaseEvent(QMouseEvent* event)
 		return;
 	}
 
-	m_contentFrameAnimation = new QPropertyAnimation(m_contentWidget, "geometry");
-	m_contentFrameAnimation->setDuration(500);
-	m_contentFrameAnimation->setStartValue(contentWidgetSourceGeometry);
-	m_contentFrameAnimation->setEndValue(contentWidgetFinalGeometry);
+	QPropertyAnimation* contentFrameAnimation = new QPropertyAnimation(m_contentWidget, "geometry");
+	contentFrameAnimation->setDuration(500);
+	contentFrameAnimation->setStartValue(contentWidgetSourceGeometry);
+	contentFrameAnimation->setEndValue(contentWidgetFinalGeometry);
 
-	m_titleFrameAnimation = new QPropertyAnimation(m_titleFrame, "geometry");
-	m_titleFrameAnimation->setDuration(500);
-	m_titleFrameAnimation->setStartValue(titleFrameSourceGeometry);
-	m_titleFrameAnimation->setEndValue(titleFrameFinalGeometry);
+	QPropertyAnimation* titleFrameAnimation = new QPropertyAnimation(m_titleFrame, "geometry");
+	titleFrameAnimation->setDuration(500);
+	titleFrameAnimation->setStartValue(titleFrameSourceGeometry);
+	titleFrameAnimation->setEndValue(titleFrameFinalGeometry);
 
-	for (int i = 0; i < m_titleLayout->count(); ++i)
-	{
-		QWidget* widget = m_titleLayout->itemAt(i)->widget();
-
-		if (widget)
-		{
-			widget->setVisible(m_titleFrameCollapsed);
-		}
-	}
-
-	m_titleFrameAnimation->start();
-	m_contentFrameAnimation->start();
+	m_collapseAnimation = new QParallelAnimationGroup(this);
+	m_collapseAnimation->addAnimation(titleFrameAnimation);
+	m_collapseAnimation->addAnimation(contentFrameAnimation);
+	m_collapseAnimation->start();
 
 	m_animationFinished = false;
 	m_titleFrameCollapsed = !m_titleFrameCollapsed;
 	
-	VERIFY(connect(m_titleFrameAnimation, &QAbstractAnimation::finished, this, &HeaderDecorationWidget::onAnimationFinished));
+	VERIFY(connect(m_collapseAnimation, &QAbstractAnimation::finished, this, &HeaderDecorationWidget::onAnimationFinished));
 }
 
 void HeaderDecorationWidget::onAnimationFinished()
 {
+	if (m_titleFrameCollapsed)
+	{
+		for (int i = 0; i < m_titleLayout->count(); ++i)
+		{
+			QWidget* widget = m_titleLayout->itemAt(i)->widget();
+
+			if (widget && widget->isVisible())
+			{
+				m_hiddenWidgets.push_back(widget);
+				widget->hide();
+			}
+		}
+	}
+	else
+	{
+		foreach(QWidget* widget, m_hiddenWidgets)
+		{
+			widget->show();
+		}
+
+		m_hiddenWidgets.clear();
+	}
+
 	m_animationFinished = true;
 
 	update();
@@ -114,9 +128,6 @@ void HeaderDecorationWidget::onAnimationFinished()
 	m_titleFrame->update();
 	m_titleFrame->style()->unpolish(m_titleFrame);
 	m_titleFrame->style()->polish(m_titleFrame);
-
-	delete m_titleFrameAnimation;
-	delete m_contentFrameAnimation;
 }
 
 }
