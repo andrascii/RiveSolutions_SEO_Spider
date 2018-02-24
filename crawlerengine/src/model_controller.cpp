@@ -842,10 +842,6 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 		}
 
 		ParsedPagePtr parent = link.resource.lock();
-		if (parent->statusCode != Common::StatusCode::Ok200)
-		{
-			continue;
-		}
 		
 		if (!hasParentResources)
 		{
