@@ -1,5 +1,6 @@
 #include "header_decoration_widget.h"
 #include "helpers.h"
+#include "collapse_header_button.h"
 
 namespace SeoSpider
 {
@@ -10,6 +11,7 @@ HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	, m_titleLayout(new QHBoxLayout(m_titleFrame))
 	, m_layout(new QVBoxLayout(this))
 	, m_contentWidget(nullptr)
+	, m_collapseButton(new CollapseHeaderButton(m_titleFrame))
 	, m_collapseAnimation(nullptr)
 	, m_animationFinished(true)
 	, m_titleFrameCollapsed(false)
@@ -19,6 +21,10 @@ HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	m_layout->setSpacing(0);
 	m_layout->setMargin(0);
 	m_layout->addWidget(m_titleFrame);
+
+	VERIFY(connect(m_collapseButton, &CollapseHeaderButton::clicked, this, &HeaderDecorationWidget::onCollapseButtonClicked));
+
+	m_titleLayout->addWidget(m_collapseButton);
 }
 
 void HeaderDecorationWidget::addWidgetToHeader(QWidget* widget, Qt::AlignmentFlag align, bool last) const
@@ -48,7 +54,7 @@ void HeaderDecorationWidget::setContentWidget(QWidget* widget)
 	m_contentWidget = widget;
 }
 
-void HeaderDecorationWidget::mouseReleaseEvent(QMouseEvent* event)
+void HeaderDecorationWidget::onCollapseButtonClicked()
 {
 	if (!m_animationFinished)
 	{
@@ -68,11 +74,6 @@ void HeaderDecorationWidget::mouseReleaseEvent(QMouseEvent* event)
 	QRect titleFrameFinalGeometry = titleFrameSourceGeometry;
 	titleFrameFinalGeometry.setHeight(m_titleFrameCollapsed ? Common::Helpers::pointsToPixels(40) : Common::Helpers::pointsToPixels(10));
 
-	if (!titleFrameSourceGeometry.contains(event->pos()))
-	{
-		return;
-	}
-
 	QPropertyAnimation* contentFrameAnimation = new QPropertyAnimation(m_contentWidget, "geometry");
 	contentFrameAnimation->setDuration(500);
 	contentFrameAnimation->setStartValue(contentWidgetSourceGeometry);
@@ -90,7 +91,7 @@ void HeaderDecorationWidget::mouseReleaseEvent(QMouseEvent* event)
 
 	m_animationFinished = false;
 	m_titleFrameCollapsed = !m_titleFrameCollapsed;
-	
+
 	VERIFY(connect(m_collapseAnimation, &QAbstractAnimation::finished, this, &HeaderDecorationWidget::onAnimationFinished));
 }
 
@@ -102,7 +103,7 @@ void HeaderDecorationWidget::onAnimationFinished()
 		{
 			QWidget* widget = m_titleLayout->itemAt(i)->widget();
 
-			if (widget && widget->isVisible())
+			if (widget && widget->isVisible() && widget != static_cast<QWidget*>(m_collapseButton))
 			{
 				m_hiddenWidgets.push_back(widget);
 				widget->hide();
