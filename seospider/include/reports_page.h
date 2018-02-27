@@ -37,6 +37,8 @@ private:
 
 	Q_SLOT void exportToPdf();
 
+	Q_SLOT void crawlerStateChangedSlot(int state);
+
 	void doExport(IReportExporter* exporter) const;
 
 #ifndef PRODUCTION
@@ -47,6 +49,8 @@ private:
 #endif
 
 private:
+	QStackedWidget* m_stackedWidget;
+	QLabel* m_placeHolderLabel;
 	QWebEngineView* m_webEngineView;
 	ReportType m_reportType;
 	ReportDataProvider m_reportDataProvider;
