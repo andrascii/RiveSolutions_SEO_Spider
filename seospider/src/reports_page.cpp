@@ -17,6 +17,8 @@ using namespace CrawlerEngine;
 
 ReportsPage::ReportsPage(QWidget* parent)
 	: QFrame(parent)
+	, m_stackedWidget(new QStackedWidget(this))
+	, m_placeHolderLabel(new QLabel(this))
 	, m_webEngineView(new QWebEngineView(this))
 	, m_reportDataProvider(theApp->crawler()->sequencedDataCollection())
 	, m_updateTimerId(0)
@@ -25,15 +27,22 @@ ReportsPage::ReportsPage(QWidget* parent)
 	theApp->installEventFilter(this);
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->addWidget(m_webEngineView);
+	layout->addWidget(m_stackedWidget);
 	layout->setMargin(0);
 		
+	m_placeHolderLabel->setObjectName(QStringLiteral("TablePlaseholderLabel"));
+	m_placeHolderLabel->setText(tr("Waiting while crawling ended"));
+	m_placeHolderLabel->setAlignment(Qt::AlignCenter);
+	m_stackedWidget->addWidget(m_placeHolderLabel);
+	m_stackedWidget->addWidget(m_webEngineView);
+
 	setReportType(ReportTypeBrief);
 
 	m_saveToPdfAction->setIcon(SvgRenderer::render(QStringLiteral(":/images/pdf.svg"), 25, 25));
 
 	VERIFY(connect(theApp->preferences(), &Preferences::companyNameChanged, this, &ReportsPage::updateContent));
 	VERIFY(connect(m_saveToPdfAction, &QAction::triggered, this, &ReportsPage::exportToPdf));
+	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(crawlerStateChangedSlot(int))));
 
 	HeaderControlsContainer* controlsContainer = theApp->headerControlsContainer();
 	controlsContainer->addAction(m_saveToPdfAction, PageFactory::AuditReportPage);
@@ -199,6 +208,17 @@ void ReportsPage::exportToPdf()
 {
 	PdfReportExporter exporter;
 	doExport(&exporter);
+}
+
+void ReportsPage::crawlerStateChangedSlot(int state)
+{
+	if(state != Crawler::State::StateWorking)
+	{
+		m_stackedWidget->setCurrentWidget(m_webEngineView);
+		return;
+	}
+	
+	m_stackedWidget->setCurrentWidget(m_placeHolderLabel);
 }
 
 void ReportsPage::doExport(IReportExporter* exporter) const

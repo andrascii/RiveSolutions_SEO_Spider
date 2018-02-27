@@ -7,6 +7,8 @@ namespace SeoSpider
 
 using namespace CrawlerEngine;
 
+class CrawlerProgressBar;
+
 class CrawlerStatusInfo : public QFrame
 {
 	Q_OBJECT
@@ -21,6 +23,7 @@ private slots:
 private:
 	QLabel* m_crawledLinksLabel;
 	QLabel* m_pendingLinksLabel;
+	CrawlerProgressBar* m_progressBar;
 };
 
 }

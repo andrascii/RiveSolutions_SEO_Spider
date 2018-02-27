@@ -114,13 +114,14 @@ SeoSpider--UrlLineEdit:focus[isValidUrl=false]
 
 /*////////////////////////////////// QProgressBar //////////////////////////*/
 
-QProgressBar
+QProgressBar 
 {
-	min-height: 1.5em;
-	background-color: #ffffff;
-	text-align: center;
-	color: #4D626E;
-	min-width: 15em;
+    min-height: 1em;
+    max-width: 10em;
+    background-color: #ffffff;
+    text-align: center;
+    color: #4D626E;
+    min-width: 15em;
 }
 
 QProgressBar::chunk
@@ -715,8 +716,16 @@ QColorDialog QSpinBox
 }
 
 /*////////////////////////////// ColorSelectorWidget //////////////////////////////////////////////*/
+
 SeoSpider--ColorSelectorWidget
 {
 	qproperty-borderColor: #4D626E;
 }
 
+
+/*////////////////////////////// PageViewModel //////////////////////////////////////////////*/
+
+SeoSpider--PageViewModel
+{
+	qproperty-selectionBackgroundColor: #4D626E;
+}
