@@ -16,6 +16,7 @@ public:
 private:
 	QFrame* m_titleFrame;
 	QHBoxLayout* m_titleLayout;
+	QHBoxLayout* m_contentLayout;
 	QVBoxLayout* m_layout;
 };
 

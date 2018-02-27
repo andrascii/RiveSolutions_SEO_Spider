@@ -27,6 +27,10 @@ signals:
 private slots:
 	void onMaximizeRestoreButtonClicked();
 
+protected:
+	void mousePressEvent(QMouseEvent *mouseEvent);
+	void mouseMoveEvent(QMouseEvent *mouseEvent);
+
 private:
 	QPushButton* createMinimizeButton();
 	QPushButton* createMaximizeRestoreButton();
@@ -49,6 +53,11 @@ private:
 	QLabel* m_minimizeButton;
 	QLabel* m_maximizeRestoreButton;
 	QLabel* m_closeButton;
+
+	QPoint m_startPosition;
+	QPoint m_clickPosition;
+
+	bool m_maximized;
 };
 
 }

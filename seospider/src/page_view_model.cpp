@@ -201,6 +201,102 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	}
 }
 
+const QColor& PageViewModel::backgroundColor() const noexcept
+{
+	return m_backgroundColor;
+}
+
+void PageViewModel::setBackgroundColor(const QColor& color) noexcept
+{
+	m_backgroundColor = color;
+
+	emit backgroundColorChanged();
+}
+
+const QColor& PageViewModel::textColor() const noexcept
+{
+	return m_textColor;
+}
+
+void PageViewModel::setTextColor(const QColor& color) noexcept
+{
+	m_textColor = color;
+
+	emit textColorChanged();
+}
+
+const QColor& PageViewModel::selectionBackgroundColor() const noexcept
+{
+	return m_selectionBackgroundColor;
+}
+
+void PageViewModel::setSelectionBackgroundColor(const QColor& color) noexcept
+{
+	m_selectionBackgroundColor = color;
+
+	emit selectionBackgroundColorChanged();
+}
+
+const QColor& PageViewModel::hoveredBackgroundColor() const noexcept
+{
+	return m_hoveredBackgroundColor;
+}
+
+void PageViewModel::setHoveredBackgroundColor(const QColor& color) noexcept
+{
+	m_hoveredBackgroundColor = color;
+
+	emit hoveredBackgroundColorChanged();
+}
+
+const QColor& PageViewModel::selectedGridLineColor() const noexcept
+{
+	return m_selectedGridLineColor;
+}
+
+void PageViewModel::setSelectedGridLineColor(const QColor& color) noexcept
+{
+	m_selectedGridLineColor = color;
+
+	emit selectedGridLineColorChanged();
+}
+
+const QColor& PageViewModel::gridLineColor() const noexcept
+{
+	return m_gridLineColor;
+}
+
+void PageViewModel::setGridLineColor(const QColor& color) noexcept
+{
+	m_gridLineColor = color;
+
+	emit gridLineColorChanged();
+}
+
+const QColor& PageViewModel::urlTextColor() const noexcept
+{
+	return m_urlTextColor;
+}
+
+void PageViewModel::setUrlTextColor(const QColor& color) noexcept
+{
+	m_urlTextColor = color;
+
+	emit urlTextColorChanged();
+}
+
+const QFont& PageViewModel::textFont() const noexcept
+{
+	return m_textFont;
+}
+
+void PageViewModel::setTextFont(const QFont& font) noexcept
+{
+	m_textFont = font;
+
+	emit textFontChanged();
+}
+
 void PageViewModel::onAttachedModelStorageAdapterChanged()
 {
 	const PageModel* model =

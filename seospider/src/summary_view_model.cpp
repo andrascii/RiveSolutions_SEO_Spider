@@ -157,4 +157,113 @@ void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	}
 }
 
+
+const QColor& SummaryViewModel::backgroundColor() const noexcept
+{
+	return m_backgroundColor;
+}
+
+void SummaryViewModel::setBackgroundColor(const QColor& color) noexcept
+{
+	m_backgroundColor = color;
+
+	emit backgroundColorChanged();
+}
+
+const QColor& SummaryViewModel::textColor() const noexcept
+{
+	return m_textColor;
+}
+
+void SummaryViewModel::setTextColor(const QColor& color) noexcept
+{
+	m_textColor = color;
+
+	emit textColorChanged();
+}
+
+const QColor& SummaryViewModel::selectedBackgroundColor() const noexcept
+{
+	return m_selectedBackgroundColor;
+}
+
+void SummaryViewModel::setSelectedBackgroundColor(const QColor& color) noexcept
+{
+	m_selectedBackgroundColor = color;
+
+	emit selectedBackgroundColorChanged();
+}
+
+const QColor& SummaryViewModel::hoveredBackgroundColor() const noexcept
+{
+	return m_hoveredBackgroundColor;
+}
+
+void SummaryViewModel::setHoveredBackgroundColor(const QColor& color) noexcept
+{
+	m_hoveredBackgroundColor = color;
+
+	emit hoveredBackgroundColorChanged();
+}
+
+const QColor& SummaryViewModel::selectedGridLineColor() const noexcept
+{
+	return m_selectedGridLineColor;
+}
+
+void SummaryViewModel::setSelectedGridLineColor(const QColor& color) noexcept
+{
+	m_selectedGridLineColor = color;
+
+	emit selectedGridLineColorChanged();
+}
+
+const QColor& SummaryViewModel::gridLineColor() const noexcept
+{
+	return m_gridLineColor;
+}
+
+void SummaryViewModel::setGridLineColor(const QColor& color) noexcept
+{
+	m_gridLineColor = color;
+
+	emit gridLineColorChanged();
+}
+
+const QFont& SummaryViewModel::headerFont() const noexcept
+{
+	return m_headerFont;
+}
+
+const QColor& SummaryViewModel::headerTextColor() const noexcept
+{
+	return m_headerTextColor;
+}
+
+void SummaryViewModel::setHeaderTextColor(const QColor& color) noexcept
+{
+	m_headerTextColor = color;
+
+	emit headerTextColorChanged();
+}
+
+void SummaryViewModel::setHeaderFont(const QFont& font) noexcept
+{
+	m_headerFont = font;
+
+	emit headerFontChanged();
+}
+
+const QFont& SummaryViewModel::textFont() const noexcept
+{
+	return m_textFont;
+}
+
+void SummaryViewModel::setTextFont(const QFont& font) noexcept
+{
+	m_textFont = font;
+
+	emit textFontChanged();
+}
+
 }

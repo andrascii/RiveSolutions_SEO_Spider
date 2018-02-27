@@ -1,5 +1,6 @@
 #include "application.h"
 #include "crawler_status_info.h"
+#include "crawler_progress_bar.h"
 
 namespace SeoSpider
 {
@@ -8,6 +9,7 @@ CrawlerStatusInfo::CrawlerStatusInfo(QWidget* parent)
 	: QFrame(parent)
 	, m_crawledLinksLabel(new QLabel(this))
 	, m_pendingLinksLabel(new QLabel(this))
+	, m_progressBar(new CrawlerProgressBar(this))
 {
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
 
@@ -15,8 +17,10 @@ CrawlerStatusInfo::CrawlerStatusInfo(QWidget* parent)
 		this, SLOT(onAboutCrawlerProgressChanged(CrawlingProgress )), Qt::QueuedConnection));
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
+	layout->addWidget(m_progressBar);
 	layout->addWidget(m_crawledLinksLabel);
 	layout->addWidget(m_pendingLinksLabel);
+	layout->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding));
 
 	hide();
 }

@@ -20,7 +20,6 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 	m_stackedWidget = new QStackedWidget(this);
 
 	m_decorationWidget->addWidgetToHeader(new ControlPanelWidget(this));
-	m_decorationWidget->addWidgetToHeader(new CrawlerProgressBar(this), Qt::AlignLeft);
 
 	QHBoxLayout* dynamicControlsLayoutWithSpacer = new QHBoxLayout(this);
 	dynamicControlsLayoutWithSpacer->setMargin(0);
@@ -34,13 +33,13 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 	dynamicControlsLayoutWithSpacer->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum));
 	m_decorationWidget->addWidgetToHeader(dynamicControlsWidget, Qt::AlignLeft, true);
 
+	m_decorationWidget->setContentWidget(m_navigationPanel.navigationPanelWidget);
 	m_decorationWidget->setContentWidget(m_stackedWidget);
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
 	horizontalLayout->setSpacing(0);
 	horizontalLayout->setMargin(0);
 
-	horizontalLayout->addWidget(m_navigationPanel.navigationPanelWidget);
 	horizontalLayout->addWidget(m_decorationWidget);
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::stateChanged,

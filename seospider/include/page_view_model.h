@@ -13,6 +13,15 @@ class PageViewModel : public AbstractViewModel
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
+	Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor NOTIFY textColorChanged)
+	Q_PROPERTY(QColor selectionBackgroundColor READ selectionBackgroundColor WRITE setSelectionBackgroundColor NOTIFY selectionBackgroundColorChanged)
+	Q_PROPERTY(QColor hoveredBackgroundColor READ hoveredBackgroundColor WRITE setHoveredBackgroundColor NOTIFY hoveredBackgroundColorChanged)
+	Q_PROPERTY(QColor selectedGridLineColor READ selectedGridLineColor WRITE setSelectedGridLineColor NOTIFY selectedGridLineColorChanged)
+	Q_PROPERTY(QColor gridLineColor READ gridLineColor WRITE setGridLineColor NOTIFY gridLineColorChanged)
+	Q_PROPERTY(QColor urlTextColor READ urlTextColor WRITE setUrlTextColor NOTIFY urlTextColorChanged)
+	Q_PROPERTY(QFont textFont READ textFont WRITE setTextFont NOTIFY textFontChanged)
+
 public:
 	PageViewModel(IView* view, PageModel* model, QObject* parent = nullptr);
 
@@ -33,6 +42,38 @@ public:
 	virtual const QColor& selectedGridLineColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& gridLineColor(const QModelIndex& index) const noexcept override;
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
+
+	const QColor& backgroundColor() const noexcept;
+	Q_SLOT void setBackgroundColor(const QColor& color) noexcept;
+	Q_SIGNAL void backgroundColorChanged();
+
+	const QColor& textColor() const noexcept;
+	Q_SLOT void setTextColor(const QColor& color) noexcept;
+	Q_SIGNAL void textColorChanged();
+
+	const QColor& selectionBackgroundColor() const noexcept;
+	Q_SLOT void setSelectionBackgroundColor(const QColor& color) noexcept;
+	Q_SIGNAL void selectionBackgroundColorChanged();
+
+	const QColor& hoveredBackgroundColor() const noexcept;
+	Q_SLOT void setHoveredBackgroundColor(const QColor& color) noexcept;
+	Q_SIGNAL void hoveredBackgroundColorChanged();
+
+	const QColor& selectedGridLineColor() const noexcept;
+	Q_SLOT void setSelectedGridLineColor(const QColor& color) noexcept;
+	Q_SIGNAL void selectedGridLineColorChanged();
+
+	const QColor& gridLineColor() const noexcept;
+	Q_SLOT void setGridLineColor(const QColor& color) noexcept;
+	Q_SIGNAL void gridLineColorChanged();
+
+	const QColor& urlTextColor() const noexcept;
+	Q_SLOT void setUrlTextColor(const QColor& color) noexcept;
+	Q_SIGNAL void urlTextColorChanged();
+
+	const QFont& textFont() const noexcept;
+	Q_SLOT void setTextFont(const QFont& font) noexcept;
+	Q_SIGNAL void textFontChanged();
 
 private slots:
 	void onAttachedModelStorageAdapterChanged();

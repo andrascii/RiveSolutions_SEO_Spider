@@ -15,6 +15,8 @@ TitleBar::TitleBar(QWidget* parent)
 {
 	setWindowFlags(Qt::CustomizeWindowHint);
 
+	m_maximized = false;
+
 	QLabel* label = new QLabel;
 	label->setPixmap(QPixmap(":/images/close-window.png"));
 
@@ -65,7 +67,7 @@ void TitleBar::onMaximizeRestoreButtonClicked()
 {
 	if (parentWidget()->isMaximized())
 	{
-
+		m_maximized = !m_maximized;
 	}
 	else
 	{
@@ -116,6 +118,29 @@ QPushButton* TitleBar::createCloseButton()
 	buttonLayout->setContentsMargins(m_pixmapLeftMargin, 0, 0, 0);
 
 	return closeButton;
+}
+
+void TitleBar::mousePressEvent(QMouseEvent *mouseEvent) 
+{
+	m_startPosition = mouseEvent->globalPos();
+	m_clickPosition = mapToParent(mouseEvent->pos());
+}
+
+void TitleBar::mouseMoveEvent(QMouseEvent *mouseEvent)
+{
+	if (m_maximized)
+	{
+		return;
+	}
+
+	parentWidget()->move(mouseEvent->globalPos() - m_clickPosition);
+
+	if (!mouseEvent->globalPos().y())
+	{
+		//QtWin::extendFrameIntoClientArea(parentWidget()->windowHandle(), -1, -1, -1, -1);
+		return;
+	}
+
 }
 
 }
