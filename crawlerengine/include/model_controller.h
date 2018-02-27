@@ -35,16 +35,16 @@ public slots:
 	void preparePageForRefresh(ParsedPage* parsedPage);
 
 private:
-	void processParsedPageUrl(WorkerResult& workerResult);
-	void processParsedPageTitle(WorkerResult& workerResult);
-	void processParsedPageMetaDescription(WorkerResult& workerResult);
-	void processParsedPageMetaKeywords(WorkerResult& workerResult);
-	void processParsedPageH1(WorkerResult& workerResult);
-	void processParsedPageH2(WorkerResult& workerResult);
-	void processParsedPageImage(WorkerResult& workerResult, bool checkOnlyLastResource = false);
-	void processParsedPageStatusCode(WorkerResult& workerResult);
-	void processParsedPageHtmlResources(WorkerResult& workerResult);
-	void processParsedPageResources(WorkerResult& workerResult);
+	void processParsedPageUrl(WorkerResult& workerResult, bool secondGetRequest);
+	void processParsedPageTitle(WorkerResult& workerResult, bool secondGetRequest);
+	void processParsedPageMetaDescription(WorkerResult& workerResult, bool secondGetRequest);
+	void processParsedPageMetaKeywords(WorkerResult& workerResult, bool secondGetRequest);
+	void processParsedPageH1(WorkerResult& workerResult, bool secondGetRequest);
+	void processParsedPageH2(WorkerResult& workerResult, bool secondGetRequest);
+	void processParsedPageImage(WorkerResult& workerResult, bool checkOnlyLastResource = false, bool secondGetRequest = false);
+	void processParsedPageStatusCode(WorkerResult& workerResult, bool secondGetRequest);
+	void processParsedPageHtmlResources(WorkerResult& workerResult, bool secondGetRequest);
+	void processParsedPageResources(WorkerResult& workerResult, bool secondGetRequest);
 	void fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept;
 	bool resourceShouldBeProcessed(ResourceType resourceType) const noexcept;
 	void calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept;

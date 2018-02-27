@@ -557,7 +557,6 @@ SeoSpider--HeaderDecorationWidget
 
 SeoSpider--HeaderDecorationWidget QFrame#TitleFrame
 {
-	min-height: 3em;
 	background-color: #F2F2F2;
 	border-bottom: 0.1em solid #CCCCCC;
 }

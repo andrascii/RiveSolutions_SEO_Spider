@@ -93,21 +93,23 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	ASSERT(workerResult.incomingPage()->resourceType >= ResourceType::ResourceHtml &&
 		workerResult.incomingPage()->resourceType <= ResourceType::ResourceOther);
 
+	bool secondGetRequest = false;
 	if (!workerResult.isRefreshResult())
 	{
-		// This is possible that the same page is loaded twice: once by a HEAD request and once by a GET request
-		// TODO: make more proper merging if the second request is a GET request
 		const ParsedPagePtr existingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
 
 		if (existingPage)
 		{
-			// WRONG
-			// TODO: implement correct processing a page second time
-			// we should not append this page in storages second time if it is already there
-			return;
+			if (workerResult.requestType() == DownloadRequestType::RequestTypeHead)
+			{
+				CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
+				return;
+			}
+			
+			secondGetRequest = true;
 		}
 		
-		//workerResult.incomingPage() = mergeTwoPages(existingPage, workerResult.incomingPage());
+		workerResult.incomingPage() = mergeTwoPages(existingPage, workerResult.incomingPage());
 	}
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
@@ -120,24 +122,24 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		return;
 	}
 
-	processParsedPageHtmlResources(workerResult);
-	processParsedPageResources(workerResult);
+	processParsedPageHtmlResources(workerResult, secondGetRequest);
+	processParsedPageResources(workerResult, secondGetRequest);
 	workerResult.incomingPage()->allResourcesOnPage.clear();
 
-	processParsedPageStatusCode(workerResult);
-	processParsedPageUrl(workerResult);
+	processParsedPageStatusCode(workerResult, secondGetRequest);
+	processParsedPageUrl(workerResult, secondGetRequest);
 
 	if (workerResult.incomingPage()->resourceType == ResourceType::ResourceHtml)
 	{
-		processParsedPageTitle(workerResult);
-		processParsedPageMetaDescription(workerResult);
-		processParsedPageMetaKeywords(workerResult);
-		processParsedPageH1(workerResult);
-		processParsedPageH2(workerResult);
+		processParsedPageTitle(workerResult, secondGetRequest);
+		processParsedPageMetaDescription(workerResult, secondGetRequest);
+		processParsedPageMetaKeywords(workerResult, secondGetRequest);
+		processParsedPageH1(workerResult, secondGetRequest);
+		processParsedPageH2(workerResult, secondGetRequest);
 	}
 	else if (workerResult.incomingPage()->resourceType == ResourceType::ResourceImage)
 	{
-		processParsedPageImage(workerResult);
+		processParsedPageImage(workerResult, false, secondGetRequest);
 	}
 
 	data()->removeParsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
@@ -159,8 +161,13 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	}
 }
 
-void ModelController::processParsedPageUrl(WorkerResult& workerResult)
+void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool secondGetRequest)
 {
+	if (secondGetRequest)
+	{
+		return;
+	}
+
 	const Url url = workerResult.incomingPage()->url;
 	const QString urlStr = url.toString();
 	
@@ -248,8 +255,10 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult)
 	}
 }
 
-void ModelController::processParsedPageTitle(WorkerResult& workerResult)
+void ModelController::processParsedPageTitle(WorkerResult& workerResult, bool secondGetRequest)
 {
+	Q_UNUSED(secondGetRequest);
+
 	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
@@ -291,8 +300,10 @@ void ModelController::processParsedPageTitle(WorkerResult& workerResult)
 	}
 }
 
-void ModelController::processParsedPageMetaDescription(WorkerResult& workerResult)
+void ModelController::processParsedPageMetaDescription(WorkerResult& workerResult, bool secondGetRequest)
 {
+	Q_UNUSED(secondGetRequest);
+
 	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
@@ -327,8 +338,10 @@ void ModelController::processParsedPageMetaDescription(WorkerResult& workerResul
 	}
 }
 
-void ModelController::processParsedPageMetaKeywords(WorkerResult& workerResult)
+void ModelController::processParsedPageMetaKeywords(WorkerResult& workerResult, bool secondGetRequest)
 {
+	Q_UNUSED(secondGetRequest)
+
 	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
@@ -356,8 +369,10 @@ void ModelController::processParsedPageMetaKeywords(WorkerResult& workerResult)
 	}
 }
 
-void ModelController::processParsedPageH1(WorkerResult& workerResult)
+void ModelController::processParsedPageH1(WorkerResult& workerResult, bool secondGetRequest)
 {
+	Q_UNUSED(secondGetRequest);
+
 	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
@@ -393,8 +408,10 @@ void ModelController::processParsedPageH1(WorkerResult& workerResult)
 	}
 }
 
-void ModelController::processParsedPageH2(WorkerResult& workerResult)
+void ModelController::processParsedPageH2(WorkerResult& workerResult, bool secondGetRequest)
 {
+	Q_UNUSED(secondGetRequest);
+
 	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		return;
@@ -430,8 +447,10 @@ void ModelController::processParsedPageH2(WorkerResult& workerResult)
 	}
 }
 
-void ModelController::processParsedPageImage(WorkerResult& workerResult, bool checkOnlyLastResource)
+void ModelController::processParsedPageImage(WorkerResult& workerResult, bool checkOnlyLastResource, bool secondGetRequest)
 {
+	Q_UNUSED(secondGetRequest);
+
 	class CounterIncrementor final
 	{
 	public:
@@ -487,8 +506,13 @@ void ModelController::processParsedPageImage(WorkerResult& workerResult, bool ch
 	}
 }
 
-void ModelController::processParsedPageStatusCode(WorkerResult& workerResult)
+void ModelController::processParsedPageStatusCode(WorkerResult& workerResult, bool secondGetRequest)
 {
+	if (secondGetRequest)
+	{
+		return;
+	}
+
 	if (workerResult.incomingPage()->statusCode == Common::StatusCode::NotFound404)
 	{
 		data()->addParsedPage(workerResult, StorageType::BrokenLinks);
@@ -517,7 +541,7 @@ void ModelController::processParsedPageStatusCode(WorkerResult& workerResult)
 	}
 }
 
-void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult)
+void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult, bool secondGetRequest)
 {
 	if (workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml)
 	{
@@ -531,15 +555,19 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult)
 	const StorageType storage = workerResult.incomingPage()->isThisExternalPage ?
 		StorageType::ExternalHtmlResourcesStorageType : StorageType::HtmlResourcesStorageType;
 
-	data()->addParsedPage(workerResult, storage);
+	if (!secondGetRequest)
+	{
+		data()->addParsedPage(workerResult, storage);
+	}
 
 	if (workerResult.incomingPage()->isThisExternalPage)
 	{
 		const bool doFollow = std::any_of(workerResult.incomingPage()->linksToThisPage.begin(), workerResult.incomingPage()->linksToThisPage.end(),
 			[](const ResourceLink& link) { return link.linkParameter == LinkParameter::DofollowParameter; });
 
-		if (doFollow)
+		if (doFollow && !secondGetRequest)
 		{
+			// TODO: we can add a "do follow" link later, so we should take this into account
 			DEBUG_ASSERT(!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::ExternalDoFollowUrlResourcesStorageType));
 			data()->addParsedPage(workerResult, StorageType::ExternalDoFollowUrlResourcesStorageType);
 		}
@@ -621,7 +649,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult)
 	}
 }
 
-void ModelController::processParsedPageResources(WorkerResult& workerResult)
+void ModelController::processParsedPageResources(WorkerResult& workerResult, bool secondGetRequest)
 {
 	static const QMap<ResourceType, StorageType> s_storageTypes
 	{
@@ -647,7 +675,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult)
 	const bool http = PageParserHelpers::isHttpOrHttpsScheme(workerResult.incomingPage()->url);
 	const bool externalOrNotHttp = workerResult.incomingPage()->isThisExternalPage || !http;
 
-	if (workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml)
+	if (workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml && !secondGetRequest)
 	{
 		const ParsedPagePtr pendingPageRaw = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
 		workerResult.incomingPage() = mergeTwoPages(pendingPageRaw, workerResult.incomingPage());
@@ -740,7 +768,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult)
 		if (existingImageResource)
 		{
 			WorkerResult result(newOrExistingResource, workerResult.isRefreshResult(), workerResult.requestType());
-			processParsedPageImage(result, true);
+			processParsedPageImage(result, true, secondGetRequest);
 		}
 	}
 }
@@ -814,10 +842,6 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 		}
 
 		ParsedPagePtr parent = link.resource.lock();
-		if (parent->statusCode != Common::StatusCode::Ok200)
-		{
-			continue;
-		}
 		
 		if (!hasParentResources)
 		{
