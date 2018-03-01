@@ -30,7 +30,7 @@ public slots:
 	void showSitemapCreatorDialog();
 	void saveFileAs();
 	void openFile();
-	void openFileThroughCmd(QString path);
+	void openFileThroughCmd(const QString& path);
 	void saveFileAndClearData();
 
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());

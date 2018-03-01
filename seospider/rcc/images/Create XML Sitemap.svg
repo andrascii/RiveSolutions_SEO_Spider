@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X6 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="512mm" height="375.24mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 475 348"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil1 {fill:#A6A7AB}
+    .fil2 {fill:#FF6600}
+    .fil0 {fill:white}
+   ]]>
+  </style>
+ </defs>
+ <g id="Слой_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <circle class="fil0" cx="338" cy="109" r="109"/>
+  <circle class="fil1" cx="68" cy="280" r="68"/>
+  <circle class="fil1" cx="239" cy="280" r="68"/>
+  <circle class="fil1" cx="407" cy="280" r="68"/>
+  <polygon class="fil1" points="400,179 74,179 74,280 59,280 59,163 415,163 415,280 400,280 "/>
+  <polygon class="fil1" points="247,132 247,280 232,280 232,132 "/>
+  <circle class="fil1" cx="239" cy="68" r="68"/>
+  <path class="fil0" d="M331 68l0 -34c0,-7 5,-12 12,-12l12 0c7,0 12,5 12,12l0 34 35 0c6,0 12,6 12,13l0 12c0,6 -6,12 -12,12l-35 0 0 34c0,7 -5,12 -12,12l-12 0c-7,0 -12,-5 -12,-12l0 -34 -35 0c-6,0 -12,-6 -12,-12l0 -12c0,-7 6,-13 12,-13l35 0z"/>
+  <path class="fil2" d="M296 76l42 0 0 -42c0,-3 2,-5 5,-5l12 0c3,0 5,2 5,5l0 42 42 0c2,0 4,2 4,5l0 12c0,2 -2,4 -4,4l-42 0 0 42c0,3 -2,5 -5,5l-12 0c-3,0 -5,-2 -5,-5l0 -42 -42 0c-2,0 -4,-2 -4,-4l0 -12c0,-3 2,-5 4,-5z"/>
+ </g>
+</svg>
