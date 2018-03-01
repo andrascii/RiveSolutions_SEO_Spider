@@ -74,7 +74,7 @@ void MainWindow::openFile()
 	theApp->crawler()->loadFromFile(path);
 }
 
-void MainWindow::openFileThroughCmd(QString path)
+void MainWindow::openFileThroughCmd(const QString& path)
 {
 	if(!path.endsWith(".sxr"))
 	{
