@@ -9,6 +9,7 @@ LogMessageReceiver::LogMessageReceiver(QObject* parent)
 	, m_message{}
 	, m_connectionTimerId{}
 {
+	assert(m_message.messageSize == 0);
 	VERIFY(connect(m_socket, &QLocalSocket::disconnected, this, &LogMessageReceiver::onConnectionClosed));
 	VERIFY(connect(m_socket, &QLocalSocket::readyRead, this, &LogMessageReceiver::readMessage));
 
@@ -45,24 +46,28 @@ void LogMessageReceiver::readMessage()
 	{
 		if (m_message.messageSize == 0)
 		{
-			if (m_socket->bytesAvailable() < static_cast<int>(sizeof(std::uint64_t) * 2))
+			if (m_socket->bytesAvailable() < static_cast<int>(sizeof(qint64) * 2))
 			{
 				break;
 			}
 
 			stream >> m_message.messageSize;
 
-			std::uint64_t severetyLevel = 0;
+			assert(m_message.messageSize <= 1000 && m_message.messageSize >= 1);
+
+			qint64 severetyLevel = 0;
 			stream >> severetyLevel;
 
 			m_message.severityLevel = static_cast<SeoSpiderServiceApi::SeverityLevel>(severetyLevel);
 		}
 
+		assert(m_message.messageSize <= 10000 && m_message.messageSize >= 1);
 		if (m_socket->bytesAvailable() < static_cast<int>(m_message.messageSize) || stream.atEnd())
 		{
 			continue;
 		}
 
+		assert(m_message.messageSize <= 10000 && m_message.messageSize >= 1);
 		char* buffer = new char[m_message.messageSize + 1];
 
 		uint length = static_cast<uint>(m_message.messageSize);
@@ -77,6 +82,7 @@ void LogMessageReceiver::readMessage()
 		emit messageReceived(m_message);
 
 		m_message = Message{};
+		assert(m_message.messageSize == 0);
 	}
 }
 

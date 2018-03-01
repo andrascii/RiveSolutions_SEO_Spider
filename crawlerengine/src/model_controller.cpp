@@ -150,6 +150,8 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		m_linksToPageChanges.changes.clear();
 	}
 
+	INFOLOG << workerResult.incomingPage()->url.canonizedUrlStr();
+
 	if (!workerResult.isRefreshResult())
 	{
 		DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||

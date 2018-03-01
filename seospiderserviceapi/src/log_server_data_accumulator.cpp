@@ -68,13 +68,17 @@ void LogServerDataAccumulator::writeDataToChannel(const QString& message, Severi
     QByteArray messageBlock;
     QDataStream sendDataStream(&messageBlock, QIODevice::WriteOnly);
     sendDataStream.setVersion(QDataStream::Qt_4_0);
+	
+	const std::string messageString = message.toStdString();
+	const char* cString = messageString.c_str();
 
-    sendDataStream << static_cast<std::uint64_t>(0);
-    sendDataStream << static_cast<std::uint64_t>(severityLevel);
-    sendDataStream.writeBytes(message.toStdString().c_str(), message.size());
+	const size_t messageSize = strlen(cString);
+	//DEBUG_ASSERT(message.size() == static_cast<int>(messageSize));
 
-    sendDataStream.device()->seek(0);
-    sendDataStream << static_cast<std::uint64_t>(message.size());
+	sendDataStream << static_cast<qint64>(messageSize);
+	sendDataStream << static_cast<qint64>(severityLevel);
+
+	sendDataStream.writeBytes(cString, static_cast<uint>(messageSize));
 
     const qint64 bytesWritten = m_currentConnectionSocket->write(messageBlock);
     m_currentConnectionSocket->waitForBytesWritten();

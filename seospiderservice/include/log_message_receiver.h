@@ -7,7 +7,7 @@ namespace SeoSpiderService
 
 struct Message
 {
-    std::uint64_t messageSize;
+    qint64 messageSize = 0;
     SeoSpiderServiceApi::SeverityLevel severityLevel;
     QString message;
 };
