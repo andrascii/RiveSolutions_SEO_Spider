@@ -1,5 +1,5 @@
-#include "smtpsendingresult.h"
-#include "smtpsender.h"
+#include "smtp_sending_result.h"
+#include "smtp_sender.h"
 
 namespace Common
 {
@@ -66,7 +66,7 @@ SmtpSendingResult::SmtpSendingResult(const SmtpMessage& message)
 			QFile attachedFile(attachedFilePath);
 			attachedFile.open(QIODevice::ReadOnly);
 			QString fileExtension = QFileInfo(attachedFilePath).suffix();
-			QxtMailAttachment attachment(attachedFile.readAll(), QString("image/").append(fileExtension));
+			QxtMailAttachment attachment(attachedFile.readAll());
 			attachedFile.close();
 			m.addAttachment(attachedFilePath, attachment);
 		}		

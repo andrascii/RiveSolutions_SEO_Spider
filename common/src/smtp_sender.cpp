@@ -1,5 +1,5 @@
-#include "smtpsender.h"
-#include "smtpsendingresult.h"
+#include "smtp_sender.h"
+#include "smtp_sending_result.h"
 
 namespace Common
 {

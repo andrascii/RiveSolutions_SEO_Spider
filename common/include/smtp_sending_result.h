@@ -1,6 +1,6 @@
 #pragma once
 
-#include "smtpsender.h"
+#include "smtp_sender.h"
 #include "qxtsmtp.h"
 
 namespace Common
