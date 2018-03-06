@@ -67,20 +67,23 @@ void LogServerDataAccumulator::writeDataToChannel(const QString& message, Severi
 {
     QByteArray messageBlock;
     QDataStream sendDataStream(&messageBlock, QIODevice::WriteOnly);
-    sendDataStream.setVersion(QDataStream::Qt_4_0);
 	
-	const std::string messageString = message.toStdString();
-	const char* cString = messageString.c_str();
+	const QByteArray messageBytes = message.toUtf8();
+	const int messageSize = messageBytes.size();
 
-	const size_t messageSize = strlen(cString);
-	//DEBUG_ASSERT(message.size() == static_cast<int>(messageSize));
+	constexpr uint headerSize = static_cast<uint>(sizeof(qint64) * 2);
+	char headerBuffer[headerSize];
+	qint64* messageSizePtr = (qint64*)((char*)headerBuffer);
+	qint64* severityPtr = (qint64*)((char*)headerBuffer + headerSize / 2);
 
-	sendDataStream << static_cast<qint64>(messageSize);
-	sendDataStream << static_cast<qint64>(severityLevel);
+	*messageSizePtr = static_cast<qint64>(messageSize);
+	*severityPtr = static_cast<qint64>(severityLevel);
 
-	sendDataStream.writeBytes(cString, static_cast<uint>(messageSize));
+	sendDataStream.writeRawData(headerBuffer, headerSize);
+	sendDataStream.writeRawData(messageBytes.constData(), static_cast<uint>(messageSize));
 
     const qint64 bytesWritten = m_currentConnectionSocket->write(messageBlock);
+	ASSERT(bytesWritten == headerSize + messageSize);
     m_currentConnectionSocket->waitForBytesWritten();
 }
 

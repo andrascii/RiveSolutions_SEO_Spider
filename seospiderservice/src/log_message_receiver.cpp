@@ -42,47 +42,87 @@ void LogMessageReceiver::readMessage()
 	QDataStream stream(m_socket);
 	stream.setVersion(QDataStream::Qt_4_0);
 
+	static bool messageSizeReceived = false;
+	constexpr uint headerSize = static_cast<uint>(sizeof(qint64) * 2);
+
 	for (;;)
 	{
 		if (m_message.messageSize == 0)
 		{
-			if (m_socket->bytesAvailable() < static_cast<int>(sizeof(qint64) * 2))
+			if (messageSizeReceived)
+			{
+				qDebug() << "Error: Message is received;";
+				assert(false);
+			}
+
+			if (m_socket->bytesAvailable() < headerSize)
 			{
 				break;
 			}
 
-			stream >> m_message.messageSize;
+			char headerBuffer[headerSize];
+			char* headerBufferPtr = headerBuffer;
+			qint64* messageSizePtr = (qint64*)headerBuffer;
+			qint64* severityPtr = (qint64*)(headerBuffer + headerSize / 2);
+			uint headerSizeLValue = headerSize;
 
-			assert(m_message.messageSize <= 1000 && m_message.messageSize >= 1);
+			stream.readRawData(headerBufferPtr, headerSizeLValue);
 
-			qint64 severetyLevel = 0;
-			stream >> severetyLevel;
+			m_message.messageSize = *messageSizePtr;
+			m_message.severityLevel = static_cast<SeoSpiderServiceApi::SeverityLevel>(*severityPtr);
 
-			m_message.severityLevel = static_cast<SeoSpiderServiceApi::SeverityLevel>(severetyLevel);
+			messageSizeReceived = true;
+			qDebug() << "Message size received " << m_message.messageSize;
+			if (m_message.messageSize > 1000 || m_message.messageSize < 1)
+			{
+				qDebug() << "m_message.messageSize > 1000 || m_message.messageSize < 1";
+				assert(false);
+			}
 		}
 
-		assert(m_message.messageSize <= 10000 && m_message.messageSize >= 1);
-		if (m_socket->bytesAvailable() < static_cast<int>(m_message.messageSize) || stream.atEnd())
+		//qDebug() << "Message before reading " << m_message.messageSize << " available " << m_socket->bytesAvailable();
+
+		if (!messageSizeReceived)
+		{
+			qDebug() << "Error: Message is not received;";
+			assert(false);
+		}
+		
+		if (m_message.messageSize > 1000 || m_message.messageSize < 1)
+		{
+			qDebug() << "m_message.messageSize > 1000 || m_message.messageSize < 1 (1)";
+			assert(false);
+		}
+		
+		if (m_socket->bytesAvailable() < m_message.messageSize || stream.atEnd())
 		{
 			continue;
 		}
 
-		assert(m_message.messageSize <= 10000 && m_message.messageSize >= 1);
-		char* buffer = new char[m_message.messageSize + 1];
+		//qDebug() << "Message size reading " << m_message.messageSize;
+
+		if (m_message.messageSize > 1000 || m_message.messageSize < 1)
+		{
+			qDebug() << "m_message.messageSize > 1000 || m_message.messageSize < 1 (2)";
+			assert(false);
+		}
+		char* buffer = new char[m_message.messageSize];
 
 		uint length = static_cast<uint>(m_message.messageSize);
-
-		stream.readBytes(buffer, length);
-		buffer[m_message.messageSize] = 0;
-
-		m_message.message = buffer;
+		stream.readRawData(buffer, length);
+		m_message.message = QString::fromUtf8(buffer, static_cast<int>(m_message.messageSize));
 
 		delete[] buffer;
 
 		emit messageReceived(m_message);
 
 		m_message = Message{};
-		assert(m_message.messageSize == 0);
+		if (m_message.messageSize != 0)
+		{
+			qDebug() << "m_message.messageSize == 0";
+			assert(false);
+		}
+		messageSizeReceived = false;
 	}
 }
 
