@@ -13,7 +13,7 @@ public:
 	HeaderDecorationWidget(QWidget* parent = nullptr);
 
 	void addWidgetToHeader(QWidget* widget, Qt::AlignmentFlag align = Qt::AlignLeft, bool last = false) const;
-	void setContentWidget(QWidget* widget);
+	void addContentWidget(QWidget* widget);
 
 private slots:
 	void onAnimationFinished();
@@ -22,9 +22,9 @@ private slots:
 private:
 	QFrame* m_titleFrame;
 	QHBoxLayout* m_titleLayout;
-	QHBoxLayout* m_contentLayout;
 	QVBoxLayout* m_layout;
 	QWidget* m_contentWidget;
+	QHBoxLayout* m_contentLayout;
 	CollapseHeaderButton* m_collapseButton;
 	QParallelAnimationGroup* m_collapseAnimation;
 	bool m_animationFinished;

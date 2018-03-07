@@ -8,30 +8,39 @@ namespace SeoSpider
 HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_titleFrame(new QFrame(this))
-	, m_titleLayout(new QHBoxLayout(m_titleFrame))
-	, m_contentLayout(new QHBoxLayout(m_titleFrame))
+	, m_titleLayout(new QHBoxLayout)
 	, m_layout(new QVBoxLayout(this))
-	, m_contentWidget(nullptr)
-	, m_collapseButton(new CollapseHeaderButton(m_titleFrame))
+	, m_contentWidget(new QWidget(this))
+	, m_contentLayout(new QHBoxLayout(m_contentWidget))
+	, m_collapseButton(new CollapseHeaderButton(this))
 	, m_collapseAnimation(nullptr)
 	, m_animationFinished(true)
 	, m_titleFrameCollapsed(false)
 {
+	QVBoxLayout* layout = new QVBoxLayout(m_titleFrame);
+	layout->setSpacing(0);
+	layout->setMargin(0);
+
+	m_titleLayout->setSpacing(0);
+	m_titleLayout->setMargin(0);
+
+	layout->addLayout(m_titleLayout);
+	layout->addWidget(m_collapseButton);
+
+	m_collapseButton->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+
 	m_titleFrame->setObjectName("TitleFrame");
 
 	m_layout->setSpacing(0);
 	m_layout->setMargin(0);
-	m_titleLayout->setSpacing(0);
-	m_titleLayout->setMargin(0);
-	m_contentLayout->setSpacing(0);
+	
 	m_contentLayout->setMargin(0);
 
 	m_layout->addWidget(m_titleFrame);
-	m_layout->addLayout(m_contentLayout);
+	m_layout->addWidget(m_contentWidget);
+	//m_layout->addLayout(m_contentLayout);
 
 	VERIFY(connect(m_collapseButton, &CollapseHeaderButton::clicked, this, &HeaderDecorationWidget::onCollapseButtonClicked));
-
-	m_titleLayout->addWidget(m_collapseButton);
 }
 
 void HeaderDecorationWidget::addWidgetToHeader(QWidget* widget, Qt::AlignmentFlag align, bool last) const
@@ -45,20 +54,9 @@ void HeaderDecorationWidget::addWidgetToHeader(QWidget* widget, Qt::AlignmentFla
 	}
 }
 
-void HeaderDecorationWidget::setContentWidget(QWidget* widget)
+void HeaderDecorationWidget::addContentWidget(QWidget* widget)
 {
-	//if (m_layout->count() > 1)
-	//{
-	//	// if content widget already added
-	//	QWidget* contentWidget = m_layout->itemAt(m_layout->count() - 1)->widget();
-	//	m_layout->removeWidget(contentWidget);
-	//
-	//	contentWidget->deleteLater();
-	//}
-
 	m_contentLayout->addWidget(widget);
-
-	m_contentWidget = widget;
 }
 
 void HeaderDecorationWidget::onCollapseButtonClicked()
