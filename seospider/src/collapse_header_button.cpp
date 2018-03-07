@@ -41,19 +41,24 @@ void CollapseHeaderButton::setArrowDirection(ArrowDirection direction)
 	m_direction = direction;
 }
 
+CollapseHeaderButton::ArrowDirection CollapseHeaderButton::arrowDirection() const noexcept
+{
+	return m_direction;
+}
+
 void CollapseHeaderButton::onClicked()
 {
-	m_direction = m_direction == ArrowDirectionUp ? ArrowDirectionDown : ArrowDirectionUp;
- 
-	const int rotateDegreeEndValue = rotateDegreeByDirection(m_direction);
- 
-	QPropertyAnimation* rotateAnimation = new QPropertyAnimation(this, "rotateDegree");
-	rotateAnimation->setDuration(500);
-	rotateAnimation->setStartValue(rotateDegree());
-	rotateAnimation->setEndValue(rotateDegreeEndValue);
-	rotateAnimation->start();
-
-	VERIFY(connect(rotateAnimation, &QAbstractAnimation::finished, this, &CollapseHeaderButton::onAnimationFinished));
+// 	m_direction = m_direction == ArrowDirectionUp ? ArrowDirectionDown : ArrowDirectionUp;
+//  
+// 	const int rotateDegreeEndValue = rotateDegreeByDirection(m_direction);
+//  
+// 	QPropertyAnimation* rotateAnimation = new QPropertyAnimation(this, "rotateDegree");
+// 	rotateAnimation->setDuration(500);
+// 	rotateAnimation->setStartValue(rotateDegree());
+// 	rotateAnimation->setEndValue(rotateDegreeEndValue);
+// 	rotateAnimation->start();
+// 
+// 	VERIFY(connect(rotateAnimation, &QAbstractAnimation::finished, this, &CollapseHeaderButton::onAnimationFinished));
 }
 
 void CollapseHeaderButton::setRotateDegree(int degree)

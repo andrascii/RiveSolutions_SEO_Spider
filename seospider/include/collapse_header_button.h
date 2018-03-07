@@ -22,6 +22,7 @@ public:
 	int rotateDegree() const noexcept;
 
 	void setArrowDirection(ArrowDirection direction);
+	ArrowDirection arrowDirection() const noexcept;
 
 signals:
 	void rotateDegreeChanged();
