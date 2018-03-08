@@ -6,7 +6,7 @@ namespace
 {
 
 constexpr int c_maxHeightPt = 45;
-constexpr int c_minHeightPt = 20;
+constexpr int c_minHeightPt = 15;
 
 }
 
@@ -50,6 +50,7 @@ HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 
 	VERIFY(connect(m_collapseButton, &CollapseHeaderButton::clicked, this, &HeaderDecorationWidget::onCollapseButtonClicked));
 
+	m_collapseButton->setWindowFlags(Qt::WindowStaysOnTopHint);
 	m_titleFrame->setMaximumHeight(Common::Helpers::pointsToPixels(c_maxHeightPt));
 	m_titleFrame->setMinimumHeight(Common::Helpers::pointsToPixels(c_minHeightPt));
 }
@@ -70,18 +71,21 @@ void HeaderDecorationWidget::addContentWidget(QWidget* widget)
 	m_contentLayout->addWidget(widget);
 }
 
-void HeaderDecorationWidget::mouseReleaseEvent(QMouseEvent* event)
-{
-	onCollapseButtonClicked();
-
-	QFrame::mouseReleaseEvent(event);
-}
-
 void HeaderDecorationWidget::onCollapseButtonClicked()
 {
 	if (!m_animationFinished)
 	{
 		return;
+	}
+
+	if (m_titleFrameCollapsed)
+	{
+		foreach(QWidget* widget, m_hiddenWidgets)
+		{
+			widget->show();
+		}
+
+		m_hiddenWidgets.clear();
 	}
 
 	constexpr int animationDuration = 500;
@@ -96,7 +100,7 @@ void HeaderDecorationWidget::onCollapseButtonClicked()
 	titleFrameAnimationMaxHeight->setDuration(animationDuration);
 	titleFrameAnimationMaxHeight->setStartValue(titleFrameSourceHeight);
 	titleFrameAnimationMaxHeight->setEndValue(titleFrameFinalHeight);
-
+			
 	QPropertyAnimation* titleFrameAnimationMinHeight = new QPropertyAnimation(m_titleFrame, "minimumHeight");
 	titleFrameAnimationMinHeight->setDuration(animationDuration);
 	titleFrameAnimationMinHeight->setStartValue(titleFrameSourceHeight);
@@ -158,15 +162,15 @@ void HeaderDecorationWidget::onAnimationFinished()
 			}
 		}
 	}
-	else
-	{
-		foreach(QWidget* widget, m_hiddenWidgets)
-		{
-			widget->show();
-		}
-
-		m_hiddenWidgets.clear();
-	}
+// 	else
+// 	{
+// 		foreach(QWidget* widget, m_hiddenWidgets)
+// 		{
+// 			widget->show();
+// 		}
+// 
+// 		m_hiddenWidgets.clear();
+// 	}
 
 	CollapseHeaderButton::ArrowDirection direction = m_collapseButton->arrowDirection() == CollapseHeaderButton::ArrowDirectionUp ?
 		CollapseHeaderButton::ArrowDirectionDown :

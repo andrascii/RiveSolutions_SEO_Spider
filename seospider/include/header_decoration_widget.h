@@ -15,9 +15,6 @@ public:
 	void addWidgetToHeader(QWidget* widget, Qt::AlignmentFlag align = Qt::AlignLeft, bool last = false) const;
 	void addContentWidget(QWidget* widget);
 
-protected:
-	virtual void mouseReleaseEvent(QMouseEvent*) override;
-
 private slots:
 	void onAnimationFinished();
 	void onCollapseButtonClicked();

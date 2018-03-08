@@ -28,9 +28,7 @@ signals:
 	void rotateDegreeChanged();
 
 private slots:
-	void onClicked();
 	void setRotateDegree(int degree);
-	void onAnimationFinished();
 
 private:
 	int rotateDegreeByDirection(ArrowDirection direction);
