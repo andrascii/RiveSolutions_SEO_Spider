@@ -33,8 +33,8 @@ DataPagesWidget::DataPagesWidget(QWidget* parent)
 	dynamicControlsLayoutWithSpacer->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum));
 	m_decorationWidget->addWidgetToHeader(dynamicControlsWidget, Qt::AlignLeft, true);
 
-	m_decorationWidget->setContentWidget(m_navigationPanel.navigationPanelWidget);
-	m_decorationWidget->setContentWidget(m_stackedWidget);
+	m_decorationWidget->addContentWidget(m_navigationPanel.navigationPanelWidget);
+	m_decorationWidget->addContentWidget(m_stackedWidget);
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
 	horizontalLayout->setSpacing(0);

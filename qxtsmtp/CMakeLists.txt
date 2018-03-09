@@ -36,8 +36,6 @@ if(MSVC)
 		/permissive-
 		/std:c++latest
 		/Zi
-		/W3
-		/WX
 	)
 	
 	set_target_properties(

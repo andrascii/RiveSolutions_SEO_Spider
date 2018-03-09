@@ -729,3 +729,10 @@ SeoSpider--PageViewModel
 {
 	qproperty-selectionBackgroundColor: #4D626E;
 }
+
+/*////////////////////////////// CollapseHeaderButton ///////////////////////////////////////////*/
+
+SeoSpider--CollapseHeaderButton
+{
+	border: none;
+}

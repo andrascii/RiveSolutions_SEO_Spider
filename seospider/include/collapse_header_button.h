@@ -22,14 +22,13 @@ public:
 	int rotateDegree() const noexcept;
 
 	void setArrowDirection(ArrowDirection direction);
+	ArrowDirection arrowDirection() const noexcept;
 
 signals:
 	void rotateDegreeChanged();
 
 private slots:
-	void onClicked();
 	void setRotateDegree(int degree);
-	void onAnimationFinished();
 
 private:
 	int rotateDegreeByDirection(ArrowDirection direction);

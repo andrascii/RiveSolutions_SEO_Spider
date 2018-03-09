@@ -2,36 +2,57 @@
 #include "helpers.h"
 #include "collapse_header_button.h"
 
+namespace
+{
+
+constexpr int c_maxHeightPt = 45;
+constexpr int c_minHeightPt = 15;
+
+}
+
 namespace SeoSpider
 {
 
 HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_titleFrame(new QFrame(this))
-	, m_titleLayout(new QHBoxLayout(m_titleFrame))
-	, m_contentLayout(new QHBoxLayout(m_titleFrame))
+	, m_titleLayout(new QHBoxLayout)
 	, m_layout(new QVBoxLayout(this))
-	, m_contentWidget(nullptr)
-	, m_collapseButton(new CollapseHeaderButton(m_titleFrame))
+	, m_contentWidget(new QWidget(this))
+	, m_contentLayout(new QHBoxLayout(m_contentWidget))
+	, m_collapseButton(new CollapseHeaderButton(this))
 	, m_collapseAnimation(nullptr)
 	, m_animationFinished(true)
 	, m_titleFrameCollapsed(false)
 {
+	QVBoxLayout* layout = new QVBoxLayout(m_titleFrame);
+	layout->setSpacing(0);
+	layout->setMargin(0);
+
+	m_titleLayout->setSpacing(0);
+	m_titleLayout->setMargin(0);
+
+	layout->addLayout(m_titleLayout);
+	layout->addWidget(m_collapseButton);
+
+	m_collapseButton->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+
 	m_titleFrame->setObjectName("TitleFrame");
 
 	m_layout->setSpacing(0);
 	m_layout->setMargin(0);
-	m_titleLayout->setSpacing(0);
-	m_titleLayout->setMargin(0);
-	m_contentLayout->setSpacing(0);
+	
 	m_contentLayout->setMargin(0);
+	m_contentLayout->setSpacing(0);
 
 	m_layout->addWidget(m_titleFrame);
-	m_layout->addLayout(m_contentLayout);
+	m_layout->addWidget(m_contentWidget);
 
 	VERIFY(connect(m_collapseButton, &CollapseHeaderButton::clicked, this, &HeaderDecorationWidget::onCollapseButtonClicked));
 
-	m_titleLayout->addWidget(m_collapseButton);
+	m_collapseButton->setWindowFlags(Qt::WindowStaysOnTopHint);
+	m_titleFrame->setMaximumHeight(Common::Helpers::pointsToPixels(c_maxHeightPt));
+	m_titleFrame->setMinimumHeight(Common::Helpers::pointsToPixels(c_minHeightPt));
 }
 
 void HeaderDecorationWidget::addWidgetToHeader(QWidget* widget, Qt::AlignmentFlag align, bool last) const
@@ -45,20 +66,9 @@ void HeaderDecorationWidget::addWidgetToHeader(QWidget* widget, Qt::AlignmentFla
 	}
 }
 
-void HeaderDecorationWidget::setContentWidget(QWidget* widget)
+void HeaderDecorationWidget::addContentWidget(QWidget* widget)
 {
-	//if (m_layout->count() > 1)
-	//{
-	//	// if content widget already added
-	//	QWidget* contentWidget = m_layout->itemAt(m_layout->count() - 1)->widget();
-	//	m_layout->removeWidget(contentWidget);
-	//
-	//	contentWidget->deleteLater();
-	//}
-
 	m_contentLayout->addWidget(widget);
-
-	m_contentWidget = widget;
 }
 
 void HeaderDecorationWidget::onCollapseButtonClicked()
@@ -68,32 +78,67 @@ void HeaderDecorationWidget::onCollapseButtonClicked()
 		return;
 	}
 
-	const QRect contentWidgetSourceGeometry = m_contentWidget->geometry();
+	if (m_titleFrameCollapsed)
+	{
+		foreach(QWidget* widget, m_hiddenWidgets)
+		{
+			widget->show();
+		}
 
-	QRect contentWidgetFinalGeometry = contentWidgetSourceGeometry;
+		m_hiddenWidgets.clear();
+	}
 
-	contentWidgetFinalGeometry.setY(m_titleFrameCollapsed ?
-		contentWidgetFinalGeometry.y() + Common::Helpers::pointsToPixels(30) :
-		contentWidgetFinalGeometry.y() - Common::Helpers::pointsToPixels(30)
-	);
+	constexpr int animationDuration = 500;
 
-	const QRect titleFrameSourceGeometry = m_titleFrame->geometry();
-	QRect titleFrameFinalGeometry = titleFrameSourceGeometry;
-	titleFrameFinalGeometry.setHeight(m_titleFrameCollapsed ? Common::Helpers::pointsToPixels(40) : Common::Helpers::pointsToPixels(10));
+	const int titleFrameSourceHeight = m_titleFrame->height();
 
-	QPropertyAnimation* contentFrameAnimation = new QPropertyAnimation(m_contentWidget, "geometry");
-	contentFrameAnimation->setDuration(500);
-	contentFrameAnimation->setStartValue(contentWidgetSourceGeometry);
-	contentFrameAnimation->setEndValue(contentWidgetFinalGeometry);
+	const int titleFrameFinalHeight = m_titleFrameCollapsed ?
+		Common::Helpers::pointsToPixels(c_maxHeightPt) :
+		Common::Helpers::pointsToPixels(c_minHeightPt);
 
-	QPropertyAnimation* titleFrameAnimation = new QPropertyAnimation(m_titleFrame, "geometry");
-	titleFrameAnimation->setDuration(500);
-	titleFrameAnimation->setStartValue(titleFrameSourceGeometry);
-	titleFrameAnimation->setEndValue(titleFrameFinalGeometry);
+	QPropertyAnimation* titleFrameAnimationMaxHeight = new QPropertyAnimation(m_titleFrame, "maximumHeight");
+	titleFrameAnimationMaxHeight->setDuration(animationDuration);
+	titleFrameAnimationMaxHeight->setStartValue(titleFrameSourceHeight);
+	titleFrameAnimationMaxHeight->setEndValue(titleFrameFinalHeight);
+			
+	QPropertyAnimation* titleFrameAnimationMinHeight = new QPropertyAnimation(m_titleFrame, "minimumHeight");
+	titleFrameAnimationMinHeight->setDuration(animationDuration);
+	titleFrameAnimationMinHeight->setStartValue(titleFrameSourceHeight);
+	titleFrameAnimationMinHeight->setEndValue(titleFrameFinalHeight);
+
+	CollapseHeaderButton::ArrowDirection direction = m_collapseButton->arrowDirection() == CollapseHeaderButton::ArrowDirectionUp ?
+		CollapseHeaderButton::ArrowDirectionDown :
+		CollapseHeaderButton::ArrowDirectionUp;
+
+	int rotateDegreeEndValue = 0;
+
+	switch (direction)
+	{
+		case CollapseHeaderButton::ArrowDirectionUp:
+		{
+			rotateDegreeEndValue = 0;
+			break;
+		}
+		case CollapseHeaderButton::ArrowDirectionDown:
+		{
+			rotateDegreeEndValue = 180;
+			break;
+		}
+		default:
+		{
+			ASSERT(!"Undefined direction");
+		}
+	}
+
+	QPropertyAnimation* rotateAnimation = new QPropertyAnimation(m_collapseButton, "rotateDegree");
+	rotateAnimation->setDuration(animationDuration);
+	rotateAnimation->setStartValue(m_collapseButton->rotateDegree());
+	rotateAnimation->setEndValue(rotateDegreeEndValue);
 
 	m_collapseAnimation = new QParallelAnimationGroup(this);
-	m_collapseAnimation->addAnimation(titleFrameAnimation);
-	m_collapseAnimation->addAnimation(contentFrameAnimation);
+	m_collapseAnimation->addAnimation(titleFrameAnimationMaxHeight);
+	m_collapseAnimation->addAnimation(titleFrameAnimationMinHeight);
+	m_collapseAnimation->addAnimation(rotateAnimation);
 	m_collapseAnimation->start();
 
 	m_animationFinished = false;
@@ -117,15 +162,21 @@ void HeaderDecorationWidget::onAnimationFinished()
 			}
 		}
 	}
-	else
-	{
-		foreach(QWidget* widget, m_hiddenWidgets)
-		{
-			widget->show();
-		}
+// 	else
+// 	{
+// 		foreach(QWidget* widget, m_hiddenWidgets)
+// 		{
+// 			widget->show();
+// 		}
+// 
+// 		m_hiddenWidgets.clear();
+// 	}
 
-		m_hiddenWidgets.clear();
-	}
+	CollapseHeaderButton::ArrowDirection direction = m_collapseButton->arrowDirection() == CollapseHeaderButton::ArrowDirectionUp ?
+		CollapseHeaderButton::ArrowDirectionDown :
+		CollapseHeaderButton::ArrowDirectionUp;
+
+	m_collapseButton->setArrowDirection(direction);
 
 	m_animationFinished = true;
 
