@@ -11,6 +11,8 @@ class IIpcSignaledObject;
 
 }
 
+class Zippo;
+
 namespace SeoSpiderService
 {
 
@@ -30,6 +32,8 @@ private:
 
 	QString commandLineParameter(int num) const noexcept;
 	void makeDump(HANDLE processHandle) const noexcept;
+	void sendReports();
+	static QString dumpsPath();
 
 	Q_SIGNAL void closeServiceApp() const;
 
@@ -48,6 +52,9 @@ private:
 	int m_timerId;
 
 	std::shared_ptr<Common::IIpcSignaledObject> m_crashEventSignaledObject;
+
+	Zippo* m_zippo;
+	mutable std::optional<QDir> m_defferedDeleteDir;
 };
 
 }

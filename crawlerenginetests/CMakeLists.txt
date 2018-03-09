@@ -40,6 +40,7 @@ add_executable(
 
 add_definitions(
 	${QT_DEFINITIONS}
+	-DQUAZIP_STATIC
 )
 
 if(MSVC)

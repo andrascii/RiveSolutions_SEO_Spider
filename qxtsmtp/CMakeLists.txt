@@ -36,7 +36,7 @@ if(MSVC)
 		/permissive-
 		/std:c++latest
 		/Zi
-		/W4
+		/W3
 		/WX
 	)
 	
