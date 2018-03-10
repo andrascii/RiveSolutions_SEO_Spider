@@ -38,6 +38,8 @@ private:
 	static QString dumpsPath();
 
 	Q_SIGNAL void closeServiceApp() const;
+	Q_SLOT void onSendingFinished(const QString& mailId, int result, const QByteArray& log);
+
 
 private:
 	std::unique_ptr<FatalErrorDialog> m_dialog;

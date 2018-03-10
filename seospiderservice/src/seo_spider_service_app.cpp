@@ -160,20 +160,20 @@ void SeoSpiderServiceApp::makeDump(HANDLE processHandle) const noexcept
 
 void SeoSpiderServiceApp::sendReports()
 {
-	QThread::sleep(15);
 	const QString path = SeoSpiderServiceApp::dumpsPath();
 	QDir dir(path);
 
+	QThread::sleep(15);
 	QFileInfoList files = dir.entryInfoList();
 
 	Common::SmtpSettings settings;
-	settings.setEmailUsername("rivesolutionreports@yandex.ru");
-	settings.setEmailPassword("riv3soLutions!");
+	settings.setEmailUsername("rivesolutionreports");
+	settings.setEmailPassword("Riv3S#lutions");
 	settings.setEmailSender("rivesolutionreports@yandex.ru");
 	settings.setEmailSmtpPort(465);
 	settings.setEmailSmtpHost("smtp.yandex.ru");
 	settings.setEmailRecipients("kirchet@yandex.ru");
-	settings.setEmailUseSsl(false);
+	settings.setEmailUseSsl(true);
 	settings.setEmailUseAuthentication(true);
 
 
@@ -187,8 +187,7 @@ void SeoSpiderServiceApp::sendReports()
 
 		
 		Common::SmtpMessage message(settings, "Report", "Message Text", { file.absoluteFilePath() });
-		Common::SmtpSender::send(message);
-		//QFile(file.absoluteFilePath()).remove();
+		Common::SmtpSender::send(message, file.absoluteFilePath(), this, SLOT(onSendingFinished(const QString&, int, const QByteArray&)));
 	}
 
 }
@@ -206,6 +205,16 @@ QString SeoSpiderServiceApp::dumpsPath()
 	}
 
 	return path;
+}
+
+void SeoSpiderServiceApp::onSendingFinished(const QString& mailId, int result, const QByteArray& log)
+{
+	Q_UNUSED(log);
+
+	if (result == Common::SmtpSender::resultSuccess)
+	{
+		QFile(mailId).remove();
+	}
 }
 
 }

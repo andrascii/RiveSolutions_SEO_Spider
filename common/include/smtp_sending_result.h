@@ -10,7 +10,7 @@ class SmtpSendingResult : public QObject
 {
 	Q_OBJECT
 public:
-	SmtpSendingResult(const SmtpMessage& message);
+	SmtpSendingResult(const SmtpMessage& message, const QString& messageId);
 	~SmtpSendingResult();
 
 	bool isFinished() const;
@@ -24,7 +24,7 @@ public:
 	QByteArray log() const;
 
 signals:
-	void sendingFinished(int id, int result, const QByteArray& log);
+	void sendingFinished(const QString&, int result, const QByteArray& log);
 
 private slots:
 	void on_smtp_connected();
@@ -60,6 +60,7 @@ private:
 	int m_result;
 	QxtSmtp* m_smtp;
 	QTime m_timeoutTime;
+	QString m_messageId;
 
 	int m_instanceId;
 };
