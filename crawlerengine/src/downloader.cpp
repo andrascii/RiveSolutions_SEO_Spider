@@ -8,6 +8,7 @@
 #include "hop.h"
 #include "service_locator.h"
 #include "inotification_service.h"
+#include "random_interval_range_timer.h"
 
 namespace CrawlerEngine
 {
@@ -15,7 +16,7 @@ namespace CrawlerEngine
 Downloader::Downloader()
 	: QObject(nullptr)
 	, m_networkAccessor(new QNetworkAccessManager(this))
-	, m_randomIntervalRangeTimer(new Common::RandomIntervalRangeTimer(this))
+	, m_randomIntervalRangeTimer(new RandomIntervalRangeTimer(this))
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
@@ -25,7 +26,7 @@ Downloader::Downloader()
 	VERIFY(connect(m_networkAccessor, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
 		this, SLOT(proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenticator*)), Qt::DirectConnection));
 
-	VERIFY(connect(m_randomIntervalRangeTimer, &Common::RandomIntervalRangeTimer::timerTicked, 
+	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked, 
 		this, &Downloader::onTimerTicked, Qt::DirectConnection));
 }
 

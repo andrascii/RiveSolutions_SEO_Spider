@@ -3,11 +3,11 @@
 #include "requester.h"
 #include "crawler_request.h"
 #include "idownloader.h"
-#include "random_interval_range_timer.h"
 
 namespace CrawlerEngine
 {
 
+class RandomIntervalRangeTimer;
 class IUniquenessChecker;
 struct DownloadResponse;
 
@@ -48,7 +48,7 @@ private:
 	QVector<int> m_activeRequests;
 	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
 	QByteArray m_userAgent;
-	Common::RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
+	RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	std::queue<RequesterSharedPtr> m_requesterQueue;
 };
 
