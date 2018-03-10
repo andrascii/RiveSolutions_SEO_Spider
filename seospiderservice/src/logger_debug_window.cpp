@@ -4,22 +4,22 @@
 namespace
 {
 
-std::map<SeoSpiderServiceApi::SeverityLevel, QString> s_backgroundColors =
+std::map<Common::SeverityLevel, QString> s_backgroundColors =
 {
-	{ SeoSpiderServiceApi::SeverityLevel::TraceLevel, "#293955" },
-	{ SeoSpiderServiceApi::SeverityLevel::DebugLevel, "#007ACC" },
-	{ SeoSpiderServiceApi::SeverityLevel::InfoLevel, "#FFFFFF" },
-	{ SeoSpiderServiceApi::SeverityLevel::WarningLevel, "#F2CF55" },
-	{ SeoSpiderServiceApi::SeverityLevel::ErrorLevel, "#A40024" },
+	{ Common::SeverityLevel::TraceLevel, "#293955" },
+	{ Common::SeverityLevel::DebugLevel, "#007ACC" },
+	{ Common::SeverityLevel::InfoLevel, "#FFFFFF" },
+	{ Common::SeverityLevel::WarningLevel, "#F2CF55" },
+	{ Common::SeverityLevel::ErrorLevel, "#A40024" },
 };
 
-std::map<SeoSpiderServiceApi::SeverityLevel, QString> s_textColors =
+std::map<Common::SeverityLevel, QString> s_textColors =
 {
-	{ SeoSpiderServiceApi::SeverityLevel::TraceLevel, "#EDEDED" },
-	{ SeoSpiderServiceApi::SeverityLevel::DebugLevel, "#EDEDED" },
-	{ SeoSpiderServiceApi::SeverityLevel::InfoLevel, "#000000" },
-	{ SeoSpiderServiceApi::SeverityLevel::WarningLevel, "#000000" },
-	{ SeoSpiderServiceApi::SeverityLevel::ErrorLevel, "#FFFFFF" },
+	{ Common::SeverityLevel::TraceLevel, "#EDEDED" },
+	{ Common::SeverityLevel::DebugLevel, "#EDEDED" },
+	{ Common::SeverityLevel::InfoLevel, "#000000" },
+	{ Common::SeverityLevel::WarningLevel, "#000000" },
+	{ Common::SeverityLevel::ErrorLevel, "#FFFFFF" },
 };
 
 }
@@ -33,11 +33,11 @@ LoggerDebugWindow::LoggerDebugWindow(QWidget* parent)
 	setupUi(this);
 
 	severityLevelComboBox->addItem(QStringLiteral("All levels"), QVariant::fromValue(static_cast<int>(AllLevels)));
-	severityLevelComboBox->addItem(QStringLiteral("Trace level"), QVariant::fromValue(SeoSpiderServiceApi::SeverityLevel::TraceLevel));
-	severityLevelComboBox->addItem(QStringLiteral("Debug level"), QVariant::fromValue(SeoSpiderServiceApi::SeverityLevel::DebugLevel));
-	severityLevelComboBox->addItem(QStringLiteral("Info level"), QVariant::fromValue(SeoSpiderServiceApi::SeverityLevel::InfoLevel));
-	severityLevelComboBox->addItem(QStringLiteral("Warning level"), QVariant::fromValue(SeoSpiderServiceApi::SeverityLevel::WarningLevel));
-	severityLevelComboBox->addItem(QStringLiteral("Error level"), QVariant::fromValue(SeoSpiderServiceApi::SeverityLevel::ErrorLevel));
+	severityLevelComboBox->addItem(QStringLiteral("Trace level"), QVariant::fromValue(Common::SeverityLevel::TraceLevel));
+	severityLevelComboBox->addItem(QStringLiteral("Debug level"), QVariant::fromValue(Common::SeverityLevel::DebugLevel));
+	severityLevelComboBox->addItem(QStringLiteral("Info level"), QVariant::fromValue(Common::SeverityLevel::InfoLevel));
+	severityLevelComboBox->addItem(QStringLiteral("Warning level"), QVariant::fromValue(Common::SeverityLevel::WarningLevel));
+	severityLevelComboBox->addItem(QStringLiteral("Error level"), QVariant::fromValue(Common::SeverityLevel::ErrorLevel));
 	severityLevelComboBox->setCurrentIndex(0);
 
 	connect(severityLevelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(levelChanged()));
@@ -45,7 +45,7 @@ LoggerDebugWindow::LoggerDebugWindow(QWidget* parent)
 
 void LoggerDebugWindow::onMessageReceived(const Common::PipeMessage& message)
 {
-	SeoSpiderServiceApi::SeverityLevel level = static_cast<SeoSpiderServiceApi::SeverityLevel>(message.severityLevel);
+	Common::SeverityLevel level = static_cast<Common::SeverityLevel>(message.severityLevel);
 
 	auto internalMessage = std::make_tuple(s_backgroundColors[level], s_textColors[level], message.message);
 

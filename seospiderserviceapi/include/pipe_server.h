@@ -12,7 +12,15 @@ public:
 	PipeServer();
 	~PipeServer();
 
-	void logMessage(const QString& message, SeverityLevel severityLevel);
+	void logMessage(
+		Common::PipeMessage::Type type,
+		Common::SeverityLevel level,
+		std::uint64_t threadId,
+		std::uint64_t line,
+		const char* file,
+		const char* function,
+		const char* message
+	);
 
 private:
 	void logMessage(const Common::PipeMessage& message);

@@ -105,12 +105,6 @@ using std::size_t;
 #define DEBUG
 #endif
 
-#ifdef Q_OS_WIN
-#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
-#else
-#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-#endif
-
 #if defined(Q_OS_WIN)
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS

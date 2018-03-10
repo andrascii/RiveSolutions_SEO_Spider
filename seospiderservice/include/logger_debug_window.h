@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ui_logger_debug_window.h"
-#include "log_message_receiver.h"
 
 namespace Common
 {
@@ -9,7 +8,6 @@ namespace Common
 struct PipeMessage;
 
 }
-
 
 namespace SeoSpiderService
 {
