@@ -39,6 +39,7 @@ add_library(
 
 add_definitions(
 	${QT_DEFINITIONS}
+	-DQUAZIP_STATIC
 )
 
 if(MSVC)

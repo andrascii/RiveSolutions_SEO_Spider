@@ -76,6 +76,7 @@ include_directories(
 target_link_libraries(
 	${SeoSpiderServiceAppName}
 	${CommonLibName}
+	#${QxtSmtpLibName}
 	${Boost_LIBRARIES}
 	Qt5::Widgets
 	Qt5::Network

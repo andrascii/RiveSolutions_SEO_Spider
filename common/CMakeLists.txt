@@ -8,6 +8,7 @@ aux_source_directory(${CommonSourcesDir} CommonSourcesList)
 file(GLOB_RECURSE CommonHeadersList "include/*.h")
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(QxtSmtpLibHeadersDir ../qxtsmtp/include)
+set(QUazipLibHeadersDir ../quazip/include)
 
 list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
 
@@ -24,6 +25,7 @@ add_library(
 add_definitions(
 	${QT_DEFINITIONS}
 	-DQXT_STATIC
+	-DQUAZIP_STATIC
 )
 
 if(MSVC)
@@ -53,11 +55,13 @@ include_directories(
 	${CommonHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
 	${QxtSmtpLibHeadersDir}
+	${QUazipLibHeadersDir}
 )
 
 target_link_libraries(
 	${CommonLibName}
 	${QxtSmtpLibName}
+	${QUazipLibName}
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Svg

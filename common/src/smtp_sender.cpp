@@ -125,11 +125,11 @@ int SmtpSender::send(const SmtpMessage& message, QObject* listener /*= NULL*/, c
 {
 	SmtpSendingResult* task = new SmtpSendingResult(message);
 
-	ASSERT((listener == NULL && onSentSlot == NULL) || (listener != NULL && onSentSlot != NULL));
+	assert((listener == NULL && onSentSlot == NULL) || (listener != NULL && onSentSlot != NULL));
 
 	if (NULL != listener && NULL != onSentSlot)
 	{
-		VERIFY(QObject::connect(task, SIGNAL(sendingFinished(int, int, const QByteArray&)), listener, onSentSlot));
+		/*VERIFY(*/QObject::connect(task, SIGNAL(sendingFinished(int, int, const QByteArray&)), listener, onSentSlot)/*)*/;
 	}
 
 	if (g_sendingResults.isEmpty())
@@ -171,7 +171,8 @@ SmtpSender::SmtpSender()
 
 void SmtpSender::timerEvent(QTimerEvent* event)
 {
-	ASSERT(event->timerId() == m_timerId);
+	Q_UNUSED(event);
+	assert(event->timerId() == m_timerId);
 
 	QVector<SmtpSendingResult*> survivors;
 

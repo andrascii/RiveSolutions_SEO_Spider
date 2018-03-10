@@ -3,7 +3,6 @@
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
 #include "logger_debug_window.h"
-#include "log_thread.h"
 
 namespace Common
 {
@@ -11,6 +10,8 @@ namespace Common
 class IIpcSignaledObject;
 
 }
+
+class Zippo;
 
 namespace SeoSpiderService
 {
@@ -31,6 +32,8 @@ private:
 
 	QString commandLineParameter(int num) const noexcept;
 	void makeDump(HANDLE processHandle) const noexcept;
+	void sendReports();
+	static QString dumpsPath();
 
 	Q_SIGNAL void closeServiceApp() const;
 
@@ -50,9 +53,8 @@ private:
 
 	std::shared_ptr<Common::IIpcSignaledObject> m_crashEventSignaledObject;
 
-	Common::IpcSocket m_pipeSocket;
-
-	std::unique_ptr<LogThread> m_logThread;
+	Zippo* m_zippo;
+	mutable std::optional<QDir> m_defferedDeleteDir;
 };
 
 }
