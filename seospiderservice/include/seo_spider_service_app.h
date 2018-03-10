@@ -3,6 +3,8 @@
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
 #include "logger_debug_window.h"
+#include "ipc_socket.h"
+#include "log_thread.h"
 
 namespace Common
 {
@@ -55,6 +57,10 @@ private:
 
 	Zippo* m_zippo;
 	mutable std::optional<QDir> m_defferedDeleteDir;
+
+	Common::IpcSocket m_pipeSocket;
+
+	std::unique_ptr<LogThread> m_logThread;
 };
 
 }

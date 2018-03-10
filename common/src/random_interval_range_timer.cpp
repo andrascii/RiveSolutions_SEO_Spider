@@ -15,7 +15,8 @@ RandomIntervalRangeTimer::RandomIntervalRangeTimer(int from, int to, QObject* pa
 	, m_started(false)
 	, m_timer(new QTimer(this))
 {
-	VERIFY(connect(m_timer, &QTimer::timeout, this, &RandomIntervalRangeTimer::onTimerTicked));
+	//VERIFY();
+	connect(m_timer, &QTimer::timeout, this, &RandomIntervalRangeTimer::onTimerTicked);
 }
 
 bool RandomIntervalRangeTimer::isValid() const noexcept
