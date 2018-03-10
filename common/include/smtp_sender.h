@@ -96,7 +96,7 @@ public:
 		resultUnknown
 	} Result;
 
-	static int send(const SmtpMessage& message, QObject* listener = NULL, const char* onSentSlot = NULL);
+	static int send(const SmtpMessage& message, const QString& messageId, QObject* listener = NULL, const char* onSentSlot = NULL);
 
 	static void init();
 	static void term();

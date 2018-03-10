@@ -121,15 +121,15 @@ SmtpSettings::~SmtpSettings()
 
 QVector<SmtpSendingResult*> g_sendingResults;
 
-int SmtpSender::send(const SmtpMessage& message, QObject* listener /*= NULL*/, const char* onSentSlot/*= NULL*/)
+int SmtpSender::send(const SmtpMessage& message, const QString& messageId, QObject* listener /*= NULL*/, const char* onSentSlot/*= NULL*/)
 {
-	SmtpSendingResult* task = new SmtpSendingResult(message);
+	SmtpSendingResult* task = new SmtpSendingResult(message, messageId);
 
 	assert((listener == NULL && onSentSlot == NULL) || (listener != NULL && onSentSlot != NULL));
 
 	if (NULL != listener && NULL != onSentSlot)
 	{
-		/*VERIFY(*/QObject::connect(task, SIGNAL(sendingFinished(int, int, const QByteArray&)), listener, onSentSlot)/*)*/;
+		/*VERIFY(*/QObject::connect(task, SIGNAL(sendingFinished(const QString&, int, const QByteArray&)), listener, onSentSlot)/*)*/;
 	}
 
 	if (g_sendingResults.isEmpty())

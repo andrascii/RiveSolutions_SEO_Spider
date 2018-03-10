@@ -406,7 +406,7 @@ void CrawlerWorkerThread::onStart()
 
 void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcept
 {
-	if (result.incomingPageConstRef()->redirectedUrl.isValid())
+	if (result.incomingPageConstRef()->redirectedUrl.isValid() && result.incomingPageConstRef()->isThisExternalPage)
 	{
 		DEBUG_ASSERT(result.incomingPageConstRef()->allResourcesOnPage.size() == 1 &&
 			result.incomingPageConstRef()->allResourcesOnPage.begin()->permission == Permission::PermissionAllowed);

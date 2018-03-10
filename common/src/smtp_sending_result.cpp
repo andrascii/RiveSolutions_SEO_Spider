@@ -18,11 +18,12 @@ QStringList splitRecipients(const QString& recipients)
 
 int resultInstanceId = 0;
 
-SmtpSendingResult::SmtpSendingResult(const SmtpMessage& message)
+SmtpSendingResult::SmtpSendingResult(const SmtpMessage& message, const QString& messageId)
 	: m_finished(false)
 	, m_result(SmtpSender::resultUnknown)
 	, m_timeoutTime(QTime::currentTime().addSecs(message.settings.emailTimeout()))
 	, m_instanceId(resultInstanceId++)
+	, m_messageId(messageId)
 {
 	if (!isValidEmailAddress(message.settings.emailRecipients()))
 	{
@@ -149,6 +150,7 @@ void SmtpSendingResult::on_smtp_authenticated()
 
 void SmtpSendingResult::on_smtp_authenticationFailed()
 {
+	addToLog("Authentication failed.");
 }
 
 void SmtpSendingResult::on_smtp_authenticationFailed(const QByteArray& msg)
@@ -267,7 +269,7 @@ void SmtpSendingResult::processState()
 
 	if (isFinished())
 	{
-		Q_EMIT sendingFinished(m_instanceId, m_result, m_log);
+		Q_EMIT sendingFinished(m_messageId, m_result, m_log);
 		return;
 	}
 }
