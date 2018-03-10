@@ -5,68 +5,68 @@ namespace SeoSpiderServiceApi
 {
 
 LogServerDataAccumulator::LogServerDataAccumulator(QObject* parent)
-    : QObject(parent)
-    , m_server(new QLocalServer(this))
-    , m_currentConnectionSocket(nullptr)
+	: QObject(parent)
+	, m_server(new QLocalServer(this))
+	, m_currentConnectionSocket(nullptr)
 {
-    VERIFY(connect(m_server, &QLocalServer::newConnection, this, &LogServerDataAccumulator::onNewConnection));
+	VERIFY(connect(m_server, &QLocalServer::newConnection, this, &LogServerDataAccumulator::onNewConnection));
 
-    if (!m_server->listen(QStringLiteral("LogServerDataAccumulator")))
-    {
-        QMessageBox::critical(nullptr, tr("Logger Server"),
-            tr("Unable to start the server: %1.").arg(m_server->errorString()), QMessageBox::Ok);
-    }
+	if (!m_server->listen(QStringLiteral("LogServerDataAccumulator")))
+	{
+		QMessageBox::critical(nullptr, tr("Logger Server"),
+			tr("Unable to start the server: %1.").arg(m_server->errorString()), QMessageBox::Ok);
+	}
 }
 
 void LogServerDataAccumulator::onNewConnection()
 {
-    if (m_currentConnectionSocket)
-    {
-        m_currentConnectionSocket->abort();
-    }
+	if (m_currentConnectionSocket)
+	{
+		m_currentConnectionSocket->abort();
+	}
 
-    m_currentConnectionSocket = m_server->nextPendingConnection();
+	m_currentConnectionSocket = m_server->nextPendingConnection();
 
-    VERIFY(connect(m_currentConnectionSocket, &QLocalSocket::disconnected, this, &LogServerDataAccumulator::onConnectionClosed));
+	VERIFY(connect(m_currentConnectionSocket, &QLocalSocket::disconnected, this, &LogServerDataAccumulator::onConnectionClosed));
 
-    sendAllDataToRemoteProcess();
+	sendAllDataToRemoteProcess();
 }
 
 void LogServerDataAccumulator::sendMessageToRemoteProcess(const QString& message, SeverityLevel severityLevel)
 {
-    if (!m_currentConnectionSocket)
-    {
-        return;
-    }
+	if (!m_currentConnectionSocket)
+	{
+		return;
+	}
 
-    writeDataToChannel(message, severityLevel);
+	writeDataToChannel(message, severityLevel);
 
-    //
-    // TODO: handle possible errors
-    //
+	//
+	// TODO: handle possible errors
+	//
 
-    m_currentConnectionSocket->flush();
+	m_currentConnectionSocket->flush();
 }
 
 void LogServerDataAccumulator::sendAllDataToRemoteProcess()
 {
-    if (!m_currentConnectionSocket)
-    {
-        return;
-    }
+	if (!m_currentConnectionSocket)
+	{
+		return;
+	}
 
-    for (const auto&[severityLevel, message] : m_logs)
-    {
-        writeDataToChannel(message, severityLevel);
-    }
+	for (const auto&[severityLevel, message] : m_logs)
+	{
+		writeDataToChannel(message, severityLevel);
+	}
 
-    m_currentConnectionSocket->flush();
+	m_currentConnectionSocket->flush();
 }
 
 void LogServerDataAccumulator::writeDataToChannel(const QString& message, SeverityLevel severityLevel)
 {
-    QByteArray messageBlock;
-    QDataStream sendDataStream(&messageBlock, QIODevice::WriteOnly);
+	QByteArray messageBlock;
+	QDataStream sendDataStream(&messageBlock, QIODevice::WriteOnly);
 	
 	const QByteArray messageBytes = message.toUtf8();
 	const int messageSize = messageBytes.size();
@@ -82,25 +82,25 @@ void LogServerDataAccumulator::writeDataToChannel(const QString& message, Severi
 	sendDataStream.writeRawData(headerBuffer, headerSize);
 	sendDataStream.writeRawData(messageBytes.constData(), static_cast<uint>(messageSize));
 
-    const qint64 bytesWritten = m_currentConnectionSocket->write(messageBlock);
+	const qint64 bytesWritten = m_currentConnectionSocket->write(messageBlock);
 	ASSERT(bytesWritten == headerSize + messageSize);
-    m_currentConnectionSocket->waitForBytesWritten();
+	m_currentConnectionSocket->waitForBytesWritten();
 }
 
 void LogServerDataAccumulator::storeLog(const QString& message, SeverityLevel severityLevel)
 {
-    m_logs.emplace_back(std::make_pair(severityLevel, message));
+	m_logs.emplace_back(std::make_pair(severityLevel, message));
 
-    sendMessageToRemoteProcess(message, severityLevel);
+	sendMessageToRemoteProcess(message, severityLevel);
 }
 
 void LogServerDataAccumulator::onConnectionClosed()
 {
-    if (m_currentConnectionSocket)
-    {
-        m_currentConnectionSocket->deleteLater();
-        m_currentConnectionSocket = nullptr;
-    }
+	if (m_currentConnectionSocket)
+	{
+		m_currentConnectionSocket->deleteLater();
+		m_currentConnectionSocket = nullptr;
+	}
 }
 
 }

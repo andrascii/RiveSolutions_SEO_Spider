@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iseo_spider_service_api.h"
+#include "pipe_server.h"
 
 namespace Common
 {
@@ -11,6 +12,8 @@ class IIpcSignaledObject;
 
 namespace SeoSpiderServiceApi
 {
+
+class PipeServer;
 
 class SeoSpiderServiceApiImpl : public ISeoSpiderServiceApi
 {
@@ -60,6 +63,7 @@ private:
 	mutable std::mutex m_mutex;
 	bool m_initialized;
 	std::shared_ptr<Common::IIpcSignaledObject> m_crashEventSignaledObject;
+	std::unique_ptr<PipeServer> m_pipeServer;
 };
 
 }

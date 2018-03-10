@@ -13,6 +13,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	, m_dialog(new FatalErrorDialog)
 	, m_dbgHelpDllLoader(new DebugHelpDllLoader)
 	, m_loggerDebugWindow(new LoggerDebugWindow)
+	, m_logThread(std::make_unique<LogThread>(&m_pipeSocket))
 {
 	init();
 
@@ -25,6 +26,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 
 	VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::quit, Qt::QueuedConnection));
 
+	//m_crashEventSignaledObject->open(m_eventName.constData());
 	m_signaledEvent = OpenEvent(SYNCHRONIZE, FALSE, m_eventName.constData());
 	m_processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE | SYNCHRONIZE, FALSE, m_processId);
 
@@ -39,15 +41,32 @@ SeoSpiderServiceApp::~SeoSpiderServiceApp()
 
 void SeoSpiderServiceApp::init()
 {
+	using namespace std::chrono_literals;
+
+	constexpr int c_maxConnectionAttemptCount = 5;
+
+	bool connectionResult = false;
+
+	for (int i = 0; i < c_maxConnectionAttemptCount; ++i)
+	{
+		connectionResult = m_pipeSocket.connectToServer(QString("seospiderserviceapi_log_channel"), QIODevice::ReadWrite);
+
+		if (connectionResult)
+		{
+			break;
+		}
+
+		std::this_thread::sleep_for(1s);
+	}
+
+	if (connectionResult)
+	{
+		m_logThread->start();
+	}
+
 #ifdef QT_DEBUG
-	LogMessageReceiver* logMessageReceiver = new LogMessageReceiver;
-
-	QThread* thread = new QThread;
-	logMessageReceiver->moveToThread(thread);
-	thread->start();
-
-	VERIFY(connect(logMessageReceiver, SIGNAL(messageReceived(Message)),
-		m_loggerDebugWindow.get(), SLOT(onMessageReceived(Message))));
+	VERIFY(connect(m_logThread.get(), SIGNAL(messageReceived(const Common::PipeMessage&)),
+		m_loggerDebugWindow.get(), SLOT(onMessageReceived(const Common::PipeMessage&)), Qt::QueuedConnection));
 
 	m_loggerDebugWindow->show();
 #endif

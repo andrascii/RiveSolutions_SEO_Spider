@@ -3,6 +3,14 @@
 #include "ui_logger_debug_window.h"
 #include "log_message_receiver.h"
 
+namespace Common
+{
+
+struct PipeMessage;
+
+}
+
+
 namespace SeoSpiderService
 {
 
@@ -16,7 +24,7 @@ private:
 public:
 	LoggerDebugWindow(QWidget* parent = nullptr);
 
-	Q_SLOT void onMessageReceived(Message message);
+	Q_SLOT void onMessageReceived(const Common::PipeMessage& message);
 
 private:
 	Q_SLOT void levelChanged();

@@ -1,4 +1,5 @@
 #include "logger_debug_window.h"
+#include "pipe_message.h"
 
 namespace
 {
@@ -42,15 +43,17 @@ LoggerDebugWindow::LoggerDebugWindow(QWidget* parent)
 	connect(severityLevelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(levelChanged()));
 }
 
-void LoggerDebugWindow::onMessageReceived(Message message)
+void LoggerDebugWindow::onMessageReceived(const Common::PipeMessage& message)
 {
-	auto internalMessage = std::make_tuple(s_backgroundColors[message.severityLevel], s_textColors[message.severityLevel], message.message);
+	SeoSpiderServiceApi::SeverityLevel level = static_cast<SeoSpiderServiceApi::SeverityLevel>(message.severityLevel);
+
+	auto internalMessage = std::make_tuple(s_backgroundColors[level], s_textColors[level], message.message);
 
 	m_messages[AllLevels].push_back(internalMessage);
-	m_messages[static_cast<int>(message.severityLevel)].push_back(internalMessage);
+	m_messages[message.severityLevel].push_back(internalMessage);
 
-	textBrowser->setTextBackgroundColor(QColor(s_backgroundColors[message.severityLevel]));
-	textBrowser->setTextColor(QColor(s_textColors[message.severityLevel]));
+	textBrowser->setTextBackgroundColor(QColor(s_backgroundColors[level]));
+	textBrowser->setTextColor(QColor(s_textColors[level]));
 	textBrowser->append(message.message);
 }
 

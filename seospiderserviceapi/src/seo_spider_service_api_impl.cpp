@@ -2,6 +2,7 @@
 #include "logger.h"
 #include "iipc_signaled_object.h"
 #include "ipc_signaled_object_creator.h"
+#include "seo_spider_service_api_export.h"
 
 namespace
 {
@@ -57,6 +58,29 @@ private:
 	const std::string m_text;
 };
 
+void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
+{
+	switch (type)
+	{
+	case QtDebugMsg:
+		seoSpiderServiceApi()->debugLogMessage(msg.toStdString().c_str());
+		break;
+
+	case QtWarningMsg:
+		seoSpiderServiceApi()->warningLogMessage(msg.toStdString().c_str());
+		break;
+
+	case QtCriticalMsg:
+		seoSpiderServiceApi()->errorLogMessage(msg.toStdString().c_str());
+		break;
+
+	case QtFatalMsg:
+		seoSpiderServiceApi()->errorLogMessage(msg.toStdString().c_str());
+		abort();
+		break;
+	}
+}
+
 }
 
 namespace SeoSpiderServiceApi
@@ -101,6 +125,10 @@ void SeoSpiderServiceApiImpl::init() noexcept
 		&m_startupInfo,
 		&m_processInfo
 	);
+
+	m_pipeServer.reset(new PipeServer);
+
+	qInstallMessageHandler(qtMsgHandler);
 
 	if (!m_initialized)
 	{
@@ -200,27 +228,27 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
 
 void SeoSpiderServiceApiImpl::traceLogMessage(const char* message)
 {
-	Logger::instance()->logMessage(message, SeverityLevel::TraceLevel);
+	m_pipeServer->logMessage(message, SeverityLevel::TraceLevel);
 }
 
 void SeoSpiderServiceApiImpl::debugLogMessage(const char* message)
 {
-	Logger::instance()->logMessage(message, SeverityLevel::DebugLevel);
+	m_pipeServer->logMessage(message, SeverityLevel::DebugLevel);
 }
 
 void SeoSpiderServiceApiImpl::infoLogMessage(const char* message)
 {
-	Logger::instance()->logMessage(message, SeverityLevel::InfoLevel);
+	m_pipeServer->logMessage(message, SeverityLevel::InfoLevel);
 }
 
 void SeoSpiderServiceApiImpl::warningLogMessage(const char* message)
 {
-	Logger::instance()->logMessage(message, SeverityLevel::WarningLevel);
+	m_pipeServer->logMessage(message, SeverityLevel::WarningLevel);
 }
 
 void SeoSpiderServiceApiImpl::errorLogMessage(const char* message)
 {
-	Logger::instance()->logMessage(message, SeverityLevel::ErrorLevel);
+	m_pipeServer->logMessage(message, SeverityLevel::ErrorLevel);
 }
 
 LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS)

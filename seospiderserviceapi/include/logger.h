@@ -2,7 +2,7 @@
 
 #include "ilogger.h"
 #include "ilogger_filter.h"
-#include "log_writer_thread.h"
+#include "log_writer.h"
 
 namespace SeoSpiderServiceApi
 {
@@ -45,7 +45,7 @@ private:
 private:
 	bool m_deleting;
 
-	LogWriterThread* m_logWriterThread;
+	LogWriter* m_logWriter;
 
 	std::unique_ptr<ILoggerFilter> m_filter;
 };

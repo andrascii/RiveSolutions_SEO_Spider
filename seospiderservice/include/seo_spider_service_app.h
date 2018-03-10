@@ -3,6 +3,7 @@
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
 #include "logger_debug_window.h"
+#include "log_thread.h"
 
 namespace Common
 {
@@ -48,6 +49,10 @@ private:
 	int m_timerId;
 
 	std::shared_ptr<Common::IIpcSignaledObject> m_crashEventSignaledObject;
+
+	Common::IpcSocket m_pipeSocket;
+
+	std::unique_ptr<LogThread> m_logThread;
 };
 
 }

@@ -76,7 +76,7 @@ Logger::~Logger()
 		abort();
 	}
 
-	m_logWriterThread->deleteLater();
+	m_logWriter->deleteLater();
 	qApp->processEvents();
 }
 
@@ -96,7 +96,7 @@ void Logger::logMessage(const QString& message, SeverityLevel level, ILogger::Ca
 
 	Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
 
-	QMetaObject::invokeMethod(m_logWriterThread, "logMessage", connectionType,
+	QMetaObject::invokeMethod(m_logWriter, "logMessage", connectionType,
 		Q_ARG(const QString&, messageWithTimeStamp), Q_ARG(SeverityLevel, level));
 }
 
@@ -104,18 +104,18 @@ void Logger::flush(ILogger::CallType callType)
 {
 	Qt::ConnectionType connectionType = callType == CallAsync ? Qt::QueuedConnection : Qt::BlockingQueuedConnection;
 
-	QMetaObject::invokeMethod(m_logWriterThread, "flush", connectionType);
+	QMetaObject::invokeMethod(m_logWriter, "flush", connectionType);
 }
 
 Logger::Logger()
 	: m_deleting(false)
-	, m_logWriterThread(new LogWriterThread)
+	, m_logWriter(new LogWriter)
 {
-	Common::NamedThread* thread = new Common::NamedThread("LogWriterThread");
-	m_logWriterThread->moveToThread(thread);
+	Common::NamedThread* thread = new Common::NamedThread("LogWriter");
+	m_logWriter->moveToThread(thread);
 
-	VERIFY(connect(qApp, &QApplication::aboutToQuit, m_logWriterThread, &LogWriterThread::flush, Qt::BlockingQueuedConnection));
-	VERIFY(connect(thread, &QThread::finished, m_logWriterThread, &LogWriterThread::flush, Qt::QueuedConnection));
+	VERIFY(connect(qApp, &QApplication::aboutToQuit, m_logWriter, &LogWriter::flush, Qt::BlockingQueuedConnection));
+	VERIFY(connect(thread, &QThread::finished, m_logWriter, &LogWriter::flush, Qt::QueuedConnection));
 
 	thread->start();
 
