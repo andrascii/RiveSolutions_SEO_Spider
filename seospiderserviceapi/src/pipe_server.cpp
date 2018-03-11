@@ -22,16 +22,26 @@ PipeServer::~PipeServer()
 	}
 }
 
-void PipeServer::logMessage(const QString& message, SeverityLevel severityLevel)
+void PipeServer::logMessage(
+	Common::PipeMessage::Type type,
+	Common::SeverityLevel level,
+	std::uint64_t threadId,
+	std::uint64_t line,
+	const char* file,
+	const char* function,
+	const char* message)
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
 
 	Common::PipeMessage pipeMessage;
 
-	pipeMessage.severityLevel = static_cast<std::uint64_t>(severityLevel);
-
-	const QByteArray messageBytes = message.toUtf8();
-	std::strcpy(pipeMessage.message, messageBytes.data());
+	pipeMessage.type = type;
+	pipeMessage.severityLevel = static_cast<std::uint64_t>(level);
+	pipeMessage.threadId = threadId;
+	pipeMessage.line = line;
+	std::strcpy(pipeMessage.file, file);
+	std::strcpy(pipeMessage.function, function);
+	std::strcpy(pipeMessage.message, message);
 
 	logMessage(pipeMessage);
 }

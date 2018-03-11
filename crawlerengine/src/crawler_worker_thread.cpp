@@ -84,6 +84,7 @@ void CrawlerWorkerThread::stop()
 		try
 		{
 			DEBUGLOG << "Set value to promise";
+			//SeoSpiderServiceApi::LogMessageBuffer(Common::PipeMessage::LogMessage, Common::SeverityLevel::TraceLevel, std::this_thread::get_id(), __LINE__, __FILENAME__, __FUNCTION__) << "Set value to promise";
 
 			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}

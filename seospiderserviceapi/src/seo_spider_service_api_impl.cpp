@@ -1,5 +1,4 @@
 #include "seo_spider_service_api_impl.h"
-#include "logger.h"
 #include "iipc_signaled_object.h"
 #include "ipc_signaled_object_creator.h"
 #include "seo_spider_service_api_export.h"
@@ -63,19 +62,47 @@ void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
 	switch (type)
 	{
 	case QtDebugMsg:
-		seoSpiderServiceApi()->debugLogMessage(msg.toStdString().c_str());
+		seoSpiderServiceApi()->debugLogMessage(
+			Common::PipeMessage::LogMessage, 
+			std::hash<std::thread::id>{}(std::this_thread::get_id()),
+			__LINE__,
+			__FILENAME__,
+			__FUNCTION__,
+			msg.toStdString().c_str()
+		);
 		break;
 
 	case QtWarningMsg:
-		seoSpiderServiceApi()->warningLogMessage(msg.toStdString().c_str());
+		seoSpiderServiceApi()->warningLogMessage(
+			Common::PipeMessage::LogMessage,
+			std::hash<std::thread::id>{}(std::this_thread::get_id()),
+			__LINE__,
+			__FILENAME__,
+			__FUNCTION__,
+			msg.toStdString().c_str()
+		);
 		break;
 
 	case QtCriticalMsg:
-		seoSpiderServiceApi()->errorLogMessage(msg.toStdString().c_str());
+		seoSpiderServiceApi()->errorLogMessage(
+			Common::PipeMessage::LogMessage,
+			std::hash<std::thread::id>{}(std::this_thread::get_id()),
+			__LINE__,
+			__FILENAME__,
+			__FUNCTION__,
+			msg.toStdString().c_str()
+		);
 		break;
 
 	case QtFatalMsg:
-		seoSpiderServiceApi()->errorLogMessage(msg.toStdString().c_str());
+		seoSpiderServiceApi()->errorLogMessage(
+			Common::PipeMessage::LogMessage,
+			std::hash<std::thread::id>{}(std::this_thread::get_id()),
+			__LINE__,
+			__FILENAME__,
+			__FUNCTION__,
+			msg.toStdString().c_str()
+		);
 		abort();
 		break;
 	}
@@ -148,7 +175,6 @@ void SeoSpiderServiceApiImpl::free() const noexcept
 void SeoSpiderServiceApiImpl::setProcessSignaledState() const noexcept
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
-	Logger::instance()->flush();
 	m_crashEventSignaledObject->setSignaledState();
 	Sleep(INFINITE);
 }
@@ -196,7 +222,17 @@ void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* f
 
 void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const noexcept
 {
-	Logger::instance()->logMessage(QStringLiteral("ASSERTION FAILURE: ") + expression, SeverityLevel::ErrorLevel);
+	//Logger::instance()->logMessage(QStringLiteral("ASSERTION FAILURE: ") + expression, Common::SeverityLevel::ErrorLevel);
+
+	m_pipeServer->logMessage(
+		Common::PipeMessage::Assert,
+		Common::SeverityLevel::ErrorLevel,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		line,
+		file,
+		function,
+		expression
+	);
 
 	std::stringstream text;
 
@@ -226,29 +262,59 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
 	}
 }
 
-void SeoSpiderServiceApiImpl::traceLogMessage(const char* message)
+void SeoSpiderServiceApiImpl::traceLogMessage(
+	Common::PipeMessage::Type type,
+	std::uint64_t threadId,
+	std::uint64_t line,
+	const char* file,
+	const char* function,
+	const char* message)
 {
-	m_pipeServer->logMessage(message, SeverityLevel::TraceLevel);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::TraceLevel, threadId, line, file, function, message);
 }
 
-void SeoSpiderServiceApiImpl::debugLogMessage(const char* message)
+void SeoSpiderServiceApiImpl::debugLogMessage(
+	Common::PipeMessage::Type type,
+	std::uint64_t threadId,
+	std::uint64_t line,
+	const char* file,
+	const char* function,
+	const char* message)
 {
-	m_pipeServer->logMessage(message, SeverityLevel::DebugLevel);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::DebugLevel, threadId, line, file, function, message);
 }
 
-void SeoSpiderServiceApiImpl::infoLogMessage(const char* message)
+void SeoSpiderServiceApiImpl::infoLogMessage(
+	Common::PipeMessage::Type type,
+	std::uint64_t threadId,
+	std::uint64_t line,
+	const char* file,
+	const char* function,
+	const char* message)
 {
-	m_pipeServer->logMessage(message, SeverityLevel::InfoLevel);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::InfoLevel, threadId, line, file, function, message);
 }
 
-void SeoSpiderServiceApiImpl::warningLogMessage(const char* message)
+void SeoSpiderServiceApiImpl::warningLogMessage(
+	Common::PipeMessage::Type type,
+	std::uint64_t threadId,
+	std::uint64_t line,
+	const char* file,
+	const char* function,
+	const char* message)
 {
-	m_pipeServer->logMessage(message, SeverityLevel::WarningLevel);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::WarningLevel, threadId, line, file, function, message);
 }
 
-void SeoSpiderServiceApiImpl::errorLogMessage(const char* message)
+void SeoSpiderServiceApiImpl::errorLogMessage(
+	Common::PipeMessage::Type type,
+	std::uint64_t threadId,
+	std::uint64_t line,
+	const char* file,
+	const char* function,
+	const char* message)
 {
-	m_pipeServer->logMessage(message, SeverityLevel::ErrorLevel);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::ErrorLevel, threadId, line, file, function, message);
 }
 
 LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS)

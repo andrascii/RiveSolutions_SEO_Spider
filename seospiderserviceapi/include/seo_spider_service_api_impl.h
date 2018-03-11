@@ -26,11 +26,46 @@ public:
 	virtual void setProcessExceptionHandlers() const noexcept override;
 	virtual void setThreadExceptionHandlers() const noexcept override;
 	virtual void doAssert(const char* file, int line, const char* function, const char* expression) const noexcept override;
-	virtual void traceLogMessage(const char* message) override;
-	virtual void debugLogMessage(const char* message) override;
-	virtual void infoLogMessage(const char* message) override;
-	virtual void warningLogMessage(const char* message) override;
-	virtual void errorLogMessage(const char* message) override;
+
+	virtual void traceLogMessage(
+		Common::PipeMessage::Type type,
+		std::uint64_t threadId,
+		std::uint64_t line,
+		const char* file,
+		const char* function,
+		const char* message) override;
+
+	virtual void debugLogMessage(
+		Common::PipeMessage::Type type,
+		std::uint64_t threadId,
+		std::uint64_t line,
+		const char* file,
+		const char* function,
+		const char* message) override;
+
+	virtual void infoLogMessage(
+		Common::PipeMessage::Type type,
+		std::uint64_t threadId,
+		std::uint64_t line,
+		const char* file,
+		const char* function,
+		const char* message) override;
+
+	virtual void warningLogMessage(
+		Common::PipeMessage::Type type,
+		std::uint64_t threadId,
+		std::uint64_t line,
+		const char* file,
+		const char* function,
+		const char* message) override;
+
+	virtual void errorLogMessage(
+		Common::PipeMessage::Type type,
+		std::uint64_t threadId,
+		std::uint64_t line,
+		const char* file,
+		const char* function,
+		const char* message) override;
 
 private:
 	void debugReport(const char* file, int line, const char* function, const char* expression) const noexcept;

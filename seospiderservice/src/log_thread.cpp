@@ -1,6 +1,13 @@
 #include "log_thread.h"
 #include "pipe_message.h"
 
+namespace
+{
+
+const QChar s_separator(';');
+
+}
+
 namespace SeoSpiderService
 {
 
@@ -35,7 +42,14 @@ void LogThread::run()
 
 		QTextStream stream(&m_outputFile);
 
-		stream << message.message << "\n";
+		stream << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
+			<< s_separator << message.threadId
+			<< s_separator << message.severityLevel
+			<< s_separator << message.line
+			<< s_separator << message.file
+			<< s_separator << message.function
+			<< s_separator << message.message << "\n";
+
 		stream.flush();
 
 		emit messageReceived(message);

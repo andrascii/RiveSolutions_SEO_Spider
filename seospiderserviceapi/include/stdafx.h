@@ -29,6 +29,8 @@
 #include <optional>
 #include <csignal>
 #include <fstream>
+#include <sstream>
+#include <iostream>
 
 namespace std
 {

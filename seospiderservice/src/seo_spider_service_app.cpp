@@ -1,7 +1,6 @@
 #include "seo_spider_service_app.h"
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
-#include "log_message_receiver.h"
 #include "iipc_signaled_object.h"
 #include "ipc_signaled_object_creator.h"
 #include "qstandardpaths.h"

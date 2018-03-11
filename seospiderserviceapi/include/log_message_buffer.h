@@ -1,41 +1,56 @@
 #pragma once
 
-#include "ilogger.h"
+#include "pipe_message.h"
 #include <sstream>
-#include <iostream>
 
 namespace SeoSpiderServiceApi
 {
 
-inline std::function<void(const char*)> getLogFunction(SeverityLevel level)
+inline auto getLogFunction(Common::SeverityLevel level)
 {
-	using LogMemberFunctionType = void(ISeoSpiderServiceApi::*)(const char*);
+	using LogMemberFunctionType = void(ISeoSpiderServiceApi::*)(
+		Common::PipeMessage::Type,
+		std::uint64_t,
+		std::uint64_t,
+		const char*,
+		const char*,
+		const char*
+	);
+
+	using LogFunctionType = void(
+		Common::PipeMessage::Type,
+		std::uint64_t,
+		std::uint64_t,
+		const char*,
+		const char*,
+		const char*
+	);
 
 	LogMemberFunctionType memberFunctionPointer = nullptr;
 
 	switch(level)
 	{
-		case SeverityLevel::TraceLevel:
+		case Common::SeverityLevel::TraceLevel:
 		{
 			memberFunctionPointer = &ISeoSpiderServiceApi::traceLogMessage;
 			break;
 		}
-		case SeverityLevel::DebugLevel:
+		case Common::SeverityLevel::DebugLevel:
 		{
 			memberFunctionPointer = &ISeoSpiderServiceApi::debugLogMessage;
 			break;
 		}
-		case SeverityLevel::InfoLevel:
+		case Common::SeverityLevel::InfoLevel:
 		{
 			memberFunctionPointer = &ISeoSpiderServiceApi::infoLogMessage;
 			break;
 		}
-		case SeverityLevel::WarningLevel:
+		case Common::SeverityLevel::WarningLevel:
 		{
 			memberFunctionPointer = &ISeoSpiderServiceApi::warningLogMessage;
 			break;
 		}
-		case SeverityLevel::ErrorLevel:
+		case Common::SeverityLevel::ErrorLevel:
 		{
 			memberFunctionPointer = &ISeoSpiderServiceApi::errorLogMessage;
 			break;
@@ -48,17 +63,29 @@ inline std::function<void(const char*)> getLogFunction(SeverityLevel level)
 		}
 	}
 
-	return std::function<void(const char*)>([seoSpiderServiceApiPointer = seoSpiderServiceApi(), memberFunctionPointer](const char* s)
+	return std::function<LogFunctionType>([seoSpiderServiceApiPointer = seoSpiderServiceApi(), memberFunctionPointer](
+		Common::PipeMessage::Type type,
+		std::uint64_t threadId,
+		std::uint64_t line,
+		const char* file,
+		const char* function,
+		const char* message)
 	{
-		(seoSpiderServiceApiPointer->*memberFunctionPointer)(s);
+		(seoSpiderServiceApiPointer->*memberFunctionPointer)(type, threadId, line, file, function, message);
 	});
 }
 
 class LogMessageBuffer
 {
 public:
-	LogMessageBuffer(SeverityLevel level)
-		: m_level(level)
+	LogMessageBuffer(Common::PipeMessage::Type type, Common::SeverityLevel level, 
+		std::uint64_t threadId, std::uint64_t line, const char* file, const char* function)
+		: m_type(type)
+		, m_level(level)
+		, m_threadId(threadId)
+		, m_line(line)
+		, m_file(file)
+		, m_function(function)
 	{
 	}
 
@@ -66,7 +93,7 @@ public:
 	{
 		auto&& logFunction = getLogFunction(m_level);
 
-		logFunction(m_stream.str().c_str());
+		logFunction(m_type, m_threadId, m_line, m_file, m_function, m_stream.str().c_str());
 	}
 
 	template <typename T>
@@ -90,7 +117,12 @@ public:
 	}
 
 private:
-	SeverityLevel m_level;
+	Common::PipeMessage::Type m_type;
+	Common::SeverityLevel m_level;
+	std::uint64_t m_threadId;
+	std::uint64_t m_line;
+	const char* m_file;
+	const char* m_function;
 
 	std::stringstream m_stream;
 };
