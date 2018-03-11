@@ -47,14 +47,28 @@ void LoggerDebugWindow::onMessageReceived(const Common::PipeMessage& message)
 {
 	Common::SeverityLevel level = static_cast<Common::SeverityLevel>(message.severityLevel);
 
-	auto internalMessage = std::make_tuple(s_backgroundColors[level], s_textColors[level], message.message);
+	QString messageString;
+
+	QTextStream stream(&messageString);
+
+	stream << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
+		<< QChar(';') << message.threadId
+		<< QChar(';') << message.severityLevel
+		<< QChar(';') << message.line
+		<< QChar(';') << message.file
+		<< QChar(';') << message.function
+		<< QChar(';') << message.message;
+
+	stream.flush();
+
+	auto internalMessage = std::make_tuple(s_backgroundColors[level], s_textColors[level], messageString);
 
 	m_messages[AllLevels].push_back(internalMessage);
 	m_messages[message.severityLevel].push_back(internalMessage);
 
 	textBrowser->setTextBackgroundColor(QColor(s_backgroundColors[level]));
 	textBrowser->setTextColor(QColor(s_textColors[level]));
-	textBrowser->append(message.message);
+	textBrowser->append(messageString);
 }
 
 void LoggerDebugWindow::levelChanged()
