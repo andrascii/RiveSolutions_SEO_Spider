@@ -14,7 +14,7 @@ namespace SeoSpider
 FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent)
 	: QFrame(parent)
 	, m_webSiteDataWidget(webSiteDataWidget)
-	, m_summaryFilterTableView(new TableView(this))
+	, m_summaryFilterTableView(new TableView(this, true))
 	, m_summaryFilterModel(new SummaryModel(this))
 	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterModel, this))
 	, m_splitter(new QSplitter(this))

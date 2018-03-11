@@ -33,9 +33,10 @@ private:
 	void init();
 
 	QString commandLineParameter(int num) const noexcept;
-	void makeDump(HANDLE processHandle) const noexcept;
+	void makeDump(HANDLE processHandle) noexcept;
 	void sendReports();
 	static QString dumpsPath();
+	static QString logFilePath();
 
 	Q_SIGNAL void closeServiceApp() const;
 	Q_SLOT void onSendingFinished(const QString& mailId, int result, const QByteArray& log);
