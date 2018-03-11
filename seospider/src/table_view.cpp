@@ -10,13 +10,14 @@
 namespace SeoSpider
 {
 
-TableView::TableView(QWidget* parent)
+TableView::TableView(QWidget* parent, bool supportColumSpans)
 	: QTableView(parent)
 	, m_model(nullptr)
 	, m_viewModel(nullptr)
 	, m_contextMenu(nullptr)
 	, m_showAdditionalGrid(false)
 	, m_rowHeight(Common::Helpers::pointsToPixels(22))
+	, m_supportColumnSpans(supportColumSpans)
 {
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -266,6 +267,11 @@ bool TableView::showAdditionalGrid() const noexcept
 
 void TableView::initSpans()
 {
+	if (!m_supportColumnSpans)
+	{
+		return;
+	}
+
 	const int rows = model()->rowCount();
 	const int columns = model()->columnCount();
 

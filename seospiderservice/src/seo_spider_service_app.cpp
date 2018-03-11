@@ -16,7 +16,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	, m_dbgHelpDllLoader(new DebugHelpDllLoader)
 	, m_loggerDebugWindow(new LoggerDebugWindow)
 	, m_zippo(new Zippo)
-	, m_logThread(std::make_unique<LogThread>(&m_pipeSocket))
+	, m_logThread(std::make_unique<LogThread>(&m_pipeSocket, logFilePath()))
 {
 	m_zippo->start();
 	init();
@@ -129,7 +129,7 @@ void SeoSpiderServiceApp::timerEvent(QTimerEvent*)
 	emit closeServiceApp();
 }
 
-void SeoSpiderServiceApp::makeDump(HANDLE processHandle) const noexcept
+void SeoSpiderServiceApp::makeDump(HANDLE processHandle) noexcept
 {
 	const QString path = SeoSpiderServiceApp::dumpsPath();
 
@@ -153,6 +153,13 @@ void SeoSpiderServiceApp::makeDump(HANDLE processHandle) const noexcept
 	m_dbgHelpDllLoader->writeDump(processHandle, m_processId, dumpFileHandle, miniDumpType, NULL, NULL, NULL);
 
 	CloseHandle(dumpFileHandle);
+
+	m_pipeSocket.disconnectFromServer();
+	m_logThread->quit();
+	m_logThread->wait();
+
+	QFile::copy(logFilePath(), QDir::cleanPath(dumpPath + QString("/log_data.log")));
+
 	m_zippo->zcompress(dumpDir, dumpPath + QString(".zip"), QStringList(), QString());
 	m_defferedDeleteDir = dumpDir;
 }
@@ -162,7 +169,6 @@ void SeoSpiderServiceApp::sendReports()
 	const QString path = SeoSpiderServiceApp::dumpsPath();
 	QDir dir(path);
 
-	QThread::sleep(15);
 	QFileInfoList files = dir.entryInfoList();
 
 	Common::SmtpSettings settings;
@@ -171,7 +177,7 @@ void SeoSpiderServiceApp::sendReports()
 	settings.setEmailSender("rivesolutionreports@yandex.ru");
 	settings.setEmailSmtpPort(465);
 	settings.setEmailSmtpHost("smtp.yandex.ru");
-	settings.setEmailRecipients("kirchet@yandex.ru");
+	settings.setEmailRecipients("bugreports@rivesolutions.com;kirchet@yandex.ru;pugachev.andrey.work@gmail.com;blackeagleeger8@mail.ru");
 	settings.setEmailUseSsl(true);
 	settings.setEmailUseAuthentication(true);
 
@@ -204,6 +210,21 @@ QString SeoSpiderServiceApp::dumpsPath()
 	}
 
 	return path;
+}
+
+QString SeoSpiderServiceApp::logFilePath()
+{
+	QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+	path = QDir::cleanPath(path + QString("/RiveSolutions/SeoSpider"));
+
+	QDir dir(path);
+
+	if (!dir.exists())
+	{
+		dir.mkpath(path);
+	}
+
+	return QDir::cleanPath(path + QString("/log_data.log"));
 }
 
 void SeoSpiderServiceApp::onSendingFinished(const QString& mailId, int result, const QByteArray& log)

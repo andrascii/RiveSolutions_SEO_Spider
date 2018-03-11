@@ -23,7 +23,7 @@ class TableView : public QTableView, public IView
 	Q_OBJECT
 
 public:
-	explicit TableView(QWidget* parent = nullptr);
+	explicit TableView(QWidget* parent, bool supportColumSpans);
 
 	virtual void setModel(QAbstractItemModel* model) override;
 	IViewModel* viewModel() const noexcept;
@@ -60,6 +60,7 @@ private:
 
 	bool m_showAdditionalGrid;
 	int m_rowHeight;
+	bool m_supportColumnSpans;
 };
 
 }
