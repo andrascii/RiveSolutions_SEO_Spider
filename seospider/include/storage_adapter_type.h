@@ -59,6 +59,9 @@ enum class StorageAdapterType
 	StorageAdapterTypeContainsMetaRefreshTag = CrawlerEngine::StorageType::ContainsMetaRefreshTagStorageType,
 	StorageAdapterTypeContainsFrames = CrawlerEngine::StorageType::ContainsFramesStorageType,
 
+	// not indexed pages
+	StorageAdapterTypeBlockedForSEIndexing = CrawlerEngine::StorageType::BlockedForSEIndexing,
+
 	// internal resources enum mappers
 	StorageAdapterTypeHtmlResources = CrawlerEngine::StorageType::HtmlResourcesStorageType,
 	StorageAdapterTypeImageResources = CrawlerEngine::StorageType::ImageResourcesStorageType,

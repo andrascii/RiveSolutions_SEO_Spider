@@ -427,6 +427,12 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
+		// not indexed pages
+
+		std::make_pair(StorageType::BlockedForSEIndexing,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
 		// Resources Types Storages
 
 		std::make_pair(StorageType::PendingResourcesStorageType,

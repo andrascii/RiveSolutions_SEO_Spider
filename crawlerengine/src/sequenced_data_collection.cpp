@@ -204,6 +204,9 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::ContainsMetaRefreshTagStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ContainsFramesStorageType, createSequencedStorage()),
 
+		// not indexed pages
+		std::make_pair(StorageType::BlockedForSEIndexing, createSequencedStorage()),
+
 		// Resources Types Storages
 		std::make_pair(StorageType::HtmlResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ImageResourcesStorageType, createSequencedStorage()),

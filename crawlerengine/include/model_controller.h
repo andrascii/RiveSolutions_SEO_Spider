@@ -51,6 +51,9 @@ private:
 	void setPageLevel(ParsedPagePtr& page, int level) const noexcept;
 	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage);
 
+	bool isResourceBlockedForIndexing(const ResourceOnPage& resource) const noexcept;
+	ParsedPagePtr parsedPageFromResource(const ResourceOnPage& resource) const;
+
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptions m_crawlerOptions;
