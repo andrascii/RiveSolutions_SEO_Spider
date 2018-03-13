@@ -205,7 +205,10 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::ContainsFramesStorageType, createSequencedStorage()),
 
 		// not indexed pages
-		std::make_pair(StorageType::BlockedForSEIndexing, createSequencedStorage()),
+		std::make_pair(StorageType::BlockedForSEIndexingStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::NofollowLinksStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::BlockedByRobotsTxtStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::BlockedByXRobotsTagStorageType, createSequencedStorage()),
 
 		// Resources Types Storages
 		std::make_pair(StorageType::HtmlResourcesStorageType, createSequencedStorage()),

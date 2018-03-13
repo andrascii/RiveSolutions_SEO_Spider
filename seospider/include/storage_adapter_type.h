@@ -60,7 +60,10 @@ enum class StorageAdapterType
 	StorageAdapterTypeContainsFrames = CrawlerEngine::StorageType::ContainsFramesStorageType,
 
 	// not indexed pages
-	StorageAdapterTypeBlockedForSEIndexing = CrawlerEngine::StorageType::BlockedForSEIndexing,
+	StorageAdapterTypeBlockedForSEIndexing = CrawlerEngine::StorageType::BlockedForSEIndexingStorageType,
+	StorageAdapterTypeNofollowLinks = CrawlerEngine::StorageType::NofollowLinksStorageType,
+	StorageAdapterTypeBlockedByRobotsTxt = CrawlerEngine::StorageType::BlockedByRobotsTxtStorageType,
+	StorageAdapterTypeBlockedByXRobotsTag = CrawlerEngine::StorageType::BlockedByXRobotsTagStorageType,
 
 	// internal resources enum mappers
 	StorageAdapterTypeHtmlResources = CrawlerEngine::StorageType::HtmlResourcesStorageType,

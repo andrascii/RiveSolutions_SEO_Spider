@@ -636,20 +636,56 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
-			if (resource.permission != Permission::PermissionAllowed &&
+			const bool isBlockedByXRobotsTag = resource.permission == Permission::PermissionBlockedByMetaRobotsRules;
+			const bool isBlockedByRobotsTxt = resource.permission == Permission::PermissionBlockedByRobotsTxtRules;
+			const bool isNofollowResource = resource.link.urlParameter == LinkParameter::NofollowParameter;
+			const bool isThisNofollowResourceExists = data()->isParsedPageExists(pendingResource, StorageType::NofollowLinksStorageType);
+			const bool isThisDofollowResourceExists = data()->isParsedPageExists(pendingResource, StorageType::DofollowUrlStorageType);
+
+			bool isResourceBlockedForIndexing = false;
+
+			if (isBlockedByRobotsTxt || isBlockedByXRobotsTag || isNofollowResource)
+			{
+				data()->addParsedPage(pendingResource, StorageType::BlockedForSEIndexingStorageType);
+				isResourceBlockedForIndexing = true;
+
+				if (isBlockedByXRobotsTag)
+				{
+					data()->addParsedPage(pendingResource, StorageType::BlockedByXRobotsTagStorageType);
+					isResourceBlockedForIndexing = true;
+				}
+				else if (isBlockedByRobotsTxt)
+				{
+					data()->addParsedPage(pendingResource, StorageType::BlockedByRobotsTxtStorageType);
+					isResourceBlockedForIndexing = true;
+				}
+			}
+
+			if (isNofollowResource)
+			{
+				if (!isThisDofollowResourceExists && !isThisNofollowResourceExists)
+				{
+					data()->addParsedPage(pendingResource, StorageType::NofollowLinksStorageType);
+					isResourceBlockedForIndexing = true;
+				}
+			}
+			else
+			{
+				if (!isThisDofollowResourceExists)
+				{
+					data()->addParsedPage(pendingResource, StorageType::DofollowUrlStorageType);
+				}
+			}
+
+			if (!isResourceBlockedForIndexing &&
+				resource.permission != Permission::PermissionAllowed &&
 				resource.permission != Permission::PermissionBlockedByRobotsTxtRules &&
 				resource.permission != Permission::PermissionNotHttpLinkNotAllowed)
 			{
-				// what if this resource is unavailable not from all pages?
 				continue;
 			}
 
 			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
-
-			if (isResourceBlockedForIndexing(resource))
-			{
-				data()->addParsedPage(existingResource, StorageType::BlockedForSEIndexing);
-			}
 
 			DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
@@ -948,13 +984,6 @@ void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType loo
 
 		data()->addParsedPage(incomingPage, destStorage);
 	}
-}
-
-bool ModelController::isResourceBlockedForIndexing(const ResourceOnPage& resource) const noexcept
-{
-	return resource.permission == Permission::PermissionBlockedByFolder ||
-		resource.permission == Permission::PermissionBlockedByMetaRobotsRules ||
-		resource.permission == Permission::PermissionBlockedByRobotsTxtRules;
 }
 
 ParsedPagePtr ModelController::parsedPageFromResource(const ResourceOnPage& resource) const

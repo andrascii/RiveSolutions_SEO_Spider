@@ -11,6 +11,7 @@ enum class StorageType
 	// Statistic data
 	CrawledUrlStorageType,
 	ExternalUrlStorageType,
+	DofollowUrlStorageType,
 
 	// Url problems
 	UpperCaseUrlStorageType,
@@ -71,7 +72,10 @@ enum class StorageType
 	ContainsFramesStorageType,
 
 	// not indexed pages
-	BlockedForSEIndexing,
+	BlockedForSEIndexingStorageType,
+	NofollowLinksStorageType,
+	BlockedByRobotsTxtStorageType,
+	BlockedByXRobotsTagStorageType,
 
 	// Resources
 	PendingResourcesStorageType,

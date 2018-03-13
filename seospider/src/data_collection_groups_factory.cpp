@@ -54,7 +54,10 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		{
 			p->name = QObject::tr("Blocked for Indexing Pages");
 			p->group = AuditGroup::NotIndexedPagesGroup;
-			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BlockedForSEIndexing, QObject::tr("Not Indexed Pages") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BlockedForSEIndexingStorageType, QObject::tr("All Not Indexed Pages") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::NofollowLinksStorageType, QObject::tr("Nofollow Links") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BlockedByRobotsTxtStorageType, QObject::tr("Blocked by robots.txt Pages") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BlockedByXRobotsTagStorageType, QObject::tr("Blocked by x-robots-tag Pages") });
 
 			return p;
 		}
