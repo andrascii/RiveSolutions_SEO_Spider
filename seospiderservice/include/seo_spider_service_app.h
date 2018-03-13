@@ -34,12 +34,13 @@ private:
 
 	QString commandLineParameter(int num) const noexcept;
 	void makeDump(HANDLE processHandle) noexcept;
-	void sendReports();
+	Q_SLOT void sendReports();
 	static QString dumpsPath();
 	static QString logFilePath();
 
 	Q_SIGNAL void closeServiceApp() const;
 	Q_SLOT void onSendingFinished(const QString& mailId, int result, const QByteArray& log);
+	Q_SLOT void onCompressingFinished();
 
 
 private:
@@ -64,6 +65,8 @@ private:
 	Common::IpcSocket m_pipeSocket;
 
 	std::unique_ptr<LogThread> m_logThread;
+	int m_pendingReportsCount;
+	bool m_compressionIsActive;
 };
 
 }

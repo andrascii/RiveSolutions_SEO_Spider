@@ -17,6 +17,8 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	, m_loggerDebugWindow(new LoggerDebugWindow)
 	, m_zippo(new Zippo)
 	, m_logThread(std::make_unique<LogThread>(&m_pipeSocket, logFilePath()))
+	, m_pendingReportsCount(0)
+	, m_compressionIsActive(false)
 {
 	m_zippo->start();
 	init();
@@ -29,6 +31,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	Q_ASSERT(processIdConvertion && "Process ID must be passed!");
 
 	VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::quit, Qt::QueuedConnection));
+	VERIFY(connect(m_zippo, &Zippo::finished, this, &SeoSpiderServiceApp::onCompressingFinished, Qt::QueuedConnection));
 
 	//m_crashEventSignaledObject->open(m_eventName.constData());
 	m_signaledEvent = OpenEvent(SYNCHRONIZE, FALSE, m_eventName.constData());
@@ -112,11 +115,21 @@ void SeoSpiderServiceApp::timerEvent(QTimerEvent*)
 		}
 		case WAIT_OBJECT_0 + 1:
 		{
+			killTimer(m_timerId);
 			makeDump(m_processHandle);
 
 			TerminateProcess(m_processHandle, 0xDEAD);
 
 			m_dialog->exec();
+			if (m_dialog->sendReportsNow())
+			{
+				
+				if (!m_compressionIsActive)
+				{
+					sendReports();
+				}
+				return;
+			}
 
 			break;
 		}
@@ -126,7 +139,11 @@ void SeoSpiderServiceApp::timerEvent(QTimerEvent*)
 		}
 	}
 
-	emit closeServiceApp();
+	if (!m_dialog->isVisible() && !m_dialog->sendReportsNow())
+	{
+		emit closeServiceApp();
+	}
+	
 }
 
 void SeoSpiderServiceApp::makeDump(HANDLE processHandle) noexcept
@@ -160,6 +177,7 @@ void SeoSpiderServiceApp::makeDump(HANDLE processHandle) noexcept
 
 	QFile::copy(logFilePath(), QDir::cleanPath(dumpPath + QString("/log_data.log")));
 
+	m_compressionIsActive = true;
 	m_zippo->zcompress(dumpDir, dumpPath + QString(".zip"), QStringList(), QString());
 	m_defferedDeleteDir = dumpDir;
 }
@@ -181,8 +199,6 @@ void SeoSpiderServiceApp::sendReports()
 	settings.setEmailUseSsl(true);
 	settings.setEmailUseAuthentication(true);
 
-
-
 	foreach(const QFileInfo& file, files)
 	{
 		if (!file.fileName().endsWith(".zip"))
@@ -190,9 +206,15 @@ void SeoSpiderServiceApp::sendReports()
 			continue;
 		}
 
+		++m_pendingReportsCount;
 		
 		Common::SmtpMessage message(settings, "Report", "Message Text", { file.absoluteFilePath() });
 		Common::SmtpSender::send(message, file.absoluteFilePath(), this, SLOT(onSendingFinished(const QString&, int, const QByteArray&)));
+	}
+
+	if (m_dialog->sendReportsNow() && m_pendingReportsCount == 0)
+	{
+		emit closeServiceApp();
 	}
 
 }
@@ -234,6 +256,22 @@ void SeoSpiderServiceApp::onSendingFinished(const QString& mailId, int result, c
 	if (result == Common::SmtpSender::resultSuccess)
 	{
 		QFile(mailId).remove();
+	}
+
+	--m_pendingReportsCount;
+
+	if (m_dialog->sendReportsNow() && m_pendingReportsCount == 0)
+	{
+		emit closeServiceApp();
+	}
+}
+
+void SeoSpiderServiceApp::onCompressingFinished()
+{
+	m_compressionIsActive = false;
+	if (m_dialog->sendReportsNow())
+	{
+		sendReports();
 	}
 }
 
