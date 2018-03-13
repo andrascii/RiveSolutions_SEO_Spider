@@ -6,21 +6,21 @@
 namespace
 {
 
-const std::map<QString, MetaRobotsItem> s_metaRobotsMapping
+const std::map<QString, CrawlerEngine::MetaRobotsItem> s_metaRobotsMapping
 {
-	{ QString("all"), MetaRobotsAll },
-	{ QString("noindex"), MetaRobotsNoIndex },
-	{ QString("nofollow"), MetaRobotsNoFollow },
-	{ QString("none"), MetaRobotsNone },
-	{ QString("noarchive"), MetaRobotsNoArchive },
-	{ QString("nosnippet"), MetaRobotsNoSnippet },
-	{ QString("noodp"), MetaRobotsNoODP },
-	{ QString("notranslate"), MetaRobotsNoTranslate },
-	{ QString("noimageindex"), MetaRobotsNoImageIndex },
-	{ QString("index"), MetaRobotsIndex },
-	{ QString("follow"), MetaRobotsFollow },
-	{ QString("noyaca"), MetaRobotsNoYaCa },
-	{ QString("noydir"), MetaRobotsNoYDir }
+	{ QString("all"), CrawlerEngine::MetaRobotsAll },
+	{ QString("noindex"), CrawlerEngine::MetaRobotsNoIndex },
+	{ QString("nofollow"), CrawlerEngine::MetaRobotsNoFollow },
+	{ QString("none"), CrawlerEngine::MetaRobotsNone },
+	{ QString("noarchive"),CrawlerEngine::MetaRobotsNoArchive },
+	{ QString("nosnippet"), CrawlerEngine::MetaRobotsNoSnippet },
+	{ QString("noodp"), CrawlerEngine::MetaRobotsNoODP },
+	{ QString("notranslate"), CrawlerEngine::MetaRobotsNoTranslate },
+	{ QString("noimageindex"), CrawlerEngine::MetaRobotsNoImageIndex },
+	{ QString("index"), CrawlerEngine::MetaRobotsIndex },
+	{ QString("follow"), CrawlerEngine::MetaRobotsFollow },
+	{ QString("noyaca"), CrawlerEngine::MetaRobotsNoYaCa },
+	{ QString("noydir"), CrawlerEngine::MetaRobotsNoYDir }
 };
 
 }
