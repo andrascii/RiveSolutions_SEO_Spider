@@ -641,13 +641,17 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			const bool isNofollowResource = resource.link.urlParameter == LinkParameter::NofollowParameter;
 			const bool isThisNofollowResourceExists = data()->isParsedPageExists(pendingResource, StorageType::NofollowLinksStorageType);
 			const bool isThisDofollowResourceExists = data()->isParsedPageExists(pendingResource, StorageType::DofollowUrlStorageType);
+			const bool isThisBlockedResourceExists = data()->isParsedPageExists(pendingResource, StorageType::BlockedForSEIndexingStorageType);
 
 			bool isResourceBlockedForIndexing = false;
 
 			if (isBlockedByRobotsTxt || isBlockedByXRobotsTag || isNofollowResource)
 			{
-				data()->addParsedPage(pendingResource, StorageType::BlockedForSEIndexingStorageType);
-				isResourceBlockedForIndexing = true;
+				if (!isThisBlockedResourceExists)
+				{
+					data()->addParsedPage(pendingResource, StorageType::BlockedForSEIndexingStorageType);
+					isResourceBlockedForIndexing = true;
+				}
 
 				if (isBlockedByXRobotsTag)
 				{
