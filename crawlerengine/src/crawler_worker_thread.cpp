@@ -340,10 +340,22 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 	bool checkUrl = false;
 
+	// fix ddos guard redirects like page.html -> ddos-site -> page.html
+	for (int i = static_cast<int>(pages.size()) - 1; i >= 0; --i)
+	{
+		for (int j = i - 1; j >= 0; --j)
+		{
+			if (pages[i]->url.urlStr() == pages[j]->url.urlStr())
+			{
+				const Url redirectUrl = pages[j]->redirectedUrl;
+				*pages[j] = *pages[i];
+				pages[j]->redirectedUrl = redirectUrl;
+			}
+		}
+	}
+
 	for (ParsedPagePtr& page : pages)
 	{
-		std::vector<LinkInfo> blockedByRobotsTxtLinks = schedulePageResourcesLoading(page);
-
 		const bool urlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
 		if (urlAdded && !m_isRunning && !m_reloadPage)
@@ -355,10 +367,10 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 		if (urlAdded)
 		{
+			std::vector<LinkInfo> blockedByRobotsTxtLinks = schedulePageResourcesLoading(page);
 			onPageParsed(WorkerResult{ page, m_reloadPage, requestType });
+			std::for_each(blockedByRobotsTxtLinks.begin(), blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
 		}
-
-		std::for_each(blockedByRobotsTxtLinks.begin(), blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
 
 		checkUrl = true;
 	}
