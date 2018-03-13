@@ -582,12 +582,13 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		{
 			// do not parse resources from an external one
 			return;
-		}		
+		}
 	}
 
 	if (workerResult.incomingPage()->canonicalUrl.isValid() && !workerResult.incomingPage()->isThisExternalPage)
 	{
 		data()->addParsedPage(workerResult, StorageType::CanonicalUrlResourcesStorageType);
+
 		if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::UniqueCanonicalUrlResourcesStorageType))
 		{
 			data()->addParsedPage(workerResult, StorageType::UniqueCanonicalUrlResourcesStorageType);
@@ -607,8 +608,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			continue;
 		}
 
-		ParsedPagePtr resourcePage = std::make_shared<ParsedPage>();
-		resourcePage->url = resource.link.url;
+		ParsedPagePtr resourcePage = parsedPageFromResource(resource);
 		ParsedPagePtr existingResource = data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 
 		if (!existingResource)
@@ -628,8 +628,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		}
 		else
 		{
-			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
-			pendingResource->url = resource.link.url;
+			ParsedPagePtr pendingResource = parsedPageFromResource(resource);
 
 			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
@@ -646,6 +645,11 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			}
 
 			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
+
+			if (isResourceBlockedForIndexing(resource))
+			{
+				data()->addParsedPage(existingResource, StorageType::BlockedForSEIndexing);
+			}
 
 			DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
@@ -700,11 +704,13 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 	for (const ResourceOnPage& resource : workerResult.incomingPage()->allResourcesOnPage)
 	{
 		const QString resourceDisplayUrl = resource.link.url.toDisplayString();
-		const ResourceType resourceType = workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml
-			? workerResult.incomingPage()->resourceType : resource.resourceType;
+
+		const ResourceType resourceType = workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml ? 
+			workerResult.incomingPage()->resourceType :
+			resource.resourceType;
 
 		if ((!resourceShouldBeProcessed(resource.resourceType) && 
-				resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
+			resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
 			resourceType == ResourceType::ResourceHtml ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
@@ -718,8 +724,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			continue;
 		}
 
-		ParsedPagePtr temporaryResource = std::make_shared<ParsedPage>();
-		temporaryResource->url = resource.link.url;
+		ParsedPagePtr temporaryResource = parsedPageFromResource(resource);
 
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url);
 		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(workerResult.incomingPage()->url, temporaryResource->url) || !httpResource;
@@ -943,6 +948,21 @@ void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType loo
 
 		data()->addParsedPage(incomingPage, destStorage);
 	}
+}
+
+bool ModelController::isResourceBlockedForIndexing(const ResourceOnPage& resource) const noexcept
+{
+	return resource.permission == Permission::PermissionBlockedByFolder ||
+		resource.permission == Permission::PermissionBlockedByMetaRobotsRules ||
+		resource.permission == Permission::PermissionBlockedByRobotsTxtRules;
+}
+
+ParsedPagePtr ModelController::parsedPageFromResource(const ResourceOnPage& resource) const
+{
+	ParsedPagePtr parsedPage = std::make_shared<ParsedPage>();
+	parsedPage->url = resource.link.url;
+
+	return parsedPage;
 }
 
 }

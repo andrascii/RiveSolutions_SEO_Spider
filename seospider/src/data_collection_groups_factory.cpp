@@ -50,6 +50,15 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			return p;
 		}
 
+		case AuditGroup::NotIndexedPagesGroup:
+		{
+			p->name = QObject::tr("Blocked for Indexing Pages");
+			p->group = AuditGroup::NotIndexedPagesGroup;
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BlockedForSEIndexing, QObject::tr("Not Indexed Pages") });
+
+			return p;
+		}
+
 		case AuditGroup::PageProblemsAuditGroup:
 		{
 			p->name = QObject::tr("Page Problems");

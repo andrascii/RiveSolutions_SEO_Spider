@@ -70,6 +70,9 @@ enum class StorageType
 	ContainsMetaRefreshTagStorageType,
 	ContainsFramesStorageType,
 
+	// not indexed pages
+	BlockedForSEIndexing,
+
 	// Resources
 	PendingResourcesStorageType,
 	HtmlResourcesStorageType,

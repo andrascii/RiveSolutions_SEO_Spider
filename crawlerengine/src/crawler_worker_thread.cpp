@@ -84,7 +84,6 @@ void CrawlerWorkerThread::stop()
 		try
 		{
 			DEBUGLOG << "Set value to promise";
-			//SeoSpiderServiceApi::LogMessageBuffer(Common::PipeMessage::LogMessage, Common::SeverityLevel::TraceLevel, std::this_thread::get_id(), __LINE__, __FILENAME__, __FUNCTION__) << "Set value to promise";
 
 			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}
@@ -298,16 +297,15 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isOutsideFolderLinkUnavailable), linkList.end());
 
 	ResourcesOnPageList resources;
+
 	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
 		ResourceOnPage fixedResource = resource;
 		setLinkLoadAvailability(fixedResource);
 		resources.insert(fixedResource);
 	}
-	
-	parsedPage->allResourcesOnPage = resources;
 
-	
+	parsedPage->allResourcesOnPage = resources;
 
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
 	std::copy(blockedByRobotsTxtLinksIterator, linkList.end(), std::back_inserter(blockedByRobotsTxtLinks));
