@@ -274,4 +274,39 @@ TEST(LinksTests, BlockedResourcesByMetaRobots)
 	env.exec();
 }
 
+
+TEST(LinksTests, SecondGetRequest)
+{
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/second-get-head/second-get.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ("Second Get 3", pages.at(2)->title);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, SecondHeadRequest)
+{
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/second-get-head/second-head.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ("Second Head 3", pages.at(1)->title);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }
