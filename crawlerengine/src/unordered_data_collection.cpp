@@ -227,11 +227,15 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		// Link Problems Storages
-
 		std::make_pair(StorageType::ExternalUrlStorageType,
-			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::DofollowUrlStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		// Link Problems Storages
 
 		std::make_pair(StorageType::UpperCaseUrlStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
@@ -429,7 +433,19 @@ void UnorderedDataCollection::initializeStorages()
 
 		// not indexed pages
 
-		std::make_pair(StorageType::BlockedForSEIndexing,
+		std::make_pair(StorageType::BlockedForSEIndexingStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::NofollowLinksStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::BlockedByRobotsTxtStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::BlockedByXRobotsTagStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 

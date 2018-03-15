@@ -3,12 +3,34 @@
 #include "gumbo_parsing_helpers.h"
 #include "meta_robots_helpers.h"
 
+namespace
+{
+
+const std::map<QString, CrawlerEngine::MetaRobotsItem> s_metaRobotsMapping
+{
+	{ QString("all"), CrawlerEngine::MetaRobotsAll },
+	{ QString("noindex"), CrawlerEngine::MetaRobotsNoIndex },
+	{ QString("nofollow"), CrawlerEngine::MetaRobotsNoFollow },
+	{ QString("none"), CrawlerEngine::MetaRobotsNone },
+	{ QString("noarchive"),CrawlerEngine::MetaRobotsNoArchive },
+	{ QString("nosnippet"), CrawlerEngine::MetaRobotsNoSnippet },
+	{ QString("noodp"), CrawlerEngine::MetaRobotsNoODP },
+	{ QString("notranslate"), CrawlerEngine::MetaRobotsNoTranslate },
+	{ QString("noimageindex"), CrawlerEngine::MetaRobotsNoImageIndex },
+	{ QString("index"), CrawlerEngine::MetaRobotsIndex },
+	{ QString("follow"), CrawlerEngine::MetaRobotsFollow },
+	{ QString("noyaca"), CrawlerEngine::MetaRobotsNoYaCa },
+	{ QString("noydir"), CrawlerEngine::MetaRobotsNoYDir }
+};
+
+}
+
 namespace CrawlerEngine
 {
 
 MetaParser::MetaParser()
+	: m_metaRefreshContentPattern(QRegularExpression("[0-9]+;[[:space:]]*url[[:space:]]*=[[:space:]]*([a-z0-9.\\-:/]+)"))
 {
-	m_metaRefreshContentPattern = QRegularExpression("[0-9]+;[[:space:]]*url[[:space:]]*=[[:space:]]*([a-z0-9.\\-:/]+)");
 }
 
 void MetaParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
@@ -170,24 +192,6 @@ void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noe
 
 void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) noexcept
 {
-	const std::map<QString, MetaRobotsItem> metaRobotsMapping
-	{
-		{ QString("all"), MetaRobotsAll },
-		{ QString("noindex"), MetaRobotsNoIndex },
-		{ QString("nofollow"), MetaRobotsNoFollow },
-		{ QString("none"), MetaRobotsNone },
-		{ QString("noarchive"), MetaRobotsNoArchive },
-		{ QString("nosnippet"), MetaRobotsNoSnippet },
-		{ QString("noodp"), MetaRobotsNoODP },
-		{ QString("notranslate"), MetaRobotsNoTranslate },
-		{ QString("noimageindex"), MetaRobotsNoImageIndex },
-		{ QString("index"), MetaRobotsIndex },
-		{ QString("follow"), MetaRobotsFollow },
-		{ QString("noyaca"), MetaRobotsNoYaCa },
-		{ QString("noydir"), MetaRobotsNoYDir },
-	};
-
-
 	std::vector<QString> xRobotsTagValues = headers.valueOf("x-robots-tag");
 
 	for (size_t i = 0; i < xRobotsTagValues.size(); ++i)
@@ -196,9 +200,9 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 
 		for (const QString& part : parts)
 		{
-			auto it = metaRobotsMapping.find(part.trimmed().toLower());
+			auto it = s_metaRobotsMapping.find(part.trimmed().toLower());
 
-			if (it != metaRobotsMapping.cend())
+			if (it != s_metaRobotsMapping.cend())
 			{
 				page->metaRobotsFlags[UserAgentType::AnyBot].setFlag(it->second);
 			}
@@ -244,9 +248,9 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 
 			for (const QString& part : parts)
 			{
-				const auto it = metaRobotsMapping.find(part.trimmed().toLower());
+				const auto it = s_metaRobotsMapping.find(part.trimmed().toLower());
 
-				if (it != metaRobotsMapping.cend())
+				if (it != s_metaRobotsMapping.cend())
 				{
 					page->metaRobotsFlags[userAgentType].setFlag(it->second);
 				}

@@ -170,6 +170,7 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 	}
 
 	std::vector<LinkInfo> outlinks;
+
 	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
 		if (resource.resourceType == ResourceType::ResourceHtml)
@@ -186,8 +187,6 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 
 	if (parsedPage->redirectedUrl.isValid())
 	{
-		// m_uniqueLinkStore->addUrlList(std::vector<Url>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
-
 		const LinkInfo redirectLinkInfo{ parsedPage->redirectedUrl, LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceRedirectUrl };
 		const ResourceOnPage redirectedResource(parsedPage->resourceType, redirectLinkInfo, Permission::PermissionAllowed);
 		parsedPage->allResourcesOnPage.erase(redirectedResource);
@@ -254,7 +253,7 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionBlockedByFolder, linkInfo, metaRobotsFlags);
 	};
 
-	const auto setLinkLoadAvailability = [&](ResourceOnPage& resource)
+	const auto setResourcePermission = [&](ResourceOnPage& resource)
 	{
 		if (!PageParserHelpers::isHttpOrHttpsScheme(resource.link.url))
 		{
@@ -301,7 +300,7 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
 		ResourceOnPage fixedResource = resource;
-		setLinkLoadAvailability(fixedResource);
+		setResourcePermission(fixedResource);
 		resources.insert(fixedResource);
 	}
 
