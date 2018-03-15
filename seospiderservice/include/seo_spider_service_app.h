@@ -34,6 +34,7 @@ private:
 
 	QString commandLineParameter(int num) const noexcept;
 	void makeDump(HANDLE processHandle) noexcept;
+	void writeSysInfoFile(const QString& fileName) const;
 	Q_SLOT void sendReports();
 	static QString dumpsPath();
 	static QString logFilePath();

@@ -73,11 +73,26 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
-target_link_libraries(
-	${SeoSpiderServiceAppName}
-	${CommonLibName}
-	#${QxtSmtpLibName}
-	${Boost_LIBRARIES}
-	Qt5::Widgets
-	Qt5::Network
-)
+if (MSVC)
+	target_link_libraries(
+		${SeoSpiderServiceAppName}
+		${CommonLibName}
+		#${QxtSmtpLibName}
+		${Boost_LIBRARIES}
+		Qt5::Widgets
+		Qt5::Network
+		Mincore.lib
+	)
+endif()
+
+
+if(APPLE)
+    target_link_libraries(
+		${SeoSpiderServiceAppName}
+		${CommonLibName}
+		#${QxtSmtpLibName}
+		${Boost_LIBRARIES}
+		Qt5::Widgets
+		Qt5::Network
+	)
+endif()
