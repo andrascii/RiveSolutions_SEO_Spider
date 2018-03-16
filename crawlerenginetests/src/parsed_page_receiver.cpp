@@ -10,9 +10,6 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	: m_sequencedDataCollection(sequencedDataCollection)
 	, m_allPagesReceived(false)
 {
-	m_receiverThread = new Common::NamedThread("ParsedPageReceiverThread");
-	moveToThread(m_receiverThread);
-
 	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageAdded,
 		this, &ParsedPageReceiver::onParsedPageAdded, Qt::QueuedConnection));
 
@@ -31,22 +28,14 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	VERIFY(connect(crawler, &Crawler::onAboutClearData,
 		this, &ParsedPageReceiver::onAboutClearData, Qt::QueuedConnection));
 
-	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)), 
-		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType))));
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)),
+		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType)), Qt::DirectConnection));
+
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(WorkerResult, StorageType)),
+		this, SLOT(onUnorderedDataCollectionPageAdded(WorkerResult, StorageType)), Qt::DirectConnection));
 
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType)),
-		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType))));
-
-	m_receiverThread->start();
-}
-
-ParsedPageReceiver::~ParsedPageReceiver()
-{
-	// Dtor should be called from a different thread
-	ASSERT(thread() != QThread::currentThread());
-	m_receiverThread->quit();
-	m_receiverThread->wait();
-	m_receiverThread->deleteLater();
+		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType)), Qt::DirectConnection));
 }
 
 void ParsedPageReceiver::onParsedPageAdded(int row, StorageType type)
@@ -123,24 +112,49 @@ void ParsedPageReceiver::onAboutClearData()
 
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
 {
+	std::lock_guard<std::mutex> locker(m_ucMutex);
+
 	m_unorderedDataCollectionPages[type].push_back(page.get());
+}
+
+void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(WorkerResult result, StorageType type)
+{
+	onUnorderedDataCollectionPageAdded(result.incomingPage(), type);
 }
 
 void ParsedPageReceiver::onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type)
 {
+	std::lock_guard<std::mutex> locker(m_ucMutex);
+
 	auto it = std::find_if(std::begin(m_unorderedDataCollectionPages[type]), std::end(m_unorderedDataCollectionPages[type]), 
 		[pagePointer = page.get()](const ParsedPage* item) { return item == pagePointer; });
+
 	ASSERT(it != std::end(m_unorderedDataCollectionPages[type]));
+
 	m_unorderedDataCollectionPages[type].erase(it);
 }
 
 std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataCollection(StorageType type) const
 {
+	std::lock_guard<std::mutex> locker(m_ucMutex);
+
 	ASSERT(m_allPagesReceived.load());
 
 	auto iterator = m_unorderedDataCollectionPages.find(type);
 
 	return iterator != m_unorderedDataCollectionPages.end() ? iterator->second : std::vector<const ParsedPage*>();
+}
+
+void ParsedPageReceiver::wait()
+{
+	std::future<std::vector<const ParsedPage*>> future = getAllCrawledPages();
+
+	if (!future.valid())
+	{
+		return;
+	}
+
+	future.wait();
 }
 
 void ParsedPageReceiver::clearReceivedData()

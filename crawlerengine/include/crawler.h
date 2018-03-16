@@ -100,6 +100,7 @@ protected:
 	virtual ITaskProcessor* createTaskProcessor() const;
 	virtual void initSequencedDataCollection();
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
+	const CrawlerOptions& crawlerOptions() const noexcept;
 
 private:
 	bool isPreinitialized() const;

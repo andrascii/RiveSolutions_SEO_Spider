@@ -191,6 +191,7 @@ struct ParsedPage
 	bool hasMetaRefreshTag = bool();
 	bool hasFrames = bool();
 	bool isThisExternalPage = bool();
+	bool isBlockedForIndexing = bool();
 
 	ResourceType resourceType;
 	ResourcesOnPageList allResourcesOnPage;

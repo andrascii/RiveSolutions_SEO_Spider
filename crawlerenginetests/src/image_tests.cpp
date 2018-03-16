@@ -12,6 +12,7 @@ TEST(ImageTests, EmptyAlt)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::MissingAltTextImageStorageType, 2, 10, "Waiting for 2 missing alt pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 
@@ -62,6 +63,7 @@ TEST(ImageTests, NoAlt)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::MissingAltTextImageStorageType, 2, 10, "Waiting for 2 missing alt pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 
@@ -111,6 +113,7 @@ TEST(ImageTests, Image404)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::MissingAltTextImageStorageType, 2, 10, "Waiting for 2 missing alt pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 
@@ -160,6 +163,7 @@ TEST(ImageTests, TwoPagesWithTheSameImage)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(3, pages.size());
 
@@ -207,6 +211,7 @@ TEST(ImageTests, TooBigImage)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::Over100kbImageStorageType, 2, 100, "Waiting for 2 too big image page");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		EXPECT_EQ(2076, pages[0]->rawResponse.size());

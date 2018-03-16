@@ -10,6 +10,7 @@ TEST(SerializationTests, PagesSerialization)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		cl->stopCrawling();
 
@@ -130,6 +131,7 @@ TEST(SerializationTests, OptionsSerialization)
 	const auto testFunction = [crawler = env.crawler(), &options]()
 	{
 		auto pages = crawler->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		crawler->waitForCrawlingDone();
 
 		crawler->checkSequencedDataCollectionConsistency();
 		crawler->stopCrawling();

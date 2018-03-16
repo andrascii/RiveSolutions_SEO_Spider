@@ -46,6 +46,7 @@ protected slots:
 	void addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type);
 	void addParsedPage(WorkerResult workerResult, StorageType type);
 	void replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
+	void onParsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type);
 	void onDataCleared();
 
 private:

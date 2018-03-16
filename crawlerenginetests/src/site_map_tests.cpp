@@ -56,6 +56,7 @@ TEST(SiteMapTests, SimpleSiteMap)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -84,6 +85,7 @@ TEST(SiteMapTests, LastModified)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -129,6 +131,7 @@ TEST(SiteMapTests, FrequencyByHeader)
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -170,6 +173,7 @@ TEST(SiteMapTests, FrequencyByLevel)
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 10, "Waiting for 8 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -228,6 +232,7 @@ TEST(SiteMapTests, PriorityTag)
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 10, "Waiting for 8 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -281,6 +286,7 @@ TEST(SiteMapTests, DiscardCanonical)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -312,6 +318,7 @@ TEST(SiteMapTests, DontDiscardCanonical)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -344,6 +351,7 @@ TEST(SiteMapTests, DiscardNextPrev)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -377,6 +385,7 @@ TEST(SiteMapTests, DoNotDiscardNextPrev)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -410,6 +419,7 @@ TEST(SiteMapTests, DiscardNoImageIndex)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 7, 10, "Waiting for 7 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;
@@ -440,6 +450,7 @@ TEST(SiteMapTests, DoNotDiscardNoImageIndex)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 7, 10, "Waiting for 7 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
 		CrawlerEngine::SiteMapSettings settings;

@@ -221,8 +221,6 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 
 std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
 {
-	std::vector<LinkInfo> blockedByRobotsTxtLinks;
-
 	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
 		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionNofollowNotAllowed, linkInfo, metaRobotsFlags);
@@ -253,6 +251,9 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionBlockedByFolder, linkInfo, metaRobotsFlags);
 	};
 
+	//
+	// TODO: make it based on flags
+	//
 	const auto setResourcePermission = [&](ResourceOnPage& resource)
 	{
 		if (!PageParserHelpers::isHttpOrHttpsScheme(resource.link.url))
@@ -289,11 +290,17 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 		}
 	};
 
+	std::vector<LinkInfo> blockedByRobotsTxtLinks;
+
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByMetaRobots), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isExternalLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isOutsideFolderLinkUnavailable), linkList.end());
+
+	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
+	std::copy(blockedByRobotsTxtLinksIterator, linkList.end(), std::back_inserter(blockedByRobotsTxtLinks));
+	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
 
 	ResourcesOnPageList resources;
 
@@ -306,9 +313,6 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 
 	parsedPage->allResourcesOnPage = resources;
 
-	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
-	std::copy(blockedByRobotsTxtLinksIterator, linkList.end(), std::back_inserter(blockedByRobotsTxtLinks));
-	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
 	return blockedByRobotsTxtLinks;
 }
 

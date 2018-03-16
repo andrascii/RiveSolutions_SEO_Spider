@@ -29,6 +29,7 @@ public:
 
 	Q_INVOKABLE void initialize();
 
+	void waitForCrawlingDone();
 	std::vector<const ParsedPage*> waitForParsedPageReceived(StorageType storage, int count, int seconds, const char* timeoutMessage) const;
 	std::vector<const ParsedPage*> waitForAllCrawledPageReceived(int seconds, const char* timeoutMessage = "Waiting for all pages received") const;
 	void waitForSerializationDone(int seconds, const char* timeoutMessage = "Waiting for serialization") const;
@@ -55,6 +56,7 @@ protected:
 private:
 	CrawlerOptions m_testCrawlerOptions;
 	QThread* m_sequencedDataCollectionThread;
+	QThread* m_receiverThread;
 	std::unique_ptr<ParsedPageReceiver> m_receiver;
 
 	mutable TestsDownloader* m_downloader;

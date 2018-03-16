@@ -635,7 +635,7 @@ void Crawler::refreshPage(StorageType storageType, int index)
 
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
-	m_sequencedDataCollection->prepareCollectionForRefreshPage(parsedPage);
+	//m_sequencedDataCollection->prepareCollectionForRefreshPage(parsedPage);
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh", 
 		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));
@@ -648,6 +648,11 @@ void Crawler::refreshPage(StorageType storageType, int index)
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 {
 	return m_uniqueLinkStore;
+}
+
+const CrawlerEngine::CrawlerOptions& Crawler::crawlerOptions() const noexcept
+{
+	return m_options;
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

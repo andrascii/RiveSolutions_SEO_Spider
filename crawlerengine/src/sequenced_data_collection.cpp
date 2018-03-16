@@ -20,6 +20,9 @@ SequencedDataCollection::SequencedDataCollection(const UnorderedDataCollection* 
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageReplaced, this,
 		&SequencedDataCollection::replaceParsedPage, Qt::QueuedConnection));
 
+	VERIFY(connect(collection, SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType)), this,
+		SLOT(onParsedPageRemoved(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
+
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, this,
 		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
 
@@ -117,6 +120,12 @@ void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, 
 
 		emit parsedPageReplaced(replacedIndex, storageType);
 	}
+}
+
+
+void SequencedDataCollection::onParsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type)
+{
+	removePage(parsedPagePointer.get(), type);
 }
 
 void SequencedDataCollection::onDataCleared()
