@@ -6,6 +6,7 @@
 #include "qstandardpaths.h"
 #include "zippo.h"
 #include "smtp_sender.h"
+#include "sys_info.h"
 
 namespace SeoSpiderService
 {
@@ -175,11 +176,37 @@ void SeoSpiderServiceApp::makeDump(HANDLE processHandle) noexcept
 	m_logThread->quit();
 	m_logThread->wait();
 
+	const QString sysInfoFileName = QDir::cleanPath(dumpPath + QString("/sys_info.txt"));
+	writeSysInfoFile(sysInfoFileName);
+
 	QFile::copy(logFilePath(), QDir::cleanPath(dumpPath + QString("/log_data.log")));
 
 	m_compressionIsActive = true;
 	m_zippo->zcompress(dumpDir, dumpPath + QString(".zip"), QStringList(), QString());
 	m_defferedDeleteDir = dumpDir;
+}
+
+void SeoSpiderServiceApp::writeSysInfoFile(const QString& fileName) const
+{
+	QFile sysinfoFile(fileName);
+
+	if (sysinfoFile.exists())
+	{
+		return;
+	}
+
+	if (sysinfoFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+	{
+		QTextStream out(&sysinfoFile);
+		out.setCodec("UTF-8");
+		//out << "[Application]\n"
+		//	<< "productname=" << QString::fromWCharArray(config->appname) << '\n'
+		//	<< "productversion=" << QString::fromWCharArray(config->version) << '\n';
+		//printAccountInformation(out);
+		printSystemInformation(out, m_processId);
+		sysinfoFile.flush();
+		sysinfoFile.close();
+	}
 }
 
 void SeoSpiderServiceApp::sendReports()
