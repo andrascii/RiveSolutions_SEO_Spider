@@ -3,5 +3,6 @@
 int main(int argc, char** argv)
 {
 	SeoSpiderService::SeoSpiderServiceApp app(argc, argv);
+	app.setQuitOnLastWindowClosed(false);
 	return app.exec();
 }

@@ -17,7 +17,7 @@ class LogThread : public QThread
 	Q_OBJECT
 
 public:
-	LogThread(Common::IpcSocket* socket);
+	LogThread(Common::IpcSocket* socket, const QString& file);
 
 	virtual void run() override;
 

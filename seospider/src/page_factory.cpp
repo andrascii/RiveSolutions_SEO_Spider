@@ -33,7 +33,7 @@ QWidget* PageFactory::createPage(Page page) const
 		}
 		case AllPagesPage:
 		{
-			TableView* crawlingTableView = new TableView;
+			TableView* crawlingTableView = new TableView(nullptr, false);
 			PageModel* model = new PageModel;
 			PageViewModel* modelView = new PageViewModel(crawlingTableView, model);
 

@@ -11,13 +11,12 @@ const QChar s_separator(';');
 namespace SeoSpiderService
 {
 
-LogThread::LogThread(Common::IpcSocket* socket)
+LogThread::LogThread(Common::IpcSocket* socket, const QString& file)
 	: m_socket(socket)
 {
 	qRegisterMetaType<Common::PipeMessage>("Common::PipeMessage");
 
-	QDir::setCurrent(qApp->applicationDirPath());
-	m_outputFile.setFileName(QStringLiteral("log_data.log"));
+	m_outputFile.setFileName(file);
 	m_outputFile.open(QIODevice::WriteOnly);
 }
 
@@ -31,6 +30,7 @@ void LogThread::run()
 
 		if (m_socket->isClosed())
 		{
+			m_outputFile.flush();
 			break;
 		}
 

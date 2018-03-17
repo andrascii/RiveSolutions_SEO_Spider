@@ -84,7 +84,6 @@ void CrawlerWorkerThread::stop()
 		try
 		{
 			DEBUGLOG << "Set value to promise";
-			//SeoSpiderServiceApi::LogMessageBuffer(Common::PipeMessage::LogMessage, Common::SeverityLevel::TraceLevel, std::this_thread::get_id(), __LINE__, __FILENAME__, __FUNCTION__) << "Set value to promise";
 
 			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}
@@ -171,6 +170,7 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 	}
 
 	std::vector<LinkInfo> outlinks;
+
 	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
 	{
 		if (resource.resourceType == ResourceType::ResourceHtml)
@@ -187,8 +187,6 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 
 	if (parsedPage->redirectedUrl.isValid())
 	{
-		// m_uniqueLinkStore->addUrlList(std::vector<Url>{ parsedPage->redirectedUrl }, DownloadRequestType::RequestTypeGet);
-
 		const LinkInfo redirectLinkInfo{ parsedPage->redirectedUrl, LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceRedirectUrl };
 		const ResourceOnPage redirectedResource(parsedPage->resourceType, redirectLinkInfo, Permission::PermissionAllowed);
 		parsedPage->allResourcesOnPage.erase(redirectedResource);
@@ -223,8 +221,6 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 
 std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
 {
-	std::vector<LinkInfo> blockedByRobotsTxtLinks;
-
 	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const LinkInfo& linkInfo)
 	{
 		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionNofollowNotAllowed, linkInfo, metaRobotsFlags);
@@ -255,7 +251,10 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 		return optionsLinkFilter->checkPermissionNotAllowed(Permission::PermissionBlockedByFolder, linkInfo, metaRobotsFlags);
 	};
 
-	const auto setLinkLoadAvailability = [&](ResourceOnPage& resource)
+	//
+	// TODO: make it based on flags
+	//
+	const auto setResourcePermission = [&](ResourceOnPage& resource)
 	{
 		if (!PageParserHelpers::isHttpOrHttpsScheme(resource.link.url))
 		{
@@ -291,27 +290,35 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 		}
 	};
 
+	std::vector<LinkInfo> blockedByRobotsTxtLinks;
+
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByMetaRobots), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isExternalLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isOutsideFolderLinkUnavailable), linkList.end());
 
-	ResourcesOnPageList resources;
-	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
-	{
-		ResourceOnPage fixedResource = resource;
-		setLinkLoadAvailability(fixedResource);
-		resources.insert(fixedResource);
-	}
-	
-	parsedPage->allResourcesOnPage = resources;
-
-	
-
 	const auto blockedByRobotsTxtLinksIterator = std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByRobotsTxt);
 	std::copy(blockedByRobotsTxtLinksIterator, linkList.end(), std::back_inserter(blockedByRobotsTxtLinks));
 	linkList.erase(blockedByRobotsTxtLinksIterator, linkList.end());
+
+	ResourcesOnPageList resources;
+
+	for (const ResourceOnPage& resource : parsedPage->allResourcesOnPage)
+	{
+		ResourceOnPage fixedResource = resource;
+		setResourcePermission(fixedResource);
+
+		if (fixedResource.permission == Permission::PermissionBlockedByMetaRobotsRules)
+		{
+			fixedResource.link.linkParameter = LinkParameter::NofollowParameter;
+		}
+
+		resources.insert(fixedResource);
+	}
+
+	parsedPage->allResourcesOnPage = resources;
+
 	return blockedByRobotsTxtLinks;
 }
 
@@ -342,10 +349,22 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 	bool checkUrl = false;
 
+	// fix ddos guard redirects like page.html -> ddos-site -> page.html
+	for (int i = static_cast<int>(pages.size()) - 1; i >= 0; --i)
+	{
+		for (int j = i - 1; j >= 0; --j)
+		{
+			if (pages[i]->url.urlStr() == pages[j]->url.urlStr())
+			{
+				const Url redirectUrl = pages[j]->redirectedUrl;
+				*pages[j] = *pages[i];
+				pages[j]->redirectedUrl = redirectUrl;
+			}
+		}
+	}
+
 	for (ParsedPagePtr& page : pages)
 	{
-		std::vector<LinkInfo> blockedByRobotsTxtLinks = schedulePageResourcesLoading(page);
-
 		const bool urlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
 		if (urlAdded && !m_isRunning && !m_reloadPage)
@@ -357,10 +376,10 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 		if (urlAdded)
 		{
+			std::vector<LinkInfo> blockedByRobotsTxtLinks = schedulePageResourcesLoading(page);
 			onPageParsed(WorkerResult{ page, m_reloadPage, requestType });
+			std::for_each(blockedByRobotsTxtLinks.begin(), blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
 		}
-
-		std::for_each(blockedByRobotsTxtLinks.begin(), blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
 
 		checkUrl = true;
 	}

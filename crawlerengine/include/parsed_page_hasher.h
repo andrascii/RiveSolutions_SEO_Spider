@@ -48,7 +48,6 @@ struct ParsedPageHasher : public IParsedPageHasher
 			{ IParsedPageHasher::UrlItemType, 
 				[](const ParsedPagePtr& el)
 				{
-					//return s_stringHasher(PageParserHelpers::removeUrlLastSlashIfExists(el->url).toDisplayString().toStdString());
 					return s_stringHasher(el->url.urlStr().toStdString());
 				}
 			},

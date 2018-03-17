@@ -3,7 +3,7 @@
 namespace CrawlerEngine
 {
 
-enum class StorageType
+enum StorageType
 {
 	BeginEnumStorageType,
 	// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
@@ -11,6 +11,7 @@ enum class StorageType
 	// Statistic data
 	CrawledUrlStorageType,
 	ExternalUrlStorageType,
+	DofollowUrlStorageType,
 
 	// Url problems
 	UpperCaseUrlStorageType,
@@ -70,6 +71,12 @@ enum class StorageType
 	ContainsMetaRefreshTagStorageType,
 	ContainsFramesStorageType,
 
+	// not indexed pages
+	BlockedForSEIndexingStorageType,
+	NofollowLinksStorageType,
+	BlockedByRobotsTxtStorageType,
+	BlockedByXRobotsTagStorageType,
+
 	// Resources
 	PendingResourcesStorageType,
 	HtmlResourcesStorageType,
@@ -110,3 +117,4 @@ inline StorageType operator++(StorageType value)
 }
 
 Q_DECLARE_METATYPE(CrawlerEngine::StorageType)
+Q_DECLARE_FLAGS(StorageTypeFlags, CrawlerEngine::StorageType)

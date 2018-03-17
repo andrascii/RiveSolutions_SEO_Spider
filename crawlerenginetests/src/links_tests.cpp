@@ -8,6 +8,7 @@ TEST(LinksTests, LinkAlt)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(0, pages[0]->linksToThisPage.size());
@@ -29,6 +30,7 @@ TEST(LinksTests, CanonicalNextPrev)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 4, 10, "Waiting for 4 crawled pages");
+		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(4, pages.size());
 
@@ -64,7 +66,7 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 		std::vector<const ParsedPage*> crawledPages = cl->storageItems(StorageType::CrawledUrlStorageType);
 		std::vector<const ParsedPage*> pendingPages = cl->getLinksFromUnorderedDataCollection(StorageType::PendingResourcesStorageType);
 
-		std::vector<QUrl> nofollowLinks;
+		std::vector<Url> nofollowLinks;
 
 		const auto addNofollowLink = [&nofollowLinks](const auto& resourceLink)
 		{
@@ -265,9 +267,55 @@ TEST(LinksTests, BlockedResourcesByMetaRobots)
 	const auto testFunction = [cl = env.crawler()]()
 	{
 		auto pages = cl->waitForAllCrawledPageReceived(10);
+
 		EXPECT_EQ(1, pages.size());
+
 		EXPECT_EQ(1, pages[0]->linksOnThisPage.size());
-		EXPECT_EQ(true, pages[0]->linksOnThisPage.front().resource.expired());
+
+		const std::vector<const ParsedPage*> blockedPages = cl->getLinksFromUnorderedDataCollection(StorageType::BlockedForSEIndexingStorageType);
+
+		EXPECT_EQ(false, pages[0]->linksOnThisPage.front().resource.expired());
+
+		const ParsedPage* blockedResource = pages[0]->linksOnThisPage.front().resource.lock().get();
+
+		const bool isResourceBlocked = std::find(blockedPages.begin(), blockedPages.end(), blockedResource) != blockedPages.end();
+
+		EXPECT_EQ(true, isResourceBlocked);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+
+TEST(LinksTests, SecondGetRequest)
+{
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/second-get-head/second-get.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ("Second Get 3", pages.at(2)->title);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, SecondHeadRequest)
+{
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/second-get-head/second-head.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ("Second Head 3", pages.at(1)->title);
 	};
 
 	env.initializeTest(testFunction);

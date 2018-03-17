@@ -13,13 +13,14 @@ class ParsedPageReceiver : public QObject
 
 public:
 	ParsedPageReceiver(const TestsCrawler* crawler, const SequencedDataCollection* sequencedDataCollection);
-	~ParsedPageReceiver();
 
 	std::future<std::vector<const ParsedPage*>> getParsedPages(int count, StorageType storageType);
 	std::future<std::vector<const ParsedPage*>> getAllCrawledPages();
 	std::vector<const ParsedPage*> storageItems(StorageType storage) const;
 	std::future<std::vector<LinksToThisResourceChanges>> getLinksToThisResourceChanges(const ParsedPage* page, int count);
 	std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(StorageType type) const;
+
+	void wait();
 
 	void clearReceivedData();
 
@@ -31,6 +32,7 @@ private slots:
 	void onCrawlingProgress(CrawlingProgress state);
 	void onAboutClearData();
 	void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type);
+	void onUnorderedDataCollectionPageAdded(WorkerResult result, StorageType type);
 	void onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type);
 
 private:
@@ -38,7 +40,7 @@ private:
 	void checkLinksToThisResourceConditions(const ParsedPage* page);
 
 private:
-	QThread * m_receiverThread;
+	QThread* m_receiverThread;
 
 	std::map<StorageType, std::vector<const ParsedPage*>> m_parsedPages;
 	std::map<StorageType, std::pair<int, std::promise<std::vector<const ParsedPage*>>>> m_waitConditions;
@@ -51,6 +53,7 @@ private:
 	std::promise<std::vector<const ParsedPage*>> m_allPagesReceivedPromise;
 	std::atomic_bool m_allPagesReceived;
 
+	mutable std::mutex m_ucMutex;
 	std::map<StorageType, std::vector<const ParsedPage*>> m_unorderedDataCollectionPages;
 };
 

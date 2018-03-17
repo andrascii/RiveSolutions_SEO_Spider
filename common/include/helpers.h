@@ -49,4 +49,44 @@ public:
 	}
 };
 
+namespace MetaHelpers
+{
+
+struct CastHelper
+{
+	std::size_t dummy;
+
+	template <typename T>
+	constexpr operator T const&() const noexcept;
+
+	template <typename T>
+	constexpr operator T&() const noexcept;
+
+	template <typename T>
+	constexpr operator T&& () const noexcept;
+};
+
+template <typename T, std::size_t... Idx>
+constexpr auto sfinaeConstructibleHelper(std::index_sequence<Idx...>) -> decltype(T{ CastHelper{ Idx }... }, std::size_t());
+
+template <typename T, std::size_t N>
+constexpr auto fieldsCountHelper(long) -> decltype(sfinaeConstructibleHelper<T>(std::make_index_sequence<N>()))
+{
+	return N;
+}
+
+template <typename T, std::size_t N>
+constexpr size_t fieldsCountHelper(int)
+{
+	return fieldsCountHelper<T, N - 1>(0L);
+}
+
+}
+
+template <typename T>
+constexpr std::size_t fieldsCount()
+{
+	return MetaHelpers::fieldsCountHelper<T, sizeof(T)>(0L);
+}
+
 }

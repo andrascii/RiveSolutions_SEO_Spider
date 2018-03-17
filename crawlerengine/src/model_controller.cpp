@@ -8,7 +8,18 @@ namespace
 
 using CrawlerEngine::ParsedPagePtr;
 
-ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr incomingParsedPage)
+template <typename IterOut, typename IterIn, typename Policy>
+void assignIf(IterOut firstOut, IterOut secondOut, IterIn firstIn, IterIn secondIn, Policy&& policy)
+{
+	DEBUG_ASSERT(std::distance(firstOut, secondOut) == std::distance(firstIn, secondIn));
+
+	for (; firstIn != secondIn; ++firstOut, ++firstIn)
+	{
+		*firstOut = policy(*firstOut, *firstIn);
+	}
+}
+
+ParsedPagePtr mergePage(ParsedPagePtr existingPage, ParsedPagePtr incomingParsedPage)
 {
 	CrawlerEngine::ParsedPage* existingPageRawPtr = existingPage.get();
 	CrawlerEngine::ParsedPage* newParsedPage = incomingParsedPage.get();
@@ -24,11 +35,30 @@ ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr incomingPa
 		std::end(existingPage->linksToThisPage)
 	);
 
+	std::vector<bool> storages = existingPage->storages;
+
 	*existingPage = *incomingParsedPage;
+
+// 	const auto policy = [](bool lhs, bool rhs) noexcept
+// 	{
+// 		return lhs ? true : rhs;
+// 	};
+// 
+// 	assignIf(storages.begin(), storages.end(), incomingParsedPage->storages.begin(), incomingParsedPage->storages.end(), policy);
+// 
+	existingPage->storages = storages;
 
 	// we should use the original ParsedPagePtr 
 	// because there are pages containing links to it
 	return existingPage;
+}
+
+ParsedPagePtr mergePageAsBlockedForIndexing(ParsedPagePtr existingPage, ParsedPagePtr incomingParsedPage)
+{
+	ParsedPagePtr mergedPage = mergePage(existingPage, incomingParsedPage);
+	mergedPage->isBlockedForIndexing = true;
+
+	return mergedPage;
 }
 
 void checkResourceLinks(ParsedPagePtr page)
@@ -94,6 +124,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		workerResult.incomingPage()->resourceType <= ResourceType::ResourceOther);
 
 	bool secondGetRequest = false;
+
 	if (!workerResult.isRefreshResult())
 	{
 		const ParsedPagePtr existingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
@@ -105,11 +136,11 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 				CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 				return;
 			}
-			
+
 			secondGetRequest = true;
 		}
-		
-		workerResult.incomingPage() = mergeTwoPages(existingPage, workerResult.incomingPage());
+
+		workerResult.incomingPage() = mergePage(existingPage, workerResult.incomingPage());
 	}
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
@@ -553,7 +584,14 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 	const ParsedPagePtr pendingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
 
-	workerResult.incomingPage() = mergeTwoPages(pendingPage, workerResult.incomingPage());
+	if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::BlockedForSEIndexingStorageType))
+	{
+		workerResult.incomingPage() = mergePage(pendingPage, workerResult.incomingPage());
+	}
+	else
+	{
+		workerResult.incomingPage() = mergePageAsBlockedForIndexing(pendingPage, workerResult.incomingPage());
+	}
 
 	const StorageType storage = workerResult.incomingPage()->isThisExternalPage ?
 		StorageType::ExternalHtmlResourcesStorageType : StorageType::HtmlResourcesStorageType;
@@ -582,12 +620,13 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		{
 			// do not parse resources from an external one
 			return;
-		}		
+		}
 	}
 
 	if (workerResult.incomingPage()->canonicalUrl.isValid() && !workerResult.incomingPage()->isThisExternalPage)
 	{
 		data()->addParsedPage(workerResult, StorageType::CanonicalUrlResourcesStorageType);
+
 		if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::UniqueCanonicalUrlResourcesStorageType))
 		{
 			data()->addParsedPage(workerResult, StorageType::UniqueCanonicalUrlResourcesStorageType);
@@ -607,8 +646,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			continue;
 		}
 
-		ParsedPagePtr resourcePage = std::make_shared<ParsedPage>();
-		resourcePage->url = resource.link.url;
+		ParsedPagePtr resourcePage = parsedPageFromResource(resource);
 		ParsedPagePtr existingResource = data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 
 		if (!existingResource)
@@ -618,30 +656,46 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+			existingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.urlParameter,
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
+
+			addIndexingBlockingPage(existingResource, resource);
 		}
 		else
 		{
-			ParsedPagePtr pendingResource = std::make_shared<ParsedPage>();
-			pendingResource->url = resource.link.url;
+			ParsedPagePtr pendingResource = parsedPageFromResource(resource);
 
-			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 			
-			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
+
+			const StorageTypeFlags flags = addIndexingBlockingPage(pendingResource, resource);
+
+			const bool mustBeAddedToPending = flags.testFlag(StorageType::NofollowLinksStorageType) &&
+				(pendingResource->isThisExternalPage ? m_crawlerOptions.followExternalNofollow : m_crawlerOptions.followInternalNofollow);
+
+			if (mustBeAddedToPending)
+			{
+				data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
+
+				pendingResource->url.canonizedUrlStr();
+
+				DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
+
+				return;
+			}
 
 			if (resource.permission != Permission::PermissionAllowed &&
 				resource.permission != Permission::PermissionBlockedByRobotsTxtRules &&
 				resource.permission != Permission::PermissionNotHttpLinkNotAllowed)
 			{
-				// what if this resource is unavailable not from all pages?
 				continue;
 			}
 
@@ -681,7 +735,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 	if (workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml && !secondGetRequest)
 	{
 		const ParsedPagePtr pendingPageRaw = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
-		workerResult.incomingPage() = mergeTwoPages(pendingPageRaw, workerResult.incomingPage());
+		workerResult.incomingPage() = mergePage(pendingPageRaw, workerResult.incomingPage());
 
 		const ResourceType resourceType = workerResult.incomingPage()->resourceType;
 
@@ -700,11 +754,13 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 	for (const ResourceOnPage& resource : workerResult.incomingPage()->allResourcesOnPage)
 	{
 		const QString resourceDisplayUrl = resource.link.url.toDisplayString();
-		const ResourceType resourceType = workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml
-			? workerResult.incomingPage()->resourceType : resource.resourceType;
+
+		const ResourceType resourceType = workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml ? 
+			workerResult.incomingPage()->resourceType :
+			resource.resourceType;
 
 		if ((!resourceShouldBeProcessed(resource.resourceType) && 
-				resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
+			resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
 			resourceType == ResourceType::ResourceHtml ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
@@ -718,8 +774,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			continue;
 		}
 
-		ParsedPagePtr temporaryResource = std::make_shared<ParsedPage>();
-		temporaryResource->url = resource.link.url;
+		ParsedPagePtr temporaryResource = parsedPageFromResource(resource);
 
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url);
 		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(workerResult.incomingPage()->url, temporaryResource->url) || !httpResource;
@@ -757,10 +812,10 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			}
 		}
 
-		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.urlParameter,
+		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.linkParameter,
 			resource.link.resourceSource, resource.link.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 			resource.link.resourceSource, resource.link.altOrTitle });
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
@@ -779,9 +834,11 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 void ModelController::fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept
 {
 	ParsedPagePtr pendingResource = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+
 	if (pendingResource && pendingResource->resourceType != ResourceType::ResourceHtml)
 	{
 		incomingPage->resourceType = pendingResource->resourceType;
+
 		if (pendingResource->linksToThisPage.size() == 1 && 
 			pendingResource->linksToThisPage.begin()->resourceSource == ResourceSource::SourceRedirectUrl &&
 			pendingResource->linksToThisPage.begin()->resource.expired())
@@ -943,6 +1000,74 @@ void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType loo
 
 		data()->addParsedPage(incomingPage, destStorage);
 	}
+}
+
+ParsedPagePtr ModelController::parsedPageFromResource(const ResourceOnPage& resource) const
+{
+	ParsedPagePtr parsedPage = std::make_shared<ParsedPage>();
+	parsedPage->url = resource.link.url;
+
+	return parsedPage;
+}
+
+StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource)
+{
+	const bool isBlockedByXRobotsTag = resource.permission == Permission::PermissionBlockedByMetaRobotsRules;
+	const bool isBlockedByRobotsTxt = resource.permission == Permission::PermissionBlockedByRobotsTxtRules;
+	const bool isNofollowResource = resource.link.linkParameter == LinkParameter::NofollowParameter;
+	const bool isThisNofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::NofollowLinksStorageType);
+	const bool isThisDofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::DofollowUrlStorageType);
+	const bool isThisBlockedResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+
+	StorageTypeFlags flags;
+
+	if (isBlockedByRobotsTxt || isBlockedByXRobotsTag || isNofollowResource)
+	{
+		if (!isThisBlockedResourceExists)
+		{
+			data()->addParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+			flags.setFlag(StorageType::BlockedForSEIndexingStorageType, true);
+		}
+
+		if (isBlockedByXRobotsTag)
+		{
+			data()->addParsedPage(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
+			flags.setFlag(StorageType::BlockedByXRobotsTagStorageType, true);
+		}
+		else if (isBlockedByRobotsTxt)
+		{
+			data()->addParsedPage(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
+			flags.setFlag(StorageType::BlockedByRobotsTxtStorageType, true);
+		}
+	}
+
+	if (isNofollowResource && !isThisDofollowResourceExists && !isThisNofollowResourceExists)
+	{
+		data()->addParsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
+		flags.setFlag(StorageType::NofollowLinksStorageType, true);
+	}
+
+	if (!isNofollowResource && !isThisDofollowResourceExists)
+	{
+		if (isThisNofollowResourceExists)
+		{
+			ParsedPagePtr existingPage = data()->parsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
+
+			DEBUG_ASSERT(existingPage);
+
+			data()->addParsedPage(existingPage, StorageType::DofollowUrlStorageType);
+
+			data()->removeParsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
+			data()->removeParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+		}
+		else
+		{
+			data()->addParsedPage(pageFromResource, StorageType::DofollowUrlStorageType);
+			flags.setFlag(StorageType::DofollowUrlStorageType, true);
+		}
+	}
+
+	return flags;
 }
 
 }

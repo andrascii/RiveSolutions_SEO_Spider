@@ -61,7 +61,13 @@ const QMap<StorageType, ErrorCategory::ErrorCategoryLevel> s_storageTypeToLevel
 	// page problems
 	{ StorageType::TooManyLinksOnPageStorageType, ErrorCategory::LevelWarning },
 	{ StorageType::ContainsMetaRefreshTagStorageType, ErrorCategory::LevelWarning },
-	{ StorageType::ContainsFramesStorageType, ErrorCategory::LevelError }
+	{ StorageType::ContainsFramesStorageType, ErrorCategory::LevelError },
+
+	// not indexed pages
+	{ StorageType::BlockedForSEIndexingStorageType, ErrorCategory::LevelInfo },
+	{ StorageType::NofollowLinksStorageType, ErrorCategory::LevelInfo },
+	{ StorageType::BlockedByRobotsTxtStorageType, ErrorCategory::LevelInfo },
+	{ StorageType::BlockedByXRobotsTagStorageType, ErrorCategory::LevelInfo }
 };
 
 }

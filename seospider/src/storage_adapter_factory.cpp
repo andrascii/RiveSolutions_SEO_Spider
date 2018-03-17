@@ -242,6 +242,17 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn;
 		}
+
+		// not indexed pages
+		case StorageAdapterType::StorageAdapterTypeBlockedForSEIndexing:
+		case StorageAdapterType::StorageAdapterTypeNofollowLinks:
+		case StorageAdapterType::StorageAdapterTypeBlockedByRobotsTxt:
+		case StorageAdapterType::StorageAdapterTypeBlockedByXRobotsTag:
+		{
+			return QVector<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::UrlLengthColumn;
+		}
 	}
 
 	ASSERT(!"Invalid type");

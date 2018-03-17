@@ -16,6 +16,7 @@ enum class AuditGroup
 	H2AuditGroup,
 	ImageAuditGroup,
 	PageProblemsAuditGroup,
+	NotIndexedPagesGroup,
 
 	//
 	// Resources

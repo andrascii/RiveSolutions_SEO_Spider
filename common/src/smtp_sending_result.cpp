@@ -25,11 +25,16 @@ SmtpSendingResult::SmtpSendingResult(const SmtpMessage& message, const QString& 
 	, m_instanceId(resultInstanceId++)
 	, m_messageId(messageId)
 {
-	if (!isValidEmailAddress(message.settings.emailRecipients()))
+	const QStringList recipients = splitRecipients(message.settings.emailRecipients());
+
+	foreach(const QString& recipient, recipients)
 	{
-		addToLog("To is not a valid e-mail address");
-		finish(SmtpSender::resultInvalidTo);
-		return;
+		if (!isValidEmailAddress(recipient))
+		{
+			addToLog("To is not a valid e-mail address");
+			finish(SmtpSender::resultInvalidTo);
+			return;
+		}
 	}
 
 	if (!isValidEmailAddress(message.settings.emailSender()))
@@ -42,8 +47,6 @@ SmtpSendingResult::SmtpSendingResult(const SmtpMessage& message, const QString& 
 	m_smtp = new QxtSmtp(this);
 	m_smtp->setObjectName(QLatin1String("smtp"));
 	QMetaObject::connectSlotsByName(this);
-
-	const QStringList recipients = splitRecipients(message.settings.emailRecipients());
 
 	QxtMailMessage m;
 

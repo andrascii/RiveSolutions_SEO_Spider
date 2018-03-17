@@ -1,10 +1,7 @@
 #pragma once
 
 #include "summary_data_accessor_factory.h"
-
-namespace CrawlerEngine {
-	enum class StorageType;
-}
+#include "storage_type.h"
 
 namespace SeoSpider
 {

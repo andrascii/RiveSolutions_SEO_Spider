@@ -60,7 +60,7 @@ enum MetaRobotsItem
 	MetaRobotsNoYDir = 1 << 12
 };
 
-Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem);
+Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem)
 
 enum class UserAgentType
 {
@@ -77,6 +77,8 @@ enum class UserAgentType
 	AnyBot // used for all robots
 };
 
+using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
+
 enum class Permission
 {
 	PermissionAllowed,
@@ -89,12 +91,10 @@ enum class Permission
 	PermissionNotHttpLinkNotAllowed
 };
 
-using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
-
 struct LinkInfo
 {
 	Url url;
-	LinkParameter urlParameter = LinkParameter::DofollowParameter;
+	LinkParameter linkParameter = LinkParameter::DofollowParameter;
 	QString altOrTitle;
 	bool dataResourceLink = false;
 	ResourceSource resourceSource;
@@ -191,6 +191,7 @@ struct ParsedPage
 	bool hasMetaRefreshTag = bool();
 	bool hasFrames = bool();
 	bool isThisExternalPage = bool();
+	bool isBlockedForIndexing = bool();
 
 	ResourceType resourceType;
 	ResourcesOnPageList allResourcesOnPage;
@@ -212,9 +213,9 @@ struct ParsedPage
 
 using ParsedPagePtr = std::shared_ptr<ParsedPage>;
 
-Q_DECLARE_METATYPE(ParsedPagePtr);
-Q_DECLARE_METATYPE(std::vector<ParsedPagePtr>);
-Q_DECLARE_METATYPE(ParsedPageWeakPtr);
-Q_DECLARE_METATYPE(UserAgentType);
+Q_DECLARE_METATYPE(ParsedPagePtr)
+Q_DECLARE_METATYPE(std::vector<ParsedPagePtr>)
+Q_DECLARE_METATYPE(ParsedPageWeakPtr)
+Q_DECLARE_METATYPE(UserAgentType)
 
 }
