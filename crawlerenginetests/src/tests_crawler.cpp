@@ -30,13 +30,24 @@ TestsCrawler::~TestsCrawler()
 	m_sequencedDataCollectionThread->quit();
 	m_sequencedDataCollectionThread->wait();
 	m_sequencedDataCollectionThread->deleteLater();
+
+	m_receiverThread->quit();
+	m_receiverThread->wait();
+	m_receiverThread->deleteLater();
 }
 
 
 void TestsCrawler::initialize()
 {
 	Crawler::initialize();
+
 	m_receiver = std::make_unique<ParsedPageReceiver>(this, sequencedDataCollection());
+
+	m_receiverThread = new Common::NamedThread("ParsedPageReceiverThread");
+	m_receiverThread->start();
+
+	m_receiver->moveToThread(m_receiverThread);
+
 	m_sequencedDataCollectionThread->start();
 }
 
@@ -160,6 +171,7 @@ TestsDownloader* TestsCrawler::testDownloader() const
 void TestsCrawler::checkSequencedDataCollectionConsistency()
 {
 	std::vector<const ParsedPage*> crawledPages = m_receiver->storageItems(StorageType::CrawledUrlStorageType);
+	std::vector<const ParsedPage*> blockedForIndexing = m_receiver->getLinksFromUnorderedDataCollection(StorageType::BlockedForSEIndexingStorageType);
 
 	for (int i = static_cast<int>(StorageType::BeginEnumStorageType) + 1; i < static_cast<int>(StorageType::EndEnumStorageType); ++i)
 	{
@@ -168,10 +180,11 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 
 		for (const ParsedPage* page : storagePages)
 		{
-			auto pageIt = std::find(std::begin(crawledPages), std::end(crawledPages), page);
+			const auto pageIt = std::find(std::begin(crawledPages), std::end(crawledPages), page);
+			const auto pageBlocked = std::find(std::begin(blockedForIndexing), std::end(blockedForIndexing), page) != std::end(blockedForIndexing);
 
 			const bool pageExists = pageIt != std::end(crawledPages);
-			EXPECT_EQ(true, pageExists || page->resourceType == ResourceType::ResourceOther);
+			EXPECT_EQ(true, pageExists || page->resourceType == ResourceType::ResourceOther || pageBlocked);
 
 			for (const ResourceLink& link : page->linksOnThisPage)
 			{
@@ -182,10 +195,31 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 					continue;
 				}
 
-				auto resourceIt = std::find(std::begin(crawledPages), std::end(crawledPages), resourcePage);
+				const auto resourceAddressComparator = [resourcePage](const ParsedPage* page)
+				{
+					return resourcePage->url.canonizedUrlStr() == page->url.canonizedUrlStr();
+				};
 
+				const auto resourceIt = std::find_if(std::begin(crawledPages), std::end(crawledPages), resourceAddressComparator);
 				const bool resourceExists = resourceIt != std::end(crawledPages);
-				EXPECT_EQ(true, resourceExists);
+
+				const bool isNofollowBlockedLink = link.linkParameter == LinkParameter::NofollowParameter &&
+					(resourcePage->isThisExternalPage ? !crawlerOptions().followExternalNofollow : !crawlerOptions().followInternalNofollow);
+
+				const bool isSubdomainBlocked = !crawlerOptions().checkSubdomains &&
+					PageParserHelpers::isSubdomain(crawlerOptions().startCrawlingPage, resourcePage->url);
+
+				const bool isBlockedByOutsideFolderLink = !crawlerOptions().crawlOutsideOfStartFolder &&
+					!PageParserHelpers::isUrlInsideBaseUrlFolder(crawlerOptions().startCrawlingPage, resourcePage->url);
+
+				if (isNofollowBlockedLink || isSubdomainBlocked || isBlockedByOutsideFolderLink)
+				{
+					EXPECT_EQ(false, resourceExists);
+				}
+				else
+				{
+					EXPECT_EQ(true, resourceExists);
+				}
 			}
 		}
 	}
@@ -221,6 +255,11 @@ IHostInfoProvider* TestsCrawler::createHostInfoProvider() const
 IWebScreenShot* TestsCrawler::createWebScreenShot()
 {
 	return new TestsWebScreenShot(this);
+}
+
+void TestsCrawler::waitForCrawlingDone()
+{
+	m_receiver->wait();
 }
 
 }

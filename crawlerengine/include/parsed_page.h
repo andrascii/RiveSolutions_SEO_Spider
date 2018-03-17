@@ -60,7 +60,7 @@ enum MetaRobotsItem
 	MetaRobotsNoYDir = 1 << 12
 };
 
-Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem);
+Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem)
 
 enum class UserAgentType
 {
@@ -77,24 +77,25 @@ enum class UserAgentType
 	AnyBot // used for all robots
 };
 
-enum class Permission
+using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
+
+enum Restriction
 {
-	PermissionAllowed,
-	PermissionExternalLinksNotAllowed,
-	PermissionNofollowNotAllowed,
-	PermissionBlockedByRobotsTxtRules,
-	PermissionBlockedByMetaRobotsRules,
-	PermissionSubdomainNotAllowed,
-	PermissionBlockedByFolder,
-	PermissionNotHttpLinkNotAllowed
+	RestrictionExternalLinksNotAllowed,
+	RestrictionNofollowNotAllowed,
+	RestrictionBlockedByRobotsTxtRules,
+	RestrictionBlockedByMetaRobotsRules,
+	RestrictionSubdomainNotAllowed,
+	RestrictionBlockedByFolder,
+	RestrictionNotHttpLinkNotAllowed
 };
 
-using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
+Q_DECLARE_FLAGS(RestrictionFlags, Restriction)
 
 struct LinkInfo
 {
 	Url url;
-	LinkParameter urlParameter = LinkParameter::DofollowParameter;
+	LinkParameter linkParameter = LinkParameter::DofollowParameter;
 	QString altOrTitle;
 	bool dataResourceLink = false;
 	ResourceSource resourceSource;
@@ -112,24 +113,24 @@ struct ResourceLink
 struct ResourceOnPage
 {
 	ResourceOnPage(ResourceType resourceType, const LinkInfo& linkInfo, 
-		Permission permission = Permission::PermissionAllowed)
+		RestrictionFlags restrictions = RestrictionFlags())
 		: resourceType(resourceType)
 		, link(linkInfo)
-		, permission(permission)
+		, restrictions(restrictions)
 	{
 	}
 
 	ResourceOnPage(ResourceType resourceType, LinkInfo&& linkInfo, 
-		Permission permission = Permission::PermissionAllowed)
+		RestrictionFlags restrictions = RestrictionFlags())
 		: resourceType(resourceType)
 		, link(std::move(linkInfo))
-		, permission(permission)
+		, restrictions(restrictions)
 	{
 	}
 
 	ResourceType resourceType;
 	LinkInfo link;
-	Permission permission;
+	RestrictionFlags restrictions;
 };
 
 struct ResourcesOnPageListItemHasher
@@ -191,6 +192,7 @@ struct ParsedPage
 	bool hasMetaRefreshTag = bool();
 	bool hasFrames = bool();
 	bool isThisExternalPage = bool();
+	bool isBlockedForIndexing = bool();
 
 	ResourceType resourceType;
 	ResourcesOnPageList allResourcesOnPage;

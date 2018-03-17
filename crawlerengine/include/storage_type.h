@@ -3,7 +3,7 @@
 namespace CrawlerEngine
 {
 
-enum class StorageType
+enum StorageType
 {
 	BeginEnumStorageType,
 	// !!!!!!!!!!!!!!!!!!! add new items below this!!!!!!!!!!!!!!!!!!!
@@ -117,3 +117,4 @@ inline StorageType operator++(StorageType value)
 }
 
 Q_DECLARE_METATYPE(CrawlerEngine::StorageType)
+Q_DECLARE_FLAGS(StorageTypeFlags, CrawlerEngine::StorageType)

@@ -52,6 +52,7 @@ private:
 	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage);
 
 	ParsedPagePtr parsedPageFromResource(const ResourceOnPage& resource) const;
+	StorageTypeFlags addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource);
 
 private:
 	UnorderedDataCollection* m_data;

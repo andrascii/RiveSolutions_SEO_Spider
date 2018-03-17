@@ -8,7 +8,18 @@ namespace
 
 using CrawlerEngine::ParsedPagePtr;
 
-ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr incomingParsedPage)
+template <typename IterOut, typename IterIn, typename Policy>
+void assignIf(IterOut firstOut, IterOut secondOut, IterIn firstIn, IterIn secondIn, Policy&& policy)
+{
+	DEBUG_ASSERT(std::distance(firstOut, secondOut) == std::distance(firstIn, secondIn));
+
+	for (; firstIn != secondIn; ++firstOut, ++firstIn)
+	{
+		*firstOut = policy(*firstOut, *firstIn);
+	}
+}
+
+ParsedPagePtr mergePage(ParsedPagePtr existingPage, ParsedPagePtr incomingParsedPage)
 {
 	CrawlerEngine::ParsedPage* existingPageRawPtr = existingPage.get();
 	CrawlerEngine::ParsedPage* newParsedPage = incomingParsedPage.get();
@@ -24,11 +35,30 @@ ParsedPagePtr mergeTwoPages(ParsedPagePtr existingPage, ParsedPagePtr incomingPa
 		std::end(existingPage->linksToThisPage)
 	);
 
+	std::vector<bool> storages = existingPage->storages;
+
 	*existingPage = *incomingParsedPage;
+
+// 	const auto policy = [](bool lhs, bool rhs) noexcept
+// 	{
+// 		return lhs ? true : rhs;
+// 	};
+// 
+// 	assignIf(storages.begin(), storages.end(), incomingParsedPage->storages.begin(), incomingParsedPage->storages.end(), policy);
+// 
+	existingPage->storages = storages;
 
 	// we should use the original ParsedPagePtr 
 	// because there are pages containing links to it
 	return existingPage;
+}
+
+ParsedPagePtr mergePageAsBlockedForIndexing(ParsedPagePtr existingPage, ParsedPagePtr incomingParsedPage)
+{
+	ParsedPagePtr mergedPage = mergePage(existingPage, incomingParsedPage);
+	mergedPage->isBlockedForIndexing = true;
+
+	return mergedPage;
 }
 
 void checkResourceLinks(ParsedPagePtr page)
@@ -94,6 +124,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		workerResult.incomingPage()->resourceType <= ResourceType::ResourceOther);
 
 	bool secondGetRequest = false;
+
 	if (!workerResult.isRefreshResult())
 	{
 		const ParsedPagePtr existingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
@@ -105,11 +136,11 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 				CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 				return;
 			}
-			
+
 			secondGetRequest = true;
 		}
-		
-		workerResult.incomingPage() = mergeTwoPages(existingPage, workerResult.incomingPage());
+
+		workerResult.incomingPage() = mergePage(existingPage, workerResult.incomingPage());
 	}
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
@@ -553,7 +584,14 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 	const ParsedPagePtr pendingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
 
-	workerResult.incomingPage() = mergeTwoPages(pendingPage, workerResult.incomingPage());
+	if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::BlockedForSEIndexingStorageType))
+	{
+		workerResult.incomingPage() = mergePage(pendingPage, workerResult.incomingPage());
+	}
+	else
+	{
+		workerResult.incomingPage() = mergePageAsBlockedForIndexing(pendingPage, workerResult.incomingPage());
+	}
 
 	const StorageType storage = workerResult.incomingPage()->isThisExternalPage ?
 		StorageType::ExternalHtmlResourcesStorageType : StorageType::HtmlResourcesStorageType;
@@ -618,73 +656,45 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+			existingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.urlParameter,
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
+
+			addIndexingBlockingPage(existingResource, resource);
 		}
 		else
 		{
 			ParsedPagePtr pendingResource = parsedPageFromResource(resource);
 
-			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 			
-			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
-			const bool isBlockedByXRobotsTag = resource.permission == Permission::PermissionBlockedByMetaRobotsRules;
-			const bool isBlockedByRobotsTxt = resource.permission == Permission::PermissionBlockedByRobotsTxtRules;
-			const bool isNofollowResource = resource.link.urlParameter == LinkParameter::NofollowParameter;
-			const bool isThisNofollowResourceExists = data()->isParsedPageExists(pendingResource, StorageType::NofollowLinksStorageType);
-			const bool isThisDofollowResourceExists = data()->isParsedPageExists(pendingResource, StorageType::DofollowUrlStorageType);
-			const bool isThisBlockedResourceExists = data()->isParsedPageExists(pendingResource, StorageType::BlockedForSEIndexingStorageType);
+			const StorageTypeFlags flags = addIndexingBlockingPage(pendingResource, resource);
 
-			bool isResourceBlockedForIndexing = false;
+			const bool mustBeAddedToPending = flags.testFlag(StorageType::NofollowLinksStorageType) &&
+				(pendingResource->isThisExternalPage ? m_crawlerOptions.followExternalNofollow : m_crawlerOptions.followInternalNofollow);
 
-			if (isBlockedByRobotsTxt || isBlockedByXRobotsTag || isNofollowResource)
+			if (mustBeAddedToPending)
 			{
-				if (!isThisBlockedResourceExists)
-				{
-					data()->addParsedPage(pendingResource, StorageType::BlockedForSEIndexingStorageType);
-					isResourceBlockedForIndexing = true;
-				}
+				data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 
-				if (isBlockedByXRobotsTag)
-				{
-					data()->addParsedPage(pendingResource, StorageType::BlockedByXRobotsTagStorageType);
-					isResourceBlockedForIndexing = true;
-				}
-				else if (isBlockedByRobotsTxt)
-				{
-					data()->addParsedPage(pendingResource, StorageType::BlockedByRobotsTxtStorageType);
-					isResourceBlockedForIndexing = true;
-				}
+				pendingResource->url.canonizedUrlStr();
+
+				DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
+
+				return;
 			}
 
-			if (isNofollowResource)
-			{
-				if (!isThisDofollowResourceExists && !isThisNofollowResourceExists)
-				{
-					data()->addParsedPage(pendingResource, StorageType::NofollowLinksStorageType);
-					isResourceBlockedForIndexing = true;
-				}
-			}
-			else
-			{
-				if (!isThisDofollowResourceExists)
-				{
-					data()->addParsedPage(pendingResource, StorageType::DofollowUrlStorageType);
-				}
-			}
-
-			if (!isResourceBlockedForIndexing &&
-				resource.permission != Permission::PermissionAllowed &&
-				resource.permission != Permission::PermissionBlockedByRobotsTxtRules &&
-				resource.permission != Permission::PermissionNotHttpLinkNotAllowed)
+			if (resource.restrictions &&
+				!resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules) &&
+				!resource.restrictions.testFlag(Restriction::RestrictionNotHttpLinkNotAllowed))
 			{
 				continue;
 			}
@@ -725,7 +735,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 	if (workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml && !secondGetRequest)
 	{
 		const ParsedPagePtr pendingPageRaw = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
-		workerResult.incomingPage() = mergeTwoPages(pendingPageRaw, workerResult.incomingPage());
+		workerResult.incomingPage() = mergePage(pendingPageRaw, workerResult.incomingPage());
 
 		const ResourceType resourceType = workerResult.incomingPage()->resourceType;
 
@@ -788,9 +798,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		{
 			newOrExistingResource = temporaryResource;
 
-			if (httpResource &&
-				(resource.permission == Permission::PermissionAllowed ||
-				resource.permission == Permission::PermissionBlockedByRobotsTxtRules))
+			if (httpResource && (!resource.restrictions || resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules)))
 			{
 				// what if this resource is unavailable not from all pages?
 				data()->addParsedPage(newOrExistingResource,
@@ -802,10 +810,10 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			}
 		}
 
-		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.urlParameter,
+		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.linkParameter,
 			resource.link.resourceSource, resource.link.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 			resource.link.resourceSource, resource.link.altOrTitle });
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
@@ -824,9 +832,11 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 void ModelController::fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept
 {
 	ParsedPagePtr pendingResource = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+
 	if (pendingResource && pendingResource->resourceType != ResourceType::ResourceHtml)
 	{
 		incomingPage->resourceType = pendingResource->resourceType;
+
 		if (pendingResource->linksToThisPage.size() == 1 && 
 			pendingResource->linksToThisPage.begin()->resourceSource == ResourceSource::SourceRedirectUrl &&
 			pendingResource->linksToThisPage.begin()->resource.expired())
@@ -996,6 +1006,77 @@ ParsedPagePtr ModelController::parsedPageFromResource(const ResourceOnPage& reso
 	parsedPage->url = resource.link.url;
 
 	return parsedPage;
+}
+
+StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource)
+{
+	const bool isBlockedByXRobotsTag = resource.restrictions.testFlag(Restriction::RestrictionBlockedByMetaRobotsRules);
+	const bool isBlockedByRobotsTxt = resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules);
+	const bool isNofollowResource = resource.link.linkParameter == LinkParameter::NofollowParameter;
+
+	const bool isThisBlockedByRobotsTxtExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
+	const bool isThisBlockedByXRobotsTagExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
+	const bool isThisNofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::NofollowLinksStorageType);
+	const bool isThisDofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::DofollowUrlStorageType);
+	const bool isThisBlockedResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+
+	StorageTypeFlags flags;
+
+	if (isBlockedByRobotsTxt || isBlockedByXRobotsTag || isNofollowResource)
+	{
+		if (!isThisBlockedResourceExists)
+		{
+			data()->addParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+			flags.setFlag(StorageType::BlockedForSEIndexingStorageType, true);
+		}
+
+		if (isBlockedByXRobotsTag && !isThisBlockedByXRobotsTagExists)
+		{
+			data()->addParsedPage(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
+			flags.setFlag(StorageType::BlockedByXRobotsTagStorageType, true);
+		}
+		else if (isBlockedByRobotsTxt && !isThisBlockedByRobotsTxtExists)
+		{
+			data()->addParsedPage(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
+			flags.setFlag(StorageType::BlockedByRobotsTxtStorageType, true);
+		}
+	}
+
+	if (isNofollowResource && !isThisDofollowResourceExists && !isThisNofollowResourceExists)
+	{
+		data()->addParsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
+		flags.setFlag(StorageType::NofollowLinksStorageType, true);
+	}
+
+	if (!isNofollowResource && !isThisDofollowResourceExists)
+	{
+		if (isThisNofollowResourceExists)
+		{
+			ParsedPagePtr existingPage = data()->parsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
+
+			DEBUG_ASSERT(existingPage);
+
+			data()->addParsedPage(existingPage, StorageType::DofollowUrlStorageType);
+
+			data()->removeParsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
+
+			//
+			// we must remove this page from blocked storage type
+			// only if this page wasn't blocked by another criteria (x-robots-tag or robots.txt)
+			//
+			if (!isThisBlockedByXRobotsTagExists && !isThisBlockedByRobotsTxtExists)
+			{
+				data()->removeParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+			}
+		}
+		else
+		{
+			data()->addParsedPage(pageFromResource, StorageType::DofollowUrlStorageType);
+			flags.setFlag(StorageType::DofollowUrlStorageType, true);
+		}
+	}
+
+	return flags;
 }
 
 }

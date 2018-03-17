@@ -211,5 +211,64 @@ TEST(RefreshTests, DuplicatesMustNotBePresentedAfterRefresh)
 	env.exec();
 }
 
+TEST(RefreshTests, RefreshNotChangedPage)
+{
+	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://refresh4.com/index.html") }));
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		cl->checkSequencedDataCollectionConsistency();
+
+		const auto checkResults = [&]
+		{
+			const auto titleDuplicates = cl->storageItems(StorageType::DuplicatedTitleUrlStorageType);
+			const auto metaDescriptionDuplicates = cl->storageItems(StorageType::DuplicatedMetaDescriptionUrlStorageType);
+
+			EXPECT_EQ(3, titleDuplicates.size());
+			EXPECT_EQ(3, metaDescriptionDuplicates.size());
+
+			const auto duplicateTitle = [](const ParsedPage* page)
+			{
+				return page->title == QString("Dummy Title");
+			};
+
+			const auto duplicateMetaDescription = [](const ParsedPage* page)
+			{
+				return page->metaDescription == QString("Dummy Description");
+			};
+
+			EXPECT_EQ(true, std::all_of(titleDuplicates.begin(), titleDuplicates.end(), duplicateTitle));
+			EXPECT_EQ(true, std::all_of(metaDescriptionDuplicates.begin(), metaDescriptionDuplicates.end(), duplicateMetaDescription));
+		};
+
+		checkResults();
+
+		const Url refreshUrl("http://refresh4.com/refresh_page.html");
+
+		const auto refreshPageIterator = std::find_if(pages.begin(), pages.end(),
+			[&refreshUrl](const ParsedPage* page) { return page->url.canonizedUrlStr() == refreshUrl.canonizedUrlStr(); });
+
+		ASSERT(refreshPageIterator != pages.end());
+
+		const int refreshPageIndex = std::distance(pages.begin(), refreshPageIterator);
+
+		cl->refreshPage(StorageType::CrawledUrlStorageType, refreshPageIndex);
+
+		cl->waitForRefreshPageDone(10);
+
+		//
+		// This delay is not reliable solution for waiting 
+		// until results is not received by sequenced data collection
+		//
+		std::this_thread::sleep_for(std::chrono::seconds(3));
+
+		checkResults();
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 
 }
