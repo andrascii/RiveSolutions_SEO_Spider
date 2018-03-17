@@ -11,9 +11,12 @@ OptionsLinkFilter::OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const
 {
 }
 
-bool OptionsLinkFilter::checkPermissionNotAllowed(Restriction permission, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const
+bool OptionsLinkFilter::checkPermissionNotAllowed(Restriction restriction, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const
 {
-	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url));
+	if(!PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url))
+	{
+		return false;
+	}
 
 	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptions.startCrawlingPage, linkInfo.url);
 	const bool isNofollowLink = linkInfo.linkParameter == LinkParameter::NofollowParameter;
@@ -21,36 +24,36 @@ bool OptionsLinkFilter::checkPermissionNotAllowed(Restriction permission, const 
 	const bool isExternalNofollowNotAllowed = isNofollowLink && isUrlExternal && !m_crawlerOptions.followExternalNofollow;
 	const bool isInternalNofollowNotAllowed = isNofollowLink && !isUrlExternal && !m_crawlerOptions.followInternalNofollow;
 
-	if (permission == Restriction::RestrictionNofollowNotAllowed)
+	if (restriction == Restriction::RestrictionNofollowNotAllowed)
 	{
 		return isInternalNofollowNotAllowed || isExternalNofollowNotAllowed;
 	}
 
 	const bool isSubdomain = PageParserHelpers::isSubdomain(m_crawlerOptions.startCrawlingPage, linkInfo.url);
 
-	if (permission == Restriction::RestrictionSubdomainNotAllowed)
+	if (restriction == Restriction::RestrictionSubdomainNotAllowed)
 	{
 		return isSubdomain && !m_crawlerOptions.checkSubdomains;
 	}
 
-	if (permission == Restriction::RestrictionBlockedByFolder)
+	if (restriction == Restriction::RestrictionBlockedByFolder)
 	{
 		return !m_crawlerOptions.crawlOutsideOfStartFolder &&
 			!PageParserHelpers::isUrlInsideBaseUrlFolder(m_crawlerOptions.startCrawlingPage, linkInfo.url);
 	}
 
-	if (permission == Restriction::RestrictionExternalLinksNotAllowed)
+	if (restriction == Restriction::RestrictionExternalLinksNotAllowed)
 	{
 		return !isNofollowLink && !isSubdomain && isUrlExternal && !m_crawlerOptions.checkExternalLinks;
 	}
 
-	if (permission == Restriction::RestrictionBlockedByRobotsTxtRules)
+	if (restriction == Restriction::RestrictionBlockedByRobotsTxtRules)
 	{
 		return !isUrlExternal && m_crawlerOptions.followRobotsTxtRules && 
 			isLinkBlockedByRobotsTxt(linkInfo);
 	}
 	
-	if (permission == Restriction::RestrictionBlockedByMetaRobotsRules)
+	if (restriction == Restriction::RestrictionBlockedByMetaRobotsRules)
 	{
 		return !isUrlExternal && m_crawlerOptions.followRobotsTxtRules && 
 			isLinkBlockedByMetaRobots(metaRobotsFlags);
