@@ -185,8 +185,8 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 	if (!workerResult.isRefreshResult())
 	{
-		DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
-			data()->size(StorageType::CrawledUrlStorageType) == 1);
+// 		DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
+// 			data()->size(StorageType::CrawledUrlStorageType) == 1);
 
 		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
 			!workerResult.incomingPage()->isThisExternalPage ||
@@ -1022,24 +1022,22 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 
 	StorageTypeFlags flags;
 
-	if (isBlockedByRobotsTxt || isBlockedByXRobotsTag || isNofollowResource)
+	if ((isBlockedByRobotsTxt || isBlockedByXRobotsTag || (isNofollowResource && !isThisDofollowResourceExists)) && !isThisBlockedResourceExists)
 	{
-		if (!isThisBlockedResourceExists)
-		{
-			data()->addParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
-			flags.setFlag(StorageType::BlockedForSEIndexingStorageType, true);
-		}
+		data()->addParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+		flags.setFlag(StorageType::BlockedForSEIndexingStorageType, true);
+	}
 
-		if (isBlockedByXRobotsTag && !isThisBlockedByXRobotsTagExists)
-		{
-			data()->addParsedPage(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
-			flags.setFlag(StorageType::BlockedByXRobotsTagStorageType, true);
-		}
-		else if (isBlockedByRobotsTxt && !isThisBlockedByRobotsTxtExists)
-		{
-			data()->addParsedPage(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
-			flags.setFlag(StorageType::BlockedByRobotsTxtStorageType, true);
-		}
+	if (isBlockedByXRobotsTag && !isThisBlockedByXRobotsTagExists)
+	{
+		data()->addParsedPage(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
+		flags.setFlag(StorageType::BlockedByXRobotsTagStorageType, true);
+	}
+
+	if (isBlockedByRobotsTxt && !isThisBlockedByRobotsTxtExists)
+	{
+		data()->addParsedPage(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
+		flags.setFlag(StorageType::BlockedByRobotsTxtStorageType, true);
 	}
 
 	if (isNofollowResource && !isThisDofollowResourceExists && !isThisNofollowResourceExists)
@@ -1058,7 +1056,7 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 
 			data()->addParsedPage(existingPage, StorageType::DofollowUrlStorageType);
 
-			data()->removeParsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
+			data()->removeParsedPage(existingPage, StorageType::NofollowLinksStorageType);
 
 			//
 			// we must remove this page from blocked storage type
@@ -1066,7 +1064,7 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 			//
 			if (!isThisBlockedByXRobotsTagExists && !isThisBlockedByRobotsTxtExists)
 			{
-				data()->removeParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+				data()->removeParsedPage(existingPage, StorageType::BlockedForSEIndexingStorageType);
 			}
 		}
 		else
