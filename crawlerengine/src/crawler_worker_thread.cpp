@@ -308,6 +308,12 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 	{
 		ResourceOnPage fixedResource = resource;
 		setResourcePermission(fixedResource);
+
+		if (fixedResource.permission == Permission::PermissionBlockedByMetaRobotsRules)
+		{
+			fixedResource.link.linkParameter = LinkParameter::NofollowParameter;
+		}
+
 		resources.insert(fixedResource);
 	}
 

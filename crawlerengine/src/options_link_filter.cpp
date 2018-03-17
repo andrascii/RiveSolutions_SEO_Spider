@@ -16,7 +16,7 @@ bool OptionsLinkFilter::checkPermissionNotAllowed(Permission permission, const L
 	DEBUG_ASSERT(PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url));
 
 	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptions.startCrawlingPage, linkInfo.url);
-	const bool isNofollowLink = linkInfo.urlParameter == LinkParameter::NofollowParameter;
+	const bool isNofollowLink = linkInfo.linkParameter == LinkParameter::NofollowParameter;
 
 	const bool isExternalNofollowNotAllowed = isNofollowLink && isUrlExternal && !m_crawlerOptions.followExternalNofollow;
 	const bool isInternalNofollowNotAllowed = isNofollowLink && !isUrlExternal && !m_crawlerOptions.followInternalNofollow;

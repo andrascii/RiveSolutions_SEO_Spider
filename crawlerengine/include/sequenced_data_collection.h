@@ -26,7 +26,6 @@ public:
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 	ISequencedStorage* storage(StorageType type) noexcept;
 	bool removePage(ParsedPage* parsedPage, StorageType type);
-	void prepareCollectionForRefreshPage(ParsedPage* pageForRefresh);
 
 signals:
 	void parsedPageAdded(int row, StorageType type);

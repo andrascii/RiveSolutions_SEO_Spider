@@ -656,12 +656,12 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+			existingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.urlParameter,
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
 			addIndexingBlockingPage(existingResource, resource);
@@ -670,10 +670,10 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		{
 			ParsedPagePtr pendingResource = parsedPageFromResource(resource);
 
-			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 			
-			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.urlParameter,
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
 			const StorageTypeFlags flags = addIndexingBlockingPage(pendingResource, resource);
@@ -812,10 +812,10 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			}
 		}
 
-		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.urlParameter,
+		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.linkParameter,
 			resource.link.resourceSource, resource.link.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.urlParameter,
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
 			resource.link.resourceSource, resource.link.altOrTitle });
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
@@ -1014,7 +1014,7 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 {
 	const bool isBlockedByXRobotsTag = resource.permission == Permission::PermissionBlockedByMetaRobotsRules;
 	const bool isBlockedByRobotsTxt = resource.permission == Permission::PermissionBlockedByRobotsTxtRules;
-	const bool isNofollowResource = resource.link.urlParameter == LinkParameter::NofollowParameter;
+	const bool isNofollowResource = resource.link.linkParameter == LinkParameter::NofollowParameter;
 	const bool isThisNofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::NofollowLinksStorageType);
 	const bool isThisDofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::DofollowUrlStorageType);
 	const bool isThisBlockedResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedForSEIndexingStorageType);

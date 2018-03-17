@@ -60,7 +60,7 @@ enum MetaRobotsItem
 	MetaRobotsNoYDir = 1 << 12
 };
 
-Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem);
+Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem)
 
 enum class UserAgentType
 {
@@ -77,6 +77,8 @@ enum class UserAgentType
 	AnyBot // used for all robots
 };
 
+using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
+
 enum class Permission
 {
 	PermissionAllowed,
@@ -89,12 +91,10 @@ enum class Permission
 	PermissionNotHttpLinkNotAllowed
 };
 
-using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
-
 struct LinkInfo
 {
 	Url url;
-	LinkParameter urlParameter = LinkParameter::DofollowParameter;
+	LinkParameter linkParameter = LinkParameter::DofollowParameter;
 	QString altOrTitle;
 	bool dataResourceLink = false;
 	ResourceSource resourceSource;

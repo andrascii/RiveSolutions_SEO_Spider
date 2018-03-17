@@ -635,8 +635,6 @@ void Crawler::refreshPage(StorageType storageType, int index)
 
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
-	//m_sequencedDataCollection->prepareCollectionForRefreshPage(parsedPage);
-
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh", 
 		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));
 
