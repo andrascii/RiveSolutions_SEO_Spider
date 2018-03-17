@@ -16,7 +16,7 @@ public:
 
 	OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const RobotsTxtRules& robotsTxtRules);
 
-	bool checkPermissionNotAllowed(Permission permission, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
+	bool checkPermissionNotAllowed(Restriction permission, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
 
 private:
 	bool isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo) const;

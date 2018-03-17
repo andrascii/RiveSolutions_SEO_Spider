@@ -692,9 +692,9 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 				return;
 			}
 
-			if (resource.permission != Permission::PermissionAllowed &&
-				resource.permission != Permission::PermissionBlockedByRobotsTxtRules &&
-				resource.permission != Permission::PermissionNotHttpLinkNotAllowed)
+			if (resource.restrictions &&
+				!resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules) &&
+				!resource.restrictions.testFlag(Restriction::RestrictionNotHttpLinkNotAllowed))
 			{
 				continue;
 			}
@@ -798,9 +798,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		{
 			newOrExistingResource = temporaryResource;
 
-			if (httpResource &&
-				(resource.permission == Permission::PermissionAllowed ||
-				resource.permission == Permission::PermissionBlockedByRobotsTxtRules))
+			if (httpResource && (!resource.restrictions || resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules)))
 			{
 				// what if this resource is unavailable not from all pages?
 				data()->addParsedPage(newOrExistingResource,
@@ -1012,9 +1010,12 @@ ParsedPagePtr ModelController::parsedPageFromResource(const ResourceOnPage& reso
 
 StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource)
 {
-	const bool isBlockedByXRobotsTag = resource.permission == Permission::PermissionBlockedByMetaRobotsRules;
-	const bool isBlockedByRobotsTxt = resource.permission == Permission::PermissionBlockedByRobotsTxtRules;
+	const bool isBlockedByXRobotsTag = resource.restrictions.testFlag(Restriction::RestrictionBlockedByMetaRobotsRules);
+	const bool isBlockedByRobotsTxt = resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules);
 	const bool isNofollowResource = resource.link.linkParameter == LinkParameter::NofollowParameter;
+
+	const bool isThisBlockedByRobotsTxtExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
+	const bool isThisBlockedByXRobotsTagExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
 	const bool isThisNofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::NofollowLinksStorageType);
 	const bool isThisDofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::DofollowUrlStorageType);
 	const bool isThisBlockedResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
@@ -1029,12 +1030,12 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 			flags.setFlag(StorageType::BlockedForSEIndexingStorageType, true);
 		}
 
-		if (isBlockedByXRobotsTag)
+		if (isBlockedByXRobotsTag && !isThisBlockedByXRobotsTagExists)
 		{
 			data()->addParsedPage(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
 			flags.setFlag(StorageType::BlockedByXRobotsTagStorageType, true);
 		}
-		else if (isBlockedByRobotsTxt)
+		else if (isBlockedByRobotsTxt && !isThisBlockedByRobotsTxtExists)
 		{
 			data()->addParsedPage(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
 			flags.setFlag(StorageType::BlockedByRobotsTxtStorageType, true);
@@ -1058,7 +1059,15 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 			data()->addParsedPage(existingPage, StorageType::DofollowUrlStorageType);
 
 			data()->removeParsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
-			data()->removeParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+
+			//
+			// we must remove this page from blocked storage type
+			// only if this page wasn't blocked by another criteria (x-robots-tag or robots.txt)
+			//
+			if (!isThisBlockedByXRobotsTagExists && !isThisBlockedByRobotsTxtExists)
+			{
+				data()->removeParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+			}
 		}
 		else
 		{
