@@ -736,3 +736,11 @@ SeoSpider--CollapseHeaderButton
 {
 	border: none;
 }
+
+/*////////////////////////////// FilterInfoWidget ///////////////////////////////////////////*/
+SeoSpider--FilterInfoWidget#filterInfo
+{
+	border: 1px solid green;
+	color: green;
+	background-color: red;
+}

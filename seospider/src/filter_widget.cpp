@@ -7,9 +7,36 @@
 #include "application.h"
 #include "command_menu.h"
 #include "page_data_widget.h"
+#include "filter_info_factory.h"
 
 namespace SeoSpider
 {
+
+FilterInfoWidget::FilterInfoWidget(QWidget* parent)
+	: QWidget(parent)
+	, m_title(new QLabel(this))
+	, m_description(new QLabel(this))
+{
+	m_title->setObjectName(QString("filterInfoWidgetTitle"));
+	m_description->setObjectName(QString("filterInfoWidgetDescription"));
+
+	QVBoxLayout* layout = new QVBoxLayout(this);
+	setLayout(layout);
+	layout->addWidget(m_title);
+	layout->addWidget(m_description);
+
+	setObjectName(QString("filterInfo"));
+}
+
+QLabel* FilterInfoWidget::title() const
+{
+	return m_title;
+}
+
+QLabel* FilterInfoWidget::description() const
+{
+	return m_description;
+}
 
 FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent)
 	: QFrame(parent)
@@ -19,6 +46,7 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterModel, this))
 	, m_splitter(new QSplitter(this))
 	, m_isFirstShow(true)
+	, m_info(new FilterInfoWidget(this))
 {
 	m_summaryFilterTableView->setModel(m_summaryFilterModel);
 	m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);
@@ -26,10 +54,18 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	m_summaryFilterTableView->horizontalHeader()->hide();
 	m_summaryFilterTableView->setObjectName("FilterWidgetTableView");
 
+	QVBoxLayout* vLayout = new QVBoxLayout(this);
+	QWidget* tableViewAndInfo = new QWidget(this);
+	tableViewAndInfo->setLayout(vLayout);
+	vLayout->addWidget(m_info);
+	vLayout->addWidget(m_webSiteDataWidget);
+	m_info->setVisible(false);
+
 	m_splitter->setOrientation(Qt::Horizontal);
 	m_splitter->setChildrenCollapsible(false);
 	m_splitter->addWidget(m_summaryFilterTableView);
-	m_splitter->addWidget(m_webSiteDataWidget);
+	m_splitter->addWidget(tableViewAndInfo);
+	//m_splitter->addWidget(m_webSiteDataWidget);
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
@@ -93,6 +129,18 @@ void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected,
 
 	const QModelIndex index = selected.size() ? selected.indexes()[0] : QModelIndex();
 	const StorageAdapterType category = m_summaryFilterModel->storageAdapterType(index);
+
+	FilterInfoFactory infoFactory;
+	std::optional<FilterInfo> filterInfo = infoFactory.filterInfo(category);
+
+	if (filterInfo != std::nullopt)
+	{
+		m_info->title()->setText(filterInfo->title);
+		m_info->description()->setText(filterInfo->description);
+	}
+	m_info->setVisible(filterInfo != std::nullopt);
+	
+
 	m_webSiteDataWidget->setStorageAdapterType(category);
 }
 

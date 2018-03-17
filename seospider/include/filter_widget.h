@@ -15,6 +15,20 @@ class SummaryModel;
 class SummaryViewModel;
 class AbstractWebSiteDataWidget;
 
+class FilterInfoWidget : public QWidget
+{
+	Q_OBJECT
+public:
+	FilterInfoWidget(QWidget* parent);
+
+	QLabel* title() const;
+	QLabel* description() const;
+
+private:
+	QLabel* m_title;
+	QLabel* m_description;
+};
+
 class FilterWidget : public QFrame
 {
 	Q_OBJECT
@@ -29,7 +43,6 @@ public:
 
 private:
 	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const;
-
 	Q_SLOT void adjustSize();
 
 private:
@@ -40,6 +53,7 @@ private:
 	SummaryViewModel* m_summaryFilterViewModel;
 
 	QSplitter* m_splitter;
+	FilterInfoWidget* m_info;
 
 	bool m_isFirstShow;
 };
