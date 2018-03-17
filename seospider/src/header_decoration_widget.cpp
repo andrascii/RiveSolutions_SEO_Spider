@@ -88,7 +88,7 @@ void HeaderDecorationWidget::onCollapseButtonClicked()
 		m_hiddenWidgets.clear();
 	}
 
-	constexpr int animationDuration = 500;
+	constexpr int animationDuration = 100;
 
 	const int titleFrameSourceHeight = m_titleFrame->height();
 

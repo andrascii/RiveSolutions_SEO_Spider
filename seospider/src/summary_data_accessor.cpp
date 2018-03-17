@@ -2,6 +2,7 @@
 #include "application.h"
 #include "sequenced_data_collection.h"
 #include "isequenced_storage.h"
+#include "error_category.h"
 
 namespace SeoSpider
 {
@@ -17,6 +18,9 @@ SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataColle
 
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageReplaced,
 		this, &SummaryDataAccessor::emitDataChanged));
+
+	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, 
+		this, &SummaryDataAccessor::sortGroups));
 
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
 		this, &SummaryDataAccessor::beginClearData));
@@ -169,6 +173,25 @@ void SummaryDataAccessor::emitDataChanged(int, CrawlerEngine::StorageType storag
 	}
 
 	Q_EMIT dataChanged(row, 1, Qt::DisplayRole);
+}
+
+void SummaryDataAccessor::sortGroups()
+{
+	QVector<DCStorageDescription*> itemRows;
+	
+	foreach(auto row, m_itemRows)
+	{
+		itemRows.append(row);
+	}
+	
+	qSort(itemRows.begin(), itemRows.end(), [](DCStorageDescription* a, DCStorageDescription* b) 
+		{return CrawlerEngine::ErrorCategory::ErrorCategoryLevel(a->storageType) < CrawlerEngine::ErrorCategory::ErrorCategoryLevel(b->storageType); });
+	
+	m_itemRows.clear();
+	for(int modelRowsCount = 0; modelRowsCount < itemRows.size(); ++modelRowsCount)
+	{
+		m_itemRows[modelRowsCount] = itemRows.at(modelRowsCount);
+	}
 }
 
 Qt::ItemFlags SummaryDataAccessor::flags(const QModelIndex& index) const noexcept
