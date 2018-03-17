@@ -29,6 +29,12 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
 		}
 	};
 
@@ -66,6 +72,17 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndCommonMetaRobotsTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+		}
+
+		if (!blockedByXRobotsTag.empty())
+		{
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
 		}
 	};
 
@@ -103,6 +120,17 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndSpecialMetaRobotsTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+		}
+
+		if (!blockedByXRobotsTag.empty())
+		{
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
 		}
 	};
 
