@@ -11,7 +11,7 @@ OptionsLinkFilter::OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const
 {
 }
 
-bool OptionsLinkFilter::checkPermissionNotAllowed(Restriction restriction, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const
+bool OptionsLinkFilter::checkRestriction(Restriction restriction, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const
 {
 	if(!PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url))
 	{
@@ -60,6 +60,15 @@ bool OptionsLinkFilter::checkPermissionNotAllowed(Restriction restriction, const
 	}
 
 	return false;
+}
+
+std::pair<bool, MetaRobotsFlags> OptionsLinkFilter::isPageBlockedByMetaRobots(const ParsedPagePtr& parsedPage) const
+{
+	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptions.startCrawlingPage, parsedPage->url);
+
+	const std::pair<bool, UserAgentType> isAllowedForRobot = m_robotsTxtRules.isUrlAllowedByMetaRobotsFor(parsedPage->metaRobotsFlags, m_crawlerOptions.userAgentToFollow);
+
+	return std::make_pair(!isUrlExternal && m_crawlerOptions.followRobotsTxtRules && !isAllowedForRobot.first, parsedPage->metaRobotsFlags[isAllowedForRobot.second]);
 }
 
 bool OptionsLinkFilter::isLinkBlockedByMetaRobots(const MetaRobotsFlagsSet& metaRobotsFlags) const

@@ -584,6 +584,18 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 	const ParsedPagePtr pendingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
 
+	if (workerResult.incomingPage()->isBlockedByMetaRobots)
+	{
+		const ParsedPagePtr blockedPage = pendingPage ? pendingPage : workerResult.incomingPage();
+
+		if (!data()->isParsedPageExists(blockedPage, StorageType::BlockedForSEIndexingStorageType))
+		{
+			data()->addParsedPage(blockedPage, StorageType::BlockedForSEIndexingStorageType);
+		}
+
+		data()->addParsedPage(blockedPage, StorageType::BlockedByXRobotsTagStorageType);
+	}
+
 	if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::BlockedForSEIndexingStorageType))
 	{
 		workerResult.incomingPage() = mergePage(pendingPage, workerResult.incomingPage());
@@ -1026,12 +1038,6 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 	{
 		data()->addParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
 		flags.setFlag(StorageType::BlockedForSEIndexingStorageType, true);
-	}
-
-	if (isBlockedByXRobotsTag && !isThisBlockedByXRobotsTagExists)
-	{
-		data()->addParsedPage(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
-		flags.setFlag(StorageType::BlockedByXRobotsTagStorageType, true);
 	}
 
 	if (isBlockedByRobotsTxt && !isThisBlockedByRobotsTxtExists)

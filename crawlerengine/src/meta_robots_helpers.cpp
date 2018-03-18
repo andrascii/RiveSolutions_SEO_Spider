@@ -57,7 +57,9 @@ bool MetaRobotsHelpers::checkIfSupportedRecordExistsAndCorrectUserAgentType(User
 bool MetaRobotsHelpers::checkIfSupportedMetaRobotsExistAndCorrectUserAgentType(UserAgentType& userAgentType,
 	const MetaRobotsFlagsSet& metaRobotsFlags)
 {
-	if (metaRobotsFlags.find(userAgentType) != metaRobotsFlags.end())
+	const auto strategyIter = metaRobotsFlags.find(userAgentType);
+
+	if (strategyIter != metaRobotsFlags.end() && strategyIter->second)
 	{
 		return true;
 	}

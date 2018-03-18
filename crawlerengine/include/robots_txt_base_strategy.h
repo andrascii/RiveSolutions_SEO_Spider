@@ -12,7 +12,7 @@ public:
 	virtual ~RobotsTxtBaseStrategy() = default;
 
 	virtual bool isUrlAllowed(const Url& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const;
-	virtual bool isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const;
+	virtual std::pair<bool, UserAgentType> isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const;
 	virtual Url cleanUrl(const Url& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const;
 
 protected:

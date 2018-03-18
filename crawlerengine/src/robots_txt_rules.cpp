@@ -55,7 +55,18 @@ bool RobotsTxtRules::isUrlAllowedByMetaRobots(const MetaRobotsFlagsSet& metaRobo
 		WARNLOG << "No appropriate strategy was found";
 		userAgentType = UserAgentType::AnyBot;
 	}
-	
+
+	return m_strategies[userAgentType]->isUrlAllowed(metaRobotsFlags, userAgentType).first;
+}
+
+std::pair<bool, UserAgentType> RobotsTxtRules::isUrlAllowedByMetaRobotsFor(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
+{
+	if (m_strategies.find(userAgentType) == m_strategies.cend())
+	{
+		WARNLOG << "No appropriate strategy was found";
+		userAgentType = UserAgentType::AnyBot;
+	}
+
 	return m_strategies[userAgentType]->isUrlAllowed(metaRobotsFlags, userAgentType);
 }
 
