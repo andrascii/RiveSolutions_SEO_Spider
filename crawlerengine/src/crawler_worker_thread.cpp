@@ -251,9 +251,6 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 		return optionsLinkFilter->checkPermissionNotAllowed(Restriction::RestrictionBlockedByFolder, linkInfo, metaRobotsFlags);
 	};
 
-	//
-	// TODO: make it based on flags
-	//
 	const auto setResourceRestrictions = [&](ResourceOnPage& resource)
 	{
 		if (!PageParserHelpers::isHttpOrHttpsScheme(resource.link.url))
