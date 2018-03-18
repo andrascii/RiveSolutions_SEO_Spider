@@ -4,16 +4,16 @@
 namespace CrawlerEngine
 {
 
-bool RobotsTxtYahooStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
+	std::pair<bool, UserAgentType> RobotsTxtYahooStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
 {
 	if (!MetaRobotsHelpers::checkIfSupportedMetaRobotsExistAndCorrectUserAgentType(userAgentType, metaRobotsFlags))
 	{
-		return true;
+		return std::make_pair(true, userAgentType);
 	}
 
 	const MetaRobotsFlags& flags = metaRobotsFlags.find(userAgentType)->second;
 
-	return !flags.testFlag(MetaRobotsNoFollow);
+	return std::make_pair(!flags.testFlag(MetaRobotsNoFollow), userAgentType);
 }
 
 }

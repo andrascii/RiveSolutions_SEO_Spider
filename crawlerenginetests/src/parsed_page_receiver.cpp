@@ -29,13 +29,13 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 		this, &ParsedPageReceiver::onAboutClearData, Qt::QueuedConnection));
 
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)),
-		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType)), Qt::DirectConnection));
+		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
 
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(WorkerResult, StorageType)),
-		this, SLOT(onUnorderedDataCollectionPageAdded(WorkerResult, StorageType)), Qt::DirectConnection));
+		this, SLOT(onUnorderedDataCollectionPageAdded(WorkerResult, StorageType)), Qt::QueuedConnection));
 
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType)),
-		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType)), Qt::DirectConnection));
+		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
 }
 
 void ParsedPageReceiver::onParsedPageAdded(int row, StorageType type)
@@ -172,6 +172,7 @@ void ParsedPageReceiver::checkWaitCondition(StorageType storageType)
 			{
 				it->second.second.set_value(m_parsedPages[storageType]);
 			}
+
 			break;
 		}
 	}

@@ -1,5 +1,37 @@
 #include "parsed_page.h"
 
+namespace
+{
+
+template <typename Iter, typename T, typename Predicate>
+bool containsAll(Iter first, Iter last, const std::vector<T>& values, Predicate&& pred)
+{
+	bool result = false;
+
+	for(; first != last; ++first)
+	{
+		result = false;
+
+		for (const T& value : values)
+		{
+			if (pred(first, value))
+			{
+				result = true;
+				break;
+			}
+		}
+
+		if (!result)
+		{
+			return false;
+		}
+	}
+
+	return result;
+}
+
+}
+
 namespace CrawlerEngineTests
 {
 
@@ -7,6 +39,11 @@ using namespace CrawlerEngine;
 
 TEST(IndexingBlockedPagesTests, TagARelNofollowTest)
 {
+	//
+	// This test check behavior for nofollow index-3.html page
+	// which is nofollow on all pages
+	//
+
 	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked1.com/index.html"));
 	options.followInternalNofollow = true;
 
@@ -42,9 +79,162 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowTest)
 	env.exec();
 }
 
-TEST(IndexingBlockedPagesTests, TagARelNofollowAndCommonMetaRobotsTest)
+TEST(IndexingBlockedPagesTests, TagARelNofollowAndAnyBotNofollowMetaRobotsTest)
 {
+	//
+	// This test check behavior for nofollow index-3.html page
+	// which is nofollow on all pages and index-2.html which
+	// is blocked by meta robots using content="nofollow".
+	// So this index-2.html page MUST NOT BE CONTAINED 
+	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
+	//
+
 	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
+	options.followInternalNofollow = true;
+	options.followRobotsTxtRules = true;
+	options.userAgentToFollow = UserAgentType::AnyBot;
+
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		const auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled page");
+		cl->waitForCrawlingDone();
+		cl->checkSequencedDataCollectionConsistency();
+
+		const auto nofollowLinks = cl->storageItems(StorageType::NofollowLinksStorageType);
+		const auto blockedForSeIndexing = cl->storageItems(StorageType::BlockedForSEIndexingStorageType);
+		const auto blockedByXRobotsTag = cl->storageItems(StorageType::BlockedByXRobotsTagStorageType);
+
+		const Url nofollowBlockedUrl("http://indexingblocked2.com/index-3.html");
+
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ(1, nofollowLinks.size());
+		EXPECT_EQ(1, blockedForSeIndexing.size());
+		EXPECT_EQ(0, blockedByXRobotsTag.size());
+
+		if (!nofollowLinks.empty())
+		{
+			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(IndexingBlockedPagesTests, TagARelNofollowAndGoogleNofollowMetaRobotsTest)
+{
+	//
+	// This test check behavior for nofollow index-3.html page
+	// which is nofollow on all pages and index-2.html which
+	// is blocked by meta robots using content="nofollow".
+	// So this index-2.html page MUST NOT BE CONTAINED 
+	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
+	//
+
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
+	options.followInternalNofollow = true;
+	options.followRobotsTxtRules = true;
+	options.userAgentToFollow = UserAgentType::GoogleBot;
+
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		const auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled page");
+		cl->waitForCrawlingDone();
+		cl->checkSequencedDataCollectionConsistency();
+
+		const auto nofollowLinks = cl->storageItems(StorageType::NofollowLinksStorageType);
+		const auto blockedForSeIndexing = cl->storageItems(StorageType::BlockedForSEIndexingStorageType);
+		const auto blockedByXRobotsTag = cl->storageItems(StorageType::BlockedByXRobotsTagStorageType);
+
+		const Url nofollowBlockedUrl("http://indexingblocked2.com/index-3.html");
+
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ(1, nofollowLinks.size());
+		EXPECT_EQ(1, blockedForSeIndexing.size());
+		EXPECT_EQ(0, blockedByXRobotsTag.size());
+
+		if (!nofollowLinks.empty())
+		{
+			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(IndexingBlockedPagesTests, TagARelNofollowAndYandexNofollowMetaRobotsTest)
+{
+	//
+	// This test check behavior for nofollow index-3.html page
+	// which is nofollow on all pages and index-2.html which
+	// is blocked by meta robots using content="nofollow".
+	// So this index-2.html page MUST NOT BE CONTAINED 
+	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
+	//
+
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
+	options.followInternalNofollow = true;
+	options.followRobotsTxtRules = true;
+	options.userAgentToFollow = UserAgentType::YandexBot;
+
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		const auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled page");
+		cl->waitForCrawlingDone();
+		cl->checkSequencedDataCollectionConsistency();
+
+		const auto nofollowLinks = cl->storageItems(StorageType::NofollowLinksStorageType);
+		const auto blockedForSeIndexing = cl->storageItems(StorageType::BlockedForSEIndexingStorageType);
+		const auto blockedByXRobotsTag = cl->storageItems(StorageType::BlockedByXRobotsTagStorageType);
+
+		const Url nofollowBlockedUrl("http://indexingblocked2.com/index-3.html");
+
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ(1, nofollowLinks.size());
+		EXPECT_EQ(1, blockedForSeIndexing.size());
+		EXPECT_EQ(0, blockedByXRobotsTag.size());
+
+		if (!nofollowLinks.empty())
+		{
+			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(IndexingBlockedPagesTests, TagARelNofollowAndRobotsTxtTest)
+{
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked3.com/index.html"));
 	options.followInternalNofollow = true;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
@@ -59,13 +249,15 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndCommonMetaRobotsTest)
 		const auto nofollowLinks = cl->storageItems(StorageType::NofollowLinksStorageType);
 		const auto blockedForSeIndexing = cl->storageItems(StorageType::BlockedForSEIndexingStorageType);
 		const auto blockedByXRobotsTag = cl->storageItems(StorageType::BlockedByXRobotsTagStorageType);
+		const auto blockedByRobotsTxt = cl->storageItems(StorageType::BlockedByRobotsTxtStorageType);
 
-		const Url nofollowBlockedUrl("http://indexingblocked2.com/index-3.html");
+		const Url nofollowBlockedUrl("http://indexingblocked3.com/index-3.html");
 
 		EXPECT_EQ(3, pages.size());
 		EXPECT_EQ(1, nofollowLinks.size());
 		EXPECT_EQ(1, blockedForSeIndexing.size());
-		EXPECT_EQ(1, blockedByXRobotsTag.size());
+		EXPECT_EQ(0, blockedByXRobotsTag.size());
+		EXPECT_EQ(1, blockedByRobotsTxt.size());
 
 		if (!nofollowLinks.empty())
 		{
@@ -76,57 +268,6 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndCommonMetaRobotsTest)
 		if (!blockedForSeIndexing.empty())
 		{
 			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
-		}
-
-		if (!blockedByXRobotsTag.empty())
-		{
-			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
-		}
-	};
-
-	env.initializeTest(testFunction);
-	env.exec();
-}
-
-TEST(IndexingBlockedPagesTests, TagARelNofollowAndSpecialMetaRobotsTest)
-{
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
-	options.followInternalNofollow = true;
-	options.followRobotsTxtRules = true;
-	options.userAgentToFollow = UserAgentType::GoogleBot;
-
-	TestEnvironment env(options);
-
-	const auto testFunction = [cl = env.crawler()]()
-	{
-		const auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled page");
-		cl->waitForCrawlingDone();
-		cl->checkSequencedDataCollectionConsistency();
-		const auto nofollowLinks = cl->storageItems(StorageType::NofollowLinksStorageType);
-		const auto blockedForSeIndexing = cl->storageItems(StorageType::BlockedForSEIndexingStorageType);
-		const auto blockedByXRobotsTag = cl->storageItems(StorageType::BlockedByXRobotsTagStorageType);
-
-		const Url nofollowBlockedUrl("http://indexingblocked2.com/index-3.html");
-
-		EXPECT_EQ(3, pages.size());
-		EXPECT_EQ(1, nofollowLinks.size());
-		EXPECT_EQ(1, blockedForSeIndexing.size());
-		EXPECT_EQ(1, blockedByXRobotsTag.size());
-
-		if (!nofollowLinks.empty())
-		{
-			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
-		}
-
-		if (!blockedForSeIndexing.empty())
-		{
-			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
-		}
-
-		if (!blockedByXRobotsTag.empty())
-		{
-			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
 		}
 	};
 
@@ -176,5 +317,170 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndDofollowTest)
 	env.initializeTest(testFunction);
 	env.exec();
 }
+
+TEST(IndexingBlockedPagesTests, TagARelNofollowAndAnyBotNoindexMetaRobotsTest)
+{
+	//
+	// This test check behavior for nofollow index-3.html page
+	// which is nofollow on all pages except index-2.html which
+	// is blocked by meta robots using content="noindex".
+	// So this index-2.html page must be contained
+	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType.
+	// But index-3.html must not be blocked.
+	//
+
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
+	options.followInternalNofollow = true;
+	options.followRobotsTxtRules = true;
+	options.userAgentToFollow = UserAgentType::AnyBot;
+
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		const auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled page");
+		cl->waitForCrawlingDone();
+		cl->checkSequencedDataCollectionConsistency();
+
+		const auto nofollowLinks = cl->storageItems(StorageType::NofollowLinksStorageType);
+		const auto blockedForSeIndexing = cl->storageItems(StorageType::BlockedForSEIndexingStorageType);
+		const auto blockedByXRobotsTag = cl->storageItems(StorageType::BlockedByXRobotsTagStorageType);
+
+		const Url xRobotsTagBlockedUrl("http://indexingblocked5.com/index-2.html");
+
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ(0, nofollowLinks.size());
+		EXPECT_EQ(1, blockedForSeIndexing.size());
+		EXPECT_EQ(1, blockedByXRobotsTag.size());
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedByMetaRobots);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
+		}
+
+		if (!blockedByXRobotsTag.empty())
+		{
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedByMetaRobots);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(IndexingBlockedPagesTests, TagARelNofollowAndGoogleNoindexMetaRobotsTest)
+{
+	//
+	// This test check behavior for nofollow index-3.html page
+	// which is nofollow on all pages except index-2.html which
+	// is blocked by meta robots using content="noindex".
+	// So this index-2.html page must be contained
+	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType.
+	// But index-3.html must not be blocked.
+	//
+
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
+	options.followInternalNofollow = true;
+	options.followRobotsTxtRules = true;
+	options.userAgentToFollow = UserAgentType::GoogleBot;
+
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		const auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled page");
+		cl->waitForCrawlingDone();
+		cl->checkSequencedDataCollectionConsistency();
+
+		const auto nofollowLinks = cl->storageItems(StorageType::NofollowLinksStorageType);
+		const auto blockedForSeIndexing = cl->storageItems(StorageType::BlockedForSEIndexingStorageType);
+		const auto blockedByXRobotsTag = cl->storageItems(StorageType::BlockedByXRobotsTagStorageType);
+
+		const Url xRobotsTagBlockedUrl("http://indexingblocked5.com/index-2.html");
+
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ(0, nofollowLinks.size());
+		EXPECT_EQ(1, blockedForSeIndexing.size());
+		EXPECT_EQ(1, blockedByXRobotsTag.size());
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedByMetaRobots);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
+		}
+
+		if (!blockedByXRobotsTag.empty())
+		{
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedByMetaRobots);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(IndexingBlockedPagesTests, TagARelNofollowAndYandexNoindexMetaRobotsTest)
+{
+	//
+	// This test check behavior for nofollow index-3.html page
+	// which is nofollow on all pages except index-2.html which
+	// is blocked by meta robots using content="noindex".
+	// So this index-2.html page must be contained
+	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType.
+	// But index-3.html must not be blocked.
+	//
+
+	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
+	options.followInternalNofollow = true;
+	options.followRobotsTxtRules = true;
+	options.userAgentToFollow = UserAgentType::YandexBot;
+
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		const auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled page");
+		cl->waitForCrawlingDone();
+		cl->checkSequencedDataCollectionConsistency();
+
+		const auto nofollowLinks = cl->storageItems(StorageType::NofollowLinksStorageType);
+		const auto blockedForSeIndexing = cl->storageItems(StorageType::BlockedForSEIndexingStorageType);
+		const auto blockedByXRobotsTag = cl->storageItems(StorageType::BlockedByXRobotsTagStorageType);
+
+		const Url xRobotsTagBlockedUrl("http://indexingblocked5.com/index-2.html");
+
+		EXPECT_EQ(3, pages.size());
+		EXPECT_EQ(0, nofollowLinks.size());
+		EXPECT_EQ(1, blockedForSeIndexing.size());
+		EXPECT_EQ(1, blockedByXRobotsTag.size());
+
+		if (!blockedForSeIndexing.empty())
+		{
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedByMetaRobots);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
+		}
+
+		if (!blockedByXRobotsTag.empty())
+		{
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedByMetaRobots);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
+		}
+
+		EXPECT_EQ(true, blockedByXRobotsTag == blockedForSeIndexing);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 
 }

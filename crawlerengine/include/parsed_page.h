@@ -193,6 +193,7 @@ struct ParsedPage
 	bool hasFrames = bool();
 	bool isThisExternalPage = bool();
 	bool isBlockedForIndexing = bool();
+	bool isBlockedByMetaRobots = bool();
 
 	ResourceType resourceType;
 	ResourcesOnPageList allResourcesOnPage;

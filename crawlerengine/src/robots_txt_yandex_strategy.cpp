@@ -83,20 +83,17 @@ Url RobotsTxtYandexStrategy::cleanUrl(const Url& url, UserAgentType userAgentTyp
 	return result;
 }
 
-bool RobotsTxtYandexStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
+std::pair<bool, UserAgentType> RobotsTxtYandexStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
 {
 	if (!MetaRobotsHelpers::checkIfSupportedMetaRobotsExistAndCorrectUserAgentType(userAgentType, metaRobotsFlags))
 	{
-		return true;
+		return std::make_pair(true, userAgentType);
 	}
 
 	const MetaRobotsFlags& flags = metaRobotsFlags.find(userAgentType)->second;
 
-	return flags.testFlag(MetaRobotsAll) ||
-		flags.testFlag(MetaRobotsFollow) ||
-		(!flags.testFlag(MetaRobotsNone) &&
-		!flags.testFlag(MetaRobotsNoFollow));
+	return std::make_pair(flags.testFlag(MetaRobotsAll) || flags.testFlag(MetaRobotsFollow) ||
+		(!flags.testFlag(MetaRobotsNone) && !flags.testFlag(MetaRobotsNoFollow) && !flags.testFlag(MetaRobotsNoIndex)), userAgentType);
 }
 
 }
-
