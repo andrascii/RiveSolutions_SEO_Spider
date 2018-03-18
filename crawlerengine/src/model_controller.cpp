@@ -181,7 +181,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		m_linksToPageChanges.changes.clear();
 	}
 
-	INFOLOG << workerResult.incomingPage()->url.canonizedUrlStr();
+	INFOLOG << "CRAWLED" << workerResult.incomingPage()->url.urlStr();
 
 	if (!workerResult.isRefreshResult())
 	{
@@ -701,12 +701,13 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 				DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 
-				return;
+				continue;
 			}
 
 			if (resource.restrictions &&
 				!resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules) &&
-				!resource.restrictions.testFlag(Restriction::RestrictionNotHttpLinkNotAllowed))
+				!resource.restrictions.testFlag(Restriction::RestrictionNotHttpLinkNotAllowed) &&
+				resource.link.resourceSource != ResourceSource::SourceRedirectUrl)
 			{
 				continue;
 			}
@@ -771,9 +772,13 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			workerResult.incomingPage()->resourceType :
 			resource.resourceType;
 
+		if (resourceType == ResourceType::ResourceHtml)
+		{
+			continue;
+		}
+
 		if ((!resourceShouldBeProcessed(resource.resourceType) && 
 			resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
-			resourceType == ResourceType::ResourceHtml ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
 		{
@@ -810,11 +815,13 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		{
 			newOrExistingResource = temporaryResource;
 
-			if (httpResource && (!resource.restrictions || resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules)))
+			if (httpResource &&
+					(!resource.restrictions || 
+					resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules) ||
+					resource.link.resourceSource == ResourceSource::SourceRedirectUrl))
 			{
 				// what if this resource is unavailable not from all pages?
-				data()->addParsedPage(newOrExistingResource,
-					httpResource ? StorageType::PendingResourcesStorageType : storage);
+				data()->addParsedPage(newOrExistingResource, StorageType::PendingResourcesStorageType);
 			}
 			else if (!httpResource)
 			{

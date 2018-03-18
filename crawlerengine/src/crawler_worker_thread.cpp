@@ -179,12 +179,6 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 		}
 	}
 
-	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
-
-	std::vector<LinkInfo> blockedByRobotsTxtLinks = handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
-
-	m_uniqueLinkStore->addLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
-
 	if (parsedPage->redirectedUrl.isValid())
 	{
 		const LinkInfo redirectLinkInfo{ parsedPage->redirectedUrl, LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceRedirectUrl };
@@ -192,6 +186,12 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 		parsedPage->allResourcesOnPage.erase(redirectedResource);
 		parsedPage->allResourcesOnPage.insert(redirectedResource);
 	}
+
+	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
+
+	std::vector<LinkInfo> blockedByRobotsTxtLinks = handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
+
+	m_uniqueLinkStore->addLinkList(std::move(outlinks), DownloadRequestType::RequestTypeGet);
 
 	std::vector<Url> resourcesHeadUrlList;
 	std::vector<Url> resourcesGetUrlList;
