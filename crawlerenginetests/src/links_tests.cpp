@@ -322,4 +322,34 @@ TEST(LinksTests, SecondHeadRequest)
 	env.exec();
 }
 
+TEST(LinksTests, Redirects)
+{
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/redirects/index.html"));
+	options.parserTypeFlags = ImagesResourcesParserType;
+	options.followRobotsTxtRules = true;
+	options.userAgentToFollow = UserAgentType::AnyBot;
+	TestEnvironment env(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(4, pages.size());
+
+		auto htmlPages = cl->storageItems(HtmlResourcesStorageType);
+		auto imagePages = cl->storageItems(ImageResourcesStorageType);
+
+		EXPECT_EQ(2, htmlPages.size());
+		EXPECT_EQ(2, imagePages.size());
+
+		EXPECT_EQ(true, !htmlPages.at(1)->linksToThisPage.empty());
+		EXPECT_EQ(false, htmlPages.at(1)->linksToThisPage.at(0).resource.expired());
+
+		EXPECT_EQ(true, !imagePages.at(1)->linksToThisPage.empty());
+		EXPECT_EQ(false, imagePages.at(1)->linksToThisPage.at(0).resource.expired());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }

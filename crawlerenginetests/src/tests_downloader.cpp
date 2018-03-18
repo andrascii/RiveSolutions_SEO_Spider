@@ -48,7 +48,7 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 
 	CrawlerEngine::DownloadRequest* request = static_cast<CrawlerEngine::DownloadRequest*>(requester->request());
 
-	const Url requestedUrl = request->requestInfo.url;
+	/*const Url requestedUrl = request->requestInfo.url;
 
 	Hop hop;
 	hop.setStatusCode(Common::StatusCode::Ok200);
@@ -111,7 +111,9 @@ void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
 		hop.setStatusCode(Common::StatusCode::NotFound404);
 	}
 
-	response->hopsChain.addHop(hop);
+	response->hopsChain.addHop(hop);*/
+	QSet<QString> uniqueUrls;
+	response->hopsChain = hopsChain(*request, uniqueUrls);
 	m_responsePostProcessor(*(response.get()));
 
 	CrawlerEngine::ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
@@ -130,6 +132,102 @@ QObject* TestsDownloader::qobject()
 void TestsDownloader::setPostProcessor(PostProcessorFunc postProcessor)
 {
 	m_responsePostProcessor = postProcessor;
+}
+
+HopsChain TestsDownloader::hopsChain(const DownloadRequest& request, QSet<QString>& uniqueUrls) const
+{
+	HopsChain result;
+
+	const Url requestedUrl = request.requestInfo.url;
+
+	Hop hop;
+	hop.setStatusCode(Common::StatusCode::Ok200);
+	hop.setUrl(requestedUrl);
+
+	QString redirectUrl;
+
+	std::pair<QString, QString> files = mapUrlToTestDataFiles(request);
+
+	if (!files.first.isEmpty())
+	{
+		QFile inputFile(files.second);
+
+		ASSERT(inputFile.open(QIODevice::ReadOnly));
+
+		QTextStream in(&inputFile);
+
+		ResponseHeaders responseHeaders;
+
+		while (!in.atEnd())
+		{
+			const QString line = in.readLine();
+			const int separatorIndex = line.indexOf(":");
+			if (separatorIndex == -1)
+			{
+				continue;
+			}
+
+			const QByteArray header = line.mid(0, separatorIndex).trimmed().toLatin1();
+			const QByteArray value = line.mid(separatorIndex + 1).trimmed().toLatin1();
+
+			if (header.toLower() == "status-code")
+			{
+				bool ok;
+				hop.setStatusCode(static_cast<Common::StatusCode>(value.toInt(&ok)));
+
+				ASSERT(ok);
+			}
+			else if (header.toLower() == "redirect-url")
+			{
+				redirectUrl = QString::fromUtf8(value);
+			}
+			else
+			{
+				responseHeaders.addHeaderValue(header, value);
+			}
+		}
+
+		hop.setResponseHeaders(responseHeaders);
+
+		inputFile.close();
+
+		if (request.requestInfo.requestType == CrawlerEngine::DownloadRequestType::RequestTypeGet)
+		{
+			QFile html(files.first);
+
+			ASSERT(html.open(QIODevice::ReadOnly));
+
+			hop.setBody(html.readAll());
+
+			html.close();
+		}
+	}
+	else
+	{
+		hop.setStatusCode(Common::StatusCode::NotFound404);
+	}
+
+	result.addHop(hop);
+	uniqueUrls.insert(request.requestInfo.url.urlStr());
+
+	if (!redirectUrl.isEmpty() && !uniqueUrls.contains(redirectUrl))
+	{
+		DownloadRequest childRequest = request;
+		childRequest.requestInfo.url = Url(redirectUrl);
+		HopsChain childResult = hopsChain(childRequest, uniqueUrls);
+
+		for (int i = 0; i < childResult.length(); ++i)
+		{
+			result.addHop(childResult[i]);
+		}
+
+		if (childResult.length() > 0)
+		{
+			result.front().setRedirectUrl(result[1].url());
+		}
+	}
+
+	return result;
 }
 
 QDir TestsDownloader::testsDataDir() const
