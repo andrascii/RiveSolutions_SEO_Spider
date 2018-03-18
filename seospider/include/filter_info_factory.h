@@ -2,6 +2,7 @@
 
 namespace SeoSpider
 {
+
 enum class StorageAdapterType;
 
 struct FilterInfo
