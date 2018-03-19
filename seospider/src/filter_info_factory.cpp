@@ -26,7 +26,7 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongLinks,
 		{
 			QObject::tr("Too long links"),
-			QObject::tr("This filter stores links that exceed the length specified in the program settings. (Settings => Crawler Settings)")
+			QObject::tr("This filter stores links that exceed the length specified in the program settings. (Settings => Limits Settings)")
 		}
 	},
 	{
@@ -83,14 +83,14 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongTitles,
 		{
 			QObject::tr("Pages with too long titles"),
-			QObject::tr("This filter stores links to pages with too long titles. You can change this value (Settings => Limits Settings).")
+			QObject::tr("This filter stores links to pages with too long titles. You can change this value (Settings => Preferences Settings).")
 		}
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeTooShortTitles,
 		{
 			QObject::tr("Pages with too short titles"),
-			QObject::tr("This filter stores links to pages with too short titles. You can change this value (Settings => Limits Settings).")
+			QObject::tr("This filter stores links to pages with too short titles. You can change this value (Settings => Preferences Settings).")
 		}
 	},
 	{
@@ -126,14 +126,14 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongMetaDescriptions,
 		{
 			QObject::tr("Pages with too long meta descriptions"),
-			QObject::tr("This filter stores links to pages with too long meta descriptions. You can change this length in the settings (Settings => Limits Settings).")
+			QObject::tr("This filter stores links to pages with too long meta descriptions. You can change this length in the settings (Settings => Preferences Settings).")
 		}
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeTooShortMetaDescriptions,
 		{
 			QObject::tr("Pages with too long meta descriptions"),
-			QObject::tr("This filter stores links to pages with too short meta descriptions. You can change this length in the settings (Settings => Limits Settings).")
+			QObject::tr("This filter stores links to pages with too short meta descriptions. You can change this length in the settings (Settings => Preferences Settings).")
 		}
 	},
 	{
@@ -184,7 +184,7 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongH1s,
 		{
 			QObject::tr("Pages with too long H1 tags"),
-			QObject::tr("This filter stores links to pages with too long H1 tags. You can change this length in the settings (Settings => Limits Settings).")
+			QObject::tr("This filter stores links to pages with too long H1 tags. You can change this length in the settings (Settings => Preferences Settings).")
 		}
 	},
 	{
@@ -213,7 +213,7 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongH2s,
 		{
 			QObject::tr("Pages with too long H2 tags"),
-			QObject::tr("This filter stores links to pages with too long H2 tags. You can change this length in the settings (Settings => Limits Settings).")
+			QObject::tr("This filter stores links to pages with too long H2 tags. You can change this length in the settings (Settings => Preferences Settings).")
 		}
 	},
 	{
@@ -221,6 +221,81 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		{
 			QObject::tr("Pages with several H2 tags on the same page"),
 			QObject::tr("This filter stores links to pages with several H2 tags on the same page.")
+		}
+	},
+	//////////////////////////////////////////////////////////////////////////
+	{
+		StorageAdapterType::StorageAdapterTypeImagesOver100kb,
+		{
+			QObject::tr("Images over 100 kilobytes"),
+			QObject::tr("This filter stores links to images that over 100 kilobytes. You can change this value in settings (Settings => Preferences Settings).")
+		}
+	},
+	{
+		StorageAdapterType::StorageAdapterTypeImageMissingAltText,
+		{
+			QObject::tr("Images with missing alt text"),
+			QObject::tr("This filter stores links to images with missing alt text.")
+		}
+	},
+	{
+		StorageAdapterType::StorageAdapterTypeImagesTooLongAltText,
+		{
+			QObject::tr("Images with too long alt text"),
+			QObject::tr("This filter stores links to images with too long alt text. You can change this value in settings (Settings => Preferences Settings).")
+		}
+	},
+	//////////////////////////////////////////////////////////////////////////
+	{
+		StorageAdapterType::StorageAdapterTypeTooManyLinksOnPage,
+		{
+			QObject::tr("Too many links on page"),
+			QObject::tr("This filter stores links to pages with too many links on page. You can change this value in settings (Settings => Limits Settings).")
+		}
+	},
+	{
+		StorageAdapterType::StorageAdapterTypeContainsMetaRefreshTag,
+		{
+			QObject::tr("Pages with meta refresh tag"),
+			QObject::tr("This filter stores links to pages with meta refresh tag.")
+		}
+	},
+	{
+		StorageAdapterType::StorageAdapterTypeContainsFrames,
+		{
+			QObject::tr("Images with too long alt text"),
+			QObject::tr("This filter stores links to images with too long alt text. You can change this value in settings (Settings => Preferences Settings).")
+		}
+	},
+	//////////////////////////////////////////////////////////////////////////
+	{
+		StorageAdapterType::StorageAdapterTypeBlockedForSEIndexing,
+		{
+			QObject::tr("Blocked for search engine indexing pages"),
+			QObject::tr("This filter stores links to blocked for search engine indexing pages. This filter accumulate all blocked pages.")
+		}
+	},
+	{
+		StorageAdapterType::StorageAdapterTypeNofollowLinks,
+		{
+			QObject::tr("Nofollow links"),
+			QObject::tr("This filter stores nofollow links. Each link here has rel=\"nofollow\" attribute on all pages.")
+		}
+	},
+	{
+		StorageAdapterType::StorageAdapterTypeBlockedByRobotsTxt,
+		{
+			QObject::tr("Blocked by robots.txt pages"),
+			QObject::tr("This filter stores blocked by robots.txt pages if you turned on "
+				"\"Follow robots.txt rules\" in the \"Settings => Crawler Settings\".\n"
+				"Additionally you can choose robot to follow rules for it in the \"Settings => User Agent Settings\".")
+		}
+	},
+	{
+		StorageAdapterType::StorageAdapterTypeBlockedByXRobotsTag,
+		{
+			QObject::tr("Pages blocked by x-robot-tag or meta robots"),
+			QObject::tr("This filter stores links to pages blocked by \"<meta name=\"robots\" content=\"something\">\" depending on robot you chose or x-robots-tag.")
 		}
 	}
 };
