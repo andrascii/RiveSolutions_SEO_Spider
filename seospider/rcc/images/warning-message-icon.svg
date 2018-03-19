@@ -2,18 +2,20 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Creator: CorelDRAW X6 -->
 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="512mm" height="512mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 194 194"
+viewBox="0 0 312 312"
  xmlns:xlink="http://www.w3.org/1999/xlink">
  <defs>
   <style type="text/css">
    <![CDATA[
-    .fil0 {fill:#FF6600}
+    .fil1 {fill:#FF6600}
+    .fil0 {fill:white}
    ]]>
   </style>
  </defs>
  <g id="Слой_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <rect class="fil0" transform="matrix(1.39644 -1.39644 2.79289 2.79289 -4.87286 28.4946)" width="23.8949" height="61.0666" rx="6" ry="6"/>
-  <rect class="fil0" transform="matrix(-1.39644 -1.39644 -2.79289 2.79289 199.047 28.4946)" width="23.8949" height="61.0666" rx="6" ry="6"/>
+  <circle class="fil0" cx="156" cy="156" r="150"/>
+  <path class="fil1" d="M156 0c86,0 156,70 156,156 0,86 -70,156 -156,156 -86,0 -156,-70 -156,-156 0,-86 70,-156 156,-156zm0 19c76,0 137,61 137,137 0,76 -61,137 -137,137 -76,0 -137,-61 -137,-137 0,-76 61,-137 137,-137z"/>
+  <path class="fil1" d="M156 218c8,0 14,6 14,14 0,8 -6,14 -14,14 -8,0 -14,-6 -14,-14 0,-8 6,-14 14,-14zm-8 -18l-7 -89c0,-14 0,-29 0,-44 0,-12 30,-11 30,0l0 44 -7 89 -16 0z"/>
  </g>
 </svg>

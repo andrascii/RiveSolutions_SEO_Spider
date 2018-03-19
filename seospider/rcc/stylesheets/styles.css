@@ -9,39 +9,70 @@ QWidget
 
 QMenuBar
 {	
-	padding-top: 0.8em;
-	padding-bottom: 0.8em;
+	/*background-color: #d2d3d5;*/
 	background-color: #4D626E;
-	border-bottom: 0.05em solid #C0C0C0;
+	padding-left: 0.3em;
+	min-width: 5em;
+	min-height: 2.2em;
+	border-bottom: 0.07em solid #bcbdc0;
 }
 
 QMenuBar::item
 {
+	/*color: #000000;*/
+	/*border-top: 0.4em solid #d2d3d5;*/
 	color: #EDEDED;
 }
 
 QMenuBar::item:selected
 {
-	background: #23354c;
-	color: #EDEDED;
+	background: #d2d3d5;
+	border-top: 0.4em solid #FF6600;
+	color: #000000;
+}
+
+QMenuBar::item:pressed 
+{
+	background: #ffffff;
+	border-top: 0.4em solid #FF6600;
+	color: #000000;
 }
 
 QMenu
 {
-	padding: 0.1em;
-	border: 0.05em solid #1f2530;
-	background-color: #F2F2F2;
+	padding-bottom: -0.1em;
+	padding-top: -0.1em;
+	padding-left: -0.1em;
+	background-color: #ffffff;
 }
 
 QMenu::item
 {
-	color: #22252D;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	padding-left: 2.1em;
+	padding-right: 2.1em;
+	color: #000000;
+	border-left: 0.6em solid #ffffff;
+}
+
+QMenu::icon
+{
+	padding-left: 1em;
 }
 
 QMenu::item:selected
 {
-	color: #EDEDED;
-	background: #22252D;
+	color: #000000;
+	background: #e8e9ea;
+	padding-left: 2.1em solid #FF6600;
+	border-left: 0.6em solid #FF6600;
+}
+
+QMenu::separator
+{
+	background: #d2d3d5;
+	height: 0.1em,5em;
 }
 
 /*/////////////////////////////// Status Bar ///////////////////////////////*/
@@ -505,24 +536,24 @@ QSplitter::handle:vertical
 
 /*/////////////////////////////// #NavigationPanel ///////////////////////////////*/
 
-
 QWidget#NavigationPanel
 {
-	background-color: #F2F2F2;
-	border-right: 0.05em solid #C0C0C0;
+	background-color: #ffffff;
+	border: 0.3em solid #d2d3d5;
+	border-bottom: none;
 }
 
 QWidget#NavigationPanel QPushButton
 {
-	border: none;
-	border-bottom: 0.05em solid #F2F2F2;
+    border: none;
 	border-radius: none;
-	background-color: #F2F2F2;
-	width: 12em;	
+	border-left: 0.3em solid #d2d3d5;
+	border-right: 0.2em solid #d2d3d5;
+	background-color:  #ffffff;
+	width: 10em;	
 	text-align: left;
-	color: #4D626E;	
-	font-size: 10pt;
-	font: bold;	
+	color: #000000;	
+	font-size: 11pt;
 	padding-left: 1em;	
 	min-width: 10em;
 	max-width: 10em;
@@ -532,12 +563,14 @@ QWidget#NavigationPanel QPushButton
 
 QWidget#NavigationPanel QPushButton:hover
 {
-	background-color: #D0D0D0;
+	border-left: 0.3em solid #d2d3d5;
+	background-color: #e8e9ea;
 }
 
 QWidget#NavigationPanel QPushButton[selected="true"]
 {
-	background-color: #D0D0D0;
+	border-left: 0.3em solid #FF6600;	
+	background-color: #d2d3d5;
 }
 
 /*/////////////////////////////// DebugWebPageInfoWidget ///////////////////////////////*/
@@ -738,9 +771,17 @@ SeoSpider--CollapseHeaderButton
 }
 
 /*////////////////////////////// FilterInfoWidget ///////////////////////////////////////////*/
+
 SeoSpider--FilterInfoWidget#filterInfo
 {
 	border: 1px solid green;
 	color: green;
 	background-color: red;
+}
+
+/*////////////////////////////// QColorDialog //////////////////////////////////////////////*/
+
+QColorDialog QSpinBox
+{
+	max-width: 5em;
 }

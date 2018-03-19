@@ -18,15 +18,8 @@ class ModelController : public QObject
 public:
 	ModelController();
 
-	const UnorderedDataCollection* data() const noexcept
-	{
-		return m_data;
-	}
-
-	UnorderedDataCollection* data() noexcept
-	{
-		return m_data;
-	}
+	const UnorderedDataCollection* data() const noexcept;
+	UnorderedDataCollection* data() noexcept;
 
 public slots:
 	void handleWorkerResult(WorkerResult workerResult) noexcept;

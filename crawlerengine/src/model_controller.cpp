@@ -97,6 +97,16 @@ ModelController::ModelController()
 {
 }
 
+const UnorderedDataCollection* ModelController::data() const noexcept
+{
+	return m_data;
+}
+
+UnorderedDataCollection* ModelController::data() noexcept
+{
+	return m_data;
+}
+
 void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
 {
 	m_crawlerOptions = options;
