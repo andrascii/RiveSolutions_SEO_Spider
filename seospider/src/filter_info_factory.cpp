@@ -26,7 +26,7 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongLinks,
 		{
 			QObject::tr("Too long links"),
-			QObject::tr("This filter stores links that exceed the length specified in the program settings. (Settings => Limits Settings)")
+			QObject::tr("This filter stores links that exceed the length specified in the \"Settings => Limits Settings\"")
 		}
 	},
 	{
@@ -83,14 +83,16 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongTitles,
 		{
 			QObject::tr("Pages with too long titles"),
-			QObject::tr("This filter stores links to pages with too long titles. You can change this value (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to pages with too long titles.\n"
+				"You can change this value in the \"Settings => Preferences Settings\".")
 		}
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeTooShortTitles,
 		{
 			QObject::tr("Pages with too short titles"),
-			QObject::tr("This filter stores links to pages with too short titles. You can change this value (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to pages with too short titles.\n"
+				"You can change this value in the \"Settings => Preferences Settings\".")
 		}
 	},
 	{
@@ -126,14 +128,16 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongMetaDescriptions,
 		{
 			QObject::tr("Pages with too long meta descriptions"),
-			QObject::tr("This filter stores links to pages with too long meta descriptions. You can change this length in the settings (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to pages with too long meta descriptions.\n"
+				"You can change this length in the \"Settings => Preferences Settings\".")
 		}
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeTooShortMetaDescriptions,
 		{
 			QObject::tr("Pages with too long meta descriptions"),
-			QObject::tr("This filter stores links to pages with too short meta descriptions. You can change this length in the settings (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to pages with too short meta descriptions.\n"
+				"You can change this length in the \"Settings => Preferences Settings\".")
 		}
 	},
 	{
@@ -184,7 +188,8 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongH1s,
 		{
 			QObject::tr("Pages with too long H1 tags"),
-			QObject::tr("This filter stores links to pages with too long H1 tags. You can change this length in the settings (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to pages with too long H1 tags.\n"
+				"You can change this length in the \"Settings => Preferences Settings\".")
 		}
 	},
 	{
@@ -213,7 +218,8 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongH2s,
 		{
 			QObject::tr("Pages with too long H2 tags"),
-			QObject::tr("This filter stores links to pages with too long H2 tags. You can change this length in the settings (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to pages with too long H2 tags.\n"
+				"You can change this length in the \"Settings => Preferences Settings\".")
 		}
 	},
 	{
@@ -228,7 +234,8 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeImagesOver100kb,
 		{
 			QObject::tr("Images over 100 kilobytes"),
-			QObject::tr("This filter stores links to images that over 100 kilobytes. You can change this value in settings (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to images that over 100 kilobytes.\n"
+				"You can change this value in \"Settings => Preferences Settings\".")
 		}
 	},
 	{
@@ -242,7 +249,8 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeImagesTooLongAltText,
 		{
 			QObject::tr("Images with too long alt text"),
-			QObject::tr("This filter stores links to images with too long alt text. You can change this value in settings (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to images with too long alt text.\n"
+				"You can change this value in \"Settings => Preferences Settings\".")
 		}
 	},
 	//////////////////////////////////////////////////////////////////////////
@@ -250,7 +258,8 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooManyLinksOnPage,
 		{
 			QObject::tr("Too many links on page"),
-			QObject::tr("This filter stores links to pages with too many links on page. You can change this value in settings (Settings => Limits Settings).")
+			QObject::tr("This filter stores links to pages with too many links on page.\n"
+				"You can change this value in \"Settings => Limits Settings\".")
 		}
 	},
 	{
@@ -264,7 +273,8 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeContainsFrames,
 		{
 			QObject::tr("Images with too long alt text"),
-			QObject::tr("This filter stores links to images with too long alt text. You can change this value in settings (Settings => Preferences Settings).")
+			QObject::tr("This filter stores links to images with too long alt text.\n"
+				"You can change this value in \"Settings => Preferences Settings\".")
 		}
 	},
 	//////////////////////////////////////////////////////////////////////////
@@ -272,7 +282,8 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeBlockedForSEIndexing,
 		{
 			QObject::tr("Blocked for search engine indexing pages"),
-			QObject::tr("This filter stores links to blocked for search engine indexing pages. This filter accumulate all blocked pages.")
+			QObject::tr("This filter stores links to blocked for search engine indexing pages.\n"
+				"This filter accumulate all blocked pages.")
 		}
 	},
 	{
@@ -295,7 +306,8 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeBlockedByXRobotsTag,
 		{
 			QObject::tr("Pages blocked by x-robot-tag or meta robots"),
-			QObject::tr("This filter stores links to pages blocked by \"<meta name=\"robots\" content=\"something\">\" depending on robot you chose or x-robots-tag.")
+			QObject::tr("This filter stores links to pages blocked by\n"
+				"\"<meta name=\"robots\" content=\"something\">\" depending on robot you chose or x-robots-tag.")
 		}
 	}
 };
