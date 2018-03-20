@@ -12,7 +12,7 @@ class SummaryModel;
 class SummaryViewModel;
 class AbstractWebSiteDataWidget;
 
-class FilterInfoWidget : public QWidget
+class FilterInfoWidget : public QFrame
 {
 	Q_OBJECT
 public:

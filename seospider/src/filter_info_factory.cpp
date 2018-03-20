@@ -26,8 +26,9 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongLinks,
 		{
 			QObject::tr("Too long links"),
-			QObject::tr("This filter stores links that exceed the length specified in the \"Settings => Limits Settings\"")
-		}
+			QObject::tr("This filter stores links that exceed %1 characters. This value can be changed in the \"Settings => Limits Settings\""),
+			{ "limitMaxUrlLength" }
+		},
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeBrokenLinks,
@@ -83,16 +84,18 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongTitles,
 		{
 			QObject::tr("Pages with too long titles"),
-			QObject::tr("This filter stores links to pages with too long titles.\n"
-				"You can change this value in the \"Settings => Preferences Settings\".")
+			QObject::tr("This filter stores links to pages with too long titles (links that contain more than %1 characters).\n"
+				"You can change this value in the \"Settings => Preferences Settings\"."),
+			{ "maxTitleLength" }
 		}
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeTooShortTitles,
 		{
 			QObject::tr("Pages with too short titles"),
-			QObject::tr("This filter stores links to pages with too short titles.\n"
-				"You can change this value in the \"Settings => Preferences Settings\".")
+			QObject::tr("This filter stores links to pages with too short titles (links that contain less than %1 characters).\n"
+				"You can change this value in the \"Settings => Preferences Settings\"."),
+			{ "minTitleLength" }
 		}
 	},
 	{
@@ -128,16 +131,18 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongMetaDescriptions,
 		{
 			QObject::tr("Pages with too long meta descriptions"),
-			QObject::tr("This filter stores links to pages with too long meta descriptions.\n"
-				"You can change this length in the \"Settings => Preferences Settings\".")
-		}
+			QObject::tr("This filter stores links to pages with too long meta descriptions (descriptions that contain more than %1 characters).\n"
+				"You can change this length in the \"Settings => Preferences Settings\"."),
+			{ "maxDescriptionLength" }
+		},
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeTooShortMetaDescriptions,
 		{
 			QObject::tr("Pages with too long meta descriptions"),
-			QObject::tr("This filter stores links to pages with too short meta descriptions.\n"
-				"You can change this length in the \"Settings => Preferences Settings\".")
+			QObject::tr("This filter stores links to pages with too short meta descriptions (descriptions that contain less than %1 characters).\n"
+				"You can change this length in the \"Settings => Preferences Settings\"."),
+			{ "minDescriptionLength" }
 		}
 	},
 	{
@@ -188,9 +193,10 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongH1s,
 		{
 			QObject::tr("Pages with too long H1 tags"),
-			QObject::tr("This filter stores links to pages with too long H1 tags.\n"
-				"You can change this length in the \"Settings => Preferences Settings\".")
-		}
+			QObject::tr("This filter stores links to pages with too long H1 tags (H1 tags that contain more than %1 characters).\n"
+				"You can change this length in the \"Settings => Preferences Settings\"."),
+			{ "maxH1LengthChars" }
+		},
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeSeveralH1s,
@@ -218,9 +224,10 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeTooLongH2s,
 		{
 			QObject::tr("Pages with too long H2 tags"),
-			QObject::tr("This filter stores links to pages with too long H2 tags.\n"
-				"You can change this length in the \"Settings => Preferences Settings\".")
-		}
+			QObject::tr("This filter stores links to pages with too long H2 tags (H2 tags that contain more than %1 characters).\n"
+				"You can change this length in the \"Settings => Preferences Settings\"."),
+			{ "maxH2LengthChars" }
+		},
 	},
 	{
 		StorageAdapterType::StorageAdapterTypeSeveralH2s,
@@ -234,8 +241,9 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeImagesOver100kb,
 		{
 			QObject::tr("Images over 100 kilobytes"),
-			QObject::tr("This filter stores links to images that over 100 kilobytes.\n"
-				"You can change this value in \"Settings => Preferences Settings\".")
+			QObject::tr("This filter stores links to images that over %1 kilobytes.\n"
+				"You can change this value in \"Settings => Preferences Settings\"."),
+			{ "maxImageSize" }
 		}
 	},
 	{
@@ -249,17 +257,19 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 		StorageAdapterType::StorageAdapterTypeImagesTooLongAltText,
 		{
 			QObject::tr("Images with too long alt text"),
-			QObject::tr("This filter stores links to images with too long alt text.\n"
-				"You can change this value in \"Settings => Preferences Settings\".")
-		}
+			QObject::tr("This filter stores links to images with too long alt text (alt text that contains more than %1 characters).\n"
+				"You can change this value in \"Settings => Preferences Settings\"."),
+			{ "maxImageAltTextChars" }
+		},
 	},
 	//////////////////////////////////////////////////////////////////////////
 	{
 		StorageAdapterType::StorageAdapterTypeTooManyLinksOnPage,
 		{
 			QObject::tr("Too many links on page"),
-			QObject::tr("This filter stores links to pages with too many links on page.\n"
-				"You can change this value in \"Settings => Limits Settings\".")
+			QObject::tr("This filter stores links to pages with too many links on page (more than %1).\n"
+				"You can change this value in \"Settings => Limits Settings\"."),
+			{ "maxLinksCountOnPage" }
 		}
 	},
 	{
