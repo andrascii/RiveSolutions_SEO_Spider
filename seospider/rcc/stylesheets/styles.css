@@ -769,18 +769,29 @@ SeoSpider--CollapseHeaderButton
 	border: none;
 }
 
-/*////////////////////////////// FilterInfoWidget ///////////////////////////////////////////*/
-
-SeoSpider--FilterInfoWidget#filterInfo
-{
-	border: 1px solid green;
-	color: green;
-	background-color: red;
-}
-
 /*////////////////////////////// QColorDialog //////////////////////////////////////////////*/
 
 QColorDialog QSpinBox
 {
 	max-width: 5em;
+}
+
+/*////////////////////////////// FilterInfoWidget ///////////////////////////////////////////*/
+SeoSpider--FilterInfoWidget#filterInfo
+{
+	background-color: #e1e9f1;
+	border-radius: 0.1em;
+	padding-left: 0.2em;
+	padding-bottom: 0.2em;
+}
+
+SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetTitle
+{
+	color: #262e35;
+	font-size: 13pt;
+}
+
+SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetDescription
+{
+	color: #262e35;
 }

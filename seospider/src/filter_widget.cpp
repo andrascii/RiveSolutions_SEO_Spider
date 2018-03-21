@@ -8,12 +8,13 @@
 #include "command_menu.h"
 #include "page_data_widget.h"
 #include "filter_info_factory.h"
+#include "preferences.h"
 
 namespace SeoSpider
 {
 
 FilterInfoWidget::FilterInfoWidget(QWidget* parent)
-	: QWidget(parent)
+	: QFrame(parent)
 	, m_title(new QLabel(this))
 	, m_description(new QLabel(this))
 {
@@ -136,7 +137,15 @@ void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected,
 	if (filterInfo != std::nullopt)
 	{
 		m_info->title()->setText(filterInfo->title);
-		m_info->description()->setText(filterInfo->description);
+
+		QString description = filterInfo->description;
+
+		foreach(const QByteArray& prop, filterInfo->props)
+		{
+			description = description.arg(theApp->preferences()->property(prop).toString());
+		}
+
+		m_info->description()->setText(description);
 	}
 	m_info->setVisible(filterInfo != std::nullopt);
 	

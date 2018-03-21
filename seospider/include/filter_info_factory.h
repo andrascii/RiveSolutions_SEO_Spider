@@ -9,6 +9,7 @@ struct FilterInfo
 {
 	QString title;
 	QString description;
+	QList<QByteArray> props;
 	// WarningLevel
 };
 
