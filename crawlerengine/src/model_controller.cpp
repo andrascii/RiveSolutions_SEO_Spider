@@ -130,6 +130,24 @@ void ModelController::preparePageForRefresh(ParsedPage* parsedPage)
 
 void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 {
+	struct EmitBlocker final
+	{
+		EmitBlocker(UnorderedDataCollection* udc)
+			: m_udc(udc)
+		{
+			m_udc->setPageAddingEmitAbility(false);
+		}
+
+		~EmitBlocker()
+		{
+			m_udc->setPageAddingEmitAbility(true);
+		}
+
+		UnorderedDataCollection* m_udc;
+	};
+
+	EmitBlocker emitBlocker(data());
+
 	ASSERT(workerResult.incomingPage()->resourceType >= ResourceType::ResourceHtml &&
 		workerResult.incomingPage()->resourceType <= ResourceType::ResourceOther);
 

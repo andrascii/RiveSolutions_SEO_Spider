@@ -7,6 +7,7 @@ namespace CrawlerEngine
 
 UnorderedDataCollection::UnorderedDataCollection(QObject* parent)
 	: QObject(parent)
+	, m_emitAbility(true)
 {
 	qRegisterMetaType<StorageType>("StorageType");
 
@@ -61,6 +62,31 @@ const ParsedPagePtr UnorderedDataCollection::parsedPage(const ParsedPagePtr& par
 	auto iter = unorderedStorage.find(parsedPagePtr);
 
 	return iter != unorderedStorage.end() ? *iter : ParsedPagePtr();
+}
+
+void UnorderedDataCollection::setPageAddingEmitAbility(bool value)
+{
+	ASSERT(thread() == QThread::currentThread());
+
+	m_emitAbility = value;
+
+	if (!m_emitAbility)
+	{
+		return;
+	}
+
+	for (const auto& emitData : m_emitWorkerResultData)
+	{
+		emit parsedPageAdded(emitData.object, emitData.type);
+	}
+
+	for (const auto& emitData : m_emitParsedPagePtrData)
+	{
+		emit parsedPageAdded(emitData.object, emitData.type);
+	}
+
+	m_emitWorkerResultData.clear();
+	m_emitParsedPagePtrData.clear();
 }
 
 void UnorderedDataCollection::clearData()
@@ -568,6 +594,27 @@ UnorderedDataCollection::removeParsedPageInternal(const ParsedPagePtr& parsedPag
 	}
 
 	return std::make_pair(ParsedPagePtr(), unorderedStorage.end());
+}
+
+
+void UnorderedDataCollection::emitParsedPageAdded(WorkerResult workerResult, StorageType type)
+{
+	if (!m_emitAbility)
+	{
+		return;
+	}
+
+	m_emitWorkerResultData.push_back(EmitData<WorkerResult>{ workerResult, type });
+}
+
+void UnorderedDataCollection::emitParsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type)
+{
+	if (!m_emitAbility)
+	{
+		return;
+	}
+
+	m_emitParsedPagePtrData.push_back(EmitData<ParsedPagePtr>{ parsedPagePointer, type });
 }
 
 }
