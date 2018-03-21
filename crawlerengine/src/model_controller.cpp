@@ -191,7 +191,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		m_linksToPageChanges.changes.clear();
 	}
 
-	INFOLOG << "CRAWLED" << workerResult.incomingPage()->url.urlStr();
+	DEBUGLOG << "CRAWLED" << workerResult.incomingPage()->url.urlStr();
 
 	if (!workerResult.isRefreshResult())
 	{

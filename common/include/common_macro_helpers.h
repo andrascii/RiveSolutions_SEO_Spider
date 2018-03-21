@@ -10,7 +10,7 @@
 #endif
 
 #define ASSERT(condition) if((condition) == false) \
-seoSpiderServiceApi()->doAssert(__FILE__, __LINE__, __FUNCTION__, #condition);
+seoSpiderServiceApi()->doAssert(__FILENAME__, __LINE__, __FUNCTION__, #condition);
 
 #ifdef QT_DEBUG
 #define DEBUG_ASSERT(condition) ASSERT(condition)

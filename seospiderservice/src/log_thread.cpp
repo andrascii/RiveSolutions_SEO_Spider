@@ -42,13 +42,24 @@ void LogThread::run()
 
 		QTextStream stream(&m_outputFile);
 
+		QString messageType;
+
+		if (message.type == Common::PipeMessage::Assert)
+		{
+			messageType = "Assertion failure: ";
+		}
+		else if (message.type == Common::PipeMessage::Assert)
+		{
+			messageType = "Crash: ";
+		}
+
 		stream << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
 			<< s_separator << message.threadId
 			<< s_separator << message.severityLevel
 			<< s_separator << message.line
 			<< s_separator << message.file
 			<< s_separator << message.function
-			<< s_separator << message.message << "\n";
+			<< s_separator << messageType << message.message << "\n";
 
 		stream.flush();
 

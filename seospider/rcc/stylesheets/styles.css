@@ -8,9 +8,8 @@ QWidget
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
 
 QMenuBar
-{	
-	/*background-color: #d2d3d5;*/
-	background-color: #4D626E;
+{
+	background-color: #4D4D4D;
 	padding-left: 0.3em;
 	min-width: 5em;
 	min-height: 2.2em;
@@ -80,7 +79,7 @@ QMenu::separator
 QStatusBar
 {
 	min-height: 2.5em;
-	background-color: #4D626E;
+	background-color: #4D4D4D;
 	border-top: 0.05em solid #C0C0C0;
 }
 
