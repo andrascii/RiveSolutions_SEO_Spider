@@ -101,11 +101,6 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 void SequencedDataCollection::addParsedPage(WorkerResult workerResult, StorageType type)
 {
 	addParsedPage(workerResult.incomingPage(), type);
-
-	if (workerResult.isRefreshResult())
-	{
-		emit refreshPageDone();
-	}
 }
 
 void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type)

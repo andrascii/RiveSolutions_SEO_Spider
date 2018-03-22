@@ -242,9 +242,6 @@ void TestsCrawler::initSequencedDataCollection()
 	m_sequencedDataCollection = std::make_unique<TestSequencedDataCollection>(m_modelController->data());
 	m_sequencedDataCollection->initialize();
 	m_sequencedDataCollection->moveToThread(m_sequencedDataCollectionThread);
-
-	VERIFY(connect(m_sequencedDataCollection.get(), &SequencedDataCollection::refreshPageDone,
-		this, &TestsCrawler::onRefreshPageDone, Qt::QueuedConnection));
 }
 
 IHostInfoProvider* TestsCrawler::createHostInfoProvider() const

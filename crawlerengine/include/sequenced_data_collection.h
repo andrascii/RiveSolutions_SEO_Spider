@@ -36,7 +36,6 @@ signals:
 	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void beginClearData();
 	void endClearData();
-	void refreshPageDone();
 
 protected:
 	virtual std::shared_ptr<ISequencedStorage> createSequencedStorage() const;
