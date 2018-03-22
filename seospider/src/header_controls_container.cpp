@@ -1,4 +1,5 @@
 #include "header_controls_container.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -13,13 +14,14 @@ void HeaderControlsContainer::addAction(QAction* action, PageFactory::Page page,
 	// TODO: use position
 	Q_UNUSED(position);
 	ASSERT(action != nullptr);
-	
+
 	QWidget* widget = m_controlsByAction.value(action, nullptr);
+
 	if (widget == nullptr)
 	{
 		widget = createControl(action);
 	}
-	
+
 	addWidget(widget, page, position);
 }
 
@@ -49,16 +51,17 @@ void HeaderControlsContainer::addWidget(QWidget* widget, PageFactory::Page page,
 
 QWidget* HeaderControlsContainer::createControl(QAction* action) const
 {
-	QPushButton* button = new QPushButton();
+	QToolButton* button = new QToolButton;
 
 	auto updateControl = [action, button]()
 	{
-		button->setText(action->text());
+		button->setToolTip(action->text());
 		button->setIcon(action->icon());
 		button->setEnabled(action->isEnabled());
+		button->setIconSize(QSize(Common::Helpers::pointsToPixels(20), Common::Helpers::pointsToPixels(20)));
 	};
 
-	VERIFY(connect(button, &QPushButton::clicked, action, &QAction::trigger));
+	VERIFY(connect(button, &QToolButton::clicked, action, &QAction::trigger));
 	VERIFY(connect(action, &QAction::changed, updateControl));
 
 	updateControl();

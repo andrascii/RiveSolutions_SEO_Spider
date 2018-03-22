@@ -258,11 +258,21 @@ QDateEdit::down-button
 
 /*/////////////////////////////// Info frame ///////////////////////////////*/
 
-SeoSpider--ControlPanelWidget, QWidget#DynamicControls
+SeoSpider--ControlPanelWidget, QFrame#DynamicControls
 {
 	min-height: 2.5em;
 	max-width: 35em;
 	padding: 0.3em;
+}
+
+QFrame#DynamicControls
+{
+	padding-right: 1em;
+}
+
+QFrame#DynamicControls QToolButton
+{
+	border: none;
 }
 
 SeoSpider--ControlPanelWidget QLineEdit
@@ -559,6 +569,11 @@ QWidget#NavigationPanel QPushButton
 	max-width: 10em;
 	min-height: 2.5em;
 	max-height: 2.5em;
+}
+
+QWidget#NavigationPanel QPushButton:focus
+{
+	outline: none;
 }
 
 QWidget#NavigationPanel QPushButton:hover

@@ -2,27 +2,7 @@
 #include "service_locator.h"
 #include "settings_page_registry.h"
 #include "helpers.h"
-
-namespace
-{
-
-class ListItemProxyStyle : public QProxyStyle
-{
-public:
-
-	virtual void drawPrimitive(PrimitiveElement element, const QStyleOption* option,
-		QPainter* painter, const QWidget* widget = nullptr) const
-	{
-		if (PE_FrameFocusRect == element)
-		{
-			return;
-		}
-
-		QProxyStyle::drawPrimitive(element, option, painter, widget);
-	}
-};
-
-}
+#include "custom_proxy_styles.h"
 
 namespace SeoSpider
 {
@@ -38,7 +18,6 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	connect(m_ui.cancelButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::cancelButtonClicked);
 
 	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
-	//VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(reloadSettingsSlot())));
 
 	const int width = Common::Helpers::pointsToPixels(800);
 	const int height = Common::Helpers::pointsToPixels(500);
@@ -122,9 +101,6 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 
 ApplicationSettingsWidget::~ApplicationSettingsWidget()
 {
-// 	VERIFY(disconnect(m_ui.stackedWidget, SIGNAL(currentChanged(int)),
-// 		this, SLOT(reloadSettingsSlot())));
-
 	while (m_ui.stackedWidget->count() > 0)
 	{
 		const int lastRemovingWidgetIndex = m_ui.stackedWidget->count() - 1;
@@ -158,7 +134,7 @@ void ApplicationSettingsWidget::initialize()
 {
 	m_ui.setupUi(this);
 
-	m_ui.propGroupsList->setStyle(new ListItemProxyStyle());
+	m_ui.propGroupsList->setStyle(new ListItemProxyStyle);
 	m_ui.propGroupsList->setCurrentRow(0);
 	
 	ISettingsPageRegistry* settingsPageRegistry = CrawlerEngine::ServiceLocator::instance()->service<ISettingsPageRegistry>();
