@@ -8,7 +8,7 @@
 namespace SeoSpider
 {
 
-class DataPagesWidget;
+class ContentFrame;
 
 class MainWindow : public QMainWindow
 {
@@ -18,7 +18,7 @@ public:
 	MainWindow(QWidget* parent = nullptr);
 
 	void init();
-	DataPagesWidget* dataPagesWidget() const noexcept;
+	ContentFrame* contentFrame() const noexcept;
 
 signals:
 	void resized();
@@ -32,6 +32,7 @@ public slots:
 	void openFile();
 	void openFileThroughCmd(const QString& path);
 	void saveFileAndClearData();
+	void exportFilterData();
 
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 
@@ -49,6 +50,7 @@ protected:
 
 private:
 	void createActions();
+	void createHeaderPageDependentActions();
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
 
@@ -60,7 +62,7 @@ private:
 
 	CrawlerEngine::RequesterWrapper m_requester;
 
-	DataPagesWidget* m_dataPagesWidget;
+	ContentFrame* m_contentFrame;
 };
 
 }

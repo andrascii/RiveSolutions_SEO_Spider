@@ -9,6 +9,10 @@
 #include "page_data_widget.h"
 #include "filter_info_factory.h"
 #include "preferences.h"
+#include "action_registry.h"
+#include "action_keys.h"
+#include "main_window.h"
+#include "content_frame.h"
 
 namespace SeoSpider
 {
@@ -66,7 +70,6 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	m_splitter->setChildrenCollapsible(false);
 	m_splitter->addWidget(m_summaryFilterTableView);
 	m_splitter->addWidget(tableViewAndInfo);
-	//m_splitter->addWidget(m_webSiteDataWidget);
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
@@ -86,7 +89,7 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
 	m_summaryFilterTableView->initSpans();
 	m_summaryFilterTableView->setContextMenu(new CommandMenu(summaryDataAccessor));
-	selectFilter(CrawlerEngine::StorageType::HtmlResourcesStorageType);
+//	selectFilter(CrawlerEngine::StorageType::HtmlResourcesStorageType);
 }
 
 void FilterWidget::selectFilter(CrawlerEngine::StorageType type) const
@@ -147,10 +150,45 @@ void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected,
 
 		m_info->description()->setText(description);
 	}
-	m_info->setVisible(filterInfo != std::nullopt);
-	
 
+	m_info->setVisible(filterInfo != std::nullopt);
 	m_webSiteDataWidget->setStorageAdapterType(category);
+
+
+	QByteArray exportFilterDataActionKey;
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	if (qobject_cast<const QWidget*>(this) == theApp->mainWindow()->contentFrame()->page(PageFactory::Page::SiteAuditPage))
+	{
+		exportFilterDataActionKey = s_exportFilterDataAuditPageAction;
+	}
+	else if (qobject_cast<const QWidget*>(this) == theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage))
+	{
+		exportFilterDataActionKey = s_exportFilterDataAllResourcesPageAction;
+	}
+
+	if (!exportFilterDataActionKey.isEmpty())
+	{
+		const bool hasSelection = m_summaryFilterTableView->selectionModel()->hasSelection();
+
+		if (hasSelection)
+		{
+			QModelIndexList modelIndexes = selected.indexes();
+			const int row = modelIndexes[0].row();
+
+			const auto uniqueRowNumberPredicate = [row](const QModelIndex& modelIndex) 
+			{ 
+				return modelIndex.row() == row;
+			};
+
+			ASSERT(std::all_of(modelIndexes.begin(), modelIndexes.end(), uniqueRowNumberPredicate));
+
+			const DCStorageDescription* storageDescription = m_summaryFilterModel->dataAccessor()->storageDescriptionByRow(row);
+			actionRegistry.globalAction(exportFilterDataActionKey)->setData(QVariant::fromValue(*storageDescription));
+		}
+
+		actionRegistry.globalAction(exportFilterDataActionKey)->setEnabled(hasSelection);
+	}
 }
 
 }

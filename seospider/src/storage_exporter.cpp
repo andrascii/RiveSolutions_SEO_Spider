@@ -6,16 +6,33 @@
 #include "sequenced_data_collection.h"
 #include "parsed_page_info.h"
 #include "storage_adapter_factory.h"
+#include "application.h"
+#include "main_window.h"
+#include "service_locator.h"
+#include "inotification_service.h"
 
 namespace SeoSpider
 {
 
 void StorageExporter::exportStorage(const CrawlerEngine::SequencedDataCollection* dataCollection, 
-	const std::vector<DCStorageDescription>& storages,
-	const QString& filepath)
+	const std::vector<DCStorageDescription>& storages)
 {
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+
+	const QString filepath = QFileDialog::getSaveFileName(
+		theApp->mainWindow(),
+		QObject::tr("Save To Excel"),
+		QString(),
+		QString("*.xlsx")
+	);
+
 	if (filepath.isEmpty())
 	{
+		serviceLocator->service<INotificationService>()->error(
+			QObject::tr("Storage Exporter"),
+			QObject::tr("Invalid path. Data were not exported.")
+		);
+
 		return;
 	}
 
@@ -69,6 +86,11 @@ void StorageExporter::exportStorage(const CrawlerEngine::SequencedDataCollection
 	}
 
 	xlsxDocument.save();
+
+	serviceLocator->service<INotificationService>()->info(
+		QObject::tr("Storage Exporter"),
+		QObject::tr("Data by specified filters were successful exported to the\n%1 file.").arg(filepath)
+	);
 }
 
 }

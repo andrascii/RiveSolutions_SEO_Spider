@@ -49,3 +49,5 @@ public:
 };
 
 }
+
+Q_DECLARE_METATYPE(SeoSpider::DCStorageDescription)

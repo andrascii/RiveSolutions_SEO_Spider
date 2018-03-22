@@ -2,7 +2,7 @@
 #include "application_settings_widget.h"
 #include "main_window.h"
 #include "crawler.h"
-#include "data_pages_widget.h"
+#include "content_frame.h"
 #include "action_keys.h"
 #include "action_registry.h"
 #include "menubar.h"
@@ -19,6 +19,7 @@
 #include "software_branding.h"
 #include "svg_renderer.h"
 #include "header_controls_container.h"
+#include "storage_exporter.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -100,6 +101,20 @@ void MainWindow::saveFileAndClearData()
 	VERIFY(connect(theApp->crawler(), &Crawler::serializationProcessDone, this, &MainWindow::clearDataOnSerializationDone));
 
 	theApp->crawler()->saveToFile(path);
+}
+
+void MainWindow::exportFilterData()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+	ASSERT(action && "This method must be called using QAction");
+
+	const QVariant objectData = action->data();
+	ASSERT(objectData.isValid() && "No data passed");
+
+	std::vector<DCStorageDescription> storages;
+	storages.push_back(qvariant_cast<DCStorageDescription>(objectData));
+
+	StorageExporter::exportStorage(theApp->crawler()->sequencedDataCollection(), storages);
 }
 
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
@@ -257,42 +272,56 @@ void MainWindow::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
 
-	// export actions
-	QAction* exportStoragesAction = actionRegistry.addGlobalAction(s_exportStorages, 
-		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export Storages"));
+	createHeaderPageDependentActions();
+}
 
-	theApp->headerControlsContainer()->addAction(exportStoragesAction, PageFactory::Page::AllResourcesPage);
-	theApp->headerControlsContainer()->addAction(exportStoragesAction, PageFactory::Page::SiteAuditPage);
+void MainWindow::createHeaderPageDependentActions()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	// export actions
+	QAction* exportFilterDataAuditPageAction = actionRegistry.addGlobalAction(s_exportFilterDataAuditPageAction,
+		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export Selected Filter Data to .xlsx File"));
+
+	QAction* exportFilterDataAllResourcesAction = actionRegistry.addGlobalAction(s_exportFilterDataAllResourcesPageAction,
+		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export Selected Filter Data to .xlsx File"));
+
+	exportFilterDataAuditPageAction->setDisabled(true);
+	exportFilterDataAllResourcesAction->setDisabled(true);
+
+	theApp->headerControlsContainer()->addAction(exportFilterDataAllResourcesAction, PageFactory::Page::AllResourcesPage);
+	theApp->headerControlsContainer()->addAction(exportFilterDataAuditPageAction, PageFactory::Page::SiteAuditPage);
+
+	VERIFY(connect(exportFilterDataAllResourcesAction, &QAction::triggered, this, &MainWindow::exportFilterData));
+	VERIFY(connect(exportFilterDataAuditPageAction, &QAction::triggered, this, &MainWindow::exportFilterData));
 }
 
 void MainWindow::createAndSetCentralWidget()
 {
 	QWidget* centralWidget = new QWidget(this);
-	DataPagesWidget* dataPagesWidget = new DataPagesWidget(centralWidget);
+	m_contentFrame = new ContentFrame(centralWidget);
 
 	PageFactory pageFactory;
 
-	dataPagesWidget->addPage(PageFactory::SiteAuditPage, pageFactory.createPage(PageFactory::SiteAuditPage), 
+	m_contentFrame->addPage(PageFactory::SiteAuditPage, pageFactory.createPage(PageFactory::SiteAuditPage),
 		tr("Audit Info"), pageFactory.createPageIcon(PageFactory::SiteAuditPage), true);
 
-	dataPagesWidget->addPage(PageFactory::AllPagesPage, pageFactory.createPage(PageFactory::AllPagesPage), 
+	m_contentFrame->addPage(PageFactory::AllPagesPage, pageFactory.createPage(PageFactory::AllPagesPage),
 		tr("All Site Pages"), pageFactory.createPageIcon(PageFactory::AllPagesPage));
 
-	dataPagesWidget->addPage(PageFactory::AllResourcesPage, pageFactory.createPage(PageFactory::AllResourcesPage),
+	m_contentFrame->addPage(PageFactory::AllResourcesPage, pageFactory.createPage(PageFactory::AllResourcesPage),
 		tr("All Resources"), pageFactory.createPageIcon(PageFactory::AllResourcesPage));
 
-	dataPagesWidget->addPage(PageFactory::AuditReportPage, pageFactory.createPage(PageFactory::AuditReportPage),
+	m_contentFrame->addPage(PageFactory::AuditReportPage, pageFactory.createPage(PageFactory::AuditReportPage),
 		tr("Audit Report"), pageFactory.createPageIcon(PageFactory::AuditReportPage));
 
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);
 	layout->setMargin(0);
-	layout->addWidget(dataPagesWidget);
+	layout->addWidget(m_contentFrame);
 
 	centralWidget->setLayout(layout);
 	setCentralWidget(centralWidget);
-
-	m_dataPagesWidget = dataPagesWidget;
 }
 
 void MainWindow::registerSettingsPages() const
@@ -338,9 +367,9 @@ void MainWindow::clearDataOnSerializationDone()
 	theApp->crawler()->clearData();
 }
 
-DataPagesWidget* MainWindow::dataPagesWidget() const noexcept
+ContentFrame* MainWindow::contentFrame() const noexcept
 {
-	return m_dataPagesWidget;
+	return m_contentFrame;
 }
 
 }

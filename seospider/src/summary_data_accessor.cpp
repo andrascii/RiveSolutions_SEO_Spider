@@ -113,32 +113,9 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(Au
 	return nullptr;
 }
 
-Menu SummaryDataAccessor::menuFor(const QModelIndex& index) const
+Menu SummaryDataAccessor::menuFor(const QModelIndex&) const
 {
-	Menu menu;
-
-	if (!index.isValid())
-	{
-		return menu;
-	}
-
-	std::vector<ICommandPointer> commands;
-
-	if (isHeaderRow(index.row()))
-	{
-		DCStorageGroupDescriptionPtr group = m_groupRows.find(index.row()).value();
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportDataToXlsxCommand>(m_sequencedDataCollection, group->descriptions)));
-	}
-	else
-	{
-		DCStorageDescription* item = m_itemRows.find(index.row()).value();
-
-		menu.addItem(std::make_shared<CommandMenuItem>(
-			std::make_shared<ExportDataToXlsxCommand>(m_sequencedDataCollection, std::vector<DCStorageDescription>{ *item }))
-		);
-	}
-
-	return menu;
+	return Menu();
 }
 
 int SummaryDataAccessor::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
