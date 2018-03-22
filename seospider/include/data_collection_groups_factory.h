@@ -35,7 +35,7 @@ enum class AuditGroup
 	//
 	// Temporary test group
 	//
-	TestGroup
+	OrderedErrorsGroup
 };
 
 // DC - DataCollection

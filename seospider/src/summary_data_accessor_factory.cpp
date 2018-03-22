@@ -31,9 +31,9 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 
 		case DataAccessorType::GroupedErrorFilterPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection));
+			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection, true));
 
-			summaryDataAccessor->addGroup(AuditGroup::TestGroup);
+			summaryDataAccessor->addGroup(AuditGroup::OrderedErrorsGroup);
 
 			return summaryDataAccessor;
 		}

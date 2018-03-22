@@ -11,7 +11,7 @@ class SummaryDataAccessor : public QObject, public ISummaryDataAccessor
 	Q_OBJECT
 
 public:
-	SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
+	SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, bool needSorting = false);
 
 	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
@@ -49,6 +49,8 @@ private:
 	QVector<DCStorageGroupDescriptionPtr> m_allGroupRows;
 	QMap<int, DCStorageGroupDescriptionPtr> m_groupRows;
 	QMap<int, DCStorageDescription*> m_itemRows;
+
+	bool m_needSortingFlag;
 };
 
 }

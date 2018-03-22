@@ -24,7 +24,7 @@ QWidget* PageFactory::createPage(Page page) const
 		case SiteAuditPage:
 		{
 			FilterWidget* siteAuditPage = new FilterWidget(new WebSiteDataWidget(nullptr));
-			//siteAuditPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
+			siteAuditPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 			siteAuditPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::GroupedErrorFilterPage);
 
 			widget = siteAuditPage;

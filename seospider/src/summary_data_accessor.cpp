@@ -7,8 +7,9 @@
 namespace SeoSpider
 {
 
-SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
+SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, bool needSorting)
 	: m_sequencedDataCollection(sequencedDataCollection)
+	, m_needSortingFlag(needSorting)
 {
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
 		this, &SummaryDataAccessor::emitDataChanged));
@@ -19,8 +20,11 @@ SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataColle
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageReplaced,
 		this, &SummaryDataAccessor::emitDataChanged));
 
-	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded, 
-		this, &SummaryDataAccessor::sortGroups));
+	if (m_needSortingFlag)
+	{
+		VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
+			this, &SummaryDataAccessor::sortGroups));
+	}
 
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
 		this, &SummaryDataAccessor::beginClearData));
@@ -142,6 +146,8 @@ Menu SummaryDataAccessor::menuFor(const QModelIndex& index) const
 		);
 	}
 
+	menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<GroupByErrorTypeCommand>()));
+
 	return menu;
 }
 
@@ -184,13 +190,23 @@ void SummaryDataAccessor::sortGroups()
 		itemRows.append(row);
 	}
 	
-	qSort(itemRows.begin(), itemRows.end(), [](DCStorageDescription* a, DCStorageDescription* b) 
-		{return CrawlerEngine::ErrorCategory::ErrorCategoryLevel(a->storageType) < CrawlerEngine::ErrorCategory::ErrorCategoryLevel(b->storageType); });
+	qSort(itemRows.begin(), itemRows.end(), [](DCStorageDescription* a, DCStorageDescription* b)
+	{
+		if(CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
+		{
+			return a->storageTypeDescriptionName < b->storageTypeDescriptionName;
+		}
+		else
+		{
+			return CrawlerEngine::ErrorCategory::level(a->storageType) > CrawlerEngine::ErrorCategory::level(b->storageType);
+		}
+	});
 	
 	m_itemRows.clear();
-	for(int modelRowsCount = 0; modelRowsCount < itemRows.size(); ++modelRowsCount)
+
+	for(int modelRowsCount = 1; modelRowsCount <= itemRows.size(); ++modelRowsCount)
 	{
-		m_itemRows[modelRowsCount] = itemRows.at(modelRowsCount);
+		m_itemRows[modelRowsCount] = itemRows.at(modelRowsCount - 1);
 	}
 }
 

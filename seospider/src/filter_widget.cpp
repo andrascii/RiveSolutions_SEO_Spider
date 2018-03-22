@@ -14,6 +14,7 @@ namespace SeoSpider
 FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent)
 	: QFrame(parent)
 	, m_webSiteDataWidget(webSiteDataWidget)
+	, m_stackedFilterWidget(new QStackedWidget(this))
 	, m_summaryFilterTableView(new TableView(this, true))
 	, m_summaryFilterModel(new SummaryModel(this))
 	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterModel, this))
@@ -25,10 +26,10 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	m_summaryFilterTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_summaryFilterTableView->horizontalHeader()->hide();
 	m_summaryFilterTableView->setObjectName("FilterWidgetTableView");
-
+	
 	m_splitter->setOrientation(Qt::Horizontal);
 	m_splitter->setChildrenCollapsible(false);
-	m_splitter->addWidget(m_summaryFilterTableView);
+	m_splitter->addWidget(m_stackedFilterWidget);
 	m_splitter->addWidget(m_webSiteDataWidget);
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
@@ -49,7 +50,9 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
 	m_summaryFilterTableView->initSpans();
 	m_summaryFilterTableView->setContextMenu(new CommandMenu(summaryDataAccessor));
-	selectFilter(CrawlerEngine::StorageType::HtmlResourcesStorageType);
+	//selectFilter(CrawlerEngine::StorageType::HtmlResourcesStorageType);
+	
+	m_stackedFilterWidget->addWidget(m_summaryFilterTableView);
 }
 
 void FilterWidget::selectFilter(CrawlerEngine::StorageType type) const
@@ -74,6 +77,11 @@ void FilterWidget::selectTab(int pageDataType)
 	}
 
 	m_webSiteDataWidget->pageDataWidget()->selectTab(static_cast<PageDataWidget::PageDataType>(pageDataType));
+}
+
+void FilterWidget::groupByErrorType()
+{
+	m_stackedFilterWidget->currentIndex() == 0 ? m_stackedFilterWidget->setCurrentIndex(1) : m_stackedFilterWidget->setCurrentIndex(0);
 }
 
 void FilterWidget::adjustSize()

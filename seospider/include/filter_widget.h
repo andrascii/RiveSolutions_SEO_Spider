@@ -23,6 +23,7 @@ public:
 	void selectFilter(CrawlerEngine::StorageType type) const;
 	void selectParsedPage(int row);
 	void selectTab(int pageDataType);
+	void groupByErrorType();
 
 private:
 	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const;
@@ -32,6 +33,7 @@ private:
 private:
 	WebSiteDataWidget* m_webSiteDataWidget;
 
+	QStackedWidget* m_stackedFilterWidget;
 	TableView* m_summaryFilterTableView;
 	SummaryModel* m_summaryFilterModel;
 	SummaryViewModel* m_summaryFilterViewModel;

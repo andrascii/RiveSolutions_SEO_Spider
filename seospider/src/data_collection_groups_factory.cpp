@@ -108,10 +108,10 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			return p;
 		}
 
-		case AuditGroup::TestGroup:
+		case AuditGroup::OrderedErrorsGroup:
 		{
 			p->name = QObject::tr("Error Groups");
-			p->group = AuditGroup::TestGroup;
+			p->group = AuditGroup::OrderedErrorsGroup;
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::UpperCaseUrlStorageType, QObject::tr("Links With Uppercase Characters") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links With Non-ASCII Characters") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongUrlStorageType, QObject::tr("Too Long Links") });
