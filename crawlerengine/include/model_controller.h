@@ -21,6 +21,9 @@ public:
 	const UnorderedDataCollection* data() const noexcept;
 	UnorderedDataCollection* data() noexcept;
 
+signals:
+	void refreshPageDone();
+
 public slots:
 	void handleWorkerResult(WorkerResult workerResult) noexcept;
 	void setWebCrawlerOptions(const CrawlerOptions& options);

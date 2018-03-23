@@ -106,9 +106,9 @@ QString getCpuVendorId()
 #else
 	int CPUInfo[4] = {0};
 	__cpuid(CPUInfo, 0);
-    *((int*)buffer) = CPUInfo[1];
-    *((int*)(buffer+4)) = CPUInfo[3];
-    *((int*)(buffer+8)) = CPUInfo[2];
+	*((int*)buffer) = CPUInfo[1];
+	*((int*)(buffer+4)) = CPUInfo[3];
+	*((int*)(buffer+8)) = CPUInfo[2];
 #endif
 
 	for (int i = 0; i < _countof(s_vendorId); ++i)

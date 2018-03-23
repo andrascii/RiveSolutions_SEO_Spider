@@ -22,6 +22,8 @@ public:
 		const char* message
 	);
 
+	void closeConnection();
+
 private:
 	void logMessage(const Common::PipeMessage& message);
 

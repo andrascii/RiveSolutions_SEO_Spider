@@ -3,6 +3,10 @@
 namespace Common
 {
 
+constexpr int c_fileNameLength = 256;
+constexpr int c_functionNameLength = 256;
+constexpr int c_messageLength = 4096;
+
 enum class SeverityLevel
 {
 	TraceLevel,
@@ -27,9 +31,9 @@ struct PipeMessage
 	std::uint64_t severityLevel;
 	std::uint64_t threadId;
 	std::uint32_t line;
-	char file[256];
-	char function[256];
-	char message[4096];
+	char file[c_fileNameLength];
+	char function[c_functionNameLength];
+	char message[c_messageLength];
 };
 
 #pragma pack(pop)

@@ -51,13 +51,24 @@ void LoggerDebugWindow::onMessageReceived(const Common::PipeMessage& message)
 
 	QTextStream stream(&messageString);
 
+	QString messageType;
+
+	if (message.type == Common::PipeMessage::Assert)
+	{
+		messageType = "Assertion failure: ";
+	}
+	else if (message.type == Common::PipeMessage::Assert)
+	{
+		messageType = "Crash: ";
+	}
+
 	stream << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
 		<< QChar(';') << message.threadId
 		<< QChar(';') << message.severityLevel
 		<< QChar(';') << message.line
 		<< QChar(';') << message.file
 		<< QChar(';') << message.function
-		<< QChar(';') << message.message;
+		<< QChar(';') << messageType << message.message;
 
 	stream.flush();
 

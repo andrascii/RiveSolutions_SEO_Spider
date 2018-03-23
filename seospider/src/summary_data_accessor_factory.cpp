@@ -29,6 +29,15 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 			return summaryDataAccessor;
 		}
 
+		case DataAccessorType::GroupedErrorFilterPage:
+		{
+			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection, true));
+
+			summaryDataAccessor->addGroup(AuditGroup::OrderedErrorsGroup);
+
+			return summaryDataAccessor;
+		}
+
 		case DataAccessorType::AllResourcesPage:
 		{
 			summaryDataAccessor = new SummaryDataAccessor(dataCollection);

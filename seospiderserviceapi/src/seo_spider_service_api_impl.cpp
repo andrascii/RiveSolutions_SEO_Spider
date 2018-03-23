@@ -176,6 +176,7 @@ void SeoSpiderServiceApiImpl::setProcessSignaledState() const noexcept
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	m_crashEventSignaledObject->setSignaledState();
+	m_pipeServer->closeConnection();
 	Sleep(INFINITE);
 }
 
@@ -222,8 +223,6 @@ void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* f
 
 void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const noexcept
 {
-	//Logger::instance()->logMessage(QStringLiteral("ASSERTION FAILURE: ") + expression, Common::SeverityLevel::ErrorLevel);
-
 	m_pipeServer->logMessage(
 		Common::PipeMessage::Assert,
 		Common::SeverityLevel::ErrorLevel,
@@ -319,27 +318,72 @@ void SeoSpiderServiceApiImpl::errorLogMessage(
 
 LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS)
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()), 
+		__LINE__, 
+		__FILENAME__, 
+		__FUNCTION__,
+		"structured exception handler"
+	);
+
 	s_self->setProcessSignaledState();
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
 void SeoSpiderServiceApiImpl::terminateHandler()
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"terminate handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
 void SeoSpiderServiceApiImpl::unexpectedHandler()
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"unexcepted handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
 void SeoSpiderServiceApiImpl::pureCallHandler()
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"pure call handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
 void SeoSpiderServiceApiImpl::sigAbortHandler(int)
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"abort signal handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
@@ -348,31 +392,85 @@ void SeoSpiderServiceApiImpl::sigFpeHandler(int code, int subcode)
 	Q_UNUSED(code);
 	Q_UNUSED(subcode);
 
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"floating point signal handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
 void SeoSpiderServiceApiImpl::sigIntHandler(int)
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"interruption signal handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
 void SeoSpiderServiceApiImpl::sigIllHandler(int)
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"illegal instruction signal handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
 void SeoSpiderServiceApiImpl::sigSegvHandler(int)
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"segmentation fault signal handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
 void SeoSpiderServiceApiImpl::sigTermHandler(int)
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"terminate signal handler"
+	);
+
 	s_self->setProcessSignaledState();
 }
 
 int SeoSpiderServiceApiImpl::newHandler(size_t)
 {
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"new handler"
+	);
+
 	s_self->setProcessSignaledState();
 	return 0;
 }
@@ -389,6 +487,15 @@ void SeoSpiderServiceApiImpl::invalidParameterHandler(
 	Q_UNUSED(file);
 	Q_UNUSED(line);
 	Q_UNUSED(pReserved);
+
+	s_self->errorLogMessage(
+		Common::PipeMessage::Crash,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		__LINE__,
+		__FILENAME__,
+		__FUNCTION__,
+		"invalid parameter handler"
+	);
 
 	s_self->setProcessSignaledState();
 }

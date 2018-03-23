@@ -10,8 +10,8 @@ class ErrorCategory
 public:
 	enum ErrorCategoryLevel
 	{
-		LevelInfo,
 		LevelNotError,
+		LevelInfo,
 		LevelWarning,
 		LevelError
 	};

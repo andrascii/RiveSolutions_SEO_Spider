@@ -93,6 +93,10 @@ public:
 	{
 		auto&& logFunction = getLogFunction(m_level);
 
+		assert(std::strlen(m_file) < Common::c_fileNameLength);
+		assert(std::strlen(m_function) < Common::c_functionNameLength);
+		assert(m_stream.str().size() < Common::c_messageLength);
+
 		logFunction(m_type, m_threadId, m_line, m_file, m_function, m_stream.str().c_str());
 	}
 

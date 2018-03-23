@@ -14,12 +14,7 @@ PipeServer::PipeServer()
 
 PipeServer::~PipeServer()
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
-
-	if (m_socket && !m_socket->isClosed())
-	{
-		m_socket->disconnectFromServer();
-	}
+	closeConnection();
 }
 
 void PipeServer::logMessage(
@@ -56,6 +51,16 @@ void PipeServer::logMessage(const Common::PipeMessage& message)
 	}
 
 	m_socket->writeData(reinterpret_cast<const char*>(&message), sizeof(message));
+}
+
+void PipeServer::closeConnection()
+{
+	std::lock_guard<std::mutex> locker(m_mutex);
+
+	if (m_socket && !m_socket->isClosed())
+	{
+		m_socket->disconnectFromServer();
+	}
 }
 
 }

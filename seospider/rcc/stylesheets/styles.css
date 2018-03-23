@@ -8,9 +8,8 @@ QWidget
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
 
 QMenuBar
-{	
-	/*background-color: #d2d3d5;*/
-	background-color: #4D626E;
+{
+	background-color: #4D4D4D;
 	padding-left: 0.3em;
 	min-width: 5em;
 	min-height: 2.2em;
@@ -80,7 +79,7 @@ QMenu::separator
 QStatusBar
 {
 	min-height: 2.5em;
-	background-color: #4D626E;
+	background-color: #4D4D4D;
 	border-top: 0.05em solid #C0C0C0;
 }
 
@@ -259,10 +258,21 @@ QDateEdit::down-button
 
 /*/////////////////////////////// Info frame ///////////////////////////////*/
 
-SeoSpider--ControlPanelWidget, QWidget#DynamicControls
+SeoSpider--ControlPanelWidget, QFrame#DynamicControls
 {
 	min-height: 2.5em;
 	max-width: 35em;
+	padding: 0.3em;
+}
+
+QFrame#DynamicControls
+{
+	padding-right: 1em;
+}
+
+QFrame#DynamicControls QToolButton
+{
+	border: none;
 }
 
 SeoSpider--ControlPanelWidget QLineEdit
@@ -559,6 +569,12 @@ QWidget#NavigationPanel QPushButton
 	max-width: 10em;
 	min-height: 2.5em;
 	max-height: 2.5em;
+	font-family: Helvetica;
+}
+
+QWidget#NavigationPanel QPushButton:focus
+{
+	outline: none;
 }
 
 QWidget#NavigationPanel QPushButton:hover
@@ -617,61 +633,26 @@ QTabWidget::tab-bar
     left: 0.2em; /* move to the right by 5px */
 }
 
-/* Style the tab using the tab sub-control. Note that
-    it reads QTabBar _not_ QTabWidget */
 QTabBar::tab
 {
 	color: black;
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-                                stop: 0.5 #D6D6D6, stop: 1.0 #D3D3D3);
-    border: 1px solid #D6D6D6;
-    border-bottom-color: #D6D6D6; /* same as the pane color */
+    border-bottom: 0.05em solid #D2D3D5;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
     min-width: 10em;
     padding: 0.3em;
+	background-color: #EAEAEA;
+}
+
+QTabBar::tab:selected
+{
+	border-top: 0.3em solid #FF6600;
+	padding-bottom: 0.5em;
 }
 
 QTabBar::tab:selected, QTabBar::tab:hover
 {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                stop: 0 #fafafa, stop: 0.4 #f4f4f4,
-                                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
-}
-
-QTabBar::tab:selected
-{
-    border-color: #9B9B9B;
-    border-bottom-color: #C2C7CB; /* same as pane color */
-}
-
-QTabBar::tab:!selected
-{
-    margin-top: 2px; /* make non-selected tabs look smaller */
-}
-
-/* make use of negative margins for overlapping tabs */
-QTabBar::tab:selected
-{
-    /* expand/overlap to the left and right by 4px */
-    margin-left: -4px;
-    margin-right: -4px;
-}
-
-QTabBar::tab:first:selected
-{
-    margin-left: 0; /* the first selected tab has nothing to overlap with on the left */
-}
-
-QTabBar::tab:last:selected
-{
-    margin-right: 0; /* the last selected tab has nothing to overlap with on the right */
-}
-
-QTabBar::tab:only-one
-{
-    margin: 0; /* if there is only one tab, we don't want overlapping margins */
+    background: #FFFFFF;
 }
 
 /*/////////////////////////////// WidgetUnderMouseInfoDialog ///////////////////////////////*/

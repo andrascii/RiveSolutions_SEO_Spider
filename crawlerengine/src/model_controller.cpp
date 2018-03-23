@@ -2,11 +2,28 @@
 #include "unordered_data_collection.h"
 #include "page_parser_helpers.h"
 #include "crawler_shared_state.h"
+#include "finally.h"
 
 namespace
 {
 
-using CrawlerEngine::ParsedPagePtr;
+using namespace CrawlerEngine;
+
+struct EmitBlocker final
+{
+	EmitBlocker(UnorderedDataCollection* udc)
+		: udc(udc)
+	{
+		udc->setPageAddingEmitAbility(false);
+	}
+
+	~EmitBlocker()
+	{
+		udc->setPageAddingEmitAbility(true);
+	}
+
+	UnorderedDataCollection* udc;
+};
 
 template <typename IterOut, typename IterIn, typename Policy>
 void assignIf(IterOut firstOut, IterOut secondOut, IterIn firstIn, IterIn secondIn, Policy&& policy)
@@ -130,6 +147,18 @@ void ModelController::preparePageForRefresh(ParsedPage* parsedPage)
 
 void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 {
+	EmitBlocker emitBlocker(data());
+
+	const auto refreshDoneEmit = [&]
+	{
+		if (workerResult.isRefreshResult())
+		{
+			emit refreshPageDone();
+		}
+	};
+
+	Common::Finally finallyObject(refreshDoneEmit);
+
 	ASSERT(workerResult.incomingPage()->resourceType >= ResourceType::ResourceHtml &&
 		workerResult.incomingPage()->resourceType <= ResourceType::ResourceOther);
 
@@ -191,7 +220,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		m_linksToPageChanges.changes.clear();
 	}
 
-	INFOLOG << "CRAWLED" << workerResult.incomingPage()->url.urlStr();
+	DEBUGLOG << "CRAWLED" << workerResult.incomingPage()->url.urlStr();
 
 	if (!workerResult.isRefreshResult())
 	{

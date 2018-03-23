@@ -91,6 +91,8 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 	if (storageIterator != m_sequencedStorageMap.end())
 	{
 		auto&[storageType, collection] = *storageIterator;
+		auto storageType1 = storageType;
+		storageType1;
 
 		collection->emplaceBack(std::move(parsedPagePtr));
 
@@ -101,11 +103,6 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 void SequencedDataCollection::addParsedPage(WorkerResult workerResult, StorageType type)
 {
 	addParsedPage(workerResult.incomingPage(), type);
-
-	if (workerResult.isRefreshResult())
-	{
-		emit refreshPageDone();
-	}
 }
 
 void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type)

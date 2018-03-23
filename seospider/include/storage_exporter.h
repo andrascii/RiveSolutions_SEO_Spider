@@ -15,9 +15,9 @@ namespace SeoSpider
 class StorageExporter final
 {
 public:
-	static void exportStorage(const CrawlerEngine::SequencedDataCollection* dataCollection, 
-		const std::vector<DCStorageDescription>& storages,
-		const QString& filepath
+	static void exportStorage(
+		const CrawlerEngine::SequencedDataCollection* dataCollection, 
+		const std::vector<DCStorageDescription>& storages
 	);
 };
 
