@@ -18,6 +18,7 @@ public:
 		DataAccessorTypeBegin,
 
 		ErrorsFilterPage,
+		GroupedErrorFilterPage,
 		AllResourcesPage,
 
 		DataAccessorTypeEnd

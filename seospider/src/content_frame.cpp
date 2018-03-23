@@ -69,7 +69,8 @@ void ContentFrame::addPage(PageFactory::Page page, QWidget* widget, const QStrin
 	m_pageIndexes[page] = m_stackedWidget->addWidget(widget);
 
 	m_navigationPanel.pushButtons[page] = new CustomPushButton(buttonIcon, buttonText, m_navigationPanel.navigationPanelWidget);
-
+	m_navigationPanel.pushButtons[page]->setIconSize(QSize(20, 20));
+	
 	VERIFY(connect(m_navigationPanel.pushButtons[page], &QPushButton::clicked,
 		this, &ContentFrame::handleNavigationPanelButtonClick));
 

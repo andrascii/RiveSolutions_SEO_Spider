@@ -22,7 +22,20 @@ enum class AuditGroup
 	// Resources
 	//
 	InternalResourcesGroup,
-	ExternalResourcesGroup
+	ExternalResourcesGroup,
+
+	//
+	// Problem type groups
+	//
+	Errors,
+	Warnings,
+	Information,
+	NoProblem,
+
+	//
+	// Temporary test group
+	//
+	OrderedErrorsGroup
 };
 
 // DC - DataCollection

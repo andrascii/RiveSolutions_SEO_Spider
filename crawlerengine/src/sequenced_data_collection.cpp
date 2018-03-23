@@ -91,6 +91,8 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 	if (storageIterator != m_sequencedStorageMap.end())
 	{
 		auto&[storageType, collection] = *storageIterator;
+		auto storageType1 = storageType;
+		storageType1;
 
 		collection->emplaceBack(std::move(parsedPagePtr));
 

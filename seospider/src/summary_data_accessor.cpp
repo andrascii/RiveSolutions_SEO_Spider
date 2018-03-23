@@ -2,12 +2,14 @@
 #include "application.h"
 #include "sequenced_data_collection.h"
 #include "isequenced_storage.h"
+#include "error_category.h"
 
 namespace SeoSpider
 {
 
-SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
+SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, bool needSorting)
 	: m_sequencedDataCollection(sequencedDataCollection)
+	, m_needSortingFlag(needSorting)
 {
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
 		this, &SummaryDataAccessor::emitDataChanged));
@@ -17,6 +19,12 @@ SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataColle
 
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageReplaced,
 		this, &SummaryDataAccessor::emitDataChanged));
+
+	if (m_needSortingFlag)
+	{
+		VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
+			this, &SummaryDataAccessor::sortGroups));
+	}
 
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::beginClearData,
 		this, &SummaryDataAccessor::beginClearData));
@@ -113,9 +121,34 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(Au
 	return nullptr;
 }
 
-Menu SummaryDataAccessor::menuFor(const QModelIndex&) const
+Menu SummaryDataAccessor::menuFor(const QModelIndex& index) const
 {
-	return Menu();
+	Menu menu;
+
+	if (!index.isValid())
+	{
+		return menu;
+	}
+
+	std::vector<ICommandPointer> commands;
+
+	if (isHeaderRow(index.row()))
+	{
+		DCStorageGroupDescriptionPtr group = m_groupRows.find(index.row()).value();
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportDataToXlsxCommand>(m_sequencedDataCollection, group->descriptions)));
+	}
+	else
+	{
+		DCStorageDescription* item = m_itemRows.find(index.row()).value();
+
+		menu.addItem(std::make_shared<CommandMenuItem>(
+			std::make_shared<ExportDataToXlsxCommand>(m_sequencedDataCollection, std::vector<DCStorageDescription>{ *item }))
+		);
+	}
+
+	menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<GroupByErrorTypeCommand>()));
+
+	return menu;
 }
 
 int SummaryDataAccessor::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
@@ -146,6 +179,38 @@ void SummaryDataAccessor::emitDataChanged(int, CrawlerEngine::StorageType storag
 	}
 
 	Q_EMIT dataChanged(row, 1, Qt::DisplayRole);
+}
+
+void SummaryDataAccessor::sortGroups(int storageRow, CrawlerEngine::StorageType)
+{
+	if (!storageRow)
+	{
+		QVector<DCStorageDescription*> itemRows;
+
+		foreach(auto row, m_itemRows)
+		{
+			itemRows.append(row);
+		}
+
+		qSort(itemRows.begin(), itemRows.end(), [](DCStorageDescription* a, DCStorageDescription* b)
+		{
+			if (CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
+			{
+				return a->storageTypeDescriptionName < b->storageTypeDescriptionName;
+			}
+			else
+			{
+				return CrawlerEngine::ErrorCategory::level(a->storageType) > CrawlerEngine::ErrorCategory::level(b->storageType);
+			}
+		});
+
+		m_itemRows.clear();
+
+		for (int modelRowsCount = 1; modelRowsCount <= itemRows.size(); ++modelRowsCount)
+		{
+			m_itemRows[modelRowsCount] = itemRows.at(modelRowsCount - 1);
+		}
+	}
 }
 
 Qt::ItemFlags SummaryDataAccessor::flags(const QModelIndex& index) const noexcept
