@@ -3,6 +3,7 @@
 #include "main_window.h"
 #include "site_map.h"
 #include "crawler.h"
+#include "svg_renderer.h"
 
 namespace SeoSpider
 {
@@ -16,6 +17,7 @@ SitemapCreatorWidget::SitemapCreatorWidget(QWidget* parent)
 	m_ui->setupUi(this);
 
 	setWindowTitle("XML Sitemap Creator");
+	setWindowIcon(SvgRenderer::render(QStringLiteral(":/images/xml-sitemap-icon.svg"), 8, 8));
 
 	VERIFY(connect(m_ui->cancelButton, &QPushButton::clicked, this, &SitemapCreatorWidget::accept));
 	VERIFY(connect(m_ui->createButton, &QPushButton::clicked, this, &SitemapCreatorWidget::showSaveFileDialog));

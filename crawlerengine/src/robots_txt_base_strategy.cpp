@@ -38,18 +38,17 @@ bool RobotsTxtBaseStrategy::isUrlAllowed(const Url& url,
 	return allowed;
 }
 
-bool RobotsTxtBaseStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
+std::pair<bool, UserAgentType> RobotsTxtBaseStrategy::isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const
 {
 	if (!MetaRobotsHelpers::checkIfSupportedMetaRobotsExistAndCorrectUserAgentType(userAgentType, metaRobotsFlags))
 	{
-		return true;
+		return std::make_pair(true, userAgentType);
 	}
 
 	const MetaRobotsFlags& flags = metaRobotsFlags.find(userAgentType)->second;
 
 	// all and follow are not supported (???)
-	return !flags.testFlag(MetaRobotsNone) &&
-		!flags.testFlag(MetaRobotsNoFollow);
+	return std::make_pair(!flags.testFlag(MetaRobotsNone) && !flags.testFlag(MetaRobotsNoFollow) && !flags.testFlag(MetaRobotsNoIndex), userAgentType);
 }
 
 Url RobotsTxtBaseStrategy::cleanUrl(const Url& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const

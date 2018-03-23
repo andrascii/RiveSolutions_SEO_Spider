@@ -12,7 +12,7 @@ class RobotsTxtYandexStrategy : public RobotsTxtBaseStrategy
 {
 public:
 	virtual Url cleanUrl(const Url& url, UserAgentType userAgentType, const RobotsTxtTokenizer& tokenizer) const override;
-	virtual bool isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const override;
+	virtual std::pair<bool, UserAgentType> isUrlAllowed(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const override;
 };
 
 

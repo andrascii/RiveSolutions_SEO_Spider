@@ -413,28 +413,28 @@ QString getWindowsName()
 {
 	typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
 
- 	OSVERSIONINFOEX osVerInfo;
- 	SYSTEM_INFO sysInfo;
+	OSVERSIONINFOEX osVerInfo;
+	SYSTEM_INFO sysInfo;
 	PGNSI pGNSI;
 
- 	ZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
- 	ZeroMemory(&osVerInfo, sizeof(OSVERSIONINFOEX));
+	ZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
+	ZeroMemory(&osVerInfo, sizeof(OSVERSIONINFOEX));
 
- 	osVerInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	osVerInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
 	const BOOL osVerInfoExSucceed = CompilerCompat::UndeprecatedGetVersionEx((OSVERSIONINFO*)&osVerInfo);
- 	if (!osVerInfoExSucceed)
+	if (!osVerInfoExSucceed)
 	{
 		return QString("Windows");
 	}	 
  
- 	// Call GetNativeSystemInfo if supported or GetSystemInfo otherwise 
- 	pGNSI = (PGNSI)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
- 	if(pGNSI)
+	// Call GetNativeSystemInfo if supported or GetSystemInfo otherwise 
+	pGNSI = (PGNSI)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
+	if(pGNSI)
 	{
 		pGNSI(&sysInfo);
 	}
- 	else
+	else
 	{
 		GetSystemInfo(&sysInfo);
 	}

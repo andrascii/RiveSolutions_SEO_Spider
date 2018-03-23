@@ -11,7 +11,7 @@
 #include "helpers.h"
 #include "crawler.h"
 #include "filter_widget.h"
-#include "data_pages_widget.h"
+#include "content_frame.h"
 #include "page_data_widget.h"
 #include "svg_renderer.h"
 
@@ -722,7 +722,7 @@ void GoToLinksOnThisPageCommand::execute()
 {
 	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
 	
-	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
 	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
 
 	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
@@ -783,7 +783,7 @@ void GoToLinksToThisPageCommand::execute()
 {
 	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
 
-	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
 	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
 
 	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
@@ -828,7 +828,7 @@ void GoToHTTPResponseCommand::execute()
 {
 	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
 
-	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
 	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
 
 	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
@@ -859,9 +859,9 @@ const char* GroupByErrorTypeCommand::description() const noexcept
 
 void GroupByErrorTypeCommand::execute()
 {
-	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::SiteAuditPage);
 	
-	auto page = theApp->mainWindow()->dataPagesWidget()->page(PageFactory::Page::AllResourcesPage);
+	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::SiteAuditPage);
 	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
 
 	filterWidget->groupByErrorType();

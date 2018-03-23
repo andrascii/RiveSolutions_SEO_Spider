@@ -12,11 +12,10 @@ struct LinkInfo;
 class OptionsLinkFilter
 {
 public:
-	
-
 	OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const RobotsTxtRules& robotsTxtRules);
 
-	bool checkPermissionNotAllowed(Permission permission, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
+	bool checkRestriction(Restriction restriction, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
+	std::pair<bool, MetaRobotsFlags> isPageBlockedByMetaRobots(const ParsedPagePtr& parsedPage) const;
 
 private:
 	bool isLinkBlockedByRobotsTxt(const LinkInfo& linkInfo) const;

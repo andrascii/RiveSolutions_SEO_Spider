@@ -109,6 +109,7 @@ void Crawler::initialize()
 
 	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
 	VERIFY(connect(m_xmlSitemapLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
+	VERIFY(connect(m_modelController, &ModelController::refreshPageDone, this, &Crawler::onRefreshPageDone, Qt::QueuedConnection));
 }
 
 void Crawler::clearData()
@@ -511,9 +512,6 @@ void Crawler::initSequencedDataCollection()
 {
 	m_sequencedDataCollection = std::make_unique<SequencedDataCollection>(m_modelController->data());
 	m_sequencedDataCollection->initialize();
-
-	VERIFY(connect(m_sequencedDataCollection.get(), &SequencedDataCollection::refreshPageDone,
-		this, &Crawler::onRefreshPageDone));
 }
 
 IHostInfoProvider* Crawler::createHostInfoProvider() const

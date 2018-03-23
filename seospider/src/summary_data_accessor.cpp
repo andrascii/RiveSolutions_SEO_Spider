@@ -181,32 +181,35 @@ void SummaryDataAccessor::emitDataChanged(int, CrawlerEngine::StorageType storag
 	Q_EMIT dataChanged(row, 1, Qt::DisplayRole);
 }
 
-void SummaryDataAccessor::sortGroups()
+void SummaryDataAccessor::sortGroups(int storageRow, CrawlerEngine::StorageType)
 {
-	QVector<DCStorageDescription*> itemRows;
-	
-	foreach(auto row, m_itemRows)
+	if (!storageRow)
 	{
-		itemRows.append(row);
-	}
-	
-	qSort(itemRows.begin(), itemRows.end(), [](DCStorageDescription* a, DCStorageDescription* b)
-	{
-		if(CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
-		{
-			return a->storageTypeDescriptionName < b->storageTypeDescriptionName;
-		}
-		else
-		{
-			return CrawlerEngine::ErrorCategory::level(a->storageType) > CrawlerEngine::ErrorCategory::level(b->storageType);
-		}
-	});
-	
-	m_itemRows.clear();
+		QVector<DCStorageDescription*> itemRows;
 
-	for(int modelRowsCount = 1; modelRowsCount <= itemRows.size(); ++modelRowsCount)
-	{
-		m_itemRows[modelRowsCount] = itemRows.at(modelRowsCount - 1);
+		foreach(auto row, m_itemRows)
+		{
+			itemRows.append(row);
+		}
+
+		qSort(itemRows.begin(), itemRows.end(), [](DCStorageDescription* a, DCStorageDescription* b)
+		{
+			if (CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
+			{
+				return a->storageTypeDescriptionName < b->storageTypeDescriptionName;
+			}
+			else
+			{
+				return CrawlerEngine::ErrorCategory::level(a->storageType) > CrawlerEngine::ErrorCategory::level(b->storageType);
+			}
+		});
+
+		m_itemRows.clear();
+
+		for (int modelRowsCount = 1; modelRowsCount <= itemRows.size(); ++modelRowsCount)
+		{
+			m_itemRows[modelRowsCount] = itemRows.at(modelRowsCount - 1);
+		}
 	}
 }
 

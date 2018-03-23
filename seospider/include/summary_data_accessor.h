@@ -39,7 +39,7 @@ signals:
 		
 private:
 	Q_SLOT void emitDataChanged(int, CrawlerEngine::StorageType);
-	Q_SLOT void sortGroups();
+	Q_SLOT void sortGroups(int, CrawlerEngine::StorageType);
 
 private:
 	static constexpr int s_summaryColumnCount = 2;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "idownloader.h"
+#include "hops_chain.h"
 
 namespace CrawlerEngine
 {
@@ -36,8 +37,9 @@ public:
 	void setPostProcessor(PostProcessorFunc postProcessor);
 
 private:
+	HopsChain hopsChain(const DownloadRequest& request, QSet<QString>& uniqueUrls) const;
 	QDir testsDataDir() const;
-	std::pair<QString, QString> mapUrlToTestDataFiles(const CrawlerEngine::DownloadRequest& downloadRequest) const;
+	std::pair<QString, QString> mapUrlToTestDataFiles(const DownloadRequest& downloadRequest) const;
 
 private:
 	mutable QString m_testDataPath;

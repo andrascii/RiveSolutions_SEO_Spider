@@ -37,6 +37,8 @@ public:
 	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 
+	void setPageAddingEmitAbility(bool value);
+
 	void clearData();
 
 	std::vector<ParsedPagePtr> allParsedPages(StorageType type) const;
@@ -80,9 +82,24 @@ private:
 	void initializeStorages();
 	void addParsedPageInternal(ParsedPagePtr& parsedPagePointer, StorageType type);
 	std::pair<ParsedPagePtr, UnorderedStorageType::iterator> removeParsedPageInternal(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
+	
+	void emitParsedPageAdded(WorkerResult workerResult, StorageType type);
+	void emitParsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type);
 
 private:
+	template <typename T>
+	struct EmitData
+	{
+		T object;
+		StorageType type;
+	};
+
 	std::unordered_map<StorageType, UnorderedStorageType> m_unorderedStorageMap;
+
+	bool m_emitAbility;
+
+	std::vector<EmitData<WorkerResult>> m_emitWorkerResultData;
+	std::vector<EmitData<ParsedPagePtr>> m_emitParsedPagePtrData;
 };
 
 }
