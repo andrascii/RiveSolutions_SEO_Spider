@@ -2,6 +2,7 @@
 
 #include "summary_data_accessor_factory.h"
 #include "storage_type.h"
+#include "filter_info_factory.h"
 
 namespace SeoSpider
 {
@@ -18,12 +19,15 @@ class FilterInfoWidget : public QFrame
 public:
 	FilterInfoWidget(QWidget* parent);
 
-	QLabel* title() const;
-	QLabel* description() const;
+	void setFilterInfo(const FilterInfo& filterInfo);
+
+private slots:
+	void onPropertyChanged();
 
 private:
 	QLabel* m_title;
 	QLabel* m_description;
+	FilterInfo m_filterInfo;
 };
 
 class FilterWidget : public QFrame
@@ -39,7 +43,7 @@ public:
 	void selectTab(int pageDataType);
 
 private:
-	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const;
+	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 	Q_SLOT void adjustSize();
 
 private:
