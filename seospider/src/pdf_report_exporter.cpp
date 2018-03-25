@@ -14,6 +14,11 @@ QString PdfReportExporter::fileMask() const
 	return tr("PDF Files (*.pdf)");
 }
 
+QString PdfReportExporter::ext() const
+{
+	return QString(".pdf");
+}
+
 void PdfReportExporter::doExport(QIODevice* device, 
 	ReportsPage::ReportType reportType, const ReportDataProvider* provider) const
 {
@@ -94,17 +99,13 @@ void PdfReportExporter::doExportBriefReport(QIODevice* device, const ReportDataP
 	// summary info
 	QFont summaryFont("Helvetica", 14);
 	const int summaryRowSpacing = 400;
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::FoundProblems, ReportDataKeys::FoundProblemsCount, &summaryFont);
+	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::FoundProblemsExceptInfo, ReportDataKeys::FoundProblemsExceptInfoCount, &summaryFont);
 
 	secondColumnRect = secondColumnRect.adjusted(0, summaryRowSpacing, 0, summaryRowSpacing);
 	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::Errors, ReportDataKeys::ErrorsCount, &summaryFont);
 
 	secondColumnRect = secondColumnRect.adjusted(0, summaryRowSpacing, 0, summaryRowSpacing);
 	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::Warnings, ReportDataKeys::WarningsCount, &summaryFont);
-
-	secondColumnRect = secondColumnRect.adjusted(0, summaryRowSpacing, 0, summaryRowSpacing);
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::Info, ReportDataKeys::InfoCount, &summaryFont);
-
 
 	const int spacingBetweenBlocks = 800;
 

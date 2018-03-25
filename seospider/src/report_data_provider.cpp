@@ -178,6 +178,15 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 				CrawlerEngine::ErrorCategory::warningCount() +
 				CrawlerEngine::ErrorCategory::errorCount();
 		}
+		case ReportDataKeys::FoundProblemsExceptInfo:
+		{
+			return QObject::tr("Found problems");
+		}
+		case ReportDataKeys::FoundProblemsExceptInfoCount:
+		{
+			return CrawlerEngine::ErrorCategory::warningCount() +
+				CrawlerEngine::ErrorCategory::errorCount();
+		}
 		case ReportDataKeys::Errors:
 		{
 			return QObject::tr("Errors");
