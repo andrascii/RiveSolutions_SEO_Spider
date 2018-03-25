@@ -45,7 +45,7 @@ ContentFrame::ContentFrame(QWidget* parent)
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::stateChanged,
 		this, &ContentFrame::onStateChanged));
 
-	VERIFY(connect(theApp->mainWindow(), SIGNAL(showDataPage(PageFactory::Page)),
+	VERIFY(connect(theApp->mainWindow(), SIGNAL(showPage(PageFactory::Page)),
 		this, SLOT(showPage(PageFactory::Page))));
 
 	QWidget* loadingWidget = new QWidget(this);
