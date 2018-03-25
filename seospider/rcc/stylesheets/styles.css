@@ -265,6 +265,14 @@ SeoSpider--ControlPanelWidget, QFrame#DynamicControls
 	padding: 0.3em;
 }
 
+SeoSpider--ControlPanelWidget QLineEdit
+{
+	min-width: 16em;
+	max-width: 16em;
+}
+
+/*/////////////////////////////// DynamicControls ///////////////////////////////*/
+
 QFrame#DynamicControls
 {
 	padding-right: 1em;
@@ -273,12 +281,18 @@ QFrame#DynamicControls
 QFrame#DynamicControls QToolButton
 {
 	border: none;
+	margin-left: 0.8em;
+	padding: 0.3em;
 }
 
-SeoSpider--ControlPanelWidget QLineEdit
+QFrame#DynamicControls QToolButton::menu-indicator
 {
-	min-width: 16em;
-	max-width: 16em;
+	width:0px;
+}
+
+QFrame#DynamicControls QToolButton:hover
+{
+	background-color: #EAEAEA;
 }
 
 QWidget#DynamicControls QPushButton
@@ -777,3 +791,6 @@ SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetDescription
 {
 	color: #262e35;
 }
+
+/*////////////////////////////// FilterInfoWidget ///////////////////////////////////////////*/
+
