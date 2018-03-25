@@ -223,11 +223,16 @@ void ReportsPage::crawlerStateChangedSlot(int state)
 
 void ReportsPage::doExport(IReportExporter* exporter) const
 {
-	const QString fileName = QFileDialog::getSaveFileName(0, exporter->description(), ".", exporter->fileMask());
+	QString fileName = QFileDialog::getSaveFileName(0, exporter->description(), ".", exporter->fileMask());
 
 	if (fileName.isEmpty())
 	{
 		return;
+	}
+
+	if (!fileName.endsWith(exporter->ext()))
+	{
+		fileName = fileName + exporter->ext();
 	}
 
 	QFile file(fileName);

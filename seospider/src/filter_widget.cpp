@@ -30,17 +30,53 @@ FilterInfoWidget::FilterInfoWidget(QWidget* parent)
 	layout->addWidget(m_title);
 	layout->addWidget(m_description);
 
+	m_description->setWordWrap(true);
+
 	setObjectName(QString("filterInfo"));
 }
 
-QLabel* FilterInfoWidget::title() const
+void FilterInfoWidget::setFilterInfo(const FilterInfo& filterInfo)
 {
-	return m_title;
+	m_filterInfo = filterInfo;
+
+	Preferences* preferences = theApp->preferences();
+	const QMetaObject& meta = preferences->staticMetaObject;
+
+	
+	disconnect(preferences);
+
+	foreach(const QByteArray& prop, filterInfo.props)
+	{
+		for (int i = 0; i < meta.propertyCount(); ++i)
+		{
+			const QMetaProperty& metaProperty = meta.property(i);
+			QByteArray iPropName = metaProperty.name();
+			if (iPropName == prop)
+			{
+				QByteArray signal = "2" + metaProperty.notifySignal().methodSignature();
+				VERIFY(connect(preferences, signal, this, SLOT(onPropertyChanged())));
+			}
+		}
+	}
+
+	onPropertyChanged();
 }
 
-QLabel* FilterInfoWidget::description() const
+void FilterInfoWidget::onPropertyChanged()
 {
-	return m_description;
+	Preferences* preferences = theApp->preferences();
+
+	m_title->setText(m_filterInfo.title);
+
+	QString description = m_filterInfo.description;
+
+	foreach(const QByteArray& prop, m_filterInfo.props)
+	{
+
+		description = description.arg(preferences->property(prop).toString());
+	}
+
+	m_description->setText(description);
 }
 
 FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent)
@@ -180,7 +216,7 @@ void FilterWidget::adjustSize()
 	m_splitter->setSizes(QList<int>() << summaryViewWidth << parentWidgetWidth - summaryViewWidth);
 }
 
-void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) const
+void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
 	Q_UNUSED(deselected);
 
@@ -192,16 +228,7 @@ void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected,
 
 	if (filterInfo != std::nullopt)
 	{
-		m_info->title()->setText(filterInfo->title);
-
-		QString description = filterInfo->description;
-
-		foreach(const QByteArray& prop, filterInfo->props)
-		{
-			description = description.arg(theApp->preferences()->property(prop).toString());
-		}
-
-		m_info->description()->setText(description);
+		m_info->setFilterInfo(filterInfo.value());
 	}
 
 	m_info->setVisible(filterInfo != std::nullopt);

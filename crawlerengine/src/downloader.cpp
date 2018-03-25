@@ -225,12 +225,23 @@ void Downloader::processReply(QNetworkReply* reply)
 	if (statusCode == Common::StatusCode::MovedPermanently301 ||
 		statusCode == Common::StatusCode::MovedTemporarily302)
 	{
-		const CrawlerRequest redirectKey{ redirectUrl, requestType };
-		loadHelper(redirectKey, requestId);
+		int urlsInChain = 0;
+		for (int i = 0; i < response->hopsChain.length(); ++i)
+		{
+			if (response->hopsChain[i].url() == redirectUrl)
+			{
+				urlsInChain += 1;
+			}
+		}
 
-		response->hopsChain.addHop(Hop{ reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs() });
-		
-		return;
+		if (urlsInChain < 2)
+		{
+			const CrawlerRequest redirectKey{ redirectUrl, requestType };
+			loadHelper(redirectKey, requestId);
+			response->hopsChain.addHop(Hop{ reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs() });
+
+			return;
+		}
 	}
 	
 	response->hopsChain.addHop(Hop(reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs()));

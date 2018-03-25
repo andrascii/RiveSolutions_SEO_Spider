@@ -10,6 +10,7 @@ class PdfReportExporter : public IReportExporter
 public:
 	virtual QString description() const override;
 	virtual QString fileMask() const override;
+	virtual QString ext() const override;
 
 	virtual void doExport(QIODevice* device, ReportsPage::ReportType reportType, 
 		const ReportDataProvider* provider) const override;

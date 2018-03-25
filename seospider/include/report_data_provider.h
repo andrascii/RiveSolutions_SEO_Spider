@@ -19,6 +19,8 @@ enum class ReportDataKeys
 	SiteLink,
 	FoundProblems,
 	FoundProblemsCount,
+	FoundProblemsExceptInfo,
+	FoundProblemsExceptInfoCount,
 	Errors,
 	ErrorsImage,
 	ErrorsCount,
