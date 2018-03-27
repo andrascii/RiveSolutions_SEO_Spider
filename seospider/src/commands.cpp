@@ -847,24 +847,4 @@ void GoToHTTPResponseCommand::execute()
 }
 
 
-QIcon GroupByErrorTypeCommand::icon() const
-{
-	return QIcon();
-}
-
-const char* GroupByErrorTypeCommand::description() const noexcept
-{
-	return "Group By Error Type";
-}
-
-void GroupByErrorTypeCommand::execute()
-{
-	theApp->mainWindow()->showContentFramePage(PageFactory::Page::SiteAuditPage);
-	
-	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::SiteAuditPage);
-	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
-
-	filterWidget->groupByErrorType();
-}
-
 }

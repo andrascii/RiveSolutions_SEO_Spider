@@ -1,6 +1,7 @@
 #include "summary_data_accessor_factory.h"
 #include "summary_data_accessor.h"
 #include "summary_data_accessor_pixmap_decorator.h"
+#include "data_collection_groups_factory.h"
 
 namespace SeoSpider
 {
@@ -31,7 +32,19 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 
 		case DataAccessorType::GroupedErrorFilterPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection, true));
+			std::function<bool(DCStorageDescription*, DCStorageDescription*)> sortPredicate([](DCStorageDescription* a, DCStorageDescription* b)
+			{
+				if (CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
+				{
+					return a->storageTypeDescriptionName < b->storageTypeDescriptionName;
+				}
+				else
+				{
+					return CrawlerEngine::ErrorCategory::level(a->storageType) > CrawlerEngine::ErrorCategory::level(b->storageType);
+				}
+			});
+
+			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection, sortPredicate));
 
 			summaryDataAccessor->addGroup(AuditGroup::OrderedErrorsGroup);
 

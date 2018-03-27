@@ -7,9 +7,10 @@
 namespace SeoSpider
 {
 
-SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, bool needSorting)
+SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection,
+	const std::function<bool(DCStorageDescription*, DCStorageDescription*)>& sortPredicate)
 	: m_sequencedDataCollection(sequencedDataCollection)
-	, m_needSortingFlag(needSorting)
+	, m_sortPredicate(sortPredicate)
 {
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
 		this, &SummaryDataAccessor::emitDataChanged));
@@ -20,7 +21,7 @@ SummaryDataAccessor::SummaryDataAccessor(const CrawlerEngine::SequencedDataColle
 	VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageReplaced,
 		this, &SummaryDataAccessor::emitDataChanged));
 
-	if (m_needSortingFlag)
+	if (m_sortPredicate)
 	{
 		VERIFY(connect(m_sequencedDataCollection, &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
 			this, &SummaryDataAccessor::sortGroups));
@@ -121,34 +122,9 @@ const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(Au
 	return nullptr;
 }
 
-Menu SummaryDataAccessor::menuFor(const QModelIndex& index) const
+Menu SummaryDataAccessor::menuFor(const QModelIndex&) const
 {
-	Menu menu;
-
-	if (!index.isValid())
-	{
-		return menu;
-	}
-
-	std::vector<ICommandPointer> commands;
-
-	if (isHeaderRow(index.row()))
-	{
-		DCStorageGroupDescriptionPtr group = m_groupRows.find(index.row()).value();
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportDataToXlsxCommand>(m_sequencedDataCollection, group->descriptions)));
-	}
-	else
-	{
-		DCStorageDescription* item = m_itemRows.find(index.row()).value();
-
-		menu.addItem(std::make_shared<CommandMenuItem>(
-			std::make_shared<ExportDataToXlsxCommand>(m_sequencedDataCollection, std::vector<DCStorageDescription>{ *item }))
-		);
-	}
-
-	menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<GroupByErrorTypeCommand>()));
-
-	return menu;
+	return Menu();
 }
 
 int SummaryDataAccessor::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
@@ -183,6 +159,10 @@ void SummaryDataAccessor::emitDataChanged(int, CrawlerEngine::StorageType storag
 
 void SummaryDataAccessor::sortGroups(int storageRow, CrawlerEngine::StorageType)
 {
+	//
+	// TODO: make it more clever
+	//
+
 	if (!storageRow)
 	{
 		QVector<DCStorageDescription*> itemRows;
@@ -192,17 +172,7 @@ void SummaryDataAccessor::sortGroups(int storageRow, CrawlerEngine::StorageType)
 			itemRows.append(row);
 		}
 
-		qSort(itemRows.begin(), itemRows.end(), [](DCStorageDescription* a, DCStorageDescription* b)
-		{
-			if (CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
-			{
-				return a->storageTypeDescriptionName < b->storageTypeDescriptionName;
-			}
-			else
-			{
-				return CrawlerEngine::ErrorCategory::level(a->storageType) > CrawlerEngine::ErrorCategory::level(b->storageType);
-			}
-		});
+		qSort(itemRows.begin(), itemRows.end(), m_sortPredicate);
 
 		m_itemRows.clear();
 

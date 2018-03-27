@@ -20,6 +20,8 @@
 #include "svg_renderer.h"
 #include "header_controls_container.h"
 #include "storage_exporter.h"
+#include "helpers.h"
+#include "filter_widget.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -121,6 +123,15 @@ void MainWindow::onChangeGroupingAuditInfo(QAction* action)
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 	actionRegistry.globalAction(s_switchAuditInfoFilterWidgetGroupingAction)->setIcon(action->icon());
+
+	theApp->mainWindow()->showContentFramePage(PageFactory::Page::SiteAuditPage);
+
+	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::SiteAuditPage);
+	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+
+	SummaryDataAccessorFactory::DataAccessorType dataAccessorType = qvariant_cast<SummaryDataAccessorFactory::DataAccessorType>(action->data());
+
+	filterWidget->switchFilterTo(dataAccessorType);
 }
 
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
@@ -131,7 +142,7 @@ void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageNam
 	applicationSettingsWidget->deleteLater();
 }
 
-void MainWindow::showMessageBoxDialog(const QString& title, 
+void MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
 	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons)
@@ -294,8 +305,14 @@ void MainWindow::createHeaderPageDependentActions()
 	ASSERT(menuButton);
 
 	QMenu* groupingMenu = new QMenu(menuButton);
-	groupingMenu->addAction(SvgRenderer::render(":/images/group-by-category.svg", 20, 20), "Group filters by error level");
-	groupingMenu->addAction(SvgRenderer::render(":/images/group-by-level.svg", 20, 20), "Group filters by category");
+
+	QAction* groupByCategoryAction = new QAction(SvgRenderer::render(":/images/group-by-category.svg", 20, 20), "Group filters by category");
+	QAction* groupByErrorLevelAction = new QAction(SvgRenderer::render(":/images/group-by-level.svg", 20, 20), "Group filters by error level");
+	groupByCategoryAction->setData(QVariant::fromValue(SummaryDataAccessorFactory::DataAccessorType::GroupedErrorFilterPage));
+	groupByCategoryAction->setData(QVariant::fromValue(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage));
+
+	groupingMenu->addAction(groupByCategoryAction);
+	groupingMenu->addAction(groupByErrorLevelAction);
 
 	menuButton->setMenu(groupingMenu);
 	menuButton->setPopupMode(QToolButton::InstantPopup);

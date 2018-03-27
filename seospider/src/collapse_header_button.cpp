@@ -8,7 +8,7 @@ namespace SeoSpider
 CollapseHeaderButton::CollapseHeaderButton(QWidget* parent)
 	: QToolButton(parent)
 	, m_direction(ArrowDirectionUp)
-	, m_pixmap(SvgRenderer::render(":/images/arrow-up.svg", 10, 10))
+	, m_pixmap(SvgRenderer::render(":/images/arrow-up.svg", 8, 8))
 {
 	VERIFY(connect(this, SIGNAL(rotateDegreeChanged()), this, SLOT(update())));
 
@@ -19,7 +19,7 @@ CollapseHeaderButton::CollapseHeaderButton(QWidget* parent)
 CollapseHeaderButton::CollapseHeaderButton(ArrowDirection direction, QWidget* parent)
 	: QToolButton(parent)
 	, m_direction(direction)
-	, m_pixmap(SvgRenderer::render(":/images/arrow-up.svg", 10, 10))
+	, m_pixmap(SvgRenderer::render(":/images/arrow-up.svg", 8, 8))
 {
 	VERIFY(connect(this, SIGNAL(rotateDegreeChanged()), this, SLOT(update())));
 
