@@ -42,4 +42,7 @@ static const QByteArray s_createXMLSitemapAction = "createXMLSitemapAction";
 static const QByteArray s_exportFilterDataAuditPageAction = "exportFilterDataAuditPageAction";
 static const QByteArray s_exportFilterDataAllResourcesPageAction = "exportFilterDataAllResourcesPageAction";
 
+// switch grouping audit info filter widget
+static const QByteArray s_switchAuditInfoFilterWidgetGroupingAction = "switchAuditInfoFilterWidgetGroupingAction";
+
 }

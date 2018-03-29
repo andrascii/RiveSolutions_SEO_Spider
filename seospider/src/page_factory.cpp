@@ -24,8 +24,8 @@ QWidget* PageFactory::createPage(Page page) const
 		case SiteAuditPage:
 		{
 			FilterWidget* siteAuditPage = new FilterWidget(new WebSiteDataWidget(nullptr));
-			siteAuditPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::GroupedErrorFilterPage);
-			siteAuditPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
+			siteAuditPage->addSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::GroupedErrorFilterPage);
+			siteAuditPage->addSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 
 			widget = siteAuditPage;
 
@@ -59,7 +59,7 @@ QWidget* PageFactory::createPage(Page page) const
 			resourceTables->setPageDataType(PageDataWidget::ServerResponseForPageType);
 			
 			FilterWidget* allResourcesPage = new FilterWidget(new WebSiteDataWidget(resourceTables));
-			allResourcesPage->setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
+			allResourcesPage->addSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
 		
 			widget = allResourcesPage;
 

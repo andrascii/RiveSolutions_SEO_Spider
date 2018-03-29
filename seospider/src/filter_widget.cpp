@@ -82,23 +82,11 @@ void FilterInfoWidget::onPropertyChanged()
 FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent)
 	: QFrame(parent)
 	, m_webSiteDataWidget(webSiteDataWidget)
-	//, m_summaryFilterTableViews(new QMap<SummaryDataAccessorFactory::DataAccessorType, TableView*>)
-	//, m_summaryFilterModels(new QMap<SummaryDataAccessorFactory::DataAccessorType, SummaryModel*>)
-	//, m_summaryFilterViewModels(new QMap<SummaryDataAccessorFactory::DataAccessorType, SummaryViewModel*>)
 	, m_stackedFilterWidget(new QStackedWidget(this))
-	//, m_summaryFilterTableView(new TableView(this, true))
-	//, m_summaryFilterModel(new SummaryModel(this))
-	//, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterModel, this))
 	, m_splitter(new QSplitter(this))
 	, m_isFirstShow(true)
 	, m_info(new FilterInfoWidget(this))
 {
-	//m_summaryFilterTableView->setModel(m_summaryFilterModel);
-	//m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);
-	//m_summaryFilterTableView->setSelectionMode(QAbstractItemView::SingleSelection);
-	//m_summaryFilterTableView->horizontalHeader()->hide();
-	//m_summaryFilterTableView->setObjectName("FilterWidgetTableView");
-
 	QVBoxLayout* vLayout = new QVBoxLayout(this);
 	QWidget* tableViewAndInfo = new QWidget(this);
 	tableViewAndInfo->setLayout(vLayout);
@@ -110,8 +98,6 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	m_splitter->setChildrenCollapsible(false);
 
 	m_splitter->addWidget(m_stackedFilterWidget);
-	//m_splitter->addWidget(m_webSiteDataWidget);
-	//m_splitter->addWidget(m_summaryFilterTableView);
 	m_splitter->addWidget(tableViewAndInfo);
 
 	QHBoxLayout* layout = new QHBoxLayout(this);
@@ -119,14 +105,13 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	layout->setMargin(0);
 	layout->addWidget(m_splitter);
 
-	//VERIFY(connect(m_summaryFilterTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-	//	this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
-
 	VERIFY(connect(theApp, &Application::mainWindowShown, this, &FilterWidget::adjustSize));
 }
 
-void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) 
+void FilterWidget::addSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType) 
 {
+	ASSERT(!m_dataAccessorIndices.contains(dataAccessorType));
+
 	createSummaryFilterTable(dataAccessorType);
 
 	CrawlerEngine::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
@@ -134,9 +119,8 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	m_summaryFilterModels[dataAccessorType]->setDataAccessor(summaryDataAccessor);
 	m_summaryFilterTableViews[dataAccessorType]->initSpans();
 	m_summaryFilterTableViews[dataAccessorType]->setContextMenu(new CommandMenu(summaryDataAccessor));
-	//selectFilter(CrawlerEngine::StorageType::HtmlResourcesStorageType);
 	
-	m_stackedFilterWidget->addWidget(m_summaryFilterTableViews[dataAccessorType]);
+	m_dataAccessorIndices[dataAccessorType] = m_stackedFilterWidget->addWidget(m_summaryFilterTableViews[dataAccessorType]);
 	m_stackedFilterWidget->setCurrentIndex(0);
 }
 
@@ -164,18 +148,9 @@ void FilterWidget::selectTab(int pageDataType)
 	m_webSiteDataWidget->pageDataWidget()->selectTab(static_cast<PageDataWidget::PageDataType>(pageDataType));
 }
 
-void FilterWidget::groupByErrorType()
+void FilterWidget::switchFilterTo(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
 {
-	//m_stackedFilterWidget->currentIndex() == 0 ? m_stackedFilterWidget->setCurrentIndex(1) : m_stackedFilterWidget->setCurrentIndex(0);
-
-	if(m_stackedFilterWidget->currentIndex() == 0)
-	{
-		m_stackedFilterWidget->setCurrentIndex(1);
-	}
-	else
-	{
-		m_stackedFilterWidget->setCurrentIndex(0);
-	}
+	m_stackedFilterWidget->setCurrentIndex(m_dataAccessorIndices[dataAccessorType]);
 }
 
 void FilterWidget::createSummaryFilterTable(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
@@ -197,7 +172,6 @@ void FilterWidget::createSummaryFilterTable(SummaryDataAccessorFactory::DataAcce
 
 	VERIFY(connect(summaryFilterTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
-
 }
 
 SummaryDataAccessorFactory::DataAccessorType FilterWidget::currentKey() const

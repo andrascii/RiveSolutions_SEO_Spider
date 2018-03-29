@@ -320,17 +320,4 @@ private:
 	int m_index;
 };
 
-class GroupByErrorTypeCommand : public ICommand
-{
-public:
-	GroupByErrorTypeCommand() {};
-
-	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
-	virtual void execute() override;
-
-private:
-
-};
-
 }

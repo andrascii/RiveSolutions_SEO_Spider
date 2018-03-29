@@ -37,11 +37,11 @@ class FilterWidget : public QFrame
 public:
 	FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent = nullptr);
 
-	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
+	void addSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
 	void selectFilter(CrawlerEngine::StorageType type) const;
 	void selectParsedPage(int row);
 	void selectTab(int pageDataType);
-	void groupByErrorType();
+	void switchFilterTo(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
 
 private:
 	void createSummaryFilterTable(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
@@ -58,10 +58,7 @@ private:
 	QMap<SummaryDataAccessorFactory::DataAccessorType, SummaryViewModel*> m_summaryFilterViewModels;
 
 	QStackedWidget* m_stackedFilterWidget;
-	//TableView* m_summaryFilterTableView;
-	//SummaryModel* m_summaryFilterModel;
-	//SummaryViewModel* m_summaryFilterViewModel;
-	
+	QMap<SummaryDataAccessorFactory::DataAccessorType, int> m_dataAccessorIndices;
 
 	QSplitter* m_splitter;
 	FilterInfoWidget* m_info;

@@ -4,6 +4,25 @@
 namespace SeoSpider
 {
 
+QWidget* HeaderToolButtonCreator::createControl(QAction* action)
+{
+	QToolButton* button = new QToolButton;
+
+	auto updateControl = [action, button]()
+	{
+		button->setToolTip(action->text());
+		button->setIcon(action->icon());
+		button->setEnabled(action->isEnabled());
+		button->setIconSize(QSize(Common::Helpers::pointsToPixels(20), Common::Helpers::pointsToPixels(20)));
+	};
+
+	VERIFY(QObject::connect(button, &QToolButton::clicked, action, &QAction::trigger));
+	VERIFY(QObject::connect(action, &QAction::changed, updateControl));
+
+	updateControl();
+	return button;
+}
+
 HeaderControlsContainer::HeaderControlsContainer()
 	: m_activePage(static_cast<PageFactory::Page>(-1))
 {
@@ -51,21 +70,7 @@ void HeaderControlsContainer::addWidget(QWidget* widget, PageFactory::Page page,
 
 QWidget* HeaderControlsContainer::createControl(QAction* action) const
 {
-	QToolButton* button = new QToolButton;
-
-	auto updateControl = [action, button]()
-	{
-		button->setToolTip(action->text());
-		button->setIcon(action->icon());
-		button->setEnabled(action->isEnabled());
-		button->setIconSize(QSize(Common::Helpers::pointsToPixels(20), Common::Helpers::pointsToPixels(20)));
-	};
-
-	VERIFY(connect(button, &QToolButton::clicked, action, &QAction::trigger));
-	VERIFY(connect(action, &QAction::changed, updateControl));
-
-	updateControl();
-	return button;
+	return HeaderToolButtonCreator::createControl(action);
 }
 
 QList<QWidget*> HeaderControlsContainer::controls(PageFactory::Page page) const

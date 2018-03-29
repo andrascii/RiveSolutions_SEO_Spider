@@ -20,6 +20,8 @@
 #include "svg_renderer.h"
 #include "header_controls_container.h"
 #include "storage_exporter.h"
+#include "helpers.h"
+#include "filter_widget.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -117,6 +119,21 @@ void MainWindow::exportFilterData()
 	StorageExporter::exportStorage(theApp->crawler()->sequencedDataCollection(), storages);
 }
 
+void MainWindow::onChangeGroupingAuditInfo(QAction* action)
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+	actionRegistry.globalAction(s_switchAuditInfoFilterWidgetGroupingAction)->setIcon(action->icon());
+
+	theApp->mainWindow()->showContentFramePage(PageFactory::Page::SiteAuditPage);
+
+	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::SiteAuditPage);
+	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+
+	SummaryDataAccessorFactory::DataAccessorType dataAccessorType = qvariant_cast<SummaryDataAccessorFactory::DataAccessorType>(action->data());
+
+	filterWidget->switchFilterTo(dataAccessorType);
+}
+
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
 {
 	ApplicationSettingsWidget* applicationSettingsWidget = new ApplicationSettingsWidget(this);
@@ -125,7 +142,7 @@ void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageNam
 	applicationSettingsWidget->deleteLater();
 }
 
-void MainWindow::showMessageBoxDialog(const QString& title, 
+void MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
 	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons)
@@ -138,9 +155,9 @@ void MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->show();
 }
 
-void MainWindow::showDataPagesWidget(PageFactory::Page page)
+void MainWindow::showContentFramePage(PageFactory::Page page)
 {
-	emit showDataPage(page);
+	emit showPage(page);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
@@ -279,12 +296,39 @@ void MainWindow::createHeaderPageDependentActions()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
+	// switch grouping action
+	QAction* switchAuditInfoFilterWidgetGroupingAction = actionRegistry.addGlobalAction(s_switchAuditInfoFilterWidgetGroupingAction,
+		SvgRenderer::render(QStringLiteral(":/images/group-by-level.svg"), 20, 20), tr("Change filters grouping"));
+
+	QToolButton* menuButton = qobject_cast<QToolButton*>(HeaderToolButtonCreator::createControl(switchAuditInfoFilterWidgetGroupingAction));
+
+	ASSERT(menuButton);
+
+	QMenu* groupingMenu = new QMenu(menuButton);
+
+	QAction* groupByCategoryAction = new QAction(SvgRenderer::render(":/images/group-by-category.svg", 20, 20), "Group filters by category");
+	QAction* groupByErrorLevelAction = new QAction(SvgRenderer::render(":/images/group-by-level.svg", 20, 20), "Group filters by error level");
+	groupByCategoryAction->setData(QVariant::fromValue(SummaryDataAccessorFactory::DataAccessorType::GroupedErrorFilterPage));
+	groupByCategoryAction->setData(QVariant::fromValue(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage));
+
+	groupingMenu->addAction(groupByCategoryAction);
+	groupingMenu->addAction(groupByErrorLevelAction);
+
+	menuButton->setMenu(groupingMenu);
+	menuButton->setPopupMode(QToolButton::InstantPopup);
+
+	theApp->headerControlsContainer()->addWidget(menuButton, PageFactory::Page::SiteAuditPage);
+
+	VERIFY(connect(groupingMenu, SIGNAL(triggered(QAction*)), this, SLOT(onChangeGroupingAuditInfo(QAction*))));
+
+	//////////////////////////////////////////////////////////////////////////
+
 	// export actions
 	QAction* exportFilterDataAuditPageAction = actionRegistry.addGlobalAction(s_exportFilterDataAuditPageAction,
-		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export Selected Filter Data to .xlsx File"));
+		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export selected filter data to .xlsx file"));
 
 	QAction* exportFilterDataAllResourcesAction = actionRegistry.addGlobalAction(s_exportFilterDataAllResourcesPageAction,
-		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export Selected Filter Data to .xlsx File"));
+		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export selected filter data to .xlsx file"));
 
 	exportFilterDataAuditPageAction->setDisabled(true);
 	exportFilterDataAllResourcesAction->setDisabled(true);

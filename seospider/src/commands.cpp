@@ -720,7 +720,7 @@ const char* GoToLinksOnThisPageCommand::description() const noexcept
 
 void GoToLinksOnThisPageCommand::execute()
 {
-	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+	theApp->mainWindow()->showContentFramePage(PageFactory::Page::AllResourcesPage);
 	
 	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
 	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
@@ -781,7 +781,7 @@ const char* GoToLinksToThisPageCommand::description() const noexcept
 
 void GoToLinksToThisPageCommand::execute()
 {
-	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+	theApp->mainWindow()->showContentFramePage(PageFactory::Page::AllResourcesPage);
 
 	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
 	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
@@ -826,7 +826,7 @@ const char* GoToHTTPResponseCommand::description() const noexcept
 
 void GoToHTTPResponseCommand::execute()
 {
-	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::AllResourcesPage);
+	theApp->mainWindow()->showContentFramePage(PageFactory::Page::AllResourcesPage);
 
 	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
 	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
@@ -846,25 +846,5 @@ void GoToHTTPResponseCommand::execute()
 	}
 }
 
-
-QIcon GroupByErrorTypeCommand::icon() const
-{
-	return QIcon();
-}
-
-const char* GroupByErrorTypeCommand::description() const noexcept
-{
-	return "Group By Error Type";
-}
-
-void GroupByErrorTypeCommand::execute()
-{
-	theApp->mainWindow()->showDataPagesWidget(PageFactory::Page::SiteAuditPage);
-	
-	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::SiteAuditPage);
-	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
-
-	filterWidget->groupByErrorType();
-}
 
 }

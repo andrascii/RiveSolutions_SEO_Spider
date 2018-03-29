@@ -11,7 +11,8 @@ class SummaryDataAccessor : public QObject, public ISummaryDataAccessor
 	Q_OBJECT
 
 public:
-	SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, bool needSorting = false);
+	SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, 
+		const std::function<bool(DCStorageDescription*, DCStorageDescription*)>& sortPredicate = std::function<bool(DCStorageDescription*, DCStorageDescription*)>());
 
 	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
@@ -36,7 +37,7 @@ signals:
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
-		
+
 private:
 	Q_SLOT void emitDataChanged(int, CrawlerEngine::StorageType);
 	Q_SLOT void sortGroups(int, CrawlerEngine::StorageType);
@@ -50,7 +51,7 @@ private:
 	QMap<int, DCStorageGroupDescriptionPtr> m_groupRows;
 	QMap<int, DCStorageDescription*> m_itemRows;
 
-	bool m_needSortingFlag;
+	std::function<bool(DCStorageDescription*, DCStorageDescription*)> m_sortPredicate;
 };
 
 }

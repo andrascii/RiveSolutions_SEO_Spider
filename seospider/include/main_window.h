@@ -24,7 +24,7 @@ signals:
 	void resized();
 	void moved();
 	void windowStateChanged();
-	void showDataPage(PageFactory::Page);
+	void showPage(PageFactory::Page);
 
 public slots:
 	void showSitemapCreatorDialog();
@@ -33,6 +33,7 @@ public slots:
 	void openFileThroughCmd(const QString& path);
 	void saveFileAndClearData();
 	void exportFilterData();
+	void onChangeGroupingAuditInfo(QAction* action);
 
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 
@@ -41,7 +42,7 @@ public slots:
 		MessageBoxDialog::Icon icon, 
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
-	void showDataPagesWidget(PageFactory::Page page);
+	void showContentFramePage(PageFactory::Page page);
 	
 protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
