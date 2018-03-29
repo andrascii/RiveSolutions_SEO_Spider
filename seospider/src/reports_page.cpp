@@ -166,7 +166,7 @@ void ReportsPage::changePlaceholderInContent(const QByteArray& placeholder, cons
 		case QVariant::String:
 		case QVariant::ByteArray:
 		{
-			content.replace("((" + placeholder + "))", value.toString().toLatin1());
+			content.replace("((" + placeholder + "))", value.toString().toUtf8());
 			break;
 		}
 		case QVariant::Pixmap:
