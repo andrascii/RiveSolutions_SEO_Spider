@@ -32,10 +32,12 @@ public:
 	void setShowAdditionalGrid(bool value) noexcept;
 	bool showAdditionalGrid() const noexcept;
 
-	Q_SLOT void initSpans();
-
 	// IView impl
 	virtual int viewportRowCapacity() const noexcept override;
+
+public slots:
+	void adjustColumnSize();
+	void initSpans();
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;
@@ -46,11 +48,11 @@ protected:
 	virtual void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 	virtual void rowsInserted(const QModelIndex &parent, int first, int last) override;
 
-private:
-	Q_SLOT void adjustColumnSize();
-	Q_SLOT void onAboutRepaintItems(const QModelIndexList& modelIndexes);
-	Q_SLOT void applyRowHeight();
+private slots:
+	void onAboutRepaintItems(const QModelIndexList& modelIndexes);
+	void applyRowHeight();
 
+private:
 	void applyRowHeightToRowRange(int first, int last);
 
 private:

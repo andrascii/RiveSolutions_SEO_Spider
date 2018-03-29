@@ -42,7 +42,6 @@ void FilterInfoWidget::setFilterInfo(const FilterInfo& filterInfo)
 	Preferences* preferences = theApp->preferences();
 	const QMetaObject& meta = preferences->staticMetaObject;
 
-	
 	disconnect(preferences);
 
 	foreach(const QByteArray& prop, filterInfo.props)
@@ -72,7 +71,6 @@ void FilterInfoWidget::onPropertyChanged()
 
 	foreach(const QByteArray& prop, m_filterInfo.props)
 	{
-
 		description = description.arg(preferences->property(prop).toString());
 	}
 
@@ -119,7 +117,7 @@ void FilterWidget::addSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	m_summaryFilterModels[dataAccessorType]->setDataAccessor(summaryDataAccessor);
 	m_summaryFilterTableViews[dataAccessorType]->initSpans();
 	m_summaryFilterTableViews[dataAccessorType]->setContextMenu(new CommandMenu(summaryDataAccessor));
-	
+
 	m_dataAccessorIndices[dataAccessorType] = m_stackedFilterWidget->addWidget(m_summaryFilterTableViews[dataAccessorType]);
 	m_stackedFilterWidget->setCurrentIndex(0);
 }
@@ -151,6 +149,9 @@ void FilterWidget::selectTab(int pageDataType)
 void FilterWidget::switchFilterTo(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
 {
 	m_stackedFilterWidget->setCurrentIndex(m_dataAccessorIndices[dataAccessorType]);
+
+	TableView* tableViewFilterWidget = Common::Helpers::fast_cast<TableView*>(m_stackedFilterWidget->currentWidget());
+	tableViewFilterWidget->adjustColumnSize();
 }
 
 void FilterWidget::createSummaryFilterTable(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)

@@ -165,6 +165,8 @@ void SummaryDataAccessor::sortGroups(int storageRow, CrawlerEngine::StorageType)
 
 	if (!storageRow)
 	{
+		emit beginClearData();
+
 		QVector<DCStorageDescription*> itemRows;
 
 		foreach(auto row, m_itemRows)
@@ -180,6 +182,8 @@ void SummaryDataAccessor::sortGroups(int storageRow, CrawlerEngine::StorageType)
 		{
 			m_itemRows[modelRowsCount] = itemRows.at(modelRowsCount - 1);
 		}
+
+		emit endClearData();
 	}
 }
 
