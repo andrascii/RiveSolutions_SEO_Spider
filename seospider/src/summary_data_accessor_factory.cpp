@@ -2,6 +2,7 @@
 #include "summary_data_accessor.h"
 #include "summary_data_accessor_pixmap_decorator.h"
 #include "data_collection_groups_factory.h"
+#include "summary_data_set.h"
 
 namespace SeoSpider
 {
@@ -11,21 +12,22 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 	ASSERT(accessorType > DataAccessorType::DataAccessorTypeBegin &&
 		accessorType < DataAccessorType::DataAccessorTypeEnd);
 
+	SummaryDataSet* dataSet = new SummaryDataSet(dataCollection);
 	ISummaryDataAccessor* summaryDataAccessor = nullptr;
 
 	switch (accessorType)
 	{
 		case DataAccessorType::ErrorsFilterPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection));
+			dataSet->addGroup(AuditGroup::LinkAuditGroup);
+			dataSet->addGroup(AuditGroup::PageProblemsAuditGroup);
+			dataSet->addGroup(AuditGroup::OnPageAuditGroup);
+			dataSet->addGroup(AuditGroup::NotIndexedPagesGroup);
+			dataSet->addGroup(AuditGroup::H1AuditGroup);
+			dataSet->addGroup(AuditGroup::H2AuditGroup);
+			dataSet->addGroup(AuditGroup::ImageAuditGroup);
 
-			summaryDataAccessor->addGroup(AuditGroup::LinkAuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::PageProblemsAuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::OnPageAuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::NotIndexedPagesGroup);
-			summaryDataAccessor->addGroup(AuditGroup::H1AuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::H2AuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::ImageAuditGroup);
+			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataSet));
 
 			return summaryDataAccessor;
 		}
@@ -44,19 +46,20 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 				}
 			});
 
-			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection, sortPredicate));
+			dataSet->addGroup(AuditGroup::OrderedErrorsGroup);
+			dataSet->addSortingPredicate(std::move(sortPredicate));
 
-			summaryDataAccessor->addGroup(AuditGroup::OrderedErrorsGroup);
+			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataSet));
 
 			return summaryDataAccessor;
 		}
 
 		case DataAccessorType::AllResourcesPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessor(dataCollection);
+			dataSet->addGroup(AuditGroup::InternalResourcesGroup);
+			dataSet->addGroup(AuditGroup::ExternalResourcesGroup);
 
-			summaryDataAccessor->addGroup(AuditGroup::InternalResourcesGroup);
-			summaryDataAccessor->addGroup(AuditGroup::ExternalResourcesGroup);
+			summaryDataAccessor = new SummaryDataAccessor(dataSet);
 
 			return summaryDataAccessor;
 		}

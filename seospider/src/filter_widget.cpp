@@ -13,6 +13,8 @@
 #include "action_keys.h"
 #include "main_window.h"
 #include "content_frame.h"
+#include "deferred_call.h"
+#include "filter_table_selection_model.h"
 
 namespace SeoSpider
 {
@@ -112,11 +114,19 @@ void FilterWidget::addSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 
 	createSummaryFilterTable(dataAccessorType);
 
-	CrawlerEngine::SequencedDataCollection* guiStorage = theApp->sequencedDataCollection();
-	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, guiStorage);
-	m_summaryFilterModels[dataAccessorType]->setDataAccessor(summaryDataAccessor);
-	m_summaryFilterTableViews[dataAccessorType]->initSpans();
-	m_summaryFilterTableViews[dataAccessorType]->setContextMenu(new CommandMenu(summaryDataAccessor));
+	CrawlerEngine::SequencedDataCollection* sequencedDataCollection = theApp->sequencedDataCollection();
+	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, sequencedDataCollection);
+
+	SummaryModel* summaryModel = m_summaryFilterModels[dataAccessorType];
+	TableView* filterTable = m_summaryFilterTableViews[dataAccessorType];
+
+	summaryModel->setDataAccessor(summaryDataAccessor);
+	filterTable->initSpans();
+	filterTable->setContextMenu(new CommandMenu(summaryDataAccessor));
+	filterTable->setSelectionModel(new FilterTableSelectionModel(summaryModel));
+
+	VERIFY(connect(filterTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 
 	m_dataAccessorIndices[dataAccessorType] = m_stackedFilterWidget->addWidget(m_summaryFilterTableViews[dataAccessorType]);
 	m_stackedFilterWidget->setCurrentIndex(0);
@@ -125,7 +135,10 @@ void FilterWidget::addSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 void FilterWidget::selectFilter(CrawlerEngine::StorageType type) const
 {
 	const int row = m_summaryFilterModels[currentKey()]->dataAccessor()->rowByStorageType(type);
-	m_summaryFilterTableViews[currentKey()]->selectionModel()->select(m_summaryFilterModels[currentKey()]->index(row, 0), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+
+	m_summaryFilterTableViews[currentKey()]->selectionModel()->select(
+		m_summaryFilterModels[currentKey()]->index(row, 0), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows
+	);
 }
 
 void FilterWidget::selectParsedPage(int row)
@@ -149,9 +162,6 @@ void FilterWidget::selectTab(int pageDataType)
 void FilterWidget::switchFilterTo(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
 {
 	m_stackedFilterWidget->setCurrentIndex(m_dataAccessorIndices[dataAccessorType]);
-
-	TableView* tableViewFilterWidget = Common::Helpers::fast_cast<TableView*>(m_stackedFilterWidget->currentWidget());
-	tableViewFilterWidget->adjustColumnSize();
 }
 
 void FilterWidget::createSummaryFilterTable(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
@@ -170,9 +180,6 @@ void FilterWidget::createSummaryFilterTable(SummaryDataAccessorFactory::DataAcce
 	summaryFilterTableView->setObjectName("FilterWidgetTableView");
 
 	m_summaryFilterTableViews[dataAccessorType] = summaryFilterTableView;
-
-	VERIFY(connect(summaryFilterTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
 }
 
 SummaryDataAccessorFactory::DataAccessorType FilterWidget::currentKey() const
@@ -208,7 +215,6 @@ void FilterWidget::onSummaryViewSelectionChanged(const QItemSelection& selected,
 
 	m_info->setVisible(filterInfo != std::nullopt);
 	m_webSiteDataWidget->setStorageAdapterType(category);
-
 
 	QByteArray exportFilterDataActionKey;
 	ActionRegistry& actionRegistry = ActionRegistry::instance();

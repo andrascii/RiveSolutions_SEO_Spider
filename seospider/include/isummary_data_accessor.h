@@ -28,11 +28,14 @@ public:
 	virtual const DCStorageDescription* storageDescription(CrawlerEngine::StorageType type) const noexcept = 0;
 	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept = 0;
 	virtual int rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept = 0;
+	virtual void selectRow(int row) noexcept = 0;
+	virtual int selectedRow() const noexcept = 0;
 
 	// signals
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const = 0;
 	virtual void beginClearData() const = 0;
 	virtual void endClearData() const = 0;
+	virtual void rowSelected(int row) = 0;
 };
 
 }

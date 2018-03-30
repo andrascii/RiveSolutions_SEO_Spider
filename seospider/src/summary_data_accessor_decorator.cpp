@@ -95,6 +95,16 @@ Menu SummaryDataAccessorDecorator::menuFor(const QModelIndex& index) const
 	return m_summaryDataAccessor->menuFor(index);
 }
 
+void SummaryDataAccessorDecorator::selectRow(int row) noexcept
+{
+	return m_summaryDataAccessor->selectRow(row);
+}
+
+int SummaryDataAccessorDecorator::selectedRow() const noexcept
+{
+	return m_summaryDataAccessor->selectedRow();
+}
+
 int SummaryDataAccessorDecorator::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
 {
 	return m_summaryDataAccessor->rowByStorageType(storageType);

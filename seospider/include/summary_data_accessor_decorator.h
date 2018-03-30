@@ -30,11 +30,14 @@ public:
 	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept override;
 	virtual int rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept override;
 	virtual Menu menuFor(const QModelIndex& index) const override;
+	virtual void selectRow(int row) noexcept override;
+	virtual int selectedRow() const noexcept override;
 
 signals:
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
+	virtual void rowSelected(int row) override;
 
 private:
 	std::unique_ptr<ISummaryDataAccessor> m_summaryDataAccessor;

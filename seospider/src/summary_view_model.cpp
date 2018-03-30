@@ -20,6 +20,8 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();
+
+	connect(model, &SummaryModel::internalDataChanged, this, &SummaryViewModel::onDataWereReset);
 }
 
 int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
@@ -103,6 +105,11 @@ int SummaryViewModel::textAlignment(const QModelIndex& index) const noexcept
 	}
 
 	return Qt::AlignLeft;
+}
+
+void SummaryViewModel::onDataWereReset()
+{
+	AbstractViewModel::invalidateItemViewRendererCache();
 }
 
 void SummaryViewModel::initializeRenderers()
