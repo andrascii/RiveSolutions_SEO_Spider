@@ -9,48 +9,113 @@ namespace SeoSpider
 {
 
 SummaryDataAccessor::SummaryDataAccessor(SummaryDataSet* dataSet)
-	: m_dataSet(dataSet) 
-	, m_selectedRow(-1)
+	: m_currentDataSet(dataSet)
+	, m_dataSet(dataSet)
+	, m_sortableDataSet(nullptr)
+	, m_selectedRow(std::make_pair(-1, CrawlerEngine::StorageType::BeginEnumStorageType))
 {
-	m_dataSet->setParent(this);
+	m_currentDataSet->setParent(this);
 
-	VERIFY(connect(m_dataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
+	VERIFY(connect(m_currentDataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::parsedPageAdded,
 		this, &SummaryDataAccessor::emitDataChanged));
 
-	VERIFY(connect(m_dataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::parsedPageRemoved,
+	VERIFY(connect(m_currentDataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::parsedPageRemoved,
 		this, &SummaryDataAccessor::emitDataChanged));
 
-	VERIFY(connect(m_dataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::parsedPageReplaced,
+	VERIFY(connect(m_currentDataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::parsedPageReplaced,
 		this, &SummaryDataAccessor::emitDataChanged));
 
-	VERIFY(connect(m_dataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::beginClearData,
+	VERIFY(connect(m_currentDataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::beginClearData,
 		this, &SummaryDataAccessor::beginClearData));
 
-	VERIFY(connect(m_dataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::endClearData,
+	VERIFY(connect(m_currentDataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::endClearData,
 		this, &SummaryDataAccessor::endClearData));
+}
 
-	VERIFY(connect(m_dataSet, &SummaryDataSet::sortingStarted, this, &SummaryDataAccessor::beginClearData));
-	VERIFY(connect(m_dataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData));
+void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
+{
+	if (m_sortableDataSet)
+	{
+		disconnect(m_sortableDataSet, &SummaryDataSet::sortingStarted, this, &SummaryDataAccessor::beginClearData);
+		disconnect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData);
+	}
+
+	m_sortableDataSet = dataSet;
+
+	for (int i = 0; i < m_currentDataSet->rowCount(); ++i)
+	{
+		const DCStorageDescription* currentDataSetStorageDescription = 
+			m_currentDataSet->storageDescriptionByRow(i);
+
+		if (!currentDataSetStorageDescription)
+		{
+			continue;
+		}
+
+		const DCStorageDescription* sortableDataSetStorageDescription = 
+			m_sortableDataSet->storageDescription(currentDataSetStorageDescription->storageType);
+
+		ASSERT(sortableDataSetStorageDescription);
+	}
+
+	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingStarted, this, &SummaryDataAccessor::beginClearData));
+	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData));
+	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::validateSelectedRow));
+}
+
+void SummaryDataAccessor::enableSortableDataSet() noexcept
+{
+	if (m_currentDataSet != m_sortableDataSet)
+	{
+		emit beginClearData();
+
+		m_currentDataSet = m_sortableDataSet;
+
+		emit endClearData();
+		emit dataSetChanged();
+
+		validateSelectedRow();
+	}
+}
+
+void SummaryDataAccessor::enablePlainDataSet() noexcept
+{
+	if (m_currentDataSet != m_dataSet)
+	{
+		emit beginClearData();
+
+		m_currentDataSet = m_dataSet;
+
+		emit endClearData();
+		emit dataSetChanged();
+
+		validateSelectedRow();
+	}
+}
+
+bool SummaryDataAccessor::hasSortableDataSet() const noexcept
+{
+	return m_sortableDataSet != nullptr;
 }
 
 int SummaryDataAccessor::columnCount() const noexcept
 {
-	return m_dataSet->columnCount();
+	return m_currentDataSet->columnCount();
 }
 
 int SummaryDataAccessor::rowCount() const noexcept
 {
-	return m_dataSet->rowCount();
+	return m_currentDataSet->rowCount();
 }
 
 void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
 {
-	m_dataSet->addGroup(group);
+	m_currentDataSet->addGroup(group);
 }
 
 const CrawlerEngine::SequencedDataCollection* SummaryDataAccessor::sequencedDataCollection() const noexcept
 {
-	return m_dataSet->sequencedDataCollection();
+	return m_currentDataSet->sequencedDataCollection();
 }
 
 QObject* SummaryDataAccessor::qobject() noexcept
@@ -60,22 +125,22 @@ QObject* SummaryDataAccessor::qobject() noexcept
 
 const DCStorageDescription* SummaryDataAccessor::storageDescriptionByRow(int row) const noexcept
 {
-	return m_dataSet->storageDescriptionByRow(row);
+	return m_currentDataSet->storageDescriptionByRow(row);
 }
 
 const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescriptionByRow(int row) const noexcept
 {
-	return m_dataSet->storageGroupDescriptionByRow(row);
+	return m_currentDataSet->storageGroupDescriptionByRow(row);
 }
 
 const DCStorageDescription* SummaryDataAccessor::storageDescription(CrawlerEngine::StorageType type) const noexcept
 {
-	return m_dataSet->storageDescription(type);
+	return m_currentDataSet->storageDescription(type);
 }
 
 const DCStorageGroupDescription* SummaryDataAccessor::storageGroupDescription(AuditGroup group) const noexcept
 {
-	return m_dataSet->storageGroupDescription(group);
+	return m_currentDataSet->storageGroupDescription(group);
 }
 
 Menu SummaryDataAccessor::menuFor(const QModelIndex&) const
@@ -103,21 +168,26 @@ int SummaryDataAccessor::rowByStorageType(CrawlerEngine::StorageType storageType
 
 void SummaryDataAccessor::selectRow(int row) noexcept
 {
-	if (m_selectedRow == row)
+	if (row == -1)
 	{
 		return;
 	}
 
 	ASSERT(!isHeaderRow(row));
 
-	m_selectedRow = row;
+	const DCStorageDescription* storageDescription = m_currentDataSet->storageDescriptionByRow(row);
 
-	emit rowSelected(m_selectedRow);
+	ASSERT(storageDescription);
+
+	m_selectedRow.first = row;
+	m_selectedRow.second = storageDescription->storageType;
+
+	emit rowSelected(m_selectedRow.first);
 }
 
 int SummaryDataAccessor::selectedRow() const noexcept
 {
-	return m_selectedRow;
+	return m_selectedRow.first;
 }
 
 void SummaryDataAccessor::emitDataChanged(int, CrawlerEngine::StorageType storageType)
@@ -132,6 +202,23 @@ void SummaryDataAccessor::emitDataChanged(int, CrawlerEngine::StorageType storag
 	emit dataChanged(row, 1, Qt::DisplayRole);
 }
 
+void SummaryDataAccessor::validateSelectedRow()
+{
+	if (m_selectedRow.first == -1)
+	{
+		return;
+	}
+
+	const int row = rowByStorageType(m_selectedRow.second);
+
+	if (row == -1)
+	{
+		return;
+	}
+
+	selectRow(row);
+}
+
 Qt::ItemFlags SummaryDataAccessor::flags(const QModelIndex& index) const noexcept
 {
 	if (isHeaderRow(index.row()))
@@ -144,22 +231,22 @@ Qt::ItemFlags SummaryDataAccessor::flags(const QModelIndex& index) const noexcep
 
 QSize SummaryDataAccessor::span(const QModelIndex& index) const noexcept
 {
-	return m_dataSet->span(index);
+	return m_currentDataSet->span(index);
 }
 
 QVariant SummaryDataAccessor::item(const QModelIndex& index) const noexcept
 {
-	return m_dataSet->item(index);
+	return m_currentDataSet->item(index);
 }
 
 bool SummaryDataAccessor::isHeaderRow(int row) const noexcept
 {
-	return m_dataSet->isHeaderRow(row);
+	return m_currentDataSet->isHeaderRow(row);
 }
 
 StorageAdapterType SummaryDataAccessor::itemCategory(const QModelIndex& index) const noexcept
 {
-	return m_dataSet->itemCategory(index);
+	return m_currentDataSet->itemCategory(index);
 }
 
 const QPixmap& SummaryDataAccessor::pixmap(const QModelIndex& index) const noexcept

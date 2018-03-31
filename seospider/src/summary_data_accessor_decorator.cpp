@@ -7,12 +7,27 @@ namespace SeoSpider
 SummaryDataAccessorDecorator::SummaryDataAccessorDecorator(ISummaryDataAccessor* dataAccessor)
 	: m_summaryDataAccessor(dataAccessor)
 {
-	VERIFY(connect(dataAccessor->qobject(), SIGNAL(dataChanged(int, int, Qt::ItemDataRole)), 
-		this, SIGNAL(dataChanged(int, int, Qt::ItemDataRole))));
+	establishSignalToSignalConnections();
+}
 
-	VERIFY(connect(dataAccessor->qobject(), SIGNAL(beginClearData()), this, SIGNAL(beginClearData())));
+void SummaryDataAccessorDecorator::setSortableDataSet(SummaryDataSet* dataSet) noexcept
+{
+	m_summaryDataAccessor->setSortableDataSet(dataSet);
+}
 
-	VERIFY(connect(dataAccessor->qobject(), SIGNAL(endClearData()), this, SIGNAL(endClearData())));
+void SummaryDataAccessorDecorator::enableSortableDataSet() noexcept
+{
+	m_summaryDataAccessor->enableSortableDataSet();
+}
+
+void SummaryDataAccessorDecorator::enablePlainDataSet() noexcept
+{
+	m_summaryDataAccessor->enablePlainDataSet();
+}
+
+bool SummaryDataAccessorDecorator::hasSortableDataSet() const noexcept
+{
+	return m_summaryDataAccessor->hasSortableDataSet();
 }
 
 StorageAdapterType SummaryDataAccessorDecorator::itemCategory(const QModelIndex& index) const noexcept
@@ -108,6 +123,57 @@ int SummaryDataAccessorDecorator::selectedRow() const noexcept
 int SummaryDataAccessorDecorator::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
 {
 	return m_summaryDataAccessor->rowByStorageType(storageType);
+}
+
+void SummaryDataAccessorDecorator::establishSignalToSignalConnections()
+{
+	const auto collectSignals = [](const QMetaObject* metaObject, std::vector<QMetaMethod>& signalsCollection)
+	{
+		for (int i = 0; i < metaObject->methodCount(); ++i)
+		{
+			QMetaMethod metaMethod = metaObject->method(i);
+
+			if (metaMethod.methodType() != QMetaMethod::Signal)
+			{
+				continue;
+			}
+
+			signalsCollection.push_back(metaMethod);
+		}
+	};
+
+	const QMetaObject* thisMetaObject = metaObject();
+	const QMetaObject* decoratedDataAccessorMetaObject = m_summaryDataAccessor->qobject()->metaObject();
+
+	std::vector<QMetaMethod> thisSignals;
+	std::vector<QMetaMethod> decoratedDataAccessorSignals;
+
+	collectSignals(thisMetaObject, thisSignals);
+	collectSignals(decoratedDataAccessorMetaObject, decoratedDataAccessorSignals);
+
+	ASSERT(thisSignals.size() == decoratedDataAccessorSignals.size());
+
+	for (std::size_t i = 0; i < thisSignals.size(); ++i)
+	{
+		QByteArray methodSignature = thisSignals[i].methodSignature();
+
+		if (methodSignature.contains("destroyed") || methodSignature.contains("objectNameChanged"))
+		{
+			continue;
+		}
+
+		for (std::size_t j = 0; j < decoratedDataAccessorSignals.size(); ++j)
+		{
+			QByteArray decoratedDataAccessorSignal = decoratedDataAccessorSignals[j].methodSignature();
+
+			if (methodSignature == decoratedDataAccessorSignal)
+			{
+				QByteArray signal = "2" + methodSignature;
+
+				VERIFY(connect(m_summaryDataAccessor->qobject(), signal, this, signal));
+			}
+		}
+	}
 }
 
 }

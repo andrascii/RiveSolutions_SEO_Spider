@@ -26,9 +26,21 @@ void FilterTableSelectionModel::onAboutSelectionChanged(const QItemSelection& se
 		return;
 	}
 
-	const QModelIndex index = selected.size() ? selected.indexes()[0] : QModelIndex();
+	const QModelIndexList indexes = selected.indexes();
+	const QModelIndex index = !indexes.isEmpty() ? indexes[0] : QModelIndex();
 
-	m_dataAccessor->selectRow(index.row());
+	const auto uniqueRowNumberPredicate = [index](const QModelIndex& modelIndex)
+	{
+		return modelIndex.row() == index.row();
+	};
+
+	ASSERT(std::all_of(indexes.begin(), indexes.end(), uniqueRowNumberPredicate));
+
+	if (index.row() != m_dataAccessor->selectedRow())
+	{
+		const QSignalBlocker signalBlocker(m_dataAccessor->qobject());
+		m_dataAccessor->selectRow(index.row());
+	}
 }
 
 void FilterTableSelectionModel::onSummaryDataAccessorSelectionChanged(int row)

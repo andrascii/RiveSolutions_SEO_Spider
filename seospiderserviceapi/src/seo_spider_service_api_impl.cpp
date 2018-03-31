@@ -59,6 +59,13 @@ private:
 
 void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
 {
+#ifdef QT_DEBUG
+	if (msg.contains("signal not found"))
+	{
+		type = QtCriticalMsg;
+	}
+#endif
+
 	switch (type)
 	{
 	case QtDebugMsg:

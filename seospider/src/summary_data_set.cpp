@@ -158,7 +158,7 @@ const DCStorageGroupDescription* SummaryDataSet::storageGroupDescription(AuditGr
 void SummaryDataSet::sortItems(int storageRow, CrawlerEngine::StorageType)
 {
 	// we can sort only one group
-	DEBUG_ASSERT(m_allGroups.size() == 1);
+	DEBUG_ASSERT(isSortable());
 
 	if (!storageRow)
 	{
@@ -182,6 +182,16 @@ void SummaryDataSet::sortItems(int storageRow, CrawlerEngine::StorageType)
 
 		emit sortingEnded();
 	}
+}
+
+bool SummaryDataSet::isSortable() const noexcept
+{
+	return m_allGroups.size() == 1;
+}
+
+bool SummaryDataSet::isSortingEnabled() const noexcept
+{
+	return static_cast<bool>(m_sortPredicate);
 }
 
 }

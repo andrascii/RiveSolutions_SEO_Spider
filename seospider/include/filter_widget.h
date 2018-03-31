@@ -37,28 +37,24 @@ class FilterWidget : public QFrame
 public:
 	FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent = nullptr);
 
-	void addSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
+	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
 	void selectFilter(CrawlerEngine::StorageType type) const;
 	void selectParsedPage(int row);
 	void selectTab(int pageDataType);
-	void switchFilterTo(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
+	void enableSortableFilter();
+	void enablePlainFilter();
 
-private:
-	void createSummaryFilterTable(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
-	SummaryDataAccessorFactory::DataAccessorType currentKey() const;
-
-	Q_SLOT void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-	Q_SLOT void adjustSize();
+private slots:
+	void adjustSize();
+	void reinitFilterTableSpans();
+	void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
 	WebSiteDataWidget* m_webSiteDataWidget;
 
-	QMap<SummaryDataAccessorFactory::DataAccessorType, TableView*> m_summaryFilterTableViews;
-	QMap<SummaryDataAccessorFactory::DataAccessorType, SummaryModel*> m_summaryFilterModels;
-	QMap<SummaryDataAccessorFactory::DataAccessorType, SummaryViewModel*> m_summaryFilterViewModels;
-
-	QStackedWidget* m_stackedFilterWidget;
-	QMap<SummaryDataAccessorFactory::DataAccessorType, int> m_dataAccessorIndices;
+	TableView* m_summaryFilterTableView;
+	SummaryModel* m_summaryFilterModel;
+	SummaryViewModel* m_summaryFilterViewModel;
 
 	QSplitter* m_splitter;
 	FilterInfoWidget* m_info;

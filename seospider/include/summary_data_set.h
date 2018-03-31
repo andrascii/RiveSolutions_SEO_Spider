@@ -21,6 +21,8 @@ public:
 	SummaryDataSet(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
 	SummaryDataSet(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, QList<AuditGroup> auditGroups);
 
+	bool isSortable() const noexcept;
+	bool isSortingEnabled() const noexcept;
 	int columnCount() const noexcept;
 	int rowCount() const noexcept;
 	void addSortingPredicate(std::function<bool(DCStorageDescription*, DCStorageDescription*)>&& predicate);

@@ -15,6 +15,12 @@ class SummaryDataAccessor : public QObject, public ISummaryDataAccessor
 public:
 	SummaryDataAccessor(SummaryDataSet* dataSet);
 
+	virtual void setSortableDataSet(SummaryDataSet* dataSet) noexcept override;
+	virtual void enableSortableDataSet() noexcept override;
+	virtual void enablePlainDataSet() noexcept override;
+	virtual bool hasSortableDataSet() const noexcept override;
+	virtual void selectRow(int row) noexcept override;
+	virtual int selectedRow() const noexcept override;
 	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 	virtual bool isHeaderRow(int row) const noexcept override;
@@ -32,21 +38,23 @@ public:
 	virtual const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept override;
 	virtual Menu menuFor(const QModelIndex& index) const override;
 	virtual int rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept override;
-	virtual void selectRow(int row) noexcept override;
-	virtual int selectedRow() const noexcept override;
 
 signals:
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
 	virtual void rowSelected(int row) override;
+	virtual void dataSetChanged() const override;
+
+private slots:
+	void emitDataChanged(int, CrawlerEngine::StorageType);
+	void validateSelectedRow();
 
 private:
-	Q_SLOT void emitDataChanged(int, CrawlerEngine::StorageType);
-
-private:
+	SummaryDataSet* m_currentDataSet;
 	SummaryDataSet* m_dataSet;
-	int m_selectedRow;
+	SummaryDataSet* m_sortableDataSet;
+	std::pair<int, CrawlerEngine::StorageType> m_selectedRow;
 };
 
 }
