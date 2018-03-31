@@ -61,6 +61,7 @@ void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingStarted, this, &SummaryDataAccessor::beginClearData));
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData));
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::validateSelectedRow));
+	VERIFY(connect(this, &SummaryDataAccessor::endClearData, this, &SummaryDataAccessor::saveSelection));
 }
 
 void SummaryDataAccessor::enableSortableDataSet() noexcept
@@ -217,6 +218,16 @@ void SummaryDataAccessor::validateSelectedRow()
 	}
 
 	selectRow(row);
+}
+
+void SummaryDataAccessor::saveSelection()
+{
+	if (m_selectedRow.first == -1)
+	{
+		return;
+	}
+
+	emit rowSelected(m_selectedRow.first);
 }
 
 Qt::ItemFlags SummaryDataAccessor::flags(const QModelIndex& index) const noexcept
