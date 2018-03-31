@@ -49,7 +49,7 @@ signals:
 private slots:
 	void emitDataChanged(int, CrawlerEngine::StorageType);
 	void validateSelectedRow();
-	void saveSelection();
+	void restoreSelection();
 
 private:
 	SummaryDataSet* m_currentDataSet;

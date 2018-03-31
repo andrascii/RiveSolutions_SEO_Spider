@@ -45,7 +45,14 @@ void FilterTableSelectionModel::onAboutSelectionChanged(const QItemSelection& se
 
 void FilterTableSelectionModel::onSummaryDataAccessorSelectionChanged(int row)
 {
-	select(model()->index(row, 0), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+	if (row == -1)
+	{
+		clearSelection();
+	}
+	else
+	{
+		select(model()->index(row, 0), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+	}
 }
 
 void FilterTableSelectionModel::init()

@@ -61,7 +61,8 @@ void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingStarted, this, &SummaryDataAccessor::beginClearData));
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData));
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::validateSelectedRow));
-	VERIFY(connect(this, &SummaryDataAccessor::endClearData, this, &SummaryDataAccessor::saveSelection));
+
+	VERIFY(connect(this, &SummaryDataAccessor::endClearData, this, &SummaryDataAccessor::restoreSelection));
 }
 
 void SummaryDataAccessor::enableSortableDataSet() noexcept
@@ -171,6 +172,9 @@ void SummaryDataAccessor::selectRow(int row) noexcept
 {
 	if (row == -1)
 	{
+		m_selectedRow.first = row;
+		m_selectedRow.second = CrawlerEngine::StorageType::BeginEnumStorageType;
+
 		return;
 	}
 
@@ -220,13 +224,8 @@ void SummaryDataAccessor::validateSelectedRow()
 	selectRow(row);
 }
 
-void SummaryDataAccessor::saveSelection()
+void SummaryDataAccessor::restoreSelection()
 {
-	if (m_selectedRow.first == -1)
-	{
-		return;
-	}
-
 	emit rowSelected(m_selectedRow.first);
 }
 
