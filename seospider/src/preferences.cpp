@@ -435,6 +435,17 @@ void Preferences::setMaxImageSize(int value)
 	emit maxImageSizeChanged();
 }
 
+int Preferences::maxPageSize() const
+{
+	return m_maxPageSize;
+}
+
+void Preferences::setMaxPageSize(int value)
+{
+	m_maxPageSize = value;
+	emit maxPageSizeChanged();
+}
+
 int Preferences::maxDescriptionLength() const
 {
 	return m_maxDescriptionLength;

@@ -163,6 +163,7 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::TooLongUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::BrokenLinks, createSequencedStorage()),
 		std::make_pair(StorageType::WwwRedirectionsUrlStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::TooManyRedirectsStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::Status4xxStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::Status5xxStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::Status302StorageType, createSequencedStorage()),
@@ -201,14 +202,16 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::SeveralH2UrlStorageType, createSequencedStorage()),
 
 		// Images Problems Storages
-		std::make_pair(StorageType::Over100kbImageStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::TooBigImageStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::MissingAltTextImageStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::TooLongAltTextImageStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::BrokenImagesStorageType, createSequencedStorage()),
 
 		// Page problems
 		std::make_pair(StorageType::TooManyLinksOnPageStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ContainsMetaRefreshTagStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ContainsFramesStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::TooBigHtmlResourcesStorageType, createSequencedStorage()),
 
 		// not indexed pages
 		std::make_pair(StorageType::BlockedForSEIndexingStorageType, createSequencedStorage()),
@@ -231,7 +234,8 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::ExternalFlashResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ExternalVideoResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ExternalOtherResourcesStorageType, createSequencedStorage()),
-		std::make_pair(StorageType::CanonicalUrlResourcesStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::AllCanonicalUrlResourcesStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::DuplicatedCanonicalUrlResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::UniqueCanonicalUrlResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ExternalDoFollowUrlResourcesStorageType, createSequencedStorage()),
 	};

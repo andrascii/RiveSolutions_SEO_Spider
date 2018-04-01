@@ -54,7 +54,7 @@ const QMap<StorageType, ErrorCategory::ErrorCategoryLevel> s_storageTypeToLevel
 	{ StorageType::SeveralH2UrlStorageType, ErrorCategory::LevelWarning },
 
 	// images
-	{ StorageType::Over100kbImageStorageType, ErrorCategory::LevelInfo },
+	{ StorageType::TooBigImageStorageType, ErrorCategory::LevelInfo },
 	{ StorageType::MissingAltTextImageStorageType, ErrorCategory::LevelInfo },
 	{ StorageType::TooLongAltTextImageStorageType, ErrorCategory::LevelInfo },
 

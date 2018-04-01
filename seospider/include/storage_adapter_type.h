@@ -50,7 +50,7 @@ enum class StorageAdapterType
 	StorageAdapterTypeSeveralH2s = CrawlerEngine::StorageType::SeveralH2UrlStorageType,
 
 	// images enum mappers
-	StorageAdapterTypeImagesOver100kb = CrawlerEngine::StorageType::Over100kbImageStorageType,
+	StorageAdapterTypeImagesOver100kb = CrawlerEngine::StorageType::TooBigImageStorageType,
 	StorageAdapterTypeImageMissingAltText = CrawlerEngine::StorageType::MissingAltTextImageStorageType,
 	StorageAdapterTypeImagesTooLongAltText = CrawlerEngine::StorageType::TooLongAltTextImageStorageType,
 

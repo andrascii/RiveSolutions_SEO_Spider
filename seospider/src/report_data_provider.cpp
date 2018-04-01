@@ -292,7 +292,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::NotIndexedPagesCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::BlockedForSEIndexingStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::ConfiguredCorrectly404:
 		{
@@ -419,7 +422,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::LargeAmountRedirectsCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::TooManyRedirectsStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::RefreshMetaTag:
 		{
@@ -448,7 +454,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		{
 			// or UniqueCanonicalUrlResourcesStorageType ???
 			const CrawlerEngine::ISequencedStorage* storage =
-				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::CanonicalUrlResourcesStorageType);
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::AllCanonicalUrlResourcesStorageType);
 
 			return storage->size();
 		}
@@ -526,7 +532,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesWithDuplicatedRelCanonicalCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::DuplicatedCanonicalUrlResourcesStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::PagesContainsFrames:
 		{
@@ -577,7 +586,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::TooLargePagesCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::TooBigHtmlResourcesStorageType);
+
+			return storage->size();
 		}
 
 		// Images
@@ -591,7 +603,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::BrokenImagesCount:
 		{
-			return 0;
+			const CrawlerEngine::ISequencedStorage* storage =
+				m_sequencedDataCollection->storage(CrawlerEngine::StorageType::BrokenImagesStorageType);
+
+			return storage->size();
 		}
 		case ReportDataKeys::ImagesWithEmptyAltText:
 		{

@@ -326,6 +326,11 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 			}
 		}
 	}
+
+	if (workerResult.incomingPage()->tooManyRedirects)
+	{
+		data()->addParsedPage(workerResult, StorageType::TooManyRedirectsStorageType);
+	}
 }
 
 void ModelController::processParsedPageTitle(WorkerResult& workerResult, bool secondGetRequest)
@@ -544,9 +549,16 @@ void ModelController::processParsedPageImage(WorkerResult& workerResult, bool ch
 	const int sizeKB = workerResult.incomingPage()->pageSizeKilobytes;
 
 	if (sizeKB > m_crawlerOptions.maxImageSizeKb &&
-		!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::Over100kbImageStorageType))
+		!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::TooBigImageStorageType))
 	{
-		data()->addParsedPage(workerResult, StorageType::Over100kbImageStorageType);
+		data()->addParsedPage(workerResult, StorageType::TooBigImageStorageType);
+	}
+
+	if (workerResult.incomingPage()->statusCode >= Common::StatusCode::BadRequest400 &&
+		workerResult.incomingPage()->statusCode < Common::StatusCode::BlockedByRobotsTxt &&
+		!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::BrokenImagesStorageType))
+	{
+		data()->addParsedPage(workerResult, StorageType::BrokenImagesStorageType);
 	}
 
 	std::size_t index = 0;
@@ -676,12 +688,20 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 	if (workerResult.incomingPage()->canonicalUrl.isValid() && !workerResult.incomingPage()->isThisExternalPage)
 	{
-		data()->addParsedPage(workerResult, StorageType::CanonicalUrlResourcesStorageType);
+		addDuplicates(workerResult.incomingPage(), 
+			StorageType::AllCanonicalUrlResourcesStorageType, StorageType::DuplicatedCanonicalUrlResourcesStorageType, false);
+		
+		data()->addParsedPage(workerResult, StorageType::AllCanonicalUrlResourcesStorageType);
 
 		if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::UniqueCanonicalUrlResourcesStorageType))
 		{
 			data()->addParsedPage(workerResult, StorageType::UniqueCanonicalUrlResourcesStorageType);
 		}
+	}
+
+	if (workerResult.incomingPage()->pageSizeKilobytes > m_crawlerOptions.maxPageSizeKb)
+	{
+		data()->addParsedPage(workerResult, StorageType::TooBigHtmlResourcesStorageType);
 	}
 
 	for (const ResourceOnPage& resource : workerResult.incomingPage()->allResourcesOnPage)
@@ -1017,7 +1037,7 @@ void ModelController::setPageLevel(ParsedPagePtr& page, int level) const noexcep
 	}
 }
 
-void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage)
+void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage, bool checkCanonicals)
 {
 	if (data()->isParsedPageExists(incomingPage, destStorage))
 	{
@@ -1025,7 +1045,7 @@ void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType loo
 		return;
 	}
 
-	const auto predicate = [&page = incomingPage](const ParsedPagePtr& candidatePage)
+	const auto predicate = [&page = incomingPage, checkCanonicals](const ParsedPagePtr& candidatePage)
 	{
 		return 
 			// discard pages that are different only by trailing slash
@@ -1033,7 +1053,7 @@ void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType loo
 			page->url.canonizedUrlStr() &&
 		
 			// and discard pages with the same canonical url
-			(candidatePage->canonicalUrl.canonizedUrlStr().isEmpty() ||
+			(!checkCanonicals || candidatePage->canonicalUrl.canonizedUrlStr().isEmpty() ||
 			candidatePage->canonicalUrl.canonizedUrlStr() != page->canonicalUrl.canonizedUrlStr());
 	};
 

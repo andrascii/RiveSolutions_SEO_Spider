@@ -149,13 +149,13 @@ void PdfReportExporter::doExportBriefReport(QIODevice* device, const ReportDataP
 	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::PagesContainsFramesImage,
 		ReportDataKeys::PagesContainsFrames, ReportDataKeys::PagesContainsFramesCount);
 
-	secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::PagesWithHtmlErrorsImage,
-		ReportDataKeys::PagesWithHtmlErrors, ReportDataKeys::PagesWithHtmlErrorsCount);
+	//secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
+	//drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::PagesWithHtmlErrorsImage,
+	//	ReportDataKeys::PagesWithHtmlErrors, ReportDataKeys::PagesWithHtmlErrorsCount);
 
-	secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::PagesWithCssErrorsWarningsImage,
-		ReportDataKeys::PagesWithCssErrorsWarnings, ReportDataKeys::PagesWithCssErrorsWarningsCount);
+	//secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
+	//drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::PagesWithCssErrorsWarningsImage,
+	//	ReportDataKeys::PagesWithCssErrorsWarnings, ReportDataKeys::PagesWithCssErrorsWarningsCount);
 
 	secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
 	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::TooLargePagesImage,
@@ -192,39 +192,6 @@ void PdfReportExporter::doExportBriefReport(QIODevice* device, const ReportDataP
 		ReportDataKeys::RelCanonicalPages, ReportDataKeys::RelCanonicalPagesCount);
 
 
-	// Images
-	drawInfoBlockHeader(&painter, secondColumnRect, tr("Images"));
-
-	secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::BrokenImagesImage,
-		ReportDataKeys::BrokenImages, ReportDataKeys::BrokenImagesCount);
-
-	secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::ImagesWithEmptyAltTextImage,
-		ReportDataKeys::ImagesWithEmptyAltText, ReportDataKeys::ImagesWithEmptyAltTextCount);
-
-
-	adjustColumnsRects(firstColumnRect, secondColumnRect, spacingBetweenBlocks);
-	// Links
-	drawInfoBlockHeader(&painter, firstColumnRect, tr("Links"));
-
-	firstColumnRect = firstColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
-	drawOneLineInfo(provider, &painter, firstColumnRect, ReportDataKeys::BrokenLinksImage,
-		ReportDataKeys::BrokenLinks, ReportDataKeys::BrokenLinksCount);
-
-	firstColumnRect = firstColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
-	drawOneLineInfo(provider, &painter, firstColumnRect, ReportDataKeys::PagesWithLargeAmountOfLinksImage,
-		ReportDataKeys::PagesWithLargeAmountOfLinks, ReportDataKeys::PagesWithLargeAmountOfLinksCount);
-
-	firstColumnRect = firstColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
-	drawOneLineInfo(provider, &painter, firstColumnRect, ReportDataKeys::ExternalDofollowLinksImage,
-		ReportDataKeys::ExternalDofollowLinks, ReportDataKeys::ExternalDofollowLinksCount);
-
-	firstColumnRect = firstColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
-	drawOneLineInfo(provider, &painter, firstColumnRect, ReportDataKeys::TooLongUrlAddressesImage,
-		ReportDataKeys::TooLongUrlAddresses, ReportDataKeys::TooLongUrlAddressesCount);
-
-
 	// On Page
 	drawInfoBlockHeader(&painter, secondColumnRect, tr("On Page"));
 
@@ -251,6 +218,39 @@ void PdfReportExporter::doExportBriefReport(QIODevice* device, const ReportDataP
 	secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
 	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::TooLongMetaDescriptionsImage,
 		ReportDataKeys::TooLongMetaDescriptions, ReportDataKeys::TooLongMetaDescriptionsCount);
+	
+
+	adjustColumnsRects(firstColumnRect, secondColumnRect, spacingBetweenBlocks);
+	// Links
+	drawInfoBlockHeader(&painter, firstColumnRect, tr("Links"));
+
+	firstColumnRect = firstColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
+	drawOneLineInfo(provider, &painter, firstColumnRect, ReportDataKeys::BrokenLinksImage,
+		ReportDataKeys::BrokenLinks, ReportDataKeys::BrokenLinksCount);
+
+	firstColumnRect = firstColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
+	drawOneLineInfo(provider, &painter, firstColumnRect, ReportDataKeys::PagesWithLargeAmountOfLinksImage,
+		ReportDataKeys::PagesWithLargeAmountOfLinks, ReportDataKeys::PagesWithLargeAmountOfLinksCount);
+
+	firstColumnRect = firstColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
+	drawOneLineInfo(provider, &painter, firstColumnRect, ReportDataKeys::ExternalDofollowLinksImage,
+		ReportDataKeys::ExternalDofollowLinks, ReportDataKeys::ExternalDofollowLinksCount);
+
+	firstColumnRect = firstColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
+	drawOneLineInfo(provider, &painter, firstColumnRect, ReportDataKeys::TooLongUrlAddressesImage,
+		ReportDataKeys::TooLongUrlAddresses, ReportDataKeys::TooLongUrlAddressesCount);
+
+
+	// Images
+	drawInfoBlockHeader(&painter, secondColumnRect, tr("Images"));
+
+	secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
+	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::BrokenImagesImage,
+		ReportDataKeys::BrokenImages, ReportDataKeys::BrokenImagesCount);
+
+	secondColumnRect = secondColumnRect.adjusted(0, rowSpacing, 0, rowSpacing);
+	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::ImagesWithEmptyAltTextImage,
+		ReportDataKeys::ImagesWithEmptyAltText, ReportDataKeys::ImagesWithEmptyAltTextCount);
 }
 
 QRect PdfReportExporter::shiftedToIconRect(const QRect& rect) const

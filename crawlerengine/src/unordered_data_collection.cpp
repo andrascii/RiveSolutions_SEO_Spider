@@ -299,6 +299,10 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
+		std::make_pair(StorageType::TooManyRedirectsStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
 		std::make_pair(StorageType::Status4xxStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
@@ -315,7 +319,11 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
-		std::make_pair(StorageType::CanonicalUrlResourcesStorageType,
+		std::make_pair(StorageType::AllCanonicalUrlResourcesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherCanonicalLinkElement),
+				ParsedPageComparatorProxy(new ParsedPageCanonicalLinkElementComparator))),
+		
+		std::make_pair(StorageType::DuplicatedCanonicalUrlResourcesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherCanonicalLinkElement),
 				ParsedPageComparatorProxy(new ParsedPageCanonicalLinkElementComparator))),
 
@@ -447,7 +455,7 @@ void UnorderedDataCollection::initializeStorages()
 
 		// Images Problems Storages
 
-		std::make_pair(StorageType::Over100kbImageStorageType,
+		std::make_pair(StorageType::TooBigImageStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
@@ -456,6 +464,10 @@ void UnorderedDataCollection::initializeStorages()
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		std::make_pair(StorageType::TooLongAltTextImageStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::BrokenImagesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl), 
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
@@ -470,6 +482,10 @@ void UnorderedDataCollection::initializeStorages()
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
 		std::make_pair(StorageType::ContainsFramesStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
+		std::make_pair(StorageType::TooBigHtmlResourcesStorageType,
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 

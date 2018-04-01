@@ -45,7 +45,7 @@ private:
 	bool resourceShouldBeProcessed(ResourceType resourceType) const noexcept;
 	void calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept;
 	void setPageLevel(ParsedPagePtr& page, int level) const noexcept;
-	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage);
+	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage, bool checkCanonicals = true);
 
 	ParsedPagePtr parsedPageFromResource(const ResourceOnPage& resource) const;
 	StorageTypeFlags addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource);

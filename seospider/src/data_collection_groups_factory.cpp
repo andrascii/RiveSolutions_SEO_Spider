@@ -101,7 +101,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		{
 			p->name = QObject::tr("Image Problems");
 			p->group = AuditGroup::ImageAuditGroup;
-			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Over100kbImageStorageType, QObject::tr("Images Over 100 KB") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooBigImageStorageType, QObject::tr("Images Over 100 KB") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::MissingAltTextImageStorageType, QObject::tr("Images With Missing Alt Description") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongAltTextImageStorageType, QObject::tr("Too Long Image Alt Description") });
 
@@ -150,7 +150,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongH2UrlStorageType, QObject::tr("Too Long H2") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::SeveralH2UrlStorageType, QObject::tr("Several Equal H2 On Page") });
 
-			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Over100kbImageStorageType, QObject::tr("Images Over 100 KB") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooBigImageStorageType, QObject::tr("Images Over 100 KB") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::MissingAltTextImageStorageType, QObject::tr("Images With Missing Alt Description") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongAltTextImageStorageType, QObject::tr("Too Long Image Alt Description") });
 

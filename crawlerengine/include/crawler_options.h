@@ -36,6 +36,7 @@ struct CrawlerOptions
 	int maxH2LengthChars = int();
 	int maxImageAltTextChars = int();
 	int maxImageSizeKb = int();
+	int maxPageSizeKb = int();
 
 	// proxy settings
 	bool useProxy = bool();

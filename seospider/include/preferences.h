@@ -59,6 +59,7 @@ class Preferences : public QObject
 	Q_PROPERTY(int maxH2LengthChars READ maxH2LengthChars WRITE setMaxH2LengthChars NOTIFY maxH2LengthCharsChanged);
 	Q_PROPERTY(int maxImageAltTextChars READ maxImageAltTextChars WRITE setMaxImageAltTextChars NOTIFY maxImageAltTextCharsChanged);
 	Q_PROPERTY(int maxImageSize READ maxImageSize WRITE setMaxImageSize NOTIFY maxImageSizeChanged);
+	Q_PROPERTY(int maxPageSize READ maxPageSize WRITE setMaxPageSize NOTIFY maxPageSizeChanged);
 	Q_PROPERTY(int maxDescriptionLength READ maxDescriptionLength WRITE setMaxDescriptionLength NOTIFY maxDescriptionLengthChanged);
 	Q_PROPERTY(int minDescriptionLength READ minDescriptionLength WRITE setMinDescriptionLength NOTIFY minDescriptionLengthChanged);
 	Q_PROPERTY(int maxTitleLength READ maxTitleLength WRITE setMaxTitleLength NOTIFY maxTitleLengthChanged);
@@ -223,6 +224,10 @@ public:
 	Q_SLOT void setMaxImageSize(int value);
 	Q_SIGNAL void maxImageSizeChanged();
 
+	int maxPageSize() const;
+	Q_SLOT void setMaxPageSize(int value);
+	Q_SIGNAL void maxPageSizeChanged();
+
 	int maxDescriptionLength() const;
 	Q_SLOT void setMaxDescriptionLength(int value);
 	Q_SIGNAL void maxDescriptionLengthChanged();
@@ -331,6 +336,7 @@ private:
 	int m_maxH2LengthChars;
 	int m_maxImageAltTextChars;
 	int m_maxImageSize;
+	int m_maxPageSize;
 	int m_maxDescriptionLength;
 	int m_minDescriptionLength;
 	int m_maxTitleLength;

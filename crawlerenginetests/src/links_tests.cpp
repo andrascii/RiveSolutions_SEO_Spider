@@ -230,8 +230,11 @@ TEST(LinksTests, Canonical)
 		auto uniqueCanonicalPages = cl->storageItems(StorageType::UniqueCanonicalUrlResourcesStorageType);
 		EXPECT_EQ(1, uniqueCanonicalPages.size());
 
-		auto pagesWithValidCanonical = cl->storageItems(StorageType::CanonicalUrlResourcesStorageType);
+		auto pagesWithValidCanonical = cl->storageItems(StorageType::AllCanonicalUrlResourcesStorageType);
 		EXPECT_EQ(2, pagesWithValidCanonical.size());
+
+		auto duplicatedCanonical = cl->storageItems(StorageType::DuplicatedCanonicalUrlResourcesStorageType);
+		EXPECT_EQ(2, duplicatedCanonical.size());
 	};
 
 	env.initializeTest(testFunction);

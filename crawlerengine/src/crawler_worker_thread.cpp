@@ -355,10 +355,18 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 	};
 
 	bool checkUrl = false;
+	constexpr int maxRedirects = 2;
+	const int pagesCount = static_cast<int>(pages.size());
 
-	// fix ddos guard redirects like page.html -> ddos-site -> page.html
-	for (int i = static_cast<int>(pages.size()) - 1; i >= 0; --i)
+	
+	for (int i = pagesCount - 1; i >= 0; --i)
 	{
+		if (i < pagesCount - maxRedirects)
+		{
+			pages[i]->tooManyRedirects = true;
+		}
+
+		// fix ddos guard redirects like page.html -> ddos-site -> page.html
 		for (int j = i - 1; j >= 0; --j)
 		{
 			if (pages[i]->url.urlStr() == pages[j]->url.urlStr())

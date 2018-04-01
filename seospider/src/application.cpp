@@ -186,6 +186,7 @@ void Application::startCrawler()
 	options.minTitleLength = preferences()->minTitleLength();
 	options.maxTitleLength = preferences()->maxTitleLength();
 	options.maxImageSizeKb = preferences()->maxImageSize();
+	options.maxPageSizeKb = preferences()->maxPageSize();
 	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
 	options.maxH1LengthChars = preferences()->maxH1LengthChars();
 	options.maxH2LengthChars = preferences()->maxH2LengthChars();
@@ -273,6 +274,7 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 	preferences()->setMinTitleLength(options.minTitleLength);
 	preferences()->setMaxTitleLength(options.maxTitleLength);
 	preferences()->setMaxImageSize(options.maxImageSizeKb);
+	preferences()->setMaxPageSize(options.maxPageSizeKb);
 	preferences()->setMaxImageAltTextChars(options.maxImageAltTextChars);
 	preferences()->setMaxH1LengthChars(options.maxH1LengthChars);
 	preferences()->setMaxH2LengthChars(options.maxH2LengthChars);

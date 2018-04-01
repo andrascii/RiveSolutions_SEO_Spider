@@ -19,6 +19,7 @@ enum StorageType
 	TooLongUrlStorageType,
 	BrokenLinks,
 	WwwRedirectionsUrlStorageType,
+	TooManyRedirectsStorageType,
 	Status4xxStorageType,
 	Status5xxStorageType,
 	Status302StorageType,
@@ -62,14 +63,16 @@ enum StorageType
 	SeveralH2UrlStorageType,
 
 	// Images problems
-	Over100kbImageStorageType,
+	TooBigImageStorageType,
 	MissingAltTextImageStorageType,
 	TooLongAltTextImageStorageType,
+	BrokenImagesStorageType,
 
 	// page problems
 	TooManyLinksOnPageStorageType,
 	ContainsMetaRefreshTagStorageType,
 	ContainsFramesStorageType,
+	TooBigHtmlResourcesStorageType,
 
 	// not indexed pages
 	BlockedForSEIndexingStorageType,
@@ -86,7 +89,8 @@ enum StorageType
 	FlashResourcesStorageType,
 	VideoResourcesStorageType,
 	OtherResourcesStorageType,
-	CanonicalUrlResourcesStorageType,
+	AllCanonicalUrlResourcesStorageType,
+	DuplicatedCanonicalUrlResourcesStorageType,
 	UniqueCanonicalUrlResourcesStorageType,
 	ExternalDoFollowUrlResourcesStorageType,
 

@@ -210,7 +210,7 @@ TEST(ImageTests, TooBigImage)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(StorageType::Over100kbImageStorageType, 2, 100, "Waiting for 2 too big image page");
+		auto pages = cl->waitForParsedPageReceived(StorageType::TooBigImageStorageType, 2, 100, "Waiting for 2 too big image page");
 		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
