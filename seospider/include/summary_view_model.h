@@ -86,6 +86,9 @@ public:
 	Q_SLOT void setTextFont(const QFont& font) noexcept;
 	Q_SIGNAL void textFontChanged();
 
+private slots:
+	void onDataWereReset();
+
 private:
 	void initializeRenderers();
 

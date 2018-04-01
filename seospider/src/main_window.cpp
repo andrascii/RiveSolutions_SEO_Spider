@@ -129,9 +129,17 @@ void MainWindow::onChangeGroupingAuditInfo(QAction* action)
 	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::SiteAuditPage);
 	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
 
-	SummaryDataAccessorFactory::DataAccessorType dataAccessorType = qvariant_cast<SummaryDataAccessorFactory::DataAccessorType>(action->data());
+	ASSERT(action->data().type() == QVariant::Bool);
+	bool isSortingEnabled = action->data().toBool();
 
-	filterWidget->switchFilterTo(dataAccessorType);
+	if (isSortingEnabled)
+	{
+		filterWidget->enableSortableFilter();
+	}
+	else
+	{
+		filterWidget->enablePlainFilter();
+	}
 }
 
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
@@ -298,7 +306,7 @@ void MainWindow::createHeaderPageDependentActions()
 
 	// switch grouping action
 	QAction* switchAuditInfoFilterWidgetGroupingAction = actionRegistry.addGlobalAction(s_switchAuditInfoFilterWidgetGroupingAction,
-		SvgRenderer::render(QStringLiteral(":/images/group-by-level.svg"), 20, 20), tr("Change filters grouping"));
+		SvgRenderer::render(QStringLiteral(":/images/group-by-category.svg"), 20, 20), tr("Change filters grouping"));
 
 	QToolButton* menuButton = qobject_cast<QToolButton*>(HeaderToolButtonCreator::createControl(switchAuditInfoFilterWidgetGroupingAction));
 
@@ -308,8 +316,12 @@ void MainWindow::createHeaderPageDependentActions()
 
 	QAction* groupByCategoryAction = new QAction(SvgRenderer::render(":/images/group-by-category.svg", 20, 20), "Group filters by category");
 	QAction* groupByErrorLevelAction = new QAction(SvgRenderer::render(":/images/group-by-level.svg", 20, 20), "Group filters by error level");
-	groupByCategoryAction->setData(QVariant::fromValue(SummaryDataAccessorFactory::DataAccessorType::GroupedErrorFilterPage));
-	groupByCategoryAction->setData(QVariant::fromValue(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage));
+
+	QVariant enableSortingData(true);
+	QVariant disableSortingData(false);
+
+	groupByErrorLevelAction->setData(enableSortingData);
+	groupByCategoryAction->setData(disableSortingData);
 
 	groupingMenu->addAction(groupByCategoryAction);
 	groupingMenu->addAction(groupByErrorLevelAction);

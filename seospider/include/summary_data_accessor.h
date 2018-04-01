@@ -6,17 +6,23 @@
 namespace SeoSpider
 {
 
+class SummaryDataSet;
+
 class SummaryDataAccessor : public QObject, public ISummaryDataAccessor
 {
 	Q_OBJECT
 
 public:
-	SummaryDataAccessor(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, 
-		const std::function<bool(DCStorageDescription*, DCStorageDescription*)>& sortPredicate = std::function<bool(DCStorageDescription*, DCStorageDescription*)>());
+	SummaryDataAccessor(SummaryDataSet* dataSet);
 
+	virtual void setSortableDataSet(SummaryDataSet* dataSet) noexcept override;
+	virtual void enableSortableDataSet() noexcept override;
+	virtual void enablePlainDataSet() noexcept override;
+	virtual bool hasSortableDataSet() const noexcept override;
+	virtual void selectRow(int row) noexcept override;
+	virtual int selectedRow() const noexcept override;
 	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept override;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
-
 	virtual bool isHeaderRow(int row) const noexcept override;
 	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept override;
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
@@ -37,21 +43,19 @@ signals:
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
+	virtual void rowSelected(int row) override;
+	virtual void dataSetChanged() const override;
+
+private slots:
+	void emitDataChanged(int, CrawlerEngine::StorageType);
+	void validateSelectedRow();
+	void restoreSelection();
 
 private:
-	Q_SLOT void emitDataChanged(int, CrawlerEngine::StorageType);
-	Q_SLOT void sortGroups(int, CrawlerEngine::StorageType);
-
-private:
-	static constexpr int s_summaryColumnCount = 2;
-
-	const CrawlerEngine::SequencedDataCollection* m_sequencedDataCollection;
-
-	QVector<DCStorageGroupDescriptionPtr> m_allGroupRows;
-	QMap<int, DCStorageGroupDescriptionPtr> m_groupRows;
-	QMap<int, DCStorageDescription*> m_itemRows;
-
-	std::function<bool(DCStorageDescription*, DCStorageDescription*)> m_sortPredicate;
+	SummaryDataSet* m_currentDataSet;
+	SummaryDataSet* m_dataSet;
+	SummaryDataSet* m_sortableDataSet;
+	std::pair<int, CrawlerEngine::StorageType> m_selectedRow;
 };
 
 }

@@ -66,7 +66,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		{
 			p->name = QObject::tr("Page Problems");
 			p->group = AuditGroup::OnPageAuditGroup;
-			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooManyLinksOnPageStorageType, QObject::tr("Too Many Links On Page (max %1)").arg(theApp->preferences()->maxLinksCountOnPage()) });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooManyLinksOnPageStorageType, QObject::tr("Too Many Links On Page") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::ContainsMetaRefreshTagStorageType, QObject::tr("Pages Contain Meta Refresh Tag") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::ContainsFramesStorageType, QObject::tr("Pages Contain Frames") });
 
@@ -120,7 +120,6 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status5xxStorageType, QObject::tr("Status Code 5xx") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status302StorageType, QObject::tr("Moved Temporarily 302") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status301StorageType, QObject::tr("Moved Permanently 301") });
-
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::EmptyTitleUrlStorageType, QObject::tr("Empty Titles") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType, QObject::tr("Duplicated Titles") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongTitleUrlStorageType, QObject::tr("Too Long Titles") });
@@ -135,16 +134,13 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::EmptyMetaKeywordsUrlStorageType, QObject::tr("Empty Meta Keywords") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedMetaKeywordsUrlStorageType, QObject::tr("Duplicated Meta Keywords") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::SeveralMetaKeywordsUrlStorageType, QObject::tr("Several Meta Keywords") });
-
-			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooManyLinksOnPageStorageType, QObject::tr("Too Many Links On Page (max %1)").arg(theApp->preferences()->maxLinksCountOnPage()) });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooManyLinksOnPageStorageType, QObject::tr("Too Many Links On Page") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::ContainsMetaRefreshTagStorageType, QObject::tr("Pages Contain Meta Refresh Tag") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::ContainsFramesStorageType, QObject::tr("Pages Contain Frames") });
-
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::MissingH1UrlStorageType, QObject::tr("Missing H1") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedH1UrlStorageType, QObject::tr("Duplicated H1") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongH1UrlStorageType, QObject::tr("Too Long H1") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::SeveralH1UrlStorageType, QObject::tr("Several Equal H1 On Page") });
-
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::MissingH2UrlStorageType, QObject::tr("Missing H2") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedH2UrlStorageType, QObject::tr("Duplicated H2") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongH2UrlStorageType, QObject::tr("Too Long H2") });
@@ -153,6 +149,10 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooBigImageStorageType, QObject::tr("Images Over 100 KB") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::MissingAltTextImageStorageType, QObject::tr("Images With Missing Alt Description") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongAltTextImageStorageType, QObject::tr("Too Long Image Alt Description") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BlockedForSEIndexingStorageType, QObject::tr("All Not Indexed Pages") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::NofollowLinksStorageType, QObject::tr("Nofollow Links") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BlockedByRobotsTxtStorageType, QObject::tr("Blocked by robots.txt Pages") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::BlockedByXRobotsTagStorageType, QObject::tr("Blocked by x-robots-tag Pages") });
 
 			return p;
 		}

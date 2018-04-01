@@ -12,8 +12,13 @@ class SummaryDataAccessorDecorator : public QObject, public ISummaryDataAccessor
 public:
 	SummaryDataAccessorDecorator(ISummaryDataAccessor* dataAccessor);
 
+	virtual void setSortableDataSet(SummaryDataSet* dataSet) noexcept override;
+	virtual void enableSortableDataSet() noexcept override;
+	virtual void enablePlainDataSet() noexcept override;
+	virtual bool hasSortableDataSet() const noexcept override;
+	virtual void selectRow(int row) noexcept override;
+	virtual int selectedRow() const noexcept override;
 	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept override;
-
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept override;
 	virtual bool isHeaderRow(int row) const noexcept override;
 	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept override;
@@ -35,6 +40,11 @@ signals:
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
+	virtual void rowSelected(int row) override;
+	virtual void dataSetChanged() const override;
+
+private:
+	void establishSignalToSignalConnections();
 
 private:
 	std::unique_ptr<ISummaryDataAccessor> m_summaryDataAccessor;

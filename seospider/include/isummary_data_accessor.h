@@ -7,11 +7,19 @@
 namespace SeoSpider
 {
 
+class SummaryDataSet;
+
 class ISummaryDataAccessor : public IMenuDataProvider
 {
 public:
 	virtual ~ISummaryDataAccessor() = default;
 
+	virtual void setSortableDataSet(SummaryDataSet* dataSet) noexcept = 0;
+	virtual void enableSortableDataSet() noexcept = 0;
+	virtual void enablePlainDataSet() noexcept = 0;
+	virtual bool hasSortableDataSet() const noexcept = 0;
+	virtual void selectRow(int row) noexcept = 0;
+	virtual int selectedRow() const noexcept = 0;
 	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept = 0;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept = 0;
 	virtual bool isHeaderRow(int row) const noexcept = 0;
@@ -33,6 +41,8 @@ public:
 	virtual void dataChanged(int row, int column, Qt::ItemDataRole role) const = 0;
 	virtual void beginClearData() const = 0;
 	virtual void endClearData() const = 0;
+	virtual void rowSelected(int row) = 0;
+	virtual void dataSetChanged() const = 0;
 };
 
 }

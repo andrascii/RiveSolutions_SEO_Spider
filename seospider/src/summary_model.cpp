@@ -43,6 +43,8 @@ void SummaryModel::setDataAccessor(ISummaryDataAccessor* accessor) noexcept
 	VERIFY(connect(dataAccessor()->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData())));
 
 	endResetModel();
+
+	emit internalDataChanged();
 }
 
 ISummaryDataAccessor* SummaryModel::dataAccessor() const noexcept

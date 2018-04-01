@@ -2,6 +2,7 @@
 #include "summary_data_accessor.h"
 #include "summary_data_accessor_pixmap_decorator.h"
 #include "data_collection_groups_factory.h"
+#include "summary_data_set.h"
 
 namespace SeoSpider
 {
@@ -17,21 +18,17 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 	{
 		case DataAccessorType::ErrorsFilterPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection));
+			SummaryDataSet* plainDataSet = new SummaryDataSet(dataCollection);
+			SummaryDataSet* sortableDataSet = new SummaryDataSet(dataCollection);
 
-			summaryDataAccessor->addGroup(AuditGroup::LinkAuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::PageProblemsAuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::OnPageAuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::NotIndexedPagesGroup);
-			summaryDataAccessor->addGroup(AuditGroup::H1AuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::H2AuditGroup);
-			summaryDataAccessor->addGroup(AuditGroup::ImageAuditGroup);
+			plainDataSet->addGroup(AuditGroup::LinkAuditGroup);
+			plainDataSet->addGroup(AuditGroup::PageProblemsAuditGroup);
+			plainDataSet->addGroup(AuditGroup::OnPageAuditGroup);
+			plainDataSet->addGroup(AuditGroup::NotIndexedPagesGroup);
+			plainDataSet->addGroup(AuditGroup::H1AuditGroup);
+			plainDataSet->addGroup(AuditGroup::H2AuditGroup);
+			plainDataSet->addGroup(AuditGroup::ImageAuditGroup);
 
-			return summaryDataAccessor;
-		}
-
-		case DataAccessorType::GroupedErrorFilterPage:
-		{
 			std::function<bool(DCStorageDescription*, DCStorageDescription*)> sortPredicate([](DCStorageDescription* a, DCStorageDescription* b)
 			{
 				if (CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
@@ -44,19 +41,23 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 				}
 			});
 
-			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(dataCollection, sortPredicate));
+			sortableDataSet->addGroup(AuditGroup::OrderedErrorsGroup);
+			sortableDataSet->addSortingPredicate(std::move(sortPredicate));
 
-			summaryDataAccessor->addGroup(AuditGroup::OrderedErrorsGroup);
+			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(plainDataSet));
+			summaryDataAccessor->setSortableDataSet(sortableDataSet);
 
 			return summaryDataAccessor;
 		}
 
 		case DataAccessorType::AllResourcesPage:
 		{
-			summaryDataAccessor = new SummaryDataAccessor(dataCollection);
+			SummaryDataSet* dataSet = new SummaryDataSet(dataCollection);
 
-			summaryDataAccessor->addGroup(AuditGroup::InternalResourcesGroup);
-			summaryDataAccessor->addGroup(AuditGroup::ExternalResourcesGroup);
+			dataSet->addGroup(AuditGroup::InternalResourcesGroup);
+			dataSet->addGroup(AuditGroup::ExternalResourcesGroup);
+
+			summaryDataAccessor = new SummaryDataAccessor(dataSet);
 
 			return summaryDataAccessor;
 		}
