@@ -219,6 +219,8 @@ void Crawler::onAboutCrawlingState()
 
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 		serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Program has ended crawling."));
+
+		emit crawlerFinished();
 	}
 }
 

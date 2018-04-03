@@ -73,6 +73,7 @@ signals:
 	void crawlingProgress(CrawlingProgress state);
 	void crawlerStarted();
 	void crawlerStopped();
+	void crawlerFinished();
 	void stateChanged(int state);
 	void onAboutClearData();
 	void crawlerOptionsChanged(CrawlerOptions options);

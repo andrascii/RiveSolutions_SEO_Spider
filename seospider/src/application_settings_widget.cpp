@@ -3,6 +3,8 @@
 #include "settings_page_registry.h"
 #include "helpers.h"
 #include "custom_proxy_styles.h"
+#include "crawler.h"
+#include "application.h"
 
 namespace SeoSpider
 {
@@ -11,6 +13,11 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	: QDialog(parent)
 	, m_somethingChanged(false)
 {
+	//////////// crawlerStarted, crawlerFinished
+
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted, this, &ApplicationSettingsWidget::onCrawlerStarted));
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished, this, &ApplicationSettingsWidget::onCrawlerFinished));
+
 	initialize();
 
 	connect(m_ui.okButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::okButtonClicked);
@@ -97,6 +104,16 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 	
 	Common::Helpers::fast_cast<SettingsPage*>(widget)->reloadSettings();
 	m_somethingChanged = false;
+}
+
+void ApplicationSettingsWidget::onCrawlerStarted()
+{
+	setEnabled(false);
+}
+
+void ApplicationSettingsWidget::onCrawlerFinished()
+{
+	setEnabled(true);
 }
 
 ApplicationSettingsWidget::~ApplicationSettingsWidget()

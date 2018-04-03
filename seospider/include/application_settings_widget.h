@@ -15,12 +15,14 @@ public:
 
 	void setCurrentPage(const QByteArray& settingsPageName);
 
-private:
-	Q_SLOT void applyChanges();
-	Q_SLOT void okButtonClicked();
-	Q_SLOT void cancelButtonClicked();
-	Q_SLOT void somethingChangedSlot();
-	Q_SLOT void reloadSettingsSlot();
+private slots:
+	void applyChanges();
+	void okButtonClicked();
+	void cancelButtonClicked();
+	void somethingChangedSlot();
+	void reloadSettingsSlot();
+	void onCrawlerStarted();
+	void onCrawlerFinished();
 
 private:
 	void initialize();

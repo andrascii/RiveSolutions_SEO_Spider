@@ -246,7 +246,7 @@ void MainWindow::createActions()
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStopped,
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished,
 		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(true); }));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), 
