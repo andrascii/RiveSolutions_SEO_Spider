@@ -39,6 +39,8 @@ private:
 
 	Q_SLOT void crawlerStateChangedSlot(int state);
 
+	Q_SLOT void crawlerDataCleared();
+
 	void doExport(IReportExporter* exporter) const;
 
 #ifndef PRODUCTION

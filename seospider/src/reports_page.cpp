@@ -43,6 +43,7 @@ ReportsPage::ReportsPage(QWidget* parent)
 	VERIFY(connect(theApp->preferences(), &Preferences::companyNameChanged, this, &ReportsPage::updateContent));
 	VERIFY(connect(m_saveToPdfAction, &QAction::triggered, this, &ReportsPage::exportToPdf));
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(crawlerStateChangedSlot(int))));
+	VERIFY(connect(theApp->crawler(), &Crawler::onAboutClearData, this, &ReportsPage::crawlerDataCleared));
 
 	HeaderControlsContainer* controlsContainer = theApp->headerControlsContainer();
 	controlsContainer->addAction(m_saveToPdfAction, PageFactory::AuditReportPage);
@@ -218,6 +219,11 @@ void ReportsPage::crawlerStateChangedSlot(int state)
 		return;
 	}
 	
+	m_stackedWidget->setCurrentWidget(m_placeHolderLabel);
+}
+
+void ReportsPage::crawlerDataCleared()
+{
 	m_stackedWidget->setCurrentWidget(m_placeHolderLabel);
 }
 
