@@ -31,6 +31,7 @@ public:
 	void setContextMenu(CommandMenu* menu) noexcept;
 	void setShowAdditionalGrid(bool value) noexcept;
 	bool showAdditionalGrid() const noexcept;
+	void recalculateColumnsSize();
 
 	// IView impl
 	virtual int viewportRowCapacity() const noexcept override;

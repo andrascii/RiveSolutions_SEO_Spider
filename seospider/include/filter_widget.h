@@ -44,6 +44,9 @@ public:
 	void enableSortableFilter();
 	void enablePlainFilter();
 
+protected:
+	virtual void showEvent(QShowEvent* event) override;
+
 private slots:
 	void adjustSize();
 	void reinitFilterTableSpans();

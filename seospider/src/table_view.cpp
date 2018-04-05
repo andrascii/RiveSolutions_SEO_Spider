@@ -265,6 +265,14 @@ bool TableView::showAdditionalGrid() const noexcept
 	return m_showAdditionalGrid;
 }
 
+void TableView::recalculateColumnsSize()
+{
+	if (m_model && m_model->resizePolicy())
+	{
+		m_model->resizePolicy()->resize(this);
+	}
+}
+
 void TableView::initSpans()
 {
 	if (!m_supportColumnSpans)

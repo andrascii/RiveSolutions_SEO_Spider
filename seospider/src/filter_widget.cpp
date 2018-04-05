@@ -171,6 +171,12 @@ void FilterWidget::enablePlainFilter()
 	m_summaryFilterModel->dataAccessor()->enablePlainDataSet();
 }
 
+void FilterWidget::showEvent(QShowEvent* event)
+{
+	m_summaryFilterTableView->recalculateColumnsSize();
+	QFrame::showEvent(event);
+}
+
 void FilterWidget::adjustSize()
 {
 	QWidget* parentWidget = qobject_cast<QWidget*>(parent());
