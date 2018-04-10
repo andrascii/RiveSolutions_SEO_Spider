@@ -8,7 +8,7 @@ namespace SeoSpider
 
 SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectedBackgroundColor("#F7F0D6")
+	, m_selectedBackgroundColor(/*"#F7F0D6"*/"#D2D3D5")
 	, m_hoveredBackgroundColor("#F2F2F2")
 	, m_backgroundColor("#FCFDFE")
 	, m_selectedGridLineColor("#F7F0D6")
