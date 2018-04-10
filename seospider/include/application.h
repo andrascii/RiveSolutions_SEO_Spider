@@ -62,6 +62,8 @@ private:
 
 	void initQSettings();
 	QSettings* settings() const;
+	
+	bool trialPeriodIsOver() const;
 
 private slots:
 	void startCrawler();

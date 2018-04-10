@@ -352,6 +352,27 @@ QSettings* Application::settings() const
 	return m_settings;
 }
 
+bool Application::trialPeriodIsOver() const
+{
+	QVariant date = settings()->value("firstStartDate");
+	const qint64 trialPeriod = 7;
+
+	if (date == QVariant())
+	{
+		settings()->setValue("firstStartDate", QDate::currentDate());
+	}
+	else
+	{
+		ASSERT(date.type() == QVariant::Date);
+
+		if(date.toDate().daysTo(QDate::currentDate()) > trialPeriod)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void Application::initialize()
 {
 	DeferredCallProcessor::init();
@@ -367,6 +388,11 @@ void Application::initialize()
 
 	registerServices();
 	initQSettings();
+	
+	//
+	//TODO: ckeck trial here and block the programm if over
+	//
+
 	preferences()->load();
 
 	m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());
