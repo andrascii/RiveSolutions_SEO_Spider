@@ -40,6 +40,7 @@ namespace
 	const QString lastModifiedDateKey = QLatin1String("lastModifiedDate");
 	const QString pageSizeKilobytesKey = QLatin1String("pageSizeKilobytes");
 	const QString wordCountKey = QLatin1String("wordCount");
+	const QString secondsToRefreshKey = QLatin1String("secondsToRefresh");
 	const QString pageHashKey = QLatin1String("pageHash");
 	const QString hasSeveralTitleTagsKey = QLatin1String("hasSeveralTitleTags");
 	const QString hasSeveralMetaDescriptionTagsKey = QLatin1String("hasSeveralMetaDescriptionTags");
@@ -49,6 +50,9 @@ namespace
 	const QString hasMetaRefreshKey = QLatin1String("hasMetaRefreshKey");
 	const QString hasFramesKey = QLatin1String("hasFramesKey");
 	const QString isThisExternalPageKey = QLatin1String("isThisExternalPage");
+	const QString isBlockedForIndexingKey = QLatin1String("isBlockedForIndexing");
+	const QString isBlockedByMetaRobotsKey = QLatin1String("isBlockedByMetaRobots");
+	const QString tooManyRedirectsKey = QLatin1String("tooManyRedirects");
 	const QString resourceTypeKey = QLatin1String("resourceType");
 	const QString rawResponseKey = QLatin1String("rawResponse");
 	const QString pageLevelKey = QLatin1String("pageLevel");
@@ -67,6 +71,10 @@ namespace
 	const QString optionsKey = QLatin1String("options");
 	const QString hostKey = QLatin1String("host");
 	const QString limitMaxUrlLengthKey = QLatin1String("limitMaxUrlLength");
+	const QString limitSearchTotalKey = QLatin1String("limitSearchTotal");
+	const QString limitTimeoutKey = QLatin1String("limitTimeout");
+	const QString maxRedirectsToFollowKey = QLatin1String("maxRedirectsToFollow");
+	const QString maxLinksCountOnPageKey = QLatin1String("maxLinksCountOnPage");
 	const QString minTitleLengthKey = QLatin1String("minTitleLength");
 	const QString maxTitleLengthKey = QLatin1String("maxTitleLength");
 	const QString maxDescriptionLengthKey = QLatin1String("maxDescriptionLength");
@@ -75,6 +83,12 @@ namespace
 	const QString maxH2LengthCharsKey = QLatin1String("maxH2LengthChars");
 	const QString maxImageAltTextCharsKey = QLatin1String("maxImageAltTextChars");
 	const QString maxImageSizeKbKey = QLatin1String("maxImageSizeKb");
+	const QString maxPageSizeKbKey = QLatin1String("maxPageSizeKb");
+	const QString useProxyKey = QLatin1String("useProxy");
+	const QString proxyHostNameKey = QLatin1String("proxyHostName");
+	const QString proxyPortKey = QLatin1String("proxyPort");
+	const QString proxyUserKey = QLatin1String("proxyUser");
+	const QString proxyPasswordKey = QLatin1String("proxyPassword");
 	const QString checkExternalLinksKey = QLatin1String("checkExternalLinks");
 	const QString followInternalNofollowKey = QLatin1String("followInternalNofollow");
 	const QString followExternalNofollowKey = QLatin1String("followExternalNofollow");
@@ -136,6 +150,7 @@ public:
 		writer.writeTextElement(lastModifiedDateKey, QString::number(static_cast<unsigned long long>(m_page->lastModifiedDate.toMSecsSinceEpoch())));
 		writer.writeTextElement(pageSizeKilobytesKey, QString::number(m_page->pageSizeKilobytes));
 		writer.writeTextElement(wordCountKey, QString::number(m_page->wordCount));
+		writer.writeTextElement(secondsToRefreshKey, QString::number(m_page->secondsToRefresh));
 		writer.writeTextElement(pageHashKey, QString::number(m_page->pageHash));
 		writer.writeTextElement(hasSeveralTitleTagsKey, QString::number(m_page->hasSeveralTitleTags));
 		writer.writeTextElement(hasSeveralMetaDescriptionTagsKey, QString::number(m_page->hasSeveralMetaDescriptionTags));
@@ -146,6 +161,9 @@ public:
 		writer.writeTextElement(hasFramesKey, QString::number(m_page->hasFrames));
 
 		writer.writeTextElement(isThisExternalPageKey, QString::number(m_page->isThisExternalPage));
+		writer.writeTextElement(isBlockedForIndexingKey, QString::number(m_page->isBlockedForIndexing));
+		writer.writeTextElement(isBlockedByMetaRobotsKey, QString::number(m_page->isBlockedByMetaRobots));
+		writer.writeTextElement(tooManyRedirectsKey, QString::number(m_page->tooManyRedirects));
 		writer.writeTextElement(resourceTypeKey, QString::number(static_cast<int>(m_page->resourceType)));
 		
 		{
@@ -331,6 +349,10 @@ public:
 			{
 				m_page->wordCount = reader.readElementText().toInt();
 			}
+			else if (reader.qualifiedName() == secondsToRefreshKey)
+			{
+				m_page->secondsToRefresh = reader.readElementText().toInt();
+			}
 			else if (reader.qualifiedName() == pageHashKey)
 			{
 				m_page->pageHash = static_cast<size_t>(reader.readElementText().toULong());
@@ -366,6 +388,18 @@ public:
 			else if (reader.qualifiedName() == isThisExternalPageKey)
 			{
 				m_page->isThisExternalPage = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == isBlockedForIndexingKey)
+			{
+				m_page->isBlockedForIndexing = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == isBlockedByMetaRobotsKey)
+			{
+				m_page->isBlockedByMetaRobots = reader.readElementText().toInt() == 1;
+			}
+			else if (reader.qualifiedName() == tooManyRedirectsKey)
+			{
+				m_page->tooManyRedirects = reader.readElementText().toInt() == 1;
 			}
 			else if (reader.qualifiedName() == resourceTypeKey)
 			{
@@ -630,6 +664,10 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 
 	writer.writeTextElement(hostKey, m_options.startCrawlingPage.toDisplayString());
 	writer.writeTextElement(limitMaxUrlLengthKey, QString::number(m_options.limitMaxUrlLength));
+	writer.writeTextElement(limitSearchTotalKey, QString::number(m_options.limitSearchTotal));
+	writer.writeTextElement(limitTimeoutKey, QString::number(m_options.limitTimeout));
+	writer.writeTextElement(maxRedirectsToFollowKey, QString::number(m_options.maxRedirectsToFollow));
+	writer.writeTextElement(maxLinksCountOnPageKey, QString::number(m_options.maxLinksCountOnPage));
 	writer.writeTextElement(minTitleLengthKey, QString::number(m_options.minTitleLength));
 	writer.writeTextElement(maxTitleLengthKey, QString::number(m_options.maxTitleLength));
 	writer.writeTextElement(maxDescriptionLengthKey, QString::number(m_options.maxDescriptionLength));
@@ -638,6 +676,12 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeTextElement(maxH2LengthCharsKey, QString::number(m_options.maxH2LengthChars));
 	writer.writeTextElement(maxImageAltTextCharsKey, QString::number(m_options.maxImageAltTextChars));
 	writer.writeTextElement(maxImageSizeKbKey, QString::number(m_options.maxImageSizeKb));
+	writer.writeTextElement(maxPageSizeKbKey, QString::number(m_options.maxPageSizeKb));
+	writer.writeTextElement(useProxyKey, QString::number(m_options.useProxy));
+	writer.writeTextElement(proxyHostNameKey, m_options.proxyHostName);
+	writer.writeTextElement(proxyPortKey, QString::number(m_options.proxyPort));
+	writer.writeTextElement(proxyUserKey, m_options.proxyUser);
+	writer.writeTextElement(proxyPasswordKey, m_options.proxyPassword);
 	writer.writeTextElement(checkExternalLinksKey, QString::number(m_options.checkExternalLinks));
 	writer.writeTextElement(followInternalNofollowKey, QString::number(m_options.followInternalNofollow));
 	writer.writeTextElement(followExternalNofollowKey, QString::number(m_options.followExternalNofollow));
@@ -673,6 +717,22 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		{
 			m_options.limitMaxUrlLength = reader.readElementText().toInt();
 		}
+		else if (reader.qualifiedName() == limitSearchTotalKey)
+		{
+			m_options.limitSearchTotal = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == limitTimeoutKey)
+		{
+			m_options.limitTimeout = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxRedirectsToFollowKey)
+		{
+			m_options.maxRedirectsToFollow = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxLinksCountOnPageKey)
+		{
+			m_options.maxLinksCountOnPage = reader.readElementText().toInt();
+		}
 		else if (reader.qualifiedName() == minTitleLengthKey)
 		{
 			m_options.minTitleLength = reader.readElementText().toInt();
@@ -704,6 +764,30 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		else if (reader.qualifiedName() == maxImageSizeKbKey)
 		{
 			m_options.maxImageSizeKb = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == maxPageSizeKbKey)
+		{
+			m_options.maxPageSizeKb = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == useProxyKey)
+		{
+			m_options.useProxy = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == proxyHostNameKey)
+		{
+			m_options.proxyHostName = reader.readElementText();
+		}
+		else if (reader.qualifiedName() == proxyPortKey)
+		{
+			m_options.proxyPort = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == proxyUserKey)
+		{
+			m_options.proxyUser = reader.readElementText();
+		}
+		else if (reader.qualifiedName() == proxyPasswordKey)
+		{
+			m_options.proxyPassword = reader.readElementText();
 		}
 		else if (reader.qualifiedName() == checkExternalLinksKey)
 		{
