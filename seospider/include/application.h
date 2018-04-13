@@ -22,6 +22,7 @@ class SummaryDataAccessorFactory;
 class HeaderControlsContainer;
 class InternetConnectionNotificationManager;
 class CommandLineHandler;
+class IUpdateChecker;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -68,7 +69,8 @@ private slots:
 	void stopCrawler();
 	void clearCrawledData();
 	void showMainWindow();
-	void onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options);
+	void onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options);
+	void onAboutUpdateExists(const QString& downloadLink);
 
 private:
 	void initialize();
@@ -90,6 +92,8 @@ private:
 
 	InternetConnectionNotificationManager* m_internetNotificationManager;
 	std::unique_ptr<HeaderControlsContainer> m_headerControlsContainer;
+
+	IUpdateChecker* m_updateChecker;
 };
 
 }

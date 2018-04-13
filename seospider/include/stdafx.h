@@ -94,6 +94,8 @@
 #include <fstream>
 #include <optional>
 
+#include <windows.h>
+
 //
 // boost
 //

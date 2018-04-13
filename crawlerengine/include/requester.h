@@ -7,8 +7,6 @@
 namespace CrawlerEngine
 {
 
-class Requester;
-
 class Requester : public QObject, public std::enable_shared_from_this<Requester>
 {
 	Q_OBJECT
