@@ -256,8 +256,7 @@ void Crawler::onCrawlingSessionInitialized()
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
 		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
 
-	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
-		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, m_options.userAgent)));
+	setUserAgent(m_options.userAgent);
 
 	if (m_options.useProxy)
 	{
@@ -641,6 +640,12 @@ void Crawler::refreshPage(StorageType storageType, int index)
 	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet);
 
 	setState(StatePageRefresh);
+}
+
+void Crawler::setUserAgent(const QByteArray& userAgent)
+{
+	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
+		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, userAgent)));
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept

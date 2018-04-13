@@ -342,6 +342,23 @@ void Application::onAboutUpdateExists(const QString& downloadLink)
 	downloadLink;
 }
 
+void Application::onAboutUseCustomUserAgentChanged()
+{
+	if (!preferences()->useCustomUserAgent())
+	{
+		return;
+	}
+
+	if (preferences()->useDesktopUserAgent())
+	{
+		m_crawler->setUserAgent(preferences()->desktopUserAgent().toLatin1());
+	}
+	else if (preferences()->useMobileUserAgent())
+	{
+		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
+	}
+}
+
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
@@ -366,6 +383,9 @@ void Application::initialize()
 	DeferredCallProcessor::init();
 
 	m_crawler->initialize();
+
+	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, this, &Application::onAboutUseCustomUserAgentChanged));
+
 	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
 
 	SplashScreen::showMessage("Initializing...");

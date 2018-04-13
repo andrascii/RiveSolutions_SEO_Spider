@@ -71,6 +71,7 @@ private slots:
 	void showMainWindow();
 	void onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options);
 	void onAboutUpdateExists(const QString& downloadLink);
+	void onAboutUseCustomUserAgentChanged();
 
 private:
 	void initialize();
