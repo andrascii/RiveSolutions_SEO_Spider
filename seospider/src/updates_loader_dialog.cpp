@@ -77,6 +77,8 @@ void UpdatesLoaderDialog::onDownloadLaterClicked()
 void UpdatesLoaderDialog::onAboutDownloadProgress(CrawlerEngine::Requester*, const CrawlerEngine::DownloadProgressResponse& response)
 {
 	double speed = response.bytesReceived * 1000.0 / m_downloadTime.elapsed();
+	double downloaded = response.bytesReceived;
+	double total = response.bytesTotal;
 
 	QString unit;
 
@@ -95,16 +97,35 @@ void UpdatesLoaderDialog::onAboutDownloadProgress(CrawlerEngine::Requester*, con
 		unit = "MB/s";
 	}
 
+	QString sizeUnit;
+
+	if (response.bytesTotal < 1024)
+	{
+		sizeUnit = "bytes";
+	}
+	else if (response.bytesTotal < 1024 * 1024)
+	{
+		downloaded /= 1024;
+		total /= 1024;
+		sizeUnit = "kB";
+	}
+	else
+	{
+		downloaded /= 1024 * 1024;
+		total /= 1024 * 1024;
+		sizeUnit = "MB";
+	}
+
 	const double percents = static_cast<double>(response.bytesReceived) / static_cast<double>(response.bytesTotal + 1) * 100.0;
 	m_ui->progressBar->setValue(static_cast<int>(percents));
-	m_ui->progressBar->setFormat(QString::number(response.bytesReceived) + "/" + QString::number(response.bytesTotal) + "(" + QString::number(speed) + " " + unit + ")");
+	m_ui->progressBar->setFormat(QString::number(downloaded, 'f', 3) + sizeUnit + "/" + QString::number(total, 'f', 3) + sizeUnit + " (" + QString::number(speed) + " " + unit + ")");
 }
 
 void UpdatesLoaderDialog::onUpdatesDownloadingFinished(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
 {
 	m_ui->progressBar->setValue(100);
 
-	QFile file(updatesPatchSaveDirPath() + m_downloadLink.fileName());
+	QFile file(updatesPatchSaveDirPath() + "/" + m_downloadLink.fileName());
 	file.open(QIODevice::WriteOnly);
 
 	DEBUG_ASSERT(response.hopsChain.length() > 0);
@@ -133,7 +154,7 @@ void UpdatesLoaderDialog::closeDialog() noexcept
 QString UpdatesLoaderDialog::updatesPatchSaveDirPath() const
 {
 	QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-	path = QDir::cleanPath(path + QString("/RiveSolutions/SeoSpider/Update"));
+	path = QDir::cleanPath(path + QString("/RiveSolutions/SeoSpider/Update/"));
 
 	QDir dir(path);
 

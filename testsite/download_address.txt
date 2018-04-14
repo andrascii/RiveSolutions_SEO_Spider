@@ -1,1 +1,1 @@
-http://rivesolutions.com/dist/installer.zip
+http://rivesolutions.com/dist/installer.exe
