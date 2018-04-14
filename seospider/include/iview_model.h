@@ -16,7 +16,7 @@ public:
 	virtual int marginLeft(const QModelIndex& index) const noexcept = 0;
 	virtual int marginRight(const QModelIndex& index) const noexcept = 0;
 
-	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept = 0;
+	virtual QPixmap pixmap(const QModelIndex& index) const noexcept = 0;
 	virtual QRect pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept = 0;
 
 	virtual QString displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept = 0;

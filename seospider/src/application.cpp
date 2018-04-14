@@ -23,6 +23,7 @@
 #include "command_line_handler.h"
 #include "command_line_keys.h"
 #include "update_checker.h"
+#include "updates_loader_dialog.h"
 
 namespace SeoSpider
 {
@@ -339,7 +340,8 @@ void Application::onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions opt
 
 void Application::onAboutUpdateExists(const QString& downloadLink)
 {
-	downloadLink;
+	UpdatesLoaderDialog* updatesLoaderDialog = new UpdatesLoaderDialog(downloadLink, mainWindow());
+	updatesLoaderDialog->show();
 }
 
 void Application::onAboutUseCustomUserAgentChanged()

@@ -8,6 +8,14 @@
 #pragma comment(lib, "mincore.lib")
 #endif
 
+namespace
+{
+
+constexpr const char* s_actualVersionFileUrl = "http://rivesolutions.com/actual_version.txt";
+constexpr const char* s_downloadAddressFileUrl = "http://rivesolutions.com/download_address.txt";
+
+}
+
 namespace SeoSpider
 {
 
@@ -22,11 +30,11 @@ void UpdateChecker::check()
 {
 	CrawlerEngine::CrawlerRequest crawlerRequest
 	{
-		CrawlerEngine::Url("http://rivesolutions.com/actual_version.txt"),
+		CrawlerEngine::Url(s_actualVersionFileUrl),
 		CrawlerEngine::DownloadRequestType::RequestTypeGet
 	};
 
-	CrawlerEngine::DownloadRequest request(crawlerRequest, false);
+	CrawlerEngine::DownloadRequest request(crawlerRequest);
 	m_downloadRequester.reset(request, this, &UpdateChecker::onActualVersionFileLoaded);
 	m_downloadRequester->start();
 }
@@ -45,6 +53,12 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 	ASSERT(response.hopsChain.length() != 0);
 
 	const CrawlerEngine::Hop lastHop = response.hopsChain.back();
+
+	if (lastHop.statusCode() != Common::StatusCode::Ok200)
+	{
+		ERRLOG << "ATTENTION!!! Cannot load actual program version!";
+		return;
+	}
 
 	//
 	// TODO: implement decryption when encryption will be implemented on the server
@@ -70,11 +84,11 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 
 	CrawlerEngine::CrawlerRequest crawlerRequest
 	{
-		CrawlerEngine::Url("http://rivesolutions.com/download_address.txt"),
+		CrawlerEngine::Url(s_downloadAddressFileUrl),
 		CrawlerEngine::DownloadRequestType::RequestTypeGet
 	};
 
-	CrawlerEngine::DownloadRequest request(crawlerRequest, false);
+	CrawlerEngine::DownloadRequest request(crawlerRequest);
 	m_downloadRequester.reset(request, this, &UpdateChecker::onDownloadLinkFileLoaded);
 	m_downloadRequester->start();
 }

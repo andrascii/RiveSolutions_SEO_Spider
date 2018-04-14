@@ -291,7 +291,7 @@ std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const Crawler
 
 	QString filename = downloadRequest.requestInfo.url.fileName();
 
-	if (downloadRequest.isReloadAlreadyLoaded)
+	if (downloadRequest.linkStatus == DownloadRequest::LinkStatus::LinkStatusReloadAlreadyLoaded)
 	{
 		const int lastDotIndex = filename.lastIndexOf(".");
 		filename.insert(lastDotIndex, "_fixed");

@@ -7,6 +7,7 @@ enum class ResponseType
 {
 	ResponseTypeUnknown,
 	ResponseTypeDownload,
+	ResponseTypeDownloadProgress,
 	ResponseTypeGetHostInfo,
 	ResponseTypeTaskResult,
 	ResponseTypeCheck404IsProper

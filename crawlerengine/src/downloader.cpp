@@ -9,6 +9,7 @@
 #include "service_locator.h"
 #include "inotification_service.h"
 #include "random_interval_range_timer.h"
+#include "helpers.h"
 
 namespace CrawlerEngine
 {
@@ -128,6 +129,31 @@ void Downloader::proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenti
 	serviceLocator->service<INotificationService>()->error(tr("Proxy error"), tr("Proxy authentication failed."));
 }
 
+void Downloader::onAboutDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+	QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+
+	ASSERT(reply);
+
+	const int requestId = reply->property("requestId").toInt();
+	const RequesterSharedPtr requester = m_requesters[requestId].lock();
+
+	std::shared_ptr<DownloadProgressResponse> downloadProgressResponse = std::make_shared<DownloadProgressResponse>();
+	downloadProgressResponse->bytesReceived = bytesReceived;
+	downloadProgressResponse->bytesTotal = bytesTotal;
+
+	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, downloadProgressResponse);
+}
+
+bool Downloader::isAutoDetectionBodyProcessing(QNetworkReply* reply) const
+{
+	const int requestId = reply->property("requestId").toInt();
+	const RequesterSharedPtr requester = m_requesters[requestId].lock();
+
+	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
+	return request->bodyProcessingCommand == DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity;
+}
+
 void Downloader::urlDownloaded(QNetworkReply* reply)
 {
 	processReply(reply);
@@ -144,7 +170,7 @@ void Downloader::metaDataChanged(QNetworkReply* reply)
 		reply->header(QNetworkRequest::ContentTypeHeader).toString()
 	);
 
-	if (nonHtmlResponse)
+	if (isAutoDetectionBodyProcessing(reply) && nonHtmlResponse)
 	{
 		processReply(reply);
 
@@ -186,10 +212,6 @@ void Downloader::processReply(QNetworkReply* reply)
 	markReplyAsProcessed(reply);
 	reply->disconnect(this);
 
-	const bool processBody = PageParserHelpers::isHtmlOrPlainContentType(
-		reply->header(QNetworkRequest::ContentTypeHeader).toString()
-	);
-
 	const DownloadRequestType requestType = static_cast<DownloadRequestType>(reply->property("crawlerRequestType").toInt());
 	const Common::StatusCode statusCode = static_cast<Common::StatusCode>(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
 	const int requestId = reply->property("requestId").toInt();
@@ -214,7 +236,21 @@ void Downloader::processReply(QNetworkReply* reply)
 
 	std::shared_ptr<DownloadResponse> response = m_responses[requestId];
 
-	const QByteArray body = processBody ? reply->readAll() : QByteArray();
+	const bool processBody = PageParserHelpers::isHtmlOrPlainContentType(
+		reply->header(QNetworkRequest::ContentTypeHeader).toString()
+	);
+
+	QByteArray body;
+
+	if (isAutoDetectionBodyProcessing(reply))
+	{
+		body = processBody ? reply->readAll() : QByteArray();
+	}
+	else
+	{
+		body = reply->readAll();
+	}
+
 	Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 
 	if (redirectUrl.isValid() && redirectUrl.isRelative())
@@ -275,7 +311,7 @@ void Downloader::markReplyAsProcessed(QNetworkReply* reply) const noexcept
 
 void Downloader::load(RequesterSharedPtr requester)
 {
-	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
+	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
 	const int requestId = loadHelper(request->requestInfo);
 
@@ -326,6 +362,8 @@ int Downloader::loadHelper(const CrawlerRequest& request, int parentRequestId)
 
 	VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this,
 		[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
+
+	VERIFY(connect(reply, SIGNAL(downloadProgress(qint64, qint64)), SLOT(onAboutDownloadProgress(qint64, qint64))));
 
 	return resultRequestId;
 }

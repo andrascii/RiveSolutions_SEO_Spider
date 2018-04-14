@@ -23,13 +23,13 @@ class PageViewModel : public AbstractViewModel
 	Q_PROPERTY(QFont textFont READ textFont WRITE setTextFont NOTIFY textFontChanged)
 
 public:
-	PageViewModel(IView* view, PageModel* model, QObject* parent = nullptr);
+	PageViewModel(QWidget* parentView, PageModel* model, QObject* parent = nullptr);
 
 	virtual int marginTop(const QModelIndex& index) const noexcept override;
 	virtual int marginBottom(const QModelIndex& index) const noexcept override;
 	virtual int marginLeft(const QModelIndex& index) const noexcept override;
 	virtual int marginRight(const QModelIndex& index) const noexcept override;
-	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept override;
+	virtual QPixmap pixmap(const QModelIndex& index) const noexcept override;
 	virtual QRect pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
 	virtual QString displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
 	virtual QRect displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
@@ -84,7 +84,7 @@ private:
 	void initializeRenderers();
 
 private:
-	IView* m_view;
+	QWidget* m_parentView;
 	QColor m_selectionBackgroundColor;
 	QColor m_hoveredBackgroundColor;
 	QColor m_backgroundColor;

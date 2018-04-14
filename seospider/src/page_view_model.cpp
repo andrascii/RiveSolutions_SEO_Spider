@@ -16,9 +16,9 @@ constexpr int s_preferredCacheSize = 500;
 namespace SeoSpider
 {
 
-PageViewModel::PageViewModel(IView* view, PageModel* model, QObject* parent)
+PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_view(view)
+	, m_parentView(parentView)
 	, m_selectionBackgroundColor("#F7F0D6")
 	, m_hoveredBackgroundColor("#F2F2F2")
 	, m_backgroundColor("#FCFDFE")
@@ -68,21 +68,34 @@ int PageViewModel::marginRight(const QModelIndex&) const noexcept
 	return Common::Helpers::pointsToPixels(2);
 }
 
-const QPixmap& PageViewModel::pixmap(const QModelIndex& index) const noexcept
+QPixmap PageViewModel::pixmap(const QModelIndex& index) const noexcept
 {
 	const PageModel* model = 
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
-	static QPixmap emptyPixmap;
+	static QPixmap s_emptyPixmap;
+
+	QPixmap pixmap;
 
 	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType && 
 		hoveredIndex().row() == index.row() &&
 		CrawlerEngine::Url(index.data(Qt::DisplayRole).toString()).isValid())
 	{
-		return m_urlIcon;
+		pixmap = m_urlIcon;
+	}
+	else
+	{
+		pixmap = s_emptyPixmap;
 	}
 
-	return emptyPixmap;
+	if (!m_parentView->isEnabled())
+	{
+		QIcon icon(pixmap);
+
+		return icon.pixmap(pixmap.size(), QIcon::Disabled, QIcon::Off);
+	}
+
+	return pixmap;
 }
 
 QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
