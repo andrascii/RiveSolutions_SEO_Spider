@@ -792,5 +792,73 @@ SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetDescription
 	color: #262e35;
 }
 
-/*////////////////////////////// FilterInfoWidget ///////////////////////////////////////////*/
+/*////////////////////////////// UpdatesLoaderDialogContent /////////////////////////////////////*/
 
+QFrame#UpdatesLoaderDialogContent
+{
+	border: 0.1em solid #CCCCCC;
+	min-width: 40em;
+	max-width: 40em;
+	min-height: 15em;
+	max-height: 15em;
+}
+
+QFrame#UpdatesLoaderDialogContent QLabel#headerLabel
+{
+	font-size: 24pt;
+	font: bold;
+	color: #4D4D4D;
+}
+
+QFrame#UpdatesLoaderDialogContent QLabel#textLabel
+{
+	font-size: 14pt;
+	font: bold;
+	color: #4D4D4D;
+}
+
+QFrame#UpdatesLoaderDialogContent QProgressBar
+{
+    min-height: 1.5em;
+	max-height: 1.5em;
+    max-width: 28.5em;	
+    background-color: #ffffff;
+    text-align: center;
+    color: #4D626E;
+	border-radius: none;
+	border-color: #4A9029;
+}
+
+QFrame#UpdatesLoaderDialogContent QProgressBar::chunk
+{
+	background-color: #61a032;
+}
+
+
+QFrame#UpdatesLoaderDialogContent QPushButton
+{
+	border-radius: none;
+	font: bold;
+	font-size: 12pt;
+	min-height: 1.5em;
+	min-width: 10em;
+	max-width: 10em;
+}
+
+QFrame#UpdatesLoaderDialogContent QPushButton#downloadNowButton
+{
+	color: white;
+	background-color: #56A433;
+	border-radius: none;
+	border-color: #4A9029;
+}
+
+QFrame#UpdatesLoaderDialogContent QPushButton#downloadNowButton:hover
+{
+	background-color: #67B847;
+}
+
+QFrame#UpdatesLoaderDialogContent QPushButton#downloadNowButton:pressed
+{
+	background-color: #4A9029;
+}

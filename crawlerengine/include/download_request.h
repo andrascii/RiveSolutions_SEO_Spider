@@ -8,9 +8,24 @@ namespace CrawlerEngine
 
 struct DownloadRequest : public IRequest
 {
-	DownloadRequest(const CrawlerRequest& requestInfo, bool isReloadAlreadyLoaded = false)
+	enum class LinkStatus
+	{
+		LinkStatusReloadAlreadyLoaded,
+		LinkStatusFirstLoading
+	};
+
+	enum class BodyProcessingCommand
+	{
+		CommandDownloadBodyAnyway,
+		CommandAutoDetectionBodyLoadingNecessity
+	};
+
+	DownloadRequest(const CrawlerRequest& requestInfo, 
+		LinkStatus linkStatus = LinkStatus::LinkStatusFirstLoading, 
+		BodyProcessingCommand bodyProcessingCommand = BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity)
 		: requestInfo(requestInfo)
-		, isReloadAlreadyLoaded(isReloadAlreadyLoaded)
+		, linkStatus(linkStatus)
+		, bodyProcessingCommand(bodyProcessingCommand)
 	{
 	}
 
@@ -24,7 +39,8 @@ struct DownloadRequest : public IRequest
 	}
 
 	CrawlerRequest requestInfo;
-	bool isReloadAlreadyLoaded;
+	LinkStatus linkStatus;
+	BodyProcessingCommand bodyProcessingCommand;
 };
 
 }

@@ -22,6 +22,8 @@
 #include "crawler_options.h"
 #include "command_line_handler.h"
 #include "command_line_keys.h"
+#include "update_checker.h"
+#include "updates_loader_dialog.h"
 
 namespace SeoSpider
 {
@@ -46,13 +48,14 @@ Application::Application(int& argc, char** argv)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
 	, m_headerControlsContainer(new HeaderControlsContainer())
+	, m_updateChecker(new UpdateChecker(this))
 {
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists(const QString&)), SLOT(onAboutUpdateExists(const QString&))));
+
 	SplashScreen::show();
 
 	initialize();
-
 	initializeStyleSheet();
-
 	showMainWindow();
 	
 	INFOLOG << "Started application under OS" << operatingSystemVersion();
@@ -66,6 +69,8 @@ Application::Application(int& argc, char** argv)
 	{
 		mainWindow()->openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
 	}
+
+	m_updateChecker->check();
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -259,7 +264,7 @@ void Application::showMainWindow()
 	emit mainWindowShown();
 }
 
-void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
+void Application::onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 {
 	// limit settings
 	preferences()->setLimitMaxUrlLength(options.limitMaxUrlLength);
@@ -333,6 +338,29 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 	}
 }
 
+void Application::onAboutUpdateExists(const QString& downloadLink)
+{
+	UpdatesLoaderDialog* updatesLoaderDialog = new UpdatesLoaderDialog(downloadLink, mainWindow());
+	updatesLoaderDialog->show();
+}
+
+void Application::onAboutUseCustomUserAgentChanged()
+{
+	if (!preferences()->useCustomUserAgent())
+	{
+		return;
+	}
+
+	if (preferences()->useDesktopUserAgent())
+	{
+		m_crawler->setUserAgent(preferences()->desktopUserAgent().toLatin1());
+	}
+	else if (preferences()->useMobileUserAgent())
+	{
+		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
+	}
+}
+
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
@@ -357,6 +385,9 @@ void Application::initialize()
 	DeferredCallProcessor::init();
 
 	m_crawler->initialize();
+
+	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, this, &Application::onAboutUseCustomUserAgentChanged));
+
 	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
 
 	SplashScreen::showMessage("Initializing...");
@@ -383,7 +414,7 @@ void Application::initialize()
 
 #endif
 
-	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsChanged, this, &Application::onCrawlerOptionsChanged));
+	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsChanged, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
 }

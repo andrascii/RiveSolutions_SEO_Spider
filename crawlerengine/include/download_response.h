@@ -19,4 +19,17 @@ struct DownloadResponse : public IResponse
 	HopsChain hopsChain;
 };
 
+struct DownloadProgressResponse : public IResponse
+{
+	virtual ResponseType type() const noexcept override
+	{
+		return ResponseType::ResponseTypeDownloadProgress;
+	}
+
+	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeDownloadProgress)
+
+	quint64 bytesReceived;
+	quint64 bytesTotal;
+};
+
 }

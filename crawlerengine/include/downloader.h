@@ -34,6 +34,8 @@ private slots:
 	void queryError(QNetworkReply* reply, QNetworkReply::NetworkError code);
 	void onTimerTicked();
 	void proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenticator*) const;
+	void onAboutDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+	bool isAutoDetectionBodyProcessing(QNetworkReply* reply) const;
 
 private:
 	void processReply(QNetworkReply* reply);

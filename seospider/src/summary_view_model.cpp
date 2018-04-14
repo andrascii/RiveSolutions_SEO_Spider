@@ -6,9 +6,9 @@
 namespace SeoSpider
 {
 
-SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
+SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QObject* parent)
 	: AbstractViewModel(model, parent)
-	, m_selectedBackgroundColor(/*"#F7F0D6"*/"#D2D3D5")
+	, m_selectedBackgroundColor("#D2D3D5")
 	, m_hoveredBackgroundColor("#F2F2F2")
 	, m_backgroundColor("#FCFDFE")
 	, m_selectedGridLineColor("#F7F0D6")
@@ -18,6 +18,7 @@ SummaryViewModel::SummaryViewModel(SummaryModel* model, QObject* parent)
 	, m_headerFont("Helvetica", 10, QFont::DemiBold)
 	, m_textFont("Helvetica", 10, QFont::Normal)
 	, m_itemRenderer(this)
+	, m_parentView(parentView)
 {
 	initializeRenderers();
 
@@ -44,11 +45,20 @@ int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
 	return Common::Helpers::pointsToPixels(2);
 }
 
-const QPixmap& SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
+QPixmap SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
 {
 	const SummaryModel* model = static_cast<const SummaryModel*>(AbstractViewModel::model());
 
-	return model->dataAccessor()->pixmap(index);
+	const QPixmap& originalPixmap = model->dataAccessor()->pixmap(index);
+
+	if (!m_parentView->isEnabled())
+	{
+		QIcon icon(originalPixmap);
+
+		return icon.pixmap(originalPixmap.size(), QIcon::Disabled, QIcon::Off);
+	}
+
+	return originalPixmap;
 }
 
 QRect SummaryViewModel::pixmapPosition(const QModelIndex&, const QRect& itemVisualRect) const noexcept

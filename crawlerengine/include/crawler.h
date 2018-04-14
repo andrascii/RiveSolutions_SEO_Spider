@@ -85,6 +85,7 @@ public slots:
 	void startCrawling(const CrawlerOptions& options);
 	void stopCrawling();
 	void refreshPage(StorageType storageType, int index);
+	void setUserAgent(const QByteArray& userAgent);
 
 protected slots:
 	void onRefreshPageDone();
