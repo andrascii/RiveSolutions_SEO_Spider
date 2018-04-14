@@ -6,6 +6,11 @@
 namespace CrawlerEngine
 {
 
+
+#ifndef SERIALIZED
+# define SERIALIZED ;
+#endif
+
 struct ParsedPage;
 
 using ParsedPageWeakPtr = std::weak_ptr<ParsedPage>;
@@ -104,10 +109,10 @@ struct LinkInfo
 struct ResourceLink
 {
 	ParsedPageWeakPtr resource;
-	Url url;
-	LinkParameter linkParameter;
-	ResourceSource resourceSource;
-	QString altOrTitle;
+	SERIALIZED Url url;
+	SERIALIZED LinkParameter linkParameter;
+	SERIALIZED ResourceSource resourceSource;
+	SERIALIZED QString altOrTitle;
 };
 
 struct ResourceOnPage
@@ -160,52 +165,52 @@ constexpr int invalidPageLevel = 100000000;
 
 struct ParsedPage
 {
-	Url url;
-	Url redirectedUrl;
-	Url canonicalUrl;
+	SERIALIZED Url url;
+	SERIALIZED Url redirectedUrl;
+	SERIALIZED Url canonicalUrl;
 
-	QString title;
-	QString contentType;
-	QString metaRefresh;
-	QString metaDescription;
-	QString metaKeywords;
-	QString serverResponse;
-	QString firstH1;
-	QString secondH1;
-	QString firstH2;
-	QString secondH2;
-	Common::StatusCode statusCode;
-	MetaRobotsFlagsSet metaRobotsFlags;
-	QDateTime responseDate;
-	QDateTime lastModifiedDate;
+	SERIALIZED QString title;
+	SERIALIZED QString contentType;
+	SERIALIZED QString metaRefresh;
+	SERIALIZED QString metaDescription;
+	SERIALIZED QString metaKeywords;
+	SERIALIZED QString serverResponse;
+	SERIALIZED QString firstH1;
+	SERIALIZED QString secondH1;
+	SERIALIZED QString firstH2;
+	SERIALIZED QString secondH2;
+	SERIALIZED Common::StatusCode statusCode;
+	SERIALIZED MetaRobotsFlagsSet metaRobotsFlags;
+	SERIALIZED QDateTime responseDate;
+	SERIALIZED QDateTime lastModifiedDate;
 
-	int pageSizeKilobytes = int();
-	int wordCount = int();
-	int secondsToRefresh = -1;
-	size_t pageHash = size_t();
+	SERIALIZED int pageSizeKilobytes = int();
+	SERIALIZED int wordCount = int();
+	SERIALIZED int secondsToRefresh = -1;
+	SERIALIZED size_t pageHash = size_t();
 
-	bool hasSeveralTitleTags = bool();
-	bool hasSeveralMetaDescriptionTags = bool();
-	bool hasSeveralMetaKeywordsTags = bool();
-	bool hasSeveralH1Tags = bool();
-	bool hasSeveralEqualH2Tags = bool();
-	bool hasMetaRefreshTag = bool();
-	bool hasFrames = bool();
-	bool isThisExternalPage = bool();
-	bool isBlockedForIndexing = bool();
-	bool isBlockedByMetaRobots = bool();
-	bool tooManyRedirects = bool();
+	SERIALIZED bool hasSeveralTitleTags = bool();
+	SERIALIZED bool hasSeveralMetaDescriptionTags = bool();
+	SERIALIZED bool hasSeveralMetaKeywordsTags = bool();
+	SERIALIZED bool hasSeveralH1Tags = bool();
+	SERIALIZED bool hasSeveralEqualH2Tags = bool();
+	SERIALIZED bool hasMetaRefreshTag = bool();
+	SERIALIZED bool hasFrames = bool();
+	SERIALIZED bool isThisExternalPage = bool();
+	SERIALIZED bool isBlockedForIndexing = bool();
+	SERIALIZED bool isBlockedByMetaRobots = bool();
+	SERIALIZED bool tooManyRedirects = bool();
 
-	ResourceType resourceType;
+	SERIALIZED ResourceType resourceType;
 	ResourcesOnPageList allResourcesOnPage;
-	std::deque<ResourceLink> linksOnThisPage;
+	SERIALIZED std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 
-	QByteArray rawResponse;
+	SERIALIZED QByteArray rawResponse;
 
-	int pageLevel = invalidPageLevel;
+	SERIALIZED int pageLevel = invalidPageLevel;
 
-	std::vector<bool> storages;
+	SERIALIZED std::vector<bool> storages;
 
 	bool canRefresh() const noexcept
 	{
