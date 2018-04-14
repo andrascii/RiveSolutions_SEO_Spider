@@ -24,9 +24,15 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 
 	VERIFY(connect(crawler, &Crawler::crawlingProgress,
 		this, &ParsedPageReceiver::onCrawlingProgress, Qt::QueuedConnection));
+	
+	VERIFY(connect(crawler, &Crawler::crawlerStarted,
+		this, &ParsedPageReceiver::onCrawlerStarted, Qt::QueuedConnection));
 
 	VERIFY(connect(crawler, &Crawler::onAboutClearData,
 		this, &ParsedPageReceiver::onAboutClearData, Qt::QueuedConnection));
+
+	VERIFY(connect(crawler->sequencedDataCollection(), &SequencedDataCollection::endClearData,
+		this, &ParsedPageReceiver::onDataCleared, Qt::QueuedConnection));
 
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)),
 		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
@@ -99,6 +105,11 @@ void ParsedPageReceiver::onCrawlingProgress(CrawlingProgress state)
 	}
 }
 
+void ParsedPageReceiver::onCrawlerStarted()
+{
+	m_waitForClearingData = std::promise<void>();
+}
+
 void ParsedPageReceiver::onAboutClearData()
 {
 	m_waitConditions.clear();
@@ -108,6 +119,11 @@ void ParsedPageReceiver::onAboutClearData()
 	m_linksToThisResourceConditions.clear();
 
 	m_allPagesReceivedPromise = std::promise<std::vector<const ParsedPage*>>();
+}
+
+void ParsedPageReceiver::onDataCleared()
+{
+	m_waitForClearingData.set_value();
 }
 
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
@@ -143,6 +159,11 @@ std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataColl
 	auto iterator = m_unorderedDataCollectionPages.find(type);
 
 	return iterator != m_unorderedDataCollectionPages.end() ? iterator->second : std::vector<const ParsedPage*>();
+}
+
+std::future<void> ParsedPageReceiver::getWaitForClearingData()
+{
+	return m_waitForClearingData.get_future();
 }
 
 void ParsedPageReceiver::wait()

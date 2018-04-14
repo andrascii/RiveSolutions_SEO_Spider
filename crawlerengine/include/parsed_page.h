@@ -86,13 +86,13 @@ using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
 
 enum Restriction
 {
-	RestrictionExternalLinksNotAllowed,
-	RestrictionNofollowNotAllowed,
-	RestrictionBlockedByRobotsTxtRules,
-	RestrictionBlockedByMetaRobotsRules,
-	RestrictionSubdomainNotAllowed,
-	RestrictionBlockedByFolder,
-	RestrictionNotHttpLinkNotAllowed
+	RestrictionExternalLinksNotAllowed = 1,
+	RestrictionNofollowNotAllowed = 1 << 1,
+	RestrictionBlockedByRobotsTxtRules = 1 << 2,
+	RestrictionBlockedByMetaRobotsRules = 1 << 3,
+	RestrictionSubdomainNotAllowed = 1 << 4,
+	RestrictionBlockedByFolder = 1 << 5,
+	RestrictionNotHttpLinkNotAllowed = 1 << 6
 };
 
 Q_DECLARE_FLAGS(RestrictionFlags, Restriction)

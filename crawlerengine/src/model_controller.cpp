@@ -186,9 +186,9 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	
 	fixParsedPageResourceType(workerResult.incomingPage());
 
-	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType))
+	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType, m_crawlerOptions))
 	{
-		data()->removeParsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
+		removeResourceFromPendingStorageIfNeeded(workerResult.incomingPage());
 		return;
 	}
 
@@ -747,13 +747,11 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.linkParameter,
 				resource.link.resourceSource, resource.link.altOrTitle });
 
-			const StorageTypeFlags flags = addIndexingBlockingPage(pendingResource, resource);
+			const QSet<StorageType> blockingStorages = addIndexingBlockingPage(pendingResource, resource);
 
-			const bool mustBeAddedToPending = flags.testFlag(StorageType::NofollowLinksStorageType) &&
-				(pendingResource->isThisExternalPage ? m_crawlerOptions.followExternalNofollow : m_crawlerOptions.followInternalNofollow);
-
-			if (mustBeAddedToPending)
+			if (!blockingStorages.isEmpty())
 			{
+				// if blockingStorages is not empty that means that we already added page to some storage
 				data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 
 				pendingResource->url.canonizedUrlStr();
@@ -836,7 +834,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			continue;
 		}
 
-		if ((!resourceShouldBeProcessed(resource.resourceType) && 
+		if ((!resourceShouldBeProcessed(resource.resourceType, m_crawlerOptions) && 
 			resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
@@ -924,7 +922,7 @@ void ModelController::fixParsedPageResourceType(ParsedPagePtr& incomingPage) con
 	}
 }
 
-bool ModelController::resourceShouldBeProcessed(ResourceType resourceType) const noexcept
+bool ModelController::resourceShouldBeProcessed(ResourceType resourceType, const CrawlerOptions& options) noexcept
 {
 	switch (resourceType)
 	{
@@ -934,27 +932,27 @@ bool ModelController::resourceShouldBeProcessed(ResourceType resourceType) const
 		}
 		case ResourceType::ResourceImage:
 		{
-			return m_crawlerOptions.parserTypeFlags.testFlag(ImagesResourcesParserType);
+			return options.parserTypeFlags.testFlag(ImagesResourcesParserType);
 		}
 		case ResourceType::ResourceJavaScript:
 		{
-			return m_crawlerOptions.parserTypeFlags.testFlag(JavaScriptResourcesParserType);
+			return options.parserTypeFlags.testFlag(JavaScriptResourcesParserType);
 		}
 		case ResourceType::ResourceStyleSheet:
 		{
-			return m_crawlerOptions.parserTypeFlags.testFlag(CssResourcesParserType);
+			return options.parserTypeFlags.testFlag(CssResourcesParserType);
 		}
 		case ResourceType::ResourceFlash:
 		{
-			return m_crawlerOptions.parserTypeFlags.testFlag(FlashResourcesParserType);
+			return options.parserTypeFlags.testFlag(FlashResourcesParserType);
 		}
 		case ResourceType::ResourceVideo:
 		{
-			return m_crawlerOptions.parserTypeFlags.testFlag(VideoResourcesParserType);
+			return options.parserTypeFlags.testFlag(VideoResourcesParserType);
 		}
 		case ResourceType::ResourceOther:
 		{
-			return m_crawlerOptions.parserTypeFlags.testFlag(OtherResourcesParserType);
+			return options.parserTypeFlags.testFlag(OtherResourcesParserType);
 		}
 		default:
 		{
@@ -964,6 +962,31 @@ bool ModelController::resourceShouldBeProcessed(ResourceType resourceType) const
 	}
 
 	return false;
+}
+
+void ModelController::removeResourceFromPendingStorageIfNeeded(ParsedPagePtr& incomingPage) noexcept
+{
+	const ParsedPagePtr pendingPage = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+	if (!pendingPage)
+	{
+		return;
+	}
+
+	const std::vector<bool>& storages = pendingPage->storages;
+	bool shouldBeRemovedFromPendingStorage = true;
+	const int size = qMin(static_cast<int>(StorageType::EndEnumStorageType), static_cast<int>(storages.size()));
+	for (int i = 0; i < size; ++i)
+	{
+		if (i != StorageType::PendingResourcesStorageType && storages[i])
+		{
+			shouldBeRemovedFromPendingStorage = false;
+			break;
+		}
+	}
+	if (shouldBeRemovedFromPendingStorage)
+	{
+		data()->removeParsedPage(pendingPage, StorageType::PendingResourcesStorageType);
+	}
 }
 
 void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept
@@ -1086,7 +1109,7 @@ ParsedPagePtr ModelController::parsedPageFromResource(const ResourceOnPage& reso
 	return parsedPage;
 }
 
-StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource)
+QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource)
 {
 	const bool isBlockedByXRobotsTag = resource.restrictions.testFlag(Restriction::RestrictionBlockedByMetaRobotsRules);
 	const bool isBlockedByRobotsTxt = resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules);
@@ -1098,24 +1121,24 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 	const bool isThisDofollowResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::DofollowUrlStorageType);
 	const bool isThisBlockedResourceExists = data()->isParsedPageExists(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
 
-	StorageTypeFlags flags;
+	QSet<StorageType> result;
 
 	if ((isBlockedByRobotsTxt || isBlockedByXRobotsTag || (isNofollowResource && !isThisDofollowResourceExists)) && !isThisBlockedResourceExists)
 	{
 		data()->addParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
-		flags.setFlag(StorageType::BlockedForSEIndexingStorageType, true);
+		result << StorageType::BlockedForSEIndexingStorageType;
 	}
 
 	if (isBlockedByRobotsTxt && !isThisBlockedByRobotsTxtExists)
 	{
 		data()->addParsedPage(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
-		flags.setFlag(StorageType::BlockedByRobotsTxtStorageType, true);
+		result << StorageType::BlockedByRobotsTxtStorageType;
 	}
 
 	if (isNofollowResource && !isThisDofollowResourceExists && !isThisNofollowResourceExists)
 	{
 		data()->addParsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
-		flags.setFlag(StorageType::NofollowLinksStorageType, true);
+		result << StorageType::NofollowLinksStorageType;
 	}
 
 	if (!isNofollowResource && !isThisDofollowResourceExists)
@@ -1142,11 +1165,11 @@ StorageTypeFlags ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFro
 		else
 		{
 			data()->addParsedPage(pageFromResource, StorageType::DofollowUrlStorageType);
-			flags.setFlag(StorageType::DofollowUrlStorageType, true);
+			result << StorageType::DofollowUrlStorageType;
 		}
 	}
 
-	return flags;
+	return result;
 }
 
 }

@@ -149,7 +149,7 @@ TEST(SerializationTests, OptionsSerialization)
 	const auto testFunction = [crawler = env.crawler(), &options]()
 	{
 		auto pages = crawler->waitForAllCrawledPageReceived(5);
-		crawler->waitForCrawlingDone();
+		EXPECT_EQ(pages.size(), 5);
 
 		crawler->checkSequencedDataCollectionConsistency();
 		crawler->stopCrawling();
@@ -158,6 +158,7 @@ TEST(SerializationTests, OptionsSerialization)
 		const auto afterSavingData = [crawler, &options, size = pages.size()]
 		{
 			crawler->clearData();
+			crawler->waitForClearingDataDone(5);
 			crawler->startCrawling(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
 			crawler->waitForAllCrawledPageReceived(10);
 

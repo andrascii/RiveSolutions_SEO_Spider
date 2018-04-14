@@ -35,6 +35,7 @@ public:
 	void waitForSerializationDone(int seconds, const char* timeoutMessage = "Waiting for serialization") const;
 	void waitForDeserializationDone(int seconds, const char* timeoutMessage = "Waiting for deserialization") const;
 	void waitForRefreshPageDone(int seconds, const char* timeoutMessage = "Waiting for refresh page") const;
+	void waitForClearingDataDone(int seconds, const char* timeoutMessage = "Waiting for refresh page") const;
 	std::vector<const ParsedPage*> storageItems(StorageType storage) const;
 	std::vector<LinksToThisResourceChanges> waitForLinksToThisResourceChangesReceived(const ParsedPage* page, int count, int seconds) const;
 	std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(StorageType type) const;

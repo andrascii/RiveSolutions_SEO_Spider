@@ -149,6 +149,7 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 void CrawlerWorkerThread::onCrawlerClearData()
 {
 	m_pagesAcceptedAfterStop.pages.clear();
+	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
 	m_downloadRequester.reset();
 	m_currentRequest.reset();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);

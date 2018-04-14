@@ -182,9 +182,18 @@ public:
 				{
 					const ParsedPage* linkPage = link.resource.lock().get();
 					auto it = m_pagesByIndex.find(linkPage);
+#ifdef PRODUCTION
+					if (it == m_pagesByIndex.end())
+					{
+						WARNLOG << "Cannot find" << linkPage->urlStr();
+						writer.writeAttribute(resourceIndexKey, QString::number(-1));
+					}
+#endif
+#ifndef PRODUCTION
 					ASSERT(it != m_pagesByIndex.end());
 
 					writer.writeAttribute(resourceIndexKey, QString::number(it->second));
+#endif
 				}
 				else
 				{
