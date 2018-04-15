@@ -82,7 +82,7 @@ void Downloader::handleRequest(RequesterSharedPtr requester)
 
 	if (m_randomIntervalRangeTimer->isValid())
 	{
-		m_requesterQueue.push(std::move(requester));
+		m_requesterQueue.push_back(std::move(requester));
 	}
 	else
 	{
@@ -92,11 +92,42 @@ void Downloader::handleRequest(RequesterSharedPtr requester)
 
 void Downloader::stopRequestHandling(RequesterSharedPtr requester)
 {
-	//
-	// TODO: reset loading link
-	//
+	const auto iter = m_activeRequestersReplies.find(requester);
 
-	requester;
+	if (iter == m_activeRequestersReplies.end())
+	{
+		const auto pendingRequesterIter = std::find(m_requesterQueue.begin(), m_requesterQueue.end(), requester);
+
+		if (pendingRequesterIter != m_requesterQueue.end())
+		{
+			m_requesterQueue.erase(pendingRequesterIter);
+		}
+
+		return;
+	}
+
+	QNetworkReply* reply = iter->second;
+	const QSignalBlocker signalBlocker(reply);
+	reply->abort();
+
+	m_activeRequestersReplies.erase(iter);
+
+	int requestId = -1;
+
+	for(auto first = m_requesters.begin(), last = m_requesters.end(); first != last; ++first)
+	{
+		if (first.value().lock() == requester)
+		{
+			requestId = first.key();
+			break;
+		}
+	}
+
+	if (requestId != -1)
+	{
+		m_requesters.remove(requestId);
+		m_activeRequests.removeOne(requestId);
+	}
 }
 
 QObject* Downloader::qobject()
@@ -115,7 +146,7 @@ void Downloader::onTimerTicked()
 
 	RequesterSharedPtr requester(std::move(m_requesterQueue.front()));
 
-	m_requesterQueue.pop();
+	m_requesterQueue.pop_front();
 
 	load(requester);
 }
@@ -283,8 +314,11 @@ void Downloader::processReply(QNetworkReply* reply)
 	response->hopsChain.addHop(Hop(reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs()));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
+	const auto iter = m_activeRequestersReplies.find(requester);
+
 	m_responses.remove(requestId);
 	m_requesters.remove(requestId);
+	m_activeRequestersReplies.erase(iter);
 
 	ASSERT(m_activeRequests.removeOne(requestId));
 }
@@ -313,12 +347,13 @@ void Downloader::load(RequesterSharedPtr requester)
 {
 	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
-	const int requestId = loadHelper(request->requestInfo);
+	const auto[requestId, reply] = loadHelper(request->requestInfo);
 
 	m_requesters[requestId] = requester;
+	m_activeRequestersReplies[requester] = reply;
 }
 
-int Downloader::loadHelper(const CrawlerRequest& request, int parentRequestId)
+std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& request, int parentRequestId)
 {
 	static int s_request_id = 0;
 	QNetworkReply* reply = nullptr;
@@ -365,7 +400,7 @@ int Downloader::loadHelper(const CrawlerRequest& request, int parentRequestId)
 
 	VERIFY(connect(reply, SIGNAL(downloadProgress(qint64, qint64)), SLOT(onAboutDownloadProgress(qint64, qint64))));
 
-	return resultRequestId;
+	return std::make_pair(resultRequestId, reply);
 }
 
 }

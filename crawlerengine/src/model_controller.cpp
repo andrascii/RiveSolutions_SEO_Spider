@@ -754,8 +754,6 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 				// if blockingStorages is not empty that means that we already added page to some storage
 				data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
 
-				pendingResource->url.canonizedUrlStr();
-
 				DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 
 				continue;

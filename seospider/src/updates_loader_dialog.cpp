@@ -11,7 +11,7 @@ namespace SeoSpider
 UpdatesLoaderDialog::UpdatesLoaderDialog(const QString& downloadLink, QWidget* parent)
 	: QFrame(parent)
 	, m_ui(new Ui_UpdatesLoaderDialogContent)
-	, m_downloadLink(/*"http://docs.php.net/distributions/php-5.6.18.tar.xz"*/downloadLink)
+	, m_downloadLink(downloadLink)
 {
 	downloadLink;
 	m_ui->setupUi(this);
@@ -67,6 +67,8 @@ void UpdatesLoaderDialog::onDownloadNowClicked()
 	m_downloadRequester.reset(request, this, &UpdatesLoaderDialog::onAboutDownloadProgress, &UpdatesLoaderDialog::onUpdatesDownloadingFinished);
 	m_downloadRequester->start();
 	m_downloadTime.start();
+
+	m_ui->downloadLaterButton->setText("Cancel Downloading");
 }
 
 void UpdatesLoaderDialog::onDownloadLaterClicked()
@@ -144,6 +146,11 @@ void UpdatesLoaderDialog::onUpdatesDownloadingFinished(CrawlerEngine::Requester*
 
 void UpdatesLoaderDialog::closeDialog() noexcept
 {
+	if (m_downloadRequester.get())
+	{
+		m_downloadRequester->stop();
+	}
+
 	m_downloadRequester.reset();
 
 	theApp->mainWindow()->setDisabled(false);
