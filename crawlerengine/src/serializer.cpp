@@ -100,6 +100,12 @@ namespace
 	const QString parserTypeFlagsKey = QLatin1String("parserTypeFlags");
 	const QString pauseRangeFromKey = QLatin1String("pauseRangeFrom");
 	const QString pauseRangeToKey = QLatin1String("pauseRangeTo");
+	
+	const QString robotsTxtValidKey = QLatin1String("robotsTxtValid");
+	const QString siteMapValidKey = QLatin1String("siteMapValid");
+	const QString is404PagesSetupRightKey = QLatin1String("is404PagesSetupRight");
+	const QString siteImageKey = QLatin1String("siteImage");
+
 
 }
 
@@ -472,11 +478,12 @@ Serializer::Serializer()
 }
 
 Serializer::Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, 
-	std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptions& options)
+	std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptions& options, const WebHostInfo::AllData& webHostInfoData)
 	: m_pages(std::move(pages))
 	, m_crawledLinks(std::move(crawledUrls))
 	, m_pendingLinks(std::move(pendingUrls))
 	, m_options(options)
+	, m_webHostInfoData(webHostInfoData)
 {
 }
 
@@ -510,6 +517,11 @@ const std::vector<CrawlerRequest>& CrawlerEngine::Serializer::pendingLinks() con
 const CrawlerOptions& Serializer::crawlerOptions() const
 {
 	return m_options;
+}
+
+const WebHostInfo::AllData& Serializer::webHostInfoData() const
+{
+	return m_webHostInfoData;
 }
 
 void Serializer::saveToXmlStream(QIODevice& device)
@@ -704,6 +716,35 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeTextElement(pauseRangeToKey, QString::number(m_options.pauseRangeTo));
 	writer.writeTextElement(userAgentKey, m_options.userAgent);
 
+	
+	writer.writeTextElement(robotsTxtValidKey, QString::number(
+		m_webHostInfoData.isRobotstxtValid != std::nullopt
+		? m_webHostInfoData.isRobotstxtValid.value()
+		: false
+	));
+
+	writer.writeTextElement(siteMapValidKey, QString::number(
+		m_webHostInfoData.isSiteMapValid != std::nullopt
+		? m_webHostInfoData.isSiteMapValid.value()
+		: false
+	));
+
+	writer.writeTextElement(is404PagesSetupRightKey, QString::number(
+		m_webHostInfoData.is404PagesSetupRight != std::nullopt
+		? m_webHostInfoData.is404PagesSetupRight.value()
+		: false
+	));
+	
+	if (!m_webHostInfoData.image.isNull())
+	{
+		QByteArray pixmapData;
+		QBuffer buffer(&pixmapData);
+
+		const QPixmap& pixmap = qvariant_cast<QPixmap>(m_webHostInfoData.image);
+		pixmap.save(&buffer, "PNG");
+		writer.writeTextElement(siteImageKey, QString::fromUtf8(pixmapData.toBase64()));
+	}
+
 	writer.writeEndElement();
 }
 
@@ -845,6 +886,22 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		else if (reader.qualifiedName() == userAgentKey)
 		{
 			m_options.userAgent = reader.readElementText().toUtf8();
+		}
+		else if (reader.qualifiedName() == robotsTxtValidKey)
+		{
+			m_webHostInfoData.isRobotstxtValid = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == siteMapValidKey)
+		{
+			m_webHostInfoData.isSiteMapValid = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == is404PagesSetupRightKey)
+		{
+			m_webHostInfoData.is404PagesSetupRight = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == siteImageKey)
+		{
+			m_webHostInfoData.image.loadFromData(QByteArray::fromBase64(reader.readElementText().toUtf8()), "PNG");
 		}
 	}
 }

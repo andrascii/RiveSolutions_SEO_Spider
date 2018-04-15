@@ -14,6 +14,7 @@ public:
 
 	virtual void load(const QUrl& url) override;
 	virtual const QPixmap& result() const override;
+	virtual void setResult(const QPixmap& pixmap) override;
 
 signals:
 	virtual void loaded(const QUrl& url, const QPixmap& pixmap) override;

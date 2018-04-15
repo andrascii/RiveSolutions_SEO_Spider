@@ -1,6 +1,7 @@
 #pragma once
 #include "crawler_request.h"
 #include "crawler_options.h"
+#include "web_host_info.h"
 
 namespace Common 
 {
@@ -17,7 +18,9 @@ class Serializer
 public:
 	Serializer();
 	Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, 
-		std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptions& options);
+		std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptions& options, 
+		const WebHostInfo::AllData& webHostInfoData);
+	
 	void saveToStream(QIODevice& device);
 	void loadFromStream(QIODevice& device);
 
@@ -25,6 +28,7 @@ public:
 	const std::vector<CrawlerRequest>& crawledLinks() const;
 	const std::vector<CrawlerRequest>& pendingLinks() const;
 	const CrawlerOptions& crawlerOptions() const;
+	const WebHostInfo::AllData& webHostInfoData() const;
 
 private:
 	void saveToXmlStream(QIODevice& device);
@@ -43,6 +47,7 @@ private:
 	std::vector<CrawlerRequest> m_crawledLinks;
 	std::vector<CrawlerRequest> m_pendingLinks;
 	CrawlerOptions m_options;
+	WebHostInfo::AllData m_webHostInfoData;
 };
 
 }

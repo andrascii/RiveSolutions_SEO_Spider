@@ -303,7 +303,15 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ConfiguredCorrectly404Image:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			CrawlerEngine::ErrorCategory::ErrorCategoryLevel level = CrawlerEngine::ErrorCategory::LevelNotError;
+
+			const std::optional<bool> result = theApp->crawler()->webHostInfo()->is404PagesSetupRight();
+			if (result != std::nullopt && !result.value())
+			{
+				level = CrawlerEngine::ErrorCategory::LevelError;
+			}
+
+			return m_pixmaps[level];
 		}
 		case ReportDataKeys::ConfiguredCorrectly404Count:
 		{
@@ -321,11 +329,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RobotsTxtImage:
 		{
-			CrawlerEngine::Crawler* crawler = theApp->crawler();
-
 			CrawlerEngine::ErrorCategory::ErrorCategoryLevel level = CrawlerEngine::ErrorCategory::LevelNotError;
 
-			if (!crawler->robotsTxtLoader()->isValid())
+			const std::optional<bool> result = theApp->crawler()->webHostInfo()->isRobotstxtValid();
+			if (result != std::nullopt && !result.value())
 			{
 				level = CrawlerEngine::ErrorCategory::LevelError;
 			}
@@ -334,11 +341,13 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RobotsTxtCount:
 		{
-			CrawlerEngine::Crawler* crawler = theApp->crawler();
+			const std::optional<bool> result = theApp->crawler()->webHostInfo()->isRobotstxtValid();
+			if (result == std::nullopt)
+			{
+				return QObject::tr("n/a");
+			}
 
-			return crawler->robotsTxtLoader()->isValid() ? 
-				QObject::tr("Yes") : 
-				QObject::tr("No");
+			return result.value() ? QObject::tr("Yes") : QObject::tr("No");
 		}
 		case ReportDataKeys::XmlSitemap:
 		{
@@ -346,11 +355,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::XmlSitemapImage:
 		{
-			CrawlerEngine::Crawler* crawler = theApp->crawler();
-
 			CrawlerEngine::ErrorCategory::ErrorCategoryLevel level = CrawlerEngine::ErrorCategory::LevelNotError;
 
-			if (!crawler->xmlSitemapLoader()->isValid())
+			const std::optional<bool> result = theApp->crawler()->webHostInfo()->isSiteMapValid();
+			if (result != std::nullopt && !result.value())
 			{
 				level = CrawlerEngine::ErrorCategory::LevelError;
 			}
@@ -359,11 +367,13 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::XmlSitemapCount:
 		{
-			CrawlerEngine::Crawler* crawler = theApp->crawler();
+			const std::optional<bool> result = theApp->crawler()->webHostInfo()->isSiteMapValid();
+			if (result == std::nullopt)
+			{
+				return QObject::tr("n/a");
+			}
 
-			return crawler->xmlSitemapLoader()->isValid() ?
-				QObject::tr("Yes") :
-				QObject::tr("No");
+			return result.value() ? QObject::tr("Yes") : QObject::tr("No");
 		}
 
 		// Redirections

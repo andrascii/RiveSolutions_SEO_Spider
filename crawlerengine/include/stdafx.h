@@ -52,6 +52,7 @@
 #include <QXmlStreamWriter>
 #include <QWebEngineView>
 #include <QWebEnginePage>
+#include <QBuffer>
 
 //
 // C/C++
