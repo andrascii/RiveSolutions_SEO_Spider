@@ -379,7 +379,9 @@ void Application::initialize()
 
 	m_crawler->initialize();
 
-	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, this, &Application::onAboutUseCustomUserAgentChanged));
+	// must be Qt::QueuedConnection
+	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, 
+		this, &Application::onAboutUseCustomUserAgentChanged, Qt::QueuedConnection));
 
 	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
 
