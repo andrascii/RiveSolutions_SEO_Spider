@@ -59,7 +59,6 @@ signals:
 
 private:
 	static void registerServices();
-	static QString operatingSystemVersion();
 
 	void initQSettings();
 	QSettings* settings() const;
