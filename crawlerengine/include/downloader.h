@@ -42,7 +42,7 @@ private:
 	bool isReplyProcessed(QNetworkReply* reply) const noexcept;
 	void markReplyAsProcessed(QNetworkReply* reply) const noexcept;
 	void load(RequesterSharedPtr requester);
-	int loadHelper(const CrawlerRequest& request, int parentRequestId = -1);
+	std::pair<int, QNetworkReply*> loadHelper(const CrawlerRequest& request, int parentRequestId = -1);
 
 private:
 	QNetworkAccessManager* m_networkAccessor;
@@ -51,7 +51,8 @@ private:
 	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
 	QByteArray m_userAgent;
 	RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
-	std::queue<RequesterSharedPtr> m_requesterQueue;
+	std::deque<RequesterSharedPtr> m_requesterQueue;
+	std::map<RequesterSharedPtr, QNetworkReply*> m_activeRequestersReplies;
 };
 
 }

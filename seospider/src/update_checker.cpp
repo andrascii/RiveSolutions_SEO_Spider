@@ -3,18 +3,11 @@
 #include "download_response.h"
 #include "crawler_request.h"
 #include "application.h"
+#include "update_helpers.h"
 
 #ifdef Q_OS_WIN
 #pragma comment(lib, "mincore.lib")
 #endif
-
-namespace
-{
-
-constexpr const char* s_actualVersionFileUrl = "http://rivesolutions.com/actual_version.txt";
-constexpr const char* s_downloadAddressFileUrl = "http://rivesolutions.com/download_address.txt";
-
-}
 
 namespace SeoSpider
 {
@@ -30,7 +23,7 @@ void UpdateChecker::check()
 {
 	CrawlerEngine::CrawlerRequest crawlerRequest
 	{
-		CrawlerEngine::Url(s_actualVersionFileUrl),
+		CrawlerEngine::Url(UpdateHelpers::actualVersionFileUrl()),
 		CrawlerEngine::DownloadRequestType::RequestTypeGet
 	};
 
@@ -84,7 +77,7 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 
 	CrawlerEngine::CrawlerRequest crawlerRequest
 	{
-		CrawlerEngine::Url(s_downloadAddressFileUrl),
+		CrawlerEngine::Url(UpdateHelpers::downloadAddressFileUrl()),
 		CrawlerEngine::DownloadRequestType::RequestTypeGet
 	};
 

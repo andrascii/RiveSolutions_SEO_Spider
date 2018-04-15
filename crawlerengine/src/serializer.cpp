@@ -191,7 +191,7 @@ public:
 #ifdef PRODUCTION
 					if (it == m_pagesByIndex.end())
 					{
-						WARNLOG << "Cannot find" << linkPage->urlStr();
+						WARNLOG << "Cannot find" << linkPage->url.urlStr();
 						writer.writeAttribute(resourceIndexKey, QString::number(-1));
 					}
 #endif

@@ -144,7 +144,6 @@ void SeoSpiderServiceApp::timerEvent(QTimerEvent*)
 	{
 		emit closeServiceApp();
 	}
-	
 }
 
 void SeoSpiderServiceApp::makeDump(HANDLE processHandle) noexcept
