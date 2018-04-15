@@ -18,6 +18,14 @@ namespace SeoSpider
 
 class UpdateLoaderDialog : public QFrame
 {
+private:
+	enum class UnitType
+	{
+		UnitTypeBytes,
+		UnitTypeKB,
+		UnitTypeMB
+	};
+
 public:
 	UpdateLoaderDialog(const QString& downloadLink, QWidget* parent = nullptr);
 
@@ -32,6 +40,16 @@ private slots:
 
 private:
 	void closeDialog() noexcept;
+	std::pair<double, QString> calculateDownloadSpeed(quint64 bytesReceived) const;
+	std::tuple<double, double, QString> downloadStatus(quint64 bytesReceived, quint64 bytesTotal) const;
+
+	UnitType unit(quint64 bytesCount) const noexcept;
+	QString unitToString(UnitType unitType) const;
+
+	double downloadPercents(const CrawlerEngine::DownloadProgressResponse& response) const;
+	QString downloadStatusString(const CrawlerEngine::DownloadProgressResponse& response) const;
+	QString downloadSpeedString(const CrawlerEngine::DownloadProgressResponse& response) const;
+	double fromUnitToUnit(double value, UnitType from, UnitType to) const;
 
 private:
 	Ui_UpdatesLoaderDialogContent* m_ui;

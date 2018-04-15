@@ -43,7 +43,7 @@ void UpdateLoaderDialog::onDownloadNowClicked()
 {
 	if (!m_downloadLink.isValid())
 	{
-		ERRLOG << "Incorrect download link. Check the http://rivesolutions.com/download_address.txt server file.";
+		ERRLOG << "Incorrect download link. Check the " << UpdateHelpers::downloadAddressFileUrl() << " server file.";
 
 		closeDialog();
 
@@ -69,6 +69,7 @@ void UpdateLoaderDialog::onDownloadNowClicked()
 	m_downloadRequester->start();
 	m_downloadTime.start();
 
+	m_ui->downloadNowButton->setDisabled(true);
 	m_ui->downloadLaterButton->setText("Cancel Downloading");
 }
 
@@ -79,49 +80,8 @@ void UpdateLoaderDialog::onDownloadLaterClicked()
 
 void UpdateLoaderDialog::onAboutDownloadProgress(CrawlerEngine::Requester*, const CrawlerEngine::DownloadProgressResponse& response)
 {
-	double speed = response.bytesReceived * 1000.0 / m_downloadTime.elapsed();
-	double downloaded = response.bytesReceived;
-	double total = response.bytesTotal;
-
-	QString unit;
-
-	if (speed < 1024)
-	{
-		unit = "bytes/sec";
-	}
-	else if (speed < 1024 * 1024)
-	{
-		speed /= 1024;
-		unit = "kB/s";
-	}
-	else
-	{
-		speed /= 1024 * 1024;
-		unit = "MB/s";
-	}
-
-	QString sizeUnit;
-
-	if (response.bytesTotal < 1024)
-	{
-		sizeUnit = "bytes";
-	}
-	else if (response.bytesTotal < 1024 * 1024)
-	{
-		downloaded /= 1024;
-		total /= 1024;
-		sizeUnit = "kB";
-	}
-	else
-	{
-		downloaded /= 1024 * 1024;
-		total /= 1024 * 1024;
-		sizeUnit = "MB";
-	}
-
-	const double percents = static_cast<double>(response.bytesReceived) / static_cast<double>(response.bytesTotal + 1) * 100.0;
-	m_ui->progressBar->setValue(static_cast<int>(percents));
-	m_ui->progressBar->setFormat(QString::number(downloaded, 'f', 3) + sizeUnit + "/" + QString::number(total, 'f', 3) + sizeUnit + " (" + QString::number(speed) + " " + unit + ")");
+	m_ui->progressBar->setValue(static_cast<int>(downloadPercents(response)));
+	m_ui->progressBar->setFormat(downloadStatusString(response) + " (" + downloadSpeedString(response) + ")");
 }
 
 void UpdateLoaderDialog::onUpdatesDownloadingFinished(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
@@ -156,6 +116,132 @@ void UpdateLoaderDialog::closeDialog() noexcept
 	theApp->mainWindow()->setDisabled(false);
 
 	close();
+}
+
+std::pair<double, QString> UpdateLoaderDialog::calculateDownloadSpeed(quint64 bytesReceived) const
+{
+	UnitType unitType = unit(bytesReceived);
+	const QString unitString = unitToString(unitType) + "/s";
+	const double speed = fromUnitToUnit(bytesReceived * 1000.0 / m_downloadTime.elapsed(), UnitType::UnitTypeBytes, unitType);
+
+	return std::make_pair(speed, unitString);
+}
+
+std::tuple<double, double, QString> UpdateLoaderDialog::downloadStatus(quint64 bytesReceived, quint64 bytesTotal) const
+{
+	const UnitType unitType = unit(bytesTotal);
+	const QString unitString = unitToString(unitType);
+	const double downloaded = fromUnitToUnit(bytesReceived, UnitType::UnitTypeBytes, unitType);
+	const double total = fromUnitToUnit(bytesTotal, UnitType::UnitTypeBytes, unitType);
+
+	return std::make_tuple(downloaded, total, unitString);
+}
+
+UpdateLoaderDialog::UnitType UpdateLoaderDialog::unit(quint64 bytesCount) const noexcept
+{
+	if (bytesCount < 1024)
+	{
+		return UnitType::UnitTypeBytes;
+	}
+	else if (bytesCount < 1024 * 1024)
+	{
+		return UnitType::UnitTypeKB;
+	}
+	
+	return UnitType::UnitTypeMB;
+}
+
+QString UpdateLoaderDialog::unitToString(UnitType unitType) const
+{
+	switch (unitType)
+	{
+		case UnitType::UnitTypeBytes:
+		{
+			return QString("bytes");
+		}
+		case UnitType::UnitTypeKB:
+		{
+			return QString("kB");
+		}
+		case UnitType::UnitTypeMB:
+		{
+			return QString("MB");
+		}
+	}
+
+	ASSERT(!"Unknown unit type");
+	return QString();
+}
+
+double UpdateLoaderDialog::downloadPercents(const CrawlerEngine::DownloadProgressResponse& response) const
+{
+	return static_cast<double>(response.bytesReceived) / static_cast<double>(response.bytesTotal + 1) * 100.0;
+}
+
+QString UpdateLoaderDialog::downloadStatusString(const CrawlerEngine::DownloadProgressResponse& response) const
+{
+	std::tuple<double, double, QString> status = downloadStatus(response.bytesReceived, response.bytesTotal);
+
+	return QString::number(std::get<0>(status), 'f', 2) + std::get<2>(status) + "/" + QString::number(std::get<1>(status), 'f', 2) + std::get<2>(status);
+}
+
+QString UpdateLoaderDialog::downloadSpeedString(const CrawlerEngine::DownloadProgressResponse& response) const
+{
+	std::pair<double, QString> downloadSpeed = calculateDownloadSpeed(response.bytesTotal);
+
+	return QString::number(downloadSpeed.first, 'f', 2) + " " + downloadSpeed.second;
+}
+
+double UpdateLoaderDialog::fromUnitToUnit(double value, UnitType from, UnitType to) const
+{
+	double result = 0;
+
+	switch (from)
+	{
+		case UnitType::UnitTypeBytes:
+		{
+			result = value;
+			break;
+		}
+		case UnitType::UnitTypeKB:
+		{
+			result = value * 1024;
+			break;
+		}
+		case UnitType::UnitTypeMB:
+		{
+			result = value * 1024 * 1024;
+			break;
+		}
+		default:
+		{
+			ASSERT(!"Unknown unit type");
+		}
+	}
+
+	switch (to)
+	{
+		case UnitType::UnitTypeBytes:
+		{
+			break;
+		}
+		case UnitType::UnitTypeKB:
+		{
+			result /= 1024;
+			break;
+		}
+		case UnitType::UnitTypeMB:
+		{
+			result /= 1024 * 1024;
+			break;
+		}
+		default:
+		{
+			ASSERT(!"Unknown unit type");
+		}
+	}
+
+	return result;
 }
 
 }
