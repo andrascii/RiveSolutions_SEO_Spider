@@ -18,4 +18,9 @@ const QPixmap& TestsWebScreenShot::result() const
 	return m_pixmapStub;
 }
 
+void TestsWebScreenShot::setResult(const QPixmap& pixmap)
+{
+	Q_UNUSED(pixmap);
+}
+
 }

@@ -50,6 +50,12 @@ bool RobotsTxtLoader::isValid() const noexcept
 	return m_isValid;
 }
 
+void RobotsTxtLoader::setValid(bool valid) noexcept
+{
+	m_isReady = true;
+	m_isValid = valid;
+}
+
 QObject* RobotsTxtLoader::qobject()
 {
 	return this;

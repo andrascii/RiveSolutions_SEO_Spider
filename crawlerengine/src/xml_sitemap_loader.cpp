@@ -78,6 +78,12 @@ bool XmlSitemapLoader::isValid() const noexcept
 	return m_isValid;
 }
 
+void XmlSitemapLoader::setValid(bool valid) noexcept
+{
+	m_isReady = true;
+	m_isValid = valid;
+}
+
 QObject* XmlSitemapLoader::qobject()
 {
 	return this;

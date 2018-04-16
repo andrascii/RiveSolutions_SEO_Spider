@@ -10,6 +10,7 @@ public:
 
 	virtual void load(const QUrl& url) = 0;
 	virtual const QPixmap& result() const = 0;
+	virtual void setResult(const QPixmap& pixmap) = 0;
 
 	// signal
 	virtual void loaded(const QUrl& url, const QPixmap& pixmap) = 0;
