@@ -1,7 +1,124 @@
 function Component()
 {
+	var value = installer.value("HKCU\Software\Rive Solutions\Seo Spider\MetaData");
+	
+	QMessageBox["information"]("version.test", "Installer", value, QMessageBox.Ok);
+	
+	if(!needUpdate())
+	{
+		QMessageBox["information"]("version.test", "Installer", "The newer version is already installed.", QMessageBox.Ok);
+		//abortInstallation();
+		installer.setUpdater();
+	}
+	
 	component.loaded.connect(this, addRegisterFileCheckBox);
     component.unusualFileType = "sxr";
+}
+
+function abortInstallation()
+{
+	installer.setValue("FinishedText", "<font color='red' size=3>The installer was quit.</font>");
+    installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
+    installer.setDefaultPageVisible(QInstaller.ReadyForInstallation, false);
+    installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
+    installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
+    installer.setDefaultPageVisible(QInstaller.PerformInstallation, false);
+    installer.setDefaultPageVisible(QInstaller.LicenseCheck, false);
+	var widget = gui.pageById(QInstaller.InstallationFinished);
+	
+	//if(widget)
+	//{
+		widget.RunItCheckBox.setEnabled(false);
+	//}
+	
+    gui.clickButton(buttons.NextButton);
+}
+
+// Register program metadata in system after installation
+function registerProgram()
+{
+	var reg = installer.environmentVariable("SystemRoot") + "\\System32\\reg.exe";
+	var key = "HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData";
+	var value = component.value("Version");
+	
+	QMessageBox["information"]("version.test", "Installer", value, QMessageBox.Ok);
+	component.addOperation("Execute", reg, "ADD", key, "/v", "Version", "/t", "REG_SZ", "/d", value, "/f");
+}
+
+// Check if newer version is already installed
+function needUpdate()
+{
+	var reg = installer.environmentVariable("SystemRoot") + "\\System32\\reg.exe";
+	var key = "HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData";	
+	var argslist = ["QUERY", key, "/v", "Version"];
+	var localVersion = component.value("Version");
+	
+	var regResult = new Array();
+	regResult = installer.execute(reg, argslist);
+	
+	var savedVersion = regResult[0].split("    ")[3];
+	
+	if(savedVersion)
+	{
+		savedVersion.trim();
+		
+		if(compareVersions(savedVersion, localVersion) > 0)
+		{
+			return false;
+		}
+		if(compareVersions(savedVersion, localVersion) < 0)
+		{
+			return true;
+		}
+		if(compareVersions(savedVersion, localVersion) == 0)
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+function compareVersions(localVersion, remoteVersion)
+{
+	var localVersionList = localVersion.split(".");
+	var localMajor = localVersionList[0];
+	var localMinor = localVersionList[1];
+	var localMaitenance = localVersionList[2];
+	
+	var remoteVersionList = remoteVersion.split(".");
+	var remoteMajor = remoteVersionList[0];
+	var remoteMinor = remoteVersionList[1];
+	var remoteMaitenance = remoteVersionList[2];
+	
+	if(localMajor > remoteMajor)
+	{
+		return 1;
+	}
+	if(localMinor > remoteMinor)
+	{
+		return 1;
+	}
+	if(localMaitenance > remoteMaitenance)
+	{
+		return 1;
+	}
+		
+	//--------------------------------------------------------------------------------------------
+	if(localMajor < remoteMajor)
+	{
+		return -1;
+	}
+	if(localMinor < remoteMinor)
+	{
+		return -1;
+	}
+	if(localMaitenance < remoteMaitenance)
+	{
+		return -1;
+	}
+
+	return 0;
 }
 
 addRegisterFileCheckBox = function()
@@ -18,6 +135,9 @@ Component.prototype.createOperations = function()
 {
     component.createOperations();
 
+	registerProgram();
+	
+	// Registering new file type
     var isRegisterFileChecked = component.userInterface("RegisterFileCheckBoxForm").RegisterFileCheckBox.checked;
     if (installer.value("os") === "win") {
         var iconId = 1;

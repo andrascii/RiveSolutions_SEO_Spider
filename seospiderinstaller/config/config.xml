@@ -15,5 +15,5 @@
 	<MaintenanceToolName>Uninstall SeoSpider</MaintenanceToolName>
 	<AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
 	<Background>background.png</Background>
-	<TargetDir>@HomeDir@/SeoSpider</TargetDir>
+	<TargetDir>@ApplicationsDirX64@/Rive Solutions/Seo Spider</TargetDir>
 </Installer>
