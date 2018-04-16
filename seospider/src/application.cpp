@@ -22,6 +22,8 @@
 #include "crawler_options.h"
 #include "command_line_handler.h"
 #include "command_line_keys.h"
+#include "update_checker.h"
+#include "update_loader_dialog.h"
 
 namespace SeoSpider
 {
@@ -46,26 +48,22 @@ Application::Application(int& argc, char** argv)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
 	, m_headerControlsContainer(new HeaderControlsContainer())
+	, m_updateChecker(new UpdateChecker(this))
 {
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists(const QString&)), SLOT(onAboutUpdateExists(const QString&))));
+
 	SplashScreen::show();
 
 	initialize();
-
 	initializeStyleSheet();
-
 	showMainWindow();
-	
-	INFOLOG << "Started application under OS" << operatingSystemVersion();
-	INFOLOG << "Kernel type:" << QSysInfo::kernelType();
-	INFOLOG << "Kernel version:" << QSysInfo::kernelVersion();
-	INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
-	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
-	INFOLOG << "App Version:" << applicationVersion();
 
 	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
 	{
 		mainWindow()->openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
 	}
+
+	m_updateChecker->check();
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -259,7 +257,7 @@ void Application::showMainWindow()
 	emit mainWindowShown();
 }
 
-void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
+void Application::onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 {
 	// limit settings
 	preferences()->setLimitMaxUrlLength(options.limitMaxUrlLength);
@@ -333,6 +331,52 @@ void Application::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
 	}
 }
 
+void Application::onAboutUpdateExists(const QString& downloadLink)
+{
+	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(downloadLink, mainWindow());
+
+	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloaded));
+
+	updatesLoaderDialog->show();
+}
+
+void Application::onAboutUseCustomUserAgentChanged()
+{
+	if (!preferences()->useCustomUserAgent())
+	{
+		return;
+	}
+
+	if (preferences()->useDesktopUserAgent())
+	{
+		m_crawler->setUserAgent(preferences()->desktopUserAgent().toLatin1());
+	}
+	else if (preferences()->useMobileUserAgent())
+	{
+		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
+	}
+}
+
+void Application::onAboutUpdateDownloaded(const QString& filepath)
+{
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+	messageBoxDialog->setWindowTitle(tr("Update successful downloaded"));
+	messageBoxDialog->setMessage(tr("Update successful downloaded. Do you want to install the update now?"));
+	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
+	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	messageBoxDialog->exec();
+
+	if (messageBoxDialog->result() != QDialog::Accepted)
+	{
+		return;
+	}
+
+	if (QProcess::startDetached(filepath))
+	{
+		quit();
+	}
+}
+
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
@@ -357,6 +401,11 @@ void Application::initialize()
 	DeferredCallProcessor::init();
 
 	m_crawler->initialize();
+
+	// must be Qt::QueuedConnection
+	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, 
+		this, &Application::onAboutUseCustomUserAgentChanged, Qt::QueuedConnection));
+
 	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
 
 	SplashScreen::showMessage("Initializing...");
@@ -383,7 +432,7 @@ void Application::initialize()
 
 #endif
 
-	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsChanged, this, &Application::onCrawlerOptionsChanged));
+	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsChanged, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
 }
@@ -403,189 +452,6 @@ void Application::initializeStyleSheet() noexcept
 bool Application::internetAvailable() const noexcept
 {
 	return m_internetNotificationManager->internetAvailable();
-}
-
-QString Application::operatingSystemVersion()
-{
-	static QString osVersion;
-
-	if (osVersion.isEmpty())
-	{
-#if defined(Q_OS_MACOS)
-		switch (QSysInfo::MacintoshVersion)
-		{
-			case QSysInfo::MV_LEOPARD:
-			{
-				osVersion = QLatin1String("MacOS 10.5(Leopard)");
-				break;
-			}
-			case QSysInfo::MV_TIGER:
-			{
-				osVersion = QLatin1String("MacOS 10.4(Tiger)");
-				break;
-			}
-			case QSysInfo::MV_PANTHER:
-			{
-				osVersion = QLatin1String("MacOS 10.3(Panther)");
-				break;
-			}
-			case QSysInfo::MV_JAGUAR:
-			{
-				osVersion = QLatin1String("MacOS 10.2(Jaguar)");
-				break;
-			}
-			case QSysInfo::MV_PUMA:
-			{
-				osVersion = QLatin1String("MacOS 10.1(Puma)");
-				break;
-			}
-			case QSysInfo::MV_CHEETAH:
-			{
-				osVersion = QLatin1String("MacOS 10.0(Cheetah)");
-				break;
-			}
-			case QSysInfo::MV_9:
-			{
-				osVersion = QLatin1String("MacOS 9");
-				break;
-			}
-
-			case QSysInfo::MV_Unknown:
-			default:
-			{
-				osVersion = QLatin1String("MacOS(unknown)");
-				break;
-			}
-		}
-#elif defined(Q_OS_UNIX)
-		utsname buf;
-		if (uname(&buf) != -1)
-		{
-			osVersion.append(buf.release).append(QLatin1Char(' '));
-			osVersion.append(buf.sysname).append(QLatin1Char(' '));
-			osVersion.append(buf.machine).append(QLatin1Char(' '));
-			osVersion.append(QLatin1String(" (")).append(buf.machine).append(QLatin1Char(')'));
-		}
-		else
-		{
-			osVersion = QLatin1String("Linux/Unix(unknown)");
-		}
-#elif defined(Q_OS_WIN) || defined(Q_OS_CYGWIN)
-		switch (QSysInfo::WindowsVersion)
-		{
-			case QSysInfo::WV_CE_6:
-			{
-				osVersion = QLatin1String("Windows CE 6.x");
-				break;
-			}
-			case QSysInfo::WV_CE_5:
-			{
-				osVersion = QLatin1String("Windows CE 5.x");
-				break;
-			}
-			case QSysInfo::WV_CENET:
-			{
-				osVersion = QLatin1String("Windows CE .NET");
-				break;
-			}
-			case QSysInfo::WV_CE:
-			{
-				osVersion = QLatin1String("Windows CE");
-				break;
-			}
-
-			case QSysInfo::WV_WINDOWS10:
-			{
-				osVersion = QLatin1String("Windows 10");
-				break;
-			}
-			case QSysInfo::WV_WINDOWS8_1:
-			{
-				osVersion = QLatin1String("Windows 8.1");
-				break;
-			}
-			case QSysInfo::WV_WINDOWS8:
-			{
-				osVersion = QLatin1String("Windows 8");
-				break;
-			}
-			case QSysInfo::WV_WINDOWS7:
-			{
-				osVersion = QLatin1String("Windows 7");
-				break;
-			}
-			case QSysInfo::WV_VISTA:
-			{
-				osVersion = QLatin1String("Windows Vista");
-				break;
-			}
-			case QSysInfo::WV_2003:
-			{
-				osVersion = QLatin1String("Windows Server 2003");
-				break;
-			}
-			case QSysInfo::WV_XP:
-			{
-				osVersion = QLatin1String("Windows XP");
-				break;
-			}
-			case QSysInfo::WV_2000:
-			{
-				osVersion = QLatin1String("Windows 2000");
-				break;
-			}
-			case QSysInfo::WV_NT:
-			{
-				osVersion = QLatin1String("Windows NT");
-				break;
-			}
-
-			case QSysInfo::WV_Me:
-			{
-				osVersion = QLatin1String("Windows Me");
-				break;
-			}
-			case QSysInfo::WV_98:
-			{
-				osVersion = QLatin1String("Windows 98");
-				break;
-			}
-			case QSysInfo::WV_95:
-			{
-				osVersion = QLatin1String("Windows 95");
-				break;
-			}
-			case QSysInfo::WV_32s:
-			{
-				osVersion = QLatin1String("Windows 3.1 with Win32s");
-				break;
-			}
-
-			default:
-			{
-				osVersion = QLatin1String("Windows(unknown)");
-				break;
-			}
-		}
-
-		if (QSysInfo::WindowsVersion & QSysInfo::WV_CE_based)
-		{
-			osVersion.append(QLatin1String(" (CE-based)"));
-		}
-		else if (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)
-		{
-			osVersion.append(QLatin1String(" (NT-based)"));
-		}
-		else if (QSysInfo::WindowsVersion & QSysInfo::WV_DOS_based)
-		{
-			osVersion.append(QLatin1String(" (MS-DOS-based)"));
-		}
-#else
-		return QLatin1String("Unknown");
-#endif
-	}
-
-	return osVersion;
 }
 
 Application::~Application()

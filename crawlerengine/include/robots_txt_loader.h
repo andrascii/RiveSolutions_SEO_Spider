@@ -22,6 +22,7 @@ public:
 	virtual const QByteArray& content() const noexcept override;
 	virtual bool isReady() const noexcept override;
 	virtual bool isValid() const noexcept override;
+	virtual void setValid(bool valid) noexcept override;
 	virtual QObject* qobject() override;
 
 	Url robotsTxtUrl() const;

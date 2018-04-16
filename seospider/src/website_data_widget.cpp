@@ -117,7 +117,12 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 
 	QItemSelectionModel* itemSelectionModel = qobject_cast<QItemSelectionModel*>(sender());
 	DEBUG_ASSERT(itemSelectionModel);
-	
+
+	if (itemSelectionModel->selectedRows().isEmpty())
+	{
+		return;
+	}
+
 	const QModelIndex index = itemSelectionModel->selectedRows().last();
 	
 	if (const PageModel* storageModel = dynamic_cast<const PageModel*>(index.model()); storageModel)

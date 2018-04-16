@@ -24,30 +24,24 @@ class SummaryViewModel : public AbstractViewModel
 	Q_PROPERTY(QFont textFont READ textFont WRITE setTextFont NOTIFY textFontChanged)
 
 public:
-	SummaryViewModel(SummaryModel* model, QObject* parent = nullptr);
+	SummaryViewModel(QWidget* parentView, SummaryModel* model, QObject* parent = nullptr);
 
 	virtual int marginTop(const QModelIndex& index) const noexcept override;
 	virtual int marginBottom(const QModelIndex& index) const noexcept override;
 	virtual int marginLeft(const QModelIndex& index) const noexcept override;
 	virtual int marginRight(const QModelIndex& index) const noexcept override;
-
-	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept override;
+	virtual QPixmap pixmap(const QModelIndex& index) const noexcept override;
 	virtual QRect pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
-
 	virtual QString displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
 	virtual QRect displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept override;
-
 	virtual const QColor& selectedBackgroundColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& hoveredBackgroundColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& backgroundColor(const QModelIndex& index) const noexcept override;
-
 	virtual const QFont& font(const QModelIndex& index) const noexcept override;
 	virtual int textAlignment(const QModelIndex& index) const noexcept override;
 	virtual const QColor& textColor(const QModelIndex& index) const noexcept override;
-
 	virtual const QColor& selectedGridLineColor(const QModelIndex& index) const noexcept override;
 	virtual const QColor& gridLineColor(const QModelIndex& index) const noexcept override;
-
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
 
 	const QColor& backgroundColor() const noexcept;
@@ -106,6 +100,8 @@ private:
 	QFont m_textFont;
 
 	ItemRenderer m_itemRenderer;
+
+	QWidget* m_parentView;
 };
 
 }

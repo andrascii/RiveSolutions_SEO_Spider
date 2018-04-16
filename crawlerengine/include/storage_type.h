@@ -121,4 +121,3 @@ inline StorageType operator++(StorageType value)
 }
 
 Q_DECLARE_METATYPE(CrawlerEngine::StorageType)
-Q_DECLARE_FLAGS(StorageTypeFlags, CrawlerEngine::StorageType)

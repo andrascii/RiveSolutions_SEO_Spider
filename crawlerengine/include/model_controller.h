@@ -21,6 +21,8 @@ public:
 	const UnorderedDataCollection* data() const noexcept;
 	UnorderedDataCollection* data() noexcept;
 
+	static bool resourceShouldBeProcessed(ResourceType resourceType, const CrawlerOptions& options) noexcept;
+
 signals:
 	void refreshPageDone();
 
@@ -42,13 +44,13 @@ private:
 	void processParsedPageHtmlResources(WorkerResult& workerResult, bool secondGetRequest);
 	void processParsedPageResources(WorkerResult& workerResult, bool secondGetRequest);
 	void fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept;
-	bool resourceShouldBeProcessed(ResourceType resourceType) const noexcept;
+	void removeResourceFromPendingStorageIfNeeded(ParsedPagePtr& incomingPage) noexcept;
 	void calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept;
 	void setPageLevel(ParsedPagePtr& page, int level) const noexcept;
 	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage, bool checkCanonicals = true);
 
 	ParsedPagePtr parsedPageFromResource(const ResourceOnPage& resource) const;
-	StorageTypeFlags addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource);
+	QSet<StorageType> addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource);
 
 private:
 	UnorderedDataCollection* m_data;

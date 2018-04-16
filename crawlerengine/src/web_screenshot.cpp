@@ -32,6 +32,11 @@ const QPixmap& WebScreenShot::result() const
 	return m_result.second;
 }
 
+void WebScreenShot::setResult(const QPixmap& pixmap)
+{
+	m_result.second = pixmap;
+}
+
 void WebScreenShot::onLoadingDone(bool ok)
 {
 	if (!ok)

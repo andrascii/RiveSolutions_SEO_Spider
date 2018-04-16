@@ -88,7 +88,7 @@ void Crawler::initialize()
 	initSequencedDataCollection();
 
 	m_downloader = createDownloader();
-	m_webHostInfo = new WebHostInfo(this, createWebScreenShot());
+	m_webHostInfo = new WebHostInfo(this, createWebScreenShot(), m_xmlSitemapLoader, m_robotsTxtLoader);
 
 	ThreadManager& threadManager = ThreadManager::instance();
 
@@ -256,8 +256,7 @@ void Crawler::onCrawlingSessionInitialized()
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
 		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptions&, m_options)));
 
-	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
-		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, m_options.userAgent)));
+	setUserAgent(m_options.userAgent);
 
 	if (m_options.useProxy)
 	{
@@ -384,6 +383,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 		m_uniqueLinkStore->setPendingUrls(result->serializer->pendingLinks());
 
 		m_options = result->serializer->crawlerOptions();
+		m_webHostInfo->setData(result->serializer->webHostInfoData());
 		emit crawlerOptionsChanged(m_options);
 
 		CrawlerSharedState* state = CrawlerSharedState::instance();
@@ -473,8 +473,8 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
 
-	std::unique_ptr<Serializer> serializer =
-		std::make_unique<Serializer>(std::move(pages), std::move(crawledUrls), std::move(pendingUrls), m_options);
+	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>(std::move(pages), 
+		std::move(crawledUrls), std::move(pendingUrls), m_options, m_webHostInfo->allData());
 
 	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(std::move(serializer), m_fileName);
 	m_fileName = QString();
@@ -641,6 +641,12 @@ void Crawler::refreshPage(StorageType storageType, int index)
 	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet);
 
 	setState(StatePageRefresh);
+}
+
+void Crawler::setUserAgent(const QByteArray& userAgent)
+{
+	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setUserAgent",
+		Qt::BlockingQueuedConnection, Q_ARG(const QByteArray&, userAgent)));
 }
 
 const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept

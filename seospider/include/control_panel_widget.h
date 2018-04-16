@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ui_control_panel_widget.h"
+#include "crawler_options.h"
 
 namespace CrawlerEngine
 {
@@ -30,6 +31,7 @@ private slots:
 	void stopCrawling() const;
 	void clearCrawlingData() const;
 	void onCrawlerStateChanged(int state);
+	void onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options);
 
 private:
 	Ui::ControlPanelWidget m_ui;

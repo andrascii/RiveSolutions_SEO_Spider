@@ -19,6 +19,7 @@ public:
 	std::vector<const ParsedPage*> storageItems(StorageType storage) const;
 	std::future<std::vector<LinksToThisResourceChanges>> getLinksToThisResourceChanges(const ParsedPage* page, int count);
 	std::vector<const ParsedPage*> getLinksFromUnorderedDataCollection(StorageType type) const;
+	std::future<void> getWaitForClearingData();
 
 	void wait();
 
@@ -30,7 +31,9 @@ private slots:
 	void onParsedPagesRemoved(int count, StorageType type);
 	void onParsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
 	void onCrawlingProgress(CrawlingProgress state);
+	void onCrawlerStarted();
 	void onAboutClearData();
+	void onDataCleared();
 	void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type);
 	void onUnorderedDataCollectionPageAdded(WorkerResult result, StorageType type);
 	void onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type);
@@ -55,6 +58,8 @@ private:
 
 	mutable std::mutex m_ucMutex;
 	std::map<StorageType, std::vector<const ParsedPage*>> m_unorderedDataCollectionPages;
+
+	std::promise<void> m_waitForClearingData;
 };
 
 }

@@ -43,7 +43,7 @@ public slots:
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
 	void showContentFramePage(PageFactory::Page page);
-	
+
 protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void moveEvent(QMoveEvent* event) override;

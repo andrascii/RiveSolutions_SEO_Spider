@@ -139,7 +139,12 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 
 	if (isUrlExtracted)
 	{
-		DownloadRequest request(crawlerRequest, m_reloadPage);
+		DownloadRequest request(crawlerRequest, 
+			m_reloadPage ? 
+			DownloadRequest::LinkStatus::LinkStatusReloadAlreadyLoaded : 
+			DownloadRequest::LinkStatus::LinkStatusFirstLoading
+		);
+
 		m_currentRequest = crawlerRequest;
 		m_downloadRequester.reset(request, this, &CrawlerWorkerThread::onLoadingDone);
 		m_downloadRequester->start();
@@ -149,6 +154,7 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 void CrawlerWorkerThread::onCrawlerClearData()
 {
 	m_pagesAcceptedAfterStop.pages.clear();
+	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
 	m_downloadRequester.reset();
 	m_currentRequest.reset();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);

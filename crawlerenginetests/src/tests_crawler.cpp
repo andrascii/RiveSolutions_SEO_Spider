@@ -130,6 +130,16 @@ void TestsCrawler::waitForRefreshPageDone(int seconds, const char* timeoutMessag
 	throw TimeOutException(timeoutMessage);
 }
 
+void TestsCrawler::waitForClearingDataDone(int seconds, const char* timeoutMessage) const
+{
+	std::future<void> future = m_receiver->getWaitForClearingData();
+
+	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
+	{
+		throw TimeOutException(timeoutMessage);
+	}
+}
+
 std::vector<const ParsedPage*> TestsCrawler::storageItems(StorageType storage) const
 {
 	return m_receiver->storageItems(storage);
@@ -218,7 +228,25 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 				}
 				else
 				{
-					EXPECT_EQ(true, resourceExists);
+					if (ModelController::resourceShouldBeProcessed(resourcePage->resourceType, crawlerOptions()))
+					{
+						if (page->storages[BlockedForSEIndexingStorageType])
+						{
+							// TODO: implement
+
+						}
+						else
+						{
+							EXPECT_EQ(true, resourceExists);
+						}
+					}
+					else
+					{
+						// page can be added to dofollow/nofollow/etc storages 
+						// event if resource of this type shouldn't be processed
+						// (by the current implementation, maybe this is not a proper behaviour)
+						EXPECT_EQ(true, page->storages[StorageType::PendingResourcesStorageType]);
+					}
 				}
 			}
 		}

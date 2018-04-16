@@ -19,52 +19,52 @@ Q_DECLARE_FLAGS(ParserTypeFlags, ParserType);
 
 struct CrawlerOptions
 {
-	Url startCrawlingPage;
+	SERIALIZED Url startCrawlingPage;
 	
-	int limitMaxUrlLength = int();
-	int limitSearchTotal = int();
-	int limitTimeout = int();
-	int maxRedirectsToFollow = int();
-	int maxLinksCountOnPage = int();
+	SERIALIZED int limitMaxUrlLength = int();
+	SERIALIZED int limitSearchTotal = int();
+	SERIALIZED int limitTimeout = int();
+	SERIALIZED int maxRedirectsToFollow = int();
+	SERIALIZED int maxLinksCountOnPage = int();
 
 	// preferences
-	int minTitleLength = int();
-	int maxTitleLength = int();
-	int maxDescriptionLength = int();
-	int minDescriptionLength = int();
-	int maxH1LengthChars = int();
-	int maxH2LengthChars = int();
-	int maxImageAltTextChars = int();
-	int maxImageSizeKb = int();
-	int maxPageSizeKb = int();
+	SERIALIZED int maxTitleLength = int();
+	SERIALIZED int minTitleLength = int();
+	SERIALIZED int maxDescriptionLength = int();
+	SERIALIZED int minDescriptionLength = int();
+	SERIALIZED int maxH1LengthChars = int();
+	SERIALIZED int maxH2LengthChars = int();
+	SERIALIZED int maxImageAltTextChars = int();
+	SERIALIZED int maxImageSizeKb = int();
+	SERIALIZED int maxPageSizeKb = int();
 
 	// proxy settings
-	bool useProxy = bool();
-	QString proxyHostName;
-	int proxyPort = int();
-	QString proxyUser;
-	QString proxyPassword;
+	SERIALIZED bool useProxy = bool();
+	SERIALIZED QString proxyHostName;
+	SERIALIZED int proxyPort = int();
+	SERIALIZED QString proxyUser;
+	SERIALIZED QString proxyPassword;
 
 	// crawler settings
-	bool checkExternalLinks = bool();
-	bool followInternalNofollow = bool();
-	bool followExternalNofollow = bool();
-	bool checkCanonicals = bool();
-	bool checkSubdomains = bool();
-	bool crawlOutsideOfStartFolder = bool();
+	SERIALIZED bool checkExternalLinks = bool();
+	SERIALIZED bool followInternalNofollow = bool();
+	SERIALIZED bool followExternalNofollow = bool();
+	SERIALIZED bool checkCanonicals = bool();
+	SERIALIZED bool checkSubdomains = bool();
+	SERIALIZED bool crawlOutsideOfStartFolder = bool();
 
 	// robots.txt rules
-	bool followRobotsTxtRules = bool();
-	UserAgentType userAgentToFollow;
+	SERIALIZED bool followRobotsTxtRules = bool();
+	SERIALIZED UserAgentType userAgentToFollow;
 
-	ParserTypeFlags parserTypeFlags;
+	SERIALIZED ParserTypeFlags parserTypeFlags;
 
 	// pause between requests
-	int pauseRangeFrom = int();
-	int pauseRangeTo = int();
+	SERIALIZED int pauseRangeFrom = int();
+	SERIALIZED int pauseRangeTo = int();
 
 	// user agent
-	QByteArray userAgent;
+	SERIALIZED QByteArray userAgent;
 };
 
 Q_DECLARE_METATYPE(CrawlerOptions);

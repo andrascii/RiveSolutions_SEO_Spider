@@ -15,6 +15,7 @@ public:
 	virtual const QByteArray& content() const noexcept = 0;
 	virtual bool isReady() const noexcept = 0;
 	virtual bool isValid() const noexcept = 0;
+	virtual void setValid(bool valid) noexcept = 0;
 	virtual QObject* qobject() = 0;
 
 	// signal

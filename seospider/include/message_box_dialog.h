@@ -24,15 +24,16 @@ public:
 
 	void setStandardButtons(QDialogButtonBox::StandardButtons buttons);
 
-	int	result() const;
+	int result() const;
 
 signals:
 	void dialogClosed(int clickedButtonRole);
 
 public slots:
-	virtual void accept();
-	virtual void reject();
-	virtual void done(int r);
+	void accept();
+	void reject();
+	void done(int r);
+	void exec();
 
 private slots:
 	void onButtonClicked(QAbstractButton* button);
@@ -42,11 +43,16 @@ protected:
 	virtual void hideEvent(QHideEvent* event) override;
 
 private:
+	void completeLocalEventLoop();
+
+private:
 	Ui_MessageBox* m_ui;
 
 	QDialog::DialogCode m_dialogCode;
 
 	QDialogButtonBox::ButtonRole m_clickedButtonRole;
+
+	QEventLoop m_eventLoop;
 };
 
 }

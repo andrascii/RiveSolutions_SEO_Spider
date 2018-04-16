@@ -34,13 +34,15 @@ private slots:
 	void queryError(QNetworkReply* reply, QNetworkReply::NetworkError code);
 	void onTimerTicked();
 	void proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenticator*) const;
+	void onAboutDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+	bool isAutoDetectionBodyProcessing(QNetworkReply* reply) const;
 
 private:
 	void processReply(QNetworkReply* reply);
 	bool isReplyProcessed(QNetworkReply* reply) const noexcept;
 	void markReplyAsProcessed(QNetworkReply* reply) const noexcept;
 	void load(RequesterSharedPtr requester);
-	int loadHelper(const CrawlerRequest& request, int parentRequestId = -1);
+	std::pair<int, QNetworkReply*> loadHelper(const CrawlerRequest& request, int parentRequestId = -1);
 
 private:
 	QNetworkAccessManager* m_networkAccessor;
@@ -49,7 +51,8 @@ private:
 	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
 	QByteArray m_userAgent;
 	RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
-	std::queue<RequesterSharedPtr> m_requesterQueue;
+	std::deque<RequesterSharedPtr> m_requesterQueue;
+	std::map<RequesterSharedPtr, QNetworkReply*> m_activeRequestersReplies;
 };
 
 }

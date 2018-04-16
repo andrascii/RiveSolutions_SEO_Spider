@@ -4,4 +4,5 @@ x64/
 doxydoc/
 *.json
 *.ini
+/testsite/dist/*.*
 /build2015
