@@ -18,6 +18,8 @@ namespace SeoSpider
 
 class UpdateLoaderDialog : public QFrame
 {
+	Q_OBJECT
+
 private:
 	enum class UnitType
 	{
@@ -28,6 +30,9 @@ private:
 
 public:
 	UpdateLoaderDialog(const QString& downloadLink, QWidget* parent = nullptr);
+
+signals:
+	void updateDownloaded(const QString& filepath);
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;

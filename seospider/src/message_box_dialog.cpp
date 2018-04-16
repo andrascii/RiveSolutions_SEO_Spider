@@ -85,9 +85,20 @@ void MessageBoxDialog::reject()
 
 void MessageBoxDialog::done(int r)
 {
+	completeLocalEventLoop();
+
 	m_dialogCode = static_cast<QDialog::DialogCode>(r);
 
 	hide();
+}
+
+void MessageBoxDialog::exec()
+{
+	show();
+
+	m_eventLoop.exec();
+
+	completeLocalEventLoop();
 }
 
 void MessageBoxDialog::onButtonClicked(QAbstractButton* button)
@@ -111,6 +122,17 @@ void MessageBoxDialog::hideEvent(QHideEvent* event)
 	QFrame::hideEvent(event);
 
 	emit dialogClosed(m_clickedButtonRole);
+}
+
+void MessageBoxDialog::completeLocalEventLoop()
+{
+	if (!m_eventLoop.isRunning())
+	{
+		return;
+	}
+
+	m_eventLoop.processEvents();
+	m_eventLoop.exit();
 }
 
 }

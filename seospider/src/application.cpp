@@ -334,6 +334,9 @@ void Application::onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions opt
 void Application::onAboutUpdateExists(const QString& downloadLink)
 {
 	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(downloadLink, mainWindow());
+
+	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloaded));
+
 	updatesLoaderDialog->show();
 }
 
@@ -351,6 +354,26 @@ void Application::onAboutUseCustomUserAgentChanged()
 	else if (preferences()->useMobileUserAgent())
 	{
 		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
+	}
+}
+
+void Application::onAboutUpdateDownloaded(const QString& filepath)
+{
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+	messageBoxDialog->setWindowTitle(tr("Update successful downloaded"));
+	messageBoxDialog->setMessage(tr("Update successful downloaded. Do you want to install the update now?"));
+	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
+	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	messageBoxDialog->exec();
+
+	if (messageBoxDialog->result() != QDialog::Accepted)
+	{
+		return;
+	}
+
+	if (QProcess::startDetached(filepath))
+	{
+		quit();
 	}
 }
 

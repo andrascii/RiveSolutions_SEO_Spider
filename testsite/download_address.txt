@@ -1,1 +1,1 @@
-http://rivesolutions.com/dist/qt.zip
+http://rivesolutions.com/dist/installer.exe

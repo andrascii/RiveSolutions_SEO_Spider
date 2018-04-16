@@ -14,7 +14,6 @@ UpdateLoaderDialog::UpdateLoaderDialog(const QString& downloadLink, QWidget* par
 	, m_ui(new Ui_UpdatesLoaderDialogContent)
 	, m_downloadLink(downloadLink)
 {
-	downloadLink;
 	m_ui->setupUi(this);
 
 	m_ui->progressBar->hide();
@@ -88,7 +87,9 @@ void UpdateLoaderDialog::onUpdatesDownloadingFinished(CrawlerEngine::Requester*,
 {
 	m_ui->progressBar->setValue(100);
 
-	QFile file(UpdateHelpers::updatesPatchSaveDirPath() + "/" + m_downloadLink.fileName());
+	const QString filepath = UpdateHelpers::updatesPatchSaveDirPath() + "/" + m_downloadLink.fileName();
+
+	QFile file(filepath);
 	file.open(QIODevice::WriteOnly);
 
 	DEBUG_ASSERT(response.hopsChain.length() > 0);
@@ -102,6 +103,11 @@ void UpdateLoaderDialog::onUpdatesDownloadingFinished(CrawlerEngine::Requester*,
 	const CrawlerEngine::Hop lastHop = response.hopsChain.back();
 
 	file.write(lastHop.body());
+	file.close();
+
+	closeDialog();
+
+	emit updateDownloaded(filepath);
 }
 
 void UpdateLoaderDialog::closeDialog() noexcept
