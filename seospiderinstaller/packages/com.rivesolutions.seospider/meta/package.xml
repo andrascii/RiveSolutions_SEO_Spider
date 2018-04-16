@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package>
-    <DisplayName>Seo Spider component</DisplayName>
+    <DisplayName>Seo Spider</DisplayName>
     <Description>Install Seo Spider.</Description>
     <Version>1.0.0</Version>
     <ReleaseDate>2018-01-20</ReleaseDate>
