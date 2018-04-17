@@ -51,6 +51,7 @@ Application::Application(int& argc, char** argv)
 	, m_updateChecker(new UpdateChecker(this))
 {
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists(const QString&)), SLOT(onAboutUpdateExists(const QString&))));
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateAlreadyDownloaded(const QString&)), SLOT(onAboutUpdateAlreadyDownloaded(const QString&))));
 
 	SplashScreen::show();
 
@@ -334,6 +335,9 @@ void Application::onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions opt
 void Application::onAboutUpdateExists(const QString& downloadLink)
 {
 	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(downloadLink, mainWindow());
+
+	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloadingFinished));
+
 	updatesLoaderDialog->show();
 }
 
@@ -351,6 +355,46 @@ void Application::onAboutUseCustomUserAgentChanged()
 	else if (preferences()->useMobileUserAgent())
 	{
 		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
+	}
+}
+
+void Application::onAboutUpdateDownloadingFinished(const QString& filepath)
+{
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+	messageBoxDialog->setWindowTitle(tr("Updates successful downloaded"));
+	messageBoxDialog->setMessage(tr("Updates successful downloaded. Do you want to install the updates now?"));
+	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
+	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	messageBoxDialog->exec();
+
+	if (messageBoxDialog->result() != QDialog::Accepted)
+	{
+		return;
+	}
+
+	if (QProcess::startDetached(filepath))
+	{
+		quit();
+	}
+}
+
+void Application::onAboutUpdateAlreadyDownloaded(const QString& filepath)
+{
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+	messageBoxDialog->setWindowTitle(tr("New updates already downloaded"));
+	messageBoxDialog->setMessage(tr("New updates already downloaded. Do you want to install the updates now?"));
+	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
+	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	messageBoxDialog->exec();
+
+	if (messageBoxDialog->result() != QDialog::Accepted)
+	{
+		return;
+	}
+
+	if (QProcess::startDetached(filepath))
+	{
+		quit();
 	}
 }
 
