@@ -4,17 +4,10 @@
 #include "requester_wrapper.h"
 #include "url.h"
 
-namespace CrawlerEngine
-{
-
-struct DownloadResponse;
-struct DownloadProgressResponse;
-class Requester;
-
-}
-
 namespace SeoSpider
 {
+
+class UpdateLoader;
 
 class UpdateLoaderDialog : public QFrame
 {
@@ -40,27 +33,25 @@ protected:
 private slots:
 	void onDownloadNowClicked();
 	void onDownloadLaterClicked();
-	void onAboutDownloadProgress(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadProgressResponse& response);
-	void onUpdatesDownloadingFinished(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
+	void onAboutDownloadProgress(quint64 bytesReceived, quint64 bytesTotal, double downloadSpeed);
+	void onUpdatesDownloadingFinished(const QString& filepath);
 
 private:
 	void closeDialog() noexcept;
-	std::pair<double, QString> calculateDownloadSpeed(quint64 bytesReceived) const;
 	std::tuple<double, double, QString> downloadStatus(quint64 bytesReceived, quint64 bytesTotal) const;
 
 	UnitType unit(quint64 bytesCount) const noexcept;
 	QString unitToString(UnitType unitType) const;
 
-	double downloadPercents(const CrawlerEngine::DownloadProgressResponse& response) const;
-	QString downloadStatusString(const CrawlerEngine::DownloadProgressResponse& response) const;
-	QString downloadSpeedString(const CrawlerEngine::DownloadProgressResponse& response) const;
+	double downloadPercents(quint64 bytesReceived, quint64 bytesTotal) const;
+	QString downloadStatusString(quint64 bytesReceived, quint64 bytesTotal) const;
+	QString downloadSpeedString(double downloadSpeed) const;
 	double fromUnitToUnit(double value, UnitType from, UnitType to) const;
 
 private:
 	Ui_UpdatesLoaderDialogContent* m_ui;
 	CrawlerEngine::Url m_downloadLink;
-	CrawlerEngine::RequesterWrapper m_downloadRequester;
-	QTime m_downloadTime;
+	UpdateLoader* m_updateLoader;
 };
 
 }
