@@ -76,6 +76,8 @@ void UpdateLoaderDialog::onUpdatesDownloadingFinished(const QString& filepath)
 {
 	m_ui->progressBar->setValue(100);
 
+	closeDialog();
+
 	emit updateDownloaded(filepath);
 }
 

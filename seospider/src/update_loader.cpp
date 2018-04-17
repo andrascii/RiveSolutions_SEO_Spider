@@ -2,6 +2,7 @@
 #include "download_request.h"
 #include "download_response.h"
 #include "update_helpers.h"
+#include "application.h"
 
 namespace SeoSpider
 {
@@ -73,6 +74,8 @@ void UpdateLoader::onUpdatesDownloadingFinished(CrawlerEngine::Requester*, const
 
 	file.write(lastHop.body());
 	file.close();
+
+	theApp->saveToSettings(UpdateHelpers::updatePatchSavePathKey(), filepath);
 
 	emit updateDownloaded(filepath);
 }

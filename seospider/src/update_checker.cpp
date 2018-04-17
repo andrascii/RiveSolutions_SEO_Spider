@@ -9,6 +9,43 @@
 #pragma comment(lib, "mincore.lib")
 #endif
 
+namespace
+{
+
+using namespace SeoSpider;
+
+Version version(const QString& fileName)
+{
+	DWORD dwHandle;
+	DWORD dwLen = GetFileVersionInfoSizeW(fileName.toStdWString().c_str(), &dwHandle);
+
+	std::unique_ptr<std::byte[]> lpData(new std::byte[dwLen]);
+
+	if (!GetFileVersionInfoW(fileName.toStdWString().c_str(), dwHandle, dwLen, lpData.get()))
+	{
+		WARNLOG << "error in GetFileVersionInfo";
+		return Version::invalidVersion;
+	}
+
+	VS_FIXEDFILEINFO *lpBuffer = NULL;
+	UINT uLen;
+
+	if (!VerQueryValueW(lpData.get(), QString("\\").toStdWString().c_str(), reinterpret_cast<LPVOID*>(&lpBuffer), &uLen))
+	{
+		WARNLOG << "error in VerQueryValue";
+		return Version::invalidVersion;
+	}
+
+	return Version
+	{
+		(lpBuffer->dwFileVersionMS >> 16) & 0xffff,
+		(lpBuffer->dwFileVersionMS) & 0xffff,
+		(lpBuffer->dwFileVersionLS >> 16) & 0xffff
+	};
+}
+
+}
+
 namespace SeoSpider
 {
 
@@ -16,11 +53,26 @@ const Version Version::invalidVersion{ -1, -1, -1 };
 
 UpdateChecker::UpdateChecker(QObject* parent)
 	: QObject(parent)
+	, m_thisProgramVersion(version(theApp->applicationFilePath()))
 {
 }
 
 void UpdateChecker::check()
 {
+	const QVariant keyValue = theApp->loadFromSettings(UpdateHelpers::updatePatchSavePathKey());
+
+	if (keyValue.isValid())
+	{
+		const QString downloadedUpdatePatchPath = qvariant_cast<QString>(keyValue);
+
+		if (isVersionNewerThanThisProgramVersion(version(downloadedUpdatePatchPath)))
+		{
+			emit updateAlreadyDownloaded(downloadedUpdatePatchPath);
+
+			return;
+		}
+	}
+
 	CrawlerEngine::CrawlerRequest crawlerRequest
 	{
 		CrawlerEngine::Url(UpdateHelpers::actualVersionFileUrl()),
@@ -57,20 +109,8 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 	// TODO: implement decryption when encryption will be implemented on the server
 	//
 	const Version actualVersion = stringToVersion(lastHop.body());
-	const Version currentVersion = version(theApp->applicationFilePath());
 
-	if (currentVersion == Version::invalidVersion)
-	{
-		//
-		// TODO: implement sending report without shutdown program
-		//
-		ERRLOG << "ATTENTION!!! Cannot parse current program version!";
-		return;
-	}
-
-	if (actualVersion.major <= currentVersion.major &&
-		actualVersion.minor <= currentVersion.minor &&
-		actualVersion.maintenance <= currentVersion.maintenance)
+	if (!isVersionNewerThanThisProgramVersion(actualVersion))
 	{
 		return;
 	}
@@ -118,34 +158,25 @@ Version UpdateChecker::stringToVersion(const QString& versionString) const
 	};
 }
 
-Version UpdateChecker::version(const QString& fileName) const
+bool UpdateChecker::isVersionNewerThanThisProgramVersion(Version ver) const
 {
-	DWORD dwHandle;
-	DWORD dwLen = GetFileVersionInfoSizeW(fileName.toStdWString().c_str(), &dwHandle);
-
-	std::unique_ptr<std::byte[]> lpData(new std::byte[dwLen]);
-
-	if (!GetFileVersionInfoW(fileName.toStdWString().c_str(), dwHandle, dwLen, lpData.get()))
+	if (m_thisProgramVersion == Version::invalidVersion)
 	{
-		WARNLOG << "error in GetFileVersionInfo";
-		return Version::invalidVersion;
+		//
+		// TODO: implement sending report without shutdown program
+		//
+		ERRLOG << "ATTENTION!!! Cannot parse current program version!";
+		return true;
 	}
 
-	VS_FIXEDFILEINFO *lpBuffer = NULL;
-	UINT uLen;
-
-	if (!VerQueryValueW(lpData.get(), QString("\\").toStdWString().c_str(), reinterpret_cast<LPVOID*>(&lpBuffer), &uLen))
+	if (ver.major <= m_thisProgramVersion.major &&
+		ver.minor <= m_thisProgramVersion.minor &&
+		ver.maintenance <= m_thisProgramVersion.maintenance)
 	{
-		WARNLOG << "error in VerQueryValue";
-		return Version::invalidVersion;
+		return false;
 	}
 
-	return Version
-	{
-		(lpBuffer->dwFileVersionMS >> 16) & 0xffff,
-		(lpBuffer->dwFileVersionMS) & 0xffff,
-		(lpBuffer->dwFileVersionLS >> 16) & 0xffff
-	};
+	return true;
 }
 
 }

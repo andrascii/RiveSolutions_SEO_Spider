@@ -16,6 +16,11 @@ public:
 		return "http://rivesolutions.com/download_address.txt";
 	}
 
+	static constexpr const char* updatePatchSavePathKey()
+	{
+		return "updatePatchSavePath";
+	}
+
 	static QString updatesPatchSaveDirPath();
 };
 

@@ -42,6 +42,7 @@ public:
 
 	// signals
 	virtual void updateExists(const QString& downloadLink) = 0;
+	virtual void updateAlreadyDownloaded(const QString& path) = 0;
 };
 
 class UpdateChecker : public QObject, public IUpdateChecker
@@ -56,17 +57,17 @@ public:
 
 signals:
 	virtual void updateExists(const QString& downloadLink) override;
+	virtual void updateAlreadyDownloaded(const QString& path) override;
 
 private:
 	void onActualVersionFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
 	void onDownloadLinkFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
 	Version stringToVersion(const QString& versionString) const;
-
-private:
-	Version version(const QString& fileName) const;
+	bool isVersionNewerThanThisProgramVersion(Version ver) const;
 
 private:
 	CrawlerEngine::RequesterWrapper m_downloadRequester;
+	Version m_thisProgramVersion;
 };
 
 }
