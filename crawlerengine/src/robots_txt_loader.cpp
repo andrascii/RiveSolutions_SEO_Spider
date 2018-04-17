@@ -19,6 +19,11 @@ void RobotsTxtLoader::setHost(const Url& url)
 	m_host = url;
 }
 
+Url RobotsTxtLoader::host() const noexcept
+{
+	return m_host;
+}
+
 void RobotsTxtLoader::load()
 {
 	const Url robotsTxtUrl = m_host.scheme() + "://" + m_host.host() + QStringLiteral("/robots.txt");
@@ -38,6 +43,11 @@ void RobotsTxtLoader::load()
 const QByteArray& RobotsTxtLoader::content() const noexcept
 {
 	return m_content;
+}
+
+void RobotsTxtLoader::setContent(const QByteArray& content) noexcept
+{
+	m_content = content;
 }
 
 bool RobotsTxtLoader::isReady() const noexcept

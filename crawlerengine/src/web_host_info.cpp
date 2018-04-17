@@ -35,6 +35,16 @@ std::optional<bool> WebHostInfo::isRobotstxtValid() const
 	return m_robotsTxtLoader->isValid();
 }
 
+QByteArray WebHostInfo::robotstxtContent() const
+{
+	return m_robotsTxtLoader->content();
+}
+
+Url WebHostInfo::robotstxtUrl() const
+{
+	return m_robotsTxtLoader->host();
+}
+
 std::optional<bool> WebHostInfo::isSiteMapValid() const
 {
 	if (!m_xmlSiteMapLoader->isReady())
@@ -43,6 +53,16 @@ std::optional<bool> WebHostInfo::isSiteMapValid() const
 	}
 
 	return m_xmlSiteMapLoader->isValid();
+}
+
+QByteArray WebHostInfo::siteMapContent() const
+{
+	return m_xmlSiteMapLoader->content();
+}
+
+Url WebHostInfo::siteMapUrl() const
+{
+	return m_xmlSiteMapLoader->host();
 }
 
 std::optional<bool> WebHostInfo::is404PagesSetupRight() const
@@ -60,7 +80,11 @@ WebHostInfo::AllData WebHostInfo::allData() const
 	return 
 	{ 
 		isRobotstxtValid(),
+		robotstxtContent(),
+		robotstxtUrl(),
 		isSiteMapValid(),
+		siteMapContent(),
+		siteMapUrl(),
 		is404PagesSetupRight(), 
 		image() 
 	};
@@ -69,7 +93,11 @@ WebHostInfo::AllData WebHostInfo::allData() const
 void WebHostInfo::setData(const AllData& data)
 {
 	m_robotsTxtLoader->setValid(data.isRobotstxtValid.value());
+	m_robotsTxtLoader->setContent(data.siteMapContent);
+	m_robotsTxtLoader->setHost(data.robotstxtUrl);
 	m_xmlSiteMapLoader->setValid(data.isSiteMapValid.value());
+	m_xmlSiteMapLoader->setContent(data.siteMapContent);
+	m_xmlSiteMapLoader->setHost(data.siteMapUrl);
 	m_is404PagesSetupRight = data.is404PagesSetupRight;
 	m_webScreenShot->setResult(data.image);
 }
