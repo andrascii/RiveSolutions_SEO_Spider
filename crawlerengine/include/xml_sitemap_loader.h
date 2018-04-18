@@ -20,8 +20,10 @@ public:
 	XmlSitemapLoader(RobotsTxtLoader* robotsTxtLoader, QObject* parent = nullptr);
 
 	virtual void setHost(const Url& url) override;
+	virtual Url host() const noexcept override;
 	virtual void load() override;
 	virtual const QByteArray& content() const noexcept override;
+	virtual void setContent(const QByteArray& content) noexcept override;
 	virtual bool isReady() const noexcept override;
 	virtual bool isValid() const noexcept override;
 	virtual void setValid(bool valid) noexcept override;

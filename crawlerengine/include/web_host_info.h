@@ -18,14 +18,22 @@ public:
 	void reset(const QUrl& url);
 
 	std::optional<bool> isRobotstxtValid() const;
+	QByteArray robotstxtContent() const;
+	Url robotstxtUrl() const;
 	std::optional<bool> isSiteMapValid() const;
+	QByteArray siteMapContent() const;
+	Url siteMapUrl() const;
 	std::optional<bool> is404PagesSetupRight() const;
 	const QPixmap& image() const;
 
 	struct AllData
 	{
 		std::optional<bool> isRobotstxtValid;
+		QByteArray robotstxtContent;
+		Url robotstxtUrl;
 		std::optional<bool> isSiteMapValid;
+		QByteArray siteMapContent;
+		Url siteMapUrl;
 		std::optional<bool> is404PagesSetupRight;
 		QPixmap image;
 	};
