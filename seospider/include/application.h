@@ -72,11 +72,13 @@ private slots:
 	void onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options);
 	void onAboutUpdateExists(const QString& downloadLink);
 	void onAboutUseCustomUserAgentChanged();
+
 	void onAboutUpdateDownloadingFinished(const QString& filepath);
 	void onAboutUpdateAlreadyDownloaded(const QString& filepath);
 
 private:
 	void initialize();
+	void startInstaller(const QString& filepath);
 
 private:
 	std::unique_ptr<CommandLineHandler> m_commandLineHandler;
