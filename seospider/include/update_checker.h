@@ -18,6 +18,23 @@ struct Version
 	int minor;
 	int maintenance;
 
+	friend bool operator>(const Version& lhs, const Version& rhs)
+	{
+		return lhs.major > rhs.major &&
+			lhs.minor > rhs.minor &&
+			lhs.maintenance > rhs.maintenance;
+	}
+
+	friend bool operator<=(const Version& lhs, const Version& rhs)
+	{
+		return !(lhs > rhs);
+	}
+
+	friend bool operator<(const Version& lhs, const Version& rhs)
+	{
+		return !(lhs > rhs) && lhs != rhs;
+	}
+
 	friend bool operator==(const Version& lhs, const Version& rhs)
 	{
 		return lhs.major == rhs.major && 
@@ -33,6 +50,10 @@ struct Version
 	static const Version invalidVersion;
 };
 
+Version version(const QString& fileName);
+
+Q_DECLARE_METATYPE(Version)
+
 class IUpdateChecker
 {
 public:
@@ -42,6 +63,7 @@ public:
 
 	// signals
 	virtual void updateExists(const QString& downloadLink) = 0;
+	virtual void updateAlreadyDownloaded(const QString& path) = 0;
 };
 
 class UpdateChecker : public QObject, public IUpdateChecker
@@ -56,6 +78,7 @@ public:
 
 signals:
 	virtual void updateExists(const QString& downloadLink) override;
+	virtual void updateAlreadyDownloaded(const QString& path) override;
 
 private:
 	void onActualVersionFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
@@ -65,9 +88,12 @@ private:
 
 private:
 	Version version(const QString& fileName) const;
+	bool isVersionNewerThanThisProgramVersion(Version ver) const;
+	std::pair<bool, QString> checkExistenceUpdatePatch() const;
 
 private:
 	CrawlerEngine::RequesterWrapper m_downloadRequester;
+	Version m_thisProgramVersion;
 };
 
 }

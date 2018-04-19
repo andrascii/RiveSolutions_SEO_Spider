@@ -2,9 +2,8 @@
 #include "application.h"
 #include "helpers.h"
 #include "main_window.h"
-#include "download_request.h"
-#include "download_response.h"
 #include "update_helpers.h"
+#include "update_loader.h"
 
 namespace SeoSpider
 {
@@ -13,6 +12,7 @@ UpdateLoaderDialog::UpdateLoaderDialog(const QString& downloadLink, QWidget* par
 	: QFrame(parent)
 	, m_ui(new Ui_UpdatesLoaderDialogContent)
 	, m_downloadLink(downloadLink)
+	, m_updateLoader(new UpdateLoader(this))
 {
 	m_ui->setupUi(this);
 
@@ -25,6 +25,9 @@ UpdateLoaderDialog::UpdateLoaderDialog(const QString& downloadLink, QWidget* par
 
 	VERIFY(connect(m_ui->downloadNowButton, &QPushButton::clicked, this, &UpdateLoaderDialog::onDownloadNowClicked));
 	VERIFY(connect(m_ui->downloadLaterButton, &QPushButton::clicked, this, &UpdateLoaderDialog::onDownloadLaterClicked));
+
+	VERIFY(connect(m_updateLoader, &UpdateLoader::downloadProgress, this, &UpdateLoaderDialog::onAboutDownloadProgress));
+	VERIFY(connect(m_updateLoader, &UpdateLoader::updateDownloaded, this, &UpdateLoaderDialog::onUpdatesDownloadingFinished));
 }
 
 void UpdateLoaderDialog::showEvent(QShowEvent* event)
@@ -52,21 +55,7 @@ void UpdateLoaderDialog::onDownloadNowClicked()
 	m_ui->progressBar->show();
 	m_ui->progressBar->setValue(0);
 
-	CrawlerEngine::CrawlerRequest crawlerRequest
-	{
-		m_downloadLink,
-		CrawlerEngine::DownloadRequestType::RequestTypeGet
-	};
-
-	CrawlerEngine::DownloadRequest request(
-		crawlerRequest, 
-		CrawlerEngine::DownloadRequest::LinkStatus::LinkStatusFirstLoading, 
-		CrawlerEngine::DownloadRequest::BodyProcessingCommand::CommandDownloadBodyAnyway
-	);
-
-	m_downloadRequester.reset(request, this, &UpdateLoaderDialog::onAboutDownloadProgress, &UpdateLoaderDialog::onUpdatesDownloadingFinished);
-	m_downloadRequester->start();
-	m_downloadTime.start();
+	m_updateLoader->startDownloadingUpdate(CrawlerEngine::Url(m_downloadLink));
 
 	m_ui->downloadNowButton->setDisabled(true);
 	m_ui->downloadLaterButton->setText("Cancel Downloading");
@@ -77,33 +66,15 @@ void UpdateLoaderDialog::onDownloadLaterClicked()
 	closeDialog();
 }
 
-void UpdateLoaderDialog::onAboutDownloadProgress(CrawlerEngine::Requester*, const CrawlerEngine::DownloadProgressResponse& response)
+void UpdateLoaderDialog::onAboutDownloadProgress(quint64 bytesReceived, quint64 bytesTotal, double downloadSpeed)
 {
-	m_ui->progressBar->setValue(static_cast<int>(downloadPercents(response)));
-	m_ui->progressBar->setFormat(downloadStatusString(response) + " (" + downloadSpeedString(response) + ")");
+	m_ui->progressBar->setValue(static_cast<int>(downloadPercents(bytesReceived, bytesTotal)));
+	m_ui->progressBar->setFormat(downloadStatusString(bytesReceived, bytesTotal) + " (" + downloadSpeedString(downloadSpeed) + ")");
 }
 
-void UpdateLoaderDialog::onUpdatesDownloadingFinished(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
+void UpdateLoaderDialog::onUpdatesDownloadingFinished(const QString& filepath)
 {
 	m_ui->progressBar->setValue(100);
-
-	const QString filepath = UpdateHelpers::updatesPatchSaveDirPath() + "/" + m_downloadLink.fileName();
-
-	QFile file(filepath);
-	file.open(QIODevice::WriteOnly);
-
-	DEBUG_ASSERT(response.hopsChain.length() > 0);
-
-	if (response.hopsChain.length() == 0)
-	{
-		ERRLOG << "For some reason hops chain is empty";
-		return;
-	}
-
-	const CrawlerEngine::Hop lastHop = response.hopsChain.back();
-
-	file.write(lastHop.body());
-	file.close();
 
 	closeDialog();
 
@@ -112,25 +83,11 @@ void UpdateLoaderDialog::onUpdatesDownloadingFinished(CrawlerEngine::Requester*,
 
 void UpdateLoaderDialog::closeDialog() noexcept
 {
-	if (m_downloadRequester.get())
-	{
-		m_downloadRequester->stop();
-	}
-
-	m_downloadRequester.reset();
+	m_updateLoader->stopDownloading();
 
 	theApp->mainWindow()->setDisabled(false);
 
 	close();
-}
-
-std::pair<double, QString> UpdateLoaderDialog::calculateDownloadSpeed(quint64 bytesReceived) const
-{
-	UnitType unitType = unit(bytesReceived);
-	const QString unitString = unitToString(unitType) + "/s";
-	const double speed = fromUnitToUnit(bytesReceived * 1000.0 / m_downloadTime.elapsed(), UnitType::UnitTypeBytes, unitType);
-
-	return std::make_pair(speed, unitString);
 }
 
 std::tuple<double, double, QString> UpdateLoaderDialog::downloadStatus(quint64 bytesReceived, quint64 bytesTotal) const
@@ -179,23 +136,24 @@ QString UpdateLoaderDialog::unitToString(UnitType unitType) const
 	return QString();
 }
 
-double UpdateLoaderDialog::downloadPercents(const CrawlerEngine::DownloadProgressResponse& response) const
+double UpdateLoaderDialog::downloadPercents(quint64 bytesReceived, quint64 bytesTotal) const
 {
-	return static_cast<double>(response.bytesReceived) / static_cast<double>(response.bytesTotal + 1) * 100.0;
+	return static_cast<double>(bytesReceived) / static_cast<double>(bytesTotal + 1) * 100.0;
 }
 
-QString UpdateLoaderDialog::downloadStatusString(const CrawlerEngine::DownloadProgressResponse& response) const
+QString UpdateLoaderDialog::downloadStatusString(quint64 bytesReceived, quint64 bytesTotal) const
 {
-	std::tuple<double, double, QString> status = downloadStatus(response.bytesReceived, response.bytesTotal);
+	std::tuple<double, double, QString> status = downloadStatus(bytesReceived, bytesTotal);
 
 	return QString::number(std::get<0>(status), 'f', 2) + std::get<2>(status) + "/" + QString::number(std::get<1>(status), 'f', 2) + std::get<2>(status);
 }
 
-QString UpdateLoaderDialog::downloadSpeedString(const CrawlerEngine::DownloadProgressResponse& response) const
+QString UpdateLoaderDialog::downloadSpeedString(double downloadSpeed) const
 {
-	std::pair<double, QString> downloadSpeed = calculateDownloadSpeed(response.bytesTotal);
+	UnitType unitType = unit(downloadSpeed);
+	const QString unitString = unitToString(unitType) + "/s";
 
-	return QString::number(downloadSpeed.first, 'f', 2) + " " + downloadSpeed.second;
+	return QString::number(fromUnitToUnit(downloadSpeed, UnitType::UnitTypeBytes, unitType), 'f', 2) + " " + unitString;
 }
 
 double UpdateLoaderDialog::fromUnitToUnit(double value, UnitType from, UnitType to) const

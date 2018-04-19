@@ -12,15 +12,48 @@
 namespace SeoSpider
 {
 
+Version version(const QString& fileName)
+{
+	DWORD dwHandle;
+	DWORD dwLen = GetFileVersionInfoSizeW(fileName.toStdWString().c_str(), &dwHandle);
+
+	std::unique_ptr<std::byte[]> lpData(new std::byte[dwLen]);
+
+	if (!GetFileVersionInfoW(fileName.toStdWString().c_str(), dwHandle, dwLen, lpData.get()))
+	{
+		WARNLOG << "error in GetFileVersionInfo";
+		return Version::invalidVersion;
+	}
+
+	VS_FIXEDFILEINFO *lpBuffer = NULL;
+	UINT uLen;
+
+	if (!VerQueryValueW(lpData.get(), QString("\\").toStdWString().c_str(), reinterpret_cast<LPVOID*>(&lpBuffer), &uLen))
+	{
+		WARNLOG << "error in VerQueryValue";
+		return Version::invalidVersion;
+	}
+
+	return Version
+	{
+		(lpBuffer->dwFileVersionMS >> 16) & 0xffff,
+		(lpBuffer->dwFileVersionMS) & 0xffff,
+		(lpBuffer->dwFileVersionLS >> 16) & 0xffff
+	};
+}
+
 const Version Version::invalidVersion{ -1, -1, -1 };
 
 UpdateChecker::UpdateChecker(QObject* parent)
 	: QObject(parent)
+	, m_thisProgramVersion(version(theApp->applicationFilePath()))
 {
 }
 
 void UpdateChecker::check()
 {
+	INFOLOG << "Start actual_version.txt loading";
+
 	CrawlerEngine::CrawlerRequest crawlerRequest
 	{
 		CrawlerEngine::Url(UpdateHelpers::actualVersionFileUrl()),
@@ -37,9 +70,9 @@ QObject* UpdateChecker::qobject() const noexcept
 	return const_cast<UpdateChecker*>(this);
 }
 
-void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response)
+void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
 {
-	Q_UNUSED(requester);
+	INFOLOG << "actual_version.txt loaded";
 
 	m_downloadRequester.reset();
 
@@ -61,18 +94,24 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 
 	if(currentVersion == Version::invalidVersion)
 	{
-		//
-		// TODO: implement sending report without shutdown program
-		//
-		ERRLOG << "ATTENTION!!! Cannot parse current program version!";
+		QFile::remove(updatePatchInfo.second);
+
+		theApp->removeKeyFromSettings(UpdateHelpers::updatePatchSavePathKey());
+
 		return;
 	}
-	
-	if(actualVersion.major <= currentVersion.major &&
-		actualVersion.minor <= currentVersion.minor &&
-		actualVersion.maintenance <= currentVersion.maintenance)
+
+	if (updatePatchInfo.first)
 	{
+		ASSERT(!updatePatchInfo.second.isEmpty());
+
+		emit updateAlreadyDownloaded(updatePatchInfo.second);
+
 		return;
+	}
+	else
+	{
+		theApp->removeKeyFromSettings(UpdateHelpers::updatePatchSavePathKey());
 	}
 
 	CrawlerEngine::CrawlerRequest crawlerRequest
@@ -86,9 +125,9 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 	m_downloadRequester->start();
 }
 
-void UpdateChecker::onDownloadLinkFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response)
+void UpdateChecker::onDownloadLinkFileLoaded(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
 {
-	Q_UNUSED(requester);
+	INFOLOG << "download_address.txt loaded";
 
 	m_downloadRequester.reset();
 
@@ -159,29 +198,27 @@ Version UpdateChecker::version(const QString& fileName) const
 	DWORD dwHandle;
 	DWORD dwLen = GetFileVersionInfoSizeW(fileName.toStdWString().c_str(), &dwHandle);
 
-	std::unique_ptr<std::byte[]> lpData(new std::byte[dwLen]);
+	return true;
+}
 
-	if (!GetFileVersionInfoW(fileName.toStdWString().c_str(), dwHandle, dwLen, lpData.get()))
+std::pair<bool, QString> UpdateChecker::checkExistenceUpdatePatch() const
+{
+	const QVariant saveUpdatePathKey = theApp->loadFromSettings(UpdateHelpers::updatePatchSavePathKey());
+
+	QString downloadedFilePath;
+	bool updatePatchAlreadyExists = false;
+
+	if (saveUpdatePathKey.isValid())
 	{
-		WARNLOG << "error in GetFileVersionInfo";
-		return Version::invalidVersion;
+		downloadedFilePath = saveUpdatePathKey.toString();
+
+		if (QFile::exists(downloadedFilePath))
+		{
+			updatePatchAlreadyExists = true;
+		}
 	}
 
-	VS_FIXEDFILEINFO *lpBuffer = NULL;
-	UINT uLen;
-
-	if (!VerQueryValueW(lpData.get(), QString("\\").toStdWString().c_str(), reinterpret_cast<LPVOID*>(&lpBuffer), &uLen))
-	{
-		WARNLOG << "error in VerQueryValue";
-		return Version::invalidVersion;
-	}
-
-	return Version
-	{
-		(lpBuffer->dwFileVersionMS >> 16) & 0xffff,
-		(lpBuffer->dwFileVersionMS) & 0xffff,
-		(lpBuffer->dwFileVersionLS >> 16) & 0xffff
-	};
+	return std::pair(updatePatchAlreadyExists, downloadedFilePath);
 }
 
 }

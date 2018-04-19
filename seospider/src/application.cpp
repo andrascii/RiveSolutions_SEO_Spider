@@ -24,10 +24,6 @@
 #include "command_line_keys.h"
 #include "update_checker.h"
 #include "update_loader_dialog.h"
-#include "update_promoter.h"
-
-namespace SeoSpider
-{
 
 namespace
 {
@@ -35,6 +31,9 @@ namespace
 const QByteArray s_riveSolutionsUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
 
 }
+
+namespace SeoSpider
+{
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
@@ -51,7 +50,10 @@ Application::Application(int& argc, char** argv)
 	, m_headerControlsContainer(new HeaderControlsContainer())
 	, m_updateChecker(new UpdateChecker(this))
 {
+	qRegisterMetaType<Version>("Version");
+
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists(const QString&)), SLOT(onAboutUpdateExists(const QString&))));
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateAlreadyDownloaded(const QString&)), SLOT(onAboutUpdateAlreadyDownloaded(const QString&))));
 
 	SplashScreen::show();
 
@@ -339,7 +341,7 @@ void Application::onAboutUpdateExists(const QString& downloadLink)
 {
 	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(downloadLink, mainWindow());
 
-	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloaded));
+	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloadingFinished));
 
 	updatesLoaderDialog->show();
 }
@@ -361,11 +363,11 @@ void Application::onAboutUseCustomUserAgentChanged()
 	}
 }
 
-void Application::onAboutUpdateDownloaded(const QString& filepath)
+void Application::onAboutUpdateDownloadingFinished(const QString& filepath)
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(tr("Update successful downloaded"));
-	messageBoxDialog->setMessage(tr("Update successful downloaded. Do you want to install the update now?"));
+	messageBoxDialog->setWindowTitle(tr("Updates successful downloaded"));
+	messageBoxDialog->setMessage(tr("Updates successful downloaded. Do you want to install the updates now?"));
 	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
 	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 	messageBoxDialog->exec();
@@ -375,10 +377,24 @@ void Application::onAboutUpdateDownloaded(const QString& filepath)
 		return;
 	}
 
-	if (QProcess::startDetached(filepath))
+	startInstaller(filepath);
+}
+
+void Application::onAboutUpdateAlreadyDownloaded(const QString& filepath)
+{
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+	messageBoxDialog->setWindowTitle(tr("New updates already downloaded"));
+	messageBoxDialog->setMessage(tr("New updates already downloaded. Do you want to install the updates now?"));
+	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
+	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+	messageBoxDialog->exec();
+
+	if (messageBoxDialog->result() != QDialog::Accepted)
 	{
-		quit();
+		return;
 	}
+
+	startInstaller(filepath);
 }
 
 void Application::registerServices()
@@ -439,6 +455,14 @@ void Application::initialize()
 	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsChanged, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
+}
+
+void Application::startInstaller(const QString& filepath)
+{
+	if (QProcess::startDetached(filepath))
+	{
+		quit();
+	}
 }
 
 void Application::initializeStyleSheet() noexcept

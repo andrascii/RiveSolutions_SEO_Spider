@@ -102,7 +102,11 @@ namespace
 	const QString pauseRangeToKey = QLatin1String("pauseRangeTo");
 	
 	const QString robotsTxtValidKey = QLatin1String("robotsTxtValid");
+	const QString robotsTxtContentKey = QLatin1String("robotsTxtContent");
+	const QString robotsTxtUrlKey = QLatin1String("robotsTxtUrl");
 	const QString siteMapValidKey = QLatin1String("siteMapValid");
+	const QString siteMapContentKey = QLatin1String("siteMapContent");
+	const QString siteMapUrlKey = QLatin1String("siteMapUrl");
 	const QString is404PagesSetupRightKey = QLatin1String("is404PagesSetupRight");
 	const QString siteImageKey = QLatin1String("siteImage");
 
@@ -723,11 +727,17 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 		: false
 	));
 
+	writer.writeTextElement(robotsTxtContentKey, QString::fromUtf8(m_webHostInfoData.robotstxtContent));
+	writer.writeTextElement(robotsTxtUrlKey, m_webHostInfoData.robotstxtUrl.toDisplayString());
+
 	writer.writeTextElement(siteMapValidKey, QString::number(
 		m_webHostInfoData.isSiteMapValid != std::nullopt
 		? m_webHostInfoData.isSiteMapValid.value()
 		: false
 	));
+
+	writer.writeTextElement(siteMapContentKey, QString::fromUtf8(m_webHostInfoData.siteMapContent));
+	writer.writeTextElement(siteMapUrlKey, m_webHostInfoData.siteMapUrl.toDisplayString());
 
 	writer.writeTextElement(is404PagesSetupRightKey, QString::number(
 		m_webHostInfoData.is404PagesSetupRight != std::nullopt
@@ -891,9 +901,25 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		{
 			m_webHostInfoData.isRobotstxtValid = reader.readElementText().toInt() == 1;
 		}
+		else if (reader.qualifiedName() == robotsTxtContentKey)
+		{
+			m_webHostInfoData.robotstxtContent = reader.readElementText().toUtf8();
+		}
+		else if (reader.qualifiedName() == robotsTxtUrlKey)
+		{
+			m_webHostInfoData.robotstxtUrl = Url(reader.readElementText());
+		}
 		else if (reader.qualifiedName() == siteMapValidKey)
 		{
 			m_webHostInfoData.isSiteMapValid = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == siteMapContentKey)
+		{
+			m_webHostInfoData.siteMapContent = reader.readElementText().toUtf8();
+		}
+		else if (reader.qualifiedName() == siteMapUrlKey)
+		{
+			m_webHostInfoData.siteMapUrl = Url(reader.readElementText());
 		}
 		else if (reader.qualifiedName() == is404PagesSetupRightKey)
 		{

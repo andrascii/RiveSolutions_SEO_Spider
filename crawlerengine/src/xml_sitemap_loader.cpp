@@ -26,6 +26,11 @@ void XmlSitemapLoader::setHost(const Url& url)
 	m_host = url;
 }
 
+Url XmlSitemapLoader::host() const noexcept
+{
+	return m_host;
+}
+
 void XmlSitemapLoader::load()
 {
 	if (m_robotsTxtLoader && !m_robotsTxtLoader->isReady())
@@ -66,6 +71,11 @@ void XmlSitemapLoader::load()
 const QByteArray& XmlSitemapLoader::content() const noexcept
 {
 	return m_content;
+}
+
+void XmlSitemapLoader::setContent(const QByteArray& content) noexcept
+{
+	m_content = content;
 }
 
 bool XmlSitemapLoader::isReady() const noexcept
