@@ -61,6 +61,7 @@ private:
 	void onActualVersionFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
 	void onDownloadLinkFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
 	Version stringToVersion(const QString& versionString) const;
+	Version getRemoteVersion(const QByteArray& remoteXmlUpdateFile);
 
 private:
 	Version version(const QString& fileName) const;

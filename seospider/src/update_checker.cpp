@@ -56,10 +56,10 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 	//
 	// TODO: implement decryption when encryption will be implemented on the server
 	//
-	const Version actualVersion = stringToVersion(lastHop.body());
+	const Version actualVersion = getRemoteVersion(lastHop.body());
 	const Version currentVersion = version(theApp->applicationFilePath());
 
-	if (currentVersion == Version::invalidVersion)
+	if(currentVersion == Version::invalidVersion)
 	{
 		//
 		// TODO: implement sending report without shutdown program
@@ -67,8 +67,8 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 		ERRLOG << "ATTENTION!!! Cannot parse current program version!";
 		return;
 	}
-
-	if (actualVersion.major <= currentVersion.major &&
+	
+	if(actualVersion.major <= currentVersion.major &&
 		actualVersion.minor <= currentVersion.minor &&
 		actualVersion.maintenance <= currentVersion.maintenance)
 	{
@@ -116,6 +116,42 @@ Version UpdateChecker::stringToVersion(const QString& versionString) const
 		matchParts[1].toInt(),
 		matchParts[2].toInt()
 	};
+}
+
+Version UpdateChecker::getRemoteVersion(const QByteArray& remoteXmlUpdateFile)
+{
+	QXmlStreamReader updateFile(remoteXmlUpdateFile);
+
+	while (!updateFile.atEnd() && !updateFile.hasError())
+	{
+		QXmlStreamReader::TokenType token = updateFile.readNext();
+		if (token == QXmlStreamReader::StartDocument)
+			continue;
+		if (token == QXmlStreamReader::StartElement)
+		{
+			if (updateFile.name() == "PackageUpdate")
+			{
+				while (!(updateFile.tokenType() == QXmlStreamReader::EndElement && updateFile.name() == "PackageUpdate"))
+				{
+					if (updateFile.tokenType() == QXmlStreamReader::StartElement)
+					{
+						if (updateFile.name() == "Version")
+						{
+							if (updateFile.tokenType() == QXmlStreamReader::StartElement)
+							{
+								updateFile.readNext();
+								const Version actualVersion = stringToVersion(updateFile.text().toString());
+								return actualVersion;
+							}
+						}
+					}
+
+					updateFile.readNext();
+				}
+			}
+		}
+	}
+	return Version::invalidVersion;
 }
 
 Version UpdateChecker::version(const QString& fileName) const

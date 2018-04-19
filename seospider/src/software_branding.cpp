@@ -1,4 +1,5 @@
 #include "software_branding.h"
+#include "svg_renderer.h"
 
 namespace SeoSpider
 {
@@ -15,7 +16,9 @@ QString SoftwareBranding::productName() const noexcept
 
 QPixmap SoftwareBranding::brandingLogoImage() const noexcept
 {
-	return QPixmap(":/images/brand-logo.png");
+	constexpr int c_height = 250;
+	constexpr double c_ratio = 1.837318615087294;
+	return SvgRenderer::render(":/images/logo_big.svg", c_height * c_ratio, c_height);
 }
 
 }

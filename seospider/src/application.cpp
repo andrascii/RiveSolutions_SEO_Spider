@@ -24,6 +24,7 @@
 #include "command_line_keys.h"
 #include "update_checker.h"
 #include "update_loader_dialog.h"
+#include "update_promoter.h"
 
 namespace SeoSpider
 {
@@ -64,6 +65,9 @@ Application::Application(int& argc, char** argv)
 	}
 
 	m_updateChecker->check();
+
+	//UpdatePromoter* m = new UpdatePromoter();
+	//m->updateAvailable();
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept

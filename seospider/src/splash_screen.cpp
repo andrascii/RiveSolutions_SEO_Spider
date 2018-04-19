@@ -75,15 +75,15 @@ void SplashScreen::paintEvent(QPaintEvent*)
 {
 	QPainter painter(this);
 
-	QPen pen(QColor("#D6D6D6"));
-	pen.setWidth(Common::Helpers::pointsToPixels(2));
-
-	painter.setPen(pen);
+	//QPen pen(QColor("#D6D6D6"));
+	//pen.setWidth(Common::Helpers::pointsToPixels(2));
+	//
+	//painter.setPen(pen);
 
 	const QRect adjustedRect = rect().adjusted(0, 0, -1, -1);
 
 	painter.drawPixmap(rect(), m_brandingLogoImage);
-	painter.drawRect(adjustedRect);
+	//painter.drawRect(adjustedRect);
 }
 
 }

@@ -1,0 +1,20 @@
+set(SRC_DIR "@CMAKE_CURRENT_SOURCE_DIR@")
+set(versionHeaderPath "@versionHeaderPath@")
+set(installerConfigPath "@installerConfigPath@")
+
+set(MAJOR @MAJOR@)
+set(MINOR @MINOR@)
+set(MAINTANCE @MAINTANCE@)
+
+configure_file(
+	${versionHeaderPath}/version.h.in 
+	${versionHeaderPath}/version.h
+)
+
+
+configure_file(
+	${installerConfigPath}/package.xml.in 
+	${installerConfigPath}/package.xml
+)
+
+message("Version set") # For testing only

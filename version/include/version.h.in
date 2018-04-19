@@ -1,0 +1,9 @@
+#ifndef VERSION_H   
+#define VERSION_H
+
+#define MAJOR ${MAJOR}
+#define MINOR ${MINOR}
+#define MAINTANCE ${MAINTANCE}
+
+#endif VERSION_H
+ 
