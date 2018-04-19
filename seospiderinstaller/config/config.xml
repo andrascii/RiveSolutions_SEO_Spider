@@ -13,6 +13,13 @@
 	<RunProgram>@TargetDir@/seospider.exe</RunProgram>
 	<StartMenuDir>Seo Spider</StartMenuDir>
 	<MaintenanceToolName>Uninstall SeoSpider</MaintenanceToolName>
+	<RemoteRepositories>
+     <Repository>
+             <Url>http://rivesolutions.com/</Url>
+             <Enabled>1</Enabled>
+             <DisplayName>SeoSpider</DisplayName>
+     </Repository>
+	</RemoteRepositories>
 	<AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
 	<Background>background.png</Background>
 	<TargetDir>@ApplicationsDirX64@/Rive Solutions/Seo Spider</TargetDir>

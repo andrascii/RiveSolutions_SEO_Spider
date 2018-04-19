@@ -1,9 +1,5 @@
 function Component()
-{
-	var value = installer.value("HKCU\Software\Rive Solutions\Seo Spider\MetaData");
-	
-	QMessageBox["information"]("version.test", "Installer", value, QMessageBox.Ok);
-	
+{	
 	if(!needUpdate())
 	{
 		QMessageBox["information"]("version.test", "Installer", "The newer version is already installed.", QMessageBox.Ok);
@@ -41,36 +37,28 @@ function registerProgram()
 	var key = "HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData";
 	var value = component.value("Version");
 	
-	QMessageBox["information"]("version.test", "Installer", value, QMessageBox.Ok);
 	component.addOperation("Execute", reg, "ADD", key, "/v", "Version", "/t", "REG_SZ", "/d", value, "/f");
 }
 
 // Check if newer version is already installed
 function needUpdate()
 {
-	var reg = installer.environmentVariable("SystemRoot") + "\\System32\\reg.exe";
-	var key = "HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData";	
-	var argslist = ["QUERY", key, "/v", "Version"];
-	var localVersion = component.value("Version");
-	
-	var regResult = new Array();
-	regResult = installer.execute(reg, argslist);
-	
-	var savedVersion = regResult[0].split("    ")[3];
+	var newVersion = component.value("Version");
+	var savedVersion = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
 	
 	if(savedVersion)
 	{
 		savedVersion.trim();
 		
-		if(compareVersions(savedVersion, localVersion) > 0)
+		if(compareVersions(savedVersion, newVersion) > 0)
 		{
 			return false;
 		}
-		if(compareVersions(savedVersion, localVersion) < 0)
+		if(compareVersions(savedVersion, newVersion) < 0)
 		{
 			return true;
 		}
-		if(compareVersions(savedVersion, localVersion) == 0)
+		if(compareVersions(savedVersion, newVersion) == 0)
 		{
 			return false;
 		}
