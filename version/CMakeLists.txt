@@ -4,8 +4,8 @@ project(${VersionProjectName})
 
 set(VersionHeaders include)
 
-set(MAJOR 2)
-set(MINOR 1)
+set(MAJOR 1)
+set(MINOR 0)
 set(MAINTANCE 0)
 
 

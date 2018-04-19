@@ -2,8 +2,8 @@ set(SRC_DIR "E:/Develop/SourceTree/quickiewebbot/version")
 set(versionHeaderPath "E:/Develop/SourceTree/quickiewebbot/version/include")
 set(installerConfigPath "E:/Develop/SourceTree/quickiewebbot/version/../seospiderinstaller/packages/com.rivesolutions.seospider/meta")
 
-set(MAJOR 2)
-set(MINOR 1)
+set(MAJOR 1)
+set(MINOR 0)
 set(MAINTANCE 0)
 
 configure_file(

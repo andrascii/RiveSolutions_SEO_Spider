@@ -2,6 +2,7 @@
 #include "software_branding.h"
 #include "splash_screen.h"
 #include "helpers.h"
+#include "version.h"
 
 namespace SeoSpider
 {
@@ -58,7 +59,7 @@ SplashScreen::SplashScreen()
 	resize(originalImageSize);
 
 #ifdef PRODUCTION
-	QString version = "13.13";
+	QString version = QString("%1.%2.%3").arg(MAJOR).arg(MINOR).arg(MAINTANCE);
 #else
 	QString version = theApp->applicationVersion().isEmpty() ? "Developer's version" : theApp->applicationVersion();
 #endif

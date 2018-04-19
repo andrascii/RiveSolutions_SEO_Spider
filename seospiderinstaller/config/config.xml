@@ -7,7 +7,7 @@
 	<ProductUrl>http://j775420.myjino.ru/seospider/</ProductUrl>
 	<InstallerWindowIcon>robot</InstallerWindowIcon>
 	<InstallerApplicationIcon>robot</InstallerApplicationIcon>
-	<Logo>brand-logo-best-png.png</Logo>
+	<Logo>logo.png</Logo>
 	<WizardStyle>Modern</WizardStyle>
 	<!--<StyleSheet>styles.qss</StyleSheet>-->
 	<RunProgram>@TargetDir@/seospider.exe</RunProgram>
