@@ -1,4 +1,5 @@
 #include "block_functionality_dialog.h"
+#include "helpers.h"
 
 BlockFunctionalityDialog::BlockFunctionalityDialog(
 	QWidget* parent,
@@ -15,4 +16,13 @@ BlockFunctionalityDialog::BlockFunctionalityDialog(
 	m_ui.messageLabel->setText(message);
 
 	adjustSize();
+
+	VERIFY(connect(m_ui.pushButton, SIGNAL(clicked()), this, SLOT(accept())));
+}
+
+void BlockFunctionalityDialog::showEvent(QShowEvent* event)
+{
+	Common::Helpers::moveWidgetToHostCenter(this);
+
+	QDialog::showEvent(event);
 }

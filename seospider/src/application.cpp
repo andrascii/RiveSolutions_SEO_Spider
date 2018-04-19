@@ -22,6 +22,7 @@
 #include "crawler_options.h"
 #include "command_line_handler.h"
 #include "command_line_keys.h"
+#include "block_functionality_dialog.h"
 
 namespace SeoSpider
 {
@@ -61,6 +62,16 @@ Application::Application(int& argc, char** argv)
 	INFOLOG << "Build ABI:" << QSysInfo::buildAbi();
 	INFOLOG << "CPU:" << QSysInfo::buildCpuArchitecture();
 	INFOLOG << "App Version:" << applicationVersion();
+
+	if (trialPeriodIsOver())
+	{
+		BlockFunctionalityDialog* blockingDialog = new BlockFunctionalityDialog(nullptr, "Trial period is over.", "Trial period is over. Buy license.");
+
+		if (blockingDialog->exec() == QDialog::Accepted)
+		{
+			QMetaObject::invokeMethod(this, "quit", Qt::QueuedConnection);
+		}
+	}
 
 	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
 	{
@@ -388,11 +399,6 @@ void Application::initialize()
 
 	registerServices();
 	initQSettings();
-	
-	//
-	//TODO: ckeck trial here and block the programm if over
-	//
-
 	preferences()->load();
 
 	m_translator->load(":/translations/translate_" + preferences()->applicationLanguage());

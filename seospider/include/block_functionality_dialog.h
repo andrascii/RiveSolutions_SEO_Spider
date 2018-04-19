@@ -11,7 +11,9 @@ public:
 		QWidget* parent, 
 		const QString& title, 
 		const QString& message,
-		Qt::WindowFlags flags = Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+		Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+
+	virtual void showEvent(QShowEvent* event) override;
 
 private:
 	Ui_BlockFunctionalityDialog m_ui;
