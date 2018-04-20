@@ -18,6 +18,23 @@ struct Version
 	int minor;
 	int maintenance;
 
+	friend bool operator>(const Version& lhs, const Version& rhs)
+	{
+		return lhs.major > rhs.major &&
+			lhs.minor > rhs.minor &&
+			lhs.maintenance > rhs.maintenance;
+	}
+
+	friend bool operator<=(const Version& lhs, const Version& rhs)
+	{
+		return !(lhs > rhs);
+	}
+
+	friend bool operator<(const Version& lhs, const Version& rhs)
+	{
+		return !(lhs > rhs) && lhs != rhs;
+	}
+
 	friend bool operator==(const Version& lhs, const Version& rhs)
 	{
 		return lhs.major == rhs.major && 
@@ -32,6 +49,10 @@ struct Version
 
 	static const Version invalidVersion;
 };
+
+Version version(const QString& fileName);
+
+Q_DECLARE_METATYPE(Version)
 
 class IUpdateChecker
 {
@@ -64,6 +85,7 @@ private:
 	void onDownloadLinkFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
 	Version stringToVersion(const QString& versionString) const;
 	bool isVersionNewerThanThisProgramVersion(Version ver) const;
+	std::pair<bool, QString> checkExistenceUpdatePatch() const;
 
 private:
 	CrawlerEngine::RequesterWrapper m_downloadRequester;

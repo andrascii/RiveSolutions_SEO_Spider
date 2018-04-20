@@ -24,9 +24,7 @@
 #include "command_line_keys.h"
 #include "update_checker.h"
 #include "update_loader_dialog.h"
-
-namespace SeoSpider
-{
+#include "update_helpers.h"
 
 namespace
 {
@@ -34,6 +32,9 @@ namespace
 const QByteArray s_riveSolutionsUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
 
 }
+
+namespace SeoSpider
+{
 
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
@@ -50,6 +51,8 @@ Application::Application(int& argc, char** argv)
 	, m_headerControlsContainer(new HeaderControlsContainer())
 	, m_updateChecker(new UpdateChecker(this))
 {
+	qRegisterMetaType<Version>("Version");
+
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists(const QString&)), SLOT(onAboutUpdateExists(const QString&))));
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateAlreadyDownloaded(const QString&)), SLOT(onAboutUpdateAlreadyDownloaded(const QString&))));
 
@@ -372,10 +375,7 @@ void Application::onAboutUpdateDownloadingFinished(const QString& filepath)
 		return;
 	}
 
-	if (QProcess::startDetached(filepath))
-	{
-		quit();
-	}
+	startInstaller(filepath);
 }
 
 void Application::onAboutUpdateAlreadyDownloaded(const QString& filepath)
@@ -392,10 +392,7 @@ void Application::onAboutUpdateAlreadyDownloaded(const QString& filepath)
 		return;
 	}
 
-	if (QProcess::startDetached(filepath))
-	{
-		quit();
-	}
+	startInstaller(filepath);
 }
 
 void Application::registerServices()
@@ -456,6 +453,14 @@ void Application::initialize()
 	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsChanged, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
+}
+
+void Application::startInstaller(const QString& filepath)
+{
+	if (QProcess::startDetached(filepath))
+	{
+		quit();
+	}
 }
 
 void Application::initializeStyleSheet() noexcept

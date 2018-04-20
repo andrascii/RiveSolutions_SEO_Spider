@@ -9,10 +9,8 @@
 #pragma comment(lib, "mincore.lib")
 #endif
 
-namespace
+namespace SeoSpider
 {
-
-using namespace SeoSpider;
 
 Version version(const QString& fileName)
 {
@@ -44,11 +42,6 @@ Version version(const QString& fileName)
 	};
 }
 
-}
-
-namespace SeoSpider
-{
-
 const Version Version::invalidVersion{ -1, -1, -1 };
 
 UpdateChecker::UpdateChecker(QObject* parent)
@@ -59,19 +52,7 @@ UpdateChecker::UpdateChecker(QObject* parent)
 
 void UpdateChecker::check()
 {
-	const QVariant keyValue = theApp->loadFromSettings(UpdateHelpers::updatePatchSavePathKey());
-
-	if (keyValue.isValid())
-	{
-		const QString downloadedUpdatePatchPath = qvariant_cast<QString>(keyValue);
-
-		if (isVersionNewerThanThisProgramVersion(version(downloadedUpdatePatchPath)))
-		{
-			emit updateAlreadyDownloaded(downloadedUpdatePatchPath);
-
-			return;
-		}
-	}
+	INFOLOG << "Start actual_version.txt loading";
 
 	CrawlerEngine::CrawlerRequest crawlerRequest
 	{
@@ -89,9 +70,9 @@ QObject* UpdateChecker::qobject() const noexcept
 	return const_cast<UpdateChecker*>(this);
 }
 
-void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response)
+void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
 {
-	Q_UNUSED(requester);
+	INFOLOG << "actual_version.txt loaded";
 
 	m_downloadRequester.reset();
 
@@ -105,14 +86,30 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 		return;
 	}
 
-	//
-	// TODO: implement decryption when encryption will be implemented on the server
-	//
+	/// TODO: implement decryption when encryption will be implemented on the server
 	const Version actualVersion = stringToVersion(lastHop.body());
+	const auto updatePatchInfo = checkExistenceUpdatePatch();
 
 	if (!isVersionNewerThanThisProgramVersion(actualVersion))
 	{
+		QFile::remove(updatePatchInfo.second);
+
+		theApp->removeKeyFromSettings(UpdateHelpers::updatePatchSavePathKey());
+
 		return;
+	}
+
+	if (updatePatchInfo.first)
+	{
+		ASSERT(!updatePatchInfo.second.isEmpty());
+
+		emit updateAlreadyDownloaded(updatePatchInfo.second);
+
+		return;
+	}
+	else
+	{
+		theApp->removeKeyFromSettings(UpdateHelpers::updatePatchSavePathKey());
 	}
 
 	CrawlerEngine::CrawlerRequest crawlerRequest
@@ -126,9 +123,9 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester* requeste
 	m_downloadRequester->start();
 }
 
-void UpdateChecker::onDownloadLinkFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response)
+void UpdateChecker::onDownloadLinkFileLoaded(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
 {
-	Q_UNUSED(requester);
+	INFOLOG << "download_address.txt loaded";
 
 	m_downloadRequester.reset();
 
@@ -169,14 +166,32 @@ bool UpdateChecker::isVersionNewerThanThisProgramVersion(Version ver) const
 		return true;
 	}
 
-	if (ver.major <= m_thisProgramVersion.major &&
-		ver.minor <= m_thisProgramVersion.minor &&
-		ver.maintenance <= m_thisProgramVersion.maintenance)
+	if (ver == Version::invalidVersion)
 	{
 		return false;
 	}
 
 	return true;
+}
+
+std::pair<bool, QString> UpdateChecker::checkExistenceUpdatePatch() const
+{
+	const QVariant saveUpdatePathKey = theApp->loadFromSettings(UpdateHelpers::updatePatchSavePathKey());
+
+	QString downloadedFilePath;
+	bool updatePatchAlreadyExists = false;
+
+	if (saveUpdatePathKey.isValid())
+	{
+		downloadedFilePath = saveUpdatePathKey.toString();
+
+		if (QFile::exists(downloadedFilePath))
+		{
+			updatePatchAlreadyExists = true;
+		}
+	}
+
+	return std::pair(updatePatchAlreadyExists, downloadedFilePath);
 }
 
 }
