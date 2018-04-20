@@ -47,6 +47,10 @@ public:
 	TestsDownloader* testDownloader() const;
 	void checkSequencedDataCollectionConsistency();
 	const UnorderedDataCollection* unorderedDataCollection() const;
+	CrawlerOptions crawlerOptions() const;
+
+	void saveToFileSafe(const QString& fileName);
+	void loadFromFIleSafe(const QString& fileName);
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const override;

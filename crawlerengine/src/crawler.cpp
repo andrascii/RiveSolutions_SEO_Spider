@@ -556,6 +556,7 @@ QString Crawler::siteMapXml(const SiteMapSettings& settings) const
 
 void Crawler::saveToFile(const QString& fileName)
 {
+	ASSERT(QThread::currentThread() == thread());
 	ASSERT(state() != State::StateWorking);
 
 	m_fileName = fileName;
@@ -567,6 +568,7 @@ void Crawler::saveToFile(const QString& fileName)
 
 void Crawler::loadFromFile(const QString& fileName)
 {
+	ASSERT(QThread::currentThread() == thread());
 	if (state() == Crawler::StateWorking)
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();

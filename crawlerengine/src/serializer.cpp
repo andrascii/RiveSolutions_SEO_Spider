@@ -530,6 +530,7 @@ const WebHostInfo::AllData& Serializer::webHostInfoData() const
 
 void Serializer::saveToXmlStream(QIODevice& device)
 {
+	INFOLOG << "Serialization...";
 	QXmlStreamWriter xmlWriter(&device);
 
 	xmlWriter.setAutoFormatting(true);
@@ -552,6 +553,7 @@ void Serializer::saveToXmlStream(QIODevice& device)
 
 	xmlWriter.writeEndElement();
 	xmlWriter.writeEndDocument();
+	INFOLOG << "Serialization done.";
 }
 
 void Serializer::loadFromXmlStream(QIODevice& device)
@@ -745,14 +747,9 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 		: false
 	));
 	
-	if (!m_webHostInfoData.image.isNull())
+	if (!m_webHostInfoData.image.isEmpty())
 	{
-		QByteArray pixmapData;
-		QBuffer buffer(&pixmapData);
-
-		const QPixmap& pixmap = qvariant_cast<QPixmap>(m_webHostInfoData.image);
-		pixmap.save(&buffer, "PNG");
-		writer.writeTextElement(siteImageKey, QString::fromUtf8(pixmapData.toBase64()));
+		writer.writeTextElement(siteImageKey, QString::fromUtf8(m_webHostInfoData.image.toBase64()));
 	}
 
 	writer.writeEndElement();
@@ -927,7 +924,7 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		}
 		else if (reader.qualifiedName() == siteImageKey)
 		{
-			m_webHostInfoData.image.loadFromData(QByteArray::fromBase64(reader.readElementText().toUtf8()), "PNG");
+			m_webHostInfoData.image = QByteArray::fromBase64(reader.readElementText().toUtf8());
 		}
 	}
 }

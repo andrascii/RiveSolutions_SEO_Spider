@@ -59,8 +59,8 @@ public:
 	State state() const noexcept;
 	SequencedDataCollection* sequencedDataCollection() const;
 	QString siteMapXml(const SiteMapSettings& settings) const;
-	void saveToFile(const QString& fileName);
-	void loadFromFile(const QString& fileName);
+	Q_SLOT void saveToFile(const QString& fileName);
+	Q_SLOT void loadFromFile(const QString& fileName);
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 

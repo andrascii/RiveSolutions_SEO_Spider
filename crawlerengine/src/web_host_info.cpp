@@ -77,6 +77,15 @@ const QPixmap& WebHostInfo::image() const
 
 WebHostInfo::AllData WebHostInfo::allData() const
 {
+	QByteArray pixmapData;
+	if (!image().isNull())
+	{
+		QBuffer buffer(&pixmapData);
+
+		const QPixmap& pixmap = qvariant_cast<QPixmap>(image());
+		pixmap.save(&buffer, "PNG");
+	}
+	
 	return 
 	{ 
 		isRobotstxtValid(),
@@ -86,20 +95,31 @@ WebHostInfo::AllData WebHostInfo::allData() const
 		siteMapContent(),
 		siteMapUrl(),
 		is404PagesSetupRight(), 
-		image() 
+		pixmapData
 	};
 }
 
 void WebHostInfo::setData(const AllData& data)
 {
 	m_robotsTxtLoader->setValid(data.isRobotstxtValid.value());
-	m_robotsTxtLoader->setContent(data.siteMapContent);
+	m_robotsTxtLoader->setContent(data.robotstxtContent);
 	m_robotsTxtLoader->setHost(data.robotstxtUrl);
 	m_xmlSiteMapLoader->setValid(data.isSiteMapValid.value());
 	m_xmlSiteMapLoader->setContent(data.siteMapContent);
 	m_xmlSiteMapLoader->setHost(data.siteMapUrl);
 	m_is404PagesSetupRight = data.is404PagesSetupRight;
-	m_webScreenShot->setResult(data.image);
+
+	if (!data.image.isEmpty())
+	{
+		QPixmap hostImage;
+		hostImage.loadFromData(data.image, "PNG");
+		m_webScreenShot->setResult(hostImage);
+	}
+	else
+	{
+		// TODO: clear image without constructing QPixmap instance in non-main thread
+	}
+	
 }
 
 void WebHostInfo::on404Checked(Requester*, const Check404IsProperResponse& response)

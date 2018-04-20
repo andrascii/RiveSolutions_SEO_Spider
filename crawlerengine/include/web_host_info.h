@@ -35,7 +35,7 @@ public:
 		QByteArray siteMapContent;
 		Url siteMapUrl;
 		std::optional<bool> is404PagesSetupRight;
-		QPixmap image;
+		QByteArray image;
 	};
 
 	AllData allData() const;

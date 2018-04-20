@@ -9,6 +9,7 @@ namespace CrawlerEngineTests
 ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const SequencedDataCollection* sequencedDataCollection)
 	: m_sequencedDataCollection(sequencedDataCollection)
 	, m_allPagesReceived(false)
+	, m_finished(false)
 {
 	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageAdded,
 		this, &ParsedPageReceiver::onParsedPageAdded, Qt::QueuedConnection));
@@ -21,15 +22,21 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 
 	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageLinksToThisResourceChanged,
 		this, &ParsedPageReceiver::onParsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
-
-	VERIFY(connect(crawler, &Crawler::crawlingProgress,
-		this, &ParsedPageReceiver::onCrawlingProgress, Qt::QueuedConnection));
 	
 	VERIFY(connect(crawler, &Crawler::crawlerStarted,
 		this, &ParsedPageReceiver::onCrawlerStarted, Qt::QueuedConnection));
 
+	VERIFY(connect(crawler, &Crawler::crawlerFinished,
+		this, &ParsedPageReceiver::onCrawlerFinished, Qt::QueuedConnection));
+
 	VERIFY(connect(crawler, &Crawler::onAboutClearData,
 		this, &ParsedPageReceiver::onAboutClearData, Qt::QueuedConnection));
+	
+	VERIFY(connect(crawler, &Crawler::serializationProcessDone,
+		this, &ParsedPageReceiver::onSerializationDone, Qt::QueuedConnection));
+
+	VERIFY(connect(crawler, &Crawler::deserializationProcessDone,
+		this, &ParsedPageReceiver::onDeserializationDone, Qt::QueuedConnection));
 
 	VERIFY(connect(crawler->sequencedDataCollection(), &SequencedDataCollection::endClearData,
 		this, &ParsedPageReceiver::onDataCleared, Qt::QueuedConnection));
@@ -51,6 +58,7 @@ void ParsedPageReceiver::onParsedPageAdded(int row, StorageType type)
 	m_parsedPages[type].push_back(storage[row]);
 
 	checkWaitCondition(type);
+	checkAllPagesReceived();
 }
 
 void ParsedPageReceiver::onParsedPageRemoved(int row, StorageType type)
@@ -87,27 +95,16 @@ void ParsedPageReceiver::onParsedPageLinksToThisResourceChanged(LinksToThisResou
 	checkLinksToThisResourceConditions(nullptr);
 }
 
-void ParsedPageReceiver::onCrawlingProgress(CrawlingProgress state)
-{
-	Q_UNUSED(state);
-	CrawlerSharedState* sharedState = CrawlerSharedState::instance();
-
-	if (!m_allPagesReceived &&
-		sharedState->downloaderPendingLinksCount() == 0 &&
-		sharedState->sequencedDataCollectionLinksCount() > 0 &&
-		sharedState->downloaderCrawledLinksCount() == sharedState->workersProcessedLinksCount() &&
-		sharedState->workersProcessedLinksCount() == sharedState->modelControllerCrawledLinksCount() &&
-		sharedState->modelControllerAcceptedLinksCount() == sharedState->sequencedDataCollectionLinksCount())
-	{
-		INFOLOG << sharedState->sequencedDataCollectionLinksCount() << m_parsedPages[StorageType::CrawledUrlStorageType].size();
-		m_allPagesReceivedPromise.set_value(m_parsedPages[StorageType::CrawledUrlStorageType]);
-		m_allPagesReceived = true;
-	}
-}
-
 void ParsedPageReceiver::onCrawlerStarted()
 {
 	m_waitForClearingData = std::promise<void>();
+	m_finished = false;
+}
+
+void ParsedPageReceiver::onCrawlerFinished()
+{
+	m_finished = true;
+	checkAllPagesReceived();
 }
 
 void ParsedPageReceiver::onAboutClearData()
@@ -119,11 +116,24 @@ void ParsedPageReceiver::onAboutClearData()
 	m_linksToThisResourceConditions.clear();
 
 	m_allPagesReceivedPromise = std::promise<std::vector<const ParsedPage*>>();
+	m_allPagesReceived = false;
 }
 
 void ParsedPageReceiver::onDataCleared()
 {
 	m_waitForClearingData.set_value();
+}
+
+void ParsedPageReceiver::onSerializationDone()
+{
+	//QThread::currentThread()->msleep(1000);
+	m_waitForSerializationDone.set_value();
+}
+
+void ParsedPageReceiver::onDeserializationDone()
+{
+	//QThread::currentThread()->msleep(1000);
+	m_waitForDeserializationDone.set_value();
 }
 
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
@@ -164,6 +174,16 @@ std::vector<const ParsedPage*> ParsedPageReceiver::getLinksFromUnorderedDataColl
 std::future<void> ParsedPageReceiver::getWaitForClearingData()
 {
 	return m_waitForClearingData.get_future();
+}
+
+std::future<void> ParsedPageReceiver::getWaitForSerializationDone()
+{
+	return m_waitForSerializationDone.get_future();
+}
+
+std::future<void> ParsedPageReceiver::getWaitForDeserializationDone()
+{
+	return m_waitForDeserializationDone.get_future();
 }
 
 void ParsedPageReceiver::wait()
@@ -211,6 +231,18 @@ void ParsedPageReceiver::checkLinksToThisResourceConditions(const ParsedPage* pa
 			}
 			break;
 		}
+	}
+}
+
+void ParsedPageReceiver::checkAllPagesReceived()
+{
+	if (!m_allPagesReceived &&
+		m_finished &&
+		m_parsedPages[CrawledUrlStorageType].size() == CrawlerSharedState::instance()->sequencedDataCollectionLinksCount())
+	{
+		INFOLOG << CrawlerSharedState::instance()->sequencedDataCollectionLinksCount() << m_parsedPages[StorageType::CrawledUrlStorageType].size();
+		m_allPagesReceivedPromise.set_value(m_parsedPages[StorageType::CrawledUrlStorageType]);
+		m_allPagesReceived = true;
 	}
 }
 
