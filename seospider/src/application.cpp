@@ -174,7 +174,10 @@ void Application::startCrawler()
 		return;
 	}
 
-	crawler()->options()->setStartCrawlingPage(url);
+	if (crawler()->state() != Crawler::StatePause)
+	{
+		crawler()->options()->setStartCrawlingPage(url);
+	}
 
 	INFOLOG << "Start crawling:" << crawler()->options()->startCrawlingPage().toDisplayString();
 
