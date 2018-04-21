@@ -15,10 +15,10 @@ namespace CrawlerEngineTests
 
 static int s_argc = 0;
 
-TestEnvironment::TestEnvironment(CrawlerEngine::CrawlerOptions options)
+TestEnvironment::TestEnvironment()
 	: QCoreApplication(s_argc, nullptr)
 	, m_testRunner(new TestRunner)
-	, m_crawler(new TestsCrawler(s_threadCount, options, nullptr))
+	, m_crawler(new TestsCrawler(s_threadCount, nullptr))
 {
 	m_crawlerThread = new Common::NamedThread("CrawlerTestsThread");
 	m_crawler->moveToThread(m_crawlerThread);
@@ -58,15 +58,17 @@ void TestEnvironment::initializeTest(const std::function<void()>& testFunction)
 	emit testInitialized(m_testFunction);
 }
 
-CrawlerEngine::CrawlerOptions TestEnvironment::defaultOptions(const Url& url)
+CrawlerEngine::CrawlerOptionsData TestEnvironment::defaultOptions(const Url& url)
 {
-	CrawlerEngine::CrawlerOptions result{ url };
+	CrawlerEngine::CrawlerOptionsData result{ url };
+
 	result.parserTypeFlags = CrawlerEngine::ParserTypeFlags(
 		CrawlerEngine::JavaScriptResourcesParserType |
 		CrawlerEngine::CssResourcesParserType |
 		CrawlerEngine::ImagesResourcesParserType |
 		CrawlerEngine::VideoResourcesParserType |
-		CrawlerEngine::FlashResourcesParserType);
+		CrawlerEngine::FlashResourcesParserType
+	);
 
 	result.minTitleLength = 0;
 	result.maxTitleLength = 1000;

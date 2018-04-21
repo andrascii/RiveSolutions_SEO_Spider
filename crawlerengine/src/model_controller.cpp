@@ -124,9 +124,9 @@ UnorderedDataCollection* ModelController::data() noexcept
 	return m_data;
 }
 
-void ModelController::setWebCrawlerOptions(const CrawlerOptions& options)
+void ModelController::setWebCrawlerOptions(const CrawlerOptionsData& optionsData)
 {
-	m_crawlerOptions = options;
+	m_crawlerOptionsData = optionsData;
 }
 
 void ModelController::clearData()
@@ -186,7 +186,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	
 	fixParsedPageResourceType(workerResult.incomingPage());
 
-	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType, m_crawlerOptions))
+	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType, m_crawlerOptionsData))
 	{
 		removeResourceFromPendingStorageIfNeeded(workerResult.incomingPage());
 		return;
@@ -261,7 +261,7 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 
 	calculatePageLevel(workerResult.incomingPage());
 
-	if (url.host() != m_crawlerOptions.startCrawlingPage.host())
+	if (url.host() != m_crawlerOptionsData.startCrawlingPage.host())
 	{
 		data()->addParsedPage(workerResult, StorageType::ExternalUrlStorageType);
 	}
@@ -276,12 +276,12 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 		data()->addParsedPage(workerResult, StorageType::UpperCaseUrlStorageType);
 	}
 
-	if (urlStr.size() > m_crawlerOptions.limitMaxUrlLength)
+	if (urlStr.size() > m_crawlerOptionsData.limitMaxUrlLength)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooLongUrlStorageType);
 	}
 
-	if (workerResult.incomingPage()->linksOnThisPage.size() > m_crawlerOptions.maxLinksCountOnPage)
+	if (workerResult.incomingPage()->linksOnThisPage.size() > m_crawlerOptionsData.maxLinksCountOnPage)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooManyLinksOnPageStorageType);
 	}
@@ -352,11 +352,11 @@ void ModelController::processParsedPageTitle(WorkerResult& workerResult, bool se
 	{
 		data()->addParsedPage(workerResult, StorageType::EmptyTitleUrlStorageType);
 	}
-	else if (title.size() > m_crawlerOptions.maxTitleLength && successfulResponseCode)
+	else if (title.size() > m_crawlerOptionsData.maxTitleLength && successfulResponseCode)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooLongTitleUrlStorageType);
 	}
-	else if (title.size() < m_crawlerOptions.minTitleLength && successfulResponseCode)
+	else if (title.size() < m_crawlerOptionsData.minTitleLength && successfulResponseCode)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooShortTitleUrlStorageType);
 	}
@@ -395,11 +395,11 @@ void ModelController::processParsedPageMetaDescription(WorkerResult& workerResul
 	{
 		data()->addParsedPage(workerResult, StorageType::EmptyMetaDescriptionUrlStorageType);
 	}
-	else if (metaDescriptionLength > m_crawlerOptions.maxDescriptionLength && successfulResponseCode)
+	else if (metaDescriptionLength > m_crawlerOptionsData.maxDescriptionLength && successfulResponseCode)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooLongMetaDescriptionUrlStorageType);
 	}
-	else if (metaDescriptionLength < m_crawlerOptions.minDescriptionLength && successfulResponseCode)
+	else if (metaDescriptionLength < m_crawlerOptionsData.minDescriptionLength && successfulResponseCode)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooShortMetaDescriptionUrlStorageType);
 	}
@@ -469,7 +469,7 @@ void ModelController::processParsedPageH1(WorkerResult& workerResult, bool secon
 	{
 		data()->addParsedPage(workerResult, StorageType::MissingH1UrlStorageType);
 	}
-	else if (h1Length > m_crawlerOptions.maxH1LengthChars)
+	else if (h1Length > m_crawlerOptionsData.maxH1LengthChars)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooLongH1UrlStorageType);
 	}
@@ -508,7 +508,7 @@ void ModelController::processParsedPageH2(WorkerResult& workerResult, bool secon
 	{
 		data()->addParsedPage(workerResult, StorageType::MissingH2UrlStorageType);
 	}
-	else if (h2Length > m_crawlerOptions.maxH2LengthChars)
+	else if (h2Length > m_crawlerOptionsData.maxH2LengthChars)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooLongH2UrlStorageType);
 	}
@@ -548,7 +548,7 @@ void ModelController::processParsedPageImage(WorkerResult& workerResult, bool ch
 
 	const int sizeKB = workerResult.incomingPage()->pageSizeKilobytes;
 
-	if (sizeKB > m_crawlerOptions.maxImageSizeKb &&
+	if (sizeKB > m_crawlerOptionsData.maxImageSizeKb &&
 		!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::TooBigImageStorageType))
 	{
 		data()->addParsedPage(workerResult, StorageType::TooBigImageStorageType);
@@ -577,7 +577,7 @@ void ModelController::processParsedPageImage(WorkerResult& workerResult, bool ch
 		{
 			const int altLength = linkToThisImage.altOrTitle.size();
 
-			if (altLength > m_crawlerOptions.maxImageAltTextChars && 
+			if (altLength > m_crawlerOptionsData.maxImageAltTextChars && 
 				!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::TooLongAltTextImageStorageType))
 			{
 				data()->addParsedPage(workerResult, StorageType::TooLongAltTextImageStorageType);
@@ -699,7 +699,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		}
 	}
 
-	if (workerResult.incomingPage()->pageSizeKilobytes > m_crawlerOptions.maxPageSizeKb)
+	if (workerResult.incomingPage()->pageSizeKilobytes > m_crawlerOptionsData.maxPageSizeKb)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooBigHtmlResourcesStorageType);
 	}
@@ -832,7 +832,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			continue;
 		}
 
-		if ((!resourceShouldBeProcessed(resource.resourceType, m_crawlerOptions) && 
+		if ((!resourceShouldBeProcessed(resource.resourceType, m_crawlerOptionsData) && 
 			resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
@@ -920,7 +920,7 @@ void ModelController::fixParsedPageResourceType(ParsedPagePtr& incomingPage) con
 	}
 }
 
-bool ModelController::resourceShouldBeProcessed(ResourceType resourceType, const CrawlerOptions& options) noexcept
+bool ModelController::resourceShouldBeProcessed(ResourceType resourceType, const CrawlerOptionsData& optionsData) noexcept
 {
 	switch (resourceType)
 	{
@@ -930,27 +930,27 @@ bool ModelController::resourceShouldBeProcessed(ResourceType resourceType, const
 		}
 		case ResourceType::ResourceImage:
 		{
-			return options.parserTypeFlags.testFlag(ImagesResourcesParserType);
+			return optionsData.parserTypeFlags.testFlag(ImagesResourcesParserType);
 		}
 		case ResourceType::ResourceJavaScript:
 		{
-			return options.parserTypeFlags.testFlag(JavaScriptResourcesParserType);
+			return optionsData.parserTypeFlags.testFlag(JavaScriptResourcesParserType);
 		}
 		case ResourceType::ResourceStyleSheet:
 		{
-			return options.parserTypeFlags.testFlag(CssResourcesParserType);
+			return optionsData.parserTypeFlags.testFlag(CssResourcesParserType);
 		}
 		case ResourceType::ResourceFlash:
 		{
-			return options.parserTypeFlags.testFlag(FlashResourcesParserType);
+			return optionsData.parserTypeFlags.testFlag(FlashResourcesParserType);
 		}
 		case ResourceType::ResourceVideo:
 		{
-			return options.parserTypeFlags.testFlag(VideoResourcesParserType);
+			return optionsData.parserTypeFlags.testFlag(VideoResourcesParserType);
 		}
 		case ResourceType::ResourceOther:
 		{
-			return options.parserTypeFlags.testFlag(OtherResourcesParserType);
+			return optionsData.parserTypeFlags.testFlag(OtherResourcesParserType);
 		}
 		default:
 		{
@@ -1008,7 +1008,7 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 
 		if (parent->pageLevel + 1 < level)
 		{
-			level = parent->pageLevel == 1 && parent->url.compare(m_crawlerOptions.startCrawlingPage)
+			level = parent->pageLevel == 1 && parent->url.compare(m_crawlerOptionsData.startCrawlingPage)
 				? 1 : parent->pageLevel + 1;
 		}
 	}

@@ -31,7 +31,7 @@ private slots:
 	void stopCrawling() const;
 	void clearCrawlingData() const;
 	void onCrawlerStateChanged(int state);
-	void onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options);
+	void onCrawlerOptionsChanged();
 
 private:
 	Ui::ControlPanelWidget m_ui;

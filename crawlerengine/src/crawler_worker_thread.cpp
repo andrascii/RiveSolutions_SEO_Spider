@@ -61,13 +61,13 @@ std::future<std::optional<CrawlerRequest>> CrawlerWorkerThread::pendingUrls() co
 	return m_pagesAcceptedAfterStop.pagesAcceptedPromise.get_future();
 }
 
-void CrawlerWorkerThread::startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules)
+void CrawlerWorkerThread::startWithOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
 
 	m_isRunning = true;
-	m_optionsLinkFilter.reset(new OptionsLinkFilter(options, robotsTxtRules));
-	m_pageDataCollector->setOptions(options);
+	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
+	m_pageDataCollector->setOptions(optionsData);
 
 	onStart();
 	extractUrlAndDownload();

@@ -58,8 +58,12 @@ Application::Application(int& argc, char** argv)
 
 	SplashScreen::show();
 
+	attachPreferencesToCrawlerOptions();
+
 	initialize();
+
 	initializeStyleSheet();
+
 	showMainWindow();
 
 	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
@@ -170,76 +174,14 @@ void Application::startCrawler()
 		return;
 	}
 
-	CrawlerOptions options;
-	options.startCrawlingPage = url;
-
-	INFOLOG << "Start crawling:" << options.startCrawlingPage.toDisplayString();
-
-	// limit settings
-	options.limitMaxUrlLength = preferences()->limitMaxUrlLength();
-	options.limitSearchTotal = preferences()->limitSearchTotal();
-	options.limitTimeout = preferences()->limitTimeout();
-	options.maxRedirectsToFollow = preferences()->maxRedirectCount();
-	options.maxLinksCountOnPage = preferences()->maxLinksCountOnPage();
-
-	// preferences settings
-	options.maxDescriptionLength = preferences()->maxDescriptionLength();
-	options.minDescriptionLength = preferences()->minDescriptionLength();
-	options.minTitleLength = preferences()->minTitleLength();
-	options.maxTitleLength = preferences()->maxTitleLength();
-	options.maxImageSizeKb = preferences()->maxImageSize();
-	options.maxPageSizeKb = preferences()->maxPageSize();
-	options.maxImageAltTextChars = preferences()->maxImageAltTextChars();
-	options.maxH1LengthChars = preferences()->maxH1LengthChars();
-	options.maxH2LengthChars = preferences()->maxH2LengthChars();
-
-	// proxy settings
-	options.useProxy = preferences()->useProxy();
-	options.proxyHostName = preferences()->proxyAddress();
-	options.proxyPort = preferences()->proxyPort();
-	options.proxyUser = preferences()->proxyUsername();
-	options.proxyPassword = preferences()->proxyPassword();
-
-	// crawler settings
-	options.checkExternalLinks = preferences()->checkExternalUrls();
-	options.followInternalNofollow = preferences()->followInternalNoFollow();
-	options.followExternalNofollow = preferences()->followExternalNoFollow();
-	options.checkCanonicals = preferences()->checkCanonicals();
-	options.checkSubdomains = preferences()->checkSubdomains();
-	options.followRobotsTxtRules = preferences()->followRobotsTxt();
-	options.crawlOutsideOfStartFolder = preferences()->crawlOutsideOfStartFolder();
-
-	// robots.txt rules
-	options.userAgentToFollow = static_cast<UserAgentType>(preferences()->robotSignature());
-
-	options.parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType, preferences()->checkJavaScript());
-	options.parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType, preferences()->checkCSS());
-	options.parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType, preferences()->checkImages());
-	options.parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType, preferences()->checkSWF());
-	options.parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType, preferences()->checkSWF());
-
-	// User agent settings
-	if (preferences()->useCustomUserAgent() && preferences()->useDesktopUserAgent())
+	if (crawler()->state() != Crawler::StatePause)
 	{
-		options.userAgent = preferences()->desktopUserAgent().toLatin1();
-	}
-	else if (preferences()->useCustomUserAgent() && preferences()->useMobileUserAgent())
-	{
-		options.userAgent = preferences()->mobileUserAgent().toLatin1();
-	}
-	else
-	{
-		options.userAgent = s_riveSolutionsUserAgent;
+		crawler()->options()->setStartCrawlingPage(url);
 	}
 
-	// pause range settings
-	if (preferences()->usePauseTimer())
-	{
-		options.pauseRangeFrom = preferences()->fromPauseTimer();
-		options.pauseRangeTo = preferences()->toPauseTimer();
-	}
+	INFOLOG << "Start crawling:" << crawler()->options()->startCrawlingPage().toDisplayString();
 
-	crawler()->startCrawling(options);
+	crawler()->startCrawling();
 }
 
 void Application::stopCrawler()
@@ -261,53 +203,55 @@ void Application::showMainWindow()
 	emit mainWindowShown();
 }
 
-void Application::onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
+void Application::onAboutCrawlerOptionsChanged()
 {
 	// limit settings
-	preferences()->setLimitMaxUrlLength(options.limitMaxUrlLength);
-	preferences()->setLimitSearchTotal(options.limitSearchTotal);
-	preferences()->setLimitTimeout(options.limitTimeout);
-	preferences()->setMaxRedirectCount(options.maxRedirectsToFollow);
-	preferences()->setMaxLinksCountOnPage(options.maxLinksCountOnPage);
+	preferences()->setLimitMaxUrlLength(crawler()->options()->limitMaxUrlLength());
+	preferences()->setLimitSearchTotal(crawler()->options()->limitSearchTotal());
+	preferences()->setLimitTimeout(crawler()->options()->limitTimeout());
+	preferences()->setMaxRedirectCount(crawler()->options()->maxRedirectsToFollow());
+	preferences()->setMaxLinksCountOnPage(crawler()->options()->maxLinksCountOnPage());
 
 	// preferences settings
-	preferences()->setMaxDescriptionLength(options.maxDescriptionLength);
-	preferences()->setMinDescriptionLength(options.minDescriptionLength);
-	preferences()->setMinTitleLength(options.minTitleLength);
-	preferences()->setMaxTitleLength(options.maxTitleLength);
-	preferences()->setMaxImageSize(options.maxImageSizeKb);
-	preferences()->setMaxPageSize(options.maxPageSizeKb);
-	preferences()->setMaxImageAltTextChars(options.maxImageAltTextChars);
-	preferences()->setMaxH1LengthChars(options.maxH1LengthChars);
-	preferences()->setMaxH2LengthChars(options.maxH2LengthChars);
+	preferences()->setMaxDescriptionLength(crawler()->options()->maxDescriptionLength());
+	preferences()->setMinDescriptionLength(crawler()->options()->minDescriptionLength());
+	preferences()->setMinTitleLength(crawler()->options()->minTitleLength());
+	preferences()->setMaxTitleLength(crawler()->options()->maxTitleLength());
+	preferences()->setMaxImageSize(crawler()->options()->maxImageSizeKb());
+	preferences()->setMaxPageSize(crawler()->options()->maxPageSizeKb());
+	preferences()->setMaxImageAltTextChars(crawler()->options()->maxImageAltTextChars());
+	preferences()->setMaxH1LengthChars(crawler()->options()->maxH1LengthChars());
+	preferences()->setMaxH2LengthChars(crawler()->options()->maxH2LengthChars());
 
 	// proxy settings
-	preferences()->setUseProxy(options.useProxy);
-	preferences()->setProxyAddress(options.proxyHostName);
-	preferences()->setProxyPort(options.proxyPort);
-	preferences()->setProxyUsername(options.proxyUser);
-	preferences()->setProxyPassword(options.proxyPassword);
+	preferences()->setUseProxy(crawler()->options()->useProxy());
+	preferences()->setProxyAddress(crawler()->options()->proxyHostName());
+	preferences()->setProxyPort(crawler()->options()->proxyPort());
+	preferences()->setProxyUsername(crawler()->options()->proxyUser());
+	preferences()->setProxyPassword(crawler()->options()->proxyPassword());
 
 	// crawler settings
-	preferences()->setCheckExternalUrls(options.checkExternalLinks);
-	preferences()->setFollowInternalNoFollow(options.followInternalNofollow);
-	preferences()->setFollowExternalNoFollow(options.followExternalNofollow);
-	preferences()->setCheckCanonicals(options.checkCanonicals);
-	preferences()->setCheckSubdomains(options.checkSubdomains);
-	preferences()->setFollowRobotsTxt(options.followRobotsTxtRules);
-	preferences()->setCrawlOutsideOfStartFolder(options.crawlOutsideOfStartFolder);
+	preferences()->setCheckExternalUrls(crawler()->options()->checkExternalLinks());
+	preferences()->setFollowInternalNoFollow(crawler()->options()->followInternalNofollow());
+	preferences()->setFollowExternalNoFollow(crawler()->options()->followExternalNofollow());
+	preferences()->setCheckCanonicals(crawler()->options()->checkCanonicals());
+	preferences()->setCheckSubdomains(crawler()->options()->checkSubdomains());
+	preferences()->setFollowRobotsTxt(crawler()->options()->followRobotsTxtRules());
+	preferences()->setCrawlOutsideOfStartFolder(crawler()->options()->crawlOutsideOfStartFolder());
 
 	// robots.txt rules
-	preferences()->setRobotSignature(static_cast<int>(options.userAgentToFollow));
+	preferences()->setRobotSignature(static_cast<int>(crawler()->options()->userAgentToFollow()));
 
-	preferences()->setCheckJavaScript(options.parserTypeFlags.testFlag(CrawlerEngine::JavaScriptResourcesParserType));
-	preferences()->setCheckCSS(options.parserTypeFlags.testFlag(CrawlerEngine::CssResourcesParserType));
-	preferences()->setCheckImages(options.parserTypeFlags.testFlag(CrawlerEngine::ImagesResourcesParserType));
-	preferences()->setCheckSWF(options.parserTypeFlags.testFlag(CrawlerEngine::VideoResourcesParserType));
-	preferences()->setCheckSWF(options.parserTypeFlags.testFlag(CrawlerEngine::FlashResourcesParserType));
+	ParserTypeFlags parserTypeFlags = crawler()->options()->parserTypeFlags();
+
+	preferences()->setCheckJavaScript(parserTypeFlags.testFlag(CrawlerEngine::JavaScriptResourcesParserType));
+	preferences()->setCheckCSS(parserTypeFlags.testFlag(CrawlerEngine::CssResourcesParserType));
+	preferences()->setCheckImages(parserTypeFlags.testFlag(CrawlerEngine::ImagesResourcesParserType));
+	preferences()->setCheckSWF(parserTypeFlags.testFlag(CrawlerEngine::VideoResourcesParserType));
+	preferences()->setCheckSWF(parserTypeFlags.testFlag(CrawlerEngine::FlashResourcesParserType));
 
 	// User agent settings
-	if (options.userAgent == s_riveSolutionsUserAgent)
+	if (crawler()->options()->userAgent() == s_riveSolutionsUserAgent)
 	{
 		preferences()->setUseCustomUserAgent(false);
 	}
@@ -317,21 +261,21 @@ void Application::onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions opt
 
 		if (preferences()->useMobileUserAgent())
 		{
-			preferences()->setMobileUserAgent(QString::fromLatin1(options.userAgent));
+			preferences()->setMobileUserAgent(QString::fromLatin1(crawler()->options()->userAgent()));
 		}
 		else
 		{
 			preferences()->setUseDesktopUserAgent(true);
-			preferences()->setDesktopUserAgent(QString::fromLatin1(options.userAgent));
+			preferences()->setDesktopUserAgent(QString::fromLatin1(crawler()->options()->userAgent()));
 		}
 	}
 
 	// pause range settings
-	if (options.pauseRangeFrom && options.pauseRangeTo)
+	if (crawler()->options()->pauseRangeFrom() && crawler()->options()->pauseRangeTo())
 	{
 		preferences()->setUsePauseTimer(true);
-		preferences()->setFromPauseTimer(options.pauseRangeFrom);
-		preferences()->setToPauseTimer(options.pauseRangeTo);
+		preferences()->setFromPauseTimer(crawler()->options()->pauseRangeFrom());
+		preferences()->setToPauseTimer(crawler()->options()->pauseRangeTo());
 	}
 }
 
@@ -420,7 +364,7 @@ void Application::initialize()
 
 	m_crawler->initialize();
 
-	// must be Qt::QueuedConnection
+	/// must be Qt::QueuedConnection
 	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, 
 		this, &Application::onAboutUseCustomUserAgentChanged, Qt::QueuedConnection));
 
@@ -450,7 +394,7 @@ void Application::initialize()
 
 #endif
 
-	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsChanged, this, &Application::onAboutCrawlerOptionsChanged));
+	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsLoaded, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
 }
@@ -461,6 +405,103 @@ void Application::startInstaller(const QString& filepath)
 	{
 		quit();
 	}
+}
+
+void Application::attachPreferencesToCrawlerOptions()
+{
+	ASSERT(crawler());
+
+	VERIFY(connect(preferences(), SIGNAL(limitMaxUrlLengthChanged(int)), crawler()->options()->qobject(), SLOT(setLimitMaxUrlLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(limitSearchTotalChanged(int)), crawler()->options()->qobject(), SLOT(setLimitSearchTotal(int))));
+	VERIFY(connect(preferences(), SIGNAL(limitTimeoutChanged(int)), crawler()->options()->qobject(), SLOT(setLimitTimeout(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxRedirectCountChanged(int)), crawler()->options()->qobject(), SLOT(setMaxRedirectsToFollow(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxLinksCountOnPageChanged(int)), crawler()->options()->qobject(), SLOT(setMaxLinksCountOnPage(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxDescriptionLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMaxDescriptionLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(minDescriptionLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMinDescriptionLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(minTitleLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMinTitleLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxTitleLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMaxTitleLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxImageSizeChanged(int)), crawler()->options()->qobject(), SLOT(setMaxImageSizeKb(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxPageSizeChanged(int)), crawler()->options()->qobject(), SLOT(setMaxPageSizeKb(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxImageAltTextCharsChanged(int)), crawler()->options()->qobject(), SLOT(setMaxImageAltTextChars(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxH1LengthCharsChanged(int)), crawler()->options()->qobject(), SLOT(setMaxH1LengthChars(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxH2LengthCharsChanged(int)), crawler()->options()->qobject(), SLOT(setMaxH2LengthChars(int))));
+	VERIFY(connect(preferences(), SIGNAL(useProxyChanged(bool)), crawler()->options()->qobject(), SLOT(setUseProxy(bool))));
+	VERIFY(connect(preferences(), SIGNAL(proxyAddressChanged(QString)), crawler()->options()->qobject(), SLOT(setProxyHostName(QString))));
+	VERIFY(connect(preferences(), SIGNAL(proxyPortChanged(int)), crawler()->options()->qobject(), SLOT(setProxyPort(int))));
+	VERIFY(connect(preferences(), SIGNAL(proxyUsernameChanged(QString)), crawler()->options()->qobject(), SLOT(setProxyUser(QString))));
+	VERIFY(connect(preferences(), SIGNAL(proxyPasswordChanged(QString)), crawler()->options()->qobject(), SLOT(setProxyPassword(QString))));
+	VERIFY(connect(preferences(), SIGNAL(checkExternalUrlsChanged(bool)), crawler()->options()->qobject(), SLOT(setCheckExternalLinks(bool))));
+	VERIFY(connect(preferences(), SIGNAL(followInternalNoFollowChanged(bool)), crawler()->options()->qobject(), SLOT(setFollowInternalNofollow(bool))));
+	VERIFY(connect(preferences(), SIGNAL(followExternalNoFollowChanged(bool)), crawler()->options()->qobject(), SLOT(setFollowExternalNofollow(bool))));
+	VERIFY(connect(preferences(), SIGNAL(checkCanonicalsChanged(bool)), crawler()->options()->qobject(), SLOT(setCheckCanonicals(bool))));
+	VERIFY(connect(preferences(), SIGNAL(checkSubdomainsChanged(bool)), crawler()->options()->qobject(), SLOT(setCheckSubdomains(bool))));
+	VERIFY(connect(preferences(), SIGNAL(followRobotsTxtChanged(bool)), crawler()->options()->qobject(), SLOT(setFollowRobotsTxtRules(bool))));
+	VERIFY(connect(preferences(), SIGNAL(crawlOutsideOfStartFolderChanged(bool)), crawler()->options()->qobject(), SLOT(setCrawlOutsideOfStartFolder(bool))));
+
+	const auto mapVariantToUserAgentType = [this](const QVariant& value)
+	{
+		DEBUG_ASSERT(value.type() == QVariant::Int || value.type() == QVariant::String);
+
+		if (value.type() != QVariant::Int)
+		{
+			return;
+		}
+
+		CrawlerEngine::UserAgentType userAgentType = static_cast<CrawlerEngine::UserAgentType>(value.toInt());
+
+		DEBUG_ASSERT(userAgentType >= CrawlerEngine::UserAgentType::Unknown && userAgentType >= CrawlerEngine::UserAgentType::AnyBot);
+
+		crawler()->options()->setUserAgentToFollow(userAgentType);
+	};
+
+	VERIFY(connect(preferences(), &Preferences::robotSignatureChanged, mapVariantToUserAgentType));
+
+	const auto parserTypeFlagsMapper = [this](bool)
+	{
+		ParserTypeFlags parserTypeFlags;
+		parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType, preferences()->checkJavaScript());
+		parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType, preferences()->checkCSS());
+		parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType, preferences()->checkImages());
+		parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType, preferences()->checkSWF());
+		parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType, preferences()->checkSWF());
+
+		crawler()->options()->setParserTypeFlags(parserTypeFlags);
+	};
+
+	VERIFY(connect(preferences(), &Preferences::checkJavaScriptChanged, parserTypeFlagsMapper));
+	VERIFY(connect(preferences(), &Preferences::checkCSSChanged, parserTypeFlagsMapper));
+	VERIFY(connect(preferences(), &Preferences::checkImagesChanged, parserTypeFlagsMapper));
+	VERIFY(connect(preferences(), &Preferences::checkSWFChanged, parserTypeFlagsMapper));
+
+	const auto userAgentMapper = [this](bool)
+	{
+		if (preferences()->useCustomUserAgent() && preferences()->useDesktopUserAgent())
+		{
+			crawler()->options()->setUserAgent(preferences()->desktopUserAgent().toLatin1());
+		}
+		else if (preferences()->useCustomUserAgent() && preferences()->useMobileUserAgent())
+		{
+			crawler()->options()->setUserAgent(preferences()->mobileUserAgent().toLatin1());
+		}
+		else
+		{
+			crawler()->options()->setUserAgent(s_riveSolutionsUserAgent);
+		}
+	};
+
+	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, userAgentMapper));
+	VERIFY(connect(preferences(), &Preferences::useDesktopUserAgentChanged, userAgentMapper));
+
+	const auto usePauseMapper = [this](bool value)
+	{
+		const int fromPauseTimerValue = value ? preferences()->fromPauseTimer() : -1;
+		const int toPauseTimerValue = value ? preferences()->toPauseTimer() : -1;
+
+		crawler()->options()->setPauseRangeFrom(fromPauseTimerValue);
+		crawler()->options()->setPauseRangeTo(toPauseTimerValue);
+	};
+
+	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, userAgentMapper));
 }
 
 void Application::initializeStyleSheet() noexcept

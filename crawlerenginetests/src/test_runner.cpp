@@ -15,7 +15,7 @@ TestRunner::TestRunner(QObject* parent)
 
 void TestRunner::runTest(const std::function<void()>& testFunction)
 {
-	QMetaObject::invokeMethod(testEnv->crawler(), "startTestCrawler", Qt::QueuedConnection);
+	VERIFY(QMetaObject::invokeMethod(testEnv->crawler(), "startCrawling", Qt::QueuedConnection));
 
 	testFunction();
 

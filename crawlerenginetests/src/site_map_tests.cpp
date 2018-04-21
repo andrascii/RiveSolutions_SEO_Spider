@@ -8,8 +8,6 @@ namespace CrawlerEngineTests
 
 QString toRFC2822Date(const QDateTime& time)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
-
 	static QMap<int, QString> s_dayOfWeek
 	{
 		{ 1, "Mon" },
@@ -49,9 +47,12 @@ QString toRFC2822Date(const QDateTime& time)
 
 TEST(SiteMapTests, SimpleSiteMap)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -76,11 +77,12 @@ TEST(SiteMapTests, SimpleSiteMap)
 
 TEST(SiteMapTests, LastModified)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
+	TestEnvironment env;
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -106,9 +108,12 @@ TEST(SiteMapTests, LastModified)
 
 TEST(SiteMapTests, FrequencyByHeader)
 {
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -159,11 +164,12 @@ TEST(SiteMapTests, FrequencyByHeader)
 
 TEST(SiteMapTests, FrequencyByLevel)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
+	TestEnvironment env;
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/index.html") });
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -218,11 +224,12 @@ TEST(SiteMapTests, FrequencyByLevel)
 
 TEST(SiteMapTests, PriorityTag)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
+	TestEnvironment env;
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/index.html") });
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -277,11 +284,12 @@ TEST(SiteMapTests, PriorityTag)
 
 TEST(SiteMapTests, DiscardCanonical)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
+	TestEnvironment env;
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/canonical/index.html") });
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/canonical/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -309,11 +317,12 @@ TEST(SiteMapTests, DiscardCanonical)
 
 TEST(SiteMapTests, DontDiscardCanonical)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
+	TestEnvironment env;
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/canonical/index.html") });
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/canonical/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -342,11 +351,12 @@ TEST(SiteMapTests, DontDiscardCanonical)
 
 TEST(SiteMapTests, DiscardNextPrev)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
+	TestEnvironment env;
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/nextprev/index.html") });
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/nextprev/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -376,11 +386,12 @@ TEST(SiteMapTests, DiscardNextPrev)
 
 TEST(SiteMapTests, DoNotDiscardNextPrev)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
+	TestEnvironment env;
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/nextprev/index.html") });
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/nextprev/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -410,11 +421,12 @@ TEST(SiteMapTests, DoNotDiscardNextPrev)
 
 TEST(SiteMapTests, DiscardNoImageIndex)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
+	TestEnvironment env;
 
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/images/index.html") });
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/images/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -441,11 +453,12 @@ TEST(SiteMapTests, DiscardNoImageIndex)
 
 TEST(SiteMapTests, DoNotDiscardNoImageIndex)
 {
-	//std::lock_guard<std::mutex> locker(g_mutex);
-
-	CrawlerEngine::CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/images/index.html") });
+	TestEnvironment env;
+	
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/images/index.html") });
 	options.parserTypeFlags = CrawlerEngine::ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

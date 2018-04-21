@@ -75,6 +75,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QXmlQuery>
+#include <QPointer>
 
 // google tests
 #include <gtest/gtest.h>

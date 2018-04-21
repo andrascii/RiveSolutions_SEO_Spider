@@ -6,6 +6,7 @@
 #include "requester_wrapper.h"
 #include "storage_type.h"
 #include "web_host_info.h"
+#include "session_state.h"
 
 namespace CrawlerEngine
 {
@@ -68,6 +69,7 @@ public:
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
 	QString currentCrawledUrl() const noexcept;
 	bool readyForRefreshPage() const noexcept;
+	ICrawlerOptions* options() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress state);
@@ -76,13 +78,13 @@ signals:
 	void crawlerFinished();
 	void stateChanged(int state);
 	void onAboutClearData();
-	void crawlerOptionsChanged(CrawlerOptions options);
+	void crawlerOptionsLoaded();
 	void serializationProcessDone();
 	void deserializationProcessDone();
 	void refreshPageDone();
 
 public slots:
-	void startCrawling(const CrawlerOptions& options);
+	void startCrawling();
 	void stopCrawling();
 	void refreshPage(StorageType storageType, int index);
 	void setUserAgent(const QByteArray& userAgent);
@@ -94,6 +96,8 @@ private slots:
 	void onAboutCrawlingState();
 	void waitSerializationReadyState();
 	void onCrawlingSessionInitialized();
+	void onSessionChanged();
+	void onCrawlerOptionsSomethingChanged();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;
@@ -102,7 +106,6 @@ protected:
 	virtual ITaskProcessor* createTaskProcessor() const;
 	virtual void initSequencedDataCollection();
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
-	const CrawlerOptions& crawlerOptions() const noexcept;
 
 private:
 	bool isPreinitialized() const;
@@ -110,14 +113,12 @@ private:
 	void onSerializationTaskDone(Requester* requester, const TaskResponse& response);
 	void onDeserializationTaskDone(Requester* requester, const TaskResponse& response);
 	void onHostInfoResponse(Requester* requester, const GetHostInfoResponse& response);
-
 	void onSerializationReadyToBeStarted();
 	void onDeserializationReadyToBeStarted();
-
 	void tryToLoadCrawlingDependencies() const;
 	void clearDataImpl();
-
 	void setState(State state);
+	void initSessionStateIfNeeded();
 
 protected:
 	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
@@ -130,7 +131,7 @@ private:
 	ISpecificLoader* m_xmlSitemapLoader;
 	UniqueLinkStore* m_uniqueLinkStore;
 
-	CrawlerOptions m_options;
+	ICrawlerOptions* m_options;
 	unsigned int m_theradCount;
 
 	QTimer* m_crawlingStateTimer;
@@ -150,6 +151,8 @@ private:
 	RequesterWrapper m_hostInfoRequester;
 	WebHostInfo* m_webHostInfo;
 	std::unique_ptr<HostInfo> m_hostInfo;
+
+	QPointer<SessionState> m_sessionState;
 };
 
 }

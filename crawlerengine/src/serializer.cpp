@@ -482,24 +482,22 @@ Serializer::Serializer()
 }
 
 Serializer::Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, 
-	std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptions& options, const WebHostInfo::AllData& webHostInfoData)
+	std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptionsData& optionsData, const WebHostInfo::AllData& webHostInfoData)
 	: m_pages(std::move(pages))
 	, m_crawledLinks(std::move(crawledUrls))
 	, m_pendingLinks(std::move(pendingUrls))
-	, m_options(options)
+	, m_crawlerOptionsData(optionsData)
 	, m_webHostInfoData(webHostInfoData)
 {
 }
 
 void Serializer::saveToStream(QIODevice& device)
 {
-	//saveToJsonStream(device);
 	saveToXmlStream(device);
 }
 
 void Serializer::loadFromStream(QIODevice& device)
 {
-	//loadFromJsonStream(device);
 	loadFromXmlStream(device);
 }
 
@@ -518,9 +516,9 @@ const std::vector<CrawlerRequest>& CrawlerEngine::Serializer::pendingLinks() con
 	return m_pendingLinks;
 }
 
-const CrawlerOptions& Serializer::crawlerOptions() const
+const CrawlerOptionsData& Serializer::crawlerOptionsData() const
 {
-	return m_options;
+	return m_crawlerOptionsData;
 }
 
 const WebHostInfo::AllData& Serializer::webHostInfoData() const
@@ -689,38 +687,38 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 {
 	writer.writeStartElement(optionsKey);
 
-	writer.writeTextElement(hostKey, m_options.startCrawlingPage.toDisplayString());
-	writer.writeTextElement(limitMaxUrlLengthKey, QString::number(m_options.limitMaxUrlLength));
-	writer.writeTextElement(limitSearchTotalKey, QString::number(m_options.limitSearchTotal));
-	writer.writeTextElement(limitTimeoutKey, QString::number(m_options.limitTimeout));
-	writer.writeTextElement(maxRedirectsToFollowKey, QString::number(m_options.maxRedirectsToFollow));
-	writer.writeTextElement(maxLinksCountOnPageKey, QString::number(m_options.maxLinksCountOnPage));
-	writer.writeTextElement(minTitleLengthKey, QString::number(m_options.minTitleLength));
-	writer.writeTextElement(maxTitleLengthKey, QString::number(m_options.maxTitleLength));
-	writer.writeTextElement(maxDescriptionLengthKey, QString::number(m_options.maxDescriptionLength));
-	writer.writeTextElement(minDescriptionLengthKey, QString::number(m_options.minDescriptionLength));
-	writer.writeTextElement(maxH1LengthCharsKey, QString::number(m_options.maxH1LengthChars));
-	writer.writeTextElement(maxH2LengthCharsKey, QString::number(m_options.maxH2LengthChars));
-	writer.writeTextElement(maxImageAltTextCharsKey, QString::number(m_options.maxImageAltTextChars));
-	writer.writeTextElement(maxImageSizeKbKey, QString::number(m_options.maxImageSizeKb));
-	writer.writeTextElement(maxPageSizeKbKey, QString::number(m_options.maxPageSizeKb));
-	writer.writeTextElement(useProxyKey, QString::number(m_options.useProxy));
-	writer.writeTextElement(proxyHostNameKey, m_options.proxyHostName);
-	writer.writeTextElement(proxyPortKey, QString::number(m_options.proxyPort));
-	writer.writeTextElement(proxyUserKey, m_options.proxyUser);
-	writer.writeTextElement(proxyPasswordKey, m_options.proxyPassword);
-	writer.writeTextElement(checkExternalLinksKey, QString::number(m_options.checkExternalLinks));
-	writer.writeTextElement(followInternalNofollowKey, QString::number(m_options.followInternalNofollow));
-	writer.writeTextElement(followExternalNofollowKey, QString::number(m_options.followExternalNofollow));
-	writer.writeTextElement(checkCanonicalsKey, QString::number(m_options.checkCanonicals));
-	writer.writeTextElement(checkSubdomainsKey, QString::number(m_options.checkSubdomains));
-	writer.writeTextElement(crawlOutsideOfStartFolderKey, QString::number(m_options.crawlOutsideOfStartFolder));
-	writer.writeTextElement(followRobotsTxtRulesKey, QString::number(m_options.followRobotsTxtRules));
-	writer.writeTextElement(userAgentToFollowKey, QString::number(static_cast<int>(m_options.userAgentToFollow)));
-	writer.writeTextElement(parserTypeFlagsKey, QString::number(static_cast<int>(m_options.parserTypeFlags)));
-	writer.writeTextElement(pauseRangeFromKey, QString::number(m_options.pauseRangeFrom));
-	writer.writeTextElement(pauseRangeToKey, QString::number(m_options.pauseRangeTo));
-	writer.writeTextElement(userAgentKey, m_options.userAgent);
+	writer.writeTextElement(hostKey, m_crawlerOptionsData.startCrawlingPage.toDisplayString());
+	writer.writeTextElement(limitMaxUrlLengthKey, QString::number(m_crawlerOptionsData.limitMaxUrlLength));
+	writer.writeTextElement(limitSearchTotalKey, QString::number(m_crawlerOptionsData.limitSearchTotal));
+	writer.writeTextElement(limitTimeoutKey, QString::number(m_crawlerOptionsData.limitTimeout));
+	writer.writeTextElement(maxRedirectsToFollowKey, QString::number(m_crawlerOptionsData.maxRedirectsToFollow));
+	writer.writeTextElement(maxLinksCountOnPageKey, QString::number(m_crawlerOptionsData.maxLinksCountOnPage));
+	writer.writeTextElement(minTitleLengthKey, QString::number(m_crawlerOptionsData.minTitleLength));
+	writer.writeTextElement(maxTitleLengthKey, QString::number(m_crawlerOptionsData.maxTitleLength));
+	writer.writeTextElement(maxDescriptionLengthKey, QString::number(m_crawlerOptionsData.maxDescriptionLength));
+	writer.writeTextElement(minDescriptionLengthKey, QString::number(m_crawlerOptionsData.minDescriptionLength));
+	writer.writeTextElement(maxH1LengthCharsKey, QString::number(m_crawlerOptionsData.maxH1LengthChars));
+	writer.writeTextElement(maxH2LengthCharsKey, QString::number(m_crawlerOptionsData.maxH2LengthChars));
+	writer.writeTextElement(maxImageAltTextCharsKey, QString::number(m_crawlerOptionsData.maxImageAltTextChars));
+	writer.writeTextElement(maxImageSizeKbKey, QString::number(m_crawlerOptionsData.maxImageSizeKb));
+	writer.writeTextElement(maxPageSizeKbKey, QString::number(m_crawlerOptionsData.maxPageSizeKb));
+	writer.writeTextElement(useProxyKey, QString::number(m_crawlerOptionsData.useProxy));
+	writer.writeTextElement(proxyHostNameKey, m_crawlerOptionsData.proxyHostName);
+	writer.writeTextElement(proxyPortKey, QString::number(m_crawlerOptionsData.proxyPort));
+	writer.writeTextElement(proxyUserKey, m_crawlerOptionsData.proxyUser);
+	writer.writeTextElement(proxyPasswordKey, m_crawlerOptionsData.proxyPassword);
+	writer.writeTextElement(checkExternalLinksKey, QString::number(m_crawlerOptionsData.checkExternalLinks));
+	writer.writeTextElement(followInternalNofollowKey, QString::number(m_crawlerOptionsData.followInternalNofollow));
+	writer.writeTextElement(followExternalNofollowKey, QString::number(m_crawlerOptionsData.followExternalNofollow));
+	writer.writeTextElement(checkCanonicalsKey, QString::number(m_crawlerOptionsData.checkCanonicals));
+	writer.writeTextElement(checkSubdomainsKey, QString::number(m_crawlerOptionsData.checkSubdomains));
+	writer.writeTextElement(crawlOutsideOfStartFolderKey, QString::number(m_crawlerOptionsData.crawlOutsideOfStartFolder));
+	writer.writeTextElement(followRobotsTxtRulesKey, QString::number(m_crawlerOptionsData.followRobotsTxtRules));
+	writer.writeTextElement(userAgentToFollowKey, QString::number(static_cast<int>(m_crawlerOptionsData.userAgentToFollow)));
+	writer.writeTextElement(parserTypeFlagsKey, QString::number(static_cast<int>(m_crawlerOptionsData.parserTypeFlags)));
+	writer.writeTextElement(pauseRangeFromKey, QString::number(m_crawlerOptionsData.pauseRangeFrom));
+	writer.writeTextElement(pauseRangeToKey, QString::number(m_crawlerOptionsData.pauseRangeTo));
+	writer.writeTextElement(userAgentKey, m_crawlerOptionsData.userAgent);
 
 	
 	writer.writeTextElement(robotsTxtValidKey, QString::number(
@@ -768,131 +766,131 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 
 		if (reader.qualifiedName() == hostKey)
 		{
-			m_options.startCrawlingPage = Url(reader.readElementText());
+			m_crawlerOptionsData.startCrawlingPage = Url(reader.readElementText());
 		}
 		else if (reader.qualifiedName() == limitMaxUrlLengthKey)
 		{
-			m_options.limitMaxUrlLength = reader.readElementText().toInt();
+			m_crawlerOptionsData.limitMaxUrlLength = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == limitSearchTotalKey)
 		{
-			m_options.limitSearchTotal = reader.readElementText().toInt();
+			m_crawlerOptionsData.limitSearchTotal = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == limitTimeoutKey)
 		{
-			m_options.limitTimeout = reader.readElementText().toInt();
+			m_crawlerOptionsData.limitTimeout = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxRedirectsToFollowKey)
 		{
-			m_options.maxRedirectsToFollow = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxRedirectsToFollow = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxLinksCountOnPageKey)
 		{
-			m_options.maxLinksCountOnPage = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxLinksCountOnPage = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == minTitleLengthKey)
 		{
-			m_options.minTitleLength = reader.readElementText().toInt();
+			m_crawlerOptionsData.minTitleLength = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxTitleLengthKey)
 		{
-			m_options.maxTitleLength = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxTitleLength = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxDescriptionLengthKey)
 		{
-			m_options.maxDescriptionLength = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxDescriptionLength = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == minDescriptionLengthKey)
 		{
-			m_options.minDescriptionLength = reader.readElementText().toInt();
+			m_crawlerOptionsData.minDescriptionLength = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxH1LengthCharsKey)
 		{
-			m_options.maxH1LengthChars = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxH1LengthChars = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxH2LengthCharsKey)
 		{
-			m_options.maxH2LengthChars = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxH2LengthChars = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxImageAltTextCharsKey)
 		{
-			m_options.maxImageAltTextChars = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxImageAltTextChars = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxImageSizeKbKey)
 		{
-			m_options.maxImageSizeKb = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxImageSizeKb = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == maxPageSizeKbKey)
 		{
-			m_options.maxPageSizeKb = reader.readElementText().toInt();
+			m_crawlerOptionsData.maxPageSizeKb = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == useProxyKey)
 		{
-			m_options.useProxy = reader.readElementText().toInt() == 1;
+			m_crawlerOptionsData.useProxy = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == proxyHostNameKey)
 		{
-			m_options.proxyHostName = reader.readElementText();
+			m_crawlerOptionsData.proxyHostName = reader.readElementText();
 		}
 		else if (reader.qualifiedName() == proxyPortKey)
 		{
-			m_options.proxyPort = reader.readElementText().toInt();
+			m_crawlerOptionsData.proxyPort = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == proxyUserKey)
 		{
-			m_options.proxyUser = reader.readElementText();
+			m_crawlerOptionsData.proxyUser = reader.readElementText();
 		}
 		else if (reader.qualifiedName() == proxyPasswordKey)
 		{
-			m_options.proxyPassword = reader.readElementText();
+			m_crawlerOptionsData.proxyPassword = reader.readElementText();
 		}
 		else if (reader.qualifiedName() == checkExternalLinksKey)
 		{
-			m_options.checkExternalLinks = reader.readElementText().toInt() == 1;
+			m_crawlerOptionsData.checkExternalLinks = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == followInternalNofollowKey)
 		{
-			m_options.followInternalNofollow = reader.readElementText().toInt() == 1;
+			m_crawlerOptionsData.followInternalNofollow = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == followExternalNofollowKey)
 		{
-			m_options.followExternalNofollow = reader.readElementText().toInt() == 1;
+			m_crawlerOptionsData.followExternalNofollow = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == checkCanonicalsKey)
 		{
-			m_options.checkCanonicals = reader.readElementText().toInt() == 1;
+			m_crawlerOptionsData.checkCanonicals = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == checkSubdomainsKey)
 		{
-			m_options.checkSubdomains = reader.readElementText().toInt() == 1;
+			m_crawlerOptionsData.checkSubdomains = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == crawlOutsideOfStartFolderKey)
 		{
-			m_options.crawlOutsideOfStartFolder = reader.readElementText().toInt() == 1;
+			m_crawlerOptionsData.crawlOutsideOfStartFolder = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == followRobotsTxtRulesKey)
 		{
-			m_options.followRobotsTxtRules = reader.readElementText().toInt() == 1;
+			m_crawlerOptionsData.followRobotsTxtRules = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == userAgentToFollowKey)
 		{
-			m_options.userAgentToFollow = static_cast<UserAgentType>(reader.readElementText().toInt());
+			m_crawlerOptionsData.userAgentToFollow = static_cast<UserAgentType>(reader.readElementText().toInt());
 		}
 		else if (reader.qualifiedName() == parserTypeFlagsKey)
 		{
-			m_options.parserTypeFlags = ParserTypeFlags(reader.readElementText().toInt());
+			m_crawlerOptionsData.parserTypeFlags = ParserTypeFlags(reader.readElementText().toInt());
 		}
 		else if (reader.qualifiedName() == pauseRangeFromKey)
 		{
-			m_options.pauseRangeFrom = reader.readElementText().toInt();
+			m_crawlerOptionsData.pauseRangeFrom = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == pauseRangeToKey)
 		{
-			m_options.pauseRangeTo = reader.readElementText().toInt();
+			m_crawlerOptionsData.pauseRangeTo = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == userAgentKey)
 		{
-			m_options.userAgent = reader.readElementText().toUtf8();
+			m_crawlerOptionsData.userAgent = reader.readElementText().toUtf8();
 		}
 		else if (reader.qualifiedName() == robotsTxtValidKey)
 		{

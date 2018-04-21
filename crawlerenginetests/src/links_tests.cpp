@@ -3,7 +3,8 @@ namespace CrawlerEngineTests
 	
 TEST(LinksTests, LinkAlt)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://links.com/link-with-title.html")));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://links.com/link-with-title.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -25,7 +26,8 @@ TEST(LinksTests, LinkAlt)
 
 TEST(LinksTests, CanonicalNextPrev)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://links.com/canonical-next-prev.html")));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://links.com/canonical-next-prev.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -53,10 +55,12 @@ TEST(LinksTests, CanonicalNextPrev)
 
 TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://nofollowlinks.com"));
+	TestEnvironment env;
+
+	CrawlerOptionsData options = TestEnvironment::defaultOptions(Url("http://nofollowlinks.com"));
 	options.followInternalNofollow = false;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -103,10 +107,12 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 
 TEST(LinksTests, SubdomainsMustNotBeLoaded)
 {
-	const Url baseUrl("http://subdomains.com");
-	CrawlerOptions options = TestEnvironment::defaultOptions(baseUrl);
+	TestEnvironment env;
 
-	TestEnvironment env(options);
+	const Url baseUrl("http://subdomains.com");
+	CrawlerOptionsData options = TestEnvironment::defaultOptions(baseUrl);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler(), &baseUrl]()
 	{
@@ -155,10 +161,11 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 
 TEST(LinksTests, BlockedByOutsideFolderLinksMustNotBeLoaded)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://links.com/folder1/folder2/"));
+	TestEnvironment env;
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/folder1/folder2/"));
 	options.crawlOutsideOfStartFolder = false;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -187,11 +194,13 @@ TEST(LinksTests, BlockedByOutsideFolderLinksMustNotBeLoaded)
 
 TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://blockedbyrobotstxt.com"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://blockedbyrobotstxt.com"));
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -219,7 +228,8 @@ TEST(LinksTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 
 TEST(LinksTests, Canonical)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://links.com/canonical-other.html")));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://links.com/canonical-other.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -243,9 +253,12 @@ TEST(LinksTests, Canonical)
 
 TEST(LinksTests, ExternalDoFollow)
 {
+	TestEnvironment env;
+
 	auto options = TestEnvironment::defaultOptions(Url("http://links.com/external-do-follow.html"));
 	options.checkExternalLinks = true;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -262,10 +275,13 @@ TEST(LinksTests, ExternalDoFollow)
 
 TEST(LinksTests, BlockedResourcesByMetaRobots)
 {
+	TestEnvironment env;
+
 	auto options = TestEnvironment::defaultOptions(Url("http://links.com/metarobots/index.html"));
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -293,9 +309,12 @@ TEST(LinksTests, BlockedResourcesByMetaRobots)
 
 TEST(LinksTests, SecondGetRequest)
 {
+	TestEnvironment env;
+
 	auto options = TestEnvironment::defaultOptions(Url("http://links.com/second-get-head/second-get.html"));
 	options.parserTypeFlags = JavaScriptResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -310,9 +329,12 @@ TEST(LinksTests, SecondGetRequest)
 
 TEST(LinksTests, SecondHeadRequest)
 {
+	TestEnvironment env;
+
 	auto options = TestEnvironment::defaultOptions(Url("http://links.com/second-get-head/second-head.html"));
 	options.parserTypeFlags = JavaScriptResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -327,11 +349,14 @@ TEST(LinksTests, SecondHeadRequest)
 
 TEST(LinksTests, Redirects)
 {
+	TestEnvironment env;
+
 	auto options = TestEnvironment::defaultOptions(Url("http://links.com/redirects/index.html"));
 	options.parserTypeFlags = ImagesResourcesParserType;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

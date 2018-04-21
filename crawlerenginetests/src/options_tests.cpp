@@ -5,9 +5,12 @@ using namespace CrawlerEngine;
 
 TEST(OptionsTests, ParseOnlyHtml)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.parserTypeFlags = ParserTypeFlags();
-	TestEnvironment env(options);
+	
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -39,9 +42,12 @@ TEST(OptionsTests, ParseOnlyHtml)
 
 TEST(OptionsTests, ParseOnlyJs)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.parserTypeFlags = JavaScriptResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -73,9 +79,12 @@ TEST(OptionsTests, ParseOnlyJs)
 
 TEST(OptionsTests, ParseOnlyCSS)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.parserTypeFlags = CssResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -108,9 +117,11 @@ TEST(OptionsTests, ParseOnlyCSS)
 
 TEST(OptionsTests, ParseOnlyImages)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.parserTypeFlags = ImagesResourcesParserType;
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -142,9 +153,12 @@ TEST(OptionsTests, ParseOnlyImages)
 
 TEST(OptionsTests, ParseOnlyVideo)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.parserTypeFlags = VideoResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -176,9 +190,12 @@ TEST(OptionsTests, ParseOnlyVideo)
 
 TEST(OptionsTests, ParseOnlyFlash)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.parserTypeFlags = FlashResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -210,10 +227,13 @@ TEST(OptionsTests, ParseOnlyFlash)
 
 TEST(OptionsTests, ParseOnlyOther)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.parserTypeFlags = OtherResourcesParserType;
 	options.checkExternalLinks = true;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -245,10 +265,12 @@ TEST(OptionsTests, ParseOnlyOther)
 
 TEST(OptionsTests, NofollowLinksMustNotBeLoaded)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://nofollowlinks.com"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://nofollowlinks.com"));
 	options.followInternalNofollow = false;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -295,10 +317,12 @@ TEST(OptionsTests, NofollowLinksMustNotBeLoaded)
 
 TEST(OptionsTests, SubdomainsMustNotBeLoaded)
 {
-	const Url baseUrl("http://subdomains.com");
-	CrawlerOptions options = TestEnvironment::defaultOptions(baseUrl);
+	TestEnvironment env;
 
-	TestEnvironment env(options);
+	const Url baseUrl("http://subdomains.com");
+	auto options = TestEnvironment::defaultOptions(baseUrl);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler(), &baseUrl]()
 	{
@@ -323,11 +347,13 @@ TEST(OptionsTests, SubdomainsMustNotBeLoaded)
 
 TEST(OptionsTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://blockedbyrobotstxt.com"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://blockedbyrobotstxt.com"));
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -361,10 +387,12 @@ TEST(OptionsTests, BlockedByRobotsTxtLinksMustNotBeLoaded)
 
 TEST(OptionsTests, CheckExternalLinkOnlyOption)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.checkExternalLinks = true;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -387,10 +415,12 @@ TEST(OptionsTests, CheckExternalLinkOnlyOption)
 
 TEST(OptionsTests, FollowExternalNofollowLinkOnlyOption)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.followExternalNofollow = true;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -413,10 +443,12 @@ TEST(OptionsTests, FollowExternalNofollowLinkOnlyOption)
 
 TEST(OptionsTests, FollowSubdomainLinkOnlyOption)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.checkSubdomains = true;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -439,12 +471,14 @@ TEST(OptionsTests, FollowSubdomainLinkOnlyOption)
 
 TEST(OptionsTests, FollowToAllExternalLinks)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
 	options.checkExternalLinks = true;
 	options.followExternalNofollow = true;
 	options.checkSubdomains = true;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

@@ -78,7 +78,7 @@ public:
 
 	unsigned threadCount() const;
 	Q_SLOT void setThreadCount(unsigned value);
-	Q_SIGNAL void threadCountChanged();
+	Q_SIGNAL void threadCountChanged(unsigned value);
 
 	QString applicationLanguage() const;
 	Q_SLOT void setApplicationLanguage(const QString& value);
@@ -86,183 +86,183 @@ public:
 
 	bool useProxy() const;
 	Q_SLOT void setUseProxy(bool value);
-	Q_SIGNAL void useProxyChanged();
+	Q_SIGNAL void useProxyChanged(bool value);
 
 	bool proxyNeedAuthorization() const;
 	Q_SLOT void setProxyNeedAuthorization(bool value);
-	Q_SIGNAL void proxyNeedAuthorizationChanged();
+	Q_SIGNAL void proxyNeedAuthorizationChanged(bool value);
 
 	const QString& proxyUsername() const;
 	Q_SLOT void setProxyUsername(const QString& value);
-	Q_SIGNAL void proxyUsernameChanged();
+	Q_SIGNAL void proxyUsernameChanged(const QString& value);
 
 	const QString& proxyPassword() const;
 	Q_SLOT void setProxyPassword(const QString& value);
-	Q_SIGNAL void proxyPasswordChanged();
+	Q_SIGNAL void proxyPasswordChanged(const QString& value);
 
 	const QString& proxyAddress() const;
 	Q_SLOT void setProxyAddress(const QString& value);
-	Q_SIGNAL void proxyAddressChanged();
+	Q_SIGNAL void proxyAddressChanged(const QString& value);
 
 	int proxyPort() const;
 	Q_SLOT void setProxyPort(int value);
-	Q_SIGNAL void proxyPortChanged();
+	Q_SIGNAL void proxyPortChanged(int value);
 
 	bool checkImages() const;
 	Q_SLOT void setCheckImages(bool value);
-	Q_SIGNAL void checkImagesChanged();
+	Q_SIGNAL void checkImagesChanged(int value);
 
 	bool checkCSS() const;
 	Q_SLOT void setCheckCSS(bool value);
-	Q_SIGNAL void checkCSSChanged();
+	Q_SIGNAL void checkCSSChanged(int value);
 
 	bool checkJavaScript() const;
 	Q_SLOT void setCheckJavaScript(bool value);
-	Q_SIGNAL void checkJavaScriptChanged();
+	Q_SIGNAL void checkJavaScriptChanged(bool value);
 
 	bool checkSWF() const;
 	Q_SLOT void setCheckSWF(bool value);
-	Q_SIGNAL void checkSWFChanged();
+	Q_SIGNAL void checkSWFChanged(bool value);
 
 	bool checkExternalUrls() const;
 	Q_SLOT void setCheckExternalUrls(bool value);
-	Q_SIGNAL void checkExternalUrlsChanged();
+	Q_SIGNAL void checkExternalUrlsChanged(bool value);
 
 	bool followInternalNoFollow() const;
 	Q_SLOT void setFollowInternalNoFollow(bool value);
-	Q_SIGNAL void followInternalNoFollowChanged();
+	Q_SIGNAL void followInternalNoFollowChanged(bool value);
 
 	bool followExternalNoFollow() const;
 	Q_SLOT void setFollowExternalNoFollow(bool value);
-	Q_SIGNAL void followExternalNoFollowChanged();
+	Q_SIGNAL void followExternalNoFollowChanged(bool value);
 
 	bool checkSubdomains() const;
 	Q_SLOT void setCheckSubdomains(bool value);
-	Q_SIGNAL void checkSubdomainsChanged();
+	Q_SIGNAL void checkSubdomainsChanged(bool value);
 
 	bool checkCanonicals() const;
 	Q_SLOT void setCheckCanonicals(bool value);
-	Q_SIGNAL void checkCanonicalsChanged();
+	Q_SIGNAL void checkCanonicalsChanged(bool value);
 
 	bool crawlOutsideOfStartFolder() const;
 	Q_SLOT void setCrawlOutsideOfStartFolder(bool value);
-	Q_SIGNAL void crawlOutsideOfStartFolderChanged();
+	Q_SIGNAL void crawlOutsideOfStartFolderChanged(bool value);
 
 	bool usePauseTimer() const;
 	Q_SLOT void setUsePauseTimer(bool value);
-	Q_SIGNAL void usePauseTimerChanged();
+	Q_SIGNAL void usePauseTimerChanged(bool value);
 
 	int fromPauseTimer() const;
 	Q_SLOT void setFromPauseTimer(int value);
-	Q_SIGNAL void fromPauseTimerChanged();
+	Q_SIGNAL void fromPauseTimerChanged(int value);
 
 	int toPauseTimer() const;
 	Q_SLOT void setToPauseTimer(int value);
-	Q_SIGNAL void toPauseTimerChanged();
+	Q_SIGNAL void toPauseTimerChanged(int value);
 
 	bool followRobotsTxt() const;
 	Q_SLOT void setFollowRobotsTxt(bool value);
-	Q_SIGNAL void followRobotsTxtChanged();
+	Q_SIGNAL void followRobotsTxtChanged(bool value);
 
 	int robotSignature() const;
 	Q_SLOT void setRobotSignature(const QVariant& value);
-	Q_SIGNAL void robotSignatureChanged();
+	Q_SIGNAL void robotSignatureChanged(const QVariant& value);
 
 	bool useCustomUserAgent() const;
 	Q_SLOT void setUseCustomUserAgent(bool value);
-	Q_SIGNAL void useCustomUserAgentChanged();
+	Q_SIGNAL void useCustomUserAgentChanged(bool value);
 
 	bool useDesktopUserAgent() const;
 	Q_SLOT void setUseDesktopUserAgent(bool value);
-	Q_SIGNAL void useDesktopUserAgentChanged();
+	Q_SIGNAL void useDesktopUserAgentChanged(bool value);
 
 	bool useMobileUserAgent() const;
 	Q_SLOT void setUseMobileUserAgent(bool value);
-	Q_SIGNAL void useMobileUserAgentChanged();
+	Q_SIGNAL void useMobileUserAgentChanged(bool value);
 
 	const QString& desktopUserAgent() const;
 	Q_SLOT void setDesktopUserAgent(const QVariant& value);
-	Q_SIGNAL void desktopUserAgentChanged();
+	Q_SIGNAL void desktopUserAgentChanged(const QVariant& value);
 
 	const QString& mobileUserAgent() const;
 	Q_SLOT void setMobileUserAgent(const QVariant& value);
-	Q_SIGNAL void mobileUserAgentChanged();
+	Q_SIGNAL void mobileUserAgentChanged(const QVariant& value);
 
 	int limitSearchTotal() const;
 	Q_SLOT void setLimitSearchTotal(int value);
-	Q_SIGNAL void limitSearchTotalChanged();
+	Q_SIGNAL void limitSearchTotalChanged(int value);
 
 	int limitMaxUrlLength() const;
 	Q_SLOT void setLimitMaxUrlLength(int value);
-	Q_SIGNAL void limitMaxUrlLengthChanged();
+	Q_SIGNAL void limitMaxUrlLengthChanged(int value);
 
 	int limitTimeout() const;
 	Q_SLOT void setLimitTimeout(int value);
-	Q_SIGNAL void limitTimeoutChanged();
+	Q_SIGNAL void limitTimeoutChanged(int value);
 
 	int maxRedirectCount() const;
 	Q_SLOT void setMaxRedirectCount(int value);
-	Q_SIGNAL void maxRedirectCountChanged();
+	Q_SIGNAL void maxRedirectCountChanged(int value);
 
 	int maxH1LengthChars() const;
 	Q_SLOT void setMaxH1LengthChars(int value);
-	Q_SIGNAL void maxH1LengthCharsChanged();
+	Q_SIGNAL void maxH1LengthCharsChanged(int value);
 
 	int maxLinksCountOnPage() const;
 	Q_SLOT void setMaxLinksCountOnPage(int value);
-	Q_SIGNAL void maxLinksCountOnPageChanged();
+	Q_SIGNAL void maxLinksCountOnPageChanged(int value);
 
 	int maxH2LengthChars() const;
 	Q_SLOT void setMaxH2LengthChars(int value);
-	Q_SIGNAL void maxH2LengthCharsChanged();
+	Q_SIGNAL void maxH2LengthCharsChanged(int value);
 
 	int maxImageAltTextChars() const;
 	Q_SLOT void setMaxImageAltTextChars(int value);
-	Q_SIGNAL void maxImageAltTextCharsChanged();
+	Q_SIGNAL void maxImageAltTextCharsChanged(int value);
 
 	int maxImageSize() const;
 	Q_SLOT void setMaxImageSize(int value);
-	Q_SIGNAL void maxImageSizeChanged();
+	Q_SIGNAL void maxImageSizeChanged(int value);
 
 	int maxPageSize() const;
 	Q_SLOT void setMaxPageSize(int value);
-	Q_SIGNAL void maxPageSizeChanged();
+	Q_SIGNAL void maxPageSizeChanged(int value);
 
 	int maxDescriptionLength() const;
 	Q_SLOT void setMaxDescriptionLength(int value);
-	Q_SIGNAL void maxDescriptionLengthChanged();
+	Q_SIGNAL void maxDescriptionLengthChanged(int value);
 
 	int minDescriptionLength() const;
 	Q_SLOT void setMinDescriptionLength(int value);
-	Q_SIGNAL void minDescriptionLengthChanged();
+	Q_SIGNAL void minDescriptionLengthChanged(int value);
 
 	int maxTitleLength() const;
 	Q_SLOT void setMaxTitleLength(int value);
-	Q_SIGNAL void maxTitleLengthChanged();
+	Q_SIGNAL void maxTitleLengthChanged(int value);
 
 	int minTitleLength() const;
 	Q_SLOT void setMinTitleLength(int value);
-	Q_SIGNAL void minTitleLengthChanged();
+	Q_SIGNAL void minTitleLengthChanged(int value);
 
 	QString companyName() const;
 	Q_SLOT void setCompanyName(QString value);
-	Q_SIGNAL void companyNameChanged();
+	Q_SIGNAL void companyNameChanged(QString value);
 
 	QString companyEmail() const;
 	Q_SLOT void setCompanyEmail(QString value);
-	Q_SIGNAL void companyEmailChanged();
+	Q_SIGNAL void companyEmailChanged(QString value);
 
 	QString companyWebSite() const;
 	Q_SLOT void setCompanyWebSite(QString value);
-	Q_SIGNAL void companyWebSiteChanged();
+	Q_SIGNAL void companyWebSiteChanged(QString value);
 
 	bool useCustomColorForNotIndexedPages() const;
 	Q_SLOT void setUseCustomColorForNotIndexedPages(bool value);
-	Q_SIGNAL void useCustomColorForNotIndexedPagesChanged();
+	Q_SIGNAL void useCustomColorForNotIndexedPagesChanged(bool value);
 
 	QColor notIndexedPagesColor() const;
 	Q_SLOT void setNotIndexedPagesColor(QColor value);
-	Q_SIGNAL void notIndexedPagesColorChanged();
+	Q_SIGNAL void notIndexedPagesColorChanged(QColor value);
 
 	//////////////////////////////////////////////////////////////////////////
 

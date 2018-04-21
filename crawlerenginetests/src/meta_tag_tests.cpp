@@ -6,7 +6,8 @@ using namespace CrawlerEngine;
 TEST(MetaTagTests, EmptyMetaDescription)
 {
 	// empty-meta.html -> empty-meta-2.html
-	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://meta-desc.com/empty-meta.html") }));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://meta-desc.com/empty-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -27,7 +28,8 @@ TEST(MetaTagTests, EmptyMetaDescription)
 TEST(MetaTagTests, NoMetaDescription)
 {
 	// no-meta.html -> no-meta-2.html
-	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://meta-desc.com/no-meta.html") }));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://meta-desc.com/no-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -48,9 +50,12 @@ TEST(MetaTagTests, NoMetaDescription)
 TEST(MetaTagTests, TooLongMetaDescription)
 {
 	// too-long-meta.html -> too-long-meta-2.html
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/too-long-meta.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/too-long-meta.html"));
 	options.maxDescriptionLength = 10;
-	TestEnvironment env(options);
+	
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -70,10 +75,13 @@ TEST(MetaTagTests, TooLongMetaDescription)
 TEST(MetaTagTests, TooShortMetaDescription)
 {
 	// too-short-meta.html -> too-short-meta-2.html
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/too-short-meta.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/too-short-meta.html"));
 	options.minDescriptionLength = 50;
 	options.maxDescriptionLength = 100;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -93,8 +101,8 @@ TEST(MetaTagTests, TooShortMetaDescription)
 TEST(MetaTagTests, DuplicatedMetaDescriptions)
 {
 	// duplicated-meta-1.html -> duplicated-meta-2.html
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/duplicated-meta-1.html"));
-	TestEnvironment env(options);
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-desc.com/duplicated-meta-1.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -115,8 +123,8 @@ TEST(MetaTagTests, DoNotIncludeCanonicalDuplicatedTitles)
 {
 	// canonical-duplicated-desc.html -> canonical-duplicated-desc.html
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/canonical-duplicated-desc.html"));
-	TestEnvironment env(options);
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-desc.com/canonical-duplicated-desc.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -133,8 +141,8 @@ TEST(MetaTagTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 {
 	// canonical-duplicated-desc-another.html -> canonical-desc-title.html -> canonical-duplicated-desc.html
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/canonical-duplicated-desc-another.html"));
-	TestEnvironment env(options);
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-desc.com/canonical-duplicated-desc-another.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -149,8 +157,8 @@ TEST(MetaTagTests, IncludeDuplicatedTitlesIfThereAreSeveralCanonical)
 
 TEST(MetaTagTests, DoNotIncludeEveryPageInDuplicatesMetaDescription)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-desc.com/single-page.html"));
-	TestEnvironment env(options);
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-desc.com/single-page.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -167,7 +175,8 @@ TEST(MetaTagTests, SeveralMetaDescriptions)
 {
 	// several-titles.html -> several-titles-2.html
 
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://meta-desc.com/several-meta.html")));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-desc.com/several-meta.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -188,7 +197,8 @@ TEST(MetaTagTests, EmptyMetaKeywords)
 {
 	// empty-meta.html -> empty-meta-2.html
 
-	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://meta-keywords.com/empty-meta.html") }));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://meta-keywords.com/empty-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -210,7 +220,8 @@ TEST(MetaTagTests, NoMetaKeywords)
 {
 	// no-meta.html -> no-meta-2.html
 
-	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://meta-keywords.com/no-meta.html") }));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://meta-keywords.com/no-meta.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -231,8 +242,8 @@ TEST(MetaTagTests, DuplicatedMetaKeywords)
 {
 	// duplicated-meta-1.html -> duplicated-meta-2.html
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-keywords.com/duplicated-meta-1.html"));
-	TestEnvironment env(options);
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-keywords.com/duplicated-meta-1.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -253,8 +264,8 @@ TEST(MetaTagTests, DoNotIncludeCanonicalDuplicatedKeywords)
 {
 	// canonical-duplicated-key.html -> canonical-duplicated-key.html
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-keywords.com/canonical-duplicated-key.html"));
-	TestEnvironment env(options);
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-keywords.com/canonical-duplicated-key.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -271,8 +282,8 @@ TEST(MetaTagTests, IncludeDuplicatedKeywordsIfThereAreSeveralCanonical)
 {
 	// canonical-duplicated-key-another.html -> canonical-desc-key.html -> canonical-duplicated-key.html
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-keywords.com/canonical-duplicated-key-another.html"));
-	TestEnvironment env(options);
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-keywords.com/canonical-duplicated-key-another.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -287,8 +298,8 @@ TEST(MetaTagTests, IncludeDuplicatedKeywordsIfThereAreSeveralCanonical)
 
 TEST(MetaTagTests, DoNotIncludeEveryPageInDuplicatesMetaKeywords)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://meta-keywords.com/single-page.html"));
-	TestEnvironment env(options);
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-keywords.com/single-page.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -305,7 +316,8 @@ TEST(MetaTagTests, SeveralMetaKeywords)
 {
 	// several-titles.html -> several-titles-2.html
 
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://meta-keywords.com/several-meta.html")));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://meta-keywords.com/several-meta.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -324,7 +336,8 @@ TEST(MetaTagTests, SeveralMetaKeywords)
 
 TEST(MetaTagTests, MetaRefreshTagDetectionTest)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://metarefreshtag.com/index.html")));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://metarefreshtag.com/index.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

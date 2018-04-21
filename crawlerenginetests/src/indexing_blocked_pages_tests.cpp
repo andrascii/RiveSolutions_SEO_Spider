@@ -44,10 +44,12 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowTest)
 	// which is nofollow on all pages
 	//
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked1.com/index.html"));
+	TestEnvironment env;
+
+	CrawlerOptionsData options = TestEnvironment::defaultOptions(Url("http://indexingblocked1.com/index.html"));
 	options.followInternalNofollow = true;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -89,12 +91,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndAnyBotNofollowMetaRobotsTest)
 	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
 	//
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
 	options.followInternalNofollow = true;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -140,12 +144,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndGoogleNofollowMetaRobotsTest)
 	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
 	//
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
 	options.followInternalNofollow = true;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::GoogleBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -191,12 +197,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndYandexNofollowMetaRobotsTest)
 	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
 	//
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://indexingblocked2.com/index.html"));
 	options.followInternalNofollow = true;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::YandexBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -234,12 +242,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndYandexNofollowMetaRobotsTest)
 
 TEST(IndexingBlockedPagesTests, TagARelNofollowAndRobotsTxtTest)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked3.com/index.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://indexingblocked3.com/index.html"));
 	options.followInternalNofollow = true;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -282,10 +292,12 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndDofollowTest)
 	// and only index-3.html actually nofollow link on all other pages
 	//
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked4.com/index.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://indexingblocked4.com/index.html"));
 	options.followInternalNofollow = true;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -329,12 +341,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndAnyBotNoindexMetaRobotsTest)
 	// But index-3.html must not be blocked.
 	//
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
 	options.followInternalNofollow = true;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -383,12 +397,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndGoogleNoindexMetaRobotsTest)
 	// But index-3.html must not be blocked.
 	//
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
 	options.followInternalNofollow = true;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::GoogleBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -437,12 +453,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndYandexNoindexMetaRobotsTest)
 	// But index-3.html must not be blocked.
 	//
 
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://indexingblocked5.com/index.html"));
 	options.followInternalNofollow = true;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::YandexBot;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

@@ -19,9 +19,8 @@ public:
 	}
 };
 
-TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerOptions& options, QObject* parent)
+TestsCrawler::TestsCrawler(unsigned int threadCount, QObject* parent)
 	: Crawler(threadCount, parent)
-	, m_testCrawlerOptions(options)
 {
 }
 
@@ -152,11 +151,6 @@ void TestsCrawler::clearReceivedData()
 	m_receiver->clearReceivedData();
 }
 
-void TestsCrawler::startTestCrawler()
-{
-	startCrawling(m_testCrawlerOptions);
-}
-
 TestsDownloader* TestsCrawler::testDownloader() const
 {
 	return m_downloader;
@@ -198,13 +192,13 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 				const bool resourceExists = resourceIt != std::end(crawledPages);
 
 				const bool isNofollowBlockedLink = link.linkParameter == LinkParameter::NofollowParameter &&
-					(resourcePage->isThisExternalPage ? !crawlerOptions().followExternalNofollow : !crawlerOptions().followInternalNofollow);
+					(resourcePage->isThisExternalPage ? !options()->followExternalNofollow() : !options()->followInternalNofollow());
 
-				const bool isSubdomainBlocked = !crawlerOptions().checkSubdomains &&
-					PageParserHelpers::isSubdomain(crawlerOptions().startCrawlingPage, resourcePage->url);
+				const bool isSubdomainBlocked = !options()->checkSubdomains() &&
+					PageParserHelpers::isSubdomain(options()->startCrawlingPage(), resourcePage->url);
 
-				const bool isBlockedByOutsideFolderLink = !crawlerOptions().crawlOutsideOfStartFolder &&
-					!PageParserHelpers::isUrlInsideBaseUrlFolder(crawlerOptions().startCrawlingPage, resourcePage->url);
+				const bool isBlockedByOutsideFolderLink = !options()->crawlOutsideOfStartFolder() &&
+					!PageParserHelpers::isUrlInsideBaseUrlFolder(options()->startCrawlingPage(), resourcePage->url);
 
 				if (isNofollowBlockedLink || isSubdomainBlocked || isBlockedByOutsideFolderLink)
 				{
@@ -212,7 +206,7 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 				}
 				else
 				{
-					if (ModelController::resourceShouldBeProcessed(resourcePage->resourceType, crawlerOptions()))
+					if (ModelController::resourceShouldBeProcessed(resourcePage->resourceType, options()->data()))
 					{
 						if (page->storages[BlockedForSEIndexingStorageType])
 						{
@@ -242,17 +236,12 @@ const UnorderedDataCollection* TestsCrawler::unorderedDataCollection() const
 	return m_modelController->data();
 }
 
-CrawlerOptions TestsCrawler::crawlerOptions() const
-{
-	return Crawler::crawlerOptions();
-}
-
 void TestsCrawler::saveToFileSafe(const QString& fileName)
 {
 	VERIFY(QMetaObject::invokeMethod(this, "saveToFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
 }
 
-void TestsCrawler::loadFromFIleSafe(const QString & fileName)
+void TestsCrawler::loadFromFileSafe(const QString & fileName)
 {
 	VERIFY(QMetaObject::invokeMethod(this, "loadFromFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
 }

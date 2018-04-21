@@ -23,7 +23,7 @@ class TestsCrawler : public Crawler
 	Q_OBJECT
 
 public:
-	TestsCrawler(unsigned int threadCount, const CrawlerOptions& options, QObject* parent = nullptr);
+	TestsCrawler(unsigned int threadCount, QObject* parent = nullptr);
 
 	~TestsCrawler();
 
@@ -42,15 +42,12 @@ public:
 
 	void clearReceivedData();
 
-	Q_SLOT void startTestCrawler();
-
 	TestsDownloader* testDownloader() const;
 	void checkSequencedDataCollectionConsistency();
 	const UnorderedDataCollection* unorderedDataCollection() const;
-	CrawlerOptions crawlerOptions() const;
 
 	void saveToFileSafe(const QString& fileName);
-	void loadFromFIleSafe(const QString& fileName);
+	void loadFromFileSafe(const QString& fileName);
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const override;
@@ -59,7 +56,6 @@ protected:
 	virtual void initSequencedDataCollection() override;
 
 private:
-	CrawlerOptions m_testCrawlerOptions;
 	QThread* m_sequencedDataCollectionThread;
 	QThread* m_receiverThread;
 	std::unique_ptr<ParsedPageReceiver> m_receiver;
