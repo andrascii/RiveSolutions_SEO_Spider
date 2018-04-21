@@ -77,38 +77,22 @@ std::vector<const ParsedPage*> TestsCrawler::waitForAllCrawledPageReceived(int s
 
 void TestsCrawler::waitForSerializationDone(int seconds, const char* timeoutMessage) const
 {
-	QDateTime elapsed = QDateTime::currentDateTime();
-	elapsed = elapsed.addSecs(seconds);
+	std::future<void> future = m_receiver->getWaitForSerializationDone();
 
-	while (QDateTime::currentDateTime() < elapsed)
+	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
-		if (state() != StateSerializaton)
-		{
-			return;
-		}
-		
-		QApplication::instance()->processEvents();
+		throw TimeOutException(timeoutMessage);
 	}
-
-	throw TimeOutException(timeoutMessage);
 }
 
 void TestsCrawler::waitForDeserializationDone(int seconds, const char* timeoutMessage) const
 {
-	QDateTime elapsed = QDateTime::currentDateTime();
-	elapsed = elapsed.addSecs(seconds);
+	std::future<void> future = m_receiver->getWaitForDeserializationDone();
 
-	while (QDateTime::currentDateTime() < elapsed)
+	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
 	{
-		if (state() != StateDeserializaton)
-		{
-			return;
-		}
-
-		QApplication::instance()->processEvents();
+		throw TimeOutException(timeoutMessage);
 	}
-
-	throw TimeOutException(timeoutMessage);
 }
 
 void TestsCrawler::waitForRefreshPageDone(int seconds, const char* timeoutMessage) const
@@ -250,6 +234,21 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 const UnorderedDataCollection* TestsCrawler::unorderedDataCollection() const
 {
 	return m_modelController->data();
+}
+
+CrawlerOptions TestsCrawler::crawlerOptions() const
+{
+	return Crawler::crawlerOptions();
+}
+
+void TestsCrawler::saveToFileSafe(const QString& fileName)
+{
+	VERIFY(QMetaObject::invokeMethod(this, "saveToFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
+}
+
+void TestsCrawler::loadFromFIleSafe(const QString & fileName)
+{
+	VERIFY(QMetaObject::invokeMethod(this, "loadFromFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
 }
 
 IDownloader* TestsCrawler::createDownloader() const
