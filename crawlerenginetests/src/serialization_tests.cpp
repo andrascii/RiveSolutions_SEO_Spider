@@ -3,9 +3,12 @@ namespace CrawlerEngineTests
 
 TEST(SerializationTests, PagesSerialization)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = ImagesResourcesParserType;
-	TestEnvironment env(options);
+
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -111,7 +114,9 @@ TEST(SerializationTests, PagesSerialization)
 
 TEST(SerializationTests, OptionsSerialization)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
 	options.limitMaxUrlLength = 10;
 	options.limitSearchTotal = 10;
 	options.limitTimeout = 10;
@@ -144,7 +149,7 @@ TEST(SerializationTests, OptionsSerialization)
 	options.pauseRangeTo = 2;
 	options.userAgent = "BOT";
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [crawler = env.crawler(), &options]()
 	{
@@ -157,16 +162,17 @@ TEST(SerializationTests, OptionsSerialization)
 
 		const auto afterSavingData = [crawler, &options, size = pages.size()]
 		{
+			crawler->options()->setData(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
 			crawler->clearData();
 			crawler->waitForClearingDataDone(5);
-			crawler->startCrawling(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
+			crawler->startCrawling();
 			crawler->waitForAllCrawledPageReceived(10);
 
-			CrawlerOptions newOptions;
+			CrawlerOptionsData newOptions;
 
-			VERIFY(QObject::connect(crawler, &Crawler::crawlerOptionsChanged, [&newOptions](CrawlerOptions opts)
+			VERIFY(QObject::connect(crawler, &Crawler::crawlerOptionsLoaded, [&newOptions, &crawler]
 			{
-				newOptions = opts;
+				newOptions = crawler->options()->data();
 			}));
 
 			crawler->loadFromFile(QString("options.json"));

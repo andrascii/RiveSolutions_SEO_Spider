@@ -5,7 +5,9 @@ using namespace CrawlerEngine;
 
 TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions(Url("http://status.com/too-short.html"));
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://status.com/too-short.html"));
 	options.maxTitleLength = 10;
 	options.minTitleLength = 9;
 
@@ -15,7 +17,7 @@ TEST(StatusCodesTests, PagesWithNonSuccessfulCodesInSeoAnalysis)
 	options.maxH1LengthChars = 10;
 	options.maxH2LengthChars = 10;
 
-	TestEnvironment env(options);
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

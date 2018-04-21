@@ -21,14 +21,14 @@ public:
 	const UnorderedDataCollection* data() const noexcept;
 	UnorderedDataCollection* data() noexcept;
 
-	static bool resourceShouldBeProcessed(ResourceType resourceType, const CrawlerOptions& options) noexcept;
+	static bool resourceShouldBeProcessed(ResourceType resourceType, const CrawlerOptionsData& optionsData) noexcept;
 
 signals:
 	void refreshPageDone();
 
 public slots:
 	void handleWorkerResult(WorkerResult workerResult) noexcept;
-	void setWebCrawlerOptions(const CrawlerOptions& options);
+	void setWebCrawlerOptions(const CrawlerOptionsData& optionsData);
 	void clearData();
 	void preparePageForRefresh(ParsedPage* parsedPage);
 
@@ -54,7 +54,7 @@ private:
 
 private:
 	UnorderedDataCollection* m_data;
-	CrawlerOptions m_crawlerOptions;
+	CrawlerOptionsData m_crawlerOptionsData;
 	LinksToThisResourceChanges m_linksToPageChanges;
 };
 

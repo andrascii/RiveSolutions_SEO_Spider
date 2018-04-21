@@ -53,6 +53,7 @@
 #include <QWebEngineView>
 #include <QWebEnginePage>
 #include <QBuffer>
+#include <QPointer>
 
 //
 // C/C++

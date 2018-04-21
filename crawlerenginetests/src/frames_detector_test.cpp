@@ -5,7 +5,9 @@ using namespace CrawlerEngine;
 
 TEST(FrameTests, FramesDetectorTest)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://frames.com/index.html")));
+	TestEnvironment env;
+
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://frames.com/index.html")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

@@ -1,5 +1,6 @@
 #include "summary_data_accessor_decorator.h"
 #include "summary_data_accessor.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -7,7 +8,12 @@ namespace SeoSpider
 SummaryDataAccessorDecorator::SummaryDataAccessorDecorator(ISummaryDataAccessor* dataAccessor)
 	: m_summaryDataAccessor(dataAccessor)
 {
-	establishSignalToSignalConnections();
+	Common::Helpers::connectSignalsToMetaMethodsWithTheSameName(
+		m_summaryDataAccessor->qobject(),
+		Common::Helpers::allUserSignals(m_summaryDataAccessor->qobject()),
+		this,
+		Common::Helpers::allUserSignals(this)
+	);
 }
 
 void SummaryDataAccessorDecorator::setSortableDataSet(SummaryDataSet* dataSet) noexcept
@@ -123,57 +129,6 @@ int SummaryDataAccessorDecorator::selectedRow() const noexcept
 int SummaryDataAccessorDecorator::rowByStorageType(CrawlerEngine::StorageType storageType) const noexcept
 {
 	return m_summaryDataAccessor->rowByStorageType(storageType);
-}
-
-void SummaryDataAccessorDecorator::establishSignalToSignalConnections()
-{
-	const auto collectSignals = [](const QMetaObject* metaObject, std::vector<QMetaMethod>& signalsCollection)
-	{
-		for (int i = 0; i < metaObject->methodCount(); ++i)
-		{
-			QMetaMethod metaMethod = metaObject->method(i);
-
-			if (metaMethod.methodType() != QMetaMethod::Signal)
-			{
-				continue;
-			}
-
-			signalsCollection.push_back(metaMethod);
-		}
-	};
-
-	const QMetaObject* thisMetaObject = metaObject();
-	const QMetaObject* decoratedDataAccessorMetaObject = m_summaryDataAccessor->qobject()->metaObject();
-
-	std::vector<QMetaMethod> thisSignals;
-	std::vector<QMetaMethod> decoratedDataAccessorSignals;
-
-	collectSignals(thisMetaObject, thisSignals);
-	collectSignals(decoratedDataAccessorMetaObject, decoratedDataAccessorSignals);
-
-	ASSERT(thisSignals.size() == decoratedDataAccessorSignals.size());
-
-	for (std::size_t i = 0; i < thisSignals.size(); ++i)
-	{
-		QByteArray methodSignature = thisSignals[i].methodSignature();
-
-		if (methodSignature.contains("destroyed") || methodSignature.contains("objectNameChanged"))
-		{
-			continue;
-		}
-
-		for (std::size_t j = 0; j < decoratedDataAccessorSignals.size(); ++j)
-		{
-			QByteArray decoratedDataAccessorSignal = decoratedDataAccessorSignals[j].methodSignature();
-
-			if (methodSignature == decoratedDataAccessorSignal)
-			{
-				QByteArray signal = "2" + methodSignature;
-
-				VERIFY(connect(m_summaryDataAccessor->qobject(), signal, this, signal));
-			}
-		}
-	}
 }
 
 }

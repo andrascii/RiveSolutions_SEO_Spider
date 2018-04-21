@@ -17,9 +17,11 @@ class Serializer
 {
 public:
 	Serializer();
+
 	Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, 
-		std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptions& options, 
-		const WebHostInfo::AllData& webHostInfoData);
+		std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptionsData& optionsData,
+		const WebHostInfo::AllData& webHostInfoData
+	);
 	
 	void saveToStream(QIODevice& device);
 	void loadFromStream(QIODevice& device);
@@ -27,7 +29,7 @@ public:
 	const std::vector<ParsedPagePtr>& pages() const;
 	const std::vector<CrawlerRequest>& crawledLinks() const;
 	const std::vector<CrawlerRequest>& pendingLinks() const;
-	const CrawlerOptions& crawlerOptions() const;
+	const CrawlerOptionsData& crawlerOptionsData() const;
 	const WebHostInfo::AllData& webHostInfoData() const;
 
 private:
@@ -46,7 +48,7 @@ private:
 	std::vector<ParsedPagePtr> m_deserializedPages;
 	std::vector<CrawlerRequest> m_crawledLinks;
 	std::vector<CrawlerRequest> m_pendingLinks;
-	CrawlerOptions m_options;
+	CrawlerOptionsData m_crawlerOptionsData;
 	WebHostInfo::AllData m_webHostInfoData;
 };
 

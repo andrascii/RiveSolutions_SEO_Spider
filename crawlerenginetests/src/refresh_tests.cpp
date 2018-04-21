@@ -8,7 +8,8 @@ using namespace CrawlerEngine;
 
 TEST(RefreshTests, OldDuplicatesMustBeRemovedAfterRefresh)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://refresh1.com/index.html") }));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://refresh1.com/index.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -84,7 +85,8 @@ TEST(RefreshTests, OldDuplicatesMustBeRemovedAfterRefresh)
 
 TEST(RefreshTests, OldDuplicatesMustBeRemovedAfterRefreshDifferentCanonicals)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://refresh2.com/index.html") }));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://refresh2.com/index.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -150,7 +152,8 @@ TEST(RefreshTests, OldDuplicatesMustBeRemovedAfterRefreshDifferentCanonicals)
 
 TEST(RefreshTests, DuplicatesMustNotBePresentedAfterRefresh)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://refresh3.com/index.html") }));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://refresh3.com/index.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -213,7 +216,8 @@ TEST(RefreshTests, DuplicatesMustNotBePresentedAfterRefresh)
 
 TEST(RefreshTests, RefreshNotChangedPage)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions({ Url("http://refresh4.com/index.html") }));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://refresh4.com/index.html") }));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{

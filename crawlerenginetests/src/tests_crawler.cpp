@@ -19,9 +19,8 @@ public:
 	}
 };
 
-TestsCrawler::TestsCrawler(unsigned int threadCount, const CrawlerOptions& options, QObject* parent)
+TestsCrawler::TestsCrawler(unsigned int threadCount, QObject* parent)
 	: Crawler(threadCount, parent)
-	, m_testCrawlerOptions(options)
 {
 }
 
@@ -168,11 +167,6 @@ void TestsCrawler::clearReceivedData()
 	m_receiver->clearReceivedData();
 }
 
-void TestsCrawler::startTestCrawler()
-{
-	startCrawling(m_testCrawlerOptions);
-}
-
 TestsDownloader* TestsCrawler::testDownloader() const
 {
 	return m_downloader;
@@ -214,13 +208,13 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 				const bool resourceExists = resourceIt != std::end(crawledPages);
 
 				const bool isNofollowBlockedLink = link.linkParameter == LinkParameter::NofollowParameter &&
-					(resourcePage->isThisExternalPage ? !crawlerOptions().followExternalNofollow : !crawlerOptions().followInternalNofollow);
+					(resourcePage->isThisExternalPage ? !options()->followExternalNofollow() : !options()->followInternalNofollow());
 
-				const bool isSubdomainBlocked = !crawlerOptions().checkSubdomains &&
-					PageParserHelpers::isSubdomain(crawlerOptions().startCrawlingPage, resourcePage->url);
+				const bool isSubdomainBlocked = !options()->checkSubdomains() &&
+					PageParserHelpers::isSubdomain(options()->startCrawlingPage(), resourcePage->url);
 
-				const bool isBlockedByOutsideFolderLink = !crawlerOptions().crawlOutsideOfStartFolder &&
-					!PageParserHelpers::isUrlInsideBaseUrlFolder(crawlerOptions().startCrawlingPage, resourcePage->url);
+				const bool isBlockedByOutsideFolderLink = !options()->crawlOutsideOfStartFolder() &&
+					!PageParserHelpers::isUrlInsideBaseUrlFolder(options()->startCrawlingPage(), resourcePage->url);
 
 				if (isNofollowBlockedLink || isSubdomainBlocked || isBlockedByOutsideFolderLink)
 				{
@@ -228,7 +222,7 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 				}
 				else
 				{
-					if (ModelController::resourceShouldBeProcessed(resourcePage->resourceType, crawlerOptions()))
+					if (ModelController::resourceShouldBeProcessed(resourcePage->resourceType, options()->data()))
 					{
 						if (page->storages[BlockedForSEIndexingStorageType])
 						{

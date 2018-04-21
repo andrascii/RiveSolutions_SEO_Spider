@@ -18,7 +18,7 @@ class PageDataCollector : public QObject
 public:
 	PageDataCollector(QObject* parent = nullptr);
 
-	void setOptions(const CrawlerOptions& crawlerOptions) noexcept;
+	void setOptions(const CrawlerOptionsData& crawlerOptions) noexcept;
 	std::vector<ParsedPagePtr> collectPageDataFromResponse(const DownloadResponse& response);
 
 private:
@@ -32,7 +32,7 @@ private:
 
 private:
 	CompoundParser m_parser;
-	CrawlerOptions m_crawlerOptions;
+	CrawlerOptionsData m_crawlerOptionsData;
 };
 
 }

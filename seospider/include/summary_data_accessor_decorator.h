@@ -44,9 +44,6 @@ signals:
 	virtual void dataSetChanged() const override;
 
 private:
-	void establishSignalToSignalConnections();
-
-private:
 	std::unique_ptr<ISummaryDataAccessor> m_summaryDataAccessor;
 };
 

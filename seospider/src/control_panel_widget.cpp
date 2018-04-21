@@ -20,7 +20,7 @@ ControlPanelWidget::ControlPanelWidget(QWidget* parent)
 	VERIFY(connect(m_ui.clearCrawlingDataButton, &QPushButton::clicked, this, &ControlPanelWidget::clearCrawlingData));
 	VERIFY(connect(m_ui.urlLineEdit, &QLineEdit::editingFinished, this, &ControlPanelWidget::setUrl));
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerOptionsChanged, this, &ControlPanelWidget::onCrawlerOptionsChanged));
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerOptionsLoaded, this, &ControlPanelWidget::onCrawlerOptionsChanged));
 
 	m_ui.urlLineEdit->installEventFilter(this);
 }
@@ -158,8 +158,8 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 	}
 }
 
-void ControlPanelWidget::onCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options)
+void ControlPanelWidget::onCrawlerOptionsChanged()
 {
-	m_ui.urlLineEdit->setText(options.startCrawlingPage.toDisplayString());
+	m_ui.urlLineEdit->setText(theApp->crawler()->options()->startCrawlingPage().toDisplayString());
 }
 }

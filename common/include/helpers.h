@@ -10,6 +10,21 @@ public:
 	static double pixelsToPoints(int sizeInPixels, double dpi = 0);
 	static void moveWidgetToHostCenter(QWidget* widget, QWidget* host = nullptr);
 
+	static std::vector<QMetaMethod> allUserSignals(QObject* qobject, QVector<QByteArray> exclude = QVector<QByteArray>());
+	static void connectMetaMethods(QObject* sender, QMetaMethod senderMethod, QObject* receiver, QMetaMethod receiverMethod);
+	static void connectSignalsToMetaMethod(QObject* sender, std::vector<QMetaMethod> senderMethods, QObject* receiver, QMetaMethod receiverMethod);
+	static void connectSignalsToMetaMethods(QObject* sender, std::vector<QMetaMethod> senderMethods, QObject* receiver, std::vector<QMetaMethod> receiverMethods);
+	static QMetaMethod metaMethod(QObject* qobject, const char* methodSignature);
+	static QMetaMethod metaMethodOfSlot(QObject* qobject, const char* slotSignature);
+	static QMetaMethod metaMethodOfSignal(QObject* qobject, const char* signalSignature);
+
+	static void connectSignalsToMetaMethodsWithTheSameName(
+		QObject* sender, 
+		std::vector<QMetaMethod> senderMethods, 
+		QObject* receiver, 
+		std::vector<QMetaMethod> receiverMethods
+	);
+
 	template <typename DestinationType, typename SourceType>
 	static DestinationType fast_cast(SourceType* p)
 	{

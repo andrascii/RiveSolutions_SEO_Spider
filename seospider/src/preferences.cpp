@@ -31,7 +31,7 @@ unsigned Preferences::threadCount() const
 void Preferences::setThreadCount(unsigned value)
 {
 	m_threadCount = value;
-	emit threadCountChanged();
+	emit threadCountChanged(value);
 }
 
 QString Preferences::applicationLanguage() const
@@ -53,7 +53,7 @@ bool Preferences::useProxy() const
 void Preferences::setUseProxy(bool value)
 {
 	m_useProxy = value;
-	emit useProxyChanged();
+	emit useProxyChanged(value);
 }
 
 bool Preferences::proxyNeedAuthorization() const
@@ -64,7 +64,7 @@ bool Preferences::proxyNeedAuthorization() const
 void Preferences::setProxyNeedAuthorization(bool value)
 {
 	m_proxyNeedAuthorization = value;
-	emit proxyNeedAuthorizationChanged();
+	emit proxyNeedAuthorizationChanged(value);
 }
 
 const QString& Preferences::proxyUsername() const
@@ -75,7 +75,7 @@ const QString& Preferences::proxyUsername() const
 void Preferences::setProxyUsername(const QString& value)
 {
 	m_proxyUsername = value;
-	emit proxyUsernameChanged();
+	emit proxyUsernameChanged(value);
 }
 
 const QString& Preferences::proxyPassword() const
@@ -86,7 +86,7 @@ const QString& Preferences::proxyPassword() const
 void Preferences::setProxyPassword(const QString& value)
 {
 	m_proxyPassword = value;
-	emit proxyPasswordChanged();
+	emit proxyPasswordChanged(value);
 }
 
 const QString& Preferences::proxyAddress() const
@@ -97,7 +97,7 @@ const QString& Preferences::proxyAddress() const
 void Preferences::setProxyAddress(const QString& value)
 {
 	m_proxyAddress = value;
-	emit proxyAddressChanged();
+	emit proxyAddressChanged(value);
 }
 
 int Preferences::proxyPort() const
@@ -108,7 +108,7 @@ int Preferences::proxyPort() const
 void Preferences::setProxyPort(int value)
 {
 	m_proxyPort = value;
-	emit proxyPortChanged();
+	emit proxyPortChanged(value);
 }
 
 bool Preferences::checkImages() const
@@ -119,7 +119,7 @@ bool Preferences::checkImages() const
 void Preferences::setCheckImages(bool value)
 {
 	m_checkImages = value;
-	emit checkImagesChanged();
+	emit checkImagesChanged(value);
 }
 
 bool Preferences::checkCSS() const
@@ -130,7 +130,7 @@ bool Preferences::checkCSS() const
 void Preferences::setCheckCSS(bool value)
 {
 	m_checkCSS = value;
-	emit checkCSSChanged();
+	emit checkCSSChanged(value);
 }
 
 bool Preferences::checkJavaScript() const
@@ -141,7 +141,7 @@ bool Preferences::checkJavaScript() const
 void Preferences::setCheckJavaScript(bool value)
 {
 	m_checkJavaScript = value;
-	emit checkJavaScriptChanged();
+	emit checkJavaScriptChanged(value);
 }
 
 bool Preferences::checkSWF() const
@@ -152,7 +152,7 @@ bool Preferences::checkSWF() const
 void Preferences::setCheckSWF(bool value)
 {
 	m_checkSWF = value;
-	emit checkSWFChanged();
+	emit checkSWFChanged(value);
 }
 
 bool Preferences::checkExternalUrls() const
@@ -163,7 +163,7 @@ bool Preferences::checkExternalUrls() const
 void Preferences::setCheckExternalUrls(bool value)
 {
 	m_checkExternalUrls = value;
-	emit checkExternalUrlsChanged();
+	emit checkExternalUrlsChanged(value);
 }
 
 bool Preferences::followInternalNoFollow() const
@@ -174,7 +174,7 @@ bool Preferences::followInternalNoFollow() const
 void Preferences::setFollowInternalNoFollow(bool value)
 {
 	m_followInternalNoFollow = value;
-	emit followInternalNoFollowChanged();
+	emit followInternalNoFollowChanged(value);
 }
 
 bool Preferences::followExternalNoFollow() const
@@ -185,7 +185,7 @@ bool Preferences::followExternalNoFollow() const
 void Preferences::setFollowExternalNoFollow(bool value)
 {
 	m_followExternalNoFollow = value;
-	emit followExternalNoFollowChanged();
+	emit followExternalNoFollowChanged(value);
 }
 
 bool Preferences::checkSubdomains() const
@@ -196,7 +196,7 @@ bool Preferences::checkSubdomains() const
 void Preferences::setCheckSubdomains(bool value)
 {
 	m_checkSubdomains = value;
-	emit checkSubdomainsChanged();
+	emit checkSubdomainsChanged(value);
 }
 
 bool Preferences::checkCanonicals() const
@@ -207,7 +207,7 @@ bool Preferences::checkCanonicals() const
 void Preferences::setCheckCanonicals(bool value)
 {
 	m_checkCanonicals = value;
-	emit checkCanonicalsChanged();
+	emit checkCanonicalsChanged(value);
 }
 
 bool Preferences::crawlOutsideOfStartFolder() const
@@ -218,7 +218,7 @@ bool Preferences::crawlOutsideOfStartFolder() const
 void Preferences::setCrawlOutsideOfStartFolder(bool value)
 {
 	m_crawlOutsideOfStartFolder = value;
-	emit crawlOutsideOfStartFolderChanged();
+	emit crawlOutsideOfStartFolderChanged(value);
 }
 
 bool Preferences::usePauseTimer() const
@@ -229,7 +229,7 @@ bool Preferences::usePauseTimer() const
 void Preferences::setUsePauseTimer(bool value)
 {
 	m_usePauseTimer = value;
-	emit usePauseTimerChanged();
+	emit usePauseTimerChanged(value);
 }
 
 int Preferences::fromPauseTimer() const
@@ -240,7 +240,7 @@ int Preferences::fromPauseTimer() const
 void Preferences::setFromPauseTimer(int value)
 {
 	m_fromPauseTimer = value;
-	emit fromPauseTimerChanged();
+	emit fromPauseTimerChanged(value);
 }
 
 int Preferences::toPauseTimer() const
@@ -251,7 +251,7 @@ int Preferences::toPauseTimer() const
 void Preferences::setToPauseTimer(int value)
 {
 	m_toPauseTimer = value;
-	emit toPauseTimerChanged();
+	emit toPauseTimerChanged(value);
 }
 
 bool Preferences::useCustomUserAgent() const
@@ -267,7 +267,7 @@ bool Preferences::followRobotsTxt() const
 void Preferences::setFollowRobotsTxt(bool value)
 {
 	m_followRobotsTxt = value;
-	emit followRobotsTxtChanged();
+	emit followRobotsTxtChanged(value);
 }
 
 int Preferences::robotSignature() const
@@ -280,13 +280,13 @@ void Preferences::setRobotSignature(const QVariant& value)
 	DEBUG_ASSERT(value.type() == QVariant::Int || value.type() == QVariant::String);
 
 	m_robotSignature = value.toInt();
-	emit robotSignatureChanged();
+	emit robotSignatureChanged(value);
 }
 
 void Preferences::setUseCustomUserAgent(bool value)
 {
 	m_useCustomUserAgent = value;
-	emit useCustomUserAgentChanged();
+	emit useCustomUserAgentChanged(value);
 }
 
 bool Preferences::useDesktopUserAgent() const
@@ -297,7 +297,7 @@ bool Preferences::useDesktopUserAgent() const
 void Preferences::setUseDesktopUserAgent(bool value)
 {
 	m_useDesktopUserAgent = value;
-	emit useDesktopUserAgentChanged();
+	emit useDesktopUserAgentChanged(value);
 }
 
 bool Preferences::useMobileUserAgent() const
@@ -308,7 +308,7 @@ bool Preferences::useMobileUserAgent() const
 void Preferences::setUseMobileUserAgent(bool value)
 {
 	m_useMobileUserAgent = value;
-	emit useMobileUserAgentChanged();
+	emit useMobileUserAgentChanged(value);
 }
 
 const QString& Preferences::desktopUserAgent() const
@@ -321,7 +321,7 @@ void Preferences::setDesktopUserAgent(const QVariant& value)
 	DEBUG_ASSERT(value.type() == QVariant::String); 
 
 	m_desktopUserAgent = value.toString();
-	emit desktopUserAgentChanged();
+	emit desktopUserAgentChanged(value);
 }
 
 const QString& Preferences::mobileUserAgent() const
@@ -334,7 +334,7 @@ void Preferences::setMobileUserAgent(const QVariant& value)
 	DEBUG_ASSERT(value.type() == QVariant::String);
 
 	m_mobileUserAgent = value.toString();
-	emit mobileUserAgentChanged();
+	emit mobileUserAgentChanged(value);
 }
 
 int Preferences::limitSearchTotal() const
@@ -345,7 +345,7 @@ int Preferences::limitSearchTotal() const
 void Preferences::setLimitSearchTotal(int value)
 {
 	m_limitSearchTotal = value;
-	emit limitSearchTotalChanged();
+	emit limitSearchTotalChanged(value);
 }
 
 int Preferences::limitMaxUrlLength() const
@@ -356,7 +356,7 @@ int Preferences::limitMaxUrlLength() const
 void Preferences::setLimitMaxUrlLength(int value)
 {
 	m_limitMaxUrlLength = value;
-	emit limitMaxUrlLengthChanged();
+	emit limitMaxUrlLengthChanged(value);
 }
 
 int Preferences::limitTimeout() const
@@ -367,7 +367,7 @@ int Preferences::limitTimeout() const
 void Preferences::setLimitTimeout(int value)
 {
 	m_limitTimeout = value;
-	emit limitTimeoutChanged();
+	emit limitTimeoutChanged(value);
 }
 
 int Preferences::maxRedirectCount() const
@@ -378,7 +378,7 @@ int Preferences::maxRedirectCount() const
 void Preferences::setMaxRedirectCount(int value)
 {
 	m_maxRedirectCount = value;
-	emit maxRedirectCountChanged();
+	emit maxRedirectCountChanged(value);
 }
 
 int Preferences::maxH1LengthChars() const
@@ -389,7 +389,7 @@ int Preferences::maxH1LengthChars() const
 void Preferences::setMaxH1LengthChars(int value)
 {
 	m_maxH1LengthChars = value;
-	emit maxH1LengthCharsChanged();
+	emit maxH1LengthCharsChanged(value);
 }
 
 int Preferences::maxLinksCountOnPage() const
@@ -410,7 +410,7 @@ int Preferences::maxH2LengthChars() const
 void Preferences::setMaxH2LengthChars(int value)
 {
 	m_maxH2LengthChars = value;
-	emit maxH2LengthCharsChanged();
+	emit maxH2LengthCharsChanged(value);
 }
 
 int Preferences::maxImageAltTextChars() const
@@ -421,7 +421,7 @@ int Preferences::maxImageAltTextChars() const
 void Preferences::setMaxImageAltTextChars(int value)
 {
 	m_maxImageAltTextChars = value;
-	emit maxImageAltTextCharsChanged();
+	emit maxImageAltTextCharsChanged(value);
 }
 
 int Preferences::maxImageSize() const
@@ -432,7 +432,7 @@ int Preferences::maxImageSize() const
 void Preferences::setMaxImageSize(int value)
 {
 	m_maxImageSize = value;
-	emit maxImageSizeChanged();
+	emit maxImageSizeChanged(value);
 }
 
 int Preferences::maxPageSize() const
@@ -443,7 +443,7 @@ int Preferences::maxPageSize() const
 void Preferences::setMaxPageSize(int value)
 {
 	m_maxPageSize = value;
-	emit maxPageSizeChanged();
+	emit maxPageSizeChanged(value);
 }
 
 int Preferences::maxDescriptionLength() const
@@ -454,7 +454,7 @@ int Preferences::maxDescriptionLength() const
 void Preferences::setMaxDescriptionLength(int value)
 {
 	m_maxDescriptionLength = value;
-	emit maxDescriptionLengthChanged();
+	emit maxDescriptionLengthChanged(value);
 }
 
 int Preferences::minDescriptionLength() const
@@ -465,7 +465,7 @@ int Preferences::minDescriptionLength() const
 void Preferences::setMinDescriptionLength(int value)
 {
 	m_minDescriptionLength = value;
-	emit minDescriptionLengthChanged();
+	emit minDescriptionLengthChanged(value);
 }
 
 int Preferences::maxTitleLength() const
@@ -476,7 +476,7 @@ int Preferences::maxTitleLength() const
 void Preferences::setMaxTitleLength(int value)
 {
 	m_maxTitleLength = value;
-	emit maxTitleLengthChanged();
+	emit maxTitleLengthChanged(value);
 }
 
 int Preferences::minTitleLength() const
@@ -487,7 +487,7 @@ int Preferences::minTitleLength() const
 void Preferences::setMinTitleLength(int value)
 {
 	m_minTitleLength = value;
-	emit minTitleLengthChanged();
+	emit minTitleLengthChanged(value);
 }
 
 QString Preferences::companyName() const
@@ -498,7 +498,7 @@ QString Preferences::companyName() const
 void Preferences::setCompanyName(QString value)
 {
 	m_companyName = value;
-	emit companyNameChanged();
+	emit companyNameChanged(value);
 }
 
 QString Preferences::companyEmail() const
@@ -509,7 +509,7 @@ QString Preferences::companyEmail() const
 void Preferences::setCompanyEmail(QString value)
 {
 	m_companyEmail = value;
-	emit companyEmailChanged();
+	emit companyEmailChanged(value);
 }
 
 QString Preferences::companyWebSite() const
@@ -520,7 +520,7 @@ QString Preferences::companyWebSite() const
 void Preferences::setCompanyWebSite(QString value)
 {
 	m_companyWebSite = value;
-	emit companyWebSiteChanged();
+	emit companyWebSiteChanged(value);
 }
 
 bool Preferences::useCustomColorForNotIndexedPages() const
@@ -531,7 +531,7 @@ bool Preferences::useCustomColorForNotIndexedPages() const
 void Preferences::setUseCustomColorForNotIndexedPages(bool value)
 {
 	m_useCustomColorForNotIndexedPages = value;
-	emit useCustomColorForNotIndexedPagesChanged();
+	emit useCustomColorForNotIndexedPagesChanged(value);
 }
 
 QColor Preferences::notIndexedPagesColor() const
@@ -542,7 +542,7 @@ QColor Preferences::notIndexedPagesColor() const
 void Preferences::setNotIndexedPagesColor(QColor value)
 {
 	m_notIndexedPagesColor = value;
-	emit notIndexedPagesColorChanged();
+	emit notIndexedPagesColorChanged(value);
 }
 
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept

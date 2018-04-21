@@ -9,7 +9,7 @@
 namespace CrawlerEngine
 {
 
-struct CrawlerOptions;
+struct CrawlerOptionsData;
 struct DownloadResponse;
 class IQueuedDownloader;
 class UniqueLinkStore;
@@ -28,7 +28,7 @@ signals:
 	void workerResult(WorkerResult workerResult) const;
 
 public slots:
-	void startWithOptions(const CrawlerOptions& options, RobotsTxtRules robotsTxtRules);
+	void startWithOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
 	void stop();
 
 private slots:

@@ -20,9 +20,9 @@ PageDataCollector::PageDataCollector(QObject* parent)
 {
 }
 
-void PageDataCollector::setOptions(const CrawlerOptions& crawlerOptions) noexcept
+void PageDataCollector::setOptions(const CrawlerOptionsData& crawlerOptionsData) noexcept
 {
-	m_crawlerOptions = crawlerOptions;
+	m_crawlerOptionsData = crawlerOptionsData;
 
 	applyOptions();
 }
@@ -73,27 +73,27 @@ void PageDataCollector::applyOptions()
 
 	m_parser.addParser(std::make_shared<HtmlResourcesParser>());
 
-	if (m_crawlerOptions.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
+	if (m_crawlerOptionsData.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{
 		m_parser.addParser(createParser(JavaScriptResourcesParserType));
 	}
-	if (m_crawlerOptions.parserTypeFlags.testFlag(CssResourcesParserType))
+	if (m_crawlerOptionsData.parserTypeFlags.testFlag(CssResourcesParserType))
 	{
 		m_parser.addParser(createParser(CssResourcesParserType));
 	}
-	if (m_crawlerOptions.parserTypeFlags.testFlag(ImagesResourcesParserType))
+	if (m_crawlerOptionsData.parserTypeFlags.testFlag(ImagesResourcesParserType))
 	{
 		m_parser.addParser(createParser(ImagesResourcesParserType));
 	}
-	if (m_crawlerOptions.parserTypeFlags.testFlag(VideoResourcesParserType))
+	if (m_crawlerOptionsData.parserTypeFlags.testFlag(VideoResourcesParserType))
 	{
 		m_parser.addParser(createParser(VideoResourcesParserType));
 	}
-	if (m_crawlerOptions.parserTypeFlags.testFlag(FlashResourcesParserType))
+	if (m_crawlerOptionsData.parserTypeFlags.testFlag(FlashResourcesParserType))
 	{
 		m_parser.addParser(createParser(FlashResourcesParserType));
 	}
-	if (m_crawlerOptions.parserTypeFlags.testFlag(OtherResourcesParserType))
+	if (m_crawlerOptionsData.parserTypeFlags.testFlag(OtherResourcesParserType))
 	{
 		m_parser.addParser(createParser(OtherResourcesParserType));
 	}
@@ -122,7 +122,7 @@ void PageDataCollector::collectReplyData(const Hop& hop, ParsedPagePtr& page) co
 	page->pageSizeKilobytes = hop.body().size() / 1024;
 	page->serverResponse = hop.responseHeaders().makeString();
 	page->pageHash = std::hash<std::string>()(hop.body().toStdString());
-	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptions.startCrawlingPage, page->url);
+	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptionsData.startCrawlingPage, page->url);
 
 	const std::vector<QString> contentTypeValues = hop.responseHeaders().valueOf("content-type");
 	page->contentType = contentTypeValues.empty() ? QString() : contentTypeValues.front();

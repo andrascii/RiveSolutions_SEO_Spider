@@ -12,7 +12,7 @@ struct LinkInfo;
 class OptionsLinkFilter
 {
 public:
-	OptionsLinkFilter(const CrawlerOptions& crawlerOptions, const RobotsTxtRules& robotsTxtRules);
+	OptionsLinkFilter(const CrawlerOptionsData& crawlerOptionsData, const RobotsTxtRules& robotsTxtRules);
 
 	bool checkRestriction(Restriction restriction, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
 	std::pair<bool, MetaRobotsFlags> isPageBlockedByMetaRobots(const ParsedPagePtr& parsedPage) const;
@@ -22,7 +22,7 @@ private:
 	bool isLinkBlockedByMetaRobots(const MetaRobotsFlagsSet& metaRobotsFlags) const;
 
 private:
-	CrawlerOptions m_crawlerOptions;
+	CrawlerOptionsData m_crawlerOptionsData;
 	RobotsTxtRules m_robotsTxtRules;
 };
 

@@ -23,6 +23,7 @@ class HeaderControlsContainer;
 class InternetConnectionNotificationManager;
 class CommandLineHandler;
 class IUpdateChecker;
+class ICrawlerOptions;
 
 class Application : public QApplication, public ISettingsAccessor
 {
@@ -69,7 +70,7 @@ private slots:
 	void clearCrawledData();
 	void showMainWindow();
 
-	void onAboutCrawlerOptionsChanged(CrawlerEngine::CrawlerOptions options);
+	void onAboutCrawlerOptionsChanged();
 	void onAboutUpdateExists(const QString& downloadLink);
 	void onAboutUseCustomUserAgentChanged();
 
@@ -79,6 +80,7 @@ private slots:
 private:
 	void initialize();
 	void startInstaller(const QString& filepath);
+	void attachPreferencesToCrawlerOptions();
 
 private:
 	std::unique_ptr<CommandLineHandler> m_commandLineHandler;

@@ -9,7 +9,8 @@ using namespace CrawlerEngine;
 
 TEST(DummyGroup, DummyName)
 {
-	TestEnvironment env(TestEnvironment::defaultOptions(Url("http://dummy.com")));
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://dummy.com")));
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
