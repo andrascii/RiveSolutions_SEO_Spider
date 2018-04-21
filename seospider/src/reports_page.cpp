@@ -26,6 +26,8 @@ ReportsPage::ReportsPage(QWidget* parent)
 {
 	theApp->installEventFilter(this);
 
+	m_webEngineView->setContextMenuPolicy(Qt::NoContextMenu);
+
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->addWidget(m_stackedWidget);
 	layout->setMargin(0);
