@@ -326,7 +326,7 @@ void Crawler::onSessionChanged()
 
 void Crawler::onCrawlerOptionsSomethingChanged()
 {
-	ASSERT(m_state == StatePending);
+	ASSERT(m_state == StatePending || m_state == StateDeserializaton);
 
 	onSessionChanged();
 }

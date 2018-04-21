@@ -60,7 +60,7 @@ TEST(SerializationTests, PagesSerialization)
 		cl->saveToFileSafe(QString("pages.json"));
 		cl->waitForSerializationDone(25);
 		cl->clearReceivedData();
-		cl->loadFromFIleSafe(QString("pages.json"));
+		cl->loadFromFileSafe(QString("pages.json"));
 		cl->waitForDeserializationDone(25);
 		
 		auto deserializedPages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
@@ -161,53 +161,51 @@ TEST(SerializationTests, OptionsSerialization)
 
 		crawler->waitForSerializationDone(10);
 
-		//QThread::currentThread()->sleep(10);
-
 		EXPECT_EQ(crawler->state(), Crawler::StatePending);
 
 		crawler->clearData();
 		crawler->waitForClearingDataDone(5);
-		crawler->startCrawling(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
+		crawler->options()->setData(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
+		crawler->startCrawling();
 		crawler->waitForAllCrawledPageReceived(10);
 		crawler->stopCrawling();
 
-		crawler->loadFromFIleSafe(QString("options.json"));
-		//crawler->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, static_cast<int>(pages.size()), 100, "Waiting for deserialized pages");
+		crawler->loadFromFileSafe(QString("options.json"));
 		crawler->waitForDeserializationDone(10);
-		CrawlerOptions newOptions = crawler->crawlerOptions();
+		CrawlerOptionsData newOptions = crawler->options()->data();
 
-		EXPECT_EQ(true, options.startCrawlingPage.compare(newOptions.startCrawlingPage));
-		EXPECT_EQ(options.limitMaxUrlLength, newOptions.limitMaxUrlLength);
-		EXPECT_EQ(options.limitSearchTotal, newOptions.limitSearchTotal);
-		EXPECT_EQ(options.limitTimeout, newOptions.limitTimeout);
-		EXPECT_EQ(options.maxRedirectsToFollow, newOptions.maxRedirectsToFollow);
-		EXPECT_EQ(options.maxLinksCountOnPage, newOptions.maxLinksCountOnPage);
-		EXPECT_EQ(options.minTitleLength, newOptions.minTitleLength);
-		EXPECT_EQ(options.maxTitleLength, newOptions.maxTitleLength);
-		EXPECT_EQ(options.maxDescriptionLength, newOptions.maxDescriptionLength);
-		EXPECT_EQ(options.minDescriptionLength, newOptions.minDescriptionLength);
-		EXPECT_EQ(options.maxH1LengthChars, newOptions.maxH1LengthChars);
-		EXPECT_EQ(options.maxH2LengthChars, newOptions.maxH2LengthChars);
-		EXPECT_EQ(options.maxImageAltTextChars, newOptions.maxImageAltTextChars);
-		EXPECT_EQ(options.maxImageSizeKb, newOptions.maxImageSizeKb);
-		EXPECT_EQ(options.maxPageSizeKb, newOptions.maxPageSizeKb);
-		EXPECT_EQ(options.useProxy, newOptions.useProxy);
-		EXPECT_EQ(options.proxyHostName, newOptions.proxyHostName);
-		EXPECT_EQ(options.proxyPort, newOptions.proxyPort);
-		EXPECT_EQ(options.proxyUser, newOptions.proxyUser);
-		EXPECT_EQ(options.proxyPassword, newOptions.proxyPassword);
-		EXPECT_EQ(options.checkExternalLinks, newOptions.checkExternalLinks);
-		EXPECT_EQ(options.followInternalNofollow, newOptions.followInternalNofollow);
-		EXPECT_EQ(options.followExternalNofollow, newOptions.followExternalNofollow);
-		EXPECT_EQ(options.checkCanonicals, newOptions.checkCanonicals);
-		EXPECT_EQ(options.checkSubdomains, newOptions.checkSubdomains);
-		EXPECT_EQ(options.crawlOutsideOfStartFolder, newOptions.crawlOutsideOfStartFolder);
-		EXPECT_EQ(options.followRobotsTxtRules, newOptions.followRobotsTxtRules);
-		EXPECT_EQ(options.userAgentToFollow, newOptions.userAgentToFollow);
-		EXPECT_EQ(options.parserTypeFlags, newOptions.parserTypeFlags);
-		EXPECT_EQ(options.pauseRangeFrom, newOptions.pauseRangeFrom);
-		EXPECT_EQ(options.pauseRangeTo, newOptions.pauseRangeTo);
-		EXPECT_EQ(options.userAgent, newOptions.userAgent);
+		EXPECT_EQ(true, crawler->options()->startCrawlingPage().compare(newOptions.startCrawlingPage));
+		EXPECT_EQ(crawler->options()->limitMaxUrlLength(), newOptions.limitMaxUrlLength);
+		EXPECT_EQ(crawler->options()->limitSearchTotal(), newOptions.limitSearchTotal);
+		EXPECT_EQ(crawler->options()->limitTimeout(), newOptions.limitTimeout);
+		EXPECT_EQ(crawler->options()->maxRedirectsToFollow(), newOptions.maxRedirectsToFollow);
+		EXPECT_EQ(crawler->options()->maxLinksCountOnPage(), newOptions.maxLinksCountOnPage);
+		EXPECT_EQ(crawler->options()->minTitleLength(), newOptions.minTitleLength);
+		EXPECT_EQ(crawler->options()->maxTitleLength(), newOptions.maxTitleLength);
+		EXPECT_EQ(crawler->options()->maxDescriptionLength(), newOptions.maxDescriptionLength);
+		EXPECT_EQ(crawler->options()->minDescriptionLength(), newOptions.minDescriptionLength);
+		EXPECT_EQ(crawler->options()->maxH1LengthChars(), newOptions.maxH1LengthChars);
+		EXPECT_EQ(crawler->options()->maxH2LengthChars(), newOptions.maxH2LengthChars);
+		EXPECT_EQ(crawler->options()->maxImageAltTextChars(), newOptions.maxImageAltTextChars);
+		EXPECT_EQ(crawler->options()->maxImageSizeKb(), newOptions.maxImageSizeKb);
+		EXPECT_EQ(crawler->options()->maxPageSizeKb(), newOptions.maxPageSizeKb);
+		EXPECT_EQ(crawler->options()->useProxy(), newOptions.useProxy);
+		EXPECT_EQ(crawler->options()->proxyHostName(), newOptions.proxyHostName);
+		EXPECT_EQ(crawler->options()->proxyPort(), newOptions.proxyPort);
+		EXPECT_EQ(crawler->options()->proxyUser(), newOptions.proxyUser);
+		EXPECT_EQ(crawler->options()->proxyPassword(), newOptions.proxyPassword);
+		EXPECT_EQ(crawler->options()->checkExternalLinks(), newOptions.checkExternalLinks);
+		EXPECT_EQ(crawler->options()->followInternalNofollow(), newOptions.followInternalNofollow);
+		EXPECT_EQ(crawler->options()->followExternalNofollow(), newOptions.followExternalNofollow);
+		EXPECT_EQ(crawler->options()->checkCanonicals(), newOptions.checkCanonicals);
+		EXPECT_EQ(crawler->options()->checkSubdomains(), newOptions.checkSubdomains);
+		EXPECT_EQ(crawler->options()->crawlOutsideOfStartFolder(), newOptions.crawlOutsideOfStartFolder);
+		EXPECT_EQ(crawler->options()->followRobotsTxtRules(), newOptions.followRobotsTxtRules);
+		EXPECT_EQ(crawler->options()->userAgentToFollow(), newOptions.userAgentToFollow);
+		EXPECT_EQ(crawler->options()->parserTypeFlags(), newOptions.parserTypeFlags);
+		EXPECT_EQ(crawler->options()->pauseRangeFrom(), newOptions.pauseRangeFrom);
+		EXPECT_EQ(crawler->options()->pauseRangeTo(), newOptions.pauseRangeTo);
+		EXPECT_EQ(crawler->options()->userAgent(), newOptions.userAgent);
 	};
 
 	env.initializeTest(testFunction);
@@ -216,11 +214,10 @@ TEST(SerializationTests, OptionsSerialization)
 
 TEST(SerializationTests, HostInfoSerialization)
 {
-	CrawlerOptions options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") }));
 
-	TestEnvironment env(options);
-
-	const auto testFunction = [crawler = env.crawler(), &options]()
+	const auto testFunction = [crawler = env.crawler()]()
 	{
 		auto pages = crawler->waitForAllCrawledPageReceived(5);
 
@@ -229,17 +226,16 @@ TEST(SerializationTests, HostInfoSerialization)
 		auto data = crawler->webHostInfo()->allData();
 
 		crawler->saveToFileSafe(QString("data.json"));
-
 		crawler->waitForSerializationDone(5);
-
 		crawler->clearData();
 		crawler->waitForClearingDataDone(5);
-		crawler->startCrawling(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
+		crawler->options()->setData(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
+		crawler->startCrawling();
 		crawler->waitForAllCrawledPageReceived(10);
 
-		CrawlerOptions newOptions;
+		CrawlerOptionsData newOptions;
 
-		crawler->loadFromFIleSafe(QString("data.json"));
+		crawler->loadFromFileSafe(QString("data.json"));
 		crawler->waitForDeserializationDone(10);
 
 		auto deserializedData = crawler->webHostInfo()->allData();

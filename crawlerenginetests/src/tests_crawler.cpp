@@ -236,17 +236,12 @@ const UnorderedDataCollection* TestsCrawler::unorderedDataCollection() const
 	return m_modelController->data();
 }
 
-CrawlerOptions TestsCrawler::crawlerOptions() const
-{
-	return Crawler::crawlerOptions();
-}
-
 void TestsCrawler::saveToFileSafe(const QString& fileName)
 {
 	VERIFY(QMetaObject::invokeMethod(this, "saveToFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
 }
 
-void TestsCrawler::loadFromFIleSafe(const QString & fileName)
+void TestsCrawler::loadFromFileSafe(const QString & fileName)
 {
 	VERIFY(QMetaObject::invokeMethod(this, "loadFromFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
 }
