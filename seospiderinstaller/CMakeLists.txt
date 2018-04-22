@@ -15,6 +15,7 @@ find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
 
 set(QTIFW_BIN_DIR $ENV{IFW_BIN_DIR})
 find_program(BinaryCreator_executable binarycreator HINTS ${QTIFW_BIN_DIR})
+find_program(RepoGen_executable repogen HINTS ${QTIFW_BIN_DIR})
 
 list(APPEND PackageFileList 
 		${ReleasePackageDir}/seospider.exe
@@ -93,6 +94,21 @@ add_custom_command(
 )
 
 message(${BinaryCreator_executable})
+message(${RepoGen_executable})
+
+if(${RepoGen_executable})
+
+message(${RepoGen_executable})
+	
+elseif(NOT ${RepoGen_executable})
+	add_custom_command(
+	TARGET ${SeoSpiderInstallerName} 
+	POST_BUILD
+    COMMAND "${RepoGen_executable}"
+           -p ${TargetInstallerPath}/packages --update ${TargetInstallerPath}/repository
+    COMMENT "Running repogen..."
+	)
+endif()
 
 if(${BinaryCreator_executable})
 
@@ -105,8 +121,7 @@ elseif(NOT ${BinaryCreator_executable})
     COMMAND "${BinaryCreator_executable}"
            -f -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller.exe
     COMMENT "Running binarycreator..."
-	)
-	
+	)	
 endif()
 
 add_custom_command(

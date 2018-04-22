@@ -2,6 +2,7 @@
 #include "software_branding.h"
 #include "splash_screen.h"
 #include "helpers.h"
+#include "version.h"
 
 namespace SeoSpider
 {
@@ -58,7 +59,7 @@ SplashScreen::SplashScreen()
 	resize(originalImageSize);
 
 #ifdef PRODUCTION
-	QString version = "13.13";
+	QString version = QString("%1.%2.%3").arg(MAJOR).arg(MINOR).arg(MAINTANCE);
 #else
 	QString version = theApp->applicationVersion().isEmpty() ? "Developer's version" : theApp->applicationVersion();
 #endif
@@ -75,15 +76,15 @@ void SplashScreen::paintEvent(QPaintEvent*)
 {
 	QPainter painter(this);
 
-	QPen pen(QColor("#D6D6D6"));
-	pen.setWidth(Common::Helpers::pointsToPixels(2));
-
-	painter.setPen(pen);
+	//QPen pen(QColor("#D6D6D6"));
+	//pen.setWidth(Common::Helpers::pointsToPixels(2));
+	//
+	//painter.setPen(pen);
 
 	const QRect adjustedRect = rect().adjusted(0, 0, -1, -1);
 
 	painter.drawPixmap(rect(), m_brandingLogoImage);
-	painter.drawRect(adjustedRect);
+	//painter.drawRect(adjustedRect);
 }
 
 }

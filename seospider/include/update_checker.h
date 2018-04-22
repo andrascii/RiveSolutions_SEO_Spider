@@ -50,8 +50,6 @@ struct Version
 	static const Version invalidVersion;
 };
 
-Version version(const QString& fileName);
-
 Q_DECLARE_METATYPE(Version)
 
 class IUpdateChecker
@@ -62,8 +60,7 @@ public:
 	virtual QObject* qobject() const noexcept = 0;
 
 	// signals
-	virtual void updateExists(const QString& downloadLink) = 0;
-	virtual void updateAlreadyDownloaded(const QString& path) = 0;
+	virtual void updateExists() = 0;
 };
 
 class UpdateChecker : public QObject, public IUpdateChecker
@@ -75,17 +72,16 @@ public:
 
 	virtual void check() override;
 	virtual QObject* qobject() const noexcept override;
+	Version getVerstionStr();
 
 signals:
-	virtual void updateExists(const QString& downloadLink) override;
-	virtual void updateAlreadyDownloaded(const QString& path) override;
+	virtual void updateExists() override;
 
 private:
 	void onActualVersionFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
-	void onDownloadLinkFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);
 	Version stringToVersion(const QString& versionString) const;
-	bool isVersionNewerThanThisProgramVersion(Version ver) const;
-	std::pair<bool, QString> checkExistenceUpdatePatch() const;
+	Version getRemoteVersion(const QByteArray& remoteXmlUpdateFile) const;
+	Version getLocalVersion() const;
 
 private:
 	CrawlerEngine::RequesterWrapper m_downloadRequester;

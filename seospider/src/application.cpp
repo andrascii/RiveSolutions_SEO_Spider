@@ -24,7 +24,6 @@
 #include "command_line_keys.h"
 #include "update_checker.h"
 #include "update_loader_dialog.h"
-#include "update_helpers.h"
 
 namespace
 {
@@ -53,8 +52,7 @@ Application::Application(int& argc, char** argv)
 {
 	qRegisterMetaType<Version>("Version");
 
-	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists(const QString&)), SLOT(onAboutUpdateExists(const QString&))));
-	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateAlreadyDownloaded(const QString&)), SLOT(onAboutUpdateAlreadyDownloaded(const QString&))));
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
 
 	SplashScreen::show();
 
@@ -279,9 +277,9 @@ void Application::onAboutCrawlerOptionsChanged()
 	}
 }
 
-void Application::onAboutUpdateExists(const QString& downloadLink)
+void Application::onAboutUpdateExists()
 {
-	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(downloadLink, mainWindow());
+	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(mainWindow());
 
 	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloadingFinished));
 

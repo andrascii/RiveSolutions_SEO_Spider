@@ -1,14 +1,10 @@
-function Component()
-{
-	var value = installer.value("HKCU\Software\Rive Solutions\Seo Spider\MetaData");
-	
-	QMessageBox["information"]("version.test", "Installer", value, QMessageBox.Ok);
-	
+/*function Component()
+{	
 	if(!needUpdate())
 	{
 		QMessageBox["information"]("version.test", "Installer", "The newer version is already installed.", QMessageBox.Ok);
-		//abortInstallation();
-		installer.setUpdater();
+		abortInstallation();
+		//installer.setUpdater();
 	}
 	
 	component.loaded.connect(this, addRegisterFileCheckBox);
@@ -37,40 +33,37 @@ function abortInstallation()
 // Register program metadata in system after installation
 function registerProgram()
 {
-	var reg = installer.environmentVariable("SystemRoot") + "\\System32\\reg.exe";
-	var key = "HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData";
-	var value = component.value("Version");
-	
-	QMessageBox["information"]("version.test", "Installer", value, QMessageBox.Ok);
-	component.addOperation("Execute", reg, "ADD", key, "/v", "Version", "/t", "REG_SZ", "/d", value, "/f");
+	if (installer.isInstaller()) 
+	{
+		QMessageBox["information"]("version.test", "Installer", "Registering program.", QMessageBox.Ok);
+		var reg = installer.environmentVariable("SystemRoot") + "\\System32\\reg.exe";
+		var key = "HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData";
+		var value = component.value("Version");
+
+		component.addOperation("Execute", reg, "ADD", key, "/v", "Version", "/t", "REG_SZ", "/d", value, "/f");
+		component.addOperation("Execute", reg, "ADD", key, "/v", "InstallPath", "/t", "REG_SZ", "/d", "@TargetDir@", "/f");
+	}
 }
 
 // Check if newer version is already installed
 function needUpdate()
 {
-	var reg = installer.environmentVariable("SystemRoot") + "\\System32\\reg.exe";
-	var key = "HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData";	
-	var argslist = ["QUERY", key, "/v", "Version"];
-	var localVersion = component.value("Version");
-	
-	var regResult = new Array();
-	regResult = installer.execute(reg, argslist);
-	
-	var savedVersion = regResult[0].split("    ")[3];
+	var newVersion = component.value("Version");
+	var savedVersion = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
 	
 	if(savedVersion)
 	{
 		savedVersion.trim();
 		
-		if(compareVersions(savedVersion, localVersion) > 0)
+		if(compareVersions(savedVersion, newVersion) > 0)
 		{
 			return false;
 		}
-		if(compareVersions(savedVersion, localVersion) < 0)
+		if(compareVersions(savedVersion, newVersion) < 0)
 		{
 			return true;
 		}
-		if(compareVersions(savedVersion, localVersion) == 0)
+		if(compareVersions(savedVersion, newVersion) == 0)
 		{
 			return false;
 		}
@@ -139,7 +132,7 @@ Component.prototype.createOperations = function()
 	
 	// Registering new file type
     var isRegisterFileChecked = component.userInterface("RegisterFileCheckBoxForm").RegisterFileCheckBox.checked;
-    if (installer.value("os") === "win") {
+    if (installer.value("os") === "win" && isRegisterFileChecked) {
         var iconId = 1;
         var seoSpiderPath =  "@TargetDir@\\seospider.exe";
         component.addOperation("RegisterFileType",
@@ -150,4 +143,4 @@ Component.prototype.createOperations = function()
                                seoSpiderPath + "," + iconId,
                                "ProgId=RiveSolutions.SeoSpider." + component.unusualFileType);
     }
-}
+}*/
