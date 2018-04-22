@@ -22,6 +22,7 @@
 #include "storage_exporter.h"
 #include "helpers.h"
 #include "filter_widget.h"
+#include "project_file_state_widget.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -210,6 +211,7 @@ void MainWindow::init()
 	QStatusBar* statusBar = new QStatusBar(this);
 	statusBar->addPermanentWidget(new NotificationsContainerWidget(statusBar));
 	statusBar->addPermanentWidget(new InternetConnectionStateWidget(statusBar));
+	statusBar->addWidget(new ProjectFileStateWidget(statusBar));
 	statusBar->addWidget(new CrawlerStatusInfo(statusBar));
 	setStatusBar(statusBar);
 
