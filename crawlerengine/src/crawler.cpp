@@ -768,6 +768,16 @@ QString Crawler::sessionName() const noexcept
 	return m_session->name();
 }
 
+bool Crawler::hasCustomSessionName() const noexcept
+{
+	if (!m_session)
+	{
+		return false;
+	}
+
+	return m_session->hasCustomName();
+}
+
 bool Crawler::readyForRefreshPage() const noexcept
 {
 	return state() == StatePause || state() == StatePending;

@@ -45,6 +45,9 @@ MainWindow::MainWindow(QWidget* parent)
 		theApp->softwareBrandingOptions()->organizationName() + QStringLiteral(" ") +
 		theApp->softwareBrandingOptions()->productName()
 	);
+
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
 }
 
 void MainWindow::showSitemapCreatorDialog()
@@ -52,6 +55,18 @@ void MainWindow::showSitemapCreatorDialog()
 	SitemapCreatorWidget* titledWindow = new SitemapCreatorWidget(this);
 	titledWindow->exec();
 	titledWindow->deleteLater();
+}
+
+void MainWindow::saveFile()
+{
+	if (theApp->crawler()->hasCustomSessionName())
+	{
+		theApp->crawler()->saveFile();
+	}
+	else
+	{
+		saveFileAs();
+	}
 }
 
 void MainWindow::saveFileAs()
@@ -232,6 +247,9 @@ void MainWindow::createActions()
 	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
 	actionRegistry.addGlobalAction(s_saveFileAndClearDataAction, tr("Save To File And Clear Data"));
 
+	actionRegistry.globalAction(s_saveFileAction)->setDisabled(true);
+	actionRegistry.globalAction(s_closeFileAction)->setDisabled(true);
+
 	// settings actions
 	actionRegistry.addActionGroup(s_settingsActionGroup);
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openSettingsAction, tr("Settings"));
@@ -296,6 +314,7 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_createXMLSitemapAction), SIGNAL(triggered()), this, SLOT(showSitemapCreatorDialog())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
+	VERIFY(connect(actionRegistry.globalAction(s_saveFileAction), SIGNAL(triggered()), this, SLOT(saveFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
 
@@ -423,6 +442,28 @@ void MainWindow::clearDataOnSerializationDone()
 {
 	VERIFY(disconnect(theApp->crawler(), &Crawler::serializationProcessDone, this, &MainWindow::clearDataOnSerializationDone));
 	theApp->crawler()->clearData();
+}
+
+void MainWindow::onCrawlerSessionCreated()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
+	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
+
+	saveFileAction->setEnabled(true);
+	closeFileAction->setEnabled(true);
+}
+
+void MainWindow::onCrawlerSessionDestroyed()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
+	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
+
+	saveFileAction->setEnabled(false);
+	closeFileAction->setEnabled(false);
 }
 
 ContentFrame* MainWindow::contentFrame() const noexcept
