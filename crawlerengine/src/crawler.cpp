@@ -323,7 +323,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 void Crawler::onSessionChanged()
 {
-	if (!m_session)
+	if (!m_session || state() == StateDeserializaton)
 	{
 		return;
 	}
@@ -334,6 +334,16 @@ void Crawler::onSessionChanged()
 void Crawler::onCrawlerOptionsSomethingChanged()
 {
 	ASSERT(m_state == StatePending || m_state == StateDeserializaton);
+
+	onSessionChanged();
+}
+
+void Crawler::onSequencedDataCollectionChanged()
+{
+	if (state() != StateWorking)
+	{
+		return;
+	}
 
 	onSessionChanged();
 }
@@ -517,15 +527,14 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
-		std::future<std::optional<CrawlerRequest>> pendingUrlFuture = worker->pendingUrls();
-		const std::optional<CrawlerRequest> workerPendingUrls = pendingUrlFuture.get();
+		std::optional<CrawlerRequest> workerPendingUrl = worker->pendingUrl();
 
-		if (!workerPendingUrls.has_value())
+		if (!workerPendingUrl.has_value())
 		{
 			continue;
 		}
 
-		pendingUrls.push_back(workerPendingUrls.value());
+		pendingUrls.push_back(workerPendingUrl.value());
 	}
 
 	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
@@ -578,7 +587,7 @@ void Crawler::initSequencedDataCollection()
 		sequencedDataCollection(),
 		Common::Helpers::allUserSignals(sequencedDataCollection(), QVector<QByteArray>() << "beginClearData()"),
 		this,
-		Common::Helpers::metaMethodOfSlot(this, "onSessionChanged()")
+		Common::Helpers::metaMethodOfSlot(this, "onSequencedDataCollectionChanged()")
 	);
 }
 

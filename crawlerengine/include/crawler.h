@@ -106,6 +106,7 @@ private slots:
 	void onCrawlingSessionInitialized();
 	void onSessionChanged();
 	void onCrawlerOptionsSomethingChanged();
+	void onSequencedDataCollectionChanged();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;

@@ -132,3 +132,5 @@ using std::size_t;
 #define CANNOT_CREATE_SOCKET -1
 
 #endif
+
+using namespace std::chrono_literals;
