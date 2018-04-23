@@ -379,30 +379,8 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 	};
 
 	bool checkUrl = false;
-	constexpr int maxRedirects = 2;
-	const int pagesCount = static_cast<int>(pages.size());
-
 	
-	for (int i = pagesCount - 1; i >= 0; --i)
-	{
-		if (i < pagesCount - maxRedirects)
-		{
-			pages[i]->tooManyRedirects = true;
-		}
-
-		// fix ddos guard redirects like page.html -> ddos-site -> page.html
-		for (int j = i - 1; j >= 0; --j)
-		{
-			if (pages[i]->url.urlStr() == pages[j]->url.urlStr())
-			{
-				const Url redirectUrl = pages[j]->redirectedUrl;
-
-				std::swap(*pages[j], *pages[i]);
-
-				pages[j]->redirectedUrl = redirectUrl;
-			}
-		}
-	}
+	fixDDOSGuardRedirectsIfNeeded(pages);
 
 	for (ParsedPagePtr& page : pages)
 	{
@@ -484,6 +462,34 @@ void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcep
 	emit workerResult(result);
 
 	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
+}
+
+void CrawlerWorkerThread::fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const
+{
+	constexpr int maxRedirects = 2;
+
+	const int pagesCount = static_cast<int>(pages.size());
+
+	for (int i = pagesCount - 1; i >= 0; --i)
+	{
+		if (i < pagesCount - maxRedirects)
+		{
+			pages[i]->tooManyRedirects = true;
+		}
+
+		// fix ddos guard redirects like page.html -> ddos-site -> page.html
+		for (int j = i - 1; j >= 0; --j)
+		{
+			if (pages[i]->url.urlStr() == pages[j]->url.urlStr())
+			{
+				const Url redirectUrl = pages[j]->redirectedUrl;
+
+				std::swap(*pages[j], *pages[i]);
+
+				pages[j]->redirectedUrl = redirectUrl;
+			}
+		}
+	}
 }
 
 std::optional<CrawlerRequest> CrawlerWorkerThread::prepareUnloadedPage() const

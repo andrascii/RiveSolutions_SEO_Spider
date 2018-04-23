@@ -41,6 +41,7 @@ private:
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 	void onStart();
 	void onPageParsed(const WorkerResult& result) const noexcept;
+	void fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const;
 
 	std::optional<CrawlerRequest> prepareUnloadedPage() const;
 
