@@ -198,6 +198,10 @@ public:
 						WARNLOG << "Cannot find" << linkPage->url.urlStr();
 						writer.writeAttribute(resourceIndexKey, QString::number(-1));
 					}
+					else
+					{
+						writer.writeAttribute(resourceIndexKey, QString::number(it->second));
+					}
 #endif
 #ifndef PRODUCTION
 					ASSERT(it != m_pagesByIndex.end());
@@ -612,6 +616,7 @@ void Serializer::savePagesToXmlStream(QXmlStreamWriter& writer) const
 	for (int i = 0; i < m_pages.size(); ++i)
 	{
 		const ParsedPage* page = m_pages[i];
+		DEBUGLOG << page->url.urlStr();
 		pageWrappers.emplace_back(page, i, pagesByIndex);
 	}
 

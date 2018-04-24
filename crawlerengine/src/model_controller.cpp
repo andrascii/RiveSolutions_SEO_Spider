@@ -718,7 +718,9 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		}
 
 		ParsedPagePtr resourcePage = parsedPageFromResource(resource);
-		ParsedPagePtr existingResource = data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
+		ParsedPagePtr existingResource = resourcePage->url.compare(workerResult.incomingPage()->url)
+			? workerResult.incomingPage()
+			: data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 
 		if (!existingResource)
 		{
@@ -855,7 +857,14 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			s_externalStorageTypes[resourceType] : 
 			s_storageTypes[resourceType];
 
-		ParsedPagePtr newOrExistingResource = data()->parsedPage(temporaryResource, storage);
+		ParsedPagePtr newOrExistingResource = temporaryResource->url.compare(workerResult.incomingPage()->url)
+			? workerResult.incomingPage()
+			: data()->parsedPage(temporaryResource, StorageType::CrawledUrlStorageType);
+
+		if (!newOrExistingResource)
+		{
+			ParsedPagePtr newOrExistingResource = data()->parsedPage(temporaryResource, storage);
+		}
 		
 		const bool existingImageResource = newOrExistingResource && 
 			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
@@ -993,7 +1002,7 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 	bool hasParentResources = false;
 	for (const ResourceLink& link : incomingPage->linksToThisPage)
 	{
-		if (link.resource.expired())
+		if (link.resource.expired() || link.url.compare(incomingPage->url))
 		{
 			continue;
 		}
