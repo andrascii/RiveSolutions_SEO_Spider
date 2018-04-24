@@ -12,41 +12,11 @@
 namespace SeoSpider
 {
 
-Version version(const QString& fileName)
-{
-	DWORD dwHandle;
-	DWORD dwLen = GetFileVersionInfoSizeW(fileName.toStdWString().c_str(), &dwHandle);
-
-	std::unique_ptr<std::byte[]> lpData(new std::byte[dwLen]);
-
-	if (!GetFileVersionInfoW(fileName.toStdWString().c_str(), dwHandle, dwLen, lpData.get()))
-	{
-		WARNLOG << "error in GetFileVersionInfo";
-		return Version::invalidVersion;
-	}
-
-	VS_FIXEDFILEINFO *lpBuffer = NULL;
-	UINT uLen;
-
-	if (!VerQueryValueW(lpData.get(), QString("\\").toStdWString().c_str(), reinterpret_cast<LPVOID*>(&lpBuffer), &uLen))
-	{
-		WARNLOG << "error in VerQueryValue";
-		return Version::invalidVersion;
-	}
-
-	return Version
-	{
-		(lpBuffer->dwFileVersionMS >> 16) & 0xffff,
-		(lpBuffer->dwFileVersionMS) & 0xffff,
-		(lpBuffer->dwFileVersionLS >> 16) & 0xffff
-	};
-}
-
 const Version Version::invalidVersion{ -1, -1, -1 };
 
 UpdateChecker::UpdateChecker(QObject* parent)
 	: QObject(parent)
-	, m_thisProgramVersion(version(theApp->applicationFilePath()))
+	, m_thisProgramVersion(getLocalVersion())
 {
 }
 
@@ -70,6 +40,11 @@ QObject* UpdateChecker::qobject() const noexcept
 	return const_cast<UpdateChecker*>(this);
 }
 
+Version UpdateChecker::getVerstionStr()
+{
+	return m_thisProgramVersion;
+}
+
 void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
 {
 	INFOLOG << "actual_version.txt loaded";
@@ -86,54 +61,15 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester*, const C
 		return;
 	}
 
-	/// TODO: implement decryption when encryption will be implemented on the server
-	const Version actualVersion = stringToVersion(lastHop.body());
-	const auto updatePatchInfo = checkExistenceUpdatePatch();
+	//
+	// TODO: implement decryption when encryption will be implemented on the server
+	//
+	const Version actualVersion = getRemoteVersion(lastHop.body());
 
-	if (!isVersionNewerThanThisProgramVersion(actualVersion))
+	if(m_thisProgramVersion < actualVersion)
 	{
-		QFile::remove(updatePatchInfo.second);
-
-		theApp->removeKeyFromSettings(UpdateHelpers::updatePatchSavePathKey());
-
-		return;
+		emit updateExists();
 	}
-
-	if (updatePatchInfo.first)
-	{
-		ASSERT(!updatePatchInfo.second.isEmpty());
-
-		emit updateAlreadyDownloaded(updatePatchInfo.second);
-
-		return;
-	}
-	else
-	{
-		theApp->removeKeyFromSettings(UpdateHelpers::updatePatchSavePathKey());
-	}
-
-	CrawlerEngine::CrawlerRequest crawlerRequest
-	{
-		CrawlerEngine::Url(UpdateHelpers::downloadAddressFileUrl()),
-		CrawlerEngine::DownloadRequestType::RequestTypeGet
-	};
-
-	CrawlerEngine::DownloadRequest request(crawlerRequest);
-	m_downloadRequester.reset(request, this, &UpdateChecker::onDownloadLinkFileLoaded);
-	m_downloadRequester->start();
-}
-
-void UpdateChecker::onDownloadLinkFileLoaded(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
-{
-	INFOLOG << "download_address.txt loaded";
-
-	m_downloadRequester.reset();
-
-	ASSERT(response.hopsChain.length() != 0);
-
-	const CrawlerEngine::Hop lastHop = response.hopsChain.back();
-
-	emit updateExists(lastHop.body());
 }
 
 Version UpdateChecker::stringToVersion(const QString& versionString) const
@@ -155,43 +91,85 @@ Version UpdateChecker::stringToVersion(const QString& versionString) const
 	};
 }
 
-bool UpdateChecker::isVersionNewerThanThisProgramVersion(Version ver) const
+Version UpdateChecker::getLocalVersion() const
 {
-	if (m_thisProgramVersion == Version::invalidVersion)
+	QFile* componentsFile = new QFile(UpdateHelpers::localVersionXmlFile());
+
+	if (!componentsFile->open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		//
-		// TODO: implement sending report without shutdown program
-		//
-		ERRLOG << "ATTENTION!!! Cannot parse current program version!";
-		return true;
+		return Version::invalidVersion;
 	}
 
-	if (ver == Version::invalidVersion)
+	QXmlStreamReader componentsXmlFile(componentsFile);
+
+	while (!componentsXmlFile.atEnd() && !componentsXmlFile.hasError())
 	{
-		return false;
-	}
-
-	return true;
-}
-
-std::pair<bool, QString> UpdateChecker::checkExistenceUpdatePatch() const
-{
-	const QVariant saveUpdatePathKey = theApp->loadFromSettings(UpdateHelpers::updatePatchSavePathKey());
-
-	QString downloadedFilePath;
-	bool updatePatchAlreadyExists = false;
-
-	if (saveUpdatePathKey.isValid())
-	{
-		downloadedFilePath = saveUpdatePathKey.toString();
-
-		if (QFile::exists(downloadedFilePath))
+		QXmlStreamReader::TokenType token = componentsXmlFile.readNext();
+		if (token == QXmlStreamReader::StartDocument)
+			continue;
+		if (token == QXmlStreamReader::StartElement)
 		{
-			updatePatchAlreadyExists = true;
+			if (componentsXmlFile.name() == "Package")
+			{
+				while (!(componentsXmlFile.tokenType() == QXmlStreamReader::EndElement && componentsXmlFile.name() == "PackageUpdate"))
+				{
+					if (componentsXmlFile.tokenType() == QXmlStreamReader::StartElement)
+					{
+						if (componentsXmlFile.name() == "Version")
+						{
+							if (componentsXmlFile.tokenType() == QXmlStreamReader::StartElement)
+							{
+								componentsXmlFile.readNext();
+								const Version actualVersion = stringToVersion(componentsXmlFile.text().toString());
+								return actualVersion;
+							}
+						}
+					}
+
+					componentsXmlFile.readNext();
+				}
+			}
 		}
 	}
 
-	return std::pair(updatePatchAlreadyExists, downloadedFilePath);
+	return Version::invalidVersion;
+}
+
+Version UpdateChecker::getRemoteVersion(const QByteArray& remoteXmlUpdateFile) const
+{
+	QXmlStreamReader updateFile(remoteXmlUpdateFile);
+
+	while (!updateFile.atEnd() && !updateFile.hasError())
+	{
+		QXmlStreamReader::TokenType token = updateFile.readNext();
+		if (token == QXmlStreamReader::StartDocument)
+			continue;
+		if (token == QXmlStreamReader::StartElement)
+		{
+			if (updateFile.name() == "PackageUpdate")
+			{
+				while (!(updateFile.tokenType() == QXmlStreamReader::EndElement && updateFile.name() == "PackageUpdate"))
+				{
+					if (updateFile.tokenType() == QXmlStreamReader::StartElement)
+					{
+						if (updateFile.name() == "Version")
+						{
+							if (updateFile.tokenType() == QXmlStreamReader::StartElement)
+							{
+								updateFile.readNext();
+								const Version actualVersion = stringToVersion(updateFile.text().toString());
+								return actualVersion;
+							}
+						}
+					}
+
+					updateFile.readNext();
+				}
+			}
+		}
+	}
+
+	return Version::invalidVersion;
 }
 
 }

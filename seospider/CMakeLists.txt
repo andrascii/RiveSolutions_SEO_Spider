@@ -11,6 +11,7 @@ set(CrawlerEngineLibHeadersDir ../crawlerengine/include)
 set(CommonLibHeadersDir ../common/include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(QtXlsxWriterHeadersDir ../qtxlsxwriter/src/xlsx)
+set(VersionHeadersDir ../version/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppCppList "src/*.cpp")
@@ -99,6 +100,7 @@ include_directories(
 	${CrawlerEngineLibHeadersDir}
 	${CommonLibHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
+	${VersionHeadersDir}
 	${QtXlsxWriterHeadersDir}
 	${QtXlsxWriter_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}
@@ -111,6 +113,7 @@ target_link_libraries(
 	${CrawlerEngineLibName}
 	${CommonLibName}
 	${SeoSpiderServiceApiDllName}
+	${VersionProjectName}
 	${QtXlsxWriter_LIBS}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}

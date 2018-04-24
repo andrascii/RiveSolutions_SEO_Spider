@@ -8,20 +8,14 @@ class UpdateHelpers
 public:
 	static constexpr const char* actualVersionFileUrl()
 	{
-		return "http://rivesolutions.com/actual_version.txt";
+		//return "http://rivesolutions.com/actual_version.txt";
+		return "http://rivesolutions.com/Updates.xml";
 	}
 
-	static constexpr const char* downloadAddressFileUrl()
+	static constexpr const char* localVersionXmlFile()
 	{
-		return "http://rivesolutions.com/download_address.txt";
+		return "components.xml";
 	}
-
-	static constexpr const char* updatePatchSavePathKey()
-	{
-		return "updatePatchSavePath";
-	}
-
-	static QString updatesPatchSaveDirPath();
 };
 
 }

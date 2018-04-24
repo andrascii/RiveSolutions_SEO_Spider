@@ -6,7 +6,7 @@
 #include "requester_wrapper.h"
 #include "storage_type.h"
 #include "web_host_info.h"
-#include "session_state.h"
+#include "session.h"
 
 namespace CrawlerEngine
 {
@@ -60,19 +60,19 @@ public:
 	State state() const noexcept;
 	SequencedDataCollection* sequencedDataCollection() const;
 	QString siteMapXml(const SiteMapSettings& settings) const;
-	Q_SLOT void saveToFile(const QString& fileName);
-	Q_SLOT void loadFromFile(const QString& fileName);
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
-
 	const WebHostInfo* webHostInfo() const;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
 	QString currentCrawledUrl() const noexcept;
 	bool readyForRefreshPage() const noexcept;
 	ICrawlerOptions* options() const noexcept;
+	Session::State sessionState() const noexcept;
+	QString sessionName() const noexcept;
+	bool hasCustomSessionName() const noexcept;
 
 signals:
-	void crawlingProgress(CrawlingProgress state);
+	void crawlingProgress(CrawlingProgress progress);
 	void crawlerStarted();
 	void crawlerStopped();
 	void crawlerFinished();
@@ -82,12 +82,20 @@ signals:
 	void serializationProcessDone();
 	void deserializationProcessDone();
 	void refreshPageDone();
+	void sessionCreated();
+	void sessionDestroyed();
+	void sessionStateChanged(Session::State state);
+	void sessionNameChanged(const QString& name);
 
 public slots:
 	void startCrawling();
 	void stopCrawling();
 	void refreshPage(StorageType storageType, int index);
 	void setUserAgent(const QByteArray& userAgent);
+
+	void saveFile();
+	void saveToFile(const QString& fileName);
+	void loadFromFile(const QString& fileName);
 
 protected slots:
 	void onRefreshPageDone();
@@ -98,6 +106,7 @@ private slots:
 	void onCrawlingSessionInitialized();
 	void onSessionChanged();
 	void onCrawlerOptionsSomethingChanged();
+	void onSequencedDataCollectionChanged();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;
@@ -118,7 +127,7 @@ private:
 	void tryToLoadCrawlingDependencies() const;
 	void clearDataImpl();
 	void setState(State state);
-	void initSessionStateIfNeeded();
+	void initSessionIfNeeded(Session::State state = Session::StateNone, const QString& name = QString());
 
 protected:
 	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
@@ -141,7 +150,6 @@ private:
 
 	State m_state;
 	State m_prevState;
-	QString m_fileName;
 
 	RequesterWrapper m_serializationRequester;
 	RequesterWrapper m_deSerializationRequester;
@@ -152,7 +160,7 @@ private:
 	WebHostInfo* m_webHostInfo;
 	std::unique_ptr<HostInfo> m_hostInfo;
 
-	QPointer<SessionState> m_sessionState;
+	QPointer<Session> m_session;
 };
 
 }

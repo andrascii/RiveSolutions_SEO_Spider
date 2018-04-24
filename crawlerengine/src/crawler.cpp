@@ -148,15 +148,20 @@ void Crawler::setState(State state)
 	emit stateChanged(state);
 }
 
-
-void Crawler::initSessionStateIfNeeded()
+void Crawler::initSessionIfNeeded(Session::State state, const QString& name)
 {
-	if (m_sessionState)
+	if (m_session)
 	{
 		return;
 	}
 
-	m_sessionState = new SessionState(SessionState::StateUnsaved, this);
+	m_session = new Session(state, name, this);
+
+	VERIFY(connect(m_session, &Session::stateChanged, this, &Crawler::sessionStateChanged));
+	VERIFY(connect(m_session, &Session::nameChanged, this, &Crawler::sessionNameChanged));
+	VERIFY(connect(m_session, &Session::destroyed, this, &Crawler::sessionDestroyed));
+
+	emit sessionCreated();
 }
 
 bool Crawler::hasNoData() const noexcept
@@ -247,8 +252,10 @@ void Crawler::waitSerializationReadyState()
 {
 	const CrawlerSharedState* state = CrawlerSharedState::instance();
 
+	ASSERT(m_session);
+
 	const bool isReadyForSerialization = 
-		(m_state == StateSerializaton || m_state == StateDeserializaton) && !m_fileName.isEmpty() &&
+		(m_state == StateSerializaton || m_state == StateDeserializaton) && !m_session->name().isEmpty() &&
 		state->workersProcessedLinksCount() == state->modelControllerCrawledLinksCount() &&
 		state->modelControllerAcceptedLinksCount() == state->sequencedDataCollectionLinksCount();
 
@@ -278,7 +285,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 	setState(StateWorking);
 
-	initSessionStateIfNeeded();
+	initSessionIfNeeded();
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
 		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptionsData&, m_options->data())));
@@ -316,17 +323,27 @@ void Crawler::onCrawlingSessionInitialized()
 
 void Crawler::onSessionChanged()
 {
-	if (!m_sessionState)
+	if (!m_session || state() == StateDeserializaton)
 	{
 		return;
 	}
 
-	m_sessionState->setState(SessionState::StateUnsaved);
+	m_session->setState(Session::StateUnsaved);
 }
 
 void Crawler::onCrawlerOptionsSomethingChanged()
 {
 	ASSERT(m_state == StatePending || m_state == StateDeserializaton);
+
+	onSessionChanged();
+}
+
+void Crawler::onSequencedDataCollectionChanged()
+{
+	if (state() != StateWorking)
+	{
+		return;
+	}
 
 	onSessionChanged();
 }
@@ -365,7 +382,7 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 {
 	Q_UNUSED(requester);
 	
-	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
+	SerializationTaskResponseResult* result = Common::Helpers::fast_cast<SerializationTaskResponseResult*>(response.result.get());
 
 	ASSERT(result);
 
@@ -376,10 +393,15 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
-		serviceLocator->service<INotificationService>()->error(tr("Serialization error"), tr("The operation has not been successful."));
+		serviceLocator->service<INotificationService>()->error(tr("Save file error"), tr("The operation has not been successful."));
 	}
 
 	m_serializationRequester.reset();
+
+	ASSERT(m_session);
+
+	m_session->setState(Session::StateSaved);
+
 	emit serializationProcessDone();
 }
 
@@ -394,8 +416,14 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	if (!result->error.isEmpty())
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
+		
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
-		serviceLocator->service<INotificationService>()->error(tr("Deserialization error"), tr("The operation has not been successful."));
+
+		serviceLocator->service<INotificationService>()->error(tr("Loading file error"), tr("The operation has not been successful."));
+
+		ASSERT(m_session);
+
+		m_session->deleteLater();
 	}
 	else
 	{
@@ -416,9 +444,6 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 						++crawledLinksCount;
 					}
 
-					//
-					// This adding might be UNSAFE!
-					//
 					m_modelController->data()->addParsedPage(page, i);
 				}
 			}
@@ -502,15 +527,14 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
-		std::future<std::optional<CrawlerRequest>> pendingUrlFuture = worker->pendingUrls();
-		const std::optional<CrawlerRequest> workerPendingUrls = pendingUrlFuture.get();
+		std::optional<CrawlerRequest> workerPendingUrl = worker->pendingUrl();
 
-		if (!workerPendingUrls.has_value())
+		if (!workerPendingUrl.has_value())
 		{
 			continue;
 		}
 
-		pendingUrls.push_back(workerPendingUrls.value());
+		pendingUrls.push_back(workerPendingUrl.value());
 	}
 
 	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
@@ -521,8 +545,7 @@ void Crawler::onSerializationReadyToBeStarted()
 	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>(std::move(pages), 
 		std::move(crawledUrls), std::move(pendingUrls), m_options->data(), m_webHostInfo->allData());
 
-	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(std::move(serializer), m_fileName);
-	m_fileName = QString();
+	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(std::move(serializer), m_session->name());
 
 	TaskRequest request(task);
 	m_serializationRequester.reset(request, this, &Crawler::onSerializationTaskDone);
@@ -536,8 +559,7 @@ void Crawler::onDeserializationReadyToBeStarted()
 	clearDataImpl();
 
 	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>();
-	std::shared_ptr<ITask> task = std::make_shared<DeserializatoinTask>(std::move(serializer), m_fileName);
-	m_fileName = QString();
+	std::shared_ptr<ITask> task = std::make_shared<DeserializatoinTask>(std::move(serializer), m_session->name());
 
 	TaskRequest request(task);
 	m_deSerializationRequester.reset(request, this, &Crawler::onDeserializationTaskDone);
@@ -565,7 +587,7 @@ void Crawler::initSequencedDataCollection()
 		sequencedDataCollection(),
 		Common::Helpers::allUserSignals(sequencedDataCollection(), QVector<QByteArray>() << "beginClearData()"),
 		this,
-		Common::Helpers::metaMethodOfSlot(this, "onSessionChanged()")
+		Common::Helpers::metaMethodOfSlot(this, "onSequencedDataCollectionChanged()")
 	);
 }
 
@@ -607,30 +629,51 @@ QString Crawler::siteMapXml(const SiteMapSettings& settings) const
 	return siteMap.xml(*storage, settings);
 }
 
-void Crawler::saveToFile(const QString& fileName)
+void Crawler::saveFile()
 {
 	ASSERT(QThread::currentThread() == thread());
 	ASSERT(state() != State::StateWorking);
 
-	m_fileName = fileName;
 	setState(StateSerializaton);
 
 	m_serializatonReadyStateCheckerTimer->start();
 	waitSerializationReadyState();
 }
 
+void Crawler::saveToFile(const QString& fileName)
+{
+	ASSERT(m_session);
+
+	m_session->setName(fileName);
+
+	saveFile();
+}
+
 void Crawler::loadFromFile(const QString& fileName)
 {
 	ASSERT(QThread::currentThread() == thread());
-	if (state() == Crawler::StateWorking)
+
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+
+	if (m_session)
 	{
-		ServiceLocator* serviceLocator = ServiceLocator::instance();
-		serviceLocator->service<INotificationService>()->info(tr("Error"), tr("Cannot open a document while crawler is working!"));
+		serviceLocator->service<INotificationService>()->error(
+			tr("Error"), 
+			tr("Cannot load project file until the existing one is saved.")
+		);
 
 		return;
 	}
-	
-	m_fileName = fileName;
+
+	if (state() == Crawler::StateWorking)
+	{
+		serviceLocator->service<INotificationService>()->error(tr("Error"), tr("Cannot open a document while crawler is working!"));
+
+		return;
+	}
+
+	initSessionIfNeeded(Session::StateSaved, fileName);
+
 	setState(StateDeserializaton);
 
 	m_serializatonReadyStateCheckerTimer->start();
@@ -712,6 +755,36 @@ const UniqueLinkStore* Crawler::uniqueLinkStore() const noexcept
 ICrawlerOptions* Crawler::options() const noexcept
 {
 	return m_options;
+}
+
+Session::State Crawler::sessionState() const noexcept
+{
+	if (!m_session)
+	{
+		return Session::StateNone;
+	}
+
+	return m_session->state();
+}
+
+QString Crawler::sessionName() const noexcept
+{
+	if (!m_session)
+	{
+		return QString();
+	}
+
+	return m_session->name();
+}
+
+bool Crawler::hasCustomSessionName() const noexcept
+{
+	if (!m_session)
+	{
+		return false;
+	}
+
+	return m_session->hasCustomName();
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

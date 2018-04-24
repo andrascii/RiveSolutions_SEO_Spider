@@ -28,6 +28,7 @@ signals:
 
 public slots:
 	void showSitemapCreatorDialog();
+	void saveFile();
 	void saveFileAs();
 	void openFile();
 	void openFileThroughCmd(const QString& path);
@@ -57,6 +58,10 @@ private:
 
 	QString getSaveFilePath() const;
 	void clearDataOnSerializationDone();
+
+private slots:
+	void onCrawlerSessionCreated();
+	void onCrawlerSessionDestroyed();
 
 private:
 	bool m_initialized;
