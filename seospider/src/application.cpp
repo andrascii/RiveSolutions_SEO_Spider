@@ -66,10 +66,12 @@ Application::Application(int& argc, char** argv)
 
 	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
 	{
-		mainWindow()->openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
+		openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
 	}
 
 	m_updateChecker->check();
+
+	ASSERT(0);
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -500,6 +502,21 @@ void Application::attachPreferencesToCrawlerOptions()
 	};
 
 	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, userAgentMapper));
+}
+
+void Application::openFileThroughCmd(const QString& path)
+{
+	if (!path.endsWith(".sxr"))
+	{
+		ERRLOG << path;
+
+		mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
+			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	crawler()->loadFromFile(path);
 }
 
 void Application::initializeStyleSheet() noexcept

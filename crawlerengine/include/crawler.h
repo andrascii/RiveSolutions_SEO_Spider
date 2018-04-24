@@ -94,6 +94,7 @@ public slots:
 	void setUserAgent(const QByteArray& userAgent);
 
 	void saveFile();
+	void closeFile();
 	void saveToFile(const QString& fileName);
 	void loadFromFile(const QString& fileName);
 

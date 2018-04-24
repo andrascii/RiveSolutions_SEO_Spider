@@ -72,8 +72,6 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 
 	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
 	VERIFY(connect(m_xmlSitemapLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
-	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()), this, SLOT(onSessionChanged())));
-	VERIFY(connect(m_xmlSitemapLoader->qobject(), SIGNAL(ready()), this, SLOT(onSessionChanged())));
 
 	m_crawlingStateTimer->setInterval(100);
 	m_serializatonReadyStateCheckerTimer->setInterval(200);
@@ -310,7 +308,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
-		VERIFY(QMetaObject::invokeMethod(worker, "startWithOptions", Qt::QueuedConnection, 
+		VERIFY(QMetaObject::invokeMethod(worker, "start", Qt::QueuedConnection, 
 			Q_ARG(const CrawlerOptionsData&, m_options->data()), Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content()))));
 	}
 
@@ -374,7 +372,9 @@ void Crawler::initializeCrawlingSession()
 	}
 
 	GetHostInfoRequest request(m_options->startCrawlingPage());
+
 	m_hostInfoRequester.reset(request, this, &Crawler::onHostInfoResponse);
+
 	m_hostInfoRequester->start();
 }
 
@@ -387,13 +387,19 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	ASSERT(result);
 
 	m_state = m_prevState;
+
 	emit stateChanged(m_state);
 
 	if (!result->error.isEmpty())
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
+
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
-		serviceLocator->service<INotificationService>()->error(tr("Save file error"), tr("The operation has not been successful."));
+
+		serviceLocator->service<INotificationService>()->error(
+			tr("Save file error"), 
+			tr("The operation has not been successful.")
+		);
 	}
 
 	m_serializationRequester.reset();
@@ -640,6 +646,20 @@ void Crawler::saveFile()
 	waitSerializationReadyState();
 }
 
+void Crawler::closeFile()
+{
+	ASSERT(QThread::currentThread() == thread());
+
+	if (!m_session)
+	{
+		return;
+	}
+
+	clearData();
+
+	m_session->deleteLater();
+}
+
 void Crawler::saveToFile(const QString& fileName)
 {
 	ASSERT(m_session);
@@ -667,7 +687,10 @@ void Crawler::loadFromFile(const QString& fileName)
 
 	if (state() == Crawler::StateWorking)
 	{
-		serviceLocator->service<INotificationService>()->error(tr("Error"), tr("Cannot open a document while crawler is working!"));
+		serviceLocator->service<INotificationService>()->error(
+			tr("Error"), 
+			tr("Cannot open a document while crawler is working!")
+		);
 
 		return;
 	}
@@ -677,6 +700,7 @@ void Crawler::loadFromFile(const QString& fileName)
 	setState(StateDeserializaton);
 
 	m_serializatonReadyStateCheckerTimer->start();
+
 	waitSerializationReadyState();
 }
 

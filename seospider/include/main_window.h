@@ -31,7 +31,7 @@ public slots:
 	void saveFile();
 	void saveFileAs();
 	void openFile();
-	void openFileThroughCmd(const QString& path);
+	void closeFile();
 	void saveFileAndClearData();
 	void exportFilterData();
 	void onChangeGroupingAuditInfo(QAction* action);

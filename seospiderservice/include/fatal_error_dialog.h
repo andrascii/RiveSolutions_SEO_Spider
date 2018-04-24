@@ -11,7 +11,9 @@ class FatalErrorDialog : public QDialog
 
 public:
 	FatalErrorDialog(QWidget* parent = nullptr);
+
 	bool sendReportsNow() const;
+	QString detailedInformation() const;
 
 private:
 	Ui::FatalErrorDialog* m_ui;

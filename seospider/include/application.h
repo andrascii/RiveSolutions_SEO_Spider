@@ -81,6 +81,7 @@ private:
 	void initialize();
 	void startInstaller(const QString& filepath);
 	void attachPreferencesToCrawlerOptions();
+	void openFileThroughCmd(const QString& path);
 
 private:
 	std::unique_ptr<CommandLineHandler> m_commandLineHandler;

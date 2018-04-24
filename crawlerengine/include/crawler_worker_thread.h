@@ -9,12 +9,12 @@
 namespace CrawlerEngine
 {
 
-struct CrawlerOptionsData;
-struct DownloadResponse;
 class IQueuedDownloader;
 class UniqueLinkStore;
 class OptionsLinkFilter;
 class PageDataCollector;
+struct CrawlerOptionsData;
+struct DownloadResponse;
 
 class CrawlerWorkerThread : public QObject
 {
@@ -28,31 +28,40 @@ signals:
 	void workerResult(WorkerResult workerResult) const;
 
 public slots:
-	void startWithOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
+	void start(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
+
 	void stop();
 
 private slots:
 	void extractUrlAndDownload();
+
 	void onCrawlerClearData();
 
 private:
-	std::vector<LinkInfo> schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
-	std::vector<LinkInfo> handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
-	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 	void onStart();
+
+	std::vector<LinkInfo> schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
+
+	std::vector<LinkInfo> handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
+
+	void onLoadingDone(Requester* requester, const DownloadResponse& response);
+
 	void onPageParsed(const WorkerResult& result) const noexcept;
+
 	void fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const;
 
 	std::optional<CrawlerRequest> prepareUnloadedPage() const;
 
-private:
-	struct PageAcceptedAfterStop
-	{
-		using PageRequestPair = std::pair<DownloadRequestType, ParsedPagePtr>;
-		using PageRequestPairs = std::vector<PageRequestPair>;
+	void handlePage(ParsedPagePtr& page, bool isUrlAdded, DownloadRequestType requestType);
 
-		PageRequestPairs page;
-		mutable std::promise<std::optional<CrawlerRequest>> pageAcceptedPromise;
+private:
+	struct PagesAcceptedAfterStop
+	{
+		using PageRequestPairs = std::vector<std::pair<DownloadRequestType, ParsedPagePtr>>;
+		using PagesPromise = std::promise<std::optional<CrawlerRequest>>;
+
+		PageRequestPairs pages;
+		PagesPromise mutable pagesAcceptedPromise;
 	};
 
 	PageDataCollector* m_pageDataCollector;
@@ -64,7 +73,7 @@ private:
 	bool m_isRunning;
 	bool m_reloadPage;
 
-	PageAcceptedAfterStop m_pageAcceptedAfterStop;
+	PagesAcceptedAfterStop m_pageAcceptedAfterStop;
 	std::optional<CrawlerRequest> m_currentRequest;
 
 	QTimer* m_defferedProcessingTimer;

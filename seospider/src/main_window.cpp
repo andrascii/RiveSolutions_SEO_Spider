@@ -93,18 +93,9 @@ void MainWindow::openFile()
 	theApp->crawler()->loadFromFile(path);
 }
 
-void MainWindow::openFileThroughCmd(const QString& path)
+void MainWindow::closeFile()
 {
-	if(!path.endsWith(".sxr"))
-	{
-		ERRLOG << path;
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
-
-		return;
-	}
-
-	theApp->crawler()->loadFromFile(path);
+	theApp->crawler()->closeFile();
 }
 
 void MainWindow::saveFileAndClearData()
@@ -316,6 +307,7 @@ void MainWindow::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAction), SIGNAL(triggered()), this, SLOT(saveFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
+	VERIFY(connect(actionRegistry.globalAction(s_closeFileAction), SIGNAL(triggered()), this, SLOT(closeFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
 
 	createHeaderPageDependentActions();
