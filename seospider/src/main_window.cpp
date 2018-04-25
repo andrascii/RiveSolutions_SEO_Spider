@@ -95,6 +95,20 @@ void MainWindow::openFile()
 
 void MainWindow::closeFile()
 {
+	if (theApp->crawler()->sessionState() == Session::StateUnsaved)
+	{
+		int answer = theApp->mainWindow()->showMessageBoxDialog(
+			tr("Warning"), 
+			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?"),
+			MessageBoxDialog::WarningIcon
+		);
+
+		if (answer == QDialog::Rejected)
+		{
+			return;
+		}
+	}
+
 	theApp->crawler()->closeFile();
 }
 
@@ -157,7 +171,7 @@ void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageNam
 	applicationSettingsWidget->deleteLater();
 }
 
-void MainWindow::showMessageBoxDialog(const QString& title,
+int MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
 	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons)
@@ -167,7 +181,9 @@ void MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setIcon(icon);
 	messageBoxDialog->setStandardButtons(buttons);
-	messageBoxDialog->show();
+	messageBoxDialog->exec();
+
+	return messageBoxDialog->result();
 }
 
 void MainWindow::showContentFramePage(PageFactory::Page page)

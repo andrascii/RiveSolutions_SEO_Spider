@@ -281,8 +281,6 @@ void Application::onAboutUpdateExists()
 {
 	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(mainWindow());
 
-	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloadingFinished));
-
 	updatesLoaderDialog->show();
 }
 
@@ -301,40 +299,6 @@ void Application::onAboutUseCustomUserAgentChanged()
 	{
 		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
 	}
-}
-
-void Application::onAboutUpdateDownloadingFinished(const QString& filepath)
-{
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(tr("Updates successful downloaded"));
-	messageBoxDialog->setMessage(tr("Updates successful downloaded. Do you want to install the updates now?"));
-	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
-	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-	messageBoxDialog->exec();
-
-	if (messageBoxDialog->result() != QDialog::Accepted)
-	{
-		return;
-	}
-
-	startInstaller(filepath);
-}
-
-void Application::onAboutUpdateAlreadyDownloaded(const QString& filepath)
-{
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(tr("New updates already downloaded"));
-	messageBoxDialog->setMessage(tr("New updates already downloaded. Do you want to install the updates now?"));
-	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
-	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-	messageBoxDialog->exec();
-
-	if (messageBoxDialog->result() != QDialog::Accepted)
-	{
-		return;
-	}
-
-	startInstaller(filepath);
 }
 
 void Application::registerServices()

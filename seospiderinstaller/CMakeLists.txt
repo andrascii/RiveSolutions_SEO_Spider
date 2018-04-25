@@ -93,12 +93,7 @@ add_custom_command(
     COMMENT "Running windeployqt..."
 )
 
-message(${BinaryCreator_executable})
-message(${RepoGen_executable})
-
 if(${RepoGen_executable})
-
-message(${RepoGen_executable})
 	
 elseif(NOT ${RepoGen_executable})
 	add_custom_command(
@@ -111,8 +106,6 @@ elseif(NOT ${RepoGen_executable})
 endif()
 
 if(${BinaryCreator_executable})
-
-message(${BinaryCreator_executable})
 
 elseif(NOT ${BinaryCreator_executable})
 	add_custom_command(

@@ -6,5 +6,5 @@ doxydoc/
 *.ini
 /testsite/dist/*.*
 /build2015
-/version/version.h
+/version/include/version.h
 /version/SetVersion.cmake

@@ -38,7 +38,7 @@ public slots:
 
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 
-	void showMessageBoxDialog(const QString& title, 
+	int showMessageBoxDialog(const QString& title, 
 		const QString& message, 
 		MessageBoxDialog::Icon icon, 
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
