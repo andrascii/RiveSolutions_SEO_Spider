@@ -124,7 +124,7 @@ void Crawler::initialize()
 
 void Crawler::clearData()
 {
-	ASSERT(m_state == StatePending || m_state == StatePause);
+	ASSERT(state() == StatePending || state() == StatePause);
 
 	clearDataImpl();
 
@@ -189,7 +189,7 @@ void Crawler::startCrawling()
 
 void Crawler::stopCrawling()
 {
-	if (m_state == StatePause || m_state == StatePending)
+	if (state() == StatePause || state() == StatePending)
 	{
 		return;
 	}
@@ -248,25 +248,25 @@ void Crawler::onAboutCrawlingState()
 
 void Crawler::waitSerializationReadyState()
 {
-	const CrawlerSharedState* state = CrawlerSharedState::instance();
+	const CrawlerSharedState* crawlerSharedState = CrawlerSharedState::instance();
 
 	ASSERT(m_session);
 
 	const bool isReadyForSerialization = 
-		(m_state == StateSerializaton || m_state == StateDeserializaton) && !m_session->name().isEmpty() &&
-		state->workersProcessedLinksCount() == state->modelControllerCrawledLinksCount() &&
-		state->modelControllerAcceptedLinksCount() == state->sequencedDataCollectionLinksCount();
+		(state() == StateSerializaton || state() == StateDeserializaton) && !m_session->name().isEmpty() &&
+		crawlerSharedState->workersProcessedLinksCount() == crawlerSharedState->modelControllerCrawledLinksCount() &&
+		crawlerSharedState->modelControllerAcceptedLinksCount() == crawlerSharedState->sequencedDataCollectionLinksCount();
 
 	if (!isReadyForSerialization)
 	{
 		return;
 	}
 
-	if (m_state == StateSerializaton)
+	if (state() == StateSerializaton)
 	{
 		onSerializationReadyToBeStarted();
 	}
-	else if (m_state == StateDeserializaton)
+	else if (state() == StateDeserializaton)
 	{
 		onDeserializationReadyToBeStarted();
 	}
@@ -331,7 +331,7 @@ void Crawler::onSessionChanged()
 
 void Crawler::onCrawlerOptionsSomethingChanged()
 {
-	ASSERT(m_state == StatePending || m_state == StateDeserializaton);
+	ASSERT(state() == StatePending || state() == StateDeserializaton);
 
 	onSessionChanged();
 }
@@ -652,6 +652,16 @@ void Crawler::closeFile()
 
 	if (!m_session)
 	{
+		return;
+	}
+
+	if (state() == StateWorking)
+	{
+		ServiceLocator::instance()->service<INotificationService>()->warning(
+			tr("Closing file error"),
+			tr("Can't close project file while crawler is working!")
+		);
+
 		return;
 	}
 

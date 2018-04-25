@@ -70,8 +70,6 @@ Application::Application(int& argc, char** argv)
 	}
 
 	m_updateChecker->check();
-
-	ASSERT(0);
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept

@@ -4,7 +4,7 @@ set(installerConfigPath "E:/develop/repositories/quickiewebbot/version/../seospi
 
 set(MAJOR 1)
 set(MINOR 0)
-set(MAINTANCE 0)
+set(MAINTENANCE 0)
 
 configure_file(
 	${versionHeaderPath}/version.h.in 
