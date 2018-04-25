@@ -232,11 +232,11 @@ void SeoSpiderServiceApp::sendReports()
 		}
 
 		++m_pendingReportsCount;
-		
-
 
 		QString info = m_dialog->detailedInformation();
-		
+		QTextCodec* codec = QTextCodec::codecForName("latin1");
+		info = codec->makeDecoder()->toUnicode(info.toUtf8());
+
 		Common::SmtpMessage message(settings, "Report", info, { file.absoluteFilePath() });
 		Common::SmtpSender::send(message, file.absoluteFilePath(), this, SLOT(onSendingFinished(const QString&, int, const QByteArray&)));
 	}
@@ -245,7 +245,6 @@ void SeoSpiderServiceApp::sendReports()
 	{
 		emit closeServiceApp();
 	}
-
 }
 
 QString SeoSpiderServiceApp::dumpsPath()
