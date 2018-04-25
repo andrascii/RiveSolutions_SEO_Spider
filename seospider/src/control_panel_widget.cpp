@@ -161,5 +161,7 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 void ControlPanelWidget::onCrawlerOptionsChanged()
 {
 	m_ui.urlLineEdit->setText(theApp->crawler()->options()->startCrawlingPage().toDisplayString());
+
+	setUrl();
 }
 }

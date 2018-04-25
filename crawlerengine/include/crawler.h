@@ -94,6 +94,7 @@ public slots:
 	void setUserAgent(const QByteArray& userAgent);
 
 	void saveFile();
+	void closeFile();
 	void saveToFile(const QString& fileName);
 	void loadFromFile(const QString& fileName);
 
@@ -106,6 +107,7 @@ private slots:
 	void onCrawlingSessionInitialized();
 	void onSessionChanged();
 	void onCrawlerOptionsSomethingChanged();
+	void onSequencedDataCollectionChanged();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;

@@ -31,14 +31,14 @@ public slots:
 	void saveFile();
 	void saveFileAs();
 	void openFile();
-	void openFileThroughCmd(const QString& path);
+	void closeFile();
 	void saveFileAndClearData();
 	void exportFilterData();
 	void onChangeGroupingAuditInfo(QAction* action);
 
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 
-	void showMessageBoxDialog(const QString& title, 
+	int showMessageBoxDialog(const QString& title, 
 		const QString& message, 
 		MessageBoxDialog::Icon icon, 
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel);

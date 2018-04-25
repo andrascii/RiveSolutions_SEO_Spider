@@ -93,18 +93,23 @@ void MainWindow::openFile()
 	theApp->crawler()->loadFromFile(path);
 }
 
-void MainWindow::openFileThroughCmd(const QString& path)
+void MainWindow::closeFile()
 {
-	if(!path.endsWith(".sxr"))
+	if (theApp->crawler()->sessionState() == Session::StateUnsaved)
 	{
-		ERRLOG << path;
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+		int answer = theApp->mainWindow()->showMessageBoxDialog(
+			tr("Warning"), 
+			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?"),
+			MessageBoxDialog::WarningIcon
+		);
 
-		return;
+		if (answer == QDialog::Rejected)
+		{
+			return;
+		}
 	}
 
-	theApp->crawler()->loadFromFile(path);
+	theApp->crawler()->closeFile();
 }
 
 void MainWindow::saveFileAndClearData()
@@ -166,7 +171,7 @@ void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageNam
 	applicationSettingsWidget->deleteLater();
 }
 
-void MainWindow::showMessageBoxDialog(const QString& title,
+int MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
 	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons)
@@ -176,7 +181,9 @@ void MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setIcon(icon);
 	messageBoxDialog->setStandardButtons(buttons);
-	messageBoxDialog->show();
+	messageBoxDialog->exec();
+
+	return messageBoxDialog->result();
 }
 
 void MainWindow::showContentFramePage(PageFactory::Page page)
@@ -309,6 +316,8 @@ void MainWindow::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
 	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(quit())));
 
+	actionRegistry.globalAction(s_exitProgramAction)->setShortcut(QKeySequence("Alt+F4"));
+
 	// sitemap actions
 	actionRegistry.addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
 
@@ -316,7 +325,13 @@ void MainWindow::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAction), SIGNAL(triggered()), this, SLOT(saveFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
+	VERIFY(connect(actionRegistry.globalAction(s_closeFileAction), SIGNAL(triggered()), this, SLOT(closeFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
+
+	actionRegistry.globalAction(s_openFileAction)->setShortcut(QKeySequence("Ctrl+O"));
+	actionRegistry.globalAction(s_saveFileAction)->setShortcut(QKeySequence("Ctrl+S"));
+	actionRegistry.globalAction(s_saveFileAsAction)->setShortcut(QKeySequence("Ctrl+Alt+S"));
+	actionRegistry.globalAction(s_closeFileAction)->setShortcut(QKeySequence("Ctrl+W")); 
 
 	createHeaderPageDependentActions();
 }

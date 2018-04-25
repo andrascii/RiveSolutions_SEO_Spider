@@ -4,10 +4,10 @@ IDI_ICON2 ICON DISCARDABLE "images/xml-file.ico"
 #include <windows.h>
 #include "version.h"
 
-#define VER_FILEVERSION             MAJOR,MINOR,MAINTANCE
-#define VER_FILEVERSION_STR         "1.0.0.0\0"
-#define VER_PRODUCTVERSION          MINOR,MINOR,MAINTANCE
-#define VER_PRODUCTVERSION_STR      "1.0.0\0"
+#define VER_FILEVERSION             MAJOR,MINOR,MAINTENANCE
+#define VER_FILEVERSION_STR         VERSION_STR
+#define VER_PRODUCTVERSION          MINOR,MINOR,MAINTENANCE
+#define VER_PRODUCTVERSION_STR      VERSION_STR
 #define VER_FILEDESCRIPTION_STR     "Rive Solutions SeoSider"
 #define VER_INTERNALNAME_STR        "SeoSpider"
 #define VER_LEGALCOPYRIGHT_STR      "Copyright (C) 2018, Rive Solutions"

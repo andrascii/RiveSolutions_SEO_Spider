@@ -177,8 +177,6 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage, const
 
 			return decodedHtmlPage;
 		}
-
-		//ERRORLOG << "Content-Type header exists but for specified charsets cannot be found special codec";
 	}
 
 	if (!charsetFromHtmlPage.isEmpty())

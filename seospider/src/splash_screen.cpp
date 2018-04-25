@@ -59,7 +59,7 @@ SplashScreen::SplashScreen()
 	resize(originalImageSize);
 
 #ifdef PRODUCTION
-	QString version = QString("%1.%2.%3").arg(MAJOR).arg(MINOR).arg(MAINTANCE);
+	QString version = QString("%1.%2.%3").arg(MAJOR).arg(MINOR).arg(MAINTENANCE);
 #else
 	QString version = theApp->applicationVersion().isEmpty() ? "Developer's version" : theApp->applicationVersion();
 #endif

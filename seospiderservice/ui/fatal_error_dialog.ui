@@ -6,24 +6,49 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>314</width>
-    <height>114</height>
+    <width>485</width>
+    <height>262</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Fatal Error</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../rcc/watchdogservice.qrc">
+   <iconset resource="../rcc/seospiderservice.qrc">
     <normaloff>:/images/images/fatal-error-icon.png</normaloff>:/images/images/fatal-error-icon.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>A Rive Solution Seo Spider process has crashed... =(</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Something was wrong and the application as been crashed. 
-Please send the generated report to our server
-in order to we can analyze it and fix.</string>
+      <string>We apologize for this failure. We are working to ensure that this does not happen again in the future. Please help us determine the cause of the failure by telling us what actions were performed before it occurred. So we can reproduce the error and quickly fix it. Thank you for helping make the program better!</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="detailedInfoTextEdit">
+     <property name="documentTitle">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Please provide detailed information about what you were doing when crash occured.</string>
      </property>
     </widget>
    </item>
@@ -92,7 +117,7 @@ in order to we can analyze it and fix.</string>
   </layout>
  </widget>
  <resources>
-  <include location="../rcc/watchdogservice.qrc"/>
+  <include location="../rcc/seospiderservice.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -122,13 +122,14 @@ void SeoSpiderServiceApp::timerEvent(QTimerEvent*)
 			TerminateProcess(m_processHandle, 0xDEAD);
 
 			m_dialog->exec();
+
 			if (m_dialog->sendReportsNow())
 			{
-				
 				if (!m_compressionIsActive)
 				{
 					sendReports();
 				}
+
 				return;
 			}
 
@@ -198,11 +199,9 @@ void SeoSpiderServiceApp::writeSysInfoFile(const QString& fileName) const
 	{
 		QTextStream out(&sysinfoFile);
 		out.setCodec("UTF-8");
-		//out << "[Application]\n"
-		//	<< "productname=" << QString::fromWCharArray(config->appname) << '\n'
-		//	<< "productversion=" << QString::fromWCharArray(config->version) << '\n';
-		//printAccountInformation(out);
+
 		printSystemInformation(out, m_processId);
+
 		sysinfoFile.flush();
 		sysinfoFile.close();
 	}
@@ -233,8 +232,12 @@ void SeoSpiderServiceApp::sendReports()
 		}
 
 		++m_pendingReportsCount;
-		
-		Common::SmtpMessage message(settings, "Report", "Message Text", { file.absoluteFilePath() });
+
+		QString info = m_dialog->detailedInformation();
+		QTextCodec* codec = QTextCodec::codecForName("latin1");
+		info = codec->makeDecoder()->toUnicode(info.toUtf8());
+
+		Common::SmtpMessage message(settings, "Report", info, { file.absoluteFilePath() });
 		Common::SmtpSender::send(message, file.absoluteFilePath(), this, SLOT(onSendingFinished(const QString&, int, const QByteArray&)));
 	}
 
@@ -242,7 +245,6 @@ void SeoSpiderServiceApp::sendReports()
 	{
 		emit closeServiceApp();
 	}
-
 }
 
 QString SeoSpiderServiceApp::dumpsPath()

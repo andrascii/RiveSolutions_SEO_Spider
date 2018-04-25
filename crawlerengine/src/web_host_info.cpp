@@ -13,6 +13,7 @@ WebHostInfo::WebHostInfo(QObject* parent, IWebScreenShot* webScreenShot,
 	, m_xmlSiteMapLoader(xmlSiteMapLoader)
 	, m_robotsTxtLoader(robotsTxtLoader)
 {
+	VERIFY(connect(m_webScreenShot->qobject(), SIGNAL(loaded(const QUrl&, const QPixmap&)), this, SIGNAL(webScreenshotLoaded())));
 }
 
 void WebHostInfo::reset(const QUrl& url)

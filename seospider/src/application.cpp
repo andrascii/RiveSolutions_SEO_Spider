@@ -66,7 +66,7 @@ Application::Application(int& argc, char** argv)
 
 	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
 	{
-		mainWindow()->openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
+		openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
 	}
 
 	m_updateChecker->check();
@@ -281,8 +281,6 @@ void Application::onAboutUpdateExists()
 {
 	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(mainWindow());
 
-	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloadingFinished));
-
 	updatesLoaderDialog->show();
 }
 
@@ -301,40 +299,6 @@ void Application::onAboutUseCustomUserAgentChanged()
 	{
 		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
 	}
-}
-
-void Application::onAboutUpdateDownloadingFinished(const QString& filepath)
-{
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(tr("Updates successful downloaded"));
-	messageBoxDialog->setMessage(tr("Updates successful downloaded. Do you want to install the updates now?"));
-	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
-	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-	messageBoxDialog->exec();
-
-	if (messageBoxDialog->result() != QDialog::Accepted)
-	{
-		return;
-	}
-
-	startInstaller(filepath);
-}
-
-void Application::onAboutUpdateAlreadyDownloaded(const QString& filepath)
-{
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(tr("New updates already downloaded"));
-	messageBoxDialog->setMessage(tr("New updates already downloaded. Do you want to install the updates now?"));
-	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
-	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-	messageBoxDialog->exec();
-
-	if (messageBoxDialog->result() != QDialog::Accepted)
-	{
-		return;
-	}
-
-	startInstaller(filepath);
 }
 
 void Application::registerServices()
@@ -500,6 +464,21 @@ void Application::attachPreferencesToCrawlerOptions()
 	};
 
 	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, userAgentMapper));
+}
+
+void Application::openFileThroughCmd(const QString& path)
+{
+	if (!path.endsWith(".sxr"))
+	{
+		ERRLOG << path;
+
+		mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
+			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	crawler()->loadFromFile(path);
 }
 
 void Application::initializeStyleSheet() noexcept

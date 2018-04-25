@@ -8,7 +8,6 @@ class UpdateHelpers
 public:
 	static constexpr const char* actualVersionFileUrl()
 	{
-		//return "http://rivesolutions.com/actual_version.txt";
 		return "http://rivesolutions.com/Updates.xml";
 	}
 

@@ -37,6 +37,12 @@ void WebScreenShot::setResult(const QPixmap& pixmap)
 	m_result.second = pixmap;
 }
 
+
+QObject* WebScreenShot::qobject() const noexcept
+{
+	return const_cast<WebScreenShot* const>(this);
+}
+
 void WebScreenShot::onLoadingDone(bool ok)
 {
 	if (!ok)

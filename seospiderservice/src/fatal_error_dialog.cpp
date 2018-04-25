@@ -20,4 +20,9 @@ bool FatalErrorDialog::sendReportsNow() const
 	return m_sendReportsNow;
 }
 
+QString FatalErrorDialog::detailedInformation() const
+{
+	return m_ui->detailedInfoTextEdit->toPlainText();
+}
+
 }
