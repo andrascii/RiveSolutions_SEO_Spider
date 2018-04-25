@@ -1,13 +1,14 @@
-/*function Component()
+function Component()
 {	
-	if(!needUpdate())
-	{
-		QMessageBox["information"]("version.test", "Installer", "The newer version is already installed.", QMessageBox.Ok);
-		abortInstallation();
-		//installer.setUpdater();
-	}
-	
-	component.loaded.connect(this, addRegisterFileCheckBox);
+	//if(!needUpdate())
+	//{
+	//	QMessageBox["information"]("version.test", "Installer", "The newer version is already installed.", QMessageBox.Ok);
+	//	abortInstallation();
+	//	//installer.setUpdater();
+	//}
+			
+	component.loaded.connect(this, addCreateMenuDirectory);
+	component.loaded.connect(this, addCreateDesktopShortcut);
     component.unusualFileType = "sxr";
 }
 
@@ -42,6 +43,65 @@ function registerProgram()
 
 		component.addOperation("Execute", reg, "ADD", key, "/v", "Version", "/t", "REG_SZ", "/d", value, "/f");
 		component.addOperation("Execute", reg, "ADD", key, "/v", "InstallPath", "/t", "REG_SZ", "/d", "@TargetDir@", "/f");
+	}
+}
+
+addCreateMenuDirectory = function()
+{
+	if(installer.isInstaller())
+	{
+        installer.addWizardPageItem(component, "CreateMenuDirCheckBoxForm", QInstaller.StartMenuSelection);
+	}
+}
+
+addCreateDesktopShortcut = function()
+{
+	if(installer.isInstaller())
+	{
+		installer.addWizardPageItem(component, "CreateDesktopIconCheckBoxForm", QInstaller.TargetDirectory);
+	}
+}
+
+function createMenuDirectory()
+{
+	var dontCreateMenuDirChecked = component.userInterface("CreateMenuDirCheckBoxForm").CreateMenuDirCheckBox.checked;
+	
+	if(systemInfo.productType === "windows" && (!dontCreateMenuDirChecked))
+	{
+		component.addOperation(
+			"CreateShortcut", 
+			"@TargetDir@/seospider.exe", 
+			"@StartMenuDir@/RiveSolutions Seo Spider.lnk",
+			"workingDirectory=@TargetDir@", 
+			"iconPath=@TargetDir@/seospider.exe",
+			"iconId=0" , 
+			"description=Open Seo Spider");
+			
+		component.addOperation(
+			"CreateShortcut", 
+			"@TargetDir@/Uninstall SeoSpider.exe", 
+			"@StartMenuDir@/Uninstall RiveSolutions Seo Spider.lnk",
+			"workingDirectory=@TargetDir@", 
+			"iconPath=@TargetDir@/Uninstall SeoSpider.exe",
+			"iconId=0" , 
+			"description=Open Seo Spider");	
+	}
+}
+
+function createDesktopShortcut()
+{
+	var isCreateDesktopIconChecked = component.userInterface("CreateDesktopIconCheckBoxForm").CreateDesktopIconCheckBox.checked;
+	
+	if(systemInfo.productType === "windows" && isCreateDesktopIconChecked)
+	{
+		component.addOperation(
+			"CreateShortcut", 
+			"@TargetDir@/seospider.exe", 
+			"@DesktopDir@/RiveSolutions Seo Spider.lnk",
+			"workingDirectory=@TargetDir@", 
+			"iconPath=@TargetDir@/seospider.exe",
+			"iconId=0" , 
+			"description=Open Seo Spider");
 	}
 }
 
@@ -114,25 +174,19 @@ function compareVersions(localVersion, remoteVersion)
 	return 0;
 }
 
-addRegisterFileCheckBox = function()
-{
-	if (installer.isInstaller()) 
-	{
-        installer.addWizardPageItem(component, "RegisterFileCheckBoxForm", QInstaller.TargetDirectory);
-        component.userInterface("RegisterFileCheckBoxForm").RegisterFileCheckBox.text =
-            component.userInterface("RegisterFileCheckBoxForm").RegisterFileCheckBox.text + component.unusualFileType;
-    }
-}
-
 Component.prototype.createOperations = function()
 {
     component.createOperations();
 
 	registerProgram();
 	
+	createMenuDirectory();
+	
+	createDesktopShortcut();
+	
 	// Registering new file type
-    var isRegisterFileChecked = component.userInterface("RegisterFileCheckBoxForm").RegisterFileCheckBox.checked;
-    if (installer.value("os") === "win" && isRegisterFileChecked) {
+    if (installer.value("os") === "win") 
+	{
         var iconId = 1;
         var seoSpiderPath =  "@TargetDir@\\seospider.exe";
         component.addOperation("RegisterFileType",
@@ -143,4 +197,4 @@ Component.prototype.createOperations = function()
                                seoSpiderPath + "," + iconId,
                                "ProgId=RiveSolutions.SeoSpider." + component.unusualFileType);
     }
-}*/
+}
