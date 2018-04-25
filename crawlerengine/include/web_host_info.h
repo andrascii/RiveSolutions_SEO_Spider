@@ -41,6 +41,9 @@ public:
 	AllData allData() const;
 	void setData(const AllData& data);
 
+signals:
+	void webScreenshotLoaded();
+
 private:
 	void on404Checked(Requester*, const Check404IsProperResponse& response);
 	// ... add more

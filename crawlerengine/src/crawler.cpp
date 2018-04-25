@@ -102,6 +102,8 @@ void Crawler::initialize()
 	m_downloader = createDownloader();
 	m_webHostInfo = new WebHostInfo(this, createWebScreenShot(), m_xmlSitemapLoader, m_robotsTxtLoader);
 
+	VERIFY(connect(m_webHostInfo, &WebHostInfo::webScreenshotLoaded, this, &Crawler::onSessionChanged));
+
 	ThreadManager& threadManager = ThreadManager::instance();
 
 	threadManager.moveObjectToThread(m_downloader->qobject(), "DownloaderThread");
