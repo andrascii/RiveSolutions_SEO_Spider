@@ -176,6 +176,8 @@ CrawlerEngine::Crawler::State Crawler::state() const noexcept
 
 void Crawler::startCrawling()
 {
+	setState(StatePreChecking);
+
 	if (!m_options->pauseRangeFrom() && !m_options->pauseRangeTo())
 	{
 		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
@@ -333,7 +335,10 @@ void Crawler::onSessionChanged()
 
 void Crawler::onCrawlerOptionsSomethingChanged()
 {
-	ASSERT(state() == StatePending || state() == StateDeserializaton);
+	ASSERT(state() == StatePending || 
+		state() == StateDeserializaton ||
+		state() == StatePreChecking
+	);
 
 	onSessionChanged();
 }

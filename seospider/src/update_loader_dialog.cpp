@@ -1,6 +1,6 @@
 #include "update_loader_dialog.h"
 #include "application.h"
-#include "helpers.h"
+#include "widget_helpers.h"
 #include "main_window.h"
 #include "update_helpers.h"
 
@@ -23,7 +23,7 @@ UpdateLoaderDialog::UpdateLoaderDialog(QWidget* parent)
 
 void UpdateLoaderDialog::showEvent(QShowEvent* event)
 {
-	Common::Helpers::moveWidgetToHostCenter(this);
+	WidgetHelpers::moveWidgetToHostCenter(this);
 
 	theApp->mainWindow()->setDisabled(true);
 

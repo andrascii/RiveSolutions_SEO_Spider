@@ -6,6 +6,7 @@
 #include "crawler.h"
 #include "sequenced_data_collection.h"
 #include "constants.h"
+#include "common_constants.h"
 #include "preferences.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
@@ -39,7 +40,7 @@ Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_commandLineHandler(new CommandLineHandler(argc, argv))
 	, m_preferences(new Preferences(this, this))
-	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
+	, m_crawler(new CrawlerEngine::Crawler(c_optimalParserThreadsCount, this))
 	, m_sequencedDataCollection(nullptr)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdapterFactory)
@@ -141,6 +142,12 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 
 void Application::startCrawler()
 {
+	if (crawler()->state() == Crawler::StateWorking ||
+		crawler()->state() == Crawler::StatePreChecking)
+	{
+		return;
+	}
+
 	QAction* action = qobject_cast<QAction*>(sender());
 	ASSERT(action && "This method must be called using QAction");
 
@@ -459,16 +466,19 @@ void Application::attachPreferencesToCrawlerOptions()
 		const int fromPauseTimerValue = value ? preferences()->fromPauseTimer() : -1;
 		const int toPauseTimerValue = value ? preferences()->toPauseTimer() : -1;
 
+		DEBUGLOG << "from pause:" << fromPauseTimerValue;
+		DEBUGLOG << "to pause:" << toPauseTimerValue;
+
 		crawler()->options()->setPauseRangeFrom(fromPauseTimerValue);
 		crawler()->options()->setPauseRangeTo(toPauseTimerValue);
 	};
 
-	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, userAgentMapper));
+	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, usePauseMapper));
 }
 
 void Application::openFileThroughCmd(const QString& path)
 {
-	if (!path.endsWith(".sxr"))
+	if (!path.endsWith(c_projectFileExtension))
 	{
 		ERRLOG << path;
 

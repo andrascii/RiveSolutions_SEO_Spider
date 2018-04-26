@@ -34,27 +34,6 @@ double Helpers::pixelsToPoints(int sizeInPixels, double dpi)
 	return static_cast<double>(sizeInPixels) * 72.0 / dpi;
 }
 
-void Helpers::moveWidgetToHostCenter(QWidget* widget, QWidget* host)
-{
-	if (!host)
-	{
-		host = widget->parentWidget();
-	}
-
-	if (host)
-	{
-		QRect hostRect = host->geometry();
-		widget->move(hostRect.center() - widget->rect().center());
-
-		return;
-	}
-
-	QRect screenGeometry = QApplication::desktop()->screenGeometry();
-	const int x = (screenGeometry.width() - widget->width()) / 2;
-	const int y = (screenGeometry.height() - widget->height()) / 2;
-	widget->move(x, y);
-}
-
 std::vector<QMetaMethod> Helpers::allUserSignals(QObject* qobject, QVector<QByteArray> exclude)
 {
 	const QMetaObject* metaObject = qobject->metaObject();

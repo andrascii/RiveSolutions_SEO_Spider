@@ -23,6 +23,7 @@
 #include "helpers.h"
 #include "filter_widget.h"
 #include "project_file_state_widget.h"
+#include "constants.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -37,6 +38,8 @@
 namespace SeoSpider
 {
 
+using namespace CrawlerEngine;
+
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_initialized(false)
@@ -46,8 +49,8 @@ MainWindow::MainWindow(QWidget* parent)
 		theApp->softwareBrandingOptions()->productName()
 	);
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
+	VERIFY(connect(theApp->crawler(), &Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
+	VERIFY(connect(theApp->crawler(), &Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
 }
 
 void MainWindow::showSitemapCreatorDialog()
@@ -83,7 +86,7 @@ void MainWindow::saveFileAs()
 
 void MainWindow::openFile()
 {
-	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*.sxr"));
+	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*" + c_projectFileExtension));
 
 	if (path.isEmpty())
 	{
@@ -95,6 +98,18 @@ void MainWindow::openFile()
 
 void MainWindow::closeFile()
 {
+	if (theApp->crawler()->state() != Crawler::StatePending &&
+		theApp->crawler()->state() != Crawler::StatePause)
+	{
+		theApp->mainWindow()->showMessageBoxDialog(
+			tr("Warning"),
+			tr("Cannot close file while crawler is working."),
+			MessageBoxDialog::WarningIcon
+		);
+
+		return;
+	}
+
 	if (theApp->crawler()->sessionState() == Session::StateUnsaved)
 	{
 		int answer = theApp->mainWindow()->showMessageBoxDialog(
@@ -270,11 +285,26 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction, QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
-		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
+	const auto settingsActionsAvailability = [](int state)
+	{
+		const auto actionsAvailabilitySetter = [](bool value)
+		{
+			ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(value);
+			ActionRegistry::instance().globalAction(s_openFileAction)->setEnabled(value);
+		};
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished,
-		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(true); }));
+		if (state == Crawler::StatePreChecking || state == Crawler::StateWorking)
+		{
+			actionsAvailabilitySetter(false);
+		}
+
+		if (state == Crawler::StatePending)
+		{
+			actionsAvailabilitySetter(true);
+		}
+	};
+
+	VERIFY(connect(theApp->crawler(), &Crawler::stateChanged, this, settingsActionsAvailability));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), 
 		this, SLOT(showApplicationSettingsDialog())));
@@ -448,7 +478,7 @@ QString MainWindow::getSaveFilePath() const
 		return QString();
 	}
 
-	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath(), QString("*.sxr"));
+	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath(), QString("*" + c_projectFileExtension));
 
 	return path;
 }
@@ -464,9 +494,11 @@ void MainWindow::onCrawlerSessionCreated()
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
 	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
+	QAction* saveFileAsAction = actionRegistry.globalAction(s_saveFileAsAction);
 	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
 
 	saveFileAction->setEnabled(true);
+	saveFileAsAction->setEnabled(true);
 	closeFileAction->setEnabled(true);
 }
 
@@ -475,9 +507,11 @@ void MainWindow::onCrawlerSessionDestroyed()
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
 	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
+	QAction* saveFileAsAction = actionRegistry.globalAction(s_saveFileAsAction);
 	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
 
 	saveFileAction->setEnabled(false);
+	saveFileAsAction->setEnabled(false);
 	closeFileAction->setEnabled(false);
 }
 

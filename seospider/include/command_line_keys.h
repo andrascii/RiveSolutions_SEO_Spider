@@ -1,10 +1,13 @@
 #pragma once
+
+#include "constants.h"
+
 namespace SeoSpider
 {
 
-	static const char* s_openSerializedFileKey = "open_serialized_file";
-	static const char* s_openSerializedFileDescription = "open sxr file in program";
-					   
-	static const char* s_introducePageKey = "introduce_page";
-	static const char* s_introducePageDescription = "Shows introduce page when starting";
+static QByteArray s_openSerializedFileKey = "open_serialized_file";
+static QByteArray s_openSerializedFileDescription = "open " + c_projectFileExtension + " file in program";
+static QByteArray s_introducePageKey = "introduce_page";
+static QByteArray s_introducePageDescription = "Shows introduce page when starting";
+
 }

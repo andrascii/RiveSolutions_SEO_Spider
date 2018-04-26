@@ -2,6 +2,7 @@
 #include "helpers.h"
 #include "application.h"
 #include "main_window.h"
+#include "widget_helpers.h"
 
 namespace SeoSpider
 {
@@ -108,7 +109,7 @@ void MessageBoxDialog::onButtonClicked(QAbstractButton* button)
 
 void MessageBoxDialog::showEvent(QShowEvent* event)
 {
-	Common::Helpers::moveWidgetToHostCenter(this);
+	WidgetHelpers::moveWidgetToHostCenter(this);
 
 	theApp->mainWindow()->setDisabled(true);
 
