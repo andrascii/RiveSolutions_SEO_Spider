@@ -1,15 +1,29 @@
 function Component()
 {	
-	//if(!needUpdate())
-	//{
-	//	QMessageBox["information"]("version.test", "Installer", "The newer version is already installed.", QMessageBox.Ok);
-	//	abortInstallation();
-	//	//installer.setUpdater();
-	//}
+	if(needUpdate())
+	{
+		if(QMessageBox["question"]("Already installed", "Installer", 
+		"Installer found older version of Seo Spider installed.<br> Do you want to update program?", 
+		QMessageBox.Ok | QMessageBox.No) == QMessageBox.No)
+		{
+			abortInstallation();
+		}
+		else
+		{	
+			var widget = gui.pageById(QInstaller.Introduction)
+			if(widget)
+			{
+				widget.MessageLabel.setText("Installer found older version of Seo Spider installed.");
+			}
+			
+			installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
+			installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
+		}
+	}
 			
 	component.loaded.connect(this, addCreateMenuDirectory);
 	component.loaded.connect(this, addCreateDesktopShortcut);
-    component.unusualFileType = "sxr";
+    component.unusualFileType = "ssproj";
 }
 
 function abortInstallation()
@@ -25,7 +39,7 @@ function abortInstallation()
 	
 	//if(widget)
 	//{
-		widget.RunItCheckBox.setEnabled(false);
+		widget.RunItCheckBox.setVisible(false);
 	//}
 	
     gui.clickButton(buttons.NextButton);
@@ -34,15 +48,23 @@ function abortInstallation()
 // Register program metadata in system after installation
 function registerProgram()
 {
-	if (installer.isInstaller()) 
+	if (installer.isInstaller() || installer.isUpdater()) 
 	{
-		QMessageBox["information"]("version.test", "Installer", "Registering program.", QMessageBox.Ok);
-		var reg = installer.environmentVariable("SystemRoot") + "\\System32\\reg.exe";
-		var key = "HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData";
 		var value = component.value("Version");
-
-		component.addOperation("Execute", reg, "ADD", key, "/v", "Version", "/t", "REG_SZ", "/d", value, "/f");
-		component.addOperation("Execute", reg, "ADD", key, "/v", "InstallPath", "/t", "REG_SZ", "/d", "@TargetDir@", "/f");
+		
+		component.addOperation(
+			"GlobalConfig", 
+			"Rive Solutions", 
+			"Seo Spider",
+			"MetaData/InstallPath", 
+			"@TargetDir@");
+		
+		component.addOperation(
+			"GlobalConfig", 
+			"Rive Solutions", 
+			"Seo Spider",
+			"MetaData/Version", 
+			value);
 	}
 }
 
@@ -105,10 +127,27 @@ function createDesktopShortcut()
 	}
 }
 
+// Registering new file type
+function registerSXRFileType()
+{
+	if (installer.value("os") === "win") 
+	{
+        var seoSpiderPath =  "@TargetDir@\\seospider.exe";
+        component.addOperation("RegisterFileType",
+                               component.unusualFileType,
+                               seoSpiderPath + " --open_serialized_file %1",
+                               "RiveSolutions SeoSpider project file type",
+                               "text/xml",
+                               seoSpiderPath + "," + 1,
+                               "ProgId=RiveSolutions.SeoSpider." + component.unusualFileType);
+    }
+}
+
 // Check if newer version is already installed
 function needUpdate()
 {
 	var newVersion = component.value("Version");
+	//var savedVersion = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
 	var savedVersion = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
 	
 	if(savedVersion)
@@ -183,18 +222,6 @@ Component.prototype.createOperations = function()
 	createMenuDirectory();
 	
 	createDesktopShortcut();
-	
-	// Registering new file type
-    if (installer.value("os") === "win") 
-	{
-        var iconId = 1;
-        var seoSpiderPath =  "@TargetDir@\\seospider.exe";
-        component.addOperation("RegisterFileType",
-                               component.unusualFileType,
-                               seoSpiderPath + " --open_serialized_file %1",
-                               "RiveSolutions SeoSpider project file type",
-                               "text/xml",
-                               seoSpiderPath + "," + iconId,
-                               "ProgId=RiveSolutions.SeoSpider." + component.unusualFileType);
-    }
+
+	registerSXRFileType();
 }
