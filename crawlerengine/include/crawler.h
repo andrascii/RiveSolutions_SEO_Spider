@@ -43,10 +43,26 @@ public:
 	{
 		StateWorking,
 		StatePause,
+
+		// This state indicates that:
+		// 1. crawler has ended crawling or
+		// 2. crawling still didn't started
 		StatePending,
+
+		// Saving project files with data
 		StateSerializaton,
+
+		// Loading project files with data
 		StateDeserializaton,
-		StatePageRefresh
+
+		StatePageRefresh,
+
+		// This state indicates that crawler:
+		// 1. checks sitemap
+		// 2. checks robots.txt
+		// 3. checks IP address using DNS
+		// 4. making main page screenshot
+		StatePreChecking
 	};
 
 	static Crawler& instance();
@@ -55,18 +71,24 @@ public:
 	virtual ~Crawler();
 
 	void initialize();
+
 	void clearData();
 	bool hasNoData() const noexcept;
 	State state() const noexcept;
+
 	SequencedDataCollection* sequencedDataCollection() const;
+
 	QString siteMapXml(const SiteMapSettings& settings) const;
+
 	const ISpecificLoader* robotsTxtLoader() const noexcept;
 	const ISpecificLoader* xmlSitemapLoader() const noexcept;
 	const WebHostInfo* webHostInfo() const;
 	std::optional<QByteArray> currentCrawledSiteIPv4() const;
+
 	QString currentCrawledUrl() const noexcept;
 	bool readyForRefreshPage() const noexcept;
 	ICrawlerOptions* options() const noexcept;
+
 	Session::State sessionState() const noexcept;
 	QString sessionName() const noexcept;
 	bool hasCustomSessionName() const noexcept;

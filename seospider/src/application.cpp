@@ -142,6 +142,12 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 
 void Application::startCrawler()
 {
+	if (crawler()->state() == Crawler::StateWorking ||
+		crawler()->state() == Crawler::StatePreChecking)
+	{
+		return;
+	}
+
 	QAction* action = qobject_cast<QAction*>(sender());
 	ASSERT(action && "This method must be called using QAction");
 

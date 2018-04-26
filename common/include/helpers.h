@@ -8,7 +8,6 @@ class Helpers
 public:
 	static int pointsToPixels(double sizeInPoints, double dpi = 0);
 	static double pixelsToPoints(int sizeInPixels, double dpi = 0);
-	static void moveWidgetToHostCenter(QWidget* widget, QWidget* host = nullptr);
 
 	static std::vector<QMetaMethod> allUserSignals(QObject* qobject, QVector<QByteArray> exclude = QVector<QByteArray>());
 	static void connectMetaMethods(QObject* sender, QMetaMethod senderMethod, QObject* receiver, QMetaMethod receiverMethod);
