@@ -95,6 +95,18 @@ void MainWindow::openFile()
 
 void MainWindow::closeFile()
 {
+	if (theApp->crawler()->state() != Crawler::StatePending &&
+		theApp->crawler()->state() != Crawler::StatePause)
+	{
+		theApp->mainWindow()->showMessageBoxDialog(
+			tr("Warning"),
+			tr("Cannot close file while crawler is working."),
+			MessageBoxDialog::WarningIcon
+		);
+
+		return;
+	}
+
 	if (theApp->crawler()->sessionState() == Session::StateUnsaved)
 	{
 		int answer = theApp->mainWindow()->showMessageBoxDialog(

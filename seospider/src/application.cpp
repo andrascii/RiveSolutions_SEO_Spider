@@ -459,11 +459,14 @@ void Application::attachPreferencesToCrawlerOptions()
 		const int fromPauseTimerValue = value ? preferences()->fromPauseTimer() : -1;
 		const int toPauseTimerValue = value ? preferences()->toPauseTimer() : -1;
 
+		DEBUGLOG << "from pause:" << fromPauseTimerValue;
+		DEBUGLOG << "to pause:" << toPauseTimerValue;
+
 		crawler()->options()->setPauseRangeFrom(fromPauseTimerValue);
 		crawler()->options()->setPauseRangeTo(toPauseTimerValue);
 	};
 
-	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, userAgentMapper));
+	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, usePauseMapper));
 }
 
 void Application::openFileThroughCmd(const QString& path)
