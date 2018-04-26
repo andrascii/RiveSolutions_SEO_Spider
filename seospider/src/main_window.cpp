@@ -38,6 +38,8 @@
 namespace SeoSpider
 {
 
+using namespace CrawlerEngine;
+
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_initialized(false)
@@ -47,8 +49,8 @@ MainWindow::MainWindow(QWidget* parent)
 		theApp->softwareBrandingOptions()->productName()
 	);
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
+	VERIFY(connect(theApp->crawler(), &Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
+	VERIFY(connect(theApp->crawler(), &Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
 }
 
 void MainWindow::showSitemapCreatorDialog()
@@ -283,11 +285,26 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction, QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
-		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
+	const auto settingsActionsAvailability = [](int state)
+	{
+		const auto actionsAvailabilitySetter = [](bool value)
+		{
+			ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(value);
+			ActionRegistry::instance().globalAction(s_openFileAction)->setEnabled(value);
+		};
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished,
-		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(true); }));
+		if (state == Crawler::StatePreChecking || state == Crawler::StateWorking)
+		{
+			actionsAvailabilitySetter(false);
+		}
+
+		if (state == Crawler::StatePending)
+		{
+			actionsAvailabilitySetter(true);
+		}
+	};
+
+	VERIFY(connect(theApp->crawler(), &Crawler::stateChanged, this, settingsActionsAvailability));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), 
 		this, SLOT(showApplicationSettingsDialog())));
@@ -477,9 +494,11 @@ void MainWindow::onCrawlerSessionCreated()
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
 	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
+	QAction* saveFileAsAction = actionRegistry.globalAction(s_saveFileAsAction);
 	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
 
 	saveFileAction->setEnabled(true);
+	saveFileAsAction->setEnabled(true);
 	closeFileAction->setEnabled(true);
 }
 
@@ -488,9 +507,11 @@ void MainWindow::onCrawlerSessionDestroyed()
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
 	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
+	QAction* saveFileAsAction = actionRegistry.globalAction(s_saveFileAsAction);
 	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
 
 	saveFileAction->setEnabled(false);
+	saveFileAsAction->setEnabled(false);
 	closeFileAction->setEnabled(false);
 }
 
