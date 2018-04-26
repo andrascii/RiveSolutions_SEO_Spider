@@ -23,6 +23,7 @@
 #include "helpers.h"
 #include "filter_widget.h"
 #include "project_file_state_widget.h"
+#include "constants.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -83,7 +84,7 @@ void MainWindow::saveFileAs()
 
 void MainWindow::openFile()
 {
-	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*.sxr"));
+	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*" + c_projectFileExtension));
 
 	if (path.isEmpty())
 	{
@@ -460,7 +461,7 @@ QString MainWindow::getSaveFilePath() const
 		return QString();
 	}
 
-	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath(), QString("*.sxr"));
+	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath(), QString("*" + c_projectFileExtension));
 
 	return path;
 }

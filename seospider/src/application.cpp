@@ -6,6 +6,7 @@
 #include "crawler.h"
 #include "sequenced_data_collection.h"
 #include "constants.h"
+#include "common_constants.h"
 #include "preferences.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
@@ -39,7 +40,7 @@ Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_commandLineHandler(new CommandLineHandler(argc, argv))
 	, m_preferences(new Preferences(this, this))
-	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
+	, m_crawler(new CrawlerEngine::Crawler(c_optimalParserThreadsCount, this))
 	, m_sequencedDataCollection(nullptr)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdapterFactory)
@@ -471,7 +472,7 @@ void Application::attachPreferencesToCrawlerOptions()
 
 void Application::openFileThroughCmd(const QString& path)
 {
-	if (!path.endsWith(".sxr"))
+	if (!path.endsWith(c_projectFileExtension))
 	{
 		ERRLOG << path;
 
