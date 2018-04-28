@@ -23,6 +23,7 @@
 #include "helpers.h"
 #include "filter_widget.h"
 #include "project_file_state_widget.h"
+#include "constants.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -37,6 +38,8 @@
 namespace SeoSpider
 {
 
+using namespace CrawlerEngine;
+
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_initialized(false)
@@ -46,8 +49,8 @@ MainWindow::MainWindow(QWidget* parent)
 		theApp->softwareBrandingOptions()->productName()
 	);
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
+	VERIFY(connect(theApp->crawler(), &Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
+	VERIFY(connect(theApp->crawler(), &Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
 }
 
 void MainWindow::showSitemapCreatorDialog()
@@ -83,7 +86,18 @@ void MainWindow::saveFileAs()
 
 void MainWindow::openFile()
 {
-	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*.sxr"));
+	if (theApp->crawler()->hasSession())
+	{
+		ServiceLocator::instance()->service<INotificationService>()->error(
+			tr("Open file error"),
+			tr("Unable to open the project file until the existing one is closed!\n"
+				"So first you need to press Ctrl+W and then open file.")
+		);
+
+		return;
+	}
+
+	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*" + c_projectFileExtension));
 
 	if (path.isEmpty())
 	{
@@ -93,18 +107,35 @@ void MainWindow::openFile()
 	theApp->crawler()->loadFromFile(path);
 }
 
-void MainWindow::openFileThroughCmd(const QString& path)
+void MainWindow::closeFile()
 {
-	if(!path.endsWith(".sxr"))
+	if (theApp->crawler()->state() != Crawler::StatePending &&
+		theApp->crawler()->state() != Crawler::StatePause)
 	{
-		ERRLOG << path;
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+		theApp->mainWindow()->showMessageBoxDialog(
+			tr("Warning"),
+			tr("Cannot close file while crawler is working."),
+			MessageBoxDialog::WarningIcon
+		);
 
 		return;
 	}
 
-	theApp->crawler()->loadFromFile(path);
+	if (theApp->crawler()->sessionState() == Session::StateUnsaved)
+	{
+		int answer = theApp->mainWindow()->showMessageBoxDialog(
+			tr("Warning"), 
+			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?"),
+			MessageBoxDialog::WarningIcon
+		);
+
+		if (answer == QDialog::Rejected)
+		{
+			return;
+		}
+	}
+
+	theApp->crawler()->closeFile();
 }
 
 void MainWindow::saveFileAndClearData()
@@ -166,7 +197,7 @@ void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageNam
 	applicationSettingsWidget->deleteLater();
 }
 
-void MainWindow::showMessageBoxDialog(const QString& title,
+int MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
 	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons)
@@ -176,7 +207,9 @@ void MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setIcon(icon);
 	messageBoxDialog->setStandardButtons(buttons);
-	messageBoxDialog->show();
+	messageBoxDialog->exec();
+
+	return messageBoxDialog->result();
 }
 
 void MainWindow::showContentFramePage(PageFactory::Page page)
@@ -263,11 +296,26 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction, QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted,
-		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setDisabled(true); }));
+	const auto settingsActionsAvailability = [](int state)
+	{
+		const auto actionsAvailabilitySetter = [](bool value)
+		{
+			ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(value);
+			ActionRegistry::instance().globalAction(s_openFileAction)->setEnabled(value);
+		};
 
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished,
-		this, [] { ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(true); }));
+		if (state == Crawler::StatePreChecking || state == Crawler::StateWorking)
+		{
+			actionsAvailabilitySetter(false);
+		}
+
+		if (state == Crawler::StatePending)
+		{
+			actionsAvailabilitySetter(true);
+		}
+	};
+
+	VERIFY(connect(theApp->crawler(), &Crawler::stateChanged, this, settingsActionsAvailability));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), 
 		this, SLOT(showApplicationSettingsDialog())));
@@ -309,6 +357,8 @@ void MainWindow::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
 	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(quit())));
 
+	actionRegistry.globalAction(s_exitProgramAction)->setShortcut(QKeySequence("Alt+F4"));
+
 	// sitemap actions
 	actionRegistry.addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
 
@@ -316,7 +366,13 @@ void MainWindow::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAction), SIGNAL(triggered()), this, SLOT(saveFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
+	VERIFY(connect(actionRegistry.globalAction(s_closeFileAction), SIGNAL(triggered()), this, SLOT(closeFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
+
+	actionRegistry.globalAction(s_openFileAction)->setShortcut(QKeySequence("Ctrl+O"));
+	actionRegistry.globalAction(s_saveFileAction)->setShortcut(QKeySequence("Ctrl+S"));
+	actionRegistry.globalAction(s_saveFileAsAction)->setShortcut(QKeySequence("Ctrl+Alt+S"));
+	actionRegistry.globalAction(s_closeFileAction)->setShortcut(QKeySequence("Ctrl+W")); 
 
 	createHeaderPageDependentActions();
 }
@@ -433,7 +489,7 @@ QString MainWindow::getSaveFilePath() const
 		return QString();
 	}
 
-	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath(), QString("*.sxr"));
+	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath(), QString("*" + c_projectFileExtension));
 
 	return path;
 }
@@ -449,9 +505,11 @@ void MainWindow::onCrawlerSessionCreated()
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
 	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
+	QAction* saveFileAsAction = actionRegistry.globalAction(s_saveFileAsAction);
 	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
 
 	saveFileAction->setEnabled(true);
+	saveFileAsAction->setEnabled(true);
 	closeFileAction->setEnabled(true);
 }
 
@@ -460,9 +518,11 @@ void MainWindow::onCrawlerSessionDestroyed()
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
 	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
+	QAction* saveFileAsAction = actionRegistry.globalAction(s_saveFileAsAction);
 	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
 
 	saveFileAction->setEnabled(false);
+	saveFileAsAction->setEnabled(false);
 	closeFileAction->setEnabled(false);
 }
 

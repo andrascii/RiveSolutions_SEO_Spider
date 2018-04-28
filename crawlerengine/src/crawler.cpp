@@ -72,8 +72,6 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 
 	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
 	VERIFY(connect(m_xmlSitemapLoader->qobject(), SIGNAL(ready()), this, SLOT(onCrawlingSessionInitialized()), Qt::QueuedConnection));
-	VERIFY(connect(m_robotsTxtLoader->qobject(), SIGNAL(ready()), this, SLOT(onSessionChanged())));
-	VERIFY(connect(m_xmlSitemapLoader->qobject(), SIGNAL(ready()), this, SLOT(onSessionChanged())));
 
 	m_crawlingStateTimer->setInterval(100);
 	m_serializatonReadyStateCheckerTimer->setInterval(200);
@@ -104,6 +102,8 @@ void Crawler::initialize()
 	m_downloader = createDownloader();
 	m_webHostInfo = new WebHostInfo(this, createWebScreenShot(), m_xmlSitemapLoader, m_robotsTxtLoader);
 
+	VERIFY(connect(m_webHostInfo, &WebHostInfo::webScreenshotLoaded, this, &Crawler::onSessionChanged));
+
 	ThreadManager& threadManager = ThreadManager::instance();
 
 	threadManager.moveObjectToThread(m_downloader->qobject(), "DownloaderThread");
@@ -126,7 +126,7 @@ void Crawler::initialize()
 
 void Crawler::clearData()
 {
-	ASSERT(m_state == StatePending || m_state == StatePause);
+	ASSERT(state() == StatePending || state() == StatePause);
 
 	clearDataImpl();
 
@@ -176,6 +176,8 @@ CrawlerEngine::Crawler::State Crawler::state() const noexcept
 
 void Crawler::startCrawling()
 {
+	setState(StatePreChecking);
+
 	if (!m_options->pauseRangeFrom() && !m_options->pauseRangeTo())
 	{
 		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
@@ -191,7 +193,7 @@ void Crawler::startCrawling()
 
 void Crawler::stopCrawling()
 {
-	if (m_state == StatePause || m_state == StatePending)
+	if (state() == StatePause || state() == StatePending)
 	{
 		return;
 	}
@@ -250,25 +252,25 @@ void Crawler::onAboutCrawlingState()
 
 void Crawler::waitSerializationReadyState()
 {
-	const CrawlerSharedState* state = CrawlerSharedState::instance();
+	const CrawlerSharedState* crawlerSharedState = CrawlerSharedState::instance();
 
 	ASSERT(m_session);
 
 	const bool isReadyForSerialization = 
-		(m_state == StateSerializaton || m_state == StateDeserializaton) && !m_session->name().isEmpty() &&
-		state->workersProcessedLinksCount() == state->modelControllerCrawledLinksCount() &&
-		state->modelControllerAcceptedLinksCount() == state->sequencedDataCollectionLinksCount();
+		(state() == StateSerializaton || state() == StateDeserializaton) && !m_session->name().isEmpty() &&
+		crawlerSharedState->workersProcessedLinksCount() == crawlerSharedState->modelControllerCrawledLinksCount() &&
+		crawlerSharedState->modelControllerAcceptedLinksCount() == crawlerSharedState->sequencedDataCollectionLinksCount();
 
 	if (!isReadyForSerialization)
 	{
 		return;
 	}
 
-	if (m_state == StateSerializaton)
+	if (state() == StateSerializaton)
 	{
 		onSerializationReadyToBeStarted();
 	}
-	else if (m_state == StateDeserializaton)
+	else if (state() == StateDeserializaton)
 	{
 		onDeserializationReadyToBeStarted();
 	}
@@ -310,7 +312,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
-		VERIFY(QMetaObject::invokeMethod(worker, "startWithOptions", Qt::QueuedConnection, 
+		VERIFY(QMetaObject::invokeMethod(worker, "start", Qt::QueuedConnection, 
 			Q_ARG(const CrawlerOptionsData&, m_options->data()), Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content()))));
 	}
 
@@ -333,7 +335,10 @@ void Crawler::onSessionChanged()
 
 void Crawler::onCrawlerOptionsSomethingChanged()
 {
-	ASSERT(m_state == StatePending || m_state == StateDeserializaton);
+	ASSERT(state() == StatePending || 
+		state() == StateDeserializaton ||
+		state() == StatePreChecking
+	);
 
 	onSessionChanged();
 }
@@ -374,7 +379,9 @@ void Crawler::initializeCrawlingSession()
 	}
 
 	GetHostInfoRequest request(m_options->startCrawlingPage());
+
 	m_hostInfoRequester.reset(request, this, &Crawler::onHostInfoResponse);
+
 	m_hostInfoRequester->start();
 }
 
@@ -387,13 +394,19 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 	ASSERT(result);
 
 	m_state = m_prevState;
+
 	emit stateChanged(m_state);
 
 	if (!result->error.isEmpty())
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
+
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
-		serviceLocator->service<INotificationService>()->error(tr("Save file error"), tr("The operation has not been successful."));
+
+		serviceLocator->service<INotificationService>()->error(
+			tr("Save file error"), 
+			tr("The operation has not been successful.")
+		);
 	}
 
 	m_serializationRequester.reset();
@@ -647,6 +660,30 @@ void Crawler::saveFile()
 	waitSerializationReadyState();
 }
 
+void Crawler::closeFile()
+{
+	ASSERT(QThread::currentThread() == thread());
+
+	if (!m_session)
+	{
+		return;
+	}
+
+	if (state() == StateWorking)
+	{
+		ServiceLocator::instance()->service<INotificationService>()->warning(
+			tr("Closing file error"),
+			tr("Can't close project file while crawler is working!")
+		);
+
+		return;
+	}
+
+	clearData();
+
+	m_session->deleteLater();
+}
+
 void Crawler::saveToFile(const QString& fileName)
 {
 	ASSERT(m_session);
@@ -674,7 +711,10 @@ void Crawler::loadFromFile(const QString& fileName)
 
 	if (state() == Crawler::StateWorking)
 	{
-		serviceLocator->service<INotificationService>()->error(tr("Error"), tr("Cannot open a document while crawler is working!"));
+		serviceLocator->service<INotificationService>()->error(
+			tr("Error"), 
+			tr("Cannot open a document while crawler is working!")
+		);
 
 		return;
 	}
@@ -684,6 +724,7 @@ void Crawler::loadFromFile(const QString& fileName)
 	setState(StateDeserializaton);
 
 	m_serializatonReadyStateCheckerTimer->start();
+
 	waitSerializationReadyState();
 }
 
@@ -774,7 +815,7 @@ Session::State Crawler::sessionState() const noexcept
 	return m_session->state();
 }
 
-QString Crawler::sessionName() const noexcept
+QString Crawler::sessionName() const
 {
 	if (!m_session)
 	{
@@ -792,6 +833,12 @@ bool Crawler::hasCustomSessionName() const noexcept
 	}
 
 	return m_session->hasCustomName();
+}
+
+
+bool Crawler::hasSession() const noexcept
+{
+	return m_session;
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

@@ -2,13 +2,13 @@
 <Package>
     <DisplayName>Seo Spider</DisplayName>
     <Description>Install Seo Spider.</Description>
-    <Version>${MAJOR}.${MINOR}.${MAINTANCE}</Version>
+    <Version>${MAJOR}.${MINOR}.${MAINTENANCE}</Version>
     <ReleaseDate>2018-01-20</ReleaseDate>
 	<Default>true</Default>
-	<!--<Script>installscript.qs</Script>-->
+	<Script>installscript.qs</Script>
 	<UserInterfaces>
-		<UserInterface>registerfilecheckboxform.ui</UserInterface>
-		<UserInterface>openfilecheckboxform.ui</UserInterface>
+		<UserInterface>createdesktopiconcheckboxform.ui</UserInterface>
+		<UserInterface>createmenudircheckboxform.ui</UserInterface>
 	</UserInterfaces>
     <Licenses>
         <License name="Rive Solutions License" file="license.txt" />

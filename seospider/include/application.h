@@ -74,13 +74,11 @@ private slots:
 	void onAboutUpdateExists();
 	void onAboutUseCustomUserAgentChanged();
 
-	void onAboutUpdateDownloadingFinished(const QString& filepath);
-	void onAboutUpdateAlreadyDownloaded(const QString& filepath);
-
 private:
 	void initialize();
 	void startInstaller(const QString& filepath);
 	void attachPreferencesToCrawlerOptions();
+	void openFileThroughCmd(const QString& path);
 
 private:
 	std::unique_ptr<CommandLineHandler> m_commandLineHandler;

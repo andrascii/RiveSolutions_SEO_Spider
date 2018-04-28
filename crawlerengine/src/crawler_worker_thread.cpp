@@ -63,7 +63,7 @@ std::optional<CrawlerRequest> CrawlerWorkerThread::pendingUrl() const
 
 	try
 	{
-		std::future<std::optional<CrawlerRequest>> future = m_pageAcceptedAfterStop.pageAcceptedPromise.get_future();
+		std::future<std::optional<CrawlerRequest>> future = m_pageAcceptedAfterStop.pagesAcceptedPromise.get_future();
 		std::future_status status = future.wait_for(0ms);
 
 		if (status == std::future_status::ready)
@@ -79,7 +79,7 @@ std::optional<CrawlerRequest> CrawlerWorkerThread::pendingUrl() const
 	return value;
 }
 
-void CrawlerWorkerThread::startWithOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
+void CrawlerWorkerThread::start(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
 
@@ -103,7 +103,7 @@ void CrawlerWorkerThread::stop()
 		{
 			DEBUGLOG << "Set value to promise";
 
-			m_pageAcceptedAfterStop.pageAcceptedPromise.set_value(prepareUnloadedPage());
+			m_pageAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}
 		catch (const std::future_error& error)
 		{
@@ -171,8 +171,8 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 
 void CrawlerWorkerThread::onCrawlerClearData()
 {
-	m_pageAcceptedAfterStop.page.clear();
-	m_pageAcceptedAfterStop.pageAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
+	m_pageAcceptedAfterStop.pages.clear();
+	m_pageAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
 	m_downloadRequester.reset();
 	m_currentRequest.reset();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);
@@ -364,50 +364,15 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 	ASSERT(m_currentRequest.has_value());
 	const DownloadRequestType requestType = m_currentRequest.value().requestType;
 
-	const auto emitBlockedByRobotsTxtPages = [this](const LinkInfo& linkInfo)
-	{
-		if (m_uniqueLinkStore->addCrawledUrl(linkInfo.url, DownloadRequestType::RequestTypeGet))
-		{
-			ParsedPagePtr page(new ParsedPage);
-
-			page->url = linkInfo.url;
-			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
-			page->resourceType = ResourceType::ResourceHtml;
-
-			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead });
-		}
-	};
-
 	bool checkUrl = false;
 	
 	fixDDOSGuardRedirectsIfNeeded(pages);
 
 	for (ParsedPagePtr& page : pages)
 	{
-		const bool urlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
+		const bool isUrlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
-		if (urlAdded && !m_isRunning && !m_reloadPage)
-		{
-			m_pageAcceptedAfterStop.page.push_back(std::make_pair(m_currentRequest.value().requestType, page));
-
-			continue;
-		}
-
-		if (urlAdded)
-		{
-			std::vector<LinkInfo> blockedByRobotsTxtLinks = schedulePageResourcesLoading(page);
-
-			const std::pair<bool, MetaRobotsFlags> isPageBlockedByMetaRobots = m_optionsLinkFilter->isPageBlockedByMetaRobots(page);
-
-			if (isPageBlockedByMetaRobots.first)
-			{
-				page->isBlockedByMetaRobots = isPageBlockedByMetaRobots.second.testFlag(MetaRobotsItem::MetaRobotsNoIndex);
-			}
-
-			onPageParsed(WorkerResult{ page, m_reloadPage, requestType });
-
-			std::for_each(blockedByRobotsTxtLinks.begin(), blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
-		}
+		handlePage(page, isUrlAdded, requestType);
 
 		checkUrl = true;
 	}
@@ -418,7 +383,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 		try
 		{
-			m_pageAcceptedAfterStop.pageAcceptedPromise.set_value(prepareUnloadedPage());
+			m_pageAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}
 		catch (const std::future_error& error)
 		{
@@ -438,17 +403,17 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 void CrawlerWorkerThread::onStart()
 {
-	if (!m_pageAcceptedAfterStop.page.empty())
+	if (!m_pageAcceptedAfterStop.pages.empty())
 	{
-		for (const PageAcceptedAfterStop::PageRequestPair& pair : m_pageAcceptedAfterStop.page)
+		for (const auto& pair : m_pageAcceptedAfterStop.pages)
 		{
 			onPageParsed(WorkerResult{ pair.second, false, pair.first });
 		}
 	}
 
-	m_pageAcceptedAfterStop.page.clear();
+	m_pageAcceptedAfterStop.pages.clear();
 
-	m_pageAcceptedAfterStop.pageAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
+	m_pageAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
 }
 
 void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcept
@@ -496,14 +461,54 @@ std::optional<CrawlerRequest> CrawlerWorkerThread::prepareUnloadedPage() const
 {
 	CrawlerRequest result;
 	
-	if (!m_pageAcceptedAfterStop.page.empty())
+	if (!m_pageAcceptedAfterStop.pages.empty())
 	{
-		PageAcceptedAfterStop::PageRequestPair pair = m_pageAcceptedAfterStop.page.front();
+		const auto pair = m_pageAcceptedAfterStop.pages.front();
 
 		return CrawlerRequest{ pair.second->url, pair.first };
 	}
 
 	return std::nullopt;
+}
+
+void CrawlerWorkerThread::handlePage(ParsedPagePtr& page, bool isStoredInCrawledUrls, DownloadRequestType requestType)
+{
+	const auto emitBlockedByRobotsTxtPages = [this](const LinkInfo& linkInfo)
+	{
+		if (m_uniqueLinkStore->addCrawledUrl(linkInfo.url, DownloadRequestType::RequestTypeGet))
+		{
+			ParsedPagePtr page(new ParsedPage);
+
+			page->url = linkInfo.url;
+			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
+			page->resourceType = ResourceType::ResourceHtml;
+
+			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead });
+		}
+	};
+
+	if (isStoredInCrawledUrls && !m_isRunning && !m_reloadPage)
+	{
+		m_pageAcceptedAfterStop.pages.push_back(std::make_pair(m_currentRequest.value().requestType, page));
+
+		return;
+	}
+
+	if (isStoredInCrawledUrls)
+	{
+		std::vector<LinkInfo> blockedByRobotsTxtLinks = schedulePageResourcesLoading(page);
+
+		const std::pair<bool, MetaRobotsFlags> isPageBlockedByMetaRobots = m_optionsLinkFilter->isPageBlockedByMetaRobots(page);
+
+		if (isPageBlockedByMetaRobots.first)
+		{
+			page->isBlockedByMetaRobots = isPageBlockedByMetaRobots.second.testFlag(MetaRobotsItem::MetaRobotsNoIndex);
+		}
+
+		onPageParsed(WorkerResult{ page, m_reloadPage, requestType });
+
+		std::for_each(blockedByRobotsTxtLinks.begin(), blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
+	}
 }
 
 }

@@ -6,6 +6,7 @@
 #include "crawler.h"
 #include "sequenced_data_collection.h"
 #include "constants.h"
+#include "common_constants.h"
 #include "preferences.h"
 #include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
@@ -39,7 +40,7 @@ Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_commandLineHandler(new CommandLineHandler(argc, argv))
 	, m_preferences(new Preferences(this, this))
-	, m_crawler(new CrawlerEngine::Crawler(Common::g_optimalParserThreadsCount, this))
+	, m_crawler(new CrawlerEngine::Crawler(c_optimalParserThreadsCount, this))
 	, m_sequencedDataCollection(nullptr)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdapterFactory)
@@ -66,7 +67,7 @@ Application::Application(int& argc, char** argv)
 
 	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
 	{
-		mainWindow()->openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
+		openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
 	}
 
 	m_updateChecker->check();
@@ -141,6 +142,12 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 
 void Application::startCrawler()
 {
+	if (crawler()->state() == Crawler::StateWorking ||
+		crawler()->state() == Crawler::StatePreChecking)
+	{
+		return;
+	}
+
 	QAction* action = qobject_cast<QAction*>(sender());
 	ASSERT(action && "This method must be called using QAction");
 
@@ -281,8 +288,6 @@ void Application::onAboutUpdateExists()
 {
 	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(mainWindow());
 
-	VERIFY(connect(updatesLoaderDialog, &UpdateLoaderDialog::updateDownloaded, this, &Application::onAboutUpdateDownloadingFinished));
-
 	updatesLoaderDialog->show();
 }
 
@@ -301,40 +306,6 @@ void Application::onAboutUseCustomUserAgentChanged()
 	{
 		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
 	}
-}
-
-void Application::onAboutUpdateDownloadingFinished(const QString& filepath)
-{
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(tr("Updates successful downloaded"));
-	messageBoxDialog->setMessage(tr("Updates successful downloaded. Do you want to install the updates now?"));
-	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
-	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-	messageBoxDialog->exec();
-
-	if (messageBoxDialog->result() != QDialog::Accepted)
-	{
-		return;
-	}
-
-	startInstaller(filepath);
-}
-
-void Application::onAboutUpdateAlreadyDownloaded(const QString& filepath)
-{
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(tr("New updates already downloaded"));
-	messageBoxDialog->setMessage(tr("New updates already downloaded. Do you want to install the updates now?"));
-	messageBoxDialog->setIcon(MessageBoxDialog::InformationIcon);
-	messageBoxDialog->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-	messageBoxDialog->exec();
-
-	if (messageBoxDialog->result() != QDialog::Accepted)
-	{
-		return;
-	}
-
-	startInstaller(filepath);
 }
 
 void Application::registerServices()
@@ -495,11 +466,29 @@ void Application::attachPreferencesToCrawlerOptions()
 		const int fromPauseTimerValue = value ? preferences()->fromPauseTimer() : -1;
 		const int toPauseTimerValue = value ? preferences()->toPauseTimer() : -1;
 
+		DEBUGLOG << "from pause:" << fromPauseTimerValue;
+		DEBUGLOG << "to pause:" << toPauseTimerValue;
+
 		crawler()->options()->setPauseRangeFrom(fromPauseTimerValue);
 		crawler()->options()->setPauseRangeTo(toPauseTimerValue);
 	};
 
-	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, userAgentMapper));
+	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, usePauseMapper));
+}
+
+void Application::openFileThroughCmd(const QString& path)
+{
+	if (!path.endsWith(c_projectFileExtension))
+	{
+		ERRLOG << path;
+
+		mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
+			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+
+		return;
+	}
+
+	crawler()->loadFromFile(path);
 }
 
 void Application::initializeStyleSheet() noexcept

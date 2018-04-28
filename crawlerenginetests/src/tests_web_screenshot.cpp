@@ -23,4 +23,9 @@ void TestsWebScreenShot::setResult(const QPixmap& pixmap)
 	Q_UNUSED(pixmap);
 }
 
+QObject* TestsWebScreenShot::qobject() const noexcept
+{
+	return const_cast<TestsWebScreenShot* const>(this);
+}
+
 }

@@ -1,6 +1,6 @@
 #include "thread_message_dispatcher.h"
 #include "common_macro_helpers.h"
-#include "constants.h"
+#include "common_constants.h"
 #include "requester.h"
 #include "handler_registry.h"
 
@@ -115,7 +115,7 @@ Q_SLOT void ThreadMessageDispatcher::shutdown()
 
 void ThreadMessageDispatcher::startDispatchTimer()
 {
-	m_dispatchTimerId = startTimer(Common::g_minimumRecommendedTimerResolution);
+	m_dispatchTimerId = startTimer(Common::c_minimumRecommendedTimerResolution);
 	ASSERT(m_dispatchTimerId);
 }
 

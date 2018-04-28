@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_updates_loader_dialog_content.h"
+#include "ui_update_loader_dialog_content.h"
 #include "requester_wrapper.h"
 #include "url.h"
 
@@ -23,14 +23,14 @@ protected:
 	virtual void showEvent(QShowEvent* event) override;
 
 private slots:
-	void onDownloadNowClicked();
-	void onDownloadLaterClicked();
+	void onUpdateNowClicked();
+	void onUpdateLaterClicked();
 
 private:
 	void closeDialog() noexcept;
 
 private:
-	Ui_UpdatesLoaderDialogContent* m_ui;
+	Ui_UpdateLoaderDialogContent* m_ui;
 };
 
 }

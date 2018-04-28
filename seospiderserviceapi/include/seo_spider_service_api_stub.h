@@ -8,22 +8,22 @@ namespace SeoSpiderServiceApi
 class SeoSpiderServiceApiStub : public ISeoSpiderServiceApi
 {
 public:
-	virtual void init() noexcept override
+	virtual void init() override
 	{
 	}
-	virtual void free() const noexcept override
+	virtual void free() const override
 	{
 	}
-	virtual void setProcessSignaledState() const noexcept override
+	virtual void setProcessSignaledState() const override
 	{
 	}
-	virtual void setProcessExceptionHandlers() const noexcept override
+	virtual void setProcessExceptionHandlers() const override
 	{
 	}
-	virtual void setThreadExceptionHandlers() const noexcept override
+	virtual void setThreadExceptionHandlers() const override
 	{
 	}
-	virtual void doAssert(const char*, int, const char*, const char*) const noexcept override
+	virtual void doAssert(const char*, int, const char*, const char*) const override
 	{
 	}
 	virtual void traceLogMessage(

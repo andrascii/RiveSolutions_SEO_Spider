@@ -1,6 +1,7 @@
 #include "project_file_state_widget.h"
 #include "application.h"
 #include "crawler.h"
+#include "constants.h"
 
 namespace SeoSpider
 {
@@ -32,7 +33,7 @@ void ProjectFileStateWidget::setProjectFileName(const QString& name)
 
 	QFileInfo fileInfo(name);
 
-	m_projectFileName = fileInfo.baseName() + ".sxr";
+	m_projectFileName = fileInfo.baseName() + c_projectFileExtension;
 
 	setNameHelper();
 }

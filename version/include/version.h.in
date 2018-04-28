@@ -3,7 +3,8 @@
 
 #define MAJOR ${MAJOR}
 #define MINOR ${MINOR}
-#define MAINTANCE ${MAINTANCE}
+#define MAINTENANCE ${MAINTENANCE}
+#define VERSION_STR "${MAJOR}.${MINOR}.${MAINTENANCE}"
 
-#endif VERSION_H
+#endif
  

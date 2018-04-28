@@ -14,16 +14,19 @@ WebScreenShot::WebScreenShot(QObject* parent)
 
 void WebScreenShot::load(const QUrl& url)
 {
-	if(url == m_result.first)
+	if(url == m_result.first || m_webView)
 	{
 		return;
 	}
 
-	ASSERT(!m_webView);
 	m_webView.reset(new QWebEngineView);
+
 	VERIFY(connect(m_webView->page(), &QWebEnginePage::loadFinished, this, &WebScreenShot::onLoadingDone));
+
 	m_webView->resize(1280, 1024);
+
 	m_result = qMakePair(url, QPixmap(m_webView->size()));
+
 	m_webView->load(url);
 }
 
@@ -35,6 +38,11 @@ const QPixmap& WebScreenShot::result() const
 void WebScreenShot::setResult(const QPixmap& pixmap)
 {
 	m_result.second = pixmap;
+}
+
+QObject* WebScreenShot::qobject() const noexcept
+{
+	return const_cast<WebScreenShot* const>(this);
 }
 
 void WebScreenShot::onLoadingDone(bool ok)
