@@ -115,6 +115,26 @@ void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
 	}
 }
 
+std::function<bool(Common::SeverityLevel)> createLogFilter()
+{
+	return [](Common::SeverityLevel level)
+	{
+#ifdef QT_DEBUG
+		level;
+
+		return true;
+#else
+		if (level == Common::SeverityLevel::TraceLevel ||
+			level == Common::SeverityLevel::DebugLevel)
+		{
+			return false;
+		}
+
+		return true;
+#endif
+	};
+}
+
 }
 
 namespace SeoSpiderServiceApi
@@ -128,10 +148,12 @@ SeoSpiderServiceApiImpl::SeoSpiderServiceApiImpl()
 {
 	ASSERT(s_self == nullptr && "Double instances detected!");
 
+	m_logFilter.setFilter(createLogFilter());
+
 	s_self = this;
 }
 
-void SeoSpiderServiceApiImpl::init() noexcept
+void SeoSpiderServiceApiImpl::init()
 {
 	if (m_initialized)
 	{
@@ -171,23 +193,26 @@ void SeoSpiderServiceApiImpl::init() noexcept
 	}
 }
 
-void SeoSpiderServiceApiImpl::free() const noexcept
+void SeoSpiderServiceApiImpl::free() const
 {
 	if (!m_initialized)
 	{
 		return;
 	}
+
+	CloseHandle(m_processInfo.hThread);
+	CloseHandle(m_processInfo.hProcess);
 }
 
-void SeoSpiderServiceApiImpl::setProcessSignaledState() const noexcept
+void SeoSpiderServiceApiImpl::setProcessSignaledState() const
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard lock(m_mutex);
 	m_crashEventSignaledObject->setSignaledState();
 	m_pipeServer->closeConnection();
 	Sleep(INFINITE);
 }
 
-void SeoSpiderServiceApiImpl::setProcessExceptionHandlers() const noexcept
+void SeoSpiderServiceApiImpl::setProcessExceptionHandlers() const
 {
 	SetUnhandledExceptionFilter(SeoSpiderServiceApiImpl::sehHandler);
 	lockExceptionFilter();
@@ -202,7 +227,7 @@ void SeoSpiderServiceApiImpl::setProcessExceptionHandlers() const noexcept
 	std::signal(SIGTERM, SeoSpiderServiceApiImpl::sigTermHandler);
 }
 
-void SeoSpiderServiceApiImpl::setThreadExceptionHandlers() const noexcept
+void SeoSpiderServiceApiImpl::setThreadExceptionHandlers() const
 {
 	typedef void(*SignalHandlerFunctionType)(int);
 
@@ -214,7 +239,7 @@ void SeoSpiderServiceApiImpl::setThreadExceptionHandlers() const noexcept
 	std::signal(SIGSEGV, SeoSpiderServiceApiImpl::sigSegvHandler);
 }
 
-void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression) const noexcept
+void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression) const
 {
 #ifndef PRODUCTION
 	debugReport(file, line, function, expression);
@@ -228,7 +253,12 @@ void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* f
 #endif
 }
 
-void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const noexcept
+void SeoSpiderServiceApiImpl::setLogFilter(const std::function<bool(Common::SeverityLevel)>& filter)
+{
+	m_logFilter.setFilter(filter);
+}
+
+void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const
 {
 	m_pipeServer->logMessage(
 		Common::PipeMessage::Assert,
@@ -276,6 +306,11 @@ void SeoSpiderServiceApiImpl::traceLogMessage(
 	const char* function,
 	const char* message)
 {
+	if (!m_logFilter.isAvailable(Common::SeverityLevel::TraceLevel))
+	{
+		return;
+	}
+
 	m_pipeServer->logMessage(type, Common::SeverityLevel::TraceLevel, threadId, line, file, function, message);
 }
 
@@ -287,6 +322,11 @@ void SeoSpiderServiceApiImpl::debugLogMessage(
 	const char* function,
 	const char* message)
 {
+	if (!m_logFilter.isAvailable(Common::SeverityLevel::DebugLevel))
+	{
+		return;
+	}
+
 	m_pipeServer->logMessage(type, Common::SeverityLevel::DebugLevel, threadId, line, file, function, message);
 }
 
@@ -298,6 +338,11 @@ void SeoSpiderServiceApiImpl::infoLogMessage(
 	const char* function,
 	const char* message)
 {
+	if (!m_logFilter.isAvailable(Common::SeverityLevel::InfoLevel))
+	{
+		return;
+	}
+
 	m_pipeServer->logMessage(type, Common::SeverityLevel::InfoLevel, threadId, line, file, function, message);
 }
 
@@ -309,6 +354,11 @@ void SeoSpiderServiceApiImpl::warningLogMessage(
 	const char* function,
 	const char* message)
 {
+	if (!m_logFilter.isAvailable(Common::SeverityLevel::WarningLevel))
+	{
+		return;
+	}
+
 	m_pipeServer->logMessage(type, Common::SeverityLevel::WarningLevel, threadId, line, file, function, message);
 }
 
@@ -320,6 +370,11 @@ void SeoSpiderServiceApiImpl::errorLogMessage(
 	const char* function,
 	const char* message)
 {
+	if (!m_logFilter.isAvailable(Common::SeverityLevel::ErrorLevel))
+	{
+		return;
+	}
+
 	m_pipeServer->logMessage(type, Common::SeverityLevel::ErrorLevel, threadId, line, file, function, message);
 }
 
