@@ -808,7 +808,7 @@ Session::State Crawler::sessionState() const noexcept
 	return m_session->state();
 }
 
-QString Crawler::sessionName() const noexcept
+QString Crawler::sessionName() const
 {
 	if (!m_session)
 	{
@@ -826,6 +826,12 @@ bool Crawler::hasCustomSessionName() const noexcept
 	}
 
 	return m_session->hasCustomName();
+}
+
+
+bool Crawler::hasSession() const noexcept
+{
+	return m_session;
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

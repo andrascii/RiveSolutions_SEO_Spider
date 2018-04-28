@@ -86,6 +86,17 @@ void MainWindow::saveFileAs()
 
 void MainWindow::openFile()
 {
+	if (theApp->crawler()->hasSession())
+	{
+		ServiceLocator::instance()->service<INotificationService>()->error(
+			tr("Open file error"),
+			tr("Unable to open the project file until the existing one is closed!\n"
+				"So first you need to press Ctrl+W and then open file.")
+		);
+
+		return;
+	}
+
 	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*" + c_projectFileExtension));
 
 	if (path.isEmpty())

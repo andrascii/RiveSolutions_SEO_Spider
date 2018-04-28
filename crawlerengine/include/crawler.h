@@ -90,8 +90,9 @@ public:
 	ICrawlerOptions* options() const noexcept;
 
 	Session::State sessionState() const noexcept;
-	QString sessionName() const noexcept;
+	QString sessionName() const;
 	bool hasCustomSessionName() const noexcept;
+	bool hasSession() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress progress);
