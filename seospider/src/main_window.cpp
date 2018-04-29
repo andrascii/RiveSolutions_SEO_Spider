@@ -251,6 +251,40 @@ void MainWindow::changeEvent(QEvent* event)
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+	const QString warningMessage("Crawler is working. Do you want to close application anyway?");
+	const QString descriptionMessage("If no then it will be collapsed to the system tray.");
+
+	if (theApp->crawler()->state() == Crawler::StateWorking)
+	{
+		Qt::WindowStates states = windowState();
+
+		int answer = -1;
+
+		if (states.testFlag(Qt::WindowMinimized))
+		{
+			answer = showMessageBoxDialog("Closing application",
+				warningMessage,
+				MessageBoxDialog::WarningIcon,
+				QDialogButtonBox::Yes | QDialogButtonBox::No);
+		}
+		else
+		{
+			answer = showMessageBoxDialog("Closing application",
+				warningMessage % "\n" % descriptionMessage,
+				MessageBoxDialog::WarningIcon,
+				QDialogButtonBox::Yes | QDialogButtonBox::No);
+		}
+		
+		ASSERT(answer == QDialog::Accepted || answer == QDialog::Rejected);
+
+		if (answer == QDialog::Rejected)
+		{
+			setWindowState(Qt::WindowMinimized);
+			event->ignore();
+			return;
+		}
+	}
+
 	const SoftwareBranding* softwareBrandingOptions = theApp->softwareBrandingOptions();
 	QSettings settings(softwareBrandingOptions->organizationName(), softwareBrandingOptions->productName());
 
@@ -374,7 +408,7 @@ void MainWindow::createActions()
 	VERIFY(connect(actionRegistry.globalAction(s_startCrawlerAction), SIGNAL(triggered()), theApp, SLOT(startCrawler())));
 	VERIFY(connect(actionRegistry.globalAction(s_stopCrawlerAction), SIGNAL(triggered()), theApp, SLOT(stopCrawler())));
 	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
-	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(quit())));
+	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(closeAllWindows())));
 
 	actionRegistry.globalAction(s_exitProgramAction)->setShortcut(QKeySequence("Alt+F4"));
 
