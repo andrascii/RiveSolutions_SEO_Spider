@@ -538,6 +538,13 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	std::vector<CrawlerRequest> pendingUrls;
 
+	
+
+	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
+	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
+
+	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
+
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
 		std::optional<CrawlerRequest> workerPendingUrl = worker->pendingUrl();
@@ -547,13 +554,13 @@ void Crawler::onSerializationReadyToBeStarted()
 			continue;
 		}
 
-		pendingUrls.push_back(workerPendingUrl.value());
+		CrawlerRequest& request = workerPendingUrl.value();
+
+		if (!m_uniqueLinkStore->hasCrawledRequest(request))
+		{
+			pendingUrls.push_back(workerPendingUrl.value());
+		}
 	}
-
-	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
-	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
-
-	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
 
 	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>(std::move(pages), 
 		std::move(crawledUrls), std::move(pendingUrls), m_options->data(), m_webHostInfo->allData());

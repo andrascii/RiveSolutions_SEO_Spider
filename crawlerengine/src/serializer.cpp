@@ -111,6 +111,17 @@ namespace
 	const QString siteImageKey = QLatin1String("siteImage");
 
 
+	QString urlToString(const Url& url)
+	{
+		//return url.toDisplayString(QUrl::FullyEncoded).toUtf8().toBase64();
+		return url.toDisplayString(QUrl::FullyEncoded);
+	}
+
+	Url urlFromString(const QString& urlStr)
+	{
+		//return Url(QString::fromUtf8(QByteArray::fromBase64(urlStr.toUtf8())));
+		return Url(urlStr);
+	}
 }
 
 class ParsedPageSerializer
@@ -128,9 +139,9 @@ public:
 	{
 		writer.writeStartElement(pageKey);
 
-		writer.writeTextElement(urlKey, m_page->url.toDisplayString());
-		writer.writeTextElement(redirectedUrlKey, m_page->redirectedUrl.toDisplayString());
-		writer.writeTextElement(canonicalUrlKey, m_page->canonicalUrl.toDisplayString());
+		writer.writeTextElement(urlKey, urlToString(m_page->url));
+		writer.writeTextElement(redirectedUrlKey, urlToString(m_page->redirectedUrl));
+		writer.writeTextElement(canonicalUrlKey, urlToString(m_page->canonicalUrl));
 		writer.writeTextElement(titleKey, m_page->title);
 		writer.writeTextElement(contentTypeKey, m_page->contentType);
 		writer.writeTextElement(metaRefreshKey, m_page->metaRefresh);
@@ -183,7 +194,7 @@ public:
 			{
 				writer.writeStartElement(linksOnThisPageItemKey);
 				
-				writer.writeAttribute(urlKey, link.url.toDisplayString());
+				writer.writeAttribute(urlKey, urlToString(link.url));
 				writer.writeAttribute(linkParameterKey, QString::number(static_cast<int>(link.linkParameter)));
 				writer.writeAttribute(resourceSourceKey, QString::number(static_cast<int>(link.resourceSource)));
 				writer.writeAttribute(altOrTitleKey, link.altOrTitle);
@@ -285,15 +296,15 @@ public:
 
 			if (reader.qualifiedName() == urlKey)
 			{
-				m_page->url = Url(reader.readElementText());
+				m_page->url = urlFromString(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == redirectedUrlKey)
 			{
-				m_page->redirectedUrl = Url(reader.readElementText());
+				m_page->redirectedUrl = urlFromString(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == canonicalUrlKey)
 			{
-				m_page->canonicalUrl = Url(reader.readElementText());
+				m_page->canonicalUrl = urlFromString(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == titleKey)
 			{
@@ -446,7 +457,7 @@ public:
 					{
 						QXmlStreamAttributes attributes = reader.attributes();
 
-						const Url url = Url(attributes.value(urlKey).toString());
+						const Url url = urlFromString(attributes.value(urlKey).toString());
 						const LinkParameter linkParameter = static_cast<LinkParameter>(attributes.value(linkParameterKey).toInt());
 						const ResourceSource source = static_cast<ResourceSource>(attributes.value(resourceSourceKey).toInt());
 						const QString altOrTitle = attributes.value(altOrTitleKey).toString();
@@ -666,7 +677,7 @@ void Serializer::saveLinksToXmlStream(QXmlStreamWriter& writer, const std::vecto
 	for (const CrawlerRequest& link : links)
 	{
 		writer.writeStartElement(urlItemKey);
-		writer.writeAttribute(urlKey, link.url.toDisplayString());
+		writer.writeAttribute(urlKey, urlToString(link.url));
 		writer.writeAttribute(requestTypeKey, QString::number(static_cast<int>(link.requestType)));
 		writer.writeEndElement();
 	}
@@ -680,7 +691,7 @@ void Serializer::loadLinksFromXmlStream(QXmlStreamReader& reader, std::vector<Cr
 		if (reader.isStartElement() && reader.qualifiedName() == urlItemKey)
 		{
 			QXmlStreamAttributes attributes = reader.attributes();
-			const Url url = Url(attributes.value(urlKey).toString());
+			const Url url = urlFromString(attributes.value(urlKey).toString());
 			const DownloadRequestType requestType = static_cast<DownloadRequestType>(attributes.value(requestTypeKey).toInt());
 
 			links.push_back(CrawlerRequest{ url, requestType });
@@ -692,7 +703,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 {
 	writer.writeStartElement(optionsKey);
 
-	writer.writeTextElement(hostKey, m_crawlerOptionsData.startCrawlingPage.toDisplayString());
+	writer.writeTextElement(hostKey, urlToString(m_crawlerOptionsData.startCrawlingPage));
 	writer.writeTextElement(limitMaxUrlLengthKey, QString::number(m_crawlerOptionsData.limitMaxUrlLength));
 	writer.writeTextElement(limitSearchTotalKey, QString::number(m_crawlerOptionsData.limitSearchTotal));
 	writer.writeTextElement(limitTimeoutKey, QString::number(m_crawlerOptionsData.limitTimeout));
@@ -733,7 +744,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	));
 
 	writer.writeTextElement(robotsTxtContentKey, QString::fromUtf8(m_webHostInfoData.robotstxtContent));
-	writer.writeTextElement(robotsTxtUrlKey, m_webHostInfoData.robotstxtUrl.toDisplayString());
+	writer.writeTextElement(robotsTxtUrlKey, urlToString(m_webHostInfoData.robotstxtUrl));
 
 	writer.writeTextElement(siteMapValidKey, QString::number(
 		m_webHostInfoData.isSiteMapValid != std::nullopt
@@ -742,7 +753,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	));
 
 	writer.writeTextElement(siteMapContentKey, QString::fromUtf8(m_webHostInfoData.siteMapContent));
-	writer.writeTextElement(siteMapUrlKey, m_webHostInfoData.siteMapUrl.toDisplayString());
+	writer.writeTextElement(siteMapUrlKey, urlToString(m_webHostInfoData.siteMapUrl));
 
 	writer.writeTextElement(is404PagesSetupRightKey, QString::number(
 		m_webHostInfoData.is404PagesSetupRight != std::nullopt
@@ -771,7 +782,7 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 
 		if (reader.qualifiedName() == hostKey)
 		{
-			m_crawlerOptionsData.startCrawlingPage = Url(reader.readElementText());
+			m_crawlerOptionsData.startCrawlingPage = urlFromString(reader.readElementText());
 		}
 		else if (reader.qualifiedName() == limitMaxUrlLengthKey)
 		{
@@ -907,7 +918,7 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		}
 		else if (reader.qualifiedName() == robotsTxtUrlKey)
 		{
-			m_webHostInfoData.robotstxtUrl = Url(reader.readElementText());
+			m_webHostInfoData.robotstxtUrl = urlFromString(reader.readElementText());
 		}
 		else if (reader.qualifiedName() == siteMapValidKey)
 		{
@@ -919,7 +930,7 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		}
 		else if (reader.qualifiedName() == siteMapUrlKey)
 		{
-			m_webHostInfoData.siteMapUrl = Url(reader.readElementText());
+			m_webHostInfoData.siteMapUrl = urlFromString(reader.readElementText());
 		}
 		else if (reader.qualifiedName() == is404PagesSetupRightKey)
 		{
