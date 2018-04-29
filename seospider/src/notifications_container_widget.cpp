@@ -1,6 +1,8 @@
 #include "notifications_container_widget.h"
 #include "notification_popup_frame.h"
 #include "service_locator.h"
+#include "application.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {
@@ -15,7 +17,7 @@ NotificationsContainerWidget::NotificationsContainerWidget(QWidget* parent)
 	, m_active(false)
 	, m_notificationPopup(nullptr)
 	, m_currentNotificationIndex(0)
-	, m_timeOut(5000)
+	, m_timeout(5000)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->addWidget(m_label);
@@ -85,7 +87,7 @@ void NotificationsContainerWidget::onNotificationAdded(int status, const QString
 
 	m_active = true;
 	changeState();
-	QTimer::singleShot(m_timeOut, this, [&](){m_active = false; changeState();});
+	QTimer::singleShot(m_timeout, this, [&](){m_active = false; changeState();});
 }
 
 void NotificationsContainerWidget::changeState()
@@ -109,20 +111,48 @@ void NotificationsContainerWidget::changeState()
 			m_notificationPopup->close();
 		}
 
-		m_notificationPopup = new NotificationPopupFrame(
-			static_cast<NotificationPopupFrame::Status>(currentNotificationData.status),
-			currentNotificationData.header, 
-			currentNotificationData.message, 
-			this
-		);
+		if (theApp->mainWindow()->isMinimized())
+		{
+			QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::NoIcon;
 
-		VERIFY(connect(m_notificationPopup, &NotificationPopupFrame::destroyed, 
-			this, &NotificationsContainerWidget::onNotificationFrameDestroyed));
+			switch (currentNotificationData.status)
+			{
+				case NotificationPopupFrame::Info:
+				{
+					msgIcon = QSystemTrayIcon::Information;
+					break;
+				}
+				case NotificationPopupFrame::Warning:
+				{
+					msgIcon = QSystemTrayIcon::Warning;
+					break;
+				}
+				case NotificationPopupFrame::Error:
+				{
+					msgIcon = QSystemTrayIcon::Critical;
+					break;
+				}
+			}
 
-		m_notificationPopup->setAttribute(Qt::WA_DeleteOnClose, true);
+			theApp->mainWindow()->systemTrayIcon()->showMessage(currentNotificationData.header, currentNotificationData.message, msgIcon, m_timeout);
+		}
+		else
+		{
+			m_notificationPopup = new NotificationPopupFrame(
+				static_cast<NotificationPopupFrame::Status>(currentNotificationData.status),
+				currentNotificationData.header,
+				currentNotificationData.message,
+				this
+			);
 
-		m_notificationPopup->show();
-		m_label->setPixmap(m_activePixmap);
+			VERIFY(connect(m_notificationPopup, &NotificationPopupFrame::destroyed,
+				this, &NotificationsContainerWidget::onNotificationFrameDestroyed));
+
+			m_notificationPopup->setAttribute(Qt::WA_DeleteOnClose, true);
+
+			m_notificationPopup->show();
+			m_label->setPixmap(m_activePixmap);
+		}
 	}
 	else
 	{

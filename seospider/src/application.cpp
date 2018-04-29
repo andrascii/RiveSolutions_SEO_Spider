@@ -130,7 +130,7 @@ QStringList Application::allKeys() const
 	return settings()->allKeys();
 }
 
-HeaderControlsContainer* Application::headerControlsContainer() const
+HeaderControlsContainer* Application::headerControlsContainer() const noexcept
 {
 	return m_headerControlsContainer.get();
 }
@@ -152,7 +152,15 @@ void Application::startCrawler()
 	ASSERT(action && "This method must be called using QAction");
 
 	const QVariant data = action->data();
-	ASSERT(data.isValid() && "No data passed");
+
+	if (!data.isValid())
+	{
+		mainWindow()->showMessageBoxDialog("Error", "Please make sure that you entered a URL.",
+			MessageBoxDialog::CriticalErrorIcon,
+			QDialogButtonBox::Ok);
+
+		return;
+	}
 
 	const Url url = data.toUrl();
 
@@ -168,7 +176,7 @@ void Application::startCrawler()
 		return;
 	}
 
-	if (!internetAvailable())
+	if (!isInternetAvailable())
 	{
 		mainWindow()->showMessageBoxDialog("Internet connection problem!",
 			"It seems that you have some problems with internet connection.\n"
@@ -203,7 +211,7 @@ void Application::showMainWindow()
 {
 	SplashScreen::finish();
 
-	m_mainWindow->showMaximized();
+	m_mainWindow->show();
 
 	emit mainWindowShown();
 }
@@ -491,7 +499,7 @@ void Application::openFileThroughCmd(const QString& path)
 	crawler()->loadFromFile(path);
 }
 
-void Application::initializeStyleSheet() noexcept
+void Application::initializeStyleSheet()
 {
 	SplashScreen::showMessage("Initializing stylesheets...");
 	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
@@ -503,7 +511,7 @@ void Application::initializeStyleSheet() noexcept
 	}
 }
 
-bool Application::internetAvailable() const noexcept
+bool Application::isInternetAvailable() const noexcept
 {
 	return m_internetNotificationManager->internetAvailable();
 }

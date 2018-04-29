@@ -23,7 +23,7 @@ InternetConnectionNotificationManager::~InternetConnectionNotificationManager()
 	InternetConnectionInspector::term();
 }
 
-bool InternetConnectionNotificationManager::internetAvailable() const
+bool InternetConnectionNotificationManager::internetAvailable() const noexcept
 {
 	return m_internetAvailable;
 }

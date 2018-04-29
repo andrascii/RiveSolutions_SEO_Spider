@@ -6,9 +6,10 @@ namespace SeoSpider
 class SoftwareBranding
 {
 public:
-	QString organizationName() const noexcept;
-	QString productName() const noexcept;
-	QPixmap brandingLogoImage() const noexcept;
+	QString organizationName() const;
+	QString productName() const;
+	QPixmap brandingLogoImage() const;
+	QIcon applicationIcon() const;
 };
 
 }

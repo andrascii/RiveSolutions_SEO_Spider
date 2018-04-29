@@ -24,6 +24,7 @@
 #include "filter_widget.h"
 #include "project_file_state_widget.h"
 #include "constants.h"
+#include "version.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -43,6 +44,7 @@ using namespace CrawlerEngine;
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_initialized(false)
+	, m_systemTrayIcon(new QSystemTrayIcon(theApp->softwareBrandingOptions()->applicationIcon(), this))
 {
 	setWindowTitle(
 		theApp->softwareBrandingOptions()->organizationName() + QStringLiteral(" ") +
@@ -51,6 +53,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
+	VERIFY(connect(systemTrayIcon(), &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated));
 }
 
 void MainWindow::showSitemapCreatorDialog()
@@ -246,6 +249,17 @@ void MainWindow::changeEvent(QEvent* event)
 	}
 }
 
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+	const SoftwareBranding* softwareBrandingOptions = theApp->softwareBrandingOptions();
+	QSettings settings(softwareBrandingOptions->organizationName(), softwareBrandingOptions->productName());
+
+	settings.setValue("geometry", saveGeometry());
+	settings.setValue("windowState", saveState(MAINTENANCE));
+
+	QMainWindow::closeEvent(event);
+}
+
 void MainWindow::init()
 {
 	DEBUG_ASSERT(!m_initialized);
@@ -253,7 +267,7 @@ void MainWindow::init()
 	createActions();
 	createAndSetCentralWidget();
 	registerSettingsPages();
-	setWindowIcon(QIcon(QStringLiteral(":/images/robot.ico")));
+	setWindowIcon(theApp->softwareBrandingOptions()->applicationIcon());
 	setMenuBar(new MenuBar(this));
 
 	QStatusBar* statusBar = new QStatusBar(this);
@@ -262,6 +276,11 @@ void MainWindow::init()
 	statusBar->addWidget(new ProjectFileStateWidget(statusBar));
 	statusBar->addWidget(new CrawlerStatusInfo(statusBar));
 	setStatusBar(statusBar);
+
+	loadState();
+
+	initSystemTrayIconMenu();
+	systemTrayIcon()->show();
 
 	m_initialized = true;
 }
@@ -494,10 +513,30 @@ QString MainWindow::getSaveFilePath() const
 	return path;
 }
 
+void MainWindow::loadState()
+{
+	const SoftwareBranding* softwareBrandingOptions = theApp->softwareBrandingOptions();
+	QSettings settings(softwareBrandingOptions->organizationName(), softwareBrandingOptions->productName());
+
+	restoreGeometry(settings.value("geometry").toByteArray());
+	restoreState(settings.value("windowState").toByteArray());
+}
+
 void MainWindow::clearDataOnSerializationDone()
 {
 	VERIFY(disconnect(theApp->crawler(), &Crawler::serializationProcessDone, this, &MainWindow::clearDataOnSerializationDone));
 	theApp->crawler()->clearData();
+}
+
+void MainWindow::initSystemTrayIconMenu()
+{
+	QMenu* menu = new QMenu;
+	menu->addAction(ActionRegistry::instance().globalAction(s_startCrawlerAction));
+	menu->addAction(ActionRegistry::instance().globalAction(s_stopCrawlerAction));
+	menu->addSeparator();
+	menu->addAction(ActionRegistry::instance().globalAction(s_openSettingsAction));
+	menu->addAction(ActionRegistry::instance().globalAction(s_exitProgramAction));
+	systemTrayIcon()->setContextMenu(menu);
 }
 
 void MainWindow::onCrawlerSessionCreated()
@@ -526,9 +565,26 @@ void MainWindow::onCrawlerSessionDestroyed()
 	closeFileAction->setEnabled(false);
 }
 
+void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+	if (reason == QSystemTrayIcon::DoubleClick)
+	{
+		Qt::WindowStates states = windowState();
+		states.setFlag(Qt::WindowMinimized, false);
+
+		setWindowState(states);
+		activateWindow();
+	}
+}
+
 ContentFrame* MainWindow::contentFrame() const noexcept
 {
 	return m_contentFrame;
+}
+
+QSystemTrayIcon* MainWindow::systemTrayIcon() const noexcept
+{
+	return m_systemTrayIcon;
 }
 
 }

@@ -61,6 +61,7 @@
 #include <QtGlobal>
 #include <QWebEngineView>
 #include <QPrinter>
+#include <QSystemTrayIcon>
 
 //
 // C/C++

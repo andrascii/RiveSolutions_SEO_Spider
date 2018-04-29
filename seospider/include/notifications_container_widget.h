@@ -47,7 +47,7 @@ private:
 	std::vector<NotificationData> m_notifications;
 	std::size_t m_currentNotificationIndex;
 
-	int m_timeOut;
+	int m_timeout;
 };
 
 }

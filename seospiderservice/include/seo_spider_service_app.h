@@ -40,6 +40,8 @@ private:
 	static QString logFilePath();
 
 	Q_SIGNAL void closeServiceApp() const;
+	Q_SLOT void onServiceClose();
+
 	Q_SLOT void onSendingFinished(const QString& mailId, int result, const QByteArray& log);
 	Q_SLOT void onCompressingFinished();
 

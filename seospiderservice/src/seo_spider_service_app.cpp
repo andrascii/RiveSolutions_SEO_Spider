@@ -31,7 +31,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 
 	Q_ASSERT(processIdConvertion && "Process ID must be passed!");
 
-	VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::quit, Qt::QueuedConnection));
+	VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::onServiceClose, Qt::QueuedConnection));
 	VERIFY(connect(m_zippo, &Zippo::finished, this, &SeoSpiderServiceApp::onCompressingFinished, Qt::QueuedConnection));
 
 	//m_crashEventSignaledObject->open(m_eventName.constData());
@@ -301,6 +301,18 @@ void SeoSpiderServiceApp::onCompressingFinished()
 	{
 		sendReports();
 	}
+}
+
+void SeoSpiderServiceApp::onServiceClose()
+{
+	if (m_loggerDebugWindow)
+	{
+		m_loggerDebugWindow->close();
+
+		processEvents();
+	}
+
+	quit();
 }
 
 }

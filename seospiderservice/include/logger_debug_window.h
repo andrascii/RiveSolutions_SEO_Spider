@@ -12,7 +12,7 @@ struct PipeMessage;
 namespace SeoSpiderService
 {
 
-class LoggerDebugWindow : public QWidget, protected Ui_LoggerDebugWindow
+class LoggerDebugWindow : public QMainWindow
 {
 	Q_OBJECT
 
@@ -24,8 +24,13 @@ public:
 
 	Q_SLOT void onMessageReceived(const Common::PipeMessage& message);
 
+protected:
+	virtual void closeEvent(QCloseEvent* event) override;
+
 private:
 	Q_SLOT void levelChanged();
+
+	void loadState();
 
 private:
 	enum
@@ -34,6 +39,8 @@ private:
 	};
 
 	std::map<int, std::vector<ColoredString>> m_messages;
+
+	Ui_LoggerDebugWindow* m_ui;
 };
 
 }
