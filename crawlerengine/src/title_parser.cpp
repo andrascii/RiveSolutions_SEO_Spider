@@ -13,7 +13,7 @@ void TitleParser::parse(GumboOutput* output, const ResponseHeaders& headers, Par
 		return;
 	}
 
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -23,14 +23,14 @@ void TitleParser::parse(GumboOutput* output, const ResponseHeaders& headers, Par
 		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
-		QByteArray titleValue = GumboParsingHelpers::nodeText(node);
-		titleValue = titleValue.trimmed().remove('\n', Qt::CaseInsensitive);
+		QString titleValue = GumboParsingHelpers::nodeText(node);
+		titleValue = titleValue.trimmed().remove("\n");
 		return titleValue;
 	};
 
-	std::vector<QByteArray> titles = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QString> titles = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
 
 	if (!titles.empty())
 	{

@@ -184,7 +184,8 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 	
-	fixParsedPageResourceType(workerResult.incomingPage());
+	// временно убрано
+	//fixParsedPageResourceType(workerResult.incomingPage());
 
 	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType, m_crawlerOptionsData))
 	{
@@ -633,28 +634,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		return;
 	}
 
-	const ParsedPagePtr pendingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
-
-	if (workerResult.incomingPage()->isBlockedByMetaRobots)
-	{
-		const ParsedPagePtr blockedPage = pendingPage ? pendingPage : workerResult.incomingPage();
-
-		if (!data()->isParsedPageExists(blockedPage, StorageType::BlockedForSEIndexingStorageType))
-		{
-			data()->addParsedPage(blockedPage, StorageType::BlockedForSEIndexingStorageType);
-		}
-
-		data()->addParsedPage(blockedPage, StorageType::BlockedByXRobotsTagStorageType);
-	}
-
-	if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::BlockedForSEIndexingStorageType))
-	{
-		workerResult.incomingPage() = mergePage(pendingPage, workerResult.incomingPage());
-	}
-	else
-	{
-		workerResult.incomingPage() = mergePageAsBlockedForIndexing(pendingPage, workerResult.incomingPage());
-	}
+	mergePageHelper(workerResult);
 
 	const StorageType storage = workerResult.incomingPage()->isThisExternalPage ?
 		StorageType::ExternalHtmlResourcesStorageType : StorageType::HtmlResourcesStorageType;
@@ -718,9 +698,11 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		}
 
 		ParsedPagePtr resourcePage = parsedPageFromResource(resource);
-		ParsedPagePtr existingResource = resourcePage->url.compare(workerResult.incomingPage()->url)
-			? workerResult.incomingPage()
-			: data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
+
+		ParsedPagePtr existingResource = 
+			resourcePage->url.compare(workerResult.incomingPage()->url) ? 
+			workerResult.incomingPage() :
+			data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
 
 		if (!existingResource)
 		{
@@ -796,7 +778,6 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		{ ResourceType::ResourceFlash, StorageType::ExternalFlashResourcesStorageType },
 		{ ResourceType::ResourceVideo, StorageType::ExternalVideoResourcesStorageType },
 		{ ResourceType::ResourceOther, StorageType::ExternalOtherResourcesStorageType },
-
 	};
 
 	const bool http = PageParserHelpers::isHttpOrHttpsScheme(workerResult.incomingPage()->url);
@@ -825,6 +806,8 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 	{
 		const QString resourceDisplayUrl = resource.link.url.toDisplayString();
 
+		/// есть ли смысл от resourceType после того как был убран fixParsedPageResourceType?
+		/// если нет, то надо удалить!
 		const ResourceType resourceType = workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml ? 
 			workerResult.incomingPage()->resourceType :
 			resource.resourceType;
@@ -879,10 +862,11 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		{
 			newOrExistingResource = temporaryResource;
 
-			if (httpResource &&
-					(!resource.restrictions || 
-					resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules) ||
-					resource.link.resourceSource == ResourceSource::SourceRedirectUrl))
+			const bool noRestrictionsOrSourceRedirect = !resource.restrictions ||
+				resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules) ||
+				resource.link.resourceSource == ResourceSource::SourceRedirectUrl;
+
+			if (httpResource && noRestrictionsOrSourceRedirect)
 			{
 				// what if this resource is unavailable not from all pages?
 				data()->addParsedPage(newOrExistingResource, StorageType::PendingResourcesStorageType);
@@ -893,11 +877,11 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			}
 		}
 
-		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url, resource.link.linkParameter,
-			resource.link.resourceSource, resource.link.altOrTitle });
+		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url,
+			resource.link.linkParameter, resource.link.resourceSource, resource.link.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
-			resource.link.resourceSource, resource.link.altOrTitle });
+		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url,
+			resource.link.linkParameter, resource.link.resourceSource, resource.link.altOrTitle });
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
 
@@ -1177,6 +1161,32 @@ QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFr
 	}
 
 	return result;
+}
+
+void ModelController::mergePageHelper(WorkerResult& workerResult)
+{
+	const ParsedPagePtr pendingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
+
+	if (workerResult.incomingPage()->isBlockedByMetaRobots)
+	{
+		const ParsedPagePtr blockedPage = pendingPage ? pendingPage : workerResult.incomingPage();
+
+		if (!data()->isParsedPageExists(blockedPage, StorageType::BlockedForSEIndexingStorageType))
+		{
+			data()->addParsedPage(blockedPage, StorageType::BlockedForSEIndexingStorageType);
+		}
+
+		data()->addParsedPage(blockedPage, StorageType::BlockedByXRobotsTagStorageType);
+	}
+
+	if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::BlockedForSEIndexingStorageType))
+	{
+		workerResult.incomingPage() = mergePage(pendingPage, workerResult.incomingPage());
+	}
+	else
+	{
+		workerResult.incomingPage() = mergePageAsBlockedForIndexing(pendingPage, workerResult.incomingPage());
+	}
 }
 
 }

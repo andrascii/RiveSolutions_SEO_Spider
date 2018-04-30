@@ -63,7 +63,7 @@ std::optional<CrawlerRequest> CrawlerWorkerThread::pendingUrl() const
 
 	try
 	{
-		std::future<std::optional<CrawlerRequest>> future = m_pageAcceptedAfterStop.pagesAcceptedPromise.get_future();
+		std::future<std::optional<CrawlerRequest>> future = m_pagesAcceptedAfterStop.pagesAcceptedPromise.get_future();
 		std::future_status status = future.wait_for(0ms);
 
 		if (status == std::future_status::ready)
@@ -103,7 +103,7 @@ void CrawlerWorkerThread::stop()
 		{
 			DEBUGLOG << "Set value to promise";
 
-			m_pageAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
+			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}
 		catch (const std::future_error& error)
 		{
@@ -171,8 +171,8 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 
 void CrawlerWorkerThread::onCrawlerClearData()
 {
-	m_pageAcceptedAfterStop.pages.clear();
-	m_pageAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
+	m_pagesAcceptedAfterStop.pages.clear();
+	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
 	m_downloadRequester.reset();
 	m_currentRequest.reset();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);
@@ -383,7 +383,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 		try
 		{
-			m_pageAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
+			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 		}
 		catch (const std::future_error& error)
 		{
@@ -403,17 +403,17 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 
 void CrawlerWorkerThread::onStart()
 {
-	if (!m_pageAcceptedAfterStop.pages.empty())
+	if (!m_pagesAcceptedAfterStop.pages.empty())
 	{
-		for (const auto& pair : m_pageAcceptedAfterStop.pages)
+		for (const auto& pair : m_pagesAcceptedAfterStop.pages)
 		{
 			onPageParsed(WorkerResult{ pair.second, false, pair.first });
 		}
 	}
 
-	m_pageAcceptedAfterStop.pages.clear();
+	m_pagesAcceptedAfterStop.pages.clear();
 
-	m_pageAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
+	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
 }
 
 void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcept
@@ -461,9 +461,9 @@ std::optional<CrawlerRequest> CrawlerWorkerThread::prepareUnloadedPage() const
 {
 	CrawlerRequest result;
 	
-	if (!m_pageAcceptedAfterStop.pages.empty())
+	if (!m_pagesAcceptedAfterStop.pages.empty())
 	{
-		const auto pair = m_pageAcceptedAfterStop.pages.front();
+		const auto pair = m_pagesAcceptedAfterStop.pages.front();
 
 		return CrawlerRequest{ pair.second->url, pair.first };
 	}
@@ -489,7 +489,7 @@ void CrawlerWorkerThread::handlePage(ParsedPagePtr& page, bool isStoredInCrawled
 
 	if (isStoredInCrawledUrls && !m_isRunning && !m_reloadPage)
 	{
-		m_pageAcceptedAfterStop.pages.push_back(std::make_pair(m_currentRequest.value().requestType, page));
+		m_pagesAcceptedAfterStop.pages.push_back(std::make_pair(m_currentRequest.value().requestType, page));
 
 		return;
 	}

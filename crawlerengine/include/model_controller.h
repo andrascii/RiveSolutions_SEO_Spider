@@ -52,6 +52,8 @@ private:
 	ParsedPagePtr parsedPageFromResource(const ResourceOnPage& resource) const;
 	QSet<StorageType> addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource);
 
+	void mergePageHelper(WorkerResult& workerResult);
+
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptionsData m_crawlerOptionsData;
