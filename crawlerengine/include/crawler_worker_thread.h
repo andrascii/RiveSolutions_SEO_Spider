@@ -32,6 +32,8 @@ public slots:
 
 	void stop();
 
+	void reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
+
 private slots:
 	void extractUrlAndDownload();
 

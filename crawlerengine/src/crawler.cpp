@@ -62,6 +62,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
 	VERIFY(connect(m_serializatonReadyStateCheckerTimer, &QTimer::timeout, this, &Crawler::waitSerializationReadyState));
+	VERIFY(connect(this, &Crawler::deserializationProcessDone, this, &Crawler::onDeserializationProcessDone));
 
 	Common::Helpers::connectSignalsToMetaMethod(
 		options()->qobject(),
@@ -351,6 +352,17 @@ void Crawler::onSequencedDataCollectionChanged()
 	}
 
 	onSessionChanged();
+}
+
+void Crawler::onDeserializationProcessDone()
+{
+	for (auto worker : m_workers)
+	{
+		VERIFY(QMetaObject::invokeMethod(worker, "reinitOptions", Qt::BlockingQueuedConnection, 
+			Q_ARG(const CrawlerOptionsData&, m_options->data()), 
+			Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content())))
+		);
+	}
 }
 
 void Crawler::onRefreshPageDone()

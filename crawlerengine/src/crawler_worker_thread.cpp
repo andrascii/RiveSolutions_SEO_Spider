@@ -115,6 +115,14 @@ void CrawlerWorkerThread::stop()
 	}
 }
 
+void CrawlerWorkerThread::reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
+{
+	DEBUG_ASSERT(thread() == QThread::currentThread());
+
+	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
+	m_pageDataCollector->setOptions(optionsData);
+}
+
 void CrawlerWorkerThread::extractUrlAndDownload()
 {
 	if (!m_isRunning && !m_uniqueLinkStore->hasRefreshUrls())
