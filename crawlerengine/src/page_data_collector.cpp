@@ -109,7 +109,7 @@ Url PageDataCollector::resolveRedirectUrl(const Hop& hop)
 	}
 	else
 	{
-		PageParserHelpers::resolveRelativeUrl(hop.redirectUrl(), hop.url());
+		redirectUrl = PageParserHelpers::resolveRelativeUrl(hop.redirectUrl(), hop.url());
 	}
 
 	return redirectUrl;
