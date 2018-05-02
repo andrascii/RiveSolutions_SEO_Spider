@@ -130,7 +130,7 @@ void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePt
 		}
 	};
 
-	const auto binaryRemove = [&](UnorderedStorageType& storage, StorageType type, const std::pair<ItemIterator, ItemIterator>& range)
+	const auto binaryRemove = [&](UnorderedStorageType& storage, StorageType type, std::pair<ItemIterator, ItemIterator>& range)
 	{
 		for (auto it = range.first; it != range.second; ++it)
 		{
@@ -142,7 +142,14 @@ void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePt
 			DEBUG_ASSERT((*it)->storages[static_cast<size_t>(type)]);
 			(*it)->storages[static_cast<size_t>(type)] = false;
 
-			itemDeleter(storage, type, it);
+			if (it == range.first)
+			{
+				range.first = itemDeleter(storage, type, it);
+			}
+			else
+			{
+				itemDeleter(storage, type, it);
+			}
 
 			break;
 		}
@@ -191,7 +198,7 @@ void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePt
 			continue;
 		}
 
-		const std::pair<ItemIterator, ItemIterator> range = storage.equal_range(pageForRefresh);
+		std::pair<ItemIterator, ItemIterator> range = storage.equal_range(pageForRefresh);
 
 		binaryRemove(storage, type, range);
 

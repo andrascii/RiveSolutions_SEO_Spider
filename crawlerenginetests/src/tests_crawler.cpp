@@ -238,12 +238,27 @@ const UnorderedDataCollection* TestsCrawler::unorderedDataCollection() const
 
 void TestsCrawler::saveToFileSafe(const QString& fileName)
 {
-	VERIFY(QMetaObject::invokeMethod(this, "saveToFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
+	if (thread() == QThread::currentThread())
+	{
+		saveToFile(fileName);
+	}
+	else
+	{
+		VERIFY(QMetaObject::invokeMethod(this, "saveToFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
+	}
 }
 
 void TestsCrawler::loadFromFileSafe(const QString & fileName)
 {
-	VERIFY(QMetaObject::invokeMethod(this, "loadFromFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
+	if (thread() == QThread::currentThread())
+	{
+		loadFromFile(fileName);
+	}
+	else
+	{
+		VERIFY(QMetaObject::invokeMethod(this, "closeFile", Qt::BlockingQueuedConnection));
+		VERIFY(QMetaObject::invokeMethod(this, "loadFromFile", Qt::BlockingQueuedConnection, Q_ARG(const QString&, fileName)));
+	}
 }
 
 IDownloader* TestsCrawler::createDownloader() const

@@ -5,6 +5,7 @@ set(SeoSpiderServiceSourcesDir src)
 set(SeoSpiderServiceHeadersDir include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include/)
 set(CommonLibHeadersDir ../common/include)
+set(VersionHeadersDir ../version/include)
 
 aux_source_directory(${SeoSpiderServiceSourcesDir} SeoSpiderServiceSourcesList)
 file(GLOB_RECURSE SeoSpiderServiceHeadersList "include/*.h")
@@ -69,6 +70,7 @@ include_directories(
 	${SeoSpiderServiceHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
 	${CommonLibHeadersDir}
+	${VersionHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}
 )

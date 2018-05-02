@@ -54,15 +54,14 @@ TEST(SerializationTests, PagesSerialization)
 		firstPage->rawResponse = "<html>...ÀÁÂÃÄ</html>";
 		firstPage->pageLevel = 3;
 
-
 		ParsedPage etalon = *firstPage;
-		
+
 		cl->saveToFileSafe(QString("pages.json"));
 		cl->waitForSerializationDone(25);
 		cl->clearReceivedData();
 		cl->loadFromFileSafe(QString("pages.json"));
 		cl->waitForDeserializationDone(25);
-		
+
 		auto deserializedPages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
 
 		EXPECT_EQ(pages.size(), deserializedPages.size());
@@ -166,7 +165,10 @@ TEST(SerializationTests, OptionsSerialization)
 		crawler->clearData();
 		crawler->waitForClearingDataDone(5);
 		crawler->options()->setData(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
-		crawler->startCrawling();
+
+		// test case and crawler works in a different threads
+		VERIFY(QMetaObject::invokeMethod(crawler, "startCrawling", Qt::BlockingQueuedConnection));
+
 		crawler->waitForAllCrawledPageReceived(10);
 		crawler->stopCrawling();
 
@@ -230,7 +232,10 @@ TEST(SerializationTests, HostInfoSerialization)
 		crawler->clearData();
 		crawler->waitForClearingDataDone(5);
 		crawler->options()->setData(TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-5.html") }));
-		crawler->startCrawling();
+
+		// test case and crawler works in a different threads
+		VERIFY(QMetaObject::invokeMethod(crawler, "startCrawling", Qt::BlockingQueuedConnection));
+
 		crawler->waitForAllCrawledPageReceived(10);
 
 		CrawlerOptionsData newOptions;

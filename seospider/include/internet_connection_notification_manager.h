@@ -11,7 +11,7 @@ public:
 	InternetConnectionNotificationManager(QObject* parent);
 	~InternetConnectionNotificationManager();
 
-	bool internetAvailable() const;
+	bool internetAvailable() const noexcept;
 
 signals:
 	void internetConnectionStateChanged();

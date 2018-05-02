@@ -27,6 +27,7 @@ public:
 	void addUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType);
 	void addLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType);
 	bool addCrawledUrl(const Url& url, DownloadRequestType requestType);
+	bool hasCrawledRequest(const CrawlerRequest& request);
 
 	std::vector<CrawlerRequest> crawledUrls() const noexcept;
 	std::vector<CrawlerRequest> pendingUrls() const noexcept;

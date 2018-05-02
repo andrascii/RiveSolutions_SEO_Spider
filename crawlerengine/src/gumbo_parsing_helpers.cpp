@@ -213,7 +213,7 @@ QByteArray GumboParsingHelpers::decodeHtmlPage(const QByteArray& htmlPage, const
 
 std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* node, bool httpOrHttpsOnly) noexcept
 {
-	const auto cond = [httpOrHttpsOnly](const GumboNode* node)
+	const auto predicate = [httpOrHttpsOnly](const GumboNode* node)
 	{
 		bool result = node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -231,7 +231,7 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 		return PageParserHelpers::isHttpOrHttpsScheme(Url(hrefVal));
 	};
 
-	const auto res = [](const GumboNode* node)
+	const auto resultGetter = [](const GumboNode* node)
 	{
 		const GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
 		const GumboAttribute* rel = gumbo_get_attribute(&node->v.element.attributes, "rel");
@@ -245,25 +245,28 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 
 		const QString altOrTitle(nodeText(node));
 		const bool dataResource = QByteArray(href->value).startsWith("data:");
+		const QString hrefValue = QString(href->value).trimmed().remove("\n");
 
-		return LinkInfo{ Url(href->value), linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA };
+		return LinkInfo{ Url(hrefValue), linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA };
 	};
 
-	std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);
-
+	std::vector<LinkInfo> result = findNodesAndGetResult(node, predicate, resultGetter);
 	const LinkInfo canonical = getLinkRelUrl(node, "canonical", ResourceSource::SourceTagLinkRelCanonical);
+
 	if (canonical.resourceSource != ResourceSource::SourceInvalid)
 	{
 		result.push_back(canonical);
 	}
 
 	const LinkInfo next = getLinkRelUrl(node, "next", ResourceSource::SourceTagLinkRelNext);
+
 	if (next.resourceSource != ResourceSource::SourceInvalid)
 	{
 		result.push_back(next);
 	}
 
 	const LinkInfo prev = getLinkRelUrl(node, "prev", ResourceSource::SourceTagLinkRelPrev);
+
 	if (prev.resourceSource != ResourceSource::SourceInvalid)
 	{
 		result.push_back(prev);

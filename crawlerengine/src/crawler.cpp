@@ -62,6 +62,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
 	VERIFY(connect(m_serializatonReadyStateCheckerTimer, &QTimer::timeout, this, &Crawler::waitSerializationReadyState));
+	VERIFY(connect(this, &Crawler::deserializationProcessDone, this, &Crawler::onDeserializationProcessDone));
 
 	Common::Helpers::connectSignalsToMetaMethod(
 		options()->qobject(),
@@ -178,7 +179,7 @@ void Crawler::startCrawling()
 {
 	setState(StatePreChecking);
 
-	if (!m_options->pauseRangeFrom() && !m_options->pauseRangeTo())
+	if (m_options->pauseRangeFrom() == -1 && m_options->pauseRangeTo() == -1)
 	{
 		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
 	}
@@ -351,6 +352,17 @@ void Crawler::onSequencedDataCollectionChanged()
 	}
 
 	onSessionChanged();
+}
+
+void Crawler::onDeserializationProcessDone()
+{
+	for (auto worker : m_workers)
+	{
+		VERIFY(QMetaObject::invokeMethod(worker, "reinitOptions", Qt::BlockingQueuedConnection, 
+			Q_ARG(const CrawlerOptionsData&, m_options->data()), 
+			Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content())))
+		);
+	}
 }
 
 void Crawler::onRefreshPageDone()
@@ -538,6 +550,11 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	std::vector<CrawlerRequest> pendingUrls;
 
+	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
+	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
+
+	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
+
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
 		std::optional<CrawlerRequest> workerPendingUrl = worker->pendingUrl();
@@ -547,13 +564,13 @@ void Crawler::onSerializationReadyToBeStarted()
 			continue;
 		}
 
-		pendingUrls.push_back(workerPendingUrl.value());
+		CrawlerRequest& request = workerPendingUrl.value();
+
+		if (!m_uniqueLinkStore->hasCrawledRequest(request))
+		{
+			pendingUrls.push_back(workerPendingUrl.value());
+		}
 	}
-
-	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
-	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
-
-	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
 
 	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>(std::move(pages), 
 		std::move(crawledUrls), std::move(pendingUrls), m_options->data(), m_webHostInfo->allData());
@@ -808,7 +825,7 @@ Session::State Crawler::sessionState() const noexcept
 	return m_session->state();
 }
 
-QString Crawler::sessionName() const noexcept
+QString Crawler::sessionName() const
 {
 	if (!m_session)
 	{
@@ -826,6 +843,12 @@ bool Crawler::hasCustomSessionName() const noexcept
 	}
 
 	return m_session->hasCustomName();
+}
+
+
+bool Crawler::hasSession() const noexcept
+{
+	return m_session;
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

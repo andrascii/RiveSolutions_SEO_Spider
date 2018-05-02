@@ -23,7 +23,7 @@ UpdateChecker::UpdateChecker(QObject* parent)
 
 void UpdateChecker::check()
 {
-	INFOLOG << "Start actual_version.txt loading";
+	INFOLOG << "Start" << UpdateHelpers::actualVersionFileUrl() << "loading";
 
 	CrawlerEngine::CrawlerRequest crawlerRequest
 	{
@@ -48,7 +48,7 @@ Version UpdateChecker::getVerstionStr()
 
 void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester*, const CrawlerEngine::DownloadResponse& response)
 {
-	INFOLOG << "actual_version.txt loaded";
+	INFOLOG << UpdateHelpers::actualVersionFileUrl() << "loaded";
 
 	m_downloadRequester.reset();
 

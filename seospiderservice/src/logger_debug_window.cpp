@@ -1,5 +1,6 @@
 #include "logger_debug_window.h"
 #include "pipe_message.h"
+#include "version.h"
 
 namespace
 {
@@ -28,19 +29,25 @@ namespace SeoSpiderService
 {
 
 LoggerDebugWindow::LoggerDebugWindow(QWidget* parent)
-	: QWidget(parent)
+	: QMainWindow(parent)
+	, m_ui(new Ui_LoggerDebugWindow)
 {
-	setupUi(this);
+	QWidget* centralWidget = new QWidget(this);
+	m_ui->setupUi(centralWidget);
 
-	severityLevelComboBox->addItem(QStringLiteral("All levels"), QVariant::fromValue(static_cast<int>(AllLevels)));
-	severityLevelComboBox->addItem(QStringLiteral("Trace level"), QVariant::fromValue(Common::SeverityLevel::TraceLevel));
-	severityLevelComboBox->addItem(QStringLiteral("Debug level"), QVariant::fromValue(Common::SeverityLevel::DebugLevel));
-	severityLevelComboBox->addItem(QStringLiteral("Info level"), QVariant::fromValue(Common::SeverityLevel::InfoLevel));
-	severityLevelComboBox->addItem(QStringLiteral("Warning level"), QVariant::fromValue(Common::SeverityLevel::WarningLevel));
-	severityLevelComboBox->addItem(QStringLiteral("Error level"), QVariant::fromValue(Common::SeverityLevel::ErrorLevel));
-	severityLevelComboBox->setCurrentIndex(0);
+	setCentralWidget(centralWidget);
 
-	connect(severityLevelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(levelChanged()));
+	m_ui->severityLevelComboBox->addItem(QStringLiteral("All levels"), QVariant::fromValue(static_cast<int>(AllLevels)));
+	m_ui->severityLevelComboBox->addItem(QStringLiteral("Trace level"), QVariant::fromValue(Common::SeverityLevel::TraceLevel));
+	m_ui->severityLevelComboBox->addItem(QStringLiteral("Debug level"), QVariant::fromValue(Common::SeverityLevel::DebugLevel));
+	m_ui->severityLevelComboBox->addItem(QStringLiteral("Info level"), QVariant::fromValue(Common::SeverityLevel::InfoLevel));
+	m_ui->severityLevelComboBox->addItem(QStringLiteral("Warning level"), QVariant::fromValue(Common::SeverityLevel::WarningLevel));
+	m_ui->severityLevelComboBox->addItem(QStringLiteral("Error level"), QVariant::fromValue(Common::SeverityLevel::ErrorLevel));
+	m_ui->severityLevelComboBox->setCurrentIndex(0);
+
+	connect(m_ui->severityLevelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(levelChanged()));
+
+	loadState();
 }
 
 void LoggerDebugWindow::onMessageReceived(const Common::PipeMessage& message)
@@ -77,23 +84,39 @@ void LoggerDebugWindow::onMessageReceived(const Common::PipeMessage& message)
 	m_messages[AllLevels].push_back(internalMessage);
 	m_messages[message.severityLevel].push_back(internalMessage);
 
-	textBrowser->setTextBackgroundColor(QColor(s_backgroundColors[level]));
-	textBrowser->setTextColor(QColor(s_textColors[level]));
-	textBrowser->append(messageString);
+	m_ui->textBrowser->setTextBackgroundColor(QColor(s_backgroundColors[level]));
+	m_ui->textBrowser->setTextColor(QColor(s_textColors[level]));
+	m_ui->textBrowser->append(messageString);
+}
+
+void LoggerDebugWindow::closeEvent(QCloseEvent* event)
+{
+	QSettings settings("Rive Solutions", "Logger");
+	settings.setValue("geometry", saveGeometry());
+	settings.setValue("windowState", saveState(MAINTENANCE));
+	QWidget::closeEvent(event);
 }
 
 void LoggerDebugWindow::levelChanged()
 {
-	textBrowser->clear();
+	m_ui->textBrowser->clear();
 
-	int messageType = severityLevelComboBox->currentData().toInt();
+	int messageType = m_ui->severityLevelComboBox->currentData().toInt();
 
 	for (const ColoredString& msg : m_messages[messageType])
 	{
-		textBrowser->setTextBackgroundColor(std::get<0>(msg));
-		textBrowser->setTextColor(std::get<1>(msg));
-		textBrowser->append(std::get<2>(msg));
+		m_ui->textBrowser->setTextBackgroundColor(std::get<0>(msg));
+		m_ui->textBrowser->setTextColor(std::get<1>(msg));
+		m_ui->textBrowser->append(std::get<2>(msg));
 	}
+}
+
+void LoggerDebugWindow::loadState()
+{
+	QSettings settings("Rive Solutions", "Logger");
+
+	restoreGeometry(settings.value("geometry").toByteArray());
+	restoreState(settings.value("windowState").toByteArray());
 }
 
 }

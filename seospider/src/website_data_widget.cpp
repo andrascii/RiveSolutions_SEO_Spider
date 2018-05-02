@@ -135,14 +135,20 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 void WebSiteDataWidget::selectParsedPage(int row) const noexcept
 {
 	TableView* currentTableView = dynamic_cast<TableView*>(m_stackedWidget->currentWidget());
+
 	if(!currentTableView)
 	{
 		ERRLOG << "Cannot cast to TableView";
 		return;
 	}
 
-	currentTableView->selectionModel()->select(currentTableView->model()->index(row, 0), 
+	const QModelIndex selectRowIndex = currentTableView->model()->index(row, 0);
+
+	currentTableView->selectionModel()->select(selectRowIndex,
 		QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+
+	const int scrollTo = currentTableView->rowViewportPosition(row);
+	currentTableView->scrollTo(selectRowIndex, QAbstractItemView::EnsureVisible);
 }
 
 }

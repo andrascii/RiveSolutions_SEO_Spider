@@ -19,6 +19,7 @@ public:
 
 	void init();
 	ContentFrame* contentFrame() const noexcept;
+	QSystemTrayIcon* systemTrayIcon() const noexcept;
 
 signals:
 	void resized();
@@ -35,7 +36,6 @@ public slots:
 	void saveFileAndClearData();
 	void exportFilterData();
 	void onChangeGroupingAuditInfo(QAction* action);
-
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 
 	int showMessageBoxDialog(const QString& title, 
@@ -49,26 +49,29 @@ protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void moveEvent(QMoveEvent* event) override;
 	virtual void changeEvent(QEvent* event) override;
+	virtual void closeEvent(QCloseEvent* event) override;
 
 private:
 	void createActions();
 	void createHeaderPageDependentActions();
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
-
-	QString getSaveFilePath() const;
 	void clearDataOnSerializationDone();
+	void initSystemTrayIconMenu();
+	void loadState();
+	QString getSaveFilePath() const;
 
 private slots:
 	void onCrawlerSessionCreated();
 	void onCrawlerSessionDestroyed();
+	void onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:
 	bool m_initialized;
 
 	CrawlerEngine::RequesterWrapper m_requester;
-
 	ContentFrame* m_contentFrame;
+	QSystemTrayIcon* m_systemTrayIcon;
 };
 
 }

@@ -27,7 +27,7 @@ private:
 	void applyOptions();
 	void collectReplyData(const Hop& hop, ParsedPagePtr& page) const;
 	void collectParsedPageData(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page);
-	void setResourceCategory(ParsedPagePtr& page) const;
+	void setResourceType(ParsedPagePtr& page) const;
 	std::shared_ptr<IPageParser> createParser(ParserType parserType) const;
 
 private:

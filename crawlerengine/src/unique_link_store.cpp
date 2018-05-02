@@ -51,6 +51,11 @@ void UniqueLinkStore::addUrl(const Url& url, DownloadRequestType requestType)
 
 	if (m_crawledUrlList.find(request) == m_crawledUrlList.end())
 	{
+		if (request.url.urlStr() == QString("http://www.cyberforum.ru/javascript-beginners/"))
+		{
+			INFOLOG << request.url.urlStr();
+		}
+
 		m_pendingUrlList.insert(std::move(request));
 
 		emit urlAdded();
@@ -68,6 +73,11 @@ void UniqueLinkStore::addUrl(Url&& url, DownloadRequestType requestType)
 
 	if (m_crawledUrlList.find(request) == m_crawledUrlList.end())
 	{
+		if (request.url.urlStr() == QString("http://www.cyberforum.ru/javascript-beginners/"))
+		{
+			INFOLOG << request.url.urlStr();
+		}
+
 		m_pendingUrlList.insert(std::move(request));
 
 		emit urlAdded();
@@ -92,6 +102,11 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 
 		const auto iter = m_pendingUrlList.begin();
 		crawlerRequest = *iter;
+
+		if (m_crawledUrlList.find(crawlerRequest) != m_crawledUrlList.end())
+		{
+			INFOLOG << crawlerRequest.url.urlStr() << static_cast<int>(crawlerRequest.requestType);
+		}
 
 		DEBUG_ASSERT(m_crawledUrlList.find(crawlerRequest) == m_crawledUrlList.end());
 		m_crawledUrlList.insert(std::move(*iter));
@@ -196,6 +211,13 @@ bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestT
 	DEBUG_ASSERT(m_lastPendingSizeChange == 0 || m_lastCrawledSizeChange != 0);
 	DEBUG_ASSERT(m_lastCrawledSizeChange != 0 || m_lastPendingSizeChange == 0);
 	return m_lastCrawledSizeChange != 0 || m_lastPendingSizeChange != 0;
+}
+
+bool UniqueLinkStore::hasCrawledRequest(const CrawlerRequest& request)
+{
+	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+
+	return m_crawledUrlList.find(request) != m_crawledUrlList.end();
 }
 
 std::vector<CrawlerRequest> UniqueLinkStore::crawledUrls() const noexcept

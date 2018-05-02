@@ -32,6 +32,8 @@ public slots:
 
 	void stop();
 
+	void reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
+
 private slots:
 	void extractUrlAndDownload();
 
@@ -73,7 +75,7 @@ private:
 	bool m_isRunning;
 	bool m_reloadPage;
 
-	PagesAcceptedAfterStop m_pageAcceptedAfterStop;
+	PagesAcceptedAfterStop m_pagesAcceptedAfterStop;
 	std::optional<CrawlerRequest> m_currentRequest;
 
 	QTimer* m_defferedProcessingTimer;

@@ -31,10 +31,13 @@ void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& he
 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
 		GumboAttribute* alt = gumbo_get_attribute(&node->v.element.attributes, "alt");
 		QString altVal = alt == nullptr ? "" : alt->value;
-		return std::make_pair(Url(src->value), altVal);
+		const QString srcValue = QString(src->value).trimmed().remove("\n");
+
+		return std::make_pair(Url(srcValue), altVal);
 	};
 
 	std::vector<std::pair<Url, QString>> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+
 	for (std::pair<Url, QString>& url : urls)
 	{
 		url.first = PageParserHelpers::resolveUrl(page->url, url.first);

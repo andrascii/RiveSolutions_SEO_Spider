@@ -74,6 +74,7 @@
 #include <QTcpSocket>
 #include <QFile>
 #include <QDir>
+#include <QSettings>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

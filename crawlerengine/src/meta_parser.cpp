@@ -50,7 +50,7 @@ void MetaParser::parse(GumboOutput* output, const ResponseHeaders& headers, Pars
 
 void MetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -62,13 +62,14 @@ void MetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& page) 
 		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).trimmed();
+		return QString(attr->value);
 	};
 
-	std::vector<QString> contentTypes = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QString> contentTypes = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
+
 	if (!contentTypes.empty())
 	{
 		page->contentType = contentTypes.front();
@@ -147,7 +148,7 @@ void MetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& page) 
 	auto res = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).trimmed();
+		return QString(attr->value).trimmed().remove("\n");
 	};
 
 	const std::vector<QString> descriptions = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
@@ -177,7 +178,7 @@ void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noe
 	auto res = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-		return QString(attr->value).trimmed();
+		return QString(attr->value).trimmed().remove("\n");
 	};
 
 	std::vector<QString> keywords = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);

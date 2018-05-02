@@ -38,22 +38,18 @@ public:
 	StorageAdapterFactory* storageAdapterFactory() const noexcept;
 	SummaryDataAccessorFactory* summaryDataAccessorFactory() const noexcept;
 	InternetConnectionNotificationManager* internetConnectionNotificationManager() const noexcept;
-
 	CrawlerEngine::Crawler* crawler() const noexcept;
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept;
-
+	HeaderControlsContainer* headerControlsContainer() const noexcept;
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
-	void initializeStyleSheet() noexcept;
-	bool internetAvailable() const noexcept;
+	void initializeStyleSheet();
+	bool isInternetAvailable() const noexcept;
 
-	// ISettingsAccessor implementation
 	virtual void saveToSettings(const QByteArray& key, const QVariant& value) noexcept override;
 	virtual QVariant loadFromSettings(const QByteArray& key, const QVariant& defaultValue = QVariant()) const noexcept override;
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
 	virtual QStringList allKeys() const override;
-
-	HeaderControlsContainer* headerControlsContainer() const;
 
 signals:
 	void mainWindowShown();

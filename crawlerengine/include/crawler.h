@@ -90,8 +90,9 @@ public:
 	ICrawlerOptions* options() const noexcept;
 
 	Session::State sessionState() const noexcept;
-	QString sessionName() const noexcept;
+	QString sessionName() const;
 	bool hasCustomSessionName() const noexcept;
+	bool hasSession() const noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress progress);
@@ -114,7 +115,6 @@ public slots:
 	void stopCrawling();
 	void refreshPage(StorageType storageType, int index);
 	void setUserAgent(const QByteArray& userAgent);
-
 	void saveFile();
 	void closeFile();
 	void saveToFile(const QString& fileName);
@@ -130,6 +130,7 @@ private slots:
 	void onSessionChanged();
 	void onCrawlerOptionsSomethingChanged();
 	void onSequencedDataCollectionChanged();
+	void onDeserializationProcessDone();
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;
