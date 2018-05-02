@@ -13,9 +13,15 @@ get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
 find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
 
+message(${_qmake_executable})
+message(${_qt_bin_dir})
+message(${WINDEPLOYQT_EXECUTABLE})
+
 set(QTIFW_BIN_DIR $ENV{IFW_BIN_DIR})
 find_program(BinaryCreator_executable binarycreator HINTS ${QTIFW_BIN_DIR})
 find_program(RepoGen_executable repogen HINTS ${QTIFW_BIN_DIR})
+
+message(${QTIFW_BIN_DIR})
 
 list(APPEND PackageFileList 
 		${ReleasePackageDir}/seospider.exe
@@ -112,7 +118,15 @@ elseif(NOT ${BinaryCreator_executable})
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
     COMMAND "${BinaryCreator_executable}"
-           -f -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller.exe
+           -f -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller-offline.exe
+    COMMENT "Running binarycreator..."
+	)	
+	
+	add_custom_command(
+	TARGET ${SeoSpiderInstallerName} 
+	POST_BUILD
+    COMMAND "${BinaryCreator_executable}"
+           -n -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller-online.exe
     COMMENT "Running binarycreator..."
 	)	
 endif()
@@ -120,5 +134,5 @@ endif()
 add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
-    COMMAND start explorer.exe /n,/e,/select, ${TargetInstallerPath}\\seospiderinstaller.exe
+    COMMAND start explorer.exe /n,/e,/select, ${TargetInstallerPath}\\seospiderinstaller-offline.exe
 )

@@ -1,48 +1,84 @@
 function Component()
 {	
-	if(needUpdate())
+	//
+	// TODO: remake this logic when new version of QTIF released
+	//
+
+	//if(isAlreadyInstalled() && needUpdate())
+	//{
+	//	if(QMessageBox["question"]("Already installed", "Installer", 
+	//	"Installer found older version of Seo Spider installed.<br> Do you want to update program?", 
+	//	QMessageBox.Ok | QMessageBox.No) == QMessageBox.No)
+	//	{
+	//		abortInstallation();
+	//		
+	//		return;
+	//	}
+	//	else
+	//	{	
+	//		var widget = gui.pageById(QInstaller.Introduction)
+	//		var installPath = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\InstallPath");	
+	//		
+	//		if(widget)
+	//		{
+	//			widget.MessageLabel.setText("Installer found older version of Seo Spider installed.");
+	//		}
+	//		
+	//		installer.setInstallerBaseBinary(installPath + "/Uninstall SeoSpider.exe")
+	//		installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
+	//		installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
+	//		
+	//		gui.clickButton(buttons.NextButton);
+	//	}
+	//}		
+	//
+	//if(isAlreadyInstalled() && (!needUpdate()))
+	//{
+	//	QMessageBox["information"]("Already installed", "Installer", 
+	//	"Installer found newer or equal verion of SeoSpider.<br> You must delete installed program for continue.", 
+	//	QMessageBox.Ok)
+	//	
+	//	abortInstallation();
+	//	
+	//	return;
+	//}
+	
+	if(isAlreadyInstalled())
 	{
-		if(QMessageBox["question"]("Already installed", "Installer", 
-		"Installer found older version of Seo Spider installed.<br> Do you want to update program?", 
-		QMessageBox.Ok | QMessageBox.No) == QMessageBox.No)
-		{
-			abortInstallation();
-		}
-		else
-		{	
-			var widget = gui.pageById(QInstaller.Introduction)
-			if(widget)
-			{
-				widget.MessageLabel.setText("Installer found older version of Seo Spider installed.");
-			}
-			
-			installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
-			installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
-		}
+		QMessageBox["information"]("Already installed", "Installer", 
+		"Installer found newer or equal verion of SeoSpider.<br> You must delete installed program for continue.", 
+		QMessageBox.Ok)
+		
+		abortInstallation();
+		
+		return;
 	}
-			
+	
 	component.loaded.connect(this, addCreateMenuDirectory);
 	component.loaded.connect(this, addCreateDesktopShortcut);
     component.unusualFileType = "ssproj";
+	
 }
 
 function abortInstallation()
 {
 	installer.setValue("FinishedText", "<font color='red' size=3>The installer was quit.</font>");
-    installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
-    installer.setDefaultPageVisible(QInstaller.ReadyForInstallation, false);
-    installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
-    installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
-    installer.setDefaultPageVisible(QInstaller.PerformInstallation, false);
-    installer.setDefaultPageVisible(QInstaller.LicenseCheck, false);
+    //installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
+    //installer.setDefaultPageVisible(QInstaller.ReadyForInstallation, false);
+    //installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
+    //installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
+    //installer.setDefaultPageVisible(QInstaller.PerformInstallation, false);
+    //installer.setDefaultPageVisible(QInstaller.LicenseCheck, false);
 	var widget = gui.pageById(QInstaller.InstallationFinished);
+		
+	if(widget)
+	{
+		widget.RunItCheckBox.setEnabled(false);
+	}
 	
-	//if(widget)
-	//{
-		widget.RunItCheckBox.setVisible(false);
-	//}
+    //gui.clickButton(buttons.NextButton);
 	
-    gui.clickButton(buttons.NextButton);
+	gui.reject();
 }
 
 // Register program metadata in system after installation
@@ -50,7 +86,7 @@ function registerProgram()
 {
 	if (installer.isInstaller() || installer.isUpdater()) 
 	{
-		var value = component.value("Version");
+		var version = component.value("Version");
 		
 		component.addOperation(
 			"GlobalConfig", 
@@ -64,7 +100,14 @@ function registerProgram()
 			"Rive Solutions", 
 			"Seo Spider",
 			"MetaData/Version", 
-			value);
+			version);
+			
+		component.addOperation(
+			"GlobalConfig", 
+			"Rive Solutions", 
+			"Seo Spider",
+			"MetaData/Installed", 
+			true);
 	}
 }
 
@@ -143,13 +186,24 @@ function registerSXRFileType()
     }
 }
 
+function isAlreadyInstalled()
+{
+	var version = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
+	
+	if(version)
+	{
+		return true;
+	}
+	
+	return false;
+}
+
 // Check if newer version is already installed
 function needUpdate()
 {
 	var newVersion = component.value("Version");
-	//var savedVersion = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
 	var savedVersion = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
-	
+
 	if(savedVersion)
 	{
 		savedVersion.trim();
