@@ -26,14 +26,15 @@ protected:
 private:
 	ThreadMessageDispatcher(QThread* thread);
 
-	Q_SLOT void shutdown();
-
 	void startDispatchTimer();
 	void stopDispatchTimer();
 
 	void execute();
 
 	MessageQueue& messageQueue() noexcept;
+
+private slots:
+	void shutdown();
 
 private:
 	int m_dispatchTimerId;

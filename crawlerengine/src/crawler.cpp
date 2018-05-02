@@ -550,8 +550,6 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	std::vector<CrawlerRequest> pendingUrls;
 
-	
-
 	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
 	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
 

@@ -121,7 +121,17 @@ void ParsedPageReceiver::onAboutClearData()
 
 void ParsedPageReceiver::onDataCleared()
 {
-	m_waitForClearingData.set_value();
+	try
+	{
+		m_waitForClearingData.set_value();
+	}
+	catch (const std::future_error& error)
+	{
+		if (error.code() != std::make_error_condition(std::future_errc::promise_already_satisfied))
+		{
+			throw;
+		}
+	}
 }
 
 void ParsedPageReceiver::onSerializationDone()
@@ -200,7 +210,14 @@ void ParsedPageReceiver::wait()
 
 void ParsedPageReceiver::clearReceivedData()
 {
-	onAboutClearData();
+	if (thread() == QThread::currentThread())
+	{
+		onAboutClearData();
+	}
+	else
+	{
+		VERIFY(QMetaObject::invokeMethod(this, "onAboutClearData", Qt::BlockingQueuedConnection));
+	}
 }
 
 void ParsedPageReceiver::checkWaitCondition(StorageType storageType)

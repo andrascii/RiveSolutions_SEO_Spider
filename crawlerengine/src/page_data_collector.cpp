@@ -132,7 +132,7 @@ void PageDataCollector::collectReplyData(const Hop& hop, ParsedPagePtr& page) co
 		WARNLOG << page->url.toDisplayString() << "contains several content-type headers from HTTP response";
 	}
 
-	setResourceCategory(page);
+	setResourceType(page);
 
 	page->redirectedUrl = resolveRedirectUrl(hop);
 
@@ -168,7 +168,7 @@ void PageDataCollector::collectParsedPageData(GumboOutput* output, const Respons
 	m_parser.parse(output, headers, page);
 }
 
-void PageDataCollector::setResourceCategory(ParsedPagePtr& page) const
+void PageDataCollector::setResourceType(ParsedPagePtr& page) const
 {
 	if (page->contentType.contains("javascript"))
 	{

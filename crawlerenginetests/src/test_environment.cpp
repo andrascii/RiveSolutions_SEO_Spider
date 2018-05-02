@@ -20,20 +20,12 @@ TestEnvironment::TestEnvironment()
 	, m_testRunner(new TestRunner)
 	, m_crawler(new TestsCrawler(s_threadCount, nullptr))
 {
-	m_crawlerThread = new Common::NamedThread("CrawlerTestsThread");
-	m_crawler->moveToThread(m_crawlerThread);
 	m_crawler->initialize();
-	
-	m_crawlerThread->start();
 }
 
 TestEnvironment::~TestEnvironment()
 {
-	m_crawler->deleteLater();
-	processEvents();
-
-	m_crawlerThread->quit();
-	m_crawlerThread->wait();
+	delete m_crawler;
 
 	CrawlerEngine::HandlerRegistry::instance().unregisterAll();
 }

@@ -30,7 +30,6 @@ signals:
 private:
 	TestRunner* m_testRunner;
 	TestsCrawler* m_crawler;
-	Common::NamedThread* m_crawlerThread;
 	std::function<void()> m_testFunction;
 };
 

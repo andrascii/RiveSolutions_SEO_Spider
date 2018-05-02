@@ -101,13 +101,20 @@ void ThreadMessageDispatcher::postResponse(RequesterSharedPtr requester, IRespon
 }
 
 ThreadMessageDispatcher::ThreadMessageDispatcher(QThread* thread)
+	: m_dispatchTimerId(0)
 {
 	moveToThread(thread);
 	startDispatchTimer();
+
 	VERIFY(connect(thread, SIGNAL(finished()), this, SLOT(shutdown()), Qt::DirectConnection)); 
+
+	if (thread == qApp->thread())
+	{
+		VERIFY(connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(shutdown()), Qt::DirectConnection));
+	}
 }
 
-Q_SLOT void ThreadMessageDispatcher::shutdown()
+void ThreadMessageDispatcher::shutdown()
 {
 	stopDispatchTimer();
 	unregisterThreadQueue(thread());

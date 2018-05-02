@@ -184,8 +184,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 	
-	// временно убрано
-	//fixParsedPageResourceType(workerResult.incomingPage());
+	fixParsedPageResourceType(workerResult.incomingPage());
 
 	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType, m_crawlerOptionsData))
 	{
@@ -221,7 +220,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		m_linksToPageChanges.changes.clear();
 	}
 
-	DEBUGLOG << "CRAWLED" << workerResult.incomingPage()->url.urlStr();
+	DEBUGLOG << "crawled" << workerResult.incomingPage()->url.urlStr();
 
 	if (!workerResult.isRefreshResult())
 	{
@@ -805,20 +804,46 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 	for (const ResourceOnPage& resource : workerResult.incomingPage()->allResourcesOnPage)
 	{
 		const QString resourceDisplayUrl = resource.link.url.toDisplayString();
+		const ResourceType resourceType = resource.resourceType;
+		const ResourceSource resourceSource = resource.link.resourceSource;
 
-		/// есть ли смысл от resourceType после того как был убран fixParsedPageResourceType?
-		/// если нет, то надо удалить!
-		const ResourceType resourceType = workerResult.incomingPage()->resourceType != ResourceType::ResourceHtml ? 
-			workerResult.incomingPage()->resourceType :
-			resource.resourceType;
+		ParsedPagePtr temporaryResource = parsedPageFromResource(resource);
+		ParsedPagePtr resourcePage = data()->parsedPage(temporaryResource, StorageType::CrawledUrlStorageType);
+
+		ResourceLink linkToThisResource
+		{
+			workerResult.incomingPage(),
+			workerResult.incomingPage()->url,
+			resource.link.linkParameter,
+			resourceSource,
+			resource.link.altOrTitle
+		};
+
+		if (resourceType == ResourceType::ResourceHtml &&
+			resourceSource == ResourceSource::SourceRedirectUrl &&
+			!resourcePage)
+		{
+			/// Обрабатываем ресурсы, на которые произошел редирект.
+			/// Просто заносим их в пендинг без установки ресурса.
+			/// Тип ресурса будет установлен при финальной загрузке ресурса из Content-Type'a.
+
+			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink{ temporaryResource, temporaryResource->url,
+				resource.link.linkParameter, resourceSource, resource.link.altOrTitle });
+
+			temporaryResource->linksToThisPage.emplace_back(linkToThisResource);
+
+			data()->addParsedPage(temporaryResource, StorageType::PendingResourcesStorageType);
+
+			continue;
+		}
 
 		if (resourceType == ResourceType::ResourceHtml)
 		{
 			continue;
 		}
 
-		if ((!resourceShouldBeProcessed(resource.resourceType, m_crawlerOptionsData) && 
-			resource.link.resourceSource != ResourceSource::SourceRedirectUrl) ||
+		if ((!resourceShouldBeProcessed(resourceType, m_crawlerOptionsData) &&
+			resourceSource != ResourceSource::SourceRedirectUrl) ||
 			resourceDisplayUrl.startsWith("javascript:") ||
 			resourceDisplayUrl.startsWith("#"))
 		{
@@ -826,32 +851,30 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		}
 
 		if (workerResult.incomingPage()->isThisExternalPage &&
-			resource.link.resourceSource != ResourceSource::SourceRedirectUrl)
+			resourceSource != ResourceSource::SourceRedirectUrl)
 		{
 			continue;
 		}
-
-		ParsedPagePtr temporaryResource = parsedPageFromResource(resource);
 
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url);
 		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(workerResult.incomingPage()->url, temporaryResource->url) || !httpResource;
 
 		const StorageType storage = externalOrNotHttpResource ?
-			s_externalStorageTypes[resourceType] : 
+			s_externalStorageTypes[resourceType] :
 			s_storageTypes[resourceType];
 
-		ParsedPagePtr newOrExistingResource = temporaryResource->url.compare(workerResult.incomingPage()->url)
-			? workerResult.incomingPage()
-			: data()->parsedPage(temporaryResource, StorageType::CrawledUrlStorageType);
+		ParsedPagePtr newOrExistingResource = 
+			temporaryResource->url.compare(workerResult.incomingPage()->url) ? 
+			workerResult.incomingPage() : resourcePage;
 
 		if (!newOrExistingResource)
 		{
 			ParsedPagePtr newOrExistingResource = data()->parsedPage(temporaryResource, storage);
 		}
-		
+
 		const bool existingImageResource = newOrExistingResource && 
 			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
-			resource.link.resourceSource == ResourceSource::SourceTagImg;
+			resourceSource == ResourceSource::SourceTagImg;
 
 		if (!newOrExistingResource)
 		{
@@ -864,7 +887,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 
 			const bool noRestrictionsOrSourceRedirect = !resource.restrictions ||
 				resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules) ||
-				resource.link.resourceSource == ResourceSource::SourceRedirectUrl;
+				resourceSource == ResourceSource::SourceRedirectUrl;
 
 			if (httpResource && noRestrictionsOrSourceRedirect)
 			{
@@ -878,10 +901,9 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		}
 
 		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url,
-			resource.link.linkParameter, resource.link.resourceSource, resource.link.altOrTitle });
+			resource.link.linkParameter, resourceSource, resource.link.altOrTitle });
 		
-		newOrExistingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url,
-			resource.link.linkParameter, resource.link.resourceSource, resource.link.altOrTitle });
+		newOrExistingResource->linksToThisPage.emplace_back(linkToThisResource);
 		
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
 
