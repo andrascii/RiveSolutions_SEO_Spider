@@ -33,6 +33,7 @@ public slots:
 	void saveFileAs();
 	void openFile();
 	void closeFile();
+	void openRecentFile();
 	void saveFileAndClearData();
 	void exportFilterData();
 	void onChangeGroupingAuditInfo(QAction* action);
@@ -52,6 +53,7 @@ protected:
 	virtual void closeEvent(QCloseEvent* event) override;
 
 private:
+	void openFile(const QString& filePath);
 	void createActions();
 	void createHeaderPageDependentActions();
 	void createAndSetCentralWidget();
