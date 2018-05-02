@@ -7,6 +7,8 @@
 namespace CrawlerEngineTests
 {
 
+using namespace CrawlerEngine;
+
 TestsDownloader::TestsDownloader()
 {
 	CrawlerEngine::HandlerRegistry& handlerRegistry = CrawlerEngine::HandlerRegistry::instance();
@@ -180,6 +182,9 @@ HopsChain TestsDownloader::hopsChain(const DownloadRequest& request, QSet<QStrin
 			else if (header.toLower() == "redirect-url")
 			{
 				redirectUrl = QString::fromUtf8(value);
+
+				responseHeaders.addHeaderValue("Location", redirectUrl);
+				hop.setRedirectUrl(redirectUrl);
 			}
 			else
 			{
@@ -213,7 +218,7 @@ HopsChain TestsDownloader::hopsChain(const DownloadRequest& request, QSet<QStrin
 	if (!redirectUrl.isEmpty() && !uniqueUrls.contains(redirectUrl))
 	{
 		DownloadRequest childRequest = request;
-		childRequest.requestInfo.url = Url(redirectUrl);
+		childRequest.requestInfo.url = Url(PageParserHelpers::resolveRelativeUrl(redirectUrl, requestedUrl));
 		HopsChain childResult = hopsChain(childRequest, uniqueUrls);
 
 		for (int i = 0; i < childResult.length(); ++i)
