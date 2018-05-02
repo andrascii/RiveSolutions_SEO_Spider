@@ -218,6 +218,7 @@ void ReportsPage::crawlerStateChangedSlot(int state)
 	if(state != Crawler::State::StateWorking)
 	{
 		m_stackedWidget->setCurrentWidget(m_webEngineView);
+		updateContent();
 		return;
 	}
 	
