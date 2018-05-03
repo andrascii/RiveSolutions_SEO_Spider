@@ -25,6 +25,7 @@
 #include "project_file_state_widget.h"
 #include "constants.h"
 #include "version.h"
+#include "recent_files.h"
 
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
@@ -84,6 +85,7 @@ void MainWindow::saveFileAs()
 		return;
 	}
 
+	RecentFiles::instance().registerNewRecentFile(path);
 	theApp->crawler()->saveToFile(path);
 }
 
@@ -107,7 +109,30 @@ void MainWindow::openFile()
 		return;
 	}
 
+	RecentFiles::instance().registerNewRecentFile(path);
 	theApp->crawler()->loadFromFile(path);
+}
+
+void MainWindow::openFile(const QString& filePath)
+{
+	if (theApp->crawler()->hasSession())
+	{
+		ServiceLocator::instance()->service<INotificationService>()->error(
+			tr("Open file error"),
+			tr("Unable to open the project file until the existing one is closed!\n"
+				"So first you need to press Ctrl+W and then open file.")
+		);
+
+		return;
+	}
+
+	if (filePath.isEmpty())
+	{
+		return;
+	}
+
+	RecentFiles::instance().registerNewRecentFile(filePath);
+	theApp->crawler()->loadFromFile(filePath);
 }
 
 void MainWindow::closeFile()
@@ -139,6 +164,16 @@ void MainWindow::closeFile()
 	}
 
 	theApp->crawler()->closeFile();
+}
+
+void MainWindow::openRecentFile()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+
+	if (action)
+	{
+		openFile(action->data().toString());
+	}
 }
 
 void MainWindow::saveFileAndClearData()
@@ -327,7 +362,12 @@ void MainWindow::createActions()
 	actionRegistry.addActionGroup(s_fileActionGroup);
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, QIcon(QStringLiteral(":/images/open-file-icon.png")), tr("Open File"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, tr("Close File"));
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")), tr("Recent Files"));
+
+	QAction* recentFilesAction = RecentFiles::instance().subMenuAction();
+	recentFilesAction->setIcon(QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")));
+	recentFilesAction->setText(tr("Recent Files"));
+
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, recentFilesAction);
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, QIcon(QStringLiteral(":/images/save-icon.png")), tr("Save File"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
 	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));

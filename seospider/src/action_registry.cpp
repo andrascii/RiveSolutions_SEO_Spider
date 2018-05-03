@@ -33,16 +33,23 @@ QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, const QIco
 	DEBUG_ASSERT(m_globalActions.find(actionKey) == std::end(m_globalActions));
 
 	QAction* action = new QAction(icon, text);
-
-	m_globalActions[actionKey] = action;
-	m_actionGroups[s_globalActionGroup]->addAction(action);
-
-	return action;
+	
+	return addGlobalAction(actionKey, action);
 }
 
 QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, const QString& text)
 {
 	return addGlobalAction(actionKey, QIcon(), text);
+}
+
+QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, QAction* action)
+{
+	DEBUG_ASSERT(m_globalActions.find(actionKey) == std::end(m_globalActions));
+
+	m_globalActions[actionKey] = action;
+	m_actionGroups[s_globalActionGroup]->addAction(action);
+
+	return action;
 }
 
 QActionGroup* ActionRegistry::addActionGroup(const QByteArray& actionGroupKey)
@@ -69,6 +76,16 @@ QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey
 QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, const QString& text)
 {
 	return addActionToActionGroup(actionGroupKey, actionKey, QIcon(), text);
+}
+
+QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey, const QByteArray& actionKey, QAction* action)
+{
+	DEBUG_ASSERT(m_actionGroups.find(actionGroupKey) != std::end(m_actionGroups));
+
+	QActionGroup* actionGroup = m_actionGroups[actionGroupKey].get();
+	QAction* act = addGlobalAction(actionKey, action);
+	
+	return actionGroup->addAction(act);
 }
 
 ActionRegistry::ActionRegistry()
