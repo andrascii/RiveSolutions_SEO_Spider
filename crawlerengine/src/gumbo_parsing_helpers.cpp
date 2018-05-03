@@ -245,7 +245,7 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 
 		const QString altOrTitle(nodeText(node));
 		const bool dataResource = QByteArray(href->value).startsWith("data:");
-		const QString hrefValue = QString(href->value).trimmed().remove("\n");
+		const QString hrefValue = QString(href->value).trimmed().remove(QRegularExpression("[\\n\\t]+"));
 
 		return LinkInfo{ Url(hrefValue), linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA };
 	};

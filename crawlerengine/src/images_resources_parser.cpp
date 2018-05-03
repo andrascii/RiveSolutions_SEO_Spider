@@ -31,7 +31,7 @@ void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& he
 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
 		GumboAttribute* alt = gumbo_get_attribute(&node->v.element.attributes, "alt");
 		QString altVal = alt == nullptr ? "" : alt->value;
-		const QString srcValue = QString(src->value).trimmed().remove("\n");
+		const QString srcValue = QString(src->value).trimmed().remove(QRegularExpression("[\\n\\t]+"));
 
 		return std::make_pair(Url(srcValue), altVal);
 	};
