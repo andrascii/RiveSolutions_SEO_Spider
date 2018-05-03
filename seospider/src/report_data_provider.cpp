@@ -100,12 +100,6 @@ const QMap<ReportDataKeys, QByteArray> s_placeHolders
 	{ ReportDataKeys::PagesContainsFrames, "pages_contains_frames" },
 	{ ReportDataKeys::PagesContainsFramesImage, "pages_contains_frames_image" },
 	{ ReportDataKeys::PagesContainsFramesCount, "pages_contains_frames_count" },
-	{ ReportDataKeys::PagesWithHtmlErrors, "pages_error_html" },
-	{ ReportDataKeys::PagesWithHtmlErrorsImage, "pages_error_html_image" },
-	{ ReportDataKeys::PagesWithHtmlErrorsCount, "pages_error_html_count" },
-	{ ReportDataKeys::PagesWithCssErrorsWarnings, "pages_error_css" },
-	{ ReportDataKeys::PagesWithCssErrorsWarningsImage, "pages_error_css_image" },
-	{ ReportDataKeys::PagesWithCssErrorsWarningsCount, "pages_error_css_count" },
 	{ ReportDataKeys::TooLargePages, "too_large_pages" },
 	{ ReportDataKeys::TooLargePagesImage, "too_large_pages_image" },
 	{ ReportDataKeys::TooLargePagesCount, "too_large_pages_count" },
@@ -288,7 +282,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::NotIndexedPagesImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::BlockedForSEIndexingStorageType)];
 		}
 		case ReportDataKeys::NotIndexedPagesCount:
 		{
@@ -383,7 +377,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::WwwFixedVersionImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::WwwRedirectionsUrlStorageType)];
 		}
 		case ReportDataKeys::WwwFixedVersionCount:
 		{
@@ -428,7 +422,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::LargeAmountRedirectsImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::TooManyRedirectsStorageType)];
 		}
 		case ReportDataKeys::LargeAmountRedirectsCount:
 		{
@@ -458,7 +452,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::RelCanonicalPagesImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::AllCanonicalUrlResourcesStorageType)];
 		}
 		case ReportDataKeys::RelCanonicalPagesCount:
 		{
@@ -506,7 +500,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::ExternalDofollowLinksImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::ExternalDoFollowUrlResourcesStorageType)];
 		}
 		case ReportDataKeys::ExternalDofollowLinksCount:
 		{
@@ -538,7 +532,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::PagesWithDuplicatedRelCanonicalImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::DuplicatedCanonicalUrlResourcesStorageType)];
 		}
 		case ReportDataKeys::PagesWithDuplicatedRelCanonicalCount:
 		{
@@ -562,37 +556,13 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 
 			return storage->size();
 		}
-		case ReportDataKeys::PagesWithHtmlErrors:
-		{
-			return QObject::tr("Pages with errors in HTML");
-		}
-		case ReportDataKeys::PagesWithHtmlErrorsImage:
-		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
-		}
-		case ReportDataKeys::PagesWithHtmlErrorsCount:
-		{
-			return 0;
-		}
-		case ReportDataKeys::PagesWithCssErrorsWarnings:
-		{
-			return QObject::tr("Pages with warnings and errors in CSS");
-		}
-		case ReportDataKeys::PagesWithCssErrorsWarningsImage:
-		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
-		}
-		case ReportDataKeys::PagesWithCssErrorsWarningsCount:
-		{
-			return 0;
-		}
 		case ReportDataKeys::TooLargePages:
 		{
 			return QObject::tr("Too large pages");
 		}
 		case ReportDataKeys::TooLargePagesImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::TooBigHtmlResourcesStorageType)];
 		}
 		case ReportDataKeys::TooLargePagesCount:
 		{
@@ -609,7 +579,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		}
 		case ReportDataKeys::BrokenImagesImage:
 		{
-			return m_pixmaps[CrawlerEngine::ErrorCategory::LevelNotError];
+			return m_pixmaps[CrawlerEngine::ErrorCategory::level(CrawlerEngine::StorageType::BrokenImagesStorageType)];
 		}
 		case ReportDataKeys::BrokenImagesCount:
 		{
