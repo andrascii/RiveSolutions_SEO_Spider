@@ -34,6 +34,8 @@ list(APPEND PackageFileList
 		${ReleasePackageDir}/QtXlsxWriter.pdb
 )
 
+file(GLOB_RECURSE OpenSslDllList "../deps/openssl/*.dll")
+
 #add_custom_target(${SeoSpiderInstallerName} ALL)
 add_custom_target(${SeoSpiderInstallerName})
 
@@ -76,7 +78,16 @@ add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy 
+	ARGS -E copy
+	${OpenSslDllList}
+	${TargetPackagePath}/data/
+)
+
+add_custom_command(
+	TARGET ${SeoSpiderInstallerName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
 	${PackageFileList}
 	${TargetPackagePath}/data/
 )
