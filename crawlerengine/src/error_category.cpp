@@ -16,10 +16,12 @@ const QMap<StorageType, ErrorCategory::ErrorCategoryLevel> s_storageTypeToLevel
 	{ StorageType::TooLongUrlStorageType, ErrorCategory::LevelInfo },
 	{ StorageType::BrokenLinks, ErrorCategory::LevelError },
 	{ StorageType::WwwRedirectionsUrlStorageType, ErrorCategory::LevelWarning },
+	{ StorageType::TooManyRedirectsStorageType, ErrorCategory::LevelWarning },
 	{ StorageType::Status4xxStorageType, ErrorCategory::LevelError },
 	{ StorageType::Status5xxStorageType, ErrorCategory::LevelError },
 	{ StorageType::Status302StorageType, ErrorCategory::LevelError },
 	{ StorageType::Status301StorageType, ErrorCategory::LevelWarning },
+	{ StorageType::ExternalDoFollowUrlResourcesStorageType, ErrorCategory::LevelInfo },
 
 	// titles
 	{ StorageType::EmptyTitleUrlStorageType, ErrorCategory::LevelWarning },
@@ -57,11 +59,15 @@ const QMap<StorageType, ErrorCategory::ErrorCategoryLevel> s_storageTypeToLevel
 	{ StorageType::TooBigImageStorageType, ErrorCategory::LevelInfo },
 	{ StorageType::MissingAltTextImageStorageType, ErrorCategory::LevelInfo },
 	{ StorageType::TooLongAltTextImageStorageType, ErrorCategory::LevelInfo },
+	{ StorageType::BrokenImagesStorageType, ErrorCategory::LevelError },
 
 	// page problems
 	{ StorageType::TooManyLinksOnPageStorageType, ErrorCategory::LevelWarning },
 	{ StorageType::ContainsMetaRefreshTagStorageType, ErrorCategory::LevelWarning },
 	{ StorageType::ContainsFramesStorageType, ErrorCategory::LevelError },
+	{ StorageType::TooBigHtmlResourcesStorageType, ErrorCategory::LevelWarning },
+	{ StorageType::DuplicatedCanonicalUrlResourcesStorageType, ErrorCategory::LevelInfo },
+	{ StorageType::AllCanonicalUrlResourcesStorageType, ErrorCategory::LevelInfo },
 
 	// not indexed pages
 	{ StorageType::BlockedForSEIndexingStorageType, ErrorCategory::LevelInfo },
