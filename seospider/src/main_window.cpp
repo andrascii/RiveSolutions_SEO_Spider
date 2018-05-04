@@ -14,6 +14,7 @@
 #include "user_agent_settings_widget.h"
 #include "crawler_pause_settings_widget.h"
 #include "page_visual_settings_widget.h"
+#include "language_settings_widget.h"
 #include "internet_connection_state_widget.h"
 #include "notifications_container_widget.h"
 #include "software_branding.h"
@@ -556,7 +557,7 @@ void MainWindow::registerSettingsPages() const
 	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettingsWidget));
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
-	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget));
+	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget), new LanguageSettingsWidget);
 	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(":/images/user-agent.png"), TYPE_STRING(Ui_UserAgentSettingsWidget), new UserAgentSettingsWidget);
 	SettingsPageImpl<Ui_CrawlerPauseSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-pause.png"), TYPE_STRING(Ui_CrawlerPauseSettingsWidget), new CrawlerPauseSettingsWidget);
 	SettingsPageImpl<Ui_CompanyProfileSettingsWidget>::registerSettingsPage(QIcon(":/images/company-profile.png"), TYPE_STRING(Ui_CompanyProfileSettingsWidget));

@@ -55,7 +55,6 @@ void UserAgentSettingsWidget::loadUserAgentsFromFile(const QString& fileName, QC
 	}
 
 	INFOLOG << "UserAgents loaded";
-
 }
 
 bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)

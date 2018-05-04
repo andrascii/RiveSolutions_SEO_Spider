@@ -1,6 +1,19 @@
 #include "preferences.h"
 #include "isettings_accessor.h"
 
+namespace
+{
+
+using namespace SeoSpider;
+
+const QMap<QString, QString> s_languageLocales
+{ 
+	{ "English", "en_EN" },
+	{ "Russian", "ru_RU" },
+};
+
+}
+
 namespace SeoSpider
 {
 
@@ -21,6 +34,13 @@ Preferences::~Preferences()
 			m_settingsAccessor->saveToSettings(property.name(), property.read(this));
 		}
 	}
+}
+
+QString Preferences::localeFromString(const QString& language) const
+{
+	ASSERT(s_languageLocales.contains(language));
+
+	return s_languageLocales[language];
 }
 
 unsigned Preferences::threadCount() const
@@ -567,9 +587,9 @@ void Preferences::load()
 		readDefaults(config.readAll());
 	}
 
-	for(const std::pair<const QString, QVariant>& pair : m_defaults)
+	for(auto pair = m_defaults.constBegin(); pair != m_defaults.constEnd(); ++pair)
 	{
-		addDefaultProperty(pair.first.toLatin1(), pair.second);
+		addDefaultProperty(pair.key().toLatin1(), pair.value());
 	}
 }
 

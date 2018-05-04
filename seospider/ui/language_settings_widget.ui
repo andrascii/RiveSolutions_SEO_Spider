@@ -110,21 +110,11 @@
       <item>
        <widget class="QComboBox" name="comboBox">
         <property name="currentText">
-         <string notr="true">Russian</string>
+         <string notr="true"/>
         </property>
         <property name="controlKey" stdset="0">
          <string notr="true">applicationLanguage</string>
         </property>
-        <item>
-         <property name="text">
-          <string>Russian</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>English</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item>
