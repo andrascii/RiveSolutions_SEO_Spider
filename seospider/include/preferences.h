@@ -266,32 +266,20 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 
-
+public:
 	Preferences(ISettingsAccessor* settingsAccessor, QObject* parent = nullptr);
 	~Preferences();
 
+	QString localeFromString(const QString& language) const;
+
 	void load();
 
-	enum SettingsGroup
-	{
-		ProjectSettings,
-		General,
-		WindowsSettings
-	};
-
-	enum UserAgentType
-	{
-		Desktop,
-		Mobile
-	};
-	
 private:
-	void readDefaults(const QString& str);
+	QMap<QString, QVariant> readDefaults(const QString& str);
 	void addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept;
 
 private:
 	ISettingsAccessor* m_settingsAccessor;
-	std::map<QString, QVariant> m_defaults;
 
 	unsigned m_threadCount;
 	QString m_applicationLanguage;

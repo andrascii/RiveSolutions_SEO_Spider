@@ -15,6 +15,7 @@ public:
 	virtual void applyChanges() noexcept override;
 
 protected:
+	virtual void init() override;
 	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private slots:
@@ -22,7 +23,6 @@ private slots:
 	void groupButtonStateChanged();
 
 private:
-	virtual void init() override;
 	void loadUserAgentsFromFile(const QString& fileName, QComboBox* targetComboBox);
 
 private:

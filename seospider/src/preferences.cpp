@@ -1,6 +1,19 @@
 #include "preferences.h"
 #include "isettings_accessor.h"
 
+namespace
+{
+
+using namespace SeoSpider;
+
+const QMap<QString, QString> s_languageLocales
+{ 
+	{ "English", "en_EN" },
+	{ "Russian", "ru_RU" },
+};
+
+}
+
 namespace SeoSpider
 {
 
@@ -21,6 +34,13 @@ Preferences::~Preferences()
 			m_settingsAccessor->saveToSettings(property.name(), property.read(this));
 		}
 	}
+}
+
+QString Preferences::localeFromString(const QString& language) const
+{
+	ASSERT(s_languageLocales.contains(language));
+
+	return s_languageLocales[language];
 }
 
 unsigned Preferences::threadCount() const
@@ -558,26 +578,29 @@ void Preferences::load()
 	QFile config(":/config/defaults.cfg");
 	config.open(QIODevice::ReadOnly);
 
+	QMap<QString, QVariant> defaults;
+
 	if (!config.isOpen())
 	{
 		ERRLOG << "Can't read defaults!";
 	}
 	else
 	{
-		readDefaults(config.readAll());
+		defaults = readDefaults(config.readAll());
 	}
 
-	for(const std::pair<const QString, QVariant>& pair : m_defaults)
+	for(auto pair = defaults.constBegin(); pair != defaults.constEnd(); ++pair)
 	{
-		addDefaultProperty(pair.first.toLatin1(), pair.second);
+		addDefaultProperty(pair.key().toLatin1(), pair.value());
 	}
 }
 
-void Preferences::readDefaults(const QString& str)
+QMap<QString, QVariant> Preferences::readDefaults(const QString& str)
 {
-	QRegExp rxRecord("^\\s*(((\\w+)/)?(\\w+))\\s*:\\s*([^\\s].{0,})\\b\\s*$");
+	const QRegExp rxRecord("^\\s*(((\\w+)/)?(\\w+))\\s*:\\s*([^\\s].{0,})\\b\\s*$");
 
-	QStringList keyValues = str.split(QRegExp(";\\W*"), QString::SkipEmptyParts);
+	const QStringList keyValues = str.split(QRegExp(";\\W*"), QString::SkipEmptyParts);
+	QMap<QString, QVariant> defaults;
 
 	foreach(const QString& keyValue, keyValues)
 	{
@@ -592,9 +615,11 @@ void Preferences::readDefaults(const QString& str)
 			
 		if (!key.isEmpty())
 		{
-			m_defaults[rxRecord.cap(1)] = value;
+			defaults[rxRecord.cap(1)] = value;
 		}
 	}
+
+	return defaults;
 }
 
 }

@@ -46,16 +46,13 @@ void UserAgentSettingsWidget::loadUserAgentsFromFile(const QString& fileName, QC
 		return;
 	}
 
-	QString userAgentString = userAgentsFile.readAll();
-	QStringList userAgentList = userAgentString.split('\n', QString::SkipEmptyParts);
+	const QString userAgentString = userAgentsFile.readAll();
+	const QStringList userAgentList = userAgentString.split('\n', QString::SkipEmptyParts);
 
 	foreach(auto line, userAgentList)
 	{
 		targetComboBox->addItem(line, line);
 	}
-
-	INFOLOG << "UserAgents loaded";
-
 }
 
 bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)
