@@ -29,12 +29,19 @@ void BaseUrlParser::parse(GumboOutput* output, const ResponseHeaders& headers, P
 
 	DEBUG_ASSERT(urls.empty() || urlCount == 1);
 
-	if (urlCount == 1)
+	const bool hasOneValidUrl = urlCount == 1 && urls[0].isValid();
+
+	if (hasOneValidUrl && !urls[0].isRelative())
 	{
 		page->baseUrl = urls[0];
 	}
 	else
 	{
+		if (hasOneValidUrl)
+		{
+			ERRLOG << "Found relative base address in <base> tag on page:" << page->url.urlStr();
+		}
+
 		page->baseUrl = page->url;
 	}
 }

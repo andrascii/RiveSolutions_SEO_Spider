@@ -78,7 +78,7 @@ void MetaParser::parseMetaContentType(GumboOutput* output, ParsedPagePtr& page) 
 
 void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -89,13 +89,13 @@ void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noex
 		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
 		return QString(attr->value).trimmed();
 	};
 
-	const std::vector<QString> contents = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	const std::vector<QString> contents = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
 
 	if (!contents.empty())
 	{
@@ -133,7 +133,7 @@ void MetaParser::parseMetaRefresh(GumboOutput* output, ParsedPagePtr& page) noex
 
 void MetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -145,13 +145,13 @@ void MetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& page) 
 		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
 		return QString(attr->value).trimmed().remove("\n");
 	};
 
-	const std::vector<QString> descriptions = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	const std::vector<QString> descriptions = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
 
 	if (!descriptions.empty())
 	{
@@ -163,7 +163,7 @@ void MetaParser::parseMetaDescription(GumboOutput* output, ParsedPagePtr& page) 
 
 void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noexcept
 {
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -175,13 +175,13 @@ void MetaParser::parseMetaKeywords(GumboOutput* output, ParsedPagePtr& page) noe
 		// TODO: uncomment when this error will be fixed in Gumbo
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
 		return QString(attr->value).trimmed().remove("\n");
 	};
 
-	std::vector<QString> keywords = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<QString> keywords = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
 
 	if (!keywords.empty())
 	{
@@ -220,7 +220,7 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 
 	foreach(const QString& userAgentStr, supportedUserAgents)
 	{
-		const auto cond = [nameValue = userAgentStr](const GumboNode* node)
+		const auto predicate = [nameValue = userAgentStr](const GumboNode* node)
 		{
 			return node &&
 				node->type == GUMBO_NODE_ELEMENT &&
@@ -232,13 +232,13 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 			// TODO: uncomment when this error will be fixed in Gumbo
 		};
 
-		const auto res = [](const GumboNode* node)
+		const auto resultGetter = [](const GumboNode* node)
 		{
 			const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
 			return QString(attr->value).trimmed();
 		};
 
-		const std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+		const std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
 		const UserAgentType userAgentType = MetaRobotsHelpers::userAgent(userAgentStr);
 
 		ASSERT(userAgentType != UserAgentType::Unknown);
@@ -257,8 +257,6 @@ void MetaParser::parseMetaRobots(GumboOutput* output, const ResponseHeaders& hea
 				}
 			}
 		}
-
-		
 	}
 }
 
