@@ -18,7 +18,7 @@ void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& he
 		return;
 	}
 
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -26,28 +26,31 @@ void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& he
 			gumbo_get_attribute(&node->v.element.attributes, "src");
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
-		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
-		GumboAttribute* alt = gumbo_get_attribute(&node->v.element.attributes, "alt");
-		QString altVal = alt == nullptr ? "" : alt->value;
-		const QString srcValue = QString(src->value).trimmed().remove(QRegularExpression("[\\n\\t]+"));
+		const QRegularExpression regExp("[\\n\\t]+");
 
-		return std::make_pair(Url(srcValue), altVal);
+		const GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
+		const GumboAttribute* alt = gumbo_get_attribute(&node->v.element.attributes, "alt");
+
+		const QString altVal = alt == nullptr ? QString() : alt->value;
+		const Url url = QString(src->value).remove(regExp);
+
+		return std::make_pair(url, altVal);
 	};
 
-	std::vector<std::pair<Url, QString>> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
+	std::vector<std::pair<Url, QString>> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
 
 	for (std::pair<Url, QString>& url : urls)
 	{
-		url.first = PageParserHelpers::resolveUrl(page->url, url.first);
+		url.first = PageParserHelpers::resolveUrl(page->baseUrl, url.first);
 
 		const bool dataResource = url.first.toDisplayString().startsWith(QString("data:"));
 
 		const ResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
-			LinkInfo{ url.first, LinkParameter::DofollowParameter, url.second, dataResource, ResourceSource::SourceTagImg },
+			LinkInfo{ url.first, LinkParameter::DofollowParameter, url.second, dataResource, ResourceSource::SourceTagImg }
 		};
 
 		if (page->allResourcesOnPage.find(imageResource) == page->allResourcesOnPage.end())

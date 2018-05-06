@@ -209,9 +209,9 @@ void Downloader::metaDataChanged(QNetworkReply* reply)
 	}
 }
 
-void Downloader::queryError(QNetworkReply* reply, QNetworkReply::NetworkError code)
+void Downloader::queryError(QNetworkReply* reply, QNetworkReply::NetworkError)
 {
-	ERRLOG << "An error occurred while downloading " << reply->url().toDisplayString() << "; code: " << code;
+	ERRLOG << reply->url().toDisplayString() << reply->errorString();
 }
 
 void Downloader::processReply(QNetworkReply* reply)
@@ -393,9 +393,7 @@ std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& requ
 
 	VERIFY(connect(reply, &QNetworkReply::metaDataChanged, this, [this, reply]() { metaDataChanged(reply); }, Qt::QueuedConnection));
 
-	using ErrorSignal = void (QNetworkReply::*)(QNetworkReply::NetworkError);
-
-	VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this,
+	VERIFY(connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this,
 		[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
 
 	VERIFY(connect(reply, SIGNAL(downloadProgress(qint64, qint64)), SLOT(onAboutDownloadProgress(qint64, qint64))));

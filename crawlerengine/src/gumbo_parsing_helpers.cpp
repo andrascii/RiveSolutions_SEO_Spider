@@ -233,6 +233,8 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 
 	const auto resultGetter = [](const GumboNode* node)
 	{
+		const QRegularExpression regExp("[\\n\\t]+");
+
 		const GumboAttribute* href = gumbo_get_attribute(&node->v.element.attributes, "href");
 		const GumboAttribute* rel = gumbo_get_attribute(&node->v.element.attributes, "rel");
 
@@ -245,9 +247,9 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 
 		const QString altOrTitle(nodeText(node));
 		const bool dataResource = QByteArray(href->value).startsWith("data:");
-		const QString hrefValue = QString(href->value).trimmed().remove(QRegularExpression("[\\n\\t]+"));
+		const Url url = QString(href->value).trimmed().remove(regExp);
 
-		return LinkInfo{ Url(hrefValue), linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA };
+		return LinkInfo{ url, linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA };
 	};
 
 	std::vector<LinkInfo> result = findNodesAndGetResult(node, predicate, resultGetter);

@@ -165,52 +165,56 @@ constexpr int invalidPageLevel = 100000000;
 
 struct ParsedPage
 {
-	SERIALIZED Url url;
-	SERIALIZED Url redirectedUrl;
-	SERIALIZED Url canonicalUrl;
+	Url url; // url address of a page
+	Url baseUrl; // url parsed from <base href="https://website.com/">
+	Url redirectedUrl; // redirection url received from http response header "location" or from meta refresh tag
+	Url canonicalUrl; // canonical address
 
-	SERIALIZED QString title;
-	SERIALIZED QString contentType;
-	SERIALIZED QString metaRefresh;
-	SERIALIZED QString metaDescription;
-	SERIALIZED QString metaKeywords;
-	SERIALIZED QString serverResponse;
-	SERIALIZED QString firstH1;
-	SERIALIZED QString secondH1;
-	SERIALIZED QString firstH2;
-	SERIALIZED QString secondH2;
-	SERIALIZED Common::StatusCode statusCode;
-	SERIALIZED MetaRobotsFlagsSet metaRobotsFlags;
-	SERIALIZED QDateTime responseDate;
-	SERIALIZED QDateTime lastModifiedDate;
+	QString title;
+	QString contentType;
+	QString metaRefresh;
+	QString metaDescription;
+	QString metaKeywords;
+	QString serverResponse;
+	QString firstH1;
+	QString secondH1;
+	QString firstH2;
+	QString secondH2;
+	Common::StatusCode statusCode;
+	MetaRobotsFlagsSet metaRobotsFlags;
+	QDateTime responseDate;
+	QDateTime lastModifiedDate;
 
-	SERIALIZED int pageSizeKilobytes = int();
-	SERIALIZED int wordCount = int();
-	SERIALIZED int secondsToRefresh = -1;
-	SERIALIZED size_t pageHash = size_t();
+	int pageSizeKilobytes = int();
+	int wordCount = int();
+	int secondsToRefresh = -1;
+	size_t pageHash = size_t();
 
-	SERIALIZED bool hasSeveralTitleTags = bool();
-	SERIALIZED bool hasSeveralMetaDescriptionTags = bool();
-	SERIALIZED bool hasSeveralMetaKeywordsTags = bool();
-	SERIALIZED bool hasSeveralH1Tags = bool();
-	SERIALIZED bool hasSeveralEqualH2Tags = bool();
-	SERIALIZED bool hasMetaRefreshTag = bool();
-	SERIALIZED bool hasFrames = bool();
-	SERIALIZED bool isThisExternalPage = bool();
-	SERIALIZED bool isBlockedForIndexing = bool();
-	SERIALIZED bool isBlockedByMetaRobots = bool();
-	SERIALIZED bool tooManyRedirects = bool();
+	bool hasSeveralTitleTags = bool();
+	bool hasSeveralMetaDescriptionTags = bool();
+	bool hasSeveralMetaKeywordsTags = bool();
+	bool hasSeveralH1Tags = bool();
+	bool hasSeveralEqualH2Tags = bool();
+	bool hasMetaRefreshTag = bool();
+	bool hasFrames = bool();
+	bool isThisExternalPage = bool();
+	bool isBlockedForIndexing = bool();
+	bool isBlockedByMetaRobots = bool();
+	bool tooManyRedirects = bool();
 
-	SERIALIZED ResourceType resourceType;
+	ResourceType resourceType;
+
+	// this container used by workers and finally ModelController clears it
+	// this intermediate data must be transfer using another way
 	ResourcesOnPageList allResourcesOnPage;
-	SERIALIZED std::deque<ResourceLink> linksOnThisPage;
+
+	std::deque<ResourceLink> linksOnThisPage;
 	std::deque<ResourceLink> linksToThisPage;
 
-	SERIALIZED QByteArray rawResponse;
+	QByteArray rawResponse;
 
-	SERIALIZED int pageLevel = invalidPageLevel;
-
-	SERIALIZED std::vector<bool> storages;
+	int pageLevel = invalidPageLevel;
+	std::vector<bool> storages;
 
 	bool canRefresh() const noexcept
 	{

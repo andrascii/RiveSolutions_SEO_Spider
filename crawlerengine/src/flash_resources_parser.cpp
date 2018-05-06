@@ -30,7 +30,7 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 	//<embed type="application/x-shockwave-flash" src="myContent.swf" width="300" height="120" pluginspage="http://www.adobe.com/go/getflashplayer" / >
 	//<noembed>Alternative content</noembed>
 
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -39,14 +39,16 @@ void FlashResourcesParser::parseFlashResourcesV1(GumboOutput* output, ParsedPage
 			GumboParsingHelpers::checkAttribute(node, "type", "application/x-shockwave-flash");
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
 		return Url(src->value);
 	};
 
-	std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	DEBUG_ASSERT(page->baseUrl.isValid());
+
+	const std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
+	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, urls);
 
 	for (const Url& url : resolvedUrls)
 	{
@@ -71,7 +73,7 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 	// 	<p>Alternative content</p>
 	// 	</object>
 
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -80,14 +82,16 @@ void FlashResourcesParser::parseFlashResourcesV2(GumboOutput* output, ParsedPage
 			GumboParsingHelpers::checkAttribute(node, "type", "application/x-shockwave-flash");
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "data");
 		return Url(src->value);
 	};
 
-	std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	DEBUG_ASSERT(page->baseUrl.isValid());
+
+	const std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
+	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, urls);
 
 	for (const Url& url : resolvedUrls)
 	{
@@ -113,7 +117,7 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 	// 	<p>Alternative content</p>
 	// 	</object>
 
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		const bool paramTagContainsMovieOrSrcAttribute =
 			GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", "")) ||
@@ -126,7 +130,7 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 			paramTagContainsMovieOrSrcAttribute;
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
 		const GumboNode* childNode = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", ""));
 		if (childNode)
@@ -141,8 +145,10 @@ void FlashResourcesParser::parseFlashResourcesV3(GumboOutput* output, ParsedPage
 		return Url(src->value);
 	};
 
-	std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	DEBUG_ASSERT(page->baseUrl.isValid());
+
+	const std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
+	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, urls);
 
 	for (const Url& url : resolvedUrls)
 	{

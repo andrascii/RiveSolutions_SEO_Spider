@@ -19,7 +19,7 @@ void OtherResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 
 	for (LinkInfo& linkInfo : linksInfo)
 	{
-		linkInfo.url = PageParserHelpers::resolveUrl(page->url, linkInfo.url);
+		linkInfo.url = PageParserHelpers::resolveUrl(page->baseUrl, linkInfo.url);
 
 		if (PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url))
 		{

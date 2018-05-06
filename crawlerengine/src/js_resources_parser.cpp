@@ -32,8 +32,10 @@ void JsResourcesParser::parse(GumboOutput* output, const ResponseHeaders& header
 		return Url(src->value);
 	};
 
+	DEBUG_ASSERT(page->baseUrl.isValid());
+
 	std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, urls);
 
 	for (const Url& url : resolvedUrls)
 	{
