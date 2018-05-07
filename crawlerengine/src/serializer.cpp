@@ -19,6 +19,7 @@ namespace
 	const QString serializerVersion = QLatin1String("1");
 
 	const QString urlKey = QLatin1String("url");
+	const QString baseUrlKey = QLatin1String("baseUrl");
 	const QString redirectedUrlKey = QLatin1String("redirectedUrl");
 	const QString canonicalUrlKey = QLatin1String("canonicalUrl");
 	const QString titleKey = QLatin1String("title");
@@ -140,6 +141,7 @@ public:
 		writer.writeStartElement(pageKey);
 
 		writer.writeTextElement(urlKey, urlToString(m_page->url));
+		writer.writeTextElement(baseUrlKey, urlToString(m_page->baseUrl));
 		writer.writeTextElement(redirectedUrlKey, urlToString(m_page->redirectedUrl));
 		writer.writeTextElement(canonicalUrlKey, urlToString(m_page->canonicalUrl));
 		writer.writeTextElement(titleKey, m_page->title);
@@ -297,6 +299,10 @@ public:
 			if (reader.qualifiedName() == urlKey)
 			{
 				m_page->url = urlFromString(reader.readElementText());
+			}
+			else if (reader.qualifiedName() == baseUrlKey)
+			{
+				m_page->baseUrl = urlFromString(reader.readElementText());
 			}
 			else if (reader.qualifiedName() == redirectedUrlKey)
 			{

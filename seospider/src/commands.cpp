@@ -27,86 +27,90 @@ StorageType getPageStorageType(const ParsedPage* page)
 	{
 		switch (page->resourceType)
 		{
-		case ResourceType::ResourceHtml:
-		{
-			type = StorageType::HtmlResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceImage:
-		{
-			type = StorageType::ImageResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceJavaScript:
-		{
-			type = StorageType::JavaScriptResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceStyleSheet:
-		{
-			type = StorageType::StyleSheetResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceFlash:
-		{
-			type = StorageType::FlashResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceVideo:
-		{
-			type = StorageType::VideoResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceOther:
-		{
-			type = StorageType::OtherResourcesStorageType;
-			break;
-		}
-		default:
-			DEBUG_ASSERT(!"Unknown resource type");
+			case ResourceType::ResourceHtml:
+			{
+				type = StorageType::HtmlResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceImage:
+			{
+				type = StorageType::ImageResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceJavaScript:
+			{
+				type = StorageType::JavaScriptResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceStyleSheet:
+			{
+				type = StorageType::StyleSheetResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceFlash:
+			{
+				type = StorageType::FlashResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceVideo:
+			{
+				type = StorageType::VideoResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceOther:
+			{
+				type = StorageType::OtherResourcesStorageType;
+				break;
+			}
+			default:
+			{
+				DEBUG_ASSERT(!"Unknown resource type");
+			}
 		}
 	}
 	else
 	{
 		switch (page->resourceType)
 		{
-		case ResourceType::ResourceHtml:
-		{
-			type = StorageType::ExternalHtmlResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceImage:
-		{
-			type = StorageType::ExternalImageResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceJavaScript:
-		{
-			type = StorageType::ExternalJavaScriptResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceStyleSheet:
-		{
-			type = StorageType::ExternalStyleSheetResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceFlash:
-		{
-			type = StorageType::ExternalFlashResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceVideo:
-		{
-			type = StorageType::ExternalVideoResourcesStorageType;
-			break;
-		}
-		case ResourceType::ResourceOther:
-		{
-			type = StorageType::ExternalOtherResourcesStorageType;
-			break;
-		}
-		default:
-			DEBUG_ASSERT(!"Unknown resource type");
+			case ResourceType::ResourceHtml:
+			{
+				type = StorageType::ExternalHtmlResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceImage:
+			{
+				type = StorageType::ExternalImageResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceJavaScript:
+			{
+				type = StorageType::ExternalJavaScriptResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceStyleSheet:
+			{
+				type = StorageType::ExternalStyleSheetResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceFlash:
+			{
+				type = StorageType::ExternalFlashResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceVideo:
+			{
+				type = StorageType::ExternalVideoResourcesStorageType;
+				break;
+			}
+			case ResourceType::ResourceOther:
+			{
+				type = StorageType::ExternalOtherResourcesStorageType;
+				break;
+			}
+			default:
+			{
+				DEBUG_ASSERT(!"Unknown resource type");
+			}
 		}
 	}
 

@@ -219,7 +219,7 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 		parsedPage->allResourcesOnPage.insert(redirectedResource);
 	}
 
-	outlinks = PageParserHelpers::resolveUrlList(parsedPage->url, outlinks);
+	outlinks = PageParserHelpers::resolveUrlList(parsedPage->baseUrl, outlinks);
 
 	std::vector<LinkInfo> blockedByRobotsTxtLinks = handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
 

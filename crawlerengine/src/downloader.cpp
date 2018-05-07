@@ -11,6 +11,28 @@
 #include "random_interval_range_timer.h"
 #include "helpers.h"
 
+namespace
+{
+
+class ReplyDeferredDeleterGuard final
+{
+public:
+	ReplyDeferredDeleterGuard(QNetworkReply* reply)
+		: m_reply(reply)
+	{
+	}
+
+	~ReplyDeferredDeleterGuard()
+	{
+		m_reply->deleteLater();
+	}
+
+private:
+	QNetworkReply* m_reply;
+};
+
+}
+
 namespace CrawlerEngine
 {
 
@@ -211,28 +233,11 @@ void Downloader::metaDataChanged(QNetworkReply* reply)
 
 void Downloader::queryError(QNetworkReply* reply, QNetworkReply::NetworkError code)
 {
-	ERRLOG << "An error occurred while downloading " << reply->url().toDisplayString() << "; code: " << code;
+	ERRLOG << reply->url().toDisplayString() << reply->errorString() << code;
 }
 
 void Downloader::processReply(QNetworkReply* reply)
 {
-	class ReplyDeferredDeleterGuard final
-	{
-	public:
-		ReplyDeferredDeleterGuard(QNetworkReply* reply)
-			: m_reply(reply)
-		{
-		}
-
-		~ReplyDeferredDeleterGuard()
-		{
-			m_reply->deleteLater();
-		}
-
-	private:
-		QNetworkReply* m_reply;
-	};
-
 	if (isReplyProcessed(reply))
 	{
 		return;
@@ -244,7 +249,7 @@ void Downloader::processReply(QNetworkReply* reply)
 	reply->disconnect(this);
 
 	const DownloadRequestType requestType = static_cast<DownloadRequestType>(reply->property("crawlerRequestType").toInt());
-	const Common::StatusCode statusCode = static_cast<Common::StatusCode>(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+	const Common::StatusCode statusCode = replyStatusCode(reply);
 	const int requestId = reply->property("requestId").toInt();
 
 	if (!m_requesters.contains(requestId))
@@ -260,34 +265,10 @@ void Downloader::processReply(QNetworkReply* reply)
 		return;
 	}
 
-	if (!m_responses.contains(requestId))
-	{
-		m_responses[requestId] = std::make_shared<DownloadResponse>();
-	}
+	std::shared_ptr<DownloadResponse> response = responseFor(requestId);
 
-	std::shared_ptr<DownloadResponse> response = m_responses[requestId];
-
-	const bool processBody = PageParserHelpers::isHtmlOrPlainContentType(
-		reply->header(QNetworkRequest::ContentTypeHeader).toString()
-	);
-
-	QByteArray body;
-
-	if (isAutoDetectionBodyProcessing(reply))
-	{
-		body = processBody ? reply->readAll() : QByteArray();
-	}
-	else
-	{
-		body = reply->readAll();
-	}
-
-	Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-
-	if (redirectUrl.isValid() && redirectUrl.isRelative())
-	{
-		redirectUrl = PageParserHelpers::resolveRelativeUrl(redirectUrl, reply->url());
-	}
+	const QByteArray body = readBody(reply);
+	const Url redirectUrlAddress = redirectUrl(reply);
 
 	if (statusCode == Common::StatusCode::MovedPermanently301 ||
 		statusCode == Common::StatusCode::MovedTemporarily302)
@@ -295,7 +276,7 @@ void Downloader::processReply(QNetworkReply* reply)
 		int urlsInChain = 0;
 		for (int i = 0; i < response->hopsChain.length(); ++i)
 		{
-			if (response->hopsChain[i].url() == redirectUrl)
+			if (response->hopsChain[i].url() == redirectUrlAddress)
 			{
 				urlsInChain += 1;
 			}
@@ -303,15 +284,15 @@ void Downloader::processReply(QNetworkReply* reply)
 
 		if (urlsInChain < 2)
 		{
-			const CrawlerRequest redirectKey{ redirectUrl, requestType };
+			const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
 			loadHelper(redirectKey, requestId);
-			response->hopsChain.addHop(Hop{ reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs() });
+			response->hopsChain.addHop(Hop{ reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs() });
 
 			return;
 		}
 	}
 	
-	response->hopsChain.addHop(Hop(reply->url(), redirectUrl, statusCode, body, reply->rawHeaderPairs()));
+	response->hopsChain.addHop(Hop(reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs()));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
 	const auto iter = m_activeRequestersReplies.find(requester);
@@ -393,14 +374,84 @@ std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& requ
 
 	VERIFY(connect(reply, &QNetworkReply::metaDataChanged, this, [this, reply]() { metaDataChanged(reply); }, Qt::QueuedConnection));
 
-	using ErrorSignal = void (QNetworkReply::*)(QNetworkReply::NetworkError);
-
-	VERIFY(connect(reply, static_cast<ErrorSignal>(&QNetworkReply::error), this,
+	VERIFY(connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this,
 		[this, reply](QNetworkReply::NetworkError code) { queryError(reply, code); }, Qt::QueuedConnection));
 
 	VERIFY(connect(reply, SIGNAL(downloadProgress(qint64, qint64)), SLOT(onAboutDownloadProgress(qint64, qint64))));
 
 	return std::make_pair(resultRequestId, reply);
+}
+
+std::shared_ptr<CrawlerEngine::DownloadResponse> Downloader::responseFor(int requestId)
+{
+	if (!m_responses.contains(requestId))
+	{
+		m_responses[requestId] = std::make_shared<DownloadResponse>();
+	}
+
+	return m_responses[requestId];
+}
+
+QByteArray Downloader::readBody(QNetworkReply* reply) const
+{
+	QByteArray body;
+
+	if (isAutoDetectionBodyProcessing(reply))
+	{
+		const bool processBody = PageParserHelpers::isHtmlOrPlainContentType(
+			reply->header(QNetworkRequest::ContentTypeHeader).toString()
+		);
+
+		body = processBody ? reply->readAll() : QByteArray();
+	}
+	else
+	{
+		body = reply->readAll();
+	}
+
+	return body;
+}
+
+Common::StatusCode Downloader::replyStatusCode(QNetworkReply* reply) const
+{
+	const QNetworkReply::NetworkError error = reply->error();
+
+	Common::StatusCode code = Common::StatusCode::Undefined;
+
+	if (error == QNetworkReply::NoError)
+	{
+		code = static_cast<Common::StatusCode>(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+	}
+	else
+	{
+		switch (error)
+		{
+			case QNetworkReply::UnknownNetworkError:
+			{
+				code = Common::StatusCode::UnknownNetworkError;
+				break;
+			}
+			case QNetworkReply::ContentNotFoundError:
+			{
+				code = Common::StatusCode::NotFound404;
+				break;
+			}
+		}
+	}
+
+	return code;
+}
+
+Url Downloader::redirectUrl(QNetworkReply* reply) const
+{
+	Url redirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+
+	if (redirectUrl.isValid() && redirectUrl.isRelative())
+	{
+		redirectUrl = PageParserHelpers::resolveRelativeUrl(redirectUrl, reply->url());
+	}
+
+	return redirectUrl;
 }
 
 }

@@ -21,12 +21,12 @@ public:
 	{
 		return toDisplayString();
 	}
-	
+
 	inline bool operator==(const Url& url) const
 	{
 		return compare(url);
 	}
-	
+
 	inline bool operator!=(const Url& url) const
 	{
 		return !compare(url);

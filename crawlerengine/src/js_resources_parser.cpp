@@ -18,7 +18,7 @@ void JsResourcesParser::parse(GumboOutput* output, const ResponseHeaders& header
 		return;
 	}
 
-	auto cond = [](const GumboNode* node)
+	auto predicate = [](const GumboNode* node)
 	{
 		return node &&
 			node->type == GUMBO_NODE_ELEMENT &&
@@ -26,14 +26,16 @@ void JsResourcesParser::parse(GumboOutput* output, const ResponseHeaders& header
 			gumbo_get_attribute(&node->v.element.attributes, "src");
 	};
 
-	auto res = [](const GumboNode* node)
+	auto resultGetter = [](const GumboNode* node)
 	{
 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
 		return Url(src->value);
 	};
 
-	std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, cond, res);
-	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
+	DEBUG_ASSERT(page->baseUrl.isValid());
+
+	std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
+	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, urls);
 
 	for (const Url& url : resolvedUrls)
 	{

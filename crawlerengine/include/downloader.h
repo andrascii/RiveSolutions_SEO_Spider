@@ -44,6 +44,11 @@ private:
 	void load(RequesterSharedPtr requester);
 	std::pair<int, QNetworkReply*> loadHelper(const CrawlerRequest& request, int parentRequestId = -1);
 
+	std::shared_ptr<DownloadResponse> responseFor(int requestId);
+	QByteArray readBody(QNetworkReply* reply) const;
+	Common::StatusCode replyStatusCode(QNetworkReply* reply) const;
+	Url redirectUrl(QNetworkReply* reply) const;
+
 private:
 	QNetworkAccessManager* m_networkAccessor;
 	QMap<int, RequesterWeakPtr> m_requesters;

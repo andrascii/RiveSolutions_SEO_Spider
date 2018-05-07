@@ -6,12 +6,17 @@ namespace CrawlerEngine
 Url::Url(const QUrl& url)
 	: QUrl(url)
 {
+#ifndef PRODUCTION
+	canonizedUrlStr();
+#endif
 }
 
 const QString& Url::canonizedUrlStr() const
 {
+#ifdef PRODUCTION
 	if (m_canonizedUrlStr.isEmpty())
 	{
+#endif
 		m_canonizedUrlStr = toDisplayString();
 		if (m_canonizedUrlStr.endsWith(QString("/")))
 		{
@@ -25,7 +30,9 @@ const QString& Url::canonizedUrlStr() const
 		{
 			m_canonizedUrlStr = QString("https://") + m_canonizedUrlStr.mid(12);
 		}
+#ifdef PRODUCTION
 	}
+#endif
 
 	return m_canonizedUrlStr;
 }

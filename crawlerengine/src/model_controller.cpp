@@ -598,7 +598,8 @@ void ModelController::processParsedPageStatusCode(WorkerResult& workerResult, bo
 		return;
 	}
 
-	if (workerResult.incomingPage()->statusCode == Common::StatusCode::NotFound404)
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::NotFound404 ||
+		workerResult.incomingPage()->statusCode == Common::StatusCode::UnknownNetworkError)
 	{
 		data()->addParsedPage(workerResult, StorageType::BrokenLinks);
 	}
@@ -823,18 +824,22 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			resourceSource == ResourceSource::SourceRedirectUrl &&
 			!resourcePage)
 		{
-			/// Обрабатываем ресурсы, на которые произошел редирект.
-			/// Просто заносим их в пендинг без установки ресурса.
-			/// Тип ресурса будет установлен при финальной загрузке ресурса из Content-Type'a.
+			/// We process the resources for which the redirect occurred.
+			/// Just put them in pending without assignment the resource.
+			/// The resource type will be set from the Content-Type when the resource is finally loaded.
+
+			if (data()->parsedPage(temporaryResource, StorageType::PendingResourcesStorageType))
+			{
+				/// this resource already had been added to the downloaded page
+				continue;
+			}
 
 			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink{ temporaryResource, temporaryResource->url,
 				resource.link.linkParameter, resourceSource, resource.link.altOrTitle });
-
+ 
 			temporaryResource->linksToThisPage.emplace_back(linkToThisResource);
-
+ 
 			data()->addParsedPage(temporaryResource, StorageType::PendingResourcesStorageType);
-
-			continue;
 		}
 
 		if (resourceType == ResourceType::ResourceHtml)

@@ -31,9 +31,11 @@ void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& head
 
 	std::vector<LinkInfo> linksInfo = GumboParsingHelpers::parsePageUrlList(output->root, true);
 
+	DEBUG_ASSERT(page->baseUrl.isValid());
+
 	for (LinkInfo& linkInfo : linksInfo)
 	{
-		linkInfo.url = PageParserHelpers::resolveUrl(page->url, linkInfo.url);
+		linkInfo.url = PageParserHelpers::resolveUrl(page->baseUrl, linkInfo.url);
 
 		if (!PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url))
 		{
