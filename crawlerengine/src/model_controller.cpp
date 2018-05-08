@@ -226,7 +226,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	{
 		DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
 			data()->size(StorageType::CrawledUrlStorageType) == 1);
-
+		
 		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
 			!workerResult.incomingPage()->isThisExternalPage ||
 			workerResult.incomingPage()->linksOnThisPage.size() == 1 &&

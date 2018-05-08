@@ -253,6 +253,7 @@ std::vector<LinkInfo> GumboParsingHelpers::parsePageUrlList(const GumboNode* nod
 	};
 
 	std::vector<LinkInfo> result = findNodesAndGetResult(node, predicate, resultGetter);
+
 	const LinkInfo canonical = getLinkRelUrl(node, "canonical", ResourceSource::SourceTagLinkRelCanonical);
 
 	if (canonical.resourceSource != ResourceSource::SourceInvalid)

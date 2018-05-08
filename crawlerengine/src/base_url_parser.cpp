@@ -26,7 +26,7 @@ void BaseUrlParser::parse(GumboOutput* output, const ResponseHeaders& headers, P
 
 	const std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
 	const auto urlCount = urls.size();
-
+	
 	DEBUG_ASSERT(urls.empty() || urlCount == 1);
 
 	const bool hasOneValidUrl = urlCount == 1 && urls[0].isValid();

@@ -6,11 +6,6 @@
 namespace CrawlerEngine
 {
 
-
-#ifndef SERIALIZED
-# define SERIALIZED ;
-#endif
-
 struct ParsedPage;
 
 using ParsedPageWeakPtr = std::weak_ptr<ParsedPage>;
@@ -109,10 +104,10 @@ struct LinkInfo
 struct ResourceLink
 {
 	ParsedPageWeakPtr resource;
-	SERIALIZED Url url;
-	SERIALIZED LinkParameter linkParameter;
-	SERIALIZED ResourceSource resourceSource;
-	SERIALIZED QString altOrTitle;
+	Url url;
+	LinkParameter linkParameter;
+	ResourceSource resourceSource;
+	QString altOrTitle;
 };
 
 struct ResourceOnPage

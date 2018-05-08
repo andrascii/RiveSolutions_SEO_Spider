@@ -53,6 +53,8 @@ void HostInfoProvider::handleRequest(RequesterSharedPtr requester)
 	DownloadRequest downloadRequest(CrawlerRequest{ request->webpage, DownloadRequestType::RequestTypeHead });
 	m_downloadRequester.reset(downloadRequest, this, &HostInfoProvider::onLoadingDone);
 	m_downloadRequester->start();
+
+	DEBUGLOG << "IP address for:" << request->webpage.toDisplayString() << "is" << m_pendingResponse->hostInfo.stringAddressesIPv4()[0];
 }
 
 void HostInfoProvider::stopRequestHandling(RequesterSharedPtr requester)
@@ -60,9 +62,8 @@ void HostInfoProvider::stopRequestHandling(RequesterSharedPtr requester)
 	requester;
 }
 
-void HostInfoProvider::onLoadingDone(Requester* requester, const DownloadResponse& response)
+void HostInfoProvider::onLoadingDone(Requester*, const DownloadResponse& response)
 {
-	Q_UNUSED(requester);
 	m_pendingResponse->url = response.hopsChain.front().url();
 
 	if (response.hopsChain.length() > 1)
@@ -79,6 +80,7 @@ void HostInfoProvider::onLoadingDone(Requester* requester, const DownloadRespons
 		{
 			const QString originalPath = originalUrl.path().toLower();
 			const QString redirectedPath = redirectedUrl.path().toLower();
+
 			if (originalPath == redirectedPath || 
 				redirectedPath == QString("/") && originalPath.isEmpty() ||
 				originalPath == QString("/") && redirectedPath.isEmpty())

@@ -102,6 +102,13 @@ void Downloader::handleRequest(RequesterSharedPtr requester)
 
 	ASSERT(requester->request()->requestType() == RequestType::RequestTypeDownload);
 
+#ifndef PRODUCTION
+	
+	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
+	DEBUGLOG << "Loading url:" << request->requestInfo.url.toDisplayString();
+
+#endif
+
 	if (m_randomIntervalRangeTimer->isValid())
 	{
 		m_requesterQueue.push_back(std::move(requester));
@@ -238,6 +245,8 @@ void Downloader::queryError(QNetworkReply* reply, QNetworkReply::NetworkError co
 
 void Downloader::processReply(QNetworkReply* reply)
 {
+	DEBUGLOG << "Loaded:" << reply->url().toDisplayString();
+
 	if (isReplyProcessed(reply))
 	{
 		return;
