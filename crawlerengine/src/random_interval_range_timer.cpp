@@ -26,8 +26,15 @@ bool RandomIntervalRangeTimer::isValid() const noexcept
 
 void RandomIntervalRangeTimer::setRange(int from, int to) noexcept
 {
-	m_from = from;
-	m_to = to;
+	if (from && to)
+	{
+		m_from = from;
+		m_to = to;
+
+		return;
+	}
+
+	reset();
 }
 
 void RandomIntervalRangeTimer::reset() noexcept
