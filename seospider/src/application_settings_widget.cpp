@@ -5,6 +5,7 @@
 #include "custom_proxy_styles.h"
 #include "crawler.h"
 #include "application.h"
+#include "widget_helpers.h"
 
 namespace SeoSpider
 {
@@ -36,6 +37,8 @@ void ApplicationSettingsWidget::showEvent(QShowEvent*)
 {
 	reloadSettingsSlot();
 	m_ui.applyButton->setEnabled(m_somethingChanged);
+
+	WidgetHelpers::moveWidgetToHostCenter(this);
 }
 
 void ApplicationSettingsWidget::hideEvent(QHideEvent*)
