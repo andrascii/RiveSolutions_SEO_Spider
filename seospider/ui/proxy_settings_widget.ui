@@ -317,34 +317,66 @@
  <resources/>
  <connections>
   <connection>
-   <sender>useProxyLabel</sender>
-   <signal>linkActivated(QString)</signal>
-   <receiver>useProxyCheckBox</receiver>
-   <slot>toggle()</slot>
+   <sender>useProxyCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>proxyAddressLineEdit</receiver>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>26</x>
-     <y>63</y>
+     <x>8</x>
+     <y>56</y>
     </hint>
     <hint type="destinationlabel">
-     <x>10</x>
-     <y>63</y>
+     <x>31</x>
+     <y>101</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>proxyRequiresAuthorizationLabel</sender>
-   <signal>linkActivated(QString)</signal>
-   <receiver>proxyNeedAuthorizationCheckBox</receiver>
-   <slot>toggle()</slot>
+   <sender>useProxyCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>portSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>183</y>
+     <x>11</x>
+     <y>62</y>
     </hint>
     <hint type="destinationlabel">
-     <x>11</x>
-     <y>177</y>
+     <x>41</x>
+     <y>158</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>proxyNeedAuthorizationCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>passwordLineEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>7</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>30</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>proxyNeedAuthorizationCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>usernameLineEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>13</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>30</x>
+     <y>231</y>
     </hint>
    </hints>
   </connection>

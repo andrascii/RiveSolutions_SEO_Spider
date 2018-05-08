@@ -188,6 +188,11 @@ function registerSXRFileType()
 
 function isAlreadyInstalled()
 {
+	if(installer.isUpdater())
+	{
+		return false;
+	}
+	
 	var version = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
 	
 	if(version)

@@ -792,9 +792,9 @@ SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetDescription
 	color: #262e35;
 }
 
-/*////////////////////////////// UpdatesLoaderDialogContent /////////////////////////////////////*/
+/*////////////////////////////// UpdateLoaderDialogContent /////////////////////////////////////*/
 
-QFrame#UpdatesLoaderDialogContent
+QFrame#UpdateLoaderDialogContent
 {
 	border: 0.1em solid #CCCCCC;
 	min-width: 40em;
@@ -803,39 +803,21 @@ QFrame#UpdatesLoaderDialogContent
 	max-height: 15em;
 }
 
-QFrame#UpdatesLoaderDialogContent QLabel#headerLabel
+QFrame#UpdateLoaderDialogContent QLabel#headerLabel
 {
 	font-size: 24pt;
 	font: bold;
 	color: #4D4D4D;
 }
 
-QFrame#UpdatesLoaderDialogContent QLabel#textLabel
+QFrame#UpdateLoaderDialogContent QLabel#textLabel
 {
 	font-size: 14pt;
 	font: bold;
 	color: #4D4D4D;
 }
 
-QFrame#UpdatesLoaderDialogContent QProgressBar
-{
-    min-height: 1.5em;
-	max-height: 1.5em;
-    max-width: 28.5em;	
-    background-color: #ffffff;
-    text-align: center;
-    color: #4D626E;
-	border-radius: none;
-	border-color: #4A9029;
-}
-
-QFrame#UpdatesLoaderDialogContent QProgressBar::chunk
-{
-	background-color: #61a032;
-}
-
-
-QFrame#UpdatesLoaderDialogContent QPushButton
+QFrame#UpdateLoaderDialogContent QPushButton
 {
 	border-radius: none;
 	font: bold;
@@ -845,7 +827,7 @@ QFrame#UpdatesLoaderDialogContent QPushButton
 	max-width: 10em;
 }
 
-QFrame#UpdatesLoaderDialogContent QPushButton#downloadNowButton
+QFrame#UpdateLoaderDialogContent QPushButton#downloadNowButton
 {
 	color: white;
 	background-color: #56A433;
@@ -853,12 +835,12 @@ QFrame#UpdatesLoaderDialogContent QPushButton#downloadNowButton
 	border-color: #4A9029;
 }
 
-QFrame#UpdatesLoaderDialogContent QPushButton#downloadNowButton:hover
+QFrame#UpdateLoaderDialogContent QPushButton#downloadNowButton:hover
 {
 	background-color: #67B847;
 }
 
-QFrame#UpdatesLoaderDialogContent QPushButton#downloadNowButton:pressed
+QFrame#UpdateLoaderDialogContent QPushButton#downloadNowButton:pressed
 {
 	background-color: #4A9029;
 }

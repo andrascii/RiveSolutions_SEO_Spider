@@ -31,6 +31,11 @@ void ProxySettingsWidget::init()
 	m_ui.useProxyLabel->installEventFilter(this);
 	m_ui.proxyRequiresAuthorizationLabel->installEventFilter(this);
 
+	m_ui.proxyAddressLineEdit->setEnabled(m_ui.useProxyCheckBox->isChecked());
+	m_ui.portSpinBox->setEnabled(m_ui.useProxyCheckBox->isChecked());
+	m_ui.usernameLineEdit->setEnabled(m_ui.proxyNeedAuthorizationCheckBox->isChecked());
+	m_ui.passwordLineEdit->setEnabled(m_ui.proxyNeedAuthorizationCheckBox->isChecked());
+
 	SettingsPage::init();
 }
 
