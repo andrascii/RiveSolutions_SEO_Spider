@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>452</width>
-    <height>426</height>
+    <height>723</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,7 +74,10 @@
         <item>
          <widget class="QLabel" name="text">
           <property name="text">
-           <string>You can set preferences settings for crawler</string>
+           <string>Set the maximum and minimum lengths for criteria such as page titles, meta descriptions, maximum lengths of tags H1 and H2, the maximum value of alt text of the images, also here you can specify the maximum values for the size of pages and images.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -118,7 +121,17 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <item row="7" column="0" colspan="3">
+        <property name="verticalSpacing">
+         <number>9</number>
+        </property>
+        <item row="20" column="0" colspan="2">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Maximum image size kBytes:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="17" column="0" colspan="2">
          <widget class="QLabel" name="label_2">
           <property name="font">
            <font>
@@ -131,28 +144,28 @@
           </property>
          </widget>
         </item>
-        <item row="14" column="0" colspan="2">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label_15">
+        <item row="22" column="0" colspan="2">
+         <widget class="QLabel" name="label_12">
           <property name="text">
-           <string>Maximum:</string>
+           <string>Maximum image alt text length:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" colspan="2">
-         <widget class="QSpinBox" name="spinBox_4">
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Meta Description Length</string>
+          </property>
+         </widget>
+        </item>
+        <item row="19" column="0" colspan="2">
+         <widget class="QSpinBox" name="spinBox_7">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -169,127 +182,11 @@
            <number>300</number>
           </property>
           <property name="controlKey" stdset="0">
-           <string notr="true">minDescriptionLength</string>
+           <string notr="true">maxPageSize</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="1" colspan="2">
-         <widget class="QSpinBox" name="spinBox_9">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximum">
-           <number>300</number>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">minTitleLength</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" rowspan="2">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>Maximum:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="14" column="2">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="11" column="0">
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>Max H1 Tag Chars:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Minimum:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="13" column="0">
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>150</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="11" column="1" colspan="2">
-         <widget class="QSpinBox" name="spinBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximum">
-           <number>300</number>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">maxH1LengthChars</string>
-          </property>
-         </widget>
-        </item>
-        <item row="9" column="1" colspan="2">
-         <widget class="QSpinBox" name="spinBox_6">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximum">
-           <number>300</number>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">maxImageSize</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1" colspan="2">
+        <item row="11" column="0" colspan="2">
          <widget class="QSpinBox" name="spinBox_10">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -311,29 +208,8 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Minimum:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="0">
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>Max Image Alt Text Chars:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="12" column="0">
-         <widget class="QLabel" name="label_14">
-          <property name="text">
-           <string>Max H2 Tag Chars:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="1" colspan="2">
-         <widget class="QSpinBox" name="spinBox_2">
+        <item row="9" column="0" colspan="2">
+         <widget class="QSpinBox" name="spinBox_9">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -350,24 +226,11 @@
            <number>300</number>
           </property>
           <property name="controlKey" stdset="0">
-           <string notr="true">maxImageAltTextChars</string>
+           <string notr="true">minTitleLength</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="0" colspan="3">
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Meta Description Length</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" rowspan="2" colspan="2">
+        <item row="4" column="0" rowspan="3" colspan="2">
          <widget class="QSpinBox" name="spinBox_8">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -389,7 +252,59 @@
           </property>
          </widget>
         </item>
-        <item row="12" column="1" colspan="2">
+        <item row="1" column="0" colspan="2">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Minimum:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="15" column="0" colspan="2">
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Maximum H2 tag length:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="24" column="0" rowspan="5" colspan="2">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>300</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="23" column="0" colspan="2">
+         <widget class="QSpinBox" name="spinBox_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximum">
+           <number>300</number>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">maxImageAltTextChars</string>
+          </property>
+         </widget>
+        </item>
+        <item row="16" column="0" colspan="2">
          <widget class="QSpinBox" name="spinBox_5">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -411,8 +326,15 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0" colspan="3">
-         <widget class="QLabel" name="label_5">
+        <item row="13" column="0" colspan="2">
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>Maximum H1 tag length:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="0" colspan="2">
+         <widget class="QLabel" name="label_3">
           <property name="font">
            <font>
             <weight>75</weight>
@@ -420,26 +342,12 @@
            </font>
           </property>
           <property name="text">
-           <string>Page Title Length</string>
+           <string>H1 and H2 Lengths</string>
           </property>
          </widget>
         </item>
-        <item row="9" column="0">
-         <widget class="QLabel" name="label_11">
-          <property name="text">
-           <string>Max Image Size kBytes</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0">
-         <widget class="QLabel" name="label_16">
-          <property name="text">
-           <string>Max Page Size kBytes</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="1" colspan="2">
-         <widget class="QSpinBox" name="spinBox_7">
+        <item row="14" column="0" colspan="2">
+         <widget class="QSpinBox" name="spinBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -456,7 +364,118 @@
            <number>300</number>
           </property>
           <property name="controlKey" stdset="0">
-           <string notr="true">maxPageSize</string>
+           <string notr="true">maxH1LengthChars</string>
+          </property>
+         </widget>
+        </item>
+        <item row="29" column="0" colspan="2">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="21" column="0" colspan="2">
+         <widget class="QSpinBox" name="spinBox_6">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximum">
+           <number>300</number>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">maxImageSize</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0" colspan="2">
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>Maximum:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="18" column="0" colspan="2">
+         <widget class="QLabel" name="label_16">
+          <property name="text">
+           <string>Maximum page size kBytes:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0" colspan="2">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Minimum:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0" colspan="2">
+         <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Page Title Length</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QSpinBox" name="spinBox_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximum">
+           <number>300</number>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">minDescriptionLength</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Maximum:</string>
           </property>
          </widget>
         </item>

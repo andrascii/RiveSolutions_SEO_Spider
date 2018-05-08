@@ -276,6 +276,7 @@ public:
 
 private:
 	QMap<QString, QVariant> readDefaults(const QString& str);
+	QVector<QMetaProperty> allProperties() const;
 	void addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept;
 
 private:

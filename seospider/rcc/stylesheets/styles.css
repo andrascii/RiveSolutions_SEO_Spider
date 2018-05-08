@@ -351,20 +351,20 @@ SeoSpider--SettingsPage QComboBox,
 SeoSpider--SettingsPage QLineEdit
 {
 	border-radius: 0;
+	min-height: 1.3em;
+	max-height: 1.3em;
+}
+
+SeoSpider--SettingsPage QSpinBox,
+SeoSpider--SettingsPage QLineEdit
+{
+	max-width: 25em;
 }
 
 SeoSpider--SettingsPage QLabel,
 SeoSpider--SettingsPage QCheckBox
 {
-	color: #333333;
 	font-size: 9pt;
-}
-
-SeoSpider--SettingsPage QCheckBox
-{
-	margin-top: 0.5em;
-	margin-bottom: 0.2em;
-	font: bold;
 }
 
 SeoSpider--SettingsPage QFrame#headerFrame
@@ -388,8 +388,7 @@ SeoSpider--SettingsPage QLabel#headerName
 {
 	font-size: 16pt;
 	font: bold;
-	
-	color: #61a032;
+	color: #FF6600;
 }
 
 /*/////////////////////////////// ApplicationSettingsWidget ///////////////////////////*/
@@ -427,7 +426,7 @@ SeoSpider--ApplicationSettingsWidget QLabel,
 SeoSpider--ApplicationSettingsWidget QWidget,
 SeoSpider--ApplicationSettingsWidget QCheckBox
 {
-	color: #4D626E;
+	color: #4D4D4D;
 }
 
 SeoSpider--ApplicationSettingsWidget QPushButton#applyButton:enabled

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>337</height>
+    <width>463</width>
+    <height>491</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,7 +77,10 @@
         <item>
          <widget class="QLabel" name="text">
           <property name="text">
-           <string>You cat set crawler limits</string>
+           <string>Specify the limitations for the crawler, which it should not exceed.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -109,8 +112,15 @@
       </property>
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="responseTimeout">
+        <item row="2" column="0" colspan="2">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Limit search total:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QSpinBox" name="limitSearch">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -124,17 +134,14 @@
            </size>
           </property>
           <property name="maximum">
-           <number>50000</number>
-          </property>
-          <property name="value">
-           <number>1000</number>
+           <number>10000</number>
           </property>
           <property name="controlKey" stdset="0">
-           <string notr="true">limitTimeout</string>
+           <string notr="true">limitSearchTotal</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="7" column="0" colspan="2">
          <widget class="QSpinBox" name="maxRedirects">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -159,8 +166,8 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="limitSearch">
+        <item row="5" column="0" colspan="2">
+         <widget class="QSpinBox" name="responseTimeout">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -174,14 +181,51 @@
            </size>
           </property>
           <property name="maximum">
-           <number>10000</number>
+           <number>50000</number>
+          </property>
+          <property name="value">
+           <number>1000</number>
           </property>
           <property name="controlKey" stdset="0">
-           <string notr="true">limitSearchTotal</string>
+           <string notr="true">limitTimeout</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="9" column="0" colspan="2">
+         <widget class="QSpinBox" name="spinBox">
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">maxLinksCountOnPage</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0" colspan="2">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Maximum links count on page:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Limit maximum response timeout in milliseconds:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0" colspan="2">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Maximum redirects to follow:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
          <widget class="QSpinBox" name="limitURILength">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -203,7 +247,14 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Limit maximum URI length to crawl:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -219,53 +270,18 @@
           </property>
          </spacer>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>Max Redirects to Follow:</string>
+        <item row="0" column="2">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>Limit Max Response Timeout In Milliseconds:</string>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
           </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Limit Search Total:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Limit Max URI Length to Crawl:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Max Links Count on Page:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QSpinBox" name="spinBox">
-          <property name="maximum">
-           <number>10000</number>
-          </property>
-          <property name="value">
-           <number>100</number>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">maxLinksCountOnPage</string>
-          </property>
-         </widget>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -282,12 +298,18 @@
           <property name="placeholderText">
            <string>Type in here the words using whitespace as a separator...</string>
           </property>
+          <property name="notProduction" stdset="0">
+           <string notr="true"/>
+          </property>
          </widget>
         </item>
         <item row="3" column="0" colspan="2">
          <widget class="QLineEdit" name="lineEdit_2">
           <property name="placeholderText">
            <string>Type in here the words using whitespace as a separator...</string>
+          </property>
+          <property name="notProduction" stdset="0">
+           <string notr="true"/>
           </property>
          </widget>
         </item>
@@ -322,12 +344,18 @@
           <property name="text">
            <string>Scan Only Pages Which Does Not Contain Words In Url</string>
           </property>
+          <property name="notProduction" stdset="0">
+           <string notr="true"/>
+          </property>
          </widget>
         </item>
         <item row="0" column="0" colspan="2">
          <widget class="QCheckBox" name="checkBox">
           <property name="text">
            <string>Scan Only Pages Which Contains Words In Url</string>
+          </property>
+          <property name="notProduction" stdset="0">
+           <string notr="true"/>
           </property>
          </widget>
         </item>

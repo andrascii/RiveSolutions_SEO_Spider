@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>Seo Spider</DisplayName>
     <Description>Install Seo Spider.</Description>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <ReleaseDate>2018-01-20</ReleaseDate>
 	<Default>true</Default>
 	<Script>installscript.qs</Script>

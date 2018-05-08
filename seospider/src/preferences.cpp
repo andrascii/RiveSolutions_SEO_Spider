@@ -589,9 +589,11 @@ void Preferences::load()
 		defaults = readDefaults(config.readAll());
 	}
 
-	for(auto pair = defaults.constBegin(); pair != defaults.constEnd(); ++pair)
+	QVector<QMetaProperty> metaProperties = allProperties();
+
+	foreach (const auto& metaProperty, metaProperties)
 	{
-		addDefaultProperty(pair.key().toLatin1(), pair.value());
+		addDefaultProperty(metaProperty.name(), defaults.contains(metaProperty.name()) ? defaults[metaProperty.name()] : QVariant());
 	}
 }
 
@@ -620,6 +622,21 @@ QMap<QString, QVariant> Preferences::readDefaults(const QString& str)
 	}
 
 	return defaults;
+}
+
+QVector<QMetaProperty> Preferences::allProperties() const
+{
+	const QMetaObject* thisMetaObject = &Preferences::staticMetaObject;
+
+	QVector<QMetaProperty> metaProperties;
+	metaProperties.reserve(thisMetaObject->propertyCount());
+
+	for (int i = 0; i < thisMetaObject->propertyCount(); ++i)
+	{
+		metaProperties.push_back(thisMetaObject->property(i));
+	}
+
+	return metaProperties;
 }
 
 }

@@ -83,8 +83,10 @@
         <item>
          <widget class="QLabel" name="text">
           <property name="text">
-           <string>You can set robot preferences, which will be followed by the programs
-during site scanning.</string>
+           <string>You can set robot settings which will be followed by the programs during site scanning.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -122,7 +124,7 @@ during site scanning.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Check External Links</string>
+           <string>Check external links</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">checkExternalUrls</string>
@@ -135,7 +137,7 @@ during site scanning.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Follow Internal &quot;nofollow&quot;</string>
+           <string>Follow internal &quot;nofollow&quot;</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">followInternalNoFollow</string>
@@ -148,7 +150,7 @@ during site scanning.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Follow External &quot;nofollow&quot;</string>
+           <string>Follow external &quot;nofollow&quot;</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">followExternalNoFollow</string>
@@ -174,7 +176,7 @@ during site scanning.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Check SubDomains Pages</string>
+           <string>Check subdomains pages</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">checkSubdomains</string>
@@ -187,7 +189,7 @@ during site scanning.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Follow robots.txt Rules</string>
+           <string>Follow robots.txt rules</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">followRobotsTxt</string>
@@ -200,7 +202,7 @@ during site scanning.</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Check Images</string>
+           <string>Check images</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">checkImages</string>
@@ -249,7 +251,7 @@ during site scanning.</string>
         <item>
          <widget class="QCheckBox" name="checkBox_11">
           <property name="text">
-           <string>Crawl Outside of Start Folder</string>
+           <string>Crawl outside of start folder</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">crawlOutsideOfStartFolder</string>

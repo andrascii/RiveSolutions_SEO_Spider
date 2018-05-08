@@ -19,7 +19,6 @@ static const QByteArray s_exitProgramAction = "exitProgramAction";
 // settings actions
 static const QByteArray s_settingsActionGroup = "settingsActionGroup";
 
-static const QByteArray s_openSettingsAction = "openSettingsAction";
 static const QByteArray s_openCrawlerSettingsAction = "openCrawlerSettingsAction";
 static const QByteArray s_openLanguageSettingsAction = "openLanguageSettingsAction";
 static const QByteArray s_openPreferencesSettingsAction = "openPreferencesSettingsAction";

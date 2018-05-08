@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>388</height>
+    <width>359</width>
+    <height>227</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,14 +70,17 @@
         <item>
          <widget class="QLabel" name="headerName">
           <property name="text">
-           <string>Company profile</string>
+           <string>Company Profile</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="text">
           <property name="text">
-           <string>Here you can fill out your company data for Audit Report tool</string>
+           <string>Here you can fill out your company data for Audit Report tool. This sign will be displayed in the report.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -121,21 +124,14 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Company Name:</string>
+           <string>Company name:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLineEdit" name="companyNameLineEdit">
+        <item row="5" column="0">
+         <widget class="QLineEdit" name="companyWebSiteLineEdit">
           <property name="controlKey" stdset="0">
-           <string notr="true">companyName</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Company Email:</string>
+           <string notr="true">companyWebSite</string>
           </property>
          </widget>
         </item>
@@ -149,16 +145,36 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Company WebSite:</string>
+           <string>Company website:</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
-         <widget class="QLineEdit" name="companyWebSiteLineEdit">
+        <item row="1" column="0">
+         <widget class="QLineEdit" name="companyNameLineEdit">
           <property name="controlKey" stdset="0">
-           <string notr="true">companyWebSite</string>
+           <string notr="true">companyName</string>
           </property>
          </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Company email:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>

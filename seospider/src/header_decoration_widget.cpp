@@ -20,7 +20,7 @@ HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	, m_layout(new QVBoxLayout(this))
 	, m_contentWidget(new QWidget(this))
 	, m_contentLayout(new QHBoxLayout(m_contentWidget))
-	, m_collapseButton(new CollapseHeaderButton(this))
+	//, m_collapseButton(new CollapseHeaderButton(this))
 	, m_collapseAnimation(nullptr)
 	, m_animationFinished(true)
 	, m_titleFrameCollapsed(false)
@@ -33,9 +33,9 @@ HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	m_titleLayout->setMargin(0);
 
 	layout->addLayout(m_titleLayout);
-	layout->addWidget(m_collapseButton);
+	//layout->addWidget(m_collapseButton);
 
-	m_collapseButton->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+	//m_collapseButton->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
 
 	m_titleFrame->setObjectName("TitleFrame");
 
@@ -48,9 +48,9 @@ HeaderDecorationWidget::HeaderDecorationWidget(QWidget* parent)
 	m_layout->addWidget(m_titleFrame);
 	m_layout->addWidget(m_contentWidget);
 
-	VERIFY(connect(m_collapseButton, &CollapseHeaderButton::clicked, this, &HeaderDecorationWidget::onCollapseButtonClicked));
+	//VERIFY(connect(m_collapseButton, &CollapseHeaderButton::clicked, this, &HeaderDecorationWidget::onCollapseButtonClicked));
 
-	m_collapseButton->setWindowFlags(Qt::WindowStaysOnTopHint);
+	//m_collapseButton->setWindowFlags(Qt::WindowStaysOnTopHint);
 	m_titleFrame->setMaximumHeight(Common::Helpers::pointsToPixels(c_maxHeightPt));
 	m_titleFrame->setMinimumHeight(Common::Helpers::pointsToPixels(c_minHeightPt));
 }

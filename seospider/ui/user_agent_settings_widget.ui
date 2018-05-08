@@ -79,6 +79,9 @@
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can choose one of the custom User Agent.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
@@ -112,11 +115,20 @@
       </property>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="horizontalSpacing">
+         <number>6</number>
+        </property>
         <property name="verticalSpacing">
          <number>9</number>
         </property>
         <item row="2" column="0">
          <widget class="QCheckBox" name="useCustomUserAgentCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -128,7 +140,7 @@
         <item row="3" column="1">
          <widget class="QRadioButton" name="useDesktopUserAgentRadioButton">
           <property name="text">
-           <string>Use Desktop User Agent</string>
+           <string>Use desktop user agent</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -141,26 +153,10 @@
           </attribute>
          </widget>
         </item>
-        <item row="3" column="0">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>13</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="5" column="1">
          <widget class="QRadioButton" name="useMobileUserAgentRadioButton">
           <property name="text">
-           <string>Use Mobile User Agent</string>
+           <string>Use mobile user agent</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">useMobileUserAgent</string>
@@ -183,20 +179,6 @@
           </property>
          </spacer>
         </item>
-        <item row="4" column="1" colspan="2">
-         <widget class="QComboBox" name="desktopUserAgentComboBox">
-          <property name="controlKey" stdset="0">
-           <string notr="true">desktopUserAgent</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1" colspan="2">
-         <widget class="QComboBox" name="mobileUserAgentComboBox">
-          <property name="controlKey" stdset="0">
-           <string notr="true">mobileUserAgent</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <widget class="QLabel" name="label_2">
           <property name="text">
@@ -206,6 +188,12 @@
         </item>
         <item row="0" column="0">
          <widget class="QCheckBox" name="followRobotsTxtCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -219,10 +207,13 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>270</width>
+            <height>10</height>
            </size>
           </property>
          </spacer>
@@ -230,14 +221,28 @@
         <item row="2" column="1">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Use Custom User Agent</string>
+           <string>Use custom user agent</string>
           </property>
           <property name="buddy">
            <cstring>useCustomUserAgentCheckBox</cstring>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" colspan="2">
+        <item row="6" column="1">
+         <widget class="QComboBox" name="mobileUserAgentComboBox">
+          <property name="controlKey" stdset="0">
+           <string notr="true">mobileUserAgent</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QComboBox" name="desktopUserAgentComboBox">
+          <property name="controlKey" stdset="0">
+           <string notr="true">desktopUserAgent</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
          <widget class="QComboBox" name="robotsTxtComboBox">
           <property name="controlKey" stdset="0">
            <string notr="true">robotSignature</string>
@@ -264,8 +269,8 @@
      <y>44</y>
     </hint>
     <hint type="destinationlabel">
-     <x>230</x>
-     <y>69</y>
+     <x>180</x>
+     <y>79</y>
     </hint>
    </hints>
   </connection>

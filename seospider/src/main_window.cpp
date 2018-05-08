@@ -15,6 +15,7 @@
 #include "crawler_pause_settings_widget.h"
 #include "page_visual_settings_widget.h"
 #include "language_settings_widget.h"
+#include "proxy_settings_widget.h"
 #include "internet_connection_state_widget.h"
 #include "notifications_container_widget.h"
 #include "software_branding.h"
@@ -27,7 +28,6 @@
 #include "constants.h"
 #include "version.h"
 #include "recent_files.h"
-
 #include "ui_crawler_settings_widget.h"
 #include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
@@ -37,6 +37,7 @@
 #include "ui_crawler_pause_settings_widget.h"
 #include "ui_company_profile_settings_widget.h"
 #include "ui_page_visual_settings_widget.h"
+
 
 namespace SeoSpider
 {
@@ -377,14 +378,13 @@ void MainWindow::createActions()
 
 	// settings actions
 	actionRegistry.addActionGroup(s_settingsActionGroup);
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openSettingsAction, tr("Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerSettingsAction, QIcon(QStringLiteral(":/images/crawler-settings.png")), tr("Crawler Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLanguageSettingsAction, QIcon(QStringLiteral(":/images/lang-settings.png")), tr("Language Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPreferencesSettingsAction, QIcon(QStringLiteral(":/images/preferences-settings-icon.png")), tr("Preferences Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction, QIcon(QStringLiteral(":/images/limits-settings.png")), tr("Limit Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction, QIcon(QStringLiteral(":/images/proxy-settings.png")), tr("Proxy Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction, QIcon(QStringLiteral(":/images/user-agent.png")), tr("User Agent Settings"));
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction, QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Timer Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction, QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction, QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
 
@@ -408,9 +408,6 @@ void MainWindow::createActions()
 	};
 
 	VERIFY(connect(theApp->crawler(), &Crawler::stateChanged, this, settingsActionsAvailability));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openSettingsAction), SIGNAL(triggered()), 
-		this, SLOT(showApplicationSettingsDialog())));
 
 	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CrawlerSettingsWidget)); }));
@@ -552,14 +549,17 @@ void MainWindow::createAndSetCentralWidget()
 void MainWindow::registerSettingsPages() const
 {
 	SettingsPageImpl<Ui_CrawlerSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettingsWidget));
-	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettingsWidget));
+	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettingsWidget), new ProxySettingsWidget);
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(QIcon(":/images/lang-settings.png"), TYPE_STRING(Ui_LanguageSettingsWidget), new LanguageSettingsWidget);
 	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(QIcon(":/images/user-agent.png"), TYPE_STRING(Ui_UserAgentSettingsWidget), new UserAgentSettingsWidget);
 	SettingsPageImpl<Ui_CrawlerPauseSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-pause.png"), TYPE_STRING(Ui_CrawlerPauseSettingsWidget), new CrawlerPauseSettingsWidget);
 	SettingsPageImpl<Ui_CompanyProfileSettingsWidget>::registerSettingsPage(QIcon(":/images/company-profile.png"), TYPE_STRING(Ui_CompanyProfileSettingsWidget));
+
+#ifndef PRODUCTION
 	SettingsPageImpl<Ui_PageVisualSettingsWidget>::registerSettingsPage(QIcon(":/images/color.png"), TYPE_STRING(Ui_PageVisualSettingsWidget), new PageVisualSettingsWidget);
+#endif
 }
 
 QString MainWindow::getSaveFilePath() const
@@ -607,7 +607,6 @@ void MainWindow::initSystemTrayIconMenu()
 	menu->addAction(ActionRegistry::instance().globalAction(s_startCrawlerAction));
 	menu->addAction(ActionRegistry::instance().globalAction(s_stopCrawlerAction));
 	menu->addSeparator();
-	menu->addAction(ActionRegistry::instance().globalAction(s_openSettingsAction));
 	menu->addAction(ActionRegistry::instance().globalAction(s_exitProgramAction));
 	systemTrayIcon()->setContextMenu(menu);
 }

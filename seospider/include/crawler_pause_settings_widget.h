@@ -15,17 +15,14 @@ public:
 
 protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;
+	virtual void init() override;
 
 private slots:
 	void fromCrawlerPauseSpinBoxChanged(int value);
 	void toCrawlerPauseSpinBoxChanged(int value);
 
 private:
-	virtual void init() override;
-
-private:
 	Ui::CrawlerPauseSettingsWidget m_ui;
-
 };
 
 }

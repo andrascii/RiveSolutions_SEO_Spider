@@ -70,14 +70,18 @@
         <item>
          <widget class="QLabel" name="headerName">
           <property name="text">
-           <string>Crawler pause timer settings</string>
+           <string>Crawler Pause Settings</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="text">
           <property name="text">
-           <string>Here you can assign crawler to use pause timer</string>
+           <string>Set the range of pauses between requests to the server on which the analyzed site is located to emulate human behavior.
+The pause is selected from the specified range randomly.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -113,10 +117,10 @@
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <property name="horizontalSpacing">
-         <number>0</number>
+         <number>6</number>
         </property>
         <property name="verticalSpacing">
-         <number>6</number>
+         <number>9</number>
         </property>
         <item row="0" column="4">
          <spacer name="horizontalSpacer">
@@ -158,13 +162,6 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>To:</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="3" colspan="2">
          <widget class="QSpinBox" name="fromPauseTimerSpinBox">
           <property name="suffix">
@@ -191,6 +188,13 @@
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">toPauseTimer</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="2">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>To:</string>
           </property>
          </widget>
         </item>

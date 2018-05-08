@@ -110,7 +110,6 @@ void SettingsPage::init()
 
 		m_controlAdapters[controlKeyString] = controlAdapter;
 	}
-
 }
 
 void SettingsPage::registerMetaTypes() const
@@ -158,6 +157,18 @@ void SettingsPage::initControlsWithProperty()
 {
 	foreach(QObject* control, findChildren<QObject*>())
 	{
+		if (control->property("notProduction").isValid())
+		{
+			QWidget* controlWidget = qobject_cast<QWidget*>(control);
+
+			DEBUG_ASSERT(controlWidget);
+
+			if (controlWidget)
+			{
+				controlWidget->hide();
+			}
+		}
+
 		if (!control->property("controlKey").isValid())
 		{
 			continue;
