@@ -8,7 +8,6 @@
 #include "menubar.h"
 #include "settings_page_impl.h"
 #include "site_map_creator_widget.h"
-#include "crawler_status_info.h"
 #include "page_factory.h"
 #include "settings_page.h"
 #include "user_agent_settings_widget.h"
@@ -29,6 +28,7 @@
 #include "constants.h"
 #include "version.h"
 #include "recent_files.h"
+#include "crawler_progress_bar.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -342,7 +342,7 @@ void MainWindow::init()
 	statusBar->addPermanentWidget(new NotificationsContainerWidget(statusBar));
 	statusBar->addPermanentWidget(new InternetConnectionStateWidget(statusBar));
 	statusBar->addWidget(new ProjectFileStateWidget(statusBar));
-	statusBar->addWidget(new CrawlerStatusInfo(statusBar));
+	statusBar->addWidget(new CrawlerProgressBar(statusBar));
 	setStatusBar(statusBar);
 
 	loadState();

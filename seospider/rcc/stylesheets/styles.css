@@ -88,7 +88,22 @@ QStatusBar::item
 	border: none;
 }
 
-SeoSpider--CrawlerStatusInfo QLabel,
+QStatusBar QProgressBar
+{
+	border-radius: none;
+	color: #4D4D4D;
+	font-size: 8pt;
+	min-width: 20em;
+	max-height: 1.2em;
+	border-color: #EEE8D5;
+	background: #FDF6E3;
+}
+
+QStatusBar QProgressBar:chunk
+{
+	background: #FF6600;
+}
+
 SeoSpider--ProjectFileStateWidget QLabel
 {
 	color: #EDEDED;
