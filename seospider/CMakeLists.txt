@@ -12,6 +12,7 @@ set(CommonLibHeadersDir ../common/include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(QtXlsxWriterHeadersDir ../qtxlsxwriter/src/xlsx)
 set(VersionHeadersDir ../version/include)
+set(VMProtectSdkDir ../deps/vmprotect/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppCppList "src/*.cpp")
@@ -40,6 +41,10 @@ source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 source_group(Ui FILES ${AppFormsList})
 source_group(Qrc FILES ${AppResourcesList})
 
+# this must be before add_executable!
+link_directories(${VMProtectSdkLibDir})
+message("VMProtectSDK path: ${VMProtectSdkLibDir}")
+
 if(WIN32)
 	source_group(WinResource FILES ${AppWin32Resoure})
 	
@@ -67,6 +72,33 @@ else()
 	)
 endif()
 
+add_custom_command(
+	TARGET ${AppName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	${VMProctectSdkDll}
+	"${CMAKE_CURRENT_BINARY_DIR}/Release"
+)
+
+add_custom_command(
+	TARGET ${AppName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	${VMProctectSdkDll}
+	"${CMAKE_CURRENT_BINARY_DIR}/Debug"
+)
+
+add_custom_command(
+	TARGET ${AppName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	${VMProtectDebugLicenseFile}
+	"${CMAKE_CURRENT_BINARY_DIR}/Debug"
+)
+
 add_definitions(
 	${QT_DEFINITIONS}
 	-DQUAZIP_STATIC
@@ -91,7 +123,7 @@ if(MSVC)
 	set_target_properties(
 		${AppName} 
 		PROPERTIES WIN32_EXECUTABLE YES
-		LINK_FLAGS "/DEBUG /ENTRY:mainCRTStartup"
+		LINK_FLAGS "/DEBUG /ENTRY:mainCRTStartup /MAP"
 	)
 endif()
 
@@ -101,6 +133,7 @@ include_directories(
 	${CommonLibHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
 	${VersionHeadersDir}
+	${VMProtectSdkDir}
 	${QtXlsxWriterHeadersDir}
 	${QtXlsxWriter_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}

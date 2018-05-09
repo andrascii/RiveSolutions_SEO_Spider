@@ -94,8 +94,8 @@
 #include <limits>
 #include <fstream>
 #include <optional>
-
 #include <windows.h>
+#include <VMProtectSDK.h>
 
 //
 // boost

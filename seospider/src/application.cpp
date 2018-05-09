@@ -26,6 +26,28 @@
 #include "update_checker.h"
 #include "update_loader_dialog.h"
 
+#define PRINT_HELPER(state, flag) if (state & flag) printf("%s ", #flag)
+void print_state(INT state)
+{
+	if (state == 0)
+	{
+		printf("state = 0\n");
+		return;
+	}
+
+	printf("state = ");
+
+	PRINT_HELPER(state, SERIAL_STATE_FLAG_CORRUPTED);
+	PRINT_HELPER(state, SERIAL_STATE_FLAG_INVALID);
+	PRINT_HELPER(state, SERIAL_STATE_FLAG_BLACKLISTED);
+	PRINT_HELPER(state, SERIAL_STATE_FLAG_DATE_EXPIRED);
+	PRINT_HELPER(state, SERIAL_STATE_FLAG_RUNNING_TIME_OVER);
+	PRINT_HELPER(state, SERIAL_STATE_FLAG_BAD_HWID);
+	PRINT_HELPER(state, SERIAL_STATE_FLAG_MAX_BUILD_EXPIRED);
+
+	printf("\n");
+}
+
 namespace
 {
 
