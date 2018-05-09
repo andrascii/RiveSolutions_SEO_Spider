@@ -121,7 +121,20 @@
         <property name="verticalSpacing">
          <number>9</number>
         </property>
-        <item row="2" column="0">
+        <item row="3" column="1">
+         <widget class="QRadioButton" name="useMobileUserAgentRadioButton">
+          <property name="text">
+           <string>Use mobile user agent</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">useMobileUserAgent</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">userAgentTypeButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="0" column="0">
          <widget class="QCheckBox" name="useCustomUserAgentCheckBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -137,7 +150,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="1" column="1">
          <widget class="QRadioButton" name="useDesktopUserAgentRadioButton">
           <property name="text">
            <string>Use desktop user agent</string>
@@ -154,19 +167,6 @@
          </widget>
         </item>
         <item row="5" column="1">
-         <widget class="QRadioButton" name="useMobileUserAgentRadioButton">
-          <property name="text">
-           <string>Use mobile user agent</string>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">useMobileUserAgent</string>
-          </property>
-          <attribute name="buttonGroup">
-           <string notr="true">userAgentTypeButtonGroup</string>
-          </attribute>
-         </widget>
-        </item>
-        <item row="7" column="1">
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -179,30 +179,7 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Follow robots.txt instuctions for: </string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="followRobotsTxtCheckBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">followRobotsTxt</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
+        <item row="0" column="2">
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -218,7 +195,7 @@
           </property>
          </spacer>
         </item>
-        <item row="2" column="1">
+        <item row="0" column="1">
          <widget class="QLabel" name="label">
           <property name="text">
            <string>Use custom user agent</string>
@@ -228,24 +205,17 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
-         <widget class="QComboBox" name="mobileUserAgentComboBox">
-          <property name="controlKey" stdset="0">
-           <string notr="true">mobileUserAgent</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
+        <item row="2" column="1">
          <widget class="QComboBox" name="desktopUserAgentComboBox">
           <property name="controlKey" stdset="0">
            <string notr="true">desktopUserAgent</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="robotsTxtComboBox">
+        <item row="4" column="1">
+         <widget class="QComboBox" name="mobileUserAgentComboBox">
           <property name="controlKey" stdset="0">
-           <string notr="true">robotSignature</string>
+           <string notr="true">mobileUserAgent</string>
           </property>
          </widget>
         </item>
@@ -257,24 +227,7 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>followRobotsTxtCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>robotsTxtComboBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>8</x>
-     <y>44</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>180</x>
-     <y>79</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <buttongroups>
   <buttongroup name="userAgentTypeButtonGroup">
    <property name="exclusive">

@@ -16,6 +16,7 @@
 #include "page_visual_settings_widget.h"
 #include "language_settings_widget.h"
 #include "proxy_settings_widget.h"
+#include "crawler_settings_widget.h"
 #include "internet_connection_state_widget.h"
 #include "notifications_container_widget.h"
 #include "software_branding.h"
@@ -28,8 +29,6 @@
 #include "constants.h"
 #include "version.h"
 #include "recent_files.h"
-#include "ui_crawler_settings_widget.h"
-#include "ui_proxy_settings_widget.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -548,7 +547,7 @@ void MainWindow::createAndSetCentralWidget()
 
 void MainWindow::registerSettingsPages() const
 {
-	SettingsPageImpl<Ui_CrawlerSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettingsWidget));
+	SettingsPageImpl<Ui_CrawlerSettingsWidget>::registerSettingsPage(QIcon(":/images/crawler-settings.png"), TYPE_STRING(Ui_CrawlerSettingsWidget), new CrawlerSettingsWidget);
 	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(QIcon(":/images/proxy-settings.png"), TYPE_STRING(Ui_ProxySettingsWidget), new ProxySettingsWidget);
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(QIcon(":/images/limits-settings.png"), TYPE_STRING(Ui_LimitsSettingsWidget));
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(QIcon(":/images/preferences-settings-icon.png"), TYPE_STRING(Ui_PreferencesSettingsWidget));

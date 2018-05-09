@@ -62,37 +62,27 @@ bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)
 		m_ui.useCustomUserAgentCheckBox->toggle();
 	}
 
-	if (object == m_ui.label_2 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.followRobotsTxtCheckBox->toggle();
-	}
-
 	return false;
 }
 
 void UserAgentSettingsWidget::init()
 {
 	m_ui.label->installEventFilter(this);
-	m_ui.label_2->installEventFilter(this);
 
 	loadUserAgentsFromFile(":/config/desktopUserAgents.cfg", m_ui.desktopUserAgentComboBox);
 	loadUserAgentsFromFile(":/config/mobileUserAgents.cfg", m_ui.mobileUserAgentComboBox);
-		
-	m_ui.robotsTxtComboBox->addItem("AnyBot", QVariant::fromValue(CrawlerEngine::UserAgentType::AnyBot));
-	m_ui.robotsTxtComboBox->addItem("GoogleBot", QVariant::fromValue(CrawlerEngine::UserAgentType::GoogleBot));
-	m_ui.robotsTxtComboBox->addItem("YandexBot", QVariant::fromValue(CrawlerEngine::UserAgentType::YandexBot));
-	m_ui.robotsTxtComboBox->addItem("MailRuBot", QVariant::fromValue(CrawlerEngine::UserAgentType::MailRuBot));
-	m_ui.robotsTxtComboBox->addItem("YahooBot", QVariant::fromValue(CrawlerEngine::UserAgentType::YahooBot));
 
 	SettingsPage::init();
 
 	checkBoxStateChanged(m_ui.useCustomUserAgentCheckBox->isChecked());
-	m_ui.robotsTxtComboBox->setEnabled(m_ui.followRobotsTxtCheckBox->isChecked());
 }
 
 void UserAgentSettingsWidget::applyChanges() noexcept
 {
-	theApp->preferences()->setProperty("userAgent", (m_ui.userAgentTypeButtonGroup->checkedId() == 0 ? m_ui.desktopUserAgentComboBox->currentText() : m_ui.mobileUserAgentComboBox->currentText()));
+	theApp->preferences()->setProperty("userAgent", (m_ui.userAgentTypeButtonGroup->checkedId() == 0 ? 
+		m_ui.desktopUserAgentComboBox->currentText() : 
+		m_ui.mobileUserAgentComboBox->currentText())
+	);
 
 	DEBUGLOG << "userAgent" << theApp->preferences()->property("userAgent").toString();
 

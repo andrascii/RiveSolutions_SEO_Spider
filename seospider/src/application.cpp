@@ -426,7 +426,8 @@ void Application::attachPreferencesToCrawlerOptions()
 
 		CrawlerEngine::UserAgentType userAgentType = static_cast<CrawlerEngine::UserAgentType>(value.toInt());
 
-		DEBUG_ASSERT(userAgentType >= CrawlerEngine::UserAgentType::Unknown && userAgentType >= CrawlerEngine::UserAgentType::AnyBot);
+		DEBUG_ASSERT(userAgentType >= CrawlerEngine::UserAgentType::Unknown && 
+			userAgentType <= CrawlerEngine::UserAgentType::AnyBot);
 
 		crawler()->options()->setUserAgentToFollow(userAgentType);
 	};

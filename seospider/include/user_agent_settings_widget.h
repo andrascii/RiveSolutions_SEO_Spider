@@ -27,7 +27,6 @@ private:
 
 private:
 	Ui::UserAgentSettingsWidget m_ui;
-		
 };
 
 }
