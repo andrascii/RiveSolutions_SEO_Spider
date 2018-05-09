@@ -318,7 +318,7 @@ QLabel#TablePlaseholderLabel
 	font-family: Helvetica;
 }
 
-/*/////////////////////////////// Header view ///////////////////////////////*/
+/*/////////////////////////////// QHeaderView ///////////////////////////////*/
 
 QHeaderView
 {
@@ -328,7 +328,7 @@ QHeaderView
 QHeaderView::section
 {
 	font-size: 8pt;
-	color: #22252D;
+	color: #4D4D4D;
 	
 	border: 0.05em solid white;
 	border-top: none;
@@ -412,14 +412,14 @@ SeoSpider--ApplicationSettingsWidget QListView::item
 
 SeoSpider--ApplicationSettingsWidget QListView::item:hover
 {
-    background-color: #F2F2F2;
-	color: black;
+    background-color: #FDF6E3/*#F2F2F2*/;
+	color: #4D4D4D;
 }
 
 SeoSpider--ApplicationSettingsWidget QListView::item:selected
 {
-    background-color: #F7F0D6;
-	color: black;
+    background-color: #EEE8D5/*#F7F0D6*/;
+	color: #4D4D4D;
 }
 
 SeoSpider--ApplicationSettingsWidget QLabel,
@@ -594,13 +594,13 @@ QWidget#NavigationPanel QPushButton:focus
 QWidget#NavigationPanel QPushButton:hover
 {
 	border-left: 0.3em solid #d2d3d5;
-	background-color: #e8e9ea;
+	background-color: #FDF6E3;
 }
 
 QWidget#NavigationPanel QPushButton[selected="true"]
 {
 	border-left: 0.3em solid #FF6600;	
-	background-color: #d2d3d5;
+	background-color: #EEE8D5;
 }
 
 /*/////////////////////////////// DebugWebPageInfoWidget ///////////////////////////////*/
@@ -680,7 +680,7 @@ SeoSpider--WidgetUnderMouseInfoDialog QLabel
 
 QFrame#MessageBox
 {
-	background: #4D626E;
+	background: #4D4D4D;
 }
 
 QFrame#MessageBox QPushButton
@@ -712,12 +712,12 @@ QStackedWidget QLabel#LoadingWidget
 	font-size: 20em;
 }
 
-/*/////////////////////////////// Notification Popup Widget ///////////////////////////////*/
+/*/////////////////////////////// NotificationPopupFrame ///////////////////////////////*/
 
 SeoSpider--NotificationPopupFrame
 {
-	qproperty-borderColor: #4D626E;
-	qproperty-backgroundColor: #F2F2F2;
+	qproperty-borderColor: #D3CBB7;
+	qproperty-backgroundColor: #FDF6E3;
 }
 
 SeoSpider--NotificationPopupFrame QToolButton
@@ -727,13 +727,21 @@ SeoSpider--NotificationPopupFrame QToolButton
 
 SeoSpider--NotificationPopupFrame QLabel
 {
-	color: #000000;
+	color: #4D4D4D;
 }
 
 SeoSpider--NotificationPopupFrame QLabel#NotificationHeaderLabel
 {
 	font-size: 10pt;
 	font: bold;
+}
+
+SeoSpider--NotificationPopupFrame QFrame#LineFrame
+{
+	min-height: 0.01em;
+	margin-top: 0.2em;
+	margin-bottom: 0.1em;
+	border: 0.05em solid #EEE8D5;
 }
 
 /*////////////////////////////// QColorDialog //////////////////////////////////////////////*/
@@ -775,21 +783,22 @@ QColorDialog QSpinBox
 /*////////////////////////////// FilterInfoWidget ///////////////////////////////////////////*/
 SeoSpider--FilterInfoWidget#filterInfo
 {
-	background-color: #e1e9f1;
-	border-radius: 0.1em;
+	background-color: #EEE8D5/*#e1e9f1*/;
+	border: 0.09em solid #D3CBB7;
+	/*border-radius: 0.1em;*/
 	padding-left: 0.2em;
 	padding-bottom: 0.2em;
 }
 
 SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetTitle
 {
-	color: #262e35;
+	color: #4D4D4D/*#262e35*/;
 	font-size: 13pt;
 }
 
 SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetDescription
 {
-	color: #262e35;
+	color: #4D4D4D/*#262e35*/;
 }
 
 /*////////////////////////////// UpdateLoaderDialogContent /////////////////////////////////////*/

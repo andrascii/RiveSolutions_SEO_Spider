@@ -45,8 +45,7 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	layout->addLayout(notificationTitleBarLayout);
 
 	QFrame* line = new QFrame(this);
-	line->setFrameShape(QFrame::HLine);
-	line->setFrameShadow(QFrame::Sunken);
+	line->setObjectName("LineFrame");
 
 	layout->addWidget(line);
 	layout->addWidget(new QLabel(message));
