@@ -83,6 +83,8 @@
 #include <csignal>
 #include <optional>
 
+#include <VMProtectSDK.h>
+
 //
 // boost
 //

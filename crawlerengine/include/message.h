@@ -6,7 +6,7 @@
 namespace CrawlerEngine
 {
 
-struct IRequest;
+class IRequest;
 
 class Message
 {

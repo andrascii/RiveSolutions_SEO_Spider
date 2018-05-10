@@ -10,7 +10,10 @@ enum class ResponseType
 	ResponseTypeDownloadProgress,
 	ResponseTypeGetHostInfo,
 	ResponseTypeTaskResult,
-	ResponseTypeCheck404IsProper
+	ResponseTypeCheck404IsProper,
+	ResponseSetSerialNumber,
+	ResponseGetSerialNumberData,
+	ResponseGetSerialNumberState
 };
 
 #define DECLARE_RESPONSE_STATIC_TYPE(Type) \
@@ -28,8 +31,9 @@ enum class ResponseType
 		return Type; \
 	}
 
-struct IResponse
+class IResponse
 {
+public:
 	virtual ~IResponse() = default;
 	virtual ResponseType type() const noexcept = 0;
 };

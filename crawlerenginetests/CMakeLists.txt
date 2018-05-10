@@ -20,6 +20,8 @@ list(REMOVE_ITEM CrawlerEngineTestsSourcesList src/stdafx.cpp)
 
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" CrawlerEngineTestsSourcesList)
 
+link_directories(${VMProtectSdkLibDir})
+
 source_group(
 	"Generated Files" FILES 
 	${CrawlerEngineTestsHeadersMocList} 
@@ -36,6 +38,33 @@ add_executable(
 	${CrawlerEngineTestsFormsHeadersList}
 	${CrawlerEngineTestsHeadersMocList}
 	${CrawlerEngineTestsResourcesListAdded}
+)
+
+add_custom_command(
+	TARGET ${CrawlerEngineLibTestsName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	${VMProctectSdkDll}
+	"${CMAKE_CURRENT_BINARY_DIR}/Release"
+)
+
+add_custom_command(
+	TARGET ${CrawlerEngineLibTestsName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	${VMProctectSdkDll}
+	"${CMAKE_CURRENT_BINARY_DIR}/Debug"
+)
+
+add_custom_command(
+	TARGET ${CrawlerEngineLibTestsName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
+	${VMProtectDebugLicenseFile}
+	"${CMAKE_CURRENT_BINARY_DIR}/Debug"
 )
 
 add_definitions(

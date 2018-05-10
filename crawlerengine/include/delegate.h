@@ -3,7 +3,7 @@
 namespace CrawlerEngine
 {
 
-struct IResponse;
+class IResponse;
 
 class Delegate
 {

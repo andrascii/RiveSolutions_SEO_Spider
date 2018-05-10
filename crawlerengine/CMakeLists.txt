@@ -8,6 +8,7 @@ set(CrawlerEngineHeadersDir include)
 set(GumboLibHeadersDir ../gumbo)
 set(CommonLibHeadersDir ../common/include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
+set(VMProtectSdkDir ../deps/vmprotect/include)
 
 aux_source_directory(${CrawlerEngineSourcesDir} CrawlerEngineSourcesList)
 file(GLOB_RECURSE CrawlerEngineHeadersList "include/*.h")
@@ -65,6 +66,7 @@ include_directories(
 	${CrawlerEngineHeadersDir}
 	${GumboLibHeadersDir}
 	${CommonLibHeadersDir}
+	${VMProtectSdkDir}
 	${SeoSpiderServiceApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}

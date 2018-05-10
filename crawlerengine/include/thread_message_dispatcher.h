@@ -5,7 +5,7 @@
 namespace CrawlerEngine
 {
 
-struct IResponse;
+class IResponse;
 class Requester;
 
 class ThreadMessageDispatcher : public QObject
