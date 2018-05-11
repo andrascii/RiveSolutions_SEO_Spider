@@ -25,6 +25,8 @@
 #include "command_line_keys.h"
 #include "update_checker.h"
 #include "update_loader_dialog.h"
+#include "get_serial_number_state_request.h"
+#include "get_serial_number_state_response.h"
 
 namespace
 {
@@ -71,6 +73,10 @@ Application::Application(int& argc, char** argv)
 	}
 
 	m_updateChecker->check();
+
+	GetSerialNumberStateRequest licenseStateRequest;
+	m_licenseRequester.reset(licenseStateRequest, this, &Application::onLicenseState);
+	m_licenseRequester->start();
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -498,6 +504,13 @@ void Application::openFileThroughCmd(const QString& path)
 	}
 
 	crawler()->loadFromFile(path);
+}
+
+void Application::onLicenseState(CrawlerEngine::Requester* requester, const CrawlerEngine::GetSerialNumberStateResponse& response)
+{
+	m_licenseRequester.reset();
+	requester;
+	response;
 }
 
 void Application::initializeStyleSheet()

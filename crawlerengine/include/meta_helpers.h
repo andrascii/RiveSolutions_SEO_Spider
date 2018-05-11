@@ -21,4 +21,44 @@ namespace MetaHelpers
 using YesType = char;
 using NoType = char[2];
 
+template <template <typename> class>
+constexpr bool isAllOf()
+{
+	return true;
+}
+
+template <template <typename> class Pred, typename Head, typename... Tail>
+constexpr bool isAllOf()
+{
+	return Pred<Head>::value && isAllOf<Pred, Tail...>();
+}
+
+// Calls for each argument from argument packet passed functor.
+template <typename Callable, typename Head>
+void callForAllArgumentsInPack(Callable callableObject, Head&& head)
+{
+	callableObject(head);
+}
+
+template <typename Callable, typename Head, typename... Tail>
+void callForAllArgumentsInPack(Callable callableObject, Head&& head, Tail&&... tail)
+{
+	(callableObject(head), callForAllArgumentsInPack(callableObject, std::forward<Tail>(tail)...));
+}
+
+// Calls for each argument from argument packet passed functor.
+// Returns true if for all passed parameters functor returns true.
+template <typename Callable>
+bool isEachArgument(Callable callableObject)
+{
+	callableObject;
+	return true;
+}
+
+template <typename Callable, typename Head, typename... Tail>
+bool isEachArgument(Callable callableObject, Head&& head, Tail&&... tail)
+{
+	return callableObject(head) && isEachArgument(callableObject, std::forward<Tail>(tail)...);
+}
+
 }
