@@ -14,7 +14,7 @@ public:
 	}
 	virtual RequestType requestType() const noexcept override
 	{
-		return RequestType::RequestGetSerialNumberData;
+		return RequestType::RequestGetSerialNumberState;
 	}
 };
 

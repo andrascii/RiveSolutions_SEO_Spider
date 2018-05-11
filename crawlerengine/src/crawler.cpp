@@ -22,6 +22,7 @@
 #include "host_info.h"
 #include "isequenced_storage.h"
 #include "helpers.h"
+#include "license_handler.h"
 
 
 namespace CrawlerEngine
@@ -111,7 +112,8 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(m_modelController, "BackgroundThread");
 	threadManager.moveObjectToThread(createHostInfoProvider()->qobject(), "BackgroundThread");
 	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
-	threadManager.moveObjectToThread(new Proper404Checker(), "BackgroundThread");
+	threadManager.moveObjectToThread(new Proper404Checker, "BackgroundThread");
+	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
