@@ -17,7 +17,7 @@ LicenseService::LicenseService()
 	m_licenseRequester->start();
 }
 
-bool LicenseService::isPayedLicense() const noexcept
+bool LicenseService::isPaidLicense() const noexcept
 {
 	return !isTrialLicense();
 }

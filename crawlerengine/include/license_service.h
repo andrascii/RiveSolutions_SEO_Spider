@@ -11,7 +11,9 @@ class Requester;
 class ILicenseService
 {
 public:
-	virtual bool isPayedLicense() const noexcept = 0;
+	virtual ~ILicenseService() = default;
+
+	virtual bool isPaidLicense() const noexcept = 0;
 	virtual bool isTrialLicense() const noexcept = 0;
 
 	// signals
@@ -25,7 +27,7 @@ class LicenseService : public QObject, public ILicenseService
 public:
 	LicenseService();
 
-	virtual bool isPayedLicense() const noexcept override;
+	virtual bool isPaidLicense() const noexcept override;
 	virtual bool isTrialLicense() const noexcept override;
 
 	// signals
