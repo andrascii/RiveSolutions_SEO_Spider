@@ -63,8 +63,8 @@ void LicenseHandler::setSerialNumber(const RequesterSharedPtr& requester)
 {
 	SetSerialNumberRequest* request = Common::Helpers::fast_cast<SetSerialNumberRequest*>(requester->request());
 
-	std::shared_ptr<SetSerialNumberResponse> response = 
-		std::make_shared<SetSerialNumberResponse>(VMProtectSetSerialNumber(request->serialNumber().data()));
+	std::shared_ptr<SetSerialNumberResponse> response =
+		std::make_shared<SetSerialNumberResponse>(QFlag(VMProtectSetSerialNumber(request->serialNumber().data())));
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
@@ -83,7 +83,7 @@ void LicenseHandler::getSerialNumberData(const RequesterSharedPtr& requester)
 void LicenseHandler::getSerialNumberState(const RequesterSharedPtr& requester)
 {
 	std::shared_ptr<GetSerialNumberStateResponse> response =
-		std::make_shared<GetSerialNumberStateResponse>(VMProtectGetSerialNumberState());
+		std::make_shared<GetSerialNumberStateResponse>(QFlag(VMProtectGetSerialNumberState()));
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }

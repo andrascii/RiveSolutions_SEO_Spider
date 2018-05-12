@@ -25,8 +25,7 @@
 #include "command_line_keys.h"
 #include "update_checker.h"
 #include "update_loader_dialog.h"
-#include "get_serial_number_state_request.h"
-#include "get_serial_number_state_response.h"
+#include "license_service.h"
 
 namespace
 {
@@ -73,10 +72,6 @@ Application::Application(int& argc, char** argv)
 	}
 
 	m_updateChecker->check();
-
-	GetSerialNumberStateRequest licenseStateRequest;
-	m_licenseRequester.reset(licenseStateRequest, this, &Application::onLicenseState);
-	m_licenseRequester->start();
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -325,6 +320,7 @@ void Application::onAboutUseCustomUserAgentChanged()
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
+	ServiceLocator::instance()->addService<ILicenseService>(new LicenseService);
 }
 
 void Application::initQSettings()
@@ -506,13 +502,6 @@ void Application::openFileThroughCmd(const QString& path)
 	crawler()->loadFromFile(path);
 }
 
-void Application::onLicenseState(CrawlerEngine::Requester* requester, const CrawlerEngine::GetSerialNumberStateResponse& response)
-{
-	m_licenseRequester.reset();
-	requester;
-	response;
-}
-
 void Application::initializeStyleSheet()
 {
 	SplashScreen::showMessage("Initializing stylesheets...");
@@ -533,6 +522,7 @@ bool Application::isInternetAvailable() const noexcept
 Application::~Application()
 {
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
+	ServiceLocator::instance()->destroyService<ILicenseService>();
 	DeferredCallProcessor::term();
 }
 

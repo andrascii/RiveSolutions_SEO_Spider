@@ -8,9 +8,7 @@ namespace CrawlerEngine
 {
 
 class Crawler;
-class Requester;
 class SequencedDataCollection;
-class GetSerialNumberStateResponse;
 
 }
 
@@ -78,7 +76,6 @@ private:
 	void startInstaller(const QString& filepath);
 	void attachPreferencesToCrawlerOptions();
 	void openFileThroughCmd(const QString& path);
-	void onLicenseState(CrawlerEngine::Requester* requester, const CrawlerEngine::GetSerialNumberStateResponse& response);
 
 private:
 	std::unique_ptr<CommandLineHandler> m_commandLineHandler;
@@ -99,7 +96,6 @@ private:
 	std::unique_ptr<HeaderControlsContainer> m_headerControlsContainer;
 
 	IUpdateChecker* m_updateChecker;
-	CrawlerEngine::RequesterWrapper m_licenseRequester;
 };
 
 }
