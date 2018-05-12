@@ -2,7 +2,6 @@
 #include "abstract_table_model.h"
 #include "iview_model.h"
 #include "iresize_policy.h"
-#include "selection_model.h"
 #include "item_view_delegate.h"
 #include "helpers.h"
 #include "command_menu.h"
@@ -24,7 +23,6 @@ TableView::TableView(QWidget* parent, bool supportColumSpans)
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 	setItemDelegate(new ItemViewDelegate(nullptr, this));
-	setSelectionModel(new SelectionModel(this));
 	horizontalHeader()->setSectionsMovable(true);
 	setShowGrid(false);
 }
@@ -46,7 +44,6 @@ void TableView::setModel(QAbstractItemModel* model)
 	}
 	
 	initSpans();
-	setSelectionModel(new SelectionModel(this));
 
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpans())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));

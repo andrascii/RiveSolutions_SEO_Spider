@@ -8,7 +8,6 @@
 #include "constants.h"
 #include "common_constants.h"
 #include "preferences.h"
-#include "debug_info_web_page_widget.h"
 #include "settings_page_impl.h"
 #include "widget_under_mouse_info.h"
 #include "deferred_call.h"
