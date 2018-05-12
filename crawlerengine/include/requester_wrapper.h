@@ -2,6 +2,7 @@
 
 #include "irequest.h"
 #include "requester.h"
+#include "meta_helpers.h"
 
 namespace CrawlerEngine
 {
@@ -40,13 +41,13 @@ public:
 		static_assert(sizeof...(callback), "Must be at least one callback");
 
 		m_requesterPtr.reset(new Requester(request));
-		addCallbackHelper((m_requesterPtr->addCallback(object, callback), 0)...);
-	}
 
-private:
-	template <typename... Args>
-	static void addCallbackHelper(Args...)
-	{
+		const auto binder = [this, object](auto&& callback)
+		{
+			m_requesterPtr->addCallback(object, callback);
+		};
+
+		MetaHelpers::callForAllArgumentsInPack(binder, std::forward<decltype(callback)>(callback)...);
 	}
 
 private:
