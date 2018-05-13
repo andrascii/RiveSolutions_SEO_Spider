@@ -42,7 +42,8 @@ void CrawlerPauseSettingsWidget::toCrawlerPauseSpinBoxChanged(int value)
 
 bool CrawlerPauseSettingsWidget::eventFilter(QObject* object, QEvent* event)
 {
-	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease)
+	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease
+		&& m_ui.usePauseTimerCheckBox->isEnabled())
 	{
 		m_ui.usePauseTimerCheckBox->toggle();
 	}

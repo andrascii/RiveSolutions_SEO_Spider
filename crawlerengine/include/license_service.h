@@ -11,6 +11,8 @@ class Requester;
 class ILicenseService
 {
 public:
+	virtual QObject* qobject() const = 0;
+
 	virtual bool isPayedLicense() const noexcept = 0;
 	virtual bool isTrialLicense() const noexcept = 0;
 
@@ -24,6 +26,8 @@ class LicenseService : public QObject, public ILicenseService
 
 public:
 	LicenseService();
+
+	virtual QObject* qobject() const override;
 
 	virtual bool isPayedLicense() const noexcept override;
 	virtual bool isTrialLicense() const noexcept override;

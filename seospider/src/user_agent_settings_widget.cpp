@@ -57,7 +57,8 @@ void UserAgentSettingsWidget::loadUserAgentsFromFile(const QString& fileName, QC
 
 bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)
 {
-	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease)
+	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease 
+		&& m_ui.useCustomUserAgentCheckBox->isEnabled())
 	{
 		m_ui.useCustomUserAgentCheckBox->toggle();
 	}

@@ -17,6 +17,11 @@ LicenseService::LicenseService()
 	m_licenseRequester->start();
 }
 
+QObject* LicenseService::qobject() const
+{
+	return const_cast<LicenseService*>(this);
+}
+
 bool LicenseService::isPayedLicense() const noexcept
 {
 	return !isTrialLicense();
