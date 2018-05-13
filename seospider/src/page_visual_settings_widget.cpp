@@ -13,7 +13,8 @@ PageVisualSettingsWidget::PageVisualSettingsWidget(QWidget* parent)
 
 bool PageVisualSettingsWidget::eventFilter(QObject* object, QEvent* event)
 {
-	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease)
+	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease 
+		&& m_ui.useCustomBackgroundForNotIndexPagesCheckBox->isEnabled())
 	{
 		m_ui.useCustomBackgroundForNotIndexPagesCheckBox->toggle();
 	}

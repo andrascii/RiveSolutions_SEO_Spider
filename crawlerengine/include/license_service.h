@@ -12,7 +12,9 @@ class Requester;
 class ILicenseService
 {
 public:
-	virtual ~ILicenseService() = default;
+	virtual ~ILicenseService() = default; 
+	
+	virtual QObject* qobject() const = 0;
 
 	virtual QObject* qobject() const = 0;
 

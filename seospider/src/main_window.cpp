@@ -29,6 +29,7 @@
 #include "version.h"
 #include "recent_files.h"
 #include "crawler_progress_bar.h"
+#include "license_controls_blocker.h"
 #include "software_branding.h"
 #include "register_product_dialog.h"
 #include "ui_limits_settings_widget.h"
@@ -346,6 +347,8 @@ void MainWindow::init()
 	statusBar->addWidget(new ProjectFileStateWidget(statusBar));
 	statusBar->addWidget(new CrawlerProgressBar(statusBar));
 	setStatusBar(statusBar);
+
+	new LicenseControlsBlocker(this);
 
 	loadState();
 

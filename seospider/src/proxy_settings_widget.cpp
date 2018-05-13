@@ -13,12 +13,14 @@ ProxySettingsWidget::ProxySettingsWidget(QWidget* parent)
 
 bool ProxySettingsWidget::eventFilter(QObject* object, QEvent* event)
 {
-	if (object == m_ui.useProxyLabel && event->type() == QEvent::MouseButtonRelease)
+	if (object == m_ui.useProxyLabel && event->type() == QEvent::MouseButtonRelease 
+		&& m_ui.useProxyCheckBox->isEnabled())
 	{
 		m_ui.useProxyCheckBox->toggle();
 	}
 
-	if (object == m_ui.proxyRequiresAuthorizationLabel && event->type() == QEvent::MouseButtonRelease)
+	if (object == m_ui.proxyRequiresAuthorizationLabel && event->type() == QEvent::MouseButtonRelease 
+		&& m_ui.proxyNeedAuthorizationCheckBox->isEnabled())
 	{
 		m_ui.proxyNeedAuthorizationCheckBox->toggle();
 	}
