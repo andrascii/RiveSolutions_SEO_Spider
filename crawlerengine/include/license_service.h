@@ -1,6 +1,7 @@
 #pragma once
 
 #include "requester_wrapper.h"
+#include "license_state.h"
 
 namespace CrawlerEngine
 {
@@ -12,6 +13,8 @@ class ILicenseService
 {
 public:
 	virtual ~ILicenseService() = default;
+
+	virtual QObject* qobject() const = 0;
 
 	virtual bool isPaidLicense() const noexcept = 0;
 	virtual bool isTrialLicense() const noexcept = 0;
@@ -27,6 +30,8 @@ class LicenseService : public QObject, public ILicenseService
 public:
 	LicenseService();
 
+	virtual QObject* qobject() const override;
+
 	virtual bool isPaidLicense() const noexcept override;
 	virtual bool isTrialLicense() const noexcept override;
 
@@ -35,6 +40,8 @@ public:
 
 private:
 	void onLicenseData(Requester* requester, const GetSerialNumberDataResponse& response);
+	void onLicenseStateChanged(const LicenseStateFlags& stateFlags);
+	void onSubscription(const IResponse& response);
 	void setTrialLicense(bool value);
 
 private:

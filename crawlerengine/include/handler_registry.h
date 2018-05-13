@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irequest.h"
+#include "iresponse.h"
 #include "meta_helpers.h"
 
 DEFINE_METHOD_CHECK(handleRequest)
@@ -47,10 +48,15 @@ public:
 		MetaHelpers::callForAllArgumentsInPack(functor, std::forward<RequestTypes>(requestTypes)...);
 	}
 
+	void addSubscription(std::function<void(const IResponse&)> subscription, QObject* handler, ResponseType responseType);
+	bool hasSubscriptionsFor(QObject* handler, ResponseType responseType) const;
+	std::vector<std::function<void(const IResponse&)>> subscriptionsFor(QObject* handler, ResponseType responseType) const;
+
 	void unregistrateHandler(QObject* handler);
 	void unregisterAll();
 
 	QObject* handlerForRequest(const IRequest& request);
+	QObject* handlerForRequest(RequestType requestType);
 	bool isHandlerExists(QObject* handler) const;
 
 private:
@@ -63,7 +69,30 @@ private:
 private:
 	mutable std::mutex m_mutex;
 
+	struct SubscriptionKey
+	{
+		ResponseType responseType;
+		QObject* handler;
+
+		friend bool operator==(const SubscriptionKey& lhs, const SubscriptionKey& rhs)
+		{
+			return lhs.responseType == rhs.responseType && lhs.handler == rhs.handler;
+		}
+	};
+
+	struct SubscriptionKeyHasher
+	{
+		size_t operator()(const SubscriptionKey& key) const
+		{
+			std::hash<int> intHasher;
+			std::hash<QObject*> pointerHasher;
+
+			return intHasher(static_cast<int>(key.responseType)) + pointerHasher(key.handler);
+		}
+	};
+
 	std::map<RequestType, QObject*> m_handlers;
+	std::unordered_map<SubscriptionKey, std::vector<std::function<void(const IResponse&)>>, SubscriptionKeyHasher> m_subscriptions;
 };
 
 }

@@ -63,6 +63,16 @@ void Requester::processResponse(const IResponse& response) const
 	}
 
 	m_delegate(response);
+
+	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+
+	const std::vector<std::function<void(const IResponse&)>> subscriptions = 
+		handlerRegistry.subscriptionsFor(m_handler, response.type());
+
+	for (const std::function<void(const IResponse&)>& subscription : subscriptions)
+	{
+		subscription(response);
+	}
 }
 
 }
