@@ -16,6 +16,7 @@ private:
 	QMenu* buildMenuFile();
 	QMenu* buildMenuSettings();
 	QMenu* buildMenuSitemap();
+	QMenu* buildMenuHelp();
 };
 
 }

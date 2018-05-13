@@ -30,6 +30,7 @@
 #include "recent_files.h"
 #include "crawler_progress_bar.h"
 #include "license_controls_blocker.h"
+#include "software_branding.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -359,6 +360,7 @@ void MainWindow::init()
 void MainWindow::createActions()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
+	const SoftwareBranding* softwareBranding = theApp->softwareBrandingOptions();
 
 	// file actions
 	actionRegistry.addActionGroup(s_fileActionGroup);
@@ -389,6 +391,13 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction, QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction, QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
+
+	// help actions
+	actionRegistry.addGlobalAction(s_viewHelpAction, tr("View Help"));
+	actionRegistry.addGlobalAction(s_sendFeedbackAction, tr("Send Feedback"));
+	actionRegistry.addGlobalAction(s_registerProductAction, tr("Register Product"));
+	actionRegistry.addGlobalAction(s_checkForUpdatesAction, tr("Check for Updates"));
+	actionRegistry.addGlobalAction(s_aboutProductAction, tr("About") + " " + softwareBranding->organizationName() + " " + softwareBranding->productName());
 
 	const auto settingsActionsAvailability = [](int state)
 	{

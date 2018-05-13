@@ -22,7 +22,7 @@ QObject* LicenseService::qobject() const
 	return const_cast<LicenseService*>(this);
 }
 
-bool LicenseService::isPayedLicense() const noexcept
+bool LicenseService::isPaidLicense() const noexcept
 {
 	return !isTrialLicense();
 }

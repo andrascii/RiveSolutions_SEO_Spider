@@ -11,9 +11,11 @@ class Requester;
 class ILicenseService
 {
 public:
+	virtual ~ILicenseService() = default; 
+	
 	virtual QObject* qobject() const = 0;
 
-	virtual bool isPayedLicense() const noexcept = 0;
+	virtual bool isPaidLicense() const noexcept = 0;
 	virtual bool isTrialLicense() const noexcept = 0;
 
 	// signals
@@ -29,7 +31,7 @@ public:
 
 	virtual QObject* qobject() const override;
 
-	virtual bool isPayedLicense() const noexcept override;
+	virtual bool isPaidLicense() const noexcept override;
 	virtual bool isTrialLicense() const noexcept override;
 
 	// signals
