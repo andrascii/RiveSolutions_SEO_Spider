@@ -9,9 +9,36 @@ HandlerRegistry& HandlerRegistry::instance()
 	return *s_handlerRegistry.get();
 }
 
+void HandlerRegistry::addSubscription(std::function<void(const IResponse&)> subscription, QObject* handler, ResponseType responseType)
+{
+	std::lock_guard locker(m_mutex);
+
+	const SubscriptionKey subscriptionKey{ responseType, handler };
+
+	ASSERT(m_subscriptions.find(subscriptionKey) == m_subscriptions.end());
+
+	m_subscriptions[subscriptionKey].push_back(subscription);
+}
+
+bool HandlerRegistry::hasSubscriptionsFor(QObject* handler, ResponseType responseType) const
+{
+	std::lock_guard locker(m_mutex);
+
+	return m_subscriptions.find(SubscriptionKey{ responseType, handler }) != m_subscriptions.end();
+}
+
+std::vector<std::function<void(const IResponse&)>> HandlerRegistry::subscriptionsFor(QObject* handler, ResponseType responseType) const
+{
+	std::lock_guard locker(m_mutex);
+
+	const auto findIter = m_subscriptions.find(SubscriptionKey{ responseType, handler });
+
+	return findIter == m_subscriptions.end() ? std::vector<std::function<void(const IResponse&)>>() : findIter->second;
+}
+
 void HandlerRegistry::unregistrateHandler(QObject* handler)
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	const auto [result, requestType] = requestTypeForValue(handler);
 
@@ -25,21 +52,28 @@ void HandlerRegistry::unregistrateHandler(QObject* handler)
 
 void HandlerRegistry::unregisterAll()
 {
+	std::lock_guard locker(m_mutex);
+
 	m_handlers.clear();
 }
 
 QObject* HandlerRegistry::handlerForRequest(const IRequest& request)
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
+	return handlerForRequest(request.requestType());
+}
 
-	const auto handlerIterator = m_handlers.find(request.requestType());
+QObject* HandlerRegistry::handlerForRequest(RequestType requestType)
+{
+	std::lock_guard locker(m_mutex);
+
+	const auto handlerIterator = m_handlers.find(requestType);
 
 	return handlerIterator == m_handlers.end() ? nullptr : handlerIterator->second;
 }
 
 bool HandlerRegistry::isHandlerExists(QObject* handler) const
 {
-	std::lock_guard<std::mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	const auto&& [result, requestType] = requestTypeForValue(handler);
 

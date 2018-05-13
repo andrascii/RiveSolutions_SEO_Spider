@@ -67,6 +67,7 @@ private slots:
 	void onCrawlerSessionCreated();
 	void onCrawlerSessionDestroyed();
 	void onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+	void showRegisterProductDialog();
 
 private:
 	bool m_initialized;

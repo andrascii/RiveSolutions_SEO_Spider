@@ -1,6 +1,7 @@
 #pragma once
 
 #include "requester_wrapper.h"
+#include "license_state.h"
 
 namespace CrawlerEngine
 {
@@ -39,6 +40,8 @@ public:
 
 private:
 	void onLicenseData(Requester* requester, const GetSerialNumberDataResponse& response);
+	void onLicenseStateChanged(const LicenseStateFlags& stateFlags);
+	void onSubscription(const IResponse& response);
 	void setTrialLicense(bool value);
 
 private:

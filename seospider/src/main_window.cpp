@@ -31,6 +31,7 @@
 #include "crawler_progress_bar.h"
 #include "license_controls_blocker.h"
 #include "software_branding.h"
+#include "register_product_dialog.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -392,13 +393,6 @@ void MainWindow::createActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction, QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction, QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
 
-	// help actions
-	actionRegistry.addGlobalAction(s_viewHelpAction, tr("View Help"));
-	actionRegistry.addGlobalAction(s_sendFeedbackAction, tr("Send Feedback"));
-	actionRegistry.addGlobalAction(s_registerProductAction, tr("Register Product"));
-	actionRegistry.addGlobalAction(s_checkForUpdatesAction, tr("Check for Updates"));
-	actionRegistry.addGlobalAction(s_aboutProductAction, tr("About") + " " + softwareBranding->organizationName() + " " + softwareBranding->productName());
-
 	const auto settingsActionsAvailability = [](int state)
 	{
 		const auto actionsAvailabilitySetter = [](bool value)
@@ -446,6 +440,16 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_openPageVisualSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_PageVisualSettingsWidget)); }));
+
+	// help actions
+	actionRegistry.addGlobalAction(s_viewHelpAction, tr("View Help"));
+	actionRegistry.addGlobalAction(s_sendFeedbackAction, tr("Send Feedback"));
+	actionRegistry.addGlobalAction(s_registerProductAction, tr("Register Product"));
+	actionRegistry.addGlobalAction(s_checkForUpdatesAction, tr("Check for Updates"));
+	actionRegistry.addGlobalAction(s_aboutProductAction, tr("About") + " " + softwareBranding->organizationName() + " " + softwareBranding->productName());
+
+	VERIFY(connect(actionRegistry.globalAction(s_registerProductAction), &QAction::triggered,
+		this, [this] { showRegisterProductDialog(); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -658,6 +662,12 @@ void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason rea
 		setWindowState(states);
 		activateWindow();
 	}
+}
+
+void MainWindow::showRegisterProductDialog()
+{
+	RegisterProductDialog* registerProductDialog = new RegisterProductDialog(this);
+	registerProductDialog->exec();
 }
 
 ContentFrame* MainWindow::contentFrame() const noexcept
