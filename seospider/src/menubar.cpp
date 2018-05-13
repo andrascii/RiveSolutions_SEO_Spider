@@ -16,6 +16,7 @@ void MenuBar::init()
 	addMenu(buildMenuFile());
 	addMenu(buildMenuSettings());
 	addMenu(buildMenuSitemap());
+	addMenu(buildMenuHelp());
 }
 
 QMenu* MenuBar::buildMenuFile()
@@ -62,6 +63,23 @@ QMenu* MenuBar::buildMenuSitemap()
 	sitemapMenu->addAction(actionRegistry.globalAction(s_createXMLSitemapAction));
 
 	return sitemapMenu;
+}
+
+QMenu* MenuBar::buildMenuHelp()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	QMenu* helpMenu = new QMenu(tr("Help"), this);
+
+	helpMenu->addAction(actionRegistry.globalAction(s_viewHelpAction));
+	helpMenu->addAction(actionRegistry.globalAction(s_sendFeedbackAction));
+	helpMenu->addSeparator();
+	helpMenu->addAction(actionRegistry.globalAction(s_registerProductAction));
+	helpMenu->addAction(actionRegistry.globalAction(s_checkForUpdatesAction));
+	helpMenu->addSeparator();
+	helpMenu->addAction(actionRegistry.globalAction(s_aboutProductAction));
+
+	return helpMenu;
 }
 
 }

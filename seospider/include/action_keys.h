@@ -29,6 +29,13 @@ static const QByteArray s_openCrawlerPauseTimerSettingsAction = "openCrawlerPaus
 static const QByteArray s_openCompanyProfileSettingsAction = "openCompanyProfileSettingsAction";
 static const QByteArray s_openPageVisualSettingsAction = "openPageVisualSettingsAction";
 
+// help actions
+static const QByteArray s_viewHelpAction = "viewHelpAction";
+static const QByteArray s_sendFeedbackAction = "sendFeedbackAction";
+static const QByteArray s_registerProductAction = "registerProductAction";
+static const QByteArray s_checkForUpdatesAction = "checkForUpdatesAction";
+static const QByteArray s_aboutProductAction = "aboutProductAction";
+
 // crawler actions
 static const QByteArray s_startCrawlerAction = "startCrawlerAction";
 static const QByteArray s_stopCrawlerAction = "stopCrawlerAction";
