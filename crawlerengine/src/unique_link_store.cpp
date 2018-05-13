@@ -62,12 +62,12 @@ void UniqueLinkStore::addUrl(const Url& url, DownloadRequestType requestType)
 			INFOLOG << request.url.urlStr();
 		}
 
-		//constexpr int limitUrls = 50;
-		//
-		//if(m_licenseService->isTrialLicense() && m_pendingUrlList.size() >= limitUrls)
-		//{
-		//	return;
-		//}
+		constexpr int limitUrls = 50;
+		
+		if(m_licenseService->isTrialLicense() && m_pendingUrlList.size() >= limitUrls)
+		{
+			return;
+		}
 
 		m_pendingUrlList.insert(std::move(request));
 
@@ -91,12 +91,12 @@ void UniqueLinkStore::addUrl(Url&& url, DownloadRequestType requestType)
 			INFOLOG << request.url.urlStr();
 		}
 
-		//constexpr int limitUrls = 50;
-		//
-		//if (m_licenseService->isTrialLicense() && m_pendingUrlList.size() >= limitUrls)
-		//{
-		//	return;
-		//}
+		constexpr int limitUrls = 50;
+		
+		if (m_licenseService->isTrialLicense() && m_pendingUrlList.size() >= limitUrls)
+		{
+			return;
+		}
 
 		m_pendingUrlList.insert(std::move(request));
 
