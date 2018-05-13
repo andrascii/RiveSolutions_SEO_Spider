@@ -79,6 +79,11 @@ void LicenseService::onLicenseStateChanged(const LicenseStateFlags& stateFlags)
 
 void LicenseService::onSubscription(const IResponse& response)
 {
+	if (m_licenseRequester)
+	{
+		return;
+	}
+
 	switch (response.type())
 	{
 		case ResponseType::ResponseSetSerialNumber:

@@ -868,3 +868,13 @@ QFrame#UpdateLoaderDialogContent QPushButton#downloadNowButton:pressed
 {
 	background-color: #4A9029;
 }
+
+/*////////////////////////////// RegisterProductDialog /////////////////////////////////////*/
+
+SeoSpider--RegisterProductDialog
+{
+	min-height: 19m;
+	max-height: 19em;
+	min-width: 35em;
+	max-width: 35em;
+}

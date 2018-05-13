@@ -16,8 +16,6 @@ public:
 	
 	virtual QObject* qobject() const = 0;
 
-	virtual QObject* qobject() const = 0;
-
 	virtual bool isPaidLicense() const noexcept = 0;
 	virtual bool isTrialLicense() const noexcept = 0;
 
