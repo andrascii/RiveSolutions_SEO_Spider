@@ -319,7 +319,6 @@ void Application::onAboutUseCustomUserAgentChanged()
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
-	ServiceLocator::instance()->addService<ILicenseService>(new LicenseService);
 }
 
 void Application::initQSettings()
@@ -340,6 +339,8 @@ void Application::initialize()
 {
 	DeferredCallProcessor::init();
 
+	registerServices();
+
 	m_crawler->initialize();
 
 	/// must be Qt::QueuedConnection
@@ -354,7 +355,6 @@ void Application::initialize()
 	std::this_thread::sleep_for(3s);
 #endif
 
-	registerServices();
 	initQSettings();
 	preferences()->load();
 
@@ -521,7 +521,6 @@ bool Application::isInternetAvailable() const noexcept
 Application::~Application()
 {
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
-	ServiceLocator::instance()->destroyService<ILicenseService>();
 	DeferredCallProcessor::term();
 }
 
