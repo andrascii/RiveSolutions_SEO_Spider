@@ -6,8 +6,9 @@
 namespace CrawlerEngine
 {
 
-class GetSerialNumberDataResponse;
 class Requester;
+class GetSerialNumberDataResponse;
+class GetSerialNumberStateResponse;
 
 class ILicenseService
 {
@@ -38,10 +39,14 @@ public:
 	// signals
 	Q_SIGNAL virtual void licenseChanged() const override;
 
+protected:
+	virtual void timerEvent(QTimerEvent* event) override;
+
 private:
+	Q_INVOKABLE void onSubscription(const IResponse& response);
+
 	void onLicenseData(Requester* requester, const GetSerialNumberDataResponse& response);
 	void onLicenseStateChanged(const LicenseStateFlags& stateFlags);
-	void onSubscription(const IResponse& response);
 	void setTrialLicense(bool value);
 
 private:

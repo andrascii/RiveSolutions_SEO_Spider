@@ -8,6 +8,13 @@
 #include "get_serial_number_state_response.h"
 #include "handler_registry.h"
 
+namespace
+{
+
+constexpr int s_minute = 60 * 1000;
+
+}
+
 namespace CrawlerEngine
 {
 
@@ -33,12 +40,17 @@ LicenseService::LicenseService()
 		onSubscription(response);
 	};
 
-	handlerRegistry.addSubscription(subscription, getSerialNumberDataRequestHandler, ResponseType::ResponseGetSerialNumberData);
-	handlerRegistry.addSubscription(subscription, getSerialNumberStateRequestHandler, ResponseType::ResponseGetSerialNumberState);
-	handlerRegistry.addSubscription(subscription, setSerialNumberRequestHandler, ResponseType::ResponseSetSerialNumber);
+	const QByteArray normalizedSubscriptionSignature = QMetaObject::normalizedSignature("onSubscription(const IResponse&)");
+	const HandlerRegistry::Subscription subscriber{ this, staticMetaObject.method(staticMetaObject.indexOfMethod(normalizedSubscriptionSignature)) };
+
+	handlerRegistry.addSubscription(subscriber, getSerialNumberDataRequestHandler, ResponseType::ResponseGetSerialNumberData);
+	handlerRegistry.addSubscription(subscriber, getSerialNumberStateRequestHandler, ResponseType::ResponseGetSerialNumberState);
+	handlerRegistry.addSubscription(subscriber, setSerialNumberRequestHandler, ResponseType::ResponseSetSerialNumber);
 
 	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseService::onLicenseData);
 	m_licenseRequester->start();
+
+	ASSERT(startTimer(s_minute));
 }
 
 QObject* LicenseService::qobject() const
@@ -54,6 +66,17 @@ bool LicenseService::isPaidLicense() const noexcept
 bool LicenseService::isTrialLicense() const noexcept
 {
 	return m_isTrialLicense;
+}
+
+void LicenseService::timerEvent(QTimerEvent*)
+{
+	if (m_licenseRequester)
+	{
+		return;
+	}
+
+	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseService::onLicenseData);
+	m_licenseRequester->start();
 }
 
 void LicenseService::onLicenseData(Requester*, const GetSerialNumberDataResponse& response)
@@ -72,6 +95,10 @@ void LicenseService::onLicenseStateChanged(const LicenseStateFlags& stateFlags)
 		setTrialLicense(false);
 	}
 	else if (stateFlags.testFlag(SERIAL_STATE_FLAG_INVALID))
+	{
+		setTrialLicense(true);
+	}
+	else if (stateFlags.testFlag(SERIAL_STATE_FLAG_DATE_EXPIRED))
 	{
 		setTrialLicense(true);
 	}
