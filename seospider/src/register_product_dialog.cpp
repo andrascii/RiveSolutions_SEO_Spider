@@ -20,7 +20,7 @@ RegisterProductDialog::RegisterProductDialog(QWidget* parent)
 	setWindowModality(Qt::ApplicationModal);
 
 	ILicenseService* licenseService = ServiceLocator::instance()->service<ILicenseService>();
-	VERIFY(connect(licenseService->qobject(), SIGNAL(licenseChanged()), SLOT(onLicenseChanged())));
+	VERIFY(connect(licenseService->qobject(), SIGNAL(licenseChanged(int)), SLOT(onLicenseChanged())));
 	VERIFY(connect(m_ui->enterKeyPushButton, &QPushButton::clicked, this, &RegisterProductDialog::onEnterSerialNumber));
 
 	onLicenseChanged();
@@ -72,6 +72,12 @@ void RegisterProductDialog::onActivationSerialNumberResult(CrawlerEngine::Reques
 	}
 
 	if (stateFlags.testFlag(SERIAL_STATE_FLAG_MAX_BUILD_EXPIRED))
+	{
+		m_ui->licenseInfoLabel->setText(tr("<font color='red'>This serial number activation period is expired! Bad news.</font>"));
+		return;
+	}
+
+	if (stateFlags.testFlag(SERIAL_STATE_FLAG_DATE_EXPIRED))
 	{
 		m_ui->licenseInfoLabel->setText(tr("<font color='red'>This serial number activation period is expired! Bad news.</font>"));
 		return;

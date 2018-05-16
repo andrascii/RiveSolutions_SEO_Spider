@@ -35,17 +35,12 @@ LicenseService::LicenseService()
 	ASSERT(getSerialNumberDataRequestHandler == getSerialNumberStateRequestHandler &&
 		getSerialNumberStateRequestHandler == setSerialNumberRequestHandler);
 
-	const auto subscription = [this](const IResponse& response)
-	{
-		onSubscription(response);
-	};
-
 	const QByteArray normalizedSubscriptionSignature = QMetaObject::normalizedSignature("onSubscription(const IResponse&)");
-	const HandlerRegistry::Subscription subscriber{ this, staticMetaObject.method(staticMetaObject.indexOfMethod(normalizedSubscriptionSignature)) };
+	const HandlerRegistry::Subscription subscription{ this, staticMetaObject.method(staticMetaObject.indexOfMethod(normalizedSubscriptionSignature)) };
 
-	handlerRegistry.addSubscription(subscriber, getSerialNumberDataRequestHandler, ResponseType::ResponseGetSerialNumberData);
-	handlerRegistry.addSubscription(subscriber, getSerialNumberStateRequestHandler, ResponseType::ResponseGetSerialNumberState);
-	handlerRegistry.addSubscription(subscriber, setSerialNumberRequestHandler, ResponseType::ResponseSetSerialNumber);
+	handlerRegistry.addSubscription(subscription, getSerialNumberDataRequestHandler, ResponseType::ResponseGetSerialNumberData);
+	handlerRegistry.addSubscription(subscription, getSerialNumberStateRequestHandler, ResponseType::ResponseGetSerialNumberState);
+	handlerRegistry.addSubscription(subscription, setSerialNumberRequestHandler, ResponseType::ResponseSetSerialNumber);
 
 	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseService::onLicenseData);
 	m_licenseRequester->start();
@@ -92,15 +87,19 @@ void LicenseService::onLicenseStateChanged(const LicenseStateFlags& stateFlags)
 {
 	if (stateFlags.testFlag(SERIAL_STATE_SUCCESS))
 	{
-		setTrialLicense(false);
+		setTrialLicense(false, ReasonSuccessActivation);
 	}
 	else if (stateFlags.testFlag(SERIAL_STATE_FLAG_INVALID))
 	{
-		setTrialLicense(true);
+		setTrialLicense(true, Reason::ReasonInvalidSerialNumberActivation);
 	}
 	else if (stateFlags.testFlag(SERIAL_STATE_FLAG_DATE_EXPIRED))
 	{
-		setTrialLicense(true);
+		setTrialLicense(true, Reason::ReasonDateExpired);
+	}
+	else if (stateFlags.testFlag(SERIAL_STATE_FLAG_RUNNING_TIME_OVER))
+	{
+		setTrialLicense(true, Reason::ReasonRunningTimeOver);
 	}
 }
 
@@ -143,7 +142,7 @@ void LicenseService::onSubscription(const IResponse& response)
 	}
 }
 
-void LicenseService::setTrialLicense(bool value)
+void LicenseService::setTrialLicense(bool value, Reason reason)
 {
 	if (m_isTrialLicense == value)
 	{
@@ -152,7 +151,7 @@ void LicenseService::setTrialLicense(bool value)
 
 	m_isTrialLicense = value;
 
-	emit licenseChanged();
+	emit licenseChanged(reason);
 }
 
 }

@@ -33,7 +33,7 @@ LicenseControlsBlocker::LicenseControlsBlocker(QObject* parent)
 
 	ILicenseService* licenseService = ServiceLocator::instance()->service<ILicenseService>();
 
-	VERIFY(connect(licenseService->qobject(), SIGNAL(licenseChanged()), SLOT(onLicenseChanged())));
+	VERIFY(connect(licenseService->qobject(), SIGNAL(licenseChanged(int)), SLOT(onLicenseChanged())));
 }
 
 void LicenseControlsBlocker::addWidget(QWidget* object)

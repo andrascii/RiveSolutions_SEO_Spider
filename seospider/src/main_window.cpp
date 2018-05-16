@@ -32,6 +32,7 @@
 #include "license_controls_blocker.h"
 #include "software_branding.h"
 #include "register_product_dialog.h"
+#include "license_service.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -100,7 +101,8 @@ void MainWindow::openFile()
 		showMessageBoxDialog("Open file error", "Unable to open the project file until the existing one is closed!\n"
 			"So first you need to press Ctrl+W and then open file.",
 			MessageBoxDialog::WarningIcon,
-			QDialogButtonBox::Ok);
+			QDialogButtonBox::Ok
+		);
 
 		return;
 	}
@@ -123,7 +125,8 @@ void MainWindow::openFile(const QString& filePath)
 		showMessageBoxDialog("Open file error", "Unable to open the project file until the existing one is closed!\n"
 			"So first you need to press Ctrl+W and then open file.",
 			MessageBoxDialog::WarningIcon,
-			QDialogButtonBox::Ok);
+			QDialogButtonBox::Ok
+		);
 
 		return;
 	}

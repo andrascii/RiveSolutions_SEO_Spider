@@ -13,6 +13,14 @@ class GetSerialNumberStateResponse;
 class ILicenseService
 {
 public:
+	enum Reason
+	{
+		ReasonSuccessActivation,
+		ReasonDateExpired, // possibly invalid serial number
+		ReasonRunningTimeOver, // when license has ended (i.e. the launch of the program the day after the license ended)
+		ReasonInvalidSerialNumberActivation
+	};
+
 	virtual ~ILicenseService() = default; 
 	
 	virtual QObject* qobject() const = 0;
@@ -21,7 +29,7 @@ public:
 	virtual bool isTrialLicense() const noexcept = 0;
 
 	// signals
-	virtual void licenseChanged() const = 0;
+	virtual void licenseChanged(int reason) const = 0;
 };
 
 class LicenseService : public QObject, public ILicenseService
@@ -37,7 +45,7 @@ public:
 	virtual bool isTrialLicense() const noexcept override;
 
 	// signals
-	Q_SIGNAL virtual void licenseChanged() const override;
+	Q_SIGNAL virtual void licenseChanged(int reason) const override;
 
 protected:
 	virtual void timerEvent(QTimerEvent* event) override;
@@ -47,7 +55,7 @@ private:
 
 	void onLicenseData(Requester* requester, const GetSerialNumberDataResponse& response);
 	void onLicenseStateChanged(const LicenseStateFlags& stateFlags);
-	void setTrialLicense(bool value);
+	void setTrialLicense(bool value, Reason reason);
 
 private:
 	bool m_isTrialLicense;
