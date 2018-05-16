@@ -1,4 +1,6 @@
 #include "unique_link_store.h"
+#include "service_locator.h"
+#include "license_service.h"
 
 namespace CrawlerEngine
 {
@@ -37,7 +39,11 @@ UniqueLinkStore::IncrementGuardExt::~IncrementGuardExt()
 
 UniqueLinkStore::UniqueLinkStore(QObject* parent)
 	: QObject(parent)
+	, m_licenseService(nullptr)
 {
+	ASSERT(ServiceLocator::instance()->isRegistered<ILicenseService>());
+
+	m_licenseService = ServiceLocator::instance()->service<ILicenseService>();
 }
 
 void UniqueLinkStore::addUrl(const Url& url, DownloadRequestType requestType)
@@ -54,6 +60,13 @@ void UniqueLinkStore::addUrl(const Url& url, DownloadRequestType requestType)
 		if (request.url.urlStr() == QString("http://www.cyberforum.ru/javascript-beginners/"))
 		{
 			INFOLOG << request.url.urlStr();
+		}
+
+		constexpr int limitUrls = 50;
+		
+		if(m_licenseService->isTrialLicense() && m_pendingUrlList.size() >= limitUrls)
+		{
+			return;
 		}
 
 		m_pendingUrlList.insert(std::move(request));
@@ -76,6 +89,13 @@ void UniqueLinkStore::addUrl(Url&& url, DownloadRequestType requestType)
 		if (request.url.urlStr() == QString("http://www.cyberforum.ru/javascript-beginners/"))
 		{
 			INFOLOG << request.url.urlStr();
+		}
+
+		constexpr int limitUrls = 50;
+		
+		if (m_licenseService->isTrialLicense() && m_pendingUrlList.size() >= limitUrls)
+		{
+			return;
 		}
 
 		m_pendingUrlList.insert(std::move(request));

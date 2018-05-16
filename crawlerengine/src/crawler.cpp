@@ -23,6 +23,7 @@
 #include "isequenced_storage.h"
 #include "helpers.h"
 #include "license_handler.h"
+#include "license_service.h"
 
 
 namespace CrawlerEngine
@@ -40,7 +41,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_robotsTxtLoader(new RobotsTxtLoader(this))
 	, m_xmlSitemapLoader(new XmlSitemapLoader(static_cast<RobotsTxtLoader*>(m_robotsTxtLoader), this))
 	, m_modelController(nullptr)
-	, m_uniqueLinkStore(new UniqueLinkStore(this))
+	, m_uniqueLinkStore(nullptr)
 	, m_options(new CrawlerOptions(this))
 	, m_theradCount(threadCount)
 	, m_crawlingStateTimer(new QTimer(this))
@@ -93,6 +94,7 @@ Crawler::~Crawler()
 	s_instance = nullptr;
 
 	ServiceLocator::instance()->destroyService<INotificationService>();
+	ServiceLocator::instance()->destroyService<ILicenseService>();
 }
 
 void Crawler::initialize()
@@ -114,6 +116,10 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
 	threadManager.moveObjectToThread(new Proper404Checker, "BackgroundThread");
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
+
+	ServiceLocator::instance()->addService<ILicenseService>(new LicenseService);
+
+	m_uniqueLinkStore = new UniqueLinkStore(this);
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{

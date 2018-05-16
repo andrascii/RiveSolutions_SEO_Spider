@@ -7,6 +7,8 @@
 namespace CrawlerEngine
 {
 
+class ILicenseService;
+
 //
 // ATTENTION: all public methods must be thread-safe
 //
@@ -72,6 +74,8 @@ private:
 	mutable std::recursive_mutex m_mutex;
 	int m_lastPendingSizeChange;
 	int m_lastCrawledSizeChange;
+
+	ILicenseService* m_licenseService;
 };
 
 }
