@@ -66,12 +66,20 @@ void Requester::processResponse(const IResponse& response) const
 
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 
-	const std::vector<std::function<void(const IResponse&)>> subscriptions = 
+	const std::vector<HandlerRegistry::Subscription> subscriptions =
 		handlerRegistry.subscriptionsFor(m_handler, response.type());
 
-	for (const std::function<void(const IResponse&)>& subscription : subscriptions)
+	for (const HandlerRegistry::Subscription& subscription : subscriptions)
 	{
-		subscription(response);
+		if (!subscription.subscriber)
+		{
+			continue;
+		}
+
+		const Qt::ConnectionType connectionType = subscription.subscriber->thread() == QThread::currentThread() ?
+			Qt::DirectConnection : Qt::QueuedConnection;
+
+		VERIFY(subscription.method.invoke(subscription.subscriber, connectionType, Q_ARG(const IResponse&, response)));
 	}
 }
 

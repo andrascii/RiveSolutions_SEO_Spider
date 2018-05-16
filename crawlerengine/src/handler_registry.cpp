@@ -9,7 +9,7 @@ HandlerRegistry& HandlerRegistry::instance()
 	return *s_handlerRegistry.get();
 }
 
-void HandlerRegistry::addSubscription(std::function<void(const IResponse&)> subscription, QObject* handler, ResponseType responseType)
+void HandlerRegistry::addSubscription(Subscription subscriber, QObject* handler, ResponseType responseType)
 {
 	std::lock_guard locker(m_mutex);
 
@@ -17,7 +17,7 @@ void HandlerRegistry::addSubscription(std::function<void(const IResponse&)> subs
 
 	ASSERT(m_subscriptions.find(subscriptionKey) == m_subscriptions.end());
 
-	m_subscriptions[subscriptionKey].push_back(subscription);
+	m_subscriptions[subscriptionKey].push_back(subscriber);
 }
 
 bool HandlerRegistry::hasSubscriptionsFor(QObject* handler, ResponseType responseType) const
@@ -27,13 +27,13 @@ bool HandlerRegistry::hasSubscriptionsFor(QObject* handler, ResponseType respons
 	return m_subscriptions.find(SubscriptionKey{ responseType, handler }) != m_subscriptions.end();
 }
 
-std::vector<std::function<void(const IResponse&)>> HandlerRegistry::subscriptionsFor(QObject* handler, ResponseType responseType) const
+std::vector<HandlerRegistry::Subscription> HandlerRegistry::subscriptionsFor(QObject* handler, ResponseType responseType) const
 {
 	std::lock_guard locker(m_mutex);
 
 	const auto findIter = m_subscriptions.find(SubscriptionKey{ responseType, handler });
 
-	return findIter == m_subscriptions.end() ? std::vector<std::function<void(const IResponse&)>>() : findIter->second;
+	return findIter == m_subscriptions.end() ? std::vector<Subscription>() : findIter->second;
 }
 
 void HandlerRegistry::unregistrateHandler(QObject* handler)

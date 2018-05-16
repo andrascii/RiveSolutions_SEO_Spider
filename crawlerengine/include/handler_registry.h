@@ -20,6 +20,12 @@ struct RequestTypeHelper
 class HandlerRegistry
 {
 public:
+	struct Subscription
+	{
+		QPointer<QObject> subscriber;
+		QMetaMethod method;
+	};
+
 	static HandlerRegistry& instance();
 
 	template <typename ObjectType, typename... RequestTypes>
@@ -48,9 +54,9 @@ public:
 		MetaHelpers::callForAllArgumentsInPack(functor, std::forward<RequestTypes>(requestTypes)...);
 	}
 
-	void addSubscription(std::function<void(const IResponse&)> subscription, QObject* handler, ResponseType responseType);
+	void addSubscription(Subscription subscriber, QObject* handler, ResponseType responseType);
 	bool hasSubscriptionsFor(QObject* handler, ResponseType responseType) const;
-	std::vector<std::function<void(const IResponse&)>> subscriptionsFor(QObject* handler, ResponseType responseType) const;
+	std::vector<Subscription> subscriptionsFor(QObject* handler, ResponseType responseType) const;
 
 	void unregistrateHandler(QObject* handler);
 	void unregisterAll();
@@ -92,7 +98,7 @@ private:
 	};
 
 	std::map<RequestType, QObject*> m_handlers;
-	std::unordered_map<SubscriptionKey, std::vector<std::function<void(const IResponse&)>>, SubscriptionKeyHasher> m_subscriptions;
+	std::unordered_map<SubscriptionKey, std::vector<Subscription>, SubscriptionKeyHasher> m_subscriptions;
 };
 
 }
