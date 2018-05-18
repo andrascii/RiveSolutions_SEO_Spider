@@ -17,6 +17,12 @@ SitemapCreatorWidget::SitemapCreatorWidget(QWidget* parent)
 	m_ui->setupUi(this);
 
 	setWindowTitle("XML Sitemap Creator");
+
+	Qt::WindowFlags flags = windowFlags();
+	Qt::WindowFlags helpFlag = Qt::WindowContextHelpButtonHint;
+	flags = flags & (~helpFlag);
+	setWindowFlags(flags);
+
 	setWindowIcon(SvgRenderer::render(QStringLiteral(":/images/xml-sitemap-icon.svg"), 8, 8));
 
 	VERIFY(connect(m_ui->cancelButton, &QPushButton::clicked, this, &SitemapCreatorWidget::accept));

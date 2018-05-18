@@ -19,6 +19,11 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted, this, &ApplicationSettingsWidget::onCrawlerStarted));
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished, this, &ApplicationSettingsWidget::onCrawlerFinished));
 
+	Qt::WindowFlags flags = windowFlags();
+	Qt::WindowFlags helpFlag = Qt::WindowContextHelpButtonHint;
+	flags = flags & (~helpFlag);
+	setWindowFlags(flags);
+
 	initialize();
 
 	connect(m_ui.okButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::okButtonClicked);
