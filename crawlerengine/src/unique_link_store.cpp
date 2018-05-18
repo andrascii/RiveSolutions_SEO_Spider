@@ -1,6 +1,7 @@
 #include "unique_link_store.h"
 #include "service_locator.h"
 #include "license_service.h"
+#include "common_constants.h"
 
 namespace CrawlerEngine
 {
@@ -48,65 +49,27 @@ UniqueLinkStore::UniqueLinkStore(QObject* parent)
 
 void UniqueLinkStore::addUrl(const Url& url, DownloadRequestType requestType)
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 		&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList, &m_lastPendingSizeChange);
 
-	CrawlerRequest request{ url, requestType };
-
-	if (m_crawledUrlList.find(request) == m_crawledUrlList.end())
-	{
-		if (request.url.urlStr() == QString("http://www.cyberforum.ru/javascript-beginners/"))
-		{
-			INFOLOG << request.url.urlStr();
-		}
-
-		constexpr int limitUrls = 50;
-		
-		if(m_licenseService->isTrialLicense() && m_pendingUrlList.size() >= limitUrls)
-		{
-			return;
-		}
-
-		m_pendingUrlList.insert(std::move(request));
-
-		emit urlAdded();
-	}
+	addUrlInternal(CrawlerRequest{ url, requestType });
 }
 
 void UniqueLinkStore::addUrl(Url&& url, DownloadRequestType requestType)
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 		&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList, &m_lastPendingSizeChange);
 
-	CrawlerRequest request{ std::move(url), requestType };
-
-	if (m_crawledUrlList.find(request) == m_crawledUrlList.end())
-	{
-		if (request.url.urlStr() == QString("http://www.cyberforum.ru/javascript-beginners/"))
-		{
-			INFOLOG << request.url.urlStr();
-		}
-
-		constexpr int limitUrls = 50;
-		
-		if (m_licenseService->isTrialLicense() && m_pendingUrlList.size() >= limitUrls)
-		{
-			return;
-		}
-
-		m_pendingUrlList.insert(std::move(request));
-
-		emit urlAdded();
-	}
+	addUrlInternal(CrawlerRequest{ std::move(url), requestType });
 }
 
 bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	if (m_pendingUrlList.empty())
 	{
@@ -125,7 +88,9 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 
 		if (m_crawledUrlList.find(crawlerRequest) != m_crawledUrlList.end())
 		{
-			INFOLOG << crawlerRequest.url.urlStr() << static_cast<int>(crawlerRequest.requestType);
+			INFOLOG << "Url from pending found in crawled url list:" 
+				<< crawlerRequest.url.urlStr() 
+				<< static_cast<int>(crawlerRequest.requestType);
 		}
 
 		DEBUG_ASSERT(m_crawledUrlList.find(crawlerRequest) == m_crawledUrlList.end());
@@ -140,7 +105,7 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 
 bool UniqueLinkStore::extractRefreshUrl(CrawlerRequest& crawlerRequest) noexcept
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	if (m_refreshUrlList.empty())
 	{
@@ -155,7 +120,7 @@ bool UniqueLinkStore::extractRefreshUrl(CrawlerRequest& crawlerRequest) noexcept
 
 void UniqueLinkStore::addRefreshUrl(const Url& url, DownloadRequestType requestType)
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	m_refreshUrlList.emplace_back(CrawlerRequest{ url, requestType });
 
@@ -169,7 +134,7 @@ void UniqueLinkStore::addUrlList(const std::vector<Url>& urlList, DownloadReques
 		return;
 	}
 
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	for (auto first = urlList.begin(), last = urlList.end(); first != last; ++first)
 	{
@@ -184,7 +149,7 @@ void UniqueLinkStore::addUrlList(std::vector<Url>&& urlList, DownloadRequestType
 		return;
 	}
 
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	for (auto first = urlList.begin(); first != urlList.end(); ++first)
 	{
@@ -213,7 +178,7 @@ void UniqueLinkStore::addLinkList(const std::vector<LinkInfo>& linkList, Downloa
 
 bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestType)
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	CrawlerRequest request{ url, requestType };
 
@@ -224,8 +189,24 @@ bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestT
 		IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 			&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList, &m_lastPendingSizeChange);
 
-		m_pendingUrlList.erase(request);
-		m_crawledUrlList.insert(std::move(request));
+		const auto urlIter = m_pendingUrlList.find(request);
+
+		if (urlIter == m_pendingUrlList.end())
+		{
+			// The condition is need because of some requests may not be presented in the pending url list.
+			// This situation may occur because of worker thread adds links from hops chain.
+			const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
+
+			if (countLinks < Common::c_maxTrialLicenseCrawlingLinksCount)
+			{
+				m_crawledUrlList.insert(std::move(request));
+			}
+		}
+		else
+		{
+			m_pendingUrlList.erase(urlIter);
+			m_crawledUrlList.insert(std::move(request));
+		}
 	}
 
 	DEBUG_ASSERT(m_lastPendingSizeChange == 0 || m_lastCrawledSizeChange != 0);
@@ -235,14 +216,26 @@ bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestT
 
 bool UniqueLinkStore::hasCrawledRequest(const CrawlerRequest& request)
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	return m_crawledUrlList.find(request) != m_crawledUrlList.end();
 }
 
-std::vector<CrawlerRequest> UniqueLinkStore::crawledUrls() const noexcept
+size_t UniqueLinkStore::crawledCount() const noexcept
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
+	return m_crawledUrlList.size();
+}
+
+size_t UniqueLinkStore::pendingCount() const noexcept
+{
+	std::lock_guard locker(m_mutex);
+	return m_pendingUrlList.size();
+}
+
+std::vector<CrawlerRequest> UniqueLinkStore::crawledUrls() const
+{
+	std::lock_guard locker(m_mutex);
 	std::vector<CrawlerRequest> result;
 	result.reserve(m_crawledUrlList.size());
 
@@ -254,9 +247,9 @@ std::vector<CrawlerRequest> UniqueLinkStore::crawledUrls() const noexcept
 	return result;
 }
 
-std::vector<CrawlerRequest> UniqueLinkStore::pendingUrls() const noexcept
+std::vector<CrawlerRequest> UniqueLinkStore::pendingUrls() const
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 	std::vector<CrawlerRequest> result;
 	result.reserve(m_pendingUrlList.size());
 
@@ -270,21 +263,21 @@ std::vector<CrawlerRequest> UniqueLinkStore::pendingUrls() const noexcept
 
 void UniqueLinkStore::setCrawledUrls(const std::vector<CrawlerRequest>& urls)
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 	m_crawledUrlList.clear();
 	m_crawledUrlList.insert(urls.begin(), urls.end());
 }
 
 void UniqueLinkStore::setPendingUrls(const std::vector<CrawlerRequest>& urls)
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 	m_pendingUrlList.clear();
 	m_pendingUrlList.insert(urls.begin(), urls.end());
 }
 
 void UniqueLinkStore::clear()
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 
 	m_pendingUrlList.clear();
 	m_crawledUrlList.clear();
@@ -294,10 +287,39 @@ void UniqueLinkStore::clear()
 	CrawlerSharedState::instance()->setDownloaderPendingLinksCount(0);
 }
 
+void UniqueLinkStore::clearPending()
+{
+	std::lock_guard locker(m_mutex);
+	m_pendingUrlList.clear();
+	CrawlerSharedState::instance()->setDownloaderPendingLinksCount(0);
+}
+
 bool UniqueLinkStore::hasRefreshUrls() const noexcept
 {
-	std::lock_guard<std::recursive_mutex> locker(m_mutex);
+	std::lock_guard locker(m_mutex);
 	return !m_refreshUrlList.empty();
+}
+
+void UniqueLinkStore::addUrlInternal(CrawlerRequest&& request)
+{
+	// this function must be obfuscated and additionally tied to a serial number
+	if (m_crawledUrlList.find(request) != m_crawledUrlList.end())
+	{
+		return;
+	}
+
+	const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
+
+	ASSERT(!m_licenseService->isTrialLicense() || countLinks <= Common::c_maxTrialLicenseCrawlingLinksCount);
+
+	if (m_licenseService->isTrialLicense() && countLinks >= Common::c_maxTrialLicenseCrawlingLinksCount)
+	{
+		return;
+	}
+
+	m_pendingUrlList.insert(std::move(request));
+
+	emit urlAdded();
 }
 
 }

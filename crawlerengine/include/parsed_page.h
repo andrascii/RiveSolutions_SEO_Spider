@@ -216,6 +216,11 @@ struct ParsedPage
 		return Common::StatusCode::BlockedByRobotsTxt != statusCode &&
 			Common::StatusCode::BlockedByRobotsTxt != statusCode;
 	}
+
+	bool isRedirectedToExternalPage() const
+	{
+		return redirectedUrl.isValid() && isThisExternalPage;
+	}
 };
 
 using ParsedPagePtr = std::shared_ptr<ParsedPage>;

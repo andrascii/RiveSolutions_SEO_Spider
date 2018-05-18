@@ -60,6 +60,7 @@ bool LicenseService::isPaidLicense() const noexcept
 
 bool LicenseService::isTrialLicense() const noexcept
 {
+	return false;
 	return m_isTrialLicense;
 }
 

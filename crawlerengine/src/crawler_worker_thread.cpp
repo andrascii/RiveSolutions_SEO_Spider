@@ -5,35 +5,16 @@
 #include "options_link_filter.h"
 #include "download_request.h"
 #include "download_response.h"
+#include "license_service.h"
+#include "service_locator.h"
+#include "common_constants.h"
 #include "crawler.h"
-
-namespace
-{
-
-template <typename T>
-class StoreValueGuard final
-{
-public:
-	StoreValueGuard(T& ref, T newValue)
-		: m_ref(ref)
-		, m_newValue(newValue)
-	{
-	}
-
-	~StoreValueGuard()
-	{
-		m_ref = m_newValue;
-	}
-
-private:
-	T& m_ref;
-	T m_newValue;
-};
-
-}
+#include "finally.h"
 
 namespace CrawlerEngine
 {
+
+std::atomic<size_t> CrawlerWorkerThread::s_trialLicenseSentLinksCounter = 0;
 
 CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	: QObject(nullptr)
@@ -42,6 +23,7 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	, m_isRunning(false)
 	, m_reloadPage(false)
 	, m_defferedProcessingTimer(new QTimer(this))
+	, m_licenseService(nullptr)
 {
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
@@ -54,6 +36,9 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	
 	m_defferedProcessingTimer->setInterval(1000);
 	m_defferedProcessingTimer->setSingleShot(true);
+
+	ASSERT(ServiceLocator::instance()->isRegistered<ILicenseService>());
+	m_licenseService = ServiceLocator::instance()->service<ILicenseService>();
 }
 
 /// this function always must be thread-safe
@@ -84,9 +69,8 @@ void CrawlerWorkerThread::start(const CrawlerOptionsData& optionsData, RobotsTxt
 	DEBUG_ASSERT(thread() == QThread::currentThread());
 
 	m_isRunning = true;
-	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
-	m_pageDataCollector->setOptions(optionsData);
 
+	reinitOptions(optionsData, robotsTxtRules);
 	onStart();
 	extractUrlAndDownload();
 }
@@ -118,6 +102,11 @@ void CrawlerWorkerThread::stop()
 void CrawlerWorkerThread::reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
+
+	if (m_optionsLinkFilter && optionsData.startCrawlingPage.compare(m_optionsLinkFilter->startCrawlingPage()))
+	{
+		s_trialLicenseSentLinksCounter = 0;
+	}
 
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
 	m_pageDataCollector->setOptions(optionsData);
@@ -363,7 +352,10 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 
 void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& response)
 {
-	StoreValueGuard<bool> reloadGuard(m_reloadPage, false);
+	Common::Finally reloadGuard([this] 
+	{ 
+		m_reloadPage = false; 
+	});
 
 	m_downloadRequester.reset();
 
@@ -426,10 +418,17 @@ void CrawlerWorkerThread::onStart()
 
 void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcept
 {
-	if (result.incomingPageConstRef()->redirectedUrl.isValid() && result.incomingPageConstRef()->isThisExternalPage)
+	if (result.incomingPageConstRef()->isRedirectedToExternalPage())
 	{
 		DEBUG_ASSERT(result.incomingPageConstRef()->allResourcesOnPage.size() == 1 &&
 			!result.incomingPageConstRef()->allResourcesOnPage.begin()->restrictions);
+	}
+
+	if (m_licenseService->isTrialLicense() && s_trialLicenseSentLinksCounter++ >= Common::c_maxTrialLicenseCrawlingLinksCount)
+	{
+		m_uniqueLinkStore->clearPending();
+
+		return;
 	}
 
 	emit workerResult(result);

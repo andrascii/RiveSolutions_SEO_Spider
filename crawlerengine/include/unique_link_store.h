@@ -31,15 +31,21 @@ public:
 	bool addCrawledUrl(const Url& url, DownloadRequestType requestType);
 	bool hasCrawledRequest(const CrawlerRequest& request);
 
-	std::vector<CrawlerRequest> crawledUrls() const noexcept;
-	std::vector<CrawlerRequest> pendingUrls() const noexcept;
+	size_t crawledCount() const noexcept;
+	size_t pendingCount() const noexcept;
+	std::vector<CrawlerRequest> crawledUrls() const;
+	std::vector<CrawlerRequest> pendingUrls() const;
 	void setCrawledUrls(const std::vector<CrawlerRequest>& urls);
 	void setPendingUrls(const std::vector<CrawlerRequest>& urls);
 	void clear();
+	void clearPending();
 	bool hasRefreshUrls() const noexcept;
 
 signals:
 	void urlAdded();
+
+private:
+	void addUrlInternal(CrawlerRequest&& request);
 
 private:
 	struct UrlListItemHasher

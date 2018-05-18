@@ -38,11 +38,12 @@ public slots:
 	void exportFilterData();
 	void onChangeGroupingAuditInfo(QAction* action);
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
+	void onCrawlingFinished() const;
 
 	int showMessageBoxDialog(const QString& title, 
 		const QString& message, 
 		MessageBoxDialog::Icon icon, 
-		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel) const;
 
 	void showContentFramePage(PageFactory::Page page);
 

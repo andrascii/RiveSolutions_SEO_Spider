@@ -33,6 +33,7 @@
 #include "software_branding.h"
 #include "register_product_dialog.h"
 #include "license_service.h"
+#include "common_constants.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -240,10 +241,32 @@ void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageNam
 	applicationSettingsWidget->deleteLater();
 }
 
+void MainWindow::onCrawlingFinished() const
+{
+	DEBUG_ASSERT(ServiceLocator::instance()->isRegistered<ILicenseService>());
+	ILicenseService* licenseService = ServiceLocator::instance()->service<ILicenseService>();
+
+	if (!licenseService)
+	{
+		return;
+	}
+
+	if (licenseService->isTrialLicense() && 
+		theApp->crawler()->scannedPagesCount() >= Common::c_maxTrialLicenseCrawlingLinksCount)
+	{
+		showMessageBoxDialog(
+			tr("Trial license"),
+			tr("This option is not available in the trial version."),
+			MessageBoxDialog::InformationIcon,
+			QDialogButtonBox::Ok
+		);
+	}
+}
+
 int MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
 	MessageBoxDialog::Icon icon,
-	QDialogButtonBox::StandardButtons buttons)
+	QDialogButtonBox::StandardButtons buttons) const
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(title);

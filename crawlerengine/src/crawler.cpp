@@ -24,6 +24,7 @@
 #include "helpers.h"
 #include "license_handler.h"
 #include "license_service.h"
+#include "common_constants.h"
 
 
 namespace CrawlerEngine
@@ -50,6 +51,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_state(StatePending)
 	, m_downloader(nullptr)
 	, m_webHostInfo(nullptr)
+	, m_licenseService(nullptr)
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->addService<INotificationService>(new NotificationService);
@@ -117,7 +119,9 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(new Proper404Checker, "BackgroundThread");
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
 
-	ServiceLocator::instance()->addService<ILicenseService>(new LicenseService);
+	m_licenseService = new LicenseService;
+
+	ServiceLocator::instance()->addService<ILicenseService>(m_licenseService);
 
 	m_uniqueLinkStore = new UniqueLinkStore(this);
 
@@ -243,11 +247,16 @@ void Crawler::onAboutCrawlingState()
 
 	emit crawlingProgress(progress);
 
-	if (uniqueLinkStorePendingCount == 0 &&
+	const bool isCrawlingEnded = uniqueLinkStorePendingCount == 0 &&
 		sequencedDataCollectionCount > 0 &&
 		uniqueLinkStoreCrawledCount == state->workersProcessedLinksCount() &&
 		state->modelControllerCrawledLinksCount() == state->workersProcessedLinksCount() &&
-		modelControllerAcceptedLinksCount == sequencedDataCollectionCount)
+		modelControllerAcceptedLinksCount == sequencedDataCollectionCount;
+
+	const bool isTrialLicenseMaxLinks = m_licenseService->isTrialLicense() && 
+		sequencedDataCollectionCount >= Common::c_maxTrialLicenseCrawlingLinksCount;
+
+	if (isTrialLicenseMaxLinks || isCrawlingEnded)
 	{
 		stopCrawling();
 		setState(StatePending);
@@ -857,6 +866,16 @@ bool Crawler::hasCustomSessionName() const noexcept
 bool Crawler::hasSession() const noexcept
 {
 	return m_session;
+}
+
+size_t Crawler::scannedPagesCount() const
+{
+	return m_uniqueLinkStore->crawledCount();
+}
+
+size_t Crawler::pagesCountOnSite() const
+{
+	return m_uniqueLinkStore->pendingCount();
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

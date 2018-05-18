@@ -14,6 +14,8 @@ class OptionsLinkFilter
 public:
 	OptionsLinkFilter(const CrawlerOptionsData& crawlerOptionsData, const RobotsTxtRules& robotsTxtRules);
 
+	const Url& startCrawlingPage() const noexcept;
+
 	bool checkRestriction(Restriction restriction, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const;
 	std::pair<bool, MetaRobotsFlags> isPageBlockedByMetaRobots(const ParsedPagePtr& parsedPage) const;
 

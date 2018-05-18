@@ -11,6 +11,11 @@ OptionsLinkFilter::OptionsLinkFilter(const CrawlerOptionsData& crawlerOptionsDat
 {
 }
 
+const Url& OptionsLinkFilter::startCrawlingPage() const noexcept
+{
+	return m_crawlerOptionsData.startCrawlingPage;
+}
+
 bool OptionsLinkFilter::checkRestriction(Restriction restriction, const LinkInfo& linkInfo, const MetaRobotsFlagsSet& metaRobotsFlags) const
 {
 	if(!PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url))

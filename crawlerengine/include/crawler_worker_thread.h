@@ -13,6 +13,7 @@ class IQueuedDownloader;
 class UniqueLinkStore;
 class OptionsLinkFilter;
 class PageDataCollector;
+class ILicenseService;
 struct CrawlerOptionsData;
 struct DownloadResponse;
 
@@ -29,32 +30,30 @@ signals:
 
 public slots:
 	void start(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
-
 	void stop();
 
 	void reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
 
 private slots:
 	void extractUrlAndDownload();
-
 	void onCrawlerClearData();
 
 private:
 	void onStart();
 
 	std::vector<LinkInfo> schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
-
 	std::vector<LinkInfo> handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
 
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
-
 	void onPageParsed(const WorkerResult& result) const noexcept;
 
 	void fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const;
 
 	std::optional<CrawlerRequest> prepareUnloadedPage() const;
-
 	void handlePage(ParsedPagePtr& page, bool isUrlAdded, DownloadRequestType requestType);
+
+private:
+	static std::atomic<size_t> s_trialLicenseSentLinksCounter;
 
 private:
 	struct PagesAcceptedAfterStop
@@ -79,6 +78,7 @@ private:
 	std::optional<CrawlerRequest> m_currentRequest;
 
 	QTimer* m_defferedProcessingTimer;
+	ILicenseService* m_licenseService;
 };
 
 }

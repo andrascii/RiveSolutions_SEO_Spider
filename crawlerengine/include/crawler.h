@@ -94,6 +94,9 @@ public:
 	bool hasCustomSessionName() const noexcept;
 	bool hasSession() const noexcept;
 
+	size_t scannedPagesCount() const;
+	size_t pagesCountOnSite() const;
+
 signals:
 	void crawlingProgress(CrawlingProgress progress);
 	void crawlerStarted();
@@ -185,6 +188,7 @@ private:
 	std::unique_ptr<HostInfo> m_hostInfo;
 
 	QPointer<Session> m_session;
+	ILicenseService* m_licenseService;
 };
 
 }
