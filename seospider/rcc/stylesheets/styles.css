@@ -382,28 +382,11 @@ SeoSpider--SettingsPage QCheckBox
 	font-size: 9pt;
 }
 
-SeoSpider--SettingsPage QFrame#headerFrame
-{
-	min-height: 6em;
-	padding: 0.5em;
-	padding-left: 1.2em;	
-	background: #F2F2F2;
-	border: 0.05em solid #CCCCCC;
-	border-bottom: none;
-}
-
 SeoSpider--SettingsPage QFrame#settingsFrame
 {
 	background: #FCFDFE;
 	padding: 0.8em;
 	border: 0.05em solid #CCCCCC;
-}
-
-SeoSpider--SettingsPage QLabel#headerName
-{
-	font-size: 16pt;
-	font: bold;
-	color: #FF6600;
 }
 
 /*/////////////////////////////// ApplicationSettingsWidget ///////////////////////////*/
@@ -513,19 +496,6 @@ QFrame#HeaderFrame
 	background: #F2F2F2;
 	border: 0.05em solid #CCCCCC;
 	border-bottom: none;
-}
-
-QFrame#HeaderFrame QLabel
-{
-	color: #4D626E;
-	font-size: 9pt;
-}
-
-QFrame#HeaderFrame QLabel#headerName
-{
-	font-size: 16pt;
-	font: bold;
-	color: #61a032;
 }
 
 QFrame#ButtonsFrame

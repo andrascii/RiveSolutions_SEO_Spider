@@ -30,63 +30,6 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="headerFrame">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QLabel" name="headerName">
-          <property name="text">
-           <string>Preferences Settings</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="text">
-          <property name="text">
-           <string>Set the maximum and minimum lengths for criteria such as page titles, meta descriptions, maximum lengths of tags H1 and H2, the maximum value of alt text of the images, also here you can specify the maximum values for the size of pages and images.</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QFrame" name="settingsFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
