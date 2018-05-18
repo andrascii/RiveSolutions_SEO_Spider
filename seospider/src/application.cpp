@@ -25,6 +25,7 @@
 #include "update_checker.h"
 #include "update_loader_dialog.h"
 #include "license_service.h"
+#include "smtp_sender.h"
 
 namespace
 {
@@ -51,6 +52,8 @@ Application::Application(int& argc, char** argv)
 	, m_headerControlsContainer(new HeaderControlsContainer())
 	, m_updateChecker(new UpdateChecker(this))
 {
+	Common::SmtpSender::init();
+
 	qRegisterMetaType<Version>("Version");
 
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
@@ -522,6 +525,7 @@ Application::~Application()
 {
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
 	DeferredCallProcessor::term();
+	Common::SmtpSender::term();
 }
 
 }

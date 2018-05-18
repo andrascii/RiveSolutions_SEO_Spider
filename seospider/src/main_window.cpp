@@ -34,6 +34,7 @@
 #include "register_product_dialog.h"
 #include "license_service.h"
 #include "common_constants.h"
+#include "feedback_dialog.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -474,6 +475,9 @@ void MainWindow::createActions()
 	actionRegistry.addGlobalAction(s_checkForUpdatesAction, tr("Check for Updates"));
 	actionRegistry.addGlobalAction(s_aboutProductAction, tr("About") + " " + softwareBranding->organizationName() + " " + softwareBranding->productName());
 
+	VERIFY(connect(actionRegistry.globalAction(s_sendFeedbackAction), &QAction::triggered,
+		this, [this] { showFeedbackDialog(); }));
+
 	VERIFY(connect(actionRegistry.globalAction(s_registerProductAction), &QAction::triggered,
 		this, [this] { showRegisterProductDialog(); }));
 
@@ -694,6 +698,12 @@ void MainWindow::showRegisterProductDialog()
 {
 	RegisterProductDialog* registerProductDialog = new RegisterProductDialog(this);
 	registerProductDialog->exec();
+}
+
+void MainWindow::showFeedbackDialog()
+{
+	FeedbackDialog* feddbackDialog = new FeedbackDialog(this);
+	feddbackDialog->exec();
 }
 
 ContentFrame* MainWindow::contentFrame() const noexcept

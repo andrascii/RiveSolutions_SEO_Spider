@@ -109,6 +109,13 @@ SeoSpider--ProjectFileStateWidget QLabel
 	color: #EDEDED;
 }
 
+/*/////////////////////////////////// QLabel ////////////////////////////*/
+
+QLabel
+{
+	color: #4D4D4D;
+}
+
 /*/////////////////////////////////// Border ////////////////////////////*/
 
 QLineEdit,
@@ -847,4 +854,12 @@ SeoSpider--RegisterProductDialog
 	max-height: 19em;
 	min-width: 35em;
 	max-width: 35em;
+}
+
+/*////////////////////////////// FeedbackDialog /////////////////////////////////////*/
+
+QLabel#feedbackDialogHeaderLabel
+{
+	font: bold;
+	font-size: 14pt;
 }
