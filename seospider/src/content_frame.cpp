@@ -194,7 +194,8 @@ void ContentFrame::onDynamicControlsChanged(int page)
 	const PageFactory::Page currentPage = static_cast<PageFactory::Page>(page);
 	QList<QWidget*> controls = theApp->headerControlsContainer()->controls(currentPage);
 
-	QLayoutItem *item;
+	QLayoutItem* item;
+
 	while ((item = m_dynamicControlsLayout->itemAt(0))) 
 	{
 		if (item->widget())

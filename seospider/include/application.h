@@ -65,10 +65,8 @@ private slots:
 	void stopCrawler();
 	void clearCrawledData();
 	void showMainWindow();
-
 	void onAboutCrawlerOptionsChanged();
 	void onAboutUseCustomUserAgentChanged();
-
 	void closeWaitOperationFrame();
 
 private:

@@ -54,6 +54,10 @@ private:
 
 	void mergePageHelper(WorkerResult& workerResult);
 
+	std::pair<ParsedPagePtr, StorageType> tryGetPageFromCrawledOrPendingStorage(const ParsedPagePtr& pointer) const;
+	ParsedPagePtr takeFromCrawledOrPendingStorage(const ParsedPagePtr& pointer) const;
+	void setLinksForResourcePageAndLoadedPage(ParsedPagePtr& resourcePage, WorkerResult& loadedPage, const ResourceOnPage& resource) const;
+
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptionsData m_crawlerOptionsData;

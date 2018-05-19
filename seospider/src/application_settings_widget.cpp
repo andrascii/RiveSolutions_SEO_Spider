@@ -6,6 +6,7 @@
 #include "crawler.h"
 #include "application.h"
 #include "widget_helpers.h"
+#include "cursor_factory.h"
 
 namespace SeoSpider
 {
@@ -36,6 +37,8 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	const int height = Common::Helpers::pointsToPixels(500);
 
 	resize(width, height);
+
+	setCursor(CursorFactory::createCursor(Qt::ArrowCursor));
 }
 
 void ApplicationSettingsWidget::showEvent(QShowEvent*)

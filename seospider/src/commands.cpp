@@ -14,6 +14,7 @@
 #include "content_frame.h"
 #include "page_data_widget.h"
 #include "svg_renderer.h"
+#include "wait_operation_frame.h"
 
 namespace
 {
@@ -691,6 +692,8 @@ const char* RefreshPageCommand::description() const noexcept
 
 void RefreshPageCommand::execute()
 {
+	WaitOperationFrame::showMessage(QObject::tr("Refreshing page..."));
+
 	theApp->crawler()->refreshPage(m_storageType, m_index);
 }
 
