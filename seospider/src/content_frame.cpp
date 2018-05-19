@@ -145,16 +145,24 @@ void ContentFrame::handleNavigationPanelButtonClick()
 
 void ContentFrame::onStateChanged(int state)
 {
+	static bool waitOperationFrameShown = false;
+
 	if (state == CrawlerEngine::Crawler::State::StateSerializaton ||
 		state == CrawlerEngine::Crawler::State::StateDeserializaton)
 	{
 		WaitOperationFrame::showMessage(tr("Please wait while saving the project..."));
 
+		waitOperationFrameShown = true;
+
 		m_stackedWidget->setCurrentIndex(0);
 	}
 	else
 	{
-		WaitOperationFrame::finish();
+		if (waitOperationFrameShown)
+		{
+			WaitOperationFrame::finish();
+			waitOperationFrameShown = false;
+		}
 
 		showPage(m_activePage);
 	}

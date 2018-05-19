@@ -336,14 +336,9 @@ void Application::initialize()
 
 	m_crawler->initialize();
 
-	VERIFY(connect(m_crawler, &Crawler::crawlerStarted,
-		this, &Application::closeWaitOperationFrame, Qt::QueuedConnection));
-
-	VERIFY(connect(m_crawler, &Crawler::crawlerStopped,
-		this, &Application::closeWaitOperationFrame, Qt::QueuedConnection));
-	
-	VERIFY(connect(m_crawler, &Crawler::crawlerFinished,
-		this, &Application::closeWaitOperationFrame, Qt::QueuedConnection));
+	VERIFY(connect(m_crawler, &Crawler::crawlerStarted, this, &Application::closeWaitOperationFrame));
+	VERIFY(connect(m_crawler, &Crawler::crawlerStopped, this, &Application::closeWaitOperationFrame));
+	VERIFY(connect(m_crawler, &Crawler::crawlerFinished, this, &Application::closeWaitOperationFrame));
 
 	/// must be Qt::QueuedConnection
 	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, 

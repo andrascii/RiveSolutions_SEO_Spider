@@ -25,6 +25,10 @@ protected:
 	virtual void hideEvent(QHideEvent* event) override;
 
 private:
+	void applyExternalVisualSettings();
+	void restoreExternalVisualSettings();
+
+private:
 	static QPointer<WaitOperationFrame> s_instance;
 
 private:

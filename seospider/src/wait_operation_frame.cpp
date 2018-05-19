@@ -45,9 +45,10 @@ WaitOperationFrame::WaitOperationFrame(QWidget* parent)
 	: QFrame(parent)
 	, m_ui(new Ui_WaitOperationFrame)
 {
+	applyExternalVisualSettings();
 	setAttribute(Qt::WA_TranslucentBackground);
 	setWindowModality(Qt::ApplicationModal);
-	setWindowFlags(Qt::Dialog | Qt::Tool | Qt::FramelessWindowHint);
+	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 
 	QFrame* internalFrame = new QFrame;
 	m_ui->setupUi(internalFrame);
@@ -62,6 +63,7 @@ WaitOperationFrame::WaitOperationFrame(QWidget* parent)
 
 WaitOperationFrame::~WaitOperationFrame()
 {
+	restoreExternalVisualSettings();
 	s_instance = nullptr;
 }
 
@@ -72,17 +74,26 @@ void WaitOperationFrame::setMessage(const QString& message)
 
 void WaitOperationFrame::showEvent(QShowEvent* event)
 {
-	theApp->mainWindow()->setEnabled(false);
 	WidgetHelpers::moveWidgetToHostCenter(this);
-	QApplication::setOverrideCursor(CursorFactory::createCursor(Qt::WaitCursor));
 	QFrame::showEvent(event);
 }
 
 void WaitOperationFrame::hideEvent(QHideEvent* event)
 {
-	theApp->mainWindow()->setEnabled(true);
-	QApplication::restoreOverrideCursor();
+	restoreExternalVisualSettings();
 	QFrame::hideEvent(event);
+}
+
+void WaitOperationFrame::applyExternalVisualSettings()
+{
+	QApplication::setOverrideCursor(CursorFactory::createCursor(Qt::WaitCursor));
+	theApp->mainWindow()->setEnabled(false);
+}
+
+void WaitOperationFrame::restoreExternalVisualSettings()
+{
+	QApplication::restoreOverrideCursor();
+	theApp->mainWindow()->setEnabled(true);
 }
 
 }

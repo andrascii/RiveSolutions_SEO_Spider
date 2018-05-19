@@ -336,7 +336,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 		else
 		{
 			answer = showMessageBoxDialog(tr("Closing application"),
-				warningMessage % "\n" % descriptionMessage,
+				warningMessage % descriptionMessage,
 				QDialogButtonBox::Yes | QDialogButtonBox::No);
 		}
 		
