@@ -59,6 +59,9 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester*, const C
 	if (lastHop.statusCode() != Common::StatusCode::Ok200)
 	{
 		ERRLOG << "ATTENTION!!! Cannot load actual program version!";
+
+		emit updateIsNotExists();
+
 		return;
 	}
 
@@ -67,6 +70,10 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester*, const C
 	if(m_thisProgramVersion < actualVersion)
 	{
 		emit updateExists();
+	}
+	else
+	{
+		emit updateIsNotExists();
 	}
 }
 

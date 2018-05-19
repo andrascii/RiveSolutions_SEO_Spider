@@ -61,6 +61,7 @@ public:
 
 	// signals
 	virtual void updateExists() = 0;
+	virtual void updateIsNotExists() = 0;
 };
 
 class UpdateChecker : public QObject, public IUpdateChecker
@@ -76,6 +77,7 @@ public:
 
 signals:
 	virtual void updateExists() override;
+	virtual void updateIsNotExists() override;
 
 private:
 	void onActualVersionFileLoaded(CrawlerEngine::Requester* requester, const CrawlerEngine::DownloadResponse& response);

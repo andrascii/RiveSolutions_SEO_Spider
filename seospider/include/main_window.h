@@ -9,6 +9,7 @@ namespace SeoSpider
 {
 
 class ContentFrame;
+class IUpdateChecker;
 
 class MainWindow : public QMainWindow
 {
@@ -70,6 +71,8 @@ private slots:
 	void onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
 	void showRegisterProductDialog();
 	void showFeedbackDialog();
+	void onAboutUpdateExists();
+	void onAboutUpdateIsNotExists();
 
 private:
 	bool m_initialized;
@@ -77,6 +80,8 @@ private:
 	CrawlerEngine::RequesterWrapper m_requester;
 	ContentFrame* m_contentFrame;
 	QSystemTrayIcon* m_systemTrayIcon;
+
+	IUpdateChecker* m_updateChecker;
 };
 
 }

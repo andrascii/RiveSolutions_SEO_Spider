@@ -35,6 +35,8 @@
 #include "license_service.h"
 #include "common_constants.h"
 #include "feedback_dialog.h"
+#include "update_checker.h"
+#include "update_loader_dialog.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -53,7 +55,10 @@ MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_initialized(false)
 	, m_systemTrayIcon(new QSystemTrayIcon(theApp->softwareBrandingOptions()->applicationIcon(), this))
+	, m_updateChecker(new UpdateChecker(this))
 {
+	qRegisterMetaType<Version>("Version");
+
 	setWindowTitle(
 		theApp->softwareBrandingOptions()->organizationName() + QStringLiteral(" ") +
 		theApp->softwareBrandingOptions()->productName()
@@ -62,6 +67,8 @@ MainWindow::MainWindow(QWidget* parent)
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
 	VERIFY(connect(systemTrayIcon(), &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated));
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateIsNotExists()), SLOT(onAboutUpdateIsNotExists())));
 }
 
 void MainWindow::showSitemapCreatorDialog()
@@ -382,6 +389,8 @@ void MainWindow::init()
 	initSystemTrayIconMenu();
 	systemTrayIcon()->show();
 
+	m_updateChecker->check();
+
 	m_initialized = true;
 }
 
@@ -480,6 +489,9 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_registerProductAction), &QAction::triggered,
 		this, [this] { showRegisterProductDialog(); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_checkForUpdatesAction), &QAction::triggered,
+		this, [this] { m_updateChecker->check(); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -704,6 +716,33 @@ void MainWindow::showFeedbackDialog()
 {
 	FeedbackDialog* feddbackDialog = new FeedbackDialog(this);
 	feddbackDialog->exec();
+}
+
+void MainWindow::onAboutUpdateExists()
+{
+	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(this);
+	updatesLoaderDialog->show();
+}
+
+void MainWindow::onAboutUpdateIsNotExists()
+{
+	static bool firstCall = true;
+
+	if (firstCall)
+	{
+		firstCall = false;
+		return;
+	}
+
+	ASSERT(ServiceLocator::instance()->isRegistered<INotificationService>());
+	INotificationService* notificationService = ServiceLocator::instance()->service<INotificationService>();
+
+	const SoftwareBranding* branding = theApp->softwareBrandingOptions();
+
+	notificationService->info(
+		tr("Information about updates"), 
+		tr("You have installed the latest version of the ") % branding->productName()
+	);
 }
 
 ContentFrame* MainWindow::contentFrame() const noexcept

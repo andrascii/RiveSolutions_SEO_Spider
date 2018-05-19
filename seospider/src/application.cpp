@@ -22,8 +22,6 @@
 #include "crawler_options.h"
 #include "command_line_handler.h"
 #include "command_line_keys.h"
-#include "update_checker.h"
-#include "update_loader_dialog.h"
 #include "license_service.h"
 #include "smtp_sender.h"
 #include "wait_operation_frame.h"
@@ -51,13 +49,8 @@ Application::Application(int& argc, char** argv)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
 	, m_headerControlsContainer(new HeaderControlsContainer())
-	, m_updateChecker(new UpdateChecker(this))
 {
 	Common::SmtpSender::init();
-
-	qRegisterMetaType<Version>("Version");
-
-	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
 
 	initializeStyleSheet();
 	SplashScreen::show();
@@ -72,8 +65,6 @@ Application::Application(int& argc, char** argv)
 	{
 		openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
 	}
-
-	m_updateChecker->check();
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -297,13 +288,6 @@ void Application::onAboutCrawlerOptionsChanged()
 		preferences()->setFromPauseTimer(crawler()->options()->pauseRangeFrom());
 		preferences()->setToPauseTimer(crawler()->options()->pauseRangeTo());
 	}
-}
-
-void Application::onAboutUpdateExists()
-{
-	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(mainWindow());
-
-	updatesLoaderDialog->show();
 }
 
 void Application::onAboutUseCustomUserAgentChanged()
