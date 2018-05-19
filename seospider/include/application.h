@@ -71,6 +71,8 @@ private slots:
 	void onAboutUpdateExists();
 	void onAboutUseCustomUserAgentChanged();
 
+	void closeWaitOperationFrame();
+
 private:
 	void initialize();
 	void startInstaller(const QString& filepath);

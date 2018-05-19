@@ -223,7 +223,7 @@ void Crawler::stopCrawling()
 	emit crawlerStopped();
 
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
-	serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler stopped."));
+	serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler stopped"));
 }
 
 void Crawler::onAboutCrawlingState()
@@ -262,7 +262,7 @@ void Crawler::onAboutCrawlingState()
 		setState(StatePending);
 
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
-		serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Program has ended crawling."));
+		serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Program has ended crawling"));
 
 		emit crawlerFinished();
 	}
@@ -338,7 +338,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 	emit crawlerStarted();
 
-	ServiceLocator::instance()->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler started."));
+	ServiceLocator::instance()->service<INotificationService>()->info(tr("Crawler state"), tr("Crawler started"));
 }
 
 void Crawler::onSessionChanged()
@@ -461,7 +461,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 		
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
 
-		serviceLocator->service<INotificationService>()->error(tr("Loading file error"), tr("The operation has not been successful."));
+		serviceLocator->service<INotificationService>()->error(tr("Loading file error"), tr("The operation has not been successful"));
 
 		ASSERT(m_session);
 
@@ -524,8 +524,8 @@ void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response
 
 		serviceLocator->service<INotificationService>()->error(
 			tr("DNS Lookup Failed!"), 
-			tr("I'm sorry but I cannot find this website.\n"
-				"Please, be sure that you entered a valid address.")
+			tr("I'm sorry but I cannot find this website\n"
+				"Please, be sure that you entered a valid address")
 		);
 
 		setState(StatePending);
@@ -730,7 +730,7 @@ void Crawler::loadFromFile(const QString& fileName)
 	{
 		serviceLocator->service<INotificationService>()->error(
 			tr("Error"), 
-			tr("Cannot load project file until the existing one is saved.")
+			tr("Cannot load project file until the existing one is saved")
 		);
 
 		return;

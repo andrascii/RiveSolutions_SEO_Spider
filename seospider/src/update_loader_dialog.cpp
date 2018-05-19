@@ -3,6 +3,7 @@
 #include "widget_helpers.h"
 #include "main_window.h"
 #include "update_helpers.h"
+#include "shadow_decoration_frame.h"
 
 namespace SeoSpider
 {
@@ -11,14 +12,21 @@ UpdateLoaderDialog::UpdateLoaderDialog(QWidget* parent)
 	: QFrame(parent)
 	, m_ui(new Ui_UpdateLoaderDialogContent)
 {
-	m_ui->setupUi(this);
+	QFrame* internalFrame = new QFrame;
+	m_ui->setupUi(internalFrame);
 
+	setAttribute(Qt::WA_TranslucentBackground);
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 	setWindowModality(Qt::ApplicationModal);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	VERIFY(connect(m_ui->downloadNowButton, &QPushButton::clicked, this, &UpdateLoaderDialog::onUpdateNowClicked));
 	VERIFY(connect(m_ui->downloadLaterButton, &QPushButton::clicked, this, &UpdateLoaderDialog::onUpdateLaterClicked));
+
+	ShadowDecorationFrame* shadowFrame = new ShadowDecorationFrame(internalFrame, this);
+
+	QVBoxLayout* layout = new QVBoxLayout(this);
+	layout->addWidget(shadowFrame);
 }
 
 void UpdateLoaderDialog::showEvent(QShowEvent* event)

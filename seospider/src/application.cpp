@@ -26,6 +26,7 @@
 #include "update_loader_dialog.h"
 #include "license_service.h"
 #include "smtp_sender.h"
+#include "wait_operation_frame.h"
 
 namespace
 {
@@ -58,14 +59,13 @@ Application::Application(int& argc, char** argv)
 
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
 
+	initializeStyleSheet();
 	SplashScreen::show();
 
+	std::this_thread::sleep_for(10s);
+
 	attachPreferencesToCrawlerOptions();
-
 	initialize();
-
-	initializeStyleSheet();
-
 	showMainWindow();
 
 	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
@@ -198,10 +198,14 @@ void Application::startCrawler()
 	INFOLOG << "Start crawling:" << crawler()->options()->startCrawlingPage().toDisplayString();
 
 	crawler()->startCrawling();
+
+	WaitOperationFrame::showMessage(tr("Starting crawler..."));
 }
 
 void Application::stopCrawler()
 {
+	WaitOperationFrame::showMessage(tr("Stopping crawler..."));
+
 	crawler()->stopCrawling();
 }
 
@@ -319,6 +323,11 @@ void Application::onAboutUseCustomUserAgentChanged()
 	}
 }
 
+void Application::closeWaitOperationFrame()
+{
+	WaitOperationFrame::finish();
+}
+
 void Application::registerServices()
 {
 	ServiceLocator::instance()->addService<ISettingsPageRegistry>(new SettingsPageRegistry);
@@ -345,6 +354,15 @@ void Application::initialize()
 	registerServices();
 
 	m_crawler->initialize();
+
+	VERIFY(connect(m_crawler, &Crawler::crawlerStarted,
+		this, &Application::closeWaitOperationFrame, Qt::QueuedConnection));
+
+	VERIFY(connect(m_crawler, &Crawler::crawlerStopped,
+		this, &Application::closeWaitOperationFrame, Qt::QueuedConnection));
+	
+	VERIFY(connect(m_crawler, &Crawler::crawlerFinished,
+		this, &Application::closeWaitOperationFrame, Qt::QueuedConnection));
 
 	/// must be Qt::QueuedConnection
 	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, 

@@ -798,17 +798,22 @@ SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetDescription
 QFrame#UpdateLoaderDialogContent
 {
 	border: 0.1em solid #CCCCCC;
-	min-width: 40em;
-	max-width: 40em;
-	min-height: 15em;
-	max-height: 15em;
+	background: #EDEDED;
+	border: 1px solid #d2d3d5;
+	min-width: 35em;
+	max-width: 35em;
+	min-height: 12em;
+	max-height: 12em;
+	border-radius: 0.143em;
+	padding-bottom: 1em;
 }
 
 QFrame#UpdateLoaderDialogContent QLabel#headerLabel
 {
-	font-size: 24pt;
+	font-size: 20pt;
 	font: bold;
 	color: #4D4D4D;
+	/*margin-bottom: -1em;*/
 }
 
 QFrame#UpdateLoaderDialogContent QLabel#textLabel
@@ -822,10 +827,10 @@ QFrame#UpdateLoaderDialogContent QPushButton
 {
 	border-radius: none;
 	font: bold;
-	font-size: 12pt;
+	font-size: 11pt;
 	min-height: 1.5em;
-	min-width: 10em;
-	max-width: 10em;
+	min-width: 8em;
+	max-width: 8em;
 }
 
 QFrame#UpdateLoaderDialogContent QPushButton#downloadNowButton
@@ -862,4 +867,40 @@ QLabel#feedbackDialogHeaderLabel
 {
 	font: bold;
 	font-size: 14pt;
+}
+
+/*////////////////////////////// WaitOperationFrame /////////////////////////////////////*/
+
+
+QFrame#WaitOperationFrame
+{
+	min-width: 25em;
+	max-width: 25em;
+	min-height: 10em;
+	max-height: 10em;
+
+	background: #EDEDED;
+	border: 1px solid #d2d3d5;
+	min-width: 25em;
+	max-width: 25em;
+	min-height: 5em;
+	max-height: 5em;
+	border-radius: 0.143em;
+
+	padding-top: 1.8em;
+	padding-bottom: 1.8em;
+}
+
+QFrame#WaitOperationFrame QLabel
+{
+	font: bold;
+	font-size: 13pt;
+}
+
+/*////////////////////////////// SplashScreenFrame /////////////////////////////////////*/
+
+QFrame#SplashScreenFrame QLabel
+{
+	color: #EDEDED;
+	font-size: 8pt;
 }

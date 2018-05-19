@@ -16,7 +16,7 @@ QString SoftwareBranding::productName() const
 
 QPixmap SoftwareBranding::brandingLogoImage() const
 {
-	constexpr int c_height = 250;
+	constexpr int c_height = 200;
 	constexpr double c_ratio = 1.837318615087294;
 	return SvgRenderer::render(":/images/logo_big.svg", c_height * c_ratio, c_height);
 }

@@ -7,6 +7,7 @@
 #include "custom_push_button.h"
 #include "header_controls_container.h"
 #include "main_window.h"
+#include "wait_operation_frame.h"
 
 namespace SeoSpider
 {
@@ -25,21 +26,21 @@ ContentFrame::ContentFrame(QWidget* parent)
 	dynamicControlsLayoutWithSpacer->setMargin(0);
 	m_dynamicControlsLayout = new QHBoxLayout(this);
 	m_dynamicControlsLayout->setMargin(0);
+
 	QWidget* dynamicControlsWidget = new QFrame(this);
 	dynamicControlsWidget->setContentsMargins(0, 0, 0, 0);
 	dynamicControlsWidget->setObjectName(QStringLiteral("DynamicControls"));
 	dynamicControlsWidget->setLayout(dynamicControlsLayoutWithSpacer);
 	dynamicControlsLayoutWithSpacer->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum));
 	dynamicControlsLayoutWithSpacer->addLayout(m_dynamicControlsLayout);
+	
 	m_decorationWidget->addWidgetToHeader(dynamicControlsWidget, Qt::AlignRight, false);
-
 	m_decorationWidget->addContentWidget(m_navigationPanel.navigationPanelWidget);
 	m_decorationWidget->addContentWidget(m_stackedWidget);
 
 	QHBoxLayout* horizontalLayout = new QHBoxLayout(this);
 	horizontalLayout->setSpacing(0);
 	horizontalLayout->setMargin(0);
-
 	horizontalLayout->addWidget(m_decorationWidget);
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::stateChanged,
@@ -49,9 +50,9 @@ ContentFrame::ContentFrame(QWidget* parent)
 		this, SLOT(showPage(PageFactory::Page))));
 
 	QWidget* loadingWidget = new QWidget(this);
-	QHBoxLayout* loadingWidgetLayout = new QHBoxLayout(this);
-	loadingWidget->setLayout(loadingWidgetLayout);
+	QHBoxLayout* loadingWidgetLayout = new QHBoxLayout(loadingWidget);
 	loadingWidgetLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
+
 	QLabel* label = new QLabel(this);
 	label->setText(tr("Please wait..."));
 	label->setObjectName("LoadingWidget");
@@ -147,14 +148,14 @@ void ContentFrame::onStateChanged(int state)
 	if (state == CrawlerEngine::Crawler::State::StateSerializaton ||
 		state == CrawlerEngine::Crawler::State::StateDeserializaton)
 	{
+		WaitOperationFrame::showMessage(tr("Please wait while saving the project..."));
+
 		m_stackedWidget->setCurrentIndex(0);
-		theApp->mainWindow()->setEnabled(false);
-		m_navigationPanel.navigationPanelWidget->setEnabled(false);
 	}
 	else
 	{
-		theApp->mainWindow()->setEnabled(true);
-		m_navigationPanel.navigationPanelWidget->setEnabled(true);
+		WaitOperationFrame::finish();
+
 		showPage(m_activePage);
 	}
 }

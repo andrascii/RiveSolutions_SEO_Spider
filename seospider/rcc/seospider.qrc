@@ -6,7 +6,6 @@
         <file>images/save-as-icon.png</file>
         <file>images/save-icon.png</file>
 		<file>images/settings.png</file>
-        <file>stylesheets/styles.css</file>
         <file>images/logo_big.svg</file>
         <file>images/ui-splitter-horizontal-icon.png</file>
         <file>images/ui-splitter-vertical-icon.png</file>
@@ -53,6 +52,7 @@
 		<file>images/group-by-category.svg</file>
 		<file>images/group-by-level.svg</file>
 		<file>images/color.png</file>
+        <file>stylesheets/styles.css</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>
@@ -60,5 +60,6 @@
 		<file>translations/translate_ru_RU.qm</file>
 		<file>reportmaket/brief_report_maket.html</file>
 		<file>reportmaket/maket_style.css</file>
+		<file>gifs/loader.gif</file>
     </qresource>
 </RCC>
