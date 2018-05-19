@@ -72,10 +72,15 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
+if(WIN32)
+	set(OSSpecificDeps ws2_32.lib windowsapp.lib)
+endif()
+
 target_link_libraries(
 	${CrawlerEngineLibName}
 	${GumboLibName}
 	${CommonLibName}
+	${OSSpecificDeps}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}

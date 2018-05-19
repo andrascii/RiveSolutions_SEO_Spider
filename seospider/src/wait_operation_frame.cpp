@@ -57,10 +57,8 @@ WaitOperationFrame::WaitOperationFrame(QWidget* parent)
 	m_ui->movieLabel->setMovie(movie);
 	movie->start();
 
-	ShadowDecorationFrame* shadowFrame = new ShadowDecorationFrame(internalFrame, this);
-
 	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->addWidget(shadowFrame);
+	layout->addWidget(new ShadowDecorationFrame(internalFrame, this));
 }
 
 WaitOperationFrame::~WaitOperationFrame()

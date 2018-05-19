@@ -20,13 +20,11 @@ UpdateLoaderDialog::UpdateLoaderDialog(QWidget* parent)
 	setWindowModality(Qt::ApplicationModal);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	VERIFY(connect(m_ui->downloadNowButton, &QPushButton::clicked, this, &UpdateLoaderDialog::onUpdateNowClicked));
-	VERIFY(connect(m_ui->downloadLaterButton, &QPushButton::clicked, this, &UpdateLoaderDialog::onUpdateLaterClicked));
-
-	ShadowDecorationFrame* shadowFrame = new ShadowDecorationFrame(internalFrame, this);
+	VERIFY(connect(m_ui->downloadNowButton, &QPushButton::clicked, this, &UpdateLoaderDialog::onDownloadNowClicked));
+	VERIFY(connect(m_ui->downloadLaterButton, &QPushButton::clicked, this, &UpdateLoaderDialog::onDownloadLaterClicked));
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->addWidget(shadowFrame);
+	layout->addWidget(new ShadowDecorationFrame(internalFrame, this));
 }
 
 void UpdateLoaderDialog::showEvent(QShowEvent* event)
@@ -40,7 +38,7 @@ void UpdateLoaderDialog::showEvent(QShowEvent* event)
 	QFrame::showEvent(event);
 }
 
-void UpdateLoaderDialog::onUpdateNowClicked()
+void UpdateLoaderDialog::onDownloadNowClicked()
 {
 	if (QProcess::startDetached("Uninstall SeoSpider.exe", { "--updater" }))
 	{
@@ -48,7 +46,7 @@ void UpdateLoaderDialog::onUpdateNowClicked()
 	}
 }
 
-void UpdateLoaderDialog::onUpdateLaterClicked()
+void UpdateLoaderDialog::onDownloadLaterClicked()
 {
 	closeDialog();
 }

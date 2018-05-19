@@ -55,8 +55,6 @@ Application::Application(int& argc, char** argv)
 	initializeStyleSheet();
 	SplashScreen::show();
 
-	std::this_thread::sleep_for(10s);
-
 	attachPreferencesToCrawlerOptions();
 	initialize();
 	showMainWindow();
@@ -380,14 +378,6 @@ void Application::initialize()
 	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsLoaded, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
-}
-
-void Application::startInstaller(const QString& filepath)
-{
-	if (QProcess::startDetached(filepath))
-	{
-		quit();
-	}
 }
 
 void Application::attachPreferencesToCrawlerOptions()

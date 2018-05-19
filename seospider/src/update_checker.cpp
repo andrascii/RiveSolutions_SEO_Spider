@@ -6,10 +6,6 @@
 #include "update_helpers.h"
 #include "version.h"
 
-#ifdef Q_OS_WIN
-#pragma comment(lib, "mincore.lib")
-#endif
-
 namespace SeoSpider
 {
 

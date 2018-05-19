@@ -73,7 +73,6 @@ private slots:
 
 private:
 	void initialize();
-	void startInstaller(const QString& filepath);
 	void attachPreferencesToCrawlerOptions();
 	void openFileThroughCmd(const QString& path);
 
