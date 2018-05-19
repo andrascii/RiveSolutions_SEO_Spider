@@ -276,6 +276,11 @@ TEST(RefreshTests, RefreshNotChangedPage)
 
 TEST(RefreshTests, RefreshNofollowLinkTest)
 {
+	// Refreshing blocked by rel="nofollow" link which is not changed.
+	// And also crawler will not loading nofollow links because of crawler options.
+	// As a result, after refreshing the filter which stores blocked by rel="nofollow" links
+	// must be the same as before refreshing
+
 	TestEnvironment env;
 	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://refresh5.com/index.html") }));
 
