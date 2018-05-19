@@ -3,6 +3,7 @@
 #include "widget_helpers.h"
 #include "shadow_decoration_frame.h"
 #include "main_window.h"
+#include "cursor_factory.h"
 
 namespace SeoSpider
 {
@@ -44,8 +45,6 @@ WaitOperationFrame::WaitOperationFrame(QWidget* parent)
 	: QFrame(parent)
 	, m_ui(new Ui_WaitOperationFrame)
 {
-	theApp->mainWindow()->setEnabled(false);
-
 	setAttribute(Qt::WA_TranslucentBackground);
 	setWindowModality(Qt::ApplicationModal);
 	setWindowFlags(Qt::Dialog | Qt::Tool | Qt::FramelessWindowHint);
@@ -63,7 +62,6 @@ WaitOperationFrame::WaitOperationFrame(QWidget* parent)
 
 WaitOperationFrame::~WaitOperationFrame()
 {
-	theApp->mainWindow()->setEnabled(true);
 	s_instance = nullptr;
 }
 
@@ -74,8 +72,17 @@ void WaitOperationFrame::setMessage(const QString& message)
 
 void WaitOperationFrame::showEvent(QShowEvent* event)
 {
+	theApp->mainWindow()->setEnabled(false);
 	WidgetHelpers::moveWidgetToHostCenter(this);
+	QApplication::setOverrideCursor(CursorFactory::createCursor(Qt::WaitCursor));
 	QFrame::showEvent(event);
+}
+
+void WaitOperationFrame::hideEvent(QHideEvent* event)
+{
+	theApp->mainWindow()->setEnabled(true);
+	QApplication::restoreOverrideCursor();
+	QFrame::hideEvent(event);
 }
 
 }

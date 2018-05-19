@@ -48,7 +48,7 @@ Application::Application(int& argc, char** argv)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
-	, m_headerControlsContainer(new HeaderControlsContainer())
+	, m_headerControlsContainer(new HeaderControlsContainer)
 {
 	Common::SmtpSender::init();
 
@@ -147,9 +147,10 @@ void Application::startCrawler()
 
 	if (!data.isValid())
 	{
-		mainWindow()->showMessageBoxDialog("Error", "Please make sure that you entered a URL.",
-			MessageBoxDialog::CriticalErrorIcon,
-			QDialogButtonBox::Ok);
+		mainWindow()->showMessageBoxDialog(tr("Error"), 
+			tr("Please make sure that you entered a URL."),
+			QDialogButtonBox::Ok
+		);
 
 		return;
 	}
@@ -159,10 +160,9 @@ void Application::startCrawler()
 	if (!preferences()->crawlOutsideOfStartFolder() && 
 		!url.path().isEmpty() && !url.path().endsWith(QChar('/')))
 	{
-		mainWindow()->showMessageBoxDialog("Invalid URL!",
-			"The option \"Crawl outside of start folder\" is disabled.\n"
-			"In this case the URL should be ended with '/'.",
-			MessageBoxDialog::CriticalErrorIcon,
+		mainWindow()->showMessageBoxDialog(tr("Invalid URL!"),
+			tr("The option \"Crawl outside of start folder\" is disabled. "
+			"In this case the URL should be ended with '/'."),
 			QDialogButtonBox::Ok);
 
 		return;
@@ -171,9 +171,8 @@ void Application::startCrawler()
 	if (!isInternetAvailable())
 	{
 		mainWindow()->showMessageBoxDialog("Internet connection problem!",
-			"It seems that you have some problems with internet connection.\n"
-			"Please, check the connection and try again.",
-			MessageBoxDialog::CriticalErrorIcon,
+			tr("It seems that you have some problems with internet connection. "
+			"Please, check the connection and try again."),
 			QDialogButtonBox::Ok);
 
 		return;
@@ -487,8 +486,11 @@ void Application::openFileThroughCmd(const QString& path)
 	{
 		ERRLOG << path;
 
-		mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+		mainWindow()->showMessageBoxDialog(
+			tr("Error"), 
+			tr("Cannot open! Unknown document type."), 
+			QDialogButtonBox::Ok
+		);
 
 		return;
 	}

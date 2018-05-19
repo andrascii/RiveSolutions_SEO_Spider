@@ -21,9 +21,6 @@
 		<file>images/oops.jpg</file>
 		<file>images/up-arrow.png</file>
 		<file>images/down-arrow.png</file>
-		<file>images/information-message-icon.png</file>
-		<file>images/warning-message-icon.png</file>
-		<file>images/critical-error-message-icon.png</file>
 		<file>images/close-window.png</file>
 		<file>images/minimize-window.png</file>
 		<file>images/maximize-window.png</file>
@@ -52,6 +49,22 @@
 		<file>images/group-by-category.svg</file>
 		<file>images/group-by-level.svg</file>
 		<file>images/color.png</file>
+
+		<!-- cursors -->
+		<file>images/arrow-cursor.svg</file>
+		<file>images/open-hand-cursor.svg</file>
+		<file>images/pointing-hand-cursor.svg</file>
+		<file>images/closed-hand-cursor.svg</file>
+		<file>images/whats-this-cursor.svg</file>
+		<file>images/busy-cursor.svg</file>
+		<file>images/wait-cursor.svg</file>
+		<file>images/size-bdiag-cursor.svg</file>
+		<file>images/size-fdiag-cursor.svg</file>
+		<file>images/size-hor-cursor.svg</file>
+		<file>images/size-ver-cursor.svg</file>
+		<file>images/split-h-cursor.svg</file>
+		<file>images/split-v-cursor.svg</file>
+
         <file>stylesheets/styles.css</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>

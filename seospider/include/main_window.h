@@ -42,8 +42,7 @@ public slots:
 	void onCrawlingFinished() const;
 
 	int showMessageBoxDialog(const QString& title, 
-		const QString& message, 
-		MessageBoxDialog::Icon icon, 
+		const QString& message,
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel) const;
 
 	void showContentFramePage(PageFactory::Page page);

@@ -37,6 +37,7 @@
 #include "feedback_dialog.h"
 #include "update_checker.h"
 #include "update_loader_dialog.h"
+#include "cursor_factory.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -107,9 +108,9 @@ void MainWindow::openFile()
 {
 	if (theApp->crawler()->hasSession())
 	{
-		showMessageBoxDialog("Open file error", "Unable to open the project file until the existing one is closed!\n"
-			"So first you need to press Ctrl+W and then open file.",
-			MessageBoxDialog::WarningIcon,
+		showMessageBoxDialog(tr("Open file error"),
+			tr("Unable to open the project file until the existing one is closed! "
+			"So first you need to press Ctrl+W and then open file."),
 			QDialogButtonBox::Ok
 		);
 
@@ -131,9 +132,9 @@ void MainWindow::openFile(const QString& filePath)
 {
 	if (theApp->crawler()->hasSession())
 	{
-		showMessageBoxDialog("Open file error", "Unable to open the project file until the existing one is closed!\n"
-			"So first you need to press Ctrl+W and then open file.",
-			MessageBoxDialog::WarningIcon,
+		showMessageBoxDialog(tr("Open file error"),
+			tr("Unable to open the project file until the existing one is closed! "
+			"So first you need to press Ctrl+W and then open file."),
 			QDialogButtonBox::Ok
 		);
 
@@ -156,8 +157,7 @@ void MainWindow::closeFile()
 	{
 		theApp->mainWindow()->showMessageBoxDialog(
 			tr("Warning"),
-			tr("Cannot close file while crawler is working."),
-			MessageBoxDialog::WarningIcon
+			tr("Cannot close file while crawler is working.")
 		);
 
 		return;
@@ -167,8 +167,7 @@ void MainWindow::closeFile()
 	{
 		int answer = theApp->mainWindow()->showMessageBoxDialog(
 			tr("Warning"), 
-			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?"),
-			MessageBoxDialog::WarningIcon
+			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?")
 		);
 
 		if (answer == QDialog::Rejected)
@@ -265,7 +264,6 @@ void MainWindow::onCrawlingFinished() const
 		showMessageBoxDialog(
 			tr("Trial license"),
 			tr("This option is not available in the trial version."),
-			MessageBoxDialog::InformationIcon,
 			QDialogButtonBox::Ok
 		);
 	}
@@ -273,13 +271,11 @@ void MainWindow::onCrawlingFinished() const
 
 int MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
-	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons) const
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
-	messageBoxDialog->setIcon(icon);
 	messageBoxDialog->setStandardButtons(buttons);
 	messageBoxDialog->exec();
 
@@ -322,8 +318,8 @@ void MainWindow::changeEvent(QEvent* event)
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-	const QString warningMessage("Crawler is working. Do you want to close application anyway?");
-	const QString descriptionMessage("If no then it will be collapsed to the system tray.");
+	const QString warningMessage(tr("Crawler is working. Do you want to close application anyway?"));
+	const QString descriptionMessage(tr("If no then it will be collapsed to the system tray."));
 
 	if (theApp->crawler()->state() == Crawler::StateWorking)
 	{
@@ -333,16 +329,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 		if (states.testFlag(Qt::WindowMinimized))
 		{
-			answer = showMessageBoxDialog("Closing application",
+			answer = showMessageBoxDialog(tr("Closing application"),
 				warningMessage,
-				MessageBoxDialog::WarningIcon,
 				QDialogButtonBox::Yes | QDialogButtonBox::No);
 		}
 		else
 		{
-			answer = showMessageBoxDialog("Closing application",
+			answer = showMessageBoxDialog(tr("Closing application"),
 				warningMessage % "\n" % descriptionMessage,
-				MessageBoxDialog::WarningIcon,
 				QDialogButtonBox::Yes | QDialogButtonBox::No);
 		}
 		
@@ -390,6 +384,8 @@ void MainWindow::init()
 	systemTrayIcon()->show();
 
 	m_updateChecker->check();
+
+	setCursor(CursorFactory::createCursor(Qt::ArrowCursor));
 
 	m_initialized = true;
 }
@@ -623,8 +619,10 @@ QString MainWindow::getSaveFilePath() const
 {
 	if (theApp->crawler()->state() == Crawler::StateWorking)
 	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot save the document while crawler is working!"),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
+			tr("Cannot save the document while crawler is working!"),
+			QDialogButtonBox::Ok
+		);
 
 		return QString();
 	}
@@ -633,12 +631,18 @@ QString MainWindow::getSaveFilePath() const
 	{
 		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
 			tr("Crawler does not contain any data."),
-			MessageBoxDialog::InformationIcon, QDialogButtonBox::Ok);
+			QDialogButtonBox::Ok
+		);
 
 		return QString();
 	}
 
-	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath() + "/" + theApp->crawler()->currentCrawledUrl(), QString("*" + c_projectFileExtension));
+	const QString path = QFileDialog::getSaveFileName(
+		theApp->mainWindow(), 
+		tr("Save File"), 
+		qApp->applicationDirPath() + "/" + theApp->crawler()->currentCrawledUrl(), 
+		QString("*" + c_projectFileExtension)
+	);
 
 	return path;
 }

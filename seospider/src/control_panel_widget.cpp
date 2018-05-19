@@ -97,11 +97,10 @@ void ControlPanelWidget::clearCrawlingData() const
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(tr("Warning"));
 	
-	const QString message = tr("You have not saved the results of the scanning your site.") + QString("\n") +
+	const QString message = tr("You have not saved the results of the scanning your site.") +
 		tr("Would you like to save the results and have the ability to start next time from this point?");
 	
 	messageBoxDialog->setMessage(message);
-	messageBoxDialog->setIcon(MessageBoxDialog::WarningIcon);
 	messageBoxDialog->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
 	messageBoxDialog->show();
 

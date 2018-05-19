@@ -22,6 +22,7 @@ private:
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
+	virtual void hideEvent(QHideEvent* event) override;
 
 private:
 	static QPointer<WaitOperationFrame> s_instance;
