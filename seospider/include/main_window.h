@@ -10,6 +10,7 @@ namespace SeoSpider
 
 class ContentFrame;
 class IUpdateChecker;
+class ShadedOverlay;
 
 class MainWindow : public QMainWindow
 {
@@ -40,6 +41,8 @@ public slots:
 	void onChangeGroupingAuditInfo(QAction* action);
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 	void onCrawlingFinished() const;
+	void showShadedOverlay();
+	void hideShadedOverlay();
 
 	int showMessageBoxDialog(const QString& title, 
 		const QString& message,
@@ -81,6 +84,7 @@ private:
 	QSystemTrayIcon* m_systemTrayIcon;
 
 	IUpdateChecker* m_updateChecker;
+	ShadedOverlay* m_shadedOverlay;
 };
 
 }

@@ -87,12 +87,14 @@ void WaitOperationFrame::hideEvent(QHideEvent* event)
 void WaitOperationFrame::applyExternalVisualSettings()
 {
 	QApplication::setOverrideCursor(CursorFactory::createCursor(Qt::WaitCursor));
+	theApp->mainWindow()->showShadedOverlay();
 	theApp->mainWindow()->setEnabled(false);
 }
 
 void WaitOperationFrame::restoreExternalVisualSettings()
 {
 	QApplication::restoreOverrideCursor();
+	theApp->mainWindow()->hideShadedOverlay();
 	theApp->mainWindow()->setEnabled(true);
 }
 

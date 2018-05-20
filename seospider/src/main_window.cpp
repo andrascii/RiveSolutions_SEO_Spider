@@ -38,6 +38,7 @@
 #include "update_checker.h"
 #include "update_loader_dialog.h"
 #include "cursor_factory.h"
+#include "shaded_overlay.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -57,6 +58,7 @@ MainWindow::MainWindow(QWidget* parent)
 	, m_initialized(false)
 	, m_systemTrayIcon(new QSystemTrayIcon(theApp->softwareBrandingOptions()->applicationIcon(), this))
 	, m_updateChecker(new UpdateChecker(this))
+	, m_shadedOverlay(new ShadedOverlay(this))
 {
 	qRegisterMetaType<Version>("Version");
 
@@ -269,6 +271,16 @@ void MainWindow::onCrawlingFinished() const
 	}
 }
 
+void MainWindow::showShadedOverlay()
+{
+	m_shadedOverlay->setVisible(true);
+}
+
+void MainWindow::hideShadedOverlay()
+{
+	m_shadedOverlay->setVisible(false);
+}
+
 int MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
 	QDialogButtonBox::StandardButtons buttons) const
@@ -291,12 +303,16 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 {
 	QMainWindow::resizeEvent(event);
 
+	m_shadedOverlay->resize(size());
+
 	emit resized();
 }
 
 void MainWindow::moveEvent(QMoveEvent* event)
 {
 	QMainWindow::moveEvent(event);
+
+	m_shadedOverlay->move(mapToGlobal(rect().topLeft()));
 
 	emit moved();
 }

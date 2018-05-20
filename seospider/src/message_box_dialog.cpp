@@ -92,6 +92,7 @@ void MessageBoxDialog::showEvent(QShowEvent* event)
 {
 	WidgetHelpers::moveWidgetToHostCenter(this);
 
+	theApp->mainWindow()->showShadedOverlay();
 	theApp->mainWindow()->setDisabled(true);
 
 	QFrame::showEvent(event);
@@ -99,6 +100,7 @@ void MessageBoxDialog::showEvent(QShowEvent* event)
 
 void MessageBoxDialog::hideEvent(QHideEvent* event)
 {
+	theApp->mainWindow()->hideShadedOverlay();
 	theApp->mainWindow()->setDisabled(false);
 
 	QFrame::hideEvent(event);
