@@ -159,7 +159,8 @@ void MainWindow::closeFile()
 	{
 		theApp->mainWindow()->showMessageBoxDialog(
 			tr("Warning"),
-			tr("Cannot close file while crawler is working.")
+			tr("Cannot close file while crawler is working."),
+			QDialogButtonBox::Ok
 		);
 
 		return;
@@ -169,7 +170,8 @@ void MainWindow::closeFile()
 	{
 		int answer = theApp->mainWindow()->showMessageBoxDialog(
 			tr("Warning"), 
-			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?")
+			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?"),
+			QDialogButtonBox::Yes | QDialogButtonBox::No
 		);
 
 		if (answer == QDialog::Rejected)
