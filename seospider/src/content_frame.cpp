@@ -49,18 +49,6 @@ ContentFrame::ContentFrame(QWidget* parent)
 	VERIFY(connect(theApp->mainWindow(), SIGNAL(showPage(PageFactory::Page)),
 		this, SLOT(showPage(PageFactory::Page))));
 
-	QWidget* loadingWidget = new QWidget(this);
-	QHBoxLayout* loadingWidgetLayout = new QHBoxLayout(loadingWidget);
-	loadingWidgetLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
-
-	QLabel* label = new QLabel(this);
-	label->setText(tr("Please wait..."));
-	label->setObjectName("LoadingWidget");
-	loadingWidgetLayout->addWidget(label);
-	loadingWidgetLayout->addSpacerItem(new QSpacerItem(10, 0, QSizePolicy::Expanding));
-	
-	m_stackedWidget->addWidget(loadingWidget);
-
 	VERIFY(connect(theApp->headerControlsContainer(), &HeaderControlsContainer::currentControlsChanged, 
 		this, &ContentFrame::onDynamicControlsChanged));
 }
@@ -153,8 +141,6 @@ void ContentFrame::onStateChanged(int state)
 		WaitOperationFrame::showMessage(tr("Please wait while saving the project..."));
 
 		waitOperationFrameShown = true;
-
-		m_stackedWidget->setCurrentIndex(0);
 	}
 	else
 	{
@@ -163,8 +149,6 @@ void ContentFrame::onStateChanged(int state)
 			WaitOperationFrame::finish();
 			waitOperationFrameShown = false;
 		}
-
-		showPage(m_activePage);
 	}
 }
 
