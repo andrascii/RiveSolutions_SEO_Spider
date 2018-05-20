@@ -6,7 +6,7 @@
         <file>images/save-as-icon.png</file>
         <file>images/save-icon.png</file>
 		<file>images/settings.png</file>
-        <file>images/logo_big.svg</file>
+        <file>images/logo-big.svg</file>
         <file>images/ui-splitter-horizontal-icon.png</file>
         <file>images/ui-splitter-vertical-icon.png</file>
         <file>images/icon-ok.svg</file>
@@ -49,6 +49,9 @@
 		<file>images/group-by-category.svg</file>
 		<file>images/group-by-level.svg</file>
 		<file>images/color.png</file>
+
+		<file>images/favicon.ico</file>
+		<file>images/application-icon.svg</file>
 
 		<!-- cursors -->
 		<file>images/arrow-cursor.svg</file>

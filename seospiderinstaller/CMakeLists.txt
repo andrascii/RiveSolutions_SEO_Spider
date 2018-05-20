@@ -88,6 +88,15 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy
+	${VMProctectSdkDll}
+	${TargetPackagePath}/data/
+)
+
+add_custom_command(
+	TARGET ${SeoSpiderInstallerName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E copy
 	${PackageFileList}
 	${TargetPackagePath}/data/
 )

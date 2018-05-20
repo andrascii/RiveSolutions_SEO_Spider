@@ -18,12 +18,12 @@ QPixmap SoftwareBranding::brandingLogoImage() const
 {
 	constexpr int c_height = 200;
 	constexpr double c_ratio = 1.837318615087294;
-	return SvgRenderer::render(":/images/logo_big.svg", c_height * c_ratio, c_height);
+	return SvgRenderer::render(":/images/logo-big.svg", c_height * c_ratio, c_height);
 }
 
 QIcon SoftwareBranding::applicationIcon() const
 {
-	return QIcon(QStringLiteral(":/images/robot.ico"));
+	return QIcon(QStringLiteral(":/images/favicon.ico"));
 }
 
 }
