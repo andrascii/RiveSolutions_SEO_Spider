@@ -9,8 +9,8 @@
 namespace SeoSpider
 {
 
-MessageBoxDialog::MessageBoxDialog()
-	: FloatingFrame(nullptr)
+MessageBoxDialog::MessageBoxDialog(QWidget* parent)
+	: FloatingFrame(parent)
 	, m_ui(new Ui_MessageBox)
 	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
 {

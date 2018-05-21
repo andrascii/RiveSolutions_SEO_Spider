@@ -37,8 +37,6 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	const int height = Common::Helpers::pointsToPixels(500);
 
 	resize(width, height);
-
-	setCursor(CursorFactory::createCursor(Qt::ArrowCursor));
 }
 
 void ApplicationSettingsWidget::showEvent(QShowEvent*)

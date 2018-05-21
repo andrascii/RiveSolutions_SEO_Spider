@@ -127,11 +127,11 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 	const CrawlerSharedState* state = CrawlerSharedState::instance();
 	const int workersProcessedLinksCount = state->workersProcessedLinksCount();
 	const int modelControllerCrawledLinksCount = state->modelControllerCrawledLinksCount();
-
-	const int pendingLinksCount = workersProcessedLinksCount - modelControllerCrawledLinksCount;
+ 
+	const int differenceBetweenWorkersAndModelController = workersProcessedLinksCount - modelControllerCrawledLinksCount;
 	constexpr int maxPendingLinksCount = 15;
-
-	if (pendingLinksCount > maxPendingLinksCount)
+ 
+	if (differenceBetweenWorkersAndModelController > maxPendingLinksCount)
 	{
 		m_defferedProcessingTimer->start();
 		return;

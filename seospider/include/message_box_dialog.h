@@ -11,7 +11,7 @@ class MessageBoxDialog : public FloatingFrame
 	Q_OBJECT
 
 public:
-	MessageBoxDialog();
+	MessageBoxDialog(QWidget* parent = nullptr);
 
 	void setMessage(const QString& message);
 	void setStandardButtons(QDialogButtonBox::StandardButtons buttons);

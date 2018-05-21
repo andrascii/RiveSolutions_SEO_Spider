@@ -403,8 +403,6 @@ void MainWindow::init()
 
 	m_updateChecker->check();
 
-	setCursor(CursorFactory::createCursor(Qt::ArrowCursor));
-
 	m_initialized = true;
 }
 
