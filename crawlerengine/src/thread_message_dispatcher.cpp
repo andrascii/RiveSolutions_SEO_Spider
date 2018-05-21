@@ -143,8 +143,15 @@ void ThreadMessageDispatcher::execute()
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	RequesterSharedPtr requester = message.requester();
 
-	if (!requester || !handlerRegistry.isHandlerExists(message.handler()))
+	if (!requester)
 	{
+		WARNLOG << "Requester is dead";
+		return;
+	}
+
+	if (!handlerRegistry.isHandlerExists(message.handler()))
+	{
+		WARNLOG << "Handler for request type is not exists";
 		return;
 	}
 

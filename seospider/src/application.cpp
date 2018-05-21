@@ -461,7 +461,17 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, userAgentMapper));
 	VERIFY(connect(preferences(), &Preferences::useDesktopUserAgentChanged, userAgentMapper));
 
-	const auto usePauseMapper = [this](bool value)
+	const auto pauseSetFromValue = [this](int value)
+	{
+		crawler()->options()->setPauseRangeFrom(value);
+	};
+
+	const auto pauseSetToValue = [this](int value)
+	{
+		crawler()->options()->setPauseRangeTo(value);
+	};
+
+	const auto usePauseMapper = [this, pauseSetFromValue, pauseSetToValue](bool value)
 	{
 		const int fromPauseTimerValue = value ? preferences()->fromPauseTimer() : -1;
 		const int toPauseTimerValue = value ? preferences()->toPauseTimer() : -1;
@@ -469,11 +479,13 @@ void Application::attachPreferencesToCrawlerOptions()
 		DEBUGLOG << "from pause:" << fromPauseTimerValue;
 		DEBUGLOG << "to pause:" << toPauseTimerValue;
 
-		crawler()->options()->setPauseRangeFrom(fromPauseTimerValue);
-		crawler()->options()->setPauseRangeTo(toPauseTimerValue);
+		pauseSetFromValue(fromPauseTimerValue);
+		pauseSetToValue(toPauseTimerValue);
 	};
 
 	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, usePauseMapper));
+	VERIFY(connect(preferences(), &Preferences::fromPauseTimerChanged, pauseSetFromValue));
+	VERIFY(connect(preferences(), &Preferences::toPauseTimerChanged, pauseSetToValue));
 }
 
 void Application::openFileThroughCmd(const QString& path)

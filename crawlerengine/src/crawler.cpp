@@ -191,7 +191,8 @@ void Crawler::startCrawling()
 {
 	setState(StatePreChecking);
 
-	if (m_options->pauseRangeFrom() == -1 && m_options->pauseRangeTo() == -1)
+	if (m_options->pauseRangeFrom() == -1 && m_options->pauseRangeTo() == -1 ||
+		m_options->pauseRangeFrom() == 0 && m_options->pauseRangeTo() == 0)
 	{
 		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "resetPauseRange", Qt::BlockingQueuedConnection));
 	}
