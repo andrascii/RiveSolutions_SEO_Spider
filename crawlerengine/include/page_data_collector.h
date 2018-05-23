@@ -10,6 +10,7 @@ namespace CrawlerEngine
 struct DownloadResponse;
 class ResponseHeaders;
 class Hop;
+class IHtmlParser;
 
 class PageDataCollector : public QObject
 {
@@ -26,11 +27,11 @@ private:
 
 	void applyOptions();
 	void collectReplyData(const Hop& hop, ParsedPagePtr& page) const;
-	void collectParsedPageData(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page);
 	void setResourceType(ParsedPagePtr& page) const;
 	std::shared_ptr<IPageParser> createParser(ParserType parserType) const;
 
 private:
+	std::shared_ptr<IHtmlParser> m_htmlParser;
 	CompoundParser m_parser;
 	CrawlerOptionsData m_crawlerOptionsData;
 };

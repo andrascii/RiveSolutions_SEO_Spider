@@ -5,31 +5,32 @@
 #include "word_count_parser.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
-#include "gumbo_parsing_helpers.h"
+#include "ihtml_parser.h"
 #include "frames_detector_parser.h"
 
 namespace CrawlerEngine
 {
 
-HtmlResourcesParser::HtmlResourcesParser()
+HtmlResourcesParser::HtmlResourcesParser(IHtmlParser* htmlParser)
+	: m_htmlParser(htmlParser)
 {
-	addParser(std::make_shared<MetaParser>());
-	addParser(std::make_shared<FramesDetectorParser>());
-	addParser(std::make_shared<TitleParser>());
-	addParser(std::make_shared<HParser>());
-	addParser(std::make_shared<WordCountParser>());
+	addParser(std::make_shared<MetaParser>(m_htmlParser));
+	addParser(std::make_shared<FramesDetectorParser>(m_htmlParser));
+	addParser(std::make_shared<TitleParser>(m_htmlParser));
+	addParser(std::make_shared<HParser>(m_htmlParser));
+	addParser(std::make_shared<WordCountParser>(m_htmlParser));
 	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceHtml));
 }
 
-void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
+void HtmlResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
-		CompoundParser::parse(output, headers, page);
+		CompoundParser::parse(headers, page);
 		return;
 	}
 
-	std::vector<LinkInfo> linksInfo = GumboParsingHelpers::parsePageUrlList(output->root, true);
+	std::vector<LinkInfo> linksInfo = m_htmlParser->pageUrlList(true);
 
 	DEBUG_ASSERT(page->baseUrl.isValid());
 
@@ -56,7 +57,7 @@ void HtmlResourcesParser::parse(GumboOutput* output, const ResponseHeaders& head
 		}
 	}
 
-	CompoundParser::parse(output, headers, page);
+	CompoundParser::parse(headers, page);
 }
 
 }

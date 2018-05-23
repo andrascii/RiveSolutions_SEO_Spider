@@ -5,10 +5,17 @@
 namespace CrawlerEngine
 {
 
+class IHtmlParser;
+
 class WordCountParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& pageRaw) noexcept override;
+	WordCountParser(IHtmlParser* htmlParser);
+
+	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& pageRaw) noexcept override;
+
+private:
+	IHtmlParser* m_htmlParser;
 };
 
 }

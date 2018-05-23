@@ -3,11 +3,11 @@
 namespace CrawlerEngine
 {
 
-void CompoundParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
+void CompoundParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	for (const std::shared_ptr<IPageParser>& parser : m_parsers)
 	{
-		parser->parse(output, headers, page);
+		parser->parse(headers, page);
 	}
 }
 

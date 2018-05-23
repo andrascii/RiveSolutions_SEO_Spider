@@ -5,7 +5,7 @@ namespace CrawlerEngine
 
 class IHtmlNode;
 
-using HtmlNodeSharedPtr = std::shared_ptr<IHtmlNode>;
+using IHtmlNodeSharedPtr = std::shared_ptr<IHtmlNode>;
 
 class IHtmlNode
 {
@@ -189,8 +189,14 @@ public:
 
 	virtual operator bool() const = 0;
 
-	virtual HtmlNodeSharedPtr findSubNode(TagId tagId, unsigned startIndexWhithinParent = 0) const = 0;
-	virtual std::vector<HtmlNodeSharedPtr> subNodes(TagId tagId) const = 0;
+	virtual IHtmlNodeSharedPtr firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent = 0) const = 0;
+	virtual std::vector<IHtmlNodeSharedPtr> matchSubNodes(TagId tagId) const = 0;
+	virtual std::vector<IHtmlNodeSharedPtr> matchSubNodesInDepth(TagId tagId) const = 0;
+	virtual std::vector<IHtmlNodeSharedPtr> matchSubNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const = 0;
+	virtual std::vector<IHtmlNodeSharedPtr> children() const = 0;
+	virtual QByteArray cutSubNodesAndGetPlainText() const = 0;
+	virtual IHtmlNodeSharedPtr findChildNodeWithAttributesValues(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const = 0;
+	virtual IHtmlNodeSharedPtr findChildNodeWithAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const = 0;
 };
 
 }

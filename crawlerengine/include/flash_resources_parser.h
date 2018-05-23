@@ -5,16 +5,22 @@
 namespace CrawlerEngine
 {
 
+class IHtmlParser;
+
 class FlashResourcesParser : public CompoundParser
 {
 public:
-	FlashResourcesParser();
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
+	FlashResourcesParser(IHtmlParser* htmlParser);
+	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& page) override;
 
 private:
-	void parseFlashResourcesV1(GumboOutput* output, ParsedPagePtr& page) noexcept;
-	void parseFlashResourcesV2(GumboOutput* output, ParsedPagePtr& page) noexcept;
-	void parseFlashResourcesV3(GumboOutput* output, ParsedPagePtr& page) noexcept;
+	void parseFlashResourcesV1(ParsedPagePtr& page) noexcept;
+	void parseFlashResourcesV2(ParsedPagePtr& page) noexcept;
+	void parseFlashResourcesV3(ParsedPagePtr& page) noexcept;
+
+private:
+	IHtmlParser* m_htmlParser;
+	QRegularExpression m_regExp;
 };
 
 }

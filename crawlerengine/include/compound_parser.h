@@ -8,7 +8,7 @@ namespace CrawlerEngine
 class CompoundParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
+	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& page) override;
 	void addParser(std::shared_ptr<IPageParser> parser);
 	void clear();
 
