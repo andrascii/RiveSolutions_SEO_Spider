@@ -80,7 +80,7 @@ void ImagesResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr&
 			return true;
 		}
 
-		return imgTag->hasAttribute("src");
+		return !imgTag->hasAttribute("src");
 	};
 
 	imgTags.erase(std::remove_if(imgTags.begin(), imgTags.end(), isBadImgTag), imgTags.end());

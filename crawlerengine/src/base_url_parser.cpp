@@ -30,7 +30,15 @@ void BaseUrlParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 // 		return url;
 // 	};
 
-	IHtmlNodeSharedPtr baseTagNode = m_htmlParser->firstMatchNode(IHtmlNode::TagIdBase);
+	IHtmlNodeSharedPtr headTagNode = m_htmlParser->firstMatchNode(IHtmlNode::TagIdHead);
+
+	if (!headTagNode)
+	{
+		page->baseUrl = page->url;
+		return;
+	}
+
+	IHtmlNodeSharedPtr baseTagNode = headTagNode->firstMatchSubNode(IHtmlNode::TagIdBase);
 
 	if (baseTagNode && baseTagNode->hasAttribute("href"))
 	{

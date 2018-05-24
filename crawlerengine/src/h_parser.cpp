@@ -54,7 +54,7 @@ void HParser::parseH1(ParsedPagePtr& parsedPage) noexcept
 // 		parsedPage->hasSeveralH1Tags = true;
 // 	}
 
-	std::vector<IHtmlNodeSharedPtr> h1Tags = m_htmlParser->matchNodes(IHtmlNode::TagIdH1);
+	std::vector<IHtmlNodeSharedPtr> h1Tags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdH1);
 
 	std::vector<QByteArray> h1TagsValues;
 	h1TagsValues.reserve(h1Tags.size());
@@ -120,7 +120,7 @@ void HParser::parseH2(ParsedPagePtr& parsedPage) noexcept
 
 	//////////////////////////////////////////////////////////////////////////
 
-	std::vector<IHtmlNodeSharedPtr> h2Tags = m_htmlParser->matchNodes(IHtmlNode::TagIdH2);
+	std::vector<IHtmlNodeSharedPtr> h2Tags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdH2);
 
 	std::vector<QByteArray> h2TagsValues;
 	h2TagsValues.reserve(h2Tags.size());

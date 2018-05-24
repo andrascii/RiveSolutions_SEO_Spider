@@ -219,7 +219,7 @@ QString GumboHtmlNode::attribute(const QByteArray& attributeName) const
 
 	const GumboAttribute* attr = gumbo_get_attribute(&m_node->v.element.attributes, attributeName.data());
 
-	return QString(attr->value);
+	return attr ? QString(attr->value) : QString();
 }
 
 bool GumboHtmlNode::hasAttribute(const QByteArray& attributeName) const
@@ -243,7 +243,6 @@ IHtmlNodeSharedPtr GumboHtmlNode::firstMatchSubNode(TagId tagId, unsigned startI
 	DEBUG_ASSERT(m_node->type == GUMBO_NODE_ELEMENT || m_node->type == GUMBO_NODE_DOCUMENT);
 
 	const GumboVector* children = &m_node->v.element.children;
-	GumboNode* searchingNode = nullptr;
 
 	DEBUG_ASSERT(startIndexWhithinParent <= children->length);
 
@@ -253,12 +252,11 @@ IHtmlNodeSharedPtr GumboHtmlNode::firstMatchSubNode(TagId tagId, unsigned startI
 
 		if (child->type == GUMBO_NODE_ELEMENT && s_tagIdMapping[child->v.element.tag] == tagId)
 		{
-			searchingNode = child;
-			break;
+			return std::make_shared<GumboHtmlNode>(child);
 		}
 	}
 
-	return std::make_shared<GumboHtmlNode>(searchingNode);
+	return IHtmlNodeSharedPtr(nullptr);
 }
 
 std::vector<IHtmlNodeSharedPtr> GumboHtmlNode::matchSubNodes(TagId tagId) const
@@ -414,7 +412,7 @@ IHtmlNodeSharedPtr GumboHtmlNode::findChildNodeWithAttributesValues(TagId tagId,
 		}
 	}
 
-	return std::make_shared<GumboHtmlNode>(nullptr);
+	return IHtmlNodeSharedPtr(nullptr);
 }
 
 }

@@ -173,7 +173,8 @@ public:
 		NodeTypeCData,
 		NodeTypeComment,
 		NodeTypeWhiteSpace,
-		NodeTypeTemplate
+		NodeTypeTemplate,
+		NodeTypeInvalid
 	};
 
 	virtual ~IHtmlNode() = default;

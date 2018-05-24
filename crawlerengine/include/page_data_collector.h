@@ -31,8 +31,8 @@ private:
 	std::shared_ptr<IPageParser> createParser(ParserType parserType) const;
 
 private:
-	std::shared_ptr<IHtmlParser> m_htmlParser;
 	CompoundParser m_parser;
+	std::shared_ptr<IHtmlParser> m_htmlParser;
 	CrawlerOptionsData m_crawlerOptionsData;
 };
 
