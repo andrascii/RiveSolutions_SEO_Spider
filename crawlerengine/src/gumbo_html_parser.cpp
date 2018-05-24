@@ -73,7 +73,7 @@ GumboHtmlParser::~GumboHtmlParser()
 	gumbo_destroy_output(m_gumboOptions, m_gumboOutput);
 }
 
-void GumboHtmlParser::parseHtmlPage(const QByteArray& htmlPage)
+void GumboHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers)
 {
 	if (m_gumboOutput)
 	{
@@ -82,6 +82,14 @@ void GumboHtmlParser::parseHtmlPage(const QByteArray& htmlPage)
 
 	m_gumboOutput = gumbo_parse_with_options(&kGumboDefaultOptions, htmlPage.data(), htmlPage.size());
 	m_htmlPage = htmlPage;
+	m_rootNode = GumboHtmlNode(m_gumboOutput->root);
+
+	// we need double parsing because we need firstly decode html page
+	// this need in order to we'll be able to extract right data
+	m_htmlPage = decodeHtmlPage(headers);
+
+	gumbo_destroy_output(m_gumboOptions, m_gumboOutput);
+	m_gumboOutput = gumbo_parse_with_options(&kGumboDefaultOptions, m_htmlPage.data(), m_htmlPage.size());
 	m_rootNode = GumboHtmlNode(m_gumboOutput->root);
 }
 
@@ -116,10 +124,8 @@ QByteArray GumboHtmlParser::identifyHtmlPageContentType() const
 	return QByteArray();
 }
 
-QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
+QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers)
 {
-	QByteArray decodedHtmlPage = m_htmlPage;
-
 	const QByteArray contentType = identifyHtmlPageContentType();
 	const QByteArray charsetFromHtmlPage = contentType.right(contentType.size() - contentType.lastIndexOf("=") - 1);
 	const std::vector<QString> contentTypeValues = headers.valueOf("content-type");
@@ -136,9 +142,9 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
 				continue;
 			}
 
-			decodedHtmlPage = codecForCharset->toUnicode(decodedHtmlPage).toStdString().data();
+			m_htmlPage = codecForCharset->toUnicode(m_htmlPage).toStdString().data();
 
-			return decodedHtmlPage;
+			return m_htmlPage;
 		}
 	}
 
@@ -148,7 +154,7 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
 
 		if (codecForCharset)
 		{
-			decodedHtmlPage = codecForCharset->toUnicode(decodedHtmlPage.data()).toStdString().data();
+			m_htmlPage = codecForCharset->toUnicode(m_htmlPage.data()).toStdString().data();
 		}
 		else
 		{
@@ -159,11 +165,11 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
 	}
 	else
 	{
-		QTextCodec* codecForHtml = QTextCodec::codecForHtml(decodedHtmlPage);
+		QTextCodec* codecForHtml = QTextCodec::codecForHtml(m_htmlPage);
 
 		if (codecForHtml)
 		{
-			decodedHtmlPage = codecForHtml->toUnicode(decodedHtmlPage).toStdString().data();
+			m_htmlPage = codecForHtml->toUnicode(m_htmlPage).toStdString().data();
 		}
 		else
 		{
@@ -171,7 +177,7 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
 		}
 	}
 
-	return decodedHtmlPage;
+	return m_htmlPage;
 }
 
 std::vector<LinkInfo> GumboHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
@@ -300,6 +306,11 @@ IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagI
 IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
 {
 	return m_rootNode.findChildNodeWithAttributesValues(tagId, expectedAttributes);
+}
+
+QByteArray GumboHtmlParser::htmlPageContent() const
+{
+	return m_htmlPage;
 }
 
 }

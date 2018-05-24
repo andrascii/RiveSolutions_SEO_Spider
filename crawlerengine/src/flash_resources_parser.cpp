@@ -40,44 +40,6 @@ void FlashResourcesParser::parseFlashResourcesV1(ParsedPagePtr& page) noexcept
 	//<embed type="application/x-shockwave-flash" src="myContent.swf" width="300" height="120" pluginspage="http://www.adobe.com/go/getflashplayer" / >
 	//<noembed>Alternative content</noembed>
 
-// 	auto predicate = [](const GumboNode* node)
-// 	{
-// 		return node &&
-// 			node->type == GUMBO_NODE_ELEMENT &&
-// 			node->v.element.tag == GUMBO_TAG_EMBED &&
-// 			gumbo_get_attribute(&node->v.element.attributes, "src") &&
-// 			GumboParsingHelpers::checkAttribute(node, "type", "application/x-shockwave-flash");
-// 	};
-// 
-// 	auto resultGetter = [](const GumboNode* node)
-// 	{
-// 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
-// 		return Url(src->value);
-// 	};
-// 
-// 	DEBUG_ASSERT(page->baseUrl.isValid());
-// 
-// 	const std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-// 	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, urls);
-// 
-// 	for (const Url& url : resolvedUrls)
-// 	{
-// 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
-// 
-// 		const ResourceOnPage flashResource
-// 		{
-// 			ResourceType::ResourceFlash,
-// 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource},
-// 		};
-// 
-// 		if (page->allResourcesOnPage.find(flashResource) == page->allResourcesOnPage.end())
-// 		{
-// 			page->allResourcesOnPage.insert(std::move(flashResource));
-// 		}
-// 	}
-
-	//////////////////////////////////////////////////////////////////////////
-
 	DEBUG_ASSERT(page->baseUrl.isValid());
 
 	std::vector<IHtmlNodeSharedPtr> embedTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdEmbed);
@@ -129,44 +91,6 @@ void FlashResourcesParser::parseFlashResourcesV2(ParsedPagePtr& page) noexcept
 	// 	<object type="application/x-shockwave-flash" data="myContent.swf" width="300" height="120">
 	// 	<p>Alternative content</p>
 	// 	</object>
-
-// 	auto predicate = [](const GumboNode* node)
-// 	{
-// 		return node &&
-// 			node->type == GUMBO_NODE_ELEMENT &&
-// 			node->v.element.tag == GUMBO_TAG_OBJECT &&
-// 			gumbo_get_attribute(&node->v.element.attributes, "data") &&
-// 			GumboParsingHelpers::checkAttribute(node, "type", "application/x-shockwave-flash");
-// 	};
-// 
-// 	auto resultGetter = [](const GumboNode* node)
-// 	{
-// 		GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "data");
-// 		return Url(src->value);
-// 	};
-// 
-// 	DEBUG_ASSERT(page->baseUrl.isValid());
-// 
-// 	const std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-// 	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, urls);
-// 
-// 	for (const Url& url : resolvedUrls)
-// 	{
-// 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
-// 
-// 		const ResourceOnPage flashResource
-// 		{
-// 			ResourceType::ResourceFlash,
-// 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
-// 		};
-// 
-// 		if (page->allResourcesOnPage.find(flashResource) == page->allResourcesOnPage.end())
-// 		{
-// 			page->allResourcesOnPage.insert(std::move(flashResource));
-// 		}
-// 	}
-
-	//////////////////////////////////////////////////////////////////////////
 
 	DEBUG_ASSERT(page->baseUrl.isValid());
 
@@ -220,57 +144,6 @@ void FlashResourcesParser::parseFlashResourcesV3(ParsedPagePtr& page) noexcept
 	// 	<param name="movie" value="myContent.swf" />
 	// 	<p>Alternative content</p>
 	// 	</object>
-
-// 	auto predicate = [](const GumboNode* node)
-// 	{
-// 		const bool paramTagContainsMovieOrSrcAttribute =
-// 			GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", "")) ||
-// 			GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", ""));
-// 
-// 		return node &&
-// 			node->type == GUMBO_NODE_ELEMENT &&
-// 			node->v.element.tag == GUMBO_TAG_OBJECT &&
-// 			GumboParsingHelpers::checkAttribute(node, "classid", "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000") &&
-// 			paramTagContainsMovieOrSrcAttribute;
-// 	};
-// 
-// 	auto resultGetter = [](const GumboNode* node)
-// 	{
-// 		const GumboNode* childNode = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("movie", ""));
-// 		if (childNode)
-// 		{
-// 			GumboAttribute* movie = gumbo_get_attribute(&childNode->v.element.attributes, "movie");
-// 			return Url(movie->value);
-// 		}
-// 
-// 		childNode = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_PARAM, std::make_pair("src", ""));
-// 
-// 		GumboAttribute* src = gumbo_get_attribute(&childNode->v.element.attributes, "src");
-// 		return Url(src->value);
-// 	};
-// 
-// 	DEBUG_ASSERT(page->baseUrl.isValid());
-// 
-// 	const std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-// 	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, urls);
-// 
-// 	for (const Url& url : resolvedUrls)
-// 	{
-// 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
-// 
-// 		const ResourceOnPage flashResource
-// 		{
-// 			ResourceType::ResourceFlash,
-// 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
-// 		};
-// 
-// 		if (page->allResourcesOnPage.find(flashResource) == page->allResourcesOnPage.end())
-// 		{
-// 			page->allResourcesOnPage.insert(std::move(flashResource));
-// 		}
-// 	}
-
-	//////////////////////////////////////////////////////////////////////////
 
 	DEBUG_ASSERT(page->baseUrl.isValid());
 

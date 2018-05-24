@@ -32,8 +32,6 @@ void PageDataCollector::setOptions(const CrawlerOptionsData& crawlerOptionsData)
 
 std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const DownloadResponse& response)
 {
-	m_htmlParser->parseHtmlPage(response.hopsChain.back().body());
-
 	std::vector<ParsedPagePtr> pages(response.hopsChain.length());
 	std::generate(pages.begin(), pages.end(), [] { return std::make_shared<ParsedPage>(); });
 
@@ -44,16 +42,13 @@ std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const 
 
 	const auto collectEachPageData = [&](const Hop& hop, ParsedPagePtr& page)
 	{
-		QByteArray decodedHtmlPage;
+		m_htmlParser->parseHtmlPage(hop.body(), hop.responseHeaders());
 
 		if (page->resourceType == ResourceType::ResourceHtml)
 		{
-			decodedHtmlPage = m_htmlParser->decodeHtmlPage(hop.responseHeaders());
-
 		#ifdef QT_DEBUG
-			page->rawResponse = qCompress(decodedHtmlPage, 9);
+			page->rawResponse = qCompress(m_htmlParser->htmlPageContent(), 9);
 		#endif
-
 		}
 		else if (page->resourceType == ResourceType::ResourceImage)
 		{

@@ -20,49 +20,6 @@ void VideoResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& 
 		return;
 	}
 
-// 	auto predicate = [](const GumboNode* node)
-// 	{
-// 		return node &&
-// 			node->type == GUMBO_NODE_ELEMENT &&
-// 			node->v.element.tag == GUMBO_TAG_VIDEO &&
-// 			(!!GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", "")) ||
-// 				gumbo_get_attribute(&node->v.element.attributes, "src"));
-// 	};
-// 
-// 	auto resultGetter = [](const GumboNode* node)
-// 	{
-// 		const GumboNode* child = GumboParsingHelpers::findChildNode(node, GUMBO_TAG_SOURCE, std::make_pair("src", ""));
-// 
-// 		GumboAttribute* src = child != nullptr ?
-// 			gumbo_get_attribute(&child->v.element.attributes, "src") :
-// 			gumbo_get_attribute(&node->v.element.attributes, "src");
-// 		
-// 		return Url(src->value);
-// 	};
-// 
-// 	std::vector<Url> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-// 	std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, urls);
-// 
-// 	for (const Url& url : resolvedUrls)
-// 	{
-// 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
-// 
-// 		const ResourceOnPage videoResource
-// 		{
-// 			ResourceType::ResourceVideo,
-// 			LinkInfo{ url, LinkParameter::DofollowParameter, QString(), dataResource }
-// 		};
-// 
-// 		if (page->allResourcesOnPage.find(videoResource) == page->allResourcesOnPage.end())
-// 		{
-// 			page->allResourcesOnPage.insert(std::move(videoResource));
-// 		}
-// 	}
-// 
-// 	CompoundParser::parse(output, headers, page);
-
-	//////////////////////////////////////////////////////////////////////////
-
 	std::vector<IHtmlNodeSharedPtr> videoTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdVideo);
 
 	std::vector<Url> videoResourceUrls;
