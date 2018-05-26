@@ -6,6 +6,7 @@ set(CrawlerEngineHeadersDir include)
 
 # deps headers
 set(GumboLibHeadersDir ../gumbo)
+set(MyHtmlLibHeadersDir ../myhtml/include)
 set(CommonLibHeadersDir ../common/include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(VMProtectSdkDir ../deps/vmprotect/include)
@@ -65,6 +66,7 @@ endif()
 include_directories(
 	${CrawlerEngineHeadersDir}
 	${GumboLibHeadersDir}
+	${MyHtmlLibHeadersDir}
 	${CommonLibHeadersDir}
 	${VMProtectSdkDir}
 	${SeoSpiderServiceApiHeadersDir}
@@ -81,6 +83,7 @@ target_link_libraries(
 	${GumboLibName}
 	${CommonLibName}
 	${OSSpecificDeps}
+	"${MyHtmlLibName}_static" # change this solution to that which is more reliable
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}

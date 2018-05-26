@@ -7,6 +7,7 @@
 #include "data_resources_parser.h"
 #include "ihtml_parser.h"
 #include "frames_detector_parser.h"
+#include "myhtml_parser.h"
 
 namespace CrawlerEngine
 {
@@ -14,6 +15,8 @@ namespace CrawlerEngine
 HtmlResourcesParser::HtmlResourcesParser(IHtmlParser* htmlParser)
 	: m_htmlParser(htmlParser)
 {
+	m_htmlParserTest = new MyHtmlParser;
+
 	addParser(std::make_shared<MetaParser>(m_htmlParser));
 	addParser(std::make_shared<FramesDetectorParser>(m_htmlParser));
 	addParser(std::make_shared<TitleParser>(m_htmlParser));

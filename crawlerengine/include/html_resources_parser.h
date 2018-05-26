@@ -16,6 +16,7 @@ public:
 
 private:
 	IHtmlParser* m_htmlParser;
+	IHtmlParser* m_htmlParserTest;
 };
 
 }
