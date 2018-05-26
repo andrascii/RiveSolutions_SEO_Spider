@@ -117,7 +117,7 @@ std::vector<LinkInfo> MyHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
 			}
 		}
 
-		const QString altOrTitle(myhtml_node_text(collection->list[i], nullptr));
+		const QString altOrTitle(MyHtmlNode(collection->list[i]).text());
 		const bool dataResource = hrefAttributeValue.startsWith("data:");
 		result.push_back(LinkInfo{ url, linkParam, altOrTitle, dataResource, ResourceSource::SourceTagA });
 	}
@@ -214,7 +214,7 @@ LinkInfo MyHtmlParser::getLinkRelUrl(const char* relValue, ResourceSource source
 		const QString hrefAttributeValue = QString(myhtml_attribute_value(hrefAttribute, nullptr)).trimmed().remove(m_regExp);
 		const Url url = hrefAttributeValue;
 
-		const QString altOrTitle(myhtml_node_text(collection->list[i], nullptr));
+		const QString altOrTitle(MyHtmlNode(collection->list[i]).text());
 		const bool dataResource = hrefAttributeValue.startsWith("data:");
 		
 		return LinkInfo{ url, LinkParameter::DofollowParameter, altOrTitle, dataResource, source };
