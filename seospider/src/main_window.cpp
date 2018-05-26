@@ -35,6 +35,10 @@
 #include "license_service.h"
 #include "common_constants.h"
 #include "feedback_dialog.h"
+#include "update_checker.h"
+#include "update_loader_dialog.h"
+#include "cursor_factory.h"
+#include "shaded_overlay.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -53,7 +57,11 @@ MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
 	, m_initialized(false)
 	, m_systemTrayIcon(new QSystemTrayIcon(theApp->softwareBrandingOptions()->applicationIcon(), this))
+	, m_updateChecker(new UpdateChecker(this))
+	, m_shadedOverlay(new ShadedOverlay(this))
 {
+	qRegisterMetaType<Version>("Version");
+
 	setWindowTitle(
 		theApp->softwareBrandingOptions()->organizationName() + QStringLiteral(" ") +
 		theApp->softwareBrandingOptions()->productName()
@@ -62,6 +70,8 @@ MainWindow::MainWindow(QWidget* parent)
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
 	VERIFY(connect(systemTrayIcon(), &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated));
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
+	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateIsNotExists()), SLOT(onAboutUpdateIsNotExists())));
 }
 
 void MainWindow::showSitemapCreatorDialog()
@@ -100,9 +110,9 @@ void MainWindow::openFile()
 {
 	if (theApp->crawler()->hasSession())
 	{
-		showMessageBoxDialog("Open file error", "Unable to open the project file until the existing one is closed!\n"
-			"So first you need to press Ctrl+W and then open file.",
-			MessageBoxDialog::WarningIcon,
+		showMessageBoxDialog(tr("Open file error"),
+			tr("Unable to open the project file until the existing one is closed! "
+			"So first you need to press Ctrl+W and then open file."),
 			QDialogButtonBox::Ok
 		);
 
@@ -124,9 +134,9 @@ void MainWindow::openFile(const QString& filePath)
 {
 	if (theApp->crawler()->hasSession())
 	{
-		showMessageBoxDialog("Open file error", "Unable to open the project file until the existing one is closed!\n"
-			"So first you need to press Ctrl+W and then open file.",
-			MessageBoxDialog::WarningIcon,
+		showMessageBoxDialog(tr("Open file error"),
+			tr("Unable to open the project file until the existing one is closed! "
+			"So first you need to press Ctrl+W and then open file."),
 			QDialogButtonBox::Ok
 		);
 
@@ -150,7 +160,7 @@ void MainWindow::closeFile()
 		theApp->mainWindow()->showMessageBoxDialog(
 			tr("Warning"),
 			tr("Cannot close file while crawler is working."),
-			MessageBoxDialog::WarningIcon
+			QDialogButtonBox::Ok
 		);
 
 		return;
@@ -161,7 +171,7 @@ void MainWindow::closeFile()
 		int answer = theApp->mainWindow()->showMessageBoxDialog(
 			tr("Warning"), 
 			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?"),
-			MessageBoxDialog::WarningIcon
+			QDialogButtonBox::Yes | QDialogButtonBox::No
 		);
 
 		if (answer == QDialog::Rejected)
@@ -258,21 +268,28 @@ void MainWindow::onCrawlingFinished() const
 		showMessageBoxDialog(
 			tr("Trial license"),
 			tr("This option is not available in the trial version."),
-			MessageBoxDialog::InformationIcon,
 			QDialogButtonBox::Ok
 		);
 	}
 }
 
+void MainWindow::showShadedOverlay()
+{
+	m_shadedOverlay->setVisible(true);
+}
+
+void MainWindow::hideShadedOverlay()
+{
+	m_shadedOverlay->setVisible(false);
+}
+
 int MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
-	MessageBoxDialog::Icon icon,
 	QDialogButtonBox::StandardButtons buttons) const
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
-	messageBoxDialog->setIcon(icon);
 	messageBoxDialog->setStandardButtons(buttons);
 	messageBoxDialog->exec();
 
@@ -288,12 +305,16 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 {
 	QMainWindow::resizeEvent(event);
 
+	m_shadedOverlay->resize(size());
+
 	emit resized();
 }
 
 void MainWindow::moveEvent(QMoveEvent* event)
 {
 	QMainWindow::moveEvent(event);
+
+	m_shadedOverlay->move(mapToGlobal(rect().topLeft()));
 
 	emit moved();
 }
@@ -315,8 +336,8 @@ void MainWindow::changeEvent(QEvent* event)
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-	const QString warningMessage("Crawler is working. Do you want to close application anyway?");
-	const QString descriptionMessage("If no then it will be collapsed to the system tray.");
+	const QString warningMessage(tr("Crawler is working. Do you want to close application anyway?"));
+	const QString descriptionMessage(tr("If no then it will be collapsed to the system tray."));
 
 	if (theApp->crawler()->state() == Crawler::StateWorking)
 	{
@@ -326,16 +347,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 		if (states.testFlag(Qt::WindowMinimized))
 		{
-			answer = showMessageBoxDialog("Closing application",
+			answer = showMessageBoxDialog(tr("Closing application"),
 				warningMessage,
-				MessageBoxDialog::WarningIcon,
 				QDialogButtonBox::Yes | QDialogButtonBox::No);
 		}
 		else
 		{
-			answer = showMessageBoxDialog("Closing application",
-				warningMessage % "\n" % descriptionMessage,
-				MessageBoxDialog::WarningIcon,
+			answer = showMessageBoxDialog(tr("Closing application"),
+				warningMessage % descriptionMessage,
 				QDialogButtonBox::Yes | QDialogButtonBox::No);
 		}
 		
@@ -381,6 +400,8 @@ void MainWindow::init()
 
 	initSystemTrayIconMenu();
 	systemTrayIcon()->show();
+
+	m_updateChecker->check();
 
 	m_initialized = true;
 }
@@ -480,6 +501,9 @@ void MainWindow::createActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_registerProductAction), &QAction::triggered,
 		this, [this] { showRegisterProductDialog(); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_checkForUpdatesAction), &QAction::triggered,
+		this, [this] { m_updateChecker->check(); }));
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -611,8 +635,10 @@ QString MainWindow::getSaveFilePath() const
 {
 	if (theApp->crawler()->state() == Crawler::StateWorking)
 	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot save the document while crawler is working!"),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
+			tr("Cannot save the document while crawler is working!"),
+			QDialogButtonBox::Ok
+		);
 
 		return QString();
 	}
@@ -621,12 +647,18 @@ QString MainWindow::getSaveFilePath() const
 	{
 		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
 			tr("Crawler does not contain any data."),
-			MessageBoxDialog::InformationIcon, QDialogButtonBox::Ok);
+			QDialogButtonBox::Ok
+		);
 
 		return QString();
 	}
 
-	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow(), tr("Save File"), qApp->applicationDirPath() + "/" + theApp->crawler()->currentCrawledUrl(), QString("*" + c_projectFileExtension));
+	const QString path = QFileDialog::getSaveFileName(
+		theApp->mainWindow(), 
+		tr("Save File"), 
+		qApp->applicationDirPath() + "/" + theApp->crawler()->currentCrawledUrl(), 
+		QString("*" + c_projectFileExtension)
+	);
 
 	return path;
 }
@@ -704,6 +736,33 @@ void MainWindow::showFeedbackDialog()
 {
 	FeedbackDialog* feddbackDialog = new FeedbackDialog(this);
 	feddbackDialog->exec();
+}
+
+void MainWindow::onAboutUpdateExists()
+{
+	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(this);
+	updatesLoaderDialog->show();
+}
+
+void MainWindow::onAboutUpdateIsNotExists()
+{
+	static bool firstCall = true;
+
+	if (firstCall)
+	{
+		firstCall = false;
+		return;
+	}
+
+	ASSERT(ServiceLocator::instance()->isRegistered<INotificationService>());
+	INotificationService* notificationService = ServiceLocator::instance()->service<INotificationService>();
+
+	const SoftwareBranding* branding = theApp->softwareBrandingOptions();
+
+	notificationService->info(
+		tr("Information about updates"), 
+		tr("You have installed the latest version of the ") % branding->productName()
+	);
 }
 
 ContentFrame* MainWindow::contentFrame() const noexcept

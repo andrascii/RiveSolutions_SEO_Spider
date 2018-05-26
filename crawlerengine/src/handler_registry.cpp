@@ -55,6 +55,7 @@ void HandlerRegistry::unregisterAll()
 	std::lock_guard locker(m_mutex);
 
 	m_handlers.clear();
+	m_subscriptions.clear();
 }
 
 QObject* HandlerRegistry::handlerForRequest(const IRequest& request)

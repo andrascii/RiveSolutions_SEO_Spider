@@ -23,7 +23,6 @@ class SummaryDataAccessorFactory;
 class HeaderControlsContainer;
 class InternetConnectionNotificationManager;
 class CommandLineHandler;
-class IUpdateChecker;
 class ICrawlerOptions;
 
 class Application : public QApplication, public ISettingsAccessor
@@ -66,14 +65,12 @@ private slots:
 	void stopCrawler();
 	void clearCrawledData();
 	void showMainWindow();
-
 	void onAboutCrawlerOptionsChanged();
-	void onAboutUpdateExists();
 	void onAboutUseCustomUserAgentChanged();
+	void closeWaitOperationFrame();
 
 private:
 	void initialize();
-	void startInstaller(const QString& filepath);
 	void attachPreferencesToCrawlerOptions();
 	void openFileThroughCmd(const QString& path);
 
@@ -94,8 +91,6 @@ private:
 
 	InternetConnectionNotificationManager* m_internetNotificationManager;
 	std::unique_ptr<HeaderControlsContainer> m_headerControlsContainer;
-
-	IUpdateChecker* m_updateChecker;
 };
 
 }

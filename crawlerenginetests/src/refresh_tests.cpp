@@ -274,5 +274,51 @@ TEST(RefreshTests, RefreshNotChangedPage)
 	env.exec();
 }
 
+TEST(RefreshTests, RefreshNofollowLinkTest)
+{
+	// Refreshing blocked by rel="nofollow" link which is not changed.
+	// And also crawler will not loading nofollow links because of crawler options.
+	// As a result, after refreshing the filter which stores blocked by rel="nofollow" links
+	// must be the same as before refreshing
+
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://refresh5.com/index.html") }));
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+		cl->checkSequencedDataCollectionConsistency();
+
+		const std::vector<const ParsedPage*> blockedByNofollowAttrLinks = 
+			cl->storageItems(StorageType::NofollowLinksStorageType);
+
+		EXPECT_EQ(1, blockedByNofollowAttrLinks.size());
+
+		const Url refreshUrl("http://refresh5.com/refresh_page.html");
+
+		const auto refreshPageIterator = std::find_if(blockedByNofollowAttrLinks.begin(), blockedByNofollowAttrLinks.end(),
+			[&refreshUrl](const ParsedPage* page) { return page->url.canonizedUrlStr() == refreshUrl.canonizedUrlStr(); });
+
+		ASSERT(refreshPageIterator != blockedByNofollowAttrLinks.end());
+
+		const int refreshPageIndex = std::distance(blockedByNofollowAttrLinks.begin(), refreshPageIterator);
+
+		cl->refreshPage(StorageType::NofollowLinksStorageType, refreshPageIndex);
+
+		cl->waitForRefreshPageDone(10);
+
+		//
+		// This delay is not reliable solution for waiting 
+		// until results is not received by sequenced data collection
+		//
+		std::this_thread::sleep_for(std::chrono::seconds(3));
+
+		EXPECT_EQ(1, cl->storageItems(StorageType::NofollowLinksStorageType).size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 
 }

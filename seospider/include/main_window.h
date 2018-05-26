@@ -9,6 +9,8 @@ namespace SeoSpider
 {
 
 class ContentFrame;
+class IUpdateChecker;
+class ShadedOverlay;
 
 class MainWindow : public QMainWindow
 {
@@ -39,10 +41,11 @@ public slots:
 	void onChangeGroupingAuditInfo(QAction* action);
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 	void onCrawlingFinished() const;
+	void showShadedOverlay();
+	void hideShadedOverlay();
 
 	int showMessageBoxDialog(const QString& title, 
-		const QString& message, 
-		MessageBoxDialog::Icon icon, 
+		const QString& message,
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel) const;
 
 	void showContentFramePage(PageFactory::Page page);
@@ -70,6 +73,8 @@ private slots:
 	void onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
 	void showRegisterProductDialog();
 	void showFeedbackDialog();
+	void onAboutUpdateExists();
+	void onAboutUpdateIsNotExists();
 
 private:
 	bool m_initialized;
@@ -77,6 +82,9 @@ private:
 	CrawlerEngine::RequesterWrapper m_requester;
 	ContentFrame* m_contentFrame;
 	QSystemTrayIcon* m_systemTrayIcon;
+
+	IUpdateChecker* m_updateChecker;
+	ShadedOverlay* m_shadedOverlay;
 };
 
 }

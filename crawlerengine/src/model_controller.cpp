@@ -246,11 +246,11 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 	
 	if (workerResult.isRefreshResult())
 	{
-		ParsedPagePtr oldPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
+		const auto[oldPage, storageType] = tryGetPageFromCrawledOrPendingStorage(workerResult.incomingPage());
 
 		ASSERT(oldPage);
 
-		data()->replaceParsedPage(oldPage, workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
+		data()->replaceParsedPage(oldPage, workerResult.incomingPage(), storageType);
 	}
 	else
 	{
@@ -699,37 +699,24 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 		ParsedPagePtr resourcePage = parsedPageFromResource(resource);
 
-		ParsedPagePtr existingResource = 
-			resourcePage->url.compare(workerResult.incomingPage()->url) ? 
-			workerResult.incomingPage() :
-			data()->parsedPage(resourcePage, StorageType::CrawledUrlStorageType);
+		const bool loadedPageIsResource = resourcePage->url.compare(workerResult.incomingPage()->url);
 
-		if (!existingResource)
-		{
-			existingResource = data()->parsedPage(resourcePage, StorageType::PendingResourcesStorageType);
-		}
+		ParsedPagePtr existingResource = loadedPageIsResource ?
+			workerResult.incomingPage() : 
+			takeFromCrawledOrPendingStorage(resourcePage);
 
 		if (existingResource)
 		{
-			existingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
-				resource.link.resourceSource, resource.link.altOrTitle });
+			setLinksForResourcePageAndLoadedPage(existingResource, workerResult, resource);
 
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 			
-			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { existingResource, existingResource->url, resource.link.linkParameter,
-				resource.link.resourceSource, resource.link.altOrTitle });
-
 			addIndexingBlockingPage(existingResource, resource);
 		}
 		else
 		{
 			ParsedPagePtr pendingResource = parsedPageFromResource(resource);
-
-			pendingResource->linksToThisPage.emplace_back(ResourceLink { workerResult.incomingPage(), workerResult.incomingPage()->url, resource.link.linkParameter,
-				resource.link.resourceSource, resource.link.altOrTitle });
-			
-			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { pendingResource, pendingResource->url, resource.link.linkParameter,
-				resource.link.resourceSource, resource.link.altOrTitle });
+			setLinksForResourcePageAndLoadedPage(pendingResource, workerResult, resource);
 
 			const QSet<StorageType> blockingStorages = addIndexingBlockingPage(pendingResource, resource);
 
@@ -1214,6 +1201,55 @@ void ModelController::mergePageHelper(WorkerResult& workerResult)
 	{
 		workerResult.incomingPage() = mergePageAsBlockedForIndexing(pendingPage, workerResult.incomingPage());
 	}
+}
+
+std::pair<ParsedPagePtr, StorageType> ModelController::tryGetPageFromCrawledOrPendingStorage(const ParsedPagePtr& pointer) const
+{
+	ParsedPagePtr searchPage = data()->parsedPage(pointer, StorageType::CrawledUrlStorageType);
+
+	if (!searchPage)
+	{
+		return std::make_pair(
+			data()->parsedPage(pointer, StorageType::PendingResourcesStorageType), 
+			StorageType::PendingResourcesStorageType
+		);
+	}
+
+	return std::make_pair(searchPage, StorageType::CrawledUrlStorageType);
+}
+
+ParsedPagePtr ModelController::takeFromCrawledOrPendingStorage(const ParsedPagePtr& pointer) const
+{
+	const auto[searchPage, storageType] = tryGetPageFromCrawledOrPendingStorage(pointer);
+
+	Q_UNUSED(storageType);
+
+	return searchPage;
+}
+
+void ModelController::setLinksForResourcePageAndLoadedPage(ParsedPagePtr& resourcePage, WorkerResult& loadedPage, const ResourceOnPage& resource) const
+{
+	resourcePage->linksToThisPage.emplace_back(
+		ResourceLink
+		{ 
+			loadedPage.incomingPage(),
+			loadedPage.incomingPage()->url,
+			resource.link.linkParameter,
+			resource.link.resourceSource, 
+			resource.link.altOrTitle 
+		}
+	);
+
+	loadedPage.incomingPage()->linksOnThisPage.emplace_back(
+		ResourceLink
+		{ 
+			resourcePage,
+			resourcePage->url,
+			resource.link.linkParameter,
+			resource.link.resourceSource, 
+			resource.link.altOrTitle
+		}
+	);
 }
 
 }

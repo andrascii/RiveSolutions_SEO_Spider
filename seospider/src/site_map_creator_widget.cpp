@@ -106,17 +106,22 @@ void SitemapCreatorWidget::showSaveFileDialog() const
 {
 	if (theApp->crawler()->state() == Crawler::StateWorking)
 	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot create site map when crawler is working!"), 
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+		theApp->mainWindow()->showMessageBoxDialog(
+			tr("Error"),
+			tr("Cannot create site map when crawler is working!"),
+			QDialogButtonBox::Ok
+		);
 
 		return;
 	}
 
 	if (theApp->crawler()->hasNoData())
 	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("What?"), 
-			tr("Crawler does not contain any data.\nIt does not make sense to create empty site map.\nAre you agree? ;)"),
-			MessageBoxDialog::InformationIcon, QDialogButtonBox::Ok);
+		theApp->mainWindow()->showMessageBoxDialog(
+			tr("What?"),
+			tr("Crawler does not contain any data. It does not make sense to create empty site map. Are you agree? ;)"),
+			QDialogButtonBox::Ok
+		);
 
 		return;
 	}

@@ -141,6 +141,10 @@ include_directories(
 	${OPENSSL_INCLUDE_DIR}
 )
 
+if(WIN32)
+	set(OSSpecificDeps mincore.lib)
+endif()
+
 target_link_libraries(
 	${AppName}
 	${CrawlerEngineLibName}
@@ -148,6 +152,7 @@ target_link_libraries(
 	${SeoSpiderServiceApiDllName}
 	${VersionProjectName}
 	${QtXlsxWriter_LIBS}
+	${OSSpecificDeps}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}

@@ -23,8 +23,8 @@ protected:
 	virtual void showEvent(QShowEvent* event) override;
 
 private slots:
-	void onUpdateNowClicked();
-	void onUpdateLaterClicked();
+	void onDownloadNowClicked();
+	void onDownloadLaterClicked();
 
 private:
 	void closeDialog() noexcept;

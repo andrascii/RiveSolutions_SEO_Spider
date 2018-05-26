@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ui_splash_screen_widget.h"
+#include "ui_splash_screen_frame.h"
 
 namespace SeoSpider
 {
 
-class SplashScreen : public QWidget
+class SplashScreen : public QFrame
 {
 	Q_OBJECT
 
@@ -23,14 +23,12 @@ private:
 
 	static SplashScreen* instance();
 
-	using QWidget::show;
-
 	void setMessage(const QString& message) const;
 
 private:
-	static SplashScreen* s_instance;
+	static QPointer<SplashScreen> s_instance;
 
-	Ui_SplashScreenWidget* m_ui;
+	Ui_SplashScreenFrame* m_ui;
 	QPixmap m_brandingLogoImage;
 };
 

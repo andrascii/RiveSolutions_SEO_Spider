@@ -22,10 +22,9 @@
 #include "crawler_options.h"
 #include "command_line_handler.h"
 #include "command_line_keys.h"
-#include "update_checker.h"
-#include "update_loader_dialog.h"
 #include "license_service.h"
 #include "smtp_sender.h"
+#include "wait_operation_frame.h"
 
 namespace
 {
@@ -49,31 +48,21 @@ Application::Application(int& argc, char** argv)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
-	, m_headerControlsContainer(new HeaderControlsContainer())
-	, m_updateChecker(new UpdateChecker(this))
+	, m_headerControlsContainer(new HeaderControlsContainer)
 {
 	Common::SmtpSender::init();
 
-	qRegisterMetaType<Version>("Version");
-
-	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
-
+	initializeStyleSheet();
 	SplashScreen::show();
 
 	attachPreferencesToCrawlerOptions();
-
 	initialize();
-
-	initializeStyleSheet();
-
 	showMainWindow();
 
 	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
 	{
 		openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
 	}
-
-	m_updateChecker->check();
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -158,9 +147,10 @@ void Application::startCrawler()
 
 	if (!data.isValid())
 	{
-		mainWindow()->showMessageBoxDialog("Error", "Please make sure that you entered a URL.",
-			MessageBoxDialog::CriticalErrorIcon,
-			QDialogButtonBox::Ok);
+		mainWindow()->showMessageBoxDialog(tr("Error"), 
+			tr("Please make sure that you entered a URL."),
+			QDialogButtonBox::Ok
+		);
 
 		return;
 	}
@@ -170,10 +160,9 @@ void Application::startCrawler()
 	if (!preferences()->crawlOutsideOfStartFolder() && 
 		!url.path().isEmpty() && !url.path().endsWith(QChar('/')))
 	{
-		mainWindow()->showMessageBoxDialog("Invalid URL!",
-			"The option \"Crawl outside of start folder\" is disabled.\n"
-			"In this case the URL should be ended with '/'.",
-			MessageBoxDialog::CriticalErrorIcon,
+		mainWindow()->showMessageBoxDialog(tr("Invalid URL!"),
+			tr("The option \"Crawl outside of start folder\" is disabled. "
+			"In this case the URL should be ended with '/'."),
 			QDialogButtonBox::Ok);
 
 		return;
@@ -182,9 +171,8 @@ void Application::startCrawler()
 	if (!isInternetAvailable())
 	{
 		mainWindow()->showMessageBoxDialog("Internet connection problem!",
-			"It seems that you have some problems with internet connection.\n"
-			"Please, check the connection and try again.",
-			MessageBoxDialog::CriticalErrorIcon,
+			tr("It seems that you have some problems with internet connection. "
+			"Please, check the connection and try again."),
 			QDialogButtonBox::Ok);
 
 		return;
@@ -198,10 +186,14 @@ void Application::startCrawler()
 	INFOLOG << "Start crawling:" << crawler()->options()->startCrawlingPage().toDisplayString();
 
 	crawler()->startCrawling();
+
+	WaitOperationFrame::showMessage(tr("Starting crawler..."));
 }
 
 void Application::stopCrawler()
 {
+	WaitOperationFrame::showMessage(tr("Stopping crawler..."));
+
 	crawler()->stopCrawling();
 }
 
@@ -295,13 +287,6 @@ void Application::onAboutCrawlerOptionsChanged()
 	}
 }
 
-void Application::onAboutUpdateExists()
-{
-	UpdateLoaderDialog* updatesLoaderDialog = new UpdateLoaderDialog(mainWindow());
-
-	updatesLoaderDialog->show();
-}
-
 void Application::onAboutUseCustomUserAgentChanged()
 {
 	if (!preferences()->useCustomUserAgent())
@@ -317,6 +302,11 @@ void Application::onAboutUseCustomUserAgentChanged()
 	{
 		m_crawler->setUserAgent(preferences()->mobileUserAgent().toLatin1());
 	}
+}
+
+void Application::closeWaitOperationFrame()
+{
+	WaitOperationFrame::finish();
 }
 
 void Application::registerServices()
@@ -345,6 +335,11 @@ void Application::initialize()
 	registerServices();
 
 	m_crawler->initialize();
+
+	VERIFY(connect(m_crawler, &Crawler::crawlerStarted, this, &Application::closeWaitOperationFrame));
+	VERIFY(connect(m_crawler, &Crawler::crawlerStopped, this, &Application::closeWaitOperationFrame));
+	VERIFY(connect(m_crawler, &Crawler::crawlerFinished, this, &Application::closeWaitOperationFrame));
+	VERIFY(connect(m_crawler, &Crawler::refreshPageDone, this, &Application::closeWaitOperationFrame));
 
 	/// must be Qt::QueuedConnection
 	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, 
@@ -378,14 +373,6 @@ void Application::initialize()
 	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsLoaded, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
-}
-
-void Application::startInstaller(const QString& filepath)
-{
-	if (QProcess::startDetached(filepath))
-	{
-		quit();
-	}
 }
 
 void Application::attachPreferencesToCrawlerOptions()
@@ -474,7 +461,17 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, userAgentMapper));
 	VERIFY(connect(preferences(), &Preferences::useDesktopUserAgentChanged, userAgentMapper));
 
-	const auto usePauseMapper = [this](bool value)
+	const auto pauseSetFromValue = [this](int value)
+	{
+		crawler()->options()->setPauseRangeFrom(value);
+	};
+
+	const auto pauseSetToValue = [this](int value)
+	{
+		crawler()->options()->setPauseRangeTo(value);
+	};
+
+	const auto usePauseMapper = [this, pauseSetFromValue, pauseSetToValue](bool value)
 	{
 		const int fromPauseTimerValue = value ? preferences()->fromPauseTimer() : -1;
 		const int toPauseTimerValue = value ? preferences()->toPauseTimer() : -1;
@@ -482,11 +479,13 @@ void Application::attachPreferencesToCrawlerOptions()
 		DEBUGLOG << "from pause:" << fromPauseTimerValue;
 		DEBUGLOG << "to pause:" << toPauseTimerValue;
 
-		crawler()->options()->setPauseRangeFrom(fromPauseTimerValue);
-		crawler()->options()->setPauseRangeTo(toPauseTimerValue);
+		pauseSetFromValue(fromPauseTimerValue);
+		pauseSetToValue(toPauseTimerValue);
 	};
 
 	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, usePauseMapper));
+	VERIFY(connect(preferences(), &Preferences::fromPauseTimerChanged, pauseSetFromValue));
+	VERIFY(connect(preferences(), &Preferences::toPauseTimerChanged, pauseSetToValue));
 }
 
 void Application::openFileThroughCmd(const QString& path)
@@ -495,8 +494,11 @@ void Application::openFileThroughCmd(const QString& path)
 	{
 		ERRLOG << path;
 
-		mainWindow()->showMessageBoxDialog(tr("Error"), tr("Cannot open! Unknown document type."),
-			MessageBoxDialog::CriticalErrorIcon, QDialogButtonBox::Ok);
+		mainWindow()->showMessageBoxDialog(
+			tr("Error"), 
+			tr("Cannot open! Unknown document type."), 
+			QDialogButtonBox::Ok
+		);
 
 		return;
 	}

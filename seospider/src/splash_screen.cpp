@@ -7,7 +7,7 @@
 namespace SeoSpider
 {
 
-SplashScreen* SplashScreen::s_instance = nullptr;
+QPointer<SplashScreen> SplashScreen::s_instance = nullptr;
 
 SplashScreen* SplashScreen::instance()
 {
@@ -47,8 +47,8 @@ void SplashScreen::showMessage(const QString& message)
 }
 
 SplashScreen::SplashScreen()
-	: QWidget(nullptr, Qt::Dialog | Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint)
-	, m_ui(new Ui::SplashScreenWidget)
+	: QFrame(nullptr, Qt::Dialog | Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint)
+	, m_ui(new Ui::SplashScreenFrame)
 {
 	m_brandingLogoImage = theApp->softwareBrandingOptions()->brandingLogoImage();
 
@@ -75,16 +75,8 @@ SplashScreen::~SplashScreen()
 void SplashScreen::paintEvent(QPaintEvent*)
 {
 	QPainter painter(this);
-
-	//QPen pen(QColor("#D6D6D6"));
-	//pen.setWidth(Common::Helpers::pointsToPixels(2));
-	//
-	//painter.setPen(pen);
-
 	const QRect adjustedRect = rect().adjusted(0, 0, -1, -1);
-
 	painter.drawPixmap(rect(), m_brandingLogoImage);
-	//painter.drawRect(adjustedRect);
 }
 
 }

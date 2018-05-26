@@ -6,6 +6,7 @@
 #include "crawler.h"
 #include "application.h"
 #include "widget_helpers.h"
+#include "cursor_factory.h"
 
 namespace SeoSpider
 {

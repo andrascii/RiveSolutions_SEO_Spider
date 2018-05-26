@@ -3,29 +3,36 @@
 #include "application.h"
 #include "main_window.h"
 #include "widget_helpers.h"
+#include "shadow_decoration_frame.h"
+#include "cursor_factory.h"
 
 namespace SeoSpider
 {
 
-MessageBoxDialog::MessageBoxDialog()
-	: QFrame(nullptr)
+MessageBoxDialog::MessageBoxDialog(QWidget* parent)
+	: FloatingFrame(parent)
 	, m_ui(new Ui_MessageBox)
 	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
 {
-	m_ui->setupUi(this);
-
-	setWindowFlags(Qt::Dialog);
+	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+	setAttribute(Qt::WA_TranslucentBackground);
 	setWindowModality(Qt::ApplicationModal);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	Qt::WindowFlags flags = windowFlags();
-	Qt::WindowFlags helpFlag = Qt::WindowContextHelpButtonHint;
-	flags = flags & (~helpFlag);
-	setWindowFlags(flags);
+	QFrame* internalFrame = new QFrame;
+	m_ui->setupUi(internalFrame);
+
+	internalFrame->installEventFilter(this);
 
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
 	VERIFY(connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, &MessageBoxDialog::onButtonClicked));
+
+	QVBoxLayout* layout = new QVBoxLayout(this);
+	layout->addWidget(new ShadowDecorationFrame(internalFrame, this));
+
+	m_ui->buttonBox->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
+	m_ui->messageLabel->setWordWrap(true);
 }
 
 void MessageBoxDialog::setMessage(const QString& message)
@@ -36,37 +43,6 @@ void MessageBoxDialog::setMessage(const QString& message)
 
 	setMinimumSize(size());
 	setMaximumSize(size());
-}
-
-void MessageBoxDialog::setIcon(Icon icon)
-{
-	const QSize pixmapSize(Common::Helpers::pointsToPixels(20), Common::Helpers::pointsToPixels(20));
-
-	switch (icon)
-	{
-		case InformationIcon:
-		{
-			static QPixmap s_informationIcon(":/images/information-message-icon.png");
-			m_ui->imageLabel->setPixmap(s_informationIcon.scaled(pixmapSize));
-			break;
-		}
-		case WarningIcon:
-		{
-			static QPixmap s_warningIcon(":/images/warning-message-icon.png");
-			m_ui->imageLabel->setPixmap(s_warningIcon.scaled(pixmapSize));
-			break;
-		}
-		case CriticalErrorIcon:
-		{
-			static QPixmap s_criticalErrorIcon(":/images/critical-error-message-icon.png");
-			m_ui->imageLabel->setPixmap(s_criticalErrorIcon.scaled(pixmapSize));
-			break;
-		}
-		default:
-		{
-			DEBUG_ASSERT(!"Invalid icon");
-		}
-	}
 }
 
 void MessageBoxDialog::setStandardButtons(QDialogButtonBox::StandardButtons buttons)
@@ -116,6 +92,7 @@ void MessageBoxDialog::showEvent(QShowEvent* event)
 {
 	WidgetHelpers::moveWidgetToHostCenter(this);
 
+	theApp->mainWindow()->showShadedOverlay();
 	theApp->mainWindow()->setDisabled(true);
 
 	QFrame::showEvent(event);
@@ -123,11 +100,32 @@ void MessageBoxDialog::showEvent(QShowEvent* event)
 
 void MessageBoxDialog::hideEvent(QHideEvent* event)
 {
+	theApp->mainWindow()->hideShadedOverlay();
 	theApp->mainWindow()->setDisabled(false);
 
 	QFrame::hideEvent(event);
 
 	emit dialogClosed(m_clickedButtonRole);
+}
+
+bool MessageBoxDialog::eventFilter(QObject*, QEvent* event)
+{
+	if (event->type() == QEvent::MouseButtonPress)
+	{
+		FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
+	}
+
+	if (event->type() == QEvent::MouseButtonRelease)
+	{
+		FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
+	}
+
+	if (event->type() == QEvent::MouseMove)
+	{
+		FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
+	}
+
+	return false;
 }
 
 void MessageBoxDialog::completeLocalEventLoop()

@@ -3,7 +3,6 @@ x64/
 .vs/
 doxydoc/
 *.json
-*.ini
 /testsite/dist/*.*
 /build2015
 /version/include/version.h
