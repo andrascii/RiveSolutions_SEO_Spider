@@ -27,8 +27,9 @@ public:
 
 private:
 	LinkInfo getLinkRelUrl(const char* relValue, ResourceSource source) const;
-	void htmlSetEncoding(const ResponseHeaders& headers);
+	myencoding_t htmlSetEncoding(const ResponseHeaders& headers);
 	QByteArray htmlPageContentType() const;
+	void initRootNode();
 
 private:
 	myhtml_t* m_myHtml;

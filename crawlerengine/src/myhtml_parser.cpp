@@ -176,27 +176,12 @@ void MyHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHeade
 {
 	m_htmlPage = htmlPage;
 
-	myhtml_parse(m_tree, MyENCODING_UTF_8, htmlPage.data(), htmlPage.size());
+	myhtml_parse_fragment(m_tree, MyENCODING_UTF_8, htmlPage.data(), htmlPage.size(), MyHTML_TAG_HEAD, MyHTML_NAMESPACE_HTML);
 
-	myhtml_collection_t* collection = myhtml_get_nodes_by_tag_id(m_tree, nullptr, MyHTML_TAG_HTML, nullptr);
+	initRootNode();
 
-	if (!collection || !collection->list || !collection->length)
-	{
-		return;
-	}
-
-	for (std::size_t i = 0; i < collection->length; ++i)
-	{
-		if (myhtml_node_tag_id(collection->list[i]) != MyHTML_TAG_HTML)
-		{
-			continue;
-		}
-
-		m_rootNode = MyHtmlNode(collection->list[i]);
-		break;
-	}
-
-	htmlSetEncoding(headers);
+	myencoding_t encoding = htmlSetEncoding(headers);
+	myhtml_parse(m_tree, encoding, htmlPage.data(), htmlPage.size());
 }
 
 std::vector<LinkInfo> MyHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
@@ -352,7 +337,7 @@ LinkInfo MyHtmlParser::getLinkRelUrl(const char* relValue, ResourceSource source
 	return LinkInfo{ Url(), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceInvalid };
 }
 
-void MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
+myencoding_t MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
 {
 	const auto contentTypeValues = headers.valueOf("content-type");
 
@@ -368,7 +353,7 @@ void MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
 			if (encoding != -1)
 			{
 				myhtml_encoding_set(m_tree, encoding);
-				return;
+				return encoding;
 			}
 		}
 	}
@@ -381,17 +366,18 @@ void MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
 
 	if (charsetFromHtmlPage.isEmpty())
 	{
-		return;
+		return MyENCODING_UTF_8;
 	}
 
 	myencoding_t encoding = s_stringToEnumEncoding.value(charsetFromHtmlPage, static_cast<myencoding_t>(-1));
 
 	if (encoding == -1)
 	{
-		return;
+		return MyENCODING_UTF_8;
 	}
 
 	myhtml_encoding_set(m_tree, encoding);
+	return encoding;
 }
 
 QByteArray MyHtmlParser::htmlPageContentType() const
@@ -428,6 +414,27 @@ QByteArray MyHtmlParser::htmlPageContentType() const
 	}
 
 	return QByteArray();
+}
+
+void MyHtmlParser::initRootNode()
+{
+	myhtml_collection_t* collection = myhtml_get_nodes_by_tag_id(m_tree, nullptr, MyHTML_TAG_HTML, nullptr);
+
+	if (!collection || !collection->list || !collection->length)
+	{
+		return;
+	}
+
+	for (std::size_t i = 0; i < collection->length; ++i)
+	{
+		if (myhtml_node_tag_id(collection->list[i]) != MyHTML_TAG_HTML)
+		{
+			continue;
+		}
+
+		m_rootNode = MyHtmlNode(collection->list[i]);
+		break;
+	}
 }
 
 }
