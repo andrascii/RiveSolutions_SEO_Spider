@@ -18,7 +18,6 @@ public:
 
 	virtual QByteArray htmlPageContent() const override;
 	virtual void parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers) override;
-	virtual QByteArray decodeHtmlPage(const ResponseHeaders& headers) override;
 	virtual std::vector<LinkInfo> pageUrlList(bool httpOrHttpsOnly) const override;
 	virtual IHtmlNodeSharedPtr firstMatchNode(IHtmlNode::TagId tagId) const override;
 	virtual std::vector<IHtmlNodeSharedPtr> matchNodes(IHtmlNode::TagId tagId) const override;
@@ -30,6 +29,7 @@ public:
 private:
 	LinkInfo getLinkRelUrl(const GumboNode* node, const char* relValue, ResourceSource source) const;
 	QByteArray identifyHtmlPageContentType() const;
+	QByteArray decodeHtmlPage(const ResponseHeaders& headers);
 
 private:
 	const GumboOptions* m_gumboOptions;

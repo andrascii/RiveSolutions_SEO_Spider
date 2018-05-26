@@ -209,6 +209,11 @@ QByteArray MyHtmlNode::text() const
 
 QString MyHtmlNode::attribute(const QByteArray& attributeName) const
 {
+	if (!m_node)
+	{
+		return QString();
+	}
+
 	myhtml_tree_attr_t* attribute = myhtml_attribute_by_key(m_node, attributeName.data(), attributeName.size());
 
 	if (!attribute)
@@ -221,6 +226,11 @@ QString MyHtmlNode::attribute(const QByteArray& attributeName) const
 
 bool MyHtmlNode::hasAttribute(const QByteArray& attributeName) const
 {
+	if (!m_node)
+	{
+		return false;
+	}
+
 	myhtml_tree_attr_t* attribute = myhtml_attribute_by_key(m_node, attributeName.data(), attributeName.size());
 
 	return attribute != nullptr;
@@ -234,6 +244,11 @@ MyHtmlNode::operator bool() const
 IHtmlNodeSharedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
 {
 	startIndexWhithinParent;
+
+	if (!m_node)
+	{
+		return nullptr;
+	}
 
 	myhtml_tree_node_t* node = myhtml_node_child(m_node);
 
@@ -274,6 +289,11 @@ std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodes(TagId tagId) const
 
 std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodesInDepth(TagId tagId) const
 {
+	if (!m_node)
+	{
+		return std::vector<IHtmlNodeSharedPtr>();
+	}
+
 	std::vector<IHtmlNodeSharedPtr> collection;
 
 	matchSubNodesInDepthHelper(myhtml_node_child(m_node), collection, [tagId](const IHtmlNode& node)
@@ -286,6 +306,11 @@ std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodesInDepth(TagId tagId) co
 
 std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
 {
+	if (!m_node)
+	{
+		return std::vector<IHtmlNodeSharedPtr>();
+	}
+
 	std::vector<IHtmlNodeSharedPtr> collection;
 	matchSubNodesInDepthHelper(myhtml_node_child(m_node), collection, predicate);
 	return collection;
@@ -405,6 +430,11 @@ void MyHtmlNode::cutAllTagsFromNodeHelper(myhtml_tree_node_t* node, QByteArray& 
 
 std::vector<myhtml_tree_node_t*> MyHtmlNode::childrenInternal(myhtml_tree_node_t* node) const
 {
+	if (!node)
+	{
+		return std::vector<myhtml_tree_node_t*>();
+	}
+
 	myhtml_tree_node_t* child = myhtml_node_child(node);
 	std::vector<myhtml_tree_node_t*> result;
 

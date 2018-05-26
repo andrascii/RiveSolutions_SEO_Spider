@@ -44,13 +44,7 @@ std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const 
 	{
 		m_htmlParser->parseHtmlPage(hop.body(), hop.responseHeaders());
 
-		if (page->resourceType == ResourceType::ResourceHtml)
-		{
-		#ifdef QT_DEBUG
-			page->rawResponse = qCompress(m_htmlParser->htmlPageContent(), 9);
-		#endif
-		}
-		else if (page->resourceType == ResourceType::ResourceImage)
+		if (page->resourceType == ResourceType::ResourceImage)
 		{
 			page->rawResponse = hop.body();
 		}
