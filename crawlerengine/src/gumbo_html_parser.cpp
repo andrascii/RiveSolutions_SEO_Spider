@@ -283,12 +283,12 @@ IHtmlNodeSharedPtr GumboHtmlParser::firstMatchNode(IHtmlNode::TagId tagId) const
 	return m_rootNode.firstMatchSubNode(tagId);
 }
 
-std::vector<CrawlerEngine::IHtmlNodeSharedPtr> GumboHtmlParser::matchNodes(IHtmlNode::TagId tagId) const
+std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodes(IHtmlNode::TagId tagId) const
 {
 	return m_rootNode.matchSubNodes(tagId);
 }
 
-std::vector<CrawlerEngine::IHtmlNodeSharedPtr> GumboHtmlParser::matchNodesInDepth(IHtmlNode::TagId tagId) const
+std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodesInDepth(IHtmlNode::TagId tagId) const
 {
 	return m_rootNode.matchSubNodesInDepth(tagId);
 }
@@ -298,14 +298,14 @@ std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodesInDepth(const std::fu
 	return m_rootNode.matchSubNodesInDepth(predicate);
 }
 
-IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
+IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
 {
-	return m_rootNode.findChildNodeWithAttributesValues(tagId, expectedAttributes);
+	return m_rootNode.childNodeByAttributeValue(tagId, expectedAttributes);
 }
 
 IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
 {
-	return m_rootNode.findChildNodeWithAttributesValues(tagId, expectedAttributes);
+	return m_rootNode.childNodeByAttributesValues(tagId, expectedAttributes);
 }
 
 QByteArray GumboHtmlParser::htmlPageContent() const

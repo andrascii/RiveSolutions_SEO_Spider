@@ -370,12 +370,12 @@ void GumboHtmlNode::cutAllTagsFromNodeHelper(GumboNode* node, QByteArray& result
 	}
 }
 
-IHtmlNodeSharedPtr GumboHtmlNode::findChildNodeWithAttributesValues(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
+IHtmlNodeSharedPtr GumboHtmlNode::childNodeByAttributeValue(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
 {
-	return findChildNodeWithAttributesValues(tagId, std::map<const char*, const char*>{ expectedAttributes });
+	return childNodeByAttributesValues(tagId, std::map<const char*, const char*>{ expectedAttributes });
 }
 
-IHtmlNodeSharedPtr GumboHtmlNode::findChildNodeWithAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
+IHtmlNodeSharedPtr GumboHtmlNode::childNodeByAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
 {
 	if (!m_node || m_node->type != GUMBO_NODE_ELEMENT)
 	{

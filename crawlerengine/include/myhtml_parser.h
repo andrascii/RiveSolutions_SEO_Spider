@@ -2,6 +2,7 @@
 
 #include "ihtml_parser.h"
 #include "myhtml/api.h"
+#include "myhtml_node.h"
 
 namespace CrawlerEngine
 {
@@ -22,7 +23,7 @@ public:
 	virtual std::vector<IHtmlNodeSharedPtr> matchNodes(IHtmlNode::TagId tagId) const override;
 	virtual std::vector<IHtmlNodeSharedPtr> matchNodesInDepth(IHtmlNode::TagId tagId) const override;
 	virtual std::vector<IHtmlNodeSharedPtr> matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const override;
-	virtual IHtmlNodeSharedPtr findNodeWithAttributesValues(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const override;
+	virtual IHtmlNodeSharedPtr findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const override;
 	virtual IHtmlNodeSharedPtr findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const override;
 
 private:
@@ -31,6 +32,7 @@ private:
 private:
 	myhtml_t* m_myHtml;
 	myhtml_tree_t* m_tree;
+	MyHtmlNode m_rootNode;
 	QRegularExpression m_regExp;
 };
 

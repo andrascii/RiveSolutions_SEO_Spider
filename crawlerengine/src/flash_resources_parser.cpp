@@ -159,8 +159,8 @@ void FlashResourcesParser::parseFlashResourcesV3(ParsedPagePtr& page) noexcept
 			return true;
 		}
 
-		const bool hasParamChildTag = objectTag->findChildNodeWithAttributesValues(IHtmlNode::TagIdParam, std::make_pair("movie", "")) ||
-			objectTag->findChildNodeWithAttributesValues(IHtmlNode::TagIdParam, std::make_pair("src", ""));
+		const bool hasParamChildTag = objectTag->childNodeByAttributeValue(IHtmlNode::TagIdParam, std::make_pair("movie", "")) ||
+			objectTag->childNodeByAttributeValue(IHtmlNode::TagIdParam, std::make_pair("src", ""));
 
 		return !hasParamChildTag;
 	};
@@ -172,7 +172,7 @@ void FlashResourcesParser::parseFlashResourcesV3(ParsedPagePtr& page) noexcept
 
 	for (const IHtmlNodeSharedPtr& objectTag : objectTags)
 	{
-		IHtmlNodeSharedPtr paramChildNode = objectTag->findChildNodeWithAttributesValues(IHtmlNode::TagIdParam, std::make_pair("movie", ""));
+		IHtmlNodeSharedPtr paramChildNode = objectTag->childNodeByAttributeValue(IHtmlNode::TagIdParam, std::make_pair("movie", ""));
 
 		if (paramChildNode)
 		{
@@ -180,7 +180,7 @@ void FlashResourcesParser::parseFlashResourcesV3(ParsedPagePtr& page) noexcept
 			continue;
 		}
 
-		paramChildNode = objectTag->findChildNodeWithAttributesValues(IHtmlNode::TagIdParam, std::make_pair("src", ""));
+		paramChildNode = objectTag->childNodeByAttributeValue(IHtmlNode::TagIdParam, std::make_pair("src", ""));
 
 		DEBUG_ASSERT(paramChildNode);
 

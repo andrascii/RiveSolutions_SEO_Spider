@@ -23,8 +23,8 @@ public:
 	virtual std::vector<IHtmlNodeSharedPtr> matchSubNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const override;
 	virtual std::vector<IHtmlNodeSharedPtr> children() const override;
 	virtual QByteArray cutSubNodesAndGetPlainText() const override;
-	IHtmlNodeSharedPtr findChildNodeWithAttributesValues(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const override;
-	IHtmlNodeSharedPtr findChildNodeWithAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const override;
+	IHtmlNodeSharedPtr childNodeByAttributeValue(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const override;
+	IHtmlNodeSharedPtr childNodeByAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const override;
 
 private:
 	void matchSubNodesInDepthHelper(std::vector<IHtmlNodeSharedPtr>& result, GumboNode* node, const std::function<bool(const IHtmlNode&)>& predicate) const;

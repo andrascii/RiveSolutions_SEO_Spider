@@ -22,6 +22,7 @@ namespace CrawlerEngine
 MyHtmlParser::MyHtmlParser()
 	: m_myHtml(myhtml_create())
 	, m_tree(myhtml_tree_create())
+	, m_rootNode(nullptr)
 	, m_regExp("[\\n\\t]+")
 {
 	myhtml_init(m_myHtml, MyHTML_OPTIONS_DEFAULT, 1, 0);
@@ -41,8 +42,26 @@ QByteArray MyHtmlParser::htmlPageContent() const
 
 void MyHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers)
 {
-	myhtml_parse(m_tree, MyENCODING_UTF_8, htmlPage.data(), htmlPage.size());
 	headers;
+
+	myhtml_parse(m_tree, MyENCODING_UTF_8, htmlPage.data(), htmlPage.size());
+	myhtml_collection_t* collection = myhtml_get_nodes_by_tag_id(m_tree, nullptr, MyHTML_TAG_HTML, nullptr);
+
+	if (!collection || !collection->list || !collection->length)
+	{
+		return;
+	}
+
+	for (std::size_t i = 0; i < collection->length; ++i)
+	{
+		if (myhtml_node_tag_id(collection->list[i]) != MyHTML_TAG_HTML)
+		{
+			continue;
+		}
+
+		m_rootNode = MyHtmlNode(collection->list[i]);
+		break;
+	}
 }
 
 QByteArray MyHtmlParser::decodeHtmlPage(const ResponseHeaders& headers)
@@ -129,40 +148,36 @@ std::vector<LinkInfo> MyHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
 
 IHtmlNodeSharedPtr MyHtmlParser::firstMatchNode(IHtmlNode::TagId tagId) const
 {
-	tagId;
-	return IHtmlNodeSharedPtr(nullptr);
+	return m_rootNode.firstMatchSubNode(tagId);
 }
 
 std::vector<IHtmlNodeSharedPtr> MyHtmlParser::matchNodes(IHtmlNode::TagId tagId) const
 {
-	tagId;
-	return std::vector<IHtmlNodeSharedPtr>();
+	return m_rootNode.matchSubNodes(tagId);
 }
 
 std::vector<IHtmlNodeSharedPtr> MyHtmlParser::matchNodesInDepth(IHtmlNode::TagId tagId) const
 {
-	tagId;
-	return std::vector<IHtmlNodeSharedPtr>();
+	return m_rootNode.matchSubNodesInDepth(tagId);
 }
 
 std::vector<IHtmlNodeSharedPtr> MyHtmlParser::matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
 {
-	predicate;
-	return std::vector<IHtmlNodeSharedPtr>();
+	return m_rootNode.matchSubNodesInDepth(predicate);
 }
 
-IHtmlNodeSharedPtr MyHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
+IHtmlNodeSharedPtr MyHtmlParser::findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
 {
-	tagId;
-	expectedAttributes;
-	return IHtmlNodeSharedPtr(nullptr);
+	ASSERT(m_rootNode);
+
+	return m_rootNode.childNodeByAttributeValue(tagId, expectedAttributes);
 }
 
 IHtmlNodeSharedPtr MyHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
 {
-	tagId;
-	expectedAttributes;
-	return IHtmlNodeSharedPtr(nullptr);
+	ASSERT(m_rootNode);
+
+	return m_rootNode.childNodeByAttributesValues(tagId, expectedAttributes);
 }
 
 LinkInfo MyHtmlParser::getLinkRelUrl(const char* relValue, ResourceSource source) const

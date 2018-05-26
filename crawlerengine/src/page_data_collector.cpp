@@ -13,13 +13,14 @@
 #include "gumbo_parsing_helpers.h"
 #include "download_response.h"
 #include "gumbo_html_parser.h"
+#include "myhtml_parser.h"
 
 namespace CrawlerEngine
 {
 
 PageDataCollector::PageDataCollector(QObject* parent)
 	: QObject(parent)
-	, m_htmlParser(std::make_shared<GumboHtmlParser>())
+	, m_htmlParser(std::make_shared<MyHtmlParser>())
 {
 }
 

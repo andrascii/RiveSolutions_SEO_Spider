@@ -27,7 +27,7 @@ void VideoResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& 
 
 	for (const IHtmlNodeSharedPtr& videoTag : videoTags)
 	{
-		IHtmlNodeSharedPtr paramChildNode = videoTag->findChildNodeWithAttributesValues(IHtmlNode::TagIdSource, std::make_pair("src", ""));
+		IHtmlNodeSharedPtr paramChildNode = videoTag->childNodeByAttributeValue(IHtmlNode::TagIdSource, std::make_pair("src", ""));
 
 		if (paramChildNode)
 		{
