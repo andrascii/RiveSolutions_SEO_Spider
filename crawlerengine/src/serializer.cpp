@@ -237,7 +237,7 @@ public:
 		writer.writeTextElement(pageLevelKey, QString::number(m_page->pageLevel));
 
 		QString storagesStr;
-		for (int i = 0; i < m_page->storages.size(); ++i)
+		for (size_t i = 0; i < m_page->storages.size(); ++i)
 		{
 			storagesStr = storagesStr % (m_page->storages[i] ? QLatin1Char('1') : QLatin1Char('0'));
 		}
@@ -265,7 +265,7 @@ public:
 
 	void resolveLinks()
 	{
-		for (int i = 0; i < m_linksOnThisPageIndices.size(); ++i)
+		for (size_t i = 0; i < m_linksOnThisPageIndices.size(); ++i)
 		{
 			ResourceLink& resourceLinkOnPage = m_page->linksOnThisPage[i];
 			const int resourceIndex = m_linksOnThisPageIndices[i];
@@ -630,14 +630,14 @@ void Serializer::savePagesToXmlStream(QXmlStreamWriter& writer) const
 	std::vector<ParsedPageSerializer> pageWrappers;
 	pageWrappers.reserve(m_pages.size());
 	std::map<const ParsedPage*, int> pagesByIndex;
-	for (int i = 0; i < m_pages.size(); ++i)
+	for (size_t i = 0; i < m_pages.size(); ++i)
 	{
 		const ParsedPage* page = m_pages[i];
 		DEBUGLOG << page->url.urlStr();
 		pageWrappers.emplace_back(page, i, pagesByIndex);
 	}
 
-	for (int i = 0; i < m_pages.size(); ++i)
+	for (size_t i = 0; i < m_pages.size(); ++i)
 	{
 		ParsedPageSerializer& wrapper = pageWrappers[i];
 		wrapper.writeXml(writer);

@@ -17,7 +17,7 @@ public:
 	{
 		const auto size = m_pages.size();
 
-		ASSERT(size <= std::numeric_limits<int>::max() && "Integer overflow");
+		ASSERT(static_cast<int>(size) <= std::numeric_limits<int>::max() && "Integer overflow");
 
 		return static_cast<int>(size);
 	}
@@ -50,7 +50,7 @@ public:
 
 	virtual const ParsedPage* operator[](int idx) const noexcept override
 	{
-		ASSERT(idx >= 0 && idx < m_pages.size());
+		ASSERT(idx >= 0 && static_cast<size_t>(idx) < m_pages.size());
 
 		return m_pages[idx].get();
 	}
@@ -64,7 +64,7 @@ public:
 
 	virtual const ParsedPage* get(int idx) const noexcept override
 	{
-		ASSERT(idx >= 0 && idx < m_pages.size());
+		ASSERT(idx >= 0 && static_cast<size_t>(idx) < m_pages.size());
 
 		return m_pages[idx].get();
 	}
@@ -79,14 +79,14 @@ public:
 protected:
 	virtual void pushBack(const ParsedPagePtr& page) override
 	{
-		DEBUG_ASSERT(m_pages.size() < std::numeric_limits<int>::max());
+		DEBUG_ASSERT(static_cast<int>(m_pages.size()) < std::numeric_limits<int>::max());
 
 		m_pages.push_back(page);
 	}
 
 	virtual void emplaceBack(ParsedPagePtr&& page) override
 	{
-		DEBUG_ASSERT(m_pages.size() < std::numeric_limits<int>::max());
+		DEBUG_ASSERT(static_cast<int>(m_pages.size()) < std::numeric_limits<int>::max());
 
 		m_pages.emplace_back(std::move(page));
 	}
@@ -120,7 +120,7 @@ protected:
 		removeEffects.invalidatedIndicesRange.first = std::distance(m_pages.begin(), nextElement);
 
 		const std::size_t upperBound = m_pages.size() - 1;
-		ASSERT(upperBound <= std::numeric_limits<int>::max() && "Integer overflow");
+		ASSERT(static_cast<int>(upperBound) <= std::numeric_limits<int>::max() && "Integer overflow");
 
 		removeEffects.invalidatedIndicesRange.second = static_cast<int>(upperBound);
 

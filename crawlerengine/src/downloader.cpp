@@ -283,7 +283,7 @@ void Downloader::processReply(QNetworkReply* reply)
 		statusCode == Common::StatusCode::MovedTemporarily302)
 	{
 		int urlsInChain = 0;
-		for (int i = 0; i < response->hopsChain.length(); ++i)
+		for (size_t i = 0; i < response->hopsChain.length(); ++i)
 		{
 			if (response->hopsChain[i].url() == redirectUrlAddress)
 			{

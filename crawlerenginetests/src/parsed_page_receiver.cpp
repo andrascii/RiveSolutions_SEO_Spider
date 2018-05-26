@@ -255,7 +255,7 @@ void ParsedPageReceiver::checkAllPagesReceived()
 {
 	if (!m_allPagesReceived &&
 		m_finished &&
-		m_parsedPages[CrawledUrlStorageType].size() == CrawlerSharedState::instance()->sequencedDataCollectionLinksCount())
+		m_parsedPages[CrawledUrlStorageType].size() == static_cast<size_t>(CrawlerSharedState::instance()->sequencedDataCollectionLinksCount()))
 	{
 		INFOLOG << CrawlerSharedState::instance()->sequencedDataCollectionLinksCount() << m_parsedPages[StorageType::CrawledUrlStorageType].size();
 		m_allPagesReceivedPromise.set_value(m_parsedPages[StorageType::CrawledUrlStorageType]);

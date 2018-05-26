@@ -55,7 +55,7 @@ void BackgroundRenderer::addRenderer(int)
 
 void BackgroundRenderer::clearCacheIfNeeded() const
 {
-	if (m_cache.size() >= m_cacheSize)
+	if (m_cache.size() >= static_cast<size_t>(m_cacheSize))
 	{
 		invalidateCache();
 	}

@@ -281,7 +281,7 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 		data()->addParsedPage(workerResult, StorageType::TooLongUrlStorageType);
 	}
 
-	if (workerResult.incomingPage()->linksOnThisPage.size() > m_crawlerOptionsData.maxLinksCountOnPage)
+	if (workerResult.incomingPage()->linksOnThisPage.size() > static_cast<size_t>(m_crawlerOptionsData.maxLinksCountOnPage))
 	{
 		data()->addParsedPage(workerResult, StorageType::TooManyLinksOnPageStorageType);
 	}

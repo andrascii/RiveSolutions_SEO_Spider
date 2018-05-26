@@ -11,7 +11,7 @@ ViewportPercentResizePolicy::ViewportPercentResizePolicy(std::vector<int> column
 
 void ViewportPercentResizePolicy::resize(TableView* view) const noexcept
 {
-	for (int i = 0; i < m_columnsPercentSize.size(); ++i)
+	for (size_t i = 0; i < m_columnsPercentSize.size(); ++i)
 	{
 		view->setColumnWidth(static_cast<int>(i), columnSize(i, view));
 	}
@@ -28,7 +28,7 @@ int ViewportPercentResizePolicy::columnSize(int column, const TableView* view) c
 	const int scrollBarWidth = view->verticalScrollBar()->isVisible() ? view->verticalScrollBar()->width() : 0;
 	const int width = view->width() - scrollBarWidth - s_extraWidth;
 
-	DEBUG_ASSERT(m_columnsPercentSize.size() > column);
+	DEBUG_ASSERT(m_columnsPercentSize.size() > static_cast<size_t>(column));
 
 	const int columnWidth = m_columnsPercentSize[column] * width / 100;
 

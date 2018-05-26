@@ -476,7 +476,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 
 		for (const ParsedPagePtr& page : pages)
 		{
-			for (int i = 0; i < page->storages.size(); ++i)
+			for (size_t i = 0; i < page->storages.size(); ++i)
 			{
 				if (page->storages[i])
 				{
@@ -560,7 +560,7 @@ void Crawler::onSerializationReadyToBeStarted()
 		pages.push_back(const_cast<ParsedPage*>(page));
 	}
 
-	for (int i = 0; i < pendingPages.size(); ++i)
+	for (size_t i = 0; i < pendingPages.size(); ++i)
 	{
 		ParsedPage* page = pendingPages[i].get();
 		pages.push_back(page);

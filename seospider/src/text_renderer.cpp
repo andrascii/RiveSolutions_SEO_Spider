@@ -107,7 +107,7 @@ void TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, c
 
 void TextRenderer::clearCacheIfNeeded() const noexcept
 {
-	if (m_cache.size() > m_cacheSize)
+	if (m_cache.size() > static_cast<size_t>(m_cacheSize))
 	{
 		m_cache.clear();
 	}

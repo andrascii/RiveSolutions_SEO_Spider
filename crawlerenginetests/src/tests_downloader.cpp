@@ -157,7 +157,7 @@ HopsChain TestsDownloader::hopsChain(const DownloadRequest& request, QSet<QStrin
 		childRequest.requestInfo.url = Url(PageParserHelpers::resolveRelativeUrl(redirectUrl, requestedUrl));
 		HopsChain childResult = hopsChain(childRequest, uniqueUrls);
 
-		for (int i = 0; i < childResult.length(); ++i)
+		for (size_t i = 0; i < childResult.length(); ++i)
 		{
 			result.addHop(childResult[i]);
 		}

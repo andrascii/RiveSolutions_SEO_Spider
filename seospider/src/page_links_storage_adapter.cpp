@@ -74,7 +74,7 @@ QVariant PageLinksStorageAdapter::item(const QModelIndex& index) const noexcept
 		return QVariant();
 	}
 
-	DEBUG_ASSERT(index.row() < m_parsedPageInfo->linksCount(m_context));
+	DEBUG_ASSERT(static_cast<size_t>(index.row()) < m_parsedPageInfo->linksCount(m_context));
 	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
 	return m_parsedPageInfo->itemValue(m_availableColumns[index.column()], m_context, index.row());
