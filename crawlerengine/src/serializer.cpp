@@ -629,15 +629,19 @@ void Serializer::savePagesToXmlStream(QXmlStreamWriter& writer) const
 
 	std::vector<ParsedPageSerializer> pageWrappers;
 	pageWrappers.reserve(m_pages.size());
+
 	std::map<const ParsedPage*, int> pagesByIndex;
-	for (size_t i = 0; i < m_pages.size(); ++i)
+
+	for (int i = 0, size = static_cast<int>(m_pages.size()); i < size; ++i)
 	{
 		const ParsedPage* page = m_pages[i];
+
 		DEBUGLOG << page->url.urlStr();
-		pageWrappers.emplace_back(page, i, pagesByIndex);
+
+		pageWrappers.emplace_back(ParsedPageSerializer(page, i, pagesByIndex));
 	}
 
-	for (size_t i = 0; i < m_pages.size(); ++i)
+	for (int i = 0, size = static_cast<int>(m_pages.size()); i < size; ++i)
 	{
 		ParsedPageSerializer& wrapper = pageWrappers[i];
 		wrapper.writeXml(writer);

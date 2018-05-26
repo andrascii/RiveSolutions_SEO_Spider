@@ -6,7 +6,7 @@ namespace SeoSpider
 
 SummaryModel::SummaryModel(QObject* parent)
 	: AbstractTableModel(parent)
-	, m_resizePolicy(std::make_shared<ViewportPercentResizePolicy>(std::vector<int>{ 85, 15 }))
+	, m_resizePolicy(std::make_shared<ViewportPercentResizePolicy>(QVector<int>{ 85, 15 }))
 	, m_dataAccessor(nullptr)
 {
 }

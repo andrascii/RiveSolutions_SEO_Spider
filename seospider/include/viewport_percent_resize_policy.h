@@ -9,7 +9,7 @@ class ViewportPercentResizePolicy : public QObject, public IResizePolicy
 	Q_OBJECT
 
 public:
-	ViewportPercentResizePolicy(std::vector<int> columnsPercentSize);
+	ViewportPercentResizePolicy(QVector<int> columnsPercentSize);
 
 public:
 	// IResizePolicy implementation
@@ -22,7 +22,7 @@ public:
 	Q_SIGNAL virtual void columnSizeChanged() override;
 
 private:
-	std::vector<int> m_columnsPercentSize;
+	QVector<int> m_columnsPercentSize;
 };
 
 }

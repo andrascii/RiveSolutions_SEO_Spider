@@ -487,7 +487,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 						++crawledLinksCount;
 					}
 
-					m_modelController->data()->addParsedPage(page, i);
+					m_modelController->data()->addParsedPage(page, static_cast<int>(i));
 				}
 			}
 		}

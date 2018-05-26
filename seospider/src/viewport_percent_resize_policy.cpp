@@ -4,16 +4,16 @@
 namespace SeoSpider
 {
 
-ViewportPercentResizePolicy::ViewportPercentResizePolicy(std::vector<int> columnsPercentSize)
+ViewportPercentResizePolicy::ViewportPercentResizePolicy(QVector<int> columnsPercentSize)
 	: m_columnsPercentSize(columnsPercentSize)
 {
 }
 
 void ViewportPercentResizePolicy::resize(TableView* view) const noexcept
 {
-	for (size_t i = 0; i < m_columnsPercentSize.size(); ++i)
+	for (int i = 0; i < m_columnsPercentSize.size(); ++i)
 	{
-		view->setColumnWidth(static_cast<int>(i), columnSize(i, view));
+		view->setColumnWidth(i, columnSize(i, view));
 	}
 }
 
