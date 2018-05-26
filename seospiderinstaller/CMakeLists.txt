@@ -21,7 +21,7 @@ set(QTIFW_BIN_DIR $ENV{IFW_BIN_DIR})
 find_program(BinaryCreator_executable binarycreator HINTS ${QTIFW_BIN_DIR})
 find_program(RepoGen_executable repogen HINTS ${QTIFW_BIN_DIR})
 
-message(${QTIFW_BIN_DIR})
+#message(${QTIFW_BIN_DIR})
 
 list(APPEND PackageFileList 
 		${ReleasePackageDir}/seospider.exe
