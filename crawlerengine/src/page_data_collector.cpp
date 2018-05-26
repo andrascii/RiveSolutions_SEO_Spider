@@ -10,7 +10,6 @@
 #include "other_resources_parser.h"
 #include "base_url_parser.h"
 #include "status_code.h"
-#include "gumbo_parsing_helpers.h"
 #include "download_response.h"
 #include "gumbo_html_parser.h"
 #include "myhtml_parser.h"

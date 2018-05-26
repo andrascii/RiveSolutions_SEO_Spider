@@ -3,7 +3,6 @@
 #include "response_headers.h"
 #include "parsed_page.h"
 #include "page_parser_helpers.h"
-#include "gumbo_parsing_helpers.h"
 
 namespace
 {
@@ -46,6 +45,12 @@ static auto findNodesAndGetResult(const GumboNode* parentNode, UnaryPredicate pr
 	}
 
 	return result;
+}
+
+bool checkAttribute(const GumboNode* node, const char* attribute, const char* expectedValue) noexcept
+{
+	const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, attribute);
+	return attr && (strlen(expectedValue) == 0 || QString(attr->value).toLower().trimmed() == expectedValue);
 }
 
 }
@@ -254,7 +259,7 @@ LinkInfo GumboHtmlParser::getLinkRelUrl(const GumboNode* node, const char* relVa
 		bool result = node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_LINK &&
-			GumboParsingHelpers::checkAttribute(node, "rel", relValue) &&
+			checkAttribute(node, "rel", relValue) &&
 			gumbo_get_attribute(&node->v.element.attributes, "href");
 		return result;
 	};
