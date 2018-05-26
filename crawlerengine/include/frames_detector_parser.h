@@ -5,10 +5,17 @@
 namespace CrawlerEngine
 {
 
+class IHtmlParser;
+
 class FramesDetectorParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
+	FramesDetectorParser(IHtmlParser* htmlParser);
+
+	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& page) override;
+
+private:
+	IHtmlParser* m_htmlParser;
 };
 
 }

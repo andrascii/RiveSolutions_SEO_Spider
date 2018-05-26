@@ -3,7 +3,6 @@
 #include "response_headers.h"
 #include "parsed_page.h"
 #include "page_parser_helpers.h"
-#include "gumbo_parsing_helpers.h"
 
 namespace
 {
@@ -48,15 +47,29 @@ static auto findNodesAndGetResult(const GumboNode* parentNode, UnaryPredicate pr
 	return result;
 }
 
+bool checkAttribute(const GumboNode* node, const char* attribute, const char* expectedValue) noexcept
+{
+	const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, attribute);
+	return attr && (strlen(expectedValue) == 0 || QString(attr->value).toLower().trimmed() == expectedValue);
+}
+
 }
 
 namespace CrawlerEngine
 {
 
+GumboHtmlParser::GumboHtmlParser() 
+	: m_gumboOptions(&kGumboDefaultOptions)
+	, m_gumboOutput(nullptr)
+	, m_rootNode(nullptr)
+{
+}
+
 GumboHtmlParser::GumboHtmlParser(const GumboOptions* options, const QByteArray& htmlPage)
 	: m_gumboOptions(options)
 	, m_gumboOutput(gumbo_parse_with_options(options, htmlPage.data(), htmlPage.size()))
 	, m_htmlPage(htmlPage)
+	, m_rootNode(m_gumboOutput->root)
 {
 }
 
@@ -65,14 +78,33 @@ GumboHtmlParser::~GumboHtmlParser()
 	gumbo_destroy_output(m_gumboOptions, m_gumboOutput);
 }
 
+void GumboHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers)
+{
+	if (m_gumboOutput)
+	{
+		gumbo_destroy_output(m_gumboOptions, m_gumboOutput);
+	}
+
+	m_gumboOutput = gumbo_parse_with_options(&kGumboDefaultOptions, htmlPage.data(), htmlPage.size());
+	m_htmlPage = htmlPage;
+	m_rootNode = GumboHtmlNode(m_gumboOutput->root);
+
+	// we need double parsing because we need firstly decode html page
+	// this need in order to we'll be able to extract right data
+	m_htmlPage = decodeHtmlPage(headers);
+
+	gumbo_destroy_output(m_gumboOptions, m_gumboOutput);
+	m_gumboOutput = gumbo_parse_with_options(&kGumboDefaultOptions, m_htmlPage.data(), m_htmlPage.size());
+	m_rootNode = GumboHtmlNode(m_gumboOutput->root);
+}
+
 QByteArray GumboHtmlParser::identifyHtmlPageContentType() const
 {
-	GumboHtmlNode rootNode(m_gumboOutput->root);
-	HtmlNodeSharedPtr head = rootNode.findSubNode(IHtmlNode::TagIdHead);
+	IHtmlNodeSharedPtr head = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
 
 	DEBUG_ASSERT(head->type() == IHtmlNode::NodeTypeElement && head->tagId() == IHtmlNode::TagIdHead);
 
-	std::vector<HtmlNodeSharedPtr> metaTags = head->subNodes(IHtmlNode::TagIdMeta);
+	std::vector<IHtmlNodeSharedPtr> metaTags = head->matchSubNodes(IHtmlNode::TagIdMeta);
 
 	for (unsigned i = 0; i < metaTags.size(); ++i)
 	{
@@ -97,10 +129,8 @@ QByteArray GumboHtmlParser::identifyHtmlPageContentType() const
 	return QByteArray();
 }
 
-QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
+QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers)
 {
-	QByteArray decodedHtmlPage = m_htmlPage;
-
 	const QByteArray contentType = identifyHtmlPageContentType();
 	const QByteArray charsetFromHtmlPage = contentType.right(contentType.size() - contentType.lastIndexOf("=") - 1);
 	const std::vector<QString> contentTypeValues = headers.valueOf("content-type");
@@ -117,9 +147,9 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
 				continue;
 			}
 
-			decodedHtmlPage = codecForCharset->toUnicode(decodedHtmlPage).toStdString().data();
+			m_htmlPage = codecForCharset->toUnicode(m_htmlPage).toStdString().data();
 
-			return decodedHtmlPage;
+			return m_htmlPage;
 		}
 	}
 
@@ -129,7 +159,7 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
 
 		if (codecForCharset)
 		{
-			decodedHtmlPage = codecForCharset->toUnicode(decodedHtmlPage.data()).toStdString().data();
+			m_htmlPage = codecForCharset->toUnicode(m_htmlPage.data()).toStdString().data();
 		}
 		else
 		{
@@ -140,11 +170,11 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
 	}
 	else
 	{
-		QTextCodec* codecForHtml = QTextCodec::codecForHtml(decodedHtmlPage);
+		QTextCodec* codecForHtml = QTextCodec::codecForHtml(m_htmlPage);
 
 		if (codecForHtml)
 		{
-			decodedHtmlPage = codecForHtml->toUnicode(decodedHtmlPage).toStdString().data();
+			m_htmlPage = codecForHtml->toUnicode(m_htmlPage).toStdString().data();
 		}
 		else
 		{
@@ -152,7 +182,7 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers) const
 		}
 	}
 
-	return decodedHtmlPage;
+	return m_htmlPage;
 }
 
 std::vector<LinkInfo> GumboHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
@@ -229,7 +259,7 @@ LinkInfo GumboHtmlParser::getLinkRelUrl(const GumboNode* node, const char* relVa
 		bool result = node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_LINK &&
-			GumboParsingHelpers::checkAttribute(node, "rel", relValue) &&
+			checkAttribute(node, "rel", relValue) &&
 			gumbo_get_attribute(&node->v.element.attributes, "href");
 		return result;
 	};
@@ -251,6 +281,41 @@ LinkInfo GumboHtmlParser::getLinkRelUrl(const GumboNode* node, const char* relVa
 	}
 
 	return LinkInfo{ Url(), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceInvalid };
+}
+
+IHtmlNodeSharedPtr GumboHtmlParser::firstMatchNode(IHtmlNode::TagId tagId) const
+{
+	return m_rootNode.firstMatchSubNode(tagId);
+}
+
+std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodes(IHtmlNode::TagId tagId) const
+{
+	return m_rootNode.matchSubNodes(tagId);
+}
+
+std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodesInDepth(IHtmlNode::TagId tagId) const
+{
+	return m_rootNode.matchSubNodesInDepth(tagId);
+}
+
+std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
+{
+	return m_rootNode.matchSubNodesInDepth(predicate);
+}
+
+IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
+{
+	return m_rootNode.childNodeByAttributeValue(tagId, expectedAttributes);
+}
+
+IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
+{
+	return m_rootNode.childNodeByAttributesValues(tagId, expectedAttributes);
+}
+
+QByteArray GumboHtmlParser::htmlPageContent() const
+{
+	return m_htmlPage;
 }
 
 }

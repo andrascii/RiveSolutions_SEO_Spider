@@ -6,14 +6,21 @@
 namespace CrawlerEngine
 {
 
+class IHtmlParser;
+
 class HParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& pageRaw) override;
+	HParser(IHtmlParser* htmlParser);
+
+	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& parsedPage) override;
 
 private:
-	void parseH1(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept;
-	void parseH2(GumboOutput* output, ParsedPagePtr& pageRaw) noexcept;
+	void parseH1(ParsedPagePtr& parsedPage) noexcept;
+	void parseH2(ParsedPagePtr& parsedPage) noexcept;
+
+private:
+	IHtmlParser* m_htmlParser;
 };
 
 }

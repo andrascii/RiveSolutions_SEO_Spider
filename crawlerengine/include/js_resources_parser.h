@@ -5,11 +5,18 @@
 namespace CrawlerEngine
 {
 
+class IHtmlParser;
+
 class JsResourcesParser : public CompoundParser
 {
 public:
-	JsResourcesParser();
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
+	JsResourcesParser(IHtmlParser* htmlParser);
+
+	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& page) override;
+
+private:
+	IHtmlParser* m_htmlParser;
+	QRegularExpression m_regExp;
 };
 
 }

@@ -5,10 +5,17 @@
 namespace CrawlerEngine
 {
 
+class IHtmlParser;
+
 class BaseUrlParser : public IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) override;
+	BaseUrlParser(IHtmlParser* htmlParser);
+	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& page) override;
+
+private:
+	IHtmlParser* m_htmlParser;
+	QRegularExpression m_regExp;
 };
 
 }

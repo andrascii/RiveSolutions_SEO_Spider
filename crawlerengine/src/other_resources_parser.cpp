@@ -1,12 +1,16 @@
 #include "other_resources_parser.h"
-
 #include "page_parser_helpers.h"
-#include "gumbo_parsing_helpers.h"
+#include "ihtml_parser.h"
 
 namespace CrawlerEngine
 {
 	
-void OtherResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
+OtherResourcesParser::OtherResourcesParser(IHtmlParser* htmlParser)
+	: m_htmlParser(htmlParser)
+{
+}
+
+void OtherResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	Q_UNUSED(headers);
 
@@ -15,7 +19,7 @@ void OtherResourcesParser::parse(GumboOutput* output, const ResponseHeaders& hea
 		return;
 	}
 
-	std::vector<LinkInfo> linksInfo = GumboParsingHelpers::parsePageUrlList(output->root, false);
+	std::vector<LinkInfo> linksInfo = m_htmlParser->pageUrlList(false);
 
 	for (LinkInfo& linkInfo : linksInfo)
 	{

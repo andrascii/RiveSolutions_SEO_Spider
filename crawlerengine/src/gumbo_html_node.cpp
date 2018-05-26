@@ -183,7 +183,7 @@ GumboHtmlNode::GumboHtmlNode(GumboNode* node)
 
 IHtmlNode::TagId GumboHtmlNode::tagId() const
 {
-	ASSERT(m_node->v.element.tag == GUMBO_NODE_ELEMENT);
+	ASSERT(type() == IHtmlNode::NodeTypeElement);
 
 	return s_tagIdMapping[m_node->v.element.tag];
 }
@@ -219,11 +219,16 @@ QString GumboHtmlNode::attribute(const QByteArray& attributeName) const
 
 	const GumboAttribute* attr = gumbo_get_attribute(&m_node->v.element.attributes, attributeName.data());
 
-	return QString(attr->value);
+	return attr ? QString(attr->value) : QString();
 }
 
 bool GumboHtmlNode::hasAttribute(const QByteArray& attributeName) const
 {
+	if (!m_node)
+	{
+		return false;
+	}
+
 	ASSERT(type() == IHtmlNode::NodeTypeElement);
 	return gumbo_get_attribute(&m_node->v.element.attributes, attributeName.data()) != nullptr;
 }
@@ -233,12 +238,11 @@ GumboHtmlNode::operator bool() const
 	return m_node != nullptr;
 }
 
-HtmlNodeSharedPtr GumboHtmlNode::findSubNode(TagId tagId, unsigned startIndexWhithinParent) const
+IHtmlNodeSharedPtr GumboHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
 {
 	DEBUG_ASSERT(m_node->type == GUMBO_NODE_ELEMENT || m_node->type == GUMBO_NODE_DOCUMENT);
 
 	const GumboVector* children = &m_node->v.element.children;
-	GumboNode* searchingNode = nullptr;
 
 	DEBUG_ASSERT(startIndexWhithinParent <= children->length);
 
@@ -248,20 +252,19 @@ HtmlNodeSharedPtr GumboHtmlNode::findSubNode(TagId tagId, unsigned startIndexWhi
 
 		if (child->type == GUMBO_NODE_ELEMENT && s_tagIdMapping[child->v.element.tag] == tagId)
 		{
-			searchingNode = child;
-			break;
+			return std::make_shared<GumboHtmlNode>(child);
 		}
 	}
 
-	return std::make_shared<GumboHtmlNode>(searchingNode);
+	return IHtmlNodeSharedPtr(nullptr);
 }
 
-std::vector<HtmlNodeSharedPtr> GumboHtmlNode::subNodes(TagId tagId) const
+std::vector<IHtmlNodeSharedPtr> GumboHtmlNode::matchSubNodes(TagId tagId) const
 {
 	DEBUG_ASSERT(m_node->type == GUMBO_NODE_ELEMENT || m_node->type == GUMBO_NODE_DOCUMENT);
 
 	const GumboVector* children = &m_node->v.element.children;
-	std::vector<HtmlNodeSharedPtr> nodes;
+	std::vector<IHtmlNodeSharedPtr> nodes;
 
 	for (unsigned i = 0; i < children->length; ++i)
 	{
@@ -274,6 +277,142 @@ std::vector<HtmlNodeSharedPtr> GumboHtmlNode::subNodes(TagId tagId) const
 	}
 
 	return nodes;
+}
+
+std::vector<IHtmlNodeSharedPtr> GumboHtmlNode::matchSubNodesInDepth(TagId tagId) const
+{
+	std::vector<IHtmlNodeSharedPtr> result;
+
+	matchSubNodesInDepthHelper(result, m_node, [tagId](const IHtmlNode& node) 
+	{ 
+		return node.type() == IHtmlNode::NodeTypeElement && node.tagId() == tagId; 
+	});
+
+	return result;
+}
+
+std::vector<CrawlerEngine::IHtmlNodeSharedPtr> GumboHtmlNode::matchSubNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
+{
+	std::vector<IHtmlNodeSharedPtr> result;
+	matchSubNodesInDepthHelper(result, m_node, predicate);
+
+	return result;
+}
+
+std::vector<IHtmlNodeSharedPtr> GumboHtmlNode::children() const
+{
+	GumboVector* childrenGumboVector = &m_node->v.element.children;
+
+	std::vector<IHtmlNodeSharedPtr> result;
+	result.reserve(childrenGumboVector->length);
+
+	for (unsigned i = 0; i < childrenGumboVector->length; ++i)
+	{
+		result.push_back(std::make_shared<GumboHtmlNode>(static_cast<GumboNode*>(childrenGumboVector->data[i])));
+	}
+
+	return result;
+}
+
+void GumboHtmlNode::matchSubNodesInDepthHelper(std::vector<IHtmlNodeSharedPtr>& result, GumboNode* node, 
+	const std::function<bool(const IHtmlNode&)>& predicate) const
+{
+	GumboHtmlNode nodeWrapper(node);
+
+	if(predicate(nodeWrapper))
+	{
+		result.push_back(std::make_shared<GumboHtmlNode>(node));
+	}
+
+	if (node->type == GUMBO_NODE_ELEMENT)
+	{
+		GumboVector* children = &node->v.element.children;
+
+		for (unsigned int i = 0; i < children->length; ++i)
+		{
+			GumboNode* child = static_cast<GumboNode*>(children->data[i]);
+			matchSubNodesInDepthHelper(result, child, predicate);
+		}
+	}
+}
+
+QByteArray GumboHtmlNode::cutSubNodesAndGetPlainText() const
+{
+	QByteArray text;
+	cutAllTagsFromNodeHelper(m_node, text);
+
+	return text;
+}
+
+void GumboHtmlNode::cutAllTagsFromNodeHelper(GumboNode* node, QByteArray& result) const
+{
+	if (!node)
+	{
+		return;
+	}
+
+	if (node->type == GUMBO_NODE_TEXT)
+	{
+		result += QByteArray(GumboHtmlNode(node).text()) + " ";
+		return;
+	}
+
+	GumboVector* children = &node->v.element.children;
+
+	for (unsigned i = 0; i < children->length; ++i)
+	{
+		GumboNode* child = static_cast<GumboNode*>(children->data[i]);
+
+		if (child->type == GUMBO_NODE_ELEMENT || child->type == GUMBO_NODE_TEXT)
+		{
+			cutAllTagsFromNodeHelper(child, result);
+		}
+	}
+}
+
+IHtmlNodeSharedPtr GumboHtmlNode::childNodeByAttributeValue(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
+{
+	return childNodeByAttributesValues(tagId, std::map<const char*, const char*>{ expectedAttributes });
+}
+
+IHtmlNodeSharedPtr GumboHtmlNode::childNodeByAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
+{
+	if (!m_node || m_node->type != GUMBO_NODE_ELEMENT)
+	{
+		return nullptr;
+	}
+
+	GumboVector* children = &m_node->v.element.children;
+
+	for (unsigned int i = 0; i < children->length; ++i)
+	{
+		GumboNode* child = static_cast<GumboNode*>(children->data[i]);
+
+		if (!child || child->type != GUMBO_NODE_ELEMENT || s_tagIdMapping[child->v.element.tag] != tagId)
+		{
+			continue;
+		}
+
+		bool success = true;
+
+		for (const auto attr : expectedAttributes)
+		{
+			GumboAttribute* gumboAttr = gumbo_get_attribute(&child->v.element.attributes, attr.first);
+			success = success && gumboAttr && (strlen(attr.second) == 0 || QString(gumboAttr->value).toLower() == attr.second);
+
+			if (!success)
+			{
+				break;
+			}
+		}
+
+		if (success)
+		{
+			return std::make_shared<GumboHtmlNode>(child);
+		}
+	}
+
+	return IHtmlNodeSharedPtr(nullptr);
 }
 
 }

@@ -10,7 +10,7 @@ namespace CrawlerEngine
 class IPageParser
 {
 public:
-	virtual void parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page) = 0;
+	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& page) = 0;
 };
 
 }

@@ -10,14 +10,16 @@
 #include "other_resources_parser.h"
 #include "base_url_parser.h"
 #include "status_code.h"
-#include "gumbo_parsing_helpers.h"
 #include "download_response.h"
+#include "gumbo_html_parser.h"
+#include "myhtml_parser.h"
 
 namespace CrawlerEngine
 {
 
 PageDataCollector::PageDataCollector(QObject* parent)
 	: QObject(parent)
+	, m_htmlParser(std::make_shared<MyHtmlParser>())
 {
 }
 
@@ -40,24 +42,14 @@ std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const 
 
 	const auto collectEachPageData = [&](const Hop& hop, ParsedPagePtr& page)
 	{
-		QByteArray decodedHtmlPage;
+		m_htmlParser->parseHtmlPage(hop.body(), hop.responseHeaders());
 
-		if (page->resourceType == ResourceType::ResourceHtml)
-		{
-			decodedHtmlPage = GumboParsingHelpers::decodeHtmlPage(hop.body(), hop.responseHeaders());
-
-		#ifdef QT_DEBUG
-			page->rawResponse = qCompress(decodedHtmlPage, 9);
-		#endif
-
-		}
-		else if (page->resourceType == ResourceType::ResourceImage)
+		if (page->resourceType == ResourceType::ResourceImage)
 		{
 			page->rawResponse = hop.body();
 		}
 
-		GumboOutputCreatorDestroyerGuard gumboOutput(&kGumboDefaultOptions, decodedHtmlPage);
-		collectParsedPageData(gumboOutput.output(), hop.responseHeaders(), page);
+		m_parser.parse(hop.responseHeaders(), page);
 	};
 
 	for (std::size_t i = 0; i < pages.size(); ++i)
@@ -72,8 +64,8 @@ void PageDataCollector::applyOptions()
 {
 	m_parser.clear();
 
-	m_parser.addParser(std::make_shared<BaseUrlParser>());
-	m_parser.addParser(std::make_shared<HtmlResourcesParser>());
+	m_parser.addParser(std::make_shared<BaseUrlParser>(m_htmlParser.get()));
+	m_parser.addParser(std::make_shared<HtmlResourcesParser>(m_htmlParser.get()));
 
 	if (m_crawlerOptionsData.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{
@@ -165,11 +157,6 @@ void PageDataCollector::collectReplyData(const Hop& hop, ParsedPagePtr& page) co
 	}
 }
 
-void PageDataCollector::collectParsedPageData(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
-{
-	m_parser.parse(output, headers, page);
-}
-
 void PageDataCollector::setResourceType(ParsedPagePtr& page) const
 {
 	if (page->contentType.contains("javascript"))
@@ -201,27 +188,27 @@ std::shared_ptr<IPageParser> PageDataCollector::createParser(ParserType parserTy
 	{
 		case JavaScriptResourcesParserType:
 		{
-			return std::make_shared<JsResourcesParser>();
+			return std::make_shared<JsResourcesParser>(m_htmlParser.get());
 		}
 		case CssResourcesParserType:
 		{
-			return std::make_shared<CssResourcesParser>();
+			return std::make_shared<CssResourcesParser>(m_htmlParser.get());
 		}
 		case ImagesResourcesParserType:
 		{
-			return std::make_shared<ImagesResourcesParser>();
+			return std::make_shared<ImagesResourcesParser>(m_htmlParser.get());
 		}
 		case VideoResourcesParserType:
 		{
-			return std::make_shared<VideoResourcesParser>();
+			return std::make_shared<VideoResourcesParser>(m_htmlParser.get());
 		}
 		case FlashResourcesParserType:
 		{
-			return std::make_shared<FlashResourcesParser>();
+			return std::make_shared<FlashResourcesParser>(m_htmlParser.get());
 		}
 		case OtherResourcesParserType:
 		{
-			return std::make_shared<OtherResourcesParser>();
+			return std::make_shared<OtherResourcesParser>(m_htmlParser.get());
 		}
 		default:
 		{

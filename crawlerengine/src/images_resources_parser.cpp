@@ -1,56 +1,63 @@
 #include "images_resources_parser.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"
-#include "gumbo_parsing_helpers.h"
+#include "ihtml_parser.h"
 
 namespace CrawlerEngine
 {
 
-ImagesResourcesParser::ImagesResourcesParser()
+ImagesResourcesParser::ImagesResourcesParser(IHtmlParser* htmlParser)
+	: m_htmlParser(htmlParser)
+	, m_regExp("[\\n\\t]+")
 {
 	addParser(std::make_shared<DataResourcesParser>(ResourceType::ResourceImage));
 }
 
-void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& headers, ParsedPagePtr& page)
+void ImagesResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}
 
-	auto predicate = [](const GumboNode* node)
+	struct ImageAttributeHandle
 	{
-		return node &&
-			node->type == GUMBO_NODE_ELEMENT &&
-			node->v.element.tag == GUMBO_TAG_IMG &&
-			gumbo_get_attribute(&node->v.element.attributes, "src");
+		Url sourceAttributeUrl;
+		QString altAttributeValue;
 	};
 
-	auto resultGetter = [](const GumboNode* node)
+	std::vector<IHtmlNodeSharedPtr> imgTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdImg);
+
+	const auto isBadImgTag = [](const IHtmlNodeSharedPtr& imgTag)
 	{
-		const QRegularExpression regExp("[\\n\\t]+");
+		if (imgTag->type() != IHtmlNode::NodeTypeElement)
+		{
+			return true;
+		}
 
-		const GumboAttribute* src = gumbo_get_attribute(&node->v.element.attributes, "src");
-		const GumboAttribute* alt = gumbo_get_attribute(&node->v.element.attributes, "alt");
-
-		const QString altVal = alt == nullptr ? QString() : alt->value;
-		const Url url = QString(src->value).remove(regExp);
-
-		return std::make_pair(url, altVal);
+		return !imgTag->hasAttribute("src");
 	};
 
-	std::vector<std::pair<Url, QString>> urls = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
+	imgTags.erase(std::remove_if(imgTags.begin(), imgTags.end(), isBadImgTag), imgTags.end());
 
-	for (std::pair<Url, QString>& url : urls)
+	std::vector<ImageAttributeHandle> imageTagHandles;
+	imageTagHandles.reserve(imgTags.size());
+
+	for (const IHtmlNodeSharedPtr& imgTag : imgTags)
 	{
-		url.first = PageParserHelpers::resolveUrl(page->baseUrl, url.first);
+		imageTagHandles.push_back(ImageAttributeHandle{ imgTag->attribute("src").remove(m_regExp), imgTag->attribute("alt").remove(m_regExp) });
+	}
 
-		const bool dataResource = url.first.toDisplayString().startsWith(QString("data:"));
+	for (ImageAttributeHandle& imageTagHandle : imageTagHandles)
+	{
+		imageTagHandle.sourceAttributeUrl = PageParserHelpers::resolveUrl(page->baseUrl, imageTagHandle.sourceAttributeUrl);
+
+		const bool dataResource = imageTagHandle.sourceAttributeUrl.toDisplayString().startsWith(QString("data:"));
 
 		const ResourceOnPage imageResource
 		{
 			ResourceType::ResourceImage,
-			LinkInfo{ url.first, LinkParameter::DofollowParameter, url.second, dataResource, ResourceSource::SourceTagImg }
+			LinkInfo{ imageTagHandle.sourceAttributeUrl, LinkParameter::DofollowParameter, imageTagHandle.altAttributeValue, dataResource, ResourceSource::SourceTagImg }
 		};
 
 		if (page->allResourcesOnPage.find(imageResource) == page->allResourcesOnPage.end())
@@ -59,7 +66,7 @@ void ImagesResourcesParser::parse(GumboOutput* output, const ResponseHeaders& he
 		}
 	}
 
-	CompoundParser::parse(output, headers, page);
+	CompoundParser::parse(headers, page);
 }
 
 }
