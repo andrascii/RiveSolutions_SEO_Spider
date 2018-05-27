@@ -11,6 +11,7 @@ struct DownloadResponse;
 class ResponseHeaders;
 class Hop;
 class IHtmlParser;
+class HopsChain;
 
 class PageDataCollector : public QObject
 {
@@ -20,7 +21,7 @@ public:
 	PageDataCollector(QObject* parent = nullptr);
 
 	void setOptions(const CrawlerOptionsData& crawlerOptions) noexcept;
-	std::vector<ParsedPagePtr> collectPageDataFromResponse(const DownloadResponse& response);
+	std::vector<ParsedPagePtr> collectPageDataFromResponse(const HopsChain& hopsChain);
 
 private:
 	static Url resolveRedirectUrl(const Hop& hop);

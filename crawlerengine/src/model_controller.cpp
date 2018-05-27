@@ -224,8 +224,8 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 	if (!workerResult.isRefreshResult())
 	{
-		DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
-			data()->size(StorageType::CrawledUrlStorageType) == 1);
+		//DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
+		//	data()->size(StorageType::CrawledUrlStorageType) == 1);
 		
 		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
 			!workerResult.incomingPage()->isThisExternalPage ||

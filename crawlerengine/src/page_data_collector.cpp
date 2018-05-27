@@ -30,14 +30,14 @@ void PageDataCollector::setOptions(const CrawlerOptionsData& crawlerOptionsData)
 	applyOptions();
 }
 
-std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const DownloadResponse& response)
+std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const HopsChain& hopsChain)
 {
-	std::vector<ParsedPagePtr> pages(response.hopsChain.length());
+	std::vector<ParsedPagePtr> pages(hopsChain.length());
 	std::generate(pages.begin(), pages.end(), [] { return std::make_shared<ParsedPage>(); });
 
 	for (std::size_t i = 0; i < pages.size(); ++i)
 	{
-		collectReplyData(response.hopsChain[i], pages[i]);
+		collectReplyData(hopsChain[i], pages[i]);
 	}
 
 	const auto collectEachPageData = [&](const Hop& hop, ParsedPagePtr& page)
@@ -54,7 +54,7 @@ std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const 
 
 	for (std::size_t i = 0; i < pages.size(); ++i)
 	{
-		collectEachPageData(response.hopsChain[i], pages[i]);
+		collectEachPageData(hopsChain[i], pages[i]);
 	}
 
 	return pages;

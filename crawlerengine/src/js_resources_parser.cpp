@@ -37,9 +37,9 @@ void JsResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& pag
 		scriptSrcValues.emplace_back(scriptTag->attribute("src").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, scriptSrcValues);
+	PageParserHelpers::resolveUrlList(page->baseUrl, scriptSrcValues);
 
-	for (const Url& url : resolvedUrls)
+	for (const Url& url : scriptSrcValues)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

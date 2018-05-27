@@ -43,9 +43,9 @@ void VideoResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& 
 		videoResourceUrls.emplace_back(videoTag->attribute("src").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->url, videoResourceUrls);
+	PageParserHelpers::resolveUrlList(page->url, videoResourceUrls);
 
-	for (const Url& url : resolvedUrls)
+	for (const Url& url : videoResourceUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

@@ -67,9 +67,9 @@ void FlashResourcesParser::parseFlashResourcesV1(ParsedPagePtr& page) noexcept
 		sourceUrls.emplace_back(embedTag->attribute("src").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedSourceUrls = PageParserHelpers::resolveUrlList(page->baseUrl, sourceUrls);
+	PageParserHelpers::resolveUrlList(page->baseUrl, sourceUrls);
 
-	for (const Url& url : resolvedSourceUrls)
+	for (const Url& url : sourceUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
@@ -119,9 +119,9 @@ void FlashResourcesParser::parseFlashResourcesV2(ParsedPagePtr& page) noexcept
 		dataAttributeUrls.emplace_back(embedTag->attribute("data").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedDataAttributeUrls = PageParserHelpers::resolveUrlList(page->baseUrl, dataAttributeUrls);
+	PageParserHelpers::resolveUrlList(page->baseUrl, dataAttributeUrls);
 
-	for (const Url& url : resolvedDataAttributeUrls)
+	for (const Url& url : dataAttributeUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
@@ -187,9 +187,9 @@ void FlashResourcesParser::parseFlashResourcesV3(ParsedPagePtr& page) noexcept
 		flashResourceUrls.emplace_back(paramChildNode->attribute("src").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, flashResourceUrls);
+	PageParserHelpers::resolveUrlList(page->baseUrl, flashResourceUrls);
 
-	for (const Url& url : resolvedUrls)
+	for (const Url& url : flashResourceUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

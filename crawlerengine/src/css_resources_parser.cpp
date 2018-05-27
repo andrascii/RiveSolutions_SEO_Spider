@@ -45,9 +45,9 @@ void CssResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& pa
 		linksHrefValues.emplace_back(linkTag->attribute("href").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(parsedPage->baseUrl, linksHrefValues);
+	PageParserHelpers::resolveUrlList(parsedPage->baseUrl, linksHrefValues);
 
-	for (const Url& url : resolvedUrls)
+	for (const Url& url : linksHrefValues)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
