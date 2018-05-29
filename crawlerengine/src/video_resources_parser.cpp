@@ -20,14 +20,14 @@ void VideoResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& 
 		return;
 	}
 
-	std::vector<IHtmlNodeSharedPtr> videoTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdVideo);
+	std::vector<IHtmlNodeCountedPtr> videoTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdVideo);
 
 	std::vector<Url> videoResourceUrls;
 	videoResourceUrls.reserve(videoTags.size());
 
-	for (const IHtmlNodeSharedPtr& videoTag : videoTags)
+	for (const IHtmlNodeCountedPtr& videoTag : videoTags)
 	{
-		IHtmlNodeSharedPtr paramChildNode = videoTag->childNodeByAttributeValue(IHtmlNode::TagIdSource, std::make_pair("src", ""));
+		IHtmlNodeCountedPtr paramChildNode = videoTag->childNodeByAttributeValue(IHtmlNode::TagIdSource, std::make_pair("src", ""));
 
 		if (paramChildNode)
 		{

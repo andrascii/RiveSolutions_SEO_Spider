@@ -26,9 +26,9 @@ void ImagesResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr&
 		QString altAttributeValue;
 	};
 
-	std::vector<IHtmlNodeSharedPtr> imgTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdImg);
+	std::vector<IHtmlNodeCountedPtr> imgTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdImg);
 
-	const auto isBadImgTag = [](const IHtmlNodeSharedPtr& imgTag)
+	const auto isBadImgTag = [](const IHtmlNodeCountedPtr& imgTag)
 	{
 		if (imgTag->type() != IHtmlNode::NodeTypeElement)
 		{
@@ -43,7 +43,7 @@ void ImagesResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr&
 	std::vector<ImageAttributeHandle> imageTagHandles;
 	imageTagHandles.reserve(imgTags.size());
 
-	for (const IHtmlNodeSharedPtr& imgTag : imgTags)
+	for (const IHtmlNodeCountedPtr& imgTag : imgTags)
 	{
 		imageTagHandles.push_back(ImageAttributeHandle{ imgTag->attribute("src").remove(m_regExp), imgTag->attribute("alt").remove(m_regExp) });
 	}

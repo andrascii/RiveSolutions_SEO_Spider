@@ -15,7 +15,7 @@ void FramesDetectorParser::parse(const ResponseHeaders& headers, ParsedPagePtr& 
 {
 	Q_UNUSED(headers);
 
-	std::vector<IHtmlNodeSharedPtr> frames = m_htmlParser->matchNodesInDepth([](const IHtmlNode& node)
+	std::vector<IHtmlNodeCountedPtr> frames = m_htmlParser->matchNodesInDepth([](const IHtmlNode& node)
 	{ 
 		return node.type() == IHtmlNode::NodeTypeElement &&
 			(node.tagId() == IHtmlNode::TagIdFrame || node.tagId() == IHtmlNode::TagIdFrameSet);

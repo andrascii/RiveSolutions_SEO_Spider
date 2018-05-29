@@ -14,7 +14,7 @@ void BaseUrlParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	Q_UNUSED(headers);
 
-	IHtmlNodeSharedPtr headTagNode = m_htmlParser->firstMatchNode(IHtmlNode::TagIdHead);
+	IHtmlNodeCountedPtr headTagNode = m_htmlParser->firstMatchNode(IHtmlNode::TagIdHead);
 
 	if (!headTagNode)
 	{
@@ -22,7 +22,7 @@ void BaseUrlParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 		return;
 	}
 
-	IHtmlNodeSharedPtr baseTagNode = headTagNode->firstMatchSubNode(IHtmlNode::TagIdBase);
+	IHtmlNodeCountedPtr baseTagNode = headTagNode->firstMatchSubNode(IHtmlNode::TagIdBase);
 
 	if (baseTagNode && baseTagNode->hasAttribute("href"))
 	{

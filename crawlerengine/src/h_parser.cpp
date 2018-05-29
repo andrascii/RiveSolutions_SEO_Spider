@@ -25,12 +25,12 @@ void HParser::parse(const ResponseHeaders& headers, ParsedPagePtr& parsedPage)
 
 void HParser::parseH1(ParsedPagePtr& parsedPage) noexcept
 {
-	std::vector<IHtmlNodeSharedPtr> h1Tags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdH1);
+	std::vector<IHtmlNodeCountedPtr> h1Tags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdH1);
 
 	std::vector<QByteArray> h1TagsValues;
 	h1TagsValues.reserve(h1Tags.size());
 
-	for (const IHtmlNodeSharedPtr& h1Tag : h1Tags)
+	for (const IHtmlNodeCountedPtr& h1Tag : h1Tags)
 	{
 		h1TagsValues.push_back(h1Tag->text());
 	}
@@ -52,12 +52,12 @@ void HParser::parseH1(ParsedPagePtr& parsedPage) noexcept
 
 void HParser::parseH2(ParsedPagePtr& parsedPage) noexcept
 {
-	std::vector<IHtmlNodeSharedPtr> h2Tags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdH2);
+	std::vector<IHtmlNodeCountedPtr> h2Tags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdH2);
 
 	std::vector<QByteArray> h2TagsValues;
 	h2TagsValues.reserve(h2Tags.size());
 
-	for (const IHtmlNodeSharedPtr& h2Tag : h2Tags)
+	for (const IHtmlNodeCountedPtr& h2Tag : h2Tags)
 	{
 		h2TagsValues.push_back(h2Tag->text());
 	}
