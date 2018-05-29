@@ -114,8 +114,8 @@ add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E
-        env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}"
-          --release --no-translations "${TargetPackagePath}/data/"
+        env PATH="${_qt_bin_dir}\;%path%" "${WINDEPLOYQT_EXECUTABLE}"
+          --release --no-translations --compiler-runtime "${TargetPackagePath}/data/"
     COMMENT "Running windeployqt..."
 )
 
