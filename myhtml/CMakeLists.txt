@@ -5,13 +5,13 @@ project(myhtml)
 ################
 ## options
 #########################
-option(MyHTML_BUILD_WITHOUT_THREADS "Build without POSIX Threads" OFF)
+option(MyHTML_BUILD_WITHOUT_THREADS "Build without POSIX Threads" ON)
 option(MyCORE_BUILD_WITHOUT_THREADS "Build MyCORE without POSIX Threads" OFF)
 option(MyHTML_BUILD_SHARED "Build shared library" ON)
 option(MyHTML_BUILD_STATIC "Build static library" ON)
 option(MyHTML_INSTALL_HEADER "Install header files" ON)
 
-SET(CMAKE_USE_PTHREADS_INIT 1)
+#SET(CMAKE_USE_PTHREADS_INIT 1)
 
 ################
 ## dependencies

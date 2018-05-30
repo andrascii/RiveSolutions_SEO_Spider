@@ -9,3 +9,4 @@ set BOOST_ROOT=%SS_DEPS%\boost
 set path=%SS_DEPS%\icu\icu_%SS_PLATFORM%\lib;%path%
 cmake -G "Visual Studio 15 2017 Win64" ..
 msbuild.exe seospider.sln /t:Build /p:Configuration=Release;Platform=x64
+msbuild.exe .\seospiderinstaller\seospiderinstaller.vcxproj /t:Build /p:Configuration=Release;Platform=x64

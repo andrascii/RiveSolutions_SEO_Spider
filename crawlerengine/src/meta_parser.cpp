@@ -79,9 +79,9 @@ void MetaParser::parseMetaContentType(ParsedPagePtr& parsedPage) noexcept
 
 	//////////////////////////////////////////////////////////////////////////
 
-	std::vector<IHtmlNodeSharedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
+	std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
-	const auto isBadMetaTag = [](const IHtmlNodeSharedPtr& metaTag)
+	const auto isBadMetaTag = [](const IHtmlNodeCountedPtr& metaTag)
 	{
 		const bool hasValidHttpEquivAttributeValue = metaTag->hasAttribute("http-equiv") &&
 			metaTag->attribute("http-equiv").toLower().trimmed() == "content-type";
@@ -99,7 +99,7 @@ void MetaParser::parseMetaContentType(ParsedPagePtr& parsedPage) noexcept
 	std::vector<QString> contentAttributeValues;
 	contentAttributeValues.reserve(metaTags.size());
 
-	for (const IHtmlNodeSharedPtr& metaTag : metaTags)
+	for (const IHtmlNodeCountedPtr& metaTag : metaTags)
 	{
 		contentAttributeValues.emplace_back(metaTag->attribute("content"));
 	}
@@ -166,9 +166,9 @@ void MetaParser::parseMetaRefresh(ParsedPagePtr& parsedPage) noexcept
 
 	//////////////////////////////////////////////////////////////////////////
 
-	std::vector<IHtmlNodeSharedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
+	std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
-	const auto isBadMetaTag = [](const IHtmlNodeSharedPtr& metaTag)
+	const auto isBadMetaTag = [](const IHtmlNodeCountedPtr& metaTag)
 	{
 		const bool hasValidHttpEquivAttributeValue = metaTag->hasAttribute("http-equiv") &&
 			metaTag->attribute("http-equiv").toLower().trimmed() == "refresh";
@@ -181,7 +181,7 @@ void MetaParser::parseMetaRefresh(ParsedPagePtr& parsedPage) noexcept
 	std::vector<QString> contentAttributeValues;
 	contentAttributeValues.reserve(metaTags.size());
 
-	for (const IHtmlNodeSharedPtr& metaTag : metaTags)
+	for (const IHtmlNodeCountedPtr& metaTag : metaTags)
 	{
 		contentAttributeValues.emplace_back(metaTag->attribute("content"));
 	}
@@ -251,9 +251,9 @@ void MetaParser::parseMetaDescription(ParsedPagePtr& parsedPage) noexcept
 
 	//////////////////////////////////////////////////////////////////////////
 
-	std::vector<IHtmlNodeSharedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
+	std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
-	const auto isBadMetaTag = [](const IHtmlNodeSharedPtr& metaTag)
+	const auto isBadMetaTag = [](const IHtmlNodeCountedPtr& metaTag)
 	{
 		const bool hasValidAttributeValue = metaTag->hasAttribute("name") &&
 			metaTag->attribute("name").toLower().trimmed() == "description";
@@ -271,7 +271,7 @@ void MetaParser::parseMetaDescription(ParsedPagePtr& parsedPage) noexcept
 	std::vector<QString> contentAttributeValues;
 	contentAttributeValues.reserve(metaTags.size());
 
-	for (const IHtmlNodeSharedPtr& metaTag : metaTags)
+	for (const IHtmlNodeCountedPtr& metaTag : metaTags)
 	{
 		contentAttributeValues.emplace_back(QString(metaTag->attribute("content")).remove(m_eraseCharsRegExp));
 	}
@@ -315,9 +315,9 @@ void MetaParser::parseMetaKeywords(ParsedPagePtr& parsedPage) noexcept
 
 	///////////////////////////////////////////////////////////////////////////
 
-	std::vector<IHtmlNodeSharedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
+	std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
-	const auto isBadMetaTag = [](const IHtmlNodeSharedPtr& metaTag)
+	const auto isBadMetaTag = [](const IHtmlNodeCountedPtr& metaTag)
 	{
 		const bool hasValidAttributeValue = metaTag->hasAttribute("name") &&
 			metaTag->attribute("name").toLower().trimmed() == "keywords";
@@ -335,7 +335,7 @@ void MetaParser::parseMetaKeywords(ParsedPagePtr& parsedPage) noexcept
 	std::vector<QString> contentAttributeValues;
 	contentAttributeValues.reserve(metaTags.size());
 
-	for (const IHtmlNodeSharedPtr& metaTag : metaTags)
+	for (const IHtmlNodeCountedPtr& metaTag : metaTags)
 	{
 		contentAttributeValues.emplace_back(QString(metaTag->attribute("content")).remove(m_eraseCharsRegExp));
 	}
@@ -397,9 +397,9 @@ void MetaParser::parseMetaRobots(const ResponseHeaders& headers, ParsedPagePtr& 
 // 
 // 		const std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
 
-		std::vector<IHtmlNodeSharedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
+		std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
-		const auto isBadMetaTag = [&userAgentStr](const IHtmlNodeSharedPtr& metaTag)
+		const auto isBadMetaTag = [&userAgentStr](const IHtmlNodeCountedPtr& metaTag)
 		{
 			const bool hasValidAttributeValue = metaTag->hasAttribute("name") &&
 				metaTag->attribute("name").toLower().trimmed() == userAgentStr;
@@ -417,7 +417,7 @@ void MetaParser::parseMetaRobots(const ResponseHeaders& headers, ParsedPagePtr& 
 		std::vector<QString> contentAttributeValues;
 		contentAttributeValues.reserve(metaTags.size());
 
-		for (const IHtmlNodeSharedPtr& metaTag : metaTags)
+		for (const IHtmlNodeCountedPtr& metaTag : metaTags)
 		{
 			contentAttributeValues.emplace_back(QString(metaTag->attribute("content")).trimmed().remove(m_eraseCharsRegExp));
 		}

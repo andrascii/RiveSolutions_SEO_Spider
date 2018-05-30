@@ -26,7 +26,6 @@
 #include "license_service.h"
 #include "common_constants.h"
 
-
 namespace CrawlerEngine
 {
 

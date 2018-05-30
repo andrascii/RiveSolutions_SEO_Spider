@@ -100,11 +100,11 @@ void GumboHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHe
 
 QByteArray GumboHtmlParser::identifyHtmlPageContentType() const
 {
-	IHtmlNodeSharedPtr head = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
+	IHtmlNodeCountedPtr head = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
 
 	DEBUG_ASSERT(head->type() == IHtmlNode::NodeTypeElement && head->tagId() == IHtmlNode::TagIdHead);
 
-	std::vector<IHtmlNodeSharedPtr> metaTags = head->matchSubNodes(IHtmlNode::TagIdMeta);
+	std::vector<IHtmlNodeCountedPtr> metaTags = head->matchSubNodes(IHtmlNode::TagIdMeta);
 
 	for (unsigned i = 0; i < metaTags.size(); ++i)
 	{
@@ -283,32 +283,32 @@ LinkInfo GumboHtmlParser::getLinkRelUrl(const GumboNode* node, const char* relVa
 	return LinkInfo{ Url(), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceInvalid };
 }
 
-IHtmlNodeSharedPtr GumboHtmlParser::firstMatchNode(IHtmlNode::TagId tagId) const
+IHtmlNodeCountedPtr GumboHtmlParser::firstMatchNode(IHtmlNode::TagId tagId) const
 {
 	return m_rootNode.firstMatchSubNode(tagId);
 }
 
-std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodes(IHtmlNode::TagId tagId) const
+std::vector<IHtmlNodeCountedPtr> GumboHtmlParser::matchNodes(IHtmlNode::TagId tagId) const
 {
 	return m_rootNode.matchSubNodes(tagId);
 }
 
-std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodesInDepth(IHtmlNode::TagId tagId) const
+std::vector<IHtmlNodeCountedPtr> GumboHtmlParser::matchNodesInDepth(IHtmlNode::TagId tagId) const
 {
 	return m_rootNode.matchSubNodesInDepth(tagId);
 }
 
-std::vector<IHtmlNodeSharedPtr> GumboHtmlParser::matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
+std::vector<IHtmlNodeCountedPtr> GumboHtmlParser::matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
 {
 	return m_rootNode.matchSubNodesInDepth(predicate);
 }
 
-IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
+IHtmlNodeCountedPtr GumboHtmlParser::findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
 {
 	return m_rootNode.childNodeByAttributeValue(tagId, expectedAttributes);
 }
 
-IHtmlNodeSharedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
+IHtmlNodeCountedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
 {
 	return m_rootNode.childNodeByAttributesValues(tagId, expectedAttributes);
 }

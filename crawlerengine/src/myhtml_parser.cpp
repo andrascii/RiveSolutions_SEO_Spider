@@ -260,34 +260,34 @@ std::vector<LinkInfo> MyHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
 	return result;
 }
 
-IHtmlNodeSharedPtr MyHtmlParser::firstMatchNode(IHtmlNode::TagId tagId) const
+IHtmlNodeCountedPtr MyHtmlParser::firstMatchNode(IHtmlNode::TagId tagId) const
 {
 	return m_rootNode.firstMatchSubNode(tagId);
 }
 
-std::vector<IHtmlNodeSharedPtr> MyHtmlParser::matchNodes(IHtmlNode::TagId tagId) const
+std::vector<IHtmlNodeCountedPtr> MyHtmlParser::matchNodes(IHtmlNode::TagId tagId) const
 {
 	return m_rootNode.matchSubNodes(tagId);
 }
 
-std::vector<IHtmlNodeSharedPtr> MyHtmlParser::matchNodesInDepth(IHtmlNode::TagId tagId) const
+std::vector<IHtmlNodeCountedPtr> MyHtmlParser::matchNodesInDepth(IHtmlNode::TagId tagId) const
 {
 	return m_rootNode.matchSubNodesInDepth(tagId);
 }
 
-std::vector<IHtmlNodeSharedPtr> MyHtmlParser::matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
+std::vector<IHtmlNodeCountedPtr> MyHtmlParser::matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
 {
 	return m_rootNode.matchSubNodesInDepth(predicate);
 }
 
-IHtmlNodeSharedPtr MyHtmlParser::findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
+IHtmlNodeCountedPtr MyHtmlParser::findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
 {
 	ASSERT(m_rootNode);
 
 	return m_rootNode.childNodeByAttributeValue(tagId, expectedAttributes);
 }
 
-IHtmlNodeSharedPtr MyHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
+IHtmlNodeCountedPtr MyHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
 {
 	ASSERT(m_rootNode);
 
@@ -382,7 +382,7 @@ myencoding_t MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
 
 QByteArray MyHtmlParser::htmlPageContentType() const
 {
-	IHtmlNodeSharedPtr headNode = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
+	IHtmlNodeCountedPtr headNode = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
 
 	if (!headNode)
 	{

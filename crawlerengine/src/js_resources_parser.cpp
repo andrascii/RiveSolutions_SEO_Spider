@@ -20,9 +20,9 @@ void JsResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& pag
 		return;
 	}
 
-	std::vector<IHtmlNodeSharedPtr> scriptTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdScript);
+	std::vector<IHtmlNodeCountedPtr> scriptTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdScript);
 
-	const auto isBadScriptTag = [](const IHtmlNodeSharedPtr& scriptTag)
+	const auto isBadScriptTag = [](const IHtmlNodeCountedPtr& scriptTag)
 	{
 		return !scriptTag->hasAttribute("src");
 	};
@@ -32,14 +32,14 @@ void JsResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& pag
 	std::vector<Url> scriptSrcValues;
 	scriptSrcValues.reserve(scriptTags.size());
 
-	for (const IHtmlNodeSharedPtr& scriptTag : scriptTags)
+	for (const IHtmlNodeCountedPtr& scriptTag : scriptTags)
 	{
 		scriptSrcValues.emplace_back(scriptTag->attribute("src").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, scriptSrcValues);
+	PageParserHelpers::resolveUrlList(page->baseUrl, scriptSrcValues);
 
-	for (const Url& url : resolvedUrls)
+	for (const Url& url : scriptSrcValues)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

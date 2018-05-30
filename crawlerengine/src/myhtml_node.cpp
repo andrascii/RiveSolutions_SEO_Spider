@@ -241,7 +241,7 @@ MyHtmlNode::operator bool() const
 	return m_node != nullptr;
 }
 
-IHtmlNodeSharedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
+IHtmlNodeCountedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
 {
 	startIndexWhithinParent;
 
@@ -258,7 +258,7 @@ IHtmlNodeSharedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startInde
 
 		if (s_tagIdMapping[tagIdentifier] == tagId)
 		{
-			return std::make_shared<MyHtmlNode>(node);
+			return Common::make_counted<MyHtmlNode>(node);
 		}
 
 		node = myhtml_node_next(node);
@@ -267,10 +267,10 @@ IHtmlNodeSharedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startInde
 	return nullptr;
 }
 
-std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodes(TagId tagId) const
+std::vector<IHtmlNodeCountedPtr> MyHtmlNode::matchSubNodes(TagId tagId) const
 {
 	myhtml_tree_node_t* node = m_node;
-	std::vector<IHtmlNodeSharedPtr> result;
+	std::vector<IHtmlNodeCountedPtr> result;
 
 	while (node)
 	{
@@ -278,7 +278,7 @@ std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodes(TagId tagId) const
 
 		if (s_tagIdMapping[tagIdentifier] == tagId)
 		{
-			result.push_back(std::make_shared<MyHtmlNode>(node));
+			result.push_back(Common::make_counted<MyHtmlNode>(node));
 		}
 
 		node = myhtml_node_next(node);
@@ -287,14 +287,14 @@ std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodes(TagId tagId) const
 	return result;
 }
 
-std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodesInDepth(TagId tagId) const
+std::vector<IHtmlNodeCountedPtr> MyHtmlNode::matchSubNodesInDepth(TagId tagId) const
 {
 	if (!m_node)
 	{
-		return std::vector<IHtmlNodeSharedPtr>();
+		return std::vector<IHtmlNodeCountedPtr>();
 	}
 
-	std::vector<IHtmlNodeSharedPtr> collection;
+	std::vector<IHtmlNodeCountedPtr> collection;
 
 	matchSubNodesInDepthHelper(myhtml_node_child(m_node), collection, [tagId](const IHtmlNode& node)
 	{
@@ -304,28 +304,28 @@ std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodesInDepth(TagId tagId) co
 	return collection;
 }
 
-std::vector<IHtmlNodeSharedPtr> MyHtmlNode::matchSubNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
+std::vector<IHtmlNodeCountedPtr> MyHtmlNode::matchSubNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const
 {
 	if (!m_node)
 	{
-		return std::vector<IHtmlNodeSharedPtr>();
+		return std::vector<IHtmlNodeCountedPtr>();
 	}
 
-	std::vector<IHtmlNodeSharedPtr> collection;
+	std::vector<IHtmlNodeCountedPtr> collection;
 	matchSubNodesInDepthHelper(myhtml_node_child(m_node), collection, predicate);
 	return collection;
 }
 
-std::vector<IHtmlNodeSharedPtr> MyHtmlNode::children() const
+std::vector<IHtmlNodeCountedPtr> MyHtmlNode::children() const
 {
 	const auto internalChildrenRepresentation = childrenInternal(m_node);
 
-	std::vector<IHtmlNodeSharedPtr> result;
+	std::vector<IHtmlNodeCountedPtr> result;
 	result.reserve(internalChildrenRepresentation.size());
 
 	for (auto* child : internalChildrenRepresentation)
 	{
-		result.emplace_back(std::make_shared<MyHtmlNode>(child));
+		result.emplace_back(Common::make_counted<MyHtmlNode>(child));
 	}
 
 	return result;
@@ -339,12 +339,12 @@ QByteArray MyHtmlNode::cutSubNodesAndGetPlainText() const
 	return result;
 }
 
-IHtmlNodeSharedPtr MyHtmlNode::childNodeByAttributeValue(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
+IHtmlNodeCountedPtr MyHtmlNode::childNodeByAttributeValue(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const
 {
 	return childNodeByAttributesValues(tagId, std::map<const char*, const char*>{ expectedAttributes });
 }
 
-IHtmlNodeSharedPtr MyHtmlNode::childNodeByAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
+IHtmlNodeCountedPtr MyHtmlNode::childNodeByAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const
 {
 	if (!m_node)
 	{
@@ -376,7 +376,7 @@ IHtmlNodeSharedPtr MyHtmlNode::childNodeByAttributesValues(TagId tagId, const st
 
 		if (success)
 		{
-			return std::make_shared<MyHtmlNode>(child);
+			return Common::make_counted<MyHtmlNode>(child);
 		}
 	}
 
@@ -384,13 +384,13 @@ IHtmlNodeSharedPtr MyHtmlNode::childNodeByAttributesValues(TagId tagId, const st
 }
 
 void MyHtmlNode::matchSubNodesInDepthHelper(myhtml_tree_node_t* node, 
-	std::vector<IHtmlNodeSharedPtr>& collection, const std::function<bool(const IHtmlNode&)>& predicate) const
+	std::vector<IHtmlNodeCountedPtr>& collection, const std::function<bool(const IHtmlNode&)>& predicate) const
 {
 	while (node)
 	{
 		if (predicate(MyHtmlNode(node)))
 		{
-			collection.push_back(std::make_shared<MyHtmlNode>(node));
+			collection.push_back(Common::make_counted<MyHtmlNode>(node));
 		}
 
 		myhtml_tree_node_t* child = myhtml_node_child(node);

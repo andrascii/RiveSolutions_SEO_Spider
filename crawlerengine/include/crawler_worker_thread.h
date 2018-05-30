@@ -9,11 +9,11 @@
 namespace CrawlerEngine
 {
 
-class IQueuedDownloader;
 class UniqueLinkStore;
 class OptionsLinkFilter;
 class PageDataCollector;
 class ILicenseService;
+class HopsChain;
 struct CrawlerOptionsData;
 struct DownloadResponse;
 
@@ -40,17 +40,14 @@ private slots:
 
 private:
 	void onStart();
-
 	std::vector<LinkInfo> schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
 	std::vector<LinkInfo> handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
-
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 	void onPageParsed(const WorkerResult& result) const noexcept;
-
 	void fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const;
-
 	std::optional<CrawlerRequest> prepareUnloadedPage() const;
 	void handlePage(ParsedPagePtr& page, bool isUrlAdded, DownloadRequestType requestType);
+	void handleResponseData(const HopsChain& hopsChain, DownloadRequestType requestType);
 
 private:
 	static std::atomic<size_t> s_trialLicenseSentLinksCounter;

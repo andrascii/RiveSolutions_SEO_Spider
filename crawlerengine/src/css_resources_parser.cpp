@@ -20,9 +20,9 @@ void CssResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& pa
 		return;
 	}
 
-	std::vector<IHtmlNodeSharedPtr> linkTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdLink);
+	std::vector<IHtmlNodeCountedPtr> linkTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdLink);
 
-	const auto isBadLinkTag = [](const IHtmlNodeSharedPtr& linkTag)
+	const auto isBadLinkTag = [](const IHtmlNodeCountedPtr& linkTag)
 	{
 		if (linkTag->type() != IHtmlNode::NodeTypeElement)
 		{
@@ -40,14 +40,14 @@ void CssResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& pa
 	std::vector<Url> linksHrefValues;
 	linksHrefValues.reserve(linkTags.size());
 
-	for (const IHtmlNodeSharedPtr& linkTag : linkTags)
+	for (const IHtmlNodeCountedPtr& linkTag : linkTags)
 	{
 		linksHrefValues.emplace_back(linkTag->attribute("href").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(parsedPage->baseUrl, linksHrefValues);
+	PageParserHelpers::resolveUrlList(parsedPage->baseUrl, linksHrefValues);
 
-	for (const Url& url : resolvedUrls)
+	for (const Url& url : linksHrefValues)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

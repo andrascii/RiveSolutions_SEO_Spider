@@ -139,7 +139,7 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 
 	CrawlerRequest crawlerRequest;
 	bool isUrlExtracted = false;
-	
+
 	m_reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(crawlerRequest);
 
 	if (!m_isRunning && !m_reloadPage)
@@ -208,7 +208,7 @@ std::vector<LinkInfo> CrawlerWorkerThread::schedulePageResourcesLoading(ParsedPa
 		parsedPage->allResourcesOnPage.insert(redirectedResource);
 	}
 
-	outlinks = PageParserHelpers::resolveUrlList(parsedPage->baseUrl, outlinks);
+	PageParserHelpers::resolveUrlList(parsedPage->baseUrl, outlinks);
 
 	std::vector<LinkInfo> blockedByRobotsTxtLinks = handlePageLinkList(outlinks, parsedPage->metaRobotsFlags, parsedPage);
 
@@ -352,52 +352,17 @@ std::vector<LinkInfo> CrawlerWorkerThread::handlePageLinkList(std::vector<LinkIn
 
 void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& response)
 {
-	Common::Finally reloadGuard([this] 
+	Common::Finally reloadGuard([this]
 	{ 
 		m_reloadPage = false; 
 	});
 
 	m_downloadRequester.reset();
 
-	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(response);
-
 	ASSERT(m_currentRequest.has_value());
 	const DownloadRequestType requestType = m_currentRequest.value().requestType;
 
-	bool checkUrl = false;
-	
-	fixDDOSGuardRedirectsIfNeeded(pages);
-
-	for (ParsedPagePtr& page : pages)
-	{
-		const bool isUrlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
-
-		handlePage(page, isUrlAdded, requestType);
-
-		checkUrl = true;
-	}
-
-	if (!m_isRunning && !m_reloadPage)
-	{
-		DEBUGLOG << "Set value to promise";
-
-		try
-		{
-			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
-		}
-		catch (const std::future_error& error)
-		{
-			if (error.code() == std::make_error_condition(std::future_errc::promise_already_satisfied))
-			{
-				DEBUG_ASSERT(!"At this stage promise must not be valid! Possibly problem in downloader!");
-			}
-			else
-			{
-				throw;
-			}
-		}
-	}
-
+	handleResponseData(response.hopsChain, requestType);
 	extractUrlAndDownload();
 }
 
@@ -515,6 +480,45 @@ void CrawlerWorkerThread::handlePage(ParsedPagePtr& page, bool isStoredInCrawled
 		onPageParsed(WorkerResult{ page, m_reloadPage, requestType });
 
 		std::for_each(blockedByRobotsTxtLinks.begin(), blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
+	}
+}
+
+void CrawlerWorkerThread::handleResponseData(const HopsChain& hopsChain, DownloadRequestType requestType)
+{
+	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(hopsChain);
+
+	bool checkUrl = false;
+
+	fixDDOSGuardRedirectsIfNeeded(pages);
+
+	for (ParsedPagePtr& page : pages)
+	{
+		const bool isUrlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
+
+		handlePage(page, isUrlAdded, requestType);
+
+		checkUrl = true;
+	}
+
+	if (!m_isRunning && !m_reloadPage)
+	{
+		DEBUGLOG << "Set value to promise";
+
+		try
+		{
+			m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
+		}
+		catch (const std::future_error& error)
+		{
+			if (error.code() == std::make_error_condition(std::future_errc::promise_already_satisfied))
+			{
+				DEBUG_ASSERT(!"At this stage promise must not be valid! Possibly problem in downloader!");
+			}
+			else
+			{
+				throw;
+			}
+		}
 	}
 }
 

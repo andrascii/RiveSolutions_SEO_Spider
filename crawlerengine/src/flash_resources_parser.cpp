@@ -42,9 +42,9 @@ void FlashResourcesParser::parseFlashResourcesV1(ParsedPagePtr& page) noexcept
 
 	DEBUG_ASSERT(page->baseUrl.isValid());
 
-	std::vector<IHtmlNodeSharedPtr> embedTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdEmbed);
+	std::vector<IHtmlNodeCountedPtr> embedTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdEmbed);
 
-	const auto isBadEmbedTag = [](const IHtmlNodeSharedPtr& embedTag)
+	const auto isBadEmbedTag = [](const IHtmlNodeCountedPtr& embedTag)
 	{
 		if (!embedTag->hasAttribute("src"))
 		{
@@ -62,14 +62,14 @@ void FlashResourcesParser::parseFlashResourcesV1(ParsedPagePtr& page) noexcept
 	std::vector<Url> sourceUrls;
 	sourceUrls.reserve(embedTags.size());
 
-	for (const IHtmlNodeSharedPtr& embedTag : embedTags)
+	for (const IHtmlNodeCountedPtr& embedTag : embedTags)
 	{
 		sourceUrls.emplace_back(embedTag->attribute("src").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedSourceUrls = PageParserHelpers::resolveUrlList(page->baseUrl, sourceUrls);
+	PageParserHelpers::resolveUrlList(page->baseUrl, sourceUrls);
 
-	for (const Url& url : resolvedSourceUrls)
+	for (const Url& url : sourceUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
@@ -94,9 +94,9 @@ void FlashResourcesParser::parseFlashResourcesV2(ParsedPagePtr& page) noexcept
 
 	DEBUG_ASSERT(page->baseUrl.isValid());
 
-	std::vector<IHtmlNodeSharedPtr> embedTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdEmbed);
+	std::vector<IHtmlNodeCountedPtr> embedTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdEmbed);
 
-	const auto isBadEmbedTag = [](const IHtmlNodeSharedPtr& embedTag)
+	const auto isBadEmbedTag = [](const IHtmlNodeCountedPtr& embedTag)
 	{
 		if (!embedTag->hasAttribute("data"))
 		{
@@ -114,14 +114,14 @@ void FlashResourcesParser::parseFlashResourcesV2(ParsedPagePtr& page) noexcept
 	std::vector<Url> dataAttributeUrls;
 	dataAttributeUrls.reserve(embedTags.size());
 
-	for (const IHtmlNodeSharedPtr& embedTag : embedTags)
+	for (const IHtmlNodeCountedPtr& embedTag : embedTags)
 	{
 		dataAttributeUrls.emplace_back(embedTag->attribute("data").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedDataAttributeUrls = PageParserHelpers::resolveUrlList(page->baseUrl, dataAttributeUrls);
+	PageParserHelpers::resolveUrlList(page->baseUrl, dataAttributeUrls);
 
-	for (const Url& url : resolvedDataAttributeUrls)
+	for (const Url& url : dataAttributeUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 
@@ -147,9 +147,9 @@ void FlashResourcesParser::parseFlashResourcesV3(ParsedPagePtr& page) noexcept
 
 	DEBUG_ASSERT(page->baseUrl.isValid());
 
-	std::vector<IHtmlNodeSharedPtr> objectTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdObject);
+	std::vector<IHtmlNodeCountedPtr> objectTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdObject);
 
-	const auto isBadObjectTag = [](const IHtmlNodeSharedPtr& objectTag)
+	const auto isBadObjectTag = [](const IHtmlNodeCountedPtr& objectTag)
 	{
 		const bool hasValidClassIdAttributeValue = objectTag->hasAttribute("classid") &&
 			objectTag->attribute("classid").toLower().trimmed() == s_classIdAttributeValueToken;
@@ -170,9 +170,9 @@ void FlashResourcesParser::parseFlashResourcesV3(ParsedPagePtr& page) noexcept
 	std::vector<Url> flashResourceUrls;
 	flashResourceUrls.reserve(objectTags.size());
 
-	for (const IHtmlNodeSharedPtr& objectTag : objectTags)
+	for (const IHtmlNodeCountedPtr& objectTag : objectTags)
 	{
-		IHtmlNodeSharedPtr paramChildNode = objectTag->childNodeByAttributeValue(IHtmlNode::TagIdParam, std::make_pair("movie", ""));
+		IHtmlNodeCountedPtr paramChildNode = objectTag->childNodeByAttributeValue(IHtmlNode::TagIdParam, std::make_pair("movie", ""));
 
 		if (paramChildNode)
 		{
@@ -187,9 +187,9 @@ void FlashResourcesParser::parseFlashResourcesV3(ParsedPagePtr& page) noexcept
 		flashResourceUrls.emplace_back(paramChildNode->attribute("src").trimmed().remove(m_regExp));
 	}
 
-	const std::vector<Url> resolvedUrls = PageParserHelpers::resolveUrlList(page->baseUrl, flashResourceUrls);
+	PageParserHelpers::resolveUrlList(page->baseUrl, flashResourceUrls);
 
-	for (const Url& url : resolvedUrls)
+	for (const Url& url : flashResourceUrls)
 	{
 		const bool dataResource = url.toDisplayString().startsWith(QString("data:"));
 

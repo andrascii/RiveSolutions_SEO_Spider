@@ -5,6 +5,8 @@ namespace CrawlerEngine
 
 Url PageParserHelpers::resolveRelativeUrl(const Url& relativeUrl, const Url& baseUrl)
 {
+	return baseUrl.resolved(relativeUrl);
+
 	Url result = relativeUrl;
 
 	if (result.toDisplayString().startsWith("//"))
@@ -80,30 +82,21 @@ Url PageParserHelpers::resolveRelativeUrl(const Url& relativeUrl, const Url& bas
 	return result;
 }
 
-std::vector<Url> PageParserHelpers::resolveUrlList(const Url& baseUrl, 
-	const std::vector<Url>& urlList) noexcept
+void PageParserHelpers::resolveUrlList(const Url& baseUrl, std::vector<Url>& urlList) noexcept
 {
-	std::vector<Url> result;
-
-	for (const Url& url : urlList)
+	for (Url& url : urlList)
 	{
-		result.push_back(resolveUrl(baseUrl, url));
+		url = resolveUrl(baseUrl, url);
 	}
 
-	return result;
 }
 
-std::vector<LinkInfo> PageParserHelpers::resolveUrlList(const Url& baseUrl,
-	const std::vector<LinkInfo>& linkList) noexcept
+void PageParserHelpers::resolveUrlList(const Url& baseUrl, std::vector<LinkInfo>& linkList) noexcept
 {
-	std::vector<LinkInfo> result = linkList;
-
-	for (LinkInfo& link : result)
+	for (LinkInfo& link : linkList)
 	{
 		link.url = resolveUrl(baseUrl, link.url);
 	}
-
-	return result;
 }
 
 Url PageParserHelpers::resolveUrl(const Url& baseUrl, const Url& url) noexcept
