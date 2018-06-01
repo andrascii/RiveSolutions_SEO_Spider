@@ -8,3 +8,4 @@ set BOOST_LIBRARYDIR=%SS_DEPS%\boost\%SS_PLATFORM%\lib
 set BOOST_ROOT=%SS_DEPS%\boost
 set path=%SS_DEPS%\icu\icu_%SS_PLATFORM%\lib;%path%
 cmake -G "Visual Studio 15 2017" ..
+cd ..

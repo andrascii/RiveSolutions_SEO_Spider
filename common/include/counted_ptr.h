@@ -433,11 +433,6 @@ private:
 	cp_counted_base * _cp_counted;
 };
 
-
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-
 template <typename T>
 class counted_ptr;
 
@@ -684,6 +679,11 @@ public:
 	explicit operator bool() const noexcept
 	{
 		return get() != nullptr;
+	}
+
+	friend bool operator==(const counted_ptr& lhs, const counted_ptr& rhs)
+	{
+		return lhs.get() == rhs.get();
 	}
 
 private:
