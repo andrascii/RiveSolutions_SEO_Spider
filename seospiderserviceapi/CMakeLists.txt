@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 project(${SeoSpiderServiceApiDllName})
 
 set(SeoSpiderServiceApiDllNameSourcesDir src)
@@ -14,6 +15,7 @@ add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" SeoSpiderServiceApiDllNa
 
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
+configure_msvc_runtime()
 add_library(
  	${SeoSpiderServiceApiDllName} SHARED
  	${SeoSpiderServiceApiDllNameSourcesList} 

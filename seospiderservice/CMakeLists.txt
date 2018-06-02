@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 project(${SeoSpiderServiceAppName})
 
 set(SeoSpiderServiceSourcesDir src)
@@ -32,6 +33,7 @@ source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 source_group(Ui FILES ${SeoSpiderServiceFormsList})
 source_group(Qrc FILES ${SeoSpiderServiceResourcesList})
 
+configure_msvc_runtime()
 add_executable(
  	${SeoSpiderServiceAppName}
  	${SeoSpiderServiceSourcesList} 
@@ -83,7 +85,7 @@ if (MSVC)
 		${Boost_LIBRARIES}
 		Qt5::Widgets
 		Qt5::Network
-		Mincore.lib
+		version.lib
 	)
 endif()
 

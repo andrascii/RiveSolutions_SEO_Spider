@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
 set(QUazipSourcesDir src)
 set(QUazipHeadersDir include)
@@ -13,6 +14,7 @@ file(GLOB_RECURSE QUazipHeadersList "include/*.h")
 
 #SET(ZLIB_NAMES z zlib zdll zlib1 zlibd zlibd1 zlibwapi)
 
+configure_msvc_runtime()
 add_library(
 	${QUazipLibName} 
 	${QUazipSourcesList} 

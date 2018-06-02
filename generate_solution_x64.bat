@@ -7,4 +7,4 @@ set CMAKE_PREFIX_PATH=%SS_DEPS%\msvc_2017_%SS_PLATFORM%
 set BOOST_LIBRARYDIR=%SS_DEPS%\boost\%SS_PLATFORM%\lib
 set BOOST_ROOT=%SS_DEPS%\boost
 set path=%SS_DEPS%\icu\icu_%SS_PLATFORM%\lib;%path%
-cmake -G "Visual Studio 15 2017 Win64" ..
+cmake -G "Visual Studio 15 2017 Win64" .. -DMSVC_RUNTIME=dynamic

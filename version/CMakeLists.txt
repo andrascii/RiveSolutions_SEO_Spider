@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 project(${VersionProjectName})
 
 set(VersionHeaders include)
@@ -23,6 +23,7 @@ configure_file(
 	@ONLY
 )
 
+configure_msvc_runtime()
 add_library(
 	${VersionProjectName} 	
 	${VersionHeadersList}

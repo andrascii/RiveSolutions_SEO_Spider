@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 project(${SeoSpiderInstallerName})
 
 set(ReleasePackageDir ../seospider/Release)
@@ -114,7 +115,7 @@ add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
     COMMAND "${WINDEPLOYQT_EXECUTABLE}"
-          --release --no-translations "${TargetPackagePath}/data/"
+          --release --no-translations --compiler-runtime "${TargetPackagePath}/data/"
     COMMENT "Running windeployqt..."
 )
 

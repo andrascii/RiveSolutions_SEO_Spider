@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.6.2)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
 project( googletest-distribution )
 

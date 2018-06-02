@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 project(${CrawlerEngineLibName})
 
 set(CrawlerEngineSourcesDir src)
@@ -30,6 +31,7 @@ source_group(
 
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
+configure_msvc_runtime()
 add_library(
  	${CrawlerEngineLibName} 
  	${CrawlerEngineSourcesList} 
@@ -75,7 +77,7 @@ include_directories(
 )
 
 if(WIN32)
-	set(OSSpecificDeps ws2_32.lib windowsapp.lib)
+	set(OSSpecificDeps ws2_32.lib ntdll.lib)
 endif()
 
 target_link_libraries(

@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
 set(QxtSmtpSourcesDir src)
 set(QxtSmtpHeadersDir include)
@@ -11,6 +12,7 @@ file(GLOB_RECURSE QxtSmptHeadersList "include/*.h")
 #add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" QxtSmtpSourcesList)
 #source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
+configure_msvc_runtime()
 add_library(
 	${QxtSmtpLibName} 
 	${QxtSmtpSourcesList} 

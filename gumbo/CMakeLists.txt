@@ -5,6 +5,7 @@ project(${GumboLibName})
 aux_source_directory(./ GumboSources)
 file(GLOB_RECURSE GumboHeaders "./*.h")
 
+configure_msvc_runtime()
 add_library(
 	${GumboLibName} STATIC 
 	${GumboSources} 
