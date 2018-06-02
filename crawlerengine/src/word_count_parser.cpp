@@ -19,7 +19,7 @@ void WordCountParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 		return;
 	}
 
-	IHtmlNodeSharedPtr bodyTag = m_htmlParser->firstMatchNode(IHtmlNode::TagIdBody);
+	IHtmlNodeCountedPtr bodyTag = m_htmlParser->firstMatchNode(IHtmlNode::TagIdBody);
 
 	if (!bodyTag)
 	{

@@ -19,12 +19,12 @@ void TitleParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page) noe
 		return;
 	}
 
-	std::vector<IHtmlNodeSharedPtr> titleTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdTitle);
+	std::vector<IHtmlNodeCountedPtr> titleTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdTitle);
 
 	std::vector<QString> titleTagsValues;
 	titleTagsValues.reserve(titleTags.size());
 
-	for (const IHtmlNodeSharedPtr& titleTag : titleTags)
+	for (const IHtmlNodeCountedPtr& titleTag : titleTags)
 	{
 		titleTagsValues.push_back(QString(titleTag->text()).trimmed().remove(m_regExp));
 	}

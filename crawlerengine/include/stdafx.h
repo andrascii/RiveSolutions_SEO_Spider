@@ -97,6 +97,7 @@
 #endif
 
 #include "common_macro_helpers.h"
+#include "counted_ptr.h"
 
 using namespace std::chrono_literals;
 using std::size_t;
