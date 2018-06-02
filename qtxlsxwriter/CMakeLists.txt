@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
 project(QtXlsxWriter)
 add_definitions(-DQT_BUILD_XLSX_LIB)
@@ -54,6 +55,7 @@ if(MSVC)
 
 endif()
 
+configure_msvc_runtime()
 add_library(QtXlsxWriter SHARED ${QtXlsxWriter_SOURCE_FILES} ${QtXlsxWriter_INCLUDE_FILES})
 
 # automatically add C++11 support with GCC

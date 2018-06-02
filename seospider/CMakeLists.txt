@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 project(${AppName})
 
 set(AppSourcesDir src)
@@ -48,6 +49,7 @@ message("VMProtectSDK path: ${VMProtectSdkLibDir}")
 if(WIN32)
 	source_group(WinResource FILES ${AppWin32Resoure})
 	
+	configure_msvc_runtime()
 	add_executable(
 		${AppName} 
 		${AppSourcesList}
@@ -60,6 +62,7 @@ if(WIN32)
 		${AppWin32Resoure}
 	)
 else()
+	configure_msvc_runtime()
 	add_executable(
 		${AppName} 
 		${AppSourcesList}
@@ -142,7 +145,7 @@ include_directories(
 )
 
 if(WIN32)
-	set(OSSpecificDeps mincore.lib)
+	set(OSSpecificDeps ntdll.lib)
 endif()
 
 target_link_libraries(

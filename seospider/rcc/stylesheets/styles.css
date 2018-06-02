@@ -1,6 +1,6 @@
 QWidget
 {
-	font-family: Helvetica;
+	font-family: Lato;
 	font-size: 10pt;
 	color: #22252D;
 }
@@ -18,8 +18,6 @@ QMenuBar
 
 QMenuBar::item
 {
-	/*color: #000000;*/
-	/*border-top: 0.4em solid #d2d3d5;*/
 	color: #EDEDED;
 }
 
@@ -27,14 +25,14 @@ QMenuBar::item:selected
 {
 	background: #d2d3d5;
 	border-top: 0.4em solid #FF6600;
-	color: #000000;
+	color: #2C2D30;
 }
 
 QMenuBar::item:pressed 
 {
 	background: #ffffff;
 	border-top: 0.4em solid #FF6600;
-	color: #000000;
+	color: #2C2D30;
 }
 
 QMenu
@@ -91,7 +89,7 @@ QStatusBar::item
 QStatusBar QProgressBar
 {
 	border-radius: none;
-	color: #4D4D4D;
+	color: #2C2D30;
 	font-size: 8pt;
 	min-width: 20em;
 	max-height: 1.2em;
@@ -113,7 +111,7 @@ SeoSpider--ProjectFileStateWidget QLabel
 
 QLabel
 {
-	color: #4D4D4D;
+	color: #2C2D30;
 }
 
 /*/////////////////////////////////// Border ////////////////////////////*/
@@ -130,12 +128,6 @@ QDateEdit
 	border-radius: 0.143em;
 }
 
-SeoSpider--TableView
-{
-	border: none;
-	background-color: #FCFDFE;
-}
-
 /*////////////////////////////////// QLineEdit, QSpinBox, QDoubleSpinBox, QDateEdit, QCheckBox ////////////////////////////////*/
 
 QLineEdit,
@@ -144,7 +136,7 @@ QDoubleSpinBox,
 QDateEdit
 {
 	min-height: 1.5em;
-	background-color: #ffffff;
+	background-color: #FFFFFF;
 	color: #4D626E;
 }
 
@@ -171,7 +163,7 @@ QProgressBar
 {
     min-height: 1em;
     max-width: 10em;
-    background-color: #ffffff;
+    background-color: #FFFFFF;
     text-align: center;
     color: #4D626E;
     min-width: 15em;
@@ -179,7 +171,7 @@ QProgressBar
 
 QProgressBar::chunk
 {
-	background-color: #61a032;
+	background-color: #61A032;
 }
 
 /*////////////////////////////////// QPushButton //////////////////////////*/
@@ -187,14 +179,14 @@ QProgressBar::chunk
 QPushButton
 {
 	color: #4D626E;
-	background-color: #F2F2F2;
+	background-color: #F9F9F9;
 	min-height: 1.5em;
 	min-width: 5em;
 }
 
 QPushButton:hover
 {
-	background-color: #FCFDFE;
+	background-color: #FFFFFF;
 }
 
 QPushButton:pressed
@@ -211,7 +203,7 @@ QPushButton:disabled
 
 QComboBox
 {
-	background-color: #f5f5f5;
+	background-color: #F5F5F5;
 	color: #494949;
 	min-height: 1.5em;
 	min-width: 3em;
@@ -329,35 +321,41 @@ QWidget#DynamicControls QPushButton
 
 SeoSpider--TableView
 {
-	background: #FCFDFE;
+	background: #FFFFFF;
+	border: 0.05em solid #F3F3F3;
+	border-top: none;
+	border-radius: 2px;
 }
 
 QLabel#TablePlaseholderLabel
 {
-	color: #D0D0D0;
+	color: #E5E5E5;
 	font-size: 48pt;
-	background: #FCFDFE;
-	font-family: Helvetica;
+	background: #FFFFFF;
+	font-family: Lato;
+	border: 0.01em solid #F3F3F3;
 }
 
 /*/////////////////////////////// QHeaderView ///////////////////////////////*/
 
 QHeaderView
 {
-	background: #EAEAEA;
+	background: #FFFFFF;
+	border: 0.05em solid #F3F3F3;
+	border-left: none;
 }
 
 QHeaderView::section
 {
 	font-size: 8pt;
-	color: #4D4D4D;
+	color: #2C2D30;
 	
-	border: 0.05em solid white;
+	border: 0.05em solid #F3F3F3;
 	border-top: none;
 	border-left: none;
 	border-bottom: none;
 	
-	background: #EAEAEA;
+	background: #FFFFFF/*#EAEAEA*/;
 	min-height: 2em;
 }
 
@@ -383,15 +381,19 @@ SeoSpider--SettingsPage QLineEdit
 	max-width: 25em;
 }
 
-SeoSpider--SettingsPage QLabel,
 SeoSpider--SettingsPage QCheckBox
 {
 	font-size: 9pt;
 }
 
+SeoSpider--SettingsPage QLabel
+{
+	font-size: 11pt;
+}
+
 SeoSpider--SettingsPage QFrame#settingsFrame
 {
-	background: #FCFDFE;
+	background: #FFFFFF;
 	padding: 0.8em;
 	border: 0.05em solid #CCCCCC;
 }
@@ -400,13 +402,13 @@ SeoSpider--SettingsPage QFrame#settingsFrame
 
 SeoSpider--ApplicationSettingsWidget
 {
-	background: #F2F2F2;
+	background: #F9F9F9;
 }
 
 SeoSpider--ApplicationSettingsWidget QListView
 {
 	border: 0.05em solid #CCCCCC;
-	background: #FCFDFE;
+	background: #FFFFFF;
 	min-width: 10em;
 }
 
@@ -417,21 +419,21 @@ SeoSpider--ApplicationSettingsWidget QListView::item
 
 SeoSpider--ApplicationSettingsWidget QListView::item:hover
 {
-    background-color: #FDF6E3/*#F2F2F2*/;
-	color: #4D4D4D;
+    background-color: #F3F3F3;
+	color: #2C2D30;
 }
 
 SeoSpider--ApplicationSettingsWidget QListView::item:selected
 {
-    background-color: #EEE8D5/*#F7F0D6*/;
-	color: #4D4D4D;
+    background-color: #E5E5E5;
+	color: #2C2D30;
 }
 
 SeoSpider--ApplicationSettingsWidget QLabel,
 SeoSpider--ApplicationSettingsWidget QWidget,
 SeoSpider--ApplicationSettingsWidget QCheckBox
 {
-	color: #4D4D4D;
+	color: #2C2D30;
 }
 
 SeoSpider--ApplicationSettingsWidget QPushButton#applyButton:enabled
@@ -455,12 +457,12 @@ SeoSpider--ApplicationSettingsWidget QPushButton#applyButton:enabled:pressed
 
 SeoSpider--SitemapCreatorWidget
 {
-	background: #F2F2F2;
+	background: #F9F9F9;
 }
 
 QFrame#ControlsFrame
 {
-	background: #FCFDFE;
+	background: #FFFFFF;
 	padding: 0.8em;
 	border: 0.05em solid #CCCCCC;
 }
@@ -494,20 +496,9 @@ QFrame#ControlsFrame QDateEdit
 	max-width: 22em;
 }
 
-QFrame#HeaderFrame
-{
-	min-height: 6em;
-	max-height: 6em;
-	padding: 0.5em;
-	padding-left: 1.2em;
-	background: #F2F2F2;
-	border: 0.05em solid #CCCCCC;
-	border-bottom: none;
-}
-
 QFrame#ButtonsFrame
 {
-	background: #F8F8F8;
+	background: #F9F9F9;
 	border: 0.05em solid #CCCCCC;
 	border-top: none;
 	padding: 0.5em;
@@ -554,8 +545,9 @@ QSplitter::handle:vertical
 
 QWidget#NavigationPanel
 {
-	background-color: #ffffff;
-	border: 0.3em solid #d2d3d5;
+	background-color: #F9F9F9;
+	border-left: 0.3em solid #F5F5F5;
+	border-right: 0.05em solid #E5E5E5;
 	border-bottom: none;
 }
 
@@ -563,19 +555,18 @@ QWidget#NavigationPanel QPushButton
 {
     border: none;
 	border-radius: none;
-	border-left: 0.3em solid #d2d3d5;
-	border-right: 0.2em solid #d2d3d5;
-	background-color:  #ffffff;
+	border-left: 0.3em solid #F5F5F5;
+	background-color:  #F9F9F9;
 	width: 10em;	
 	text-align: left;
-	color: #000000;	
+	color: #2C2D30;	
 	font-size: 11pt;
-	padding-left: 1em;	
+	padding-left: 1em;
 	min-width: 10em;
 	max-width: 10em;
 	min-height: 2.5em;
 	max-height: 2.5em;
-	font-family: Helvetica;
+	font-family: Lato;
 }
 
 QWidget#NavigationPanel QPushButton:focus
@@ -585,14 +576,14 @@ QWidget#NavigationPanel QPushButton:focus
 
 QWidget#NavigationPanel QPushButton:hover
 {
-	border-left: 0.3em solid #d2d3d5;
-	background-color: #FDF6E3;
+	border-left: 0.3em solid #E5E5E5;
+	background-color: #F5F5F5;
 }
 
 QWidget#NavigationPanel QPushButton[selected="true"]
 {
 	border-left: 0.3em solid #FF6600;	
-	background-color: #EEE8D5;
+	background-color: #E5E5E5;
 }
 
 /*/////////////////////////////// DebugWebPageInfoWidget ///////////////////////////////*/
@@ -607,13 +598,13 @@ QWidget#DebugWebPageInfoWidget QWidget
 
 SeoSpider--HeaderDecorationWidget
 {
-	background-color: #F2F2F2;
+	background-color: #F9F9F9;
 }
 
 SeoSpider--HeaderDecorationWidget QFrame#TitleFrame
 {
-	background-color: #F2F2F2;
-	border-bottom: 0.1em solid #CCCCCC;
+	background-color: #F9F9F9;
+	border-bottom: 0.08em solid #E5E5E5;
 }
 
 /*/////////////////////////////// QTabWidget ///////////////////////////////*/
@@ -641,8 +632,7 @@ QTabWidget::tab-bar
 
 QTabBar::tab
 {
-	color: black;
-    border-bottom: 0.05em solid #D2D3D5;
+	color: #2C2D30;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
     min-width: 10em;
@@ -652,7 +642,7 @@ QTabBar::tab
 
 QTabBar::tab:selected
 {
-	border-top: 0.3em solid #FF6600;
+	border-top: 0.2em solid #FF6600;
 	padding-bottom: 0.5em;
 }
 
@@ -697,7 +687,6 @@ QFrame#MessageBox QPushButton:hover
 
 QFrame#MessageBox QPushButton:pressed
 {
-	/*border-color: #F2F2F2;*/
 	border-color: #D3CBB7;
 	background: #EEE8D5;
 }
@@ -719,8 +708,8 @@ QStackedWidget QLabel#LoadingWidget
 
 SeoSpider--NotificationPopupFrame
 {
-	qproperty-borderColor: #D3CBB7;
-	qproperty-backgroundColor: #FDF6E3;
+	qproperty-borderColor: #B1B1B3;
+	qproperty-backgroundColor: #F9F9F9;
 }
 
 SeoSpider--NotificationPopupFrame QToolButton
@@ -730,7 +719,7 @@ SeoSpider--NotificationPopupFrame QToolButton
 
 SeoSpider--NotificationPopupFrame QLabel
 {
-	color: #4D4D4D;
+	color: #2C2D30;
 }
 
 SeoSpider--NotificationPopupFrame QLabel#NotificationHeaderLabel
@@ -744,7 +733,7 @@ SeoSpider--NotificationPopupFrame QFrame#LineFrame
 	min-height: 0.01em;
 	margin-top: 0.2em;
 	margin-bottom: 0.1em;
-	border: 0.05em solid #EEE8D5;
+	border: 0.05em solid #E5E5E5;
 }
 
 /*////////////////////////////// QColorDialog //////////////////////////////////////////////*/
@@ -786,22 +775,21 @@ QColorDialog QSpinBox
 /*////////////////////////////// FilterInfoWidget ///////////////////////////////////////////*/
 SeoSpider--FilterInfoWidget#filterInfo
 {
-	background-color: #EEE8D5/*#e1e9f1*/;
-	border: 0.09em solid #D3CBB7;
-	/*border-radius: 0.1em;*/
+	background-color: #FFFFFF;
+	border: 0.09em solid #E5E5E5;
 	padding-left: 0.2em;
 	padding-bottom: 0.2em;
 }
 
 SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetTitle
 {
-	color: #4D4D4D/*#262e35*/;
+	color: #2C2D30;
 	font-size: 13pt;
 }
 
 SeoSpider--FilterInfoWidget#filterInfo QLabel#filterInfoWidgetDescription
 {
-	color: #4D4D4D/*#262e35*/;
+	color: #2C2D30;
 }
 
 /*////////////////////////////// UpdateLoaderDialogContent /////////////////////////////////////*/
@@ -823,15 +811,14 @@ QFrame#UpdateLoaderDialogContent QLabel#headerLabel
 {
 	font-size: 20pt;
 	font: bold;
-	color: #4D4D4D;
-	/*margin-bottom: -1em;*/
+	color: #2C2D30;
 }
 
 QFrame#UpdateLoaderDialogContent QLabel#textLabel
 {
 	font-size: 14pt;
 	font: bold;
-	color: #4D4D4D;
+	color: #2C2D30;
 }
 
 QFrame#UpdateLoaderDialogContent QPushButton

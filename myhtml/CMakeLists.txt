@@ -1,4 +1,5 @@
 cmake_minimum_required (VERSION 3.0)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
 project(myhtml)
 
@@ -200,6 +201,7 @@ set(MYHTML_LIBRARIES myhtml CACHE STRING "Libraries to link for Myhtml")
 ## Create static/dynamic library
 #########################
 if(MyHTML_BUILD_SHARED)
+    configure_msvc_runtime()
     add_library(${PROJECT_LIB_NAME} SHARED ${PROJECT_SOURCES} ${PROJECT_SOURCES_PORT})
     target_link_libraries(${PROJECT_LIB_NAME} ${CMAKE_THREAD_LIBS_INIT})
     set_target_properties(${PROJECT_LIB_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_LIB_NAME})
@@ -207,6 +209,7 @@ if(MyHTML_BUILD_SHARED)
 endif()
 
 if(MyHTML_BUILD_STATIC)
+    configure_msvc_runtime()
     add_library(${PROJECT_LIB_NAME_STATIC} STATIC ${PROJECT_SOURCES} ${PROJECT_SOURCES_PORT})
     target_link_libraries(${PROJECT_LIB_NAME_STATIC} ${CMAKE_THREAD_LIBS_INIT})
     set_target_properties(${PROJECT_LIB_NAME_STATIC} PROPERTIES OUTPUT_NAME ${PROJECT_LIB_NAME_STATIC})

@@ -10,7 +10,7 @@ git clone https://github.com/openssl/openssl.git
 cd openssl
 git fetch
 git checkout OpenSSL_1_1_0-stable
-perl Configure VC-WIN64A --prefix=c:\openssl -D_BIND_TO_CURRENT_VCLIBS_VERSION=1
+perl Configure VC-WIN64A --prefix=c:\openssl
 nmake
 nmake test
 nmake install
@@ -32,7 +32,7 @@ git submodule foreach "git clean -dfx"
 set path=c:\jom;%path%
 perl init-repository
 set path=D:\deps\icu\icu_x64\lib;%path%
-call configure.bat -confirm-license -debug-and-release -opensource -shared -prefix D:\deps\qt\msvc_2017_x64 -mp -nomake examples -force-debug-info -I c:\\openssl\include -L c:\openssl\\lib OPENSSL_LIBS="-llibcrypto -llibssl -lgdi32" -openssl-linked -no-angle -opengl desktop -icu -I d:/deps/icu/icu_x64/include -L d:/deps/icu/icu_x64/lib -no-vulkan -no-plugin-manifests -D "_BIND_TO_CURRENT_VCLIBS_VERSION=1"
+call configure.bat -confirm-license -debug-and-release -opensource -shared -prefix D:\deps\qt\msvc_2017_x64 -mp -nomake examples -force-debug-info -I c:\\openssl\include -L c:\openssl\\lib OPENSSL_LIBS="-llibcrypto -llibssl -lgdi32" -openssl-linked -no-angle -opengl desktop -icu -I d:/deps/icu/icu_x64/include -L d:/deps/icu/icu_x64/lib -no-vulkan -no-plugin-manifests
 jom
 jom install
 git clean -dfx

@@ -3,14 +3,20 @@
 namespace Common
 {
 
-//////////////////////////////////////////////////////////////////////////
+// verify that types are complete for increased safety
+
+template<class T> inline void checked_delete(T * x)
+{
+	// intentionally complex - simplification causes regressions
+	typedef char type_must_be_complete[sizeof(T) ? 1 : -1];
+	(void) sizeof(type_must_be_complete);
+	delete x;
+}
 
 template <typename T>
 struct cp_inplace_tag
 {
 };
-
-//////////////////////////////////////////////////////////////////////////
 
 template <std::size_t N, std::size_t A>
 struct cp_aligned_storage
@@ -21,9 +27,6 @@ struct cp_aligned_storage
 		//typename boost::type_with_alignment< A >::type align_;
 	};
 };
-
-
-//////////////////////////////////////////////////////////////////////////
 
 template <class T>
 class cp_ms_deleter
@@ -89,7 +92,6 @@ public:
 	}
 };
 
-//////////////////////////////////////////////////////////////////////////
 
 class cp_counted_base
 {
@@ -135,7 +137,6 @@ private:
 	long m_useCount;
 };
 
-//////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 class cp_counted_impl_p final : public cp_counted_base
@@ -160,7 +161,6 @@ private:
 	T * m_pointer;
 };
 
-//////////////////////////////////////////////////////////////////////////
 
 template <typename T, typename D>
 class cp_counted_impl_pd final : public cp_counted_base
@@ -193,7 +193,6 @@ private:
 	D m_deleter;
 };
 
-//////////////////////////////////////////////////////////////////////////
 
 template <typename T, typename D, typename A>
 class cp_counted_impl_pda final : public cp_counted_base
@@ -240,7 +239,6 @@ private:
 	A m_allocator;
 };
 
-//////////////////////////////////////////////////////////////////////////
 
 class cp_count
 {
@@ -260,7 +258,7 @@ public:
 		}
 		catch (...)
 		{
-			// use boost::checked_delete here
+			checked_delete(p);
 		}
 	}
 
@@ -354,11 +352,11 @@ public:
 	}
 #endif
 
-//	template <typename Y, typename D>
-//	explicit cp_count(std::unique_ptr<Y, D>& r)
-//		: _cp_counted(new sp_counted_impl_pd<typename std::unique_ptr<Y, D>::pointer, D>(r.release(), r.get_deleter()))
-//	{
-//	}
+// 	template <typename Y, typename D>
+// 	explicit cp_count(std::unique_ptr<Y, D>& r)
+// 		: _cp_counted(new sp_counted_impl_pd<typename std::unique_ptr<Y, D>::pointer, D>(r.release(), r.get_deleter()))
+// 	{
+// 	}
 
 	cp_count(const cp_count& other) noexcept
 		: _cp_counted(other._cp_counted)
@@ -432,11 +430,6 @@ public:
 private:
 	cp_counted_base * _cp_counted;
 };
-
-
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 class counted_ptr;
@@ -686,6 +679,11 @@ public:
 		return get() != nullptr;
 	}
 
+	friend bool operator==(const counted_ptr& lhs, const counted_ptr& rhs)
+	{
+		return lhs.get() == rhs.get();
+	}
+
 private:
 	template <typename T> friend struct enable_counted_from_this;
 	template <typename S> friend class counted_ptr;
@@ -712,8 +710,6 @@ private:
 	cp_count _cp_count;
 };
 
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 struct enable_counted_from_this

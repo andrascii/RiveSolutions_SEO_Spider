@@ -93,6 +93,7 @@ FilterWidget::FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent
 	m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);
 	m_summaryFilterTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_summaryFilterTableView->horizontalHeader()->hide();
+	m_summaryFilterTableView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	m_summaryFilterTableView->setObjectName("FilterWidgetTableView");
 
 	QVBoxLayout* vLayout = new QVBoxLayout(this);
