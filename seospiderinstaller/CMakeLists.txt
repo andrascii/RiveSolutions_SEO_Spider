@@ -115,7 +115,7 @@ add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
     COMMAND "${WINDEPLOYQT_EXECUTABLE}"
-          --release --no-translations "${TargetPackagePath}/data/"
+          --release --no-translations --compiler-runtime "${TargetPackagePath}/data/"
     COMMENT "Running windeployqt..."
 )
 
