@@ -5,6 +5,11 @@ QWidget
 	color: #22252D;
 }
 
+QMainWindow QWidget#CentralWidget
+{
+	background: #FFFFFF;
+}
+
 /*/////////////////////////////// Menubar and actions ///////////////////////////////*/
 
 QMenuBar
@@ -895,4 +900,82 @@ QFrame#WaitOperationFrame QLabel
 QFrame#SplashScreenFrame QLabel
 {
 	color: #EDEDED;
+}
+
+QFrame#ShadedOverlayFrame
+{
+	border: 10px solid red;
+}
+
+/*////////////////////////////// QScrollBar Horizontal //////////////////////////////*/
+
+QScrollBar:horizontal
+{
+	background: #F3F3F3;
+	height: 0.8em;
+	padding: 0.05em;
+	border-radius: 0.35em;
+}
+
+QScrollBar::handle:horizontal
+{
+    background: #D9D9DE;
+	min-width: 2em;
+	border-radius: 0.35em;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
+{
+	background: none;
+	width: 0;
+	height: 0;
+}
+
+QScrollBar::add-line:horizontal
+{
+	width: 0;
+	height: 0;
+}
+	
+QScrollBar::sub-line:horizontal
+{
+	width: 0;
+	height: 0;
+}
+
+/*////////////////////////////// QScrollBar Vertical //////////////////////////////*/
+
+QScrollBar:vertical
+{
+	background: #F3F3F3;
+	width: 0.8em;
+	padding: 0.05em;
+	border-radius: 0.35em;
+}
+
+QScrollBar::handle:vertical
+{
+	background: #D9D9DE;
+	min-height: 2em;
+	border-radius: 0.35em;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
+{
+	background: none;
+	width: 0;
+	height: 0;
+}
+
+QScrollBar::add-line:vertical
+{
+	background: none;
+	width: 0;
+	height: 0;
+}
+	
+QScrollBar::sub-line:vertical
+{
+	width: 0;
+	height: 0;
 }
