@@ -35,7 +35,7 @@ WaitOperationFrame* WaitOperationFrame::instance()
 {
 	if (!s_instance)
 	{
-		s_instance = new WaitOperationFrame(nullptr);
+		s_instance = new WaitOperationFrame(theApp->mainWindow());
 	}
 
 	return s_instance;

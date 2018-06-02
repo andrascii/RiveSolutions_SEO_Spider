@@ -729,13 +729,13 @@ void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason rea
 void MainWindow::showRegisterProductDialog()
 {
 	RegisterProductDialog* registerProductDialog = new RegisterProductDialog(this);
-	registerProductDialog->exec();
+	registerProductDialog->open();
 }
 
 void MainWindow::showFeedbackDialog()
 {
 	FeedbackDialog* feddbackDialog = new FeedbackDialog(this);
-	feddbackDialog->exec();
+	feddbackDialog->open();
 }
 
 void MainWindow::onAboutUpdateExists()

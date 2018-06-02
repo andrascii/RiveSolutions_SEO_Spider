@@ -135,10 +135,24 @@ void ContentFrame::onStateChanged(int state)
 {
 	static bool waitOperationFrameShown = false;
 
-	if (state == CrawlerEngine::Crawler::State::StateSerializaton ||
-		state == CrawlerEngine::Crawler::State::StateDeserializaton)
+	const bool isSavingOrLoadingProject = state == CrawlerEngine::Crawler::State::StateSerializaton ||
+		state == CrawlerEngine::Crawler::State::StateDeserializaton;
+
+	QString userWaitMessage;
+
+	if (state == CrawlerEngine::Crawler::State::StateSerializaton)
 	{
-		WaitOperationFrame::showMessage(tr("Please wait while saving the project..."));
+		userWaitMessage = tr("Please wait while saving the project...");
+	}
+
+	if (state == CrawlerEngine::Crawler::State::StateDeserializaton)
+	{
+		userWaitMessage = tr("Please wait while loading the project...");
+	}
+
+	if (isSavingOrLoadingProject)
+	{
+		WaitOperationFrame::showMessage(userWaitMessage);
 
 		waitOperationFrameShown = true;
 	}
