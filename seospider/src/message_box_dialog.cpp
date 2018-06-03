@@ -10,7 +10,7 @@ namespace SeoSpider
 {
 
 MessageBoxDialog::MessageBoxDialog(QWidget* parent)
-	: FloatingFrame(parent)
+	: Dialog(this, parent)
 	, m_ui(new Ui_MessageBox)
 	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
 {
@@ -19,17 +19,11 @@ MessageBoxDialog::MessageBoxDialog(QWidget* parent)
 	setWindowModality(Qt::ApplicationModal);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	QFrame* internalFrame = new QFrame;
-	m_ui->setupUi(internalFrame);
-
-	internalFrame->installEventFilter(this);
+	m_ui->setupUi(this);
 
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
 	VERIFY(connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, &MessageBoxDialog::onButtonClicked));
-
-	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->addWidget(new ShadowDecorationFrame(internalFrame, this));
 
 	m_ui->buttonBox->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
 	m_ui->messageLabel->setWordWrap(true);
@@ -48,39 +42,6 @@ void MessageBoxDialog::setMessage(const QString& message)
 void MessageBoxDialog::setStandardButtons(QDialogButtonBox::StandardButtons buttons)
 {
 	m_ui->buttonBox->setStandardButtons(buttons);
-}
-
-int MessageBoxDialog::result() const
-{
-	return m_dialogCode;
-}
-
-void MessageBoxDialog::accept()
-{
-	done(QDialog::Accepted);
-}
-
-void MessageBoxDialog::reject()
-{
-	done(QDialog::Rejected);
-}
-
-void MessageBoxDialog::done(int r)
-{
-	completeLocalEventLoop();
-
-	m_dialogCode = static_cast<QDialog::DialogCode>(r);
-
-	hide();
-}
-
-void MessageBoxDialog::exec()
-{
-	show();
-
-	m_eventLoop.exec();
-
-	completeLocalEventLoop();
 }
 
 void MessageBoxDialog::onButtonClicked(QAbstractButton* button)
@@ -108,35 +69,24 @@ void MessageBoxDialog::hideEvent(QHideEvent* event)
 	emit dialogClosed(m_clickedButtonRole);
 }
 
-bool MessageBoxDialog::eventFilter(QObject*, QEvent* event)
+bool MessageBoxDialog::eventFilter(QObject*, QEvent*)
 {
-	if (event->type() == QEvent::MouseButtonPress)
-	{
-		FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
-	}
-
-	if (event->type() == QEvent::MouseButtonRelease)
-	{
-		FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-	}
-
-	if (event->type() == QEvent::MouseMove)
-	{
-		FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
-	}
+	//if (event->type() == QEvent::MouseButtonPress)
+	//{
+	//	FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
+	//}
+	//
+	//if (event->type() == QEvent::MouseButtonRelease)
+	//{
+	//	FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
+	//}
+	//
+	//if (event->type() == QEvent::MouseMove)
+	//{
+	//	FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
+	//}
 
 	return false;
-}
-
-void MessageBoxDialog::completeLocalEventLoop()
-{
-	if (!m_eventLoop.isRunning())
-	{
-		return;
-	}
-
-	m_eventLoop.processEvents();
-	m_eventLoop.exit();
 }
 
 }

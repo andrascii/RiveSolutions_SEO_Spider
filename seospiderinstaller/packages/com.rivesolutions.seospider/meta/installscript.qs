@@ -127,6 +127,17 @@ addCreateDesktopShortcut = function()
 	}
 }
 
+function installVCRedist()
+{
+	if(systemInfo.currentCpuArchitecture.search("64") < 0) 
+	{
+		component.addOperation("Execute", "@TargetDir@/vc_redist.x32.exe", "/quiet", "/norestart");
+	} else 
+	{
+		component.addOperation("Execute", "@TargetDir@/vc_redist.x64.exe", "/quiet", "/norestart");
+	}
+}
+
 function createMenuDirectory()
 {
 	var dontCreateMenuDirChecked = component.userInterface("CreateMenuDirCheckBoxForm").CreateMenuDirCheckBox.checked;
@@ -277,6 +288,8 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
 	registerProgram();
+	
+	installVCRedist();
 	
 	createMenuDirectory();
 	

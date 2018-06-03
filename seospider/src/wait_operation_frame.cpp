@@ -36,6 +36,7 @@ WaitOperationFrame* WaitOperationFrame::instance()
 	if (!s_instance)
 	{
 		s_instance = new WaitOperationFrame(theApp->mainWindow());
+		s_instance->setAttribute(Qt::WA_DeleteOnClose);
 	}
 
 	return s_instance;
