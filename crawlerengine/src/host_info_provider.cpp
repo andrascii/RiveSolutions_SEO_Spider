@@ -54,7 +54,8 @@ void HostInfoProvider::handleRequest(RequesterSharedPtr requester)
 	m_downloadRequester.reset(downloadRequest, this, &HostInfoProvider::onLoadingDone);
 	m_downloadRequester->start();
 
-	DEBUGLOG << "IP address for:" << request->webpage.toDisplayString() << "is" << m_pendingResponse->hostInfo.stringAddressesIPv4()[0];
+	DEBUGLOG << "IP address for:" << request->webpage.toDisplayString() 
+		<< "is" << (!m_pendingResponse->hostInfo.stringAddressesIPv4().isEmpty() ? m_pendingResponse->hostInfo.stringAddressesIPv4()[0] : QByteArray("unknown"));
 }
 
 void HostInfoProvider::stopRequestHandling(RequesterSharedPtr requester)

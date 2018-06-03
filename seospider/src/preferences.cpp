@@ -420,6 +420,7 @@ int Preferences::maxLinksCountOnPage() const
 void Preferences::setMaxLinksCountOnPage(int value)
 {
 	m_maxLinksCountOnPage = value;
+	emit maxLinksCountOnPageChanged(m_maxLinksCountOnPage);
 }
 
 int Preferences::maxH2LengthChars() const
