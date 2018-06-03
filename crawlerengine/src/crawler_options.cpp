@@ -92,9 +92,9 @@ int CrawlerOptions::maxTitleLength() const noexcept
 
 void CrawlerOptions::setMaxTitleLength(int value) noexcept
 {
-	m_data.maxLinksCountOnPage = value;
+	m_data.maxTitleLength = value;
 
-	emit maxLinksCountOnPageChanged(m_data.maxLinksCountOnPage);
+	emit maxTitleLengthChanged(m_data.maxTitleLength);
 }
 
 int CrawlerOptions::minTitleLength() const noexcept
