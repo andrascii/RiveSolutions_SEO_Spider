@@ -6,6 +6,8 @@
 #include "crawler.h"
 #include "url_line_edit.h"
 #include "message_box_dialog.h"
+#include "application.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {
@@ -102,7 +104,7 @@ void ControlPanelWidget::clearCrawlingData() const
 	
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
-	messageBoxDialog->show();
+	messageBoxDialog->open();
 
 	auto onDialogClosed = [messageBoxDialog](int result)
 	{
