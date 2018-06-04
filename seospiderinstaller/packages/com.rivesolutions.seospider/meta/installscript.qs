@@ -131,7 +131,7 @@ function installVCRedist()
 {
 	if(systemInfo.currentCpuArchitecture.search("64") < 0) 
 	{
-		component.addOperation("Execute", "@TargetDir@/vc_redist.x32.exe", "/quiet", "/norestart");
+		component.addOperation("Execute", "@TargetDir@/vc_redist.x86.exe", "/quiet", "/norestart");
 	} else 
 	{
 		component.addOperation("Execute", "@TargetDir@/vc_redist.x64.exe", "/quiet", "/norestart");
