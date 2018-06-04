@@ -4,11 +4,12 @@
 namespace SeoSpider
 {
 
-FloatingDialog::FloatingDialog(QWidget* parent)
+FloatingDialog::FloatingDialog(QWidget* decoratedWidget, QWidget* parent)
 	: FloatingFrame(parent)
-	, m_dialog(new Dialog(this))
+	, m_dialog(new Dialog(decoratedWidget, parent))
 {
-
+	//QVBoxLayout* layout = new QVBoxLayout(parent);
+	//layout->addWidget(dynamic_cast<QWidget*>(m_dialog));
 }
 
 void FloatingDialog::accept()

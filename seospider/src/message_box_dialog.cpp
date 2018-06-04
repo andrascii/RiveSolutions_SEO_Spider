@@ -10,12 +10,11 @@ namespace SeoSpider
 {
 
 MessageBoxDialog::MessageBoxDialog(QWidget* parent)
-	: Dialog(this, parent)
+	: FloatingDialog(this, parent)
 	, m_ui(new Ui_MessageBox)
 	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
 {
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-	setAttribute(Qt::WA_TranslucentBackground);
 	setWindowModality(Qt::ApplicationModal);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -51,7 +50,7 @@ void MessageBoxDialog::onButtonClicked(QAbstractButton* button)
 
 void MessageBoxDialog::showEvent(QShowEvent* event)
 {
-	WidgetHelpers::moveWidgetToHostCenter(this);
+	WidgetHelpers::moveWidgetToHostCenter(this, theApp->mainWindow());
 
 	theApp->mainWindow()->showShadedOverlay();
 	theApp->mainWindow()->setDisabled(true);
@@ -69,22 +68,22 @@ void MessageBoxDialog::hideEvent(QHideEvent* event)
 	emit dialogClosed(m_clickedButtonRole);
 }
 
-bool MessageBoxDialog::eventFilter(QObject*, QEvent*)
+bool MessageBoxDialog::eventFilter(QObject*, QEvent* event)
 {
-	//if (event->type() == QEvent::MouseButtonPress)
-	//{
-	//	FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
-	//}
-	//
-	//if (event->type() == QEvent::MouseButtonRelease)
-	//{
-	//	FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-	//}
-	//
-	//if (event->type() == QEvent::MouseMove)
-	//{
-	//	FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
-	//}
+	if (event->type() == QEvent::MouseButtonPress)
+	{
+		FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
+	}
+	
+	if (event->type() == QEvent::MouseButtonRelease)
+	{
+		FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
+	}
+	
+	if (event->type() == QEvent::MouseMove)
+	{
+		FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
+	}
 
 	return false;
 }
