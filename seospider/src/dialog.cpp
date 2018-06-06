@@ -12,7 +12,6 @@ Dialog::Dialog(QWidget* decoratedWidget, QWidget* parent)
 	: QFrame(parent)
 {
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-	setAttribute(Qt::WA_TranslucentBackground);
 	setWindowModality(Qt::ApplicationModal);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	

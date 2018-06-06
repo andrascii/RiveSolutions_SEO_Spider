@@ -3,11 +3,12 @@
 #include "ui_message_box.h"
 #include "floating_frame.h"
 #include "dialog.h"
+#include "floating_dialog.h"
 
 namespace SeoSpider
 {
 
-class MessageBoxDialog : public Dialog
+class MessageBoxDialog : public FloatingDialog
 {
 	Q_OBJECT
 
