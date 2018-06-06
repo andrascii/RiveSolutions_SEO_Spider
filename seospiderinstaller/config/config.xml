@@ -4,7 +4,7 @@
 	<Version>1.0.0</Version>
 	<Title>Seo Spider Setup</Title>
 	<Publisher>Rive Solutions</Publisher>
-	<ProductUrl>http://j775420.myjino.ru/seospider/</ProductUrl>
+	<ProductUrl>http://rivesolutions.com/</ProductUrl>
 	<InstallerWindowIcon>robot</InstallerWindowIcon>
 	<InstallerApplicationIcon>robot</InstallerApplicationIcon>
 	<Logo>logo.png</Logo>
@@ -17,7 +17,7 @@
      <Repository>
              <Url>http://rivesolutions.com/</Url>
              <Enabled>1</Enabled>
-             <DisplayName>SeoSpider</DisplayName>
+             <DisplayName>SEO Spider</DisplayName>
      </Repository>
 	</RemoteRepositories>
 	<AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>

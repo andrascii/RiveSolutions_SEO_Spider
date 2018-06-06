@@ -182,7 +182,10 @@ void SeoSpiderServiceApiImpl::init()
 		&m_processInfo
 	);
 
-	m_pipeServer.reset(new PipeServer);
+	if (m_initialized)
+	{
+		m_pipeServer.reset(new PipeServer);
+	}
 
 	qInstallMessageHandler(qtMsgHandler);
 
