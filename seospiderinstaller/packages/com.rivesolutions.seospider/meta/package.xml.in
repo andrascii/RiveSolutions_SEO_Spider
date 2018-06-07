@@ -11,6 +11,6 @@
 		<UserInterface>createmenudircheckboxform.ui</UserInterface>
 	</UserInterfaces>
     <Licenses>
-        <License name="Rive Solutions License" file="license.txt" />
+        <License name="RiveSolutions License" file="license.txt" />
     </Licenses>
 </Package>
