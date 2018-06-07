@@ -57,14 +57,18 @@ QString ResponseHeaders::makeString() const
 {
 	QString serverResponse;
 
+	const QString colon = QStringLiteral(": ");
+	const QString lineEnd = QStringLiteral("\r\n");
+
 	for (const auto& [headerName, value] : m_responseHeaders)
 	{
-		serverResponse += headerName + QStringLiteral(": ") + value + QStringLiteral("\r\n");
+		serverResponse = serverResponse % headerName % colon % value % lineEnd;
 	}
 
 	// finalize string
-	serverResponse += QStringLiteral("\r\n");
+	serverResponse = serverResponse % lineEnd;
 
+	serverResponse.squeeze();
 	return serverResponse;
 }
 
