@@ -1,27 +1,24 @@
-# QuickieWebBot
-# Installing
+# RiveSolutions SEO Spider
 
-All CMakeLists.txt files intended for creating project for Visual Studio.
+# Installer
 
-Note:
+Для компилирования инсталлера надо загрузить и установить Qt Intaller Framework https://blog.qt.io/blog/2017/12/15/qt-installer-framework-3-0-2-released/
+Затем задать новую системную переменную окружения IFW_BIN_DIR = *\Qt Installer Framework 3.0.2\bin
 
-For successful build and generating Visual Studio project you need boost library at least 1.64.0 version.
+# Build steps
 
-For compiling installer you should Downoad and Setup Qt Intaller Framework https://blog.qt.io/blog/2017/12/15/qt-installer-framework-3-0-2-released/
-and set new system variable IFW_BIN_DIR to *\Qt Installer Framework 3.0.2\bin
-
-Steps for build:
-
-1. Положить депсы в d:\deps
-2. Удалить все переменные среды BOOST*, CMAKE_PREFIX_PATH, QT*, а так же пути к ним в path
-3. Создать переменную среды SS_DEPS со значением d:\deps
-4. Добавить в PATH значения:
+Для того, чтобы успешно сгенерировать и забилдить проект, надо:
+1. Скачать deps.7z отсюда https://yadi.sk/d/I4qfKFy03TFN4g
+2. Распаковать архив в корень диска D так, чтобы все зависимости лежали по пути D:\\deps\
+3. Удалить все переменные среды BOOST*, CMAKE_PREFIX_PATH, QT*, а так же пути к ним в path
+4. Создать переменную среды SS_DEPS со значением d:\deps
+5. Добавить в PATH значения:
 	%SS_DEPS%\qt\msvc_2017_%SS_PLATFORM%\bin
 	%SS_DEPS%\qt\msvc_2017_%SS_PLATFORM%\plugins\platforms
 	%SS_DEPS%\icu\icu_%SS_PLATFORM%\lib
 	%SS_DEPS%\openssl\openssl_%SS_PLATFORM%\bin
 	путь до cmake (C:\Program Files\CMake\bin)
-4. Установить переменную среды SS_PLATFORM правильно (x64 или win32).
-6. Запустить generate_solution_win32.bat либо generate_solution_x64.bat
+6. Установить переменную среды SS_PLATFORM правильно (x64 или win32).
+7. Запустить generate_solution_win32.bat либо generate_solution_x64.bat
 
 Если нет диска D:, то нужно создать виртуальный диск: http://composs.ru/windows-10-vhd/ (необходимо примерно 20Гб)
