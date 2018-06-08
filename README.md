@@ -43,7 +43,7 @@
 
 # Uploading builds to hosting
 
-1. Заходим на наш хостинг
+1. Заходим на наш хостинг на сайте jino.ru
 2. Переходим в папку domains, затем в папку rivesolutions.com
 3. В rivesolutions.com будет лежать папка downloads, заходим туда
 4. В папке downloads будут лежать папки с именами ОС, выбираем win
