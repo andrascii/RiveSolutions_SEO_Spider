@@ -3,6 +3,7 @@
 # Installer
 
 Для компилирования инсталлера надо загрузить и установить Qt Intaller Framework https://blog.qt.io/blog/2017/12/15/qt-installer-framework-3-0-2-released/
+
 Затем задать новую системную переменную окружения IFW_BIN_DIR = *\Qt Installer Framework 3.0.2\bin
 
 # Build steps
