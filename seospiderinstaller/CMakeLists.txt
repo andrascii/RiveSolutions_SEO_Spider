@@ -84,10 +84,7 @@ add_custom_command(
 add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E xcopy
-	$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/*.dll
-	${TargetPackagePath}/data/
+	COMMAND xcopy $ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/*.dll ${TargetPackagePath}/data/
 )
 
 add_custom_command(
