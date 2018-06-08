@@ -77,17 +77,8 @@ add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/libcrypto-1_1.dll
-	${TargetPackagePath}/data/
-)
-
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/libssl-1_1.dll
+	ARGS -E xcopy
+	$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/*.dll
 	${TargetPackagePath}/data/
 )
 
