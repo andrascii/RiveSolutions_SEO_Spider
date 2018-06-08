@@ -416,6 +416,7 @@ QByteArray Downloader::readBody(QNetworkReply* reply) const
 	else
 	{
 		body = reply->readAll();
+		body.squeeze();
 	}
 
 	return body;

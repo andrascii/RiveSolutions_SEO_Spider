@@ -85,6 +85,19 @@ void MainWindow::saveFile()
 {
 	if (theApp->crawler()->hasCustomSessionName())
 	{
+		if (theApp->crawler()->state() == Crawler::StateWorking)
+		{
+			ASSERT(ServiceLocator::instance()->isRegistered<INotificationService>());
+			INotificationService* notificationService = ServiceLocator::instance()->service<INotificationService>();
+
+			notificationService->error(
+				tr("Operation failed"),
+				tr("Cannot save file while crawler is active, \nplease stop crawling and try again")
+			);
+
+			return;
+		}
+
 		theApp->crawler()->saveFile();
 	}
 	else
