@@ -26,3 +26,9 @@ TransparentDialogContainer::~TransparentDialogContainer()
 void TransparentDialogContainer::closeEvent(QCloseEvent*)
 {
 }
+
+void TransparentDialogContainer::showEvent(QShowEvent* event)
+{
+	Q_UNUSED(event);
+	adjustSize();
+}
