@@ -6,7 +6,7 @@
 using namespace SeoSpider;
 
 TransparentDialogContainer::TransparentDialogContainer(Dialog* dialog)
-	//: QFrame(dialog->parentWidget())
+	: QDialog(dialog->parentWidget())
 {
 	//setAttribute(Qt::WA_TranslucentBackground);
 	//setWindowFlags(Qt::FramelessWindowHint);

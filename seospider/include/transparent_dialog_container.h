@@ -5,7 +5,7 @@ namespace SeoSpider
 
 class Dialog;
 
-class TransparentDialogContainer : public QFrame
+class TransparentDialogContainer : public QDialog
 {
 public:
 	TransparentDialogContainer(Dialog* dialog);

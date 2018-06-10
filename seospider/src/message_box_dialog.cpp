@@ -49,8 +49,6 @@ void MessageBoxDialog::showEvent(QShowEvent* event)
 {
 	WidgetHelpers::moveWidgetToHostCenter(this, theApp->mainWindow());
 
-	resize(size());
-
 	QFrame::showEvent(event);
 }
 
