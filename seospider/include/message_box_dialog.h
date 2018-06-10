@@ -8,7 +8,7 @@
 namespace SeoSpider
 {
 
-class MessageBoxDialog : public FloatingDialog
+class MessageBoxDialog : public Dialog
 {
 	Q_OBJECT
 
@@ -23,8 +23,7 @@ private slots:
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
-	virtual void hideEvent(QHideEvent* event) override;
-	virtual bool eventFilter(QObject* object, QEvent* event) override;
+	//virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private:
 	Ui_MessageBox* m_ui;

@@ -10,13 +10,9 @@ class Dialog : public QFrame, public IDialog
 {
 	Q_OBJECT
 
-//friend class FloatingDialog;
-
 public:
-	Dialog(QWidget* decoratedWidget, QWidget* parent = nullptr);
-	virtual ~Dialog() = default;
+	Dialog(QWidget* parent = nullptr);
 
-	//IDialog implementaion
 signals:
 	virtual void dialogClosed(int clickedButtonRole) override;
 
@@ -26,6 +22,9 @@ public slots:
 	virtual void open() override;
 	virtual void done(int r) override;
 	virtual int result() const override;
+
+protected:
+	virtual void hideEvent(QHideEvent* event) override;
 
 private:
 	void completeLocalEventLoop();

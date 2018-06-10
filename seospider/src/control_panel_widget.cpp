@@ -117,7 +117,7 @@ void ControlPanelWidget::clearCrawlingData() const
 			ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
 		}
 
-		messageBoxDialog->deleteLater();
+		//messageBoxDialog->deleteLater();
 	};
 
 	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));

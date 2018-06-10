@@ -1,22 +1,16 @@
 #include "dialog.h"
-#include "shadow_decoration_frame.h"
-#include "cursor_factory.h"
-#include "widget_helpers.h"
+#include "dialog_container.h"
 #include "application.h"
 #include "main_window.h"
 
 namespace SeoSpider
 {
 
-Dialog::Dialog(QWidget* decoratedWidget, QWidget* parent)
+Dialog::Dialog(QWidget* parent)
 	: QFrame(parent)
 {
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 	setWindowModality(Qt::ApplicationModal);
-	setAttribute(Qt::WA_DeleteOnClose, true);
-	
-	QVBoxLayout* layout = new QVBoxLayout(parent);
-	layout->addWidget(new ShadowDecorationFrame(decoratedWidget, parent));
 }
 
 void Dialog::accept()
@@ -31,11 +25,19 @@ void Dialog::reject()
 
 void Dialog::open()
 {
-	show();
+	theApp->mainWindow()->showShadedOverlay();
 
-	m_eventLoop.exec();
+	/*int result =*/ DialogContainer::instance().openDialog(this);
 
-	completeLocalEventLoop();
+	//done(result);
+
+// 	show();
+// 
+// 	m_eventLoop.exec();
+// 
+// 	completeLocalEventLoop();
+
+	theApp->mainWindow()->hideShadedOverlay();
 }
 
 void Dialog::done(int r)
@@ -45,6 +47,13 @@ void Dialog::done(int r)
 	m_dialogCode = static_cast<QDialog::DialogCode>(r);
 
 	hide();
+}
+
+void Dialog::hideEvent(QHideEvent* event)
+{
+	emit dialogClosed(result());
+
+	QFrame::hideEvent(event);
 }
 
 int Dialog::result() const

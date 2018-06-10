@@ -5,19 +5,16 @@
 #include "widget_helpers.h"
 #include "shadow_decoration_frame.h"
 #include "cursor_factory.h"
+#include "dialog_container.h"
 
 namespace SeoSpider
 {
 
 MessageBoxDialog::MessageBoxDialog(QWidget* parent)
-	: FloatingDialog(this, parent)
+	: Dialog(parent)
 	, m_ui(new Ui_MessageBox)
 	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
 {
-	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-	setWindowModality(Qt::ApplicationModal);
-	setAttribute(Qt::WA_DeleteOnClose, true);
-
 	m_ui->setupUi(this);
 
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
@@ -52,40 +49,29 @@ void MessageBoxDialog::showEvent(QShowEvent* event)
 {
 	WidgetHelpers::moveWidgetToHostCenter(this, theApp->mainWindow());
 
-	theApp->mainWindow()->showShadedOverlay();
-	theApp->mainWindow()->setDisabled(true);
+	resize(size());
 
 	QFrame::showEvent(event);
 }
 
-void MessageBoxDialog::hideEvent(QHideEvent* event)
-{
-	theApp->mainWindow()->hideShadedOverlay();
-	theApp->mainWindow()->setDisabled(false);
-
-	QFrame::hideEvent(event);
-
-	emit dialogClosed(m_clickedButtonRole);
-}
-
-bool MessageBoxDialog::eventFilter(QObject*, QEvent* event)
-{
-	if (event->type() == QEvent::MouseButtonPress)
-	{
-		FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
-	}
-	
-	if (event->type() == QEvent::MouseButtonRelease)
-	{
-		FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-	}
-	
-	if (event->type() == QEvent::MouseMove)
-	{
-		FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
-	}
-
-	return false;
-}
+// bool MessageBoxDialog::eventFilter(QObject*, QEvent* event)
+// {
+// 	if (event->type() == QEvent::MouseButtonPress)
+// 	{
+// 		//FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
+// 	}
+// 	
+// 	if (event->type() == QEvent::MouseButtonRelease)
+// 	{
+// 		//FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
+// 	}
+// 	
+// 	if (event->type() == QEvent::MouseMove)
+// 	{
+// 		//FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
+// 	}
+// 
+// 	return false;
+// }
 
 }

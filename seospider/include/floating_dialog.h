@@ -11,7 +11,7 @@ class FloatingDialog : public FloatingFrame, public IDialog
 	Q_OBJECT
 
 public:	
-	FloatingDialog(QWidget* decoratedWidget, QWidget* parent = nullptr);
+	FloatingDialog(QWidget* parent = nullptr);
 	virtual ~FloatingDialog() = default;
 	
 	//IDialog implementaion

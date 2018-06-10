@@ -19,8 +19,8 @@ ShadowDecorationFrame::ShadowDecorationFrame(QWidget* decoratingWidget, QWidget*
 	QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect;
 	shadowEffect->setBlurRadius(5);
 	shadowEffect->setOffset(4.0);
-
 	m_decoratingWidget->setGraphicsEffect(shadowEffect);
+	m_decoratingWidget->adjustSize();
 }
 
 }
