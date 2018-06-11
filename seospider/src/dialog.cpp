@@ -9,8 +9,11 @@ namespace SeoSpider
 Dialog::Dialog(QWidget* parent)
 	: QFrame(parent)
 {
-	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-	setWindowModality(Qt::ApplicationModal);
+}
+
+QObject* Dialog::qobject() const
+{
+	return const_cast<Dialog*>(this);
 }
 
 void Dialog::accept()
@@ -27,23 +30,13 @@ void Dialog::open()
 {
 	theApp->mainWindow()->showShadedOverlay();
 
-	/*int result =*/ DialogContainer::instance().openDialog(this);
-
-	//done(result);
-
-// 	show();
-// 
-// 	m_eventLoop.exec();
-// 
-// 	completeLocalEventLoop();
+	DialogContainer::instance().openDialog(this);
 
 	theApp->mainWindow()->hideShadedOverlay();
 }
 
 void Dialog::done(int r)
 {
-	completeLocalEventLoop();
-
 	m_dialogCode = static_cast<QDialog::DialogCode>(r);
 
 	hide();
@@ -59,17 +52,6 @@ void Dialog::hideEvent(QHideEvent* event)
 int Dialog::result() const
 {
 	return m_dialogCode;
-}
-
-void Dialog::completeLocalEventLoop()
-{
-	if (!m_eventLoop.isRunning())
-	{
-		return;
-	}
-
-	m_eventLoop.processEvents();
-	m_eventLoop.exit();
 }
 
 }

@@ -1,60 +1,58 @@
 #include "floating_dialog.h"
 #include "dialog.h"
+#include "application.h"
+#include "main_window.h"
+#include "dialog_container.h"
 
 namespace SeoSpider
 {
 
 FloatingDialog::FloatingDialog(QWidget* parent)
 	: FloatingFrame(parent)
-	, m_dialog(new Dialog(parent))
 {
-	//QVBoxLayout* layout = new QVBoxLayout(parent);
-	//layout->addWidget(dynamic_cast<QWidget*>(m_dialog));
+}
+
+QObject* FloatingDialog::qobject() const
+{
+	return const_cast<FloatingDialog*>(this);
 }
 
 void FloatingDialog::accept()
 {
-	m_dialog->accept();
+	done(QDialog::Accepted);
 }
 
 void FloatingDialog::reject()
 {
-	m_dialog->reject();
+	done(QDialog::Rejected);
 }
 
 void FloatingDialog::open()
 {
-	m_dialog->open();
+	theApp->mainWindow()->showShadedOverlay();
+
+	DialogContainer::instance().openDialog(this);
+
+	theApp->mainWindow()->hideShadedOverlay();
 }
 
 void FloatingDialog::done(int r)
 {
-	m_dialog->done(r);
+	m_dialogCode = static_cast<QDialog::DialogCode>(r);
+
+	hide();
 }
 
 int FloatingDialog::result() const
 {
-	return m_dialog->result();
+	return m_dialogCode;
 }
 
-bool FloatingDialog::eventFilter(QObject*, QEvent* event)
+void FloatingDialog::hideEvent(QHideEvent* event)
 {
-	if (event->type() == QEvent::MouseButtonPress)
-	{
-		FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
-	}
+	emit dialogClosed(result());
 
-	if (event->type() == QEvent::MouseButtonRelease)
-	{
-		FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-	}
-
-	if (event->type() == QEvent::MouseMove)
-	{
-		FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
-	}
-
-	return false;
+	QFrame::hideEvent(event);
 }
 
 }

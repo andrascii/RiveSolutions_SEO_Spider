@@ -4,16 +4,21 @@ namespace SeoSpider
 {
 
 class Dialog;
+class FloatingDialog;
 
 class TransparentDialogContainer : public QDialog
 {
+	Q_OBJECT
+
 public:
 	TransparentDialogContainer(Dialog* dialog);
-	~TransparentDialogContainer();
+	TransparentDialogContainer(FloatingDialog* dialog);
 
 protected:
-	virtual void closeEvent(QCloseEvent* event) override;
 	virtual void showEvent(QShowEvent* event) override;
+
+private:
+	TransparentDialogContainer(QWidget* dialog);
 };
 
 }

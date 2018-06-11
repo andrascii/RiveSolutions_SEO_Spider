@@ -104,11 +104,10 @@ void ControlPanelWidget::clearCrawlingData() const
 	
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
-	messageBoxDialog->open();
 
 	auto onDialogClosed = [messageBoxDialog](int result)
 	{
-		if (result == QDialogButtonBox::YesRole)
+		if (result == QDialog::Accepted)
 		{
 			ActionRegistry::instance().globalAction(s_saveFileAndClearDataAction)->trigger();
 		}
@@ -117,10 +116,12 @@ void ControlPanelWidget::clearCrawlingData() const
 			ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
 		}
 
-		//messageBoxDialog->deleteLater();
+		messageBoxDialog->deleteLater();
 	};
 
-	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
+	//VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
+
+	messageBoxDialog->open();
 }
 
 void ControlPanelWidget::onCrawlerStateChanged(int state)

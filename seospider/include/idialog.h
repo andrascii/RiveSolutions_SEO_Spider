@@ -8,10 +8,12 @@ class IDialog
 public:
 	virtual ~IDialog() = default;
 
-	//public signals
+	virtual QObject* qobject() const = 0;
+
+	// signals
 	virtual void dialogClosed(int clickedButtonRole) = 0;
 
-	//public slots
+	// slots
 	virtual void accept() = 0;
 	virtual void reject() = 0;
 	virtual void open() = 0;

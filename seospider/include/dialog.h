@@ -13,6 +13,8 @@ class Dialog : public QFrame, public IDialog
 public:
 	Dialog(QWidget* parent = nullptr);
 
+	virtual QObject* qobject() const override;
+
 signals:
 	virtual void dialogClosed(int clickedButtonRole) override;
 
@@ -27,11 +29,7 @@ protected:
 	virtual void hideEvent(QHideEvent* event) override;
 
 private:
-	void completeLocalEventLoop();
-
-private:
 	QDialog::DialogCode m_dialogCode;
-	QEventLoop m_eventLoop;
 };
 
 }

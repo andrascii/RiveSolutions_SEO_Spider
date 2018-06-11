@@ -12,9 +12,9 @@ class FloatingDialog : public FloatingFrame, public IDialog
 
 public:	
 	FloatingDialog(QWidget* parent = nullptr);
-	virtual ~FloatingDialog() = default;
-	
-	//IDialog implementaion
+
+	virtual QObject* qobject() const override;
+
 signals:
 	virtual void dialogClosed(int clickedButtonRole) override;
 
@@ -26,10 +26,10 @@ public slots:
 	virtual int result() const override;
 
 protected:
-	virtual bool eventFilter(QObject* object, QEvent* event) override;
+	virtual void hideEvent(QHideEvent* event) override;
 
 private:
-	IDialog* m_dialog;
+	QDialog::DialogCode m_dialogCode;
 };
 
 }

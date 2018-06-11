@@ -11,7 +11,7 @@ namespace SeoSpider
 {
 
 MessageBoxDialog::MessageBoxDialog(QWidget* parent)
-	: Dialog(parent)
+	: FloatingDialog(parent)
 	, m_ui(new Ui_MessageBox)
 	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
 {
@@ -23,6 +23,8 @@ MessageBoxDialog::MessageBoxDialog(QWidget* parent)
 
 	m_ui->buttonBox->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
 	m_ui->messageLabel->setWordWrap(true);
+
+	DialogContainer::instance().registerDialog(this);
 }
 
 void MessageBoxDialog::setMessage(const QString& message)
@@ -38,6 +40,11 @@ void MessageBoxDialog::setMessage(const QString& message)
 void MessageBoxDialog::setStandardButtons(QDialogButtonBox::StandardButtons buttons)
 {
 	m_ui->buttonBox->setStandardButtons(buttons);
+}
+
+int MessageBoxDialog::clickedButtonRole() const
+{
+	return m_clickedButtonRole;
 }
 
 void MessageBoxDialog::onButtonClicked(QAbstractButton* button)

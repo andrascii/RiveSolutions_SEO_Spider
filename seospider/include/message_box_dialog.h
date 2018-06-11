@@ -8,7 +8,7 @@
 namespace SeoSpider
 {
 
-class MessageBoxDialog : public Dialog
+class MessageBoxDialog : public FloatingDialog
 {
 	Q_OBJECT
 
@@ -17,6 +17,7 @@ public:
 
 	void setMessage(const QString& message);
 	void setStandardButtons(QDialogButtonBox::StandardButtons buttons);
+	int clickedButtonRole() const;
 
 private slots:
 	void onButtonClicked(QAbstractButton* button);
