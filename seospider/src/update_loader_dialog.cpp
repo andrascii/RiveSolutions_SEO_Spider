@@ -40,7 +40,12 @@ void UpdateLoaderDialog::showEvent(QShowEvent* event)
 
 void UpdateLoaderDialog::onDownloadNowClicked()
 {
-	if (QProcess::startDetached("Uninstall SeoSpider.exe", { "--updater" }))
+	QString repositoryUrl = QString(UpdateHelpers::actualVersionFileUrl());
+	repositoryUrl.truncate(repositoryUrl.lastIndexOf("/"));
+
+	INFOLOG << "Launch installer with url:" << repositoryUrl;
+
+	if (QProcess::startDetached("Uninstall SeoSpider.exe", { "--updater", "--setTempRepository", repositoryUrl }))
 	{
 		theApp->quit();
 	}

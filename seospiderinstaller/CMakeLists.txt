@@ -35,8 +35,18 @@ list(APPEND PackageFileList
 		${ReleasePackageDir}/QtXlsxWriter.pdb
 )
 
+file(GLOB_RECURSE OpenSslDllList "$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/*.dll")
+
 #add_custom_target(${SeoSpiderInstallerName} ALL)
 add_custom_target(${SeoSpiderInstallerName})
+
+add_custom_command(
+	TARGET ${SeoSpiderInstallerName} 
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E remove_directory 
+	${TargetPackagePath}/data
+)
 
 ######### dirs creation block ##################
 add_custom_command(
@@ -78,16 +88,7 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy
-	$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/libcrypto-1_1.dll
-	${TargetPackagePath}/data/
-)
-
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/libssl-1_1.dll
+	${OpenSslDllList}
 	${TargetPackagePath}/data/
 )
 
@@ -125,6 +126,22 @@ add_custom_command(
           --release --no-translations --compiler-runtime "${TargetPackagePath}/data/"
     COMMENT "Running windeployqt..."
 )
+
+if("$ENV{SS_PLATFORM}" STREQUAL "win32")
+	set(vc_redist "vc_redist.x86.exe")	
+elseif("$ENV{SS_PLATFORM}" STREQUAL "x64")
+	set(vc_redist "vc_redist.x64.exe")
+endif()	
+
+add_custom_command(
+	TARGET ${SeoSpiderInstallerName}
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND}
+	ARGS -E rename 
+	${TargetPackagePath}/data/${vc_redist}
+	${TargetPackagePath}/data/vcredist.exe
+)
+
 
 if(${RepoGen_executable})
 	
