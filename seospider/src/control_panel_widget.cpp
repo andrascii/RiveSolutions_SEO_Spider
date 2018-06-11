@@ -6,6 +6,8 @@
 #include "crawler.h"
 #include "url_line_edit.h"
 #include "message_box_dialog.h"
+#include "application.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {
@@ -102,11 +104,10 @@ void ControlPanelWidget::clearCrawlingData() const
 	
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
-	messageBoxDialog->show();
 
 	auto onDialogClosed = [messageBoxDialog](int result)
 	{
-		if (result == QDialogButtonBox::YesRole)
+		if (result == QDialog::Accepted)
 		{
 			ActionRegistry::instance().globalAction(s_saveFileAndClearDataAction)->trigger();
 		}
@@ -119,6 +120,8 @@ void ControlPanelWidget::clearCrawlingData() const
 	};
 
 	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
+
+	messageBoxDialog->open();
 }
 
 void ControlPanelWidget::onCrawlerStateChanged(int state)

@@ -291,7 +291,7 @@ int MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setStandardButtons(buttons);
-	messageBoxDialog->exec();
+	messageBoxDialog->open();
 
 	return messageBoxDialog->result();
 }
