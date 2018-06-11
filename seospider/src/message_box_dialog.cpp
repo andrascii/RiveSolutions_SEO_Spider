@@ -59,24 +59,4 @@ void MessageBoxDialog::showEvent(QShowEvent* event)
 	QFrame::showEvent(event);
 }
 
-// bool MessageBoxDialog::eventFilter(QObject*, QEvent* event)
-// {
-// 	if (event->type() == QEvent::MouseButtonPress)
-// 	{
-// 		//FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
-// 	}
-// 	
-// 	if (event->type() == QEvent::MouseButtonRelease)
-// 	{
-// 		//FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-// 	}
-// 	
-// 	if (event->type() == QEvent::MouseMove)
-// 	{
-// 		//FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
-// 	}
-// 
-// 	return false;
-// }
-
 }

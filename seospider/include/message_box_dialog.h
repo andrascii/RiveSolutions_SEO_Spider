@@ -24,7 +24,6 @@ private slots:
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
-	//virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private:
 	Ui_MessageBox* m_ui;

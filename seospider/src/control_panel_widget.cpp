@@ -119,7 +119,7 @@ void ControlPanelWidget::clearCrawlingData() const
 		messageBoxDialog->deleteLater();
 	};
 
-	//VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
+	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
 
 	messageBoxDialog->open();
 }
