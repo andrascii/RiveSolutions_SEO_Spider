@@ -63,7 +63,7 @@
        <item>
         <widget class="QPushButton" name="downloadLaterButton">
          <property name="text">
-          <string>Update Later</string>
+          <string>Exit</string>
          </property>
         </widget>
        </item>

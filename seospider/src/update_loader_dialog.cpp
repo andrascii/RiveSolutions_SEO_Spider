@@ -38,6 +38,12 @@ void UpdateLoaderDialog::showEvent(QShowEvent* event)
 	QFrame::showEvent(event);
 }
 
+void UpdateLoaderDialog::closeEvent(QCloseEvent*)
+{
+	theApp->mainWindow()->setDisabled(false);
+	theApp->quit();
+}
+
 void UpdateLoaderDialog::onDownloadNowClicked()
 {
 	QString repositoryUrl = QString(UpdateHelpers::actualVersionFileUrl());
@@ -59,6 +65,7 @@ void UpdateLoaderDialog::onDownloadLaterClicked()
 void UpdateLoaderDialog::closeDialog() noexcept
 {
 	theApp->mainWindow()->setDisabled(false);
+	theApp->quit();
 
 	close();
 }
