@@ -16,6 +16,7 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event);
 	void paintEvent(QPaintEvent* event);
 
+private:
 	bool m_mousePressed;
 	QPoint m_mousePos;
 	QPoint m_wndPos;

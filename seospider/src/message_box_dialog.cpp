@@ -5,34 +5,26 @@
 #include "widget_helpers.h"
 #include "shadow_decoration_frame.h"
 #include "cursor_factory.h"
+#include "dialog_container.h"
 
 namespace SeoSpider
 {
 
 MessageBoxDialog::MessageBoxDialog(QWidget* parent)
-	: FloatingFrame(parent)
+	: FloatingDialog(parent)
 	, m_ui(new Ui_MessageBox)
 	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
 {
-	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-	setAttribute(Qt::WA_TranslucentBackground);
-	setWindowModality(Qt::ApplicationModal);
-	setAttribute(Qt::WA_DeleteOnClose, true);
-
-	QFrame* internalFrame = new QFrame;
-	m_ui->setupUi(internalFrame);
-
-	internalFrame->installEventFilter(this);
+	m_ui->setupUi(this);
 
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
 	VERIFY(connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, &MessageBoxDialog::onButtonClicked));
 
-	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->addWidget(new ShadowDecorationFrame(internalFrame, this));
-
 	m_ui->buttonBox->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
 	m_ui->messageLabel->setWordWrap(true);
+
+	DialogContainer::instance().registerDialog(this);
 }
 
 void MessageBoxDialog::setMessage(const QString& message)
@@ -50,37 +42,9 @@ void MessageBoxDialog::setStandardButtons(QDialogButtonBox::StandardButtons butt
 	m_ui->buttonBox->setStandardButtons(buttons);
 }
 
-int MessageBoxDialog::result() const
+int MessageBoxDialog::clickedButtonRole() const
 {
-	return m_dialogCode;
-}
-
-void MessageBoxDialog::accept()
-{
-	done(QDialog::Accepted);
-}
-
-void MessageBoxDialog::reject()
-{
-	done(QDialog::Rejected);
-}
-
-void MessageBoxDialog::done(int r)
-{
-	completeLocalEventLoop();
-
-	m_dialogCode = static_cast<QDialog::DialogCode>(r);
-
-	hide();
-}
-
-void MessageBoxDialog::exec()
-{
-	show();
-
-	m_eventLoop.exec();
-
-	completeLocalEventLoop();
+	return m_clickedButtonRole;
 }
 
 void MessageBoxDialog::onButtonClicked(QAbstractButton* button)
@@ -90,53 +54,9 @@ void MessageBoxDialog::onButtonClicked(QAbstractButton* button)
 
 void MessageBoxDialog::showEvent(QShowEvent* event)
 {
-	WidgetHelpers::moveWidgetToHostCenter(this);
-
-	theApp->mainWindow()->showShadedOverlay();
-	theApp->mainWindow()->setDisabled(true);
+	WidgetHelpers::moveWidgetToHostCenter(this, theApp->mainWindow());
 
 	QFrame::showEvent(event);
-}
-
-void MessageBoxDialog::hideEvent(QHideEvent* event)
-{
-	theApp->mainWindow()->hideShadedOverlay();
-	theApp->mainWindow()->setDisabled(false);
-
-	QFrame::hideEvent(event);
-
-	emit dialogClosed(m_clickedButtonRole);
-}
-
-bool MessageBoxDialog::eventFilter(QObject*, QEvent* event)
-{
-	if (event->type() == QEvent::MouseButtonPress)
-	{
-		FloatingFrame::mousePressEvent(static_cast<QMouseEvent*>(event));
-	}
-
-	if (event->type() == QEvent::MouseButtonRelease)
-	{
-		FloatingFrame::mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-	}
-
-	if (event->type() == QEvent::MouseMove)
-	{
-		FloatingFrame::mouseMoveEvent(static_cast<QMouseEvent*>(event));
-	}
-
-	return false;
-}
-
-void MessageBoxDialog::completeLocalEventLoop()
-{
-	if (!m_eventLoop.isRunning())
-	{
-		return;
-	}
-
-	m_eventLoop.processEvents();
-	m_eventLoop.exit();
 }
 
 }
