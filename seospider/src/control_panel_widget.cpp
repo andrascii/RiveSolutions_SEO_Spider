@@ -121,7 +121,7 @@ void ControlPanelWidget::clearCrawlingData() const
 
 	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
 
-	messageBoxDialog->open();
+	messageBoxDialog->exec();
 }
 
 void ControlPanelWidget::onCrawlerStateChanged(int state)

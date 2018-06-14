@@ -2,6 +2,7 @@
 
 #include "ui_register_product_dialog.h"
 #include "requester_wrapper.h"
+#include "dialog.h"
 
 namespace CrawlerEngine
 {
@@ -14,7 +15,7 @@ class SetSerialNumberResponse;
 namespace SeoSpider
 {
 
-class RegisterProductDialog : public QDialog
+class RegisterProductDialog : public Dialog
 {
 	Q_OBJECT
 

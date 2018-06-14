@@ -1,11 +1,12 @@
 #pragma once
 
 #include "ui_feedback_dialog.h"
+#include "dialog.h"
 
 namespace SeoSpider
 {
 
-class FeedbackDialog final : public QDialog
+class FeedbackDialog final : public Dialog
 {
 public:
 	FeedbackDialog(QWidget* parent = nullptr);

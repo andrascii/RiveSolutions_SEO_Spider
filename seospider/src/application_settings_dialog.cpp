@@ -1,4 +1,4 @@
-#include "application_settings_widget.h"
+#include "application_settings_dialog.h"
 #include "service_locator.h"
 #include "settings_page_registry.h"
 #include "helpers.h"
@@ -11,14 +11,12 @@
 namespace SeoSpider
 {
 
-ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
-	: QDialog(parent)
+ApplicationSettingsDialog::ApplicationSettingsDialog(QWidget* parent)
+	: Dialog(parent)
 	, m_somethingChanged(false)
 {
-	//////////// crawlerStarted, crawlerFinished
-
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted, this, &ApplicationSettingsWidget::onCrawlerStarted));
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished, this, &ApplicationSettingsWidget::onCrawlerFinished));
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted, this, &ApplicationSettingsDialog::onCrawlerStarted));
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished, this, &ApplicationSettingsDialog::onCrawlerFinished));
 
 	Qt::WindowFlags flags = windowFlags();
 	Qt::WindowFlags helpFlag = Qt::WindowContextHelpButtonHint;
@@ -27,9 +25,9 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 
 	initialize();
 
-	connect(m_ui.okButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::okButtonClicked);
-	connect(m_ui.applyButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::applyChanges);
-	connect(m_ui.cancelButton, &QPushButton::clicked, this, &ApplicationSettingsWidget::cancelButtonClicked);
+	connect(m_ui.okButton, &QPushButton::clicked, this, &ApplicationSettingsDialog::okButtonClicked);
+	connect(m_ui.applyButton, &QPushButton::clicked, this, &ApplicationSettingsDialog::applyChanges);
+	connect(m_ui.cancelButton, &QPushButton::clicked, this, &ApplicationSettingsDialog::cancelButtonClicked);
 
 	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
 
@@ -39,7 +37,7 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 	resize(width, height);
 }
 
-void ApplicationSettingsWidget::showEvent(QShowEvent*)
+void ApplicationSettingsDialog::showEvent(QShowEvent*)
 {
 	reloadSettingsSlot();
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -47,12 +45,12 @@ void ApplicationSettingsWidget::showEvent(QShowEvent*)
 	WidgetHelpers::moveWidgetToHostCenter(this);
 }
 
-void ApplicationSettingsWidget::hideEvent(QHideEvent*)
+void ApplicationSettingsDialog::hideEvent(QHideEvent*)
 {
 	restoreChangedValues();
 }
 
-void ApplicationSettingsWidget::restoreChangedValues()
+void ApplicationSettingsDialog::restoreChangedValues()
 {
 	m_somethingChanged = false;
 
@@ -66,7 +64,7 @@ void ApplicationSettingsWidget::restoreChangedValues()
 	m_ui.applyButton->setEnabled(m_somethingChanged);
 }
 
-void ApplicationSettingsWidget::applyChanges()
+void ApplicationSettingsDialog::applyChanges()
 {
 	m_somethingChanged = false;
 
@@ -80,13 +78,13 @@ void ApplicationSettingsWidget::applyChanges()
 	m_ui.applyButton->setEnabled(m_somethingChanged);
 }
 
-void ApplicationSettingsWidget::okButtonClicked()
+void ApplicationSettingsDialog::okButtonClicked()
 {
 	applyChanges();
 	close();
 }
 
-void ApplicationSettingsWidget::cancelButtonClicked()
+void ApplicationSettingsDialog::cancelButtonClicked()
 {
 	ISettingsPageRegistry* settingsPageRegistry = CrawlerEngine::ServiceLocator::instance()->service<ISettingsPageRegistry>();
 	
@@ -102,7 +100,7 @@ void ApplicationSettingsWidget::cancelButtonClicked()
 	close();
 }
 
-void ApplicationSettingsWidget::reloadSettingsSlot()
+void ApplicationSettingsDialog::reloadSettingsSlot()
 {
 	QWidget* widget = m_ui.stackedWidget->currentWidget();
 
@@ -115,17 +113,17 @@ void ApplicationSettingsWidget::reloadSettingsSlot()
 	m_somethingChanged = false;
 }
 
-void ApplicationSettingsWidget::onCrawlerStarted()
+void ApplicationSettingsDialog::onCrawlerStarted()
 {
 	setEnabled(false);
 }
 
-void ApplicationSettingsWidget::onCrawlerFinished()
+void ApplicationSettingsDialog::onCrawlerFinished()
 {
 	setEnabled(true);
 }
 
-ApplicationSettingsWidget::~ApplicationSettingsWidget()
+ApplicationSettingsDialog::~ApplicationSettingsDialog()
 {
 	while (m_ui.stackedWidget->count() > 0)
 	{
@@ -138,7 +136,7 @@ ApplicationSettingsWidget::~ApplicationSettingsWidget()
 	}
 }
 
-void ApplicationSettingsWidget::setCurrentPage(const QByteArray& settingsPageName)
+void ApplicationSettingsDialog::setCurrentPage(const QByteArray& settingsPageName)
 {
 	if (settingsPageName.isEmpty())
 	{
@@ -150,13 +148,13 @@ void ApplicationSettingsWidget::setCurrentPage(const QByteArray& settingsPageNam
 	m_ui.propGroupsList->setCurrentRow(m_pageIndex[settingsPageName]);
 }
 
-void ApplicationSettingsWidget::somethingChangedSlot()
+void ApplicationSettingsDialog::somethingChangedSlot()
 {
 	m_somethingChanged = true;
 	m_ui.applyButton->setEnabled(m_somethingChanged);
 }
 
-void ApplicationSettingsWidget::initialize()
+void ApplicationSettingsDialog::initialize()
 {
 	m_ui.setupUi(this);
 

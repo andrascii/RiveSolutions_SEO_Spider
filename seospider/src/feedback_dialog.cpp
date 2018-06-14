@@ -5,7 +5,7 @@ namespace SeoSpider
 {
 
 FeedbackDialog::FeedbackDialog(QWidget* parent)
-	: QDialog(parent)
+	: Dialog(parent)
 	, m_ui(new Ui::FeedbackDialog)
 {
 	m_ui->setupUi(this);
