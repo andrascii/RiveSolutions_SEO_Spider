@@ -31,6 +31,10 @@ void TestsDownloader::resetPauseRange()
 {
 }
 
+void TestsDownloader::setTimeout(int)
+{
+}
+
 void TestsDownloader::setUserAgent(const QByteArray&)
 {
 }

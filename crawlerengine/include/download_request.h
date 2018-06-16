@@ -22,10 +22,12 @@ struct DownloadRequest : public IRequest
 
 	DownloadRequest(const CrawlerRequest& requestInfo, 
 		LinkStatus linkStatus = LinkStatus::LinkStatusFirstLoading, 
-		BodyProcessingCommand bodyProcessingCommand = BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity)
+		BodyProcessingCommand bodyProcessingCommand = BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity,
+		bool useTimeout = false)
 		: requestInfo(requestInfo)
 		, linkStatus(linkStatus)
 		, bodyProcessingCommand(bodyProcessingCommand)
+		, useTimeout(useTimeout)
 	{
 	}
 
@@ -41,6 +43,7 @@ struct DownloadRequest : public IRequest
 	CrawlerRequest requestInfo;
 	LinkStatus linkStatus;
 	BodyProcessingCommand bodyProcessingCommand;
+	bool useTimeout;
 };
 
 }

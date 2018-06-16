@@ -40,6 +40,7 @@ Downloader::Downloader()
 	: QObject(nullptr)
 	, m_networkAccessor(new QNetworkAccessManager(this))
 	, m_randomIntervalRangeTimer(new RandomIntervalRangeTimer(this))
+	, m_timeoutTimer(new QTimer(this))
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
@@ -51,6 +52,13 @@ Downloader::Downloader()
 
 	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked, 
 		this, &Downloader::onTimerTicked, Qt::DirectConnection));
+
+
+	m_timeoutTimer->setInterval(100);
+	VERIFY(connect(m_timeoutTimer, &QTimer::timeout,
+		this, &Downloader::onTimeoutTimerTicked, Qt::DirectConnection));
+
+	
 }
 
 void Downloader::setPauseRange(int from, int to)
@@ -58,6 +66,19 @@ void Downloader::setPauseRange(int from, int to)
 	resetPauseRange();
 	m_randomIntervalRangeTimer->setRange(from, to);
 	m_randomIntervalRangeTimer->start();
+}
+
+void Downloader::setTimeout(int msecs)
+{
+	m_timeout = msecs;
+	if (msecs <= 0)
+	{
+		m_timeoutTimer->stop();
+	}
+	else
+	{
+		m_timeoutTimer->start();
+	}
 }
 
 void Downloader::resetPauseRange()
@@ -180,6 +201,40 @@ void Downloader::onTimerTicked()
 	load(requester);
 }
 
+void Downloader::onTimeoutTimerTicked()
+{
+	const qint64 currentMsecsSinceEpoch = QDateTime::currentMSecsSinceEpoch();
+
+	QSet<QNetworkReply*> timeoutReplies;
+	QSet<QNetworkReply*> destroyedReplies;
+	foreach (QNetworkReply* reply, m_activeReplies.keys())
+	{
+		if (m_activeReplies.value(reply).first.isNull())
+		{
+			destroyedReplies.insert(reply);
+			continue;
+		}
+
+		if (currentMsecsSinceEpoch - m_activeReplies.value(reply).second > static_cast<qint64>(m_timeout))
+		{
+			timeoutReplies.insert(reply);
+		}
+	}
+
+	foreach(QNetworkReply* reply, timeoutReplies)
+	{
+		reply->setProperty("timeout", true);
+		reply->abort();
+		ASSERT(reply->property("processed").isValid());
+		ASSERT(!m_activeReplies.contains(reply));
+	}
+
+	foreach(QNetworkReply* reply, destroyedReplies)
+	{
+		m_activeReplies.remove(reply);
+	}
+}
+
 void Downloader::proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenticator*) const
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
@@ -276,7 +331,7 @@ void Downloader::processReply(QNetworkReply* reply)
 
 	std::shared_ptr<DownloadResponse> response = responseFor(requestId);
 
-	const QByteArray body = readBody(reply);
+	const QByteArray body = statusCode == Common::StatusCode::Timeout ? QByteArray() : readBody(reply);
 	const Url redirectUrlAddress = redirectUrl(reply);
 
 	if (statusCode == Common::StatusCode::MovedPermanently301 ||
@@ -294,7 +349,7 @@ void Downloader::processReply(QNetworkReply* reply)
 		if (urlsInChain < 2)
 		{
 			const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
-			loadHelper(redirectKey, requestId);
+			loadHelper(redirectKey, requestId, reply->property("useTimeout").isValid());
 			response->hopsChain.addHop(Hop{ reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs() });
 
 			return;
@@ -326,24 +381,27 @@ bool Downloader::isReplyProcessed(QNetworkReply* reply) const noexcept
 	return alreadyProcessed.isValid();
 }
 
-void Downloader::markReplyAsProcessed(QNetworkReply* reply) const noexcept
+void Downloader::markReplyAsProcessed(QNetworkReply* reply) noexcept
 {
 	ASSERT(reply != nullptr);
 
 	reply->setProperty("processed", true);
+
+	m_activeReplies.remove(reply);
 }
 
 void Downloader::load(RequesterSharedPtr requester)
 {
 	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
-	const auto[requestId, reply] = loadHelper(request->requestInfo);
+	const auto[requestId, reply] = loadHelper(request->requestInfo, -1, request->useTimeout);
 
 	m_requesters[requestId] = requester;
 	m_activeRequestersReplies[requester] = reply;
+
 }
 
-std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& request, int parentRequestId)
+std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& request, int parentRequestId, bool useTimeout)
 {
 	static int s_request_id = 0;
 	QNetworkReply* reply = nullptr;
@@ -369,6 +427,12 @@ std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& requ
 		}
 	}
 
+	if (useTimeout)
+	{
+		m_activeReplies[reply] = QPair<QPointer<QNetworkReply>, qint64>(reply, QDateTime::currentMSecsSinceEpoch());
+		reply->setProperty("useTimeout", true);
+	}
+	
 	reply->setProperty("crawlerRequestType", static_cast<int>(request.requestType));
 	
 	const int resultRequestId = parentRequestId == -1 ? s_request_id : parentRequestId;
@@ -424,6 +488,11 @@ QByteArray Downloader::readBody(QNetworkReply* reply) const
 
 Common::StatusCode Downloader::replyStatusCode(QNetworkReply* reply) const
 {
+	if (reply->property("timeout").isValid())
+	{
+		return Common::StatusCode::Timeout;
+	}
+
 	const QNetworkReply::NetworkError error = reply->error();
 
 	Common::StatusCode code = Common::StatusCode::Undefined;

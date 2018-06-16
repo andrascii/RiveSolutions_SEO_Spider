@@ -201,6 +201,9 @@ void Crawler::startCrawling()
 			Qt::BlockingQueuedConnection, Q_ARG(int, m_options->pauseRangeFrom()), Q_ARG(int, m_options->pauseRangeTo())));
 	}
 
+	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setTimeout",
+		Qt::BlockingQueuedConnection, Q_ARG(int, m_options->limitTimeout())));
+
 	initializeCrawlingSession();
 }
 

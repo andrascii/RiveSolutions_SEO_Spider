@@ -157,7 +157,9 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 		DownloadRequest request(crawlerRequest, 
 			m_reloadPage ? 
 			DownloadRequest::LinkStatus::LinkStatusReloadAlreadyLoaded : 
-			DownloadRequest::LinkStatus::LinkStatusFirstLoading
+			DownloadRequest::LinkStatus::LinkStatusFirstLoading,
+			DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity,
+			true
 		);
 
 		m_currentRequest = crawlerRequest;
