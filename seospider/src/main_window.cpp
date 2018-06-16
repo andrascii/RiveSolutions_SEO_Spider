@@ -1,5 +1,5 @@
 #include "application.h"
-#include "application_settings_widget.h"
+#include "application_settings_dialog.h"
 #include "main_window.h"
 #include "crawler.h"
 #include "content_frame.h"
@@ -7,7 +7,7 @@
 #include "action_registry.h"
 #include "menubar.h"
 #include "settings_page_impl.h"
-#include "site_map_creator_widget.h"
+#include "site_map_creator_dialog.h"
 #include "page_factory.h"
 #include "settings_page.h"
 #include "user_agent_settings_widget.h"
@@ -39,6 +39,7 @@
 #include "update_loader_dialog.h"
 #include "cursor_factory.h"
 #include "shaded_overlay.h"
+#include "message_box_dialog.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -76,7 +77,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 void MainWindow::showSitemapCreatorDialog()
 {
-	SitemapCreatorWidget* titledWindow = new SitemapCreatorWidget(this);
+	SitemapCreatorDialog* titledWindow = new SitemapCreatorDialog(this);
 	titledWindow->exec();
 	titledWindow->deleteLater();
 }
@@ -259,7 +260,7 @@ void MainWindow::onChangeGroupingAuditInfo(QAction* action)
 
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
 {
-	ApplicationSettingsWidget* applicationSettingsWidget = new ApplicationSettingsWidget(this);
+	ApplicationSettingsDialog* applicationSettingsWidget = new ApplicationSettingsDialog(this);
 	applicationSettingsWidget->setCurrentPage(settingsPageName);
 	applicationSettingsWidget->exec();
 	applicationSettingsWidget->deleteLater();
@@ -304,7 +305,7 @@ int MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
 	messageBoxDialog->setStandardButtons(buttons);
-	messageBoxDialog->open();
+	messageBoxDialog->exec();
 
 	return messageBoxDialog->result();
 }

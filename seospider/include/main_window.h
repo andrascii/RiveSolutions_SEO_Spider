@@ -1,6 +1,5 @@
 #pragma once
 
-#include "message_box_dialog.h"
 #include "requester_wrapper.h"
 #include "page_factory.h"
 

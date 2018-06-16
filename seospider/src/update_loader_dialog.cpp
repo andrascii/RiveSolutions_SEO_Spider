@@ -29,13 +29,20 @@ UpdateLoaderDialog::UpdateLoaderDialog(QWidget* parent)
 
 void UpdateLoaderDialog::showEvent(QShowEvent* event)
 {
+	theApp->mainWindow()->showShadedOverlay();
+
 	WidgetHelpers::moveWidgetToHostCenter(this);
 
 	theApp->mainWindow()->setDisabled(true);
 
 	setEnabled(true);
-
 	QFrame::showEvent(event);
+}
+
+void UpdateLoaderDialog::hideEvent(QHideEvent* event)
+{
+	theApp->mainWindow()->hideShadedOverlay();
+	QFrame::hideEvent(event);
 }
 
 void UpdateLoaderDialog::closeEvent(QCloseEvent*)

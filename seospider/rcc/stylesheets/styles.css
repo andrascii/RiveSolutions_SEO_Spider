@@ -403,64 +403,64 @@ SeoSpider--SettingsPage QFrame#settingsFrame
 	border: 0.05em solid #CCCCCC;
 }
 
-/*/////////////////////////////// ApplicationSettingsWidget ///////////////////////////*/
+/*/////////////////////////////// ApplicationSettingsDialog ///////////////////////////*/
 
-SeoSpider--ApplicationSettingsWidget
+SeoSpider--ApplicationSettingsDialog
 {
 	background: #F9F9F9;
 }
 
-SeoSpider--ApplicationSettingsWidget QListView
+SeoSpider--ApplicationSettingsDialog QListView
 {
 	border: 0.05em solid #CCCCCC;
 	background: #FFFFFF;
 	min-width: 10em;
 }
 
-SeoSpider--ApplicationSettingsWidget QListView::item
+SeoSpider--ApplicationSettingsDialog QListView::item
 {
     min-height: 2em;
 }
 
-SeoSpider--ApplicationSettingsWidget QListView::item:hover
+SeoSpider--ApplicationSettingsDialog QListView::item:hover
 {
     background-color: #F3F3F3;
 	color: #2C2D30;
 }
 
-SeoSpider--ApplicationSettingsWidget QListView::item:selected
+SeoSpider--ApplicationSettingsDialog QListView::item:selected
 {
     background-color: #E5E5E5;
 	color: #2C2D30;
 }
 
-SeoSpider--ApplicationSettingsWidget QLabel,
-SeoSpider--ApplicationSettingsWidget QWidget,
-SeoSpider--ApplicationSettingsWidget QCheckBox
+SeoSpider--ApplicationSettingsDialog QLabel,
+SeoSpider--ApplicationSettingsDialog QWidget,
+SeoSpider--ApplicationSettingsDialog QCheckBox
 {
 	color: #2C2D30;
 }
 
-SeoSpider--ApplicationSettingsWidget QPushButton#applyButton:enabled
+SeoSpider--ApplicationSettingsDialog QPushButton#applyButton:enabled
 {
 	color: white;
 	background-color: #56A433;
 	border-color: #4A9029;
 }
 
-SeoSpider--ApplicationSettingsWidget QPushButton#applyButton:enabled:hover
+SeoSpider--ApplicationSettingsDialog QPushButton#applyButton:enabled:hover
 {
 	background-color: #67B847;
 }
 
-SeoSpider--ApplicationSettingsWidget QPushButton#applyButton:enabled:pressed
+SeoSpider--ApplicationSettingsDialog QPushButton#applyButton:enabled:pressed
 {
 	background-color: #4A9029;
 }
 
-/*/////////////////////////////// SitemapCreatorWidget ///////////////////////////////*/
+/*/////////////////////////////// SitemapCreatorDialog ///////////////////////////////*/
 
-SeoSpider--SitemapCreatorWidget
+SeoSpider--SitemapCreatorDialog
 {
 	background: #F9F9F9;
 }
@@ -475,8 +475,8 @@ QFrame#ControlsFrame
 QFrame#ControlsFrame QCheckBox,
 QFrame#ControlsFrame QLabel
 {
-	color: #4D626E;
-	font-size: 9pt;
+	color: #2C2D30;
+	font-size: 11pt;
 }
 
 QFrame#ControlsFrame QSpinBox,

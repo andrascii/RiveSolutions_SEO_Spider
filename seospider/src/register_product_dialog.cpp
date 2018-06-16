@@ -11,7 +11,7 @@ namespace SeoSpider
 using namespace CrawlerEngine;
 
 RegisterProductDialog::RegisterProductDialog(QWidget* parent)
-	: QDialog(parent)
+	: Dialog(parent)
 	, m_ui(new Ui_RegisterProductDialog)
 {
 	m_ui->setupUi(this);

@@ -1,17 +1,18 @@
 #pragma once
 
-#include "ui_application_settings_widget.h"
+#include "ui_application_settings_dialog.h"
+#include "dialog.h"
 
 namespace SeoSpider
 {
 
-class ApplicationSettingsWidget : public QDialog
+class ApplicationSettingsDialog : public Dialog
 {
 	Q_OBJECT
 
 public:
-	ApplicationSettingsWidget(QWidget* parent = nullptr);
-	~ApplicationSettingsWidget();
+	ApplicationSettingsDialog(QWidget* parent = nullptr);
+	~ApplicationSettingsDialog();
 
 	void setCurrentPage(const QByteArray& settingsPageName);
 
@@ -31,7 +32,7 @@ private:
 	virtual void hideEvent(QHideEvent* event) override;
 
 private:
-	Ui::ApplicationSettingsWidget m_ui;
+	Ui::ApplicationSettingsDialog m_ui;
 	QMap<QByteArray, int> m_pageIndex;
 	bool m_somethingChanged;
 };
