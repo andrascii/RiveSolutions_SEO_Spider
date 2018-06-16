@@ -52,6 +52,7 @@ enum class StatusCode
 	// custom
 	BlockedByRobotsTxt,
 	BlockedByMetaRobots,
+	Timeout,
 	UnknownNetworkError
 };
 

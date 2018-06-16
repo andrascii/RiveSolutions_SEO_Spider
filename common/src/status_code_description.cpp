@@ -50,7 +50,8 @@ QMap<StatusCode, QString> s_statusCodeDescriptions
 	{ StatusCode::HttpVersionNotSupported505, "505 Http Version Not Supported" },
 
 	{ StatusCode::BlockedByRobotsTxt, "Blocked By robots.txt" },
-	{ StatusCode::BlockedByMetaRobots, "Blocked By Meta Robots" }
+	{ StatusCode::BlockedByMetaRobots, "Blocked By Meta Robots" },
+	{ StatusCode::Timeout, "Timeout"}
 };
 
 }
