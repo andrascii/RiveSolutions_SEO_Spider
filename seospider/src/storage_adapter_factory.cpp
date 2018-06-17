@@ -140,6 +140,12 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 
 		// Meta description available columns
 		case StorageAdapterType::StorageAdapterTypeEmptyMetaDescriptions:
+		{
+			return QVector<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::UrlLengthColumn
+				<< ParsedPageInfo::Column::ContentTypeColumn;
+		}
 		case StorageAdapterType::StorageAdapterTypeDuplicatedMetaDescriptions:
 		case StorageAdapterType::StorageAdapterTypeTooLongMetaDescriptions:
 		case StorageAdapterType::StorageAdapterTypeTooShortMetaDescriptions:
