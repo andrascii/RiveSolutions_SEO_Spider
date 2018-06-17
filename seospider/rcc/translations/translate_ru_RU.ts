@@ -252,7 +252,7 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>No image</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет изображения</translation>
     </message>
     <message>
         <source>Indexing and Page Scanning</source>
@@ -389,11 +389,11 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>Status Code 4xx</source>
-        <translation></translation>
+        <translation>Коды состояния 4хх</translation>
     </message>
     <message>
         <source>Status Code 5xx</source>
-        <translation></translation>
+        <translation>Коды состояния 5хх</translation>
     </message>
     <message>
         <source>Moved Temporarily 302</source>
@@ -417,7 +417,7 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>Too Long Titles</source>
-        <translation>Слишком значения title</translation>
+        <translation>Слишком длинные значения title</translation>
     </message>
     <message>
         <source>Too Short Titles</source>
@@ -433,35 +433,35 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>Empty Meta Descriptions</source>
-        <translation>Пустые Meta Desciption</translation>
+        <translation>Пустые meta desciption</translation>
     </message>
     <message>
         <source>Duplicated Meta Descriptions</source>
-        <translation>Дубликаты Meta Description</translation>
+        <translation>Дубликаты meta description</translation>
     </message>
     <message>
         <source>Too Long Meta Descriptions</source>
-        <translation>Слишком длинные Meta Description</translation>
+        <translation>Слишком длинные meta description</translation>
     </message>
     <message>
         <source>Too Short Meta Descriptions</source>
-        <translation>Слишком короткие Meta Description</translation>
+        <translation>Слишком короткие meta description</translation>
     </message>
     <message>
         <source>Several Meta Descriptions</source>
-        <translation>Несколько тегов с Meta Description</translation>
+        <translation>Несколько тегов meta description</translation>
     </message>
     <message>
         <source>Empty Meta Keywords</source>
-        <translation>Пустые Meta Keywords</translation>
+        <translation>Пустые meta keywords</translation>
     </message>
     <message>
         <source>Duplicated Meta Keywords</source>
-        <translation>Дубликаты Meta Keywords</translation>
+        <translation>Дубликаты meta keywords</translation>
     </message>
     <message>
         <source>Several Meta Keywords</source>
-        <translation>Несколько тегов Meta Keywords</translation>
+        <translation>Несколько тегов meta keywords</translation>
     </message>
     <message>
         <source>Blocked for Indexing Pages</source>
@@ -971,7 +971,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Redirected URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL-адрес редиректа</translation>
     </message>
     <message>
         <source>Server Response</source>
@@ -1007,7 +1007,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Status Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Код состояния</translation>
     </message>
     <message>
         <source>Url Length</source>
@@ -1836,7 +1836,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Version: </source>
-        <translation type="unfinished"></translation>
+        <translation>Версия:</translation>
     </message>
 </context>
 <context>
@@ -1847,38 +1847,38 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>New updates available</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступно новое обновление</translation>
     </message>
     <message>
         <source>There is a program updates. What should we do?</source>
-        <translation type="unfinished"></translation>
+        <translation>Обнаружены новые обновления. Что нам делать?</translation>
     </message>
     <message>
         <source>Update Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить сейчас</translation>
     </message>
     <message>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Завершить программу</translation>
     </message>
 </context>
 <context>
     <name>UserAgentSettingsWidget</name>
     <message>
         <source>User Agent Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки User Agent</translation>
     </message>
     <message>
         <source>Use mobile user agent</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать мобильный User Agent</translation>
     </message>
     <message>
         <source>Use desktop user agent</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать десктопный User Agent</translation>
     </message>
     <message>
         <source>Use custom user agent</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать кастомный User Agent</translation>
     </message>
 </context>
 <context>
