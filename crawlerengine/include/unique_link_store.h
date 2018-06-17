@@ -40,6 +40,7 @@ public:
 	void clear();
 	void clearPending();
 	bool hasRefreshUrls() const noexcept;
+	void setLimitCrawledLinksCount(int value) noexcept;
 
 signals:
 	void urlAdded();
@@ -80,6 +81,8 @@ private:
 	mutable std::recursive_mutex m_mutex;
 	int m_lastPendingSizeChange;
 	int m_lastCrawledSizeChange;
+
+	int m_limitCrawledLinksCount;
 
 	ILicenseService* m_licenseService;
 };

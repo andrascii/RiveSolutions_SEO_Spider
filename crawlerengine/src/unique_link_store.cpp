@@ -41,6 +41,7 @@ UniqueLinkStore::IncrementGuardExt::~IncrementGuardExt()
 UniqueLinkStore::UniqueLinkStore(QObject* parent)
 	: QObject(parent)
 	, m_licenseService(nullptr)
+	, m_limitCrawledLinksCount(-1)
 {
 	ASSERT(ServiceLocator::instance()->isRegistered<ILicenseService>());
 
@@ -180,6 +181,13 @@ bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestT
 {
 	std::lock_guard locker(m_mutex);
 
+	if (m_limitCrawledLinksCount > 0 &&
+		m_crawledUrlList.size() + m_pendingUrlList.size() >= static_cast<size_t>(m_limitCrawledLinksCount))
+	{
+		// don't add this url if we exceed the "Limit Crawled Links Count" option
+		return false;
+	}
+
 	CrawlerRequest request{ url, requestType };
 
 	{
@@ -300,8 +308,20 @@ bool UniqueLinkStore::hasRefreshUrls() const noexcept
 	return !m_refreshUrlList.empty();
 }
 
+void UniqueLinkStore::setLimitCrawledLinksCount(int value) noexcept
+{
+	m_limitCrawledLinksCount = value;
+}
+
 void UniqueLinkStore::addUrlInternal(CrawlerRequest&& request)
 {
+	if (m_limitCrawledLinksCount > 0 && 
+		m_crawledUrlList.size() + m_pendingUrlList.size() >= static_cast<size_t>(m_limitCrawledLinksCount))
+	{
+		// don't add this url if we exceed the "Limit Crawled Links Count" option
+		return;
+	}
+
 	// this function must be obfuscated and additionally tied to a serial number
 	if (m_crawledUrlList.find(request) != m_crawledUrlList.end())
 	{
