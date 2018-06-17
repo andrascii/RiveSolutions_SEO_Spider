@@ -122,7 +122,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">maxPageSize</string>
