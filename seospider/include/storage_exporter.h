@@ -19,6 +19,9 @@ public:
 		const CrawlerEngine::SequencedDataCollection* dataCollection, 
 		const std::vector<DCStorageDescription>& storages
 	);
+
+private:
+	static bool addLinksToThisPageColumn(const std::vector<DCStorageDescription>& storages) noexcept;
 };
 
 }
