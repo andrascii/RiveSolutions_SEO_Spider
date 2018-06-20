@@ -26,13 +26,12 @@ void LogThread::run()
 
 	forever
 	{
-		const qint64 size = m_socket->readData(reinterpret_cast<char*>(&message), sizeof(Common::PipeMessage));
-
 		if (m_socket->isClosed())
 		{
-			m_outputFile.flush();
 			break;
 		}
+
+		const qint64 size = m_socket->readData(reinterpret_cast<char*>(&message), sizeof(Common::PipeMessage));
 
 		if (size < sizeof(Common::PipeMessage))
 		{
@@ -65,6 +64,8 @@ void LogThread::run()
 
 		emit messageReceived(message);
 	}
+
+	m_outputFile.flush();
 }
 
 }
