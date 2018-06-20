@@ -244,6 +244,16 @@ void SeoSpiderServiceApiImpl::setThreadExceptionHandlers() const
 
 void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression) const
 {
+	m_pipeServer->logMessage(
+		Common::PipeMessage::Assert,
+		Common::SeverityLevel::ErrorLevel,
+		std::hash<std::thread::id>{}(std::this_thread::get_id()),
+		line,
+		file,
+		function,
+		expression
+	);
+
 #ifndef PRODUCTION
 	debugReport(file, line, function, expression);
 #else
@@ -263,16 +273,6 @@ void SeoSpiderServiceApiImpl::setLogFilter(const std::function<bool(Common::Seve
 
 void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const
 {
-	m_pipeServer->logMessage(
-		Common::PipeMessage::Assert,
-		Common::SeverityLevel::ErrorLevel,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		line,
-		file,
-		function,
-		expression
-	);
-
 	std::stringstream text;
 
 	text << std::string("Debug Assertion") << std::endl << std::endl;
