@@ -22,21 +22,10 @@ public:
 		const char* message
 	);
 
-	void transactMessage(
-		Common::PipeMessage::Type type,
-		Common::SeverityLevel level,
-		std::uint64_t threadId,
-		std::uint64_t line,
-		const char* file,
-		const char* function,
-		const char* message
-	);
-
 	void closeConnection();
 
 private:
 	void logMessage(const Common::PipeMessage& message);
-	void transactMessage(const Common::PipeMessage& message);
 
 private:
 	mutable std::mutex m_mutex;

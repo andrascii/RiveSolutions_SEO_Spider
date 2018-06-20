@@ -244,7 +244,7 @@ void SeoSpiderServiceApiImpl::setThreadExceptionHandlers() const
 
 void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression) const
 {
-	m_pipeServer->transactMessage(
+	m_pipeServer->logMessage(
 		Common::PipeMessage::Assert,
 		Common::SeverityLevel::ErrorLevel,
 		std::hash<std::thread::id>{}(std::this_thread::get_id()),
@@ -314,7 +314,7 @@ void SeoSpiderServiceApiImpl::traceLogMessage(
 		return;
 	}
 
-	m_pipeServer->transactMessage(type, Common::SeverityLevel::TraceLevel, threadId, line, file, function, message);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::TraceLevel, threadId, line, file, function, message);
 }
 
 void SeoSpiderServiceApiImpl::debugLogMessage(
@@ -330,7 +330,7 @@ void SeoSpiderServiceApiImpl::debugLogMessage(
 		return;
 	}
 
-	m_pipeServer->transactMessage(type, Common::SeverityLevel::DebugLevel, threadId, line, file, function, message);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::DebugLevel, threadId, line, file, function, message);
 }
 
 void SeoSpiderServiceApiImpl::infoLogMessage(
@@ -346,7 +346,7 @@ void SeoSpiderServiceApiImpl::infoLogMessage(
 		return;
 	}
 
-	m_pipeServer->transactMessage(type, Common::SeverityLevel::InfoLevel, threadId, line, file, function, message);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::InfoLevel, threadId, line, file, function, message);
 }
 
 void SeoSpiderServiceApiImpl::warningLogMessage(
@@ -362,7 +362,7 @@ void SeoSpiderServiceApiImpl::warningLogMessage(
 		return;
 	}
 
-	m_pipeServer->transactMessage(type, Common::SeverityLevel::WarningLevel, threadId, line, file, function, message);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::WarningLevel, threadId, line, file, function, message);
 }
 
 void SeoSpiderServiceApiImpl::errorLogMessage(
@@ -378,7 +378,7 @@ void SeoSpiderServiceApiImpl::errorLogMessage(
 		return;
 	}
 
-	m_pipeServer->transactMessage(type, Common::SeverityLevel::ErrorLevel, threadId, line, file, function, message);
+	m_pipeServer->logMessage(type, Common::SeverityLevel::ErrorLevel, threadId, line, file, function, message);
 }
 
 LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS)
