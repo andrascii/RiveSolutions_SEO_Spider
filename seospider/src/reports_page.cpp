@@ -19,14 +19,13 @@ ReportsPage::ReportsPage(QWidget* parent)
 	: QFrame(parent)
 	, m_stackedWidget(new QStackedWidget(this))
 	, m_placeHolderLabel(new QLabel(this))
-	, m_webEngineView(new QWebEngineView(this))
 	, m_reportDataProvider(theApp->crawler()->sequencedDataCollection())
 	, m_updateTimerId(0)
 	, m_saveToPdfAction(new QAction(tr("Export to PDF"), this))
 {
 	theApp->installEventFilter(this);
 
-	m_webEngineView->setContextMenuPolicy(Qt::NoContextMenu);
+	webEngineView()->setContextMenuPolicy(Qt::NoContextMenu);
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->addWidget(m_stackedWidget);
@@ -36,7 +35,7 @@ ReportsPage::ReportsPage(QWidget* parent)
 	m_placeHolderLabel->setText(tr("Waiting while crawling ended"));
 	m_placeHolderLabel->setAlignment(Qt::AlignCenter);
 	m_stackedWidget->addWidget(m_placeHolderLabel);
-	m_stackedWidget->addWidget(m_webEngineView);
+	m_stackedWidget->addWidget(webEngineView());
 
 	setReportType(ReportTypeBrief);
 
@@ -53,7 +52,7 @@ ReportsPage::ReportsPage(QWidget* parent)
 
 void ReportsPage::setReportType(ReportType reportType)
 {
-	m_webEngineView->setHtml(reportMaketContent(reportType));
+	webEngineView()->setHtml(reportMaketContent(reportType));
 
 	m_reportType = reportType;
 }
@@ -217,7 +216,7 @@ void ReportsPage::crawlerStateChangedSlot(int state)
 {
 	if(state != Crawler::State::StateWorking)
 	{
-		m_stackedWidget->setCurrentWidget(m_webEngineView);
+		m_stackedWidget->setCurrentWidget(webEngineView());
 		updateContent();
 		return;
 	}
@@ -258,11 +257,17 @@ void ReportsPage::doExport(IReportExporter* exporter) const
 	file.close();
 }
 
+QWebEngineView* ReportsPage::webEngineView() const
+{
+	static QWebEngineView s_webEngineView;
+	return &s_webEngineView;
+}
+
 #ifndef PRODUCTION
 
 void ReportsPage::setDebugReportType(ReportType reportType)
 {
-	m_webEngineView->setHtml(debugReportMaketContent(reportType));
+	webEngineView()->setHtml(debugReportMaketContent(reportType));
 }
 
 QByteArray ReportsPage::debugReportMaketContent(ReportType reportType) const

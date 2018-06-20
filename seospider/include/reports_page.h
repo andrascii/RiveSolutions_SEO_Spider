@@ -43,6 +43,8 @@ private:
 
 	void doExport(IReportExporter* exporter) const;
 
+	QWebEngineView* webEngineView() const;
+
 #ifndef PRODUCTION
 
 	void setDebugReportType(ReportType reportType);
@@ -53,7 +55,6 @@ private:
 private:
 	QStackedWidget* m_stackedWidget;
 	QLabel* m_placeHolderLabel;
-	QWebEngineView* m_webEngineView;
 	ReportType m_reportType;
 	ReportDataProvider m_reportDataProvider;
 	int m_updateTimerId;
