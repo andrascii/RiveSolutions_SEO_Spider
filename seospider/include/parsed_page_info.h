@@ -55,6 +55,7 @@ public:
 		FirstH2LengthColumn,
 		SecondH2LengthColumn,
 		LinksOnThisPageCountColumn,
+		LinksToThisPageColumn,
 
 		// !!!!!!!!!!!!!!!!!!! add new length enumerators above this!!!!!!!!!!!!!!!!!!!
 		EndLengthEnumeratorsColumn,
@@ -123,6 +124,7 @@ private:
 	QVariant acceptPageHash() const;
 	QVariant acceptImageSizeKb() const;
 	QVariant acceptLinksOnThisPageCount() const;
+	QVariant acceptLinksToThisPage() const;
 
 	static void checkColumnType(ParsedPageInfo::Column column);
 

@@ -62,6 +62,11 @@ void StorageExporter::exportStorage(const CrawlerEngine::SequencedDataCollection
 		QVector<ParsedPageInfo::Column> columnsForType =
 			StorageAdapterFactory::parsedPageAvailableColumns(static_cast<StorageAdapterType>(storageType));
 
+		if (addLinksToThisPageColumn(storages))
+		{
+			columnsForType.push_back(ParsedPageInfo::Column::LinksToThisPageColumn);
+		}
+
 		for (int k = 1; k <= columnsForType.size(); ++k)
 		{
 			QXlsx::RichString columnRichString;
@@ -93,4 +98,16 @@ void StorageExporter::exportStorage(const CrawlerEngine::SequencedDataCollection
 	);
 }
 
+bool StorageExporter::addLinksToThisPageColumn(const std::vector<DCStorageDescription>& storages) noexcept
+{
+	auto it = std::find_if(std::cbegin(storages), std::cend(storages), 
+		[](const DCStorageDescription& desc)
+	{
+		return desc.storageType == BrokenLinks ||
+			desc.storageType == Status4xxStorageType ||
+			desc.storageType == Status5xxStorageType;
+	});
+
+	return it != std::cend(storages);
+}
 }
