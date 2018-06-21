@@ -208,4 +208,22 @@ TEST(TitleTests, SeveralTitles)
 	env.exec();
 }
 
+TEST(TitleTests, ShinnyiMir)
+{
+	// several-titles.html -> several-titles-2.html
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://title.com/shinnyi-mir.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		//auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 1, 10, "Waiting for 1 page");
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(1, pages.size());
+		EXPECT_EQ(false, pages[0]->title.isEmpty());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }
