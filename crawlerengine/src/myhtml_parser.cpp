@@ -176,12 +176,12 @@ void MyHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHeade
 {
 	m_htmlPage = htmlPage;
 
-	myhtml_parse_fragment(m_tree, MyENCODING_UTF_8, htmlPage.data(), htmlPage.size(), MyHTML_TAG_HEAD, MyHTML_NAMESPACE_HTML);
-
+	myhtml_parse(m_tree, MyENCODING_UTF_8, htmlPage.data(), htmlPage.size());
 	initRootNode();
 
 	myencoding_t encoding = htmlSetEncoding(headers);
 	myhtml_parse(m_tree, encoding, htmlPage.data(), htmlPage.size());
+	initRootNode();
 }
 
 std::vector<LinkInfo> MyHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
