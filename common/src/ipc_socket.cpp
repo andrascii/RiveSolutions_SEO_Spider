@@ -134,4 +134,9 @@ bool IpcSocket::isClosed()
 	return 0 > peekData(&c, 0) && ERROR_BROKEN_PIPE == GetLastError();
 }
 
+QIODevice::OpenModeFlag IpcSocket::openMode() const
+{
+	return m_openMode;
+}
+
 }

@@ -25,6 +25,8 @@
 #include "license_handler.h"
 #include "license_service.h"
 #include "common_constants.h"
+#include "proper_404_checker.h"
+#include "screenshot_maker.h"
 
 namespace CrawlerEngine
 {
@@ -105,7 +107,7 @@ void Crawler::initialize()
 	initSequencedDataCollection();
 
 	m_downloader = createDownloader();
-	m_webHostInfo = new WebHostInfo(this, createWebScreenShot(), m_xmlSitemapLoader, m_robotsTxtLoader);
+	m_webHostInfo = new WebHostInfo(this, m_xmlSitemapLoader, m_robotsTxtLoader);
 
 	VERIFY(connect(m_webHostInfo, &WebHostInfo::webScreenshotLoaded, this, &Crawler::onSessionChanged));
 
@@ -117,6 +119,7 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
 	threadManager.moveObjectToThread(new Proper404Checker, "BackgroundThread");
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
+	threadManager.moveObjectToThread(new ScreenshotMaker, "BackgroundThread");
 
 	m_licenseService = new LicenseService;
 

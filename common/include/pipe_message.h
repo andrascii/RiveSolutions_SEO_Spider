@@ -16,8 +16,6 @@ enum class SeverityLevel
 	ErrorLevel
 };
 
-#pragma pack(push, 1)
-
 struct PipeMessage
 {
 	enum Type : std::uint64_t
@@ -35,8 +33,6 @@ struct PipeMessage
 	char function[c_functionNameLength];
 	char message[c_messageLength];
 };
-
-#pragma pack(pop)
 
 }
 

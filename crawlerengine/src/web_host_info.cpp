@@ -2,24 +2,26 @@
 #include "web_screenshot.h"
 #include "proper_404_checker.h"
 #include "ispecific_loader.h"
+#include "take_screenshot_response.h"
+#include "take_screenshot_request.h"
 
 namespace CrawlerEngine
 {
 
-WebHostInfo::WebHostInfo(QObject* parent, IWebScreenShot* webScreenShot, 
-	ISpecificLoader* xmlSiteMapLoader, ISpecificLoader* robotsTxtLoader)
+WebHostInfo::WebHostInfo(QObject* parent, ISpecificLoader* xmlSiteMapLoader, ISpecificLoader* robotsTxtLoader)
 	: QObject(parent)
-	, m_webScreenShot(webScreenShot)
 	, m_xmlSiteMapLoader(xmlSiteMapLoader)
 	, m_robotsTxtLoader(robotsTxtLoader)
 {
-	VERIFY(connect(m_webScreenShot->qobject(), SIGNAL(loaded(const QUrl&, const QPixmap&)), this, SIGNAL(webScreenshotLoaded())));
 }
 
 void WebHostInfo::reset(const QUrl& url)
 {
-	m_webScreenShot->load(url);
 	m_is404PagesSetupRight = std::nullopt;
+
+	TakeScreenshotRequest makeScreenshotRequest(url);
+	m_screenshotMakerRequester.reset(makeScreenshotRequest, this, &WebHostInfo::onScreenshotCreated);
+	m_screenshotMakerRequester->start();
 
 	Check404IsProperRequest request(url);
 	m_404IsProperRequester.reset(request, this, &WebHostInfo::on404Checked);
@@ -73,7 +75,7 @@ std::optional<bool> WebHostInfo::is404PagesSetupRight() const
 
 const QPixmap& WebHostInfo::image() const
 {
-	return m_webScreenShot->result();
+	return m_screenshot;
 }
 
 WebHostInfo::AllData WebHostInfo::allData() const
@@ -86,7 +88,7 @@ WebHostInfo::AllData WebHostInfo::allData() const
 		const QPixmap& pixmap = qvariant_cast<QPixmap>(image());
 		pixmap.save(&buffer, "PNG");
 	}
-	
+
 	return 
 	{ 
 		isRobotstxtValid(),
@@ -114,18 +116,24 @@ void WebHostInfo::setData(const AllData& data)
 	{
 		QPixmap hostImage;
 		hostImage.loadFromData(data.image, "PNG");
-		m_webScreenShot->setResult(hostImage);
+		m_screenshot = hostImage;
 	}
 	else
 	{
 		// TODO: clear image without constructing QPixmap instance in non-main thread
 	}
-	
 }
 
 void WebHostInfo::on404Checked(Requester*, const Check404IsProperResponse& response)
 {
 	m_is404PagesSetupRight = response.result;
+}
+
+void WebHostInfo::onScreenshotCreated(Requester*, const TakeScreenshotResponse& response)
+{
+	m_screenshot = response.pixmap();
+
+	emit webScreenshotLoaded();
 }
 
 }

@@ -11,7 +11,8 @@ enum class RequestType
 	RequestCheck404IsProper,
 	RequestSetSerialNumber,
 	RequestGetSerialNumberData,
-	RequestGetSerialNumberState
+	RequestGetSerialNumberState,
+	RequestTakeScreenshot
 };
 
 class IRequest

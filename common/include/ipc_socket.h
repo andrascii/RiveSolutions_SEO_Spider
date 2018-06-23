@@ -19,6 +19,7 @@ public:
 	qint64 transactData(const char* inData, qint64 inSize, char* outData, int outSize);
 	QString errorString() const { return m_errorString; }
 	bool isClosed();
+	QIODevice::OpenModeFlag openMode() const;
 
 private:
 	quintptr m_descriptor;

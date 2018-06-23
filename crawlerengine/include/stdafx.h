@@ -54,6 +54,7 @@
 #include <QWebEnginePage>
 #include <QBuffer>
 #include <QPointer>
+#include <QSharedMemory>
 
 //
 // C/C++
