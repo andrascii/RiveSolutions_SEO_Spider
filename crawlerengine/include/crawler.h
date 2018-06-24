@@ -22,6 +22,7 @@ class ModelController;
 class SequencedDataCollection;
 class Requester;
 class HostInfo;
+class IScreenshotMaker;
 struct SiteMapSettings;
 struct TaskResponse;
 struct GetHostInfoResponse;
@@ -137,7 +138,7 @@ private slots:
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;
-	virtual IWebScreenShot* createWebScreenShot();
+	virtual IScreenshotMaker* createScreenshotMaker();
 	virtual IDownloader* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
 	virtual void initSequencedDataCollection();

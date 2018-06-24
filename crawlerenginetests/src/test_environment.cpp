@@ -21,6 +21,9 @@ TestEnvironment::TestEnvironment()
 	, m_crawler(new TestsCrawler(s_threadCount, nullptr))
 {
 	m_crawler->initialize();
+
+	// in order to create QPixmap in non-GUI thread
+	setAttribute(Qt::AA_X11InitThreads, true);
 }
 
 TestEnvironment::~TestEnvironment()

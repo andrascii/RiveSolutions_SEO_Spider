@@ -8,7 +8,7 @@ namespace CrawlerEngine
 
 class IWebScreenShot;
 class ISpecificLoader;
-class TakeScreenshotResponse;
+class ITakeScreenshotResponse;
 struct Check404IsProperResponse;
 
 class WebHostInfo : public QObject
@@ -49,7 +49,7 @@ signals:
 
 private:
 	void on404Checked(Requester*, const Check404IsProperResponse& response);
-	void onScreenshotCreated(Requester*, const TakeScreenshotResponse& response);
+	void onScreenshotCreated(Requester*, const ITakeScreenshotResponse& response);
 	// ... add more
 
 private:

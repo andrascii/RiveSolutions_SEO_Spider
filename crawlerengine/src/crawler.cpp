@@ -18,7 +18,6 @@
 #include "xml_sitemap_loader.h"
 #include "get_host_info_request.h"
 #include "get_host_info_response.h"
-#include "web_screenshot.h"
 #include "host_info.h"
 #include "isequenced_storage.h"
 #include "helpers.h"
@@ -119,7 +118,7 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
 	threadManager.moveObjectToThread(new Proper404Checker, "BackgroundThread");
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
-	threadManager.moveObjectToThread(new ScreenshotMaker, "BackgroundThread");
+	threadManager.moveObjectToThread(createScreenshotMaker()->qobject(), "BackgroundThread");
 
 	m_licenseService = new LicenseService;
 
@@ -651,9 +650,9 @@ IHostInfoProvider* Crawler::createHostInfoProvider() const
 	return new HostInfoProvider;
 }
 
-CrawlerEngine::IWebScreenShot* Crawler::createWebScreenShot()
+IScreenshotMaker* Crawler::createScreenshotMaker()
 {
-	return new WebScreenShot(this);
+	return new ScreenshotMaker;
 }
 
 IDownloader* Crawler::createDownloader() const

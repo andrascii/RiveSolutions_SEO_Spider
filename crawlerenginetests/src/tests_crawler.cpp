@@ -4,8 +4,8 @@
 #include "test_sequenced_data_collection.h"
 #include "unordered_data_collection.h"
 #include "model_controller.h"
-#include "tests_web_screenshot.h"
 #include "tests_host_info_provider.h"
+#include "tests_screenshot_maker.h"
 
 namespace CrawlerEngineTests
 {
@@ -280,9 +280,9 @@ IHostInfoProvider* TestsCrawler::createHostInfoProvider() const
 	return new TestsHostInfoProvider;
 }
 
-IWebScreenShot* TestsCrawler::createWebScreenShot()
+IScreenshotMaker* TestsCrawler::createScreenshotMaker()
 {
-	return new TestsWebScreenShot(this);
+	return new TestsScreenshotMaker;
 }
 
 void TestsCrawler::waitForCrawlingDone()

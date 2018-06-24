@@ -5,14 +5,9 @@
 namespace CrawlerEngine
 {
 
-class TakeScreenshotResponse : public IResponse
+class ITakeScreenshotResponse : public IResponse
 {
 public:
-	TakeScreenshotResponse(const QPixmap& pixmap)
-		: m_pixmap(pixmap)
-	{
-	}
-
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTakeScreenshot)
 
 	virtual ResponseType type() const noexcept override
@@ -20,13 +15,40 @@ public:
 		return ResponseType::ResponseTakeScreenshot;
 	}
 
-	const QPixmap& pixmap() const
+	virtual QVariant screenshot() const = 0;
+};
+
+class TakeScreenshotResponse : public ITakeScreenshotResponse
+{
+public:
+	TakeScreenshotResponse()
 	{
-		return m_pixmap;
+	}
+
+	TakeScreenshotResponse(const QPixmap& screenshot)
+		: m_screenshot(screenshot)
+	{
+	}
+
+	virtual QVariant screenshot() const override
+	{
+		return m_screenshot;
 	}
 
 private:
-	QPixmap m_pixmap;
+	QPixmap m_screenshot;
+};
+
+class TakeScreenshotResponseTest : public ITakeScreenshotResponse
+{
+public:
+	virtual QVariant screenshot() const override
+	{
+		return m_screenshot;
+	}
+
+private:
+	QImage m_screenshot;
 };
 
 }

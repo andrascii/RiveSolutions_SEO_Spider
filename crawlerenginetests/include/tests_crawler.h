@@ -51,7 +51,7 @@ public:
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const override;
-	virtual IWebScreenShot* createWebScreenShot() override;
+	virtual IScreenshotMaker* createScreenshotMaker() override;
 	virtual IDownloader* createDownloader() const override;
 	virtual void initSequencedDataCollection() override;
 
