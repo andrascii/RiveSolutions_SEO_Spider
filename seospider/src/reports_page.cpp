@@ -19,13 +19,14 @@ ReportsPage::ReportsPage(QWidget* parent)
 	: QFrame(parent)
 	, m_stackedWidget(new QStackedWidget(this))
 	, m_placeHolderLabel(new QLabel(this))
+	, m_webEngineView(new QWebEngineView(this))
 	, m_reportDataProvider(theApp->crawler()->sequencedDataCollection())
 	, m_updateTimerId(0)
 	, m_saveToPdfAction(new QAction(tr("Export to PDF"), this))
 {
 	theApp->installEventFilter(this);
 
-	webEngineView()->setContextMenuPolicy(Qt::NoContextMenu);
+	m_webEngineView->setContextMenuPolicy(Qt::NoContextMenu);
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->addWidget(m_stackedWidget);
@@ -35,7 +36,7 @@ ReportsPage::ReportsPage(QWidget* parent)
 	m_placeHolderLabel->setText(tr("Waiting while crawling ended"));
 	m_placeHolderLabel->setAlignment(Qt::AlignCenter);
 	m_stackedWidget->addWidget(m_placeHolderLabel);
-	m_stackedWidget->addWidget(webEngineView());
+	m_stackedWidget->addWidget(m_webEngineView);
 
 	setReportType(ReportTypeBrief);
 
@@ -50,9 +51,10 @@ ReportsPage::ReportsPage(QWidget* parent)
 	controlsContainer->addAction(m_saveToPdfAction, PageFactory::AuditReportPage);
 }
 
+
 void ReportsPage::setReportType(ReportType reportType)
 {
-	webEngineView()->setHtml(reportMaketContent(reportType));
+	m_webEngineView->setHtml(reportMaketContent(reportType));
 
 	m_reportType = reportType;
 }
@@ -216,7 +218,7 @@ void ReportsPage::crawlerStateChangedSlot(int state)
 {
 	if(state != Crawler::State::StateWorking)
 	{
-		m_stackedWidget->setCurrentWidget(webEngineView());
+		m_stackedWidget->setCurrentWidget(m_webEngineView);
 		updateContent();
 		return;
 	}
@@ -257,17 +259,11 @@ void ReportsPage::doExport(IReportExporter* exporter) const
 	file.close();
 }
 
-QWebEngineView* ReportsPage::webEngineView() const
-{
-	static QWebEngineView s_webEngineView;
-	return &s_webEngineView;
-}
-
 #ifndef PRODUCTION
 
 void ReportsPage::setDebugReportType(ReportType reportType)
 {
-	webEngineView()->setHtml(debugReportMaketContent(reportType));
+	m_webEngineView->setHtml(debugReportMaketContent(reportType));
 }
 
 QByteArray ReportsPage::debugReportMaketContent(ReportType reportType) const

@@ -14,18 +14,19 @@ WebScreenShot::WebScreenShot(QObject* parent)
 
 void WebScreenShot::load(const QUrl& url)
 {
-	if(url == m_result.first)
+	if(url == m_result.first || m_webView)
 	{
 		return;
 	}
 
-	connect(webEngineView()->page(), &QWebEnginePage::loadFinished, this, &WebScreenShot::onLoadingDone, Qt::UniqueConnection);
+	m_webView.reset(new QWebEngineView);
 
-	webEngineView()->resize(1280, 1024);
+	VERIFY(connect(m_webView->page(), &QWebEnginePage::loadFinished, this, &WebScreenShot::onLoadingDone));
 
-	m_result = qMakePair(url, QPixmap(webEngineView()->size()));
+	m_webView->resize(1280, 1024);
 
-	webEngineView()->load(url);
+	m_result = qMakePair(url, QPixmap(m_webView->size()));
+	m_webView->load(url);
 }
 
 const QPixmap& WebScreenShot::result() const
@@ -47,25 +48,20 @@ void WebScreenShot::onLoadingDone(bool ok)
 {
 	if (!ok)
 	{
-		emit loaded(webEngineView()->url(), QPixmap());
+		emit loaded(m_webView->url(), QPixmap());
 		return;
 	}
 
-	webEngineView()->showMinimized();
+	m_webView->showMinimized();
 	m_timer->start();
 }
 
 void WebScreenShot::onReadyToRenderPixmap()
 {
-	m_result.second = webEngineView()->grab();
+	m_result.second = m_webView->grab();
 	m_result.second = m_result.second.scaledToWidth(400, Qt::SmoothTransformation);
-	emit loaded(webEngineView()->url(), m_result.second);
-	webEngineView()->close();
+	emit loaded(m_webView->url(), m_result.second);
+	m_webView.reset();
 }
 
-QWebEngineView* WebScreenShot::webEngineView() const
-{
-	static QWebEngineView s_webEngineView;
-	return &s_webEngineView;
-}
 }

@@ -26,9 +26,7 @@ private slots:
 	void onReadyToRenderPixmap();
 
 private:
-	QWebEngineView* webEngineView() const;
-
-private:
+	std::unique_ptr<QWebEngineView> m_webView;
 	QPair<Url, QPixmap> m_result;
 	QTimer* m_timer;
 };
