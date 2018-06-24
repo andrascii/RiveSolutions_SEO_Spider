@@ -8,7 +8,7 @@ class UpdateHelpers
 public:
 	static constexpr const char* actualVersionFileUrl()
 	{
-	#ifdef _WIN64
+	#ifdef Q_OS_WIN64
 		return "http://rivesolutions.com/downloads/win/x64/Updates.xml";
 	#else
 		return "http://rivesolutions.com/downloads/win/x86/Updates.xml";
