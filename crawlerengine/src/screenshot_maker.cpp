@@ -61,7 +61,15 @@ QObject* ScreenshotMaker::qobject()
 void ScreenshotMaker::timerEvent(QTimerEvent*)
 {
 	char response = 0;
-	m_ipcSocket.readData(&response, sizeof(response));
+
+	if (m_ipcSocket.peekData(&response, sizeof(response)) != 1)
+	{
+		return;
+	}
+	else
+	{
+		m_ipcSocket.readData(&response, sizeof(response));
+	}
 
 	if (response != 1)
 	{
@@ -75,14 +83,16 @@ void ScreenshotMaker::timerEvent(QTimerEvent*)
 	if (!m_sharedMemory.attach(QSharedMemory::ReadOnly))
 	{
 		logSharedMemoryAttachError();
+
+		ERRLOG << "Cannot attach to shared memory to read the screenshot image data";
 	}
 
 	QPixmap pixmap;
 
 	{
 		std::lock_guard locker(m_sharedMemory);
-		uchar* pixmapData = static_cast<uchar*>(m_sharedMemory.data());
-		pixmap.loadFromData(pixmapData, m_sharedMemory.size());
+		uchar* imageData = static_cast<uchar*>(m_sharedMemory.data());
+		pixmap.loadFromData(imageData, m_sharedMemory.size());
 	}
 
 	m_sharedMemory.detach();

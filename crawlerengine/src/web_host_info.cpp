@@ -1,5 +1,4 @@
 #include "web_host_info.h"
-#include "web_screenshot.h"
 #include "proper_404_checker.h"
 #include "ispecific_loader.h"
 #include "take_screenshot_response.h"
@@ -129,9 +128,9 @@ void WebHostInfo::on404Checked(Requester*, const Check404IsProperResponse& respo
 	m_is404PagesSetupRight = response.result;
 }
 
-void WebHostInfo::onScreenshotCreated(Requester*, const TakeScreenshotResponse& response)
+void WebHostInfo::onScreenshotCreated(Requester*, const ITakeScreenshotResponse& response)
 {
-	m_screenshot = response.pixmap();
+	m_screenshot = qvariant_cast<QPixmap>(response.screenshot());
 
 	emit webScreenshotLoaded();
 }
