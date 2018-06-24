@@ -3,10 +3,9 @@
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
+	app.setQuitOnLastWindowClosed(false);
 
 	const QStringList arguments = app.arguments();
-
-	//while (!IsDebuggerPresent());
 
 	Q_ASSERT(arguments.size() == 3);
 

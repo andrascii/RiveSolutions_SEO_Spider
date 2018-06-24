@@ -31,6 +31,11 @@ ScreenshotMaker::ScreenshotMaker(QObject* parent)
 	handlerRegistry.registrateHandler(this, RequestType::RequestTakeScreenshot);
 }
 
+ScreenshotMaker::~ScreenshotMaker()
+{
+	sendExitCommandToScreenshotMakerProcess();
+}
+
 void ScreenshotMaker::handleRequest(RequesterSharedPtr requester)
 {
 	if (m_isActive)
@@ -125,7 +130,7 @@ void ScreenshotMaker::startScreenshotMakerIfNeeded(int attemptsCount)
 
 void ScreenshotMaker::ensureConnection(int attemptsCount)
 {
-	if (m_ipcSocket.openMode() != QIODevice::NotOpen && !m_ipcSocket.isClosed())
+	if (m_ipcSocket.openMode() != QIODevice::NotOpen)
 	{
 		return;
 	}
@@ -145,14 +150,7 @@ void ScreenshotMaker::sendScreenshotRequest(const RequesterSharedPtr& requester)
 {
 	ASSERT(requester->request()->requestType() == RequestType::RequestTakeScreenshot);
 
-	TakeScreenshotRequest* request = static_cast<TakeScreenshotRequest*>(requester->request());
-
-	Common::Command cmd{ Common::CommandType::CommandTypeTakeScreenshot };
-	const std::string url = request->url().toDisplayString().toStdString();
-	std::copy(url.begin(), url.end(), cmd.data);
-
-	m_ipcSocket.writeData(reinterpret_cast<const char*>(&cmd), sizeof(cmd));
-
+	sendTakeScreenshotCommand(static_cast<TakeScreenshotRequest*>(requester->request()));
 	m_currentRequester = requester;
 
 	m_timerId = startTimer(Common::c_minimumRecommendedTimerResolution);
@@ -206,6 +204,32 @@ void ScreenshotMaker::logSharedMemoryAttachError()
 			break;
 		}
 	}
+}
+
+void ScreenshotMaker::sendTakeScreenshotCommand(TakeScreenshotRequest* request)
+{
+	if (m_ipcSocket.openMode() == QIODevice::NotOpen)
+	{
+		ERRLOG << "There is no connection with screenshotmaker.exe";
+		return;
+	}
+
+	Common::Command cmd{ Common::CommandType::CommandTypeTakeScreenshot };
+	const std::string url = request->url().toDisplayString().toStdString();
+	std::copy(url.begin(), url.end(), cmd.data);
+	m_ipcSocket.writeData(reinterpret_cast<const char*>(&cmd), sizeof(cmd));
+}
+
+void ScreenshotMaker::sendExitCommandToScreenshotMakerProcess()
+{
+	if (m_ipcSocket.openMode() == QIODevice::NotOpen)
+	{
+		ERRLOG << "There is no connection with screenshotmaker.exe";
+		return;
+	}
+
+	Common::Command cmd{ Common::CommandType::CommandTypeExit };
+	m_ipcSocket.writeData(reinterpret_cast<const char*>(&cmd), sizeof(cmd));
 }
 
 }
