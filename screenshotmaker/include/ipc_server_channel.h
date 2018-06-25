@@ -24,7 +24,7 @@ protected:
 	virtual void timerEvent(QTimerEvent* event) override;
 
 private:
-	void detectCommandType(Common::Command cmd);
+	void detectCommandType(const Common::Command& cmd);
 
 private:
 	QString m_pipeChannelName;

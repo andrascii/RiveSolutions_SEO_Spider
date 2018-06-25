@@ -6,13 +6,10 @@ namespace ScreenshotMaker
 
 Executor::Executor(const QString& pipeChannelName, const QString& sharedMemoryKey, QObject* parent)
 	: QObject(parent)
-	, m_thread(new QThread(this))
 	, m_ipcChannel(new IpcServerChannel(pipeChannelName, this))
 	, m_sharedMemory(sharedMemoryKey)
 	, m_timer(new QTimer(this))
 {
-	m_ipcChannel->moveToThread(m_thread);
-
 	Q_ASSERT(connect(m_ipcChannel, SIGNAL(screenshotRequested(const QUrl&)), this,
 		SLOT(takeScreenshot(const QUrl&)), Qt::QueuedConnection));
 
@@ -28,7 +25,7 @@ void Executor::takeScreenshot(const QUrl& url)
 	m_timer->setSingleShot(true);
 
 	Q_ASSERT(connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap));
-	Q_ASSERT(connect(m_webEngineView.page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone, Qt::UniqueConnection));
+	Q_ASSERT(connect(m_webEngineView.page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone));
 
 	m_webEngineView.resize(1280, 1024);
 	m_webEngineView.load(url);

@@ -10,6 +10,7 @@ IpcServerChannel::IpcServerChannel(const QString& pipeChannelName, QObject* pare
 	: QObject(parent)
 	, m_pipeChannelName(pipeChannelName)
 {
+	m_ipcServer.listen(m_pipeChannelName);
 	m_timerId = startTimer(Common::c_minimumRecommendedTimerResolution);
 }
 
@@ -23,14 +24,18 @@ void IpcServerChannel::onScreenshotCreated()
 
 void IpcServerChannel::timerEvent(QTimerEvent*)
 {
-	if (m_ipcServer.hasConnection())
+	if (!m_ipcServer.hasConnection())
 	{
+		killTimer(m_timerId);
 		return;
 	}
 
-	m_ipcServer.listen(m_pipeChannelName);
-
 	Common::Command cmd;
+
+	if (m_ipcServer.peekData(cmd) != sizeof(cmd))
+	{
+		return;
+	}
 
 	const qint64 size = m_ipcServer.readData(cmd);
 
@@ -48,7 +53,7 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 	}
 }
 
-void IpcServerChannel::detectCommandType(Common::Command cmd)
+void IpcServerChannel::detectCommandType(const Common::Command& cmd)
 {
 	switch (cmd.type)
 	{

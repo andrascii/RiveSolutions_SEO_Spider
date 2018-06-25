@@ -27,7 +27,6 @@ private:
 
 private:
 	QWebEngineView m_webEngineView;
-	QThread* m_thread;
 	IpcServerChannel* m_ipcChannel;
 	QTimer* m_timer;
 	QSharedMemory m_sharedMemory;

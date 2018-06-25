@@ -18,7 +18,7 @@ public:
 	template <typename Data>
 	void writeData(const Data& data)
 	{
-		std::lock_guard<std::mutex> locker(m_mutex);
+		std::lock_guard locker(m_mutex);
 
 		if (!m_socket || m_socket->isClosed())
 		{
@@ -57,6 +57,21 @@ public:
 			reinterpret_cast<const char*>(&receiveData),
 			sizeof(receiveData)
 		);
+	}
+
+	template <typename ReceiveData>
+	qint64 peekData(ReceiveData& receiveData)
+	{
+		std::lock_guard locker(m_mutex);
+
+		if (!m_socket || m_socket->isClosed())
+		{
+			return -1;
+		}
+
+		const qint64 size = m_socket->peekData(reinterpret_cast<char*>(&receiveData), sizeof(receiveData));
+
+		return size;
 	}
 
 	bool hasConnection() const;

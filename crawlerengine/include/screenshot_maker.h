@@ -25,19 +25,24 @@ protected:
 	virtual void timerEvent(QTimerEvent* event) override;
 
 private:
-	void startScreenshotMakerIfNeeded(int attemptsCount = 3);
-	void ensureConnection(int attemptsCount = 3);
+	bool ensureScreenshotMakerIsAlive(int attemptsCount = 3);
+	bool ensureConnection(int attemptsCount = 3);
 	void sendScreenshotRequest(const RequesterSharedPtr& requester);
 	void logSharedMemoryAttachError();
 
 	void sendTakeScreenshotCommand(TakeScreenshotRequest* request);
 	void sendExitCommandToScreenshotMakerProcess();
 
+	void killTimerHelper();
+	QPixmap readScreenshotFromMemory();
+
+	bool isScreenshotReadyForRead();
+
 private:
 	std::queue<RequesterSharedPtr> m_requesters;
 	RequesterSharedPtr m_currentRequester;
 	Common::IpcSocket m_ipcSocket;
-	QProcess m_screenshotMakerProcess;
+	boost::process::child m_screenshotMakerProcess;
 	QSharedMemory m_sharedMemory;
 	int m_timerId;
 	bool m_isActive;

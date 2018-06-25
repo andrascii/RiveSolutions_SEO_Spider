@@ -24,7 +24,7 @@ ScreenshotMaker::ScreenshotMaker(QObject* parent)
 	, m_timerId(0)
 	, m_isActive(false)
 {
-	startScreenshotMakerIfNeeded();
+	ensureScreenshotMakerIsAlive();
 	ensureConnection();
 
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
@@ -44,8 +44,6 @@ void ScreenshotMaker::handleRequest(RequesterSharedPtr requester)
 		return;
 	}
 
-	startScreenshotMakerIfNeeded();
-	ensureConnection();
 	sendScreenshotRequest(requester);
 }
 
@@ -60,48 +58,28 @@ QObject* ScreenshotMaker::qobject()
 
 void ScreenshotMaker::timerEvent(QTimerEvent*)
 {
-	char response = 0;
-
-	if (m_ipcSocket.peekData(&response, sizeof(response)) != 1)
+	if (m_ipcSocket.openMode() == QIODevice::NotOpen || m_ipcSocket.isClosed())
 	{
+		killTimerHelper();
+		sendScreenshotRequest(m_currentRequester);
 		return;
 	}
-	else
-	{
-		m_ipcSocket.readData(&response, sizeof(response));
-	}
 
-	if (response != 1)
+	if (!isScreenshotReadyForRead())
 	{
 		return;
 	}
 
-	DEBUG_ASSERT(m_timerId);
-	killTimer(m_timerId);
-	m_timerId = 0;
+	killTimerHelper();
 
-	if (!m_sharedMemory.attach(QSharedMemory::ReadOnly))
-	{
-		logSharedMemoryAttachError();
-
-		ERRLOG << "Cannot attach to shared memory to read the screenshot image data";
-	}
-
-	QPixmap pixmap;
-
-	{
-		std::lock_guard locker(m_sharedMemory);
-		uchar* imageData = static_cast<uchar*>(m_sharedMemory.data());
-		pixmap.loadFromData(imageData, m_sharedMemory.size());
-	}
-
-	m_sharedMemory.detach();
-
-	ThreadMessageDispatcher::forThread(m_currentRequester->thread())->postResponse(m_currentRequester, std::make_shared<TakeScreenshotResponse>(pixmap));
+	ThreadMessageDispatcher::forThread(m_currentRequester->thread())->postResponse(
+		m_currentRequester, std::make_shared<TakeScreenshotResponse>(readScreenshotFromMemory())
+	);
 
 	if (m_requesters.empty())
 	{
 		m_isActive = false;
+		m_currentRequester.reset();
 	}
 	else
 	{
@@ -112,38 +90,48 @@ void ScreenshotMaker::timerEvent(QTimerEvent*)
 	}
 }
 
-void ScreenshotMaker::startScreenshotMakerIfNeeded(int attemptsCount)
+bool ScreenshotMaker::ensureScreenshotMakerIsAlive(int attemptsCount)
 {
-	if (m_screenshotMakerProcess.state() == QProcess::Running)
+	if (m_screenshotMakerProcess.running())
 	{
-		return;
+		return true;
 	}
-
-	const QString commandLine("screenshotmaker.exe " + s_screenshotMakerChannelName + " " + s_sharedMemoryKey);
 
 	for (int i = 0; i < attemptsCount; ++i)
 	{
-		m_screenshotMakerProcess.start(commandLine, QIODevice::ReadWrite);
-		
-		if (m_screenshotMakerProcess.waitForStarted(5000))
+		m_screenshotMakerProcess = boost::process::child(
+			std::string("screenshotmaker.exe " +
+				s_screenshotMakerChannelName.toStdString() + " " +
+				s_sharedMemoryKey.toStdString() + " " +
+				std::to_string(GetCurrentProcessId()))
+		);
+
+		if (m_screenshotMakerProcess.running())
 		{
 			INFOLOG << "screenshotmaker was started";
 			break;
 		}
 	}
 
-	if (m_screenshotMakerProcess.state() != QProcess::Running)
+	const bool isStarted = m_screenshotMakerProcess.running();
+
+	if (!isStarted)
 	{
 		ERRLOG << "screenshotmaker was not started";
 	}
+
+	return isStarted;
 }
 
-void ScreenshotMaker::ensureConnection(int attemptsCount)
+bool ScreenshotMaker::ensureConnection(int attemptsCount)
 {
-	if (m_ipcSocket.openMode() != QIODevice::NotOpen)
+	if (m_ipcSocket.openMode() != QIODevice::NotOpen && !m_ipcSocket.isClosed())
 	{
-		return;
+		return true;
 	}
+
+	// to clear internal state
+	m_ipcSocket.disconnectFromServer();
 
 	for (int i = 0; i < attemptsCount; ++i)
 	{
@@ -154,11 +142,37 @@ void ScreenshotMaker::ensureConnection(int attemptsCount)
 
 		std::this_thread::sleep_for(1s);
 	}
+
+	return m_ipcSocket.openMode() != QIODevice::NotOpen;
 }
 
 void ScreenshotMaker::sendScreenshotRequest(const RequesterSharedPtr& requester)
 {
 	ASSERT(requester->request()->requestType() == RequestType::RequestTakeScreenshot);
+
+	if (!ensureScreenshotMakerIsAlive())
+	{
+		ERRLOG << "Cannot start screenshotmaker.exe";
+		
+		std::shared_ptr<TakeScreenshotResponse> response = std::make_shared<TakeScreenshotResponse>();
+		response->setError(ITakeScreenshotResponse::ErrorCannotStartScreenshotMakerProcess);
+		
+		ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+
+		return;
+	}
+
+	if (!ensureConnection())
+	{
+		ERRLOG << "Cannot to establish connection with screenshotmaker.exe";
+
+		std::shared_ptr<TakeScreenshotResponse> response = std::make_shared<TakeScreenshotResponse>();
+		response->setError(ITakeScreenshotResponse::ErrorCannotEstablishConnection);
+
+		ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+
+		return;
+	}
 
 	sendTakeScreenshotCommand(static_cast<TakeScreenshotRequest*>(requester->request()));
 	m_currentRequester = requester;
@@ -240,6 +254,52 @@ void ScreenshotMaker::sendExitCommandToScreenshotMakerProcess()
 
 	Common::Command cmd{ Common::CommandType::CommandTypeExit };
 	m_ipcSocket.writeData(reinterpret_cast<const char*>(&cmd), sizeof(cmd));
+}
+
+void ScreenshotMaker::killTimerHelper()
+{
+	DEBUG_ASSERT(m_timerId);
+	killTimer(m_timerId);
+	m_timerId = 0;
+}
+
+QPixmap ScreenshotMaker::readScreenshotFromMemory()
+{
+	if (!m_sharedMemory.attach(QSharedMemory::ReadOnly))
+	{
+		logSharedMemoryAttachError();
+
+		ERRLOG << "Cannot attach to shared memory to read the screenshot image data";
+	}
+
+	QPixmap pixmap;
+
+	{
+		std::lock_guard locker(m_sharedMemory);
+		uchar* imageData = static_cast<uchar*>(m_sharedMemory.data());
+		pixmap.loadFromData(imageData, m_sharedMemory.size());
+	}
+
+	m_sharedMemory.detach();
+
+	return pixmap;
+}
+
+bool ScreenshotMaker::isScreenshotReadyForRead()
+{
+	char response = 0;
+
+	// wait 1 byte then read this and check value
+	if (m_ipcSocket.peekData(&response, sizeof(response)) != 1)
+	{
+		return false;
+	}
+	else
+	{
+		m_ipcSocket.readData(&response, sizeof(response));
+	}
+
+	return response == 1;
 }
 
 }

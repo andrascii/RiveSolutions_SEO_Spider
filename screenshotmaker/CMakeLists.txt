@@ -73,7 +73,7 @@ if(MSVC)
 		/EHsc
 		/MP
 		/permissive-
-		/std:c++latest
+		/std:c++17
 		/Zi
 		/W4
 		/WX
