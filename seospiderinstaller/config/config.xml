@@ -21,6 +21,7 @@
      </Repository>
 	</RemoteRepositories>
 	<AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
+	<AllowSpaceInPath>true</AllowSpaceInPath>
 	<Background>background.png</Background>
 	<TargetDir>@ApplicationsDirX64@/Rive Solutions/Seo Spider</TargetDir>
 	<ControlScript>installscript.qs</ControlScript>
