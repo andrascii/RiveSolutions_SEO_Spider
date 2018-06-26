@@ -21,6 +21,8 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	, m_pendingReportsCount(0)
 	, m_compressionIsActive(false)
 {
+	setWindowIcon(QIcon(":/images/favicon.ico"));
+
 	m_zippo->start();
 	init();
 

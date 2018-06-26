@@ -12,6 +12,7 @@ aux_source_directory(${SeoSpiderServiceSourcesDir} SeoSpiderServiceSourcesList)
 file(GLOB_RECURSE SeoSpiderServiceHeadersList "include/*.h")
 file(GLOB_RECURSE SeoSpiderServiceFormsList "ui/*.ui")
 file(GLOB_RECURSE SeoSpiderServiceResourcesList "rcc/*.qrc")
+file(GLOB_RECURSE AppWin32Resoure "rcc/*.rc")
 
 qt5_wrap_ui(SeoSpiderServiceFormsHeadersList ${SeoSpiderServiceFormsList})
 qt5_wrap_cpp(SeoSpiderServiceHeadersMocList ${SeoSpiderServiceFormsHeadersList})
@@ -33,6 +34,10 @@ source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 source_group(Ui FILES ${SeoSpiderServiceFormsList})
 source_group(Qrc FILES ${SeoSpiderServiceResourcesList})
 
+if(WIN32)
+	source_group(WinResource FILES ${AppWin32Resoure})
+endif()
+
 configure_msvc_runtime()
 add_executable(
  	${SeoSpiderServiceAppName}
@@ -42,6 +47,7 @@ add_executable(
 	${SeoSpiderServiceResourcesListAdded} 
 	${SeoSpiderServiceResourcesList} 
 	${SeoSpiderServiceFormsHeadersList}
+	${AppWin32Resoure}
 )
 
 add_definitions(
