@@ -17,7 +17,7 @@ class WebHostInfo : public QObject
 
 public:
 	WebHostInfo(QObject* parent, ISpecificLoader* xmlSiteMapLoader, ISpecificLoader* robotsTxtLoader);
-	
+
 	void reset(const QUrl& url);
 
 	std::optional<bool> isRobotstxtValid() const;
@@ -27,7 +27,7 @@ public:
 	QByteArray siteMapContent() const;
 	Url siteMapUrl() const;
 	std::optional<bool> is404PagesSetupRight() const;
-	const QPixmap& image() const;
+	const QPixmap& screenshot() const;
 
 	struct AllData
 	{
@@ -54,7 +54,7 @@ private:
 
 private:
 	std::optional<bool> m_is404PagesSetupRight;
-	QPixmap m_screenshot;
+	std::pair<Url, QPixmap> m_screenshot;
 	ISpecificLoader* m_xmlSiteMapLoader;
 	ISpecificLoader* m_robotsTxtLoader;
 

@@ -156,7 +156,7 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 		// report header
 		case ReportDataKeys::SiteShortImage:
 		{
-			return theApp->crawler()->webHostInfo()->image();
+			return theApp->crawler()->webHostInfo()->screenshot();
 		}
 		case ReportDataKeys::SiteLink:
 		{

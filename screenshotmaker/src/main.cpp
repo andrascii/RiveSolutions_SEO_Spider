@@ -13,10 +13,10 @@ int main(int argc, char** argv)
 	Q_ASSERT(arguments.size() == 4);
 
 	new Executor(arguments[1], arguments[2], &app);
-// 	ProcessWatchDogThread* watchDog = new ProcessWatchDogThread(arguments[3], &app);
-// 
-// 	Q_ASSERT(QObject::connect(watchDog, &ProcessWatchDogThread::processClosed, &app, &QApplication::quit));
-// 
-// 	watchDog->start();
+	ProcessWatchDogThread* watchDog = new ProcessWatchDogThread(arguments[3], &app);
+
+	Q_ASSERT(QObject::connect(watchDog, &ProcessWatchDogThread::processClosed, &app, &QApplication::quit));
+
+	watchDog->start();
 	return app.exec();
 }

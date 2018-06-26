@@ -18,9 +18,13 @@ void WebHostInfo::reset(const QUrl& url)
 {
 	m_is404PagesSetupRight = std::nullopt;
 
-	TakeScreenshotRequest makeScreenshotRequest(url);
-	m_screenshotMakerRequester.reset(makeScreenshotRequest, this, &WebHostInfo::onScreenshotCreated);
-	m_screenshotMakerRequester->start();
+	if (m_screenshot.first != url)
+	{
+		m_screenshot.first = url;
+		TakeScreenshotRequest makeScreenshotRequest(url);
+		m_screenshotMakerRequester.reset(makeScreenshotRequest, this, &WebHostInfo::onScreenshotCreated);
+		m_screenshotMakerRequester->start();
+	}
 
 	Check404IsProperRequest request(url);
 	m_404IsProperRequester.reset(request, this, &WebHostInfo::on404Checked);
@@ -72,19 +76,19 @@ std::optional<bool> WebHostInfo::is404PagesSetupRight() const
 	return m_is404PagesSetupRight;
 }
 
-const QPixmap& WebHostInfo::image() const
+const QPixmap& WebHostInfo::screenshot() const
 {
-	return m_screenshot;
+	return m_screenshot.second;
 }
 
 WebHostInfo::AllData WebHostInfo::allData() const
 {
 	QByteArray pixmapData;
-	if (!image().isNull())
+	if (!screenshot().isNull())
 	{
 		QBuffer buffer(&pixmapData);
 
-		const QPixmap& pixmap = qvariant_cast<QPixmap>(image());
+		const QPixmap& pixmap = qvariant_cast<QPixmap>(screenshot());
 		pixmap.save(&buffer, "PNG");
 	}
 
@@ -115,7 +119,9 @@ void WebHostInfo::setData(const AllData& data)
 	{
 		QPixmap hostImage;
 		hostImage.loadFromData(data.image, "PNG");
-		m_screenshot = hostImage;
+
+		// TODO: add here the url of the website screenshot
+		m_screenshot.second = hostImage;
 	}
 	else
 	{
@@ -130,7 +136,9 @@ void WebHostInfo::on404Checked(Requester*, const Check404IsProperResponse& respo
 
 void WebHostInfo::onScreenshotCreated(Requester*, const ITakeScreenshotResponse& response)
 {
-	m_screenshot = qvariant_cast<QPixmap>(response.screenshot());
+	m_screenshotMakerRequester.reset();
+
+	m_screenshot.second = qvariant_cast<QPixmap>(response.screenshot());
 
 	emit webScreenshotLoaded();
 }
