@@ -8,7 +8,7 @@ IDI_ICON1 ICON DISCARDABLE "images/favicon.ico"
 #define VER_PRODUCTVERSION          MINOR,MINOR,MAINTENANCE
 #define VER_PRODUCTVERSION_STR      VERSION_STR
 #define VER_FILEDESCRIPTION_STR     "RiveSolutions Screenshot Maker"
-#define VER_INTERNALNAME_STR        "SeoSpider"
+#define VER_INTERNALNAME_STR        "screenshotmaker"
 #define VER_LEGALCOPYRIGHT_STR      "Copyright (C) 2018, RiveSolutions"
 #define VER_ORIGINALFILENAME_STR    "screenshotmaker.exe"
 #define VER_PRODUCTNAME_STR         "Screenshot Maker"
