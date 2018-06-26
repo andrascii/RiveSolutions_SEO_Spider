@@ -95,6 +95,7 @@ endif()
 
 include_directories(
 	${AppHeadersDir}
+	${VersionHeadersDir}
 	${CommonLibHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}

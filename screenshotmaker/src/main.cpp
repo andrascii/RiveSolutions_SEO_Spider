@@ -7,6 +7,7 @@ int main(int argc, char** argv)
 
 	QApplication app(argc, argv);
 	app.setQuitOnLastWindowClosed(false);
+	app.setWindowIcon(QIcon(":/images/favicon.ico"));
 
 	const QStringList arguments = app.arguments();
 
