@@ -6,6 +6,7 @@ namespace ScreenshotMaker
 
 Executor::Executor(const QString& pipeChannelName, const QString& sharedMemoryKey, QObject* parent)
 	: QObject(parent)
+	, m_webEngineView(new QWebEngineView) // this object will not be destroyed
 	, m_ipcChannel(new IpcServerChannel(pipeChannelName, this))
 	, m_sharedMemory(sharedMemoryKey)
 	, m_timer(new QTimer(this))
@@ -25,10 +26,10 @@ void Executor::takeScreenshot(const QUrl& url)
 	m_timer->setSingleShot(true);
 
 	Q_ASSERT(connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap));
-	Q_ASSERT(connect(m_webEngineView.page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone));
+	Q_ASSERT(connect(m_webEngineView->page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone));
 
-	m_webEngineView.resize(1280, 1024);
-	m_webEngineView.load(url);
+	m_webEngineView->resize(1280, 1024);
+	m_webEngineView->load(url);
 }
 
 void Executor::onLoadingDone(bool ok)
@@ -39,18 +40,18 @@ void Executor::onLoadingDone(bool ok)
 		return;
 	}
 
-	m_webEngineView.showMinimized();
+	m_webEngineView->showMinimized();
 	m_timer->start();
 }
 
 void Executor::onReadyToRenderPixmap()
 {
-	QPixmap pixmap = m_webEngineView.grab();
+	QPixmap pixmap = m_webEngineView->grab();
 	pixmap = pixmap.scaledToWidth(400, Qt::SmoothTransformation);
 
 	saveScreenshot(pixmap);
 
-	m_webEngineView.close();
+	m_webEngineView->close();
 }
 
 void Executor::saveScreenshot(const QPixmap& pixmap)

@@ -5,15 +5,15 @@ namespace Common
 
 constexpr int c_dataLength = 4096;
 
-enum class CommandType
+enum class ScreenshotCommandType
 {
 	CommandTypeTakeScreenshot,
 	CommandTypeExit
 };
 
-struct Command
+struct ScreenshotCommand
 {
-	CommandType type;
+	ScreenshotCommandType type;
 	char data[c_dataLength];
 };
 

@@ -2,6 +2,7 @@
 
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
 
 //https://developercommunity.visualstudio.com/content/problem/185399/error-c2760-in-combaseapih-with-windows-sdk-81-and.html
 struct IUnknown;
@@ -34,6 +35,7 @@ struct IUnknown;
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 namespace std
 {
@@ -64,6 +66,10 @@ struct unary_function
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/process/child.hpp>
+#include <boost/process/spawn.hpp>
+#include <boost/process/search_path.hpp>
+#include <boost/process/cmd.hpp>
 
 #pragma warning(disable:4127)
 #pragma warning(disable:745)

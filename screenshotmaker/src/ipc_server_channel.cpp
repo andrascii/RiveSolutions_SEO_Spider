@@ -53,7 +53,7 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 		return;
 	}
 
-	Common::Command cmd;
+	Common::ScreenshotCommand cmd;
 
 	if (m_ipcServer->peekData(cmd) != sizeof(cmd))
 	{
@@ -62,7 +62,7 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 
 	const qint64 size = m_ipcServer->readData(cmd);
 
-	if (size < sizeof(Common::Command))
+	if (size < sizeof(Common::ScreenshotCommand))
 	{
 		qDebug("error reading channel");
 		return;
@@ -70,22 +70,22 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 
 	detectCommandType(cmd);
 
-	if (cmd.type == Common::CommandType::CommandTypeExit)
+	if (cmd.type == Common::ScreenshotCommandType::CommandTypeExit)
 	{
 		killTimer(m_timerId);
 	}
 }
 
-void IpcServerChannel::detectCommandType(const Common::Command& cmd)
+void IpcServerChannel::detectCommandType(const Common::ScreenshotCommand& cmd)
 {
 	switch (cmd.type)
 	{
-		case Common::CommandType::CommandTypeTakeScreenshot:
+		case Common::ScreenshotCommandType::CommandTypeTakeScreenshot:
 		{
 			emit screenshotRequested(QUrl(cmd.data));
 			break;
 		}
-		case Common::CommandType::CommandTypeExit:
+		case Common::ScreenshotCommandType::CommandTypeExit:
 		{
 			emit exitRequested();
 			break;

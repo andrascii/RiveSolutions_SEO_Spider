@@ -1,11 +1,12 @@
 #pragma once
 
 #include "ui_logger_debug_window.h"
+#include "command.h"
 
 namespace Common
 {
 
-struct PipeMessage;
+struct Command;
 
 }
 
@@ -22,7 +23,7 @@ private:
 public:
 	LoggerDebugWindow(QWidget* parent = nullptr);
 
-	Q_SLOT void onMessageReceived(const Common::PipeMessage& message);
+	Q_SLOT void onCommandReceived(Common::Command command);
 
 protected:
 	virtual void closeEvent(QCloseEvent* event) override;

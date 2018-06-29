@@ -238,7 +238,7 @@ void ScreenshotMaker::sendTakeScreenshotCommand(TakeScreenshotRequest* request)
 		return;
 	}
 
-	Common::Command cmd{ Common::CommandType::CommandTypeTakeScreenshot };
+	Common::ScreenshotCommand cmd{ Common::ScreenshotCommandType::CommandTypeTakeScreenshot };
 	const std::string url = request->url().toDisplayString().toStdString();
 	std::copy(url.begin(), url.end(), cmd.data);
 	m_ipcSocket.writeData(reinterpret_cast<const char*>(&cmd), sizeof(cmd));
@@ -252,7 +252,7 @@ void ScreenshotMaker::sendExitCommandToScreenshotMakerProcess()
 		return;
 	}
 
-	Common::Command cmd{ Common::CommandType::CommandTypeExit };
+	Common::ScreenshotCommand cmd{ Common::ScreenshotCommandType::CommandTypeExit };
 	m_ipcSocket.writeData(reinterpret_cast<const char*>(&cmd), sizeof(cmd));
 }
 

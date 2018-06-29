@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pipe_message.h"
+#include "command.h"
 
 namespace SeoSpiderServiceApi
 {
@@ -8,7 +8,7 @@ namespace SeoSpiderServiceApi
 class LogFilter final
 {
 public:
-	bool isAvailable(Common::SeverityLevel level) const;
+	bool isAvailable(Common::LogLevel level) const;
 
 	template <typename F>
 	void setFilter(F&& f)
@@ -19,7 +19,7 @@ public:
 
 private:
 	mutable std::mutex m_mutex;
-	std::function<bool(Common::SeverityLevel)> m_functor;
+	std::function<bool(Common::LogLevel)> m_functor;
 };
 
 }

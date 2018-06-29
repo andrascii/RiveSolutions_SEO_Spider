@@ -3,7 +3,7 @@
 namespace SeoSpiderServiceApi
 {
 
-bool LogFilter::isAvailable(Common::SeverityLevel level) const
+bool LogFilter::isAvailable(Common::LogLevel level) const
 {
 	std::lock_guard guard(m_mutex);
 

@@ -17,7 +17,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	, m_dbgHelpDllLoader(new DebugHelpDllLoader)
 	, m_loggerDebugWindow(new LoggerDebugWindow)
 	, m_zippo(new Zippo)
-	, m_logThread(std::make_unique<LogThread>(&m_pipeSocket, logFilePath()))
+	, m_cmdThread(std::make_unique<CommandThread>(&m_pipeSocket, logFilePath()))
 	, m_pendingReportsCount(0)
 	, m_compressionIsActive(false)
 {
@@ -27,19 +27,12 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	init();
 
 	bool processIdConvertion = false;
-
-	m_eventName = commandLineParameter(1).toLatin1();
-	m_processId = commandLineParameter(2).toInt(&processIdConvertion);
-
-	Q_ASSERT(processIdConvertion && "Process ID must be passed!");
+	m_processId = commandLineParameter(1).toInt(&processIdConvertion);
 
 	VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::onServiceClose, Qt::QueuedConnection));
 	VERIFY(connect(m_zippo, &Zippo::finished, this, &SeoSpiderServiceApp::onCompressingFinished, Qt::QueuedConnection));
 
-	//m_crashEventSignaledObject->open(m_eventName.constData());
-	m_signaledEvent = OpenEvent(SYNCHRONIZE, FALSE, m_eventName.constData());
 	m_processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE | SYNCHRONIZE, FALSE, m_processId);
-
 	m_timerId = startTimer(100);
 
 	Common::SmtpSender::init();
@@ -48,7 +41,6 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 
 SeoSpiderServiceApp::~SeoSpiderServiceApp()
 {
-	CloseHandle(m_signaledEvent);
 	CloseHandle(m_processHandle);
 
 	m_zippo->quit();
@@ -82,12 +74,15 @@ void SeoSpiderServiceApp::init()
 
 	if (connectionResult)
 	{
-		m_logThread->start();
+		m_cmdThread->start();
 	}
 
+	VERIFY(connect(m_cmdThread.get(), SIGNAL(commandReceived(const Common::Command&)),
+		this, SLOT(onCommandReceived(Common::Command)), Qt::QueuedConnection));
+
 #ifdef QT_DEBUG
-	VERIFY(connect(m_logThread.get(), SIGNAL(messageReceived(const Common::PipeMessage&)),
-		m_loggerDebugWindow.get(), SLOT(onMessageReceived(const Common::PipeMessage&)), Qt::QueuedConnection));
+	VERIFY(connect(m_cmdThread.get(), SIGNAL(commandReceived(const Common::Command&)),
+		m_loggerDebugWindow.get(), SLOT(onCommandReceived(Common::Command)), Qt::QueuedConnection));
 
 	m_loggerDebugWindow->show();
 #endif
@@ -107,49 +102,15 @@ QString SeoSpiderServiceApp::commandLineParameter(int num) const noexcept
 
 void SeoSpiderServiceApp::timerEvent(QTimerEvent*)
 {
-	HANDLE waitableHandles[] = { m_processHandle, m_signaledEvent };
-	DWORD awakenedObject = WaitForMultipleObjects(sizeof(waitableHandles) / sizeof(HANDLE), waitableHandles, FALSE, 1);
-
-	switch (awakenedObject)
+	if (WaitForSingleObject(m_processHandle, 0) == WAIT_TIMEOUT)
 	{
-		case WAIT_OBJECT_0 + 0:
-		{
-			break;
-		}
-		case WAIT_OBJECT_0 + 1:
-		{
-			killTimer(m_timerId);
-			makeDump(m_processHandle);
-
-			TerminateProcess(m_processHandle, 0xDEAD);
-
-			m_dialog->exec();
-
-			if (m_dialog->sendReportsNow())
-			{
-				if (!m_compressionIsActive)
-				{
-					sendReports();
-				}
-
-				return;
-			}
-
-			break;
-		}
-		case WAIT_TIMEOUT:
-		{
-			return;
-		}
+		return;
 	}
 
-	if (!m_dialog->isVisible() && !m_dialog->sendReportsNow())
-	{
-		emit closeServiceApp();
-	}
+	emit closeServiceApp();
 }
 
-void SeoSpiderServiceApp::makeDump(HANDLE processHandle) noexcept
+bool SeoSpiderServiceApp::makeDump(HANDLE processHandle, const void* threadId, const void* exceptionInfo, qint64 exceptionSize) noexcept
 {
 	const QString path = SeoSpiderServiceApp::dumpsPath();
 
@@ -168,15 +129,22 @@ void SeoSpiderServiceApp::makeDump(HANDLE processHandle) noexcept
 		GENERIC_WRITE, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
 		NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	MINIDUMP_TYPE miniDumpType = MINIDUMP_TYPE::MiniDumpNormal;
+	MINIDUMP_EXCEPTION_INFORMATION mdeinfo;
+	PMINIDUMP_EXCEPTION_INFORMATION mdeinfoPtr = NULL;
 
-	m_dbgHelpDllLoader->writeDump(processHandle, m_processId, dumpFileHandle, miniDumpType, NULL, NULL, NULL);
+	if (exceptionSize == sizeof(EXCEPTION_POINTERS))
+	{
+		mdeinfo.ThreadId = quintptr(threadId);
+		mdeinfo.ClientPointers = TRUE;
+		mdeinfo.ExceptionPointers = PEXCEPTION_POINTERS(exceptionInfo);
+		mdeinfoPtr = &mdeinfo;
+	}
+
+	const bool result = m_dbgHelpDllLoader->writeDump(processHandle, m_processId, dumpFileHandle, MiniDumpNormal, mdeinfoPtr, NULL, NULL);
 
 	CloseHandle(dumpFileHandle);
-
-	m_pipeSocket.disconnectFromServer();
-	m_logThread->quit();
-	m_logThread->wait();
+	m_cmdThread->quit();
+	m_cmdThread->wait();
 
 	const QString sysInfoFileName = QDir::cleanPath(dumpPath + QString("/sys_info.txt"));
 	writeSysInfoFile(sysInfoFileName);
@@ -186,6 +154,8 @@ void SeoSpiderServiceApp::makeDump(HANDLE processHandle) noexcept
 	m_compressionIsActive = true;
 	m_zippo->zcompress(dumpDir, dumpPath + QString(".zip"), QStringList(), QString());
 	m_defferedDeleteDir = dumpDir;
+
+	return result;
 }
 
 void SeoSpiderServiceApp::writeSysInfoFile(const QString& fileName) const
@@ -302,6 +272,41 @@ void SeoSpiderServiceApp::onCompressingFinished()
 	if (m_dialog->sendReportsNow())
 	{
 		sendReports();
+	}
+}
+
+void SeoSpiderServiceApp::onCommandReceived(Common::Command command)
+{
+	if (!command.dumpData() && !command.assertData())
+	{
+		return;
+	}
+
+	const void* threadId = command.dumpData() ? command.dumpData()->threadId : command.assertData()->threadId;
+	const void* exceptionInfo = command.dumpData() ? command.dumpData()->exceptionInfo : command.assertData()->exceptionInfo;
+	qint64 exceptionSize = command.dumpData() ? command.dumpData()->exceptionSize : command.assertData()->exceptionSize;
+
+	const bool dumpCreationResult = makeDump(m_processHandle, threadId, exceptionInfo, exceptionSize);
+
+	m_dialog->exec();
+
+	if (m_dialog->sendReportsNow())
+	{
+		if (!m_compressionIsActive)
+		{
+			sendReports();
+		}
+
+		return;
+	}
+
+	Common::Result result;
+	result.errorcode = !dumpCreationResult ? GetLastError() : 0;
+	m_pipeSocket.writeData(reinterpret_cast<const char*>(&result), sizeof(result));
+
+	if (!m_dialog->isVisible() && !m_dialog->sendReportsNow())
+	{
+		emit closeServiceApp();
 	}
 }
 

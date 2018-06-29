@@ -26,7 +26,7 @@ private:
 	void saveScreenshot(const QPixmap& pixmap);
 
 private:
-	QWebEngineView m_webEngineView;
+	QWebEngineView* m_webEngineView;
 	IpcServerChannel* m_ipcChannel;
 	QTimer* m_timer;
 	QSharedMemory m_sharedMemory;

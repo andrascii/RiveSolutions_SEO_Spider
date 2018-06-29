@@ -14,7 +14,11 @@ public:
 	virtual void free() const override
 	{
 	}
-	virtual void setProcessSignaledState() const override
+	virtual bool restartApplication(int) override
+	{
+		return false;
+	}
+	virtual bool doDump(const void*, const int) override
 	{
 	}
 	virtual void setProcessExceptionHandlers() const override
@@ -23,51 +27,16 @@ public:
 	virtual void setThreadExceptionHandlers() const override
 	{
 	}
-	virtual void doAssert(const char*, int, const char*, const char*) const override
+	virtual void doAssert(const char*, int, const char*, const char*) override
 	{
 	}
-	virtual void traceLogMessage(
-		Common::PipeMessage::Type,
-		std::uint64_t,
-		std::uint64_t,
+	virtual bool writeLog(
+		int,
+		int,
 		const char*,
+		unsigned int,
 		const char*,
-		const char*) override
-	{
-	}
-	virtual void debugLogMessage(
-		Common::PipeMessage::Type,
-		std::uint64_t,
-		std::uint64_t,
-		const char*,
-		const char*,
-		const char*) override
-	{
-	}
-	virtual void infoLogMessage(
-		Common::PipeMessage::Type,
-		std::uint64_t,
-		std::uint64_t,
-		const char*,
-		const char*,
-		const char*) override
-	{
-	}
-	virtual void warningLogMessage(
-		Common::PipeMessage::Type,
-		std::uint64_t,
-		std::uint64_t,
-		const char*,
-		const char*,
-		const char*) override
-	{
-	}
-	virtual void errorLogMessage(
-		Common::PipeMessage::Type,
-		std::uint64_t,
-		std::uint64_t,
-		const char*,
-		const char*,
+		const void*,
 		const char*) override
 	{
 	}

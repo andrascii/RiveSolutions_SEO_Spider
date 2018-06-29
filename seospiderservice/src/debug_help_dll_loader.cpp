@@ -38,7 +38,7 @@ bool DebugHelpDllLoader::isLoaded() const noexcept
 	return m_module;
 }
 
-void DebugHelpDllLoader::writeDump(
+bool DebugHelpDllLoader::writeDump(
 	HANDLE processHandle, 
 	DWORD processId, 
 	HANDLE dumpFileHandle, 
@@ -52,7 +52,7 @@ void DebugHelpDllLoader::writeDump(
 	if (!isLoaded())
 	{
 		qDebug() << "Attempt to write dump with unloaded dbghelp.dll";
-		return;
+		return false;
 	}
 
 	BOOL result = m_writeDumpFunction(processHandle, processId, dumpFileHandle, miniDumpType, exceptionInformation, userStreamInformation, callbackInformation);
@@ -61,6 +61,8 @@ void DebugHelpDllLoader::writeDump(
 	{
 		qDebug() << "Can't write minidump!";
 	}
+
+	return static_cast<bool>(result);
 }
 
 }
