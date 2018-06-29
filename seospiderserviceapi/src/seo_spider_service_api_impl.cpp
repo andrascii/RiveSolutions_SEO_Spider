@@ -388,6 +388,11 @@ bool SeoSpiderServiceApiImpl::writeLog(
 	const void* thisptr,
 	const char* text)
 {
+	if (!m_logFilter.isAvailable(static_cast<Common::LogLevel>(level)))
+	{
+		return false;
+	}
+
 	const size_t packetSize = logDataPacketSize(text);
 
 	if (packetSize > sizeof(Command))
