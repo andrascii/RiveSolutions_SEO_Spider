@@ -982,3 +982,54 @@ QScrollBar::sub-line:vertical
 	width: 0;
 	height: 0;
 }
+
+/*////////////////////////////// Report //////////////////////////////*/
+
+QFrame#reportView QFrame#reportViewBody
+{
+	background-color: white;
+	width: 	400em;
+}
+
+QFrame#reportView QLabel#blockLabel
+{
+	font-weight: bold;
+	color: #555;
+}
+
+QFrame#reportView QLabel#summaryElementText, QFrame#reportView QLabel#problemsFound
+{
+	color: #555;
+}
+
+QFrame#reportView QLabel#site_link
+{
+	font-size: 21pt;
+	color: #456A81;
+}
+
+QFrame#reportView QLabel#problems_count
+{
+	font-size: 27pt;
+}
+
+QFrame#reportView QLabel#site_short_image
+{
+	background-color: #f0f0f0;
+	border: 1px solid #fafafa;
+}
+
+QFrame#reportView QLabel#summaryElementCounter
+{
+	font-size: 15pt;
+}
+
+QFrame#reportView QLabel#spacerElement
+{
+	background-color: #f8f8f8;
+}
+
+QScrollArea#reportScrollArea
+{
+	border: 0px solid transparent;
+}

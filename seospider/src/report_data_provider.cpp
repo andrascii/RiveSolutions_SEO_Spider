@@ -32,6 +32,7 @@ const QMap<ReportDataKeys, QByteArray> s_placeHolders
 	{ ReportDataKeys::InfoImage, "info_image" },
 	{ ReportDataKeys::InfoCount, "info_count" },
 	{ ReportDataKeys::Date, "creation_date" },
+	{ ReportDataKeys::FooterDate, "footer_creation_date" },
 	{ ReportDataKeys::DateImage, "creation_date_image" },
 
 	// Signature
@@ -218,6 +219,10 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 			return CrawlerEngine::ErrorCategory::infoCount();
 		}
 		case ReportDataKeys::Date:
+		{
+			return QDate::currentDate().toString(Qt::RFC2822Date);
+		}
+		case ReportDataKeys::FooterDate:
 		{
 			return QDate::currentDate().toString(Qt::RFC2822Date);
 		}

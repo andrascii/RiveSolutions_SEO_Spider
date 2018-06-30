@@ -6,6 +6,7 @@ namespace SeoSpider
 {
 
 class IReportExporter;
+class ReportElementBase;
 
 class ReportsPage : public QFrame
 {
@@ -19,11 +20,12 @@ public:
 	};
 
 	ReportsPage(QWidget* parent = nullptr);
+	~ReportsPage();
 
+	void updateLayout(ReportType report, const bool rebuildLayout);
 	void setReportType(ReportType reportType);
 
 protected:
-	virtual bool eventFilter(QObject* object, QEvent* event) override;
 	virtual void timerEvent(QTimerEvent* event) override;
 	virtual void showEvent(QShowEvent* event) override;
 	virtual void hideEvent(QHideEvent* event) override;
@@ -45,12 +47,8 @@ private:
 
 	QWebEngineView* webEngineView() const;
 
-#ifndef PRODUCTION
-
-	void setDebugReportType(ReportType reportType);
-	QByteArray debugReportMaketContent(ReportType reportType) const;
-
-#endif
+	void buildLayout(ReportType reportType);
+	void buildLayoutBrief();
 
 private:
 	QStackedWidget* m_stackedWidget;
@@ -60,6 +58,10 @@ private:
 	int m_updateTimerId;
 
 	QAction* m_saveToPdfAction;
+	QFrame* m_viewFrame;
+	QFrame* m_viewFrameBody;
+	QScrollArea* m_scrollArea;
+	QMap<QByteArray, ReportElementBase*> m_reportElements;
 };
 
 }
