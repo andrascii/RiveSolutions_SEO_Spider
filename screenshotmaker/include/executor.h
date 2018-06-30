@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ipc_server_wrapper.h"
-
 namespace ScreenshotMaker
 {
 
@@ -24,12 +22,14 @@ private slots:
 
 private:
 	void saveScreenshot(const QPixmap& pixmap);
+	void doPendingRequests();
 
 private:
 	QWebEngineView* m_webEngineView;
 	IpcServerChannel* m_ipcChannel;
 	QTimer* m_timer;
 	QSharedMemory m_sharedMemory;
+	std::queue<QUrl> m_pendingScreenshotRequests;
 };
 
 }

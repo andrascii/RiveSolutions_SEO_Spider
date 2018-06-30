@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ipc_server_wrapper.h"
+#include "pipe_server.h"
 #include "ipc_command.h"
 
 namespace ScreenshotMaker
@@ -32,7 +32,7 @@ private:
 
 private:
 	QString m_pipeChannelName;
-	std::shared_ptr<Common::IpcServerWrapper> m_ipcServer;
+	std::shared_ptr<Common::PipeServer> m_pipeServer;
 	PipeConnectionEstablisherThread* m_connectionEstablisherThread;
 	int m_timerId;
 };

@@ -1,5 +1,5 @@
 #include "ipc_server_channel.h"
-#include "ipc_server_wrapper.h"
+#include "pipe_server.h"
 #include "ipc_command.h"
 #include "common_constants.h"
 #include "pipe_connection_establisher_thread.h"
@@ -10,12 +10,10 @@ namespace ScreenshotMaker
 IpcServerChannel::IpcServerChannel(const QString& pipeChannelName, QObject* parent)
 	: QObject(parent)
 	, m_pipeChannelName(pipeChannelName)
-	, m_ipcServer(std::make_shared<Common::IpcServerWrapper>())
-	, m_connectionEstablisherThread(new PipeConnectionEstablisherThread(m_pipeChannelName, m_ipcServer, this))
+	, m_pipeServer(std::make_shared<Common::PipeServer>())
+	, m_connectionEstablisherThread(new PipeConnectionEstablisherThread(m_pipeChannelName, m_pipeServer, this))
 	, m_timerId(0)
 {
-	qDebug("IPC Channel");
-
  	connect(m_connectionEstablisherThread, &PipeConnectionEstablisherThread::connectionEstablished,
  		this, &IpcServerChannel::onConnectionEstablished, Qt::QueuedConnection);
 
@@ -37,8 +35,8 @@ void IpcServerChannel::onScreenshotCreated()
 {
 	// send 1 as a signal that we already create a screenshot and sent data using pipe
 	const char response = 1;
-	m_ipcServer->writeData(response);
-	m_ipcServer->closeConnection();
+	m_pipeServer->writeData(response);
+	m_pipeServer->closeConnection();
 
 	qDebug("Screenshot created");
 }
@@ -52,9 +50,9 @@ void IpcServerChannel::onConnectionEstablished()
 
 void IpcServerChannel::timerEvent(QTimerEvent*)
 {
-	if (!m_ipcServer->hasConnection())
+	if (!m_pipeServer->hasConnection())
 	{
-		qDebug("Has no connection");
+		qDebug("Has no connection. Kill read timer");
 
 		killTimer(m_timerId);
 		m_connectionEstablisherThread->start();
@@ -63,22 +61,20 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 
 	Common::ScreenshotCommand cmd;
 
-	if (m_ipcServer->peekData(cmd) != sizeof(cmd))
+	if (m_pipeServer->peekData(cmd) != sizeof(cmd))
 	{
 		return;
 	}
 
-	qDebug("Has data");
+	qDebug("Detected screenshot command data");
 
-	const qint64 size = m_ipcServer->readData(cmd);
+	const qint64 size = m_pipeServer->readData(cmd);
 
 	if (size < sizeof(Common::ScreenshotCommand))
 	{
 		qDebug("error reading channel");
 		return;
 	}
-
-	qDebug("Read msg");
 
 	detectCommandType(cmd);
 
@@ -94,11 +90,13 @@ void IpcServerChannel::detectCommandType(const Common::ScreenshotCommand& cmd)
 	{
 		case Common::ScreenshotCommandType::CommandTypeTakeScreenshot:
 		{
+			qDebug("Screenshot requested");
 			emit screenshotRequested(QUrl(cmd.data));
 			break;
 		}
 		case Common::ScreenshotCommandType::CommandTypeExit:
 		{
+			qDebug("Exit requested");
 			emit exitRequested();
 			break;
 		}

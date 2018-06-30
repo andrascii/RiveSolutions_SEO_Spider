@@ -14,8 +14,6 @@ class IIpcSignaledObject;
 namespace SeoSpiderServiceApi
 {
 
-class PipeServer;
-
 class SeoSpiderServiceApiImpl : public ISeoSpiderServiceApi
 {
 public:
@@ -79,7 +77,7 @@ private:
 	STARTUPINFOW m_startupInfo;
 	PROCESS_INFORMATION m_processInfo;
 	std::atomic_bool m_initialized;
-	std::unique_ptr<PipeServer> m_pipeServer;
+	std::unique_ptr<Common::PipeServer> m_pipeServer;
 	LogFilter m_logFilter;
 };
 
