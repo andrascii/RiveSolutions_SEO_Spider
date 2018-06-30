@@ -11,11 +11,11 @@ Executor::Executor(const QString& pipeChannelName, const QString& sharedMemoryKe
 	, m_sharedMemory(sharedMemoryKey)
 	, m_timer(new QTimer(this))
 {
-	Q_ASSERT(connect(m_ipcChannel, SIGNAL(screenshotRequested(const QUrl&)), this,
-		SLOT(takeScreenshot(const QUrl&)), Qt::QueuedConnection));
+	connect(m_ipcChannel, SIGNAL(screenshotRequested(const QUrl&)), this,
+		SLOT(takeScreenshot(const QUrl&)), Qt::QueuedConnection);
 
-	Q_ASSERT(connect(this, SIGNAL(screenshotCreated()), m_ipcChannel,
-		SLOT(onScreenshotCreated()), Qt::QueuedConnection));
+	connect(this, SIGNAL(screenshotCreated()), m_ipcChannel,
+		SLOT(onScreenshotCreated()), Qt::QueuedConnection);
 }
 
 void Executor::takeScreenshot(const QUrl& url)
@@ -25,8 +25,8 @@ void Executor::takeScreenshot(const QUrl& url)
 	m_timer->setInterval(5000);
 	m_timer->setSingleShot(true);
 
-	Q_ASSERT(connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap));
-	Q_ASSERT(connect(m_webEngineView->page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone));
+	connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap);
+	connect(m_webEngineView->page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone);
 
 	m_webEngineView->resize(1280, 1024);
 	m_webEngineView->load(url);

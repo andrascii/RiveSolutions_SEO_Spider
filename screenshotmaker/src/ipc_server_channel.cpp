@@ -14,8 +14,10 @@ IpcServerChannel::IpcServerChannel(const QString& pipeChannelName, QObject* pare
 	, m_connectionEstablisherThread(new PipeConnectionEstablisherThread(m_pipeChannelName, m_ipcServer, this))
 	, m_timerId(0)
 {
-	Q_ASSERT(connect(m_connectionEstablisherThread, &PipeConnectionEstablisherThread::connectionEstablished,
-		this, &IpcServerChannel::onConnectionEstablished, Qt::QueuedConnection));
+	qDebug("IPC Channel");
+
+ 	connect(m_connectionEstablisherThread, &PipeConnectionEstablisherThread::connectionEstablished,
+ 		this, &IpcServerChannel::onConnectionEstablished, Qt::QueuedConnection);
 
 	m_connectionEstablisherThread->start();
 }
@@ -37,10 +39,14 @@ void IpcServerChannel::onScreenshotCreated()
 	const char response = 1;
 	m_ipcServer->writeData(response);
 	m_ipcServer->closeConnection();
+
+	qDebug("Screenshot created");
 }
 
 void IpcServerChannel::onConnectionEstablished()
 {
+	qDebug("Connection established");
+
 	m_timerId = startTimer(Common::c_minimumRecommendedTimerResolution);
 }
 
@@ -48,6 +54,8 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 {
 	if (!m_ipcServer->hasConnection())
 	{
+		qDebug("Has no connection");
+
 		killTimer(m_timerId);
 		m_connectionEstablisherThread->start();
 		return;
@@ -60,6 +68,8 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 		return;
 	}
 
+	qDebug("Has data");
+
 	const qint64 size = m_ipcServer->readData(cmd);
 
 	if (size < sizeof(Common::ScreenshotCommand))
@@ -67,6 +77,8 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 		qDebug("error reading channel");
 		return;
 	}
+
+	qDebug("Read msg");
 
 	detectCommandType(cmd);
 

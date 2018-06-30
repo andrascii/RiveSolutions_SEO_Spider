@@ -18,12 +18,18 @@ void PipeConnectionEstablisherThread::run()
 {
 	std::shared_ptr<Common::IpcServerWrapper> ipcServer = m_ipcServer.lock();
 
+	qDebug("Try listen");
+
 	if (!ipcServer)
 	{
 		return;
 	}
 
+	qDebug("Listen");
+
 	ipcServer->listen(m_pipeChannelName);
+
+	qDebug("New connection");
 
 	emit connectionEstablished();
 }

@@ -43,7 +43,6 @@ private:
 	void debugReport(const char* file, int line, const char* function, const char* expression) const;
 
 	static LONG WINAPI exceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs);
-	static LONG WINAPI stackOverflowExceptionFilter(EXCEPTION_POINTERS* exceptionInfo);
 	static void pureCallHandler();
 	static void terminateHandler();
 	static void unexpectedHandler();
