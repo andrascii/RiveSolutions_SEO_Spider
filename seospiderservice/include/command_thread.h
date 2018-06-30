@@ -5,24 +5,24 @@
 namespace Common
 {
 
-struct PipeMessage;
+struct Command;
 
 }
 
 namespace SeoSpiderService
 {
 
-class LogThread : public QThread
+class CommandThread : public QThread
 {
 	Q_OBJECT
 
 public:
-	LogThread(Common::IpcSocket* socket, const QString& file);
+	CommandThread(Common::IpcSocket* socket, const QString& file);
 
 	virtual void run() override;
 
 signals:
-	void messageReceived(const Common::PipeMessage& message);
+	void commandReceived(const Common::Command& command);
 
 private:
 	Common::IpcSocket* m_socket;

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/images">
         <file>images/fatal-error-icon.png</file>
+        <file>images/favicon.ico</file>
     </qresource>
 </RCC>

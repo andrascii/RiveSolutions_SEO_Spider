@@ -24,8 +24,7 @@ seoSpiderServiceApi()->doAssert(__FILENAME__, __LINE__, __FUNCTION__, #condition
 #define VERIFY(Connection) Connection
 #endif
 
-#define TRACELOG SeoSpiderServiceApi::LogMessageBuffer(Common::PipeMessage::LogMessage, Common::SeverityLevel::TraceLevel, std::hash<std::thread::id>{}(std::this_thread::get_id()), __LINE__, __FILENAME__, __FUNCTION__)
-#define DEBUGLOG SeoSpiderServiceApi::LogMessageBuffer(Common::PipeMessage::LogMessage, Common::SeverityLevel::DebugLevel, std::hash<std::thread::id>{}(std::this_thread::get_id()), __LINE__, __FILENAME__, __FUNCTION__)
-#define INFOLOG  SeoSpiderServiceApi::LogMessageBuffer(Common::PipeMessage::LogMessage, Common::SeverityLevel::InfoLevel, std::hash<std::thread::id>{}(std::this_thread::get_id()), __LINE__, __FILENAME__, __FUNCTION__)
-#define WARNLOG  SeoSpiderServiceApi::LogMessageBuffer(Common::PipeMessage::LogMessage, Common::SeverityLevel::WarningLevel, std::hash<std::thread::id>{}(std::this_thread::get_id()), __LINE__, __FILENAME__, __FUNCTION__)
-#define ERRLOG   SeoSpiderServiceApi::LogMessageBuffer(Common::PipeMessage::LogMessage, Common::SeverityLevel::ErrorLevel, std::hash<std::thread::id>{}(std::this_thread::get_id()), __LINE__, __FILENAME__, __FUNCTION__)
+#define DEBUGLOG SeoSpiderServiceApi::LogMessageBuffer(Common::LogLevel::DebugLog, __LINE__, __FILENAME__, __FUNCTION__)
+#define INFOLOG  SeoSpiderServiceApi::LogMessageBuffer(Common::LogLevel::InfoLog, __LINE__, __FILENAME__, __FUNCTION__)
+#define WARNLOG  SeoSpiderServiceApi::LogMessageBuffer(Common::LogLevel::WarningLog, __LINE__, __FILENAME__, __FUNCTION__)
+#define ERRLOG   SeoSpiderServiceApi::LogMessageBuffer(Common::LogLevel::ErrorLog, __LINE__, __FILENAME__, __FUNCTION__)

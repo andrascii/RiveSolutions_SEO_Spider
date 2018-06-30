@@ -1,6 +1,5 @@
 #pragma once
 
-#include "requester.h"
 #include "requester_wrapper.h"
 #include "url.h"
 

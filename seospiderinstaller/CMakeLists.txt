@@ -37,6 +37,17 @@ list(APPEND PackageFileList
 
 file(GLOB_RECURSE OpenSslDllList "$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/*.dll")
 
+if("$ENV{SS_PLATFORM}" STREQUAL "win32")
+	set(ApplicationsDir @ApplicationsDirX86@)	
+elseif("$ENV{SS_PLATFORM}" STREQUAL "x64")
+	set(ApplicationsDir @ApplicationsDirX64@)
+endif()	
+
+configure_file(
+	config/config.xml.in 
+	${InstallerConfigDir}/config.xml
+)
+
 #add_custom_target(${SeoSpiderInstallerName} ALL)
 add_custom_target(${SeoSpiderInstallerName})
 

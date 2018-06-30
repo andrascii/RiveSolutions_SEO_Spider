@@ -13,7 +13,8 @@ enum class ResponseType
 	ResponseTypeCheck404IsProper,
 	ResponseSetSerialNumber,
 	ResponseGetSerialNumberData,
-	ResponseGetSerialNumberState
+	ResponseGetSerialNumberState,
+	ResponseTakeScreenshot
 };
 
 #define DECLARE_RESPONSE_STATIC_TYPE(Type) \

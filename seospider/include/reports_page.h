@@ -45,8 +45,6 @@ private:
 
 	void doExport(IReportExporter* exporter) const;
 
-	QWebEngineView* webEngineView() const;
-
 	void buildLayout(ReportType reportType);
 	void buildLayoutBrief();
 

@@ -2,6 +2,9 @@
 #include "iipc_signaled_object.h"
 #include "ipc_signaled_object_creator.h"
 #include "seo_spider_service_api_export.h"
+#include "command.h"
+
+using namespace Common;
 
 namespace
 {
@@ -69,45 +72,49 @@ void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
 	switch (type)
 	{
 	case QtDebugMsg:
-		seoSpiderServiceApi()->debugLogMessage(
-			Common::PipeMessage::LogMessage, 
-			std::hash<std::thread::id>{}(std::this_thread::get_id()),
-			__LINE__,
+		seoSpiderServiceApi()->writeLog(
+			1,
+			Common::LogLevel::DebugLog,
 			__FILENAME__,
+			__LINE__,
 			__FUNCTION__,
+			nullptr,
 			msg.toStdString().c_str()
 		);
 		break;
 
 	case QtWarningMsg:
-		seoSpiderServiceApi()->warningLogMessage(
-			Common::PipeMessage::LogMessage,
-			std::hash<std::thread::id>{}(std::this_thread::get_id()),
-			__LINE__,
+		seoSpiderServiceApi()->writeLog(
+			1,
+			Common::LogLevel::WarningLog,
 			__FILENAME__,
+			__LINE__,
 			__FUNCTION__,
+			nullptr,
 			msg.toStdString().c_str()
 		);
 		break;
 
 	case QtCriticalMsg:
-		seoSpiderServiceApi()->errorLogMessage(
-			Common::PipeMessage::LogMessage,
-			std::hash<std::thread::id>{}(std::this_thread::get_id()),
-			__LINE__,
+		seoSpiderServiceApi()->writeLog(
+			1,
+			Common::LogLevel::ErrorLog,
 			__FILENAME__,
+			__LINE__,
 			__FUNCTION__,
+			nullptr,
 			msg.toStdString().c_str()
 		);
 		break;
 
 	case QtFatalMsg:
-		seoSpiderServiceApi()->errorLogMessage(
-			Common::PipeMessage::LogMessage,
-			std::hash<std::thread::id>{}(std::this_thread::get_id()),
-			__LINE__,
+		seoSpiderServiceApi()->writeLog(
+			1,
+			Common::LogLevel::ErrorLog,
 			__FILENAME__,
+			__LINE__,
 			__FUNCTION__,
+			nullptr,
 			msg.toStdString().c_str()
 		);
 		abort();
@@ -115,17 +122,16 @@ void qtMsgHandler(QtMsgType type, const QMessageLogContext&, const QString& msg)
 	}
 }
 
-std::function<bool(Common::SeverityLevel)> createLogFilter()
+std::function<bool(Common::LogLevel)> createLogFilter()
 {
-	return [](Common::SeverityLevel level)
+	return [](Common::LogLevel level)
 	{
 #ifdef QT_DEBUG
 		level;
 
 		return true;
 #else
-		if (level == Common::SeverityLevel::TraceLevel ||
-			level == Common::SeverityLevel::DebugLevel)
+		if (level < Common::LogLevel::WarningLog)
 		{
 			return false;
 		}
@@ -133,6 +139,115 @@ std::function<bool(Common::SeverityLevel)> createLogFilter()
 		return true;
 #endif
 	};
+}
+
+size_t logDataPacketSize(const char* text)
+{
+	const size_t textLength = std::strlen(text);
+
+	if (textLength <= LogData::maximumTextLength)
+	{
+		return sizeof(Common::Command);
+	}
+
+	const size_t result = sizeof(Common::Command) + sizeof(wchar_t) * (textLength - Common::LogData::maximumTextLength + 1);
+
+	return result;
+}
+
+PCHAR*
+CommandLineToArgvA(
+	PCHAR CmdLine,
+	int* _argc
+)
+{
+	PCHAR* argv;
+	PCHAR  _argv;
+	ULONG   len;
+	ULONG   argc;
+	CHAR   a;
+	ULONG   i, j;
+
+	BOOLEAN  in_QM;
+	BOOLEAN  in_TEXT;
+	BOOLEAN  in_SPACE;
+
+	len = (ULONG)strlen(CmdLine);
+	i = ((len + 2) / 2) * sizeof(PVOID) + sizeof(PVOID);
+
+	argv = (PCHAR*)GlobalAlloc(GMEM_FIXED,
+		i + (len + 2) * sizeof(CHAR));
+
+	_argv = (PCHAR)(((PUCHAR)argv) + i);
+
+	argc = 0;
+	argv[argc] = _argv;
+	in_QM = FALSE;
+	in_TEXT = FALSE;
+	in_SPACE = TRUE;
+	i = 0;
+	j = 0;
+
+	while (a = CmdLine[i])
+	{
+		if (in_QM)
+		{
+			if (a == '\"')
+			{
+				in_QM = FALSE;
+			}
+			else
+			{
+				_argv[j] = a;
+				j++;
+			}
+		}
+		else
+		{
+			switch (a)
+			{
+				case '\"':
+					in_QM = TRUE;
+					in_TEXT = TRUE;
+					if (in_SPACE)
+					{
+						argv[argc] = _argv + j;
+						argc++;
+					}
+					in_SPACE = FALSE;
+					break;
+				case ' ':
+				case '\t':
+				case '\n':
+				case '\r':
+					if (in_TEXT)
+					{
+						_argv[j] = '\0';
+						j++;
+					}
+					in_TEXT = FALSE;
+					in_SPACE = TRUE;
+					break;
+				default:
+					in_TEXT = TRUE;
+					if (in_SPACE)
+					{
+						argv[argc] = _argv + j;
+						argc++;
+					}
+					_argv[j] = a;
+					j++;
+					in_SPACE = FALSE;
+					break;
+			}
+		}
+		i++;
+	}
+	_argv[j] = '\0';
+	argv[argc] = NULL;
+
+	(*_argc) = argc;
+	return argv;
 }
 
 }
@@ -160,14 +275,7 @@ void SeoSpiderServiceApiImpl::init()
 		return;
 	}
 
-	const boost::uuids::uuid uuid = boost::uuids::random_generator()();
-	const std::wstring crashHandlerEventName = boost::lexical_cast<std::wstring>(uuid);
-	std::wstring commandLine = L"seospiderservice.exe " + crashHandlerEventName + L" " + std::to_wstring(GetCurrentProcessId());
-
-	m_crashEventSignaledObject = Common::createSignaledObjectInstance();
-	const bool creationResult = m_crashEventSignaledObject->create(crashHandlerEventName);
-
-	ASSERT(creationResult);
+	std::wstring commandLine = L"seospiderservice.exe " + std::to_wstring(GetCurrentProcessId());
 
 	m_initialized = CreateProcessW(
 		NULL,
@@ -188,12 +296,6 @@ void SeoSpiderServiceApiImpl::init()
 	}
 
 	qInstallMessageHandler(qtMsgHandler);
-
-	if (!m_initialized)
-	{
-		CloseHandle(m_processInfo.hThread);
-		CloseHandle(m_processInfo.hProcess);
-	}
 }
 
 void SeoSpiderServiceApiImpl::free() const
@@ -207,17 +309,29 @@ void SeoSpiderServiceApiImpl::free() const
 	CloseHandle(m_processInfo.hProcess);
 }
 
-void SeoSpiderServiceApiImpl::setProcessSignaledState() const
+bool SeoSpiderServiceApiImpl::restartApplication(int msec)
 {
-	std::lock_guard lock(m_mutex);
-	m_crashEventSignaledObject->setSignaledState();
-	m_pipeServer->closeConnection();
-	Sleep(INFINITE);
+	Command command;
+	int argc = 0;
+
+	const char** argv = (const char**)CommandLineToArgvA(::GetCommandLineA(), &argc);
+	command.setRestartData("", false, msec, argc, argv);
+	::LocalFree(argv);
+
+	Result result;
+	result.errorcode = -1;
+	m_pipeServer->transactData((const char*)&command, sizeof(Command), (char*)&result, sizeof(Result));
+	return result.errorcode == 0;
+}
+
+bool SeoSpiderServiceApiImpl::doDump(const void* exceptionInfo, const int exceptionInfoSize)
+{
+	return makeCrashDump(exceptionInfo, exceptionInfoSize);
 }
 
 void SeoSpiderServiceApiImpl::setProcessExceptionHandlers() const
 {
-	SetUnhandledExceptionFilter(SeoSpiderServiceApiImpl::sehHandler);
+	SetUnhandledExceptionFilter(SeoSpiderServiceApiImpl::exceptionFilter);
 	lockExceptionFilter();
 
 	_set_purecall_handler(SeoSpiderServiceApiImpl::pureCallHandler);
@@ -242,33 +356,46 @@ void SeoSpiderServiceApiImpl::setThreadExceptionHandlers() const
 	std::signal(SIGSEGV, SeoSpiderServiceApiImpl::sigSegvHandler);
 }
 
-void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression) const
+void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression)
 {
-	m_pipeServer->logMessage(
-		Common::PipeMessage::Assert,
-		Common::SeverityLevel::ErrorLevel,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		line,
-		file,
-		function,
-		expression
-	);
-
 #ifndef PRODUCTION
 	debugReport(file, line, function, expression);
 #else
-	Q_UNUSED(file);
-	Q_UNUSED(line);
-	Q_UNUSED(function);
-	Q_UNUSED(expression);
+	__try
+	{
+		// generate minidump exception
+		DebugBreak();
+	}
+	__except (assertExceptionFilter(file, line, function, this, expression, GetExceptionInformation()))
+	{
+	}
 
-	setProcessSignaledState();
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 #endif
 }
 
-void SeoSpiderServiceApiImpl::setLogFilter(const std::function<bool(Common::SeverityLevel)>& filter)
+void SeoSpiderServiceApiImpl::setLogFilter(const std::function<bool(Common::LogLevel)>& filter)
 {
 	m_logFilter.setFilter(filter);
+}
+
+bool SeoSpiderServiceApiImpl::writeLog(
+	int id,
+	int level,
+	const char* file,
+	unsigned int line,
+	const char* function,
+	const void* thisptr,
+	const char* text)
+{
+	const size_t packetSize = logDataPacketSize(text);
+
+	if (packetSize > sizeof(Command))
+	{
+		return writeLogHeap(id, level, file, line, function, thisptr, text);
+	}
+
+	return writeLogStack(id, level, file, line, function, thisptr, text);
 }
 
 void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const
@@ -301,268 +428,84 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
 	}
 }
 
-void SeoSpiderServiceApiImpl::traceLogMessage(
-	Common::PipeMessage::Type type,
-	std::uint64_t threadId,
-	std::uint64_t line,
-	const char* file,
-	const char* function,
-	const char* message)
+LONG WINAPI SeoSpiderServiceApiImpl::exceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 {
-	if (!m_logFilter.isAvailable(Common::SeverityLevel::TraceLevel))
-	{
-		return;
-	}
+	s_self->doDump(pExceptionPtrs, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 
-	m_pipeServer->logMessage(type, Common::SeverityLevel::TraceLevel, threadId, line, file, function, message);
-}
-
-void SeoSpiderServiceApiImpl::debugLogMessage(
-	Common::PipeMessage::Type type,
-	std::uint64_t threadId,
-	std::uint64_t line,
-	const char* file,
-	const char* function,
-	const char* message)
-{
-	if (!m_logFilter.isAvailable(Common::SeverityLevel::DebugLevel))
-	{
-		return;
-	}
-
-	m_pipeServer->logMessage(type, Common::SeverityLevel::DebugLevel, threadId, line, file, function, message);
-}
-
-void SeoSpiderServiceApiImpl::infoLogMessage(
-	Common::PipeMessage::Type type,
-	std::uint64_t threadId,
-	std::uint64_t line,
-	const char* file,
-	const char* function,
-	const char* message)
-{
-	if (!m_logFilter.isAvailable(Common::SeverityLevel::InfoLevel))
-	{
-		return;
-	}
-
-	m_pipeServer->logMessage(type, Common::SeverityLevel::InfoLevel, threadId, line, file, function, message);
-}
-
-void SeoSpiderServiceApiImpl::warningLogMessage(
-	Common::PipeMessage::Type type,
-	std::uint64_t threadId,
-	std::uint64_t line,
-	const char* file,
-	const char* function,
-	const char* message)
-{
-	if (!m_logFilter.isAvailable(Common::SeverityLevel::WarningLevel))
-	{
-		return;
-	}
-
-	m_pipeServer->logMessage(type, Common::SeverityLevel::WarningLevel, threadId, line, file, function, message);
-}
-
-void SeoSpiderServiceApiImpl::errorLogMessage(
-	Common::PipeMessage::Type type,
-	std::uint64_t threadId,
-	std::uint64_t line,
-	const char* file,
-	const char* function,
-	const char* message)
-{
-	if (!m_logFilter.isAvailable(Common::SeverityLevel::ErrorLevel))
-	{
-		return;
-	}
-
-	m_pipeServer->logMessage(type, Common::SeverityLevel::ErrorLevel, threadId, line, file, function, message);
-}
-
-LONG WINAPI SeoSpiderServiceApiImpl::sehHandler(PEXCEPTION_POINTERS)
-{
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()), 
-		__LINE__, 
-		__FILENAME__, 
-		__FUNCTION__,
-		"structured exception handler"
-	);
-
-	s_self->setProcessSignaledState();
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
 void SeoSpiderServiceApiImpl::terminateHandler()
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"terminate handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 void SeoSpiderServiceApiImpl::unexpectedHandler()
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"unexcepted handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 void SeoSpiderServiceApiImpl::pureCallHandler()
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"pure call handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 void SeoSpiderServiceApiImpl::sigAbortHandler(int)
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"abort signal handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
-void SeoSpiderServiceApiImpl::sigFpeHandler(int code, int subcode)
+void SeoSpiderServiceApiImpl::sigFpeHandler(int, int)
 {
-	Q_UNUSED(code);
-	Q_UNUSED(subcode);
-
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"floating point signal handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 void SeoSpiderServiceApiImpl::sigIntHandler(int)
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"interruption signal handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 void SeoSpiderServiceApiImpl::sigIllHandler(int)
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"illegal instruction signal handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 void SeoSpiderServiceApiImpl::sigSegvHandler(int)
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"segmentation fault signal handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 void SeoSpiderServiceApiImpl::sigTermHandler(int)
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"terminate signal handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 int SeoSpiderServiceApiImpl::newHandler(size_t)
 {
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"new handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 	return 0;
 }
 
 void SeoSpiderServiceApiImpl::invalidParameterHandler(
-	const wchar_t* expression,
-	const wchar_t* function,
-	const wchar_t* file,
-	unsigned int line,
-	uintptr_t pReserved)
+	const wchar_t*,
+	const wchar_t*,
+	const wchar_t*,
+	unsigned int,
+	uintptr_t)
 {
-	Q_UNUSED(expression);
-	Q_UNUSED(function);
-	Q_UNUSED(file);
-	Q_UNUSED(line);
-	Q_UNUSED(pReserved);
-
-	s_self->errorLogMessage(
-		Common::PipeMessage::Crash,
-		std::hash<std::thread::id>{}(std::this_thread::get_id()),
-		__LINE__,
-		__FILENAME__,
-		__FUNCTION__,
-		"invalid parameter handler"
-	);
-
-	s_self->setProcessSignaledState();
+	s_self->doDump(nullptr, 0);
+	TerminateProcess(GetCurrentProcess(), 0xDEAD);
 }
 
 bool SeoSpiderServiceApiImpl::lockExceptionFilter()
@@ -603,6 +546,76 @@ bool SeoSpiderServiceApiImpl::lockExceptionFilter()
 	}
 
 	return true;
+}
+
+unsigned SeoSpiderServiceApiImpl::assertExceptionFilter(
+	const char* file,
+	int line,
+	const char* function,
+	const void* thisptr,
+	const char* expression,
+	void* exceptionInfo)
+{
+	EXCEPTION_POINTERS* ep = (EXCEPTION_POINTERS*)exceptionInfo;
+	Command command;
+	command.setAssertData(file, line, function, thisptr, expression, ep, sizeof(*ep));
+	Result result;
+	m_pipeServer->transactData((const char*)&command, sizeof(Command), (char*)&result, sizeof(Result));
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+bool SeoSpiderServiceApiImpl::writeLogStack(
+	int id,
+	int level,
+	const char* file,
+	unsigned int line,
+	const char* function,
+	const void* thisptr,
+	const char* text)
+{
+	Common::Command command;
+	command.setLogData(file, line, function, thisptr);
+	Common::LogData* logData = command.logData();
+	logData->categoryId = id;
+	logData->level = level;
+	logData->depth = 0;
+	Common::LogData::setText(logData, text);
+
+	return m_pipeServer->writeData((const char*)&command, sizeof(Common::Command)) == sizeof(Common::Command);
+}
+
+bool SeoSpiderServiceApiImpl::writeLogHeap(
+	int id,
+	int level,
+	const char* file,
+	unsigned int line,
+	const char* function,
+	const void* thisptr,
+	const char* text)
+{
+	const size_t bufferSize = logDataPacketSize(text);
+	std::vector<char> buffer(bufferSize);
+
+	Common::Command* command = reinterpret_cast<Common::Command*>(&buffer[0]);
+	command->setLogData(file, line, function, thisptr);
+	Common::LogData* logData = command->logData();
+	logData->categoryId = id;
+	logData->level = level;
+	logData->depth = 0;
+	Common::LogData::setText(logData, text);
+
+	return m_pipeServer->writeData(&buffer[0], buffer.size()) == static_cast<qint64>(buffer.size());
+}
+
+bool SeoSpiderServiceApiImpl::makeCrashDump(const void* exceptionInfo, const int exceptionInfoSize)
+{
+	Command command;
+	command.setDumpData(exceptionInfo, exceptionInfoSize, DumpData::NativeCrash);
+
+	Result result;
+	
+	m_pipeServer->transactData((const char*)&command, sizeof(Command), (char*)&result, sizeof(Result));
+	return result.errorcode == 0;
 }
 
 }

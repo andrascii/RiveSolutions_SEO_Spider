@@ -23,56 +23,27 @@ public:
 
 	virtual void init() override;
 	virtual void free() const override;
-	virtual void setProcessSignaledState() const override;
+	virtual bool restartApplication(int msec) override;
+	virtual bool doDump(const void* exceptionInfo, const int exceptionInfoSize) override;
 	virtual void setProcessExceptionHandlers() const override;
 	virtual void setThreadExceptionHandlers() const override;
-	virtual void doAssert(const char* file, int line, const char* function, const char* expression) const override;
-	virtual void setLogFilter(const std::function<bool(Common::SeverityLevel)>& filter) override;
+	virtual void doAssert(const char* file, int line, const char* function, const char* expression) override;
+	virtual void setLogFilter(const std::function<bool(Common::LogLevel)>& filter) override;
 
-	virtual void traceLogMessage(
-		Common::PipeMessage::Type type,
-		std::uint64_t threadId,
-		std::uint64_t line,
+	virtual bool writeLog(
+		int id,
+		int level,
 		const char* file,
+		unsigned int line,
 		const char* function,
-		const char* message) override;
-
-	virtual void debugLogMessage(
-		Common::PipeMessage::Type type,
-		std::uint64_t threadId,
-		std::uint64_t line,
-		const char* file,
-		const char* function,
-		const char* message) override;
-
-	virtual void infoLogMessage(
-		Common::PipeMessage::Type type,
-		std::uint64_t threadId,
-		std::uint64_t line,
-		const char* file,
-		const char* function,
-		const char* message) override;
-
-	virtual void warningLogMessage(
-		Common::PipeMessage::Type type,
-		std::uint64_t threadId,
-		std::uint64_t line,
-		const char* file,
-		const char* function,
-		const char* message) override;
-
-	virtual void errorLogMessage(
-		Common::PipeMessage::Type type,
-		std::uint64_t threadId,
-		std::uint64_t line,
-		const char* file,
-		const char* function,
-		const char* message) override;
+		const void* thisptr,
+		const char* text) override;
 
 private:
 	void debugReport(const char* file, int line, const char* function, const char* expression) const;
 
-	static LONG WINAPI sehHandler(PEXCEPTION_POINTERS pExceptionPtrs);
+	static LONG WINAPI exceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs);
+	static LONG WINAPI stackOverflowExceptionFilter(EXCEPTION_POINTERS* exceptionInfo);
 	static void pureCallHandler();
 	static void terminateHandler();
 	static void unexpectedHandler();
@@ -92,14 +63,23 @@ private:
 	
 	static bool lockExceptionFilter();
 
+	unsigned assertExceptionFilter(const char* file, int line, const char* function,
+		const void* thisptr, const char* expression, void* exceptionInfo);
+
+	bool writeLogStack(int id, int level, const char* file, unsigned int line,
+		const char* function, const void* thisptr, const char* text);
+	bool writeLogHeap(int id, int level, const char* file, unsigned int line,
+		const char* function, const void* thisptr, const char* text);
+
+	bool makeCrashDump(const void* exceptionInfo, const int exceptionInfoSize);
+
 private:
 	static SeoSpiderServiceApiImpl* s_self;
 
+	mutable std::mutex m_mutex;
 	STARTUPINFOW m_startupInfo;
 	PROCESS_INFORMATION m_processInfo;
-	mutable std::mutex m_mutex;
 	std::atomic_bool m_initialized;
-	std::shared_ptr<Common::IIpcSignaledObject> m_crashEventSignaledObject;
 	std::unique_ptr<PipeServer> m_pipeServer;
 	LogFilter m_logFilter;
 };

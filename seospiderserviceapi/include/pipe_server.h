@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ipc_server.h"
-#include "pipe_message.h"
 
 namespace SeoSpiderServiceApi
 {
@@ -12,24 +11,14 @@ public:
 	PipeServer();
 	~PipeServer();
 
-	void logMessage(
-		Common::PipeMessage::Type type,
-		Common::SeverityLevel level,
-		std::uint64_t threadId,
-		std::uint64_t line,
-		const char* file,
-		const char* function,
-		const char* message
-	);
-
+	qint64 readData(char* data, qint64 maxSize);
+	qint64 writeData(const char* data, qint64 maxSize);
+	qint64 peekData(char* data, qint64 maxSize);
+	qint64 transactData(const char* inData, qint64 inSize, char* outData, int outSize);
 	void closeConnection();
 
 private:
-	void logMessage(const Common::PipeMessage& message);
-
-private:
 	mutable std::mutex m_mutex;
-	std::deque<Common::PipeMessage> m_messages;
 	Common::IpcServer m_server;
 	Common::IpcSocket* m_socket;
 };

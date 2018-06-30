@@ -4,7 +4,8 @@
 #include "debug_help_dll_loader.h"
 #include "logger_debug_window.h"
 #include "ipc_socket.h"
-#include "log_thread.h"
+#include "command_thread.h"
+#include "command.h"
 
 namespace Common
 {
@@ -33,7 +34,7 @@ private:
 	void init();
 
 	QString commandLineParameter(int num) const noexcept;
-	void makeDump(HANDLE processHandle) noexcept;
+	bool makeDump(HANDLE processHandle, const void* threadId, const void* exceptionInfo, qint64 exceptionSize) noexcept;
 	void writeSysInfoFile(const QString& fileName) const;
 	Q_SLOT void sendReports();
 	static QString dumpsPath();
@@ -44,7 +45,7 @@ private:
 
 	Q_SLOT void onSendingFinished(const QString& mailId, int result, const QByteArray& log);
 	Q_SLOT void onCompressingFinished();
-
+	Q_SLOT void onCommandReceived(Common::Command command);
 
 private:
 	std::unique_ptr<FatalErrorDialog> m_dialog;
@@ -54,20 +55,16 @@ private:
 	DWORD m_processId;
 
 	std::unique_ptr<LoggerDebugWindow> m_loggerDebugWindow;
-
-	HANDLE m_signaledEvent;
 	HANDLE m_processHandle;
 
 	int m_timerId;
-
-	std::shared_ptr<Common::IIpcSignaledObject> m_crashEventSignaledObject;
 
 	Zippo* m_zippo;
 	mutable std::optional<QDir> m_defferedDeleteDir;
 
 	Common::IpcSocket m_pipeSocket;
 
-	std::unique_ptr<LogThread> m_logThread;
+	std::unique_ptr<CommandThread> m_cmdThread;
 	int m_pendingReportsCount;
 	bool m_compressionIsActive;
 };

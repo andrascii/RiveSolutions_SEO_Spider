@@ -158,6 +158,7 @@ target_link_libraries(
 	${OSSpecificDeps}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
+	${Boost_FILESYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
 	${OPENSSL_LIBRARIES}
 	Qt5::Widgets

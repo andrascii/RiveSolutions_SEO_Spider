@@ -121,6 +121,7 @@ target_link_libraries(
 	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
+	${Boost_FILESYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
 	Qt5::Widgets
 	Qt5::Network

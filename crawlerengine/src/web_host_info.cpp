@@ -1,25 +1,30 @@
 #include "web_host_info.h"
-#include "web_screenshot.h"
 #include "proper_404_checker.h"
 #include "ispecific_loader.h"
+#include "take_screenshot_response.h"
+#include "take_screenshot_request.h"
 
 namespace CrawlerEngine
 {
 
-WebHostInfo::WebHostInfo(QObject* parent, IWebScreenShot* webScreenShot, 
-	ISpecificLoader* xmlSiteMapLoader, ISpecificLoader* robotsTxtLoader)
+WebHostInfo::WebHostInfo(QObject* parent, ISpecificLoader* xmlSiteMapLoader, ISpecificLoader* robotsTxtLoader)
 	: QObject(parent)
-	, m_webScreenShot(webScreenShot)
 	, m_xmlSiteMapLoader(xmlSiteMapLoader)
 	, m_robotsTxtLoader(robotsTxtLoader)
 {
-	VERIFY(connect(m_webScreenShot->qobject(), SIGNAL(loaded(const QUrl&, const QPixmap&)), this, SIGNAL(webScreenshotLoaded())));
 }
 
 void WebHostInfo::reset(const QUrl& url)
 {
-	m_webScreenShot->load(url);
 	m_is404PagesSetupRight = std::nullopt;
+
+	if (m_screenshot.first != url)
+	{
+		m_screenshot.first = url;
+		TakeScreenshotRequest makeScreenshotRequest(url);
+		m_screenshotMakerRequester.reset(makeScreenshotRequest, this, &WebHostInfo::onScreenshotCreated);
+		m_screenshotMakerRequester->start();
+	}
 
 	Check404IsProperRequest request(url);
 	m_404IsProperRequester.reset(request, this, &WebHostInfo::on404Checked);
@@ -71,22 +76,22 @@ std::optional<bool> WebHostInfo::is404PagesSetupRight() const
 	return m_is404PagesSetupRight;
 }
 
-const QPixmap& WebHostInfo::image() const
+const QPixmap& WebHostInfo::screenshot() const
 {
-	return m_webScreenShot->result();
+	return m_screenshot.second;
 }
 
 WebHostInfo::AllData WebHostInfo::allData() const
 {
 	QByteArray pixmapData;
-	if (!image().isNull())
+	if (!screenshot().isNull())
 	{
 		QBuffer buffer(&pixmapData);
 
-		const QPixmap& pixmap = qvariant_cast<QPixmap>(image());
+		const QPixmap& pixmap = qvariant_cast<QPixmap>(screenshot());
 		pixmap.save(&buffer, "PNG");
 	}
-	
+
 	return 
 	{ 
 		isRobotstxtValid(),
@@ -114,18 +119,28 @@ void WebHostInfo::setData(const AllData& data)
 	{
 		QPixmap hostImage;
 		hostImage.loadFromData(data.image, "PNG");
-		m_webScreenShot->setResult(hostImage);
+
+		// TODO: add here the url of the website screenshot
+		m_screenshot.second = hostImage;
 	}
 	else
 	{
 		// TODO: clear image without constructing QPixmap instance in non-main thread
 	}
-	
 }
 
 void WebHostInfo::on404Checked(Requester*, const Check404IsProperResponse& response)
 {
 	m_is404PagesSetupRight = response.result;
+}
+
+void WebHostInfo::onScreenshotCreated(Requester*, const ITakeScreenshotResponse& response)
+{
+	m_screenshotMakerRequester.reset();
+
+	m_screenshot.second = qvariant_cast<QPixmap>(response.screenshot());
+
+	emit webScreenshotLoaded();
 }
 
 }

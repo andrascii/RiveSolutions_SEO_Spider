@@ -1,20 +1,23 @@
 #pragma once
+
 #include "requester_wrapper.h"
-#include "proper_404_checker.h"
+#include "url.h"
 
 namespace CrawlerEngine
 {
+
 class IWebScreenShot;
 class ISpecificLoader;
-	
+class ITakeScreenshotResponse;
+struct Check404IsProperResponse;
+
 class WebHostInfo : public QObject
 {
 	Q_OBJECT
 
 public:
-	WebHostInfo(QObject* parent, IWebScreenShot* webScreenShot, 
-		ISpecificLoader* xmlSiteMapLoader, ISpecificLoader* robotsTxtLoader);
-	
+	WebHostInfo(QObject* parent, ISpecificLoader* xmlSiteMapLoader, ISpecificLoader* robotsTxtLoader);
+
 	void reset(const QUrl& url);
 
 	std::optional<bool> isRobotstxtValid() const;
@@ -24,7 +27,7 @@ public:
 	QByteArray siteMapContent() const;
 	Url siteMapUrl() const;
 	std::optional<bool> is404PagesSetupRight() const;
-	const QPixmap& image() const;
+	const QPixmap& screenshot() const;
 
 	struct AllData
 	{
@@ -46,15 +49,17 @@ signals:
 
 private:
 	void on404Checked(Requester*, const Check404IsProperResponse& response);
+	void onScreenshotCreated(Requester*, const ITakeScreenshotResponse& response);
 	// ... add more
 
 private:
 	std::optional<bool> m_is404PagesSetupRight;
-	IWebScreenShot* m_webScreenShot;
+	std::pair<Url, QPixmap> m_screenshot;
 	ISpecificLoader* m_xmlSiteMapLoader;
 	ISpecificLoader* m_robotsTxtLoader;
 
 	RequesterWrapper m_404IsProperRequester;
+	RequesterWrapper m_screenshotMakerRequester;
 };
 
 }

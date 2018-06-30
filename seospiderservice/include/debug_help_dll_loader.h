@@ -9,7 +9,7 @@ public:
 	DebugHelpDllLoader();
 	~DebugHelpDllLoader();
 
-	void writeDump(
+	bool writeDump(
 		HANDLE,
 		DWORD,
 		HANDLE,

@@ -105,7 +105,7 @@ qint64 IpcSocket::peekData(char* data, qint64 maxSize)
 	DWORD totalbytes = 0;
 	DWORD messagebytes = 0;
 
-	if (!PeekNamedPipe(HANDLE(m_descriptor), &data, DWORD(maxSize), &bytesread, &totalbytes, &messagebytes))
+	if (!PeekNamedPipe(HANDLE(m_descriptor), data, DWORD(maxSize), &bytesread, &totalbytes, &messagebytes))
 	{
 		m_errorString = QString("peek data failed (%1)").arg(GetLastError());
 		return -1;
@@ -132,6 +132,11 @@ bool IpcSocket::isClosed()
 {
 	char c;
 	return 0 > peekData(&c, 0) && ERROR_BROKEN_PIPE == GetLastError();
+}
+
+QIODevice::OpenModeFlag IpcSocket::openMode() const
+{
+	return m_openMode;
 }
 
 }

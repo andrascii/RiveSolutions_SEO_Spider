@@ -3,6 +3,8 @@
 //https://developercommunity.visualstudio.com/content/problem/185399/error-c2760-in-combaseapih-with-windows-sdk-81-and.html
 struct IUnknown;
 
+#define _CRT_SECURE_NO_WARNINGS
+
 //
 // C/C++
 //
@@ -28,6 +30,7 @@ struct IUnknown;
 #include <functional>
 #include <optional>
 #include <sstream>
+#include <algorithm>
 
 #pragma warning(disable:4127)
 #pragma warning(disable:745)

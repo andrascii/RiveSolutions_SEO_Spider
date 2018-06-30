@@ -17,7 +17,7 @@ XmlSitemapLoader::XmlSitemapLoader(RobotsTxtLoader* robotsTxtLoader, QObject* pa
 {
 	if (m_robotsTxtLoader)
 	{
-		VERIFY(connect(m_robotsTxtLoader, &RobotsTxtLoader::ready, this, &XmlSitemapLoader::onRobotsTxtLoaderReady));
+		VERIFY(connect(m_robotsTxtLoader, SIGNAL(ready()), this, SLOT(onRobotsTxtLoaderReady())));
 	}
 }
 
