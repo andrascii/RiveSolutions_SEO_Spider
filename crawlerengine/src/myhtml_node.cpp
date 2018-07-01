@@ -269,7 +269,7 @@ IHtmlNodeCountedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startInd
 
 std::vector<IHtmlNodeCountedPtr> MyHtmlNode::matchSubNodes(TagId tagId) const
 {
-	myhtml_tree_node_t* node = m_node;
+	myhtml_tree_node_t* node = myhtml_node_child(m_node);
 	std::vector<IHtmlNodeCountedPtr> result;
 
 	while (node)
