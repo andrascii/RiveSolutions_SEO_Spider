@@ -25,6 +25,7 @@ void Executor::takeScreenshot(const QUrl& url)
 	else
 	{
 		m_webEngineView = new QWebEngineView;
+		m_webEngineView->setWindowFlags(Qt::Tool | Qt::CustomizeWindowHint);
 	}
 
 	m_sharedMemory.detach();
