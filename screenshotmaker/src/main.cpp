@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 	new Executor(arguments[1], arguments[2], &app);
 	ProcessWatchDogThread* watchDog = new ProcessWatchDogThread(arguments[3], &app);
 
-	Q_ASSERT(QObject::connect(watchDog, &ProcessWatchDogThread::processClosed, &app, &QApplication::quit));
+	QObject::connect(watchDog, &ProcessWatchDogThread::processClosed, &app, &QApplication::quit);
 
 	watchDog->start();
 	return app.exec();

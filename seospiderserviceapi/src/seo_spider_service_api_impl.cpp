@@ -293,6 +293,7 @@ void SeoSpiderServiceApiImpl::init()
 	if (m_initialized)
 	{
 		m_pipeServer.reset(new PipeServer);
+		m_pipeServer->listen("seospiderserviceapi_log_channel");
 	}
 
 	qInstallMessageHandler(qtMsgHandler);
@@ -320,7 +321,7 @@ bool SeoSpiderServiceApiImpl::restartApplication(int msec)
 
 	Result result;
 	result.errorcode = -1;
-	m_pipeServer->transactData((const char*)&command, sizeof(Command), (char*)&result, sizeof(Result));
+	m_pipeServer->transactData(command, result);
 	return result.errorcode == 0;
 }
 
@@ -388,6 +389,11 @@ bool SeoSpiderServiceApiImpl::writeLog(
 	const void* thisptr,
 	const char* text)
 {
+	if (!m_logFilter.isAvailable(static_cast<Common::LogLevel>(level)))
+	{
+		return false;
+	}
+
 	const size_t packetSize = logDataPacketSize(text);
 
 	if (packetSize > sizeof(Command))
@@ -560,7 +566,7 @@ unsigned SeoSpiderServiceApiImpl::assertExceptionFilter(
 	Command command;
 	command.setAssertData(file, line, function, thisptr, expression, ep, sizeof(*ep));
 	Result result;
-	m_pipeServer->transactData((const char*)&command, sizeof(Command), (char*)&result, sizeof(Result));
+	m_pipeServer->transactData(command, result);
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
@@ -581,7 +587,7 @@ bool SeoSpiderServiceApiImpl::writeLogStack(
 	logData->depth = 0;
 	Common::LogData::setText(logData, text);
 
-	return m_pipeServer->writeData((const char*)&command, sizeof(Common::Command)) == sizeof(Common::Command);
+	return m_pipeServer->writeData(command) == sizeof(Common::Command);
 }
 
 bool SeoSpiderServiceApiImpl::writeLogHeap(
@@ -614,7 +620,7 @@ bool SeoSpiderServiceApiImpl::makeCrashDump(const void* exceptionInfo, const int
 
 	Result result;
 	
-	m_pipeServer->transactData((const char*)&command, sizeof(Command), (char*)&result, sizeof(Result));
+	m_pipeServer->transactData(command, result);
 	return result.errorcode == 0;
 }
 

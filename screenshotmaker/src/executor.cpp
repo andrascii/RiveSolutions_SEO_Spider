@@ -6,27 +6,35 @@ namespace ScreenshotMaker
 
 Executor::Executor(const QString& pipeChannelName, const QString& sharedMemoryKey, QObject* parent)
 	: QObject(parent)
-	, m_webEngineView(new QWebEngineView) // this object will not be destroyed
+	, m_webEngineView(nullptr) // this object will not be destroyed
 	, m_ipcChannel(new IpcServerChannel(pipeChannelName, this))
 	, m_sharedMemory(sharedMemoryKey)
 	, m_timer(new QTimer(this))
 {
-	Q_ASSERT(connect(m_ipcChannel, SIGNAL(screenshotRequested(const QUrl&)), this,
-		SLOT(takeScreenshot(const QUrl&)), Qt::QueuedConnection));
-
-	Q_ASSERT(connect(this, SIGNAL(screenshotCreated()), m_ipcChannel,
-		SLOT(onScreenshotCreated()), Qt::QueuedConnection));
+	connect(m_ipcChannel, SIGNAL(screenshotRequested(const QUrl&)), this, SLOT(takeScreenshot(const QUrl&)));
+	connect(this, SIGNAL(screenshotCreated()), m_ipcChannel, SLOT(onScreenshotCreated()));
 }
 
 void Executor::takeScreenshot(const QUrl& url)
 {
+	if (m_webEngineView)
+	{
+		m_pendingScreenshotRequests.push(url);
+		return;
+	}
+	else
+	{
+		m_webEngineView = new QWebEngineView;
+		m_webEngineView->setWindowFlags(Qt::Tool | Qt::CustomizeWindowHint);
+	}
+
 	m_sharedMemory.detach();
 
 	m_timer->setInterval(5000);
 	m_timer->setSingleShot(true);
 
-	Q_ASSERT(connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap));
-	Q_ASSERT(connect(m_webEngineView->page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone));
+	connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap);
+	connect(m_webEngineView->page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone);
 
 	m_webEngineView->resize(1280, 1024);
 	m_webEngineView->load(url);
@@ -68,7 +76,25 @@ void Executor::saveScreenshot(const QPixmap& pixmap)
 		std::copy(pixmapData.begin(), pixmapData.end(), data);
 	}
 
+	m_webEngineView->deleteLater();
+	m_webEngineView = nullptr;
+
+	doPendingRequests();
+
 	emit screenshotCreated();
+}
+
+void Executor::doPendingRequests()
+{
+	if (m_pendingScreenshotRequests.empty())
+	{
+		return;
+	}
+
+	QUrl url = std::move(m_pendingScreenshotRequests.front());
+	m_pendingScreenshotRequests.pop();
+
+	takeScreenshot(url);
 }
 
 }

@@ -192,6 +192,12 @@ void Application::startCrawler()
 
 void Application::stopCrawler()
 {
+	if (theApp->crawler()->state() == Crawler::StatePause ||
+		theApp->crawler()->state() == Crawler::StatePending)
+	{
+		return;
+	}
+
 	WaitOperationFrame::showMessage(tr("Stopping crawler..."));
 
 	crawler()->stopCrawling();

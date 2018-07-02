@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ipc_server_wrapper.h"
+#include "pipe_server.h"
 
 namespace ScreenshotMaker
 {
@@ -12,7 +12,7 @@ class PipeConnectionEstablisherThread : public QThread
 public:
 	PipeConnectionEstablisherThread(
 		const QString& pipeChannelName,
-		const std::shared_ptr<Common::IpcServerWrapper>& ipcServer,
+		const std::shared_ptr<Common::PipeServer>& pipeServer,
 		QObject* parent = nullptr
 	);
 
@@ -23,7 +23,7 @@ signals:
 
 private:
 	const QString& m_pipeChannelName;
-	std::weak_ptr<Common::IpcServerWrapper> m_ipcServer;
+	std::weak_ptr<Common::PipeServer> m_pipeServer;
 };
 
 }
