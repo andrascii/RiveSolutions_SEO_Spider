@@ -14,8 +14,7 @@ void ReportElementBase::setRelativePosition(int leftMargin, int topMargin, IRepo
 
 void ReportElementBase::moveToPosition()
 {
-	QWidget* parentWidget = widget()->parentWidget();
-	ASSERT(parentWidget != nullptr);
+	DEBUG_ASSERT(widget()->parentWidget() != nullptr);
 
 	const int top = m_prevLineWidget ? m_prevLineWidget->bottom() + m_topMargin : m_topMargin;
 	const int left = m_leftWidget ? m_leftWidget->right() + m_leftMargin : m_leftMargin;
@@ -58,27 +57,47 @@ int ReportElementBase::height() const
 
 int ReportElementBase::bottom() const
 {
-	if (!m_prevLineWidget)
+	if (m_bottom >= 0)
 	{
-		return height() + m_topMargin;
+		return m_bottom;
 	}
 
-	return m_prevLineWidget->bottom() + height() + m_topMargin;
+	if (!m_prevLineWidget)
+	{
+		m_bottom = height() + m_topMargin;
+		return m_bottom;
+	}
+
+	m_bottom = m_prevLineWidget->bottom() + height() + m_topMargin;
+	return m_bottom;
 }
 
 int ReportElementBase::right() const
 {
-	if (!m_leftWidget)
+	if (m_right >= 0)
 	{
-		return width() + m_leftMargin;
+		return m_right;
 	}
 
-	return m_leftWidget->right() + width() + m_leftMargin;
+	if (!m_leftWidget)
+	{
+		m_right = width() + m_leftMargin;
+		return m_right;
+	}
+
+	m_right = m_leftWidget->right() + width() + m_leftMargin;
+	return m_right;
 }
 
 void ReportElementBase::setCalculatedWidth(bool value)
 {
 	m_calculatedWidth = value;
+}
+
+void ReportElementBase::invalidateRightBottom()
+{
+	m_right = -1;
+	m_bottom = -1;
 }
 
 LabelReportElement::LabelReportElement(const QByteArray& elementId, QWidget* parentWidget, Qt::Alignment alignment)
@@ -105,8 +124,9 @@ QWidget* LabelReportElement::widget() const
 	return m_label;
 }
 
-ImageReportElement::ImageReportElement(const QByteArray& elementId, QWidget* parentWidget)
+ImageReportElement::ImageReportElement(const QByteArray& elementId, QWidget* parentWidget, bool adjustWidth)
 	: m_label(new QLabel(parentWidget))
+	, m_adjustWidth(adjustWidth)
 {
 	m_label->setAlignment(Qt::AlignCenter);
 	m_label->setObjectName(elementId);
@@ -116,7 +136,12 @@ void ImageReportElement::setValue(const QVariant& value)
 {
 	if (value.type() == QVariant::Pixmap)
 	{
-		m_label->setPixmap(qvariant_cast<QPixmap>(value));
+		QPixmap pixmap = qvariant_cast<QPixmap>(value);
+		if (m_adjustWidth)
+		{
+			pixmap = pixmap.scaledToWidth(width(), Qt::SmoothTransformation);
+		}
+		m_label->setPixmap(pixmap);
 	}
 }
 

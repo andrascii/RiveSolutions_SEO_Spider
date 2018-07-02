@@ -16,6 +16,7 @@ public:
 	virtual int height() const = 0;
 	virtual int bottom() const = 0;
 	virtual int right() const = 0;
+	virtual void invalidateRightBottom() = 0;
 };
 
 class ReportElementBase: public IReportElement
@@ -28,6 +29,7 @@ public:
 	virtual int height() const override;
 	virtual int bottom() const override;
 	virtual int right() const override;
+	virtual void invalidateRightBottom() override;
 	virtual void setCalculatedWidth(bool value);
 
 protected:
@@ -39,6 +41,8 @@ protected:
 	int m_width = 0;
 	int m_height = 0;
 	bool m_calculatedWidth = false;
+	mutable int m_right = -1;
+	mutable int m_bottom = -1;
 };
 
 class LabelReportElement: public ReportElementBase
@@ -55,12 +59,13 @@ private:
 class ImageReportElement : public ReportElementBase
 {
 public:
-	ImageReportElement(const QByteArray& elementId, QWidget* parentWidget);
+	ImageReportElement(const QByteArray& elementId, QWidget* parentWidget, bool adjustWidth = false);
 	virtual void setValue(const QVariant& value) override;
 	virtual QWidget* widget() const override;
 
 private:
 	QLabel* m_label;
+	bool m_adjustWidth;
 };
 
 }

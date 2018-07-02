@@ -47,6 +47,9 @@ private:
 
 	void buildLayout(ReportType reportType);
 	void buildLayoutBrief();
+	int percentWidthPixels(int percent) const;
+	ReportElementBase* getWidget(ReportDataKeys key) const;
+	ReportElementBase* getWidget(const QByteArray& key) const;
 
 private:
 	QStackedWidget* m_stackedWidget;
