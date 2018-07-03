@@ -46,7 +46,7 @@ QObject* Proper404Checker::qobject()
 void Proper404Checker::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
 	Q_UNUSED(requester);
-	Common::StatusCode resultStatusCode = response.hopsChain.front().statusCode();
+	Common::StatusCode resultStatusCode = response.hopsChain.firstHop().statusCode();
 	const bool success = Common::StatusCode::NotFound404 == resultStatusCode;
 	IResponseSharedPtr resultResponse = std::make_shared<Check404IsProperResponse>(success);
 	ThreadMessageDispatcher::forThread(m_requester->thread())->postResponse(m_requester, resultResponse);

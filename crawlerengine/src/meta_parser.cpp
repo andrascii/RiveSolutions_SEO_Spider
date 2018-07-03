@@ -52,33 +52,6 @@ void MetaParser::parse(const ResponseHeaders& headers, ParsedPagePtr& parsedPage
 
 void MetaParser::parseMetaContentType(ParsedPagePtr& parsedPage) noexcept
 {
-// 	auto predicate = [](const GumboNode* node)
-// 	{
-// 		return node &&
-// 			node->type == GUMBO_NODE_ELEMENT &&
-// 			node->v.element.tag == GUMBO_TAG_META &&
-// 			/*node->parent &&
-// 			node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
-// 			GumboParsingHelpers::checkAttribute(node, "http-equiv", "content-type") &&
-// 			GumboParsingHelpers::checkAttribute(node, "content", "");
-// 		// TODO: uncomment when this error will be fixed in Gumbo
-// 	};
-// 
-// 	auto resultGetter = [](const GumboNode* node)
-// 	{
-// 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-// 		return QString(attr->value);
-// 	};
-// 
-// 	std::vector<QString> contentTypes = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-// 
-// 	if (!contentTypes.empty())
-// 	{
-// 		parsedPage->contentType = contentTypes.front();
-// 	}
-
-	//////////////////////////////////////////////////////////////////////////
-
 	std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
 	const auto isBadMetaTag = [](const IHtmlNodeCountedPtr& metaTag)
@@ -112,60 +85,6 @@ void MetaParser::parseMetaContentType(ParsedPagePtr& parsedPage) noexcept
 
 void MetaParser::parseMetaRefresh(ParsedPagePtr& parsedPage) noexcept
 {
-// 	auto predicate = [](const GumboNode* node)
-// 	{
-// 		return node &&
-// 			node->type == GUMBO_NODE_ELEMENT &&
-// 			node->v.element.tag == GUMBO_TAG_META &&
-// 			/*node->parent &&
-// 			node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
-// 			GumboParsingHelpers::checkAttribute(node, "http-equiv", "refresh");
-// 		// TODO: uncomment when this error will be fixed in Gumbo
-// 	};
-// 
-// 	auto resultGetter = [](const GumboNode* node)
-// 	{
-// 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-// 		return QString(attr->value).trimmed();
-// 	};
-// 
-// 	const std::vector<QString> contents = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-// 
-// 	if (!contents.empty())
-// 	{
-// 		parsedPage->metaRefresh = contents.back();
-// 		parsedPage->hasMetaRefreshTag = true;
-// 	}
-// 
-// 	foreach (const QString& content, contents)
-// 	{
-// 		const QRegularExpressionMatch match = m_metaRefreshContentPattern.match(content);
-// 		const QStringList matchParts = match.capturedTexts();
-// 
-// 		if (matchParts.size() < 2)
-// 		{
-// 			continue;
-// 		}
-// 
-// 		Url contentUrl(matchParts[1]);
-// 
-// 		if (contentUrl == parsedPage->url)
-// 		{
-// 			continue;
-// 		}
-// 
-// 		LinkInfo link{ std::move(contentUrl), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceTagMetaRefresh };
-// 		
-// 		ResourceOnPage resource(ResourceType::ResourceHtml, std::move(link));
-// 
-// 		if (parsedPage->allResourcesOnPage.find(resource) == parsedPage->allResourcesOnPage.end())
-// 		{
-// 			parsedPage->allResourcesOnPage.insert(std::move(resource));
-// 		}
-// 	}
-
-	//////////////////////////////////////////////////////////////////////////
-
 	std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
 	const auto isBadMetaTag = [](const IHtmlNodeCountedPtr& metaTag)
@@ -222,35 +141,6 @@ void MetaParser::parseMetaRefresh(ParsedPagePtr& parsedPage) noexcept
 
 void MetaParser::parseMetaDescription(ParsedPagePtr& parsedPage) noexcept
 {
-// 	auto predicate = [](const GumboNode* node)
-// 	{
-// 		return node &&
-// 			node->type == GUMBO_NODE_ELEMENT &&
-// 			node->v.element.tag == GUMBO_TAG_META &&
-// 			/*node->parent &&
-// 			node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
-// 			GumboParsingHelpers::checkAttribute(node, "name", "description") &&
-// 			GumboParsingHelpers::checkAttribute(node, "content", "");
-// 		// TODO: uncomment when this error will be fixed in Gumbo
-// 	};
-// 
-// 	auto resultGetter = [](const GumboNode* node)
-// 	{
-// 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-// 		return QString(attr->value).trimmed().remove("\n");
-// 	};
-// 
-// 	const std::vector<QString> descriptions = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-// 
-// 	if (!descriptions.empty())
-// 	{
-// 		parsedPage->metaDescription = descriptions.front();
-// 	}
-// 
-// 	parsedPage->hasSeveralMetaDescriptionTags = descriptions.size() > 1;
-
-	//////////////////////////////////////////////////////////////////////////
-
 	std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
 	const auto isBadMetaTag = [](const IHtmlNodeCountedPtr& metaTag)
@@ -286,35 +176,6 @@ void MetaParser::parseMetaDescription(ParsedPagePtr& parsedPage) noexcept
 
 void MetaParser::parseMetaKeywords(ParsedPagePtr& parsedPage) noexcept
 {
-// 	auto predicate = [](const GumboNode* node)
-// 	{
-// 		return node &&
-// 			node->type == GUMBO_NODE_ELEMENT &&
-// 			node->v.element.tag == GUMBO_TAG_META &&
-// 			/*node->parent &&
-// 			node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
-// 			GumboParsingHelpers::checkAttribute(node, "name", "keywords") &&
-// 			GumboParsingHelpers::checkAttribute(node, "content", "");
-// 		// TODO: uncomment when this error will be fixed in Gumbo
-// 	};
-// 
-// 	auto resultGetter = [](const GumboNode* node)
-// 	{
-// 		const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-// 		return QString(attr->value).trimmed().remove("\n");
-// 	};
-// 
-// 	std::vector<QString> keywords = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-// 
-// 	if (!keywords.empty())
-// 	{
-// 		parsedPage->metaKeywords = keywords.front();
-// 	}
-// 
-// 	parsedPage->hasSeveralMetaKeywordsTags = keywords.size() > 1;
-
-	///////////////////////////////////////////////////////////////////////////
-
 	std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
 	const auto isBadMetaTag = [](const IHtmlNodeCountedPtr& metaTag)
@@ -377,26 +238,6 @@ void MetaParser::parseMetaRobots(const ResponseHeaders& headers, ParsedPagePtr& 
 
 	foreach(const QString& userAgentStr, supportedUserAgents)
 	{
-// 		const auto predicate = [nameValue = userAgentStr](const GumboNode* node)
-// 		{
-// 			return node &&
-// 				node->type == GUMBO_NODE_ELEMENT &&
-// 				node->v.element.tag == GUMBO_TAG_META &&
-// 				/*node->parent &&
-// 				node->parent->v.element.tag == GUMBO_TAG_HEAD &&*/
-// 				GumboParsingHelpers::checkAttribute(node, "name", nameValue.toLatin1().constData()) &&
-// 				GumboParsingHelpers::checkAttribute(node, "content", "");
-// 			// TODO: uncomment when this error will be fixed in Gumbo
-// 		};
-// 
-// 		const auto resultGetter = [](const GumboNode* node)
-// 		{
-// 			const GumboAttribute* attr = gumbo_get_attribute(&node->v.element.attributes, "content");
-// 			return QString(attr->value).trimmed();
-// 		};
-// 
-// 		const std::vector<QString> robots = GumboParsingHelpers::findNodesAndGetResult(output->root, predicate, resultGetter);
-
 		std::vector<IHtmlNodeCountedPtr> metaTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdMeta);
 
 		const auto isBadMetaTag = [&userAgentStr](const IHtmlNodeCountedPtr& metaTag)

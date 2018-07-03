@@ -108,11 +108,11 @@ void XmlSitemapLoader::onLoadingDone(Requester* requester, const DownloadRespons
 {
 	Q_UNUSED(requester);
 
-	const Common::StatusCode statusCode = response.hopsChain.back().statusCode();
+	const Common::StatusCode statusCode = response.hopsChain.lastHop().statusCode();
 
 	m_isValid = statusCode == Common::StatusCode::Ok200;
 
-	m_content = response.hopsChain.back().body();
+	m_content = response.hopsChain.lastHop().body();
 	m_isReady = true;
 
 	m_hopsChain = response.hopsChain;

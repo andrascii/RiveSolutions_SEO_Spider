@@ -50,7 +50,7 @@ void UpdateChecker::onActualVersionFileLoaded(CrawlerEngine::Requester*, const C
 
 	ASSERT(response.hopsChain.length() != 0);
 
-	const CrawlerEngine::Hop lastHop = response.hopsChain.back();
+	const CrawlerEngine::Hop lastHop = response.hopsChain.lastHop();
 
 	if (lastHop.statusCode() != Common::StatusCode::Ok200)
 	{

@@ -16,11 +16,11 @@ public:
 	bool hasHopTo(const Url& url) const noexcept;
 	std::size_t length() const noexcept;
 
-	Hop& front() noexcept;
-	const Hop& front() const noexcept;
+	Hop& firstHop() noexcept;
+	const Hop& firstHop() const noexcept;
 
-	Hop& back() noexcept;
-	const Hop& back() const noexcept;
+	Hop& lastHop() noexcept;
+	const Hop& lastHop() const noexcept;
 
 	Hop& operator[](std::size_t idx) noexcept;
 	const Hop& operator[](std::size_t idx) const noexcept;

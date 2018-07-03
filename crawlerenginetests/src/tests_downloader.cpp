@@ -168,7 +168,7 @@ HopsChain TestsDownloader::hopsChain(const DownloadRequest& request, QSet<QStrin
 
 		if (childResult.length() > 0)
 		{
-			result.front().setRedirectUrl(result[1].url());
+			result.firstHop().setRedirectUrl(result[1].url());
 		}
 	}
 

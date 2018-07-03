@@ -6,11 +6,12 @@ set(CrawlerEngineTestsSourceDir src)
 set(CrawlerEngineTestsHeaderDir include)
 
 # deps headers
+set(GumboLibHeadersDir ../gumbo)
 set(CrawlerEngineLibHeadersDir ../crawlerengine/include)
 set(CommonLibHeadersDir ../common/include)
-set(WatchDogApiHeadersDir ../watchdogapi/include)
 set(GoogleTestHeadersDir ../googletest/googletest/include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
+set(MyHtmlLibHeadersDir ../myhtml/include)
 
 aux_source_directory(${CrawlerEngineTestsSourceDir} CrawlerEngineTestsSourcesList)
 file(GLOB_RECURSE CrawlerEngineTestsHeaderList "include/*.h")
@@ -107,7 +108,8 @@ include_directories(
 	${CrawlerEngineTestsHeaderDir}
 	${CrawlerEngineLibHeadersDir}
 	${CommonLibHeadersDir}
-	${WatchDogApiHeadersDir}
+	${GumboLibHeadersDir}
+	${MyHtmlLibHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}

@@ -28,22 +28,22 @@ std::size_t HopsChain::length() const noexcept
 	return m_hopsChain.size();
 }
 
-Hop& HopsChain::front() noexcept
+Hop& HopsChain::firstHop() noexcept
 {
 	return m_hopsChain.front();
 }
 
-const Hop& HopsChain::front() const noexcept
+const Hop& HopsChain::firstHop() const noexcept
 {
 	return m_hopsChain.front();
 }
 
-Hop& HopsChain::back() noexcept
+Hop& HopsChain::lastHop() noexcept
 {
 	return m_hopsChain.back();
 }
 
-const Hop& HopsChain::back() const noexcept
+const Hop& HopsChain::lastHop() const noexcept
 {
 	return m_hopsChain.back();
 }
