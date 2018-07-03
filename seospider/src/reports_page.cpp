@@ -101,6 +101,13 @@ void ReportsPage::updateLayout(ReportType report, const bool rebuildLayout)
 
 	int bottom = 0;
 	keys = m_reportElements.keys().toSet();
+
+	foreach(const QByteArray& key, keys)
+	{
+		IReportElement* element = m_reportElements.value(key);
+		element->invalidateRightBottom();
+	}
+
 	foreach(ReportDataKeys key, m_reportDataProvider.allKeys())
 	{
 		IReportElement* element = m_reportElements.value(m_reportDataProvider.placeholder(key), nullptr);
@@ -322,23 +329,11 @@ void SeoSpider::ReportsPage::buildLayout(ReportType reportType)
 
 void ReportsPage::buildLayoutBrief()
 {
-	// TODO: it's working but needs refactoring
-
 	using Key = ReportDataKeys;
 
 	const int bodyMargin = Common::Helpers::pointsToPixels(10);
 
-	const auto percentWidthPixels = [this](int percent)
-	{
-		return m_viewFrameBody->width() * percent / 100;
-	};
-
-	const auto getWidget = [this](Key key)
-	{
-		return m_reportElements[m_reportDataProvider.placeholder(key)];
-	};
-
-	const auto addSpacerItem = [this, percentWidthPixels, bodyMargin](const QByteArray& spacerKey, ReportElementBase* prevElement)
+	const auto addSpacerItem = [this, bodyMargin](const QByteArray& spacerKey, ReportElementBase* prevElement)
 	{
 		const int height = Common::Helpers::pointsToPixels(15);
 		ReportElementBase* spacerElement = m_reportElements.value(spacerKey, nullptr);
@@ -351,7 +346,7 @@ void ReportsPage::buildLayoutBrief()
 		spacerElement->setRelativePosition(0, bodyMargin, prevElement, nullptr);
 	};
 
-	const auto addSummaryItem = [this, percentWidthPixels](Key image, Key text, Key counter, int leftMargin, int topMargin, ReportElementBase* prevLineWidget)
+	const auto addSummaryItem = [this](Key image, Key text, Key counter, int leftMargin, int topMargin, ReportElementBase* prevLineWidget)
 	{
 		const int firstLineHeight = Common::Helpers::pointsToPixels(15);
 		const int secondLineHeight = Common::Helpers::pointsToPixels(22);
@@ -391,54 +386,7 @@ void ReportsPage::buildLayoutBrief()
 		counterElement->setRelativePosition(percentWidthPixels(1), Common::Helpers::pointsToPixels(2), textElement, imageElement);
 	};
 
-	ReportElementBase* siteImage = m_reportElements.value(m_reportDataProvider.placeholder(Key::SiteShortImage), nullptr);
-	if (siteImage == nullptr)
-	{
-		siteImage = new ImageReportElement(m_reportDataProvider.placeholder(Key::SiteShortImage), m_viewFrameBody);
-		m_reportElements[m_reportDataProvider.placeholder(Key::SiteShortImage)] = siteImage;
-	}
-	siteImage->setSize(percentWidthPixels(35), percentWidthPixels(35) * 0.9);
-	siteImage->setRelativePosition(bodyMargin, bodyMargin, nullptr, nullptr);
-
-
-	ReportElementBase* siteLink = m_reportElements.value(m_reportDataProvider.placeholder(Key::SiteLink), nullptr);
-	if (siteLink == nullptr)
-	{
-		siteLink = new LabelReportElement(m_reportDataProvider.placeholder(Key::SiteLink), m_viewFrameBody);
-		m_reportElements[m_reportDataProvider.placeholder(Key::SiteLink)] = siteLink;
-	}
-	siteLink->setSize(percentWidthPixels(60), Common::Helpers::pointsToPixels(24));
-	siteLink->setRelativePosition(percentWidthPixels(3), bodyMargin + Common::Helpers::pointsToPixels(5), nullptr, siteImage);
-
-	ReportElementBase* problemsCount = m_reportElements.value(m_reportDataProvider.placeholder(Key::FoundProblemsCount), nullptr);
-	if (problemsCount == nullptr)
-	{
-		problemsCount = new LabelReportElement(m_reportDataProvider.placeholder(Key::FoundProblemsCount), m_viewFrameBody, Qt::AlignLeft | Qt::AlignBottom);
-		m_reportElements[m_reportDataProvider.placeholder(Key::FoundProblemsCount)] = problemsCount;
-	}
-	problemsCount->setSize(-1, Common::Helpers::pointsToPixels(28));
-	problemsCount->setRelativePosition(percentWidthPixels(3), Common::Helpers::pointsToPixels(10), siteLink, siteImage);
-
-	ReportElementBase* problemsFound = m_reportElements.value("problemsFound", nullptr);
-	if (problemsFound == nullptr)
-	{
-		problemsFound = new LabelReportElement("problemsFound", m_viewFrameBody, Qt::AlignLeft | Qt::AlignBottom);
-		problemsFound->setValue(QObject::tr("problems found"));
-		m_reportElements["problemsFound"] = problemsFound;
-	}
-	problemsFound->setSize(percentWidthPixels(35), problemsCount->height());
-	problemsFound->setRelativePosition(Common::Helpers::pointsToPixels(5), Common::Helpers::pointsToPixels(6), siteLink, problemsCount);
-
-	addSpacerItem("spacer1", siteImage);
-
-	addSummaryItem(Key::ErrorsImage, Key::Errors, Key::ErrorsCount, bodyMargin, Common::Helpers::pointsToPixels(10), m_reportElements["spacer1"]);
-	addSummaryItem(Key::WarningsImage, Key::Warnings, Key::WarningsCount, bodyMargin + percentWidthPixels(24), Common::Helpers::pointsToPixels(10), m_reportElements["spacer1"]);
-	addSummaryItem(Key::InfoImage, Key::Info, Key::InfoCount, bodyMargin + percentWidthPixels(49), Common::Helpers::pointsToPixels(10), m_reportElements["spacer1"]);
-	addSummaryItem(Key::DateImage, Key::Date, Key::Date, bodyMargin + percentWidthPixels(74), Common::Helpers::pointsToPixels(10), m_reportElements["spacer1"]);
-
-	addSpacerItem("spacer2", getWidget(Key::ErrorsCount));
-
-	const auto addReportItem = [this, percentWidthPixels, bodyMargin](Key image, Key text, Key counter, ReportElementBase* prevLineWidget, ReportElementBase* leftWidget, int extraLeftMarginPercents = 0)
+	const auto addReportItem = [this, bodyMargin](Key image, Key text, Key counter, ReportElementBase* prevLineWidget, ReportElementBase* leftWidget, int extraLeftMarginPercents = 0)
 	{
 		const int height = Common::Helpers::pointsToPixels(15);
 		const int leftMargin = extraLeftMarginPercents == 0 ? bodyMargin : percentWidthPixels(extraLeftMarginPercents);
@@ -472,9 +420,54 @@ void ReportsPage::buildLayoutBrief()
 		counterElement->setRelativePosition(percentWidthPixels(1), topMargin, prevLineWidget, textElement);
 	};
 
-	const int row = 5;
+	ReportElementBase* siteImage = getWidget(Key::SiteShortImage);
+	if (siteImage == nullptr)
+	{
+		siteImage = new ImageReportElement(m_reportDataProvider.placeholder(Key::SiteShortImage), m_viewFrameBody, true);
+		m_reportElements[m_reportDataProvider.placeholder(Key::SiteShortImage)] = siteImage;
+	}
+	siteImage->setSize(percentWidthPixels(35), percentWidthPixels(35) * 0.8);
+	siteImage->setRelativePosition(bodyMargin, bodyMargin, nullptr, nullptr);
 
-	ReportElementBase* indexingAndPageScanning = m_reportElements.value("indexingAndPageScanning", nullptr);
+
+	ReportElementBase* siteLink = getWidget(Key::SiteLink);
+	if (siteLink == nullptr)
+	{
+		siteLink = new LabelReportElement(m_reportDataProvider.placeholder(Key::SiteLink), m_viewFrameBody);
+		m_reportElements[m_reportDataProvider.placeholder(Key::SiteLink)] = siteLink;
+	}
+	siteLink->setSize(percentWidthPixels(60), Common::Helpers::pointsToPixels(24));
+	siteLink->setRelativePosition(percentWidthPixels(3), bodyMargin + Common::Helpers::pointsToPixels(5), nullptr, siteImage);
+
+	ReportElementBase* problemsCount = getWidget(Key::FoundProblemsCount);
+	if (problemsCount == nullptr)
+	{
+		problemsCount = new LabelReportElement(m_reportDataProvider.placeholder(Key::FoundProblemsCount), m_viewFrameBody, Qt::AlignLeft | Qt::AlignBottom);
+		m_reportElements[m_reportDataProvider.placeholder(Key::FoundProblemsCount)] = problemsCount;
+	}
+	problemsCount->setSize(-1, Common::Helpers::pointsToPixels(28));
+	problemsCount->setRelativePosition(percentWidthPixels(3), Common::Helpers::pointsToPixels(10), siteLink, siteImage);
+
+	ReportElementBase* problemsFound = getWidget("problemsFound");
+	if (problemsFound == nullptr)
+	{
+		problemsFound = new LabelReportElement("problemsFound", m_viewFrameBody, Qt::AlignLeft | Qt::AlignBottom);
+		problemsFound->setValue(QObject::tr("problems found"));
+		m_reportElements["problemsFound"] = problemsFound;
+	}
+	problemsFound->setSize(percentWidthPixels(35), problemsCount->height());
+	problemsFound->setRelativePosition(Common::Helpers::pointsToPixels(5), Common::Helpers::pointsToPixels(6), siteLink, problemsCount);
+
+	addSpacerItem("spacer1", siteImage);
+
+	addSummaryItem(Key::ErrorsImage, Key::Errors, Key::ErrorsCount, bodyMargin, Common::Helpers::pointsToPixels(10), getWidget("spacer1"));
+	addSummaryItem(Key::WarningsImage, Key::Warnings, Key::WarningsCount, bodyMargin + percentWidthPixels(24), Common::Helpers::pointsToPixels(10), getWidget("spacer1"));
+	addSummaryItem(Key::InfoImage, Key::Info, Key::InfoCount, bodyMargin + percentWidthPixels(49), Common::Helpers::pointsToPixels(10), getWidget("spacer1"));
+	addSummaryItem(Key::DateImage, Key::Date, Key::Date, bodyMargin + percentWidthPixels(74), Common::Helpers::pointsToPixels(10), getWidget("spacer1"));
+
+	addSpacerItem("spacer2", getWidget(Key::ErrorsCount));
+
+	ReportElementBase* indexingAndPageScanning = getWidget("indexingAndPageScanning");
 	if (indexingAndPageScanning == nullptr)
 	{
 		indexingAndPageScanning = new LabelReportElement("blockLabel", m_viewFrameBody);
@@ -483,7 +476,7 @@ void ReportsPage::buildLayoutBrief()
 	}
 
 	indexingAndPageScanning->setSize(percentWidthPixels(45), Common::Helpers::pointsToPixels(18));
-	indexingAndPageScanning->setRelativePosition(bodyMargin, Common::Helpers::pointsToPixels(10), m_reportElements["spacer2"], nullptr);
+	indexingAndPageScanning->setRelativePosition(bodyMargin, Common::Helpers::pointsToPixels(10), getWidget("spacer2"), nullptr);
 
 	addReportItem(Key::StatusCode4xxImage, Key::StatusCode4xx, Key::StatusCode4xxCount, indexingAndPageScanning, nullptr);
 	addReportItem(Key::StatusCode5xxImage, Key::StatusCode5xx, Key::StatusCode5xxCount, getWidget(Key::StatusCode4xxCount), nullptr);
@@ -493,7 +486,7 @@ void ReportsPage::buildLayoutBrief()
 	addReportItem(Key::XmlSitemapImage, Key::XmlSitemap, Key::XmlSitemapCount, getWidget(Key::RobotsTxtCount), nullptr);
 
 
-	ReportElementBase* technicalFactors = m_reportElements.value("technicalFactors", nullptr);
+	ReportElementBase* technicalFactors = getWidget("technicalFactors");
 	if (technicalFactors == nullptr)
 	{
 		technicalFactors = new LabelReportElement("blockLabel", m_viewFrameBody);
@@ -502,13 +495,13 @@ void ReportsPage::buildLayoutBrief()
 	}
 
 	technicalFactors->setSize(percentWidthPixels(45), Common::Helpers::pointsToPixels(18));
-	technicalFactors->setRelativePosition(percentWidthPixels(52), Common::Helpers::pointsToPixels(10), m_reportElements["spacer2"], nullptr);
+	technicalFactors->setRelativePosition(percentWidthPixels(52), Common::Helpers::pointsToPixels(10), getWidget("spacer2"), nullptr);
 
 	addReportItem(Key::PagesWithDuplicatedRelCanonicalImage, Key::PagesWithDuplicatedRelCanonical, Key::PagesWithDuplicatedRelCanonicalCount, technicalFactors, nullptr, 52);
 	addReportItem(Key::PagesContainsFramesImage, Key::PagesContainsFrames, Key::PagesContainsFramesCount, getWidget(Key::PagesWithDuplicatedRelCanonicalCount), nullptr, 52);
 	addReportItem(Key::TooLargePagesImage, Key::TooLargePages, Key::TooLargePagesCount, getWidget(Key::PagesContainsFramesCount), nullptr, 52);
 
-	ReportElementBase* redirections = m_reportElements.value("redirections", nullptr);
+	ReportElementBase* redirections = getWidget("redirections");
 	if (redirections == nullptr)
 	{
 		redirections = new LabelReportElement("blockLabel", m_viewFrameBody);
@@ -527,7 +520,7 @@ void ReportsPage::buildLayoutBrief()
 	addReportItem(Key::RelCanonicalPagesImage, Key::RelCanonicalPages, Key::RelCanonicalPagesCount, getWidget(Key::RefreshMetaTagCount), nullptr);
 
 
-	ReportElementBase* onPage = m_reportElements.value("onPage", nullptr);
+	ReportElementBase* onPage = getWidget("onPage");
 	if (onPage == nullptr)
 	{
 		onPage = new LabelReportElement("blockLabel", m_viewFrameBody);
@@ -546,7 +539,7 @@ void ReportsPage::buildLayoutBrief()
 	addReportItem(Key::DuplicatedMetaDescriptionsImage, Key::DuplicatedMetaDescriptions, Key::DuplicatedMetaDescriptionsCount, getWidget(Key::EmptyMetaDescriptionsCount), nullptr, 52);
 	addReportItem(Key::TooLongMetaDescriptionsImage, Key::TooLongMetaDescriptions, Key::TooLongMetaDescriptionsCount, getWidget(Key::DuplicatedMetaDescriptionsCount), nullptr, 52);
 
-	ReportElementBase* links = m_reportElements.value("links", nullptr);
+	ReportElementBase* links = getWidget("links");
 	if (links == nullptr)
 	{
 		links = new LabelReportElement("blockLabel", m_viewFrameBody);
@@ -562,7 +555,7 @@ void ReportsPage::buildLayoutBrief()
 	addReportItem(Key::ExternalDofollowLinksImage, Key::ExternalDofollowLinks, Key::ExternalDofollowLinksCount, getWidget(Key::PagesWithLargeAmountOfLinksCount), nullptr);
 	addReportItem(Key::TooLongUrlAddressesImage, Key::TooLongUrlAddresses, Key::TooLongUrlAddressesCount, getWidget(Key::ExternalDofollowLinksCount), nullptr);
 
-	ReportElementBase* images = m_reportElements.value("images", nullptr);
+	ReportElementBase* images = getWidget("images");
 	if (images == nullptr)
 	{
 		images = new LabelReportElement("blockLabel", m_viewFrameBody);
@@ -578,23 +571,36 @@ void ReportsPage::buildLayoutBrief()
 
 	addSpacerItem("spacer3", getWidget(Key::TooLongUrlAddressesCount));
 
-	ReportElementBase* creationDate = m_reportElements.value(m_reportDataProvider.placeholder(Key::FooterDate), nullptr);
+	ReportElementBase* creationDate = getWidget(Key::FooterDate);
 	if (creationDate == nullptr)
 	{
 		creationDate = new LabelReportElement("footerLabel", m_viewFrameBody, Qt::AlignLeft | Qt::AlignTop);
 		m_reportElements[m_reportDataProvider.placeholder(Key::FooterDate)] = creationDate;
 	}
 	creationDate->setSize(-1, Common::Helpers::pointsToPixels(15) + bodyMargin);
-	creationDate->setRelativePosition(bodyMargin, bodyMargin, m_reportElements["spacer3"], nullptr);
+	creationDate->setRelativePosition(bodyMargin, bodyMargin, getWidget("spacer3"), nullptr);
 
-	ReportElementBase* companyName = m_reportElements.value(m_reportDataProvider.placeholder(Key::CompanyName), nullptr);
+	ReportElementBase* companyName = getWidget(Key::CompanyName);
 	if (companyName == nullptr)
 	{
 		companyName = new LabelReportElement("footerLabel", m_viewFrameBody, Qt::AlignLeft | Qt::AlignTop);
 		m_reportElements[m_reportDataProvider.placeholder(Key::CompanyName)] = companyName;
 	}
 	companyName->setSize(percentWidthPixels(45), Common::Helpers::pointsToPixels(15) + bodyMargin);
-	companyName->setRelativePosition(Common::Helpers::pointsToPixels(5), bodyMargin, m_reportElements["spacer3"], creationDate);
+	companyName->setRelativePosition(Common::Helpers::pointsToPixels(5), bodyMargin, getWidget("spacer3"), creationDate);
 }
 
+int ReportsPage::percentWidthPixels(int percent) const
+{
+	return m_viewFrameBody->width() * percent / 100;
+}
+ReportElementBase* ReportsPage::getWidget(ReportDataKeys key) const
+{
+	return m_reportElements.value(m_reportDataProvider.placeholder(key), nullptr);
+}
+
+ReportElementBase* ReportsPage::getWidget(const QByteArray& key) const
+{
+	return m_reportElements.value(key, nullptr);
+}
 }
