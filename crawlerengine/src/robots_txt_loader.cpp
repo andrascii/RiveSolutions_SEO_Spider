@@ -73,18 +73,18 @@ QObject* RobotsTxtLoader::qobject()
 
 CrawlerEngine::Url RobotsTxtLoader::robotsTxtUrl() const
 {
-	return !m_hopsChain.empty() ? m_hopsChain.back().url() : Url();
+	return !m_hopsChain.empty() ? m_hopsChain.lastHop().url() : Url();
 }
 
 void RobotsTxtLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
 	Q_UNUSED(requester);
 
-	const Common::StatusCode statusCode = response.hopsChain.back().statusCode();
+	const Common::StatusCode statusCode = response.hopsChain.lastHop().statusCode();
 
 	m_isValid = statusCode == Common::StatusCode::Ok200;
 
-	m_content = response.hopsChain.back().body();
+	m_content = response.hopsChain.lastHop().body();
 	m_isReady = true;
 
 	m_hopsChain = response.hopsChain;

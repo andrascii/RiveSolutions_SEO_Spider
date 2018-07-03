@@ -121,18 +121,18 @@ TEST(SiteMapTests, FrequencyByHeader)
 		{
 			QDateTime time = QDateTime::currentDateTime().toUTC();
 
-			if (response.hopsChain.back().url().path() == QString("/page-2.html"))
+			if (response.hopsChain.lastHop().url().path() == QString("/page-2.html"))
 			{
 				time = time.addMSecs(-1000 * 60 * 15 - 1); // -15 minutes 
 			}
-			if (response.hopsChain.back().url().path() == QString("/page-3.html"))
+			if (response.hopsChain.lastHop().url().path() == QString("/page-3.html"))
 			{
 				time = time.addMSecs(-1000 * 60 * 60 * 12 - 1); // -12 hours
 			}
 
 			const QString dateTIme = toRFC2822Date(time);
-			response.hopsChain.back().responseHeaders().removeHeaderValues(QString("Last-Modified"));
-			response.hopsChain.back().responseHeaders().addHeaderValue(QString("Last-Modified"), dateTIme);
+			response.hopsChain.lastHop().responseHeaders().removeHeaderValues(QString("Last-Modified"));
+			response.hopsChain.lastHop().responseHeaders().addHeaderValue(QString("Last-Modified"), dateTIme);
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 6, 10, "Waiting for 6 crawled pages");
@@ -175,7 +175,7 @@ TEST(SiteMapTests, FrequencyByLevel)
 	{
 		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& response)
 		{
-			response.hopsChain.back().setStatusCode(Common::StatusCode::Ok200);
+			response.hopsChain.lastHop().setStatusCode(Common::StatusCode::Ok200);
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 10, "Waiting for 8 crawled pages");
@@ -235,7 +235,7 @@ TEST(SiteMapTests, PriorityTag)
 	{
 		cl->testDownloader()->setPostProcessor([](CrawlerEngine::DownloadResponse& response)
 		{
-			response.hopsChain.back().setStatusCode(Common::StatusCode::Ok200);
+			response.hopsChain.lastHop().setStatusCode(Common::StatusCode::Ok200);
 		});
 
 		cl->waitForParsedPageReceived(CrawlerEngine::StorageType::CrawledUrlStorageType, 8, 10, "Waiting for 8 crawled pages");
