@@ -326,11 +326,6 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 			}
 		}
 	}
-
-	if (workerResult.incomingPage()->tooManyRedirects)
-	{
-		data()->addParsedPage(workerResult, StorageType::TooManyRedirectsStorageType);
-	}
 }
 
 void ModelController::processParsedPageTitle(WorkerResult& workerResult, bool secondGetRequest)
@@ -624,6 +619,16 @@ void ModelController::processParsedPageStatusCode(WorkerResult& workerResult, bo
 	if (workerResult.incomingPage()->statusCode == Common::StatusCode::MovedTemporarily302)
 	{
 		data()->addParsedPage(workerResult, StorageType::Status302StorageType);
+	}
+
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::TooManyRedirections)
+	{
+		data()->addParsedPage(workerResult, StorageType::TooManyRedirectsStorageType);
+	}
+
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::Timeout)
+	{
+		data()->addParsedPage(workerResult, StorageType::TimeoutStorageType);
 	}
 }
 

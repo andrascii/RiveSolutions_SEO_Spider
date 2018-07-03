@@ -195,7 +195,6 @@ struct ParsedPage
 	bool isThisExternalPage = bool();
 	bool isBlockedForIndexing = bool();
 	bool isBlockedByMetaRobots = bool();
-	bool tooManyRedirects = bool();
 
 	ResourceType resourceType;
 

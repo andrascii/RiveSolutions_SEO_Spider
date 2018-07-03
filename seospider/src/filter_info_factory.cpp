@@ -65,6 +65,24 @@ std::map<StorageAdapterType, FilterInfo> s_filters
 			QObject::tr("This filter stores links with the server status code 301.")
 		}
 	},
+	{
+		StorageAdapterType::StorageAdapterTypeTooManyRedirections,
+		{
+			QObject::tr("Links with too many redirections"),
+			QObject::tr("This filter stores links with too many redirections (links with %1 or more redirections).\n"
+				"You can change this value in the \"Settings => Limit Settings\"."),
+			{ "maxRedirectCount" }
+		}
+	},
+	{
+		StorageAdapterType::StorageAdapterTypeTimeout,
+		{
+			QObject::tr("Timeout links"),
+			QObject::tr("This filter stores links that exceed maximum timeout load time (%1 milliseconds).\n"
+				"You can change this value in the \"Settings => Limit Settings\"."),
+			{ "limitTimeout" }
+		}
+	},
 	//////////////////////////////////////////////////////////////////////////
 	{
 		StorageAdapterType::StorageAdapterTypeEmptyTitles,

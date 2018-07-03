@@ -20,6 +20,7 @@ public:
 
 	Q_INVOKABLE virtual void setPauseRange(int from, int to) override;
 	Q_INVOKABLE virtual void setTimeout(int msecs) override;
+	Q_INVOKABLE virtual void setMaxRedirects(int redirects) override;
 	Q_INVOKABLE virtual void resetPauseRange() override;
 	Q_INVOKABLE virtual void setUserAgent(const QByteArray& userAgent) override;
 	Q_INVOKABLE virtual void setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword) override;
@@ -44,6 +45,7 @@ private:
 	bool isReplyProcessed(QNetworkReply* reply) const noexcept;
 	void markReplyAsProcessed(QNetworkReply* reply) noexcept;
 	void load(RequesterSharedPtr requester);
+	int maxRedirectsToProcess() const noexcept;
 	std::pair<int, QNetworkReply*> loadHelper(const CrawlerRequest& request, int parentRequestId = -1, bool useTimeout = false);
 
 	std::shared_ptr<DownloadResponse> responseFor(int requestId);
@@ -61,6 +63,7 @@ private:
 	RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	QTimer* m_timeoutTimer;
 	int m_timeout;
+	int m_maxRedirects;
 	std::deque<RequesterSharedPtr> m_requesterQueue;
 	std::map<RequesterSharedPtr, QNetworkReply*> m_activeRequestersReplies;
 };

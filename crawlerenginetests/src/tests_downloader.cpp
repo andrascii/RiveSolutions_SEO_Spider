@@ -35,6 +35,10 @@ void TestsDownloader::setTimeout(int)
 {
 }
 
+void TestsDownloader::setMaxRedirects(int)
+{
+}
+
 void TestsDownloader::setUserAgent(const QByteArray&)
 {
 }
