@@ -104,12 +104,20 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 		}
 		case StorageAdapterType::StorageAdapterTypeStatus301:
 		case StorageAdapterType::StorageAdapterTypeStatus302:
+		case StorageAdapterType::StorageAdapterTypeTooManyRedirections:
 		{
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
 				<< ParsedPageInfo::Column::RedirectedUrlColumn;
+		}
+		case StorageAdapterType::StorageAdapterTypeTimeout:
+		{
+			return QVector<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::UrlLengthColumn
+				<< ParsedPageInfo::Column::StatusCodeColumn;
 		}
 
 		// Title available columns

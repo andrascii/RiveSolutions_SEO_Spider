@@ -53,7 +53,6 @@ namespace
 	const QString isThisExternalPageKey = QLatin1String("isThisExternalPage");
 	const QString isBlockedForIndexingKey = QLatin1String("isBlockedForIndexing");
 	const QString isBlockedByMetaRobotsKey = QLatin1String("isBlockedByMetaRobots");
-	const QString tooManyRedirectsKey = QLatin1String("tooManyRedirects");
 	const QString resourceTypeKey = QLatin1String("resourceType");
 	const QString rawResponseKey = QLatin1String("rawResponse");
 	const QString pageLevelKey = QLatin1String("pageLevel");
@@ -186,7 +185,6 @@ public:
 		writer.writeTextElement(isThisExternalPageKey, QString::number(m_page->isThisExternalPage));
 		writer.writeTextElement(isBlockedForIndexingKey, QString::number(m_page->isBlockedForIndexing));
 		writer.writeTextElement(isBlockedByMetaRobotsKey, QString::number(m_page->isBlockedByMetaRobots));
-		writer.writeTextElement(tooManyRedirectsKey, QString::number(m_page->tooManyRedirects));
 		writer.writeTextElement(resourceTypeKey, QString::number(static_cast<int>(m_page->resourceType)));
 		
 		{
@@ -436,10 +434,6 @@ public:
 			else if (reader.qualifiedName() == isBlockedByMetaRobotsKey)
 			{
 				m_page->isBlockedByMetaRobots = reader.readElementText().toInt() == 1;
-			}
-			else if (reader.qualifiedName() == tooManyRedirectsKey)
-			{
-				m_page->tooManyRedirects = reader.readElementText().toInt() == 1;
 			}
 			else if (reader.qualifiedName() == resourceTypeKey)
 			{

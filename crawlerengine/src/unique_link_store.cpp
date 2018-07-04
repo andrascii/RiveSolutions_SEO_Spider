@@ -6,6 +6,23 @@
 namespace CrawlerEngine
 {
 
+namespace
+{
+bool isTrialLicense(ILicenseService* licenseService)
+{
+	static std::optional<bool> s_result;
+
+	if (s_result != std::nullopt)
+	{
+		return s_result.value();
+	}
+
+	ASSERT(licenseService != nullptr);
+	s_result = licenseService->isTrialLicense();
+	return s_result.value();
+}
+}
+
 UniqueLinkStore::IncrementGuardExt::IncrementGuardExt(IncrementFunc inc, 
 	IncrementFunc decr, const UrlList& storage, int* change)
 	: inc(inc)
@@ -181,6 +198,14 @@ bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestT
 {
 	std::lock_guard locker(m_mutex);
 
+	const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
+
+	if (isTrialLicense(m_licenseService) && countLinks >= static_cast<size_t>(Common::c_maxTrialLicenseCrawlingLinksCount))
+	{
+		// don't add this url if we exceed the "Limit Crawled Links Count" option
+		return false;
+	}
+
 	if (m_limitCrawledLinksCount > 0 &&
 		m_crawledUrlList.size() + m_pendingUrlList.size() >= static_cast<size_t>(m_limitCrawledLinksCount))
 	{
@@ -197,24 +222,9 @@ bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestT
 		IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 			&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList, &m_lastPendingSizeChange);
 
-		const auto urlIter = m_pendingUrlList.find(request);
+		m_crawledUrlList.insert(request);
+		m_pendingUrlList.erase(std::move(request));
 
-		if (urlIter == m_pendingUrlList.end())
-		{
-			// The condition is need because of some requests may not be presented in the pending url list.
-			// This situation may occur because of worker thread adds links from hops chain.
-			const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
-
-			if (countLinks < Common::c_maxTrialLicenseCrawlingLinksCount)
-			{
-				m_crawledUrlList.insert(std::move(request));
-			}
-		}
-		else
-		{
-			m_pendingUrlList.erase(urlIter);
-			m_crawledUrlList.insert(std::move(request));
-		}
 	}
 
 	DEBUG_ASSERT(m_lastPendingSizeChange == 0 || m_lastCrawledSizeChange != 0);
@@ -314,9 +324,16 @@ void UniqueLinkStore::setLimitCrawledLinksCount(int value) noexcept
 }
 
 void UniqueLinkStore::addUrlInternal(CrawlerRequest&& request)
-{
-	if (m_limitCrawledLinksCount > 0 && 
-		m_crawledUrlList.size() + m_pendingUrlList.size() >= static_cast<size_t>(m_limitCrawledLinksCount))
+{	
+	const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
+
+	if (m_limitCrawledLinksCount > 0 && countLinks >= static_cast<size_t>(m_limitCrawledLinksCount))
+	{
+		// don't add this url if we exceed the "Limit Crawled Links Count" option
+		return;
+	}
+
+	if (isTrialLicense(m_licenseService) && countLinks >= static_cast<size_t>(Common::c_maxTrialLicenseCrawlingLinksCount))
 	{
 		// don't add this url if we exceed the "Limit Crawled Links Count" option
 		return;
@@ -324,15 +341,6 @@ void UniqueLinkStore::addUrlInternal(CrawlerRequest&& request)
 
 	// this function must be obfuscated and additionally tied to a serial number
 	if (m_crawledUrlList.find(request) != m_crawledUrlList.end())
-	{
-		return;
-	}
-
-	const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
-
-	ASSERT(!m_licenseService->isTrialLicense() || countLinks <= Common::c_maxTrialLicenseCrawlingLinksCount);
-
-	if (m_licenseService->isTrialLicense() && countLinks >= Common::c_maxTrialLicenseCrawlingLinksCount)
 	{
 		return;
 	}

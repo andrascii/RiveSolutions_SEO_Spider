@@ -53,6 +53,7 @@ enum class StatusCode
 	BlockedByRobotsTxt,
 	BlockedByMetaRobots,
 	Timeout,
+	TooManyRedirections,
 	UnknownNetworkError
 };
 

@@ -17,6 +17,7 @@ const QMap<StorageType, ErrorCategory::ErrorCategoryLevel> s_storageTypeToLevel
 	{ StorageType::BrokenLinks, ErrorCategory::LevelError },
 	{ StorageType::WwwRedirectionsUrlStorageType, ErrorCategory::LevelWarning },
 	{ StorageType::TooManyRedirectsStorageType, ErrorCategory::LevelWarning },
+	{ StorageType::TimeoutStorageType, ErrorCategory::LevelWarning },
 	{ StorageType::Status4xxStorageType, ErrorCategory::LevelError },
 	{ StorageType::Status5xxStorageType, ErrorCategory::LevelError },
 	{ StorageType::Status302StorageType, ErrorCategory::LevelError },

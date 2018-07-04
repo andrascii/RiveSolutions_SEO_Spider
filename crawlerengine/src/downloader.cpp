@@ -41,6 +41,8 @@ Downloader::Downloader()
 	, m_networkAccessor(new QNetworkAccessManager(this))
 	, m_randomIntervalRangeTimer(new RandomIntervalRangeTimer(this))
 	, m_timeoutTimer(new QTimer(this))
+	, m_maxRedirects(-1)
+	, m_timeout(-1)
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
@@ -79,6 +81,11 @@ void Downloader::setTimeout(int msecs)
 	{
 		m_timeoutTimer->start();
 	}
+}
+
+void Downloader::setMaxRedirects(int redirects)
+{
+	m_maxRedirects = redirects;
 }
 
 void Downloader::resetPauseRange()
@@ -313,7 +320,7 @@ void Downloader::processReply(QNetworkReply* reply)
 	reply->disconnect(this);
 
 	const DownloadRequestType requestType = static_cast<DownloadRequestType>(reply->property("crawlerRequestType").toInt());
-	const Common::StatusCode statusCode = replyStatusCode(reply);
+	Common::StatusCode statusCode = replyStatusCode(reply);
 	const int requestId = reply->property("requestId").toInt();
 
 	if (!m_requesters.contains(requestId))
@@ -331,28 +338,36 @@ void Downloader::processReply(QNetworkReply* reply)
 
 	std::shared_ptr<DownloadResponse> response = responseFor(requestId);
 
-	const QByteArray body = statusCode == Common::StatusCode::Timeout ? QByteArray() : readBody(reply);
+	QByteArray body = statusCode == Common::StatusCode::Timeout ? QByteArray() : readBody(reply);
 	const Url redirectUrlAddress = redirectUrl(reply);
 
 	if (statusCode == Common::StatusCode::MovedPermanently301 ||
 		statusCode == Common::StatusCode::MovedTemporarily302)
 	{
-		int urlsInChain = 0;
-		for (size_t i = 0; i < response->hopsChain.length(); ++i)
+		if (response->hopsChain.length() == static_cast<size_t>(maxRedirectsToProcess()))
 		{
-			if (response->hopsChain[i].url() == redirectUrlAddress)
-			{
-				urlsInChain += 1;
-			}
+			statusCode = Common::StatusCode::TooManyRedirections;
+			body = QByteArray();
 		}
-
-		if (urlsInChain < 2)
+		else
 		{
-			const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
-			loadHelper(redirectKey, requestId, reply->property("useTimeout").isValid());
-			response->hopsChain.addHop(Hop{ reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs() });
+			int urlsInChain = 0;
+			for (size_t i = 0; i < response->hopsChain.length(); ++i)
+			{
+				if (response->hopsChain[i].url() == redirectUrlAddress)
+				{
+					urlsInChain += 1;
+				}
+			}
 
-			return;
+			if (urlsInChain < 2)
+			{
+				const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
+				loadHelper(redirectKey, requestId, reply->property("useTimeout").isValid());
+				response->hopsChain.addHop(Hop{ reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs() });
+				statusCode = Common::StatusCode::TooManyRedirections;
+				return;
+			}
 		}
 	}
 	
@@ -399,6 +414,18 @@ void Downloader::load(RequesterSharedPtr requester)
 	m_requesters[requestId] = requester;
 	m_activeRequestersReplies[requester] = reply;
 
+}
+
+int Downloader::maxRedirectsToProcess() const noexcept
+{
+	constexpr int maxRedirectsToProcessAnyway = 100;
+
+	if (m_maxRedirects > 0)
+	{
+		return qMin(m_maxRedirects, maxRedirectsToProcessAnyway);
+	}
+
+	return maxRedirectsToProcessAnyway;
 }
 
 std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& request, int parentRequestId, bool useTimeout)

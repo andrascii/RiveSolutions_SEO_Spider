@@ -164,6 +164,7 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::BrokenLinks, createSequencedStorage()),
 		std::make_pair(StorageType::WwwRedirectionsUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::TooManyRedirectsStorageType, createSequencedStorage()),
+		std::make_pair(StorageType::TimeoutStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::Status4xxStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::Status5xxStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::Status302StorageType, createSequencedStorage()),

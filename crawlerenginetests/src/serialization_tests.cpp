@@ -49,7 +49,6 @@ TEST(SerializationTests, PagesSerialization)
 		firstPage->isThisExternalPage = true;
 		firstPage->isBlockedForIndexing = true;
 		firstPage->isBlockedByMetaRobots = true;
-		firstPage->tooManyRedirects = true;
 		firstPage->resourceType = ResourceType::ResourceHtml;
 		firstPage->rawResponse = "<html>...ÀÁÂÃÄ</html>";
 		firstPage->pageLevel = 3;
@@ -100,7 +99,6 @@ TEST(SerializationTests, PagesSerialization)
 		EXPECT_EQ(etalon.isThisExternalPage, newFirstPage->isThisExternalPage);
 		EXPECT_EQ(etalon.isBlockedForIndexing, newFirstPage->isBlockedForIndexing);
 		EXPECT_EQ(etalon.isBlockedByMetaRobots, newFirstPage->isBlockedByMetaRobots);
-		EXPECT_EQ(etalon.tooManyRedirects, newFirstPage->tooManyRedirects);
 		EXPECT_EQ(etalon.resourceType, newFirstPage->resourceType);
 		EXPECT_EQ(etalon.rawResponse, newFirstPage->rawResponse);
 		EXPECT_EQ(etalon.pageLevel, newFirstPage->pageLevel);

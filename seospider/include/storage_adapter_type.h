@@ -21,6 +21,8 @@ enum class StorageAdapterType
 	StorageAdapterTypeStatus5xx = CrawlerEngine::StorageType::Status5xxStorageType,
 	StorageAdapterTypeStatus302 = CrawlerEngine::StorageType::Status302StorageType,
 	StorageAdapterTypeStatus301 = CrawlerEngine::StorageType::Status301StorageType,
+	StorageAdapterTypeTooManyRedirections = CrawlerEngine::StorageType::TooManyRedirectsStorageType,
+	StorageAdapterTypeTimeout = CrawlerEngine::StorageType::TimeoutStorageType,
 
 	StorageAdapterTypeEmptyTitles = CrawlerEngine::StorageType::EmptyTitleUrlStorageType,
 	StorageAdapterTypeDuplicatedTitles = CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType,

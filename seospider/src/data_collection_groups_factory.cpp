@@ -24,6 +24,8 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status5xxStorageType, QObject::tr("Status Code 5xx") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status302StorageType, QObject::tr("Moved Temporarily 302") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status301StorageType, QObject::tr("Moved Permanently 301") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooManyRedirectsStorageType, QObject::tr("Too Many Redirections") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TimeoutStorageType, QObject::tr("Timeout") });
 
 			return p;
 		}
@@ -120,6 +122,8 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status5xxStorageType, QObject::tr("Status Code 5xx") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status302StorageType, QObject::tr("Moved Temporarily 302") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::Status301StorageType, QObject::tr("Moved Permanently 301") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TimeoutStorageType, QObject::tr("Timeout") });
+			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooManyRedirectsStorageType, QObject::tr("Too Many Redirections") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::EmptyTitleUrlStorageType, QObject::tr("Empty Titles") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::DuplicatedTitleUrlStorageType, QObject::tr("Duplicated Titles") });
 			p->descriptions.emplace_back(DCStorageDescription{ CrawlerEngine::StorageType::TooLongTitleUrlStorageType, QObject::tr("Too Long Titles") });

@@ -24,6 +24,7 @@ enum StorageType
 	Status5xxStorageType,
 	Status302StorageType,
 	Status301StorageType,
+	TimeoutStorageType,
 
 	// Title problems
 	AllTitlesUrlStorageType,
