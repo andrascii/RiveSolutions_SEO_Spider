@@ -6,23 +6,6 @@
 namespace CrawlerEngine
 {
 
-namespace
-{
-bool isTrialLicense(ILicenseService* licenseService)
-{
-	static std::optional<bool> s_result;
-
-	if (s_result != std::nullopt)
-	{
-		return s_result.value();
-	}
-
-	ASSERT(licenseService != nullptr);
-	s_result = licenseService->isTrialLicense();
-	return s_result.value();
-}
-}
-
 UniqueLinkStore::IncrementGuardExt::IncrementGuardExt(IncrementFunc inc, 
 	IncrementFunc decr, const UrlList& storage, int* change)
 	: inc(inc)
@@ -200,7 +183,7 @@ bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestT
 
 	const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
 
-	if (isTrialLicense(m_licenseService) && countLinks >= static_cast<size_t>(Common::c_maxTrialLicenseCrawlingLinksCount))
+	if (m_licenseService->isTrialLicense() && countLinks >= static_cast<size_t>(Common::c_maxTrialLicenseCrawlingLinksCount))
 	{
 		// don't add this url if we exceed the "Limit Crawled Links Count" option
 		return false;
@@ -333,7 +316,7 @@ void UniqueLinkStore::addUrlInternal(CrawlerRequest&& request)
 		return;
 	}
 
-	if (isTrialLicense(m_licenseService) && countLinks >= static_cast<size_t>(Common::c_maxTrialLicenseCrawlingLinksCount))
+	if (m_licenseService->isTrialLicense() && countLinks >= static_cast<size_t>(Common::c_maxTrialLicenseCrawlingLinksCount))
 	{
 		// don't add this url if we exceed the "Limit Crawled Links Count" option
 		return;
