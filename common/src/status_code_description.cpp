@@ -53,6 +53,7 @@ QMap<StatusCode, QString> s_statusCodeDescriptions
 	{ StatusCode::BlockedByMetaRobots, "Blocked By Meta Robots" },
 	{ StatusCode::Timeout, "Timeout"},
 	{ StatusCode::TooManyRedirections, "Too Many Redirections"},
+	{ StatusCode::TooLongLInk, "Too Long Link"},
 	{ StatusCode::UnknownNetworkError, "Unknown Network Error"},
 };
 
