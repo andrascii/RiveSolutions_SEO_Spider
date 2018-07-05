@@ -360,12 +360,11 @@ void Downloader::processReply(QNetworkReply* reply)
 				}
 			}
 
-			if (urlsInChain < 2)
+			if (urlsInChain <= 2)
 			{
 				const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
 				loadHelper(redirectKey, requestId, reply->property("useTimeout").isValid());
 				response->hopsChain.addHop(Hop{ reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs() });
-				statusCode = Common::StatusCode::TooManyRedirections;
 				return;
 			}
 		}
@@ -540,6 +539,22 @@ Common::StatusCode Downloader::replyStatusCode(QNetworkReply* reply) const
 			case QNetworkReply::ContentNotFoundError:
 			{
 				code = Common::StatusCode::NotFound404;
+				break;
+			}
+			case QNetworkReply::ContentAccessDenied:
+			{
+				code = Common::StatusCode::Forbidden403;
+				break;
+			}
+			case QNetworkReply::TimeoutError:
+			case QNetworkReply::ProxyTimeoutError:
+			{
+				code = Common::StatusCode::Timeout;
+				break;
+			}
+			case QNetworkReply::InternalServerError:
+			{
+				code = Common::StatusCode::InternalServerError500;
 				break;
 			}
 		}
