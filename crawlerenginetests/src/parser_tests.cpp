@@ -71,10 +71,15 @@ private:
 		EXPECT_EQ(titleNode->text(), QString("Dummy Title"));
 
 		std::vector<IHtmlNodeCountedPtr> metaNodes = headNode->matchSubNodes(IHtmlNode::TagIdMeta);
-		EXPECT_EQ(metaNodes.size(), 2);
+		EXPECT_EQ(metaNodes.size(), 3);
 
 		for (const IHtmlNodeCountedPtr& node : metaNodes)
 		{
+			if (node->hasAttribute("http-equiv"))
+			{
+				continue;
+			}
+
 			const bool hasNameAttribute = node->hasAttribute("name");
 			const bool hasContentAttribute = node->hasAttribute("content");
 
@@ -115,7 +120,7 @@ private:
 
 		EXPECT_EQ(h1Node->text(), QString("h1 tag value"));
 		EXPECT_EQ(h2Node->text(), QString("h2 tag value"));
-		EXPECT_EQ(spanNode->text(), QString("Çíà÷åíèå òåãà span"));
+		EXPECT_EQ(spanNode->text(), "Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ñ‚ÐµÐ³Ð° span");
 		EXPECT_EQ(spanNode->hasAttribute("color") && spanNode->attribute("color") == QString("Arial"), true);
 	}
 
