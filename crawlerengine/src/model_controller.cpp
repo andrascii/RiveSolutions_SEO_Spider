@@ -276,11 +276,6 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 		data()->addParsedPage(workerResult, StorageType::UpperCaseUrlStorageType);
 	}
 
-	if (urlStr.size() > m_crawlerOptionsData.limitMaxUrlLength)
-	{
-		data()->addParsedPage(workerResult, StorageType::TooLongUrlStorageType);
-	}
-
 	if (workerResult.incomingPage()->linksOnThisPage.size() > static_cast<size_t>(m_crawlerOptionsData.maxLinksCountOnPage))
 	{
 		data()->addParsedPage(workerResult, StorageType::TooManyLinksOnPageStorageType);
@@ -629,6 +624,11 @@ void ModelController::processParsedPageStatusCode(WorkerResult& workerResult, bo
 	if (workerResult.incomingPage()->statusCode == Common::StatusCode::Timeout)
 	{
 		data()->addParsedPage(workerResult, StorageType::TimeoutStorageType);
+	}
+
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::TooLongLInk)
+	{
+		data()->addParsedPage(workerResult, StorageType::TooLongUrlStorageType);
 	}
 }
 

@@ -54,6 +54,7 @@ enum class StatusCode
 	BlockedByMetaRobots,
 	Timeout,
 	TooManyRedirections,
+	TooLongLInk,
 	UnknownNetworkError
 };
 

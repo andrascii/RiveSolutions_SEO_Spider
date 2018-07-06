@@ -5,6 +5,7 @@
 #include "requester_wrapper.h"
 #include "crawler_request.h"
 #include "worker_result.h"
+#include "crawler_options.h"
 
 namespace CrawlerEngine
 {
@@ -14,7 +15,6 @@ class OptionsLinkFilter;
 class PageDataCollector;
 class ILicenseService;
 class HopsChain;
-struct CrawlerOptionsData;
 struct DownloadResponse;
 
 class CrawlerWorkerThread : public QObject
@@ -39,9 +39,15 @@ private slots:
 	void onCrawlerClearData();
 
 private:
+	struct ShedulePagesResult
+	{
+		std::vector<ResourceOnPage> blockedByRobotsTxtLinks;
+		std::vector<ResourceOnPage> tooLongLinks;
+	};
+
 	void onStart();
-	std::vector<LinkInfo> schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
-	std::vector<LinkInfo> handlePageLinkList(std::vector<LinkInfo>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
+	ShedulePagesResult schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
+	ShedulePagesResult handlePageLinkList(std::vector<ResourceOnPage>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 	void onPageParsed(const WorkerResult& result) const noexcept;
 	void fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const;
@@ -76,6 +82,7 @@ private:
 
 	QTimer* m_defferedProcessingTimer;
 	ILicenseService* m_licenseService;
+	CrawlerOptionsData m_optionsData;
 };
 
 }
