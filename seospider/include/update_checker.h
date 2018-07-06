@@ -20,8 +20,8 @@ struct Version
 
 	friend bool operator>(const Version& lhs, const Version& rhs)
 	{
-		return lhs.major > rhs.major &&
-			lhs.minor > rhs.minor &&
+		return lhs.major > rhs.major ||
+			lhs.minor > rhs.minor ||
 			lhs.maintenance > rhs.maintenance;
 	}
 
