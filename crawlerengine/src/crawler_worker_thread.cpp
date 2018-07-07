@@ -230,7 +230,7 @@ CrawlerWorkerThread::ShedulePagesResult CrawlerWorkerThread::schedulePageResourc
 			resource.resourceType != ResourceType::ResourceHtml &&
 			!resource.restrictions)
 		{
-			if (resource.link.url.toDisplayString().length() > m_optionsData.limitMaxUrlLength)
+			if (m_optionsData.limitMaxUrlLength > 0 && resource.link.url.toDisplayString().length() > m_optionsData.limitMaxUrlLength)
 			{
 				result.tooLongLinks.push_back(resource);
 				continue;

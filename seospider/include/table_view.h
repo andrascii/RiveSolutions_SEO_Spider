@@ -52,12 +52,14 @@ protected:
 private slots:
 	void onAboutRepaintItems(const QModelIndexList& modelIndexes);
 	void applyRowHeight();
+	void onLayoutChanged(const QList<QPersistentModelIndex>&, QAbstractItemModel::LayoutChangeHint);
 
 private:
 	void applyRowHeightToRowRange(int first, int last);
 
 private:
 	AbstractTableModel* m_model;
+	QSortFilterProxyModel* m_sortFilterProxyModel;
 	IViewModel* m_viewModel;
 	std::unique_ptr<CommandMenu> m_contextMenu;
 
