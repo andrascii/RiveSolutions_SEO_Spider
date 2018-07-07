@@ -29,6 +29,8 @@ list(APPEND PackageFileList
 		${ReleasePackageDir}/seospider.pdb
 		${ReleasePackageDir}/seospiderservice.exe
 		${ReleasePackageDir}/seospiderservice.pdb
+		${ReleasePackageDir}/screenshotmaker.exe
+		${ReleasePackageDir}/screenshotmaker.pdb
 		${ReleasePackageDir}/seospiderserviceapi.dll
 		${ReleasePackageDir}/seospiderserviceapi.pdb
 		${ReleasePackageDir}/QtXlsxWriter.dll
