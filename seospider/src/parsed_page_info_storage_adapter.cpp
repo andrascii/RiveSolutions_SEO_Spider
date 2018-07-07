@@ -120,7 +120,14 @@ Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 
 	if (urlColumnIterator != m_availableColumns.end())
 	{
-		const QVariant urlItem = ParsedPageInfo(storage[index.row()]).itemValue(*urlColumnIterator);
+		int row = index.row();
+		const QSortFilterProxyModel* proxy = dynamic_cast<const QSortFilterProxyModel*>(index.model());
+		if (proxy)
+		{
+			row = proxy->mapToSource(index).row();
+		}
+
+		const QVariant urlItem = ParsedPageInfo(storage[row]).itemValue(*urlColumnIterator);
 		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
 
 		const CrawlerEngine::Url url = urlItem.toUrl();
@@ -130,24 +137,25 @@ Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<CheckHTMLWithW3CValidatorCommand>(url)));
 		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenInWaybackMachineCommand>(url)));
 		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenRobotsTxtFileCommand>()));
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<RefreshPageCommand>(m_storageType, index.row())));
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<RefreshPageCommand>(m_storageType, row)));
+
 
 		std::shared_ptr<Menu> copySubMenu = std::make_shared<Menu>(tr("Copy..."));
 		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllPagesCommand>(m_associatedStorage)));
-		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, index.row())));
-		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, index.row())));
+		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, row)));
+		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, row)));
 		menu.addItem(copySubMenu);
 
 		std::shared_ptr<Menu> exportSubMenu = std::make_shared<Menu>(tr("Export..."));
-		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, index.row())));
-		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, index.row())));
-		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, index.row())));
+		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, row)));
+		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, row)));
+		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, row)));
 		menu.addItem(exportSubMenu);
 
 		std::shared_ptr<Menu> goToSubMenu = std::make_shared<Menu>(tr("Go to..."));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksOnThisPageCommand>(m_dataCollection, m_associatedStorage, m_storageType, index.row())));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksToThisPageCommand>(m_dataCollection, m_associatedStorage, m_storageType, index.row())));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToHTTPResponseCommand>(m_dataCollection, m_associatedStorage, m_storageType, index.row())));
+		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksOnThisPageCommand>(m_dataCollection, m_associatedStorage, m_storageType, row)));
+		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksToThisPageCommand>(m_dataCollection, m_associatedStorage, m_storageType, row)));
+		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToHTTPResponseCommand>(m_dataCollection, m_associatedStorage, m_storageType, row)));
 		menu.addItem(goToSubMenu);
 	}
 
