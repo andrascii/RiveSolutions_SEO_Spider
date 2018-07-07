@@ -118,7 +118,7 @@ QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemV
 
 QString PageViewModel::displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	DEBUG_ASSERT(index.model() == static_cast<const QAbstractItemModel*>(model()));
+	// DEBUG_ASSERT(index.model() == static_cast<const QAbstractItemModel*>(model()));
 
 	const QString displayData = index.data(Qt::DisplayRole).toString();
 

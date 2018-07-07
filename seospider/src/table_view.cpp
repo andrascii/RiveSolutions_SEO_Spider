@@ -17,6 +17,7 @@ TableView::TableView(QWidget* parent, bool supportColumSpans)
 	, m_showAdditionalGrid(false)
 	, m_rowHeight(Common::Helpers::pointsToPixels(22))
 	, m_supportColumnSpans(supportColumSpans)
+	, m_sortFilterProxyModel(new QSortFilterProxyModel)
 {
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -25,11 +26,13 @@ TableView::TableView(QWidget* parent, bool supportColumSpans)
 	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	horizontalHeader()->setSectionsMovable(true);
 	setShowGrid(false);
+	setSortingEnabled(true);
 }
 
 void TableView::setModel(QAbstractItemModel* model)
 {
-	QTableView::setModel(model);
+	m_sortFilterProxyModel->setSourceModel(model);
+	QTableView::setModel(m_sortFilterProxyModel);
 
 	m_model = Common::Helpers::fast_cast<AbstractTableModel*>(model);
 
@@ -48,6 +51,8 @@ void TableView::setModel(QAbstractItemModel* model)
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpans())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(applyRowHeight())));
+
+	VERIFY(connect(m_sortFilterProxyModel, &QSortFilterProxyModel::layoutChanged, this, &TableView::onLayoutChanged));
 }
 
 void TableView::mouseMoveEvent(QMouseEvent* event)
@@ -302,7 +307,7 @@ int TableView::viewportRowCapacity() const noexcept
 
 void TableView::adjustColumnSize()
 {
-	m_model = Common::Helpers::fast_cast<AbstractTableModel*>(model());
+	m_model = Common::Helpers::fast_cast<AbstractTableModel*>(m_model);
 
 	if (m_model->resizePolicy())
 	{
@@ -332,6 +337,14 @@ void TableView::onAboutRepaintItems(const QModelIndexList& modelIndexes)
 void TableView::applyRowHeight()
 {
 	applyRowHeightToRowRange(0, m_model->rowCount());
+}
+
+void TableView::onLayoutChanged(const QList<QPersistentModelIndex>& indices, QAbstractItemModel::LayoutChangeHint hint)
+{
+	if (indices.isEmpty() && hint == QAbstractItemModel::VerticalSortHint)
+	{
+		viewModel()->invalidateItemViewRendererCache();
+	}
 }
 
 void TableView::applyRowHeightToRowRange(int first, int last)

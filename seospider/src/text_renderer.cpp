@@ -50,8 +50,10 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 
 	painterPixmap.drawText(viewModel()->displayDataPosition(index, pixmapRect), textAlignmentFlags, paintingText);
 
-	m_cache[index] = pixmap;
-	pixmapPointer = &m_cache[index];
+	// m_cache[index] = pixmap;
+	// pixmapPointer = &m_cache[index];
+
+	pixmapPointer = &pixmap;
 
 	painter->drawPixmap(adjustedRect, *pixmapPointer);
 

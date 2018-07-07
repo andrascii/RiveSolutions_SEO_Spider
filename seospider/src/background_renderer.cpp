@@ -29,7 +29,7 @@ void BackgroundRenderer::draw(QPainter* painter, const QStyleOptionViewItem& opt
 
 	painter->drawPixmap(option.rect, pixmap);
 
-	m_cache[index] = pixmap;
+	// m_cache[index] = pixmap;
 	clearCacheIfNeeded();
 }
 

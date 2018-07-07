@@ -68,7 +68,7 @@ QRect SummaryViewModel::pixmapPosition(const QModelIndex&, const QRect& itemVisu
 
 QString SummaryViewModel::displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	DEBUG_ASSERT(index.model() == static_cast<const QAbstractItemModel*>(model()));
+	// DEBUG_ASSERT(index.model() == static_cast<const QAbstractItemModel*>(m_model));
 
 	const QString displayData = index.data(Qt::DisplayRole).toString();
 	QFontMetrics fontMetrics(font(index));
