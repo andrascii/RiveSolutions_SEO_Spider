@@ -80,6 +80,7 @@
 #include <QWebEngineView>
 #include <QSharedMemory>
 #include <QBuffer>
+#include <QWebEngineSettings>
 
 #ifdef Q_OS_WIN
 

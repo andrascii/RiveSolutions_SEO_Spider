@@ -1,12 +1,19 @@
 #include "executor.h"
 #include "ipc_server_channel.h"
 
+namespace
+{
+
+const QSize s_browserWindowSize(1280, 1024);
+
+}
+
 namespace ScreenshotMaker
 {
 
 Executor::Executor(const QString& pipeChannelName, const QString& sharedMemoryKey, QObject* parent)
 	: QObject(parent)
-	, m_webEngineView(nullptr) // this object will not be destroyed
+	, m_webEngineView(nullptr)
 	, m_ipcChannel(new IpcServerChannel(pipeChannelName, this))
 	, m_sharedMemory(sharedMemoryKey)
 	, m_timer(new QTimer(this))
@@ -25,7 +32,9 @@ void Executor::takeScreenshot(const QUrl& url)
 	else
 	{
 		m_webEngineView = new QWebEngineView;
-		m_webEngineView->setWindowFlags(Qt::Tool | Qt::CustomizeWindowHint);
+		m_webEngineView->setAttribute(Qt::WA_DontShowOnScreen);
+		m_webEngineView->page()->settings()->setAttribute(QWebEngineSettings::ShowScrollBars, false);
+		m_webEngineView->page()->setAudioMuted(true);
 	}
 
 	m_sharedMemory.detach();
@@ -36,7 +45,7 @@ void Executor::takeScreenshot(const QUrl& url)
 	connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap);
 	connect(m_webEngineView->page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone);
 
-	m_webEngineView->resize(1280, 1024);
+	m_webEngineView->resize(s_browserWindowSize);
 	m_webEngineView->load(url);
 }
 
@@ -54,12 +63,15 @@ void Executor::onLoadingDone(bool ok)
 
 void Executor::onReadyToRenderPixmap()
 {
-	QPixmap pixmap = m_webEngineView->grab();
-	pixmap = pixmap.scaledToWidth(400, Qt::SmoothTransformation);
+	QPixmap pixmap(s_browserWindowSize);
+	QPainter painter(&pixmap);
+
+	m_webEngineView->page()->view()->render(&painter);
+	painter.end();
+
+	pixmap = pixmap.scaledToWidth(s_browserWindowSize.width(), Qt::SmoothTransformation);
 
 	saveScreenshot(pixmap);
-
-	m_webEngineView->close();
 }
 
 void Executor::saveScreenshot(const QPixmap& pixmap)
