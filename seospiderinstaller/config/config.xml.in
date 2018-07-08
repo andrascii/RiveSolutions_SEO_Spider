@@ -9,7 +9,6 @@
 	<InstallerApplicationIcon>robot</InstallerApplicationIcon>
 	<Logo>logo.png</Logo>
 	<WizardStyle>Modern</WizardStyle>
-	<!--<StyleSheet>styles.qss</StyleSheet>-->
 	<RunProgram>@TargetDir@/seospider.exe</RunProgram>
 	<StartMenuDir>Seo Spider</StartMenuDir>
 	<MaintenanceToolName>Uninstall SeoSpider</MaintenanceToolName>
@@ -24,5 +23,4 @@
 	<AllowSpaceInPath>true</AllowSpaceInPath>
 	<Background>background.png</Background>
 	<TargetDir>${ApplicationsDir}/Rive Solutions/Seo Spider</TargetDir>
-	<ControlScript>installscript.qs</ControlScript>
 </Installer>
