@@ -4,6 +4,8 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+// #define USE_SORTING
+
 #pragma warning(disable:4127)
 #pragma warning(disable:745)
 #pragma warning(disable:749)

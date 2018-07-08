@@ -31,18 +31,27 @@ TableView::TableView(QWidget* parent, bool supportColumSpans)
 #ifdef USE_SORTING	
 	setSortingEnabled(true);
 #endif
+
+	qRegisterMetaType<QModelIndexList>();
 }
 
 void TableView::setModel(QAbstractItemModel* model)
 {
+	m_model = Common::Helpers::fast_cast<AbstractTableModel*>(model);
+
 #ifdef USE_SORTING
 	m_sortFilterProxyModel->setSourceModel(model);
 	QTableView::setModel(m_sortFilterProxyModel);
+	m_model->setProxyModel(m_sortFilterProxyModel);
+	if (m_viewModel)
+	{
+		// reconnect signals/slots with correct order
+		setViewModel(m_viewModel);	
+	}
+	
 #else 
 	QTableView::setModel(model);
 #endif
-
-	m_model = Common::Helpers::fast_cast<AbstractTableModel*>(model);
 
 	applyRowHeight();
 
@@ -80,6 +89,13 @@ void TableView::mouseMoveEvent(QMouseEvent* event)
 	}
 	else
 	{
+#ifdef USE_SORTING
+		if (index.model() != m_sortFilterProxyModel)
+		{
+			ASSERT(index.model() == m_model);
+			index = m_sortFilterProxyModel->mapFromSource(index);
+		}
+#endif
 		viewModel()->setHoveredIndex(index);
 	}
 
@@ -340,7 +356,21 @@ void TableView::onAboutRepaintItems(const QModelIndexList& modelIndexes)
 			continue;
 		}
 
+#ifdef USE_SORTING
+		ASSERT(index.model() == m_sortFilterProxyModel);
+		ASSERT(m_model == m_sortFilterProxyModel->sourceModel());
+		if (index.row() >= m_sortFilterProxyModel->rowCount() ||
+			index.column() >= m_sortFilterProxyModel->columnCount())
+		{
+			continue;
+		}
+
+		// workaround to fix crash caused by missing mapping for this index
+		// by getting index from model we can be sure that there is a mapping for this index
+		update(m_sortFilterProxyModel->index(index.row(), index.column()));
+#else
 		update(index);
+#endif
 	}
 }
 

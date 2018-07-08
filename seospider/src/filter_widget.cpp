@@ -125,7 +125,7 @@ void FilterWidget::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::Da
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
 	m_summaryFilterTableView->initSpans();
 	m_summaryFilterTableView->setContextMenu(new CommandMenu(summaryDataAccessor));
-	m_summaryFilterTableView->setSelectionModel(new FilterTableSelectionModel(m_summaryFilterModel));
+	m_summaryFilterTableView->setSelectionModel(new FilterTableSelectionModel(m_summaryFilterTableView->model()));
 
 	VERIFY(connect(m_summaryFilterTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(onSummaryViewSelectionChanged(const QItemSelection&, const QItemSelection&))));
