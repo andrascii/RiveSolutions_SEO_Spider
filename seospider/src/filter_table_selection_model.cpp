@@ -132,7 +132,12 @@ void FilterTableSelectionModel::setCurrentIndex(const QModelIndex& index, QItemS
 
 void FilterTableSelectionModel::init()
 {
+#ifdef USE_SORTING
+	QSortFilterProxyModel* proxyModel = dynamic_cast<QSortFilterProxyModel*>(model());
+	SummaryModel* summaryModel = proxyModel ? dynamic_cast<SummaryModel*>(proxyModel->sourceModel()) : nullptr;
+#else
 	SummaryModel* summaryModel = dynamic_cast<SummaryModel*>(model());
+#endif
 
 	DEBUG_ASSERT(summaryModel);
 
