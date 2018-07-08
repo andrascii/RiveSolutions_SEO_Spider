@@ -17,7 +17,9 @@ TableView::TableView(QWidget* parent, bool supportColumSpans)
 	, m_showAdditionalGrid(false)
 	, m_rowHeight(Common::Helpers::pointsToPixels(22))
 	, m_supportColumnSpans(supportColumSpans)
+#ifdef USE_SORTING
 	, m_sortFilterProxyModel(new QSortFilterProxyModel)
+#endif
 {
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -26,13 +28,19 @@ TableView::TableView(QWidget* parent, bool supportColumSpans)
 	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	horizontalHeader()->setSectionsMovable(true);
 	setShowGrid(false);
+#ifdef USE_SORTING	
 	setSortingEnabled(true);
+#endif
 }
 
 void TableView::setModel(QAbstractItemModel* model)
 {
+#ifdef USE_SORTING
 	m_sortFilterProxyModel->setSourceModel(model);
 	QTableView::setModel(m_sortFilterProxyModel);
+#else 
+	QTableView::setModel(model);
+#endif
 
 	m_model = Common::Helpers::fast_cast<AbstractTableModel*>(model);
 
@@ -52,7 +60,9 @@ void TableView::setModel(QAbstractItemModel* model)
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(applyRowHeight())));
 
+#ifdef USE_SORTING
 	VERIFY(connect(m_sortFilterProxyModel, &QSortFilterProxyModel::layoutChanged, this, &TableView::onLayoutChanged));
+#endif
 }
 
 void TableView::mouseMoveEvent(QMouseEvent* event)
