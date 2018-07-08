@@ -74,9 +74,9 @@ void MessageBoxDialog::done(int r)
 
 void MessageBoxDialog::exec()
 {
-	show();
-
 	m_eventLoop.exec();
+
+	show();
 
 	completeLocalEventLoop();
 }
