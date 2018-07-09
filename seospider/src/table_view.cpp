@@ -177,10 +177,13 @@ void TableView::paintEvent(QPaintEvent* event)
 
 	const int baseLineYOffset = std::min(rowViewportPosition(rowAt(0)), 0) + m_rowHeight;
 
+	const int columnCount = model()->columnCount();
+	const int lastXOffset = columnWidth(columnCount - 1) + columnViewportPosition(columnCount - 1);
+
 	for (int i = 0; i < maxViewportRowCount; ++i)
 	{
 		const int offsetByY = m_rowHeight * i + baseLineYOffset;
-		
+
 		const int thisRowLogicalIndex = rowAt(offsetByY);
 		const int belowRowLogicalIndex = rowAt(offsetByY - m_rowHeight);
 		
@@ -195,9 +198,10 @@ void TableView::paintEvent(QPaintEvent* event)
 			painter.save();
 
 			painter.setPen(viewModel()->selectedGridLineColor(QModelIndex()));
-			painter.drawLine(QPoint(0, offsetByY), QPoint(width(), offsetByY));
-
+			painter.drawLine(QPoint(0, offsetByY), QPoint(lastXOffset, offsetByY)); 
 			painter.restore();
+
+			painter.drawLine(QPoint(lastXOffset, offsetByY), QPoint(width(), offsetByY));
 		}
 		else
 		{
