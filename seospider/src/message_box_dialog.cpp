@@ -13,6 +13,7 @@ MessageBoxDialog::MessageBoxDialog(QWidget* parent)
 	: FloatingFrame(parent)
 	, m_ui(new Ui_MessageBox)
 	, m_clickedButtonRole(QDialogButtonBox::InvalidRole)
+	, m_eventLoop(new QEventLoop(this))
 {
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground);
@@ -31,6 +32,11 @@ MessageBoxDialog::MessageBoxDialog(QWidget* parent)
 
 	m_ui->buttonBox->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
 	m_ui->messageLabel->setWordWrap(true);
+}
+
+MessageBoxDialog::~MessageBoxDialog()
+{
+	completeLocalEventLoop();
 }
 
 void MessageBoxDialog::setMessage(const QString& message)
@@ -74,9 +80,9 @@ void MessageBoxDialog::done(int r)
 
 void MessageBoxDialog::exec()
 {
-	m_eventLoop.exec();
-
 	show();
+
+	m_eventLoop->exec();
 
 	completeLocalEventLoop();
 }
@@ -84,6 +90,17 @@ void MessageBoxDialog::exec()
 void MessageBoxDialog::onButtonClicked(QAbstractButton* button)
 {
 	m_clickedButtonRole = m_ui->buttonBox->buttonRole(button);
+}
+
+bool MessageBoxDialog::event(QEvent* event)
+{
+	if (event->type() == QEvent::DeferredDelete && m_eventLoop->isRunning())
+	{
+		INFOLOG << "Skipping deferred delete when local event loop is running";
+		return true;
+	}
+
+	return FloatingFrame::event(event);
 }
 
 void MessageBoxDialog::showEvent(QShowEvent* event)
@@ -108,13 +125,13 @@ void MessageBoxDialog::hideEvent(QHideEvent* event)
 
 void MessageBoxDialog::completeLocalEventLoop()
 {
-	if (!m_eventLoop.isRunning())
+	if (!m_eventLoop->isRunning())
 	{
 		return;
 	}
 
-	m_eventLoop.processEvents();
-	m_eventLoop.exit();
+	m_eventLoop->processEvents();
+	m_eventLoop->exit();
 }
 
 }

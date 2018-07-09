@@ -12,6 +12,7 @@ class MessageBoxDialog : public FloatingFrame
 
 public:
 	MessageBoxDialog(QWidget* parent = nullptr);
+	~MessageBoxDialog();
 
 	void setMessage(const QString& message);
 	void setStandardButtons(QDialogButtonBox::StandardButtons buttons);
@@ -30,6 +31,7 @@ private slots:
 	void onButtonClicked(QAbstractButton* button);
 
 protected:
+	virtual bool event(QEvent* event) override;
 	virtual void showEvent(QShowEvent* event) override;
 	virtual void hideEvent(QHideEvent* event) override;
 
@@ -40,7 +42,7 @@ private:
 	Ui_MessageBox * m_ui;
 	QDialog::DialogCode m_dialogCode;
 	QDialogButtonBox::ButtonRole m_clickedButtonRole;
-	QEventLoop m_eventLoop;
+	QEventLoop* m_eventLoop;
 };
 
 }
