@@ -48,7 +48,12 @@ bool ItemViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QSt
 			return false;
 		}
 
+#ifdef USE_SORTING
+		QSortFilterProxyModel* proxyModel = qobject_cast<QSortFilterProxyModel*>(tableView->model());
+		PageModel* pageModel = proxyModel ? qobject_cast<PageModel*>(proxyModel->sourceModel()) : nullptr;
+#else
 		PageModel* pageModel = qobject_cast<PageModel*>(tableView->model());
+#endif
 
 		if (pageModel && pageModel->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
 		{					
