@@ -123,9 +123,17 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 		return;
 	}
 
-	const QModelIndex index = itemSelectionModel->selectedRows().last();
+	QModelIndex index = itemSelectionModel->selectedRows().last();
+
+#ifdef USE_SORTING
+	const QSortFilterProxyModel* proxyModel = qobject_cast<const QSortFilterProxyModel*>(index.model());
+	const PageModel* storageModel = proxyModel != nullptr ? qobject_cast<const PageModel*>(proxyModel->sourceModel()) : nullptr;
+	index = proxyModel->mapToSource(index);
+#else
+	const PageModel* storageModel = qobject_cast<const PageModel*>(index.model());
+#endif
 	
-	if (const PageModel* storageModel = dynamic_cast<const PageModel*>(index.model()); storageModel)
+	if (storageModel)
 	{
 		const IStorageAdapter* storageAdapter = storageModel->storageAdapter();
 		m_pageDataWidget->setParsedPageInfo(storageAdapter->parsedPageInfoPtr(index));
