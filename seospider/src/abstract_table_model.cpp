@@ -5,6 +5,8 @@ namespace SeoSpider
 
 QModelIndexList AbstractTableModel::makeModelIndexesForRow(int row) const noexcept
 {
+	// TODO: reimplement this method: create a free function instead of this method with QModelIndex parameter
+	// and make sure that it has valid model, in this case we can create row indices without any additional information
 	if (!rowCount())
 	{
 		return QModelIndexList();
