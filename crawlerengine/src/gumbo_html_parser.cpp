@@ -98,30 +98,46 @@ void GumboHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHe
 	m_rootNode = GumboHtmlNode(m_gumboOutput->root);
 }
 
-QByteArray GumboHtmlParser::identifyHtmlPageContentType() const
+QByteArray GumboHtmlParser::encodingFromPage() const
 {
-	IHtmlNodeCountedPtr head = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
+	IHtmlNodeCountedPtr headNode = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
 
-	DEBUG_ASSERT(head->type() == IHtmlNode::NodeTypeElement && head->tagId() == IHtmlNode::TagIdHead);
-
-	std::vector<IHtmlNodeCountedPtr> metaTags = head->matchSubNodes(IHtmlNode::TagIdMeta);
-
-	for (unsigned i = 0; i < metaTags.size(); ++i)
+	if (!headNode)
 	{
-		if (!metaTags[i]->hasAttribute("content"))
+		INFOLOG << "tag <head> not found";
+		return QByteArray();
+	}
+
+	const auto metaTags = headNode->matchSubNodes(IHtmlNode::TagIdMeta);
+
+	for (const auto& metaTag : metaTags)
+	{
+		const bool hasContentAttribute = metaTag->hasAttribute("content");
+		const bool hasCharsetAttribute = metaTag->hasAttribute("charset");
+
+		if (!hasContentAttribute && !hasCharsetAttribute)
 		{
 			continue;
 		}
 
-		const QString contentAttribute = metaTags[i]->attribute("content");
-
-		if (metaTags[i]->hasAttribute("http-equiv"))
+		if (hasCharsetAttribute)
 		{
-			const QString attributeValue = metaTags[i]->attribute("http-equiv").toLower();
+			return metaTag->attribute("charset").toLatin1();
+		}
+
+		const QString contentAttribute = metaTag->attribute("content");
+
+		if (metaTag->hasAttribute("http-equiv"))
+		{
+			const QString attributeValue = metaTag->attribute("http-equiv").toLower();
 
 			if (attributeValue == "content-type")
 			{
-				return contentAttribute.toLatin1();
+				const auto charsetFromHtmlPage = contentAttribute.right(
+					contentAttribute.size() - contentAttribute.lastIndexOf("=") - 1
+				);
+
+				return charsetFromHtmlPage.toLatin1();
 			}
 		}
 	}
@@ -131,8 +147,6 @@ QByteArray GumboHtmlParser::identifyHtmlPageContentType() const
 
 QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers)
 {
-	const QByteArray contentType = identifyHtmlPageContentType();
-	const QByteArray charsetFromHtmlPage = contentType.right(contentType.size() - contentType.lastIndexOf("=") - 1);
 	const std::vector<QString> contentTypeValues = headers.valueOf("content-type");
 
 	if (!contentTypeValues.empty())
@@ -147,11 +161,14 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers)
 				continue;
 			}
 
+			m_currentPageEncoding = charsetFromHttpResponse;
 			m_htmlPage = codecForCharset->toUnicode(m_htmlPage).toStdString().data();
 
 			return m_htmlPage;
 		}
 	}
+
+	const QByteArray charsetFromHtmlPage = encodingFromPage();
 
 	if (!charsetFromHtmlPage.isEmpty())
 	{
@@ -159,12 +176,12 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers)
 
 		if (codecForCharset)
 		{
+			m_currentPageEncoding = charsetFromHtmlPage;
 			m_htmlPage = codecForCharset->toUnicode(m_htmlPage.data()).toStdString().data();
 		}
 		else
 		{
 			ERRLOG << "Cannot find QTextCodec for page encoding";
-			ERRLOG << "content-type:" << contentType;
 			ERRLOG << "charset:" << charsetFromHtmlPage;
 		}
 	}
@@ -174,6 +191,7 @@ QByteArray GumboHtmlParser::decodeHtmlPage(const ResponseHeaders& headers)
 
 		if (codecForHtml)
 		{
+			m_currentPageEncoding = codecForHtml->name();
 			m_htmlPage = codecForHtml->toUnicode(m_htmlPage).toStdString().data();
 		}
 		else
@@ -316,6 +334,11 @@ IHtmlNodeCountedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::Tag
 QByteArray GumboHtmlParser::htmlPageContent() const
 {
 	return m_htmlPage;
+}
+
+QByteArray GumboHtmlParser::currentPageEncoding() const
+{
+	return m_currentPageEncoding;
 }
 
 }

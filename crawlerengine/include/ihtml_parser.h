@@ -13,6 +13,7 @@ class IHtmlParser
 public:
 	virtual ~IHtmlParser() = default;
 
+	virtual QByteArray currentPageEncoding() const = 0;
 	virtual QByteArray htmlPageContent() const = 0;
 	virtual void parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers) = 0;
 	virtual std::vector<LinkInfo> pageUrlList(bool httpOrHttpsOnly) const = 0;
