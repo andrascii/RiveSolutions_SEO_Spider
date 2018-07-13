@@ -43,10 +43,8 @@ protected:
 private:
 	void setPreviousHoveredIndex(const QModelIndex& index);
 
-protected:
-	AbstractTableModel * m_model;
-
 private:
+	AbstractTableModel * m_model;
 	QModelIndex m_hoveredIndex;
 	QModelIndex m_previousHoveredIndex;
 	QModelIndexList m_selectedModelIndexes;
