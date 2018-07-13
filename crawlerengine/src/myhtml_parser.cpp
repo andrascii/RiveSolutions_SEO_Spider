@@ -16,112 +16,112 @@ const QByteArray s_relAttributeNofollowValue = "nofollow";
 
 const QMap<QByteArray, myencoding_list> s_stringToEnumEncoding =
 {
-	{ "UTF-8", MyENCODING_UTF_8 },
-	{ "csUTF8", MyENCODING_UTF_8 },
-	{ "UTF-16LE", MyENCODING_UTF_16LE },
-	{ "csUTF16LE", MyENCODING_UTF_16LE },
-	{ "UTF-16BE", MyENCODING_UTF_16BE },
-	{ "csUTF16BE", MyENCODING_UTF_16BE },
-	{ "Big5", MyENCODING_BIG5 },
-	{ "csBig5", MyENCODING_BIG5 },
-	{ "EUC-JP", MyENCODING_EUC_JP },
-	{ "csEUCPkdFmtJapanese", MyENCODING_EUC_JP },
-	{ "EUC-KR", MyENCODING_EUC_KR },
-	{ "csEUCKR", MyENCODING_EUC_KR },
-	{ "GB18030", MyENCODING_GB18030 },
-	{ "csGB18030", MyENCODING_GB18030 },
-	{ "GBK", MyENCODING_GBK },
-	{ "CP936", MyENCODING_GBK },
-	{ "MS936", MyENCODING_GBK },
+	{ "utf-8", MyENCODING_UTF_8 },
+	{ "csutf8", MyENCODING_UTF_8 },
+	{ "utf-16le", MyENCODING_UTF_16LE },
+	{ "csutf16le", MyENCODING_UTF_16LE },
+	{ "utf-16be", MyENCODING_UTF_16BE },
+	{ "csutf16be", MyENCODING_UTF_16BE },
+	{ "big5", MyENCODING_BIG5 },
+	{ "csbig5", MyENCODING_BIG5 },
+	{ "euc-jp", MyENCODING_EUC_JP },
+	{ "cseucpkdfmtjapanese", MyENCODING_EUC_JP },
+	{ "euc-kr", MyENCODING_EUC_KR },
+	{ "cseuckr", MyENCODING_EUC_KR },
+	{ "gb18030", MyENCODING_GB18030 },
+	{ "csgb18030", MyENCODING_GB18030 },
+	{ "gbk", MyENCODING_GBK },
+	{ "cp936", MyENCODING_GBK },
+	{ "ms936", MyENCODING_GBK },
 	{ "windows-936", MyENCODING_GBK },
-	{ "csGBK", MyENCODING_GBK },
-	{ "IBM866", MyENCODING_IBM866 },
+	{ "csgbk", MyENCODING_GBK },
+	{ "ibm866", MyENCODING_IBM866 },
 	{ "cp866", MyENCODING_IBM866 },
 	{ "866", MyENCODING_IBM866 },
-	{ "csIBM866", MyENCODING_IBM866 },
-	{ "ISO-2022-JP", MyENCODING_ISO_2022_JP },
-	{ "csISO2022JP", MyENCODING_ISO_2022_JP },
-	{ "ISO-8859-10", MyENCODING_ISO_8859_10 },
+	{ "csibm866", MyENCODING_IBM866 },
+	{ "iso-2022-jp", MyENCODING_ISO_2022_JP },
+	{ "csiso2022jp", MyENCODING_ISO_2022_JP },
+	{ "iso-8859-10", MyENCODING_ISO_8859_10 },
 	{ "iso-ir-157", MyENCODING_ISO_8859_10 },
 	{ "l6", MyENCODING_ISO_8859_10 },
-	{ "ISO_8859-10:1992", MyENCODING_ISO_8859_10 },
-	{ "csISOLatin6", MyENCODING_ISO_8859_10 },
+	{ "iso_8859-10:1992", MyENCODING_ISO_8859_10 },
+	{ "csisolatin6", MyENCODING_ISO_8859_10 },
 	{ "latin6", MyENCODING_ISO_8859_10 },
-	{ "ISO-8859-13", MyENCODING_ISO_8859_13 },
-	{ "csISO885913", MyENCODING_ISO_8859_13 },
-	{ "ISO-8859-14", MyENCODING_ISO_8859_14 },
+	{ "iso-8859-13", MyENCODING_ISO_8859_13 },
+	{ "csiso885913", MyENCODING_ISO_8859_13 },
+	{ "iso-8859-14", MyENCODING_ISO_8859_14 },
 	{ "iso-ir-199", MyENCODING_ISO_8859_14 },
-	{ "ISO_8859-14:1998", MyENCODING_ISO_8859_14 },
-	{ "ISO_8859-14", MyENCODING_ISO_8859_14 },
+	{ "iso_8859-14:1998", MyENCODING_ISO_8859_14 },
+	{ "iso_8859-14", MyENCODING_ISO_8859_14 },
 	{ "latin8", MyENCODING_ISO_8859_14 },
 	{ "iso-celtic", MyENCODING_ISO_8859_14 },
 	{ "l8", MyENCODING_ISO_8859_14 },
-	{ "csISO885914", MyENCODING_ISO_8859_14 },
-	{ "ISO_8859-15", MyENCODING_ISO_8859_15 },
-	{ "Latin-9", MyENCODING_ISO_8859_15 },
-	{ "csISO885915", MyENCODING_ISO_8859_15 },
-	{ "ISO-8859-16", MyENCODING_ISO_8859_16 },
+	{ "csiso885914", MyENCODING_ISO_8859_14 },
+	{ "iso_8859-15", MyENCODING_ISO_8859_15 },
+	{ "latin-9", MyENCODING_ISO_8859_15 },
+	{ "csiso885915", MyENCODING_ISO_8859_15 },
+	{ "iso-8859-16", MyENCODING_ISO_8859_16 },
 	{ "iso-ir-226", MyENCODING_ISO_8859_16 },
-	{ "ISO_8859-16:2001", MyENCODING_ISO_8859_16 },
-	{ "ISO_8859-16", MyENCODING_ISO_8859_16 },
+	{ "iso_8859-16:2001", MyENCODING_ISO_8859_16 },
+	{ "iso_8859-16", MyENCODING_ISO_8859_16 },
 	{ "latin10", MyENCODING_ISO_8859_16 },
 	{ "l10", MyENCODING_ISO_8859_16 },
-	{ "csISO885916", MyENCODING_ISO_8859_16 },
-	{ "ISO-8859-2", MyENCODING_ISO_8859_2 },
+	{ "csiso885916", MyENCODING_ISO_8859_16 },
+	{ "iso-8859-2", MyENCODING_ISO_8859_2 },
 	{ "iso-ir-101", MyENCODING_ISO_8859_2 },
-	{ "ISO_8859-2", MyENCODING_ISO_8859_2 },
+	{ "iso_8859-2", MyENCODING_ISO_8859_2 },
 	{ "latin2", MyENCODING_ISO_8859_2 },
 	{ "l2", MyENCODING_ISO_8859_2 },
-	{ "csISOLatin2", MyENCODING_ISO_8859_2 },
-	{ "ISO-8859-3", MyENCODING_ISO_8859_3 },
+	{ "csisolatin2", MyENCODING_ISO_8859_2 },
+	{ "iso-8859-3", MyENCODING_ISO_8859_3 },
 	{ "iso-ir-109", MyENCODING_ISO_8859_3 },
-	{ "ISO_8859-3", MyENCODING_ISO_8859_3 },
+	{ "iso_8859-3", MyENCODING_ISO_8859_3 },
 	{ "latin3", MyENCODING_ISO_8859_3 },
 	{ "l3", MyENCODING_ISO_8859_3 },
-	{ "csISOLatin3", MyENCODING_ISO_8859_3 },
-	{ "ISO-8859-4", MyENCODING_ISO_8859_4 },
+	{ "csisolatin3", MyENCODING_ISO_8859_3 },
+	{ "iso-8859-4", MyENCODING_ISO_8859_4 },
 	{ "iso-ir-110", MyENCODING_ISO_8859_4 },
-	{ "ISO_8859-4", MyENCODING_ISO_8859_4 },
+	{ "iso_8859-4", MyENCODING_ISO_8859_4 },
 	{ "latin4", MyENCODING_ISO_8859_4 },
 	{ "l4", MyENCODING_ISO_8859_4 },
-	{ "csISOLatin4", MyENCODING_ISO_8859_4 },
-	{ "ISO-8859-5", MyENCODING_ISO_8859_5 },
+	{ "csisolatin4", MyENCODING_ISO_8859_4 },
+	{ "iso-8859-5", MyENCODING_ISO_8859_5 },
 	{ "iso-ir-144", MyENCODING_ISO_8859_5 },
-	{ "ISO_8859-5", MyENCODING_ISO_8859_5 },
+	{ "iso_8859-5", MyENCODING_ISO_8859_5 },
 	{ "cyrillic", MyENCODING_ISO_8859_5 },
-	{ "csISOLatinCyrillic", MyENCODING_ISO_8859_5 },
-	{ "ISO-8859-6", MyENCODING_ISO_8859_6 },
+	{ "csisolatincyrillic", MyENCODING_ISO_8859_5 },
+	{ "iso-8859-6", MyENCODING_ISO_8859_6 },
 	{ "iso-ir-127", MyENCODING_ISO_8859_6 },
-	{ "ISO_8859-6", MyENCODING_ISO_8859_6 },
-	{ "ECMA-114", MyENCODING_ISO_8859_6 },
-	{ "ASMO-708", MyENCODING_ISO_8859_6 },
+	{ "iso_8859-6", MyENCODING_ISO_8859_6 },
+	{ "ecma-114", MyENCODING_ISO_8859_6 },
+	{ "asmo-708", MyENCODING_ISO_8859_6 },
 	{ "arabic", MyENCODING_ISO_8859_6 },
-	{ "csISOLatinArabic", MyENCODING_ISO_8859_6 },
-	{ "ISO-8859-7", MyENCODING_ISO_8859_7 },
+	{ "csisolatinarabic", MyENCODING_ISO_8859_6 },
+	{ "iso-8859-7", MyENCODING_ISO_8859_7 },
 	{ "iso-ir-126", MyENCODING_ISO_8859_7 },
-	{ "ISO_8859-7", MyENCODING_ISO_8859_7 },
-	{ "ELOT_928", MyENCODING_ISO_8859_7 },
-	{ "ECMA-118", MyENCODING_ISO_8859_7 },
+	{ "iso_8859-7", MyENCODING_ISO_8859_7 },
+	{ "elot_928", MyENCODING_ISO_8859_7 },
+	{ "ecma-118", MyENCODING_ISO_8859_7 },
 	{ "greek", MyENCODING_ISO_8859_7 },
 	{ "greek8", MyENCODING_ISO_8859_7 },
-	{ "csISOLatinGreek", MyENCODING_ISO_8859_7 },
-	{ "ISO-8859-8", MyENCODING_ISO_8859_8 },
+	{ "csisolatingreek", MyENCODING_ISO_8859_7 },
+	{ "iso-8859-8", MyENCODING_ISO_8859_8 },
 	{ "iso-ir-138", MyENCODING_ISO_8859_8 },
-	{ "ISO_8859-8", MyENCODING_ISO_8859_8 },
+	{ "iso_8859-8", MyENCODING_ISO_8859_8 },
 	{ "hebrew", MyENCODING_ISO_8859_8 },
-	{ "csISOLatinHebrew", MyENCODING_ISO_8859_8 },
-	{ "ISO-8859-8-I", MyENCODING_ISO_8859_8_I },
-	{ "csISO88598I", MyENCODING_ISO_8859_8_I },
-	{ "KOI8-R", MyENCODING_KOI8_R },
-	{ "csKOI8R", MyENCODING_KOI8_R },
-	{ "KOI8-U", MyENCODING_KOI8_U },
-	{ "csKOI8U", MyENCODING_KOI8_U },
+	{ "csisolatinhebrew", MyENCODING_ISO_8859_8 },
+	{ "iso-8859-8-I", MyENCODING_ISO_8859_8_I },
+	{ "csiso88598i", MyENCODING_ISO_8859_8_I },
+	{ "koi8-r", MyENCODING_KOI8_R },
+	{ "cskoi8r", MyENCODING_KOI8_R },
+	{ "koi8-u", MyENCODING_KOI8_U },
+	{ "cskoi8u", MyENCODING_KOI8_U },
 	{ "macintosh", MyENCODING_MACINTOSH },
 	{ "mac", MyENCODING_MACINTOSH },
-	{ "csMacintosh", MyENCODING_MACINTOSH },
-	{ "Shift_JIS", MyENCODING_SHIFT_JIS },
-	{ "MS_Kanji", MyENCODING_SHIFT_JIS },
-	{ "csShiftJIS", MyENCODING_SHIFT_JIS },
+	{ "csmacintosh", MyENCODING_MACINTOSH },
+	{ "shift_jis", MyENCODING_SHIFT_JIS },
+	{ "ms_kanji", MyENCODING_SHIFT_JIS },
+	{ "csshiftjis", MyENCODING_SHIFT_JIS },
 	{ "windows-1250", MyENCODING_WINDOWS_1250 },
 	{ "cswindows1250", MyENCODING_WINDOWS_1250 },
 	{ "windows-1251", MyENCODING_WINDOWS_1251 },
@@ -142,7 +142,7 @@ const QMap<QByteArray, myencoding_list> s_stringToEnumEncoding =
 	{ "cswindows1258", MyENCODING_WINDOWS_1258 },
 	{ "windows-874", MyENCODING_WINDOWS_874 },
 	{ "cswindows874", MyENCODING_WINDOWS_874 },
-	{ "csISO111ECMACyrillic", MyENCODING_X_MAC_CYRILLIC }
+	{ "csiso111ecmacyrillic", MyENCODING_X_MAC_CYRILLIC }
 };
 
 }
@@ -179,9 +179,11 @@ void MyHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHeade
 	myhtml_parse(m_tree, MyENCODING_UTF_8, htmlPage.data(), htmlPage.size());
 	initRootNode();
 
-	myencoding_t encoding = htmlSetEncoding(headers);
+	const myencoding_t encoding = htmlSetEncoding(headers);
 	myhtml_parse(m_tree, encoding, htmlPage.data(), htmlPage.size());
 	initRootNode();
+
+	m_currentPageEncoding = encodingString(encoding);
 }
 
 std::vector<LinkInfo> MyHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
@@ -348,7 +350,7 @@ myencoding_t MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
 			QString charsetFromHttpResponse = contentTypeValue.right(contentTypeValue.size() - contentTypeValue.lastIndexOf("=") - 1);
 			charsetFromHttpResponse.remove(m_quotesRegExp);
 
-			myencoding_t encoding = s_stringToEnumEncoding.value(charsetFromHttpResponse.toLatin1(), static_cast<myencoding_t>(-1));
+			myencoding_t encoding = s_stringToEnumEncoding.value(charsetFromHttpResponse.toLatin1().toLower(), static_cast<myencoding_t>(-1));
 
 			if (encoding != -1)
 			{
@@ -358,18 +360,14 @@ myencoding_t MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
 		}
 	}
 
-	const auto contentTypeValueFromPage = htmlPageContentType();
-
-	const auto charsetFromHtmlPage = contentTypeValueFromPage.right(
-		contentTypeValueFromPage.size() - contentTypeValueFromPage.lastIndexOf("=") - 1
-	);
+	const auto charsetFromHtmlPage = encodingFromPage();
 
 	if (charsetFromHtmlPage.isEmpty())
 	{
 		return MyENCODING_UTF_8;
 	}
 
-	myencoding_t encoding = s_stringToEnumEncoding.value(charsetFromHtmlPage, static_cast<myencoding_t>(-1));
+	myencoding_t encoding = s_stringToEnumEncoding.value(charsetFromHtmlPage.toLower(), static_cast<myencoding_t>(-1));
 
 	if (encoding == -1)
 	{
@@ -380,35 +378,46 @@ myencoding_t MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
 	return encoding;
 }
 
-QByteArray MyHtmlParser::htmlPageContentType() const
+QByteArray MyHtmlParser::encodingFromPage() const
 {
 	IHtmlNodeCountedPtr headNode = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
 
 	if (!headNode)
 	{
-		DEBUGLOG << "tag <head> not found";
-
+		INFOLOG << "tag <head> not found";
 		return QByteArray();
 	}
 
 	const auto metaTags = headNode->matchSubNodes(IHtmlNode::TagIdMeta);
 
-	for (unsigned i = 0; i < metaTags.size(); ++i)
+	for (const auto& metaTag : metaTags)
 	{
-		if (!metaTags[i]->hasAttribute("content"))
+		const bool hasContentAttribute = metaTag->hasAttribute("content");
+		const bool hasCharsetAttribute = metaTag->hasAttribute("charset");
+
+		if (!hasContentAttribute && !hasCharsetAttribute)
 		{
 			continue;
 		}
 
-		const QString contentAttribute = metaTags[i]->attribute("content");
-
-		if (metaTags[i]->hasAttribute("http-equiv"))
+		if (hasCharsetAttribute)
 		{
-			const QString attributeValue = metaTags[i]->attribute("http-equiv").toLower();
+			return metaTag->attribute("charset").toLatin1();
+		}
+		
+		const QString contentAttribute = metaTag->attribute("content");
+
+		if (metaTag->hasAttribute("http-equiv"))
+		{
+			const QString attributeValue = metaTag->attribute("http-equiv").toLower();
 
 			if (attributeValue == "content-type")
 			{
-				return contentAttribute.toLatin1();
+				const auto charsetFromHtmlPage = contentAttribute.right(
+					contentAttribute.size() - contentAttribute.lastIndexOf("=") - 1
+				);
+
+				return charsetFromHtmlPage.toLatin1();
 			}
 		}
 	}
@@ -435,6 +444,26 @@ void MyHtmlParser::initRootNode()
 		m_rootNode = MyHtmlNode(collection->list[i]);
 		break;
 	}
+}
+
+QByteArray MyHtmlParser::currentPageEncoding() const
+{
+	return m_currentPageEncoding;
+}
+
+QByteArray MyHtmlParser::encodingString(myencoding_t encoding) const
+{
+	for (auto iter = s_stringToEnumEncoding.begin(); iter != s_stringToEnumEncoding.end(); ++iter)
+	{
+		if (iter.value() != encoding)
+		{
+			continue;
+		}
+
+		return iter.key();
+	}
+
+	return QByteArray();
 }
 
 }

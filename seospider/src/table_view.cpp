@@ -192,7 +192,7 @@ void TableView::paintEvent(QPaintEvent* event)
 			std::end(uniqueSelectedRows), 
 			[&](int selectedRow) {return selectedRow == thisRowLogicalIndex || selectedRow == belowRowLogicalIndex; }) !=
 			std::end(uniqueSelectedRows);
-		
+
 		if (isThisOrNextRowSelected)
 		{
 			painter.save();

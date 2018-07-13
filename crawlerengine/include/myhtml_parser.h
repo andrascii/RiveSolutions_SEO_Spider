@@ -15,6 +15,7 @@ public:
 	MyHtmlParser();
 	virtual ~MyHtmlParser();
 
+	virtual QByteArray currentPageEncoding() const override;
 	virtual QByteArray htmlPageContent() const override;
 	virtual void parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers) override;
 	virtual std::vector<LinkInfo> pageUrlList(bool httpOrHttpsOnly) const override;
@@ -28,8 +29,9 @@ public:
 private:
 	LinkInfo getLinkRelUrl(const char* relValue, ResourceSource source) const;
 	myencoding_t htmlSetEncoding(const ResponseHeaders& headers);
-	QByteArray htmlPageContentType() const;
+	QByteArray encodingFromPage() const;
 	void initRootNode();
+	QByteArray encodingString(myencoding_t encoding) const;
 
 private:
 	myhtml_t* m_myHtml;
@@ -38,6 +40,7 @@ private:
 	QByteArray m_htmlPage;
 	QRegularExpression m_regExp;
 	QRegularExpression m_quotesRegExp;
+	QByteArray m_currentPageEncoding;
 };
 
 }
