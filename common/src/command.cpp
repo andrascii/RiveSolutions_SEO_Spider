@@ -76,4 +76,13 @@ void Command::setRestartData(const char* displayMessage, bool showRestartDialog,
 	d->timeout = timeout;
 }
 
+void Command::setCounterData(const char* name, quint64 value, int counterType)
+{
+	type = Counter;
+	CounterData* d = counterData();
+	std::strncpy(d->name, name, _countof(d->name));
+	d->value = value;
+	d->type = static_cast<CounterData::Type>(counterType);
+}
+
 }
