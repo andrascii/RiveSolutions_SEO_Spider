@@ -65,6 +65,7 @@ CrawlerEngine::CrawlerOptionsData TestEnvironment::defaultOptions(const Url& url
 	result.minTitleLength = 0;
 	result.maxTitleLength = 1000;
 	result.crawlOutsideOfStartFolder = true;
+	result.limitMaxUrlLength = 1000;
 
 	return result;
 }
