@@ -47,7 +47,7 @@ private slots:
 	void onStorageUpdated(int row, CrawlerEngine::StorageType type);
 	void onPageRemoved(int row, CrawlerEngine::StorageType type);
 	void onPageReplaced(int row, CrawlerEngine::StorageType type);
-	void onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type) const;
+	void onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type);
 
 private:
 	CrawlerEngine::SequencedDataCollection* m_dataCollection;

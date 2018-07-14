@@ -3,6 +3,7 @@
 #include "iview_model.h"
 #include "page_model.h"
 #include "table_view.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
@@ -48,12 +49,7 @@ bool ItemViewDelegate::editorEvent(QEvent* event, QAbstractItemModel*, const QSt
 			return false;
 		}
 
-#ifdef USE_SORTING
-		QSortFilterProxyModel* proxyModel = qobject_cast<QSortFilterProxyModel*>(tableView->model());
-		PageModel* pageModel = proxyModel ? qobject_cast<PageModel*>(proxyModel->sourceModel()) : nullptr;
-#else
-		PageModel* pageModel = qobject_cast<PageModel*>(tableView->model());
-#endif
+		PageModel* pageModel = getUnderlyingModelByIndex<PageModel*, false>(index);
 
 		if (pageModel && pageModel->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
 		{					

@@ -1,25 +1,29 @@
 #include "application.h"
 #include "text_renderer.h"
 #include "iview_model.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
 
 TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
 	: m_viewModel(viewModel)
-	, m_cacheSize(cacheSize)
+	, m_cache(cacheSize)
 {
+	ASSERT(cacheSize > 0);
 }
 
 void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	const int marginTop = viewModel()->marginTop(index);
-	const int marginBottom = viewModel()->marginBottom(index);
-	const int marginLeft = viewModel()->marginLeft(index);
-	const int marginRight = viewModel()->marginRight(index);
+	const QModelIndex underlyingIndex = getUnderlyingIndex(index);
+
+	const int marginTop = viewModel()->marginTop(underlyingIndex);
+	const int marginBottom = viewModel()->marginBottom(underlyingIndex);
+	const int marginLeft = viewModel()->marginLeft(underlyingIndex);
+	const int marginRight = viewModel()->marginRight(underlyingIndex);
 
 	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
-	QPixmap* pixmapPointer = cached(index);
+	QPixmap* pixmapPointer = m_cache.object(underlyingIndex);
 
 	if (pixmapPointer && pixmapPointer->rect().size() == adjustedRect.size())
 	{
@@ -28,16 +32,16 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 	}
 
 	QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
-	QPixmap pixmap(pixmapRect.size());
-	pixmap.fill(Qt::transparent);
+	pixmapPointer = new QPixmap(pixmapRect.size());
+	pixmapPointer->fill(Qt::transparent);
 
-	QPainter painterPixmap(&pixmap);
+	QPainter painterPixmap(pixmapPointer);
 
-	const bool isDecorationValid = !viewModel()->pixmap(index).isNull();
-	const int textAlignmentFlags = viewModel()->textAlignment(index);
-	const QFont& font = viewModel()->font(index);
-	const QColor& textColor = viewModel()->textColor(index);
-	const QString paintingText = viewModel()->displayData(index, pixmapRect);
+	const bool isDecorationValid = !viewModel()->pixmap(underlyingIndex).isNull();
+	const int textAlignmentFlags = viewModel()->textAlignment(underlyingIndex);
+	const QFont& font = viewModel()->font(underlyingIndex);
+	const QColor& textColor = viewModel()->textColor(underlyingIndex);
+	const QString paintingText = viewModel()->displayData(underlyingIndex, pixmapRect);
 
 	painterPixmap.setRenderHints(QPainter::HighQualityAntialiasing);
 	painterPixmap.setFont(font);
@@ -45,22 +49,18 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 
 	if (isDecorationValid)
 	{
-		paintDecorator(&painterPixmap, index, viewModel()->pixmapPosition(index, pixmapRect));
+		paintDecorator(&painterPixmap, underlyingIndex, viewModel()->pixmapPosition(underlyingIndex, pixmapRect));
 	}
 
-	painterPixmap.drawText(viewModel()->displayDataPosition(index, pixmapRect), textAlignmentFlags, paintingText);
+	painterPixmap.drawText(viewModel()->displayDataPosition(underlyingIndex, pixmapRect), textAlignmentFlags, paintingText);
 
-	m_cache[index] = pixmap;
-	pixmapPointer = &m_cache[index];
-
+	ASSERT(m_cache.insert(underlyingIndex, pixmapPointer));
 	painter->drawPixmap(adjustedRect, *pixmapPointer);
-
-	clearCacheIfNeeded();
 }
 
 void TextRenderer::invalidateCacheIndex(const QModelIndex& index) const
 {
-	m_cache.erase(index);
+	m_cache.remove(getUnderlyingIndex(index));
 }
 
 void TextRenderer::invalidateCache() const
@@ -70,26 +70,12 @@ void TextRenderer::invalidateCache() const
 
 void TextRenderer::setCacheSize(int cacheSize)
 {
-	m_cacheSize = cacheSize;
-
-	clearCacheIfNeeded();
+	m_cache.setMaxCost(cacheSize);
 }
 
 void TextRenderer::addRenderer(int)
 {
 	ASSERT(!"Attempt to add renderer to leaf");
-}
-
-QPixmap* TextRenderer::cached(const QModelIndex& index) const
-{
-	auto iter = m_cache.find(index);
-
-	if (iter != std::end(m_cache))
-	{
-		return &iter->second;
-	}
-
-	return nullptr;
 }
 
 QString TextRenderer::elidedText(const QString& string, const int width, bool) const noexcept
@@ -103,14 +89,6 @@ void TextRenderer::paintDecorator(QPainter* painter, const QModelIndex& index, c
 	const QPixmap& pixmap = m_viewModel->pixmap(index);
 	const QSize pixmapSize = pixmap.size();
 	painter->drawPixmap(QRect(rect.topLeft(), pixmapSize), pixmap);
-}
-
-void TextRenderer::clearCacheIfNeeded() const noexcept
-{
-	if (m_cache.size() > static_cast<size_t>(m_cacheSize))
-	{
-		m_cache.clear();
-	}
 }
 
 const IViewModel* TextRenderer::viewModel() const noexcept

@@ -35,7 +35,7 @@ void ItemRenderer::addRenderer(int rendererTypes)
 {
 	if (rendererTypes & BackgroundRendererType)
 	{
-		m_renderers.append(new BackgroundRenderer(m_viewModel));
+		m_renderers.append(new BackgroundRenderer(m_viewModel, 2000));
 	}
 
 	if (rendererTypes & SelectionBackgroundRendererType)
@@ -45,7 +45,7 @@ void ItemRenderer::addRenderer(int rendererTypes)
 
 	if (rendererTypes & PlainTextRendererType)
 	{
-		m_renderers.append(new TextRenderer(m_viewModel));
+		m_renderers.append(new TextRenderer(m_viewModel, 5000));
 	}
 }
 
