@@ -1,41 +1,44 @@
 #include "background_renderer.h"
 #include "iview_model.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
 
 BackgroundRenderer::BackgroundRenderer(const IViewModel* viewModel, int cacheSize)
 	: m_viewModel(viewModel)
-	, m_cacheSize(cacheSize)
+	, m_cache(cacheSize)
 {
+	ASSERT(cacheSize > 0);
 }
 
 void BackgroundRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	QPixmap* cachedPixmap = cached(index);
+	const QModelIndex underlyingIndex = getUnderlyingIndex(index);
 
-	if (cachedPixmap && cachedPixmap->rect().size() == option.rect.size())
+	QPixmap* pixmap = m_cache.object(underlyingIndex);
+
+	if (pixmap && pixmap->rect().size() == option.rect.size())
 	{
-		painter->drawPixmap(option.rect, m_cache[index]);
+		painter->drawPixmap(option.rect, *pixmap);
 		return;
 	}
 
-	const QColor bgColor = m_viewModel->hoveredIndex().row() == index.row() ?
+	const QColor bgColor = getUnderlyingIndex(m_viewModel->hoveredIndex()).row() == underlyingIndex.row() ?
 		m_viewModel->hoveredBackgroundColor(index) :
 		m_viewModel->backgroundColor(index);
 
-	QPixmap pixmap(option.rect.size());
-	pixmap.fill(bgColor);
+	pixmap = new QPixmap(option.rect.size());
+	pixmap->fill(bgColor);
 
-	painter->drawPixmap(option.rect, pixmap);
+	painter->drawPixmap(option.rect, *pixmap);
 
-	m_cache[index] = pixmap;
-	clearCacheIfNeeded();
+	m_cache.insert(underlyingIndex, pixmap);
 }
 
 void BackgroundRenderer::invalidateCacheIndex(const QModelIndex& index) const
 {
-	m_cache.erase(index);
+	m_cache.remove(getUnderlyingIndex(index));
 }
 
 void BackgroundRenderer::invalidateCache() const
@@ -45,32 +48,12 @@ void BackgroundRenderer::invalidateCache() const
 
 void BackgroundRenderer::setCacheSize(int cacheSize)
 {
-	m_cacheSize = cacheSize;
+	m_cache.setMaxCost(cacheSize);
 }
 
 void BackgroundRenderer::addRenderer(int)
 {
 	ASSERT(!"Attempt to add renderer to leaf");
-}
-
-void BackgroundRenderer::clearCacheIfNeeded() const
-{
-	if (m_cache.size() >= static_cast<size_t>(m_cacheSize))
-	{
-		invalidateCache();
-	}
-}
-
-QPixmap* BackgroundRenderer::cached(const QModelIndex& index) const noexcept
-{
-	auto cachedPixmapIterator = m_cache.find(index);
-
-	if (cachedPixmapIterator != std::end(m_cache))
-	{
-		return &cachedPixmapIterator->second;
-	}
-
-	return nullptr;
 }
 
 }

@@ -42,7 +42,6 @@ void TableView::setModel(QAbstractItemModel* model)
 #ifdef USE_SORTING
 	m_sortFilterProxyModel->setSourceModel(model);
 	QTableView::setModel(m_sortFilterProxyModel);
-	m_model->setProxyModel(m_sortFilterProxyModel);
 	if (m_viewModel)
 	{
 		// reconnect signals/slots with correct order
@@ -361,8 +360,13 @@ void TableView::onAboutRepaintItems(const QModelIndexList& modelIndexes)
 		}
 
 #ifdef USE_SORTING
-		ASSERT(index.model() == m_sortFilterProxyModel);
-		ASSERT(m_model == m_sortFilterProxyModel->sourceModel());
+		if (index.model() == m_model)
+		{
+			update(m_sortFilterProxyModel->mapFromSource(index));
+			continue;
+		}
+
+
 		if (index.row() >= m_sortFilterProxyModel->rowCount() ||
 			index.column() >= m_sortFilterProxyModel->columnCount())
 		{

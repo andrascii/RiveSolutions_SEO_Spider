@@ -122,6 +122,11 @@ QVariant PageModel::data(const QModelIndex& index, int role) const
 		return QVariant();
 	}
 
+	if (role == AbstractTableModel::underlyingIndexRole)
+	{
+		return index;
+	}
+
 	if (index.column() == 0)
 	{
 		if (role == Qt::DisplayRole)

@@ -1,5 +1,6 @@
 #include "abstract_view_model.h"
 #include "irenderer.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
@@ -7,7 +8,6 @@ namespace SeoSpider
 AbstractViewModel::AbstractViewModel(AbstractTableModel* model, QObject* parent)
 	: QObject(parent)
 	, m_model(model)
-	, m_hoveredIndex(QModelIndex())
 	, m_previousHoveredIndex(QModelIndex())
 	, m_itemRenderer(this)
 {
@@ -15,24 +15,24 @@ AbstractViewModel::AbstractViewModel(AbstractTableModel* model, QObject* parent)
 
 const QModelIndex& AbstractViewModel::hoveredIndex() const noexcept
 {
-	return m_hoveredIndex;
+	return m_hoveredUnderlyingIndex;
 }
 
 void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept
 {
-	const auto topSelectedRow = [this]() -> int
+	const auto topSelectedRow = [this]() -> QModelIndex
 	{
-		std::vector<int> selectedRows;
+		QModelIndex result;
 
 		foreach(const QModelIndex& index, selectedIndexes())
 		{
-			selectedRows.push_back(index.row());
+			if (!result.isValid() || index.row() < result.row())
+			{
+				result = index;
+			}
 		}
 
-		std::vector<int>::iterator findElement = std::min_element(
-			std::begin(selectedRows), std::end(selectedRows));
-
-		return findElement != std::end(selectedRows) ? *findElement : -1;
+		return result;
 	};
 
 	for (int i = 0; i < modelIndexes.size(); ++i)
@@ -45,11 +45,11 @@ void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) 
 		m_selectedModelIndexes.append(modelIndexes[i]);
 	}
 
-	const int topSelectedRowIndex = topSelectedRow();
+	const QModelIndex topSelectedRowIndex = topSelectedRow();
 
-	if (topSelectedRowIndex != -1 && model()->rowCount() > topSelectedRowIndex + 1)
+	if (topSelectedRowIndex.isValid() && model()->rowCount() > topSelectedRowIndex.row() + 1)
 	{
-		emitNeedToRepaintIndexes(model()->makeModelIndexesForRow(topSelectedRowIndex + 1));
+		emitNeedToRepaintIndexes(makeRowIndexes(topSelectedRowIndex.model()->index(topSelectedRowIndex.row() + 1, topSelectedRowIndex.column())));
 	}
 
 	emitNeedToRepaintIndexes(m_selectedModelIndexes);
@@ -57,51 +57,59 @@ void AbstractViewModel::setSelectedIndexes(const QModelIndexList& modelIndexes) 
 
 void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept
 {
-	const auto rowsForRepaintHelper = [this, &modelIndexes]() -> QVector<int>
+	const auto rowsForRepaintHelper = [this, &modelIndexes]() -> QVector<QModelIndex>
 	{
 		if (!m_selectedModelIndexes.size())
 		{
-			return QVector<int>();
+			return QVector<QModelIndex>();
 		}
 
-		QVector<int> uniqueSelectedRows;
+		QVector<QModelIndex> uniqueSelectedRows;
 
 		foreach(const QModelIndex& index, m_selectedModelIndexes)
 		{
-			uniqueSelectedRows.push_back(index.row());
+			uniqueSelectedRows.push_back(index);
 		}
 
 		std::sort(std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows));
 		uniqueSelectedRows.erase(std::unique(std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows)), std::end(uniqueSelectedRows));
 
-		QVector<int>::iterator topRowElement = std::min_element(
-			std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows));
-
-		QVector<int>::iterator footRowElement = std::max_element(
-			std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows));
-
-		const int topRow = *topRowElement;
-		const int footRow = *footRowElement;
-
-		QVector<int> rowsForRepaint;
-
-		for (int i = topRow; i <= footRow; ++i)
+		QVector<QModelIndex>::iterator topRowElement = std::min_element(
+			std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows), [](const QModelIndex& index1, const QModelIndex& index2)
 		{
+			return index1.row() < index2.row();
+		});
+
+		QVector<QModelIndex>::iterator footRowElement = std::max_element(
+			std::begin(uniqueSelectedRows), std::end(uniqueSelectedRows), [](const QModelIndex& index1, const QModelIndex& index2)
+		{
+			return index1.row() > index2.row();
+		});
+
+		const QModelIndex topRow = *topRowElement;
+		const QModelIndex footRow = *footRowElement;
+
+		QVector<QModelIndex> rowsForRepaint;
+
+		for (int i = topRow.row(); i <= footRow.row(); ++i)
+		{
+			QModelIndex rowIndex = topRow.model()->index(i, 0);
+			QModelIndex nextRowIndex = topRow.model()->index(i + 1, 0);
 			const bool isNonSelectedRowBelowSelectedRow = 
-				!uniqueSelectedRows.contains(i + 1) && uniqueSelectedRows.contains(i);
+				!uniqueSelectedRows.contains(nextRowIndex) && uniqueSelectedRows.contains(rowIndex);
 
 			if (!isNonSelectedRowBelowSelectedRow)
 			{
 				continue;
 			}
 
-			rowsForRepaint.push_back(i + 1);
+			rowsForRepaint.push_back(nextRowIndex);
 		}
 
 		return rowsForRepaint;
 	};
 
-	const QVector<int> rowsForRepaint = rowsForRepaintHelper();
+	const QVector<QModelIndex> rowsForRepaint = rowsForRepaintHelper();
 
 	for (int i = 0; i < modelIndexes.size(); ++i)
 	{
@@ -115,11 +123,11 @@ void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes
 	{
 		QModelIndexList itemsForRepaintAfterDeselect;
 
-		foreach(const int row, rowsForRepaint)
+		foreach(const QModelIndex& row, rowsForRepaint)
 		{
-			if (row < model()->rowCount())
+			if (row.row() < model()->rowCount())
 			{
-				itemsForRepaintAfterDeselect.append(model()->makeModelIndexesForRow(row));
+				itemsForRepaintAfterDeselect.append(makeRowIndexes(row));
 			}
 		} 
 
@@ -146,13 +154,14 @@ const IRenderer* AbstractViewModel::itemViewRenderer(const QModelIndex&) const n
 
 void AbstractViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 {
-	if (index == m_hoveredIndex)
+	QModelIndex underlyingIndex = getUnderlyingIndex(index);
+	if (underlyingIndex == m_hoveredUnderlyingIndex)
 	{
 		return;
 	}
 
-	const QModelIndex previousHoveredIndex = m_hoveredIndex;
-
+	const QModelIndex previousHoveredIndex = m_hoveredUnderlyingIndex;
+	m_hoveredUnderlyingIndex = underlyingIndex;
 	m_hoveredIndex = index;
 
 	setPreviousHoveredIndex(previousHoveredIndex);
