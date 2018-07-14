@@ -24,6 +24,7 @@ SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QOb
 	initializeRenderers();
 
 	connect(model, &SummaryModel::internalDataChanged, this, &SummaryViewModel::onDataWereReset);
+	VERIFY(connect(model, &SummaryModel::dataChanged, this, &SummaryViewModel::onAttachedModelDataChanged));
 }
 
 int SummaryViewModel::marginTop(const QModelIndex&) const noexcept

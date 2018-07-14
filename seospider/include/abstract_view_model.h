@@ -40,6 +40,8 @@ protected:
 	void invalidateCacheIndexes(const QModelIndexList& modelIndexes) const noexcept;
 	void invalidateCacheIndex(const QModelIndex& index) const noexcept;
 
+	Q_SLOT void onAttachedModelDataChanged(const QModelIndex& startIndex, const QModelIndex& endIndex, const QVector<int>& roles);
+
 private:
 	void setPreviousHoveredIndex(const QModelIndex& index);
 
