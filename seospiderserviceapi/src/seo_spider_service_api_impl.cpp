@@ -1,6 +1,4 @@
 #include "seo_spider_service_api_impl.h"
-#include "iipc_signaled_object.h"
-#include "ipc_signaled_object_creator.h"
 #include "seo_spider_service_api_export.h"
 #include "command.h"
 

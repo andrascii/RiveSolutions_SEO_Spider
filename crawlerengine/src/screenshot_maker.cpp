@@ -1,5 +1,4 @@
 #include "screenshot_maker.h"
-#include "ipc_command.h"
 #include "take_screenshot_request.h"
 #include "take_screenshot_response.h"
 #include "thread_message_dispatcher.h"
@@ -17,6 +16,8 @@ const QString s_screenshotMakerChannelName("screenshot_maker_channel");
 
 namespace CrawlerEngine
 {
+
+using namespace Common;
 
 ScreenshotMaker::ScreenshotMaker(QObject* parent)
 	: QObject(parent)
@@ -65,16 +66,29 @@ void ScreenshotMaker::timerEvent(QTimerEvent*)
 		return;
 	}
 
-	if (!isScreenshotReadyForRead())
+	auto[isResponseReceived, msg] = screenshotMakerResponse();
+
+	if (!isResponseReceived)
 	{
 		return;
 	}
 
 	killTimerHelper();
 
-	ThreadMessageDispatcher::forThread(m_currentRequester->thread())->postResponse(
-		m_currentRequester, std::make_shared<TakeScreenshotResponse>(readScreenshotFromMemory())
-	);
+	ScreenshotMakerResponse* responseMsg = msg.responseMessage();
+	std::shared_ptr<TakeScreenshotResponse> pixmapResponse;
+
+	if (responseMsg->operationComplete)
+	{
+		pixmapResponse = std::make_shared<TakeScreenshotResponse>(readScreenshotFromMemory());
+	}
+	else
+	{
+		// TODO: put here a pixmap stub
+		pixmapResponse = std::make_shared<TakeScreenshotResponse>();
+	}
+
+	ThreadMessageDispatcher::forThread(m_currentRequester->thread())->postResponse(m_currentRequester, pixmapResponse);
 
 	if (m_requesters.empty())
 	{
@@ -174,7 +188,7 @@ void ScreenshotMaker::sendScreenshotRequest(const RequesterSharedPtr& requester)
 		return;
 	}
 
-	sendTakeScreenshotCommand(static_cast<TakeScreenshotRequest*>(requester->request()));
+	sendTakeScreenshotMessage(static_cast<TakeScreenshotRequest*>(requester->request()));
 	m_currentRequester = requester;
 
 	m_timerId = startTimer(Common::c_minimumRecommendedTimerResolution);
@@ -230,7 +244,7 @@ void ScreenshotMaker::logSharedMemoryAttachError()
 	}
 }
 
-void ScreenshotMaker::sendTakeScreenshotCommand(TakeScreenshotRequest* request)
+void ScreenshotMaker::sendTakeScreenshotMessage(TakeScreenshotRequest* request)
 {
 	if (m_ipcSocket.openMode() == QIODevice::NotOpen)
 	{
@@ -238,10 +252,9 @@ void ScreenshotMaker::sendTakeScreenshotCommand(TakeScreenshotRequest* request)
 		return;
 	}
 
-	Common::ScreenshotCommand cmd{ Common::ScreenshotCommandType::CommandTypeTakeScreenshot };
-	const std::string url = request->url().toDisplayString().toStdString();
-	std::copy(url.begin(), url.end(), cmd.data);
-	m_ipcSocket.writeData(reinterpret_cast<const char*>(&cmd), sizeof(cmd));
+	ScreenshotMakerMessage msg;
+	msg.setTakeScreenshotMessage(request->url());
+	m_ipcSocket.writeData(reinterpret_cast<const char*>(&msg), sizeof(msg));
 }
 
 void ScreenshotMaker::sendExitCommandToScreenshotMakerProcess()
@@ -252,8 +265,10 @@ void ScreenshotMaker::sendExitCommandToScreenshotMakerProcess()
 		return;
 	}
 
-	Common::ScreenshotCommand cmd{ Common::ScreenshotCommandType::CommandTypeExit };
-	m_ipcSocket.writeData(reinterpret_cast<const char*>(&cmd), sizeof(cmd));
+	ScreenshotMakerMessage msg;
+	msg.setExitMessage();
+
+	m_ipcSocket.writeData(reinterpret_cast<const char*>(&msg), sizeof(msg));
 }
 
 void ScreenshotMaker::killTimerHelper()
@@ -285,21 +300,21 @@ QPixmap ScreenshotMaker::readScreenshotFromMemory()
 	return pixmap;
 }
 
-bool ScreenshotMaker::isScreenshotReadyForRead()
+std::pair<bool, ScreenshotMakerMessage> ScreenshotMaker::screenshotMakerResponse()
 {
-	char response = 0;
+	ScreenshotMakerMessage msg;
 
 	// wait 1 byte then read this and check value
-	if (m_ipcSocket.peekData(&response, sizeof(response)) != 1)
+	if (m_ipcSocket.peekData(reinterpret_cast<char*>(&msg), sizeof(msg)) != sizeof(msg))
 	{
-		return false;
+		return std::make_pair(false, ScreenshotMakerMessage{});
 	}
 	else
 	{
-		m_ipcSocket.readData(&response, sizeof(response));
+		m_ipcSocket.readData(reinterpret_cast<char*>(&msg), sizeof(msg));
 	}
 
-	return response == 1;
+	return std::make_pair(true, msg);
 }
 
 }

@@ -1,20 +1,20 @@
 #pragma once
 
 #include "pipe_server.h"
-#include "ipc_command.h"
+#include "screenshot_maker_command.h"
 
 namespace ScreenshotMaker
 {
 
 class PipeConnectionEstablisherThread;
 
-class IpcServerChannel : public QObject
+class MessageChannel : public QObject
 {
 	Q_OBJECT
 
 public:
-	IpcServerChannel(const QString& pipeChannelName, QObject* parent = nullptr);
-	virtual ~IpcServerChannel();
+	MessageChannel(const QString& pipeChannelName, QObject* parent = nullptr);
+	virtual ~MessageChannel();
 
 signals:
 	void screenshotRequested(const QUrl& url);
@@ -28,7 +28,7 @@ protected:
 	virtual void timerEvent(QTimerEvent* event) override;
 
 private:
-	void detectCommandType(const Common::ScreenshotCommand& cmd);
+	void detectCommandType(const Common::ScreenshotMakerMessage& msg);
 
 private:
 	QString m_pipeChannelName;
