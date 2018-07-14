@@ -26,6 +26,7 @@
 #include <cassert>
 #include <functional>
 #include <optional>
+#include <algorithm>
 
 //
 // boost

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iscreenshot_maker.h"
+#include "screenshot_maker_command.h"
 #include "ipc_socket.h"
 #include "url.h"
 
@@ -30,13 +31,13 @@ private:
 	void sendScreenshotRequest(const RequesterSharedPtr& requester);
 	void logSharedMemoryAttachError();
 
-	void sendTakeScreenshotCommand(TakeScreenshotRequest* request);
+	void sendTakeScreenshotMessage(TakeScreenshotRequest* request);
 	void sendExitCommandToScreenshotMakerProcess();
 
 	void killTimerHelper();
 	QPixmap readScreenshotFromMemory();
 
-	bool isScreenshotReadyForRead();
+	std::pair<bool, Common::ScreenshotMakerMessage> screenshotMakerResponse();
 
 private:
 	std::queue<RequesterSharedPtr> m_requesters;

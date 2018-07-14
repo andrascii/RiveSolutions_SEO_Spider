@@ -3,7 +3,7 @@
 namespace ScreenshotMaker
 {
 
-class IpcServerChannel;
+class MessageChannel;
 
 class Executor : public QObject
 {
@@ -26,7 +26,7 @@ private:
 
 private:
 	QWebEngineView* m_webEngineView;
-	IpcServerChannel* m_ipcChannel;
+	MessageChannel* m_messageChannel;
 	QTimer* m_timer;
 	QSharedMemory m_sharedMemory;
 	std::queue<QUrl> m_pendingScreenshotRequests;

@@ -180,9 +180,9 @@ struct Command
 	//! Command type
 	Type type;
 	static const size_t rawDataSize =
-		max(sizeof(LogData), 
-		max(sizeof(AssertData), 
-		max(sizeof(DumpData), 
+		max(sizeof(LogData),
+		max(sizeof(AssertData),
+		max(sizeof(DumpData),
 		max(sizeof(CategoryData), sizeof(RestartData)))));
 
 	//! Raw data structure on of LogData, AssertData or DumpData
