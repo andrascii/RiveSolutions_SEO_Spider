@@ -5,6 +5,14 @@
 #include "zippo.h"
 #include "smtp_sender.h"
 #include "sys_info.h"
+#include "statistics_uploader.h"
+
+namespace
+{
+
+const int s_quitTimer = 30000;
+
+}
 
 namespace SeoSpiderService
 {
@@ -18,6 +26,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	, m_cmdThread(std::make_unique<CommandThread>(&m_pipeSocket, logFilePath()))
 	, m_pendingReportsCount(0)
 	, m_compressionIsActive(false)
+	, m_statisticsUploader(new StatisticsUploader(this))
 {
 	setWindowIcon(QIcon(":/images/favicon.ico"));
 
@@ -29,6 +38,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 
 	VERIFY(connect(this, &SeoSpiderServiceApp::closeServiceApp, this, &SeoSpiderServiceApp::onServiceClose, Qt::QueuedConnection));
 	VERIFY(connect(m_zippo, &Zippo::finished, this, &SeoSpiderServiceApp::onCompressingFinished, Qt::QueuedConnection));
+	VERIFY(connect(m_statisticsUploader, SIGNAL(uploadFinished()), this, SLOT(quit()), Qt::QueuedConnection));
 
 	m_processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE | SYNCHRONIZE, FALSE, m_processId);
 	m_timerId = startTimer(100);
@@ -177,6 +187,36 @@ void SeoSpiderServiceApp::writeSysInfoFile(const QString& fileName) const
 	}
 }
 
+void SeoSpiderServiceApp::writeStatisticsFile(const QString& fileName) const
+{
+	QFile statisticsFile(fileName);
+
+	if(statisticsFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+	{
+		QTextStream out(&statisticsFile);
+		out.setCodec("UTF-8");
+
+		QVariantMap variantMap;
+
+		//
+		//TODO: check for empty maps
+		//
+		QMapIterator<QString, unsigned long long> iter(m_counterContainer);
+		while (iter.hasNext()) 
+		{
+			iter.next();
+			variantMap.insert(iter.key(), iter.value());
+		}
+
+		QJsonDocument json = QJsonDocument::fromVariant(variantMap);
+
+		out << json.toJson();
+
+		statisticsFile.flush();
+		statisticsFile.close();
+	}
+}
+
 void SeoSpiderServiceApp::sendReports()
 {
 	const QString path = SeoSpiderServiceApp::dumpsPath();
@@ -247,6 +287,24 @@ QString SeoSpiderServiceApp::logFilePath()
 	return QDir::cleanPath(path + QString("/log_data.log"));
 }
 
+QString SeoSpiderServiceApp::statisticsFilePath()
+{
+	QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+	path = QDir::cleanPath(path + QString("/RiveSolutions/SeoSpider/statistics"));
+
+	QDir dir(path);
+
+	if(!dir.exists())
+	{
+		dir.mkpath(path);
+	}
+
+	//
+	//TODO: add quid for filename
+	//
+	return QDir::cleanPath(path + QString("/statistics.json"));
+}
+
 void SeoSpiderServiceApp::onSendingFinished(const QString& mailId, int result, const QByteArray& log)
 {
 	Q_UNUSED(log);
@@ -308,6 +366,11 @@ void SeoSpiderServiceApp::onCommandReceived(Common::Command command)
 	}
 }
 
+SeoSpiderServiceApp::CounterContainer& SeoSpiderServiceApp::counterContainer()
+{
+	return m_counterContainer;
+}
+
 void SeoSpiderServiceApp::onServiceClose()
 {
 	if (m_loggerDebugWindow)
@@ -317,7 +380,10 @@ void SeoSpiderServiceApp::onServiceClose()
 		processEvents();
 	}
 
-	quit();
+	writeStatisticsFile(statisticsFilePath());
+	m_statisticsUploader->startUploading();
+
+	QTimer::singleShot(s_quitTimer, this, SLOT(quit()));
 }
 
 }

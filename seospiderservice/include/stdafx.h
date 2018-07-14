@@ -55,6 +55,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QAuthenticator>
 #include <QTimer>
 #include <QMutex>
 #include <QMutexLocker>
@@ -75,6 +76,7 @@
 #include <QFile>
 #include <QDir>
 #include <QSettings>
+#include <QJsonDocument>
 
 #ifdef Q_OS_WIN
 

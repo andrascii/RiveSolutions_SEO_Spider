@@ -19,13 +19,22 @@ class Zippo;
 namespace SeoSpiderService
 {
 
+class StatisticsUploader;
+
 class SeoSpiderServiceApp : public QApplication
 {
 	Q_OBJECT
 
 public:
+	using CounterContainer = QMap<QString, unsigned long long>;
+
+public:
 	SeoSpiderServiceApp(int& argc, char** argv);
 	~SeoSpiderServiceApp();
+
+
+	CounterContainer& counterContainer();
+	static QString statisticsFilePath();
 
 protected:
 	virtual void timerEvent(QTimerEvent*) override;
@@ -36,6 +45,8 @@ private:
 	QString commandLineParameter(int num) const noexcept;
 	bool makeDump(HANDLE processHandle, const void* threadId, const void* exceptionInfo, qint64 exceptionSize) noexcept;
 	void writeSysInfoFile(const QString& fileName) const;
+	void writeStatisticsFile(const QString& fileName) const;
+
 	Q_SLOT void sendReports();
 	static QString dumpsPath();
 	static QString logFilePath();
@@ -67,6 +78,9 @@ private:
 	std::unique_ptr<CommandThread> m_cmdThread;
 	int m_pendingReportsCount;
 	bool m_compressionIsActive;
+
+	CounterContainer m_counterContainer;
+	StatisticsUploader* m_statisticsUploader;
 };
 
 }

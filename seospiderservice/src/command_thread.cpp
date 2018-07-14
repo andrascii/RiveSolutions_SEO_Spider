@@ -1,5 +1,6 @@
 #include "command_thread.h"
 #include "command.h"
+#include "seo_spider_service_app.h"
 
 namespace
 {
@@ -93,6 +94,17 @@ void CommandThread::run()
 
 				stream << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
 					<< s_separator << "RESTART REQUEST: " << restartData->message << "\n";
+				break;
+			}
+			case Common::Command::Counter:
+			{
+				Common::CounterData* counterData = command.counterData();
+				
+				SeoSpiderServiceApp::CounterContainer& counterContainer =
+					qobject_cast<SeoSpiderServiceApp*>(qApp)->counterContainer();
+
+				counterContainer[counterData->name] += counterData->value;
+
 				break;
 			}
 		}

@@ -378,6 +378,14 @@ void SeoSpiderServiceApiImpl::setLogFilter(const std::function<bool(Common::LogL
 	m_logFilter.setFilter(filter);
 }
 
+void SeoSpiderServiceApiImpl::commitCounterData(const char* name, quint64 value, int counterType)
+{
+	Command command;
+	command.setCounterData(name, value, counterType);
+
+	m_pipeServer->writeData(command);
+}
+
 bool SeoSpiderServiceApiImpl::writeLog(
 	int id,
 	int level,
