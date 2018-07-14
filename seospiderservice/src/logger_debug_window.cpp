@@ -113,6 +113,11 @@ void LoggerDebugWindow::onCommandReceived(Common::Command command)
 				<< s_separator << "RESTART REQUEST: " << restartData->message;
 			break;
 		}
+		case Common::Command::Counter:
+		{
+			//TODO: need to remove that dermo
+			level = Common::LogLevel::CounterLog;
+		}
 	}
 
 	stream.flush();

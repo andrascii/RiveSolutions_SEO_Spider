@@ -26,7 +26,9 @@ enum LogLevel
 	//! Ignore all messages
 	DisabledLog = 0x80,
 	//! Use parent log level
-	InheritedLogLevel = 0x100
+	InheritedLogLevel = 0x100,
+	//! Counter log
+	CounterLog = 0x110
 };
 
 inline QLatin1String logLevelName(LogLevel f)
@@ -53,6 +55,12 @@ inline QLatin1String logLevelName(LogLevel f)
 
 		case InheritedLogLevel:
 			return QLatin1String("Inherited");
+
+		//
+		//TODO: remove counters from logging
+		//
+		case CounterLog:
+			return QLatin1String("Counter");
 	}
 	return QLatin1String("invalid_loglevel_value");
 }
@@ -143,6 +151,19 @@ struct RestartData
 	int timeout;
 };
 
+struct CounterData
+{
+	enum Type
+	{
+		SessionId = 0, 
+		UseCounter = 1,
+		TimerCounter = 2
+	};
+	char name[256];
+	quint64 value;
+	Type type;
+};
+
 //! IPC communication message structure
 /*! Due to system requirement message size limited to 8192 bytes. */
 struct Command
@@ -162,6 +183,8 @@ struct Command
 		LogCategory,
 		//! Request to restart watching application
 		Restart,
+		//! Counter update
+		Counter
 	};
 
 	inline LogData* logData() { return type == Log ? reinterpret_cast<LogData*>(rawData) : 0; }
@@ -169,6 +192,7 @@ struct Command
 	inline DumpData* dumpData() { return type == Dump ? reinterpret_cast<DumpData*>(rawData) : 0; };
 	inline CategoryData* categoryData() { return type == LogCategory ? reinterpret_cast<CategoryData*>(rawData) : 0; }
 	inline RestartData* restartData() { return type == Restart ? reinterpret_cast<RestartData*>(rawData) : 0; }
+	inline CounterData* counterData() { return type == Counter ? reinterpret_cast<CounterData*>(rawData) : 0; }
 
 	void setLogData(const char* file, int line, const char* function, const void* thisptr);
 	void setDumpData(const void* exceptionInfo, int exceptionSize, int params);
@@ -176,14 +200,16 @@ struct Command
 		const void* thisptr, const char* condition, void* exceptionInfo, int exceptionSize);
 	void setCategoryData(const char* categoryName);
 	void setRestartData(const char* displayMessage, bool showRestartDialog, int timeout, size_t argc, const char** argv);
+	void setCounterData(const char* name, quint64 value, int counterType);
 
 	//! Command type
 	Type type;
 	static const size_t rawDataSize =
-		max(sizeof(LogData),
-		max(sizeof(AssertData),
-		max(sizeof(DumpData),
-		max(sizeof(CategoryData), sizeof(RestartData)))));
+		max(sizeof(LogData), 
+		max(sizeof(AssertData), 
+		max(sizeof(DumpData), 
+		max(sizeof(CategoryData), 
+		max(sizeof(RestartData), sizeof(CounterData))))));
 
 	//! Raw data structure on of LogData, AssertData or DumpData
 	char rawData[rawDataSize];
