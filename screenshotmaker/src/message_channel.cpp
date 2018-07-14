@@ -1,13 +1,15 @@
-#include "ipc_server_channel.h"
+#include "message_channel.h"
 #include "pipe_server.h"
-#include "ipc_command.h"
 #include "common_constants.h"
 #include "pipe_connection_establisher_thread.h"
+#include "screenshot_maker_command.h"
+
+using namespace Common;
 
 namespace ScreenshotMaker
 {
 
-IpcServerChannel::IpcServerChannel(const QString& pipeChannelName, QObject* parent)
+MessageChannel::MessageChannel(const QString& pipeChannelName, QObject* parent)
 	: QObject(parent)
 	, m_pipeChannelName(pipeChannelName)
 	, m_pipeServer(std::make_shared<Common::PipeServer>())
@@ -15,12 +17,12 @@ IpcServerChannel::IpcServerChannel(const QString& pipeChannelName, QObject* pare
 	, m_timerId(0)
 {
  	connect(m_connectionEstablisherThread, &PipeConnectionEstablisherThread::connectionEstablished,
- 		this, &IpcServerChannel::onConnectionEstablished, Qt::QueuedConnection);
+ 		this, &MessageChannel::onConnectionEstablished, Qt::QueuedConnection);
 
 	m_connectionEstablisherThread->start();
 }
 
-IpcServerChannel::~IpcServerChannel()
+MessageChannel::~MessageChannel()
 {
 	if (!m_connectionEstablisherThread->isRunning())
 	{
@@ -31,24 +33,25 @@ IpcServerChannel::~IpcServerChannel()
 	m_connectionEstablisherThread->wait();
 }
 
-void IpcServerChannel::onScreenshotCreated()
+void MessageChannel::onScreenshotCreated()
 {
-	// send 1 as a signal that we already create a screenshot and sent data using pipe
-	const char response = 1;
-	m_pipeServer->writeData(response);
+	ScreenshotMakerMessage msg;
+	msg.setResponse(true);
+
+	m_pipeServer->writeData(msg);
 	m_pipeServer->closeConnection();
 
-	qDebug("Screenshot created");
+	qDebug("Send response about created screenshot");
 }
 
-void IpcServerChannel::onConnectionEstablished()
+void MessageChannel::onConnectionEstablished()
 {
 	qDebug("Connection established");
 
 	m_timerId = startTimer(Common::c_minimumRecommendedTimerResolution);
 }
 
-void IpcServerChannel::timerEvent(QTimerEvent*)
+void MessageChannel::timerEvent(QTimerEvent*)
 {
 	if (!m_pipeServer->hasConnection())
 	{
@@ -59,45 +62,43 @@ void IpcServerChannel::timerEvent(QTimerEvent*)
 		return;
 	}
 
-	Common::ScreenshotCommand cmd;
+	ScreenshotMakerMessage cmd;
 
 	if (m_pipeServer->peekData(cmd) != sizeof(cmd))
 	{
 		return;
 	}
 
-	qDebug("Detected screenshot command data");
+	qDebug("Read ScreenshotMakerMessage");
 
 	const qint64 size = m_pipeServer->readData(cmd);
 
-	if (size < sizeof(Common::ScreenshotCommand))
+	if (size < sizeof(ScreenshotMakerMessage))
 	{
 		qDebug("error reading channel");
 		return;
 	}
 
 	detectCommandType(cmd);
-
-	if (cmd.type == Common::ScreenshotCommandType::CommandTypeExit)
-	{
-		killTimer(m_timerId);
-	}
 }
 
-void IpcServerChannel::detectCommandType(const Common::ScreenshotCommand& cmd)
+void MessageChannel::detectCommandType(const ScreenshotMakerMessage& msg)
 {
-	switch (cmd.type)
+	switch (msg.type)
 	{
-		case Common::ScreenshotCommandType::CommandTypeTakeScreenshot:
+		case ScreenshotMakerMessage::TypeTakeScreenshot:
 		{
 			qDebug("Screenshot requested");
-			emit screenshotRequested(QUrl(cmd.data));
+
+			const ScreenshotMakerTakeScreenshot* screenshotMsg = msg.takeScreenshotMessage();
+			emit screenshotRequested(QUrl(screenshotMsg->data));
+
 			break;
 		}
-		case Common::ScreenshotCommandType::CommandTypeExit:
+		case ScreenshotMakerMessage::TypeExit:
 		{
 			qDebug("Exit requested");
-			emit exitRequested();
+			killTimer(m_timerId);
 			break;
 		}
 		default:

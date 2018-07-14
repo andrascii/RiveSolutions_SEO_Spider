@@ -1,5 +1,5 @@
 #include "executor.h"
-#include "ipc_server_channel.h"
+#include "message_channel.h"
 
 namespace
 {
@@ -14,12 +14,13 @@ namespace ScreenshotMaker
 Executor::Executor(const QString& pipeChannelName, const QString& sharedMemoryKey, QObject* parent)
 	: QObject(parent)
 	, m_webEngineView(nullptr)
-	, m_ipcChannel(new IpcServerChannel(pipeChannelName, this))
+	, m_messageChannel(new MessageChannel(pipeChannelName, this))
 	, m_sharedMemory(sharedMemoryKey)
 	, m_timer(new QTimer(this))
 {
-	connect(m_ipcChannel, SIGNAL(screenshotRequested(const QUrl&)), this, SLOT(takeScreenshot(const QUrl&)));
-	connect(this, SIGNAL(screenshotCreated()), m_ipcChannel, SLOT(onScreenshotCreated()));
+	connect(m_messageChannel, SIGNAL(screenshotRequested(const QUrl&)), this, SLOT(takeScreenshot(const QUrl&)));
+	connect(this, SIGNAL(screenshotCreated()), m_messageChannel, SLOT(onScreenshotCreated()));
+	connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap);
 }
 
 void Executor::takeScreenshot(const QUrl& url)
@@ -42,7 +43,6 @@ void Executor::takeScreenshot(const QUrl& url)
 	m_timer->setInterval(5000);
 	m_timer->setSingleShot(true);
 
-	connect(m_timer, &QTimer::timeout, this, &Executor::onReadyToRenderPixmap);
 	connect(m_webEngineView->page(), &QWebEnginePage::loadFinished, this, &Executor::onLoadingDone);
 
 	m_webEngineView->resize(s_browserWindowSize);
