@@ -77,7 +77,6 @@ public:
 
 private slots:
 	void onAttachedModelStorageAdapterChanged();
-	void onAttachedModelDataChanged(const QModelIndex& startIndex, const QModelIndex& endIndex, const QVector<int>& roles);
 	void onModelDataWasReset();
 
 private:
