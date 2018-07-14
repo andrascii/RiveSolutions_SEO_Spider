@@ -222,7 +222,33 @@ void AbstractViewModel::invalidateCacheIndex(const QModelIndex& index) const noe
 	m_itemRenderer.invalidateCacheIndex(index);
 }
 
-void AbstractViewModel::clearSelectedIndexes() noexcept
+void AbstractViewModel::onAttachedModelDataChanged(const QModelIndex& startIndex, const QModelIndex& endIndex, const QVector<int>& roles)
+{
+	Q_UNUSED(roles);
+	QModelIndexList indices;
+	const int columns = startIndex.model()->columnCount();
+	for (int row = startIndex.row(); row <= endIndex.row(); ++row)
+	{
+		// TODO: optimize
+		for (int column = 0; column < columns; ++column)
+		{
+			indices.append(startIndex.model()->index(row, column));
+		}
+	}
+
+	invalidateCacheIndexes(indices);
+
+#ifdef USE_SORTING
+	invalidateCacheIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+	emitNeedToRepaintIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+
+	m_hoveredUnderlyingIndex = getUnderlyingIndex(m_hoveredIndex);
+	invalidateCacheIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+	emitNeedToRepaintIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+#endif
+}
+
+	void AbstractViewModel::clearSelectedIndexes() noexcept
 {
 	m_selectedModelIndexes.clear();
 }
