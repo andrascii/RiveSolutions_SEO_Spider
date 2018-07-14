@@ -2,6 +2,7 @@
 #include "summary_model.h"
 #include "text_renderer.h"
 #include "helpers.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
@@ -161,14 +162,14 @@ void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 
 	if (previousHoveredIndex.isValid())
 	{
-		const QModelIndexList& modelIndexes = model()->makeModelIndexesForRow(previousHoveredIndex.row());
+		const QModelIndexList& modelIndexes = makeRowIndexes(previousHoveredIndex);
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}
 
 	if (hoveredIndex().isValid())
 	{
-		const QModelIndexList& modelIndexes = model()->makeModelIndexesForRow(hoveredIndex().row());
+		const QModelIndexList& modelIndexes = makeRowIndexes(hoveredIndex());
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}

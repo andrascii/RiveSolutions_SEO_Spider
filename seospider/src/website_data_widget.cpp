@@ -8,6 +8,7 @@
 #include "helpers.h"
 #include "application.h"
 #include "command_menu.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
@@ -124,14 +125,7 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected,
 	}
 
 	QModelIndex index = itemSelectionModel->selectedRows().last();
-
-#ifdef USE_SORTING
-	const QSortFilterProxyModel* proxyModel = qobject_cast<const QSortFilterProxyModel*>(index.model());
-	const PageModel* storageModel = proxyModel != nullptr ? qobject_cast<const PageModel*>(proxyModel->sourceModel()) : nullptr;
-	index = proxyModel->mapToSource(index);
-#else
-	const PageModel* storageModel = qobject_cast<const PageModel*>(index.model());
-#endif
+	const PageModel* storageModel = getUnderlyingModelByIndex<PageModel*>(index);;
 	
 	if (storageModel)
 	{

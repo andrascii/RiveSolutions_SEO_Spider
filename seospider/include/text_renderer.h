@@ -24,17 +24,13 @@ protected:
 	virtual QString elidedText(const QString& string, const int width, bool isDecorationValid) const noexcept;
 	virtual void paintDecorator(QPainter* painter, const QModelIndex& index, const QRect& rect) const;
 
-	QPixmap* cached(const QModelIndex& index) const;
-	void clearCacheIfNeeded() const noexcept;
-
 	const IViewModel* viewModel() const noexcept;
 
 private:
 	const IViewModel* m_viewModel;
 
-	mutable std::map<QModelIndex, QPixmap> m_cache;
-
-	int m_cacheSize;
+	
+	mutable QCache<QModelIndex, QPixmap> m_cache;
 };
 
 }

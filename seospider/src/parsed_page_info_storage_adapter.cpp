@@ -2,6 +2,7 @@
 #include "isequenced_storage.h"
 #include "application.h"
 #include "crawler.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
@@ -120,12 +121,7 @@ Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 
 	if (urlColumnIterator != m_availableColumns.end())
 	{
-		int row = index.row();
-		const QSortFilterProxyModel* proxy = dynamic_cast<const QSortFilterProxyModel*>(index.model());
-		if (proxy)
-		{
-			row = proxy->mapToSource(index).row();
-		}
+		int row = getUnderlyingIndex(index).row();
 
 		const QVariant urlItem = ParsedPageInfo(storage[row]).itemValue(*urlColumnIterator);
 		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
@@ -191,6 +187,7 @@ void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, CrawlerEngine::Stor
 	}
 
 	emit parsedPageInfoAdded(row);
+	onRepaintIndicesRange(std::pair(row, row), m_storageType);
 }
 
 void ParsedPageInfoStorageAdapter::onPageRemoved(int row, CrawlerEngine::StorageType type)
@@ -213,7 +210,7 @@ void ParsedPageInfoStorageAdapter::onPageReplaced(int row, CrawlerEngine::Storag
 	emit parsedPageInfoReplaced(row);
 }
 
-void ParsedPageInfoStorageAdapter::onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type) const
+void ParsedPageInfoStorageAdapter::onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type)
 {
 	if (type != m_storageType)
 	{

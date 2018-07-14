@@ -1,10 +1,9 @@
-#include "abstract_table_model.h"
 #include "page_model.h"
 #include "page_view_model.h"
 #include "helpers.h"
-#include "table_view.h"
 #include "url.h"
 #include "svg_renderer.h"
+#include "model_helpers.h"
 
 namespace
 {
@@ -197,9 +196,9 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	if (previousHoveredIndex.isValid())
 	{
 		QModelIndexList modelIndexes;
-		modelIndexes.append(model()->makeModelIndexesForRow(previousHoveredIndex.row()));
-		modelIndexes.append(model()->makeModelIndexesForRow(previousHoveredIndex.row() - 1));
-		
+		modelIndexes.append(makeRowIndexes(previousHoveredIndex));
+		modelIndexes.append(makeRowIndexes(previousHoveredIndex.model()->index(previousHoveredIndex.row() - 1, previousHoveredIndex.column())));
+
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 		AbstractViewModel::resetPreviousHoveredIndex();
 	}
@@ -207,8 +206,8 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	if (hoveredIndex().isValid())
 	{
 		QModelIndexList modelIndexes;
-		modelIndexes.append(model()->makeModelIndexesForRow(hoveredIndex().row()));
-		modelIndexes.append(model()->makeModelIndexesForRow(hoveredIndex().row() - 1));
+		modelIndexes.append(makeRowIndexes(hoveredIndex()));
+		modelIndexes.append(makeRowIndexes(hoveredIndex().model()->index(hoveredIndex().row() - 1, hoveredIndex().column())));
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}
@@ -323,10 +322,27 @@ void PageViewModel::onAttachedModelStorageAdapterChanged()
 void PageViewModel::onAttachedModelDataChanged(const QModelIndex& startIndex, const QModelIndex& endIndex, const QVector<int>& roles)
 {
 	Q_UNUSED(roles);
-	Q_UNUSED(startIndex);
-	Q_UNUSED(endIndex);
+	QModelIndexList indices;
+	const int columns = startIndex.model()->columnCount();
+	for (int row = startIndex.row(); row <= endIndex.row(); ++row)
+	{
+		// TODO: optimize
+		for (int column = 0; column < columns; ++column)
+		{
+			indices.append(startIndex.model()->index(row, column));
+		}
+	}
 
-	AbstractViewModel::invalidateItemViewRendererCache();
+	invalidateCacheIndexes(indices);
+
+#ifdef USE_SORTING
+	invalidateCacheIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+	emitNeedToRepaintIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+
+	m_hoveredUnderlyingIndex = getUnderlyingIndex(m_hoveredIndex);
+	invalidateCacheIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+	emitNeedToRepaintIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+#endif
 }
 
 void PageViewModel::onModelDataWasReset()

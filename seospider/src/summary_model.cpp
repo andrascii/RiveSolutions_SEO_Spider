@@ -107,6 +107,11 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 		{
 			return dataAccessor()->item(index);
 		}
+
+		case AbstractTableModel::underlyingIndexRole:
+		{
+			return index;
+		}
 	}
 
 	return QVariant();

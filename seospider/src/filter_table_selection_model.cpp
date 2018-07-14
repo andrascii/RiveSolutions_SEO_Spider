@@ -1,6 +1,7 @@
 #include "filter_table_selection_model.h"
 #include "isummary_data_accessor.h"
 #include "summary_model.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
@@ -132,12 +133,7 @@ void FilterTableSelectionModel::setCurrentIndex(const QModelIndex& index, QItemS
 
 void FilterTableSelectionModel::init()
 {
-#ifdef USE_SORTING
-	QSortFilterProxyModel* proxyModel = dynamic_cast<QSortFilterProxyModel*>(model());
-	SummaryModel* summaryModel = proxyModel ? dynamic_cast<SummaryModel*>(proxyModel->sourceModel()) : nullptr;
-#else
-	SummaryModel* summaryModel = dynamic_cast<SummaryModel*>(model());
-#endif
+	SummaryModel* summaryModel = getUnderlyingModel<SummaryModel*>(model());
 
 	DEBUG_ASSERT(summaryModel);
 
