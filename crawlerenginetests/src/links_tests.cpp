@@ -380,4 +380,83 @@ TEST(LinksTests, Redirects)
 	env.exec();
 }
 
+TEST(LinksTests, AllNofollow)
+{
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://nofollowlinks.com/allnofollow/index.html"));
+	options.followInternalNofollow = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(4, pages.size());
+
+		auto nofollowPages = cl->storageItems(NofollowLinksStorageType);
+		EXPECT_EQ(1, nofollowPages.size());
+		
+		EXPECT_EQ(3, nofollowPages.at(0)->linksOnThisPage.size());
+		
+		auto blocked = cl->storageItems(BlockedForSEIndexingStorageType);
+		EXPECT_EQ(1, blocked.size());
+
+		auto crawledPages = cl->storageItems(CrawledUrlStorageType);
+		auto crawledIt = std::find_if(crawledPages.begin(), crawledPages.end(), [](const CrawlerEngine::ParsedPage* page)
+		{
+			return page->url.toDisplayString() == QString("http://nofollowlinks.com/allnofollow/nofollow.html");
+		});
+
+		EXPECT_NE(crawledPages.end(), crawledIt);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, PartialNofollow)
+{
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://nofollowlinks.com/partialnofollow/index.html"));
+	options.followInternalNofollow = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(5, pages.size());
+
+		auto nofollowPages = cl->storageItems(NofollowLinksStorageType);
+		EXPECT_EQ(0, nofollowPages.size());
+
+		auto blocked = cl->storageItems(BlockedForSEIndexingStorageType);
+		EXPECT_EQ(0, blocked.size());
+
+		auto it = std::find_if(pages.begin(), pages.end(), [](const CrawlerEngine::ParsedPage* page)
+		{
+			return page->title == QString("Partial nofollow");
+		});
+
+		EXPECT_NE(pages.end(), it);
+
+		auto crawledPages = cl->storageItems(CrawledUrlStorageType);
+		auto crawledIt = std::find_if(crawledPages.begin(), crawledPages.end(), [](const CrawlerEngine::ParsedPage* page)
+		{
+			return page->url.toDisplayString() == QString("http://nofollowlinks.com/partialnofollow/nofollow.html");
+		});
+
+		EXPECT_NE(crawledPages.end(), crawledIt);
+		QString title = (*crawledIt)->title;
+		EXPECT_EQ(QString("Partial nofollow"), title);
+
+		// TODO: check another storages
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }
