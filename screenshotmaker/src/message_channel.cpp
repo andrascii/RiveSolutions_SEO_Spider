@@ -41,7 +41,7 @@ void MessageChannel::onScreenshotCreated()
 	m_pipeServer->writeData(msg);
 	m_pipeServer->closeConnection();
 
-	qDebug("Send response about created screenshot");
+	qDebug("Response sent");
 }
 
 void MessageChannel::onConnectionEstablished()
