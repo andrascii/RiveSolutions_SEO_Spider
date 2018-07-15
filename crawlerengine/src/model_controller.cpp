@@ -715,7 +715,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			setLinksForResourcePageAndLoadedPage(existingResource, workerResult, resource);
 
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
-			
+
 			addIndexingBlockingPage(existingResource, resource);
 		}
 		else

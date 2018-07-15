@@ -325,7 +325,7 @@ CrawlerWorkerThread::ShedulePagesResult CrawlerWorkerThread::handlePageLinkList(
 
 	const auto isTooLongLink = [this](const ResourceOnPage& resource)
 	{
-		return resource.link.url.toDisplayString().length() > m_optionsData.limitMaxUrlLength;
+		return m_optionsData.limitMaxUrlLength == 0 ? false : resource.link.url.toDisplayString().length() > m_optionsData.limitMaxUrlLength;
 	};
 
 	ShedulePagesResult result;
