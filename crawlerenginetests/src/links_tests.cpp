@@ -97,7 +97,6 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 			}
 		};
 		
-		//std::for_each(pendingPages.begin(), pendingPages.end(), checkLinks);
 		std::for_each(crawledPages.begin(), crawledPages.end(), checkLinks);
 	};
 
@@ -151,7 +150,6 @@ TEST(LinksTests, SubdomainsMustNotBeLoaded)
 			}
 		};
 
-		//std::for_each(pendingPages.begin(), pendingPages.end(), checkLinks);
 		std::for_each(crawledPages.begin(), crawledPages.end(), checkLinks);
 	};
 
@@ -396,9 +394,9 @@ TEST(LinksTests, AllNofollow)
 
 		auto nofollowPages = cl->storageItems(NofollowLinksStorageType);
 		EXPECT_EQ(1, nofollowPages.size());
-		
-		EXPECT_EQ(3, nofollowPages.at(0)->linksOnThisPage.size());
-		
+
+		EXPECT_EQ(3, nofollowPages.at(0)->linksToThisPage.size());
+
 		auto blocked = cl->storageItems(BlockedForSEIndexingStorageType);
 		EXPECT_EQ(1, blocked.size());
 
