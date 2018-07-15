@@ -7,6 +7,7 @@
 #include "application.h"
 #include "widget_helpers.h"
 #include "cursor_factory.h"
+#include "statistic_counter.h"
 
 namespace SeoSpider
 {
@@ -39,6 +40,9 @@ ApplicationSettingsDialog::ApplicationSettingsDialog(QWidget* parent)
 
 void ApplicationSettingsDialog::showEvent(QShowEvent*)
 {
+	StatisticCounter showCounter("ApplicationSettingsDialogShow");
+	showCounter.increment();
+
 	reloadSettingsSlot();
 	m_ui.applyButton->setEnabled(m_somethingChanged);
 

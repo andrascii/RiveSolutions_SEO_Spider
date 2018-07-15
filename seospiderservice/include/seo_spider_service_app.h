@@ -34,7 +34,7 @@ public:
 
 
 	CounterContainer& counterContainer();
-	static QString statisticsFilePath();
+	QString statisticsFilePath();
 
 protected:
 	virtual void timerEvent(QTimerEvent*) override;
@@ -45,7 +45,7 @@ private:
 	QString commandLineParameter(int num) const noexcept;
 	bool makeDump(HANDLE processHandle, const void* threadId, const void* exceptionInfo, qint64 exceptionSize) noexcept;
 	void writeSysInfoFile(const QString& fileName) const;
-	void writeStatisticsFile(const QString& fileName) const;
+	bool writeStatisticsFile(const QString& fileName) const;
 
 	Q_SLOT void sendReports();
 	static QString dumpsPath();
@@ -81,6 +81,8 @@ private:
 
 	CounterContainer m_counterContainer;
 	StatisticsUploader* m_statisticsUploader;
+
+	QString m_statisticsFilePath;
 };
 
 }
