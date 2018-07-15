@@ -30,7 +30,11 @@ inline QModelIndex getUnderlyingIndex(const QModelIndex& index)
 		return index;
 	}
 
-	const QModelIndex underlyingModelIndex = qvariant_cast<QModelIndex>(index.data(AbstractTableModel::underlyingIndexRole));
+	// slow but safe: sometimes index is not mapped to source model ant it causes crash
+	// sad but true: we can't just use index, it can be unmapped.
+	// TODO: check it in the future version of Qt
+	const QModelIndex fixedindex = index.model()->index(index.row(), index.column());
+	const QModelIndex underlyingModelIndex = qvariant_cast<QModelIndex>(fixedindex.data(AbstractTableModel::underlyingIndexRole));
 	DEBUG_ASSERT(underlyingModelIndex.isValid());
 	return underlyingModelIndex;
 #else
