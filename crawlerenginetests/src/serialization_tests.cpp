@@ -114,7 +114,7 @@ TEST(SerializationTests, OptionsSerialization)
 	TestEnvironment env;
 
 	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
-	options.limitMaxUrlLength = 10;
+	options.limitMaxUrlLength = 150;
 	options.limitSearchTotal = 10;
 	options.limitTimeout = 10;
 	options.maxRedirectsToFollow = 10;
@@ -150,7 +150,9 @@ TEST(SerializationTests, OptionsSerialization)
 
 	const auto testFunction = [crawler = env.crawler(), &options]()
 	{
-		auto pages = crawler->waitForAllCrawledPageReceived(5);
+		crawler->waitForCrawlingDone();
+		auto pages = crawler->storageItems(StorageType::CrawledUrlStorageType);
+
 		EXPECT_EQ(pages.size(), 5);
 
 		crawler->checkSequencedDataCollectionConsistency();
