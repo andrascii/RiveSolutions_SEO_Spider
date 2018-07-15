@@ -115,8 +115,7 @@ void LoggerDebugWindow::onCommandReceived(Common::Command command)
 		}
 		case Common::Command::Counter:
 		{
-			//TODO: need to remove that dermo
-			level = Common::LogLevel::CounterLog;
+			return;
 		}
 	}
 

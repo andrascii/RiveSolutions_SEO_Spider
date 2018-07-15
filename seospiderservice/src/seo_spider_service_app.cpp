@@ -27,6 +27,7 @@ SeoSpiderServiceApp::SeoSpiderServiceApp(int& argc, char** argv)
 	, m_pendingReportsCount(0)
 	, m_compressionIsActive(false)
 	, m_statisticsUploader(new StatisticsUploader(this))
+	, m_statisticsFilePath(QString())
 {
 	setWindowIcon(QIcon(":/images/favicon.ico"));
 
@@ -187,7 +188,7 @@ void SeoSpiderServiceApp::writeSysInfoFile(const QString& fileName) const
 	}
 }
 
-void SeoSpiderServiceApp::writeStatisticsFile(const QString& fileName) const
+bool SeoSpiderServiceApp::writeStatisticsFile(const QString& fileName) const
 {
 	QFile statisticsFile(fileName);
 
@@ -198,23 +199,34 @@ void SeoSpiderServiceApp::writeStatisticsFile(const QString& fileName) const
 
 		QVariantMap variantMap;
 
-		//
-		//TODO: check for empty maps
-		//
 		QMapIterator<QString, unsigned long long> iter(m_counterContainer);
 		while (iter.hasNext()) 
 		{
 			iter.next();
-			variantMap.insert(iter.key(), iter.value());
+			if (iter.value())
+			{
+				variantMap.insert(iter.key(), iter.value());
+			}
 		}
 
-		QJsonDocument json = QJsonDocument::fromVariant(variantMap);
+		if (!variantMap.isEmpty())
+		{
+			QJsonDocument json = QJsonDocument::fromVariant(variantMap);
 
-		out << json.toJson();
+			out << json.toJson();
+
+			statisticsFile.flush();
+			statisticsFile.close();
+
+			return true;
+		}
 
 		statisticsFile.flush();
 		statisticsFile.close();
+		statisticsFile.remove();
 	}
+
+	return false;
 }
 
 void SeoSpiderServiceApp::sendReports()
@@ -299,10 +311,12 @@ QString SeoSpiderServiceApp::statisticsFilePath()
 		dir.mkpath(path);
 	}
 
-	//
-	//TODO: add quid for filename
-	//
-	return QDir::cleanPath(path + QString("/statistics.json"));
+	if(m_statisticsFilePath.isEmpty())
+	{
+		m_statisticsFilePath = QDir::cleanPath(path + QString("/statistics_%1.json").arg(QUuid::createUuid().toString()));
+	}
+
+	return m_statisticsFilePath;
 }
 
 void SeoSpiderServiceApp::onSendingFinished(const QString& mailId, int result, const QByteArray& log)
@@ -380,8 +394,10 @@ void SeoSpiderServiceApp::onServiceClose()
 		processEvents();
 	}
 
-	writeStatisticsFile(statisticsFilePath());
-	m_statisticsUploader->startUploading();
+	if (writeStatisticsFile(statisticsFilePath()))
+	{
+		m_statisticsUploader->startUploading();
+	}
 
 	QTimer::singleShot(s_quitTimer, this, SLOT(quit()));
 }
