@@ -94,7 +94,7 @@ void FlashResourcesParser::parseFlashResourcesV2(ParsedPagePtr& page) noexcept
 
 	DEBUG_ASSERT(page->baseUrl.isValid());
 
-	std::vector<IHtmlNodeCountedPtr> embedTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdEmbed);
+	std::vector<IHtmlNodeCountedPtr> objectTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdObject);
 
 	const auto isBadEmbedTag = [](const IHtmlNodeCountedPtr& embedTag)
 	{
@@ -109,12 +109,12 @@ void FlashResourcesParser::parseFlashResourcesV2(ParsedPagePtr& page) noexcept
 		return !hasValidTypeAttributeValue;
 	};
 
-	embedTags.erase(std::remove_if(embedTags.begin(), embedTags.end(), isBadEmbedTag), embedTags.end());
+	objectTags.erase(std::remove_if(objectTags.begin(), objectTags.end(), isBadEmbedTag), objectTags.end());
 
 	std::vector<Url> dataAttributeUrls;
-	dataAttributeUrls.reserve(embedTags.size());
+	dataAttributeUrls.reserve(objectTags.size());
 
-	for (const IHtmlNodeCountedPtr& embedTag : embedTags)
+	for (const IHtmlNodeCountedPtr& embedTag : objectTags)
 	{
 		dataAttributeUrls.emplace_back(embedTag->attribute("data").trimmed().remove(m_regExp));
 	}
