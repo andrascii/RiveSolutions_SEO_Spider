@@ -6,12 +6,12 @@ namespace SeoSpider
 
 QString SoftwareBranding::organizationName() const
 {
-	return "Rive Solutions";
+	return "RiveSolution";
 }
 
 QString SoftwareBranding::productName() const
 {
-	return "Seo Spider";
+	return "SEO Spider";
 }
 
 QPixmap SoftwareBranding::brandingLogoImage() const

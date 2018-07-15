@@ -41,6 +41,8 @@ void StatisticsUploader::onUploadFinished(QNetworkReply* reply)
 	if (!reply->error())
 	{
 		m_statisticsFile.close();
+		m_statisticsFile.remove();
+
 		reply->deleteLater();
 	}
 
