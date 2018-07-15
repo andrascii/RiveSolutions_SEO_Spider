@@ -392,6 +392,15 @@ void TableView::onLayoutChanged(const QList<QPersistentModelIndex>& indices, QAb
 	if (indices.isEmpty() && hint == QAbstractItemModel::VerticalSortHint)
 	{
 		viewModel()->invalidateItemViewRendererCache();
+		
+
+#ifdef USE_SORTING
+		// seems like a bug in QSortProxyFiltermodel, so we need a costyl here
+		// after resorting each row has undefined height, but it should have a specific height: see applyRowHeightToRowRange
+		// TODO: fix it in a proper way
+		// check it in the future versions of Qt, probably it will be fixed
+		applyRowHeight();
+#endif;;
 	}
 }
 
