@@ -23,7 +23,7 @@ SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QOb
 {
 	initializeRenderers();
 
-	connect(model, &SummaryModel::internalDataChanged, this, &SummaryViewModel::onDataWereReset);
+	VERIFY(connect(model, SIGNAL(internalDataChanged()), this, SLOT(onDataWereReset())));
 	VERIFY(connect(model, &SummaryModel::dataChanged, this, &SummaryViewModel::onAttachedModelDataChanged));
 }
 

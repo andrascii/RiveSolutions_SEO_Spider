@@ -74,6 +74,7 @@ void SummaryModel::onAboutBeginClearingData()
 
 void SummaryModel::onAboutEndClearingData()
 {
+	emit internalDataChanged();
 	endResetModel();
 }
 

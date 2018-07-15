@@ -229,6 +229,7 @@ void PageModel::onAboutBeginClearingData()
 
 void PageModel::onAboutEndClearingData()
 {
+	emit internalDataChanged();
 	endResetModel();
 }
 
