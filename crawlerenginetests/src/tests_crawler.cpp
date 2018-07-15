@@ -168,11 +168,10 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 
 		for (const ParsedPage* page : storagePages)
 		{
-			const auto pageIt = std::find(std::begin(crawledPages), std::end(crawledPages), page);
-			const auto pageBlocked = std::find(std::begin(blockedForIndexing), std::end(blockedForIndexing), page) != std::end(blockedForIndexing);
+			const auto pageWasCrawled = std::find(std::begin(crawledPages), std::end(crawledPages), page) != std::end(crawledPages);
+			const auto pageWasBlocked = std::find(std::begin(blockedForIndexing), std::end(blockedForIndexing), page) != std::end(blockedForIndexing);
 
-			const bool pageExists = pageIt != std::end(crawledPages);
-			EXPECT_EQ(true, pageExists || page->resourceType == ResourceType::ResourceOther || pageBlocked);
+			EXPECT_EQ(true, pageWasCrawled || page->resourceType == ResourceType::ResourceOther || pageWasBlocked);
 
 			for (const ResourceLink& link : page->linksOnThisPage)
 			{
