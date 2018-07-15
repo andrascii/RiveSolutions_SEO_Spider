@@ -1,6 +1,6 @@
 namespace CrawlerEngineTests
 {
-	
+
 TEST(H1AndH2Tests, EmptyH1)
 {
 	// empty-h1.html -> empty-h1-2.html
@@ -10,9 +10,11 @@ TEST(H1AndH2Tests, EmptyH1)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForParsedPageReceived(CrawlerEngine::StorageType::MissingH1UrlStorageType, 2, 10, "Waiting for 2 empty h1 pages");
 		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
+
+		auto pages = cl->storageItems(CrawlerEngine::StorageType::MissingH1UrlStorageType);
+
 		EXPECT_EQ(2, pages.size());
 		EXPECT_EQ(QString(), pages[0]->firstH1);
 		EXPECT_EQ(QString(), pages[1]->firstH1);
