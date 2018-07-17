@@ -53,7 +53,7 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 		return;
 	}
 
-	TableView* tableView = new TableView(stackedWidget, false);
+	TableView* tableView = new TableView(stackedWidget, false, true);
 	m_models[pageDataType] = new PageModel(this);
 	
 	tableView->setModel(m_models[pageDataType]);
