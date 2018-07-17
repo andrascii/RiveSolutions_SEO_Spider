@@ -78,6 +78,8 @@ public:
 private slots:
 	void onAttachedModelStorageAdapterChanged();
 	void onModelDataWasReset();
+	void onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last);
+	void onRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow);
 
 private:
 	void initializeRenderers();
