@@ -48,6 +48,7 @@ void BackgroundRenderer::invalidateCache() const
 
 void BackgroundRenderer::setCacheSize(int cacheSize)
 {
+	ASSERT(cacheSize > 0);
 	m_cache.setMaxCost(cacheSize);
 }
 

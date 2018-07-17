@@ -23,7 +23,7 @@ class TableView : public QTableView, public IView
 	Q_OBJECT
 
 public:
-	explicit TableView(QWidget* parent, bool supportColumSpans);
+	explicit TableView(QWidget* parent, bool supportColumSpans, bool sortingEnabled);
 
 	virtual void setModel(QAbstractItemModel* model) override;
 	IViewModel* viewModel() const noexcept;

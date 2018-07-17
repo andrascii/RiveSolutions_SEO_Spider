@@ -9,7 +9,7 @@
 namespace SeoSpider
 {
 
-TableView::TableView(QWidget* parent, bool supportColumSpans)
+TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnabled)
 	: QTableView(parent)
 	, m_model(nullptr)
 	, m_viewModel(nullptr)
@@ -21,6 +21,7 @@ TableView::TableView(QWidget* parent, bool supportColumSpans)
 	, m_sortFilterProxyModel(new QSortFilterProxyModel)
 #endif
 {
+	Q_UNUSED(sortingEnabled);
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -29,7 +30,11 @@ TableView::TableView(QWidget* parent, bool supportColumSpans)
 	horizontalHeader()->setSectionsMovable(true);
 	setShowGrid(false);
 #ifdef USE_SORTING	
-	setSortingEnabled(true);
+	if (sortingEnabled)
+	{
+		setSortingEnabled(true);
+		QTableView::sortByColumn(0, Qt::AscendingOrder);
+	}
 #endif
 
 	qRegisterMetaType<QModelIndexList>();

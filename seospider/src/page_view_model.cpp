@@ -35,6 +35,8 @@ PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, QObject* par
 	VERIFY(connect(model, &PageModel::internalDataChanged, this, &PageViewModel::onAttachedModelStorageAdapterChanged));
 	VERIFY(connect(model, &PageModel::dataChanged, this, &PageViewModel::onAttachedModelDataChanged));
 	VERIFY(connect(model, &PageModel::modelReset, this, &PageViewModel::onModelDataWasReset));
+	VERIFY(connect(model, &PageModel::rowsAboutToBeRemoved, this, &PageViewModel::onRowsAboutToBeRemoved));
+	VERIFY(connect(model, &PageModel::rowsAboutToBeMoved, this, &PageViewModel::onRowsAboutToBeMoved));
 }
 
 int PageViewModel::marginTop(const QModelIndex& index) const noexcept
@@ -316,11 +318,31 @@ void PageViewModel::onAttachedModelStorageAdapterChanged()
 
 	AbstractViewModel::clearSelectedIndexes();
 	AbstractViewModel::invalidateItemViewRendererCache();
-	AbstractViewModel::setItemRendererCacheSize(static_cast<int>(model->columnCount() * model->columnCount()));
+	const int cacheSize = static_cast<int>(model->columnCount() * model->columnCount());
+	AbstractViewModel::setItemRendererCacheSize(std::max(cacheSize, 1));
 }
 
 void PageViewModel::onModelDataWasReset()
 {
+	invalidateItemViewRendererCache();
+}
+
+void PageViewModel::onRowsAboutToBeRemoved(const QModelIndex& parent, int first, int last)
+{
+	Q_UNUSED(parent);
+	Q_UNUSED(first);
+	Q_UNUSED(last);
+	invalidateItemViewRendererCache();
+}
+
+void PageViewModel::onRowsAboutToBeMoved(const QModelIndex& sourceParent, int sourceStart, int sourceEnd,
+	const QModelIndex& destinationParent, int destinationRow)
+{
+	Q_UNUSED(sourceParent);
+	Q_UNUSED(sourceStart);
+	Q_UNUSED(sourceEnd);
+	Q_UNUSED(destinationParent);
+	Q_UNUSED(destinationRow);
 	invalidateItemViewRendererCache();
 }
 

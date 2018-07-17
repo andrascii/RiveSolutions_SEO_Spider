@@ -70,6 +70,7 @@ void TextRenderer::invalidateCache() const
 
 void TextRenderer::setCacheSize(int cacheSize)
 {
+	ASSERT(cacheSize > 0);
 	m_cache.setMaxCost(cacheSize);
 }
 
