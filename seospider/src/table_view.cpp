@@ -324,6 +324,12 @@ void TableView::initSpans()
 		for (int column = 0; column < columns;)
 		{
 			QSize colSpan = model()->span(model()->index(row, column));
+
+			if (colSpan.width() == -1 && colSpan.height() == -1)
+			{
+				break;
+			}
+
 			setSpan(row, column, colSpan.height(), colSpan.width());
 
 			column += colSpan.width();
