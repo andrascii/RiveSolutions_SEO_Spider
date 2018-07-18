@@ -20,11 +20,13 @@ SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QOb
 	, m_textFont("Lato", 10, QFont::Normal)
 	, m_itemRenderer(this)
 	, m_parentView(parentView)
+	, m_windowBlocked(false)
 {
 	initializeRenderers();
 
 	VERIFY(connect(model, SIGNAL(internalDataChanged()), this, SLOT(onDataWereReset())));
 	VERIFY(connect(model, &SummaryModel::dataChanged, this, &SummaryViewModel::onAttachedModelDataChanged));
+	parentView->installEventFilter(this);
 }
 
 int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
@@ -53,7 +55,7 @@ QPixmap SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
 
 	const QPixmap& originalPixmap = model->dataAccessor()->pixmap(index);
 
-	if (!m_parentView->isEnabled())
+	if (m_windowBlocked)
 	{
 		QIcon icon(originalPixmap);
 
@@ -176,6 +178,17 @@ void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	}
 }
 
+
+bool SummaryViewModel::eventFilter(QObject* object, QEvent* event)
+{
+	if (event->type() == QEvent::WindowActivate || event->type() == QEvent::WindowDeactivate)
+	{
+		m_windowBlocked = QApplication::activeModalWidget() != nullptr;
+		invalidateItemViewRendererCache();
+	}
+
+	return AbstractViewModel::eventFilter(object, event);
+}
 
 const QColor& SummaryViewModel::backgroundColor() const noexcept
 {
