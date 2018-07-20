@@ -65,7 +65,7 @@ StorageAdapterType SummaryModel::storageAdapterType(const QModelIndex& index) co
 void SummaryModel::formActualUpdateDataSignal(int row, int column, Qt::ItemDataRole role)
 {
 	Q_UNUSED(column);
-	Q_EMIT dataChanged(index(row, 0), index(row, columnCount()), QVector<int>() << role);
+	Q_EMIT dataChanged(index(row, 0), index(row, columnCount() - 1), QVector<int>() << role);
 }
 
 void SummaryModel::onAboutBeginClearingData()
