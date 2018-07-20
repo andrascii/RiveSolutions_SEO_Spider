@@ -47,15 +47,21 @@ void Executor::takeScreenshot(const QUrl& url)
 
 	m_webEngineView->resize(s_browserWindowSize);
 	m_webEngineView->load(url);
+
+	qDebug("Loading page started");
 }
 
 void Executor::onLoadingDone(bool ok)
 {
 	if (!ok)
 	{
+		qDebug("Loading page failed");
+
 		saveScreenshot(QPixmap());
 		return;
 	}
+
+	qDebug("Page loaded");
 
 	m_webEngineView->showMinimized();
 	m_timer->start();
@@ -63,6 +69,8 @@ void Executor::onLoadingDone(bool ok)
 
 void Executor::onReadyToRenderPixmap()
 {
+	qDebug("Rendering...");
+
 	QPixmap pixmap(s_browserWindowSize);
 	QPainter painter(&pixmap);
 
@@ -71,11 +79,15 @@ void Executor::onReadyToRenderPixmap()
 
 	pixmap = pixmap.scaledToWidth(s_browserWindowSize.width(), Qt::SmoothTransformation);
 
+	qDebug("Screenshot successfully rendered!");
+
 	saveScreenshot(pixmap);
 }
 
 void Executor::saveScreenshot(const QPixmap& pixmap)
 {
+	qDebug("Screenshot saved to shared memory");
+
 	QByteArray pixmapData;
 	QBuffer buffer(&pixmapData);
 	pixmap.save(&buffer, "png");

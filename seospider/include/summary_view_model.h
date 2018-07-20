@@ -44,6 +44,8 @@ public:
 	virtual const QColor& gridLineColor(const QModelIndex& index) const noexcept override;
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
 
+	virtual bool eventFilter(QObject* object, QEvent* event) override;
+
 	const QColor& backgroundColor() const noexcept;
 	Q_SLOT void setBackgroundColor(const QColor& color) noexcept;
 	Q_SIGNAL void backgroundColorChanged();
@@ -102,6 +104,7 @@ private:
 	ItemRenderer m_itemRenderer;
 
 	QWidget* m_parentView;
+	bool m_windowBlocked;
 };
 
 }
