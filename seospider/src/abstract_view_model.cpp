@@ -226,6 +226,7 @@ void AbstractViewModel::onAttachedModelDataChanged(const QModelIndex& startIndex
 {
 	Q_UNUSED(roles);
 	QModelIndexList indices;
+	DEBUG_ASSERT(startIndex.isValid() && endIndex.isValid());
 	const int columns = startIndex.model()->columnCount();
 	for (int row = startIndex.row(); row <= endIndex.row(); ++row)
 	{
@@ -235,6 +236,8 @@ void AbstractViewModel::onAttachedModelDataChanged(const QModelIndex& startIndex
 			indices.append(startIndex.model()->index(row, column));
 		}
 	}
+
+	DEBUG_ASSERT(indices.size() > 0);
 
 	invalidateCacheIndexes(indices);
 
