@@ -20,6 +20,7 @@ public:
 
 	void setStorageAdapterType(StorageAdapterType storageAdapterType);
 
+	void setPageDataWidget(PageDataWidget* dataWidget);
 	PageDataWidget* pageDataWidget() const noexcept;
 
 	void selectParsedPage(int row) const noexcept;

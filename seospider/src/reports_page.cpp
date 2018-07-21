@@ -2,8 +2,6 @@
 #include "application.h"
 #include "preferences.h"
 #include "crawler.h"
-#include "page_factory.h"
-#include "header_controls_container.h"
 #include "helpers.h"
 #include "inotification_service.h"
 #include "service_locator.h"
@@ -22,7 +20,6 @@ ReportsPage::ReportsPage(QWidget* parent)
 	, m_placeHolderLabel(new QLabel(this))
 	, m_reportDataProvider(theApp->crawler()->sequencedDataCollection())
 	, m_updateTimerId(0)
-	, m_saveToPdfAction(new QAction(tr("Export to PDF"), this))
 	, m_scrollArea(new QScrollArea(this))
 {
 	theApp->installEventFilter(this);
@@ -61,15 +58,9 @@ ReportsPage::ReportsPage(QWidget* parent)
 
 	setReportType(ReportTypeBrief);
 
-	m_saveToPdfAction->setIcon(SvgRenderer::render(QStringLiteral(":/images/pdf.svg"), 25, 25));
-
 	VERIFY(connect(theApp->preferences(), &Preferences::companyNameChanged, this, &ReportsPage::updateContent));
-	VERIFY(connect(m_saveToPdfAction, &QAction::triggered, this, &ReportsPage::exportToPdf));
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(crawlerStateChangedSlot(int))));
 	VERIFY(connect(theApp->crawler(), &Crawler::onAboutClearData, this, &ReportsPage::crawlerDataCleared));
-
-	HeaderControlsContainer* controlsContainer = theApp->headerControlsContainer();
-	controlsContainer->addAction(m_saveToPdfAction, PageFactory::AuditReportPage);
 
 	updateLayout(m_reportType, true);
 	m_stackedWidget->setCurrentWidget(m_placeHolderLabel);

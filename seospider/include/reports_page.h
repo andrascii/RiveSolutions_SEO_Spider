@@ -25,6 +25,8 @@ public:
 	void updateLayout(ReportType report, const bool rebuildLayout);
 	void setReportType(ReportType reportType);
 
+	Q_SLOT void exportToPdf();
+
 protected:
 	virtual void timerEvent(QTimerEvent* event) override;
 	virtual void showEvent(QShowEvent* event) override;
@@ -36,11 +38,7 @@ private:
 	void changePlaceholderInContent(const QByteArray& placeholder, const QVariant& value, QByteArray& content) const;
 
 	Q_SLOT void updateContent();
-
-	Q_SLOT void exportToPdf();
-
 	Q_SLOT void crawlerStateChangedSlot(int state);
-
 	Q_SLOT void crawlerDataCleared();
 
 	void doExport(IReportExporter* exporter) const;
@@ -58,7 +56,6 @@ private:
 	ReportDataProvider m_reportDataProvider;
 	int m_updateTimerId;
 
-	QAction* m_saveToPdfAction;
 	QFrame* m_viewFrame;
 	QFrame* m_viewFrameBody;
 	QScrollArea* m_scrollArea;

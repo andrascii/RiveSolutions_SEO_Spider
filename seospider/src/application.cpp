@@ -14,7 +14,6 @@
 #include "internet_connection_notification_manager.h"
 #include "action_registry.h"
 #include "action_keys.h"
-#include "header_controls_container.h"
 #include "main_window.h"
 #include "software_branding.h"
 #include "storage_adapter_factory.h"
@@ -48,7 +47,6 @@ Application::Application(int& argc, char** argv)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
-	, m_headerControlsContainer(new HeaderControlsContainer)
 {
 	Common::SmtpSender::init();
 
@@ -120,11 +118,6 @@ void Application::removeKeyFromSettings(const QByteArray& key)
 QStringList Application::allKeys() const
 {
 	return settings()->allKeys();
-}
-
-HeaderControlsContainer* Application::headerControlsContainer() const noexcept
-{
-	return m_headerControlsContainer.get();
 }
 
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "requester_wrapper.h"
-#include "page_factory.h"
-
 
 namespace SeoSpider
 {
@@ -26,7 +24,6 @@ signals:
 	void resized();
 	void moved();
 	void windowStateChanged();
-	void showPage(PageFactory::Page);
 
 public slots:
 	void showSitemapCreatorDialog();
@@ -36,8 +33,6 @@ public slots:
 	void closeFile();
 	void openRecentFile();
 	void saveFileAndClearData();
-	void exportFilterData();
-	void onChangeGroupingAuditInfo(QAction* action);
 	void showApplicationSettingsDialog(const QByteArray& settingsPageName = QByteArray());
 	void onCrawlingFinished() const;
 	void showShadedOverlay();
@@ -46,8 +41,6 @@ public slots:
 	int showMessageBoxDialog(const QString& title, 
 		const QString& message,
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel) const;
-
-	void showContentFramePage(PageFactory::Page page);
 
 protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
@@ -58,7 +51,6 @@ protected:
 private:
 	void openFile(const QString& filePath);
 	void createActions();
-	void createHeaderPageDependentActions();
 	void createAndSetCentralWidget();
 	void registerSettingsPages() const;
 	void clearDataOnSerializationDone();

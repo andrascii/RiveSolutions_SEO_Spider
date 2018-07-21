@@ -1,5 +1,6 @@
 #pragma once
 
+#include "abstract_page.h"
 #include "summary_data_accessor_factory.h"
 #include "storage_type.h"
 #include "filter_info_factory.h"
@@ -11,41 +12,31 @@ class WebSiteDataWidget;
 class TableView;
 class SummaryModel;
 class SummaryViewModel;
-class AbstractWebSiteDataWidget;
+class FilterInfoWidget;
 
-class FilterInfoWidget : public QFrame
-{
-	Q_OBJECT
-public:
-	FilterInfoWidget(QWidget* parent);
-
-	void setFilterInfo(const FilterInfo& filterInfo);
-
-private slots:
-	void onPropertyChanged();
-
-private:
-	QLabel* m_title;
-	QLabel* m_description;
-	FilterInfo m_filterInfo;
-};
-
-class FilterWidget : public QFrame
+class AbstractFilterPage : public QFrame, public AbstractPage
 {
 	Q_OBJECT
 
 public:
-	FilterWidget(WebSiteDataWidget* webSiteDataWidget, QWidget* parent = nullptr);
+	AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWidget* parent = nullptr);
 
 	void setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType);
 	void selectFilter(CrawlerEngine::StorageType type) const;
 	void selectParsedPage(int row);
 	void selectTab(int pageDataType);
+	void setInfoCategory(StorageAdapterType category);
+	const SummaryModel* summaryFilterModel() const;
+	WebSiteDataWidget* websiteDataWidget();
+
 	void enableSortableFilter();
 	void enablePlainFilter();
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
+
+	virtual void hasFilterSelection(int row) = 0;
+	virtual void hasNoFilterSelection() = 0;
 
 private slots:
 	void adjustSize();
