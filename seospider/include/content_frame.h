@@ -1,6 +1,6 @@
 #pragma once
 
-#include "page_factory.h"
+#include "ipage.h"
 
 namespace SeoSpider
 {
@@ -14,16 +14,17 @@ class ContentFrame : public QFrame
 public:
 	ContentFrame(QWidget* parent = nullptr);
 
-	void addPage(PageFactory::Page page, QWidget* widget, const QString& buttonText, const QIcon& buttonIcon = QIcon(), bool setSelected = false);
-	QWidget* page(PageFactory::Page page) const noexcept;
+	void addPage(IPage* page, bool setSelected = false);
+	IPage* page(IPage::Type pageType) const;
+	QWidget* pageWidget(IPage::Type pageType) const;
 
 public slots:
-	void showPage(PageFactory::Page page);
+	void showPage(IPage::Type pageType);
 
 private slots:
 	void handleNavigationPanelButtonClick();
 	void onStateChanged(int state);
-	void onDynamicControlsChanged(int page);
+	void onDynamicControlsChanged(IPage::Type pageType);
 
 private:
 	void initializeNavigationPanelWidget();
@@ -33,12 +34,12 @@ private:
 	{
 		QWidget* navigationPanelWidget;
 
-		std::map<PageFactory::Page, QPushButton*> pushButtons;
+		std::map<IPage::Type, QPushButton*> pushButtons;
 	};
 
 	QStackedWidget* m_stackedWidget;
 	
-	QMap<PageFactory::Page, int> m_pageIndexes;
+	QMap<IPage::Type, int> m_pageIndexes;
 
 	NavigationPanelControls m_navigationPanel;
 
@@ -46,7 +47,7 @@ private:
 
 	HeaderDecorationWidget* m_decorationWidget;
 
-	PageFactory::Page m_activePage;
+	IPage::Type m_activePage;
 
 	QHBoxLayout* m_dynamicControlsLayout;
 };

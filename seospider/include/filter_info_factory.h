@@ -17,7 +17,6 @@ class FilterInfoFactory
 {
 public:
 	std::optional<FilterInfo> filterInfo(StorageAdapterType filter);
-
 };
 
 }

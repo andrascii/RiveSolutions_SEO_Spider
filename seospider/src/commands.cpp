@@ -10,14 +10,15 @@
 #include "robots_txt_loader.h"
 #include "helpers.h"
 #include "crawler.h"
-#include "filter_widget.h"
 #include "content_frame.h"
 #include "page_data_widget.h"
 #include "svg_renderer.h"
 #include "wait_operation_frame.h"
+#include "all_resources_page.h"
 
 namespace
 {
+
 using namespace CrawlerEngine;
 
 StorageType getPageStorageType(const ParsedPage* page)
@@ -727,19 +728,21 @@ const char* GoToLinksOnThisPageCommand::description() const noexcept
 
 void GoToLinksOnThisPageCommand::execute()
 {
-	theApp->mainWindow()->showContentFramePage(PageFactory::Page::AllResourcesPage);
-	
-	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
-	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+	IPage* page = theApp->mainWindow()->contentFrame()->page(IPage::AllResourcesPage);
+	AllResourcesPage* allResourcesPage = Common::Helpers::fast_cast<AllResourcesPage*>(page);
+
+	DEBUG_ASSERT(allResourcesPage);
+
+	page->showMe();
 
 	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
 	
-	filterWidget->selectFilter(type);
-	filterWidget->selectTab(PageDataWidget::PageDataType::LinksOnThisPageType);
+	allResourcesPage->selectFilter(type);
+	allResourcesPage->selectTab(PageDataWidget::PageDataType::LinksOnThisPageType);
 	
 	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
 	{
-		filterWidget->selectParsedPage(index);
+		allResourcesPage->selectParsedPage(index);
 	}
 	else
 	{
@@ -753,13 +756,17 @@ bool GoToLinksOnThisPageCommand::canExecute() const noexcept
 
 	switch(type)
 	{
-	case CrawlerEngine::ResourceType::ResourceImage:
-	case CrawlerEngine::ResourceType::ResourceVideo:
-	case CrawlerEngine::ResourceType::ResourceFlash:
-	case CrawlerEngine::ResourceType::ResourceOther:
-		return false;
-	default:
-		return true;
+		case CrawlerEngine::ResourceType::ResourceImage:
+		case CrawlerEngine::ResourceType::ResourceVideo:
+		case CrawlerEngine::ResourceType::ResourceFlash:
+		case CrawlerEngine::ResourceType::ResourceOther:
+		{
+			return false;
+		}
+		default:
+		{
+			return true;
+		}
 	}
 }
 
@@ -788,19 +795,21 @@ const char* GoToLinksToThisPageCommand::description() const noexcept
 
 void GoToLinksToThisPageCommand::execute()
 {
-	theApp->mainWindow()->showContentFramePage(PageFactory::Page::AllResourcesPage);
+	IPage* page = theApp->mainWindow()->contentFrame()->page(IPage::AllResourcesPage);
+	AllResourcesPage* allResourcesPage = Common::Helpers::fast_cast<AllResourcesPage*>(page);
 
-	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
-	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+	DEBUG_ASSERT(allResourcesPage);
+
+	page->showMe();
 
 	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
 
-	filterWidget->selectFilter(type);
-	filterWidget->selectTab(PageDataWidget::PageDataType::LinksToThisPageType);
+	allResourcesPage->selectFilter(type);
+	allResourcesPage->selectTab(PageDataWidget::PageDataType::LinksToThisPageType);
 
 	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
 	{
-		filterWidget->selectParsedPage(index);
+		allResourcesPage->selectParsedPage(index);
 	}
 	else
 	{
@@ -833,19 +842,21 @@ const char* GoToHTTPResponseCommand::description() const noexcept
 
 void GoToHTTPResponseCommand::execute()
 {
-	theApp->mainWindow()->showContentFramePage(PageFactory::Page::AllResourcesPage);
+	IPage* page = theApp->mainWindow()->contentFrame()->page(IPage::AllResourcesPage);
+	AllResourcesPage* allResourcesPage = Common::Helpers::fast_cast<AllResourcesPage*>(page);
 
-	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::AllResourcesPage);
-	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
+	DEBUG_ASSERT(allResourcesPage);
+
+	page->showMe();
 
 	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
 
-	filterWidget->selectFilter(type);
-	filterWidget->selectTab(PageDataWidget::PageDataType::ServerResponseForPageType);
+	allResourcesPage->selectFilter(type);
+	allResourcesPage->selectTab(PageDataWidget::PageDataType::ServerResponseForPageType);
 
 	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
 	{
-		filterWidget->selectParsedPage(index);
+		allResourcesPage->selectParsedPage(index);
 	}
 	else
 	{
