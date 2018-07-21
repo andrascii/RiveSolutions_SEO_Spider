@@ -20,7 +20,6 @@ class MainWindow;
 class SoftwareBranding;
 class StorageAdapterFactory;
 class SummaryDataAccessorFactory;
-class HeaderControlsContainer;
 class InternetConnectionNotificationManager;
 class CommandLineHandler;
 class ICrawlerOptions;
@@ -40,7 +39,6 @@ public:
 	InternetConnectionNotificationManager* internetConnectionNotificationManager() const noexcept;
 	CrawlerEngine::Crawler* crawler() const noexcept;
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept;
-	HeaderControlsContainer* headerControlsContainer() const noexcept;
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
 
 	void initializeStyleSheet();
@@ -90,7 +88,6 @@ private:
 	QTranslator* m_translator;
 
 	InternetConnectionNotificationManager* m_internetNotificationManager;
-	std::unique_ptr<HeaderControlsContainer> m_headerControlsContainer;
 };
 
 }

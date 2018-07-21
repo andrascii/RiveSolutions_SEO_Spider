@@ -83,6 +83,20 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 	}
 }
 
+void WebSiteDataWidget::setPageDataWidget(PageDataWidget* dataWidget)
+{
+	if (!dataWidget || dataWidget == m_pageDataWidget)
+	{
+		return;
+	}
+
+	m_pageDataWidget = dataWidget;
+	m_splitter->addWidget(m_pageDataWidget);
+// 
+// 	VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+// 		m_pageDataWidget, SLOT(pageViewSelectionChangedSlot(const QItemSelection&, const QItemSelection&))));
+}
+
 PageDataWidget* WebSiteDataWidget::pageDataWidget() const noexcept
 {
 	return m_pageDataWidget;

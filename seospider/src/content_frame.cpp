@@ -5,7 +5,6 @@
 #include "control_panel_widget.h"
 #include "crawler_progress_bar.h"
 #include "custom_push_button.h"
-#include "header_controls_container.h"
 #include "main_window.h"
 #include "wait_operation_frame.h"
 
@@ -22,18 +21,18 @@ ContentFrame::ContentFrame(QWidget* parent)
 
 	m_decorationWidget->addWidgetToHeader(new ControlPanelWidget(this));
 
-	QHBoxLayout* dynamicControlsLayoutWithSpacer = new QHBoxLayout(this);
-	dynamicControlsLayoutWithSpacer->setMargin(0);
-	m_dynamicControlsLayout = new QHBoxLayout(this);
+	m_dynamicControlsLayout = new QHBoxLayout;
 	m_dynamicControlsLayout->setMargin(0);
 
 	QWidget* dynamicControlsWidget = new QFrame(this);
 	dynamicControlsWidget->setContentsMargins(0, 0, 0, 0);
 	dynamicControlsWidget->setObjectName(QStringLiteral("DynamicControls"));
-	dynamicControlsWidget->setLayout(dynamicControlsLayoutWithSpacer);
+	QHBoxLayout* dynamicControlsLayoutWithSpacer = new QHBoxLayout(this);
+	dynamicControlsLayoutWithSpacer->setMargin(0);
 	dynamicControlsLayoutWithSpacer->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum));
 	dynamicControlsLayoutWithSpacer->addLayout(m_dynamicControlsLayout);
-	
+	dynamicControlsWidget->setLayout(dynamicControlsLayoutWithSpacer);
+
 	m_decorationWidget->addWidgetToHeader(dynamicControlsWidget, Qt::AlignRight, false);
 	m_decorationWidget->addContentWidget(m_navigationPanel.navigationPanelWidget);
 	m_decorationWidget->addContentWidget(m_stackedWidget);
@@ -45,22 +44,16 @@ ContentFrame::ContentFrame(QWidget* parent)
 
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::stateChanged,
 		this, &ContentFrame::onStateChanged));
-
-	VERIFY(connect(theApp->mainWindow(), SIGNAL(showPage(PageFactory::Page)),
-		this, SLOT(showPage(PageFactory::Page))));
-
-	VERIFY(connect(theApp->headerControlsContainer(), &HeaderControlsContainer::currentControlsChanged, 
-		this, &ContentFrame::onDynamicControlsChanged));
 }
 
-void ContentFrame::addPage(PageFactory::Page page, QWidget* widget, const QString& buttonText, const QIcon& buttonIcon, bool setSelected)
+void ContentFrame::addPage(IPage* page, bool setSelected)
 {
-	m_pageIndexes[page] = m_stackedWidget->addWidget(widget);
+	m_pageIndexes[page->type()] = m_stackedWidget->addWidget(page->widget());
 
-	m_navigationPanel.pushButtons[page] = new CustomPushButton(buttonIcon, buttonText, m_navigationPanel.navigationPanelWidget);
-	m_navigationPanel.pushButtons[page]->setIconSize(QSize(20, 20));
+	m_navigationPanel.pushButtons[page->type()] = new CustomPushButton(page->icon(), page->name(), m_navigationPanel.navigationPanelWidget);
+	m_navigationPanel.pushButtons[page->type()]->setIconSize(QSize(20, 20));
 	
-	VERIFY(connect(m_navigationPanel.pushButtons[page], &QPushButton::clicked,
+	VERIFY(connect(m_navigationPanel.pushButtons[page->type()], &QPushButton::clicked,
 		this, &ContentFrame::handleNavigationPanelButtonClick));
 
 	const int insertPosition = m_navigationPanel.navigationPanelWidget->layout()->count() - 1;
@@ -69,25 +62,37 @@ void ContentFrame::addPage(PageFactory::Page page, QWidget* widget, const QStrin
 
 	ASSERT(layout);
 
-	layout->insertWidget(insertPosition, m_navigationPanel.pushButtons[page]);
+	layout->insertWidget(insertPosition, m_navigationPanel.pushButtons[page->type()]);
 
-	m_navigationPanel.pushButtons[page]->setProperty("selected", setSelected);
+	m_navigationPanel.pushButtons[page->type()]->setProperty("selected", setSelected);
 
 	if (setSelected)
 	{
-		m_prevButton = m_navigationPanel.pushButtons[page];
-		showPage(page);
+		m_prevButton = m_navigationPanel.pushButtons[page->type()];
+		showPage(page->type());
 	}
+
+	VERIFY(connect(page->widget(), SIGNAL(controlsChanged(IPage::Type)), this, SLOT(onDynamicControlsChanged(IPage::Type))));
 }
 
-QWidget* ContentFrame::page(PageFactory::Page page) const noexcept
+IPage* ContentFrame::page(IPage::Type pageType) const
 {
-	const int pageIndex = m_pageIndexes.value(page, -1);
-
-	return pageIndex == -1 ? nullptr : m_stackedWidget->widget(pageIndex);
+	return dynamic_cast<IPage*>(pageWidget(pageType));
 }
 
-void ContentFrame::showPage(PageFactory::Page page)
+QWidget* ContentFrame::pageWidget(IPage::Type pageType) const
+{
+	auto iterator = m_pageIndexes.find(pageType);
+
+	if (iterator == std::end(m_pageIndexes))
+	{
+		return nullptr;
+	}
+
+	return m_stackedWidget->widget(iterator.value());
+}
+
+void ContentFrame::showPage(IPage::Type pageType)
 {
 	if (m_prevButton)
 	{
@@ -97,7 +102,7 @@ void ContentFrame::showPage(PageFactory::Page page)
 		m_prevButton->style()->polish(m_prevButton);
 	}
 
-	QPushButton* button = m_navigationPanel.pushButtons[page];
+	QPushButton* button = m_navigationPanel.pushButtons[pageType];
 
 	button->setProperty("selected", true);
 	button->style()->unpolish(button);
@@ -105,9 +110,10 @@ void ContentFrame::showPage(PageFactory::Page page)
 
 	m_prevButton = button;
 
-	m_stackedWidget->setCurrentIndex(m_pageIndexes[page]);
-	m_activePage = page;
-	theApp->headerControlsContainer()->setActivePage(page);
+	m_stackedWidget->setCurrentIndex(m_pageIndexes[pageType]);
+	m_activePage = pageType;
+
+	onDynamicControlsChanged(pageType);
 }
 
 void ContentFrame::handleNavigationPanelButtonClick()
@@ -187,10 +193,9 @@ void ContentFrame::initializeNavigationPanelWidget()
 	m_navigationPanel.navigationPanelWidget->setObjectName(QStringLiteral("NavigationPanel"));
 }
 
-void ContentFrame::onDynamicControlsChanged(int page)
+void ContentFrame::onDynamicControlsChanged(IPage::Type pageType)
 {
-	const PageFactory::Page currentPage = static_cast<PageFactory::Page>(page);
-	QList<QWidget*> controls = theApp->headerControlsContainer()->controls(currentPage);
+	QList<QWidget*> controls = page(pageType)->bindControls();
 
 	QLayoutItem* item;
 

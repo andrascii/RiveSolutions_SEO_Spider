@@ -8,7 +8,6 @@
 #include "menubar.h"
 #include "settings_page_impl.h"
 #include "site_map_creator_dialog.h"
-#include "page_factory.h"
 #include "settings_page.h"
 #include "user_agent_settings_widget.h"
 #include "crawler_pause_settings_widget.h"
@@ -20,10 +19,8 @@
 #include "notifications_container_widget.h"
 #include "software_branding.h"
 #include "svg_renderer.h"
-#include "header_controls_container.h"
 #include "storage_exporter.h"
 #include "helpers.h"
-#include "filter_widget.h"
 #include "project_file_state_widget.h"
 #include "constants.h"
 #include "version.h"
@@ -40,6 +37,11 @@
 #include "cursor_factory.h"
 #include "shaded_overlay.h"
 #include "message_box_dialog.h"
+#include "header_toolbar_creator.h"
+#include "site_audit_page.h"
+#include "all_pages_page.h"
+#include "all_resources_page.h"
+#include "audit_report_page.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -221,43 +223,6 @@ void MainWindow::saveFileAndClearData()
 	theApp->crawler()->saveToFile(path);
 }
 
-void MainWindow::exportFilterData()
-{
-	QAction* action = qobject_cast<QAction*>(sender());
-	ASSERT(action && "This method must be called using QAction");
-
-	const QVariant objectData = action->data();
-	ASSERT(objectData.isValid() && "No data passed");
-
-	std::vector<DCStorageDescription> storages;
-	storages.push_back(qvariant_cast<DCStorageDescription>(objectData));
-
-	StorageExporter::exportStorage(theApp->crawler()->sequencedDataCollection(), storages);
-}
-
-void MainWindow::onChangeGroupingAuditInfo(QAction* action)
-{
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
-	actionRegistry.globalAction(s_switchAuditInfoFilterWidgetGroupingAction)->setIcon(action->icon());
-
-	theApp->mainWindow()->showContentFramePage(PageFactory::Page::SiteAuditPage);
-
-	auto page = theApp->mainWindow()->contentFrame()->page(PageFactory::Page::SiteAuditPage);
-	auto filterWidget = Common::Helpers::fast_cast<FilterWidget*>(page);
-
-	ASSERT(action->data().type() == QVariant::Bool);
-	bool isSortingEnabled = action->data().toBool();
-
-	if (isSortingEnabled)
-	{
-		filterWidget->enableSortableFilter();
-	}
-	else
-	{
-		filterWidget->enablePlainFilter();
-	}
-}
-
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
 {
 	ApplicationSettingsDialog* applicationSettingsWidget = new ApplicationSettingsDialog(this);
@@ -308,11 +273,6 @@ int MainWindow::showMessageBoxDialog(const QString& title,
 	messageBoxDialog->exec();
 
 	return messageBoxDialog->result();
-}
-
-void MainWindow::showContentFramePage(PageFactory::Page page)
-{
-	emit showPage(page);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
@@ -545,60 +505,6 @@ void MainWindow::createActions()
 	actionRegistry.globalAction(s_saveFileAction)->setShortcut(QKeySequence("Ctrl+S"));
 	actionRegistry.globalAction(s_saveFileAsAction)->setShortcut(QKeySequence("Ctrl+Alt+S"));
 	actionRegistry.globalAction(s_closeFileAction)->setShortcut(QKeySequence("Ctrl+W")); 
-
-	createHeaderPageDependentActions();
-}
-
-void MainWindow::createHeaderPageDependentActions()
-{
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
-
-	// switch grouping action
-	QAction* switchAuditInfoFilterWidgetGroupingAction = actionRegistry.addGlobalAction(s_switchAuditInfoFilterWidgetGroupingAction,
-		SvgRenderer::render(QStringLiteral(":/images/group-by-category.svg"), 20, 20), tr("Change filters grouping"));
-
-	QToolButton* menuButton = qobject_cast<QToolButton*>(HeaderToolButtonCreator::createControl(switchAuditInfoFilterWidgetGroupingAction));
-
-	ASSERT(menuButton);
-
-	QMenu* groupingMenu = new QMenu(menuButton);
-
-	QAction* groupByCategoryAction = new QAction(SvgRenderer::render(":/images/group-by-category.svg", 20, 20), "Group filters by category");
-	QAction* groupByErrorLevelAction = new QAction(SvgRenderer::render(":/images/group-by-level.svg", 20, 20), "Group filters by error level");
-
-	QVariant enableSortingData(true);
-	QVariant disableSortingData(false);
-
-	groupByErrorLevelAction->setData(enableSortingData);
-	groupByCategoryAction->setData(disableSortingData);
-
-	groupingMenu->addAction(groupByCategoryAction);
-	groupingMenu->addAction(groupByErrorLevelAction);
-
-	menuButton->setMenu(groupingMenu);
-	menuButton->setPopupMode(QToolButton::InstantPopup);
-
-	theApp->headerControlsContainer()->addWidget(menuButton, PageFactory::Page::SiteAuditPage);
-
-	VERIFY(connect(groupingMenu, SIGNAL(triggered(QAction*)), this, SLOT(onChangeGroupingAuditInfo(QAction*))));
-
-	//////////////////////////////////////////////////////////////////////////
-
-	// export actions
-	QAction* exportFilterDataAuditPageAction = actionRegistry.addGlobalAction(s_exportFilterDataAuditPageAction,
-		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export selected filter data to .xlsx file"));
-
-	QAction* exportFilterDataAllResourcesAction = actionRegistry.addGlobalAction(s_exportFilterDataAllResourcesPageAction,
-		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export selected filter data to .xlsx file"));
-
-	exportFilterDataAuditPageAction->setDisabled(true);
-	exportFilterDataAllResourcesAction->setDisabled(true);
-
-	theApp->headerControlsContainer()->addAction(exportFilterDataAllResourcesAction, PageFactory::Page::AllResourcesPage);
-	theApp->headerControlsContainer()->addAction(exportFilterDataAuditPageAction, PageFactory::Page::SiteAuditPage);
-
-	VERIFY(connect(exportFilterDataAllResourcesAction, &QAction::triggered, this, &MainWindow::exportFilterData));
-	VERIFY(connect(exportFilterDataAuditPageAction, &QAction::triggered, this, &MainWindow::exportFilterData));
 }
 
 void MainWindow::createAndSetCentralWidget()
@@ -606,19 +512,10 @@ void MainWindow::createAndSetCentralWidget()
 	QWidget* centralWidget = new QWidget(this);
 	m_contentFrame = new ContentFrame(centralWidget);
 
-	PageFactory pageFactory;
-
-	m_contentFrame->addPage(PageFactory::SiteAuditPage, pageFactory.createPage(PageFactory::SiteAuditPage),
-		tr("Audit Info"), pageFactory.createPageIcon(PageFactory::SiteAuditPage), true);
-
-	m_contentFrame->addPage(PageFactory::AllPagesPage, pageFactory.createPage(PageFactory::AllPagesPage),
-		tr("All Site Pages"), pageFactory.createPageIcon(PageFactory::AllPagesPage));
-
-	m_contentFrame->addPage(PageFactory::AllResourcesPage, pageFactory.createPage(PageFactory::AllResourcesPage),
-		tr("All Resources"), pageFactory.createPageIcon(PageFactory::AllResourcesPage));
-
-	m_contentFrame->addPage(PageFactory::AuditReportPage, pageFactory.createPage(PageFactory::AuditReportPage),
-		tr("Audit Report"), pageFactory.createPageIcon(PageFactory::AuditReportPage));
+	m_contentFrame->addPage(new SiteAuditPage, true);
+	m_contentFrame->addPage(new AllPagesPage);
+	m_contentFrame->addPage(new AllResourcesPage);
+	m_contentFrame->addPage(new AuditReportPage);
 
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);
