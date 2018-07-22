@@ -45,6 +45,8 @@ elseif("$ENV{SS_PLATFORM}" STREQUAL "x64")
 	set(ApplicationsDir @ApplicationsDirX64@)
 endif()	
 
+set(TargetDir @TargetDir@)
+
 configure_file(
 	config/config.xml.in 
 	${InstallerConfigDir}/config.xml

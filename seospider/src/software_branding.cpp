@@ -6,7 +6,7 @@ namespace SeoSpider
 
 QString SoftwareBranding::organizationName() const
 {
-	return "RiveSolution";
+	return "RiveSolutions";
 }
 
 QString SoftwareBranding::productName() const

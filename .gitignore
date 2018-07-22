@@ -7,3 +7,4 @@ doxydoc/
 /build2015
 /version/include/version.h
 /version/SetVersion.cmake
+*.aps
