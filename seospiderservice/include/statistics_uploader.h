@@ -36,11 +36,13 @@ private:
 private slots:
 	void onUploadFinished(QNetworkReply *reply);
 	void onAuthenticationRequired(QNetworkReply *reply, QAuthenticator *authenticator);
+	void onReplyError(QNetworkReply::NetworkError code);
 
 private:
 	QEventLoop* m_eventLoop;
 
-	QNetworkAccessManager * m_networkAccessManager;
+	QNetworkReply* m_reply;
+	QNetworkAccessManager* m_networkAccessManager;
 	QUrl m_requestUrl;
 
 	QFile m_statisticsFile;

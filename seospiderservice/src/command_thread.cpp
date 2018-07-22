@@ -99,12 +99,9 @@ void CommandThread::run()
 			case Common::Command::Counter:
 			{
 				Common::CounterData* counterData = command.counterData();
-				
-				SeoSpiderServiceApp::CounterContainer& counterContainer =
-					qobject_cast<SeoSpiderServiceApp*>(qApp)->counterContainer();
 
-				counterContainer[counterData->name] = 
-					counterContainer[counterData->name].toULongLong() + counterData->value;
+				m_countersJsonBody[counterData->name] = 
+					m_countersJsonBody[counterData->name].toULongLong() + counterData->value;
 
 				break;
 			}
@@ -121,10 +118,7 @@ void CommandThread::run()
 					m_statisticsJsonHeader["programBittness"] = applicationInitializedData->programBittness;
 					m_statisticsJsonHeader["programVersion"] = applicationInitializedData->programVersion;
 
-					SeoSpiderServiceApp::CounterContainer& counterContainer =
-						qobject_cast<SeoSpiderServiceApp*>(qApp)->counterContainer();
-
-					counterContainer["Header"] = m_statisticsJsonHeader;
+					m_counterContainer["Header"] = m_statisticsJsonHeader;
 				}
 				else
 				{
@@ -148,6 +142,38 @@ void CommandThread::run()
 	}
 
 	m_outputFile.flush();
+}
+
+
+bool CommandThread::writeStatisticsFile(const QString& fileName)
+{
+	QFile statisticsFile(fileName);
+
+	if (statisticsFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+	{
+		QTextStream out(&statisticsFile);
+		out.setCodec("UTF-8");
+
+		m_counterContainer["Counters"] = m_countersJsonBody;
+
+		if (!m_counterContainer.isEmpty())
+		{
+			QJsonDocument json = QJsonDocument::fromVariant(m_counterContainer);
+
+			out << json.toJson();
+
+			statisticsFile.flush();
+			statisticsFile.close();
+
+			return true;
+		}
+
+		statisticsFile.flush();
+		statisticsFile.close();
+		statisticsFile.remove();
+	}
+
+	return false;
 }
 
 }

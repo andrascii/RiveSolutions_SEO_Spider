@@ -188,35 +188,6 @@ void SeoSpiderServiceApp::writeSysInfoFile(const QString& fileName) const
 	}
 }
 
-bool SeoSpiderServiceApp::writeStatisticsFile(const QString& fileName) const
-{
-	QFile statisticsFile(fileName);
-
-	if(statisticsFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-	{
-		QTextStream out(&statisticsFile);
-		out.setCodec("UTF-8");
-
-		if (!m_counterContainer.isEmpty())
-		{
-			QJsonDocument json = QJsonDocument::fromVariant(m_counterContainer);
-
-			out << json.toJson();
-
-			statisticsFile.flush();
-			statisticsFile.close();
-
-			return true;
-		}
-
-		statisticsFile.flush();
-		statisticsFile.close();
-		statisticsFile.remove();
-	}
-
-	return false;
-}
-
 void SeoSpiderServiceApp::sendReports()
 {
 	const QString path = SeoSpiderServiceApp::dumpsPath();
@@ -301,7 +272,11 @@ QString SeoSpiderServiceApp::statisticsFilePath()
 
 	if(m_statisticsFilePath.isEmpty())
 	{
+#ifdef QT_DEBUG
+		m_statisticsFilePath = QDir::cleanPath(path + QString("/statistics_%1_debug.json").arg(QUuid::createUuid().toString()));
+#else
 		m_statisticsFilePath = QDir::cleanPath(path + QString("/statistics_%1.json").arg(QUuid::createUuid().toString()));
+#endif
 	}
 
 	return m_statisticsFilePath;
@@ -368,11 +343,6 @@ void SeoSpiderServiceApp::onCommandReceived(Common::Command command)
 	}
 }
 
-SeoSpiderServiceApp::CounterContainer& SeoSpiderServiceApp::counterContainer()
-{
-	return m_counterContainer;
-}
-
 void SeoSpiderServiceApp::onServiceClose()
 {
 	if (m_loggerDebugWindow)
@@ -382,7 +352,7 @@ void SeoSpiderServiceApp::onServiceClose()
 		processEvents();
 	}
 
-	if (writeStatisticsFile(statisticsFilePath()))
+	if (m_cmdThread->writeStatisticsFile(statisticsFilePath()))
 	{
 		m_statisticsUploader->startUploading();
 	}
