@@ -55,6 +55,11 @@ void StatisticsUploader::onAuthenticationRequired(QNetworkReply*, QAuthenticator
 	authenticator->setPassword(s_statisticsServerPassword);
 }
 
+void StatisticsUploader::onReplyError(QNetworkReply::NetworkError code)
+{
+	qDebug() << QString("Reply error: %1").arg(code).toLatin1();
+}
+
 void StatisticsUploader::startUploading()
 {
 	if(m_isRunning)
@@ -70,7 +75,10 @@ void StatisticsUploader::startUploading()
 
 	if (m_statisticsFile.open(QIODevice::ReadOnly) && !m_eventLoop->isRunning())
 	{
-		m_networkAccessManager->put(QNetworkRequest(m_requestUrl), &m_statisticsFile);
+		m_reply = m_networkAccessManager->put(QNetworkRequest(m_requestUrl), &m_statisticsFile);
+
+		VERIFY(connect(m_reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+			this, &StatisticsUploader::onReplyError));
 
 		m_eventLoop->exec();
 	}
