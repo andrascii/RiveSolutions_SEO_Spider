@@ -26,7 +26,7 @@ class SeoSpiderServiceApp : public QApplication
 	Q_OBJECT
 
 public:
-	using CounterContainer = QMap<QString, unsigned long long>;
+	using CounterContainer = QVariantMap;
 
 public:
 	SeoSpiderServiceApp(int& argc, char** argv);

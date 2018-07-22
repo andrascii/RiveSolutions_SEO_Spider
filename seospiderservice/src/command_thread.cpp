@@ -103,7 +103,33 @@ void CommandThread::run()
 				SeoSpiderServiceApp::CounterContainer& counterContainer =
 					qobject_cast<SeoSpiderServiceApp*>(qApp)->counterContainer();
 
-				counterContainer[counterData->name] += counterData->value;
+				counterContainer[counterData->name] = 
+					counterContainer[counterData->name].toULongLong() + counterData->value;
+
+				break;
+			}
+			case Common::Command::ApplicationInitialized:
+			{
+				Common::ApplicationInitializedData* applicationInitializedData = command.applicationInitializedData();
+
+				if (m_statisticsJsonHeader.isEmpty())
+				{
+					m_statisticsJsonHeader["userID"] = applicationInitializedData->userID;
+					m_statisticsJsonHeader["country"] = applicationInitializedData->country;
+					m_statisticsJsonHeader["language"] = applicationInitializedData->language;
+					m_statisticsJsonHeader["os"] = applicationInitializedData->os;
+					m_statisticsJsonHeader["programBittness"] = applicationInitializedData->programBittness;
+					m_statisticsJsonHeader["programVersion"] = applicationInitializedData->programVersion;
+
+					SeoSpiderServiceApp::CounterContainer& counterContainer =
+						qobject_cast<SeoSpiderServiceApp*>(qApp)->counterContainer();
+
+					counterContainer["Header"] = m_statisticsJsonHeader;
+				}
+				else
+				{
+					//TODO: write error log
+				}
 
 				break;
 			}

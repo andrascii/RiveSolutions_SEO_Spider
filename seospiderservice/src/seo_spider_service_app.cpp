@@ -197,21 +197,9 @@ bool SeoSpiderServiceApp::writeStatisticsFile(const QString& fileName) const
 		QTextStream out(&statisticsFile);
 		out.setCodec("UTF-8");
 
-		QVariantMap variantMap;
-
-		QMapIterator<QString, unsigned long long> iter(m_counterContainer);
-		while (iter.hasNext()) 
+		if (!m_counterContainer.isEmpty())
 		{
-			iter.next();
-			if (iter.value())
-			{
-				variantMap.insert(iter.key(), iter.value());
-			}
-		}
-
-		if (!variantMap.isEmpty())
-		{
-			QJsonDocument json = QJsonDocument::fromVariant(variantMap);
+			QJsonDocument json = QJsonDocument::fromVariant(m_counterContainer);
 
 			out << json.toJson();
 
