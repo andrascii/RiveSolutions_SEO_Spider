@@ -376,7 +376,7 @@ void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& resp
 {
 	Common::Finally reloadGuard([this]
 	{ 
-		m_reloadPage = false; 
+		m_reloadPage = false;
 	});
 
 	m_downloadRequester.reset();

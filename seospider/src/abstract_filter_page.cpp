@@ -15,6 +15,8 @@
 #include "content_frame.h"
 #include "filter_table_selection_model.h"
 #include "filter_info_widget.h"
+#include "storage_exporter.h"
+#include "crawler.h"
 
 namespace SeoSpider
 {
@@ -181,6 +183,20 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 	{
 		hasNoFilterSelection();
 	}
+}
+
+void AbstractFilterPage::exportFilterData()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+	ASSERT(action && "This method must be called using QAction");
+
+	const QVariant objectData = action->data();
+	ASSERT(objectData.isValid() && "No data passed");
+
+	std::vector<DCStorageDescription> storages;
+	storages.push_back(qvariant_cast<DCStorageDescription>(objectData));
+
+	StorageExporter::exportStorage(theApp->crawler()->sequencedDataCollection(), storages);
 }
 
 void AbstractFilterPage::reinitFilterTableSpans()
