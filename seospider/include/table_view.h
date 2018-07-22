@@ -52,6 +52,8 @@ protected:
 private slots:
 	void onAboutRepaintItems(const QModelIndexList& modelIndexes);
 	void applyRowHeight();
+
+	void onLayoutAboutToBeChanged(const QList<QPersistentModelIndex>&, QAbstractItemModel::LayoutChangeHint);
 	void onLayoutChanged(const QList<QPersistentModelIndex>&, QAbstractItemModel::LayoutChangeHint);
 
 private:
@@ -66,6 +68,7 @@ private:
 	bool m_showAdditionalGrid;
 	int m_rowHeight;
 	bool m_supportColumnSpans;
+	QList<int> m_columnsizesBeforeSorting;
 };
 
 }
