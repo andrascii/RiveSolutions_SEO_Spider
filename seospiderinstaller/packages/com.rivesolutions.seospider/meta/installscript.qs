@@ -17,7 +17,7 @@ function Component()
 	//	else
 	//	{	
 	//		var widget = gui.pageById(QInstaller.Introduction)
-	//		var installPath = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\InstallPath");	
+	//		var installPath = installer.value("HKCU\\Software\\RiveSolutions\\Seo Spider\\MetaData\\InstallPath");	
 	//		
 	//		if(widget)
 	//		{
@@ -46,7 +46,7 @@ function Component()
 	if(isAlreadyInstalled())
 	{
 		QMessageBox["information"]("Already installed", "Installer", 
-		"Installer found newer or equal verion of SeoSpider.<br> You must delete installed program for continue.", 
+		"Installer found newer or equal verion of SEO Spider.<br> You must delete installed program for continue.", 
 		QMessageBox.Ok)
 		
 		abortInstallation();
@@ -90,22 +90,22 @@ function registerProgram()
 		
 		component.addOperation(
 			"GlobalConfig", 
-			"Rive Solutions", 
-			"Seo Spider",
+			"RiveSolutions", 
+			"SEO Spider",
 			"MetaData/InstallPath", 
 			"@TargetDir@");
 		
 		component.addOperation(
 			"GlobalConfig", 
-			"Rive Solutions", 
-			"Seo Spider",
+			"RiveSolutions", 
+			"SEO Spider",
 			"MetaData/Version", 
 			version);
 			
 		component.addOperation(
 			"GlobalConfig", 
-			"Rive Solutions", 
-			"Seo Spider",
+			"RiveSolutions", 
+			"SEO Spider",
 			"MetaData/Installed", 
 			true);
 	}
@@ -141,20 +141,20 @@ function createMenuDirectory()
 		component.addOperation(
 			"CreateShortcut", 
 			"@TargetDir@/seospider.exe", 
-			"@StartMenuDir@/RiveSolutions Seo Spider.lnk",
+			"@StartMenuDir@/RiveSolution SEO Spider.lnk",
 			"workingDirectory=@TargetDir@", 
 			"iconPath=@TargetDir@/seospider.exe",
 			"iconId=0" , 
-			"description=Open Seo Spider");
+			"description=Open SEO Spider");
 			
 		component.addOperation(
 			"CreateShortcut", 
 			"@TargetDir@/Uninstall SeoSpider.exe", 
-			"@StartMenuDir@/Uninstall RiveSolutions Seo Spider.lnk",
+			"@StartMenuDir@/Uninstall RiveSolution SEO Spider.lnk",
 			"workingDirectory=@TargetDir@", 
 			"iconPath=@TargetDir@/Uninstall SeoSpider.exe",
 			"iconId=0" , 
-			"description=Open Seo Spider");	
+			"description=Open SEO Spider");	
 	}
 }
 
@@ -167,11 +167,11 @@ function createDesktopShortcut()
 		component.addOperation(
 			"CreateShortcut", 
 			"@TargetDir@/seospider.exe", 
-			"@DesktopDir@/RiveSolutions Seo Spider.lnk",
+			"@DesktopDir@/RiveSolution SEO Spider.lnk",
 			"workingDirectory=@TargetDir@", 
 			"iconPath=@TargetDir@/seospider.exe",
 			"iconId=0" , 
-			"description=Open Seo Spider");
+			"description=Open SEO Spider");
 	}
 }
 
@@ -184,10 +184,10 @@ function registerSXRFileType()
         component.addOperation("RegisterFileType",
                                component.unusualFileType,
                                seoSpiderPath + " --open_serialized_file %1",
-                               "RiveSolutions SeoSpider project file type",
+                               "RiveSolution SEO Spider project file type",
                                "text/xml",
                                seoSpiderPath + "," + 1,
-                               "ProgId=RiveSolutions.SeoSpider." + component.unusualFileType);
+                               "ProgId=RiveSolution.SEO Spider." + component.unusualFileType);
     }
 }
 
@@ -198,7 +198,7 @@ function isAlreadyInstalled()
 		return false;
 	}
 	
-	var version = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
+	var version = installer.value("HKCU\\Software\\RiveSolutions\\SEO Spider\\MetaData\\Version");
 	
 	if(version)
 	{
@@ -212,7 +212,7 @@ function isAlreadyInstalled()
 function needUpdate()
 {
 	var newVersion = component.value("Version");
-	var savedVersion = installer.value("HKCU\\Software\\Rive Solutions\\Seo Spider\\MetaData\\Version");
+	var savedVersion = installer.value("HKCU\\Software\\RiveSolutions\\SEO Spider\\MetaData\\Version");
 
 	if(savedVersion)
 	{
