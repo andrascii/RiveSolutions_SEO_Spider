@@ -128,7 +128,16 @@ const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 
 const QString Application::getOrGenerateUserID()
 {
-	return loadFromSettings("userID", QUuid::createUuid()).toString();
+	//
+	//TODO: find out hou to change this to loadFromSettings("userID", QUuid::createUuid());
+	//
+
+	if(!loadFromSettings("userID").isValid())
+	{
+		saveToSettings("userID", QUuid::createUuid());
+	}
+
+	return loadFromSettings("userID").toString();
 }
 
 void Application::startCrawler()
