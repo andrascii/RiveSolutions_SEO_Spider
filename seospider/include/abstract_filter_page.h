@@ -34,9 +34,11 @@ public:
 
 protected:
 	virtual void showEvent(QShowEvent* event) override;
-
 	virtual void hasFilterSelection(int row) = 0;
 	virtual void hasNoFilterSelection() = 0;
+
+protected slots:
+	void exportFilterData();
 
 private slots:
 	void adjustSize();

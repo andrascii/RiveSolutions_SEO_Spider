@@ -37,7 +37,7 @@
 #include "cursor_factory.h"
 #include "shaded_overlay.h"
 #include "message_box_dialog.h"
-#include "header_toolbar_creator.h"
+#include "header_toolbutton_creator.h"
 #include "site_audit_page.h"
 #include "all_pages_page.h"
 #include "all_resources_page.h"

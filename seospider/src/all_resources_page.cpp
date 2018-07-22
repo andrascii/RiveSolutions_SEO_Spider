@@ -2,10 +2,7 @@
 #include "application.h"
 #include "page_data_widget.h"
 #include "website_data_widget.h"
-#include "action_registry.h"
-#include "action_keys.h"
 #include "application.h"
-#include "crawler.h"
 #include "storage_exporter.h"
 #include "data_collection_groups_factory.h"
 #include "svg_renderer.h"
@@ -18,6 +15,7 @@ namespace SeoSpider
 
 AllResourcesPage::AllResourcesPage(QWidget* parent)
 	: AbstractFilterPage(new WebSiteDataWidget(nullptr), parent)
+	, m_exportFilterDataAction(nullptr)
 {
 	PageDataWidget* resourceTables = new PageDataWidget(this);
 	resourceTables->setPageDataType(PageDataWidget::LinksOnThisPageType);
@@ -58,45 +56,26 @@ IPage::Type AllResourcesPage::type() const
 
 void AllResourcesPage::hasFilterSelection(int row)
 {
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
 	const DCStorageDescription* storageDescription = summaryFilterModel()->dataAccessor()->storageDescriptionByRow(row);
-	actionRegistry.globalAction(s_exportFilterDataAllResourcesPageAction)->setData(QVariant::fromValue(*storageDescription));
-	actionRegistry.globalAction(s_exportFilterDataAllResourcesPageAction)->setEnabled(true);
+	m_exportFilterDataAction->setData(QVariant::fromValue(*storageDescription));
+	m_exportFilterDataAction->setEnabled(true);
 }
 
 void AllResourcesPage::hasNoFilterSelection()
 {
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
-	actionRegistry.globalAction(s_exportFilterDataAllResourcesPageAction)->setEnabled(false);
+	m_exportFilterDataAction->setEnabled(false);
 }
 
 void AllResourcesPage::createHeaderActionWidgets()
 {
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
+	m_exportFilterDataAction = new QAction(SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20),
+		tr("Export selected filter data to .xlsx file"), this);
 
-	// export actions
-	QAction* exportFilterDataAllResourcesAction = actionRegistry.addGlobalAction(s_exportFilterDataAllResourcesPageAction,
-		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export selected filter data to .xlsx file"));
+	m_exportFilterDataAction->setDisabled(true);
 
-	exportFilterDataAllResourcesAction->setDisabled(true);
+	AbstractPage::addAction(m_exportFilterDataAction);
 
-	AbstractPage::addAction(exportFilterDataAllResourcesAction);
-
-	VERIFY(connect(exportFilterDataAllResourcesAction, &QAction::triggered, this, &AllResourcesPage::exportFilterData));
-}
-
-void AllResourcesPage::exportFilterData()
-{
-	QAction* action = qobject_cast<QAction*>(sender());
-	ASSERT(action && "This method must be called using QAction");
-
-	const QVariant objectData = action->data();
-	ASSERT(objectData.isValid() && "No data passed");
-
-	std::vector<DCStorageDescription> storages;
-	storages.push_back(qvariant_cast<DCStorageDescription>(objectData));
-
-	StorageExporter::exportStorage(theApp->crawler()->sequencedDataCollection(), storages);
+	VERIFY(connect(m_exportFilterDataAction, &QAction::triggered, this, &AllResourcesPage::exportFilterData));
 }
 
 }
