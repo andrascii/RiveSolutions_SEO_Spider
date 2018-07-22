@@ -24,6 +24,7 @@
 #include "license_service.h"
 #include "smtp_sender.h"
 #include "wait_operation_frame.h"
+#include "version.h"
 
 namespace
 {
@@ -123,6 +124,11 @@ QStringList Application::allKeys() const
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 {
 	return m_softwareBrandingOptions.get();
+}
+
+const QString Application::getOrGenerateUserID()
+{
+	return loadFromSettings("userID", QUuid::createUuid()).toString();
 }
 
 void Application::startCrawler()
@@ -372,6 +378,19 @@ void Application::initialize()
 	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsLoaded, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
+
+	applicationInitialized();
+}
+
+void Application::applicationInitialized()
+{
+	seoSpiderServiceApi()->applicationInitialized(
+		getOrGenerateUserID().toLatin1(),
+		QLocale::countryToString(QLocale::system().country()).toLatin1(),
+		QLocale::languageToString(QLocale::system().language()).toLatin1(),
+		QSysInfo::prettyProductName().toLatin1(),
+		QString("%1").arg(QSysInfo::WordSize).toLatin1(),
+		VERSION_STR);
 }
 
 void Application::attachPreferencesToCrawlerOptions()

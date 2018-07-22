@@ -25,6 +25,8 @@ signals:
 	void commandReceived(const Common::Command& command);
 
 private:
+	QVariantMap m_statisticsJsonHeader;
+
 	Common::IpcSocket* m_socket;
 	QFile m_outputFile;
 };

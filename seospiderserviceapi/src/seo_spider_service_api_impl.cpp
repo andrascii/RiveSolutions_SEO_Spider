@@ -378,6 +378,15 @@ void SeoSpiderServiceApiImpl::setLogFilter(const std::function<bool(Common::LogL
 	m_logFilter.setFilter(filter);
 }
 
+void SeoSpiderServiceApiImpl::applicationInitialized(const char* userID, const char* country, const char* language,
+	const char* os, const char* programBittness, const char* programVersion)
+{
+	Command command;
+	command.setApplicationsInitializedData(userID, country, language, os, programBittness, programVersion);
+
+	m_pipeServer->writeData(command);
+}
+
 void SeoSpiderServiceApiImpl::commitCounterData(const char* name, quint64 value, int counterType)
 {
 	Command command;

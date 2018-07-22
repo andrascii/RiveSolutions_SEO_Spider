@@ -28,7 +28,9 @@ enum LogLevel
 	//! Use parent log level
 	InheritedLogLevel = 0x100,
 	//! Counter log
-	CounterLog = 0x110
+	CounterLog = 0x110,
+	//! Application Initialized
+	ApplicationInitialized = 0x120
 };
 
 inline QLatin1String logLevelName(LogLevel f)
@@ -55,12 +57,6 @@ inline QLatin1String logLevelName(LogLevel f)
 
 		case InheritedLogLevel:
 			return QLatin1String("Inherited");
-
-		//
-		//TODO: remove counters from logging
-		//
-		case CounterLog:
-			return QLatin1String("Counter");
 	}
 	return QLatin1String("invalid_loglevel_value");
 }
@@ -164,6 +160,16 @@ struct CounterData
 	Type type;
 };
 
+struct ApplicationInitializedData
+{
+	char userID[256];
+	char country[128];
+	char language[64];
+	char os[128];
+	char programBittness[64];
+	char programVersion[128];
+};
+
 //! IPC communication message structure
 /*! Due to system requirement message size limited to 8192 bytes. */
 struct Command
@@ -184,7 +190,9 @@ struct Command
 		//! Request to restart watching application
 		Restart,
 		//! Counter update
-		Counter
+		Counter,
+		//! Application Initialized
+		ApplicationInitialized
 	};
 
 	inline LogData* logData() { return type == Log ? reinterpret_cast<LogData*>(rawData) : 0; }
@@ -193,6 +201,7 @@ struct Command
 	inline CategoryData* categoryData() { return type == LogCategory ? reinterpret_cast<CategoryData*>(rawData) : 0; }
 	inline RestartData* restartData() { return type == Restart ? reinterpret_cast<RestartData*>(rawData) : 0; }
 	inline CounterData* counterData() { return type == Counter ? reinterpret_cast<CounterData*>(rawData) : 0; }
+	inline ApplicationInitializedData* applicationInitializedData() { return type == ApplicationInitialized ? reinterpret_cast<ApplicationInitializedData*>(rawData) : 0; }
 
 	void setLogData(const char* file, int line, const char* function, const void* thisptr);
 	void setDumpData(const void* exceptionInfo, int exceptionSize, int params);
@@ -201,6 +210,7 @@ struct Command
 	void setCategoryData(const char* categoryName);
 	void setRestartData(const char* displayMessage, bool showRestartDialog, int timeout, size_t argc, const char** argv);
 	void setCounterData(const char* name, quint64 value, int counterType);
+	void setApplicationsInitializedData(const char* userID, const char* country, const char* language, const char* OS, const char* programBittness, const char* programVersion);
 
 	//! Command type
 	Type type;
@@ -209,7 +219,8 @@ struct Command
 		max(sizeof(AssertData), 
 		max(sizeof(DumpData), 
 		max(sizeof(CategoryData), 
-		max(sizeof(RestartData), sizeof(CounterData))))));
+		max(sizeof(RestartData), 
+		max(sizeof(ApplicationInitializedData), sizeof(CounterData)))))));
 
 	//! Raw data structure on of LogData, AssertData or DumpData
 	char rawData[rawDataSize];

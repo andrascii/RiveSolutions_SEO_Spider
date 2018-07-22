@@ -40,6 +40,7 @@ public:
 	CrawlerEngine::Crawler* crawler() const noexcept;
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept;
 	const SoftwareBranding* softwareBrandingOptions() const noexcept;
+	const QString getOrGenerateUserID();
 
 	void initializeStyleSheet();
 	bool isInternetAvailable() const noexcept;
@@ -69,6 +70,7 @@ private slots:
 
 private:
 	void initialize();
+	void applicationInitialized();
 	void attachPreferencesToCrawlerOptions();
 	void openFileThroughCmd(const QString& path);
 
