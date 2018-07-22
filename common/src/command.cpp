@@ -85,4 +85,17 @@ void Command::setCounterData(const char* name, quint64 value, int counterType)
 	d->type = static_cast<CounterData::Type>(counterType);
 }
 
+void Command::setApplicationsInitializedData(const char* userID, const char* country, const char* language,
+	const char* os, const char* programBittness, const char* programVersion)
+{
+	type = ApplicationInitialized;
+	ApplicationInitializedData* d = applicationInitializedData();
+	std::strncpy(d->userID, userID, _countof(d->userID));
+	std::strncpy(d->country, country, _countof(d->country));
+	std::strncpy(d->language, language, _countof(d->language));
+	std::strncpy(d->os, os, _countof(d->os));
+	std::strncpy(d->programBittness, programBittness, _countof(d->programBittness));
+	std::strncpy(d->programVersion, programVersion, _countof(d->programVersion));
+}
+
 }

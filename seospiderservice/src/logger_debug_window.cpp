@@ -114,6 +114,7 @@ void LoggerDebugWindow::onCommandReceived(Common::Command command)
 			break;
 		}
 		case Common::Command::Counter:
+		case Common::Command::ApplicationInitialized:
 		{
 			return;
 		}

@@ -27,6 +27,7 @@ public:
 	virtual void setThreadExceptionHandlers() const override;
 	virtual void doAssert(const char* file, int line, const char* function, const char* expression) override;
 	virtual void setLogFilter(const std::function<bool(Common::LogLevel)>& filter) override;
+	virtual void applicationInitialized(const char* userID, const char* country, const char* language, const char* os, const char* programBittness, const char* programVersion) override;
 	virtual void commitCounterData(const char* name, quint64 value, int counterType) override;
 
 	virtual bool writeLog(
