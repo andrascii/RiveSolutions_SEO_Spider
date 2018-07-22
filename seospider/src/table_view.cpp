@@ -74,6 +74,7 @@ void TableView::setModel(QAbstractItemModel* model)
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(applyRowHeight())));
 
 #ifdef USE_SORTING
+	VERIFY(connect(m_sortFilterProxyModel, &QSortFilterProxyModel::layoutAboutToBeChanged, this, &TableView::onLayoutAboutToBeChanged));
 	VERIFY(connect(m_sortFilterProxyModel, &QSortFilterProxyModel::layoutChanged, this, &TableView::onLayoutChanged));
 #endif
 }
@@ -398,6 +399,24 @@ void TableView::applyRowHeight()
 	applyRowHeightToRowRange(0, m_model->rowCount());
 }
 
+void TableView::onLayoutAboutToBeChanged(const QList<QPersistentModelIndex>& indices, QAbstractItemModel::LayoutChangeHint hint)
+{
+	if (indices.isEmpty() && hint == QAbstractItemModel::VerticalSortHint)
+	{
+		if (model()->rowCount() > 0)
+		{
+			return;
+		}
+
+		const int columns = model()->columnCount();
+		// fixing reseting columns width bug after sorting empty table
+		for (int i = 0; i < columns; ++i)
+		{
+			m_columnsizesBeforeSorting << columnWidth(i);
+		}
+	}
+}
+
 void TableView::onLayoutChanged(const QList<QPersistentModelIndex>& indices, QAbstractItemModel::LayoutChangeHint hint)
 {
 	if (indices.isEmpty() && hint == QAbstractItemModel::VerticalSortHint)
@@ -411,7 +430,17 @@ void TableView::onLayoutChanged(const QList<QPersistentModelIndex>& indices, QAb
 		// TODO: fix it in a proper way
 		// check it in the future versions of Qt, probably it will be fixed
 		applyRowHeight();
-#endif;;
+#endif;
+
+		// fixing reseting columns width bug after sorting empty table
+		int index = 0;
+		foreach(int size, m_columnsizesBeforeSorting)
+		{
+			setColumnWidth(index, size);
+			++index;
+		}
+
+		m_columnsizesBeforeSorting.clear();
 	}
 }
 
