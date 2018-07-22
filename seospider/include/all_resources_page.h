@@ -27,8 +27,8 @@ protected:
 private:
 	void createHeaderActionWidgets();
 
-private slots:
-	void exportFilterData();
+private:
+	QAction* m_exportFilterDataAction;
 };
 
 }

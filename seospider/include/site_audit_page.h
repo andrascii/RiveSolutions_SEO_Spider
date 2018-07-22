@@ -30,7 +30,10 @@ private:
 
 private slots:
 	void onChangeGroupingAuditInfo(QAction* action);
-	void exportFilterData();
+
+private:
+	QAction* m_exportFilterDataAction;
+	QAction* m_switchAuditInfoFilterWidgetGroupingAction;
 };
 
 }

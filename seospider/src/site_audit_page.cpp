@@ -1,13 +1,10 @@
 #include "site_audit_page.h"
 #include "website_data_widget.h"
-#include "action_registry.h"
-#include "action_keys.h"
 #include "svg_renderer.h"
-#include "header_toolbar_creator.h"
+#include "header_toolbutton_creator.h"
 #include "data_collection_groups_factory.h"
 #include "application.h"
 #include "storage_exporter.h"
-#include "crawler.h"
 #include "summary_model.h"
 
 namespace SeoSpider
@@ -15,6 +12,8 @@ namespace SeoSpider
 
 SiteAuditPage::SiteAuditPage(QWidget* parent)
 	: AbstractFilterPage(new WebSiteDataWidget(nullptr), parent)
+	, m_exportFilterDataAction(nullptr)
+	, m_switchAuditInfoFilterWidgetGroupingAction(nullptr)
 {
 	setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 	createHeaderActionWidgets();
@@ -48,30 +47,23 @@ IPage::Type SiteAuditPage::type() const
 
 void SiteAuditPage::hasFilterSelection(int row)
 {
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
 	const DCStorageDescription* storageDescription = summaryFilterModel()->dataAccessor()->storageDescriptionByRow(row);
-	actionRegistry.globalAction(s_exportFilterDataAuditPageAction)->setData(QVariant::fromValue(*storageDescription));
-	actionRegistry.globalAction(s_exportFilterDataAuditPageAction)->setEnabled(true);
+	m_exportFilterDataAction->setData(QVariant::fromValue(*storageDescription));
+	m_exportFilterDataAction->setEnabled(true);
 }
 
 void SiteAuditPage::hasNoFilterSelection()
 {
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
-	actionRegistry.globalAction(s_exportFilterDataAuditPageAction)->setEnabled(false);
+	m_exportFilterDataAction->setEnabled(false);
 }
 
 void SiteAuditPage::createHeaderActionWidgets()
 {
-	// TODO: remove switchAuditInfoFilterWidgetGroupingAction from ActionRegistry
-	// because this container must contain only common actions
+	m_switchAuditInfoFilterWidgetGroupingAction = new QAction(
+		SvgRenderer::render(QStringLiteral(":/images/group-by-category.svg"), 20, 20),
+		tr("Change filters grouping"), this);
 
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
-
-	// switch grouping action
-	QAction* switchAuditInfoFilterWidgetGroupingAction = actionRegistry.addGlobalAction(s_switchAuditInfoFilterWidgetGroupingAction,
-		SvgRenderer::render(QStringLiteral(":/images/group-by-category.svg"), 20, 20), tr("Change filters grouping"));
-
-	QToolButton* menuButton = qobject_cast<QToolButton*>(HeaderToolButtonCreator::createControl(switchAuditInfoFilterWidgetGroupingAction));
+	QToolButton* menuButton = qobject_cast<QToolButton*>(createControl(m_switchAuditInfoFilterWidgetGroupingAction));
 
 	ASSERT(menuButton);
 
@@ -94,21 +86,19 @@ void SiteAuditPage::createHeaderActionWidgets()
 
 	//////////////////////////////////////////////////////////////////////////
 
-	// export actions
-	QAction* exportFilterDataAuditPageAction = actionRegistry.addGlobalAction(s_exportFilterDataAuditPageAction,
-		SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), tr("Export selected filter data to .xlsx file"));
+	m_exportFilterDataAction = new QAction(SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), 
+		tr("Export selected filter data to .xlsx file"), this);
 
-	exportFilterDataAuditPageAction->setDisabled(true);
+	m_exportFilterDataAction->setDisabled(true);
 
-	AbstractPage::addAction(exportFilterDataAuditPageAction);
+	AbstractPage::addAction(m_exportFilterDataAction);
 
-	VERIFY(connect(exportFilterDataAuditPageAction, &QAction::triggered, this, &SiteAuditPage::exportFilterData));
+	VERIFY(connect(m_exportFilterDataAction, &QAction::triggered, this, &SiteAuditPage::exportFilterData));
 }
 
 void SiteAuditPage::onChangeGroupingAuditInfo(QAction* action)
 {
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
-	actionRegistry.globalAction(s_switchAuditInfoFilterWidgetGroupingAction)->setIcon(action->icon());
+	m_switchAuditInfoFilterWidgetGroupingAction->setIcon(action->icon());
 
 	showMe();
 
@@ -123,20 +113,6 @@ void SiteAuditPage::onChangeGroupingAuditInfo(QAction* action)
 	{
 		enablePlainFilter();
 	}
-}
-
-void SiteAuditPage::exportFilterData()
-{
-	QAction* action = qobject_cast<QAction*>(sender());
-	ASSERT(action && "This method must be called using QAction");
-
-	const QVariant objectData = action->data();
-	ASSERT(objectData.isValid() && "No data passed");
-
-	std::vector<DCStorageDescription> storages;
-	storages.push_back(qvariant_cast<DCStorageDescription>(objectData));
-
-	StorageExporter::exportStorage(theApp->crawler()->sequencedDataCollection(), storages);
 }
 
 }

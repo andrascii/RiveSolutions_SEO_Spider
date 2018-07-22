@@ -44,10 +44,6 @@ static const QByteArray s_clearCrawledDataAction = "clearCrawledDataAction";
 // sitemap actions
 static const QByteArray s_createXMLSitemapAction = "createXMLSitemapAction";
 
-// export data actions
-static const QByteArray s_exportFilterDataAuditPageAction = "exportFilterDataAuditPageAction";
-static const QByteArray s_exportFilterDataAllResourcesPageAction = "exportFilterDataAllResourcesPageAction";
-
 // switch grouping audit info filter widget
 static const QByteArray s_switchAuditInfoFilterWidgetGroupingAction = "switchAuditInfoFilterWidgetGroupingAction";
 

@@ -13,7 +13,7 @@ public:
 	virtual void addAction(QAction* action, int position = -1) override;
 	virtual void showMe() const override;
 
-private:
+protected:
 	QWidget* createControl(QAction* action) const;
 
 private:
