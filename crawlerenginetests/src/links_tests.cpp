@@ -24,6 +24,25 @@ TEST(LinksTests, LinkAlt)
 	env.exec();
 }
 
+TEST(LinksTests, StylesheetLink)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://links.com/link-stylesheet.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(5);
+		cl->checkSequencedDataCollectionConsistency();
+		EXPECT_EQ(2, pages.size());
+		auto cssPages = cl->storageItems(StyleSheetResourcesStorageType);
+		EXPECT_EQ(1, cssPages.size());
+		EXPECT_EQ(QString("http://links.com/styles.css"), cssPages.at(0)->url.toDisplayString());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(LinksTests, CanonicalNextPrev)
 {
 	TestEnvironment env;
