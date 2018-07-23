@@ -32,7 +32,7 @@ void CssResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& pa
 		const bool hasStyleSheetRelAttribute = linkTag->hasAttribute("rel") &&
 			linkTag->attribute("rel").toLower().trimmed() == "stylesheet";
 
-		return !linkTag->hasAttribute("href") && !hasStyleSheetRelAttribute;
+		return !linkTag->hasAttribute("href") || !hasStyleSheetRelAttribute;
 	};
 
 	linkTags.erase(std::remove_if(linkTags.begin(), linkTags.end(), isBadLinkTag), linkTags.end());
