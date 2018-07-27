@@ -4,6 +4,7 @@
 #include "page_view_model.h"
 #include "application.h"
 #include "storage_adapter_factory.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -19,6 +20,8 @@ PageDataWidget::PageDataWidget(QWidget* parent)
 
 	layout->addWidget(m_tabWidget);
 	m_httpResponseLabel->setReadOnly(true);
+
+	VERIFY(connect(m_tabWidget, &QTabWidget::tabBarClicked, this, &PageDataWidget::onTabBarClicked));
 }
 
 void PageDataWidget::setParsedPageInfo(const ParsedPageInfoPtr& page)
@@ -72,6 +75,11 @@ void PageDataWidget::selectTab(PageDataType pageDataType)
 	ASSERT(pageDataType > BeginType && pageDataType < EndType);
 
 	m_tabWidget->setCurrentIndex(m_pageIndices[pageDataType]);
+}
+
+void PageDataWidget::onTabBarClicked(int index)
+{
+	emit tabBarClicked(index, m_tabWidget->currentIndex());
 }
 
 void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page) const

@@ -6,6 +6,7 @@
 #include "application.h"
 #include "storage_exporter.h"
 #include "summary_model.h"
+#include "page_data_widget.h"
 
 namespace SeoSpider
 {
@@ -15,6 +16,13 @@ SiteAuditPage::SiteAuditPage(QWidget* parent)
 	, m_exportFilterDataAction(nullptr)
 	, m_switchAuditInfoFilterWidgetGroupingAction(nullptr)
 {
+	PageDataWidget* resourceTables = new PageDataWidget(this);
+	resourceTables->setPageDataType(PageDataWidget::LinksOnThisPageType);
+	resourceTables->setPageDataType(PageDataWidget::LinksToThisPageType);
+	resourceTables->setPageDataType(PageDataWidget::ServerResponseForPageType);
+
+	websiteDataWidget()->setPageDataWidget(resourceTables);
+
 	setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 	createHeaderActionWidgets();
 }

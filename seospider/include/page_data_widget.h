@@ -32,6 +32,10 @@ public:
 
 public slots:
 	void pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected);
+	void onTabBarClicked(int index);
+
+signals:
+	void tabBarClicked(int index, int prevIndex);
 
 private:
 	void setPageServerResponse(const ParsedPageInfoPtr& page) const;
