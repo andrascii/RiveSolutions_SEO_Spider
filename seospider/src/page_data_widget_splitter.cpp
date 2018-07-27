@@ -113,6 +113,7 @@ void PageDataWidgetSplitter::syncronize(const PageDataWidgetSplitter* other)
 	}
 	
 	setSecondWidgetHeightImpl(other->m_splitterSecondWidget->height(), false);
+	m_splitterSecondWidget->setMaximumHeight(other->m_splitterSecondWidget->maximumHeight());
 	m_defaultTableViewHeight = other->m_splitterFirstWidget->height();
 
 	m_pageDataWidgetCollapsed = other->m_pageDataWidgetCollapsed;
