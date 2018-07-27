@@ -38,6 +38,8 @@ private:
 	};
 
 	QStackedWidget* m_stackedWidget;
+
+	QSplitter* m_splitter;
 	
 	QMap<IPage::Type, int> m_pageIndexes;
 

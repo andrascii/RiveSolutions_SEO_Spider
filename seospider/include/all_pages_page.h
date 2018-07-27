@@ -5,6 +5,8 @@
 namespace SeoSpider
 {
 
+class PageDataWidget;
+
 class AllPagesPage : public QFrame, public AbstractPage
 {
 	Q_OBJECT
@@ -18,6 +20,13 @@ public:
 
 signals:
 	virtual void controlsChanged(IPage::Type) override;
+
+private slots:
+	void pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected);
+
+private:
+	PageDataWidget* m_pageDataWidget;
+	QSplitter* m_splitter;
 };
 
 }

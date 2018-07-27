@@ -9,23 +9,17 @@
 #include "application.h"
 #include "command_menu.h"
 #include "model_helpers.h"
+#include "page_data_widget_splitter.h"
 
 namespace SeoSpider
 {
 
 WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* parent)
 	: QFrame(parent)
-	, m_splitter(new QSplitter(this))
 	, m_stackedWidget(new QStackedWidget(this))
 	, m_pageDataWidget(pageDataWidget)
-	, m_wasShown(false)
 {
-	m_splitter->setOrientation(Qt::Vertical);
-	m_splitter->setChildrenCollapsible(false);
-
 	QVBoxLayout* layout = new QVBoxLayout(this);
-
-	layout->addWidget(m_splitter);
 
 	layout->setMargin(0);
 	layout->setSpacing(0);
@@ -38,12 +32,8 @@ WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* pa
 	m_tables[StorageAdapterType::StorageAdapterTypeNone] = m_stackedWidget->addWidget(selectFilterLabel);
 	m_stackedWidget->setCurrentIndex(m_tables[StorageAdapterType::StorageAdapterTypeNone]);
 
-	m_splitter->addWidget(m_stackedWidget);
-
-	if (m_pageDataWidget)
-	{
-		m_splitter->addWidget(m_pageDataWidget);
-	}
+	m_splitter = new PageDataWidgetSplitter(this, m_stackedWidget, m_pageDataWidget);
+	layout->addWidget(m_splitter);
 }
 
 void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterType)
@@ -91,7 +81,7 @@ void WebSiteDataWidget::setPageDataWidget(PageDataWidget* dataWidget)
 	}
 
 	m_pageDataWidget = dataWidget;
-	m_splitter->addWidget(m_pageDataWidget);
+	m_splitter->addPageDataWidget(m_pageDataWidget);
 // 
 // 	VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 // 		m_pageDataWidget, SLOT(pageViewSelectionChangedSlot(const QItemSelection&, const QItemSelection&))));
@@ -100,24 +90,6 @@ void WebSiteDataWidget::setPageDataWidget(PageDataWidget* dataWidget)
 PageDataWidget* WebSiteDataWidget::pageDataWidget() const noexcept
 {
 	return m_pageDataWidget;
-}
-
-void WebSiteDataWidget::showEvent(QShowEvent*)
-{
-	if (m_wasShown)
-	{
-		return;
-	}
-
-	QWidget* parentWidget = qobject_cast<QWidget*>(parent());
-
-	ASSERT(parentWidget);
-
-	const int parentWidgetHeight = parentWidget->height();
-	const int mainTableView = Common::Helpers::pointsToPixels(400);
-
-	m_splitter->setSizes(QList<int>() << mainTableView << parentWidgetHeight - mainTableView);
-	m_wasShown = true;
 }
 
 void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
