@@ -5,8 +5,8 @@
 namespace SeoSpider
 {
 
-StatisticCounter::StatisticCounter(const QString& counterName)
-	: IStatisticCounter() 
+StatisticCounter::StatisticCounter(const QString& counterName, QObject* parent)
+	: QObject(parent) 
 	, m_value(0)
 	, m_name(counterName)
 	, m_type(Common::CounterData::Type::UseCounter)

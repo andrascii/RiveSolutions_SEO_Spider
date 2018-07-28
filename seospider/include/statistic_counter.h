@@ -11,7 +11,7 @@ class StatisticCounter : public QObject, public IStatisticCounter
 	Q_OBJECT
 
 public:
-	StatisticCounter(const QString& counterName);
+	StatisticCounter(const QString& counterName, QObject* parent = nullptr);
 	virtual ~StatisticCounter();
 
 	virtual const QString& name() const override;

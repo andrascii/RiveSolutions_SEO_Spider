@@ -5,6 +5,8 @@
 namespace SeoSpider
 {
 
+class IStatisticCounter;
+
 class LookupLineEditWidget : public QFrame, protected Ui::LookupLineEditWidget
 {
 	Q_OBJECT
@@ -25,9 +27,15 @@ private slots:
 	void onActionTriggered(QAction* action);
 
 private:
-	QMap<int, QString> m_searchFields;
+	void configureLineEdit();
+	void configureToolButton();
+
+private:
+	std::vector<int> m_searchFields;
+	QActionGroup* m_actionGroup;
 	QMenu* m_toolButtonMenu;
 	int m_currentSearchKey;
+	IStatisticCounter* m_counter;
 };
 
 }
