@@ -139,4 +139,20 @@ void WebSiteDataWidget::selectParsedPage(int row) const noexcept
 	currentTableView->scrollTo(selectRowIndex, QAbstractItemView::EnsureVisible);
 }
 
+QAbstractItemModel* WebSiteDataWidget::modelFor(StorageAdapterType storageAdapterType) const
+{
+	auto tableIndexIterator = m_tables.find(storageAdapterType);
+
+	if (tableIndexIterator != m_tables.end())
+	{
+		TableView* tableView = qobject_cast<TableView*>(m_stackedWidget->widget(tableIndexIterator.value()));
+
+		ASSERT(tableView);
+
+		return tableView->model();
+	}
+
+	return nullptr;
+}
+
 }

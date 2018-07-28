@@ -273,27 +273,7 @@ void SeoSpiderServiceApiImpl::init()
 		return;
 	}
 
-	std::wstring commandLine = L"seospiderservice.exe " + std::to_wstring(GetCurrentProcessId());
-
-	m_initialized = CreateProcessW(
-		NULL,
-		commandLine.data(),
-		NULL,
-		NULL,
-		TRUE,
-		CREATE_NO_WINDOW,
-		NULL,
-		NULL,
-		&m_startupInfo,
-		&m_processInfo
-	);
-
-	if (m_initialized)
-	{
-		m_pipeServer.reset(new PipeServer);
-		m_pipeServer->listen("seospiderserviceapi_log_channel");
-	}
-
+	startService();
 	qInstallMessageHandler(qtMsgHandler);
 }
 
@@ -310,6 +290,11 @@ void SeoSpiderServiceApiImpl::free() const
 
 bool SeoSpiderServiceApiImpl::restartApplication(int msec)
 {
+	if (!m_pipeServer)
+	{
+		return false;
+	}
+
 	Command command;
 	int argc = 0;
 
@@ -381,6 +366,11 @@ void SeoSpiderServiceApiImpl::setLogFilter(const std::function<bool(Common::LogL
 void SeoSpiderServiceApiImpl::applicationInitialized(const char* userID, const char* country, const char* language,
 	const char* os, const char* programBittness, const char* programVersion)
 {
+	if (!m_pipeServer)
+	{
+		return;
+	}
+
 	Command command;
 	command.setApplicationsInitializedData(userID, country, language, os, programBittness, programVersion);
 
@@ -389,6 +379,11 @@ void SeoSpiderServiceApiImpl::applicationInitialized(const char* userID, const c
 
 void SeoSpiderServiceApiImpl::commitCounterData(const char* name, quint64 value, int counterType)
 {
+	if (!m_pipeServer)
+	{
+		return;
+	}
+
 	Command command;
 	command.setCounterData(name, value, counterType);
 
@@ -577,6 +572,11 @@ unsigned SeoSpiderServiceApiImpl::assertExceptionFilter(
 	const char* expression,
 	void* exceptionInfo)
 {
+	if (!m_pipeServer)
+	{
+		return false;
+	}
+
 	EXCEPTION_POINTERS* ep = (EXCEPTION_POINTERS*)exceptionInfo;
 	Command command;
 	command.setAssertData(file, line, function, thisptr, expression, ep, sizeof(*ep));
@@ -594,6 +594,11 @@ bool SeoSpiderServiceApiImpl::writeLogStack(
 	const void* thisptr,
 	const char* text)
 {
+	if (!m_pipeServer)
+	{
+		return false;
+	}
+
 	Common::Command command;
 	command.setLogData(file, line, function, thisptr);
 	Common::LogData* logData = command.logData();
@@ -614,6 +619,11 @@ bool SeoSpiderServiceApiImpl::writeLogHeap(
 	const void* thisptr,
 	const char* text)
 {
+	if (!m_pipeServer)
+	{
+		return false;
+	}
+
 	const size_t bufferSize = logDataPacketSize(text);
 	std::vector<char> buffer(bufferSize);
 
@@ -630,6 +640,11 @@ bool SeoSpiderServiceApiImpl::writeLogHeap(
 
 bool SeoSpiderServiceApiImpl::makeCrashDump(const void* exceptionInfo, const int exceptionInfoSize)
 {
+	if (!m_pipeServer)
+	{
+		return false;
+	}
+
 	Command command;
 	command.setDumpData(exceptionInfo, exceptionInfoSize, DumpData::NativeCrash);
 
@@ -637,6 +652,30 @@ bool SeoSpiderServiceApiImpl::makeCrashDump(const void* exceptionInfo, const int
 	
 	m_pipeServer->transactData(command, result);
 	return result.errorcode == 0;
+}
+
+void SeoSpiderServiceApiImpl::startService()
+{
+	std::wstring commandLine = L"seospiderservice.exe " + std::to_wstring(GetCurrentProcessId());
+
+	m_initialized = CreateProcessW(
+		NULL,
+		commandLine.data(),
+		NULL,
+		NULL,
+		TRUE,
+		CREATE_NO_WINDOW,
+		NULL,
+		NULL,
+		&m_startupInfo,
+		&m_processInfo
+	);
+
+	if (m_initialized)
+	{
+		m_pipeServer.reset(new PipeServer);
+		m_pipeServer->listen("seospiderserviceapi_log_channel");
+	}
 }
 
 }

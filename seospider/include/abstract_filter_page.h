@@ -13,6 +13,7 @@ class TableView;
 class SummaryModel;
 class SummaryViewModel;
 class FilterInfoWidget;
+class LookupLineEditWidget;
 
 class AbstractFilterPage : public QFrame, public AbstractPage
 {
@@ -36,9 +37,11 @@ protected:
 	virtual void showEvent(QShowEvent* event) override;
 	virtual void hasFilterSelection(int row) = 0;
 	virtual void hasNoFilterSelection() = 0;
+	virtual void initHeaderWidgets() final;
 
 protected slots:
 	void exportFilterData();
+	void onApplySearch(int searchKey, const QString& searchValue);
 
 private slots:
 	void adjustSize();
@@ -55,7 +58,11 @@ private:
 	QSplitter* m_splitter;
 	FilterInfoWidget* m_info;
 
+	int m_currentSelectedRow;
+
 	bool m_isFirstShow;
+
+	LookupLineEditWidget* m_lookupLineEditWidget;
 };
 
 }

@@ -17,9 +17,14 @@
 #include "filter_info_widget.h"
 #include "storage_exporter.h"
 #include "crawler.h"
+#include "lookup_lineedit_widget.h"
+#include "parsed_page_info.h"
+#include "storage_adapter_factory.h"
 
 namespace SeoSpider
 {
+
+using namespace CrawlerEngine;
 
 AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWidget* parent)
 	: QFrame(parent)
@@ -30,6 +35,8 @@ AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWi
 	, m_splitter(new QSplitter(this))
 	, m_isFirstShow(true)
 	, m_info(new FilterInfoWidget(this))
+	, m_lookupLineEditWidget(nullptr)
+	, m_currentSelectedRow(-1)
 {
 	m_summaryFilterTableView->setModel(m_summaryFilterModel);
 	m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);
@@ -61,7 +68,7 @@ AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWi
 
 void AbstractFilterPage::setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType dataAccessorType)
 {
-	CrawlerEngine::SequencedDataCollection* sequencedDataCollection = theApp->sequencedDataCollection();
+	SequencedDataCollection* sequencedDataCollection = theApp->sequencedDataCollection();
 	ISummaryDataAccessor* summaryDataAccessor = theApp->summaryDataAccessorFactory()->create(dataAccessorType, sequencedDataCollection);
 
 	m_summaryFilterModel->setDataAccessor(summaryDataAccessor);
@@ -75,7 +82,7 @@ void AbstractFilterPage::setSummaryViewDataAccessorType(SummaryDataAccessorFacto
 	VERIFY(connect(summaryDataAccessor->qobject(), SIGNAL(dataSetChanged()), this, SLOT(reinitFilterTableSpans())));
 }
 
-void AbstractFilterPage::selectFilter(CrawlerEngine::StorageType type) const
+void AbstractFilterPage::selectFilter(StorageType type) const
 {
 	const int row = m_summaryFilterModel->dataAccessor()->rowByStorageType(type);
 
@@ -144,6 +151,39 @@ void AbstractFilterPage::showEvent(QShowEvent* event)
 	QFrame::showEvent(event);
 }
 
+void AbstractFilterPage::hasFilterSelection(int row)
+{
+	DEBUG_ASSERT(m_lookupLineEditWidget);
+
+	if (!m_lookupLineEditWidget)
+	{
+		return;
+	}
+
+	m_lookupLineEditWidget->removeAllSearchFields();
+	m_lookupLineEditWidget->setEnabled(true);
+
+	QVector<ParsedPageInfo::Column> columns = 
+		StorageAdapterFactory::parsedPageAvailableColumns(m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(row, 0)));
+
+	for (int i = 0; i < columns.size(); ++i)
+	{
+		m_lookupLineEditWidget->addSearchField(i, ParsedPageInfo::itemTypeDescription(columns[i]));
+	}
+}
+
+void AbstractFilterPage::hasNoFilterSelection()
+{
+	DEBUG_ASSERT(m_lookupLineEditWidget);
+
+	if (!m_lookupLineEditWidget)
+	{
+		return;
+	}
+
+	m_lookupLineEditWidget->setEnabled(false);
+}
+
 void AbstractFilterPage::adjustSize()
 {
 	QWidget* parentWidget = qobject_cast<QWidget*>(parent());
@@ -177,12 +217,29 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 
 		ASSERT(std::all_of(indexes.begin(), indexes.end(), uniqueRowNumberPredicate));
 
+		AbstractFilterPage::hasFilterSelection(row);
 		hasFilterSelection(row);
+
+		m_currentSelectedRow = row;
 	}
 	else
 	{
+		AbstractFilterPage::hasNoFilterSelection();
 		hasNoFilterSelection();
+
+		m_currentSelectedRow = -1;
 	}
+}
+
+void AbstractFilterPage::initHeaderWidgets()
+{
+	// this function must not be called from AbstractFilterPage constructor
+	// in order to avoid crash with pure virtual function
+	m_lookupLineEditWidget = new LookupLineEditWidget;
+	addWidget(m_lookupLineEditWidget);
+
+	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
+		this, SLOT(onApplySearch(int, const QString&))));
 }
 
 void AbstractFilterPage::exportFilterData()
@@ -202,6 +259,20 @@ void AbstractFilterPage::exportFilterData()
 void AbstractFilterPage::reinitFilterTableSpans()
 {
 	m_summaryFilterTableView->initSpans();
+}
+
+void AbstractFilterPage::onApplySearch(int searchKey, const QString& searchValue)
+{
+	StorageAdapterType storageAdapterType =
+		m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(m_currentSelectedRow, 0));
+
+	QSortFilterProxyModel* filterProxyModel =
+		qobject_cast<QSortFilterProxyModel*>(websiteDataWidget()->modelFor(storageAdapterType));
+
+	ASSERT(filterProxyModel);
+
+	filterProxyModel->setFilterKeyColumn(searchKey + 1);
+	filterProxyModel->setFilterRegExp("^.*" + searchValue + ".*$");
 }
 
 }
