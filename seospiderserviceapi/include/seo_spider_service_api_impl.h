@@ -72,6 +72,8 @@ private:
 
 	bool makeCrashDump(const void* exceptionInfo, const int exceptionInfoSize);
 
+	void startService();
+
 private:
 	static SeoSpiderServiceApiImpl* s_self;
 

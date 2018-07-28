@@ -68,13 +68,7 @@ void SiteAuditPage::hasNoFilterSelection()
 
 void SiteAuditPage::createHeaderActionWidgets()
 {
-	LookupLineEditWidget* lookupLineEditWidget = new LookupLineEditWidget;
-	lookupLineEditWidget->addSearchField(0, tr("Zero"));
-	lookupLineEditWidget->addSearchField(1, tr("One"));
-
-	AbstractPage::addWidget(lookupLineEditWidget);
-
-	//////////////////////////////////////////////////////////////////////////
+	AbstractFilterPage::initHeaderWidgets();
 
 	m_switchAuditInfoFilterWidgetGroupingAction = new QAction(
 		SvgRenderer::render(QStringLiteral(":/images/group-by-category.svg"), 20, 20),

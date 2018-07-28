@@ -6,11 +6,22 @@ namespace SeoSpider
 LookupLineEditWidget::LookupLineEditWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_toolButtonMenu(new QMenu(this))
+	, m_currentSearchKey(-1)
 {
 	setupUi(this);
 
 	toolButton->setMenu(m_toolButtonMenu);
 	toolButton->setPopupMode(QToolButton::InstantPopup);
+
+	VERIFY(connect(lineEdit, &QLineEdit::returnPressed, this, &LookupLineEditWidget::onApplySearch));
+	VERIFY(connect(m_toolButtonMenu, &QMenu::triggered, this, &LookupLineEditWidget::onActionTriggered));
+}
+
+void LookupLineEditWidget::removeAllSearchFields()
+{
+	m_toolButtonMenu->clear();
+	m_searchFields.clear();
+	m_currentSearchKey = -1;
 }
 
 void LookupLineEditWidget::addSearchField(int searchKey, const QString& searchKeyDescription)
@@ -23,12 +34,30 @@ void LookupLineEditWidget::addSearchField(int searchKey, const QString& searchKe
 
 	m_searchFields[searchKey] = searchKeyDescription;
 
-	m_toolButtonMenu->addAction(new QAction(searchKeyDescription));
+	QAction* action = new QAction(searchKeyDescription);
+	action->setData(searchKey);
+
+	m_toolButtonMenu->addAction(action);
 }
 
-void LookupLineEditWidget::onSearchKeyChanged(int searchKey)
+int LookupLineEditWidget::currentSearchKey() const
 {
-	searchKey;
+	return m_currentSearchKey;
+}
+
+QString LookupLineEditWidget::currentSearchString() const
+{
+	return lineEdit->text();
+}
+
+void LookupLineEditWidget::onApplySearch()
+{
+	emit applySearch(m_currentSearchKey, lineEdit->text());
+}
+
+void LookupLineEditWidget::onActionTriggered(QAction* action)
+{
+	m_currentSearchKey = action->data().toInt();
 }
 
 }

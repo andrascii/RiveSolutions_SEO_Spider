@@ -12,18 +12,22 @@ class LookupLineEditWidget : public QFrame, protected Ui::LookupLineEditWidget
 public:
 	LookupLineEditWidget(QWidget* parent = nullptr);
 
+	void removeAllSearchFields();
 	void addSearchField(int searchKey, const QString& searchKeyDescription);
-	const QString& searchValue() const;
+	int currentSearchKey() const;
+	QString currentSearchString() const;
 
 signals:
-	void searchKeyChanged(int searchKey);
+	void applySearch(int searchKey, const QString& searchString);
 
 private slots:
-	void onSearchKeyChanged(int searchKey);
+	void onApplySearch();
+	void onActionTriggered(QAction* action);
 
 private:
 	QMap<int, QString> m_searchFields;
 	QMenu* m_toolButtonMenu;
+	int m_currentSearchKey;
 };
 
 }

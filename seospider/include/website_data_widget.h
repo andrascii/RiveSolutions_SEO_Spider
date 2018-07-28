@@ -26,6 +26,8 @@ public:
 
 	void selectParsedPage(int row) const noexcept;
 
+	QAbstractItemModel* modelFor(StorageAdapterType storageAdapterType) const;
+
 private slots:
 	void pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
