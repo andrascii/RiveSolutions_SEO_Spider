@@ -55,7 +55,7 @@ QMenu::item
 	padding-left: 2.1em;
 	padding-right: 2.1em;
 	color: #000000;
-	border-left: 0.6em solid #ffffff;
+	border-left: 0.6em solid #D2D3D5;
 }
 
 QMenu::icon
@@ -1032,4 +1032,11 @@ QFrame#reportView QLabel#spacerElement
 QScrollArea#reportScrollArea
 {
 	border: 0px solid transparent;
+}
+
+/*////////////////////////////// LookupLineEditWidget //////////////////////////////*/
+
+SeoSpider--LookupLineEditWidget
+{
+	min-width: 20em;
 }
