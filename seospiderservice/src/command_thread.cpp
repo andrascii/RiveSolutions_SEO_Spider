@@ -147,6 +147,8 @@ void CommandThread::run()
 
 bool CommandThread::writeStatisticsFile(const QString& fileName)
 {
+	Q_ASSERT(!isRunning() || QThread::currentThread() == thread());
+
 	QFile statisticsFile(fileName);
 
 	if (statisticsFile.open(QIODevice::WriteOnly | QIODevice::Truncate))

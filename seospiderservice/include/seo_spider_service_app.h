@@ -7,13 +7,6 @@
 #include "command_thread.h"
 #include "command.h"
 
-namespace Common
-{
-
-class IIpcSignaledObject;
-
-}
-
 class Zippo;
 
 namespace SeoSpiderService

@@ -280,6 +280,7 @@ void TableView::setViewModel(IViewModel* modelView) noexcept
 	}
 
 	m_viewModel = modelView;
+	m_viewModel->qobject()->setParent(this);
 
 	VERIFY(connect(m_viewModel->qobject(), SIGNAL(repaintItems(const QModelIndexList&)),
 		this, SLOT(onAboutRepaintItems(const QModelIndexList&))));
