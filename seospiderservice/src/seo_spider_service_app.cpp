@@ -54,6 +54,8 @@ SeoSpiderServiceApp::~SeoSpiderServiceApp()
 
 	m_zippo->quit();
 	m_zippo->wait();
+	m_cmdThread->quit();
+	m_cmdThread->wait();
 	
 	if (m_defferedDeleteDir != std::nullopt)
 	{
