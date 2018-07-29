@@ -14,6 +14,8 @@ public:
 
 	static SeoSpiderServiceApiLoader& instance();
 	static SeoSpiderServiceApi::ISeoSpiderServiceApi* serviceApi();
+	static void disableService();
+	static void enableService();
 
 	SeoSpiderDllMainFunction entryPoint();
 
@@ -21,6 +23,8 @@ private:
 	SeoSpiderServiceApiLoader();
 
 private:
+	static std::atomic_bool m_isDisabled;
+
 	SeoSpiderServiceApiLoaderPrivate* m_impl;
 };
 

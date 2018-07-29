@@ -58,9 +58,9 @@ Application::Application(int& argc, char** argv)
 	initialize();
 	showMainWindow();
 
-	if (!m_commandLineHandler->getCommandArguments(s_openSerializedFileKey).isEmpty())
+	if (!m_commandLineHandler->commandValue(s_openSerializedFileKey).isEmpty())
 	{
-		openFileThroughCmd(m_commandLineHandler->getCommandArguments(s_openSerializedFileKey));
+		openFileThroughCmd(m_commandLineHandler->commandValue(s_openSerializedFileKey));
 	}
 }
 
