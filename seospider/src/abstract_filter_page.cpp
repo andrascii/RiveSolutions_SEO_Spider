@@ -163,7 +163,7 @@ void AbstractFilterPage::hasFilterSelection(int row)
 	m_lookupLineEditWidget->reset();
 	m_lookupLineEditWidget->setEnabled(true);
 
-	QVector<ParsedPageInfo::Column> columns = 
+	const QVector<ParsedPageInfo::Column> columns = 
 		StorageAdapterFactory::parsedPageAvailableColumns(m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(row, 0)));
 
 	for (int i = 0; i < columns.size(); ++i)

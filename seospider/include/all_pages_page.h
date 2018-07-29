@@ -5,7 +5,9 @@
 namespace SeoSpider
 {
 
+class TableView;
 class PageDataWidget;
+class LookupLineEditWidget;
 
 class AllPagesPage : public QFrame, public AbstractPage
 {
@@ -23,10 +25,16 @@ signals:
 
 private slots:
 	void pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected);
+	void onApplySearch(int searchKey, const QString& searchValue);
 
 private:
+	void createHeaderActionWidgets();
+
+private:
+	TableView* m_crawlingTableView;
 	PageDataWidget* m_pageDataWidget;
 	QSplitter* m_splitter;
+	LookupLineEditWidget* m_lookupLineEditWidget;
 };
 
 }
