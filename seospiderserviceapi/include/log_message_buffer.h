@@ -1,6 +1,7 @@
 #pragma once
 
 #include "command.h"
+#include "seo_spider_service_api_loader.h"
 #include <sstream>
 
 namespace SeoSpiderServiceApi
@@ -19,7 +20,15 @@ public:
 
 	~LogMessageBuffer()
 	{
-		seoSpiderServiceApi()->writeLog(0, m_level, m_file, m_line, m_function, this, m_stream.str().c_str());
+		Common::SeoSpiderServiceApiLoader& loader = Common::SeoSpiderServiceApiLoader::instance();
+		const auto* entryPoint = loader.entryPoint();
+
+		if (!entryPoint)
+		{
+			return;
+		}
+
+		entryPoint()->writeLog(0, m_level, m_file, m_line, m_function, this, m_stream.str().c_str());
 	}
 
 	template <typename T>

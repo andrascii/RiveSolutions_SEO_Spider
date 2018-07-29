@@ -1,6 +1,6 @@
 #pragma once
 
-#include "seo_spider_service_api_export.h"
+#include "seo_spider_service_api_loader.h"
 #include "log_message_buffer.h"
 
 #ifdef Q_OS_WIN
@@ -9,8 +9,11 @@
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define ASSERT(condition) if((condition) == false) \
-seoSpiderServiceApi()->doAssert(__FILENAME__, __LINE__, __FUNCTION__, #condition);
+#define ASSERT(condition) \
+if((condition) == false) \
+{\
+	Common::SeoSpiderServiceApiLoader::serviceApi()->doAssert(__FILENAME__, __LINE__, __FUNCTION__, #condition); \
+}
 
 #ifdef QT_DEBUG
 #define DEBUG_ASSERT(condition) ASSERT(condition)

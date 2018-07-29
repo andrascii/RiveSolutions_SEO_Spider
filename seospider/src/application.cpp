@@ -384,7 +384,7 @@ void Application::initialize()
 
 void Application::applicationInitialized()
 {
-	seoSpiderServiceApi()->applicationInitialized(
+	Common::SeoSpiderServiceApiLoader::serviceApi()->applicationInitialized(
 		getOrGenerateUserID().toLatin1(),
 		QLocale::countryToString(QLocale::system().country()).toLatin1(),
 		QLocale::languageToString(QLocale::system().language()).toLatin1(),
