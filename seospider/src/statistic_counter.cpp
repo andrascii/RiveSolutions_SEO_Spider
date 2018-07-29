@@ -15,7 +15,7 @@ StatisticCounter::StatisticCounter(const QString& counterName, QObject* parent)
 
 StatisticCounter::~StatisticCounter()
 {
-	seoSpiderServiceApi()->commitCounterData(m_name.toLatin1(), m_value, m_type);
+	Common::SeoSpiderServiceApiLoader::serviceApi()->commitCounterData(m_name.toLatin1(), m_value, m_type);
 }
 
 const QString& StatisticCounter::name() const
@@ -35,7 +35,7 @@ void StatisticCounter::increment()
 
 void StatisticCounter::commit()
 {
-	seoSpiderServiceApi()->commitCounterData(m_name.toLatin1(), m_value, m_type);
+	Common::SeoSpiderServiceApiLoader::serviceApi()->commitCounterData(m_name.toLatin1(), m_value, m_type);
 	reset();
 }
 

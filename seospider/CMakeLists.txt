@@ -152,7 +152,6 @@ target_link_libraries(
 	${AppName}
 	${CrawlerEngineLibName}
 	${CommonLibName}
-	${SeoSpiderServiceApiDllName}
 	${VersionProjectName}
 	${QtXlsxWriter_LIBS}
 	${OSSpecificDeps}

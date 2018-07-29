@@ -20,6 +20,7 @@ public:
 	}
 	virtual bool doDump(const void*, const int) override
 	{
+		return false;
 	}
 	virtual void setProcessExceptionHandlers() const override
 	{
@@ -30,15 +31,18 @@ public:
 	virtual void doAssert(const char*, int, const char*, const char*) override
 	{
 	}
-	virtual bool writeLog(
-		int,
-		int,
-		const char*,
-		unsigned int,
-		const char*,
-		const void*,
-		const char*) override
+	virtual void setLogFilter(const std::function<bool(Common::LogLevel)>&) override
 	{
+	}
+	virtual void applicationInitialized(const char*, const char*, const char*, const char*, const char*, const char*) override
+	{
+	}
+	virtual void commitCounterData(const char*, quint64, int) override
+	{
+	}
+	virtual bool writeLog(int, int, const char*, unsigned int, const char*, const void*, const char*) override
+	{
+		return false;
 	}
 };
 

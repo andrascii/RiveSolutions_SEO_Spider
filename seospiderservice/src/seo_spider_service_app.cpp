@@ -312,11 +312,6 @@ void SeoSpiderServiceApp::onCompressingFinished()
 
 void SeoSpiderServiceApp::onCommandReceived(Common::Command command)
 {
-#ifdef QT_DEBUG
-	emit closeServiceApp();
-	return;
-#endif
-
 	if (!command.dumpData() && !command.assertData())
 	{
 		return;

@@ -120,7 +120,6 @@ target_link_libraries(
 	${CrawlerEngineLibName}
 	gtest
 	${CommonLibName}
-	${SeoSpiderServiceApiDllName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_FILESYSTEM_LIBRARY}
