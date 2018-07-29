@@ -7,7 +7,8 @@ class CommandLineHandler
 {
 public:
 	CommandLineHandler(int& argc, char** argv);
-	QString getCommandArguments(const char*);
+	QString commandValue(const char* commandKey) const;
+	bool hasCommand(const char* commandKey) const;
 
 private:
 	boost::program_options::options_description m_optionsDescription;

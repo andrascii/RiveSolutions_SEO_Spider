@@ -9,7 +9,7 @@ class SeoSpiderServiceApiLoaderPrivate final : public QObject
 public:
 	SeoSpiderServiceApiLoaderPrivate(QObject* parent)
 		: QObject(parent)
-		, m_library(new QLibrary("seospiderserviceapi.dll", this))
+		, m_library(new QLibrary("seospiderserviceapi", this))
 		, m_functionPointer(nullptr)
 	{
 	}
@@ -28,6 +28,10 @@ private:
 	QLibrary* m_library;
 	QFunctionPointer m_functionPointer;
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+std::atomic_bool SeoSpiderServiceApiLoader::m_isDisabled = false;
 
 SeoSpiderServiceApiLoader&
 SeoSpiderServiceApiLoader::instance()
@@ -60,6 +64,16 @@ SeoSpiderServiceApi::ISeoSpiderServiceApi* SeoSpiderServiceApiLoader::serviceApi
 	return loader.entryPoint()();
 }
 
+void SeoSpiderServiceApiLoader::disableService()
+{
+	m_isDisabled = true;
+}
+
+void SeoSpiderServiceApiLoader::enableService()
+{
+	m_isDisabled = false;
+}
+
 SeoSpiderServiceApiLoader::SeoSpiderServiceApiLoader()
 	: QObject(nullptr)
 	, m_impl(new SeoSpiderServiceApiLoaderPrivate(this))
@@ -69,6 +83,11 @@ SeoSpiderServiceApiLoader::SeoSpiderServiceApiLoader()
 SeoSpiderServiceApiLoader::SeoSpiderDllMainFunction
 SeoSpiderServiceApiLoader::entryPoint()
 {
+	if (m_isDisabled)
+	{
+		return nullptr;
+	}
+
 	return reinterpret_cast<SeoSpiderDllMainFunction>(m_impl->entryPoint());
 }
 
