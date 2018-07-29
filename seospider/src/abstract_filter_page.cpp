@@ -160,7 +160,7 @@ void AbstractFilterPage::hasFilterSelection(int row)
 		return;
 	}
 
-	m_lookupLineEditWidget->removeAllSearchFields();
+	m_lookupLineEditWidget->reset();
 	m_lookupLineEditWidget->setEnabled(true);
 
 	QVector<ParsedPageInfo::Column> columns = 
@@ -169,6 +169,12 @@ void AbstractFilterPage::hasFilterSelection(int row)
 	for (int i = 0; i < columns.size(); ++i)
 	{
 		m_lookupLineEditWidget->addSearchField(i, ParsedPageInfo::itemTypeDescription(columns[i]));
+	}
+
+	if (m_searchRules.contains(row))
+	{
+		onApplySearch(m_searchRules[row].searchKey, m_searchRules[row].searchData);
+		m_lookupLineEditWidget->setCurrentSearchData(m_searchRules[row].searchKey, m_searchRules[row].searchData);
 	}
 }
 
@@ -217,17 +223,17 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 
 		ASSERT(std::all_of(indexes.begin(), indexes.end(), uniqueRowNumberPredicate));
 
+		m_currentSelectedRow = row;
+
 		AbstractFilterPage::hasFilterSelection(row);
 		hasFilterSelection(row);
-
-		m_currentSelectedRow = row;
 	}
 	else
 	{
+		m_currentSelectedRow = -1;
+
 		AbstractFilterPage::hasNoFilterSelection();
 		hasNoFilterSelection();
-
-		m_currentSelectedRow = -1;
 	}
 }
 
@@ -273,6 +279,8 @@ void AbstractFilterPage::onApplySearch(int searchKey, const QString& searchValue
 
 	filterProxyModel->setFilterKeyColumn(searchKey + 1);
 	filterProxyModel->setFilterRegExp("^.*" + searchValue + ".*$");
+
+	m_searchRules[m_currentSelectedRow] = SearchRules{ searchKey, searchValue };
 }
 
 }

@@ -68,6 +68,8 @@ void AllResourcesPage::hasNoFilterSelection()
 
 void AllResourcesPage::createHeaderActionWidgets()
 {
+	AbstractFilterPage::initHeaderWidgets();
+
 	m_exportFilterDataAction = new QAction(SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20),
 		tr("Export selected filter data to .xlsx file"), this);
 

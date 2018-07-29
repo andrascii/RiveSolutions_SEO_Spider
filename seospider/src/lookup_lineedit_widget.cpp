@@ -26,7 +26,7 @@ LookupLineEditWidget::LookupLineEditWidget(QWidget* parent)
 	configureToolButton();
 }
 
-void LookupLineEditWidget::removeAllSearchFields()
+void LookupLineEditWidget::reset()
 {
 	m_toolButtonMenu->clear();
 	m_searchFields.clear();
@@ -34,6 +34,8 @@ void LookupLineEditWidget::removeAllSearchFields()
 
 	m_actionGroup->deleteLater();
 	m_actionGroup = nullptr;
+
+	lineEdit->clear();
 
 	configureLineEdit();
 	configureToolButton();
@@ -84,21 +86,44 @@ void LookupLineEditWidget::onApplySearch()
 void LookupLineEditWidget::onActionTriggered(QAction* action)
 {
 	m_currentSearchKey = action->data().toInt();
+	const QString placeholderText = tr("Search by \"") + action->text() + tr("\" column");
 
-	configureLineEdit();
+	configureLineEdit(placeholderText);
 }
 
-void LookupLineEditWidget::configureLineEdit()
+void LookupLineEditWidget::configureLineEdit(const QString& placeholderText)
 {
 	const bool hasCheckedAction = m_actionGroup && m_actionGroup->checkedAction() != nullptr;
 
 	lineEdit->setEnabled(hasCheckedAction);
-	lineEdit->setPlaceholderText(hasCheckedAction ? tr("") : tr("Select the column for search..."));
+	lineEdit->setPlaceholderText(hasCheckedAction ? placeholderText : tr("Select the column for search..."));
 }
 
 void LookupLineEditWidget::configureToolButton()
 {
 	toolButton->setEnabled(!m_searchFields.empty());
+}
+
+QAction* LookupLineEditWidget::actionBySearchKey(int searchKey) const
+{
+	for (const auto& action : m_actionGroup->actions())
+	{
+		if (action->data().toInt() == searchKey)
+		{
+			return action;
+		}
+	}
+
+	return nullptr;
+}
+
+void LookupLineEditWidget::setCurrentSearchData(int searchKey, const QString& searchData)
+{
+	m_currentSearchKey = searchKey;
+	lineEdit->setText(searchData);
+
+	QAction* action = actionBySearchKey(m_currentSearchKey);
+	action->trigger();
 }
 
 }

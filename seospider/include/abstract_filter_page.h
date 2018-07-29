@@ -49,6 +49,12 @@ private slots:
 	void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
+	struct SearchRules
+	{
+		int searchKey;
+		QString searchData;
+	};
+
 	WebSiteDataWidget* m_webSiteDataWidget;
 
 	TableView* m_summaryFilterTableView;
@@ -59,10 +65,10 @@ private:
 	FilterInfoWidget* m_info;
 
 	int m_currentSelectedRow;
-
 	bool m_isFirstShow;
 
 	LookupLineEditWidget* m_lookupLineEditWidget;
+	QMap<int, SearchRules> m_searchRules;
 };
 
 }
