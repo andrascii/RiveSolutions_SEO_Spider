@@ -16,6 +16,7 @@ CommandLineHandler::CommandLineHandler(int& argc, char** argv)
 	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, m_optionsDescription), m_variablesMap);
 	boost::program_options::notify(m_variablesMap);
 
+#ifdef QT_DEBUG
 	if (hasCommand(s_startWithoutService))
 	{
 		// we must do this here because on the next initialization steps
@@ -23,6 +24,7 @@ CommandLineHandler::CommandLineHandler(int& argc, char** argv)
 		// library and starting service but using this key we don't wanna start the service
 		Common::SeoSpiderServiceApiLoader::disableService();
 	}
+#endif
 }
 
 QString CommandLineHandler::commandValue(const char* commandKey) const
