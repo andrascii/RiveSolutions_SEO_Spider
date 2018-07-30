@@ -13,7 +13,7 @@
 if((condition) == false) \
 {\
 	Common::SeoSpiderServiceApiLoader::serviceApi()->doAssert(__FILENAME__, __LINE__, __FUNCTION__, #condition); \
-}
+} 0
 
 #ifdef QT_DEBUG
 #define DEBUG_ASSERT(condition) ASSERT(condition)

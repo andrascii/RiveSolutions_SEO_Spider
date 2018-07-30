@@ -15,7 +15,7 @@ namespace SeoSpider
 
 AllPagesPage::AllPagesPage(QWidget* parent)
 	: QFrame(parent)
-	, m_crawlingTableView(new TableView(this, false, true))
+	, m_stackedTableView(new QStackedWidget(this))
 	, m_pageDataWidget(nullptr)
 	, m_splitter(nullptr)
 	, m_lookupLineEditWidget(nullptr)
@@ -24,31 +24,42 @@ AllPagesPage::AllPagesPage(QWidget* parent)
 	layout->setMargin(0);
 	layout->setSpacing(0);
 
+	TableView* tableView = new TableView(this, false, true);
 	PageModel* model = new PageModel;
-	PageViewModel* modelView = new PageViewModel(m_crawlingTableView, model);
+	PageViewModel* modelView = new PageViewModel(tableView, model);
 
 	IStorageAdapter* storageAdapter = theApp->storageAdapterFactory()->createParsedPageInfoStorage(
 		StorageAdapterType::StorageAdapterTypeAllPages, theApp->sequencedDataCollection());
 
 	model->setStorageAdapter(storageAdapter);
 
-	m_crawlingTableView->setModel(model);
-	m_crawlingTableView->setViewModel(modelView);
-	m_crawlingTableView->setShowAdditionalGrid(true);
-	m_crawlingTableView->setContextMenu(new CommandMenu(storageAdapter));
+	tableView->setModel(model);
+	tableView->setViewModel(modelView);
+	tableView->setShowAdditionalGrid(true);
+	tableView->setContextMenu(new CommandMenu(storageAdapter));
 
 	m_pageDataWidget = new PageDataWidget(this);
 	m_pageDataWidget->setPageDataType(PageDataWidget::LinksOnThisPageType);
 	m_pageDataWidget->setPageDataType(PageDataWidget::LinksToThisPageType);
 	m_pageDataWidget->setPageDataType(PageDataWidget::ServerResponseForPageType);
 
-	m_splitter = new PageDataWidgetSplitter(this, m_crawlingTableView, m_pageDataWidget);
+	QLabel* noSearchResultsLabel = new QLabel(this);
+	noSearchResultsLabel->setObjectName(QStringLiteral("NoSearchResultsLabel"));
+	noSearchResultsLabel->setText(AbstractPage::s_noResultsMessageStub);
+	noSearchResultsLabel->setAlignment(Qt::AlignCenter);
+	noSearchResultsLabel->setWordWrap(true);
+
+	m_widgetIndexes[NoResultsWidget] = m_stackedTableView->addWidget(noSearchResultsLabel);
+	m_widgetIndexes[CrawlingTableViewWidget] = m_stackedTableView->addWidget(tableView);
+	m_stackedTableView->setCurrentIndex(m_widgetIndexes[CrawlingTableViewWidget]);
+
+	m_splitter = new PageDataWidgetSplitter(this, m_stackedTableView, m_pageDataWidget);
 	layout->addWidget(m_splitter);
 
-	VERIFY(connect(m_crawlingTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+	VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		m_pageDataWidget, SLOT(pageViewSelectionChangedSlot(const QItemSelection&, const QItemSelection&))));
 
-	VERIFY(connect(m_crawlingTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+	VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 		this, SLOT(pageViewSelectionChangedSlot(const QItemSelection&, const QItemSelection&))));
 
 	createHeaderActionWidgets();
@@ -76,11 +87,21 @@ void AllPagesPage::pageViewSelectionChangedSlot(const QItemSelection&, const QIt
 
 void AllPagesPage::onApplySearch(int searchKey, const QString& searchValue)
 {
-	QSortFilterProxyModel* filterProxyModel = qobject_cast<QSortFilterProxyModel*>(m_crawlingTableView->model());
+	QSortFilterProxyModel* filterProxyModel = qobject_cast<QSortFilterProxyModel*>(tableView()->model());
 	ASSERT(filterProxyModel);
 
 	filterProxyModel->setFilterKeyColumn(searchKey + 1);
 	filterProxyModel->setFilterRegExp("^.*" + searchValue + ".*$");
+
+	if (!filterProxyModel->rowCount() && !searchValue.isEmpty())
+	{
+		showNoResultsLabelFor(searchValue);
+	}
+
+	if (searchValue.isEmpty())
+	{
+		hideNoResultsLabel();
+	}
 }
 
 void AllPagesPage::createHeaderActionWidgets()
@@ -98,6 +119,22 @@ void AllPagesPage::createHeaderActionWidgets()
 
 	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
 		this, SLOT(onApplySearch(int, const QString&))));
+}
+
+void AllPagesPage::showNoResultsLabelFor(const QString& searchValue)
+{
+	QLabel* noResultsLabel =
+		qobject_cast<QLabel*>(m_stackedTableView->widget(m_widgetIndexes[NoResultsWidget]));
+
+	ASSERT(noResultsLabel);
+
+	noResultsLabel->setText(s_noResultsMessageStub.arg(searchValue));
+	m_stackedTableView->setCurrentIndex(m_widgetIndexes[NoResultsWidget]);
+}
+
+void AllPagesPage::hideNoResultsLabel()
+{
+	m_stackedTableView->setCurrentIndex(m_widgetIndexes[CrawlingTableViewWidget]);
 }
 
 QWidget* AllPagesPage::widget() const
@@ -124,6 +161,15 @@ QIcon AllPagesPage::icon() const
 IPage::Type AllPagesPage::type() const
 {
 	return IPage::AllPagesPage;
+}
+
+TableView* AllPagesPage::tableView() const
+{
+	TableView* tableView = qobject_cast<TableView*>(
+		m_stackedTableView->widget(m_widgetIndexes[CrawlingTableViewWidget]));
+
+	ASSERT(tableView);
+	return tableView;
 }
 
 }

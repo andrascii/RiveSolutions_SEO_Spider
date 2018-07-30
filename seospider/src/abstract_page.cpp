@@ -7,6 +7,8 @@
 namespace SeoSpider
 {
 
+const QString AbstractPage::s_noResultsMessageStub(QObject::tr("No results found for \"%1\""));
+
 QList<QWidget*> AbstractPage::bindControls() const
 {
 	return m_controls;
