@@ -16,6 +16,9 @@ public:
 protected:
 	QWidget* createControl(QAction* action) const;
 
+protected:
+	static const QString s_noResultsMessageStub;
+
 private:
 	QList<QWidget*> m_controls;
 	QMap<QAction*, QWidget*>  m_controlsByAction;

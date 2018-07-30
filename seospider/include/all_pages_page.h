@@ -29,12 +29,22 @@ private slots:
 
 private:
 	void createHeaderActionWidgets();
+	void showNoResultsLabelFor(const QString& searchValue);
+	void hideNoResultsLabel();
+	TableView* tableView() const;
 
 private:
-	TableView* m_crawlingTableView;
+	enum WidgetType
+	{
+		NoResultsWidget,
+		CrawlingTableViewWidget
+	};
+
+	QStackedWidget* m_stackedTableView;
 	PageDataWidget* m_pageDataWidget;
 	QSplitter* m_splitter;
 	LookupLineEditWidget* m_lookupLineEditWidget;
+	QMap<WidgetType, int> m_widgetIndexes;
 };
 
 }

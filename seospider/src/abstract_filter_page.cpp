@@ -99,12 +99,12 @@ void AbstractFilterPage::selectParsedPage(int row)
 void AbstractFilterPage::selectTab(int pageDataType)
 {
 	ASSERT(pageDataType > PageDataWidget::BeginType &&
-		pageDataType < PageDataWidget::EndType)
+		pageDataType < PageDataWidget::EndType);
 
-		if (!m_webSiteDataWidget->pageDataWidget())
-		{
-			return;
-		}
+	if (!m_webSiteDataWidget->pageDataWidget())
+	{
+		return;
+	}
 
 	m_webSiteDataWidget->pageDataWidget()->selectTab(static_cast<PageDataWidget::PageDataType>(pageDataType));
 }
@@ -281,6 +281,16 @@ void AbstractFilterPage::onApplySearch(int searchKey, const QString& searchValue
 	filterProxyModel->setFilterRegExp("^.*" + searchValue + ".*$");
 
 	m_searchRules[m_currentSelectedRow] = SearchRules{ searchKey, searchValue };
+
+	if (!filterProxyModel->rowCount() && !searchValue.isEmpty())
+	{
+		websiteDataWidget()->showNoResultsLabelFor(AbstractPage::s_noResultsMessageStub.arg(searchValue));
+	}
+
+	if (searchValue.isEmpty())
+	{
+		websiteDataWidget()->hideNoResultsLabel();
+	}
 }
 
 }

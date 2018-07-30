@@ -77,7 +77,7 @@ QString SiteMap::xml(const ISequencedStorage& crawledPages, const SiteMapSetting
 		if (includePriority)
 		{
 			const double priority = settings.priorityLevelSettings[level - 1];
-			DEBUG_ASSERT(priority > 0.0 && priority <= 1.0)
+			DEBUG_ASSERT(priority > 0.0 && priority <= 1.0);
 			const QString prioritySr = QString::number(priority);
 			result = result % tab % tab % priorityOpenTag % prioritySr % priorityCloseTag % endLine;
 		}

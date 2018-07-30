@@ -18,6 +18,7 @@ WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* pa
 	: QFrame(parent)
 	, m_stackedWidget(new QStackedWidget(this))
 	, m_pageDataWidget(pageDataWidget)
+	, m_pageIndexBeforeShowNoResultsLabel(-1)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
@@ -29,7 +30,13 @@ WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* pa
 	selectFilterLabel->setText(tr("Select The Filter"));
 	selectFilterLabel->setAlignment(Qt::AlignCenter);
 
+	QLabel* noSearchResultsLabel = new QLabel(this);
+	noSearchResultsLabel->setObjectName(QStringLiteral("NoSearchResultsLabel"));
+	noSearchResultsLabel->setAlignment(Qt::AlignCenter);
+	noSearchResultsLabel->setWordWrap(true);
+
 	m_tables[StorageAdapterType::StorageAdapterTypeNone] = m_stackedWidget->addWidget(selectFilterLabel);
+	m_tables[StorageAdapterType::StorageAdapterTypeNotFound] = m_stackedWidget->addWidget(noSearchResultsLabel);
 	m_stackedWidget->setCurrentIndex(m_tables[StorageAdapterType::StorageAdapterTypeNone]);
 
 	m_splitter = new PageDataWidgetSplitter(this, m_stackedWidget, m_pageDataWidget);
@@ -82,9 +89,6 @@ void WebSiteDataWidget::setPageDataWidget(PageDataWidget* dataWidget)
 
 	m_pageDataWidget = dataWidget;
 	m_splitter->addPageDataWidget(m_pageDataWidget);
-// 
-// 	VERIFY(connect(tableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-// 		m_pageDataWidget, SLOT(pageViewSelectionChangedSlot(const QItemSelection&, const QItemSelection&))));
 }
 
 PageDataWidget* WebSiteDataWidget::pageDataWidget() const noexcept
@@ -92,11 +96,8 @@ PageDataWidget* WebSiteDataWidget::pageDataWidget() const noexcept
 	return m_pageDataWidget;
 }
 
-void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
-	Q_UNUSED(selected);
-	Q_UNUSED(deselected);
-
 	if (!m_pageDataWidget)
 	{
 		return;
@@ -153,6 +154,29 @@ QAbstractItemModel* WebSiteDataWidget::modelFor(StorageAdapterType storageAdapte
 	}
 
 	return nullptr;
+}
+
+void WebSiteDataWidget::showNoResultsLabelFor(const QString& searchValue)
+{
+	DEBUG_ASSERT(m_pageIndexBeforeShowNoResultsLabel != -1);
+
+	if (m_stackedWidget->currentIndex() != m_tables[StorageAdapterType::StorageAdapterTypeNotFound])
+	{
+		m_pageIndexBeforeShowNoResultsLabel = m_stackedWidget->currentIndex();
+	}
+
+	QLabel* noResultsLabel =
+		qobject_cast<QLabel*>(m_stackedWidget->widget(m_tables[StorageAdapterType::StorageAdapterTypeNotFound]));
+
+	ASSERT(noResultsLabel);
+
+	noResultsLabel->setText(searchValue);
+	m_stackedWidget->setCurrentIndex(m_tables[StorageAdapterType::StorageAdapterTypeNotFound]);
+}
+
+void WebSiteDataWidget::hideNoResultsLabel()
+{
+	m_stackedWidget->setCurrentIndex(m_pageIndexBeforeShowNoResultsLabel);
 }
 
 }

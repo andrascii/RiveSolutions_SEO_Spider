@@ -27,18 +27,18 @@ public:
 	void selectParsedPage(int row) const noexcept;
 
 	QAbstractItemModel* modelFor(StorageAdapterType storageAdapterType) const;
+	void showNoResultsLabelFor(const QString& searchValue);
+	void hideNoResultsLabel();
 
 private slots:
 	void pageViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
 	PageDataWidgetSplitter* m_splitter;
-
 	QStackedWidget* m_stackedWidget;
-
 	QMap<StorageAdapterType, int> m_tables;
-
 	PageDataWidget* m_pageDataWidget;
+	int m_pageIndexBeforeShowNoResultsLabel;
 };
 
 }
