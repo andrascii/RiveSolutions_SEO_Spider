@@ -337,7 +337,8 @@ SeoSpider--TableView
 	border-radius: 2px;
 }
 
-QLabel#TablePlaseholderLabel
+QLabel#TablePlaseholderLabel,
+QLabel#NoSearchResultsLabel
 {
 	color: #E5E5E5;
 	font-size: 48pt;
@@ -345,6 +346,13 @@ QLabel#TablePlaseholderLabel
 	font-family: Lato;
 	border: 0.01em solid #F3F3F3;
 }
+
+QLabel#NoSearchResultsLabel
+{
+	font-size: 36pt;
+	color: #E0E0E0;
+}
+
 
 /*/////////////////////////////// QHeaderView ///////////////////////////////*/
 
@@ -903,11 +911,6 @@ QFrame#WaitOperationFrame QLabel
 QFrame#SplashScreenFrame QLabel
 {
 	color: #EDEDED;
-}
-
-QFrame#ShadedOverlayFrame
-{
-	border: 10px solid red;
 }
 
 /*////////////////////////////// QScrollBar Horizontal //////////////////////////////*/
