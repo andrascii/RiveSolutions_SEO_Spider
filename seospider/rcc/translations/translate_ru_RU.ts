@@ -1718,6 +1718,17 @@ please stop crawling and try again</source>
     </message>
 </context>
 <context>
+    <name>SeoSpider::PageDataWidgetSplitter</name>
+    <message>
+        <source>Show Page Information</source>
+        <translation>Показать информацию о странице</translation>
+    </message>
+    <message>
+        <source>Hide Page Information</source>
+        <translation>Скрыть информацию о странице</translation>
+    </message>
+</context>
+<context>
     <name>SeoSpider::PageModel</name>
     <message>
         <source>#</source>

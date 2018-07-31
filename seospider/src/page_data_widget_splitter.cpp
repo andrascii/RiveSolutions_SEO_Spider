@@ -79,7 +79,9 @@ void PageDataWidgetSplitter::addPageDataWidget(PageDataWidget* splitterSecondWid
 	addWidget(splitterSecondWidget);
 
 	VERIFY(connect(splitterSecondWidget, &PageDataWidget::tabBarClicked, this, &PageDataWidgetSplitter::onPageWidgetTabClicked));
+	VERIFY(connect(splitterSecondWidget->tabWidget(), &QTabWidget::currentChanged, this, &PageDataWidgetSplitter::updateTabTooltips));
 	splitterSecondWidget->installEventFilter(this);
+	updateTabTooltips();
 }
 
 int PageDataWidgetSplitter::secondWidgetHeight() const
@@ -119,6 +121,7 @@ void PageDataWidgetSplitter::syncronize(const PageDataWidgetSplitter* other)
 	m_pageDataWidgetCollapsed = other->m_pageDataWidgetCollapsed;
 	m_prevDatawidgetHeight = other->m_prevDatawidgetHeight;
 	m_animationEndHeight = other->m_animationEndHeight;
+	updateTabTooltips();
 }
 
 bool PageDataWidgetSplitter::eventFilter(QObject* watched, QEvent* event)
@@ -190,10 +193,32 @@ void PageDataWidgetSplitter::setSecondWidgetHeightImpl(int height, bool setMaxim
 		}
 		m_animationEndHeight = 0;
 		splitterSyncronizer.syncSplitter(this);
+		updateTabTooltips();
 	}
 }
 
-	void PageDataWidgetSplitter::onPageWidgetTabClicked(int index, int prevIndex)
+void PageDataWidgetSplitter::updateTabTooltips()
+{
+	for (int i = 0; i < m_splitterSecondWidget->tabWidget()->count(); ++i)
+	{
+		QTabWidget* tabWidget = m_splitterSecondWidget->tabWidget();
+
+		if (m_pageDataWidgetCollapsed)
+		{
+			tabWidget->setTabToolTip(i, tr("Show Page Information"));
+		}
+		else if (tabWidget->currentIndex() != i)
+		{
+			tabWidget->setTabToolTip(i, tabWidget->tabText(i));
+		}
+		else
+		{
+			tabWidget->setTabToolTip(i, tr("Hide Page Information"));
+		}
+	}
+}
+
+void PageDataWidgetSplitter::onPageWidgetTabClicked(int index, int prevIndex)
 {
 	if (m_animationEndHeight != 0)
 	{

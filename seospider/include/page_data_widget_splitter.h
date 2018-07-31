@@ -31,10 +31,11 @@ private:
 
 private slots:
 	void onPageWidgetTabClicked(int index, int prevIndex);
+	void updateTabTooltips();
 
 private:
 	QWidget* m_splitterFirstWidget;
-	QWidget* m_splitterSecondWidget;
+	PageDataWidget* m_splitterSecondWidget;
 	bool m_wasShown;
 	bool m_pageDataWidgetCollapsed;
 	double m_prevDatawidgetHeight;
