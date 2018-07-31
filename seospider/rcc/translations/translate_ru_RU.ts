@@ -1141,7 +1141,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>404 page configured correctly</source>
-        <translation>Страница 404 сконфигурирована правильно</translation>
+        <translation>Страницы 404 настроены верно</translation>
     </message>
     <message>
         <source>n/a</source>
@@ -1177,7 +1177,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Pages with large amount of redirects</source>
-        <translation>Страницы с большим количество переадресаций</translation>
+        <translation>Страницы с большим кол-вом переадресаций</translation>
     </message>
     <message>
         <source>Pages with refresh meta tag</source>
@@ -1189,7 +1189,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Pages with large amount of links</source>
-        <translation>Страницы с большим количеством ссылок</translation>
+        <translation>Страницы с большим кол-вом ссылок</translation>
     </message>
     <message>
         <source>External dofollow links</source>
@@ -1201,7 +1201,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Pages with duplicated rel=&quot;canonical&quot;</source>
-        <translation>Страницы с дублирующимися rel=&quot;canonnical&quot;</translation>
+        <translation>Страницы с дублями  rel=&quot;canonnical&quot;</translation>
     </message>
     <message>
         <source>Pages that contain frames</source>
@@ -1209,7 +1209,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Too large pages</source>
-        <translation>Слишком большие страницы в киллобайтах</translation>
+        <translation>Слишком большие страницы в кБ</translation>
     </message>
     <message>
         <source>Broken images</source>
@@ -1225,7 +1225,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Pages with duplicated titles</source>
-        <translation>Страницы с дубликатами title</translation>
+        <translation type="unfinished">Страницы с дубликатами title</translation>
     </message>
     <message>
         <source>Too long titles</source>
@@ -1237,7 +1237,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Pages with duplicated meta descriptions</source>
-        <translation>Страницы с дубликатами Meta Description</translation>
+        <translation>Страницы с дубл-ми Meta Description</translation>
     </message>
     <message>
         <source>Too long meta descriptions</source>
@@ -1270,7 +1270,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Links with too many redirections</source>
-        <translation>Ссылки с большим количеством редиректов</translation>
+        <translation>Ссылки с большим кол-вом редиректов</translation>
     </message>
     <message>
         <source>This filter stores links with too many redirections (links with %1 or more redirections).
@@ -1770,7 +1770,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Waiting while crawling ended</source>
-        <translation>Ожидание завержение краулинга</translation>
+        <translation>Ожидание завершения краулинга</translation>
     </message>
     <message>
         <source>Export</source>
