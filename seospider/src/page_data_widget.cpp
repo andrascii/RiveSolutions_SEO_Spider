@@ -5,6 +5,7 @@
 #include "application.h"
 #include "storage_adapter_factory.h"
 #include "helpers.h"
+#include "cursor_factory.h"
 
 namespace SeoSpider
 {
@@ -14,6 +15,8 @@ PageDataWidget::PageDataWidget(QWidget* parent)
 	, m_tabWidget(new QTabWidget(this))
 	, m_httpResponseLabel(new QTextEdit(this))
 {
+	m_tabWidget->tabBar()->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
+
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->setMargin(0);
 	layout->setSpacing(0);
@@ -75,6 +78,11 @@ void PageDataWidget::selectTab(PageDataType pageDataType)
 	ASSERT(pageDataType > BeginType && pageDataType < EndType);
 
 	m_tabWidget->setCurrentIndex(m_pageIndices[pageDataType]);
+}
+
+QTabWidget* PageDataWidget::tabWidget()
+{
+	return m_tabWidget;
 }
 
 void PageDataWidget::onTabBarClicked(int index)

@@ -30,6 +30,8 @@ public:
 
 	void selectTab(PageDataType pageDataType);
 
+	QTabWidget* tabWidget();
+
 public slots:
 	void pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected);
 	void onTabBarClicked(int index);
