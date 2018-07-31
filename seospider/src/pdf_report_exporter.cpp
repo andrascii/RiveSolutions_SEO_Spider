@@ -295,7 +295,7 @@ void PdfReportExporter::drawOneLineInfo(QPainter* painter, const QRect& lineRect
 
 	if (customFont == nullptr)
 	{
-		const QFont font = QFont("Helvetica", 10);
+		const QFont font = QFont("Helvetica", 9);
 		painter->setFont(font);
 	}
 	else
