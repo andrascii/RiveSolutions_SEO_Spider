@@ -17,6 +17,9 @@ class FilterInfoFactory
 {
 public:
 	std::optional<FilterInfo> filterInfo(StorageAdapterType filter);
+
+private:
+	static std::map<StorageAdapterType, FilterInfo>& filters();
 };
 
 }
