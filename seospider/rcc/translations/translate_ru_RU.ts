@@ -27,13 +27,16 @@
 <context>
     <name>BlockFunctionalityDialog</name>
     <message>
-        <source>eSignal cannot establish a connection 
-due to internet connectivity issues or 
-an invalid username/password.</source>
+        <source>OK</source>
         <translation></translation>
     </message>
     <message>
-        <source>OK</source>
+        <source>SEO Spider cannot establish a connection 
+due to internet connectivity issues or 
+an invalid username/password.</source>
+        <translatorcomment>SEO Spider не может установить соединение 
+по причине проблем с интернетом либо 
+невалидным логином/паролем.</translatorcomment>
         <translation></translation>
     </message>
 </context>
@@ -215,6 +218,17 @@ an invalid username/password.</source>
     </message>
 </context>
 <context>
+    <name>LookupLineEditWidget</name>
+    <message>
+        <source>Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MessageBox</name>
     <message>
         <source>Frame</source>
@@ -229,15 +243,15 @@ an invalid username/password.</source>
     <name>PageVisualSettingsWidget</name>
     <message>
         <source>Page Visual Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Визуальные настройки</translation>
     </message>
     <message>
         <source>Not indexed pages color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цвет неиндексируемых страниц</translation>
     </message>
     <message>
         <source>Use custom background for not indexed pages</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать специальный цвет для неиндексируемых страниц</translation>
     </message>
 </context>
 <context>
@@ -248,7 +262,7 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>PDF Files (*.pdf)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы PDF (*.pdf)</translation>
     </message>
     <message>
         <source>No image</source>
@@ -951,7 +965,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Url</source>
-        <translation type="unfinished"></translation>
+        <translation>Url</translation>
     </message>
     <message>
         <source>Content</source>
@@ -1131,7 +1145,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>n/a</source>
-        <translation type="unfinished"></translation>
+        <translation>нет данных</translation>
     </message>
     <message>
         <source>Yes</source>
@@ -1242,6 +1256,74 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
 %1 file.</source>
         <translation>Данные по указанному фильтро были успешно экспортированы в %1 файл.</translation>
     </message>
+    <message>
+        <source>No results found for &quot;%1&quot;</source>
+        <translation>Нет найденых результатов для &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Too Many Redirections</source>
+        <translation>Слишком много редиректов</translation>
+    </message>
+    <message>
+        <source>Timeout</source>
+        <translation>Таймаут</translation>
+    </message>
+    <message>
+        <source>Links with too many redirections</source>
+        <translation>Ссылки с большим количеством редиректов</translation>
+    </message>
+    <message>
+        <source>This filter stores links with too many redirections (links with %1 or more redirections).
+You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</source>
+        <translation>Этот фильтр содержит ссылки с большим количеством редиректов (с  %1 или больше редиректов).
+Вы можете изменить это значение в &quot;Настройки =&gt; Настройки параметров размера/длины&quot;.</translation>
+    </message>
+    <message>
+        <source>Timeout links</source>
+        <translation>Ссылки превышающие таймаут загрузки</translation>
+    </message>
+    <message>
+        <source>This filter stores links that exceed maximum timeout load time (%1 milliseconds).
+You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</source>
+        <translation>Этот фильтр содержит ссылки превышающие максимальное значение таймаута загрузки (%1 миллисекунд).
+Вы можете изменить это значение в &quot;Настройки =&gt; Настройки параметров размера/длины&quot;.</translation>
+    </message>
+    <message>
+        <source>Links To This Page</source>
+        <translation>Ссылки на эту страницу</translation>
+    </message>
+    <message>
+        <source>Report Date</source>
+        <translation>Дата репорта</translation>
+    </message>
+    <message>
+        <source>problems found</source>
+        <translation>проблем найдено</translation>
+    </message>
+    <message>
+        <source>Indexing and Page Scanning</source>
+        <translation type="unfinished">Индексирование и сканирование страницы</translation>
+    </message>
+    <message>
+        <source>Technical factors</source>
+        <translation>Технические факторы</translation>
+    </message>
+    <message>
+        <source>Redirections</source>
+        <translation>Редиректы</translation>
+    </message>
+    <message>
+        <source>On Page</source>
+        <translation>На странице</translation>
+    </message>
+    <message>
+        <source>Links</source>
+        <translation>Ссылки</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Изображения</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
@@ -1260,6 +1342,24 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     <message>
         <source>Enter</source>
         <translation>Ввод</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::AllPagesPage</name>
+    <message>
+        <source>All Site Pages</source>
+        <translation>Все страницы сайта</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::AllResourcesPage</name>
+    <message>
+        <source>All Resources</source>
+        <translation>Все ресурсы</translation>
+    </message>
+    <message>
+        <source>Export selected filter data to .xlsx file</source>
+        <translation>Эскпортировать данные выбранного фильтра в excel</translation>
     </message>
 </context>
 <context>
@@ -1298,6 +1398,17 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     <message>
         <source>Cannot open! Unknown document type.</source>
         <translation>Невозможно открыть! Неизвестный тип документа.</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::AuditReportPage</name>
+    <message>
+        <source>Audit Report</source>
+        <translation>Отчет об аудите</translation>
+    </message>
+    <message>
+        <source>Export to PDF</source>
+        <translation>Экспортировать в PDF</translation>
     </message>
 </context>
 <context>
@@ -1343,6 +1454,21 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     <message>
         <source>Has no internet connection</source>
         <translation>Нет интернет соединения</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::LookupLineEditWidget</name>
+    <message>
+        <source>Search by &quot;</source>
+        <translation>Искать по &quot;</translation>
+    </message>
+    <message>
+        <source>&quot; column</source>
+        <translation>&quot; колонке</translation>
+    </message>
+    <message>
+        <source>Select the column for search...</source>
+        <translation>Выберите колонку для поиска...</translation>
     </message>
 </context>
 <context>
@@ -1499,27 +1625,27 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Change filters grouping</source>
-        <translation>Изменить группировку фильтров</translation>
+        <translation type="vanished">Изменить группировку фильтров</translation>
     </message>
     <message>
         <source>Export selected filter data to .xlsx file</source>
-        <translation>Эскпортировать данные выбранного фильтра в excel</translation>
+        <translation type="vanished">Эскпортировать данные выбранного фильтра в excel</translation>
     </message>
     <message>
         <source>Audit Info</source>
-        <translation>Информация аудита</translation>
+        <translation type="vanished">Информация аудита</translation>
     </message>
     <message>
         <source>All Site Pages</source>
-        <translation>Все страницы сайта</translation>
+        <translation type="vanished">Все страницы сайта</translation>
     </message>
     <message>
         <source>All Resources</source>
-        <translation>Все ресурсы</translation>
+        <translation type="vanished">Все ресурсы</translation>
     </message>
     <message>
         <source>Audit Report</source>
-        <translation>Отчет об аудите</translation>
+        <translation type="vanished">Отчет об аудите</translation>
     </message>
     <message>
         <source>Error</source>
@@ -1640,11 +1766,11 @@ please stop crawling and try again</source>
     <name>SeoSpider::ReportsPage</name>
     <message>
         <source>Export to PDF</source>
-        <translation>Экспорт в PDF</translation>
+        <translation type="vanished">Экспорт в PDF</translation>
     </message>
     <message>
         <source>Waiting while crawling ended</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидание завержение краулинга</translation>
     </message>
     <message>
         <source>Export</source>
@@ -1657,6 +1783,21 @@ please stop crawling and try again</source>
     <message>
         <source>Export has been finished</source>
         <translation>Экспорт был успешно завершен</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::SiteAuditPage</name>
+    <message>
+        <source>Audit Info</source>
+        <translation>Информация аудита</translation>
+    </message>
+    <message>
+        <source>Change filters grouping</source>
+        <translation>Изменить группировку фильтров</translation>
+    </message>
+    <message>
+        <source>Export selected filter data to .xlsx file</source>
+        <translation>Эскпортировать данные выбранного фильтра в excel</translation>
     </message>
 </context>
 <context>
@@ -1675,23 +1816,23 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Hourly</source>
-        <translation type="unfinished"></translation>
+        <translation>Ежечасно</translation>
     </message>
     <message>
         <source>Daily</source>
-        <translation type="unfinished"></translation>
+        <translation>Ежедневно</translation>
     </message>
     <message>
         <source>Weekly</source>
-        <translation type="unfinished"></translation>
+        <translation>Еженедельно</translation>
     </message>
     <message>
         <source>Monthly</source>
-        <translation type="unfinished"></translation>
+        <translation>Ежемесячно</translation>
     </message>
     <message>
         <source>Yearly</source>
-        <translation type="unfinished"></translation>
+        <translation>Ежегодно</translation>
     </message>
     <message>
         <source>Never</source>
@@ -1729,35 +1870,35 @@ please stop crawling and try again</source>
     <name>SitemapCreatorDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Crawl Depth 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Глубина краулинга 2</translation>
     </message>
     <message>
         <source>Include Canonicolised</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить канонические ссылки</translation>
     </message>
     <message>
         <source>Include &lt;priority&gt; tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить &lt;priority&gt; тэг</translation>
     </message>
     <message>
         <source>Crawl Depth 5+</source>
-        <translation type="unfinished"></translation>
+        <translation>Глубина краулинга 5+</translation>
     </message>
     <message>
         <source>Include &lt;changefreq&gt; tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить &lt;changefreq&gt; тэг</translation>
     </message>
     <message>
         <source>Crawl Depth 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Глубина краулинга 1</translation>
     </message>
     <message>
         <source>Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>Страницы</translation>
     </message>
     <message>
         <source>Include Painted Urls</source>
@@ -1765,67 +1906,67 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Include PDFs</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить PDF</translation>
     </message>
     <message>
         <source>Include Noindex Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить неиндексируемые изображения</translation>
     </message>
     <message>
         <source>Crawl Depth 0</source>
-        <translation type="unfinished"></translation>
+        <translation>Глубина краулинга 0</translation>
     </message>
     <message>
         <source>Crawl Depth 4</source>
-        <translation type="unfinished"></translation>
+        <translation>Глубина краулинга 4</translation>
     </message>
     <message>
         <source>Priority</source>
-        <translation type="unfinished"></translation>
+        <translation>Приоритет</translation>
     </message>
     <message>
         <source>Crawl Depth 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Глубина краулинга 3</translation>
     </message>
     <message>
         <source>Include Noindex Pages</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить неиндексируемые страницы</translation>
     </message>
     <message>
         <source>Include Only Relevant Images with up to</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить только релевантные изображения с</translation>
     </message>
     <message>
         <source>inlinks</source>
-        <translation type="unfinished"></translation>
+        <translation>входящими ссылками</translation>
     </message>
     <message>
         <source>Include Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить изображения</translation>
     </message>
     <message>
         <source>Change Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>Частота изменений</translation>
     </message>
     <message>
         <source>Include &lt;lastmod&gt; tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить &lt;lastmod&gt; тэг</translation>
     </message>
     <message>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения</translation>
     </message>
     <message>
         <source>Last Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Врема последней модификации</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Отмена</translation>
     </message>
 </context>
 <context>
