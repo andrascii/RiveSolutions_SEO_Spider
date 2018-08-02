@@ -83,6 +83,90 @@ an invalid username/password.</source>
     </message>
 </context>
 <context>
+    <name>CrawlerEngine::Crawler</name>
+    <message>
+        <source>Crawler state</source>
+        <translation>Состояние краулинга</translation>
+    </message>
+    <message>
+        <source>Crawler stopped</source>
+        <translation>Краулинг остановлен</translation>
+    </message>
+    <message>
+        <source>Program has ended crawling</source>
+        <translation>Программа завешила краулинг</translation>
+    </message>
+    <message>
+        <source>Crawler started</source>
+        <translation>Краулинг запущен</translation>
+    </message>
+    <message>
+        <source>Refreshing page</source>
+        <translation>Рефреш страницы</translation>
+    </message>
+    <message>
+        <source>Page refresh completed.</source>
+        <translation>Рефреш страницы завершен</translation>
+    </message>
+    <message>
+        <source>Save file error</source>
+        <translation>Ошибка сохранения файла</translation>
+    </message>
+    <message>
+        <source>The operation has not been successful.</source>
+        <translation>Операция завершилась неуспешно</translation>
+    </message>
+    <message>
+        <source>Loading file error</source>
+        <translation>Ошибка загрузки файла</translation>
+    </message>
+    <message>
+        <source>The operation has not been successful</source>
+        <translation>Операция завершилась неуспешно</translation>
+    </message>
+    <message>
+        <source>DNS Lookup Failed!</source>
+        <translation>Поиск DNS завешился неудачно</translation>
+    </message>
+    <message>
+        <source>I&apos;m sorry but I cannot find this website
+Please, be sure that you entered a valid address</source>
+        <translation>К сожалению этот сайт не найден
+Пожалуйста, убедитесь что Вы ввели адресс корректно</translation>
+    </message>
+    <message>
+        <source>Closing file error</source>
+        <translation>Ошибка закрытия файла</translation>
+    </message>
+    <message>
+        <source>Can&apos;t close project file while crawler is working!</source>
+        <translation>Невозможно закрыть проект пока краулинг активен</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <source>Cannot load project file until the existing one is saved</source>
+        <translation>Невозможно загрузить файл проекта пока текущий не сохранен</translation>
+    </message>
+    <message>
+        <source>Cannot open a document while crawler is working!</source>
+        <translation>Невозможно открыть документ пока краулинг активен</translation>
+    </message>
+</context>
+<context>
+    <name>CrawlerEngine::Downloader</name>
+    <message>
+        <source>Proxy error</source>
+        <translation>Ошибка прокси</translation>
+    </message>
+    <message>
+        <source>Proxy authentication failed.</source>
+        <translation>Аутентификация прокси завешилась неуспешно</translation>
+    </message>
+</context>
+<context>
     <name>CrawlerPauseSettingsWidget</name>
     <message>
         <source>Crawler Pause Settings</source>
@@ -1225,7 +1309,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Pages with duplicated titles</source>
-        <translation type="unfinished">Страницы с дубликатами title</translation>
+        <translation>Страницы с дубликатами title</translation>
     </message>
     <message>
         <source>Too long titles</source>
@@ -1302,7 +1386,7 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
     </message>
     <message>
         <source>Indexing and Page Scanning</source>
-        <translation type="unfinished">Индексирование и сканирование страницы</translation>
+        <translation>Индексирование и сканирование страницы</translation>
     </message>
     <message>
         <source>Technical factors</source>
@@ -1323,6 +1407,22 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
     <message>
         <source>Images</source>
         <translation>Изображения</translation>
+    </message>
+    <message>
+        <source>Blocked By robots.txt</source>
+        <translation>Блокировка по robots.txt</translation>
+    </message>
+    <message>
+        <source>Blocked By Meta Robots</source>
+        <translation>Блокировка по Meta Robots</translation>
+    </message>
+    <message>
+        <source>Too Long Link</source>
+        <translation>Слишком длинная ссылка</translation>
+    </message>
+    <message>
+        <source>Unknown Network Error</source>
+        <translation>Неизвестная ошибка сети</translation>
     </message>
 </context>
 <context>
@@ -1698,7 +1798,7 @@ please stop crawling and try again</source>
     <name>SeoSpider::PageDataWidget</name>
     <message>
         <source>Select The Page</source>
-        <translation>Выбрать страницу</translation>
+        <translation>Выберите страницу</translation>
     </message>
     <message>
         <source>Links To This Page</source>
