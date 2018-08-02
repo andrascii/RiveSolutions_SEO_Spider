@@ -15,28 +15,17 @@ public:
 	LookupLineEditWidget(QWidget* parent = nullptr);
 
 	void reset();
-	void addSearchField(int searchKey, const QString& searchKeyDescription);
-	int currentSearchKey() const;
 	QString currentSearchString() const;
-	void setCurrentSearchData(int searchKey, const QString& searchData);
+	void setCurrentSearchData(const QString& searchData);
 
 signals:
-	void applySearch(int searchKey, const QString& searchString);
+	void applySearch(const QString& searchString);
 
 private slots:
 	void onApplySearch();
-	void onActionTriggered(QAction* action);
+	void onTextChanged();
 
 private:
-	void configureLineEdit(const QString& placeholderText = QString());
-	void configureToolButton();
-	QAction* actionBySearchKey(int searchKey) const;
-
-private:
-	std::vector<int> m_searchFields;
-	QActionGroup* m_actionGroup;
-	QMenu* m_toolButtonMenu;
-	int m_currentSearchKey;
 	IStatisticCounter* m_counter;
 };
 

@@ -158,8 +158,6 @@ QAbstractItemModel* WebSiteDataWidget::modelFor(StorageAdapterType storageAdapte
 
 void WebSiteDataWidget::showNoResultsLabelFor(const QString& searchValue)
 {
-	DEBUG_ASSERT(m_pageIndexBeforeShowNoResultsLabel != -1);
-
 	if (m_stackedWidget->currentIndex() != m_tables[StorageAdapterType::StorageAdapterTypeNotFound])
 	{
 		m_pageIndexBeforeShowNoResultsLabel = m_stackedWidget->currentIndex();

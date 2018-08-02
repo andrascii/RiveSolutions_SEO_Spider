@@ -7,7 +7,7 @@ namespace SeoSpider
 
 class TableView;
 class PageDataWidget;
-class LookupLineEditWidget;
+class ColumnsLookupLineEditWidget;
 
 class AllPagesPage : public QFrame, public AbstractPage
 {
@@ -25,12 +25,14 @@ signals:
 
 private slots:
 	void pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected);
-	void onApplySearch(int searchKey, const QString& searchValue);
+	void onApplyColumnSearch(int searchKey, const QString& searchValue);
+	void onApplyPlainSearch(const QString& searchValue);
 
 private:
 	void createHeaderActionWidgets();
 	void showNoResultsLabelFor(const QString& searchValue);
 	void hideNoResultsLabel();
+	void applySearchHelper(int searchColumnNumber, const QString& searchValue);
 	TableView* tableView() const;
 
 private:
@@ -43,7 +45,7 @@ private:
 	QStackedWidget* m_stackedTableView;
 	PageDataWidget* m_pageDataWidget;
 	QSplitter* m_splitter;
-	LookupLineEditWidget* m_lookupLineEditWidget;
+	ColumnsLookupLineEditWidget* m_lookupLineEditWidget;
 	QMap<WidgetType, int> m_widgetIndexes;
 };
 

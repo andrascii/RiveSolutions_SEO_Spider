@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>186</width>
-    <height>24</height>
+    <width>300</width>
+    <height>27</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,14 +41,21 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QToolButton" name="toolButton">
+      <widget class="QLineEdit" name="lineEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clearButton">
        <property name="text">
-        <string>...</string>
+        <string>clear</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QPushButton" name="applyButton">
+       <property name="text">
+        <string>apply</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
