@@ -117,6 +117,7 @@ void CommandThread::run()
 					m_statisticsJsonHeader["os"] = applicationInitializedData->os;
 					m_statisticsJsonHeader["programBittness"] = applicationInitializedData->programBittness;
 					m_statisticsJsonHeader["programVersion"] = applicationInitializedData->programVersion;
+					m_statisticsJsonHeader["sessionDateTime"] = QDateTime::currentDateTimeUtc();
 
 					m_counterContainer["Header"] = m_statisticsJsonHeader;
 				}
