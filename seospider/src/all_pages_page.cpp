@@ -8,7 +8,7 @@
 #include "page_data_widget.h"
 #include "model_helpers.h"
 #include "page_data_widget_splitter.h"
-#include "lookup_lineedit_widget.h"
+#include "columns_lookup_lineedit_widget.h"
 
 namespace SeoSpider
 {
@@ -85,28 +85,19 @@ void AllPagesPage::pageViewSelectionChangedSlot(const QItemSelection&, const QIt
 	}
 }
 
-void AllPagesPage::onApplySearch(int searchKey, const QString& searchValue)
+void AllPagesPage::onApplyColumnSearch(int searchKey, const QString& searchValue)
 {
-	QSortFilterProxyModel* filterProxyModel = qobject_cast<QSortFilterProxyModel*>(tableView()->model());
-	ASSERT(filterProxyModel);
+	applySearchHelper(searchKey + 1, searchValue);
+}
 
-	filterProxyModel->setFilterKeyColumn(searchKey + 1);
-	filterProxyModel->setFilterRegExp("^.*" + searchValue + ".*$");
-
-	if (!filterProxyModel->rowCount() && !searchValue.isEmpty())
-	{
-		showNoResultsLabelFor(searchValue);
-	}
-
-	if (searchValue.isEmpty())
-	{
-		hideNoResultsLabel();
-	}
+void AllPagesPage::onApplyPlainSearch(const QString& searchValue)
+{
+	applySearchHelper(-1, searchValue);
 }
 
 void AllPagesPage::createHeaderActionWidgets()
 {
-	m_lookupLineEditWidget = new LookupLineEditWidget;
+	m_lookupLineEditWidget = new ColumnsLookupLineEditWidget;
 	addWidget(m_lookupLineEditWidget);
 
 	const QVector<ParsedPageInfo::Column> columns =
@@ -118,7 +109,7 @@ void AllPagesPage::createHeaderActionWidgets()
 	}
 
 	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
-		this, SLOT(onApplySearch(int, const QString&))));
+		this, SLOT(onApplyColumnSearch(int, const QString&))));
 }
 
 void AllPagesPage::showNoResultsLabelFor(const QString& searchValue)
@@ -135,6 +126,25 @@ void AllPagesPage::showNoResultsLabelFor(const QString& searchValue)
 void AllPagesPage::hideNoResultsLabel()
 {
 	m_stackedTableView->setCurrentIndex(m_widgetIndexes[CrawlingTableViewWidget]);
+}
+
+void AllPagesPage::applySearchHelper(int searchColumnNumber, const QString& searchValue)
+{
+	QSortFilterProxyModel* filterProxyModel = qobject_cast<QSortFilterProxyModel*>(tableView()->model());
+	ASSERT(filterProxyModel);
+
+	filterProxyModel->setFilterKeyColumn(searchColumnNumber);
+	filterProxyModel->setFilterRegExp("^.*" + searchValue + ".*$");
+
+	if (!filterProxyModel->rowCount() && !searchValue.isEmpty())
+	{
+		showNoResultsLabelFor(searchValue);
+	}
+
+	if (searchValue.isEmpty())
+	{
+		hideNoResultsLabel();
+	}
 }
 
 QWidget* AllPagesPage::widget() const

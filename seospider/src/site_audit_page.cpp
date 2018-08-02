@@ -7,7 +7,7 @@
 #include "storage_exporter.h"
 #include "summary_model.h"
 #include "page_data_widget.h"
-#include "lookup_lineedit_widget.h"
+#include "columns_lookup_lineedit_widget.h"
 
 namespace SeoSpider
 {

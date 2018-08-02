@@ -14,6 +14,7 @@ class SummaryModel;
 class SummaryViewModel;
 class FilterInfoWidget;
 class LookupLineEditWidget;
+class ColumnsLookupLineEditWidget;
 
 class AbstractFilterPage : public QFrame, public AbstractPage
 {
@@ -41,12 +42,18 @@ protected:
 
 protected slots:
 	void exportFilterData();
-	void onApplySearch(int searchKey, const QString& searchValue);
+	void onApplyColumnSearch(int searchKey, const QString& searchValue);
+	void onApplyPlainSearch(const QString& searchValue);
 
 private slots:
 	void adjustSize();
 	void reinitFilterTableSpans();
 	void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+
+private:
+	void applySearchHelper(int searchColumnNumber, const QString& searchValue);
+	void prepareColumnSearchWidget(int row);
+	void preparePlainSearchWidget(int row);
 
 private:
 	struct SearchRules
@@ -67,6 +74,7 @@ private:
 	int m_currentSelectedRow;
 	bool m_isFirstShow;
 
+	ColumnsLookupLineEditWidget* m_columnsLookupLineEditWidget;
 	LookupLineEditWidget* m_lookupLineEditWidget;
 	QMap<int, SearchRules> m_searchRules;
 };

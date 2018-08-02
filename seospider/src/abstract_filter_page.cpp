@@ -18,6 +18,7 @@
 #include "storage_exporter.h"
 #include "crawler.h"
 #include "lookup_lineedit_widget.h"
+#include "columns_lookup_lineedit_widget.h"
 #include "parsed_page_info.h"
 #include "storage_adapter_factory.h"
 
@@ -35,6 +36,7 @@ AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWi
 	, m_splitter(new QSplitter(this))
 	, m_isFirstShow(true)
 	, m_info(new FilterInfoWidget(this))
+	, m_columnsLookupLineEditWidget(nullptr)
 	, m_lookupLineEditWidget(nullptr)
 	, m_currentSelectedRow(-1)
 {
@@ -153,41 +155,21 @@ void AbstractFilterPage::showEvent(QShowEvent* event)
 
 void AbstractFilterPage::hasFilterSelection(int row)
 {
-	DEBUG_ASSERT(m_lookupLineEditWidget);
-
-	if (!m_lookupLineEditWidget)
-	{
-		return;
-	}
-
-	m_lookupLineEditWidget->reset();
-	m_lookupLineEditWidget->setEnabled(true);
-
-	const QVector<ParsedPageInfo::Column> columns = 
-		StorageAdapterFactory::parsedPageAvailableColumns(m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(row, 0)));
-
-	for (int i = 0; i < columns.size(); ++i)
-	{
-		m_lookupLineEditWidget->addSearchField(i, ParsedPageInfo::itemTypeDescription(columns[i]));
-	}
-
-	if (m_searchRules.contains(row))
-	{
-		onApplySearch(m_searchRules[row].searchKey, m_searchRules[row].searchData);
-		m_lookupLineEditWidget->setCurrentSearchData(m_searchRules[row].searchKey, m_searchRules[row].searchData);
-	}
+	prepareColumnSearchWidget(row);
+	preparePlainSearchWidget(row);
 }
 
 void AbstractFilterPage::hasNoFilterSelection()
 {
-	DEBUG_ASSERT(m_lookupLineEditWidget);
-
-	if (!m_lookupLineEditWidget)
+	if (m_columnsLookupLineEditWidget)
 	{
-		return;
+		m_columnsLookupLineEditWidget->setEnabled(false);
 	}
 
-	m_lookupLineEditWidget->setEnabled(false);
+	if (m_lookupLineEditWidget)
+	{
+		m_lookupLineEditWidget->setEnabled(false);
+	}
 }
 
 void AbstractFilterPage::adjustSize()
@@ -237,15 +219,46 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 	}
 }
 
+void AbstractFilterPage::applySearchHelper(int searchColumnNumber, const QString& searchValue)
+{
+	StorageAdapterType storageAdapterType =
+		m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(m_currentSelectedRow, 0));
+
+	QSortFilterProxyModel* filterProxyModel =
+		qobject_cast<QSortFilterProxyModel*>(websiteDataWidget()->modelFor(storageAdapterType));
+
+	ASSERT(filterProxyModel);
+
+	filterProxyModel->setFilterKeyColumn(searchColumnNumber);
+	filterProxyModel->setFilterRegExp("^.*" + searchValue + ".*$");
+
+	if (!filterProxyModel->rowCount() && !searchValue.isEmpty())
+	{
+		websiteDataWidget()->showNoResultsLabelFor(AbstractPage::s_noResultsMessageStub.arg(searchValue));
+	}
+
+	if (searchValue.isEmpty())
+	{
+		websiteDataWidget()->hideNoResultsLabel();
+	}
+}
+
 void AbstractFilterPage::initHeaderWidgets()
 {
 	// this function must not be called from AbstractFilterPage constructor
 	// in order to avoid crash with pure virtual function
+
+// 	m_columnsLookupLineEditWidget = new ColumnsLookupLineEditWidget;
+// 	addWidget(m_columnsLookupLineEditWidget);
+// 
+// 	VERIFY(connect(m_columnsLookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
+// 		this, SLOT(onApplyColumnSearch(int, const QString&))));
+
 	m_lookupLineEditWidget = new LookupLineEditWidget;
 	addWidget(m_lookupLineEditWidget);
 
-	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
-		this, SLOT(onApplySearch(int, const QString&))));
+	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(const QString&)),
+		this, SLOT(onApplyPlainSearch(const QString&))));
 }
 
 void AbstractFilterPage::exportFilterData()
@@ -267,29 +280,57 @@ void AbstractFilterPage::reinitFilterTableSpans()
 	m_summaryFilterTableView->initSpans();
 }
 
-void AbstractFilterPage::onApplySearch(int searchKey, const QString& searchValue)
+void AbstractFilterPage::onApplyColumnSearch(int searchKey, const QString& searchValue)
 {
-	StorageAdapterType storageAdapterType =
-		m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(m_currentSelectedRow, 0));
-
-	QSortFilterProxyModel* filterProxyModel =
-		qobject_cast<QSortFilterProxyModel*>(websiteDataWidget()->modelFor(storageAdapterType));
-
-	ASSERT(filterProxyModel);
-
-	filterProxyModel->setFilterKeyColumn(searchKey + 1);
-	filterProxyModel->setFilterRegExp("^.*" + searchValue + ".*$");
-
+	applySearchHelper(searchKey + 1, searchValue);
 	m_searchRules[m_currentSelectedRow] = SearchRules{ searchKey, searchValue };
+}
 
-	if (!filterProxyModel->rowCount() && !searchValue.isEmpty())
+void AbstractFilterPage::onApplyPlainSearch(const QString& searchValue)
+{
+	applySearchHelper(-1, searchValue);
+	m_searchRules[m_currentSelectedRow] = SearchRules{ -1, searchValue };
+}
+
+void AbstractFilterPage::prepareColumnSearchWidget(int row)
+{
+	if (!m_columnsLookupLineEditWidget)
 	{
-		websiteDataWidget()->showNoResultsLabelFor(AbstractPage::s_noResultsMessageStub.arg(searchValue));
+		return;
 	}
 
-	if (searchValue.isEmpty())
+	m_columnsLookupLineEditWidget->reset();
+	m_columnsLookupLineEditWidget->setEnabled(true);
+
+	const QVector<ParsedPageInfo::Column> columns =
+		StorageAdapterFactory::parsedPageAvailableColumns(m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(row, 0)));
+
+	for (int i = 0; i < columns.size(); ++i)
 	{
-		websiteDataWidget()->hideNoResultsLabel();
+		m_columnsLookupLineEditWidget->addSearchField(i, ParsedPageInfo::itemTypeDescription(columns[i]));
+	}
+
+	if (m_searchRules.contains(row))
+	{
+		onApplyColumnSearch(m_searchRules[row].searchKey, m_searchRules[row].searchData);
+		m_columnsLookupLineEditWidget->setCurrentSearchData(m_searchRules[row].searchKey, m_searchRules[row].searchData);
+	}
+}
+
+void AbstractFilterPage::preparePlainSearchWidget(int row)
+{
+	if (!m_lookupLineEditWidget)
+	{
+		return;
+	}
+
+	m_lookupLineEditWidget->reset();
+	m_lookupLineEditWidget->setEnabled(true);
+
+	if (m_searchRules.contains(row))
+	{
+		onApplyPlainSearch(m_searchRules[row].searchData);
+		m_lookupLineEditWidget->setCurrentSearchData(m_searchRules[row].searchData);
 	}
 }
 
