@@ -31,6 +31,7 @@ private:
 
 private slots:
 	void onPageWidgetTabClicked(int index, int prevIndex);
+	void onPageWidgetTabSelected(int index);
 	void updateTabTooltips();
 
 private:

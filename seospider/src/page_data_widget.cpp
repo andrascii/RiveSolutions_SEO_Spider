@@ -76,8 +76,10 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 void PageDataWidget::selectTab(PageDataType pageDataType)
 {
 	ASSERT(pageDataType > BeginType && pageDataType < EndType);
+	ASSERT(m_pageIndices.find(pageDataType) != m_pageIndices.end());
 
 	m_tabWidget->setCurrentIndex(m_pageIndices[pageDataType]);
+	emit tabSelected(m_pageIndices[pageDataType]);
 }
 
 QTabWidget* PageDataWidget::tabWidget()

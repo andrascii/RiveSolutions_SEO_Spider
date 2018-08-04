@@ -17,12 +17,12 @@ AllResourcesPage::AllResourcesPage(QWidget* parent)
 	: AbstractFilterPage(new WebSiteDataWidget(nullptr), parent)
 	, m_exportFilterDataAction(nullptr)
 {
-	PageDataWidget* resourceTables = new PageDataWidget(this);
-	resourceTables->setPageDataType(PageDataWidget::LinksOnThisPageType);
-	resourceTables->setPageDataType(PageDataWidget::LinksToThisPageType);
-	resourceTables->setPageDataType(PageDataWidget::ServerResponseForPageType);
+	m_pageDataWidget = new PageDataWidget(this);
+	m_pageDataWidget->setPageDataType(PageDataWidget::LinksOnThisPageType);
+	m_pageDataWidget->setPageDataType(PageDataWidget::LinksToThisPageType);
+	m_pageDataWidget->setPageDataType(PageDataWidget::ServerResponseForPageType);
 
-	websiteDataWidget()->setPageDataWidget(resourceTables);
+	websiteDataWidget()->setPageDataWidget(m_pageDataWidget);
 	setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::AllResourcesPage);
 
 	createHeaderActionWidgets();

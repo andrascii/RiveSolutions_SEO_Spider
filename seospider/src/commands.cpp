@@ -135,7 +135,7 @@ bool ICommand::isCompound() const noexcept
 }
 
 
-CompoundCommand::CompoundCommand(const char* description, const QIcon& icon)
+CompoundCommand::CompoundCommand(const QString& description, const QIcon& icon)
 	: m_description(description)
 	, m_icon(icon)
 {
@@ -156,7 +156,7 @@ QIcon CompoundCommand::icon() const
 	return m_icon;
 }
 
-const char* CompoundCommand::description() const noexcept
+QString CompoundCommand::description() const noexcept
 {
 	return m_description;
 }
@@ -186,9 +186,9 @@ QIcon OpenUrlCommand::icon() const
 	return QIcon();
 }
 
-const char* OpenUrlCommand::description() const noexcept
+QString OpenUrlCommand::description() const noexcept
 {
-	return "Open URL";
+	return QObject::tr("Open URL");
 }
 
 void OpenUrlCommand::execute()
@@ -209,9 +209,9 @@ QIcon RemoveRowCommand::icon() const
 	return QIcon();
 }
 
-const char* RemoveRowCommand::description() const noexcept
+QString RemoveRowCommand::description() const noexcept
 {
-	return "Remove Row";
+	return QObject::tr("Remove Row");
 }
 
 void RemoveRowCommand::execute()
@@ -232,9 +232,9 @@ QIcon ExportDataToXlsxCommand::icon() const
 	return QIcon();
 }
 
-const char* ExportDataToXlsxCommand::description() const noexcept
+QString ExportDataToXlsxCommand::description() const noexcept
 {
-	return "Export Data to .xlsx File";
+	return QObject::tr("Export Data to .xlsx File");
 }
 
 void ExportDataToXlsxCommand::execute()
@@ -319,9 +319,9 @@ QIcon ExportUrlInfoToXlsxCommand::icon() const
 	return SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 15, 15);
 }
 
-const char* ExportUrlInfoToXlsxCommand::description() const noexcept
+QString ExportUrlInfoToXlsxCommand::description() const noexcept
 {
-	return "Export Url Info to .xlsx";
+	return QObject::tr("Export Url Info to .xlsx");
 }
 
 void ExportUrlInfoToXlsxCommand::execute()
@@ -368,9 +368,9 @@ QIcon ExportUrlOutlinksToXlsxCommand::icon() const
 	return SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 15, 15);
 }
 
-const char* ExportUrlOutlinksToXlsxCommand::description() const noexcept
+QString ExportUrlOutlinksToXlsxCommand::description() const noexcept
 {
-	return "Export Url Outlinks to .xlsx";
+	return QObject::tr("Export Url Outlinks to .xlsx");
 }
 
 void ExportUrlOutlinksToXlsxCommand::execute()
@@ -416,9 +416,9 @@ QIcon ExportUrlInlinksToXlsxCommand::icon() const
 	return SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 15, 15);
 }
 
-const char* ExportUrlInlinksToXlsxCommand::description() const noexcept
+QString ExportUrlInlinksToXlsxCommand::description() const noexcept
 {
-	return "Export Url Inlinks to .xlsx";
+	return QObject::tr("Export Url Inlinks to .xlsx");
 }
 
 void ExportUrlInlinksToXlsxCommand::execute()
@@ -463,9 +463,9 @@ QIcon CopyToClipboardAllPagesCommand::icon() const
 	return QIcon();
 }
 
-const char* CopyToClipboardAllPagesCommand::description() const noexcept
+QString CopyToClipboardAllPagesCommand::description() const noexcept
 {
-	return "Copy to Clipboard All Pages";
+	return QObject::tr("Copy to Clipboard All Pages");
 }
 
 void CopyToClipboardAllPagesCommand::execute()
@@ -501,9 +501,9 @@ QIcon CopyToClipboardAllColumnsDataCommand::icon() const
 	return QIcon();
 }
 
-const char* CopyToClipboardAllColumnsDataCommand::description() const noexcept
+QString CopyToClipboardAllColumnsDataCommand::description() const noexcept
 {
-	return "Copy to Clipboard All Columns Data";
+	return QObject::tr("Copy to Clipboard All Columns Data");
 }
 
 void CopyToClipboardAllColumnsDataCommand::execute()
@@ -537,9 +537,9 @@ QIcon CopyToClipboardUrlCommand::icon() const
 	return QIcon();
 }
 
-const char* CopyToClipboardUrlCommand::description() const noexcept
+QString CopyToClipboardUrlCommand::description() const noexcept
 {
-	return "Copy to Clipboard Url";
+	return QObject::tr("Copy to Clipboard Url");
 }
 
 void CopyToClipboardUrlCommand::execute()
@@ -563,9 +563,9 @@ QIcon CheckGoogleCacheCommand::icon() const
 	return QIcon();
 }
 
-const char* CheckGoogleCacheCommand::description() const noexcept
+QString CheckGoogleCacheCommand::description() const noexcept
 {
-	return "Check Google Cache";
+	return QObject::tr("Check Google Cache");
 }
 
 void CheckGoogleCacheCommand::execute()
@@ -588,9 +588,9 @@ QIcon CheckHTMLWithW3CValidatorCommand::icon() const
 	return QIcon();
 }
 
-const char* CheckHTMLWithW3CValidatorCommand::description() const noexcept
+QString CheckHTMLWithW3CValidatorCommand::description() const noexcept
 {
-	return "Check HTML with W3C Validator";
+	return QObject::tr("Check HTML with W3C Validator");
 }
 
 void CheckHTMLWithW3CValidatorCommand::execute()
@@ -613,9 +613,9 @@ QIcon OpenInWaybackMachineCommand::icon() const
 	return QIcon();
 }
 
-const char* OpenInWaybackMachineCommand::description() const noexcept
+QString OpenInWaybackMachineCommand::description() const noexcept
 {
-	return "Open in Wayback Machine";
+	return QObject::tr("Open in Wayback Machine");
 }
 
 void OpenInWaybackMachineCommand::execute()
@@ -637,9 +637,9 @@ QIcon ShowOtherDomainsOnIpCommand::icon() const
 	return QIcon();
 }
 
-const char* ShowOtherDomainsOnIpCommand::description() const noexcept
+QString ShowOtherDomainsOnIpCommand::description() const noexcept
 {
-	return "Show Other Domains on IP";
+	return QObject::tr("Show Other Domains on IP");
 }
 
 void ShowOtherDomainsOnIpCommand::execute()
@@ -656,9 +656,9 @@ QIcon OpenRobotsTxtFileCommand::icon() const
 	return QIcon();
 }
 
-const char* OpenRobotsTxtFileCommand::description() const noexcept
+QString OpenRobotsTxtFileCommand::description() const noexcept
 {
-	return "Open robots.txt File";
+	return QObject::tr("Open robots.txt File");
 }
 
 void OpenRobotsTxtFileCommand::execute()
@@ -686,9 +686,9 @@ QIcon RefreshPageCommand::icon() const
 	return QIcon();
 }
 
-const char* RefreshPageCommand::description() const noexcept
+QString RefreshPageCommand::description() const noexcept
 {
-	return "Refresh Page";
+	return QObject::tr("Refresh Page");
 }
 
 void RefreshPageCommand::execute()
@@ -704,15 +704,24 @@ bool RefreshPageCommand::canExecute() const noexcept
 	return theApp->crawler()->readyForRefreshPage() && parsedPage->canRefresh();
 }
 
-GoToLinksOnThisPageCommand::GoToLinksOnThisPageCommand(
-	const CrawlerEngine::SequencedDataCollection* dataCollection,
-	const CrawlerEngine::ISequencedStorage* storage, 
-	CrawlerEngine::StorageType storageType, 
-	int index)
-	: m_dataCollection(dataCollection)
-	, m_storage(storage)
-	, m_storageType(storageType)
-	, m_index(index)
+GoToPageData::GoToPageData(PageDataWidget::PageDataType pageDataType)
+	: m_pageDataType(pageDataType)
+{
+}
+
+void GoToPageData::execute()
+{
+	IPage* page = theApp->mainWindow()->contentFrame()->activePage();
+	page->goTo(m_pageDataType);
+}
+
+bool GoToPageData::canExecute() const noexcept
+{
+	return true;
+}
+
+GoToLinksOnThisPageCommand::GoToLinksOnThisPageCommand()
+	: GoToPageData(PageDataWidget::LinksOnThisPageType)
 {	
 }
 
@@ -721,65 +730,13 @@ QIcon GoToLinksOnThisPageCommand::icon() const
 	return QIcon();
 }
 
-const char* GoToLinksOnThisPageCommand::description() const noexcept
+QString GoToLinksOnThisPageCommand::description() const noexcept
 {
-	return "Go to \"Links on this Page\"";
+	return QObject::tr("Go to \"Links on this Page\"");
 }
 
-void GoToLinksOnThisPageCommand::execute()
-{
-	IPage* page = theApp->mainWindow()->contentFrame()->page(IPage::AllResourcesPage);
-	AllResourcesPage* allResourcesPage = Common::Helpers::fast_cast<AllResourcesPage*>(page);
-
-	DEBUG_ASSERT(allResourcesPage);
-
-	page->showMe();
-
-	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
-	
-	allResourcesPage->selectFilter(type);
-	allResourcesPage->selectTab(PageDataWidget::PageDataType::LinksOnThisPageType);
-	
-	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
-	{
-		allResourcesPage->selectParsedPage(index);
-	}
-	else
-	{
-		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
-	}
-}
-
-bool GoToLinksOnThisPageCommand::canExecute() const noexcept
-{
-	CrawlerEngine::ResourceType type = m_storage->get(m_index)->resourceType;
-
-	switch(type)
-	{
-		case CrawlerEngine::ResourceType::ResourceImage:
-		case CrawlerEngine::ResourceType::ResourceVideo:
-		case CrawlerEngine::ResourceType::ResourceFlash:
-		case CrawlerEngine::ResourceType::ResourceOther:
-		{
-			return false;
-		}
-		default:
-		{
-			return true;
-		}
-	}
-}
-
-
-GoToLinksToThisPageCommand::GoToLinksToThisPageCommand(
-	const CrawlerEngine::SequencedDataCollection* dataCollection,
-	const CrawlerEngine::ISequencedStorage* storage,
-	CrawlerEngine::StorageType storageType,
-	int index)
-	: m_dataCollection(dataCollection)
-	, m_storage(storage)
-	, m_storageType(storageType)
-	, m_index(index)
+GoToLinksToThisPageCommand::GoToLinksToThisPageCommand()
+	: GoToPageData(PageDataWidget::LinksToThisPageType)
 {
 }
 
@@ -788,45 +745,13 @@ QIcon GoToLinksToThisPageCommand::icon() const
 	return QIcon();
 }
 
-const char* GoToLinksToThisPageCommand::description() const noexcept
+QString GoToLinksToThisPageCommand::description() const noexcept
 {
-	return "Go to \"Links to this Page\"";
+	return QObject::tr("Go to \"Links to this Page\"");
 }
 
-void GoToLinksToThisPageCommand::execute()
-{
-	IPage* page = theApp->mainWindow()->contentFrame()->page(IPage::AllResourcesPage);
-	AllResourcesPage* allResourcesPage = Common::Helpers::fast_cast<AllResourcesPage*>(page);
-
-	DEBUG_ASSERT(allResourcesPage);
-
-	page->showMe();
-
-	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
-
-	allResourcesPage->selectFilter(type);
-	allResourcesPage->selectTab(PageDataWidget::PageDataType::LinksToThisPageType);
-
-	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
-	{
-		allResourcesPage->selectParsedPage(index);
-	}
-	else
-	{
-		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
-	}
-}
-
-
-GoToHTTPResponseCommand::GoToHTTPResponseCommand(
-	const CrawlerEngine::SequencedDataCollection* dataCollection,
-	const CrawlerEngine::ISequencedStorage* storage,
-	CrawlerEngine::StorageType storageType,
-	int index)
-	: m_dataCollection(dataCollection)
-	, m_storage(storage)
-	, m_storageType(storageType)
-	, m_index(index)
+GoToHTTPResponseCommand::GoToHTTPResponseCommand()
+	: GoToPageData(PageDataWidget::ServerResponseForPageType)
 {
 }
 
@@ -835,34 +760,9 @@ QIcon GoToHTTPResponseCommand::icon() const
 	return QIcon();
 }
 
-const char* GoToHTTPResponseCommand::description() const noexcept
+QString GoToHTTPResponseCommand::description() const noexcept
 {
-	return "Go to \"HTTP Response\"";
+	return QObject::tr("Go to \"HTTP Response\"");
 }
-
-void GoToHTTPResponseCommand::execute()
-{
-	IPage* page = theApp->mainWindow()->contentFrame()->page(IPage::AllResourcesPage);
-	AllResourcesPage* allResourcesPage = Common::Helpers::fast_cast<AllResourcesPage*>(page);
-
-	DEBUG_ASSERT(allResourcesPage);
-
-	page->showMe();
-
-	CrawlerEngine::StorageType type = getPageStorageType(m_storage->get(m_index));
-
-	allResourcesPage->selectFilter(type);
-	allResourcesPage->selectTab(PageDataWidget::PageDataType::ServerResponseForPageType);
-
-	if (const int index = m_dataCollection->storage(type)->find(m_storage->get(m_index)); index != -1)
-	{
-		allResourcesPage->selectParsedPage(index);
-	}
-	else
-	{
-		ERRLOG << "Page not found in " << static_cast<int>(type) << "storage";
-	}
-}
-
 
 }

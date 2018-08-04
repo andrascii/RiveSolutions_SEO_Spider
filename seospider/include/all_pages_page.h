@@ -44,7 +44,6 @@ private:
 	};
 
 	QStackedWidget* m_stackedTableView;
-	PageDataWidget* m_pageDataWidget;
 	QSplitter* m_splitter;
 	ColumnsLookupLineEditWidget* m_columnsLookupLineEditWidget;
 	LookupLineEditWidget* m_lookupLineEditWidget;

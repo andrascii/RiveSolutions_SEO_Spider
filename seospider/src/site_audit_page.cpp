@@ -17,12 +17,12 @@ SiteAuditPage::SiteAuditPage(QWidget* parent)
 	, m_exportFilterDataAction(nullptr)
 	, m_switchAuditInfoFilterWidgetGroupingAction(nullptr)
 {
-	PageDataWidget* resourceTables = new PageDataWidget(this);
-	resourceTables->setPageDataType(PageDataWidget::LinksOnThisPageType);
-	resourceTables->setPageDataType(PageDataWidget::LinksToThisPageType);
-	resourceTables->setPageDataType(PageDataWidget::ServerResponseForPageType);
+	m_pageDataWidget = new PageDataWidget(this);
+	m_pageDataWidget->setPageDataType(PageDataWidget::LinksOnThisPageType);
+	m_pageDataWidget->setPageDataType(PageDataWidget::LinksToThisPageType);
+	m_pageDataWidget->setPageDataType(PageDataWidget::ServerResponseForPageType);
 
-	websiteDataWidget()->setPageDataWidget(resourceTables);
+	websiteDataWidget()->setPageDataWidget(m_pageDataWidget);
 
 	setSummaryViewDataAccessorType(SummaryDataAccessorFactory::DataAccessorType::ErrorsFilterPage);
 	createHeaderActionWidgets();

@@ -38,6 +38,7 @@ public slots:
 
 signals:
 	void tabBarClicked(int index, int prevIndex);
+	void tabSelected(int index);
 
 private:
 	void setPageServerResponse(const ParsedPageInfoPtr& page) const;

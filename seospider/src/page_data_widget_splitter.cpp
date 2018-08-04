@@ -79,6 +79,7 @@ void PageDataWidgetSplitter::addPageDataWidget(PageDataWidget* splitterSecondWid
 	addWidget(splitterSecondWidget);
 
 	VERIFY(connect(splitterSecondWidget, &PageDataWidget::tabBarClicked, this, &PageDataWidgetSplitter::onPageWidgetTabClicked));
+	VERIFY(connect(splitterSecondWidget, &PageDataWidget::tabSelected, this, &PageDataWidgetSplitter::onPageWidgetTabSelected));
 	VERIFY(connect(splitterSecondWidget->tabWidget(), &QTabWidget::currentChanged, this, &PageDataWidgetSplitter::updateTabTooltips));
 	splitterSecondWidget->installEventFilter(this);
 	updateTabTooltips();
@@ -256,4 +257,8 @@ void PageDataWidgetSplitter::onPageWidgetTabClicked(int index, int prevIndex)
 	animation->start();
 }
 
+void PageDataWidgetSplitter::onPageWidgetTabSelected(int index)
+{
+	onPageWidgetTabClicked(index, -1);
+}
 }

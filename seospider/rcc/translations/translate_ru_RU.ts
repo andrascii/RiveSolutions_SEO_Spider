@@ -1439,6 +1439,78 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
         <source>Unknown Network Error</source>
         <translation>Неизвестная ошибка сети</translation>
     </message>
+    <message>
+        <source>Open URL</source>
+        <translation>Открыть URL</translation>
+    </message>
+    <message>
+        <source>Remove Row</source>
+        <translation>Удалить строку</translation>
+    </message>
+    <message>
+        <source>Export Data to .xlsx File</source>
+        <translation>Экспортировать данные в .xlsx файл</translation>
+    </message>
+    <message>
+        <source>Export Url Info to .xlsx</source>
+        <translation>Экспортировать данные URL в .xlsx</translation>
+    </message>
+    <message>
+        <source>Export Url Outlinks to .xlsx</source>
+        <translation>Экспортировать исходящие ссылки в .xlsx</translation>
+    </message>
+    <message>
+        <source>Export Url Inlinks to .xlsx</source>
+        <translation>Экспортировать входящие ссылки в .xlsx</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard All Pages</source>
+        <translation>Копировать все страницы в буфер обмена</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard All Columns Data</source>
+        <translation>Копировать в буфер обмена все данные колонок</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard Url</source>
+        <translation>Копировать в буфер обмена Url</translation>
+    </message>
+    <message>
+        <source>Check Google Cache</source>
+        <translation>Проверить в Google Cache</translation>
+    </message>
+    <message>
+        <source>Check HTML with W3C Validator</source>
+        <translation>Проверить HTML при помощи W3C валидатора</translation>
+    </message>
+    <message>
+        <source>Open in Wayback Machine</source>
+        <translation>Открыть в Wayback Machine</translation>
+    </message>
+    <message>
+        <source>Show Other Domains on IP</source>
+        <translation>Показать другие домены с этим IP</translation>
+    </message>
+    <message>
+        <source>Open robots.txt File</source>
+        <translation>Открыть robots.txt файл</translation>
+    </message>
+    <message>
+        <source>Refresh Page</source>
+        <translation>Перезагрузить страницу</translation>
+    </message>
+    <message>
+        <source>Go to &quot;Links on this Page&quot;</source>
+        <translation>Перейти к  &quot;Ссылки на этой странице&quot;</translation>
+    </message>
+    <message>
+        <source>Go to &quot;Links to this Page&quot;</source>
+        <translation>Перейти к &quot;Ссылки на эту страницу&quot;</translation>
+    </message>
+    <message>
+        <source>Go to &quot;HTTP Response&quot;</source>
+        <translation>Перейти к &quot;HTTP ответ&quot;</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>

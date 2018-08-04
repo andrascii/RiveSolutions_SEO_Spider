@@ -56,6 +56,14 @@ void AbstractPage::showMe() const
 	theApp->mainWindow()->contentFrame()->showPage(type());
 }
 
+void AbstractPage::goTo(PageDataWidget::PageDataType pageDataType)
+{
+	if (m_pageDataWidget != nullptr)
+	{
+		m_pageDataWidget->selectTab(pageDataType);
+	}
+}
+
 QWidget* AbstractPage::createControl(QAction* action) const
 {
 	return HeaderToolButtonCreator::createControl(action);
