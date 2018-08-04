@@ -17,7 +17,8 @@ enum SiteMapIncludeSettings
 	IncludePriorityTag = 1 << 5,
 	IncludeChangeFreqTag = 1 << 6,
 	IncludeImages = 1 << 7,
-	IncludeNoIndexImages = 1 << 8
+	IncludeNoIndexImages = 1 << 8,
+	IncludeOnlyRelevantImages = 1 << 9
 };
 
 Q_DECLARE_FLAGS(SiteMapIncludeSettingsFlags, SiteMapIncludeSettings);
@@ -51,6 +52,7 @@ struct SiteMapSettings
 	SiteMapLastModTagMode lastModifiedMode = SiteMapLastModTagMode::Calculated;
 	QDateTime lastModifiedDate;
 	double priorityLevelSettings[6];
+	int minimumInLinksForImages;
 	SiteMapChangeFreqTagMode changeFreqMode = SiteMapChangeFreqTagMode::CalculatedFromLastModifiedHeader;
 	SitemapChangeFreq changeFreqLevelSettings[6];
 };
@@ -67,6 +69,7 @@ private:
 	bool discardByStatusCode(const ParsedPage* page) const;
 	bool discardByCanonicalNextPrev(const ParsedPage* page, const SiteMapSettings& settings) const;
 	bool discardImageByNoImageIndex(const ParsedPage* page, const SiteMapSettings& settings) const;
+	bool discardImageByFewInLinks(const ParsedPage* page, const SiteMapSettings& settings) const;
 
 	QString responseDate(const ParsedPage* page) const;
 	QString formatDate(const QDateTime& dateTime) const;

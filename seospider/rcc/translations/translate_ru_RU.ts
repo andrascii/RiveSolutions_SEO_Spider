@@ -41,6 +41,17 @@ an invalid username/password.</source>
     </message>
 </context>
 <context>
+    <name>ColumnsLookupLineEditWidget</name>
+    <message>
+        <source>Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CompanyProfileSettingsWidget</name>
     <message>
         <source>Company Profile</source>
@@ -308,8 +319,12 @@ Please, be sure that you entered a valid address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>...</source>
-        <translation type="unfinished"></translation>
+        <source>Clear</source>
+        <translation type="unfinished">Очистить данные</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished">Применить</translation>
     </message>
 </context>
 <context>
@@ -1512,6 +1527,21 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
     </message>
 </context>
 <context>
+    <name>SeoSpider::ColumnsLookupLineEditWidget</name>
+    <message>
+        <source>Search by &quot;</source>
+        <translation type="unfinished">Искать по &quot;</translation>
+    </message>
+    <message>
+        <source>&quot; column</source>
+        <translation type="unfinished">&quot; колонке</translation>
+    </message>
+    <message>
+        <source>Select the column for search...</source>
+        <translation type="unfinished">Выберите колонку для поиска...</translation>
+    </message>
+</context>
+<context>
     <name>SeoSpider::ContentFrame</name>
     <message>
         <source>Please wait while saving the project...</source>
@@ -1560,15 +1590,15 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
     <name>SeoSpider::LookupLineEditWidget</name>
     <message>
         <source>Search by &quot;</source>
-        <translation>Искать по &quot;</translation>
+        <translation type="vanished">Искать по &quot;</translation>
     </message>
     <message>
         <source>&quot; column</source>
-        <translation>&quot; колонке</translation>
+        <translation type="vanished">&quot; колонке</translation>
     </message>
     <message>
         <source>Select the column for search...</source>
-        <translation>Выберите колонку для поиска...</translation>
+        <translation type="vanished">Выберите колонку для поиска...</translation>
     </message>
 </context>
 <context>
@@ -1969,6 +1999,10 @@ please stop crawling and try again</source>
         <source>Crawler does not contain any data. It does not make sense to create empty site map. Are you agree? ;)</source>
         <translation>Краулер не содержит никаких данных. Какой смысл создавать пустую карту сайта? Вы согласны? ;)</translation>
     </message>
+    <message>
+        <source>Manual</source>
+        <translation>Вручную</translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::WebSiteDataWidget</name>
@@ -2010,10 +2044,6 @@ please stop crawling and try again</source>
     <message>
         <source>Pages</source>
         <translation>Страницы</translation>
-    </message>
-    <message>
-        <source>Include Painted Urls</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Include PDFs</source>
@@ -2078,6 +2108,10 @@ please stop crawling and try again</source>
     <message>
         <source>Cancel</source>
         <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Include Paginated Urls</source>
+        <translation>Включить страницы пагинации</translation>
     </message>
 </context>
 <context>
