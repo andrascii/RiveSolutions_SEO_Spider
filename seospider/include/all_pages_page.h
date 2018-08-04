@@ -7,6 +7,7 @@ namespace SeoSpider
 
 class TableView;
 class PageDataWidget;
+class LookupLineEditWidget;
 class ColumnsLookupLineEditWidget;
 
 class AllPagesPage : public QFrame, public AbstractPage
@@ -45,7 +46,8 @@ private:
 	QStackedWidget* m_stackedTableView;
 	PageDataWidget* m_pageDataWidget;
 	QSplitter* m_splitter;
-	ColumnsLookupLineEditWidget* m_lookupLineEditWidget;
+	ColumnsLookupLineEditWidget* m_columnsLookupLineEditWidget;
+	LookupLineEditWidget* m_lookupLineEditWidget;
 	QMap<WidgetType, int> m_widgetIndexes;
 };
 

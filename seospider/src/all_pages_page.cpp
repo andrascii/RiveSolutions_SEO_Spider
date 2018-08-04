@@ -8,6 +8,7 @@
 #include "page_data_widget.h"
 #include "model_helpers.h"
 #include "page_data_widget_splitter.h"
+#include "lookup_lineedit_widget.h"
 #include "columns_lookup_lineedit_widget.h"
 
 namespace SeoSpider
@@ -18,6 +19,7 @@ AllPagesPage::AllPagesPage(QWidget* parent)
 	, m_stackedTableView(new QStackedWidget(this))
 	, m_pageDataWidget(nullptr)
 	, m_splitter(nullptr)
+	, m_columnsLookupLineEditWidget(nullptr)
 	, m_lookupLineEditWidget(nullptr)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -97,19 +99,29 @@ void AllPagesPage::onApplyPlainSearch(const QString& searchValue)
 
 void AllPagesPage::createHeaderActionWidgets()
 {
-	m_lookupLineEditWidget = new ColumnsLookupLineEditWidget;
-	addWidget(m_lookupLineEditWidget);
+	m_columnsLookupLineEditWidget = new ColumnsLookupLineEditWidget;
+	m_columnsLookupLineEditWidget->setProperty("ReservedForFuture", true);
+
+	addWidget(m_columnsLookupLineEditWidget);
 
 	const QVector<ParsedPageInfo::Column> columns =
 		StorageAdapterFactory::parsedPageAvailableColumns(StorageAdapterType::StorageAdapterTypeAllPages);
 
 	for (int i = 0; i < columns.size(); ++i)
 	{
-		m_lookupLineEditWidget->addSearchField(i, ParsedPageInfo::itemTypeDescription(columns[i]));
+		m_columnsLookupLineEditWidget->addSearchField(i, ParsedPageInfo::itemTypeDescription(columns[i]));
 	}
 
-	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
+	VERIFY(connect(m_columnsLookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
 		this, SLOT(onApplyColumnSearch(int, const QString&))));
+
+	//////////////////////////////////////////////////////////////////////////
+
+	m_lookupLineEditWidget = new LookupLineEditWidget;
+	addWidget(m_lookupLineEditWidget);
+
+	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(const QString&)),
+		this, SLOT(onApplyPlainSearch(const QString&))));
 }
 
 void AllPagesPage::showNoResultsLabelFor(const QString& searchValue)
