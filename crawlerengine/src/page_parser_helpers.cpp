@@ -197,11 +197,6 @@ bool PageParserHelpers::isHttpOrHttpsScheme(const Url& url) noexcept
 
 bool PageParserHelpers::isSubdomain(const Url& baseUrl, const Url& url)
 {
-	INFOLOG << baseUrl.toDisplayString() << url.toDisplayString();
-
-	/*static const QRegularExpression s_regExp("(?:([a-z0-9\\.-]+)?\\.)?([a-z0-9]+\\.[a-z\\.]+){1,1}", 
-		QRegularExpression::CaseInsensitiveOption);*/
-
 	if (!isHttpOrHttpsScheme(baseUrl) || !isHttpOrHttpsScheme(url))
 	{
 		return false;
@@ -225,59 +220,6 @@ bool PageParserHelpers::isSubdomain(const Url& baseUrl, const Url& url)
 
 	return baseUrlWithoutScheme.host().endsWith(targetUrlWithoutScheme.host()) ||
 		targetUrlWithoutScheme.host().endsWith(baseUrlWithoutScheme.host());
-
-	//const QRegularExpressionMatch baseUrlMatch = s_regExp.match(baseUrlWithoutScheme.host());
-	//const QRegularExpressionMatch targetUrlMatch = s_regExp.match(targetUrlWithoutScheme.host());
-
-	//const QStringList baseUrlCapturedTexts = baseUrlMatch.capturedTexts();
-	//const QStringList targetUrlCapturedTexts = targetUrlMatch.capturedTexts();
-
-	//if (targetUrlCapturedTexts.isEmpty() || baseUrlCapturedTexts.isEmpty())
-	//{
-	//	WARNLOG << "Can't parse links";
-	//	WARNLOG << "Base link:" << baseUrlWithoutScheme.host();
-	//	WARNLOG << "Checking link:" << targetUrlWithoutScheme.host();
-
-	//	return false;
-	//}
-
-	//QStringList baseUrlSubdomains = baseUrlCapturedTexts[1].split(".", QString::SkipEmptyParts);
-	//QStringList targetUrlSubdomains = targetUrlCapturedTexts[1].split(".", QString::SkipEmptyParts);
-
-
-	//if (baseUrlSubdomains.startsWith("www"))
-	//{
-	//	baseUrlSubdomains.removeOne("www");
-	//}
-	//
-	//if (targetUrlSubdomains.startsWith("www"))
-	//{
-	//	targetUrlSubdomains.removeOne("www");
-	//}
-	
-
-	//if (baseUrlSubdomains.size() > targetUrlSubdomains.size() ||
-	//	baseUrlSubdomains.isEmpty() && targetUrlSubdomains.isEmpty())
-	//{
-	//	return false;
-	//}
-
-	//bool equal = false;
-	//
-	//for (int i = baseUrlSubdomains.size() - 1, j = targetUrlSubdomains.size() - 1; i >= 0 && j >= 0; --i, --j)
-	//{
-	//	if (baseUrlSubdomains[i] == targetUrlSubdomains[j])
-	//	{
-	//		equal = true;
-	//	}
-	//	else
-	//	{
-	//		equal = false;
-	//		break;
-	//	}
-	//}
-
-	//return !equal;
 }
 
 }
