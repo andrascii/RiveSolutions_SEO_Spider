@@ -253,11 +253,17 @@ void AbstractFilterPage::initHeaderWidgets()
 	// this function must not be called from AbstractFilterPage constructor
 	// in order to avoid crash with pure virtual function
 
-// 	m_columnsLookupLineEditWidget = new ColumnsLookupLineEditWidget;
-// 	addWidget(m_columnsLookupLineEditWidget);
-// 
-// 	VERIFY(connect(m_columnsLookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
-// 		this, SLOT(onApplyColumnSearch(int, const QString&))));
+	m_columnsLookupLineEditWidget = new ColumnsLookupLineEditWidget;
+	m_columnsLookupLineEditWidget->setProperty("ReservedForFuture", true);
+
+	addWidget(m_columnsLookupLineEditWidget);
+
+	VERIFY(connect(m_columnsLookupLineEditWidget, SIGNAL(applySearch(int, const QString&)),
+		this, SLOT(onApplyColumnSearch(int, const QString&))));
+
+	m_columnsLookupLineEditWidget->setEnabled(false);
+
+	//////////////////////////////////////////////////////////////////////////
 
 	m_lookupLineEditWidget = new LookupLineEditWidget;
 	addWidget(m_lookupLineEditWidget);

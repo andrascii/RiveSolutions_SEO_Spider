@@ -212,7 +212,15 @@ void ContentFrame::onDynamicControlsChanged(IPage::Type pageType)
 
 	foreach(QWidget* control, controls)
 	{
+		const QVariant reservedForFuture = control->property("ReservedForFuture");
+
+		if (reservedForFuture.isValid())
+		{
+			continue;
+		}
+
 		m_dynamicControlsLayout->addWidget(control);
+
 		control->show();
 	}
 }
