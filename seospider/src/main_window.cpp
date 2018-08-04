@@ -323,13 +323,13 @@ void MainWindow::closeEvent(QCloseEvent* event)
 		{
 			answer = showMessageBoxDialog(tr("Closing application"),
 				warningMessage,
-				QDialogButtonBox::Yes | QDialogButtonBox::No);
+				QDialogButtonBox::Save | QDialogButtonBox::No);
 		}
 		else
 		{
 			answer = showMessageBoxDialog(tr("Closing application"),
 				warningMessage % " " % descriptionMessage,
-				QDialogButtonBox::Yes | QDialogButtonBox::No);
+				QDialogButtonBox::Save | QDialogButtonBox::No);
 		}
 		
 		ASSERT(answer == QDialog::Accepted || answer == QDialog::Rejected);

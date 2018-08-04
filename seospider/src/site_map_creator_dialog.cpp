@@ -121,7 +121,7 @@ void SitemapCreatorDialog::showSaveFileDialog() const
 	{
 		theApp->mainWindow()->showMessageBoxDialog(
 			tr("What?"),
-			tr("Crawler does not contain any data. It does not make sense to create empty site map. Are you agree? ;)"),
+			tr("Crawler does not contain any data. It does not make sense to create empty site map. Are you agree?"),
 			QDialogButtonBox::Ok
 		);
 

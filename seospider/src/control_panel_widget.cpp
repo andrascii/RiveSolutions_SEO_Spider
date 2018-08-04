@@ -104,7 +104,9 @@ void ControlPanelWidget::clearCrawlingData() const
 		tr("Would you like to save the results and have the ability to start next time from this point?");
 	
 	messageBoxDialog->setMessage(message);
-	messageBoxDialog->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::No);
+
+	messageBoxDialog->addButton(tr("Save"), QDialogButtonBox::YesRole);
+	messageBoxDialog->addButton(tr("Don`s save"), QDialogButtonBox::NoRole);
 
 	auto onDialogClosed = [messageBoxDialog](int result)
 	{
