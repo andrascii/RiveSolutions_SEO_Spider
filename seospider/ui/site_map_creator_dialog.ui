@@ -174,7 +174,7 @@
         <item row="3" column="0">
          <widget class="QCheckBox" name="includePaintedUrlsCheckBox">
           <property name="text">
-           <string>Include Painted Urls</string>
+           <string>Include Paginated Urls</string>
           </property>
          </widget>
         </item>
@@ -377,6 +377,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="inlinksSpinBox">
+            <property name="maximum">
+             <number>100000</number>
+            </property>
             <property name="value">
              <number>10</number>
             </property>
@@ -624,5 +627,22 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>includeOnlyRelevantImages</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>inlinksSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>531</x>
+     <y>377</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>662</x>
+     <y>381</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

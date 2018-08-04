@@ -146,7 +146,7 @@ bool SiteMap::discardByResourceType(const ParsedPage* page, const SiteMapSetting
 
 	if (settings.flags.testFlag(IncludeImages) && resourceType == ResourceType::ResourceImage)
 	{
-		return discardImageByNoImageIndex(page, settings);
+		return discardImageByNoImageIndex(page, settings) || discardImageByFewInLinks(page, settings);
 	}
 
 	if (settings.flags.testFlag(IncludePDFs) && 
@@ -251,6 +251,16 @@ bool SiteMap::discardImageByNoImageIndex(const ParsedPage* page, const SiteMapSe
 	}
 
 	return true;
+}
+
+bool SiteMap::discardImageByFewInLinks(const ParsedPage* page, const SiteMapSettings& settings) const
+{
+	if (!settings.flags.testFlag(IncludeOnlyRelevantImages))
+	{
+		return false;
+	}
+	
+	return page->linksToThisPage.size() < static_cast<size_t>(settings.minimumInLinksForImages);
 }
 
 QString SiteMap::responseDate(const ParsedPage* page) const

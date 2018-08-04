@@ -95,7 +95,7 @@ SitemapCreatorDialog::SitemapCreatorDialog(QWidget* parent)
 	m_ui->changefreqCrawlDepth5PlusComboBox->setCurrentIndex(static_cast<int>(SitemapChangeFreq::Daily));
 
 	m_ui->lastmodDateComboBox->addItem(tr("User Server Response Headers"), QVariant::fromValue(SiteMapLastModTagMode::Calculated));
-	m_ui->lastmodDateComboBox->addItem(tr("User Server Response Headers"), QVariant::fromValue(SiteMapLastModTagMode::Manual));
+	m_ui->lastmodDateComboBox->addItem(tr("Manual"), QVariant::fromValue(SiteMapLastModTagMode::Manual));
 	m_ui->lastmodDateComboBox->setCurrentIndex(static_cast<int>(SiteMapLastModTagMode::Calculated));
 	m_ui->customDateEdit->setDate(QDate::currentDate());
 
@@ -168,9 +168,14 @@ void SitemapCreatorDialog::showSaveFileDialog() const
 	{
 		sitemapSettings.flags.setFlag(IncludeNoIndexImages);
 	}
+	if (m_ui->includeOnlyRelevantImages->isChecked())
+	{
+		sitemapSettings.flags.setFlag(IncludeOnlyRelevantImages);
+	}
 
 	sitemapSettings.lastModifiedMode = static_cast<SiteMapLastModTagMode>(m_ui->lastmodDateComboBox->currentData().toInt());
 	sitemapSettings.lastModifiedDate = m_ui->customDateEdit->dateTime();
+	sitemapSettings.minimumInLinksForImages = m_ui->inlinksSpinBox->value();
 
 	sitemapSettings.priorityLevelSettings[0] = m_ui->priorityCrawlDepth0SpinBox->value();
 	sitemapSettings.priorityLevelSettings[1] = m_ui->priorityCrawlDepth1SpinBox->value();
