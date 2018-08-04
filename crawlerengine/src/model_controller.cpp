@@ -854,7 +854,9 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		}
 
 		const bool httpResource = PageParserHelpers::isHttpOrHttpsScheme(resource.link.url);
-		const bool externalOrNotHttpResource = PageParserHelpers::isUrlExternal(workerResult.incomingPage()->url, temporaryResource->url) || !httpResource;
+
+		const bool externalOrNotHttpResource = !httpResource ||
+			PageParserHelpers::isUrlExternal(workerResult.incomingPage()->url, temporaryResource->url, m_crawlerOptionsData.checkSubdomains);
 
 		const StorageType storage = externalOrNotHttpResource ?
 			s_externalStorageTypes[resourceType] :
