@@ -18,6 +18,8 @@ public:
 	void setStandardButtons(QDialogButtonBox::StandardButtons buttons);
 	int result() const;
 
+	void addButton(const QString &text, QDialogButtonBox::ButtonRole role);
+
 signals:
 	void dialogClosed(int clickedButtonRole);
 

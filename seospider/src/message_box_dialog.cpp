@@ -23,6 +23,8 @@ MessageBoxDialog::MessageBoxDialog(QWidget* parent)
 	QFrame* internalFrame = new QFrame;
 	m_ui->setupUi(internalFrame);
 
+	setStandardButtons(QDialogButtonBox::NoButton);
+
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 	VERIFY(connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
 	VERIFY(connect(m_ui->buttonBox, &QDialogButtonBox::clicked, this, &MessageBoxDialog::onButtonClicked));
@@ -57,6 +59,11 @@ void MessageBoxDialog::setStandardButtons(QDialogButtonBox::StandardButtons butt
 int MessageBoxDialog::result() const
 {
 	return m_dialogCode;
+}
+
+void MessageBoxDialog::addButton(const QString& text, QDialogButtonBox::ButtonRole role)
+{
+	m_ui->buttonBox->addButton(text, role);
 }
 
 void MessageBoxDialog::accept()
@@ -120,7 +127,7 @@ void MessageBoxDialog::hideEvent(QHideEvent* event)
 
 	QFrame::hideEvent(event);
 
-	emit dialogClosed(m_clickedButtonRole);
+	emit dialogClosed(m_dialogCode);
 }
 
 void MessageBoxDialog::completeLocalEventLoop()
