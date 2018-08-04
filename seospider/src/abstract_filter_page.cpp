@@ -221,6 +221,11 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 
 void AbstractFilterPage::applySearchHelper(int searchColumnNumber, const QString& searchValue)
 {
+	if (m_currentSelectedRow == -1)
+	{
+		return;
+	}
+
 	StorageAdapterType storageAdapterType =
 		m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(m_currentSelectedRow, 0));
 
@@ -256,6 +261,8 @@ void AbstractFilterPage::initHeaderWidgets()
 
 	m_lookupLineEditWidget = new LookupLineEditWidget;
 	addWidget(m_lookupLineEditWidget);
+
+	m_lookupLineEditWidget->setEnabled(false);
 
 	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(const QString&)),
 		this, SLOT(onApplyPlainSearch(const QString&))));
