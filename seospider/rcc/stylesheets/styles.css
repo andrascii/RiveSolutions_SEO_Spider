@@ -1037,9 +1037,42 @@ QScrollArea#reportScrollArea
 	border: 0px solid transparent;
 }
 
-/*////////////////////////////// LookupLineEditWidget //////////////////////////////*/
+/*////////////////////////////// ColumnsLookupLineEditWidget //////////////////////////////*/
 
+SeoSpider--ColumnsLookupLineEditWidget,
 SeoSpider--LookupLineEditWidget
 {
 	min-width: 20em;
+}
+
+/*////////////////////////////// LookupLineEditWidget //////////////////////////////*/
+
+SeoSpider--LookupLineEditWidget QLineEdit
+{
+	border-bottom-right-radius: 0;
+	border-top-right-radius: 0;
+	border-right: 0;
+}
+
+SeoSpider--LookupLineEditWidget QLineEdit,
+SeoSpider--LookupLineEditWidget QPushButton
+{
+}
+
+SeoSpider--LookupLineEditWidget QPushButton#applyButton
+{
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+	max-width: 3.5em;
+	min-width: 3.5em;
+	background: #EFEFEF;
+}
+
+SeoSpider--LookupLineEditWidget QPushButton#clearButton
+{
+	border-radius: 0;
+	border-right: 0;
+	max-width: 3.5em;
+	min-width: 3.5em;
+	background: #EFEFEF;
 }

@@ -24,9 +24,12 @@ signals:
 private slots:
 	void onApplySearch();
 	void onTextChanged();
+	void onAnimationFinished();
+	void onClearButtonClicked();
 
 private:
 	IStatisticCounter* m_counter;
+	QParallelAnimationGroup* m_clearButtonAnimation;
 };
 
 }
