@@ -16,6 +16,7 @@ public:
 
 	void addPage(IPage* page, bool setSelected = false);
 	IPage* page(IPage::Type pageType) const;
+	IPage* activePage() const;
 	QWidget* pageWidget(IPage::Type pageType) const;
 
 public slots:

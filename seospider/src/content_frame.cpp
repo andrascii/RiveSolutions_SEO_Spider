@@ -80,6 +80,11 @@ IPage* ContentFrame::page(IPage::Type pageType) const
 	return dynamic_cast<IPage*>(pageWidget(pageType));
 }
 
+IPage* ContentFrame::activePage() const
+{
+	return dynamic_cast<IPage*>(pageWidget(m_activePage));
+}
+
 QWidget* ContentFrame::pageWidget(IPage::Type pageType) const
 {
 	auto iterator = m_pageIndexes.find(pageType);

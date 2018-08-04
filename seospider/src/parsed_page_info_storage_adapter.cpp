@@ -149,9 +149,9 @@ Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 		menu.addItem(exportSubMenu);
 
 		std::shared_ptr<Menu> goToSubMenu = std::make_shared<Menu>(tr("Go to..."));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksOnThisPageCommand>(m_dataCollection, m_associatedStorage, m_storageType, row)));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksToThisPageCommand>(m_dataCollection, m_associatedStorage, m_storageType, row)));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToHTTPResponseCommand>(m_dataCollection, m_associatedStorage, m_storageType, row)));
+		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksOnThisPageCommand>()));
+		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksToThisPageCommand>()));
+		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToHTTPResponseCommand>()));
 		menu.addItem(goToSubMenu);
 	}
 

@@ -17,7 +17,6 @@ namespace SeoSpider
 AllPagesPage::AllPagesPage(QWidget* parent)
 	: QFrame(parent)
 	, m_stackedTableView(new QStackedWidget(this))
-	, m_pageDataWidget(nullptr)
 	, m_splitter(nullptr)
 	, m_columnsLookupLineEditWidget(nullptr)
 	, m_lookupLineEditWidget(nullptr)

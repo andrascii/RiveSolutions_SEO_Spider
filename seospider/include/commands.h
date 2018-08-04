@@ -2,6 +2,7 @@
 
 #include "data_collection_groups_factory.h"
 #include "parsed_page_info.h"
+#include "page_data_widget.h"
 
 namespace CrawlerEngine
 {
@@ -20,7 +21,7 @@ public:
 	virtual ~ICommand() = default;
 
 	virtual QIcon icon() const = 0;
-	virtual const char* description() const noexcept = 0;
+	virtual QString description() const noexcept = 0;
 	virtual void execute() = 0;
 	virtual bool canExecute() const noexcept;
 	virtual bool isCompound() const noexcept;
@@ -31,17 +32,17 @@ using ICommandPointer = std::shared_ptr<ICommand>;
 class CompoundCommand : public ICommand
 {
 public:
-	CompoundCommand(const char* description, const QIcon& icon = QIcon());
+	CompoundCommand(const QString& description, const QIcon& icon = QIcon());
 
 	const std::vector<ICommandPointer>& commands() const noexcept;
 	void addCommand(ICommandPointer commandPointer);
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 	virtual bool isCompound() const noexcept;
 
 private:
-	const char* m_description;
+	QString m_description;
 	QIcon m_icon;
 	std::vector<ICommandPointer> m_commands;
 };
@@ -52,7 +53,7 @@ public:
 	OpenUrlCommand(const QUrl& url);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -65,7 +66,7 @@ public:
 	RemoveRowCommand(int row);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -81,7 +82,7 @@ public:
 	);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -98,7 +99,7 @@ public:
 	);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -113,7 +114,7 @@ public:
 	ExportUrlOutlinksToXlsxCommand(const CrawlerEngine::ISequencedStorage* storage, int row);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -127,7 +128,7 @@ public:
 	ExportUrlInlinksToXlsxCommand(const CrawlerEngine::ISequencedStorage* storage, int row);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -141,7 +142,7 @@ public:
 	CopyToClipboardAllPagesCommand(const CrawlerEngine::ISequencedStorage* storage);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -158,7 +159,7 @@ public:
 	);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -176,7 +177,7 @@ public:
 	);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -190,7 +191,7 @@ public:
 	CheckGoogleCacheCommand(const QUrl& url);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -203,7 +204,7 @@ public:
 	CheckHTMLWithW3CValidatorCommand(const QUrl& url);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -216,7 +217,7 @@ public:
 	OpenInWaybackMachineCommand(const QUrl& url);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -229,7 +230,7 @@ public:
 	ShowOtherDomainsOnIpCommand(const QByteArray& ipv4);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 
 private:
@@ -240,7 +241,7 @@ class OpenRobotsTxtFileCommand : public ICommand
 {
 public:
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 };
 
@@ -250,7 +251,7 @@ public:
 	RefreshPageCommand(CrawlerEngine::StorageType storageType, int index);
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	virtual QString description() const noexcept override;
 	virtual void execute() override;
 	virtual bool canExecute() const noexcept override;
 
@@ -259,65 +260,42 @@ private:
 	int m_index;
 };
 
-class GoToLinksOnThisPageCommand : public ICommand
+class GoToPageData : public ICommand
 {
 public:
-	GoToLinksOnThisPageCommand(
-		const CrawlerEngine::SequencedDataCollection* dataCollection, 
-		const CrawlerEngine::ISequencedStorage* storage,
-		CrawlerEngine::StorageType storageType, 
-		int index);
-
-	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
+	GoToPageData(PageDataWidget::PageDataType pageDataType);
 	virtual void execute() override;
 	virtual bool canExecute() const noexcept override;
 
 private:
-	const CrawlerEngine::SequencedDataCollection* m_dataCollection;
-	const CrawlerEngine::ISequencedStorage* m_storage;
-	CrawlerEngine::StorageType m_storageType;
-	int m_index;
+	PageDataWidget::PageDataType m_pageDataType;
 };
 
-class GoToLinksToThisPageCommand : public ICommand
+class GoToLinksOnThisPageCommand : public GoToPageData
 {
 public:
-	GoToLinksToThisPageCommand(
-		const CrawlerEngine::SequencedDataCollection* dataCollection,
-		const CrawlerEngine::ISequencedStorage* storage,
-		CrawlerEngine::StorageType storageType,
-		int index);
+	GoToLinksOnThisPageCommand();
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
-	virtual void execute() override;
-
-private:
-	const CrawlerEngine::SequencedDataCollection* m_dataCollection;
-	const CrawlerEngine::ISequencedStorage* m_storage;
-	CrawlerEngine::StorageType m_storageType;
-	int m_index;
+	virtual QString description() const noexcept override;
 };
 
-class GoToHTTPResponseCommand : public ICommand
+class GoToLinksToThisPageCommand : public GoToPageData
 {
 public:
-	GoToHTTPResponseCommand(
-		const CrawlerEngine::SequencedDataCollection* dataCollection,
-		const CrawlerEngine::ISequencedStorage* storage,
-		CrawlerEngine::StorageType storageType,
-		int index);
+	GoToLinksToThisPageCommand();
 
 	virtual QIcon icon() const override;
-	virtual const char* description() const noexcept override;
-	virtual void execute() override;
+	virtual QString description() const noexcept override;
+};
 
-private:
-	const CrawlerEngine::SequencedDataCollection* m_dataCollection;
-	const CrawlerEngine::ISequencedStorage* m_storage;
-	CrawlerEngine::StorageType m_storageType;
-	int m_index;
+class GoToHTTPResponseCommand : public GoToPageData
+{
+public:
+	GoToHTTPResponseCommand();
+
+	virtual QIcon icon() const override;
+	virtual QString description() const noexcept override;
 };
 
 }

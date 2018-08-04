@@ -1,4 +1,5 @@
 #pragma once
+#include "page_data_widget.h"
 
 namespace SeoSpider
 {
@@ -24,6 +25,7 @@ public:
 	virtual QIcon icon() const = 0;
 	virtual Type type() const = 0;
 	virtual void showMe() const = 0;
+	virtual void goTo(PageDataWidget::PageDataType pageDataType) = 0;
 
 	// signals
 	virtual void controlsChanged(IPage::Type) = 0;
