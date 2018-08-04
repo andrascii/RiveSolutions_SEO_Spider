@@ -23,7 +23,7 @@ bool OptionsLinkFilter::checkRestriction(Restriction restriction, const LinkInfo
 		return false;
 	}
 
-	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptionsData.startCrawlingPage, linkInfo.url);
+	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptionsData.startCrawlingPage, linkInfo.url, m_crawlerOptionsData.checkSubdomains);
 	const bool isNofollowLink = linkInfo.linkParameter == LinkParameter::NofollowParameter;
 
 	const bool isExternalNofollowNotAllowed = isNofollowLink && isUrlExternal && !m_crawlerOptionsData.followExternalNofollow;
@@ -38,12 +38,13 @@ bool OptionsLinkFilter::checkRestriction(Restriction restriction, const LinkInfo
 
 	if (restriction == Restriction::RestrictionSubdomainNotAllowed)
 	{
+		INFOLOG << m_crawlerOptionsData.startCrawlingPage.urlStr() << linkInfo.url.urlStr();
 		return isSubdomain && !m_crawlerOptionsData.checkSubdomains;
 	}
 
 	if (restriction == Restriction::RestrictionBlockedByFolder)
 	{
-		return !m_crawlerOptionsData.crawlOutsideOfStartFolder &&
+		return !isSubdomain && !m_crawlerOptionsData.crawlOutsideOfStartFolder &&
 			!PageParserHelpers::isUrlInsideBaseUrlFolder(m_crawlerOptionsData.startCrawlingPage, linkInfo.url);
 	}
 
@@ -69,7 +70,7 @@ bool OptionsLinkFilter::checkRestriction(Restriction restriction, const LinkInfo
 
 std::pair<bool, MetaRobotsFlags> OptionsLinkFilter::isPageBlockedByMetaRobots(const ParsedPagePtr& parsedPage) const
 {
-	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptionsData.startCrawlingPage, parsedPage->url);
+	const bool isUrlExternal = PageParserHelpers::isUrlExternal(m_crawlerOptionsData.startCrawlingPage, parsedPage->url, m_crawlerOptionsData.checkSubdomains);
 
 	const std::pair<bool, UserAgentType> isAllowedForRobot = m_robotsTxtRules.isUrlAllowedByMetaRobotsFor(parsedPage->metaRobotsFlags, m_crawlerOptionsData.userAgentToFollow);
 

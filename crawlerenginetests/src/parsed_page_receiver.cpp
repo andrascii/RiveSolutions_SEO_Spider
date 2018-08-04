@@ -253,6 +253,7 @@ void ParsedPageReceiver::checkLinksToThisResourceConditions(const ParsedPage* pa
 
 void ParsedPageReceiver::checkAllPagesReceived()
 {
+	INFOLOG << "Started";
 	if (!m_allPagesReceived &&
 		m_finished &&
 		m_parsedPages[CrawledUrlStorageType].size() == static_cast<size_t>(CrawlerSharedState::instance()->sequencedDataCollectionLinksCount()))
@@ -261,6 +262,8 @@ void ParsedPageReceiver::checkAllPagesReceived()
 		m_allPagesReceivedPromise.set_value(m_parsedPages[StorageType::CrawledUrlStorageType]);
 		m_allPagesReceived = true;
 	}
+
+	INFOLOG << "Ended";
 }
 
 std::future<std::vector<const ParsedPage*>> ParsedPageReceiver::getParsedPages(int count, StorageType storageType)

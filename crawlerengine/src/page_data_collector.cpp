@@ -116,7 +116,7 @@ void PageDataCollector::collectReplyData(const Hop& hop, ParsedPagePtr& page) co
 	page->pageSizeKilobytes = hop.body().size() / 1024;
 	page->serverResponse = hop.responseHeaders().makeString();
 	page->pageHash = std::hash<std::string>()(hop.body().toStdString());
-	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptionsData.startCrawlingPage, page->url);
+	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptionsData.startCrawlingPage, page->url, m_crawlerOptionsData.checkSubdomains);
 
 	const std::vector<QString> contentTypeValues = hop.responseHeaders().valueOf("content-type");
 	page->contentType = contentTypeValues.empty() ? QString() : contentTypeValues.front();
@@ -168,6 +168,12 @@ void PageDataCollector::setResourceType(ParsedPagePtr& page) const
 	if (page->contentType.startsWith("image/"))
 	{
 		page->resourceType = ResourceType::ResourceImage;
+		return;
+	}
+
+	if (page->contentType == "text/css")
+	{
+		page->resourceType = ResourceType::ResourceStyleSheet;
 		return;
 	}
 
