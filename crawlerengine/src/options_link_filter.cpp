@@ -38,7 +38,6 @@ bool OptionsLinkFilter::checkRestriction(Restriction restriction, const LinkInfo
 
 	if (restriction == Restriction::RestrictionSubdomainNotAllowed)
 	{
-		INFOLOG << m_crawlerOptionsData.startCrawlingPage.urlStr() << linkInfo.url.urlStr();
 		return isSubdomain && !m_crawlerOptionsData.checkSubdomains;
 	}
 
