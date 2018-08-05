@@ -119,22 +119,28 @@ void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes
 		}
 	}
 
+	QModelIndexList itemsForRepaintAfterDeselect;
+	const int rowCount = model()->rowCount();
 	if (rowsForRepaint.size())
 	{
-		QModelIndexList itemsForRepaintAfterDeselect;
-
 		foreach(const QModelIndex& row, rowsForRepaint)
 		{
-			if (row.row() < model()->rowCount())
+			if (row.row() < rowCount)
 			{
 				itemsForRepaintAfterDeselect.append(makeRowIndexes(row));
 			}
-		} 
-
-		emitNeedToRepaintIndexes(itemsForRepaintAfterDeselect);
+		}
 	}
 
-	emitNeedToRepaintIndexes(modelIndexes);
+	foreach(const QModelIndex& index, modelIndexes)
+	{
+		if (index.row() < rowCount)
+		{
+			itemsForRepaintAfterDeselect.append(index);
+		}
+	}
+
+	emitNeedToRepaintIndexes(itemsForRepaintAfterDeselect);
 }
 
 const QModelIndexList& AbstractViewModel::selectedIndexes() const noexcept

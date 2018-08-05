@@ -34,7 +34,19 @@ inline QModelIndex getUnderlyingIndex(const QModelIndex& index)
 	// sad but true: we can't just use index, it can be unmapped.
 	// TODO: check it in the future version of Qt
 	const QModelIndex fixedindex = index.model()->index(index.row(), index.column());
+
+	if (!fixedindex.isValid() || fixedindex.model() == nullptr)
+	{
+		// again magic
+		return QModelIndex();
+	}
+
 	const QModelIndex underlyingModelIndex = qvariant_cast<QModelIndex>(fixedindex.data(AbstractTableModel::underlyingIndexRole));
+	if ((!underlyingModelIndex.isValid() || underlyingModelIndex.model() == nullptr) && fixedindex.model()->rowCount() > fixedindex.row())
+	{
+		// magic or bug it QSortProxyFilterModel
+		return QModelIndex();
+	}
 	DEBUG_ASSERT(underlyingModelIndex.isValid());
 	return underlyingModelIndex;
 #else
@@ -47,7 +59,7 @@ T getUnderlyingModelByIndex(const QModelIndex& index)
 {
 #ifdef USE_SORTING
 	QModelIndex underlyingModelIndex = getUnderlyingIndex(index);
-	if (!index.isValid())
+	if (!underlyingModelIndex.isValid())
 	{
 		return nullptr;
 	}
