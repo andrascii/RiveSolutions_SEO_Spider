@@ -84,8 +84,8 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::SecondH2Column, Common::Helpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::CanonicalLinkElementColumn, Common::Helpers::pointsToPixels(300) },
 		{ ParsedPageInfo::Column::StatusCodeColumn, Common::Helpers::pointsToPixels(150) },
-		{ ParsedPageInfo::Column::PageSizeKbColumn, Common::Helpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::WordCountColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::PageSizeKbColumn, Common::Helpers::pointsToPixels(150) },
+		{ ParsedPageInfo::Column::WordCountColumn, Common::Helpers::pointsToPixels(150) },
 		{ ParsedPageInfo::Column::PageHashColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::TitleLengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::UrlLengthColumn, Common::Helpers::pointsToPixels(100) },
@@ -95,8 +95,8 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::SecondH1LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::FirstH2LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::SecondH2LengthColumn, Common::Helpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::ImageSizeKbColumn, Common::Helpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::ImageSizeKbColumn, Common::Helpers::pointsToPixels(150) },
+		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, Common::Helpers::pointsToPixels(150) },
 	};
 
 	const int result = s_parsedPageColumnPrefferedSizes.value(column, -1);
