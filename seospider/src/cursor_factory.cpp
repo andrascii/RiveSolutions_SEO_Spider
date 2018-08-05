@@ -42,11 +42,11 @@ QCursor CursorFactory::createCursor(Qt::CursorShape shape)
 		}
 		case Qt::PointingHandCursor:
 		{
-			return QCursor(SvgRenderer::render(QStringLiteral(":/images/pointing-hand-cursor.svg"), 14, 14));
+			return QCursor(SvgRenderer::render(QStringLiteral(":/images/pointing-hand-cursor.svg"), 14, 14), -1, 0);
 		}
 		case Qt::OpenHandCursor:
 		{
-			return QCursor(SvgRenderer::render(QStringLiteral(":/images/open-hand-cursor.svg"), 14, 14));
+			return QCursor(SvgRenderer::render(QStringLiteral(":/images/open-hand-cursor.svg"), 14, 14), -1, 0);
 		}
 		case Qt::ClosedHandCursor:
 		{
