@@ -813,6 +813,7 @@ void Crawler::refreshPage(StorageType storageType, int index)
 	ASSERT(!m_workers.empty());
 
 	ParsedPage* parsedPage = m_sequencedDataCollection->storage(storageType)->get(index);
+	std::vector<bool> storagesBeforeRemoving = parsedPage->storages;
 
 	ASSERT(parsedPage->canRefresh());
 
@@ -821,7 +822,7 @@ void Crawler::refreshPage(StorageType storageType, int index)
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh", 
 		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));
 
-	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet, storagesBeforeRemoving);
 
 	setState(StatePageRefresh);
 }

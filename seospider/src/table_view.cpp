@@ -51,7 +51,7 @@ void TableView::setModel(QAbstractItemModel* model)
 	if (m_viewModel)
 	{
 		// reconnect signals/slots with correct order
-		setViewModel(m_viewModel);	
+		setViewModel(m_viewModel);
 	}
 #else 
 	QTableView::setModel(model);

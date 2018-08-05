@@ -168,18 +168,21 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	{
 		const ParsedPagePtr existingPage = data()->parsedPage(workerResult.incomingPage(), StorageType::CrawledUrlStorageType);
 
-		if (existingPage)
+		if (existingPage && workerResult.requestType() == DownloadRequestType::RequestTypeHead)
 		{
-			if (workerResult.requestType() == DownloadRequestType::RequestTypeHead)
-			{
-				CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
-				return;
-			}
-
+			CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
+			return;
+		}
+		else if(existingPage)
+		{
 			secondGetRequest = true;
 		}
 
 		workerResult.incomingPage() = mergePage(existingPage, workerResult.incomingPage());
+	}
+	else if (workerResult.storagesBeforeRemoving()[StorageType::NofollowLinksStorageType])
+	{
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::NofollowLinksStorageType);
 	}
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
@@ -911,7 +914,11 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		// special case: parse image resource again because it can have now empty or too short/long alt text
 		if (existingImageResource)
 		{
-			WorkerResult result(newOrExistingResource, workerResult.isRefreshResult(), workerResult.requestType());
+			WorkerResult result(newOrExistingResource,
+				workerResult.isRefreshResult(),
+				workerResult.requestType(),
+				workerResult.storagesBeforeRemoving());
+
 			processParsedPageImage(result, true, secondGetRequest);
 		}
 	}

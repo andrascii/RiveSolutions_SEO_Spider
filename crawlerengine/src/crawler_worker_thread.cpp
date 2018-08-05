@@ -138,9 +138,10 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 	}
 
 	CrawlerRequest crawlerRequest;
+	RefreshUrlRequest refreshRequest;
 	bool isUrlExtracted = false;
 
-	m_reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(crawlerRequest);
+	m_reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(refreshRequest);
 
 	if (!m_isRunning && !m_reloadPage)
 	{
@@ -154,13 +155,19 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 
 	if (isUrlExtracted)
 	{
-		DownloadRequest request(crawlerRequest, 
-			m_reloadPage ? 
-			DownloadRequest::LinkStatus::LinkStatusReloadAlreadyLoaded : 
-			DownloadRequest::LinkStatus::LinkStatusFirstLoading,
+		const DownloadRequest::LinkStatus linkStatus = m_reloadPage ?
+			DownloadRequest::LinkStatus::LinkStatusReloadAlreadyLoaded :
+			DownloadRequest::LinkStatus::LinkStatusFirstLoading;
+
+		DownloadRequest request(m_reloadPage ? refreshRequest.crawlerRequest : crawlerRequest,
+			linkStatus,
 			DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity,
-			true
-		);
+			true);
+
+		if (m_reloadPage)
+		{
+			m_storagesBeforeRemoving = refreshRequest.storagesBeforeRemoving;
+		}
 
 		m_currentRequest = crawlerRequest;
 		m_downloadRequester.reset(request, this, &CrawlerWorkerThread::onLoadingDone);
@@ -394,7 +401,7 @@ void CrawlerWorkerThread::onStart()
 	{
 		for (const auto& pair : m_pagesAcceptedAfterStop.pages)
 		{
-			onPageParsed(WorkerResult{ pair.second, false, pair.first });
+			onPageParsed(WorkerResult{ pair.second, false, pair.first, std::vector<bool>() });
 		}
 	}
 
@@ -471,7 +478,7 @@ void CrawlerWorkerThread::handlePage(ParsedPagePtr& page, bool isStoredInCrawled
 			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
 			page->resourceType = ResourceType::ResourceHtml;
 
-			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead });
+			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead, std::vector<bool>() });
 		}
 	};
 
@@ -485,7 +492,7 @@ void CrawlerWorkerThread::handlePage(ParsedPagePtr& page, bool isStoredInCrawled
 			page->statusCode = Common::StatusCode::TooLongLInk;
 			page->resourceType = resource.resourceType;
 
-			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead });
+			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead, std::vector<bool>() });
 		}
 	};
 
@@ -507,7 +514,7 @@ void CrawlerWorkerThread::handlePage(ParsedPagePtr& page, bool isStoredInCrawled
 			page->isBlockedByMetaRobots = isPageBlockedByMetaRobots.second.testFlag(MetaRobotsItem::MetaRobotsNoIndex);
 		}
 
-		onPageParsed(WorkerResult{ page, m_reloadPage, requestType });
+		onPageParsed(WorkerResult{ page, m_reloadPage, requestType, m_storagesBeforeRemoving });
 
 		std::for_each(readyLinks.blockedByRobotsTxtLinks.begin(), readyLinks.blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
 		std::for_each(readyLinks.tooLongLinks.begin(), readyLinks.tooLongLinks.end(), emitTooLongLinksPages);

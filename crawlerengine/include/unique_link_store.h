@@ -9,6 +9,12 @@ namespace CrawlerEngine
 
 class ILicenseService;
 
+struct RefreshUrlRequest
+{
+	CrawlerRequest crawlerRequest;
+	std::vector<bool> storagesBeforeRemoving;
+};
+
 //
 // ATTENTION: all public methods must be thread-safe
 //
@@ -21,8 +27,8 @@ public:
 	UniqueLinkStore(QObject* parent);
 
 	bool extractUrl(CrawlerRequest& crawlerRequest) noexcept;
-	bool extractRefreshUrl(CrawlerRequest& crawlerRequest) noexcept;
-	void addRefreshUrl(const Url& url, DownloadRequestType requestType);
+	bool extractRefreshUrl(RefreshUrlRequest& crawlerRequest) noexcept;
+	void addRefreshUrl(const Url& url, DownloadRequestType requestType, const std::vector<bool>& storagesBeforeRemoving);
 	void addUrl(const Url& url, DownloadRequestType requestType);
 	void addUrl(Url&& url, DownloadRequestType requestType);
 	void addUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType);
@@ -76,7 +82,7 @@ private:
 
 	UrlList m_pendingUrlList;
 	UrlList m_crawledUrlList;
-	std::deque<CrawlerRequest> m_refreshUrlList;
+	std::deque<RefreshUrlRequest> m_refreshUrlList;
 
 	mutable std::recursive_mutex m_mutex;
 	int m_lastPendingSizeChange;
