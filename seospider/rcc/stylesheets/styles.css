@@ -1044,7 +1044,7 @@ QScrollArea#reportScrollArea
 SeoSpider--ColumnsLookupLineEditWidget,
 SeoSpider--LookupLineEditWidget
 {
-	min-width: 20em;
+	min-width: 28em;
 }
 
 /*////////////////////////////// LookupLineEditWidget //////////////////////////////*/
@@ -1065,8 +1065,8 @@ SeoSpider--LookupLineEditWidget QPushButton#applyButton
 {
 	border-bottom-left-radius: 0;
 	border-top-left-radius: 0;
-	max-width: 3.5em;
-	min-width: 3.5em;
+	max-width: 4.6em;
+	min-width: 4.6em;
 	background: #EFEFEF;
 }
 
@@ -1074,7 +1074,5 @@ SeoSpider--LookupLineEditWidget QPushButton#clearButton
 {
 	border-radius: 0;
 	border-right: 0;
-	max-width: 3.5em;
-	min-width: 3.5em;
 	background: #EFEFEF;
 }
