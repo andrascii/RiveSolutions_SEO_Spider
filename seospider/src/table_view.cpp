@@ -5,6 +5,7 @@
 #include "item_view_delegate.h"
 #include "helpers.h"
 #include "command_menu.h"
+#include "finally.h"
 
 namespace SeoSpider
 {
@@ -52,7 +53,6 @@ void TableView::setModel(QAbstractItemModel* model)
 		// reconnect signals/slots with correct order
 		setViewModel(m_viewModel);	
 	}
-	
 #else 
 	QTableView::setModel(model);
 #endif
@@ -326,15 +326,20 @@ void TableView::initSpans()
 		for (int column = 0; column < columns;)
 		{
 			QSize colSpan = model()->span(model()->index(row, column));
+			Common::Finally finallyObject([&] { column += colSpan.width(); });
 
 			if (colSpan.width() == -1 && colSpan.height() == -1)
 			{
 				break;
 			}
 
-			setSpan(row, column, colSpan.height(), colSpan.width());
+			// skip Qt warnings using this condition
+			if (colSpan.width() == 1 && colSpan.height() == 1)
+			{
+				continue;
+			}
 
-			column += colSpan.width();
+			setSpan(row, column, colSpan.height(), colSpan.width());
 		}
 	}
 }
