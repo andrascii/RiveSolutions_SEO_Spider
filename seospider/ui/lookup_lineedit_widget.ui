@@ -41,7 +41,11 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="placeholderText">
+        <string>Type in something for search...</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="clearButton">

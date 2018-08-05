@@ -36,7 +36,7 @@ Preferences::~Preferences()
 	}
 }
 
-QString Preferences::localeFromString(const QString& language) const
+QString Preferences::localeFromString(const QString& language)
 {
 	ASSERT(s_languageLocales.contains(language));
 

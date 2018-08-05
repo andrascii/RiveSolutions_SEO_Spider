@@ -3,14 +3,8 @@
 #include "statistic_counter.h"
 #include "helpers.h"
 #include "cursor_factory.h"
-
-namespace
-{
-
-constexpr int c_maxWidthPt = 50;
-constexpr int c_minWidthPt = 0;
-
-}
+#include "application.h"
+#include "preferences.h"
 
 namespace SeoSpider
 {
@@ -25,9 +19,10 @@ LookupLineEditWidget::LookupLineEditWidget(QWidget* parent)
 
 	clearButton->hide();
 	clearButton->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
-	applyButton->setMaximumWidth(Common::Helpers::pointsToPixels(c_maxWidthPt));
-	applyButton->setMinimumWidth(Common::Helpers::pointsToPixels(c_maxWidthPt));
+	applyButton->setMaximumWidth(clearButtonMaxWidth());
+	applyButton->setMinimumWidth(clearButtonMaxWidth());
 	applyButton->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
+	applyButton->setEnabled(false);
 
 	VERIFY(connect(clearButton, &QPushButton::clicked, this, &LookupLineEditWidget::onClearButtonClicked));
 	VERIFY(connect(applyButton, &QPushButton::clicked, this, &LookupLineEditWidget::onApplySearch));
@@ -56,6 +51,7 @@ void LookupLineEditWidget::onTextChanged()
 {
 	constexpr int animationDuration = 150;
 	const bool needToHideClearButton = lineEdit->text().isEmpty();
+	applyButton->setEnabled(!needToHideClearButton);
 
 	if (m_clearButtonAnimation && needToHideClearButton)
 	{
@@ -88,24 +84,24 @@ void LookupLineEditWidget::onTextChanged()
 	if (needToHideClearButton)
 	{
 		maxWidthAnimation->setStartValue(clearButton->width());
-		maxWidthAnimation->setEndValue(c_minWidthPt);
+		maxWidthAnimation->setEndValue(0);
 		minWidthAnimation->setStartValue(clearButton->width());
-		minWidthAnimation->setEndValue(c_minWidthPt);
+		minWidthAnimation->setEndValue(0);
 
 		m_animationProcess = ProcessHide;
 	}
 	else
 	{
-		if (clearButton->width() == Common::Helpers::pointsToPixels(c_maxWidthPt))
+		if (clearButton->width() == clearButtonMaxWidth())
 		{
 			onAnimationFinished();
 			return;
 		}
 
 		maxWidthAnimation->setStartValue(clearButton->width());
-		maxWidthAnimation->setEndValue(Common::Helpers::pointsToPixels(c_maxWidthPt));
+		maxWidthAnimation->setEndValue(clearButtonMaxWidth());
 		minWidthAnimation->setStartValue(clearButton->width());
-		minWidthAnimation->setEndValue(Common::Helpers::pointsToPixels(c_maxWidthPt));
+		minWidthAnimation->setEndValue(clearButtonMaxWidth());
 
 		m_animationProcess = ProcessShow;
 	}
@@ -134,6 +130,18 @@ void LookupLineEditWidget::onClearButtonClicked()
 {
 	lineEdit->clear();
 	onApplySearch();
+}
+
+int LookupLineEditWidget::clearButtonMaxWidth() const
+{
+	const QString locale = Preferences::localeFromString(QStringLiteral("Russian"));
+
+	if (locale == theApp->preferences()->applicationLanguage())
+	{
+		return Common::Helpers::pointsToPixels(90);
+	}
+
+	return Common::Helpers::pointsToPixels(50);
 }
 
 }

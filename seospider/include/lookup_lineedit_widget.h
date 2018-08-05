@@ -28,6 +28,9 @@ private slots:
 	void onClearButtonClicked();
 
 private:
+	int clearButtonMaxWidth() const;
+
+private:
 	enum AnimationProcess
 	{
 		ProcessNone,

@@ -326,6 +326,10 @@ Please, be sure that you entered a valid address</source>
         <source>Apply</source>
         <translation type="unfinished">Применить</translation>
     </message>
+    <message>
+        <source>Type in something for search...</source>
+        <translation>Введите какой-нибудь текст для поиска...</translation>
+    </message>
 </context>
 <context>
     <name>MessageBox</name>
@@ -1646,6 +1650,14 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
         <source>Start</source>
         <translation>Запуск</translation>
     </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don`s save</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::InternetConnectionStateWidget</name>
@@ -2069,11 +2081,15 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Crawler does not contain any data. It does not make sense to create empty site map. Are you agree? ;)</source>
-        <translation>Краулер не содержит никаких данных. Какой смысл создавать пустую карту сайта? Вы согласны? ;)</translation>
+        <translation type="vanished">Краулер не содержит никаких данных. Какой смысл создавать пустую карту сайта? Вы согласны? ;)</translation>
     </message>
     <message>
         <source>Manual</source>
         <translation>Вручную</translation>
+    </message>
+    <message>
+        <source>Crawler does not contain any data. It does not make sense to create empty site map. Are you agree?</source>
+        <translation>Краулер не содержит никаких данных.</translation>
     </message>
 </context>
 <context>

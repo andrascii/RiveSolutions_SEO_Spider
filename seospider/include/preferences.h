@@ -270,7 +270,7 @@ public:
 	Preferences(ISettingsAccessor* settingsAccessor, QObject* parent = nullptr);
 	~Preferences();
 
-	QString localeFromString(const QString& language) const;
+	static QString localeFromString(const QString& language);
 
 	void load();
 
