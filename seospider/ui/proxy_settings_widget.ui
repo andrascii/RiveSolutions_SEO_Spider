@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>452</width>
-    <height>445</height>
+    <width>604</width>
+    <height>603</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,69 +51,24 @@
        <number>0</number>
       </property>
       <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="horizontalSpacing">
-         <number>6</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>9</number>
-        </property>
-        <item row="5" column="0">
-         <widget class="QCheckBox" name="proxyNeedAuthorizationCheckBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="4" column="1">
+         <widget class="QSpinBox" name="portSpinBox">
+          <property name="maximum">
+           <number>999999999</number>
           </property>
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
+          <property name="value">
+           <number>80</number>
           </property>
           <property name="controlKey" stdset="0">
-           <string notr="true">proxyNeedAuthorization</string>
+           <string notr="true">proxyPort</string>
           </property>
          </widget>
         </item>
-        <item row="7" column="1" colspan="2">
-         <widget class="QLineEdit" name="usernameLineEdit">
-          <property name="placeholderText">
-           <string notr="true">myusername</string>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">proxyUsername</string>
-          </property>
-         </widget>
-        </item>
-        <item row="9" column="1" colspan="2">
-         <widget class="QLineEdit" name="passwordLineEdit">
-          <property name="echoMode">
-           <enum>QLineEdit::Password</enum>
-          </property>
-          <property name="placeholderText">
-           <string notr="true">qwerty</string>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">proxyPassword</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" colspan="2">
-         <widget class="QLabel" name="label">
+        <item row="3" column="1">
+         <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Proxy address:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1" colspan="2">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Username:</string>
+           <string>Port:</string>
           </property>
          </widget>
         </item>
@@ -133,7 +88,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" colspan="2">
+        <item row="2" column="1">
          <widget class="QLineEdit" name="proxyAddressLineEdit">
           <property name="focusPolicy">
            <enum>Qt::StrongFocus</enum>
@@ -146,7 +101,110 @@
           </property>
          </widget>
         </item>
-        <item row="11" column="1" colspan="2">
+        <item row="0" column="1">
+         <widget class="QLabel" name="useProxyLabel">
+          <property name="text">
+           <string>Use proxy</string>
+          </property>
+          <property name="buddy">
+           <cstring>useProxyCheckBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Proxy address:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>13</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="5" column="1">
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="proxyNeedAuthorizationCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">proxyNeedAuthorization</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="proxyRequiresAuthorizationLabel">
+            <property name="text">
+             <string>Proxy requires authorization</string>
+            </property>
+            <property name="buddy">
+             <cstring>proxyNeedAuthorizationCheckBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Username:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="usernameLineEdit">
+            <property name="placeholderText">
+             <string notr="true">myusername</string>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">proxyUsername</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Password:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="passwordLineEdit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+            <property name="placeholderText">
+             <string notr="true">qwerty</string>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">proxyPassword</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="6" column="1">
          <spacer name="verticalSpacer_2">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -158,79 +216,6 @@
            </size>
           </property>
          </spacer>
-        </item>
-        <item row="1" column="3">
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>10</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="10" column="0" colspan="4">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>10</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="8" column="1" colspan="2">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Password:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1" colspan="2">
-         <widget class="QSpinBox" name="portSpinBox">
-          <property name="maximum">
-           <number>999999999</number>
-          </property>
-          <property name="value">
-           <number>80</number>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">proxyPort</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" colspan="2">
-         <widget class="QLabel" name="useProxyLabel">
-          <property name="text">
-           <string>Use proxy</string>
-          </property>
-          <property name="buddy">
-           <cstring>useProxyCheckBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1" colspan="2">
-         <widget class="QLabel" name="proxyRequiresAuthorizationLabel">
-          <property name="text">
-           <string>Proxy requires authorization</string>
-          </property>
-          <property name="buddy">
-           <cstring>proxyNeedAuthorizationCheckBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1" colspan="2">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Port:</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>
@@ -248,70 +233,5 @@
   <tabstop>passwordLineEdit</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>useProxyCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>proxyAddressLineEdit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>8</x>
-     <y>56</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>31</x>
-     <y>101</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useProxyCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>portSpinBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>11</x>
-     <y>62</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>41</x>
-     <y>158</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>proxyNeedAuthorizationCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>passwordLineEdit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>7</x>
-     <y>187</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>30</x>
-     <y>279</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>proxyNeedAuthorizationCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>usernameLineEdit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>13</x>
-     <y>187</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>30</x>
-     <y>231</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
