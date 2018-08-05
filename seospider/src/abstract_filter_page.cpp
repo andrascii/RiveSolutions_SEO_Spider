@@ -155,7 +155,6 @@ void AbstractFilterPage::showEvent(QShowEvent* event)
 
 void AbstractFilterPage::hasFilterSelection(int row)
 {
-	prepareColumnSearchWidget(row);
 	preparePlainSearchWidget(row);
 }
 
@@ -241,8 +240,7 @@ void AbstractFilterPage::applySearchHelper(int searchColumnNumber, const QString
 	{
 		websiteDataWidget()->showNoResultsLabelFor(AbstractPage::s_noResultsMessageStub.arg(searchValue));
 	}
-
-	if (searchValue.isEmpty())
+	else
 	{
 		websiteDataWidget()->hideNoResultsLabel();
 	}

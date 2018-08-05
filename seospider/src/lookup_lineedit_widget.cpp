@@ -7,7 +7,7 @@
 namespace
 {
 
-constexpr int c_maxWidthPt = 40;
+constexpr int c_maxWidthPt = 50;
 constexpr int c_minWidthPt = 0;
 
 }
@@ -19,6 +19,7 @@ LookupLineEditWidget::LookupLineEditWidget(QWidget* parent)
 	: QFrame(parent)
 	, m_counter(new StatisticCounter(QStringLiteral("LookupLineEditWidgetApplySearchCounter"), this))
 	, m_clearButtonAnimation(nullptr)
+	, m_animationProcess(ProcessNone)
 {
 	setupUi(this);
 
@@ -53,12 +54,20 @@ void LookupLineEditWidget::onApplySearch()
 
 void LookupLineEditWidget::onTextChanged()
 {
-	constexpr int animationDuration = 300;
+	constexpr int animationDuration = 150;
+	const bool needToHideClearButton = lineEdit->text().isEmpty();
 
-	if (m_clearButtonAnimation)
+	if (m_clearButtonAnimation && needToHideClearButton)
 	{
 		INFOLOG << "Skip animation call";
 		return;
+	}
+
+	if (m_animationProcess == ProcessHide)
+	{
+		m_clearButtonAnimation->stop();
+		m_clearButtonAnimation->deleteLater();
+		m_clearButtonAnimation = nullptr;
 	}
 
 	if (!clearButton->isVisible())
@@ -76,25 +85,29 @@ void LookupLineEditWidget::onTextChanged()
 	maxWidthAnimation->setDuration(animationDuration);
 	minWidthAnimation->setDuration(animationDuration);
 
-	if (lineEdit->text().isEmpty())
+	if (needToHideClearButton)
 	{
 		maxWidthAnimation->setStartValue(clearButton->width());
 		maxWidthAnimation->setEndValue(c_minWidthPt);
 		minWidthAnimation->setStartValue(clearButton->width());
 		minWidthAnimation->setEndValue(c_minWidthPt);
+
+		m_animationProcess = ProcessHide;
 	}
 	else
 	{
-		if (clearButton->width())
+		if (clearButton->width() == Common::Helpers::pointsToPixels(c_maxWidthPt))
 		{
 			onAnimationFinished();
 			return;
 		}
 
-		maxWidthAnimation->setStartValue(c_minWidthPt);
+		maxWidthAnimation->setStartValue(clearButton->width());
 		maxWidthAnimation->setEndValue(Common::Helpers::pointsToPixels(c_maxWidthPt));
-		minWidthAnimation->setStartValue(c_minWidthPt);
+		minWidthAnimation->setStartValue(clearButton->width());
 		minWidthAnimation->setEndValue(Common::Helpers::pointsToPixels(c_maxWidthPt));
+
+		m_animationProcess = ProcessShow;
 	}
 
 	m_clearButtonAnimation->addAnimation(minWidthAnimation);
@@ -108,6 +121,8 @@ void LookupLineEditWidget::onAnimationFinished()
 {
 	m_clearButtonAnimation->deleteLater();
 	m_clearButtonAnimation = nullptr;
+
+	m_animationProcess = ProcessNone;
 }
 
 void LookupLineEditWidget::setCurrentSearchData(const QString& searchData)

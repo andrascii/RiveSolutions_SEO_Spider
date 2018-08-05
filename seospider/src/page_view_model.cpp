@@ -25,7 +25,7 @@ PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, QObject* par
 	, m_gridLineColor("#F3F3F3")
 	, m_urlTextColor("#1C51AF")
 	, m_textColor("#2C2D30")
-	, m_textFont("Lato", 10, QFont::Normal)
+	, m_textFont("Arial", 10, QFont::Normal)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();
