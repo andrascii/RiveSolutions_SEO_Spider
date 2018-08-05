@@ -83,6 +83,8 @@ private:
 	QTimer* m_defferedProcessingTimer;
 	ILicenseService* m_licenseService;
 	CrawlerOptionsData m_optionsData;
+
+	std::vector<bool> m_storagesBeforeRemoving;
 };
 
 }

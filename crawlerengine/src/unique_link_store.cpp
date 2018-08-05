@@ -104,7 +104,7 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 	return true;
 }
 
-bool UniqueLinkStore::extractRefreshUrl(CrawlerRequest& crawlerRequest) noexcept
+bool UniqueLinkStore::extractRefreshUrl(RefreshUrlRequest& crawlerRequest) noexcept
 {
 	std::lock_guard locker(m_mutex);
 
@@ -119,11 +119,11 @@ bool UniqueLinkStore::extractRefreshUrl(CrawlerRequest& crawlerRequest) noexcept
 	return true;
 }
 
-void UniqueLinkStore::addRefreshUrl(const Url& url, DownloadRequestType requestType)
+void UniqueLinkStore::addRefreshUrl(const Url& url, DownloadRequestType requestType, const std::vector<bool>& storagesBeforeRemoving)
 {
 	std::lock_guard locker(m_mutex);
 
-	m_refreshUrlList.emplace_back(CrawlerRequest{ url, requestType });
+	m_refreshUrlList.emplace_back(RefreshUrlRequest{ url, requestType, storagesBeforeRemoving });
 
 	emit urlAdded();
 }
