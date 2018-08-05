@@ -146,6 +146,8 @@ void Crawler::clearData()
 
 	setState(StatePending);
 
+	m_hostInfo.reset();
+
 	emit onAboutClearData();
 }
 
