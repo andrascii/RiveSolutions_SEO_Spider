@@ -15,6 +15,7 @@
 #include "svg_renderer.h"
 #include "wait_operation_frame.h"
 #include "all_resources_page.h"
+#include "abstract_table_page.h"
 
 namespace
 {
@@ -711,8 +712,12 @@ GoToPageData::GoToPageData(PageDataWidget::PageDataType pageDataType)
 
 void GoToPageData::execute()
 {
-	IPage* page = theApp->mainWindow()->contentFrame()->activePage();
-	page->goTo(m_pageDataType);
+	AbstractTablePage* page = dynamic_cast<AbstractTablePage*>(theApp->mainWindow()->contentFrame()->activePage());
+	DEBUG_ASSERT(page);
+	if (page != nullptr)
+	{
+		page->goTo(m_pageDataType);
+	}
 }
 
 bool GoToPageData::canExecute() const noexcept

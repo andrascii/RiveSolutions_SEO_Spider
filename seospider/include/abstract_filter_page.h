@@ -1,6 +1,6 @@
 #pragma once
 
-#include "abstract_page.h"
+#include "abstract_table_page.h"
 #include "summary_data_accessor_factory.h"
 #include "storage_type.h"
 #include "filter_info_factory.h"
@@ -16,7 +16,7 @@ class FilterInfoWidget;
 class LookupLineEditWidget;
 class ColumnsLookupLineEditWidget;
 
-class AbstractFilterPage : public QFrame, public AbstractPage
+class AbstractFilterPage : public QFrame, public AbstractTablePage
 {
 	Q_OBJECT
 
