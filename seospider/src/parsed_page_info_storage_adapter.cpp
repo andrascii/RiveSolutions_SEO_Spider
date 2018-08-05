@@ -217,7 +217,15 @@ void ParsedPageInfoStorageAdapter::onRepaintIndicesRange(std::pair<int, int> ind
 		return;
 	}
 
-	emit repaintIndicesRange(indicesRange);
+	const int currentSize = m_associatedStorage->size();
+	if (currentSize < 1)
+	{
+		return;
+	}
+
+	const std::pair<int, int> fixedRange(std::min(currentSize - 1, indicesRange.first), std::min(currentSize - 1, indicesRange.second));
+
+	emit repaintIndicesRange(fixedRange);
 }
 
 }
