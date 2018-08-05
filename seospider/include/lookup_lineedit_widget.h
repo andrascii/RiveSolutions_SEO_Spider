@@ -28,8 +28,16 @@ private slots:
 	void onClearButtonClicked();
 
 private:
+	enum AnimationProcess
+	{
+		ProcessNone,
+		ProcessHide,
+		ProcessShow
+	};
+
 	IStatisticCounter* m_counter;
 	QParallelAnimationGroup* m_clearButtonAnimation;
+	AnimationProcess m_animationProcess;
 };
 
 }

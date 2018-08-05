@@ -151,8 +151,7 @@ void AllPagesPage::applySearchHelper(int searchColumnNumber, const QString& sear
 	{
 		showNoResultsLabelFor(searchValue);
 	}
-
-	if (searchValue.isEmpty())
+	else
 	{
 		hideNoResultsLabel();
 	}

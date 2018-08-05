@@ -1,6 +1,6 @@
 QWidget
 {
-	font-family: Lato;
+	font-family: Arial;
 	font-size: 10pt;
 	color: #22252D;
 }
@@ -93,7 +93,7 @@ QStatusBar::item
 
 QStatusBar QProgressBar
 {
-	border-radius: none;
+	border-radius: 0.143em;
 	color: #2C2D30;
 	font-size: 8pt;
 	min-width: 20em;
@@ -143,6 +143,12 @@ QDateEdit
 	min-height: 1.5em;
 	background-color: #FFFFFF;
 	color: #4D626E;
+}
+
+QLineEdit
+{
+	padding-left: 0.2em;
+	padding-right: 0.2em;
 }
 
 QCheckBox
@@ -281,7 +287,7 @@ QDateEdit::down-button
 SeoSpider--ControlPanelWidget, QFrame#DynamicControls
 {
 	min-height: 2.5em;
-	max-width: 40em;
+	max-width: 42em;
 	padding: 0.3em;
 }
 
@@ -334,7 +340,7 @@ SeoSpider--TableView
 	background: #FFFFFF;
 	border: 0.05em solid #F3F3F3;
 	border-top: none;
-	border-radius: 2px;
+	border-radius: 0.143em;
 }
 
 QLabel#TablePlaseholderLabel,
@@ -343,7 +349,7 @@ QLabel#NoSearchResultsLabel
 	color: #E5E5E5;
 	font-size: 48pt;
 	background: #FFFFFF;
-	font-family: Lato;
+	font-family: Arial;
 	border: 0.01em solid #F3F3F3;
 }
 
@@ -388,7 +394,7 @@ SeoSpider--SettingsPage QSpinBox,
 SeoSpider--SettingsPage QComboBox,
 SeoSpider--SettingsPage QLineEdit
 {
-	border-radius: 0;
+	border-radius: 0.143em;
 	min-height: 1.3em;
 	max-height: 1.3em;
 }
@@ -399,14 +405,10 @@ SeoSpider--SettingsPage QLineEdit
 	max-width: 25em;
 }
 
-SeoSpider--SettingsPage QCheckBox
-{
-	font-size: 9pt;
-}
-
+SeoSpider--SettingsPage QCheckBox,
 SeoSpider--SettingsPage QLabel
 {
-	font-size: 11pt;
+	font-size: 10pt;
 }
 
 SeoSpider--SettingsPage QFrame#settingsFrame
@@ -489,7 +491,7 @@ QFrame#ControlsFrame QCheckBox,
 QFrame#ControlsFrame QLabel
 {
 	color: #2C2D30;
-	font-size: 11pt;
+	font-size: 10pt;
 }
 
 QFrame#ControlsFrame QSpinBox,
@@ -498,7 +500,7 @@ QFrame#ControlsFrame QComboBox,
 QFrame#ControlsFrame QLineEdit,
 QFrame#ControlsFrame QDateEdit
 {
-	border-radius: 0;
+	border-radius: 0.143em;
 }
 
 QFrame#ControlsFrame QSpinBox,
@@ -584,7 +586,7 @@ QWidget#NavigationPanel QPushButton
 	max-width: 10em;
 	min-height: 2.5em;
 	max-height: 2.5em;
-	font-family: Lato;
+	font-family: Arial;
 }
 
 QWidget#NavigationPanel QPushButton:focus
@@ -839,7 +841,7 @@ QFrame#UpdateLoaderDialogContent QLabel#textLabel
 
 QFrame#UpdateLoaderDialogContent QPushButton
 {
-	border-radius: none;
+	border-radius: 0.143em;
 	font: bold;
 	font-size: 11pt;
 	min-height: 1.5em;
@@ -851,7 +853,7 @@ QFrame#UpdateLoaderDialogContent QPushButton#downloadNowButton
 {
 	color: white;
 	background-color: #56A433;
-	border-radius: none;
+	border-radius: 0.143em;
 	border-color: #4A9029;
 }
 
