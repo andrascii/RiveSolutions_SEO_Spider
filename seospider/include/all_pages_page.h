@@ -1,6 +1,6 @@
 #pragma once
 
-#include "abstract_page.h"
+#include "abstract_table_page.h"
 
 namespace SeoSpider
 {
@@ -10,7 +10,7 @@ class PageDataWidget;
 class LookupLineEditWidget;
 class ColumnsLookupLineEditWidget;
 
-class AllPagesPage : public QFrame, public AbstractPage
+class AllPagesPage : public QFrame, public AbstractTablePage
 {
 	Q_OBJECT
 

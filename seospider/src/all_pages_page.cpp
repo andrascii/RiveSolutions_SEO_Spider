@@ -16,6 +16,7 @@ namespace SeoSpider
 
 AllPagesPage::AllPagesPage(QWidget* parent)
 	: QFrame(parent)
+	, AbstractTablePage(new PageDataWidget(this))
 	, m_stackedTableView(new QStackedWidget(this))
 	, m_splitter(nullptr)
 	, m_columnsLookupLineEditWidget(nullptr)
@@ -39,7 +40,6 @@ AllPagesPage::AllPagesPage(QWidget* parent)
 	tableView->setShowAdditionalGrid(true);
 	tableView->setContextMenu(new CommandMenu(storageAdapter));
 
-	m_pageDataWidget = new PageDataWidget(this);
 	m_pageDataWidget->setPageDataType(PageDataWidget::LinksOnThisPageType);
 	m_pageDataWidget->setPageDataType(PageDataWidget::LinksToThisPageType);
 	m_pageDataWidget->setPageDataType(PageDataWidget::ServerResponseForPageType);

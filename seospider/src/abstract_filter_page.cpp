@@ -29,6 +29,7 @@ using namespace CrawlerEngine;
 
 AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWidget* parent)
 	: QFrame(parent)
+	, AbstractTablePage(webSiteDataWidget->pageDataWidget())
 	, m_webSiteDataWidget(webSiteDataWidget)
 	, m_summaryFilterTableView(new TableView(this, true, false))
 	, m_summaryFilterModel(new SummaryModel(this))
