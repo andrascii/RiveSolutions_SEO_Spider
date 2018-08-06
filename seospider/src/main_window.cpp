@@ -336,7 +336,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 		if (answer == QDialog::Rejected)
 		{
-			setWindowState(Qt::WindowMinimized);
+			hide();
 			event->ignore();
 			return;
 		}
@@ -347,6 +347,11 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 	settings.setValue("geometry", saveGeometry());
 	settings.setValue("windowState", saveState(MAINTENANCE));
+
+	if(systemTrayIcon()->isVisible())
+	{
+		systemTrayIcon()->hide();
+	}
 
 	QMainWindow::closeEvent(event);
 }
@@ -627,12 +632,10 @@ void MainWindow::onCrawlerSessionDestroyed()
 
 void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-	if (reason == QSystemTrayIcon::DoubleClick)
+	if (reason == QSystemTrayIcon::DoubleClick && !isVisible())
 	{
-		Qt::WindowStates states = windowState();
-		states.setFlag(Qt::WindowMinimized, false);
+		show();
 
-		setWindowState(states);
 		activateWindow();
 	}
 }
