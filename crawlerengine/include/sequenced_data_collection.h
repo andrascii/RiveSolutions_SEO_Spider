@@ -6,6 +6,7 @@
 #include "storage_type.h"
 #include "sequenced_data_collection_types.h"
 #include "worker_result.h"
+#include "icustom_data_feed.h"
 
 namespace CrawlerEngine
 {
@@ -26,6 +27,7 @@ public:
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 	ISequencedStorage* storage(StorageType type) noexcept;
 	bool removePage(ParsedPage* parsedPage, StorageType type);
+	void setCustomDataFeeds(const QVector<ICustomDataFeed*> dataFeeds);
 
 signals:
 	void parsedPageAdded(int row, StorageType type);
@@ -46,9 +48,11 @@ protected slots:
 	void replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
 	void onParsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type);
 	void onDataCleared();
+	void onCustomDataFeedRowReceived(ICustomDataFeedRow* row);
 
 private:
 	std::unordered_map<StorageType, std::shared_ptr<ISequencedStorage>> m_sequencedStorageMap;
+	QVector<ICustomDataFeed*> m_customDataFeeds;
 };
 
 }
