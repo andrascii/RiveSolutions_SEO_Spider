@@ -23,6 +23,7 @@ class SequencedDataCollection;
 class Requester;
 class HostInfo;
 class IScreenshotMaker;
+class ICustomDataFeed;
 struct SiteMapSettings;
 struct TaskResponse;
 struct GetHostInfoResponse;
@@ -98,6 +99,9 @@ public:
 	size_t scannedPagesCount() const;
 	size_t pagesCountOnSite() const;
 
+	void addCustomDataFeed(ICustomDataFeed* customDataFeed);
+	ICustomDataFeed* customDataFeedByName(const QString& dataFeedName) const;
+
 signals:
 	void crawlingProgress(CrawlingProgress progress);
 	void crawlerStarted();
@@ -156,6 +160,7 @@ private:
 	void clearDataImpl();
 	void setState(State state);
 	void initSessionIfNeeded(Session::State state = Session::StateNone, const QString& name = QString());
+	void setCustomDataFeedsToSequencedDataCollection();
 
 protected:
 	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;
@@ -190,6 +195,8 @@ private:
 
 	QPointer<Session> m_session;
 	ILicenseService* m_licenseService;
+
+	QMap<QString, ICustomDataFeed*> m_customDataFeeds;
 };
 
 }
