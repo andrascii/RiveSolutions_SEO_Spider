@@ -24,6 +24,9 @@ signals:
 private:
 	void createHeaderActionWidgets();
 
+protected:
+	virtual void showEvent(QShowEvent *event);
+
 private:
 	ReportsPage* m_reportsPage;
 };

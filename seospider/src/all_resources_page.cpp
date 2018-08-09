@@ -80,4 +80,9 @@ void AllResourcesPage::createHeaderActionWidgets()
 	VERIFY(connect(m_exportFilterDataAction, &QAction::triggered, this, &AllResourcesPage::exportFilterData));
 }
 
+QString AllResourcesPage::pageName() const
+{
+	return QStringLiteral("AllResourcesPage");
+}
+
 }

@@ -1,6 +1,7 @@
 #include "audit_report_page.h"
 #include "reports_page.h"
 #include "svg_renderer.h"
+#include "statistic_counter.h"
 
 namespace SeoSpider
 {
@@ -51,6 +52,14 @@ void AuditReportPage::createHeaderActionWidgets()
 	VERIFY(connect(saveToPdfAction, &QAction::triggered, m_reportsPage, &ReportsPage::exportToPdf));
 
 	AbstractPage::addAction(saveToPdfAction);
+}
+
+void AuditReportPage::showEvent(QShowEvent* event)
+{
+	QFrame::showEvent(event);
+
+	StatisticCounter showCounter("AuditReportPageShowCounter");
+	showCounter.increment();
 }
 
 }
