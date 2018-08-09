@@ -36,6 +36,9 @@ private:
 	void applySearchHelper(int searchColumnNumber, const QString& searchValue);
 	TableView* tableView() const;
 
+protected:
+	virtual void showEvent(QShowEvent *event);
+
 private:
 	enum WidgetType
 	{

@@ -10,6 +10,7 @@
 #include "page_data_widget_splitter.h"
 #include "lookup_lineedit_widget.h"
 #include "columns_lookup_lineedit_widget.h"
+#include "statistic_counter.h"
 
 namespace SeoSpider
 {
@@ -190,6 +191,14 @@ TableView* AllPagesPage::tableView() const
 
 	ASSERT(tableView);
 	return tableView;
+}
+
+void AllPagesPage::showEvent(QShowEvent * event)
+{
+	QFrame::showEvent(event);
+
+	StatisticCounter showCounter("AllSitePagesShowCounter");
+	showCounter.increment();
 }
 
 }

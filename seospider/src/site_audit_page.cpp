@@ -107,6 +107,11 @@ void SiteAuditPage::createHeaderActionWidgets()
 	VERIFY(connect(m_exportFilterDataAction, &QAction::triggered, this, &SiteAuditPage::exportFilterData));
 }
 
+QString SiteAuditPage::pageName() const
+{
+	return QStringLiteral("SiteAuditPage");
+}
+
 void SiteAuditPage::onChangeGroupingAuditInfo(QAction* action)
 {
 	m_switchAuditInfoFilterWidgetGroupingAction->setIcon(action->icon());

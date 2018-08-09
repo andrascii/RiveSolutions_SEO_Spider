@@ -51,6 +51,7 @@ private slots:
 	void onSummaryViewSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
+	virtual QString pageName() const = 0;
 	void applySearchHelper(int searchColumnNumber, const QString& searchValue);
 	void prepareColumnSearchWidget(int row);
 	void preparePlainSearchWidget(int row);
