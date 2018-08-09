@@ -26,6 +26,7 @@ protected:
 
 private:
 	void createHeaderActionWidgets();
+	virtual QString pageName() const override;
 
 private:
 	QAction* m_exportFilterDataAction;

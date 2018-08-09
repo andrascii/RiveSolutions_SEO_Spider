@@ -27,6 +27,7 @@ protected:
 
 private:
 	void createHeaderActionWidgets();
+	virtual QString pageName() const override;
 
 private slots:
 	void onChangeGroupingAuditInfo(QAction* action);
