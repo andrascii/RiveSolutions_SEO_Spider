@@ -26,7 +26,6 @@
 #include "common_constants.h"
 #include "proper_404_checker.h"
 #include "screenshot_maker.h"
-#include "icustom_data_feed.h"
 
 namespace CrawlerEngine
 {
@@ -64,7 +63,6 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	ASSERT(qRegisterMetaType<CrawlingProgress>());
 	ASSERT(qRegisterMetaType<CrawlerOptionsData>() > -1);
 	ASSERT(qRegisterMetaType<RobotsTxtRules>());
-	ASSERT(qRegisterMetaType<ICustomDataFeedRow*>());
 
 	VERIFY(connect(m_crawlingStateTimer, &QTimer::timeout, this, &Crawler::onAboutCrawlingState));
 	VERIFY(connect(m_serializatonReadyStateCheckerTimer, &QTimer::timeout, this, &Crawler::waitSerializationReadyState));
@@ -99,8 +97,6 @@ Crawler::~Crawler()
 
 	ServiceLocator::instance()->destroyService<INotificationService>();
 	ServiceLocator::instance()->destroyService<ILicenseService>();
-
-	qDeleteAll(m_customDataFeeds);
 }
 
 void Crawler::initialize()
@@ -182,20 +178,6 @@ void Crawler::initSessionIfNeeded(Session::State state, const QString& name)
 	VERIFY(connect(m_session, &Session::destroyed, this, &Crawler::sessionDestroyed));
 
 	emit sessionCreated();
-}
-
-void Crawler::setCustomDataFeedsToSequencedDataCollection()
-{
-	ASSERT(m_sequencedDataCollection);
-	foreach(ICustomDataFeed* dataFeed, m_customDataFeeds.values())
-	{
-		QObject* qObject = dynamic_cast<QObject*>(dataFeed);
-		ASSERT(qObject != nullptr);
-
-		qObject->disconnect(m_sequencedDataCollection.get());
-	}
-
-	m_sequencedDataCollection->setCustomDataFeeds(m_customDataFeeds.values().toVector());
 }
 
 bool Crawler::hasNoData() const noexcept
@@ -666,8 +648,6 @@ void Crawler::initSequencedDataCollection()
 		this,
 		Common::Helpers::metaMethodOfSlot(this, "onSequencedDataCollectionChanged()")
 	);
-
-	setCustomDataFeedsToSequencedDataCollection();
 }
 
 IHostInfoProvider* Crawler::createHostInfoProvider() const
@@ -909,18 +889,6 @@ size_t Crawler::scannedPagesCount() const
 size_t Crawler::pagesCountOnSite() const
 {
 	return m_uniqueLinkStore->pendingCount();
-}
-
-void Crawler::addCustomDataFeed(ICustomDataFeed* customDataFeed)
-{
-	m_customDataFeeds[customDataFeed->name()] = customDataFeed;
-
-	setCustomDataFeedsToSequencedDataCollection();
-}
-
-ICustomDataFeed* Crawler::customDataFeedByName(const QString& dataFeedName) const
-{
-	return m_customDataFeeds.value(dataFeedName, nullptr);
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

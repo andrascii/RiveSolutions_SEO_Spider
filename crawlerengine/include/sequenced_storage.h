@@ -48,22 +48,6 @@ public:
 		return std::distance(m_pages.begin(), pageIterator);
 	}
 
-	virtual int rfind(const ParsedPage* page) const noexcept override
-	{
-		auto pageIterator = std::find_if(m_pages.rbegin(), m_pages.rend(),
-			[&page](ParsedPagePtr pagePtr)
-		{
-			return pagePtr.get() == page;
-		});
-
-		if (pageIterator == m_pages.rend())
-		{
-			return -1;
-		}
-
-		return std::distance(m_pages.rbegin(), pageIterator);
-	}
-
 	virtual const ParsedPage* operator[](int idx) const noexcept override
 	{
 		ASSERT(idx >= 0 && static_cast<size_t>(idx) < m_pages.size());

@@ -10,6 +10,7 @@ struct ParsedPage;
 
 using ParsedPageWeakPtr = std::weak_ptr<ParsedPage>;
 
+
 enum class LinkParameter
 {
 	DofollowParameter,
@@ -90,13 +91,6 @@ enum Restriction
 };
 
 Q_DECLARE_FLAGS(RestrictionFlags, Restriction)
-
-enum class DataFeedId
-{
-	YandexMetrica = 0,
-	GoogleAnalytics = 1,
-	TestDataFeed = 1000
-};
 
 struct LinkInfo
 {
@@ -215,8 +209,6 @@ struct ParsedPage
 
 	int pageLevel = invalidPageLevel;
 	std::vector<bool> storages;
-
-	QMap<DataFeedId, QMap<int, QString>> dataFeedsData;
 
 	bool canRefresh() const noexcept
 	{

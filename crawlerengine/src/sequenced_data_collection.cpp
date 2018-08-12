@@ -74,19 +74,6 @@ bool SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType typ
 	return false;
 }
 
-void SequencedDataCollection::setCustomDataFeeds(const QVector<ICustomDataFeed*> dataFeeds)
-{
-	m_customDataFeeds = dataFeeds;
-
-	for (ICustomDataFeed* dataFeed : dataFeeds)
-	{
-		QObject* qObject = dynamic_cast<QObject*>(dataFeed);
-		ASSERT(qObject != nullptr);
-		VERIFY(QObject::connect(qObject, SIGNAL(dataReady(ICustomDataFeedRow*)),
-			this, SLOT(onCustomDataFeedRowReceived(ICustomDataFeedRow*)), Qt::QueuedConnection));
-	}
-}
-
 std::shared_ptr<ISequencedStorage> SequencedDataCollection::createSequencedStorage() const
 {
 	return std::static_pointer_cast<ISequencedStorage>(std::make_shared<SequencedStorage>());
@@ -116,18 +103,6 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 void SequencedDataCollection::addParsedPage(WorkerResult workerResult, StorageType type)
 {
 	addParsedPage(workerResult.incomingPage(), type);
-
-	// TODO: check if page added first time
-	if (type == CrawledUrlStorageType)
-	{
-		for (ICustomDataFeed* dataFeed : m_customDataFeeds)
-		{
-			if (dataFeed->connected())
-			{
-				dataFeed->requestData(workerResult.incomingPage());
-			}
-		}
-	}
 }
 
 void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type)
@@ -173,45 +148,6 @@ void SequencedDataCollection::onDataCleared()
 	CrawlerSharedState::instance()->setSequencedDataCollectionLinksCount(0);
 
 	emit endClearData();
-}
-
-void SequencedDataCollection::onCustomDataFeedRowReceived(ICustomDataFeedRow* row)
-{
-	if (ParsedPagePtr page = row->page().lock())
-	{
-		const QStringList columns = row->dataFeed()->columns();
-		const DataFeedId feedId = row->dataFeed()->dataFeedId();
-
-		int index = 0;
-		foreach(const QString& column, columns)
-		{
-			page->dataFeedsData[feedId][index] = row->data(column);
-			index += 1;
-		}
-
-		// TODO: optimize
-
-		for (size_t i = 0; i < page->storages.size(); ++i)
-		{
-			if (!page->storages[i])
-			{
-				continue;
-			}
-			
-			StorageType storageType = static_cast<StorageType>(i);
-			const auto storageIterator = m_sequencedStorageMap.find(storageType);
-
-			if (storageIterator != m_sequencedStorageMap.end())
-			{
-				const int pageIndex = storageIterator->second->find(page.get());
-				DEBUG_ASSERT(pageIndex >= 0);
-				if (pageIndex >= 0)
-				{
-					emit indicesRangeInvalidated(std::make_pair(pageIndex, pageIndex), storageType);
-				}
-			}
-		}
-	}
 }
 
 void SequencedDataCollection::initialize()
