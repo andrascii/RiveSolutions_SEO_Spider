@@ -79,6 +79,8 @@ struct SystemInformation
 
 bool getSystemInformation(SystemInformation* sysinfo, quintptr pid);
 bool printSystemInformation(QTextStream& out, quintptr pid);
+void getSystemMemoryInfo(SystemInformation::SystemMemory& sysmem);
+QString formatMemorySize(quint64 value);
 
 }
 
