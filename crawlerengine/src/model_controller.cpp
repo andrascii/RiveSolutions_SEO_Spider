@@ -60,12 +60,12 @@ ParsedPagePtr mergePage(ParsedPagePtr existingPage, ParsedPagePtr incomingParsed
 // 	{
 // 		return lhs ? true : rhs;
 // 	};
-// 
+//
 // 	assignIf(storages.begin(), storages.end(), incomingParsedPage->storages.begin(), incomingParsedPage->storages.end(), policy);
-// 
+//
 	existingPage->storages = storages;
 
-	// we should use the original ParsedPagePtr 
+	// we should use the original ParsedPagePtr
 	// because there are pages containing links to it
 	return existingPage;
 }
@@ -186,7 +186,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	}
 
 	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
-	
+
 	fixParsedPageResourceType(workerResult.incomingPage());
 
 	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType, m_crawlerOptionsData))
@@ -229,7 +229,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	{
 		//DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
 		//	data()->size(StorageType::CrawledUrlStorageType) == 1);
-		
+
 		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
 			!workerResult.incomingPage()->isThisExternalPage ||
 			workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
@@ -246,7 +246,7 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 
 	const Url url = workerResult.incomingPage()->url;
 	const QString urlStr = url.toString();
-	
+
 	if (workerResult.isRefreshResult())
 	{
 		const auto[oldPage, storageType] = tryGetPageFromCrawledOrPendingStorage(workerResult.incomingPage());
@@ -570,7 +570,7 @@ void ModelController::processParsedPageImage(WorkerResult& workerResult, bool ch
 		{
 			const int altLength = linkToThisImage.altOrTitle.size();
 
-			if (altLength > m_crawlerOptionsData.maxImageAltTextChars && 
+			if (altLength > m_crawlerOptionsData.maxImageAltTextChars &&
 				!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::TooLongAltTextImageStorageType))
 			{
 				data()->addParsedPage(workerResult, StorageType::TooLongAltTextImageStorageType);
@@ -664,7 +664,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			data()->addParsedPage(workerResult, StorageType::ExternalDoFollowUrlResourcesStorageType);
 		}
 
-		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() || 
+		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
 			workerResult.incomingPage()->allResourcesOnPage.size() == 1);
 
 		if (!workerResult.incomingPage()->redirectedUrl.isValid())
@@ -676,9 +676,9 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 	if (workerResult.incomingPage()->canonicalUrl.isValid() && !workerResult.incomingPage()->isThisExternalPage)
 	{
-		addDuplicates(workerResult.incomingPage(), 
+		addDuplicates(workerResult.incomingPage(),
 			StorageType::AllCanonicalUrlResourcesStorageType, StorageType::DuplicatedCanonicalUrlResourcesStorageType, false);
-		
+
 		data()->addParsedPage(workerResult, StorageType::AllCanonicalUrlResourcesStorageType);
 
 		if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::UniqueCanonicalUrlResourcesStorageType))
@@ -699,7 +699,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 			continue;
 		}
 
-		if (workerResult.incomingPage()->isThisExternalPage && 
+		if (workerResult.incomingPage()->isThisExternalPage &&
 			resource.link.resourceSource != ResourceSource::SourceRedirectUrl)
 		{
 			continue;
@@ -710,7 +710,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 		const bool loadedPageIsResource = resourcePage->url.compare(workerResult.incomingPage()->url);
 
 		ParsedPagePtr existingResource = loadedPageIsResource ?
-			workerResult.incomingPage() : 
+			workerResult.incomingPage() :
 			takeFromCrawledOrPendingStorage(resourcePage);
 
 		if (existingResource)
@@ -788,7 +788,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		const StorageType storage = externalOrNotHttp
 			? s_externalStorageTypes[resourceType]
 			: s_storageTypes[resourceType];
-		
+
 		data()->addParsedPage(workerResult, storage);
 	}
 
@@ -831,9 +831,9 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 
 			workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink{ temporaryResource, temporaryResource->url,
 				resource.link.linkParameter, resourceSource, resource.link.altOrTitle });
- 
+
 			temporaryResource->linksToThisPage.emplace_back(linkToThisResource);
- 
+
 			data()->addParsedPage(temporaryResource, StorageType::PendingResourcesStorageType);
 		}
 
@@ -865,8 +865,8 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			s_externalStorageTypes[resourceType] :
 			s_storageTypes[resourceType];
 
-		ParsedPagePtr newOrExistingResource = 
-			temporaryResource->url.compare(workerResult.incomingPage()->url) ? 
+		ParsedPagePtr newOrExistingResource =
+			temporaryResource->url.compare(workerResult.incomingPage()->url) ?
 			workerResult.incomingPage() : resourcePage;
 
 		if (!newOrExistingResource)
@@ -874,7 +874,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			ParsedPagePtr newOrExistingResource = data()->parsedPage(temporaryResource, storage);
 		}
 
-		const bool existingImageResource = newOrExistingResource && 
+		const bool existingImageResource = newOrExistingResource &&
 			newOrExistingResource->resourceType == ResourceType::ResourceImage &&
 			resourceSource == ResourceSource::SourceTagImg;
 
@@ -904,9 +904,9 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 
 		workerResult.incomingPage()->linksOnThisPage.emplace_back(ResourceLink { newOrExistingResource, newOrExistingResource->url,
 			resource.link.linkParameter, resourceSource, resource.link.altOrTitle });
-		
+
 		newOrExistingResource->linksToThisPage.emplace_back(linkToThisResource);
-		
+
 		m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ newOrExistingResource, newOrExistingResource->linksToThisPage.size() - 1 });
 
 		newOrExistingResource->resourceType = resourceType;
@@ -932,7 +932,7 @@ void ModelController::fixParsedPageResourceType(ParsedPagePtr& incomingPage) con
 	{
 		incomingPage->resourceType = pendingResource->resourceType;
 
-		if (pendingResource->linksToThisPage.size() == 1 && 
+		if (pendingResource->linksToThisPage.size() == 1 &&
 			pendingResource->linksToThisPage.begin()->resourceSource == ResourceSource::SourceRedirectUrl &&
 			pendingResource->linksToThisPage.begin()->resource.expired())
 		{
@@ -1020,7 +1020,7 @@ void ModelController::calculatePageLevel(ParsedPagePtr& incomingPage) const noex
 		}
 
 		ParsedPagePtr parent = link.resource.lock();
-		
+
 		if (!hasParentResources)
 		{
 			hasParentResources = true;
@@ -1089,11 +1089,11 @@ void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType loo
 
 	const auto predicate = [&page = incomingPage, checkCanonicals](const ParsedPagePtr& candidatePage)
 	{
-		return 
+		return
 			// discard pages that are different only by trailing slash
-			candidatePage->url.canonizedUrlStr() != 
+			candidatePage->url.canonizedUrlStr() !=
 			page->url.canonizedUrlStr() &&
-		
+
 			// and discard pages with the same canonical url
 			(!checkCanonicals || candidatePage->canonicalUrl.canonizedUrlStr().isEmpty() ||
 			candidatePage->canonicalUrl.canonizedUrlStr() != page->canonicalUrl.canonizedUrlStr());
@@ -1101,18 +1101,18 @@ void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType loo
 
 	const auto alwaysTruePredicate = [](const ParsedPagePtr&) { return true; };
 
-	const std::vector<ParsedPagePtr> duplicatesWithDifferentCanonical = 
+	const std::vector<ParsedPagePtr> duplicatesWithDifferentCanonical =
 		data()->allParsedPages(incomingPage, lookupStorage, predicate);
 
 	if (!duplicatesWithDifferentCanonical.empty())
 	{
-		std::vector<ParsedPagePtr> allDuplicates = 
+		std::vector<ParsedPagePtr> allDuplicates =
 			data()->allParsedPages(incomingPage, lookupStorage, alwaysTruePredicate);
 
 		for (ParsedPagePtr& duplicate : allDuplicates)
 		{
 			DEBUG_ASSERT(!duplicate->storages[static_cast<std::size_t>(destStorage)]);
-			
+
 			data()->addParsedPage(duplicate, destStorage);
 		}
 
@@ -1224,7 +1224,7 @@ std::pair<ParsedPagePtr, StorageType> ModelController::tryGetPageFromCrawledOrPe
 	if (!searchPage)
 	{
 		return std::make_pair(
-			data()->parsedPage(pointer, StorageType::PendingResourcesStorageType), 
+			data()->parsedPage(pointer, StorageType::PendingResourcesStorageType),
 			StorageType::PendingResourcesStorageType
 		);
 	}
@@ -1245,22 +1245,22 @@ void ModelController::setLinksForResourcePageAndLoadedPage(ParsedPagePtr& resour
 {
 	resourcePage->linksToThisPage.emplace_back(
 		ResourceLink
-		{ 
+		{
 			loadedPage.incomingPage(),
 			loadedPage.incomingPage()->url,
 			resource.link.linkParameter,
-			resource.link.resourceSource, 
-			resource.link.altOrTitle 
+			resource.link.resourceSource,
+			resource.link.altOrTitle
 		}
 	);
 
 	loadedPage.incomingPage()->linksOnThisPage.emplace_back(
 		ResourceLink
-		{ 
+		{
 			resourcePage,
 			resourcePage->url,
 			resource.link.linkParameter,
-			resource.link.resourceSource, 
+			resource.link.resourceSource,
 			resource.link.altOrTitle
 		}
 	);
