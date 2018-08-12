@@ -155,7 +155,7 @@ void Application::startCrawler()
 
 	if (!data.isValid())
 	{
-		mainWindow()->showMessageBoxDialog(tr("Error"), 
+		mainWindow()->showMessageBoxDialog(tr("Error"),
 			tr("Please make sure that you entered a URL."),
 			QDialogButtonBox::Ok
 		);
@@ -165,7 +165,7 @@ void Application::startCrawler()
 
 	const Url url = data.toUrl();
 
-	if (!preferences()->crawlOutsideOfStartFolder() && 
+	if (!preferences()->crawlOutsideOfStartFolder() &&
 		!url.path().isEmpty() && !url.path().endsWith(QChar('/')))
 	{
 		mainWindow()->showMessageBoxDialog(tr("Invalid URL!"),
@@ -331,7 +331,7 @@ void Application::registerServices()
 void Application::initQSettings()
 {
 	m_settings = new QSettings(
-		softwareBrandingOptions()->organizationName(), 
+		softwareBrandingOptions()->organizationName(),
 		softwareBrandingOptions()->productName(),
 		qobject_cast<QObject*>(this));
 }
@@ -356,7 +356,7 @@ void Application::initialize()
 	VERIFY(connect(m_crawler, &Crawler::refreshPageDone, this, &Application::closeWaitOperationFrame));
 
 	/// must be Qt::QueuedConnection
-	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged, 
+	VERIFY(connect(preferences(), &Preferences::useCustomUserAgentChanged,
 		this, &Application::onAboutUseCustomUserAgentChanged, Qt::QueuedConnection));
 
 	m_sequencedDataCollection = m_crawler->sequencedDataCollection();
@@ -444,7 +444,7 @@ void Application::attachPreferencesToCrawlerOptions()
 
 		CrawlerEngine::UserAgentType userAgentType = static_cast<CrawlerEngine::UserAgentType>(value.toInt());
 
-		DEBUG_ASSERT(userAgentType >= CrawlerEngine::UserAgentType::Unknown && 
+		DEBUG_ASSERT(userAgentType >= CrawlerEngine::UserAgentType::Unknown &&
 			userAgentType <= CrawlerEngine::UserAgentType::AnyBot);
 
 		crawler()->options()->setUserAgentToFollow(userAgentType);
@@ -522,8 +522,8 @@ void Application::openFileThroughCmd(const QString& path)
 		ERRLOG << path;
 
 		mainWindow()->showMessageBoxDialog(
-			tr("Error"), 
-			tr("Cannot open! Unknown document type."), 
+			tr("Error"),
+			tr("Cannot open! Unknown document type."),
 			QDialogButtonBox::Ok
 		);
 

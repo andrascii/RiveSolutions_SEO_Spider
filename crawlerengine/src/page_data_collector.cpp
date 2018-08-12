@@ -8,6 +8,7 @@
 #include "video_resources_parser.h"
 #include "flash_resources_parser.h"
 #include "other_resources_parser.h"
+#include "ym_parser.h"
 #include "base_url_parser.h"
 #include "status_code.h"
 #include "download_response.h"
@@ -66,6 +67,7 @@ void PageDataCollector::applyOptions()
 
 	m_parser.addParser(std::make_shared<BaseUrlParser>(m_htmlParser.get()));
 	m_parser.addParser(std::make_shared<HtmlResourcesParser>(m_htmlParser.get()));
+	m_parser.addParser(std::make_shared<YmParser>(m_htmlParser.get()));
 
 	if (m_crawlerOptionsData.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{

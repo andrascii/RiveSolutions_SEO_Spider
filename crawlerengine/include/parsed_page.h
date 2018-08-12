@@ -98,6 +98,12 @@ enum class DataFeedId
 	TestDataFeed = 1000
 };
 
+enum class PageCounterId
+{
+	YandexMetrica = 1 << 1,
+	GoogleAnalytics = 1 << 2
+};
+
 struct LinkInfo
 {
 	Url url;
@@ -118,7 +124,7 @@ struct ResourceLink
 
 struct ResourceOnPage
 {
-	ResourceOnPage(ResourceType resourceType, const LinkInfo& linkInfo, 
+	ResourceOnPage(ResourceType resourceType, const LinkInfo& linkInfo,
 		RestrictionFlags restrictions = RestrictionFlags())
 		: resourceType(resourceType)
 		, link(linkInfo)
@@ -126,7 +132,7 @@ struct ResourceOnPage
 	{
 	}
 
-	ResourceOnPage(ResourceType resourceType, LinkInfo&& linkInfo, 
+	ResourceOnPage(ResourceType resourceType, LinkInfo&& linkInfo,
 		RestrictionFlags restrictions = RestrictionFlags())
 		: resourceType(resourceType)
 		, link(std::move(linkInfo))
@@ -217,6 +223,7 @@ struct ParsedPage
 	std::vector<bool> storages;
 
 	QMap<DataFeedId, QMap<int, QString>> dataFeedsData;
+	std::uint32_t pageCounterIds = std::uint32_t();
 
 	bool canRefresh() const noexcept
 	{
