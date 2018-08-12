@@ -3,7 +3,7 @@
     <DisplayName>Seo Spider</DisplayName>
     <Description>Install Seo Spider.</Description>
     <Version>${MAJOR}.${MINOR}.${MAINTENANCE}</Version>
-    <ReleaseDate>2018-01-20</ReleaseDate>
+    <ReleaseDate>2018-08-12</ReleaseDate>
 	<Default>true</Default>
 	<Script>installscript.qs</Script>
 	<UserInterfaces>
