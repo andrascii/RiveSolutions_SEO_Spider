@@ -112,7 +112,7 @@ void MainWindow::saveFile()
 void MainWindow::saveFileAs()
 {
 	const QString path = getSaveFilePath();
-	
+
 	if (path.isEmpty())
 	{
 		return;
@@ -185,7 +185,7 @@ void MainWindow::closeFile()
 	if (theApp->crawler()->sessionState() == Session::StateUnsaved)
 	{
 		int answer = theApp->mainWindow()->showMessageBoxDialog(
-			tr("Warning"), 
+			tr("Warning"),
 			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?"),
 			QDialogButtonBox::Yes | QDialogButtonBox::No
 		);
@@ -241,7 +241,7 @@ void MainWindow::onCrawlingFinished() const
 		return;
 	}
 
-	if (licenseService->isTrialLicense() && 
+	if (licenseService->isTrialLicense() &&
 		theApp->crawler()->scannedPagesCount() >= Common::c_maxTrialLicenseCrawlingLinksCount)
 	{
 		showMessageBoxDialog(
@@ -319,19 +319,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 		int answer = -1;
 
-		if (states.testFlag(Qt::WindowMinimized))
-		{
-			answer = showMessageBoxDialog(tr("Closing application"),
-				warningMessage,
-				QDialogButtonBox::Save | QDialogButtonBox::No);
-		}
-		else
-		{
-			answer = showMessageBoxDialog(tr("Closing application"),
-				warningMessage % " " % descriptionMessage,
-				QDialogButtonBox::Save | QDialogButtonBox::No);
-		}
-		
+		MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+		messageBoxDialog->setMessage(warningMessage + " "+ descriptionMessage);
+		messageBoxDialog->addButton("Close", QDialogButtonBox::ButtonRole::AcceptRole);
+		messageBoxDialog->addButton("Collapse", QDialogButtonBox::ButtonRole::RejectRole);
+		messageBoxDialog->exec();
+
+		answer = messageBoxDialog->result();
+
 		ASSERT(answer == QDialog::Accepted || answer == QDialog::Rejected);
 
 		if (answer == QDialog::Rejected)
@@ -509,7 +504,7 @@ void MainWindow::createActions()
 	actionRegistry.globalAction(s_openFileAction)->setShortcut(QKeySequence("Ctrl+O"));
 	actionRegistry.globalAction(s_saveFileAction)->setShortcut(QKeySequence("Ctrl+S"));
 	actionRegistry.globalAction(s_saveFileAsAction)->setShortcut(QKeySequence("Ctrl+Alt+S"));
-	actionRegistry.globalAction(s_closeFileAction)->setShortcut(QKeySequence("Ctrl+W")); 
+	actionRegistry.globalAction(s_closeFileAction)->setShortcut(QKeySequence("Ctrl+W"));
 }
 
 void MainWindow::createAndSetCentralWidget()
@@ -570,9 +565,9 @@ QString MainWindow::getSaveFilePath() const
 	}
 
 	const QString path = QFileDialog::getSaveFileName(
-		theApp->mainWindow(), 
-		tr("Save File"), 
-		qApp->applicationDirPath() + "/" + theApp->crawler()->currentCrawledUrl(), 
+		theApp->mainWindow(),
+		tr("Save File"),
+		qApp->applicationDirPath() + "/" + theApp->crawler()->currentCrawledUrl(),
 		QString("*" + c_projectFileExtension)
 	);
 
@@ -674,7 +669,7 @@ void MainWindow::onAboutUpdateIsNotExists()
 	const SoftwareBranding* branding = theApp->softwareBrandingOptions();
 
 	notificationService->info(
-		tr("Information about updates"), 
+		tr("Information about updates"),
 		tr("You have installed the latest version of the ") % branding->productName()
 	);
 }
