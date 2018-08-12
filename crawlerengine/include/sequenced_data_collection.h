@@ -28,6 +28,7 @@ public:
 	ISequencedStorage* storage(StorageType type) noexcept;
 	bool removePage(ParsedPage* parsedPage, StorageType type);
 	void setCustomDataFeeds(const QVector<ICustomDataFeed*> dataFeeds);
+	const QVector<ICustomDataFeed*>& customDataFeeds() const;
 
 signals:
 	void parsedPageAdded(int row, StorageType type);

@@ -40,6 +40,7 @@ class IParsedPageStorageAdapter : public IStorageAdapter
 public:
 	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept = 0;
 	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept = 0;
+	virtual void setCustomDataFeed(const QString& cunstomDataFeed) noexcept = 0;
 };
 
 class IPageLinksStorageAdapter : public IStorageAdapter

@@ -126,7 +126,7 @@ void AbstractFilterPage::enablePlainFilter()
 	m_summaryFilterModel->dataAccessor()->enablePlainDataSet();
 }
 
-void AbstractFilterPage::setInfoCategory(StorageAdapterType category)
+void AbstractFilterPage::setInfoCategory(StorageAdapterType category, const QString& customDataFeed)
 {
 	FilterInfoFactory infoFactory;
 	std::optional<FilterInfo> filterInfo = infoFactory.filterInfo(category);
@@ -137,7 +137,7 @@ void AbstractFilterPage::setInfoCategory(StorageAdapterType category)
 	}
 
 	m_info->setVisible(filterInfo != std::nullopt);
-	m_webSiteDataWidget->setStorageAdapterType(category);
+	m_webSiteDataWidget->setStorageAdapterType(category, customDataFeed);
 }
 
 const SummaryModel* AbstractFilterPage::summaryFilterModel() const
@@ -192,7 +192,7 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 	const QModelIndexList indexes = selected.indexes();
 	const QModelIndex index = !indexes.isEmpty() ? indexes[0] : QModelIndex();
 
-	setInfoCategory(summaryFilterModel()->storageAdapterType(index));
+	setInfoCategory(summaryFilterModel()->storageAdapterType(index), summaryFilterModel()->customDataFeed(index));
 
 	const bool selectionExists = !indexes.isEmpty();
 

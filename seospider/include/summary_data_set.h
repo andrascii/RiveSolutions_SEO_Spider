@@ -19,7 +19,6 @@ class SummaryDataSet : public QObject
 
 public:
 	SummaryDataSet(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
-	SummaryDataSet(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, QList<AuditGroup> auditGroups);
 
 	bool isSortable() const noexcept;
 	bool isSortingEnabled() const noexcept;
@@ -28,10 +27,12 @@ public:
 	void addSortingPredicate(std::function<bool(DCStorageDescription*, DCStorageDescription*)>&& predicate);
 	const CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept;
 	void addGroup(AuditGroup group) noexcept;
+	void addGroup(DCStorageGroupDescriptionPtr group) noexcept;
 	bool isHeaderRow(int row) const noexcept;
 	QSize span(const QModelIndex& index) const noexcept;
 	QVariant item(const QModelIndex& index) const noexcept;
 	StorageAdapterType itemCategory(const QModelIndex& index) const noexcept;
+	QString customDataFeed(const QModelIndex& index) const noexcept;
 	const DCStorageDescription* storageDescriptionByRow(int row) const noexcept;
 	const DCStorageGroupDescription* storageGroupDescriptionByRow(int row) const noexcept;
 	const DCStorageDescription* storageDescription(CrawlerEngine::StorageType type) const noexcept;

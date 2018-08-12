@@ -21,6 +21,7 @@ public:
 
 	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept override;
 	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept override;
+	virtual void setCustomDataFeed(const QString& customDataFeed) noexcept override;
 	virtual QString columnDescription(int columnIndex) const noexcept override;
 	virtual int columnWidth(int columnNumber) const noexcept override;
 	virtual int columnCount() const noexcept override;
@@ -53,6 +54,8 @@ private:
 	CrawlerEngine::SequencedDataCollection* m_dataCollection;
 	CrawlerEngine::ISequencedStorage* m_associatedStorage;
 	QVector<ParsedPageInfo::Column> m_availableColumns;
+	QVector<QString> m_customColumns;
+	QString m_dataFeed;
 	CrawlerEngine::StorageType m_storageType;
 };
 

@@ -82,9 +82,16 @@ void SequencedDataCollection::setCustomDataFeeds(const QVector<ICustomDataFeed*>
 	{
 		QObject* qObject = dynamic_cast<QObject*>(dataFeed);
 		ASSERT(qObject != nullptr);
+
+		qObject->disconnect(this);
 		VERIFY(QObject::connect(qObject, SIGNAL(dataReady(ICustomDataFeedRow*)),
 			this, SLOT(onCustomDataFeedRowReceived(ICustomDataFeedRow*)), Qt::QueuedConnection));
 	}
+}
+
+const QVector<ICustomDataFeed*>& SequencedDataCollection::customDataFeeds() const
+{
+	return m_customDataFeeds;
 }
 
 std::shared_ptr<ISequencedStorage> SequencedDataCollection::createSequencedStorage() const
@@ -99,6 +106,18 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 	if (type == StorageType::CrawledUrlStorageType)
 	{
 		CrawlerSharedState::instance()->incrementSequencedDataCollectionLinksCount();
+
+		// TODO: check if page added first time
+		if (type == CrawledUrlStorageType)
+		{
+			for (ICustomDataFeed* dataFeed : m_customDataFeeds)
+			{
+				if (dataFeed->connected())
+				{
+					dataFeed->requestData(parsedPagePtr);
+				}
+			}
+		}
 	}
 
 	if (storageIterator != m_sequencedStorageMap.end())
@@ -116,18 +135,6 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 void SequencedDataCollection::addParsedPage(WorkerResult workerResult, StorageType type)
 {
 	addParsedPage(workerResult.incomingPage(), type);
-
-	// TODO: check if page added first time
-	if (type == CrawledUrlStorageType)
-	{
-		for (ICustomDataFeed* dataFeed : m_customDataFeeds)
-		{
-			if (dataFeed->connected())
-			{
-				dataFeed->requestData(workerResult.incomingPage());
-			}
-		}
-	}
 }
 
 void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type)
@@ -190,27 +197,34 @@ void SequencedDataCollection::onCustomDataFeedRowReceived(ICustomDataFeedRow* ro
 		}
 
 		// TODO: optimize
-
-		for (size_t i = 0; i < page->storages.size(); ++i)
+		const auto storageIterator = m_sequencedStorageMap.find(CrawledUrlStorageType);
+		const int pageIndex = storageIterator->second->find(page.get());
+		// DEBUG_ASSERT(pageIndex >= 0);
+		if (pageIndex >= 0)
 		{
-			if (!page->storages[i])
-			{
-				continue;
-			}
-			
-			StorageType storageType = static_cast<StorageType>(i);
-			const auto storageIterator = m_sequencedStorageMap.find(storageType);
-
-			if (storageIterator != m_sequencedStorageMap.end())
-			{
-				const int pageIndex = storageIterator->second->find(page.get());
-				DEBUG_ASSERT(pageIndex >= 0);
-				if (pageIndex >= 0)
-				{
-					emit indicesRangeInvalidated(std::make_pair(pageIndex, pageIndex), storageType);
-				}
-			}
+			emit indicesRangeInvalidated(std::make_pair(pageIndex, pageIndex), CrawledUrlStorageType);
 		}
+
+		//for (size_t i = 0; i < page->storages.size(); ++i)
+		//{
+		//	if (!page->storages[i])
+		//	{
+		//		continue;
+		//	}
+		//	
+		//	StorageType storageType = static_cast<StorageType>(i);
+		//	const auto storageIterator = m_sequencedStorageMap.find(storageType);
+
+		//	if (storageIterator != m_sequencedStorageMap.end())
+		//	{
+		//		const int pageIndex = storageIterator->second->find(page.get());
+		//		// DEBUG_ASSERT(pageIndex >= 0);
+		//		if (pageIndex >= 0)
+		//		{
+		//			emit indicesRangeInvalidated(std::make_pair(pageIndex, pageIndex), storageType);
+		//		}
+		//	}
+		//}
 	}
 }
 

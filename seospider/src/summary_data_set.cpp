@@ -10,15 +10,6 @@ SummaryDataSet::SummaryDataSet(const CrawlerEngine::SequencedDataCollection* seq
 {
 }
 
-SummaryDataSet::SummaryDataSet(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection, QList<AuditGroup> auditGroups)
-	: m_sequencedDataCollection(sequencedDataCollection)
-{
-	foreach(AuditGroup group, auditGroups)
-	{
-		addGroup(group);
-	}
-}
-
 int SummaryDataSet::columnCount() const noexcept
 {
 	return s_summaryColumnCount;
@@ -51,7 +42,12 @@ const CrawlerEngine::SequencedDataCollection* SummaryDataSet::sequencedDataColle
 void SummaryDataSet::addGroup(AuditGroup group) noexcept
 {
 	DataCollectionGroupsFactory dcGroupsFactory;
-	m_allGroups.push_back(dcGroupsFactory.create(group));
+	addGroup(dcGroupsFactory.create(group));
+}
+
+void SummaryDataSet::addGroup(DCStorageGroupDescriptionPtr group) noexcept
+{
+	m_allGroups.push_back(group);
 
 	int modelRowIndex = rowCount();
 	m_groupRows[modelRowIndex++] = m_allGroups.last();
@@ -100,7 +96,35 @@ StorageAdapterType SummaryDataSet::itemCategory(const QModelIndex& index) const 
 		return StorageAdapterType::StorageAdapterTypeNone;
 	}
 
-	return StorageAdapterType{ m_itemRows[index.row()]->storageType };
+	const DCStorageDescription* description = storageDescriptionByRow(index.row());
+	DEBUG_ASSERT(description != nullptr);
+
+	if (description != nullptr)
+	{
+		return !description->customDataFeed.isEmpty()
+			? StorageAdapterType::StorageAdapterTypeCustomDataFeed
+			: static_cast<StorageAdapterType>(description->storageType);
+	}
+
+	return StorageAdapterType::StorageAdapterTypeNone;
+}
+
+QString SummaryDataSet::customDataFeed(const QModelIndex& index) const noexcept
+{
+	if (isHeaderRow(index.row()) || !index.isValid())
+	{
+		return QString();
+	}
+
+	const DCStorageDescription* description = storageDescriptionByRow(index.row());
+	DEBUG_ASSERT(description != nullptr);
+
+	if (description == nullptr || description->customDataFeed.isEmpty())
+	{
+		return QString();
+	}
+
+	return description->customDataFeed;
 }
 
 const DCStorageDescription* SummaryDataSet::storageDescriptionByRow(int row) const noexcept

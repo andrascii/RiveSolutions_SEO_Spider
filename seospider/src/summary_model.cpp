@@ -62,6 +62,16 @@ StorageAdapterType SummaryModel::storageAdapterType(const QModelIndex& index) co
 	return dataAccessor()->itemCategory(index);
 }
 
+QString SummaryModel::customDataFeed(const QModelIndex& index) const noexcept
+{
+	if (!dataAccessor())
+	{
+		return QString::null;
+	}
+
+	return dataAccessor()->customDataFeed(index);
+}
+
 void SummaryModel::formActualUpdateDataSignal(int row, int column, Qt::ItemDataRole role)
 {
 	Q_UNUSED(column);

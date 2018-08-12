@@ -1,6 +1,5 @@
 #include "data_collection_groups_factory.h"
-#include "application.h"
-#include "preferences.h"
+#include "icustom_data_feed.h"
 
 namespace SeoSpider
 {
@@ -195,4 +194,21 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 	return nullptr;
 }
 
+DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(const QVector<CrawlerEngine::ICustomDataFeed*> dataFeeds) const
+{
+	std::shared_ptr<DCStorageGroupDescription> p =
+		std::make_shared<DCStorageGroupDescription>();
+
+	p->name = QObject::tr("Custom Analisys");
+	p->group = AuditGroup::CustomDataFeeds;
+
+	foreach(const CrawlerEngine::ICustomDataFeed* dataFeed, dataFeeds)
+	{
+		DCStorageDescription description { CrawlerEngine::StorageType::CrawledUrlStorageType, dataFeed->name() };
+		description.customDataFeed = dataFeed->name();
+		p->descriptions.emplace_back(description);
+	}
+
+	return p;
+}
 }

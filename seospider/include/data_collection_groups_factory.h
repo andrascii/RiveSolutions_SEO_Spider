@@ -2,6 +2,11 @@
 
 #include "storage_type.h"
 
+namespace CrawlerEngine
+{
+class ICustomDataFeed;
+}
+
 namespace SeoSpider
 {
 
@@ -33,6 +38,12 @@ enum class AuditGroup
 	NoProblem,
 
 	//
+	// Custom data feeds
+	//
+
+	CustomDataFeeds,
+
+	//
 	// Temporary test group
 	//
 	OrderedErrorsGroup
@@ -44,6 +55,7 @@ struct DCStorageDescription
 {
 	CrawlerEngine::StorageType storageType;
 	QString storageTypeDescriptionName;
+	QString customDataFeed;
 };
 
 struct DCStorageGroupDescription
@@ -59,6 +71,7 @@ class DataCollectionGroupsFactory
 {
 public:
 	DCStorageGroupDescriptionPtr create(AuditGroup group) const;
+	DCStorageGroupDescriptionPtr create(const QVector<CrawlerEngine::ICustomDataFeed*> dataFeeds) const;
 };
 
 }

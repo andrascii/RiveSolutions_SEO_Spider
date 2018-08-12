@@ -19,7 +19,7 @@ class WebSiteDataWidget : public QFrame
 public:
 	WebSiteDataWidget(PageDataWidget* pageDataWidget = nullptr, QWidget* parent = nullptr);
 
-	void setStorageAdapterType(StorageAdapterType storageAdapterType);
+	void setStorageAdapterType(StorageAdapterType storageAdapterType, const QString& customDataFeed);
 
 	void setPageDataWidget(PageDataWidget* dataWidget);
 	PageDataWidget* pageDataWidget() const noexcept;
@@ -37,6 +37,7 @@ private:
 	PageDataWidgetSplitter* m_splitter;
 	QStackedWidget* m_stackedWidget;
 	QMap<StorageAdapterType, int> m_tables;
+	QMap<StorageAdapterType, IStorageAdapter*> m_storageAdapters;
 	PageDataWidget* m_pageDataWidget;
 	int m_pageIndexBeforeShowNoResultsLabel;
 };

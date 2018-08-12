@@ -101,6 +101,7 @@ public:
 
 	void addCustomDataFeed(ICustomDataFeed* customDataFeed);
 	ICustomDataFeed* customDataFeedByName(const QString& dataFeedName) const;
+	QList<ICustomDataFeed*> customDataFeeds() const;
 
 signals:
 	void crawlingProgress(CrawlingProgress progress);

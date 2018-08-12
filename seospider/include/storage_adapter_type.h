@@ -7,8 +7,8 @@ namespace SeoSpider
 
 enum class StorageAdapterType
 {
-	StorageAdapterTypeBegin,
-	StorageAdapterTypeNone,
+	StorageAdapterTypeBegin = -1,
+	StorageAdapterTypeNone = 0,
 
 	StorageAdapterTypeAllPages = CrawlerEngine::StorageType::CrawledUrlStorageType,
 	StorageAdapterTypeUpperCaseLinks = CrawlerEngine::StorageType::UpperCaseUrlStorageType,
@@ -82,6 +82,8 @@ enum class StorageAdapterType
 	StorageAdapterTypeExternalFlashResources = CrawlerEngine::StorageType::ExternalFlashResourcesStorageType,
 	StorageAdapterTypeExternalVideoResources = CrawlerEngine::StorageType::ExternalVideoResourcesStorageType,
 	StorageAdapterTypeExternalOtherResources = CrawlerEngine::StorageType::ExternalOtherResourcesStorageType,
+
+	StorageAdapterTypeCustomDataFeed = CrawlerEngine::StorageType::EndEnumStorageType + 1,
 
 	StorageAdapterTypeNotFound, // not an actual storage but used for show QLabel that says about "has no search results"
 	StorageAdapterTypeEnd
