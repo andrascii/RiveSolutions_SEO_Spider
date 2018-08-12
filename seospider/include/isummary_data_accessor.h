@@ -21,6 +21,7 @@ public:
 	virtual void selectRow(int row) noexcept = 0;
 	virtual int selectedRow() const noexcept = 0;
 	virtual StorageAdapterType itemCategory(const QModelIndex& index) const noexcept = 0;
+	virtual QString customDataFeed(const QModelIndex& index) const noexcept = 0;
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const noexcept = 0;
 	virtual bool isHeaderRow(int row) const noexcept = 0;
 	virtual const QPixmap& pixmap(const QModelIndex& index) const noexcept = 0;
@@ -28,7 +29,6 @@ public:
 	virtual QSize span(const QModelIndex& index) const noexcept = 0;
 	virtual int columnCount() const noexcept = 0;
 	virtual int rowCount() const noexcept = 0;
-	virtual void addGroup(AuditGroup group) noexcept = 0;
 	virtual const CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept = 0;
 	virtual QObject* qobject() noexcept = 0;
 	virtual const DCStorageDescription* storageDescriptionByRow(int row) const noexcept = 0;

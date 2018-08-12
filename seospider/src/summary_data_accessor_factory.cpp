@@ -29,6 +29,13 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 			plainDataSet->addGroup(AuditGroup::H2AuditGroup);
 			plainDataSet->addGroup(AuditGroup::ImageAuditGroup);
 
+			DataCollectionGroupsFactory dcGroupsFactory;
+			const DCStorageGroupDescriptionPtr customDataFeedGroup = dcGroupsFactory.create(dataCollection->customDataFeeds());
+			if (!customDataFeedGroup->descriptions.empty())
+			{
+				plainDataSet->addGroup(customDataFeedGroup);
+			}
+
 			std::function<bool(DCStorageDescription*, DCStorageDescription*)> sortPredicate([](DCStorageDescription* a, DCStorageDescription* b)
 			{
 				if (CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
@@ -41,7 +48,17 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 				}
 			});
 
-			sortableDataSet->addGroup(AuditGroup::OrderedErrorsGroup);
+			
+			const DCStorageGroupDescriptionPtr orderedErrorsGroup = dcGroupsFactory.create(AuditGroup::OrderedErrorsGroup);
+			if (!customDataFeedGroup->descriptions.empty())
+			{
+				for (const DCStorageDescription& description : customDataFeedGroup->descriptions)
+				{
+					orderedErrorsGroup->descriptions.push_back(description);
+				}
+			}
+			sortableDataSet->addGroup(orderedErrorsGroup);
+
 			sortableDataSet->addSortingPredicate(std::move(sortPredicate));
 
 			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(plainDataSet));

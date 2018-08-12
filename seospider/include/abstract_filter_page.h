@@ -27,7 +27,7 @@ public:
 	void selectFilter(CrawlerEngine::StorageType type) const;
 	void selectParsedPage(int row);
 	void selectTab(int pageDataType);
-	void setInfoCategory(StorageAdapterType category);
+	void setInfoCategory(StorageAdapterType category, const QString& customDataFeed);
 	const SummaryModel* summaryFilterModel() const;
 	WebSiteDataWidget* websiteDataWidget();
 

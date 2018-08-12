@@ -27,6 +27,7 @@
 #include "proper_404_checker.h"
 #include "screenshot_maker.h"
 #include "icustom_data_feed.h"
+#include "test_data_feed.h"
 
 namespace CrawlerEngine
 {
@@ -187,14 +188,6 @@ void Crawler::initSessionIfNeeded(Session::State state, const QString& name)
 void Crawler::setCustomDataFeedsToSequencedDataCollection()
 {
 	ASSERT(m_sequencedDataCollection);
-	foreach(ICustomDataFeed* dataFeed, m_customDataFeeds.values())
-	{
-		QObject* qObject = dynamic_cast<QObject*>(dataFeed);
-		ASSERT(qObject != nullptr);
-
-		qObject->disconnect(m_sequencedDataCollection.get());
-	}
-
 	m_sequencedDataCollection->setCustomDataFeeds(m_customDataFeeds.values().toVector());
 }
 
@@ -667,6 +660,9 @@ void Crawler::initSequencedDataCollection()
 		Common::Helpers::metaMethodOfSlot(this, "onSequencedDataCollectionChanged()")
 	);
 
+	// jus for test
+	// addCustomDataFeed(new TestDataFeed());
+
 	setCustomDataFeedsToSequencedDataCollection();
 }
 
@@ -921,6 +917,11 @@ void Crawler::addCustomDataFeed(ICustomDataFeed* customDataFeed)
 ICustomDataFeed* Crawler::customDataFeedByName(const QString& dataFeedName) const
 {
 	return m_customDataFeeds.value(dataFeedName, nullptr);
+}
+
+QList<ICustomDataFeed*> Crawler::customDataFeeds() const
+{
+	return m_customDataFeeds.values();
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

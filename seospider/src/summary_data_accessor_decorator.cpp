@@ -41,6 +41,11 @@ StorageAdapterType SummaryDataAccessorDecorator::itemCategory(const QModelIndex&
 	return m_summaryDataAccessor->itemCategory(index);
 }
 
+QString SummaryDataAccessorDecorator::customDataFeed(const QModelIndex& index) const noexcept
+{
+	return m_summaryDataAccessor->customDataFeed(index);
+}
+
 Qt::ItemFlags SummaryDataAccessorDecorator::flags(const QModelIndex& index) const noexcept
 {
 	return m_summaryDataAccessor->flags(index);
@@ -74,11 +79,6 @@ int SummaryDataAccessorDecorator::columnCount() const noexcept
 int SummaryDataAccessorDecorator::rowCount() const noexcept
 {
 	return m_summaryDataAccessor->rowCount();
-}
-
-void SummaryDataAccessorDecorator::addGroup(AuditGroup group) noexcept
-{
-	return m_summaryDataAccessor->addGroup(group);
 }
 
 const CrawlerEngine::SequencedDataCollection* SummaryDataAccessorDecorator::sequencedDataCollection() const noexcept

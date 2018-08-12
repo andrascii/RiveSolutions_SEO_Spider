@@ -62,7 +62,8 @@ void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData));
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::validateSelectedRow));
 
-	VERIFY(connect(this, &SummaryDataAccessor::endClearData, this, &SummaryDataAccessor::restoreSelection));
+	// VERIFY(connect(this, &SummaryDataAccessor::endClearData, this, &SummaryDataAccessor::restoreSelection));
+	VERIFY(connect(this, SIGNAL(endClearData()), this, SLOT(restoreSelection())));
 }
 
 void SummaryDataAccessor::enableSortableDataSet() noexcept
@@ -108,11 +109,6 @@ int SummaryDataAccessor::columnCount() const noexcept
 int SummaryDataAccessor::rowCount() const noexcept
 {
 	return m_currentDataSet->rowCount();
-}
-
-void SummaryDataAccessor::addGroup(AuditGroup group) noexcept
-{
-	m_currentDataSet->addGroup(group);
 }
 
 const CrawlerEngine::SequencedDataCollection* SummaryDataAccessor::sequencedDataCollection() const noexcept
@@ -257,6 +253,11 @@ bool SummaryDataAccessor::isHeaderRow(int row) const noexcept
 StorageAdapterType SummaryDataAccessor::itemCategory(const QModelIndex& index) const noexcept
 {
 	return m_currentDataSet->itemCategory(index);
+}
+
+QString SummaryDataAccessor::customDataFeed(const QModelIndex& index) const noexcept
+{
+	return m_currentDataSet->customDataFeed(index);
 }
 
 const QPixmap& SummaryDataAccessor::pixmap(const QModelIndex& index) const noexcept

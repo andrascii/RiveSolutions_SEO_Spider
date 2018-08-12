@@ -3,6 +3,7 @@
 #include "application.h"
 #include "crawler.h"
 #include "model_helpers.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -49,23 +50,44 @@ QVector<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::availableColumns()
 	return m_availableColumns;
 }
 
+void ParsedPageInfoStorageAdapter::setCustomDataFeed(const QString& customDataFeed) noexcept
+{
+	if (customDataFeed.isEmpty())
+	{
+		return;
+	}
+
+	m_dataFeed = customDataFeed;
+	m_customColumns = theApp->crawler()->customDataFeedByName(customDataFeed)->columns().toVector();
+}
+
 QString ParsedPageInfoStorageAdapter::columnDescription(int columnIndex) const noexcept
 {
-	DEBUG_ASSERT(columnIndex < m_availableColumns.size());
+	DEBUG_ASSERT(columnIndex < m_availableColumns.size() + m_customColumns.size());
+
+	if (columnIndex >= m_availableColumns.size())
+	{
+		return m_customColumns[columnIndex - m_availableColumns.size()];
+	}
 
 	return ParsedPageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
 int ParsedPageInfoStorageAdapter::columnWidth(int columnNumber) const noexcept
 {
-	DEBUG_ASSERT(columnNumber < m_availableColumns.size());
+	DEBUG_ASSERT(columnNumber < m_availableColumns.size() + m_customColumns.size());
+
+	if (columnNumber >= m_availableColumns.size())
+	{
+		return Common::Helpers::pointsToPixels(150);
+	}
 
 	return ParsedPageInfo::columnPrefferedSize(m_availableColumns[columnNumber]);
 }
 
 int ParsedPageInfoStorageAdapter::columnCount() const noexcept
 {
-	return m_availableColumns.size();
+	return m_availableColumns.size() + m_customColumns.size();
 }
 
 int ParsedPageInfoStorageAdapter::itemCount() const noexcept
@@ -78,14 +100,26 @@ QVariant ParsedPageInfoStorageAdapter::item(const QModelIndex& index) const noex
 	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 
 	DEBUG_ASSERT(index.row() < storage.size());
-	DEBUG_ASSERT(index.column() < m_availableColumns.size());
+	DEBUG_ASSERT(index.column() < m_availableColumns.size() + m_customColumns.size());
+
+	if (index.column() >= m_availableColumns.size())
+	{
+		const CrawlerEngine::ICustomDataFeed* dataFeed = theApp->crawler()->customDataFeedByName(m_dataFeed);
+		const QMap<int, QString>& dataFeedData = storage[index.row()]->dataFeedsData[dataFeed->dataFeedId()];
+		return dataFeedData[index.column() - m_availableColumns.size()];
+	}
 
 	return ParsedPageInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
 }
 
 ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(const QModelIndex& index) const noexcept
 {
-	DEBUG_ASSERT(index.column() < m_availableColumns.size());
+	DEBUG_ASSERT(index.column() < m_availableColumns.size() + m_customColumns.size());
+
+	if (index.column() >= m_availableColumns.size())
+	{
+		return ItemType::PlainItemType;
+	}
 
 	const bool isIndexMappedToUrl = 
 		m_availableColumns[index.column()] == ParsedPageInfo::Column::UrlColumn ||

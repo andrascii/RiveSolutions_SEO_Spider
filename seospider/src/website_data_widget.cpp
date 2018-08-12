@@ -43,7 +43,7 @@ WebSiteDataWidget::WebSiteDataWidget(PageDataWidget* pageDataWidget, QWidget* pa
 	layout->addWidget(m_splitter);
 }
 
-void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterType)
+void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterType, const QString& customDataFeed)
 {
 	auto tableIndexIterator = m_tables.find(storageAdapterType);
 
@@ -57,6 +57,13 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 
 	PageModel* pageModel = new PageModel(m_stackedWidget);
 	IStorageAdapter* storageAdapter = factory->createParsedPageInfoStorage(storageAdapterType, theApp->sequencedDataCollection());
+	
+	if (IParsedPageStorageAdapter* pageAdapter = dynamic_cast<IParsedPageStorageAdapter*>(storageAdapter))
+	{
+		pageAdapter->setCustomDataFeed(customDataFeed);
+	}
+
+	m_storageAdapters[storageAdapterType] = storageAdapter;
 	pageModel->setStorageAdapter(storageAdapter);
 
 	TableView* tableView = new TableView(m_stackedWidget, false, true);

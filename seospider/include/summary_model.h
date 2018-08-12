@@ -28,6 +28,7 @@ public:
 	void setDataAccessor(ISummaryDataAccessor* dataAccessor) noexcept;
 	ISummaryDataAccessor* dataAccessor() const noexcept;
 	StorageAdapterType storageAdapterType(const QModelIndex& index) const noexcept;
+	QString customDataFeed(const QModelIndex& index) const noexcept;
 
 signals:
 	virtual void internalDataChanged() override;

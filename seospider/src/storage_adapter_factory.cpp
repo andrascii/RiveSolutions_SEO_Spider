@@ -11,8 +11,9 @@ IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapt
 	ASSERT(type > StorageAdapterType::StorageAdapterTypeBegin &&
 		type < StorageAdapterType::StorageAdapterTypeEnd);
 
-	const CrawlerEngine::StorageType storageType =
-		static_cast<CrawlerEngine::StorageType>(type);
+	const CrawlerEngine::StorageType storageType = type == StorageAdapterType::StorageAdapterTypeCustomDataFeed
+		? CrawlerEngine::CrawledUrlStorageType
+		: static_cast<CrawlerEngine::StorageType>(type);
 
 	IParsedPageStorageAdapter* storageAdapter = new ParsedPageInfoStorageAdapter(sequencedDataCollection,
 		sequencedDataCollection->storage(storageType), storageType);
@@ -266,6 +267,14 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn;
+		}
+
+		// custom data feed
+		case StorageAdapterType::StorageAdapterTypeCustomDataFeed:
+		{
+			return QVector<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::StatusCodeColumn;
 		}
 	}
 
