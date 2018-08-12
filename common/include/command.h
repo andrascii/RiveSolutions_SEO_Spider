@@ -151,7 +151,7 @@ struct CounterData
 {
 	enum Type
 	{
-		SessionId = 0, 
+		SessionId = 0,
 		UseCounter = 1,
 		TimerCounter = 2
 	};
@@ -215,11 +215,11 @@ struct Command
 	//! Command type
 	Type type;
 	static const size_t rawDataSize =
-		max(sizeof(LogData), 
-		max(sizeof(AssertData), 
-		max(sizeof(DumpData), 
-		max(sizeof(CategoryData), 
-		max(sizeof(RestartData), 
+		max(sizeof(LogData),
+		max(sizeof(AssertData),
+		max(sizeof(DumpData),
+		max(sizeof(CategoryData),
+		max(sizeof(RestartData),
 		max(sizeof(ApplicationInitializedData), sizeof(CounterData)))))));
 
 	//! Raw data structure on of LogData, AssertData or DumpData

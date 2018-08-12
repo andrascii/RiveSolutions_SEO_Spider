@@ -1,6 +1,7 @@
 #include "command_thread.h"
 #include "command.h"
 #include "seo_spider_service_app.h"
+#include "sys_info.h"
 
 namespace
 {
@@ -100,7 +101,7 @@ void CommandThread::run()
 			{
 				Common::CounterData* counterData = command.counterData();
 
-				m_countersJsonBody[counterData->name] = 
+				m_countersJsonBody[counterData->name] =
 					m_countersJsonBody[counterData->name].toULongLong() + counterData->value;
 
 				break;
@@ -118,6 +119,11 @@ void CommandThread::run()
 					m_statisticsJsonHeader["programBittness"] = applicationInitializedData->programBittness;
 					m_statisticsJsonHeader["programVersion"] = applicationInitializedData->programVersion;
 					m_statisticsJsonHeader["sessionDateTime"] = QDateTime::currentDateTimeUtc();
+
+					SystemInformation sysinfo;
+					getSystemMemoryInfo(sysinfo.systemMemory);
+
+					m_statisticsJsonHeader["physicalMemory"] = formatMemorySize(sysinfo.systemMemory.totalPhysical);
 
 					m_counterContainer["Header"] = m_statisticsJsonHeader;
 				}
