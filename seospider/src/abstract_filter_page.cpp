@@ -21,6 +21,8 @@
 #include "columns_lookup_lineedit_widget.h"
 #include "parsed_page_info.h"
 #include "storage_adapter_factory.h"
+#include "storage_adapter_type.h"
+#include "statistic_counter.h"
 
 namespace SeoSpider
 {
@@ -206,6 +208,10 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 		ASSERT(std::all_of(indexes.begin(), indexes.end(), uniqueRowNumberPredicate));
 
 		m_currentSelectedRow = row;
+
+		auto typeString = storageAdapterTypeStringFromEnum(summaryFilterModel()->storageAdapterType(index));
+		StatisticCounter showCounter(QString("%1_%2FilterShowCounter").arg(pageName()).arg(typeString));
+		showCounter.increment();
 
 		AbstractFilterPage::hasFilterSelection(row);
 		hasFilterSelection(row);
