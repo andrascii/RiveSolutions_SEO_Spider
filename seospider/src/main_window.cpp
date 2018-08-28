@@ -49,6 +49,7 @@
 #include "ui_crawler_pause_settings_widget.h"
 #include "ui_company_profile_settings_widget.h"
 #include "ui_page_visual_settings_widget.h"
+#include "custom_uri_channel.h"
 
 
 namespace SeoSpider
@@ -72,6 +73,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
+	VERIFY(connect(CustomUrlChannel::instance(), &CustomUrlChannel::uriReceived, this, &MainWindow::onCustomUrlReceived, Qt::QueuedConnection));
 	VERIFY(connect(systemTrayIcon(), &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated));
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateIsNotExists()), SLOT(onAboutUpdateIsNotExists())));
@@ -260,6 +262,13 @@ void MainWindow::showShadedOverlay()
 void MainWindow::hideShadedOverlay()
 {
 	m_shadedOverlay->setVisible(false);
+}
+
+void MainWindow::onCustomUrlReceived()
+{
+	this->setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+	this->raise();  // for MacOS
+	this->activateWindow(); // for Windows
 }
 
 int MainWindow::showMessageBoxDialog(const QString& title,

@@ -37,6 +37,7 @@ public slots:
 	void onCrawlingFinished() const;
 	void showShadedOverlay();
 	void hideShadedOverlay();
+	void onCustomUrlReceived();
 
 	int showMessageBoxDialog(const QString& title, 
 		const QString& message,

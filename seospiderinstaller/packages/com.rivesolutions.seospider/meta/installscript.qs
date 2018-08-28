@@ -132,6 +132,27 @@ function installVCRedist()
 	component.addOperation("Execute", "@TargetDir@/vcredist.exe", "/quiet", "/norestart");
 }
 
+function addRegistryKey(key, value, data) 
+{ 
+	var args = [ "cmd", "cmd", "/c", "REG", "ADD", key, "/f", "/v", value, "/t", "REG_SZ", "/d", data ];
+	component.addElevatedOperation( "Execute", args ); 
+}
+
+function addRegistryDefaultKey(key, data) 
+{ 
+	var args = [ "cmd", "cmd", "/c", "REG", "ADD", key, "/f", "/ve", "/d", data ];
+	component.addElevatedOperation("Execute", args); 
+}
+
+function registerCustomURI()
+{
+	// only for windows
+	addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider", "SeoSpider protocol");
+	addRegistryKey("HKEY_CLASSES_ROOT\\seospider", "URL Protocol", "");
+	addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider\\DefaultIcon", "seospider.exe,1");
+	addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider\\shell\\open\\command", "\"@TargetDir@\\seospider.exe\" \"%1\"");
+}
+
 function createMenuDirectory()
 {
 	var dontCreateMenuDirChecked = component.userInterface("CreateMenuDirCheckBoxForm").CreateMenuDirCheckBox.checked;
@@ -284,6 +305,8 @@ Component.prototype.createOperations = function()
 	registerProgram();
 	
 	installVCRedist();
+
+	registerCustomURI();
 	
 	createMenuDirectory();
 	
