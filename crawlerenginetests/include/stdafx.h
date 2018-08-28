@@ -76,6 +76,7 @@
 #include <QDir>
 #include <QXmlQuery>
 #include <QPointer>
+#include <QSharedMemory>
 
 // google tests
 #include <gtest/gtest.h>
