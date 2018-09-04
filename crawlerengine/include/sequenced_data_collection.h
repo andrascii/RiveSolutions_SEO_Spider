@@ -23,7 +23,7 @@ public:
 
 	void initialize();
 	bool empty() const noexcept;
-	
+
 	const ISequencedStorage* storage(StorageType type) const noexcept;
 	ISequencedStorage* storage(StorageType type) noexcept;
 	bool removePage(ParsedPage* parsedPage, StorageType type);

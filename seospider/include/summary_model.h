@@ -10,7 +10,7 @@ namespace SeoSpider
 class IResizePolicy;
 class ViewportPercentResizePolicy;
 
-	
+
 class SummaryModel : public AbstractTableModel
 {
 	Q_OBJECT

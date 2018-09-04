@@ -23,7 +23,7 @@ void SettingsPageRegistry::registerSettingsPage(const QByteArray& pageId, Settin
 	DEBUG_ASSERT(m_settingsPages.contains(pageId) == false);
 
 	VERIFY(connect(page, SIGNAL(destroyed(QObject*)), SLOT(settingsPageDestroyed())));
-	
+
 	m_settingsPages[pageId] = page;
 }
 

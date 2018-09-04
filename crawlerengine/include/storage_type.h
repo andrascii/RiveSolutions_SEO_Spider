@@ -104,6 +104,13 @@ enum StorageType
 	ExternalVideoResourcesStorageType,
 	ExternalOtherResourcesStorageType,
 
+	// Counters
+	YandexMetricaCounter1StorageType,
+	YandexMetricaCounter2StorageType,
+	YandexMetricaCounter3StorageType,
+	YandexMetricaCounter4StorageType,
+	YandexMetricaCounter5StorageType,
+
 	// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 	EndEnumStorageType
 };
