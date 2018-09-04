@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>YandexMetricaSettingsWidget</class>
+ <widget class="QWidget" name="YandexMetricaSettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>701</width>
+    <height>526</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Yandex Metrica Settings</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="ycCheckBox1">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string>search</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Search yandex metrica counter</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" rowspan="2">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="ycLineEdit1">
+       <property name="placeholderText">
+        <string>Type in yandex metrica counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexMetricaCounterId1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="ycLineEdit2">
+       <property name="placeholderText">
+        <string>Type in yandex metrica counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexMetricaCounterId2</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="ycLineEdit3">
+       <property name="placeholderText">
+        <string>Type in yandex metrica counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexMetricaCounterId3</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="ycLineEdit4">
+       <property name="placeholderText">
+        <string>Type in yandex metrica counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexMetricaCounterId4</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="ycLineEdit5">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Type in yandex metrica counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexMetricaCounterId5</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="addCounterButton">
+         <property name="text">
+          <string>Add Counter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="removeCounterButton">
+         <property name="text">
+          <string>Remove Counter</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="7" column="1">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>178</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>ycCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ycLineEdit1</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>36</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ycCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ycLineEdit2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ycCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ycLineEdit3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ycCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ycLineEdit4</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ycCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ycLineEdit5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

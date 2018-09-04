@@ -78,7 +78,7 @@ void ApplicationSettingsDialog::applyChanges()
 
 		Common::Helpers::fast_cast<SettingsPage*>(widget)->applyChanges();
 	}
-		
+
 	m_ui.applyButton->setEnabled(m_somethingChanged);
 }
 
@@ -91,14 +91,14 @@ void ApplicationSettingsDialog::okButtonClicked()
 void ApplicationSettingsDialog::cancelButtonClicked()
 {
 	ISettingsPageRegistry* settingsPageRegistry = CrawlerEngine::ServiceLocator::instance()->service<ISettingsPageRegistry>();
-	
+
 	foreach(const QByteArray& pageId, settingsPageRegistry->pagesKeys())
 	{
 		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);
 		page->reloadSettings();
 		page->clearChangedKeys();
 	}
-	
+
 	m_somethingChanged = false;
 	m_ui.applyButton->setEnabled(m_somethingChanged);
 	close();
@@ -112,7 +112,7 @@ void ApplicationSettingsDialog::reloadSettingsSlot()
 	{
 		return;
 	}
-	
+
 	Common::Helpers::fast_cast<SettingsPage*>(widget)->reloadSettings();
 	m_somethingChanged = false;
 }
@@ -164,7 +164,7 @@ void ApplicationSettingsDialog::initialize()
 
 	m_ui.propGroupsList->setStyle(new ListItemProxyStyle);
 	m_ui.propGroupsList->setCurrentRow(0);
-	
+
 	ISettingsPageRegistry* settingsPageRegistry = CrawlerEngine::ServiceLocator::instance()->service<ISettingsPageRegistry>();
 
 	int pageIndex = 0;

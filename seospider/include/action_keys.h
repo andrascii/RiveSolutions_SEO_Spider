@@ -28,6 +28,7 @@ static const QByteArray s_openUserAgentSettingsAction = "openUserAgentSettingsAc
 static const QByteArray s_openCrawlerPauseTimerSettingsAction = "openCrawlerPauseTimerSettingsAction";
 static const QByteArray s_openCompanyProfileSettingsAction = "openCompanyProfileSettingsAction";
 static const QByteArray s_openPageVisualSettingsAction = "openPageVisualSettingsAction";
+static const QByteArray s_yandexMetricaSettingsAction = "yandexMetricaSettingsAction";
 
 // help actions
 static const QByteArray s_viewHelpAction = "viewHelpAction";

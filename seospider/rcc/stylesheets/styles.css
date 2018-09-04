@@ -388,6 +388,9 @@ QHeaderView::section
 SeoSpider--SettingsPage
 {
 	min-width: 20em;
+	background: #FFFFFF;
+	padding: 0.8em;
+	border: 0.05em solid #CCCCCC;
 }
 
 SeoSpider--SettingsPage QSpinBox,
@@ -409,13 +412,6 @@ SeoSpider--SettingsPage QCheckBox,
 SeoSpider--SettingsPage QLabel
 {
 	font-size: 10pt;
-}
-
-SeoSpider--SettingsPage QFrame#settingsFrame
-{
-	background: #FFFFFF;
-	padding: 0.8em;
-	border: 0.05em solid #CCCCCC;
 }
 
 /*/////////////////////////////// ApplicationSettingsDialog ///////////////////////////*/

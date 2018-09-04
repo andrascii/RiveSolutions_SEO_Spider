@@ -8,6 +8,7 @@
 #include "control_adapter_combo_box.h"
 #include "control_adapter_radio_button.h"
 #include "control_adapter_color_selector.h"
+#include "internal_settings_helper.h"
 
 namespace SeoSpider
 {
@@ -45,7 +46,7 @@ void SettingsPage::applyChanges() noexcept
 
 void SettingsPage::reloadSettings() noexcept
 {
-	INFOLOG << "Trying reload settings for " << this->windowTitle();
+	INFOLOG << "Trying reload settings for " << windowTitle();
 
 	if (!m_somethingChanged)
 	{
@@ -58,16 +59,16 @@ void SettingsPage::reloadSettings() noexcept
 		controlAdapter.second->setValue(propertyValue);
 		DEBUGLOG << controlAdapter.first << " " << controlAdapter.second->value().toString();
 	}
-	
+
 	setSomethingChanged(false);
-	INFOLOG << "Settings reloaded for " << this->windowTitle();
+	INFOLOG << "Settings reloaded for " << windowTitle();
 }
 
 bool SettingsPage::isAutoApply() const noexcept
 {
 	return m_isAutoApply;
 }
- 
+
 void SettingsPage::setSomethingChanged(bool val) noexcept
 {
 	m_somethingChanged = val;
@@ -94,9 +95,9 @@ void SettingsPage::init()
 
 		if (!propertyValue.isValid())
 		{
-			ERRLOG << controlKey.constData() 
-				<< "which appears in the" 
-				<< control->objectName() 
+			ERRLOG << controlKey.constData()
+				<< "which appears in the"
+				<< control->objectName()
 				<< "is not exists in the ApplicationProperties! It will be ignored!";
 
 			continue;
@@ -110,6 +111,14 @@ void SettingsPage::init()
 
 		m_controlAdapters[controlKeyString] = controlAdapter;
 	}
+}
+
+InternalSettingsHelper* SettingsPage::registrateInternalHelperControl(const QVariant& initialValue)
+{
+	InternalSettingsHelper* helper = new InternalSettingsHelper(this);
+	helper->setValue(initialValue);
+
+	return helper;
 }
 
 void SettingsPage::registerMetaTypes() const
@@ -145,7 +154,7 @@ std::shared_ptr<IControlAdapter> SettingsPage::createControlAdapter(QObject* con
 
 	std::shared_ptr<IControlAdapter> controlAdapter{ static_cast<IControlAdapter*>(QMetaType::create(type)) };
 
-	DEBUG_ASSERT((controlAdapter != nullptr) && "Non registered control adapter type.");
+	DEBUG_ASSERT(controlAdapter != nullptr && "Non registered control adapter type.");
 
 	controlAdapter->setControl(control);
 	controlAdapter->connectChangesObserver(this);

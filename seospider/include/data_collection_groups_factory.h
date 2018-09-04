@@ -38,6 +38,11 @@ enum class AuditGroup
 	NoProblem,
 
 	//
+	// Counters group
+	//
+	Counters,
+
+	//
 	// Custom data feeds
 	//
 
