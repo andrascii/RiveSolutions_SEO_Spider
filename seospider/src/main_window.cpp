@@ -267,9 +267,9 @@ void MainWindow::hideShadedOverlay()
 
 void MainWindow::onCustomUrlReceived()
 {
-	this->setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-	this->raise();  // for MacOS
-	this->activateWindow(); // for Windows
+	setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+	raise();  // for MacOS
+	activateWindow(); // for Windows
 }
 
 int MainWindow::showMessageBoxDialog(const QString& title,
