@@ -17,6 +17,16 @@ public:
 	virtual ParsedPageWeakPtr page() const = 0;
 };
 
+class ICustomDataFeedAuthenticator
+{
+public:
+	virtual ~ICustomDataFeedAuthenticator() = default;
+	virtual bool authenticated() const = 0;
+	virtual void authenticate() = 0;
+	// signals
+	virtual void authenticationDone(const QVariantMap& data) = 0;
+};
+
 Q_DECLARE_METATYPE(ICustomDataFeedRow*);
 
 class ICustomDataFeed
@@ -29,8 +39,10 @@ public:
 	virtual void requestData(ParsedPageWeakPtr page) = 0;
 	virtual bool connected() const = 0;
 	virtual void connect() = 0;
-	virtual QVariantMap connectionData() const = 0;
 	virtual void setConnectionData(const QVariantMap& data) = 0;
+	virtual ICustomDataFeedAuthenticator* authenticator() const = 0;
+	virtual QVariantMap connectionData() const = 0;
+	virtual void setParams(const QVariantMap& params) = 0;
 
 	// signals
 	virtual void dataReady(ICustomDataFeedRow* row) = 0;

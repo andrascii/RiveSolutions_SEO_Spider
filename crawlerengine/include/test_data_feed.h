@@ -88,6 +88,15 @@ public:
 		Q_UNUSED(data);
 	}
 
+	virtual ICustomDataFeedAuthenticator* authenticator() const override
+	{
+		return nullptr;
+	}
+
+	virtual void setParams(const QVariantMap&) override
+	{
+	}
+
 	// signals
 	Q_SIGNAL void dataReady(ICustomDataFeedRow* row);
 
