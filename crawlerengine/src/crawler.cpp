@@ -28,6 +28,7 @@
 #include "screenshot_maker.h"
 #include "icustom_data_feed.h"
 #include "test_data_feed.h"
+#include "yandex_metrica_data_feed.h"
 
 namespace CrawlerEngine
 {
@@ -662,6 +663,8 @@ void Crawler::initSequencedDataCollection()
 
 	// jus for test
 	// addCustomDataFeed(new TestDataFeed());
+
+	// addCustomDataFeed(new YandexMetricaDataFeed());
 
 	setCustomDataFeedsToSequencedDataCollection();
 }

@@ -165,6 +165,7 @@ inline QString storageAdapterTypeStringFromEnum(StorageAdapterType type)
 		case StorageAdapterType::StorageAdapterTypeExternalFlashResources: return "ExternalFlashResources";
 		case StorageAdapterType::StorageAdapterTypeExternalVideoResources: return "ExternalVideoResources";
 		case StorageAdapterType::StorageAdapterTypeExternalOtherResources: return "ExternalOtherResources";
+		case StorageAdapterType::StorageAdapterTypeCustomDataFeed: return "CustomDataFeed";
 
 		default: ASSERT(false && "Incorrect storage type"); return QString();
 	}

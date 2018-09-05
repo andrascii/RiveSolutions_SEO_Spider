@@ -58,6 +58,7 @@
 #include <QBuffer>
 #include <QPointer>
 #include <QSharedMemory>
+#include <QDesktopServices>
 
 //
 // C/C++
