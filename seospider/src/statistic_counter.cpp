@@ -6,7 +6,7 @@ namespace SeoSpider
 {
 
 StatisticCounter::StatisticCounter(const QString& counterName, QObject* parent)
-	: QObject(parent) 
+	: QObject(parent)
 	, m_value(0)
 	, m_name(counterName)
 	, m_type(Common::CounterData::Type::UseCounter)
@@ -25,7 +25,7 @@ const QString& StatisticCounter::name() const
 
 StatisticCounter::CounterValue StatisticCounter::value() const
 {
-	return m_value.load();
+	return m_value.load(std::memory_order_relaxed);
 }
 
 void StatisticCounter::increment()

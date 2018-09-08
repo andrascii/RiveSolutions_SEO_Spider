@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>701</width>
-    <height>526</height>
+    <width>482</width>
+    <height>312</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
         <string/>
        </property>
        <property name="controlKey" stdset="0">
-        <string>search</string>
+        <string notr="true">searchYandexMetricaCounters</string>
        </property>
       </widget>
      </item>
@@ -67,7 +67,7 @@
         <string>Type in yandex metrica counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexMetricaCounterId1</string>
+        <string notr="true">yandexMetricaCounter1Id</string>
        </property>
       </widget>
      </item>
@@ -77,7 +77,7 @@
         <string>Type in yandex metrica counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexMetricaCounterId2</string>
+        <string notr="true">yandexMetricaCounter2Id</string>
        </property>
       </widget>
      </item>

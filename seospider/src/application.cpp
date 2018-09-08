@@ -52,7 +52,7 @@ Application::Application(int& argc, char** argv)
 	Common::SmtpSender::init();
 
 	initializeStyleSheet();
-	SplashScreen::show();
+	//SplashScreen::show();
 
 	attachPreferencesToCrawlerOptions();
 	initialize();

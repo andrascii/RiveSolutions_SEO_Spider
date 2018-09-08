@@ -74,6 +74,24 @@ class Preferences : public QObject
 	Q_PROPERTY(bool useCustomColorForNotIndexedPages READ useCustomColorForNotIndexedPages WRITE setUseCustomColorForNotIndexedPages NOTIFY useCustomColorForNotIndexedPagesChanged);
 	Q_PROPERTY(QColor notIndexedPagesColor READ notIndexedPagesColor WRITE setNotIndexedPagesColor NOTIFY notIndexedPagesColorChanged);
 
+	// Yandex metrica counters
+	Q_PROPERTY(bool searchYandexMetricaCounters READ searchYandexMetricaCounters WRITE setSearchYandexMetricaCounters NOTIFY searchYandexMetricaCountersChanged);
+
+	Q_PROPERTY(bool searchYandexMetricaCounter1 READ searchYandexMetricaCounter1 WRITE setSearchYandexMetricaCounter1 NOTIFY searchYandexMetricaCounter1Changed);
+	Q_PROPERTY(int yandexMetricaCounter1Id READ yandexMetricaCounter1Id WRITE setYandexMetricaCounter1Id NOTIFY yandexMetricaCounter1IdChanged);
+
+	Q_PROPERTY(bool searchYandexMetricaCounter2 READ searchYandexMetricaCounter2 WRITE setSearchYandexMetricaCounter2 NOTIFY searchYandexMetricaCounter2Changed);
+	Q_PROPERTY(int yandexMetricaCounter2Id READ yandexMetricaCounter2Id WRITE setYandexMetricaCounter2Id NOTIFY yandexMetricaCounter2IdChanged);
+
+	Q_PROPERTY(bool searchYandexMetricaCounter3 READ searchYandexMetricaCounter3 WRITE setSearchYandexMetricaCounter3 NOTIFY searchYandexMetricaCounter3Changed);
+	Q_PROPERTY(int yandexMetricaCounter3Id READ yandexMetricaCounter3Id WRITE setYandexMetricaCounter3Id NOTIFY yandexMetricaCounter3IdChanged);
+
+	Q_PROPERTY(bool searchYandexMetricaCounter4 READ searchYandexMetricaCounter4 WRITE setSearchYandexMetricaCounter4 NOTIFY searchYandexMetricaCounter4Changed);
+	Q_PROPERTY(int yandexMetricaCounter4Id READ yandexMetricaCounter4Id WRITE setYandexMetricaCounter4Id NOTIFY yandexMetricaCounter4IdChanged);
+
+	Q_PROPERTY(bool searchYandexMetricaCounter5 READ searchYandexMetricaCounter5 WRITE setSearchYandexMetricaCounter5 NOTIFY searchYandexMetricaCounter5Changed);
+	Q_PROPERTY(int yandexMetricaCounter5Id READ yandexMetricaCounter5Id WRITE setYandexMetricaCounter5Id NOTIFY yandexMetricaCounter5IdChanged);
+
 public:
 
 	unsigned threadCount() const;
@@ -264,7 +282,44 @@ public:
 	Q_SLOT void setNotIndexedPagesColor(QColor value);
 	Q_SIGNAL void notIndexedPagesColorChanged(QColor value);
 
-	//////////////////////////////////////////////////////////////////////////
+	bool searchYandexMetricaCounters() const;
+	Q_SLOT void setSearchYandexMetricaCounters(bool value);
+	Q_SIGNAL void searchYandexMetricaCountersChanged(bool value);
+
+	bool searchYandexMetricaCounter1() const;
+	Q_SLOT void setSearchYandexMetricaCounter1(bool value);
+	Q_SIGNAL void searchYandexMetricaCounter1Changed(bool value);
+	int yandexMetricaCounter1Id() const;
+	Q_SLOT void setYandexMetricaCounter1Id(int value);
+	Q_SIGNAL void yandexMetricaCounter1IdChanged(int value);
+
+	bool searchYandexMetricaCounter2() const;
+	Q_SLOT void setSearchYandexMetricaCounter2(bool value);
+	Q_SIGNAL void searchYandexMetricaCounter2Changed(bool value);
+	int yandexMetricaCounter2Id() const;
+	Q_SLOT void setYandexMetricaCounter2Id(int value);
+	Q_SIGNAL void yandexMetricaCounter2IdChanged(int value);
+
+	bool searchYandexMetricaCounter3() const;
+	Q_SLOT void setSearchYandexMetricaCounter3(bool value);
+	Q_SIGNAL void searchYandexMetricaCounter3Changed(bool value);
+	int yandexMetricaCounter3Id() const;
+	Q_SLOT void setYandexMetricaCounter3Id(int value);
+	Q_SIGNAL void yandexMetricaCounter3IdChanged(int value);
+
+	bool searchYandexMetricaCounter4() const;
+	Q_SLOT void setSearchYandexMetricaCounter4(bool value);
+	Q_SIGNAL void searchYandexMetricaCounter4Changed(bool value);
+	int yandexMetricaCounter4Id() const;
+	Q_SLOT void setYandexMetricaCounter4Id(int value);
+	Q_SIGNAL void yandexMetricaCounter4IdChanged(int value);
+
+	bool searchYandexMetricaCounter5() const;
+	Q_SLOT void setSearchYandexMetricaCounter5(bool value);
+	Q_SIGNAL void searchYandexMetricaCounter5Changed(bool value);
+	int yandexMetricaCounter5Id() const;
+	Q_SLOT void setYandexMetricaCounter5Id(int value);
+	Q_SIGNAL void yandexMetricaCounter5IdChanged(int value);
 
 public:
 	Preferences(ISettingsAccessor* settingsAccessor, QObject* parent = nullptr);
@@ -337,6 +392,24 @@ private:
 
 	bool m_useCustomColorForNotIndexedPages;
 	QColor m_notIndexedPagesColor;
+
+	// Yandex metrica
+	bool m_searchYandexMetricaCounters;
+
+	bool m_searchYandexMetricaCounter1;
+	int m_yandexMetricaCounter1Id;
+
+	bool m_searchYandexMetricaCounter2;
+	int m_yandexMetricaCounter2Id;
+
+	bool m_searchYandexMetricaCounter3;
+	int m_yandexMetricaCounter3Id;
+
+	bool m_searchYandexMetricaCounter4;
+	int m_yandexMetricaCounter4Id;
+
+	bool m_searchYandexMetricaCounter5;
+	int m_yandexMetricaCounter5Id;
 };
 
 }
