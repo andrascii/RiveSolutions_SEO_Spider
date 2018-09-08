@@ -24,11 +24,17 @@ private slots:
 	void onInternalValueChanged(const QVariant& value);
 	void decrementHelperValue();
 	void incrementHelperValue();
+	void onSearchCounterChanged(const QVariant&);
+
+private:
+	void validateButtonsVisibility(int currentVisibleLineEditCount);
 
 private:
 	Ui::YandexMetricaSettingsWidget m_ui;
 	QList<QWidget*> m_lineEdits;
+	QList<InternalSettingsHelper*> m_useCounterBooleanHelpers;
 	InternalSettingsHelper* m_helperControl;
+	int m_visibleLineEditCount;
 };
 
 }

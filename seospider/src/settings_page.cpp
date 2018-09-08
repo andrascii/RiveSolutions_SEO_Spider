@@ -8,6 +8,7 @@
 #include "control_adapter_combo_box.h"
 #include "control_adapter_radio_button.h"
 #include "control_adapter_color_selector.h"
+#include "control_adapter_internal_settings_helper.h"
 #include "internal_settings_helper.h"
 
 namespace SeoSpider
@@ -105,7 +106,13 @@ void SettingsPage::init()
 
 		std::shared_ptr<IControlAdapter> controlAdapter = createControlAdapter(control);
 
-		const QSignalBlocker blocker(controlAdapter->qobject());
+		QSignalBlocker blocker(controlAdapter->qobject());
+
+		// we must not block signals from InternalSettingsHelper controls at the loading stage
+		if (dynamic_cast<ControlAdapterInternalSettingsHelper*>(controlAdapter.get()))
+		{
+			blocker.unblock();
+		}
 
 		controlAdapter->setValue(propertyValue);
 
@@ -129,6 +136,7 @@ void SettingsPage::registerMetaTypes() const
 	qRegisterMetaType<ControlAdapterQComboBox>();
 	qRegisterMetaType<ControlAdapterQRadioButton>();
 	qRegisterMetaType<ControlAdapterColorSelector>("ControlAdapterSeoSpider::ColorSelector");
+	qRegisterMetaType<ControlAdapterInternalSettingsHelper>("ControlAdapterSeoSpider::InternalSettingsHelper");
 }
 
 void SettingsPage::somethingChangedSlot()

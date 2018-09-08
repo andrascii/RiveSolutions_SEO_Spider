@@ -7,7 +7,7 @@ namespace
 using namespace SeoSpider;
 
 const QMap<QString, QString> s_languageLocales
-{ 
+{
 	{ "English", "en_EN" },
 	{ "Russian", "ru_RU" },
 };
@@ -338,7 +338,7 @@ const QString& Preferences::desktopUserAgent() const
 
 void Preferences::setDesktopUserAgent(const QVariant& value)
 {
-	DEBUG_ASSERT(value.type() == QVariant::String); 
+	DEBUG_ASSERT(value.type() == QVariant::String);
 
 	m_desktopUserAgent = value.toString();
 	emit desktopUserAgentChanged(value);
@@ -566,6 +566,127 @@ void Preferences::setNotIndexedPagesColor(QColor value)
 	emit notIndexedPagesColorChanged(value);
 }
 
+bool Preferences::searchYandexMetricaCounters() const
+{
+	return m_searchYandexMetricaCounters;
+}
+
+void Preferences::setSearchYandexMetricaCounters(bool value)
+{
+	m_searchYandexMetricaCounters = value;
+	emit searchYandexMetricaCountersChanged(m_searchYandexMetricaCounters);
+}
+
+bool Preferences::searchYandexMetricaCounter1() const
+{
+	return m_searchYandexMetricaCounter1;
+}
+
+void Preferences::setSearchYandexMetricaCounter1(bool value)
+{
+	m_searchYandexMetricaCounter1 = value;
+	emit searchYandexMetricaCounter1Changed(m_searchYandexMetricaCounter1);
+}
+
+int Preferences::yandexMetricaCounter1Id() const
+{
+	return m_yandexMetricaCounter1Id;
+}
+
+void Preferences::setYandexMetricaCounter1Id(int value)
+{
+	m_yandexMetricaCounter1Id = value;
+	emit yandexMetricaCounter1IdChanged(m_yandexMetricaCounter1Id);
+}
+
+bool Preferences::searchYandexMetricaCounter2() const
+{
+	return m_searchYandexMetricaCounter2;
+}
+
+void Preferences::setSearchYandexMetricaCounter2(bool value)
+{
+	m_searchYandexMetricaCounter2 = value;
+	emit searchYandexMetricaCounter2Changed(m_searchYandexMetricaCounter2);
+}
+
+int Preferences::yandexMetricaCounter2Id() const
+{
+	return m_yandexMetricaCounter2Id;
+}
+
+void Preferences::setYandexMetricaCounter2Id(int value)
+{
+	m_yandexMetricaCounter2Id = value;
+	emit yandexMetricaCounter2IdChanged(m_yandexMetricaCounter2Id);
+}
+
+bool Preferences::searchYandexMetricaCounter3() const
+{
+	return m_searchYandexMetricaCounter3;
+}
+
+void Preferences::setSearchYandexMetricaCounter3(bool value)
+{
+	m_searchYandexMetricaCounter3 = value;
+	emit searchYandexMetricaCounter3Changed(m_searchYandexMetricaCounter3);
+}
+
+int Preferences::yandexMetricaCounter3Id() const
+{
+	return m_yandexMetricaCounter3Id;
+}
+
+void Preferences::setYandexMetricaCounter3Id(int value)
+{
+	m_yandexMetricaCounter3Id = value;
+	emit yandexMetricaCounter3IdChanged(m_yandexMetricaCounter3Id);
+}
+
+bool Preferences::searchYandexMetricaCounter4() const
+{
+	return m_searchYandexMetricaCounter4;
+}
+
+void Preferences::setSearchYandexMetricaCounter4(bool value)
+{
+	m_searchYandexMetricaCounter4 = value;
+	emit searchYandexMetricaCounter4Changed(m_searchYandexMetricaCounter4);
+}
+
+int Preferences::yandexMetricaCounter4Id() const
+{
+	return m_yandexMetricaCounter4Id;
+}
+
+void Preferences::setYandexMetricaCounter4Id(int value)
+{
+	m_yandexMetricaCounter4Id = value;
+	emit yandexMetricaCounter4IdChanged(m_yandexMetricaCounter4Id);
+}
+
+bool Preferences::searchYandexMetricaCounter5() const
+{
+	return m_searchYandexMetricaCounter5;
+}
+
+void Preferences::setSearchYandexMetricaCounter5(bool value)
+{
+	m_searchYandexMetricaCounter5 = value;
+	emit searchYandexMetricaCounter5Changed(m_searchYandexMetricaCounter5);
+}
+
+int Preferences::yandexMetricaCounter5Id() const
+{
+	return m_yandexMetricaCounter5Id;
+}
+
+void Preferences::setYandexMetricaCounter5Id(int value)
+{
+	m_yandexMetricaCounter5Id = value;
+	emit yandexMetricaCounter5IdChanged(m_yandexMetricaCounter5Id);
+}
+
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept
 {
 	const QVariant valueFromSettings = m_settingsAccessor->loadFromSettings(key, defaultValue);
@@ -615,7 +736,7 @@ QMap<QString, QVariant> Preferences::readDefaults(const QString& str)
 		const QString group = rxRecord.cap(3);
 		const QString key = rxRecord.cap(4);
 		const QString value = rxRecord.cap(5);
-			
+
 		if (!key.isEmpty())
 		{
 			defaults[rxRecord.cap(1)] = value;

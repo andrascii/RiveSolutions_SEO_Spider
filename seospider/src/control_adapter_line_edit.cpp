@@ -17,7 +17,9 @@ QVariant ControlAdapterQLineEdit::value() const
 
 void ControlAdapterQLineEdit::setValue(const QVariant& val)
 {
-	DEBUG_ASSERT((val.type() == QVariant::String) || (val.type() == QVariant::ByteArray));
+	DEBUG_ASSERT(val.type() == QVariant::String ||
+		val.type() == QVariant::ByteArray ||
+		val.type() == QVariant::Int);
 
 	m_control->setText(val.toString());
 }

@@ -7,6 +7,7 @@ namespace SeoSpider
 YandexMetricaSettingsWidget::YandexMetricaSettingsWidget(QWidget* parent)
 	: SettingsPage(parent)
 	, m_helperControl(nullptr)
+	, m_visibleLineEditCount(0)
 {
 	m_ui.setupUi(this);
 
@@ -27,7 +28,25 @@ void YandexMetricaSettingsWidget::init()
 
 	m_helperControl = registrateInternalHelperControl(1);
 
+	constexpr int useCounterHelperCount = 5;
+
+	for (int i = 0; i < useCounterHelperCount; ++i)
+	{
+		m_useCounterBooleanHelpers.push_back(registrateInternalHelperControl(false));
+		m_useCounterBooleanHelpers.back()->setProperty("controlKey", QVariant(QStringLiteral("searchYandexMetricaCounter%1").arg(i + 1)));
+
+		VERIFY(connect(m_useCounterBooleanHelpers.back(), SIGNAL(valueChanged(const QVariant&)), this, SLOT(onSearchCounterChanged(const QVariant&))));
+	}
+
 	SettingsPage::init();
+
+	for (int i = 0; i < m_useCounterBooleanHelpers.size(); ++i)
+	{
+		disconnect(m_useCounterBooleanHelpers[i], SIGNAL(valueChanged(const QVariant&)),
+			this, SLOT(onSearchCounterChanged(const QVariant&)));
+	}
+
+	m_helperControl->setValue(m_visibleLineEditCount);
 
 	VERIFY(connect(m_helperControl, SIGNAL(valueChanged(const QVariant&)),
 		this, SLOT(onInternalValueChanged(const QVariant&))));
@@ -68,12 +87,16 @@ void YandexMetricaSettingsWidget::onInternalValueChanged(const QVariant& value)
 		if (i < intValue)
 		{
 			m_lineEdits[i]->show();
+			m_useCounterBooleanHelpers[i]->setValue(true);
 		}
 		else
 		{
 			m_lineEdits[i]->hide();
+			m_useCounterBooleanHelpers[i]->setValue(false);
 		}
 	}
+
+	validateButtonsVisibility(intValue);
 }
 
 void YandexMetricaSettingsWidget::decrementHelperValue()
@@ -83,7 +106,9 @@ void YandexMetricaSettingsWidget::decrementHelperValue()
 		return;
 	}
 
-	m_helperControl->setValue(m_helperControl->value().toInt() - 1);
+	const int currentValue = m_helperControl->value().toInt() - 1;
+	m_helperControl->setValue(currentValue);
+	validateButtonsVisibility(currentValue);
 }
 
 void YandexMetricaSettingsWidget::incrementHelperValue()
@@ -93,7 +118,28 @@ void YandexMetricaSettingsWidget::incrementHelperValue()
 		return;
 	}
 
-	m_helperControl->setValue(m_helperControl->value().toInt() + 1);
+	const int currentValue = m_helperControl->value().toInt() + 1;
+	m_helperControl->setValue(currentValue);
+	validateButtonsVisibility(currentValue);
+}
+
+void YandexMetricaSettingsWidget::onSearchCounterChanged(const QVariant& value)
+{
+	DEBUG_ASSERT(value.type() == QVariant::Bool);
+
+	if (value.type() != QVariant::Bool)
+	{
+		return;
+	}
+
+	++m_visibleLineEditCount;
+}
+
+
+void YandexMetricaSettingsWidget::validateButtonsVisibility(int currentVisibleLineEditCount)
+{
+	m_ui.removeCounterButton->setVisible(currentVisibleLineEditCount > 1);
+	m_ui.addCounterButton->setVisible(currentVisibleLineEditCount < m_lineEdits.size());
 }
 
 }

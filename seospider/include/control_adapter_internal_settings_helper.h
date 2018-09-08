@@ -5,7 +5,9 @@
 namespace SeoSpider
 {
 
-class ControlAdapterQComboBox : public IControlAdapter
+class InternalSettingsHelper;
+
+class ControlAdapterInternalSettingsHelper : public IControlAdapter
 {
 public:
 	virtual void setControl(QObject* control) override;
@@ -16,9 +18,9 @@ public:
 	virtual QObject* qobject() override;
 
 private:
-	QPointer<QComboBox> m_control;
+	QPointer<InternalSettingsHelper> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterQComboBox);
+Q_DECLARE_METATYPE(ControlAdapterInternalSettingsHelper);
 
 }
