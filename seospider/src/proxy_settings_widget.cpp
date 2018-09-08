@@ -57,4 +57,12 @@ void ProxySettingsWidget::onCheckBoxToggled()
 	m_ui.passwordLineEdit->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
 }
 
+void ProxySettingsWidget::onShow()
+{
+}
+
+void ProxySettingsWidget::onClose()
+{
+}
+
 }

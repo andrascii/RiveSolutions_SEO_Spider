@@ -40,6 +40,14 @@ void CrawlerPauseSettingsWidget::toCrawlerPauseSpinBoxChanged(int value)
 	m_ui.fromPauseTimerSpinBox->setMaximum(value);
 }
 
+void CrawlerPauseSettingsWidget::onShow()
+{
+}
+
+void CrawlerPauseSettingsWidget::onClose()
+{
+}
+
 bool CrawlerPauseSettingsWidget::eventFilter(QObject* object, QEvent* event)
 {
 	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease

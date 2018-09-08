@@ -87,7 +87,7 @@
         <string>Type in yandex metrica counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexMetricaCounterId3</string>
+        <string notr="true">yandexMetricaCounter3Id</string>
        </property>
       </widget>
      </item>
@@ -97,7 +97,7 @@
         <string>Type in yandex metrica counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexMetricaCounterId4</string>
+        <string notr="true">yandexMetricaCounter4Id</string>
        </property>
       </widget>
      </item>
@@ -110,7 +110,7 @@
         <string>Type in yandex metrica counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexMetricaCounterId5</string>
+        <string notr="true">yandexMetricaCounter5Id</string>
        </property>
       </widget>
      </item>
@@ -228,6 +228,38 @@
     <hint type="destinationlabel">
      <x>103</x>
      <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ycCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>removeCounterButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>7</x>
+     <y>7</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>191</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ycCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>addCounterButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>7</x>
+     <y>7</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
+     <y>162</y>
     </hint>
    </hints>
   </connection>

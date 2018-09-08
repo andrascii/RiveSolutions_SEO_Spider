@@ -42,6 +42,10 @@ void LanguageSettingsWidget::loadLanguagesFromFile(const QString& fileName)
 	}
 }
 
+void LanguageSettingsWidget::onClose()
+{
+}
+
 void LanguageSettingsWidget::applyChanges() noexcept
 {
 	theApp->preferences()->setProperty("applicationLanguage", (m_ui.comboBox->currentData()));
@@ -49,6 +53,10 @@ void LanguageSettingsWidget::applyChanges() noexcept
 	DEBUGLOG << "applicationLanguage: " << theApp->preferences()->property("applicationLanguage").toString();
 
 	SettingsPage::applyChanges();
+}
+
+void LanguageSettingsWidget::onShow()
+{
 }
 
 }

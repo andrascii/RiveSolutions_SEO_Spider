@@ -11,11 +11,11 @@ UserAgentSettingsWidget::UserAgentSettingsWidget(QWidget* parent)
 	m_ui.setupUi(this);
 
 	init();
-	
-	VERIFY(connect(m_ui.useCustomUserAgentCheckBox, &QCheckBox::toggled, 
+
+	VERIFY(connect(m_ui.useCustomUserAgentCheckBox, &QCheckBox::toggled,
 		this, &UserAgentSettingsWidget::checkBoxStateChanged));
 
-	VERIFY(connect(m_ui.userAgentTypeButtonGroup, SIGNAL(buttonToggled(int, bool)), 
+	VERIFY(connect(m_ui.userAgentTypeButtonGroup, SIGNAL(buttonToggled(int, bool)),
 		this, SLOT(groupButtonStateChanged())));
 
 	applyChanges();
@@ -55,9 +55,17 @@ void UserAgentSettingsWidget::loadUserAgentsFromFile(const QString& fileName, QC
 	}
 }
 
+void UserAgentSettingsWidget::onShow()
+{
+}
+
+void UserAgentSettingsWidget::onClose()
+{
+}
+
 bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)
 {
-	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease 
+	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease
 		&& m_ui.useCustomUserAgentCheckBox->isEnabled())
 	{
 		m_ui.useCustomUserAgentCheckBox->toggle();
@@ -80,8 +88,8 @@ void UserAgentSettingsWidget::init()
 
 void UserAgentSettingsWidget::applyChanges() noexcept
 {
-	theApp->preferences()->setProperty("userAgent", (m_ui.userAgentTypeButtonGroup->checkedId() == 0 ? 
-		m_ui.desktopUserAgentComboBox->currentText() : 
+	theApp->preferences()->setProperty("userAgent", (m_ui.userAgentTypeButtonGroup->checkedId() == 0 ?
+		m_ui.desktopUserAgentComboBox->currentText() :
 		m_ui.mobileUserAgentComboBox->currentText())
 	);
 

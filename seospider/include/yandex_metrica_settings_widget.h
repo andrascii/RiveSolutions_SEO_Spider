@@ -16,6 +16,8 @@ public:
 public:
 	YandexMetricaSettingsWidget(QWidget* parent = nullptr);
 
+	virtual void applyChanges() override;
+
 protected:
 	virtual void init() override;
 	virtual bool eventFilter(QObject* object, QEvent* event) override;
@@ -28,6 +30,10 @@ private slots:
 
 private:
 	void validateButtonsVisibility(int currentVisibleLineEditCount);
+	void validateLineEditsEnabled();
+
+	virtual void onShow() override;
+	virtual void onClose() override;
 
 private:
 	Ui::YandexMetricaSettingsWidget m_ui;
@@ -35,6 +41,8 @@ private:
 	QList<InternalSettingsHelper*> m_useCounterBooleanHelpers;
 	InternalSettingsHelper* m_helperControl;
 	int m_visibleLineEditCount;
+	int m_visibleLineEditCountAtShow;
+	bool m_visibleLineEditCountApplied;
 };
 
 }

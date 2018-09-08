@@ -8,6 +8,8 @@ YandexMetricaSettingsWidget::YandexMetricaSettingsWidget(QWidget* parent)
 	: SettingsPage(parent)
 	, m_helperControl(nullptr)
 	, m_visibleLineEditCount(0)
+	, m_visibleLineEditCountApplied(true)
+	, m_visibleLineEditCountAtShow(-1)
 {
 	m_ui.setupUi(this);
 
@@ -28,14 +30,15 @@ void YandexMetricaSettingsWidget::init()
 
 	m_helperControl = registrateInternalHelperControl(1);
 
-	constexpr int useCounterHelperCount = 5;
+	const int useCounterHelperCount = m_lineEdits.size();
 
 	for (int i = 0; i < useCounterHelperCount; ++i)
 	{
 		m_useCounterBooleanHelpers.push_back(registrateInternalHelperControl(false));
 		m_useCounterBooleanHelpers.back()->setProperty("controlKey", QVariant(QStringLiteral("searchYandexMetricaCounter%1").arg(i + 1)));
 
-		VERIFY(connect(m_useCounterBooleanHelpers.back(), SIGNAL(valueChanged(const QVariant&)), this, SLOT(onSearchCounterChanged(const QVariant&))));
+		VERIFY(connect(m_useCounterBooleanHelpers.back(), SIGNAL(valueChanged(const QVariant&)),
+			this, SLOT(onSearchCounterChanged(const QVariant&))));
 	}
 
 	SettingsPage::init();
@@ -58,6 +61,7 @@ void YandexMetricaSettingsWidget::init()
 		this, SLOT(decrementHelperValue())));
 
 	onInternalValueChanged(m_helperControl->value());
+	validateLineEditsEnabled();
 }
 
 bool YandexMetricaSettingsWidget::eventFilter(QObject* object, QEvent* event)
@@ -97,6 +101,7 @@ void YandexMetricaSettingsWidget::onInternalValueChanged(const QVariant& value)
 	}
 
 	validateButtonsVisibility(intValue);
+	m_visibleLineEditCountApplied = false;
 }
 
 void YandexMetricaSettingsWidget::decrementHelperValue()
@@ -140,6 +145,47 @@ void YandexMetricaSettingsWidget::validateButtonsVisibility(int currentVisibleLi
 {
 	m_ui.removeCounterButton->setVisible(currentVisibleLineEditCount > 1);
 	m_ui.addCounterButton->setVisible(currentVisibleLineEditCount < m_lineEdits.size());
+}
+
+void YandexMetricaSettingsWidget::validateLineEditsEnabled()
+{
+	for (int i = 0; i < m_lineEdits.size(); ++i)
+	{
+		m_lineEdits[i]->setEnabled(m_ui.ycCheckBox1->isChecked());
+	}
+
+	m_ui.removeCounterButton->setEnabled(m_ui.ycCheckBox1->isChecked());
+	m_ui.addCounterButton->setEnabled(m_ui.ycCheckBox1->isChecked());
+}
+
+
+void YandexMetricaSettingsWidget::onShow()
+{
+	if (m_visibleLineEditCountAtShow != -1)
+	{
+		return;
+	}
+
+	m_visibleLineEditCountAtShow = m_helperControl->value().toInt();
+}
+
+void YandexMetricaSettingsWidget::onClose()
+{
+	if (m_visibleLineEditCountApplied)
+	{
+		return;
+	}
+
+	m_helperControl->setValue(m_visibleLineEditCountAtShow);
+	m_visibleLineEditCountAtShow = -1;
+}
+
+void YandexMetricaSettingsWidget::applyChanges()
+{
+	m_visibleLineEditCountApplied = true;
+	m_visibleLineEditCountAtShow = -1;
+
+	SettingsPage::applyChanges();
 }
 
 }
