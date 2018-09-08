@@ -21,6 +21,10 @@ private slots:
 	void onCheckBoxToggled();
 
 private:
+	virtual void onShow() override;
+	virtual void onClose() override;
+
+private:
 	Ui::ProxySettingsWidget m_ui;
 };
 

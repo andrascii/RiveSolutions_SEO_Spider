@@ -5,7 +5,7 @@
 
 namespace SeoSpider
 {
-	
+
 class LanguageSettingsWidget : public SettingsPage
 {
 	Q_OBJECT
@@ -19,6 +19,9 @@ protected:
 
 private:
 	void loadLanguagesFromFile(const QString& fileName);
+
+	virtual void onShow() override;
+	virtual void onClose() override;
 
 private:
 	Ui::LanguageSettingsWidget m_ui;

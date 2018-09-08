@@ -18,6 +18,10 @@ protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private:
+	virtual void onShow() override;
+	virtual void onClose() override;
+
+private:
 	Ui::CrawlerSettingsWidget m_ui;
 };
 

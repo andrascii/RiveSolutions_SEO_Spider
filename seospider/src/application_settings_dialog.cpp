@@ -31,6 +31,7 @@ ApplicationSettingsDialog::ApplicationSettingsDialog(QWidget* parent)
 	connect(m_ui.cancelButton, &QPushButton::clicked, this, &ApplicationSettingsDialog::cancelButtonClicked);
 
 	VERIFY(connect(m_ui.propGroupsList, SIGNAL(currentRowChanged(int)), m_ui.stackedWidget, SLOT(setCurrentIndex(int))));
+	VERIFY(connect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(currentSettingsPageChanged(int))));
 
 	const int width = Common::Helpers::pointsToPixels(800);
 	const int height = Common::Helpers::pointsToPixels(500);
@@ -54,6 +55,16 @@ void ApplicationSettingsDialog::hideEvent(QHideEvent*)
 	restoreChangedValues();
 }
 
+
+void ApplicationSettingsDialog::closeEvent(QCloseEvent*)
+{
+	for (int index = 0; index < m_ui.stackedWidget->count(); index++)
+	{
+		QWidget* widget = m_ui.stackedWidget->widget(index);
+		Common::Helpers::fast_cast<SettingsPage*>(widget)->onClose();
+	}
+}
+
 void ApplicationSettingsDialog::restoreChangedValues()
 {
 	m_somethingChanged = false;
@@ -61,7 +72,6 @@ void ApplicationSettingsDialog::restoreChangedValues()
 	for (int index = 0; index < m_ui.stackedWidget->count(); index++)
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
-
 		Common::Helpers::fast_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
 	}
 
@@ -75,7 +85,6 @@ void ApplicationSettingsDialog::applyChanges()
 	for (int index = 0 ; index < m_ui.stackedWidget->count(); index++)
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
-
 		Common::Helpers::fast_cast<SettingsPage*>(widget)->applyChanges();
 	}
 
@@ -125,6 +134,18 @@ void ApplicationSettingsDialog::onCrawlerStarted()
 void ApplicationSettingsDialog::onCrawlerFinished()
 {
 	setEnabled(true);
+}
+
+
+void ApplicationSettingsDialog::currentSettingsPageChanged(int index)
+{
+	if (index == -1)
+	{
+		return;
+	}
+
+	QWidget* widget = m_ui.stackedWidget->widget(index);
+	Common::Helpers::fast_cast<SettingsPage*>(widget)->onShow();
 }
 
 ApplicationSettingsDialog::~ApplicationSettingsDialog()

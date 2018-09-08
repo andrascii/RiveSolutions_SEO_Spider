@@ -41,6 +41,14 @@ private:
 	{
 		init();
 	}
+
+	virtual void onShow() override
+	{
+	}
+
+	virtual void onClose() override
+	{
+	}
 };
 
 }

@@ -25,6 +25,9 @@ private slots:
 private:
 	void loadUserAgentsFromFile(const QString& fileName, QComboBox* targetComboBox);
 
+	virtual void onShow() override;
+	virtual void onClose() override;
+
 private:
 	Ui::UserAgentSettingsWidget m_ui;
 };

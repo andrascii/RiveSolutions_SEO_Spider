@@ -99,4 +99,12 @@ bool CrawlerSettingsWidget::eventFilter(QObject* object, QEvent* event)
 	return false;
 }
 
+void CrawlerSettingsWidget::onShow()
+{
+}
+
+void CrawlerSettingsWidget::onClose()
+{
+}
+
 }

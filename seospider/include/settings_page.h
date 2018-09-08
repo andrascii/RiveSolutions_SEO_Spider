@@ -13,10 +13,12 @@ class SettingsPage : public QFrame, public ISettingsPage
 	Q_OBJECT
 
 public:
+	friend class ApplicationSettingsDialog;
+
 	SettingsPage(bool isAutoApply = false, QWidget* parent = nullptr);
 
-	virtual void applyChanges() noexcept override;
-	virtual void reloadSettings() noexcept override;
+	virtual void applyChanges() override;
+	virtual void reloadSettings() override;
 	virtual bool isAutoApply() const noexcept override;
 	void setSomethingChanged(bool val) noexcept;
 	void clearChangedKeys() noexcept;
@@ -32,6 +34,9 @@ private:
 	void registerMetaTypes() const;
 	std::shared_ptr<IControlAdapter> createControlAdapter(QObject* control);
 	void initControlsWithProperty();
+
+	virtual void onShow() = 0;
+	virtual void onClose() = 0;
 
 private:
 	const bool m_isAutoApply;

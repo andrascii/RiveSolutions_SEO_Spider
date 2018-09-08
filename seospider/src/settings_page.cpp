@@ -21,7 +21,7 @@ SettingsPage::SettingsPage(bool isAutoApply, QWidget* parent)
 {
 }
 
-void SettingsPage::applyChanges() noexcept
+void SettingsPage::applyChanges()
 {
 	foreach(QObject* control, m_controls)
 	{
@@ -45,7 +45,7 @@ void SettingsPage::applyChanges() noexcept
 	setSomethingChanged(false);
 }
 
-void SettingsPage::reloadSettings() noexcept
+void SettingsPage::reloadSettings()
 {
 	INFOLOG << "Trying reload settings for " << windowTitle();
 
@@ -75,7 +75,7 @@ void SettingsPage::setSomethingChanged(bool val) noexcept
 	m_somethingChanged = val;
 }
 
-void SeoSpider::SettingsPage::clearChangedKeys() noexcept
+void SettingsPage::clearChangedKeys() noexcept
 {
 	m_changedSettingsKeys.clear();
 	m_somethingChanged = false;

@@ -22,6 +22,10 @@ private slots:
 	void toCrawlerPauseSpinBoxChanged(int value);
 
 private:
+	virtual void onShow() override;
+	virtual void onClose() override;
+
+private:
 	Ui::CrawlerPauseSettingsWidget m_ui;
 };
 
