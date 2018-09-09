@@ -177,7 +177,7 @@ int CrawlerOptions::maxImageSizeKb() const noexcept
 void CrawlerOptions::setMaxImageSizeKb(int value) noexcept
 {
 	m_data.maxImageSizeKb = value;
-	
+
 	emit maxImageSizeKbChanged(m_data.maxImageSizeKb);
 }
 
@@ -395,6 +395,144 @@ void CrawlerOptions::setUserAgent(const QByteArray& value)
 	m_data.userAgent = value;
 
 	emit userAgentChanged(m_data.userAgent);
+}
+
+
+bool CrawlerOptions::searchYandexMetricaCounters() const noexcept
+{
+	return m_data.searchYandexMetricaCounters;
+}
+
+
+void CrawlerOptions::setSearchYandexMetricaCounters(bool value)
+{
+	m_data.searchYandexMetricaCounters = value;
+
+	emit searchYandexMetricaCountersChanged(m_data.searchYandexMetricaCounters);
+}
+
+
+bool CrawlerOptions::searchYandexMetricaCounter1() const noexcept
+{
+	return m_data.searchYandexMetricaCounter1;
+}
+
+
+void CrawlerOptions::setSearchYandexMetricaCounter1(bool value)
+{
+	m_data.searchYandexMetricaCounter1 = value;
+
+	emit searchYandexMetricaCounter1Changed(m_data.searchYandexMetricaCounter1);
+}
+
+int CrawlerOptions::yandexMetricaCounter1Id() const noexcept
+{
+	return m_data.yandexMetricaCounter1Id;
+}
+
+void CrawlerOptions::setYandexMetricaCounter1Id(int value)
+{
+	m_data.yandexMetricaCounter1Id = value;
+
+	emit yandexMetricaCounter1IdChanged(m_data.yandexMetricaCounter1Id);
+}
+
+bool CrawlerOptions::searchYandexMetricaCounter2() const noexcept
+{
+	return m_data.searchYandexMetricaCounter2;
+}
+
+void CrawlerOptions::setSearchYandexMetricaCounter2(bool value)
+{
+	m_data.searchYandexMetricaCounter2 = value;
+
+	emit searchYandexMetricaCounter2Changed(m_data.searchYandexMetricaCounter2);
+}
+
+int CrawlerOptions::yandexMetricaCounter2Id() const noexcept
+{
+	return m_data.yandexMetricaCounter2Id;
+}
+
+
+void CrawlerOptions::setYandexMetricaCounter2Id(int value)
+{
+	m_data.yandexMetricaCounter2Id = value;
+
+	emit yandexMetricaCounter2IdChanged(m_data.yandexMetricaCounter2Id);
+}
+
+bool CrawlerOptions::searchYandexMetricaCounter3() const noexcept
+{
+	return m_data.searchYandexMetricaCounter3;
+}
+
+void CrawlerOptions::setSearchYandexMetricaCounter3(bool value)
+{
+	m_data.searchYandexMetricaCounter3 = value;
+
+	emit searchYandexMetricaCounter3Changed(m_data.searchYandexMetricaCounter3);
+}
+
+int CrawlerOptions::yandexMetricaCounter3Id() const noexcept
+{
+	return m_data.yandexMetricaCounter3Id;
+}
+
+void CrawlerOptions::setYandexMetricaCounter3Id(int value)
+{
+	m_data.yandexMetricaCounter3Id = value;
+
+	emit yandexMetricaCounter3IdChanged(m_data.yandexMetricaCounter3Id);
+}
+
+bool CrawlerOptions::searchYandexMetricaCounter4() const noexcept
+{
+	return m_data.searchYandexMetricaCounter4;
+}
+
+void CrawlerOptions::setSearchYandexMetricaCounter4(bool value)
+{
+	m_data.searchYandexMetricaCounter4 = value;
+
+	emit searchYandexMetricaCounter4Changed(m_data.searchYandexMetricaCounter4);
+}
+
+int CrawlerOptions::yandexMetricaCounter4Id() const noexcept
+{
+	return m_data.yandexMetricaCounter4Id;
+}
+
+void CrawlerOptions::setYandexMetricaCounter4Id(int value)
+{
+	m_data.yandexMetricaCounter4Id = value;
+
+	emit yandexMetricaCounter4IdChanged(m_data.yandexMetricaCounter4Id);
+}
+
+bool CrawlerOptions::searchYandexMetricaCounter5() const noexcept
+{
+	return m_data.searchYandexMetricaCounter5;
+}
+
+void CrawlerOptions::setSearchYandexMetricaCounter5(bool value)
+{
+	m_data.searchYandexMetricaCounter5 = value;
+
+	emit searchYandexMetricaCounter5Changed(m_data.searchYandexMetricaCounter5);
+}
+
+int CrawlerOptions::yandexMetricaCounter5Id() const noexcept
+{
+	return m_data.yandexMetricaCounter5Id;
+}
+
+
+void CrawlerOptions::setYandexMetricaCounter5Id(int value)
+{
+	m_data.yandexMetricaCounter5Id = value;
+
+	emit yandexMetricaCounter5IdChanged(m_data.yandexMetricaCounter5Id);
 }
 
 const CrawlerOptionsData& CrawlerOptions::data() const noexcept

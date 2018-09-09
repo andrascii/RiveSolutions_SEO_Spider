@@ -299,6 +299,19 @@ void Application::onAboutCrawlerOptionsChanged()
 		preferences()->setFromPauseTimer(crawler()->options()->pauseRangeFrom());
 		preferences()->setToPauseTimer(crawler()->options()->pauseRangeTo());
 	}
+
+	// yandex metrica counters
+	preferences()->setSearchYandexMetricaCounters(crawler()->options()->searchYandexMetricaCounters());
+	preferences()->setSearchYandexMetricaCounter1(crawler()->options()->searchYandexMetricaCounter1());
+	preferences()->setYandexMetricaCounter1Id(crawler()->options()->yandexMetricaCounter1Id());
+	preferences()->setSearchYandexMetricaCounter2(crawler()->options()->searchYandexMetricaCounter2());
+	preferences()->setYandexMetricaCounter2Id(crawler()->options()->yandexMetricaCounter2Id());
+	preferences()->setSearchYandexMetricaCounter3(crawler()->options()->searchYandexMetricaCounter3());
+	preferences()->setYandexMetricaCounter3Id(crawler()->options()->yandexMetricaCounter3Id());
+	preferences()->setSearchYandexMetricaCounter4(crawler()->options()->searchYandexMetricaCounter4());
+	preferences()->setYandexMetricaCounter4Id(crawler()->options()->yandexMetricaCounter4Id());
+	preferences()->setSearchYandexMetricaCounter5(crawler()->options()->searchYandexMetricaCounter5());
+	preferences()->setYandexMetricaCounter5Id(crawler()->options()->yandexMetricaCounter5Id());
 }
 
 void Application::onAboutUseCustomUserAgentChanged()
@@ -432,6 +445,17 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), SIGNAL(checkSubdomainsChanged(bool)), crawler()->options()->qobject(), SLOT(setCheckSubdomains(bool))));
 	VERIFY(connect(preferences(), SIGNAL(followRobotsTxtChanged(bool)), crawler()->options()->qobject(), SLOT(setFollowRobotsTxtRules(bool))));
 	VERIFY(connect(preferences(), SIGNAL(crawlOutsideOfStartFolderChanged(bool)), crawler()->options()->qobject(), SLOT(setCrawlOutsideOfStartFolder(bool))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCountersChanged(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounters(bool))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter1Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter1(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter1IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter1Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter2Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter2(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter2IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter2Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter3Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter3(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter3IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter3Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter4Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter4(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter4IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter4Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter5Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter5(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter5IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter5Id(int))));
 
 	const auto mapVariantToUserAgentType = [this](const QVariant& value)
 	{

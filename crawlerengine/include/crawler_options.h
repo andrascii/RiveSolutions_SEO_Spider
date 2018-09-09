@@ -39,6 +39,23 @@ struct CrawlerOptionsData final
 	int pauseRangeFrom = -1;
 	int pauseRangeTo = -1;
 	QByteArray userAgent;
+
+	bool searchYandexMetricaCounters;
+
+	bool searchYandexMetricaCounter1;
+	int yandexMetricaCounter1Id;
+
+	bool searchYandexMetricaCounter2;
+	int yandexMetricaCounter2Id;
+
+	bool searchYandexMetricaCounter3;
+	int yandexMetricaCounter3Id;
+
+	bool searchYandexMetricaCounter4;
+	int yandexMetricaCounter4Id;
+
+	bool searchYandexMetricaCounter5;
+	int yandexMetricaCounter5Id;
 };
 
 class CrawlerOptions : public QObject, public ICrawlerOptions
@@ -77,6 +94,19 @@ class CrawlerOptions : public QObject, public ICrawlerOptions
 	Q_PROPERTY(int pauseRangeFrom READ pauseRangeFrom WRITE setPauseRangeFrom NOTIFY pauseRangeFromChanged)
 	Q_PROPERTY(int pauseRangeTo READ pauseRangeTo WRITE setPauseRangeTo NOTIFY pauseRangeToChanged)
 	Q_PROPERTY(QByteArray userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged)
+
+	// yandex metrica
+	Q_PROPERTY(bool searchYandexMetricaCounters READ searchYandexMetricaCounters WRITE setSearchYandexMetricaCounters NOTIFY searchYandexMetricaCountersChanged)
+	Q_PROPERTY(bool searchYandexMetricaCounter1 READ searchYandexMetricaCounter1 WRITE setSearchYandexMetricaCounter1 NOTIFY searchYandexMetricaCounter1Changed)
+	Q_PROPERTY(int yandexMetricaCounter1Id READ yandexMetricaCounter1Id WRITE setYandexMetricaCounter1Id NOTIFY yandexMetricaCounter1IdChanged)
+	Q_PROPERTY(bool searchYandexMetricaCounter2 READ searchYandexMetricaCounter2 WRITE setSearchYandexMetricaCounter2 NOTIFY searchYandexMetricaCounter2Changed)
+	Q_PROPERTY(int yandexMetricaCounter2Id READ yandexMetricaCounter2Id WRITE setYandexMetricaCounter2Id NOTIFY yandexMetricaCounter2IdChanged)
+	Q_PROPERTY(bool searchYandexMetricaCounter3 READ searchYandexMetricaCounter3 WRITE setSearchYandexMetricaCounter3 NOTIFY searchYandexMetricaCounter3Changed)
+	Q_PROPERTY(int yandexMetricaCounter3Id READ yandexMetricaCounter3Id WRITE setYandexMetricaCounter3Id NOTIFY yandexMetricaCounter3IdChanged)
+	Q_PROPERTY(bool searchYandexMetricaCounter4 READ searchYandexMetricaCounter4 WRITE setSearchYandexMetricaCounter4 NOTIFY searchYandexMetricaCounter4Changed)
+	Q_PROPERTY(int yandexMetricaCounter4Id READ yandexMetricaCounter4Id WRITE setYandexMetricaCounter4Id NOTIFY yandexMetricaCounter4IdChanged)
+	Q_PROPERTY(bool searchYandexMetricaCounter5 READ searchYandexMetricaCounter5 WRITE setSearchYandexMetricaCounter5 NOTIFY searchYandexMetricaCounter5Changed)
+	Q_PROPERTY(int yandexMetricaCounter5Id READ yandexMetricaCounter5Id WRITE setYandexMetricaCounter5Id NOTIFY yandexMetricaCounter5IdChanged)
 
 public:
 	CrawlerOptions(QObject* parent = nullptr);
@@ -215,6 +245,47 @@ public:
 	virtual QByteArray userAgent() const noexcept override;
 	Q_SLOT virtual void setUserAgent(const QByteArray& value) override;
 	Q_SIGNAL virtual void userAgentChanged(const QByteArray& value) const override;
+
+	// yandex metrica
+
+	virtual bool searchYandexMetricaCounters() const noexcept override;
+	Q_SLOT virtual void setSearchYandexMetricaCounters(bool value) override;
+	Q_SIGNAL virtual void searchYandexMetricaCountersChanged(bool value) override;
+
+	virtual bool searchYandexMetricaCounter1() const noexcept override;
+	Q_SLOT virtual void setSearchYandexMetricaCounter1(bool value) override;
+	Q_SIGNAL virtual void searchYandexMetricaCounter1Changed(bool value) override;
+	virtual int yandexMetricaCounter1Id() const noexcept override;
+	Q_SLOT virtual void setYandexMetricaCounter1Id(int value) override;
+	Q_SIGNAL virtual void yandexMetricaCounter1IdChanged(int value) override;
+
+	virtual bool searchYandexMetricaCounter2() const noexcept override;
+	Q_SLOT virtual void setSearchYandexMetricaCounter2(bool value) override;
+	Q_SIGNAL virtual void searchYandexMetricaCounter2Changed(bool value) override;
+	virtual int yandexMetricaCounter2Id() const noexcept override;
+	Q_SLOT virtual void setYandexMetricaCounter2Id(int value) override;
+	Q_SIGNAL virtual void yandexMetricaCounter2IdChanged(int value) override;
+
+	virtual bool searchYandexMetricaCounter3() const noexcept override;
+	Q_SLOT virtual void setSearchYandexMetricaCounter3(bool value) override;
+	Q_SIGNAL virtual void searchYandexMetricaCounter3Changed(bool value) override;
+	virtual int yandexMetricaCounter3Id() const noexcept override;
+	Q_SLOT virtual void setYandexMetricaCounter3Id(int value) override;
+	Q_SIGNAL virtual void yandexMetricaCounter3IdChanged(int value) override;
+
+	virtual bool searchYandexMetricaCounter4() const noexcept override;
+	Q_SLOT virtual void setSearchYandexMetricaCounter4(bool value) override;
+	Q_SIGNAL virtual void searchYandexMetricaCounter4Changed(bool value) override;
+	virtual int yandexMetricaCounter4Id() const noexcept override;
+	Q_SLOT virtual void setYandexMetricaCounter4Id(int value) override;
+	Q_SIGNAL virtual void yandexMetricaCounter4IdChanged(int value) override;
+
+	virtual bool searchYandexMetricaCounter5() const noexcept override;
+	Q_SLOT virtual void setSearchYandexMetricaCounter5(bool value) override;
+	Q_SIGNAL virtual void searchYandexMetricaCounter5Changed(bool value) override;
+	virtual int yandexMetricaCounter5Id() const noexcept override;
+	Q_SLOT virtual void setYandexMetricaCounter5Id(int value) override;
+	Q_SIGNAL virtual void yandexMetricaCounter5IdChanged(int value) override;
 
 private:
 	CrawlerOptionsData m_data;
