@@ -156,6 +156,45 @@ public:
 	virtual QByteArray userAgent() const noexcept = 0;
 	virtual void setUserAgent(const QByteArray& value) = 0;
 	virtual void userAgentChanged(const QByteArray& value) const = 0;
+
+	virtual bool searchYandexMetricaCounters() const noexcept = 0;
+	virtual void setSearchYandexMetricaCounters(bool value) = 0;
+	virtual void searchYandexMetricaCountersChanged(bool value) = 0;
+
+	virtual bool searchYandexMetricaCounter1() const noexcept = 0;
+	virtual void setSearchYandexMetricaCounter1(bool value) = 0;
+	virtual void searchYandexMetricaCounter1Changed(bool value) = 0;
+	virtual int yandexMetricaCounter1Id() const noexcept = 0;
+	virtual void setYandexMetricaCounter1Id(int value) = 0;
+	virtual void yandexMetricaCounter1IdChanged(int value) = 0;
+
+	virtual bool searchYandexMetricaCounter2() const noexcept = 0;
+	virtual void setSearchYandexMetricaCounter2(bool value) = 0;
+	virtual void searchYandexMetricaCounter2Changed(bool value) = 0;
+	virtual int yandexMetricaCounter2Id() const noexcept = 0;
+	virtual void setYandexMetricaCounter2Id(int value) = 0;
+	virtual void yandexMetricaCounter2IdChanged(int value) = 0;
+
+	virtual bool searchYandexMetricaCounter3() const noexcept = 0;
+	virtual void setSearchYandexMetricaCounter3(bool value) = 0;
+	virtual void searchYandexMetricaCounter3Changed(bool value) = 0;
+	virtual int yandexMetricaCounter3Id() const noexcept = 0;
+	virtual void setYandexMetricaCounter3Id(int value) = 0;
+	virtual void yandexMetricaCounter3IdChanged(int value) = 0;
+
+	virtual bool searchYandexMetricaCounter4() const noexcept = 0;
+	virtual void setSearchYandexMetricaCounter4(bool value) = 0;
+	virtual void searchYandexMetricaCounter4Changed(bool value) = 0;
+	virtual int yandexMetricaCounter4Id() const noexcept = 0;
+	virtual void setYandexMetricaCounter4Id(int value) = 0;
+	virtual void yandexMetricaCounter4IdChanged(int value) = 0;
+
+	virtual bool searchYandexMetricaCounter5() const noexcept = 0;
+	virtual void setSearchYandexMetricaCounter5(bool value) = 0;
+	virtual void searchYandexMetricaCounter5Changed(bool value) = 0;
+	virtual int yandexMetricaCounter5Id() const noexcept = 0;
+	virtual void setYandexMetricaCounter5Id(int value) = 0;
+	virtual void yandexMetricaCounter5IdChanged(int value) = 0;
 };
 
 }
