@@ -55,7 +55,7 @@ bool SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType typ
 	const ParsedPagePtr pointer(parsedPage, fakeDeleter);
 
 	ISequencedStorage* sequencedStorage = storage(type);
-	
+
 	if (sequencedStorage)
 	{
 		const RemoveEffects removeEffects = sequencedStorage->remove(pointer);
@@ -211,7 +211,7 @@ void SequencedDataCollection::onCustomDataFeedRowReceived(ICustomDataFeedRow* ro
 		//	{
 		//		continue;
 		//	}
-		//	
+		//
 		//	StorageType storageType = static_cast<StorageType>(i);
 		//	const auto storageIterator = m_sequencedStorageMap.find(storageType);
 
@@ -267,7 +267,7 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::EmptyMetaKeywordsUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::DuplicatedMetaKeywordsUrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::SeveralMetaKeywordsUrlStorageType, createSequencedStorage()),
-		
+
 		// H1 Problems Storages
 		std::make_pair(StorageType::MissingH1UrlStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::DuplicatedH1UrlStorageType, createSequencedStorage()),
@@ -317,6 +317,13 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::DuplicatedCanonicalUrlResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::UniqueCanonicalUrlResourcesStorageType, createSequencedStorage()),
 		std::make_pair(StorageType::ExternalDoFollowUrlResourcesStorageType, createSequencedStorage()),
+
+		// yandex metrica
+		std::make_pair(StorageType::YandexMetricaCounter1StorageType, createSequencedStorage()),
+		std::make_pair(StorageType::YandexMetricaCounter2StorageType, createSequencedStorage()),
+		std::make_pair(StorageType::YandexMetricaCounter3StorageType, createSequencedStorage()),
+		std::make_pair(StorageType::YandexMetricaCounter4StorageType, createSequencedStorage()),
+		std::make_pair(StorageType::YandexMetricaCounter5StorageType, createSequencedStorage()),
 	};
 }
 

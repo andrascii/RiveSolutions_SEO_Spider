@@ -83,6 +83,13 @@ enum class StorageAdapterType
 	StorageAdapterTypeExternalVideoResources = CrawlerEngine::StorageType::ExternalVideoResourcesStorageType,
 	StorageAdapterTypeExternalOtherResources = CrawlerEngine::StorageType::ExternalOtherResourcesStorageType,
 
+	// yandex metrica
+	StorageAdapterTypeYandexMetricaCounter1 = CrawlerEngine::StorageType::YandexMetricaCounter1StorageType,
+	StorageAdapterTypeYandexMetricaCounter2 = CrawlerEngine::StorageType::YandexMetricaCounter2StorageType,
+	StorageAdapterTypeYandexMetricaCounter3 = CrawlerEngine::StorageType::YandexMetricaCounter3StorageType,
+	StorageAdapterTypeYandexMetricaCounter4 = CrawlerEngine::StorageType::YandexMetricaCounter4StorageType,
+	StorageAdapterTypeYandexMetricaCounter5 = CrawlerEngine::StorageType::YandexMetricaCounter5StorageType,
+
 	StorageAdapterTypeCustomDataFeed = CrawlerEngine::StorageType::EndEnumStorageType + 1,
 
 	StorageAdapterTypeNotFound, // not an actual storage but used for show QLabel that says about "has no search results"
@@ -165,6 +172,14 @@ inline QString storageAdapterTypeStringFromEnum(StorageAdapterType type)
 		case StorageAdapterType::StorageAdapterTypeExternalFlashResources: return "ExternalFlashResources";
 		case StorageAdapterType::StorageAdapterTypeExternalVideoResources: return "ExternalVideoResources";
 		case StorageAdapterType::StorageAdapterTypeExternalOtherResources: return "ExternalOtherResources";
+
+		// yandex metrica
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter1: return "YandexMetricaCounter1";
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter2: return "YandexMetricaCounter2";
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter3: return "YandexMetricaCounter3";
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter4: return "YandexMetricaCounter4";
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter5: return "YandexMetricaCounter5";
+
 		case StorageAdapterType::StorageAdapterTypeCustomDataFeed: return "CustomDataFeed";
 
 		default: ASSERT(false && "Incorrect storage type"); return QString();

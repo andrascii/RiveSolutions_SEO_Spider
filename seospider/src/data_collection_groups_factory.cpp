@@ -160,6 +160,9 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->descriptions.push_back(DCStorageDescription{ StorageType::BlockedByRobotsTxtStorageType, QObject::tr("Blocked by robots.txt Pages") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::BlockedByXRobotsTagStorageType, QObject::tr("Blocked by x-robots-tag Pages") });
 
+			const auto yandexMetricaDescriptions = createYandexMetricaDescriptions();
+			p->descriptions.insert(p->descriptions.end(), yandexMetricaDescriptions.begin(), yandexMetricaDescriptions.end());
+
 			return p;
 		}
 
@@ -193,35 +196,16 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			return p;
 		}
 
-		case AuditGroup::Counters:
+		case AuditGroup::YandexMetricaCounters:
 		{
+			if (!theApp->preferences()->searchYandexMetricaCounters())
+			{
+				return p;
+			}
+
 			p->name = QObject::tr("Yandex Metrica");
-			p->group = AuditGroup::Counters;
-
-			if (theApp->preferences()->searchYandexMetricaCounter1())
-			{
-				p->descriptions.push_back(DCStorageDescription{ StorageType::YandexMetricaCounter1StorageType, QObject::tr("HTML Resources") });
-			}
-
-			if (theApp->preferences()->searchYandexMetricaCounter2())
-			{
-				p->descriptions.push_back(DCStorageDescription{ StorageType::YandexMetricaCounter2StorageType, QObject::tr("HTML Resources") });
-			}
-
-			if (theApp->preferences()->searchYandexMetricaCounter3())
-			{
-				p->descriptions.push_back(DCStorageDescription{ StorageType::YandexMetricaCounter3StorageType, QObject::tr("HTML Resources") });
-			}
-
-			if (theApp->preferences()->searchYandexMetricaCounter4())
-			{
-				p->descriptions.push_back(DCStorageDescription{ StorageType::YandexMetricaCounter4StorageType, QObject::tr("HTML Resources") });
-			}
-
-			if (theApp->preferences()->searchYandexMetricaCounter5())
-			{
-				p->descriptions.push_back(DCStorageDescription{ StorageType::YandexMetricaCounter5StorageType, QObject::tr("HTML Resources") });
-			}
+			p->group = AuditGroup::YandexMetricaCounters;
+			p->descriptions = createYandexMetricaDescriptions();
 
 			return p;
 		}
@@ -247,4 +231,67 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(const QVector<C
 
 	return p;
 }
+
+std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetricaDescriptions() const
+{
+	std::vector<DCStorageDescription> descriptions;
+
+	if (!theApp->preferences()->searchYandexMetricaCounters())
+	{
+		return descriptions;
+	}
+
+	if (theApp->preferences()->searchYandexMetricaCounter1())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::YandexMetricaCounter1StorageType,
+				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter1Id()).toStdString().c_str())
+			});
+	}
+
+	if (theApp->preferences()->searchYandexMetricaCounter2())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::YandexMetricaCounter2StorageType,
+				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter2Id()).toStdString().c_str())
+			});
+	}
+
+	if (theApp->preferences()->searchYandexMetricaCounter3())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::YandexMetricaCounter3StorageType,
+				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter3Id()).toStdString().c_str())
+			});
+	}
+
+	if (theApp->preferences()->searchYandexMetricaCounter4())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::YandexMetricaCounter4StorageType,
+				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter4Id()).toStdString().c_str())
+			});
+	}
+
+	if (theApp->preferences()->searchYandexMetricaCounter5())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::YandexMetricaCounter5StorageType,
+				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter5Id()).toStdString().c_str())
+			});
+	}
+
+	return descriptions;
+}
+
 }

@@ -63,7 +63,7 @@ Url PageParserHelpers::resolveRelativeUrl(const Url& relativeUrl, const Url& bas
 	{
 		fixedPath = fixedPath.replace("/./", "/");
 	}
-	
+
 	while (fixedPath.contains("/../"))
 	{
 		int doublePointsPos = fixedPath.indexOf("/../");
@@ -73,7 +73,7 @@ Url PageParserHelpers::resolveRelativeUrl(const Url& relativeUrl, const Url& bas
 			WARNLOG << "Can't resolve absolute path: " << fixedPath;
 			break;
 		}
-		
+
 		fixedPath = fixedPath.left(prevSlashPos + 1) + fixedPath.right(fixedPath.size() - doublePointsPos - 4);
 	}
 
@@ -136,8 +136,8 @@ bool PageParserHelpers::isUrlExternal(const Url& baseUrl, const Url& url, bool a
 	// TODO: improve
 	QString baseUrlHost = baseUrl.host().toLower();
 	QString urlHost = url.host().toLower();
-	
-	const bool isUrlInternal =  baseUrlHost == urlHost || 
+
+	const bool isUrlInternal =  baseUrlHost == urlHost ||
 		(urlHost.endsWith("www." + baseUrlHost)) ||
 		(baseUrlHost.endsWith("www." + urlHost));
 
@@ -183,7 +183,7 @@ bool PageParserHelpers::isHtmlOrPlainContentType(const QString& contentType) noe
 {
 	return contentType.startsWith("text/html") ||
 		contentType.startsWith("text/xhtml") ||
-		contentType.startsWith("text/xml") ||
+		contentType.startsWith("text/xml") || // why xml document treated as a html content?
 		contentType.startsWith("application/xhtml") ||
 		contentType.startsWith("text/plain") ||
 		contentType.isEmpty();
