@@ -28,6 +28,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 			plainDataSet->addGroup(AuditGroup::H1AuditGroup);
 			plainDataSet->addGroup(AuditGroup::H2AuditGroup);
 			plainDataSet->addGroup(AuditGroup::ImageAuditGroup);
+			plainDataSet->addGroup(AuditGroup::YandexMetricaCounters);
 
 			DataCollectionGroupsFactory dcGroupsFactory;
 			const DCStorageGroupDescriptionPtr customDataFeedGroup = dcGroupsFactory.create(dataCollection->customDataFeeds());
@@ -48,7 +49,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 				}
 			});
 
-			
+
 			const DCStorageGroupDescriptionPtr orderedErrorsGroup = dcGroupsFactory.create(AuditGroup::OrderedErrorsGroup);
 			if (!customDataFeedGroup->descriptions.empty())
 			{

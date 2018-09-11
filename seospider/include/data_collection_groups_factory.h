@@ -38,9 +38,9 @@ enum class AuditGroup
 	NoProblem,
 
 	//
-	// Counters group
+	// Yandex Metrica Counters group
 	//
-	Counters,
+	YandexMetricaCounters,
 
 	//
 	// Custom data feeds
@@ -77,6 +77,9 @@ class DataCollectionGroupsFactory
 public:
 	DCStorageGroupDescriptionPtr create(AuditGroup group) const;
 	DCStorageGroupDescriptionPtr create(const QVector<CrawlerEngine::ICustomDataFeed*> dataFeeds) const;
+
+private:
+	std::vector<DCStorageDescription> createYandexMetricaDescriptions() const;
 };
 
 }

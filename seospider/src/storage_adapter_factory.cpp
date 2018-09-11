@@ -5,7 +5,7 @@
 namespace SeoSpider
 {
 
-IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapterType type, 
+IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapterType type,
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection) const
 {
 	ASSERT(type > StorageAdapterType::StorageAdapterTypeBegin &&
@@ -274,6 +274,19 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 		{
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::StatusCodeColumn;
+		}
+
+		// yandex metrica
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter1:
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter2:
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter3:
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter4:
+		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter5:
+		{
+			return QVector<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::TitleColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn;
 		}
 	}

@@ -219,7 +219,7 @@ void Crawler::startCrawling()
 
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setTimeout",
 		Qt::BlockingQueuedConnection, Q_ARG(int, m_options->limitTimeout())));
-	
+
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setMaxRedirects",
 		Qt::BlockingQueuedConnection, Q_ARG(int, m_options->maxRedirectsToFollow())));
 
@@ -277,7 +277,7 @@ void Crawler::onAboutCrawlingState()
 		state->modelControllerCrawledLinksCount() == state->workersProcessedLinksCount() &&
 		modelControllerAcceptedLinksCount == sequencedDataCollectionCount;
 
-	const bool isTrialLicenseMaxLinks = m_licenseService->isTrialLicense() && 
+	const bool isTrialLicenseMaxLinks = m_licenseService->isTrialLicense() &&
 		sequencedDataCollectionCount >= Common::c_maxTrialLicenseCrawlingLinksCount;
 
 	if (isTrialLicenseMaxLinks || isCrawlingEnded)
@@ -298,7 +298,7 @@ void Crawler::waitSerializationReadyState()
 
 	ASSERT(m_session);
 
-	const bool isReadyForSerialization = 
+	const bool isReadyForSerialization =
 		(state() == StateSerializaton || state() == StateDeserializaton) && !m_session->name().isEmpty() &&
 		crawlerSharedState->workersProcessedLinksCount() == crawlerSharedState->modelControllerCrawledLinksCount() &&
 		crawlerSharedState->modelControllerAcceptedLinksCount() == crawlerSharedState->sequencedDataCollectionLinksCount();
@@ -331,7 +331,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 	initSessionIfNeeded();
 
-	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions", 
+	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions",
 		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptionsData&, m_options->data())));
 
 	setUserAgent(m_options->userAgent());
@@ -354,7 +354,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 	for (CrawlerWorkerThread* worker : m_workers)
 	{
-		VERIFY(QMetaObject::invokeMethod(worker, "start", Qt::QueuedConnection, 
+		VERIFY(QMetaObject::invokeMethod(worker, "start", Qt::QueuedConnection,
 			Q_ARG(const CrawlerOptionsData&, m_options->data()), Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content()))));
 	}
 
@@ -377,7 +377,7 @@ void Crawler::onSessionChanged()
 
 void Crawler::onCrawlerOptionsSomethingChanged()
 {
-	ASSERT(state() == StatePending || 
+	ASSERT(state() == StatePending ||
 		state() == StateDeserializaton ||
 		state() == StatePreChecking
 	);
@@ -399,8 +399,8 @@ void Crawler::onDeserializationProcessDone()
 {
 	for (auto worker : m_workers)
 	{
-		VERIFY(QMetaObject::invokeMethod(worker, "reinitOptions", Qt::BlockingQueuedConnection, 
-			Q_ARG(const CrawlerOptionsData&, m_options->data()), 
+		VERIFY(QMetaObject::invokeMethod(worker, "reinitOptions", Qt::BlockingQueuedConnection,
+			Q_ARG(const CrawlerOptionsData&, m_options->data()),
 			Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content())))
 		);
 	}
@@ -409,7 +409,7 @@ void Crawler::onDeserializationProcessDone()
 void Crawler::onRefreshPageDone()
 {
 	ServiceLocator::instance()->service<INotificationService>()->info(
-		tr("Refreshing page"), 
+		tr("Refreshing page"),
 		tr("Page refresh completed.")
 	);
 
@@ -441,7 +441,7 @@ void Crawler::initializeCrawlingSession()
 void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& response)
 {
 	Q_UNUSED(requester);
-	
+
 	SerializationTaskResponseResult* result = Common::Helpers::fast_cast<SerializationTaskResponseResult*>(response.result.get());
 
 	ASSERT(result);
@@ -457,7 +457,7 @@ void Crawler::onSerializationTaskDone(Requester* requester, const TaskResponse& 
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
 
 		serviceLocator->service<INotificationService>()->error(
-			tr("Save file error"), 
+			tr("Save file error"),
 			tr("The operation has not been successful.")
 		);
 	}
@@ -482,7 +482,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	if (!result->error.isEmpty())
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
-		
+
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
 
 		serviceLocator->service<INotificationService>()->error(tr("Loading file error"), tr("The operation has not been successful"));
@@ -547,7 +547,7 @@ void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 
 		serviceLocator->service<INotificationService>()->error(
-			tr("DNS Lookup Failed!"), 
+			tr("DNS Lookup Failed!"),
 			tr("I'm sorry but I cannot find this website\n"
 				"Please, be sure that you entered a valid address")
 		);
@@ -559,7 +559,7 @@ void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response
 
 	m_hostInfo.reset(new HostInfo(response.hostInfo));
 	m_options->setStartCrawlingPage(response.url);
-	
+
 	tryToLoadCrawlingDependencies();
 }
 
@@ -613,7 +613,7 @@ void Crawler::onSerializationReadyToBeStarted()
 		}
 	}
 
-	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>(std::move(pages), 
+	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>(std::move(pages),
 		std::move(crawledUrls), std::move(pendingUrls), m_options->data(), m_webHostInfo->allData());
 
 	std::shared_ptr<ITask> task = std::make_shared<SerializationTask>(std::move(serializer), m_session->name());
@@ -760,7 +760,7 @@ void Crawler::loadFromFile(const QString& fileName)
 	if (m_session)
 	{
 		serviceLocator->service<INotificationService>()->error(
-			tr("Error"), 
+			tr("Error"),
 			tr("Cannot load project file until the existing one is saved")
 		);
 
@@ -770,7 +770,7 @@ void Crawler::loadFromFile(const QString& fileName)
 	if (state() == Crawler::StateWorking)
 	{
 		serviceLocator->service<INotificationService>()->error(
-			tr("Error"), 
+			tr("Error"),
 			tr("Cannot open a document while crawler is working!")
 		);
 
@@ -840,7 +840,7 @@ void Crawler::refreshPage(StorageType storageType, int index)
 
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
-	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh", 
+	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh",
 		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));
 
 	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet, storagesBeforeRemoving);
