@@ -5,15 +5,15 @@
 namespace CrawlerEngine
 {
 
-YmParser::YmParser(IHtmlParser* htmlParser)
+YmParser::YmParser(IHtmlParser* htmlParser, int counterNumber, StorageType targetStorageType)
 	: m_htmlParser(htmlParser)
+	, m_counterNumber(counterNumber)
+	, m_targetStorageType(targetStorageType)
 {
 }
 
-void YmParser::parse(const ResponseHeaders& headers, ParsedPagePtr& parsedPage)
+void YmParser::parse(const ResponseHeaders&, ParsedPagePtr& parsedPage)
 {
-	headers;
-
 	if (parsedPage->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
@@ -26,19 +26,22 @@ void YmParser::parse(const ResponseHeaders& headers, ParsedPagePtr& parsedPage)
 		return;
 	}
 
-	std::vector<IHtmlNodeCountedPtr> tagScripts = headTags[0]->matchSubNodes(IHtmlNode::TagIdScript);
+	const std::vector<IHtmlNodeCountedPtr> tagScripts = headTags[0]->matchSubNodes(IHtmlNode::TagIdScript);
 
 	const auto iter = std::find_if(tagScripts.begin(), tagScripts.end(), [this](const IHtmlNodeCountedPtr& node)
 	{
 		return findYaCounter(node->text());
 	});
 
-	parsedPage->pageCounterIds |= static_cast<std::uint32_t>(PageCounterId::YandexMetrica);
+	if (iter == tagScripts.end())
+	{
+		parsedPage->missingYandexMetricaCounters.push_back(m_targetStorageType);
+	}
 }
 
 bool YmParser::findYaCounter(const QString& javaScriptCode) const
 {
-	return javaScriptCode.contains("w.yaCounter");
+	return javaScriptCode.contains(QString("w.yaCounter%1").arg(m_counterNumber));
 }
 
 }

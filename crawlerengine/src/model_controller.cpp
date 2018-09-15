@@ -195,6 +195,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		return;
 	}
 
+	handlePresenceYandexMetricaCounters(workerResult, secondGetRequest);
 	processParsedPageHtmlResources(workerResult, secondGetRequest);
 	processParsedPageResources(workerResult, secondGetRequest);
 	workerResult.incomingPage()->allResourcesOnPage.clear();
@@ -1264,6 +1265,17 @@ void ModelController::setLinksForResourcePageAndLoadedPage(ParsedPagePtr& resour
 			resource.link.altOrTitle
 		}
 	);
+}
+
+void ModelController::handlePresenceYandexMetricaCounters(WorkerResult& workerResult, bool secondGetRequest)
+{
+	if (!m_crawlerOptionsData.searchYandexMetricaCounters || secondGetRequest)
+	{
+		return;
+	}
+
+	std::for_each(workerResult.incomingPage()->missingYandexMetricaCounters.begin(), workerResult.incomingPage()->missingYandexMetricaCounters.end(),
+		[&](StorageType targetStorageType) { data()->addParsedPage(workerResult.incomingPage(), targetStorageType); });
 }
 
 }
