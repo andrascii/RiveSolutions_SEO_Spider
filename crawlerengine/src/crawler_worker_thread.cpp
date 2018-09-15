@@ -28,12 +28,12 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorkerThread::extractUrlAndDownload, Qt::QueuedConnection));
 
-	VERIFY(connect(&Crawler::instance(), &Crawler::onAboutClearData, 
+	VERIFY(connect(&Crawler::instance(), &Crawler::onAboutClearData,
 		this, &CrawlerWorkerThread::onCrawlerClearData, Qt::QueuedConnection));
 
-	VERIFY(connect(m_defferedProcessingTimer, &QTimer::timeout, 
+	VERIFY(connect(m_defferedProcessingTimer, &QTimer::timeout,
 		this, &CrawlerWorkerThread::extractUrlAndDownload));
-	
+
 	m_defferedProcessingTimer->setInterval(1000);
 	m_defferedProcessingTimer->setSingleShot(true);
 
@@ -127,7 +127,7 @@ void CrawlerWorkerThread::extractUrlAndDownload()
 	const CrawlerSharedState* state = CrawlerSharedState::instance();
 	const int workersProcessedLinksCount = state->workersProcessedLinksCount();
 	const int donwloaderCrawledLinksCOunt = state->downloaderCrawledLinksCount();
- 
+
 	const int differenceBetweenWorkersAndDownloader = donwloaderCrawledLinksCOunt - workersProcessedLinksCount;
 	constexpr int maxPendingLinksCount = 50;
 
@@ -225,7 +225,7 @@ CrawlerWorkerThread::ShedulePagesResult CrawlerWorkerThread::schedulePageResourc
 	{
 		return resource.link;
 	});
-	
+
 	m_uniqueLinkStore->addLinkList(std::move(getHtmlLinks), DownloadRequestType::RequestTypeGet);
 
 	std::vector<Url> resourcesHeadUrlList;
@@ -382,7 +382,7 @@ CrawlerWorkerThread::ShedulePagesResult CrawlerWorkerThread::handlePageLinkList(
 void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& response)
 {
 	Common::Finally reloadGuard([this]
-	{ 
+	{
 		m_reloadPage = false;
 	});
 
@@ -455,7 +455,7 @@ void CrawlerWorkerThread::fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePt
 std::optional<CrawlerRequest> CrawlerWorkerThread::prepareUnloadedPage() const
 {
 	CrawlerRequest result;
-	
+
 	if (!m_pagesAcceptedAfterStop.pages.empty())
 	{
 		const auto pair = m_pagesAcceptedAfterStop.pages.front();

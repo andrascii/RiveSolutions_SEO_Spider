@@ -67,7 +67,6 @@ void PageDataCollector::applyOptions()
 
 	m_parser.addParser(std::make_shared<BaseUrlParser>(m_htmlParser.get()));
 	m_parser.addParser(std::make_shared<HtmlResourcesParser>(m_htmlParser.get()));
-	m_parser.addParser(std::make_shared<YmParser>(m_htmlParser.get()));
 
 	if (m_crawlerOptionsData.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{
@@ -92,6 +91,47 @@ void PageDataCollector::applyOptions()
 	if (m_crawlerOptionsData.parserTypeFlags.testFlag(OtherResourcesParserType))
 	{
 		m_parser.addParser(createParser(OtherResourcesParserType));
+	}
+
+	if (!m_crawlerOptionsData.searchYandexMetricaCounters)
+	{
+		return;
+	}
+
+	if (m_crawlerOptionsData.searchYandexMetricaCounter1)
+	{
+		m_parser.addParser(std::make_shared<YmParser>(
+			m_htmlParser.get(),
+			m_crawlerOptionsData.yandexMetricaCounter1Id,
+			StorageType::YandexMetricaCounter1StorageType));
+	}
+	if (m_crawlerOptionsData.searchYandexMetricaCounter2)
+	{
+		m_parser.addParser(std::make_shared<YmParser>(
+			m_htmlParser.get(),
+			m_crawlerOptionsData.yandexMetricaCounter2Id,
+			StorageType::YandexMetricaCounter2StorageType));
+	}
+	if (m_crawlerOptionsData.searchYandexMetricaCounter3)
+	{
+		m_parser.addParser(std::make_shared<YmParser>(
+			m_htmlParser.get(),
+			m_crawlerOptionsData.yandexMetricaCounter3Id,
+			StorageType::YandexMetricaCounter3StorageType));
+	}
+	if (m_crawlerOptionsData.searchYandexMetricaCounter4)
+	{
+		m_parser.addParser(std::make_shared<YmParser>(
+			m_htmlParser.get(),
+			m_crawlerOptionsData.yandexMetricaCounter4Id,
+			StorageType::YandexMetricaCounter4StorageType));
+	}
+	if (m_crawlerOptionsData.searchYandexMetricaCounter5)
+	{
+		m_parser.addParser(std::make_shared<YmParser>(
+			m_htmlParser.get(),
+			m_crawlerOptionsData.yandexMetricaCounter5Id,
+			StorageType::YandexMetricaCounter5StorageType));
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #include "status_code.h"
 #include "url.h"
+#include "storage_type.h"
 
 namespace CrawlerEngine
 {
@@ -211,7 +212,7 @@ struct ParsedPage
 	ResourceType resourceType;
 
 	// this container used by workers and finally ModelController clears it
-	// this intermediate data must be transfer using another way
+	// TODO: this intermediate data must be transfer using another way
 	ResourcesOnPageList allResourcesOnPage;
 
 	std::deque<ResourceLink> linksOnThisPage;
@@ -223,7 +224,7 @@ struct ParsedPage
 	std::vector<bool> storages;
 
 	QMap<DataFeedId, QMap<int, QString>> dataFeedsData;
-	std::uint32_t pageCounterIds = std::uint32_t();
+	std::vector<StorageType> missingYandexMetricaCounters;
 
 	bool canRefresh() const noexcept
 	{

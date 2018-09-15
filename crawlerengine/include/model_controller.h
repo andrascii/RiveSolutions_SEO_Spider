@@ -58,6 +58,8 @@ private:
 	ParsedPagePtr takeFromCrawledOrPendingStorage(const ParsedPagePtr& pointer) const;
 	void setLinksForResourcePageAndLoadedPage(ParsedPagePtr& resourcePage, WorkerResult& loadedPage, const ResourceOnPage& resource) const;
 
+	void handlePresenceYandexMetricaCounters(WorkerResult& workerResult, bool secondGetRequest);
+
 private:
 	UnorderedDataCollection* m_data;
 	CrawlerOptionsData m_crawlerOptionsData;

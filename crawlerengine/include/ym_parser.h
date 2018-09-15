@@ -10,7 +10,7 @@ class IHtmlParser;
 class YmParser : public IPageParser
 {
 public:
-	YmParser(IHtmlParser* htmlParser);
+	YmParser(IHtmlParser* htmlParser, int counterNumber, StorageType targetStorageType);
 	virtual void parse(const ResponseHeaders& headers, ParsedPagePtr& parsedPage) override;
 
 private:
@@ -18,6 +18,8 @@ private:
 
 private:
 	IHtmlParser* m_htmlParser;
+	int m_counterNumber;
+	StorageType m_targetStorageType;
 };
 
 }
