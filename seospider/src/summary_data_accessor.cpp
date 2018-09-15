@@ -30,6 +30,8 @@ SummaryDataAccessor::SummaryDataAccessor(SummaryDataSet* dataSet)
 
 	VERIFY(connect(m_currentDataSet->sequencedDataCollection(), &CrawlerEngine::SequencedDataCollection::endClearData,
 		this, &SummaryDataAccessor::endClearData));
+
+	VERIFY(connect(m_currentDataSet, &SummaryDataSet::dataSetChanged, this, &SummaryDataAccessor::onDataSetChanged));
 }
 
 void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
@@ -38,13 +40,14 @@ void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
 	{
 		disconnect(m_sortableDataSet, &SummaryDataSet::sortingStarted, this, &SummaryDataAccessor::beginClearData);
 		disconnect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData);
+		disconnect(m_sortableDataSet, &SummaryDataSet::dataSetChanged, this, &SummaryDataAccessor::onDataSetChanged);
 	}
 
 	m_sortableDataSet = dataSet;
 
 	for (int i = 0; i < m_currentDataSet->rowCount(); ++i)
 	{
-		const DCStorageDescription* currentDataSetStorageDescription = 
+		const DCStorageDescription* currentDataSetStorageDescription =
 			m_currentDataSet->storageDescriptionByRow(i);
 
 		if (!currentDataSetStorageDescription)
@@ -52,7 +55,7 @@ void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
 			continue;
 		}
 
-		const DCStorageDescription* sortableDataSetStorageDescription = 
+		const DCStorageDescription* sortableDataSetStorageDescription =
 			m_sortableDataSet->storageDescription(currentDataSetStorageDescription->storageType);
 
 		ASSERT(sortableDataSetStorageDescription);
@@ -61,6 +64,7 @@ void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingStarted, this, &SummaryDataAccessor::beginClearData));
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData));
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::validateSelectedRow));
+	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::dataSetChanged, this, &SummaryDataAccessor::onDataSetChanged));
 
 	// VERIFY(connect(this, &SummaryDataAccessor::endClearData, this, &SummaryDataAccessor::restoreSelection));
 	VERIFY(connect(this, SIGNAL(endClearData()), this, SLOT(restoreSelection())));
@@ -223,6 +227,13 @@ void SummaryDataAccessor::validateSelectedRow()
 void SummaryDataAccessor::restoreSelection()
 {
 	emit rowSelected(m_selectedRow.first);
+}
+
+void SummaryDataAccessor::onDataSetChanged()
+{
+	emit beginClearData();
+	emit endClearData();
+	emit dataSetChanged();
 }
 
 Qt::ItemFlags SummaryDataAccessor::flags(const QModelIndex& index) const noexcept

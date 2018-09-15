@@ -18,7 +18,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::LinkAuditGroup:
 		{
 			p->name = QObject::tr("Link Problems");
-			p->group = AuditGroup::LinkAuditGroup;
+			p->auditGroup = AuditGroup::LinkAuditGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::UpperCaseUrlStorageType, QObject::tr("Links With Uppercase Characters") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links With Non-ASCII Characters") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::TooLongUrlStorageType, QObject::tr("Too Long Links") });
@@ -36,7 +36,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::OnPageAuditGroup:
 		{
 			p->name = QObject::tr("On Page Problems");
-			p->group = AuditGroup::OnPageAuditGroup;
+			p->auditGroup = AuditGroup::OnPageAuditGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::EmptyTitleUrlStorageType, QObject::tr("Empty Titles") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::DuplicatedTitleUrlStorageType, QObject::tr("Duplicated Titles") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::TooLongTitleUrlStorageType, QObject::tr("Too Long Titles") });
@@ -58,7 +58,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::NotIndexedPagesGroup:
 		{
 			p->name = QObject::tr("Blocked for Indexing Pages");
-			p->group = AuditGroup::NotIndexedPagesGroup;
+			p->auditGroup = AuditGroup::NotIndexedPagesGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::BlockedForSEIndexingStorageType, QObject::tr("All Not Indexed Pages") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::NofollowLinksStorageType, QObject::tr("Nofollow Links") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::BlockedByRobotsTxtStorageType, QObject::tr("Blocked by robots.txt Pages") });
@@ -70,7 +70,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::PageProblemsAuditGroup:
 		{
 			p->name = QObject::tr("Page Problems");
-			p->group = AuditGroup::OnPageAuditGroup;
+			p->auditGroup = AuditGroup::OnPageAuditGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::TooManyLinksOnPageStorageType, QObject::tr("Too Many Links On Page") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::ContainsMetaRefreshTagStorageType, QObject::tr("Pages Contain Meta Refresh Tag") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::ContainsFramesStorageType, QObject::tr("Pages Contain Frames") });
@@ -81,7 +81,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::H1AuditGroup:
 		{
 			p->name = QObject::tr("H1 Problems");
-			p->group = AuditGroup::H1AuditGroup;
+			p->auditGroup = AuditGroup::H1AuditGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::MissingH1UrlStorageType, QObject::tr("Missing H1") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::DuplicatedH1UrlStorageType, QObject::tr("Duplicated H1") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::TooLongH1UrlStorageType, QObject::tr("Too Long H1") });
@@ -93,7 +93,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::H2AuditGroup:
 		{
 			p->name = QObject::tr("H2 Problems");
-			p->group = AuditGroup::H2AuditGroup;
+			p->auditGroup = AuditGroup::H2AuditGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::MissingH2UrlStorageType, QObject::tr("Missing H2") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::DuplicatedH2UrlStorageType, QObject::tr("Duplicated H2") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::TooLongH2UrlStorageType, QObject::tr("Too Long H2") });
@@ -105,7 +105,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::ImageAuditGroup:
 		{
 			p->name = QObject::tr("Image Problems");
-			p->group = AuditGroup::ImageAuditGroup;
+			p->auditGroup = AuditGroup::ImageAuditGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::TooBigImageStorageType, QObject::tr("Images Over 100 KB") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::MissingAltTextImageStorageType, QObject::tr("Images With Missing Alt Description") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::TooLongAltTextImageStorageType, QObject::tr("Too Long Image Alt Description") });
@@ -116,7 +116,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::OrderedErrorsGroup:
 		{
 			p->name = QObject::tr("Error Groups");
-			p->group = AuditGroup::OrderedErrorsGroup;
+			p->auditGroup = AuditGroup::OrderedErrorsGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::UpperCaseUrlStorageType, QObject::tr("Links With Uppercase Characters") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links With Non-ASCII Characters") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::TooLongUrlStorageType, QObject::tr("Too Long Links") });
@@ -169,7 +169,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::InternalResourcesGroup:
 		{
 			p->name = QObject::tr("Internal Resources");
-			p->group = AuditGroup::InternalResourcesGroup;
+			p->auditGroup = AuditGroup::InternalResourcesGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::HtmlResourcesStorageType, QObject::tr("HTML Resources") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::ImageResourcesStorageType, QObject::tr("Image Resources") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::JavaScriptResourcesStorageType, QObject::tr("JavaScript Resources") });
@@ -184,7 +184,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		case AuditGroup::ExternalResourcesGroup:
 		{
 			p->name = QObject::tr("External Resources");
-			p->group = AuditGroup::ExternalResourcesGroup;
+			p->auditGroup = AuditGroup::ExternalResourcesGroup;
 			p->descriptions.push_back(DCStorageDescription{ StorageType::ExternalHtmlResourcesStorageType, QObject::tr("HTML Resources") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::ExternalImageResourcesStorageType, QObject::tr("Image Resources") });
 			p->descriptions.push_back(DCStorageDescription{ StorageType::ExternalJavaScriptResourcesStorageType, QObject::tr("JavaScript Resources") });
@@ -204,7 +204,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			}
 
 			p->name = QObject::tr("Yandex Metrica");
-			p->group = AuditGroup::YandexMetricaCounters;
+			p->auditGroup = AuditGroup::YandexMetricaCounters;
 			p->descriptions = createYandexMetricaDescriptions();
 
 			return p;
@@ -220,7 +220,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(const QVector<C
 		std::make_shared<DCStorageGroupDescription>();
 
 	p->name = QObject::tr("Custom Analisys");
-	p->group = AuditGroup::CustomDataFeeds;
+	p->auditGroup = AuditGroup::CustomDataFeeds;
 
 	foreach(const CrawlerEngine::ICustomDataFeed* dataFeed, dataFeeds)
 	{

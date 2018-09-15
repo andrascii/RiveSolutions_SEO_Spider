@@ -1,6 +1,8 @@
 #include "summary_data_set.h"
 #include "sequenced_data_collection.h"
 #include "isequenced_storage.h"
+#include "application.h"
+#include "preferences.h"
 
 namespace SeoSpider
 {
@@ -10,12 +12,12 @@ SummaryDataSet::SummaryDataSet(const CrawlerEngine::SequencedDataCollection* seq
 {
 }
 
-int SummaryDataSet::columnCount() const noexcept
+int SummaryDataSet::columnCount() const
 {
 	return s_summaryColumnCount;
 }
 
-int SummaryDataSet::rowCount() const noexcept
+int SummaryDataSet::rowCount() const
 {
 	return m_groupRows.size() + m_itemRows.size();
 }
@@ -34,20 +36,26 @@ void SummaryDataSet::addSortingPredicate(std::function<bool(DCStorageDescription
 	}
 }
 
-const CrawlerEngine::SequencedDataCollection* SummaryDataSet::sequencedDataCollection() const noexcept
+const CrawlerEngine::SequencedDataCollection* SummaryDataSet::sequencedDataCollection() const
 {
 	return m_sequencedDataCollection;
 }
 
-void SummaryDataSet::addGroup(AuditGroup group) noexcept
+void SummaryDataSet::addGroup(AuditGroup group)
 {
 	DataCollectionGroupsFactory dcGroupsFactory;
 	addGroup(dcGroupsFactory.create(group));
 }
 
-void SummaryDataSet::addGroup(DCStorageGroupDescriptionPtr group) noexcept
+void SummaryDataSet::addGroup(DCStorageGroupDescriptionPtr groupPointer)
 {
-	m_allGroups.push_back(group);
+	if (groupPointer->auditGroup == AuditGroup::YandexMetricaCounters)
+	{
+		VERIFY(connect(theApp->preferences(), &Preferences::searchYandexMetricaCountersChanged,
+			this, &SummaryDataSet::searchYandexMetricaCountersChanged));
+	}
+
+	m_allGroups.push_back(groupPointer);
 
 	int modelRowIndex = rowCount();
 	m_groupRows[modelRowIndex++] = m_allGroups.last();
@@ -58,19 +66,73 @@ void SummaryDataSet::addGroup(DCStorageGroupDescriptionPtr group) noexcept
 	{
 		m_itemRows[modelRowIndex] = &(*itemStart);
 	}
+
+	emit dataSetChanged();
 }
 
-bool SummaryDataSet::isHeaderRow(int row) const noexcept
+void SummaryDataSet::removeGroup(AuditGroup auditGroup)
+{
+	// TODO: refactor this bullshit
+
+	const auto iter = std::find_if(m_allGroups.begin(), m_allGroups.end(),
+		[auditGroup](const DCStorageGroupDescriptionPtr& p) { return p->auditGroup == auditGroup; });
+
+	if (iter == m_allGroups.end())
+	{
+		return;
+	}
+
+	DCStorageGroupDescriptionPtr groupPtr = *iter;
+	m_allGroups.erase(iter);
+
+	std::vector<decltype(m_itemRows)::iterator> iteratorsToDelete;
+
+	for(auto it = m_itemRows.begin(); it != m_itemRows.end(); ++it)
+	{
+		const auto checkStorageType = [&](const DCStorageDescription& description)
+		{
+			return description.storageType == it.value()->storageType;
+		};
+
+		const auto searchingDescription = std::find_if(
+			groupPtr->descriptions.begin(),
+			groupPtr->descriptions.end(),
+			checkStorageType);
+
+		if (searchingDescription != groupPtr->descriptions.end())
+		{
+			iteratorsToDelete.push_back(it);
+		}
+	}
+
+	for (int i = 0; i < iteratorsToDelete.size(); ++i)
+	{
+		m_itemRows.erase(iteratorsToDelete[i]);
+	}
+
+	for (auto it = m_groupRows.begin(); it != m_groupRows.end(); ++it)
+	{
+		if (it.value() == groupPtr)
+		{
+			m_groupRows.erase(it);
+			break;
+		}
+	}
+
+	emit dataSetChanged();
+}
+
+bool SummaryDataSet::isHeaderRow(int row) const
 {
 	return m_groupRows.find(row) != m_groupRows.end();
 }
 
-QSize SummaryDataSet::span(const QModelIndex& index) const noexcept
+QSize SummaryDataSet::span(const QModelIndex& index) const
 {
 	return m_groupRows.find(index.row()) != m_groupRows.end() ? QSize(2, 1) : QSize(1, 1);
 }
 
-QVariant SummaryDataSet::item(const QModelIndex& index) const noexcept
+QVariant SummaryDataSet::item(const QModelIndex& index) const
 {
 	if (isHeaderRow(index.row()))
 	{
@@ -89,7 +151,7 @@ QVariant SummaryDataSet::item(const QModelIndex& index) const noexcept
 	return m_sequencedDataCollection->storage(itemIterator.value()->storageType)->size();
 }
 
-StorageAdapterType SummaryDataSet::itemCategory(const QModelIndex& index) const noexcept
+StorageAdapterType SummaryDataSet::itemCategory(const QModelIndex& index) const
 {
 	if (isHeaderRow(index.row()) || !index.isValid())
 	{
@@ -109,7 +171,7 @@ StorageAdapterType SummaryDataSet::itemCategory(const QModelIndex& index) const 
 	return StorageAdapterType::StorageAdapterTypeNone;
 }
 
-QString SummaryDataSet::customDataFeed(const QModelIndex& index) const noexcept
+QString SummaryDataSet::customDataFeed(const QModelIndex& index) const
 {
 	if (isHeaderRow(index.row()) || !index.isValid())
 	{
@@ -127,7 +189,7 @@ QString SummaryDataSet::customDataFeed(const QModelIndex& index) const noexcept
 	return description->customDataFeed;
 }
 
-const DCStorageDescription* SummaryDataSet::storageDescriptionByRow(int row) const noexcept
+const DCStorageDescription* SummaryDataSet::storageDescriptionByRow(int row) const
 {
 	for (auto beg = m_itemRows.begin(); beg != m_itemRows.end(); ++beg)
 	{
@@ -140,7 +202,7 @@ const DCStorageDescription* SummaryDataSet::storageDescriptionByRow(int row) con
 	return nullptr;
 }
 
-const DCStorageGroupDescription* SummaryDataSet::storageGroupDescriptionByRow(int row) const noexcept
+const DCStorageGroupDescription* SummaryDataSet::storageGroupDescriptionByRow(int row) const
 {
 	for (auto beg = m_groupRows.begin(); beg != m_groupRows.end(); ++beg)
 	{
@@ -153,7 +215,7 @@ const DCStorageGroupDescription* SummaryDataSet::storageGroupDescriptionByRow(in
 	return nullptr;
 }
 
-const DCStorageDescription* SummaryDataSet::storageDescription(CrawlerEngine::StorageType type) const noexcept
+const DCStorageDescription* SummaryDataSet::storageDescription(CrawlerEngine::StorageType type) const
 {
 	foreach(DCStorageDescription* dcStorageDescription, m_itemRows)
 	{
@@ -166,11 +228,11 @@ const DCStorageDescription* SummaryDataSet::storageDescription(CrawlerEngine::St
 	return nullptr;
 }
 
-const DCStorageGroupDescription* SummaryDataSet::storageGroupDescription(AuditGroup group) const noexcept
+const DCStorageGroupDescription* SummaryDataSet::storageGroupDescription(AuditGroup group) const
 {
 	foreach(const DCStorageGroupDescriptionPtr& dcStorageGroupDescription, m_groupRows)
 	{
-		if (dcStorageGroupDescription->group == group)
+		if (dcStorageGroupDescription->auditGroup == group)
 		{
 			return dcStorageGroupDescription.get();
 		}
@@ -208,12 +270,24 @@ void SummaryDataSet::sortItems(int storageRow, CrawlerEngine::StorageType)
 	}
 }
 
-bool SummaryDataSet::isSortable() const noexcept
+void SummaryDataSet::searchYandexMetricaCountersChanged(bool value)
+{
+	if (!value)
+	{
+		removeGroup(AuditGroup::YandexMetricaCounters);
+	}
+	else
+	{
+		addGroup(AuditGroup::YandexMetricaCounters);
+	}
+}
+
+bool SummaryDataSet::isSortable() const
 {
 	return m_allGroups.size() == 1;
 }
 
-bool SummaryDataSet::isSortingEnabled() const noexcept
+bool SummaryDataSet::isSortingEnabled() const
 {
 	return static_cast<bool>(m_sortPredicate);
 }

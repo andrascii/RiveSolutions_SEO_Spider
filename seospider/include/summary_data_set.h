@@ -20,30 +20,33 @@ class SummaryDataSet : public QObject
 public:
 	SummaryDataSet(const CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
 
-	bool isSortable() const noexcept;
-	bool isSortingEnabled() const noexcept;
-	int columnCount() const noexcept;
-	int rowCount() const noexcept;
+	bool isSortable() const;
+	bool isSortingEnabled() const;
+	int columnCount() const;
+	int rowCount() const;
 	void addSortingPredicate(std::function<bool(DCStorageDescription*, DCStorageDescription*)>&& predicate);
-	const CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const noexcept;
-	void addGroup(AuditGroup group) noexcept;
-	void addGroup(DCStorageGroupDescriptionPtr group) noexcept;
-	bool isHeaderRow(int row) const noexcept;
-	QSize span(const QModelIndex& index) const noexcept;
-	QVariant item(const QModelIndex& index) const noexcept;
-	StorageAdapterType itemCategory(const QModelIndex& index) const noexcept;
-	QString customDataFeed(const QModelIndex& index) const noexcept;
-	const DCStorageDescription* storageDescriptionByRow(int row) const noexcept;
-	const DCStorageGroupDescription* storageGroupDescriptionByRow(int row) const noexcept;
-	const DCStorageDescription* storageDescription(CrawlerEngine::StorageType type) const noexcept;
-	const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const noexcept;
+	const CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const;
+	void addGroup(AuditGroup group);
+	void addGroup(DCStorageGroupDescriptionPtr group);
+	void removeGroup(AuditGroup group);
+	bool isHeaderRow(int row) const;
+	QSize span(const QModelIndex& index) const;
+	QVariant item(const QModelIndex& index) const;
+	StorageAdapterType itemCategory(const QModelIndex& index) const;
+	QString customDataFeed(const QModelIndex& index) const;
+	const DCStorageDescription* storageDescriptionByRow(int row) const;
+	const DCStorageGroupDescription* storageGroupDescriptionByRow(int row) const;
+	const DCStorageDescription* storageDescription(CrawlerEngine::StorageType type) const;
+	const DCStorageGroupDescription* storageGroupDescription(AuditGroup group) const;
 
 signals:
 	void sortingStarted();
 	void sortingEnded();
+	void dataSetChanged();
 
 private slots:
 	void sortItems(int, CrawlerEngine::StorageType);
+	void searchYandexMetricaCountersChanged(bool value);
 
 private:
 	static constexpr int s_summaryColumnCount = 2;

@@ -129,8 +129,8 @@ void SummaryViewModel::onDataWereReset()
 void SummaryViewModel::initializeRenderers()
 {
 	AbstractViewModel::addRenderer(
-		IRenderer::PlainTextRendererType | 
-		IRenderer::SelectionBackgroundRendererType | 
+		IRenderer::PlainTextRendererType |
+		IRenderer::SelectionBackgroundRendererType |
 		IRenderer::BackgroundRendererType
 	);
 }
@@ -181,10 +181,17 @@ void SummaryViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 
 bool SummaryViewModel::eventFilter(QObject* object, QEvent* event)
 {
-	if (event->type() == QEvent::WindowActivate || event->type() == QEvent::WindowDeactivate)
+	if (object == m_parentView &&
+		(event->type() == QEvent::WindowActivate ||
+		event->type() == QEvent::WindowDeactivate))
 	{
-		m_windowBlocked = QApplication::activeModalWidget() != nullptr;
-		invalidateItemViewRendererCache();
+		const bool isWindowBlocked = QApplication::activeModalWidget() != nullptr;
+
+		if (isWindowBlocked != m_windowBlocked)
+		{
+			m_windowBlocked = isWindowBlocked;
+			invalidateItemViewRendererCache();
+		}
 	}
 
 	return AbstractViewModel::eventFilter(object, event);

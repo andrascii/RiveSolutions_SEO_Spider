@@ -3,7 +3,7 @@
 
 namespace SeoSpider
 {
-	
+
 inline QModelIndexList makeRowIndexes(const QModelIndex& index)
 {
 	if (!index.isValid() || !index.model()->rowCount())

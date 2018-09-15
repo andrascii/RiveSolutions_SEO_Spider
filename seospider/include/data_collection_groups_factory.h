@@ -66,7 +66,7 @@ struct DCStorageDescription
 struct DCStorageGroupDescription
 {
 	QString name;
-	AuditGroup group;
+	AuditGroup auditGroup;
 	std::vector<DCStorageDescription> descriptions;
 };
 

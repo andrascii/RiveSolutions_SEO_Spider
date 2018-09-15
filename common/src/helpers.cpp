@@ -44,8 +44,8 @@ std::vector<QMetaMethod> Helpers::allUserSignals(QObject* qobject, QVector<QByte
 		QMetaMethod metaMethod = metaObject->method(i);
 		QByteArray methodSignature = metaMethod.methodSignature();
 
-		if (metaMethod.methodType() != QMetaMethod::Signal || 
-			methodSignature.contains("destroyed") || 
+		if (metaMethod.methodType() != QMetaMethod::Signal ||
+			methodSignature.contains("destroyed") ||
 			methodSignature.contains("objectNameChanged") ||
 			exclude.contains(methodSignature.data()))
 		{
@@ -126,9 +126,9 @@ QMetaMethod Helpers::metaMethodOfSignal(QObject* qobject, const char* signalSign
 	return metaObject->method(signalIndex);
 }
 
-void Helpers::connectSignalsToMetaMethodsWithTheSameName(QObject* sender, 
-	std::vector<QMetaMethod> senderMethods, 
-	QObject* receiver, 
+void Helpers::connectSignalsToMetaMethodsWithTheSameName(QObject* sender,
+	std::vector<QMetaMethod> senderMethods,
+	QObject* receiver,
 	std::vector<QMetaMethod> receiverMethods)
 {
 	ASSERT(senderMethods.size() == receiverMethods.size());
