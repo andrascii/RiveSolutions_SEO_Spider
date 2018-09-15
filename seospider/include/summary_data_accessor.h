@@ -50,6 +50,7 @@ private slots:
 	void emitDataChanged(int, CrawlerEngine::StorageType);
 	void validateSelectedRow();
 	void restoreSelection();
+	void onDataSetChanged();
 
 private:
 	SummaryDataSet* m_currentDataSet;

@@ -95,7 +95,7 @@ void AbstractViewModel::setDeselectedIndexes(const QModelIndexList& modelIndexes
 		{
 			QModelIndex rowIndex = topRow.model()->index(i, 0);
 			QModelIndex nextRowIndex = topRow.model()->index(i + 1, 0);
-			const bool isNonSelectedRowBelowSelectedRow = 
+			const bool isNonSelectedRowBelowSelectedRow =
 				!uniqueSelectedRows.contains(nextRowIndex) && uniqueSelectedRows.contains(rowIndex);
 
 			if (!isNonSelectedRowBelowSelectedRow)
