@@ -279,7 +279,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter1StorageType,
-				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter1Id()).toStdString().c_str())
+				QObject::tr(QString("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter1Id()).toStdString().c_str())
 			});
 	}
 
@@ -289,7 +289,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter2StorageType,
-				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter2Id()).toStdString().c_str())
+				QObject::tr(QString("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter2Id()).toStdString().c_str())
 			});
 	}
 
@@ -299,7 +299,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter3StorageType,
-				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter3Id()).toStdString().c_str())
+				QObject::tr(QString("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter3Id()).toStdString().c_str())
 			});
 	}
 
@@ -309,7 +309,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter4StorageType,
-				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter4Id()).toStdString().c_str())
+				QObject::tr(QString("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter4Id()).toStdString().c_str())
 			});
 	}
 
@@ -319,7 +319,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter5StorageType,
-				QObject::tr(QString("Pages without Yandex Metrica %1").arg(theApp->preferences()->yandexMetricaCounter5Id()).toStdString().c_str())
+				QObject::tr(QString("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter5Id()).toStdString().c_str())
 			});
 	}
 
