@@ -19,14 +19,7 @@ void YmParser::parse(const ResponseHeaders&, ParsedPagePtr& parsedPage)
 		return;
 	}
 
-	const std::vector<IHtmlNodeCountedPtr> headTags = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdHead);
-
-	if (headTags.empty())
-	{
-		return;
-	}
-
-	const std::vector<IHtmlNodeCountedPtr> tagScripts = headTags[0]->matchSubNodes(IHtmlNode::TagIdScript);
+	const std::vector<IHtmlNodeCountedPtr> tagScripts = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdScript);
 
 	const auto iter = std::find_if(tagScripts.begin(), tagScripts.end(), [this](const IHtmlNodeCountedPtr& node)
 	{

@@ -1269,7 +1269,9 @@ void ModelController::setLinksForResourcePageAndLoadedPage(ParsedPagePtr& resour
 
 void ModelController::handlePresenceYandexMetricaCounters(WorkerResult& workerResult, bool secondGetRequest)
 {
-	if (!m_crawlerOptionsData.searchYandexMetricaCounters || secondGetRequest)
+	if (!m_crawlerOptionsData.searchYandexMetricaCounters ||
+		secondGetRequest ||
+		workerResult.incomingPage()->statusCode != Common::StatusCode::Ok200)
 	{
 		return;
 	}
