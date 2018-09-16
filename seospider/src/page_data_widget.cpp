@@ -61,14 +61,14 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 
 	TableView* tableView = new TableView(stackedWidget, false, true);
 	m_models[pageDataType] = new PageModel(this);
-	
+
 	tableView->setModel(m_models[pageDataType]);
 	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], this));
 	tableView->setShowAdditionalGrid(true);
-	
+
 	stackedWidget->addWidget(tableView);
 	stackedWidget->setCurrentIndex(0);
-		
+
 	m_pageIndices[pageDataType] = m_tabWidget->addTab(stackedWidget, tabDescription(pageDataType));
 	m_stackedWidgets[pageDataType] = stackedWidget;
 }
@@ -180,7 +180,7 @@ void PageDataWidget::pageViewSelectionChangedSlot(const QItemSelection& selected
 {
 	Q_UNUSED(selected);
 	Q_UNUSED(deselected);
-	
+
 	QItemSelectionModel* itemSelectionModel = qobject_cast<QItemSelectionModel*>(sender());
 	DEBUG_ASSERT(itemSelectionModel);
 
