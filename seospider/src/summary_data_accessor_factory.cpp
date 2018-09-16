@@ -3,6 +3,8 @@
 #include "summary_data_accessor_pixmap_decorator.h"
 #include "data_collection_groups_factory.h"
 #include "summary_data_set.h"
+#include "application.h"
+#include "preferences.h"
 
 namespace SeoSpider
 {
@@ -21,23 +23,38 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 			SummaryDataSet* plainDataSet = new SummaryDataSet(dataCollection);
 			SummaryDataSet* sortableDataSet = new SummaryDataSet(dataCollection);
 
-			plainDataSet->addGroup(AuditGroup::LinkAuditGroup);
-			plainDataSet->addGroup(AuditGroup::PageProblemsAuditGroup);
-			plainDataSet->addGroup(AuditGroup::OnPageAuditGroup);
-			plainDataSet->addGroup(AuditGroup::NotIndexedPagesGroup);
-			plainDataSet->addGroup(AuditGroup::H1AuditGroup);
-			plainDataSet->addGroup(AuditGroup::H2AuditGroup);
-			plainDataSet->addGroup(AuditGroup::ImageAuditGroup);
-			plainDataSet->addGroup(AuditGroup::YandexMetricaCounters);
+			plainDataSet->appendGroup(AuditGroup::YandexMetricaCounters);
+			plainDataSet->appendGroup(AuditGroup::LinkAuditGroup);
+			plainDataSet->appendGroup(AuditGroup::PageProblemsAuditGroup);
+			plainDataSet->appendGroup(AuditGroup::OnPageAuditGroup);
+			plainDataSet->appendGroup(AuditGroup::NotIndexedPagesGroup);
+			plainDataSet->appendGroup(AuditGroup::H1AuditGroup);
+			plainDataSet->appendGroup(AuditGroup::H2AuditGroup);
+			plainDataSet->appendGroup(AuditGroup::ImageAuditGroup);
+
+			const auto onSearchYmCountersChanged = [plainDataSet](bool value)
+			{
+				if (!value)
+				{
+					plainDataSet->removeGroup(AuditGroup::YandexMetricaCounters);
+				}
+				else
+				{
+					plainDataSet->prependGroup(AuditGroup::YandexMetricaCounters);
+				}
+			};
+
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCountersChanged, onSearchYmCountersChanged));
 
 			DataCollectionGroupsFactory dcGroupsFactory;
 			const DCStorageGroupDescriptionPtr customDataFeedGroup = dcGroupsFactory.create(dataCollection->customDataFeeds());
-			if (!customDataFeedGroup->descriptions.empty())
+			if (customDataFeedGroup->hasDescriptions())
 			{
-				plainDataSet->addGroup(customDataFeedGroup);
+				plainDataSet->appendGroup(customDataFeedGroup);
 			}
 
-			std::function<bool(DCStorageDescription*, DCStorageDescription*)> sortPredicate([](DCStorageDescription* a, DCStorageDescription* b)
+			std::function<bool(const DCStorageDescription*, const DCStorageDescription*)>
+			sortPredicate([](const DCStorageDescription* a, const DCStorageDescription* b)
 			{
 				if (CrawlerEngine::ErrorCategory::level(a->storageType) == CrawlerEngine::ErrorCategory::level(b->storageType))
 				{
@@ -51,15 +68,15 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 
 
 			const DCStorageGroupDescriptionPtr orderedErrorsGroup = dcGroupsFactory.create(AuditGroup::OrderedErrorsGroup);
-			if (!customDataFeedGroup->descriptions.empty())
+			if (customDataFeedGroup->hasDescriptions())
 			{
-				for (const DCStorageDescription& description : customDataFeedGroup->descriptions)
+				for (const DCStorageDescription& description : customDataFeedGroup->descriptions())
 				{
-					orderedErrorsGroup->descriptions.push_back(description);
+					orderedErrorsGroup->addDescription(description);
 				}
 			}
-			sortableDataSet->addGroup(orderedErrorsGroup);
 
+			sortableDataSet->appendGroup(orderedErrorsGroup);
 			sortableDataSet->addSortingPredicate(std::move(sortPredicate));
 
 			summaryDataAccessor = new SummaryDataAccessorPixmapDecorator(new SummaryDataAccessor(plainDataSet));
@@ -72,8 +89,8 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 		{
 			SummaryDataSet* dataSet = new SummaryDataSet(dataCollection);
 
-			dataSet->addGroup(AuditGroup::InternalResourcesGroup);
-			dataSet->addGroup(AuditGroup::ExternalResourcesGroup);
+			dataSet->appendGroup(AuditGroup::InternalResourcesGroup);
+			dataSet->appendGroup(AuditGroup::ExternalResourcesGroup);
 
 			summaryDataAccessor = new SummaryDataAccessor(dataSet);
 

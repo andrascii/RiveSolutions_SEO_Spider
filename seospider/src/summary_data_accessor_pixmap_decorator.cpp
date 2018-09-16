@@ -34,7 +34,7 @@ ErrorCategory::ErrorCategoryLevel SummaryDataAccessorPixmapDecorator::errorCateg
 {
 	StorageType storageType = storageTypeByRow(row);
 
-	ASSERT(storageType != StorageType::BeginEnumStorageType && 
+	ASSERT(storageType != StorageType::BeginEnumStorageType &&
 		storageType != StorageType::EndEnumStorageType);
 
 	return ErrorCategory::level(storageType);

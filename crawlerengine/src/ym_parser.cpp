@@ -33,7 +33,7 @@ void YmParser::parse(const ResponseHeaders&, ParsedPagePtr& parsedPage)
 		return findYaCounter(node->text());
 	});
 
-	if (iter == tagScripts.end())
+	if (iter != tagScripts.end())
 	{
 		parsedPage->missingYandexMetricaCounters.push_back(m_targetStorageType);
 	}

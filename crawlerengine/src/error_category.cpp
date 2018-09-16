@@ -74,7 +74,14 @@ const QMap<StorageType, ErrorCategory::ErrorCategoryLevel> s_storageTypeToLevel
 	{ StorageType::BlockedForSEIndexingStorageType, ErrorCategory::LevelInfo },
 	{ StorageType::NofollowLinksStorageType, ErrorCategory::LevelInfo },
 	{ StorageType::BlockedByRobotsTxtStorageType, ErrorCategory::LevelInfo },
-	{ StorageType::BlockedByXRobotsTagStorageType, ErrorCategory::LevelInfo }
+	{ StorageType::BlockedByXRobotsTagStorageType, ErrorCategory::LevelInfo },
+
+	// yandex metrica counters
+	{ StorageType::YandexMetricaCounter1StorageType, ErrorCategory::LevelError },
+	{ StorageType::YandexMetricaCounter2StorageType, ErrorCategory::LevelError },
+	{ StorageType::YandexMetricaCounter3StorageType, ErrorCategory::LevelError },
+	{ StorageType::YandexMetricaCounter4StorageType, ErrorCategory::LevelError },
+	{ StorageType::YandexMetricaCounter5StorageType, ErrorCategory::LevelError }
 };
 
 }

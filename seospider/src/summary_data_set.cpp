@@ -22,7 +22,7 @@ int SummaryDataSet::rowCount() const
 	return m_groupRows.size() + m_itemRows.size();
 }
 
-void SummaryDataSet::addSortingPredicate(std::function<bool(DCStorageDescription*, DCStorageDescription*)>&& predicate)
+void SummaryDataSet::addSortingPredicate(std::function<bool(const DCStorageDescription*, const DCStorageDescription*)>&& predicate)
 {
 	m_sortPredicate = std::move(predicate);
 
@@ -41,85 +41,60 @@ const CrawlerEngine::SequencedDataCollection* SummaryDataSet::sequencedDataColle
 	return m_sequencedDataCollection;
 }
 
-void SummaryDataSet::addGroup(AuditGroup group)
+void SummaryDataSet::appendGroup(AuditGroup auditGroup)
 {
 	DataCollectionGroupsFactory dcGroupsFactory;
-	addGroup(dcGroupsFactory.create(group));
+	appendGroup(dcGroupsFactory.create(auditGroup));
 }
 
-void SummaryDataSet::addGroup(DCStorageGroupDescriptionPtr groupPointer)
+void SummaryDataSet::appendGroup(DCStorageGroupDescriptionPtr groupPointer)
 {
-	if (groupPointer->auditGroup == AuditGroup::YandexMetricaCounters)
+	if (!groupPointer)
 	{
-		VERIFY(connect(theApp->preferences(), &Preferences::searchYandexMetricaCountersChanged,
-			this, &SummaryDataSet::searchYandexMetricaCountersChanged));
+		ERRLOG << "Some group did not created by the factory";
+		return;
 	}
 
 	m_allGroups.push_back(groupPointer);
 
 	int modelRowIndex = rowCount();
-	m_groupRows[modelRowIndex++] = m_allGroups.last();
+	m_groupRows[modelRowIndex++] = groupPointer;
 
-	for (auto itemStart = std::begin(m_allGroups.last()->descriptions);
-		itemStart != std::end(m_allGroups.last()->descriptions);
+	for (auto itemStart = std::begin(groupPointer->descriptions());
+		itemStart != std::end(groupPointer->descriptions());
 		++itemStart, ++modelRowIndex)
 	{
 		m_itemRows[modelRowIndex] = &(*itemStart);
 	}
 
+	VERIFY(connect(groupPointer.get(), &DCStorageGroupDescription::changed,
+		this, &SummaryDataSet::reconfigureFilters));
+
 	emit dataSetChanged();
+}
+
+void SummaryDataSet::prependGroup(AuditGroup auditGroup)
+{
+	QVector<AuditGroup> auditGroupsSequentialChainData = auditGroupsSequentialChain();
+
+	removeFilters();
+
+	auditGroupsSequentialChainData.prepend(auditGroup);
+
+	std::for_each(auditGroupsSequentialChainData.begin(), auditGroupsSequentialChainData.end(),
+		[this](AuditGroup auditGroup) { appendGroup(auditGroup); });
 }
 
 void SummaryDataSet::removeGroup(AuditGroup auditGroup)
 {
-	// TODO: refactor this bullshit
+	QVector<AuditGroup> auditGroupsSequentialChainData = auditGroupsSequentialChain();
 
-	const auto iter = std::find_if(m_allGroups.begin(), m_allGroups.end(),
-		[auditGroup](const DCStorageGroupDescriptionPtr& p) { return p->auditGroup == auditGroup; });
+	removeFilters();
 
-	if (iter == m_allGroups.end())
-	{
-		return;
-	}
+	auditGroupsSequentialChainData.removeOne(auditGroup);
 
-	DCStorageGroupDescriptionPtr groupPtr = *iter;
-	m_allGroups.erase(iter);
-
-	std::vector<decltype(m_itemRows)::iterator> iteratorsToDelete;
-
-	for(auto it = m_itemRows.begin(); it != m_itemRows.end(); ++it)
-	{
-		const auto checkStorageType = [&](const DCStorageDescription& description)
-		{
-			return description.storageType == it.value()->storageType;
-		};
-
-		const auto searchingDescription = std::find_if(
-			groupPtr->descriptions.begin(),
-			groupPtr->descriptions.end(),
-			checkStorageType);
-
-		if (searchingDescription != groupPtr->descriptions.end())
-		{
-			iteratorsToDelete.push_back(it);
-		}
-	}
-
-	for (int i = 0; i < iteratorsToDelete.size(); ++i)
-	{
-		m_itemRows.erase(iteratorsToDelete[i]);
-	}
-
-	for (auto it = m_groupRows.begin(); it != m_groupRows.end(); ++it)
-	{
-		if (it.value() == groupPtr)
-		{
-			m_groupRows.erase(it);
-			break;
-		}
-	}
-
-	emit dataSetChanged();
+	std::for_each(auditGroupsSequentialChainData.begin(), auditGroupsSequentialChainData.end(),
+		[this](AuditGroup auditGroup) { appendGroup(auditGroup); });
 }
 
 bool SummaryDataSet::isHeaderRow(int row) const
@@ -136,7 +111,7 @@ QVariant SummaryDataSet::item(const QModelIndex& index) const
 {
 	if (isHeaderRow(index.row()))
 	{
-		return m_groupRows.find(index.row()).value()->name;
+		return m_groupRows.find(index.row()).value()->name();
 	}
 
 	auto itemIterator = m_itemRows.find(index.row());
@@ -163,9 +138,9 @@ StorageAdapterType SummaryDataSet::itemCategory(const QModelIndex& index) const
 
 	if (description != nullptr)
 	{
-		return !description->customDataFeed.isEmpty()
-			? StorageAdapterType::StorageAdapterTypeCustomDataFeed
-			: static_cast<StorageAdapterType>(description->storageType);
+		return !description->customDataFeed.isEmpty() ?
+			StorageAdapterType::StorageAdapterTypeCustomDataFeed :
+			static_cast<StorageAdapterType>(description->storageType);
 	}
 
 	return StorageAdapterType::StorageAdapterTypeNone;
@@ -217,7 +192,7 @@ const DCStorageGroupDescription* SummaryDataSet::storageGroupDescriptionByRow(in
 
 const DCStorageDescription* SummaryDataSet::storageDescription(CrawlerEngine::StorageType type) const
 {
-	foreach(DCStorageDescription* dcStorageDescription, m_itemRows)
+	foreach(const DCStorageDescription* dcStorageDescription, m_itemRows)
 	{
 		if (dcStorageDescription->storageType == type)
 		{
@@ -232,7 +207,7 @@ const DCStorageGroupDescription* SummaryDataSet::storageGroupDescription(AuditGr
 {
 	foreach(const DCStorageGroupDescriptionPtr& dcStorageGroupDescription, m_groupRows)
 	{
-		if (dcStorageGroupDescription->auditGroup == group)
+		if (dcStorageGroupDescription->auditGroup() == group)
 		{
 			return dcStorageGroupDescription.get();
 		}
@@ -250,7 +225,7 @@ void SummaryDataSet::sortItems(int storageRow, CrawlerEngine::StorageType)
 	{
 		emit sortingStarted();
 
-		QVector<DCStorageDescription*> itemRows;
+		QVector<const DCStorageDescription*> itemRows;
 
 		foreach(auto row, m_itemRows)
 		{
@@ -270,16 +245,33 @@ void SummaryDataSet::sortItems(int storageRow, CrawlerEngine::StorageType)
 	}
 }
 
-void SummaryDataSet::searchYandexMetricaCountersChanged(bool value)
+void SummaryDataSet::reconfigureFilters()
 {
-	if (!value)
+	QVector<AuditGroup> auditGroupsSequentialChainData = auditGroupsSequentialChain();
+
+	removeFilters();
+
+	std::for_each(auditGroupsSequentialChainData.begin(), auditGroupsSequentialChainData.end(),
+		[this](AuditGroup auditGroup) { appendGroup(auditGroup); });
+}
+
+QVector<AuditGroup> SummaryDataSet::auditGroupsSequentialChain() const
+{
+	QVector<AuditGroup> auditGroupsSequentialChainData;
+
+	foreach(const DCStorageGroupDescriptionPtr& groupPointer, m_groupRows)
 	{
-		removeGroup(AuditGroup::YandexMetricaCounters);
+		auditGroupsSequentialChainData.push_back(groupPointer->auditGroup());
 	}
-	else
-	{
-		addGroup(AuditGroup::YandexMetricaCounters);
-	}
+
+	return auditGroupsSequentialChainData;
+}
+
+void SummaryDataSet::removeFilters()
+{
+	m_allGroups.clear();
+	m_groupRows.clear();
+	m_itemRows.clear();
 }
 
 bool SummaryDataSet::isSortable() const

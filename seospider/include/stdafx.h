@@ -189,3 +189,5 @@ using std::size_t;
 #define CANNOT_CREATE_SOCKET -1
 
 #endif
+
+#include "counted_ptr.h"

@@ -24,11 +24,12 @@ public:
 	bool isSortingEnabled() const;
 	int columnCount() const;
 	int rowCount() const;
-	void addSortingPredicate(std::function<bool(DCStorageDescription*, DCStorageDescription*)>&& predicate);
+	void addSortingPredicate(std::function<bool(const DCStorageDescription*, const DCStorageDescription*)>&& predicate);
 	const CrawlerEngine::SequencedDataCollection* sequencedDataCollection() const;
-	void addGroup(AuditGroup group);
-	void addGroup(DCStorageGroupDescriptionPtr group);
-	void removeGroup(AuditGroup group);
+	void appendGroup(AuditGroup auditGroup);
+	void appendGroup(DCStorageGroupDescriptionPtr group);
+	void prependGroup(AuditGroup auditGroup);
+	void removeGroup(AuditGroup auditGroup);
 	bool isHeaderRow(int row) const;
 	QSize span(const QModelIndex& index) const;
 	QVariant item(const QModelIndex& index) const;
@@ -46,7 +47,11 @@ signals:
 
 private slots:
 	void sortItems(int, CrawlerEngine::StorageType);
-	void searchYandexMetricaCountersChanged(bool value);
+	void reconfigureFilters();
+
+private:
+	QVector<AuditGroup> auditGroupsSequentialChain() const;
+	void removeFilters();
 
 private:
 	static constexpr int s_summaryColumnCount = 2;
@@ -55,9 +60,9 @@ private:
 
 	QVector<DCStorageGroupDescriptionPtr> m_allGroups;
 	QMap<int, DCStorageGroupDescriptionPtr> m_groupRows;
-	QMap<int, DCStorageDescription*> m_itemRows;
+	QMap<int, const DCStorageDescription*> m_itemRows;
 
-	std::function<bool(DCStorageDescription*, DCStorageDescription*)> m_sortPredicate;
+	std::function<bool(const DCStorageDescription*, const DCStorageDescription*)> m_sortPredicate;
 };
 
 }
