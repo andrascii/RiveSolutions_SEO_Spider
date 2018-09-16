@@ -41,7 +41,7 @@
      <item row="0" column="1">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Search yandex metrica counter</string>
+        <string>Search yandex metrica counters</string>
        </property>
       </widget>
      </item>
