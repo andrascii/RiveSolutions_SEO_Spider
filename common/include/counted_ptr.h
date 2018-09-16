@@ -427,6 +427,14 @@ public:
 		return _cp_counted ? _cp_counted->use_count() : 0;
 	}
 
+	void release()
+	{
+		if (_cp_counted)
+		{
+			_cp_counted->release();
+		}
+	}
+
 private:
 	cp_counted_base * _cp_counted;
 };

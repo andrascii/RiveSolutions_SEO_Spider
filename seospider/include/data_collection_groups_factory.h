@@ -1,76 +1,9 @@
 #pragma once
 
-#include "storage_type.h"
-
-namespace CrawlerEngine
-{
-class ICustomDataFeed;
-}
+#include "dc_storage_group_description.h"
 
 namespace SeoSpider
 {
-
-enum class AuditGroup
-{
-	//
-	// Problem groups
-	//
-	LinkAuditGroup,
-	OnPageAuditGroup,
-	H1AuditGroup,
-	H2AuditGroup,
-	ImageAuditGroup,
-	PageProblemsAuditGroup,
-	NotIndexedPagesGroup,
-
-	//
-	// Resources
-	//
-	InternalResourcesGroup,
-	ExternalResourcesGroup,
-
-	//
-	// Problem type groups
-	//
-	Errors,
-	Warnings,
-	Information,
-	NoProblem,
-
-	//
-	// Yandex Metrica Counters group
-	//
-	YandexMetricaCounters,
-
-	//
-	// Custom data feeds
-	//
-
-	CustomDataFeeds,
-
-	//
-	// Temporary test group
-	//
-	OrderedErrorsGroup
-};
-
-// DC - DataCollection
-
-struct DCStorageDescription
-{
-	CrawlerEngine::StorageType storageType;
-	QString storageTypeDescriptionName;
-	QString customDataFeed;
-};
-
-struct DCStorageGroupDescription
-{
-	QString name;
-	AuditGroup auditGroup;
-	std::vector<DCStorageDescription> descriptions;
-};
-
-using DCStorageGroupDescriptionPtr = std::shared_ptr<DCStorageGroupDescription>;
 
 class DataCollectionGroupsFactory
 {
@@ -83,5 +16,3 @@ private:
 };
 
 }
-
-Q_DECLARE_METATYPE(SeoSpider::DCStorageDescription)
