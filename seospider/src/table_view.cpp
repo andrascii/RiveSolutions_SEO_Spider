@@ -30,7 +30,7 @@ TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnable
 	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	horizontalHeader()->setSectionsMovable(true);
 	setShowGrid(false);
-#ifdef USE_SORTING	
+#ifdef USE_SORTING
 	if (sortingEnabled)
 	{
 		setSortingEnabled(true);
@@ -53,7 +53,7 @@ void TableView::setModel(QAbstractItemModel* model)
 		// reconnect signals/slots with correct order
 		setViewModel(m_viewModel);
 	}
-#else 
+#else
 	QTableView::setModel(model);
 #endif
 
@@ -66,7 +66,7 @@ void TableView::setModel(QAbstractItemModel* model)
 
 		VERIFY(connect(m_model->resizePolicy()->qobject(), SIGNAL(columnSizeChanged()), this, SLOT(adjustColumnSize())));
 	}
-	
+
 	initSpans();
 
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpans())));
@@ -191,10 +191,10 @@ void TableView::paintEvent(QPaintEvent* event)
 
 		const int thisRowLogicalIndex = rowAt(offsetByY);
 		const int belowRowLogicalIndex = rowAt(offsetByY - m_rowHeight);
-		
+
 		const bool isThisOrNextRowSelected = std::find_if(
-			std::begin(uniqueSelectedRows), 
-			std::end(uniqueSelectedRows), 
+			std::begin(uniqueSelectedRows),
+			std::end(uniqueSelectedRows),
 			[&](int selectedRow) {return selectedRow == thisRowLogicalIndex || selectedRow == belowRowLogicalIndex; }) !=
 			std::end(uniqueSelectedRows);
 
@@ -203,7 +203,7 @@ void TableView::paintEvent(QPaintEvent* event)
 			painter.save();
 
 			painter.setPen(viewModel()->selectedGridLineColor(QModelIndex()));
-			painter.drawLine(QPoint(0, offsetByY), QPoint(lastXOffset, offsetByY)); 
+			painter.drawLine(QPoint(0, offsetByY), QPoint(lastXOffset, offsetByY));
 			painter.restore();
 
 			painter.drawLine(QPoint(lastXOffset, offsetByY), QPoint(width(), offsetByY));
@@ -229,8 +229,8 @@ void TableView::paintEvent(QPaintEvent* event)
 
 	for (int i = 0; i < horizontalHeader()->count(); ++i)
 	{
-		const int offsetByX = 
-			horizontalHeader()->sectionViewportPosition(i) + 
+		const int offsetByX =
+			horizontalHeader()->sectionViewportPosition(i) +
 			horizontalHeader()->sectionSize(i) - 1;
 
 		painter.drawLine(QPoint(offsetByX, 0), QPoint(offsetByX, viewportRect.height()));
@@ -240,7 +240,7 @@ void TableView::paintEvent(QPaintEvent* event)
 
 		for (int j = 0, size = static_cast<int>(verticalLineSegments.size()); j < size; ++j)
 		{
-			painter.drawLine(QPoint(offsetByX, verticalLineSegments[j].firstYCoordinate), 
+			painter.drawLine(QPoint(offsetByX, verticalLineSegments[j].firstYCoordinate),
 				QPoint(offsetByX, verticalLineSegments[j].secondYCoordinate));
 		}
 
@@ -275,7 +275,7 @@ void TableView::setViewModel(IViewModel* modelView) noexcept
 {
 	if (m_viewModel)
 	{
-		disconnect(m_viewModel->qobject(), SIGNAL(repaintItems(const QModelIndexList&)), 
+		disconnect(m_viewModel->qobject(), SIGNAL(repaintItems(const QModelIndexList&)),
 			this, SLOT(onAboutRepaintItems(const QModelIndexList&)));
 	}
 
@@ -317,6 +317,8 @@ void TableView::initSpans()
 	{
 		return;
 	}
+
+	clearSpans();
 
 	const int rows = model()->rowCount();
 	const int columns = model()->columnCount();
@@ -428,7 +430,7 @@ void TableView::onLayoutChanged(const QList<QPersistentModelIndex>& indices, QAb
 	if (indices.isEmpty() && hint == QAbstractItemModel::VerticalSortHint)
 	{
 		viewModel()->invalidateItemViewRendererCache();
-		
+
 
 #ifdef USE_SORTING
 		// seems like a bug in QSortProxyFiltermodel, so we need a costyl here

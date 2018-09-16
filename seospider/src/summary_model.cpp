@@ -101,6 +101,11 @@ QSize SummaryModel::span(const QModelIndex& index) const
 
 QVariant SummaryModel::data(const QModelIndex& index, int role) const
 {
+	const int row = index.row();
+	const int column = index.column();
+	row;
+	column;
+
 	if (!dataAccessor())
 	{
 		return QVariant();
