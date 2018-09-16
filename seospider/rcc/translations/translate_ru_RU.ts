@@ -117,7 +117,7 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>Page refresh completed.</source>
-        <translation>Рефреш страницы завершен</translation>
+        <translation>Рефреш страницы завершен.</translation>
     </message>
     <message>
         <source>Save file error</source>
@@ -125,7 +125,7 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>The operation has not been successful.</source>
-        <translation>Операция завершилась неуспешно</translation>
+        <translation>Операция завершилась неуспешно.</translation>
     </message>
     <message>
         <source>Loading file error</source>
@@ -137,7 +137,7 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>DNS Lookup Failed!</source>
-        <translation>Поиск DNS завешился неудачно</translation>
+        <translation>Поиск DNS завешился неудачно!</translation>
     </message>
     <message>
         <source>I&apos;m sorry but I cannot find this website
@@ -151,7 +151,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Can&apos;t close project file while crawler is working!</source>
-        <translation>Невозможно закрыть проект пока краулинг активен</translation>
+        <translation>Невозможно закрыть проект пока краулинг активен!</translation>
     </message>
     <message>
         <source>Error</source>
@@ -163,7 +163,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Cannot open a document while crawler is working!</source>
-        <translation>Невозможно открыть документ пока краулинг активен</translation>
+        <translation>Невозможно открыть документ пока краулинг активен!</translation>
     </message>
 </context>
 <context>
@@ -174,7 +174,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Proxy authentication failed.</source>
-        <translation>Аутентификация прокси завешилась неуспешно</translation>
+        <translation>Аутентификация прокси завешилась неуспешно.</translation>
     </message>
 </context>
 <context>
@@ -1515,6 +1515,36 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
         <source>Go to &quot;HTTP Response&quot;</source>
         <translation>Перейти к &quot;HTTP ответ&quot;</translation>
     </message>
+    <message>
+        <source>Custom Analisys</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with missing Yandex Metrica Counter</source>
+        <translation>Страницы с отсутствующими счетчиком яндекс метрики</translation>
+    </message>
+    <message>
+        <source>This filter stores pages that did not find the yandex metrica counter with the number %1.
+You can change the number of this counter in the settings &quot;Settings =&gt; Yandex Metrica Settings&quot;.</source>
+        <translation>Этот фильтр хранит страницы, на которых не был найден счетчик яндекс метрики с номером %1.
+Вы можете изменить номер счетчика для поиска в настройках &quot;Настройки =&gt; Настройки поиска счетчиков Яндекс Метрики&quot;.</translation>
+    </message>
+    <message>
+        <source>Yandex Metrika</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Test Data Feed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with missing Yandex Metrica Counters</source>
+        <translation>Страницы с отсутствующими счетчиками яндекс метрики</translation>
+    </message>
+    <message>
+        <source>Pages with missing Yandex Metrica Counter %1</source>
+        <translation>Страницы с отсутствующими счетчиком яндекс метрики %1</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
@@ -1694,7 +1724,7 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
     <message>
         <source>Cannot save file while crawler is active, 
 please stop crawling and try again</source>
-        <translation>Невозможно сохранить результат анализа до тех пор, пока краулер в активном состоянии.</translation>
+        <translation>Невозможно сохранить результат анализа до тех пор, пока краулер в активном состоянии</translation>
     </message>
     <message>
         <source>Open file error</source>
@@ -1739,7 +1769,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Closing application</source>
-        <translation>Закрытие приложения</translation>
+        <translation type="vanished">Закрытие приложения</translation>
     </message>
     <message>
         <source>Close File</source>
@@ -1880,6 +1910,10 @@ please stop crawling and try again</source>
     <message>
         <source>You have installed the latest version of the </source>
         <translation>У Вас установлена последняя версия программы</translation>
+    </message>
+    <message>
+        <source>Yandex Metrica Settings</source>
+        <translation type="unfinished">Настройки поиска счетчиков Яндекс Метрики</translation>
     </message>
 </context>
 <context>
@@ -2287,6 +2321,29 @@ please stop crawling and try again</source>
     <message>
         <source>Class Name:</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>YandexMetricaSettingsWidget</name>
+    <message>
+        <source>Yandex Metrica Settings</source>
+        <translation>Настройки поиска счетчиков Яндекс Метрики</translation>
+    </message>
+    <message>
+        <source>Type in yandex metrica counter number to search</source>
+        <translation>Введите номер счетчика яндекс метрики</translation>
+    </message>
+    <message>
+        <source>Add Counter</source>
+        <translation>Добавить счетчик</translation>
+    </message>
+    <message>
+        <source>Remove Counter</source>
+        <translation>Удалить счетчик</translation>
+    </message>
+    <message>
+        <source>Search yandex metrica counters</source>
+        <translation>Искать счектчики яндекс метрики на страницах сайта</translation>
     </message>
 </context>
 </TS>

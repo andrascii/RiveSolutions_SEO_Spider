@@ -1,1 +1,0 @@
-start xcopy /h "%CD%\deps\openssl\*.dll" "%CMAKE_PREFIX_PATH%/bin"
