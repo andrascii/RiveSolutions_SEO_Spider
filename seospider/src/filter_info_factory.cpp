@@ -1,5 +1,7 @@
 #include "filter_info_factory.h"
 #include "storage_adapter_type.h"
+#include "application.h"
+#include "preferences.h"
 
 namespace SeoSpider
 {
@@ -351,7 +353,52 @@ std::map<StorageAdapterType, FilterInfo>& FilterInfoFactory::filters()
 					"\"<meta name=\"robots\" content=\"something\">\" or x-robots-tag response header.\n"
 					"Additionally you can choose specific robot's rules to follow in the \"Settings => User Agent Settings\".")
 			}
-		}
+		},
+		// yandex metrica counters
+		{
+			StorageAdapterType::StorageAdapterTypeYandexMetricaCounter1,
+			{
+				QObject::tr("Pages with missing Yandex Metrica Counter"),
+				QObject::tr("This filter stores pages that did not find the yandex metrica counter with the number %1.\n"
+				"You can change the number of this counter in the settings \"Settings => Yandex Metrica Settings\".").arg(theApp->preferences()->yandexMetricaCounter1Id())
+			}
+		},
+		{
+			StorageAdapterType::StorageAdapterTypeYandexMetricaCounter2,
+			{
+				QObject::tr("Pages with missing Yandex Metrica Counter"),
+				QObject::tr("This filter stores pages that did not find the yandex metrica counter with the number %1.\n"
+					"You can change the number of this counter in the settings "
+					"\"Settings => Yandex Metrica Settings\".").arg(theApp->preferences()->yandexMetricaCounter2Id())
+			}
+		},
+		{
+			StorageAdapterType::StorageAdapterTypeYandexMetricaCounter3,
+			{
+				QObject::tr("Pages with missing Yandex Metrica Counter"),
+				QObject::tr("This filter stores pages that did not find the yandex metrica counter with the number %1.\n"
+					"You can change the number of this counter in the settings "
+					"\"Settings => Yandex Metrica Settings\".").arg(theApp->preferences()->yandexMetricaCounter3Id())
+			}
+		},
+		{
+			StorageAdapterType::StorageAdapterTypeYandexMetricaCounter4,
+			{
+				QObject::tr("Pages with missing Yandex Metrica Counter"),
+				QObject::tr("This filter stores pages that did not find the yandex metrica counter with the number %1.\n"
+					"You can change the number of this counter in the settings "
+					"\"Settings => Yandex Metrica Settings\".").arg(theApp->preferences()->yandexMetricaCounter4Id())
+			}
+		},
+		{
+			StorageAdapterType::StorageAdapterTypeYandexMetricaCounter5,
+			{
+				QObject::tr("Pages with missing Yandex Metrica Counter"),
+				QObject::tr("This filter stores pages that did not find the yandex metrica counter with the number %1.\n"
+					"You can change the number of this counter in the settings "
+					"\"Settings => Yandex Metrica Settings\".").arg(theApp->preferences()->yandexMetricaCounter5Id())
+			}
+		},
 	};
 
 	return s_filters;
