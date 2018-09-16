@@ -195,7 +195,6 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		return;
 	}
 
-	handlePresenceYandexMetricaCounters(workerResult, secondGetRequest);
 	processParsedPageHtmlResources(workerResult, secondGetRequest);
 	processParsedPageResources(workerResult, secondGetRequest);
 	workerResult.incomingPage()->allResourcesOnPage.clear();
@@ -210,6 +209,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		processParsedPageMetaKeywords(workerResult, secondGetRequest);
 		processParsedPageH1(workerResult, secondGetRequest);
 		processParsedPageH2(workerResult, secondGetRequest);
+		handlePresenceYandexMetricaCounters(workerResult, secondGetRequest);
 	}
 	else if (workerResult.incomingPage()->resourceType == ResourceType::ResourceImage)
 	{

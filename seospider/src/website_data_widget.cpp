@@ -57,7 +57,7 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 
 	PageModel* pageModel = new PageModel(m_stackedWidget);
 	IStorageAdapter* storageAdapter = factory->createParsedPageInfoStorage(storageAdapterType, theApp->sequencedDataCollection());
-	
+
 	if (IParsedPageStorageAdapter* pageAdapter = dynamic_cast<IParsedPageStorageAdapter*>(storageAdapter))
 	{
 		pageAdapter->setCustomDataFeed(customDataFeed);
@@ -120,7 +120,7 @@ void WebSiteDataWidget::pageViewSelectionChanged(const QItemSelection&, const QI
 
 	QModelIndex index = itemSelectionModel->selectedRows().last();
 	const PageModel* storageModel = getUnderlyingModelByIndex<PageModel*>(index);;
-	
+
 	if (storageModel)
 	{
 		const IStorageAdapter* storageAdapter = storageModel->storageAdapter();

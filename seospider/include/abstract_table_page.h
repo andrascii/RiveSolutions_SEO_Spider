@@ -4,7 +4,7 @@
 
 namespace SeoSpider
 {
-	
+
 class AbstractTablePage: public AbstractPage
 {
 public:
