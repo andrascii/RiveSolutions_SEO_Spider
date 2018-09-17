@@ -51,21 +51,21 @@ void TestsDownloader::resetProxy()
 {
 }
 
-void TestsDownloader::handleRequest(CrawlerEngine::RequesterSharedPtr requester)
+void TestsDownloader::handleRequest(RequesterSharedPtr requester)
 {
-	std::shared_ptr<CrawlerEngine::DownloadResponse> response = 
-		std::make_shared<CrawlerEngine::DownloadResponse>();
+	std::shared_ptr<DownloadResponse> response =
+		std::make_shared<DownloadResponse>();
 
-	CrawlerEngine::DownloadRequest* request = static_cast<CrawlerEngine::DownloadRequest*>(requester->request());
+	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
 
 	QSet<QString> uniqueUrls;
 	response->hopsChain = hopsChain(*request, uniqueUrls);
 	m_responsePostProcessor(*(response.get()));
 
-	CrawlerEngine::ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
 
-void TestsDownloader::stopRequestHandling(CrawlerEngine::RequesterSharedPtr requester)
+void TestsDownloader::stopRequestHandling(RequesterSharedPtr requester)
 {
 	requester;
 }
@@ -85,6 +85,8 @@ HopsChain TestsDownloader::hopsChain(const DownloadRequest& request, QSet<QStrin
 	HopsChain result;
 
 	const Url requestedUrl = request.requestInfo.url;
+	std::string str = requestedUrl.toDisplayString().toStdString();
+	str;
 
 	Hop hop;
 	hop.setStatusCode(Common::StatusCode::Ok200);
@@ -140,7 +142,7 @@ HopsChain TestsDownloader::hopsChain(const DownloadRequest& request, QSet<QStrin
 
 		inputFile.close();
 
-		if (request.requestInfo.requestType == CrawlerEngine::DownloadRequestType::RequestTypeGet)
+		if (request.requestInfo.requestType == DownloadRequestType::RequestTypeGet)
 		{
 			QFile html(files.first);
 
@@ -217,7 +219,7 @@ QDir TestsDownloader::testsDataDir() const
 	return QDir(m_testDataPath);
 }
 
-std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const CrawlerEngine::DownloadRequest& downloadRequest) const
+std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const DownloadRequest& downloadRequest) const
 {
 	const QDir testsDir = testsDataDir();
 	const QString hostPath = downloadRequest.requestInfo.url.host();
@@ -233,8 +235,8 @@ std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const Crawler
 
 	if (QFileInfo(requestedFilePath).isDir())
 	{
-		requestedFilePath = requestedFilePath.endsWith(QChar('/')) ? 
-			requestedFilePath + QString("index.html") : 
+		requestedFilePath = requestedFilePath.endsWith(QChar('/')) ?
+			requestedFilePath + QString("index.html") :
 			requestedFilePath + QString("/index.html");
 	}
 
