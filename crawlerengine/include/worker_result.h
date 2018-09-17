@@ -11,7 +11,7 @@ class WorkerResult final
 public:
 	WorkerResult();
 
-	WorkerResult(ParsedPagePtr incomingPage, 
+	WorkerResult(ParsedPagePtr incomingPage,
 		bool refresh,
 		DownloadRequestType downloadRequestType,
 		const std::vector<bool>& storagesBeforeRemoving);

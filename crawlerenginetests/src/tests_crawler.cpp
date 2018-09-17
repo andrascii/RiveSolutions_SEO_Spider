@@ -130,7 +130,7 @@ std::vector<const ParsedPage*> TestsCrawler::storageItems(StorageType storage) c
 
 std::vector<LinksToThisResourceChanges> TestsCrawler::waitForLinksToThisResourceChangesReceived(const ParsedPage* page, int count, int seconds) const
 {
-	std::future<std::vector<LinksToThisResourceChanges>> future = 
+	std::future<std::vector<LinksToThisResourceChanges>> future =
 		m_receiver->getLinksToThisResourceChanges(page, count);
 
 	if (future.wait_for(std::chrono::seconds(seconds)) == std::future_status::timeout)
@@ -163,7 +163,7 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 
 	for (int i = static_cast<int>(StorageType::BeginEnumStorageType) + 1; i < static_cast<int>(StorageType::EndEnumStorageType); ++i)
 	{
-		std::vector<const ParsedPage*> storagePages = 
+		std::vector<const ParsedPage*> storagePages =
 			m_receiver->storageItems(static_cast<StorageType>(i));
 
 		for (const ParsedPage* page : storagePages)
@@ -219,7 +219,7 @@ void TestsCrawler::checkSequencedDataCollectionConsistency()
 					}
 					else
 					{
-						// page can be added to dofollow/nofollow/etc storages 
+						// page can be added to dofollow/nofollow/etc storages
 						// event if resource of this type shouldn't be processed
 						// (by the current implementation, maybe this is not a proper behaviour)
 						EXPECT_EQ(true, page->storages[StorageType::PendingResourcesStorageType]);
