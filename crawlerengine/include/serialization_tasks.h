@@ -5,13 +5,12 @@
 
 namespace CrawlerEngine
 {
-	
+
 struct SerializationTaskResponseResult : public TaskResponseResult
 {
 	SerializationTaskResponseResult(std::shared_ptr<Serializer> serializer)
 		: serializer(serializer)
 	{
-		
 	}
 
 	std::shared_ptr<Serializer> serializer;

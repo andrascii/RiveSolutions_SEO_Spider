@@ -49,12 +49,9 @@ void SerializationTask::run()
 
 		const bool oldFileExisits = oldFile.exists();
 
-		if (oldFileExisits)
+		if (oldFileExisits && !oldFile.rename(oldFileName))
 		{
-			if (!oldFile.rename(oldFileName))
-			{
-				throw std::runtime_error(oldFile.errorString().toStdString());
-			}
+			throw std::runtime_error(oldFile.errorString().toStdString());
 		}
 		QFile::rename(tempFileName, m_fileName);
 

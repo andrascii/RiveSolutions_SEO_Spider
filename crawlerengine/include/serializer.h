@@ -3,7 +3,7 @@
 #include "crawler_options.h"
 #include "web_host_info.h"
 
-namespace Common 
+namespace Common
 {
 class JsonParserStreamWriter;
 class JsonParserStreamReader;
@@ -18,11 +18,11 @@ class Serializer
 public:
 	Serializer();
 
-	Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls, 
+	Serializer(std::vector<ParsedPage*>&& pages, std::vector<CrawlerRequest>&& crawledUrls,
 		std::vector<CrawlerRequest>&& pendingUrls, const CrawlerOptionsData& optionsData,
 		const WebHostInfo::AllData& webHostInfoData
 	);
-	
+
 	void saveToStream(QIODevice& device);
 	void loadFromStream(QIODevice& device);
 
