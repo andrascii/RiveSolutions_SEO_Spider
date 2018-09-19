@@ -55,6 +55,15 @@ void SummaryDataSet::appendGroup(DCStorageGroupDescriptionPtr groupPointer)
 		return;
 	}
 
+	const auto groupIter = std::find_if(m_allGroups.begin(), m_allGroups.end(),
+		[&](const DCStorageGroupDescriptionPtr& group) { return group->auditGroup() == groupPointer->auditGroup(); });
+
+	if (groupIter != m_allGroups.end())
+	{
+		INFOLOG << "Group" << (int)groupPointer->auditGroup() << "already exists and it will be skipped";
+		return;
+	}
+
 	m_allGroups.push_back(groupPointer);
 
 	int modelRowIndex = rowCount();

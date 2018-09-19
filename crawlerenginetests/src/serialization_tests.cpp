@@ -262,5 +262,5 @@ TEST(SerializationTests, HostInfoSerialization)
 	env.initializeTest(testFunction);
 	env.exec();
 }
-	
+
 }
