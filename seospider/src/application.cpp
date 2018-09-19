@@ -301,6 +301,14 @@ void Application::onAboutCrawlerOptionsChanged()
 	}
 
 	// yandex metrica counters
+
+	const bool isAllYmCountersDisabled =
+		!crawler()->options()->searchYandexMetricaCounter1() &&
+		!crawler()->options()->searchYandexMetricaCounter2() &&
+		!crawler()->options()->searchYandexMetricaCounter3() &&
+		!crawler()->options()->searchYandexMetricaCounter4() &&
+		!crawler()->options()->searchYandexMetricaCounter5();
+
 	preferences()->setSearchYandexMetricaCounters(crawler()->options()->searchYandexMetricaCounters());
 	preferences()->setSearchYandexMetricaCounter1(crawler()->options()->searchYandexMetricaCounter1());
 	preferences()->setYandexMetricaCounter1Id(crawler()->options()->yandexMetricaCounter1Id());
@@ -312,6 +320,11 @@ void Application::onAboutCrawlerOptionsChanged()
 	preferences()->setYandexMetricaCounter4Id(crawler()->options()->yandexMetricaCounter4Id());
 	preferences()->setSearchYandexMetricaCounter5(crawler()->options()->searchYandexMetricaCounter5());
 	preferences()->setYandexMetricaCounter5Id(crawler()->options()->yandexMetricaCounter5Id());
+
+	if (isAllYmCountersDisabled)
+	{
+		preferences()->setSearchYandexMetricaCounter1(true);
+	}
 }
 
 void Application::onAboutUseCustomUserAgentChanged()
