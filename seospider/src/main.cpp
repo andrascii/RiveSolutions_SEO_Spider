@@ -14,13 +14,13 @@ int main(int argc, char *argv[])
 			if (CrawlerEngine::CustomUrlChannel::writeUri(argStr))
 			{
 				return 0;
-				
+
 			}
 			// application is not started or something went wrong
 			// TODO: start application with params
 			return 1;
 		}
-		
+
 	}
 
 	QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));

@@ -54,4 +54,8 @@ bool DCStorageGroupDescription::hasDescriptions() const noexcept
 	return !m_descriptions.empty();
 }
 
+DCStorageGroupDescription::~DCStorageGroupDescription()
+{
+}
+
 }

@@ -121,7 +121,7 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(m_downloader->qobject(), "DownloaderThread");
 	threadManager.moveObjectToThread(m_modelController, "BackgroundThread");
 	threadManager.moveObjectToThread(createHostInfoProvider()->qobject(), "BackgroundThread");
-	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "BackgroundThread");
+	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "SerializerThread");
 	threadManager.moveObjectToThread(new Proper404Checker, "BackgroundThread");
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
 	threadManager.moveObjectToThread(createScreenshotMaker()->qobject(), "BackgroundThread");

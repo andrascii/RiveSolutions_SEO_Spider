@@ -14,7 +14,7 @@ InternetConnectionNotificationManager::InternetConnectionNotificationManager(QOb
 
 	InternetConnectionInspector::init();
 
-	VERIFY(connect(InternetConnectionInspector::instance(), SIGNAL(statusChanged(bool)), 
+	VERIFY(connect(InternetConnectionInspector::instance(), SIGNAL(statusChanged(bool)),
 		this, SLOT(onAboutInternetConnectionStateChanged(bool)), Qt::QueuedConnection));
 }
 

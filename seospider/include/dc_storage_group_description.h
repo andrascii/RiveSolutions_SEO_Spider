@@ -69,6 +69,8 @@ class DCStorageGroupDescription final : public QObject
 	Q_OBJECT
 
 public:
+	~DCStorageGroupDescription();
+
 	const QString& name() const noexcept;
 	void setName(const QString& name);
 
@@ -92,6 +94,12 @@ private:
 };
 
 using DCStorageGroupDescriptionPtr = Common::counted_ptr<DCStorageGroupDescription>;
+
+template <typename... Args>
+DCStorageGroupDescriptionPtr createDCStorageGroupDescriptionPtr(Args&&... args)
+{
+	return Common::make_counted<DCStorageGroupDescription>(std::forward<Args>(args)...);
+}
 
 }
 

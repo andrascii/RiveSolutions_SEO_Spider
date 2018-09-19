@@ -27,7 +27,7 @@ ReportsPage::ReportsPage(QWidget* parent)
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->addWidget(m_stackedWidget);
 	layout->setMargin(0);
-		
+
 	m_placeHolderLabel->setObjectName(QStringLiteral("TablePlaseholderLabel"));
 	m_placeHolderLabel->setText(tr("Waiting while crawling ended"));
 	m_placeHolderLabel->setAlignment(Qt::AlignCenter);
@@ -270,7 +270,7 @@ void ReportsPage::crawlerStateChangedSlot(int state)
 		updateContent();
 		return;
 	}
-	
+
 	m_stackedWidget->setCurrentWidget(m_placeHolderLabel);
 }
 
