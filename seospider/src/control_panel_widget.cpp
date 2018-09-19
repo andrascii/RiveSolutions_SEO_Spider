@@ -46,7 +46,7 @@ bool ControlPanelWidget::eventFilter(QObject* object, QEvent* event)
 
 	QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 
-	if (keyEvent->key() != Qt::Key_Return 
+	if (keyEvent->key() != Qt::Key_Return
 		&& keyEvent->key() != Qt::Key_Enter)
 	{
 		return false;
@@ -99,10 +99,10 @@ void ControlPanelWidget::clearCrawlingData() const
 {
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(tr("Warning"));
-	
+
 	const QString message = tr("You have not saved the results of the scanning your site.") +
 		tr("Would you like to save the results and have the ability to start next time from this point?");
-	
+
 	messageBoxDialog->setMessage(message);
 
 	messageBoxDialog->addButton(tr("Save"), QDialogButtonBox::YesRole);
@@ -140,7 +140,7 @@ void ControlPanelWidget::onCrawlerStateChanged(int state)
 		}
 		case CrawlerEngine::Crawler::StatePause:
 		{
-			m_ui.clearCrawlingDataButton->setDisabled(false); 
+			m_ui.clearCrawlingDataButton->setDisabled(false);
 			m_ui.startOrConrinueCrawlingButton->setDisabled(false);
 			m_ui.startOrConrinueCrawlingButton->setText(tr("Continue"));
 

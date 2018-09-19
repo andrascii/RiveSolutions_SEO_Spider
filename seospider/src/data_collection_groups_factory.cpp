@@ -10,8 +10,7 @@ using namespace CrawlerEngine;
 
 DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup group) const
 {
-	Common::counted_ptr<DCStorageGroupDescription> p =
-		Common::make_counted<DCStorageGroupDescription>();
+	DCStorageGroupDescriptionPtr p = createDCStorageGroupDescriptionPtr();
 
 	std::vector<DCStorageDescription> descriptions;
 
@@ -219,21 +218,26 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->setAuditGroup(AuditGroup::YandexMetricaCounters);
 			p->setDescriptions(std::move(createYandexMetricaDescriptions()));
 
-			const auto reconfigureYmDescriptions = [p, this]
+			const auto reconfigureYmDescriptions = [this, group = QPointer<DCStorageGroupDescription>(p.get())]
 			{
-				p->setDescriptions(std::move(createYandexMetricaDescriptions()));
+				if (!group)
+				{
+					return;
+				}
+
+				group->setDescriptions(std::move(createYandexMetricaDescriptions()));
 			};
 
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter1Changed, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter1IdChanged, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter2Changed, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter2IdChanged, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter3Changed, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter3IdChanged, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter4Changed, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter4IdChanged, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter5Changed, reconfigureYmDescriptions));
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter5IdChanged, reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter1Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter1IdChanged, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter2Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter2IdChanged, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter3Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter3IdChanged, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter4Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter4IdChanged, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter5Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter5IdChanged, p.get(), reconfigureYmDescriptions));
 
 			return p;
 		}
@@ -244,8 +248,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 
 DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(const QVector<CrawlerEngine::ICustomDataFeed*> dataFeeds) const
 {
-	Common::counted_ptr<DCStorageGroupDescription> p =
-		Common::make_counted<DCStorageGroupDescription>();
+	DCStorageGroupDescriptionPtr p = createDCStorageGroupDescriptionPtr();
 
 	std::vector<DCStorageDescription> descriptions;
 

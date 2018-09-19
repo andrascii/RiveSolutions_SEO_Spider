@@ -27,7 +27,7 @@ void CrawlerProgressBar::calculatePercents(CrawlingProgress progress)
 
 	setValue(percents ? std::floor(percents)  : percents + 1);
 
-	const QString format = QStringLiteral("Scanned pages: %1").arg(progress.crawledLinkCount) + " / " + 
+	const QString format = QStringLiteral("Scanned pages: %1").arg(progress.crawledLinkCount) + " / " +
 		QStringLiteral("Found pages: %1").arg(progress.pendingLinkCount);
 
 	setFormat(format);
