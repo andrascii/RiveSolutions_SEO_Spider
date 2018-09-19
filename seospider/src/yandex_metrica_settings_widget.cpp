@@ -1,5 +1,8 @@
 #include "yandex_metrica_settings_widget.h"
 #include "internal_settings_helper.h"
+#include "application.h"
+#include "preferences.h"
+#include "helpers.h"
 
 namespace SeoSpider
 {
@@ -29,16 +32,22 @@ void YandexMetricaSettingsWidget::init()
 	m_lineEdits.push_back(m_ui.ycLineEdit5);
 
 	m_helperControl = registrateInternalHelperControl(1);
-
 	const int useCounterHelperCount = m_lineEdits.size();
+
+	const QMetaMethod thisValidateHelperControlSignal = Common::Helpers::metaMethodOfSlot(this, "validateHelperControlValue()");
 
 	for (int i = 0; i < useCounterHelperCount; ++i)
 	{
+		const QByteArray propertyName = QStringLiteral("searchYandexMetricaCounter%1").arg(i + 1).toLatin1();
+
 		m_useCounterBooleanHelpers.push_back(registrateInternalHelperControl(false));
-		m_useCounterBooleanHelpers.back()->setProperty("controlKey", QVariant(QStringLiteral("searchYandexMetricaCounter%1").arg(i + 1)));
+		m_useCounterBooleanHelpers.back()->setProperty("controlKey", QVariant(propertyName));
 
 		VERIFY(connect(m_useCounterBooleanHelpers.back(), SIGNAL(valueChanged(const QVariant&)),
 			this, SLOT(onSearchCounterChanged(const QVariant&))));
+
+		const QMetaMethod signal = Common::Helpers::metaMethodOfSignal(theApp->preferences(), propertyName + "Changed(bool)");
+		Common::Helpers::connectMetaMethods(theApp->preferences(), signal, this, thisValidateHelperControlSignal);
 	}
 
 	SettingsPage::init();
@@ -140,6 +149,20 @@ void YandexMetricaSettingsWidget::onSearchCounterChanged(const QVariant& value)
 	++m_visibleLineEditCount;
 }
 
+
+void YandexMetricaSettingsWidget::validateHelperControlValue()
+{
+	std::vector<bool> ymCountersState;
+
+	for (int i = 0, sz = m_lineEdits.size(); i < sz; ++i)
+	{
+		const QByteArray propertyName = QStringLiteral("searchYandexMetricaCounter%1").arg(i + 1).toLatin1();
+
+		ymCountersState.push_back(theApp->preferences()->property(propertyName).toBool());
+	}
+
+	m_helperControl->setValue(static_cast<int>(std::count(ymCountersState.begin(), ymCountersState.end(), true)));
+}
 
 void YandexMetricaSettingsWidget::validateButtonsVisibility(int currentVisibleLineEditCount)
 {

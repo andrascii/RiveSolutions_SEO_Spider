@@ -18,9 +18,9 @@ public:
 	static QMetaMethod metaMethodOfSignal(QObject* qobject, const char* signalSignature);
 
 	static void connectSignalsToMetaMethodsWithTheSameName(
-		QObject* sender, 
-		std::vector<QMetaMethod> senderMethods, 
-		QObject* receiver, 
+		QObject* sender,
+		std::vector<QMetaMethod> senderMethods,
+		QObject* receiver,
 		std::vector<QMetaMethod> receiverMethods
 	);
 

@@ -10,7 +10,6 @@ class InternalSettingsHelper;
 
 class YandexMetricaSettingsWidget : public SettingsPage
 {
-public:
 	Q_OBJECT
 
 public:
@@ -27,6 +26,7 @@ private slots:
 	void decrementHelperValue();
 	void incrementHelperValue();
 	void onSearchCounterChanged(const QVariant&);
+	void validateHelperControlValue();
 
 private:
 	void validateButtonsVisibility(int currentVisibleLineEditCount);
