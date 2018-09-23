@@ -212,7 +212,7 @@ public:
 
 			for (StorageType storageType : m_page->missingYandexMetricaCounters)
 			{
-				writer.writeStartElement(s_linksOnThisPageItemKey);
+				writer.writeStartElement(s_storageTypeKey);
 				writer.writeAttribute(s_storageTypeValueKey, QString::number(static_cast<int>(storageType)));
 				writer.writeEndElement();
 			}

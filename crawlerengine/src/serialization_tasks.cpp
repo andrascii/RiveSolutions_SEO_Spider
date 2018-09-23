@@ -97,7 +97,6 @@ void DeserializatoinTask::run()
 		ERRLOG << e.what();
 		m_result->error = QString(e.what());
 	}
-
 }
 
 std::unique_ptr<TaskResponseResult> DeserializatoinTask::result()
