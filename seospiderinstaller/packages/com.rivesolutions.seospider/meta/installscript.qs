@@ -43,6 +43,8 @@ function Component()
 	//	return;
 	//}
 	
+	installer.setDefaultPageVisible(QInstaller.LicenseCheck, false);
+	
 	if(isAlreadyInstalled())
 	{
 		QMessageBox["information"]("Already installed", "Installer", 
