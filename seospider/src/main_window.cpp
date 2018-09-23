@@ -114,11 +114,16 @@ void MainWindow::saveFile()
 
 void MainWindow::saveFileAs()
 {
-	const QString path = getSaveFilePath();
+	QString path = getSaveFilePath();
 
 	if (path.isEmpty())
 	{
 		return;
+	}
+
+	if(!path.contains(c_projectFileExtension))
+	{
+		path.append(c_projectFileExtension);
 	}
 
 	RecentFiles::instance().registerNewRecentFile(path);
