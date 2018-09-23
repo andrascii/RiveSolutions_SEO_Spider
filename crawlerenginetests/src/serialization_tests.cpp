@@ -7,6 +7,17 @@ TEST(SerializationTests, PagesSerialization)
 
 	auto options = TestEnvironment::defaultOptions({ Url("http://sitemap.com/page-1.html") });
 	options.parserTypeFlags = ImagesResourcesParserType;
+	options.searchYandexMetricaCounters = true;
+	options.searchYandexMetricaCounter1 = true;
+	options.yandexMetricaCounter1Id = 1;
+	options.searchYandexMetricaCounter2 = true;
+	options.yandexMetricaCounter2Id = 2;
+	options.searchYandexMetricaCounter3 = true;
+	options.yandexMetricaCounter3Id = 3;
+	options.searchYandexMetricaCounter4 = true;
+	options.yandexMetricaCounter4Id = 4;
+	options.searchYandexMetricaCounter5 = true;
+	options.yandexMetricaCounter5Id = 5;
 
 	env.crawler()->options()->setData(options);
 
@@ -52,6 +63,14 @@ TEST(SerializationTests, PagesSerialization)
 		firstPage->resourceType = ResourceType::ResourceHtml;
 		firstPage->rawResponse = "<html>...ÀÁÂÃÄ</html>";
 		firstPage->pageLevel = 3;
+		firstPage->missingYandexMetricaCounters = std::vector<StorageType>
+		{
+			YandexMetricaCounter1StorageType,
+			YandexMetricaCounter2StorageType,
+			YandexMetricaCounter3StorageType,
+			YandexMetricaCounter4StorageType,
+			YandexMetricaCounter5StorageType
+		};
 
 		ParsedPage etalon = *firstPage;
 
@@ -103,6 +122,7 @@ TEST(SerializationTests, PagesSerialization)
 		EXPECT_EQ(etalon.rawResponse, newFirstPage->rawResponse);
 		EXPECT_EQ(etalon.pageLevel, newFirstPage->pageLevel);
 		EXPECT_EQ(etalon.storages, newFirstPage->storages);
+		EXPECT_EQ(etalon.missingYandexMetricaCounters, newFirstPage->missingYandexMetricaCounters);
 	};
 
 	env.initializeTest(testFunction);
@@ -145,6 +165,17 @@ TEST(SerializationTests, OptionsSerialization)
 	options.pauseRangeFrom = 1;
 	options.pauseRangeTo = 2;
 	options.userAgent = "BOT";
+	options.searchYandexMetricaCounters = true;
+	options.searchYandexMetricaCounter1 = true;
+	options.yandexMetricaCounter1Id = 1;
+	options.searchYandexMetricaCounter2 = true;
+	options.yandexMetricaCounter2Id = 2;
+	options.searchYandexMetricaCounter3 = true;
+	options.yandexMetricaCounter3Id = 3;
+	options.searchYandexMetricaCounter4 = true;
+	options.yandexMetricaCounter4Id = 4;
+	options.searchYandexMetricaCounter5 = true;
+	options.yandexMetricaCounter5Id = 5;
 
 	env.crawler()->options()->setData(options);
 
@@ -208,6 +239,17 @@ TEST(SerializationTests, OptionsSerialization)
 		EXPECT_EQ(crawler->options()->pauseRangeFrom(), newOptions.pauseRangeFrom);
 		EXPECT_EQ(crawler->options()->pauseRangeTo(), newOptions.pauseRangeTo);
 		EXPECT_EQ(crawler->options()->userAgent(), newOptions.userAgent);
+		EXPECT_EQ(crawler->options()->searchYandexMetricaCounters(), newOptions.searchYandexMetricaCounters);
+		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter1(), newOptions.searchYandexMetricaCounter1);
+		EXPECT_EQ(crawler->options()->yandexMetricaCounter1Id(), newOptions.yandexMetricaCounter1Id);
+		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter2(), newOptions.searchYandexMetricaCounter2);
+		EXPECT_EQ(crawler->options()->yandexMetricaCounter2Id(), newOptions.yandexMetricaCounter2Id);
+		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter3(), newOptions.searchYandexMetricaCounter3);
+		EXPECT_EQ(crawler->options()->yandexMetricaCounter3Id(), newOptions.yandexMetricaCounter3Id);
+		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter4(), newOptions.searchYandexMetricaCounter4);
+		EXPECT_EQ(crawler->options()->yandexMetricaCounter4Id(), newOptions.yandexMetricaCounter4Id);
+		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter5(), newOptions.searchYandexMetricaCounter5);
+		EXPECT_EQ(crawler->options()->yandexMetricaCounter5Id(), newOptions.yandexMetricaCounter5Id);
 	};
 
 	env.initializeTest(testFunction);
