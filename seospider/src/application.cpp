@@ -29,7 +29,7 @@
 namespace
 {
 
-const QByteArray s_riveSolutionsUserAgent = "RiveSolutionsBot/1.0 Alpha (+http://www.rivesolutions.com/)";
+const QString s_riveSolutionsUserAgent = QString("RiveSolutionsBot/%1 Alpha (+http://www.rivesolutions.com/)").arg(VERSION_STR);
 
 }
 
@@ -521,7 +521,7 @@ void Application::attachPreferencesToCrawlerOptions()
 		}
 		else
 		{
-			crawler()->options()->setUserAgent(s_riveSolutionsUserAgent);
+			crawler()->options()->setUserAgent(s_riveSolutionsUserAgent.toLatin1());
 		}
 	};
 
