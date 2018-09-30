@@ -13,7 +13,7 @@ struct HasMethod_##Method																										\
 	: std::integral_constant<bool, sizeof(hasMethodHelper_##Method<ObjectType, ParamTypes...>(nullptr)) == sizeof(YesType)>		\
 {																																\
 };																																\
-}																																
+}
 
 namespace MetaHelpers
 {

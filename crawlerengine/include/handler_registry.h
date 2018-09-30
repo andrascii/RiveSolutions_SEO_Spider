@@ -3,6 +3,7 @@
 #include "irequest.h"
 #include "iresponse.h"
 #include "meta_helpers.h"
+#include "requester.h"
 
 DEFINE_METHOD_CHECK(handleRequest)
 DEFINE_METHOD_CHECK(stopRequestHandling)
