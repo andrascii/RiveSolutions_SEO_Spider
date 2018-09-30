@@ -354,11 +354,11 @@ public:
 	}
 #endif
 
-// 	template <typename Y, typename D>
-// 	explicit cp_count(std::unique_ptr<Y, D>& r)
-// 		: _cp_counted(new sp_counted_impl_pd<typename std::unique_ptr<Y, D>::pointer, D>(r.release(), r.get_deleter()))
-// 	{
-// 	}
+	template <typename Y, typename D>
+	explicit cp_count(std::unique_ptr<Y, D>& r)
+		: _cp_counted(new cp_counted_impl_pd<typename std::unique_ptr<Y, D>::pointer, D>(r.release(), r.get_deleter()))
+	{
+	}
 
 	cp_count(const cp_count& other) noexcept
 		: _cp_counted(other._cp_counted)
@@ -438,7 +438,7 @@ public:
 	}
 
 private:
-	cp_counted_base * _cp_counted;
+	cp_counted_base* _cp_counted;
 };
 
 template <typename T>
