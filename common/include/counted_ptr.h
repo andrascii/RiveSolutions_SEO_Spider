@@ -158,7 +158,7 @@ public:
 	}
 
 private:
-	T * m_pointer;
+	T* m_pointer;
 };
 
 
@@ -189,7 +189,7 @@ public:
 	}
 
 private:
-	T * m_pointer;
+	T* m_pointer;
 	D m_deleter;
 };
 
@@ -197,6 +197,8 @@ private:
 template <typename T, typename D, typename A>
 class cp_counted_impl_pda final : public cp_counted_base
 {
+	typedef cp_counted_impl_pda<T, D, A> this_type;
+
 public:
 	cp_counted_impl_pda(T* pointer, D deleter, A allocator)
 		: m_pointer(pointer)
@@ -219,9 +221,9 @@ public:
 
 	virtual void destroy()
 	{
-		using A2 = typename A::template rebind<cp_counted_impl_pda<Y, D, A>>::other;
+		using A2 = typename A::template rebind<this_type>::other;
 
-		A2 a2(a);
+		A2 a2(m_allocator);
 
 		this->~cp_counted_impl_pda();
 
@@ -234,7 +236,7 @@ public:
 	}
 
 private:
-	T * m_pointer;
+	T* m_pointer;
 	D m_deleter;
 	A m_allocator;
 };

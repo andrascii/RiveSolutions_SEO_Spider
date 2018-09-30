@@ -381,6 +381,8 @@ CrawlerWorkerThread::ShedulePagesResult CrawlerWorkerThread::handlePageLinkList(
 
 void CrawlerWorkerThread::onLoadingDone(Requester*, const DownloadResponse& response)
 {
+	extractUrlAndDownload();
+
 	Common::Finally reloadGuard([this]
 	{
 		m_reloadPage = false;
