@@ -24,16 +24,16 @@ bool MessageQueue::isEmpty() const noexcept
 Message MessageQueue::extractMessage()
 {
 	std::lock_guard<std::mutex> locker(m_mutex);
-	
+
 	if (!m_messages.size())
 	{
 		return Message::undefinedMessage();
 	}
 
-	Message message = std::move(m_messages.front());
-	m_messages.pop_front();
+	Message message = std::move(m_messages.back());
+	m_messages.pop_back();
 
-	return message;
+	return std::move(message);
 }
 
 }

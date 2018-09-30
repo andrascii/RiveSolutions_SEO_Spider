@@ -106,7 +106,7 @@ ThreadMessageDispatcher::ThreadMessageDispatcher(QThread* thread)
 	moveToThread(thread);
 	startDispatchTimer();
 
-	VERIFY(connect(thread, SIGNAL(finished()), this, SLOT(shutdown()), Qt::DirectConnection)); 
+	VERIFY(connect(thread, SIGNAL(finished()), this, SLOT(shutdown()), Qt::DirectConnection));
 
 	if (thread == qApp->thread())
 	{
@@ -139,7 +139,7 @@ void ThreadMessageDispatcher::execute()
 		return;
 	}
 
-	Message message = messageQueue().extractMessage();
+	Message message = std::move(messageQueue().extractMessage());
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	RequesterSharedPtr requester = message.requester();
 
@@ -159,7 +159,7 @@ void ThreadMessageDispatcher::execute()
 	{
 		case Message::MessageTypeStartRequest:
 		{
-			VERIFY(QMetaObject::invokeMethod(message.handler(), "handleRequest", 
+			VERIFY(QMetaObject::invokeMethod(message.handler(), "handleRequest",
 				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requester)));
 
 			break;

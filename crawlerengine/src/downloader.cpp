@@ -52,7 +52,7 @@ Downloader::Downloader()
 	VERIFY(connect(m_networkAccessor, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
 		this, SLOT(proxyAuthenticationRequiredSlot(const QNetworkProxy&, QAuthenticator*)), Qt::DirectConnection));
 
-	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked, 
+	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked,
 		this, &Downloader::onTimerTicked, Qt::DirectConnection));
 
 
@@ -60,7 +60,7 @@ Downloader::Downloader()
 	VERIFY(connect(m_timeoutTimer, &QTimer::timeout,
 		this, &Downloader::onTimeoutTimerTicked, Qt::DirectConnection));
 
-	
+
 }
 
 void Downloader::setPauseRange(int from, int to)
@@ -131,7 +131,7 @@ void Downloader::handleRequest(RequesterSharedPtr requester)
 	ASSERT(requester->request()->requestType() == RequestType::RequestTypeDownload);
 
 #ifndef PRODUCTION
-	
+
 	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 	DEBUGLOG << "Loading url:" << request->requestInfo.url.toDisplayString();
 
@@ -369,7 +369,7 @@ void Downloader::processReply(QNetworkReply* reply)
 			}
 		}
 	}
-	
+
 	response->hopsChain.addHop(Hop(reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs()));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
@@ -458,9 +458,9 @@ std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& requ
 		m_activeReplies[reply] = QPair<QPointer<QNetworkReply>, qint64>(reply, QDateTime::currentMSecsSinceEpoch());
 		reply->setProperty("useTimeout", true);
 	}
-	
+
 	reply->setProperty("crawlerRequestType", static_cast<int>(request.requestType));
-	
+
 	const int resultRequestId = parentRequestId == -1 ? s_request_id : parentRequestId;
 	reply->setProperty("requestId", resultRequestId);
 

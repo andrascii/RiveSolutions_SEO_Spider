@@ -4,7 +4,7 @@
 
 namespace CrawlerEngine
 {
-	
+
 class MessageQueue
 {
 public:
@@ -18,7 +18,7 @@ public:
 private:
 	mutable std::mutex m_mutex;
 
-	std::deque<Message> m_messages;
+	std::vector<Message> m_messages;
 };
 
 }
