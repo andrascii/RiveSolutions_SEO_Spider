@@ -1,0 +1,3 @@
+[statistics file path] = "/home/users/j/j775420/domains/rivesolutions.com/statistics"
+
+[statistics script path] = "php7.1 /home/users/j/j775420/domains/rivesolutions.com/statistics/collect_statistic.php > /dev/null"
