@@ -260,7 +260,8 @@ CrawlerWorkerThread::ShedulePagesResult CrawlerWorkerThread::schedulePageResourc
 	return result;
 }
 
-CrawlerWorkerThread::ShedulePagesResult CrawlerWorkerThread::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
+CrawlerWorkerThread::ShedulePagesResult
+CrawlerWorkerThread::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
 {
 	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const ResourceOnPage& resource)
 	{
