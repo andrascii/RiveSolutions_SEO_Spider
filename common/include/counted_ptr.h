@@ -695,14 +695,14 @@ public:
 	}
 
 private:
-	template <typename T> friend struct enable_counted_from_this;
+	template <typename S> friend struct enable_counted_from_this;
 	template <typename S> friend class counted_ptr;
 
 	template <typename S, typename... Args>
 	friend counted_ptr<S> make_counted(Args&&... args);
 
-	template <typename T>
-	friend void enable_counted(T* pointer, counted_ptr<T>* counted_pointer, typename T::sfinae_helper_type*);
+	template <typename S>
+	friend void enable_counted(S* pointer, counted_ptr<S>* counted_pointer, typename S::sfinae_helper_type*);
 
 	counted_ptr(element_type* p, cp_count* count)
 		: _p(p)
