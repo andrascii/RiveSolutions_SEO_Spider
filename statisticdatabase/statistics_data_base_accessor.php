@@ -16,7 +16,7 @@ class StatisticsDataBaseAccessor
             or die("Error: " . mysqli_error($m_connection));
     }
     
-    function getCounterId($counterName)
+    public function getCounterId($counterName)
 	{
 		$query = "SELECT `ID` FROM `counters` WHERE `CounterName` = \"$counterName\"";
 
@@ -29,7 +29,7 @@ class StatisticsDataBaseAccessor
 		}
 	}
 	
-    function getSessionId($sessionName)
+    public function getSessionId($sessionName)
 	{
 		$query = "SELECT `ID` FROM `sessions` WHERE `SessionName` = \"$sessionName\"";
     
@@ -42,7 +42,7 @@ class StatisticsDataBaseAccessor
 		}
 	}
 	
-    function getUserId($userName)
+    public function getUserId($userName)
 	{
 		$query = "SELECT `ID` FROM `users` WHERE `UserName` = \"$userName\"";
     
@@ -55,7 +55,7 @@ class StatisticsDataBaseAccessor
 		}
 	}
 	
-    function getOsId($os, $bittness)
+    public function getOsId($os, $bittness)
 	{
 		$query = "SELECT `ID` FROM `os` WHERE `os` = \"$os\" AND `bittness` = \"$bittness\"";
     
@@ -68,7 +68,7 @@ class StatisticsDataBaseAccessor
 		}
 	}
 	
-    function getVersionId($programVersion, $programBittness)
+    public function getVersionId($programVersion, $programBittness)
 	{
 		$query = "SELECT `ID` FROM `program_versions` WHERE `version` = \"$programVersion\" AND `programBittness` = \"$programBittness\"";
 
@@ -81,7 +81,7 @@ class StatisticsDataBaseAccessor
 		}
 	}
 	
-    function getCountryId($country)
+    public function getCountryId($country)
 	{
 		$query = "SELECT `ID` FROM `countries` WHERE `country` = \"$country\"";
     
@@ -94,7 +94,7 @@ class StatisticsDataBaseAccessor
 		}
 	}
 	
-    function getLanguageId($langauge)
+    public function getLanguageId($langauge)
 	{
 		$query = "SELECT `ID` FROM `locale_languages` WHERE `localeLanguage` = \"$langauge\"";
     
@@ -107,7 +107,7 @@ class StatisticsDataBaseAccessor
 		}
 	}
 	
-    function getSessionByUserId($sessionId)
+    public function getSessionByUserId($sessionId)
 	{
 		$query = "SELECT `ID` FROM `session_by_user` WHERE `SessionID` = \"$sessionId\"";
 
@@ -120,7 +120,7 @@ class StatisticsDataBaseAccessor
 		}
 	}
     
-    function insertCounterDataBySessionData($sessionByUserId, $counterId, $value)
+    public function insertCounterDataBySessionData($sessionByUserId, $counterId, $value)
 	{
 		$query = "INSERT IGNORE INTO `counters_data_by_session_data` (`SessionByUserID`, `CounterID`, `Value`) 
 			VALUES (\"$sessionByUserId\", \"$counterId\", \"$value\")";
@@ -128,56 +128,56 @@ class StatisticsDataBaseAccessor
 		$result = mysqli_query($m_connection, $query) or die("Ошибка " . mysqli_error($m_connection)); 
 	}
 	
-    function insertCounter($counterName)
+    public function insertCounter($counterName)
 	{
 		$query = "INSERT IGNORE INTO `counters`(`CounterName`) VALUES (\"$counterName\")";
 
 		$result = mysqli_query($m_connection, $query) or die("Ошибка " . mysqli_error($m_connection));
 	}
 	
-    function insertSessionByUser($sessionID, $userId)
+    public function insertSessionByUser($sessionID, $userId)
 	{
 		$query = "INSERT IGNORE INTO `session_by_user`(`SessionID`, `UserID`) VALUES (\"$sessionID\", \"$userId\")";
 		
 		$result = mysqli_query($m_connection, $query) or die("Ошибка " . mysqli_error($m_connection)); 
 	}
 	
-    function insertSession($sessionName, $sessionDateTime)
+    public function insertSession($sessionName, $sessionDateTime)
 	{
 		$query = "INSERT IGNORE INTO `sessions`(`sessionName`, `sessionDateTime`) VALUES (\"$sessionName\", \"$sessionDateTime\")";
     
 		$result = mysqli_query($m_connection, $query) or die("Ошибка " . mysqli_error($m_connection));
 	}
 	
-    function insertOs($os, $bittness)
+    public function insertOs($os, $bittness)
 	{
 		$query = "INSERT IGNORE INTO `os`(`os`, `bittness`) VALUES (\"$os\", \"$bittness\")";
  
 		$result = mysqli_query($m_connection, $query) or die("Ошибка " . mysqli_error($m_connection));
 	}
 	
-    function insertProgramVersion($programVersion, $programBittness)
+    public function insertProgramVersion($programVersion, $programBittness)
 	{
 		$query = "INSERT IGNORE INTO `program_versions` (`version`, `programBittness`) VALUES (\"$programVersion\", \"$programBittness\")";
 
 		$result = mysqli_query($m_connection, $query) or die("Ошибка " . mysqli_error($m_connection)); 
 	}
 	
-    function insertCountry($country)
+    public function insertCountry($country)
 	{
 		$query = "INSERT IGNORE INTO `countries` (`country`) VALUES (\"$country\")";
     
 		$result = mysqli_query($m_connection, $query) or die("Ошибка " . mysqli_error($m_connection));
 	}
 	
-    function insertLanguage($language)
+    public function insertLanguage($language)
 	{
 		$query = "INSERT IGNORE INTO `locale_languages` (`localeLanguage`) VALUES (\"$language\")";
      
 		$result = mysqli_query($m_connection, $query) or die("Ошибка " . mysqli_error($m_connection));
 	}
 	
-    function insertUser($userName, $OSID, $versionID, $countryID, $languageID)
+    public function insertUser($userName, $OSID, $versionID, $countryID, $languageID)
 	{
 		$userID = getUserIdSql($userName);
 
