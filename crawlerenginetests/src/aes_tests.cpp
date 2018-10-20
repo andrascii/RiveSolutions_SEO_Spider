@@ -893,7 +893,7 @@ TEST(AesTests, DecryptOnPyEncryptedData)
 			continue;
 		}
 
-		const QByteArray initialData = line.mid(0, separatorIndex + 1).trimmed().toLatin1();
+		const QByteArray initialData = line.mid(0, separatorIndex).trimmed().toLatin1();
 		const int initialDataSeparatorIndex = initialData.indexOf(" ");
 
 		if (initialDataSeparatorIndex == -1)
