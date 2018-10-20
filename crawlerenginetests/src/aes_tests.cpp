@@ -872,3 +872,45 @@ TEST(AesTests, OFB256String)
 	QByteArray decodedText = encryption.removePadding(encryption.decode(encodeText, hashKey, aesTestData.iv));
 	EXPECT_EQ(inputStr, decodedText);
 }
+
+TEST(AesTests, DecryptOnPyEncryptedData)
+{
+	QDir dir = QFileInfo(__FILE__).absoluteDir();
+	const QString testsDataPath = QDir::cleanPath(dir.absolutePath() + "/../testsdata");
+
+	QFile pyScriptAesOutput(testsDataPath + "/output.txt");
+	EXPECT_EQ(pyScriptAesOutput.open(QIODevice::ReadOnly), true);
+
+	QTextStream in(&pyScriptAesOutput);
+
+	while (!in.atEnd())
+	{
+		const QString line = in.readLine();
+		const int separatorIndex = line.indexOf(":");
+
+		if (separatorIndex == -1)
+		{
+			continue;
+		}
+
+		const QByteArray initialData = line.mid(0, separatorIndex + 1).trimmed().toLatin1();
+		const int initialDataSeparatorIndex = initialData.indexOf(" ");
+
+		if (initialDataSeparatorIndex == -1)
+		{
+			continue;
+		}
+
+		const QByteArray base64DecodedKey = QByteArray::fromBase64(line.mid(separatorIndex + 1).trimmed().toLatin1());
+		const QByteArray cryptedValue = base64DecodedKey.mid(16);
+		const QByteArray iv = base64DecodedKey.mid(0, 16);
+
+		QAESEncryption encryption(QAESEncryption::AES_192, QAESEncryption::CBC, QAESEncryption::PKCS7);
+		const QByteArray padededDecryptedValue = encryption.decode(cryptedValue, QByteArray("111111111111111111111111"), iv);
+
+		const int lastCharacterValue = static_cast<int>(padededDecryptedValue[padededDecryptedValue.size() - 1]);
+		const QByteArray decryptedValue = padededDecryptedValue.left(padededDecryptedValue.size() - lastCharacterValue);
+
+		EXPECT_EQ(decryptedValue, initialData);
+	}
+}
