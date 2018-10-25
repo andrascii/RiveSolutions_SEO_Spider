@@ -1,7 +1,7 @@
 #pragma once
 
 #include "requester_wrapper.h"
-#include "license_state.h"
+#include "serial_number_data.h"
 
 namespace CrawlerEngine
 {
@@ -10,7 +10,7 @@ class Requester;
 class GetSerialNumberDataResponse;
 class GetSerialNumberStateResponse;
 
-class ILicenseService
+class ILicenseStateObserver
 {
 public:
 	enum Reason
@@ -21,8 +21,8 @@ public:
 		ReasonInvalidSerialNumberActivation
 	};
 
-	virtual ~ILicenseService() = default; 
-	
+	virtual ~ILicenseStateObserver() = default;
+
 	virtual QObject* qobject() const = 0;
 
 	virtual bool isPaidLicense() const noexcept = 0;
@@ -32,12 +32,12 @@ public:
 	virtual void licenseChanged(int reason) const = 0;
 };
 
-class LicenseService : public QObject, public ILicenseService
+class LicenseStateObserver : public QObject, public ILicenseStateObserver
 {
 	Q_OBJECT
 
 public:
-	LicenseService();
+	LicenseStateObserver();
 
 	virtual QObject* qobject() const override;
 
@@ -54,7 +54,7 @@ private:
 	Q_INVOKABLE void onSubscription(const IResponse& response);
 
 	void onLicenseData(Requester* requester, const GetSerialNumberDataResponse& response);
-	void onLicenseStateChanged(const LicenseStateFlags& stateFlags);
+	void onLicenseStateChanged(const SerialNumberStates& stateFlags);
 	void setTrialLicense(bool value, Reason reason);
 
 private:

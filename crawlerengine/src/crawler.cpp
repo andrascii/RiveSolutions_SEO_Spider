@@ -22,7 +22,7 @@
 #include "isequenced_storage.h"
 #include "helpers.h"
 #include "license_handler.h"
-#include "license_service.h"
+#include "license_state_observer.h"
 #include "common_constants.h"
 #include "proper_404_checker.h"
 #include "screenshot_maker.h"
@@ -54,7 +54,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 	, m_state(StatePending)
 	, m_downloader(nullptr)
 	, m_webHostInfo(nullptr)
-	, m_licenseService(nullptr)
+	, m_licenseStateObserver(nullptr)
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->addService<INotificationService>(new NotificationService);
@@ -100,7 +100,7 @@ Crawler::~Crawler()
 	s_instance = nullptr;
 
 	ServiceLocator::instance()->destroyService<INotificationService>();
-	ServiceLocator::instance()->destroyService<ILicenseService>();
+	ServiceLocator::instance()->destroyService<ILicenseStateObserver>();
 
 	qDeleteAll(m_customDataFeeds);
 }
@@ -126,9 +126,9 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
 	threadManager.moveObjectToThread(createScreenshotMaker()->qobject(), "BackgroundThread");
 
-	m_licenseService = new LicenseService;
+	m_licenseStateObserver = new LicenseStateObserver;
 
-	ServiceLocator::instance()->addService<ILicenseService>(m_licenseService);
+	ServiceLocator::instance()->addService<ILicenseStateObserver>(m_licenseStateObserver);
 
 	m_uniqueLinkStore = new UniqueLinkStore(this);
 
@@ -277,7 +277,7 @@ void Crawler::onAboutCrawlingState()
 		state->modelControllerCrawledLinksCount() == state->workersProcessedLinksCount() &&
 		modelControllerAcceptedLinksCount == sequencedDataCollectionCount;
 
-	const bool isTrialLicenseMaxLinks = m_licenseService->isTrialLicense() &&
+	const bool isTrialLicenseMaxLinks = m_licenseStateObserver->isTrialLicense() &&
 		sequencedDataCollectionCount >= Common::c_maxTrialLicenseCrawlingLinksCount;
 
 	if (isTrialLicenseMaxLinks || isCrawlingEnded)

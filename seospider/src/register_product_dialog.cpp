@@ -1,9 +1,9 @@
 #include "register_product_dialog.h"
 #include "service_locator.h"
-#include "license_service.h"
+#include "license_state_observer.h"
 #include "set_serial_number_request.h"
 #include "set_serial_number_response.h"
-#include "license_state.h"
+#include "serial_number_data.h"
 
 namespace SeoSpider
 {
@@ -25,7 +25,7 @@ RegisterProductDialog::RegisterProductDialog(QWidget* parent)
 
 	setWindowModality(Qt::ApplicationModal);
 
-	ILicenseService* licenseService = ServiceLocator::instance()->service<ILicenseService>();
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 	VERIFY(connect(licenseService->qobject(), SIGNAL(licenseChanged(int)), SLOT(onLicenseChanged())));
 	VERIFY(connect(m_ui->enterKeyPushButton, &QPushButton::clicked, this, &RegisterProductDialog::onEnterSerialNumber));
 
@@ -34,7 +34,7 @@ RegisterProductDialog::RegisterProductDialog(QWidget* parent)
 
 void RegisterProductDialog::onLicenseChanged()
 {
-	ILicenseService* licenseService = ServiceLocator::instance()->service<ILicenseService>();
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 	const bool isTrialLicense = licenseService->isTrialLicense();
 
 	m_ui->licenseInfoLabel->setText(isTrialLicense ?
@@ -63,27 +63,27 @@ void RegisterProductDialog::onActivationSerialNumberResult(CrawlerEngine::Reques
 {
 	m_licenseActivationRequester.reset();
 
-	LicenseStateFlags stateFlags = response.state();
+	const SerialNumberStates& stateFlags = response.state();
 
-	if (stateFlags.testFlag(SERIAL_STATE_FLAG_INVALID))
+	if (stateFlags.testFlag(SerialNumberState::StateInvalidSerialNumberActivation))
 	{
 		m_ui->licenseInfoLabel->setText(tr("<font color='red'>The entered serial number is invalid! Try again maybe you're lucky.</font>"));
 		return;
 	}
 
-	if (stateFlags.testFlag(SERIAL_STATE_FLAG_BLACKLISTED))
+	if (stateFlags.testFlag(SerialNumberState::StateSerialNumberBlacklisted))
 	{
 		m_ui->licenseInfoLabel->setText(tr("<font color='red'>Oops. This serial number is in the black list!</font>"));
 		return;
 	}
 
-	if (stateFlags.testFlag(SERIAL_STATE_FLAG_MAX_BUILD_EXPIRED))
+	if (stateFlags.testFlag(SerialNumberState::StateMaxBuildExpired))
 	{
 		m_ui->licenseInfoLabel->setText(tr("<font color='red'>This serial number activation period is expired! Bad news.</font>"));
 		return;
 	}
 
-	if (stateFlags.testFlag(SERIAL_STATE_FLAG_DATE_EXPIRED))
+	if (stateFlags.testFlag(SerialNumberState::StateDateExpired))
 	{
 		m_ui->licenseInfoLabel->setText(tr("<font color='red'>This serial number activation period is expired! Bad news.</font>"));
 		return;

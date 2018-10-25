@@ -13,7 +13,7 @@ namespace CrawlerEngine
 class UniqueLinkStore;
 class OptionsLinkFilter;
 class PageDataCollector;
-class ILicenseService;
+class ILicenseStateObserver;
 class HopsChain;
 struct DownloadResponse;
 
@@ -81,7 +81,7 @@ private:
 	std::optional<CrawlerRequest> m_currentRequest;
 
 	QTimer* m_defferedProcessingTimer;
-	ILicenseService* m_licenseService;
+	ILicenseStateObserver* m_licenseService;
 	CrawlerOptionsData m_optionsData;
 
 	std::vector<bool> m_storagesBeforeRemoving;

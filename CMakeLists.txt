@@ -121,7 +121,11 @@ MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar
 ENDMACRO(add_msvc_precompiled_header)
 
 add_subdirectory(${CrawlerEngineLibName})
-add_subdirectory(${CrawlerEngineLibTestsName})
+
+if ($ENV{TESTS} STREQUAL "enabled")
+	add_subdirectory(${CrawlerEngineLibTestsName})	
+endif()
+
 add_subdirectory(${QtXlsxWriter})
 add_subdirectory(${GuiBinName})
 add_subdirectory(${ScreenshotMaker})

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iresponse.h"
+#include "serial_number_data.h"
 
 namespace CrawlerEngine
 {
@@ -13,6 +14,11 @@ public:
 	{
 	}
 
+	GetSerialNumberDataResponse(const SerialNumberData& data)
+		: m_data(data)
+	{
+	}
+
 	virtual ResponseType type() const noexcept override
 	{
 		return ResponseType::ResponseGetSerialNumberData;
@@ -20,13 +26,13 @@ public:
 
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseGetSerialNumberData)
 
-	const VMProtectSerialNumberData& data() const
+	const SerialNumberData& data() const
 	{
 		return m_data;
 	}
 
 private:
-	VMProtectSerialNumberData m_data;
+	SerialNumberData m_data;
 };
 
 }

@@ -5,7 +5,7 @@
 #include "options_link_filter.h"
 #include "download_request.h"
 #include "download_response.h"
-#include "license_service.h"
+#include "license_state_observer.h"
 #include "service_locator.h"
 #include "common_constants.h"
 #include "crawler.h"
@@ -37,8 +37,8 @@ CrawlerWorkerThread::CrawlerWorkerThread(UniqueLinkStore* uniqueLinkStore)
 	m_defferedProcessingTimer->setInterval(1000);
 	m_defferedProcessingTimer->setSingleShot(true);
 
-	ASSERT(ServiceLocator::instance()->isRegistered<ILicenseService>());
-	m_licenseService = ServiceLocator::instance()->service<ILicenseService>();
+	ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
+	m_licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 }
 
 /// this function always must be thread-safe

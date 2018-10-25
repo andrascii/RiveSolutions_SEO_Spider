@@ -1,6 +1,6 @@
 #include "unique_link_store.h"
 #include "service_locator.h"
-#include "license_service.h"
+#include "license_state_observer.h"
 #include "common_constants.h"
 
 namespace CrawlerEngine
@@ -43,9 +43,9 @@ UniqueLinkStore::UniqueLinkStore(QObject* parent)
 	, m_licenseService(nullptr)
 	, m_limitCrawledLinksCount(-1)
 {
-	ASSERT(ServiceLocator::instance()->isRegistered<ILicenseService>());
+	ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
 
-	m_licenseService = ServiceLocator::instance()->service<ILicenseService>();
+	m_licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 }
 
 void UniqueLinkStore::addUrl(const Url& url, DownloadRequestType requestType)
