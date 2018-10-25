@@ -1,6 +1,8 @@
 #include "license_handler.h"
 #include "handler_registry.h"
 #include "helpers.h"
+#include "my_license_service.h"
+#include "vm_protect_license_service.h"
 #include "thread_message_dispatcher.h"
 #include "set_serial_number_request.h"
 #include "set_serial_number_response.h"
@@ -13,6 +15,7 @@ namespace CrawlerEngine
 {
 
 LicenseHandler::LicenseHandler()
+	: m_licenseService(new VmProtectLicenseService(this))
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 
@@ -64,18 +67,15 @@ void LicenseHandler::setSerialNumber(const RequesterSharedPtr& requester)
 	SetSerialNumberRequest* request = Common::Helpers::fast_cast<SetSerialNumberRequest*>(requester->request());
 
 	std::shared_ptr<SetSerialNumberResponse> response =
-		std::make_shared<SetSerialNumberResponse>(QFlag(VMProtectSetSerialNumber(request->serialNumber().data())));
+		std::make_shared<SetSerialNumberResponse>(m_licenseService->setSerialNumber(request->serialNumber()));
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
 
 void LicenseHandler::getSerialNumberData(const RequesterSharedPtr& requester)
 {
-	VMProtectSerialNumberData data{0};
-	VMProtectGetSerialNumberData(&data, sizeof(data));
-
 	std::shared_ptr<GetSerialNumberDataResponse> response =
-		std::make_shared<GetSerialNumberDataResponse>(data);
+		std::make_shared<GetSerialNumberDataResponse>(m_licenseService->serialNumberData());
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
@@ -83,7 +83,7 @@ void LicenseHandler::getSerialNumberData(const RequesterSharedPtr& requester)
 void LicenseHandler::getSerialNumberState(const RequesterSharedPtr& requester)
 {
 	std::shared_ptr<GetSerialNumberStateResponse> response =
-		std::make_shared<GetSerialNumberStateResponse>(QFlag(VMProtectGetSerialNumberState()));
+		std::make_shared<GetSerialNumberStateResponse>(m_licenseService->serialNumberStates());
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }

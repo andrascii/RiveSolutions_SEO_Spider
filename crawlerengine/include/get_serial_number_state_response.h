@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iresponse.h"
-#include "license_state.h"
+#include "serial_number_data.h"
 
 namespace CrawlerEngine
 {
@@ -9,7 +9,7 @@ namespace CrawlerEngine
 class GetSerialNumberStateResponse : public IResponse
 {
 public:
-	GetSerialNumberStateResponse(QFlag state)
+	GetSerialNumberStateResponse(SerialNumberStates state)
 		: m_state(state)
 	{
 	}
@@ -21,13 +21,13 @@ public:
 
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseGetSerialNumberState)
 
-	LicenseStateFlags state() const
+	const SerialNumberStates& state() const
 	{
 		return m_state;
 	}
 
 private:
-	LicenseStateFlags m_state;
+	SerialNumberStates m_state;
 };
 
 }

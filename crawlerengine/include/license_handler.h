@@ -6,6 +6,8 @@
 namespace CrawlerEngine
 {
 
+class ILicenseService;
+
 class LicenseHandler : public QObject
 {
 	Q_OBJECT
@@ -21,6 +23,9 @@ private:
 	void setSerialNumber(const RequesterSharedPtr& requester);
 	void getSerialNumberData(const RequesterSharedPtr& requester);
 	void getSerialNumberState(const RequesterSharedPtr& requester);
+
+private:
+	ILicenseService* m_licenseService;
 };
 
 }

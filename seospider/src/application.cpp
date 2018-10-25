@@ -21,7 +21,7 @@
 #include "crawler_options.h"
 #include "command_line_handler.h"
 #include "command_line_keys.h"
-#include "license_service.h"
+#include "license_state_observer.h"
 #include "smtp_sender.h"
 #include "wait_operation_frame.h"
 #include "version.h"

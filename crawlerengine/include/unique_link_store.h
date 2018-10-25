@@ -7,7 +7,7 @@
 namespace CrawlerEngine
 {
 
-class ILicenseService;
+class ILicenseStateObserver;
 
 struct RefreshUrlRequest
 {
@@ -90,7 +90,7 @@ private:
 
 	int m_limitCrawledLinksCount;
 
-	ILicenseService* m_licenseService;
+	ILicenseStateObserver* m_licenseService;
 };
 
 }

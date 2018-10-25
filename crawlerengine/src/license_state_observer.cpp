@@ -1,4 +1,4 @@
-#include "license_service.h"
+#include "license_state_observer.h"
 #include "iresponse.h"
 #include "set_serial_number_request.h"
 #include "set_serial_number_response.h"
@@ -18,7 +18,7 @@ constexpr int s_minute = 60 * 1000;
 namespace CrawlerEngine
 {
 
-LicenseService::LicenseService()
+LicenseStateObserver::LicenseStateObserver()
 	: m_isTrialLicense(false)
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
@@ -42,69 +42,66 @@ LicenseService::LicenseService()
 	handlerRegistry.addSubscription(subscription, getSerialNumberStateRequestHandler, ResponseType::ResponseGetSerialNumberState);
 	handlerRegistry.addSubscription(subscription, setSerialNumberRequestHandler, ResponseType::ResponseSetSerialNumber);
 
-	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseService::onLicenseData);
+	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
 	m_licenseRequester->start();
 
 	ASSERT(startTimer(s_minute));
 }
 
-QObject* LicenseService::qobject() const
+QObject* LicenseStateObserver::qobject() const
 {
-	return const_cast<LicenseService*>(this);
+	return const_cast<LicenseStateObserver*>(this);
 }
 
-bool LicenseService::isPaidLicense() const noexcept
+bool LicenseStateObserver::isPaidLicense() const noexcept
 {
 	return !isTrialLicense();
 }
 
-bool LicenseService::isTrialLicense() const noexcept
+bool LicenseStateObserver::isTrialLicense() const noexcept
 {
 	return false;
 	return m_isTrialLicense;
 }
 
-void LicenseService::timerEvent(QTimerEvent*)
+void LicenseStateObserver::timerEvent(QTimerEvent*)
 {
 	if (m_licenseRequester)
 	{
 		return;
 	}
 
-	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseService::onLicenseData);
+	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
 	m_licenseRequester->start();
 }
 
-void LicenseService::onLicenseData(Requester*, const GetSerialNumberDataResponse& response)
+void LicenseStateObserver::onLicenseData(Requester*, const GetSerialNumberDataResponse& response)
 {
 	m_licenseRequester.reset();
-
-	const LicenseStateFlags stateFlags(response.data().nState);
-
-	onLicenseStateChanged(stateFlags);
+	onLicenseStateChanged(response.data().states);
 }
 
-void LicenseService::onLicenseStateChanged(const LicenseStateFlags& stateFlags)
+void LicenseStateObserver::onLicenseStateChanged(const SerialNumberStates& stateFlags)
 {
-	if (stateFlags.testFlag(SERIAL_STATE_SUCCESS))
+	if (stateFlags.testFlag(StateSuccessActivation))
 	{
 		setTrialLicense(false, ReasonSuccessActivation);
 	}
-	else if (stateFlags.testFlag(SERIAL_STATE_FLAG_INVALID))
+	else if (stateFlags.testFlag(StateInvalidSerialNumberActivation))
 	{
 		setTrialLicense(true, Reason::ReasonInvalidSerialNumberActivation);
 	}
-	else if (stateFlags.testFlag(SERIAL_STATE_FLAG_DATE_EXPIRED))
+	else if (stateFlags.testFlag(StateDateExpired))
 	{
 		setTrialLicense(true, Reason::ReasonDateExpired);
 	}
-	else if (stateFlags.testFlag(SERIAL_STATE_FLAG_RUNNING_TIME_OVER))
+	else if (stateFlags.testFlag(StateRunningTimeOver))
 	{
 		setTrialLicense(true, Reason::ReasonRunningTimeOver);
 	}
 }
 
-void LicenseService::onSubscription(const IResponse& response)
+void LicenseStateObserver::onSubscription(const IResponse& response)
 {
 	if (m_licenseRequester)
 	{
@@ -115,7 +112,7 @@ void LicenseService::onSubscription(const IResponse& response)
 	{
 		case ResponseType::ResponseSetSerialNumber:
 		{
-			const SetSerialNumberResponse& setSerialNumberResponse = 
+			const SetSerialNumberResponse& setSerialNumberResponse =
 				static_cast<const SetSerialNumberResponse&>(response);
 
 			onLicenseStateChanged(setSerialNumberResponse.state());
@@ -127,7 +124,7 @@ void LicenseService::onSubscription(const IResponse& response)
 			const GetSerialNumberDataResponse& getSerialNumberDataResponse =
 				static_cast<const GetSerialNumberDataResponse&>(response);
 
-			onLicenseStateChanged(QFlag(getSerialNumberDataResponse.data().nState));
+			onLicenseStateChanged(getSerialNumberDataResponse.data().states);
 
 			break;
 		}
@@ -143,7 +140,7 @@ void LicenseService::onSubscription(const IResponse& response)
 	}
 }
 
-void LicenseService::setTrialLicense(bool value, Reason reason)
+void LicenseStateObserver::setTrialLicense(bool value, Reason reason)
 {
 	if (m_isTrialLicense == value)
 	{

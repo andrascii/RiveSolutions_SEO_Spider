@@ -195,7 +195,7 @@ private:
 	std::unique_ptr<HostInfo> m_hostInfo;
 
 	QPointer<Session> m_session;
-	ILicenseService* m_licenseService;
+	ILicenseStateObserver* m_licenseStateObserver;
 
 	QMap<QString, ICustomDataFeed*> m_customDataFeeds;
 };

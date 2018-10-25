@@ -29,7 +29,7 @@
 #include "license_controls_blocker.h"
 #include "software_branding.h"
 #include "register_product_dialog.h"
-#include "license_service.h"
+#include "license_state_observer.h"
 #include "common_constants.h"
 #include "feedback_dialog.h"
 #include "update_checker.h"
@@ -241,8 +241,8 @@ void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageNam
 
 void MainWindow::onCrawlingFinished() const
 {
-	DEBUG_ASSERT(ServiceLocator::instance()->isRegistered<ILicenseService>());
-	ILicenseService* licenseService = ServiceLocator::instance()->service<ILicenseService>();
+	DEBUG_ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 
 	if (!licenseService)
 	{

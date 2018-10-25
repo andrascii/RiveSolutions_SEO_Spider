@@ -1,6 +1,6 @@
 #include "license_controls_blocker.h"
 #include "service_locator.h"
-#include "license_service.h"
+#include "license_state_observer.h"
 #include "settings_page_registry.h"
 
 namespace
@@ -31,7 +31,7 @@ LicenseControlsBlocker::LicenseControlsBlocker(QObject* parent)
 		addWidget(settingsPageRegistry->settingsPageById(controlName));
 	}
 
-	ILicenseService* licenseService = ServiceLocator::instance()->service<ILicenseService>();
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 
 	VERIFY(connect(licenseService->qobject(), SIGNAL(licenseChanged(int)), SLOT(onLicenseChanged())));
 }
@@ -45,7 +45,7 @@ void LicenseControlsBlocker::addWidget(QWidget* object)
 
 void LicenseControlsBlocker::onLicenseChanged()
 {
-	ILicenseService* licenseService = ServiceLocator::instance()->service<ILicenseService>();
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 
 	foreach(auto widget, m_widgets)
 	{
