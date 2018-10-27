@@ -10,7 +10,7 @@ class SetSerialNumberResponse : public IResponse
 {
 public:
 	SetSerialNumberResponse(const SerialNumberStates& state)
-		: m_state(state)
+		: m_states(state)
 	{
 	}
 
@@ -21,13 +21,13 @@ public:
 
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseSetSerialNumber)
 
-	const SerialNumberStates& state() const
+	const SerialNumberStates& states() const
 	{
-		return m_state;
+		return m_states;
 	}
 
 private:
-	SerialNumberStates m_state;
+	SerialNumberStates m_states;
 };
 
 }

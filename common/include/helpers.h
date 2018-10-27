@@ -61,6 +61,8 @@ public:
 			static_assert(!"Destination type must be a reference");
 		}
 	}
+
+	static QByteArray decryptAesKey(const QByteArray& keyBase64, const QByteArray& helperKey);
 };
 
 namespace MetaHelpers

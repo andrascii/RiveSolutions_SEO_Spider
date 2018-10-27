@@ -9,6 +9,7 @@ namespace CrawlerEngine
 class Requester;
 class GetSerialNumberDataResponse;
 class GetSerialNumberStateResponse;
+class SetSerialNumberResponse;
 
 class ILicenseStateObserver
 {
@@ -54,8 +55,11 @@ private:
 	Q_INVOKABLE void onSubscription(const IResponse& response);
 
 	void onLicenseData(Requester* requester, const GetSerialNumberDataResponse& response);
+	void onSetSerialNumber(Requester* requester, const SetSerialNumberResponse& response);
 	void onLicenseStateChanged(const SerialNumberStates& stateFlags);
 	void setTrialLicense(bool value, Reason reason);
+
+	void checkLicenseFileAndInitLicenseIfNeeded();
 
 private:
 	bool m_isTrialLicense;

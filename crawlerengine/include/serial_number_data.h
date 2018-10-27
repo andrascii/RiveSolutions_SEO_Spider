@@ -17,7 +17,10 @@ Q_DECLARE_FLAGS(SerialNumberStates, SerialNumberState);
 
 struct SerialNumberData
 {
-	SerialNumberData() = default;
+	SerialNumberData()
+	{
+		states.setFlag(SerialNumberState::StateInvalidSerialNumberActivation);
+	}
 
 	SerialNumberData(const VMProtectSerialNumberData& data)
 	{

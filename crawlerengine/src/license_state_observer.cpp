@@ -42,8 +42,7 @@ LicenseStateObserver::LicenseStateObserver()
 	handlerRegistry.addSubscription(subscription, getSerialNumberStateRequestHandler, ResponseType::ResponseGetSerialNumberState);
 	handlerRegistry.addSubscription(subscription, setSerialNumberRequestHandler, ResponseType::ResponseSetSerialNumber);
 
-	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
-	m_licenseRequester->start();
+	checkLicenseFileAndInitLicenseIfNeeded();
 
 	ASSERT(startTimer(s_minute));
 }
@@ -60,7 +59,6 @@ bool LicenseStateObserver::isPaidLicense() const noexcept
 
 bool LicenseStateObserver::isTrialLicense() const noexcept
 {
-	return false;
 	return m_isTrialLicense;
 }
 
@@ -79,6 +77,12 @@ void LicenseStateObserver::onLicenseData(Requester*, const GetSerialNumberDataRe
 {
 	m_licenseRequester.reset();
 	onLicenseStateChanged(response.data().states);
+}
+
+void LicenseStateObserver::onSetSerialNumber(Requester*, const SetSerialNumberResponse& response)
+{
+	m_licenseRequester.reset();
+	onLicenseStateChanged(response.states());
 }
 
 void LicenseStateObserver::onLicenseStateChanged(const SerialNumberStates& stateFlags)
@@ -115,7 +119,7 @@ void LicenseStateObserver::onSubscription(const IResponse& response)
 			const SetSerialNumberResponse& setSerialNumberResponse =
 				static_cast<const SetSerialNumberResponse&>(response);
 
-			onLicenseStateChanged(setSerialNumberResponse.state());
+			onLicenseStateChanged(setSerialNumberResponse.states());
 
 			break;
 		}
@@ -150,6 +154,23 @@ void LicenseStateObserver::setTrialLicense(bool value, Reason reason)
 	m_isTrialLicense = value;
 
 	emit licenseChanged(reason);
+}
+
+
+void LicenseStateObserver::checkLicenseFileAndInitLicenseIfNeeded()
+{
+	QFile serialNumberFile("serial.txt");
+
+	if (!serialNumberFile.open(QIODevice::ReadOnly))
+	{
+		m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
+		m_licenseRequester->start();
+
+		return;
+	}
+
+	m_licenseRequester.reset(SetSerialNumberRequest(serialNumberFile.readAll()), this, &LicenseStateObserver::onSetSerialNumber);
+	m_licenseRequester->start();
 }
 
 }

@@ -63,7 +63,7 @@ void RegisterProductDialog::onActivationSerialNumberResult(CrawlerEngine::Reques
 {
 	m_licenseActivationRequester.reset();
 
-	const SerialNumberStates& stateFlags = response.state();
+	const SerialNumberStates& stateFlags = response.states();
 
 	if (stateFlags.testFlag(SerialNumberState::StateInvalidSerialNumberActivation))
 	{

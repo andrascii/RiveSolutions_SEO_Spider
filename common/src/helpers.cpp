@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include "qaes_encryption.h"
 
 namespace
 {
@@ -147,6 +148,19 @@ void Helpers::connectSignalsToMetaMethodsWithTheSameName(QObject* sender,
 			}
 		}
 	}
+}
+
+QByteArray Helpers::decryptAesKey(const QByteArray& keyBase64, const QByteArray& helperKey)
+{
+	const QByteArray base64DecodedKey = QByteArray::fromBase64(keyBase64);
+	const QByteArray cryptedValue = base64DecodedKey.mid(16);
+	const QByteArray iv = base64DecodedKey.mid(0, 16);
+
+	QAESEncryption encryption(QAESEncryption::AES_192, QAESEncryption::CBC, QAESEncryption::PKCS7);
+	const QByteArray padededDecryptedValue = encryption.decode(cryptedValue, helperKey, iv);
+
+	const int lastCharacterValue = static_cast<int>(padededDecryptedValue[padededDecryptedValue.size() - 1]);
+	return padededDecryptedValue.left(padededDecryptedValue.size() - lastCharacterValue);
 }
 
 }
