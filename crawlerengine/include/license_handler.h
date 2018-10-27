@@ -2,6 +2,7 @@
 
 #include "requester.h"
 #include "requester_wrapper.h"
+#include "serial_number_data.h"
 
 namespace CrawlerEngine
 {
@@ -23,6 +24,11 @@ private:
 	void setSerialNumber(const RequesterSharedPtr& requester);
 	void getSerialNumberData(const RequesterSharedPtr& requester);
 	void getSerialNumberState(const RequesterSharedPtr& requester);
+
+	void checkLicenseFileAndInitializeService();
+	void initLicenseServiceByKey(const QByteArray& key);
+	bool isMyLicenseServiceKeyType(const QByteArray& key) const;
+	SerialNumberStates setSerialNumberInternal(const QByteArray& serialNumber);
 
 private:
 	ILicenseService* m_licenseService;

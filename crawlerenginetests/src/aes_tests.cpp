@@ -1,4 +1,5 @@
 #include "qaes_encryption.h"
+#include "helpers.h"
 
 namespace
 {
@@ -894,23 +895,7 @@ TEST(AesTests, DecryptOnPyEncryptedData)
 		}
 
 		const QByteArray initialData = line.mid(0, separatorIndex).trimmed().toLatin1();
-		const int initialDataSeparatorIndex = initialData.indexOf(" ");
-
-		if (initialDataSeparatorIndex == -1)
-		{
-			continue;
-		}
-
-		const QByteArray base64DecodedKey = QByteArray::fromBase64(line.mid(separatorIndex + 1).trimmed().toLatin1());
-		const QByteArray cryptedValue = base64DecodedKey.mid(16);
-		const QByteArray iv = base64DecodedKey.mid(0, 16);
-
-		QAESEncryption encryption(QAESEncryption::AES_192, QAESEncryption::CBC, QAESEncryption::PKCS7);
-		const QByteArray padededDecryptedValue = encryption.decode(cryptedValue, QByteArray("111111111111111111111111"), iv);
-
-		const int lastCharacterValue = static_cast<int>(padededDecryptedValue[padededDecryptedValue.size() - 1]);
-		const QByteArray decryptedValue = padededDecryptedValue.left(padededDecryptedValue.size() - lastCharacterValue);
-
-		EXPECT_EQ(decryptedValue, initialData);
+		const QByteArray base64Key = line.mid(separatorIndex + 1).trimmed().toLatin1();
+		EXPECT_EQ(Common::Helpers::decryptAesKey(base64Key, QByteArray("111111111111111111111111")), initialData);
 	}
 }

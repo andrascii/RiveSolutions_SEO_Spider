@@ -11,11 +11,18 @@
 #include "get_serial_number_state_request.h"
 #include "get_serial_number_state_response.h"
 
+namespace
+{
+
+constexpr int c_myServiceRawDataParts = 3;
+
+}
+
 namespace CrawlerEngine
 {
 
 LicenseHandler::LicenseHandler()
-	: m_licenseService(new VmProtectLicenseService(this))
+	: m_licenseService(nullptr)
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 
@@ -67,25 +74,76 @@ void LicenseHandler::setSerialNumber(const RequesterSharedPtr& requester)
 	SetSerialNumberRequest* request = Common::Helpers::fast_cast<SetSerialNumberRequest*>(requester->request());
 
 	std::shared_ptr<SetSerialNumberResponse> response =
-		std::make_shared<SetSerialNumberResponse>(m_licenseService->setSerialNumber(request->serialNumber()));
+		std::make_shared<SetSerialNumberResponse>(setSerialNumberInternal(request->serialNumber()));
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
 
 void LicenseHandler::getSerialNumberData(const RequesterSharedPtr& requester)
 {
+	const SerialNumberData responseData = m_licenseService ? m_licenseService->serialNumberData() : SerialNumberData();
+
 	std::shared_ptr<GetSerialNumberDataResponse> response =
-		std::make_shared<GetSerialNumberDataResponse>(m_licenseService->serialNumberData());
+		std::make_shared<GetSerialNumberDataResponse>(responseData);
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
 
 void LicenseHandler::getSerialNumberState(const RequesterSharedPtr& requester)
 {
+	SerialNumberStates responseData;
+
+	if (m_licenseService)
+	{
+		responseData = m_licenseService->serialNumberStates();
+	}
+	else
+	{
+		responseData.setFlag(SerialNumberState::StateInvalidSerialNumberActivation);
+	}
+
 	std::shared_ptr<GetSerialNumberStateResponse> response =
-		std::make_shared<GetSerialNumberStateResponse>(m_licenseService->serialNumberStates());
+		std::make_shared<GetSerialNumberStateResponse>(responseData);
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+}
+
+void LicenseHandler::initLicenseServiceByKey(const QByteArray& key)
+{
+	if (m_licenseService)
+	{
+		QObject* licenseServiceObject = dynamic_cast<QObject*>(m_licenseService);
+
+		ASSERT(licenseServiceObject);
+
+		licenseServiceObject->deleteLater();
+	}
+
+	m_licenseService = isMyLicenseServiceKeyType(key) ?
+		static_cast<ILicenseService*>(new MyLicenseService(this)) :
+		static_cast<ILicenseService*>(new VmProtectLicenseService(this));
+}
+
+bool LicenseHandler::isMyLicenseServiceKeyType(const QByteArray& key) const
+{
+	const QByteArray& rawData = Common::Helpers::decryptAesKey(key, QByteArray("111111111111111111111111"));
+
+	QList<QByteArray> rawDataParts = rawData.split(' ');
+
+	if (rawDataParts.size() != c_myServiceRawDataParts)
+	{
+		return false;
+	}
+
+	QDate date = QDate::fromString(rawDataParts[2]);
+
+	return !date.isNull();
+}
+
+SerialNumberStates LicenseHandler::setSerialNumberInternal(const QByteArray& serialNumber)
+{
+	initLicenseServiceByKey(serialNumber);
+	return m_licenseService->setSerialNumber(serialNumber);
 }
 
 }
