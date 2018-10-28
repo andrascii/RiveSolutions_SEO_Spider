@@ -63,6 +63,8 @@ public:
 	}
 
 	static QByteArray decryptAesKey(const QByteArray& keyBase64, const QByteArray& helperKey);
+	static bool isMyLicenseSerialNumber(const QByteArray& serialNumber);
+	static std::pair<QByteArray, QDate> parseMySerialNumber(const QByteArray& serialNumber);
 };
 
 namespace MetaHelpers

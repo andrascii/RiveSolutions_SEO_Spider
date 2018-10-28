@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ilicense_service.h"
+#include "abstract_license_service.h"
 
 namespace CrawlerEngine
 {
 
-class VmProtectLicenseService : public QObject, public ILicenseService
+class VmProtectLicenseService : public QObject, public AbstractLicenseService
 {
 	Q_OBJECT
 

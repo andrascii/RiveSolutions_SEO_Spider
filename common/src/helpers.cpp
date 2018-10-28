@@ -4,9 +4,27 @@
 namespace
 {
 
+constexpr int c_myServiceRawDataParts = 3;
+
 qreal primaryScreenDpi()
 {
 	return QApplication::screens().at(0)->logicalDotsPerInch();
+}
+
+using ParsedSerialNumberData = std::tuple<QByteArray, QByteArray, QDate>;
+
+ParsedSerialNumberData parseMySerialNumberData(const QByteArray& serialNumber)
+{
+	const QByteArray& rawData = Common::Helpers::decryptAesKey(serialNumber, QByteArray("111111111111111111111111"));
+	const QList<QByteArray> rawDataParts = rawData.split(' ');
+
+	if (rawDataParts.size() != c_myServiceRawDataParts)
+	{
+		return std::make_tuple(QByteArray(), QByteArray(), QDate());
+	}
+
+	const QDate date = QDate::fromString(rawDataParts[2], "dd/MM/yyyy");
+	return std::make_tuple(rawDataParts[0], rawDataParts[1], date);
 }
 
 }
@@ -161,6 +179,18 @@ QByteArray Helpers::decryptAesKey(const QByteArray& keyBase64, const QByteArray&
 
 	const int lastCharacterValue = static_cast<int>(padededDecryptedValue[padededDecryptedValue.size() - 1]);
 	return padededDecryptedValue.left(padededDecryptedValue.size() - lastCharacterValue);
+}
+
+bool Helpers::isMyLicenseSerialNumber(const QByteArray& serialNumber)
+{
+	const ParsedSerialNumberData parsedSerialNumberData = parseMySerialNumberData(serialNumber);
+	return !std::get<2>(parsedSerialNumberData).isNull();
+}
+
+std::pair<QByteArray, QDate> Helpers::parseMySerialNumber(const QByteArray& serialNumber)
+{
+	const ParsedSerialNumberData parsedSerialNumberData = parseMySerialNumberData(serialNumber);
+	return std::make_pair(std::get<1>(parsedSerialNumberData), std::get<2>(parsedSerialNumberData));
 }
 
 }

@@ -27,7 +27,6 @@ private:
 
 	void checkLicenseFileAndInitializeService();
 	void initLicenseServiceByKey(const QByteArray& key);
-	bool isMyLicenseServiceKeyType(const QByteArray& key) const;
 	SerialNumberStates setSerialNumberInternal(const QByteArray& serialNumber);
 
 private:
