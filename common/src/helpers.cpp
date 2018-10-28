@@ -193,4 +193,18 @@ std::pair<QByteArray, QDate> Helpers::parseMySerialNumber(const QByteArray& seri
 	return std::make_pair(std::get<1>(parsedSerialNumberData), std::get<2>(parsedSerialNumberData));
 }
 
+QString Helpers::serialNumberFilePath()
+{
+	QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+	QDir dir(path);
+
+	if (!dir.exists())
+	{
+		dir.mkpath(path);
+	}
+
+	return QDir::cleanPath(path + QString("/serial.txt"));
+}
+
 }

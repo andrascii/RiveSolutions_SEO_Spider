@@ -1,7 +1,6 @@
 #include "seo_spider_service_app.h"
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"
-#include "qstandardpaths.h"
 #include "zippo.h"
 #include "smtp_sender.h"
 #include "sys_info.h"
@@ -56,7 +55,7 @@ SeoSpiderServiceApp::~SeoSpiderServiceApp()
 	m_zippo->wait();
 	m_cmdThread->quit();
 	m_cmdThread->wait();
-	
+
 	if (m_defferedDeleteDir != std::nullopt)
 	{
 		m_defferedDeleteDir->removeRecursively();
@@ -233,7 +232,7 @@ void SeoSpiderServiceApp::sendReports()
 QString SeoSpiderServiceApp::dumpsPath()
 {
 	QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-	path = QDir::cleanPath(path + QString("/RiveSolutions/SeoSpider/dumps"));
+	path = QDir::cleanPath(path + QString("/dumps"));
 
 	QDir dir(path);
 
@@ -248,7 +247,6 @@ QString SeoSpiderServiceApp::dumpsPath()
 QString SeoSpiderServiceApp::logFilePath()
 {
 	QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-	path = QDir::cleanPath(path + QString("/RiveSolutions/SeoSpider"));
 
 	QDir dir(path);
 
@@ -263,7 +261,7 @@ QString SeoSpiderServiceApp::logFilePath()
 QString SeoSpiderServiceApp::statisticsFilePath()
 {
 	QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-	path = QDir::cleanPath(path + QString("/RiveSolutions/SeoSpider/statistics"));
+	path = QDir::cleanPath(path + QString("/statistics"));
 
 	QDir dir(path);
 

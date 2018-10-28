@@ -59,6 +59,7 @@
 #include <QPointer>
 #include <QSharedMemory>
 #include <QDesktopServices>
+#include <QDir>
 
 //
 // C/C++
