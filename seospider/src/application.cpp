@@ -65,8 +65,6 @@ Application::Application(int& argc, char** argv)
 	{
 		openFileThroughCmd(m_commandLineHandler->commandValue(s_openSerializedFileKey));
 	}
-
-	ASSERT(0);
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
