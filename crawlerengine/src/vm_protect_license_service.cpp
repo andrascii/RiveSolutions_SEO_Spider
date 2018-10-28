@@ -10,7 +10,14 @@ VmProtectLicenseService::VmProtectLicenseService(QObject* parent)
 
 SerialNumberStates VmProtectLicenseService::setSerialNumber(const QByteArray& serialNumber)
 {
-	return QFlag(VMProtectSetSerialNumber(serialNumber.data()));
+	SerialNumberStates states = fromVmProtectStates(VMProtectSetSerialNumber(serialNumber.data()));
+
+	if (states.testFlag(SerialNumberState::StateSuccessActivation))
+	{
+		saveSerialNumberToFile(serialNumber);
+	}
+
+	return states;
 }
 
 SerialNumberData VmProtectLicenseService::serialNumberData() const
@@ -22,7 +29,7 @@ SerialNumberData VmProtectLicenseService::serialNumberData() const
 
 SerialNumberStates VmProtectLicenseService::serialNumberStates() const
 {
-	return QFlag(VMProtectGetSerialNumberState());
+	return fromVmProtectStates(VMProtectGetSerialNumberState());
 }
 
 }

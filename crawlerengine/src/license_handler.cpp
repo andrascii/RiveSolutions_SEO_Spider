@@ -11,13 +11,6 @@
 #include "get_serial_number_state_request.h"
 #include "get_serial_number_state_response.h"
 
-namespace
-{
-
-constexpr int c_myServiceRawDataParts = 3;
-
-}
-
 namespace CrawlerEngine
 {
 
@@ -119,25 +112,9 @@ void LicenseHandler::initLicenseServiceByKey(const QByteArray& key)
 		licenseServiceObject->deleteLater();
 	}
 
-	m_licenseService = isMyLicenseServiceKeyType(key) ?
+	m_licenseService = Common::Helpers::isMyLicenseSerialNumber(key) ?
 		static_cast<ILicenseService*>(new MyLicenseService(this)) :
 		static_cast<ILicenseService*>(new VmProtectLicenseService(this));
-}
-
-bool LicenseHandler::isMyLicenseServiceKeyType(const QByteArray& key) const
-{
-	const QByteArray& rawData = Common::Helpers::decryptAesKey(key, QByteArray("111111111111111111111111"));
-
-	QList<QByteArray> rawDataParts = rawData.split(' ');
-
-	if (rawDataParts.size() != c_myServiceRawDataParts)
-	{
-		return false;
-	}
-
-	QDate date = QDate::fromString(rawDataParts[2]);
-
-	return !date.isNull();
 }
 
 SerialNumberStates LicenseHandler::setSerialNumberInternal(const QByteArray& serialNumber)
