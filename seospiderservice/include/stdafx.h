@@ -77,6 +77,7 @@
 #include <QDir>
 #include <QSettings>
 #include <QJsonDocument>
+#include <QStandardPaths>
 
 #ifdef Q_OS_WIN
 

@@ -1,3 +1,4 @@
+#include "helpers.h"
 #include "abstract_license_service.h"
 
 namespace CrawlerEngine
@@ -5,7 +6,7 @@ namespace CrawlerEngine
 
 bool AbstractLicenseService::saveSerialNumberToFile(const QByteArray& serialNumber) const
 {
-	QFile serialNumberFile("serial.txt");
+	QFile serialNumberFile(Common::Helpers::serialNumberFilePath());
 
 	if (!serialNumberFile.open(QIODevice::WriteOnly))
 	{

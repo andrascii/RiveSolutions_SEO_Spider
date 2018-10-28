@@ -1,5 +1,6 @@
 #include "license_state_observer.h"
 #include "iresponse.h"
+#include "helpers.h"
 #include "set_serial_number_request.h"
 #include "set_serial_number_response.h"
 #include "get_serial_number_data_request.h"
@@ -159,7 +160,7 @@ void LicenseStateObserver::setTrialLicense(bool value, Reason reason)
 
 void LicenseStateObserver::checkLicenseFileAndInitLicenseIfNeeded()
 {
-	QFile serialNumberFile("serial.txt");
+	QFile serialNumberFile(Common::Helpers::serialNumberFilePath());
 
 	if (!serialNumberFile.open(QIODevice::ReadOnly))
 	{
