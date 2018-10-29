@@ -86,6 +86,7 @@ struct IUnknown;
 #include <QtSvg>
 #include <QBuffer>
 #include <QStack>
+#include <QNetworkInterface>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

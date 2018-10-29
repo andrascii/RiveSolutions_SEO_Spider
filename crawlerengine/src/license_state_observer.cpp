@@ -12,7 +12,7 @@
 namespace
 {
 
-constexpr int s_minute = 60 * 1000;
+constexpr int c_minute = 60 * 1000;
 
 }
 
@@ -45,7 +45,7 @@ LicenseStateObserver::LicenseStateObserver()
 
 	checkLicenseFileAndInitLicenseIfNeeded();
 
-	ASSERT(startTimer(s_minute));
+	ASSERT(startTimer(c_minute));
 }
 
 QObject* LicenseStateObserver::qobject() const

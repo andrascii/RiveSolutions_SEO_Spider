@@ -60,6 +60,8 @@
 #include <QSharedMemory>
 #include <QDesktopServices>
 #include <QDir>
+#include <QUrlQuery>
+#include <QJsonDocument>
 
 //
 // C/C++

@@ -3,6 +3,28 @@
 namespace CrawlerEngine
 {
 
+bool operator==(const SerialNumberData& lhs, const SerialNumberData& rhs)
+{
+	if (std::addressof(lhs) == std::addressof(rhs))
+	{
+		return true;
+	}
+
+	return lhs.states == rhs.states &&
+		lhs.userName == rhs.userName &&
+		lhs.email == rhs.email &&
+		lhs.dateExpire == rhs.dateExpire &&
+		lhs.dateMaxBuild == rhs.dateMaxBuild &&
+		lhs.runningTime == rhs.runningTime &&
+		lhs.userDataLength == rhs.userDataLength &&
+		std::equal(std::begin(lhs.userData), std::begin(lhs.userData) + lhs.userDataLength, std::begin(rhs.userData));
+}
+
+bool operator!=(const SerialNumberData& lhs, const SerialNumberData& rhs)
+{
+	return !(lhs == rhs);
+}
+
 SerialNumberStates fromVmProtectStates(int vmProtectStates)
 {
 	SerialNumberStates states;

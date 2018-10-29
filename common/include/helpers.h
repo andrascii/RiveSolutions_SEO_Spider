@@ -6,6 +6,8 @@ namespace Common
 class Helpers
 {
 public:
+	using ParsedSerialNumberData = std::tuple<QByteArray, QByteArray, QDate>;
+
 	static int pointsToPixels(double sizeInPoints, double dpi = 0);
 	static double pixelsToPoints(int sizeInPixels, double dpi = 0);
 
@@ -23,6 +25,12 @@ public:
 		QObject* receiver,
 		std::vector<QMetaMethod> receiverMethods
 	);
+
+	static QByteArray decryptAesKey(const QByteArray& keyBase64, const QByteArray& helperKey);
+	static bool isMyLicenseSerialNumber(const QByteArray& serialNumber);
+	static ParsedSerialNumberData parseMySerialNumber(const QByteArray& serialNumber);
+	static QString serialNumberFilePath();
+	static QString macAddress();
 
 	template <typename DestinationType, typename SourceType>
 	static DestinationType fast_cast(SourceType* p)
@@ -61,11 +69,6 @@ public:
 			static_assert(!"Destination type must be a reference");
 		}
 	}
-
-	static QByteArray decryptAesKey(const QByteArray& keyBase64, const QByteArray& helperKey);
-	static bool isMyLicenseSerialNumber(const QByteArray& serialNumber);
-	static std::pair<QByteArray, QDate> parseMySerialNumber(const QByteArray& serialNumber);
-	static QString serialNumberFilePath();
 };
 
 namespace MetaHelpers
