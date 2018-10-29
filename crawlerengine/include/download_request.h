@@ -20,8 +20,8 @@ struct DownloadRequest : public IRequest
 		CommandAutoDetectionBodyLoadingNecessity
 	};
 
-	DownloadRequest(const CrawlerRequest& requestInfo, 
-		LinkStatus linkStatus = LinkStatus::LinkStatusFirstLoading, 
+	DownloadRequest(const CrawlerRequest& requestInfo,
+		LinkStatus linkStatus = LinkStatus::LinkStatusFirstLoading,
 		BodyProcessingCommand bodyProcessingCommand = BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity,
 		bool useTimeout = false)
 		: requestInfo(requestInfo)

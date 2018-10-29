@@ -4,6 +4,8 @@
 namespace
 {
 
+using namespace Common;
+
 constexpr int c_myServiceRawDataParts = 3;
 
 qreal primaryScreenDpi()
@@ -11,9 +13,7 @@ qreal primaryScreenDpi()
 	return QApplication::screens().at(0)->logicalDotsPerInch();
 }
 
-using ParsedSerialNumberData = std::tuple<QByteArray, QByteArray, QDate>;
-
-ParsedSerialNumberData parseMySerialNumberData(const QByteArray& serialNumber)
+Helpers::ParsedSerialNumberData parseMySerialNumberData(const QByteArray& serialNumber)
 {
 	const QByteArray& rawData = Common::Helpers::decryptAesKey(serialNumber, QByteArray("111111111111111111111111"));
 	const QList<QByteArray> rawDataParts = rawData.split(' ');
@@ -187,10 +187,9 @@ bool Helpers::isMyLicenseSerialNumber(const QByteArray& serialNumber)
 	return !std::get<2>(parsedSerialNumberData).isNull();
 }
 
-std::pair<QByteArray, QDate> Helpers::parseMySerialNumber(const QByteArray& serialNumber)
+Helpers::ParsedSerialNumberData Helpers::parseMySerialNumber(const QByteArray& serialNumber)
 {
-	const ParsedSerialNumberData parsedSerialNumberData = parseMySerialNumberData(serialNumber);
-	return std::make_pair(std::get<1>(parsedSerialNumberData), std::get<2>(parsedSerialNumberData));
+	return parseMySerialNumberData(serialNumber);
 }
 
 QString Helpers::serialNumberFilePath()
@@ -205,6 +204,21 @@ QString Helpers::serialNumberFilePath()
 	}
 
 	return QDir::cleanPath(path + QString("/serial.txt"));
+}
+
+QString Helpers::macAddress()
+{
+	foreach(QNetworkInterface networkInterface, QNetworkInterface::allInterfaces())
+	{
+		if (networkInterface.flags() & QNetworkInterface::IsLoopBack)
+		{
+			continue;
+		}
+
+		return networkInterface.hardwareAddress();
+	}
+
+	return QString();
 }
 
 }

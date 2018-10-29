@@ -46,8 +46,13 @@ private:
 	};
 
 	void onStart();
+
 	ShedulePagesResult schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
-	ShedulePagesResult handlePageLinkList(std::vector<ResourceOnPage>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage);
+
+	ShedulePagesResult handlePageLinkList(std::vector<ResourceOnPage>& linkList,
+		const MetaRobotsFlagsSet& metaRobotsFlags,
+		ParsedPagePtr& parsedPage);
+
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
 	void onPageParsed(const WorkerResult& result) const noexcept;
 	void fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const;

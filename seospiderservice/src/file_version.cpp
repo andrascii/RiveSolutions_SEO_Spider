@@ -22,7 +22,7 @@ FileVersion::FileVersion()
 FileVersion FileVersion::version(const wchar_t* moduleName)
 {
 	FileVersion fileVersion;
-	
+
 	DWORD versionHandle;
 
 	const DWORD infoSize = GetFileVersionInfoSizeW(moduleName, &versionHandle);
@@ -64,7 +64,7 @@ FileVersion FileVersion::version(const wchar_t* moduleName)
 
 	//The Value member to contain an array of DWORD values indicating the language and code page combinations supported by this file.
 	//The low-order word of each DWORD must contain a Microsoft language identifier,
-	//and the high-order word must contain the IBM code page number. 
+	//and the high-order word must contain the IBM code page number.
 	LangAndCodePage* languageInfo = NULL;
 
 	success =
@@ -75,7 +75,7 @@ FileVersion FileVersion::version(const wchar_t* moduleName)
 		fileVersion.language = languageInfo->language;
 		fileVersion.codePage = languageInfo->codePage;
 
-		const QString blockName = 
+		const QString blockName =
 			QString()
 				.sprintf("\\StringFileInfo\\%04x%04x\\ProductName", fileVersion.language, fileVersion.codePage);
 

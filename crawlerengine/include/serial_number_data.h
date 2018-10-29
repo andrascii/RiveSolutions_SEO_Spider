@@ -32,4 +32,7 @@ struct SerialNumberData
 	unsigned char userData[255];
 };
 
+bool operator==(const SerialNumberData& lhs, const SerialNumberData& rhs);
+bool operator!=(const SerialNumberData& lhs, const SerialNumberData& rhs);
+
 }

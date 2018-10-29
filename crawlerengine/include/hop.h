@@ -15,8 +15,8 @@ public:
 	Hop(
 		const Url& url,
 		const Url& redirectUrl,
-		Common::StatusCode statusCode, 
-		const QByteArray& body, 
+		Common::StatusCode statusCode,
+		const QByteArray& body,
 		const ResponseHeaders& responseHeaders
 	);
 

@@ -435,7 +435,6 @@ void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcep
 
 void CrawlerWorkerThread::fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const
 {
-
 	const int pagesCount = static_cast<int>(pages.size());
 
 	for (int i = pagesCount - 1; i >= 0; --i)
