@@ -9,7 +9,7 @@ namespace
 using namespace CrawlerEngine;
 
 constexpr int c_myServiceRawDataParts = 3;
-constexpr int c_hour = 1000;// 60 * 60 * 1000;
+constexpr int c_hour = 60 * 60 * 1000;
 
 const QString s_verifySerialNumberUrl("https://pay.rivesolutions.com");
 const QString s_verifyPageName("verifykey");
