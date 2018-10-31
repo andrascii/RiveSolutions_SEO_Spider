@@ -10,8 +10,16 @@ class Dialog : public QDialog
 public:
 	Dialog(QWidget* parent = nullptr);
 
+	static Dialog* shownDialog();
+
 	virtual void open() override;
 	virtual int exec() override;
+
+signals:
+	void dialogClosed();
+
+private:
+	static Dialog* s_dialog;
 };
 
 }

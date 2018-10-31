@@ -2,7 +2,7 @@
 
 namespace SeoSpider
 {
-	
+
 class DeferredCall : public QEvent
 {
 public:
