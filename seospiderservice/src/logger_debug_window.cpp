@@ -31,6 +31,7 @@ namespace SeoSpiderService
 
 LoggerDebugWindow::LoggerDebugWindow(QWidget* parent)
 	: QMainWindow(parent)
+	, m_currentLevel(s_allLevels)
 	, m_ui(new Ui_LoggerDebugWindow)
 {
 	QWidget* centralWidget = new QWidget(this);
@@ -81,7 +82,7 @@ void LoggerDebugWindow::onCommandReceived(Common::Command command)
 			stream << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
 				<< s_separator << dumpData->processId
 				<< s_separator << quintptr(dumpData->threadId)
-				<< s_separator << (dumpData->dumpParams == Common::DumpData::NativeCrash ? "NATIVE CRASH" : "USER DUMP");
+				<< s_separator << (dumpData->dumpParams == Common::DumpData::NativeCrash ? "Native crash" : "User dump");
 			break;
 		}
 		case Common::Command::Log:
@@ -110,7 +111,7 @@ void LoggerDebugWindow::onCommandReceived(Common::Command command)
 			level = Common::LogLevel::InfoLog;
 
 			stream << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz")
-				<< s_separator << "RESTART REQUEST: " << restartData->message;
+				<< s_separator << "Restart request: " << restartData->message;
 			break;
 		}
 		case Common::Command::Counter:
@@ -129,6 +130,12 @@ void LoggerDebugWindow::onCommandReceived(Common::Command command)
 	m_messages[s_allLevels].push_back(internalMessage);
 	m_messages[level].push_back(internalMessage);
 
+	if (m_currentLevel != s_allLevels &&
+		m_currentLevel != level)
+	{
+		return;
+	}
+
 	m_ui->textBrowser->setTextBackgroundColor(QColor(s_backgroundColors[level]));
 	m_ui->textBrowser->setTextColor(QColor(s_textColors[level]));
 	m_ui->textBrowser->append(messageString);
@@ -146,7 +153,8 @@ void LoggerDebugWindow::levelChanged()
 {
 	m_ui->textBrowser->clear();
 
-	int messageType = m_ui->severityLevelComboBox->currentData().toInt();
+	const int messageType = m_ui->severityLevelComboBox->currentData().toInt();
+	m_currentLevel = messageType;
 
 	for (const ColoredString& msg : m_messages[messageType])
 	{

@@ -34,13 +34,8 @@ private:
 	void loadState();
 
 private:
-	enum
-	{
-		AllLevels = -1
-	};
-
+	int m_currentLevel;
 	std::map<int, std::vector<ColoredString>> m_messages;
-
 	Ui_LoggerDebugWindow* m_ui;
 };
 
