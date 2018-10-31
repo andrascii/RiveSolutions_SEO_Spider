@@ -67,6 +67,7 @@ private slots:
 	void onAboutCrawlerOptionsChanged();
 	void onAboutUseCustomUserAgentChanged();
 	void closeWaitOperationFrame();
+	void onLicenseStateChanged(int reason);
 
 private:
 	void initialize();

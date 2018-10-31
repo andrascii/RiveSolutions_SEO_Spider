@@ -15,7 +15,7 @@ private:
 
 private slots:
 	void onLicenseChanged();
-	
+
 private:
 	QVector<QWidget*> m_widgets;
 };

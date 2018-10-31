@@ -65,6 +65,9 @@ Application::Application(int& argc, char** argv)
 	{
 		openFileThroughCmd(m_commandLineHandler->commandValue(s_openSerializedFileKey));
 	}
+
+	ILicenseStateObserver* licenseStateObserver = ServiceLocator::instance()->service<ILicenseStateObserver>();
+	VERIFY(connect(licenseStateObserver->qobject(), SIGNAL(licenseChanged(int)), this, SLOT(onLicenseStateChanged(int))));
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -350,6 +353,48 @@ void Application::onAboutUseCustomUserAgentChanged()
 void Application::closeWaitOperationFrame()
 {
 	WaitOperationFrame::finish();
+}
+
+void Application::onLicenseStateChanged(int reason)
+{
+	switch(reason)
+	{
+		case ILicenseStateObserver::ReasonSuccessActivation:
+		{
+			break;
+		}
+		case ILicenseStateObserver::ReasonDateExpired:
+		{
+			mainWindow()->showMessageBoxDialog(
+				tr("Serial number date expired!"),
+				tr("Your serial number date is over!"),
+				QDialogButtonBox::Ok);
+
+			break;
+		}
+		case ILicenseStateObserver::ReasonRunningTimeOver:
+		{
+			break;
+		}
+		case ILicenseStateObserver::ReasonInvalidSerialNumberActivation:
+		{
+			mainWindow()->showMessageBoxDialog(
+				tr("Serial number is invalid!"),
+				tr("Unfortunately we detected that your license serial number is invalid!"),
+				QDialogButtonBox::Ok);
+
+			break;
+		}
+		case ILicenseStateObserver::ReasonSerialNumberBlacklisted:
+		{
+			mainWindow()->showMessageBoxDialog(
+				tr("Serial number is now blacklisted!"),
+				tr("Unfortunately we detected that your license serial number is now blacklisted! You can notify us about it if you don't understand why this happened."),
+				QDialogButtonBox::Ok);
+
+			break;
+		}
+	}
 }
 
 void Application::registerServices()

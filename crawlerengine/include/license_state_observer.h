@@ -19,7 +19,8 @@ public:
 		ReasonSuccessActivation,
 		ReasonDateExpired, // possibly invalid serial number
 		ReasonRunningTimeOver, // when license has ended (i.e. the launch of the program the day after the license ended)
-		ReasonInvalidSerialNumberActivation
+		ReasonInvalidSerialNumberActivation,
+		ReasonSerialNumberBlacklisted
 	};
 
 	virtual ~ILicenseStateObserver() = default;
