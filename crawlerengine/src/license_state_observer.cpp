@@ -12,7 +12,7 @@
 namespace
 {
 
-constexpr int c_minute = 60 * 1000;
+constexpr int c_minute = 1000;// 60 * 1000;
 
 }
 
@@ -88,19 +88,23 @@ void LicenseStateObserver::onSetSerialNumber(Requester*, const SetSerialNumberRe
 
 void LicenseStateObserver::onLicenseStateChanged(const SerialNumberStates& stateFlags)
 {
-	if (stateFlags.testFlag(StateSuccessActivation))
+	if (stateFlags.testFlag(SerialNumberState::StateSuccessActivation))
 	{
 		setTrialLicense(false, ReasonSuccessActivation);
 	}
-	else if (stateFlags.testFlag(StateInvalidSerialNumberActivation))
+	else if (stateFlags.testFlag(SerialNumberState::StateSerialNumberBlacklisted))
+	{
+		setTrialLicense(true, Reason::ReasonSerialNumberBlacklisted);
+	}
+	else if (stateFlags.testFlag(SerialNumberState::StateInvalidSerialNumberActivation))
 	{
 		setTrialLicense(true, Reason::ReasonInvalidSerialNumberActivation);
 	}
-	else if (stateFlags.testFlag(StateDateExpired))
+	else if (stateFlags.testFlag(SerialNumberState::StateDateExpired))
 	{
 		setTrialLicense(true, Reason::ReasonDateExpired);
 	}
-	else if (stateFlags.testFlag(StateRunningTimeOver))
+	else if (stateFlags.testFlag(SerialNumberState::StateRunningTimeOver))
 	{
 		setTrialLicense(true, Reason::ReasonRunningTimeOver);
 	}
@@ -154,9 +158,13 @@ void LicenseStateObserver::setTrialLicense(bool value, Reason reason)
 
 	m_isTrialLicense = value;
 
+	if (m_isTrialLicense)
+	{
+		INFOLOG << "License invalidated";
+	}
+
 	emit licenseChanged(reason);
 }
-
 
 void LicenseStateObserver::checkLicenseFileAndInitLicenseIfNeeded()
 {

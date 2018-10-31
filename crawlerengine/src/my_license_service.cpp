@@ -9,9 +9,9 @@ namespace
 using namespace CrawlerEngine;
 
 constexpr int c_myServiceRawDataParts = 3;
-constexpr int c_hour = 60 * 60 * 1000;
+constexpr int c_hour = 1000;// 60 * 60 * 1000;
 
-const QString s_verifySerialNumberUrl("http://pay.rivesolutions.com");
+const QString s_verifySerialNumberUrl("https://pay.rivesolutions.com");
 const QString s_verifyPageName("verifykey");
 const QString s_userNameVariableName("username");
 const QString s_idVariableName("id");
@@ -130,6 +130,13 @@ void MyLicenseService::timerEvent(QTimerEvent*)
 {
 	if (!m_data.states.testFlag(SerialNumberState::StateSuccessActivation))
 	{
+		return;
+	}
+
+	if (QDateTime::currentDateTime() > m_data.dateExpire)
+	{
+		m_data.states = SerialNumberStates();
+		m_data.states.setFlag(SerialNumberState::StateDateExpired);
 		return;
 	}
 

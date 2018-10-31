@@ -16,7 +16,6 @@ set(VersionHeadersDir ../version/include)
 set(VMProtectSdkDir ../deps/vmprotect/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
-file(GLOB_RECURSE AppCppList "src/*.cpp")
 file(GLOB_RECURSE AppHeadersList "include/*.h")
 file(GLOB_RECURSE AppFormsList "ui/*.ui")
 file(GLOB_RECURSE AppResourcesList "rcc/*.qrc")
