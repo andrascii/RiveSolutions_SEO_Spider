@@ -12,7 +12,7 @@
 namespace
 {
 
-constexpr int c_minute = 1000;// 60 * 1000;
+constexpr int c_minute = 60 * 1000;
 
 }
 
