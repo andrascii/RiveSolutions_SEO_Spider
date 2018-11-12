@@ -120,6 +120,7 @@ MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(add_msvc_precompiled_header)
 
+add_subdirectory(curl)
 add_subdirectory(${CrawlerEngineLibName})
 
 if ($ENV{TESTS} STREQUAL "enabled")
