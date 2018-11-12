@@ -274,107 +274,107 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column)
 {
 	switch (column)
 	{
-		case Column::UrlColumn: 
+		case Column::UrlColumn:
 		{
 			return &ParsedPageInfo::acceptUrl;
 		}
-		case Column::ContentTypeColumn: 
+		case Column::ContentTypeColumn:
 		{
 			return &ParsedPageInfo::acceptContentType;
 		}
-		case Column::TitleColumn: 
+		case Column::TitleColumn:
 		{
 			return &ParsedPageInfo::acceptTitle;
 		}
-		case Column::MetaRefreshColumn: 
+		case Column::MetaRefreshColumn:
 		{
 			return &ParsedPageInfo::acceptMetaRefresh;
 		}
-		case Column::MetaRobotsColumn: 
+		case Column::MetaRobotsColumn:
 		{
 			return &ParsedPageInfo::acceptMetaRobots;
 		}
-		case Column::RedirectedUrlColumn: 
+		case Column::RedirectedUrlColumn:
 		{
 			return &ParsedPageInfo::acceptRedirectedUrl;
 		}
-		case Column::ServerResponseColumn: 
+		case Column::ServerResponseColumn:
 		{
 			return &ParsedPageInfo::acceptServerResponse;
 		}
-		case Column::MetaDescriptionColumn: 
+		case Column::MetaDescriptionColumn:
 		{
 			return &ParsedPageInfo::acceptMetaDescription;
 		}
-		case Column::MetaKeywordsColumn: 
+		case Column::MetaKeywordsColumn:
 		{
 			return &ParsedPageInfo::acceptMetaKeywords;
 		}
-		case Column::FirstH1Column: 
+		case Column::FirstH1Column:
 		{
 			return &ParsedPageInfo::acceptFirstH1;
 		}
-		case Column::SecondH1Column: 
+		case Column::SecondH1Column:
 		{
 			return &ParsedPageInfo::acceptSecondH1;
 		}
-		case Column::FirstH2Column: 
+		case Column::FirstH2Column:
 		{
 			return &ParsedPageInfo::acceptFirstH2;
 		}
-		case Column::SecondH2Column: 
+		case Column::SecondH2Column:
 		{
 			return &ParsedPageInfo::acceptSecondH2;
 		}
-		case Column::CanonicalLinkElementColumn: 
+		case Column::CanonicalLinkElementColumn:
 		{
 			return &ParsedPageInfo::acceptCanonicalLinkElement;
 		}
-		case Column::StatusCodeColumn: 
+		case Column::StatusCodeColumn:
 		{
 			return &ParsedPageInfo::acceptStatusCode;
 		}
-		case Column::UrlLengthColumn: 
+		case Column::UrlLengthColumn:
 		{
 			return &ParsedPageInfo::acceptUrlLength;
 		}
-		case Column::TitleLengthColumn: 
+		case Column::TitleLengthColumn:
 		{
 			return &ParsedPageInfo::acceptTitleLength;
 		}
-		case Column::MetaDescriptionLengthColumn: 
+		case Column::MetaDescriptionLengthColumn:
 		{
 			return &ParsedPageInfo::acceptMetaDescriptionLength;
 		}
-		case Column::MetaKeywordsLengthColumn: 
+		case Column::MetaKeywordsLengthColumn:
 		{
 			return &ParsedPageInfo::acceptMetaKeywordsLength;
 		}
-		case Column::FirstH1LengthColumn: 
+		case Column::FirstH1LengthColumn:
 		{
 			return &ParsedPageInfo::acceptFirstH1Length;
 		}
-		case Column::SecondH1LengthColumn: 
+		case Column::SecondH1LengthColumn:
 		{
 			return &ParsedPageInfo::acceptSecondH1Length;
 		}
-		case Column::FirstH2LengthColumn: 
+		case Column::FirstH2LengthColumn:
 		{
 			return &ParsedPageInfo::acceptFirstH2Length;
 		}
-		case Column::SecondH2LengthColumn: 
+		case Column::SecondH2LengthColumn:
 		{
 			return &ParsedPageInfo::acceptSecondH2Length;
 		}
-		case Column::PageSizeKbColumn: 
+		case Column::PageSizeKbColumn:
 		{
 			return &ParsedPageInfo::acceptPageSizeKb;
 		}
-		case Column::WordCountColumn: 
+		case Column::WordCountColumn:
 		{
 			return &ParsedPageInfo::acceptWordCount;
 		}
-		case Column::PageHashColumn: 
+		case Column::PageHashColumn:
 		{
 			return &ParsedPageInfo::acceptPageHash;
 		}
@@ -437,7 +437,7 @@ QVariant ParsedPageInfo::acceptMetaRobots() const
 	{
 		return it->second;
 	}
-	
+
 	QString result;
 	const auto addFlag = [&flags, &result](CrawlerEngine::MetaRobotsItem flag, const QString& flagStr)
 	{
@@ -446,7 +446,7 @@ QVariant ParsedPageInfo::acceptMetaRobots() const
 			result += result.isEmpty() ? flagStr : QString(", ") + flagStr;
 		}
 	};
-	
+
 	addFlag(CrawlerEngine::MetaRobotsAll, QString("all"));
 	addFlag(CrawlerEngine::MetaRobotsNoIndex, QString("noindex"));
 	addFlag(CrawlerEngine::MetaRobotsNoFollow, QString("nofollow"));

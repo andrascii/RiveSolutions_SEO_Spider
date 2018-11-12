@@ -1,3 +1,5 @@
+cd ..
+cd ..
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Buildvcvars32.bat"
 mkdir build
 cd build
@@ -8,5 +10,6 @@ set BOOST_LIBRARYDIR=%SS_DEPS%\boost\%SS_PLATFORM%\lib
 set BOOST_ROOT=%SS_DEPS%\boost
 set path=%SS_DEPS%\icu\icu_%SS_PLATFORM%\lib;%path%
 set TESTS=disabled
-cmake -G "Visual Studio 15 2017" .. -DMSVC_RUNTIME=dynamic
-msbuild.exe .\seospiderinstaller\seospiderinstaller.vcxproj /t:Build /p:Configuration=Release;Platform=Win32
+cmake -G "Visual Studio 15 2017" .. -DMSVC_RUNTIME=dynamic -DCMAKE_BUILD_TYPE=Debug
+cd ..
+cd ./buildscripts/debug/

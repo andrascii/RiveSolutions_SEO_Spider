@@ -32,6 +32,7 @@ source_group(
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
 configure_msvc_runtime()
+
 add_library(
  	${CrawlerEngineLibName} 
  	${CrawlerEngineSourcesList} 
@@ -80,11 +81,14 @@ if(WIN32)
 	set(OSSpecificDeps ws2_32.lib ntdll.lib)
 endif()
 
+#add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
+
 target_link_libraries(
 	${CrawlerEngineLibName}
 	${GumboLibName}
 	${CommonLibName}
 	${OSSpecificDeps}
+	${CurlLibraries}
 	"${MyHtmlLibName}_static" # change this solution to that which is more reliable
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}

@@ -6,7 +6,7 @@
 namespace CrawlerEngine
 {
 
-UniqueLinkStore::IncrementGuardExt::IncrementGuardExt(IncrementFunc inc, 
+UniqueLinkStore::IncrementGuardExt::IncrementGuardExt(IncrementFunc inc,
 	IncrementFunc decr, const UrlList& storage, int* change)
 	: inc(inc)
 	, decr(decr)
@@ -78,9 +78,9 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 	}
 
 	{
-		IncrementGuardExt guardCrawledExt(&CrawlerSharedState::incrementDownloaderCrawledLinksCount, 
+		IncrementGuardExt guardCrawledExt(&CrawlerSharedState::incrementDownloaderCrawledLinksCount,
 			nullptr, m_crawledUrlList, &m_lastCrawledSizeChange);
-		
+
 		IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 			&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList, &m_lastPendingSizeChange);
 
@@ -89,8 +89,8 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 
 		if (m_crawledUrlList.find(crawlerRequest) != m_crawledUrlList.end())
 		{
-			INFOLOG << "Url from pending found in crawled url list:" 
-				<< crawlerRequest.url.urlStr() 
+			INFOLOG << "Url from pending found in crawled url list:"
+				<< crawlerRequest.url.urlStr()
 				<< static_cast<int>(crawlerRequest.requestType);
 		}
 
@@ -199,9 +199,9 @@ bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestT
 	CrawlerRequest request{ url, requestType };
 
 	{
-		IncrementGuardExt guardCrawledExt(&CrawlerSharedState::incrementDownloaderCrawledLinksCount, 
+		IncrementGuardExt guardCrawledExt(&CrawlerSharedState::incrementDownloaderCrawledLinksCount,
 			nullptr, m_crawledUrlList, &m_lastCrawledSizeChange);
-		
+
 		IncrementGuardExt guardPendingExt(&CrawlerSharedState::incrementDownloaderPendingLinksCount,
 			&CrawlerSharedState::decrementDownloaderPendingLinksCount, m_pendingUrlList, &m_lastPendingSizeChange);
 
@@ -307,7 +307,7 @@ void UniqueLinkStore::setLimitCrawledLinksCount(int value) noexcept
 }
 
 void UniqueLinkStore::addUrlInternal(CrawlerRequest&& request)
-{	
+{
 	const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
 
 	if (m_limitCrawledLinksCount > 0 && countLinks >= static_cast<size_t>(m_limitCrawledLinksCount))
