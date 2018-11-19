@@ -21,7 +21,7 @@ function getCounterIdSql($counterName)
     
     $result = mysqli_query($link, $insertOsSql) or die("Ошибка " . mysqli_error($link)); 
     
-    if($result)
+    if(isset($result))
     {
         $resultArray = mysqli_fetch_assoc($result);
         return $resultArray['ID'];
@@ -36,7 +36,7 @@ function getSessionIdSql($sessionName)
     
     $result = mysqli_query($link, $insertOsSql) or die("Ошибка " . mysqli_error($link)); 
     
-    if($result)
+    if(isset($result))
     {
         $resultArray = mysqli_fetch_assoc($result);
         return $resultArray['ID'];
@@ -51,7 +51,7 @@ function getUserIdSql($userName)
     
     $result = mysqli_query($link, $insertOsSql) or die("Ошибка " . mysqli_error($link)); 
     
-    if($result)
+    if(isset($result))
     {
         $resultArray = mysqli_fetch_assoc($result);
         return $resultArray['ID'];
@@ -66,7 +66,7 @@ function getOsIdSql($os, $bittness)
     
     $result = mysqli_query($link, $insertOsSql) or die("Ошибка " . mysqli_error($link)); 
     
-    if($result)
+    if(isset($result))
     {
         $resultArray = mysqli_fetch_assoc($result);
         return $resultArray['ID'];
@@ -81,7 +81,7 @@ function getVersionIdSql($programVersion, $programBittness)
     
     $result = mysqli_query($link, $insertOsSql) or die("Ошибка " . mysqli_error($link)); 
     
-    if($result)
+    if(isset($result))
     {
         $resultArray = mysqli_fetch_assoc($result);
         return $resultArray['ID'];
@@ -96,7 +96,7 @@ function getCountryIdSql($country)
     
     $result = mysqli_query($link, $getCountryIdSql) or die("Ошибка " . mysqli_error($link)); 
     
-    if($result)
+    if(isset($result))
     {
         $resultArray = mysqli_fetch_assoc($result);
         return $resultArray['ID'];
@@ -111,7 +111,7 @@ function getLanguageIdSql($langauge)
     
     $result = mysqli_query($link, $getLanguageIdSql) or die("Ошибка " . mysqli_error($link)); 
     
-    if($result)
+    if(isset($result))
     {
         $resultArray = mysqli_fetch_assoc($result);
         return $resultArray['ID'];
@@ -126,7 +126,7 @@ function getSessionByUserIdSql($sessionId)
     
     $result = mysqli_query($link, $getSessionByUserIdSql) or die("Ошибка " . mysqli_error($link)); 
     
-    if($result)
+    if(isset($result))
     {
         $resultArray = mysqli_fetch_assoc($result);
         return $resultArray['ID'];
@@ -140,7 +140,7 @@ function insertCounterDataBySessionData($sessionByUserId, $counterId, $value)
     
     global $link;
     
-    $result = mysqli_query($link, $insertSessionSql) or die("Ошибка " . mysqli_error($link)); 
+    mysqli_query($link, $insertSessionSql) or die("Ошибка " . mysqli_error($link)); 
 }
 
 function insertCounterSql($counterName)
@@ -149,7 +149,7 @@ function insertCounterSql($counterName)
     
     global $link;
     
-    $result = mysqli_query($link, $insertSessionSql) or die("Ошибка " . mysqli_error($link)); 
+    mysqli_query($link, $insertSessionSql) or die("Ошибка " . mysqli_error($link)); 
 }
 
 function insertSessionByUserSql($sessionID, $userId)
@@ -212,7 +212,7 @@ function insertUserSql($userName, $OSID, $versionID, $countryID, $languageID)
     
     global $link;
     
-    if($userID)
+    if(isset($userID))
     {
         $updateUserInfoSql = "UPDATE `users` SET `OSID`=\"$OSID\", `VersionID`=\"$versionID\", `CountryID`=\"$countryID\", `LanguageID`=\"$languageID\" WHERE `ID` = \"$userID\"";
         
@@ -257,12 +257,11 @@ foreach ($statisticsFiles as $statisticsFile)
         insertCountrySql($statisticsHeader['country']);
         insertLanguageSql($statisticsHeader['language']);
         
-        insertUserSql(  
-                    $statisticsHeader['userID'], 
-                    getOsIdSql($statisticsHeader['os'], $statisticsHeader['programBittness']),    
-                    getVersionIdSql($statisticsHeader['programVersion'], $statisticsHeader['programBittness']),
-                    getCountryIdSql($statisticsHeader['country']),     
-                    getLanguageIdSql($statisticsHeader['language']));
+        insertUserSql($statisticsHeader['userID'], 
+            getOsIdSql($statisticsHeader['os'], $statisticsHeader['programBittness']),    
+            getVersionIdSql($statisticsHeader['programVersion'], $statisticsHeader['programBittness']),
+            getCountryIdSql($statisticsHeader['country']),     
+            getLanguageIdSql($statisticsHeader['language']));
         
         insertSessionByUserSql(getSessionIdSql($sessionName), getUserIdSql($statisticsHeader['userID']));
         
@@ -270,7 +269,7 @@ foreach ($statisticsFiles as $statisticsFile)
         {
             insertCounterSql($key);
             
-            if($value)
+            if(isset($value))
             {
                 insertCounterDataBySessionData(getSessionByUserIdSql(getSessionIdSql($sessionName)), getCounterIdSql($key), $value);
             }

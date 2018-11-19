@@ -1,0 +1,11 @@
+set FOREIGN_KEY_CHECKS = 0;
+truncate table counters;
+truncate table counters_data_by_session_data;
+truncate table countries;
+truncate table locale_languages;
+truncate table os;
+truncate table program_versions;
+truncate table sessions;
+truncate table session_by_user;
+truncate table users;
+set FOREIGN_KEY_CHECKS = 1;
