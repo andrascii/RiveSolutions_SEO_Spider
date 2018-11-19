@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net
 --
 -- Хост: 10.0.0.109:3306
--- Время создания: Ноя 19 2018 г., 20:37
+-- Время создания: Ноя 19 2018 г., 23:44
 -- Версия сервера: 10.1.37-MariaDB
 -- Версия PHP: 5.3.3
 
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `countries_count` (
 --
 CREATE TABLE IF NOT EXISTS `last_30_days_counters_usages` (
 `Counter Name` varchar(255)
-,`Uses Count` bigint(40) unsigned
+,`Uses Count` decimal(42,0)
 ,`Users Count` bigint(21)
 );
 -- --------------------------------------------------------
@@ -294,7 +294,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`046767862_stats`@`%` SQL SECURITY DEFINER VI
 --
 DROP TABLE IF EXISTS `last_30_days_counters_usages`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`046767862_stats`@`%` SQL SECURITY DEFINER VIEW `last_30_days_counters_usages` AS select `counters`.`CounterName` AS `Counter Name`,(count(`counters_data_by_session_data`.`CounterID`) * `counters_data_by_session_data`.`Value`) AS `Uses Count`,count(`session_by_user`.`UserID`) AS `Users Count` from (((`counters_data_by_session_data` join `counters` on((`counters_data_by_session_data`.`CounterID` = `counters`.`ID`))) join `session_by_user` on((`counters_data_by_session_data`.`SessionByUserID` = `session_by_user`.`ID`))) join `sessions` on((`sessions`.`ID` = `session_by_user`.`SessionID`))) where ((`sessions`.`SessionDateTime` >= (now() - interval 30 day)) and (`sessions`.`SessionDateTime` <= now())) group by `counters_data_by_session_data`.`CounterID`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`046767862_stats`@`%` SQL SECURITY DEFINER VIEW `last_30_days_counters_usages` AS select `counters`.`CounterName` AS `Counter Name`,sum(`counters_data_by_session_data`.`Value`) AS `Uses Count`,count(`session_by_user`.`UserID`) AS `Users Count` from (((`counters_data_by_session_data` join `counters` on((`counters_data_by_session_data`.`CounterID` = `counters`.`ID`))) join `session_by_user` on((`counters_data_by_session_data`.`SessionByUserID` = `session_by_user`.`ID`))) join `sessions` on((`sessions`.`ID` = `session_by_user`.`SessionID`))) where ((`sessions`.`SessionDateTime` >= (now() - interval 30 day)) and (`sessions`.`SessionDateTime` <= now())) group by `counters_data_by_session_data`.`CounterID`;
 
 -- --------------------------------------------------------
 
