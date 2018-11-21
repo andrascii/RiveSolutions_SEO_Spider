@@ -104,6 +104,8 @@ add_custom_command(
 add_definitions(
 	${QT_DEFINITIONS}
 	-DQUAZIP_STATIC
+	-D_WINSOCK_DEPRECATED_NO_WARNINGS
+	-DCURL_STATICLIB
 )
 
 if(MSVC)
@@ -132,6 +134,7 @@ endif()
 include_directories(
 	${AppHeadersDir}
 	${CrawlerEngineLibHeadersDir}
+	${CurlHeadersDir}
 	${CommonLibHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
 	${VersionHeadersDir}
@@ -147,8 +150,13 @@ if(WIN32)
 	set(OSSpecificDeps ntdll.lib)
 endif()
 
+message("CURL library dependencies: ${CurlLibraries}")
+message("OpenSSL library dependencies: ${OPENSSL_LIBRARIES}")
+message("OpenSSL include directory: ${OPENSSL_INCLUDE_DIR}")
+
 target_link_libraries(
 	${AppName}
+	${CurlLibraries}
 	${CrawlerEngineLibName}
 	${CommonLibName}
 	${VersionProjectName}
@@ -159,6 +167,8 @@ target_link_libraries(
 	${Boost_FILESYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
 	${OPENSSL_LIBRARIES}
+	D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libcrypto.lib
+	D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libssl.lib
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Svg

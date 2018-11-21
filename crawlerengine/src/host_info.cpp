@@ -30,7 +30,7 @@ HostInfo::HostInfo()
 	, m_addressFamily(AddressFamily::IPv4)
 {
 	in_addr fakeAddress;
-	
+
 #ifdef Q_OS_WIN
 	inet_pton(AF_INET, "127.0.0.1", &fakeAddress);
 #else
@@ -88,7 +88,7 @@ AddressFamily HostInfo::addressFamily() const noexcept
 void HostInfo::determineError()
 {
 #ifdef Q_OS_WIN
-	
+
 	const DWORD error = ::WSAGetLastError();
 
 	switch (error)
@@ -122,7 +122,7 @@ void HostInfo::determineError()
 		{
 			m_error =
 				"The requested name is valid, but no data of the requested type was found. "
-				"This error is also returned if the name parameter contains a string " 
+				"This error is also returned if the name parameter contains a string "
 				"representation of an IPv6 address or an illegal IPv4 address.\n\n"
 				"This error should not be interpreted to mean that the name parameter contains a name string "
 				"that has been validated for a particular protocol(an IP hostname, for example). "
@@ -208,7 +208,7 @@ void HostInfo::setIpAddresses(hostent* remoteHost)
 
 			CHAR ipStringRepresentation[16] = { 0 };
 			::RtlIpv4AddressToStringA(&addr, ipStringRepresentation);
-			
+
 			m_ipv4Addresses[ipStringRepresentation] = addr;
 		}
 	}

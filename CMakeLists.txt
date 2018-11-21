@@ -80,8 +80,6 @@ set(VMProtectDebugLicenseFile "${CMAKE_CURRENT_SOURCE_DIR}/deps/vmprotect/debugl
 
 project(${AppName})
 
-set(GuiBinName ${AppName})
-
 set(CMAKE_INSTALL_PREFIX)
 
 # Find includes in corresponding build directories
@@ -128,7 +126,7 @@ if ($ENV{TESTS} STREQUAL "enabled")
 endif()
 
 add_subdirectory(${QtXlsxWriter})
-add_subdirectory(${GuiBinName})
+add_subdirectory(${AppName})
 add_subdirectory(${ScreenshotMaker})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${MyHtmlLibName})

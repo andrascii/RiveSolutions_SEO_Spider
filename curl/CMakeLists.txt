@@ -12,8 +12,9 @@ externalproject_add(curl
 )
 
 externalproject_get_property(curl Source_Dir Binary_Dir)
-include_directories("${Source_Dir}/include")
-list(APPEND CurlLibraries wsock32 ws2_32)
+set(CurlHeadersDir "${Source_Dir}/include" CACHE INTERNAL "")
+include_directories(${CurlHeadersDir})
+list(APPEND CurlLibrariesList wsock32 ws2_32)
 set(CurlDependency curl)
 
 set(CurlDebugDir ${Binary_Dir}/lib/debug)
@@ -23,10 +24,10 @@ message(STATUS "CURL Release directory ${CurlReleaseDir}")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	# in Debug mode
-	list(APPEND CurlLibraries ${CurlDebugDir}/libcurl-d.lib)
+	set(CurlLibraries ${CurlLibrariesList} ${CurlDebugDir}/libcurl-d.lib CACHE INTERNAL "")
 else (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	# in Release mode
-	list(APPEND CurlLibraries ${CurlReleaseDir}/libcurl.lib)
+	set(CurlLibraries ${CurlLibrariesList} ${CurlReleaseDir}/libcurl.lib CACHE INTERNAL "")
 endif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 add_definitions(-DCURL_STATICLIB)

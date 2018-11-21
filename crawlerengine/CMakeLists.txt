@@ -45,6 +45,7 @@ add_library(
 add_definitions(
 	${QT_DEFINITIONS}
 	-DQUAZIP_STATIC
+	-D_WINSOCK_DEPRECATED_NO_WARNINGS
 )
 
 if(MSVC)
@@ -66,8 +67,11 @@ if(MSVC)
 
 endif()
 
+message("CURL include headers directory: ${CurlHeadersDir}")
+
 include_directories(
 	${CrawlerEngineHeadersDir}
+	${CurlHeadersDir}
 	${GumboLibHeadersDir}
 	${MyHtmlLibHeadersDir}
 	${CommonLibHeadersDir}
@@ -80,8 +84,6 @@ include_directories(
 if(WIN32)
 	set(OSSpecificDeps ws2_32.lib ntdll.lib)
 endif()
-
-#add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
 
 target_link_libraries(
 	${CrawlerEngineLibName}

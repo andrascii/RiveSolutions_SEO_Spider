@@ -99,6 +99,7 @@
 #include <optional>
 #include <windows.h>
 #include <VMProtectSDK.h>
+#include <curl/curl.h>
 
 //
 // boost
@@ -162,8 +163,6 @@ using std::size_t;
 #endif
 
 #if defined(Q_OS_WIN)
-
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #include <ws2tcpip.h>
 #include <mstcpip.h>
