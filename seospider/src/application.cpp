@@ -6,26 +6,22 @@
 #include "crawler.h"
 #include "sequenced_data_collection.h"
 #include "constants.h"
-#include "common_constants.h"
 #include "preferences.h"
 #include "settings_page_impl.h"
 #include "widget_under_mouse_info.h"
 #include "deferred_call.h"
 #include "internet_connection_notification_manager.h"
-#include "action_registry.h"
-#include "action_keys.h"
 #include "main_window.h"
-#include "software_branding.h"
 #include "storage_adapter_factory.h"
 #include "summary_data_accessor_factory.h"
 #include "crawler_options.h"
 #include "command_line_handler.h"
 #include "command_line_keys.h"
-#include "license_state_observer.h"
 #include "smtp_sender.h"
 #include "wait_operation_frame.h"
 #include "version.h"
 #include "license_state_notificator.h"
+#include "http_client.h"
 
 namespace
 {
@@ -50,6 +46,8 @@ Application::Application(int& argc, char** argv)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
 {
+	curl_global_init(CURL_GLOBAL_ALL);
+
 	Common::SmtpSender::init();
 
 	initializeStyleSheet();
@@ -598,6 +596,8 @@ Application::~Application()
 	ServiceLocator::instance()->destroyService<ISettingsPageRegistry>();
 	DeferredCallProcessor::term();
 	Common::SmtpSender::term();
+
+	curl_global_cleanup();
 }
 
 }

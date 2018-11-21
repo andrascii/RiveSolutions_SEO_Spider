@@ -11,6 +11,7 @@ public:
 
 	Url() = default;
 	Url(const QUrl& url);
+	Url(const QString& url);
 
 	inline bool compare(const Url& url) const
 	{

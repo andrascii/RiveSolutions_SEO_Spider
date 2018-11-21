@@ -1,5 +1,14 @@
 #include "response_headers.h"
 
+namespace
+{
+
+const QString s_mainHeader = "the main header";
+const char* s_endHeaderName = ":";
+const char s_endOfHeader[] = "\r\n";
+
+}
+
 namespace CrawlerEngine
 {
 
@@ -10,7 +19,7 @@ void ResponseHeaders::addHeaderValue(const std::pair<QString, QString>& headerVa
 
 void ResponseHeaders::addHeaderValue(const QString& header, const QString& value)
 {
-	m_responseHeaders.push_back(std::make_pair(header, value));
+	m_responseHeaders.push_back(std::make_pair(header.trimmed(), value.trimmed()));
 }
 
 bool ResponseHeaders::removeHeaderValues(const QString& header)
@@ -30,6 +39,38 @@ ResponseHeaders::ResponseHeaders(const QList<QNetworkReply::RawHeaderPair>& head
 	addHeaderValues(headerValues);
 }
 
+void ResponseHeaders::buildFromByteArray(const QByteArray& responseData)
+{
+	int position = 0;
+
+	while (true)
+	{
+		const int delimeterPosition = responseData.indexOf(s_endHeaderName, position);
+		const int headerEndPosition = responseData.indexOf(s_endOfHeader, position);
+
+		if (delimeterPosition == -1 || headerEndPosition == -1)
+		{
+			return;
+		}
+
+		if (delimeterPosition > headerEndPosition)
+		{
+			// here we have the first header
+			addHeaderValue(s_mainHeader, responseData.mid(0, headerEndPosition));
+			position += headerEndPosition + static_cast<int>(std::size(s_endOfHeader)) - 1;
+
+			continue;
+		}
+
+		const QByteArray headerName = responseData.mid(position, delimeterPosition - position);
+		const QByteArray headerValue = responseData.mid(delimeterPosition + 1, headerEndPosition - delimeterPosition + 1);
+
+		position = headerEndPosition + static_cast<int>(std::size(s_endOfHeader)) - 1;
+
+		addHeaderValue(headerName, headerValue);
+	}
+}
+
 void ResponseHeaders::addHeaderValues(const QList<QNetworkReply::RawHeaderPair>& headerValues)
 {
 	for (const QNetworkReply::RawHeaderPair& rawHeaderPair : headerValues)
@@ -38,7 +79,7 @@ void ResponseHeaders::addHeaderValues(const QList<QNetworkReply::RawHeaderPair>&
 	}
 }
 
-std::vector<QString> ResponseHeaders::valueOf(const QString& header) const noexcept
+std::vector<QString> ResponseHeaders::valueOf(const QString& header) const
 {
 	std::vector<QString> values;
 
@@ -51,6 +92,18 @@ std::vector<QString> ResponseHeaders::valueOf(const QString& header) const noexc
 	}
 
 	return values;
+}
+
+QString ResponseHeaders::mainHeader() const noexcept
+{
+	std::vector<QString> value = valueOf(s_mainHeader);
+
+	if(value.empty())
+	{
+		return QString();
+	}
+
+	return value[0];
 }
 
 QString ResponseHeaders::makeString() const
