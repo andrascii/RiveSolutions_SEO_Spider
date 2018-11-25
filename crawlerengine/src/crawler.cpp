@@ -27,8 +27,6 @@
 #include "proper_404_checker.h"
 #include "screenshot_maker.h"
 #include "icustom_data_feed.h"
-#include "test_data_feed.h"
-#include "yandex_metrica_data_feed.h"
 
 namespace CrawlerEngine
 {
@@ -136,7 +134,8 @@ void Crawler::initialize()
 	{
 		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
 
-		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(WorkerResult)), m_modelController, SLOT(handleWorkerResult(WorkerResult)), Qt::QueuedConnection));
+		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(WorkerResult)),
+			m_modelController, SLOT(handleWorkerResult(WorkerResult)), Qt::QueuedConnection));
 
 		threadManager.moveObjectToThread(m_workers.back(), QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
 	}
@@ -197,7 +196,7 @@ bool Crawler::hasNoData() const noexcept
 	return m_sequencedDataCollection->empty();
 }
 
-CrawlerEngine::Crawler::State Crawler::state() const noexcept
+Crawler::State Crawler::state() const noexcept
 {
 	return m_state;
 }

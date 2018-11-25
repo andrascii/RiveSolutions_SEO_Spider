@@ -3,6 +3,8 @@
 namespace CrawlerEngine
 {
 
+// TODO: !!!make it thread safe!!!
+
 class ServiceLocator
 {
 public:

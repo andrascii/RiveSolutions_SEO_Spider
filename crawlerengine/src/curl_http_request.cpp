@@ -1,22 +1,39 @@
-#include "curl_http_get_request.h"
+#include "curl_http_request.h"
+
+namespace
+{
+
+bool proxyAddressHasScheme(const QString& proxyHostName)
+{
+	return proxyHostName.startsWith("http://") ||
+		proxyHostName.startsWith("https://") ||
+		proxyHostName.startsWith("socks4://") ||
+		proxyHostName.startsWith("socks4a://") ||
+		proxyHostName.startsWith("socks5://") ||
+		proxyHostName.startsWith("socks5h://");
+}
+
+}
 
 namespace CrawlerEngine
 {
 
-CurlHttpGetRequest::CurlHttpGetRequest(CURL* httpConnection, const Url& url)
+CurlHttpRequest::CurlHttpRequest(CURL* httpConnection, const Url& url)
 	: m_httpConnection(httpConnection)
 	, m_url(url)
+	, m_redirects(-1)
 {
 }
 
-HopsChain CurlHttpGetRequest::execute()
+HopsChain CurlHttpRequest::execute()
 {
 	HopsChain hopsChain;
 
-	bool continueLoading = false;
 	const Url* url = &m_url;
 
-	do
+	int redirectCount = 0;
+
+	while (true)
 	{
 		Hop hop = loadUrl(*url);
 
@@ -28,34 +45,69 @@ HopsChain CurlHttpGetRequest::execute()
 
 		if (isRedirected)
 		{
-			continueLoading = true;
+			if (m_redirects != -1 && redirectCount >= m_redirects)
+			{
+				hop.setStatusCode(Common::StatusCode::TooManyRedirections);
+				break;
+			}
+
+			++redirectCount;
 			url = &hopsChain.lastHop().redirectUrl();
 		}
 		else
 		{
-			continueLoading = false;
+			break;
 		}
-
-	} while (continueLoading);
+	}
 
 	return hopsChain;
 }
 
-void CurlHttpGetRequest::setCustomRequestOptions()
+void CurlHttpRequest::setTimeout(int ms) const
+{
+	setOption(CURLOPT_TIMEOUT_MS, ms);
+}
+
+void CurlHttpRequest::setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword) const
+{
+	setOption(CURLOPT_PROXY, proxyHostName.toUtf8().constData());
+	setOption(CURLOPT_PROXYPORT, proxyPort);
+
+	// TODO: should we do it?
+	if (!proxyAddressHasScheme(proxyHostName))
+	{
+		setOption(CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+	}
+
+	if (!proxyUser.isEmpty() && !proxyPassword.isEmpty())
+	{
+		const QByteArray& userPasswordString = (proxyUser + ":" + proxyPassword).toUtf8();
+		setOption(CURLOPT_PROXYUSERPWD, userPasswordString.constData());
+	}
+}
+
+void CurlHttpRequest::setMaxRedirects(int redirects)
+{
+	m_redirects = redirects;
+}
+
+void CurlHttpRequest::setCustomRequestOptions()
 {
 }
 
-void CurlHttpGetRequest::addRequestHeader(const std::string& name, const std::string& value)
+void CurlHttpRequest::addRequestHeader(const QByteArray& name, const QByteArray& value)
 {
 	m_headers.add(name, value);
 }
 
-Hop CurlHttpGetRequest::loadUrl(const Url& url)
+Hop CurlHttpRequest::loadUrl(const Url& url)
 {
 	Hop hop;
 	QByteArray responseHeadersData;
 
 	curl_easy_reset(m_httpConnection);
+
+	setOption(CURLOPT_CONNECTTIMEOUT, 30);
 	setOption(CURLOPT_URL, url.toDisplayString().toStdString().c_str());
 
 	// TODO: avoid copy of response headers data
@@ -74,22 +126,28 @@ Hop CurlHttpGetRequest::loadUrl(const Url& url)
 
 	const CURLcode result = curl_easy_perform(m_httpConnection);
 
-	if (result != CURLE_OK)
+	if (result != CURLE_OK &&
+		result != CURLE_OPERATION_TIMEDOUT)
 	{
-		std::stringstream formatter;
-
-		formatter << "Cannot perform HTTP request ("
+		ERRLOG
+			<< "Cannot perform HTTP request ("
 			<< "result: " << result
 			<< ", message: " << errorMessage << ")";
-
-		throw std::runtime_error(formatter.str());
 	}
 
 	ResponseHeaders responseHeaders;
 	responseHeaders.buildFromByteArray(responseHeadersData);
 
 	hop.setUrl(url);
-	hop.setStatusCode(static_cast<Common::StatusCode>(getHttpCode()));
+
+	if (result == CURLE_OPERATION_TIMEDOUT)
+	{
+		hop.setStatusCode(Common::StatusCode::Timeout);
+	}
+	else
+	{
+		hop.setStatusCode(static_cast<Common::StatusCode>(getHttpCode()));
+	}
 
 	const std::vector<QString> locationHeaderData = responseHeaders.valueOf("location");
 
@@ -106,23 +164,23 @@ Hop CurlHttpGetRequest::loadUrl(const Url& url)
 	return hop;
 }
 
-long CurlHttpGetRequest::getHttpCode() const
+long CurlHttpRequest::getHttpCode() const
 {
 	long httpCode = 0;
 	const auto result = curl_easy_getinfo(m_httpConnection, CURLINFO_RESPONSE_CODE, &httpCode);
 
 	if (result != CURLE_OK)
 	{
-		std::stringstream formatter;
-		formatter << "Cannot get HTTP code (" << curl_easy_strerror(result) << ")";
-
-		throw std::runtime_error(formatter.str());
+		ERRLOG
+			<< "Cannot get HTTP code ("
+			<< curl_easy_strerror(result)
+			<< ")";
 	}
 
 	return httpCode;
 }
 
-size_t CurlHttpGetRequest::writeBodyCallback(void* buffer, size_t size, size_t nmemb, void* userdata)
+size_t CurlHttpRequest::writeBodyCallback(void* buffer, size_t size, size_t nmemb, void* userdata)
 {
 	QByteArray* dataReceived = reinterpret_cast<QByteArray*>(userdata);
 	const auto bufferSize = size * nmemb;
@@ -130,7 +188,7 @@ size_t CurlHttpGetRequest::writeBodyCallback(void* buffer, size_t size, size_t n
 	return bufferSize;
 }
 
-size_t CurlHttpGetRequest::writeResponseHeadersCallback(void* buffer, size_t size, size_t nmemb, void* userdata)
+size_t CurlHttpRequest::writeResponseHeadersCallback(void* buffer, size_t size, size_t nmemb, void* userdata)
 {
 	QByteArray* dataReceived = reinterpret_cast<QByteArray*>(userdata);
 	const auto bufferSize = size * nmemb;

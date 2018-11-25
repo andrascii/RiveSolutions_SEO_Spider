@@ -13,9 +13,9 @@ CurlHttpHeadersWrapper::~CurlHttpHeadersWrapper()
 	curl_slist_free_all(m_head);
 }
 
-void CurlHttpHeadersWrapper::add(const std::string& name, const std::string& value)
+void CurlHttpHeadersWrapper::add(const QByteArray& name, const QByteArray& value)
 {
-	m_head = curl_slist_append(m_head, (name + ": " + value).c_str());
+	m_head = curl_slist_append(m_head, (name + ": " + value).constData());
 
 	if (!m_head)
 	{
