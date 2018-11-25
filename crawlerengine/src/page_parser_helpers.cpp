@@ -157,12 +157,14 @@ bool PageParserHelpers::isUrlInsideBaseUrlFolder(const Url& baseUrl, const Url& 
 	}
 
 	const QString baseUrlPath = baseUrl.path().toLower();
+
 	if (baseUrlPath.isEmpty() || baseUrlPath == QString("/"))
 	{
 		return true;
 	}
 
 	const QString urlPath = url.path().toLower();
+
 	if (baseUrlPath.size() > urlPath.size())
 	{
 		return false;
@@ -173,8 +175,10 @@ bool PageParserHelpers::isUrlInsideBaseUrlFolder(const Url& baseUrl, const Url& 
 		return baseUrlPath == urlPath;
 	}
 
-	const QString folder = baseUrlPath.endsWith(QChar('/'))
-		? baseUrlPath : baseUrlPath + QChar('/');
+	const QString folder =
+		baseUrlPath.endsWith(QChar('/')) ?
+		baseUrlPath :
+		baseUrlPath + QChar('/');
 
 	return urlPath.startsWith(folder);
 }

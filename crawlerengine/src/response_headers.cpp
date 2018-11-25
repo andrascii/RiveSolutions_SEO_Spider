@@ -4,8 +4,9 @@ namespace
 {
 
 const QString s_mainHeader = "the main header";
-const char* s_endHeaderName = ":";
-const char s_endOfHeader[] = "\r\n";
+const char s_endHeaderNameMarkChar = ':';
+const char s_endOfHeaderMarkChar = '\r';
+const char s_endOfHeaderMarkString[] = "\r\n";
 
 }
 
@@ -45,8 +46,8 @@ void ResponseHeaders::buildFromByteArray(const QByteArray& responseData)
 
 	while (true)
 	{
-		const int delimeterPosition = responseData.indexOf(s_endHeaderName, position);
-		const int headerEndPosition = responseData.indexOf(s_endOfHeader, position);
+		const int delimeterPosition = responseData.indexOf(s_endHeaderNameMarkChar, position);
+		const int headerEndPosition = responseData.indexOf(s_endOfHeaderMarkString, position);
 
 		if (delimeterPosition == -1 || headerEndPosition == -1)
 		{
@@ -57,7 +58,7 @@ void ResponseHeaders::buildFromByteArray(const QByteArray& responseData)
 		{
 			// here we have the first header
 			addHeaderValue(s_mainHeader, responseData.mid(0, headerEndPosition));
-			position += headerEndPosition + static_cast<int>(std::size(s_endOfHeader)) - 1;
+			position += headerEndPosition + static_cast<int>(std::size(s_endOfHeaderMarkString)) - 1;
 
 			continue;
 		}
@@ -65,7 +66,7 @@ void ResponseHeaders::buildFromByteArray(const QByteArray& responseData)
 		const QByteArray headerName = responseData.mid(position, delimeterPosition - position);
 		const QByteArray headerValue = responseData.mid(delimeterPosition + 1, headerEndPosition - delimeterPosition + 1);
 
-		position = headerEndPosition + static_cast<int>(std::size(s_endOfHeader)) - 1;
+		position = headerEndPosition + static_cast<int>(std::size(s_endOfHeaderMarkString)) - 1;
 
 		addHeaderValue(headerName, headerValue);
 	}
@@ -76,6 +77,36 @@ void ResponseHeaders::addHeaderValues(const QList<QNetworkReply::RawHeaderPair>&
 	for (const QNetworkReply::RawHeaderPair& rawHeaderPair : headerValues)
 	{
 		addHeaderValue(rawHeaderPair.first, rawHeaderPair.second);
+	}
+}
+
+void ResponseHeaders::addHeaderValue(const char* headerValueRawData)
+{
+	if (!std::char_traits<char>::compare(headerValueRawData, s_endOfHeaderMarkString, std::size(s_endOfHeaderMarkString)))
+	{
+		return;
+	}
+
+	const char* delimeterPosition = std::char_traits<char>::find(headerValueRawData, std::strlen(headerValueRawData), s_endHeaderNameMarkChar);
+	const char* headerEndPosition = std::char_traits<char>::find(headerValueRawData, std::strlen(headerValueRawData), s_endOfHeaderMarkChar);
+
+	if (delimeterPosition == nullptr &&
+		headerEndPosition == nullptr)
+	{
+		ERRLOG << "Passed invalid HTTP header format string";
+		return;
+	}
+
+	if (delimeterPosition && headerEndPosition)
+	{
+		const QByteArray headerName(headerValueRawData, delimeterPosition - headerValueRawData);
+		const QByteArray headerValue(delimeterPosition + 1);
+
+		addHeaderValue(headerName, headerValue);
+	}
+	else if (!delimeterPosition && headerEndPosition)
+	{
+		addHeaderValue(s_mainHeader, headerValueRawData);
 	}
 }
 
@@ -115,7 +146,14 @@ QString ResponseHeaders::makeString() const
 
 	for (const auto& [headerName, value] : m_responseHeaders)
 	{
-		serverResponse = serverResponse % headerName % colon % value % lineEnd;
+		if (!headerName.isEmpty() && headerName == s_mainHeader)
+		{
+			serverResponse = value % lineEnd;
+		}
+		else
+		{
+			serverResponse = serverResponse % headerName % colon % value % lineEnd;
+		}
 	}
 
 	// finalize string

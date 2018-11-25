@@ -34,12 +34,13 @@ CURL* initCurl()
 namespace CrawlerEngine
 {
 
-HttpClient::HttpClient(QObject* parent)
+HttpClient::HttpClient(OnOperationCompletedCallback callback, QObject* parent)
 	: QObject(parent)
 	, m_connection(initCurl())
 	, m_randomIntervalRangeTimer(new RandomIntervalRangeTimer(this))
 	, m_timeout(-1)
 	, m_maxRedirectCount(-1)
+	, m_operationCompletedCallback(callback)
 {
 	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked,
 		this, &HttpClient::onTimerTicked, Qt::DirectConnection));
@@ -152,7 +153,7 @@ void HttpClient::getInternal(const Url& url)
 	applyRequestSettings(request);
 
 	const HopsChain hopsChain = request.execute();
-	emit operationCompleted(hopsChain);
+	m_operationCompletedCallback(hopsChain);
 }
 
 void HttpClient::postInternal(const Url& url, const QByteArray& uploadData)
@@ -161,7 +162,7 @@ void HttpClient::postInternal(const Url& url, const QByteArray& uploadData)
 	applyRequestSettings(request);
 
 	const HopsChain hopsChain = request.execute();
-	emit operationCompleted(hopsChain);
+	m_operationCompletedCallback(hopsChain);
 }
 
 void HttpClient::onTimerTicked()

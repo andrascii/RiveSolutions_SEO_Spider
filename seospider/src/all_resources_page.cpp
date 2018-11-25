@@ -1,13 +1,9 @@
 #include "all_resources_page.h"
-#include "application.h"
 #include "page_data_widget.h"
 #include "website_data_widget.h"
-#include "application.h"
-#include "storage_exporter.h"
 #include "data_collection_groups_factory.h"
 #include "svg_renderer.h"
 #include "summary_model.h"
-#include "main_window.h"
 #include "content_frame.h"
 
 namespace SeoSpider

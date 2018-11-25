@@ -16,9 +16,6 @@ public:
 
 	virtual std::optional<CrawlerRequest> pendingUrl() const override;
 
-private slots:
-	void onUrlLoaded(const HopsChain& hopsChain);
-
 private:
 	virtual bool canPullLoading() const override;
 	virtual void applyNetworkOptions(const CrawlerOptionsData& optionsData) override;

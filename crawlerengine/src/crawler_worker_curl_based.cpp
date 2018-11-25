@@ -6,10 +6,8 @@ namespace CrawlerEngine
 
 CrawlerWorkerCurlBased::CrawlerWorkerCurlBased(UniqueLinkStore* uniqueLinkStore)
 	: AbstractCrawlerWorker(uniqueLinkStore)
-	, m_httpClient(new HttpClient(this))
+	, m_httpClient(new HttpClient([this](const HopsChain& hopsChain) { onLoadingDone(hopsChain); }, this))
 {
-	VERIFY(connect(m_httpClient->qobject(), SIGNAL(operationCompleted(const HopsChain&)),
-		this, SLOT(onUrlLoaded(const HopsChain&))));
 }
 
 std::optional<CrawlerRequest> CrawlerWorkerCurlBased::pendingUrl() const
@@ -63,11 +61,6 @@ void CrawlerWorkerCurlBased::setPageReceivedAfterStopPromise()
 std::vector<WorkerResult> CrawlerWorkerCurlBased::extractLoadedAfterStopPages()
 {
 	return std::vector<WorkerResult>();
-}
-
-void CrawlerWorkerCurlBased::onUrlLoaded(const HopsChain& hopsChain)
-{
-	onLoadingDone(hopsChain);
 }
 
 }

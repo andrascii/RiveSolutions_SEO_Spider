@@ -13,7 +13,9 @@ class HttpClient : public QObject, public IHttpClient
 	Q_OBJECT
 
 public:
-	HttpClient(QObject* parent);
+	using OnOperationCompletedCallback = std::function<void(const HopsChain&)>;
+
+	HttpClient(OnOperationCompletedCallback callback, QObject* parent);
 	~HttpClient();
 
 	virtual void get(const Url& url) override;
@@ -68,6 +70,7 @@ private:
 	int m_maxRedirectCount;
 	QByteArray m_userAgent;
 	ProxySettings m_proxySettings;
+	OnOperationCompletedCallback m_operationCompletedCallback;
 };
 
 }
