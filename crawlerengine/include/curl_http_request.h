@@ -44,8 +44,19 @@ private:
 	Hop loadUrl(const Url& url);
 	long getHttpCode() const;
 
+private:
+	enum class InterruptionReason
+	{
+		ReasonContinueLoading,
+		ReasonNonHtmlResponse
+	};
+
 	static size_t writeBodyCallback(void* buffer, size_t size, size_t nmemb, void* userdata);
 	static size_t writeResponseHeadersCallback(void* buffer, size_t size, size_t nmemb, void* userdata);
+	static int progressCallback(void* clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+
+private:
+	static thread_local InterruptionReason s_interruptionReason;
 
 private:
 	CURL* const m_httpConnection;

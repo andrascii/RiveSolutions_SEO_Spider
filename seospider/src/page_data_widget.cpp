@@ -109,7 +109,17 @@ void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page) const
 	for (int i = 0; i < serverResponseHeaders.size(); ++i)
 	{
 		serverResponseHeaders[i].insert(0, "<b>");
-		serverResponseHeaders[i].insert(serverResponseHeaders[i].indexOf(":") + 1, "</b>");
+
+		const int endBoldPosition = serverResponseHeaders[i].indexOf(":") + 1;
+
+		if (endBoldPosition != 0)
+		{
+			serverResponseHeaders[i].insert(endBoldPosition, "</b>");
+		}
+		else
+		{
+			serverResponseHeaders[i].append("</b>");
+		}
 	}
 
 	selectedPageServerResponse.clear();

@@ -1,4 +1,5 @@
 #include "curl_http_request.h"
+#include "page_parser_helpers.h"
 
 namespace
 {
@@ -18,6 +19,9 @@ bool proxyAddressHasScheme(const QString& proxyHostName)
 namespace CrawlerEngine
 {
 
+thread_local CurlHttpRequest::InterruptionReason
+CurlHttpRequest::s_interruptionReason = InterruptionReason::ReasonContinueLoading;
+
 CurlHttpRequest::CurlHttpRequest(CURL* httpConnection, const Url& url)
 	: m_httpConnection(httpConnection)
 	, m_url(url)
@@ -27,10 +31,10 @@ CurlHttpRequest::CurlHttpRequest(CURL* httpConnection, const Url& url)
 
 HopsChain CurlHttpRequest::execute()
 {
+	s_interruptionReason = InterruptionReason::ReasonContinueLoading;
+
 	HopsChain hopsChain;
-
 	const Url* url = &m_url;
-
 	int redirectCount = 0;
 
 	while (true)
@@ -103,19 +107,19 @@ void CurlHttpRequest::addRequestHeader(const QByteArray& name, const QByteArray&
 Hop CurlHttpRequest::loadUrl(const Url& url)
 {
 	Hop hop;
-	QByteArray responseHeadersData;
 
 	curl_easy_reset(m_httpConnection);
 
 	setOption(CURLOPT_CONNECTTIMEOUT, 30);
 	setOption(CURLOPT_URL, url.toDisplayString().toStdString().c_str());
 
-	// TODO: avoid copy of response headers data
 	setOption(CURLOPT_WRITEFUNCTION, &writeBodyCallback);
 	setOption(CURLOPT_WRITEDATA, &hop.body());
 
+	setOption(CURLOPT_PROGRESSFUNCTION, &progressCallback);
+
 	setOption(CURLOPT_HEADERFUNCTION, &writeResponseHeadersCallback);
-	setOption(CURLOPT_HEADERDATA, &responseHeadersData);
+	setOption(CURLOPT_HEADERDATA, &hop.responseHeaders());
 
 	char errorMessage[CURL_ERROR_SIZE];
 	setOption(CURLOPT_ERRORBUFFER, &errorMessage);
@@ -135,9 +139,6 @@ Hop CurlHttpRequest::loadUrl(const Url& url)
 			<< ", message: " << errorMessage << ")";
 	}
 
-	ResponseHeaders responseHeaders;
-	responseHeaders.buildFromByteArray(responseHeadersData);
-
 	hop.setUrl(url);
 
 	if (result == CURLE_OPERATION_TIMEDOUT)
@@ -149,7 +150,7 @@ Hop CurlHttpRequest::loadUrl(const Url& url)
 		hop.setStatusCode(static_cast<Common::StatusCode>(getHttpCode()));
 	}
 
-	const std::vector<QString> locationHeaderData = responseHeaders.valueOf("location");
+	const std::vector<QString> locationHeaderData = hop.responseHeaders().valueOf("location");
 
 	// supposed that we've got only one location header
 	// so we use locationHeaderData[0] to get the refirect url
@@ -158,8 +159,6 @@ Hop CurlHttpRequest::loadUrl(const Url& url)
 		const Url redirectUrl = locationHeaderData[0];
 		hop.setRedirectUrl(redirectUrl);
 	}
-
-	hop.setResponseHeaders(std::move(responseHeaders));
 
 	return hop;
 }
@@ -190,10 +189,29 @@ size_t CurlHttpRequest::writeBodyCallback(void* buffer, size_t size, size_t nmem
 
 size_t CurlHttpRequest::writeResponseHeadersCallback(void* buffer, size_t size, size_t nmemb, void* userdata)
 {
-	QByteArray* dataReceived = reinterpret_cast<QByteArray*>(userdata);
-	const auto bufferSize = size * nmemb;
-	dataReceived->append(reinterpret_cast<const char*>(buffer), static_cast<int>(bufferSize));
-	return bufferSize;
+	ResponseHeaders* responseHeadersBuffer = reinterpret_cast<ResponseHeaders*>(userdata);
+	responseHeadersBuffer->addHeaderValue(reinterpret_cast<const char*>(buffer));
+
+	const std::vector<QString> value = responseHeadersBuffer->valueOf("content-type");
+
+	if (!value.empty() && !PageParserHelpers::isHtmlOrPlainContentType(value[0]))
+	{
+		s_interruptionReason = InterruptionReason::ReasonNonHtmlResponse;
+	}
+
+	return size * nmemb;
+}
+
+int CurlHttpRequest::progressCallback(void*, double, double, double, double)
+{
+	if (s_interruptionReason == InterruptionReason::ReasonNonHtmlResponse)
+	{
+		// abort
+		return 1;
+	}
+
+	// continue loading
+	return 0;
 }
 
 }
