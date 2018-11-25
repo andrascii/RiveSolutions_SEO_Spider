@@ -20,6 +20,8 @@ public:
 	virtual void setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword) = 0;
 	virtual void resetProxy() = 0;
 
+	virtual QObject* qobject() const = 0;
+
 	// signals
 	virtual void operationCompleted(const HopsChain& hopsChain) = 0;
 };

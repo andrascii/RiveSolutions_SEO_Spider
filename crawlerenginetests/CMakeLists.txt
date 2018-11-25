@@ -73,6 +73,7 @@ add_custom_command(
 add_definitions(
 	${QT_DEFINITIONS}
 	-DQUAZIP_STATIC
+	-DCURL_STATICLIB
 )
 
 if(MSVC)
@@ -104,9 +105,13 @@ if(MSVC)
 	)
 endif()
 
+message("${CrawlerEngineLibTestsName}: CURL library dependencies: ${CurlLibraries}")
+message("${CrawlerEngineLibTestsName}: CURL library include dir: ${CurlHeadersDir}")
+
 include_directories(
 	${CrawlerEngineTestsHeaderDir}
 	${CrawlerEngineLibHeadersDir}
+	${CurlHeadersDir}
 	${CommonLibHeadersDir}
 	${GumboLibHeadersDir}
 	${MyHtmlLibHeadersDir}
@@ -117,6 +122,7 @@ include_directories(
 
 target_link_libraries(
 	${CrawlerEngineLibTestsName}
+	${CurlLibraries}
 	${CrawlerEngineLibName}
 	gtest
 	${CommonLibName}
@@ -124,6 +130,8 @@ target_link_libraries(
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_FILESYSTEM_LIBRARY}
 	${Boost_ASIO_LIBRARY}
+	D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libcrypto.lib
+	D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libssl.lib
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Xml

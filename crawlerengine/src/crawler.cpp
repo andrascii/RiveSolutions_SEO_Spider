@@ -2,7 +2,7 @@
 #include "unordered_data_collection.h"
 #include "sequenced_data_collection.h"
 #include "model_controller.h"
-#include "crawler_worker_thread.h"
+#include "abstract_crawler_worker.h"
 #include "robots_txt_rules.h"
 #include "robots_txt_loader.h"
 #include "thread_manager.h"
@@ -27,6 +27,8 @@
 #include "proper_404_checker.h"
 #include "screenshot_maker.h"
 #include "icustom_data_feed.h"
+#include "crawler_worker_qt_based_loader.h"
+#include "crawler_worker_curl_based.h"
 
 namespace CrawlerEngine
 {
@@ -88,7 +90,7 @@ Crawler::Crawler(unsigned int threadCount, QObject* parent)
 
 Crawler::~Crawler()
 {
-	for (CrawlerWorkerThread* worker : m_workers)
+	for (AbstractCrawlerWorker* worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "stop", Qt::BlockingQueuedConnection));
 	}
@@ -132,7 +134,7 @@ void Crawler::initialize()
 
 	for (unsigned i = 0; i < m_theradCount; ++i)
 	{
-		m_workers.push_back(new CrawlerWorkerThread(m_uniqueLinkStore));
+		m_workers.push_back(new CrawlerWorkerCurlBased(m_uniqueLinkStore));
 
 		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(WorkerResult)),
 			m_modelController, SLOT(handleWorkerResult(WorkerResult)), Qt::QueuedConnection));
@@ -236,7 +238,7 @@ void Crawler::stopCrawling()
 
 	setState(StatePause);
 
-	for (CrawlerWorkerThread* worker : m_workers)
+	for (AbstractCrawlerWorker* worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "stop", Qt::BlockingQueuedConnection));
 	}
@@ -351,7 +353,7 @@ void Crawler::onCrawlingSessionInitialized()
 
 	m_uniqueLinkStore->addUrl(m_options->startCrawlingPage(), DownloadRequestType::RequestTypeGet);
 
-	for (CrawlerWorkerThread* worker : m_workers)
+	for (AbstractCrawlerWorker* worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "start", Qt::QueuedConnection,
 			Q_ARG(const CrawlerOptionsData&, m_options->data()), Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content()))));
@@ -595,7 +597,7 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
 
-	for (CrawlerWorkerThread* worker : m_workers)
+	for (AbstractCrawlerWorker* worker : m_workers)
 	{
 		std::optional<CrawlerRequest> workerPendingUrl = worker->pendingUrl();
 

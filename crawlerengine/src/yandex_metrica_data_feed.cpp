@@ -1,6 +1,6 @@
 #include "yandex_metrica_data_feed.h"
 #include "custom_uri_channel.h"
-#include "crawler_worker_thread.h"
+#include "abstract_crawler_worker.h"
 #include "download_request.h"
 #include "download_response.h"
 
