@@ -10,28 +10,7 @@
 #include "inotification_service.h"
 #include "random_interval_range_timer.h"
 #include "helpers.h"
-
-namespace
-{
-
-class ReplyDeferredDeleterGuard final
-{
-public:
-	ReplyDeferredDeleterGuard(QNetworkReply* reply)
-		: m_reply(reply)
-	{
-	}
-
-	~ReplyDeferredDeleterGuard()
-	{
-		m_reply->deleteLater();
-	}
-
-private:
-	QNetworkReply* m_reply;
-};
-
-}
+#include "finally.h"
 
 namespace CrawlerEngine
 {
@@ -55,12 +34,10 @@ Downloader::Downloader()
 	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked,
 		this, &Downloader::onTimerTicked, Qt::DirectConnection));
 
-
 	m_timeoutTimer->setInterval(100);
+
 	VERIFY(connect(m_timeoutTimer, &QTimer::timeout,
 		this, &Downloader::onTimeoutTimerTicked, Qt::DirectConnection));
-
-
 }
 
 void Downloader::setPauseRange(int from, int to)
@@ -110,7 +87,7 @@ void Downloader::setProxy(const QString& proxyHostName, int proxyPort, const QSt
 	proxy.setHostName(proxyHostName);
 	proxy.setPort(proxyPort);
 
-	if(!(proxyUser.isEmpty() && proxyPassword.isEmpty()))
+	if(!proxyUser.isEmpty() && !proxyPassword.isEmpty())
 	{
 		proxy.setUser(proxyUser);
 		proxy.setPassword(proxyPassword);
@@ -289,13 +266,11 @@ void Downloader::metaDataChanged(QNetworkReply* reply)
 	}
 
 	const bool nonHtmlResponse = !PageParserHelpers::isHtmlOrPlainContentType(
-		reply->header(QNetworkRequest::ContentTypeHeader).toString()
-	);
+		reply->header(QNetworkRequest::ContentTypeHeader).toString());
 
 	if (isAutoDetectionBodyProcessing(reply) && nonHtmlResponse)
 	{
 		processReply(reply);
-
 		reply->abort();
 	}
 }
@@ -314,7 +289,7 @@ void Downloader::processReply(QNetworkReply* reply)
 		return;
 	}
 
-	ReplyDeferredDeleterGuard guard(reply);
+	Common::Finally replyGuard([reply] { reply->deleteLater(); });
 
 	markReplyAsProcessed(reply);
 	reply->disconnect(this);

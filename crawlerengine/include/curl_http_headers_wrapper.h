@@ -9,7 +9,7 @@ public:
 	CurlHttpHeadersWrapper();
 	~CurlHttpHeadersWrapper();
 
-	void add(const std::string& name, const std::string& value);
+	void add(const QByteArray& name, const QByteArray& value);
 
 	curl_slist* get() const;
 

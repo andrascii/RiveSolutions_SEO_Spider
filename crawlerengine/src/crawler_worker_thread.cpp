@@ -105,7 +105,7 @@ void CrawlerWorkerThread::reinitOptions(const CrawlerOptionsData& optionsData, R
 
 	if (m_optionsLinkFilter && optionsData.startCrawlingPage.compare(m_optionsLinkFilter->startCrawlingPage()))
 	{
-		s_trialLicenseSentLinksCounter = 0;
+		s_trialLicenseSentLinksCounter.store(0, std::memory_order_relaxed);
 	}
 
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
@@ -421,7 +421,9 @@ void CrawlerWorkerThread::onPageParsed(const WorkerResult& result) const noexcep
 			!result.incomingPageConstRef()->allResourcesOnPage.begin()->restrictions);
 	}
 
-	if (m_licenseService->isTrialLicense() && s_trialLicenseSentLinksCounter++ >= Common::c_maxTrialLicenseCrawlingLinksCount)
+	const bool isLimitReached = s_trialLicenseSentLinksCounter.fetch_add(1, std::memory_order_relaxed) >= Common::c_maxTrialLicenseCrawlingLinksCount;
+
+	if (m_licenseService->isTrialLicense() && isLimitReached)
 	{
 		m_uniqueLinkStore->clearPending();
 
