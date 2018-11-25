@@ -26,6 +26,8 @@ public:
 	virtual void setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword) override;
 	virtual void resetProxy() override;
 
+	virtual QObject* qobject() const override;
+
 signals:
 	virtual void operationCompleted(const HopsChain& hopsChain) override;
 

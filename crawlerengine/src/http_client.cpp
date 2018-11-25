@@ -115,6 +115,11 @@ void HttpClient::resetProxy()
 	m_proxySettings = ProxySettings();
 }
 
+QObject* HttpClient::qobject() const
+{
+	return const_cast<QObject*>(qobject_cast<const QObject*>(this));
+}
+
 void HttpClient::applyRequestSettings(CurlHttpRequest& request) const
 {
 	if (m_timeout != -1)
