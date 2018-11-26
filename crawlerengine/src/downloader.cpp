@@ -268,7 +268,11 @@ void Downloader::metaDataChanged(QNetworkReply* reply)
 	const bool nonHtmlResponse = !PageParserHelpers::isHtmlOrPlainContentType(
 		reply->header(QNetworkRequest::ContentTypeHeader).toString());
 
-	if (isAutoDetectionBodyProcessing(reply) && nonHtmlResponse)
+	const Common::StatusCode statusCode = replyStatusCode(reply);
+	const bool redirectionStatusCode = statusCode == Common::StatusCode::MovedPermanently301 ||
+		statusCode == Common::StatusCode::MovedTemporarily302;
+
+	if (isAutoDetectionBodyProcessing(reply) && nonHtmlResponse && !redirectionStatusCode)
 	{
 		processReply(reply);
 		reply->abort();

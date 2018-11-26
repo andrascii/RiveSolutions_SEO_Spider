@@ -132,10 +132,11 @@ ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(co
 ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
 	const CrawlerEngine::ParsedPage* parsedPage;
+	const int row = getUnderlyingIndex(index).row();
 
 	if (itemCount() > index.row())
 	{
-		parsedPage = (*m_associatedStorage)[index.row()];
+		parsedPage = (*m_associatedStorage)[row];
 	}
 
 	return std::make_shared<ParsedPageInfo>(parsedPage);
