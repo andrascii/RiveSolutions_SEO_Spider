@@ -34,7 +34,14 @@ void CrawlerWorkerCurlBased::applyNetworkOptions(const CrawlerOptionsData& optio
 	m_httpClient->setTimeout(optionsData.limitTimeout);
 	m_httpClient->setMaxRedirects(optionsData.maxRedirectsToFollow);
 	m_httpClient->setUserAgent(optionsData.userAgent);
-	m_httpClient->setPauseRange(optionsData.pauseRangeFrom, optionsData.pauseRangeTo);
+	if (!optionsData.pauseRangeEnabled)
+	{
+		m_httpClient->resetPauseRange();
+	}
+	else
+	{
+		m_httpClient->setPauseRange(optionsData.pauseRangeFrom, optionsData.pauseRangeTo);
+	}
 }
 
 void CrawlerWorkerCurlBased::performLoading(const CrawlerRequest& crawlerRequest, DownloadRequest::LinkStatus)

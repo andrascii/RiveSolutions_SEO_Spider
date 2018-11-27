@@ -297,12 +297,9 @@ void Application::onAboutCrawlerOptionsChanged()
 	}
 
 	// pause range settings
-	if (crawler()->options()->pauseRangeFrom() && crawler()->options()->pauseRangeTo())
-	{
-		preferences()->setUsePauseTimer(true);
-		preferences()->setFromPauseTimer(crawler()->options()->pauseRangeFrom());
-		preferences()->setToPauseTimer(crawler()->options()->pauseRangeTo());
-	}
+	preferences()->setUsePauseTimer(true);
+	preferences()->setFromPauseTimer(crawler()->options()->pauseRangeEnabled());
+	preferences()->setToPauseTimer(crawler()->options()->pauseRangeTo());
 
 	// yandex metrica counters
 
@@ -539,19 +536,12 @@ void Application::attachPreferencesToCrawlerOptions()
 		crawler()->options()->setPauseRangeTo(value);
 	};
 
-	const auto usePauseMapper = [this, pauseSetFromValue, pauseSetToValue](bool value)
+	const auto pauseSetEnabledValue = [this](bool enabled)
 	{
-		const int fromPauseTimerValue = value ? preferences()->fromPauseTimer() : -1;
-		const int toPauseTimerValue = value ? preferences()->toPauseTimer() : -1;
-
-		DEBUGLOG << "from pause:" << fromPauseTimerValue;
-		DEBUGLOG << "to pause:" << toPauseTimerValue;
-
-		pauseSetFromValue(fromPauseTimerValue);
-		pauseSetToValue(toPauseTimerValue);
+		crawler()->options()->setPauseRangeEnabled(enabled);
 	};
 
-	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, usePauseMapper));
+	VERIFY(connect(preferences(), &Preferences::usePauseTimerChanged, pauseSetEnabledValue));
 	VERIFY(connect(preferences(), &Preferences::fromPauseTimerChanged, pauseSetFromValue));
 	VERIFY(connect(preferences(), &Preferences::toPauseTimerChanged, pauseSetToValue));
 }

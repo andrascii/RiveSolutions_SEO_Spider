@@ -38,6 +38,7 @@ struct CrawlerOptionsData final
 	ParserTypeFlags parserTypeFlags;
 	int pauseRangeFrom = -1;
 	int pauseRangeTo = -1;
+	bool pauseRangeEnabled = false;
 	QByteArray userAgent;
 
 	bool searchYandexMetricaCounters;
@@ -93,6 +94,7 @@ class CrawlerOptions : public QObject, public ICrawlerOptions
 	Q_PROPERTY(ParserTypeFlags parserTypeFlags READ parserTypeFlags WRITE setParserTypeFlags NOTIFY parserTypeFlagsChanged)
 	Q_PROPERTY(int pauseRangeFrom READ pauseRangeFrom WRITE setPauseRangeFrom NOTIFY pauseRangeFromChanged)
 	Q_PROPERTY(int pauseRangeTo READ pauseRangeTo WRITE setPauseRangeTo NOTIFY pauseRangeToChanged)
+	Q_PROPERTY(bool pauseRangeEnabled READ pauseRangeEnabled WRITE setPauseRangeEnabled NOTIFY pauseRangeEnabledChanged)
 	Q_PROPERTY(QByteArray userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged)
 
 	// yandex metrica
@@ -241,6 +243,10 @@ public:
 	virtual int pauseRangeTo() const noexcept override;
 	Q_SLOT virtual void setPauseRangeTo(int value) noexcept override;
 	Q_SIGNAL virtual void pauseRangeToChanged(int value) const override;
+
+	virtual bool pauseRangeEnabled() const noexcept override;
+	Q_SLOT virtual void setPauseRangeEnabled(bool value) noexcept override;
+	Q_SIGNAL virtual void pauseRangeEnabledChanged(bool value) const override;
 
 	virtual QByteArray userAgent() const noexcept override;
 	Q_SLOT virtual void setUserAgent(const QByteArray& value) override;

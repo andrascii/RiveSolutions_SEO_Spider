@@ -164,6 +164,7 @@ TEST(SerializationTests, OptionsSerialization)
 	options.parserTypeFlags = ImagesResourcesParserType;
 	options.pauseRangeFrom = 1;
 	options.pauseRangeTo = 2;
+	options.pauseRangeEnabled = true;
 	options.userAgent = "BOT";
 	options.searchYandexMetricaCounters = true;
 	options.searchYandexMetricaCounter1 = true;
@@ -238,6 +239,7 @@ TEST(SerializationTests, OptionsSerialization)
 		EXPECT_EQ(crawler->options()->parserTypeFlags(), newOptions.parserTypeFlags);
 		EXPECT_EQ(crawler->options()->pauseRangeFrom(), newOptions.pauseRangeFrom);
 		EXPECT_EQ(crawler->options()->pauseRangeTo(), newOptions.pauseRangeTo);
+		EXPECT_EQ(crawler->options()->pauseRangeEnabled(), newOptions.pauseRangeEnabled);
 		EXPECT_EQ(crawler->options()->userAgent(), newOptions.userAgent);
 		EXPECT_EQ(crawler->options()->searchYandexMetricaCounters(), newOptions.searchYandexMetricaCounters);
 		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter1(), newOptions.searchYandexMetricaCounter1);
