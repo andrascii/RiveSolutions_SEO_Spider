@@ -7,7 +7,7 @@ static QMap<StatusCode, QString>& descriptions()
 {
 	static QMap<StatusCode, QString> s_statusCodeDescriptions
 	{
-		{StatusCode::Continue100, "100 Continue" },
+		{ StatusCode::Continue100, "100 Continue" },
 		{ StatusCode::SwitchingProtocol101, "101 Switching Protocol" },
 
 		{ StatusCode::Ok200, "200 OK" },
@@ -51,7 +51,7 @@ static QMap<StatusCode, QString>& descriptions()
 
 		{ StatusCode::BlockedByRobotsTxt, QObject::tr("Blocked By robots.txt") },
 		{ StatusCode::BlockedByMetaRobots, QObject::tr("Blocked By Meta Robots") },
-		{ StatusCode::Timeout, QObject::tr("Timeout") },
+		{ StatusCode::Timedout, QObject::tr("Timedout") },
 		{ StatusCode::TooManyRedirections, QObject::tr("Too Many Redirections") },
 		{ StatusCode::TooLongLInk, QObject::tr("Too Long Link") },
 		{ StatusCode::UnknownNetworkError, QObject::tr("Unknown Network Error") },
