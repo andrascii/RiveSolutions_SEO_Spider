@@ -372,7 +372,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
 {
 	if (event->key() == Qt::Key_Alt)
 	{
-		m_loader->get("http://cyberforum.ru");
+		m_loader->get("http://www.cyberforum.ru");
 	}
 }
 
