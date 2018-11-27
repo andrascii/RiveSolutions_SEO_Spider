@@ -3,30 +3,7 @@
 namespace CrawlerEngine
 {
 
-/* Global information, common to all connections */
-struct GlobalInfo
-{
-	CURLM* multi;
-	int stillRunning;
-};
-
-/* Information associated with a specific easy handle */
-struct ConnectionInfo
-{
-	CURL* easy;
-	QByteArray url;
-	char error[CURL_ERROR_SIZE];
-	QByteArray data;
-	GlobalInfo* globalInfo;
-};
-
-struct SocketInfo
-{
-	curl_socket_t sockfd;
-	CURL* easy;
-	int action;
-	long timeout;
-};
+class HopsChain;
 
 class MultiSocketLoader : public QObject
 {
@@ -34,33 +11,37 @@ class MultiSocketLoader : public QObject
 
 public:
 	MultiSocketLoader(QObject* parent = nullptr);
+	~MultiSocketLoader();
 
 	void get(const QByteArray& url);
+	void post(const QByteArray& url);
+	void head(const QByteArray& url);
+
+signals:
+	void done(const HopsChain& hopsChain);
 
 private slots:
 	void timeout();
-	void doAction(const SocketInfo& socketInfo);
+	void doAction(curl_socket_t socketDescriptor, int curlAction);
 
 private:
 	void setTimer();
 	void resetTimer();
 
 private:
-	static void checkMultiInfo();
-	static void onTimeout();
-	static void removeSocket();
+	struct SocketFunctionCallbackPrivateData
+	{
+		MultiSocketLoader* multiSocketLoader;
+		CURLM* multiHandle;
+		int stillRunning;
+	};
 
-	static size_t writeBodyCallback(void* buffer, size_t size, size_t nmemb, void* userdata);
 	static int socketFunctionCallback(CURL* easy, curl_socket_t s, int action, void* userPrivateData, void* socketPrivateData);
 	static int multiTimerCallback(CURLM* multi, long timeoutMs, void* userPrivateData);
 
 private:
-	static GlobalInfo s_globalInfo;
-
-private:
 	QTimer* m_timer;
+	SocketFunctionCallbackPrivateData m_socketPrivateData;
 };
-
-Q_DECLARE_METATYPE(SocketInfo)
 
 }
