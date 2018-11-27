@@ -20,6 +20,7 @@ protected:
 private slots:
 	void fromCrawlerPauseSpinBoxChanged(int value);
 	void toCrawlerPauseSpinBoxChanged(int value);
+	void useCrawlerPauseCheckBoxChanged(int value);
 
 private:
 	virtual void onShow() override;

@@ -385,6 +385,18 @@ void CrawlerOptions::setPauseRangeTo(int value) noexcept
 	emit pauseRangeToChanged(m_data.pauseRangeTo);
 }
 
+bool CrawlerOptions::pauseRangeEnabled() const noexcept
+{
+	return m_data.pauseRangeEnabled;
+}
+
+void CrawlerOptions::setPauseRangeEnabled(bool value) noexcept
+{
+	m_data.pauseRangeEnabled = value;
+
+	emit pauseRangeEnabledChanged(m_data.pauseRangeEnabled);
+}
+
 QByteArray CrawlerOptions::userAgent() const noexcept
 {
 	return m_data.userAgent;

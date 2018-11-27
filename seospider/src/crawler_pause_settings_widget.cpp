@@ -15,6 +15,11 @@ CrawlerPauseSettingsWidget::CrawlerPauseSettingsWidget(QWidget* parent)
 
 	VERIFY(connect(m_ui.toPauseTimerSpinBox, SIGNAL(valueChanged(int)),
 		this, SLOT(toCrawlerPauseSpinBoxChanged(int))));
+
+	VERIFY(connect(m_ui.usePauseTimerCheckBox, SIGNAL(stateChanged(int)),
+		this, SLOT(useCrawlerPauseCheckBoxChanged(int))));
+
+	// TODO: connect to theApp->preferences changes and update UI controls correspondingly
 }
 
 void CrawlerPauseSettingsWidget::init()
@@ -25,6 +30,7 @@ void CrawlerPauseSettingsWidget::init()
 
 	fromCrawlerPauseSpinBoxChanged(m_ui.fromPauseTimerSpinBox->value());
 	toCrawlerPauseSpinBoxChanged(m_ui.toPauseTimerSpinBox->value());
+	useCrawlerPauseCheckBoxChanged(m_ui.usePauseTimerCheckBox->checkState());
 
 	m_ui.fromPauseTimerSpinBox->setEnabled(m_ui.usePauseTimerCheckBox->isChecked());
 	m_ui.toPauseTimerSpinBox->setEnabled(m_ui.usePauseTimerCheckBox->isChecked());
@@ -38,6 +44,12 @@ void CrawlerPauseSettingsWidget::fromCrawlerPauseSpinBoxChanged(int value)
 void CrawlerPauseSettingsWidget::toCrawlerPauseSpinBoxChanged(int value)
 {
 	m_ui.fromPauseTimerSpinBox->setMaximum(value);
+}
+
+void CrawlerPauseSettingsWidget::useCrawlerPauseCheckBoxChanged(int value)
+{
+	m_ui.toPauseTimerSpinBox->setEnabled(Qt::Checked == value);
+	m_ui.fromPauseTimerSpinBox->setEnabled(Qt::Checked == value);
 }
 
 void CrawlerPauseSettingsWidget::onShow()

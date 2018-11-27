@@ -98,6 +98,7 @@ namespace
 	const QString s_parserTypeFlagsKey = QLatin1String("parserTypeFlags");
 	const QString s_pauseRangeFromKey = QLatin1String("pauseRangeFrom");
 	const QString s_pauseRangeToKey = QLatin1String("pauseRangeTo");
+	const QString s_pauseRangeEnabledKey = QLatin1String("pauseRangeEnabled");
 
 	const QString s_robotsTxtValidKey = QLatin1String("robotsTxtValid");
 	const QString s_robotsTxtContentKey = QLatin1String("robotsTxtContent");
@@ -788,6 +789,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeTextElement(s_parserTypeFlagsKey, QString::number(static_cast<int>(m_crawlerOptionsData.parserTypeFlags)));
 	writer.writeTextElement(s_pauseRangeFromKey, QString::number(m_crawlerOptionsData.pauseRangeFrom));
 	writer.writeTextElement(s_pauseRangeToKey, QString::number(m_crawlerOptionsData.pauseRangeTo));
+	writer.writeTextElement(s_pauseRangeEnabledKey, QString::number(m_crawlerOptionsData.pauseRangeEnabled));
 	writer.writeTextElement(s_userAgentKey, m_crawlerOptionsData.userAgent);
 
 	writer.writeTextElement(s_searchYandexMetricaCountersSettingsKey, QString::number(static_cast<int>(m_crawlerOptionsData.searchYandexMetricaCounters)));
@@ -974,6 +976,10 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		else if (reader.qualifiedName() == s_pauseRangeToKey)
 		{
 			m_crawlerOptionsData.pauseRangeTo = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_pauseRangeEnabledKey)
+		{
+			m_crawlerOptionsData.pauseRangeEnabled = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == s_userAgentKey)
 		{

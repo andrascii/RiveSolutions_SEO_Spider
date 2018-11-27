@@ -153,6 +153,10 @@ public:
 	virtual void setPauseRangeTo(int value) noexcept = 0;
 	virtual void pauseRangeToChanged(int value) const = 0;
 
+	virtual bool pauseRangeEnabled() const noexcept = 0;
+	virtual void setPauseRangeEnabled(bool value) noexcept = 0;
+	virtual void pauseRangeEnabledChanged(bool value) const = 0;
+
 	virtual QByteArray userAgent() const noexcept = 0;
 	virtual void setUserAgent(const QByteArray& value) = 0;
 	virtual void userAgentChanged(const QByteArray& value) const = 0;
