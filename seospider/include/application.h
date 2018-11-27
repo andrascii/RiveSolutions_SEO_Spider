@@ -56,9 +56,6 @@ signals:
 private:
 	static void registerServices();
 
-	void initQSettings();
-	QSettings* settings() const;
-
 private slots:
 	void startCrawler();
 	void stopCrawler();
@@ -73,6 +70,8 @@ private:
 	void applicationInitialized();
 	void attachPreferencesToCrawlerOptions();
 	void openFileThroughCmd(const QString& path);
+	void initQSettings();
+	QSettings* settings() const;
 
 private:
 	std::unique_ptr<CommandLineHandler> m_commandLineHandler;

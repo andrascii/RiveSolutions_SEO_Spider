@@ -1,7 +1,6 @@
 #pragma once
 
 #include "url.h"
-#include "status_code.h"
 #include "hop.h"
 
 namespace CrawlerEngine
@@ -30,5 +29,7 @@ public:
 private:
 	std::vector<Hop> m_hopsChain;
 };
+
+Q_DECLARE_METATYPE(HopsChain)
 
 }

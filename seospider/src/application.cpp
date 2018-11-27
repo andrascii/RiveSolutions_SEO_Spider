@@ -1,5 +1,4 @@
 #include "application.h"
-#include "style_loader.h"
 #include "software_branding.h"
 #include "splash_screen.h"
 #include "service_locator.h"
@@ -8,7 +7,6 @@
 #include "constants.h"
 #include "preferences.h"
 #include "settings_page_impl.h"
-#include "widget_under_mouse_info.h"
 #include "deferred_call.h"
 #include "internet_connection_notification_manager.h"
 #include "main_window.h"
@@ -21,7 +19,11 @@
 #include "wait_operation_frame.h"
 #include "version.h"
 #include "license_state_notificator.h"
-#include "http_client.h"
+
+#ifndef PRODUCTION
+#include "style_loader.h"
+#include "widget_under_mouse_info.h"
+#endif
 
 namespace
 {
