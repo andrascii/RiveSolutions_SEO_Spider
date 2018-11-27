@@ -143,7 +143,7 @@ Hop CurlHttpRequest::loadUrl(const Url& url)
 
 	if (result == CURLE_OPERATION_TIMEDOUT)
 	{
-		hop.setStatusCode(Common::StatusCode::Timeout);
+		hop.setStatusCode(Common::StatusCode::Timedout);
 	}
 	else
 	{

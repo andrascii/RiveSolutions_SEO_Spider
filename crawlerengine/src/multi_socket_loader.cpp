@@ -1,5 +1,6 @@
 #include "multi_socket_loader.h"
 #include "page_parser_helpers.h"
+#include "status_code_description.h"
 #include "hops_chain.h"
 
 namespace
@@ -21,6 +22,7 @@ struct RequestDescriptor
 	QByteArray data;
 	ResponseHeaders responseHeaders;
 	Common::StatusCode statusCode;
+	long timeElapsed;
 	InterruptionReason interruptionReason = InterruptionReason::ReasonContinueLoading;
 	char error[CURL_ERROR_SIZE];
 };
@@ -81,6 +83,7 @@ void MultiSocketLoader::get(const QByteArray& url)
 	request->url = url;
 
 	curl_easy_setopt(request->easy, CURLOPT_CONNECTTIMEOUT, 30);
+	curl_easy_setopt(request->easy, CURLOPT_TIMEOUT_MS, 50);
 	curl_easy_setopt(request->easy, CURLOPT_URL, url.constData());
 	curl_easy_setopt(request->easy, CURLOPT_PRIVATE, request);
 	curl_easy_setopt(request->easy, CURLOPT_ERRORBUFFER, request->error);
@@ -302,16 +305,28 @@ void checkMultiInfo(CURLM* multiHandle)
 			RequestDescriptor* requestDescriptor = nullptr;
 			curl_easy_getinfo(easyHandle, CURLINFO_PRIVATE, &requestDescriptor);
 
-			const long statusCode = getHttpCode(easyHandle);
-			requestDescriptor->statusCode = static_cast<Common::StatusCode>(statusCode);
+			if (result == CURLE_OPERATION_TIMEDOUT)
+			{
+				requestDescriptor->statusCode = Common::StatusCode::Timedout;
+			}
+			else
+			{
+				requestDescriptor->statusCode = static_cast<Common::StatusCode>(getHttpCode(easyHandle));
+			}
 
-			if (result != CURLE_OK)
+			if (result != CURLE_OK &&
+				result != CURLE_OPERATION_TIMEDOUT)
 			{
 				ERRLOG << requestDescriptor->error;
 			}
 			else
 			{
-				DEBUGLOG << requestDescriptor->url << "loaded" << "(status code:" << statusCode << ")";
+				DEBUGLOG
+					<< requestDescriptor->url
+					<< "loaded"
+					<< "(status code:"
+					<< Common::StatusCodeDescription::description(requestDescriptor->statusCode)
+					<< ")";
 			}
 
 			curl_multi_remove_handle(multiHandle, easyHandle);

@@ -317,7 +317,7 @@ void Downloader::processReply(QNetworkReply* reply)
 
 	std::shared_ptr<DownloadResponse> response = responseFor(requestId);
 
-	QByteArray body = statusCode == Common::StatusCode::Timeout ? QByteArray() : readBody(reply);
+	QByteArray body = statusCode == Common::StatusCode::Timedout ? QByteArray() : readBody(reply);
 	const Url redirectUrlAddress = redirectUrl(reply);
 
 	if (statusCode == Common::StatusCode::MovedPermanently301 ||
@@ -495,7 +495,7 @@ Common::StatusCode Downloader::replyStatusCode(QNetworkReply* reply) const
 {
 	if (reply->property("timeout").isValid())
 	{
-		return Common::StatusCode::Timeout;
+		return Common::StatusCode::Timedout;
 	}
 
 	const QNetworkReply::NetworkError error = reply->error();
@@ -528,7 +528,7 @@ Common::StatusCode Downloader::replyStatusCode(QNetworkReply* reply) const
 			case QNetworkReply::TimeoutError:
 			case QNetworkReply::ProxyTimeoutError:
 			{
-				code = Common::StatusCode::Timeout;
+				code = Common::StatusCode::Timedout;
 				break;
 			}
 			case QNetworkReply::InternalServerError:
