@@ -6,13 +6,22 @@ namespace CrawlerEngine
 
 CrawlerWorkerCurlBased::CrawlerWorkerCurlBased(UniqueLinkStore* uniqueLinkStore)
 	: AbstractCrawlerWorker(uniqueLinkStore)
-	, m_httpClient(new HttpClient([this](const HopsChain& hopsChain) { onLoadingDone(hopsChain); }, this))
+	, m_httpClient(new HttpClient(this))
 {
+	qRegisterMetaType<HopsChain>("HopsChain");
+
+	VERIFY(connect(m_httpClient->qobject(), SIGNAL(operationCompleted(const HopsChain&)),
+		this, SLOT(onUrlLoaded(const HopsChain&)), Qt::QueuedConnection));
 }
 
 std::optional<CrawlerRequest> CrawlerWorkerCurlBased::pendingUrl() const
 {
 	return std::nullopt;
+}
+
+void CrawlerWorkerCurlBased::onUrlLoaded(const HopsChain& hopsChain)
+{
+	onLoadingDone(hopsChain);
 }
 
 bool CrawlerWorkerCurlBased::canPullLoading() const

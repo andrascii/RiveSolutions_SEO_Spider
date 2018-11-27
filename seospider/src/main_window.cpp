@@ -51,6 +51,7 @@
 #include "ui_company_profile_settings_widget.h"
 #include "ui_page_visual_settings_widget.h"
 #include "custom_uri_channel.h"
+#include "multi_socket_loader.h"
 
 
 namespace SeoSpider
@@ -64,6 +65,7 @@ MainWindow::MainWindow(QWidget* parent)
 	, m_systemTrayIcon(new QSystemTrayIcon(theApp->softwareBrandingOptions()->applicationIcon(), this))
 	, m_updateChecker(new UpdateChecker(this))
 	, m_shadedOverlay(new ShadedOverlay(this))
+	, m_loader(new CrawlerEngine::MultiSocketLoader(this))
 {
 	qRegisterMetaType<Version>("Version");
 
@@ -364,6 +366,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	}
 
 	QMainWindow::closeEvent(event);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event)
+{
+	if (event->key() == Qt::Key_Alt)
+	{
+		m_loader->get("http://cyberforum.ru");
+	}
 }
 
 void MainWindow::init()

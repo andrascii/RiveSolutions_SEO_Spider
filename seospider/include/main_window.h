@@ -2,6 +2,13 @@
 
 #include "requester_wrapper.h"
 
+namespace CrawlerEngine
+{
+
+class MultiSocketLoader;
+
+}
+
 namespace SeoSpider
 {
 
@@ -39,7 +46,7 @@ public slots:
 	void hideShadedOverlay();
 	void onCustomUrlReceived();
 
-	int showMessageBoxDialog(const QString& title, 
+	int showMessageBoxDialog(const QString& title,
 		const QString& message,
 		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel) const;
 
@@ -48,6 +55,7 @@ protected:
 	virtual void moveEvent(QMoveEvent* event) override;
 	virtual void changeEvent(QEvent* event) override;
 	virtual void closeEvent(QCloseEvent* event) override;
+	virtual void keyPressEvent(QKeyEvent* event) override;
 
 private:
 	void openFile(const QString& filePath);
@@ -77,6 +85,7 @@ private:
 
 	IUpdateChecker* m_updateChecker;
 	ShadedOverlay* m_shadedOverlay;
+	CrawlerEngine::MultiSocketLoader* m_loader;
 };
 
 }
