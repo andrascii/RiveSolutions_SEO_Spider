@@ -8,7 +8,6 @@
 #include "menubar.h"
 #include "settings_page_impl.h"
 #include "site_map_creator_dialog.h"
-#include "settings_page.h"
 #include "user_agent_settings_widget.h"
 #include "crawler_pause_settings_widget.h"
 #include "page_visual_settings_widget.h"
@@ -19,25 +18,20 @@
 #include "notifications_container_widget.h"
 #include "software_branding.h"
 #include "svg_renderer.h"
-#include "storage_exporter.h"
-#include "helpers.h"
 #include "project_file_state_widget.h"
 #include "constants.h"
 #include "version.h"
 #include "recent_files.h"
 #include "crawler_progress_bar.h"
 #include "license_controls_blocker.h"
-#include "software_branding.h"
 #include "register_product_dialog.h"
 #include "license_state_observer.h"
 #include "common_constants.h"
 #include "feedback_dialog.h"
 #include "update_checker.h"
 #include "update_loader_dialog.h"
-#include "cursor_factory.h"
 #include "shaded_overlay.h"
 #include "message_box_dialog.h"
-#include "header_toolbutton_creator.h"
 #include "site_audit_page.h"
 #include "all_pages_page.h"
 #include "all_resources_page.h"
@@ -65,7 +59,7 @@ MainWindow::MainWindow(QWidget* parent)
 	, m_systemTrayIcon(new QSystemTrayIcon(theApp->softwareBrandingOptions()->applicationIcon(), this))
 	, m_updateChecker(new UpdateChecker(this))
 	, m_shadedOverlay(new ShadedOverlay(this))
-	, m_loader(new CrawlerEngine::MultiSocketLoader(this))
+	//, m_loader(new CrawlerEngine::MultiSocketLoader(this))
 {
 	qRegisterMetaType<Version>("Version");
 
@@ -370,10 +364,11 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
 {
-	if (event->key() == Qt::Key_Alt)
-	{
-		m_loader->get("http://www.cyberforum.ru");
-	}
+	event;
+//	if (event->key() == Qt::Key_Alt)
+//	{
+//		m_loader->get(Url("http://www.cyberforum.ru"));
+//	}
 }
 
 void MainWindow::init()

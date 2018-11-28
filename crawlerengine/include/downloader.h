@@ -8,7 +8,6 @@ namespace CrawlerEngine
 {
 
 class RandomIntervalRangeTimer;
-class IUniquenessChecker;
 struct DownloadResponse;
 
 class Downloader : public QObject, public IDownloader
