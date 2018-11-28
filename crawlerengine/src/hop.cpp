@@ -3,12 +3,13 @@
 namespace CrawlerEngine
 {
 
-Hop::Hop(const Url& url, const Url& redirectUrl, Common::StatusCode statusCode, const QByteArray& body, const ResponseHeaders& responseHeaders)
+Hop::Hop(const Url& url, const Url& redirectUrl, Common::StatusCode statusCode, const QByteArray& body, const ResponseHeaders& responseHeaders, int elapsedTime)
 	: m_url(url)
 	, m_redirectUrl(redirectUrl)
 	, m_statusCode(statusCode)
 	, m_body(body)
 	, m_responseHeaders(responseHeaders)
+	, m_elapsedTime(elapsedTime)
 {
 }
 
@@ -80,6 +81,16 @@ ResponseHeaders& Hop::responseHeaders() noexcept
 void Hop::setResponseHeaders(const ResponseHeaders& responseHeaders) noexcept
 {
 	m_responseHeaders = responseHeaders;
+}
+
+int Hop::elapsedTime() const
+{
+	return m_elapsedTime;
+}
+
+void Hop::setElapsedTime(int elapsedTime)
+{
+	m_elapsedTime = elapsedTime;
 }
 
 }

@@ -17,7 +17,8 @@ public:
 		const Url& redirectUrl,
 		Common::StatusCode statusCode,
 		const QByteArray& body,
-		const ResponseHeaders& responseHeaders
+		const ResponseHeaders& responseHeaders,
+		int elapsedTime
 	);
 
 	Url& url() noexcept;
@@ -39,12 +40,16 @@ public:
 	const ResponseHeaders& responseHeaders() const noexcept;
 	void setResponseHeaders(const ResponseHeaders& responseHeaders) noexcept;
 
+	int elapsedTime() const;
+	void setElapsedTime(int elapsedTime);
+
 private:
 	Url m_url;
 	Url m_redirectUrl;
 	Common::StatusCode m_statusCode;
 	QByteArray m_body;
 	ResponseHeaders m_responseHeaders;
+	int m_elapsedTime;
 };
 
 }

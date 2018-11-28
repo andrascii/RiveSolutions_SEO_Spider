@@ -356,6 +356,8 @@ AbstractCrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList,
 
 void AbstractCrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
 {
+	extractUrlAndDownload();
+
 	Common::Finally reloadGuard([this]
 	{
 		m_reloadPage = false;
@@ -365,6 +367,8 @@ void AbstractCrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
 	const DownloadRequestType requestType = m_currentRequest.value().requestType;
 
 	handleResponseData(hopsChain, requestType);
+
+	extractUrlAndDownload();
 }
 
 void AbstractCrawlerWorker::onStart()

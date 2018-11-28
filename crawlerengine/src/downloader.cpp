@@ -343,13 +343,13 @@ void Downloader::processReply(QNetworkReply* reply)
 			{
 				const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
 				loadHelper(redirectKey, requestId, reply->property("useTimeout").isValid());
-				response->hopsChain.addHop(Hop{ reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs() });
+				response->hopsChain.addHop(Hop{ reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs(), -1 });
 				return;
 			}
 		}
 	}
 
-	response->hopsChain.addHop(Hop(reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs()));
+	response->hopsChain.addHop(Hop(reply->url(), redirectUrlAddress, statusCode, body, reply->rawHeaderPairs(), -1));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
 	const auto iter = m_activeRequestersReplies.find(requester);
@@ -391,7 +391,6 @@ void Downloader::load(RequesterSharedPtr requester)
 
 	m_requesters[requestId] = requester;
 	m_activeRequestersReplies[requester] = reply;
-
 }
 
 int Downloader::maxRedirectsToProcess() const noexcept
@@ -460,7 +459,7 @@ std::pair<int, QNetworkReply*> Downloader::loadHelper(const CrawlerRequest& requ
 	return std::make_pair(resultRequestId, reply);
 }
 
-std::shared_ptr<CrawlerEngine::DownloadResponse> Downloader::responseFor(int requestId)
+std::shared_ptr<DownloadResponse> Downloader::responseFor(int requestId)
 {
 	if (!m_responses.contains(requestId))
 	{

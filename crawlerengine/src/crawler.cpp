@@ -29,6 +29,7 @@
 #include "icustom_data_feed.h"
 #include "crawler_worker_qt_based_loader.h"
 #include "crawler_worker_curl_based.h"
+#include "multi_socket_download_handler.h"
 
 namespace CrawlerEngine
 {
@@ -683,7 +684,8 @@ IScreenshotMaker* Crawler::createScreenshotMaker()
 
 IDownloader* Crawler::createDownloader() const
 {
-	IDownloader* downloader = new Downloader;
+	//IDownloader* downloader = new Downloader;
+	IDownloader* downloader = new MultiSocketDownloadHandler;
 
 	return downloader;
 }
