@@ -1,19 +1,17 @@
 #pragma once
 
-namespace Common {
-	enum class StatusCode;
+#include "download_request.h"
+#include "curl_http_headers_wrapper.h"
+
+namespace Common
+{
+
+enum class StatusCode;
+
 }
 
 namespace CrawlerEngine
 {
-
-// IMPLEMENT:
-// 1. Using proxy							#DONE
-// 2. Loading elapsed time tracking			#DONE
-// 3. POST requests
-// 4. HEAD requests
-// 5. Timeout per request					#DONE
-// 6. Loading body of non html resources
 
 class Url;
 class HopsChain;
@@ -27,9 +25,9 @@ public:
 	MultiSocketLoader(QObject* parent = nullptr);
 	~MultiSocketLoader();
 
-	int get(const Url& url) const;
-	int post(const Url& url) const;
-	int head(const Url& url) const;
+	int get(const Url& url, DownloadRequest::BodyProcessingCommand bodyProcessingCommand = DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading);
+	int post(const Url& url);
+	int head(const Url& url);
 
 	void setProxySettings(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword);
 	void resetProxySettings();
@@ -37,6 +35,8 @@ public:
 	void setTimeout(size_t timeoutMilliseconds);
 	void resetTimeout();
 	size_t timeout() const;
+
+	void setUserAgent(const QByteArray& userAgent);
 
 	static MultiSocketLoader* instance();
 
@@ -48,8 +48,10 @@ signals:
 		Common::StatusCode statusCode,
 		int timeElapsed);
 
+protected:
+	virtual void timerEvent(QTimerEvent* event) override;
+
 private slots:
-	void onTimeout();
 	void doAction(curl_socket_t socketDescriptor, int curlAction);
 
 private:
@@ -81,6 +83,9 @@ private:
 	SocketFunctionCallbackPrivateData m_socketPrivateData;
 	size_t m_timeoutMilliseconds;
 	ProxySettings m_proxySettings;
+	int m_requestCounter;
+	CurlHttpHeadersWrapper m_headers;
+	int m_timerId;
 };
 
 }

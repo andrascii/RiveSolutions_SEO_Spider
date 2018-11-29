@@ -65,7 +65,7 @@ void CrawlerWorkerQtBasedLoader::applyNetworkOptions(const CrawlerOptionsData&)
 void CrawlerWorkerQtBasedLoader::performLoading(const CrawlerRequest& crawlerRequest, DownloadRequest::LinkStatus linkStatus)
 {
 	DownloadRequest request(crawlerRequest, linkStatus,
-		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity, true);
+		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading, true);
 
 	m_downloadRequester.reset(request, this, &CrawlerWorkerQtBasedLoader::onLoadingDone);
 	m_downloadRequester->start();

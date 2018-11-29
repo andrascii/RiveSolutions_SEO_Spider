@@ -54,7 +54,7 @@ void MultiSocketDownloadHandler::setMaxRedirects(int redirects)
 
 void MultiSocketDownloadHandler::setUserAgent(const QByteArray& userAgent)
 {
-	m_userAgent = userAgent;
+	m_multiSocketLoader->setUserAgent(userAgent);
 }
 
 void MultiSocketDownloadHandler::setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword)
@@ -69,7 +69,14 @@ void MultiSocketDownloadHandler::resetProxy()
 
 void MultiSocketDownloadHandler::handleRequest(RequesterSharedPtr requester)
 {
-	load(requester);
+	if (m_randomIntervalRangeTimer->isValid())
+	{
+		m_requesterQueue.push_back(std::move(requester));
+	}
+	else
+	{
+		load(requester);
+	}
 }
 
 void MultiSocketDownloadHandler::stopRequestHandling(RequesterSharedPtr requester)
@@ -110,18 +117,25 @@ std::shared_ptr<DownloadResponse> MultiSocketDownloadHandler::responseFor(int re
 	return m_responses[requestId];
 }
 
-Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders & responseHeaders) const
+Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders& responseHeaders, const Url& baseAddress) const
 {
 	const std::vector<QString> locationHeaderData = responseHeaders.valueOf("location");
+
+	Url redirectAddress;
 
 	// supposed that we've got only one location header
 	// so we use locationHeaderData[0] to get the refirect url
 	if (!locationHeaderData.empty())
 	{
-		return locationHeaderData[0];
+		redirectAddress = locationHeaderData[0];
+
+		if (redirectAddress.isValid() && redirectAddress.isRelative())
+		{
+			redirectAddress = PageParserHelpers::resolveRelativeUrl(redirectAddress, baseAddress);
+		}
 	}
 
-	return Url();
+	return redirectAddress;
 }
 
 RequesterSharedPtr MultiSocketDownloadHandler::requesterById(int id) const
@@ -152,7 +166,8 @@ int MultiSocketDownloadHandler::parentIdFor(int id) const
 	return -1;
 }
 
-void MultiSocketDownloadHandler::followLocation(const std::shared_ptr<DownloadResponse>& response,
+void MultiSocketDownloadHandler::followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
+	const std::shared_ptr<DownloadResponse>& response,
 	int parentRequestId,
 	const Url& url,
 	const Url& redirectUrlAddress,
@@ -162,45 +177,30 @@ void MultiSocketDownloadHandler::followLocation(const std::shared_ptr<DownloadRe
 	const ResponseHeaders& responseHeaders,
 	int timeElapsed)
 {
-	if (response->hopsChain.length() == static_cast<size_t>(maxRedirectsToProcess()))
+	int urlsInChain = 0;
+
+	for (size_t i = 0; i < response->hopsChain.length(); ++i)
 	{
-		statusCode = Common::StatusCode::TooManyRedirections;
+		if (response->hopsChain[i].url() == redirectUrlAddress)
+		{
+			urlsInChain += 1;
+		}
 	}
-	else
+
+	if (urlsInChain <= 2)
 	{
-		int urlsInChain = 0;
+		const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
+		const int redirectionRequestId = loadHelper(redirectKey, bodyProcessingCommand);
 
-		for (size_t i = 0; i < response->hopsChain.length(); ++i)
-		{
-			if (response->hopsChain[i].url() == redirectUrlAddress)
-			{
-				urlsInChain += 1;
-			}
-		}
+		m_idBindings.redirectRequestIdToParentId[redirectionRequestId] = parentRequestId;
+		m_idBindings.parentIdToRedirectRequestId[parentRequestId].append(redirectionRequestId);
 
-		if (urlsInChain <= 2)
-		{
-			const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
-
-			const int redirectionRequestId = loadHelper(redirectKey);
-
-			m_idBindings.redirectRequestIdToParentId[redirectionRequestId] = parentRequestId;
-			m_idBindings.parentIdToRedirectRequestId[parentRequestId].append(redirectionRequestId);
-
-			response->hopsChain.addHop(Hop(url, redirectUrlAddress, statusCode, data, responseHeaders, timeElapsed));
-		}
+		response->hopsChain.addHop(Hop(url, redirectUrlAddress, statusCode, data, responseHeaders, timeElapsed));
 	}
 }
 
 void MultiSocketDownloadHandler::onAboutDownloadProgress(qint64, qint64)
 {
-}
-
-bool MultiSocketDownloadHandler::isAutoDetectionBodyProcessing(int requestId) const
-{
-	const RequesterSharedPtr requester = m_requesters[requestId].lock();
-	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
-	return request->bodyProcessingCommand == DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity;
 }
 
 void MultiSocketDownloadHandler::onUrlLoaded(int id,
@@ -233,13 +233,30 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 
 	const std::shared_ptr<DownloadResponse> response = responseFor(id);
 
-	const Url redirectUrlAddress = redirectedUrl(responseHeaders);
 	const Url loadedResourceUrl(url);
+	const Url redirectUrlAddress = redirectedUrl(responseHeaders, loadedResourceUrl);
 
 	if (isRedirectionStatusCode)
 	{
-		followLocation(response, id, loadedResourceUrl, redirectUrlAddress, data, requestType, statusCode, responseHeaders, timeElapsed);
-		return;
+		if (response->hopsChain.length() == static_cast<size_t>(maxRedirectsToProcess()))
+		{
+			statusCode = Common::StatusCode::TooManyRedirections;
+		}
+		else
+		{
+			followLocation(request->bodyProcessingCommand,
+				response,
+				id,
+				loadedResourceUrl,
+				redirectUrlAddress,
+				data,
+				requestType,
+				statusCode,
+				responseHeaders,
+				timeElapsed);
+
+			return;
+		}
 	}
 
 	response->hopsChain.addHop(Hop(loadedResourceUrl, redirectUrlAddress, statusCode, data, responseHeaders, timeElapsed));
@@ -260,9 +277,9 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 
 void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
 {
-	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
+	const DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
-	const int requestId = loadHelper(request->requestInfo);
+	const int requestId = loadHelper(request->requestInfo, request->bodyProcessingCommand);
 
 	m_requesters[requestId] = requester;
 }
@@ -272,7 +289,7 @@ int MultiSocketDownloadHandler::maxRedirectsToProcess() const noexcept
 	return m_maxRedirects;
 }
 
-int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request)
+int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand)
 {
 	int requestId = 0;
 
@@ -280,7 +297,7 @@ int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request)
 	{
 		case DownloadRequestType::RequestTypeGet:
 		{
-			requestId = m_multiSocketLoader->get(request.url);
+			requestId = m_multiSocketLoader->get(request.url, bodyProcessingCommand);
 			break;
 		}
 		case DownloadRequestType::RequestTypeHead:

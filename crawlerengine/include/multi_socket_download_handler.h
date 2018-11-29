@@ -3,6 +3,7 @@
 #include "requester.h"
 #include "crawler_request.h"
 #include "idownloader.h"
+#include "download_request.h"
 
 namespace CrawlerEngine
 {
@@ -34,7 +35,6 @@ public:
 private slots:
 	void onTimerTicked();
 	void onAboutDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-	bool isAutoDetectionBodyProcessing(int requestId) const;
 
 	void onUrlLoaded(int id,
 		const QByteArray& url,
@@ -46,15 +46,16 @@ private slots:
 private:
 	void load(RequesterSharedPtr requester);
 	int maxRedirectsToProcess() const noexcept;
-	int loadHelper(const CrawlerRequest& request);
+	int loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand);
 	void proxyAuthenticationRequired() const;
 	std::shared_ptr<DownloadResponse> responseFor(int requestId);
-	Url redirectedUrl(const ResponseHeaders& responseHeaders) const;
+	Url redirectedUrl(const ResponseHeaders& responseHeaders, const Url& baseAddress) const;
 
 	RequesterSharedPtr requesterById(int id) const;
 	int parentIdFor(int id) const;
 
-	void followLocation(const std::shared_ptr<DownloadResponse>& response,
+	void followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
+		const std::shared_ptr<DownloadResponse>& response,
 		int parentRequestId,
 		const Url& url,
 		const Url& redirectUrlAddress,
@@ -75,7 +76,6 @@ private:
 	QMap<int, RequesterWeakPtr> m_requesters;
 	QVector<int> m_activeRequests;
 	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
-	QByteArray m_userAgent;
 	RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	int m_timeout;
 	int m_maxRedirects;

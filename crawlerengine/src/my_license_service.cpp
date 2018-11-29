@@ -150,7 +150,7 @@ void MyLicenseService::timerEvent(QTimerEvent*)
 	const CrawlerRequest crawlerRequest{ verifyUrl, DownloadRequestType::RequestTypeGet };
 
 	DownloadRequest request(crawlerRequest, DownloadRequest::LinkStatus::LinkStatusFirstLoading,
-		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity, true);
+		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading, true);
 
 	m_verifyKeyRequester.reset(request, this, &MyLicenseService::onLoadingDone);
 	m_verifyKeyRequester->start();

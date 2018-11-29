@@ -250,7 +250,7 @@ bool Downloader::isAutoDetectionBodyProcessing(QNetworkReply* reply) const
 	const RequesterSharedPtr requester = m_requesters[requestId].lock();
 
 	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
-	return request->bodyProcessingCommand == DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity;
+	return request->bodyProcessingCommand == DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading;
 }
 
 void Downloader::urlDownloaded(QNetworkReply* reply)
