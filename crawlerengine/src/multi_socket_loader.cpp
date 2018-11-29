@@ -26,7 +26,8 @@ struct RequestDescriptor
 	Common::StatusCode statusCode;
 	std::chrono::time_point<std::chrono::high_resolution_clock> startLoadingPoint;
 	InterruptionReason interruptionReason = InterruptionReason::ReasonContinueLoading;
-	int id = 0;
+	DownloadRequest::BodyProcessingCommand bodyProcessingCommand;
+	int id = -1;
 	char error[CURL_ERROR_SIZE];
 };
 
@@ -37,6 +38,9 @@ struct SocketInfo
 	int action;
 };
 
+MultiSocketLoader* s_multiSocketLoader = nullptr;
+std::atomic<size_t> s_multiSocketLoaderCounter = 0;
+
 void verifyCurlReturnCode(const char* where, CURLMcode code);
 long getHttpCode(CURL* easyHandle);
 void checkMultiInfo(CURLM* multiHandle);
@@ -44,10 +48,7 @@ void timeoutAction(CURLM* multiHandle, int* stillRunning);
 size_t writeBodyCallback(void* buffer, size_t size, size_t nmemb, void* userData);
 size_t writeResponseHeadersCallback(void* buffer, size_t size, size_t nmemb, void* userData);
 int progressFunctionCallback(void* clientPointer, double, double, double, double);
-
-MultiSocketLoader* s_multiSocketLoader = nullptr;
-std::atomic<size_t> s_multiSocketLoaderCounter = 0;
-int s_requestCounter = 0;
+RequestDescriptor* createRequestDescriptor(const Url& url, size_t timeoutMilliseconds, curl_slist* headers);
 
 }
 
@@ -58,7 +59,9 @@ MultiSocketLoader::MultiSocketLoader(QObject* parent)
 	: QObject(parent)
 	, m_timer(nullptr)
 	, m_socketPrivateData{ this, curl_multi_init(), 0 }
-	, m_timeoutMilliseconds(c_second)
+	, m_timeoutMilliseconds(0)
+	, m_requestCounter(0)
+	, m_timerId(0)
 {
 	ASSERT(s_multiSocketLoaderCounter.fetch_add(1, std::memory_order_relaxed) == 0 || !"Must be only one instance of MultiSocketLoader");
 	ASSERT(m_socketPrivateData.multiHandle);
@@ -79,85 +82,35 @@ MultiSocketLoader::~MultiSocketLoader()
 	s_multiSocketLoader = nullptr;
 }
 
-void MultiSocketLoader::onTimeout()
+int MultiSocketLoader::get(const Url& url, DownloadRequest::BodyProcessingCommand bodyProcessingCommand)
 {
-	timeoutAction(m_socketPrivateData.multiHandle, &m_socketPrivateData.stillRunning);
-}
-
-int MultiSocketLoader::get(const Url& url) const
-{
-	RequestDescriptor* request = new RequestDescriptor;
-	request->easy = curl_easy_init();
-	request->url = url.toDisplayString().toUtf8();
-
-	curl_easy_setopt(request->easy, CURLOPT_CONNECTTIMEOUT, 30);
-
-	if (m_timeoutMilliseconds)
-	{
-		curl_easy_setopt(request->easy, CURLOPT_TIMEOUT_MS, m_timeoutMilliseconds);
-	}
-
-	curl_easy_setopt(request->easy, CURLOPT_URL, request->url.constData());
-	curl_easy_setopt(request->easy, CURLOPT_PRIVATE, request);
-	curl_easy_setopt(request->easy, CURLOPT_ERRORBUFFER, request->error);
-	curl_easy_setopt(request->easy, CURLOPT_FOLLOWLOCATION, 0L);
-	curl_easy_setopt(request->easy, CURLOPT_SSL_VERIFYPEER, 0);
-
-	curl_easy_setopt(request->easy, CURLOPT_WRITEFUNCTION, &writeBodyCallback);
-	curl_easy_setopt(request->easy, CURLOPT_WRITEDATA, request);
-	curl_easy_setopt(request->easy, CURLOPT_HEADERFUNCTION, &writeResponseHeadersCallback);
-	curl_easy_setopt(request->easy, CURLOPT_HEADERDATA, request);
-	curl_easy_setopt(request->easy, CURLOPT_PROGRESSFUNCTION, &progressFunctionCallback);
-	curl_easy_setopt(request->easy, CURLOPT_PROGRESSDATA, &request->interruptionReason);
-
+	RequestDescriptor* request = createRequestDescriptor(url, m_timeoutMilliseconds, m_headers.get());
 	applyProxySettingsIfNeeded(request->easy);
 
-	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
-
-	request->id = s_requestCounter++;// m_socketPrivateData.stillRunning;
+	request->id = m_requestCounter++;
 	request->startLoadingPoint = std::chrono::high_resolution_clock::now();
+	request->bodyProcessingCommand = bodyProcessingCommand;
+
+	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
 	return request->id;
 }
 
-int MultiSocketLoader::post(const Url&) const
+int MultiSocketLoader::post(const Url&)
 {
 	return 0;
 }
 
-int MultiSocketLoader::head(const Url& url) const
+int MultiSocketLoader::head(const Url& url)
 {
-	RequestDescriptor* request = new RequestDescriptor;
-	request->easy = curl_easy_init();
-	request->url = url.toDisplayString().toUtf8();
-
-	curl_easy_setopt(request->easy, CURLOPT_CONNECTTIMEOUT, 30);
-
-	if (m_timeoutMilliseconds)
-	{
-		curl_easy_setopt(request->easy, CURLOPT_TIMEOUT_MS, m_timeoutMilliseconds);
-	}
-
-	curl_easy_setopt(request->easy, CURLOPT_URL, request->url.constData());
-	curl_easy_setopt(request->easy, CURLOPT_PRIVATE, request);
-	curl_easy_setopt(request->easy, CURLOPT_ERRORBUFFER, request->error);
-	curl_easy_setopt(request->easy, CURLOPT_FOLLOWLOCATION, 0L);
-	curl_easy_setopt(request->easy, CURLOPT_SSL_VERIFYPEER, 0);
-	curl_easy_setopt(request->easy, CURLOPT_NOBODY, 1L);
-
-	curl_easy_setopt(request->easy, CURLOPT_WRITEFUNCTION, &writeBodyCallback);
-	curl_easy_setopt(request->easy, CURLOPT_WRITEDATA, request);
-	curl_easy_setopt(request->easy, CURLOPT_HEADERFUNCTION, &writeResponseHeadersCallback);
-	curl_easy_setopt(request->easy, CURLOPT_HEADERDATA, request);
-	curl_easy_setopt(request->easy, CURLOPT_PROGRESSFUNCTION, &progressFunctionCallback);
-	curl_easy_setopt(request->easy, CURLOPT_PROGRESSDATA, &request->interruptionReason);
-
+	RequestDescriptor* request = createRequestDescriptor(url, m_timeoutMilliseconds, m_headers.get());
 	applyProxySettingsIfNeeded(request->easy);
 
-	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
-
-	request->id = s_requestCounter++;// m_socketPrivateData.stillRunning;
+	request->id = m_requestCounter++;
 	request->startLoadingPoint = std::chrono::high_resolution_clock::now();
+
+	curl_easy_setopt(request->easy, CURLOPT_NOBODY, 1L);
+	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
 	return request->id;
 }
@@ -193,6 +146,11 @@ size_t MultiSocketLoader::timeout() const
 	return m_timeoutMilliseconds;
 }
 
+void MultiSocketLoader::setUserAgent(const QByteArray& userAgent)
+{
+	m_headers.add("User-Agent", userAgent);
+}
+
 MultiSocketLoader* MultiSocketLoader::instance()
 {
 	return s_multiSocketLoader;
@@ -201,27 +159,22 @@ MultiSocketLoader* MultiSocketLoader::instance()
 void MultiSocketLoader::setTimer()
 {
 	resetTimer();
-	m_timer = new QTimer(this);
-	m_timer->setInterval(1000);
-	m_timer->setSingleShot(true);
-
-	VERIFY(connect(m_timer, &QTimer::timeout, this, &MultiSocketLoader::onTimeout));
-
-	m_timer->start();
+	m_timerId = startTimer(c_second);
+	ASSERT(m_timerId);
 }
 
 void MultiSocketLoader::resetTimer()
 {
-	// TODO: optimize reinitialization of timer because of this method calls very frequently
-	if (m_timer && m_timer->isActive())
+	if (!m_timerId)
 	{
-		m_timer->stop();
-		m_timer->deleteLater();
-		m_timer = nullptr;
+		return;
 	}
+
+	killTimer(m_timerId);
+	m_timerId = 0;
 }
 
-void MultiSocketLoader::applyProxySettingsIfNeeded(CURL * easyHandle) const
+void MultiSocketLoader::applyProxySettingsIfNeeded(CURL* easyHandle) const
 {
 	if (!m_proxySettings.proxyHostName.isEmpty())
 	{
@@ -289,6 +242,12 @@ int MultiSocketLoader::timerFunctionCallback(CURLM* multiHandle, long timeoutMs,
 	}
 
 	return 0;
+}
+
+void MultiSocketLoader::timerEvent(QTimerEvent*)
+{
+	resetTimer();
+	timeoutAction(m_socketPrivateData.multiHandle, &m_socketPrivateData.stillRunning);
 }
 
 void MultiSocketLoader::doAction(curl_socket_t socketDescriptor, int curlAction)
@@ -410,6 +369,8 @@ void checkMultiInfo(CURLM* multiHandle)
 			RequestDescriptor* requestDescriptor = nullptr;
 			curl_easy_getinfo(easyHandle, CURLINFO_PRIVATE, &requestDescriptor);
 
+			DEBUG_ASSERT(requestDescriptor->id != -1 || !"id is invalid");
+
 			if (result == CURLE_OPERATION_TIMEDOUT)
 			{
 				requestDescriptor->statusCode = Common::StatusCode::Timedout;
@@ -420,7 +381,8 @@ void checkMultiInfo(CURLM* multiHandle)
 			}
 
 			if (result != CURLE_OK &&
-				result != CURLE_OPERATION_TIMEDOUT)
+				result != CURLE_OPERATION_TIMEDOUT &&
+				result != CURLE_ABORTED_BY_CALLBACK)
 			{
 				ERRLOG << requestDescriptor->error;
 			}
@@ -482,7 +444,9 @@ size_t writeResponseHeadersCallback(void* buffer, size_t size, size_t nmemb, voi
 	const std::vector<QString> value = requestDescriptor->responseHeaders.valueOf("content-type");
 
 	// by default we should to download body only of HTML resources
-	if (!value.empty() && !PageParserHelpers::isHtmlOrPlainContentType(value[0]))
+	if (!value.empty() &&
+		requestDescriptor->bodyProcessingCommand == DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading &&
+		!PageParserHelpers::isHtmlOrPlainContentType(value[0]))
 	{
 		requestDescriptor->interruptionReason = RequestDescriptor::InterruptionReason::ReasonNonHtmlResponse;
 	}
@@ -502,6 +466,37 @@ int progressFunctionCallback(void* clientPointer, double, double, double, double
 
 	// continue loading
 	return 0;
+}
+
+RequestDescriptor* createRequestDescriptor(const Url& url, size_t timeoutMilliseconds, curl_slist* headers)
+{
+	RequestDescriptor* request = new RequestDescriptor;
+	request->easy = curl_easy_init();
+	request->url = url.toDisplayString().toUtf8();
+
+	curl_easy_setopt(request->easy, CURLOPT_CONNECTTIMEOUT, 30);
+
+	if (timeoutMilliseconds)
+	{
+		curl_easy_setopt(request->easy, CURLOPT_TIMEOUT_MS, timeoutMilliseconds);
+	}
+
+	curl_easy_setopt(request->easy, CURLOPT_URL, request->url.constData());
+	curl_easy_setopt(request->easy, CURLOPT_PRIVATE, request);
+	curl_easy_setopt(request->easy, CURLOPT_ERRORBUFFER, request->error);
+	curl_easy_setopt(request->easy, CURLOPT_FOLLOWLOCATION, 0L);
+	curl_easy_setopt(request->easy, CURLOPT_SSL_VERIFYPEER, 0);
+	curl_easy_setopt(request->easy, CURLOPT_NOPROGRESS, 0L);
+
+	curl_easy_setopt(request->easy, CURLOPT_WRITEFUNCTION, writeBodyCallback);
+	curl_easy_setopt(request->easy, CURLOPT_WRITEDATA, request);
+	curl_easy_setopt(request->easy, CURLOPT_HEADERFUNCTION, writeResponseHeadersCallback);
+	curl_easy_setopt(request->easy, CURLOPT_HEADERDATA, request);
+	curl_easy_setopt(request->easy, CURLOPT_PROGRESSFUNCTION, progressFunctionCallback);
+	curl_easy_setopt(request->easy, CURLOPT_PROGRESSDATA, &request->interruptionReason);
+	curl_easy_setopt(request->easy, CURLOPT_HTTPHEADER, headers);
+
+	return request;
 }
 
 }

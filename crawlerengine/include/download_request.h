@@ -17,12 +17,12 @@ struct DownloadRequest : public IRequest
 	enum class BodyProcessingCommand
 	{
 		CommandDownloadBodyAnyway,
-		CommandAutoDetectionBodyLoadingNecessity
+		CommandAutoDetectionBodyLoading
 	};
 
 	DownloadRequest(const CrawlerRequest& requestInfo,
 		LinkStatus linkStatus = LinkStatus::LinkStatusFirstLoading,
-		BodyProcessingCommand bodyProcessingCommand = BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity,
+		BodyProcessingCommand bodyProcessingCommand = BodyProcessingCommand::CommandAutoDetectionBodyLoading,
 		bool useTimeout = false)
 		: requestInfo(requestInfo)
 		, linkStatus(linkStatus)
