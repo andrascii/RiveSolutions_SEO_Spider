@@ -146,11 +146,18 @@ Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders& responseHea
 
 RequesterSharedPtr MultiSocketDownloadHandler::requesterByIdAssertIfNotExists(int id) const
 {
-	RequesterSharedPtr requester = requesterById(id);
+	const auto requesterIterator = m_requesters.find(id);
 
-	ASSERT(requester || !"Requester not found");
+	if (requesterIterator == m_requesters.end())
+	{
+		const int parentId = parentIdFor(id);
 
-	return requester;
+		DEBUG_ASSERT(parentId != -1 || !"Parent ID not found");
+
+		return m_requesters[parentId].lock();
+	}
+
+	return requesterIterator.value().lock();
 }
 
 RequesterSharedPtr MultiSocketDownloadHandler::requesterById(int id) const
