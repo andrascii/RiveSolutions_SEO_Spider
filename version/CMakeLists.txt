@@ -6,7 +6,7 @@ set(VersionHeaders include)
 
 set(MAJOR 1)
 set(MINOR 0)
-set(MAINTENANCE 6)
+set(MAINTENANCE 7)
 
 
 # targer files path
