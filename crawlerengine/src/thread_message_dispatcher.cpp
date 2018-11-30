@@ -143,13 +143,13 @@ void ThreadMessageDispatcher::execute()
 		if (!requester)
 		{
 			WARNLOG << "Requester is dead";
-			return;
+			continue;
 		}
 
 		if (!handlerRegistry.isHandlerExists(message.handler()))
 		{
 			WARNLOG << "Handler for request type is not exists";
-			return;
+			continue;
 		}
 
 		switch (message.type())
