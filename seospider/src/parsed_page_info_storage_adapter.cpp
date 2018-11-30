@@ -121,7 +121,7 @@ ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(co
 		return ItemType::PlainItemType;
 	}
 
-	const bool isIndexMappedToUrl = 
+	const bool isIndexMappedToUrl =
 		m_availableColumns[index.column()] == ParsedPageInfo::Column::UrlColumn ||
 		m_availableColumns[index.column()] == ParsedPageInfo::Column::RedirectedUrlColumn ||
 		m_availableColumns[index.column()] == ParsedPageInfo::Column::CanonicalLinkElementColumn;

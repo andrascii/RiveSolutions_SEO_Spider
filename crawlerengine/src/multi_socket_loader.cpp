@@ -527,6 +527,19 @@ void notifyAboutTransferProgress(MultiSocketLoader* multiSocketLoader,
 	double uploadTotal,
 	double uploadSent)
 {
+	constexpr int pause = 300;
+
+	static std::chrono::time_point<std::chrono::high_resolution_clock> lastEmitTimePoint =
+		std::chrono::high_resolution_clock::now();
+
+	const int timePassed = std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::high_resolution_clock::now() - lastEmitTimePoint).count();
+
+	if (timePassed < pause)
+	{
+		return;
+	}
+
 	ASSERT(multiSocketLoader);
 
 	if (requestDescriptor->method == RequestDescriptor::Method::Get ||
@@ -539,6 +552,8 @@ void notifyAboutTransferProgress(MultiSocketLoader* multiSocketLoader,
 	{
 		emit multiSocketLoader->uploadProgress(requestDescriptor->id, uploadTotal, uploadSent);
 	}
+
+	lastEmitTimePoint = std::chrono::high_resolution_clock::now();
 }
 
 }

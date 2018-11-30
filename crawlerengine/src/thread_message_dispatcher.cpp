@@ -134,50 +134,48 @@ void ThreadMessageDispatcher::stopDispatchTimer()
 
 void ThreadMessageDispatcher::execute()
 {
-	if (messageQueue().isEmpty())
+	while (!messageQueue().isEmpty())
 	{
-		return;
-	}
+		Message message = std::move(messageQueue().extractMessage());
+		HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+		RequesterSharedPtr requester = message.requester();
 
-	Message message = std::move(messageQueue().extractMessage());
-	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
-	RequesterSharedPtr requester = message.requester();
-
-	if (!requester)
-	{
-		WARNLOG << "Requester is dead";
-		return;
-	}
-
-	if (!handlerRegistry.isHandlerExists(message.handler()))
-	{
-		WARNLOG << "Handler for request type is not exists";
-		return;
-	}
-
-	switch(message.type())
-	{
-		case Message::MessageTypeStartRequest:
+		if (!requester)
 		{
-			VERIFY(QMetaObject::invokeMethod(message.handler(), "handleRequest",
-				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requester)));
-
-			break;
+			WARNLOG << "Requester is dead";
+			return;
 		}
-		case Message::MessageTypeStopRequest:
-		{
-			VERIFY(QMetaObject::invokeMethod(message.handler(), "stopRequestHandling",
-				Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requester)));
 
-			break;
+		if (!handlerRegistry.isHandlerExists(message.handler()))
+		{
+			WARNLOG << "Handler for request type is not exists";
+			return;
 		}
-		case Message::MessageTypePostResponse:
+
+		switch (message.type())
 		{
-			ASSERT(requester->thread() == thread());
+			case Message::MessageTypeStartRequest:
+			{
+				VERIFY(QMetaObject::invokeMethod(message.handler(), "handleRequest",
+					Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requester)));
 
-			requester->processResponse(*message.response());
+				break;
+			}
+			case Message::MessageTypeStopRequest:
+			{
+				VERIFY(QMetaObject::invokeMethod(message.handler(), "stopRequestHandling",
+					Qt::QueuedConnection, Q_ARG(RequesterSharedPtr, requester)));
 
-			break;
+				break;
+			}
+			case Message::MessageTypePostResponse:
+			{
+				ASSERT(requester->thread() == thread());
+
+				requester->processResponse(*message.response());
+
+				break;
+			}
 		}
 	}
 }

@@ -34,7 +34,7 @@ public:
 
 	virtual int find(const ParsedPage* page) const noexcept override
 	{
-		auto pageIterator = std::find_if(m_pages.begin(), m_pages.end(), 
+		auto pageIterator = std::find_if(m_pages.begin(), m_pages.end(),
 			[&page](ParsedPagePtr pagePtr)
 		{
 			return pagePtr.get() == page;
@@ -129,7 +129,7 @@ protected:
 		{
 			removeEffects.invalidatedIndicesRange.first = 0;
 			removeEffects.invalidatedIndicesRange.second = 0;
-			
+
 			return removeEffects;
 		}
 
