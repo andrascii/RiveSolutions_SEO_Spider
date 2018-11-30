@@ -86,6 +86,8 @@ if(WIN32)
 	set(OSSpecificDeps ws2_32.lib ntdll.lib)
 endif()
 
+add_dependencies(${CrawlerEngineLibName} curl)
+
 target_link_libraries(
 	${CrawlerEngineLibName}
 	${GumboLibName}
