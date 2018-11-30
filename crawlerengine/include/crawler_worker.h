@@ -5,25 +5,26 @@
 #include "crawler_request.h"
 #include "worker_result.h"
 #include "crawler_options.h"
-#include "download_request.h"
 #include "options_link_filter.h"
+#include <qobjectdefs.h>
 
 namespace CrawlerEngine
 {
 
+class ICrawlerWorkerPageLoader;
 class UniqueLinkStore;
 class PageDataCollector;
 class ILicenseStateObserver;
 class HopsChain;
 struct DownloadResponse;
 
-class AbstractCrawlerWorker : public QObject
+class CrawlerWorker : public QObject
 {
 	Q_OBJECT
 
 public:
-	AbstractCrawlerWorker(UniqueLinkStore* uniqueLinkStore);
-	virtual std::optional<CrawlerRequest> pendingUrl() const = 0;
+	CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPageLoader* pageLoader);
+	std::optional<CrawlerRequest> pendingUrl() const;
 
 signals:
 	void workerResult(WorkerResult workerResult) const;
@@ -36,8 +37,6 @@ public slots:
 private slots:
 	void extractUrlAndDownload();
 	void onCrawlerClearData();
-
-protected:
 	void onLoadingDone(const HopsChain& hopsChain);
 
 private:
@@ -60,17 +59,6 @@ private:
 	void handleResponseData(const HopsChain& hopsChain, DownloadRequestType requestType);
 
 private:
-	// loading interface
-	virtual bool canPullLoading() const = 0;
-	virtual void applyNetworkOptions(const CrawlerOptionsData& optionsData) = 0;
-	virtual void performLoading(const CrawlerRequest& crawlerRequest, DownloadRequest::LinkStatus linkStatus) = 0;
-	virtual void stopLoading() = 0;
-	virtual void clearState() = 0;
-	virtual void addPageReceivedAfterStop(const std::pair<DownloadRequestType, ParsedPagePtr>& pageInfo) = 0;
-	virtual void setPageReceivedAfterStopPromise() = 0;
-	virtual std::vector<WorkerResult> extractLoadedAfterStopPages() = 0;
-
-private:
 	static std::atomic<size_t> s_trialLicenseSentLinksCounter;
 
 private:
@@ -88,6 +76,7 @@ private:
 	CrawlerOptionsData m_optionsData;
 
 	std::vector<bool> m_storagesBeforeRemoving;
+	ICrawlerWorkerPageLoader* m_pageLoader;
 };
 
 }

@@ -1,6 +1,6 @@
 #include "yandex_metrica_data_feed.h"
 #include "custom_uri_channel.h"
-#include "abstract_crawler_worker.h"
+#include "crawler_worker.h"
 #include "download_request.h"
 #include "download_response.h"
 
@@ -9,7 +9,7 @@ namespace CrawlerEngine
 YandexMetricaAuthenticator::YandexMetricaAuthenticator(QObject* parent)
 	: QObject(parent)
 {
-	VERIFY(connect(CustomUrlChannel::instance(), &CustomUrlChannel::uriReceived, 
+	VERIFY(connect(CustomUrlChannel::instance(), &CustomUrlChannel::uriReceived,
 		this, &YandexMetricaAuthenticator::onCustomUriReceived, Qt::QueuedConnection));
 }
 
@@ -30,7 +30,7 @@ QByteArray YandexMetricaAuthenticator::token() const
 
 void YandexMetricaAuthenticator::onCustomUriReceived(const QByteArray& url)
 {
-	// seospider://yandexmetrica/#access_token=AQAAAAAGVrMJAAUs-4OXrgBu90CPvT_AgaSN-HE&token_type=bearer&expires_in=31536000 
+	// seospider://yandexmetrica/#access_token=AQAAAAAGVrMJAAUs-4OXrgBu90CPvT_AgaSN-HE&token_type=bearer&expires_in=31536000
 	if (url.startsWith("seospider://yandexmetrica"))
 	{
 		if (url.contains("access_token=") && url.contains("expires_in"))
@@ -89,10 +89,10 @@ void YandexMetricaDataFeed::requestData(ParsedPageWeakPtr page)
 		// TODO: generate correct url
 		const Url apiUrl = QString("https://api-metrika.yandex.ru/stat/v1/data?dimensions=ym:pv:URLPath=~") + lockedPage->url.path(QUrl::FullyEncoded)
 			+ "&oauth_token=" + m_authenticator->token();
-		
+
 		DownloadRequest request({apiUrl , DownloadRequestType::RequestTypeGet });
 		m_downloadRequester.reset(request, this, &YandexMetricaDataFeed::onLoadingDone);
-		
+
 		m_downloadRequester->start();
 	}
 }

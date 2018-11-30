@@ -28,8 +28,22 @@ struct DownloadProgressResponse : public IResponse
 
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeDownloadProgress)
 
-	quint64 bytesReceived;
+		quint64 bytesReceived;
 	quint64 bytesTotal;
 };
+
+struct UploadProgressResponse : public IResponse
+{
+	virtual ResponseType type() const noexcept override
+	{
+		return ResponseType::ResponseTypeUploadProgress;
+	}
+
+	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeUploadProgress)
+
+	quint64 bytesSent;
+	quint64 bytesTotal;
+};
+
 
 }

@@ -37,7 +37,7 @@ struct DownloadRequest : public IRequest
 	}
 	virtual RequestType requestType() const noexcept override
 	{
-		return RequestType::RequestTypeDownload;
+		return RequestType::RequestDownload;
 	}
 
 	CrawlerRequest requestInfo;
