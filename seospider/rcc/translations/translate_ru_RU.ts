@@ -94,6 +94,17 @@ an invalid username/password.</source>
     </message>
 </context>
 <context>
+    <name>CrawlerEngine::AbstractDownloadHandler</name>
+    <message>
+        <source>Proxy error</source>
+        <translation>Ошибка прокси</translation>
+    </message>
+    <message>
+        <source>Proxy authentication failed</source>
+        <translation>Аутентификация прокси завешилась неуспешно</translation>
+    </message>
+</context>
+<context>
     <name>CrawlerEngine::Crawler</name>
     <message>
         <source>Crawler state</source>
@@ -170,11 +181,11 @@ Please, be sure that you entered a valid address</source>
     <name>CrawlerEngine::Downloader</name>
     <message>
         <source>Proxy error</source>
-        <translation>Ошибка прокси</translation>
+        <translation type="vanished">Ошибка прокси</translation>
     </message>
     <message>
         <source>Proxy authentication failed.</source>
-        <translation>Аутентификация прокси завешилась неуспешно.</translation>
+        <translation type="vanished">Аутентификация прокси завешилась неуспешно.</translation>
     </message>
 </context>
 <context>
@@ -1072,7 +1083,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"></translation>
+        <translation>Контент</translation>
     </message>
     <message>
         <source>Title</source>
@@ -1545,6 +1556,10 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <source>Pages with missing Yandex Metrica Counter %1</source>
         <translation>Страницы с отсутствующими счетчиком яндекс метрики %1</translation>
     </message>
+    <message>
+        <source>Timedout</source>
+        <translation>Таймаут</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
@@ -1701,6 +1716,29 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
     </message>
 </context>
 <context>
+    <name>SeoSpider::LicenseStateNotificator</name>
+    <message>
+        <source>Your serial number is successfully activated!</source>
+        <translation>Ваш серийный номер успешно активирован!</translation>
+    </message>
+    <message>
+        <source>Your serial number date is over!</source>
+        <translation>Ваш серийный номер устарел!</translation>
+    </message>
+    <message>
+        <source>Unfortunately we detected that your license serial number is invalid!</source>
+        <translation>К сожалению Ваш серийный ключ невалиден!</translation>
+    </message>
+    <message>
+        <source>Unfortunately we detected that your license serial number is now blacklisted! You can notify us about it if you don&apos;t understand why this happened.</source>
+        <translation>К сожалению указанный Вами серийный номер находится в черном списке! Сообщите об этом в тех. поддержку, если Вы не знаете причину. </translation>
+    </message>
+    <message>
+        <source>Serial number activation</source>
+        <translation>Активация серийного номера</translation>
+    </message>
+</context>
+<context>
     <name>SeoSpider::LookupLineEditWidget</name>
     <message>
         <source>Search by &quot;</source>
@@ -1817,7 +1855,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>User Agent Settings</source>
-        <translation>Настройки User Agent</translation>
+        <translation type="vanished">Настройки User Agent</translation>
     </message>
     <message>
         <source>Crawler Pause Settings</source>
@@ -1833,7 +1871,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>View Help</source>
-        <translation>Помощь</translation>
+        <translation type="vanished">Помощь</translation>
     </message>
     <message>
         <source>Send Feedback</source>
@@ -1909,11 +1947,23 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>You have installed the latest version of the </source>
-        <translation>У Вас установлена последняя версия программы</translation>
+        <translation type="vanished">У Вас установлена последняя версия программы </translation>
     </message>
     <message>
         <source>Yandex Metrica Settings</source>
-        <translation type="unfinished">Настройки поиска счетчиков Яндекс Метрики</translation>
+        <translation>Настройки Яндекс Метрики</translation>
+    </message>
+    <message>
+        <source>You have installed the latest version of the</source>
+        <translation>У Вас установлена последняя версия программы</translation>
+    </message>
+    <message>
+        <source>User-Agent Settings</source>
+        <translation>Настройки User-Agent</translation>
+    </message>
+    <message>
+        <source>Show Help</source>
+        <translation>Помощь</translation>
     </message>
 </context>
 <context>
@@ -2274,19 +2324,35 @@ please stop crawling and try again</source>
     <name>UserAgentSettingsWidget</name>
     <message>
         <source>User Agent Settings</source>
-        <translation>Настройки User Agent</translation>
+        <translation type="vanished">Настройки User Agent</translation>
     </message>
     <message>
         <source>Use mobile user agent</source>
-        <translation>Использовать мобильный User Agent</translation>
+        <translation type="vanished">Использовать мобильный User Agent</translation>
     </message>
     <message>
         <source>Use desktop user agent</source>
-        <translation>Использовать десктопный User Agent</translation>
+        <translation type="vanished">Использовать десктопный User Agent</translation>
     </message>
     <message>
         <source>Use custom user agent</source>
-        <translation>Использовать кастомный User Agent</translation>
+        <translation type="vanished">Использовать кастомный User Agent</translation>
+    </message>
+    <message>
+        <source>User-Agent Settings</source>
+        <translation>Настройки User-Agent</translation>
+    </message>
+    <message>
+        <source>Use mobile User-Agent</source>
+        <translation>Использовать мобильный User-Agent</translation>
+    </message>
+    <message>
+        <source>Use desktop User-Agent</source>
+        <translation>Использовать десктопный User-Agent</translation>
+    </message>
+    <message>
+        <source>Use custom User-Agent</source>
+        <translation>Использовать кастомный User-Agent</translation>
     </message>
 </context>
 <context>

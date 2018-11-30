@@ -59,6 +59,8 @@ private:
 	void loadState();
 	QString getSaveFilePath() const;
 
+	void initHelpActions();
+
 private slots:
 	void onCrawlerSessionCreated();
 	void onCrawlerSessionDestroyed();
@@ -67,6 +69,7 @@ private slots:
 	void showFeedbackDialog();
 	void onAboutUpdateExists();
 	void onAboutUpdateIsNotExists();
+	void openHelpPage();
 
 private:
 	bool m_initialized;

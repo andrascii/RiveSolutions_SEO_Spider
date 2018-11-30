@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>User Agent Settings</string>
+   <string>User-Agent Settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
@@ -64,7 +64,7 @@
         <item row="3" column="1">
          <widget class="QRadioButton" name="useMobileUserAgentRadioButton">
           <property name="text">
-           <string>Use mobile user agent</string>
+           <string>Use mobile User-Agent</string>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">useMobileUserAgent</string>
@@ -93,7 +93,7 @@
         <item row="1" column="1">
          <widget class="QRadioButton" name="useDesktopUserAgentRadioButton">
           <property name="text">
-           <string>Use desktop user agent</string>
+           <string>Use desktop User-Agent</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -138,7 +138,7 @@
         <item row="0" column="1">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Use custom user agent</string>
+           <string>Use custom User-Agent</string>
           </property>
           <property name="buddy">
            <cstring>useCustomUserAgentCheckBox</cstring>

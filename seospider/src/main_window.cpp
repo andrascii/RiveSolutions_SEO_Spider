@@ -46,6 +46,12 @@
 #include "ui_page_visual_settings_widget.h"
 #include "custom_uri_channel.h"
 
+namespace
+{
+
+const QString s_helpPage = "https://rivesolutions.com/faq/";
+
+}
 
 namespace SeoSpider
 {
@@ -275,6 +281,8 @@ int MainWindow::showMessageBoxDialog(const QString& title,
 	const QString& message,
 	QDialogButtonBox::StandardButtons buttons) const
 {
+	INFOLOG << "Show message box with message:" << message;
+
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(title);
 	messageBoxDialog->setMessage(message);
@@ -329,7 +337,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 		int answer = -1;
 
 		MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-		messageBoxDialog->setMessage(warningMessage + " "+ descriptionMessage);
+		messageBoxDialog->setMessage(warningMessage + " " + descriptionMessage);
 		messageBoxDialog->addButton("Close", QDialogButtonBox::ButtonRole::AcceptRole);
 		messageBoxDialog->addButton("Collapse", QDialogButtonBox::ButtonRole::RejectRole);
 		messageBoxDialog->exec();
@@ -392,7 +400,6 @@ void MainWindow::init()
 void MainWindow::createActions()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
-	const SoftwareBranding* softwareBranding = theApp->softwareBrandingOptions();
 
 	// file actions
 	actionRegistry.addActionGroup(s_fileActionGroup);
@@ -431,7 +438,7 @@ void MainWindow::createActions()
 		QIcon(QStringLiteral(":/images/proxy-settings.png")), tr("Proxy Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction,
-		QIcon(QStringLiteral(":/images/user-agent.png")), tr("User Agent Settings"));
+		QIcon(QStringLiteral(":/images/user-agent.png")), tr("User-Agent Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction,
 		QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Settings"));
@@ -497,20 +504,7 @@ void MainWindow::createActions()
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_YandexMetricaSettingsWidget)); }));
 
 	// help actions
-	actionRegistry.addGlobalAction(s_viewHelpAction, tr("View Help"));
-	actionRegistry.addGlobalAction(s_sendFeedbackAction, tr("Send Feedback"));
-	actionRegistry.addGlobalAction(s_registerProductAction, tr("Register Product"));
-	actionRegistry.addGlobalAction(s_checkForUpdatesAction, tr("Check for Updates"));
-	actionRegistry.addGlobalAction(s_aboutProductAction, tr("About") + " " + softwareBranding->organizationName() + " " + softwareBranding->productName());
-
-	VERIFY(connect(actionRegistry.globalAction(s_sendFeedbackAction), &QAction::triggered,
-		this, [this] { showFeedbackDialog(); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_registerProductAction), &QAction::triggered,
-		this, [this] { showRegisterProductDialog(); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_checkForUpdatesAction), &QAction::triggered,
-		this, [this] { m_updateChecker->check(); }));
+	initHelpActions();
 
 	// crawler actions
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
@@ -643,6 +637,30 @@ QString MainWindow::getSaveFilePath() const
 	return path;
 }
 
+void MainWindow::initHelpActions()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+	const SoftwareBranding* softwareBranding = theApp->softwareBrandingOptions();
+
+	actionRegistry.addGlobalAction(s_showHelpAction, tr("Show Help"));
+	actionRegistry.addGlobalAction(s_sendFeedbackAction, tr("Send Feedback"));
+	actionRegistry.addGlobalAction(s_registerProductAction, tr("Register Product"));
+	actionRegistry.addGlobalAction(s_checkForUpdatesAction, tr("Check for Updates"));
+	actionRegistry.addGlobalAction(s_aboutProductAction, tr("About") + " " + softwareBranding->organizationName() + " " + softwareBranding->productName());
+
+	VERIFY(connect(actionRegistry.globalAction(s_sendFeedbackAction), &QAction::triggered,
+		this, [this] { showFeedbackDialog(); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_registerProductAction), &QAction::triggered,
+		this, [this] { showRegisterProductDialog(); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_checkForUpdatesAction), &QAction::triggered,
+		this, [this] { m_updateChecker->check(); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_showHelpAction), SIGNAL(triggered()),
+		this, SLOT(openHelpPage())));
+}
+
 void MainWindow::loadState()
 {
 	const SoftwareBranding* softwareBrandingOptions = theApp->softwareBrandingOptions();
@@ -739,8 +757,13 @@ void MainWindow::onAboutUpdateIsNotExists()
 
 	notificationService->info(
 		tr("Information about updates"),
-		tr("You have installed the latest version of the ") % branding->productName()
+		tr("You have installed the latest version of the") % " " % branding->productName()
 	);
+}
+
+void MainWindow::openHelpPage()
+{
+	QDesktopServices::openUrl(s_helpPage);
 }
 
 ContentFrame* MainWindow::contentFrame() const noexcept

@@ -21,14 +21,16 @@ void LicenseStateNotificator::onLicenseStateChanged(int reason)
 {
 	std::function<void()> notification;
 
+	const QString popupHeader(tr("Serial number activation"));
+
 	switch (reason)
 	{
 		case ILicenseStateObserver::ReasonSuccessActivation:
 		{
-			notification = []()
+			notification = [popupHeader]()
 			{
 				theApp->mainWindow()->showMessageBoxDialog(
-					tr("Serial number successfully activated!"),
+					popupHeader,
 					tr("Your serial number is successfully activated!"),
 					QDialogButtonBox::Ok);
 			};
@@ -37,10 +39,10 @@ void LicenseStateNotificator::onLicenseStateChanged(int reason)
 		}
 		case ILicenseStateObserver::ReasonDateExpired:
 		{
-			notification = []()
+			notification = [popupHeader]()
 			{
 				theApp->mainWindow()->showMessageBoxDialog(
-					tr("Serial number date expired!"),
+					popupHeader,
 					tr("Your serial number date is over!"),
 					QDialogButtonBox::Ok);
 			};
@@ -53,10 +55,10 @@ void LicenseStateNotificator::onLicenseStateChanged(int reason)
 		}
 		case ILicenseStateObserver::ReasonInvalidSerialNumberActivation:
 		{
-			notification = []()
+			notification = [popupHeader]()
 			{
 				theApp->mainWindow()->showMessageBoxDialog(
-					tr("Serial number is invalid!"),
+					popupHeader,
 					tr("Unfortunately we detected that your license serial number is invalid!"),
 					QDialogButtonBox::Ok);
 			};
@@ -65,10 +67,10 @@ void LicenseStateNotificator::onLicenseStateChanged(int reason)
 		}
 		case ILicenseStateObserver::ReasonSerialNumberBlacklisted:
 		{
-			notification = []()
+			notification = [popupHeader]()
 			{
 				theApp->mainWindow()->showMessageBoxDialog(
-					tr("Serial number is now blacklisted!"),
+					popupHeader,
 					tr("Unfortunately we detected that your license serial number is now blacklisted! "
 						"You can notify us about it if you don't understand why this happened."),
 					QDialogButtonBox::Ok);
