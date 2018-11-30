@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idownloader.h"
+#include "idownload_handler.h"
 #include "hops_chain.h"
 
 namespace CrawlerEngine
@@ -15,7 +15,7 @@ struct DownloadRequest;
 namespace CrawlerEngineTests
 {
 
-class TestsDownloader : public QObject, public CrawlerEngine::IDownloader
+class TestsDownloader : public QObject, public CrawlerEngine::IDownloadHandler
 {
 	Q_OBJECT
 
