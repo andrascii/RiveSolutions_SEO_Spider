@@ -24,7 +24,7 @@ Downloader::Downloader()
 	, m_timeout(-1)
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
+	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
 
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*)), Qt::DirectConnection));
 
@@ -105,7 +105,7 @@ void Downloader::handleRequest(RequesterSharedPtr requester)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
 
-	ASSERT(requester->request()->requestType() == RequestType::RequestTypeDownload);
+	ASSERT(requester->request()->requestType() == RequestType::RequestDownload);
 
 #ifndef PRODUCTION
 

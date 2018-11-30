@@ -2,7 +2,7 @@
 
 namespace CrawlerEngine
 {
-	
+
 class CrawlerSharedState
 {
 public:

@@ -148,6 +148,7 @@ void ModelController::preparePageForRefresh(ParsedPage* parsedPage)
 void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 {
 	EmitBlocker emitBlocker(data());
+	Common::Finally incrementCrawledLinksCountGuard([] { CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount(); });
 
 	const auto refreshDoneEmit = [&]
 	{
@@ -170,7 +171,6 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 		if (existingPage && workerResult.requestType() == DownloadRequestType::RequestTypeHead)
 		{
-			CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 			return;
 		}
 		else if(existingPage)
@@ -184,8 +184,6 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	{
 		data()->addParsedPage(workerResult.incomingPage(), StorageType::NofollowLinksStorageType);
 	}
-
-	CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount();
 
 	fixParsedPageResourceType(workerResult.incomingPage());
 
@@ -261,7 +259,7 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 		data()->addParsedPage(workerResult, StorageType::CrawledUrlStorageType);
 	}
 
-	CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount();
+	Common::Finally incrementAcceptedLinksCountGuard([] { CrawlerSharedState::instance()->incrementModelControllerAcceptedLinksCount(); });
 
 	calculatePageLevel(workerResult.incomingPage());
 

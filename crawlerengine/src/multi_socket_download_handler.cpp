@@ -20,13 +20,19 @@ MultiSocketDownloadHandler::MultiSocketDownloadHandler()
 	, m_timeout(-1)
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, RequestType::RequestTypeDownload);
+	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
 
 	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked,
 		this, &MultiSocketDownloadHandler::onTimerTicked, Qt::DirectConnection));
 
 	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::loaded,
 		this, &MultiSocketDownloadHandler::onUrlLoaded, Qt::DirectConnection));
+
+	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::uploadProgress,
+		this, &MultiSocketDownloadHandler::onAboutUploadProgress, Qt::QueuedConnection));
+
+	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::downloadProgress,
+		this, &MultiSocketDownloadHandler::onAboutDownloadProgress, Qt::QueuedConnection));
 }
 
 void MultiSocketDownloadHandler::setPauseRange(int from, int to)
@@ -138,6 +144,15 @@ Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders& responseHea
 	return redirectAddress;
 }
 
+RequesterSharedPtr MultiSocketDownloadHandler::requesterByIdAssertIfNotExists(int id) const
+{
+	RequesterSharedPtr requester = requesterById(id);
+
+	ASSERT(requester || !"Requester not found");
+
+	return requester;
+}
+
 RequesterSharedPtr MultiSocketDownloadHandler::requesterById(int id) const
 {
 	const auto requesterIterator = m_requesters.find(id);
@@ -146,7 +161,10 @@ RequesterSharedPtr MultiSocketDownloadHandler::requesterById(int id) const
 	{
 		const int parentId = parentIdFor(id);
 
-		ASSERT(parentId != -1 || !"Invalid request identifier");
+		if (parentId == -1)
+		{
+			return RequesterSharedPtr();
+		}
 
 		return m_requesters[parentId].lock();
 	}
@@ -156,14 +174,17 @@ RequesterSharedPtr MultiSocketDownloadHandler::requesterById(int id) const
 
 int MultiSocketDownloadHandler::parentIdFor(int id) const
 {
-	const auto redirectBindingIterator = m_idBindings.redirectRequestIdToParentId.find(id);
+	int parendIdSearchResult = -1;
 
-	if (redirectBindingIterator != m_idBindings.redirectRequestIdToParentId.end())
+	auto redirectBindingIterator = m_idBindings.redirectRequestIdToParentId.find(id);
+
+	while (redirectBindingIterator != m_idBindings.redirectRequestIdToParentId.end())
 	{
-		return redirectBindingIterator.value();
+		parendIdSearchResult = redirectBindingIterator.value();
+		redirectBindingIterator = m_idBindings.redirectRequestIdToParentId.find(parendIdSearchResult);
 	}
 
-	return -1;
+	return parendIdSearchResult;
 }
 
 void MultiSocketDownloadHandler::followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
@@ -199,8 +220,40 @@ void MultiSocketDownloadHandler::followLocation(DownloadRequest::BodyProcessingC
 	}
 }
 
-void MultiSocketDownloadHandler::onAboutDownloadProgress(qint64, qint64)
+void MultiSocketDownloadHandler::onAboutDownloadProgress(int id, double bytesTotal, double bytesReceived)
 {
+	const RequesterSharedPtr requester = requesterById(id);
+
+	if (!requester)
+	{
+		return;
+	}
+
+	const std::shared_ptr<DownloadProgressResponse> downloadProgressResponse =
+		std::make_shared<DownloadProgressResponse>();
+
+	downloadProgressResponse->bytesReceived = static_cast<quint64>(bytesReceived);
+	downloadProgressResponse->bytesTotal = static_cast<quint64>(bytesTotal);
+
+	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, downloadProgressResponse);
+}
+
+void MultiSocketDownloadHandler::onAboutUploadProgress(int id, double bytesTotal, double bytesSent)
+{
+	const RequesterSharedPtr requester = requesterById(id);
+
+	if (!requester)
+	{
+		return;
+	}
+
+	const std::shared_ptr<UploadProgressResponse> uploadProgressResponse =
+		std::make_shared<UploadProgressResponse>();
+
+	uploadProgressResponse->bytesSent = static_cast<quint64>(bytesSent);
+	uploadProgressResponse->bytesTotal = static_cast<quint64>(bytesTotal);
+
+	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, uploadProgressResponse);
 }
 
 void MultiSocketDownloadHandler::onUrlLoaded(int id,
@@ -217,7 +270,7 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 		proxyAuthenticationRequired();
 	}
 
-	const RequesterSharedPtr requester = requesterById(id);
+	const RequesterSharedPtr requester = requesterByIdAssertIfNotExists(id);
 
 	if (!requester)
 	{

@@ -17,7 +17,7 @@ class IDownloader;
 class ITaskProcessor;
 class IWebScreenShot;
 class IHostInfoProvider;
-class AbstractCrawlerWorker;
+class CrawlerWorker;
 class ModelController;
 class SequencedDataCollection;
 class Requester;
@@ -180,7 +180,7 @@ private:
 	QTimer* m_crawlingStateTimer;
 	QTimer* m_serializatonReadyStateCheckerTimer;
 
-	std::vector<AbstractCrawlerWorker*> m_workers;
+	std::vector<CrawlerWorker*> m_workers;
 
 	State m_state;
 	State m_prevState;

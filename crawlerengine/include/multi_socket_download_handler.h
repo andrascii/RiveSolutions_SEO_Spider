@@ -34,7 +34,8 @@ public:
 
 private slots:
 	void onTimerTicked();
-	void onAboutDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+	void onAboutDownloadProgress(int id, double bytesTotal, double bytesReceived);
+	void onAboutUploadProgress(int id, double bytesTotal, double bytesSent);
 
 	void onUrlLoaded(int id,
 		const QByteArray& url,
@@ -51,6 +52,7 @@ private:
 	std::shared_ptr<DownloadResponse> responseFor(int requestId);
 	Url redirectedUrl(const ResponseHeaders& responseHeaders, const Url& baseAddress) const;
 
+	RequesterSharedPtr requesterByIdAssertIfNotExists(int id) const;
 	RequesterSharedPtr requesterById(int id) const;
 	int parentIdFor(int id) const;
 

@@ -1,4 +1,4 @@
-#include "abstract_crawler_worker.h"
+#include "crawler_worker.h"
 #include "unique_link_store.h"
 #include "page_parser_helpers.h"
 #include "page_data_collector.h"
@@ -9,13 +9,14 @@
 #include "common_constants.h"
 #include "crawler.h"
 #include "finally.h"
+#include "icrawler_worker_page_loader.h"
 
 namespace CrawlerEngine
 {
 
-std::atomic<size_t> AbstractCrawlerWorker::s_trialLicenseSentLinksCounter = 0;
+std::atomic<size_t> CrawlerWorker::s_trialLicenseSentLinksCounter = 0;
 
-AbstractCrawlerWorker::AbstractCrawlerWorker(UniqueLinkStore* uniqueLinkStore)
+CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPageLoader* pageLoader)
 	: QObject(nullptr)
 	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(uniqueLinkStore)
@@ -23,15 +24,23 @@ AbstractCrawlerWorker::AbstractCrawlerWorker(UniqueLinkStore* uniqueLinkStore)
 	, m_reloadPage(false)
 	, m_defferedProcessingTimer(new QTimer(this))
 	, m_licenseService(nullptr)
+	, m_pageLoader(pageLoader)
 {
+	m_pageLoader->qobject()->setParent(this);
+
+	qRegisterMetaType<HopsChain>("HopsChain");
+
+	VERIFY(connect(m_pageLoader->qobject(), SIGNAL(pageLoaded(const HopsChain&)),
+		this, SLOT(onLoadingDone(const HopsChain&)), Qt::QueuedConnection));
+
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
-		&AbstractCrawlerWorker::extractUrlAndDownload, Qt::QueuedConnection));
+		&CrawlerWorker::extractUrlAndDownload, Qt::QueuedConnection));
 
 	VERIFY(connect(&Crawler::instance(), &Crawler::onAboutClearData,
-		this, &AbstractCrawlerWorker::onCrawlerClearData, Qt::QueuedConnection));
+		this, &CrawlerWorker::onCrawlerClearData, Qt::QueuedConnection));
 
 	VERIFY(connect(m_defferedProcessingTimer, &QTimer::timeout,
-		this, &AbstractCrawlerWorker::extractUrlAndDownload));
+		this, &CrawlerWorker::extractUrlAndDownload));
 
 	m_defferedProcessingTimer->setInterval(1000);
 	m_defferedProcessingTimer->setSingleShot(true);
@@ -40,7 +49,12 @@ AbstractCrawlerWorker::AbstractCrawlerWorker(UniqueLinkStore* uniqueLinkStore)
 	m_licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 }
 
-void AbstractCrawlerWorker::start(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
+std::optional<CrawlerRequest> CrawlerWorker::pendingUrl() const
+{
+	return m_pageLoader->pendingUrl();
+}
+
+void CrawlerWorker::start(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
 
@@ -51,16 +65,16 @@ void AbstractCrawlerWorker::start(const CrawlerOptionsData& optionsData, RobotsT
 	extractUrlAndDownload();
 }
 
-void AbstractCrawlerWorker::stop()
+void CrawlerWorker::stop()
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
 
 	m_isRunning = false;
 
-	stopLoading();
+	m_pageLoader->stopLoading();
 }
 
-void AbstractCrawlerWorker::reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
+void CrawlerWorker::reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
 
@@ -72,17 +86,17 @@ void AbstractCrawlerWorker::reinitOptions(const CrawlerOptionsData& optionsData,
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
 	m_pageDataCollector->setOptions(optionsData);
 
-	applyNetworkOptions(optionsData);
+	m_pageLoader->applyNetworkOptions(optionsData);
 }
 
-void AbstractCrawlerWorker::extractUrlAndDownload()
+void CrawlerWorker::extractUrlAndDownload()
 {
 	if (!m_isRunning && !m_uniqueLinkStore->hasRefreshUrls())
 	{
 		return;
 	}
 
-	if (!canPullLoading())
+	if (!m_pageLoader->canPullLoading())
 	{
 		return;
 	}
@@ -131,18 +145,18 @@ void AbstractCrawlerWorker::extractUrlAndDownload()
 
 		m_currentRequest = request;
 
-		performLoading(request, linkStatus);
+		m_pageLoader->performLoading(request, linkStatus);
 	}
 }
 
-void AbstractCrawlerWorker::onCrawlerClearData()
+void CrawlerWorker::onCrawlerClearData()
 {
 	m_currentRequest.reset();
-	clearState();
+	m_pageLoader->clearState();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);
 }
 
-AbstractCrawlerWorker::SchedulePagesResult AbstractCrawlerWorker::schedulePageResourcesLoading(ParsedPagePtr& parsedPage)
+CrawlerWorker::SchedulePagesResult CrawlerWorker::schedulePageResourcesLoading(ParsedPagePtr& parsedPage)
 {
 	SchedulePagesResult result;
 
@@ -234,8 +248,8 @@ AbstractCrawlerWorker::SchedulePagesResult AbstractCrawlerWorker::schedulePageRe
 	return result;
 }
 
-AbstractCrawlerWorker::SchedulePagesResult
-AbstractCrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
+CrawlerWorker::SchedulePagesResult
+CrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const MetaRobotsFlagsSet& metaRobotsFlags, ParsedPagePtr& parsedPage)
 {
 	const auto isNofollowLinkUnavailable = [optionsLinkFilter = m_optionsLinkFilter.get(), metaRobotsFlags](const ResourceOnPage& resource)
 	{
@@ -354,7 +368,7 @@ AbstractCrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList,
 	return result;
 }
 
-void AbstractCrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
+void CrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
 {
 	extractUrlAndDownload();
 
@@ -371,9 +385,9 @@ void AbstractCrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
 	extractUrlAndDownload();
 }
 
-void AbstractCrawlerWorker::onStart()
+void CrawlerWorker::onStart()
 {
-	std::vector<WorkerResult> loadedAfterStopPages = extractLoadedAfterStopPages();
+	std::vector<WorkerResult> loadedAfterStopPages = m_pageLoader->extractLoadedAfterStopPages();
 
 	for(const WorkerResult& workerResult : loadedAfterStopPages)
 	{
@@ -381,7 +395,7 @@ void AbstractCrawlerWorker::onStart()
 	}
 }
 
-void AbstractCrawlerWorker::onPageParsed(const WorkerResult& result) const noexcept
+void CrawlerWorker::onPageParsed(const WorkerResult& result) const noexcept
 {
 	if (result.incomingPageConstRef()->isRedirectedToExternalPage())
 	{
@@ -403,7 +417,7 @@ void AbstractCrawlerWorker::onPageParsed(const WorkerResult& result) const noexc
 	CrawlerSharedState::instance()->incrementWorkersProcessedLinksCount();
 }
 
-void AbstractCrawlerWorker::fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const
+void CrawlerWorker::fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const
 {
 	const int pagesCount = static_cast<int>(pages.size());
 
@@ -424,7 +438,7 @@ void AbstractCrawlerWorker::fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPage
 	}
 }
 
-void AbstractCrawlerWorker::handlePage(ParsedPagePtr& page, bool isStoredInCrawledUrls, DownloadRequestType requestType)
+void CrawlerWorker::handlePage(ParsedPagePtr& page, bool isStoredInCrawledUrls, DownloadRequestType requestType)
 {
 	const auto emitBlockedByRobotsTxtPages = [this](const ResourceOnPage& resource)
 	{
@@ -456,7 +470,7 @@ void AbstractCrawlerWorker::handlePage(ParsedPagePtr& page, bool isStoredInCrawl
 
 	if (isStoredInCrawledUrls && !m_isRunning && !m_reloadPage)
 	{
-		addPageReceivedAfterStop(std::make_pair(m_currentRequest.value().requestType, page));
+		m_pageLoader->addPageReceivedAfterStop(std::make_pair(m_currentRequest.value().requestType, page));
 		return;
 	}
 
@@ -478,7 +492,7 @@ void AbstractCrawlerWorker::handlePage(ParsedPagePtr& page, bool isStoredInCrawl
 	}
 }
 
-void AbstractCrawlerWorker::handleResponseData(const HopsChain& hopsChain, DownloadRequestType requestType)
+void CrawlerWorker::handleResponseData(const HopsChain& hopsChain, DownloadRequestType requestType)
 {
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(hopsChain);
 
@@ -497,7 +511,7 @@ void AbstractCrawlerWorker::handleResponseData(const HopsChain& hopsChain, Downl
 
 	if (!m_isRunning && !m_reloadPage)
 	{
-		setPageReceivedAfterStopPromise();
+		m_pageLoader->setPageReceivedAfterStopPromise();
 	}
 }
 

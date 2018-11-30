@@ -5,7 +5,7 @@ namespace CrawlerEngine
 
 enum class RequestType
 {
-	RequestTypeDownload,
+	RequestDownload,
 	RequestGetHostInfo,
 	RequestTypeRunTask,
 	RequestCheck404IsProper,
