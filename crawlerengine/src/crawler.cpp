@@ -267,7 +267,7 @@ void Crawler::onAboutCrawlingState()
 	const size_t seqCollPending = qMax(modelControllerAcceptedLinksCount, sequencedDataCollectionCount) - sequencedDataCollectionCount;
 	const size_t additionalPendingCount = controllerPending + seqCollPending;
 
-	progress.crawledLinkCount = uniqueLinkStoreCrawledCount - additionalPendingCount;
+	progress.crawledLinkCount = sequencedDataCollectionCount;
 	progress.pendingLinkCount = uniqueLinkStorePendingCount + additionalPendingCount;
 
 	emit crawlingProgress(progress);
