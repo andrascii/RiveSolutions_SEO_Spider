@@ -13,7 +13,7 @@ namespace CrawlerEngine
 
 class ISpecificLoader;
 class IRobotsTxtRules;
-class IDownloader;
+class IDownloadHandler;
 class ITaskProcessor;
 class IWebScreenShot;
 class IHostInfoProvider;
@@ -144,7 +144,7 @@ private slots:
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;
 	virtual IScreenshotMaker* createScreenshotMaker();
-	virtual IDownloader* createDownloader() const;
+	virtual IDownloadHandler* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
 	virtual void initSequencedDataCollection();
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
@@ -188,7 +188,7 @@ private:
 	RequesterWrapper m_serializationRequester;
 	RequesterWrapper m_deSerializationRequester;
 
-	IDownloader* m_downloader;
+	IDownloadHandler* m_downloader;
 
 	RequesterWrapper m_hostInfoRequester;
 	WebHostInfo* m_webHostInfo;

@@ -1,6 +1,4 @@
 #include "multi_socket_download_handler.h"
-#include "service_locator.h"
-#include "inotification_service.h"
 #include "random_interval_range_timer.h"
 #include "handler_registry.h"
 #include "multi_socket_loader.h"
@@ -13,17 +11,10 @@ namespace CrawlerEngine
 {
 
 MultiSocketDownloadHandler::MultiSocketDownloadHandler()
-	: QObject(nullptr)
-	, m_multiSocketLoader(new MultiSocketLoader(this))
-	, m_randomIntervalRangeTimer(new RandomIntervalRangeTimer(this))
-	, m_maxRedirects(-1)
-	, m_timeout(-1)
+	: m_multiSocketLoader(new MultiSocketLoader(this))
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
-
-	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked,
-		this, &MultiSocketDownloadHandler::onTimerTicked, Qt::DirectConnection));
 
 	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::loaded,
 		this, &MultiSocketDownloadHandler::onUrlLoaded, Qt::DirectConnection));
@@ -33,29 +24,6 @@ MultiSocketDownloadHandler::MultiSocketDownloadHandler()
 
 	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::downloadProgress,
 		this, &MultiSocketDownloadHandler::onAboutDownloadProgress, Qt::QueuedConnection));
-}
-
-void MultiSocketDownloadHandler::setPauseRange(int from, int to)
-{
-	resetPauseRange();
-	m_randomIntervalRangeTimer->setRange(from, to);
-	m_randomIntervalRangeTimer->start();
-}
-
-void MultiSocketDownloadHandler::resetPauseRange()
-{
-	DEBUG_ASSERT(thread() == QThread::currentThread() && "This method should be called from the same thread");
-	m_randomIntervalRangeTimer->reset();
-}
-
-void MultiSocketDownloadHandler::setTimeout(int msecs)
-{
-	m_multiSocketLoader->setTimeout(msecs);
-}
-
-void MultiSocketDownloadHandler::setMaxRedirects(int redirects)
-{
-	m_maxRedirects = redirects;
 }
 
 void MultiSocketDownloadHandler::setUserAgent(const QByteArray& userAgent)
@@ -73,16 +41,9 @@ void MultiSocketDownloadHandler::resetProxy()
 	m_multiSocketLoader->resetProxySettings();
 }
 
-void MultiSocketDownloadHandler::handleRequest(RequesterSharedPtr requester)
+void MultiSocketDownloadHandler::setTimeout(int msecs)
 {
-	if (m_randomIntervalRangeTimer->isValid())
-	{
-		m_requesterQueue.push_back(std::move(requester));
-	}
-	else
-	{
-		load(requester);
-	}
+	m_multiSocketLoader->setTimeout(msecs);
 }
 
 void MultiSocketDownloadHandler::stopRequestHandling(RequesterSharedPtr requester)
@@ -93,15 +54,6 @@ void MultiSocketDownloadHandler::stopRequestHandling(RequesterSharedPtr requeste
 QObject* MultiSocketDownloadHandler::qobject()
 {
 	return this;
-}
-
-void MultiSocketDownloadHandler::proxyAuthenticationRequired() const
-{
-	ServiceLocator* serviceLocator = ServiceLocator::instance();
-
-	ASSERT(serviceLocator->isRegistered<INotificationService>());
-
-	serviceLocator->service<INotificationService>()->error(tr("Proxy error"), tr("Proxy authentication failed"));
 }
 
 std::shared_ptr<DownloadResponse> MultiSocketDownloadHandler::responseFor(int requestId)
@@ -344,11 +296,6 @@ void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
 	m_requesters[requestId] = requester;
 }
 
-int MultiSocketDownloadHandler::maxRedirectsToProcess() const noexcept
-{
-	return m_maxRedirects;
-}
-
 int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand)
 {
 	int requestId = 0;
@@ -375,22 +322,6 @@ int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request, Downlo
 	m_activeRequests.push_back(requestId);
 
 	return requestId;
-}
-
-void MultiSocketDownloadHandler::onTimerTicked()
-{
-	DEBUG_ASSERT(thread() == QThread::currentThread());
-
-	if (m_requesterQueue.empty())
-	{
-		return;
-	}
-
-	RequesterSharedPtr requester(std::move(m_requesterQueue.front()));
-
-	m_requesterQueue.pop_front();
-
-	load(requester);
 }
 
 }

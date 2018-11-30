@@ -260,7 +260,7 @@ void TestsCrawler::loadFromFileSafe(const QString & fileName)
 	}
 }
 
-IDownloader* TestsCrawler::createDownloader() const
+IDownloadHandler* TestsCrawler::createDownloader() const
 {
 	m_downloader = new TestsDownloader;
 	return m_downloader;

@@ -6,7 +6,7 @@
 #include "robots_txt_rules.h"
 #include "robots_txt_loader.h"
 #include "thread_manager.h"
-#include "downloader.h"
+#include "qt_based_download_handler.h"
 #include "host_info_provider.h"
 #include "site_map.h"
 #include "serializer.h"
@@ -680,10 +680,10 @@ IScreenshotMaker* Crawler::createScreenshotMaker()
 	return new ScreenshotMaker;
 }
 
-IDownloader* Crawler::createDownloader() const
+IDownloadHandler* Crawler::createDownloader() const
 {
-	//IDownloader* downloader = new Downloader;
-	IDownloader* downloader = new MultiSocketDownloadHandler;
+	//IDownloadHandler* downloader = new QtBasedDownloadHandler;
+	IDownloadHandler* downloader = new MultiSocketDownloadHandler;
 
 	return downloader;
 }

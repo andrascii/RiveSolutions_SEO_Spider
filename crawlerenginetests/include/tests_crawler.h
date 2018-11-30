@@ -52,7 +52,7 @@ public:
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const override;
 	virtual IScreenshotMaker* createScreenshotMaker() override;
-	virtual IDownloader* createDownloader() const override;
+	virtual IDownloadHandler* createDownloader() const override;
 	virtual void initSequencedDataCollection() override;
 
 private:

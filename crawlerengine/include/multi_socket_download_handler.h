@@ -2,7 +2,7 @@
 
 #include "requester.h"
 #include "crawler_request.h"
-#include "idownloader.h"
+#include "abstract_download_handler.h"
 #include "download_request.h"
 
 namespace CrawlerEngine
@@ -13,27 +13,22 @@ class RandomIntervalRangeTimer;
 class MultiSocketLoader;
 struct DownloadResponse;
 
-class MultiSocketDownloadHandler : public QObject, public IDownloader
+class MultiSocketDownloadHandler : public AbstractDownloadHandler
 {
 	Q_OBJECT
 
 public:
 	MultiSocketDownloadHandler();
 
-	Q_INVOKABLE virtual void setPauseRange(int from, int to) override;
-	Q_INVOKABLE virtual void resetPauseRange() override;
-	Q_INVOKABLE virtual void setTimeout(int msecs) override;
-	Q_INVOKABLE virtual void setMaxRedirects(int redirects) override;
 	Q_INVOKABLE virtual void setUserAgent(const QByteArray& userAgent) override;
 	Q_INVOKABLE virtual void setProxy(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword) override;
 	Q_INVOKABLE virtual void resetProxy() override;
-	Q_INVOKABLE virtual void handleRequest(RequesterSharedPtr requester) override;
+	Q_INVOKABLE virtual void setTimeout(int msecs) override;
 	Q_INVOKABLE virtual void stopRequestHandling(RequesterSharedPtr requester) override;
 
 	virtual QObject* qobject() override;
 
 private slots:
-	void onTimerTicked();
 	void onAboutDownloadProgress(int id, double bytesTotal, double bytesReceived);
 	void onAboutUploadProgress(int id, double bytesTotal, double bytesSent);
 
@@ -45,11 +40,11 @@ private slots:
 		int timeElapsed);
 
 private:
-	void load(RequesterSharedPtr requester);
-	int maxRedirectsToProcess() const noexcept;
+	virtual void load(RequesterSharedPtr requester) override;
+	virtual std::shared_ptr<DownloadResponse> responseFor(int requestId) override;
+
+private:
 	int loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand);
-	void proxyAuthenticationRequired() const;
-	std::shared_ptr<DownloadResponse> responseFor(int requestId);
 	Url redirectedUrl(const ResponseHeaders& responseHeaders, const Url& baseAddress) const;
 
 	RequesterSharedPtr requesterByIdAssertIfNotExists(int id) const;
@@ -78,10 +73,6 @@ private:
 	QMap<int, RequesterWeakPtr> m_requesters;
 	QVector<int> m_activeRequests;
 	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
-	RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
-	int m_timeout;
-	int m_maxRedirects;
-	std::deque<RequesterSharedPtr> m_requesterQueue;
 	RequestIdBindings m_idBindings;
 };
 

@@ -12,7 +12,7 @@ using namespace CrawlerEngine;
 TestsDownloader::TestsDownloader()
 {
 	CrawlerEngine::HandlerRegistry& handlerRegistry = CrawlerEngine::HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, CrawlerEngine::RequestType::RequestTypeDownload);
+	handlerRegistry.registrateHandler(this, CrawlerEngine::RequestType::RequestDownload);
 
 	m_responsePostProcessor = [](CrawlerEngine::DownloadResponse&) {};
 }

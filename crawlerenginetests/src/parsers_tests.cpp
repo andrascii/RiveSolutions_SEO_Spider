@@ -28,7 +28,7 @@ public:
 
 		DownloadRequest request(crawlerRequest,
 			DownloadRequest::LinkStatus::LinkStatusFirstLoading,
-			DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoadingNecessity,
+			DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading,
 			true
 		);
 
