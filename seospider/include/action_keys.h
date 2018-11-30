@@ -31,7 +31,7 @@ static const QByteArray s_openPageVisualSettingsAction = "openPageVisualSettings
 static const QByteArray s_yandexMetricaSettingsAction = "yandexMetricaSettingsAction";
 
 // help actions
-static const QByteArray s_viewHelpAction = "viewHelpAction";
+static const QByteArray s_showHelpAction = "showHelpAction";
 static const QByteArray s_sendFeedbackAction = "sendFeedbackAction";
 static const QByteArray s_registerProductAction = "registerProductAction";
 static const QByteArray s_checkForUpdatesAction = "checkForUpdatesAction";

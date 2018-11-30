@@ -50,7 +50,11 @@ QMenu* MenuBar::buildMenuSettings()
 	settingsMenu->addAction(actionRegistry.globalAction(s_openUserAgentSettingsAction));
 	settingsMenu->addAction(actionRegistry.globalAction(s_openCrawlerPauseTimerSettingsAction));
 	settingsMenu->addAction(actionRegistry.globalAction(s_openCompanyProfileSettingsAction));
+
+#ifndef PRODUCTION
 	settingsMenu->addAction(actionRegistry.globalAction(s_openPageVisualSettingsAction));
+#endif
+
 	settingsMenu->addAction(actionRegistry.globalAction(s_yandexMetricaSettingsAction));
 
 	return settingsMenu;
@@ -72,7 +76,7 @@ QMenu* MenuBar::buildMenuHelp()
 
 	QMenu* helpMenu = new QMenu(tr("Help"), this);
 
-	helpMenu->addAction(actionRegistry.globalAction(s_viewHelpAction));
+	helpMenu->addAction(actionRegistry.globalAction(s_showHelpAction));
 	helpMenu->addAction(actionRegistry.globalAction(s_sendFeedbackAction));
 	helpMenu->addSeparator();
 	helpMenu->addAction(actionRegistry.globalAction(s_registerProductAction));

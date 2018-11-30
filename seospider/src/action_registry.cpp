@@ -33,7 +33,7 @@ QAction* ActionRegistry::addGlobalAction(const QByteArray& actionKey, const QIco
 	DEBUG_ASSERT(m_globalActions.find(actionKey) == std::end(m_globalActions));
 
 	QAction* action = new QAction(icon, text);
-	
+
 	return addGlobalAction(actionKey, action);
 }
 
@@ -84,7 +84,7 @@ QAction* ActionRegistry::addActionToActionGroup(const QByteArray& actionGroupKey
 
 	QActionGroup* actionGroup = m_actionGroups[actionGroupKey].get();
 	QAction* act = addGlobalAction(actionKey, action);
-	
+
 	return actionGroup->addAction(act);
 }
 

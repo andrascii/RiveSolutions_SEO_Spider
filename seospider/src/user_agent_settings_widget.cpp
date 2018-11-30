@@ -42,7 +42,7 @@ void UserAgentSettingsWidget::loadUserAgentsFromFile(const QString& fileName, QC
 	userAgentsFile.open(QIODevice::ReadOnly);
 	if (!userAgentsFile.isOpen())
 	{
-		ERRLOG << "Cannot open " << userAgentsFile.fileName();
+		ERRLOG << "Cannot open" << userAgentsFile.fileName();
 		return;
 	}
 
