@@ -1,6 +1,7 @@
 #include "dispatcher_based_worker_page_loader.h"
 #include "download_response.h"
 #include "download_request.h"
+#include "crawler_shared_state.h"
 
 namespace CrawlerEngine
 {
@@ -33,9 +34,11 @@ std::optional<CrawlerRequest> DispatcherBasedWorkerPageLoader::pendingUrl() cons
 	return value;
 }
 
-void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester*, const DownloadResponse& response)
+void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
-	m_downloadRequester.reset();
+	m_activeRequesters[requester].reset();
+	m_activeRequesters.remove(requester);
+
 	emit pageLoaded(response.hopsChain);
 }
 
@@ -55,25 +58,38 @@ std::optional<CrawlerRequest> DispatcherBasedWorkerPageLoader::prepareUnloadedPa
 
 bool DispatcherBasedWorkerPageLoader::canPullLoading() const
 {
-	return !m_downloadRequester;
-}
+	const CrawlerSharedState* state = CrawlerSharedState::instance();
+	const int workersProcessedLinksCount = state->workersProcessedLinksCount();
+	const int downloaderCrawledLinksCount = state->downloaderCrawledLinksCount();
 
-void DispatcherBasedWorkerPageLoader::applyNetworkOptions(const CrawlerOptionsData&)
-{
-} // do nothing here
+	const int differenceBetweenWorkersAndDownloader = downloaderCrawledLinksCount - workersProcessedLinksCount;
+	constexpr int maxPendingLinksCount = 50;
+
+	if (differenceBetweenWorkersAndDownloader > maxPendingLinksCount)
+	{
+		INFOLOG			<< "The page loader is ahead of the workers at"			<< differenceBetweenWorkersAndDownloader			<< "pages. Loading will be throttled";
+		return false;
+	}
+
+	return true;
+}
 
 void DispatcherBasedWorkerPageLoader::performLoading(const CrawlerRequest& crawlerRequest, DownloadRequest::LinkStatus linkStatus)
 {
 	DownloadRequest request(crawlerRequest, linkStatus,
 		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading, true);
 
-	m_downloadRequester.reset(request, this, &DispatcherBasedWorkerPageLoader::onLoadingDone);
-	m_downloadRequester->start();
+	RequesterWrapper requesterWrapper;
+
+	requesterWrapper.reset(request, this, &DispatcherBasedWorkerPageLoader::onLoadingDone);
+	requesterWrapper->start();
+
+	m_activeRequesters[requesterWrapper.get()] = requesterWrapper;
 }
 
 void DispatcherBasedWorkerPageLoader::stopLoading()
 {
-	if (m_downloadRequester)
+	if (!m_activeRequesters.isEmpty())
 	{
 		return;
 	}
@@ -83,7 +99,7 @@ void DispatcherBasedWorkerPageLoader::stopLoading()
 
 void DispatcherBasedWorkerPageLoader::clearState()
 {
-	m_downloadRequester.reset();
+	m_activeRequesters.clear();
 	m_pagesAcceptedAfterStop.pages.clear();
 	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
 }

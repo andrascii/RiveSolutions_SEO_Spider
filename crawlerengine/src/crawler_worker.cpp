@@ -85,8 +85,6 @@ void CrawlerWorker::reinitOptions(const CrawlerOptionsData& optionsData, RobotsT
 
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
 	m_pageDataCollector->setOptions(optionsData);
-
-	m_pageLoader->applyNetworkOptions(optionsData);
 }
 
 void CrawlerWorker::extractUrlAndDownload()
@@ -98,19 +96,6 @@ void CrawlerWorker::extractUrlAndDownload()
 
 	if (!m_pageLoader->canPullLoading())
 	{
-		return;
-	}
-
-	const CrawlerSharedState* state = CrawlerSharedState::instance();
-	const int workersProcessedLinksCount = state->workersProcessedLinksCount();
-	const int donwloaderCrawledLinksCOunt = state->downloaderCrawledLinksCount();
-
-	const int differenceBetweenWorkersAndDownloader = donwloaderCrawledLinksCOunt - workersProcessedLinksCount;
-	constexpr int maxPendingLinksCount = 50;
-
-	if (differenceBetweenWorkersAndDownloader > maxPendingLinksCount)
-	{
-		m_defferedProcessingTimer->start();
 		return;
 	}
 
@@ -381,8 +366,6 @@ void CrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
 	const DownloadRequestType requestType = m_currentRequest.value().requestType;
 
 	handleResponseData(hopsChain, requestType);
-
-	extractUrlAndDownload();
 }
 
 void CrawlerWorker::onStart()

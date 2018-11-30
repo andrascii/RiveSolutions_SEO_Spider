@@ -18,7 +18,6 @@ public:
 
 	virtual std::optional<CrawlerRequest> pendingUrl() const override;
 	virtual bool canPullLoading() const override;
-	virtual void applyNetworkOptions(const CrawlerOptionsData& optionsData) override;
 	virtual void performLoading(const CrawlerRequest& crawlerRequest, DownloadRequest::LinkStatus linkStatus) override;
 	virtual void stopLoading() override;
 	virtual void clearState() override;
@@ -45,8 +44,8 @@ private:
 		PagesPromise mutable pagesAcceptedPromise;
 	};
 
-	RequesterWrapper m_downloadRequester;
 	PagesAcceptedAfterStop m_pagesAcceptedAfterStop;
+	QMap<Requester*, RequesterWrapper> m_activeRequesters;
 };
 
 }

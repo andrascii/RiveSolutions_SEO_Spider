@@ -17,7 +17,6 @@ public:
 	virtual ~ICrawlerWorkerPageLoader() = default;
 	virtual std::optional<CrawlerRequest> pendingUrl() const = 0;
 	virtual bool canPullLoading() const = 0;
-	virtual void applyNetworkOptions(const CrawlerOptionsData& optionsData) = 0;
 	virtual void performLoading(const CrawlerRequest& crawlerRequest, DownloadRequest::LinkStatus linkStatus) = 0;
 	virtual void stopLoading() = 0;
 	virtual void clearState() = 0;
