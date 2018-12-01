@@ -13,7 +13,6 @@ set(CommonLibHeadersDir ../common/include)
 set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(QtXlsxWriterHeadersDir ../qtxlsxwriter/src/xlsx)
 set(VersionHeadersDir ../version/include)
-set(VMProtectSdkDir ../deps/vmprotect/include)
 
 aux_source_directory(${AppSourcesDir} AppSourcesList)
 file(GLOB_RECURSE AppHeadersList "include/*.h")
@@ -138,7 +137,7 @@ include_directories(
 	${CommonLibHeadersDir}
 	${SeoSpiderServiceApiHeadersDir}
 	${VersionHeadersDir}
-	${VMProtectSdkDir}
+	${VMProtectSdkHeadersDir}
 	${QtXlsxWriterHeadersDir}
 	${QtXlsxWriter_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}

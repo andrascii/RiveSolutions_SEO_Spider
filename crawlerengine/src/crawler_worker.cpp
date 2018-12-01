@@ -227,8 +227,8 @@ CrawlerWorker::SchedulePagesResult CrawlerWorker::schedulePageResourcesLoading(P
 		}
 	}
 
-	m_uniqueLinkStore->addUrlList(resourcesGetUrlList, DownloadRequestType::RequestTypeGet);
-	m_uniqueLinkStore->addUrlList(resourcesHeadUrlList, DownloadRequestType::RequestTypeHead);
+	m_uniqueLinkStore->addUrlList(std::move(resourcesGetUrlList), DownloadRequestType::RequestTypeGet);
+	m_uniqueLinkStore->addUrlList(std::move(resourcesHeadUrlList), DownloadRequestType::RequestTypeHead);
 
 	return result;
 }

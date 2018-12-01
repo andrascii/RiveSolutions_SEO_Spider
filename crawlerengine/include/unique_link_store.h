@@ -31,9 +31,10 @@ public:
 	void addRefreshUrl(const Url& url, DownloadRequestType requestType, const std::vector<bool>& storagesBeforeRemoving);
 	void addUrl(const Url& url, DownloadRequestType requestType);
 	void addUrl(Url&& url, DownloadRequestType requestType);
-	void addUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType);
-	void addUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType);
-	void addLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType);
+
+	void addUrlList(std::vector<Url> urlList, DownloadRequestType requestType);
+	void addLinkList(std::vector<LinkInfo> linkList, DownloadRequestType requestType);
+
 	bool addCrawledUrl(const Url& url, DownloadRequestType requestType);
 	bool hasCrawledRequest(const CrawlerRequest& request);
 

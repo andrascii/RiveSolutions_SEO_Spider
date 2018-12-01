@@ -128,7 +128,7 @@ void UniqueLinkStore::addRefreshUrl(const Url& url, DownloadRequestType requestT
 	emit urlAdded();
 }
 
-void UniqueLinkStore::addUrlList(const std::vector<Url>& urlList, DownloadRequestType requestType)
+void UniqueLinkStore::addUrlList(std::vector<Url> urlList, DownloadRequestType requestType)
 {
 	if (urlList.empty())
 	{
@@ -137,44 +137,37 @@ void UniqueLinkStore::addUrlList(const std::vector<Url>& urlList, DownloadReques
 
 	std::lock_guard locker(m_mutex);
 
-	for (auto first = urlList.begin(), last = urlList.end(); first != last; ++first)
 	{
-		addUrl(*first, requestType);
-	}
-}
+		QSignalBlocker blocker(this);
 
-void UniqueLinkStore::addUrlList(std::vector<Url>&& urlList, DownloadRequestType requestType)
-{
-	if (urlList.empty())
-	{
-		return;
-	}
-
-	std::lock_guard locker(m_mutex);
-
-	for (auto first = urlList.begin(); first != urlList.end(); ++first)
-	{
-		addUrl(std::move(*first), requestType);
-	}
-}
-
-void UniqueLinkStore::addLinkList(const std::vector<LinkInfo>& linkList, DownloadRequestType requestType)
-{
-	const auto makeUrlList = [&linkList]() -> std::vector<Url>
-	{
-		std::vector<Url> urlList;
-
-		for(const LinkInfo& link : linkList)
+		std::for_each(std::make_move_iterator(urlList.begin()), std::make_move_iterator(urlList.end()), [&](Url&& url)
 		{
-			urlList.push_back(link.url);
-		}
+			addUrl(std::move(url), requestType);
+		});
+	}
 
-		return urlList;
-	};
+	emit urlAdded();
+}
 
-	std::vector<Url> urlList = makeUrlList();
+void UniqueLinkStore::addLinkList(std::vector<LinkInfo> linkList, DownloadRequestType requestType)
+{
+	if (linkList.empty())
+	{
+		return;
+	}
 
-	addUrlList(std::move(urlList), requestType);
+	std::lock_guard locker(m_mutex);
+
+	{
+		QSignalBlocker blocker(this);
+
+		std::for_each(std::make_move_iterator(linkList.begin()), std::make_move_iterator(linkList.end()), [&](LinkInfo&& linkInfo)
+		{
+			addUrl(std::move(linkInfo.url), requestType);
+		});
+	}
+
+	emit urlAdded();
 }
 
 bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestType)
