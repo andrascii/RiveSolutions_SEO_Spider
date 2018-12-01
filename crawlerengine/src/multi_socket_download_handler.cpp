@@ -19,11 +19,11 @@ MultiSocketDownloadHandler::MultiSocketDownloadHandler()
 	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::loaded,
 		this, &MultiSocketDownloadHandler::onUrlLoaded, Qt::DirectConnection));
 
-	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::uploadProgress,
-		this, &MultiSocketDownloadHandler::onAboutUploadProgress, Qt::QueuedConnection));
-
-	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::downloadProgress,
-		this, &MultiSocketDownloadHandler::onAboutDownloadProgress, Qt::QueuedConnection));
+//	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::uploadProgress,
+//		this, &MultiSocketDownloadHandler::onAboutUploadProgress, Qt::QueuedConnection));
+//
+//	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::downloadProgress,
+//		this, &MultiSocketDownloadHandler::onAboutDownloadProgress, Qt::QueuedConnection));
 }
 
 void MultiSocketDownloadHandler::setUserAgent(const QByteArray& userAgent)

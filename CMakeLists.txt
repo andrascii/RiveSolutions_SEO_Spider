@@ -58,25 +58,26 @@ set(SeoSpiderInstallerName seospiderinstaller)
 set(VersionProjectName version)
 
 if(WIN32)
-  set(VMProtectSdkLibDir "${CMAKE_CURRENT_SOURCE_DIR}/deps/vmprotect/bin/windows")
+  set(VMProtectSdkLibDir "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/windows")
 
   if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
-    set(VMProctectSdkDll "${CMAKE_CURRENT_SOURCE_DIR}/deps/vmprotect/bin/windows/VMProtectSDK32.dll")
+    set(VMProctectSdkDll "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/windows/VMProtectSDK32.dll")
   else()
-    set(VMProctectSdkDll "${CMAKE_CURRENT_SOURCE_DIR}/deps/vmprotect/bin/windows/VMProtectSDK64.dll")
+    set(VMProctectSdkDll "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/windows/VMProtectSDK64.dll")
   endif()
 
 endif()
 
 if(UNIX AND NOT APPLE)
-  set(VMProtectSdkLibDir "${CMAKE_CURRENT_SOURCE_DIR}/deps/vmprotect/bin/linux")
+  set(VMProtectSdkLibDir "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/linux")
 endif()
 
 if(APPLE)
-  set(VMProtectSdkLibDir "${CMAKE_CURRENT_SOURCE_DIR}/deps/vmprotect/bin/osx")
+  set(VMProtectSdkLibDir "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/osx")
 endif()
 
-set(VMProtectDebugLicenseFile "${CMAKE_CURRENT_SOURCE_DIR}/deps/vmprotect/debuglicense/VMProtectLicense.ini")
+set(VMProtectSdkHeadersDir ../thirdparty/vmprotect/include)
+set(VMProtectDebugLicenseFile "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/debuglicense/VMProtectLicense.ini")
 
 project(${AppName})
 
