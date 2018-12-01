@@ -14,9 +14,9 @@ public:
 	{
 	}
 
-	virtual IRequest* clone() const override
+	virtual std::shared_ptr<IRequest> clone() const override
 	{
-		return new TakeScreenshotRequest(*this);
+		return std::make_shared<TakeScreenshotRequest>(*this);
 	}
 	virtual RequestType requestType() const noexcept override
 	{

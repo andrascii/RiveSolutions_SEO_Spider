@@ -38,7 +38,7 @@ public:
 		static_assert(MetaHelpers::HasMethod_handleRequest<ObjectType, RequesterSharedPtr>::value, "Passed object does not contain handleRequest function");
 		static_assert(MetaHelpers::HasMethod_stopRequestHandling<ObjectType, RequesterSharedPtr>::value, "Passed object does not contain stopRequestHandling function");
 
-		std::lock_guard<std::mutex> locker(m_mutex);
+		std::lock_guard locker(m_mutex);
 
 		const auto conditionCheckerFunctor = [this](RequestType requestType)
 		{

@@ -67,7 +67,7 @@ namespace CrawlerEngine
 
 std::shared_ptr<ThreadMessageDispatcher> ThreadMessageDispatcher::forThread(QThread* thread)
 {
-	std::lock_guard<std::mutex> locker(s_mutex);
+	std::lock_guard locker(s_mutex);
 
 	std::shared_ptr<ThreadMessageDispatcher> threadQueuePtr = threadQueue(thread);
 

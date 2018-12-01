@@ -35,7 +35,7 @@ Message Message::postResponseMessage(RequesterSharedPtr requester, IResponseShar
 	{
 		return Message(MessageTypePostResponse, requester->thread(), requester, response);
 	}
-	
+
 	return undefinedMessage();
 }
 

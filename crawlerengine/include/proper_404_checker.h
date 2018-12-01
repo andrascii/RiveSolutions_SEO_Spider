@@ -14,9 +14,9 @@ struct Check404IsProperRequest : IRequest
 	{
 	}
 
-	virtual IRequest* clone() const override
+	virtual std::shared_ptr<IRequest> clone() const override
 	{
-		return new Check404IsProperRequest(*this);
+		return std::make_shared<Check404IsProperRequest>(*this);
 	}
 	virtual RequestType requestType() const noexcept override
 	{
