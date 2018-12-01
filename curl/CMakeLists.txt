@@ -3,8 +3,6 @@ set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
 include(ExternalProject)
 
-message("")
-
 externalproject_add(curl
 	URL ${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty/curl-7.62.0.tar.gz
 	PREFIX curl
