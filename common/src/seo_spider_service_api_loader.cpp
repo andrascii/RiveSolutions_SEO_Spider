@@ -36,16 +36,7 @@ std::atomic_bool SeoSpiderServiceApiLoader::m_isDisabled = false;
 SeoSpiderServiceApiLoader&
 SeoSpiderServiceApiLoader::instance()
 {
-	static std::mutex s_mutex;
-	static std::unique_ptr<SeoSpiderServiceApiLoader> s_instance;
-
-	std::lock_guard locker(s_mutex);
-
-	if (!s_instance)
-	{
-		s_instance.reset(new SeoSpiderServiceApiLoader);
-	}
-
+	static std::unique_ptr<SeoSpiderServiceApiLoader> s_instance(new SeoSpiderServiceApiLoader);
 	return *s_instance.get();
 }
 
