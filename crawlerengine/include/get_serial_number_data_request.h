@@ -8,9 +8,9 @@ namespace CrawlerEngine
 class GetSerialNumberDataRequest : public IRequest
 {
 public:
-	virtual IRequest* clone() const override
+	virtual std::shared_ptr<IRequest> clone() const override
 	{
-		return new GetSerialNumberDataRequest(*this);
+		return std::make_shared<GetSerialNumberDataRequest>(*this);
 	}
 	virtual RequestType requestType() const noexcept override
 	{

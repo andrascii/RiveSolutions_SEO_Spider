@@ -22,9 +22,9 @@ struct TaskRequest : public IRequest
 	{
 	}
 
-	virtual IRequest* clone() const override
+	virtual std::shared_ptr<IRequest> clone() const override
 	{
-		return new TaskRequest(*this);
+		return std::make_shared<TaskRequest>(*this);
 	}
 	virtual RequestType requestType() const noexcept override
 	{

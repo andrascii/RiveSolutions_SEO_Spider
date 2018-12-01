@@ -13,9 +13,9 @@ public:
 	{
 	}
 
-	virtual IRequest* clone() const override
+	virtual std::shared_ptr<IRequest> clone() const override
 	{
-		return new SetSerialNumberRequest(*this);
+		return std::make_shared<SetSerialNumberRequest>(*this);
 	}
 	virtual RequestType requestType() const noexcept override
 	{

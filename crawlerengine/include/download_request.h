@@ -31,9 +31,9 @@ struct DownloadRequest : public IRequest
 	{
 	}
 
-	virtual IRequest* clone() const override
+	virtual std::shared_ptr<IRequest> clone() const override
 	{
-		return new DownloadRequest(*this);
+		return std::make_shared<DownloadRequest>(*this);
 	}
 	virtual RequestType requestType() const noexcept override
 	{

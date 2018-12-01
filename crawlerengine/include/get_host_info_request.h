@@ -13,9 +13,9 @@ struct GetHostInfoRequest : IRequest
 	{
 	}
 
-	virtual IRequest* clone() const override
+	virtual std::shared_ptr<IRequest> clone() const override
 	{
-		return new GetHostInfoRequest(*this);
+		return std::make_shared<GetHostInfoRequest>(*this);
 	}
 	virtual RequestType requestType() const noexcept override
 	{
