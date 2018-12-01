@@ -28,7 +28,7 @@ struct DownloadProgressResponse : public IResponse
 
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeDownloadProgress)
 
-		quint64 bytesReceived;
+	quint64 bytesReceived;
 	quint64 bytesTotal;
 };
 

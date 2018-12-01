@@ -150,11 +150,8 @@ struct ResourcesOnPageListItemHasher
 {
 	size_t operator()(const ResourceOnPage& resource) const noexcept
 	{
-		return hasher(resource.link.url.urlStr().toStdString());
-		// TODO: make it more clever
+		return qHash(resource.link.url);
 	}
-
-	boost::hash<std::string> hasher;
 };
 
 inline bool operator==(const ResourceOnPage& first, const ResourceOnPage& second)

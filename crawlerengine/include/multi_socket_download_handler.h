@@ -51,6 +51,8 @@ private:
 	RequesterSharedPtr requesterById(int id) const;
 	int parentIdFor(int id) const;
 
+	void removeRequestIndexesChain(int id);
+
 	void followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
 		const std::shared_ptr<DownloadResponse>& response,
 		int parentRequestId,
@@ -63,17 +65,12 @@ private:
 		int timeElapsed);
 
 private:
-	struct RequestIdBindings
-	{
-		QMap<int, int> redirectRequestIdToParentId;
-		QMap<int, QVector<int>> parentIdToRedirectRequestId;
-	};
-
 	MultiSocketLoader* m_multiSocketLoader;
 	QMap<int, RequesterWeakPtr> m_requesters;
-	QVector<int> m_activeRequests;
 	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
-	RequestIdBindings m_idBindings;
+
+	// contains mapping redirect request indexes to their parent request indexes
+	QMap<int, int> m_redirectRequestIdToParentId;
 };
 
 }
