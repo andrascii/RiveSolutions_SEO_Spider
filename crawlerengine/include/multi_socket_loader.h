@@ -17,7 +17,7 @@ namespace CrawlerEngine
 class Url;
 class HopsChain;
 
-/* Information associated with a specific HTTP request */
+/*! Information associated with a specific HTTP request */
 struct RequestDescriptor
 {
 	enum class InterruptionReason
@@ -35,48 +35,38 @@ struct RequestDescriptor
 
 	struct UploadData
 	{
-		// buffer
+		//! buffer
 		QByteArray buffer;
-
-		// this pointer used to point on data.constData();
-		// this pointer will move in process of reading
+		//! this pointer used to point on data.constData();
+		//! this pointer will move in process of reading
 		const char* dataPointer;
-
-		// upload data length
+		//! upload data length
 		size_t dataLength;
 	};
 
+	//! CURL easy handle describing the request
 	CURL* easy;
-
-	// url for request
+	//! URL for the request
 	QByteArray url;
-
-	// stores body for GET method
+	//! stores body for GET method
 	QByteArray body;
-
-	// used for POST method
+	//! used for POST method
 	UploadData uploadData;
-
-	// server response headers
+	//! server response headers
 	ResponseHeaders responseHeaders;
-
+	//! response status code received from the server
 	Common::StatusCode statusCode;
-
-	// time point at the start of loading, used to calculate loading time
+	//! time point at the start of loading, used to calculate loading time
 	std::chrono::time_point<std::chrono::high_resolution_clock> startLoadingPoint;
-
-	// used for mark the reason for interruption loading (method GET)
+	//! used for mark the reason for interruption loading (method GET)
 	InterruptionReason interruptionReason = InterruptionReason::ReasonContinueLoading;
-
-	// should we load body of non-HTML resource mark
+	//! should we load body of non-HTML resource mark
 	DownloadRequest::BodyProcessingCommand bodyProcessingCommand;
-
+	//! Method to use for the request
 	Method method;
-
-	// stores identifier assigned to the request
+	//! stores identifier assigned to the request
 	int id = -1;
-
-	// this buffer stores CURL error message if it occurs
+	//! this buffer stores CURL error message if it occurs
 	char error[CURL_ERROR_SIZE];
 };
 

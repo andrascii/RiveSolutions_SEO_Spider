@@ -86,7 +86,7 @@ if(WIN32)
 	set(OSSpecificDeps ws2_32.lib ntdll.lib)
 endif()
 
-add_dependencies(${CrawlerEngineLibName} curl)
+add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
 
 target_link_libraries(
 	${CrawlerEngineLibName}
