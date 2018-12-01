@@ -60,6 +60,9 @@ private:
 	QString getSaveFilePath() const;
 
 	void initHelpActions();
+	void initFileActions();
+	void initSettingsActions();
+	void initCrawlerActions();
 
 private slots:
 	void onCrawlerSessionCreated();

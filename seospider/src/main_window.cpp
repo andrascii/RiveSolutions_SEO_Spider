@@ -399,139 +399,12 @@ void MainWindow::init()
 
 void MainWindow::createActions()
 {
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
+	ActionRegistry::instance().addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
 
-	// file actions
-	actionRegistry.addActionGroup(s_fileActionGroup);
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, QIcon(QStringLiteral(":/images/open-file-icon.png")), tr("Open File"));
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, tr("Close File"));
-
-	QAction* recentFilesAction = RecentFiles::instance().subMenuAction();
-	recentFilesAction->setIcon(QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")));
-	recentFilesAction->setText(tr("Recent Files"));
-
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, recentFilesAction);
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, QIcon(QStringLiteral(":/images/save-icon.png")), tr("Save File"));
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
-	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
-	actionRegistry.addGlobalAction(s_saveFileAndClearDataAction, tr("Save To File And Clear Data"));
-
-	actionRegistry.globalAction(s_saveFileAction)->setDisabled(true);
-	actionRegistry.globalAction(s_closeFileAction)->setDisabled(true);
-
-	// settings actions
-	actionRegistry.addActionGroup(s_settingsActionGroup);
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerSettingsAction,
-		QIcon(QStringLiteral(":/images/crawler-settings.png")), tr("Crawler Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLanguageSettingsAction,
-		QIcon(QStringLiteral(":/images/lang-settings.png")), tr("Language Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPreferencesSettingsAction,
-		QIcon(QStringLiteral(":/images/preferences-settings-icon.png")), tr("Preferences Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction,
-		QIcon(QStringLiteral(":/images/limits-settings.png")), tr("Limit Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction,
-		QIcon(QStringLiteral(":/images/proxy-settings.png")), tr("Proxy Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction,
-		QIcon(QStringLiteral(":/images/user-agent.png")), tr("User-Agent Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction,
-		QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction,
-		QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction,
-		QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
-
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_yandexMetricaSettingsAction,
-		SvgRenderer::render(":/images/yandex.svg", 10, 10), tr("Yandex Metrica Settings"));
-
-	const auto settingsActionsAvailability = [](int state)
-	{
-		const auto actionsAvailabilitySetter = [](bool value)
-		{
-			ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(value);
-			ActionRegistry::instance().globalAction(s_openFileAction)->setEnabled(value);
-		};
-
-		if (state == Crawler::StatePreChecking || state == Crawler::StateWorking)
-		{
-			actionsAvailabilitySetter(false);
-		}
-
-		if (state == Crawler::StatePending)
-		{
-			actionsAvailabilitySetter(true);
-		}
-	};
-
-	VERIFY(connect(theApp->crawler(), &Crawler::stateChanged, this, settingsActionsAvailability));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CrawlerSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openLanguageSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_LanguageSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openPreferencesSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_PreferencesSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openLimitsSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_LimitsSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openProxySettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_ProxySettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openUserAgentSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_UserAgentSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerPauseTimerSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CrawlerPauseSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openCompanyProfileSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CompanyProfileSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_openPageVisualSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_PageVisualSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_yandexMetricaSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_YandexMetricaSettingsWidget)); }));
-
-	// help actions
+	initFileActions();
+	initSettingsActions();
 	initHelpActions();
-
-	// crawler actions
-	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
-	actionRegistry.addGlobalAction(s_stopCrawlerAction, tr("Stop Crawler"));
-	actionRegistry.addGlobalAction(s_clearCrawledDataAction, tr("Clear Crawled Data"));
-
-	VERIFY(connect(actionRegistry.globalAction(s_startCrawlerAction), SIGNAL(triggered()), theApp, SLOT(startCrawler())));
-	VERIFY(connect(actionRegistry.globalAction(s_stopCrawlerAction), SIGNAL(triggered()), theApp, SLOT(stopCrawler())));
-	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
-	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(closeAllWindows())));
-
-	actionRegistry.globalAction(s_exitProgramAction)->setShortcut(QKeySequence("Alt+F4"));
-
-	// sitemap actions
-	actionRegistry.addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
-
-	VERIFY(connect(actionRegistry.globalAction(s_createXMLSitemapAction), SIGNAL(triggered()), this, SLOT(showSitemapCreatorDialog())));
-	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
-	VERIFY(connect(actionRegistry.globalAction(s_saveFileAction), SIGNAL(triggered()), this, SLOT(saveFile())));
-	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
-	VERIFY(connect(actionRegistry.globalAction(s_closeFileAction), SIGNAL(triggered()), this, SLOT(closeFile())));
-	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
-
-	actionRegistry.globalAction(s_openFileAction)->setShortcut(QKeySequence("Ctrl+O"));
-	actionRegistry.globalAction(s_saveFileAction)->setShortcut(QKeySequence("Ctrl+S"));
-	actionRegistry.globalAction(s_saveFileAsAction)->setShortcut(QKeySequence("Ctrl+Alt+S"));
-	actionRegistry.globalAction(s_closeFileAction)->setShortcut(QKeySequence("Ctrl+W"));
+	initCrawlerActions();
 }
 
 void MainWindow::createAndSetCentralWidget()
@@ -659,6 +532,144 @@ void MainWindow::initHelpActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_showHelpAction), SIGNAL(triggered()),
 		this, SLOT(openHelpPage())));
+}
+
+void MainWindow::initFileActions()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	actionRegistry.addActionGroup(s_fileActionGroup);
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, QIcon(QStringLiteral(":/images/open-file-icon.png")), tr("Open File"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, tr("Close File"));
+
+	QAction* recentFilesAction = RecentFiles::instance().subMenuAction();
+	recentFilesAction->setIcon(QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")));
+	recentFilesAction->setText(tr("Recent Files"));
+
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, recentFilesAction);
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, QIcon(QStringLiteral(":/images/save-icon.png")), tr("Save File"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
+	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
+	actionRegistry.addGlobalAction(s_saveFileAndClearDataAction, tr("Save To File And Clear Data"));
+
+	actionRegistry.globalAction(s_saveFileAction)->setDisabled(true);
+	actionRegistry.globalAction(s_closeFileAction)->setDisabled(true);
+
+	VERIFY(connect(actionRegistry.globalAction(s_createXMLSitemapAction), SIGNAL(triggered()), this, SLOT(showSitemapCreatorDialog())));
+	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
+	VERIFY(connect(actionRegistry.globalAction(s_saveFileAction), SIGNAL(triggered()), this, SLOT(saveFile())));
+	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
+	VERIFY(connect(actionRegistry.globalAction(s_closeFileAction), SIGNAL(triggered()), this, SLOT(closeFile())));
+	VERIFY(connect(actionRegistry.globalAction(s_saveFileAndClearDataAction), SIGNAL(triggered()), this, SLOT(saveFileAndClearData())));
+
+	actionRegistry.globalAction(s_openFileAction)->setShortcut(QKeySequence("Ctrl+O"));
+	actionRegistry.globalAction(s_saveFileAction)->setShortcut(QKeySequence("Ctrl+S"));
+	actionRegistry.globalAction(s_saveFileAsAction)->setShortcut(QKeySequence("Ctrl+Alt+S"));
+	actionRegistry.globalAction(s_closeFileAction)->setShortcut(QKeySequence("Ctrl+W"));
+}
+
+void MainWindow::initSettingsActions()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	actionRegistry.addActionGroup(s_settingsActionGroup);
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerSettingsAction,
+		QIcon(QStringLiteral(":/images/crawler-settings.png")), tr("Crawler Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLanguageSettingsAction,
+		QIcon(QStringLiteral(":/images/lang-settings.png")), tr("Language Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPreferencesSettingsAction,
+		QIcon(QStringLiteral(":/images/preferences-settings-icon.png")), tr("Preferences Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction,
+		QIcon(QStringLiteral(":/images/limits-settings.png")), tr("Limit Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction,
+		QIcon(QStringLiteral(":/images/proxy-settings.png")), tr("Proxy Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction,
+		QIcon(QStringLiteral(":/images/user-agent.png")), tr("User-Agent Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction,
+		QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction,
+		QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction,
+		QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
+
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_yandexMetricaSettingsAction,
+		SvgRenderer::render(":/images/yandex.svg", 10, 10), tr("Yandex Metrica Settings"));
+
+	const auto settingsActionsAvailability = [](int state)
+	{
+		const auto actionsAvailabilitySetter = [](bool value)
+		{
+			ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(value);
+			ActionRegistry::instance().globalAction(s_openFileAction)->setEnabled(value);
+		};
+
+		if (state == Crawler::StatePreChecking || state == Crawler::StateWorking)
+		{
+			actionsAvailabilitySetter(false);
+		}
+
+		if (state == Crawler::StatePending)
+		{
+			actionsAvailabilitySetter(true);
+		}
+	};
+
+	VERIFY(connect(theApp->crawler(), &Crawler::stateChanged, this, settingsActionsAvailability));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CrawlerSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openLanguageSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_LanguageSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openPreferencesSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_PreferencesSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openLimitsSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_LimitsSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openProxySettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_ProxySettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openUserAgentSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_UserAgentSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openCrawlerPauseTimerSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CrawlerPauseSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openCompanyProfileSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_CompanyProfileSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_openPageVisualSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_PageVisualSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_yandexMetricaSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_YandexMetricaSettingsWidget)); }));
+}
+
+void MainWindow::initCrawlerActions()
+{
+	ActionRegistry& actionRegistry = ActionRegistry::instance();
+
+	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
+	actionRegistry.addGlobalAction(s_stopCrawlerAction, tr("Stop Crawler"));
+	actionRegistry.addGlobalAction(s_clearCrawledDataAction, tr("Clear Crawled Data"));
+
+	VERIFY(connect(actionRegistry.globalAction(s_startCrawlerAction), SIGNAL(triggered()), theApp, SLOT(startCrawler())));
+	VERIFY(connect(actionRegistry.globalAction(s_stopCrawlerAction), SIGNAL(triggered()), theApp, SLOT(stopCrawler())));
+	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
+	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(closeAllWindows())));
+
+	actionRegistry.globalAction(s_exitProgramAction)->setShortcut(QKeySequence("Alt+F4"));
 }
 
 void MainWindow::loadState()
