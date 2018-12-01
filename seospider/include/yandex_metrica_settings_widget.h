@@ -43,6 +43,7 @@ private:
 	int m_visibleLineEditCount;
 	int m_visibleLineEditCountAtShow;
 	bool m_visibleLineEditCountApplied;
+	bool m_applyingChanges;
 };
 
 }

@@ -13,6 +13,7 @@ YandexMetricaSettingsWidget::YandexMetricaSettingsWidget(QWidget* parent)
 	, m_visibleLineEditCount(0)
 	, m_visibleLineEditCountApplied(true)
 	, m_visibleLineEditCountAtShow(-1)
+	, m_applyingChanges(false)
 {
 	m_ui.setupUi(this);
 
@@ -85,6 +86,10 @@ bool YandexMetricaSettingsWidget::eventFilter(QObject* object, QEvent* event)
 
 void YandexMetricaSettingsWidget::onInternalValueChanged(const QVariant& value)
 {
+	if (m_applyingChanges)
+	{
+		return;
+	}
 	const bool isValueTypeCorrect = value.type() == QVariant::Int;
 	DEBUG_ASSERT(isValueTypeCorrect);
 
@@ -205,10 +210,13 @@ void YandexMetricaSettingsWidget::onClose()
 
 void YandexMetricaSettingsWidget::applyChanges()
 {
+	m_applyingChanges = true;
 	m_visibleLineEditCountApplied = true;
 	m_visibleLineEditCountAtShow = -1;
 
 	SettingsPage::applyChanges();
+	m_applyingChanges = false;
+	m_helperControl->setValue(m_visibleLineEditCount);
 }
 
 }
