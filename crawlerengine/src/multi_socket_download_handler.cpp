@@ -82,7 +82,7 @@ Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders& responseHea
 	Url redirectAddress;
 
 	// supposed that we've got only one location header
-	// so we use locationHeaderData[0] to get the refirect url
+	// so we use locationHeaderData[0] to get the redirect url
 	if (!locationHeaderData.empty())
 	{
 		redirectAddress = locationHeaderData[0];
@@ -135,15 +135,30 @@ int MultiSocketDownloadHandler::parentIdFor(int id) const
 {
 	int parendIdSearchResult = -1;
 
-	auto redirectBindingIterator = m_idBindings.redirectRequestIdToParentId.find(id);
+	auto redirectBindingIterator = m_redirectRequestIdToParentId.find(id);
 
-	while (redirectBindingIterator != m_idBindings.redirectRequestIdToParentId.end())
+	while (redirectBindingIterator != m_redirectRequestIdToParentId.end())
 	{
 		parendIdSearchResult = redirectBindingIterator.value();
-		redirectBindingIterator = m_idBindings.redirectRequestIdToParentId.find(parendIdSearchResult);
+		redirectBindingIterator = m_redirectRequestIdToParentId.find(parendIdSearchResult);
 	}
 
 	return parendIdSearchResult;
+}
+
+void MultiSocketDownloadHandler::removeRequestIndexesChain(int id)
+{
+	std::vector<int> chain;
+
+	auto redirectBindingIterator = m_redirectRequestIdToParentId.find(id);
+
+	while (redirectBindingIterator != m_redirectRequestIdToParentId.end())
+	{
+		chain.push_back(redirectBindingIterator.key());
+		redirectBindingIterator = m_redirectRequestIdToParentId.find(redirectBindingIterator.value());
+	}
+
+	std::for_each(chain.begin(), chain.end(), [this](int key) { m_redirectRequestIdToParentId.remove(key); });
 }
 
 void MultiSocketDownloadHandler::followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
@@ -172,8 +187,7 @@ void MultiSocketDownloadHandler::followLocation(DownloadRequest::BodyProcessingC
 		const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
 		const int redirectionRequestId = loadHelper(redirectKey, bodyProcessingCommand);
 
-		m_idBindings.redirectRequestIdToParentId[redirectionRequestId] = parentRequestId;
-		m_idBindings.parentIdToRedirectRequestId[parentRequestId].append(redirectionRequestId);
+		m_redirectRequestIdToParentId[redirectionRequestId] = parentRequestId;
 
 		response->hopsChain.addHop(Hop(url, redirectUrlAddress, statusCode, data, responseHeaders, timeElapsed));
 	}
@@ -274,17 +288,13 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 	response->hopsChain.addHop(Hop(loadedResourceUrl, redirectUrlAddress, statusCode, data, responseHeaders, timeElapsed));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
-	m_responses.remove(id);
-	m_requesters.remove(id);
+	const int parentRequestId = parentIdFor(id);
+	const int idToDelete = parentRequestId == -1 ? id : parentRequestId;
 
-	foreach(int redirectRequestId, m_idBindings.parentIdToRedirectRequestId[id])
-	{
-		m_idBindings.redirectRequestIdToParentId.remove(redirectRequestId);
-	}
+	m_responses.remove(idToDelete);
+	m_requesters.remove(idToDelete);
 
-	m_idBindings.parentIdToRedirectRequestId.remove(id);
-
-	ASSERT(m_activeRequests.removeOne(id));
+	removeRequestIndexesChain(id);
 }
 
 void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
@@ -293,6 +303,8 @@ void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
 
 	const int requestId = loadHelper(request->requestInfo, request->bodyProcessingCommand);
 
+	// we add requester to the m_requesters only for first request
+	// redirect requests here will not be stored
 	m_requesters[requestId] = requester;
 }
 
@@ -318,8 +330,6 @@ int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request, Downlo
 			break;
 		}
 	}
-
-	m_activeRequests.push_back(requestId);
 
 	return requestId;
 }
