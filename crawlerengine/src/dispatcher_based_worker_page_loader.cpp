@@ -67,9 +67,8 @@ bool DispatcherBasedWorkerPageLoader::canPullLoading() const
 
 	if (differenceBetweenWorkersAndDownloader > maxPendingLinksCount)
 	{
-		INFOLOG			<< "The page loader is ahead of the workers at"			<< differenceBetweenWorkersAndDownloader			<< "pages. Loading will be throttled";
 		return false;
-	}
+	}
 
 	return true;
 }
@@ -113,7 +112,7 @@ void DispatcherBasedWorkerPageLoader::setPageReceivedAfterStopPromise()
 {
 	try
 	{
-		DEBUGLOG << "Set value to promise";
+		DEBUGLOG << "Set promise";
 
 		m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
 	}
