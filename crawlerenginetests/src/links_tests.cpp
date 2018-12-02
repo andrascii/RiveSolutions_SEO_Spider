@@ -1,6 +1,6 @@
 namespace CrawlerEngineTests
 {
-	
+
 TEST(LinksTests, LinkAlt)
 {
 	TestEnvironment env;
@@ -56,8 +56,8 @@ TEST(LinksTests, CanonicalNextPrev)
 		EXPECT_EQ(4, pages.size());
 
 		auto canonical = pages[0]->linksOnThisPage[0];
-		auto next = pages[0]->linksOnThisPage[1];
-		auto prev = pages[0]->linksOnThisPage[2];
+		auto next = pages[0]->linksOnThisPage[2];
+		auto prev = pages[0]->linksOnThisPage[1];
 
 		EXPECT_EQ(QString("http://links.com/next-prev-canonical.html"), canonical.resource.lock()->url.toDisplayString());
 		EXPECT_EQ(QString("http://links.com/next.html"), next.resource.lock()->url.toDisplayString());
@@ -115,7 +115,7 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 				EXPECT_NE(nofollowLink, page->url);
 			}
 		};
-		
+
 		std::for_each(crawledPages.begin(), crawledPages.end(), checkLinks);
 	};
 
@@ -397,12 +397,57 @@ TEST(LinksTests, Redirects)
 	env.exec();
 }
 
-TEST(LinksTests, AllNofollow)
+TEST(LinksTests, SkipLoadingNofollowPage)
 {
+	// Scan website.
+	// Follow by all links except that is the nofollow one
+	// Verify that all storages contains the valid data:
+	// All crawled page count == 3 (because we skip nofollow page)
+
 	TestEnvironment env;
 
 	auto options = TestEnvironment::defaultOptions(Url("http://nofollowlinks.com/allnofollow/index.html"));
 	options.followInternalNofollow = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(3, pages.size());
+
+		auto nofollowPages = cl->storageItems(NofollowLinksStorageType);
+		EXPECT_EQ(1, nofollowPages.size());
+
+		EXPECT_EQ(3, nofollowPages.at(0)->linksToThisPage.size());
+
+		auto blocked = cl->storageItems(BlockedForSEIndexingStorageType);
+		EXPECT_EQ(1, blocked.size());
+
+		auto crawledPages = cl->storageItems(CrawledUrlStorageType);
+		auto crawledIt = std::find_if(crawledPages.begin(), crawledPages.end(), [](const CrawlerEngine::ParsedPage* page)
+		{
+			return page->url.toDisplayString() == QString("http://nofollowlinks.com/allnofollow/nofollow.html");
+		});
+
+		EXPECT_EQ(crawledPages.end(), crawledIt);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, LoadNofollowPage)
+{
+	// Scan website.
+	// Follow by all links
+	// Verify that all storages contains the valid data:
+	// BlockedForSEIndexingStorageType and NofollowLinksStorageType must contain one page
+
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://nofollowlinks.com/allnofollow/index.html"));
+	options.followInternalNofollow = true;
 
 	env.crawler()->options()->setData(options);
 

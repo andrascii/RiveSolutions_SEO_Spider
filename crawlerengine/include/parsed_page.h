@@ -150,7 +150,7 @@ struct ResourcesOnPageListItemHasher
 {
 	size_t operator()(const ResourceOnPage& resource) const noexcept
 	{
-		return qHash(resource.link.url);
+		return qHash(resource.link.url.toDisplayString());
 	}
 };
 
