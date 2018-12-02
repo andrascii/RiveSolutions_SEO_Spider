@@ -67,13 +67,20 @@ public:
 		StatePreChecking
 	};
 
+	enum DownloaderType
+	{
+		DownloaderTypeLibCurlMultiSocket,
+		DownloaderTypeQNetworkAccessManager
+	};
+
 	static Crawler& instance();
 
 	Crawler(unsigned int threadCount, QObject* parent = nullptr);
 	virtual ~Crawler();
 
-	void initialize();
+	void setDownloaderType(DownloaderType type);
 
+	void initialize();
 	void clearData();
 	bool hasNoData() const noexcept;
 	State state() const noexcept;
@@ -198,6 +205,7 @@ private:
 	ILicenseStateObserver* m_licenseStateObserver;
 
 	QMap<QString, ICustomDataFeed*> m_customDataFeeds;
+	DownloaderType m_downloaderType;
 };
 
 }
