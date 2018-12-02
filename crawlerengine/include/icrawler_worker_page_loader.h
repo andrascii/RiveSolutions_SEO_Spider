@@ -27,7 +27,7 @@ public:
 	virtual QObject* qobject() = 0;
 
 	// signals
-	virtual void pageLoaded(const HopsChain& hopsChain) = 0;
+	virtual void pageLoaded(const HopsChain& hopsChain, int requestType) = 0;
 };
 
 }

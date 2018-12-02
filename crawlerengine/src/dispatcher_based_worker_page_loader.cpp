@@ -39,7 +39,7 @@ void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const 
 	m_activeRequesters[requester].reset();
 	m_activeRequesters.remove(requester);
 
-	emit pageLoaded(response.hopsChain);
+	emit pageLoaded(response.hopsChain, static_cast<int>(response.requestType));
 }
 
 std::optional<CrawlerRequest> DispatcherBasedWorkerPageLoader::prepareUnloadedPage() const

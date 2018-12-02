@@ -258,6 +258,7 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 		statusCode == Common::StatusCode::MovedTemporarily302;
 
 	const std::shared_ptr<DownloadResponse> response = responseFor(id);
+	response->requestType = request->requestInfo.requestType;
 
 	const Url loadedResourceUrl(url);
 	const Url redirectUrlAddress = redirectedUrl(responseHeaders, loadedResourceUrl);
