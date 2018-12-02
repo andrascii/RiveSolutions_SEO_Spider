@@ -5,12 +5,15 @@
 
 namespace Common
 {
+
 class JsonParserStreamWriter;
 class JsonParserStreamReader;
+
 }
 
 namespace CrawlerEngine
 {
+
 struct ParsedPage;
 
 class Serializer
