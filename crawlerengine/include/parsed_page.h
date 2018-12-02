@@ -170,6 +170,17 @@ constexpr int invalidPageLevel = 100000000;
 
 struct ParsedPage
 {
+	bool canRefresh() const noexcept
+	{
+		return Common::StatusCode::BlockedByRobotsTxt != statusCode &&
+			Common::StatusCode::BlockedByRobotsTxt != statusCode;
+	}
+
+	bool isRedirectedToExternalPage() const
+	{
+		return redirectedUrl.isValid() && isThisExternalPage;
+	}
+
 	Url url; // url address of a page
 	Url baseUrl; // url parsed from <base href="https://website.com/">
 	Url redirectedUrl; // redirection url received from http response header "location" or from meta refresh tag
@@ -223,16 +234,8 @@ struct ParsedPage
 	QMap<DataFeedId, QMap<int, QString>> dataFeedsData;
 	std::vector<StorageType> missingYandexMetricaCounters;
 
-	bool canRefresh() const noexcept
-	{
-		return Common::StatusCode::BlockedByRobotsTxt != statusCode &&
-			Common::StatusCode::BlockedByRobotsTxt != statusCode;
-	}
-
-	bool isRedirectedToExternalPage() const
-	{
-		return redirectedUrl.isValid() && isThisExternalPage;
-	}
+	//! response time in milliseconds
+	int responseTime = int();
 };
 
 using ParsedPagePtr = std::shared_ptr<ParsedPage>;
