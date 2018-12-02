@@ -32,10 +32,10 @@ void HParser::parseH1(ParsedPagePtr& parsedPage) noexcept
 
 	for (const IHtmlNodeCountedPtr& h1Tag : h1Tags)
 	{
-		h1TagsValues.push_back(h1Tag->text());
+		h1TagsValues.push_back(h1Tag->text().trimmed());
 	}
 
-	h1TagsValues.erase(std::remove_if(h1TagsValues.begin(), h1TagsValues.end(), 
+	h1TagsValues.erase(std::remove_if(h1TagsValues.begin(), h1TagsValues.end(),
 		[](const QByteArray& h1Tag) { return h1Tag.isEmpty(); }), h1TagsValues.end());
 
 	if (!h1TagsValues.empty())
@@ -59,7 +59,7 @@ void HParser::parseH2(ParsedPagePtr& parsedPage) noexcept
 
 	for (const IHtmlNodeCountedPtr& h2Tag : h2Tags)
 	{
-		h2TagsValues.push_back(h2Tag->text());
+		h2TagsValues.push_back(h2Tag->text().trimmed());
 	}
 
 	h2TagsValues.erase(std::remove_if(h2TagsValues.begin(), h2TagsValues.end(),
