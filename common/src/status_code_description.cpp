@@ -51,7 +51,7 @@ static QMap<StatusCode, QString>& descriptions()
 
 		{ StatusCode::BlockedByRobotsTxt, QObject::tr("Blocked By robots.txt") },
 		{ StatusCode::BlockedByMetaRobots, QObject::tr("Blocked By Meta Robots") },
-		{ StatusCode::Timedout, QObject::tr("Timedout") },
+		{ StatusCode::Timeout, QObject::tr("Timeout") },
 		{ StatusCode::TooManyRedirections, QObject::tr("Too Many Redirections") },
 		{ StatusCode::TooLongLInk, QObject::tr("Too Long Link") },
 		{ StatusCode::UnknownNetworkError, QObject::tr("Unknown Network Error") },

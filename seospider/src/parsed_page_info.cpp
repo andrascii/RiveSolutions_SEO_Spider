@@ -44,6 +44,7 @@ QString ParsedPageInfo::itemTypeDescription(Column column)
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, QObject::tr("Image Size KB") },
 		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, QObject::tr("Links Count On This Page") },
 		{ ParsedPageInfo::Column::LinksToThisPageColumn, QObject::tr("Links To This Page") },
+		{ ParsedPageInfo::Column::ResponseTimeColumn, QObject::tr("Response Time (ms)") },
 	};
 
 	checkColumnType(column);
@@ -83,7 +84,8 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::FirstH2Column, Common::Helpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::SecondH2Column, Common::Helpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::CanonicalLinkElementColumn, Common::Helpers::pointsToPixels(300) },
-		{ ParsedPageInfo::Column::StatusCodeColumn, Common::Helpers::pointsToPixels(150) },
+		{ ParsedPageInfo::Column::StatusCodeColumn, Common::Helpers::pointsToPixels(120) },
+		{ ParsedPageInfo::Column::ResponseTimeColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::PageSizeKbColumn, Common::Helpers::pointsToPixels(150) },
 		{ ParsedPageInfo::Column::WordCountColumn, Common::Helpers::pointsToPixels(150) },
 		{ ParsedPageInfo::Column::PageHashColumn, Common::Helpers::pointsToPixels(100) },
@@ -96,7 +98,8 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::FirstH2LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::SecondH2LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, Common::Helpers::pointsToPixels(10) },
-		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, Common::Helpers::pointsToPixels(150) },
+		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::LinksToThisPageColumn, Common::Helpers::pointsToPixels(100) },
 	};
 
 	const int result = s_parsedPageColumnPrefferedSizes.value(column, -1);
@@ -390,6 +393,10 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column)
 		{
 			return &ParsedPageInfo::acceptLinksToThisPage;
 		}
+		case Column::ResponseTimeColumn:
+		{
+			return &ParsedPageInfo::acceptResponseTime;
+		}
 		default:
 		{
 			ASSERT(!"Unknown element");
@@ -590,6 +597,15 @@ QVariant ParsedPageInfo::acceptLinksToThisPage() const
 	}
 
 	return result;
+}
+
+QVariant ParsedPageInfo::acceptResponseTime() const
+{
+#ifdef QT_DEBUG
+	return m_parsedPage->responseTime;
+#else
+	return m_parsedPage->statusCode != Common::StatusCode::Timeout ? m_parsedPage->responseTime : 0;
+#endif
 }
 
 void ParsedPageInfo::checkColumnType(Column column)

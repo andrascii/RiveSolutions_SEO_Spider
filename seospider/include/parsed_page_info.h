@@ -37,6 +37,7 @@ public:
 
 		CanonicalLinkElementColumn,
 		StatusCodeColumn,
+		ResponseTimeColumn,
 		PageSizeKbColumn,
 		WordCountColumn,
 		PageHashColumn,
@@ -125,6 +126,7 @@ private:
 	QVariant acceptImageSizeKb() const;
 	QVariant acceptLinksOnThisPageCount() const;
 	QVariant acceptLinksToThisPage() const;
+	QVariant acceptResponseTime() const;
 
 	static void checkColumnType(ParsedPageInfo::Column column);
 

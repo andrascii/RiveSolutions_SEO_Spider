@@ -46,6 +46,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::ResponseTimeColumn
 				<< ParsedPageInfo::Column::TitleColumn
 				<< ParsedPageInfo::Column::TitleLengthColumn
 				<< ParsedPageInfo::Column::MetaRefreshColumn
@@ -86,7 +87,9 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
-				<< ParsedPageInfo::Column::StatusCodeColumn;
+				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::ResponseTimeColumn;
+
 		}
 
 		// Links available columns
@@ -101,7 +104,8 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
-				<< ParsedPageInfo::Column::StatusCodeColumn;
+				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeStatus301:
 		case StorageAdapterType::StorageAdapterTypeStatus302:
@@ -111,6 +115,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::ResponseTimeColumn
 				<< ParsedPageInfo::Column::RedirectedUrlColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeTimeout:
@@ -274,7 +279,8 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 		{
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
-				<< ParsedPageInfo::Column::StatusCodeColumn;
+				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
 
 		// yandex metrica
@@ -287,7 +293,8 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::TitleColumn
-				<< ParsedPageInfo::Column::StatusCodeColumn;
+				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
 	}
 
