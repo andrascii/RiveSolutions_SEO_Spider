@@ -1557,8 +1557,8 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <translation>Страницы с отсутствующими счетчиком яндекс метрики %1</translation>
     </message>
     <message>
-        <source>Timedout</source>
-        <translation>Таймаут</translation>
+        <source>Response Time (ms)</source>
+        <translation>Время ответа (мс)</translation>
     </message>
 </context>
 <context>

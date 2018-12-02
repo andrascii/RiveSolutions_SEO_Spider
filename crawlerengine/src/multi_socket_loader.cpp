@@ -468,7 +468,7 @@ void checkMultiInfo(CURLM* multiHandle, MultiSocketLoader* multiSocketLoader)
 
 			if (result == CURLE_OPERATION_TIMEDOUT)
 			{
-				requestDescriptor->statusCode = Common::StatusCode::Timedout;
+				requestDescriptor->statusCode = Common::StatusCode::Timeout;
 			}
 			else
 			{

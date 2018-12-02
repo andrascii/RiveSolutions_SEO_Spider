@@ -623,7 +623,7 @@ void ModelController::processParsedPageStatusCode(WorkerResult& workerResult, bo
 		data()->addParsedPage(workerResult, StorageType::TooManyRedirectsStorageType);
 	}
 
-	if (workerResult.incomingPage()->statusCode == Common::StatusCode::Timedout)
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::Timeout)
 	{
 		data()->addParsedPage(workerResult, StorageType::TimeoutStorageType);
 	}

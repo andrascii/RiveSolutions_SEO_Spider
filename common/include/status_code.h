@@ -52,7 +52,7 @@ enum class StatusCode
 	// custom
 	BlockedByRobotsTxt,
 	BlockedByMetaRobots,
-	Timedout,
+	Timeout,
 	TooManyRedirections,
 	TooLongLInk,
 	UnknownNetworkError
