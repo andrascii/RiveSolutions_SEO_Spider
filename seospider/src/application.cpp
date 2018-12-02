@@ -47,8 +47,14 @@ Application::Application(int& argc, char** argv)
 	, m_settings(nullptr)
 	, m_translator(new QTranslator(this))
 	, m_internetNotificationManager(new InternetConnectionNotificationManager(this))
+	, m_curlSuccessfullyInitialized(false)
 {
-	curl_global_init(CURL_GLOBAL_ALL);
+	m_curlSuccessfullyInitialized = !m_commandLineHandler->hasCommand(s_useOldDownloader) ?
+		curl_global_init(CURL_GLOBAL_ALL) == 0 : false;
+
+	m_crawler->setDownloaderType(m_curlSuccessfullyInitialized ?
+		CrawlerEngine::Crawler::DownloaderTypeLibCurlMultiSocket :
+		CrawlerEngine::Crawler::DownloaderTypeQNetworkAccessManager);
 
 	Common::SmtpSender::init();
 
@@ -589,7 +595,10 @@ Application::~Application()
 	DeferredCallProcessor::term();
 	Common::SmtpSender::term();
 
-	curl_global_cleanup();
+	if (m_curlSuccessfullyInitialized)
+	{
+		curl_global_cleanup();
+	}
 }
 
 }

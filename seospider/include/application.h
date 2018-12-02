@@ -85,6 +85,7 @@ private:
 	QSettings* m_settings;
 	QTranslator* m_translator;
 	InternetConnectionNotificationManager* m_internetNotificationManager;
+	bool m_curlSuccessfullyInitialized;
 };
 
 }

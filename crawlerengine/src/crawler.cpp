@@ -105,6 +105,12 @@ Crawler::~Crawler()
 	qDeleteAll(m_customDataFeeds);
 }
 
+void Crawler::setDownloaderType(DownloaderType type)
+{
+	ASSERT(type == DownloaderTypeLibCurlMultiSocket || type == DownloaderTypeQNetworkAccessManager);
+	m_downloaderType = type;
+}
+
 void Crawler::initialize()
 {
 	m_modelController = new ModelController;
@@ -682,10 +688,23 @@ IScreenshotMaker* Crawler::createScreenshotMaker()
 
 IDownloadHandler* Crawler::createDownloader() const
 {
-	//IDownloadHandler* downloader = new QtBasedDownloadHandler;
-	IDownloadHandler* downloader = new MultiSocketDownloadHandler;
+	switch (m_downloaderType)
+	{
+		case DownloaderTypeQNetworkAccessManager:
+		{
+			INFOLOG << "Creating QtBasedDownloadHandler";
+			return new QtBasedDownloadHandler;
+		}
+		case DownloaderTypeLibCurlMultiSocket:
+		{
+			INFOLOG << "Creating MultiSocketDownloadHandler";
+			return new MultiSocketDownloadHandler;
+		}
+	}
 
-	return downloader;
+	ASSERT(!"Invalid downloader type");
+
+	return nullptr;
 }
 
 ITaskProcessor* Crawler::createTaskProcessor() const

@@ -14,4 +14,7 @@ static QByteArray s_introducePageDescription = "Shows introduce page when starti
 static QByteArray s_startWithoutService = "start_without_service";
 static QByteArray s_startWithoutServiceDescription = "This command force starting app without starting seospiderservice app";
 
+static QByteArray s_useOldDownloader = "use_old_downloader";
+static QByteArray s_useOldDownloaderDescription = "Force program to use the downloader based on QNetworkAccessManager";
+
 }
