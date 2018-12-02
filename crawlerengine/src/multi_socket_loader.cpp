@@ -491,6 +491,8 @@ void checkMultiInfo(CURLM* multiHandle, MultiSocketLoader* multiSocketLoader)
 					<< ")";
 			}
 
+			DEBUG_ASSERT(requestDescriptor->method != RequestDescriptor::Method::Head || requestDescriptor->body.isEmpty());
+
 			curl_multi_remove_handle(multiHandle, easyHandle);
 			curl_easy_cleanup(easyHandle);
 

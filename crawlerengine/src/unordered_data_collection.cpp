@@ -612,6 +612,7 @@ void UnorderedDataCollection::addParsedPageInternal(ParsedPagePtr& parsedPagePoi
 		pageStoragesFlags.resize(static_cast<size_t>(StorageType::EndEnumStorageType), false);
 	}
 
+	DEBUG_ASSERT(!pageStoragesFlags[static_cast<size_t>(type)]);
 	pageStoragesFlags[static_cast<size_t>(type)] = true;
 	storage(type).insert(parsedPagePointer);
 

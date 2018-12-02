@@ -30,8 +30,8 @@ CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPag
 
 	qRegisterMetaType<HopsChain>("HopsChain");
 
-	VERIFY(connect(m_pageLoader->qobject(), SIGNAL(pageLoaded(const HopsChain&)),
-		this, SLOT(onLoadingDone(const HopsChain&)), Qt::QueuedConnection));
+	VERIFY(connect(m_pageLoader->qobject(), SIGNAL(pageLoaded(const HopsChain&, int)),
+		this, SLOT(onLoadingDone(const HopsChain&, int)), Qt::QueuedConnection));
 
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorker::extractUrlAndDownload, Qt::QueuedConnection));
@@ -353,7 +353,7 @@ CrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const M
 	return result;
 }
 
-void CrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
+void CrawlerWorker::onLoadingDone(const HopsChain & hopsChain, int requestType)
 {
 	extractUrlAndDownload();
 
@@ -363,9 +363,10 @@ void CrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
 	});
 
 	ASSERT(m_currentRequest.has_value());
-	const DownloadRequestType requestType = m_currentRequest.value().requestType;
 
-	handleResponseData(hopsChain, requestType);
+	const DownloadRequestType reqType = static_cast<DownloadRequestType>(requestType);
+	DEBUG_ASSERT(reqType != DownloadRequestType::RequestTypeHead || hopsChain.firstHop().body().isEmpty());
+	handleResponseData(hopsChain, reqType);
 }
 
 void CrawlerWorker::onStart()
