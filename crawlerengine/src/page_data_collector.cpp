@@ -154,13 +154,22 @@ Url PageDataCollector::resolveRedirectUrl(const Hop& hop)
 void PageDataCollector::collectReplyData(const Hop& hop, ParsedPagePtr& page) const
 {
 	page->url = hop.url();
+
 	page->statusCode = static_cast<Common::StatusCode>(hop.statusCode());
+
 	page->pageSizeKilobytes = hop.body().size() / 1024;
+
 	page->serverResponse = hop.responseHeaders().makeString();
+
 	page->pageHash = std::hash<std::string>()(hop.body().toStdString());
-	page->isThisExternalPage = PageParserHelpers::isUrlExternal(m_crawlerOptionsData.startCrawlingPage, page->url, m_crawlerOptionsData.checkSubdomains);
+
+	page->isThisExternalPage = PageParserHelpers::isUrlExternal(
+		m_crawlerOptionsData.startCrawlingPage, page->url, m_crawlerOptionsData.checkSubdomains);
+
+	page->responseTime = hop.elapsedTime();
 
 	const std::vector<QString> contentTypeValues = hop.responseHeaders().valueOf("content-type");
+
 	page->contentType = contentTypeValues.empty() ? QString() : contentTypeValues.front();
 
 	if (contentTypeValues.size() > 1)
