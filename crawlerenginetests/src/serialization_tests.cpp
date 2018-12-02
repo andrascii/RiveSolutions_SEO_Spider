@@ -63,6 +63,7 @@ TEST(SerializationTests, PagesSerialization)
 		firstPage->resourceType = ResourceType::ResourceHtml;
 		firstPage->rawResponse = "<html>...ÀÁÂÃÄ</html>";
 		firstPage->pageLevel = 3;
+		firstPage->responseTime = 100;
 		firstPage->missingYandexMetricaCounters = std::vector<StorageType>
 		{
 			YandexMetricaCounter1StorageType,
@@ -121,6 +122,7 @@ TEST(SerializationTests, PagesSerialization)
 		EXPECT_EQ(etalon.resourceType, newFirstPage->resourceType);
 		EXPECT_EQ(etalon.rawResponse, newFirstPage->rawResponse);
 		EXPECT_EQ(etalon.pageLevel, newFirstPage->pageLevel);
+		EXPECT_EQ(etalon.responseTime, newFirstPage->responseTime);
 		EXPECT_EQ(etalon.storages, newFirstPage->storages);
 		EXPECT_EQ(etalon.missingYandexMetricaCounters, newFirstPage->missingYandexMetricaCounters);
 	};

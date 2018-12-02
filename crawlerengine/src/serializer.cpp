@@ -54,6 +54,7 @@ namespace
 	const QString s_resourceTypeKey = QLatin1String("resourceType");
 	const QString s_rawResponseKey = QLatin1String("rawResponse");
 	const QString s_pageLevelKey = QLatin1String("pageLevel");
+	const QString s_pageResponseTimeKey = QLatin1String("pageResponseTime");
 	const QString s_linksOnThisPageKey = QLatin1String("linksOnThisPage");
 	const QString s_linksOnThisPageItemKey = QLatin1String("link");
 	const QString s_linkParameterKey = QLatin1String("linkParameter");
@@ -267,6 +268,7 @@ public:
 
 		writer.writeTextElement(s_rawResponseKey, m_page->rawResponse.toBase64());
 		writer.writeTextElement(s_pageLevelKey, QString::number(m_page->pageLevel));
+		writer.writeTextElement(s_pageResponseTimeKey, QString::number(m_page->responseTime));
 
 		QString storagesStr;
 		for (size_t i = 0; i < m_page->storages.size(); ++i)
@@ -480,6 +482,10 @@ public:
 			else if (reader.qualifiedName() == s_pageLevelKey)
 			{
 				m_page->pageLevel = reader.readElementText().toInt();
+			}
+			else if (reader.qualifiedName() == s_pageResponseTimeKey)
+			{
+				m_page->responseTime = reader.readElementText().toInt();
 			}
 			else if (reader.qualifiedName() == s_ymMissingCountersKey)
 			{
