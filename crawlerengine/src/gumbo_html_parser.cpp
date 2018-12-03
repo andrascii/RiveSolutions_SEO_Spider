@@ -246,39 +246,43 @@ std::vector<LinkInfo> GumboHtmlParser::pageUrlList(bool httpOrHttpsOnly) const
 
 	std::vector<LinkInfo> result = findNodesAndGetResult(m_gumboOutput->root, predicate, resultGetter);
 
-	const LinkInfo canonical = getLinkRelUrl(m_gumboOutput->root, "canonical", ResourceSource::SourceTagLinkRelCanonical);
+	const std::vector<LinkInfo> canonical = getLinkRelUrl(m_gumboOutput->root, "canonical", ResourceSource::SourceTagLinkRelCanonical);
 
-	if (canonical.resourceSource != ResourceSource::SourceInvalid)
+	if (!canonical.empty())
 	{
-		result.push_back(canonical);
+		result.push_back(canonical[0]);
 	}
 
-	const LinkInfo next = getLinkRelUrl(m_gumboOutput->root, "next", ResourceSource::SourceTagLinkRelNext);
+	const std::vector<LinkInfo> next = getLinkRelUrl(m_gumboOutput->root, "next", ResourceSource::SourceTagLinkRelNext);
 
-	if (next.resourceSource != ResourceSource::SourceInvalid)
+	if (!next.empty())
 	{
-		result.push_back(next);
+		result.push_back(next[0]);
 	}
 
-	const LinkInfo prev = getLinkRelUrl(m_gumboOutput->root, "prev", ResourceSource::SourceTagLinkRelPrev);
+	const std::vector<LinkInfo> prev = getLinkRelUrl(m_gumboOutput->root, "prev", ResourceSource::SourceTagLinkRelPrev);
 
-	if (prev.resourceSource != ResourceSource::SourceInvalid)
+	if (!prev.empty())
 	{
-		result.push_back(prev);
+		result.push_back(prev[0]);
 	}
+
+	const std::vector<LinkInfo> hrefLang = getLinkRelUrl(m_gumboOutput->root, "alternate", ResourceSource::SourceTagLinkAlternateHrefLang, "hreflang", false);
+	std::copy(hrefLang.cbegin(), hrefLang.cend(), std::back_inserter(result));
 
 	return result;
 }
 
-LinkInfo GumboHtmlParser::getLinkRelUrl(const GumboNode* node, const char* relValue, ResourceSource source) const
+std::vector<LinkInfo> GumboHtmlParser::getLinkRelUrl(const GumboNode* node, const char* relValue, ResourceSource source, const char* requiredAttribute, bool getFirstValueOnly) const
 {
-	const auto cond = [relValue](const GumboNode* node)
+	const auto cond = [relValue, requiredAttribute](const GumboNode* node)
 	{
 		bool result = node &&
 			node->type == GUMBO_NODE_ELEMENT &&
 			node->v.element.tag == GUMBO_TAG_LINK &&
 			checkAttribute(node, "rel", relValue) &&
-			gumbo_get_attribute(&node->v.element.attributes, "href");
+			gumbo_get_attribute(&node->v.element.attributes, "href") &&
+			(requiredAttribute == nullptr || gumbo_get_attribute(&node->v.element.attributes, requiredAttribute));
 		return result;
 	};
 
@@ -292,13 +296,11 @@ LinkInfo GumboHtmlParser::getLinkRelUrl(const GumboNode* node, const char* relVa
 	};
 
 	std::vector<LinkInfo> result = findNodesAndGetResult(node, cond, res);
-
-	if (!result.empty())
+	if (getFirstValueOnly && !result.empty())
 	{
-		return result[0];
+		return { result[0] };
 	}
-
-	return LinkInfo{ Url(), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceInvalid };
+	return result;
 }
 
 IHtmlNodeCountedPtr GumboHtmlParser::firstMatchNode(IHtmlNode::TagId tagId) const

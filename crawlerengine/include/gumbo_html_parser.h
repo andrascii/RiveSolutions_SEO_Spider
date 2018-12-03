@@ -28,7 +28,7 @@ public:
 	virtual IHtmlNodeCountedPtr findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const override;
 
 private:
-	LinkInfo getLinkRelUrl(const GumboNode* node, const char* relValue, ResourceSource source) const;
+	std::vector<LinkInfo> getLinkRelUrl(const GumboNode* node, const char* relValue, ResourceSource source, const char* requiredAttribute = nullptr, bool getFirstValueOnly = true) const;
 	QByteArray encodingFromPage() const;
 	QByteArray decodeHtmlPage(const ResponseHeaders& headers);
 

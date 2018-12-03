@@ -27,7 +27,7 @@ public:
 	virtual IHtmlNodeCountedPtr findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const override;
 
 private:
-	LinkInfo getLinkRelUrl(const char* relValue, ResourceSource source) const;
+	std::vector<LinkInfo> getLinkRelUrl(const char* relValue, ResourceSource source, const char* requiredAttribute = nullptr, bool getFirstValueOnly = true) const;
 	myencoding_t htmlSetEncoding(const ResponseHeaders& headers);
 	QByteArray encodingFromPage() const;
 	void initRootNode();
