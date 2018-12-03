@@ -36,6 +36,7 @@ enum class ResourceSource
 	SourceTagLinkRelCanonical,
 	SourceTagLinkRelNext,
 	SourceTagLinkRelPrev,
+	SourceTagLinkAlternateHrefLang,
 	SourceTagScript,
 	SourceTagMetaRefresh,
 	SourceCSS,

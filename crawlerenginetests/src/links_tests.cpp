@@ -72,6 +72,32 @@ TEST(LinksTests, CanonicalNextPrev)
 	env.exec();
 }
 
+TEST(LinksTests, HrefLang)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://links.com/hreflang.html")));
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 3, 10, "Waiting for 3 crawled pages");
+		cl->waitForCrawlingDone();
+		cl->checkSequencedDataCollectionConsistency();
+		EXPECT_EQ(3, pages.size());
+
+		auto hreflang1 = pages[0]->linksOnThisPage[0];
+		auto hreflang2 = pages[0]->linksOnThisPage[1];
+
+		EXPECT_EQ(QString("http://links.com/hreflang-ru.html"), hreflang1.resource.lock()->url.toDisplayString());
+		EXPECT_EQ(QString("http://links.com/hreflang-en.html"), hreflang2.resource.lock()->url.toDisplayString());
+
+		EXPECT_EQ(ResourceSource::SourceTagLinkAlternateHrefLang, hreflang1.resourceSource);
+		EXPECT_EQ(ResourceSource::SourceTagLinkAlternateHrefLang, hreflang2.resourceSource);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 {
 	TestEnvironment env;
