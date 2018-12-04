@@ -1,8 +1,8 @@
 #pragma once
 
 #include "iresponse.h"
+#include "response_headers.h"
 #include "hops_chain.h"
-#include "crawler_request.h"
 
 namespace CrawlerEngine
 {
@@ -17,7 +17,6 @@ struct DownloadResponse : public IResponse
 	DEFINE_RESPONSE_STATIC_TYPE_IN_CLASS(ResponseType::ResponseTypeDownload)
 
 	HopsChain hopsChain;
-	DownloadRequestType requestType;
 };
 
 struct DownloadProgressResponse : public IResponse
