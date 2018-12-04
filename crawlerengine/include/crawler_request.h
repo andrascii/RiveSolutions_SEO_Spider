@@ -40,4 +40,6 @@ struct CrawlerRequestHasher
 
 bool operator<(const CrawlerRequest& lhs, const CrawlerRequest& rhs);
 
+Q_DECLARE_METATYPE(DownloadRequestType)
+
 }

@@ -605,7 +605,7 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	for (CrawlerWorker* worker : m_workers)
 	{
-		std::optional<CrawlerRequest> workerPendingUrl = worker->pendingUrl();
+		std::optional<CrawlerRequest> workerPendingUrl = worker->readyPages();
 
 		if (!workerPendingUrl.has_value())
 		{

@@ -9,43 +9,55 @@ namespace CrawlerEngine
 class Requester;
 struct DownloadResponse;
 
-class DispatcherBasedWorkerPageLoader final : public QObject, public ICrawlerWorkerPageLoader
+class DispatcherBasedWorkerPageLoader final
+	: public QObject
+	, public ICrawlerWorkerPageLoader
 {
 	Q_OBJECT
 
 public:
 	DispatcherBasedWorkerPageLoader(QObject* parent = nullptr);
 
-	virtual std::optional<CrawlerRequest> pendingUrl() const override;
+	virtual QVector<ResponseData> pendingResponseData() override;
+
 	virtual bool canPullLoading() const override;
-	virtual void performLoading(const CrawlerRequest& crawlerRequest, DownloadRequest::LinkStatus linkStatus) override;
-	virtual void stopLoading() override;
-	virtual void clearState() override;
-	virtual void addPageReceivedAfterStop(const std::pair<DownloadRequestType, ParsedPagePtr>& pageInfo) override;
-	virtual void setPageReceivedAfterStopPromise() override;
-	virtual std::vector<WorkerResult> extractLoadedAfterStopPages() override;
+
+	virtual void performLoading(const CrawlerRequest& crawlerRequest,
+		const std::vector<bool>& reloadingPageStrorages,
+		DownloadRequest::Status linkStatus) override;
+
+	virtual void setReceiveState(ReceiveState state) override;
+
+	virtual void clear() override;
 
 	virtual QObject* qobject() override;
 
 signals:
-	virtual void pageLoaded(const HopsChain& hopsChain) override;
+	virtual void pageLoaded(const HopsChain& hopsChain,
+		bool isPageReloaded,
+		const std::vector<bool>& reloadingPageStrorages,
+		DownloadRequestType requestType) override;
 
 private:
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
-	std::optional<CrawlerRequest> prepareUnloadedPage() const;
+	void emitResponseData(const QVector<ResponseData>& responseData);
 
 private:
-	struct PagesAcceptedAfterStop
+	struct RequesterAssociatedData
 	{
-		using PageRequestPairs = std::vector<std::pair<DownloadRequestType, ParsedPagePtr>>;
-		using PagesPromise = std::promise<std::optional<CrawlerRequest>>;
+		RequesterWrapper requesterWrapper;
 
-		PageRequestPairs pages;
-		PagesPromise mutable pagesAcceptedPromise;
+		//! used when we reloading a page
+		//! reloading page storages
+		//! the bits where the reloading page is stored
+		std::vector<bool> storagesBeforeRemoving;
 	};
 
-	PagesAcceptedAfterStop m_pagesAcceptedAfterStop;
-	QMap<Requester*, RequesterWrapper> m_activeRequesters;
+	QVector<ResponseData> m_pendingResponseData;
+	std::promise<QVector<ResponseData>> m_pendingResponseDataPromise;
+
+	QMap<Requester*, RequesterAssociatedData> m_activeRequesters;
+	ReceiveState m_state;
 };
 
 }
