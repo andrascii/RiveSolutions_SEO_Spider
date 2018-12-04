@@ -27,7 +27,7 @@ public:
 		crawlerRequest.requestType = DownloadRequestType::RequestTypeGet;
 
 		DownloadRequest request(crawlerRequest,
-			DownloadRequest::LinkStatus::LinkStatusFirstLoading,
+			DownloadRequest::Status::LinkStatusFirstLoading,
 			DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading,
 			true
 		);
