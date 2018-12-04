@@ -36,15 +36,14 @@ DispatcherBasedWorkerPageLoader::pendingResponseData()
 
 void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
-	m_activeRequesters[requester].requesterWrapper.reset();
-	m_activeRequesters.remove(requester);
+	DEBUG_ASSERT(m_activeRequesters.contains(requester));
 
 	const DownloadRequest* downloadRequest =
 		Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
 	const bool isPageReloaded = downloadRequest->linkStatus == DownloadRequest::Status::LinkStatusReloadAlreadyLoaded;
 
-	if (m_state == CanReceivePages)
+	if (m_state == CanReceivePages || isPageReloaded)
 	{
 		emit pageLoaded(response.hopsChain,
 			isPageReloaded,
@@ -69,6 +68,9 @@ void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const 
 			m_pendingResponseData.clear();
 		}
 	}
+
+	m_activeRequesters[requester].requesterWrapper.reset();
+	m_activeRequesters.remove(requester);
 }
 
 bool DispatcherBasedWorkerPageLoader::canPullLoading() const
@@ -97,7 +99,7 @@ void DispatcherBasedWorkerPageLoader::performLoading(const CrawlerRequest& crawl
 	const std::vector<bool>& reloadingPageStrorages,
 	DownloadRequest::Status linkStatus)
 {
-	DEBUG_ASSERT(m_state == CanReceivePages);
+	DEBUG_ASSERT(m_state == CanReceivePages || linkStatus == DownloadRequest::Status::LinkStatusReloadAlreadyLoaded);
 
 	DownloadRequest request(crawlerRequest, linkStatus,
 		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading, true);

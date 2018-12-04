@@ -242,7 +242,7 @@ std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const Downloa
 
 	QString filename = downloadRequest.requestInfo.url.fileName();
 
-	if (downloadRequest.linkStatus == DownloadRequest::LinkStatus::LinkStatusReloadAlreadyLoaded)
+	if (downloadRequest.linkStatus == DownloadRequest::Status::LinkStatusReloadAlreadyLoaded)
 	{
 		const int lastDotIndex = filename.lastIndexOf(".");
 		filename.insert(lastDotIndex, "_fixed");
