@@ -239,7 +239,6 @@ void QtBasedDownloadHandler::processReply(QNetworkReply* reply)
 	}
 
 	std::shared_ptr<DownloadResponse> response = responseFor(requestId);
-	response->requestType = requestType;
 
 	QByteArray body = statusCode == Common::StatusCode::Timeout ? QByteArray() : readBody(reply);
 	const Url redirectUrlAddress = redirectUrl(reply);

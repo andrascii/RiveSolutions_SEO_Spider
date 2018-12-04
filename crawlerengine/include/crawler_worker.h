@@ -37,7 +37,7 @@ public slots:
 private slots:
 	void extractUrlAndDownload();
 	void onCrawlerClearData();
-	void onLoadingDone(const HopsChain& hopsChain, int requestType);
+	void onLoadingDone(const HopsChain& hopsChain);
 
 private:
 	struct SchedulePagesResult
