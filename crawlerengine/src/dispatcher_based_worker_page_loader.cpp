@@ -2,62 +2,82 @@
 #include "download_response.h"
 #include "download_request.h"
 #include "crawler_shared_state.h"
+#include "helpers.h"
 
 namespace CrawlerEngine
 {
 
 DispatcherBasedWorkerPageLoader::DispatcherBasedWorkerPageLoader(QObject* parent)
 	: QObject(parent)
+	, m_state(CanReceivePages)
 {
 }
 
-// this function always must be thread-safe
-std::optional<CrawlerRequest> DispatcherBasedWorkerPageLoader::pendingUrl() const
+//! this function always must be thread-safe
+QVector<ICrawlerWorkerPageLoader::ResponseData>
+DispatcherBasedWorkerPageLoader::pendingResponseData()
 {
-	std::optional<CrawlerRequest> value;
+	DEBUG_ASSERT(thread() != QThread::currentThread());
+
+	QVector<ResponseData> responseData;
 
 	try
 	{
-		std::future<std::optional<CrawlerRequest>> future = m_pagesAcceptedAfterStop.pagesAcceptedPromise.get_future();
-		std::future_status status = future.wait_for(0ms);
-
-		if (status == std::future_status::ready)
-		{
-			value = future.get();
-		}
+		std::future<QVector<ResponseData>> future = m_pendingResponseDataPromise.get_future();
+		responseData = future.get();
 	}
-	catch (const std::future_error& fe)
+	catch (const std::future_error& futureError)
 	{
-		WARNLOG << fe.what();
+		WARNLOG << futureError.what();
 	}
 
-	return value;
+	return responseData;
 }
 
 void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
-	m_activeRequesters[requester].reset();
+	m_activeRequesters[requester].requesterWrapper.reset();
 	m_activeRequesters.remove(requester);
 
-	emit pageLoaded(response.hopsChain);
-}
+	const DownloadRequest* downloadRequest =
+		Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
-std::optional<CrawlerRequest> DispatcherBasedWorkerPageLoader::prepareUnloadedPage() const
-{
-	CrawlerRequest result;
+	const bool isPageReloaded = downloadRequest->linkStatus == DownloadRequest::Status::LinkStatusReloadAlreadyLoaded;
 
-	if (!m_pagesAcceptedAfterStop.pages.empty())
+	if (m_state == CanReceivePages)
 	{
-		const auto pair = m_pagesAcceptedAfterStop.pages.front();
-
-		return CrawlerRequest{ pair.second->url, pair.first };
+		emit pageLoaded(response.hopsChain,
+			isPageReloaded,
+			m_activeRequesters[requester].storagesBeforeRemoving,
+			downloadRequest->requestInfo.requestType);
 	}
+	else
+	{
+		ResponseData responseData
+		{
+			std::move(response.hopsChain),
+			m_activeRequesters[requester].storagesBeforeRemoving,
+			downloadRequest->requestInfo.requestType,
+			isPageReloaded
+		};
 
-	return std::nullopt;
+		m_pendingResponseData.insert(m_pendingResponseData.end(), std::move(responseData));
+
+		if (m_activeRequesters.isEmpty())
+		{
+			m_pendingResponseDataPromise.set_value(std::move(m_pendingResponseData));
+			m_pendingResponseData.clear();
+		}
+	}
 }
 
 bool DispatcherBasedWorkerPageLoader::canPullLoading() const
 {
+	if (m_state == CantReceivePages)
+	{
+		return false;
+	}
+
 	const CrawlerSharedState* state = CrawlerSharedState::instance();
 	const int workersProcessedLinksCount = state->workersProcessedLinksCount();
 	const int downloaderCrawledLinksCount = state->downloaderCrawledLinksCount();
@@ -73,8 +93,12 @@ bool DispatcherBasedWorkerPageLoader::canPullLoading() const
 	return true;
 }
 
-void DispatcherBasedWorkerPageLoader::performLoading(const CrawlerRequest& crawlerRequest, DownloadRequest::LinkStatus linkStatus)
+void DispatcherBasedWorkerPageLoader::performLoading(const CrawlerRequest& crawlerRequest,
+	const std::vector<bool>& reloadingPageStrorages,
+	DownloadRequest::Status linkStatus)
 {
+	DEBUG_ASSERT(m_state == CanReceivePages);
+
 	DownloadRequest request(crawlerRequest, linkStatus,
 		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading, true);
 
@@ -83,69 +107,57 @@ void DispatcherBasedWorkerPageLoader::performLoading(const CrawlerRequest& crawl
 	requesterWrapper.reset(request, this, &DispatcherBasedWorkerPageLoader::onLoadingDone);
 	requesterWrapper->start();
 
-	m_activeRequesters[requesterWrapper.get()] = requesterWrapper;
+	m_activeRequesters[requesterWrapper.get()] = RequesterAssociatedData{ requesterWrapper, reloadingPageStrorages };
 }
 
-void DispatcherBasedWorkerPageLoader::stopLoading()
-{
-	if (!m_activeRequesters.isEmpty())
-	{
-		return;
-	}
-
-	setPageReceivedAfterStopPromise();
-}
-
-void DispatcherBasedWorkerPageLoader::clearState()
+void DispatcherBasedWorkerPageLoader::clear()
 {
 	m_activeRequesters.clear();
-	m_pagesAcceptedAfterStop.pages.clear();
-	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
-}
-
-void DispatcherBasedWorkerPageLoader::addPageReceivedAfterStop(const std::pair<DownloadRequestType, ParsedPagePtr>& pageInfo)
-{
-	m_pagesAcceptedAfterStop.pages.push_back(pageInfo);
-}
-
-void DispatcherBasedWorkerPageLoader::setPageReceivedAfterStopPromise()
-{
-	try
-	{
-		DEBUGLOG << "Set promise";
-
-		m_pagesAcceptedAfterStop.pagesAcceptedPromise.set_value(prepareUnloadedPage());
-	}
-	catch (const std::future_error& error)
-	{
-		if (error.code() != std::make_error_condition(std::future_errc::promise_already_satisfied))
-		{
-			throw;
-		}
-	}
-}
-
-std::vector<WorkerResult> DispatcherBasedWorkerPageLoader::extractLoadedAfterStopPages()
-{
-	std::vector<WorkerResult> loadedAfterStopPages;
-
-	if (!m_pagesAcceptedAfterStop.pages.empty())
-	{
-		for (const auto& pair : m_pagesAcceptedAfterStop.pages)
-		{
-			loadedAfterStopPages.emplace_back(pair.second, false, pair.first, std::vector<bool>());
-		}
-	}
-
-	m_pagesAcceptedAfterStop.pages.clear();
-	m_pagesAcceptedAfterStop.pagesAcceptedPromise = std::promise<std::optional<CrawlerRequest>>();
-
-	return loadedAfterStopPages;
+	m_pendingResponseData.clear();
+	m_pendingResponseDataPromise = std::promise<QVector<ResponseData>>();
 }
 
 QObject* DispatcherBasedWorkerPageLoader::qobject()
 {
 	return this;
+}
+
+void DispatcherBasedWorkerPageLoader::setReceiveState(ReceiveState state)
+{
+	DEBUG_ASSERT(thread() == QThread::currentThread());
+	ASSERT(state == CanReceivePages || state == CantReceivePages);
+
+	m_state = state;
+
+	if (state == CanReceivePages)
+	{
+		try
+		{
+			std::future<QVector<ResponseData>> future = m_pendingResponseDataPromise.get_future();
+			const std::future_status futureStatus = future.wait_for(0ms);
+
+			if (futureStatus == std::future_status::ready)
+			{
+				emitResponseData(future.get());
+				return;
+			}
+
+			emitResponseData(m_pendingResponseData);
+			m_pendingResponseData.clear();
+		}
+		catch (const std::future_error& futureError)
+		{
+			WARNLOG << futureError.what();
+		}
+	}
+}
+
+void DispatcherBasedWorkerPageLoader::emitResponseData(const QVector<ResponseData>& responseData)
+{
+	std::for_each(responseData.begin(), responseData.end(), [this](const ResponseData& data)
+	{
+		emit pageLoaded(data.hopsChain, data.isPageReloaded, data.reloadingPageStrorages, data.requestType);
+	});
 }
 
 }

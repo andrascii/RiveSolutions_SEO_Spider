@@ -8,7 +8,7 @@ namespace CrawlerEngine
 
 struct DownloadRequest : public IRequest
 {
-	enum class LinkStatus
+	enum class Status
 	{
 		LinkStatusReloadAlreadyLoaded,
 		LinkStatusFirstLoading
@@ -21,7 +21,7 @@ struct DownloadRequest : public IRequest
 	};
 
 	DownloadRequest(const CrawlerRequest& requestInfo,
-		LinkStatus linkStatus = LinkStatus::LinkStatusFirstLoading,
+		Status linkStatus = Status::LinkStatusFirstLoading,
 		BodyProcessingCommand bodyProcessingCommand = BodyProcessingCommand::CommandAutoDetectionBodyLoading,
 		bool useTimeout = false)
 		: requestInfo(requestInfo)
@@ -41,7 +41,7 @@ struct DownloadRequest : public IRequest
 	}
 
 	CrawlerRequest requestInfo;
-	LinkStatus linkStatus;
+	Status linkStatus;
 	BodyProcessingCommand bodyProcessingCommand;
 	bool useTimeout;
 };

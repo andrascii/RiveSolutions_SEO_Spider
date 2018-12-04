@@ -21,7 +21,6 @@ CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPag
 	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(uniqueLinkStore)
 	, m_isRunning(false)
-	, m_reloadPage(false)
 	, m_defferedProcessingTimer(new QTimer(this))
 	, m_licenseService(nullptr)
 	, m_pageLoader(pageLoader)
@@ -30,8 +29,8 @@ CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPag
 
 	qRegisterMetaType<HopsChain>("HopsChain");
 
-	VERIFY(connect(m_pageLoader->qobject(), SIGNAL(pageLoaded(const HopsChain&)),
-		this, SLOT(onLoadingDone(const HopsChain&)), Qt::QueuedConnection));
+	VERIFY(connect(m_pageLoader->qobject(), SIGNAL(pageLoaded(const HopsChain&, bool, const std::vector<bool>&, DownloadRequestType)),
+		this, SLOT(onLoadingDone(const HopsChain&, bool, const std::vector<bool>&, DownloadRequestType))));
 
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorker::extractUrlAndDownload, Qt::QueuedConnection));
@@ -49,9 +48,11 @@ CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPag
 	m_licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 }
 
-std::optional<CrawlerRequest> CrawlerWorker::pendingUrl() const
+std::optional<CrawlerRequest> CrawlerWorker::readyPages() const
 {
-	return m_pageLoader->pendingUrl();
+	QVector<ICrawlerWorkerPageLoader::ResponseData> responseData = m_pageLoader->pendingResponseData();
+	responseData;
+	return {};
 }
 
 void CrawlerWorker::start(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
@@ -60,8 +61,10 @@ void CrawlerWorker::start(const CrawlerOptionsData& optionsData, RobotsTxtRules 
 
 	m_isRunning = true;
 	m_optionsData = optionsData;
+
+	m_pageLoader->setReceiveState(ICrawlerWorkerPageLoader::CanReceivePages);
+
 	reinitOptions(optionsData, robotsTxtRules);
-	onStart();
 	extractUrlAndDownload();
 }
 
@@ -71,7 +74,7 @@ void CrawlerWorker::stop()
 
 	m_isRunning = false;
 
-	m_pageLoader->stopLoading();
+	m_pageLoader->setReceiveState(ICrawlerWorkerPageLoader::CantReceivePages);
 }
 
 void CrawlerWorker::reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
@@ -94,18 +97,15 @@ void CrawlerWorker::extractUrlAndDownload()
 		return;
 	}
 
-	if (!m_pageLoader->canPullLoading())
-	{
-		return;
-	}
-
 	CrawlerRequest crawlerRequest;
 	RefreshUrlRequest refreshRequest;
+
 	bool isUrlExtracted = false;
+	bool reloadPage = false;
 
-	m_reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(refreshRequest);
+	reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(refreshRequest);
 
-	if (!m_isRunning && !m_reloadPage)
+	if (!m_isRunning && !reloadPage && !m_pageLoader->canPullLoading())
 	{
 		return;
 	}
@@ -117,27 +117,26 @@ void CrawlerWorker::extractUrlAndDownload()
 
 	if (isUrlExtracted)
 	{
-		const DownloadRequest::LinkStatus linkStatus = m_reloadPage ?
-			DownloadRequest::LinkStatus::LinkStatusReloadAlreadyLoaded :
-			DownloadRequest::LinkStatus::LinkStatusFirstLoading;
+		const DownloadRequest::Status linkStatus = reloadPage ?
+			DownloadRequest::Status::LinkStatusReloadAlreadyLoaded :
+			DownloadRequest::Status::LinkStatusFirstLoading;
 
-		if (m_reloadPage)
+		std::vector<bool> reloadingPageStorages;
+
+		if (reloadPage)
 		{
-			m_storagesBeforeRemoving = refreshRequest.storagesBeforeRemoving;
+			reloadingPageStorages = refreshRequest.storagesBeforeRemoving;
 		}
 
-		const CrawlerRequest& request = m_reloadPage ? refreshRequest.crawlerRequest : crawlerRequest;
+		const CrawlerRequest& request = reloadPage ? refreshRequest.crawlerRequest : crawlerRequest;
 
-		m_currentRequest = request;
-
-		m_pageLoader->performLoading(request, linkStatus);
+		m_pageLoader->performLoading(request, reloadingPageStorages, linkStatus);
 	}
 }
 
 void CrawlerWorker::onCrawlerClearData()
 {
-	m_currentRequest.reset();
-	m_pageLoader->clearState();
+	m_pageLoader->clear();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);
 }
 
@@ -353,29 +352,13 @@ CrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const M
 	return result;
 }
 
-void CrawlerWorker::onLoadingDone(const HopsChain & hopsChain)
+void CrawlerWorker::onLoadingDone(const HopsChain& hopsChain,
+	bool isPageReloaded,
+	const std::vector<bool>& reloadingPageStrorages,
+	DownloadRequestType requestType)
 {
 	extractUrlAndDownload();
-
-	Common::Finally reloadGuard([this]
-	{
-		m_reloadPage = false;
-	});
-
-	ASSERT(m_currentRequest.has_value());
-	const DownloadRequestType requestType = m_currentRequest.value().requestType;
-
-	handleResponseData(hopsChain, requestType);
-}
-
-void CrawlerWorker::onStart()
-{
-	std::vector<WorkerResult> loadedAfterStopPages = m_pageLoader->extractLoadedAfterStopPages();
-
-	for(const WorkerResult& workerResult : loadedAfterStopPages)
-	{
-		onPageParsed(workerResult);
-	}
+	handleResponseData(hopsChain, isPageReloaded, reloadingPageStrorages, requestType);
 }
 
 void CrawlerWorker::onPageParsed(const WorkerResult& result) const noexcept
@@ -421,7 +404,11 @@ void CrawlerWorker::fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pa
 	}
 }
 
-void CrawlerWorker::handlePage(ParsedPagePtr& page, bool isStoredInCrawledUrls, DownloadRequestType requestType)
+void CrawlerWorker::handlePage(ParsedPagePtr& page,
+	bool isStoredInCrawledUrls,
+	bool isPageReloaded,
+	const std::vector<bool>& reloadingPageStrorages,
+	DownloadRequestType requestType)
 {
 	const auto emitBlockedByRobotsTxtPages = [this](const ResourceOnPage& resource)
 	{
@@ -451,12 +438,6 @@ void CrawlerWorker::handlePage(ParsedPagePtr& page, bool isStoredInCrawledUrls, 
 		}
 	};
 
-	if (isStoredInCrawledUrls && !m_isRunning && !m_reloadPage)
-	{
-		m_pageLoader->addPageReceivedAfterStop(std::make_pair(m_currentRequest.value().requestType, page));
-		return;
-	}
-
 	if (isStoredInCrawledUrls)
 	{
 		SchedulePagesResult readyLinks = schedulePageResourcesLoading(page);
@@ -468,14 +449,17 @@ void CrawlerWorker::handlePage(ParsedPagePtr& page, bool isStoredInCrawledUrls, 
 			page->isBlockedByMetaRobots = isPageBlockedByMetaRobots.second.testFlag(MetaRobotsItem::MetaRobotsNoIndex);
 		}
 
-		onPageParsed(WorkerResult{ page, m_reloadPage, requestType, m_storagesBeforeRemoving });
+		onPageParsed(WorkerResult{ page, isPageReloaded, requestType, reloadingPageStrorages });
 
 		std::for_each(readyLinks.blockedByRobotsTxtLinks.begin(), readyLinks.blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
 		std::for_each(readyLinks.tooLongLinks.begin(), readyLinks.tooLongLinks.end(), emitTooLongLinksPages);
 	}
 }
 
-void CrawlerWorker::handleResponseData(const HopsChain& hopsChain, DownloadRequestType requestType)
+void CrawlerWorker::handleResponseData(const HopsChain& hopsChain,
+	bool isPageReloaded,
+	const std::vector<bool>& reloadingPageStrorages,
+	DownloadRequestType requestType)
 {
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(hopsChain);
 
@@ -487,14 +471,9 @@ void CrawlerWorker::handleResponseData(const HopsChain& hopsChain, DownloadReque
 	{
 		const bool isUrlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
-		handlePage(page, isUrlAdded, requestType);
+		handlePage(page, isUrlAdded, isPageReloaded, reloadingPageStrorages, requestType);
 
 		checkUrl = true;
-	}
-
-	if (!m_isRunning && !m_reloadPage)
-	{
-		m_pageLoader->setPageReceivedAfterStopPromise();
 	}
 }
 

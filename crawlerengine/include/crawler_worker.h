@@ -24,7 +24,7 @@ class CrawlerWorker : public QObject
 
 public:
 	CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPageLoader* pageLoader);
-	std::optional<CrawlerRequest> pendingUrl() const;
+	std::optional<CrawlerRequest> readyPages() const;
 
 signals:
 	void workerResult(WorkerResult workerResult) const;
@@ -37,7 +37,11 @@ public slots:
 private slots:
 	void extractUrlAndDownload();
 	void onCrawlerClearData();
-	void onLoadingDone(const HopsChain& hopsChain);
+
+	void onLoadingDone(const HopsChain& hopsChain,
+		bool isPageReloaded,
+		const std::vector<bool>& reloadingPageStrorages,
+		DownloadRequestType requestType);
 
 private:
 	struct SchedulePagesResult
@@ -46,8 +50,6 @@ private:
 		std::vector<ResourceOnPage> tooLongLinks;
 	};
 
-	void onStart();
-
 	SchedulePagesResult schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
 	SchedulePagesResult handlePageLinkList(std::vector<ResourceOnPage>& linkList,
 		const MetaRobotsFlagsSet& metaRobotsFlags,
@@ -55,8 +57,17 @@ private:
 
 	void onPageParsed(const WorkerResult& result) const noexcept;
 	void fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const;
-	void handlePage(ParsedPagePtr& page, bool isUrlAdded, DownloadRequestType requestType);
-	void handleResponseData(const HopsChain& hopsChain, DownloadRequestType requestType);
+
+	void handlePage(ParsedPagePtr& page,
+		bool isUrlAdded,
+		bool isPageReloaded,
+		const std::vector<bool>& reloadingPageStrorages,
+		DownloadRequestType requestType);
+
+	void handleResponseData(const HopsChain& hopsChain,
+		bool isPageReloaded,
+		const std::vector<bool>& reloadingPageStrorages,
+		DownloadRequestType requestType);
 
 private:
 	static std::atomic<size_t> s_trialLicenseSentLinksCounter;
@@ -67,15 +78,10 @@ private:
 	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;
 
 	bool m_isRunning;
-	bool m_reloadPage;
-
-	std::optional<CrawlerRequest> m_currentRequest;
 
 	QTimer* m_defferedProcessingTimer;
 	ILicenseStateObserver* m_licenseService;
 	CrawlerOptionsData m_optionsData;
-
-	std::vector<bool> m_storagesBeforeRemoving;
 	ICrawlerWorkerPageLoader* m_pageLoader;
 };
 

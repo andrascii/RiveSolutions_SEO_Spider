@@ -80,8 +80,8 @@ void SiteAuditPage::createHeaderActionWidgets()
 
 	QMenu* groupingMenu = new QMenu(menuButton);
 
-	QAction* groupByCategoryAction = new QAction(SvgRenderer::render(":/images/group-by-category.svg", 20, 20), "Group filters by category");
-	QAction* groupByErrorLevelAction = new QAction(SvgRenderer::render(":/images/group-by-level.svg", 20, 20), "Group filters by error level");
+	QAction* groupByCategoryAction = new QAction(SvgRenderer::render(":/images/group-by-category.svg", 20, 20), tr("Group filters by category"));
+	QAction* groupByErrorLevelAction = new QAction(SvgRenderer::render(":/images/group-by-level.svg", 20, 20), tr("Group filters by error level"));
 	groupByErrorLevelAction->setData(true);
 	groupByCategoryAction->setData(false);
 
@@ -97,7 +97,7 @@ void SiteAuditPage::createHeaderActionWidgets()
 
 	//////////////////////////////////////////////////////////////////////////
 
-	m_exportFilterDataAction = new QAction(SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20), 
+	m_exportFilterDataAction = new QAction(SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20),
 		tr("Export selected filter data to .xlsx file"), this);
 
 	m_exportFilterDataAction->setDisabled(true);

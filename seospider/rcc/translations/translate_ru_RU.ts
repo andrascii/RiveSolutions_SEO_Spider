@@ -2108,6 +2108,14 @@ please stop crawling and try again</source>
         <source>Export selected filter data to .xlsx file</source>
         <translation>Эскпортировать данные выбранного фильтра в excel</translation>
     </message>
+    <message>
+        <source>Group filters by category</source>
+        <translation>Сгруппировать фильтры по категории </translation>
+    </message>
+    <message>
+        <source>Group filters by error level</source>
+        <translation>Сгруппировать фильтры по важности</translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::SitemapCreatorDialog</name>

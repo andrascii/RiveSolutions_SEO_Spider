@@ -40,9 +40,9 @@ const QMap<StorageType, ErrorCategory::ErrorCategoryLevel> s_storageTypeToLevel
 	{ StorageType::SeveralMetaDescriptionUrlStorageType, ErrorCategory::LevelError },
 
 	// meta keywords
-	{ StorageType::EmptyMetaKeywordsUrlStorageType, ErrorCategory::LevelWarning },
-	{ StorageType::DuplicatedMetaKeywordsUrlStorageType, ErrorCategory::LevelError },
-	{ StorageType::SeveralMetaKeywordsUrlStorageType, ErrorCategory::LevelError },
+	{ StorageType::EmptyMetaKeywordsUrlStorageType, ErrorCategory::LevelInfo },
+	{ StorageType::DuplicatedMetaKeywordsUrlStorageType, ErrorCategory::LevelInfo },
+	{ StorageType::SeveralMetaKeywordsUrlStorageType, ErrorCategory::LevelInfo },
 
 	// h1s
 	{ StorageType::MissingH1UrlStorageType, ErrorCategory::LevelInfo },
