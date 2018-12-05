@@ -11,6 +11,8 @@
 #include "finally.h"
 #include "icrawler_worker_page_loader.h"
 
+Q_DECLARE_METATYPE(std::vector<bool>)
+
 namespace CrawlerEngine
 {
 
@@ -28,9 +30,11 @@ CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPag
 	m_pageLoader->qobject()->setParent(this);
 
 	qRegisterMetaType<HopsChain>("HopsChain");
+	qRegisterMetaType<std::vector<bool>>("std::vector<bool>");
+	qRegisterMetaType<DownloadRequestType>("DownloadRequestType");
 
 	VERIFY(connect(m_pageLoader->qobject(), SIGNAL(pageLoaded(const HopsChain&, bool, const std::vector<bool>&, DownloadRequestType)),
-		this, SLOT(onLoadingDone(const HopsChain&, bool, const std::vector<bool>&, DownloadRequestType))));
+		this, SLOT(onLoadingDone(const HopsChain&, bool, const std::vector<bool>&, DownloadRequestType)), Qt::QueuedConnection));
 
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorker::extractUrlAndDownload, Qt::QueuedConnection));

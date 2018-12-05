@@ -40,7 +40,12 @@ signals:
 
 private:
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
+
 	void emitResponseData(const QVector<ResponseData>& responseData);
+
+	void removeRequesterAssociatedData(Requester* requester);
+
+	void reloadPromise();
 
 private:
 	struct RequesterAssociatedData
@@ -55,6 +60,7 @@ private:
 
 	QVector<ResponseData> m_pendingResponseData;
 	std::promise<QVector<ResponseData>> m_pendingResponseDataPromise;
+	std::future<QVector<ResponseData>> m_pendingResponseDataFuture;
 
 	QMap<Requester*, RequesterAssociatedData> m_activeRequesters;
 	ReceiveState m_state;

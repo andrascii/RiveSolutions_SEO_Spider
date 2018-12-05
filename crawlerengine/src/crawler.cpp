@@ -646,9 +646,15 @@ void Crawler::onDeserializationReadyToBeStarted()
 	m_deSerializationRequester->start();
 }
 
-void Crawler::tryToLoadCrawlingDependencies() const
+void Crawler::tryToLoadCrawlingDependencies()
 {
 	DEBUG_ASSERT(m_options->startCrawlingPage().isValid());
+
+	if (isPreinitialized())
+	{
+		onCrawlingSessionInitialized();
+		return;
+	}
 
 	m_robotsTxtLoader->setHost(m_options->startCrawlingPage());
 	m_xmlSitemapLoader->setHost(m_options->startCrawlingPage());
