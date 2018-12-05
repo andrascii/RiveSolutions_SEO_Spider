@@ -4,6 +4,27 @@
 #include "crawler_shared_state.h"
 #include "helpers.h"
 
+namespace
+{
+
+using namespace CrawlerEngine;
+
+QString printReceiveState(ICrawlerWorkerPageLoader::ReceiveState state)
+{
+	DEBUG_ASSERT(state == ICrawlerWorkerPageLoader::CanReceivePages ||
+		state == ICrawlerWorkerPageLoader::CantReceivePages);
+
+	switch (state)
+	{
+		case ICrawlerWorkerPageLoader::CanReceivePages: return QStringLiteral("CanReceivePages State");
+		case ICrawlerWorkerPageLoader::CantReceivePages: return QStringLiteral("CantReceivePages State");
+	}
+
+	return QString();
+}
+
+}
+
 namespace CrawlerEngine
 {
 
@@ -11,6 +32,7 @@ DispatcherBasedWorkerPageLoader::DispatcherBasedWorkerPageLoader(QObject* parent
 	: QObject(parent)
 	, m_state(CanReceivePages)
 {
+	reloadPromise();
 }
 
 //! this function always must be thread-safe
@@ -23,8 +45,7 @@ DispatcherBasedWorkerPageLoader::pendingResponseData()
 
 	try
 	{
-		std::future<QVector<ResponseData>> future = m_pendingResponseDataPromise.get_future();
-		responseData = future.get();
+		responseData = m_pendingResponseDataFuture.get();
 	}
 	catch (const std::future_error& futureError)
 	{
@@ -49,6 +70,8 @@ void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const 
 			isPageReloaded,
 			m_activeRequesters[requester].storagesBeforeRemoving,
 			downloadRequest->requestInfo.requestType);
+
+		removeRequesterAssociatedData(requester);
 	}
 	else
 	{
@@ -62,15 +85,14 @@ void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const 
 
 		m_pendingResponseData.insert(m_pendingResponseData.end(), std::move(responseData));
 
+		removeRequesterAssociatedData(requester);
+
 		if (m_activeRequesters.isEmpty())
 		{
+			INFOLOG << "Set promise";
 			m_pendingResponseDataPromise.set_value(std::move(m_pendingResponseData));
-			m_pendingResponseData.clear();
 		}
 	}
-
-	m_activeRequesters[requester].requesterWrapper.reset();
-	m_activeRequesters.remove(requester);
 }
 
 bool DispatcherBasedWorkerPageLoader::canPullLoading() const
@@ -116,7 +138,8 @@ void DispatcherBasedWorkerPageLoader::clear()
 {
 	m_activeRequesters.clear();
 	m_pendingResponseData.clear();
-	m_pendingResponseDataPromise = std::promise<QVector<ResponseData>>();
+
+	reloadPromise();
 }
 
 QObject* DispatcherBasedWorkerPageLoader::qobject()
@@ -131,16 +154,20 @@ void DispatcherBasedWorkerPageLoader::setReceiveState(ReceiveState state)
 
 	m_state = state;
 
+	INFOLOG << printReceiveState(m_state);
+
 	if (state == CanReceivePages)
 	{
 		try
 		{
-			std::future<QVector<ResponseData>> future = m_pendingResponseDataPromise.get_future();
-			const std::future_status futureStatus = future.wait_for(0ms);
+			const std::future_status futureStatus = m_pendingResponseDataFuture.wait_for(0ms);
 
 			if (futureStatus == std::future_status::ready)
 			{
-				emitResponseData(future.get());
+				emitResponseData(m_pendingResponseDataFuture.get());
+
+				reloadPromise();
+
 				return;
 			}
 
@@ -160,6 +187,18 @@ void DispatcherBasedWorkerPageLoader::emitResponseData(const QVector<ResponseDat
 	{
 		emit pageLoaded(data.hopsChain, data.isPageReloaded, data.reloadingPageStrorages, data.requestType);
 	});
+}
+
+void DispatcherBasedWorkerPageLoader::removeRequesterAssociatedData(Requester* requester)
+{
+	m_activeRequesters[requester].requesterWrapper.reset();
+	m_activeRequesters.remove(requester);
+}
+
+void DispatcherBasedWorkerPageLoader::reloadPromise()
+{
+	m_pendingResponseDataPromise = std::promise<QVector<ResponseData>>();
+	m_pendingResponseDataFuture = m_pendingResponseDataPromise.get_future();
 }
 
 }

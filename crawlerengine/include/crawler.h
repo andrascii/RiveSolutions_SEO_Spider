@@ -164,7 +164,7 @@ private:
 	void onHostInfoResponse(Requester* requester, const GetHostInfoResponse& response);
 	void onSerializationReadyToBeStarted();
 	void onDeserializationReadyToBeStarted();
-	void tryToLoadCrawlingDependencies() const;
+	void tryToLoadCrawlingDependencies();
 	void clearDataImpl();
 	void setState(State state);
 	void initSessionIfNeeded(Session::State state = Session::StateNone, const QString& name = QString());
