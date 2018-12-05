@@ -60,6 +60,7 @@ void TestsDownloader::handleRequest(RequesterSharedPtr requester)
 
 	QSet<QString> uniqueUrls;
 	response->hopsChain = hopsChain(*request, uniqueUrls);
+	response->requestType = request->requestInfo.requestType;
 	m_responsePostProcessor(*(response.get()));
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);

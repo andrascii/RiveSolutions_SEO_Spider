@@ -75,7 +75,9 @@ TEST(LinksTests, CanonicalNextPrev)
 TEST(LinksTests, HrefLang)
 {
 	TestEnvironment env;
-	env.crawler()->options()->setData(TestEnvironment::defaultOptions(Url("http://links.com/hreflang.html")));
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/hreflang.html"));
+	options.crawlMetaHrefLangLinks = true;
+	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
@@ -92,6 +94,25 @@ TEST(LinksTests, HrefLang)
 
 		EXPECT_EQ(ResourceSource::SourceTagLinkAlternateHrefLang, hreflang1.resourceSource);
 		EXPECT_EQ(ResourceSource::SourceTagLinkAlternateHrefLang, hreflang2.resourceSource);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, NORM_FORMHrefLang)
+{
+	TestEnvironment env;
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/hreflang.html"));
+	options.crawlMetaHrefLangLinks = false;
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		const auto pages = cl->waitForAllCrawledPageReceived(10);
+		cl->checkSequencedDataCollectionConsistency();
+		EXPECT_EQ(1, pages.size());
+
 	};
 
 	env.initializeTest(testFunction);

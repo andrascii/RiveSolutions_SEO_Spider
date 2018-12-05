@@ -172,6 +172,11 @@ QByteArray MyHtmlParser::htmlPageContent() const
 	return m_htmlPage;
 }
 
+bool MyHtmlParser::isEmpty() const
+{
+	return m_htmlPage.isEmpty();
+}
+
 void MyHtmlParser::parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers)
 {
 	m_htmlPage = htmlPage;

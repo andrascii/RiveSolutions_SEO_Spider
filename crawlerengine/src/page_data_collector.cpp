@@ -66,7 +66,7 @@ void PageDataCollector::applyOptions()
 	m_parser.clear();
 
 	m_parser.addParser(std::make_shared<BaseUrlParser>(m_htmlParser.get()));
-	m_parser.addParser(std::make_shared<HtmlResourcesParser>(m_htmlParser.get()));
+	m_parser.addParser(std::make_shared<HtmlResourcesParser>(m_htmlParser.get(), m_crawlerOptionsData.crawlMetaHrefLangLinks));
 
 	if (m_crawlerOptionsData.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{

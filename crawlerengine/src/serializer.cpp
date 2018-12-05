@@ -94,6 +94,7 @@ namespace
 	const QString s_checkCanonicalsKey = QLatin1String("checkCanonicals");
 	const QString s_checkSubdomainsKey = QLatin1String("checkSubdomains");
 	const QString s_crawlOutsideOfStartFolderKey = QLatin1String("crawlOutsideOfStartFolder");
+	const QString s_crawlMetaHrefLangLinksKey = QLatin1String("crawlMetaHrefLangLinks");
 	const QString s_followRobotsTxtRulesKey = QLatin1String("followRobotsTxtRules");
 	const QString s_userAgentToFollowKey = QLatin1String("userAgentToFollow");
 	const QString s_parserTypeFlagsKey = QLatin1String("parserTypeFlags");
@@ -790,6 +791,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeTextElement(s_checkCanonicalsKey, QString::number(m_crawlerOptionsData.checkCanonicals));
 	writer.writeTextElement(s_checkSubdomainsKey, QString::number(m_crawlerOptionsData.checkSubdomains));
 	writer.writeTextElement(s_crawlOutsideOfStartFolderKey, QString::number(m_crawlerOptionsData.crawlOutsideOfStartFolder));
+	writer.writeTextElement(s_crawlMetaHrefLangLinksKey, QString::number(m_crawlerOptionsData.crawlMetaHrefLangLinks));
 	writer.writeTextElement(s_followRobotsTxtRulesKey, QString::number(m_crawlerOptionsData.followRobotsTxtRules));
 	writer.writeTextElement(s_userAgentToFollowKey, QString::number(static_cast<int>(m_crawlerOptionsData.userAgentToFollow)));
 	writer.writeTextElement(s_parserTypeFlagsKey, QString::number(static_cast<int>(m_crawlerOptionsData.parserTypeFlags)));
@@ -962,6 +964,10 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		else if (reader.qualifiedName() == s_crawlOutsideOfStartFolderKey)
 		{
 			m_crawlerOptionsData.crawlOutsideOfStartFolder = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_crawlMetaHrefLangLinksKey)
+		{
+			m_crawlerOptionsData.crawlMetaHrefLangLinks = reader.readElementText().toInt() == 1;
 		}
 		else if (reader.qualifiedName() == s_followRobotsTxtRulesKey)
 		{

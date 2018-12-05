@@ -241,6 +241,17 @@ void Preferences::setCrawlOutsideOfStartFolder(bool value)
 	emit crawlOutsideOfStartFolderChanged(value);
 }
 
+bool Preferences::crawlMetaHrefLangLinks() const
+{
+	return m_crawlMetaHrefLangLinks;
+}
+
+void Preferences::setCrawlMetaHrefLangLinks(bool value)
+{
+	m_crawlMetaHrefLangLinks = value;
+	emit crawlMetaHrefLangLinksChanged(value);
+}
+
 bool Preferences::usePauseTimer() const
 {
 	return m_usePauseTimer;

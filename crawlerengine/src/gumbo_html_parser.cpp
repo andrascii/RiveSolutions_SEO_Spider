@@ -338,6 +338,11 @@ QByteArray GumboHtmlParser::htmlPageContent() const
 	return m_htmlPage;
 }
 
+bool GumboHtmlParser::isEmpty() const
+{
+	return m_htmlPage.isEmpty();
+}
+
 QByteArray GumboHtmlParser::currentPageEncoding() const
 {
 	return m_currentPageEncoding;

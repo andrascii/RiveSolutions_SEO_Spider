@@ -27,6 +27,7 @@ void CrawlerSettingsWidget::init()
 	m_ui.label_9->installEventFilter(this);
 	m_ui.label_10->installEventFilter(this);
 	m_ui.label_11->installEventFilter(this);
+	m_ui.label_12->installEventFilter(this);
 
 	m_ui.robotsTxtComboBox->addItem("AnyBot", QVariant::fromValue(CrawlerEngine::UserAgentType::AnyBot));
 	m_ui.robotsTxtComboBox->addItem("GoogleBot", QVariant::fromValue(CrawlerEngine::UserAgentType::GoogleBot));
@@ -94,6 +95,11 @@ bool CrawlerSettingsWidget::eventFilter(QObject* object, QEvent* event)
 	if (object == m_ui.label_11 && event->type() == QEvent::MouseButtonRelease)
 	{
 		m_ui.followInternalNofollowCheckBox->toggle();
+	}
+
+	if (object == m_ui.label_12 && event->type() == QEvent::MouseButtonRelease)
+	{
+		m_ui.crawlMetaHerefLangLinksCheckBox->toggle();
 	}
 
 	return false;

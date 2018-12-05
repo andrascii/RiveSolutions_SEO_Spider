@@ -18,6 +18,7 @@ public:
 
 	virtual QByteArray currentPageEncoding() const override;
 	virtual QByteArray htmlPageContent() const override;
+	virtual bool isEmpty() const override;
 	virtual void parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers) override;
 	virtual std::vector<LinkInfo> pageUrlList(bool httpOrHttpsOnly) const override;
 	virtual IHtmlNodeCountedPtr firstMatchNode(IHtmlNode::TagId tagId) const override;

@@ -14,7 +14,7 @@ void WordCountParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	Q_UNUSED(headers);
 
-	if (page->resourceType != ResourceType::ResourceHtml)
+	if (page->resourceType != ResourceType::ResourceHtml || m_htmlParser->isEmpty())
 	{
 		return;
 	}
