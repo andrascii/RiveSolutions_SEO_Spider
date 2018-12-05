@@ -31,6 +31,12 @@ public:
 		
 		if (url.isValid() && CrawlerEngine::PageParserHelpers::isHttpOrHttpsScheme(url))
 		{
+			if (input.contains("."))
+			{
+				input = url.toDisplayString();
+			}
+
+			pos = qMin(pos, input.length());
 			if (!s_urlRegExp.match(input).hasMatch())
 			{
 				return QValidator::Intermediate;
