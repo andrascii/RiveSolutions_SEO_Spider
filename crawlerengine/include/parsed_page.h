@@ -237,6 +237,10 @@ struct ParsedPage
 
 	//! response time in milliseconds
 	int responseTime = int();
+
+#ifdef QT_DEBUG
+	bool headRequest = false;
+#endif
 };
 
 using ParsedPagePtr = std::shared_ptr<ParsedPage>;
