@@ -325,6 +325,17 @@ void CrawlerOptions::setCrawlOutsideOfStartFolder(bool value) noexcept
 	emit crawlOutsideOfStartFolderChanged(m_data.crawlOutsideOfStartFolder);
 }
 
+bool CrawlerOptions::crawlMetaHrefLangLinks() const noexcept
+{
+	return m_data.crawlMetaHrefLangLinks;
+}
+
+void CrawlerOptions::setCrawlMetaHrefLangLinks(bool value) noexcept
+{
+	m_data.crawlMetaHrefLangLinks = value;
+	emit crawlMetaHrefLangLinksChanged(m_data.crawlMetaHrefLangLinks);
+}
+
 bool CrawlerOptions::followRobotsTxtRules() const noexcept
 {
 	return m_data.followRobotsTxtRules;

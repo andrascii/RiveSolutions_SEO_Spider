@@ -133,6 +133,10 @@ public:
 	virtual void setCrawlOutsideOfStartFolder(bool value) noexcept = 0;
 	virtual void crawlOutsideOfStartFolderChanged(bool value) const = 0;
 
+	virtual bool crawlMetaHrefLangLinks() const noexcept = 0;
+	virtual void setCrawlMetaHrefLangLinks(bool value) noexcept = 0;
+	virtual void crawlMetaHrefLangLinksChanged(bool value) const = 0;
+
 	virtual bool followRobotsTxtRules() const noexcept = 0;
 	virtual void setFollowRobotsTxtRules(bool value) noexcept = 0;
 	virtual void followRobotsTxtRulesChanged(bool value) const = 0;

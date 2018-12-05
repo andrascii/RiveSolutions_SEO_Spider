@@ -15,6 +15,7 @@ public:
 
 	virtual QByteArray currentPageEncoding() const = 0;
 	virtual QByteArray htmlPageContent() const = 0;
+	virtual bool isEmpty() const = 0;
 	virtual void parseHtmlPage(const QByteArray& htmlPage, const ResponseHeaders& headers) = 0;
 	virtual std::vector<LinkInfo> pageUrlList(bool httpOrHttpsOnly) const = 0;
 	virtual IHtmlNodeCountedPtr firstMatchNode(IHtmlNode::TagId tagId) const = 0;

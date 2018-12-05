@@ -467,6 +467,7 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), SIGNAL(checkSubdomainsChanged(bool)), crawler()->options()->qobject(), SLOT(setCheckSubdomains(bool))));
 	VERIFY(connect(preferences(), SIGNAL(followRobotsTxtChanged(bool)), crawler()->options()->qobject(), SLOT(setFollowRobotsTxtRules(bool))));
 	VERIFY(connect(preferences(), SIGNAL(crawlOutsideOfStartFolderChanged(bool)), crawler()->options()->qobject(), SLOT(setCrawlOutsideOfStartFolder(bool))));
+	VERIFY(connect(preferences(), SIGNAL(crawlMetaHrefLangLinksChanged(bool)), crawler()->options()->qobject(), SLOT(setCrawlMetaHrefLangLinks(bool))));
 	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCountersChanged(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounters(bool))));
 	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter1Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter1(bool))));
 	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter1IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter1Id(int))));

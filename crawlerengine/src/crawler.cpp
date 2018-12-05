@@ -506,9 +506,11 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 
 		for (const ParsedPagePtr& page : pages)
 		{
-			for (size_t i = 0; i < page->storages.size(); ++i)
+			const std::vector<bool> storages(std::move(page->storages));
+			page->storages = std::vector<bool>(storages.size(), false);
+			for (size_t i = 0; i < storages.size(); ++i)
 			{
-				if (page->storages[i])
+				if (storages[i])
 				{
 					const StorageType storage = static_cast<StorageType>(i);
 

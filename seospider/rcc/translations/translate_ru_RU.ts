@@ -261,6 +261,10 @@ Please, be sure that you entered a valid address</source>
         <source>Check images</source>
         <translation>Проверять изображения</translation>
     </message>
+    <message>
+        <source>Crawl meta hreflang links</source>
+        <translation>Переходить по meta hreflang ссылкам</translation>
+    </message>
 </context>
 <context>
     <name>FeedbackDialog</name>

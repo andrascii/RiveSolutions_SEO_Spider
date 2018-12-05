@@ -12,8 +12,9 @@
 namespace CrawlerEngine
 {
 
-HtmlResourcesParser::HtmlResourcesParser(IHtmlParser* htmlParser)
+HtmlResourcesParser::HtmlResourcesParser(IHtmlParser* htmlParser, bool parseMetaHrefLangLinks)
 	: m_htmlParser(htmlParser)
+	, m_parseMetaHrefLangLinks(parseMetaHrefLangLinks)
 {
 	m_htmlParserTest = new MyHtmlParser;
 
@@ -44,6 +45,11 @@ void HtmlResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& p
 		if (!PageParserHelpers::isHttpOrHttpsScheme(linkInfo.url))
 		{
 			DEBUG_ASSERT(!"This url leads to a not html resources");
+			continue;
+		}
+
+		if (linkInfo.resourceSource == ResourceSource::SourceTagLinkAlternateHrefLang && !m_parseMetaHrefLangLinks)
+		{
 			continue;
 		}
 

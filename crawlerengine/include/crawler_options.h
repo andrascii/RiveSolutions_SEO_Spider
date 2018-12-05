@@ -33,6 +33,7 @@ struct CrawlerOptionsData final
 	bool checkCanonicals = bool();
 	bool checkSubdomains = bool();
 	bool crawlOutsideOfStartFolder = bool();
+	bool crawlMetaHrefLangLinks = bool();
 	bool followRobotsTxtRules = bool();
 	UserAgentType userAgentToFollow = UserAgentType::AnyBot;
 	ParserTypeFlags parserTypeFlags;
@@ -89,6 +90,7 @@ class CrawlerOptions : public QObject, public ICrawlerOptions
 	Q_PROPERTY(bool checkCanonicals READ checkCanonicals WRITE setCheckCanonicals NOTIFY checkCanonicalsChanged)
 	Q_PROPERTY(bool checkSubdomains READ checkSubdomains WRITE setCheckSubdomains NOTIFY checkSubdomainsChanged)
 	Q_PROPERTY(bool crawlOutsideOfStartFolder READ crawlOutsideOfStartFolder WRITE setCrawlOutsideOfStartFolder NOTIFY crawlOutsideOfStartFolderChanged)
+	Q_PROPERTY(bool crawlMetaHrefLangLinks READ crawlMetaHrefLangLinks WRITE setCrawlMetaHrefLangLinks NOTIFY crawlMetaHrefLangLinksChanged)
 	Q_PROPERTY(bool followRobotsTxtRules READ followRobotsTxtRules WRITE setFollowRobotsTxtRules NOTIFY followRobotsTxtRulesChanged)
 	Q_PROPERTY(UserAgentType userAgentToFollow READ userAgentToFollow WRITE setUserAgentToFollow NOTIFY userAgentToFollowChanged)
 	Q_PROPERTY(ParserTypeFlags parserTypeFlags READ parserTypeFlags WRITE setParserTypeFlags NOTIFY parserTypeFlagsChanged)
@@ -223,6 +225,10 @@ public:
 	virtual bool crawlOutsideOfStartFolder() const noexcept override;
 	Q_SLOT virtual void setCrawlOutsideOfStartFolder(bool value) noexcept override;
 	Q_SIGNAL virtual void crawlOutsideOfStartFolderChanged(bool value) const override;
+
+	virtual bool crawlMetaHrefLangLinks() const noexcept override;
+	Q_SLOT virtual void setCrawlMetaHrefLangLinks(bool value) noexcept override;
+	Q_SIGNAL virtual void crawlMetaHrefLangLinksChanged(bool value) const override;
 
 	virtual bool followRobotsTxtRules() const noexcept override;
 	Q_SLOT virtual void setFollowRobotsTxtRules(bool value) noexcept override;
