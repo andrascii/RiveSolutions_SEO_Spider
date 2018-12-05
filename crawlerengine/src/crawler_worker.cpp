@@ -362,6 +362,9 @@ void CrawlerWorker::onLoadingDone(const HopsChain& hopsChain,
 	DownloadRequestType requestType)
 {
 	extractUrlAndDownload();
+
+	DEBUG_ASSERT(requestType != DownloadRequestType::RequestTypeHead || hopsChain.firstHop().body().isEmpty());
+
 	handleResponseData(hopsChain, isPageReloaded, reloadingPageStrorages, requestType);
 }
 

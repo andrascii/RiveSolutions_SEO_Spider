@@ -178,6 +178,12 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 			secondGetRequest = true;
 		}
 
+	#ifdef QT_DEBUG
+		DEBUG_ASSERT(!secondGetRequest || existingPage->headRequest);
+		workerResult.incomingPage()->headRequest = workerResult.requestType() == DownloadRequestType::RequestTypeHead;
+		DEBUG_ASSERT(!workerResult.incomingPage()->headRequest || workerResult.incomingPage()->wordCount == 0);
+	#endif
+
 		workerResult.incomingPage() = mergePage(existingPage, workerResult.incomingPage());
 	}
 	else if (workerResult.storagesBeforeRemoving()[StorageType::NofollowLinksStorageType])

@@ -16,8 +16,22 @@ MultiSocketDownloadHandler::MultiSocketDownloadHandler()
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
 
+	// must be queued connection otherwise
+	// requesterByIdAssertIfNotExists can assert in the debug mode
+	//
+	// case:
+	// 1. we schedule the request to load using MultiSocketDownloadHandler::loadHelper in the MultiSocketDownloadHandler::load
+	// 2. then the loading done earlier than we returned from this function
+	// 3. direct connection calls the onUrlLoaded
+	// 4. than method calls the requesterByIdAssertIfNotExists but requester is not stored
+	//
 	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::loaded,
-		this, &MultiSocketDownloadHandler::onUrlLoaded, Qt::DirectConnection));
+		this, &MultiSocketDownloadHandler::onUrlLoaded, Qt::QueuedConnection));
+
+
+	//
+	// TODO: optimize the many calls by these connections
+	//
 
 //	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::uploadProgress,
 //		this, &MultiSocketDownloadHandler::onAboutUploadProgress, Qt::QueuedConnection));
