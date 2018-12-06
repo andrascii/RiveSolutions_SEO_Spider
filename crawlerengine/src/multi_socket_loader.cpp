@@ -76,9 +76,15 @@ int MultiSocketLoader::get(const Url& url, DownloadRequest::BodyProcessingComman
 	request->bodyProcessingCommand = bodyProcessingCommand;
 	request->method = RequestDescriptor::Method::Get;
 
+	// we should to return a copy of the request id
+	// because of curl_multi_add_handle immediately invokes
+	// checkMultiInfo which may to delete our request pointer
+	// in this case we will access to the freed memory - Undefined Behavior
+	const int returnValue = request->id;
+
 	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
-	return request->id;
+	return returnValue;
 }
 
 int MultiSocketLoader::post(const Url& url, QByteArray uploadData)
@@ -97,9 +103,16 @@ int MultiSocketLoader::post(const Url& url, QByteArray uploadData)
 	curl_easy_setopt(request->easy, CURLOPT_POSTFIELDSIZE, request->uploadData.buffer.size());
 	curl_easy_setopt(request->easy, CURLOPT_READFUNCTION, readUploadDataCallback);
 	curl_easy_setopt(request->easy, CURLOPT_READDATA, &request->uploadData);
+
+	// we should to return a copy of the request id
+	// because of curl_multi_add_handle immediately invokes
+	// checkMultiInfo which may to delete our request pointer
+	// in this case we will access to the freed memory - Undefined Behavior
+	const int returnValue = request->id;
+
 	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
-	return request->id;
+	return returnValue;
 }
 
 int MultiSocketLoader::head(const Url& url)

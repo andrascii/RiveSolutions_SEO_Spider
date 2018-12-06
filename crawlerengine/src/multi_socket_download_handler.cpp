@@ -7,24 +7,24 @@
 #include "helpers.h"
 #include "thread_message_dispatcher.h"
 
+std::vector<int> testIndices;
+
 namespace CrawlerEngine
 {
 
 MultiSocketDownloadHandler::MultiSocketDownloadHandler()
 	: m_multiSocketLoader(new MultiSocketLoader(this))
 {
+	qRegisterMetaType<ResponseHeaders>("ResponseHeaders");
+	qRegisterMetaType<Common::StatusCode>("Common::StatusCode");
+
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
 
-	// must be queued connection otherwise
-	// requesterByIdAssertIfNotExists can assert in the debug mode
-	//
-	// case:
-	// 1. we schedule the request to load using MultiSocketDownloadHandler::loadHelper in the MultiSocketDownloadHandler::load
-	// 2. then the loading done earlier than we returned from this function
-	// 3. direct connection calls the onUrlLoaded
-	// 4. than method calls the requesterByIdAssertIfNotExists but requester is not stored
-	//
+	// must be queued connection
+	// otherwise loader can emit signal about loaded url
+	// before we add the request id to the m_requesters map
+	// in this case we have not a chance to find a requester in the onUrlLoaded slot!!!
 	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::loaded,
 		this, &MultiSocketDownloadHandler::onUrlLoaded, Qt::QueuedConnection));
 
@@ -331,11 +331,13 @@ int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request, Downlo
 		case DownloadRequestType::RequestTypeGet:
 		{
 			requestId = m_multiSocketLoader->get(request.url, bodyProcessingCommand);
+			testIndices.push_back(requestId);
 			break;
 		}
 		case DownloadRequestType::RequestTypeHead:
 		{
 			requestId = m_multiSocketLoader->head(request.url);
+			testIndices.push_back(requestId);
 			break;
 		}
 		default:

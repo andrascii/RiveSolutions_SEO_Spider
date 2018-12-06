@@ -28,4 +28,6 @@ private:
 	std::vector<std::pair<QString, QString>> m_responseHeaders;
 };
 
+Q_DECLARE_METATYPE(ResponseHeaders)
+
 }
