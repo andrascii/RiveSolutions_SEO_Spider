@@ -1750,8 +1750,8 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <translation>Ваш серийный номер устарел!</translation>
     </message>
     <message>
-        <source>Unfortunately we detected that your license serial number is invalid!</source>
-        <translation>К сожалению Ваш серийный ключ невалиден!</translation>
+        <source>Unfortunately we detected that your license serial number is invalid</source>
+        <translation>К сожалению Ваш серийный ключ невалиден</translation>
     </message>
     <message>
         <source>Unfortunately we detected that your license serial number is now blacklisted! You can notify us about it if you don&apos;t understand why this happened.</source>
