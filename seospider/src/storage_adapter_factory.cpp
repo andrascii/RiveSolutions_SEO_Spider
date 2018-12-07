@@ -46,6 +46,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::SchemeColumn
 				<< ParsedPageInfo::Column::ResponseTimeColumn
 				<< ParsedPageInfo::Column::TitleColumn
 				<< ParsedPageInfo::Column::TitleLengthColumn
@@ -88,6 +89,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::SchemeColumn
 				<< ParsedPageInfo::Column::ResponseTimeColumn;
 
 		}
@@ -105,6 +107,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::SchemeColumn
 				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
 		case StorageAdapterType::StorageAdapterTypeStatus301:
@@ -115,6 +118,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::SchemeColumn
 				<< ParsedPageInfo::Column::ResponseTimeColumn
 				<< ParsedPageInfo::Column::RedirectedUrlColumn;
 		}
@@ -123,7 +127,8 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
-				<< ParsedPageInfo::Column::StatusCodeColumn;
+				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::SchemeColumn;
 		}
 
 		// Title available columns
@@ -280,6 +285,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::SchemeColumn
 				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
 
@@ -294,6 +300,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::TitleColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::SchemeColumn
 				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
 	}

@@ -29,6 +29,7 @@ public:
 		MetaKeywordsColumn,
 		RedirectedUrlColumn,
 		ServerResponseColumn,
+		SchemeColumn,
 
 		FirstH1Column,
 		SecondH1Column,
@@ -104,6 +105,7 @@ private:
 	QVariant acceptMetaRobots() const;
 	QVariant acceptRedirectedUrl() const;
 	QVariant acceptServerResponse() const;
+	QVariant acceptScheme() const;
 	QVariant acceptMetaDescription() const;
 	QVariant acceptMetaKeywords() const;
 	QVariant acceptFirstH1() const;

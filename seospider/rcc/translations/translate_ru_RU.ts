@@ -1564,6 +1564,10 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <source>Response Time (ms)</source>
         <translation>Время ответа (мс)</translation>
     </message>
+    <message>
+        <source>Protocol</source>
+        <translation>Протокол</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
