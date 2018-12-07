@@ -81,6 +81,11 @@ void SettingsPage::clearChangedKeys() noexcept
 	m_somethingChanged = false;
 }
 
+bool SeoSpider::SettingsPage::somethingChanged() const noexcept
+{
+	return m_somethingChanged;
+}
+
 void SettingsPage::init()
 {
 	registerMetaTypes();

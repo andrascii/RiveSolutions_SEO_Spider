@@ -22,6 +22,7 @@ public:
 	virtual bool isAutoApply() const noexcept override;
 	void setSomethingChanged(bool val) noexcept;
 	void clearChangedKeys() noexcept;
+	bool somethingChanged() const noexcept;
 
 	Q_SLOT void somethingChangedSlot();
 	Q_SIGNAL void somethingChangedSignal();
