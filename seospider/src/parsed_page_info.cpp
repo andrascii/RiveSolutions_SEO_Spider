@@ -22,6 +22,7 @@ QString ParsedPageInfo::itemTypeDescription(Column column)
 		{ ParsedPageInfo::Column::MetaRobotsColumn, QObject::tr("Meta Robots") },
 		{ ParsedPageInfo::Column::RedirectedUrlColumn, QObject::tr("Redirected URL") },
 		{ ParsedPageInfo::Column::ServerResponseColumn, QObject::tr("Server Response") },
+		{ ParsedPageInfo::Column::SchemeColumn, QObject::tr("Protocol") },
 		{ ParsedPageInfo::Column::MetaDescriptionColumn, QObject::tr("Meta Description") },
 		{ ParsedPageInfo::Column::MetaKeywordsColumn, QObject::tr("Meta Keywords") },
 		{ ParsedPageInfo::Column::FirstH1Column, QObject::tr("First H1") },
@@ -79,6 +80,7 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::MetaKeywordsColumn, Common::Helpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::RedirectedUrlColumn, Common::Helpers::pointsToPixels(300) },
 		{ ParsedPageInfo::Column::ServerResponseColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::SchemeColumn, Common::Helpers::pointsToPixels(50) },
 		{ ParsedPageInfo::Column::FirstH1Column, Common::Helpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::SecondH1Column, Common::Helpers::pointsToPixels(400) },
 		{ ParsedPageInfo::Column::FirstH2Column, Common::Helpers::pointsToPixels(400) },
@@ -305,6 +307,10 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column)
 		{
 			return &ParsedPageInfo::acceptServerResponse;
 		}
+		case Column::SchemeColumn:
+		{
+			return &ParsedPageInfo::acceptScheme;
+		}
 		case Column::MetaDescriptionColumn:
 		{
 			return &ParsedPageInfo::acceptMetaDescription;
@@ -480,6 +486,12 @@ QVariant ParsedPageInfo::acceptRedirectedUrl() const
 QVariant ParsedPageInfo::acceptServerResponse() const
 {
 	return m_parsedPage->serverResponse;
+}
+
+QVariant ParsedPageInfo::acceptScheme() const
+{
+	// TODO: return http, https, other
+	return m_parsedPage->url.scheme();
 }
 
 QVariant ParsedPageInfo::acceptMetaDescription() const
