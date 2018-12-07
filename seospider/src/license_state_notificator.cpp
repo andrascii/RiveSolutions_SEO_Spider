@@ -59,7 +59,7 @@ void LicenseStateNotificator::onLicenseStateChanged(int reason)
 			{
 				theApp->mainWindow()->showMessageBoxDialog(
 					popupHeader,
-					tr("Unfortunately we detected that your license serial number is invalid!"),
+					tr("Unfortunately we detected that your license serial number is invalid"),
 					QDialogButtonBox::Ok);
 			};
 
