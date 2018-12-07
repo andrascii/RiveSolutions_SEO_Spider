@@ -841,8 +841,7 @@ QFrame#UpdateLoaderDialogContent QPushButton
 	font: bold;
 	font-size: 11pt;
 	min-height: 1.5em;
-	min-width: 8em;
-	max-width: 8em;
+	padding: 0em 2em;
 }
 
 QFrame#UpdateLoaderDialogContent QPushButton#downloadNowButton
