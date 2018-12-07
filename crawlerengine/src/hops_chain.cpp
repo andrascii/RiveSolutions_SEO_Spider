@@ -16,7 +16,7 @@ void HopsChain::addHop(Hop&& hop)
 bool HopsChain::hasHopTo(const Url& url) const noexcept
 {
 	const auto predicate = [&url](const Hop& hop)
-	{ 
+	{
 		return url.compare(hop.url());
 	};
 
@@ -61,6 +61,37 @@ const Hop& HopsChain::operator[](std::size_t idx) const noexcept
 bool HopsChain::empty() const noexcept
 {
 	return m_hopsChain.empty();
+}
+
+
+HopsChain::iterator HopsChain::begin() noexcept
+{
+	return m_hopsChain.begin();
+}
+
+HopsChain::const_iterator HopsChain::begin() const noexcept
+{
+	return m_hopsChain.begin();
+}
+
+HopsChain::const_iterator HopsChain::cbegin() const noexcept
+{
+	return m_hopsChain.cbegin();
+}
+
+HopsChain::iterator HopsChain::end() noexcept
+{
+	return m_hopsChain.end();
+}
+
+HopsChain::const_iterator HopsChain::end() const noexcept
+{
+	return m_hopsChain.end();
+}
+
+HopsChain::const_iterator HopsChain::cend() const noexcept
+{
+	return m_hopsChain.cend();
 }
 
 }

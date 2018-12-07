@@ -11,6 +11,7 @@ namespace CrawlerEngine
 class ResponseHeaders;
 class RandomIntervalRangeTimer;
 class MultiSocketLoader;
+class HopsChain;
 struct DownloadResponse;
 
 class MultiSocketDownloadHandler : public AbstractDownloadHandler
@@ -54,15 +55,11 @@ private:
 	void removeRequestIndexesChain(int id);
 
 	void followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
-		const std::shared_ptr<DownloadResponse>& response,
 		int parentRequestId,
-		const Url& url,
 		const Url& redirectUrlAddress,
-		const QByteArray& data,
-		DownloadRequestType requestType,
-		Common::StatusCode statusCode,
-		const ResponseHeaders& responseHeaders,
-		int timeElapsed);
+		DownloadRequestType requestType);
+
+	bool isRedirectLoop(const HopsChain& hopsChain, const Url& redirectUrlAddress) const;
 
 private:
 	MultiSocketLoader* m_multiSocketLoader;
