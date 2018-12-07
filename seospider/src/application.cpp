@@ -281,8 +281,9 @@ void Application::onAboutCrawlerOptionsChanged()
 	preferences()->setCheckJavaScript(parserTypeFlags.testFlag(CrawlerEngine::JavaScriptResourcesParserType));
 	preferences()->setCheckCSS(parserTypeFlags.testFlag(CrawlerEngine::CssResourcesParserType));
 	preferences()->setCheckImages(parserTypeFlags.testFlag(CrawlerEngine::ImagesResourcesParserType));
-	preferences()->setCheckSWF(parserTypeFlags.testFlag(CrawlerEngine::VideoResourcesParserType));
+	preferences()->setCheckVideo(parserTypeFlags.testFlag(CrawlerEngine::VideoResourcesParserType));
 	preferences()->setCheckSWF(parserTypeFlags.testFlag(CrawlerEngine::FlashResourcesParserType));
+	preferences()->setCheckOther(parserTypeFlags.testFlag(CrawlerEngine::OtherResourcesParserType));
 
 	// User agent settings
 	if (crawler()->options()->userAgent() == s_riveSolutionsUserAgent)
@@ -505,8 +506,9 @@ void Application::attachPreferencesToCrawlerOptions()
 		parserTypeFlags.setFlag(CrawlerEngine::JavaScriptResourcesParserType, preferences()->checkJavaScript());
 		parserTypeFlags.setFlag(CrawlerEngine::CssResourcesParserType, preferences()->checkCSS());
 		parserTypeFlags.setFlag(CrawlerEngine::ImagesResourcesParserType, preferences()->checkImages());
-		parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType, preferences()->checkSWF());
+		parserTypeFlags.setFlag(CrawlerEngine::VideoResourcesParserType, preferences()->checkVideo());
 		parserTypeFlags.setFlag(CrawlerEngine::FlashResourcesParserType, preferences()->checkSWF());
+		parserTypeFlags.setFlag(CrawlerEngine::OtherResourcesParserType, preferences()->checkOther());
 
 		crawler()->options()->setParserTypeFlags(parserTypeFlags);
 	};
@@ -515,6 +517,8 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), &Preferences::checkCSSChanged, parserTypeFlagsMapper));
 	VERIFY(connect(preferences(), &Preferences::checkImagesChanged, parserTypeFlagsMapper));
 	VERIFY(connect(preferences(), &Preferences::checkSWFChanged, parserTypeFlagsMapper));
+	VERIFY(connect(preferences(), &Preferences::checkVideoChanged, parserTypeFlagsMapper));
+	VERIFY(connect(preferences(), &Preferences::checkOtherChanged, parserTypeFlagsMapper));
 
 	const auto userAgentMapper = [this](bool)
 	{

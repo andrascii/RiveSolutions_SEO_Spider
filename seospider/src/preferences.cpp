@@ -175,6 +175,28 @@ void Preferences::setCheckSWF(bool value)
 	emit checkSWFChanged(value);
 }
 
+bool Preferences::checkVideo() const
+{
+	return m_checkVideo;
+}
+
+void Preferences::setCheckVideo(bool value)
+{
+	m_checkVideo = value;
+	emit checkVideoChanged(value);
+}
+
+bool Preferences::checkOther() const
+{
+	return m_checkOther;
+}
+
+void Preferences::setCheckOther(bool value)
+{
+	m_checkOther = value;
+	emit checkOtherChanged(value);
+}
+
 bool Preferences::checkExternalUrls() const
 {
 	return m_checkExternalUrls;
