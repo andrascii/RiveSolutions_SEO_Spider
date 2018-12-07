@@ -634,7 +634,7 @@ void ModelController::processParsedPageStatusCode(WorkerResult& workerResult, bo
 		data()->addParsedPage(workerResult, StorageType::TimeoutStorageType);
 	}
 
-	if (workerResult.incomingPage()->statusCode == Common::StatusCode::TooLongLInk)
+	if (workerResult.incomingPage()->statusCode == Common::StatusCode::TooLongLink)
 	{
 		data()->addParsedPage(workerResult, StorageType::TooLongUrlStorageType);
 	}

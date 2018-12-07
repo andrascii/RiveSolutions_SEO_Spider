@@ -438,7 +438,7 @@ void CrawlerWorker::handlePage(ParsedPagePtr& page,
 			ParsedPagePtr page(new ParsedPage);
 
 			page->url = resource.link.url;
-			page->statusCode = Common::StatusCode::TooLongLInk;
+			page->statusCode = Common::StatusCode::TooLongLink;
 			page->resourceType = resource.resourceType;
 
 			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead, std::vector<bool>() });

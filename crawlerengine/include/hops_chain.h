@@ -9,6 +9,9 @@ namespace CrawlerEngine
 class HopsChain
 {
 public:
+	using iterator = std::vector<Hop>::iterator;
+	using const_iterator = std::vector<Hop>::const_iterator;
+
 	void addHop(const Hop& hop);
 	void addHop(Hop&& hop);
 
@@ -25,6 +28,15 @@ public:
 	const Hop& operator[](std::size_t idx) const noexcept;
 
 	bool empty() const noexcept;
+
+
+	iterator begin() noexcept;
+	const_iterator begin() const noexcept;
+	const_iterator cbegin() const noexcept;
+
+	iterator end() noexcept;
+	const_iterator end() const noexcept;
+	const_iterator cend() const noexcept;
 
 private:
 	std::vector<Hop> m_hopsChain;

@@ -7,8 +7,6 @@
 #include "helpers.h"
 #include "thread_message_dispatcher.h"
 
-std::vector<int> testIndices;
-
 namespace CrawlerEngine
 {
 
@@ -171,40 +169,29 @@ void MultiSocketDownloadHandler::removeRequestIndexesChain(int id)
 		chain.push_back(redirectBindingIterator.key());
 		redirectBindingIterator = m_redirectRequestIdToParentId.find(redirectBindingIterator.value());
 	}
-
-	std::for_each(chain.begin(), chain.end(), [this](int key) { m_redirectRequestIdToParentId.remove(key); });
 }
 
 void MultiSocketDownloadHandler::followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
-	const std::shared_ptr<DownloadResponse>& response,
 	int parentRequestId,
-	const Url& url,
 	const Url& redirectUrlAddress,
-	const QByteArray& data,
-	DownloadRequestType requestType,
-	Common::StatusCode statusCode,
-	const ResponseHeaders& responseHeaders,
-	int timeElapsed)
+	DownloadRequestType requestType)
 {
-	int urlsInChain = 0;
+	const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
+	const int redirectionRequestId = loadHelper(redirectKey, bodyProcessingCommand);
+	m_redirectRequestIdToParentId[redirectionRequestId] = parentRequestId;
+}
 
-	for (size_t i = 0; i < response->hopsChain.length(); ++i)
+
+bool MultiSocketDownloadHandler::isRedirectLoop(const HopsChain& hopsChain, const Url& redirectUrlAddress) const
+{
+	const auto urlComparator = [&redirectUrlAddress](const Hop& hop)
 	{
-		if (response->hopsChain[i].url() == redirectUrlAddress)
-		{
-			urlsInChain += 1;
-		}
-	}
+		return hop.url() == redirectUrlAddress;
+	};
 
-	if (urlsInChain <= 2)
-	{
-		const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
-		const int redirectionRequestId = loadHelper(redirectKey, bodyProcessingCommand);
+	const int urlCount = std::count_if(hopsChain.begin(), hopsChain.end(), urlComparator);
 
-		m_redirectRequestIdToParentId[redirectionRequestId] = parentRequestId;
-
-		response->hopsChain.addHop(Hop(url, redirectUrlAddress, statusCode, data, responseHeaders, timeElapsed));
-	}
+	return urlCount > 2;
 }
 
 void MultiSocketDownloadHandler::onAboutDownloadProgress(int id, double bytesTotal, double bytesReceived)
@@ -250,7 +237,7 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 	Common::StatusCode statusCode,
 	int timeElapsed)
 {
-	DEBUGLOG << "Loaded:" << url;
+	DEBUGLOG << "Loaded: " << url;
 
 	if (statusCode == Common::StatusCode::ProxyAuthenticationRequired407)
 	{
@@ -276,30 +263,35 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 	const Url loadedResourceUrl(url);
 	const Url redirectUrlAddress = redirectedUrl(responseHeaders, loadedResourceUrl);
 
+	response->hopsChain.addHop(Hop(loadedResourceUrl, redirectUrlAddress, statusCode, data, responseHeaders, timeElapsed));
+
 	if (isRedirectionStatusCode)
 	{
+		DEBUGLOG
+			<< "Url: "
+			<< url
+			<< " was redirected to: "
+			<< redirectUrlAddress.urlStr();
+
 		if (response->hopsChain.length() == static_cast<size_t>(maxRedirectsToProcess()))
 		{
 			statusCode = Common::StatusCode::TooManyRedirections;
 		}
+		else if (isRedirectLoop(response->hopsChain, redirectUrlAddress))
+		{
+			statusCode = Common::StatusCode::RedirectLoop;
+
+			DEBUGLOG
+				<< "redirect loop detected"
+				<< url;
+		}
 		else
 		{
-			followLocation(request->bodyProcessingCommand,
-				response,
-				id,
-				loadedResourceUrl,
-				redirectUrlAddress,
-				data,
-				requestType,
-				statusCode,
-				responseHeaders,
-				timeElapsed);
-
+			followLocation(request->bodyProcessingCommand, id, redirectUrlAddress, requestType);
 			return;
 		}
 	}
 
-	response->hopsChain.addHop(Hop(loadedResourceUrl, redirectUrlAddress, statusCode, data, responseHeaders, timeElapsed));
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
 	const int parentRequestId = parentIdFor(id);
@@ -331,13 +323,11 @@ int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request, Downlo
 		case DownloadRequestType::RequestTypeGet:
 		{
 			requestId = m_multiSocketLoader->get(request.url, bodyProcessingCommand);
-			testIndices.push_back(requestId);
 			break;
 		}
 		case DownloadRequestType::RequestTypeHead:
 		{
 			requestId = m_multiSocketLoader->head(request.url);
-			testIndices.push_back(requestId);
 			break;
 		}
 		default:

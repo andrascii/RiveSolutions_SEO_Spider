@@ -125,6 +125,13 @@ int MultiSocketLoader::head(const Url& url)
 	request->method = RequestDescriptor::Method::Head;
 
 	curl_easy_setopt(request->easy, CURLOPT_NOBODY, 1L);
+
+	// we should to return a copy of the request id
+	// because of curl_multi_add_handle immediately invokes
+	// checkMultiInfo which may to delete our request pointer
+	// in this case we will access to the freed memory - Undefined Behavior
+	const int returnValue = request->id;
+
 	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
 	return request->id;
@@ -479,6 +486,9 @@ void checkMultiInfo(CURLM* multiHandle, MultiSocketLoader* multiSocketLoader)
 
 			DEBUG_ASSERT(requestDescriptor->id != -1 || !"id is invalid");
 
+			const bool test = requestDescriptor->url.contains(QByteArray("http://interpult-s.ru/wp-content/uploads/2016/09/"));
+			test;
+
 			if (result == CURLE_OPERATION_TIMEDOUT)
 			{
 				requestDescriptor->statusCode = Common::StatusCode::Timeout;
@@ -492,16 +502,22 @@ void checkMultiInfo(CURLM* multiHandle, MultiSocketLoader* multiSocketLoader)
 				result != CURLE_OPERATION_TIMEDOUT &&
 				result != CURLE_ABORTED_BY_CALLBACK)
 			{
-				ERRLOG << requestDescriptor->error;
+				ERRLOG
+					<< "Url: "
+					<< requestDescriptor->url
+					<< " ID: "
+					<< requestDescriptor->id
+					<< " error: "
+					<< requestDescriptor->error;
 			}
 			else
 			{
 				DEBUGLOG
 					<< requestDescriptor->url
-					<< "loaded"
-					<< "(status code:"
+					<< " loaded"
+					<< " (status code:"
 					<< Common::StatusCodeDescription::description(requestDescriptor->statusCode)
-					<< ")";
+					<< ", id:" << requestDescriptor->id << ")";
 			}
 
 			DEBUG_ASSERT(requestDescriptor->method != RequestDescriptor::Method::Head || requestDescriptor->body.isEmpty());
