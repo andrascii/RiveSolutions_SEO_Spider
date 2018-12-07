@@ -1072,3 +1072,8 @@ SeoSpider--LookupLineEditWidget QPushButton#clearButton
 	border-right: 0;
 	background: #EFEFEF;
 }
+
+QWidget#propGroupsList
+{
+	min-width: 19em;
+}
