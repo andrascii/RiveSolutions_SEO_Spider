@@ -102,6 +102,16 @@ bool CrawlerSettingsWidget::eventFilter(QObject* object, QEvent* event)
 		m_ui.crawlMetaHerefLangLinksCheckBox->toggle();
 	}
 
+	if (object == m_ui.label_13 && event->type() == QEvent::MouseButtonRelease)
+	{
+		m_ui.checkVideoCheckBox->toggle();
+	}
+
+	if (object == m_ui.label_14 && event->type() == QEvent::MouseButtonRelease)
+	{
+		m_ui.checkOtherCheckBox->toggle();
+	}
+
 	return false;
 }
 

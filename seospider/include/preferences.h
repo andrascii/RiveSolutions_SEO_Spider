@@ -26,6 +26,8 @@ class Preferences : public QObject
 	Q_PROPERTY(bool checkCSS READ checkCSS WRITE setCheckCSS NOTIFY checkCSSChanged);
 	Q_PROPERTY(bool checkJavaScript READ checkJavaScript WRITE setCheckJavaScript NOTIFY checkJavaScriptChanged);
 	Q_PROPERTY(bool checkSWF READ checkSWF WRITE setCheckSWF NOTIFY checkSWFChanged);
+	Q_PROPERTY(bool checkVideo READ checkVideo WRITE setCheckVideo NOTIFY checkVideoChanged);
+	Q_PROPERTY(bool checkOther READ checkOther WRITE setCheckOther NOTIFY checkOtherChanged);
 	Q_PROPERTY(bool checkExternalUrls READ checkExternalUrls WRITE setCheckExternalUrls NOTIFY checkExternalUrlsChanged);
 	Q_PROPERTY(bool followInternalNoFollow READ followInternalNoFollow WRITE setFollowInternalNoFollow NOTIFY followInternalNoFollowChanged);
 	Q_PROPERTY(bool followExternalNoFollow READ followExternalNoFollow WRITE setFollowExternalNoFollow NOTIFY followExternalNoFollowChanged);
@@ -142,6 +144,14 @@ public:
 	bool checkSWF() const;
 	Q_SLOT void setCheckSWF(bool value);
 	Q_SIGNAL void checkSWFChanged(bool value);
+
+	bool checkVideo() const;
+	Q_SLOT void setCheckVideo(bool value);
+	Q_SIGNAL void checkVideoChanged(bool value);
+
+	bool checkOther() const;
+	Q_SLOT void setCheckOther(bool value);
+	Q_SIGNAL void checkOtherChanged(bool value);
 
 	bool checkExternalUrls() const;
 	Q_SLOT void setCheckExternalUrls(bool value);
@@ -356,6 +366,8 @@ private:
 	bool m_checkCSS;
 	bool m_checkJavaScript;
 	bool m_checkSWF;
+	bool m_checkVideo;
+	bool m_checkOther;
 	bool m_checkExternalUrls;
 	bool m_followInternalNoFollow;
 	bool m_followExternalNoFollow;

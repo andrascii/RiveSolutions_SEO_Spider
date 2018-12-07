@@ -265,6 +265,14 @@ Please, be sure that you entered a valid address</source>
         <source>Crawl meta hreflang links</source>
         <translation>Переходить по meta hreflang ссылкам</translation>
     </message>
+    <message>
+        <source>Check Video</source>
+        <translation>Проверять видео</translation>
+    </message>
+    <message>
+        <source>Check Other</source>
+        <translation>Проверять другие ресурсы</translation>
+    </message>
 </context>
 <context>
     <name>FeedbackDialog</name>
