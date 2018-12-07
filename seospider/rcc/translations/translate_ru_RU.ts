@@ -1576,6 +1576,14 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <source>Protocol</source>
         <translation>Протокол</translation>
     </message>
+    <message>
+        <source>Change language</source>
+        <translation>Изменить язык приложения</translation>
+    </message>
+    <message>
+        <source>You should restart the application to apply these changes</source>
+        <translation>Необходимо перезапустить  программу чтоб изменения вступили в силу</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>

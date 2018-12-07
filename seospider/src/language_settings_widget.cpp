@@ -1,6 +1,7 @@
 #include "language_settings_widget.h"
 #include "application.h"
 #include "preferences.h"
+#include "main_window.h"
 
 namespace SeoSpider
 {
@@ -52,7 +53,15 @@ void LanguageSettingsWidget::applyChanges() noexcept
 
 	DEBUGLOG << "applicationLanguage: " << theApp->preferences()->property("applicationLanguage").toString();
 
+	const bool languageChanged = somethingChanged();
+
 	SettingsPage::applyChanges();
+	
+	if (languageChanged)
+	{
+		const int result = theApp->mainWindow()->showMessageBoxDialog(QObject::tr("Change language"),
+			QObject::tr("You should restart the application to apply these changes"), QDialogButtonBox::Ok);
+	}
 }
 
 void LanguageSettingsWidget::onShow()
