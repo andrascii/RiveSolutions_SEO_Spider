@@ -51,10 +51,9 @@ PageDataWidgetSplitter::PageDataWidgetSplitter(QWidget* parent, QWidget* splitte
 	: QSplitter(parent)
 	, m_splitterFirstWidget(splitterFirstWidget)
 	, m_splitterSecondWidget(splitterSecondWidget)
-	, m_wasShown(false)
 	, m_pageDataWidgetCollapsed(false)
 	, m_animationEndHeight(0)
-	, m_defaultTableViewHeight(Common::Helpers::pointsToPixels(400))
+	, m_firstShowEvent(true)
 {
 	setOrientation(Qt::Vertical);
 	setChildrenCollapsible(false);
@@ -83,6 +82,11 @@ void PageDataWidgetSplitter::addPageDataWidget(PageDataWidget* splitterSecondWid
 	VERIFY(connect(splitterSecondWidget->tabWidget(), &QTabWidget::currentChanged, this, &PageDataWidgetSplitter::updateTabTooltips));
 	splitterSecondWidget->installEventFilter(this);
 	updateTabTooltips();
+
+	m_splitterSecondWidget->setMaximumHeight(collapsedPageDataWidgetHeight());
+	m_prevDatawidgetHeight = 0.3;
+	m_pageDataWidgetCollapsed = true;
+	m_splitterFirstWidget->adjustSize();
 }
 
 int PageDataWidgetSplitter::secondWidgetHeight() const
@@ -115,13 +119,14 @@ void PageDataWidgetSplitter::syncronize(const PageDataWidgetSplitter* other)
 		return;
 	}
 	
-	setSecondWidgetHeightImpl(other->m_splitterSecondWidget->height(), false);
+	const int height = other->m_splitterSecondWidget->height();
+	setSecondWidgetHeightImpl(height, false);
 	m_splitterSecondWidget->setMaximumHeight(other->m_splitterSecondWidget->maximumHeight());
-	m_defaultTableViewHeight = other->m_splitterFirstWidget->height();
 
 	m_pageDataWidgetCollapsed = other->m_pageDataWidgetCollapsed;
 	m_prevDatawidgetHeight = other->m_prevDatawidgetHeight;
 	m_animationEndHeight = other->m_animationEndHeight;
+	m_secondWidgetHeight = height;
 	updateTabTooltips();
 }
 
@@ -138,20 +143,11 @@ bool PageDataWidgetSplitter::eventFilter(QObject* watched, QEvent* event)
 
 void PageDataWidgetSplitter::showEvent(QShowEvent*)
 {
-	if (m_wasShown)
+	if (m_secondWidgetHeight != std::nullopt && m_firstShowEvent)
 	{
-		return;
+		setSecondWidgetHeightImpl(m_secondWidgetHeight.value(), false);
+		m_firstShowEvent = false;
 	}
-
-	QWidget* parentWidget = qobject_cast<QWidget*>(parent())->parentWidget();
-
-	ASSERT(parentWidget);
-
-	const int parentWidgetHeight = parentWidget->height();
-	const int mainTableView = m_defaultTableViewHeight;
-
-	setSizes(QList<int>() << mainTableView << parentWidgetHeight - mainTableView);
-	m_wasShown = true;
 }
 
 int PageDataWidgetSplitter::collapsedPageDataWidgetHeight()
@@ -165,21 +161,16 @@ void PageDataWidgetSplitter::setSecondWidgetHeightImpl(int height, bool setMaxim
 	const bool animationEnd = height == m_animationEndHeight &&
 		m_splitterSecondWidget->height() != height;
 	
-	int parentWidgetHeight = m_splitterFirstWidget->height() + m_splitterSecondWidget->height();
-
-	if (!m_wasShown)
-	{
-		QWidget* parentWidget = qobject_cast<QWidget*>(parent())->parentWidget();
-		ASSERT(parentWidget);
-		parentWidgetHeight = parentWidget->height();
-	}
+	const int parentWidgetHeight = m_splitterFirstWidget->height() + m_splitterSecondWidget->height();
 
 	if (setMaximumHeight)
 	{
 		m_splitterSecondWidget->setMaximumHeight(height);
 	}
 
-	setSizes(QList<int>() << parentWidgetHeight - height << height);
+	const int firstWidgetHeight = parentWidgetHeight - height;
+
+	setSizes(QList<int>() << firstWidgetHeight << height);
 
 	if (animationEnd)
 	{

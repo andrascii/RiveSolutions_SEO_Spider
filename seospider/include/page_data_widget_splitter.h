@@ -37,11 +37,11 @@ private slots:
 private:
 	QWidget* m_splitterFirstWidget;
 	PageDataWidget* m_splitterSecondWidget;
-	bool m_wasShown;
 	bool m_pageDataWidgetCollapsed;
 	double m_prevDatawidgetHeight;
 	int m_animationEndHeight;
-	int m_defaultTableViewHeight;
+	std::optional<int> m_secondWidgetHeight;
+	bool m_firstShowEvent;
 };
 
 }
