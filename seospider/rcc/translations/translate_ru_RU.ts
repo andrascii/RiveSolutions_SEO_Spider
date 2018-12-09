@@ -1380,7 +1380,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     <message>
         <source>Data by specified filters were successful exported to the
 %1 file.</source>
-        <translation>Данные по указанному фильтро были успешно экспортированы в %1 файл.</translation>
+        <translation>Данные по указанному фильтру были успешно экспортированы в %1 файл.</translation>
     </message>
     <message>
         <source>No results found for &quot;%1&quot;</source>
