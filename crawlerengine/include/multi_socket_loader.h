@@ -33,6 +33,16 @@ struct RequestDescriptor
 		Post
 	};
 
+	RequestDescriptor(const std::function<void(int)>& onDestroyFunction)
+		: onDestroyFunction(onDestroyFunction)
+	{
+	}
+
+	~RequestDescriptor()
+	{
+		onDestroyFunction(id);
+	}
+
 	struct UploadData
 	{
 		//! buffer
@@ -68,6 +78,8 @@ struct RequestDescriptor
 	int id = -1;
 	//! this buffer stores CURL error message if it occurs
 	char error[CURL_ERROR_SIZE];
+	//! destroy function which is removes this descriptor by id from MultiSocketLoader::m_activeRequestDescriptors map
+	std::function<void(int)> onDestroyFunction;
 };
 
 class MultiSocketLoader : public QObject
@@ -92,6 +104,8 @@ public:
 	void setUserAgent(const QByteArray& userAgent);
 
 	int currentParallelConnections() const noexcept;
+	void pauseConnection(int id) const noexcept;
+	void unpauseConnection(int id) const noexcept;
 
 signals:
 	void loaded(int id,
@@ -103,7 +117,6 @@ signals:
 
 	void downloadProgress(int id, double total, double received);
 	void uploadProgress(int id, double total, double sent);
-
 	void currentParallelTransferCountChanged(int count);
 
 protected:
@@ -116,6 +129,8 @@ private:
 	void setTimer();
 	void resetTimer();
 	void applyProxySettingsIfNeeded(CURL* easyHandle) const;
+
+	RequestDescriptor* createRequestDescriptor(const Url& url, size_t timeoutMilliseconds, curl_slist* headers);
 
 private:
 	struct SocketFunctionCallbackPrivateData
@@ -135,7 +150,6 @@ private:
 
 private:
 	static MultiSocketLoader* instance();
-	static RequestDescriptor* createRequestDescriptor(const Url& url, size_t timeoutMilliseconds, curl_slist* headers);
 	static int socketFunctionCallback(CURL* easy, curl_socket_t s, int action, void* userPrivateData, void* socketPrivateData);
 	static int timerFunctionCallback(CURLM* multi, long timeoutMs, void* userPrivateData);
 	static size_t writeBodyCallback(void* buffer, size_t size, size_t nmemb, void* userData);
@@ -149,10 +163,11 @@ private:
 private:
 	QTimer* m_timer;
 	SocketFunctionCallbackPrivateData m_socketPrivateData;
-	size_t m_timeoutMilliseconds;
 	ProxySettings m_proxySettings;
-	int m_requestCounter;
 	CurlHttpHeadersWrapper m_headers;
+	QMap<int, RequestDescriptor*> m_activeRequestDescriptors;
+	size_t m_timeoutMilliseconds;
+	int m_requestCounter;
 	int m_timerId;
 };
 

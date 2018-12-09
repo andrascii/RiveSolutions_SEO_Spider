@@ -50,6 +50,8 @@ private:
 
 private:
 	int loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand);
+
+	//! extracts and returns the value of the Location header (resolves the location address by baseAddress)
 	Url redirectedUrl(const ResponseHeaders& responseHeaders, const Url& baseAddress) const;
 
 	RequesterSharedPtr requesterByIdAssertIfNotExists(int id) const;
@@ -58,24 +60,43 @@ private:
 
 	void removeRequestIndexesChain(int id);
 
+	//! creates new request to load a redirection target
 	void followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
 		int parentRequestId,
 		const Url& redirectUrlAddress,
 		DownloadRequestType requestType);
 
+	//! true if redirectUrlAddress contains twice in the hopsChain
 	bool isRedirectLoop(const HopsChain& hopsChain, const Url& redirectUrlAddress) const;
+
+	//! returns the valid request indexes which should be paused
+	QVector<int> requestIndexesToPause() const;
+
+	//! returns first unpaused requester and also clears expired requesters by searching pass
+	RequesterSharedPtr extractFirstUnpausedRequester();
 
 private:
 	MultiSocketLoader* m_multiSocketLoader;
 
-	// contains mapping redirect request indexes to their parent request indexes
+	//! contains mapping redirect request indexes to their parent request indexes
+	//! { redirection request index => parent request index }
+	//! where parent request id for redirection request id can also be the redirection request id
 	QMap<int, int> m_redirectRequestIdToParentId;
 
+	//! contains { parent request id (first request) => list of redirection requests ids }
+	QMap<int, QVector<int>> m_parentIdToRedirectIds;
+
+	//! current active requesters (which are already passed to the libcurl)
 	QMap<int, RequesterWeakPtr> m_activeRequesters;
+
+	//! responses for the active requesters
 	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
+
+	//! requesters will be added to this container
+	//! if maximum parallel transfer count achieved
 	QQueue<RequesterWeakPtr> m_pendingRequesters;
 
-	// stores the pointers to the requesters which must be paused
+	//! stores the pointers to the requesters which must be paused
 	QSet<const void*> m_pausedRequesters;
 };
 
