@@ -9,6 +9,16 @@
 #include "cursor_factory.h"
 #include "statistic_counter.h"
 
+namespace
+{
+SeoSpider::SettingsPage* getSettingsPage(QWidget* widget)
+{
+	SeoSpider::SettingsPage* settingsPage = widget->findChild<SeoSpider::SettingsPage*>();
+	ASSERT(settingsPage != nullptr);
+	return settingsPage;
+}
+}
+
 namespace SeoSpider
 {
 
@@ -61,7 +71,7 @@ void ApplicationSettingsDialog::closeEvent(QCloseEvent*)
 	for (int index = 0; index < m_ui.stackedWidget->count(); index++)
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
-		Common::Helpers::fast_cast<SettingsPage*>(widget)->onClose();
+		getSettingsPage(widget)->onClose();
 	}
 }
 
@@ -72,7 +82,7 @@ void ApplicationSettingsDialog::restoreChangedValues()
 	for (int index = 0; index < m_ui.stackedWidget->count(); index++)
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
-		Common::Helpers::fast_cast<SettingsPage*>(widget)->setSomethingChanged(m_somethingChanged);
+		getSettingsPage(widget)->setSomethingChanged(m_somethingChanged);
 	}
 
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -85,7 +95,7 @@ void ApplicationSettingsDialog::applyChanges()
 	for (int index = 0 ; index < m_ui.stackedWidget->count(); index++)
 	{
 		QWidget* widget = m_ui.stackedWidget->widget(index);
-		Common::Helpers::fast_cast<SettingsPage*>(widget)->applyChanges();
+		getSettingsPage(widget)->applyChanges();
 	}
 
 	m_ui.applyButton->setEnabled(m_somethingChanged);
@@ -122,7 +132,7 @@ void ApplicationSettingsDialog::reloadSettingsSlot()
 		return;
 	}
 
-	Common::Helpers::fast_cast<SettingsPage*>(widget)->reloadSettings();
+	getSettingsPage(widget)->reloadSettings();
 	m_somethingChanged = false;
 }
 
@@ -145,7 +155,7 @@ void ApplicationSettingsDialog::currentSettingsPageChanged(int index)
 	}
 
 	QWidget* widget = m_ui.stackedWidget->widget(index);
-	Common::Helpers::fast_cast<SettingsPage*>(widget)->onShow();
+	getSettingsPage(widget)->onShow();
 }
 
 ApplicationSettingsDialog::~ApplicationSettingsDialog()
@@ -207,7 +217,13 @@ void ApplicationSettingsDialog::initialize()
 		item->setData(Qt::UserRole, pageId);
 		VERIFY(connect(page, SIGNAL(somethingChangedSignal()), this, SLOT(somethingChangedSlot())));
 
-		m_ui.stackedWidget->addWidget(page);
+		QScrollArea* scrollArea = new QScrollArea(this);
+		scrollArea->setObjectName(QStringLiteral("scrollArea"));
+		scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		scrollArea->setWidgetResizable(true);
+		scrollArea->setWidget(page);
+
+		m_ui.stackedWidget->addWidget(scrollArea);
 		m_ui.propGroupsList->addItem(item);
 
 		m_pageIndex[pageId] = pageIndex++;
