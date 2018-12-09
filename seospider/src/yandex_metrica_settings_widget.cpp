@@ -157,6 +157,11 @@ void YandexMetricaSettingsWidget::onSearchCounterChanged(const QVariant& value)
 
 void YandexMetricaSettingsWidget::validateHelperControlValue()
 {
+	if (m_applyingChanges)
+	{
+		return;
+	}
+
 	std::vector<bool> ymCountersState;
 
 	for (int i = 0, sz = m_lineEdits.size(); i < sz; ++i)
@@ -216,7 +221,7 @@ void YandexMetricaSettingsWidget::applyChanges()
 
 	SettingsPage::applyChanges();
 	m_applyingChanges = false;
-	m_helperControl->setValue(m_visibleLineEditCount);
+	validateHelperControlValue();
 }
 
 }
