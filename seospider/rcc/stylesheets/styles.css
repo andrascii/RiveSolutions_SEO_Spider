@@ -414,6 +414,14 @@ SeoSpider--SettingsPage QLabel
 	font-size: 10pt;
 }
 
+SeoSpider--SettingsPage QSpinBox:disabled,
+SeoSpider--SettingsPage QComboBox:disabled,
+SeoSpider--SettingsPage QLineEdit:disabled,
+SeoSpider--SettingsPage QLabel:disabled
+{
+	color: #eeeeee;
+}
+
 /*/////////////////////////////// ApplicationSettingsDialog ///////////////////////////*/
 
 SeoSpider--ApplicationSettingsDialog

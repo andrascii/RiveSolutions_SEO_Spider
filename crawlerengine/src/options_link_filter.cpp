@@ -49,7 +49,7 @@ bool OptionsLinkFilter::checkRestriction(Restriction restriction, const LinkInfo
 
 	if (restriction == Restriction::RestrictionExternalLinksNotAllowed)
 	{
-		return !isNofollowLink && !isSubdomain && isUrlExternal && !m_crawlerOptionsData.checkExternalLinks;
+		return isUrlExternal && !m_crawlerOptionsData.checkExternalLinks;
 	}
 
 	if (restriction == Restriction::RestrictionBlockedByRobotsTxtRules)

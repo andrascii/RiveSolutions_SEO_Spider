@@ -337,6 +337,48 @@ TEST(LinksTests, ExternalDoFollow)
 	env.exec();
 }
 
+TEST(LinksTests, DiscardAllExternalLinks)
+{
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/external.html"));
+	options.checkExternalLinks = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(1, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, DiscardOnlyNoFollowExternalLinks)
+{
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/external.html"));
+	options.checkExternalLinks = true;
+	options.followExternalNofollow = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(2, pages.size());
+
+		auto externalDoFollowPages = cl->storageItems(StorageType::ExternalDoFollowUrlResourcesStorageType);
+		EXPECT_EQ(QString("http://external.com/link1"), externalDoFollowPages.at(0)->url.toDisplayString());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(LinksTests, BlockedResourcesByMetaRobots)
 {
 	TestEnvironment env;
