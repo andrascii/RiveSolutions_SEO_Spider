@@ -8,18 +8,17 @@ PageVisualSettingsWidget::PageVisualSettingsWidget(QWidget* parent)
 	: SettingsPage(parent)
 {
 	m_ui.setupUi(this);
+
+	VERIFY(connect(m_ui.useCustomBackgroundForNotIndexPagesCheckBox, &QCheckBox::toggled, 
+		m_ui.notIndexedPagesColorLabel, &QWidget::setEnabled));
+
+	VERIFY(connect(m_ui.useCustomBackgroundForNotIndexPagesCheckBox, &QCheckBox::toggled,
+		m_ui.colorSelector, &QWidget::setEnabled));
+
+	m_ui.notIndexedPagesColorLabel->setEnabled(m_ui.useCustomBackgroundForNotIndexPagesCheckBox->isChecked());
+	m_ui.colorSelector->setEnabled(m_ui.useCustomBackgroundForNotIndexPagesCheckBox->isChecked());
+
 	init();
-}
-
-bool PageVisualSettingsWidget::eventFilter(QObject* object, QEvent* event)
-{
-	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease
-		&& m_ui.useCustomBackgroundForNotIndexPagesCheckBox->isEnabled())
-	{
-		m_ui.useCustomBackgroundForNotIndexPagesCheckBox->toggle();
-	}
-
-	return false;
 }
 
 void PageVisualSettingsWidget::onClose()
@@ -28,7 +27,6 @@ void PageVisualSettingsWidget::onClose()
 
 void PageVisualSettingsWidget::init()
 {
-	m_ui.label->installEventFilter(this);
 	SettingsPage::init();
 }
 

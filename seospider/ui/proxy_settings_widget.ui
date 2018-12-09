@@ -67,40 +67,8 @@
         </item>
         <item row="5" column="1">
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="proxyNeedAuthorizationCheckBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="controlKey" stdset="0">
-             <string notr="true">proxyNeedAuthorization</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="proxyRequiresAuthorizationLabel">
-            <property name="text">
-             <string>Proxy requires authorization</string>
-            </property>
-            <property name="buddy">
-             <cstring>proxyNeedAuthorizationCheckBox</cstring>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="usernameLabel">
             <property name="text">
              <string>Username:</string>
             </property>
@@ -117,7 +85,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="passwordLabel">
             <property name="text">
              <string>Password:</string>
             </property>
@@ -133,6 +101,44 @@
             </property>
             <property name="controlKey" stdset="0">
              <string notr="true">proxyPassword</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>15</width>
+              <height>1</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="proxyNeedAuthorizationCheckBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Proxy requires authorization</string>
+            </property>
+            <property name="controlKey" stdset="0">
+             <string notr="true">proxyNeedAuthorization</string>
             </property>
            </widget>
           </item>
@@ -165,40 +171,14 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="portLabel">
           <property name="text">
            <string>Port:</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="useProxyCheckBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">useProxy</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="useProxyLabel">
-          <property name="text">
-           <string>Use proxy</string>
-          </property>
-          <property name="buddy">
-           <cstring>useProxyCheckBox</cstring>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="proxyAddressLabel">
           <property name="text">
            <string>Proxy address:</string>
           </property>
@@ -216,6 +196,38 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="1" column="0">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>15</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QCheckBox" name="useProxyCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Use proxy</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">useProxy</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

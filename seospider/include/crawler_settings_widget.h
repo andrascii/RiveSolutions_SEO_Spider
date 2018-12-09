@@ -15,7 +15,6 @@ public:
 
 protected:
 	virtual void init() override;
-	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private:
 	virtual void onShow() override;

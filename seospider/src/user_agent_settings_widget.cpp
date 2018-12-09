@@ -63,21 +63,8 @@ void UserAgentSettingsWidget::onClose()
 {
 }
 
-bool UserAgentSettingsWidget::eventFilter(QObject* object, QEvent* event)
-{
-	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease
-		&& m_ui.useCustomUserAgentCheckBox->isEnabled())
-	{
-		m_ui.useCustomUserAgentCheckBox->toggle();
-	}
-
-	return false;
-}
-
 void UserAgentSettingsWidget::init()
 {
-	m_ui.label->installEventFilter(this);
-
 	loadUserAgentsFromFile(":/config/desktopUserAgents.cfg", m_ui.desktopUserAgentComboBox);
 	loadUserAgentsFromFile(":/config/mobileUserAgents.cfg", m_ui.mobileUserAgentComboBox);
 

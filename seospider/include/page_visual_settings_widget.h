@@ -13,9 +13,6 @@ class PageVisualSettingsWidget : public SettingsPage
 public:
 	PageVisualSettingsWidget(QWidget* parent = nullptr);
 
-protected:
-	virtual bool eventFilter(QObject* object, QEvent* event) override;
-
 private:
 	virtual void onShow() override;
 	virtual void onClose() override;

@@ -14,7 +14,6 @@ public:
 	ProxySettingsWidget(QWidget* parent = nullptr);
 
 protected:
-	virtual bool eventFilter(QObject* object, QEvent* event) override;
 	virtual void init() override;
 
 private slots:
