@@ -9,7 +9,7 @@
 namespace
 {
 
-constexpr int c_maxParallelTransferCount = 24;
+constexpr int c_maxParallelTransferCount = 3;
 
 }
 
@@ -24,7 +24,7 @@ MultiSocketDownloadHandler::MultiSocketDownloadHandler()
 
 	// must be queued connection
 	// otherwise loader can emit signal about loaded url
-	// before we add the request id to the m_requesters map
+	// before we add the request id to the m_activeRequesters map
 	// in this case we have not a chance to find a requester in the onUrlLoaded slot!!!
 	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::loaded,
 		this, &MultiSocketDownloadHandler::onUrlLoaded, Qt::QueuedConnection));
@@ -98,6 +98,13 @@ void MultiSocketDownloadHandler::pauseRequesters(const QVector<const void*>& req
 	{
 		m_pausedRequesters.insert(p);
 	});
+
+	QVector<int> requestIndexes = requestIndexesToPause();
+
+	std::for_each(requestIndexes.begin(), requestIndexes.end(), [this](int id)
+	{
+		m_multiSocketLoader->pauseConnection(id);
+	});
 }
 
 void MultiSocketDownloadHandler::unpauseRequesters(const QVector<const void*>& requesterToBeUnpaused)
@@ -108,6 +115,7 @@ void MultiSocketDownloadHandler::unpauseRequesters(const QVector<const void*>& r
 	});
 }
 
+//! extracts and returns the value of the Location header (resolves the location address by baseAddress)
 Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders& responseHeaders, const Url& baseAddress) const
 {
 	const std::vector<QString> locationHeaderData = responseHeaders.valueOf("location");
@@ -190,8 +198,21 @@ void MultiSocketDownloadHandler::removeRequestIndexesChain(int id)
 		chain.push_back(redirectBindingIterator.key());
 		redirectBindingIterator = m_redirectRequestIdToParentId.find(redirectBindingIterator.value());
 	}
+
+	if (chain.empty())
+	{
+		return;
+	}
+
+	m_parentIdToRedirectIds.remove(m_redirectRequestIdToParentId[chain.back()]);
+
+	std::for_each(chain.begin(), chain.end(), [this](int id)
+	{
+		m_redirectRequestIdToParentId.remove(id);
+	});
 }
 
+//! creates new request to load a redirection target
 void MultiSocketDownloadHandler::followLocation(DownloadRequest::BodyProcessingCommand bodyProcessingCommand,
 	int parentRequestId,
 	const Url& redirectUrlAddress,
@@ -200,9 +221,10 @@ void MultiSocketDownloadHandler::followLocation(DownloadRequest::BodyProcessingC
 	const CrawlerRequest redirectKey{ redirectUrlAddress, requestType };
 	const int redirectionRequestId = loadHelper(redirectKey, bodyProcessingCommand);
 	m_redirectRequestIdToParentId[redirectionRequestId] = parentRequestId;
+	m_parentIdToRedirectIds[parentRequestId].append(redirectionRequestId);
 }
 
-
+//! true if redirectUrlAddress contains twice in the hopsChain
 bool MultiSocketDownloadHandler::isRedirectLoop(const HopsChain& hopsChain, const Url& redirectUrlAddress) const
 {
 	const auto urlComparator = [&redirectUrlAddress](const Hop& hop)
@@ -213,6 +235,41 @@ bool MultiSocketDownloadHandler::isRedirectLoop(const HopsChain& hopsChain, cons
 	const int urlCount = std::count_if(hopsChain.begin(), hopsChain.end(), urlComparator);
 
 	return urlCount > 2;
+}
+
+//! returns the valid request indexes which should be paused
+QVector<int> MultiSocketDownloadHandler::requestIndexesToPause() const
+{
+	using ActiveRequesterMapIterator = QMap<int, RequesterWeakPtr>::const_iterator;
+
+	QVector<int> result;
+
+	for (ActiveRequesterMapIterator iterator = m_activeRequesters.begin(), last = m_activeRequesters.end(); iterator != last; ++iterator)
+	{
+		if (iterator.value().expired())
+		{
+			continue;
+		}
+
+		RequesterSharedPtr actualRequester = iterator.value().lock();
+
+		if (!m_pausedRequesters.contains(actualRequester.get()))
+		{
+			continue;
+		}
+
+		if (m_parentIdToRedirectIds.contains(iterator.key()))
+		{
+			DEBUG_ASSERT(!m_parentIdToRedirectIds[iterator.key()].isEmpty());
+			result.append(m_parentIdToRedirectIds[iterator.key()].back());
+		}
+		else
+		{
+			result.append(iterator.key());
+		}
+	}
+
+	return result;
 }
 
 void MultiSocketDownloadHandler::onAboutDownloadProgress(int id, double bytesTotal, double bytesReceived)
@@ -315,11 +372,11 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
-	const int parentRequestId = parentIdFor(id);
-	const int idToDelete = parentRequestId == -1 ? id : parentRequestId;
+	const int parentId = parentIdFor(id);
+	const int parentRequestId = parentId == -1 ? id : parentId;
 
-	m_responses.remove(idToDelete);
-	m_activeRequesters.remove(idToDelete);
+	m_responses.remove(parentRequestId);
+	m_activeRequesters.remove(parentRequestId);
 
 	removeRequestIndexesChain(id);
 }
@@ -327,26 +384,15 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 
 void MultiSocketDownloadHandler::onCurrentParallelTransfersCountChanged(int count)
 {
-	if (count >= c_maxParallelTransferCount)
+	if (count >= c_maxParallelTransferCount || m_pendingRequesters.isEmpty())
 	{
 		return;
 	}
 
-	if (m_pendingRequesters.isEmpty())
-	{
-		return;
-	}
-
-	RequesterSharedPtr requester = m_pendingRequesters.dequeue().lock();
+	RequesterSharedPtr requester = extractFirstUnpausedRequester();
 
 	if (!requester)
 	{
-		return;
-	}
-
-	if (m_pausedRequesters.contains(requester.get()))
-	{
-
 		return;
 	}
 
@@ -365,7 +411,7 @@ void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
 
 	const int requestId = loadHelper(request->requestInfo, request->bodyProcessingCommand);
 
-	// we add requester to the m_requesters only for first request
+	// we add requester to the m_activeRequesters only for the first request
 	// redirect requests here will not be stored
 	m_activeRequesters[requestId] = requester;
 }
@@ -394,6 +440,33 @@ int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request, Downlo
 	}
 
 	return requestId;
+}
+
+//! returns first unpaused requester and also clears expired requesters by searching pass
+RequesterSharedPtr MultiSocketDownloadHandler::extractFirstUnpausedRequester()
+{
+	for (auto first = m_pendingRequesters.begin(); first != m_pendingRequesters.end();)
+	{
+		RequesterSharedPtr requester = first->lock();
+
+		if (!requester)
+		{
+			first = m_pendingRequesters.erase(first);
+			continue;
+		}
+
+		if (m_pausedRequesters.contains(requester.get()))
+		{
+			++first;
+		}
+		else
+		{
+			m_pendingRequesters.erase(first);
+			return requester;
+		}
+	}
+
+	return RequesterSharedPtr();
 }
 
 }

@@ -82,6 +82,7 @@ int MultiSocketLoader::get(const Url& url, DownloadRequest::BodyProcessingComman
 	// in this case we will access to the freed memory - Undefined Behavior
 	const int returnValue = request->id;
 
+	m_activeRequestDescriptors[returnValue] = request;
 	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
 	return returnValue;
@@ -110,6 +111,7 @@ int MultiSocketLoader::post(const Url& url, QByteArray uploadData)
 	// in this case we will access to the freed memory - Undefined Behavior
 	const int returnValue = request->id;
 
+	m_activeRequestDescriptors[returnValue] = request;
 	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
 	return returnValue;
@@ -132,6 +134,7 @@ int MultiSocketLoader::head(const Url& url)
 	// in this case we will access to the freed memory - Undefined Behavior
 	const int returnValue = request->id;
 
+	m_activeRequestDescriptors[returnValue] = request;
 	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
 	return request->id;
@@ -178,6 +181,18 @@ int MultiSocketLoader::currentParallelConnections() const noexcept
 	return m_socketPrivateData.stillRunning;
 }
 
+void MultiSocketLoader::pauseConnection(int id) const noexcept
+{
+	DEBUG_ASSERT(m_activeRequestDescriptors.contains(id));
+	curl_easy_pause(m_activeRequestDescriptors[id]->easy, CURLPAUSE_ALL);
+}
+
+void MultiSocketLoader::unpauseConnection(int id) const noexcept
+{
+	DEBUG_ASSERT(m_activeRequestDescriptors.contains(id));
+	curl_easy_pause(m_activeRequestDescriptors[id]->easy, CURLPAUSE_CONT);
+}
+
 void MultiSocketLoader::setTimer()
 {
 	resetTimer();
@@ -218,7 +233,12 @@ MultiSocketLoader* MultiSocketLoader::instance()
 
 RequestDescriptor* MultiSocketLoader::createRequestDescriptor(const Url& url, size_t timeoutMilliseconds, curl_slist* headers)
 {
-	RequestDescriptor* requestDescriptor = new RequestDescriptor;
+	const auto requestIdDeleter = [this](int id)
+	{
+		m_activeRequestDescriptors.remove(id);
+	};
+
+	RequestDescriptor* requestDescriptor = new RequestDescriptor(requestIdDeleter);
 	requestDescriptor->easy = curl_easy_init();
 	requestDescriptor->url = url.toDisplayString().toUtf8();
 
@@ -523,10 +543,10 @@ void checkMultiInfo(CURLM* multiHandle, MultiSocketLoader* multiSocketLoader)
 			{
 				DEBUGLOG
 					<< requestDescriptor->url
-					<< " loaded"
-					<< " (status code:"
+					<< " loaded "
+					<< "(status code: "
 					<< Common::StatusCodeDescription::description(requestDescriptor->statusCode)
-					<< ", id:" << requestDescriptor->id << ")";
+					<< ", id: " << requestDescriptor->id << ")";
 			}
 
 			DEBUG_ASSERT(requestDescriptor->method != RequestDescriptor::Method::Head || requestDescriptor->body.isEmpty());
