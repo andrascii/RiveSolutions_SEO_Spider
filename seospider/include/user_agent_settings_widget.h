@@ -16,7 +16,6 @@ public:
 
 protected:
 	virtual void init() override;
-	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 private slots:
 	void checkBoxStateChanged(bool state);

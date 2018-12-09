@@ -16,19 +16,6 @@ CrawlerSettingsWidget::CrawlerSettingsWidget(QWidget* parent)
 
 void CrawlerSettingsWidget::init()
 {
-	m_ui.label->installEventFilter(this);
-	m_ui.label_2->installEventFilter(this);
-	m_ui.label_3->installEventFilter(this);
-	m_ui.label_4->installEventFilter(this);
-	m_ui.label_5->installEventFilter(this);
-	m_ui.label_6->installEventFilter(this);
-	m_ui.label_7->installEventFilter(this);
-	m_ui.label_8->installEventFilter(this);
-	m_ui.label_9->installEventFilter(this);
-	m_ui.label_10->installEventFilter(this);
-	m_ui.label_11->installEventFilter(this);
-	m_ui.label_12->installEventFilter(this);
-
 	m_ui.robotsTxtComboBox->addItem("AnyBot", QVariant::fromValue(CrawlerEngine::UserAgentType::AnyBot));
 	m_ui.robotsTxtComboBox->addItem("GoogleBot", QVariant::fromValue(CrawlerEngine::UserAgentType::GoogleBot));
 	m_ui.robotsTxtComboBox->addItem("YandexBot", QVariant::fromValue(CrawlerEngine::UserAgentType::YandexBot));
@@ -40,85 +27,7 @@ void CrawlerSettingsWidget::init()
 	m_ui.robotsTxtComboBox->setEnabled(m_ui.followRobotsTxtCheckBox->isChecked());
 
 	connect(m_ui.checkExternalLinksCheckBox, &QCheckBox::toggled, m_ui.followExternalNofollowCheckBox, &QWidget::setEnabled);
-	connect(m_ui.checkExternalLinksCheckBox, &QCheckBox::toggled, m_ui.label_6, &QWidget::setEnabled);
-	
 	m_ui.followExternalNofollowCheckBox->setEnabled(m_ui.checkExternalLinksCheckBox->isChecked());
-	m_ui.label_6->setEnabled(m_ui.checkExternalLinksCheckBox->isChecked());
-}
-
-bool CrawlerSettingsWidget::eventFilter(QObject* object, QEvent* event)
-{
-	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.crawlOutsideStartFolderCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_2 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkSwfCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_3 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkJavaScriptCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_4 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkCssCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_5 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkImagesCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_6 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.followExternalNofollowCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_7 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkCanonicalsCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_8 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkSubdomainsCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_9 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.followRobotsTxtCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_10 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkExternalLinksCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_11 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.followInternalNofollowCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_12 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.crawlMetaHerefLangLinksCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_13 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkVideoCheckBox->toggle();
-	}
-
-	if (object == m_ui.label_14 && event->type() == QEvent::MouseButtonRelease)
-	{
-		m_ui.checkOtherCheckBox->toggle();
-	}
-
-	return false;
 }
 
 void CrawlerSettingsWidget::onShow()

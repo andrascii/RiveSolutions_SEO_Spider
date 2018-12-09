@@ -74,22 +74,6 @@
           </attribute>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="useCustomUserAgentCheckBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">useCustomUserAgent</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QRadioButton" name="useDesktopUserAgentRadioButton">
           <property name="text">
@@ -135,16 +119,6 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Use custom User-Agent</string>
-          </property>
-          <property name="buddy">
-           <cstring>useCustomUserAgentCheckBox</cstring>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="1">
          <widget class="QComboBox" name="desktopUserAgentComboBox">
           <property name="controlKey" stdset="0">
@@ -156,6 +130,38 @@
          <widget class="QComboBox" name="mobileUserAgentComboBox">
           <property name="controlKey" stdset="0">
            <string notr="true">mobileUserAgent</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>15</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QCheckBox" name="useCustomUserAgentCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Use custom User-Agent</string>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">useCustomUserAgent</string>
           </property>
          </widget>
         </item>

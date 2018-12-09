@@ -11,36 +11,18 @@ ProxySettingsWidget::ProxySettingsWidget(QWidget* parent)
 	init();
 }
 
-bool ProxySettingsWidget::eventFilter(QObject* object, QEvent* event)
-{
-	if (object == m_ui.useProxyLabel &&
-		event->type() == QEvent::MouseButtonRelease &&
-		m_ui.useProxyCheckBox->isEnabled())
-	{
-		m_ui.useProxyCheckBox->toggle();
-	}
-
-	if (object == m_ui.proxyRequiresAuthorizationLabel &&
-		event->type() == QEvent::MouseButtonRelease &&
-		m_ui.proxyNeedAuthorizationCheckBox->isEnabled())
-	{
-		m_ui.proxyNeedAuthorizationCheckBox->toggle();
-	}
-
-	return false;
-}
-
 void ProxySettingsWidget::init()
 {
-	m_ui.useProxyLabel->installEventFilter(this);
-	m_ui.proxyRequiresAuthorizationLabel->installEventFilter(this);
-
 	m_ui.proxyAddressLineEdit->setEnabled(m_ui.useProxyCheckBox->isChecked());
 	m_ui.portSpinBox->setEnabled(m_ui.useProxyCheckBox->isChecked());
 	m_ui.proxyNeedAuthorizationCheckBox->setEnabled(m_ui.useProxyCheckBox->isChecked());
+	m_ui.proxyAddressLabel->setEnabled(m_ui.useProxyCheckBox->isChecked());
+	m_ui.portLabel->setEnabled(m_ui.useProxyCheckBox->isChecked());
 
 	m_ui.usernameLineEdit->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
 	m_ui.passwordLineEdit->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
+	m_ui.usernameLabel->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
+	m_ui.passwordLabel->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
 
 	SettingsPage::init();
 
@@ -51,10 +33,14 @@ void ProxySettingsWidget::init()
 void ProxySettingsWidget::onCheckBoxToggled()
 {
 	m_ui.proxyAddressLineEdit->setEnabled(m_ui.useProxyCheckBox->isChecked());
+	m_ui.proxyAddressLabel->setEnabled(m_ui.useProxyCheckBox->isChecked());
+	m_ui.portLabel->setEnabled(m_ui.useProxyCheckBox->isChecked());
 	m_ui.portSpinBox->setEnabled(m_ui.useProxyCheckBox->isChecked());
 	m_ui.proxyNeedAuthorizationCheckBox->setEnabled(m_ui.useProxyCheckBox->isChecked());
 	m_ui.usernameLineEdit->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
 	m_ui.passwordLineEdit->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
+	m_ui.usernameLabel->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
+	m_ui.passwordLabel->setEnabled(m_ui.useProxyCheckBox->isChecked() && m_ui.proxyNeedAuthorizationCheckBox->isChecked());
 }
 
 void ProxySettingsWidget::onShow()

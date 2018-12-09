@@ -19,13 +19,14 @@ CrawlerPauseSettingsWidget::CrawlerPauseSettingsWidget(QWidget* parent)
 	VERIFY(connect(m_ui.usePauseTimerCheckBox, SIGNAL(stateChanged(int)),
 		this, SLOT(useCrawlerPauseCheckBoxChanged(int))));
 
+	VERIFY(connect(m_ui.usePauseTimerCheckBox, &QCheckBox::toggled, m_ui.label_2, &QWidget::setEnabled));
+	VERIFY(connect(m_ui.usePauseTimerCheckBox, &QCheckBox::toggled, m_ui.label_3, &QWidget::setEnabled));
+
 	// TODO: connect to theApp->preferences changes and update UI controls correspondingly
 }
 
 void CrawlerPauseSettingsWidget::init()
 {
-	m_ui.label->installEventFilter(this);
-
 	SettingsPage::init();
 
 	fromCrawlerPauseSpinBoxChanged(m_ui.fromPauseTimerSpinBox->value());
@@ -34,6 +35,8 @@ void CrawlerPauseSettingsWidget::init()
 
 	m_ui.fromPauseTimerSpinBox->setEnabled(m_ui.usePauseTimerCheckBox->isChecked());
 	m_ui.toPauseTimerSpinBox->setEnabled(m_ui.usePauseTimerCheckBox->isChecked());
+	m_ui.label_2->setEnabled(m_ui.usePauseTimerCheckBox->isChecked());
+	m_ui.label_3->setEnabled(m_ui.usePauseTimerCheckBox->isChecked());
 }
 
 void CrawlerPauseSettingsWidget::fromCrawlerPauseSpinBoxChanged(int value)
@@ -58,17 +61,6 @@ void CrawlerPauseSettingsWidget::onShow()
 
 void CrawlerPauseSettingsWidget::onClose()
 {
-}
-
-bool CrawlerPauseSettingsWidget::eventFilter(QObject* object, QEvent* event)
-{
-	if (object == m_ui.label && event->type() == QEvent::MouseButtonRelease
-		&& m_ui.usePauseTimerCheckBox->isEnabled())
-	{
-		m_ui.usePauseTimerCheckBox->toggle();
-	}
-
-	return false;
 }
 
 }

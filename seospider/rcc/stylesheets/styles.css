@@ -417,6 +417,9 @@ SeoSpider--SettingsPage QLabel
 SeoSpider--SettingsPage QSpinBox:disabled,
 SeoSpider--SettingsPage QComboBox:disabled,
 SeoSpider--SettingsPage QLineEdit:disabled,
+SeoSpider--SettingsPage QCheckBox:disabled,
+SeoSpider--SettingsPage QPushButton:disabled,
+SeoSpider--SettingsPage QRadioButton:disabled,
 SeoSpider--SettingsPage QLabel:disabled
 {
 	color: #eeeeee;
