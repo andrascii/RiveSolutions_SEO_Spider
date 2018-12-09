@@ -38,6 +38,12 @@ void CrawlerSettingsWidget::init()
 	SettingsPage::init();
 
 	m_ui.robotsTxtComboBox->setEnabled(m_ui.followRobotsTxtCheckBox->isChecked());
+
+	connect(m_ui.checkExternalLinksCheckBox, &QCheckBox::toggled, m_ui.followExternalNofollowCheckBox, &QWidget::setEnabled);
+	connect(m_ui.checkExternalLinksCheckBox, &QCheckBox::toggled, m_ui.label_6, &QWidget::setEnabled);
+	
+	m_ui.followExternalNofollowCheckBox->setEnabled(m_ui.checkExternalLinksCheckBox->isChecked());
+	m_ui.label_6->setEnabled(m_ui.checkExternalLinksCheckBox->isChecked());
 }
 
 bool CrawlerSettingsWidget::eventFilter(QObject* object, QEvent* event)
