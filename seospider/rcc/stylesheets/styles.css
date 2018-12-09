@@ -425,6 +425,11 @@ SeoSpider--SettingsPage QLabel:disabled
 	color: #eeeeee;
 }
 
+SeoSpider--ApplicationSettingsDialog QScrollArea
+{
+	border: 0px solid transparent;
+}
+
 /*/////////////////////////////// ApplicationSettingsDialog ///////////////////////////*/
 
 SeoSpider--ApplicationSettingsDialog
