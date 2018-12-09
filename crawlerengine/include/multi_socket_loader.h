@@ -91,6 +91,8 @@ public:
 
 	void setUserAgent(const QByteArray& userAgent);
 
+	int currentParallelConnections() const noexcept;
+
 signals:
 	void loaded(int id,
 		const QByteArray& url,
@@ -101,6 +103,8 @@ signals:
 
 	void downloadProgress(int id, double total, double received);
 	void uploadProgress(int id, double total, double sent);
+
+	void currentParallelTransferCountChanged(int count);
 
 protected:
 	virtual void timerEvent(QTimerEvent* event) override;

@@ -12,7 +12,9 @@ enum class RequestType
 	RequestSetSerialNumber,
 	RequestGetSerialNumberData,
 	RequestGetSerialNumberState,
-	RequestTakeScreenshot
+	RequestTakeScreenshot,
+	RequestPauseConnections,
+	RequestUnpauseConnections
 };
 
 class IRequest

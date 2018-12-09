@@ -1,5 +1,4 @@
 #include "qt_based_download_handler.h"
-#include "handler_registry.h"
 #include "download_request.h"
 #include "download_response.h"
 #include "thread_message_dispatcher.h"
@@ -20,9 +19,6 @@ QtBasedDownloadHandler::QtBasedDownloadHandler()
 	, m_timeoutTimer(new QTimer(this))
 	, m_timeout(-1)
 {
-	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
-
 	VERIFY(connect(m_networkAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(urlDownloaded(QNetworkReply*)), Qt::DirectConnection));
 
 	VERIFY(connect(m_networkAccessor, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)),
@@ -378,6 +374,14 @@ std::shared_ptr<DownloadResponse> QtBasedDownloadHandler::responseFor(int reques
 	}
 
 	return m_responses[requestId];
+}
+
+void QtBasedDownloadHandler::pauseRequesters(const QVector<const void*>&)
+{
+}
+
+void QtBasedDownloadHandler::unpauseRequesters(const QVector<const void*>&)
+{
 }
 
 QByteArray QtBasedDownloadHandler::readBody(QNetworkReply* reply) const
