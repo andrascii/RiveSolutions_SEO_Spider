@@ -40,9 +40,13 @@ private slots:
 		Common::StatusCode statusCode,
 		int timeElapsed);
 
+	void onCurrentParallelTransfersCountChanged(int count);
+
 private:
 	virtual void load(RequesterSharedPtr requester) override;
 	virtual std::shared_ptr<DownloadResponse> responseFor(int requestId) override;
+	virtual void pauseRequesters(const QVector<const void*>& requesterToBePaused) override;
+	virtual void unpauseRequesters(const QVector<const void*>& requesterToBeUnpaused) override;
 
 private:
 	int loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand);
@@ -63,11 +67,16 @@ private:
 
 private:
 	MultiSocketLoader* m_multiSocketLoader;
-	QMap<int, RequesterWeakPtr> m_requesters;
-	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
 
 	// contains mapping redirect request indexes to their parent request indexes
 	QMap<int, int> m_redirectRequestIdToParentId;
+
+	QMap<int, RequesterWeakPtr> m_activeRequesters;
+	QMap<int, std::shared_ptr<DownloadResponse>> m_responses;
+	QQueue<RequesterWeakPtr> m_pendingRequesters;
+
+	// stores the pointers to the requesters which must be paused
+	QSet<const void*> m_pausedRequesters;
 };
 
 }

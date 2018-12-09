@@ -173,6 +173,11 @@ void MultiSocketLoader::setUserAgent(const QByteArray& userAgent)
 	m_headers.add("User-Agent", userAgent);
 }
 
+int MultiSocketLoader::currentParallelConnections() const noexcept
+{
+	return m_socketPrivateData.stillRunning;
+}
+
 void MultiSocketLoader::setTimer()
 {
 	resetTimer();
@@ -367,10 +372,17 @@ void MultiSocketLoader::timerEvent(QTimerEvent*)
 
 void MultiSocketLoader::doAction(curl_socket_t socketDescriptor, int curlAction)
 {
+	const int currentParallelConnectionCount = m_socketPrivateData.stillRunning;
+
 	const CURLMcode returnCode = curl_multi_socket_action(m_socketPrivateData.multiHandle,
 		socketDescriptor,
 		curlAction,
 		&m_socketPrivateData.stillRunning);
+
+	if (currentParallelConnectionCount != m_socketPrivateData.stillRunning)
+	{
+		emit currentParallelTransferCountChanged(m_socketPrivateData.stillRunning);
+	}
 
 	verifyCurlReturnCode(__FUNCTION__, returnCode);
 	checkMultiInfo(m_socketPrivateData.multiHandle, this);
@@ -485,9 +497,6 @@ void checkMultiInfo(CURLM* multiHandle, MultiSocketLoader* multiSocketLoader)
 			curl_easy_getinfo(easyHandle, CURLINFO_PRIVATE, &requestDescriptor);
 
 			DEBUG_ASSERT(requestDescriptor->id != -1 || !"id is invalid");
-
-			const bool test = requestDescriptor->url.contains(QByteArray("http://interpult-s.ru/wp-content/uploads/2016/09/"));
-			test;
 
 			if (result == CURLE_OPERATION_TIMEDOUT)
 			{

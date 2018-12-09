@@ -1,11 +1,17 @@
 #include "multi_socket_download_handler.h"
 #include "random_interval_range_timer.h"
-#include "handler_registry.h"
 #include "multi_socket_loader.h"
 #include "download_request.h"
 #include "download_response.h"
 #include "helpers.h"
 #include "thread_message_dispatcher.h"
+
+namespace
+{
+
+constexpr int c_maxParallelTransferCount = 24;
+
+}
 
 namespace CrawlerEngine
 {
@@ -16,9 +22,6 @@ MultiSocketDownloadHandler::MultiSocketDownloadHandler()
 	qRegisterMetaType<ResponseHeaders>("ResponseHeaders");
 	qRegisterMetaType<Common::StatusCode>("Common::StatusCode");
 
-	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
-
 	// must be queued connection
 	// otherwise loader can emit signal about loaded url
 	// before we add the request id to the m_requesters map
@@ -26,6 +29,8 @@ MultiSocketDownloadHandler::MultiSocketDownloadHandler()
 	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::loaded,
 		this, &MultiSocketDownloadHandler::onUrlLoaded, Qt::QueuedConnection));
 
+	VERIFY(connect(m_multiSocketLoader, &MultiSocketLoader::currentParallelTransferCountChanged,
+		this, &MultiSocketDownloadHandler::onCurrentParallelTransfersCountChanged));
 
 	//
 	// TODO: optimize the many calls by these connections
@@ -87,6 +92,22 @@ std::shared_ptr<DownloadResponse> MultiSocketDownloadHandler::responseFor(int re
 	return m_responses[requestId];
 }
 
+void MultiSocketDownloadHandler::pauseRequesters(const QVector<const void*>& requesterToBePaused)
+{
+	std::for_each(requesterToBePaused.begin(), requesterToBePaused.end(), [this](const void* p)
+	{
+		m_pausedRequesters.insert(p);
+	});
+}
+
+void MultiSocketDownloadHandler::unpauseRequesters(const QVector<const void*>& requesterToBeUnpaused)
+{
+	std::for_each(requesterToBeUnpaused.begin(), requesterToBeUnpaused.end(), [this](const void* p)
+	{
+		m_pausedRequesters.remove(p);
+	});
+}
+
 Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders& responseHeaders, const Url& baseAddress) const
 {
 	const std::vector<QString> locationHeaderData = responseHeaders.valueOf("location");
@@ -110,15 +131,15 @@ Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders& responseHea
 
 RequesterSharedPtr MultiSocketDownloadHandler::requesterByIdAssertIfNotExists(int id) const
 {
-	const auto requesterIterator = m_requesters.find(id);
+	const auto requesterIterator = m_activeRequesters.find(id);
 
-	if (requesterIterator == m_requesters.end())
+	if (requesterIterator == m_activeRequesters.end())
 	{
 		const int parentId = parentIdFor(id);
 
 		DEBUG_ASSERT(parentId != -1 || !"Parent ID not found");
 
-		return m_requesters[parentId].lock();
+		return m_activeRequesters[parentId].lock();
 	}
 
 	return requesterIterator.value().lock();
@@ -126,9 +147,9 @@ RequesterSharedPtr MultiSocketDownloadHandler::requesterByIdAssertIfNotExists(in
 
 RequesterSharedPtr MultiSocketDownloadHandler::requesterById(int id) const
 {
-	const auto requesterIterator = m_requesters.find(id);
+	const auto requesterIterator = m_activeRequesters.find(id);
 
-	if (requesterIterator == m_requesters.end())
+	if (requesterIterator == m_activeRequesters.end())
 	{
 		const int parentId = parentIdFor(id);
 
@@ -137,7 +158,7 @@ RequesterSharedPtr MultiSocketDownloadHandler::requesterById(int id) const
 			return RequesterSharedPtr();
 		}
 
-		return m_requesters[parentId].lock();
+		return m_activeRequesters[parentId].lock();
 	}
 
 	return requesterIterator.value().lock();
@@ -298,20 +319,55 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 	const int idToDelete = parentRequestId == -1 ? id : parentRequestId;
 
 	m_responses.remove(idToDelete);
-	m_requesters.remove(idToDelete);
+	m_activeRequesters.remove(idToDelete);
 
 	removeRequestIndexesChain(id);
 }
 
+
+void MultiSocketDownloadHandler::onCurrentParallelTransfersCountChanged(int count)
+{
+	if (count >= c_maxParallelTransferCount)
+	{
+		return;
+	}
+
+	if (m_pendingRequesters.isEmpty())
+	{
+		return;
+	}
+
+	RequesterSharedPtr requester = m_pendingRequesters.dequeue().lock();
+
+	if (!requester)
+	{
+		return;
+	}
+
+	if (m_pausedRequesters.contains(requester.get()))
+	{
+
+		return;
+	}
+
+	load(requester);
+}
+
 void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
 {
+	if (m_multiSocketLoader->currentParallelConnections() >= c_maxParallelTransferCount)
+	{
+		m_pendingRequesters.enqueue(requester);
+		return;
+	}
+
 	const DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
 	const int requestId = loadHelper(request->requestInfo, request->bodyProcessingCommand);
 
 	// we add requester to the m_requesters only for first request
 	// redirect requests here will not be stored
-	m_requesters[requestId] = requester;
+	m_activeRequesters[requestId] = requester;
 }
 
 int MultiSocketDownloadHandler::loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand)

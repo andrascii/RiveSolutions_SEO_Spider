@@ -4,6 +4,9 @@
 #include "service_locator.h"
 #include "download_request.h"
 #include "helpers.h"
+#include "handler_registry.h"
+#include "pause_connections_request.h"
+#include "unpause_connections_request.h"
 
 namespace CrawlerEngine
 {
@@ -12,6 +15,11 @@ AbstractDownloadHandler::AbstractDownloadHandler()
 	: m_randomIntervalRangeTimer(new RandomIntervalRangeTimer(this))
 	, m_maxRedirects(-1)
 {
+	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
+	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
+	handlerRegistry.registrateHandler(this, RequestType::RequestPauseConnections);
+	handlerRegistry.registrateHandler(this, RequestType::RequestUnpauseConnections);
+
 	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked,
 		this, &AbstractDownloadHandler::onTimerTicked, Qt::DirectConnection));
 }
@@ -38,12 +46,29 @@ void AbstractDownloadHandler::handleRequest(RequesterSharedPtr requester)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
 
-	ASSERT(requester->request()->requestType() == RequestType::RequestDownload);
+	const RequestType requestType = requester->request()->requestType();
+
+	ASSERT(requestType == RequestType::RequestDownload ||
+		requestType == RequestType::RequestPauseConnections ||
+		requestType == RequestType::RequestUnpauseConnections);
+
+	if (requestType == RequestType::RequestPauseConnections)
+	{
+		PauseConnectionsRequest* request = Common::Helpers::fast_cast<PauseConnectionsRequest*>(requester->request());
+		pauseRequesters(request->requestersToBePaused);
+		return;
+	}
+	if (requestType == RequestType::RequestUnpauseConnections)
+	{
+		UnpauseConnectionsRequest* request = Common::Helpers::fast_cast<UnpauseConnectionsRequest*>(requester->request());
+		unpauseRequesters(request->requestersToBeUnpaused);
+		return;
+	}
 
 #ifndef PRODUCTION
 
 	DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
-	DEBUGLOG << "Loading url:" << request->requestInfo.url.toDisplayString();
+	DEBUGLOG << "Loading url: " << request->requestInfo.url.toDisplayString();
 
 #endif
 
