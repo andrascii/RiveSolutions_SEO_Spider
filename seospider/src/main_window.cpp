@@ -75,7 +75,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionCreated, this, &MainWindow::onCrawlerSessionCreated));
 	VERIFY(connect(theApp->crawler(), &Crawler::sessionDestroyed, this, &MainWindow::onCrawlerSessionDestroyed));
+#ifdef USE_CUSTOM_URI_CHANNEL
 	VERIFY(connect(CustomUrlChannel::instance(), &CustomUrlChannel::uriReceived, this, &MainWindow::onCustomUrlReceived, Qt::QueuedConnection));
+#endif
 	VERIFY(connect(systemTrayIcon(), &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated));
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateExists()), SLOT(onAboutUpdateExists())));
 	VERIFY(connect(m_updateChecker->qobject(), SIGNAL(updateIsNotExists()), SLOT(onAboutUpdateIsNotExists())));
