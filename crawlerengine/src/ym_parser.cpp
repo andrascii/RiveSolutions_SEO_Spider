@@ -34,7 +34,22 @@ void YmParser::parse(const ResponseHeaders&, ParsedPagePtr& parsedPage)
 
 bool YmParser::findYaCounter(const QString& javaScriptCode) const
 {
-	return javaScriptCode.contains(QString("w.yaCounter%1").arg(m_counterNumber));
+	// TODO: move constanst outside of the function
+	const QString ymIdentifier = QString("w.yaCounter%1").arg(m_counterNumber);
+	const int index = javaScriptCode.indexOf(ymIdentifier);
+	if (index == -1)
+	{
+		return false;
+	}
+
+	const int nextCharIndex = index + ymIdentifier.size();
+	if (nextCharIndex == ymIdentifier.size())
+	{
+		return true;
+	}
+
+	const QChar& nextSymbol = javaScriptCode.at(nextCharIndex);
+	return nextSymbol < 48 || nextSymbol > 57; // 48='0', 57='9'
 }
 
 }
