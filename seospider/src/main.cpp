@@ -9,6 +9,8 @@ int main(int argc, char *argv[])
 	{
 		const char* arg = argv[1];
 		const QByteArray argStr = QByteArray::fromRawData(arg, static_cast<int>(strlen(arg)));
+
+#ifdef USE_CUSTOM_URI_CHANNEL
 		if (argStr.startsWith("seospider:"))
 		{
 			if (CrawlerEngine::CustomUrlChannel::writeUri(argStr))
@@ -20,6 +22,7 @@ int main(int argc, char *argv[])
 			// TODO: start application with params
 			return 1;
 		}
+#endif
 
 	}
 
