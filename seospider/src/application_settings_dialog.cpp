@@ -27,7 +27,8 @@ ApplicationSettingsDialog::ApplicationSettingsDialog(QWidget* parent)
 	, m_somethingChanged(false)
 {
 	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerStarted, this, &ApplicationSettingsDialog::onCrawlerStarted));
-	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished, this, &ApplicationSettingsDialog::onCrawlerFinished));
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::crawlerFinished, this, &ApplicationSettingsDialog::onCrawlerFinishedOrDataCleared));
+	VERIFY(connect(theApp->crawler(), &CrawlerEngine::Crawler::onAboutClearData, this, &ApplicationSettingsDialog::onCrawlerFinishedOrDataCleared));
 
 	Qt::WindowFlags flags = windowFlags();
 	Qt::WindowFlags helpFlag = Qt::WindowContextHelpButtonHint;
@@ -141,7 +142,7 @@ void ApplicationSettingsDialog::onCrawlerStarted()
 	setEnabled(false);
 }
 
-void ApplicationSettingsDialog::onCrawlerFinished()
+void ApplicationSettingsDialog::onCrawlerFinishedOrDataCleared()
 {
 	setEnabled(true);
 }
