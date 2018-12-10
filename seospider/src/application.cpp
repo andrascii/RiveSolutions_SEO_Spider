@@ -404,10 +404,6 @@ void Application::initialize()
 
 	SplashScreen::showMessage("Initializing...");
 
-#ifdef PRODUCTION
-	std::this_thread::sleep_for(3s);
-#endif
-
 	initQSettings();
 	preferences()->load();
 
