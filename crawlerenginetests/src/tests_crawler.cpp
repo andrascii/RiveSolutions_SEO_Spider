@@ -19,8 +19,8 @@ public:
 	}
 };
 
-TestsCrawler::TestsCrawler(unsigned int threadCount, QObject* parent)
-	: Crawler(threadCount, parent)
+TestsCrawler::TestsCrawler(QObject* parent)
+	: Crawler(parent)
 {
 }
 
