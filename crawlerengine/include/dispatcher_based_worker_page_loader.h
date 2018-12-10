@@ -27,9 +27,7 @@ public:
 		DownloadRequest::Status linkStatus) override;
 
 	virtual void setReceiveState(ReceiveState state) override;
-
 	virtual void clear() override;
-
 	virtual QObject* qobject() override;
 
 signals:
@@ -40,12 +38,11 @@ signals:
 
 private:
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
-
 	void emitResponseData(const QVector<ResponseData>& responseData);
-
 	void removeRequesterAssociatedData(Requester* requester);
-
 	void reloadPromise();
+	void sendRequestToPauseAllActiveDownloads() const;
+	void sendRequestToUnpauseAllPausedDownloads() const;
 
 private:
 	struct RequesterAssociatedData

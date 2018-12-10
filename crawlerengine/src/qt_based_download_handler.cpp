@@ -376,11 +376,11 @@ std::shared_ptr<DownloadResponse> QtBasedDownloadHandler::responseFor(int reques
 	return m_responses[requestId];
 }
 
-void QtBasedDownloadHandler::pauseRequesters(const QVector<const void*>&)
+void QtBasedDownloadHandler::pauseRequesters(const QList<Requester*>&)
 {
 }
 
-void QtBasedDownloadHandler::unpauseRequesters(const QVector<const void*>&)
+void QtBasedDownloadHandler::unpauseRequesters(const QList<Requester*>&)
 {
 }
 

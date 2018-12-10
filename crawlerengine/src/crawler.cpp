@@ -40,14 +40,14 @@ Crawler& Crawler::instance()
 	return *s_instance;
 }
 
-Crawler::Crawler(unsigned int threadCount, QObject* parent)
+Crawler::Crawler(QObject* parent)
 	: QObject(parent)
 	, m_robotsTxtLoader(new RobotsTxtLoader(this))
 	, m_xmlSitemapLoader(new XmlSitemapLoader(static_cast<RobotsTxtLoader*>(m_robotsTxtLoader), this))
 	, m_modelController(nullptr)
 	, m_uniqueLinkStore(nullptr)
 	, m_options(new CrawlerOptions(this))
-	, m_theradCount(threadCount)
+	, m_theradCount(0)
 	, m_crawlingStateTimer(new QTimer(this))
 	, m_serializatonReadyStateCheckerTimer(new QTimer(this))
 	, m_sequencedDataCollection(nullptr)
@@ -138,7 +138,7 @@ void Crawler::initialize()
 
 	m_uniqueLinkStore = new UniqueLinkStore(this);
 
-	for (unsigned i = 0; i < m_theradCount; ++i)
+	for (unsigned i = 0; i < workerCount(); ++i)
 	{
 		m_workers.push_back(new CrawlerWorker(m_uniqueLinkStore, new DispatcherBasedWorkerPageLoader));
 
@@ -197,6 +197,24 @@ void Crawler::setCustomDataFeedsToSequencedDataCollection()
 {
 	ASSERT(m_sequencedDataCollection);
 	m_sequencedDataCollection->setCustomDataFeeds(m_customDataFeeds.values().toVector());
+}
+
+unsigned Crawler::workerCount() const noexcept
+{
+	const unsigned hardwareConcurrency = std::thread::hardware_concurrency();
+
+	if (m_theradCount == 0 || m_theradCount > hardwareConcurrency * 2)
+	{
+
+#ifdef QT_DEBUG
+		return hardwareConcurrency / 2;
+#else
+		return hardwareConcurrency;
+#endif
+
+	}
+
+	return m_theradCount;
 }
 
 bool Crawler::hasNoData() const noexcept
@@ -954,6 +972,11 @@ ICustomDataFeed* Crawler::customDataFeedByName(const QString& dataFeedName) cons
 QList<ICustomDataFeed*> Crawler::customDataFeeds() const
 {
 	return m_customDataFeeds.values();
+}
+
+void Crawler::setWorkerCount(unsigned workerCount) noexcept
+{
+	m_theradCount = workerCount;
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

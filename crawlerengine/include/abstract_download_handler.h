@@ -33,8 +33,8 @@ private slots:
 private:
 	virtual void load(RequesterSharedPtr requester) = 0;
 	virtual std::shared_ptr<DownloadResponse> responseFor(int requestId) = 0;
-	virtual void pauseRequesters(const QVector<const void*>& requesterToBePaused) = 0;
-	virtual void unpauseRequesters(const QVector<const void*>& requesterToBeUnpaused) = 0;
+	virtual void pauseRequesters(const QList<Requester*>& requesterToBePaused) = 0;
+	virtual void unpauseRequesters(const QList<Requester*>& requesterToBeUnpaused) = 0;
 
 private:
 	RandomIntervalRangeTimer* m_randomIntervalRangeTimer;

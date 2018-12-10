@@ -17,4 +17,7 @@ static QByteArray s_startWithoutServiceDescription = "This command force startin
 static QByteArray s_useOldDownloader = "use_old_downloader";
 static QByteArray s_useOldDownloaderDescription = "Force program to use the downloader based on QNetworkAccessManager";
 
+static QByteArray s_workerCount = "worker_count";
+static QByteArray s_workerCountDescription = "Sets the parser count";
+
 }

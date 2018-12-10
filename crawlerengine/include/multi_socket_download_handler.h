@@ -45,8 +45,8 @@ private slots:
 private:
 	virtual void load(RequesterSharedPtr requester) override;
 	virtual std::shared_ptr<DownloadResponse> responseFor(int requestId) override;
-	virtual void pauseRequesters(const QVector<const void*>& requesterToBePaused) override;
-	virtual void unpauseRequesters(const QVector<const void*>& requesterToBeUnpaused) override;
+	virtual void pauseRequesters(const QList<Requester*>& requesterToBePaused) override;
+	virtual void unpauseRequesters(const QList<Requester*>& requesterToBeUnpaused) override;
 
 private:
 	int loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand);
@@ -97,7 +97,7 @@ private:
 	QQueue<RequesterWeakPtr> m_pendingRequesters;
 
 	//! stores the pointers to the requesters which must be paused
-	QSet<const void*> m_pausedRequesters;
+	QSet<Requester*> m_pausedRequesters;
 };
 
 }

@@ -75,7 +75,7 @@ public:
 
 	static Crawler& instance();
 
-	Crawler(unsigned int threadCount, QObject* parent = nullptr);
+	Crawler(QObject* parent = nullptr);
 	virtual ~Crawler();
 
 	void setDownloaderType(DownloaderType type);
@@ -109,6 +109,8 @@ public:
 	void addCustomDataFeed(ICustomDataFeed* customDataFeed);
 	ICustomDataFeed* customDataFeedByName(const QString& dataFeedName) const;
 	QList<ICustomDataFeed*> customDataFeeds() const;
+
+	void setWorkerCount(unsigned workerCount) noexcept;
 
 signals:
 	void crawlingProgress(CrawlingProgress progress);
@@ -169,6 +171,7 @@ private:
 	void setState(State state);
 	void initSessionIfNeeded(Session::State state = Session::StateNone, const QString& name = QString());
 	void setCustomDataFeedsToSequencedDataCollection();
+	unsigned workerCount() const noexcept;
 
 protected:
 	std::unique_ptr<SequencedDataCollection> m_sequencedDataCollection;

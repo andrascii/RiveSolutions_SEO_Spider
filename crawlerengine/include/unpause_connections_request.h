@@ -5,9 +5,11 @@
 namespace CrawlerEngine
 {
 
+class Requester;
+
 struct UnpauseConnectionsRequest : public IRequest
 {
-	UnpauseConnectionsRequest(const QVector<const void*>& requestersToBeUnpaused)
+	UnpauseConnectionsRequest(const QList<Requester*>& requestersToBeUnpaused)
 		: requestersToBeUnpaused(requestersToBeUnpaused)
 	{
 	}
@@ -21,7 +23,7 @@ struct UnpauseConnectionsRequest : public IRequest
 		return RequestType::RequestUnpauseConnections;
 	}
 
-	QVector<const void*> requestersToBeUnpaused;
+	QList<Requester*> requestersToBeUnpaused;
 };
 
 }
