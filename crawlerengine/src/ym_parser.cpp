@@ -43,13 +43,13 @@ bool YmParser::findYaCounter(const QString& javaScriptCode) const
 	}
 
 	const int nextCharIndex = index + ymIdentifier.size();
-	if (nextCharIndex == ymIdentifier.size())
+	if (nextCharIndex == javaScriptCode.size())
 	{
 		return true;
 	}
 
 	const QChar& nextSymbol = javaScriptCode.at(nextCharIndex);
-	return nextSymbol < 48 || nextSymbol > 57; // 48='0', 57='9'
+	return nextSymbol < '0' || nextSymbol > '9';
 }
 
 }
