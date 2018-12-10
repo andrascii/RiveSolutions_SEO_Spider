@@ -2,6 +2,8 @@
 #include "download_response.h"
 #include "download_request.h"
 #include "crawler_shared_state.h"
+#include "pause_connections_request.h"
+#include "unpause_connections_request.h"
 #include "helpers.h"
 
 namespace
@@ -165,9 +167,7 @@ void DispatcherBasedWorkerPageLoader::setReceiveState(ReceiveState state)
 			if (futureStatus == std::future_status::ready)
 			{
 				emitResponseData(m_pendingResponseDataFuture.get());
-
 				reloadPromise();
-
 				return;
 			}
 
@@ -178,6 +178,12 @@ void DispatcherBasedWorkerPageLoader::setReceiveState(ReceiveState state)
 		{
 			WARNLOG << futureError.what();
 		}
+
+		sendRequestToUnpauseAllPausedDownloads();
+	}
+	else
+	{
+		sendRequestToPauseAllActiveDownloads();
 	}
 }
 
@@ -199,6 +205,22 @@ void DispatcherBasedWorkerPageLoader::reloadPromise()
 {
 	m_pendingResponseDataPromise = std::promise<QVector<ResponseData>>();
 	m_pendingResponseDataFuture = m_pendingResponseDataPromise.get_future();
+}
+
+void DispatcherBasedWorkerPageLoader::sendRequestToPauseAllActiveDownloads() const
+{
+	PauseConnectionsRequest pauseRequest(m_activeRequesters.keys());
+	RequesterWrapper requester;
+	requester.reset(pauseRequest);
+	requester->start();
+}
+
+void DispatcherBasedWorkerPageLoader::sendRequestToUnpauseAllPausedDownloads() const
+{
+	UnpauseConnectionsRequest pauseRequest(m_activeRequesters.keys());
+	RequesterWrapper requester;
+	requester.reset(pauseRequest);
+	requester->start();
 }
 
 }

@@ -37,7 +37,7 @@ private:
 private:
 	MessageType m_type;
 	QThread* m_targetThread;
-	RequesterWeakPtr m_requester;
+	RequesterSharedPtr m_requester;
 	IResponseSharedPtr m_response;
 };
 

@@ -9,7 +9,7 @@
 namespace
 {
 
-constexpr int c_maxParallelTransferCount = 3;
+constexpr int c_maxParallelTransferCount = 1000;
 
 }
 
@@ -92,14 +92,17 @@ std::shared_ptr<DownloadResponse> MultiSocketDownloadHandler::responseFor(int re
 	return m_responses[requestId];
 }
 
-void MultiSocketDownloadHandler::pauseRequesters(const QVector<const void*>& requesterToBePaused)
+void MultiSocketDownloadHandler::pauseRequesters(const QList<Requester*>& requesterToBePaused)
 {
-	std::for_each(requesterToBePaused.begin(), requesterToBePaused.end(), [this](const void* p)
+	std::for_each(requesterToBePaused.begin(), requesterToBePaused.end(), [this](Requester* p)
 	{
 		m_pausedRequesters.insert(p);
 	});
 
-	QVector<int> requestIndexes = requestIndexesToPause();
+	// some of these requests at this moment can be already downloaded - it's a normal situation.
+	// MultiSocketLoader emit a signal about new downloaded page but our slot onUrlLoaded had not been called yet
+	// because of we uses the Qt::QueuedConnection
+	const QVector<int> requestIndexes = requestIndexesToPause();
 
 	std::for_each(requestIndexes.begin(), requestIndexes.end(), [this](int id)
 	{
@@ -107,9 +110,16 @@ void MultiSocketDownloadHandler::pauseRequesters(const QVector<const void*>& req
 	});
 }
 
-void MultiSocketDownloadHandler::unpauseRequesters(const QVector<const void*>& requesterToBeUnpaused)
+void MultiSocketDownloadHandler::unpauseRequesters(const QList<Requester*>& requesterToBeUnpaused)
 {
-	std::for_each(requesterToBeUnpaused.begin(), requesterToBeUnpaused.end(), [this](const void* p)
+	const QVector<int> requestIndexes = requestIndexesToPause();
+
+	std::for_each(requestIndexes.begin(), requestIndexes.end(), [this](int id)
+	{
+		m_multiSocketLoader->unpauseConnection(id);
+	});
+
+	std::for_each(requesterToBeUnpaused.begin(), requesterToBeUnpaused.end(), [this](Requester* p)
 	{
 		m_pausedRequesters.remove(p);
 	});

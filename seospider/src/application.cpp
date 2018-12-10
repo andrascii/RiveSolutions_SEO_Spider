@@ -4,7 +4,6 @@
 #include "service_locator.h"
 #include "crawler.h"
 #include "sequenced_data_collection.h"
-#include "constants.h"
 #include "preferences.h"
 #include "settings_page_impl.h"
 #include "deferred_call.h"
@@ -39,7 +38,7 @@ Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 	, m_commandLineHandler(new CommandLineHandler(argc, argv))
 	, m_preferences(new Preferences(this, this))
-	, m_crawler(new CrawlerEngine::Crawler(c_optimalParserThreadsCount, this))
+	, m_crawler(new CrawlerEngine::Crawler(this))
 	, m_sequencedDataCollection(nullptr)
 	, m_softwareBrandingOptions(new SoftwareBranding)
 	, m_storageAdatpterFactory(new StorageAdapterFactory)
@@ -55,6 +54,12 @@ Application::Application(int& argc, char** argv)
 	m_crawler->setDownloaderType(m_curlSuccessfullyInitialized ?
 		CrawlerEngine::Crawler::DownloaderTypeLibCurlMultiSocket :
 		CrawlerEngine::Crawler::DownloaderTypeQNetworkAccessManager);
+
+	if (m_commandLineHandler->hasCommand(s_workerCount))
+	{
+		const unsigned workerCount = m_commandLineHandler->commandValue(s_workerCount).toUInt();
+		m_crawler->setWorkerCount(workerCount);
+	}
 
 	Common::SmtpSender::init();
 

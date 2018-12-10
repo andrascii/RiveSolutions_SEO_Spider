@@ -12,7 +12,8 @@ CommandLineHandler::CommandLineHandler(int& argc, char** argv)
 		(s_openSerializedFileKey, boost::program_options::value<std::string>(), s_openSerializedFileDescription)
 		(s_introducePageKey, s_introducePageDescription)
 		(s_startWithoutService, s_startWithoutServiceDescription)
-		(s_useOldDownloader, s_useOldDownloaderDescription);
+		(s_useOldDownloader, s_useOldDownloaderDescription)
+		(s_workerCount, boost::program_options::value<std::string>(), s_workerCountDescription);
 
 	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, m_optionsDescription), m_variablesMap);
 	boost::program_options::notify(m_variablesMap);

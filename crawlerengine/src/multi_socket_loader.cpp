@@ -183,13 +183,21 @@ int MultiSocketLoader::currentParallelConnections() const noexcept
 
 void MultiSocketLoader::pauseConnection(int id) const noexcept
 {
-	DEBUG_ASSERT(m_activeRequestDescriptors.contains(id));
+	if (!m_activeRequestDescriptors.contains(id))
+	{
+		return;
+	}
+
 	curl_easy_pause(m_activeRequestDescriptors[id]->easy, CURLPAUSE_ALL);
 }
 
 void MultiSocketLoader::unpauseConnection(int id) const noexcept
 {
-	DEBUG_ASSERT(m_activeRequestDescriptors.contains(id));
+	if (!m_activeRequestDescriptors.contains(id))
+	{
+		return;
+	}
+
 	curl_easy_pause(m_activeRequestDescriptors[id]->easy, CURLPAUSE_CONT);
 }
 

@@ -36,8 +36,8 @@ private slots:
 private:
 	virtual void load(RequesterSharedPtr requester) override;
 	virtual std::shared_ptr<DownloadResponse> responseFor(int requestId) override;
-	virtual void pauseRequesters(const QVector<const void*>& requesterToBePaused) override;
-	virtual void unpauseRequesters(const QVector<const void*>& requesterToBeUnpaused) override;
+	virtual void pauseRequesters(const QList<Requester*>& requesterToBePaused) override;
+	virtual void unpauseRequesters(const QList<Requester*>& requesterToBeUnpaused) override;
 
 private:
 	void processReply(QNetworkReply* reply);

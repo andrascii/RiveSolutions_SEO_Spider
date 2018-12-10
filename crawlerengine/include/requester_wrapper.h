@@ -35,6 +35,11 @@ public:
 		m_requesterPtr.reset();
 	}
 
+	void reset(const IRequest& request)
+	{
+		m_requesterPtr.reset(new Requester(request));
+	}
+
 	template <typename ObjectType, typename... ResponseTypes>
 	void reset(const IRequest& request, ObjectType* object, void(ObjectType::*...callback)(Requester*, const ResponseTypes))
 	{
