@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget* parent)
 	, m_systemTrayIcon(new QSystemTrayIcon(theApp->softwareBrandingOptions()->applicationIcon(), this))
 	, m_updateChecker(new UpdateChecker(this))
 	, m_shadedOverlay(new ShadedOverlay(this))
+	, m_applicationSettingsDialog(nullptr)
 {
 	qRegisterMetaType<Version>("Version");
 
@@ -233,10 +234,13 @@ void MainWindow::saveFileAndClearData()
 
 void MainWindow::showApplicationSettingsDialog(const QByteArray& settingsPageName)
 {
-	ApplicationSettingsDialog* applicationSettingsWidget = new ApplicationSettingsDialog(this);
-	applicationSettingsWidget->setCurrentPage(settingsPageName);
-	applicationSettingsWidget->exec();
-	applicationSettingsWidget->deleteLater();
+	if (m_applicationSettingsDialog == nullptr)
+	{
+		m_applicationSettingsDialog = new ApplicationSettingsDialog(this);
+	}
+
+	m_applicationSettingsDialog->setCurrentPage(settingsPageName);
+	m_applicationSettingsDialog->exec();
 }
 
 void MainWindow::onCrawlingFinished() const

@@ -8,6 +8,7 @@ namespace SeoSpider
 class ContentFrame;
 class IUpdateChecker;
 class ShadedOverlay;
+class ApplicationSettingsDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -83,6 +84,7 @@ private:
 
 	IUpdateChecker* m_updateChecker;
 	ShadedOverlay* m_shadedOverlay;
+	ApplicationSettingsDialog* m_applicationSettingsDialog;
 };
 
 }

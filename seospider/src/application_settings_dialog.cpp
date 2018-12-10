@@ -160,6 +160,7 @@ void ApplicationSettingsDialog::currentSettingsPageChanged(int index)
 
 ApplicationSettingsDialog::~ApplicationSettingsDialog()
 {
+	disconnect(m_ui.stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(currentSettingsPageChanged(int)));
 	while (m_ui.stackedWidget->count() > 0)
 	{
 		const int lastRemovingWidgetIndex = m_ui.stackedWidget->count() - 1;
@@ -203,7 +204,6 @@ void ApplicationSettingsDialog::initialize()
 	foreach (const QByteArray& pageId, settingsPageRegistry->pagesKeys())
 	{
 		SettingsPage* page = settingsPageRegistry->settingsPageById(pageId);
-		page->setParent(this);
 
 		if (page->isAutoApply())
 		{
@@ -218,6 +218,7 @@ void ApplicationSettingsDialog::initialize()
 		VERIFY(connect(page, SIGNAL(somethingChangedSignal()), this, SLOT(somethingChangedSlot())));
 
 		QScrollArea* scrollArea = new QScrollArea(this);
+		page->setParent(scrollArea);
 		scrollArea->setObjectName(QStringLiteral("scrollArea"));
 		scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 		scrollArea->setWidgetResizable(true);
