@@ -109,7 +109,7 @@ bool DispatcherBasedWorkerPageLoader::canPullLoading() const
 	const int downloaderCrawledLinksCount = state->downloaderCrawledLinksCount();
 
 	const int differenceBetweenWorkersAndDownloader = downloaderCrawledLinksCount - workersProcessedLinksCount;
-	constexpr int maxPendingLinksCount = 50;
+	constexpr int maxPendingLinksCount = 16;
 
 	if (differenceBetweenWorkersAndDownloader > maxPendingLinksCount)
 	{

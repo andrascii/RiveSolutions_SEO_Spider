@@ -72,6 +72,9 @@ private:
 	//! returns the valid request indexes which should be paused
 	QVector<int> requestIndexesToPause() const;
 
+	//! returns the valid request indexes which should be unpaused and stored in the m_activeRequesters and m_pendingRequesters
+	QVector<int> requestIndexesToUnpause(const QList<Requester*>& requesterToBeUnpaused) const;
+
 	//! returns first unpaused requester and also clears expired requesters by searching pass
 	RequesterSharedPtr extractFirstUnpausedRequester();
 
