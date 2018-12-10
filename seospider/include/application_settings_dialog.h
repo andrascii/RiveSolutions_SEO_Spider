@@ -23,7 +23,7 @@ private slots:
 	void somethingChangedSlot();
 	void reloadSettingsSlot();
 	void onCrawlerStarted();
-	void onCrawlerFinished();
+	void onCrawlerFinishedOrDataCleared();
 	void currentSettingsPageChanged(int index);
 
 private:
