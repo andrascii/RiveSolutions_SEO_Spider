@@ -23,7 +23,7 @@ class TestsCrawler : public Crawler
 	Q_OBJECT
 
 public:
-	TestsCrawler(unsigned int threadCount, QObject* parent = nullptr);
+	TestsCrawler(QObject* parent = nullptr);
 
 	~TestsCrawler();
 

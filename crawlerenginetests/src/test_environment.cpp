@@ -3,13 +3,6 @@
 #include "handler_registry.h"
 #include "test_runner.h"
 
-namespace
-{
-
-constexpr int s_threadCount = 1;
-
-}
-
 namespace CrawlerEngineTests
 {
 
@@ -18,7 +11,7 @@ static int s_argc = 0;
 TestEnvironment::TestEnvironment()
 	: QCoreApplication(s_argc, nullptr)
 	, m_testRunner(new TestRunner)
-	, m_crawler(new TestsCrawler(s_threadCount, nullptr))
+	, m_crawler(new TestsCrawler(nullptr))
 {
 	m_crawler->initialize();
 }
