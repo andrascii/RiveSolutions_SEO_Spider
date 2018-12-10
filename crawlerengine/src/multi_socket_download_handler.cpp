@@ -9,7 +9,7 @@
 namespace
 {
 
-constexpr int c_maxParallelTransferCount = 1000;
+constexpr int c_maxParallelTransferCount = 24;
 
 }
 
@@ -94,35 +94,45 @@ std::shared_ptr<DownloadResponse> MultiSocketDownloadHandler::responseFor(int re
 
 void MultiSocketDownloadHandler::pauseRequesters(const QList<Requester*>& requesterToBePaused)
 {
-	std::for_each(requesterToBePaused.begin(), requesterToBePaused.end(), [this](Requester* p)
-	{
-		m_pausedRequesters.insert(p);
-	});
+	std::for_each(requesterToBePaused.begin(), requesterToBePaused.end(),
+		[this](Requester* p) { m_pausedRequesters.insert(p); });
 
 	// some of these requests at this moment can be already downloaded - it's a normal situation.
 	// MultiSocketLoader emit a signal about new downloaded page but our slot onUrlLoaded had not been called yet
 	// because of we uses the Qt::QueuedConnection
 	const QVector<int> requestIndexes = requestIndexesToPause();
 
-	std::for_each(requestIndexes.begin(), requestIndexes.end(), [this](int id)
-	{
-		m_multiSocketLoader->pauseConnection(id);
-	});
+	std::for_each(requestIndexes.begin(), requestIndexes.end(),
+		[this](int id) { m_multiSocketLoader->pauseConnection(id); });
 }
 
 void MultiSocketDownloadHandler::unpauseRequesters(const QList<Requester*>& requesterToBeUnpaused)
 {
-	const QVector<int> requestIndexes = requestIndexesToPause();
+	const QVector<int> requestIndexes = requestIndexesToUnpause(requesterToBeUnpaused);
 
-	std::for_each(requestIndexes.begin(), requestIndexes.end(), [this](int id)
-	{
-		m_multiSocketLoader->unpauseConnection(id);
-	});
+	std::for_each(requesterToBeUnpaused.begin(), requesterToBeUnpaused.end(),
+		[this](Requester* p) { m_pausedRequesters.remove(p); });
 
-	std::for_each(requesterToBeUnpaused.begin(), requesterToBeUnpaused.end(), [this](Requester* p)
+	if (requestIndexes.isEmpty())
 	{
-		m_pausedRequesters.remove(p);
-	});
+		// In this case MultiSocketDownloadHandler can stay in the sleeping state.
+		// We need to make sure that we actually don't have any requesters
+		// by checking and extracting requesters from the m_pendingRequesters.
+		RequesterSharedPtr requester = extractFirstUnpausedRequester();
+
+		if (!requester)
+		{
+			INFOLOG << "There is no requesters to unpause and start to load";
+			return;
+		}
+
+		load(requester);
+	}
+	else
+	{
+		std::for_each(requestIndexes.begin(), requestIndexes.end(),
+			[this](int id) { m_multiSocketLoader->unpauseConnection(id); });
+	}
 }
 
 //! extracts and returns the value of the Location header (resolves the location address by baseAddress)
@@ -264,6 +274,41 @@ QVector<int> MultiSocketDownloadHandler::requestIndexesToPause() const
 		RequesterSharedPtr actualRequester = iterator.value().lock();
 
 		if (!m_pausedRequesters.contains(actualRequester.get()))
+		{
+			continue;
+		}
+
+		if (m_parentIdToRedirectIds.contains(iterator.key()))
+		{
+			DEBUG_ASSERT(!m_parentIdToRedirectIds[iterator.key()].isEmpty());
+			result.append(m_parentIdToRedirectIds[iterator.key()].back());
+		}
+		else
+		{
+			result.append(iterator.key());
+		}
+	}
+
+	return result;
+}
+
+//! returns the valid request indexes which should be unpaused and stored in the m_activeRequesters and m_pendingRequesters
+QVector<int> MultiSocketDownloadHandler::requestIndexesToUnpause(const QList<Requester*>& requesterToBeUnpaused) const
+{
+	using ActiveRequesterMapIterator = QMap<int, RequesterWeakPtr>::const_iterator;
+
+	QVector<int> result;
+
+	for (ActiveRequesterMapIterator iterator = m_activeRequesters.begin(), last = m_activeRequesters.end(); iterator != last; ++iterator)
+	{
+		if (iterator.value().expired())
+		{
+			continue;
+		}
+
+		RequesterSharedPtr actualRequester = iterator.value().lock();
+
+		if (requesterToBeUnpaused.indexOf(actualRequester.get()) == -1)
 		{
 			continue;
 		}
