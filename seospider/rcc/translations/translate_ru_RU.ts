@@ -521,7 +521,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Too Long Links</source>
-        <translation>Слишком длинные ссылки</translation>
+        <translation>Слишком длинные URL адреса</translation>
     </message>
     <message>
         <source>Broken Links</source>
