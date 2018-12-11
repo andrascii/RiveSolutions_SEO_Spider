@@ -238,8 +238,10 @@ void Crawler::startCrawling()
 	}
 	else
 	{
+		const int rangeFrom = qMax(0, m_options->pauseRangeFrom());
+		const int rangeTo = qMax(rangeFrom, m_options->pauseRangeTo());
 		VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setPauseRange",
-			Qt::BlockingQueuedConnection, Q_ARG(int, m_options->pauseRangeFrom()), Q_ARG(int, m_options->pauseRangeTo())));
+			Qt::BlockingQueuedConnection, Q_ARG(int, rangeFrom), Q_ARG(int, rangeTo)));
 	}
 
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setTimeout",
