@@ -24,7 +24,6 @@ class CrawlerWorker : public QObject
 
 public:
 	CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPageLoader* pageLoader);
-	std::optional<CrawlerRequest> readyPages() const;
 
 signals:
 	void workerResult(WorkerResult workerResult) const;

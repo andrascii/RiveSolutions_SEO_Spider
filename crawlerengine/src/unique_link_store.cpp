@@ -95,7 +95,9 @@ bool UniqueLinkStore::extractUrl(CrawlerRequest& crawlerRequest) noexcept
 		}
 
 		DEBUG_ASSERT(m_crawledUrlList.find(crawlerRequest) == m_crawledUrlList.end());
-		m_crawledUrlList.insert(std::move(*iter));
+		CrawlerRequest request = std::move(*iter);
+		m_crawledUrlList.insert(request);
+		m_activeUrlList.insert(request);
 		m_pendingUrlList.erase(iter);
 	}
 
@@ -215,6 +217,12 @@ bool UniqueLinkStore::hasCrawledRequest(const CrawlerRequest& request)
 	return m_crawledUrlList.find(request) != m_crawledUrlList.end();
 }
 
+void UniqueLinkStore::activeRequestReceived(const CrawlerRequest& request)
+{
+	std::lock_guard locker(m_mutex);
+	m_activeUrlList.erase(request);
+}
+
 size_t UniqueLinkStore::crawledCount() const noexcept
 {
 	std::lock_guard locker(m_mutex);
@@ -255,6 +263,25 @@ std::vector<CrawlerRequest> UniqueLinkStore::pendingUrls() const
 	return result;
 }
 
+std::vector<CrawlerRequest> UniqueLinkStore::pendingAndActiveUrls() const
+{
+	std::lock_guard locker(m_mutex);
+	std::vector<CrawlerRequest> result;
+	result.reserve(m_pendingUrlList.size());
+
+	for (auto it = m_pendingUrlList.begin(); it != m_pendingUrlList.end(); ++it)
+	{
+		result.emplace_back(*it);
+	}
+
+	for (auto it = m_activeUrlList.begin(); it != m_activeUrlList.end(); ++it)
+	{
+		result.emplace_back(*it);
+	}
+
+	return result;
+}
+
 void UniqueLinkStore::setCrawledUrls(const std::vector<CrawlerRequest>& urls)
 {
 	std::lock_guard locker(m_mutex);
@@ -276,6 +303,7 @@ void UniqueLinkStore::clear()
 	m_pendingUrlList.clear();
 	m_crawledUrlList.clear();
 	m_refreshUrlList.clear();
+	m_activeUrlList.clear();
 
 	CrawlerSharedState::instance()->setDownloaderCrawledLinksCount(0);
 	CrawlerSharedState::instance()->setDownloaderPendingLinksCount(0);

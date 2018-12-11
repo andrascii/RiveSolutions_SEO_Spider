@@ -598,6 +598,7 @@ void Crawler::onSerializationReadyToBeStarted()
 
 	const ISequencedStorage* storage = sequencedCollection->storage(StorageType::CrawledUrlStorageType);
 	std::vector<ParsedPagePtr> pendingPages = m_modelController->data()->allParsedPages(StorageType::PendingResourcesStorageType);
+	std::vector<ParsedPagePtr> nonLoadingPages = m_modelController->data()->allParsedPages(StorageType::AllOtherResourcesStorageType);
 
 	const int pagesCount = storage->size() + static_cast<int>(pendingPages.size());
 
@@ -616,29 +617,18 @@ void Crawler::onSerializationReadyToBeStarted()
 		pages.push_back(page);
 	}
 
+	for (size_t i = 0; i < nonLoadingPages.size(); ++i)
+	{
+		ParsedPage* page = nonLoadingPages[i].get();
+		pages.push_back(page);
+	}
+
 	std::vector<CrawlerRequest> pendingUrls;
 
-	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingUrls();
+	std::vector<CrawlerRequest> linkStorePendingUrls = m_uniqueLinkStore->pendingAndActiveUrls();
 	pendingUrls.insert(pendingUrls.end(), linkStorePendingUrls.begin(), linkStorePendingUrls.end());
 
 	std::vector<CrawlerRequest> crawledUrls = m_uniqueLinkStore->crawledUrls();
-
-	for (CrawlerWorker* worker : m_workers)
-	{
-		std::optional<CrawlerRequest> workerPendingUrl = worker->readyPages();
-
-		if (!workerPendingUrl.has_value())
-		{
-			continue;
-		}
-
-		CrawlerRequest& request = workerPendingUrl.value();
-
-		if (!m_uniqueLinkStore->hasCrawledRequest(request))
-		{
-			pendingUrls.push_back(workerPendingUrl.value());
-		}
-	}
 
 	std::unique_ptr<Serializer> serializer = std::make_unique<Serializer>(std::move(pages),
 		std::move(crawledUrls), std::move(pendingUrls), m_options->data(), m_webHostInfo->allData());

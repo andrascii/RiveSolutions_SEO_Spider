@@ -52,13 +52,6 @@ CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPag
 	m_licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
 }
 
-std::optional<CrawlerRequest> CrawlerWorker::readyPages() const
-{
-	QVector<ICrawlerWorkerPageLoader::ResponseData> responseData = m_pageLoader->pendingResponseData();
-	responseData;
-	return {};
-}
-
 void CrawlerWorker::start(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
@@ -361,6 +354,9 @@ void CrawlerWorker::onLoadingDone(const HopsChain& hopsChain,
 	const std::vector<bool>& reloadingPageStrorages,
 	DownloadRequestType requestType)
 {
+	CrawlerRequest readyRequest = { hopsChain.firstHop().url(), requestType };
+	m_uniqueLinkStore->activeRequestReceived(readyRequest);
+
 	extractUrlAndDownload();
 
 	DEBUG_ASSERT(requestType != DownloadRequestType::RequestTypeHead || hopsChain.firstHop().body().isEmpty());

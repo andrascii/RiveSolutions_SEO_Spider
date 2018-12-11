@@ -34,27 +34,6 @@ DispatcherBasedWorkerPageLoader::DispatcherBasedWorkerPageLoader(QObject* parent
 	: QObject(parent)
 	, m_state(CanReceivePages)
 {
-	reloadPromise();
-}
-
-//! this function always must be thread-safe
-QVector<ICrawlerWorkerPageLoader::ResponseData>
-DispatcherBasedWorkerPageLoader::pendingResponseData()
-{
-	DEBUG_ASSERT(thread() != QThread::currentThread());
-
-	QVector<ResponseData> responseData;
-
-	try
-	{
-		responseData = m_pendingResponseDataFuture.get();
-	}
-	catch (const std::future_error& futureError)
-	{
-		WARNLOG << futureError.what();
-	}
-
-	return responseData;
 }
 
 void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
@@ -85,15 +64,7 @@ void DispatcherBasedWorkerPageLoader::onLoadingDone(Requester* requester, const 
 			isPageReloaded
 		};
 
-		m_pendingResponseData.insert(m_pendingResponseData.end(), std::move(responseData));
-
 		removeRequesterAssociatedData(requester);
-
-		if (m_activeRequesters.isEmpty())
-		{
-			INFOLOG << "Set promise";
-			m_pendingResponseDataPromise.set_value(std::move(m_pendingResponseData));
-		}
 	}
 }
 
@@ -139,9 +110,6 @@ void DispatcherBasedWorkerPageLoader::performLoading(const CrawlerRequest& crawl
 void DispatcherBasedWorkerPageLoader::clear()
 {
 	m_activeRequesters.clear();
-	m_pendingResponseData.clear();
-
-	reloadPromise();
 }
 
 QObject* DispatcherBasedWorkerPageLoader::qobject()
@@ -160,25 +128,6 @@ void DispatcherBasedWorkerPageLoader::setReceiveState(ReceiveState state)
 
 	if (state == CanReceivePages)
 	{
-		try
-		{
-			const std::future_status futureStatus = m_pendingResponseDataFuture.wait_for(0ms);
-
-			if (futureStatus == std::future_status::ready)
-			{
-				emitResponseData(m_pendingResponseDataFuture.get());
-				reloadPromise();
-				return;
-			}
-
-			emitResponseData(m_pendingResponseData);
-			m_pendingResponseData.clear();
-		}
-		catch (const std::future_error& futureError)
-		{
-			WARNLOG << futureError.what();
-		}
-
 		sendRequestToUnpauseAllPausedDownloads();
 	}
 	else
@@ -199,12 +148,6 @@ void DispatcherBasedWorkerPageLoader::removeRequesterAssociatedData(Requester* r
 {
 	m_activeRequesters[requester].requesterWrapper.reset();
 	m_activeRequesters.remove(requester);
-}
-
-void DispatcherBasedWorkerPageLoader::reloadPromise()
-{
-	m_pendingResponseDataPromise = std::promise<QVector<ResponseData>>();
-	m_pendingResponseDataFuture = m_pendingResponseDataPromise.get_future();
 }
 
 void DispatcherBasedWorkerPageLoader::sendRequestToPauseAllActiveDownloads() const
