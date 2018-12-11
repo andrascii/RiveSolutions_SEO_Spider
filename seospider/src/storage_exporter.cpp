@@ -10,6 +10,7 @@
 #include "main_window.h"
 #include "service_locator.h"
 #include "inotification_service.h"
+#include "statistic_counter.h"
 
 namespace SeoSpider
 {
@@ -34,6 +35,18 @@ void StorageExporter::exportStorage(const CrawlerEngine::SequencedDataCollection
 		);
 
 		return;
+	}
+
+	if (storages.size() == 1)
+	{
+		const QString storageNameStr = storageAdapterTypeStringFromEnum(static_cast<StorageAdapterType>(storages.front().storageType));
+		StatisticCounter exportCounter(QString("%1_ExportToExcelCounter").arg(storageNameStr));
+		exportCounter.increment();
+	}
+	else
+	{
+		StatisticCounter exportCounter(QString("SeveralStorages_ExportToExcelCounter").arg(storages.front().storageTypeDescriptionName));
+		exportCounter.increment();
 	}
 
 	QXlsx::Document xlsxDocument(filepath);

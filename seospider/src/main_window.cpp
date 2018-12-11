@@ -45,6 +45,7 @@
 #include "ui_company_profile_settings_widget.h"
 #include "ui_page_visual_settings_widget.h"
 #include "custom_uri_channel.h"
+#include "statistic_counter.h"
 
 namespace
 {
@@ -113,6 +114,9 @@ void MainWindow::saveFile()
 	{
 		saveFileAs();
 	}
+
+	StatisticCounter saveToFileCounter(QString("SaveProjectToFileCounter"));
+	saveToFileCounter.increment();
 }
 
 void MainWindow::saveFileAs()
@@ -153,6 +157,9 @@ void MainWindow::openFile()
 		return;
 	}
 
+	StatisticCounter openFromFileCounter(QString("OpenProjectFromFileCounter"));
+	openFromFileCounter.increment();
+
 	RecentFiles::instance().registerNewRecentFile(path);
 	theApp->crawler()->loadFromFile(path);
 }
@@ -174,6 +181,9 @@ void MainWindow::openFile(const QString& filePath)
 	{
 		return;
 	}
+
+	StatisticCounter openFromFileCounter(QString("OpenProjectFromFileCounter"));
+	openFromFileCounter.increment();
 
 	RecentFiles::instance().registerNewRecentFile(filePath);
 	theApp->crawler()->loadFromFile(filePath);
