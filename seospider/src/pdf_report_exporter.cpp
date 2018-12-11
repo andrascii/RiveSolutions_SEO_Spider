@@ -1,5 +1,6 @@
 #include "pdf_report_exporter.h"
 #include "report_data_provider.h"
+#include "statistic_counter.h"
 
 namespace SeoSpider
 {
@@ -22,6 +23,9 @@ QString PdfReportExporter::ext() const
 void PdfReportExporter::doExport(QIODevice* device, 
 	ReportsPage::ReportType reportType, const ReportDataProvider* provider) const
 {
+	StatisticCounter exportCounter(QString("ExportReportToPdfCounter"));
+	exportCounter.increment();
+
 	switch (reportType)
 	{
 	case ReportsPage::ReportTypeBrief:
