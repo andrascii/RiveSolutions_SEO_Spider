@@ -38,10 +38,13 @@ public:
 	bool addCrawledUrl(const Url& url, DownloadRequestType requestType);
 	bool hasCrawledRequest(const CrawlerRequest& request);
 
+	void activeRequestReceived(const CrawlerRequest& request);
+
 	size_t crawledCount() const noexcept;
 	size_t pendingCount() const noexcept;
 	std::vector<CrawlerRequest> crawledUrls() const;
 	std::vector<CrawlerRequest> pendingUrls() const;
+	std::vector<CrawlerRequest> pendingAndActiveUrls() const;
 	void setCrawledUrls(const std::vector<CrawlerRequest>& urls);
 	void setPendingUrls(const std::vector<CrawlerRequest>& urls);
 	void clear();
@@ -83,6 +86,7 @@ private:
 
 	UrlList m_pendingUrlList;
 	UrlList m_crawledUrlList;
+	UrlList m_activeUrlList;;
 	std::deque<RefreshUrlRequest> m_refreshUrlList;
 
 	mutable std::recursive_mutex m_mutex;

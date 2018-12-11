@@ -30,8 +30,6 @@ public:
 
 	virtual ~ICrawlerWorkerPageLoader() = default;
 
-	virtual QVector<ResponseData> pendingResponseData() = 0;
-
 	virtual bool canPullLoading() const = 0;
 
 	virtual void performLoading(const CrawlerRequest& crawlerRequest,

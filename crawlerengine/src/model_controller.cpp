@@ -901,8 +901,9 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 				// what if this resource is unavailable not from all pages?
 				data()->addParsedPage(newOrExistingResource, StorageType::PendingResourcesStorageType);
 			}
-			else if (!httpResource)
+			else if (!httpResource && !data()->isParsedPageExists(newOrExistingResource, StorageType::AllOtherResourcesStorageType))
 			{
+				data()->addParsedPage(newOrExistingResource, StorageType::AllOtherResourcesStorageType);
 				data()->addParsedPage(newOrExistingResource, storage);
 			}
 		}

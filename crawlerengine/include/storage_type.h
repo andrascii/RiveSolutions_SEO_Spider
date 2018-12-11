@@ -90,6 +90,7 @@ enum StorageType
 	FlashResourcesStorageType,
 	VideoResourcesStorageType,
 	OtherResourcesStorageType,
+	AllOtherResourcesStorageType,
 	AllCanonicalUrlResourcesStorageType,
 	DuplicatedCanonicalUrlResourcesStorageType,
 	UniqueCanonicalUrlResourcesStorageType,
