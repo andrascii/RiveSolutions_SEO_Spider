@@ -25,6 +25,7 @@ public:
 	virtual void clear() override
 	{
 		m_pages.clear();
+		m_pages.shrink_to_fit();
 	}
 
 	virtual bool empty() const noexcept override
