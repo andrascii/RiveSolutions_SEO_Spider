@@ -7,6 +7,7 @@ namespace CrawlerEngine
 {
 
 class Requester;
+class UniqueLinkStore;
 struct DownloadResponse;
 
 class DispatcherBasedWorkerPageLoader final
@@ -16,7 +17,7 @@ class DispatcherBasedWorkerPageLoader final
 	Q_OBJECT
 
 public:
-	DispatcherBasedWorkerPageLoader(QObject* parent = nullptr);
+	DispatcherBasedWorkerPageLoader(UniqueLinkStore* uniqueLinkStore, QObject* parent = nullptr);
 
 	virtual bool canPullLoading() const override;
 
@@ -54,6 +55,7 @@ private:
 
 	QMap<Requester*, RequesterAssociatedData> m_activeRequesters;
 	ReceiveState m_state;
+	UniqueLinkStore* m_uniqueLinkStore;
 };
 
 }

@@ -140,7 +140,7 @@ void Crawler::initialize()
 
 	for (unsigned i = 0; i < workerCount(); ++i)
 	{
-		m_workers.push_back(new CrawlerWorker(m_uniqueLinkStore, new DispatcherBasedWorkerPageLoader));
+		m_workers.push_back(new CrawlerWorker(m_uniqueLinkStore, new DispatcherBasedWorkerPageLoader(m_uniqueLinkStore)));
 
 		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(WorkerResult)),
 			m_modelController, SLOT(handleWorkerResult(WorkerResult)), Qt::QueuedConnection));

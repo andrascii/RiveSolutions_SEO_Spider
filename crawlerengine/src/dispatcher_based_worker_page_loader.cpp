@@ -5,6 +5,7 @@
 #include "pause_connections_request.h"
 #include "unpause_connections_request.h"
 #include "helpers.h"
+#include "unique_link_store.h"
 
 namespace
 {
@@ -30,9 +31,10 @@ QString printReceiveState(ICrawlerWorkerPageLoader::ReceiveState state)
 namespace CrawlerEngine
 {
 
-DispatcherBasedWorkerPageLoader::DispatcherBasedWorkerPageLoader(QObject* parent)
+DispatcherBasedWorkerPageLoader::DispatcherBasedWorkerPageLoader(UniqueLinkStore* uniqueLinkStore, QObject* parent)
 	: QObject(parent)
 	, m_state(CanReceivePages)
+	, m_uniqueLinkStore(uniqueLinkStore)
 {
 }
 
@@ -75,14 +77,7 @@ bool DispatcherBasedWorkerPageLoader::canPullLoading() const
 		return false;
 	}
 
-	const CrawlerSharedState* state = CrawlerSharedState::instance();
-	const int workersProcessedLinksCount = state->workersProcessedLinksCount();
-	const int downloaderCrawledLinksCount = state->downloaderCrawledLinksCount();
-
-	const int differenceBetweenWorkersAndDownloader = downloaderCrawledLinksCount - workersProcessedLinksCount;
-	constexpr int maxPendingLinksCount = 16;
-
-	if (differenceBetweenWorkersAndDownloader > maxPendingLinksCount)
+	if (m_uniqueLinkStore->activeUrlCount() > 24)
 	{
 		return false;
 	}
