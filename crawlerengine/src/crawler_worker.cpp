@@ -102,7 +102,7 @@ void CrawlerWorker::extractUrlAndDownload()
 
 	reloadPage = isUrlExtracted = m_uniqueLinkStore->extractRefreshUrl(refreshRequest);
 
-	if (!m_isRunning && !reloadPage && !m_pageLoader->canPullLoading())
+	if (!m_pageLoader->canPullLoading() || !m_isRunning && !reloadPage)
 	{
 		return;
 	}
