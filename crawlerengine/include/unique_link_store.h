@@ -42,6 +42,7 @@ public:
 
 	size_t crawledCount() const noexcept;
 	size_t pendingCount() const noexcept;
+	size_t activeUrlCount() const noexcept;
 	std::vector<CrawlerRequest> crawledUrls() const;
 	std::vector<CrawlerRequest> pendingUrls() const;
 	std::vector<CrawlerRequest> pendingAndActiveUrls() const;
@@ -86,7 +87,7 @@ private:
 
 	UrlList m_pendingUrlList;
 	UrlList m_crawledUrlList;
-	UrlList m_activeUrlList;;
+	UrlList m_activeUrlList;
 	std::deque<RefreshUrlRequest> m_refreshUrlList;
 
 	mutable std::recursive_mutex m_mutex;

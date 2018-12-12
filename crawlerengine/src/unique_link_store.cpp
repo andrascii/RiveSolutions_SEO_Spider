@@ -235,6 +235,12 @@ size_t UniqueLinkStore::pendingCount() const noexcept
 	return m_pendingUrlList.size();
 }
 
+size_t UniqueLinkStore::activeUrlCount() const noexcept
+{
+	std::lock_guard locker(m_mutex);
+	return m_activeUrlList.size();
+}
+
 std::vector<CrawlerRequest> UniqueLinkStore::crawledUrls() const
 {
 	std::lock_guard locker(m_mutex);
