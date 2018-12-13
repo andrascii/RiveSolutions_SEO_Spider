@@ -7,6 +7,7 @@
 namespace CrawlerEngine
 {
 
+//! A request handler can send you a response only if the requester at the moment of sending is alive
 class Requester : public QObject, public std::enable_shared_from_this<Requester>
 {
 	Q_OBJECT

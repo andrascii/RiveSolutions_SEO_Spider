@@ -54,6 +54,11 @@ private:
 	//! extracts and returns the value of the Location header (resolves the location address by baseAddress)
 	Url redirectedUrl(const ResponseHeaders& responseHeaders, const Url& baseAddress) const;
 
+	//! Returns the identifier of the active requester by loaded resource identifier.
+	//! Search performs with respect of redirections.
+	//! Returns -1 if requester was not found.
+	int actualRequesterIdByLoadedResourceId(int id) const;
+
 	RequesterSharedPtr requesterByIdAssertIfNotExists(int id) const;
 	RequesterSharedPtr requesterById(int id) const;
 	int parentIdFor(int id) const;
@@ -77,6 +82,9 @@ private:
 
 	//! returns first unpaused requester and also clears expired requesters by searching pass
 	RequesterSharedPtr extractFirstUnpausedRequester();
+
+	//! removes all request binded data with passed identifier
+	void removeLoadedResourceAssociatedData(int id, Requester* requester);
 
 private:
 	MultiSocketLoader* m_multiSocketLoader;

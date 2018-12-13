@@ -15,7 +15,8 @@ enum class ResponseType
 	ResponseSetSerialNumber,
 	ResponseGetSerialNumberData,
 	ResponseGetSerialNumberState,
-	ResponseTakeScreenshot
+	ResponseTakeScreenshot,
+	ResponseUnpauseRequesters
 };
 
 #define DECLARE_RESPONSE_STATIC_TYPE(Type) \

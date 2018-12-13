@@ -40,7 +40,7 @@ CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPag
 		&CrawlerWorker::extractUrlAndDownload, Qt::QueuedConnection));
 
 	VERIFY(connect(&Crawler::instance(), &Crawler::onAboutClearData,
-		this, &CrawlerWorker::onCrawlerClearData, Qt::QueuedConnection));
+		this, &CrawlerWorker::onAllLoadedDataToBeCleared, Qt::QueuedConnection));
 
 	VERIFY(connect(m_defferedProcessingTimer, &QTimer::timeout,
 		this, &CrawlerWorker::extractUrlAndDownload));
@@ -131,7 +131,7 @@ void CrawlerWorker::extractUrlAndDownload()
 	}
 }
 
-void CrawlerWorker::onCrawlerClearData()
+void CrawlerWorker::onAllLoadedDataToBeCleared()
 {
 	m_pageLoader->clear();
 	CrawlerSharedState::instance()->setWorkersProcessedLinksCount(0);

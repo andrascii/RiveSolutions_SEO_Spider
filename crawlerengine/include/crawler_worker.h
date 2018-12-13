@@ -35,7 +35,7 @@ public slots:
 
 private slots:
 	void extractUrlAndDownload();
-	void onCrawlerClearData();
+	void onAllLoadedDataToBeCleared();
 
 	void onLoadingDone(const HopsChain& hopsChain,
 		bool isPageReloaded,

@@ -157,39 +157,40 @@ Url MultiSocketDownloadHandler::redirectedUrl(const ResponseHeaders& responseHea
 	return redirectAddress;
 }
 
-RequesterSharedPtr MultiSocketDownloadHandler::requesterByIdAssertIfNotExists(int id) const
+//! Returns the identifier of the active requester by loaded resource identifier.
+//! Search performs with respect of redirections.
+//! Returns -1 if requester was not found.
+int MultiSocketDownloadHandler::actualRequesterIdByLoadedResourceId(int id) const
 {
 	const auto requesterIterator = m_activeRequesters.find(id);
 
 	if (requesterIterator == m_activeRequesters.end())
 	{
-		const int parentId = parentIdFor(id);
-
-		DEBUG_ASSERT(parentId != -1 || !"Parent ID not found");
-
-		return m_activeRequesters[parentId].lock();
+		return parentIdFor(id);
 	}
 
-	return requesterIterator.value().lock();
+	return id;
+}
+
+RequesterSharedPtr MultiSocketDownloadHandler::requesterByIdAssertIfNotExists(int id) const
+{
+	const int actualRequesterId = actualRequesterIdByLoadedResourceId(id);
+
+	DEBUG_ASSERT(actualRequesterId != -1 || !"Parent ID not found");
+
+	return m_activeRequesters[actualRequesterId].lock();
 }
 
 RequesterSharedPtr MultiSocketDownloadHandler::requesterById(int id) const
 {
-	const auto requesterIterator = m_activeRequesters.find(id);
+	const int actualRequesterId = actualRequesterIdByLoadedResourceId(id);
 
-	if (requesterIterator == m_activeRequesters.end())
+	if (actualRequesterId == -1)
 	{
-		const int parentId = parentIdFor(id);
-
-		if (parentId == -1)
-		{
-			return RequesterSharedPtr();
-		}
-
-		return m_activeRequesters[parentId].lock();
+		return RequesterSharedPtr();
 	}
 
-	return requesterIterator.value().lock();
+	return m_activeRequesters[actualRequesterId].lock();
 }
 
 int MultiSocketDownloadHandler::parentIdFor(int id) const
@@ -381,6 +382,9 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 
 	if (!requester)
 	{
+		// this code can be executed only if the requester is already expired
+		// but it still stores in the m_activeRequesters map
+		removeLoadedResourceAssociatedData(id, requester.get());
 		return;
 	}
 
@@ -426,14 +430,7 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 	}
 
 	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
-
-	const int parentId = parentIdFor(id);
-	const int parentRequestId = parentId == -1 ? id : parentId;
-
-	m_responses.remove(parentRequestId);
-	m_activeRequesters.remove(parentRequestId);
-
-	removeRequestIndexesChain(id);
+	removeLoadedResourceAssociatedData(id, requester.get());
 }
 
 
@@ -522,6 +519,19 @@ RequesterSharedPtr MultiSocketDownloadHandler::extractFirstUnpausedRequester()
 	}
 
 	return RequesterSharedPtr();
+}
+
+//! removes all request binded data with passed identifier
+void MultiSocketDownloadHandler::removeLoadedResourceAssociatedData(int id, Requester* requester)
+{
+	const int parentId = parentIdFor(id);
+	const int parentRequesterId = parentId == -1 ? id : parentId;
+
+	m_pausedRequesters.remove(requester);
+	m_activeRequesters.remove(parentRequesterId);
+	m_responses.remove(parentRequesterId);
+
+	removeRequestIndexesChain(id);
 }
 
 }
