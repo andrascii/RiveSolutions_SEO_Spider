@@ -28,6 +28,8 @@ void UpdateChecker::check()
 	};
 
 	CrawlerEngine::DownloadRequest request(crawlerRequest);
+	request.ignoreMaxParallelConnections = true;
+
 	m_downloadRequester.reset(request, this, &UpdateChecker::onActualVersionFileLoaded);
 	m_downloadRequester->start();
 }
@@ -122,8 +124,8 @@ Version UpdateChecker::getRemoteVersion(const QByteArray& remoteXmlUpdateFile) c
 
 		while (!(updateFile.tokenType() == QXmlStreamReader::EndElement && updateFile.name() == "PackageUpdate"))
 		{
-			if (updateFile.tokenType() == QXmlStreamReader::StartElement && 
-				updateFile.name() == "Version" && 
+			if (updateFile.tokenType() == QXmlStreamReader::StartElement &&
+				updateFile.name() == "Version" &&
 				updateFile.tokenType() == QXmlStreamReader::StartElement)
 			{
 				updateFile.readNext();
