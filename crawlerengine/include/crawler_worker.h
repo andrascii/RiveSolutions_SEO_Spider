@@ -11,7 +11,7 @@
 namespace CrawlerEngine
 {
 
-class ICrawlerWorkerPageLoader;
+class IWorkerPageLoader;
 class UniqueLinkStore;
 class PageDataCollector;
 class ILicenseStateObserver;
@@ -23,7 +23,7 @@ class CrawlerWorker : public QObject
 	Q_OBJECT
 
 public:
-	CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPageLoader* pageLoader);
+	CrawlerWorker(UniqueLinkStore* uniqueLinkStore, IWorkerPageLoader* pageLoader);
 
 signals:
 	void workerResult(WorkerResult workerResult) const;
@@ -81,7 +81,7 @@ private:
 	QTimer* m_defferedProcessingTimer;
 	ILicenseStateObserver* m_licenseService;
 	CrawlerOptionsData m_optionsData;
-	ICrawlerWorkerPageLoader* m_pageLoader;
+	IWorkerPageLoader* m_pageLoader;
 };
 
 }

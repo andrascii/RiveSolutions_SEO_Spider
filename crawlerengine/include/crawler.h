@@ -24,6 +24,7 @@ class Requester;
 class HostInfo;
 class IScreenshotMaker;
 class ICustomDataFeed;
+class IWorkerPageLoader;
 struct SiteMapSettings;
 struct TaskResponse;
 struct GetHostInfoResponse;
@@ -156,6 +157,8 @@ protected:
 	virtual IDownloadHandler* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
 	virtual void initSequencedDataCollection();
+
+	IWorkerPageLoader* createWorkerPageLoader() const;
 	const UniqueLinkStore* uniqueLinkStore() const noexcept;
 
 private:
