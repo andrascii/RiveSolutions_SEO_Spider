@@ -59,7 +59,7 @@ TEST(RefreshTests, OldDuplicatesMustBeRemovedAfterRefresh)
 
 		const Url refreshUrl("http://refresh1.com/refresh_page.html");
 
-		const auto refreshPageIterator = std::find_if(pages.begin(), pages.end(), 
+		const auto refreshPageIterator = std::find_if(pages.begin(), pages.end(),
 			[&refreshUrl](const ParsedPage* page) { return page->url == refreshUrl; });
 
 		ASSERT(refreshPageIterator != pages.end());
@@ -71,7 +71,7 @@ TEST(RefreshTests, OldDuplicatesMustBeRemovedAfterRefresh)
 		cl->waitForRefreshPageDone(10);
 
 		//
-		// This delay is not reliable solution for waiting 
+		// This delay is not reliable solution for waiting
 		// until results is not received by sequenced data collection
 		//
 		std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -138,7 +138,7 @@ TEST(RefreshTests, OldDuplicatesMustBeRemovedAfterRefreshDifferentCanonicals)
 		cl->waitForRefreshPageDone(10);
 
 		//
-		// This delay is not reliable solution for waiting 
+		// This delay is not reliable solution for waiting
 		// until results is not received by sequenced data collection
 		//
 		std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -202,7 +202,7 @@ TEST(RefreshTests, DuplicatesMustNotBePresentedAfterRefresh)
 		cl->waitForRefreshPageDone(10);
 
 		//
-		// This delay is not reliable solution for waiting 
+		// This delay is not reliable solution for waiting
 		// until results is not received by sequenced data collection
 		//
 		std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -262,7 +262,7 @@ TEST(RefreshTests, RefreshNotChangedPage)
 		cl->waitForRefreshPageDone(10);
 
 		//
-		// This delay is not reliable solution for waiting 
+		// This delay is not reliable solution for waiting
 		// until results is not received by sequenced data collection
 		//
 		std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -289,7 +289,7 @@ TEST(RefreshTests, RefreshNofollowLinkTest)
 		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 
-		const std::vector<const ParsedPage*> blockedByNofollowAttrLinks = 
+		const std::vector<const ParsedPage*> blockedByNofollowAttrLinks =
 			cl->storageItems(StorageType::NofollowLinksStorageType);
 
 		EXPECT_EQ(1, blockedByNofollowAttrLinks.size());
@@ -308,7 +308,7 @@ TEST(RefreshTests, RefreshNofollowLinkTest)
 		cl->waitForRefreshPageDone(10);
 
 		//
-		// This delay is not reliable solution for waiting 
+		// This delay is not reliable solution for waiting
 		// until results is not received by sequenced data collection
 		//
 		std::this_thread::sleep_for(std::chrono::seconds(3));

@@ -22,6 +22,7 @@ public:
 TestsCrawler::TestsCrawler(QObject* parent)
 	: Crawler(parent)
 {
+	setWorkerCount(1);
 }
 
 TestsCrawler::~TestsCrawler()

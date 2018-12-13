@@ -11,9 +11,6 @@ using namespace CrawlerEngine;
 
 TestsDownloader::TestsDownloader()
 {
-	CrawlerEngine::HandlerRegistry& handlerRegistry = CrawlerEngine::HandlerRegistry::instance();
-	handlerRegistry.registrateHandler(this, CrawlerEngine::RequestType::RequestDownload);
-
 	m_responsePostProcessor = [](CrawlerEngine::DownloadResponse&) {};
 }
 
@@ -49,20 +46,6 @@ void TestsDownloader::setProxy(const QString&, int, const QString&, const QStrin
 
 void TestsDownloader::resetProxy()
 {
-}
-
-void TestsDownloader::handleRequest(RequesterSharedPtr requester)
-{
-	std::shared_ptr<DownloadResponse> response =
-		std::make_shared<DownloadResponse>();
-
-	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
-
-	QSet<QString> uniqueUrls;
-	response->hopsChain = hopsChain(*request, uniqueUrls);
-	m_responsePostProcessor(*(response.get()));
-
-	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 }
 
 void TestsDownloader::stopRequestHandling(RequesterSharedPtr requester)
@@ -265,6 +248,33 @@ std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const Downloa
 	}
 
 	return std::make_pair(requestedFilePath, metadataFilePath);
+}
+
+void TestsDownloader::load(RequesterSharedPtr requester)
+{
+	std::shared_ptr<DownloadResponse> response =
+		std::make_shared<DownloadResponse>();
+
+	DownloadRequest* request = static_cast<DownloadRequest*>(requester->request());
+
+	QSet<QString> uniqueUrls;
+	response->hopsChain = hopsChain(*request, uniqueUrls);
+	m_responsePostProcessor(*(response.get()));
+
+	ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+}
+
+std::shared_ptr<CrawlerEngine::DownloadResponse> TestsDownloader::responseFor(int)
+{
+	return std::make_shared<CrawlerEngine::DownloadResponse>();
+}
+
+void TestsDownloader::pauseRequesters(const QList<Requester*>&)
+{
+}
+
+void TestsDownloader::unpauseRequesters(const QList<Requester*>&)
+{
 }
 
 }
