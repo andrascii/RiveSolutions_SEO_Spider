@@ -29,6 +29,7 @@
 #include "icustom_data_feed.h"
 #include "multi_socket_download_handler.h"
 #include "multi_request_page_loader.h"
+#include "qt_page_loader.h"
 
 namespace CrawlerEngine
 {
@@ -55,6 +56,7 @@ Crawler::Crawler(QObject* parent)
 	, m_downloader(nullptr)
 	, m_webHostInfo(nullptr)
 	, m_licenseStateObserver(nullptr)
+	, m_downloaderType(DownloaderTypeQNetworkAccessManager)
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->addService<INotificationService>(new NotificationService);
@@ -140,7 +142,7 @@ void Crawler::initialize()
 
 	for (unsigned i = 0; i < workerCount(); ++i)
 	{
-		m_workers.push_back(new CrawlerWorker(m_uniqueLinkStore, new MultiRequestPageLoader(m_uniqueLinkStore)));
+		m_workers.push_back(new CrawlerWorker(m_uniqueLinkStore, createWorkerPageLoader()));
 
 		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(WorkerResult)),
 			m_modelController, SLOT(handleWorkerResult(WorkerResult)), Qt::QueuedConnection));
@@ -692,6 +694,27 @@ void Crawler::initSequencedDataCollection()
 	// addCustomDataFeed(new YandexMetricaDataFeed());
 
 	setCustomDataFeedsToSequencedDataCollection();
+}
+
+IWorkerPageLoader* Crawler::createWorkerPageLoader() const
+{
+	switch (m_downloaderType)
+	{
+		case DownloaderTypeQNetworkAccessManager:
+		{
+			INFOLOG << "Creating QtPageLoader";
+			return new QtPageLoader(m_uniqueLinkStore);
+		}
+		case DownloaderTypeLibCurlMultiSocket:
+		{
+			INFOLOG << "Creating MultiRequestPageLoader";
+			return new MultiRequestPageLoader(m_uniqueLinkStore);
+		}
+	}
+
+	ASSERT(!"Invalid downloader type");
+
+	return nullptr;
 }
 
 IHostInfoProvider* Crawler::createHostInfoProvider() const

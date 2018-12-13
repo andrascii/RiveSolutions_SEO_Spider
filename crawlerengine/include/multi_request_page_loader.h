@@ -1,6 +1,6 @@
 #pragma once
 
-#include "icrawler_worker_page_loader.h"
+#include "iworker_page_loader.h"
 #include "requester_wrapper.h"
 
 namespace CrawlerEngine
@@ -13,7 +13,7 @@ struct UnpauseResponse;
 
 class MultiRequestPageLoader final
 	: public QObject
-	, public ICrawlerWorkerPageLoader
+	, public IWorkerPageLoader
 {
 	Q_OBJECT
 

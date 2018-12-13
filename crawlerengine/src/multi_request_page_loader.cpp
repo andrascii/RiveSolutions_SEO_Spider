@@ -13,15 +13,15 @@ namespace
 
 using namespace CrawlerEngine;
 
-QString printReceiveState(ICrawlerWorkerPageLoader::ReceiveState state)
+QString printReceiveState(IWorkerPageLoader::ReceiveState state)
 {
-	DEBUG_ASSERT(state == ICrawlerWorkerPageLoader::CanReceivePages ||
-		state == ICrawlerWorkerPageLoader::CantReceivePages);
+	DEBUG_ASSERT(state == IWorkerPageLoader::CanReceivePages ||
+		state == IWorkerPageLoader::CantReceivePages);
 
 	switch (state)
 	{
-		case ICrawlerWorkerPageLoader::CanReceivePages: return QStringLiteral("CanReceivePages State");
-		case ICrawlerWorkerPageLoader::CantReceivePages: return QStringLiteral("CantReceivePages State");
+		case IWorkerPageLoader::CanReceivePages: return QStringLiteral("CanReceivePages State");
+		case IWorkerPageLoader::CantReceivePages: return QStringLiteral("CantReceivePages State");
 	}
 
 	return QString();
@@ -48,27 +48,12 @@ void MultiRequestPageLoader::onLoadingDone(Requester* requester, const DownloadR
 
 	const bool isPageReloaded = downloadRequest->linkStatus == DownloadRequest::Status::LinkStatusReloadAlreadyLoaded;
 
-	if (m_state == CanReceivePages || isPageReloaded)
-	{
-		emit pageLoaded(response.hopsChain,
-			isPageReloaded,
-			m_activeRequesters[requester].storagesBeforeRemoving,
-			downloadRequest->requestInfo.requestType);
+	emit pageLoaded(response.hopsChain,
+		isPageReloaded,
+		m_activeRequesters[requester].storagesBeforeRemoving,
+		downloadRequest->requestInfo.requestType);
 
-		removeRequesterAssociatedData(requester);
-	}
-	else
-	{
-		ResponseData responseData
-		{
-			std::move(response.hopsChain),
-			m_activeRequesters[requester].storagesBeforeRemoving,
-			downloadRequest->requestInfo.requestType,
-			isPageReloaded
-		};
-
-		removeRequesterAssociatedData(requester);
-	}
+	removeRequesterAssociatedData(requester);
 }
 
 bool MultiRequestPageLoader::canPullLoading() const

@@ -9,7 +9,7 @@
 #include "common_constants.h"
 #include "crawler.h"
 #include "finally.h"
-#include "icrawler_worker_page_loader.h"
+#include "iworker_page_loader.h"
 
 Q_DECLARE_METATYPE(std::vector<bool>)
 
@@ -18,7 +18,7 @@ namespace CrawlerEngine
 
 std::atomic<size_t> CrawlerWorker::s_trialLicenseSentLinksCounter = 0;
 
-CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, ICrawlerWorkerPageLoader* pageLoader)
+CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, IWorkerPageLoader* pageLoader)
 	: QObject(nullptr)
 	, m_pageDataCollector(new PageDataCollector(this))
 	, m_uniqueLinkStore(uniqueLinkStore)
@@ -59,7 +59,7 @@ void CrawlerWorker::start(const CrawlerOptionsData& optionsData, RobotsTxtRules 
 	m_isRunning = true;
 	m_optionsData = optionsData;
 
-	m_pageLoader->setReceiveState(ICrawlerWorkerPageLoader::CanReceivePages);
+	m_pageLoader->setReceiveState(IWorkerPageLoader::CanReceivePages);
 
 	reinitOptions(optionsData, robotsTxtRules);
 	extractUrlAndDownload();
@@ -71,7 +71,7 @@ void CrawlerWorker::stop()
 
 	m_isRunning = false;
 
-	m_pageLoader->setReceiveState(ICrawlerWorkerPageLoader::CantReceivePages);
+	m_pageLoader->setReceiveState(IWorkerPageLoader::CantReceivePages);
 }
 
 void CrawlerWorker::reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
