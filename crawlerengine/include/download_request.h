@@ -23,11 +23,13 @@ struct DownloadRequest : public IRequest
 	DownloadRequest(const CrawlerRequest& requestInfo,
 		Status linkStatus = Status::LinkStatusFirstLoading,
 		BodyProcessingCommand bodyProcessingCommand = BodyProcessingCommand::CommandAutoDetectionBodyLoading,
-		bool useTimeout = false)
+		bool useTimeout = false,
+		bool ignoreMaxParallelConnections = false)
 		: requestInfo(requestInfo)
 		, linkStatus(linkStatus)
 		, bodyProcessingCommand(bodyProcessingCommand)
 		, useTimeout(useTimeout)
+		, ignoreMaxParallelConnections(ignoreMaxParallelConnections)
 	{
 	}
 
@@ -43,7 +45,12 @@ struct DownloadRequest : public IRequest
 	CrawlerRequest requestInfo;
 	Status linkStatus;
 	BodyProcessingCommand bodyProcessingCommand;
+
+	//! use timeout set by settings
 	bool useTimeout;
+
+	//! this download request will be scheduled immediately ignoring the maximum connection count
+	bool ignoreMaxParallelConnections;
 };
 
 }

@@ -453,13 +453,14 @@ void MultiSocketDownloadHandler::onCurrentParallelTransfersCountChanged(int coun
 
 void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
 {
-	if (m_multiSocketLoader->currentParallelConnections() >= c_maxParallelTransferCount)
+	const DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
+
+	if (m_multiSocketLoader->currentParallelConnections() >= c_maxParallelTransferCount &&
+		request->ignoreMaxParallelConnections == false)
 	{
 		m_pendingRequesters.enqueue(requester);
 		return;
 	}
-
-	const DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
 	const int requestId = loadHelper(request->requestInfo, request->bodyProcessingCommand);
 
