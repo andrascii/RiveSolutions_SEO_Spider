@@ -28,7 +28,7 @@
 #include "screenshot_maker.h"
 #include "icustom_data_feed.h"
 #include "multi_socket_download_handler.h"
-#include "dispatcher_based_worker_page_loader.h"
+#include "multi_request_page_loader.h"
 
 namespace CrawlerEngine
 {
@@ -140,7 +140,7 @@ void Crawler::initialize()
 
 	for (unsigned i = 0; i < workerCount(); ++i)
 	{
-		m_workers.push_back(new CrawlerWorker(m_uniqueLinkStore, new DispatcherBasedWorkerPageLoader(m_uniqueLinkStore)));
+		m_workers.push_back(new CrawlerWorker(m_uniqueLinkStore, new MultiRequestPageLoader(m_uniqueLinkStore)));
 
 		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(WorkerResult)),
 			m_modelController, SLOT(handleWorkerResult(WorkerResult)), Qt::QueuedConnection));

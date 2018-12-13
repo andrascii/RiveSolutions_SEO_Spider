@@ -41,7 +41,7 @@ public:
 	}
 
 	template <typename ObjectType, typename... ResponseTypes>
-	void reset(const IRequest& request, ObjectType* object, void(ObjectType::*...callback)(Requester*, const ResponseTypes))
+	void reset(const IRequest& request, ObjectType* object, void(ObjectType::*...callback)(Requester*, const ResponseTypes&))
 	{
 		static_assert(sizeof...(callback), "Must be at least one callback");
 

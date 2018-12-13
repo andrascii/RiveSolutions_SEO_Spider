@@ -181,7 +181,7 @@ int MultiSocketLoader::currentParallelConnections() const noexcept
 	return m_socketPrivateData.stillRunning;
 }
 
-void MultiSocketLoader::pauseConnection(int id) const noexcept
+void MultiSocketLoader::pauseConnection(int id) const
 {
 	if (!m_activeRequestDescriptors.contains(id))
 	{
@@ -191,7 +191,7 @@ void MultiSocketLoader::pauseConnection(int id) const noexcept
 	curl_easy_pause(m_activeRequestDescriptors[id]->easy, CURLPAUSE_ALL);
 }
 
-void MultiSocketLoader::unpauseConnection(int id) const noexcept
+void MultiSocketLoader::unpauseConnection(int id)
 {
 	if (!m_activeRequestDescriptors.contains(id))
 	{
@@ -199,6 +199,7 @@ void MultiSocketLoader::unpauseConnection(int id) const noexcept
 	}
 
 	curl_easy_pause(m_activeRequestDescriptors[id]->easy, CURLPAUSE_CONT);
+	curl_multi_socket_all(m_socketPrivateData.multiHandle, &m_socketPrivateData.stillRunning);
 }
 
 void MultiSocketLoader::setTimer()
