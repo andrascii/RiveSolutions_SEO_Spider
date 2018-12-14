@@ -82,6 +82,52 @@ TEST(SearchYmCountersTests, SearchResults)
 	env.exec();
 }
 
+TEST(SearchYmCountersTests, OldYmById)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://ymcounters.com/old-ym-by-id.html") }));
+	env.crawler()->options()->setSearchYandexMetricaCounters(true);
+
+	env.crawler()->options()->setSearchYandexMetricaCounter1(true);
+	env.crawler()->options()->setYandexMetricaCounter1Id(11111111);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingYm1Counter =
+			cl->storageItems(StorageType::YandexMetricaCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingYm1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SearchYmCountersTests, NewYmById)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://ymcounters.com/new-ym-by-id.html") }));
+	env.crawler()->options()->setSearchYandexMetricaCounters(true);
+
+	env.crawler()->options()->setSearchYandexMetricaCounter1(true);
+	env.crawler()->options()->setYandexMetricaCounter1Id(11111111);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingYm1Counter =
+			cl->storageItems(StorageType::YandexMetricaCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingYm1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(SearchYmCountersTests, DiscardExternalPages)
 {
 	TestEnvironment env;
