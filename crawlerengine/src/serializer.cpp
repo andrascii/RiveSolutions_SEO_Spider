@@ -73,6 +73,7 @@ namespace
 	const QString s_limitSearchTotalKey = QLatin1String("limitSearchTotal");
 	const QString s_limitTimeoutKey = QLatin1String("limitTimeout");
 	const QString s_maxRedirectsToFollowKey = QLatin1String("maxRedirectsToFollow");
+	const QString s_maxParallelConnectionsKey = QLatin1String("maxParallelConnections");
 	const QString s_maxLinksCountOnPageKey = QLatin1String("maxLinksCountOnPage");
 	const QString s_minTitleLengthKey = QLatin1String("minTitleLength");
 	const QString s_maxTitleLengthKey = QLatin1String("maxTitleLength");
@@ -770,6 +771,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeTextElement(s_limitSearchTotalKey, QString::number(m_crawlerOptionsData.limitSearchTotal));
 	writer.writeTextElement(s_limitTimeoutKey, QString::number(m_crawlerOptionsData.limitTimeout));
 	writer.writeTextElement(s_maxRedirectsToFollowKey, QString::number(m_crawlerOptionsData.maxRedirectsToFollow));
+	writer.writeTextElement(s_maxParallelConnectionsKey, QString::number(m_crawlerOptionsData.maxParallelConnections));
 	writer.writeTextElement(s_maxLinksCountOnPageKey, QString::number(m_crawlerOptionsData.maxLinksCountOnPage));
 	writer.writeTextElement(s_minTitleLengthKey, QString::number(m_crawlerOptionsData.minTitleLength));
 	writer.writeTextElement(s_maxTitleLengthKey, QString::number(m_crawlerOptionsData.maxTitleLength));
@@ -880,6 +882,10 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		else if (reader.qualifiedName() == s_maxRedirectsToFollowKey)
 		{
 			m_crawlerOptionsData.maxRedirectsToFollow = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxParallelConnectionsKey)
+		{
+			m_crawlerOptionsData.maxParallelConnections = reader.readElementText().toInt();
 		}
 		else if (reader.qualifiedName() == s_maxLinksCountOnPageKey)
 		{

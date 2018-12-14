@@ -6,13 +6,6 @@
 #include "helpers.h"
 #include "thread_message_dispatcher.h"
 
-namespace
-{
-
-constexpr int c_maxParallelTransferCount = 24;
-
-}
-
 namespace CrawlerEngine
 {
 
@@ -436,7 +429,7 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 
 void MultiSocketDownloadHandler::onCurrentParallelTransfersCountChanged(int count)
 {
-	if (count >= c_maxParallelTransferCount || m_pendingRequesters.isEmpty())
+	if (count >= maxParrallelConnections() || m_pendingRequesters.isEmpty())
 	{
 		return;
 	}
@@ -455,7 +448,7 @@ void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
 {
 	const DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
-	if (m_multiSocketLoader->currentParallelConnections() >= c_maxParallelTransferCount &&
+	if (m_multiSocketLoader->currentParallelConnections() >= maxParrallelConnections() &&
 		request->ignoreMaxParallelConnections == false)
 	{
 		m_pendingRequesters.enqueue(requester);

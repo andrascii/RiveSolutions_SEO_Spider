@@ -8,12 +8,21 @@
 #include "pause_connections_request.h"
 #include "unpause_connections_request.h"
 
+namespace
+{
+
+constexpr int c_maxParallelTransferCount = 50;
+constexpr int c_defaultParallelTransferCount = 24;
+
+}
+
 namespace CrawlerEngine
 {
 
 AbstractDownloadHandler::AbstractDownloadHandler()
 	: m_randomIntervalRangeTimer(new RandomIntervalRangeTimer(this))
 	, m_maxRedirects(-1)
+	, m_maxParallelConnections(c_defaultParallelTransferCount)
 {
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
@@ -40,6 +49,11 @@ void AbstractDownloadHandler::resetPauseRange()
 void AbstractDownloadHandler::setMaxRedirects(int redirects)
 {
 	m_maxRedirects = redirects;
+}
+
+void AbstractDownloadHandler::setMaxParallelConnections(int connections)
+{
+	m_maxParallelConnections = connections;
 }
 
 void AbstractDownloadHandler::handleRequest(RequesterSharedPtr requester)
@@ -92,6 +106,11 @@ int AbstractDownloadHandler::maxRedirectsToProcess() const noexcept
 	}
 
 	return maxRedirectsToProcessAnyway;
+}
+
+int AbstractDownloadHandler::maxParrallelConnections() const noexcept
+{
+	return qBound(1, m_maxParallelConnections, c_maxParallelTransferCount);
 }
 
 void AbstractDownloadHandler::removeRequesterFromQueue(RequesterSharedPtr requester)

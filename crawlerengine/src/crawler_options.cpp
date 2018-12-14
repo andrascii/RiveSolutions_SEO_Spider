@@ -73,6 +73,17 @@ void CrawlerOptions::setMaxRedirectsToFollow(int value) noexcept
 	emit maxRedirectsToFollowChanged(m_data.maxRedirectsToFollow);
 }
 
+int CrawlerOptions::maxParallelConnections() const noexcept
+{
+	return m_data.maxParallelConnections;
+}
+
+void CrawlerOptions::setMaxParallelConnections(int value) noexcept
+{
+	m_data.maxParallelConnections = value;
+	emit maxParallelConnectionsChanged(m_data.maxParallelConnections);
+}
+
 int CrawlerOptions::maxLinksCountOnPage() const noexcept
 {
 	return m_data.maxLinksCountOnPage;
