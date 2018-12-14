@@ -334,6 +334,10 @@ Please, be sure that you entered a valid address</source>
         <source>Scan Only Pages Which Contains Words In Url</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Maximum active connections:</source>
+        <translation>Максимальное число активных соединений:</translation>
+    </message>
 </context>
 <context>
     <name>LookupLineEditWidget</name>
@@ -1583,6 +1587,10 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
     <message>
         <source>You should restart the application to apply these changes</source>
         <translation>Необходимо перезапустить  программу чтоб изменения вступили в силу</translation>
+    </message>
+    <message>
+        <source>Redirect Loop</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

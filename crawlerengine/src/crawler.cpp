@@ -252,6 +252,9 @@ void Crawler::startCrawling()
 	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setMaxRedirects",
 		Qt::BlockingQueuedConnection, Q_ARG(int, m_options->maxRedirectsToFollow())));
 
+	VERIFY(QMetaObject::invokeMethod(m_downloader->qobject(), "setMaxParallelConnections",
+		Qt::BlockingQueuedConnection, Q_ARG(int, m_options->maxParallelConnections())));
+
 	m_uniqueLinkStore->setLimitCrawledLinksCount(m_options->limitSearchTotal());
 
 	initializeCrawlingSession();

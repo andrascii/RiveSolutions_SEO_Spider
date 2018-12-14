@@ -140,6 +140,7 @@ TEST(SerializationTests, OptionsSerialization)
 	options.limitSearchTotal = 10;
 	options.limitTimeout = 10;
 	options.maxRedirectsToFollow = 10;
+	options.maxParallelConnections = 15;
 	options.maxLinksCountOnPage = 10;
 	options.minTitleLength = 11;
 	options.maxTitleLength = 12;
@@ -215,6 +216,7 @@ TEST(SerializationTests, OptionsSerialization)
 		EXPECT_EQ(crawler->options()->limitSearchTotal(), options.limitSearchTotal);
 		EXPECT_EQ(crawler->options()->limitTimeout(), options.limitTimeout);
 		EXPECT_EQ(crawler->options()->maxRedirectsToFollow(), options.maxRedirectsToFollow);
+		EXPECT_EQ(crawler->options()->maxParallelConnections(), options.maxParallelConnections);
 		EXPECT_EQ(crawler->options()->maxLinksCountOnPage(), options.maxLinksCountOnPage);
 		EXPECT_EQ(crawler->options()->minTitleLength(), options.minTitleLength);
 		EXPECT_EQ(crawler->options()->maxTitleLength(), options.maxTitleLength);

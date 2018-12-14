@@ -49,6 +49,10 @@ public:
 	virtual void setMaxRedirectsToFollow(int value) noexcept = 0;
 	virtual void maxRedirectsToFollowChanged(int value) const = 0;
 
+	virtual int maxParallelConnections() const noexcept = 0;
+	virtual void setMaxParallelConnections(int value) noexcept = 0;
+	virtual void maxParallelConnectionsChanged(int value) const = 0;
+
 	virtual int maxLinksCountOnPage() const noexcept = 0;
 	virtual void setMaxLinksCountOnPage(int value) noexcept = 0;
 	virtual void maxLinksCountOnPageChanged(int value) const = 0;

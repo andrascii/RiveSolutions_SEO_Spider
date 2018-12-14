@@ -46,6 +46,7 @@ class Preferences : public QObject
 	Q_PROPERTY(int limitMaxUrlLength READ limitMaxUrlLength WRITE setLimitMaxUrlLength NOTIFY limitMaxUrlLengthChanged);
 	Q_PROPERTY(int limitTimeout READ limitTimeout WRITE setLimitTimeout NOTIFY limitTimeoutChanged);
 	Q_PROPERTY(int maxRedirectCount READ maxRedirectCount WRITE setMaxRedirectCount NOTIFY maxRedirectCountChanged);
+	Q_PROPERTY(int maxParallelConnections READ maxParallelConnections WRITE setMaxParallelConnections NOTIFY maxParallelConnectionsChanged);
 	Q_PROPERTY(int maxLinksCountOnPage READ maxLinksCountOnPage WRITE setMaxLinksCountOnPage NOTIFY maxLinksCountOnPageChanged);
 
 	// User agent properties
@@ -237,6 +238,10 @@ public:
 	Q_SLOT void setMaxRedirectCount(int value);
 	Q_SIGNAL void maxRedirectCountChanged(int value);
 
+	int maxParallelConnections() const;
+	Q_SLOT void setMaxParallelConnections(int value);
+	Q_SIGNAL void maxParallelConnectionsChanged(int value);
+
 	int maxH1LengthChars() const;
 	Q_SLOT void setMaxH1LengthChars(int value);
 	Q_SIGNAL void maxH1LengthCharsChanged(int value);
@@ -392,6 +397,7 @@ private:
 	int m_limitMaxUrlLength;
 	int m_limitTimeout;
 	int m_maxRedirectCount;
+	int m_maxParallelConnections;
 	int m_maxLinksCountOnPage;
 
 	int m_maxH1LengthChars;

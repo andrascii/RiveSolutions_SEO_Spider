@@ -18,10 +18,12 @@ public:
 	Q_INVOKABLE virtual void setPauseRange(int from, int to) override;
 	Q_INVOKABLE virtual void resetPauseRange() override;
 	Q_INVOKABLE virtual void setMaxRedirects(int redirects) override;
+	Q_INVOKABLE virtual void setMaxParallelConnections(int connections) override;
 	Q_INVOKABLE virtual void handleRequest(RequesterSharedPtr requester) override;
 
 protected:
 	int maxRedirectsToProcess() const noexcept;
+	int maxParrallelConnections() const noexcept;
 	void removeRequesterFromQueue(RequesterSharedPtr requester);
 
 protected slots:
@@ -40,6 +42,7 @@ private:
 	RandomIntervalRangeTimer* m_randomIntervalRangeTimer;
 	std::deque<RequesterSharedPtr> m_requesterQueue;
 	int m_maxRedirects;
+	int m_maxParallelConnections;
 };
 
 }

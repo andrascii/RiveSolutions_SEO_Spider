@@ -448,6 +448,7 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), SIGNAL(limitSearchTotalChanged(int)), crawler()->options()->qobject(), SLOT(setLimitSearchTotal(int))));
 	VERIFY(connect(preferences(), SIGNAL(limitTimeoutChanged(int)), crawler()->options()->qobject(), SLOT(setLimitTimeout(int))));
 	VERIFY(connect(preferences(), SIGNAL(maxRedirectCountChanged(int)), crawler()->options()->qobject(), SLOT(setMaxRedirectsToFollow(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxParallelConnectionsChanged(int)), crawler()->options()->qobject(), SLOT(setMaxParallelConnections(int))));
 	VERIFY(connect(preferences(), SIGNAL(maxLinksCountOnPageChanged(int)), crawler()->options()->qobject(), SLOT(setMaxLinksCountOnPage(int))));
 	VERIFY(connect(preferences(), SIGNAL(maxDescriptionLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMaxDescriptionLength(int))));
 	VERIFY(connect(preferences(), SIGNAL(minDescriptionLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMinDescriptionLength(int))));

@@ -434,6 +434,17 @@ void Preferences::setMaxRedirectCount(int value)
 	emit maxRedirectCountChanged(value);
 }
 
+int Preferences::maxParallelConnections() const
+{
+	return m_maxParallelConnections;
+}
+
+void Preferences::setMaxParallelConnections(int value)
+{
+	m_maxParallelConnections = value;
+	emit maxParallelConnectionsChanged(value);
+}
+
 int Preferences::maxH1LengthChars() const
 {
 	return m_maxH1LengthChars;

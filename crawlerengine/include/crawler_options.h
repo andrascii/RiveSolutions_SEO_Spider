@@ -12,6 +12,7 @@ struct CrawlerOptionsData final
 	int limitSearchTotal = int();
 	int limitTimeout = int();
 	int maxRedirectsToFollow = int();
+	int maxParallelConnections = int();
 	int maxLinksCountOnPage = int();
 	int maxTitleLength = int();
 	int minTitleLength = int();
@@ -69,6 +70,7 @@ class CrawlerOptions : public QObject, public ICrawlerOptions
 	Q_PROPERTY(int limitSearchTotal READ limitSearchTotal WRITE setLimitSearchTotal NOTIFY limitSearchTotalChanged)
 	Q_PROPERTY(int limitTimeout READ limitTimeout WRITE setLimitTimeout NOTIFY limitTimeoutChanged)
 	Q_PROPERTY(int maxRedirectsToFollow READ maxRedirectsToFollow WRITE setMaxRedirectsToFollow NOTIFY maxRedirectsToFollowChanged)
+	Q_PROPERTY(int maxParallelConnections READ maxParallelConnections WRITE setMaxParallelConnections NOTIFY maxParallelConnectionsChanged)
 	Q_PROPERTY(int maxLinksCountOnPage READ maxLinksCountOnPage WRITE setMaxLinksCountOnPage NOTIFY maxLinksCountOnPageChanged)
 	Q_PROPERTY(int maxTitleLength READ maxTitleLength WRITE setMaxTitleLength NOTIFY maxTitleLengthChanged)
 	Q_PROPERTY(int minTitleLength READ minTitleLength WRITE setMinTitleLength NOTIFY minTitleLengthChanged)
@@ -141,6 +143,10 @@ public:
 	virtual int maxRedirectsToFollow() const noexcept override;
 	Q_SLOT virtual void setMaxRedirectsToFollow(int value) noexcept override;
 	Q_SIGNAL virtual void maxRedirectsToFollowChanged(int value) const override;
+
+	virtual int maxParallelConnections() const noexcept override;
+	Q_SLOT virtual void setMaxParallelConnections(int value) noexcept override;
+	Q_SIGNAL virtual void maxParallelConnectionsChanged(int value) const override;
 
 	virtual int maxLinksCountOnPage() const noexcept override;
 	Q_SLOT virtual void setMaxLinksCountOnPage(int value) noexcept override;
