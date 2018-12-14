@@ -339,6 +339,7 @@ TEST(OptionsTests, FollowExternalNofollowLinkOnlyOption)
 	TestEnvironment env;
 
 	auto options = TestEnvironment::defaultOptions({ Url("http://options.com/index.html") });
+	options.checkExternalLinks = true;
 	options.followExternalNofollow = true;
 
 	env.crawler()->options()->setData(options);
