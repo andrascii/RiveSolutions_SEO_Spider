@@ -82,4 +82,31 @@ TEST(SearchYmCountersTests, SearchResults)
 	env.exec();
 }
 
+TEST(SearchYmCountersTests, DiscardExternalPages)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://ymcounters.com/with-link-to-external-page.html") }));
+	env.crawler()->options()->setCheckExternalLinks(true);
+	env.crawler()->options()->setSearchYandexMetricaCounters(true);
+
+	env.crawler()->options()->setSearchYandexMetricaCounter1(true);
+	env.crawler()->options()->setYandexMetricaCounter1Id(11111111);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		const auto allPages = cl->waitForAllCrawledPageReceived(10);
+		const auto pagesWithMissingYm1Counter = cl->storageItems(StorageType::YandexMetricaCounter1StorageType);
+
+		EXPECT_EQ(allPages.size(), 2);
+		EXPECT_EQ(allPages.at(1)->statusCode, Common::StatusCode::Ok200);
+		EXPECT_EQ(allPages.at(1)->isThisExternalPage, true);
+	
+		EXPECT_EQ(pagesWithMissingYm1Counter.size(), 1);
+		EXPECT_EQ(pagesWithMissingYm1Counter.at(0)->isThisExternalPage, false);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }
