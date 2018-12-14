@@ -394,6 +394,7 @@ void Application::initialize()
 	VERIFY(connect(m_crawler, &Crawler::crawlerStarted, this, &Application::closeWaitOperationFrame));
 	VERIFY(connect(m_crawler, &Crawler::crawlerStopped, this, &Application::closeWaitOperationFrame));
 	VERIFY(connect(m_crawler, &Crawler::crawlerFinished, this, &Application::closeWaitOperationFrame));
+	VERIFY(connect(m_crawler, &Crawler::crawlerFailed, this, &Application::closeWaitOperationFrame));
 	VERIFY(connect(m_crawler, &Crawler::refreshPageDone, this, &Application::closeWaitOperationFrame));
 
 	/// must be Qt::QueuedConnection
