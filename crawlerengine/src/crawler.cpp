@@ -584,6 +584,7 @@ void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response
 		);
 
 		setState(StatePending);
+		emit crawlerFailed();
 
 		return;
 	}
