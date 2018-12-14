@@ -14,7 +14,7 @@ YmParser::YmParser(IHtmlParser* htmlParser, int counterNumber, StorageType targe
 
 void YmParser::parse(const ResponseHeaders&, ParsedPagePtr& parsedPage)
 {
-	if (parsedPage->resourceType != ResourceType::ResourceHtml)
+	if (parsedPage->resourceType != ResourceType::ResourceHtml || parsedPage->isThisExternalPage)
 	{
 		return;
 	}
