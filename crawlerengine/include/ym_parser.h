@@ -15,6 +15,8 @@ public:
 
 private:
 	bool findYaCounter(const QString& javaScriptCode) const;
+	bool findYaCounter2(const QString& javaScriptCode) const;
+	bool findYaCounter3(const QString& javaScriptCode) const;
 
 private:
 	IHtmlParser* m_htmlParser;
