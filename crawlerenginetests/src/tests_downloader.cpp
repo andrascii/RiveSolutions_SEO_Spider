@@ -277,4 +277,8 @@ void TestsDownloader::unpauseRequesters(const QList<Requester*>&)
 {
 }
 
+void TestsDownloader::resetRequesters(const QList<Requester*>&)
+{
+}
+
 }

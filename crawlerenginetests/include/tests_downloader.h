@@ -45,8 +45,10 @@ private:
 private:
 	virtual void load(RequesterSharedPtr requester) override;
 	virtual std::shared_ptr<DownloadResponse> responseFor(int requestId) override;
+
 	virtual void pauseRequesters(const QList<Requester*>& requesterToBePaused) override;
 	virtual void unpauseRequesters(const QList<Requester*>& requesterToBeUnpaused) override;
+	virtual void resetRequesters(const QList<Requester*>& requesterToReset) override;
 
 private:
 	mutable QString m_testDataPath;
