@@ -10,7 +10,7 @@ class Requester;
 struct UnpauseConnectionsRequest : public IRequest
 {
 	UnpauseConnectionsRequest(const QList<Requester*>& requestersToBeUnpaused)
-		: requestersToBeUnpaused(requestersToBeUnpaused)
+		: requestersToUnpause(requestersToBeUnpaused)
 	{
 	}
 
