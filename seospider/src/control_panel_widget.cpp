@@ -97,6 +97,7 @@ void ControlPanelWidget::stopCrawling() const
 
 void ControlPanelWidget::clearCrawlingData() const
 {
+#ifdef SUPPORT_SERIALIZATION
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(tr("Warning"));
 
@@ -125,6 +126,9 @@ void ControlPanelWidget::clearCrawlingData() const
 	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
 
 	messageBoxDialog->exec();
+#else
+	ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
+#endif
 }
 
 void ControlPanelWidget::onCrawlerStateChanged(int state)

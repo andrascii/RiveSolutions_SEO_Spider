@@ -539,6 +539,7 @@ void MainWindow::initFileActions()
 {
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
+#ifdef SUPPORT_SERIALIZATION
 	actionRegistry.addActionGroup(s_fileActionGroup);
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, QIcon(QStringLiteral(":/images/open-file-icon.png")), tr("Open File"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, tr("Close File"));
@@ -550,13 +551,17 @@ void MainWindow::initFileActions()
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, recentFilesAction);
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, QIcon(QStringLiteral(":/images/save-icon.png")), tr("Save File"));
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
+#endif
 	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
+#ifdef SUPPORT_SERIALIZATION
 	actionRegistry.addGlobalAction(s_saveFileAndClearDataAction, tr("Save To File And Clear Data"));
 
 	actionRegistry.globalAction(s_saveFileAction)->setDisabled(true);
 	actionRegistry.globalAction(s_closeFileAction)->setDisabled(true);
+#endif
 
 	VERIFY(connect(actionRegistry.globalAction(s_createXMLSitemapAction), SIGNAL(triggered()), this, SLOT(showSitemapCreatorDialog())));
+#ifdef SUPPORT_SERIALIZATION
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAsAction), SIGNAL(triggered()), this, SLOT(saveFileAs())));
 	VERIFY(connect(actionRegistry.globalAction(s_saveFileAction), SIGNAL(triggered()), this, SLOT(saveFile())));
 	VERIFY(connect(actionRegistry.globalAction(s_openFileAction), SIGNAL(triggered()), this, SLOT(openFile())));
@@ -567,6 +572,7 @@ void MainWindow::initFileActions()
 	actionRegistry.globalAction(s_saveFileAction)->setShortcut(QKeySequence("Ctrl+S"));
 	actionRegistry.globalAction(s_saveFileAsAction)->setShortcut(QKeySequence("Ctrl+Alt+S"));
 	actionRegistry.globalAction(s_closeFileAction)->setShortcut(QKeySequence("Ctrl+W"));
+#endif
 }
 
 void MainWindow::initSettingsActions()
@@ -610,7 +616,9 @@ void MainWindow::initSettingsActions()
 		const auto actionsAvailabilitySetter = [](bool value)
 		{
 			ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(value);
+#ifdef SUPPORT_SERIALIZATION
 			ActionRegistry::instance().globalAction(s_openFileAction)->setEnabled(value);
+#endif
 		};
 
 		if (state == Crawler::StatePreChecking || state == Crawler::StateWorking)
@@ -700,6 +708,7 @@ void MainWindow::initSystemTrayIconMenu()
 
 void MainWindow::onCrawlerSessionCreated()
 {
+#ifdef SUPPORT_SERIALIZATION
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
 	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
@@ -709,10 +718,12 @@ void MainWindow::onCrawlerSessionCreated()
 	saveFileAction->setEnabled(true);
 	saveFileAsAction->setEnabled(true);
 	closeFileAction->setEnabled(true);
+#endif
 }
 
 void MainWindow::onCrawlerSessionDestroyed()
 {
+#ifdef SUPPORT_SERIALIZATION
 	ActionRegistry& actionRegistry = ActionRegistry::instance();
 
 	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
@@ -722,6 +733,7 @@ void MainWindow::onCrawlerSessionDestroyed()
 	saveFileAction->setEnabled(false);
 	saveFileAsAction->setEnabled(false);
 	closeFileAction->setEnabled(false);
+#endif
 }
 
 void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
