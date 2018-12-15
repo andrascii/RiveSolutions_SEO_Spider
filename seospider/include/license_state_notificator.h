@@ -12,10 +12,6 @@ public:
 
 private slots:
 	void onLicenseStateChanged(int reason);
-	void onDialogClosed();
-
-private:
-	std::vector<std::function<void()>> m_deferredNotifications;
 };
 
 }

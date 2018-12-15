@@ -14,7 +14,7 @@ public:
 	SitemapCreatorDialog(QWidget* parent = nullptr);
 
 private slots:
-	void showSaveFileDialog() const;
+	void showSaveFileDialog();
 	void controlStateChanged() const;
 
 private:

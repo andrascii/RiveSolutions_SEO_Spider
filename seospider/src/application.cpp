@@ -18,6 +18,7 @@
 #include "wait_operation_frame.h"
 #include "version.h"
 #include "license_state_notificator.h"
+#include "dialog.h"
 
 #ifndef PRODUCTION
 #include "style_loader.h"
@@ -172,7 +173,7 @@ void Application::startCrawler()
 
 	if (!data.isValid())
 	{
-		mainWindow()->showMessageBoxDialog(tr("Error"),
+		Dialog::showMessageBoxDialog(tr("Error"),
 			tr("Please make sure that you entered a URL."),
 			QDialogButtonBox::Ok
 		);
@@ -185,7 +186,7 @@ void Application::startCrawler()
 	if (!preferences()->crawlOutsideOfStartFolder() &&
 		!url.path().isEmpty() && !url.path().endsWith(QChar('/')))
 	{
-		mainWindow()->showMessageBoxDialog(tr("Invalid URL!"),
+		Dialog::showMessageBoxDialog(tr("Invalid URL!"),
 			tr("The option \"Crawl outside of start folder\" is disabled. "
 			"In this case the URL should be ended with '/'."),
 			QDialogButtonBox::Ok);
@@ -195,7 +196,7 @@ void Application::startCrawler()
 
 	if (!isInternetAvailable())
 	{
-		mainWindow()->showMessageBoxDialog("Internet connection problem!",
+		Dialog::showMessageBoxDialog("Internet connection problem!",
 			tr("It seems that you have some problems with internet connection. "
 			"Please, check the connection and try again."),
 			QDialogButtonBox::Ok);
@@ -568,7 +569,7 @@ void Application::openFileThroughCmd(const QString& path)
 	{
 		ERRLOG << path;
 
-		mainWindow()->showMessageBoxDialog(
+		Dialog::showMessageBoxDialog(
 			tr("Error"),
 			tr("Cannot open! Unknown document type."),
 			QDialogButtonBox::Ok
