@@ -155,9 +155,8 @@ void MultiRequestPageLoader::unpauseAllPausedDownloads() const
 	requester->start();
 }
 
-void MultiRequestPageLoader::onResetConnectionsResponse(Requester* requester, const ResetConnectionsResponse&)
+void MultiRequestPageLoader::onResetConnectionsResponse(Requester*, const ResetConnectionsResponse&)
 {
-	requester->deleteLater();
 	m_onAboutClearData.clear();
 	m_clearWrapper.reset();
 }

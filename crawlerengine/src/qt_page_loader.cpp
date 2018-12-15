@@ -13,7 +13,7 @@ QtPageLoader::QtPageLoader(UniqueLinkStore* uniqueLinkStore)
 
 bool QtPageLoader::canPullLoading() const
 {
-	if (m_state == CantReceivePages || m_requester)
+	if (m_requester.get() != nullptr || m_state == CantReceivePages)
 	{
 		return false;
 	}
