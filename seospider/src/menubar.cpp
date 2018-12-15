@@ -25,6 +25,7 @@ QMenu* MenuBar::buildMenuFile()
 
 	QMenu* fileMenu = new QMenu(tr("File"), this);
 
+#ifdef SUPPORT_SERIALIZATION
 	fileMenu->addAction(actionRegistry.globalAction(s_openFileAction));
 	fileMenu->addAction(actionRegistry.globalAction(s_recentFilesAction));
 	fileMenu->addSeparator();
@@ -32,6 +33,7 @@ QMenu* MenuBar::buildMenuFile()
 	fileMenu->addAction(actionRegistry.globalAction(s_saveFileAsAction));
 	fileMenu->addAction(actionRegistry.globalAction(s_closeFileAction));
 	fileMenu->addSeparator();
+#endif
 	fileMenu->addAction(actionRegistry.globalAction(s_exitProgramAction));
 
 	return fileMenu;
