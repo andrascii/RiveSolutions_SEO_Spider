@@ -1,12 +1,13 @@
 #include "multi_request_page_loader.h"
-#include "unpause_response.h"
+#include "reset_connections_request.h"
+#include "reset_connections_response.h"
 #include "download_response.h"
 #include "download_request.h"
 #include "crawler_shared_state.h"
 #include "pause_connections_request.h"
 #include "unpause_connections_request.h"
-#include "helpers.h"
 #include "unique_link_store.h"
+#include "helpers.h"
 
 namespace
 {
@@ -41,7 +42,7 @@ MultiRequestPageLoader::MultiRequestPageLoader(UniqueLinkStore* uniqueLinkStore,
 
 void MultiRequestPageLoader::onLoadingDone(Requester* requester, const DownloadResponse& response)
 {
-	DEBUG_ASSERT(m_activeRequesters.contains(requester));
+	DEBUG_ASSERT(m_activeRequesters.contains(requester) || m_onAboutClearData.contains(requester));
 
 	const DownloadRequest* downloadRequest =
 		Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
@@ -90,7 +91,7 @@ void MultiRequestPageLoader::performLoading(const CrawlerRequest& crawlerRequest
 
 void MultiRequestPageLoader::clear()
 {
-	unpauseAllPausedDownloadsAndWaitForResponse();
+	resetAllActiveConnections();
 
 	// in case if user clears the data and after that immediately stars the new crawling
 	// we copying all active requesters in order to delete all them after the response of unpause operation is received
@@ -154,17 +155,17 @@ void MultiRequestPageLoader::unpauseAllPausedDownloads() const
 	requester->start();
 }
 
-void MultiRequestPageLoader::onUnpauseResponse(Requester* requester, const UnpauseResponse&)
+void MultiRequestPageLoader::onResetConnectionsResponse(Requester* requester, const ResetConnectionsResponse&)
 {
 	requester->deleteLater();
 	m_onAboutClearData.clear();
 	m_clearWrapper.reset();
 }
 
-void MultiRequestPageLoader::unpauseAllPausedDownloadsAndWaitForResponse()
+void MultiRequestPageLoader::resetAllActiveConnections()
 {
 	UnpauseConnectionsRequest unpauseRequest(m_activeRequesters.keys());
-	m_clearWrapper.reset(unpauseRequest, this, &MultiRequestPageLoader::onUnpauseResponse);
+	m_clearWrapper.reset(unpauseRequest, this, &MultiRequestPageLoader::onResetConnectionsResponse);
 	m_clearWrapper->start();
 }
 

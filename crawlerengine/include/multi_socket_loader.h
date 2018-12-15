@@ -104,8 +104,10 @@ public:
 	void setUserAgent(const QByteArray& userAgent);
 
 	int currentParallelConnections() const noexcept;
+
 	void pauseConnection(int id) const;
 	void unpauseConnection(int id);
+	void resetConnection(int id);
 
 signals:
 	void loaded(int id,

@@ -14,7 +14,8 @@ enum class RequestType
 	RequestGetSerialNumberState,
 	RequestTakeScreenshot,
 	RequestPauseConnections,
-	RequestUnpauseConnections
+	RequestUnpauseConnections,
+	RequestResetConnections
 };
 
 class IRequest

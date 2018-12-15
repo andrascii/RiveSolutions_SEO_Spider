@@ -7,6 +7,9 @@
 #include "handler_registry.h"
 #include "pause_connections_request.h"
 #include "unpause_connections_request.h"
+#include "reset_connections_request.h"
+#include "reset_connections_response.h"
+#include "thread_message_dispatcher.h"
 
 namespace
 {
@@ -28,6 +31,7 @@ AbstractDownloadHandler::AbstractDownloadHandler()
 	handlerRegistry.registrateHandler(this, RequestType::RequestDownload);
 	handlerRegistry.registrateHandler(this, RequestType::RequestPauseConnections);
 	handlerRegistry.registrateHandler(this, RequestType::RequestUnpauseConnections);
+	handlerRegistry.registrateHandler(this, RequestType::RequestResetConnections);
 
 	VERIFY(connect(m_randomIntervalRangeTimer, &RandomIntervalRangeTimer::timerTicked,
 		this, &AbstractDownloadHandler::onTimerTicked, Qt::DirectConnection));
@@ -64,18 +68,26 @@ void AbstractDownloadHandler::handleRequest(RequesterSharedPtr requester)
 
 	ASSERT(requestType == RequestType::RequestDownload ||
 		requestType == RequestType::RequestPauseConnections ||
-		requestType == RequestType::RequestUnpauseConnections);
+		requestType == RequestType::RequestUnpauseConnections ||
+		requestType == RequestType::RequestResetConnections);
 
 	if (requestType == RequestType::RequestPauseConnections)
 	{
 		PauseConnectionsRequest* request = Common::Helpers::fast_cast<PauseConnectionsRequest*>(requester->request());
-		pauseRequesters(request->requestersToBePaused);
+		pauseRequesters(request->requestersToPause);
 		return;
 	}
 	if (requestType == RequestType::RequestUnpauseConnections)
 	{
 		UnpauseConnectionsRequest* request = Common::Helpers::fast_cast<UnpauseConnectionsRequest*>(requester->request());
-		unpauseRequesters(request->requestersToBeUnpaused);
+		unpauseRequesters(request->requestersToUnpause);
+		return;
+	}
+	if (requestType == RequestType::RequestResetConnections)
+	{
+		ResetConnectionsRequest* request = Common::Helpers::fast_cast<ResetConnectionsRequest*>(requester->request());
+		resetRequesters(request->requestersToReset);
+		ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, std::make_shared<ResetConnectionsResponse>());
 		return;
 	}
 

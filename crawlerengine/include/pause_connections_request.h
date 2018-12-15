@@ -10,7 +10,7 @@ class Requester;
 struct PauseConnectionsRequest : public IRequest
 {
 	PauseConnectionsRequest(const QList<Requester*>& requestersToBePaused)
-		: requestersToBePaused(requestersToBePaused)
+		: requestersToPause(requestersToBePaused)
 	{
 	}
 
@@ -23,7 +23,7 @@ struct PauseConnectionsRequest : public IRequest
 		return RequestType::RequestPauseConnections;
 	}
 
-	QList<Requester*> requestersToBePaused;
+	QList<Requester*> requestersToPause;
 };
 
 }

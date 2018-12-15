@@ -23,7 +23,7 @@ struct UnpauseConnectionsRequest : public IRequest
 		return RequestType::RequestUnpauseConnections;
 	}
 
-	QList<Requester*> requestersToBeUnpaused;
+	QList<Requester*> requestersToUnpause;
 };
 
 }

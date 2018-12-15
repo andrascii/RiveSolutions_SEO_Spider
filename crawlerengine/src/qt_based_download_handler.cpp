@@ -384,6 +384,10 @@ void QtBasedDownloadHandler::unpauseRequesters(const QList<Requester*>&)
 {
 }
 
+void QtBasedDownloadHandler::resetRequesters(const QList<Requester*>&)
+{
+}
+
 QByteArray QtBasedDownloadHandler::readBody(QNetworkReply* reply) const
 {
 	QByteArray body;
