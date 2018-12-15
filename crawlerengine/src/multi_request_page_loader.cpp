@@ -164,7 +164,7 @@ void MultiRequestPageLoader::onResetConnectionsResponse(Requester* requester, co
 
 void MultiRequestPageLoader::resetAllActiveConnections()
 {
-	UnpauseConnectionsRequest unpauseRequest(m_activeRequesters.keys());
+	ResetConnectionsRequest unpauseRequest(m_activeRequesters.keys());
 	m_clearWrapper.reset(unpauseRequest, this, &MultiRequestPageLoader::onResetConnectionsResponse);
 	m_clearWrapper->start();
 }
