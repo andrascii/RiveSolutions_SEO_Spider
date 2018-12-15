@@ -141,7 +141,7 @@ void MainWindow::openFile()
 {
 	if (theApp->crawler()->hasSession())
 	{
-		showMessageBoxDialog(tr("Open file error"),
+		Dialog::showMessageBoxDialog(tr("Open file error"),
 			tr("Unable to open the project file until the existing one is closed! "
 			"So first you need to press Ctrl+W and then open file."),
 			QDialogButtonBox::Ok
@@ -168,7 +168,7 @@ void MainWindow::openFile(const QString& filePath)
 {
 	if (theApp->crawler()->hasSession())
 	{
-		showMessageBoxDialog(tr("Open file error"),
+		Dialog::showMessageBoxDialog(tr("Open file error"),
 			tr("Unable to open the project file until the existing one is closed! "
 			"So first you need to press Ctrl+W and then open file."),
 			QDialogButtonBox::Ok
@@ -194,7 +194,7 @@ void MainWindow::closeFile()
 	if (theApp->crawler()->state() != Crawler::StatePending &&
 		theApp->crawler()->state() != Crawler::StatePause)
 	{
-		theApp->mainWindow()->showMessageBoxDialog(
+		Dialog::showMessageBoxDialog(
 			tr("Warning"),
 			tr("Cannot close file while crawler is working."),
 			QDialogButtonBox::Ok
@@ -205,7 +205,7 @@ void MainWindow::closeFile()
 
 	if (theApp->crawler()->sessionState() == Session::StateUnsaved)
 	{
-		int answer = theApp->mainWindow()->showMessageBoxDialog(
+		int answer = Dialog::showMessageBoxDialog(
 			tr("Warning"),
 			tr("The project file was not saved, all data will be lost. Do you want to close it anyway?"),
 			QDialogButtonBox::Yes | QDialogButtonBox::No
@@ -268,7 +268,7 @@ void MainWindow::onCrawlingFinished() const
 	if (licenseService->isTrialLicense() &&
 		theApp->crawler()->scannedPagesCount() >= Common::c_maxTrialLicenseCrawlingLinksCount)
 	{
-		showMessageBoxDialog(
+		Dialog::showMessageBoxDialog(
 			tr("Trial license"),
 			tr("This option is not available in the trial version."),
 			QDialogButtonBox::Ok
@@ -291,21 +291,6 @@ void MainWindow::onCustomUrlReceived()
 	setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
 	raise();  // for MacOS
 	activateWindow(); // for Windows
-}
-
-int MainWindow::showMessageBoxDialog(const QString& title,
-	const QString& message,
-	QDialogButtonBox::StandardButtons buttons) const
-{
-	INFOLOG << "Show message box with message:" << message;
-
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(title);
-	messageBoxDialog->setMessage(message);
-	messageBoxDialog->setStandardButtons(buttons);
-	messageBoxDialog->exec();
-
-	return messageBoxDialog->result();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
@@ -498,7 +483,7 @@ QString MainWindow::getSaveFilePath() const
 {
 	if (theApp->crawler()->state() == Crawler::StateWorking)
 	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
+		Dialog::showMessageBoxDialog(tr("Error"),
 			tr("Cannot save the document while crawler is working!"),
 			QDialogButtonBox::Ok
 		);
@@ -508,7 +493,7 @@ QString MainWindow::getSaveFilePath() const
 
 	if (theApp->crawler()->hasNoData())
 	{
-		theApp->mainWindow()->showMessageBoxDialog(tr("Error"),
+		Dialog::showMessageBoxDialog(tr("Error"),
 			tr("Crawler does not contain any data."),
 			QDialogButtonBox::Ok
 		);

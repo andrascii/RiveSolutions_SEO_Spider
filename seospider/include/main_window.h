@@ -40,10 +40,6 @@ public slots:
 	void hideShadedOverlay();
 	void onCustomUrlReceived();
 
-	int showMessageBoxDialog(const QString& title,
-		const QString& message,
-		QDialogButtonBox::StandardButtons buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel) const;
-
 protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void moveEvent(QMoveEvent* event) override;
