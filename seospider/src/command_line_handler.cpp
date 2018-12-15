@@ -9,7 +9,9 @@ namespace SeoSpider
 CommandLineHandler::CommandLineHandler(int& argc, char** argv)
 {
 	m_optionsDescription.add_options()
+#ifdef SUPPORT_SERIALIZATION
 		(s_openSerializedFileKey, boost::program_options::value<std::string>(), s_openSerializedFileDescription)
+#endif
 		(s_introducePageKey, s_introducePageDescription)
 		(s_startWithoutService, s_startWithoutServiceDescription)
 		(s_useOldDownloader, s_useOldDownloaderDescription)

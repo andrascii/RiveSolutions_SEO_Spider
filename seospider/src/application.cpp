@@ -74,10 +74,12 @@ Application::Application(int& argc, char** argv)
 	initialize();
 	showMainWindow();
 
+#ifdef SUPPORT_SERIALIZATION
 	if (!m_commandLineHandler->commandValue(s_openSerializedFileKey).isEmpty())
 	{
 		openFileThroughCmd(m_commandLineHandler->commandValue(s_openSerializedFileKey));
 	}
+#endif
 
 	new LicenseStateNotificator(this);
 }
