@@ -9,7 +9,7 @@ namespace CrawlerEngine
 class Requester;
 class UniqueLinkStore;
 struct DownloadResponse;
-struct UnpauseResponse;
+struct ResetConnectionsResponse;
 
 class MultiRequestPageLoader final
 	: public QObject
@@ -42,8 +42,8 @@ private:
 	void removeRequesterAssociatedData(Requester* requester);
 	void pauseAllActiveDownloads() const;
 	void unpauseAllPausedDownloads() const;
-	void unpauseAllPausedDownloadsAndWaitForResponse();
-	void onUnpauseResponse(Requester* requester, const UnpauseResponse&);
+	void resetAllActiveConnections();
+	void onResetConnectionsResponse(Requester* requester, const ResetConnectionsResponse&);
 
 private:
 	struct RequesterAssociatedData

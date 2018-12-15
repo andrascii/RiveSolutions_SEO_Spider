@@ -45,8 +45,9 @@ private slots:
 private:
 	virtual void load(RequesterSharedPtr requester) override;
 	virtual std::shared_ptr<DownloadResponse> responseFor(int requestId) override;
-	virtual void pauseRequesters(const QList<Requester*>& requesterToBePaused) override;
-	virtual void unpauseRequesters(const QList<Requester*>& requesterToBeUnpaused) override;
+	virtual void pauseRequesters(const QList<Requester*>& requesterToPause) override;
+	virtual void unpauseRequesters(const QList<Requester*>& requesterToUnpause) override;
+	virtual void resetRequesters(const QList<Requester*>& requesterToReset) override;
 
 private:
 	int loadHelper(const CrawlerRequest& request, DownloadRequest::BodyProcessingCommand bodyProcessingCommand);
@@ -77,14 +78,17 @@ private:
 	//! returns the valid request indexes which should be paused
 	QVector<int> requestIndexesToPause() const;
 
-	//! returns the valid request indexes which should be unpaused and stored in the m_activeRequesters and m_pendingRequesters
-	QVector<int> requestIndexesToUnpause(const QList<Requester*>& requesterToBeUnpaused) const;
+	//! returns the valid request indexes stored in the m_activeRequesters and also in passed container
+	QVector<int> intersectActiveRequestIndexes(const QList<Requester*>& value) const;
 
 	//! returns first unpaused requester and also clears expired requesters by searching pass
 	RequesterSharedPtr extractFirstUnpausedRequester();
 
 	//! removes all request binded data with passed identifier
 	void removeLoadedResourceAssociatedData(int id, Requester* requester);
+
+	void removeAllExpiredPendingRequesters();
+	void removePendingRequesterIfExists(Requester* requesterToRemove);
 
 private:
 	MultiSocketLoader* m_multiSocketLoader;

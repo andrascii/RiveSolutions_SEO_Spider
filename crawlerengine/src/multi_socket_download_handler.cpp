@@ -85,9 +85,9 @@ std::shared_ptr<DownloadResponse> MultiSocketDownloadHandler::responseFor(int re
 	return m_responses[requestId];
 }
 
-void MultiSocketDownloadHandler::pauseRequesters(const QList<Requester*>& requesterToBePaused)
+void MultiSocketDownloadHandler::pauseRequesters(const QList<Requester*>& requesterToPause)
 {
-	std::for_each(requesterToBePaused.begin(), requesterToBePaused.end(),
+	std::for_each(requesterToPause.begin(), requesterToPause.end(),
 		[this](Requester* p) { m_pausedRequesters.insert(p); });
 
 	// some of these requests at this moment can be already downloaded - it's a normal situation.
@@ -99,11 +99,11 @@ void MultiSocketDownloadHandler::pauseRequesters(const QList<Requester*>& reques
 		[this](int id) { m_multiSocketLoader->pauseConnection(id); });
 }
 
-void MultiSocketDownloadHandler::unpauseRequesters(const QList<Requester*>& requesterToBeUnpaused)
+void MultiSocketDownloadHandler::unpauseRequesters(const QList<Requester*>& requesterToUnpause)
 {
-	const QVector<int> requestIndexes = requestIndexesToUnpause(requesterToBeUnpaused);
+	const QVector<int> requestIndexes = intersectActiveRequestIndexes(requesterToUnpause);
 
-	std::for_each(requesterToBeUnpaused.begin(), requesterToBeUnpaused.end(),
+	std::for_each(requesterToUnpause.begin(), requesterToUnpause.end(),
 		[this](Requester* p) { m_pausedRequesters.remove(p); });
 
 	if (requestIndexes.isEmpty())
@@ -125,6 +125,31 @@ void MultiSocketDownloadHandler::unpauseRequesters(const QList<Requester*>& requ
 	{
 		std::for_each(requestIndexes.begin(), requestIndexes.end(),
 			[this](int id) { m_multiSocketLoader->unpauseConnection(id); });
+	}
+}
+
+void MultiSocketDownloadHandler::resetRequesters(const QList<Requester*>& requesterToReset)
+{
+	const QVector<int> requestIndexes = intersectActiveRequestIndexes(requesterToReset);
+
+	removeAllExpiredPendingRequesters();
+
+	std::for_each(requesterToReset.begin(), requesterToReset.end(), [this](Requester* p)
+	{
+		m_pausedRequesters.remove(p);
+		removePendingRequesterIfExists(p);
+	});
+
+	if (!requestIndexes.isEmpty())
+	{
+		std::for_each(requestIndexes.begin(), requestIndexes.end(), [this](int id)
+		{
+			m_multiSocketLoader->resetConnection(id);
+			m_activeRequesters.remove(id);
+			m_responses.remove(id);
+
+			removeRequestIndexesChain(id);
+		});
 	}
 }
 
@@ -286,8 +311,8 @@ QVector<int> MultiSocketDownloadHandler::requestIndexesToPause() const
 	return result;
 }
 
-//! returns the valid request indexes which should be unpaused and stored in the m_activeRequesters and m_pendingRequesters
-QVector<int> MultiSocketDownloadHandler::requestIndexesToUnpause(const QList<Requester*>& requesterToBeUnpaused) const
+//! returns the valid request indexes stored in the m_activeRequesters and also in passed container
+QVector<int> MultiSocketDownloadHandler::intersectActiveRequestIndexes(const QList<Requester*>& value) const
 {
 	using ActiveRequesterMapIterator = QMap<int, RequesterWeakPtr>::const_iterator;
 
@@ -302,7 +327,7 @@ QVector<int> MultiSocketDownloadHandler::requestIndexesToUnpause(const QList<Req
 
 		RequesterSharedPtr actualRequester = iterator.value().lock();
 
-		if (requesterToBeUnpaused.indexOf(actualRequester.get()) == -1)
+		if (value.indexOf(actualRequester.get()) == -1)
 		{
 			continue;
 		}
@@ -449,7 +474,8 @@ void MultiSocketDownloadHandler::load(RequesterSharedPtr requester)
 	const DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 
 	if (m_multiSocketLoader->currentParallelConnections() >= maxParrallelConnections() &&
-		request->ignoreMaxParallelConnections == false)
+		request->ignoreMaxParallelConnections == false ||
+		m_pausedRequesters.contains(requester.get()))
 	{
 		m_pendingRequesters.enqueue(requester);
 		return;
@@ -526,6 +552,44 @@ void MultiSocketDownloadHandler::removeLoadedResourceAssociatedData(int id, Requ
 	m_responses.remove(parentRequesterId);
 
 	removeRequestIndexesChain(id);
+}
+
+void MultiSocketDownloadHandler::removeAllExpiredPendingRequesters()
+{
+	for (auto first = m_pendingRequesters.begin(); first != m_pendingRequesters.end();)
+	{
+		if (first->expired())
+		{
+			first = m_pendingRequesters.erase(first);
+		}
+		else
+		{
+			++first;
+		}
+	}
+}
+
+void MultiSocketDownloadHandler::removePendingRequesterIfExists(Requester* requesterToRemove)
+{
+	for (auto first = m_pendingRequesters.begin(); first != m_pendingRequesters.end();)
+	{
+		RequesterSharedPtr requester = first->lock();
+
+		if (!requester)
+		{
+			continue;
+		}
+
+		if (requester.get() != requesterToRemove)
+		{
+			++first;
+		}
+		else
+		{
+			m_pendingRequesters.erase(first);
+			return;
+		}
+	}
 }
 
 }

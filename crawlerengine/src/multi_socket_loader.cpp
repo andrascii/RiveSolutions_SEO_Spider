@@ -202,6 +202,17 @@ void MultiSocketLoader::unpauseConnection(int id)
 	curl_multi_socket_all(m_socketPrivateData.multiHandle, &m_socketPrivateData.stillRunning);
 }
 
+void MultiSocketLoader::resetConnection(int id)
+{
+	if (!m_activeRequestDescriptors.contains(id))
+	{
+		return;
+	}
+
+	curl_multi_remove_handle(m_socketPrivateData.multiHandle, m_activeRequestDescriptors[id]->easy);
+	curl_easy_cleanup(m_activeRequestDescriptors[id]->easy);
+}
+
 void MultiSocketLoader::setTimer()
 {
 	resetTimer();
