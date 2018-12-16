@@ -52,7 +52,7 @@ void ContentFrame::addPage(IPage* page, bool setSelected)
 
 	m_navigationPanel.pushButtons[page->type()] = new CustomPushButton(page->icon(), page->name(), m_navigationPanel.navigationPanelWidget);
 	m_navigationPanel.pushButtons[page->type()]->setIconSize(QSize(20, 20));
-	
+
 	VERIFY(connect(m_navigationPanel.pushButtons[page->type()], &QPushButton::clicked,
 		this, &ContentFrame::handleNavigationPanelButtonClick));
 
@@ -133,7 +133,7 @@ void ContentFrame::handleNavigationPanelButtonClick()
 
 	auto pushButtonsIterator = std::find_if(
 		std::begin(m_navigationPanel.pushButtons),
-		std::end(m_navigationPanel.pushButtons), 
+		std::end(m_navigationPanel.pushButtons),
 		[button](const auto& pair) { return pair.second == button; }
 	);
 
@@ -180,9 +180,9 @@ void ContentFrame::onStateChanged(int state)
 void ContentFrame::initializeNavigationPanelWidget()
 {
 	m_navigationPanel.navigationPanelWidget = new QWidget(this);
-	
+
 	QVBoxLayout* layout = new QVBoxLayout(m_navigationPanel.navigationPanelWidget);
-	
+
 	layout->setContentsMargins(0, 0, Common::Helpers::pointsToPixels(0.6), 0);
 
 	layout->setSpacing(0);
@@ -190,7 +190,7 @@ void ContentFrame::initializeNavigationPanelWidget()
 	layout->addItem(
 		new QSpacerItem(
 			Common::Helpers::pointsToPixels(15),
-			Common::Helpers::pointsToPixels(30), 
+			Common::Helpers::pointsToPixels(30),
 			QSizePolicy::Minimum, QSizePolicy::Expanding)
 	);
 
@@ -204,7 +204,7 @@ void ContentFrame::onDynamicControlsChanged(IPage::Type pageType)
 
 	QLayoutItem* item;
 
-	while ((item = m_dynamicControlsLayout->itemAt(0))) 
+	while ((item = m_dynamicControlsLayout->itemAt(0)))
 	{
 		if (item->widget())
 		{
