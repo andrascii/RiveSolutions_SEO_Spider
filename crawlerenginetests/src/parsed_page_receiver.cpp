@@ -22,7 +22,7 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 
 	VERIFY(connect(sequencedDataCollection, &SequencedDataCollection::parsedPageLinksToThisResourceChanged,
 		this, &ParsedPageReceiver::onParsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
-	
+
 	VERIFY(connect(crawler, &Crawler::crawlerStarted,
 		this, &ParsedPageReceiver::onCrawlerStarted, Qt::QueuedConnection));
 
@@ -31,7 +31,7 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 
 	VERIFY(connect(crawler, &Crawler::onAboutClearData,
 		this, &ParsedPageReceiver::onAboutClearData, Qt::QueuedConnection));
-	
+
 	VERIFY(connect(crawler, &Crawler::serializationProcessDone,
 		this, &ParsedPageReceiver::onSerializationDone, Qt::QueuedConnection));
 
@@ -78,7 +78,7 @@ void ParsedPageReceiver::onParsedPagesRemoved(int count, StorageType type)
 	std::vector<const ParsedPage*>& data = m_parsedPages[type];
 
 	data.clear();
-	
+
 	for (int i = 0; i < storage.size(); ++i)
 	{
 		data.push_back(storage[i]);
@@ -162,7 +162,7 @@ void ParsedPageReceiver::onUnorderedDataCollectionPageRemoved(ParsedPagePtr page
 {
 	std::lock_guard<std::mutex> locker(m_ucMutex);
 
-	auto it = std::find_if(std::begin(m_unorderedDataCollectionPages[type]), std::end(m_unorderedDataCollectionPages[type]), 
+	auto it = std::find_if(std::begin(m_unorderedDataCollectionPages[type]), std::end(m_unorderedDataCollectionPages[type]),
 		[pagePointer = page.get()](const ParsedPage* item) { return item == pagePointer; });
 
 	ASSERT(it != std::end(m_unorderedDataCollectionPages[type]));
