@@ -767,7 +767,7 @@ QMap<QString, QVariant> Preferences::readDefaults(const QString& str)
 {
 	const QRegExp rxRecord("^\\s*(((\\w+)/)?(\\w+))\\s*:\\s*([^\\s].{0,})\\b\\s*$");
 
-	const QStringList keyValues = str.split(QRegExp(";\\W*"), QString::SkipEmptyParts);
+	const QStringList keyValues = str.split(QRegExp(";\\s*(\\r\\n|\\n)"), QString::SkipEmptyParts);
 	QMap<QString, QVariant> defaults;
 
 	foreach(const QString& keyValue, keyValues)
