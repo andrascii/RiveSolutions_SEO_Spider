@@ -518,15 +518,18 @@ void MainWindow::initHelpActions()
 
 	actionRegistry.addGlobalAction(s_showHelpAction, tr("Show Help"));
 	actionRegistry.addGlobalAction(s_sendFeedbackAction, tr("Send Feedback"));
+#ifdef CHECK_LICENSE
 	actionRegistry.addGlobalAction(s_registerProductAction, tr("Register Product"));
+#endif
 	actionRegistry.addGlobalAction(s_checkForUpdatesAction, tr("Check for Updates"));
 	actionRegistry.addGlobalAction(s_aboutProductAction, tr("About") + " " + softwareBranding->organizationName() + " " + softwareBranding->productName());
 
 	VERIFY(connect(actionRegistry.globalAction(s_sendFeedbackAction), &QAction::triggered,
 		this, [this] { showFeedbackDialog(); }));
-
+#ifdef CHECK_LICENSE
 	VERIFY(connect(actionRegistry.globalAction(s_registerProductAction), &QAction::triggered,
 		this, [this] { showRegisterProductDialog(); }));
+#endif
 
 	VERIFY(connect(actionRegistry.globalAction(s_checkForUpdatesAction), &QAction::triggered,
 		this, [this] { m_updateChecker->check(); }));

@@ -22,6 +22,7 @@ namespace CrawlerEngine
 LicenseStateObserver::LicenseStateObserver()
 	: m_isTrialLicense(false)
 {
+#ifdef CHECK_LICENSE
 	HandlerRegistry& handlerRegistry = HandlerRegistry::instance();
 
 	QObject* getSerialNumberDataRequestHandler =
@@ -46,6 +47,7 @@ LicenseStateObserver::LicenseStateObserver()
 	checkLicenseFileAndInitLicenseIfNeeded();
 
 	ASSERT(startTimer(c_minute));
+#endif
 }
 
 QObject* LicenseStateObserver::qobject() const
@@ -60,11 +62,16 @@ bool LicenseStateObserver::isPaidLicense() const noexcept
 
 bool LicenseStateObserver::isTrialLicense() const noexcept
 {
+#ifdef CHECK_LICENSE
 	return m_isTrialLicense;
+#else
+	return false;
+#endif
 }
 
 void LicenseStateObserver::timerEvent(QTimerEvent*)
 {
+#ifdef CHECK_LICENSE
 	if (m_licenseRequester)
 	{
 		return;
@@ -72,6 +79,7 @@ void LicenseStateObserver::timerEvent(QTimerEvent*)
 
 	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
 	m_licenseRequester->start();
+#endif
 }
 
 void LicenseStateObserver::onLicenseData(Requester*, const GetSerialNumberDataResponse& response)
