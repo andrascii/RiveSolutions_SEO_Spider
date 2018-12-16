@@ -59,6 +59,7 @@ void ProjectFileStateWidget::onSessionStateDestroyed()
 
 void ProjectFileStateWidget::setNameHelper()
 {
+#ifdef SUPPORT_SERIALIZATION
 	if (m_stateDescriptor.second == CrawlerEngine::Session::StateUnsaved)
 	{
 		m_projectFileNameLabel->setText(m_projectFileName + "*");
@@ -67,6 +68,9 @@ void ProjectFileStateWidget::setNameHelper()
 	{
 		m_projectFileNameLabel->setText(m_projectFileName);
 	}
+#else
+	m_projectFileNameLabel->setText(QString());
+#endif
 }
 
 }
