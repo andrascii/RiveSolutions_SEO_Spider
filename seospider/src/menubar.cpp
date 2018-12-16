@@ -81,7 +81,9 @@ QMenu* MenuBar::buildMenuHelp()
 	helpMenu->addAction(actionRegistry.globalAction(s_showHelpAction));
 	helpMenu->addAction(actionRegistry.globalAction(s_sendFeedbackAction));
 	helpMenu->addSeparator();
+#ifdef CHECK_LICENSE
 	helpMenu->addAction(actionRegistry.globalAction(s_registerProductAction));
+#endif
 	helpMenu->addAction(actionRegistry.globalAction(s_checkForUpdatesAction));
 	helpMenu->addSeparator();
 	helpMenu->addAction(actionRegistry.globalAction(s_aboutProductAction));
