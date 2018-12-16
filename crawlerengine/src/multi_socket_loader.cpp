@@ -137,7 +137,7 @@ int MultiSocketLoader::head(const Url& url)
 	m_activeRequestDescriptors[returnValue] = request;
 	curl_multi_add_handle(m_socketPrivateData.multiHandle, request->easy);
 
-	return request->id;
+	return returnValue;
 }
 
 void MultiSocketLoader::setProxySettings(const QString& proxyHostName, int proxyPort, const QString& proxyUser, const QString& proxyPassword)
