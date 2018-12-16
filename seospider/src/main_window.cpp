@@ -46,6 +46,7 @@
 #include "ui_page_visual_settings_widget.h"
 #include "custom_uri_channel.h"
 #include "statistic_counter.h"
+#include "limits_settings_widget.h"
 
 namespace
 {
@@ -441,7 +442,8 @@ void MainWindow::registerSettingsPages() const
 
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(
 		QIcon(":/images/limits-settings.png"),
-		TYPE_STRING(Ui_LimitsSettingsWidget));
+		TYPE_STRING(Ui_LimitsSettingsWidget),
+		new LimitsSettingsWidget);
 
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(
 		QIcon(":/images/preferences-settings-icon.png"),

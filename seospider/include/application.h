@@ -50,6 +50,8 @@ public:
 	virtual void removeKeyFromSettings(const QByteArray& key) override;
 	virtual QStringList allKeys() const override;
 
+	const CommandLineHandler* commandLineHandler() const;
+
 signals:
 	void mainWindowShown();
 

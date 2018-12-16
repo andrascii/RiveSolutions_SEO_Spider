@@ -141,6 +141,11 @@ QStringList Application::allKeys() const
 	return settings()->allKeys();
 }
 
+const CommandLineHandler* Application::commandLineHandler() const
+{
+	return m_commandLineHandler.get();
+}
+
 const SoftwareBranding* Application::softwareBrandingOptions() const noexcept
 {
 	return m_softwareBrandingOptions.get();
