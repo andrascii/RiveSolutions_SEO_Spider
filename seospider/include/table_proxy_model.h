@@ -3,10 +3,13 @@
 namespace SeoSpider
 {
 
-class TableSortFilterProxyModel : public QSortFilterProxyModel
+class TableProxyModel : public QSortFilterProxyModel
 {
+	Q_OBJECT
 public:
-	explicit TableSortFilterProxyModel(QObject* parent = nullptr);
+	explicit TableProxyModel(QObject* parent = nullptr);
+	void setAcceptedResources(int resources);
+	int acceptedResources() const;
 protected:
 	bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const  override;
 

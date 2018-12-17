@@ -287,14 +287,14 @@ QDateEdit::down-button
 SeoSpider--ControlPanelWidget, QFrame#DynamicControls
 {
 	min-height: 2.5em;
-	max-width: 42em;
+	/*max-width: 42em; */
 	padding: 0.3em;
 }
 
 SeoSpider--ControlPanelWidget QLineEdit
 {
-	min-width: 16em;
-	max-width: 16em;
+	min-width: 14em;
+	max-width: 14em;
 }
 
 SeoSpider--ControlPanelWidget QPushButton
@@ -331,6 +331,42 @@ QWidget#DynamicControls QPushButton
 	min-width: 10em;
 	max-width: 10em;
 	margin: 0px;
+}
+
+QWidget#DynamicControls QPushButton#filterButton
+{
+	min-width: 3em;
+	max-width: 3em;
+	min-height: 1.7em;
+	margin: 0px;
+	border: 0.05em solid #E3E3E3;
+	border-radius: 0px;
+	font-size: 7pt;
+	border-left: none;
+	background-color: #fff0f0;
+}
+
+QWidget#DynamicControls QPushButton#filterButton[left="true"]
+{
+	border-left: 0.05em solid #E3E3E3;;
+	border-top-left-radius: 0.143em;
+	border-bottom-left-radius: 0.143em;
+}
+
+QWidget#DynamicControls QPushButton#filterButton[right="true"]
+{
+	border-top-right-radius: 0.143em;
+	border-bottom-right-radius: 0.143em;
+}
+
+QWidget#DynamicControls QPushButton#filterButton:checked
+{
+	background-color: #fbfbfb;
+}
+
+QWidget#DynamicControls QWidget#resourceTypeFilter
+{
+	padding: 0px;
 }
 
 /*/////////////////////////////// TableView ///////////////////////////////*/
@@ -1055,7 +1091,7 @@ QScrollArea#reportScrollArea
 SeoSpider--ColumnsLookupLineEditWidget,
 SeoSpider--LookupLineEditWidget
 {
-	min-width: 28em;
+	min-width: 20em;
 }
 
 /*////////////////////////////// LookupLineEditWidget //////////////////////////////*/

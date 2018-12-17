@@ -11,6 +11,8 @@
 #include "lookup_lineedit_widget.h"
 #include "columns_lookup_lineedit_widget.h"
 #include "statistic_counter.h"
+#include "resource_type_filter_widget.h"
+#include "table_proxy_model.h"
 
 namespace SeoSpider
 {
@@ -97,6 +99,13 @@ void AllPagesPage::onApplyPlainSearch(const QString& searchValue)
 	applySearchHelper(-1, searchValue);
 }
 
+void AllPagesPage::onResourceTypeFilterChanged(int filter)
+{
+	TableProxyModel* filterProxyModel = qobject_cast<TableProxyModel*>(tableView()->model());
+	ASSERT(filterProxyModel);
+	filterProxyModel->setAcceptedResources(filter);
+}
+
 void AllPagesPage::createHeaderActionWidgets()
 {
 	m_columnsLookupLineEditWidget = new ColumnsLookupLineEditWidget;
@@ -117,8 +126,14 @@ void AllPagesPage::createHeaderActionWidgets()
 
 	//////////////////////////////////////////////////////////////////////////
 
+	ResourceTypeFilterWidget* resourceFilter = new ResourceTypeFilterWidget();
+	addWidget(resourceFilter);
+
 	m_lookupLineEditWidget = new LookupLineEditWidget;
 	addWidget(m_lookupLineEditWidget);
+
+	VERIFY(connect(resourceFilter, &ResourceTypeFilterWidget::filterChanged, 
+		this, &AllPagesPage::onResourceTypeFilterChanged));
 
 	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(const QString&)),
 		this, SLOT(onApplyPlainSearch(const QString&))));
