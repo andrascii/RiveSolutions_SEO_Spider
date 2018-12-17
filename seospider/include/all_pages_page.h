@@ -28,6 +28,7 @@ private slots:
 	void pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected);
 	void onApplyColumnSearch(int searchKey, const QString& searchValue);
 	void onApplyPlainSearch(const QString& searchValue);
+	void onResourceTypeFilterChanged(int filter);
 
 private:
 	void createHeaderActionWidgets();

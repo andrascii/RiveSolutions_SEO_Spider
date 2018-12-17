@@ -23,6 +23,8 @@
 #include "storage_adapter_factory.h"
 #include "storage_adapter_type.h"
 #include "statistic_counter.h"
+#include "table_proxy_model.h"
+#include "resource_type_filter_widget.h"
 
 namespace SeoSpider
 {
@@ -152,6 +154,10 @@ WebSiteDataWidget* AbstractFilterPage::websiteDataWidget()
 
 void AbstractFilterPage::showEvent(QShowEvent* event)
 {
+	if (m_currentSelectedRow == -1)
+	{
+		m_resourceTypeFilterWidget->setVisible(false);
+	}
 	m_summaryFilterTableView->recalculateColumnsSize();
 	QFrame::showEvent(event);
 }
@@ -215,6 +221,7 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 
 		AbstractFilterPage::hasFilterSelection(row);
 		hasFilterSelection(row);
+		updateResourceTypeFilterWidget();
 	}
 	else
 	{
@@ -270,10 +277,17 @@ void AbstractFilterPage::initHeaderWidgets()
 
 	//////////////////////////////////////////////////////////////////////////
 
+	m_resourceTypeFilterWidget = new ResourceTypeFilterWidget();
+	addWidget(m_resourceTypeFilterWidget);
+	m_resourceTypeFilterWidget->setVisible(false);
+
 	m_lookupLineEditWidget = new LookupLineEditWidget;
 	addWidget(m_lookupLineEditWidget);
 
 	m_lookupLineEditWidget->setEnabled(false);
+
+	VERIFY(connect(m_resourceTypeFilterWidget, &ResourceTypeFilterWidget::filterChanged,
+		this, &AbstractFilterPage::onResourceTypeFilterChanged));
 
 	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(const QString&)),
 		this, SLOT(onApplyPlainSearch(const QString&))));
@@ -308,6 +322,23 @@ void AbstractFilterPage::onApplyPlainSearch(const QString& searchValue)
 {
 	applySearchHelper(-1, searchValue);
 	m_searchRules[m_currentSelectedRow] = SearchRules{ -1, searchValue };
+}
+
+void AbstractFilterPage::onResourceTypeFilterChanged(int filter)
+{
+	StorageAdapterType storageAdapterType =
+		m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(m_currentSelectedRow, 0));
+
+	if (storageAdapterType == StorageAdapterType::StorageAdapterTypeNone)
+	{
+		return;
+	}
+
+	TableProxyModel* filterProxyModel =
+		qobject_cast<TableProxyModel*>(websiteDataWidget()->modelFor(storageAdapterType));
+
+	ASSERT(filterProxyModel);
+	filterProxyModel->setAcceptedResources(filter);
 }
 
 void AbstractFilterPage::prepareColumnSearchWidget(int row)
@@ -352,4 +383,23 @@ void AbstractFilterPage::preparePlainSearchWidget(int row)
 	}
 }
 
+void AbstractFilterPage::updateResourceTypeFilterWidget()
+{
+	StorageAdapterType storageAdapterType =
+		m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(m_currentSelectedRow, 0));
+
+	if (storageAdapterType == StorageAdapterType::StorageAdapterTypeNone)
+	{
+		m_resourceTypeFilterWidget->setVisible(false);
+		return;
+	}
+
+	// TODO: hide or show filter widget depending on current storage
+	m_resourceTypeFilterWidget->setVisible(true);
+	TableProxyModel* filterProxyModel =
+		qobject_cast<TableProxyModel*>(websiteDataWidget()->modelFor(storageAdapterType));
+
+	ASSERT(filterProxyModel);
+	m_resourceTypeFilterWidget->setFilter(filterProxyModel->acceptedResources());
+}
 }

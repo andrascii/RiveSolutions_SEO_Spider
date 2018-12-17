@@ -5,13 +5,24 @@
 namespace SeoSpider
 {
 
-TableSortFilterProxyModel::TableSortFilterProxyModel(QObject* parent)
+TableProxyModel::TableProxyModel(QObject* parent)
 	: QSortFilterProxyModel(parent)
 	, m_acceptedResources(ResourceAny)
 {
 }
 
-bool TableSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
+void TableProxyModel::setAcceptedResources(int resources)
+{
+	m_acceptedResources = resources;
+	setFilterKeyColumn(filterKeyColumn());
+}
+
+int TableProxyModel::acceptedResources() const
+{
+	return m_acceptedResources;
+}
+
+bool TableProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
 	const bool result = QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
 	if (result)
