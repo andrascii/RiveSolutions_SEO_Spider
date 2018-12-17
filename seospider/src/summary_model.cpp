@@ -106,6 +106,11 @@ QVariant SummaryModel::data(const QModelIndex& index, int role) const
 	row;
 	column;
 
+	if (role == AbstractTableModel::resourceTypeRole)
+	{
+		return ResourceAny;
+	}
+
 	if (!dataAccessor())
 	{
 		return QVariant();

@@ -28,6 +28,7 @@ public:
 	virtual int itemCount() const noexcept override;
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
+	virtual RowResourceType resourceType(const QModelIndex& index) const noexcept override;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
 	virtual Menu menuFor(const QModelIndex& index) const override;
 	virtual QObject* qobject() noexcept override;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "parsed_page.h"
+#include "row_resource_type.h"
 
 namespace SeoSpider
 {
@@ -83,7 +84,9 @@ public:
 	static int columnPrefferedSize(PageLinksColumn column);
 
 	QVariant itemValue(Column column) const;
+	RowResourceType resourceType() const;
 	QVariant itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number) const;
+	RowResourceType resourceType(PageLinkContext context, size_t number) const;
 	size_t linksCount(PageLinkContext context) const;
 
 	const CrawlerEngine::ParsedPage* associatedParsedPage() const noexcept;

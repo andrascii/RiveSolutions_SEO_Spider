@@ -89,6 +89,19 @@ PageLinksStorageAdapter::ItemType PageLinksStorageAdapter::itemType(const QModel
 		ItemType::PlainItemType;
 }
 
+RowResourceType PageLinksStorageAdapter::resourceType(const QModelIndex& index) const noexcept
+{
+	if (!m_parsedPageInfo)
+	{
+		return ResourceNone;
+	}
+
+	DEBUG_ASSERT(static_cast<size_t>(index.row()) < m_parsedPageInfo->linksCount(m_context));
+	DEBUG_ASSERT(index.column() < m_availableColumns.size());
+
+	return m_parsedPageInfo->resourceType(m_context, index.row());
+}
+
 ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
 	Q_UNUSED(index);
