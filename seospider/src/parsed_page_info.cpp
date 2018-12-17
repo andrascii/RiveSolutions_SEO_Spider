@@ -140,6 +140,11 @@ QVariant ParsedPageInfo::itemValue(Column column) const
 	return (this->*acceptItemMethod(column))();
 }
 
+RowResourceType ParsedPageInfo::resourceType() const
+{
+	return resourceTypeToRowResourceType(m_parsedPage->resourceType);
+}
+
 QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkContext context, size_t number) const
 {
 	const PageLinksPointer pointer = pointerByContext(context);
@@ -182,6 +187,20 @@ QVariant ParsedPageInfo::itemValue(PageLinksColumn pageLinksColumn, PageLinkCont
 	}
 
 	return value;
+}
+
+RowResourceType ParsedPageInfo::resourceType(PageLinkContext context, size_t number) const
+{
+	const PageLinksPointer pointer = pointerByContext(context);
+
+	const CrawlerEngine::ResourceLink& resourceLink = (m_parsedPage->*pointer)[number];
+
+	if (resourceLink.resource.expired())
+	{
+		return ResourceNone;
+	}
+
+	return resourceTypeToRowResourceType(resourceLink.resource.lock()->resourceType);
 }
 
 size_t ParsedPageInfo::linksCount(PageLinkContext context) const

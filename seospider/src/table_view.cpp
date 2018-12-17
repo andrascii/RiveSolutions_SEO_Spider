@@ -6,6 +6,7 @@
 #include "helpers.h"
 #include "command_menu.h"
 #include "finally.h"
+#include "table_proxy_model.h"
 
 namespace SeoSpider
 {
@@ -19,7 +20,7 @@ TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnable
 	, m_rowHeight(Common::Helpers::pointsToPixels(22))
 	, m_supportColumnSpans(supportColumSpans)
 #ifdef USE_SORTING
-	, m_sortFilterProxyModel(new QSortFilterProxyModel)
+	, m_sortFilterProxyModel(new TableSortFilterProxyModel)
 #endif
 {
 	Q_UNUSED(sortingEnabled);

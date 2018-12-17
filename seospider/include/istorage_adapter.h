@@ -2,6 +2,7 @@
 
 #include "parsed_page_info.h"
 #include "imenu_data_provider.h"
+#include "row_resource_type.h"
 
 namespace SeoSpider
 {
@@ -22,6 +23,7 @@ public:
 	virtual int itemCount() const noexcept = 0;
 	virtual QVariant item(const QModelIndex& index) const noexcept = 0;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept = 0;
+	virtual RowResourceType resourceType(const QModelIndex& index) const noexcept = 0;
 	virtual QString columnDescription(int columnIndex) const noexcept = 0;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept = 0;
 	virtual QObject* qobject() noexcept = 0;

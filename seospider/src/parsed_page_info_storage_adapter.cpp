@@ -129,6 +129,16 @@ ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(co
 	return isIndexMappedToUrl ? ItemType::UrlItemType : ItemType::PlainItemType;
 }
 
+RowResourceType ParsedPageInfoStorageAdapter::resourceType(const QModelIndex& index) const noexcept
+{
+	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
+
+	DEBUG_ASSERT(index.row() < storage.size());
+	DEBUG_ASSERT(index.column() < m_availableColumns.size() + m_customColumns.size());
+
+	return resourceTypeToRowResourceType(storage[index.row()]->resourceType);
+}
+
 ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
 	const CrawlerEngine::ParsedPage* parsedPage;

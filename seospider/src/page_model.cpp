@@ -141,6 +141,11 @@ QVariant PageModel::data(const QModelIndex& index, int role) const
 
 	const QModelIndex validatedIndex = createIndex(index.row(), index.column() - 1);
 
+	if (role == AbstractTableModel::resourceTypeRole)
+	{
+		return static_cast<int>(storageAdapter()->resourceType(validatedIndex));
+	}
+
 	switch (role)
 	{
 		case Qt::DisplayRole:
