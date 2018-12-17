@@ -98,7 +98,7 @@ void LoggerDebugWindow::onCommandReceived(Common::Command command)
 				<< s_separator << logData->function
 				<< s_separator << quintptr(logData->thisptr)
 				<< s_separator << quintptr(logData->threadId)
-				<< s_separator << logData->text;
+				<< s_separator << QString(logData->text);
 			break;
 		}
 		case Common::Command::LogCategory:

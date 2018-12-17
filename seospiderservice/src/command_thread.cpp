@@ -1,4 +1,4 @@
-#include "command_thread.h"
+﻿#include "command_thread.h"
 #include "command.h"
 #include "seo_spider_service_app.h"
 #include "sys_info.h"
@@ -82,7 +82,7 @@ void CommandThread::run()
 					<< s_separator << logData->function
 					<< s_separator << quintptr(logData->thisptr)
 					<< s_separator << quintptr(logData->threadId)
-					<< s_separator << logData->text << "\n";
+					<< s_separator << QString(logData->text) << "\n";
 				break;
 			}
 			case Common::Command::LogCategory:
