@@ -193,7 +193,9 @@ RowResourceType ParsedPageInfo::resourceType(PageLinkContext context, size_t num
 {
 	const PageLinksPointer pointer = pointerByContext(context);
 
-	const CrawlerEngine::ResourceLink& resourceLink = (m_parsedPage->*pointer)[number];
+	const auto& storage = (m_parsedPage->*pointer);
+	DEBUG_ASSERT(number < storage.size());
+	const CrawlerEngine::ResourceLink& resourceLink = storage[number];
 
 	if (resourceLink.resource.expired())
 	{

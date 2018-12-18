@@ -24,17 +24,12 @@ int TableProxyModel::acceptedResources() const
 
 bool TableProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
-	const bool result = QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
-	if (result)
+	const QModelIndex index = sourceModel()->index(sourceRow, 1);
+	const int resourceType = sourceModel()->data(index, AbstractTableModel::resourceTypeRole).toInt();
+	if (!(resourceType & m_acceptedResources))
 	{
-		const QModelIndex index = sourceModel()->index(sourceRow, 1);
-		const int resourceType = sourceModel()->data(index, AbstractTableModel::resourceTypeRole).toInt();
-		if (!(resourceType & m_acceptedResources))
-		{
-			return false;
-		}
+		return false;
 	}
-
-	return result;
+	return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
 }
 }
