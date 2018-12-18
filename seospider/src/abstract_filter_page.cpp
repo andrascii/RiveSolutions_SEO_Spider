@@ -25,6 +25,7 @@
 #include "statistic_counter.h"
 #include "table_proxy_model.h"
 #include "resource_type_filter_widget.h"
+#include "supported_resource_type_filtering_storages.h"
 
 namespace SeoSpider
 {
@@ -154,10 +155,6 @@ WebSiteDataWidget* AbstractFilterPage::websiteDataWidget()
 
 void AbstractFilterPage::showEvent(QShowEvent* event)
 {
-	if (m_currentSelectedRow == -1)
-	{
-		m_resourceTypeFilterWidget->setVisible(false);
-	}
 	m_summaryFilterTableView->recalculateColumnsSize();
 	QFrame::showEvent(event);
 }
@@ -280,6 +277,7 @@ void AbstractFilterPage::initHeaderWidgets()
 	m_resourceTypeFilterWidget = new ResourceTypeFilterWidget();
 	addWidget(m_resourceTypeFilterWidget);
 	m_resourceTypeFilterWidget->setVisible(false);
+	m_resourceTypeFilterWidget->installEventFilter(this);
 
 	m_lookupLineEditWidget = new LookupLineEditWidget;
 	addWidget(m_lookupLineEditWidget);
@@ -291,6 +289,16 @@ void AbstractFilterPage::initHeaderWidgets()
 
 	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(const QString&)),
 		this, SLOT(onApplyPlainSearch(const QString&))));
+}
+
+bool AbstractFilterPage::eventFilter(QObject* object, QEvent* event)
+{
+	if (object == m_resourceTypeFilterWidget && event->type() == QEvent::Show)
+	{
+		updateResourceTypeFilterWidget();
+	}
+
+	return false;
 }
 
 void AbstractFilterPage::exportFilterData()
@@ -388,7 +396,7 @@ void AbstractFilterPage::updateResourceTypeFilterWidget()
 	StorageAdapterType storageAdapterType =
 		m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(m_currentSelectedRow, 0));
 
-	if (storageAdapterType == StorageAdapterType::StorageAdapterTypeNone)
+	if (!storageSupportsResourceTypeFiltering(storageAdapterType))
 	{
 		m_resourceTypeFilterWidget->setVisible(false);
 		return;

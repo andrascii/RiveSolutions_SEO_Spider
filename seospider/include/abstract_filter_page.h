@@ -41,6 +41,8 @@ protected:
 	virtual void hasNoFilterSelection() = 0;
 	virtual void initHeaderWidgets() final;
 
+	virtual bool eventFilter(QObject* object, QEvent* event) override;
+
 protected slots:
 	void exportFilterData();
 	void onApplyColumnSearch(int searchKey, const QString& searchValue);
