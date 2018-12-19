@@ -30,7 +30,7 @@ public:
 
 	void selectTab(PageDataType pageDataType);
 
-	QTabWidget* tabWidget();
+	QTabBar* tabWidget();
 
 public slots:
 	void pageViewSelectionChangedSlot(const QItemSelection& selected, const QItemSelection& deselected);
@@ -40,6 +40,9 @@ signals:
 	void tabBarClicked(int index, int prevIndex);
 	void tabSelected(int index);
 
+protected:
+	virtual bool eventFilter(QObject* object, QEvent* event) override;
+
 private:
 	void setPageServerResponse(const ParsedPageInfoPtr& page) const;
 
@@ -47,13 +50,17 @@ private:
 	static PageLinkContext mapType(PageDataType pageDataType) noexcept;
 
 private:
-	QTabWidget* m_tabWidget;
+	QStackedWidget* m_stackedWidget;
+	QTabBar* m_tabBar;
 
 	QTextEdit* m_httpResponseLabel;
 
 	QMap<PageDataType, PageModel*> m_models;
 	QMap<PageDataType, int> m_pageIndices;
 	QMap<PageDataType, QStackedWidget*> m_stackedWidgets;
+	QMap<QWidget*, QWidget*> m_filterResourceTypeWidgets;
+	QHBoxLayout* m_topWidgetLayout;
+
 };
 
 }

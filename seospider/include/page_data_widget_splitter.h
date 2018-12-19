@@ -30,7 +30,7 @@ private:
 	void setSecondWidgetHeightImpl(int height, bool setMaximumHeight);
 
 private slots:
-	void onPageWidgetTabClicked(int index, int prevIndex);
+	void onPageWidgetTabClicked(int index);
 	void onPageWidgetTabSelected(int index);
 	void updateTabTooltips();
 
@@ -42,6 +42,7 @@ private:
 	int m_animationEndHeight;
 	std::optional<int> m_secondWidgetHeight;
 	bool m_firstShowEvent;
+	int m_prevIndex;
 };
 
 }

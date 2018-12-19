@@ -117,7 +117,7 @@ IStorageAdapter* PageModel::storageAdapter()
 
 QVariant PageModel::data(const QModelIndex& index, int role) const
 {
-	if (!storageAdapter() && !index.isValid())
+	if (!storageAdapter() || !index.isValid())
 	{
 		return QVariant();
 	}
