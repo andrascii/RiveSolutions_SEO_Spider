@@ -333,12 +333,22 @@ QWidget#DynamicControls QPushButton
 	margin: 0px;
 }
 
-QWidget#DynamicControls QPushButton#filterButton
+/* resourceTypeFilter */
+
+QWidget#resourceTypeFilter
+{
+	padding: 0px;
+	margin: 0px;
+}
+
+QWidget#resourceTypeFilter QPushButton#filterButton
 {
 	min-width: 3em;
 	max-width: 3em;
-	min-height: 1.7em;
+	min-height: 1.6em;
+	max-height: 1.6em;
 	margin: 0px;
+	padding: 0px;
 	border: 0.05em solid #E3E3E3;
 	border-radius: 0px;
 	font-size: 7pt;
@@ -346,25 +356,39 @@ QWidget#DynamicControls QPushButton#filterButton
 	background-color: #fff0f0;
 }
 
-QWidget#DynamicControls QPushButton#filterButton[left="true"]
+QWidget#resourceTypeFilter QPushButton#filterButton[left="true"]
 {
 	border-left: 0.05em solid #E3E3E3;;
 	border-top-left-radius: 0.143em;
 	border-bottom-left-radius: 0.143em;
 }
 
-QWidget#DynamicControls QPushButton#filterButton[right="true"]
+QWidget#resourceTypeFilter QPushButton#filterButton[right="true"]
 {
 	border-top-right-radius: 0.143em;
 	border-bottom-right-radius: 0.143em;
 }
 
-QWidget#DynamicControls QPushButton#filterButton:checked
+QWidget#resourceTypeFilter QPushButton#filterButton:checked
 {
 	background-color: #fbfbfb;
 }
 
-QWidget#DynamicControls QWidget#resourceTypeFilter
+QWidget#resourceTypeFilter
+{
+	padding: 0px;
+	margin: 0px;
+}
+
+/* page info */
+
+QTabBar#pageInfoTabBar
+{
+	padding: 0px;
+	border: none;
+}
+
+QStackedWidget#tabContent
 {
 	padding: 0px;
 }

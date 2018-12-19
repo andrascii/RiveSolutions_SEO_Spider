@@ -6,25 +6,65 @@
 #include "storage_adapter_factory.h"
 #include "helpers.h"
 #include "cursor_factory.h"
+#include "resource_type_filter_widget.h"
+#include "table_proxy_model.h"
+
+namespace
+{
+class MinStackedWidget: public QStackedWidget
+{
+public:
+	MinStackedWidget(QWidget* parent = nullptr)
+		: QStackedWidget(parent)
+	{
+	}
+
+protected:
+	virtual QSize minimumSizeHint() const override
+	{
+		QSize result = QStackedWidget::minimumSizeHint();
+		result.setHeight(0);
+		return result;
+	}
+};
+}
 
 namespace SeoSpider
 {
 
 PageDataWidget::PageDataWidget(QWidget* parent)
 	: QFrame(parent)
-	, m_tabWidget(new QTabWidget(this))
 	, m_httpResponseLabel(new QTextEdit(this))
+	, m_stackedWidget(new MinStackedWidget(this))
+	, m_tabBar(new QTabBar(this))
 {
-	m_tabWidget->tabBar()->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
+	m_tabBar->setObjectName("pageInfoTabBar");
+	m_tabBar->setContentsMargins(0, 0, 0, 0);
 
-	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->setMargin(0);
-	layout->setSpacing(0);
+	m_stackedWidget->setContentsMargins(0, 0, 0, 0);
+	m_stackedWidget->setMinimumHeight(0);
+	m_tabBar->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
 
-	layout->addWidget(m_tabWidget);
+	QVBoxLayout* vLayout = new QVBoxLayout(this);
+	vLayout->setSpacing(0);
+	vLayout->setMargin(0);
+	setLayout(vLayout);
+
+	QFrame* topWidget = new QFrame(this);
+	topWidget->setContentsMargins(Common::Helpers::pointsToPixels(2), 0, Common::Helpers::pointsToPixels(3), 0);
+	vLayout->addWidget(topWidget);
+	vLayout->addWidget(m_stackedWidget);
+
+	m_topWidgetLayout = new QHBoxLayout(this);
+	m_topWidgetLayout->setSpacing(0);
+	m_topWidgetLayout->setMargin(0);
+	topWidget->setLayout(m_topWidgetLayout);
+
+	m_topWidgetLayout->addWidget(m_tabBar);
+	m_topWidgetLayout->addStretch();
 	m_httpResponseLabel->setReadOnly(true);
 
-	VERIFY(connect(m_tabWidget, &QTabWidget::tabBarClicked, this, &PageDataWidget::onTabBarClicked));
+	VERIFY(connect(m_tabBar, &QTabBar::tabBarClicked, this, &PageDataWidget::onTabBarClicked));
 }
 
 void PageDataWidget::setParsedPageInfo(const ParsedPageInfoPtr& page)
@@ -44,33 +84,62 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 	DEBUG_ASSERT(pageDataType > BeginType && pageDataType < EndType);
 
 	QLabel* selectPageLabel = new QLabel(this);
+	selectPageLabel->setContentsMargins(0, 0, 0, 0);
 	selectPageLabel->setObjectName(QStringLiteral("TablePlaseholderLabel"));
 	selectPageLabel->setText(tr("Select The Page"));
 	selectPageLabel->setAlignment(Qt::AlignCenter);
-	QStackedWidget* stackedWidget = new QStackedWidget(this);
-	stackedWidget->addWidget(selectPageLabel);
+	selectPageLabel->setContentsMargins(0, 0, 0, 0);
+	QStackedWidget* tabStackedWidget = new QStackedWidget(this);
+	tabStackedWidget->setContentsMargins(0, 0, 0, 0);
+	tabStackedWidget->setMinimumHeight(0);
+	tabStackedWidget->setObjectName("tabContent");
+	tabStackedWidget->addWidget(selectPageLabel);
+	m_stackedWidget->setMinimumHeight(0);
+
+	tabStackedWidget->installEventFilter(this);
 
 	if (pageDataType == ServerResponseForPageType)
 	{
-		m_pageIndices[pageDataType] = m_tabWidget->addTab(stackedWidget, tabDescription(pageDataType));
-		stackedWidget->addWidget(m_httpResponseLabel);
-		stackedWidget->setCurrentIndex(0);
-		m_stackedWidgets[pageDataType] = stackedWidget;
+		m_pageIndices[pageDataType] = m_tabBar->addTab(tabDescription(pageDataType));
+		m_stackedWidget->addWidget(tabStackedWidget);
+		tabStackedWidget->addWidget(m_httpResponseLabel);
+		tabStackedWidget->setCurrentIndex(0);
+		m_stackedWidgets[pageDataType] = tabStackedWidget;
+		m_filterResourceTypeWidgets[tabStackedWidget] = nullptr;
 		return;
 	}
 
-	TableView* tableView = new TableView(stackedWidget, false, true);
+	TableView* tableView = new TableView(tabStackedWidget, false, true);
+	tableView->setObjectName("TableView");
+	tableView->setContentsMargins(0, 0, 0, 0);
+	tableView->setMinimumWidth(0);
 	m_models[pageDataType] = new PageModel(this);
+	ResourceTypeFilterWidget* filterWidget = new ResourceTypeFilterWidget(this);
+	filterWidget->setContentsMargins(0, 0, 0, 0);
+	tableView->setMinimumHeight(0);
+	m_filterResourceTypeWidgets[tabStackedWidget] = filterWidget;
+	m_topWidgetLayout->addWidget(filterWidget);
+
+	VERIFY(connect(filterWidget, &ResourceTypeFilterWidget::filterChanged, tableView, [tableView](int filter)
+	{
+		TableProxyModel* filterProxyModel =
+			qobject_cast<TableProxyModel*>(tableView->model());
+
+		ASSERT(filterProxyModel);
+		filterProxyModel->setAcceptedResources(filter);
+	}));
 
 	tableView->setModel(m_models[pageDataType]);
 	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], this));
 	tableView->setShowAdditionalGrid(true);
 
-	stackedWidget->addWidget(tableView);
-	stackedWidget->setCurrentIndex(0);
+	tabStackedWidget->addWidget(tableView);
+	tabStackedWidget->setCurrentIndex(0);
 
-	m_pageIndices[pageDataType] = m_tabWidget->addTab(stackedWidget, tabDescription(pageDataType));
-	m_stackedWidgets[pageDataType] = stackedWidget;
+
+	m_pageIndices[pageDataType] = m_tabBar->addTab(tabDescription(pageDataType));
+	m_stackedWidget->addWidget(tabStackedWidget);
+	m_stackedWidgets[pageDataType] = tabStackedWidget;
 }
 
 void PageDataWidget::selectTab(PageDataType pageDataType)
@@ -78,23 +147,44 @@ void PageDataWidget::selectTab(PageDataType pageDataType)
 	ASSERT(pageDataType > BeginType && pageDataType < EndType);
 	ASSERT(m_pageIndices.find(pageDataType) != m_pageIndices.end());
 
-	m_tabWidget->setCurrentIndex(m_pageIndices[pageDataType]);
+	m_tabBar->setCurrentIndex(m_pageIndices[pageDataType]);
+	m_stackedWidget->setCurrentIndex(m_pageIndices[pageDataType]);
 	emit tabSelected(m_pageIndices[pageDataType]);
 }
 
-QTabWidget* PageDataWidget::tabWidget()
+QTabBar* PageDataWidget::tabWidget()
 {
-	return m_tabWidget;
+	return m_tabBar;
 }
 
 void PageDataWidget::onTabBarClicked(int index)
 {
-	emit tabBarClicked(index, m_tabWidget->currentIndex());
+	m_stackedWidget->setCurrentIndex(index);
+	emit tabBarClicked(index, index);
+}
+
+bool PageDataWidget::eventFilter(QObject* object, QEvent* event)
+{
+	if (event->type() == QEvent::Show)
+	{
+		foreach (QWidget* tableView, m_filterResourceTypeWidgets.keys())
+		{
+			QWidget* filterWidget = m_filterResourceTypeWidgets[tableView];
+			if (filterWidget != nullptr)
+			{
+				filterWidget->setVisible(tableView == object);
+			}
+		}
+	}
+
+	return false;
 }
 
 void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page) const
 {
 	m_httpResponseLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+	m_httpResponseLabel->setContentsMargins(0, 0, 0, 0);
+	m_httpResponseLabel->setMaximumHeight(0);
 
 	QString selectedPageServerResponse = page->itemValue(ParsedPageInfo::Column::ServerResponseColumn).toString().trimmed();
 

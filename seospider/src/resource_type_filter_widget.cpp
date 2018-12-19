@@ -11,6 +11,7 @@ ResourceTypeFilterWidget::ResourceTypeFilterWidget(QWidget* parent)
 	setObjectName("resourceTypeFilter");
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addStretch();
 	createPushButton(QObject::tr("HTML"), ResourceHtml, layout, "left");
 	createPushButton(QObject::tr("JS"), ResourceJavaScript, layout);
@@ -40,6 +41,7 @@ void ResourceTypeFilterWidget::createPushButton(const QString& text, int flag, Q
 	button->setChecked(true);
 	button->setText(text);
 	layout->addWidget(button);
+	button->setContentsMargins(0, 0, 0, 0);
 
 	m_buttons[flag] = button;
 
