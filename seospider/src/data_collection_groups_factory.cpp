@@ -172,6 +172,27 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			descriptions.insert(descriptions.end(), yandexMetricaDescriptions.begin(), yandexMetricaDescriptions.end());
 			p->setDescriptions(std::move(descriptions));
 
+			const auto reconfigureYmDescriptions = [this, group = QPointer<DCStorageGroupDescription>(p.get())]
+			{
+				if (!group)
+				{
+					return;
+				}
+
+				group->setDescriptions(std::move(createYandexMetricaDescriptions()));
+			};
+
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter1Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter1IdChanged, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter2Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter2IdChanged, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter3Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter3IdChanged, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter4Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter4IdChanged, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter5Changed, p.get(), reconfigureYmDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter5IdChanged, p.get(), reconfigureYmDescriptions));
+
 			return p;
 		}
 
