@@ -70,6 +70,7 @@ private slots:
 	void onAboutUpdateExists();
 	void onAboutUpdateIsNotExists();
 	void openHelpPage();
+	void delayedHideShadedOverlay();
 
 private:
 	bool m_initialized;
@@ -81,6 +82,7 @@ private:
 	IUpdateChecker* m_updateChecker;
 	ShadedOverlay* m_shadedOverlay;
 	ApplicationSettingsDialog* m_applicationSettingsDialog;
+	QTimer* m_delayedHideShadedOverlayTimer;
 };
 
 }

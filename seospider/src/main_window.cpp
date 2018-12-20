@@ -67,8 +67,12 @@ MainWindow::MainWindow(QWidget* parent)
 	, m_updateChecker(new UpdateChecker(this))
 	, m_shadedOverlay(new ShadedOverlay(this))
 	, m_applicationSettingsDialog(nullptr)
+	, m_delayedHideShadedOverlayTimer(new QTimer(this))
 {
 	qRegisterMetaType<Version>("Version");
+
+	m_delayedHideShadedOverlayTimer->setInterval(100);
+	VERIFY(connect(m_delayedHideShadedOverlayTimer, &QTimer::timeout, this, &MainWindow::delayedHideShadedOverlay));
 
 	setWindowTitle(
 		theApp->softwareBrandingOptions()->organizationName() + QStringLiteral(" ") +
@@ -280,9 +284,23 @@ void MainWindow::onCrawlingFinished() const
 void MainWindow::showShadedOverlay()
 {
 	m_shadedOverlay->setVisible(true);
+	if (m_delayedHideShadedOverlayTimer->isActive())
+	{
+		m_delayedHideShadedOverlayTimer->stop();
+	}
 }
 
 void MainWindow::hideShadedOverlay()
+{
+	if (m_delayedHideShadedOverlayTimer->isActive())
+	{
+		m_delayedHideShadedOverlayTimer->stop();
+	}
+
+	m_delayedHideShadedOverlayTimer->start();
+}
+
+void MainWindow::delayedHideShadedOverlay()
 {
 	m_shadedOverlay->setVisible(false);
 }
