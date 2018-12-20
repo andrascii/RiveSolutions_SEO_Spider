@@ -316,7 +316,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Maximum redirects to follow:</source>
-        <translation>Максимальное длина цепочки редиректов для перехода:</translation>
+        <translation>Максимальная длина цепочки редиректов для перехода:</translation>
     </message>
     <message>
         <source>Limit maximum URI length to crawl:</source>
