@@ -154,7 +154,7 @@ an invalid username/password.</source>
         <source>I&apos;m sorry but I cannot find this website
 Please, be sure that you entered a valid address</source>
         <translation>К сожалению этот сайт не найден
-Пожалуйста, убедитесь что Вы ввели адресс корректно</translation>
+Пожалуйста, убедитесь что Вы ввели адрес корректно</translation>
     </message>
     <message>
         <source>Closing file error</source>
