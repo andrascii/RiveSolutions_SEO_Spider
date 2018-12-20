@@ -435,7 +435,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Maximum image alt text length:</source>
-        <translation>Максимальная длин6а атрибута alt изображения:</translation>
+        <translation>Максимальная длина атрибута alt изображения:</translation>
     </message>
     <message>
         <source>Meta Description Length</source>
