@@ -20,19 +20,12 @@ public:
 		CantReceivePages
 	};
 
-	struct ResponseData
-	{
-		HopsChain hopsChain;
-		std::vector<bool> reloadingPageStrorages;
-		DownloadRequestType requestType;
-		bool isPageReloaded;
-	};
-
 	virtual ~IWorkerPageLoader() = default;
 
 	virtual bool canPullLoading() const = 0;
 
 	virtual void performLoading(const CrawlerRequest& crawlerRequest,
+		int turnaround,
 		const std::vector<bool>& reloadingPageStrorages,
 		DownloadRequest::Status linkStatus) = 0;
 
@@ -44,6 +37,7 @@ public:
 
 	// signals
 	virtual void pageLoaded(const HopsChain& hopsChain,
+		int turnaround,
 		bool isPageReloaded,
 		const std::vector<bool>& reloadingPageStrorages,
 		DownloadRequestType requestType) = 0;

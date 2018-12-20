@@ -31,12 +31,15 @@ public:
 	void incrementSequencedDataCollectionLinksCount() noexcept;
 	void setSequencedDataCollectionLinksCount(int count) noexcept;
 
+	int turnaround() const noexcept;
+
 	void clear() noexcept;
 
 	static CrawlerSharedState* instance() noexcept;
 
 private:
 	CrawlerSharedState();
+	void incrementTurnaround() noexcept;
 
 private:
 	std::atomic<int> m_downloaderCrawledLinksCount;
@@ -45,6 +48,7 @@ private:
 	std::atomic<int> m_modelControllerAcceptedLinksCount;
 	std::atomic<int> m_modelControllerCrawledLinksCount;
 	std::atomic<int> m_sequencedDataCollectionLinksCount;
+	std::atomic<int> m_turnaround;
 };
 
 }

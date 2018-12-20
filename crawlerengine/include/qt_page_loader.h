@@ -20,6 +20,7 @@ public:
 	virtual bool canPullLoading() const override;
 
 	virtual void performLoading(const CrawlerRequest& crawlerRequest,
+		int turnaround,
 		const std::vector<bool>& reloadingPageStrorages,
 		DownloadRequest::Status linkStatus) override;
 
@@ -31,6 +32,7 @@ public:
 
 signals:
 	virtual void pageLoaded(const HopsChain& hopsChain,
+		int turnaround,
 		bool isPageReloaded,
 		const std::vector<bool>& reloadingPageStrorages,
 		DownloadRequestType requestType) override;

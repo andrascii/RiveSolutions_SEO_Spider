@@ -41,14 +41,14 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	VERIFY(connect(crawler->sequencedDataCollection(), &SequencedDataCollection::endClearData,
 		this, &ParsedPageReceiver::onDataCleared, Qt::QueuedConnection));
 
-	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)),
-		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType, int)),
+		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType, int)), Qt::QueuedConnection));
 
 	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(WorkerResult, StorageType)),
 		this, SLOT(onUnorderedDataCollectionPageAdded(WorkerResult, StorageType)), Qt::QueuedConnection));
 
-	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType)),
-		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType, int)),
+		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType, int)), Qt::QueuedConnection));
 }
 
 void ParsedPageReceiver::onParsedPageAdded(int row, StorageType type)
@@ -146,8 +146,9 @@ void ParsedPageReceiver::onDeserializationDone()
 	m_waitForDeserializationDone.set_value();
 }
 
-void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type)
+void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type, int turnaround)
 {
+	Q_UNUSED(turnaround);
 	std::lock_guard<std::mutex> locker(m_ucMutex);
 
 	m_unorderedDataCollectionPages[type].push_back(page.get());
@@ -155,11 +156,12 @@ void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(ParsedPagePtr page, 
 
 void ParsedPageReceiver::onUnorderedDataCollectionPageAdded(WorkerResult result, StorageType type)
 {
-	onUnorderedDataCollectionPageAdded(result.incomingPage(), type);
+	onUnorderedDataCollectionPageAdded(result.incomingPage(), type, result.turnaround());
 }
 
-void ParsedPageReceiver::onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type)
+void ParsedPageReceiver::onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type, int turnaround)
 {
+	Q_UNUSED(turnaround);
 	std::lock_guard<std::mutex> locker(m_ucMutex);
 
 	auto it = std::find_if(std::begin(m_unorderedDataCollectionPages[type]), std::end(m_unorderedDataCollectionPages[type]),

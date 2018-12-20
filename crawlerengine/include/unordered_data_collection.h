@@ -26,18 +26,18 @@ public:
 	bool isParsedPageExists(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 	size_t size(StorageType type) const noexcept;
 
-	void replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type);
+	void replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type, int turnaround);
 
 	void addParsedPage(WorkerResult& workerResult, StorageType type);
-	void addParsedPage(ParsedPagePtr& parsedPagePointer, StorageType type);
+	void addParsedPage(ParsedPagePtr& parsedPagePointer, StorageType type, int turnaround);
 
 	Q_SLOT void addParsedPage(WorkerResult workerResult, int type);
-	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePointer, int type);
+	Q_SLOT void addParsedPage(ParsedPagePtr parsedPagePointer, int type, int turnaround);
 
-	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
+	ParsedPagePtr removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type, int turnaround) noexcept;
 	const ParsedPagePtr parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept;
 
-	void setPageAddingEmitAbility(bool value);
+	void setPageAddingEmitAbility(bool value, int turnaround);
 
 	void clearData();
 
@@ -63,14 +63,14 @@ public:
 		return result;
 	}
 
-	void prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh);
+	void prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh, int turnaround);
 
 signals:
 	void parsedPageAdded(WorkerResult workerResult, StorageType type);
-	void parsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type);
-	void parsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type);
-	void parsedPageReplaced(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
-	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
+	void parsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type, int turnaround);
+	void parsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type, int turnaround);
+	void parsedPageReplaced(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type, int turnaround);
+	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes, int turnaround);
 	void dataCleared();
 
 protected:
@@ -81,8 +81,8 @@ private:
 	void checkStorageType(StorageType type) const noexcept;
 	void initializeStorages();
 	void addParsedPageInternal(ParsedPagePtr& parsedPagePointer, StorageType type);
-	std::pair<ParsedPagePtr, UnorderedStorageType::iterator> removeParsedPageInternal(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept;
-	
+	std::pair<ParsedPagePtr, UnorderedStorageType::iterator> removeParsedPageInternal(const ParsedPagePtr& parsedPagePtr, StorageType type, int turnaround) noexcept;
+
 	void emitParsedPageAdded(WorkerResult workerResult, StorageType type);
 	void emitParsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type);
 

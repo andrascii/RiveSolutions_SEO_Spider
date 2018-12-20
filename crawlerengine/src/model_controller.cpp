@@ -11,18 +11,20 @@ using namespace CrawlerEngine;
 
 struct EmitBlocker final
 {
-	EmitBlocker(UnorderedDataCollection* udc)
+	EmitBlocker(UnorderedDataCollection* udc, int turnaround)
 		: udc(udc)
+		, turnaround(turnaround)
 	{
-		udc->setPageAddingEmitAbility(false);
+		udc->setPageAddingEmitAbility(false, turnaround);
 	}
 
 	~EmitBlocker()
 	{
-		udc->setPageAddingEmitAbility(true);
+		udc->setPageAddingEmitAbility(true, turnaround);
 	}
 
 	UnorderedDataCollection* udc;
+	int turnaround;
 };
 
 template <typename IterOut, typename IterIn, typename Policy>
@@ -137,17 +139,22 @@ void ModelController::clearData()
 	CrawlerSharedState::instance()->setModelControllerCrawledLinksCount(0);
 }
 
-void ModelController::preparePageForRefresh(ParsedPage* parsedPage)
+void ModelController::preparePageForRefresh(ParsedPage* parsedPage, int turnaround)
 {
 	const auto fakeDeleter = [](ParsedPage*) noexcept {};
 	ParsedPagePtr pointer(parsedPage, fakeDeleter);
 
-	data()->prepareCollectionForRefreshPage(pointer);
+	data()->prepareCollectionForRefreshPage(pointer, turnaround);
 }
 
 void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 {
-	EmitBlocker emitBlocker(data());
+	if (workerResult.turnaround() != CrawlerSharedState::instance()->turnaround())
+	{
+		return;
+	}
+
+	EmitBlocker emitBlocker(data(), workerResult.turnaround());
 	Common::Finally incrementCrawledLinksCountGuard([] { CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount(); });
 
 	const auto refreshDoneEmit = [&]
@@ -188,14 +195,14 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 	}
 	else if (workerResult.storagesBeforeRemoving()[StorageType::NofollowLinksStorageType])
 	{
-		data()->addParsedPage(workerResult.incomingPage(), StorageType::NofollowLinksStorageType);
+		data()->addParsedPage(workerResult.incomingPage(), StorageType::NofollowLinksStorageType, workerResult.turnaround());
 	}
 
 	fixParsedPageResourceType(workerResult.incomingPage());
 
 	if (!resourceShouldBeProcessed(workerResult.incomingPage()->resourceType, m_crawlerOptionsData))
 	{
-		removeResourceFromPendingStorageIfNeeded(workerResult.incomingPage());
+		removeResourceFromPendingStorageIfNeeded(workerResult.incomingPage(), workerResult.turnaround());
 		return;
 	}
 
@@ -220,11 +227,11 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		processParsedPageImage(workerResult, false, secondGetRequest);
 	}
 
-	data()->removeParsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType);
+	data()->removeParsedPage(workerResult.incomingPage(), StorageType::PendingResourcesStorageType, workerResult.turnaround());
 
 	if (!m_linksToPageChanges.changes.empty())
 	{
-		data()->parsedPageLinksToThisResourceChanged(m_linksToPageChanges);
+		data()->parsedPageLinksToThisResourceChanged(m_linksToPageChanges, workerResult.turnaround());
 		m_linksToPageChanges.changes.clear();
 	}
 
@@ -258,7 +265,7 @@ void ModelController::processParsedPageUrl(WorkerResult& workerResult, bool seco
 
 		ASSERT(oldPage);
 
-		data()->replaceParsedPage(oldPage, workerResult.incomingPage(), storageType);
+		data()->replaceParsedPage(oldPage, workerResult.incomingPage(), storageType, workerResult.turnaround());
 	}
 	else
 	{
@@ -361,7 +368,9 @@ void ModelController::processParsedPageTitle(WorkerResult& workerResult, bool se
 
 	if (!title.isEmpty() && successfulResponseCode)
 	{
-		addDuplicates(workerResult.incomingPage(), StorageType::AllTitlesUrlStorageType, StorageType::DuplicatedTitleUrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllTitlesUrlStorageType,
+			StorageType::DuplicatedTitleUrlStorageType, workerResult.turnaround());
+
 		data()->addParsedPage(workerResult, StorageType::AllTitlesUrlStorageType);
 	}
 
@@ -404,7 +413,9 @@ void ModelController::processParsedPageMetaDescription(WorkerResult& workerResul
 
 	if (metaDescriptionLength > 0 && successfulResponseCode)
 	{
-		addDuplicates(workerResult.incomingPage(), StorageType::AllMetaDescriptionsUrlStorageType, StorageType::DuplicatedMetaDescriptionUrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllMetaDescriptionsUrlStorageType,
+			StorageType::DuplicatedMetaDescriptionUrlStorageType, workerResult.turnaround());
+
 		data()->addParsedPage(workerResult, StorageType::AllMetaDescriptionsUrlStorageType);
 	}
 
@@ -434,7 +445,9 @@ void ModelController::processParsedPageMetaKeywords(WorkerResult& workerResult, 
 
 	if (metaKeywordsLength > 0 && successfulResponseCode)
 	{
-		addDuplicates(workerResult.incomingPage(), StorageType::AllMetaKeywordsUrlStorageType, StorageType::DuplicatedMetaKeywordsUrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllMetaKeywordsUrlStorageType,
+			StorageType::DuplicatedMetaKeywordsUrlStorageType, workerResult.turnaround());
+
 		data()->addParsedPage(workerResult, StorageType::AllMetaKeywordsUrlStorageType);
 	}
 
@@ -474,7 +487,9 @@ void ModelController::processParsedPageH1(WorkerResult& workerResult, bool secon
 
 	if (h1Length > 0)
 	{
-		addDuplicates(workerResult.incomingPage(), StorageType::AllH1UrlStorageType, StorageType::DuplicatedH1UrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllH1UrlStorageType,
+			StorageType::DuplicatedH1UrlStorageType, workerResult.turnaround());
+
 		data()->addParsedPage(workerResult, StorageType::AllH1UrlStorageType);
 	}
 
@@ -513,7 +528,9 @@ void ModelController::processParsedPageH2(WorkerResult& workerResult, bool secon
 
 	if (h2Length > 0)
 	{
-		addDuplicates(workerResult.incomingPage(), StorageType::AllH2UrlStorageType, StorageType::DuplicatedH2UrlStorageType);
+		addDuplicates(workerResult.incomingPage(), StorageType::AllH2UrlStorageType,
+			StorageType::DuplicatedH2UrlStorageType, workerResult.turnaround());
+
 		data()->addParsedPage(workerResult, StorageType::AllH2UrlStorageType);
 	}
 
@@ -682,7 +699,8 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 	if (workerResult.incomingPage()->canonicalUrl.isValid() && !workerResult.incomingPage()->isThisExternalPage)
 	{
 		addDuplicates(workerResult.incomingPage(),
-			StorageType::AllCanonicalUrlResourcesStorageType, StorageType::DuplicatedCanonicalUrlResourcesStorageType, false);
+			StorageType::AllCanonicalUrlResourcesStorageType, 
+				StorageType::DuplicatedCanonicalUrlResourcesStorageType, workerResult.turnaround(), false);
 
 		data()->addParsedPage(workerResult, StorageType::AllCanonicalUrlResourcesStorageType);
 
@@ -724,19 +742,19 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 			m_linksToPageChanges.changes.emplace_back(LinksToThisResourceChanges::Change{ existingResource, existingResource->linksToThisPage.size() - 1 });
 
-			addIndexingBlockingPage(existingResource, resource);
+			addIndexingBlockingPage(existingResource, resource, workerResult.turnaround());
 		}
 		else
 		{
 			ParsedPagePtr pendingResource = parsedPageFromResource(resource);
 			setLinksForResourcePageAndLoadedPage(pendingResource, workerResult, resource);
 
-			const QSet<StorageType> blockingStorages = addIndexingBlockingPage(pendingResource, resource);
+			const QSet<StorageType> blockingStorages = addIndexingBlockingPage(pendingResource, resource, workerResult.turnaround());
 
 			if (!blockingStorages.isEmpty())
 			{
 				// if blockingStorages is not empty that means that we already added page to some storage
-				data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
+				data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType, workerResult.turnaround());
 
 				DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 
@@ -751,7 +769,7 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 				continue;
 			}
 
-			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType);
+			data()->addParsedPage(pendingResource, StorageType::PendingResourcesStorageType, workerResult.turnaround());
 
 			DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
@@ -839,7 +857,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 
 			temporaryResource->linksToThisPage.emplace_back(linkToThisResource);
 
-			data()->addParsedPage(temporaryResource, StorageType::PendingResourcesStorageType);
+			data()->addParsedPage(temporaryResource, StorageType::PendingResourcesStorageType, workerResult.turnaround());
 		}
 
 		if (resourceType == ResourceType::ResourceHtml)
@@ -899,12 +917,12 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 			if (httpResource && noRestrictionsOrSourceRedirect)
 			{
 				// what if this resource is unavailable not from all pages?
-				data()->addParsedPage(newOrExistingResource, StorageType::PendingResourcesStorageType);
+				data()->addParsedPage(newOrExistingResource, StorageType::PendingResourcesStorageType, workerResult.turnaround());
 			}
 			else if (!httpResource && !data()->isParsedPageExists(newOrExistingResource, StorageType::AllOtherResourcesStorageType))
 			{
-				data()->addParsedPage(newOrExistingResource, StorageType::AllOtherResourcesStorageType);
-				data()->addParsedPage(newOrExistingResource, storage);
+				data()->addParsedPage(newOrExistingResource, StorageType::AllOtherResourcesStorageType, workerResult.turnaround());
+				data()->addParsedPage(newOrExistingResource, storage, workerResult.turnaround());
 			}
 		}
 
@@ -921,6 +939,7 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 		if (existingImageResource)
 		{
 			WorkerResult result(newOrExistingResource,
+				workerResult.turnaround(),
 				workerResult.isRefreshResult(),
 				workerResult.requestType(),
 				workerResult.storagesBeforeRemoving());
@@ -989,7 +1008,7 @@ bool ModelController::resourceShouldBeProcessed(ResourceType resourceType, const
 	return false;
 }
 
-void ModelController::removeResourceFromPendingStorageIfNeeded(ParsedPagePtr& incomingPage) noexcept
+void ModelController::removeResourceFromPendingStorageIfNeeded(ParsedPagePtr& incomingPage, int turnaround) noexcept
 {
 	const ParsedPagePtr pendingPage = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
 	if (!pendingPage)
@@ -1010,7 +1029,7 @@ void ModelController::removeResourceFromPendingStorageIfNeeded(ParsedPagePtr& in
 	}
 	if (shouldBeRemovedFromPendingStorage)
 	{
-		data()->removeParsedPage(pendingPage, StorageType::PendingResourcesStorageType);
+		data()->removeParsedPage(pendingPage, StorageType::PendingResourcesStorageType, turnaround);
 	}
 }
 
@@ -1085,11 +1104,11 @@ void ModelController::setPageLevel(ParsedPagePtr& page, int level) const noexcep
 	}
 }
 
-void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage, bool checkCanonicals)
+void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage, int turnaround, bool checkCanonicals)
 {
 	if (data()->isParsedPageExists(incomingPage, destStorage))
 	{
-		data()->addParsedPage(incomingPage, destStorage);
+		data()->addParsedPage(incomingPage, destStorage, turnaround);
 		return;
 	}
 
@@ -1119,10 +1138,10 @@ void ModelController::addDuplicates(ParsedPagePtr& incomingPage, StorageType loo
 		{
 			DEBUG_ASSERT(!duplicate->storages[static_cast<std::size_t>(destStorage)]);
 
-			data()->addParsedPage(duplicate, destStorage);
+			data()->addParsedPage(duplicate, destStorage, turnaround);
 		}
 
-		data()->addParsedPage(incomingPage, destStorage);
+		data()->addParsedPage(incomingPage, destStorage, turnaround);
 	}
 }
 
@@ -1134,7 +1153,7 @@ ParsedPagePtr ModelController::parsedPageFromResource(const ResourceOnPage& reso
 	return parsedPage;
 }
 
-QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource)
+QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource, int turnaround)
 {
 	const bool isBlockedByXRobotsTag = resource.restrictions.testFlag(Restriction::RestrictionBlockedByMetaRobotsRules);
 	const bool isBlockedByRobotsTxt = resource.restrictions.testFlag(Restriction::RestrictionBlockedByRobotsTxtRules);
@@ -1150,19 +1169,19 @@ QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFr
 
 	if ((isBlockedByRobotsTxt || isBlockedByXRobotsTag || (isNofollowResource && !isThisDofollowResourceExists)) && !isThisBlockedResourceExists)
 	{
-		data()->addParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+		data()->addParsedPage(pageFromResource, StorageType::BlockedForSEIndexingStorageType, turnaround);
 		result << StorageType::BlockedForSEIndexingStorageType;
 	}
 
 	if (isBlockedByRobotsTxt && !isThisBlockedByRobotsTxtExists)
 	{
-		data()->addParsedPage(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
+		data()->addParsedPage(pageFromResource, StorageType::BlockedByRobotsTxtStorageType, turnaround);
 		result << StorageType::BlockedByRobotsTxtStorageType;
 	}
 
 	if (isNofollowResource && !isThisDofollowResourceExists && !isThisNofollowResourceExists)
 	{
-		data()->addParsedPage(pageFromResource, StorageType::NofollowLinksStorageType);
+		data()->addParsedPage(pageFromResource, StorageType::NofollowLinksStorageType, turnaround);
 		result << StorageType::NofollowLinksStorageType;
 	}
 
@@ -1174,9 +1193,9 @@ QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFr
 
 			DEBUG_ASSERT(existingPage);
 
-			data()->addParsedPage(existingPage, StorageType::DofollowUrlStorageType);
+			data()->addParsedPage(existingPage, StorageType::DofollowUrlStorageType, turnaround);
 
-			data()->removeParsedPage(existingPage, StorageType::NofollowLinksStorageType);
+			data()->removeParsedPage(existingPage, StorageType::NofollowLinksStorageType, turnaround);
 
 			//
 			// we must remove this page from blocked storage type
@@ -1184,12 +1203,12 @@ QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFr
 			//
 			if (!isThisBlockedByXRobotsTagExists && !isThisBlockedByRobotsTxtExists)
 			{
-				data()->removeParsedPage(existingPage, StorageType::BlockedForSEIndexingStorageType);
+				data()->removeParsedPage(existingPage, StorageType::BlockedForSEIndexingStorageType, turnaround);
 			}
 		}
 		else
 		{
-			data()->addParsedPage(pageFromResource, StorageType::DofollowUrlStorageType);
+			data()->addParsedPage(pageFromResource, StorageType::DofollowUrlStorageType, turnaround);
 			result << StorageType::DofollowUrlStorageType;
 		}
 	}
@@ -1207,10 +1226,10 @@ void ModelController::mergePageHelper(WorkerResult& workerResult)
 
 		if (!data()->isParsedPageExists(blockedPage, StorageType::BlockedForSEIndexingStorageType))
 		{
-			data()->addParsedPage(blockedPage, StorageType::BlockedForSEIndexingStorageType);
+			data()->addParsedPage(blockedPage, StorageType::BlockedForSEIndexingStorageType, workerResult.turnaround());
 		}
 
-		data()->addParsedPage(blockedPage, StorageType::BlockedByXRobotsTagStorageType);
+		data()->addParsedPage(blockedPage, StorageType::BlockedByXRobotsTagStorageType, workerResult.turnaround());
 	}
 
 	if (!data()->isParsedPageExists(workerResult.incomingPage(), StorageType::BlockedForSEIndexingStorageType))
@@ -1282,7 +1301,7 @@ void ModelController::handlePresenceYandexMetricaCounters(WorkerResult& workerRe
 	}
 
 	std::for_each(workerResult.incomingPage()->missingYandexMetricaCounters.begin(), workerResult.incomingPage()->missingYandexMetricaCounters.end(),
-		[&](StorageType targetStorageType) { data()->addParsedPage(workerResult.incomingPage(), targetStorageType); });
+		[&](StorageType targetStorageType) { data()->addParsedPage(workerResult.incomingPage(), targetStorageType, workerResult.turnaround()); });
 }
 
 }

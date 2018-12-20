@@ -38,6 +38,7 @@ private slots:
 	void onAllLoadedDataToBeCleared();
 
 	void onLoadingDone(const HopsChain& hopsChain,
+		int turnaround,
 		bool isPageReloaded,
 		const std::vector<bool>& reloadingPageStrorages,
 		DownloadRequestType requestType);
@@ -58,12 +59,14 @@ private:
 	void fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pages) const;
 
 	void handlePage(ParsedPagePtr& page,
+		int turnaround,
 		bool isUrlAdded,
 		bool isPageReloaded,
 		const std::vector<bool>& reloadingPageStrorages,
 		DownloadRequestType requestType);
 
 	void handleResponseData(const HopsChain& hopsChain,
+		int turnaround,
 		bool isPageReloaded,
 		const std::vector<bool>& reloadingPageStrorages,
 		DownloadRequestType requestType);

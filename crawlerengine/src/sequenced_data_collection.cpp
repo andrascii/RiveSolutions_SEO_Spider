@@ -11,8 +11,8 @@ SequencedDataCollection::SequencedDataCollection(const UnorderedDataCollection* 
 {
 	ASSERT(collection);
 
-	VERIFY(connect(collection, SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType)), this,
-		SLOT(addParsedPage(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
+	VERIFY(connect(collection, SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType, int)), this,
+		SLOT(addParsedPage(ParsedPagePtr, StorageType, int)), Qt::QueuedConnection));
 
 	VERIFY(connect(collection, SIGNAL(parsedPageAdded(WorkerResult, StorageType)), this,
 		SLOT(addParsedPage(WorkerResult, StorageType)), Qt::QueuedConnection));
@@ -20,8 +20,8 @@ SequencedDataCollection::SequencedDataCollection(const UnorderedDataCollection* 
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageReplaced, this,
 		&SequencedDataCollection::replaceParsedPage, Qt::QueuedConnection));
 
-	VERIFY(connect(collection, SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType)), this,
-		SLOT(onParsedPageRemoved(ParsedPagePtr, StorageType)), Qt::QueuedConnection));
+	VERIFY(connect(collection, SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType, int)), this,
+		SLOT(onParsedPageRemoved(ParsedPagePtr, StorageType, int)), Qt::QueuedConnection));
 
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, this,
 		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));
@@ -99,8 +99,13 @@ std::shared_ptr<ISequencedStorage> SequencedDataCollection::createSequencedStora
 	return std::static_pointer_cast<ISequencedStorage>(std::make_shared<SequencedStorage>());
 }
 
-void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type)
+void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type, int turnaround)
 {
+	if (CrawlerSharedState::instance()->turnaround() != turnaround)
+	{
+		return;
+	}
+
 	auto storageIterator = m_sequencedStorageMap.find(type);
 
 	if (type == StorageType::CrawledUrlStorageType)
@@ -134,11 +139,16 @@ void SequencedDataCollection::addParsedPage(ParsedPagePtr parsedPagePtr, Storage
 
 void SequencedDataCollection::addParsedPage(WorkerResult workerResult, StorageType type)
 {
-	addParsedPage(workerResult.incomingPage(), type);
+	addParsedPage(workerResult.incomingPage(), type, workerResult.turnaround());
 }
 
-void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type)
+void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type, int turnaround)
 {
+	if (CrawlerSharedState::instance()->turnaround() != turnaround)
+	{
+		return;
+	}
+
 	auto storageIterator = m_sequencedStorageMap.find(type);
 
 	if (storageIterator != m_sequencedStorageMap.end())
@@ -152,8 +162,13 @@ void SequencedDataCollection::replaceParsedPage(ParsedPagePtr oldParsedPagePtr, 
 }
 
 
-void SequencedDataCollection::onParsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type)
+void SequencedDataCollection::onParsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type, int turnaround)
 {
+	if (CrawlerSharedState::instance()->turnaround() != turnaround)
+	{
+		return;
+	}
+
 	removePage(parsedPagePointer.get(), type);
 }
 

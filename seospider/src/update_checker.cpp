@@ -27,7 +27,7 @@ void UpdateChecker::check()
 		CrawlerEngine::DownloadRequestType::RequestTypeGet
 	};
 
-	CrawlerEngine::DownloadRequest request(crawlerRequest);
+	CrawlerEngine::DownloadRequest request(crawlerRequest, 0);
 	request.ignoreMaxParallelConnections = true;
 
 	m_downloadRequester.reset(request, this, &UpdateChecker::onActualVersionFileLoaded);

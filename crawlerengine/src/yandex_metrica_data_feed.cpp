@@ -3,6 +3,7 @@
 #include "crawler_worker.h"
 #include "download_request.h"
 #include "download_response.h"
+#include "crawler_shared_state.h"
 
 namespace CrawlerEngine
 {
@@ -90,7 +91,7 @@ void YandexMetricaDataFeed::requestData(ParsedPageWeakPtr page)
 		const Url apiUrl = QString("https://api-metrika.yandex.ru/stat/v1/data?dimensions=ym:pv:URLPath=~") + lockedPage->url.path(QUrl::FullyEncoded)
 			+ "&oauth_token=" + m_authenticator->token();
 
-		DownloadRequest request({apiUrl , DownloadRequestType::RequestTypeGet });
+		DownloadRequest request({apiUrl , DownloadRequestType::RequestTypeGet }, CrawlerSharedState::instance()->turnaround());
 		m_downloadRequester.reset(request, this, &YandexMetricaDataFeed::onLoadingDone);
 
 		m_downloadRequester->start();
