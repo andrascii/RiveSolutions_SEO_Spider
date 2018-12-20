@@ -10,6 +10,7 @@ CrawlerSharedState::CrawlerSharedState()
 	, m_modelControllerAcceptedLinksCount(0)
 	, m_modelControllerCrawledLinksCount(0)
 	, m_sequencedDataCollectionLinksCount(0)
+	, m_turnaround(0)
 {
 }
 
@@ -108,6 +109,16 @@ void CrawlerSharedState::setSequencedDataCollectionLinksCount(int count) noexcep
 	m_sequencedDataCollectionLinksCount.store(count, std::memory_order_release);
 }
 
+int CrawlerSharedState::turnaround() const noexcept
+{
+	return m_turnaround.load(std::memory_order_acquire);
+}
+
+void CrawlerSharedState::incrementTurnaround() noexcept
+{
+	m_turnaround.fetch_add(1, std::memory_order_release);
+}
+
 void CrawlerSharedState::clear() noexcept
 {
 	m_downloaderCrawledLinksCount.store(0, std::memory_order_release);
@@ -116,6 +127,7 @@ void CrawlerSharedState::clear() noexcept
 	m_modelControllerAcceptedLinksCount.store(0, std::memory_order_release);
 	m_modelControllerCrawledLinksCount.store(0, std::memory_order_release);
 	m_sequencedDataCollectionLinksCount.store(0, std::memory_order_release);
+	incrementTurnaround();
 }
 
 CrawlerSharedState* CrawlerSharedState::instance() noexcept

@@ -9,10 +9,12 @@ WorkerResult::WorkerResult()
 }
 
 WorkerResult::WorkerResult(ParsedPagePtr incomingPage,
+	int turnaround,
 	bool refresh,
 	DownloadRequestType downloadRequestType,
 	const std::vector<bool>& storagesBeforeRemoving)
 	: m_incomingPage(incomingPage)
+	, m_turnaround(turnaround)
 	, m_refresh(refresh)
 	, m_requestType(downloadRequestType)
 	, m_storagesBeforeRemoving(storagesBeforeRemoving)
@@ -27,6 +29,11 @@ ParsedPagePtr& WorkerResult::incomingPage() noexcept
 const ParsedPagePtr& WorkerResult::incomingPageConstRef() const noexcept
 {
 	return m_incomingPage;
+}
+
+int WorkerResult::turnaround() const noexcept
+{
+	return m_turnaround;
 }
 
 bool WorkerResult::isRefreshResult() const noexcept

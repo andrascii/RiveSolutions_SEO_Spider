@@ -33,8 +33,8 @@ CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, IWorkerPageLoader
 	qRegisterMetaType<std::vector<bool>>("std::vector<bool>");
 	qRegisterMetaType<DownloadRequestType>("DownloadRequestType");
 
-	VERIFY(connect(m_pageLoader->qobject(), SIGNAL(pageLoaded(const HopsChain&, bool, const std::vector<bool>&, DownloadRequestType)),
-		this, SLOT(onLoadingDone(const HopsChain&, bool, const std::vector<bool>&, DownloadRequestType)), Qt::QueuedConnection));
+	VERIFY(connect(m_pageLoader->qobject(), SIGNAL(pageLoaded(const HopsChain&, int, bool, const std::vector<bool>&, DownloadRequestType)),
+		this, SLOT(onLoadingDone(const HopsChain&, int, bool, const std::vector<bool>&, DownloadRequestType)), Qt::QueuedConnection));
 
 	VERIFY(connect(m_uniqueLinkStore, &UniqueLinkStore::urlAdded, this,
 		&CrawlerWorker::extractUrlAndDownload, Qt::QueuedConnection));
@@ -127,7 +127,7 @@ void CrawlerWorker::extractUrlAndDownload()
 
 		const CrawlerRequest& request = reloadPage ? refreshRequest.crawlerRequest : crawlerRequest;
 
-		m_pageLoader->performLoading(request, reloadingPageStorages, linkStatus);
+		m_pageLoader->performLoading(request, CrawlerSharedState::instance()->turnaround(), reloadingPageStorages, linkStatus);
 	}
 }
 
@@ -350,10 +350,16 @@ CrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const M
 }
 
 void CrawlerWorker::onLoadingDone(const HopsChain& hopsChain,
+	int turnaround,
 	bool isPageReloaded,
 	const std::vector<bool>& reloadingPageStrorages,
 	DownloadRequestType requestType)
 {
+	if (CrawlerSharedState::instance()->turnaround() != turnaround)
+	{
+		return;
+	}
+
 	CrawlerRequest readyRequest = { hopsChain.firstHop().url(), requestType };
 	m_uniqueLinkStore->activeRequestReceived(readyRequest);
 
@@ -361,7 +367,7 @@ void CrawlerWorker::onLoadingDone(const HopsChain& hopsChain,
 
 	DEBUG_ASSERT(requestType != DownloadRequestType::RequestTypeHead || hopsChain.firstHop().body().isEmpty());
 
-	handleResponseData(hopsChain, isPageReloaded, reloadingPageStrorages, requestType);
+	handleResponseData(hopsChain, turnaround, isPageReloaded, reloadingPageStrorages, requestType);
 }
 
 void CrawlerWorker::onPageParsed(const WorkerResult& result) const noexcept
@@ -408,12 +414,13 @@ void CrawlerWorker::fixDDOSGuardRedirectsIfNeeded(std::vector<ParsedPagePtr>& pa
 }
 
 void CrawlerWorker::handlePage(ParsedPagePtr& page,
+	int turnaround,
 	bool isStoredInCrawledUrls,
 	bool isPageReloaded,
 	const std::vector<bool>& reloadingPageStrorages,
 	DownloadRequestType requestType)
 {
-	const auto emitBlockedByRobotsTxtPages = [this](const ResourceOnPage& resource)
+	const auto emitBlockedByRobotsTxtPages = [this, turnaround](const ResourceOnPage& resource)
 	{
 		if (m_uniqueLinkStore->addCrawledUrl(resource.link.url, DownloadRequestType::RequestTypeGet))
 		{
@@ -423,11 +430,11 @@ void CrawlerWorker::handlePage(ParsedPagePtr& page,
 			page->statusCode = Common::StatusCode::BlockedByRobotsTxt;
 			page->resourceType = ResourceType::ResourceHtml;
 
-			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead, std::vector<bool>() });
+			onPageParsed(WorkerResult{ page, turnaround, false, DownloadRequestType::RequestTypeHead, std::vector<bool>() });
 		}
 	};
 
-	const auto emitTooLongLinksPages = [this](const ResourceOnPage& resource)
+	const auto emitTooLongLinksPages = [this, turnaround](const ResourceOnPage& resource)
 	{
 		if (m_uniqueLinkStore->addCrawledUrl(resource.link.url, DownloadRequestType::RequestTypeGet))
 		{
@@ -437,7 +444,7 @@ void CrawlerWorker::handlePage(ParsedPagePtr& page,
 			page->statusCode = Common::StatusCode::TooLongLink;
 			page->resourceType = resource.resourceType;
 
-			onPageParsed(WorkerResult{ page, false, DownloadRequestType::RequestTypeHead, std::vector<bool>() });
+			onPageParsed(WorkerResult{ page, turnaround, false, DownloadRequestType::RequestTypeHead, std::vector<bool>() });
 		}
 	};
 
@@ -452,7 +459,7 @@ void CrawlerWorker::handlePage(ParsedPagePtr& page,
 			page->isBlockedByMetaRobots = isPageBlockedByMetaRobots.second.testFlag(MetaRobotsItem::MetaRobotsNoIndex);
 		}
 
-		onPageParsed(WorkerResult{ page, isPageReloaded, requestType, reloadingPageStrorages });
+		onPageParsed(WorkerResult{ page, turnaround, isPageReloaded, requestType, reloadingPageStrorages });
 
 		std::for_each(readyLinks.blockedByRobotsTxtLinks.begin(), readyLinks.blockedByRobotsTxtLinks.end(), emitBlockedByRobotsTxtPages);
 		std::for_each(readyLinks.tooLongLinks.begin(), readyLinks.tooLongLinks.end(), emitTooLongLinksPages);
@@ -460,6 +467,7 @@ void CrawlerWorker::handlePage(ParsedPagePtr& page,
 }
 
 void CrawlerWorker::handleResponseData(const HopsChain& hopsChain,
+	int turnaround,
 	bool isPageReloaded,
 	const std::vector<bool>& reloadingPageStrorages,
 	DownloadRequestType requestType)
@@ -474,7 +482,7 @@ void CrawlerWorker::handleResponseData(const HopsChain& hopsChain,
 	{
 		const bool isUrlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
-		handlePage(page, isUrlAdded, isPageReloaded, reloadingPageStrorages, requestType);
+		handlePage(page, turnaround, isUrlAdded, isPageReloaded, reloadingPageStrorages, requestType);
 
 		checkUrl = true;
 	}

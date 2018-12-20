@@ -168,6 +168,7 @@ void Crawler::clearData()
 
 void Crawler::clearDataImpl()
 {
+	CrawlerSharedState::instance()->clear();
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
 	m_uniqueLinkStore->clear();
 }
@@ -508,6 +509,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	Q_UNUSED(requester);
 
 	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
+	const int turnaround = CrawlerSharedState::instance()->turnaround();
 
 	ASSERT(result);
 
@@ -544,7 +546,7 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 						++crawledLinksCount;
 					}
 
-					m_modelController->data()->addParsedPage(page, static_cast<int>(i));
+					m_modelController->data()->addParsedPage(page, static_cast<int>(i), turnaround);
 				}
 			}
 		}
@@ -907,7 +909,7 @@ void Crawler::refreshPage(StorageType storageType, int index)
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh",
-		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage)));
+		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage), Q_ARG(int, CrawlerEngine::CrawlerSharedState::instance()->turnaround())));
 
 	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet, storagesBeforeRemoving);
 

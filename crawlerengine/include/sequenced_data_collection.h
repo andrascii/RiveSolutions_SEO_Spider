@@ -44,10 +44,10 @@ protected:
 	virtual std::shared_ptr<ISequencedStorage> createSequencedStorage() const;
 
 protected slots:
-	void addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type);
+	void addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type, int turnaround);
 	void addParsedPage(WorkerResult workerResult, StorageType type);
-	void replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type);
-	void onParsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type);
+	void replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type, int turnaround);
+	void onParsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type, int turnaround);
 	void onDataCleared();
 	void onCustomDataFeedRowReceived(ICustomDataFeedRow* row);
 

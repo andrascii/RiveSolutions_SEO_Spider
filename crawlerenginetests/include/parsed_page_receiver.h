@@ -38,9 +38,9 @@ private slots:
 	void onDataCleared();
 	void onSerializationDone();
 	void onDeserializationDone();
-	void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type);
+	void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type, int turnaround);
 	void onUnorderedDataCollectionPageAdded(WorkerResult result, StorageType type);
-	void onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type);
+	void onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type, int turnaround);
 
 private:
 	void checkWaitCondition(StorageType storageType);

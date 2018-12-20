@@ -7,6 +7,7 @@
 #include "download_response.h"
 #include "crawler_request.h"
 #include "download_request.h"
+#include "crawler_shared_state.h"
 
 namespace CrawlerEngine
 {
@@ -50,11 +51,11 @@ void HostInfoProvider::handleRequest(RequesterSharedPtr requester)
 	GetHostInfoRequest* request = static_cast<GetHostInfoRequest*>(requester->request());
 	m_pendingResponse.reset(new GetHostInfoResponse(HostInfo(request->webpage.host(QUrl::FullyEncoded).toLatin1())));
 
-	DownloadRequest downloadRequest(CrawlerRequest{ request->webpage, DownloadRequestType::RequestTypeHead });
+	const DownloadRequest downloadRequest(CrawlerRequest{ request->webpage, DownloadRequestType::RequestTypeHead}, CrawlerSharedState::instance()->turnaround());
 	m_downloadRequester.reset(downloadRequest, this, &HostInfoProvider::onLoadingDone);
 	m_downloadRequester->start();
 
-	DEBUGLOG << "IP address for:" << request->webpage.toDisplayString() 
+	DEBUGLOG << "IP address for:" << request->webpage.toDisplayString()
 		<< "is" << (!m_pendingResponse->hostInfo.stringAddressesIPv4().isEmpty() ? m_pendingResponse->hostInfo.stringAddressesIPv4()[0] : QByteArray("unknown"));
 }
 
@@ -82,7 +83,7 @@ void HostInfoProvider::onLoadingDone(Requester*, const DownloadResponse& respons
 			const QString originalPath = originalUrl.path().toLower();
 			const QString redirectedPath = redirectedUrl.path().toLower();
 
-			if (originalPath == redirectedPath || 
+			if (originalPath == redirectedPath ||
 				redirectedPath == QString("/") && originalPath.isEmpty() ||
 				originalPath == QString("/") && redirectedPath.isEmpty())
 			{
@@ -90,7 +91,7 @@ void HostInfoProvider::onLoadingDone(Requester*, const DownloadResponse& respons
 			}
 		}
 	}
-	
+
 	ThreadMessageDispatcher::forThread(m_requester->thread())->postResponse(m_requester, m_pendingResponse);
 	m_pendingResponse.reset();
 	m_downloadRequester.reset();

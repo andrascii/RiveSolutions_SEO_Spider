@@ -26,7 +26,7 @@ public:
 		crawlerRequest.url = "http://parsers.com/index.html";
 		crawlerRequest.requestType = DownloadRequestType::RequestTypeGet;
 
-		DownloadRequest request(crawlerRequest,
+		DownloadRequest request(crawlerRequest, 0,
 			DownloadRequest::Status::LinkStatusFirstLoading,
 			DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading,
 			true

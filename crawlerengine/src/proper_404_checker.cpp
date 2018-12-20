@@ -24,10 +24,10 @@ void Proper404Checker::handleRequest(RequesterSharedPtr requester)
 {
 	m_requester = requester;
 	Check404IsProperRequest* request = static_cast<Check404IsProperRequest*>(requester->request());
-	
+
 	Url url = request->url;
 	url.setPath(QString("/this-path-should-never-be-presented-on-this-web-site"));
-	DownloadRequest downloadRequest(CrawlerRequest{url , DownloadRequestType::RequestTypeHead });
+	DownloadRequest downloadRequest(CrawlerRequest{url , DownloadRequestType::RequestTypeHead }, 0);
 	m_downloadRequester.reset(downloadRequest, this, &Proper404Checker::onLoadingDone);
 	m_downloadRequester->start();
 }

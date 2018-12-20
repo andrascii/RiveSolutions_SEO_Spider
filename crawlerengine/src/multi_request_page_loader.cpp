@@ -50,6 +50,7 @@ void MultiRequestPageLoader::onLoadingDone(Requester* requester, const DownloadR
 	const bool isPageReloaded = downloadRequest->linkStatus == DownloadRequest::Status::LinkStatusReloadAlreadyLoaded;
 
 	emit pageLoaded(response.hopsChain,
+		downloadRequest->turnaround,
 		isPageReloaded,
 		m_activeRequesters[requester].storagesBeforeRemoving,
 		downloadRequest->requestInfo.requestType);
@@ -73,12 +74,13 @@ bool MultiRequestPageLoader::canPullLoading() const
 }
 
 void MultiRequestPageLoader::performLoading(const CrawlerRequest& crawlerRequest,
+	int turnaround,
 	const std::vector<bool>& reloadingPageStrorages,
 	DownloadRequest::Status linkStatus)
 {
 	DEBUG_ASSERT(m_state == CanReceivePages || linkStatus == DownloadRequest::Status::LinkStatusReloadAlreadyLoaded);
 
-	DownloadRequest request(crawlerRequest, linkStatus,
+	DownloadRequest request(crawlerRequest, turnaround, linkStatus,
 		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading, true);
 
 	RequesterWrapper requesterWrapper;
@@ -123,14 +125,6 @@ void MultiRequestPageLoader::setReceiveState(ReceiveState state)
 	{
 		pauseAllActiveDownloads();
 	}
-}
-
-void MultiRequestPageLoader::emitResponseData(const QVector<ResponseData>& responseData)
-{
-	std::for_each(responseData.begin(), responseData.end(), [this](const ResponseData& data)
-	{
-		emit pageLoaded(data.hopsChain, data.isPageReloaded, data.reloadingPageStrorages, data.requestType);
-	});
 }
 
 void MultiRequestPageLoader::removeRequesterAssociatedData(Requester* requester)

@@ -22,6 +22,7 @@ bool QtPageLoader::canPullLoading() const
 }
 
 void QtPageLoader::performLoading(const CrawlerRequest& crawlerRequest,
+	int turnaround,
 	const std::vector<bool>& reloadingPageStrorages,
 	DownloadRequest::Status linkStatus)
 {
@@ -29,7 +30,7 @@ void QtPageLoader::performLoading(const CrawlerRequest& crawlerRequest,
 
 	m_reloadingPageStrorages = reloadingPageStrorages;
 
-	DownloadRequest request(crawlerRequest, linkStatus,
+	DownloadRequest request(crawlerRequest, turnaround, linkStatus,
 		DownloadRequest::BodyProcessingCommand::CommandAutoDetectionBodyLoading, true);
 
 	m_requester.reset(request, this, &QtPageLoader::onLoadingDone);
@@ -62,6 +63,7 @@ void QtPageLoader::onLoadingDone(Requester* requester, const DownloadResponse& r
 	const bool isPageReloaded = downloadRequest->linkStatus == DownloadRequest::Status::LinkStatusReloadAlreadyLoaded;
 
 	emit pageLoaded(response.hopsChain,
+		downloadRequest->turnaround,
 		isPageReloaded,
 		m_reloadingPageStrorages,
 		downloadRequest->requestInfo.requestType);

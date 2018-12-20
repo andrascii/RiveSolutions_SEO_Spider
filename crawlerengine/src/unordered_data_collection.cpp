@@ -30,7 +30,7 @@ size_t UnorderedDataCollection::size(StorageType type) const noexcept
 	return unorderedStorage.size();
 }
 
-void UnorderedDataCollection::replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type)
+void UnorderedDataCollection::replaceParsedPage(const ParsedPagePtr& oldPage, const ParsedPagePtr& newPage, StorageType type, int turnaround)
 {
 	checkStorageType(type);
 
@@ -51,7 +51,7 @@ void UnorderedDataCollection::replaceParsedPage(const ParsedPagePtr& oldPage, co
 
 	DEBUG_ASSERT(isParsedPageExists(newPage, type));
 
-	emit parsedPageReplaced(oldPage, newPage, type);
+	emit parsedPageReplaced(oldPage, newPage, type, turnaround);
 }
 
 const ParsedPagePtr UnorderedDataCollection::parsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) const noexcept
@@ -64,7 +64,7 @@ const ParsedPagePtr UnorderedDataCollection::parsedPage(const ParsedPagePtr& par
 	return iter != unorderedStorage.end() ? *iter : ParsedPagePtr();
 }
 
-void UnorderedDataCollection::setPageAddingEmitAbility(bool value)
+void UnorderedDataCollection::setPageAddingEmitAbility(bool value, int turnaround)
 {
 	ASSERT(thread() == QThread::currentThread());
 
@@ -82,7 +82,7 @@ void UnorderedDataCollection::setPageAddingEmitAbility(bool value)
 
 	for (const auto& emitData : m_emitParsedPagePtrData)
 	{
-		emit parsedPageAdded(emitData.object, emitData.type);
+		emit parsedPageAdded(emitData.object, emitData.type, turnaround);
 	}
 
 	m_emitWorkerResultData.clear();
@@ -111,13 +111,13 @@ std::vector<ParsedPagePtr> UnorderedDataCollection::allParsedPages(StorageType t
 	return result;
 }
 
-void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh)
+void UnorderedDataCollection::prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh, int turnaround)
 {
 	using ItemIterator = UnorderedStorageType::iterator;
 
-	const auto itemDeleter = [this](UnorderedStorageType& storage, StorageType type, ItemIterator iter)
+	const auto itemDeleter = [this, turnaround](UnorderedStorageType& storage, StorageType type, ItemIterator iter)
 	{
-		emit parsedPageRemoved(*iter, type);
+		emit parsedPageRemoved(*iter, type, turnaround);
 
 		return storage.erase(iter);
 	};
@@ -231,22 +231,22 @@ void UnorderedDataCollection::addParsedPage(WorkerResult workerResult, int type)
 	addParsedPage(workerResult, storage);
 }
 
-void UnorderedDataCollection::addParsedPage(ParsedPagePtr& parsedPagePointer, StorageType type)
+void UnorderedDataCollection::addParsedPage(ParsedPagePtr& parsedPagePointer, StorageType type, int turnaround)
 {
 	addParsedPageInternal(parsedPagePointer, type);
 
-	emit parsedPageAdded(parsedPagePointer, type);
+	emit parsedPageAdded(parsedPagePointer, type, turnaround);
 }
 
-void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePointer, int type)
+void UnorderedDataCollection::addParsedPage(ParsedPagePtr parsedPagePointer, int type, int turnaround)
 {
 	const StorageType storage = static_cast<StorageType>(type);
-	addParsedPage(parsedPagePointer, storage);
+	addParsedPage(parsedPagePointer, storage, turnaround);
 }
 
-ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
+ParsedPagePtr UnorderedDataCollection::removeParsedPage(const ParsedPagePtr& parsedPagePtr, StorageType type, int turnaround) noexcept
 {
-	return removeParsedPageInternal(parsedPagePtr, type).first;
+	return removeParsedPageInternal(parsedPagePtr, type, turnaround).first;
 }
 
 UnorderedDataCollection::UnorderedStorageType& UnorderedDataCollection::storage(StorageType type) noexcept
@@ -625,7 +625,7 @@ void UnorderedDataCollection::addParsedPageInternal(ParsedPagePtr& parsedPagePoi
 
 
 std::pair<ParsedPagePtr, UnorderedDataCollection::UnorderedStorageType::iterator>
-UnorderedDataCollection::removeParsedPageInternal(const ParsedPagePtr& parsedPagePtr, StorageType type) noexcept
+UnorderedDataCollection::removeParsedPageInternal(const ParsedPagePtr& parsedPagePtr, StorageType type, int turnaround) noexcept
 {
 	checkStorageType(type);
 
@@ -640,7 +640,7 @@ UnorderedDataCollection::removeParsedPageInternal(const ParsedPagePtr& parsedPag
 
 		const auto nextItem = unorderedStorage.erase(iter);
 
-		emit parsedPageRemoved(result, type);
+		emit parsedPageRemoved(result, type, turnaround);
 
 		return std::make_pair(result, nextItem);
 	}

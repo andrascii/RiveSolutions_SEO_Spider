@@ -30,7 +30,7 @@ public slots:
 	void handleWorkerResult(WorkerResult workerResult) noexcept;
 	void setWebCrawlerOptions(const CrawlerOptionsData& optionsData);
 	void clearData();
-	void preparePageForRefresh(ParsedPage* parsedPage);
+	void preparePageForRefresh(ParsedPage* parsedPage, int turnaround);
 
 private:
 	void processParsedPageUrl(WorkerResult& workerResult, bool secondGetRequest);
@@ -44,13 +44,13 @@ private:
 	void processParsedPageHtmlResources(WorkerResult& workerResult, bool secondGetRequest);
 	void processParsedPageResources(WorkerResult& workerResult, bool secondGetRequest);
 	void fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept;
-	void removeResourceFromPendingStorageIfNeeded(ParsedPagePtr& incomingPage) noexcept;
+	void removeResourceFromPendingStorageIfNeeded(ParsedPagePtr& incomingPage, int turnaround) noexcept;
 	void calculatePageLevel(ParsedPagePtr& incomingPage) const noexcept;
 	void setPageLevel(ParsedPagePtr& page, int level) const noexcept;
-	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage, bool checkCanonicals = true);
+	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage, int turnaround, bool checkCanonicals = true);
 
 	ParsedPagePtr parsedPageFromResource(const ResourceOnPage& resource) const;
-	QSet<StorageType> addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource);
+	QSet<StorageType> addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource, int turnaround);
 
 	void mergePageHelper(WorkerResult& workerResult);
 
