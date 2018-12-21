@@ -1592,6 +1592,26 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <source>Redirect Loop</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>HTML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CSS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Другие</translation>
+    </message>
+    <message>
+        <source>Images%0</source>
+        <translation>Изобр.</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>

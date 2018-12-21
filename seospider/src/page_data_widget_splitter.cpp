@@ -153,7 +153,7 @@ void PageDataWidgetSplitter::showEvent(QShowEvent*)
 
 int PageDataWidgetSplitter::collapsedPageDataWidgetHeight()
 {
-	static int s_collapsedPageDataWidgetHeight = Common::Helpers::pointsToPixels(22);
+	static int s_collapsedPageDataWidgetHeight = Common::Helpers::pointsToPixels(24);
 	return s_collapsedPageDataWidgetHeight;
 }
 

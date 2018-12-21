@@ -343,17 +343,17 @@ QWidget#resourceTypeFilter
 
 QWidget#resourceTypeFilter QPushButton#filterButton
 {
-	min-width: 3em;
-	max-width: 3em;
-	min-height: 1.6em;
-	max-height: 1.6em;
+	min-width: 3.5em;
+	max-width: 3.5em;
+	min-height: 2.0em;
+	max-height: 2.0em;
 	margin: 0px;
 	padding: 0px;
 	border: 0.05em solid #E3E3E3;
 	border-radius: 0px;
 	font-size: 7pt;
 	border-left: none;
-	background-color: #fff0f0;
+	background-color: #D0D0D0;
 }
 
 QWidget#resourceTypeFilter QPushButton#filterButton[left="true"]
@@ -380,18 +380,6 @@ QWidget#resourceTypeFilter
 	margin: 0px;
 }
 
-/* page info */
-
-QTabBar#pageInfoTabBar
-{
-	padding: 0px;
-	border: none;
-}
-
-QStackedWidget#tabContent
-{
-	padding: 0px;
-}
 
 /*/////////////////////////////// TableView ///////////////////////////////*/
 
@@ -699,9 +687,9 @@ SeoSpider--HeaderDecorationWidget QFrame#TitleFrame
 	border-bottom: 0.08em solid #E5E5E5;
 }
 
-/*/////////////////////////////// QTabWidget ///////////////////////////////*/
+/*/////////////////////////////// SeoSpider--PageDataWidget ///////////////////////////////*/
 
-QTabWidget QTextEdit
+SeoSpider--PageDataWidget QTextEdit
 {
 	background: white;
 	border: none;
@@ -710,6 +698,19 @@ QTabWidget QTextEdit
 	font-size: 11pt;
 	padding: 0.7em;
 }
+
+SeoSpider--PageDataWidget QTabBar#pageInfoTabBar
+{
+	padding: 0px;
+	border: none;
+}
+
+SeoSpider--PageDataWidget QStackedWidget#tabContent
+{
+	padding: 0px;
+}
+
+/*/////////////////////////////// QTabWidget ///////////////////////////////*/
 
 QTabWidget::pane
 { 

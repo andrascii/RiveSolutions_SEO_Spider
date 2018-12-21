@@ -16,7 +16,7 @@ ResourceTypeFilterWidget::ResourceTypeFilterWidget(QWidget* parent)
 	createPushButton(QObject::tr("HTML"), ResourceHtml, layout, "left");
 	createPushButton(QObject::tr("JS"), ResourceJavaScript, layout);
 	createPushButton(QObject::tr("CSS"), ResourceStyleSheet, layout);
-	createPushButton(QObject::tr("Images"), ResourceImage, layout);
+	createPushButton(QObject::tr("Images%0").arg(QString("")), ResourceImage, layout);
 	// createPushButton(QObject::tr("Flash"), ResourceFlash, layout);
 	// createPushButton(QObject::tr("Video"), ResourceVideo, layout);
 	createPushButton(QObject::tr("Other"), ResourceFlash | ResourceVideo | ResourceOther, layout, "right");
