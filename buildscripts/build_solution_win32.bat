@@ -1,5 +1,5 @@
 set SS_PLATFORM=win32
-call "/details/prepare_environment.bat"
+call "./details/prepare_environment.bat"
 cd ..
 mkdir build
 cd build
