@@ -43,6 +43,7 @@ PageDataWidget::PageDataWidget(QWidget* parent)
 
 	m_stackedWidget->setContentsMargins(0, 0, 0, 0);
 	m_stackedWidget->setMinimumHeight(0);
+	m_stackedWidget->setObjectName("pageInfoBody");
 	m_tabBar->setCursor(CursorFactory::createCursor(Qt::PointingHandCursor));
 
 	QVBoxLayout* vLayout = new QVBoxLayout(this);
@@ -184,7 +185,6 @@ void PageDataWidget::setPageServerResponse(const ParsedPageInfoPtr& page) const
 {
 	m_httpResponseLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	m_httpResponseLabel->setContentsMargins(0, 0, 0, 0);
-	m_httpResponseLabel->setMaximumHeight(0);
 
 	QString selectedPageServerResponse = page->itemValue(ParsedPageInfo::Column::ServerResponseColumn).toString().trimmed();
 
