@@ -4,6 +4,7 @@
 #include "isequenced_storage.h"
 #include "error_category.h"
 #include "summary_data_set.h"
+#include "finally.h"
 
 namespace SeoSpider
 {
@@ -62,8 +63,7 @@ void SummaryDataAccessor::setSortableDataSet(SummaryDataSet* dataSet) noexcept
 	}
 
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingStarted, this, &SummaryDataAccessor::beginClearData));
-	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::endClearData));
-	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::validateSelectedRow));
+	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::sortingEnded, this, &SummaryDataAccessor::onDataSetSortingEnded));
 	VERIFY(connect(m_sortableDataSet, &SummaryDataSet::dataSetChanged, this, &SummaryDataAccessor::onDataSetChanged));
 
 	// VERIFY(connect(this, &SummaryDataAccessor::endClearData, this, &SummaryDataAccessor::restoreSelection));
@@ -226,7 +226,10 @@ void SummaryDataAccessor::validateSelectedRow()
 
 void SummaryDataAccessor::restoreSelection()
 {
-	emit rowSelected(m_selectedRow.first);
+	if (m_sortableDataSet && m_currentDataSet == m_sortableDataSet)
+	{
+		emit rowSelected(m_selectedRow.first);
+	}
 }
 
 void SummaryDataAccessor::onDataSetChanged()
@@ -234,6 +237,15 @@ void SummaryDataAccessor::onDataSetChanged()
 	emit beginClearData();
 	emit endClearData();
 	emit dataSetChanged();
+}
+
+void SummaryDataAccessor::onDataSetSortingEnded()
+{
+	blockSignals(m_sortableDataSet && m_currentDataSet != m_sortableDataSet);
+	Common::Finally finally([this] { blockSignals(false); });
+
+	validateSelectedRow();
+	emit endClearData();
 }
 
 Qt::ItemFlags SummaryDataAccessor::flags(const QModelIndex& index) const noexcept

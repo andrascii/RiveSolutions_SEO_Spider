@@ -45,6 +45,7 @@ AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWi
 	, m_columnsLookupLineEditWidget(nullptr)
 	, m_lookupLineEditWidget(nullptr)
 	, m_currentSelectedRow(-1)
+	, m_currentStorageType(CrawlerEngine::StorageType::BeginEnumStorageType)
 {
 	m_summaryFilterTableView->setModel(m_summaryFilterModel);
 	m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);
@@ -210,9 +211,37 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 
 		ASSERT(std::all_of(indexes.begin(), indexes.end(), uniqueRowNumberPredicate));
 
-		m_currentSelectedRow = row;
+		// TODO: remove this code if you delete sortable data set from the program!!!
 
-		auto typeString = storageAdapterTypeStringFromEnum(summaryFilterModel()->storageAdapterType(index));
+		const int oldSelectedRow = m_currentSelectedRow;
+
+		// avoid calculating new and old selected storage by row
+		// because it's a resource-intensive operation
+		if (m_currentSelectedRow == row)
+		{
+			return;
+		}
+		else
+		{
+			// we must update current row every time to have ability to apply search rules
+			// even if the current row was changed but current storage type stays the same
+			// this is possible when we enable sortable data set (in this case row can be changed but storage type may stay the same)
+			// if we forget to do it then debug assertion will crash our program at the applying search rules stage if enabled sortable data set
+			setCurrentStorageDescriptors(row, m_currentStorageType);
+		}
+
+		const DCStorageDescription* newSelectedStorage = summaryFilterModel()->dataAccessor()->storageDescriptionByRow(row);
+
+		// in order to prevent clearing lookup line edit widget data
+		if (newSelectedStorage && newSelectedStorage->storageType == m_currentStorageType)
+		{
+			// TODO: validate applied search rules to the new index but how to do that?
+			return;
+		}
+
+		setCurrentStorageDescriptors(row, newSelectedStorage ? newSelectedStorage->storageType : CrawlerEngine::StorageType::BeginEnumStorageType);
+
+		const auto typeString = storageAdapterTypeStringFromEnum(summaryFilterModel()->storageAdapterType(index));
 		StatisticCounter showCounter(QString("%1_%2FilterShowCounter").arg(pageName()).arg(typeString));
 		showCounter.increment();
 
@@ -222,7 +251,7 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 	}
 	else
 	{
-		m_currentSelectedRow = -1;
+		resetCurrentStorageDescriptors();
 
 		AbstractFilterPage::hasNoFilterSelection();
 		hasNoFilterSelection();
@@ -410,4 +439,17 @@ void AbstractFilterPage::updateResourceTypeFilterWidget()
 	ASSERT(filterProxyModel);
 	m_resourceTypeFilterWidget->setFilter(filterProxyModel->acceptedResources());
 }
+
+void AbstractFilterPage::setCurrentStorageDescriptors(int row, CrawlerEngine::StorageType storageType)
+{
+	m_currentSelectedRow = row;
+	m_currentStorageType = storageType;
+}
+
+void AbstractFilterPage::resetCurrentStorageDescriptors()
+{
+	m_currentSelectedRow = -1;
+	m_currentStorageType = CrawlerEngine::StorageType::BeginEnumStorageType;
+}
+
 }
