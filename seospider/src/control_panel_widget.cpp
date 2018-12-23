@@ -143,8 +143,7 @@ void ControlPanelWidget::restartCrawling() const
 	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
 	messageBoxDialog->setWindowTitle(tr("Warning"));
 
-	const QString message = tr("Crawling is already finished.") +
-		tr("Crawling is already finished. Do you want to restart it?");
+	const QString message = tr("Crawling is already finished. Do you want to restart it?");
 
 	messageBoxDialog->setMessage(message);
 
