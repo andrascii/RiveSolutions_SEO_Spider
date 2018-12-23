@@ -58,7 +58,7 @@ private:
 	virtual QString pageName() const = 0;
 	void applySearchHelper(int searchColumnNumber, const QString& searchValue);
 	void prepareColumnSearchWidget(int row);
-	void preparePlainSearchWidget(int row);
+	void preparePlainSearchWidget();
 	void updateResourceTypeFilterWidget();
 	void setCurrentStorageDescriptors(int row, CrawlerEngine::StorageType storageType);
 	void resetCurrentStorageDescriptors();
@@ -88,7 +88,7 @@ private:
 
 	ColumnsLookupLineEditWidget* m_columnsLookupLineEditWidget;
 	LookupLineEditWidget* m_lookupLineEditWidget;
-	QMap<int, SearchRules> m_searchRules;
+	QMap<CrawlerEngine::StorageType, SearchRules> m_searchRules;
 	ResourceTypeFilterWidget* m_resourceTypeFilterWidget;
 };
 
