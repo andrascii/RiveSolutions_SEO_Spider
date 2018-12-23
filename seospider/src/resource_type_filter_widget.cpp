@@ -1,5 +1,6 @@
 #include "resource_type_filter_widget.h"
 #include "row_resource_type.h"
+#include "custom_proxy_styles.h"
 
 namespace SeoSpider
 {
@@ -42,6 +43,7 @@ void ResourceTypeFilterWidget::createPushButton(const QString& text, int flag, Q
 	button->setText(text);
 	layout->addWidget(button);
 	button->setContentsMargins(0, 0, 0, 0);
+	button->setStyle(new ListItemProxyStyle());
 
 	m_buttons[flag] = button;
 
