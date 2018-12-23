@@ -51,6 +51,7 @@ private slots:
 	void validateSelectedRow();
 	void restoreSelection();
 	void onDataSetChanged();
+	void onDataSetSortingEnded();
 
 private:
 	SummaryDataSet* m_currentDataSet;

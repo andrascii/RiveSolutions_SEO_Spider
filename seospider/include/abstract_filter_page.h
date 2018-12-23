@@ -60,6 +60,8 @@ private:
 	void prepareColumnSearchWidget(int row);
 	void preparePlainSearchWidget(int row);
 	void updateResourceTypeFilterWidget();
+	void setCurrentStorageDescriptors(int row, CrawlerEngine::StorageType storageType);
+	void resetCurrentStorageDescriptors();
 
 private:
 	struct SearchRules
@@ -77,7 +79,11 @@ private:
 	QSplitter* m_splitter;
 	FilterInfoWidget* m_info;
 
+	// we store here current selected row and storage type
+	// only for performance needs (see: onSummaryViewSelectionChanged)
 	int m_currentSelectedRow;
+	CrawlerEngine::StorageType m_currentStorageType;
+
 	bool m_isFirstShow;
 
 	ColumnsLookupLineEditWidget* m_columnsLookupLineEditWidget;
