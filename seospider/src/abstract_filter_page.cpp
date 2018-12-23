@@ -162,7 +162,8 @@ void AbstractFilterPage::showEvent(QShowEvent* event)
 
 void AbstractFilterPage::hasFilterSelection(int row)
 {
-	preparePlainSearchWidget(row);
+	Q_UNUSED(row);
+	preparePlainSearchWidget();
 }
 
 void AbstractFilterPage::hasNoFilterSelection()
@@ -352,13 +353,13 @@ void AbstractFilterPage::reinitFilterTableSpans()
 void AbstractFilterPage::onApplyColumnSearch(int searchKey, const QString& searchValue)
 {
 	applySearchHelper(searchKey + 1, searchValue);
-	m_searchRules[m_currentSelectedRow] = SearchRules{ searchKey, searchValue };
+	m_searchRules[m_currentStorageType] = SearchRules{ searchKey, searchValue };
 }
 
 void AbstractFilterPage::onApplyPlainSearch(const QString& searchValue)
 {
 	applySearchHelper(-1, searchValue);
-	m_searchRules[m_currentSelectedRow] = SearchRules{ -1, searchValue };
+	m_searchRules[m_currentStorageType] = SearchRules{ -1, searchValue };
 }
 
 void AbstractFilterPage::onResourceTypeFilterChanged(int filter)
@@ -396,14 +397,14 @@ void AbstractFilterPage::prepareColumnSearchWidget(int row)
 		m_columnsLookupLineEditWidget->addSearchField(i, ParsedPageInfo::itemTypeDescription(columns[i]));
 	}
 
-	if (m_searchRules.contains(row))
+	if (m_searchRules.contains(m_currentStorageType))
 	{
-		onApplyColumnSearch(m_searchRules[row].searchKey, m_searchRules[row].searchData);
-		m_columnsLookupLineEditWidget->setCurrentSearchData(m_searchRules[row].searchKey, m_searchRules[row].searchData);
+		onApplyColumnSearch(m_searchRules[m_currentStorageType].searchKey, m_searchRules[m_currentStorageType].searchData);
+		m_columnsLookupLineEditWidget->setCurrentSearchData(m_searchRules[m_currentStorageType].searchKey, m_searchRules[m_currentStorageType].searchData);
 	}
 }
 
-void AbstractFilterPage::preparePlainSearchWidget(int row)
+void AbstractFilterPage::preparePlainSearchWidget()
 {
 	if (!m_lookupLineEditWidget)
 	{
@@ -413,10 +414,10 @@ void AbstractFilterPage::preparePlainSearchWidget(int row)
 	m_lookupLineEditWidget->reset();
 	m_lookupLineEditWidget->setEnabled(true);
 
-	if (m_searchRules.contains(row))
+	if (m_searchRules.contains(m_currentStorageType))
 	{
-		onApplyPlainSearch(m_searchRules[row].searchData);
-		m_lookupLineEditWidget->setCurrentSearchData(m_searchRules[row].searchData);
+		onApplyPlainSearch(m_searchRules[m_currentStorageType].searchData);
+		m_lookupLineEditWidget->setCurrentSearchData(m_searchRules[m_currentStorageType].searchData);
 	}
 }
 
