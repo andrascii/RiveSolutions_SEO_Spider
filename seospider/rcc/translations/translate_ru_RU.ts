@@ -1755,6 +1755,18 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <source>Don`s save</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Crawling is already finished. Do you want to restart it?</source>
+        <translation>Краулинг уже завершен. Хотите перезапустить его?</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Да</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Нет</translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::InternetConnectionStateWidget</name>
@@ -2016,6 +2028,10 @@ please stop crawling and try again</source>
     <message>
         <source>Show Help</source>
         <translation>Помощь</translation>
+    </message>
+    <message>
+        <source>Restart Crawler</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
