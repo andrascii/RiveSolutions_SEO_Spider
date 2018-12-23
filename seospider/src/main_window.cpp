@@ -695,11 +695,13 @@ void MainWindow::initCrawlerActions()
 	actionRegistry.addGlobalAction(s_startCrawlerAction, tr("Start Crawler"));
 	actionRegistry.addGlobalAction(s_stopCrawlerAction, tr("Stop Crawler"));
 	actionRegistry.addGlobalAction(s_clearCrawledDataAction, tr("Clear Crawled Data"));
+	actionRegistry.addGlobalAction(s_restartCrawlerAction, tr("Restart Crawler"));
 
 	VERIFY(connect(actionRegistry.globalAction(s_startCrawlerAction), SIGNAL(triggered()), theApp, SLOT(startCrawler())));
 	VERIFY(connect(actionRegistry.globalAction(s_stopCrawlerAction), SIGNAL(triggered()), theApp, SLOT(stopCrawler())));
 	VERIFY(connect(actionRegistry.globalAction(s_clearCrawledDataAction), SIGNAL(triggered()), theApp, SLOT(clearCrawledData())));
 	VERIFY(connect(actionRegistry.globalAction(s_exitProgramAction), SIGNAL(triggered()), theApp, SLOT(closeAllWindows())));
+	VERIFY(connect(actionRegistry.globalAction(s_restartCrawlerAction), SIGNAL(triggered()), theApp, SLOT(restartCrawler())));
 
 	actionRegistry.globalAction(s_exitProgramAction)->setShortcut(QKeySequence("Alt+F4"));
 }
