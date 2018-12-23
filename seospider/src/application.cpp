@@ -241,6 +241,12 @@ void Application::clearCrawledData()
 	crawler()->clearData();
 }
 
+void Application::restartCrawler()
+{
+	clearCrawledData();
+	startCrawler();
+}
+
 void Application::showMainWindow()
 {
 	SplashScreen::finish();

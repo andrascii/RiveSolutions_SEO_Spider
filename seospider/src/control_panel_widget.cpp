@@ -78,12 +78,19 @@ void ControlPanelWidget::setUrl() const
 	}
 
 	ActionRegistry::instance().globalAction(s_startCrawlerAction)->setData(url);
+	ActionRegistry::instance().globalAction(s_restartCrawlerAction)->setData(url);
 }
 
 void ControlPanelWidget::startCrawling() const
 {
 	if (!m_ui.urlLineEdit->isUrlCorrect())
 	{
+		return;
+	}
+
+	if (theApp->crawler()->crawlingFinished())
+	{
+		restartCrawling();
 		return;
 	}
 
@@ -129,6 +136,33 @@ void ControlPanelWidget::clearCrawlingData() const
 #else
 	ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
 #endif
+}
+
+void ControlPanelWidget::restartCrawling() const
+{
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+	messageBoxDialog->setWindowTitle(tr("Warning"));
+
+	const QString message = tr("Crawling is already finished.") +
+		tr("Crawling is already finished. Do you want to restart it?");
+
+	messageBoxDialog->setMessage(message);
+
+	messageBoxDialog->addButton(tr("Yes"), QDialogButtonBox::YesRole);
+	messageBoxDialog->addButton(tr("No"), QDialogButtonBox::NoRole);
+
+	auto onDialogClosed = [messageBoxDialog](int result)
+	{
+		if (result == QDialog::Accepted)
+		{
+			ActionRegistry::instance().globalAction(s_restartCrawlerAction)->trigger();
+		}
+		messageBoxDialog->deleteLater();
+	};
+
+	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
+
+	messageBoxDialog->exec();
 }
 
 void ControlPanelWidget::onCrawlerStateChanged(int state)

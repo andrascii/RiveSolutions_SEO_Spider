@@ -41,6 +41,7 @@ static const QByteArray s_aboutProductAction = "aboutProductAction";
 static const QByteArray s_startCrawlerAction = "startCrawlerAction";
 static const QByteArray s_stopCrawlerAction = "stopCrawlerAction";
 static const QByteArray s_clearCrawledDataAction = "clearCrawledDataAction";
+static const QByteArray s_restartCrawlerAction = "restartCrawlerAction";
 
 // sitemap actions
 static const QByteArray s_createXMLSitemapAction = "createXMLSitemapAction";

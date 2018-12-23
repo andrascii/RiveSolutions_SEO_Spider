@@ -30,6 +30,7 @@ private slots:
 	void startCrawling() const;
 	void stopCrawling() const;
 	void clearCrawlingData() const;
+	void restartCrawling() const;
 	void onCrawlerStateChanged(int state);
 	void onCrawlerOptionsChanged();
 

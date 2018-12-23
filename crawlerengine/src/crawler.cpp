@@ -57,6 +57,7 @@ Crawler::Crawler(QObject* parent)
 	, m_webHostInfo(nullptr)
 	, m_licenseStateObserver(nullptr)
 	, m_downloaderType(DownloaderTypeQNetworkAccessManager)
+	, m_crawlingFinished(false)
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();
 	serviceLocator->addService<INotificationService>(new NotificationService);
@@ -168,6 +169,7 @@ void Crawler::clearData()
 
 void Crawler::clearDataImpl()
 {
+	m_crawlingFinished = false;
 	CrawlerSharedState::instance()->clear();
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
 	m_uniqueLinkStore->clear();
@@ -232,6 +234,7 @@ Crawler::State Crawler::state() const noexcept
 
 void Crawler::startCrawling()
 {
+	m_crawlingFinished = false;
 	setState(StatePreChecking);
 
 	if (m_options->pauseRangeFrom() == -1 && m_options->pauseRangeTo() == -1 ||
@@ -320,6 +323,7 @@ void Crawler::onAboutCrawlingState()
 
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
 		serviceLocator->service<INotificationService>()->info(tr("Crawler state"), tr("Program has ended crawling"));
+		m_crawlingFinished = true;
 
 		emit crawlerFinished();
 	}
@@ -998,6 +1002,11 @@ QList<ICustomDataFeed*> Crawler::customDataFeeds() const
 void Crawler::setWorkerCount(unsigned workerCount) noexcept
 {
 	m_theradCount = workerCount;
+}
+
+bool Crawler::crawlingFinished() const noexcept
+{
+	return m_crawlingFinished;
 }
 
 bool Crawler::readyForRefreshPage() const noexcept

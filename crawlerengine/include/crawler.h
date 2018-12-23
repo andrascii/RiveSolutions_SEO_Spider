@@ -113,6 +113,8 @@ public:
 
 	void setWorkerCount(unsigned workerCount) noexcept;
 
+	bool crawlingFinished() const noexcept;
+
 signals:
 	void crawlingProgress(CrawlingProgress progress);
 	void crawlerStarted();
@@ -213,6 +215,8 @@ private:
 
 	QMap<QString, ICustomDataFeed*> m_customDataFeeds;
 	DownloaderType m_downloaderType;
+
+	bool m_crawlingFinished;
 };
 
 }
