@@ -1,6 +1,7 @@
 set(SRC_DIR "@CMAKE_CURRENT_SOURCE_DIR@")
 set(versionHeaderPath "@versionHeaderPath@")
 set(installerConfigPath "@installerConfigPath@")
+set(packageConfigPath "@packageConfigPath@")
 
 set(MAJOR @MAJOR@)
 set(MINOR @MINOR@)
@@ -13,8 +14,14 @@ configure_file(
 
 
 configure_file(
-	${installerConfigPath}/package.xml.in 
-	${installerConfigPath}/package.xml
+	${packageConfigPath}/package.xml.in 
+	${packageConfigPath}/package.xml
 )
+
+configure_file(
+	${installerConfigPath}/config.xml.in
+	${installerConfigPath}/config.xml
+)
+
 
 message("Version set") # For testing only

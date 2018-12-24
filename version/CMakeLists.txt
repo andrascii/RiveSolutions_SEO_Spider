@@ -11,7 +11,8 @@ set(MAINTENANCE 0)
 
 # targer files path
 set(versionHeaderPath ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(installerConfigPath ${CMAKE_CURRENT_SOURCE_DIR}/../seospiderinstaller/packages/com.rivesolutions.seospider/meta)
+set(installerConfigPath ${CMAKE_CURRENT_SOURCE_DIR}/../seospiderinstaller/config)
+set(packageConfigPath ${CMAKE_CURRENT_SOURCE_DIR}/../seospiderinstaller/packages/com.rivesolutions.seospider/meta)
 
 file(GLOB_RECURSE VersionHeadersList "include/*.h")
 

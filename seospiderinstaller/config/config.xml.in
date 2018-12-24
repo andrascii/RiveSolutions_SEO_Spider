@@ -5,8 +5,8 @@
 	<Title>Seo Spider Setup</Title>
 	<Publisher>Rive Solutions</Publisher>
 	<ProductUrl>http://rivesolutions.com/</ProductUrl>
-	<InstallerWindowIcon>robot</InstallerWindowIcon>
-	<InstallerApplicationIcon>robot</InstallerApplicationIcon>
+	<InstallerWindowIcon>favicon</InstallerWindowIcon>
+	<InstallerApplicationIcon>favicon</InstallerApplicationIcon>
 	<Logo>logo.png</Logo>
 	<WizardStyle>Modern</WizardStyle>
 	<RunProgram>@TargetDir@/seospider.exe</RunProgram>
