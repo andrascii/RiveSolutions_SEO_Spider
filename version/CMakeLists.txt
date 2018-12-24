@@ -4,9 +4,9 @@ project(${VersionProjectName})
 
 set(VersionHeaders include)
 
-set(MAJOR 1)
+set(MAJOR 2)
 set(MINOR 0)
-set(MAINTENANCE 8)
+set(MAINTENANCE 0)
 
 
 # targer files path
