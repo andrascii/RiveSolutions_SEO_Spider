@@ -1,6 +1,7 @@
 #include "qt_page_loader.h"
 #include "download_response.h"
 #include "helpers.h"
+#include "crawler_shared_state.h"
 
 namespace CrawlerEngine
 {
@@ -14,6 +15,12 @@ QtPageLoader::QtPageLoader(UniqueLinkStore* uniqueLinkStore)
 bool QtPageLoader::canPullLoading() const
 {
 	if (m_requester.get() != nullptr || m_state == CantReceivePages)
+	{
+		return false;
+	}
+
+	constexpr int maxAdditionalPendingCount = 150;
+	if (CrawlerSharedState::instance()->additionalPendingCount() > maxAdditionalPendingCount)
 	{
 		return false;
 	}

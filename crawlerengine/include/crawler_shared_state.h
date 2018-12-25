@@ -35,6 +35,8 @@ public:
 
 	void clear() noexcept;
 
+	int additionalPendingCount() const noexcept;
+
 	static CrawlerSharedState* instance() noexcept;
 
 private:

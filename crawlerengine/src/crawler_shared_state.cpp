@@ -130,6 +130,18 @@ void CrawlerSharedState::clear() noexcept
 	incrementTurnaround();
 }
 
+int CrawlerSharedState::additionalPendingCount() const noexcept
+{
+	const int sequencedDataCollectionLinks = sequencedDataCollectionLinksCount();
+	const int modelControllerCrawledLinks = modelControllerCrawledLinksCount();
+	const int modelControllerAcceptedLinks = modelControllerAcceptedLinksCount();
+	const int uniqueLinkStoreCrawledLinks = downloaderCrawledLinksCount();
+
+	const int controllerPending = qMax(uniqueLinkStoreCrawledLinks, modelControllerCrawledLinks) - modelControllerCrawledLinks;
+	const int seqCollPending = qMax(modelControllerAcceptedLinks, sequencedDataCollectionLinks) - sequencedDataCollectionLinks;
+	return controllerPending + seqCollPending;
+}
+
 CrawlerSharedState* CrawlerSharedState::instance() noexcept
 {
 	static CrawlerSharedState s_instance;
