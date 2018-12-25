@@ -70,6 +70,12 @@ bool MultiRequestPageLoader::canPullLoading() const
 		return false;
 	}
 
+	constexpr int maxAdditionalPendingCount = 150;
+	if (CrawlerSharedState::instance()->additionalPendingCount() > maxAdditionalPendingCount)
+	{
+		return false;
+	}
+
 	return true;
 }
 
