@@ -49,7 +49,6 @@ namespace
 	const QString s_hasMetaRefreshKey = QLatin1String("hasMetaRefreshKey");
 	const QString s_hasFramesKey = QLatin1String("hasFramesKey");
 	const QString s_isThisExternalPageKey = QLatin1String("isThisExternalPage");
-	const QString s_isBlockedForIndexingKey = QLatin1String("isBlockedForIndexing");
 	const QString s_isBlockedByMetaRobotsKey = QLatin1String("isBlockedByMetaRobots");
 	const QString s_resourceTypeKey = QLatin1String("resourceType");
 	const QString s_rawResponseKey = QLatin1String("rawResponse");
@@ -207,7 +206,6 @@ public:
 		writer.writeTextElement(s_hasFramesKey, QString::number(m_page->hasFrames));
 
 		writer.writeTextElement(s_isThisExternalPageKey, QString::number(m_page->isThisExternalPage));
-		writer.writeTextElement(s_isBlockedForIndexingKey, QString::number(m_page->isBlockedForIndexing));
 		writer.writeTextElement(s_isBlockedByMetaRobotsKey, QString::number(m_page->isBlockedByMetaRobots));
 		writer.writeTextElement(s_resourceTypeKey, QString::number(static_cast<int>(m_page->resourceType)));
 
@@ -464,10 +462,6 @@ public:
 			else if (reader.qualifiedName() == s_isThisExternalPageKey)
 			{
 				m_page->isThisExternalPage = reader.readElementText().toInt() == 1;
-			}
-			else if (reader.qualifiedName() == s_isBlockedForIndexingKey)
-			{
-				m_page->isBlockedForIndexing = reader.readElementText().toInt() == 1;
 			}
 			else if (reader.qualifiedName() == s_isBlockedByMetaRobotsKey)
 			{

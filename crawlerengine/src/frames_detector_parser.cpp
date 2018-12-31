@@ -16,10 +16,30 @@ void FramesDetectorParser::parse(const ResponseHeaders& headers, ParsedPagePtr& 
 	Q_UNUSED(headers);
 
 	std::vector<IHtmlNodeCountedPtr> frames = m_htmlParser->matchNodesInDepth([](const IHtmlNode& node)
-	{ 
+	{
 		return node.type() == IHtmlNode::NodeTypeElement &&
 			(node.tagId() == IHtmlNode::TagIdFrame || node.tagId() == IHtmlNode::TagIdFrameSet);
 	});
+
+	// uncomment to parse iframes
+	/*for (const IHtmlNodeCountedPtr& frame: frames)
+	{
+		if (frame->tagId() != IHtmlNode::TagIdFrame)
+		{
+			continue;
+		}
+
+		Url frameUrl(frame->attribute("src"));
+
+		LinkInfo link{ std::move(frameUrl), LinkParameter::DofollowParameter, QString(), false, ResourceSource::SourceTagIframe };
+
+		ResourceOnPage resource(ResourceType::ResourceHtml, std::move(link));
+
+		if (page->allResourcesOnPage.find(resource) == page->allResourcesOnPage.end())
+		{
+			page->allResourcesOnPage.insert(std::move(resource));
+		}
+	}*/
 
 	page->hasFrames = !frames.empty();
 }

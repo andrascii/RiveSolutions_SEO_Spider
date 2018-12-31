@@ -1,5 +1,22 @@
 #include "parsed_page.h"
 
+/*** We have 3 independent storages:
+ *		Blocked by robots.txt
+ *		Blocked by XRobotsTag (by meta robots)
+ *		Blocked by nofollow
+ *
+ *	The apropriate behaviour for now is to process them separately.
+ *	That means that XRobots tags knows nothing about robots.txt and nofollow.
+ *	The same is also for robots.txt and XRobots.
+ *	So, if the page is blocked by robots.txt or by XRobots but have dofollow links
+ *	we remove these links from the 'nofollow' list.
+ *	If a user will disable the option 'use robotx.txt rules', he'll see tha same result
+ *	of 'nofollow' links as it was when this option was enabled.
+ *
+ *	!But: metarobots flag nofollow and the corresponding rules for all links on such page
+ *	we are treating as a part of the 'Blocked by nofollow' strategy
+*/
+
 namespace
 {
 
@@ -68,12 +85,12 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, nofollowLinks[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 
 		if (!blockedForSeIndexing.empty())
 		{
-			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 	};
 
@@ -87,7 +104,7 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndAnyBotNofollowMetaRobotsTest)
 	// This test check behavior for nofollow index-3.html page
 	// which is nofollow on all pages and index-2.html which
 	// is blocked by meta robots using content="nofollow".
-	// So this index-2.html page MUST NOT BE CONTAINED 
+	// So this index-2.html page MUST NOT BE CONTAINED
 	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
 	//
 
@@ -120,13 +137,13 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndAnyBotNofollowMetaRobotsTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, nofollowLinks[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 
 		if (!blockedForSeIndexing.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, nofollowLinks[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 	};
 
@@ -140,7 +157,7 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndGoogleNofollowMetaRobotsTest)
 	// This test check behavior for nofollow index-3.html page
 	// which is nofollow on all pages and index-2.html which
 	// is blocked by meta robots using content="nofollow".
-	// So this index-2.html page MUST NOT BE CONTAINED 
+	// So this index-2.html page MUST NOT BE CONTAINED
 	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
 	//
 
@@ -173,13 +190,13 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndGoogleNofollowMetaRobotsTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, nofollowLinks[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 
 		if (!blockedForSeIndexing.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, nofollowLinks[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 	};
 
@@ -193,7 +210,7 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndYandexNofollowMetaRobotsTest)
 	// This test check behavior for nofollow index-3.html page
 	// which is nofollow on all pages and index-2.html which
 	// is blocked by meta robots using content="nofollow".
-	// So this index-2.html page MUST NOT BE CONTAINED 
+	// So this index-2.html page MUST NOT BE CONTAINED
 	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType
 	//
 
@@ -226,13 +243,13 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndYandexNofollowMetaRobotsTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, nofollowLinks[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 
 		if (!blockedForSeIndexing.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, nofollowLinks[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 	};
 
@@ -272,12 +289,12 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndRobotsTxtTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, nofollowLinks[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, nofollowLinks[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 
 		if (!blockedForSeIndexing.empty())
 		{
-			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 	};
 
@@ -288,9 +305,9 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndRobotsTxtTest)
 TEST(IndexingBlockedPagesTests, TagARelNofollowAndDofollowTest)
 {
 	//
-	// This test case checks behavior for index-2.html, which is dofollow and on another page it is nofollow
+	// This test case checks behavior for index-2.html, which is nofollow and on another page it is dofollow
 	// and only index-3.html actually nofollow link on all other pages
-	//
+	// Also index-2.html resource from index.html and index-3.html should be merged even though it's initially nofollow
 
 	TestEnvironment env;
 
@@ -317,12 +334,13 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndDofollowTest)
 		if (!nofollowLinks.empty())
 		{
 			EXPECT_EQ(true, nofollowLinks[0]->url == nofollowBlockedUrl);
+			EXPECT_EQ(2, nofollowLinks[0]->linksToThisPage.size());
 		}
 
 		if (!blockedForSeIndexing.empty())
 		{
 			EXPECT_EQ(true, blockedForSeIndexing[0]->url == nofollowBlockedUrl);
-			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 		}
 	};
 
@@ -369,14 +387,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndAnyBotNoindexMetaRobotsTest)
 
 		if (!blockedForSeIndexing.empty())
 		{
-			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedByMetaRobots);
 			EXPECT_EQ(true, blockedForSeIndexing[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
 		}
 
 		if (!blockedByXRobotsTag.empty())
 		{
-			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedByMetaRobots);
 			EXPECT_EQ(true, blockedByXRobotsTag[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
 		}
@@ -394,7 +412,7 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndGoogleNoindexMetaRobotsTest)
 	// is blocked by meta robots using content="noindex".
 	// So this index-2.html page must be contained
 	// in the StorageType::BlockedByXRobotsTagStorageType and StorageType::BlockedForSEIndexingStorageType.
-	// But index-3.html must not be blocked.
+	// index-3.html must not be blocked.
 	//
 
 	TestEnvironment env;
@@ -425,14 +443,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndGoogleNoindexMetaRobotsTest)
 
 		if (!blockedForSeIndexing.empty())
 		{
-			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedByMetaRobots);
 			EXPECT_EQ(true, blockedForSeIndexing[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
 		}
 
 		if (!blockedByXRobotsTag.empty())
 		{
-			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedByMetaRobots);
 			EXPECT_EQ(true, blockedByXRobotsTag[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
 		}
@@ -481,14 +499,14 @@ TEST(IndexingBlockedPagesTests, TagARelNofollowAndYandexNoindexMetaRobotsTest)
 
 		if (!blockedForSeIndexing.empty())
 		{
-			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedForSeIndexing[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 			EXPECT_EQ(true, blockedForSeIndexing[0]->isBlockedByMetaRobots);
 			EXPECT_EQ(true, blockedForSeIndexing[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
 		}
 
 		if (!blockedByXRobotsTag.empty())
 		{
-			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedForIndexing);
+			EXPECT_EQ(true, blockedByXRobotsTag[0]->storages[StorageType::BlockedForSEIndexingStorageType]);
 			EXPECT_EQ(true, blockedByXRobotsTag[0]->isBlockedByMetaRobots);
 			EXPECT_EQ(true, blockedByXRobotsTag[0]->url.canonizedUrlStr() == xRobotsTagBlockedUrl.canonizedUrlStr());
 		}
