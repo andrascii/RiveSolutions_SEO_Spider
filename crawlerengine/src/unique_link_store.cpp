@@ -174,6 +174,8 @@ void UniqueLinkStore::addLinkList(std::vector<LinkInfo> linkList, DownloadReques
 
 bool UniqueLinkStore::addCrawledUrl(const Url& url, DownloadRequestType requestType)
 {
+	DEBUG_ASSERT(url.isValid());
+	DEBUG_ASSERT(url.fragment().isEmpty());
 	std::lock_guard locker(m_mutex);
 
 	const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
@@ -335,6 +337,8 @@ void UniqueLinkStore::setLimitCrawledLinksCount(int value) noexcept
 
 void UniqueLinkStore::addUrlInternal(CrawlerRequest&& request)
 {
+	DEBUG_ASSERT(request.url.isValid());
+	DEBUG_ASSERT(request.url.fragment().isEmpty());
 	const size_t countLinks = m_pendingUrlList.size() + m_crawledUrlList.size();
 
 	if (m_limitCrawledLinksCount > 0 && countLinks >= static_cast<size_t>(m_limitCrawledLinksCount))

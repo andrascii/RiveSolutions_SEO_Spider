@@ -50,9 +50,10 @@ private:
 	void addDuplicates(ParsedPagePtr& incomingPage, StorageType lookupStorage, StorageType destStorage, int turnaround, bool checkCanonicals = true);
 
 	ParsedPagePtr parsedPageFromResource(const ResourceOnPage& resource) const;
-	QSet<StorageType> addIndexingBlockingPage(ParsedPagePtr& pageFromResource, const ResourceOnPage& resource, int turnaround);
+	QSet<StorageType> addIndexingBlockingPage(ParsedPagePtr& pageFromResource, bool existingResource, const ResourceOnPage& resource, bool isParentResourceBlockedByMetaRobot, int turnaround);
+	void removeFromIndexingBlockingPagesIfNeeded(ParsedPagePtr& existingResource, int turnaround);
 
-	void mergePageHelper(WorkerResult& workerResult);
+	void addToBlockedByXrobotsTagIfNeeded(WorkerResult& workerResult);
 
 	std::pair<ParsedPagePtr, StorageType> tryGetPageFromCrawledOrPendingStorage(const ParsedPagePtr& pointer) const;
 	ParsedPagePtr takeFromCrawledOrPendingStorage(const ParsedPagePtr& pointer) const;

@@ -12,6 +12,7 @@ enum StorageType
 	CrawledUrlStorageType,
 	ExternalUrlStorageType,
 	DofollowUrlStorageType,
+	AllowedByXRobotsTagStorageType,
 
 	// Url problems
 	UpperCaseUrlStorageType,

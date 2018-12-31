@@ -284,6 +284,10 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
+		std::make_pair(StorageType::AllowedByXRobotsTagStorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
 		// Link Problems Storages
 
 		std::make_pair(StorageType::UpperCaseUrlStorageType,

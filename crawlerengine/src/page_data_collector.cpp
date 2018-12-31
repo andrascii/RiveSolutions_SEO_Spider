@@ -38,7 +38,11 @@ std::vector<ParsedPagePtr> PageDataCollector::collectPageDataFromResponse(const 
 
 	for (std::size_t i = 0; i < pages.size(); ++i)
 	{
-		collectReplyData(hopsChain[i], pages[i]);
+		DEBUG_ASSERT(hopsChain[i].url().isValid());
+		if (hopsChain[i].url().isValid())
+		{
+			collectReplyData(hopsChain[i], pages[i]);
+		}
 	}
 
 	const auto collectEachPageData = [&](const Hop& hop, ParsedPagePtr& page)
@@ -154,6 +158,8 @@ Url PageDataCollector::resolveRedirectUrl(const Hop& hop)
 void PageDataCollector::collectReplyData(const Hop& hop, ParsedPagePtr& page) const
 {
 	page->url = hop.url();
+
+	DEBUG_ASSERT(page->url.isValid());
 
 	page->statusCode = static_cast<Common::StatusCode>(hop.statusCode());
 

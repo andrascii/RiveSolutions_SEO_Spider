@@ -58,7 +58,6 @@ TEST(SerializationTests, PagesSerialization)
 		firstPage->hasMetaRefreshTag = false;
 		firstPage->hasFrames = true;
 		firstPage->isThisExternalPage = true;
-		firstPage->isBlockedForIndexing = true;
 		firstPage->isBlockedByMetaRobots = true;
 		firstPage->resourceType = ResourceType::ResourceHtml;
 		firstPage->rawResponse = "<html>...ÀÁÂÃÄ</html>";
@@ -117,7 +116,6 @@ TEST(SerializationTests, PagesSerialization)
 		EXPECT_EQ(etalon.hasMetaRefreshTag, newFirstPage->hasMetaRefreshTag);
 		EXPECT_EQ(etalon.hasFrames, newFirstPage->hasFrames);
 		EXPECT_EQ(etalon.isThisExternalPage, newFirstPage->isThisExternalPage);
-		EXPECT_EQ(etalon.isBlockedForIndexing, newFirstPage->isBlockedForIndexing);
 		EXPECT_EQ(etalon.isBlockedByMetaRobots, newFirstPage->isBlockedByMetaRobots);
 		EXPECT_EQ(etalon.resourceType, newFirstPage->resourceType);
 		EXPECT_EQ(etalon.rawResponse, newFirstPage->rawResponse);
