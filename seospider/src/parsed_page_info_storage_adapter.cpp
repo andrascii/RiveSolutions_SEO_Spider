@@ -50,6 +50,16 @@ QVector<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::availableColumns()
 	return m_availableColumns;
 }
 
+void ParsedPageInfoStorageAdapter::setCurrentColumns(QVector<ParsedPageInfo::Column> currentColumns) noexcept
+{
+	m_currentColumns = currentColumns;
+}
+
+QVector<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::currentColumns() const noexcept
+{
+	return m_currentColumns;
+}
+
 void ParsedPageInfoStorageAdapter::setCustomDataFeed(const QString& customDataFeed) noexcept
 {
 	if (customDataFeed.isEmpty())
@@ -88,6 +98,13 @@ int ParsedPageInfoStorageAdapter::columnWidth(int columnNumber) const noexcept
 int ParsedPageInfoStorageAdapter::columnCount() const noexcept
 {
 	return m_availableColumns.size() + m_customColumns.size();
+}
+
+bool ParsedPageInfoStorageAdapter::columnEnabled(int column) const noexcept
+{
+	DEBUG_ASSERT(column < m_availableColumns.size() && column >= 0);
+	auto it = std::find(m_currentColumns.cbegin(), m_currentColumns.cend(), m_availableColumns[column]);
+	return it != m_currentColumns.cend();
 }
 
 int ParsedPageInfoStorageAdapter::itemCount() const noexcept

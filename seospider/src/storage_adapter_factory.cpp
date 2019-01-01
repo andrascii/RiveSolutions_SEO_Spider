@@ -18,7 +18,8 @@ IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapt
 	IParsedPageStorageAdapter* storageAdapter = new ParsedPageInfoStorageAdapter(sequencedDataCollection,
 		sequencedDataCollection->storage(storageType), storageType);
 
-	storageAdapter->setAvailableColumns(parsedPageAvailableColumns(type));
+	storageAdapter->setCurrentColumns(parsedPageAvailableColumns(type));
+	storageAdapter->setAvailableColumns(parsedPageAllColumns());
 
 	return storageAdapter;
 }
@@ -31,6 +32,38 @@ IStorageAdapter* StorageAdapterFactory::createPageLinksStorage(PageLinkContext t
 	setupAvailablePageLinkColumns(storageAdapter);
 
 	return storageAdapter;
+}
+
+QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAllColumns()
+{
+	return QVector<ParsedPageInfo::Column>()
+		<< ParsedPageInfo::Column::UrlColumn
+		<< ParsedPageInfo::Column::UrlLengthColumn
+		<< ParsedPageInfo::Column::ContentTypeColumn
+		<< ParsedPageInfo::Column::StatusCodeColumn
+		<< ParsedPageInfo::Column::SchemeColumn
+		<< ParsedPageInfo::Column::ResponseTimeColumn
+		<< ParsedPageInfo::Column::TitleColumn
+		<< ParsedPageInfo::Column::TitleLengthColumn
+		<< ParsedPageInfo::Column::MetaRefreshColumn
+		<< ParsedPageInfo::Column::MetaRobotsColumn
+		<< ParsedPageInfo::Column::MetaDescriptionColumn
+		<< ParsedPageInfo::Column::MetaDescriptionLengthColumn
+		<< ParsedPageInfo::Column::MetaKeywordsColumn
+		<< ParsedPageInfo::Column::MetaKeywordsLengthColumn
+		<< ParsedPageInfo::Column::RedirectedUrlColumn
+		<< ParsedPageInfo::Column::FirstH1Column
+		<< ParsedPageInfo::Column::FirstH1LengthColumn
+		<< ParsedPageInfo::Column::SecondH1Column
+		<< ParsedPageInfo::Column::SecondH1LengthColumn
+		<< ParsedPageInfo::Column::FirstH2Column
+		<< ParsedPageInfo::Column::FirstH2LengthColumn
+		<< ParsedPageInfo::Column::SecondH2Column
+		<< ParsedPageInfo::Column::SecondH2LengthColumn
+		<< ParsedPageInfo::Column::CanonicalLinkElementColumn
+		<< ParsedPageInfo::Column::PageSizeKbColumn
+		<< ParsedPageInfo::Column::WordCountColumn
+		<< ParsedPageInfo::Column::PageHashColumn;
 }
 
 QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumns(StorageAdapterType type)

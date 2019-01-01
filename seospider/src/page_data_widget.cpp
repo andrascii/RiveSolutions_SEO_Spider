@@ -110,7 +110,7 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 		return;
 	}
 
-	TableView* tableView = new TableView(tabStackedWidget, false, true);
+	TableView* tableView = new TableView(tabStackedWidget, false, true, false);
 	tableView->setObjectName("TableView");
 	tableView->setContentsMargins(0, 0, 0, 0);
 	tableView->setMinimumWidth(0);

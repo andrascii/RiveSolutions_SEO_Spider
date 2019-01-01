@@ -16,6 +16,7 @@ public:
 	IStorageAdapter* createParsedPageInfoStorage(StorageAdapterType type, CrawlerEngine::SequencedDataCollection* sequencedDataCollection) const;
 	IStorageAdapter* createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer);
 
+	static QVector<ParsedPageInfo::Column> parsedPageAllColumns();
 	static QVector<ParsedPageInfo::Column> parsedPageAvailableColumns(StorageAdapterType type);
 
 protected:

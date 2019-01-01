@@ -431,6 +431,27 @@ QHeaderView::section
 	min-height: 2em;
 }
 
+QHeaderView QPushButton#customizeColumns
+{
+	min-width: 1em;
+	max-width: 1em; 
+	border: 0px solid #ddd;
+	border-radius: 0px;
+	font-family: Helvetica;
+	font-size: 10pt;
+	background: #FBFBFB;
+}
+
+QHeaderView QPushButton:hover#customizeColumns
+{
+	background: #EEEEEE;
+}
+
+QHeaderView QPushButton::menu-indicator#customizeColumns
+{
+	width:0px;
+}
+
 /*/////////////////////////////// SettingsPage ////////////////////////////////*/
 
 SeoSpider--SettingsPage

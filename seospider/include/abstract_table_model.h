@@ -20,6 +20,7 @@ public:
 
 	static constexpr int underlyingIndexRole = Qt::UserRole;
 	static constexpr int resourceTypeRole = underlyingIndexRole - 1;
+	static constexpr int columnEnabledRole = underlyingIndexRole - 2;
 };
 
 

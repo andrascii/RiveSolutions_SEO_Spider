@@ -57,6 +57,12 @@ int PageLinksStorageAdapter::columnCount() const noexcept
 	return m_availableColumns.size();
 }
 
+bool PageLinksStorageAdapter::columnEnabled(int column) const noexcept
+{
+	Q_UNUSED(column);
+	return true;
+}
+
 int PageLinksStorageAdapter::itemCount() const noexcept
 {
 	if (!m_parsedPageInfo)

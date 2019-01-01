@@ -29,7 +29,7 @@ AllPagesPage::AllPagesPage(QWidget* parent)
 	layout->setMargin(0);
 	layout->setSpacing(0);
 
-	TableView* tableView = new TableView(this, false, true);
+	TableView* tableView = new TableView(this, false, true, true);
 	PageModel* model = new PageModel;
 	PageViewModel* modelView = new PageViewModel(tableView, model);
 
@@ -132,7 +132,7 @@ void AllPagesPage::createHeaderActionWidgets()
 	m_lookupLineEditWidget = new LookupLineEditWidget;
 	addWidget(m_lookupLineEditWidget);
 
-	VERIFY(connect(resourceFilter, &ResourceTypeFilterWidget::filterChanged, 
+	VERIFY(connect(resourceFilter, &ResourceTypeFilterWidget::filterChanged,
 		this, &AllPagesPage::onResourceTypeFilterChanged));
 
 	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(const QString&)),

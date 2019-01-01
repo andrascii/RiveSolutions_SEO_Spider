@@ -70,7 +70,9 @@
 		<file>images/split-h-cursor.svg</file>
 		<file>images/split-v-cursor.svg</file>
 
-        <file>stylesheets/styles.css</file>
+		<file>images/gear.svg</file>
+
+		<file>stylesheets/styles.css</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>

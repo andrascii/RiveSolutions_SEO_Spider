@@ -21,6 +21,7 @@ public:
 	virtual QString columnDescription(int columnIndex) const noexcept override;
 	virtual int columnWidth(int columnNumber) const noexcept override;
 	virtual int columnCount() const noexcept override;
+	virtual bool columnEnabled(int column) const noexcept override;
 	virtual int itemCount() const noexcept override;
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
