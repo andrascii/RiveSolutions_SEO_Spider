@@ -75,7 +75,7 @@ T getUnderlyingModelByIndex(const QModelIndex& index)
 }
 
 template <class T>
-T getUnderlyingModel(const QAbstractItemModel* model)
+T getUnderlyingModel(QAbstractItemModel* model)
 {
 #ifdef USE_SORTING
 	if (model == nullptr)
@@ -83,7 +83,20 @@ T getUnderlyingModel(const QAbstractItemModel* model)
 		return nullptr;
 	}
 
-	return getUnderlyingModelByIndex<T>(model->index(0, 0));
+	const QModelIndex index = model->index(0, 0);
+
+	if (index.isValid())
+	{
+		return getUnderlyingModelByIndex<T>(index);
+	}
+
+	QSortFilterProxyModel* proxyModel = qobject_cast<QSortFilterProxyModel*>(model);
+	if (proxyModel == nullptr)
+	{
+		return qobject_cast<T>(model);
+	}
+
+	return qobject_cast<T>(proxyModel->sourceModel());
 #else
 	return qobject_cast<T>(const_cast<QAbstractItemModel*>(model));
 #endif

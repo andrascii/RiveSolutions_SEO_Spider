@@ -7,11 +7,12 @@
 #include "command_menu.h"
 #include "finally.h"
 #include "table_proxy_model.h"
+#include "header_view.h"
 
 namespace SeoSpider
 {
 
-TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnabled)
+TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnabled, bool showCustomizeColumnsButton)
 	: QTableView(parent)
 	, m_model(nullptr)
 	, m_viewModel(nullptr)
@@ -19,11 +20,14 @@ TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnable
 	, m_showAdditionalGrid(false)
 	, m_rowHeight(Common::Helpers::pointsToPixels(22))
 	, m_supportColumnSpans(supportColumSpans)
-#ifdef USE_SORTING
 	, m_sortFilterProxyModel(new TableProxyModel)
-#endif
+	, m_headerView(new HeaderView(this, showCustomizeColumnsButton))
 {
 	Q_UNUSED(sortingEnabled);
+
+	m_headerView->setSortIndicatorShown(true);
+	setHorizontalHeader(m_headerView);
+
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -69,6 +73,7 @@ void TableView::setModel(QAbstractItemModel* model)
 	}
 
 	initSpans();
+	m_headerView->initColumns();
 
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpans())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));

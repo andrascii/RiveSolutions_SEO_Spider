@@ -36,7 +36,7 @@ AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWi
 	: QFrame(parent)
 	, AbstractTablePage(webSiteDataWidget->pageDataWidget())
 	, m_webSiteDataWidget(webSiteDataWidget)
-	, m_summaryFilterTableView(new TableView(this, true, false))
+	, m_summaryFilterTableView(new TableView(this, true, false, false))
 	, m_summaryFilterModel(new SummaryModel(this))
 	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterTableView, m_summaryFilterModel, this))
 	, m_splitter(new QSplitter(this))

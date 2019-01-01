@@ -20,6 +20,7 @@ public:
 
 	virtual int columnWidth(int columnNumber) const noexcept = 0;
 	virtual int columnCount() const noexcept = 0;
+	virtual bool columnEnabled(int column) const noexcept = 0;
 	virtual int itemCount() const noexcept = 0;
 	virtual QVariant item(const QModelIndex& index) const noexcept = 0;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept = 0;
@@ -42,6 +43,10 @@ class IParsedPageStorageAdapter : public IStorageAdapter
 public:
 	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept = 0;
 	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept = 0;
+
+	virtual void setCurrentColumns(QVector<ParsedPageInfo::Column> currentColumns) noexcept = 0;
+	virtual QVector<ParsedPageInfo::Column> currentColumns() const noexcept = 0;
+
 	virtual void setCustomDataFeed(const QString& cunstomDataFeed) noexcept = 0;
 };
 

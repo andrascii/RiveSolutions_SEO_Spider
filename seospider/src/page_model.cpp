@@ -174,6 +174,16 @@ QVariant PageModel::headerData(int section, Qt::Orientation orientation, int rol
 		return storageAdapter()->columnDescription(section - 1);
 	}
 
+	if (orientation == Qt::Horizontal && role == columnEnabledRole)
+	{
+		if (section == 0)
+		{
+			return true;
+		}
+
+		return storageAdapter()->columnEnabled(section - 1);
+	}
+
 	return QVariant();
 }
 

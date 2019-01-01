@@ -11,6 +11,7 @@ class ContextMenuDataCollectionRow;
 class IRenderer;
 class IViewModel;
 class CommandMenu;
+class HeaderView;
 
 class IView
 {
@@ -23,7 +24,7 @@ class TableView : public QTableView, public IView
 	Q_OBJECT
 
 public:
-	explicit TableView(QWidget* parent, bool supportColumSpans, bool sortingEnabled);
+	explicit TableView(QWidget* parent, bool supportColumSpans, bool sortingEnabled, bool showCustomizeColumnsButton);
 
 	virtual void setModel(QAbstractItemModel* model) override;
 	IViewModel* viewModel() const noexcept;
@@ -63,6 +64,7 @@ private:
 	AbstractTableModel* m_model;
 	QSortFilterProxyModel* m_sortFilterProxyModel;
 	IViewModel* m_viewModel;
+	HeaderView* m_headerView;
 	std::unique_ptr<CommandMenu> m_contextMenu;
 
 	bool m_showAdditionalGrid;
