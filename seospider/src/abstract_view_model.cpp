@@ -231,30 +231,49 @@ void AbstractViewModel::invalidateCacheIndex(const QModelIndex& index) const noe
 void AbstractViewModel::onAttachedModelDataChanged(const QModelIndex& startIndex, const QModelIndex& endIndex, const QVector<int>& roles)
 {
 	Q_UNUSED(roles);
-	QModelIndexList indices;
 	DEBUG_ASSERT(startIndex.isValid() && endIndex.isValid());
-	const int columns = startIndex.model()->columnCount();
-	for (int row = startIndex.row(); row <= endIndex.row(); ++row)
+	// TODO: is's more intelligent to check [rows in cache/visible rows]
+	// and check if these indices are axist in the cache before remove the corresponding rows from cache
+	// and before adding them to 'indices' (because we can add to indices a lot of values)
+	// but probably it'll be better just to clear the cache instead of this
+	constexpr int maxRowsToUpdate = 70;
+	const int invalidateAllCache = qAbs(startIndex.row() - endIndex.row()) > maxRowsToUpdate;
+	if (invalidateAllCache)
 	{
-		// TODO: optimize
-		for (int column = 0; column < columns; ++column)
+		// optimization
+		m_itemRenderer.invalidateCache();
+	}
+	else
+	{
+		QModelIndexList indices;
+
+		const int columns = startIndex.model()->columnCount();
+		for (int row = startIndex.row(); row <= endIndex.row(); ++row)
 		{
-			indices.append(startIndex.model()->index(row, column));
+			// TODO: optimize
+			for (int column = 0; column < columns; ++column)
+			{
+				indices.append(startIndex.model()->index(row, column));
+			}
 		}
+
+		DEBUG_ASSERT(indices.size() > 0);
+
+		invalidateCacheIndexes(indices);
 	}
 
-	DEBUG_ASSERT(indices.size() > 0);
-
-	invalidateCacheIndexes(indices);
-
-#ifdef USE_SORTING
-	invalidateCacheIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
-	emitNeedToRepaintIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+	if (!invalidateAllCache)
+	{
+		invalidateCacheIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+	}
+	emit repaintItems(makeRowIndexes(m_hoveredUnderlyingIndex));
 
 	m_hoveredUnderlyingIndex = getUnderlyingIndex(m_hoveredIndex);
-	invalidateCacheIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
-	emitNeedToRepaintIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
-#endif
+	if (!invalidateAllCache)
+	{
+		invalidateCacheIndexes(makeRowIndexes(m_hoveredUnderlyingIndex));
+	}
+	emit repaintItems(makeRowIndexes(m_hoveredUnderlyingIndex));
 }
 
 	void AbstractViewModel::clearSelectedIndexes() noexcept

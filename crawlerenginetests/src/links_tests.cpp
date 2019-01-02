@@ -453,11 +453,16 @@ TEST(LinksTests, SecondHeadRequest)
 	env.exec();
 }
 
-TEST(LinksTests, Redirects)
+TEST(LinksTests, BlockedByRobotsTxtRedirect)
 {
+	// index.html redirected to index-redirected.html
+	// btclogo.png redirected to btclogo-redirected.png
+
+	// index-redirected.html is blocked by robots.txt, but should be loaded as it's a redirected url (??? maybe shouldn't?)
+	// Disallow: /*redirected
 	TestEnvironment env;
 
-	auto options = TestEnvironment::defaultOptions(Url("http://links.com/redirects/index.html"));
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects.com/index.html"));
 	options.parserTypeFlags = ImagesResourcesParserType;
 	options.followRobotsTxtRules = true;
 	options.userAgentToFollow = UserAgentType::AnyBot;
@@ -480,6 +485,399 @@ TEST(LinksTests, Redirects)
 
 		EXPECT_EQ(true, !imagePages.at(1)->linksToThisPage.empty());
 		EXPECT_EQ(false, imagePages.at(1)->linksToThisPage.at(0).resource.expired());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+const ResourceLink* getLink(const std::deque<ResourceLink>& links, const QString& urlPart)
+{
+	auto it = std::find_if(links.begin(), links.end(), [&urlPart](const ResourceLink& link)
+	{
+		return link.url.toDisplayString().contains(urlPart);
+	});
+
+	if (it != links.end())
+	{
+		return &(*it);
+	}
+
+	return nullptr;
+}
+
+const ParsedPage* getPage(const std::vector<const ParsedPage*>& pages, const QString& urlPart)
+{
+	auto it = std::find_if(pages.begin(), pages.end(), [&urlPart](const ParsedPage* page)
+	{
+		return page->url.toDisplayString().contains(urlPart);
+	});
+
+	if (it != pages.end())
+	{
+		return *it;
+	}
+
+	return nullptr;
+}
+
+TEST(LinksTests, MergeInternalRedirects)
+{
+	// index.html redirected to index-redirected.html
+	// btclogo.png redirected to btclogo-redirected.png
+	// but merge.html has direct links to index-redirected.html and btclogo-redirected.png
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects.com/merge.html"));
+	options.parserTypeFlags = ImagesResourcesParserType;
+	options.followRobotsTxtRules = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(5, pages.size());
+
+		auto htmlPages = cl->storageItems(HtmlResourcesStorageType);
+		auto imagePages = cl->storageItems(ImageResourcesStorageType);
+
+		EXPECT_EQ(3, htmlPages.size());
+		EXPECT_EQ(2, imagePages.size());
+
+		const std::deque<ResourceLink>& mergeHtmlPageLinks = htmlPages.at(0)->linksOnThisPage;
+		EXPECT_EQ(3, mergeHtmlPageLinks.size());
+
+		auto indexRedirectedLink = getLink(mergeHtmlPageLinks, "index-redirected.html");
+		auto btcLogoRedirectedLink = getLink(mergeHtmlPageLinks, "btclogo-redirected.png");
+
+		EXPECT_TRUE(indexRedirectedLink != nullptr);
+		EXPECT_TRUE(btcLogoRedirectedLink != nullptr);
+
+		if (indexRedirectedLink != nullptr)
+		{
+			EXPECT_TRUE(!indexRedirectedLink->resource.expired() && indexRedirectedLink->resource.lock()->linksToThisPage.size() == 2);
+		}
+
+		if (btcLogoRedirectedLink != nullptr)
+		{
+			EXPECT_TRUE(!btcLogoRedirectedLink->resource.expired() && btcLogoRedirectedLink->resource.lock()->linksToThisPage.size() == 2);
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, SimpleJsRedirect)
+{
+	// script.js redirected to script-redirected.js
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects.com/testjs.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	options.followRobotsTxtRules = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(3, pages.size());
+
+		auto htmlPages = cl->storageItems(HtmlResourcesStorageType);
+		auto jsPages = cl->storageItems(JavaScriptResourcesStorageType);
+
+		// script.js with 301 code is interpreted as a js resource because it was found in the <script> tag
+		EXPECT_EQ(1, htmlPages.size());
+		EXPECT_EQ(2, jsPages.size());
+
+		if (pages.size() == 3)
+		{
+			auto scriptjsPage = pages[1];
+			auto scriptjsredirectedPage = pages[1];
+
+			EXPECT_TRUE(scriptjsPage->linksOnThisPage.size() == 1 && !scriptjsPage->linksOnThisPage[0].resource.expired());
+			EXPECT_TRUE(scriptjsredirectedPage->linksToThisPage.size() == 1 && !scriptjsredirectedPage->linksToThisPage[0].resource.expired());
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, MergeJsRedirect)
+{
+	// script.js redirected to script-redirected.js
+	// testjmerge.html has a direct link to script-redirected.js
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects.com/testjsmerge.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	options.followRobotsTxtRules = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(4, pages.size());
+
+		auto htmlPages = cl->storageItems(HtmlResourcesStorageType);
+		auto jsPages = cl->storageItems(JavaScriptResourcesStorageType);
+
+		// script.js with 301 code is interpreted as a js resource because it was found in the <script> tag
+		EXPECT_EQ(2, htmlPages.size());
+		EXPECT_EQ(2, jsPages.size());
+
+		if (pages.size() == 4)
+		{
+			const ParsedPage* scriptjsPage = getPage(pages, "script.js");
+			const ParsedPage* scriptjsredirectedPage = getPage(pages, "script-redirected.js");
+
+			EXPECT_TRUE(scriptjsPage != nullptr);
+			EXPECT_TRUE(scriptjsredirectedPage != nullptr);
+
+			if (scriptjsPage != nullptr)
+			{
+				EXPECT_EQ(ResourceType::ResourceJavaScript, scriptjsPage->resourceType);
+				EXPECT_TRUE(scriptjsPage->linksOnThisPage.size() == 1 && !scriptjsPage->linksOnThisPage[0].resource.expired());
+			}
+
+			if (scriptjsredirectedPage != nullptr)
+			{
+				EXPECT_TRUE(scriptjsredirectedPage->linksToThisPage.size() == 2 &&
+					!scriptjsredirectedPage->linksToThisPage[0].resource.expired() &&
+					!scriptjsredirectedPage->linksToThisPage[1].resource.expired());
+			}
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, MergeJsRedirectWithHtmlLinkToJs)
+{
+	// script.js redirected to script-redirected.js
+	// testjmerge.html has a direct link to script-redirected.js
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects.com/testjsmergewithahreflink.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	options.followRobotsTxtRules = false;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(4, pages.size());
+
+		auto htmlPages = cl->storageItems(HtmlResourcesStorageType);
+		auto jsPages = cl->storageItems(JavaScriptResourcesStorageType);
+
+		EXPECT_EQ(2, htmlPages.size());
+		EXPECT_EQ(2, jsPages.size());
+
+		if (pages.size() == 4)
+		{
+			const ParsedPage* scriptjsPage = getPage(pages, "script.js");
+			const ParsedPage* scriptjsredirectedPage = getPage(pages, "script-redirected.js");
+
+			EXPECT_TRUE(scriptjsPage != nullptr);
+			EXPECT_TRUE(scriptjsredirectedPage != nullptr);
+
+			if (scriptjsPage != nullptr)
+			{
+				EXPECT_EQ(ResourceType::ResourceJavaScript, scriptjsPage->resourceType);
+				EXPECT_TRUE(scriptjsPage->linksOnThisPage.size() == 1 && !scriptjsPage->linksOnThisPage[0].resource.expired());
+			}
+
+			if (scriptjsredirectedPage != nullptr)
+			{
+				EXPECT_TRUE(scriptjsredirectedPage->linksToThisPage.size() == 2 &&
+					!scriptjsredirectedPage->linksToThisPage[0].resource.expired() &&
+					!scriptjsredirectedPage->linksToThisPage[1].resource.expired());
+			}
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, ExternalHtmlRedirect)
+{
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects2.com/index.html"));
+	options.followRobotsTxtRules = false;
+	options.checkExternalLinks = true;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(3, pages.size());
+
+		if (pages.size() == 3)
+		{
+			const ParsedPage* externalPageWithRedirect = pages[1];
+			const ParsedPage* redirectedExternalPage = pages[2];
+
+			EXPECT_TRUE(externalPageWithRedirect->linksOnThisPage.size() == 1 && !externalPageWithRedirect->linksOnThisPage[0].resource.expired());
+			EXPECT_TRUE(redirectedExternalPage->linksToThisPage.size() == 1 && !redirectedExternalPage->linksToThisPage[0].resource.expired());
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, MergeExternalRedirect)
+{
+	// index.html redirected to index-redirected.html
+	// btclogo.png redirected to btclogo-redirected.png
+	// but merge.html has direct links to index-redirected.html and btclogo-redirected.png
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects2.com/merge.html"));
+	options.parserTypeFlags = 0;
+	options.followRobotsTxtRules = false;
+	options.checkExternalLinks = true;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(3, pages.size());
+
+		if (pages.size() == 3)
+		{
+			const ParsedPage* externalWithRedirect = getPage(pages, "redirects.com/index.html");
+			const ParsedPage* redirectedExternal = getPage(pages, "redirects.com/index-redirected.html");
+
+			EXPECT_TRUE(externalWithRedirect != nullptr);
+			EXPECT_TRUE(redirectedExternal != nullptr);
+
+			if (redirectedExternal != nullptr)
+			{
+				EXPECT_TRUE(redirectedExternal->linksToThisPage.size() == 2 &&
+					!redirectedExternal->linksToThisPage[0].resource.expired() &&
+					!redirectedExternal->linksToThisPage[1].resource.expired());
+			}
+
+			if (externalWithRedirect != nullptr)
+			{
+				EXPECT_TRUE(externalWithRedirect->linksOnThisPage.size() == 1 && !externalWithRedirect->linksOnThisPage[0].resource.expired());
+			}
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, MergeExternalJsRedirect)
+{
+	// script.js redirected to script-redirected.js
+	// testjmerge.html has a direct link to script-redirected.js
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects2.com/testjsmerge.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	options.followRobotsTxtRules = false;
+	options.checkExternalLinks = true;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(4, pages.size());
+
+		auto htmlPages = cl->storageItems(HtmlResourcesStorageType);
+		auto jsPages = cl->storageItems(ExternalJavaScriptResourcesStorageType);
+
+		// script.js with 301 code is interpreted as a js resource because it was found in the <script> tag
+		EXPECT_EQ(2, htmlPages.size());
+		EXPECT_EQ(2, jsPages.size());
+
+		if (pages.size() == 4)
+		{
+			const ParsedPage* scriptjsPage = getPage(pages, "script.js");
+			const ParsedPage* scriptjsredirectedPage = getPage(pages, "script-redirected.js");
+
+			EXPECT_TRUE(scriptjsPage != nullptr);
+			EXPECT_TRUE(scriptjsredirectedPage != nullptr);
+
+			if (scriptjsPage != nullptr)
+			{
+				EXPECT_EQ(ResourceType::ResourceJavaScript, scriptjsPage->resourceType);
+				EXPECT_TRUE(scriptjsPage->linksOnThisPage.size() == 1 && !scriptjsPage->linksOnThisPage[0].resource.expired());
+			}
+
+			if (scriptjsredirectedPage != nullptr)
+			{
+				EXPECT_TRUE(scriptjsredirectedPage->linksToThisPage.size() == 2 &&
+					!scriptjsredirectedPage->linksToThisPage[0].resource.expired() &&
+					!scriptjsredirectedPage->linksToThisPage[1].resource.expired());
+			}
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(LinksTests, MergeExternalJsRedirectWithHtmlLinkToJs)
+{
+	// script.js redirected to script-redirected.js
+	// testjmerge.html has a direct link to script-redirected.js
+	TestEnvironment env;
+
+	auto options = TestEnvironment::defaultOptions(Url("http://redirects2.com/testjsmergewithahreflink.html"));
+	options.parserTypeFlags = JavaScriptResourcesParserType;
+	options.followRobotsTxtRules = false;
+	options.checkExternalLinks = true;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(100);
+		EXPECT_EQ(4, pages.size());
+
+		auto htmlPages = cl->storageItems(HtmlResourcesStorageType);
+		auto jsPages = cl->storageItems(ExternalJavaScriptResourcesStorageType);
+
+		EXPECT_EQ(2, htmlPages.size());
+		EXPECT_EQ(2, jsPages.size());
+
+		if (pages.size() == 4)
+		{
+			const ParsedPage* scriptjsPage = getPage(pages, "script.js");
+			const ParsedPage* scriptjsredirectedPage = getPage(pages, "script-redirected.js");
+
+			EXPECT_TRUE(scriptjsPage != nullptr);
+			EXPECT_TRUE(scriptjsredirectedPage != nullptr);
+
+			if (scriptjsPage != nullptr)
+			{
+				EXPECT_EQ(ResourceType::ResourceJavaScript, scriptjsPage->resourceType);
+				EXPECT_TRUE(scriptjsPage->linksOnThisPage.size() == 1 && !scriptjsPage->linksOnThisPage[0].resource.expired());
+			}
+
+			if (scriptjsredirectedPage != nullptr)
+			{
+				EXPECT_TRUE(scriptjsredirectedPage->linksToThisPage.size() == 2 &&
+					!scriptjsredirectedPage->linksToThisPage[0].resource.expired() &&
+					!scriptjsredirectedPage->linksToThisPage[1].resource.expired());
+			}
+		}
 	};
 
 	env.initializeTest(testFunction);
