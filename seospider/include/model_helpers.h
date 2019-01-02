@@ -24,7 +24,6 @@ inline QModelIndexList makeRowIndexes(const QModelIndex& index)
 
 inline QModelIndex getUnderlyingIndex(const QModelIndex& index)
 {
-#ifdef USE_SORTING
 	if (!index.isValid())
 	{
 		return index;
@@ -49,15 +48,11 @@ inline QModelIndex getUnderlyingIndex(const QModelIndex& index)
 	}
 	DEBUG_ASSERT(underlyingModelIndex.isValid());
 	return underlyingModelIndex;
-#else
-	return index;
-#endif
 }
 
 template <class T, bool CheckModelNotNull = true>
 T getUnderlyingModelByIndex(const QModelIndex& index)
 {
-#ifdef USE_SORTING
 	QModelIndex underlyingModelIndex = getUnderlyingIndex(index);
 	if (!underlyingModelIndex.isValid())
 	{
@@ -66,10 +61,6 @@ T getUnderlyingModelByIndex(const QModelIndex& index)
 
 	QAbstractItemModel* model = const_cast<QAbstractItemModel*>(underlyingModelIndex.model());
 	T underlyingModel = qobject_cast<T>(model);
-#else
-	QAbstractItemModel* model = const_cast<QAbstractItemModel*>(index.model());
-	T underlyingModel = qobject_cast<T>(model);
-#endif
 	DEBUG_ASSERT(!CheckModelNotNull || underlyingModel);
 	return underlyingModel;
 }
@@ -77,7 +68,6 @@ T getUnderlyingModelByIndex(const QModelIndex& index)
 template <class T>
 T getUnderlyingModel(QAbstractItemModel* model)
 {
-#ifdef USE_SORTING
 	if (model == nullptr)
 	{
 		return nullptr;
@@ -97,9 +87,6 @@ T getUnderlyingModel(QAbstractItemModel* model)
 	}
 
 	return qobject_cast<T>(proxyModel->sourceModel());
-#else
-	return qobject_cast<T>(const_cast<QAbstractItemModel*>(model));
-#endif
 }
 
 }

@@ -148,6 +148,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 	EmitBlocker emitBlocker(data(), workerResult.turnaround());
 	Common::Finally incrementCrawledLinksCountGuard([] { CrawlerSharedState::instance()->incrementModelControllerCrawledLinksCount(); });
+	Common::Finally clearAllResourcesOnPageGuard([workerResult] { workerResult.incomingPageConstRef()->allResourcesOnPage.clear(); });
 
 	const auto refreshDoneEmit = [&]
 	{
@@ -200,7 +201,6 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 
 	processParsedPageHtmlResources(workerResult, secondGetRequest);
 	processParsedPageResources(workerResult, secondGetRequest);
-	workerResult.incomingPage()->allResourcesOnPage.clear();
 
 	processParsedPageStatusCode(workerResult, secondGetRequest);
 	processParsedPageUrl(workerResult, secondGetRequest);
@@ -234,10 +234,25 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		//DEBUG_ASSERT(!workerResult.incomingPage()->linksToThisPage.empty() ||
 		//	data()->size(StorageType::CrawledUrlStorageType) == 1);
 
-		DEBUG_ASSERT(!workerResult.incomingPage()->redirectedUrl.isValid() ||
-			!workerResult.incomingPage()->isThisExternalPage ||
-			workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
-			!workerResult.incomingPage()->linksOnThisPage.front().resource.expired());
+#ifdef QT_DEBUG
+		const bool redirect = workerResult.incomingPage()->redirectedUrl.isValid();
+		const bool external = workerResult.incomingPage()->isThisExternalPage;
+		if (redirect && external)
+		{
+			const bool hasLinksOnThispage =
+				workerResult.incomingPage()->linksOnThisPage.size() == 1 &&
+				!workerResult.incomingPage()->linksOnThisPage.front().resource.expired();
+
+			if (!hasLinksOnThispage)
+			{
+				INFOLOG << "Invalid links on this page for"
+					<< workerResult.incomingPage()->redirectedUrl.toDisplayString()
+					<< " resources on page:"
+					<< workerResult.incomingPage()->allResourcesOnPage.size();
+				DEBUG_ASSERT(false);
+			}
+		}
+#endif
 	}
 }
 
@@ -939,18 +954,19 @@ void ModelController::processParsedPageResources(WorkerResult& workerResult, boo
 
 void ModelController::fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept
 {
-	ParsedPagePtr pendingResource = data()->parsedPage(incomingPage, StorageType::PendingResourcesStorageType);
+	ParsedPagePtr pendingOrCrawled = takeFromCrawledOrPendingStorage(incomingPage);
 
-	if (pendingResource && pendingResource->resourceType != ResourceType::ResourceHtml)
+	if (pendingOrCrawled && pendingOrCrawled->resourceType != ResourceType::ResourceHtml)
 	{
-		incomingPage->resourceType = pendingResource->resourceType;
-
-		if (pendingResource->linksToThisPage.size() == 1 &&
-			pendingResource->linksToThisPage.begin()->resourceSource == ResourceSource::SourceRedirectUrl &&
-			pendingResource->linksToThisPage.begin()->resource.expired())
+		incomingPage->resourceType = pendingOrCrawled->resourceType;
+/*
+		if (pendingOrCrawled->linksToThisPage.size() == 1 &&
+			pendingOrCrawled->linksToThisPage.begin()->resourceSource == ResourceSource::SourceRedirectUrl &&
+			pendingOrCrawled->linksToThisPage.begin()->resource.expired() &&
+			pendingOrCrawled->linksToThisPage.begin()->resource.lock()->redirectedUrl.isValid())
 		{
-			incomingPage->resourceType = pendingResource->linksToThisPage.begin()->resource.lock()->resourceType;
-		}
+			incomingPage->resourceType = pendingOrCrawled->linksToThisPage.begin()->resource.lock()->resourceType;
+		}*/
 	}
 }
 
@@ -1141,6 +1157,35 @@ ParsedPagePtr ModelController::parsedPageFromResource(const ResourceOnPage& reso
 	return parsedPage;
 }
 
+// #define CHECK_IS_RESOURCE_EXIST_CONSISTENCY
+bool isResourceIxist(UnorderedDataCollection* collection, ParsedPagePtr& resource, StorageType storage, bool existingResource)
+{
+	// BEWARE: if existingResource is true - use this function in cases when it is really existing resource
+	// Existing resource means that resource (not incoming page!) in pending or crawled pages (this resource was added/parsed from another page before)
+
+	// If you're trying to use it with an incoming page, this function can be executed incorrectly because this page can be added
+	// in some storages (crawled or pending), but not added in the chekced storages yet.
+
+	// uncomment #define CHECK_IS_RESOURCE_EXIST_CONSISTENCY to check if this function is executed correctly
+
+	// if UnorderedDataCollection::isParsedPageExists will be optimized, remove this function
+
+	DEBUG_ASSERT(!existingResource ||
+		resource->storages.size() > StorageType::PendingResourcesStorageType && resource->storages[StorageType::PendingResourcesStorageType] ||
+		resource->storages.size() > StorageType::CrawledUrlStorageType && resource->storages[StorageType::CrawledUrlStorageType]);
+
+	if (existingResource)
+	{
+		const bool result = resource->storages.size() > storage && resource->storages[storage];
+#ifdef CHECK_IS_RESOURCE_EXIST_CONSISTENCY
+		DEBUG_ASSERT(collection->isParsedPageExists(resource, storage) == result);
+#endif
+		return result;
+	}
+
+	return collection->isParsedPageExists(resource, storage);
+}
+
 QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFromResource, bool existingResource, const ResourceOnPage& resource, bool isParentResourceBlockedByMetaRobots, int turnaround)
 {
 	Q_UNUSED(existingResource);
@@ -1153,12 +1198,12 @@ QSet<StorageType> ModelController::addIndexingBlockingPage(ParsedPagePtr& pageFr
 	const bool isNofollowResource = resource.link.linkParameter == LinkParameter::NofollowParameter;
 	const bool isDofollowResource = !isNofollowResource;
 
-	const bool resourceInBlockedByRobotsTxtStorage = data()->isParsedPageExists(pageFromResource, StorageType::BlockedByRobotsTxtStorageType);
-	const bool resourceInBlockedByXRobotsTagStorage = data()->isParsedPageExists(pageFromResource, StorageType::BlockedByXRobotsTagStorageType);
-	const bool resourceInAllowedByXRobotsTagStorage = data()->isParsedPageExists(pageFromResource, StorageType::AllowedByXRobotsTagStorageType);
-	const bool resourceInNoFollowLinksStorage = data()->isParsedPageExists(pageFromResource, StorageType::NofollowLinksStorageType);
-	const bool resourceInDoFollowLinksStorage = data()->isParsedPageExists(pageFromResource, StorageType::DofollowUrlStorageType);
-	const bool resourceInBlockedForSEIndexStorage = data()->isParsedPageExists(pageFromResource, StorageType::BlockedForSEIndexingStorageType);
+	const bool resourceInBlockedByRobotsTxtStorage = isResourceIxist(data(), pageFromResource, StorageType::BlockedByRobotsTxtStorageType, existingResource);
+	const bool resourceInBlockedByXRobotsTagStorage = isResourceIxist(data(), pageFromResource, StorageType::BlockedByXRobotsTagStorageType, existingResource);
+	const bool resourceInAllowedByXRobotsTagStorage = isResourceIxist(data(), pageFromResource, StorageType::AllowedByXRobotsTagStorageType, existingResource);
+	const bool resourceInNoFollowLinksStorage = isResourceIxist(data(), pageFromResource, StorageType::NofollowLinksStorageType, existingResource);
+	const bool resourceInDoFollowLinksStorage = isResourceIxist(data(), pageFromResource, StorageType::DofollowUrlStorageType, existingResource);
+	const bool resourceInBlockedForSEIndexStorage = isResourceIxist(data(), pageFromResource, StorageType::BlockedForSEIndexingStorageType, existingResource);
 
 	QSet<StorageType> blockingStoragesSet;
 

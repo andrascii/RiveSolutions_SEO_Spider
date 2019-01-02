@@ -35,13 +35,11 @@ TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnable
 	setItemDelegate(new ItemViewDelegate(nullptr, this));
 	horizontalHeader()->setSectionsMovable(true);
 	setShowGrid(false);
-#ifdef USE_SORTING
 	if (sortingEnabled)
 	{
 		setSortingEnabled(true);
 		QTableView::sortByColumn(0, Qt::AscendingOrder);
 	}
-#endif
 
 	qRegisterMetaType<QModelIndexList>();
 }
@@ -50,7 +48,6 @@ void TableView::setModel(QAbstractItemModel* model)
 {
 	m_model = Common::Helpers::fast_cast<AbstractTableModel*>(model);
 
-#ifdef USE_SORTING
 	m_sortFilterProxyModel->setSourceModel(model);
 	QTableView::setModel(m_sortFilterProxyModel);
 	if (m_viewModel)
@@ -58,9 +55,6 @@ void TableView::setModel(QAbstractItemModel* model)
 		// reconnect signals/slots with correct order
 		setViewModel(m_viewModel);
 	}
-#else
-	QTableView::setModel(model);
-#endif
 
 	applyRowHeight();
 
@@ -79,10 +73,8 @@ void TableView::setModel(QAbstractItemModel* model)
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(applyRowHeight())));
 
-#ifdef USE_SORTING
 	VERIFY(connect(m_sortFilterProxyModel, &QSortFilterProxyModel::layoutAboutToBeChanged, this, &TableView::onLayoutAboutToBeChanged));
 	VERIFY(connect(m_sortFilterProxyModel, &QSortFilterProxyModel::layoutChanged, this, &TableView::onLayoutChanged));
-#endif
 }
 
 void TableView::mouseMoveEvent(QMouseEvent* event)
@@ -100,13 +92,11 @@ void TableView::mouseMoveEvent(QMouseEvent* event)
 	}
 	else
 	{
-#ifdef USE_SORTING
 		if (index.model() != m_sortFilterProxyModel)
 		{
 			ASSERT(index.model() == m_model);
 			index = m_sortFilterProxyModel->mapFromSource(index);
 		}
-#endif
 		viewModel()->setHoveredIndex(index);
 	}
 
@@ -385,7 +375,6 @@ void TableView::onAboutRepaintItems(const QModelIndexList& modelIndexes)
 			continue;
 		}
 
-#ifdef USE_SORTING
 		if (index.model() == m_model)
 		{
 			update(m_sortFilterProxyModel->mapFromSource(index));
@@ -402,9 +391,6 @@ void TableView::onAboutRepaintItems(const QModelIndexList& modelIndexes)
 		// workaround to fix crash caused by missing mapping for this index
 		// by getting index from model we can be sure that there is a mapping for this index
 		update(m_sortFilterProxyModel->index(index.row(), index.column()));
-#else
-		update(index);
-#endif
 	}
 }
 
@@ -437,14 +423,11 @@ void TableView::onLayoutChanged(const QList<QPersistentModelIndex>& indices, QAb
 	{
 		viewModel()->invalidateItemViewRendererCache();
 
-
-#ifdef USE_SORTING
 		// seems like a bug in QSortProxyFiltermodel, so we need a costyl here
 		// after resorting each row has undefined height, but it should have a specific height: see applyRowHeightToRowRange
 		// TODO: fix it in a proper way
 		// check it in the future versions of Qt, probably it will be fixed
 		applyRowHeight();
-#endif;
 
 		// fixing reseting columns width bug after sorting empty table
 		int index = 0;

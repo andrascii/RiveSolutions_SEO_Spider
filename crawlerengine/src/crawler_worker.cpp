@@ -104,6 +104,7 @@ void CrawlerWorker::extractUrlAndDownload()
 
 	if ((!m_pageLoader->canPullLoading() || !m_isRunning) && !reloadPage)
 	{
+		m_defferedProcessingTimer->start();
 		return;
 	}
 
@@ -378,6 +379,10 @@ void CrawlerWorker::onPageParsed(const WorkerResult& result) const noexcept
 			!result.incomingPageConstRef()->allResourcesOnPage.begin()->restrictions);
 	}
 
+	DEBUG_ASSERT(!result.incomingPageConstRef()->redirectedUrl.isValid() ||
+		!result.incomingPageConstRef()->isThisExternalPage ||
+		result.incomingPageConstRef()->allResourcesOnPage.size() == 1);
+
 	const bool isLimitReached = s_trialLicenseSentLinksCounter.fetch_add(1, std::memory_order_relaxed) >= Common::c_maxTrialLicenseCrawlingLinksCount;
 
 	if (m_licenseService->isTrialLicense() && isLimitReached)
@@ -474,12 +479,22 @@ void CrawlerWorker::handleResponseData(const HopsChain& hopsChain,
 {
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(hopsChain);
 
+	for (int i = 0; i < pages.size() - 1; ++i)
+	{
+		// fix resource type in redirects chain
+		pages[i]->resourceType = pages.back()->resourceType;
+	}
+
 	bool checkUrl = false;
 
 	fixDDOSGuardRedirectsIfNeeded(pages);
 
 	for (ParsedPagePtr& page : pages)
 	{
+		if (checkUrl && !page->url.fragment().isEmpty())
+		{
+			page->url.setFragment(QString());
+		}
 		const bool isUrlAdded = !checkUrl || m_uniqueLinkStore->addCrawledUrl(page->url, requestType);
 
 		handlePage(page, turnaround, isUrlAdded, isPageReloaded, reloadingPageStrorages, requestType);
