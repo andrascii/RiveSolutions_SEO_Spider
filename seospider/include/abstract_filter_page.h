@@ -17,7 +17,7 @@ class LookupLineEditWidget;
 class ColumnsLookupLineEditWidget;
 class ResourceTypeFilterWidget;
 
-class AbstractFilterPage : public QFrame, public AbstractTablePage
+class AbstractFilterPage : public AbstractTablePage
 {
 	Q_OBJECT
 
@@ -44,7 +44,6 @@ protected:
 	virtual bool eventFilter(QObject* object, QEvent* event) override;
 
 protected slots:
-	void exportFilterData();
 	void onApplyColumnSearch(int searchKey, const QString& searchValue);
 	void onApplyPlainSearch(const QString& searchValue);
 	void onResourceTypeFilterChanged(int filter);

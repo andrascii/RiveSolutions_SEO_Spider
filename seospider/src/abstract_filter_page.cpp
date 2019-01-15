@@ -8,15 +8,9 @@
 #include "command_menu.h"
 #include "page_data_widget.h"
 #include "filter_info_factory.h"
-#include "preferences.h"
-#include "action_registry.h"
-#include "action_keys.h"
-#include "main_window.h"
-#include "content_frame.h"
 #include "filter_table_selection_model.h"
 #include "filter_info_widget.h"
 #include "storage_exporter.h"
-#include "crawler.h"
 #include "lookup_lineedit_widget.h"
 #include "columns_lookup_lineedit_widget.h"
 #include "parsed_page_info.h"
@@ -33,8 +27,7 @@ namespace SeoSpider
 using namespace CrawlerEngine;
 
 AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWidget* parent)
-	: QFrame(parent)
-	, AbstractTablePage(webSiteDataWidget->pageDataWidget())
+	: AbstractTablePage(parent, webSiteDataWidget->pageDataWidget())
 	, m_webSiteDataWidget(webSiteDataWidget)
 	, m_summaryFilterTableView(new TableView(this, true, false, false))
 	, m_summaryFilterModel(new SummaryModel(this))
@@ -329,20 +322,6 @@ bool AbstractFilterPage::eventFilter(QObject* object, QEvent* event)
 	}
 
 	return false;
-}
-
-void AbstractFilterPage::exportFilterData()
-{
-	QAction* action = qobject_cast<QAction*>(sender());
-	ASSERT(action && "This method must be called using QAction");
-
-	const QVariant objectData = action->data();
-	ASSERT(objectData.isValid() && "No data passed");
-
-	std::vector<DCStorageDescription> storages;
-	storages.push_back(qvariant_cast<DCStorageDescription>(objectData));
-
-	StorageExporter::exportStorage(theApp->crawler()->sequencedDataCollection(), storages);
 }
 
 void AbstractFilterPage::reinitFilterTableSpans()
