@@ -235,7 +235,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 				return nullptr;
 			}
 
-			p->setName(QObject::tr("Pages with missing Yandex Metrica Counters"));
+			p->setName(QObject::tr("Yandex Metrica Finder"));
 			p->setAuditGroup(AuditGroup::YandexMetricaCounters);
 			p->setDescriptions(std::move(createYandexMetricaDescriptions()));
 
@@ -303,7 +303,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter1StorageType,
-				QObject::tr("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter1Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter1Id()).toStdString().c_str()
 			});
 	}
 
@@ -313,7 +313,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter2StorageType,
-				QObject::tr("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter2Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter2Id()).toStdString().c_str()
 			});
 	}
 
@@ -323,7 +323,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter3StorageType,
-				QObject::tr("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter3Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter3Id()).toStdString().c_str()
 			});
 	}
 
@@ -333,7 +333,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter4StorageType,
-				QObject::tr("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter4Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter4Id()).toStdString().c_str()
 			});
 	}
 
@@ -343,7 +343,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter5StorageType,
-				QObject::tr("Pages with missing Yandex Metrica Counter %1").arg(theApp->preferences()->yandexMetricaCounter5Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter5Id()).toStdString().c_str()
 			});
 	}
 
