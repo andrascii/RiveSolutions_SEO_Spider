@@ -10,7 +10,7 @@ class PageDataWidget;
 class LookupLineEditWidget;
 class ColumnsLookupLineEditWidget;
 
-class AllPagesPage : public QFrame, public AbstractTablePage
+class AllPagesPage : public AbstractTablePage
 {
 	Q_OBJECT
 
@@ -52,6 +52,7 @@ private:
 	ColumnsLookupLineEditWidget* m_columnsLookupLineEditWidget;
 	LookupLineEditWidget* m_lookupLineEditWidget;
 	QMap<WidgetType, int> m_widgetIndexes;
+	QAction* m_exportFilterDataAction;
 };
 
 }

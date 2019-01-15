@@ -13,17 +13,18 @@
 #include "statistic_counter.h"
 #include "resource_type_filter_widget.h"
 #include "table_proxy_model.h"
+#include "svg_renderer.h"
 
 namespace SeoSpider
 {
 
 AllPagesPage::AllPagesPage(QWidget* parent)
-	: QFrame(parent)
-	, AbstractTablePage(new PageDataWidget(this))
+	: AbstractTablePage(parent, new PageDataWidget())
 	, m_stackedTableView(new QStackedWidget(this))
 	, m_splitter(nullptr)
 	, m_columnsLookupLineEditWidget(nullptr)
 	, m_lookupLineEditWidget(nullptr)
+	, m_exportFilterDataAction(nullptr)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->setMargin(0);
@@ -137,6 +138,23 @@ void AllPagesPage::createHeaderActionWidgets()
 
 	VERIFY(connect(m_lookupLineEditWidget, SIGNAL(applySearch(const QString&)),
 		this, SLOT(onApplyPlainSearch(const QString&))));
+
+	//////////////////////////////////////////////////////////////////////////
+
+	m_exportFilterDataAction = new QAction(SvgRenderer::render(QStringLiteral(":/images/excel.svg"), 20, 20),
+		tr("Export selected filter data to .xlsx file"), this);
+
+	AbstractPage::addAction(m_exportFilterDataAction);
+
+	VERIFY(connect(m_exportFilterDataAction, &QAction::triggered, this, &AllPagesPage::exportFilterData));
+
+	static DCStorageDescription s_description
+	{
+		CrawlerEngine::StorageType::CrawledUrlStorageType,
+		name(),
+	};
+
+	m_exportFilterDataAction->setData(QVariant::fromValue(s_description));
 }
 
 void AllPagesPage::showNoResultsLabelFor(const QString& searchValue)
