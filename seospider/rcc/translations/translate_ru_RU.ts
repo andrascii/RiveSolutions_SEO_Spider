@@ -1566,11 +1566,11 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
     </message>
     <message>
         <source>Pages with missing Yandex Metrica Counters</source>
-        <translation>Страницы с отсутствующими счетчиками яндекс метрики</translation>
+        <translation type="vanished">Страницы с отсутствующими счетчиками яндекс метрики</translation>
     </message>
     <message>
         <source>Pages with missing Yandex Metrica Counter %1</source>
-        <translation>Страницы с отсутствующими счетчиком яндекс метрики %1</translation>
+        <translation type="vanished">Страницы с отсутствующими счетчиком яндекс метрики %1</translation>
     </message>
     <message>
         <source>Response Time (ms)</source>
@@ -1612,6 +1612,14 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <source>Images%0</source>
         <translation>Изобр.</translation>
     </message>
+    <message>
+        <source>Yandex Metrica Finder</source>
+        <translation>Яндекс Метрика Finder</translation>
+    </message>
+    <message>
+        <source>Pages without Counter %1</source>
+        <translation>Страницы без счетчика %1</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
@@ -1637,6 +1645,10 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
     <message>
         <source>All Site Pages</source>
         <translation>Все страницы сайта</translation>
+    </message>
+    <message>
+        <source>Export selected filter data to .xlsx file</source>
+        <translation>Эскпортировать данные выбранного фильтра в excel</translation>
     </message>
 </context>
 <context>
@@ -2166,7 +2178,7 @@ please stop crawling and try again</source>
     <name>SeoSpider::SiteAuditPage</name>
     <message>
         <source>Audit Info</source>
-        <translation>Информация аудита</translation>
+        <translation>SEO анализ ресурса</translation>
     </message>
     <message>
         <source>Change filters grouping</source>
