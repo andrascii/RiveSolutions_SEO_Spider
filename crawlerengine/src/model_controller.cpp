@@ -1176,7 +1176,7 @@ bool isResourceIxist(UnorderedDataCollection* collection, ParsedPagePtr& resourc
 
 	if (existingResource)
 	{
-		const bool result = resource->storages.size() > storage && resource->storages[storage];
+		const bool result = resource->storages.size() > static_cast<size_t>(storage) && resource->storages[storage];
 #ifdef CHECK_IS_RESOURCE_EXIST_CONSISTENCY
 		DEBUG_ASSERT(collection->isParsedPageExists(resource, storage) == result);
 #endif

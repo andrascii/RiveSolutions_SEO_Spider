@@ -479,7 +479,7 @@ void CrawlerWorker::handleResponseData(const HopsChain& hopsChain,
 {
 	std::vector<ParsedPagePtr> pages = m_pageDataCollector->collectPageDataFromResponse(hopsChain);
 
-	for (int i = 0; i < pages.size() - 1; ++i)
+	for (size_t i = 0; i < pages.size() - 1; ++i)
 	{
 		// fix resource type in redirects chain
 		pages[i]->resourceType = pages.back()->resourceType;
