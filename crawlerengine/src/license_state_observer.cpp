@@ -69,17 +69,24 @@ bool LicenseStateObserver::isTrialLicense() const noexcept
 #endif
 }
 
+const QDateTime& LicenseStateObserver::expirationDate() const noexcept
+{
+	return m_expirationDate;
+}
+
+const QString& LicenseStateObserver::userName() const noexcept
+{
+	return m_userName;
+}
+
+const QString& LicenseStateObserver::email() const noexcept
+{
+	return m_email;
+}
+
 void LicenseStateObserver::timerEvent(QTimerEvent*)
 {
-#ifdef CHECK_LICENSE
-	if (m_licenseRequester)
-	{
-		return;
-	}
-
-	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
-	m_licenseRequester->start();
-#endif
+	requestLicenseDataIfNeeded();
 }
 
 void LicenseStateObserver::onLicenseData(Requester*, const GetSerialNumberDataResponse& response)
@@ -133,6 +140,7 @@ void LicenseStateObserver::onSubscription(const IResponse& response)
 				static_cast<const SetSerialNumberResponse&>(response);
 
 			onLicenseStateChanged(setSerialNumberResponse.states());
+			requestLicenseDataIfNeeded();
 
 			break;
 		}
@@ -142,6 +150,9 @@ void LicenseStateObserver::onSubscription(const IResponse& response)
 				static_cast<const GetSerialNumberDataResponse&>(response);
 
 			onLicenseStateChanged(getSerialNumberDataResponse.data().states);
+			m_expirationDate = getSerialNumberDataResponse.data().dateExpire;
+			m_email = getSerialNumberDataResponse.data().email;
+			m_userName = getSerialNumberDataResponse.data().userName;
 
 			break;
 		}
@@ -190,4 +201,16 @@ void LicenseStateObserver::checkLicenseFileAndInitLicenseIfNeeded()
 	m_licenseRequester->start();
 }
 
+void LicenseStateObserver::requestLicenseDataIfNeeded()
+{
+#ifdef CHECK_LICENSE
+	if (m_licenseRequester)
+	{
+		return;
+	}
+
+	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
+	m_licenseRequester->start();
+#endif
+}
 }

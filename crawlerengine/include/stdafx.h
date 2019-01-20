@@ -17,6 +17,8 @@
 #pragma warning(disable:4702)
 #pragma warning(disable:4456)
 
+#define CHECK_LICENSE
+
 //
 // Qt
 //

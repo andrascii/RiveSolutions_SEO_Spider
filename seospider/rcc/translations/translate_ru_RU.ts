@@ -69,6 +69,10 @@ an invalid username/password.</source>
         <source>Company email:</source>
         <translation>Email компании:</translation>
     </message>
+    <message>
+        <source>These preferences are not available on the trial version of the application.</source>
+        <translation>Эти настройки недоступны в пробной версии приложения.</translation>
+    </message>
 </context>
 <context>
     <name>ControlPanelWidget</name>
@@ -210,6 +214,10 @@ Please, be sure that you entered a valid address</source>
         <source>To:</source>
         <translation>До:</translation>
     </message>
+    <message>
+        <source>These preferences are not available on the trial version of the application.</source>
+        <translation>Эти настройки недоступны в пробной версии приложения.</translation>
+    </message>
 </context>
 <context>
     <name>CrawlerSettingsWidget</name>
@@ -337,6 +345,10 @@ Please, be sure that you entered a valid address</source>
     <message>
         <source>Maximum active connections:</source>
         <translation>Максимальное число активных соединений:</translation>
+    </message>
+    <message>
+        <source>These preferences are not available on the trial version of the application.</source>
+        <translation>Эти настройки недоступны в пробной версии приложения.</translation>
     </message>
 </context>
 <context>
@@ -468,6 +480,10 @@ Please, be sure that you entered a valid address</source>
     <message>
         <source>Page Title Length</source>
         <translation>Длина тега title</translation>
+    </message>
+    <message>
+        <source>These preferences are not available on the trial version of the application.</source>
+        <translation>Эти настройки недоступны в пробной версии приложения.</translation>
     </message>
 </context>
 <context>
@@ -1620,6 +1636,24 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
         <source>Pages without Counter %1</source>
         <translation>Страницы без счетчика %1</translation>
     </message>
+    <message>
+        <source>Unregistered: you are using the trial version of the application</source>
+        <translation>Нет регистрации: Вы используете пробную версию приложения</translation>
+    </message>
+    <message>
+        <source>The application is registered on %0 
+The license is valid untill %1</source>
+        <translation>Приложение зарегистрировано на %0 
+Лицензия активна до %1</translation>
+    </message>
+    <message>
+        <source>You&apos;re using the trial version of the application, to use full functionality, please purchase a license</source>
+        <translation>Вы используете пробную  версию приложения, для получения полного функционала приобретите лицензию</translation>
+    </message>
+    <message>
+        <source>These preferences are not available on the trial version of the application.</source>
+        <translation>Эти настройки недоступны в пробной версии приложения.</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
@@ -2043,7 +2077,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Restart Crawler</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезапустить краулер</translation>
     </message>
 </context>
 <context>

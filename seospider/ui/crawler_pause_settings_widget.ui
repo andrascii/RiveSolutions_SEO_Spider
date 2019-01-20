@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>469</width>
+    <width>410</width>
     <height>335</height>
    </rect>
   </property>
@@ -53,6 +53,13 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <item>
+       <widget class="SeoSpider::TrialLicenseLabel" name="trialLabel">
+        <property name="text">
+         <string>These preferences are not available on the trial version of the application.</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <property name="horizontalSpacing">
@@ -172,6 +179,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeoSpider::TrialLicenseLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">trial_license_label.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

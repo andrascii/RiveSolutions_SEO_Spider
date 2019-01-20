@@ -24,17 +24,27 @@ void SplashScreen::setMessage(const QString& message) const
 	m_ui->messageText->setText(message);
 }
 
-void SplashScreen::show()
+void SplashScreen::show(bool isAboutDialog)
 {
+	instance()->m_isAboutDialog = isAboutDialog;
 	instance()->QWidget::show();
+
+	if (isAboutDialog)
+	{
+		theApp->installEventFilter(instance());
+	}
 
 	theApp->processEvents();
 }
 
 void SplashScreen::finish()
 {
+	if (instance()->m_isAboutDialog)
+	{
+		theApp->removeEventFilter(instance());
+	}
+
 	instance()->hide();
-	instance()->deleteLater();
 
 	theApp->processEvents();
 }
@@ -79,4 +89,13 @@ void SplashScreen::paintEvent(QPaintEvent*)
 	painter.drawPixmap(rect(), m_brandingLogoImage);
 }
 
+bool SplashScreen::eventFilter(QObject* watched, QEvent* event)
+{
+	if (m_isAboutDialog && (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::WindowDeactivate))
+	{
+		finish();
+	}
+
+	return QFrame::eventFilter(watched, event);
+}
 }

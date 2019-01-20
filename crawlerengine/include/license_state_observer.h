@@ -29,6 +29,9 @@ public:
 
 	virtual bool isPaidLicense() const noexcept = 0;
 	virtual bool isTrialLicense() const noexcept = 0;
+	virtual const QDateTime& expirationDate() const noexcept = 0;
+	virtual const QString& userName() const noexcept = 0;
+	virtual const QString& email() const noexcept = 0;
 
 	// signals
 	virtual void licenseChanged(int reason) const = 0;
@@ -45,6 +48,9 @@ public:
 
 	virtual bool isPaidLicense() const noexcept override;
 	virtual bool isTrialLicense() const noexcept override;
+	virtual const QDateTime& expirationDate() const noexcept override;
+	virtual const QString& userName() const noexcept override;
+	virtual const QString& email() const noexcept override;
 
 	// signals
 	Q_SIGNAL virtual void licenseChanged(int reason) const override;
@@ -61,10 +67,15 @@ private:
 	void setTrialLicense(bool value, Reason reason);
 
 	void checkLicenseFileAndInitLicenseIfNeeded();
+	void requestLicenseDataIfNeeded();
 
 private:
 	bool m_isTrialLicense;
 	RequesterWrapper m_licenseRequester;
+	RequesterWrapper m_licenseDataRequester;
+	QDateTime m_expirationDate;
+	QString m_userName;
+	QString m_email;
 };
 
 }
