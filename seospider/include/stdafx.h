@@ -14,6 +14,9 @@
 #pragma warning(disable:4702)
 #pragma warning(disable:4456)
 
+#define SUPPORT_SERIALIZATION
+#define CHECK_LICENSE
+
 //
 // Qt
 //

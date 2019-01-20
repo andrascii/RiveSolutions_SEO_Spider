@@ -70,6 +70,7 @@ private slots:
 	void onAboutUpdateExists();
 	void onAboutUpdateIsNotExists();
 	void openHelpPage();
+	void openAboutDialog();
 	void delayedHideShadedOverlay();
 
 private:

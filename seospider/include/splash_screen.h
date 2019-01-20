@@ -10,12 +10,13 @@ class SplashScreen : public QFrame
 	Q_OBJECT
 
 public:
-	static void show();
+	static void show(bool isAboutDialog = false);
 	static void finish();
 	static void showMessage(const QString& message);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
+	virtual bool eventFilter(QObject* watched, QEvent* event) override;
 
 private:
 	SplashScreen();
@@ -30,6 +31,7 @@ private:
 
 	Ui_SplashScreenFrame* m_ui;
 	QPixmap m_brandingLogoImage;
+	bool m_isAboutDialog;
 };
 
 }

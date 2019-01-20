@@ -107,6 +107,13 @@ QStatusBar QProgressBar:chunk
 	background: #FF6600;
 }
 
+QStatusBar SeoSpider--TrialLicenseLabel
+{
+	color: #FF7777;
+	margin-left: 1em;
+	font: bold;
+}
+
 SeoSpider--ProjectFileStateWidget QLabel
 {
 	color: #EDEDED;
@@ -552,6 +559,17 @@ SeoSpider--ApplicationSettingsDialog QPushButton#applyButton:enabled:hover
 SeoSpider--ApplicationSettingsDialog QPushButton#applyButton:enabled:pressed
 {
 	background-color: #4A9029;
+}
+
+SeoSpider--ApplicationSettingsDialog SeoSpider--TrialLicenseLabel
+{
+	color: #FF3333;
+	font: bold;
+}
+
+SeoSpider--ApplicationSettingsDialog SeoSpider--TrialLicenseLabel:disabled
+{
+	color: #FF3333;
 }
 
 /*/////////////////////////////// SitemapCreatorDialog ///////////////////////////////*/

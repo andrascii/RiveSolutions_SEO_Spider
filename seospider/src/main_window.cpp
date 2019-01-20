@@ -47,6 +47,7 @@
 #include "custom_uri_channel.h"
 #include "statistic_counter.h"
 #include "limits_settings_widget.h"
+#include "splash_screen.h"
 
 namespace
 {
@@ -300,6 +301,29 @@ void MainWindow::hideShadedOverlay()
 	m_delayedHideShadedOverlayTimer->start();
 }
 
+void MainWindow::openAboutDialog()
+{
+	DEBUG_ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
+
+	if (!licenseService)
+	{
+		return;
+	}
+
+	static const QString s_noLicenseMessage = QObject::tr("Unregistered: you are using the trial version of the application");
+
+	QString message = s_noLicenseMessage;
+	if (licenseService->isPaidLicense())
+	{
+		static QString s_paidLicenseTemplate = QObject::tr("The application is registered on %0 \nThe license is valid untill %1");
+		message = s_paidLicenseTemplate.arg(licenseService->userName()).arg(licenseService->expirationDate().toString("dd.MM.yyyy"));
+	}
+
+	SplashScreen::showMessage(message);
+	SplashScreen::show(true);
+}
+
 void MainWindow::delayedHideShadedOverlay()
 {
 	m_shadedOverlay->setVisible(false);
@@ -401,6 +425,9 @@ void MainWindow::init()
 	QStatusBar* statusBar = new QStatusBar(this);
 	statusBar->addPermanentWidget(new NotificationsContainerWidget(statusBar));
 	statusBar->addPermanentWidget(new InternetConnectionStateWidget(statusBar));
+	TrialLicenseLabel* trialLabel = new TrialLicenseLabel(statusBar);
+	trialLabel->setText(QObject::tr("You're using the trial version of the application, to use full functionality, please purchase a license"));
+	statusBar->addWidget(trialLabel);
 	statusBar->addWidget(new ProjectFileStateWidget(statusBar));
 	statusBar->addWidget(new CrawlerProgressBar(statusBar));
 	setStatusBar(statusBar);
@@ -556,6 +583,9 @@ void MainWindow::initHelpActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_showHelpAction), SIGNAL(triggered()),
 		this, SLOT(openHelpPage())));
+
+	VERIFY(connect(actionRegistry.globalAction(s_aboutProductAction), SIGNAL(triggered()),
+		this, SLOT(openAboutDialog())));
 }
 
 void MainWindow::initFileActions()
