@@ -9,6 +9,8 @@ class TrialLicenseLabel: public QLabel
 public:
 	TrialLicenseLabel(QWidget* parent = nullptr);
 
+	virtual void mousePressEvent(QMouseEvent* event) override;
+
 private:
 	Q_SLOT void onLicenseChanged();
 };
