@@ -426,7 +426,8 @@ void MainWindow::init()
 	statusBar->addPermanentWidget(new NotificationsContainerWidget(statusBar));
 	statusBar->addPermanentWidget(new InternetConnectionStateWidget(statusBar));
 	TrialLicenseLabel* trialLabel = new TrialLicenseLabel(statusBar);
-	trialLabel->setText(QObject::tr("You're using the trial version of the application, to use full functionality, please purchase a license"));
+	trialLabel->setTextFormat(Qt::RichText);
+	trialLabel->setText(QObject::tr("You're using the trial version of the application, to use full functionality, please <a href='#' style='color:#aaaaff'>purchase a license</a>"));
 	statusBar->addWidget(trialLabel);
 	statusBar->addWidget(new ProjectFileStateWidget(statusBar));
 	statusBar->addWidget(new CrawlerProgressBar(statusBar));

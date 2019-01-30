@@ -1647,12 +1647,12 @@ The license is valid untill %1</source>
 Лицензия активна до %1</translation>
     </message>
     <message>
-        <source>You&apos;re using the trial version of the application, to use full functionality, please purchase a license</source>
-        <translation>Вы используете пробную  версию приложения, для получения полного функционала приобретите лицензию</translation>
-    </message>
-    <message>
         <source>These preferences are not available on the trial version of the application.</source>
         <translation>Эти настройки недоступны в пробной версии приложения.</translation>
+    </message>
+    <message>
+        <source>You&apos;re using the trial version of the application, to use full functionality, please &lt;a href=&apos;#&apos; style=&apos;color:#aaaaff&apos;&gt;purchase a license&lt;/a&gt;</source>
+        <translation type="unfinished">Вы используете пробную  версию приложения, для получения полного функционала &lt;a href=&apos;#&apos; style=&apos;color:#aaaaff&apos;&gt;приобретите лицензию&lt;/a&gt;</translation>
     </message>
 </context>
 <context>

@@ -13,6 +13,12 @@ TrialLicenseLabel::TrialLicenseLabel(QWidget* parent)
 	onLicenseChanged();
 }
 
+void TrialLicenseLabel::mousePressEvent(QMouseEvent* event)
+{
+	QLabel::mousePressEvent(event);
+	QDesktopServices::openUrl(QUrl("https://rivesolutions.com#prices"));
+}
+
 void TrialLicenseLabel::onLicenseChanged()
 {
 	CrawlerEngine::ILicenseStateObserver* licenseService = CrawlerEngine::ServiceLocator::instance()->service<CrawlerEngine::ILicenseStateObserver>();
