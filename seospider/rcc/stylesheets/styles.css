@@ -805,6 +805,10 @@ QFrame#MessageBox
 QFrame#MessageBox QPushButton
 {
 	min-height: 1.4em;
+	min-width: 7em;
+	max-width: 10em;
+	padding-left: 1em;
+	padding-right: 1em;
 	border-color: #D3CBB7;
 	background: #EEE8D5;
 }

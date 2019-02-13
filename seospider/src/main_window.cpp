@@ -97,8 +97,48 @@ void MainWindow::showSitemapCreatorDialog()
 	titledWindow->deleteLater();
 }
 
+void MainWindow::showPurchaseDialog()
+{
+	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+	messageBoxDialog->setWindowTitle(tr("Purchase PRO version"));
+
+	const QString message = tr("This functionality is not available in the trial version. To unlock all features you need to purchase the PRO version");
+
+	messageBoxDialog->setMessage(message);
+
+	messageBoxDialog->addButton(tr("Purchase now"), QDialogButtonBox::YesRole);
+	messageBoxDialog->addButton(tr("No, thanks"), QDialogButtonBox::NoRole);
+
+	auto onDialogClosed = [messageBoxDialog](int result)
+	{
+		if (result == QDialog::Accepted)
+		{
+			QDesktopServices::openUrl(QUrl("https://rivesolutions.com#prices"));
+		}
+		messageBoxDialog->deleteLater();
+	};
+
+	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
+
+	messageBoxDialog->exec();
+}
+
 void MainWindow::saveFile()
 {
+	DEBUG_ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
+
+	if (!licenseService)
+	{
+		return;
+	}
+
+	if (licenseService->isTrialLicense())
+	{
+		showPurchaseDialog();
+		return;
+	}
+
 	if (theApp->crawler()->hasCustomSessionName())
 	{
 		if (theApp->crawler()->state() == Crawler::StateWorking)
@@ -127,6 +167,20 @@ void MainWindow::saveFile()
 
 void MainWindow::saveFileAs()
 {
+	DEBUG_ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
+
+	if (!licenseService)
+	{
+		return;
+	}
+
+	if (licenseService->isTrialLicense())
+	{
+		showPurchaseDialog();
+		return;
+	}
+
 	QString path = getSaveFilePath();
 
 	if (path.isEmpty())
@@ -145,6 +199,20 @@ void MainWindow::saveFileAs()
 
 void MainWindow::openFile()
 {
+	DEBUG_ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
+
+	if (!licenseService)
+	{
+		return;
+	}
+
+	if (licenseService->isTrialLicense())
+	{
+		showPurchaseDialog();
+		return;
+	}
+
 	if (theApp->crawler()->hasSession())
 	{
 		Dialog::showMessageBoxDialog(tr("Open file error"),
@@ -172,6 +240,20 @@ void MainWindow::openFile()
 
 void MainWindow::openFile(const QString& filePath)
 {
+	DEBUG_ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
+	ILicenseStateObserver* licenseService = ServiceLocator::instance()->service<ILicenseStateObserver>();
+
+	if (!licenseService)
+	{
+		return;
+	}
+
+	if (licenseService->isTrialLicense())
+	{
+		showPurchaseDialog();
+		return;
+	}
+
 	if (theApp->crawler()->hasSession())
 	{
 		Dialog::showMessageBoxDialog(tr("Open file error"),

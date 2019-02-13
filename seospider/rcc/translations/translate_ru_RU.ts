@@ -2079,6 +2079,22 @@ please stop crawling and try again</source>
         <source>Restart Crawler</source>
         <translation>Перезапустить краулер</translation>
     </message>
+    <message>
+        <source>Purchase PRO version</source>
+        <translation>Приобретите PRO версию</translation>
+    </message>
+    <message>
+        <source>This functionality is not available in the trial version. To unlock all features you need to purchase the PRO version</source>
+        <translation>Этот функционал недоступен в пробной версии. Чтобы использовать все возможности приложения Вам необходимо приобрести PRO версию</translation>
+    </message>
+    <message>
+        <source>Purchase now</source>
+        <translation>Приобрести сейчас</translation>
+    </message>
+    <message>
+        <source>No, thanks</source>
+        <translation>Спасибо, нет</translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::MenuBar</name>
