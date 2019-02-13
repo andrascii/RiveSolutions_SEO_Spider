@@ -28,6 +28,7 @@ signals:
 
 public slots:
 	void showSitemapCreatorDialog();
+	void showPurchaseDialog();
 	void saveFile();
 	void saveFileAs();
 	void openFile();
