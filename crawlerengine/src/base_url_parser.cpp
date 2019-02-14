@@ -14,15 +14,8 @@ void BaseUrlParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 {
 	Q_UNUSED(headers);
 
-	IHtmlNodeCountedPtr headTagNode = m_htmlParser->firstMatchNode(IHtmlNode::TagIdHead);
-
-	if (!headTagNode)
-	{
-		page->baseUrl = page->url;
-		return;
-	}
-
-	IHtmlNodeCountedPtr baseTagNode = headTagNode->firstMatchSubNode(IHtmlNode::TagIdBase);
+	std::vector<IHtmlNodeCountedPtr> baseTagNodes = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdBase);
+	IHtmlNodeCountedPtr baseTagNode = baseTagNodes.empty() ? nullptr : baseTagNodes[0];
 
 	if (baseTagNode && baseTagNode->hasAttribute("href"))
 	{

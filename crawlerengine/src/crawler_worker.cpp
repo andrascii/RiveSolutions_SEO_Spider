@@ -142,6 +142,11 @@ CrawlerWorker::SchedulePagesResult CrawlerWorker::schedulePageResourcesLoading(P
 {
 	SchedulePagesResult result;
 
+	if (parsedPage->statusCode >= Common::StatusCode::BadRequest400)
+	{
+		return result;
+	}
+
 	if (parsedPage->isThisExternalPage)
 	{
 		if (parsedPage->redirectedUrl.isValid())
