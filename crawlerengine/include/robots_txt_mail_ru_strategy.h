@@ -4,7 +4,7 @@
 
 namespace CrawlerEngine
 {
-	
+
 // https://help.mail.ru/webmaster/indexing/robots.txt/rules/user-agent
 // https://help.mail.ru/webmaster/indexing/robots/management_methods/meta_tags
 

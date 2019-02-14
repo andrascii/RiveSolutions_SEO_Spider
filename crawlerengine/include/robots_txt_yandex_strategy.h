@@ -6,7 +6,7 @@ namespace CrawlerEngine
 {
 
 // yandex
-// https://yandex.ru/support/webmaster/controlling-robot/robots-txt.html	
+// https://yandex.ru/support/webmaster/controlling-robot/robots-txt.html
 
 class RobotsTxtYandexStrategy : public RobotsTxtBaseStrategy
 {

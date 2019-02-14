@@ -6,7 +6,7 @@ namespace CrawlerEngine
 
 namespace
 {
-	
+
 const QMap<QString, UserAgentType> s_userAgent =
 {
 	{ "googlebot", UserAgentType::GoogleBot },
@@ -18,7 +18,7 @@ const QMap<QString, UserAgentType> s_userAgent =
 };
 
 }
-	
+
 UserAgentType MetaRobotsHelpers::userAgent(const QString& userAgentStr)
 {
 	const QString fixedUserAgentStr = userAgentStr == QString("robots") ? QString("*") : userAgentStr;

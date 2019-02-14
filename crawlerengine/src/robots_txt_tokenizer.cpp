@@ -179,7 +179,7 @@ QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> RobotsTxtTokenizer::allowAndDi
 		}
 
 		return first.token == RobotsTxtToken::TokenAllow && second.token == RobotsTxtToken::TokenDisallow;
-		
+
 	};
 
 	std::sort(result.begin(), result.end(), sortFunc);
