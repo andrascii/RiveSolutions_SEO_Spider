@@ -235,8 +235,9 @@ void MultiSocketLoader::applyProxySettingsIfNeeded(CURL* easyHandle) const
 {
 	if (!m_proxySettings.proxyHostName.isEmpty())
 	{
-		curl_easy_setopt(easyHandle, CURLOPT_PROXY, m_proxySettings.proxyHostName.constData());
-		curl_easy_setopt(easyHandle, CURLOPT_PROXYPORT, m_proxySettings.proxyPort);
+		const QString proxyAddress = m_proxySettings.proxyHostName + ":" + QString::number(m_proxySettings.proxyPort);
+
+		curl_easy_setopt(easyHandle, CURLOPT_PROXY, proxyAddress.toStdString().data());
 
 		if (!m_proxySettings.proxyUser.isEmpty() && !m_proxySettings.proxyPassword.isEmpty())
 		{

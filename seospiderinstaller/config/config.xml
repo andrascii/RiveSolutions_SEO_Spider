@@ -9,7 +9,7 @@
 	<InstallerApplicationIcon>favicon</InstallerApplicationIcon>
 	<Logo>logo.png</Logo>
 	<WizardStyle>Modern</WizardStyle>
-	<RunProgram>/seospider.exe</RunProgram>
+	<RunProgram>@TargetDir@/seospider.exe</RunProgram>
 	<StartMenuDir>Seo Spider</StartMenuDir>
 	<MaintenanceToolName>Uninstall SeoSpider</MaintenanceToolName>
 	<RemoteRepositories>
@@ -22,5 +22,5 @@
 	<AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
 	<AllowSpaceInPath>true</AllowSpaceInPath>
 	<Background>background.png</Background>
-	<TargetDir>/Rive Solutions/Seo Spider</TargetDir>
+	<TargetDir>@ApplicationsDirX64@/Rive Solutions/Seo Spider</TargetDir>
 </Installer>
