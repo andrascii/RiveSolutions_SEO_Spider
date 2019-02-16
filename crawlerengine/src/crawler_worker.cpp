@@ -16,8 +16,6 @@ Q_DECLARE_METATYPE(std::vector<bool>)
 namespace CrawlerEngine
 {
 
-std::atomic<size_t> CrawlerWorker::s_trialLicenseSentLinksCounter = 0;
-
 CrawlerWorker::CrawlerWorker(UniqueLinkStore* uniqueLinkStore, IWorkerPageLoader* pageLoader)
 	: QObject(nullptr)
 	, m_pageDataCollector(new PageDataCollector(this))
@@ -77,11 +75,6 @@ void CrawlerWorker::stop()
 void CrawlerWorker::reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules)
 {
 	DEBUG_ASSERT(thread() == QThread::currentThread());
-
-	if (m_optionsLinkFilter && optionsData.startCrawlingPage.compare(m_optionsLinkFilter->startCrawlingPage()))
-	{
-		s_trialLicenseSentLinksCounter.store(0, std::memory_order_relaxed);
-	}
 
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
 	m_pageDataCollector->setOptions(optionsData);
@@ -387,15 +380,6 @@ void CrawlerWorker::onPageParsed(const WorkerResult& result) const noexcept
 	DEBUG_ASSERT(!result.incomingPageConstRef()->redirectedUrl.isValid() ||
 		!result.incomingPageConstRef()->isThisExternalPage ||
 		result.incomingPageConstRef()->allResourcesOnPage.size() == 1);
-
-	const bool isLimitReached = s_trialLicenseSentLinksCounter.fetch_add(1, std::memory_order_relaxed) >= Common::c_maxTrialLicenseCrawlingLinksCount;
-
-	if (m_licenseService->isTrialLicense() && isLimitReached)
-	{
-		m_uniqueLinkStore->clearPending();
-
-		return;
-	}
 
 	emit workerResult(result);
 

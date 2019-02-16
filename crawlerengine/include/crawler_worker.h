@@ -72,9 +72,6 @@ private:
 		DownloadRequestType requestType);
 
 private:
-	static std::atomic<size_t> s_trialLicenseSentLinksCounter;
-
-private:
 	PageDataCollector* m_pageDataCollector;
 	UniqueLinkStore* m_uniqueLinkStore;
 	std::unique_ptr<OptionsLinkFilter> m_optionsLinkFilter;
