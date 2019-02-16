@@ -41,7 +41,7 @@ protected:
 
 	void run()
 	{
-		
+
 #if defined(QT_DEBUG)
 		long messageBoxType = MB_RETRYCANCEL;
 #else
@@ -340,17 +340,17 @@ void SeoSpiderServiceApiImpl::setThreadExceptionHandlers() const
 	std::signal(SIGSEGV, SeoSpiderServiceApiImpl::sigSegvHandler);
 }
 
-void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression)
+void SeoSpiderServiceApiImpl::doAssert(const char* file, int line, const char* function, const char* expression, const char* additionalDumpData)
 {
 #ifndef PRODUCTION
-	debugReport(file, line, function, expression);
+	debugReport(file, line, function, expression, additionalDumpData);
 #else
 	__try
 	{
 		// generate minidump exception
 		DebugBreak();
 	}
-	__except (assertExceptionFilter(file, line, function, this, expression, GetExceptionInformation()))
+	__except (assertExceptionFilter(file, line, function, this, expression, GetExceptionInformation(), additionalDumpData))
 	{
 	}
 
@@ -414,9 +414,11 @@ bool SeoSpiderServiceApiImpl::writeLog(
 	return writeLogStack(id, level, file, line, function, thisptr, text);
 }
 
-void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression) const
+void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char* function, const char* expression, const char* additionalDumpData) const
 {
 	std::stringstream text;
+
+	const std::string separator(65, '-');
 
 	text << std::string("Debug Assertion") << std::endl << std::endl;
 	text << std::string("Thread: ") << (ptrdiff_t)QThread::currentThreadId() << std::endl;
@@ -424,6 +426,9 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
 	text << std::string("File: ") << file << std::endl;
 	text << std::string("Line: ") << line << std::endl << std::endl;
 	text << std::string("Expression: ") << expression << std::endl << std::endl;
+	text << std::string("Additional dump data:\n") << separator << std::endl;
+	text << additionalDumpData << std::endl;
+	text << separator << std::endl << std::endl;
 	text << std::string("Press Retry to debug the application");
 
 	// Run message box in background thread to stop main thread message pump
@@ -570,11 +575,17 @@ unsigned SeoSpiderServiceApiImpl::assertExceptionFilter(
 	const char* function,
 	const void* thisptr,
 	const char* expression,
-	void* exceptionInfo)
+	void* exceptionInfo,
+	const char* additionalDumpData)
 {
 	if (!m_pipeServer)
 	{
 		return false;
+	}
+
+	if (std::strlen(additionalDumpData) > 0)
+	{
+		writeLog(0, Command::Assert, file, line, function, thisptr, additionalDumpData);
 	}
 
 	EXCEPTION_POINTERS* ep = (EXCEPTION_POINTERS*)exceptionInfo;
@@ -649,7 +660,7 @@ bool SeoSpiderServiceApiImpl::makeCrashDump(const void* exceptionInfo, const int
 	command.setDumpData(exceptionInfo, exceptionInfoSize, DumpData::NativeCrash);
 
 	Result result;
-	
+
 	m_pipeServer->transactData(command, result);
 	return result.errorcode == 0;
 }

@@ -28,7 +28,7 @@ public:
 	virtual void setThreadExceptionHandlers() const override
 	{
 	}
-	virtual void doAssert(const char*, int, const char*, const char*) override
+	virtual void doAssert(const char*, int, const char*, const char*, const char*) override
 	{
 	}
 	virtual void setLogFilter(const std::function<bool(Common::LogLevel)>&) override

@@ -416,7 +416,7 @@ void AbstractFilterPage::updateResourceTypeFilterWidget()
 	TableProxyModel* filterProxyModel =
 		qobject_cast<TableProxyModel*>(websiteDataWidget()->modelFor(storageAdapterType));
 
-	ASSERT(filterProxyModel);
+	ASSERT_WITH_DUMP(filterProxyModel, DUMP(m_currentSelectedRow), DUMP((int)storageAdapterType));
 	m_resourceTypeFilterWidget->setFilter(filterProxyModel->acceptedResources());
 }
 
