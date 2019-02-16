@@ -4,7 +4,7 @@ namespace SeoSpiderServiceApi
 {
 
 #define DUMP(arg) #arg, arg
-#define ADDITIONAL_DUMP_DATA(...) SeoSpiderServiceApi::MakeDumpData(__VA_ARGS__).data()
+#define MAKE_DUMP_DATA(...) SeoSpiderServiceApi::MakeDumpData(__VA_ARGS__).data()
 
 class MakeDumpData
 {

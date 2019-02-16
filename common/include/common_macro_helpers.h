@@ -2,7 +2,7 @@
 
 #include "seo_spider_service_api_loader.h"
 #include "log_message_buffer.h"
-#include "additional_dump_data.h"
+#include "make_dump_data.h"
 
 #ifdef Q_OS_WIN
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
@@ -14,7 +14,7 @@
 #define ASSERT_WITH_DUMP(condition, ...) \
 if((condition) == false) \
 {\
-	Common::SeoSpiderServiceApiLoader::serviceApi()->doAssert(__FILENAME__, __LINE__, __FUNCTION__, #condition, ADDITIONAL_DUMP_DATA(__VA_ARGS__).c_str()); \
+	Common::SeoSpiderServiceApiLoader::serviceApi()->doAssert(__FILENAME__, __LINE__, __FUNCTION__, #condition, MAKE_DUMP_DATA(__VA_ARGS__).c_str()); \
 	assert(0); \
 } 0
 
