@@ -342,7 +342,7 @@ std::vector<LinkInfo> MyHtmlParser::getLinkRelUrl(const char* relValue, Resource
 
 		const QString altOrTitle(MyHtmlNode(collection->list[i]).text());
 		const bool dataResource = hrefAttributeValue.startsWith("data:");
-		
+
 		result.push_back({ url, LinkParameter::DofollowParameter, altOrTitle, dataResource, source });
 		if (getFirstValueOnly)
 		{
@@ -394,15 +394,13 @@ myencoding_t MyHtmlParser::htmlSetEncoding(const ResponseHeaders& headers)
 
 QByteArray MyHtmlParser::encodingFromPage() const
 {
-	IHtmlNodeCountedPtr headNode = m_rootNode.firstMatchSubNode(IHtmlNode::TagIdHead);
+	const auto metaTags = m_rootNode.matchSubNodesInDepth(IHtmlNode::TagIdMeta);
 
-	if (!headNode)
+	if (metaTags.empty())
 	{
-		INFOLOG << "tag <head> not found";
+		INFOLOG << "no meta tags found";
 		return QByteArray();
 	}
-
-	const auto metaTags = headNode->matchSubNodes(IHtmlNode::TagIdMeta);
 
 	for (const auto& metaTag : metaTags)
 	{
@@ -418,7 +416,7 @@ QByteArray MyHtmlParser::encodingFromPage() const
 		{
 			return metaTag->attribute("charset").toLatin1();
 		}
-		
+
 		const QString contentAttribute = metaTag->attribute("content");
 
 		if (metaTag->hasAttribute("http-equiv"))
