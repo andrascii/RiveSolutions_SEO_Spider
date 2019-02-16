@@ -4,13 +4,13 @@ namespace SeoSpiderServiceApi
 {
 
 #define DUMP(arg) #arg, arg
-#define ADDITIONAL_DUMP_DATA(...) SeoSpiderServiceApi::createAdditionalDumpDataString(__VA_ARGS__)
+#define ADDITIONAL_DUMP_DATA(...) SeoSpiderServiceApi::MakeDumpData(__VA_ARGS__).data()
 
-class Dumper
+class MakeDumpData
 {
 public:
 	template <typename... Args>
-	Dumper(Args&&... args)
+	MakeDumpData(Args&&... args)
 	{
 		static_assert(sizeof...(args) % 2 == 0, "The size of argument pack must be even number");
 
@@ -27,6 +27,9 @@ public:
 	}
 
 private:
+	// TypeConverter is used to support variables whose type isn't compatible with QTextStream.
+	// For example QTextStream cannot write std::string type.
+	// Therefore we convert variables like that to QByteArray and so on...
 	template <typename T>
 	struct TypeConverter
 	{
@@ -52,15 +55,14 @@ private:
 	template <typename Head, typename... Args>
 	void fillStreamHelper(QTextStream& stream, Head&& head, Args&&... args)
 	{
+		TypeConverter converter(static_cast<std::decay_t<Head>>(head));
+
 		if constexpr (sizeof...(args) % 2 == 1)
 		{
-			TypeConverter converter(static_cast<std::decay_t<Head>>(head));
 			stream << converter.result << "=";
 		}
 		else
 		{
-			TypeConverter converter(static_cast<std::decay_t<Head>>(head));
-
 #ifdef QT_DEBUG
 			stream << converter.result << "\n";
 #else
@@ -81,11 +83,5 @@ private:
 private:
 	std::string m_data;
 };
-
-template <typename... Args>
-std::string createAdditionalDumpDataString(Args&&... args)
-{
-	return Dumper(std::forward<Args>(args)...).data();
-}
 
 }
