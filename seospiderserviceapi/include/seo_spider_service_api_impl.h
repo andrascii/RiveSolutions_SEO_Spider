@@ -25,7 +25,7 @@ public:
 	virtual bool doDump(const void* exceptionInfo, const int exceptionInfoSize) override;
 	virtual void setProcessExceptionHandlers() const override;
 	virtual void setThreadExceptionHandlers() const override;
-	virtual void doAssert(const char* file, int line, const char* function, const char* expression) override;
+	virtual void doAssert(const char* file, int line, const char* function, const char* expression, const char* additionalDumpData) override;
 	virtual void setLogFilter(const std::function<bool(Common::LogLevel)>& filter) override;
 	virtual void applicationInitialized(const char* userID, const char* country, const char* language, const char* os, const char* programBittness, const char* programVersion) override;
 	virtual void commitCounterData(const char* name, quint64 value, int counterType) override;
@@ -40,7 +40,7 @@ public:
 		const char* text) override;
 
 private:
-	void debugReport(const char* file, int line, const char* function, const char* expression) const;
+	void debugReport(const char* file, int line, const char* function, const char* expression, const char* additionalDumpData) const;
 
 	static LONG WINAPI exceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs);
 	static void pureCallHandler();
@@ -59,11 +59,11 @@ private:
 		const wchar_t* function,
 		const wchar_t* file,
 		unsigned int line, uintptr_t pReserved);
-	
+
 	static bool lockExceptionFilter();
 
 	unsigned assertExceptionFilter(const char* file, int line, const char* function,
-		const void* thisptr, const char* expression, void* exceptionInfo);
+		const void* thisptr, const char* expression, void* exceptionInfo, const char* additionalDumpData);
 
 	bool writeLogStack(int id, int level, const char* file, unsigned int line,
 		const char* function, const void* thisptr, const char* text);
