@@ -170,6 +170,32 @@ TEST(LinksTests, NofollowLinksMustNotBeLoaded)
 	env.exec();
 }
 
+TEST(LinksTests, BaseUrl)
+{
+	TestEnvironment env;
+
+	const Url baseUrl("http://links.com/baseurl/index.html");
+	CrawlerOptionsData options = TestEnvironment::defaultOptions(baseUrl);
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler(), &baseUrl]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		cl->checkSequencedDataCollectionConsistency();
+
+		auto firstPage = pages.at(0);
+		auto linksOnThisPage = firstPage->linksOnThisPage;
+		for (auto link : linksOnThisPage)
+		{
+			EXPECT_TRUE(!link.url.toDisplayString().contains("/baseurl"));
+		}
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(LinksTests, SubdomainsMustNotBeLoaded)
 {
 	TestEnvironment env;
