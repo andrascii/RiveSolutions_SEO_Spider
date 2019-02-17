@@ -9,7 +9,7 @@
 	<InstallerApplicationIcon>favicon</InstallerApplicationIcon>
 	<Logo>logo.png</Logo>
 	<WizardStyle>Modern</WizardStyle>
-	<RunProgram>@TargetDir@/seospider.exe</RunProgram>
+	<RunProgram>/seospider.exe</RunProgram>
 	<StartMenuDir>Seo Spider</StartMenuDir>
 	<MaintenanceToolName>Uninstall SeoSpider</MaintenanceToolName>
 	<RemoteRepositories>

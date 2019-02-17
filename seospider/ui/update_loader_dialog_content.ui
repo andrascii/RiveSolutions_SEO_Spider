@@ -75,7 +75,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Exit</string>
+          <string>Update Later</string>
          </property>
         </widget>
        </item>
