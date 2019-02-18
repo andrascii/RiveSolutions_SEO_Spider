@@ -2455,7 +2455,11 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Exit</source>
-        <translation>Завершить программу</translation>
+        <translation type="vanished">Завершить программу</translation>
+    </message>
+    <message>
+        <source>Update Later</source>
+        <translation>Обновить позже</translation>
     </message>
 </context>
 <context>
