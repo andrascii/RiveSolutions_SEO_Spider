@@ -14,6 +14,7 @@
 #include "download_response.h"
 #include "gumbo_html_parser.h"
 #include "myhtml_parser.h"
+#include "ga_parser.h"
 
 namespace CrawlerEngine
 {
@@ -97,45 +98,83 @@ void PageDataCollector::applyOptions()
 		m_parser.addParser(createParser(OtherResourcesParserType));
 	}
 
-	if (!m_crawlerOptionsData.searchYandexMetricaCounters)
+	if (m_crawlerOptionsData.searchYandexMetricaCounters)
 	{
-		return;
+		if (m_crawlerOptionsData.searchYandexMetricaCounter1)
+		{
+			m_parser.addParser(std::make_shared<YmParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.yandexMetricaCounter1Id,
+				StorageType::YandexMetricaCounter1StorageType));
+		}
+		if (m_crawlerOptionsData.searchYandexMetricaCounter2)
+		{
+			m_parser.addParser(std::make_shared<YmParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.yandexMetricaCounter2Id,
+				StorageType::YandexMetricaCounter2StorageType));
+		}
+		if (m_crawlerOptionsData.searchYandexMetricaCounter3)
+		{
+			m_parser.addParser(std::make_shared<YmParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.yandexMetricaCounter3Id,
+				StorageType::YandexMetricaCounter3StorageType));
+		}
+		if (m_crawlerOptionsData.searchYandexMetricaCounter4)
+		{
+			m_parser.addParser(std::make_shared<YmParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.yandexMetricaCounter4Id,
+				StorageType::YandexMetricaCounter4StorageType));
+		}
+		if (m_crawlerOptionsData.searchYandexMetricaCounter5)
+		{
+			m_parser.addParser(std::make_shared<YmParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.yandexMetricaCounter5Id,
+				StorageType::YandexMetricaCounter5StorageType));
+		}
 	}
 
-	if (m_crawlerOptionsData.searchYandexMetricaCounter1)
+	if (m_crawlerOptionsData.searchGoogleAnalyticsCounters)
 	{
-		m_parser.addParser(std::make_shared<YmParser>(
-			m_htmlParser.get(),
-			m_crawlerOptionsData.yandexMetricaCounter1Id,
-			StorageType::YandexMetricaCounter1StorageType));
-	}
-	if (m_crawlerOptionsData.searchYandexMetricaCounter2)
-	{
-		m_parser.addParser(std::make_shared<YmParser>(
-			m_htmlParser.get(),
-			m_crawlerOptionsData.yandexMetricaCounter2Id,
-			StorageType::YandexMetricaCounter2StorageType));
-	}
-	if (m_crawlerOptionsData.searchYandexMetricaCounter3)
-	{
-		m_parser.addParser(std::make_shared<YmParser>(
-			m_htmlParser.get(),
-			m_crawlerOptionsData.yandexMetricaCounter3Id,
-			StorageType::YandexMetricaCounter3StorageType));
-	}
-	if (m_crawlerOptionsData.searchYandexMetricaCounter4)
-	{
-		m_parser.addParser(std::make_shared<YmParser>(
-			m_htmlParser.get(),
-			m_crawlerOptionsData.yandexMetricaCounter4Id,
-			StorageType::YandexMetricaCounter4StorageType));
-	}
-	if (m_crawlerOptionsData.searchYandexMetricaCounter5)
-	{
-		m_parser.addParser(std::make_shared<YmParser>(
-			m_htmlParser.get(),
-			m_crawlerOptionsData.yandexMetricaCounter5Id,
-			StorageType::YandexMetricaCounter5StorageType));
+
+		if (m_crawlerOptionsData.searchGoogleAnalyticsCounter1)
+		{
+			m_parser.addParser(std::make_shared<GaParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.googleAnalyticsCounter1Id,
+				StorageType::GoogleAnalyticsCounter1StorageType));
+		}
+		if (m_crawlerOptionsData.searchGoogleAnalyticsCounter2)
+		{
+			m_parser.addParser(std::make_shared<GaParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.googleAnalyticsCounter2Id,
+				StorageType::GoogleAnalyticsCounter2StorageType));
+		}
+		if (m_crawlerOptionsData.searchGoogleAnalyticsCounter3)
+		{
+			m_parser.addParser(std::make_shared<GaParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.googleAnalyticsCounter3Id,
+				StorageType::GoogleAnalyticsCounter3StorageType));
+		}
+		if (m_crawlerOptionsData.searchGoogleAnalyticsCounter4)
+		{
+			m_parser.addParser(std::make_shared<GaParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.googleAnalyticsCounter4Id,
+				StorageType::GoogleAnalyticsCounter4StorageType));
+		}
+		if (m_crawlerOptionsData.searchGoogleAnalyticsCounter5)
+		{
+			m_parser.addParser(std::make_shared<GaParser>(
+				m_htmlParser.get(),
+				m_crawlerOptionsData.googleAnalyticsCounter5Id,
+				StorageType::GoogleAnalyticsCounter5StorageType));
+		}
 	}
 }
 

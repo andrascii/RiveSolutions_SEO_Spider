@@ -233,6 +233,7 @@ struct ParsedPage
 
 	QMap<DataFeedId, QMap<int, QString>> dataFeedsData;
 	std::vector<StorageType> missingYandexMetricaCounters;
+	std::vector<StorageType> missingGoogleAnalyticsCounters;
 
 	//! response time in milliseconds
 	int responseTime = int();

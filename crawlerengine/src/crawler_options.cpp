@@ -596,12 +596,12 @@ void CrawlerOptions::setSearchGoogleAnalyticsCounter1(bool value)
 	emit searchGoogleAnalyticsCounter1Changed(m_data.searchGoogleAnalyticsCounter1);
 }
 
-int CrawlerOptions::googleAnalyticsCounter1Id() const noexcept
+const QString& CrawlerOptions::googleAnalyticsCounter1Id() const noexcept
 {
 	return m_data.googleAnalyticsCounter1Id;
 }
 
-void CrawlerOptions::setGoogleAnalyticsCounter1Id(int value)
+void CrawlerOptions::setGoogleAnalyticsCounter1Id(const QString& value)
 {
 	m_data.googleAnalyticsCounter1Id = value;
 
@@ -620,13 +620,13 @@ void CrawlerOptions::setSearchGoogleAnalyticsCounter2(bool value)
 	emit searchGoogleAnalyticsCounter2Changed(m_data.searchGoogleAnalyticsCounter2);
 }
 
-int CrawlerOptions::googleAnalyticsCounter2Id() const noexcept
+const QString& CrawlerOptions::googleAnalyticsCounter2Id() const noexcept
 {
 	return m_data.googleAnalyticsCounter2Id;
 }
 
 
-void CrawlerOptions::setGoogleAnalyticsCounter2Id(int value)
+void CrawlerOptions::setGoogleAnalyticsCounter2Id(const QString& value)
 {
 	m_data.googleAnalyticsCounter2Id = value;
 
@@ -645,12 +645,12 @@ void CrawlerOptions::setSearchGoogleAnalyticsCounter3(bool value)
 	emit searchGoogleAnalyticsCounter3Changed(m_data.searchGoogleAnalyticsCounter3);
 }
 
-int CrawlerOptions::googleAnalyticsCounter3Id() const noexcept
+const QString& CrawlerOptions::googleAnalyticsCounter3Id() const noexcept
 {
 	return m_data.googleAnalyticsCounter3Id;
 }
 
-void CrawlerOptions::setGoogleAnalyticsCounter3Id(int value)
+void CrawlerOptions::setGoogleAnalyticsCounter3Id(const QString& value)
 {
 	m_data.googleAnalyticsCounter3Id = value;
 
@@ -669,12 +669,12 @@ void CrawlerOptions::setSearchGoogleAnalyticsCounter4(bool value)
 	emit searchGoogleAnalyticsCounter4Changed(m_data.searchGoogleAnalyticsCounter4);
 }
 
-int CrawlerOptions::googleAnalyticsCounter4Id() const noexcept
+const QString& CrawlerOptions::googleAnalyticsCounter4Id() const noexcept
 {
 	return m_data.googleAnalyticsCounter4Id;
 }
 
-void CrawlerOptions::setGoogleAnalyticsCounter4Id(int value)
+void CrawlerOptions::setGoogleAnalyticsCounter4Id(const QString& value)
 {
 	m_data.googleAnalyticsCounter4Id = value;
 
@@ -693,13 +693,13 @@ void CrawlerOptions::setSearchGoogleAnalyticsCounter5(bool value)
 	emit searchGoogleAnalyticsCounter5Changed(m_data.searchGoogleAnalyticsCounter5);
 }
 
-int CrawlerOptions::googleAnalyticsCounter5Id() const noexcept
+const QString& CrawlerOptions::googleAnalyticsCounter5Id() const noexcept
 {
 	return m_data.googleAnalyticsCounter5Id;
 }
 
 
-void CrawlerOptions::setGoogleAnalyticsCounter5Id(int value)
+void CrawlerOptions::setGoogleAnalyticsCounter5Id(const QString& value)
 {
 	m_data.googleAnalyticsCounter5Id = value;
 

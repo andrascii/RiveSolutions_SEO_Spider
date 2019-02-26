@@ -525,15 +525,15 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter5IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter5Id(int))));
 	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCountersChanged(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounters(bool))));
 	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter1Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter1(bool))));
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter1IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter1Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter1IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter1Id(const QString&))));
 	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter2Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter2(bool))));
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter2IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter2Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter2IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter2Id(const QString&))));
 	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter3Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter3(bool))));
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter3IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter3Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter3IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter3Id(const QString&))));
 	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter4Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter4(bool))));
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter4IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter4Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter4IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter4Id(const QString&))));
 	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter5Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter5(bool))));
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter5IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter5Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter5IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter5Id(const QString&))));
 
 	const auto mapVariantToUserAgentType = [this](const QVariant& value)
 	{

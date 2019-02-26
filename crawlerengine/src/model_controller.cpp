@@ -213,6 +213,7 @@ void ModelController::handleWorkerResult(WorkerResult workerResult) noexcept
 		processParsedPageH1(workerResult, secondGetRequest);
 		processParsedPageH2(workerResult, secondGetRequest);
 		handlePresenceYandexMetricaCounters(workerResult, secondGetRequest);
+		handlePresenceGoogleAnalyticsCounters(workerResult, secondGetRequest);
 	}
 	else if (workerResult.incomingPage()->resourceType == ResourceType::ResourceImage)
 	{
@@ -1377,6 +1378,19 @@ void ModelController::handlePresenceYandexMetricaCounters(WorkerResult& workerRe
 	}
 
 	std::for_each(workerResult.incomingPage()->missingYandexMetricaCounters.begin(), workerResult.incomingPage()->missingYandexMetricaCounters.end(),
+		[&](StorageType targetStorageType) { data()->addParsedPage(workerResult.incomingPage(), targetStorageType, workerResult.turnaround()); });
+}
+
+void ModelController::handlePresenceGoogleAnalyticsCounters(WorkerResult& workerResult, bool secondGetRequest)
+{
+	if (!m_crawlerOptionsData.searchGoogleAnalyticsCounters ||
+		secondGetRequest ||
+		workerResult.incomingPage()->statusCode != Common::StatusCode::Ok200)
+	{
+		return;
+	}
+
+	std::for_each(workerResult.incomingPage()->missingGoogleAnalyticsCounters.begin(), workerResult.incomingPage()->missingGoogleAnalyticsCounters.end(),
 		[&](StorageType targetStorageType) { data()->addParsedPage(workerResult.incomingPage(), targetStorageType, workerResult.turnaround()); });
 }
 

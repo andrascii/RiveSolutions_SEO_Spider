@@ -100,19 +100,19 @@ class Preferences : public QObject
 	Q_PROPERTY(bool searchGoogleAnalyticsCounters READ searchGoogleAnalyticsCounters WRITE setSearchGoogleAnalyticsCounters NOTIFY searchGoogleAnalyticsCountersChanged);
 
 	Q_PROPERTY(bool searchGoogleAnalyticsCounter1 READ searchGoogleAnalyticsCounter1 WRITE setSearchGoogleAnalyticsCounter1 NOTIFY searchGoogleAnalyticsCounter1Changed);
-	Q_PROPERTY(int googleAnalyticsCounter1Id READ googleAnalyticsCounter1Id WRITE setGoogleAnalyticsCounter1Id NOTIFY googleAnalyticsCounter1IdChanged);
+	Q_PROPERTY(QString googleAnalyticsCounter1Id READ googleAnalyticsCounter1Id WRITE setGoogleAnalyticsCounter1Id NOTIFY googleAnalyticsCounter1IdChanged);
 
 	Q_PROPERTY(bool searchGoogleAnalyticsCounter2 READ searchGoogleAnalyticsCounter2 WRITE setSearchGoogleAnalyticsCounter2 NOTIFY searchGoogleAnalyticsCounter2Changed);
-	Q_PROPERTY(int googleAnalyticsCounter2Id READ googleAnalyticsCounter2Id WRITE setGoogleAnalyticsCounter2Id NOTIFY googleAnalyticsCounter2IdChanged);
+	Q_PROPERTY(QString googleAnalyticsCounter2Id READ googleAnalyticsCounter2Id WRITE setGoogleAnalyticsCounter2Id NOTIFY googleAnalyticsCounter2IdChanged);
 
 	Q_PROPERTY(bool searchGoogleAnalyticsCounter3 READ searchGoogleAnalyticsCounter3 WRITE setSearchGoogleAnalyticsCounter3 NOTIFY searchGoogleAnalyticsCounter3Changed);
-	Q_PROPERTY(int googleAnalyticsCounter3Id READ googleAnalyticsCounter3Id WRITE setGoogleAnalyticsCounter3Id NOTIFY googleAnalyticsCounter3IdChanged);
+	Q_PROPERTY(QString googleAnalyticsCounter3Id READ googleAnalyticsCounter3Id WRITE setGoogleAnalyticsCounter3Id NOTIFY googleAnalyticsCounter3IdChanged);
 
 	Q_PROPERTY(bool searchGoogleAnalyticsCounter4 READ searchGoogleAnalyticsCounter4 WRITE setSearchGoogleAnalyticsCounter4 NOTIFY searchGoogleAnalyticsCounter4Changed);
-	Q_PROPERTY(int googleAnalyticsCounter4Id READ googleAnalyticsCounter4Id WRITE setGoogleAnalyticsCounter4Id NOTIFY googleAnalyticsCounter4IdChanged);
+	Q_PROPERTY(QString googleAnalyticsCounter4Id READ googleAnalyticsCounter4Id WRITE setGoogleAnalyticsCounter4Id NOTIFY googleAnalyticsCounter4IdChanged);
 
 	Q_PROPERTY(bool searchGoogleAnalyticsCounter5 READ searchGoogleAnalyticsCounter5 WRITE setSearchGoogleAnalyticsCounter5 NOTIFY searchGoogleAnalyticsCounter5Changed);
-	Q_PROPERTY(int googleAnalyticsCounter5Id READ googleAnalyticsCounter5Id WRITE setGoogleAnalyticsCounter5Id NOTIFY googleAnalyticsCounter5IdChanged);
+	Q_PROPERTY(QString googleAnalyticsCounter5Id READ googleAnalyticsCounter5Id WRITE setGoogleAnalyticsCounter5Id NOTIFY googleAnalyticsCounter5IdChanged);
 
 public:
 
@@ -368,37 +368,37 @@ public:
 	bool searchGoogleAnalyticsCounter1() const;
 	Q_SLOT void setSearchGoogleAnalyticsCounter1(bool value);
 	Q_SIGNAL void searchGoogleAnalyticsCounter1Changed(bool value);
-	int googleAnalyticsCounter1Id() const;
-	Q_SLOT void setGoogleAnalyticsCounter1Id(int value);
-	Q_SIGNAL void googleAnalyticsCounter1IdChanged(int value);
+	const QString& googleAnalyticsCounter1Id() const;
+	Q_SLOT void setGoogleAnalyticsCounter1Id(const QString& value);
+	Q_SIGNAL void googleAnalyticsCounter1IdChanged(const QString& value);
 
 	bool searchGoogleAnalyticsCounter2() const;
 	Q_SLOT void setSearchGoogleAnalyticsCounter2(bool value);
 	Q_SIGNAL void searchGoogleAnalyticsCounter2Changed(bool value);
-	int googleAnalyticsCounter2Id() const;
-	Q_SLOT void setGoogleAnalyticsCounter2Id(int value);
-	Q_SIGNAL void googleAnalyticsCounter2IdChanged(int value);
+	const QString& googleAnalyticsCounter2Id() const;
+	Q_SLOT void setGoogleAnalyticsCounter2Id(const QString& value);
+	Q_SIGNAL void googleAnalyticsCounter2IdChanged(const QString& value);
 
 	bool searchGoogleAnalyticsCounter3() const;
 	Q_SLOT void setSearchGoogleAnalyticsCounter3(bool value);
 	Q_SIGNAL void searchGoogleAnalyticsCounter3Changed(bool value);
-	int googleAnalyticsCounter3Id() const;
-	Q_SLOT void setGoogleAnalyticsCounter3Id(int value);
-	Q_SIGNAL void googleAnalyticsCounter3IdChanged(int value);
+	const QString& googleAnalyticsCounter3Id() const;
+	Q_SLOT void setGoogleAnalyticsCounter3Id(const QString& value);
+	Q_SIGNAL void googleAnalyticsCounter3IdChanged(const QString& value);
 
 	bool searchGoogleAnalyticsCounter4() const;
 	Q_SLOT void setSearchGoogleAnalyticsCounter4(bool value);
 	Q_SIGNAL void searchGoogleAnalyticsCounter4Changed(bool value);
-	int googleAnalyticsCounter4Id() const;
-	Q_SLOT void setGoogleAnalyticsCounter4Id(int value);
-	Q_SIGNAL void googleAnalyticsCounter4IdChanged(int value);
+	const QString& googleAnalyticsCounter4Id() const;
+	Q_SLOT void setGoogleAnalyticsCounter4Id(const QString& value);
+	Q_SIGNAL void googleAnalyticsCounter4IdChanged(const QString& value);
 
 	bool searchGoogleAnalyticsCounter5() const;
 	Q_SLOT void setSearchGoogleAnalyticsCounter5(bool value);
 	Q_SIGNAL void searchGoogleAnalyticsCounter5Changed(bool value);
-	int googleAnalyticsCounter5Id() const;
-	Q_SLOT void setGoogleAnalyticsCounter5Id(int value);
-	Q_SIGNAL void googleAnalyticsCounter5IdChanged(int value);
+	const QString& googleAnalyticsCounter5Id() const;
+	Q_SLOT void setGoogleAnalyticsCounter5Id(const QString& value);
+	Q_SIGNAL void googleAnalyticsCounter5IdChanged(const QString& value);
 
 public:
 	Preferences(ISettingsAccessor* settingsAccessor, QObject* parent = nullptr);
@@ -498,19 +498,19 @@ private:
 	bool m_searchGoogleAnalyticsCounters;
 
 	bool m_searchGoogleAnalyticsCounter1;
-	int m_googleAnalyticsCounter1Id;
+	QString m_googleAnalyticsCounter1Id;
 
 	bool m_searchGoogleAnalyticsCounter2;
-	int m_googleAnalyticsCounter2Id;
+	QString m_googleAnalyticsCounter2Id;
 
 	bool m_searchGoogleAnalyticsCounter3;
-	int m_googleAnalyticsCounter3Id;
+	QString m_googleAnalyticsCounter3Id;
 
 	bool m_searchGoogleAnalyticsCounter4;
-	int m_googleAnalyticsCounter4Id;
+	QString m_googleAnalyticsCounter4Id;
 
 	bool m_searchGoogleAnalyticsCounter5;
-	int m_googleAnalyticsCounter5Id;
+	QString m_googleAnalyticsCounter5Id;
 };
 
 }

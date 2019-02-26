@@ -217,37 +217,37 @@ public:
 	virtual bool searchGoogleAnalyticsCounter1() const noexcept = 0;
 	virtual void setSearchGoogleAnalyticsCounter1(bool value) = 0;
 	virtual void searchGoogleAnalyticsCounter1Changed(bool value) = 0;
-	virtual int googleAnalyticsCounter1Id() const noexcept = 0;
-	virtual void setGoogleAnalyticsCounter1Id(int value) = 0;
-	virtual void googleAnalyticsCounter1IdChanged(int value) = 0;
+	virtual const QString& googleAnalyticsCounter1Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter1Id(const QString& value) = 0;
+	virtual void googleAnalyticsCounter1IdChanged(const QString& value) = 0;
 
 	virtual bool searchGoogleAnalyticsCounter2() const noexcept = 0;
 	virtual void setSearchGoogleAnalyticsCounter2(bool value) = 0;
 	virtual void searchGoogleAnalyticsCounter2Changed(bool value) = 0;
-	virtual int googleAnalyticsCounter2Id() const noexcept = 0;
-	virtual void setGoogleAnalyticsCounter2Id(int value) = 0;
-	virtual void googleAnalyticsCounter2IdChanged(int value) = 0;
+	virtual const QString& googleAnalyticsCounter2Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter2Id(const QString& value) = 0;
+	virtual void googleAnalyticsCounter2IdChanged(const QString& value) = 0;
 
 	virtual bool searchGoogleAnalyticsCounter3() const noexcept = 0;
 	virtual void setSearchGoogleAnalyticsCounter3(bool value) = 0;
 	virtual void searchGoogleAnalyticsCounter3Changed(bool value) = 0;
-	virtual int googleAnalyticsCounter3Id() const noexcept = 0;
-	virtual void setGoogleAnalyticsCounter3Id(int value) = 0;
-	virtual void googleAnalyticsCounter3IdChanged(int value) = 0;
+	virtual const QString& googleAnalyticsCounter3Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter3Id(const QString& value) = 0;
+	virtual void googleAnalyticsCounter3IdChanged(const QString& value) = 0;
 
 	virtual bool searchGoogleAnalyticsCounter4() const noexcept = 0;
 	virtual void setSearchGoogleAnalyticsCounter4(bool value) = 0;
 	virtual void searchGoogleAnalyticsCounter4Changed(bool value) = 0;
-	virtual int googleAnalyticsCounter4Id() const noexcept = 0;
-	virtual void setGoogleAnalyticsCounter4Id(int value) = 0;
-	virtual void googleAnalyticsCounter4IdChanged(int value) = 0;
+	virtual const QString& googleAnalyticsCounter4Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter4Id(const QString& value) = 0;
+	virtual void googleAnalyticsCounter4IdChanged(const QString& value) = 0;
 
 	virtual bool searchGoogleAnalyticsCounter5() const noexcept = 0;
 	virtual void setSearchGoogleAnalyticsCounter5(bool value) = 0;
 	virtual void searchGoogleAnalyticsCounter5Changed(bool value) = 0;
-	virtual int googleAnalyticsCounter5Id() const noexcept = 0;
-	virtual void setGoogleAnalyticsCounter5Id(int value) = 0;
-	virtual void googleAnalyticsCounter5IdChanged(int value) = 0;
+	virtual const QString& googleAnalyticsCounter5Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter5Id(const QString& value) = 0;
+	virtual void googleAnalyticsCounter5IdChanged(const QString& value) = 0;
 };
 
 }

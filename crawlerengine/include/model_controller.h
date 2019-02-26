@@ -60,6 +60,7 @@ private:
 	void setLinksForResourcePageAndLoadedPage(ParsedPagePtr& resourcePage, WorkerResult& loadedPage, const ResourceOnPage& resource) const;
 
 	void handlePresenceYandexMetricaCounters(WorkerResult& workerResult, bool secondGetRequest);
+	void handlePresenceGoogleAnalyticsCounters(WorkerResult& workerResult, bool secondGetRequest);
 
 private:
 	UnorderedDataCollection* m_data;

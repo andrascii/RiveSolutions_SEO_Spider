@@ -753,12 +753,12 @@ void Preferences::setSearchGoogleAnalyticsCounter1(bool value)
 	emit searchGoogleAnalyticsCounter1Changed(m_searchGoogleAnalyticsCounter1);
 }
 
-int Preferences::googleAnalyticsCounter1Id() const
+const QString& Preferences::googleAnalyticsCounter1Id() const
 {
 	return m_googleAnalyticsCounter1Id;
 }
 
-void Preferences::setGoogleAnalyticsCounter1Id(int value)
+void Preferences::setGoogleAnalyticsCounter1Id(const QString& value)
 {
 	m_googleAnalyticsCounter1Id = value;
 	emit googleAnalyticsCounter1IdChanged(m_googleAnalyticsCounter1Id);
@@ -775,12 +775,12 @@ void Preferences::setSearchGoogleAnalyticsCounter2(bool value)
 	emit searchGoogleAnalyticsCounter2Changed(m_searchGoogleAnalyticsCounter2);
 }
 
-int Preferences::googleAnalyticsCounter2Id() const
+const QString& Preferences::googleAnalyticsCounter2Id() const
 {
 	return m_googleAnalyticsCounter2Id;
 }
 
-void Preferences::setGoogleAnalyticsCounter2Id(int value)
+void Preferences::setGoogleAnalyticsCounter2Id(const QString& value)
 {
 	m_googleAnalyticsCounter2Id = value;
 	emit googleAnalyticsCounter2IdChanged(m_googleAnalyticsCounter2Id);
@@ -797,12 +797,12 @@ void Preferences::setSearchGoogleAnalyticsCounter3(bool value)
 	emit searchGoogleAnalyticsCounter3Changed(m_searchGoogleAnalyticsCounter3);
 }
 
-int Preferences::googleAnalyticsCounter3Id() const
+const QString& Preferences::googleAnalyticsCounter3Id() const
 {
 	return m_googleAnalyticsCounter3Id;
 }
 
-void Preferences::setGoogleAnalyticsCounter3Id(int value)
+void Preferences::setGoogleAnalyticsCounter3Id(const QString& value)
 {
 	m_googleAnalyticsCounter3Id = value;
 	emit googleAnalyticsCounter3IdChanged(m_googleAnalyticsCounter3Id);
@@ -819,12 +819,12 @@ void Preferences::setSearchGoogleAnalyticsCounter4(bool value)
 	emit searchGoogleAnalyticsCounter4Changed(m_searchGoogleAnalyticsCounter4);
 }
 
-int Preferences::googleAnalyticsCounter4Id() const
+const QString& Preferences::googleAnalyticsCounter4Id() const
 {
 	return m_googleAnalyticsCounter4Id;
 }
 
-void Preferences::setGoogleAnalyticsCounter4Id(int value)
+void Preferences::setGoogleAnalyticsCounter4Id(const QString& value)
 {
 	m_googleAnalyticsCounter4Id = value;
 	emit googleAnalyticsCounter4IdChanged(m_googleAnalyticsCounter4Id);
@@ -841,12 +841,12 @@ void Preferences::setSearchGoogleAnalyticsCounter5(bool value)
 	emit searchGoogleAnalyticsCounter5Changed(m_searchGoogleAnalyticsCounter5);
 }
 
-int Preferences::googleAnalyticsCounter5Id() const
+const QString& Preferences::googleAnalyticsCounter5Id() const
 {
 	return m_googleAnalyticsCounter5Id;
 }
 
-void Preferences::setGoogleAnalyticsCounter5Id(int value)
+void Preferences::setGoogleAnalyticsCounter5Id(const QString& value)
 {
 	m_googleAnalyticsCounter5Id = value;
 	emit googleAnalyticsCounter5IdChanged(m_googleAnalyticsCounter5Id);
