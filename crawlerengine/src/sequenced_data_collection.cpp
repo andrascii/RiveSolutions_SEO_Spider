@@ -339,6 +339,13 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::YandexMetricaCounter3StorageType, createSequencedStorage()),
 		std::make_pair(StorageType::YandexMetricaCounter4StorageType, createSequencedStorage()),
 		std::make_pair(StorageType::YandexMetricaCounter5StorageType, createSequencedStorage()),
+
+		// Google Analytics
+		std::make_pair(StorageType::GoogleAnalyticsCounter1StorageType, createSequencedStorage()),
+		std::make_pair(StorageType::GoogleAnalyticsCounter2StorageType, createSequencedStorage()),
+		std::make_pair(StorageType::GoogleAnalyticsCounter3StorageType, createSequencedStorage()),
+		std::make_pair(StorageType::GoogleAnalyticsCounter4StorageType, createSequencedStorage()),
+		std::make_pair(StorageType::GoogleAnalyticsCounter5StorageType, createSequencedStorage())
 	};
 }
 

@@ -90,6 +90,13 @@ enum class StorageAdapterType
 	StorageAdapterTypeYandexMetricaCounter4 = CrawlerEngine::StorageType::YandexMetricaCounter4StorageType,
 	StorageAdapterTypeYandexMetricaCounter5 = CrawlerEngine::StorageType::YandexMetricaCounter5StorageType,
 
+	// Google Analytics
+	StorageAdapterTypeGoogleAnalyticsCounter1 = CrawlerEngine::StorageType::GoogleAnalyticsCounter1StorageType,
+	StorageAdapterTypeGoogleAnalyticsCounter2 = CrawlerEngine::StorageType::GoogleAnalyticsCounter2StorageType,
+	StorageAdapterTypeGoogleAnalyticsCounter3 = CrawlerEngine::StorageType::GoogleAnalyticsCounter3StorageType,
+	StorageAdapterTypeGoogleAnalyticsCounter4 = CrawlerEngine::StorageType::GoogleAnalyticsCounter4StorageType,
+	StorageAdapterTypeGoogleAnalyticsCounter5 = CrawlerEngine::StorageType::GoogleAnalyticsCounter5StorageType,
+
 	StorageAdapterTypeCustomDataFeed = CrawlerEngine::StorageType::EndEnumStorageType + 1,
 
 	StorageAdapterTypeNotFound, // not an actual storage but used for show QLabel that says about "has no search results"
