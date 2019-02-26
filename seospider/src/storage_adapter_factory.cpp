@@ -336,6 +336,21 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::SchemeColumn
 				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
+
+		// Google Analytics
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter1:
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter2:
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter3:
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter4:
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter5:
+		{
+			return QVector<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::TitleColumn
+				<< ParsedPageInfo::Column::StatusCodeColumn
+				<< ParsedPageInfo::Column::SchemeColumn
+				<< ParsedPageInfo::Column::ResponseTimeColumn;
+		}
 	}
 
 	ASSERT(!"Invalid type");

@@ -39,7 +39,7 @@ void GoogleAnalyticsSettingsWidget::init()
 
 	for (int i = 0; i < useCounterHelperCount; ++i)
 	{
-		const QByteArray propertyName = QStringLiteral("searchYandexMetricaCounter%1").arg(i + 1).toLatin1();
+		const QByteArray propertyName = QStringLiteral("searchGoogleAnalyticsCounter%1").arg(i + 1).toLatin1();
 
 		m_useCounterBooleanHelpers.push_back(registrateInternalHelperControl(false));
 		m_useCounterBooleanHelpers.back()->setProperty("controlKey", QVariant(propertyName));
@@ -166,7 +166,7 @@ void GoogleAnalyticsSettingsWidget::validateHelperControlValue()
 
 	for (int i = 0, sz = m_lineEdits.size(); i < sz; ++i)
 	{
-		const QByteArray propertyName = QStringLiteral("searchYandexMetricaCounter%1").arg(i + 1).toLatin1();
+		const QByteArray propertyName = QStringLiteral("searchGoogleAnalyticsCounter%1").arg(i + 1).toLatin1();
 
 		ymCountersState.push_back(theApp->preferences()->property(propertyName).toBool());
 	}

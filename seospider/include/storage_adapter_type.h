@@ -187,6 +187,13 @@ inline QString storageAdapterTypeStringFromEnum(StorageAdapterType type)
 		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter4: return "YandexMetricaCounter4";
 		case StorageAdapterType::StorageAdapterTypeYandexMetricaCounter5: return "YandexMetricaCounter5";
 
+		// Google Analytics
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter1: return "GoogleAnalyticsCounter1";
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter2: return "GoogleAnalyticsCounter2";
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter3: return "GoogleAnalyticsCounter3";
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter4: return "GoogleAnalyticsCounter4";
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter5: return "GoogleAnalyticsCounter5";
+
 		case StorageAdapterType::StorageAdapterTypeCustomDataFeed: return "CustomDataFeed";
 
 		default: ASSERT(false && "Incorrect storage type"); return QString();

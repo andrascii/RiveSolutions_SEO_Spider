@@ -13,6 +13,7 @@ public:
 
 private:
 	std::vector<DCStorageDescription> createYandexMetricaDescriptions() const;
+	std::vector<DCStorageDescription> createGoogleAnalyticsDescriptions() const;
 };
 
 }

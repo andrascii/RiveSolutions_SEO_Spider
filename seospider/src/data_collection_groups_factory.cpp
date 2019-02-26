@@ -170,7 +170,6 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 
 			const auto yandexMetricaDescriptions = createYandexMetricaDescriptions();
 			descriptions.insert(descriptions.end(), yandexMetricaDescriptions.begin(), yandexMetricaDescriptions.end());
-			p->setDescriptions(std::move(descriptions));
 
 			const auto reconfigureYmDescriptions = [this, group = QPointer<DCStorageGroupDescription>(p.get())]
 			{
@@ -192,6 +191,31 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter4IdChanged, p.get(), reconfigureYmDescriptions));
 			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCounter5Changed, p.get(), reconfigureYmDescriptions));
 			VERIFY(QObject::connect(theApp->preferences(), &Preferences::yandexMetricaCounter5IdChanged, p.get(), reconfigureYmDescriptions));
+
+			const auto googleAnalyticsDescriptions = createGoogleAnalyticsDescriptions();
+			descriptions.insert(descriptions.end(), googleAnalyticsDescriptions.begin(), googleAnalyticsDescriptions.end());
+			p->setDescriptions(std::move(descriptions));
+
+			const auto reconfigureGaDescriptions = [this, group = QPointer<DCStorageGroupDescription>(p.get())]
+			{
+				if (!group)
+				{
+					return;
+				}
+
+				group->setDescriptions(std::move(createGoogleAnalyticsDescriptions()));
+			};
+
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter1Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter1IdChanged, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter2Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter2IdChanged, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter3Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter3IdChanged, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter4Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter4IdChanged, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter5Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter5IdChanged, p.get(), reconfigureGaDescriptions));
 
 			return p;
 		}
@@ -262,6 +286,41 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 
 			return p;
 		}
+
+		case AuditGroup::GoogleAnalyticsCounters:
+		{
+			if (!theApp->preferences()->searchGoogleAnalyticsCounters())
+			{
+				return nullptr;
+			}
+
+			p->setName(QObject::tr("Google Analytics Finder"));
+			p->setAuditGroup(AuditGroup::GoogleAnalyticsCounters);
+			p->setDescriptions(std::move(createGoogleAnalyticsDescriptions()));
+
+			const auto reconfigureGaDescriptions = [this, group = QPointer<DCStorageGroupDescription>(p.get())]
+			{
+				if (!group)
+				{
+					return;
+				}
+
+				group->setDescriptions(std::move(createGoogleAnalyticsDescriptions()));
+			};
+
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter1Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter1IdChanged, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter2Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter2IdChanged, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter3Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter3IdChanged, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter4Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter4IdChanged, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchGoogleAnalyticsCounter5Changed, p.get(), reconfigureGaDescriptions));
+			VERIFY(QObject::connect(theApp->preferences(), &Preferences::googleAnalyticsCounter5IdChanged, p.get(), reconfigureGaDescriptions));
+
+			return p;
+		}
 	}
 
 	return nullptr;
@@ -303,7 +362,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter1StorageType,
-				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter1Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter1Id())
 			});
 	}
 
@@ -313,7 +372,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter2StorageType,
-				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter2Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter2Id())
 			});
 	}
 
@@ -323,7 +382,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter3StorageType,
-				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter3Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter3Id())
 			});
 	}
 
@@ -333,7 +392,7 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter4StorageType,
-				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter4Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter4Id())
 			});
 	}
 
@@ -343,7 +402,69 @@ std::vector<DCStorageDescription> DataCollectionGroupsFactory::createYandexMetri
 			DCStorageDescription
 			{
 				StorageType::YandexMetricaCounter5StorageType,
-				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter5Id()).toStdString().c_str()
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->yandexMetricaCounter5Id())
+			});
+	}
+
+	return descriptions;
+}
+
+std::vector<DCStorageDescription> DataCollectionGroupsFactory::createGoogleAnalyticsDescriptions() const
+{
+	std::vector<DCStorageDescription> descriptions;
+
+	if (!theApp->preferences()->searchGoogleAnalyticsCounters())
+	{
+		return descriptions;
+	}
+
+	if (theApp->preferences()->searchGoogleAnalyticsCounter1())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::GoogleAnalyticsCounter1StorageType,
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->googleAnalyticsCounter1Id())
+			});
+	}
+
+	if (theApp->preferences()->searchGoogleAnalyticsCounter2())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::GoogleAnalyticsCounter2StorageType,
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->googleAnalyticsCounter2Id())
+			});
+	}
+
+	if (theApp->preferences()->searchGoogleAnalyticsCounter3())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::GoogleAnalyticsCounter3StorageType,
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->googleAnalyticsCounter3Id())
+			});
+	}
+
+	if (theApp->preferences()->searchGoogleAnalyticsCounter4())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::GoogleAnalyticsCounter4StorageType,
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->googleAnalyticsCounter4Id())
+			});
+	}
+
+	if (theApp->preferences()->searchGoogleAnalyticsCounter5())
+	{
+		descriptions.push_back(
+			DCStorageDescription
+			{
+				StorageType::GoogleAnalyticsCounter5StorageType,
+				QObject::tr("Pages without Counter %1").arg(theApp->preferences()->googleAnalyticsCounter5Id())
 			});
 	}
 

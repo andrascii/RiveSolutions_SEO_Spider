@@ -6,6 +6,23 @@
 #include "application.h"
 #include "preferences.h"
 
+namespace
+{
+
+using namespace SeoSpider;
+
+auto onSearchCountersChangedCallback(SummaryDataSet* dataSet, AuditGroup auditGroup)
+{
+	return [dataSet, auditGroup](bool value)
+	{
+		value ?
+			dataSet->prependGroup(auditGroup) :
+			dataSet->removeGroup(auditGroup);
+	};
+}
+
+}
+
 namespace SeoSpider
 {
 
@@ -24,6 +41,7 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 			SummaryDataSet* sortableDataSet = new SummaryDataSet(dataCollection);
 
 			plainDataSet->appendGroup(AuditGroup::YandexMetricaCounters);
+			plainDataSet->appendGroup(AuditGroup::GoogleAnalyticsCounters);
 			plainDataSet->appendGroup(AuditGroup::LinkAuditGroup);
 			plainDataSet->appendGroup(AuditGroup::PageProblemsAuditGroup);
 			plainDataSet->appendGroup(AuditGroup::OnPageAuditGroup);
@@ -32,22 +50,18 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 			plainDataSet->appendGroup(AuditGroup::H2AuditGroup);
 			plainDataSet->appendGroup(AuditGroup::ImageAuditGroup);
 
-			const auto onSearchYmCountersChanged = [plainDataSet](bool value)
-			{
-				if (!value)
-				{
-					plainDataSet->removeGroup(AuditGroup::YandexMetricaCounters);
-				}
-				else
-				{
-					plainDataSet->prependGroup(AuditGroup::YandexMetricaCounters);
-				}
-			};
+			// ga and ym
+			VERIFY(QObject::connect(theApp->preferences(),
+				&Preferences::searchYandexMetricaCountersChanged,
+				onSearchCountersChangedCallback(plainDataSet, AuditGroup::YandexMetricaCounters)));
 
-			VERIFY(QObject::connect(theApp->preferences(), &Preferences::searchYandexMetricaCountersChanged, onSearchYmCountersChanged));
+			VERIFY(QObject::connect(theApp->preferences(),
+				&Preferences::searchGoogleAnalyticsCountersChanged,
+				onSearchCountersChangedCallback(plainDataSet, AuditGroup::GoogleAnalyticsCounters)));
 
 			DataCollectionGroupsFactory dcGroupsFactory;
 			const DCStorageGroupDescriptionPtr customDataFeedGroup = dcGroupsFactory.create(dataCollection->customDataFeeds());
+
 			if (customDataFeedGroup->hasDescriptions())
 			{
 				plainDataSet->appendGroup(customDataFeedGroup);
@@ -65,7 +79,6 @@ ISummaryDataAccessor* SummaryDataAccessorFactory::create(DataAccessorType access
 					return CrawlerEngine::ErrorCategory::level(a->storageType) > CrawlerEngine::ErrorCategory::level(b->storageType);
 				}
 			});
-
 
 			const DCStorageGroupDescriptionPtr orderedErrorsGroup = dcGroupsFactory.create(AuditGroup::OrderedErrorsGroup);
 			if (customDataFeedGroup->hasDescriptions())

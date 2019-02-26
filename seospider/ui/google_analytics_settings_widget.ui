@@ -67,7 +67,7 @@
         <string>Type in google analytics counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexGoogleAnalytics1Id</string>
+        <string notr="true">googleAnalyticsCounter1Id</string>
        </property>
       </widget>
      </item>
@@ -77,7 +77,7 @@
         <string>Type in google analytics counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexGoogleAnalytics2Id</string>
+        <string notr="true">googleAnalyticsCounter2Id</string>
        </property>
       </widget>
      </item>
@@ -87,7 +87,7 @@
         <string>Type in google analytics counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexGoogleAnalytics3Id</string>
+        <string notr="true">googleAnalyticsCounter3Id</string>
        </property>
       </widget>
      </item>
@@ -97,7 +97,7 @@
         <string>Type in google analytics counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexGoogleAnalytics4Id</string>
+        <string notr="true">googleAnalyticsCounter4Id</string>
        </property>
       </widget>
      </item>
@@ -110,7 +110,7 @@
         <string>Type in google analytics counter number to search</string>
        </property>
        <property name="controlKey" stdset="0">
-        <string notr="true">yandexGoogleAnalytics5Id</string>
+        <string notr="true">googleAnalyticsCounter5Id</string>
        </property>
       </widget>
      </item>

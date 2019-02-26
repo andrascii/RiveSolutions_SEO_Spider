@@ -45,6 +45,11 @@ enum class AuditGroup
 	YandexMetricaCounters,
 
 	//
+	// Google Analytics Counters group
+	//
+	GoogleAnalyticsCounters,
+
+	//
 	// Custom data feeds
 	//
 
