@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GoogleAnalyticsSettingsWidget</class>
+ <widget class="QWidget" name="GoogleAnalyticsSettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>482</width>
+    <height>312</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Google Analytics Settings</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="gaCheckBox1">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">searchGoogleAnalyticsCounters</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Search Google Analytics Counters</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" rowspan="2">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="gaLineEdit1">
+       <property name="placeholderText">
+        <string>Type in google analytics counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexGoogleAnalytics1Id</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="gaLineEdit2">
+       <property name="placeholderText">
+        <string>Type in google analytics counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexGoogleAnalytics2Id</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="gaLineEdit3">
+       <property name="placeholderText">
+        <string>Type in google analytics counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexGoogleAnalytics3Id</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="gaLineEdit4">
+       <property name="placeholderText">
+        <string>Type in google analytics counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexGoogleAnalytics4Id</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="gaLineEdit5">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Type in google analytics counter number to search</string>
+       </property>
+       <property name="controlKey" stdset="0">
+        <string notr="true">yandexGoogleAnalytics5Id</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="addCounterButton">
+         <property name="text">
+          <string>Add Counter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="removeCounterButton">
+         <property name="text">
+          <string>Remove Counter</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="7" column="1">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>178</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>gaCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gaLineEdit1</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>36</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gaCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gaLineEdit2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gaCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gaLineEdit3</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gaCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gaLineEdit4</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gaCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>gaLineEdit5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gaCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>removeCounterButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>7</x>
+     <y>7</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>191</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gaCheckBox1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>addCounterButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>7</x>
+     <y>7</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

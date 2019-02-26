@@ -354,6 +354,32 @@ void Application::onAboutCrawlerOptionsChanged()
 	{
 		preferences()->setSearchYandexMetricaCounter1(true);
 	}
+
+	// google analytics counters
+
+	const bool isAllGaCountersDisabled =
+		!crawler()->options()->searchGoogleAnalyticsCounter1() &&
+		!crawler()->options()->searchGoogleAnalyticsCounter2() &&
+		!crawler()->options()->searchGoogleAnalyticsCounter3() &&
+		!crawler()->options()->searchGoogleAnalyticsCounter4() &&
+		!crawler()->options()->searchGoogleAnalyticsCounter5();
+
+	preferences()->setSearchGoogleAnalyticsCounters(crawler()->options()->searchGoogleAnalyticsCounters());
+	preferences()->setSearchGoogleAnalyticsCounter1(crawler()->options()->searchGoogleAnalyticsCounter1());
+	preferences()->setGoogleAnalyticsCounter1Id(crawler()->options()->googleAnalyticsCounter1Id());
+	preferences()->setSearchGoogleAnalyticsCounter2(crawler()->options()->searchGoogleAnalyticsCounter2());
+	preferences()->setGoogleAnalyticsCounter2Id(crawler()->options()->googleAnalyticsCounter2Id());
+	preferences()->setSearchGoogleAnalyticsCounter3(crawler()->options()->searchGoogleAnalyticsCounter3());
+	preferences()->setGoogleAnalyticsCounter3Id(crawler()->options()->googleAnalyticsCounter3Id());
+	preferences()->setSearchGoogleAnalyticsCounter4(crawler()->options()->searchGoogleAnalyticsCounter4());
+	preferences()->setGoogleAnalyticsCounter4Id(crawler()->options()->googleAnalyticsCounter4Id());
+	preferences()->setSearchGoogleAnalyticsCounter5(crawler()->options()->searchGoogleAnalyticsCounter5());
+	preferences()->setGoogleAnalyticsCounter5Id(crawler()->options()->googleAnalyticsCounter5Id());
+
+	if (isAllGaCountersDisabled)
+	{
+		preferences()->setSearchGoogleAnalyticsCounter1(true);
+	}
 }
 
 void Application::onAboutUseCustomUserAgentChanged()
@@ -497,6 +523,17 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter4IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter4Id(int))));
 	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter5Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter5(bool))));
 	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter5IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter5Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCountersChanged(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounters(bool))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter1Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter1(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter1IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter1Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter2Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter2(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter2IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter2Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter3Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter3(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter3IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter3Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter4Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter4(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter4IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter4Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter5Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter5(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter5IdChanged(int)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter5Id(int))));
 
 	const auto mapVariantToUserAgentType = [this](const QVariant& value)
 	{

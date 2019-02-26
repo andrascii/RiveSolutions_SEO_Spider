@@ -58,6 +58,7 @@ QMenu* MenuBar::buildMenuSettings()
 #endif
 
 	settingsMenu->addAction(actionRegistry.globalAction(s_yandexMetricaSettingsAction));
+	settingsMenu->addAction(actionRegistry.globalAction(s_googleAnalyticsSettingsAction));
 
 	return settingsMenu;
 }

@@ -169,6 +169,7 @@ public:
 	virtual void setUserAgent(const QByteArray& value) = 0;
 	virtual void userAgentChanged(const QByteArray& value) const = 0;
 
+	// ym
 	virtual bool searchYandexMetricaCounters() const noexcept = 0;
 	virtual void setSearchYandexMetricaCounters(bool value) = 0;
 	virtual void searchYandexMetricaCountersChanged(bool value) = 0;
@@ -207,6 +208,46 @@ public:
 	virtual int yandexMetricaCounter5Id() const noexcept = 0;
 	virtual void setYandexMetricaCounter5Id(int value) = 0;
 	virtual void yandexMetricaCounter5IdChanged(int value) = 0;
+
+	// ga
+	virtual bool searchGoogleAnalyticsCounters() const noexcept = 0;
+	virtual void setSearchGoogleAnalyticsCounters(bool value) = 0;
+	virtual void searchGoogleAnalyticsCountersChanged(bool value) = 0;
+
+	virtual bool searchGoogleAnalyticsCounter1() const noexcept = 0;
+	virtual void setSearchGoogleAnalyticsCounter1(bool value) = 0;
+	virtual void searchGoogleAnalyticsCounter1Changed(bool value) = 0;
+	virtual int googleAnalyticsCounter1Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter1Id(int value) = 0;
+	virtual void googleAnalyticsCounter1IdChanged(int value) = 0;
+
+	virtual bool searchGoogleAnalyticsCounter2() const noexcept = 0;
+	virtual void setSearchGoogleAnalyticsCounter2(bool value) = 0;
+	virtual void searchGoogleAnalyticsCounter2Changed(bool value) = 0;
+	virtual int googleAnalyticsCounter2Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter2Id(int value) = 0;
+	virtual void googleAnalyticsCounter2IdChanged(int value) = 0;
+
+	virtual bool searchGoogleAnalyticsCounter3() const noexcept = 0;
+	virtual void setSearchGoogleAnalyticsCounter3(bool value) = 0;
+	virtual void searchGoogleAnalyticsCounter3Changed(bool value) = 0;
+	virtual int googleAnalyticsCounter3Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter3Id(int value) = 0;
+	virtual void googleAnalyticsCounter3IdChanged(int value) = 0;
+
+	virtual bool searchGoogleAnalyticsCounter4() const noexcept = 0;
+	virtual void setSearchGoogleAnalyticsCounter4(bool value) = 0;
+	virtual void searchGoogleAnalyticsCounter4Changed(bool value) = 0;
+	virtual int googleAnalyticsCounter4Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter4Id(int value) = 0;
+	virtual void googleAnalyticsCounter4IdChanged(int value) = 0;
+
+	virtual bool searchGoogleAnalyticsCounter5() const noexcept = 0;
+	virtual void setSearchGoogleAnalyticsCounter5(bool value) = 0;
+	virtual void searchGoogleAnalyticsCounter5Changed(bool value) = 0;
+	virtual int googleAnalyticsCounter5Id() const noexcept = 0;
+	virtual void setGoogleAnalyticsCounter5Id(int value) = 0;
+	virtual void googleAnalyticsCounter5IdChanged(int value) = 0;
 };
 
 }

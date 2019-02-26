@@ -569,6 +569,143 @@ void CrawlerOptions::setYandexMetricaCounter5Id(int value)
 	emit yandexMetricaCounter5IdChanged(m_data.yandexMetricaCounter5Id);
 }
 
+bool CrawlerOptions::searchGoogleAnalyticsCounters() const noexcept
+{
+	return m_data.searchGoogleAnalyticsCounters;
+}
+
+
+void CrawlerOptions::setSearchGoogleAnalyticsCounters(bool value)
+{
+	m_data.searchGoogleAnalyticsCounters = value;
+
+	emit searchGoogleAnalyticsCountersChanged(m_data.searchGoogleAnalyticsCounters);
+}
+
+
+bool CrawlerOptions::searchGoogleAnalyticsCounter1() const noexcept
+{
+	return m_data.searchGoogleAnalyticsCounter1;
+}
+
+
+void CrawlerOptions::setSearchGoogleAnalyticsCounter1(bool value)
+{
+	m_data.searchGoogleAnalyticsCounter1 = value;
+
+	emit searchGoogleAnalyticsCounter1Changed(m_data.searchGoogleAnalyticsCounter1);
+}
+
+int CrawlerOptions::googleAnalyticsCounter1Id() const noexcept
+{
+	return m_data.googleAnalyticsCounter1Id;
+}
+
+void CrawlerOptions::setGoogleAnalyticsCounter1Id(int value)
+{
+	m_data.googleAnalyticsCounter1Id = value;
+
+	emit googleAnalyticsCounter1IdChanged(m_data.googleAnalyticsCounter1Id);
+}
+
+bool CrawlerOptions::searchGoogleAnalyticsCounter2() const noexcept
+{
+	return m_data.searchGoogleAnalyticsCounter2;
+}
+
+void CrawlerOptions::setSearchGoogleAnalyticsCounter2(bool value)
+{
+	m_data.searchGoogleAnalyticsCounter2 = value;
+
+	emit searchGoogleAnalyticsCounter2Changed(m_data.searchGoogleAnalyticsCounter2);
+}
+
+int CrawlerOptions::googleAnalyticsCounter2Id() const noexcept
+{
+	return m_data.googleAnalyticsCounter2Id;
+}
+
+
+void CrawlerOptions::setGoogleAnalyticsCounter2Id(int value)
+{
+	m_data.googleAnalyticsCounter2Id = value;
+
+	emit googleAnalyticsCounter2IdChanged(m_data.googleAnalyticsCounter2Id);
+}
+
+bool CrawlerOptions::searchGoogleAnalyticsCounter3() const noexcept
+{
+	return m_data.searchGoogleAnalyticsCounter3;
+}
+
+void CrawlerOptions::setSearchGoogleAnalyticsCounter3(bool value)
+{
+	m_data.searchGoogleAnalyticsCounter3 = value;
+
+	emit searchGoogleAnalyticsCounter3Changed(m_data.searchGoogleAnalyticsCounter3);
+}
+
+int CrawlerOptions::googleAnalyticsCounter3Id() const noexcept
+{
+	return m_data.googleAnalyticsCounter3Id;
+}
+
+void CrawlerOptions::setGoogleAnalyticsCounter3Id(int value)
+{
+	m_data.googleAnalyticsCounter3Id = value;
+
+	emit googleAnalyticsCounter3IdChanged(m_data.googleAnalyticsCounter3Id);
+}
+
+bool CrawlerOptions::searchGoogleAnalyticsCounter4() const noexcept
+{
+	return m_data.searchGoogleAnalyticsCounter4;
+}
+
+void CrawlerOptions::setSearchGoogleAnalyticsCounter4(bool value)
+{
+	m_data.searchGoogleAnalyticsCounter4 = value;
+
+	emit searchGoogleAnalyticsCounter4Changed(m_data.searchGoogleAnalyticsCounter4);
+}
+
+int CrawlerOptions::googleAnalyticsCounter4Id() const noexcept
+{
+	return m_data.googleAnalyticsCounter4Id;
+}
+
+void CrawlerOptions::setGoogleAnalyticsCounter4Id(int value)
+{
+	m_data.googleAnalyticsCounter4Id = value;
+
+	emit googleAnalyticsCounter4IdChanged(m_data.googleAnalyticsCounter4Id);
+}
+
+bool CrawlerOptions::searchGoogleAnalyticsCounter5() const noexcept
+{
+	return m_data.searchGoogleAnalyticsCounter5;
+}
+
+void CrawlerOptions::setSearchGoogleAnalyticsCounter5(bool value)
+{
+	m_data.searchGoogleAnalyticsCounter5 = value;
+
+	emit searchGoogleAnalyticsCounter5Changed(m_data.searchGoogleAnalyticsCounter5);
+}
+
+int CrawlerOptions::googleAnalyticsCounter5Id() const noexcept
+{
+	return m_data.googleAnalyticsCounter5Id;
+}
+
+
+void CrawlerOptions::setGoogleAnalyticsCounter5Id(int value)
+{
+	m_data.googleAnalyticsCounter5Id = value;
+
+	emit googleAnalyticsCounter5IdChanged(m_data.googleAnalyticsCounter5Id);
+}
+
 const CrawlerOptionsData& CrawlerOptions::data() const noexcept
 {
 	return m_data;

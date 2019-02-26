@@ -731,6 +731,127 @@ void Preferences::setYandexMetricaCounter5Id(int value)
 	emit yandexMetricaCounter5IdChanged(m_yandexMetricaCounter5Id);
 }
 
+bool Preferences::searchGoogleAnalyticsCounters() const
+{
+	return m_searchGoogleAnalyticsCounters;
+}
+
+void Preferences::setSearchGoogleAnalyticsCounters(bool value)
+{
+	m_searchGoogleAnalyticsCounters = value;
+	emit searchGoogleAnalyticsCountersChanged(m_searchGoogleAnalyticsCounters);
+}
+
+bool Preferences::searchGoogleAnalyticsCounter1() const
+{
+	return m_searchGoogleAnalyticsCounter1;
+}
+
+void Preferences::setSearchGoogleAnalyticsCounter1(bool value)
+{
+	m_searchGoogleAnalyticsCounter1 = value;
+	emit searchGoogleAnalyticsCounter1Changed(m_searchGoogleAnalyticsCounter1);
+}
+
+int Preferences::googleAnalyticsCounter1Id() const
+{
+	return m_googleAnalyticsCounter1Id;
+}
+
+void Preferences::setGoogleAnalyticsCounter1Id(int value)
+{
+	m_googleAnalyticsCounter1Id = value;
+	emit googleAnalyticsCounter1IdChanged(m_googleAnalyticsCounter1Id);
+}
+
+bool Preferences::searchGoogleAnalyticsCounter2() const
+{
+	return m_searchGoogleAnalyticsCounter2;
+}
+
+void Preferences::setSearchGoogleAnalyticsCounter2(bool value)
+{
+	m_searchGoogleAnalyticsCounter2 = value;
+	emit searchGoogleAnalyticsCounter2Changed(m_searchGoogleAnalyticsCounter2);
+}
+
+int Preferences::googleAnalyticsCounter2Id() const
+{
+	return m_googleAnalyticsCounter2Id;
+}
+
+void Preferences::setGoogleAnalyticsCounter2Id(int value)
+{
+	m_googleAnalyticsCounter2Id = value;
+	emit googleAnalyticsCounter2IdChanged(m_googleAnalyticsCounter2Id);
+}
+
+bool Preferences::searchGoogleAnalyticsCounter3() const
+{
+	return m_searchGoogleAnalyticsCounter3;
+}
+
+void Preferences::setSearchGoogleAnalyticsCounter3(bool value)
+{
+	m_searchGoogleAnalyticsCounter3 = value;
+	emit searchGoogleAnalyticsCounter3Changed(m_searchGoogleAnalyticsCounter3);
+}
+
+int Preferences::googleAnalyticsCounter3Id() const
+{
+	return m_googleAnalyticsCounter3Id;
+}
+
+void Preferences::setGoogleAnalyticsCounter3Id(int value)
+{
+	m_googleAnalyticsCounter3Id = value;
+	emit googleAnalyticsCounter3IdChanged(m_googleAnalyticsCounter3Id);
+}
+
+bool Preferences::searchGoogleAnalyticsCounter4() const
+{
+	return m_searchGoogleAnalyticsCounter4;
+}
+
+void Preferences::setSearchGoogleAnalyticsCounter4(bool value)
+{
+	m_searchGoogleAnalyticsCounter4 = value;
+	emit searchGoogleAnalyticsCounter4Changed(m_searchGoogleAnalyticsCounter4);
+}
+
+int Preferences::googleAnalyticsCounter4Id() const
+{
+	return m_googleAnalyticsCounter4Id;
+}
+
+void Preferences::setGoogleAnalyticsCounter4Id(int value)
+{
+	m_googleAnalyticsCounter4Id = value;
+	emit googleAnalyticsCounter4IdChanged(m_googleAnalyticsCounter4Id);
+}
+
+bool Preferences::searchGoogleAnalyticsCounter5() const
+{
+	return m_searchGoogleAnalyticsCounter5;
+}
+
+void Preferences::setSearchGoogleAnalyticsCounter5(bool value)
+{
+	m_searchGoogleAnalyticsCounter5 = value;
+	emit searchGoogleAnalyticsCounter5Changed(m_searchGoogleAnalyticsCounter5);
+}
+
+int Preferences::googleAnalyticsCounter5Id() const
+{
+	return m_googleAnalyticsCounter5Id;
+}
+
+void Preferences::setGoogleAnalyticsCounter5Id(int value)
+{
+	m_googleAnalyticsCounter5Id = value;
+	emit googleAnalyticsCounter5IdChanged(m_googleAnalyticsCounter5Id);
+}
+
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept
 {
 	const QVariant valueFromSettings = m_settingsAccessor->loadFromSettings(key, defaultValue);

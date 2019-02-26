@@ -37,6 +37,7 @@
 #include "all_resources_page.h"
 #include "audit_report_page.h"
 #include "yandex_metrica_settings_widget.h"
+#include "google_analytics_settings_widget.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -596,10 +597,15 @@ void MainWindow::registerSettingsPages() const
 		QIcon(":/images/company-profile.png"),
 		TYPE_STRING(Ui_CompanyProfileSettingsWidget));
 
-	SettingsPageImpl<Ui_CompanyProfileSettingsWidget>::registerSettingsPage(
+	SettingsPageImpl<Ui_YandexMetricaSettingsWidget>::registerSettingsPage(
 		SvgRenderer::render(":/images/yandex.svg", 10, 10),
 		TYPE_STRING(Ui_YandexMetricaSettingsWidget),
 		new YandexMetricaSettingsWidget);
+
+	SettingsPageImpl<Ui_GoogleAnalyticsSettingsWidget>::registerSettingsPage(
+		SvgRenderer::render(":/images/google-analytics.svg", 10, 10),
+		TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget),
+		new GoogleAnalyticsSettingsWidget);
 
 #ifndef PRODUCTION
 	SettingsPageImpl<Ui_PageVisualSettingsWidget>::registerSettingsPage(
@@ -747,6 +753,9 @@ void MainWindow::initSettingsActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_yandexMetricaSettingsAction,
 		SvgRenderer::render(":/images/yandex.svg", 10, 10), tr("Yandex Metrica Settings"));
 
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_googleAnalyticsSettingsAction,
+		SvgRenderer::render(":/images/google-analytics.svg", 10, 10), tr("Google Analytics Settings"));
+
 	const auto settingsActionsAvailability = [](int state)
 	{
 		const auto actionsAvailabilitySetter = [](bool value)
@@ -799,6 +808,9 @@ void MainWindow::initSettingsActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_yandexMetricaSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_YandexMetricaSettingsWidget)); }));
+
+	VERIFY(connect(actionRegistry.globalAction(s_googleAnalyticsSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget)); }));
 }
 
 void MainWindow::initCrawlerActions()

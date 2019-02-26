@@ -43,6 +43,7 @@ struct CrawlerOptionsData final
 	bool pauseRangeEnabled = false;
 	QByteArray userAgent;
 
+	// ym
 	bool searchYandexMetricaCounters;
 
 	bool searchYandexMetricaCounter1;
@@ -59,6 +60,24 @@ struct CrawlerOptionsData final
 
 	bool searchYandexMetricaCounter5;
 	int yandexMetricaCounter5Id;
+
+	// ga
+	bool searchGoogleAnalyticsCounters;
+
+	bool searchGoogleAnalyticsCounter1;
+	int googleAnalyticsCounter1Id;
+
+	bool searchGoogleAnalyticsCounter2;
+	int googleAnalyticsCounter2Id;
+
+	bool searchGoogleAnalyticsCounter3;
+	int googleAnalyticsCounter3Id;
+
+	bool searchGoogleAnalyticsCounter4;
+	int googleAnalyticsCounter4Id;
+
+	bool searchGoogleAnalyticsCounter5;
+	int googleAnalyticsCounter5Id;
 };
 
 class CrawlerOptions : public QObject, public ICrawlerOptions
@@ -113,6 +132,19 @@ class CrawlerOptions : public QObject, public ICrawlerOptions
 	Q_PROPERTY(int yandexMetricaCounter4Id READ yandexMetricaCounter4Id WRITE setYandexMetricaCounter4Id NOTIFY yandexMetricaCounter4IdChanged)
 	Q_PROPERTY(bool searchYandexMetricaCounter5 READ searchYandexMetricaCounter5 WRITE setSearchYandexMetricaCounter5 NOTIFY searchYandexMetricaCounter5Changed)
 	Q_PROPERTY(int yandexMetricaCounter5Id READ yandexMetricaCounter5Id WRITE setYandexMetricaCounter5Id NOTIFY yandexMetricaCounter5IdChanged)
+
+	// google analytics
+	Q_PROPERTY(bool searchGoogleAnalyticsCounters READ searchGoogleAnalyticsCounters WRITE setSearchGoogleAnalyticsCounters NOTIFY searchGoogleAnalyticsCountersChanged)
+	Q_PROPERTY(bool searchGoogleAnalyticsCounter1 READ searchGoogleAnalyticsCounter1 WRITE setSearchGoogleAnalyticsCounter1 NOTIFY searchGoogleAnalyticsCounter1Changed)
+	Q_PROPERTY(int googleAnalyticsCounter1Id READ googleAnalyticsCounter1Id WRITE setGoogleAnalyticsCounter1Id NOTIFY googleAnalyticsCounter1IdChanged)
+	Q_PROPERTY(bool searchGoogleAnalyticsCounter2 READ searchGoogleAnalyticsCounter2 WRITE setSearchGoogleAnalyticsCounter2 NOTIFY searchGoogleAnalyticsCounter2Changed)
+	Q_PROPERTY(int googleAnalyticsCounter2Id READ googleAnalyticsCounter2Id WRITE setGoogleAnalyticsCounter2Id NOTIFY googleAnalyticsCounter2IdChanged)
+	Q_PROPERTY(bool searchGoogleAnalyticsCounter3 READ searchGoogleAnalyticsCounter3 WRITE setSearchGoogleAnalyticsCounter3 NOTIFY searchGoogleAnalyticsCounter3Changed)
+	Q_PROPERTY(int googleAnalyticsCounter3Id READ googleAnalyticsCounter3Id WRITE setGoogleAnalyticsCounter3Id NOTIFY googleAnalyticsCounter3IdChanged)
+	Q_PROPERTY(bool searchGoogleAnalyticsCounter4 READ searchGoogleAnalyticsCounter4 WRITE setSearchGoogleAnalyticsCounter4 NOTIFY searchGoogleAnalyticsCounter4Changed)
+	Q_PROPERTY(int googleAnalyticsCounter4Id READ googleAnalyticsCounter4Id WRITE setGoogleAnalyticsCounter4Id NOTIFY googleAnalyticsCounter4IdChanged)
+	Q_PROPERTY(bool searchGoogleAnalyticsCounter5 READ searchGoogleAnalyticsCounter5 WRITE setSearchGoogleAnalyticsCounter5 NOTIFY searchGoogleAnalyticsCounter5Changed)
+	Q_PROPERTY(int googleAnalyticsCounter5Id READ googleAnalyticsCounter5Id WRITE setGoogleAnalyticsCounter5Id NOTIFY googleAnalyticsCounter5IdChanged)
 
 public:
 	CrawlerOptions(QObject* parent = nullptr);
@@ -304,6 +336,47 @@ public:
 	virtual int yandexMetricaCounter5Id() const noexcept override;
 	Q_SLOT virtual void setYandexMetricaCounter5Id(int value) override;
 	Q_SIGNAL virtual void yandexMetricaCounter5IdChanged(int value) override;
+
+	// google analytics
+
+	virtual bool searchGoogleAnalyticsCounters() const noexcept override;
+	Q_SLOT virtual void setSearchGoogleAnalyticsCounters(bool value) override;
+	Q_SIGNAL virtual void searchGoogleAnalyticsCountersChanged(bool value) override;
+
+	virtual bool searchGoogleAnalyticsCounter1() const noexcept override;
+	Q_SLOT virtual void setSearchGoogleAnalyticsCounter1(bool value) override;
+	Q_SIGNAL virtual void searchGoogleAnalyticsCounter1Changed(bool value) override;
+	virtual int googleAnalyticsCounter1Id() const noexcept override;
+	Q_SLOT virtual void setGoogleAnalyticsCounter1Id(int value) override;
+	Q_SIGNAL virtual void googleAnalyticsCounter1IdChanged(int value) override;
+
+	virtual bool searchGoogleAnalyticsCounter2() const noexcept override;
+	Q_SLOT virtual void setSearchGoogleAnalyticsCounter2(bool value) override;
+	Q_SIGNAL virtual void searchGoogleAnalyticsCounter2Changed(bool value) override;
+	virtual int googleAnalyticsCounter2Id() const noexcept override;
+	Q_SLOT virtual void setGoogleAnalyticsCounter2Id(int value) override;
+	Q_SIGNAL virtual void googleAnalyticsCounter2IdChanged(int value) override;
+
+	virtual bool searchGoogleAnalyticsCounter3() const noexcept override;
+	Q_SLOT virtual void setSearchGoogleAnalyticsCounter3(bool value) override;
+	Q_SIGNAL virtual void searchGoogleAnalyticsCounter3Changed(bool value) override;
+	virtual int googleAnalyticsCounter3Id() const noexcept override;
+	Q_SLOT virtual void setGoogleAnalyticsCounter3Id(int value) override;
+	Q_SIGNAL virtual void googleAnalyticsCounter3IdChanged(int value) override;
+
+	virtual bool searchGoogleAnalyticsCounter4() const noexcept override;
+	Q_SLOT virtual void setSearchGoogleAnalyticsCounter4(bool value) override;
+	Q_SIGNAL virtual void searchGoogleAnalyticsCounter4Changed(bool value) override;
+	virtual int googleAnalyticsCounter4Id() const noexcept override;
+	Q_SLOT virtual void setGoogleAnalyticsCounter4Id(int value) override;
+	Q_SIGNAL virtual void googleAnalyticsCounter4IdChanged(int value) override;
+
+	virtual bool searchGoogleAnalyticsCounter5() const noexcept override;
+	Q_SLOT virtual void setSearchGoogleAnalyticsCounter5(bool value) override;
+	Q_SIGNAL virtual void searchGoogleAnalyticsCounter5Changed(bool value) override;
+	virtual int googleAnalyticsCounter5Id() const noexcept override;
+	Q_SLOT virtual void setGoogleAnalyticsCounter5Id(int value) override;
+	Q_SIGNAL virtual void googleAnalyticsCounter5IdChanged(int value) override;
 
 private:
 	CrawlerOptionsData m_data;
