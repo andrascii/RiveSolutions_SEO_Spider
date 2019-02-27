@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>index page</title>
+	<meta name="description" content="Dummy Description">
+	
+	     <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(function() {
+        var pageTracker = _gat._createTracker (   
+          'UA-11111-1'
+          , 'myTracker'
+          );
+        var link = document.getElementById('my-link-id');
+        link.href = pageTracker._getLinkerUrl('http://example.com/');
+      });
+
+      _gaq.push(['myTracker._trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+	
+</head>
+<body>
+	<h1>Dummy H1</h1>
+</body>
+</html>

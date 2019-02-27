@@ -5,7 +5,7 @@ namespace CrawlerEngineTests
 
 using namespace CrawlerEngine;
 
-TEST(SearchGaCountersTests, SearchResults)
+TEST(SearchGaCountersTests, SearchOldGaVer1)
 {
 	TestEnvironment env;
 	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/index.html") }));
@@ -76,6 +76,78 @@ TEST(SearchGaCountersTests, SearchResults)
 
 		ParsedPage* resourceToPageWithMissingGaCounter = pageWithMissingGaCounterPointer->linksToThisPage[0].resource.lock().get();
 		ASSERT_EQ(resourceToPageWithMissingGaCounter->url, Url("http://gacounters.com/index.html"));
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SearchGaCountersTests, SearchOldGaVer2)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/old-ga-ver-2.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("UA-11111-1");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SearchGaCountersTests, SearchOldGaVer3)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/old-ga-ver-3.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("UA-11111-1");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SearchGaCountersTests, DisableOldGa)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/old-ga-disabled-counter.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("UA-11111-1");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+
+		ASSERT_EQ(1, pagesWithMissingGa1Counter.size());
 	};
 
 	env.initializeTest(testFunction);
