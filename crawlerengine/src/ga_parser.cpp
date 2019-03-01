@@ -8,17 +8,17 @@ namespace
 // _gaq.push(['_setAccount', 'UA-XXXXX-X']);
 QString oldGaInitializer = QString("_setAccount");
 QString oldGaInitializerEnd = QString("]");
-QRegularExpression oldGaIdentifierRegExp(",\\s*['|\"](UA-.{3,6}-.)['|\"]\\s*]", QRegularExpression::MultilineOption);
+QRegularExpression oldGaIdentifierRegExp(",\\s*['|\"](UA-.{3,12}-.)['|\"]\\s*]", QRegularExpression::MultilineOption);
 
 // var pageTracker = _gat._getTracker('UA-XXXXX-X');
 QString oldGaInitializer2 = QString("_getTracker");
 QString oldGaInitializerEnd2 = QString(")");
-QRegularExpression oldGaIdentifierRegExp2("\\s*\\(\\s*['|\"](UA-.{3,6}-.)['|\"]\\s*\\)", QRegularExpression::MultilineOption);
+QRegularExpression oldGaIdentifierRegExp2("\\s*\\(\\s*['|\"](UA-.{3,12}-.)['|\"]\\s*\\)", QRegularExpression::MultilineOption);
 
 // var pageTracker = _gat._createTracker('UA-XXXXX-X', 'myTracker');
 QString oldGaInitializer3 = QString("_createTracker");
 QString oldGaInitializerEnd3 = QString(")");
-QRegularExpression oldGaIdentifierRegExp3("\\s*\\(\\s*['|\"](UA-.{3,6}-.)['|\"]\\s*,\\s*['|\"].*['|\"]\\s*\\)", QRegularExpression::MultilineOption);
+QRegularExpression oldGaIdentifierRegExp3("\\s*\\(\\s*['|\"](UA-.{3,12}-.)['|\"]\\s*,\\s*['|\"].*['|\"]\\s*\\)", QRegularExpression::MultilineOption);
 
 struct Pattern
 {
@@ -94,7 +94,7 @@ bool findOldGaDisabledCounter(const QString& javaScriptCode, const QString& coun
 	{
 		QString("window"),
 		QString("true"),
-		QRegularExpression("\\s*['|\"]ga-disable-(UA-.{3,6}-.)['|\"]\\s*]\\s*=\\s*true", QRegularExpression::MultilineOption)
+		QRegularExpression("\\s*['|\"]ga-disable-(UA-.{3,12}-.)['|\"]\\s*]\\s*=\\s*true", QRegularExpression::MultilineOption)
 	};
 
 	return patternMatched(s_oldGaDisablePattern, javaScriptCode, counterNumber);
@@ -107,7 +107,7 @@ bool findGaCounter(const QString& javaScriptCode, const QString& counterNumber)
 	{
 		QString("ga"),
 		QString(")"),
-		QRegularExpression("ga\\s*\\(\\s*['|\"]\\s*create['|\"]\\s*,\\s*['|\"](UA-.{3,6}-.)['|\"]\\s*(,\\s*['|\"]\\w*['|\"]\\s*)?\\)", QRegularExpression::MultilineOption)
+		QRegularExpression("ga\\s*\\(\\s*['|\"]\\s*create['|\"]\\s*,\\s*['|\"](UA-.{3,12}-.)['|\"]\\s*(,\\s*['|\"]\\w*['|\"]\\s*)?\\)", QRegularExpression::MultilineOption)
 	};
 
 	return patternMatched(s_gaPattern, javaScriptCode, counterNumber);
