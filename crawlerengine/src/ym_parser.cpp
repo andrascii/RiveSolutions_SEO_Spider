@@ -86,17 +86,16 @@ bool YmParser::findYaCounter2(const QString& javaScriptCode) const
 		const QString content = javaScriptCode.mid(searchBeginIndex, searchEndIndex - searchBeginIndex);
 		const QRegularExpressionMatch match = oldYmIdentifierRegExp.match(content);
 
-		if (!match.isValid() || !match.hasMatch())
+		if (match.isValid() && match.hasMatch())
 		{
-			return false;
+			const int foundId = match.captured(1).toInt();
+			const bool result = foundId == m_counterNumber;
+			if (result)
+			{
+				return true;
+			}
 		}
 
-		const int foundId = match.captured(1).toInt();
-		const bool result = foundId == m_counterNumber;
-		if (result)
-		{
-			return true;
-		}
 		index = searchEndIndex;
 	}
 	return false;
@@ -126,17 +125,16 @@ bool YmParser::findYaCounter3(const QString& javaScriptCode) const
 		const QString content = javaScriptCode.mid(searchBeginIndex, searchEndIndex - searchBeginIndex);
 		const QRegularExpressionMatch match = newYmIdentifierRegExp.match(content);
 
-		if (!match.isValid() || !match.hasMatch())
+		if (match.isValid() && match.hasMatch())
 		{
-			return false;
+			const int foundId = match.captured(1).toInt();
+			const bool result = foundId == m_counterNumber;
+			if (result)
+			{
+				return true;
+			}
 		}
 
-		const int foundId = match.captured(1).toInt();
-		const bool result = foundId == m_counterNumber;
-		if (result)
-		{
-			return true;
-		}
 		index = searchEndIndex;
 	}
 	return false;

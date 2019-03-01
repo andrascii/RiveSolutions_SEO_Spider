@@ -71,6 +71,14 @@ TEST(SerializationTests, PagesSerialization)
 			YandexMetricaCounter4StorageType,
 			YandexMetricaCounter5StorageType
 		};
+		firstPage->missingGoogleAnalyticsCounters = std::vector<StorageType>
+		{
+			GoogleAnalyticsCounter1StorageType,
+			GoogleAnalyticsCounter2StorageType,
+			GoogleAnalyticsCounter3StorageType,
+			GoogleAnalyticsCounter4StorageType,
+			GoogleAnalyticsCounter5StorageType
+		};
 
 		ParsedPage etalon = *firstPage;
 
@@ -123,6 +131,7 @@ TEST(SerializationTests, PagesSerialization)
 		EXPECT_EQ(etalon.responseTime, newFirstPage->responseTime);
 		EXPECT_EQ(etalon.storages, newFirstPage->storages);
 		EXPECT_EQ(etalon.missingYandexMetricaCounters, newFirstPage->missingYandexMetricaCounters);
+		EXPECT_EQ(etalon.missingGoogleAnalyticsCounters, newFirstPage->missingGoogleAnalyticsCounters);
 	};
 
 	env.initializeTest(testFunction);

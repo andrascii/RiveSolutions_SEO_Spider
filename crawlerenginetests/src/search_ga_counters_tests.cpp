@@ -154,4 +154,50 @@ TEST(SearchGaCountersTests, DisableOldGa)
 	env.exec();
 }
 
+TEST(SearchGaCountersTests, NewGTAG)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/new-ga-gtag-counter.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("GA_TRACKING_ID1");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SearchGaCountersTests, NewGA)
+{
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/new-ga-gtag-counter.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("UA-11111-1");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }

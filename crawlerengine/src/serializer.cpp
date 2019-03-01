@@ -111,8 +111,9 @@ namespace
 	const QString s_is404PagesSetupRightKey = QLatin1String("is404PagesSetupRight");
 	const QString s_siteImageKey = QLatin1String("siteImage");
 
-	// missing yandex metrica keys
+	// missing yandex metrica and google analytics keys
 	const QString s_ymMissingCountersKey = QLatin1String("yandexMetricaMissingCounters");
+	const QString s_gaMissingCountersKey = QLatin1String("googleAnalyticsMissingCounters");
 	const QString s_storageTypeKey = QLatin1String("storageType");
 	const QString s_storageTypeValueKey = QLatin1String("storageTypeValue");
 
@@ -213,6 +214,19 @@ public:
 			writer.writeStartElement(s_ymMissingCountersKey);
 
 			for (StorageType storageType : m_page->missingYandexMetricaCounters)
+			{
+				writer.writeStartElement(s_storageTypeKey);
+				writer.writeAttribute(s_storageTypeValueKey, QString::number(static_cast<int>(storageType)));
+				writer.writeEndElement();
+			}
+
+			writer.writeEndElement();
+		}
+
+		{
+			writer.writeStartElement(s_gaMissingCountersKey);
+
+			for (StorageType storageType : m_page->missingGoogleAnalyticsCounters)
 			{
 				writer.writeStartElement(s_storageTypeKey);
 				writer.writeAttribute(s_storageTypeValueKey, QString::number(static_cast<int>(storageType)));
@@ -498,6 +512,23 @@ public:
 					const StorageType storageType = static_cast<StorageType>(attributes.value(s_storageTypeValueKey).toInt());
 
 					m_page->missingYandexMetricaCounters.push_back(storageType);
+				}
+			}
+			else if (reader.qualifiedName() == s_gaMissingCountersKey)
+			{
+				while (!reader.isEndElement() || reader.qualifiedName() != s_gaMissingCountersKey)
+				{
+					reader.readNext();
+
+					if (!reader.isStartElement() || reader.qualifiedName() != s_storageTypeKey)
+					{
+						continue;
+					}
+
+					QXmlStreamAttributes attributes = reader.attributes();
+					const StorageType storageType = static_cast<StorageType>(attributes.value(s_storageTypeValueKey).toInt());
+
+					m_page->missingGoogleAnalyticsCounters.push_back(storageType);
 				}
 			}
 			else if (reader.qualifiedName() == s_linksOnThisPageKey)
