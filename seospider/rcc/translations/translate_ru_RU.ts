@@ -298,6 +298,29 @@ Please, be sure that you entered a valid address</source>
     </message>
 </context>
 <context>
+    <name>GoogleAnalyticsSettingsWidget</name>
+    <message>
+        <source>Google Analytics Settings</source>
+        <translation>Настройки поиска счетчиков Google Analytics</translation>
+    </message>
+    <message>
+        <source>Search Google Analytics Counters</source>
+        <translation>Искать счетчики Google Analytics на страницах сайта</translation>
+    </message>
+    <message>
+        <source>Type in google analytics counter number to search</source>
+        <translation>Введите номер счетчика Google Analytics</translation>
+    </message>
+    <message>
+        <source>Add Counter</source>
+        <translation>Добавить счетчик</translation>
+    </message>
+    <message>
+        <source>Remove Counter</source>
+        <translation>Удалить счетчик</translation>
+    </message>
+</context>
+<context>
     <name>LanguageSettingsWidget</name>
     <message>
         <source>Language Settings</source>
@@ -1654,6 +1677,10 @@ The license is valid untill %1</source>
         <source>You&apos;re using the trial version of the application, to use full functionality, please &lt;a href=&apos;#&apos; style=&apos;color:#aaaaff&apos;&gt;purchase a license&lt;/a&gt;</source>
         <translation type="unfinished">Вы используете пробную  версию приложения, для получения полного функционала &lt;a href=&apos;#&apos; style=&apos;color:#aaaaff&apos;&gt;приобретите лицензию&lt;/a&gt;</translation>
     </message>
+    <message>
+        <source>Google Analytics Finder</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
@@ -2094,6 +2121,10 @@ please stop crawling and try again</source>
     <message>
         <source>No, thanks</source>
         <translation>Спасибо, нет</translation>
+    </message>
+    <message>
+        <source>Google Analytics Settings</source>
+        <translation>Настройки Google Analytics</translation>
     </message>
 </context>
 <context>
