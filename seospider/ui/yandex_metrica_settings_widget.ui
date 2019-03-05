@@ -63,6 +63,12 @@
      </item>
      <item row="1" column="1">
       <widget class="QLineEdit" name="ycLineEdit1">
+       <property name="inputMask">
+        <string>DD#######</string>
+       </property>
+       <property name="maxLength">
+        <number>9</number>
+       </property>
        <property name="placeholderText">
         <string>Type in yandex metrica counter number to search</string>
        </property>
@@ -73,6 +79,12 @@
      </item>
      <item row="2" column="1">
       <widget class="QLineEdit" name="ycLineEdit2">
+       <property name="inputMask">
+        <string>DD#######</string>
+       </property>
+       <property name="maxLength">
+        <number>9</number>
+       </property>
        <property name="placeholderText">
         <string>Type in yandex metrica counter number to search</string>
        </property>
@@ -83,6 +95,12 @@
      </item>
      <item row="3" column="1">
       <widget class="QLineEdit" name="ycLineEdit3">
+       <property name="inputMask">
+        <string>DD#######</string>
+       </property>
+       <property name="maxLength">
+        <number>9</number>
+       </property>
        <property name="placeholderText">
         <string>Type in yandex metrica counter number to search</string>
        </property>
@@ -93,6 +111,12 @@
      </item>
      <item row="4" column="1">
       <widget class="QLineEdit" name="ycLineEdit4">
+       <property name="inputMask">
+        <string>DD#######</string>
+       </property>
+       <property name="maxLength">
+        <number>9</number>
+       </property>
        <property name="placeholderText">
         <string>Type in yandex metrica counter number to search</string>
        </property>
@@ -103,8 +127,14 @@
      </item>
      <item row="5" column="1">
       <widget class="QLineEdit" name="ycLineEdit5">
+       <property name="inputMask">
+        <string>DD#######</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="maxLength">
+        <number>9</number>
        </property>
        <property name="placeholderText">
         <string>Type in yandex metrica counter number to search</string>
