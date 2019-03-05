@@ -200,4 +200,130 @@ TEST(SearchGaCountersTests, NewGA)
 	env.exec();
 }
 
+TEST(SearchGaCountersTests, RealPage1)
+{
+	// source: https://texterra.ru/blog/google-analytics-dlya-nachinayushchikh-samoe-polnoe-rukovodstvo-v-runete.html
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/real-page-1.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+	env.crawler()->options()->setLimitSearchTotal(1);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("UA-31053658-1");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+
+TEST(SearchGaCountersTests, RealPage2)
+{
+	// source: https://netology.ru/blog/google-analytics-new
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/real-page-2.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+	env.crawler()->options()->setLimitSearchTotal(1);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("GTM-PWG78J");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SearchGaCountersTests, RealPage3)
+{
+	// source: https://wiki.rookee.ru/google-analytics/
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/real-page-3.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+	env.crawler()->options()->setLimitSearchTotal(1);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("GTM-P6FZK6R");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SearchGaCountersTests, RealPage4)
+{
+	// source: https://convertmonster.ru/blog/kontekstnaya-reklama-blog/ustanovka-schetchika-nastrojka-google-analytics/
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/real-page-4.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+	env.crawler()->options()->setLimitSearchTotal(1);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("GTM-5QSCMZ");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
+TEST(SearchGaCountersTests, RealPage5)
+{
+	// source: https://semantica.in/blog/google-analytics.html
+	TestEnvironment env;
+	env.crawler()->options()->setData(TestEnvironment::defaultOptions({ Url("http://gacounters.com/real-page-5.html") }));
+	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
+	env.crawler()->options()->setLimitSearchTotal(1);
+
+	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("UA-70455991-2");
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		cl->waitForCrawlingDone();
+
+		const std::vector<const ParsedPage*> pagesWithMissingGa1Counter =
+			cl->storageItems(StorageType::GoogleAnalyticsCounter1StorageType);
+
+		ASSERT_EQ(0, pagesWithMissingGa1Counter.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }

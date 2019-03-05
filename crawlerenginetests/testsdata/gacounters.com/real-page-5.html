@@ -1,0 +1,614 @@
+
+<!DOCTYPE html>
+<html lang="ru-RU">
+<head>
+	<meta charset="UTF-8">
+	<meta name="SKYPE_TOOLBAR" content="SKYPE_TOOLBAR_PARSER_COMPATIBLE">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
+	<title>Google Analytics — что это и для чего нужно? Подробное объяснение что такое Google Аналитикс</title>
+	<meta name="description" content="Google Analytics — что это такое? Это cчетчик посещений. Как установить счетчик гугл аналитикс? Код счетчика Google Analytics."/>
+<link rel='dns-prefetch' href='//s.w.org' />
+<meta property="og:title" content="Google Analytics">
+<meta property="og:type" content="article">
+<meta property="og:description" content="Что такое Google Aналитикс? Больше видео на нашем канале - изучайте интернет-маркетинг с SEMANTICA Список функций, которые предлагает Google Analytics счетчик, включает в себя: анализ эффективности web-ресурса (скорость загрузки, маршрут пользователей); формирование отчетов в режиме real time; оценка медийных, поисковых и социальных рекламных каналов; анализ конверсии и адаптации сайт к бизнес-целям; оценка количества «мобильного» трафика. &nbsp; Счетчик Google Analytics — что это такое и как его установить Прежде всего, потребуется создать аккаунт в системе, для чего следует перейти по этой ссылке. Нужно отметить, что счетчик Гугл позволяет отслеживать как веб-сайт, так и приложения. В один аккаунт GA можно добавить до 25-ти различных ресурсов. Если вы устанавливаете счетчик посещаемости сайта Google, то потребуется указать тематику интернет проекта, выбрать подходящий часовой пояс (ориентируясь на целевую аудиторию) и добавить URL сайта с указанием протокола http:// либо https://. Далее потребуется принять условия пользовательского соглашения, после чего система предоставит код счетчика Google Analytics. Следующим этапом потребуется добавить Google счетчик на сайт. Для этого необходимо внедрить скопированный код в шаблон интернет проекта. Если вебмастер указал в настройках создание синхронного кода, то его добавляют в футер. Впрочем, Гугл рекомендует использовать асинхронный код, не замедляющий загрузку страниц. Такой JavaScript положено добавлять перед закрывающим тегом &lt;/head&gt;. На что способен счетчик Google?  Если web-проект имеет коммерческую направленность, то счетчик сайта Google поможет выполнить конверсию по целям. Вебмастер сможет узнать, как часто посетители нажимают на кнопки, типа «оформить покупку» или «заказать обратный звонок». Система позволяет отслеживать до 20-ти целей. Установив Google Analytics счетчик на сайт, можно собирать статистику по страницам интернет ресурса. Владелец…">
+<meta property="og:url" content="https://semantica.in/blog/google-analytics.html">
+<meta property="og:image" content="https://semantica.in/wp-content/uploads/2015/09/azbuka254.jpg">
+<link rel='stylesheet' id='sdTheme-fonts-css'  href='//fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&#038;PT+Sans+Narrow&#038;subset=latin,cyrillic' type='text/css' media='all' />
+<link rel='stylesheet' id='swpc-main-css'  href='https://semantica.in/wp-content/themes/semantica-msk/main.min.css?ver=135.17' type='text/css' media='all' />
+<link rel='https://api.w.org/' href='https://semantica.in/wp-json/' />
+<link rel='prev' title='Cost Per Click' href='https://semantica.in/blog/cost-per-click.html' />
+<link rel='next' title='Поисковая система' href='https://semantica.in/blog/poiskovaya-sistema.html' />
+<link rel="canonical" href="https://semantica.in/blog/google-analytics.html" />
+<meta name="google-site-verification" content="ucchndPPxCmgB0mNm8FMfjllCHUuDaPb9vwGxyghINk" />
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-70455991-2', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1160456317348513');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1160456317348513&ev=PageView&noscript=1"
+/></noscript>
+<!-- DO NOT MODIFY -->
+<!-- End Facebook Pixel Code -->
+<script charset="UTF-8" src="//cdn.sendpulse.com/9dae6d62c816560a842268bde2cd317d/js/push/148e9254a416917c703eae9f658ff06b_1.js" async></script>
+<script type="text/javascript">(window.Image ? (new Image()) : document.createElement('img')).src = location.protocol + '//vk.com/rtrg?r=A9kB5q1Eh*vbDn14uCh0Kh41rIbfE67P5OGWl3YPuClauTn3LamgKBCP7xI/sTSnh*uDYcOk1DE57p54OHf6mEwMhITrBBeTuk1SRGJ9dWFSuHwY7iYimo2pKfnGxvdVvT/TLwmmtzYWy5uWwjQrOpc88vA4LlXXCWUicKJA1xg-&pixel_id=1000042439';</script><link rel="alternate" type="application/rss+xml" title="SEMANTICA // Блог о поисковом маркетинге" href="https://semantica.in/blog/feed?data=rss2"><style type="text/css" id="syntaxhighlighteranchor"></style>
+</head>
+<body class="post-template-default single single-post postid-3756 single-format-standard">
+
+
+<div class="header">
+	<div class="header_nav"></div>
+	<div class="header_logo">
+		<a href="https://semantica.in">
+			<img src="https://semantica.in/wp-content/themes/semantica/i/header/logo.png" height="34" alt="SEMANTICA">		</a>
+	</div>
+</div>
+
+
+<div class="mobileMenu">
+	<div class="mobileMenu_i">
+		<div class="mobileMenu_i2">
+			<div class="mobileMenu_i3">
+                <ul id="menu-glavnoe-menyu" class="mobileMenu_menu"><li id="menu-item-5268" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-5268"><a href="#">Продвижение сайта</a>
+<ul class="sub-menu">
+	<li id="menu-item-3996" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3996"><a href="https://semantica.in/seo-traffic">Коммерческий трафик</a></li>
+	<li id="menu-item-4929" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4929"><a href="https://semantica.in/seo-thematic">Тематический трафик</a></li>
+	<li id="menu-item-16865" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16865"><a href="https://semantica.in/audit-i-strategiya-prodvizheniya">Аудит сайта</a></li>
+</ul>
+</li>
+<li id="menu-item-16866" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-16866"><a href="#">Реклама</a>
+<ul class="sub-menu">
+	<li id="menu-item-6362" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6362"><a href="https://semantica.in/performance-marketing">Performance Marketing</a></li>
+	<li id="menu-item-3997" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3997"><a href="https://semantica.in/ad-context">Контекстная реклама</a></li>
+	<li id="menu-item-16867" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16867"><a href="https://semantica.in/instagram-vk-facebook-ok">Продвижение в социальных сетях</a></li>
+	<li id="menu-item-16868" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16868"><a href="https://semantica.in/ad-youtube-channel">Продвижение в Youtube</a></li>
+</ul>
+</li>
+<li id="menu-item-15743" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15743"><a href="https://semantica.in/serm">SERM</a></li>
+<li id="menu-item-17113" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-17113"><a href="#">Контент-маркетинг</a>
+<ul class="sub-menu">
+	<li id="menu-item-17112" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17112"><a href="https://semantica.in/kontent-marketing">Контент-маркетинг в социальных сетях</a></li>
+	<li id="menu-item-16870" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16870"><a href="https://semantica.in/kontent-podderzhka">Контент-поддержка сайта</a></li>
+</ul>
+</li>
+<li id="menu-item-3998" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3998"><a href="https://semantica.in/contacts">Контакты</a></li>
+</ul><div class="mobileMenu_sep"></div><ul id="menu-dopolnitelnoe-menyu" class="mobileMenu_menu"><li id="menu-item-510" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-510"><a href="https://semantica.in/cases">Истории успеха</a></li>
+<li id="menu-item-1445" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-1445"><a href="https://semantica.in/blog">Блог</a></li>
+<li id="menu-item-4821" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4821"><a href="https://semantica.in/business-solutions">Решения для бизнеса</a></li>
+<li id="menu-item-6461" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6461"><a href="https://semantica.in/partnerskaya-programma-semantica">Партнерская программа</a></li>
+<li id="menu-item-509" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-509"><a href="https://semantica.in/tools">Инструменты</a></li>
+<li id="menu-item-15361" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15361"><a href="http://team.semantica.in">Вакансии</a></li>
+<li id="menu-item-15798" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15798"><a href="https://school.semantica.in?utm_source=menumsksite">Школа SEMANTICA</a></li>
+</ul>				                    <div class="mobileMenu_sep"></div>
+					<div class="mobileMenu_city">
+						<p>Мы работаем не только в Моcкве, но и в других городах России:</p>
+						<ul>
+							<li><a href="http://vrn.semantica.in">Воронеж</a></li><li><a href="http://nn.semantica.in">Нижний Новгород</a></li><li><a href="http://samara.semantica.in">Самара</a></li><li><a href="http://volgograd.semantica.in">Волгоград</a></li><li><a href="https://krasnodar.semantica.in">Краснодар</a></li><li><a href="http://rostov.semantica.in">Ростов-на-Дону</a></li>						</ul>
+					</div>
+							</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="container">
+
+
+                                                <div class="promoBar promoBar-green">
+                <a href="https://school.semantica.in/webinars/dolgo-i-schastlivo-kak-vystraivat-partnerskie-otnosheniya-c-klientom-razvivat-proekt-i-uvelichivat-chek/?utm_source=site&utm_medium=plashka&utm_campaign=webinar07032019" class="promoBar_i">
+                <span class="promoBar_text">
+                    Ждем вас на вебинаре! "Долго и счастливо: как выстраивать партнерские отношения c клиентом, развивать проект и увеличивать чек - 12 марта в 13:00 по мск.                </span>
+                    <span class="promoBar_btn"><span class="btn btn-small">Узнать больше</span></span>                </a>
+                <div class="promoBar_hide" title="Скрыть">
+                    <i class="fa fa-times"></i>
+                </div>
+            </div>
+                
+
+<div class="grid"><div class="breadcrumbs mt-base"><a href="https://semantica.in" class="breadcrumbs_item">Главная</a> &nbsp;&rarr;&nbsp; <a href="https://semantica.in/blog" class="breadcrumbs_item">Блог</a> &nbsp;&rarr;&nbsp; <a href="https://semantica.in/blog/tag/abc" class="breadcrumbs_item">Азбука терминов</a> &nbsp;&rarr;&nbsp; <span class="breadcrumbs_item">Google Analytics</span></div></div>
+
+    <div class="grid">
+        <div class="grid_c grid_c-3of31">
+
+                            <h1 class="postTitle title mt-base">Google Analytics</h1>
+                <div class="postHeaderBanner">
+                    <a href="https://semantica.in/contacts/?utm_source=blogset" class="postHeaderBanner_block">
+                    <span class="postHeaderBanner_header">
+                        Комплекс услуг для вашего бизнеса
+                    </span>
+                        <span class="postHeaderBanner_items">
+                        <b><i class="fa fa-star"></i> Продвижение сайтов</b>
+                        <b><i class="fa fa-star"></i> Перформанс маркетинг</b>
+                        <b><i class="fa fa-star"></i> Продвижение в соцсетях</b>
+                        <b><i class="fa fa-star"></i> Продвижение в YouTube</b>
+                        <b><i class="fa fa-star"></i> SERM</b>
+                        <b><i class="fa fa-star"></i> Контент-маркетинг в соцсетях</b>
+                    </span>
+                        <span class="styledBtn styledBtn-gold">
+                        Узнать стоимость
+                        <i class="fa fa-chevron-right"></i>
+                    </span>
+                    </a>
+                </div>
+            
+            <div class="postMeta mt-half">
+                <p>
+                                            <span class="postMeta_item nowrap">
+							<i class="fa fa-calendar"></i>
+                            16 сентября 2015 года.
+						</span>
+                                        <span class="postMeta_item"><span class="nowrap"><i class="fa fa-bookmark-o"></i>  Опубликовано в разделах:</span> <a href="https://semantica.in/blog/tag/abc">Азбука терминов</a>.</span>                                         <span class="postMeta_item nowrap" title="Количество просмотров статьи"><i class="fa fa-eye"></i> 20137</span>                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="grid mt-base js-blogSidebarAffix">
+        <div class="grid_c grid_c-3of31">
+
+
+                        <div class="text">
+
+
+                <div class="innerContentServicePromo text_innerBlock" data-paragraph="9">   <div class="innerContentServicePromo_enot"></div>   <div class="innerContentServicePromo_body">Performance Marketing основывается на четко и однозначно измеряемых параметрах
+Мы находим оптимальные решения в любой отрасли! Работаем над правильными KPI</div><div class="innerContentServicePromo_btn"><a href="https://semantica.in/performance-marketing/?utm_source=performance_marketing&utm_campaign=bloginside" class="styledBtn styledBtn-gold">Performance Marketing в Семантике</a></div></div>
+
+                    <div class="innerContentSubscribe text_innerBlock" data-paragraph="14">
+        <div class="innerContentSubscribe_bookImg">
+            <img src="https://semantica.in/wp-content/themes/semantica/i/inner-subscribe-book.png" alt="">
+        </div>
+        <div class="innerContentSubscribe_bookTitle">
+            Мы выпустили новую книгу «Контент-маркетинг в социальных сетях: Как засесть в голову подписчиков и влюбить их в свой бренд».
+        </div>
+        <div class="innerContentSubscribe_title">
+            <i class="fa fa-envelope-o"></i>
+            Подпишись на рассылку и получи книгу в подарок!
+        </div>
+        <div class="innerContentSubscribe_success swpmc-js-success"></div>
+        <form
+            onsubmit="return false;"
+            class="innerContentSubscribe_form swpmc-js-form"
+            data-container=".innerContentSubscribe"
+            data-on-success="swptEvents.blogSubscribeSuccess()"        >
+            <div class="innerContentSubscribe_errors swpmc-js-errors"></div>
+            <div class="innerContentSubscribe_wrap">
+                <div class="innerContentSubscribe_fields">
+                    <div class="pos-relative">
+                        <label for="innerContentSubscribeEmail" class="placeholder">Введите e-mail</label>
+                        <input class="inputText js-placeholder" type="text" name="email" id="innerContentSubscribeEmail" value="">
+                    </div>
+                    <div class="innerContentSubscribe_checkbox">
+                        <label>
+                            <input type="checkbox" class="checkbox" name="agreement" value="1"/>
+                            Я подтверждаю свою дееспособность и даю согласие на обработку своих персональных данных в соответствии с
+                            <a href="https://semantica.in/agreement" target="_blank">соглашением</a>.
+                        </label>
+                    </div>
+                </div>
+                <div class="innerContentSubscribe_go">
+                    <button type="submit" class="flatBtn flatBtn-primary">Подписаться</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+                <h2 style="text-align: justify;"><span style="color: #008000;">Что такое Google Aналитикс?</span></h2>
+<div class="focustext focustext-success mt-base">
+	<i class="fa fa-paperclip"></i>
+	<div class="focustext_i">
+		<div class="focustext_title">Google Analytics — удобный инструмент для сбора статистики</div><div class="focustext_content"><p>Счетчик посещений сайта Google представляет собой код, написанный на JavaScript. Это бесплатный сервис, предназначенный для сбора сведений о посещаемости, а также о действиях интернет пользователей на сайте. Инструмент формирует множество отчетов, на основании которых можно строить стратегию продвижения сайта.</p>
+<p>Иными словами, установка счетчика Google Analytics дает вам возможность понять – кто, когда и зачем посетил ваш сайт. Всесторонний анализ целевой аудитории позволяет оперативно реагировать на запросы пользователей.</p>
+</div>	</div>
+</div>
+<p style="text-align: center;">
+<iframe src="https://www.youtube.com/embed/eDbgHhJzAOU" width="854" height="480" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+<p style="text-align: center;"><strong>Больше видео на нашем канале - изучайте интернет-маркетинг с SEMANTICA</strong></p>
+<p style="text-align: center;"><a href="https://www.youtube.com/channel/UCLf4mukbu2Z8C7ONPw7Dwfw?sub_confirmation=1" target="_blank" rel="noopener"><img src="https://semantica.in/wp-content/uploads/2017/12/yutub.png" alt="" width="178" height="37" /></a></p>
+<p style="text-align: justify;">Список функций, которые предлагает Google Analytics счетчик, включает в себя:</p>
+<ul>
+<li>анализ эффективности web-ресурса (скорость загрузки, маршрут пользователей);</li>
+<li>формирование отчетов в режиме real time;</li>
+<li>оценка медийных, поисковых и социальных рекламных каналов;</li>
+<li>анализ конверсии и адаптации сайт к бизнес-целям;</li>
+<li>оценка количества «мобильного» трафика.</li>
+</ul>
+<p>&nbsp;</p>
+<h2><span style="color: #008000;">Счетчик Google Analytics — что это такое и как его установить</span></h2>
+<p style="text-align: justify;">Прежде всего, потребуется создать аккаунт в системе, для чего следует перейти <a href="http://www.google.ru/analytics/">по этой ссылке</a>. Нужно отметить, что счетчик Гугл позволяет отслеживать как веб-сайт, так и приложения. В один аккаунт GA можно добавить до 25-ти различных ресурсов.</p>
+<p style="text-align: justify;">Если вы устанавливаете счетчик посещаемости сайта <a href="https://semantica.in/blog/chto-takoe-google-2.html">Google</a>, то потребуется указать тематику интернет проекта, выбрать подходящий часовой пояс (ориентируясь на целевую аудиторию) и добавить URL сайта с указанием протокола http:// либо https://. Далее потребуется принять условия пользовательского соглашения, после чего система предоставит код счетчика Google Analytics.</p>
+<p style="text-align: justify;">Следующим этапом потребуется добавить Google счетчик на сайт. Для этого необходимо внедрить скопированный код в шаблон интернет проекта. Если вебмастер указал в настройках создание синхронного кода, то его добавляют в футер. Впрочем, Гугл рекомендует использовать асинхронный код, не замедляющий загрузку страниц. Такой JavaScript положено добавлять перед закрывающим тегом &lt;/head&gt;.</p>
+<div class="promo">Знаете ли вы, что счетчик Гугл Аналитикс интегрирован с сервисом Google AdWords? Благодаря этому, вебмастер имеет возможность сделать рекламные кампании более эффективными.</div>
+<h2><span style="color: #008000;">На что способен счетчик Google? </span></h2>
+<p style="text-align: justify;">Если web-проект имеет коммерческую направленность, то счетчик сайта Google поможет выполнить конверсию по целям. Вебмастер сможет узнать, как часто посетители нажимают на кнопки, типа «оформить покупку» или «заказать обратный звонок». Система позволяет отслеживать до 20-ти целей.</p>
+<p style="text-align: justify;">Установив Google Analytics счетчик на сайт, можно собирать статистику по страницам интернет ресурса. Владелец сайта сможет узнать, как часто посетители совершают переходы по внутренним и внешним ссылкам. Система проанализирует каждый переход.</p>
+<p style="text-align: justify;"><span style="line-height: 1.5;"><div class="promo">Нужно отметить, что счетчики для сайта Google способны визуализировать маршрут передвижения посетителя на сайте. Визуализация осуществляется от точки входа на сайт до последней страницы, просмотренной интернет пользователем.<span style="line-height: 1.5;"></span></div></span></p>
+<p>&nbsp;</p>
+<p style="text-align: justify;"><span style="line-height: 1.5;">Счетчики на сайт </span><span style="line-height: 1.5;">Google </span><span style="line-height: 1.5;">могут осуществлять экспорт собранной статистики. Отчеты сохраняются в формате PDF, Excel либо в текстовом файле. Можно настроить автоматическую отправку отчета по времени.  </span></p>
+<div class="promo">Может пригодиться: <a href="/business-solutions/prodvizhenie-sajta-po-perekhodam-v-moskve">раскрутка сайта с оплатой за переходы</a> - найдем решение подходящее именно вам! Семантика</div>
+            </div>
+            
+
+            <div class="share  mt-base">
+		<div class="share_title">Рассказать о статье:</div>
+	<div class="share_body">
+				<div
+			class="ya-share2"
+			data-services="facebook,vkontakte,twitter,gplus,odnoklassniki"
+			data-counter=""
+			data-size="m"
+			data-lang="ru"
+					></div>
+			</div>
+</div>
+
+            
+
+                                        <div class="bigServiceFormPromo mt-double">
+                    <img src="https://semantica.in/wp-content/themes/semantica/i/blog/enot_big_service_form_promo.png" class="bigServiceFormPromo_enot" alt="">
+                    <div class="bigServiceFormPromo_title">
+                        Получайте реальный результат                    </div>
+                                            <div class="bigServiceFormPromo_text">
+                            <p>Вы сами формируете оценки эффективности для нас: продажи, кол-во заявок, другое<br />
+Мы работаем в рамках ваших бюджетов на прогнозируемый результат</p>
+                        </div>
+                                                                <div class="bigServiceFormPromo_go">
+                                                        <a href="https://semantica.in/performance-marketing/?utm_source=performance_marketing&utm_campaign=blogfinish#serviceform" class="styledBtn styledBtn-xxl styledBtn-gold">Узнать стоимость</a>
+                        </div>
+                                    </div>
+                        
+
+            <div class='yarpp-related'>
+<div class="relatedPosts mt-half"><div class="relatedPosts_posts clearfix"><div class="grid_c grid_c-1of3">
+	<div class="postRow">
+		<div class="postRow_i">
+							<div class="postRow_img">
+					<a href="https://semantica.in/blog/google-universal-analytics-conversion-i-voronki-polnoe-rukovodstvo-chast-pervaya-perevod.html">
+						<img src="https://semantica.in/wp-content/uploads/2015/04/jpg-500x375." alt="" />
+					</a>
+				</div>
+						<div class="postRow_meta">
+                					<span class="postMeta_item nowrap">
+						<i class="fa fa-calendar"></i>
+                        22.04.2015					</span>
+                				 <span class="postMeta_item nowrap" title="Количество просмотров статьи"><i class="fa fa-eye"></i> 6365</span>			</div>
+			<div class="postRow_title">
+				<a href="https://semantica.in/blog/google-universal-analytics-conversion-i-voronki-polnoe-rukovodstvo-chast-pervaya-perevod.html">Google Analytics и воронки: полное руководство. Как работать с воронкой конверсии и воронкой продаж Google Analytics</a>
+			</div>
+			<div class="postRow_intro">Вместе с Анной Серебряковой мы перевели эту чудесную статью, но она вышла настолько большой, что было принято решение разделить публикацию на две части. Встречайте первую часть! Для того, чтобы сделать свой бизнес успешным, вы должны тратить больше времени и ресурсов на конверсию существующего трафика, чем на приобретение нового потока трафика. Когда вы думаете, что для увеличения продаж вам нужно просто…</div>
+		</div>
+		<div class="postRow_read">
+			<a class="btn btn-primary" href="https://semantica.in/blog/google-universal-analytics-conversion-i-voronki-polnoe-rukovodstvo-chast-pervaya-perevod.html">Читать (~17 мин.) <i class="fa fa-arrow-right"></i></a>		</div>
+	</div>
+</div><div class="grid_c grid_c-1of3">
+	<div class="postRow">
+		<div class="postRow_i">
+							<div class="postRow_img">
+					<a href="https://semantica.in/blog/kto-on-tainstvennyj-pokupatel-otchety-po-auditoriyam-v-google-analytics.html">
+						<img src="https://semantica.in/wp-content/uploads/2016/07/auditoriya-v-google.jpg" alt="" />
+					</a>
+				</div>
+						<div class="postRow_meta">
+                					<span class="postMeta_item nowrap">
+						<i class="fa fa-calendar"></i>
+                        18.07.2016					</span>
+                				 <span class="postMeta_item nowrap" title="Количество просмотров статьи"><i class="fa fa-eye"></i> 3846</span>			</div>
+			<div class="postRow_title">
+				<a href="https://semantica.in/blog/kto-on-tainstvennyj-pokupatel-otchety-po-auditoriyam-v-google-analytics.html">Кто он, таинственный покупатель? Отчеты по аудиториям в Google Analytics</a>
+			</div>
+			<div class="postRow_intro">Поскольку об отчетах веб-аналитики Яндекса мы уже говорили, предлагаю немного расслабиться и заняться ее сородичем – сервисом для аналитики от Google, Google Analytics, а если точнее – основными отчетами, полезными для беглого анализа и которыми можно воспользоваться, не отвлекаясь на сложную сегментацию. Сегодня я предлагаю остановиться на отчетах «Аудитории». Чем он может быть полезен? Отчет «Обзор» Благодаря отслеживанию Google Analytics…</div>
+		</div>
+		<div class="postRow_read">
+			<a class="btn btn-primary" href="https://semantica.in/blog/kto-on-tainstvennyj-pokupatel-otchety-po-auditoriyam-v-google-analytics.html">Читать (~5 мин.) <i class="fa fa-arrow-right"></i></a>		</div>
+	</div>
+</div><div class="grid_c grid_c-1of3">
+	<div class="postRow">
+		<div class="postRow_i">
+							<div class="postRow_img">
+					<a href="https://semantica.in/blog/analiziruj-eto-chto-umeet-google-universal-analytics.html">
+						<img src="https://semantica.in/wp-content/uploads/2016/10/Google-Analytics-Universal.jpg" alt="" />
+					</a>
+				</div>
+						<div class="postRow_meta">
+                					<span class="postMeta_item nowrap">
+						<i class="fa fa-calendar"></i>
+                        06.10.2016					</span>
+                				 <span class="postMeta_item nowrap" title="Количество просмотров статьи"><i class="fa fa-eye"></i> 3759</span>			</div>
+			<div class="postRow_title">
+				<a href="https://semantica.in/blog/analiziruj-eto-chto-umeet-google-universal-analytics.html">Анализируй это: что умеет Google Universal Analytics</a>
+			</div>
+			<div class="postRow_intro">Веб-аналитика – это как добыча золота. Чем глубже ты закопался в шахту, тем больше блестящего металла получаешь и тем сильнее поток слез счастья. Так и с информацией о пользователях. Чем больше вы о них знаете, тем лучше можете сделать сайт и бизнес. Поэтому сегодня разбираемся с Google Universal Analytics. Это довольно старое обновление системы аналитики, но не все знают, сколько…</div>
+		</div>
+		<div class="postRow_read">
+			<a class="btn btn-primary" href="https://semantica.in/blog/analiziruj-eto-chto-umeet-google-universal-analytics.html">Читать (~7 мин.) <i class="fa fa-arrow-right"></i></a>		</div>
+	</div>
+</div></div></div>
+</div>
+
+
+                        <div class="mt-base">
+                            </div>
+            
+
+        </div>
+        <div class="grid_c grid_c-1of31">
+
+
+                                        <div
+                    class="js-affix"
+                    data-affix-offset="18"
+                    data-affix-target=".js-blogSidebarAffix"
+                >
+
+
+                                        <div class="sideSocialSubscribe">
+                        <div class="sideSocialSubscribe_item">
+                            <div
+                                class="vk-subscribe"
+                                data-soft="1"
+                                data-owner-id="-64195172"
+                            ></div>
+                        </div>
+                        <div class="sideSocialSubscribe_item">
+                            <div
+                                class="fb-like"
+                                data-href="https://www.facebook.com/sd.semantica"
+                                data-layout="button"
+                                data-action="like"
+                                data-size="small"
+                                data-show-faces="false"
+                                data-share="false"
+                            ></div>
+                        </div>
+                        <div class="sideSocialSubscribe_item">
+                            <a
+                                href="https://twitter.com/sd_semantica"
+                                class="twitter-follow-button"
+                                data-show-count="false"
+                            >Follow @sd_semantica</a>
+                        </div>
+                        <div class="sideSocialSubscribe_item">
+                            <a
+                                href="https://t.me/semantica"
+                                class="telegramButton"
+                                target="_blank"
+                                title="Подписаться на канал Семантики в Telegram"
+                            ><i class="fa fa-send"></i> Подписаться</a>
+                        </div>
+                    </div>
+                    
+
+                                            <div class="affixService mt-base">
+                            <div class="affixService_enot"></div>
+                            <div class="affixService_header">
+                                <div class="affixService_title">Performance Marketing - достигаем KPI в 97% договоров</div>                            </div>
+                            <div class="affixService_desc">Работаем на измеряемые показатели: продажи, регистрации, звонки. Обращайтесь к нам и получайте тот результат, который нужен именно вам!</div>                                                            <div class="affixService_go">
+                                    <a href="https://semantica.in/performance-marketing/?utm_source=performance_marketing&utm_campaign=blogsideways" class="styledBtn styledBtn-gold">
+                                        Узнать подробнее
+                                        <i class="fa fa-chevron-right"></i>
+                                    </a>
+                                </div>
+                                                    </div>
+                    
+
+                                        <div class="sideSubscribe mt-half">
+                        <div class="sideSubscribe_title">Подпишись на обновления блога</div>
+                        <div class="sideSubscribe_success swpmc-js-success"></div>
+                        <form onsubmit="return false;" class="sideSubscribe_form swpmc-js-form" data-container=".sideSubscribe" data-on-success="swptEvents.blogSideSubscribeSuccess()">
+                            <div class="sideSubscribe_errors swpmc-js-errors"></div>
+                            <div class="sideSubscribe_wrap">
+                                <div class="sideSubscribe_email">
+                                    <label for="sidebarSubscribeEmail" class="placeholder placeholder-small">Введите e-mail</label>
+                                    <input class="inputText inputText-small js-placeholder" type="text" name="email" id="sidebarSubscribeEmail" value="">
+                                </div>
+                                <div class="sideSubscribe_go">
+                                    <button type="submit" class="btn btn-small" title="Подписаться"><i class="fa fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="sideSubscribe_checkbox">
+                                <label>
+                                    <input type="checkbox" class="checkbox" name="agreement" value="1"/>
+                                    Я подтверждаю свою дееспособность и даю согласие на обработку своих персональных данных в соответствии с
+                                    <a href="https://semantica.in/agreement" target="_blank">соглашением</a>.
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    
+
+                                                                                
+
+                                    </div>
+                                    
+
+        </div>
+    </div>
+
+
+	<br>
+	<div class="bgblock ta-c mt-base">
+		<div class="grid">
+			<a class="btn btn-primary" href="https://semantica.in/contacts" onclick="swptEvents.footerBtnContactsClick()">Контакты</a>
+		</div>
+	</div>
+	<div class="cities">
+		<div class="grid">
+			<div class="cities_title">
+				Мы работаем не только в Моcкве, но и в других городах России:
+			</div>
+			<div class="cities_items">
+				<a href="https://semantica.in">Москва</a><a href="http://vrn.semantica.in">Воронеж</a><a href="http://nn.semantica.in">Нижний Новгород</a><a href="http://samara.semantica.in">Самара</a><a href="http://volgograd.semantica.in">Волгоград</a><a href="https://krasnodar.semantica.in">Краснодар</a><a href="http://rostov.semantica.in">Ростов-на-Дону</a>			</div>
+		</div>
+	</div>
+	<div class="grid">
+		<div class="footer mt-half">
+			<a href="https://semantica.in/agreement">Пользовательское соглашение</a>
+			<a href="https://semantica.in/personal-data-policy.pdf">Персональные данные</a>
+		</div>
+	</div>
+
+
+<div class="sidebar">
+    <div class="sidebar_i">
+        <div class="sidebar_wrapper">
+            <div class="sidebar_row">
+                <div class="sidebar_base">
+
+
+					                    <div class="sidebar_logo">
+                        <a href="https://semantica.in">
+							<img src="https://semantica.in/wp-content/themes/semantica/i/sidebar/logo.png" width="200" height="46" alt="SEMANTICA">                        </a>
+                    </div>
+					
+
+					                        <div class="sidebar_city">
+                            <div class="sidebar_city_toggle">
+                                <span class="sidebar_city_toggle_i"><b>Москва</b><i></i></span>
+                            </div>
+                            <div class="nav">
+                                <ul>
+									<li><a class="nav_link" href="http://vrn.semantica.in">Воронеж</a></li><li><a class="nav_link" href="http://nn.semantica.in">Нижний Новгород</a></li><li><a class="nav_link" href="http://samara.semantica.in">Самара</a></li><li><a class="nav_link" href="http://volgograd.semantica.in">Волгоград</a></li><li><a class="nav_link" href="https://krasnodar.semantica.in">Краснодар</a></li><li><a class="nav_link" href="http://rostov.semantica.in">Ростов-на-Дону</a></li>                                </ul>
+                            </div>
+                        </div>
+					
+
+					<ul class="nav"><li class="nav_item"><span class="nav_link" href="#">Продвижение сайта</span><ul class="nav_sub"><li class="nav_item"><a class="nav_link" href="https://semantica.in/seo-traffic">Коммерческий трафик<div class="nav_link_desc">от 15 000 руб.</div></a></li>
+<li class="nav_item"><a class="nav_link" href="https://semantica.in/seo-thematic">Тематический трафик<div class="nav_link_desc">от 35 000 руб.</div></a></li>
+<li class="nav_item"><a class="nav_link" href="https://semantica.in/audit-i-strategiya-prodvizheniya">Аудит сайта</a></li>
+</ul>
+</li>
+<li class="nav_item"><span class="nav_link" href="#">Реклама</span><ul class="nav_sub"><li class="nav_item"><a class="nav_link" href="https://semantica.in/performance-marketing">Performance Marketing</a></li>
+<li class="nav_item"><a class="nav_link" href="https://semantica.in/ad-context">Контекстная реклама</a></li>
+<li class="nav_item"><a class="nav_link" href="https://semantica.in/instagram-vk-facebook-ok">Продвижение в социальных сетях</a></li>
+<li class="nav_item"><a class="nav_link" href="https://semantica.in/ad-youtube-channel">Продвижение в Youtube</a></li>
+</ul>
+</li>
+<li class="nav_item"><a class="nav_link" href="https://semantica.in/serm">SERM</a></li>
+<li class="nav_item"><span class="nav_link" href="#">Контент-маркетинг</span><ul class="nav_sub"><li class="nav_item"><a class="nav_link" href="https://semantica.in/kontent-marketing">Контент-маркетинг в социальных сетях</a></li>
+<li class="nav_item"><a class="nav_link" href="https://semantica.in/kontent-podderzhka">Контент-поддержка сайта</a></li>
+</ul>
+</li>
+<li class="nav_item"><a class="nav_link" href="https://semantica.in/contacts">Контакты</a></li>
+</ul>
+
+					<ul class="sidebar_menu2"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-510"><a href="https://semantica.in/cases">Истории успеха</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-1445"><a href="https://semantica.in/blog">Блог</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4821"><a href="https://semantica.in/business-solutions">Решения для бизнеса</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6461"><a href="https://semantica.in/partnerskaya-programma-semantica">Партнерская программа</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-509"><a href="https://semantica.in/tools">Инструменты</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15361"><a href="http://team.semantica.in">Вакансии</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-15798"><a href="https://school.semantica.in?utm_source=menumsksite">Школа SEMANTICA</a></li>
+</ul>
+
+					
+
+					<div class="sidebar_social"><a href="https://www.facebook.com/sd.semantica/" class="sidebar_social_item sidebar_social_item-fb" title="Facebook"></a> <a href="https://twitter.com/sd_semantica" class="sidebar_social_item sidebar_social_item-twi" title="Twitter"></a> <a href="https://vk.com/sd.semantica" class="sidebar_social_item sidebar_social_item-vk" title="ВКонтакте"></a> <a href="https://www.instagram.com/azbuka.semantica" class="sidebar_social_item sidebar_social_item-insta" title="Instagram"></a> <a href="https://www.youtube.com/channel/UCLf4mukbu2Z8C7ONPw7Dwfw" class="sidebar_social_item sidebar_social_item-yt" title="YouTube"></a> <a href="https://t.me/semantica" class="sidebar_social_item sidebar_social_item-telegram" title="Telegram"></a></div>
+
+					<ul class="sidebar_menu3"><li id="menu-item-6668" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6668"><i class="fa fa-book"></i><a href="https://semantica.in/book-thematic">Книга об использовании тематического трафика</a></li>
+<li id="menu-item-6669" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6669"><i class="fa fa-file-pdf-o"></i><a href="https://semantica.in/semantica2019.pdf">Презентация компании</a></li>
+</ul>
+
+	                	                	                
+
+					
+
+                </div>
+            </div>
+            <div class="sidebar_row">
+                <div class="sidebar_footer">
+
+
+										                        <div class="sidebar_callback">
+                            <div
+                                    class="btn btn-primary btn-fw btn-small js-modalForm"
+                                    data-modal-form-id="callback"
+                            >
+								<i class="fa fa-phone"></i> Обратный звонок                            </div>
+                        </div>
+										
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter24378608 = new Ya.Metrika({id:24378608,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true,
+params:window.yaParams||{ }});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/24378608" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<script>
+(function(W, D, counterId, delay) {
+		if (!W.addEventListener)
+			return;
+		delay = delay * 1000;
+		var t = new Date();
+		var fn = function(e) {
+			if (new Date() - t < delay)
+				return;
+			t = new Date();
+			if (window['yaCounter' + counterId] != undefined)
+				window['yaCounter' + counterId].reachGoal('timeKnock');
+		};
+		D.addEventListener('click', fn);
+		D.addEventListener('keydown', fn);
+		W.addEventListener('scroll', fn);
+	})(window, document, '24378608', 5);
+</script><script type='text/javascript'>
+/* <![CDATA[ */
+var countVars = {"disqusShortname":"semantica-msk"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://semantica.in/wp-content/plugins/disqus-comment-system/public/js/comment_count.js?ver=3.0.15'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var SITE_FRONTEND_FILES = "https:\/\/semantica.in\/wp-content\/themes\/semantica";
+var countVars = {};
+var swpt = {"yandex_metrika_id":"24378608","ajaxUrl":"https:\/\/semantica.in\/wp-admin\/admin-ajax.php"};
+var swpmcAjax = {"url":"https:\/\/semantica.in\/wp-admin\/admin-ajax.php","data":{"swpmc_is_public":true}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://semantica.in/wp-content/themes/semantica-msk/main.min.js?ver=135.17'></script>
+</body>
+</html>

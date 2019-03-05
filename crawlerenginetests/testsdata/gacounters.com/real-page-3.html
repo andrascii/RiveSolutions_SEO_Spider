@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta property="og:title" content="Google Analytics: что это за статистика сайта от Гугл" />
+  <meta property="og:image" content="//wiki.rookee.ru/assets/images/og_image.jpg" />
+  <meta property="og:url" content="https://wiki.rookee.ru/google-analytics/" />
+  <meta property="og:description" content="Описание функционала отслеживания статистики сайта Google Analytics, его возможностей и способов применения данных аналитики для увеличения эффективности продвижения сайта." />
+  <meta property="og:type" content="article" />
+  <meta name="google-site-verification" content="i4IVVjRTaSxv65BIotW7W0TuagHDCBDm90uga4WakbY"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="description" content="Описание функционала отслеживания статистики сайта Google Analytics, его возможностей и способов применения данных аналитики для увеличения эффективности продвижения сайта." />
+<link href="/bitrix/cache/css/s1/wiki/template_63d9ed8309d6ffb25de13b9f2591a7c1/template_63d9ed8309d6ffb25de13b9f2591a7c1_v1.css?1551695742213585" type="text/css"  data-template-style="true" rel="stylesheet" />
+<script type="text/javascript">var _ba = _ba || []; _ba.push(["aid", "7753b4e6e31c485b2ec9ee00b8352233"]); _ba.push(["host", "wiki.rookee.ru"]); (function() {var ba = document.createElement("script"); ba.type = "text/javascript"; ba.async = true;ba.src = (document.location.protocol == "https:" ? "https://" : "http://") + "bitrix.info/ba.js";var s = document.getElementsByTagName("script")[0];s.parentNode.insertBefore(ba, s);})();</script>
+
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:500,normal,bold%7COpen+Sans:400,600" rel="stylesheet">
+  <script defer type="text/javascript" src="https://www.rookee.ru/modules/components/new-unauth-layout.js" charset="utf-8"></script>
+    <script async type="text/javascript" src="https://www.rookee.ru/modules/components/counters.js" charset="utf-8"></script>
+  <title>Google Analytics: что это за статистика сайта от Гугл</title>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-P6FZK6R');</script>
+  <script>
+    if (window.ga) {
+      window.ga('set', 'page', window.location.pathname + window.location.search);
+      window.ga('send', 'pageview');
+    }
+  </script>
+</head>
+<body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P6FZK6R" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<div id="header-root">
+  </div>
+
+<div class="inner">
+  <div class="container-fluid">
+    <div id="main-row" class="row">
+
+      <div id="col-center" class="col-12 col-lg col-md col-sm order-1">
+        
+  <div class="rk-banner rk-banner_center desktop-hidden row">
+    <div class="col-8 col-md-auto my-auto">
+      <span class="rk-banner__text text-bold">Как сэкономить время при продвижении сайта?</span>
+    </div>
+    <div class="col-4 col-md-auto text-right">
+      <a rel="nofollow" href="//www.rookee.ru?code=referral_wiki-rookee_banner-uznat_dinamicheskiy-s-knopkoy-uznat_23_10_18&utm_medium=referral&utm_source=wiki-rookee&utm_campaign=banner-uznat&utm_term=dinamicheskiy-s-knopkoy-uznat&utm_content=23_10_18" class="btn btn_upper">Узнать</a>
+    </div>
+  </div>
+
+        <div class="rk-block_search d-flex align-items-center desktop-hidden">
+          <select name="rk-tag" id="rk-tag" class="rk-tag"><option value="/">SEO Wiki</option><option value="/tag/google/">Google</option><option value="/tag/algoritmy-ranzhirovaniya/">Алгоритмы ранжирования</option><option value="/tag/analiz-effektivnosti/">Анализ эффективности</option><option value="/tag/veb_razrabotka/">Веб разработка</option><option value="/tag/vnutrennyaya-optimizatsiya/">Внутренняя оптимизация</option><option value="/tag/vredonosnye-tekhnologii/">Вредоносные технологии</option><option value="/tag/zaprosy/">Запросы</option><option value="/tag/indeksatsiya-sayta/">Индексация сайта</option><option value="/tag/internet-reklama/">Интернет реклама</option><option value="/tag/kontekstnaya-reklama/">Контекстная реклама</option><option value="/tag/metategi/">Мета-теги</option><option value="/tag/poiskovye-sistemy/">Поисковые системы</option><option value="/tag/poiskovye-filtry/">Поисковые фильтры</option><option value="/tag/prodvizhenie-saytov/">Продвижение сайтов</option><option value="/tag/ranzhirovanie/">Ранжирование</option><option value="/tag/servisy/">Сервисы</option><option value="/tag/sotsialnye-seti/">Социальные сети</option><option value="/tag/spetsialisty/">Специалисты</option><option value="/tag/ssylochnaya_optimizatsiya/">Ссылочная оптимизация</option><option value="/tag/struktura-sayta/">Структура сайта</option><option value="/tag/tekstovaya-optimizatsiya/">Текстовая оптимизация</option><option value="/tag/tekhnicheskaya_optimizatsiya/">Техническая оптимизация</option><option value="/tag/chernoe-seo/">Черное SEO</option><option value="/tag/yandeks/">Яндекс</option></select>          <div class="rk-msearch">
+            <svg aria-hidden="true" data-prefix="far" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class=""><path fill="currentColor" d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z" class=""></path></svg>
+          </div>
+
+          <div class="rk-search rk-search-m p-lg-0">
+            <form name="mobile-search" action="/search/" method="get" class=" d-flex">
+              <button type="button" class="btn btn_srch_icon btn_srch_close"><span class="arrow arrow-left gray"></span></button>
+              <input class="rk-input rk-input_icon rk-input_icon_close border-l-0 border-r-0"
+                     required="required"
+                     name="q"
+                     value=""
+                     placeholder="Поиск (минимум два символа)">
+              <button class="btn btn_srch_icon"> <svg aria-hidden="true" data-prefix="far" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class=""><path fill="currentColor" d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z" class=""></path></svg> </button>
+              <input type="submit" class="hidden">
+            </form>
+          </div>
+
+        </div>
+        
+        <div class="rk-block rk-block_tb-none">
+
+          <form name="main-search" action="/search/" method="get">
+            <div class="rk-search mobile-hidden row">
+              <div class="col-12 col-sm">
+                <input class="rk-input rk-input_w100"
+                       required="required"
+                       name="q"
+                       value=""
+                       placeholder="Поиск (минимум два символа)">
+              </div>
+              <div class="col-12 col-sm-auto">
+                  <input type="submit" class="btn btn_srch" value="Найти">
+              </div>
+            </div>
+          </form>
+
+                      <div class="rk-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
+              
+      <span itemscope itemprop="itemListElement" itemtype="http://schema.org/ListItem">
+        <a href="https://wiki.rookee.ru/" title="SEO Wiki" itemprop="item"><span itemprop="name">SEO Wiki</span></a>
+        <meta itemprop="position" content="1" />
+      </span>
+     / 
+      <span itemscope itemprop="itemListElement" itemtype="http://schema.org/ListItem">
+        <a itemprop="item" class="hidden" href="https://wiki.rookee.ru" title="Google Analytics"></a>
+        <span itemprop="name">Google Analytics</span>
+        <meta itemprop="position" content="2" />
+      </span>
+                </div>
+          
+          <h1>Google Analytics</h1>
+          <div class="rk-content">
+            <div class="rk-article">
+  <p>Статистика Google Analytics &ndash; это бесплатный сервис аналитики посещаемости сайта от поисковой системы Google. Предоставляет детальные данные по всем посетителям, отображая данные о регионе, операционной системе, провайдере, источнике трафика и других важных параметрах.</p>
+<h2>Принцип работы</h2>
+<p>На сайт владельца устанавливается Java Script от Google, автоматически отслеживающий все переходы. Система начинает запись действий и перемещений, как только посетитель заходит на любую страницу ресурса. Причем учитываются как прямые переходы, так и посещения из поисковой системы, социальных сетей, рекламных сервисов и других источников.</p>
+<p>Все данные отправляются на серверы Google, где обрабатываются и систематизируются в единую базу данных. Через некоторое время они отображаются в панели управления, где можно использовать различные фильтры и виджеты для просмотра определенной информации.</p>
+<h2>Возможности</h2>
+<p>Сбор статистики в Google предоставляет огромные возможности для владельцев сайтов. Выделим основные:</p>
+<ul>
+<li><strong>аналитические инструменты.</strong> Полные сводки по посещаемости, пользовательские переменные, визуализация трафика, поддержка общего доступа для сотрудников, API-инструменты и т. д.;</li>
+<li><strong>анализ содержания.</strong> Статистика всех страниц сайта, анализ скорости загрузки, отслеживание событий. Большой набор инструментов, позволяющий получить информацию о самых популярных страницах ресурса;</li>
+<li><strong>анализ мобильных данных.</strong> Оценка эффективности мобильных объявлений, анализ по приложениям, статистика переходов с мобильных устройств;</li>
+<li><strong>анализ социальной активности.</strong> Влияние социальных сетей и переходы пользователей, детальная статистика репостов материалов, коммерческая выгода;</li>
+<li><strong>анализ конверсий.</strong> Детальная статистика для целей и конверсий, оптимизация продаж, отслеживание эффективности рекламных кампаний, визуализация переходов на сайте;</li>
+<li><strong>анализ рекламы.</strong> Инструмент для анализа и сравнения разных источников рекламы, повышения эффективности маркетинга и интеграции с сервисом AdWords.</li>
+</ul>
+<h2>Как установить и настроить сервис</h2>
+<p>Для работы с сервисом используется создание учетной записи Google. Зарегистрируйтесь как новый пользователь или авторизуйтесь под своим логином на странице https://www.google.com/analytics/.</p>
+<ul>
+<li>Авторизуйтесь под своей учетной записью в сервисе и нажмите вкладку &laquo;Администратор&raquo;.</li>
+<li>В раскрывшемся меню кликните по вкладке &laquo;Аккаунт&raquo; и выберите аккаунт, для которого нужно добавить сайт.</li>
+<li>В раскрывшемся меню нажмите вкладку &laquo;Создать ресурс&raquo;.</li>
+<li>Укажите, для чего вы подключаете аналитику, &ndash; &laquo;Сайт&raquo; или &laquo;Мобильное приложение&raquo;.</li>
+<li>Мы рассматриваем пример для сайта. Укажите название ресурса (для себя), URL, отрасль и часовой пояс и нажмите кнопку &laquo;Получить идентификатор&raquo;.</li>
+<li>Согласитесь с условиями и подтвердите операцию.</li>
+<li>Вам будет показан фрагмент кода из Google Analytics, который необходимо установить на ресурсе, чтобы записывать действия пользователей и вести статистику.</li>
+<li>Скопируйте его и вставьте в футере (подвале) сайта. Можно поместить и в начале страницы между тегами head.</li>
+</ul>
+<p>Для популярных CMS имеются специализированные плагины, позволяющие в несколько кликов установить код, используя лишь идентификатор пользователя.</p>
+<h2>Параметры оценки посещаемости в Google Analytics</h2>
+<p>Параметры оценки посещаемости в Google Analytics строятся из большого количества данных, собираемых системой о пользователях. Мы условно разделили их на 4 блока.</p>
+<p><strong>Суммарные данные о посещаемости сайта.</strong> Здесь отслеживается количество просматриваемых страниц, уникальных и неуникальных сессий, общая аудитория, новые посетители.</p>
+<p><strong>Характеристика аудитории.</strong> Активность посетителей (количество страниц, которое посетил уникальный пользователь, средняя заинтересованность, географическое распределение на основе IP).</p>
+<p><strong>Источники пользователей.</strong> Отслеживание площадок, с которых осуществлялся переход, прямые переходы, полный пул ключевых запросов из поисковых систем, источники трафика по группам.</p>
+<p><strong>Популярность разделов и страниц на сайте.</strong> Полный анализ посещаемости каждой страницы, раздела, категории, список популярных страниц на каждого пользователя.</p>
+<p>Это лишь часть параметров, по которым Google оценивает посещаемость сайта и предоставляет данные веб-мастерам. В совокупности ведется полная аналитика и записывается каждое действие посетителя, чтобы на основе этой информации владелец мог проанализировать, насколько интересен его ресурс пользователям, к какому региону относится основная масса посетителей, какие страницы вызывают наибольший интерес.</p>
+<h2>Что можно узнать из отчетов Google Analytics</h2>
+<p>Собранная с помощью аналитического инструмента от Google статистика позволяет понять, какие ошибки допущены в верстке, в расположении элементов, в текстовых материалах и пр. Благодаря отчетам можно узнать:</p>
+<ul>
+<li><strong>скорость загрузки страниц сайта</strong>. Один из важных факторов, оказывающий влияние и на ранжирование в поисковых системах;</li>
+<li><strong>отслеживание событий.</strong> Полная информация о нажатиях на различные кнопки, о переходах между страницами, о заполнении различных форм;</li>
+<li><strong>распределение платформ.</strong> Важно ориентироваться не только на персональные компьютеры, но и на мобильные устройства. Благодаря инструментам для сбора статистики по сайту Google Analytics вы определите, какой процент пользователей посещает ресурс с мобильных устройств, планшетов, ПК;</li>
+<li><strong>анализ продаж и конверсий.</strong> Детальная статистика и анализ всех действий пользователей с баннерами, информационными панелями, видеоматериалами. Из отчетов можно понять, какие факторы сказываются на конверсии и продажах;</li>
+<li><strong>анализ рекламных мест.</strong> Пользуетесь контекстной рекламой? Не можете понять, какое объявление наиболее эффективно? Google Analytics предоставит подробные отчеты обо всех рекламных объявлениях и подскажет, какие блоки наиболее эффективны;</li>
+<li><strong>активность в социальных сетях</strong>. Аналитический инструмент автоматически отслеживает активность пользователей в социальных сетях и на вашем сайте. Вы получите полную статистику репостов материалов с ресурса.</li>
+</ul>
+<h2>Сравнение Google Analytics и Яндекс.Метрики</h2>
+<p>У Google Analytics есть конкурент &ndash; сервис Яндекс.Метрика, ориентированный на Россию и другие страны СНГ. Если сравнивать оба сервиса, можно выявить много схожих инструментов, но есть и кардинальные отличия. Перечислим особенности каждого сервиса, чтобы было понятно, чем они различаются.</p>
+<p><strong>Google Analytics</strong></p>
+<ol>
+<li>Огромный функционал, включающий в себя десятки фильтров, почти 100 видов отчетов, большое количество настроек.</li>
+<li>Ограниченная бесплатная версия. Но ее достаточно даже для крупных проектов, а платной пользуется небольшой процент веб-мастеров.</li>
+<li>Детальная статистика для каждого проекта. Но для России погрешность составляет 20&ndash;40 %, когда Метрика имеет отклонения максимум 5 %.</li>
+<li>Поддержка большого количества языковых настроек.</li>
+</ol>
+<p><strong>Яндекс.Метрика</strong></p>
+<ol>
+<li>Интуитивно понятный, удобный и продуманный интерфейс.</li>
+<li>Данные обновляются с минимальной задержкой, примерно 5 минут. В Google обработка составляет до 4 часов.</li>
+<li>Доставка sms-отчетов по заданным параметрам, времени.</li>
+<li>Детальная статистика поведения посетителей в инструменте Яндекс.Вебвизор, Карты кликов и скроллинга, Аналитика форм.</li>
+<li>Мониторинг и установка целей, интеграция с Яндекс.Директом.</li>
+</ol>
+<p>Если рассматривать сервисы в целом, то Google Analytics больше ориентирован на западные страны. Для России и СНГ же оптимальным вариантом остается сервис Яндекса.</p>
+<h2><strong>Ссылки </strong></h2>
+<ul>
+<li><a href="http://www.google.com/analytics/" rel="nofollow">http://www.google.com/analytics/</a></li>
+</ul>
+<p>&nbsp;</p></div>
+
+
+  <div class="rk-article-tags">
+    <ul>
+              <li><a rel="nofollow" href="/tag/google/">Google</a></li>
+              <li><a rel="nofollow" href="/tag/analiz-effektivnosti/">Анализ эффективности</a></li>
+          </ul>
+  </div>
+
+<div class="rk-start-seo">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-6 rk-start-seo__col-desc">
+      <div class="rk-start-seo__desc">Rookee &mdash; простой способ поднять сайт в ТОП поисковых систем</div>
+    </div>
+    <div class="col-12 col-xl-6 rk-start-seo__col-btn">
+      <a rel="nofollow" class="btn btn_upper btn_shadow" href="//www.rookee.ru/modules/register?code=referral_wiki-rookee_knopka-register_dlinnay-orange-zaregistrirovatca_23_10_18&utm_medium=referral&utm_source=wiki-rookee&utm_campaign=knopka-register&utm_term=dlinnay-orange-zaregistrirovatca&utm_content=23_10_18">Начать продвижение</a>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<script>
+  try {
+    setTimeout ( function () {
+      ga( 'send' , 'pageview' , location.pathname) ;
+    } , 2000 ) ;
+  } catch (e) {
+    console. error (e)
+  }
+</script>
+
+
+
+</div>
+
+<div id="col-left" class="col-auto mobile-hidden order-0 ">
+  <div class="rk-block rk-block_left rk-block_tb-none">
+    <div class="h4"><a href="/">SEO Wiki</a></div>
+      
+<div class="rk-links">
+  <div class="rk-links__title text-bold">Теги статей</div>
+  <ul>
+
+        <li><a rel="nofollow" href="/tag/google/">Google</a></li>
+    
+        <li><a rel="nofollow" href="/tag/algoritmy-ranzhirovaniya/">Алгоритмы ранжирования</a></li>
+    
+        <li><a rel="nofollow" href="/tag/analiz-effektivnosti/">Анализ эффективности</a></li>
+    
+        <li><a rel="nofollow" href="/tag/veb_razrabotka/">Веб разработка</a></li>
+    
+        <li><a rel="nofollow" href="/tag/vnutrennyaya-optimizatsiya/">Внутренняя оптимизация</a></li>
+    
+        <li><a rel="nofollow" href="/tag/vredonosnye-tekhnologii/">Вредоносные технологии</a></li>
+    
+        <li><a rel="nofollow" href="/tag/zaprosy/">Запросы</a></li>
+    
+        <li><a rel="nofollow" href="/tag/indeksatsiya-sayta/">Индексация сайта</a></li>
+    
+        <li><a rel="nofollow" href="/tag/internet-reklama/">Интернет реклама</a></li>
+    
+        <li><a rel="nofollow" href="/tag/kontekstnaya-reklama/">Контекстная реклама</a></li>
+    
+        <li><a rel="nofollow" href="/tag/metategi/">Мета-теги</a></li>
+    
+        <li><a rel="nofollow" href="/tag/poiskovye-sistemy/">Поисковые системы</a></li>
+    
+        <li><a rel="nofollow" href="/tag/poiskovye-filtry/">Поисковые фильтры</a></li>
+    
+        <li><a rel="nofollow" href="/tag/prodvizhenie-saytov/">Продвижение сайтов</a></li>
+    
+        <li><a rel="nofollow" href="/tag/ranzhirovanie/">Ранжирование</a></li>
+    
+        <li><a rel="nofollow" href="/tag/servisy/">Сервисы</a></li>
+    
+        <li><a rel="nofollow" href="/tag/sotsialnye-seti/">Социальные сети</a></li>
+    
+        <li><a rel="nofollow" href="/tag/spetsialisty/">Специалисты</a></li>
+    
+        <li><a rel="nofollow" href="/tag/ssylochnaya_optimizatsiya/">Ссылочная оптимизация</a></li>
+    
+        <li><a rel="nofollow" href="/tag/struktura-sayta/">Структура сайта</a></li>
+    
+        <li><a rel="nofollow" href="/tag/tekstovaya-optimizatsiya/">Текстовая оптимизация</a></li>
+    
+        <li><a rel="nofollow" href="/tag/tekhnicheskaya_optimizatsiya/">Техническая оптимизация</a></li>
+    
+        <li><a rel="nofollow" href="/tag/chernoe-seo/">Черное SEO</a></li>
+    
+        <li><a rel="nofollow" href="/tag/yandeks/">Яндекс</a></li>
+    
+
+  </ul>
+</div>
+
+
+  </div>
+</div>
+
+<div id="col-right" class="col-12 col-lg-auto order-2">
+
+  
+    <div class="rk-banner rk-banner_right_block mobile-hidden p-0">
+    <a rel="nofollow" href="//www.rookee.ru/about/seo-pomoshnik?code=referral_wiki.rookee.ru_SEO_helper_PBMRO_banner_300х160_14_12_18&utm_medium=referral&utm_source=wiki.rookee.ru&utm_campaign=SEO_helper_PBMRO&utm_term=banner_300х160&utm_content=14_12_18" class="">
+      <img width="300" src="/upload/banners/wiki/bunner.gif" image />
+    </a>
+  </div>
+
+  <div class="rk-block rk-block_right">
+  
+<div class="rk-links">
+  <div class="rk-links__title text-bold">Популярные статьи</div>
+  <ul>
+                  <li><a href="/meta-teg-description/">Description</a></li>
+                  <li><a href="/vechnye-ssylki/">Вечные ссылки</a></li>
+                  <li><a href="/yandex-wordstat/">Яндекс.Вордстат</a></li>
+              </ul>
+  <ul class="mobile-hidden ul_mt">
+          <li><a href="/ctr/">CTR выдачи</a></li>
+                  <li><a href="/ssylka/">Ссылка</a></li>
+                  <li><a href="/perelinkovka/">Перелинковка</a></li>
+                  <li><a href="/ankor/">Анкор</a></li>
+                  <li><a href="/yandex/">Яндекс</a></li>
+                  <li><a href="/affiliat/">Аффилиат</a></li>
+                  <li><a href="/dorvej/">Дорвей</a></li>
+      </ul>
+</div>  </div>
+      <div class="rk-block rk-block_right">
+    
+<div class="rk-links">
+  <div class="rk-links__title text-bold">Рекомендуемые статьи</div>
+  <ul>
+                  <li><a href="/statistika-liveinternet/">Статистика Liveinternet</a></li>
+                  <li><a href="/cti/">CTI</a></li>
+                  <li><a href="/konversiya/">Конверсия</a></li>
+              </ul>
+  <ul class="mobile-hidden ul_mt">
+          <li><a href="/ctb/">CTB</a></li>
+                  <li><a href="/konvertaciya-trafika/">Конвертация трафика</a></li>
+                  <li><a href="/roi/">ROI</a></li>
+                  <li><a href="/poseshhaemost/">Посещаемость сайта</a></li>
+                  <li><a href="/lid/">Лид</a></li>
+                  <li><a href="/schetchik/">Счетчик</a></li>
+                  <li><a href="/monetizaciya/">Монетизация трафика</a></li>
+      </ul>
+</div>    </div>
+      
+      <div class="rk-block rk-block_right">
+      <div class="rk-subscribe">
+        <div class="rk-subscribe__title text-bold">Подписывайтесь на «Новости SEO рынка»</div>
+        <form class="rk-subscribe__form">
+          <div class="rk-subscribe__form-row"><input class="rk-input rk-input_w100" type="email" name="email" required="required" placeholder="Введите ваш email"></div>
+          <div class="rk-subscribe__form-row"><input class="rk-input rk-input_w100" type="text" name="name" required="required" placeholder="Введите ваше имя"></div>
+          <div class="rk-subscribe__form-row"><input type="submit" class="btn btn_w100 js-subscribe-form" value="Подписаться"></div>
+          <div class="rk-subscribe__form-row"><div class="rk-subscribe__agree text-small">Нажимая кнопку, вы подтверждаете свое согласие на<br><a rel="nofollow" href="//www.rookee.ru/modules/personal-data-processing">обработку персональных данных</a>.</div></div>
+          <div><a rel="nofollow" class="rk-subscribe__go-blog text-small" href="//www.rookee.ru/blog/">Перейти в блог</a></div>
+        </form>
+      </div>
+    </div>
+    
+  <div class="sticky mobile-hidden rk-block rk-block_right p-0">
+    <a rel="nofollow" href="//www.rookee.ru/about/seo-pomoshnik?code=referral_wiki.rookee.ru_SEO_helper_PBMRO_banner_300х600_17_12_18&utm_medium=referral&utm_source=wiki.rookee.ru&utm_campaign=SEO_helper_PBMRO&utm_term=banner_300х600&utm_content=17_12_18" class="">
+      <img width="300" src="/upload/banners/wiki/banner-bottom.png" image />
+    </a>
+  </div>
+  
+</div>
+</div>
+
+</div>
+
+</div>
+
+
+
+<div id="footer-root">
+  </div>
+<script type="text/javascript" src="/assets/js/scripts.js?v=0.05"></script>
+</body>
+</html>

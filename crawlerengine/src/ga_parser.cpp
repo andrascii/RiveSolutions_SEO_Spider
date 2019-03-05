@@ -24,6 +24,7 @@ struct Pattern
 {
 	QString initializer;
 	QString initializerEnd;
+	QString initializerEnd2;
 	QRegularExpression pattern;
 };
 
@@ -47,6 +48,19 @@ bool patternMatched(const Pattern& pattern, const QString& javaScriptCode, const
 		}
 
 		searchEndIndex += pattern.initializerEnd.size();
+		const int nextSearchIndex = searchEndIndex;
+
+		if (!pattern.initializerEnd2.isEmpty())
+		{
+			const int searchEndIndex2 = javaScriptCode.indexOf(pattern.initializerEnd2, searchEndIndex);
+
+			if (searchEndIndex2 == -1)
+			{
+				return false;
+			}
+
+			searchEndIndex += searchEndIndex2 + pattern.initializerEnd2.size();
+		}
 
 		const QString content = javaScriptCode.mid(searchBeginIndex, searchEndIndex - searchBeginIndex);
 		const QRegularExpressionMatch match = pattern.pattern.match(content);
@@ -61,7 +75,7 @@ bool patternMatched(const Pattern& pattern, const QString& javaScriptCode, const
 			}
 		}
 
-		index = searchEndIndex;
+		index = nextSearchIndex;
 	}
 
 	return false;
@@ -71,9 +85,9 @@ bool findOldGaCounter(const QString& javaScriptCode, const QString& counterNumbe
 {
 	static std::vector<Pattern> s_patterns =
 	{
-		{ oldGaInitializer, oldGaInitializerEnd, oldGaIdentifierRegExp },
-		{ oldGaInitializer2, oldGaInitializerEnd2, oldGaIdentifierRegExp2 },
-		{ oldGaInitializer3, oldGaInitializerEnd3, oldGaIdentifierRegExp3 },
+		{ oldGaInitializer, oldGaInitializerEnd, QString(), oldGaIdentifierRegExp },
+		{ oldGaInitializer2, oldGaInitializerEnd2, QString(), oldGaIdentifierRegExp2 },
+		{ oldGaInitializer3, oldGaInitializerEnd3, QString(), oldGaIdentifierRegExp3 },
 	};
 
 	for (const auto& pattern : s_patterns)
@@ -94,6 +108,7 @@ bool findOldGaDisabledCounter(const QString& javaScriptCode, const QString& coun
 	{
 		QString("window"),
 		QString("true"),
+		QString(),
 		QRegularExpression("\\s*['|\"]ga-disable-(UA-.{3,12}-.)['|\"]\\s*]\\s*=\\s*true", QRegularExpression::MultilineOption)
 	};
 
@@ -107,6 +122,7 @@ bool findGaCounter(const QString& javaScriptCode, const QString& counterNumber)
 	{
 		QString("ga"),
 		QString(")"),
+		QString(),
 		QRegularExpression("ga\\s*\\(\\s*['|\"]\\s*create['|\"]\\s*,\\s*['|\"](UA-.{3,12}-.)['|\"]\\s*(,\\s*['|\"]\\w*['|\"]\\s*)?\\)", QRegularExpression::MultilineOption)
 	};
 
@@ -114,16 +130,44 @@ bool findGaCounter(const QString& javaScriptCode, const QString& counterNumber)
 }
 
 // gtag('config', 'GA_TRACKING_ID', { 'send_page_view': false });
+
+// OR
+
+//<script>
+//(function(w, d, s, l, i) {
+//	w[l] = w[l] || []; w[l].push({ 'gtm.start':
+//	new Date().getTime(),event : 'gtm.js' }); var f = d.getElementsByTagName(s)[0],
+//		j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+//		'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+//})(window, document, 'script', 'dataLayer', 'GTM-PWG78J');
+//< / script>
 bool findGtagCounter(const QString& javaScriptCode, const QString& counterNumber)
 {
-	static Pattern s_gtagPattern =
+	static std::vector<Pattern> s_gtagPatterns =
 	{
-		QString("gtag"),
-		QString(")"),
-		QRegularExpression("gtag\\s*\\(\\s*['|\"]config['|\"]\\s*,\\s*['|\"](\\w*)['|\"]\\s*(,\\s*{\\s*['|\"]\\w*['|\"]\\s*:\\s*\\w*\\s*}\\s*)?\\)", QRegularExpression::MultilineOption)
+		{
+			QString("gtag"),
+			QString(")"),
+			QString(),
+			QRegularExpression("gtag\\s*\\(\\s*['|\"]config['|\"]\\s*,\\s*['|\"](\\w*)['|\"]\\s*(,\\s*{\\s*['|\"]\\w*['|\"]\\s*:\\s*\\w*\\s*}\\s*)?\\)", QRegularExpression::MultilineOption)
+		},
+		{
+			QString("googletagmanager.com"),
+			QString("GTM-"),
+			QString(")"),
+			QRegularExpression("gtm\\..*\\s*.*window.*\\s*,\\s*['|\"](GTM-.{3,12})['|\"]", QRegularExpression::MultilineOption)
+		}
 	};
 
-	return patternMatched(s_gtagPattern, javaScriptCode, counterNumber);
+	for (const auto& pattern : s_gtagPatterns)
+	{
+		if (patternMatched(pattern, javaScriptCode, counterNumber))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 }
