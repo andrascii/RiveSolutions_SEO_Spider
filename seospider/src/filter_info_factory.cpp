@@ -394,11 +394,57 @@ std::map<StorageAdapterType, FilterInfo>& FilterInfoFactory::filters()
 			StorageAdapterType::StorageAdapterTypeYandexMetricaCounter5,
 			{
 				QObject::tr("Pages with missing Yandex Metrica Counter"),
-				QObject::tr("This filter stores pages that did not find the yandex metrica counter with the number %1.\n"
+				QObject::tr("This filter stores pages that did not find the yandex metrica counter %1.\n"
 					"You can change the number of this counter in the settings "
 					"\"Settings => Yandex Metrica Settings\".").arg(theApp->preferences()->yandexMetricaCounter5Id())
 			}
 		},
+        // google analytics counters
+        {
+            StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter1,
+            {
+                QObject::tr("Pages with missing Google Analytics Counter"),
+                QObject::tr("This filter stores pages that did not find the Google Analytics counter %1.\n"
+                "You can change this counter in the settings "
+                "\"Settings => Google Analytics Settings\".").arg(theApp->preferences()->googleAnalyticsCounter1Id())
+            }
+        },
+        {
+            StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter2,
+            {
+                QObject::tr("Pages with missing Google Analytics Counter"),
+                QObject::tr("This filter stores pages that did not find the Google Analytics counter %1.\n"
+                    "You can change this counter in the settings "
+                    "\"Settings => Google Analytics Settings\".").arg(theApp->preferences()->googleAnalyticsCounter2Id())
+            }
+        },
+        {
+            StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter3,
+            {
+                QObject::tr("Pages with missing Google Analytics Counter"),
+                QObject::tr("This filter stores pages that did not find the Google Analytics counter %1.\n"
+                    "You can change this counter in the settings "
+                    "\"Settings => Google Analytics Settings\".").arg(theApp->preferences()->googleAnalyticsCounter3Id())
+            }
+        },
+        {
+            StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter4,
+            {
+                QObject::tr("Pages with missing Google Analytics Counter"),
+                QObject::tr("This filter stores pages that did not find the Google Analytics counter %1.\n"
+                    "You can change this counter in the settings "
+                    "\"Settings => Google Analytics Settings\".").arg(theApp->preferences()->googleAnalyticsCounter4Id())
+            }
+        },
+        {
+            StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter5,
+            {
+                QObject::tr("Pages with missing Google Analytics Counter"),
+                QObject::tr("This filter stores pages that did not find the Google Analytics counter %1.\n"
+                    "You can change this counter in the settings "
+                    "\"Settings => Google Analytics Settings\".").arg(theApp->preferences()->googleAnalyticsCounter5Id())
+            }
+        },
 	};
 
 	return s_filters;
