@@ -149,13 +149,19 @@ bool findGtagCounter(const QString& javaScriptCode, const QString& counterNumber
 			QString("gtag"),
 			QString(")"),
 			QString(),
-			QRegularExpression("gtag\\s*\\(\\s*['|\"]config['|\"]\\s*,\\s*['|\"](\\w*)['|\"]\\s*(,\\s*{\\s*['|\"]\\w*['|\"]\\s*:\\s*\\w*\\s*}\\s*)?\\)", QRegularExpression::MultilineOption)
+			QRegularExpression("gtag\\s*\\(\\s*['|\"]config['|\"]\\s*,\\s*['|\"]([\\w|-]*)['|\"]\\s*(,\\s*{\\s*['|\"]\\w*['|\"]\\s*:\\s*\\w*\\s*}\\s*)?\\)", QRegularExpression::MultilineOption)
 		},
 		{
 			QString("googletagmanager.com"),
 			QString("GTM-"),
 			QString(")"),
 			QRegularExpression("gtm\\..*\\s*.*window.*\\s*,\\s*['|\"](GTM-.{3,12})['|\"]", QRegularExpression::MultilineOption)
+		},
+		{
+			QString("googletagmanager.com"),
+			QString("UA-"),
+			QString(")"),
+			QRegularExpression("gtm\\..*\\s*.*window.*\\s*,\\s*['|\"](UA-.{3,12})['|\"]", QRegularExpression::MultilineOption)
 		}
 	};
 

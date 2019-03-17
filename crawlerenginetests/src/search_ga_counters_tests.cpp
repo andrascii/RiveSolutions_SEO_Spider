@@ -161,7 +161,7 @@ TEST(SearchGaCountersTests, NewGTAG)
 	env.crawler()->options()->setSearchGoogleAnalyticsCounters(true);
 
 	env.crawler()->options()->setSearchGoogleAnalyticsCounter1(true);
-	env.crawler()->options()->setGoogleAnalyticsCounter1Id("GA_TRACKING_ID1");
+	env.crawler()->options()->setGoogleAnalyticsCounter1Id("UA-121704852-1");
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
