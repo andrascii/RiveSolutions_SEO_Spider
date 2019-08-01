@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "dc_storage_group_description.h"
 
 namespace SeoSpider

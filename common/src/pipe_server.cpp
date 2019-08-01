@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "pipe_server.h"
 
 namespace Common

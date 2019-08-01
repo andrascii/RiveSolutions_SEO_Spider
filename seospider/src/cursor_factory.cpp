@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "cursor_factory.h"
 #include "svg_renderer.h"
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "table_view.h"
 #include "abstract_table_model.h"
 #include "iview_model.h"

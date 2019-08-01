@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "collapse_header_button.h"
 #include "helpers.h"
 #include "svg_renderer.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "language_settings_widget.h"
 #include "application.h"
 #include "preferences.h"

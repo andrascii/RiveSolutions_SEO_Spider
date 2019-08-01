@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "license_controls_blocker.h"
 #include "service_locator.h"
 #include "license_state_observer.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "multi_socket_loader.h"
 #include "page_parser_helpers.h"
 #include "status_code_description.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "application.h"
 #include "software_branding.h"
 #include "splash_screen.h"

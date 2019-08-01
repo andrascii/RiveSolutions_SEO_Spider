@@ -8,3 +8,4 @@ doxydoc/
 /version/include/version.h
 /version/SetVersion.cmake
 *.aps
+.DS_Store

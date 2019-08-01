@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "page_model.h"
 #include "default_column_resize_policy.h"
 #include "parsed_page_info_storage_adapter.h"

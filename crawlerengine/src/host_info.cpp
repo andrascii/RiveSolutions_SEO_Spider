@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "host_info.h"
 
 namespace CrawlerEngine

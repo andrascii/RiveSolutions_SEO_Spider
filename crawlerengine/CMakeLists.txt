@@ -89,6 +89,7 @@ add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
 
 target_link_libraries(
 	${CrawlerEngineLibName}
+	PUBLIC
 	${GumboLibName}
 	${CommonLibName}
 	${OSSpecificDeps}

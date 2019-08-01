@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "crawler_pause_settings_widget.h"
 
 namespace SeoSpider

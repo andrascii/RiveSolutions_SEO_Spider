@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "feedback_dialog.h"
 #include "smtp_sender.h"
 

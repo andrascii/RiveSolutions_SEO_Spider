@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "control_adapter_check_box.h"
 
 namespace SeoSpider

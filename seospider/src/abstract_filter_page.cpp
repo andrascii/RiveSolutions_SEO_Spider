@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "abstract_filter_page.h"
 #include "table_view.h"
 #include "summary_model.h"

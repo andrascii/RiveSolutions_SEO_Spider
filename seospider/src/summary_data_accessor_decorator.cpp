@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "summary_data_accessor_decorator.h"
 #include "summary_data_accessor.h"
 #include "helpers.h"

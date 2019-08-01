@@ -155,6 +155,7 @@ message("OpenSSL include directory: ${OPENSSL_INCLUDE_DIR}")
 
 target_link_libraries(
 	${AppName}
+	PUBLIC
 	${CurlLibraries}
 	${CrawlerEngineLibName}
 	${CommonLibName}

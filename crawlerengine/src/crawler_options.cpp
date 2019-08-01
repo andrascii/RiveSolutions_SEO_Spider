@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "crawler_options.h"
 
 namespace CrawlerEngine

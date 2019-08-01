@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "trial_license_label.h"
 #include "license_state_observer.h"
 #include "service_locator.h"

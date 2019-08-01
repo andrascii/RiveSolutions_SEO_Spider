@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "internal_settings_helper.h"
 
 namespace SeoSpider

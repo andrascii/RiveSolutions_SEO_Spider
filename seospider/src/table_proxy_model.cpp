@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "table_proxy_model.h"
 #include "abstract_table_model.h"
 #include "row_resource_type.h"

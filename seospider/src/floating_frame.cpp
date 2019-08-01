@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "floating_frame.h"
 #include "cursor_factory.h"
 

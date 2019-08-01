@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "serial_number_data.h"
 
 namespace CrawlerEngine

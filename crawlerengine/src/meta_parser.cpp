@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "meta_parser.h"
 #include "page_parser_helpers.h"
 #include "ihtml_parser.h"

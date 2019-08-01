@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "crawler_progress_bar.h"
 #include "application.h"
 #include "main_window.h"

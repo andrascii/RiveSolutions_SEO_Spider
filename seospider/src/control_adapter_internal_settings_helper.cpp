@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "control_adapter_internal_settings_helper.h"
 #include "internal_settings_helper.h"
 

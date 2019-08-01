@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "options_link_filter.h"
 #include "parsed_page.h"
 #include  "page_parser_helpers.h"

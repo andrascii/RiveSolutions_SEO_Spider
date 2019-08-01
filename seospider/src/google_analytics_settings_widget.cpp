@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "google_analytics_settings_widget.h"
 #include "internal_settings_helper.h"
 #include "application.h"

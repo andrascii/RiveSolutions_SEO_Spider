@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "page_model.h"
 #include "page_view_model.h"
 #include "helpers.h"

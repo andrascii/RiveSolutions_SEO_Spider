@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "notification_popup_frame.h"
 #include "custom_push_button.h"
 #include "application.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "command_line_handler.h"
 #include "command_line_keys.h"
 #include "application.h"

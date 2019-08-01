@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "color_selector.h"
 #include "helpers.h"
 

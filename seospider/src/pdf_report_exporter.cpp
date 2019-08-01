@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "pdf_report_exporter.h"
 #include "report_data_provider.h"
 #include "statistic_counter.h"

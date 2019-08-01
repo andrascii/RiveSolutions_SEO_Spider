@@ -99,6 +99,7 @@ endif()
 if(APPLE)
     target_link_libraries(
 		${SeoSpiderServiceAppName}
+		PUBLIC
 		${CommonLibName}
 		#${QxtSmtpLibName}
 		${Boost_LIBRARIES}

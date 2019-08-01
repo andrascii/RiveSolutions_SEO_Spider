@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "notification_service.h"
 
 namespace CrawlerEngine

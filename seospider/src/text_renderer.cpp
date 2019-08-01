@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "application.h"
 #include "text_renderer.h"
 #include "iview_model.h"

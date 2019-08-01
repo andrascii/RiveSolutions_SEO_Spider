@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "site_map.h"
 #include "page_parser_helpers.h"
 #include "sequenced_data_collection.h"

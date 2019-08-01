@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "sequenced_data_collection.h"
 #include "unordered_data_collection.h"
 #include "sequenced_storage.h"

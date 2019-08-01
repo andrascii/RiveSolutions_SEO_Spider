@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "statistic_counter.h"
 #include "seo_spider_service_api_export.h"
 #include "command.h"

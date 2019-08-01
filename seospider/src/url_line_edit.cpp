@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "url_line_edit.h"
 #include "page_parser_helpers.h"
 

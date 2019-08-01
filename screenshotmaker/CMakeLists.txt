@@ -107,6 +107,7 @@ endif()
 
 target_link_libraries(
 	${ScreenshotMaker}
+	PUBLIC
 	${CommonLibName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}

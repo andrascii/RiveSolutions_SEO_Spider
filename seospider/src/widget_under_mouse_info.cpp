@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "widget_under_mouse_info.h"
 #include "widget_under_mouse_info_dialog.h"
 #include "application.h"

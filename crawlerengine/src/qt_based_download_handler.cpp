@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "qt_based_download_handler.h"
 #include "download_request.h"
 #include "download_response.h"

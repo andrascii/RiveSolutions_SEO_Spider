@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "error_category.h"
 #include "crawler.h"
 #include "sequenced_data_collection.h"

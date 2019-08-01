@@ -58,5 +58,6 @@ include_directories(
 
 target_link_libraries(
 	${QxtSmtpLibName}
+	PUBLIC
 	Qt5::Network
 )

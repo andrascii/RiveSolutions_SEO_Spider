@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "limits_settings_widget.h"
 #include "application.h"
 #include "command_line_handler.h"

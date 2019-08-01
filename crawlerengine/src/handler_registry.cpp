@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "handler_registry.h"
 
 namespace CrawlerEngine

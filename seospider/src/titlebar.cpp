@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "titlebar.h"
 #include "helpers.h"
 

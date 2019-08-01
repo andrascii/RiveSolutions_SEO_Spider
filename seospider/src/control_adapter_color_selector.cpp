@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "control_adapter_color_selector.h"
 
 namespace SeoSpider

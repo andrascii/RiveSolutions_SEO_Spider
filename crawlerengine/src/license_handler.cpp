@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "license_handler.h"
 #include "handler_registry.h"
 #include "helpers.h"

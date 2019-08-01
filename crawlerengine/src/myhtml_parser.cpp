@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "myhtml_parser.h"
 #include "myhtml/api.h"
 #include "response_headers.h"

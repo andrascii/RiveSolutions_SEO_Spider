@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "control_adapter_spin_box.h"
 
 namespace SeoSpider

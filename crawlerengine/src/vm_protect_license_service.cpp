@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "vm_protect_license_service.h"
 
 namespace CrawlerEngine

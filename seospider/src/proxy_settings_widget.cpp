@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "proxy_settings_widget.h"
 
 namespace SeoSpider

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "task_processor.h"
 #include "handler_registry.h"
 #include "task_request.h"

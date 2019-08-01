@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "license_state_observer.h"
 #include "iresponse.h"
 #include "helpers.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "robots_txt_loader.h"
 #include "status_code.h"
 #include "download_request.h"

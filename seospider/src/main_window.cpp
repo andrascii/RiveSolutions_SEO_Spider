@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "application.h"
 #include "application_settings_dialog.h"
 #include "main_window.h"

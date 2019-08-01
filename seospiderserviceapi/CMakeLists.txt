@@ -57,6 +57,7 @@ include_directories(
 
 target_link_libraries(
 	${SeoSpiderServiceApiDllName}
+	PUBLIC
 	${CommonLibName}
 	${Boost_LIBRARIES}
 	Qt5::Network

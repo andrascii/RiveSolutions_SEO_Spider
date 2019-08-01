@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parsed_page_info_storage_adapter.h"
 #include "isequenced_storage.h"
 #include "application.h"

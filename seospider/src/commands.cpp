@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "commands.h"
 #include "xlsxdocument.h"
 #include "xlsxformat.h"

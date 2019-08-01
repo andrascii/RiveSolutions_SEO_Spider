@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "storage_adapter_factory.h"
 #include "parsed_page_info.h"
 #include "parsed_page_info_storage_adapter.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "storage_exporter.h"
 #include "xlsxdocument.h"
 #include "xlsxformat.h"

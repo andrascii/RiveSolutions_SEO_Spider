@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "gtest/gtest.h"
 #include "tests_crawler.h"
 #include "test_environment.h"

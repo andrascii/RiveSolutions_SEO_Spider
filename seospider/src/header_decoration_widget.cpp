@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "header_decoration_widget.h"
 #include "helpers.h"
 #include "collapse_header_button.h"

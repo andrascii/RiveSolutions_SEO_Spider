@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "page_data_widget_splitter.h"
 #include "helpers.h"
 #include "page_data_widget.h"

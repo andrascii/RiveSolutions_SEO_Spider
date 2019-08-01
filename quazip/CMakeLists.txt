@@ -61,6 +61,7 @@ include_directories(
 
 target_link_libraries(
 	${QUazipLibName}
-	Qt5::Core
+	PUBLIC
 	zlibstatic
+	Qt5::Core
 )

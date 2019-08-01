@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "columns_lookup_lineedit_widget.h"
 #include "svg_renderer.h"
 #include "statistic_counter.h"

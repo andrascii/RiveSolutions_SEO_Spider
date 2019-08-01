@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "summary_view_model.h"
 #include "summary_model.h"
 #include "text_renderer.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "selection_background_renderer.h"
 #include "iview_model.h"
 

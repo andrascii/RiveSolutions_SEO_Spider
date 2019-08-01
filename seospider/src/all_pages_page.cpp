@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "all_pages_page.h"
 #include "application.h"
 #include "table_view.h"

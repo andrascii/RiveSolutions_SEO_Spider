@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "qaes_encryption.h"
 #include "helpers.h"
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parsed_page_hasher_proxy.h"
 
 namespace CrawlerEngine

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "delegate.h"
 
 namespace CrawlerEngine

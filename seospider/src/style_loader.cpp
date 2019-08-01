@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "style_loader.h"
 #include "application.h"
 #include "service_locator.h"

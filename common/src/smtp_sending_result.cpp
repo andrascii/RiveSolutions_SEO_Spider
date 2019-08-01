@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "smtp_sending_result.h"
 #include "smtp_sender.h"
 

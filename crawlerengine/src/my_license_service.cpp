@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "my_license_service.h"
 #include "download_response.h"
 #include "download_request.h"

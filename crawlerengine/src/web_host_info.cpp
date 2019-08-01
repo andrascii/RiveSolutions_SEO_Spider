@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "web_host_info.h"
 #include "proper_404_checker.h"
 #include "ispecific_loader.h"

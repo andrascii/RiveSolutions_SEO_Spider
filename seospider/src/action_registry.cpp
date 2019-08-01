@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "action_registry.h"
 
 namespace SeoSpider

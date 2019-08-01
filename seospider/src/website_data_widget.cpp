@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "website_data_widget.h"
 #include "table_view.h"
 #include "page_model.h"

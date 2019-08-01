@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "preferences.h"
 #include "isettings_accessor.h"
 

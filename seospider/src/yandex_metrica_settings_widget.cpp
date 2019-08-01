@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "yandex_metrica_settings_widget.h"
 #include "internal_settings_helper.h"
 #include "application.h"

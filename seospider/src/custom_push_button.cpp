@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "custom_push_button.h"
 #include "custom_proxy_styles.h"
 

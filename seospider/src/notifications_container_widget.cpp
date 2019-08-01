@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "notifications_container_widget.h"
 #include "notification_popup_frame.h"
 #include "service_locator.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "page_parser_helpers.h"
 
 namespace CrawlerEngineTests

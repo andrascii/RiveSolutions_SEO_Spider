@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "robots_txt_tokenizer.h"
 #include "robots_txt_base_strategy.h"
 #include "robots_txt_rules.h"

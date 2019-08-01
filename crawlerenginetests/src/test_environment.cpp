@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "test_environment.h"
 #include "tests_crawler.h"
 #include "handler_registry.h"

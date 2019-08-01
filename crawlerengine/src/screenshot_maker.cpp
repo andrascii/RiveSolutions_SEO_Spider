@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "screenshot_maker.h"
 #include "take_screenshot_request.h"
 #include "take_screenshot_response.h"

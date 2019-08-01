@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "site_audit_page.h"
 #include "website_data_widget.h"
 #include "svg_renderer.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "zippo.h"
 
 #include "quazip.h"

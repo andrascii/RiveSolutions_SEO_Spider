@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "crawler_settings_widget.h"
 #include "parsed_page.h"
 

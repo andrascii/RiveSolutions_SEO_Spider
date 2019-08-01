@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "abstract_download_handler.h"
 #include "random_interval_range_timer.h"
 #include "inotification_service.h"

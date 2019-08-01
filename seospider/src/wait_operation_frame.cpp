@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "wait_operation_frame.h"
 #include "application.h"
 #include "widget_helpers.h"

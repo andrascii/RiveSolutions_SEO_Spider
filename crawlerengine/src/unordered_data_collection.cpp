@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "unordered_data_collection.h"
 #include "parsed_page_comparator.h"
 #include "sequenced_data_collection.h"

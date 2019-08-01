@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parsed_page.h"
 #include "parsed_page_info.h"
 #include "helpers.h"

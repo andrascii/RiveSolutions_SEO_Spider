@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "serializer.h"
 #include "isequenced_storage.h"
 #include "unique_link_store.h"

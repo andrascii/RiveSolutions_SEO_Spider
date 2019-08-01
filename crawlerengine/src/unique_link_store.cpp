@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "unique_link_store.h"
 #include "service_locator.h"
 #include "license_state_observer.h"

@@ -132,6 +132,7 @@ target_link_libraries(
 	${Boost_ASIO_LIBRARY}
 	D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libcrypto.lib
 	D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libssl.lib
+	PUBLIC
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::Xml

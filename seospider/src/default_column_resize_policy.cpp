@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "default_column_resize_policy.h"
 #include "table_view.h"
 

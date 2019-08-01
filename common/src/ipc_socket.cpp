@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ipc_socket.h"
 
 namespace Common

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "titled_window.h"
 #include "titlebar.h"
 

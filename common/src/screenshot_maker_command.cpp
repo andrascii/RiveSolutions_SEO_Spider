@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "screenshot_maker_command.h"
 
 namespace Common

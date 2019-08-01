@@ -62,6 +62,7 @@ include_directories(
 
 target_link_libraries(
 	${CommonLibName}
+	PUBLIC
 	${QxtSmtpLibName}
 	${QUazipLibName}
 	Qt5::Widgets

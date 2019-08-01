@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "item_view_delegate.h"
 #include "irenderer.h"
 #include "iview_model.h"

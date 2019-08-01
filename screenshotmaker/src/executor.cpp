@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "executor.h"
 #include "message_channel.h"
 

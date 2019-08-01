@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "resource_type_filter_widget.h"
 #include "row_resource_type.h"
 #include "custom_proxy_styles.h"

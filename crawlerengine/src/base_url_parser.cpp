@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "base_url_parser.h"
 #include "ihtml_parser.h"
 

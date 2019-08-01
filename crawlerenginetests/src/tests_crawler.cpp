@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "tests_crawler.h"
 #include "tests_downloader.h"
 #include "page_parser_helpers.h"

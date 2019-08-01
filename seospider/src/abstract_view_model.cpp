@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "abstract_view_model.h"
 #include "irenderer.h"
 #include "model_helpers.h"

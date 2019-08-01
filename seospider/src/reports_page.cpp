@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "reports_page.h"
 #include "application.h"
 #include "preferences.h"
