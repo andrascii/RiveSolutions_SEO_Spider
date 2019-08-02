@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef Q_OS_WIN
+#define _countof(array) (sizeof(array) / sizeof(array[0]))
+#endif
+
 //https://developercommunity.visualstudio.com/content/problem/185399/error-c2760-in-combaseapih-with-windows-sdk-81-and.html
 struct IUnknown;
 
@@ -90,8 +94,6 @@ struct IUnknown;
 
 #ifdef Q_OS_WIN
 #include <windows.h>
-#else
-#error You compile this code on unsupported platform!
 #endif
 
 #include "common_macro_helpers.h"

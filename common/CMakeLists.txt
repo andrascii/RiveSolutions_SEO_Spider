@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set (CMAKE_CXX_STANDARD 17)
 
 set(CommonSourcesDir src)
 set(CommonHeadersDir include)
@@ -11,7 +12,11 @@ set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(QxtSmtpLibHeadersDir ../qxtsmtp/include)
 set(QUazipLibHeadersDir ../quazip/include)
 
-list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
+if (APPLE)
+	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp src/ipc_socket.cpp src/ipc_server.cpp src/pipe_server.cpp)
+else()
+	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
+endif()
 
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" CommonSourcesList)
 

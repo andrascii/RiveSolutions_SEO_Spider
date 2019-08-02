@@ -3,6 +3,17 @@
 namespace Common
 {
 
+namespace Details
+{
+
+template <typename T>
+struct AlwaysFalse
+{
+    static const bool value = false;
+};
+    
+}
+    
 class Helpers
 {
 public:
@@ -42,7 +53,7 @@ public:
 		}
 		else
 		{
-			static_assert(!"Destination type must be a pointer");
+            static_assert(Details::AlwaysFalse<DestinationType>::value, "Destination type must be a pointer");
 		}
 	}
 
@@ -66,7 +77,7 @@ public:
 		}
 		else
 		{
-			static_assert(!"Destination type must be a reference");
+            static_assert(Details::AlwaysFalse<DestinationType>::value, "Destination type must be a reference");
 		}
 	}
 };

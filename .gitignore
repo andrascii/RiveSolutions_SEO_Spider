@@ -9,3 +9,4 @@ doxydoc/
 /version/SetVersion.cmake
 *.aps
 .DS_Store
+xcodebuild
