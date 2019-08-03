@@ -8,11 +8,8 @@ doxydoc/
 /version/include/version.h
 /version/SetVersion.cmake
 *.aps
-<<<<<<< HEAD
-=======
 .DS_Store
 xcodebuild
 cmake-build-debug
 .idea
 seospiderinstaller/config/config.xml
->>>>>>> a9be4c3a... Added ignore folders to .gitignoe and also deleted config.xml from index
