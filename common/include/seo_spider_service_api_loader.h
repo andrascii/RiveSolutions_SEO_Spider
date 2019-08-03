@@ -1,6 +1,12 @@
+#include "stdafx.h"
 #pragma once
 
-#include "iseo_spider_service_api.h"
+namespace SeoSpiderServiceApi
+{
+    
+class ISeoSpiderServiceApi;
+    
+}
 
 namespace Common
 {

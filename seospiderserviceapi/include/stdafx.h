@@ -118,8 +118,6 @@ struct unary_function
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <new.h>
-#else
-#error You compile this code on unsupported platform!
 #endif
 
 #ifndef QT_DEBUG

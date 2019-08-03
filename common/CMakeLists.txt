@@ -13,7 +13,7 @@ set(QxtSmtpLibHeadersDir ../qxtsmtp/include)
 set(QUazipLibHeadersDir ../quazip/include)
 
 if (APPLE)
-	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp src/ipc_socket.cpp src/ipc_server.cpp src/pipe_server.cpp)
+	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp src/ipc_socket.cpp src/ipc_server.cpp src/pipe_server.cpp src/seo_spider_service_api_loader.cpp)
 else()
 	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
 endif()

@@ -10,3 +10,4 @@ doxydoc/
 *.aps
 .DS_Store
 xcodebuild
+cmake-build-debug
