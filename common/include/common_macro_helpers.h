@@ -1,11 +1,11 @@
+#include "stdafx.h"
 #pragma once
 
 #ifdef Q_OS_WIN
 #include "seo_spider_service_api_loader.h"
 #include "log_message_buffer.h"
-#endif
-
 #include "make_dump_data.h"
+#endif
 
 #ifdef Q_OS_WIN
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)

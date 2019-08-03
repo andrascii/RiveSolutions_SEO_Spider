@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
-set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
 set (CMAKE_CXX_STANDARD 17)
 
 set(CommonSourcesDir src)
@@ -63,6 +63,7 @@ include_directories(
 	${SeoSpiderServiceApiHeadersDir}
 	${QxtSmtpLibHeadersDir}
 	${QUazipLibHeadersDir}
+	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(
