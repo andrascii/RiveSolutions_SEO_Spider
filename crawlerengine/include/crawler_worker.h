@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "parsed_page.h"
 #include "robots_txt_rules.h"

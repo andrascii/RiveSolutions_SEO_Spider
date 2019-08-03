@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "settings_page.h"
 #include "ui_yandex_metrica_settings_widget.h"

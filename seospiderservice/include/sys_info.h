@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #ifndef SYSINFO_H
 #define SYSINFO_H
 

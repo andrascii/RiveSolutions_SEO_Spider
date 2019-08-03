@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "requester_wrapper.h"
 #include "url.h"

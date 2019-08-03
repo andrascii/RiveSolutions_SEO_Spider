@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "page_parser_helpers.h"
 #include "url.h"

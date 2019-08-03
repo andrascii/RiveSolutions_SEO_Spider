@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "pipe_server.h"
 

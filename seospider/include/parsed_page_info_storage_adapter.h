@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "istorage_adapter.h"
 #include "parsed_page_info.h"

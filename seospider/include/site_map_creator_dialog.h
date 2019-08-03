@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "ui_site_map_creator_dialog.h"
 #include "dialog.h"

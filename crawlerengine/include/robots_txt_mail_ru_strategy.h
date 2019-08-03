@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "robots_txt_yandex_strategy.h"
 

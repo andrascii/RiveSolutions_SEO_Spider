@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "iresponse.h"
 #include "serial_number_data.h"
