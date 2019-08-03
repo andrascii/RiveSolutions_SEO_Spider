@@ -11,3 +11,5 @@ doxydoc/
 .DS_Store
 xcodebuild
 cmake-build-debug
+.idea
+seospiderinstaller/config/config.xml
