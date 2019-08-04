@@ -134,7 +134,9 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "SerializerThread");
 	threadManager.moveObjectToThread(new Proper404Checker, "BackgroundThread");
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
-	threadManager.moveObjectToThread(createScreenshotMaker()->qobject(), "BackgroundThread");
+
+	// disabled due first building on Mac
+	//threadManager.moveObjectToThread(createScreenshotMaker()->qobject(), "BackgroundThread");
 
 	m_licenseStateObserver = new LicenseStateObserver;
 

@@ -59,6 +59,6 @@ enum class StatusCode
 	UnknownNetworkError
 };
 
-Q_DECLARE_METATYPE(StatusCode)
-
 }
+
+Q_DECLARE_METATYPE(Common::StatusCode)

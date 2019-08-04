@@ -63,9 +63,23 @@ if((condition) == false) \
 
 #else
 
-#define DEBUGLOG
-#define INFOLOG
-#define WARNLOG
-#define ERRLOG
+#ifndef UNIX_TEMPORARY_LOGS_STUB
+#define UNIX_TEMPORARY_LOGS_STUB
+
+struct UnixTemporaryLogsStub
+{
+    template <typename T>
+    UnixTemporaryLogsStub& operator<<(const T&)
+    {
+        return *this;
+    }
+};
+
+#endif
+
+#define DEBUGLOG UnixTemporaryLogsStub()
+#define INFOLOG UnixTemporaryLogsStub()
+#define WARNLOG UnixTemporaryLogsStub()
+#define ERRLOG UnixTemporaryLogsStub()
 
 #endif

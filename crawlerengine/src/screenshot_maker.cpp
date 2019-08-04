@@ -114,11 +114,20 @@ bool ScreenshotMaker::ensureScreenshotMakerIsAlive(int attemptsCount)
 
 	for (int i = 0; i < attemptsCount; ++i)
 	{
+#ifdef Q_OS_WIN
+        const std::string binaryName = "screenshotmaker.exe";
+        const std::string currentProcessId = std::to_string(GetCurrentProcessId());
+#else
+        const std::string binaryName = "screenshotmaker";
+        const std::string currentProcessId = std::to_string(getpid());
+#endif
+
+
 		m_screenshotMakerProcess = boost::process::child(
-			std::string("screenshotmaker.exe " +
+			std::string(binaryName + " " +
 				s_screenshotMakerChannelName.toStdString() + " " +
 				s_sharedMemoryKey.toStdString() + " " +
-				std::to_string(GetCurrentProcessId()))
+				currentProcessId)
 		);
 
 		if (m_screenshotMakerProcess.running())
@@ -219,7 +228,8 @@ void ScreenshotMaker::logSharedMemoryAttachError()
 		}
 		case QSharedMemory::AlreadyExists:
 		{
-			ERRLOG << "A create() operation failed because a shared memory segment with the specified key already existed.";
+			ERRLOG << "A create() operation failed because a shared "
+                "memory segment with the specified key already existed.";
 			break;
 		}
 		case QSharedMemory::NotFound:
@@ -229,7 +239,8 @@ void ScreenshotMaker::logSharedMemoryAttachError()
 		}
 		case QSharedMemory::LockError:
 		{
-			ERRLOG << "The attempt to lock() the shared memory segment failed because create() or attach() failed and returned false, or because a system error occurred in QSystemSemaphore::acquire().";
+			ERRLOG << "The attempt to lock() the shared memory segment failed because create() or attach() "
+                "failed and returned false, or because a system error occurred in QSystemSemaphore::acquire().";
 			break;
 		}
 		case QSharedMemory::OutOfResources:

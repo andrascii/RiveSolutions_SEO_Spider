@@ -90,8 +90,6 @@ struct IUnknown;
 
 #include <windows.h>
 #include <dbghelp.h>
-#else
-#error You compile this code on unsupported platform!
 #endif
 
 #ifdef QT_DEBUG

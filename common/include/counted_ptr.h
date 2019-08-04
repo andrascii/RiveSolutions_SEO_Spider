@@ -101,6 +101,8 @@ public:
 	{
 	}
 
+	virtual ~cp_counted_base() = default;
+
 	virtual void dispose() = 0;
 
 	virtual void destroy()

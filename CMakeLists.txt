@@ -130,15 +130,15 @@ endif()
 
 add_subdirectory(${QtXlsxWriter})
 add_subdirectory(${AppName})
-add_subdirectory(${ScreenshotMaker})
+#add_subdirectory(${ScreenshotMaker}) # disabled due first building on Mac
 add_subdirectory(${GumboLibName})
 add_subdirectory(${MyHtmlLibName})
-#add_subdirectory(${SeoSpiderServiceApiDllName})
-#add_subdirectory(${SeoSpiderServiceAppName})
+#add_subdirectory(${SeoSpiderServiceApiDllName}) # disabled due first building on Mac
+#add_subdirectory(${SeoSpiderServiceAppName}) # disabled due first building on Mac
 add_subdirectory(${CommonLibName})
 add_subdirectory(${QxtSmtpLibName})
 add_subdirectory(${ZLibName})
 add_subdirectory(${QUazipLibName})
-#add_subdirectory(${GoogleTestLibName})
-#add_subdirectory(${SeoSpiderInstallerName})
+#add_subdirectory(${GoogleTestLibName}) # disabled due first building on Mac
+#add_subdirectory(${SeoSpiderInstallerName}) # disabled due first building on Mac
 add_subdirectory(${VersionProjectName})
