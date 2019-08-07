@@ -4,6 +4,8 @@ set (CMAKE_CXX_STANDARD 17)
 
 project(${AppName})
 
+include(cotire)
+
 set(AppSourcesDir src)
 set(AppHeadersDir include)
 
@@ -177,3 +179,6 @@ target_link_libraries(
 	Qt5::WebEngineWidgets
 	Qt5::PrintSupport
 )
+
+set_target_properties(${AppName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+cotire(${AppName})

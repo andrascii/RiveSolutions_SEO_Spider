@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 
 project(${CrawlerEngineLibName})
+
+include(cotire)
 
 set(CrawlerEngineSourcesDir src)
 set(CrawlerEngineHeadersDir include)
@@ -105,4 +107,8 @@ target_link_libraries(
 	Qt5::Network
 	Qt5::Xml
 	Qt5::XmlPatterns
+	Qt5::WebEngineWidgets
 )
+
+set_target_properties(${CrawlerEngineLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+cotire(${CrawlerEngineLibName})

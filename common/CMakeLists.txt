@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
 set (CMAKE_CXX_STANDARD 17)
 
+include(cotire)
+
 set(CommonSourcesDir src)
 set(CommonHeadersDir include)
 
@@ -13,13 +15,17 @@ set(QxtSmtpLibHeadersDir ../qxtsmtp/include)
 set(QUazipLibHeadersDir ../quazip/include)
 
 if (APPLE)
-	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp src/ipc_socket.cpp src/ipc_server.cpp src/pipe_server.cpp src/seo_spider_service_api_loader.cpp)
+	list(REMOVE_ITEM CommonSourcesList
+		src/stdafx.cpp
+		src/ipc_socket.cpp
+		src/ipc_server.cpp
+		src/pipe_server.cpp
+		src/seo_spider_service_api_loader.cpp)
 else()
 	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
 endif()
 
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" CommonSourcesList)
-
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
 configure_msvc_runtime()
@@ -76,3 +82,6 @@ target_link_libraries(
 	Qt5::Svg
 	Qt5::WebEngineWidgets
 )
+
+set_target_properties(${CommonLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+cotire(${CommonLibName})

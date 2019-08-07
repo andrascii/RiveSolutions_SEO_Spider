@@ -15,7 +15,11 @@ public:
 	Zippo();
 	~Zippo();
 	
-	void zcompress(const QDir& reportDir, const QString& reportfile, const QStringList& userFiles, const QString& description);
+	void zcompress(const QDir& reportDir,
+        const QString& reportfile,
+        const QStringList& userFiles,
+        const QString& description);
+
 	void cancel();
 
 	QString errorString() const { return m_error; }
@@ -25,11 +29,17 @@ signals:
 	void finished();
 	void error();
 
-	void startCompression(const QDir& reportDir, const QString& reportfile, const QStringList& userFiles, const QString& description);
+	void startCompression(const QDir& reportDir,
+        const QString& reportfile,
+        const QStringList& userFiles,
+        const QString& description);
 
 protected slots:
 
-	void onStartCompression(const QDir& reportDir, const QString& reportfile, const QStringList& userFiles, const QString& description);
+	void onStartCompression(const QDir& reportDir,
+        const QString& reportfile,
+        const QStringList& userFiles,
+        const QString& description);
 
 private:
 

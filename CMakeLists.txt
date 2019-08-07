@@ -81,6 +81,7 @@ set(VMProtectDebugLicenseFile "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/
 
 project(${AppName})
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 set(CMAKE_INSTALL_PREFIX)
 
 # Find includes in corresponding build directories
