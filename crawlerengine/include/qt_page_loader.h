@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "iworker_page_loader.h"
 #include "requester_wrapper.h"

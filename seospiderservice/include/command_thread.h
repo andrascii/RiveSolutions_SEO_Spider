@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "stdafx.h"
 
 #include "ipc_socket.h"
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "ui_language_settings_widget.h"
 #include "settings_page.h"

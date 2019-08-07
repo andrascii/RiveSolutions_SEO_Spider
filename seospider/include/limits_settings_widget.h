@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "settings_page.h"
 #include "ui_limits_settings_widget.h"

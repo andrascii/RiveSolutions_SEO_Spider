@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "ui_application_settings_dialog.h"
 #include "dialog.h"

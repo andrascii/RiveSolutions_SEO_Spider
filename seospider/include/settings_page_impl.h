@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "service_locator.h"
 #include "settings_page_registry.h"

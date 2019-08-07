@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "ui_register_product_dialog.h"
 #include "requester_wrapper.h"

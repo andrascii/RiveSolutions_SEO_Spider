@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "parsed_page.h"
 #include "row_resource_type.h"

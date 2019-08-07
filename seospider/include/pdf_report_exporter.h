@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include "ireport_exporter.h"
 
 namespace SeoSpider

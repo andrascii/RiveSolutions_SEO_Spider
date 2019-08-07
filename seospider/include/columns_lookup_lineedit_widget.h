@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "ui_columns_lookup_lineedit_widget.h"
 

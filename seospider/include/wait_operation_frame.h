@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "ui_wait_operation_frame.h"
 
