@@ -14,6 +14,6 @@ struct LinksToThisResourceChanges
 	std::vector<Change> changes;
 };
 
-Q_DECLARE_METATYPE(LinksToThisResourceChanges);
-
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::LinksToThisResourceChanges);

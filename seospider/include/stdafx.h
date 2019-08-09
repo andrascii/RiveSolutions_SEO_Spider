@@ -71,7 +71,6 @@
 // C/C++
 //
 #include <cstdlib>
-#include <crtdbg.h>
 #include <vector>
 #include <deque>
 #include <queue>
@@ -98,7 +97,6 @@
 #include <limits>
 #include <fstream>
 #include <optional>
-#include <windows.h>
 #include <VMProtectSDK.h>
 #include <curl/curl.h>
 
@@ -165,6 +163,7 @@ using std::size_t;
 
 #if defined(Q_OS_WIN)
 
+#include <windows.h>
 #include <ws2tcpip.h>
 #include <mstcpip.h>
 #include <shellapi.h>

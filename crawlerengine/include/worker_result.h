@@ -32,6 +32,6 @@ private:
 	std::vector<bool> m_storagesBeforeRemoving;
 };
 
-Q_DECLARE_METATYPE(WorkerResult)
-
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::WorkerResult)

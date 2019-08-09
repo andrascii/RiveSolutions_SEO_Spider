@@ -35,8 +35,6 @@ struct CrawlingProgress
 	size_t pendingLinkCount;
 };
 
-Q_DECLARE_METATYPE(CrawlingProgress)
-
 class Crawler : public QObject
 {
 	Q_OBJECT
@@ -220,3 +218,5 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::CrawlingProgress)

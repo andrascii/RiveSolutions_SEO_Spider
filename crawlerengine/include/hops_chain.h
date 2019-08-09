@@ -42,6 +42,6 @@ private:
 	std::vector<Hop> m_hopsChain;
 };
 
-Q_DECLARE_METATYPE(HopsChain)
-
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::HopsChain)

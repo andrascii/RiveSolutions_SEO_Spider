@@ -39,6 +39,6 @@ private:
 	QMap<UserAgentType, std::shared_ptr<RobotsTxtBaseStrategy>> m_strategies;
 };
 
-Q_DECLARE_METATYPE(RobotsTxtRules)
-
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::RobotsTxtRules)

@@ -61,8 +61,8 @@ SerialNumberStates fromVmProtectStates(int vmProtectStates)
 SerialNumberData::SerialNumberData(const VMProtectSerialNumberData& data)
 {
 	states = fromVmProtectStates(data.nState);
-	userName = QString::fromWCharArray(data.wUserName);
-	email = QString::fromWCharArray(data.wEMail);
+	userName = QString::fromWCharArray((const wchar_t*)data.wUserName);
+	email = QString::fromWCharArray((const wchar_t*)data.wEMail);
 	dateExpire = QDateTime(QDate(data.dtExpire.wYear, data.dtExpire.bMonth, data.dtExpire.bDay), QTime());
 	dateExpire = QDateTime(QDate(data.dtMaxBuild.wYear, data.dtMaxBuild.bMonth, data.dtMaxBuild.bDay), QTime());
 	runningTime = data.bRunningTime;

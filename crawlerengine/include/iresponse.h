@@ -42,6 +42,7 @@ public:
 };
 
 using IResponseSharedPtr = std::shared_ptr<IResponse>;
-Q_DECLARE_METATYPE(IResponseSharedPtr)
 
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::IResponseSharedPtr)

@@ -348,7 +348,7 @@ public:
 		}
 	}
 
-#if __cplusplus > 201402L
+#if __cplusplus <= 201402L
 	template <typename Y>
 	explicit cp_count(std::auto_ptr<Y>& r)
 		: _cp_counted(new sp_counted_impl_p<Y>(r.release()))

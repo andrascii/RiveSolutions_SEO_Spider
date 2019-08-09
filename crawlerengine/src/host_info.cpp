@@ -198,6 +198,8 @@ void HostInfo::setAliases(hostent* remoteHost)
 
 void HostInfo::setIpAddresses(hostent* remoteHost)
 {
+    remoteHost;
+    /*
 	if (m_addressFamily == AddressFamily::IPv4)
 	{
 		int i = 0;
@@ -231,6 +233,7 @@ void HostInfo::setIpAddresses(hostent* remoteHost)
 			m_ipv6Addresses[ipStringRepresentation] = addr;
 		}
 	}
+     */
 }
 
 }

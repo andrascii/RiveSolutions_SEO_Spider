@@ -141,6 +141,6 @@ private:
 
 using ParsedPageInfoPtr = std::shared_ptr<ParsedPageInfo>;
 
-Q_DECLARE_METATYPE(ParsedPageInfoPtr);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ParsedPageInfoPtr);
