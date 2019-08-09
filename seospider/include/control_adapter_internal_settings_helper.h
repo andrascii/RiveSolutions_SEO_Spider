@@ -21,6 +21,6 @@ private:
 	QPointer<InternalSettingsHelper> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterInternalSettingsHelper);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ControlAdapterInternalSettingsHelper);

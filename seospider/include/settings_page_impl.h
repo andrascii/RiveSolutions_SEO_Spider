@@ -24,7 +24,7 @@ public:
 	{
 		page->setWindowIcon(icon);
 
-		ISettingsPageRegistry* settingsPageRegistry = ServiceLocator::instance()->service<ISettingsPageRegistry>();
+        ISettingsPageRegistry* settingsPageRegistry = CrawlerEngine::ServiceLocator::instance()->service<ISettingsPageRegistry>();
 
 		settingsPageRegistry->registerSettingsPage(pageId, page);
 	}

@@ -1,5 +1,4 @@
-#include "stdafx.h"
-﻿#include "header_view.h"
+#include "header_view.h"
 #include "model_helpers.h"
 #include "svg_renderer.h"
 #include "deferred_call.h"

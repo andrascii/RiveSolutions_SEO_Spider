@@ -1,8 +1,8 @@
-#include "stdafx.h"
 #pragma once
 
-#ifdef Q_OS_WIN
 #include "seo_spider_service_api_loader.h"
+
+#ifdef Q_OS_WIN
 #include "log_message_buffer.h"
 #include "make_dump_data.h"
 #endif

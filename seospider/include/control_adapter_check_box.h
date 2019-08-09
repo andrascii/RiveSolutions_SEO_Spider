@@ -18,6 +18,6 @@ private:
 	QPointer<QCheckBox> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterQCheckBox);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ControlAdapterQCheckBox);

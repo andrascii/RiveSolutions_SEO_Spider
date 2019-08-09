@@ -18,6 +18,6 @@ private:
 	QPointer<QLineEdit> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterQLineEdit);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ControlAdapterQLineEdit);

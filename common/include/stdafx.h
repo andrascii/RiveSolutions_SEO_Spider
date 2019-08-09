@@ -87,13 +87,14 @@ struct IUnknown;
 #include <QScrollBar>
 #include <QScreen>
 #include <QItemSelectionModel>
-//#include <QtSvg>
+#include <QtSvg>
 #include <QBuffer>
 #include <QStack>
 #include <QNetworkInterface>
 #include <QStandardPaths>
 #include <QDir>
 #include <QFileInfo>
+#include <QLibrary>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

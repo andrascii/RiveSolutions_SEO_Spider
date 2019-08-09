@@ -18,6 +18,6 @@ private:
 	QPointer<QSpinBox> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterQSpinBox);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ControlAdapterQSpinBox);

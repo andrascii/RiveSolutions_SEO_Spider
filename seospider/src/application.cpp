@@ -20,6 +20,7 @@
 #include "version.h"
 #include "license_state_notificator.h"
 #include "dialog.h"
+#include "seo_spider_service_api_loader.h"
 
 #ifndef PRODUCTION
 #include "style_loader.h"

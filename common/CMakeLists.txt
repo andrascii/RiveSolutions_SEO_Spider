@@ -19,8 +19,7 @@ if (APPLE)
 		src/stdafx.cpp
 		src/ipc_socket.cpp
 		src/ipc_server.cpp
-		src/pipe_server.cpp
-		src/seo_spider_service_api_loader.cpp)
+		src/pipe_server.cpp)
 else()
 	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
 endif()
