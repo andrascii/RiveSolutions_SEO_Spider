@@ -100,6 +100,8 @@
 // boost
 //
 
+#ifdef Q_OS_WIN
+
 namespace std
 {
 
@@ -124,6 +126,10 @@ struct unary_function
 };
 
 }
+
+#else
+#define BOOST_NO_CXX98_FUNCTION_BASE
+#endif
 
 #include <boost/functional/hash.hpp>
 #include <boost/process/child.hpp>

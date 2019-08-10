@@ -107,8 +107,6 @@ if(WIN32)
 	set(OSSpecificDeps ws2_32.lib ntdll.lib)
 endif()
 
-add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
-
 if(APPLE)
 	target_link_libraries(
 		${CrawlerEngineLibName}
@@ -129,6 +127,8 @@ if(APPLE)
 		Qt5::WebEngineWidgets
 	)
 else()
+	add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
+	
 	target_link_libraries(
 		${CrawlerEngineLibName}
 		PUBLIC
