@@ -21,10 +21,12 @@ void WebHostInfo::reset(const QUrl& url)
 
 	if (m_screenshot.first != url)
 	{
+        /*
 		m_screenshot.first = url;
 		TakeScreenshotRequest makeScreenshotRequest(url);
 		m_screenshotMakerRequester.reset(makeScreenshotRequest, this, &WebHostInfo::onScreenshotCreated);
 		m_screenshotMakerRequester->start();
+         */
 	}
 
 	Check404IsProperRequest request(url);
