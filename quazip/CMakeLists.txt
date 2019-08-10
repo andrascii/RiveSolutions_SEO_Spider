@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
-set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
 
 set(QUazipSourcesDir src)
 set(QUazipHeadersDir include)

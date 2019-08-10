@@ -3691,12 +3691,6 @@ if (CMAKE_SCRIPT_MODE_FILE)
 			endif()
 		endforeach()
 
-		message("INCLUDE_PATH ${COTIRE_TARGET_INCLUDE_PATH}")
-		message("INCLUDE_DIRECTORIES ${_includeDirs}")
-		message("SYSTEM_INCLUDE_DIRECTORIES ${_systemIncludeDirs}")
-		message("COMPILE_DEFINITIONS ${_compileDefinitions}")
-		message("COMPILE_FLAGS ${_compileFlags}")
-
 		cotire_precompile_prefix_header(
 			"${COTIRE_ARGV3}" "${COTIRE_ARGV4}" "${COTIRE_ARGV5}"
 			COMPILER_LAUNCHER "${COTIRE_TARGET_${COTIRE_TARGET_LANGUAGE}_COMPILER_LAUNCHER}"
@@ -4194,4 +4188,3 @@ else()
 	message (STATUS "cotire ${COTIRE_CMAKE_MODULE_VERSION} loaded.")
 
 endif()
-
