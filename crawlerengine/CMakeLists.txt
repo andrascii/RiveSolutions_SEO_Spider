@@ -21,7 +21,11 @@ file(GLOB_RECURSE CrawlerEngineResourcesList "rcc/*.qrc")
 
 qt5_wrap_cpp(CrawlerEngineHeadersMocList ${CrawlerEngineFormsHeadersList})
 
-list(REMOVE_ITEM CrawlerEngineSourcesList src/stdafx.cpp)
+if(APPLE)
+	list(REMOVE_ITEM CrawlerEngineSourcesList src/stdafx.cpp src/screenshot_maker.cpp)
+else()
+	list(REMOVE_ITEM CrawlerEngineSourcesList src/stdafx.cpp)
+endif()
 
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" CrawlerEngineSourcesList)
 
@@ -73,17 +77,31 @@ endif()
 
 message("CURL include headers directory: ${CurlHeadersDir}")
 
-include_directories(
-	${CrawlerEngineHeadersDir}
-	${CurlHeadersDir}
-	${GumboLibHeadersDir}
-	${MyHtmlLibHeadersDir}
-	${CommonLibHeadersDir}
-	${VMProtectSdkHeadersDir}
-	${SeoSpiderServiceApiHeadersDir}
-	${Boost_INCLUDE_DIRS}
-	${CMAKE_CURRENT_BINARY_DIR}
-)
+if(APPLE)
+	include_directories(
+		${CrawlerEngineHeadersDir}
+		${GumboLibHeadersDir}
+		${MyHtmlLibHeadersDir}
+		${CommonLibHeadersDir}
+		${VMProtectSdkHeadersDir}
+		${SeoSpiderServiceApiHeadersDir}
+		${Boost_INCLUDE_DIRS}
+		${CMAKE_CURRENT_BINARY_DIR}
+		${CURL_INCLUDE_DIRS}
+	)
+else()
+	include_directories(
+		${CrawlerEngineHeadersDir}
+		${CurlHeadersDir}
+		${GumboLibHeadersDir}
+		${MyHtmlLibHeadersDir}
+		${CommonLibHeadersDir}
+		${VMProtectSdkHeadersDir}
+		${SeoSpiderServiceApiHeadersDir}
+		${Boost_INCLUDE_DIRS}
+		${CMAKE_CURRENT_BINARY_DIR}
+	)
+endif()
 
 if(WIN32)
 	set(OSSpecificDeps ws2_32.lib ntdll.lib)
@@ -91,24 +109,45 @@ endif()
 
 add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
 
-target_link_libraries(
-	${CrawlerEngineLibName}
-	PUBLIC
-	${GumboLibName}
-	${CommonLibName}
-	${OSSpecificDeps}
-	${CurlLibraries}
-	"${MyHtmlLibName}_static" # change this solution to that which is more reliable
-	${Boost_LIBRARIES}
-	${Boost_SYSTEM_LIBRARY}
-	${Boost_FILESYSTEM_LIBRARY}
-	${Boost_ASIO_LIBRARY}
-	${Boost_REGEX_LIBRARY}
-	Qt5::Network
-	Qt5::Xml
-	Qt5::XmlPatterns
-	Qt5::WebEngineWidgets
-)
+if(APPLE)
+	target_link_libraries(
+		${CrawlerEngineLibName}
+		PUBLIC
+		${GumboLibName}
+		${CommonLibName}
+		${OSSpecificDeps}
+		${CURL_LIBRARIES}
+		"${MyHtmlLibName}_static" # change this solution to that which is more reliable
+		${Boost_LIBRARIES}
+		${Boost_SYSTEM_LIBRARY}
+		${Boost_FILESYSTEM_LIBRARY}
+		${Boost_ASIO_LIBRARY}
+		${Boost_REGEX_LIBRARY}
+		Qt5::Network
+		Qt5::Xml
+		Qt5::XmlPatterns
+		Qt5::WebEngineWidgets
+	)
+else()
+	target_link_libraries(
+		${CrawlerEngineLibName}
+		PUBLIC
+		${GumboLibName}
+		${CommonLibName}
+		${OSSpecificDeps}
+		${CurlLibraries}
+		"${MyHtmlLibName}_static" # change this solution to that which is more reliable
+		${Boost_LIBRARIES}
+		${Boost_SYSTEM_LIBRARY}
+		${Boost_FILESYSTEM_LIBRARY}
+		${Boost_ASIO_LIBRARY}
+		${Boost_REGEX_LIBRARY}
+		Qt5::Network
+		Qt5::Xml
+		Qt5::XmlPatterns
+		Qt5::WebEngineWidgets
+	)
+endif()
 
 set_target_properties(${CrawlerEngineLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
 cotire(${CrawlerEngineLibName})

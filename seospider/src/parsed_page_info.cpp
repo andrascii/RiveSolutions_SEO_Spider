@@ -608,7 +608,7 @@ QVariant ParsedPageInfo::acceptWordCount() const
 
 QVariant ParsedPageInfo::acceptPageHash() const
 {
-	return m_parsedPage->pageHash;
+	return static_cast<qulonglong>(m_parsedPage->pageHash);
 }
 
 QVariant ParsedPageInfo::acceptImageSizeKb() const
@@ -619,7 +619,7 @@ QVariant ParsedPageInfo::acceptImageSizeKb() const
 
 QVariant ParsedPageInfo::acceptLinksOnThisPageCount() const
 {
-	return m_parsedPage->linksOnThisPage.size();
+	return static_cast<qulonglong>(m_parsedPage->linksOnThisPage.size());
 }
 
 QVariant ParsedPageInfo::acceptLinksToThisPage() const

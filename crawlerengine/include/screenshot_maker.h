@@ -9,7 +9,7 @@ namespace CrawlerEngine
 {
 
 class TakeScreenshotRequest;
-
+/*
 class ScreenshotMaker : public QObject, public IScreenshotMaker
 {
 	Q_OBJECT
@@ -48,5 +48,5 @@ private:
 	int m_timerId;
 	bool m_isActive;
 };
-
+*/
 }

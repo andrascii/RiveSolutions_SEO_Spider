@@ -74,6 +74,7 @@ endif()
 
 if(APPLE)
   set(VMProtectSdkLibDir "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/osx")
+  set(VMProctectSdkDll "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/osx/libVMProtectSDK.dylib")
 endif()
 
 set(VMProtectSdkHeadersDir ../thirdparty/vmprotect/include)
@@ -96,8 +97,14 @@ find_package(Qt5 REQUIRED PrintSupport Widgets Network Svg WebEngineWidgets Xml 
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED system date_time program_options filesystem COMPONENTS)
-
 message("Boost found ${Boost_FOUND}")
+
+if(APPLE)
+  find_package(OpenSSL)
+  find_package(curl)
+  message("OpenSSL found ${OPENSSL_FOUND}")
+  message("CURL found ${OPENSSL_FOUND}")
+endif()
 
 MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
   IF(MSVC)
@@ -122,7 +129,10 @@ MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar
   ENDIF(MSVC)
 ENDMACRO(add_msvc_precompiled_header)
 
-add_subdirectory(curl)
+if(NOT APPLE)
+  add_subdirectory(curl)
+endif()
+
 add_subdirectory(${CrawlerEngineLibName})
 
 if ($ENV{TESTS} and $ENV{TESTS} STREQUAL "enabled")

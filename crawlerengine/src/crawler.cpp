@@ -737,7 +737,11 @@ IHostInfoProvider* Crawler::createHostInfoProvider() const
 
 IScreenshotMaker* Crawler::createScreenshotMaker()
 {
+#ifdef Q_OS_MACOS
+    return nullptr;
+#else
 	return new ScreenshotMaker;
+#endif
 }
 
 IDownloadHandler* Crawler::createDownloader() const

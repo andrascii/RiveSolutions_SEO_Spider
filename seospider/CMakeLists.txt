@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 
 project(${AppName})
 
@@ -134,51 +134,96 @@ if(MSVC)
 	)
 endif()
 
-include_directories(
-	${AppHeadersDir}
-	${CrawlerEngineLibHeadersDir}
-	${CurlHeadersDir}
-	${CommonLibHeadersDir}
-	${SeoSpiderServiceApiHeadersDir}
-	${VersionHeadersDir}
-	${VMProtectSdkHeadersDir}
-	${QtXlsxWriterHeadersDir}
-	${QtXlsxWriter_INCLUDE_DIRS}
-	${Boost_INCLUDE_DIRS}
-	${CMAKE_CURRENT_BINARY_DIR}
-	${OPENSSL_INCLUDE_DIR}
-)
+if(APPLE)
+	include_directories(
+		${AppHeadersDir}
+		${CrawlerEngineLibHeadersDir}
+		${CommonLibHeadersDir}
+		${SeoSpiderServiceApiHeadersDir}
+		${VersionHeadersDir}
+		${VMProtectSdkHeadersDir}
+		${QtXlsxWriterHeadersDir}
+		${QtXlsxWriter_INCLUDE_DIRS}
+		${Boost_INCLUDE_DIRS}
+		${CMAKE_CURRENT_BINARY_DIR}
+		${OPENSSL_INCLUDE_DIR}
+		${CURL_INCLUDE_DIRS}
+	)
+else()
+	include_directories(
+		${AppHeadersDir}
+		${CrawlerEngineLibHeadersDir}
+		${CurlHeadersDir}
+		${CommonLibHeadersDir}
+		${SeoSpiderServiceApiHeadersDir}
+		${VersionHeadersDir}
+		${VMProtectSdkHeadersDir}
+		${QtXlsxWriterHeadersDir}
+		${QtXlsxWriter_INCLUDE_DIRS}
+		${Boost_INCLUDE_DIRS}
+		${CMAKE_CURRENT_BINARY_DIR}
+		${OPENSSL_INCLUDE_DIR}
+	)
+endif()
 
 if(WIN32)
 	set(OSSpecificDeps ntdll.lib)
 endif()
 
-message("CURL library dependencies: ${CurlLibraries}")
+if(APPLE)
+	message("CURL library dependencies: ${CURL_LIBRARIES}")
+else()
+	message("CURL library dependencies: ${CurlLibraries}")
+endif()
+
 message("OpenSSL library dependencies: ${OPENSSL_LIBRARIES}")
 message("OpenSSL include directory: ${OPENSSL_INCLUDE_DIR}")
 
-target_link_libraries(
-	${AppName}
-	PUBLIC
-	${CurlLibraries}
-	${CrawlerEngineLibName}
-	${CommonLibName}
-	${VersionProjectName}
-	${QtXlsxWriter_LIBS}
-	${OSSpecificDeps}
-	${Boost_LIBRARIES}
-	${Boost_SYSTEM_LIBRARY}
-	${Boost_FILESYSTEM_LIBRARY}
-	${Boost_ASIO_LIBRARY}
-	${OPENSSL_LIBRARIES}
-	D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libcrypto.lib
-	D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libssl.lib
-	Qt5::Widgets
-	Qt5::Network
-	Qt5::Svg
-	Qt5::WebEngineWidgets
-	Qt5::PrintSupport
-)
+if(APPLE)
+    target_link_libraries(
+        ${AppName}
+        PUBLIC
+        ${CURL_LIBRARIES}
+        ${CrawlerEngineLibName}
+        ${CommonLibName}
+		${VersionProjectName}
+		${VMProctectSdkDll}
+        ${QtXlsxWriter_LIBS}
+        ${OSSpecificDeps}
+        ${Boost_LIBRARIES}
+        ${Boost_SYSTEM_LIBRARY}
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_ASIO_LIBRARY}
+        ${OPENSSL_LIBRARIES}
+        Qt5::Widgets
+        Qt5::Network
+        Qt5::Svg
+        Qt5::WebEngineWidgets
+        Qt5::PrintSupport
+    )
+else()
+    target_link_libraries(
+        ${AppName}
+		PUBLIC
+		${CurlLibraries}
+        ${CrawlerEngineLibName}
+        ${CommonLibName}
+        ${VersionProjectName}
+        ${QtXlsxWriter_LIBS}
+        ${OSSpecificDeps}
+        ${Boost_LIBRARIES}
+        ${Boost_SYSTEM_LIBRARY}
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_ASIO_LIBRARY}
+        D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libcrypto.lib
+        D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libssl.lib
+        Qt5::Widgets
+        Qt5::Network
+        Qt5::Svg
+        Qt5::WebEngineWidgets
+        Qt5::PrintSupport
+    )
+endif()
 
 set_target_properties(${AppName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
 cotire(${AppName})

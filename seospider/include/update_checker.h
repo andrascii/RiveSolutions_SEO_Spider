@@ -50,8 +50,6 @@ struct Version
 	static const Version invalidVersion;
 };
 
-Q_DECLARE_METATYPE(Version)
-
 class IUpdateChecker
 {
 public:
@@ -91,3 +89,5 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(SeoSpider::Version)
