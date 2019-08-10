@@ -136,13 +136,13 @@ InternalSettingsHelper* SettingsPage::registrateInternalHelperControl(const QVar
 
 void SettingsPage::registerMetaTypes() const
 {
-	qRegisterMetaType<ControlAdapterQCheckBox>();
+    qRegisterMetaType<ControlAdapterQCheckBox>();
 	qRegisterMetaType<ControlAdapterQLineEdit>();
 	qRegisterMetaType<ControlAdapterQSpinBox>();
 	qRegisterMetaType<ControlAdapterQComboBox>();
 	qRegisterMetaType<ControlAdapterQRadioButton>();
-	qRegisterMetaType<ControlAdapterColorSelector>("ControlAdapterSeoSpider::ColorSelector");
-	qRegisterMetaType<ControlAdapterInternalSettingsHelper>("ControlAdapterSeoSpider::InternalSettingsHelper");
+	qRegisterMetaType<ControlAdapterColorSelector>(); //"ControlAdapterSeoSpider::ColorSelector"
+	qRegisterMetaType<ControlAdapterInternalSettingsHelper>(); //"ControlAdapterSeoSpider::InternalSettingsHelper"
 }
 
 void SettingsPage::somethingChangedSlot()
@@ -162,10 +162,31 @@ void SettingsPage::somethingChangedSlot()
 std::shared_ptr<IControlAdapter> SettingsPage::createControlAdapter(QObject* control)
 {
 	const QMetaObject* metaObject = control->metaObject();
-	const char* className = metaObject->className();
-	const QByteArray controlStringType = QString{ "%1%2" }.arg("ControlAdapter").arg(className).toLatin1();
+    const QString typeName = metaObject->className();
+    QList<QString> typeParts = typeName.split("::", QString::SkipEmptyParts);
+    
+    QByteArray controlStringType;
+    
+    if (typeParts.size() == 1)
+    {
+        const QString typeString = typeParts[0];
+        controlStringType = QString{ "SeoSpider::%1%2" }.arg("ControlAdapter").arg(typeString).toLatin1();
+    }
+    else if (typeParts.size() == 2)
+    {
+        const QString namespaceString = typeParts[0];
+        const QString typeString = typeParts[1];
+        qDebug() << "namespace: " << namespaceString << "\ntype: " << typeString;
+        controlStringType = QString{ "%1::%2%3" }.arg(namespaceString).arg("ControlAdapter").arg(typeString).toLatin1();
+    }
+    else
+    {
+        ASSERT(!"Trying to create undefined type");
+    }
+    
+    qDebug() << "try find: " << controlStringType;
+    
 	const int type = QMetaType::type(controlStringType);
-
 	std::shared_ptr<IControlAdapter> controlAdapter{ static_cast<IControlAdapter*>(QMetaType::create(type)) };
 
 	DEBUG_ASSERT(controlAdapter != nullptr && "Non registered control adapter type.");
