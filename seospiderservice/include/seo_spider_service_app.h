@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "fatal_error_dialog.h"
 #include "debug_help_dll_loader.h"

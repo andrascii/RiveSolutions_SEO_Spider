@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "icontrol_adapter.h"
 #include "color_selector.h"
 

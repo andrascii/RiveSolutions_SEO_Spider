@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "ui_update_loader_dialog_content.h"
 #include "requester_wrapper.h"

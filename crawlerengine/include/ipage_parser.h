@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "gumbo.h"
 #include "parsed_page.h"

@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "task_response.h"
 #include "serializer.h"
 #include "task_request.h"

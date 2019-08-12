@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "crawler.h"
 #include "sequenced_data_collection.h"

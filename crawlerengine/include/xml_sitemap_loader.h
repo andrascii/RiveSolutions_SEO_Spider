@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "ispecific_loader.h"
 #include "hops_chain.h"

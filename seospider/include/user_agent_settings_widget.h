@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 
 #include "ui_user_agent_settings_widget.h"
 #include "settings_page.h"
