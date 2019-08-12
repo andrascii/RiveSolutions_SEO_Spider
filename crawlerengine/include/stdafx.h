@@ -127,8 +127,6 @@ struct unary_function
 
 }
 
-#else
-#define BOOST_NO_CXX98_FUNCTION_BASE
 #endif
 
 #include <boost/functional/hash.hpp>
