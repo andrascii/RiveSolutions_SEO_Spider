@@ -62,6 +62,8 @@ struct unary_function
 
 }
 
+#define BOOST_NO_CXX98_FUNCTION_BASE
+
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>

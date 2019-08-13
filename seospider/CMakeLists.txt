@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.2)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
 set(CMAKE_CXX_STANDARD 17)
 
-project(${AppName})
-
 include(cotire)
+
+project(${AppName})
 
 set(AppSourcesDir src)
 set(AppHeadersDir include)
@@ -107,7 +107,6 @@ add_custom_command(
 add_definitions(
 	${QT_DEFINITIONS}
 	-DQUAZIP_STATIC
-	-D_WINSOCK_DEPRECATED_NO_WARNINGS
 	-DCURL_STATICLIB
 )
 
@@ -120,6 +119,7 @@ if(MSVC)
 		/Zi
 		/W4
 		/WX
+		-D_WINSOCK_DEPRECATED_NO_WARNINGS
 	)
 	
 	set_target_properties(
@@ -134,7 +134,7 @@ if(MSVC)
 	)
 endif()
 
-if(APPLE)
+if(APPLE OR UNIX)
 	include_directories(
 		${AppHeadersDir}
 		${CrawlerEngineLibHeadersDir}
@@ -166,11 +166,7 @@ else()
 	)
 endif()
 
-if(WIN32)
-	set(OSSpecificDeps ntdll.lib)
-endif()
-
-if(APPLE)
+if(APPLE OR UNIX)
 	message("CURL library dependencies: ${CURL_LIBRARIES}")
 else()
 	message("CURL library dependencies: ${CurlLibraries}")
@@ -179,7 +175,7 @@ endif()
 message("OpenSSL library dependencies: ${OPENSSL_LIBRARIES}")
 message("OpenSSL include directory: ${OPENSSL_INCLUDE_DIR}")
 
-if(APPLE)
+if(APPLE OR UNIX)
     target_link_libraries(
         ${AppName}
         PUBLIC
@@ -189,7 +185,6 @@ if(APPLE)
 		${VersionProjectName}
 		${VMProctectSdkDll}
         ${QtXlsxWriter_LIBS}
-        ${OSSpecificDeps}
         ${Boost_LIBRARIES}
         ${Boost_SYSTEM_LIBRARY}
         ${Boost_FILESYSTEM_LIBRARY}
@@ -197,7 +192,6 @@ if(APPLE)
         ${OPENSSL_LIBRARIES}
         Qt5::Widgets
         Qt5::Network
-        Qt5::Svg
         Qt5::WebEngineWidgets
         Qt5::PrintSupport
     )
@@ -210,7 +204,7 @@ else()
         ${CommonLibName}
         ${VersionProjectName}
         ${QtXlsxWriter_LIBS}
-        ${OSSpecificDeps}
+		ntdll.lib
         ${Boost_LIBRARIES}
         ${Boost_SYSTEM_LIBRARY}
         ${Boost_FILESYSTEM_LIBRARY}
@@ -219,11 +213,18 @@ else()
         D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libssl.lib
         Qt5::Widgets
         Qt5::Network
-        Qt5::Svg
         Qt5::WebEngineWidgets
         Qt5::PrintSupport
     )
 endif()
 
-set_target_properties(${AppName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+# to speedup compilation
+# but qtsvg can't be compiled with cotire
+# this is because we call cotire() here
 cotire(${AppName})
+
+target_link_libraries(
+	${AppName}
+	PUBLIC
+	Qt5::Svg
+)

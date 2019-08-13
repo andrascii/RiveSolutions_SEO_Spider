@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 
 include(cotire)
 
@@ -14,7 +14,7 @@ set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(QxtSmtpLibHeadersDir ../qxtsmtp/include)
 set(QUazipLibHeadersDir ../quazip/include)
 
-if (APPLE)
+if (APPLE OR UNIX)
 	list(REMOVE_ITEM CommonSourcesList
 		src/stdafx.cpp
 		src/ipc_socket.cpp
@@ -78,9 +78,16 @@ target_link_libraries(
 	${QUazipLibName}
 	Qt5::Widgets
 	Qt5::Network
-	Qt5::Svg
 	Qt5::WebEngineWidgets
 )
 
-set_target_properties(${CommonLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+# to speedup compilation
+# but qtsvg can't be compiled with cotire
+# this is because we call cotire() here
 cotire(${CommonLibName})
+
+target_link_libraries(
+	${CommonLibName}
+	PUBLIC
+	Qt5::Svg
+)

@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
 set(CMAKE_CXX_STANDARD 17)
 
-project(${CrawlerEngineLibName})
-
 include(cotire)
+
+project(${CrawlerEngineLibName})
 
 set(CrawlerEngineSourcesDir src)
 set(CrawlerEngineHeadersDir include)
@@ -21,7 +21,7 @@ file(GLOB_RECURSE CrawlerEngineResourcesList "rcc/*.qrc")
 
 qt5_wrap_cpp(CrawlerEngineHeadersMocList ${CrawlerEngineFormsHeadersList})
 
-if(APPLE)
+if(APPLE OR UNIX)
 	list(REMOVE_ITEM CrawlerEngineSourcesList src/stdafx.cpp src/screenshot_maker.cpp)
 else()
 	list(REMOVE_ITEM CrawlerEngineSourcesList src/stdafx.cpp)
@@ -52,7 +52,6 @@ add_library(
 add_definitions(
 	${QT_DEFINITIONS}
 	-DQUAZIP_STATIC
-	-D_WINSOCK_DEPRECATED_NO_WARNINGS
 	-DCURL_STATICLIB
 )
 
@@ -65,6 +64,7 @@ if(MSVC)
 		/Zi
 		/W4
 		/WX
+		-D_WINSOCK_DEPRECATED_NO_WARNINGS
 	)
 	
 	set_target_properties(
@@ -72,12 +72,9 @@ if(MSVC)
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
 		LINK_FLAGS /DEBUG
 	)
-
 endif()
 
-message("CURL include headers directory: ${CurlHeadersDir}")
-
-if(APPLE)
+if(APPLE OR UNIX)
 	include_directories(
 		${CrawlerEngineHeadersDir}
 		${GumboLibHeadersDir}
@@ -90,6 +87,8 @@ if(APPLE)
 		${CURL_INCLUDE_DIRS}
 	)
 else()
+	message("CURL include headers directory: ${CurlHeadersDir}")
+
 	include_directories(
 		${CrawlerEngineHeadersDir}
 		${CurlHeadersDir}
@@ -103,11 +102,7 @@ else()
 	)
 endif()
 
-if(WIN32)
-	set(OSSpecificDeps ws2_32.lib ntdll.lib)
-endif()
-
-if(APPLE)
+if(APPLE OR UNIX)
 	target_link_libraries(
 		${CrawlerEngineLibName}
 		PUBLIC
@@ -134,7 +129,8 @@ else()
 		PUBLIC
 		${GumboLibName}
 		${CommonLibName}
-		${OSSpecificDeps}
+		ws2_32.lib
+		ntdll.lib
 		${CurlLibraries}
 		"${MyHtmlLibName}_static" # change this solution to that which is more reliable
 		${Boost_LIBRARIES}
@@ -149,5 +145,4 @@ else()
 	)
 endif()
 
-set_target_properties(${CrawlerEngineLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
 cotire(${CrawlerEngineLibName})
