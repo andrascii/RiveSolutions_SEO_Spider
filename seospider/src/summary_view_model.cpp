@@ -21,8 +21,8 @@ namespace
 namespace SeoSpider
 {
 
-SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QObject* parent)
-	: AbstractViewModel(model, parent)
+SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, float devicePixelRatio, QObject* parent)
+	: AbstractViewModel(model, devicePixelRatio, parent)
 	, m_selectedBackgroundColor("#E5E5E5")
 	, m_hoveredBackgroundColor("#F3F3F3")
 	, m_backgroundColor("#FFFFFF")
@@ -48,19 +48,24 @@ int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
 	return Common::Helpers::pointsToPixels(5);
 }
 
-int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
+int SummaryViewModel::marginBottom(const QModelIndex& ) const noexcept
 {
 	return Common::Helpers::pointsToPixels(0);
 }
 
-int SummaryViewModel::marginLeft(const QModelIndex&) const noexcept
+int SummaryViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
+    if (index.column() == 1)
+    {
+        return Common::Helpers::pointsToPixels(0);
+    }
+
 	return Common::Helpers::pointsToPixels(6);
 }
 
-int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
+int SummaryViewModel::marginRight(const QModelIndex& index) const noexcept
 {
-	return Common::Helpers::pointsToPixels(2);
+	return Common::Helpers::pointsToPixels(3);
 }
 
 QPixmap SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
@@ -79,9 +84,9 @@ QPixmap SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
 	return originalPixmap;
 }
 
-QRect SummaryViewModel::pixmapPosition(const QModelIndex&, const QRect& itemVisualRect) const noexcept
+QRect SummaryViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	return itemVisualRect;
+	return itemVisualRect.adjusted(marginLeft(index), marginTop(index), -marginRight(index), -marginBottom(index));
 }
 
 QString SummaryViewModel::displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
@@ -95,7 +100,20 @@ QString SummaryViewModel::displayData(const QModelIndex& index, const QRect& ite
 
 QRect SummaryViewModel::displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	return itemVisualRect.adjusted(pixmap(index).width() + Common::Helpers::pointsToPixels(3), 0, 0, 0);
+    if (index.column() == 1)
+    {
+        return itemVisualRect.adjusted(
+            marginLeft(index),
+            marginTop(index),
+            -marginRight(index) - itemVisualRect.width() / devicePixelRatio(),
+            -marginBottom(index));
+    }
+
+	return itemVisualRect.adjusted(
+	    pixmap(index).width() + Common::Helpers::pointsToPixels(3) + marginLeft(index),
+	    marginTop(index),
+	    -marginRight(index),
+	    -marginBottom(index));
 }
 
 const QColor& SummaryViewModel::selectedBackgroundColor(const QModelIndex&) const noexcept

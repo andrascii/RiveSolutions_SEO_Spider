@@ -68,7 +68,7 @@ void WebSiteDataWidget::setStorageAdapterType(StorageAdapterType storageAdapterT
 	pageModel->setStorageAdapter(storageAdapter);
 
 	TableView* tableView = new TableView(m_stackedWidget, false, true, true);
-	PageViewModel* pageViewModel = new PageViewModel(tableView, pageModel, pageModel);
+	PageViewModel* pageViewModel = new PageViewModel(tableView, pageModel, devicePixelRatioF(), pageModel);
 
 	tableView->setModel(pageModel);
 	tableView->setViewModel(pageViewModel);

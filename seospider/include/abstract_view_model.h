@@ -14,7 +14,7 @@ class AbstractViewModel : public QObject, public IViewModel
 	Q_OBJECT
 
 public:
-	AbstractViewModel(AbstractTableModel* model, QObject* parent = nullptr);
+	AbstractViewModel(AbstractTableModel* model, float devicePixelRatio, QObject* parent = nullptr);
 
 	virtual const QModelIndex& hoveredIndex() const noexcept override;
 	virtual void setSelectedIndexes(const QModelIndexList& modelIndexes) noexcept override;
@@ -23,6 +23,7 @@ public:
 	virtual void invalidateItemViewRendererCache() const noexcept override;
 	virtual const IRenderer* itemViewRenderer(const QModelIndex& index) const noexcept override;
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
+	virtual float devicePixelRatio() const override;
 	virtual QObject* qobject() noexcept override;
 
 signals:
@@ -50,11 +51,11 @@ protected:
 	QModelIndex m_hoveredUnderlyingIndex;
 	QModelIndex m_hoveredIndex;;
 
-
 private:
 	AbstractTableModel* m_model;
 	QModelIndexList m_selectedModelIndexes;
 	ItemRenderer m_itemRenderer;
+	float m_devicePixelRatio;
 };
 
 }

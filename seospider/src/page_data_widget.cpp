@@ -132,7 +132,7 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 	}));
 
 	tableView->setModel(m_models[pageDataType]);
-	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], this));
+	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], devicePixelRatioF(), this));
 	tableView->setShowAdditionalGrid(true);
 
 	tabStackedWidget->addWidget(tableView);

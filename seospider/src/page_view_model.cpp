@@ -16,8 +16,8 @@ constexpr int s_preferredCacheSize = 500;
 namespace SeoSpider
 {
 
-PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, QObject* parent)
-	: AbstractViewModel(model, parent)
+PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, float devicePixelRatio, QObject* parent)
+	: AbstractViewModel(model, devicePixelRatio, parent)
 	, m_parentView(parentView)
 	, m_selectionBackgroundColor("#E5E5E5")
 	, m_hoveredBackgroundColor("#F3F3F3")

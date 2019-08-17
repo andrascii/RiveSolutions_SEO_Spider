@@ -17,23 +17,19 @@ TextRenderer::TextRenderer(const IViewModel* viewModel, int cacheSize)
 void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	const QModelIndex underlyingIndex = getUnderlyingIndex(index);
+    const double devicePixelRatio = viewModel()->devicePixelRatio();
 
-	const int marginTop = viewModel()->marginTop(underlyingIndex);
-	const int marginBottom = viewModel()->marginBottom(underlyingIndex);
-	const int marginLeft = viewModel()->marginLeft(underlyingIndex);
-	const int marginRight = viewModel()->marginRight(underlyingIndex);
-
-	QRect adjustedRect = option.rect.adjusted(marginLeft, marginTop, -marginRight, -marginBottom);
 	QPixmap* pixmapPointer = m_cache.object(underlyingIndex);
 
-	if (pixmapPointer && pixmapPointer->rect().size() == adjustedRect.size())
+	if (pixmapPointer && pixmapPointer->rect().size() == option.rect.size())
 	{
-		painter->drawPixmap(adjustedRect, *pixmapPointer);
+		painter->drawPixmap(option.rect, *pixmapPointer);
 		return;
 	}
 
-	QRect pixmapRect(0, 0, adjustedRect.width(), adjustedRect.height());
+	QRect pixmapRect(0, 0, option.rect.width() * devicePixelRatio, option.rect.height() * devicePixelRatio);
 	pixmapPointer = new QPixmap(pixmapRect.size());
+	pixmapPointer->setDevicePixelRatio(devicePixelRatio);
 	pixmapPointer->fill(Qt::transparent);
 
 	QPainter painterPixmap(pixmapPointer);
@@ -44,20 +40,20 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 	const QColor& textColor = viewModel()->textColor(underlyingIndex);
 	const QString paintingText = viewModel()->displayData(underlyingIndex, pixmapRect);
 
-	painterPixmap.setRenderHints(QPainter::HighQualityAntialiasing);
-	painterPixmap.setFont(font);
-	painterPixmap.setPen(textColor);
+    painterPixmap.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
+    painterPixmap.setFont(font);
+    painterPixmap.setPen(textColor);
 
 	if (isDecorationValid)
 	{
 		paintDecorator(&painterPixmap, underlyingIndex, viewModel()->pixmapPosition(underlyingIndex, pixmapRect));
 	}
 
-	painterPixmap.drawText(viewModel()->displayDataPosition(
+    painterPixmap.drawText(viewModel()->displayDataPosition(
 	    underlyingIndex, pixmapRect), textAlignmentFlags, paintingText);
 
 	ASSERT(m_cache.insert(underlyingIndex, pixmapPointer));
-	painter->drawPixmap(adjustedRect, *pixmapPointer);
+	painter->drawPixmap(option.rect, *pixmapPointer);
 }
 
 void TextRenderer::invalidateCacheIndex(const QModelIndex& index) const

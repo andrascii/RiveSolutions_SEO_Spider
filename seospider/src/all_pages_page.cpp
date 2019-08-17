@@ -33,7 +33,7 @@ AllPagesPage::AllPagesPage(QWidget* parent)
 
 	TableView* tableView = new TableView(this, false, true, true);
 	PageModel* model = new PageModel;
-	PageViewModel* modelView = new PageViewModel(tableView, model);
+	PageViewModel* modelView = new PageViewModel(tableView, model, devicePixelRatioF());
 
 	IStorageAdapter* storageAdapter = theApp->storageAdapterFactory()->createParsedPageInfoStorage(
 		StorageAdapterType::StorageAdapterTypeAllPages, theApp->sequencedDataCollection());
