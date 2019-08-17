@@ -28,10 +28,10 @@ signals:
 	void refreshPageDone();
 
 public slots:
-	void handleWorkerResult(WorkerResult workerResult) noexcept;
-	void setWebCrawlerOptions(const CrawlerOptionsData& optionsData);
+	void handleWorkerResult(CrawlerEngine::WorkerResult workerResult) noexcept;
+	void setWebCrawlerOptions(const CrawlerEngine::CrawlerOptionsData& optionsData);
 	void clearData();
-	void preparePageForRefresh(ParsedPage* parsedPage, int turnaround);
+	void preparePageForRefresh(CrawlerEngine::ParsedPage* parsedPage, int turnaround);
 
 private:
 	void processParsedPageUrl(WorkerResult& workerResult, bool secondGetRequest);

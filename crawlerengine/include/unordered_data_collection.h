@@ -66,11 +66,11 @@ public:
 	void prepareCollectionForRefreshPage(const ParsedPagePtr& pageForRefresh, int turnaround);
 
 signals:
-	void parsedPageAdded(WorkerResult workerResult, StorageType type);
-	void parsedPageAdded(ParsedPagePtr parsedPagePointer, StorageType type, int turnaround);
-	void parsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type, int turnaround);
-	void parsedPageReplaced(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type, int turnaround);
-	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes, int turnaround);
+    void parsedPageAdded(CrawlerEngine::WorkerResult workerResult, CrawlerEngine::StorageType type);
+	void parsedPageAdded(CrawlerEngine::ParsedPagePtr parsedPagePointer, CrawlerEngine::StorageType type, int turnaround);
+	void parsedPageRemoved(CrawlerEngine::ParsedPagePtr parsedPagePointer, CrawlerEngine::StorageType type, int turnaround);
+	void parsedPageReplaced(CrawlerEngine::ParsedPagePtr oldParsedPagePtr, CrawlerEngine::ParsedPagePtr newParsedPagePtr, CrawlerEngine::StorageType type, int turnaround);
+	void parsedPageLinksToThisResourceChanged(CrawlerEngine::LinksToThisResourceChanges changes, int turnaround);
 	void dataCleared();
 
 protected:
