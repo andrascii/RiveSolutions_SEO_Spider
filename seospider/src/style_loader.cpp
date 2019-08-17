@@ -46,12 +46,12 @@ StyleLoader::StyleLoader(QObject* parent, QString const& filename, QKeySequence 
 
 void StyleLoader::loadCustomStyleSheet() const
 {
-	const QString filenamePath = "C:/" + m_filename;
-
-	QFile styles(filenamePath);
+	QFile styles(m_filename);
 
 	CrawlerEngine::ServiceLocator* serviceLocator = CrawlerEngine::ServiceLocator::instance();
-	CrawlerEngine::INotificationService* notificationService = serviceLocator->service<CrawlerEngine::INotificationService>();
+
+	CrawlerEngine::INotificationService* notificationService =
+	    serviceLocator->service<CrawlerEngine::INotificationService>();
 
 	ASSERT(notificationService);
 
@@ -60,22 +60,27 @@ void StyleLoader::loadCustomStyleSheet() const
 		const QString styleSheet = styles.readAll();
 		qApp->setStyleSheet(styleSheet);
 
-		notificationService->info(QStringLiteral("Debug style loader"), QStringLiteral("Debug styles loaded from %1").arg(filenamePath));
+		notificationService->info(QStringLiteral("Debug style loader"),
+		    QStringLiteral("Debug styles loaded from %1").arg(m_filename));
 	}
 	else
 	{
-		notificationService->error(QStringLiteral("Debug style loader"), QStringLiteral("Debug styles cannot be loaded from %1").arg(filenamePath));
+		notificationService->error(QStringLiteral("Debug style loader"),
+		    QStringLiteral("Debug styles cannot be loaded from %1").arg(m_filename));
 	}
 }
 
 void StyleLoader::loadStandardStyleSheet() const
 {
 	CrawlerEngine::ServiceLocator* serviceLocator = CrawlerEngine::ServiceLocator::instance();
-	CrawlerEngine::INotificationService* notificationService = serviceLocator->service<CrawlerEngine::INotificationService>();
+
+	CrawlerEngine::INotificationService* notificationService =
+	    serviceLocator->service<CrawlerEngine::INotificationService>();
 
 	ASSERT(notificationService);
 
-	notificationService->info(QStringLiteral("Debug style loader"), QStringLiteral("Loaded standard stylesheets"));
+	notificationService->info(QStringLiteral("Debug style loader"),
+	    QStringLiteral("Loaded standard stylesheets"));
 
 	theApp->initializeStyleSheet();
 }

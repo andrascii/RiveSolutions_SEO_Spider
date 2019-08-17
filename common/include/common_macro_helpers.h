@@ -49,7 +49,7 @@ if((condition) == false) \
 #if defined(QT_DEBUG) && defined(Q_OS_WIN)
 #define VERIFY(Connection) ASSERT(Connection)
 #elif defined(QT_DEBUG)
-#define VERIFY(Connection) assert(Connection)
+#define VERIFY(Connection) Connection//assert(Connection)
 #else
 #define VERIFY(Connection) Connection
 #endif
