@@ -5,6 +5,19 @@
 #include "helpers.h"
 #include "model_helpers.h"
 
+namespace
+{
+
+#ifdef Q_OS_WIN
+    const int s_headerSize = 12;
+    const int s_filterTextSize = 10;
+#else
+    const int s_headerSize = 14;
+    const int s_filterTextSize = 12;
+#endif
+
+}
+
 namespace SeoSpider
 {
 
@@ -17,8 +30,8 @@ SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QOb
 	, m_gridLineColor("#F3F3F3")
 	, m_headerTextColor("#2C2D30")
 	, m_textColor("#2C2D30")
-	, m_headerFont("Arial", 12, QFont::DemiBold)
-	, m_textFont("Arial", 10, QFont::Medium)
+	, m_headerFont("Arial", s_headerSize, QFont::DemiBold)
+	, m_textFont("Arial", s_filterTextSize, QFont::Medium)
 	, m_itemRenderer(this)
 	, m_parentView(parentView)
 	, m_windowBlocked(false)

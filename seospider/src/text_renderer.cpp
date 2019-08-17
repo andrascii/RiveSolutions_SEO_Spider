@@ -53,7 +53,8 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 		paintDecorator(&painterPixmap, underlyingIndex, viewModel()->pixmapPosition(underlyingIndex, pixmapRect));
 	}
 
-	painterPixmap.drawText(viewModel()->displayDataPosition(underlyingIndex, pixmapRect), textAlignmentFlags, paintingText);
+	painterPixmap.drawText(viewModel()->displayDataPosition(
+	    underlyingIndex, pixmapRect), textAlignmentFlags, paintingText);
 
 	ASSERT(m_cache.insert(underlyingIndex, pixmapPointer));
 	painter->drawPixmap(adjustedRect, *pixmapPointer);

@@ -458,10 +458,8 @@ void Application::initialize()
 	m_mainWindow.reset(new MainWindow);
 
 #if !defined(PRODUCTION)
-
 	StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
 	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
-
 #endif
 
 	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsLoaded, this, &Application::onAboutCrawlerOptionsChanged));
@@ -637,7 +635,14 @@ void Application::initializeStyleSheet()
 {
 	SplashScreen::showMessage("Initializing stylesheets...");
 	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
-	QFile styles(":/stylesheets/styles.css");
+
+#ifdef Q_OS_MACOS
+	const QString stylesheetsFile = ":/stylesheets/macos_styles.css";
+#else
+    const QString stylesheetsFile = ":/stylesheets/styles.css";
+#endif
+
+	QFile styles(stylesheetsFile);
 
 	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
