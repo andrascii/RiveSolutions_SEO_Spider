@@ -26,7 +26,7 @@ PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, float device
 	, m_gridLineColor("#F3F3F3")
 	, m_urlTextColor("#1C51AF")
 	, m_textColor("#2C2D30")
-	, m_textFont("Arial", 10, QFont::Normal)
+	, m_textFont("Arial", 12, QFont::Normal)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();
@@ -42,32 +42,32 @@ PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, float device
 
 int PageViewModel::marginTop(const QModelIndex& index) const noexcept
 {
-	if (index.column() == 0)
-	{
-		return Common::Helpers::pointsToPixels(0);
-	}
-
 	return Common::Helpers::pointsToPixels(0);
 }
 
 int PageViewModel::marginBottom(const QModelIndex&) const noexcept
 {
-	return Common::Helpers::pointsToPixels(0);
+	return Common::Helpers::pointsToPixels(12) * devicePixelRatio();
 }
 
 int PageViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
-		return Common::Helpers::pointsToPixels(2);
+		return Common::Helpers::pointsToPixels(0);
 	}
 
-	return Common::Helpers::pointsToPixels(6);
+	return Common::Helpers::pointsToPixels(3) * devicePixelRatio();
 }
 
-int PageViewModel::marginRight(const QModelIndex&) const noexcept
+int PageViewModel::marginRight(const QModelIndex& index) const noexcept
 {
-	return Common::Helpers::pointsToPixels(2);
+    if (index.column() == 0)
+    {
+        return Common::Helpers::pointsToPixels(0) * devicePixelRatio();
+    }
+
+	return Common::Helpers::pointsToPixels(2) * devicePixelRatio();
 }
 
 QPixmap PageViewModel::pixmap(const QModelIndex& index) const noexcept
@@ -112,7 +112,11 @@ QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemV
 
 	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
 	{
-		return itemVisualRect.adjusted(itemVisualRect.width() - Common::Helpers::pointsToPixels(20), offsetByY, 0, 0);
+		return itemVisualRect.adjusted(
+		    itemVisualRect.width() / devicePixelRatio() - Common::Helpers::pointsToPixels(20),
+		    0,
+		    0,
+		    0);
 	}
 
 	return itemVisualRect.adjusted(itemVisualRect.width() + Common::Helpers::pointsToPixels(3), offsetByY, 0, 0);
@@ -124,15 +128,25 @@ QString PageViewModel::displayData(const QModelIndex& index, const QRect& itemVi
 
 	const QString displayData = index.data(Qt::DisplayRole).toString();
 
-	const int pixmapOccupiedWidth = index.row() == hoveredIndex().row() ? itemVisualRect.width() - pixmapPosition(index, itemVisualRect).x() : 0;
+	const int pixmapOccupiedWidth = index.row() == hoveredIndex().row() ?
+	    itemVisualRect.width() - pixmapPosition(index, itemVisualRect).x() : 0;
 
 	QFontMetrics fontMetrics(font(index));
 	return fontMetrics.elidedText(displayData, Qt::ElideRight, itemVisualRect.width() - pixmapOccupiedWidth);
 }
 
-QRect PageViewModel::displayDataPosition(const QModelIndex&, const QRect& itemVisualRect) const noexcept
+QRect PageViewModel::displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	return itemVisualRect;
+    if (index.column() == 0)
+    {
+        return itemVisualRect.adjusted(
+            marginLeft(index),
+            marginTop(index),
+            -marginRight(index) - itemVisualRect.width() / 2,
+            -marginBottom(index));
+    }
+
+	return itemVisualRect.adjusted(marginLeft(index), marginTop(index), -marginRight(index), -marginBottom(index));
 }
 
 const QColor& PageViewModel::selectedBackgroundColor(const QModelIndex&) const noexcept
@@ -200,7 +214,8 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	{
 		QModelIndexList modelIndexes;
 		modelIndexes.append(makeRowIndexes(previousHoveredIndex));
-		modelIndexes.append(makeRowIndexes(previousHoveredIndex.model()->index(previousHoveredIndex.row() - 1, previousHoveredIndex.column())));
+		modelIndexes.append(makeRowIndexes(previousHoveredIndex.model()->index(
+		    previousHoveredIndex.row() - 1, previousHoveredIndex.column())));
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 		AbstractViewModel::resetPreviousHoveredIndex();
@@ -210,7 +225,8 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	{
 		QModelIndexList modelIndexes;
 		modelIndexes.append(makeRowIndexes(hoveredIndex()));
-		modelIndexes.append(makeRowIndexes(hoveredIndex().model()->index(hoveredIndex().row() - 1, hoveredIndex().column())));
+		modelIndexes.append(makeRowIndexes(hoveredIndex().model()->index(
+		    hoveredIndex().row() - 1, hoveredIndex().column())));
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}

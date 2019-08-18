@@ -19,7 +19,7 @@ TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnable
 	, m_viewModel(nullptr)
 	, m_contextMenu(nullptr)
 	, m_showAdditionalGrid(false)
-	, m_rowHeight(Common::Helpers::pointsToPixels(22))
+	, m_rowHeight(Common::Helpers::pointsToPixels(28))
 	, m_supportColumnSpans(supportColumSpans)
 	, m_sortFilterProxyModel(new TableProxyModel)
 	, m_headerView(new HeaderView(this, showCustomizeColumnsButton))
