@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "ui_crawler_pause_settings_widget.h"
 #include "settings_page.h"

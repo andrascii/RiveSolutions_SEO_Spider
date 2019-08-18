@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "status_code.h"
 #include "url.h"

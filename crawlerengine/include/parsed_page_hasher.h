@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "parsed_page.h"
 #include "page_parser_helpers.h"

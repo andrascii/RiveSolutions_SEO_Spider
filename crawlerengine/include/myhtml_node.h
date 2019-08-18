@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "ihtml_node.h"
 #include "myhtml/api.h"

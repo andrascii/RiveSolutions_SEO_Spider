@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include "crawler_request.h"
 #include "crawler_options.h"
 #include "web_host_info.h"

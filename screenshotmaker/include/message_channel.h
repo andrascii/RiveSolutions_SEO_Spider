@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "pipe_server.h"
 #include "screenshot_maker_command.h"

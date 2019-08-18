@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #ifdef _MSC_VER
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "robots_txt_base_strategy.h"
 

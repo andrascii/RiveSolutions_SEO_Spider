@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "requester_wrapper.h"
 #include "serial_number_data.h"

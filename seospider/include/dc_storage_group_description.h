@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include "storage_type.h"
 

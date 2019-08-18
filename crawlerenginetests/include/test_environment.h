@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include "crawler_options.h"
 #include "parsed_page.h"
 #include "named_thread.h"

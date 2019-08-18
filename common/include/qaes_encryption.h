@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #ifndef QAESENCRYPTION_H
 #define QAESENCRYPTION_H

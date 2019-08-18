@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #ifndef ZIPPO_H
 #define ZIPPO_H
 
