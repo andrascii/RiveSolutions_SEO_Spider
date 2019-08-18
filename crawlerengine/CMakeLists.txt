@@ -145,4 +145,5 @@ else()
 	)
 endif()
 
+set_target_properties(${CrawlerEngineLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
 cotire(${CrawlerEngineLibName})

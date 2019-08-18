@@ -76,6 +76,7 @@ target_link_libraries(
 	PUBLIC
 	${QxtSmtpLibName}
 	${QUazipLibName}
+	Qt5::Svg
 	Qt5::Widgets
 	Qt5::Network
 	Qt5::WebEngineWidgets
@@ -84,10 +85,5 @@ target_link_libraries(
 # to speedup compilation
 # but qtsvg can't be compiled with cotire
 # this is because we call cotire() here
+set_target_properties(${CommonLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
 cotire(${CommonLibName})
-
-target_link_libraries(
-	${CommonLibName}
-	PUBLIC
-	Qt5::Svg
-)

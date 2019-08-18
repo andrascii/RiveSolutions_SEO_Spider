@@ -134,35 +134,25 @@ if(MSVC)
 	)
 endif()
 
-if(APPLE OR UNIX)
+include_directories(
+	${AppHeadersDir}
+	${CrawlerEngineLibHeadersDir}
+	${CommonLibHeadersDir}
+	${SeoSpiderServiceApiHeadersDir}
+	${VersionHeadersDir}
+	${VMProtectSdkHeadersDir}
+	${QtXlsxWriterHeadersDir}
+	${QtXlsxWriter_INCLUDE_DIRS}
+	${Boost_INCLUDE_DIRS}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${OPENSSL_INCLUDE_DIR}
+	${CURL_INCLUDE_DIRS}
+)
+
+if(NOT APPLE AND NOT UNIX)
 	include_directories(
 		${AppHeadersDir}
-		${CrawlerEngineLibHeadersDir}
-		${CommonLibHeadersDir}
-		${SeoSpiderServiceApiHeadersDir}
-		${VersionHeadersDir}
-		${VMProtectSdkHeadersDir}
-		${QtXlsxWriterHeadersDir}
-		${QtXlsxWriter_INCLUDE_DIRS}
-		${Boost_INCLUDE_DIRS}
-		${CMAKE_CURRENT_BINARY_DIR}
-		${OPENSSL_INCLUDE_DIR}
-		${CURL_INCLUDE_DIRS}
-	)
-else()
-	include_directories(
-		${AppHeadersDir}
-		${CrawlerEngineLibHeadersDir}
 		${CurlHeadersDir}
-		${CommonLibHeadersDir}
-		${SeoSpiderServiceApiHeadersDir}
-		${VersionHeadersDir}
-		${VMProtectSdkHeadersDir}
-		${QtXlsxWriterHeadersDir}
-		${QtXlsxWriter_INCLUDE_DIRS}
-		${Boost_INCLUDE_DIRS}
-		${CMAKE_CURRENT_BINARY_DIR}
-		${OPENSSL_INCLUDE_DIR}
 	)
 endif()
 
@@ -175,56 +165,45 @@ endif()
 message("OpenSSL library dependencies: ${OPENSSL_LIBRARIES}")
 message("OpenSSL include directory: ${OPENSSL_INCLUDE_DIR}")
 
+target_link_libraries(
+	${AppName}
+	PUBLIC
+	${CrawlerEngineLibName}
+	${CommonLibName}
+	${VersionProjectName}
+	${VMProctectSdkDll}
+	${QtXlsxWriter_LIBS}
+	${Boost_LIBRARIES}
+	${Boost_SYSTEM_LIBRARY}
+	${Boost_FILESYSTEM_LIBRARY}
+	${Boost_ASIO_LIBRARY}
+	${OPENSSL_LIBRARIES}
+	Qt5::Widgets
+	Qt5::Svg
+	Qt5::Network
+	Qt5::WebEngineWidgets
+	Qt5::PrintSupport
+)
+
 if(APPLE OR UNIX)
-    target_link_libraries(
-        ${AppName}
-        PUBLIC
-        ${CURL_LIBRARIES}
-        ${CrawlerEngineLibName}
-        ${CommonLibName}
-		${VersionProjectName}
-		${VMProctectSdkDll}
-        ${QtXlsxWriter_LIBS}
-        ${Boost_LIBRARIES}
-        ${Boost_SYSTEM_LIBRARY}
-        ${Boost_FILESYSTEM_LIBRARY}
-        ${Boost_ASIO_LIBRARY}
-        ${OPENSSL_LIBRARIES}
-        Qt5::Widgets
-        Qt5::Network
-        Qt5::WebEngineWidgets
-        Qt5::PrintSupport
-    )
+	target_link_libraries(
+		${AppName}
+		PUBLIC
+		${CURL_LIBRARIES}
+	)
 else()
-    target_link_libraries(
-        ${AppName}
+	target_link_libraries(
+		${AppName}
 		PUBLIC
 		${CurlLibraries}
-        ${CrawlerEngineLibName}
-        ${CommonLibName}
-        ${VersionProjectName}
-        ${QtXlsxWriter_LIBS}
 		ntdll.lib
-        ${Boost_LIBRARIES}
-        ${Boost_SYSTEM_LIBRARY}
-        ${Boost_FILESYSTEM_LIBRARY}
-        ${Boost_ASIO_LIBRARY}
-        D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libcrypto.lib
-        D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libssl.lib
-        Qt5::Widgets
-        Qt5::Network
-        Qt5::WebEngineWidgets
-        Qt5::PrintSupport
-    )
+		D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libcrypto.lib
+		D:/deps/openssl/openssl_$ENV{SS_PLATFORM}/lib/libssl.lib
+	)
 endif()
 
 # to speedup compilation
 # but qtsvg can't be compiled with cotire
 # this is because we call cotire() here
+set_target_properties(${AppName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
 cotire(${AppName})
-
-target_link_libraries(
-	${AppName}
-	PUBLIC
-	Qt5::Svg
-)
