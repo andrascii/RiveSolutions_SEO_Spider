@@ -13,6 +13,7 @@ class RobotsTxtBaseStrategy;
 class IRobotsTxtRules
 {
 public:
+    virtual ~IRobotsTxtRules() = default;
 	virtual bool isValid() const = 0;
 	virtual bool isUrlAllowedByRobotsTxt(const Url& url, UserAgentType userAgentType) const = 0;
 	virtual bool isUrlAllowedByMetaRobots(const MetaRobotsFlagsSet& metaRobotsFlags, UserAgentType userAgentType) const = 0;

@@ -8,6 +8,7 @@ namespace CrawlerEngine
 struct IParsedPageComparator
 {
 public:
+    virtual ~IParsedPageComparator() = default;
 	virtual bool operator()(const ParsedPagePtr& lhs, const ParsedPagePtr& rhs) const noexcept = 0;
 };
 
