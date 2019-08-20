@@ -12,8 +12,8 @@ GoogleAnalyticsSettingsWidget::GoogleAnalyticsSettingsWidget(QWidget* parent)
 	: SettingsPage(parent)
 	, m_helperControl(nullptr)
 	, m_visibleLineEditCount(0)
-	, m_visibleLineEditCountApplied(true)
 	, m_visibleLineEditCountAtShow(-1)
+    , m_visibleLineEditCountApplied(true)
 	, m_applyingChanges(false)
 {
 	m_ui.setupUi(this);

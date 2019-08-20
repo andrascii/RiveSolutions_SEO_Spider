@@ -16,13 +16,13 @@ namespace SeoSpider
 TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnabled, bool showCustomizeColumnsButton)
 	: QTableView(parent)
 	, m_model(nullptr)
-	, m_viewModel(nullptr)
-	, m_contextMenu(nullptr)
-	, m_showAdditionalGrid(false)
-	, m_rowHeight(Common::Helpers::pointsToPixels(28))
-	, m_supportColumnSpans(supportColumSpans)
 	, m_sortFilterProxyModel(new TableProxyModel)
+    , m_viewModel(nullptr)
 	, m_headerView(new HeaderView(this, showCustomizeColumnsButton))
+    , m_contextMenu(nullptr)
+    , m_showAdditionalGrid(false)
+    , m_rowHeight(Common::Helpers::pointsToPixels(28))
+    , m_supportColumnSpans(supportColumSpans)
 {
 	Q_UNUSED(sortingEnabled);
 

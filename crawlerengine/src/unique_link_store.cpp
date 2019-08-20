@@ -11,8 +11,8 @@ UniqueLinkStore::IncrementGuardExt::IncrementGuardExt(IncrementFunc inc,
 	IncrementFunc decr, const UrlList& storage, int* change)
 	: inc(inc)
 	, decr(decr)
-	, storage(storage)
 	, oldSize(storage.size())
+    , storage(storage)
 	, change(change)
 {
 }
@@ -41,8 +41,8 @@ UniqueLinkStore::IncrementGuardExt::~IncrementGuardExt()
 
 UniqueLinkStore::UniqueLinkStore(QObject* parent)
 	: QObject(parent)
-	, m_licenseService(nullptr)
 	, m_limitCrawledLinksCount(-1)
+    , m_licenseService(nullptr)
 {
 	ASSERT(ServiceLocator::instance()->isRegistered<ILicenseStateObserver>());
 

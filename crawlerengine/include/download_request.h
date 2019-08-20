@@ -27,9 +27,9 @@ struct DownloadRequest : public IRequest
 		bool useTimeout = false,
 		bool ignoreMaxParallelConnections = false)
 		: requestInfo(requestInfo)
-		, turnaround(turnaround)
-		, linkStatus(linkStatus)
+        , linkStatus(linkStatus)
 		, bodyProcessingCommand(bodyProcessingCommand)
+        , turnaround(turnaround)
 		, useTimeout(useTimeout)
 		, ignoreMaxParallelConnections(ignoreMaxParallelConnections)
 	{

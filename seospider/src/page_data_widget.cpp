@@ -35,9 +35,9 @@ namespace SeoSpider
 
 PageDataWidget::PageDataWidget(QWidget* parent)
 	: QFrame(parent)
-	, m_httpResponseLabel(new QTextEdit(this))
 	, m_stackedWidget(new MinStackedWidget(this))
 	, m_tabBar(new QTabBar(this))
+    , m_httpResponseLabel(new QTextEdit(this))
 {
 	m_tabBar->setObjectName("pageInfoTabBar");
 	m_tabBar->setContentsMargins(0, 0, 0, 0);

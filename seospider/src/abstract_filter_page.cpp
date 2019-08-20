@@ -34,12 +34,12 @@ AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWi
 	, m_summaryFilterModel(new SummaryModel(this))
 	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterTableView, m_summaryFilterModel, devicePixelRatioF(), this))
 	, m_splitter(new QSplitter(this))
-	, m_isFirstShow(true)
 	, m_info(new FilterInfoWidget(this))
-	, m_columnsLookupLineEditWidget(nullptr)
-	, m_lookupLineEditWidget(nullptr)
 	, m_currentSelectedRow(-1)
 	, m_currentStorageType(CrawlerEngine::StorageType::BeginEnumStorageType)
+    , m_isFirstShow(true)
+    , m_columnsLookupLineEditWidget(nullptr)
+    , m_lookupLineEditWidget(nullptr)
 {
 	m_summaryFilterTableView->setModel(m_summaryFilterModel);
 	m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);

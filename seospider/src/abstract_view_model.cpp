@@ -8,8 +8,8 @@ namespace SeoSpider
 
 AbstractViewModel::AbstractViewModel(AbstractTableModel* model, float devicePixelRatio, QObject* parent)
 	: QObject(parent)
-	, m_model(model)
 	, m_previousHoveredIndex(QModelIndex())
+    , m_model(model)
 	, m_itemRenderer(this)
 	, m_devicePixelRatio(devicePixelRatio)
 {
