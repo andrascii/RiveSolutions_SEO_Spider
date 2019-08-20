@@ -8,6 +8,7 @@ namespace SeoSpiderServiceApi
 class ISeoSpiderServiceApi
 {
 public:
+    virtual ~ISeoSpiderServiceApi() = default;
 	virtual void init() = 0;
 	virtual void free() const = 0;
 	virtual bool restartApplication(int msec) = 0;

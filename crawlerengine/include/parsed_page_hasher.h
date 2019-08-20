@@ -25,7 +25,8 @@ struct IParsedPageHasher
 		SecondH2ItemType,
 		CanonicalLinkElementItemType
 	};
-
+    
+    virtual ~IParsedPageHasher() = default;
 	virtual size_t operator()(const ParsedPagePtr& parsedPage) const noexcept = 0;
 };
 
