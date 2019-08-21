@@ -446,6 +446,11 @@ void MyHtmlParser::initRootNode()
 	{
 		return;
 	}
+    
+    Common::Finally destroyCollection([collection]
+    {
+        myhtml_collection_destroy(collection);
+    });
 
 	for (std::size_t i = 0; i < collection->length; ++i)
 	{

@@ -17,8 +17,6 @@ HtmlResourcesParser::HtmlResourcesParser(IHtmlParser* htmlParser, bool parseMeta
 	: m_htmlParser(htmlParser)
 	, m_parseMetaHrefLangLinks(parseMetaHrefLangLinks)
 {
-	m_htmlParserTest = new MyHtmlParser;
-
 	addParser(std::make_shared<MetaParser>(m_htmlParser));
 	addParser(std::make_shared<FramesDetectorParser>(m_htmlParser));
 	addParser(std::make_shared<TitleParser>(m_htmlParser));
