@@ -63,7 +63,7 @@ int SummaryViewModel::marginLeft(const QModelIndex& index) const noexcept
 	return Common::Helpers::pointsToPixels(3) * devicePixelRatio();
 }
 
-int SummaryViewModel::marginRight(const QModelIndex& index) const noexcept
+int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
 {
 	return Common::Helpers::pointsToPixels(3);
 }

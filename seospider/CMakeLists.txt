@@ -185,7 +185,7 @@ target_link_libraries(
 	Qt5::PrintSupport
 )
 
-if(APPLE OR UNIX)
+if(UNIX)
 	target_link_libraries(
 		${AppName}
 		PUBLIC

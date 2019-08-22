@@ -40,7 +40,7 @@ PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, float device
 	VERIFY(connect(model, &PageModel::rowsAboutToBeMoved, this, &PageViewModel::onRowsAboutToBeMoved));
 }
 
-int PageViewModel::marginTop(const QModelIndex& index) const noexcept
+int PageViewModel::marginTop(const QModelIndex&) const noexcept
 {
 	return Common::Helpers::pointsToPixels(0);
 }
@@ -72,14 +72,14 @@ int PageViewModel::marginRight(const QModelIndex& index) const noexcept
 
 QPixmap PageViewModel::pixmap(const QModelIndex& index) const noexcept
 {
-	const PageModel* model = 
+	const PageModel* model =
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
 	static QPixmap s_emptyPixmap;
 
 	QPixmap pixmap;
 
-	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType && 
+	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType &&
 		hoveredIndex().row() == index.row() &&
 		CrawlerEngine::Url(index.data(Qt::DisplayRole).toString()).isValid())
 	{
@@ -183,7 +183,7 @@ int PageViewModel::textAlignment(const QModelIndex& index) const noexcept
 
 const QColor& PageViewModel::textColor(const QModelIndex& index) const noexcept
 {
-	const PageModel* model = 
+	const PageModel* model =
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
 	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
@@ -366,8 +366,8 @@ void PageViewModel::onRowsAboutToBeMoved(const QModelIndex& sourceParent, int so
 void PageViewModel::initializeRenderers()
 {
 	AbstractViewModel::addRenderer(
-		IRenderer::PlainTextRendererType | 
-		IRenderer::SelectionBackgroundRendererType | 
+		IRenderer::PlainTextRendererType |
+		IRenderer::SelectionBackgroundRendererType |
 		IRenderer::BackgroundRendererType
 	);
 

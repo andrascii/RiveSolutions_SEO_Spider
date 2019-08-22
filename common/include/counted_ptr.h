@@ -348,13 +348,16 @@ public:
 		}
 	}
 
-#if __cplusplus <= 201402L
+// TODO: use valid preprocessor if/else to include only if it exists
+/*
+#if __cplusplus < 201402L
 	template <typename Y>
 	explicit cp_count(std::auto_ptr<Y>& r)
 		: _cp_counted(new sp_counted_impl_p<Y>(r.release()))
 	{
 	}
 #endif
+*/
 
 	template <typename Y, typename D>
 	explicit cp_count(std::unique_ptr<Y, D>& r)
