@@ -41,7 +41,7 @@ private:
 	void completeLocalEventLoop();
 
 private:
-	Ui_MessageBox * m_ui;
+    std::unique_ptr<Ui_MessageBox> m_ui;
 	QDialog::DialogCode m_dialogCode;
 	QDialogButtonBox::ButtonRole m_clickedButtonRole;
 	QEventLoop* m_eventLoop;

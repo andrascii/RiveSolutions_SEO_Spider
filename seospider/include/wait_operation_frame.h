@@ -32,7 +32,7 @@ private:
 	static QPointer<WaitOperationFrame> s_instance;
 
 private:
-	Ui_WaitOperationFrame* m_ui;
+    std::unique_ptr<Ui_WaitOperationFrame> m_ui;
 };
 
 }
