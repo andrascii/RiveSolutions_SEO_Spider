@@ -171,7 +171,7 @@ target_link_libraries(
 	${CrawlerEngineLibName}
 	${CommonLibName}
 	${VersionProjectName}
-	${VMProctectSdkDll}
+	${VMProtectSdkLinkLibrary}
 	${QtXlsxWriter_LIBS}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
@@ -202,8 +202,10 @@ else()
 	)
 endif()
 
-# to speedup compilation
-# but qtsvg can't be compiled with cotire
-# this is because we call cotire() here
-set_target_properties(${AppName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
-cotire(${AppName})
+if(NOT WIN32)
+	# to speedup compilation
+	# but qtsvg can't be compiled with cotire
+	# this is because we call cotire() here
+	set_target_properties(${AppName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+	cotire(${AppName})
+endif()

@@ -82,8 +82,10 @@ target_link_libraries(
 	Qt5::WebEngineWidgets
 )
 
-# to speedup compilation
-# but qtsvg can't be compiled with cotire
-# this is because we call cotire() here
-set_target_properties(${CommonLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
-cotire(${CommonLibName})
+if(NOT WIN32)
+	# to speedup compilation
+	# but qtsvg can't be compiled with cotire
+	# this is because we call cotire() here
+	set_target_properties(${CommonLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+	cotire(${CommonLibName})
+endif()

@@ -58,8 +58,10 @@ if(WIN32)
 
     if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
         set(VMProctectSdkDll "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/windows/VMProtectSDK32.dll")
+		set(VMProtectSdkLinkLibrary "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/windows/VMProtectSDK32.lib")
     else()
         set(VMProctectSdkDll "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/windows/VMProtectSDK64.dll")
+		set(VMProtectSdkLinkLibrary "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/windows/VMProtectSDK64.lib")
     endif()
 endif()
 
@@ -70,6 +72,7 @@ endif()
 if(APPLE)
     set(VMProtectSdkLibDir "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/osx")
     set(VMProctectSdkDll "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/vmprotect/bin/osx/libVMProtectSDK.dylib")
+	set(VMProtectSdkLinkLibrary ${VMProctectSdkDll})
 endif()
 
 set(VMProtectSdkHeadersDir ../thirdparty/vmprotect/include)
