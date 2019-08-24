@@ -23,7 +23,7 @@ public:
 	virtual void invalidateItemViewRendererCache() const noexcept override;
 	virtual const IRenderer* itemViewRenderer(const QModelIndex& index) const noexcept override;
 	virtual void setHoveredIndex(const QModelIndex& index) noexcept override;
-	virtual float devicePixelRatio() const override;
+	virtual double devicePixelRatio() const override;
 	virtual QObject* qobject() noexcept override;
 
 signals:
@@ -55,7 +55,7 @@ private:
 	AbstractTableModel* m_model;
 	QModelIndexList m_selectedModelIndexes;
 	ItemRenderer m_itemRenderer;
-	float m_devicePixelRatio;
+	double m_devicePixelRatio;
 };
 
 }

@@ -175,7 +175,7 @@ void AbstractViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	setPreviousHoveredIndex(previousHoveredIndex);
 }
 
-float AbstractViewModel::devicePixelRatio() const
+double AbstractViewModel::devicePixelRatio() const
 {
     return m_devicePixelRatio;
 }

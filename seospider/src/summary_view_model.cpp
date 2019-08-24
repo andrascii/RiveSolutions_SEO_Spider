@@ -48,7 +48,7 @@ int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
 	return Common::Helpers::pointsToPixels(4) * devicePixelRatio();
 }
 
-int SummaryViewModel::marginBottom(const QModelIndex& ) const noexcept
+int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
 {
 	return Common::Helpers::pointsToPixels(0);
 }
@@ -65,7 +65,7 @@ int SummaryViewModel::marginLeft(const QModelIndex& index) const noexcept
 
 int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
 {
-	return Common::Helpers::pointsToPixels(3);
+	return Common::Helpers::pointsToPixels(3) * devicePixelRatio();
 }
 
 QPixmap SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
@@ -105,7 +105,7 @@ QRect SummaryViewModel::displayDataPosition(const QModelIndex& index, const QRec
         return itemVisualRect.adjusted(
             marginLeft(index),
             marginTop(index),
-            -marginRight(index) - itemVisualRect.width() / devicePixelRatio(),
+            -marginRight(index),
             -marginBottom(index));
     }
 
