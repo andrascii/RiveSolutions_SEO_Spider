@@ -115,7 +115,7 @@ void ControlPanelWidget::clearCrawlingData() const
 	messageBoxDialog->setMessage(message);
 
 	messageBoxDialog->addButton(tr("Save"), QDialogButtonBox::YesRole);
-	messageBoxDialog->addButton(tr("Don`s save"), QDialogButtonBox::NoRole);
+	messageBoxDialog->addButton(tr("Do not save"), QDialogButtonBox::NoRole);
 
 	auto onDialogClosed = [messageBoxDialog](int result)
 	{

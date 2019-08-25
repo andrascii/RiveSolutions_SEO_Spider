@@ -133,7 +133,7 @@ endif()
 
 add_subdirectory(${CrawlerEngineLibName})
 
-if ($ENV{TESTS} STREQUAL "enabled")
+if ($ENV{TESTS})
 	add_subdirectory(${CrawlerEngineLibTestsName})	
 endif()
 

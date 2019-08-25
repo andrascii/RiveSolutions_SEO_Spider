@@ -74,7 +74,6 @@
 		<file>images/gear.svg</file>
 
 		<file>stylesheets/styles.css</file>
-		<file>stylesheets/macos_styles.css</file>
 		<file>config/defaults.cfg</file>
 		<file>config/desktopUserAgents.cfg</file>
 		<file>config/mobileUserAgents.cfg</file>

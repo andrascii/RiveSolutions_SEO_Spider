@@ -738,11 +738,7 @@ void Application::initializeStyleSheet()
 	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
 
-#ifdef Q_OS_MACOS
-	const QString stylesheetsFile = ":/stylesheets/macos_styles.css";
-#else
     const QString stylesheetsFile = ":/stylesheets/styles.css";
-#endif
 
 	QFile styles(stylesheetsFile);
 

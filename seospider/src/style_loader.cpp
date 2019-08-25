@@ -21,7 +21,7 @@ bool StyleLoader::eventFilter(QObject* obj, QEvent* event)
 
 		if (m_keySequenceCustomStyleSheet == QKeySequence(keyEvent->key()))
 		{
-			if (keyEvent->modifiers() & Qt::ControlModifier)
+			if (keyEvent->modifiers() & Qt::ShiftModifier)
 			{
 				loadStandardStyleSheet();
 			}
