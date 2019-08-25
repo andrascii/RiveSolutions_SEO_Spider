@@ -15,6 +15,7 @@
 1. Создать !СИСТЕМНУЮ! переменную окружения SS_DEPS со значением d:\deps
 1. OPENSSL_ROOT_DIR со значением %SS_DEPS%\openssl\openssl_%SS_PLATFORM%
 1. OPENSSL_INCLUDE_DIR со значением %SS_DEPS%\openssl\openssl_%SS_PLATFORM%\include
+1. IFW_BIN_DIR со значением %SS_DEPS%\IFW\%SS_PLATFORM%\bin
 1. Добавить в PATH значения:
 - %SS_DEPS%\qt\msvc_2017_%SS_PLATFORM%\bin
 - %SS_DEPS%\qt\msvc_2017_%SS_PLATFORM%\plugins\platforms
