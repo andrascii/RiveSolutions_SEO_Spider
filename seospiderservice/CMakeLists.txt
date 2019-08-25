@@ -54,6 +54,12 @@ add_definitions(
 	${QT_DEFINITIONS}
 )
 
+if(${ENABLE_STATISTICS} STREQUAL "true")
+	add_definitions(
+		-DENABLE_STATISTICS
+	)
+endif()
+
 if(MSVC)
 	add_definitions(
 		/EHsc
