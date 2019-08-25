@@ -5,7 +5,7 @@ namespace CrawlerEngine
 
 enum SerialNumberState
 {
-	StateSuccessActivation,
+	StateSuccessActivation = 1,
 	StateDateExpired, // possibly invalid serial number
 	StateMaxBuildExpired,
 	StateRunningTimeOver, // when license has ended (i.e. the launch of the program the day after the license ended)

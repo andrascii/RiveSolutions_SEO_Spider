@@ -32,4 +32,9 @@ SerialNumberStates VmProtectLicenseService::serialNumberStates() const
 	return fromVmProtectStates(VMProtectGetSerialNumberState());
 }
 
+void VmProtectLicenseService::requestSerialNumberData(const RequesterSharedPtr&)
+{
+	// TODO: implement
+}
+
 }

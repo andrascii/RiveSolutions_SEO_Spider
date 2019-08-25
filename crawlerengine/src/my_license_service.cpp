@@ -2,6 +2,8 @@
 #include "download_response.h"
 #include "download_request.h"
 #include "helpers.h"
+#include "get_serial_number_data_response.h"
+#include "thread_message_dispatcher.h"
 
 namespace
 {
@@ -9,7 +11,7 @@ namespace
 using namespace CrawlerEngine;
 
 constexpr int c_myServiceRawDataParts = 3;
-constexpr int c_hour = 60 * 60 * 1000;
+constexpr int c_hour = 30 * 60 * 1000;
 
 const QString s_verifySerialNumberUrl("https://pay.rivesolutions.com");
 const QString s_verifyPageName("verifykey");
@@ -19,8 +21,9 @@ const QString s_macVariableName("mac");
 const QString s_secretVariableName("secret");
 
 const QString s_statusKey("status");
+const QString s_emailKey("email");
 const QString s_statusOk("ok");
-const QString s_statusBlocked("blocked");
+const QString s_statusBlocked("wrong_mac");
 const QString s_statusUserNotFound("user_not_found");
 
 Url makeVerifyUrl(const QString& userName, const QString& id, const QString& mac, const QString& secret)
@@ -113,6 +116,8 @@ SerialNumberStates MyLicenseService::setSerialNumber(const QByteArray& serialNum
 		saveSerialNumberToFile(serialNumber);
 	}
 
+	verifyKey();
+
 	return m_data.states;
 }
 
@@ -126,7 +131,18 @@ SerialNumberStates MyLicenseService::serialNumberStates() const
 	return m_data.states;
 }
 
+void MyLicenseService::requestSerialNumberData(const RequesterSharedPtr& requester)
+{
+	m_requesters.push_back(requester);
+	verifyKey();
+}
+
 void MyLicenseService::timerEvent(QTimerEvent*)
+{
+	verifyKey();
+}
+
+void MyLicenseService::verifyKey()
 {
 	if (!m_data.states.testFlag(SerialNumberState::StateSuccessActivation))
 	{
@@ -140,7 +156,7 @@ void MyLicenseService::timerEvent(QTimerEvent*)
 		return;
 	}
 
-	const QByteArray hashedSerialNumber = QCryptographicHash::hash(m_validSerialNumber, QCryptographicHash::Md5);
+	const QByteArray hashedSerialNumber = QCryptographicHash::hash(m_validSerialNumber, QCryptographicHash::Md5).toHex();
 
 	const Url verifyUrl = makeVerifyUrl(m_data.userName,
 		QString::fromUtf8(reinterpret_cast<char*>(&m_data.userData)),
@@ -174,6 +190,8 @@ void MyLicenseService::onLoadingDone(Requester*, const DownloadResponse& respons
 
 	QJsonDocument jsonDocument = QJsonDocument::fromJson(response.hopsChain.lastHop().body());
 	const QString statusValue = jsonDocument[s_statusKey].toString();
+	// we do not store email in the serial number key, so we're getting it from the response
+	m_data.email = jsonDocument[s_emailKey].toString();
 
 	const SerialNumberStates states = statesByDate(m_data);
 
@@ -184,14 +202,33 @@ void MyLicenseService::onLoadingDone(Requester*, const DownloadResponse& respons
 	}
 	else if (statusValue == s_statusUserNotFound)
 	{
-		m_data.states = SerialNumberStates();
 		m_data.states.setFlag(SerialNumberState::StateInvalidSerialNumberActivation);
 	}
 	else if (statusValue == s_statusBlocked)
 	{
-		m_data.states = SerialNumberStates();
 		m_data.states.setFlag(SerialNumberState::StateSerialNumberBlacklisted);
 	}
+
+	respondSerialNumberData();
+}
+
+void MyLicenseService::respondSerialNumberData()
+{
+	for (auto weakrequester : m_requesters)
+	{
+		if (auto requester = weakrequester.lock())
+		{
+			std::shared_ptr<GetSerialNumberDataResponse> response =
+				std::make_shared<GetSerialNumberDataResponse>(m_data);
+
+			ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+		}
+	}
+
+	m_requesters.erase(
+		std::remove_if(m_requesters.begin(), m_requesters.end(), [](const auto& requester) { return requester.expired(); }),
+		m_requesters.end()
+	);
 }
 
 }

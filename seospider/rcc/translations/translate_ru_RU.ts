@@ -44,11 +44,11 @@ an invalid username/password.</source>
     <name>ColumnsLookupLineEditWidget</name>
     <message>
         <source>Frame</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -78,11 +78,11 @@ an invalid username/password.</source>
     <name>ControlPanelWidget</name>
     <message>
         <source>crawlerControlWidget</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>http://www.example.com</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Stop</source>
@@ -355,11 +355,11 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Type in here the words using whitespace as a separator...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Scan Only Pages Which Does Not Contain Words In Url</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Scan Only Pages Which Contains Words In Url</source>
@@ -1593,7 +1593,7 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
         <source>This filter stores pages that did not find the yandex metrica counter with the number %1.
 You can change the number of this counter in the settings &quot;Settings =&gt; Yandex Metrica Settings&quot;.</source>
         <translation>Этот фильтр хранит страницы, на которых не был найден счетчик яндекс метрики с номером %1.
-Вы можете изменить номер счетчика для поиска в настройках &quot;Настройки =&gt; Настройки поиска счетчиков Яндекс Метрики&quot;.</translation>
+Вы можете изменить номер счетчика для поиска в настройках &quot;Настройки =&gt; Настройки Яндекс Метрики&quot;.</translation>
     </message>
     <message>
         <source>Yandex Metrika</source>
@@ -1680,6 +1680,21 @@ The license is valid untill %1</source>
     <message>
         <source>Google Analytics Finder</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This filter stores pages that did not find the yandex metrica counter %1.
+You can change the number of this counter in the settings &quot;Settings =&gt; Yandex Metrica Settings&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages with missing Google Analytics Counter</source>
+        <translation>Страницы с отсутствующими счетчиком Google Analytics</translation>
+    </message>
+    <message>
+        <source>This filter stores pages that did not find the Google Analytics counter %1.
+You can change this counter in the settings &quot;Settings =&gt; Google Analytics Settings&quot;.</source>
+        <translation>Этот фильтр хранит страницы, на которых не был найден счетчик Google Analytics с номером %1.
+Вы можете изменить номер счетчика для поиска в настройках &quot;Настройки =&gt; Настройки Google Analytics&quot;.</translation>
     </message>
 </context>
 <context>
@@ -1868,11 +1883,15 @@ The license is valid untill %1</source>
     </message>
     <message>
         <source>Unfortunately we detected that your license serial number is now blacklisted! You can notify us about it if you don&apos;t understand why this happened.</source>
-        <translation>К сожалению указанный Вами серийный номер находится в черном списке! Сообщите об этом в тех. поддержку, если Вы не знаете причину. </translation>
+        <translation type="vanished">К сожалению указанный Вами серийный номер находится в черном списке! Сообщите об этом в тех. поддержку, если Вы не знаете причину. </translation>
     </message>
     <message>
         <source>Serial number activation</source>
         <translation>Активация серийного номера</translation>
+    </message>
+    <message>
+        <source>Unfortunately we detected that your license serial number has been used before on a different computer! Please send an email from your address %0 to %1 and we&apos;ll reset your licence state.</source>
+        <translation>К сожалению мы обраружили что ваш лицензионный ключ ранее был использован на другом компьютере! Пожалуйса отправьте email с Вашего адреса %0 на %1 и мы восстановим состояние Вашей лицензии.</translation>
     </message>
 </context>
 <context>
@@ -2583,6 +2602,10 @@ please stop crawling and try again</source>
     <message>
         <source>Search yandex metrica counters</source>
         <translation>Искать счектчики яндекс метрики на страницах сайта</translation>
+    </message>
+    <message>
+        <source>DD#######</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
