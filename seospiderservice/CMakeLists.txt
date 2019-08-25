@@ -54,7 +54,7 @@ add_definitions(
 	${QT_DEFINITIONS}
 )
 
-if(${ENABLE_STATISTICS} STREQUAL "true")
+if(${ENABLE_STATISTICS})
 	add_definitions(
 		-DENABLE_STATISTICS
 	)
