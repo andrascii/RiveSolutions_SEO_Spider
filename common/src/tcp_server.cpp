@@ -1,0 +1,40 @@
+#include "tcp_server.h"
+#include "tcp_socket.h"
+
+namespace
+{
+
+const qint64 c_defaultPort = 12345;
+
+}
+
+namespace Common
+{
+
+bool TcpServer::listen(const QString& name)
+{
+    Q_UNUSED(name);
+    return m_tcpServer.listen(QHostAddress::Any, c_defaultPort);
+}
+
+std::shared_ptr<IRpcSocket> TcpServer::nextPendingConnection()
+{
+    return std::make_shared<TcpSocket>(m_tcpServer.nextPendingConnection());
+}
+
+QString TcpServer::serverName() const
+{
+    return m_tcpServer.serverAddress().toString();
+}
+
+QString TcpServer::fullServerName() const
+{
+    return serverName();
+}
+
+QString TcpServer::errorString() const
+{
+    return m_tcpServer.errorString();
+}
+
+}

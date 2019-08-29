@@ -14,11 +14,10 @@ namespace Common
 
 IpcServer::IpcServer()
 	: m_descriptor(0)
-	, m_openMode(QIODevice::NotOpen)
 {
 }
 
-bool IpcServer::listen(const QString& name, QIODevice::OpenModeFlag mode)
+bool IpcServer::listen(const QString& name)
 {
 	static const quint64 s_pipeBufferSize = 1024 * 1024;
 
@@ -27,8 +26,7 @@ bool IpcServer::listen(const QString& name, QIODevice::OpenModeFlag mode)
 	m_serverName = name;
 	m_fullServerName = name.startsWith(pipePath) ? name : pipePath + name;
 
-	DWORD access = QIODevice::ReadOnly == mode ? PIPE_ACCESS_INBOUND :
-		QIODevice::WriteOnly == mode ? PIPE_ACCESS_OUTBOUND : PIPE_ACCESS_DUPLEX;
+	DWORD access = PIPE_ACCESS_DUPLEX;
 
 	HANDLE pipe = CreateNamedPipeW(reinterpret_cast<LPCWSTR>(m_fullServerName.utf16()),
 		access,
@@ -47,12 +45,11 @@ bool IpcServer::listen(const QString& name, QIODevice::OpenModeFlag mode)
 	}
 
 	m_descriptor = quintptr(pipe);
-	m_openMode = mode;
 
 	return true;
 }
 
-IpcSocket* IpcServer::nextPendingConnection()
+std::make_shared<IRpcSocket> IpcServer::nextPendingConnection()
 {
 	//TODO: use overlapped io
 	Q_ASSERT(m_descriptor);
@@ -64,7 +61,7 @@ IpcSocket* IpcServer::nextPendingConnection()
 		return 0;
 	}
 
-	m_socket.reset(new IpcSocket(m_descriptor, m_openMode));
+	m_socket.reset(std::make_shared<IpcSocket>(m_descriptor));
 	return m_socket.get();
 }
 

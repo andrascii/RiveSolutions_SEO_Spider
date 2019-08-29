@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "pipe_server.h"
+#include "rpc_factory.h"
 
 namespace Common
 {
 
 PipeServer::PipeServer()
-	: m_socket(nullptr)
+    : m_server(RpcFactory::createRpcServer())
 {
 }
 
@@ -26,9 +27,9 @@ void PipeServer::closeConnection()
 
 void PipeServer::listen(const QString& channelName)
 {
-	if (m_server.listen(channelName, QIODevice::ReadWrite))
+	if (m_server->listen(channelName))
 	{
-		m_socket = m_server.nextPendingConnection();
+		m_socket = m_server->nextPendingConnection();
 	}
 }
 
@@ -36,7 +37,7 @@ bool PipeServer::hasConnection() const
 {
 	std::lock_guard locker(m_mutex);
 
-	return m_socket->openMode() != QIODevice::NotOpen && !m_socket->isClosed();
+	return m_socket && !m_socket->isClosed();
 }
 
 qint64 PipeServer::writeData(const char* data, qint64 maxSize)

@@ -19,9 +19,13 @@ if (APPLE OR UNIX)
 		src/stdafx.cpp
 		src/ipc_socket.cpp
 		src/ipc_server.cpp
-		src/pipe_server.cpp)
+	)
 else()
-	list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
+	list(REMOVE_ITEM CommonSourcesList
+		src/stdafx.cpp
+		src/tcp_socket.cpp
+		src/tcp_server.cpp
+	)
 endif()
 
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" CommonSourcesList)
