@@ -555,11 +555,11 @@ Please, be sure that you entered a valid address</source>
         <translation>Проблемы с адресами ссылок</translation>
     </message>
     <message>
-        <source>Links With Uppercase Characters</source>
+        <source>Links with Uppercase Characters</source>
         <translation>Ссылки с символами в верхнем регистре</translation>
     </message>
     <message>
-        <source>Links With Non-ASCII Characters</source>
+        <source>Links with Non-ASCII Characters</source>
         <translation>Ссылки с не ASCII символами</translation>
     </message>
     <message>
@@ -731,7 +731,7 @@ Please, be sure that you entered a valid address</source>
         <translation>Изображения больше 100кб</translation>
     </message>
     <message>
-        <source>Images With Missing Alt Description</source>
+        <source>Images with Missing Alt Description</source>
         <translation>Изображения без атрибута alt</translation>
     </message>
     <message>
