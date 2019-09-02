@@ -93,6 +93,45 @@ MainWindow::MainWindow(QWidget* parent)
 
 void MainWindow::showSitemapCreatorDialog()
 {
+	const CrawlerEngine::Crawler::State state = theApp->crawler()->state();
+	if (state == CrawlerEngine::Crawler::StatePending && theApp->crawler()->hasNoData())
+	{
+		Dialog::showMessageBoxDialog(
+			tr("XML Sitemap"),
+			tr("To create an XML Sitemap it's needed to analyze a web-site first. "
+				"Please, type a URL address of a site that you want to analyze and start its processing. "
+				"When the process will be finished you'll be able to open the XML Sitemap dialog."),
+			QDialogButtonBox::Ok
+		);
+		return;
+	}
+
+	if (state == CrawlerEngine::Crawler::StatePause)
+	{
+		int answer = Dialog::showMessageBoxDialog(
+			tr("XML Sitemap"),
+			tr("It seems that SEO Spider has not finished the analyzing proces of your web-site yet. "
+				"Are you sure that you want to create an XML Sitemap right now? "
+				"Please notice that in this case the XLM Sitemap will contain not all links of your web-site!"),
+			QDialogButtonBox::Yes | QDialogButtonBox::No
+		);
+
+		if (answer == QDialog::Rejected)
+		{
+			return;
+		}
+	}
+
+	if (state == CrawlerEngine::Crawler::StateWorking)
+	{
+		Dialog::showMessageBoxDialog(tr("XML Sitemap"),
+			tr("To create an XML Sitemap you need to wait untill analyzing of a web-site will be finished or pause the process."),
+			QDialogButtonBox::Ok
+		);
+		return;
+	}
+
+
 	SitemapCreatorDialog* titledWindow = new SitemapCreatorDialog(this);
 	titledWindow->exec();
 	titledWindow->deleteLater();

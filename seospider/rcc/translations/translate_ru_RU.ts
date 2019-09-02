@@ -2145,6 +2145,22 @@ please stop crawling and try again</source>
         <source>Google Analytics Settings</source>
         <translation>Настройки Google Analytics</translation>
     </message>
+    <message>
+        <source>XML Sitemap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To create an XML Sitemap it&apos;s needed to analyze a web-site first. Please, type a URL address of a site that you want to analyze and start its processing. When the process will be finished you&apos;ll be able to open the XML Sitemap dialog.</source>
+        <translation>Для того, чтобы создать карту сайта, необходимо сперва проанализировать Ваш сайт. Пожалуйста, введите адрес интересующего Вас сайта и запустите его анализ. После этого снова вызовите окно создания карты сайта.</translation>
+    </message>
+    <message>
+        <source>It seems that SEO Spider has not finished the analyzing proces of your web-site yet. Are you sure that you want to create an XML Sitemap right now? Please notice that in this case the XLM Sitemap will contain not all links of your web-site!</source>
+        <translation>Кажется, что SEO Spider еще не завершил анализ веб-сайта. Вы действительно хотите создать XML карту сайта сейчас? Учтите, что в таком случае в карте будут отражены не все существующие ссылки Вашего сайта!</translation>
+    </message>
+    <message>
+        <source>To create an XML Sitemap you need to wait untill analyzing of a web-site will be finished or pause the process.</source>
+        <translation>Для создания XML карты сайта необходимо дождаться завершения анализа сайта или поставить анализ на паузу.</translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::MenuBar</name>
