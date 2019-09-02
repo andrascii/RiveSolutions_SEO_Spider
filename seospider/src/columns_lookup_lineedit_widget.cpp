@@ -10,7 +10,7 @@ ColumnsLookupLineEditWidget::ColumnsLookupLineEditWidget(QWidget* parent)
 	, m_actionGroup(nullptr)
 	, m_toolButtonMenu(new QMenu(this))
 	, m_currentSearchKey(-1)
-	, m_counter(new StatisticCounter(QStringLiteral("ColumnsLookupLineEditWidgetApplySearchCounter"), this))
+	, m_counter(new Common::StatisticCounter(QStringLiteral("ColumnsLookupLineEditWidgetApplySearchCounter"), this))
 {
 	setupUi(this);
 

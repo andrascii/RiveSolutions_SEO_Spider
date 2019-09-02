@@ -47,6 +47,7 @@ private:
 	QSharedMemory m_sharedMemory;
 	int m_timerId;
 	bool m_isActive;
+	bool m_screenshotMakerCrashedAtLeastOnce;
 };
 
 }

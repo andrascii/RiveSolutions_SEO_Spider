@@ -230,7 +230,7 @@ void AllPagesPage::showEvent(QShowEvent * event)
 {
 	QFrame::showEvent(event);
 
-	StatisticCounter showCounter("AllSitePagesShowCounter");
+	Common::StatisticCounter showCounter("AllSitePagesShowCounter");
 	showCounter.increment();
 }
 

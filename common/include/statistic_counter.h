@@ -3,7 +3,7 @@
 #include "istatistic_counter.h"
 #include "command.h"
 
-namespace SeoSpider
+namespace Common
 {
 
 class StatisticCounter : public QObject, public IStatisticCounter

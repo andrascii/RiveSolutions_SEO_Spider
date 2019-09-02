@@ -11,7 +11,7 @@ namespace SeoSpider
 
 LookupLineEditWidget::LookupLineEditWidget(QWidget* parent)
 	: QFrame(parent)
-	, m_counter(new StatisticCounter(QStringLiteral("LookupLineEditWidgetApplySearchCounter"), this))
+	, m_counter(new Common::StatisticCounter(QStringLiteral("LookupLineEditWidgetApplySearchCounter"), this))
 	, m_clearButtonAnimation(nullptr)
 	, m_animationProcess(ProcessNone)
 {

@@ -2,10 +2,13 @@
 
 #include "ui_columns_lookup_lineedit_widget.h"
 
+namespace Common
+{
+class IStatisticCounter;
+}
+
 namespace SeoSpider
 {
-
-class IStatisticCounter;
 
 class ColumnsLookupLineEditWidget : public QFrame, protected Ui::ColumnsLookupLineEditWidget
 {
@@ -37,7 +40,7 @@ private:
 	QActionGroup* m_actionGroup;
 	QMenu* m_toolButtonMenu;
 	int m_currentSearchKey;
-	IStatisticCounter* m_counter;
+	Common::IStatisticCounter* m_counter;
 };
 
 }

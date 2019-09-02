@@ -23,7 +23,7 @@ QString PdfReportExporter::ext() const
 void PdfReportExporter::doExport(QIODevice* device, 
 	ReportsPage::ReportType reportType, const ReportDataProvider* provider) const
 {
-	StatisticCounter exportCounter(QString("ExportReportToPdfCounter"));
+	Common::StatisticCounter exportCounter(QString("ExportReportToPdfCounter"));
 	exportCounter.increment();
 
 	switch (reportType)

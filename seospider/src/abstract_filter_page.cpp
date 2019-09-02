@@ -236,7 +236,7 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 		setCurrentStorageDescriptors(row, newSelectedStorage ? newSelectedStorage->storageType : CrawlerEngine::StorageType::BeginEnumStorageType);
 
 		const auto typeString = storageAdapterTypeStringFromEnum(summaryFilterModel()->storageAdapterType(index));
-		StatisticCounter showCounter(QString("%1_%2FilterShowCounter").arg(pageName()).arg(typeString));
+		Common::StatisticCounter showCounter(QString("%1_%2FilterShowCounter").arg(pageName()).arg(typeString));
 		showCounter.increment();
 
 		AbstractFilterPage::hasFilterSelection(row);

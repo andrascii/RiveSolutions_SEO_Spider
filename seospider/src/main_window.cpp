@@ -162,7 +162,7 @@ void MainWindow::saveFile()
 		saveFileAs();
 	}
 
-	StatisticCounter saveToFileCounter(QString("SaveProjectToFileCounter"));
+	Common::StatisticCounter saveToFileCounter(QString("SaveProjectToFileCounter"));
 	saveToFileCounter.increment();
 }
 
@@ -232,7 +232,7 @@ void MainWindow::openFile()
 		return;
 	}
 
-	StatisticCounter openFromFileCounter(QString("OpenProjectFromFileCounter"));
+	Common::StatisticCounter openFromFileCounter(QString("OpenProjectFromFileCounter"));
 	openFromFileCounter.increment();
 
 	RecentFiles::instance().registerNewRecentFile(path);
@@ -271,7 +271,7 @@ void MainWindow::openFile(const QString& filePath)
 		return;
 	}
 
-	StatisticCounter openFromFileCounter(QString("OpenProjectFromFileCounter"));
+	Common::StatisticCounter openFromFileCounter(QString("OpenProjectFromFileCounter"));
 	openFromFileCounter.increment();
 
 	RecentFiles::instance().registerNewRecentFile(filePath);

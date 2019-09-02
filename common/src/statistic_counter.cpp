@@ -2,7 +2,7 @@
 #include "seo_spider_service_api_export.h"
 #include "command.h"
 
-namespace SeoSpider
+namespace Common
 {
 
 StatisticCounter::StatisticCounter(const QString& counterName, QObject* parent)

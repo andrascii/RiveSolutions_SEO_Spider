@@ -52,7 +52,7 @@ ApplicationSettingsDialog::ApplicationSettingsDialog(QWidget* parent)
 
 void ApplicationSettingsDialog::showEvent(QShowEvent*)
 {
-	StatisticCounter showCounter("ApplicationSettingsDialogShow");
+	Common::StatisticCounter showCounter("ApplicationSettingsDialogShow");
 	showCounter.increment();
 
 	reloadSettingsSlot();
