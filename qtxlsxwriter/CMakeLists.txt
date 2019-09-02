@@ -12,7 +12,7 @@ endif()
 
 file(
 	GLOB
-	QtXlsxWriter_SOURCE_FILES 
+	QtXlsxWriter_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/xlsx/*.cpp
 	${CMAKE_CURRENT_BINARY_DIR}/QtXlsxWriterTest_automoc.cpp
 )
@@ -20,11 +20,11 @@ file(
 find_package(Qt5 5.5 REQUIRED Core Gui Test)
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/src/xlsx/
-	${Qt5Core_INCLUDE_DIRS} 
+	${Qt5Core_INCLUDE_DIRS}
 	${Qt5Gui_INCLUDE_DIRS}
 	${Qt5Gui_PRIVATE_INCLUDE_DIRS} )
-	
-SET(QtXlsxWriter_INCLUDE_FILES 
+
+SET(QtXlsxWriter_INCLUDE_FILES
   src/xlsx/xlsxabstractooxmlfile.h
   src/xlsx/xlsxabstractsheet.h
   src/xlsx/xlsxcell.h
@@ -63,7 +63,7 @@ if(NOT MSVC)
     target_compile_features(QtXlsxWriter PRIVATE cxx_range_for)
 endif()
 
-if (APPLE)
+if (UNIX)
     set_target_properties(QtXlsxWriter PROPERTIES DEBUG_POSTFIX "d" RUNTIME_OUTPUT_DIRECTORY "../seospider/")
 else()
     set_target_properties(QtXlsxWriter PROPERTIES DEBUG_POSTFIX "d" RUNTIME_OUTPUT_DIRECTORY "../seospider/" LINK_FLAGS /DEBUG)

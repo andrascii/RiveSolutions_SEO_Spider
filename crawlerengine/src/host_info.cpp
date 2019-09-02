@@ -175,11 +175,13 @@ void HostInfo::setAddressFamily(hostent* remoteHost)
 			m_addressFamily = AddressFamily::IPv6;
 			break;
 		}
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
 		case AF_NETBIOS:
 		{
 			m_addressFamily = AddressFamily::NetBios;
 			break;
 		}
+#endif
 		default:
 		{
 			m_addressFamily = AddressFamily::UnknownAddressFamily;

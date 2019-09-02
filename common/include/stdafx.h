@@ -35,6 +35,7 @@ struct IUnknown;
 #include <optional>
 #include <sstream>
 #include <algorithm>
+#include <cstring>
 
 #pragma warning(disable:4127)
 #pragma warning(disable:745)
