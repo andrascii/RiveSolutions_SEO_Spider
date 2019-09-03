@@ -21,7 +21,7 @@ file(GLOB_RECURSE CrawlerEngineResourcesList "rcc/*.qrc")
 
 qt5_wrap_cpp(CrawlerEngineHeadersMocList ${CrawlerEngineFormsHeadersList})
 
-list(REMOVE_ITEM CrawlerEngineSourcesList src/stdafx.cpp src/screenshot_maker.cpp)
+list(REMOVE_ITEM CrawlerEngineSourcesList src/stdafx.cpp)
 
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" CrawlerEngineSourcesList)
 

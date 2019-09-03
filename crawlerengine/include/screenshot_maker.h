@@ -2,14 +2,20 @@
 
 #include "iscreenshot_maker.h"
 #include "screenshot_maker_command.h"
-#include "ipc_socket.h"
 #include "url.h"
+
+namespace Common
+{
+
+class IRpcSocket;
+
+}
 
 namespace CrawlerEngine
 {
 
 class TakeScreenshotRequest;
-/*
+
 class ScreenshotMaker : public QObject, public IScreenshotMaker
 {
 	Q_OBJECT
@@ -42,11 +48,11 @@ private:
 private:
 	std::queue<RequesterSharedPtr> m_requesters;
 	RequesterSharedPtr m_currentRequester;
-	Common::IpcSocket m_ipcSocket;
+    std::shared_ptr<Common::IRpcSocket> m_ipcSocket;
 	boost::process::child m_screenshotMakerProcess;
 	QSharedMemory m_sharedMemory;
 	int m_timerId;
 	bool m_isActive;
 };
-*/
+
 }

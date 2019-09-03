@@ -32,6 +32,8 @@
 // boost
 //
 
+#ifdef Q_OS_WIN
+
 namespace std
 {
 
@@ -56,6 +58,8 @@ struct unary_function
 };
 
 }
+
+#endif
 
 #include <boost/functional/hash.hpp>
 

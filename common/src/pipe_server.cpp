@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "pipe_server.h"
 #include "rpc_factory.h"
+#include "pipe_server.h"
 
 namespace Common
 {

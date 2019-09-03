@@ -136,7 +136,7 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
 
 	// disabled due first building on Mac
-	//threadManager.moveObjectToThread(createScreenshotMaker()->qobject(), "BackgroundThread");
+	threadManager.moveObjectToThread(createScreenshotMaker()->qobject(), "BackgroundThread");
 
 	m_licenseStateObserver = new LicenseStateObserver;
 
@@ -738,7 +738,7 @@ IHostInfoProvider* Crawler::createHostInfoProvider() const
 
 IScreenshotMaker* Crawler::createScreenshotMaker()
 {
-    return nullptr;
+    return new ScreenshotMaker;
 }
 
 IDownloadHandler* Crawler::createDownloader() const

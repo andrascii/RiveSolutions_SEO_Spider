@@ -139,7 +139,7 @@ endif()
 
 add_subdirectory(${QtXlsxWriter})
 add_subdirectory(${AppName})
-#add_subdirectory(${ScreenshotMaker}) # disabled due first building on Mac
+add_subdirectory(${ScreenshotMaker})
 add_subdirectory(${GumboLibName})
 add_subdirectory(${MyHtmlLibName})
 #add_subdirectory(${SeoSpiderServiceApiDllName}) # disabled due first building on Mac
