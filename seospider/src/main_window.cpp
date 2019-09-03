@@ -253,15 +253,21 @@ void MainWindow::openFile()
 		return;
 	}
 
-	if (theApp->crawler()->hasSession())
+	if (theApp->crawler()->hasSession() && theApp->crawler()->sessionState() == CrawlerEngine::Session::State::StateUnsaved)
 	{
-		Dialog::showMessageBoxDialog(tr("Open file error"),
+		int answer = Dialog::showMessageBoxDialog(
+			tr("Open file error"),
 			tr("Unable to open the project file until the existing one is closed! "
-			"So first you need to press Ctrl+W and then open file."),
-			QDialogButtonBox::Ok
+				"Do you want to close the current project? All unsaved data will be lost."),
+			QDialogButtonBox::Yes | QDialogButtonBox::No
 		);
 
-		return;
+		if (answer == QDialog::Rejected)
+		{
+			return;
+		}
+
+		theApp->crawler()->clearData();
 	}
 
 	const QString path = QFileDialog::getOpenFileName(theApp->mainWindow(), tr("Open File"), qApp->applicationDirPath(), QString("*" + c_projectFileExtension));
@@ -294,15 +300,21 @@ void MainWindow::openFile(const QString& filePath)
 		return;
 	}
 
-	if (theApp->crawler()->hasSession())
+	if (theApp->crawler()->hasSession() && theApp->crawler()->sessionState() == CrawlerEngine::Session::State::StateUnsaved)
 	{
-		Dialog::showMessageBoxDialog(tr("Open file error"),
+		int answer = Dialog::showMessageBoxDialog(
+			tr("Open file error"),
 			tr("Unable to open the project file until the existing one is closed! "
-			"So first you need to press Ctrl+W and then open file."),
-			QDialogButtonBox::Ok
+				"Do you want to close the current project? All unsaved data will be lost."),
+			QDialogButtonBox::Yes | QDialogButtonBox::No
 		);
 
-		return;
+		if (answer == QDialog::Rejected)
+		{
+			return;
+		}
+
+		theApp->crawler()->clearData();
 	}
 
 	if (filePath.isEmpty())
@@ -738,6 +750,7 @@ void MainWindow::initFileActions()
 	actionRegistry.addGlobalAction(s_saveFileAndClearDataAction, tr("Save To File And Clear Data"));
 
 	actionRegistry.globalAction(s_saveFileAction)->setDisabled(true);
+	actionRegistry.globalAction(s_saveFileAsAction)->setDisabled(true);
 	actionRegistry.globalAction(s_closeFileAction)->setDisabled(true);
 #endif
 
@@ -802,6 +815,12 @@ void MainWindow::initSettingsActions()
 			ActionRegistry::instance().actionGroup(s_settingsActionGroup)->setEnabled(value);
 #ifdef SUPPORT_SERIALIZATION
 			ActionRegistry::instance().globalAction(s_openFileAction)->setEnabled(value);
+			ActionRegistry::instance().globalAction(s_recentFilesAction)->setEnabled(value);
+
+			ActionRegistry::instance().globalAction(s_saveFileAction)->setEnabled(value);
+			ActionRegistry::instance().globalAction(s_saveFileAsAction)->setEnabled(value);
+
+			ActionRegistry::instance().globalAction(s_closeFileAction)->setEnabled(value);
 #endif
 		};
 
@@ -810,7 +829,7 @@ void MainWindow::initSettingsActions()
 			actionsAvailabilitySetter(false);
 		}
 
-		if (state == Crawler::StatePending)
+		if (state == Crawler::StatePending || state == Crawler::StatePause)
 		{
 			actionsAvailabilitySetter(true);
 		}
@@ -897,17 +916,6 @@ void MainWindow::initSystemTrayIconMenu()
 
 void MainWindow::onCrawlerSessionCreated()
 {
-#ifdef SUPPORT_SERIALIZATION
-	ActionRegistry& actionRegistry = ActionRegistry::instance();
-
-	QAction* saveFileAction = actionRegistry.globalAction(s_saveFileAction);
-	QAction* saveFileAsAction = actionRegistry.globalAction(s_saveFileAsAction);
-	QAction* closeFileAction = actionRegistry.globalAction(s_closeFileAction);
-
-	saveFileAction->setEnabled(true);
-	saveFileAsAction->setEnabled(true);
-	closeFileAction->setEnabled(true);
-#endif
 }
 
 void MainWindow::onCrawlerSessionDestroyed()

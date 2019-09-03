@@ -105,34 +105,41 @@ void ControlPanelWidget::stopCrawling() const
 void ControlPanelWidget::clearCrawlingData() const
 {
 #ifdef SUPPORT_SERIALIZATION
-	MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
-	messageBoxDialog->setWindowTitle(tr("Warning"));
-
-	const QString message = tr("You have not saved the results of the scanning your site.") +
-		tr("Would you like to save the results and have the ability to start next time from this point?");
-
-	messageBoxDialog->setMessage(message);
-
-	messageBoxDialog->addButton(tr("Save"), QDialogButtonBox::YesRole);
-	messageBoxDialog->addButton(tr("Don`s save"), QDialogButtonBox::NoRole);
-
-	auto onDialogClosed = [messageBoxDialog](int result)
+	if (theApp->crawler()->sessionState() == CrawlerEngine::Session::State::StateUnsaved)
 	{
-		if (result == QDialog::Accepted)
+		MessageBoxDialog* messageBoxDialog = new MessageBoxDialog;
+		messageBoxDialog->setWindowTitle(tr("Warning"));
+
+		const QString message = tr("You have not saved the results of the scanning your site.") +
+			tr("Would you like to save the results and have the ability to start next time from this point?");
+
+		messageBoxDialog->setMessage(message);
+
+		messageBoxDialog->addButton(tr("Save"), QDialogButtonBox::YesRole);
+		messageBoxDialog->addButton(tr("Don`s save"), QDialogButtonBox::NoRole);
+
+		auto onDialogClosed = [messageBoxDialog](int result)
 		{
-			ActionRegistry::instance().globalAction(s_saveFileAndClearDataAction)->trigger();
-		}
-		else
-		{
-			ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
-		}
+			if (result == QDialog::Accepted)
+			{
+				ActionRegistry::instance().globalAction(s_saveFileAndClearDataAction)->trigger();
+			}
+			else
+			{
+				ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
+			}
 
-		messageBoxDialog->deleteLater();
-	};
+			messageBoxDialog->deleteLater();
+		};
 
-	VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
+		VERIFY(connect(messageBoxDialog, &MessageBoxDialog::dialogClosed, onDialogClosed));
 
-	messageBoxDialog->exec();
+		messageBoxDialog->exec();
+	}
+	else
+	{
+		ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
+	}
 #else
 	ActionRegistry::instance().globalAction(s_clearCrawledDataAction)->trigger();
 #endif

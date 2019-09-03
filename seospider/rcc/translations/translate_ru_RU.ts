@@ -363,7 +363,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Scan Only Pages Which Contains Words In Url</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Maximum active connections:</source>
@@ -378,15 +378,15 @@ Please, be sure that you entered a valid address</source>
     <name>LookupLineEditWidget</name>
     <message>
         <source>Frame</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished">Очистить данные</translation>
+        <translation>Очистить данные</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">Применить</translation>
+        <translation>Применить</translation>
     </message>
     <message>
         <source>Type in something for search...</source>
@@ -397,11 +397,11 @@ Please, be sure that you entered a valid address</source>
     <name>MessageBox</name>
     <message>
         <source>Frame</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>This is a simple message</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1142,15 +1142,15 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Meta Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Meta Robots</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Redirected URL</source>
@@ -1583,7 +1583,7 @@ You can change this value in the &quot;Settings =&gt; Limit Settings&quot;.</sou
     </message>
     <message>
         <source>Custom Analisys</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Pages with missing Yandex Metrica Counter</source>
@@ -1597,11 +1597,11 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
     </message>
     <message>
         <source>Yandex Metrika</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Test Data Feed</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Pages with missing Yandex Metrica Counters</source>
@@ -1629,19 +1629,19 @@ You can change the number of this counter in the settings &quot;Settings =&gt; Y
     </message>
     <message>
         <source>Redirect Loop</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>HTML</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>JS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>CSS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Other</source>
@@ -1675,16 +1675,16 @@ The license is valid untill %1</source>
     </message>
     <message>
         <source>You&apos;re using the trial version of the application, to use full functionality, please &lt;a href=&apos;#&apos; style=&apos;color:#aaaaff&apos;&gt;purchase a license&lt;/a&gt;</source>
-        <translation type="unfinished">Вы используете пробную  версию приложения, для получения полного функционала &lt;a href=&apos;#&apos; style=&apos;color:#aaaaff&apos;&gt;приобретите лицензию&lt;/a&gt;</translation>
+        <translation>Вы используете пробную  версию приложения, для получения полного функционала &lt;a href=&apos;#&apos; style=&apos;color:#aaaaff&apos;&gt;приобретите лицензию&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Google Analytics Finder</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>This filter stores pages that did not find the yandex metrica counter %1.
 You can change the number of this counter in the settings &quot;Settings =&gt; Yandex Metrica Settings&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Pages with missing Google Analytics Counter</source>
@@ -1837,11 +1837,11 @@ You can change this counter in the settings &quot;Settings =&gt; Google Analytic
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <source>Don`s save</source>
-        <translation type="unfinished"></translation>
+        <translation>Не сохранять</translation>
     </message>
     <message>
         <source>Crawling is already finished. Do you want to restart it?</source>
@@ -1925,9 +1925,8 @@ please stop crawling and try again</source>
         <translation>Ошибка открытия файла</translation>
     </message>
     <message>
-        <source>Unable to open the project file until the existing one is closed! So first you need to press Ctrl+W and then open file.</source>
-        <translation>Невозможно открыть файл проекта, пока Вы не закроете уже открытый.
-Для закрытия существующего проекта, нажмите CTRL+W и затем откройте новый проект.</translation>
+        <source>Unable to open the project file until the existing one is closed! Do you want to close the current project? All unsaved data will be lost.</source>
+        <translation>Невозможно открыть файл проекта, пока Вы не закроете уже открытый. Вы хотите закрыть текущий проект? Все несохраненные данные будут утеряны.</translation>
     </message>
     <message>
         <source>Open File</source>
