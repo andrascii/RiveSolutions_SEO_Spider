@@ -48,12 +48,17 @@ function Component()
 	if(isAlreadyInstalled())
 	{
 		QMessageBox["information"]("Already installed", "Installer", 
-		"Installer found newer or equal verion of SEO Spider.<br> You must delete installed program for continue.", 
+		"Installer found existing SEO Spider installation.<br> You must delete installed program for continue.", 
 		QMessageBox.Ok)
 		
 		abortInstallation();
 		
 		return;
+	}
+
+	var programFiles = installer.environmentVariable("ProgramFiles");
+	if (programFiles != "") {
+		installer.setValue("TargetDir", programFiles + "/Rive Solutions/SEO Spider");
 	}
 	
 	component.loaded.connect(this, addCreateMenuDirectory);
@@ -306,7 +311,10 @@ Component.prototype.createOperations = function()
 
 	registerProgram();
 	
-	installVCRedist();
+	try {
+		installVCRedist();
+	} catch(e) {
+	}
 
 	registerCustomURI();
 	

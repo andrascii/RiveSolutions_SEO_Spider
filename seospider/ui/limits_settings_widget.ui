@@ -112,7 +112,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>10000</number>
+           <number>10000000</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">limitSearchTotal</string>

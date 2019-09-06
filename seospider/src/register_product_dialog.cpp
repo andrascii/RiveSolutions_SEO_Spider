@@ -44,6 +44,7 @@ void RegisterProductDialog::onLicenseChanged()
 	);
 
 	m_ui->licenseKeyTextEdit->setEnabled(isTrialLicense);
+	m_ui->licenseKeyTextEdit->setText(licenseService->serialNumber());
 	m_ui->enterKeyPushButton->setEnabled(isTrialLicense);
 }
 

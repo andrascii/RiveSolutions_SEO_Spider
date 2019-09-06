@@ -21,8 +21,8 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		{
 			p->setName(QObject::tr("Link Problems"));
 			p->setAuditGroup(AuditGroup::LinkAuditGroup);
-			descriptions.push_back(DCStorageDescription{ StorageType::UpperCaseUrlStorageType, QObject::tr("Links With Uppercase Characters") });
-			descriptions.push_back(DCStorageDescription{ StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links With Non-ASCII Characters") });
+			descriptions.push_back(DCStorageDescription{ StorageType::UpperCaseUrlStorageType, QObject::tr("Links with Uppercase Characters") });
+			descriptions.push_back(DCStorageDescription{ StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links with Non-ASCII Characters") });
 			descriptions.push_back(DCStorageDescription{ StorageType::TooLongUrlStorageType, QObject::tr("Too Long Links") });
 			descriptions.push_back(DCStorageDescription{ StorageType::BrokenLinks, QObject::tr("Broken Links") });
 			descriptions.push_back(DCStorageDescription{ StorageType::Status4xxStorageType, QObject::tr("Status Code 4xx") });
@@ -115,7 +115,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			p->setName(QObject::tr("Image Problems"));
 			p->setAuditGroup(AuditGroup::ImageAuditGroup);
 			descriptions.push_back(DCStorageDescription{ StorageType::TooBigImageStorageType, QObject::tr("Images Over 100 KB") });
-			descriptions.push_back(DCStorageDescription{ StorageType::MissingAltTextImageStorageType, QObject::tr("Images With Missing Alt Description") });
+			descriptions.push_back(DCStorageDescription{ StorageType::MissingAltTextImageStorageType, QObject::tr("Images with Missing Alt Description") });
 			descriptions.push_back(DCStorageDescription{ StorageType::TooLongAltTextImageStorageType, QObject::tr("Too Long Image Alt Description") });
 			p->setDescriptions(std::move(descriptions));
 
@@ -126,8 +126,8 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 		{
 			p->setName(QObject::tr("Error Groups"));
 			p->setAuditGroup(AuditGroup::OrderedErrorsGroup);
-			descriptions.push_back(DCStorageDescription{ StorageType::UpperCaseUrlStorageType, QObject::tr("Links With Uppercase Characters") });
-			descriptions.push_back(DCStorageDescription{ StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links With Non-ASCII Characters") });
+			descriptions.push_back(DCStorageDescription{ StorageType::UpperCaseUrlStorageType, QObject::tr("Links with Uppercase Characters") });
+			descriptions.push_back(DCStorageDescription{ StorageType::NonAsciiCharacterUrlStorageType, QObject::tr("Links with Non-ASCII Characters") });
 			descriptions.push_back(DCStorageDescription{ StorageType::TooLongUrlStorageType, QObject::tr("Too Long Links") });
 			descriptions.push_back(DCStorageDescription{ StorageType::BrokenLinks, QObject::tr("Broken Links") });
 			descriptions.push_back(DCStorageDescription{ StorageType::Status4xxStorageType, QObject::tr("Status Code 4xx") });
@@ -162,7 +162,7 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			descriptions.push_back(DCStorageDescription{ StorageType::TooLongH2UrlStorageType, QObject::tr("Too Long H2") });
 			descriptions.push_back(DCStorageDescription{ StorageType::SeveralH2UrlStorageType, QObject::tr("Several Equal H2 On Page") });
 			descriptions.push_back(DCStorageDescription{ StorageType::TooBigImageStorageType, QObject::tr("Images Over 100 KB") });
-			descriptions.push_back(DCStorageDescription{ StorageType::MissingAltTextImageStorageType, QObject::tr("Images With Missing Alt Description") });
+			descriptions.push_back(DCStorageDescription{ StorageType::MissingAltTextImageStorageType, QObject::tr("Images with Missing Alt Description") });
 			descriptions.push_back(DCStorageDescription{ StorageType::TooLongAltTextImageStorageType, QObject::tr("Too Long Image Alt Description") });
 			descriptions.push_back(DCStorageDescription{ StorageType::BlockedForSEIndexingStorageType, QObject::tr("All Not Indexed Pages") });
 			descriptions.push_back(DCStorageDescription{ StorageType::NofollowLinksStorageType, QObject::tr("Nofollow Links") });

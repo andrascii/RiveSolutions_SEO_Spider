@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "table_view.h"
 #include "abstract_table_model.h"
 #include "iview_model.h"
@@ -9,6 +8,7 @@
 #include "finally.h"
 #include "table_proxy_model.h"
 #include "header_view.h"
+#include "floating_image_widget.h"
 
 namespace SeoSpider
 {
@@ -16,18 +16,18 @@ namespace SeoSpider
 TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnabled, bool showCustomizeColumnsButton)
 	: QTableView(parent)
 	, m_model(nullptr)
+	, m_viewModel(nullptr)
+	, m_contextMenu(nullptr)
+	, m_showAdditionalGrid(false)
+	, m_rowHeight(Common::Helpers::pointsToPixels(22))
+	, m_supportColumnSpans(supportColumSpans)
 	, m_sortFilterProxyModel(new TableProxyModel)
-    , m_viewModel(nullptr)
 	, m_headerView(new HeaderView(this, showCustomizeColumnsButton))
-    , m_contextMenu(nullptr)
-    , m_showAdditionalGrid(false)
-    , m_rowHeight(Common::Helpers::pointsToPixels(28))
-    , m_supportColumnSpans(supportColumSpans)
+	, m_image(new FloatingImageWidget())
 {
-	Q_UNUSED(sortingEnabled);
-
 	m_headerView->setSortIndicatorShown(true);
 	setHorizontalHeader(m_headerView);
+	m_headerView->installEventFilter(this);
 
 	setMouseTracking(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -43,6 +43,11 @@ TableView::TableView(QWidget* parent, bool supportColumSpans, bool sortingEnable
 	}
 
 	qRegisterMetaType<QModelIndexList>();
+}
+
+TableView::~TableView()
+{
+	delete m_image;
 }
 
 void TableView::setModel(QAbstractItemModel* model)
@@ -85,23 +90,21 @@ void TableView::mouseMoveEvent(QMouseEvent* event)
 		return QTableView::mouseMoveEvent(event);
 	}
 
-	QModelIndex index = indexAt(event->pos());
-
-	if (!(index.flags() & Qt::ItemIsSelectable))
-	{
-		viewModel()->setHoveredIndex(QModelIndex());
-	}
-	else
-	{
-		if (index.model() != m_sortFilterProxyModel)
-		{
-			ASSERT(index.model() == m_model);
-			index = m_sortFilterProxyModel->mapFromSource(index);
-		}
-		viewModel()->setHoveredIndex(index);
-	}
+	mouseMoveInternal(event->pos(), event->globalPos());
 
 	QTableView::mouseMoveEvent(event);
+}
+
+void TableView::wheelEvent(QWheelEvent* event)
+{
+	QTableView::wheelEvent(event);
+
+	if (!viewModel())
+	{
+		return;
+	}
+
+	mouseMoveInternal(event->pos(), event->globalPos());
 }
 
 void TableView::resizeEvent(QResizeEvent* event)
@@ -121,6 +124,7 @@ void TableView::leaveEvent(QEvent* event)
 		viewModel()->setHoveredIndex(QModelIndex());
 	}
 
+	m_image->invalidateUrl();
 	QTableView::leaveEvent(event);
 }
 
@@ -261,6 +265,16 @@ void TableView::rowsInserted(const QModelIndex &parent, int first, int last)
 	applyRowHeightToRowRange(first, last);
 
 	QTableView::rowsInserted(parent, first, last);
+}
+
+bool SeoSpider::TableView::eventFilter(QObject* object, QEvent* event)
+{
+	if (event->type() == QEvent::Enter && object == m_headerView)
+	{
+		m_image->invalidateUrl();
+	}
+
+	return QTableView::eventFilter(object, event);
 }
 
 void TableView::setContextMenu(CommandMenu* menu) noexcept
@@ -447,6 +461,36 @@ void TableView::applyRowHeightToRowRange(int first, int last)
 	for (int i = first; i <= last; ++i)
 	{
 		setRowHeight(i, m_rowHeight);
+	}
+}
+
+void SeoSpider::TableView::mouseMoveInternal(const QPoint& pos, const QPoint& globalPos)
+{
+	QModelIndex index = indexAt(pos);
+
+	if (index.data(AbstractTableModel::resourceTypeRole).toInt() == static_cast<int>(RowResourceType::ResourceImage))
+	{
+		QUrl imageUrl(index.data().toString());
+		m_image->setCurrentUrl(imageUrl);
+		m_image->move(globalPos + QPoint(0, Common::Helpers::pointsToPixels(20)));
+	}
+	else
+	{
+		m_image->invalidateUrl();
+	}
+
+	if (!(index.flags() & Qt::ItemIsSelectable))
+	{
+		viewModel()->setHoveredIndex(QModelIndex());
+	}
+	else
+	{
+		if (index.model() != m_sortFilterProxyModel)
+		{
+			ASSERT(index.model() == m_model);
+			index = m_sortFilterProxyModel->mapFromSource(index);
+		}
+		viewModel()->setHoveredIndex(index);
 	}
 }
 

@@ -10,13 +10,6 @@
 #include "get_serial_number_state_response.h"
 #include "handler_registry.h"
 
-namespace
-{
-
-constexpr int c_minute = 60 * 1000;
-
-}
-
 namespace CrawlerEngine
 {
 
@@ -46,8 +39,6 @@ LicenseStateObserver::LicenseStateObserver()
 	handlerRegistry.addSubscription(subscription, setSerialNumberRequestHandler, ResponseType::ResponseSetSerialNumber);
 
 	checkLicenseFileAndInitLicenseIfNeeded();
-
-	ASSERT(startTimer(c_minute));
 #endif
 }
 
@@ -85,30 +76,28 @@ const QString& LicenseStateObserver::email() const noexcept
 	return m_email;
 }
 
-void LicenseStateObserver::timerEvent(QTimerEvent*)
+const QByteArray& LicenseStateObserver::serialNumber() const noexcept
 {
-	requestLicenseDataIfNeeded();
+	return m_serialNumber;
 }
 
 void LicenseStateObserver::onLicenseData(Requester*, const GetSerialNumberDataResponse& response)
 {
 	m_licenseRequester.reset();
+	m_email = response.data().email;
 	onLicenseStateChanged(response.data().states);
 }
 
 void LicenseStateObserver::onSetSerialNumber(Requester*, const SetSerialNumberResponse& response)
 {
 	m_licenseRequester.reset();
+	m_licenseDataRequester.reset();
 	onLicenseStateChanged(response.states());
 }
 
 void LicenseStateObserver::onLicenseStateChanged(const SerialNumberStates& stateFlags)
 {
-	if (stateFlags.testFlag(SerialNumberState::StateSuccessActivation))
-	{
-		setTrialLicense(false, ReasonSuccessActivation);
-	}
-	else if (stateFlags.testFlag(SerialNumberState::StateSerialNumberBlacklisted))
+	if (stateFlags.testFlag(SerialNumberState::StateSerialNumberBlacklisted))
 	{
 		setTrialLicense(true, Reason::ReasonSerialNumberBlacklisted);
 	}
@@ -123,6 +112,10 @@ void LicenseStateObserver::onLicenseStateChanged(const SerialNumberStates& state
 	else if (stateFlags.testFlag(SerialNumberState::StateRunningTimeOver))
 	{
 		setTrialLicense(true, Reason::ReasonRunningTimeOver);
+	} 
+	else if (stateFlags.testFlag(SerialNumberState::StateSuccessActivation))
+	{
+		setTrialLicense(false, ReasonSuccessActivation);
 	}
 }
 
@@ -141,6 +134,7 @@ void LicenseStateObserver::onSubscription(const IResponse& response)
 				static_cast<const SetSerialNumberResponse&>(response);
 
 			onLicenseStateChanged(setSerialNumberResponse.states());
+			m_licenseDataRequester.reset();
 			requestLicenseDataIfNeeded();
 
 			break;
@@ -150,10 +144,10 @@ void LicenseStateObserver::onSubscription(const IResponse& response)
 			const GetSerialNumberDataResponse& getSerialNumberDataResponse =
 				static_cast<const GetSerialNumberDataResponse&>(response);
 
-			onLicenseStateChanged(getSerialNumberDataResponse.data().states);
 			m_expirationDate = getSerialNumberDataResponse.data().dateExpire;
 			m_email = getSerialNumberDataResponse.data().email;
 			m_userName = getSerialNumberDataResponse.data().userName;
+			onLicenseStateChanged(getSerialNumberDataResponse.data().states);
 
 			break;
 		}
@@ -198,20 +192,21 @@ void LicenseStateObserver::checkLicenseFileAndInitLicenseIfNeeded()
 		return;
 	}
 
-	m_licenseRequester.reset(SetSerialNumberRequest(serialNumberFile.readAll()), this, &LicenseStateObserver::onSetSerialNumber);
+	m_serialNumber = serialNumberFile.readAll();
+	m_licenseRequester.reset(SetSerialNumberRequest(m_serialNumber), this, &LicenseStateObserver::onSetSerialNumber);
 	m_licenseRequester->start();
 }
 
 void LicenseStateObserver::requestLicenseDataIfNeeded()
 {
 #ifdef CHECK_LICENSE
-	if (m_licenseRequester)
+	if (m_licenseDataRequester || this->m_isTrialLicense)
 	{
 		return;
 	}
 
-	m_licenseRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
-	m_licenseRequester->start();
+	m_licenseDataRequester.reset(GetSerialNumberDataRequest(), this, &LicenseStateObserver::onLicenseData);
+	m_licenseDataRequester->start();
 #endif
 }
 }

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "all_pages_page.h"
 #include "application.h"
 #include "table_view.h"
@@ -33,7 +32,7 @@ AllPagesPage::AllPagesPage(QWidget* parent)
 
 	TableView* tableView = new TableView(this, false, true, true);
 	PageModel* model = new PageModel;
-	PageViewModel* modelView = new PageViewModel(tableView, model, devicePixelRatioF());
+	PageViewModel* modelView = new PageViewModel(tableView, model);
 
 	IStorageAdapter* storageAdapter = theApp->storageAdapterFactory()->createParsedPageInfoStorage(
 		StorageAdapterType::StorageAdapterTypeAllPages, theApp->sequencedDataCollection());
@@ -231,7 +230,7 @@ void AllPagesPage::showEvent(QShowEvent * event)
 {
 	QFrame::showEvent(event);
 
-	StatisticCounter showCounter("AllSitePagesShowCounter");
+	Common::StatisticCounter showCounter("AllSitePagesShowCounter");
 	showCounter.increment();
 }
 

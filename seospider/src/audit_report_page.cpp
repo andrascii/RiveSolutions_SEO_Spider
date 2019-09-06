@@ -59,7 +59,7 @@ void AuditReportPage::showEvent(QShowEvent* event)
 {
 	QFrame::showEvent(event);
 
-	StatisticCounter showCounter("AuditReportPageShowCounter");
+	Common::StatisticCounter showCounter("AuditReportPageShowCounter");
 	showCounter.increment();
 }
 

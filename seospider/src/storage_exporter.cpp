@@ -41,12 +41,12 @@ void StorageExporter::exportStorage(const CrawlerEngine::SequencedDataCollection
 	if (storages.size() == 1)
 	{
 		const QString storageNameStr = storageAdapterTypeStringFromEnum(static_cast<StorageAdapterType>(storages.front().storageType));
-		StatisticCounter exportCounter(QString("%1_ExportToExcelCounter").arg(storageNameStr));
+		Common::StatisticCounter exportCounter(QString("%1_ExportToExcelCounter").arg(storageNameStr));
 		exportCounter.increment();
 	}
 	else
 	{
-		StatisticCounter exportCounter(QString("SeveralStorages_ExportToExcelCounter").arg(storages.front().storageTypeDescriptionName));
+		Common::StatisticCounter exportCounter(QString("SeveralStorages_ExportToExcelCounter").arg(storages.front().storageTypeDescriptionName));
 		exportCounter.increment();
 	}
 

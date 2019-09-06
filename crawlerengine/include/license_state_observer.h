@@ -32,6 +32,7 @@ public:
 	virtual const QDateTime& expirationDate() const noexcept = 0;
 	virtual const QString& userName() const noexcept = 0;
 	virtual const QString& email() const noexcept = 0;
+	virtual const QByteArray& serialNumber() const noexcept = 0;
 
 	// signals
 	virtual void licenseChanged(int reason) const = 0;
@@ -51,12 +52,10 @@ public:
 	virtual const QDateTime& expirationDate() const noexcept override;
 	virtual const QString& userName() const noexcept override;
 	virtual const QString& email() const noexcept override;
+	virtual const QByteArray& serialNumber() const noexcept override;
 
 	// signals
 	Q_SIGNAL virtual void licenseChanged(int reason) const override;
-
-protected:
-	virtual void timerEvent(QTimerEvent* event) override;
 
 private:
 	Q_INVOKABLE void onSubscription(const IResponse& response);
@@ -76,6 +75,7 @@ private:
 	QDateTime m_expirationDate;
 	QString m_userName;
 	QString m_email;
+	QByteArray m_serialNumber;
 };
 
 }

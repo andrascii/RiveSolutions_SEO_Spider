@@ -2,10 +2,13 @@
 
 #include "ui_lookup_lineedit_widget.h"
 
+namespace Common
+{
+class IStatisticCounter;
+}
+
 namespace SeoSpider
 {
-
-class IStatisticCounter;
 
 class LookupLineEditWidget : public QFrame, protected Ui::LookupLineEditWidget
 {
@@ -38,7 +41,7 @@ private:
 		ProcessShow
 	};
 
-	IStatisticCounter* m_counter;
+	Common::IStatisticCounter* m_counter;
 	QParallelAnimationGroup* m_clearButtonAnimation;
 	AnimationProcess m_animationProcess;
 };

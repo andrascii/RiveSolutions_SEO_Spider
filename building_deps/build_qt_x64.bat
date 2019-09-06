@@ -26,7 +26,7 @@ if not exist qt5 (
 cd qt5
 git fetch
 git checkout 5.10
-perl init-repository
+perl init-repository -f
 git clean -dfx
 git submodule foreach "git clean -dfx"
 set path=c:\jom;%path%

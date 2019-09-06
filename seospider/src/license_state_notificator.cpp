@@ -55,10 +55,14 @@ void LicenseStateNotificator::onLicenseStateChanged(int reason)
 		}
 		case ILicenseStateObserver::ReasonSerialNumberBlacklisted:
 		{
+			ILicenseStateObserver* licenseStateObserver = ServiceLocator::instance()->service<ILicenseStateObserver>();
+			const auto message = tr("Unfortunately we detected that your license serial number has been used before on a different computer! "
+				"Please send an email from your address %0 to %1 and we'll reset your licence state.")
+				.arg(licenseStateObserver->email(), "support@rivesolutions.com");
+
 			Dialog::showDeferredMessageBoxDialog(
 				popupHeader,
-				tr("Unfortunately we detected that your license serial number is now blacklisted! "
-					"You can notify us about it if you don't understand why this happened."),
+				message,
 				QDialogButtonBox::Ok);
 
 			break;

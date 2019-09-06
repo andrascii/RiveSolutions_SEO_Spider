@@ -1,6 +1,6 @@
 #pragma once
 
-namespace SeoSpider
+namespace Common
 {
 
 class IStatisticCounter

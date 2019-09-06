@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "abstract_filter_page.h"
 #include "table_view.h"
 #include "summary_model.h"
@@ -32,14 +31,14 @@ AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWi
 	, m_webSiteDataWidget(webSiteDataWidget)
 	, m_summaryFilterTableView(new TableView(this, true, false, false))
 	, m_summaryFilterModel(new SummaryModel(this))
-	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterTableView, m_summaryFilterModel, devicePixelRatioF(), this))
+	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterTableView, m_summaryFilterModel, this))
 	, m_splitter(new QSplitter(this))
+	, m_isFirstShow(true)
 	, m_info(new FilterInfoWidget(this))
+	, m_columnsLookupLineEditWidget(nullptr)
+	, m_lookupLineEditWidget(nullptr)
 	, m_currentSelectedRow(-1)
 	, m_currentStorageType(CrawlerEngine::StorageType::BeginEnumStorageType)
-    , m_isFirstShow(true)
-    , m_columnsLookupLineEditWidget(nullptr)
-    , m_lookupLineEditWidget(nullptr)
 {
 	m_summaryFilterTableView->setModel(m_summaryFilterModel);
 	m_summaryFilterTableView->setViewModel(m_summaryFilterViewModel);
@@ -237,7 +236,7 @@ void AbstractFilterPage::onSummaryViewSelectionChanged(const QItemSelection& sel
 		setCurrentStorageDescriptors(row, newSelectedStorage ? newSelectedStorage->storageType : CrawlerEngine::StorageType::BeginEnumStorageType);
 
 		const auto typeString = storageAdapterTypeStringFromEnum(summaryFilterModel()->storageAdapterType(index));
-		StatisticCounter showCounter(QString("%1_%2FilterShowCounter").arg(pageName()).arg(typeString));
+		Common::StatisticCounter showCounter(QString("%1_%2FilterShowCounter").arg(pageName()).arg(typeString));
 		showCounter.increment();
 
 		AbstractFilterPage::hasFilterSelection(row);

@@ -20,15 +20,20 @@ public:
 	virtual SerialNumberData serialNumberData() const override;
 	virtual SerialNumberStates serialNumberStates() const override;
 
+	void requestSerialNumberData(const RequesterSharedPtr& requester);
+
 private:
 	virtual void timerEvent(QTimerEvent* event) override;
+	virtual void verifyKey();
 
 	void onLoadingDone(Requester* requester, const DownloadResponse& response);
+	void respondSerialNumberData();
 
 private:
 	SerialNumberData m_data;
 	QByteArray m_validSerialNumber;
 	RequesterWrapper m_verifyKeyRequester;
+	QList<RequesterWeakPtr> m_requesters;
 };
 
 }

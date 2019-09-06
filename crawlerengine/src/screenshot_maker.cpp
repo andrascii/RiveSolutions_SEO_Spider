@@ -8,6 +8,7 @@
 #include "url.h"
 #include "rpc_factory.h"
 #include "irpc_socket.h"
+#include "statistic_counter.h"
 
 namespace
 {
@@ -28,6 +29,7 @@ ScreenshotMaker::ScreenshotMaker(QObject* parent)
 	, m_sharedMemory(s_sharedMemoryKey)
 	, m_timerId(0)
 	, m_isActive(false)
+	, m_screenshotMakerCrashedAtLeastOnce(false)
 {
 	ensureScreenshotMakerIsAlive();
 	ensureConnection();
@@ -137,6 +139,14 @@ bool ScreenshotMaker::ensureScreenshotMakerIsAlive(int attemptsCount)
 		{
 			INFOLOG << "screenshotmaker was started";
 			break;
+		}
+
+		if (!m_screenshotMakerCrashedAtLeastOnce)
+		{
+			m_screenshotMakerCrashedAtLeastOnce = true;
+			Common::StatisticCounter exportCounter(QString("ScreenShotMakerCrash"));
+			exportCounter.increment();
+
 		}
 	}
 

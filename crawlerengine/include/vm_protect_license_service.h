@@ -15,6 +15,7 @@ public:
 	virtual SerialNumberStates setSerialNumber(const QByteArray& serialNumber) override;
 	virtual SerialNumberData serialNumberData() const override;
 	virtual SerialNumberStates serialNumberStates() const override;
+	virtual void requestSerialNumberData(const RequesterSharedPtr& requester) override;
 };
 
 }
