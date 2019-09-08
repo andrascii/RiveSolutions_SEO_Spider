@@ -39,6 +39,8 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAllColumns()
 	return QVector<ParsedPageInfo::Column>()
 		<< ParsedPageInfo::Column::UrlColumn
 		<< ParsedPageInfo::Column::UrlLengthColumn
+		<< ParsedPageInfo::Column::LinksOnThisPageCountColumn
+		<< ParsedPageInfo::Column::LinksToThisPageCountColumn
 		<< ParsedPageInfo::Column::ContentTypeColumn
 		<< ParsedPageInfo::Column::StatusCodeColumn
 		<< ParsedPageInfo::Column::SchemeColumn
@@ -76,6 +78,8 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 		{
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::LinksOnThisPageCountColumn
+				<< ParsedPageInfo::Column::LinksToThisPageCountColumn
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::ContentTypeColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn

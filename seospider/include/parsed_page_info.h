@@ -58,6 +58,7 @@ public:
 		FirstH2LengthColumn,
 		SecondH2LengthColumn,
 		LinksOnThisPageCountColumn,
+		LinksToThisPageCountColumn,
 		LinksToThisPageColumn,
 
 		// !!!!!!!!!!!!!!!!!!! add new length enumerators above this!!!!!!!!!!!!!!!!!!!
@@ -130,6 +131,7 @@ private:
 	QVariant acceptPageHash() const;
 	QVariant acceptImageSizeKb() const;
 	QVariant acceptLinksOnThisPageCount() const;
+	QVariant acceptLinksToThisPageCount() const;
 	QVariant acceptLinksToThisPage() const;
 	QVariant acceptResponseTime() const;
 

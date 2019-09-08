@@ -1696,6 +1696,10 @@ You can change this counter in the settings &quot;Settings =&gt; Google Analytic
         <translation>Этот фильтр хранит страницы, на которых не был найден счетчик Google Analytics с номером %1.
 Вы можете изменить номер счетчика для поиска в настройках &quot;Настройки =&gt; Настройки Google Analytics&quot;.</translation>
     </message>
+    <message>
+        <source>Links Count To This Page</source>
+        <translation>Количество ссылок на страницу</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
