@@ -302,7 +302,7 @@ SitemapChangeFreq SiteMap::frequencyByDate(const QDateTime& now, const QDateTime
 	const qint64 msecs = pageDate.msecsTo(now);
 
 	const QList<qint64> keys = s_mapping.keys();
-	auto it = qLowerBound(keys, msecs);
+	auto it = std::lower_bound(keys.cbegin(), keys.cend(), msecs);
 	if (it == keys.cend())
 	{
 		return SitemapChangeFreq::Never;
