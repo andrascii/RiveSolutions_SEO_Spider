@@ -62,10 +62,10 @@ int PageViewModel::marginLeft(const QModelIndex& index) const noexcept
 
 int PageViewModel::marginRight(const QModelIndex& index) const noexcept
 {
-    if (index.column() == 0)
-    {
-        return Common::Helpers::pointsToPixels(0) * devicePixelRatio();
-    }
+	if (index.column() == 0)
+	{
+		return Common::Helpers::pointsToPixels(0) * devicePixelRatio();
+	}
 
 	return Common::Helpers::pointsToPixels(2) * devicePixelRatio();
 }
@@ -73,7 +73,7 @@ int PageViewModel::marginRight(const QModelIndex& index) const noexcept
 QPixmap PageViewModel::pixmap(const QModelIndex& index) const noexcept
 {
 	const PageModel* model =
-		static_cast<const PageModel*>(AbstractViewModel::model());
+	Common::Helpers::fast_cast<const PageModel*>(AbstractViewModel::model());
 
 	static QPixmap s_emptyPixmap;
 
@@ -103,20 +103,19 @@ QPixmap PageViewModel::pixmap(const QModelIndex& index) const noexcept
 QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
 	const PageModel* model =
-		static_cast<const PageModel*>(AbstractViewModel::model());
+		Common::Helpers::fast_cast<const PageModel*>(AbstractViewModel::model());
 
 	const QPixmap& pix = pixmap(index);
-	const int visualRectHeight = itemVisualRect.height();
 
-	const int offsetByY = (visualRectHeight - pix.height()) / 2;
+	const int offsetByY = (itemVisualRect.height() - pix.height()) / 2;
 
 	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
 	{
 		return itemVisualRect.adjusted(
-		    itemVisualRect.width() / devicePixelRatio() - Common::Helpers::pointsToPixels(20),
-		    0,
-		    0,
-		    0);
+			itemVisualRect.width() / devicePixelRatio() - Common::Helpers::pointsToPixels(20),
+			offsetByY / 2,
+			0,
+			0);
 	}
 
 	return itemVisualRect.adjusted(itemVisualRect.width() + Common::Helpers::pointsToPixels(3), offsetByY, 0, 0);
@@ -129,7 +128,7 @@ QString PageViewModel::displayData(const QModelIndex& index, const QRect& itemVi
 	const QString displayData = index.data(Qt::DisplayRole).toString();
 
 	const int pixmapOccupiedWidth = index.row() == hoveredIndex().row() ?
-	    itemVisualRect.width() - pixmapPosition(index, itemVisualRect).x() : 0;
+		itemVisualRect.width() - pixmapPosition(index, itemVisualRect).x() : 0;
 
 	QFontMetrics fontMetrics(font(index));
 	return fontMetrics.elidedText(displayData, Qt::ElideRight, itemVisualRect.width() - pixmapOccupiedWidth);
@@ -137,14 +136,14 @@ QString PageViewModel::displayData(const QModelIndex& index, const QRect& itemVi
 
 QRect PageViewModel::displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-    if (index.column() == 0)
-    {
-        return itemVisualRect.adjusted(
-            marginLeft(index),
-            marginTop(index),
-            -marginRight(index) - itemVisualRect.width() / 2,
-            -marginBottom(index));
-    }
+	if (index.column() == 0)
+	{
+		return itemVisualRect.adjusted(
+			marginLeft(index),
+			marginTop(index),
+			-marginRight(index) - itemVisualRect.width() / 2,
+			-marginBottom(index));
+	}
 
 	return itemVisualRect.adjusted(marginLeft(index), marginTop(index), -marginRight(index), -marginBottom(index));
 }

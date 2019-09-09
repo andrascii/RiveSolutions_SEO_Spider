@@ -81,6 +81,7 @@ void LicenseHandler::getSerialNumberData(const RequesterSharedPtr& requester)
 			std::make_shared<GetSerialNumberDataResponse>(SerialNumberData());
 
 		ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+		return;
 	}
 
 	m_licenseService->requestSerialNumberData(requester);
