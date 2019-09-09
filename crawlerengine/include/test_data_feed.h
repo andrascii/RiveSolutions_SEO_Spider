@@ -18,7 +18,7 @@ public:
 
 	virtual QString data(const QString& column) const override
 	{
-		return m_data.value(column, QString::null);
+		return m_data.value(column, QString());
 	}
 	
 	virtual const ICustomDataFeed* dataFeed() const override
