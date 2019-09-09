@@ -241,7 +241,7 @@ void SummaryDataSet::sortItems(int storageRow, CrawlerEngine::StorageType)
 			itemRows.append(row);
 		}
 
-		qSort(itemRows.begin(), itemRows.end(), m_sortPredicate);
+		std::sort(itemRows.begin(), itemRows.end(), m_sortPredicate);
 
 		m_itemRows.clear();
 
