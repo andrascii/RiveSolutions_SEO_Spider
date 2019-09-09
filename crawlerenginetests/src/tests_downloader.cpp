@@ -244,7 +244,7 @@ std::pair<QString, QString> TestsDownloader::mapUrlToTestDataFiles(const Downloa
 
 	if (!metaFileExists || !requestedFileExists)
 	{
-		return std::make_pair(QString::null, QString::null);
+		return std::make_pair(QString(), QString());
 	}
 
 	return std::make_pair(requestedFilePath, metadataFilePath);

@@ -37,8 +37,8 @@ TEST(MetaTagTests, NoMetaDescription)
 		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QString::null, pages[0]->metaDescription);
-		EXPECT_EQ(QString::null, pages[1]->metaDescription);
+		EXPECT_EQ(QString(), pages[0]->metaDescription);
+		EXPECT_EQ(QString(), pages[1]->metaDescription);
 		cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
@@ -229,8 +229,8 @@ TEST(MetaTagTests, NoMetaKeywords)
 		cl->waitForCrawlingDone();
 		cl->checkSequencedDataCollectionConsistency();
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QString::null, pages[0]->metaKeywords);
-		EXPECT_EQ(QString::null, pages[1]->metaKeywords);
+		EXPECT_EQ(QString(), pages[0]->metaKeywords);
+		EXPECT_EQ(QString(), pages[1]->metaKeywords);
 		cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 

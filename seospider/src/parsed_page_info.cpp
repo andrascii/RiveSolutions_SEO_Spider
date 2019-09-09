@@ -51,7 +51,7 @@ QString ParsedPageInfo::itemTypeDescription(Column column)
 
 	checkColumnType(column);
 
-	return s_parsedPageColumns.value(column, QString::null);
+	return s_parsedPageColumns.value(column, QString());
 }
 
 QString ParsedPageInfo::itemTypeDescription(PageLinksColumn column)
@@ -65,7 +65,7 @@ QString ParsedPageInfo::itemTypeDescription(PageLinksColumn column)
 		{ ParsedPageInfo::PageLinksColumn::LinkParameterColumn, QObject::tr("Nofollow / Dofollow") }
 	};
 
-	return s_pageLinksColumns.value(column, QString::null);
+	return s_pageLinksColumns.value(column, QString());
 }
 
 int ParsedPageInfo::columnPrefferedSize(Column column)

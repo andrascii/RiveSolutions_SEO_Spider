@@ -33,8 +33,8 @@ TEST(TitleTests, NoTitle)
 	{
 		auto pages = cl->waitForParsedPageReceived(StorageType::EmptyTitleUrlStorageType, 2, 10, "Waiting for 2 empty title pages");
 		EXPECT_EQ(2, pages.size());
-		EXPECT_EQ(QString::null, pages[0]->title);
-		EXPECT_EQ(QString::null, pages[1]->title);
+		EXPECT_EQ(QString(), pages[0]->title);
+		EXPECT_EQ(QString(), pages[1]->title);
 		cl->waitForParsedPageReceived(StorageType::CrawledUrlStorageType, 2, 10, "Waiting for 2 crawled pages");
 	};
 
