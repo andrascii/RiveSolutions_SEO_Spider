@@ -17,6 +17,7 @@ ParsedPageInfoStorageAdapter::ParsedPageInfoStorageAdapter(
 	, m_dataCollection(dataCollection)
 	, m_associatedStorage(associatedStorage)
 	, m_storageType(storageType)
+	, m_linksToThisPageIndex(-1)
 {
 	CrawlerEngine::SequencedDataCollection* sequencedDataCollection = theApp->sequencedDataCollection();
 
@@ -54,6 +55,7 @@ QVector<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::availableColumns()
 void ParsedPageInfoStorageAdapter::setCurrentColumns(QVector<ParsedPageInfo::Column> currentColumns) noexcept
 {
 	m_currentColumns = currentColumns;
+	m_linksToThisPageIndex = m_currentColumns.indexOf(ParsedPageInfo::Column::LinksToThisPageCountColumn);
 }
 
 QVector<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::currentColumns() const noexcept
@@ -261,6 +263,10 @@ void ParsedPageInfoStorageAdapter::onPageRemoved(int row, CrawlerEngine::Storage
 	}
 
 	emit parsedPageInfoRemoved(row);
+	if (m_linksToThisPageIndex != -1)
+	{
+		emit repaintColumn(m_linksToThisPageIndex);
+	}
 }
 
 void ParsedPageInfoStorageAdapter::onPageReplaced(int row, CrawlerEngine::StorageType type)
@@ -271,6 +277,10 @@ void ParsedPageInfoStorageAdapter::onPageReplaced(int row, CrawlerEngine::Storag
 	}
 
 	emit parsedPageInfoReplaced(row);
+	if (m_linksToThisPageIndex != -1)
+	{
+		emit repaintColumn(m_linksToThisPageIndex);
+	}
 }
 
 void ParsedPageInfoStorageAdapter::onRepaintIndicesRange(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type)
@@ -289,6 +299,10 @@ void ParsedPageInfoStorageAdapter::onRepaintIndicesRange(std::pair<int, int> ind
 	const std::pair<int, int> fixedRange(std::min(currentSize - 1, indicesRange.first), std::min(currentSize - 1, indicesRange.second));
 
 	emit repaintIndicesRange(fixedRange);
+	if (m_linksToThisPageIndex != -1)
+	{
+		emit repaintColumn(m_linksToThisPageIndex);
+	}
 }
 
 }

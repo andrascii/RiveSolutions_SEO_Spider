@@ -45,6 +45,7 @@ signals:
 	virtual void parsedPageInfoRemoved(int rowIndex) const override;
 	virtual void parsedPageInfoReplaced(int rowIndex) const override;
 	virtual void repaintIndicesRange(std::pair<int, int> indicesRange) const override;
+	virtual void repaintColumn(int rowIndex) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
 
@@ -62,6 +63,7 @@ private:
 	QVector<QString> m_customColumns;
 	QString m_dataFeed;
 	CrawlerEngine::StorageType m_storageType;
+	int m_linksToThisPageIndex;
 };
 
 }

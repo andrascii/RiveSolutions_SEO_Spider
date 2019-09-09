@@ -34,6 +34,7 @@ private slots:
 	void onParsedPageInfoRemoved(int rowIndex);
 	void onParsedPageInfoReplaced(int rowIndex);
 	void onRepaintIndicesRange(std::pair<int, int> indicesRange);
+	void onRepaintColumn(int column);
 	void onAboutBeginClearingData();
 	void onAboutEndClearingData();
 

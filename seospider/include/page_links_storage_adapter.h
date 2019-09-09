@@ -35,6 +35,7 @@ signals:
 	virtual void parsedPageInfoRemoved(int rowIndex) const override;
 	virtual void parsedPageInfoReplaced(int rowIndex) const override;
 	virtual void repaintIndicesRange(std::pair<int, int> indicesRange) const override;
+	virtual void repaintColumn(int column) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
 

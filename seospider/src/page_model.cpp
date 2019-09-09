@@ -45,6 +45,7 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 		disconnect(m_storageAdapter->qobject(), SIGNAL(parsedPageInfoRemoved(int)), this, SLOT(onParsedPageInfoRemoved(int)));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(parsedPageInfoReplaced(int)), this, SLOT(onParsedPageInfoReplaced(int)));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(repaintIndicesRange(std::pair<int, int>)), this, SLOT(onRepaintIndicesRange(std::pair<int, int>)));
+		disconnect(m_storageAdapter->qobject(), SIGNAL(repaintColumn(int)), this, SLOT(onRepaintColumn(int)));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData()));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData()));
 	}
@@ -53,6 +54,7 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(parsedPageInfoRemoved(int)), this, SLOT(onParsedPageInfoRemoved(int))));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(parsedPageInfoReplaced(int)), this, SLOT(onParsedPageInfoReplaced(int))));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(repaintIndicesRange(std::pair<int, int>)), this, SLOT(onRepaintIndicesRange(std::pair<int, int>))));
+	VERIFY(connect(storageAdapter->qobject(), SIGNAL(repaintColumn(int)), this, SLOT(onRepaintColumn(int))));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData())));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData())));
 
@@ -234,6 +236,14 @@ void PageModel::onRepaintIndicesRange(std::pair<int, int> indicesRange)
 {
 	const QModelIndex startIndexChanged = index(indicesRange.first, 0);
 	const QModelIndex endIndexChanged = index(indicesRange.second, storageAdapter()->columnCount() - 1);
+
+	emit dataChanged(startIndexChanged, endIndexChanged);
+}
+
+void PageModel::onRepaintColumn(int column)
+{
+	const QModelIndex startIndexChanged = index(0, column);
+	const QModelIndex endIndexChanged = index(storageAdapter()->itemCount() - 1, column);
 
 	emit dataChanged(startIndexChanged, endIndexChanged);
 }

@@ -45,6 +45,7 @@ QString ParsedPageInfo::itemTypeDescription(Column column)
 		{ ParsedPageInfo::Column::PageHashColumn, QObject::tr("Page Hash") },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, QObject::tr("Image Size KB") },
 		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, QObject::tr("Links Count On This Page") },
+		{ ParsedPageInfo::Column::LinksToThisPageCountColumn, QObject::tr("Links Count To This Page") },
 		{ ParsedPageInfo::Column::LinksToThisPageColumn, QObject::tr("Links To This Page") },
 		{ ParsedPageInfo::Column::ResponseTimeColumn, QObject::tr("Response Time (ms)") },
 	};
@@ -102,6 +103,7 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::SecondH2LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, Common::Helpers::pointsToPixels(10) },
 		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::LinksToThisPageCountColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::LinksToThisPageColumn, Common::Helpers::pointsToPixels(100) },
 	};
 
@@ -417,6 +419,10 @@ ParsedPageInfo::MethodAcceptor ParsedPageInfo::acceptItemMethod(Column column)
 		{
 			return &ParsedPageInfo::acceptLinksOnThisPageCount;
 		}
+		case Column::LinksToThisPageCountColumn:
+		{
+			return &ParsedPageInfo::acceptLinksToThisPageCount;
+		}
 		case Column::LinksToThisPageColumn:
 		{
 			return &ParsedPageInfo::acceptLinksToThisPage;
@@ -620,6 +626,11 @@ QVariant ParsedPageInfo::acceptImageSizeKb() const
 QVariant ParsedPageInfo::acceptLinksOnThisPageCount() const
 {
 	return static_cast<qulonglong>(m_parsedPage->linksOnThisPage.size());
+}
+
+QVariant ParsedPageInfo::acceptLinksToThisPageCount() const
+{
+	return m_parsedPage->linksToThisPage.size();
 }
 
 QVariant ParsedPageInfo::acceptLinksToThisPage() const
