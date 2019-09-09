@@ -56,6 +56,7 @@ void ProjectFileStateWidget::onSessionStateCreated()
 void ProjectFileStateWidget::onSessionStateDestroyed()
 {
 	m_stateDescriptor = std::pair(false, CrawlerEngine::Session::StateNone);
+	m_projectFileNameLabel->setText("");
 }
 
 void ProjectFileStateWidget::setNameHelper()
