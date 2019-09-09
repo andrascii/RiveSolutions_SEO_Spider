@@ -40,6 +40,7 @@
 #pragma warning(disable:4251)
 #pragma warning(disable:4702)
 #pragma warning(disable:4456)
+#pragma warning(disable:4996)
 
 //
 // Qt
