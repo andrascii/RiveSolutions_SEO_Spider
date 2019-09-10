@@ -74,15 +74,17 @@ void LicenseHandler::setSerialNumber(const RequesterSharedPtr& requester)
 
 void LicenseHandler::getSerialNumberData(const RequesterSharedPtr& requester)
 {
-	if (m_licenseService != nullptr)
+	if (m_licenseService == nullptr)
 	{
 		std::shared_ptr<GetSerialNumberDataResponse> response =
 			std::make_shared<GetSerialNumberDataResponse>(SerialNumberData());
 
 		ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
-		m_licenseService->requestSerialNumberData(requester);
+		return;
 	}
+
+	m_licenseService->requestSerialNumberData(requester);
 }
 
 void LicenseHandler::getSerialNumberState(const RequesterSharedPtr& requester)
