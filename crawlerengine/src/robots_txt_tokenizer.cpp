@@ -142,7 +142,7 @@ QPair<QString, QString> RobotsTxtTokenizer::tokenizeRow(const QString& row) cons
 	if (tokenPartStringDelimeterPosition == -1)
 	{
 		// invalid row
-		return qMakePair(QString::null, QString::null);
+		return qMakePair(QString(), QString());
 	}
 
 	const QString token = row.left(tokenPartStringDelimeterPosition).trimmed().toLower();

@@ -67,7 +67,7 @@ QString SummaryModel::customDataFeed(const QModelIndex& index) const noexcept
 {
 	if (!dataAccessor())
 	{
-		return QString::null;
+		return QString();
 	}
 
 	return dataAccessor()->customDataFeed(index);

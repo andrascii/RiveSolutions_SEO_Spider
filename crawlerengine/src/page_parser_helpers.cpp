@@ -215,8 +215,8 @@ bool PageParserHelpers::isSubdomain(const Url& baseUrl, const Url& url)
 	Url baseUrlWithoutScheme = baseUrl;
 	Url targetUrlWithoutScheme = url;
 
-	baseUrlWithoutScheme.setScheme(QString::null);
-	targetUrlWithoutScheme.setScheme(QString::null);
+	baseUrlWithoutScheme.setScheme(QString());
+	targetUrlWithoutScheme.setScheme(QString());
 
 	if (baseUrlWithoutScheme.host() == targetUrlWithoutScheme.host())
 	{

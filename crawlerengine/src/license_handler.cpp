@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "license_handler.h"
 #include "handler_registry.h"
 #include "helpers.h"
@@ -81,6 +80,7 @@ void LicenseHandler::getSerialNumberData(const RequesterSharedPtr& requester)
 			std::make_shared<GetSerialNumberDataResponse>(SerialNumberData());
 
 		ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
+
 		return;
 	}
 

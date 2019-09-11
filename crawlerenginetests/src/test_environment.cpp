@@ -80,7 +80,7 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceOnThisPageOfType(const
 		Url(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
-		QString::null
+		QString()
 	};
 }
 
@@ -100,7 +100,7 @@ CrawlerEngine::ResourceLink TestEnvironment::firstResourceToThisPageOfType(const
 		Url(),
 		CrawlerEngine::LinkParameter::DofollowParameter,
 		CrawlerEngine::ResourceSource::SourceInvalid,
-		QString::null
+		QString()
 	};
 }
 
