@@ -630,7 +630,7 @@ QVariant ParsedPageInfo::acceptLinksOnThisPageCount() const
 
 QVariant ParsedPageInfo::acceptLinksToThisPageCount() const
 {
-	return m_parsedPage->linksToThisPage.size();
+	return static_cast<qulonglong>(m_parsedPage->linksToThisPage.size());
 }
 
 QVariant ParsedPageInfo::acceptLinksToThisPage() const
