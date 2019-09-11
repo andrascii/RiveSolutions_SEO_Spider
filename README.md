@@ -95,6 +95,26 @@
 
 `brew install curl`
 
+### OpenSSL
+
+`brew install openssl`
+
+### Настройка переменных окружения
+
+Теперь нужно добавить зависимости в соответствующие переменные окружения, чтобы библиотеки могли быть найдены cmake'ом.
+Открываем файл `~/.bash_profile` и добавляем туда следующие пути:
+
+1. `export PATH="path-to-the-boost-library:/usr/local/opt/qt:/usr/local/include:$PATH"`
+2. `export OPENSSL_ROOT_DIR="/usr/local/opt/openssl"`
+3. `export OPENSSL_INCLUDE_DIR="/usr/local/opt/openssl/include"`
+
+Вставить разумеется нужно свои пути.
+Но они с большой вероятностью будут такими же, как указано здесь.
+
+Вместо `path-to-the-boost-library` вставить путь до скачанного репозитория библиотеки `boost`.
+Также этот путь возможно не нужно указывтаь, так как мы уже указали в `PATH` путь до всех инклудов в системе `/usr/loca/include`.
+Я не проверял, как будет вести себя сборка проекта, если удалить из `PATH` путь до репозитория библиотеки `boost`.
+
 ## Генерация проекта для Xcode
 
 1. `git clone https://github.com/andrascii/RiveSolutions_SEO_Spider.git`
