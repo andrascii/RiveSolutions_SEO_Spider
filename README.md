@@ -62,3 +62,42 @@
 
 Все эти действия для удобства можно выполнить через FTP подключение.
 О том как подключиться к нашему хостингу можно прочитать в `README.md` файле в этом репозитории: https://github.com/andrascii/RiveSolutions_WordPress.git
+
+# Сборка под Mac OS
+
+## Для начала нужно установить зависимости
+
+### Boost
+
+На данном этапе мы вынуждены использовать кастомную сборку библиотеки `boost`.
+А именно, в составе библиотеки `boost` должна идти библиотека `container_hash` из ветки `develop`.
+Вот как выглядит процесс сборки:
+
+1. `git clone https://github.com/boostorg/boost.git`
+2. `cd boost`
+3. `gitsubmodule update --init`
+4. `cd libs/container_hash`
+5. `git checkout develop`
+6. `cd -`
+7. `./bootstrap.sh`
+8. `./b2`
+9. `./b2 install`
+
+После этого мы получим собранную и установленную в систему библиотеку `boost`.
+
+О том как удалить из системы библиотеку `boost`, собранную из исходников: https://askubuntu.com/questions/325504/ubuntu-12-04-uninstall-boost-installed-from-source
+
+### Qt
+
+`brew install qt`
+
+### cURL
+
+`brew install curl`
+
+### Генерация проекта для Xcode
+
+1. `git clone https://github.com/andrascii/RiveSolutions_SEO_Spider.git`
+2. `git checkout macos`
+3. `cmake -B build -G Xcode`
+4. Открыть проект с помощью `Xcode` в папке `build`
