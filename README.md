@@ -1,12 +1,12 @@
 # RiveSolutions SEO Spider
 
-# Installer
+# Сборка инсталлера
 
 Для компилирования инсталлера надо загрузить и установить Qt Intaller Framework https://blog.qt.io/blog/2017/12/15/qt-installer-framework-3-0-2-released/
 
 Затем задать новую системную переменную окружения `IFW_BIN_DIR = *\Qt Installer Framework 3.0.2\bin`
 
-# Build steps
+# Сборка под OS Windows
 
 Для того, чтобы успешно сгенерировать и забилдить проект, надо:
 1. Скачать deps.7z отсюда https://yadi.sk/d/I4qfKFy03TFN4g
@@ -29,36 +29,36 @@
 
 # Deploy
 
-Для создания готового инсталлера нужно вызвать билд скрипт build_solution_win32.bat или build_solution_x64.bat.
+Для создания готового инсталлера нужно вызвать билд скрипт `build_solution_win32.bat` или `build_solution_x64.bat`.
 
-После сборки откроется explorer.exe с папкой билда.
+После сборки откроется `explorer.exe` с папкой билда.
 
 В этом билде будет лежать три папки:
-1. config
-2. packages
-3. repository
+1. `config`
+2. `packages`
+3. `repository`
 
 Также рядом будут находиться два установщика:
-1. seospiderinstaller-offline.exe
-2. seospiderinstaller-online.exe
+1. `seospiderinstaller-offline.exe`
+2. `seospiderinstaller-online.exe`
 
 Соответственно это оффлайн и онлайн версия инсталляторов.
 
-# Uploading builds to hosting
+# Загрузка новых билдов на наш сервер для обновления по воздуху
 
-1. Заходим на наш хостинг на сайте jino.ru
-2. Переходим в папку domains, затем в папку rivesolutions.com
-3. В rivesolutions.com будет лежать папка downloads, заходим туда
-4. В папке downloads будут лежать папки с именами ОС, выбираем win
-5. В папке win будут находиться еще две папки - х64 и х86
-6. Заходим в ту, которая нам нужна, например в х64
-7. Из директории с полученным билдом (описанным выше) заходим в папку repository, берем оттуда файл Updates.xml 
-	и заливаем его в корень нашей х64 папки (это сигнал для скачивания апдейта).
+1. Заходим на наш хостинг на сайте `jino.ru`
+2. Переходим в папку domains, затем в папку `rivesolutions.com`
+3. В `rivesolutions.com` будет лежать папка `downloads`, заходим туда
+4. В папке `downloads` будут лежать папки с именами ОС, выбираем `win`
+5. В папке `win` будут находиться еще две папки - `х64` и `х86`
+6. Заходим в ту, которая нам нужна, например в `х64`
+7. Из директории с полученным билдом (описанным выше) заходим в папку `repository`, берем оттуда файл `Updates.xml`
+	и заливаем его в корень нашей `х64` папки (это сигнал для скачивания апдейта).
 	Именно этот файл опрашивается при запуске программы, если версия, указанная в этом файле выше версии программы, то будет показан диалог с предложением загрузки апдейта.
-8. Далее, берем папку ./repository/com.rivesolution.seospider и заливаем ее на наш хостинг по пути /domains/rivesolutions.com/downloads/win/x64
-9. Последнее действие, берем exe инсталляторы из папки с билдом и заливаем их по пути /domains/rivesolutions.com/downloads/win/x64/dist (папки win и x64 зависят от типа сборки и ОС для которой билды предназначены).
+8. Далее, берем папку `repository/com.rivesolution.seospider` и заливаем ее на наш хостинг по пути `domains/rivesolutions.com/downloads/win/x64`
+9. Последнее действие, берем exe инсталляторы из папки с билдом и заливаем их по пути `domains/rivesolutions.com/downloads/win/x64/dist` (папки `win` и `x64` зависят от типа сборки и ОС для которой билды предназначены).
 
-## Using FTP
+## Использование FTP
 
 Все эти действия для удобства можно выполнить через FTP подключение.
 О том как подключиться к нашему хостингу можно прочитать в `README.md` файле в этом репозитории: https://github.com/andrascii/RiveSolutions_WordPress.git
@@ -75,7 +75,7 @@
 
 1. `git clone https://github.com/boostorg/boost.git`
 2. `cd boost`
-3. `gitsubmodule update --init`
+3. `git submodule update --init`
 4. `cd libs/container_hash`
 5. `git checkout develop`
 6. `cd -`
@@ -95,9 +95,13 @@
 
 `brew install curl`
 
-### Генерация проекта для Xcode
+## Генерация проекта для Xcode
 
 1. `git clone https://github.com/andrascii/RiveSolutions_SEO_Spider.git`
 2. `git checkout macos`
 3. `cmake -B build -G Xcode`
 4. Открыть проект с помощью `Xcode` в папке `build`
+
+# Сборка под OS Linux
+
+Linux говно и сборок под него никогда не будет!
