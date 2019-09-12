@@ -97,7 +97,7 @@ if(MSVC)
 else()
     set_target_properties(
         ${ScreenshotMaker}
-        PROPERTIES WIN32_EXECUTABLE YES
+        PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "../seospider/"
     )
 endif()

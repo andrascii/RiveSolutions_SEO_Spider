@@ -461,6 +461,11 @@ QHeaderView QPushButton::menu-indicator#customizeColumns
 
 /*/////////////////////////////// SettingsPage ////////////////////////////////*/
 
+QFrame#settingsFrame
+{
+	border: none;
+}
+
 SeoSpider--SettingsPage
 {
 	min-width: 20em;
