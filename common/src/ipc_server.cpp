@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ipc_server.h"
+#include "ipc_socket.h"
 
 namespace
 {
@@ -34,8 +35,8 @@ bool IpcServer::listen(const QString& name)
 		PIPE_UNLIMITED_INSTANCES,
 		s_pipeBufferSize,
 		s_pipeBufferSize,		// input buffer size
-		c_connectionTimeout,	// client time-out 
-		NULL					// default security attribute 
+		c_connectionTimeout,	// client time-out
+		NULL					// default security attribute
 	);
 
 	if (INVALID_HANDLE_VALUE == pipe)
@@ -49,7 +50,7 @@ bool IpcServer::listen(const QString& name)
 	return true;
 }
 
-std::make_shared<IRpcSocket> IpcServer::nextPendingConnection()
+std::shared_ptr<IRpcSocket> IpcServer::nextPendingConnection()
 {
 	//TODO: use overlapped io
 	Q_ASSERT(m_descriptor);
@@ -61,8 +62,7 @@ std::make_shared<IRpcSocket> IpcServer::nextPendingConnection()
 		return 0;
 	}
 
-	m_socket.reset(std::make_shared<IpcSocket>(m_descriptor));
-	return m_socket.get();
+	return std::make_shared<IpcSocket>(m_descriptor);
 }
 
 }

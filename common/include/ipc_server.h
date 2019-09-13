@@ -23,7 +23,6 @@ private:
 	QString m_fullServerName;
 	QString m_errorString;
 	quintptr m_descriptor;
-    std::unique_ptr<IRpcSocket> m_socket;
 };
 
 }

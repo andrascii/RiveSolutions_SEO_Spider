@@ -2,6 +2,8 @@
 #include "irpc_socket.h"
 #include "tcp_socket.h"
 #include "tcp_server.h"
+#include "ipc_socket.h"
+#include "ipc_server.h"
 
 namespace Common
 {
@@ -16,7 +18,7 @@ std::shared_ptr<IRpcSocket> RpcFactory::createRpcSocket()
 #endif
 }
 
-static std::shared_ptr<IRpcServer> createRpcServer()
+std::shared_ptr<IRpcServer> RpcFactory::createRpcServer()
 {
 #ifdef Q_OS_WIN
     return std::make_shared<IpcServer>();
