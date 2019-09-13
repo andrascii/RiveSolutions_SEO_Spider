@@ -18,28 +18,31 @@ struct Version
 	int minor;
 	int maintenance;
 
+	friend bool operator<(const Version& lhs, const Version& rhs)
+	{
+		return lhs.major < rhs.major ||
+			(lhs.major <= rhs.major && lhs.minor < rhs.minor) ||
+			(lhs.major <= rhs.major && lhs.minor <= rhs.minor && lhs.maintenance < rhs.maintenance);
+	}
+
 	friend bool operator>(const Version& lhs, const Version& rhs)
 	{
-		return lhs.major > rhs.major ||
-			lhs.minor > rhs.minor ||
-			lhs.maintenance > rhs.maintenance;
+		return !(lhs < rhs) && lhs != rhs;
 	}
 
 	friend bool operator<=(const Version& lhs, const Version& rhs)
 	{
-		return !(lhs > rhs);
+		return lhs < rhs || lhs == rhs;
 	}
 
-	friend bool operator<(const Version& lhs, const Version& rhs)
+	friend bool operator>=(const Version& lhs, const Version& rhs)
 	{
-		return !(lhs > rhs) && lhs != rhs;
+		return lhs > rhs || lhs == rhs;
 	}
 
 	friend bool operator==(const Version& lhs, const Version& rhs)
 	{
-		return lhs.major == rhs.major && 
-			lhs.minor == rhs.minor && 
-			lhs.maintenance == rhs.maintenance;
+		return !(lhs < rhs) && !(rhs < lhs);
 	}
 
 	friend bool operator!=(const Version& lhs, const Version& rhs)

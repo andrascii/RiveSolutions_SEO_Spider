@@ -24,7 +24,18 @@ Helpers::ParsedSerialNumberData parseMySerialNumberData(const QByteArray& serial
 		return std::make_tuple(QByteArray(), QByteArray(), QDate());
 	}
 
-	const QDate date = QDate::fromString(rawDataParts[2], "dd/MM/yyyy");
+
+	const QList<QByteArray> ddMMYY = rawDataParts[2].split('/');
+	QDate date = QDate();
+	if (ddMMYY.size() == 3)
+	{
+		const QByteArray dd = ddMMYY[0].size() == 1 ? "0" + ddMMYY[0] : ddMMYY[0];
+		const QByteArray MM = ddMMYY[1].size() == 1 ? "0" + ddMMYY[1] : ddMMYY[1];
+		const QByteArray yyyy = ddMMYY[2];
+
+		date = QDate::fromString(dd + '/' + MM + '/' + yyyy, "dd/MM/yyyy");
+	}
+
 	return std::make_tuple(rawDataParts[0], rawDataParts[1], date);
 }
 
@@ -185,7 +196,8 @@ QByteArray Helpers::decryptAesKey(const QByteArray& keyBase64, const QByteArray&
 bool Helpers::isMyLicenseSerialNumber(const QByteArray& serialNumber)
 {
 	const ParsedSerialNumberData parsedSerialNumberData = parseMySerialNumberData(serialNumber);
-	return !std::get<2>(parsedSerialNumberData).isNull();
+	const QDate& date = std::get<2>(parsedSerialNumberData);
+	return !date.isNull();
 }
 
 Helpers::ParsedSerialNumberData Helpers::parseMySerialNumber(const QByteArray& serialNumber)
