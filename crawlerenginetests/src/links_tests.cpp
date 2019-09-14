@@ -24,6 +24,27 @@ TEST(LinksTests, LinkAlt)
 	env.exec();
 }
 
+TEST(LinksTests, ExcludeByRegExp)
+{
+	TestEnvironment env;
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/regexp/index.html"));
+	options.excludeUrlRegExps = ".*page-4.htm$\n.*/folder2/.*";
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		auto page4It = std::find_if(pages.cbegin(), pages.cend(), [](const ParsedPage* page) { return page->url.toDisplayString().contains("page-4.htm"); });
+		auto folder2It = std::find_if(pages.cbegin(), pages.cend(), [](const ParsedPage* page) { return page->url.toDisplayString().contains("folder2"); });
+		
+		EXPECT_EQ(page4It, pages.cend());
+		EXPECT_EQ(folder2It, pages.cend());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(LinksTests, StylesheetLink)
 {
 	TestEnvironment env;

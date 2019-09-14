@@ -431,6 +431,18 @@ void CrawlerOptions::setUserAgent(const QByteArray& value)
 	emit userAgentChanged(m_data.userAgent);
 }
 
+QString CrawlerOptions::excludeUrlRegExps() const noexcept
+{
+	return m_data.excludeUrlRegExps;
+}
+
+void CrawlerOptions::setExcludeUrlRegExps(const QString& value)
+{
+	m_data.excludeUrlRegExps = value;
+
+	emit excludeUrlRegExpsChanged(m_data.excludeUrlRegExps);
+}
+
 
 bool CrawlerOptions::searchYandexMetricaCounters() const noexcept
 {

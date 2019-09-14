@@ -169,6 +169,10 @@ public:
 	virtual void setUserAgent(const QByteArray& value) = 0;
 	virtual void userAgentChanged(const QByteArray& value) const = 0;
 
+	virtual QString excludeUrlRegExps() const noexcept = 0;
+	virtual void setExcludeUrlRegExps(const QString& value) = 0;
+	virtual void excludeUrlRegExpsChanged(const QString& value) const = 0;
+
 	// ym
 	virtual bool searchYandexMetricaCounters() const noexcept = 0;
 	virtual void setSearchYandexMetricaCounters(bool value) = 0;
