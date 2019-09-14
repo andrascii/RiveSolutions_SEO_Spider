@@ -35,6 +35,7 @@ namespace
 	const QString s_metaRobotsFlagsItemKey = QLatin1String("metaRobotsItem");
 	const QString s_metaRobotsValueKey = QLatin1String("metaRobotsValue");
 	const QString s_userAgentKey = QLatin1String("userAgent");
+	const QString s_excludeRegExpsKey = QLatin1String("excludeRegExps");
 	const QString s_responseDateKey = QLatin1String("responseDate");
 	const QString s_lastModifiedDateKey = QLatin1String("lastModifiedDate");
 	const QString s_pageSizeKilobytesKey = QLatin1String("pageSizeKilobytes");
@@ -826,6 +827,7 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeTextElement(s_pauseRangeToKey, QString::number(m_crawlerOptionsData.pauseRangeTo));
 	writer.writeTextElement(s_pauseRangeEnabledKey, QString::number(m_crawlerOptionsData.pauseRangeEnabled));
 	writer.writeTextElement(s_userAgentKey, m_crawlerOptionsData.userAgent);
+	writer.writeTextElement(s_excludeRegExpsKey, m_crawlerOptionsData.excludeUrlRegExps);
 
 	writer.writeTextElement(s_searchYandexMetricaCountersSettingsKey, QString::number(static_cast<int>(m_crawlerOptionsData.searchYandexMetricaCounters)));
 
@@ -1027,6 +1029,10 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 		else if (reader.qualifiedName() == s_userAgentKey)
 		{
 			m_crawlerOptionsData.userAgent = reader.readElementText().toUtf8();
+		}
+		else if (reader.qualifiedName() == s_excludeRegExpsKey)
+		{
+		m_crawlerOptionsData.excludeUrlRegExps = reader.readElementText();
 		}
 		else if (reader.qualifiedName() == s_searchYandexMetricaCountersSettingsKey)
 		{
