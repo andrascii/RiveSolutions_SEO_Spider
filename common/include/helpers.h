@@ -80,6 +80,10 @@ public:
             static_assert(Details::AlwaysFalse<DestinationType>::value, "Destination type must be a reference");
 		}
 	}
+	
+#ifdef Q_OS_MACOS
+	static bool amIBeingDebugged();
+#endif
 };
 
 namespace MetaHelpers

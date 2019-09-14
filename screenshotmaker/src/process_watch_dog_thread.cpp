@@ -13,13 +13,13 @@ ProcessWatchDogThread::ProcessWatchDogThread(const QString& processId, QObject* 
 void ProcessWatchDogThread::run()
 {
 #ifdef Q_OS_WIN
-    HANDLE processHandle = OpenProcess(
-	        PROCESS_QUERY_INFORMATION |
-	        PROCESS_VM_READ |
-	        PROCESS_TERMINATE |
-	        SYNCHRONIZE,
-	        FALSE,
-	        m_targetPid);
+	HANDLE processHandle = OpenProcess(
+		PROCESS_QUERY_INFORMATION |
+		PROCESS_VM_READ |
+		PROCESS_TERMINATE |
+		SYNCHRONIZE,
+		FALSE,
+		m_targetPid);
 
 	WaitForSingleObject(processHandle, INFINITE);
 #else

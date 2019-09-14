@@ -109,3 +109,9 @@ using std::size_t;
 #ifndef QT_DEBUG
 #define PRODUCTION
 #endif
+
+#ifdef Q_OS_UNIX
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/sysctl.h>
+#endif
