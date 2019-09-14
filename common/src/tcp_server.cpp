@@ -14,7 +14,12 @@ namespace Common
 bool TcpServer::listen(const QString& name)
 {
     Q_UNUSED(name);
-    return m_tcpServer.listen(QHostAddress::Any, c_defaultPort);
+	// bad solution to make this method synchronous
+    QEventLoop loop;
+    QObject::connect(&m_tcpServer, &QTcpServer::newConnection, &loop, &QEventLoop::quit);
+    m_tcpServer.listen(QHostAddress::Any, c_defaultPort);
+    loop.exec();
+    return true;
 }
 
 std::shared_ptr<IRpcSocket> TcpServer::nextPendingConnection()

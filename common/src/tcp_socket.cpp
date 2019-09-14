@@ -26,9 +26,11 @@ bool TcpSocket::connectToServer(const QString& name)
 
     if (!m_tcpSocket->waitForConnected())
     {
-        //ERRLOG << "Cannot connect to " << name << ":" << c_defaultPort;
         qDebug() << "Cannot connect to " << name << ":" << c_defaultPort;
+        return false;
     }
+
+    return true;
 }
 
 void TcpSocket::disconnectFromServer()

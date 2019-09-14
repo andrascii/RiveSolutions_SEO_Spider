@@ -14,7 +14,13 @@ namespace
 {
 
 const QString s_sharedMemoryKey("shared_screenshot_memory");
+
+#ifdef Q_OS_WIN
 const QString s_screenshotMakerChannelName("screenshot_maker_channel");
+#else
+// on Unix we use plain TCP sockets to communicate between processes
+const QString s_screenshotMakerChannelName("127.0.0.1");
+#endif
 
 }
 
@@ -190,10 +196,10 @@ void ScreenshotMaker::sendScreenshotRequest(const RequesterSharedPtr& requester)
 	if (!ensureScreenshotMakerIsAlive())
 	{
 		ERRLOG << "Cannot start screenshotmaker.exe";
-		
+
 		std::shared_ptr<TakeScreenshotResponse> response = std::make_shared<TakeScreenshotResponse>();
 		response->setError(ITakeScreenshotResponse::ErrorCannotStartScreenshotMakerProcess);
-		
+
 		ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
 		return;
