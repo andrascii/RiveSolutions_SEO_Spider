@@ -109,12 +109,11 @@ void TableView::wheelEvent(QWheelEvent* event)
 
 void TableView::resizeEvent(QResizeEvent* event)
 {
+	QTableView::resizeEvent(event);
 	if (m_model && m_model->resizePolicy())
 	{
 		m_model->resizePolicy()->resize(this);
 	}
-
-	QTableView::resizeEvent(event);
 }
 
 void TableView::leaveEvent(QEvent* event)

@@ -13,7 +13,7 @@ void ViewportPercentResizePolicy::resize(TableView* view) const noexcept
 {
 	for (int i = 0; i < m_columnsPercentSize.size(); ++i)
 	{
-		view->setColumnWidth(i, columnSize(i, view));
+		view->horizontalHeader()->resizeSection(i, columnSize(i, view));
 	}
 }
 
@@ -26,11 +26,11 @@ int ViewportPercentResizePolicy::columnSize(int column, const TableView* view) c
 	const int s_extraWidth = 0; // view border, etc
 
 	const int scrollBarWidth = view->verticalScrollBar()->isVisible() ? view->verticalScrollBar()->width() : 0;
-	const int width = view->width() - scrollBarWidth - s_extraWidth;
+	const int width = view->horizontalHeader()->width() - scrollBarWidth - s_extraWidth;
 
 	DEBUG_ASSERT(m_columnsPercentSize.size() > column);
 
-	const int columnWidth = m_columnsPercentSize[column] * width / 100;
+	const int columnWidth = m_columnsPercentSize[column] * width / 100.0;
 
 	return columnWidth;
 }
