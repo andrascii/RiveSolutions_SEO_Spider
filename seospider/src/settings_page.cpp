@@ -4,6 +4,7 @@
 #include "icontrol_adapter.h"
 #include "control_adapter_check_box.h"
 #include "control_adapter_line_edit.h"
+#include "control_adapter_text_edit.h"
 #include "control_adapter_spin_box.h"
 #include "control_adapter_combo_box.h"
 #include "control_adapter_radio_button.h"
@@ -137,6 +138,7 @@ void SettingsPage::registerMetaTypes() const
 {
 	qRegisterMetaType<ControlAdapterQCheckBox>();
 	qRegisterMetaType<ControlAdapterQLineEdit>();
+	qRegisterMetaType<ControlAdapterQPlainTextEdit>();
 	qRegisterMetaType<ControlAdapterQSpinBox>();
 	qRegisterMetaType<ControlAdapterQComboBox>();
 	qRegisterMetaType<ControlAdapterQRadioButton>();

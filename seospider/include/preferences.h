@@ -35,6 +35,7 @@ class Preferences : public QObject
 	Q_PROPERTY(bool checkCanonicals READ checkCanonicals WRITE setCheckCanonicals NOTIFY checkCanonicalsChanged);
 	Q_PROPERTY(bool crawlOutsideOfStartFolder READ crawlOutsideOfStartFolder WRITE setCrawlOutsideOfStartFolder NOTIFY crawlOutsideOfStartFolderChanged);
 	Q_PROPERTY(bool crawlMetaHrefLangLinks READ crawlMetaHrefLangLinks WRITE setCrawlMetaHrefLangLinks NOTIFY crawlMetaHrefLangLinksChanged)
+	Q_PROPERTY(QString excludeUrlRegExps READ excludeUrlRegExps WRITE setExcludeUrlRegExps NOTIFY excludeUrlRegExpsChanged)
 
 	// Crawler pause-timer properties
 	Q_PROPERTY(bool usePauseTimer READ usePauseTimer WRITE setUsePauseTimer NOTIFY usePauseTimerChanged);
@@ -199,6 +200,10 @@ public:
 	bool crawlMetaHrefLangLinks() const;
 	void setCrawlMetaHrefLangLinks(bool value);
 	Q_SIGNAL void crawlMetaHrefLangLinksChanged(bool value);
+
+	QString excludeUrlRegExps() const;
+	void setExcludeUrlRegExps(const QString& value);
+	Q_SIGNAL void excludeUrlRegExpsChanged(QString value);
 
 	bool usePauseTimer() const;
 	Q_SLOT void setUsePauseTimer(bool value);
@@ -439,6 +444,7 @@ private:
 	bool m_checkCanonicals;
 	bool m_crawlOutsideOfStartFolder;
 	bool m_crawlMetaHrefLangLinks;
+	QString m_excludedUrlRegExps;
 
 	bool m_usePauseTimer;
 	int m_fromPauseTimer;

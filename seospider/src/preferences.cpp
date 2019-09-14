@@ -274,6 +274,17 @@ void Preferences::setCrawlMetaHrefLangLinks(bool value)
 	emit crawlMetaHrefLangLinksChanged(value);
 }
 
+QString Preferences::excludeUrlRegExps() const
+{
+	return m_excludedUrlRegExps;
+}
+
+void Preferences::setExcludeUrlRegExps(const QString& value)
+{
+	m_excludedUrlRegExps = value;
+	emit excludeUrlRegExpsChanged(value);
+}
+
 bool Preferences::usePauseTimer() const
 {
 	return m_usePauseTimer;
