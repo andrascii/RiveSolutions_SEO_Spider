@@ -231,6 +231,11 @@ CrawlerWorker::SchedulePagesResult CrawlerWorker::schedulePageResourcesLoading(P
 				continue;
 			}
 
+			if (isExcludedByRegexp(resource))
+			{
+				continue;
+			}
+
 			if (resource.resourceType == ResourceType::ResourceImage)
 			{
 				resourcesGetUrlList.push_back(resource.link.url);
@@ -377,7 +382,8 @@ CrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const M
 bool CrawlerWorker::isExcludedByRegexp(const ResourceOnPage& resource) const {
 	for (auto it = m_excludeUrlRegExps.cbegin(); it != m_excludeUrlRegExps.cend(); ++it)
 	{
-		if (it->indexIn(resource.link.url.toDisplayString()) != -1)
+		const auto linkStr = resource.link.url.toDisplayString();
+		if (it->indexIn(linkStr) != -1)
 		{
 			return true;
 		}
