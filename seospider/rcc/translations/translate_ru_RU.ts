@@ -281,6 +281,14 @@ Please, be sure that you entered a valid address</source>
         <source>Check Other</source>
         <translation>Проверять другие ресурсы</translation>
     </message>
+    <message>
+        <source>&lt;strong&gt;List of regular expressions for URLs to not be crawled&lt;/strong&gt;&lt;br /&gt;Example: http://some-site.com/exclude-folder/.*&lt;br /&gt;Type regular expressions one per line</source>
+        <translation>&lt;strong&gt;Список регулярных выражений для ссылок которые должны быть пропущены в процессе краулинга&lt;/strong&gt;&lt;br /&gt;Пример: http://some-site.com/exclude-folder/.*&lt;br /&gt;Введите регулярные выражения по одному на строку</translation>
+    </message>
+    <message>
+        <source>excludeUrlRegExps</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FeedbackDialog</name>

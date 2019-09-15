@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "application.h"
 #include "software_branding.h"
 #include "splash_screen.h"
@@ -20,7 +19,6 @@
 #include "version.h"
 #include "license_state_notificator.h"
 #include "dialog.h"
-#include "seo_spider_service_api_loader.h"
 
 #ifndef PRODUCTION
 #include "style_loader.h"
@@ -30,8 +28,7 @@
 namespace
 {
 
-const QString s_riveSolutionsUserAgent =
-    QString("RiveSolutionsBot/%1 Alpha (+http://www.rivesolutions.com/)").arg(VERSION_STR);
+const QString s_riveSolutionsUserAgent = QString("RiveSolutionsBot/%1 Alpha (+http://www.rivesolutions.com/)").arg(VERSION_STR);
 
 }
 
@@ -459,12 +456,13 @@ void Application::initialize()
 	m_mainWindow.reset(new MainWindow);
 
 #if !defined(PRODUCTION)
+
 	StyleLoader::attach(QStringLiteral("styles.css"), QStringLiteral("F5"));
 	WidgetUnderMouseInfo::attach(QStringLiteral("F6"));
+
 #endif
 
-	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsLoaded,
-	    this, &Application::onAboutCrawlerOptionsChanged));
+	VERIFY(connect(m_crawler, &Crawler::crawlerOptionsLoaded, this, &Application::onAboutCrawlerOptionsChanged));
 
 	mainWindow()->init();
 
@@ -486,155 +484,57 @@ void Application::attachPreferencesToCrawlerOptions()
 {
 	ASSERT(crawler());
 
-	VERIFY(connect(preferences(), SIGNAL(limitMaxUrlLengthChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setLimitMaxUrlLength(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(limitSearchTotalChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setLimitSearchTotal(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(limitTimeoutChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setLimitTimeout(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxRedirectCountChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxRedirectsToFollow(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxParallelConnectionsChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxParallelConnections(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxLinksCountOnPageChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxLinksCountOnPage(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxDescriptionLengthChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxDescriptionLength(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(minDescriptionLengthChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMinDescriptionLength(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(minTitleLengthChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMinTitleLength(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxTitleLengthChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxTitleLength(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxImageSizeChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxImageSizeKb(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxPageSizeChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxPageSizeKb(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxImageAltTextCharsChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxImageAltTextChars(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxH1LengthCharsChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxH1LengthChars(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(maxH2LengthCharsChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setMaxH2LengthChars(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(useProxyChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setUseProxy(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(proxyAddressChanged(QString)),
-	    crawler()->options()->qobject(), SLOT(setProxyHostName(QString))));
-
-	VERIFY(connect(preferences(), SIGNAL(proxyPortChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setProxyPort(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(proxyUsernameChanged(QString)),
-	    crawler()->options()->qobject(), SLOT(setProxyUser(QString))));
-
-	VERIFY(connect(preferences(), SIGNAL(proxyPasswordChanged(QString)),
-	    crawler()->options()->qobject(), SLOT(setProxyPassword(QString))));
-
-	VERIFY(connect(preferences(), SIGNAL(checkExternalUrlsChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setCheckExternalLinks(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(followInternalNoFollowChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setFollowInternalNofollow(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(followExternalNoFollowChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setFollowExternalNofollow(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(checkCanonicalsChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setCheckCanonicals(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(checkSubdomainsChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setCheckSubdomains(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(followRobotsTxtChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setFollowRobotsTxtRules(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(crawlOutsideOfStartFolderChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setCrawlOutsideOfStartFolder(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(crawlMetaHrefLangLinksChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setCrawlMetaHrefLangLinks(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCountersChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounters(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter1Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter1(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter1IdChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setYandexMetricaCounter1Id(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter2Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter2(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter2IdChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setYandexMetricaCounter2Id(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter3Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter3(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter3IdChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setYandexMetricaCounter3Id(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter4Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter4(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter4IdChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setYandexMetricaCounter4Id(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter5Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter5(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter5IdChanged(int)),
-	    crawler()->options()->qobject(), SLOT(setYandexMetricaCounter5Id(int))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCountersChanged(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounters(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter1Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter1(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter1IdChanged(const QString&)),
-	    crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter1Id(const QString&))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter2Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter2(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter2IdChanged(const QString&)),
-	    crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter2Id(const QString&))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter3Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter3(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter3IdChanged(const QString&)),
-	    crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter3Id(const QString&))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter4Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter4(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter4IdChanged(const QString&)),
-	    crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter4Id(const QString&))));
-
-	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter5Changed(bool)),
-	    crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter5(bool))));
-
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter5IdChanged(const QString&)),
-	    crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter5Id(const QString&))));
+	VERIFY(connect(preferences(), SIGNAL(limitMaxUrlLengthChanged(int)), crawler()->options()->qobject(), SLOT(setLimitMaxUrlLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(limitSearchTotalChanged(int)), crawler()->options()->qobject(), SLOT(setLimitSearchTotal(int))));
+	VERIFY(connect(preferences(), SIGNAL(limitTimeoutChanged(int)), crawler()->options()->qobject(), SLOT(setLimitTimeout(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxRedirectCountChanged(int)), crawler()->options()->qobject(), SLOT(setMaxRedirectsToFollow(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxParallelConnectionsChanged(int)), crawler()->options()->qobject(), SLOT(setMaxParallelConnections(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxLinksCountOnPageChanged(int)), crawler()->options()->qobject(), SLOT(setMaxLinksCountOnPage(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxDescriptionLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMaxDescriptionLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(minDescriptionLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMinDescriptionLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(minTitleLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMinTitleLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxTitleLengthChanged(int)), crawler()->options()->qobject(), SLOT(setMaxTitleLength(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxImageSizeChanged(int)), crawler()->options()->qobject(), SLOT(setMaxImageSizeKb(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxPageSizeChanged(int)), crawler()->options()->qobject(), SLOT(setMaxPageSizeKb(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxImageAltTextCharsChanged(int)), crawler()->options()->qobject(), SLOT(setMaxImageAltTextChars(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxH1LengthCharsChanged(int)), crawler()->options()->qobject(), SLOT(setMaxH1LengthChars(int))));
+	VERIFY(connect(preferences(), SIGNAL(maxH2LengthCharsChanged(int)), crawler()->options()->qobject(), SLOT(setMaxH2LengthChars(int))));
+	VERIFY(connect(preferences(), SIGNAL(useProxyChanged(bool)), crawler()->options()->qobject(), SLOT(setUseProxy(bool))));
+	VERIFY(connect(preferences(), SIGNAL(proxyAddressChanged(QString)), crawler()->options()->qobject(), SLOT(setProxyHostName(QString))));
+	VERIFY(connect(preferences(), SIGNAL(proxyPortChanged(int)), crawler()->options()->qobject(), SLOT(setProxyPort(int))));
+	VERIFY(connect(preferences(), SIGNAL(proxyUsernameChanged(QString)), crawler()->options()->qobject(), SLOT(setProxyUser(QString))));
+	VERIFY(connect(preferences(), SIGNAL(proxyPasswordChanged(QString)), crawler()->options()->qobject(), SLOT(setProxyPassword(QString))));
+	VERIFY(connect(preferences(), SIGNAL(checkExternalUrlsChanged(bool)), crawler()->options()->qobject(), SLOT(setCheckExternalLinks(bool))));
+	VERIFY(connect(preferences(), SIGNAL(followInternalNoFollowChanged(bool)), crawler()->options()->qobject(), SLOT(setFollowInternalNofollow(bool))));
+	VERIFY(connect(preferences(), SIGNAL(followExternalNoFollowChanged(bool)), crawler()->options()->qobject(), SLOT(setFollowExternalNofollow(bool))));
+	VERIFY(connect(preferences(), SIGNAL(checkCanonicalsChanged(bool)), crawler()->options()->qobject(), SLOT(setCheckCanonicals(bool))));
+	VERIFY(connect(preferences(), SIGNAL(checkSubdomainsChanged(bool)), crawler()->options()->qobject(), SLOT(setCheckSubdomains(bool))));
+	VERIFY(connect(preferences(), SIGNAL(followRobotsTxtChanged(bool)), crawler()->options()->qobject(), SLOT(setFollowRobotsTxtRules(bool))));
+	VERIFY(connect(preferences(), SIGNAL(crawlOutsideOfStartFolderChanged(bool)), crawler()->options()->qobject(), SLOT(setCrawlOutsideOfStartFolder(bool))));
+	VERIFY(connect(preferences(), SIGNAL(crawlMetaHrefLangLinksChanged(bool)), crawler()->options()->qobject(), SLOT(setCrawlMetaHrefLangLinks(bool))));
+	VERIFY(connect(preferences(), SIGNAL(excludeUrlRegExpsChanged(QString)), crawler()->options()->qobject(), SLOT(setExcludeUrlRegExps(QString))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCountersChanged(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounters(bool))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter1Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter1(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter1IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter1Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter2Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter2(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter2IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter2Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter3Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter3(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter3IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter3Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter4Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter4(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter4IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter4Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchYandexMetricaCounter5Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchYandexMetricaCounter5(bool))));
+	VERIFY(connect(preferences(), SIGNAL(yandexMetricaCounter5IdChanged(int)), crawler()->options()->qobject(), SLOT(setYandexMetricaCounter5Id(int))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCountersChanged(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounters(bool))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter1Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter1(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter1IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter1Id(const QString&))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter2Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter2(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter2IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter2Id(const QString&))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter3Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter3(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter3IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter3Id(const QString&))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter4Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter4(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter4IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter4Id(const QString&))));
+	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter5Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter5(bool))));
+	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter5IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter5Id(const QString&))));
 
 	const auto mapVariantToUserAgentType = [this](const QVariant& value)
 	{
@@ -736,11 +636,7 @@ void Application::initializeStyleSheet()
 {
 	SplashScreen::showMessage("Initializing stylesheets...");
 	QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
-
-    const QString stylesheetsFile = ":/stylesheets/styles.css";
-
-	QFile styles(stylesheetsFile);
+	QFile styles(":/stylesheets/styles.css");
 
 	if (styles.open(QIODevice::ReadOnly | QIODevice::Text))
 	{

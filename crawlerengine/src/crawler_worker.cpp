@@ -14,6 +14,24 @@
 
 Q_DECLARE_METATYPE(std::vector<bool>)
 
+namespace
+{
+QVector<QRegExp> getRegExps(const QString& str)
+{
+	QVector<QRegExp> result;
+	QStringList parts = str.split("\n", QString::SkipEmptyParts);
+	for (auto it = parts.cbegin(); it != parts.cend(); ++it)
+	{
+		QRegExp regExp = QRegExp((*it).trimmed());
+		if (regExp.isValid() && !regExp.isEmpty())
+		{
+			result.push_back(regExp);
+		}
+	}
+	return result;
+}
+}
+
 namespace CrawlerEngine
 {
 
@@ -57,6 +75,7 @@ void CrawlerWorker::start(const CrawlerOptionsData& optionsData, RobotsTxtRules 
 
 	m_isRunning = true;
 	m_optionsData = optionsData;
+	m_excludeUrlRegExps = getRegExps(m_optionsData.excludeUrlRegExps);
 
 	m_pageLoader->setReceiveState(IWorkerPageLoader::CanReceivePages);
 
@@ -79,6 +98,7 @@ void CrawlerWorker::reinitOptions(const CrawlerOptionsData& optionsData, RobotsT
 
 	m_optionsLinkFilter.reset(new OptionsLinkFilter(optionsData, robotsTxtRules));
 	m_pageDataCollector->setOptions(optionsData);
+	m_excludeUrlRegExps = getRegExps(optionsData.excludeUrlRegExps);
 }
 
 void CrawlerWorker::extractUrlAndDownload()
@@ -212,6 +232,11 @@ CrawlerWorker::SchedulePagesResult CrawlerWorker::schedulePageResourcesLoading(P
 				continue;
 			}
 
+			if (isExcludedByRegexp(resource))
+			{
+				continue;
+			}
+
 			if (resource.resourceType == ResourceType::ResourceImage)
 			{
 				resourcesGetUrlList.push_back(resource.link.url);
@@ -305,8 +330,14 @@ CrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const M
 		return m_optionsData.limitMaxUrlLength == 0 ? false : resource.link.url.toDisplayString().length() > m_optionsData.limitMaxUrlLength;
 	};
 
+	const auto isExcludedByRegexp = [this](const ResourceOnPage& resource)
+	{
+		return this->isExcludedByRegexp(resource);
+	};
+
 	SchedulePagesResult result;
 
+	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isExcludedByRegexp), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isLinkBlockedByMetaRobots), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isNofollowLinkUnavailable), linkList.end());
 	linkList.erase(std::remove_if(linkList.begin(), linkList.end(), isSubdomainLinkUnavailable), linkList.end());
@@ -347,6 +378,19 @@ CrawlerWorker::handlePageLinkList(std::vector<ResourceOnPage>& linkList, const M
 	parsedPage->allResourcesOnPage = resources;
 
 	return result;
+}
+
+bool CrawlerWorker::isExcludedByRegexp(const ResourceOnPage& resource) const {
+	for (auto it = m_excludeUrlRegExps.cbegin(); it != m_excludeUrlRegExps.cend(); ++it)
+	{
+		const auto linkStr = resource.link.url.toDisplayString();
+		if (it->indexIn(linkStr) != -1)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void CrawlerWorker::onLoadingDone(const HopsChain& hopsChain,

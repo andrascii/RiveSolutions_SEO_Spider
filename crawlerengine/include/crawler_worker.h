@@ -50,6 +50,9 @@ private:
 		std::vector<ResourceOnPage> tooLongLinks;
 	};
 
+
+	bool isExcludedByRegexp(const ResourceOnPage& resource) const;
+
 	SchedulePagesResult schedulePageResourcesLoading(ParsedPagePtr& parsedPage);
 	SchedulePagesResult handlePageLinkList(std::vector<ResourceOnPage>& linkList,
 		const MetaRobotsFlagsSet& metaRobotsFlags,
@@ -82,6 +85,8 @@ private:
 	ILicenseStateObserver* m_licenseService;
 	CrawlerOptionsData m_optionsData;
 	IWorkerPageLoader* m_pageLoader;
+
+	QVector<QRegExp> m_excludeUrlRegExps;
 };
 
 }

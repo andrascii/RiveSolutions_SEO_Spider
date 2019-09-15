@@ -178,6 +178,7 @@ TEST(SerializationTests, OptionsSerialization)
 	options.pauseRangeTo = 2;
 	options.pauseRangeEnabled = true;
 	options.userAgent = "BOT";
+	options.excludeUrlRegExps = "aaaaaaaaaaaaaa\nbbbbbbbbbbbbbbbbbbbb\ncccccccccccccccc";
 	options.searchYandexMetricaCounters = true;
 	options.searchYandexMetricaCounter1 = true;
 	options.yandexMetricaCounter1Id = 1;
@@ -254,6 +255,7 @@ TEST(SerializationTests, OptionsSerialization)
 		EXPECT_EQ(crawler->options()->pauseRangeTo(), options.pauseRangeTo);
 		EXPECT_EQ(crawler->options()->pauseRangeEnabled(), options.pauseRangeEnabled);
 		EXPECT_EQ(crawler->options()->userAgent(), options.userAgent);
+		EXPECT_EQ(crawler->options()->excludeUrlRegExps(), options.excludeUrlRegExps);
 		EXPECT_EQ(crawler->options()->searchYandexMetricaCounters(), options.searchYandexMetricaCounters);
 		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter1(), options.searchYandexMetricaCounter1);
 		EXPECT_EQ(crawler->options()->yandexMetricaCounter1Id(), options.yandexMetricaCounter1Id);
