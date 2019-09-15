@@ -43,7 +43,7 @@ bool OptionsLinkFilter::checkRestriction(Restriction restriction, const LinkInfo
 
 	if (restriction == Restriction::RestrictionBlockedByFolder)
 	{
-		return !isSubdomain && !m_crawlerOptionsData.crawlOutsideOfStartFolder &&
+		return !isUrlExternal && !isSubdomain && !m_crawlerOptionsData.crawlOutsideOfStartFolder &&
 			!PageParserHelpers::isUrlInsideBaseUrlFolder(m_crawlerOptionsData.startCrawlingPage, linkInfo.url);
 	}
 
