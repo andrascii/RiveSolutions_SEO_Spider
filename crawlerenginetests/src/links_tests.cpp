@@ -45,6 +45,29 @@ TEST(LinksTests, ExcludeByRegExp)
 	env.exec();
 }
 
+TEST(LinksTests, FollowExternalLinksIfCrawlOutsideIsDisabled)
+{
+	TestEnvironment env;
+	auto options = TestEnvironment::defaultOptions(Url("http://links.com/folder2/subfolder/index.html"));
+	options.crawlOutsideOfStartFolder = false;
+	options.checkExternalLinks = true;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		auto outerIt = std::find_if(pages.cbegin(), pages.cend(), [](const ParsedPage* page) { return page->url.toDisplayString().contains("outer"); });
+		auto externalIt = std::find_if(pages.cbegin(), pages.cend(), [](const ParsedPage* page) { return page->url.toDisplayString().contains("dummy.com"); });
+
+		EXPECT_EQ(outerIt == pages.cend(), true);
+		EXPECT_EQ(externalIt == pages.cend(), false);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(LinksTests, StylesheetLink)
 {
 	TestEnvironment env;
