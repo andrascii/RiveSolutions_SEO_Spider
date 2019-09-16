@@ -40,9 +40,9 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 	const QColor& textColor = viewModel()->textColor(underlyingIndex);
 	const QString paintingText = viewModel()->displayData(underlyingIndex, pixmapRect);
 
-    painterPixmap.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
-    painterPixmap.setFont(font);
-    painterPixmap.setPen(textColor);
+	painterPixmap.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
+	painterPixmap.setFont(font);
+	painterPixmap.setPen(textColor);
 
 	if (isDecorationValid)
 	{

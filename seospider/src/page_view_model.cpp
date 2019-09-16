@@ -141,7 +141,7 @@ QRect PageViewModel::displayDataPosition(const QModelIndex& index, const QRect& 
 		return itemVisualRect.adjusted(
 			marginLeft(index),
 			marginTop(index),
-			-marginRight(index) - itemVisualRect.width() / 2,
+			-marginRight(index),
 			-marginBottom(index));
 	}
 
@@ -225,7 +225,7 @@ void PageViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 		QModelIndexList modelIndexes;
 		modelIndexes.append(makeRowIndexes(hoveredIndex()));
 		modelIndexes.append(makeRowIndexes(hoveredIndex().model()->index(
-		    hoveredIndex().row() - 1, hoveredIndex().column())));
+			hoveredIndex().row() - 1, hoveredIndex().column())));
 
 		AbstractViewModel::emitNeedToRepaintIndexes(modelIndexes);
 	}

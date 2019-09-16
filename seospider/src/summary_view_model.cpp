@@ -45,7 +45,7 @@ SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, flo
 
 int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
 {
-	return Common::Helpers::pointsToPixels(4) * devicePixelRatio();
+	return Common::Helpers::pointsToPixels(2) * devicePixelRatio();
 }
 
 int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
@@ -55,10 +55,10 @@ int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
 
 int SummaryViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
-    if (index.column() == 1)
-    {
-        return Common::Helpers::pointsToPixels(0);
-    }
+	if (index.column() == 1)
+	{
+		return Common::Helpers::pointsToPixels(0);
+	}
 
 	return Common::Helpers::pointsToPixels(3) * devicePixelRatio();
 }
