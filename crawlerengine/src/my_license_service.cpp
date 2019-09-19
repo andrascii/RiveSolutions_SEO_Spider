@@ -13,7 +13,7 @@ using namespace CrawlerEngine;
 constexpr int c_myServiceRawDataParts = 3;
 constexpr int c_hour = 30 * 60 * 1000;
 
-const QString s_verifySerialNumberUrl("https://pay.rivesolutions.com");
+const QString s_verifySerialNumberUrl("http://127.0.0.1:8000");
 const QString s_verifyPageName("verifykey");
 const QString s_userNameVariableName("username");
 const QString s_idVariableName("id");
@@ -211,7 +211,7 @@ void MyLicenseService::onLoadingDone(Requester*, const DownloadResponse& respons
 	}
     else if (statusValue == s_statusExpired)
     {
-        m_data.states.setFlag(SerialNumberState::StateSerialNumberBlacklisted);
+        m_data.states.setFlag(SerialNumberState::StateDateExpired);
     }
 
 	respondSerialNumberData();
