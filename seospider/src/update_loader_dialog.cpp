@@ -57,7 +57,7 @@ void UpdateLoaderDialog::onDownloadNowClicked()
 
 	INFOLOG << "Launch installer with url:" << repositoryUrl;
 
-	if (QProcess::startDetached("Uninstall SeoSpider.exe", { "--updater", "--setTempRepository", repositoryUrl }))
+	if (QProcess::startDetached("Uninstall SEO Spider.exe", { "--updater", "--setTempRepository", repositoryUrl }))
 	{
 		theApp->quit();
 	}
