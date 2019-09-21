@@ -238,6 +238,36 @@ GumboHtmlNode::operator bool() const
 	return m_node != nullptr;
 }
 
+IHtmlNodeCountedPtr GumboHtmlNode::parent() const
+{
+	ASSERT(!"Not implemented");
+	return IHtmlNodeCountedPtr();
+}
+
+IHtmlNodeCountedPtr GumboHtmlNode::firstChild() const
+{
+	ASSERT(!"Not implemented");
+	return IHtmlNodeCountedPtr();
+}
+
+IHtmlNodeCountedPtr GumboHtmlNode::nextSibling() const
+{
+	ASSERT(!"Not implemented");
+	return IHtmlNodeCountedPtr();
+}
+
+IHtmlNodeCountedPtr GumboHtmlNode::prevSibling() const
+{
+	ASSERT(!"Not implemented");
+	return IHtmlNodeCountedPtr();
+}
+
+int GumboHtmlNode::childIndex() const
+{
+	ASSERT(!"Not implemented");
+	return 0;
+}
+
 IHtmlNodeCountedPtr GumboHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
 {
 	DEBUG_ASSERT(m_node->type == GUMBO_NODE_ELEMENT || m_node->type == GUMBO_NODE_DOCUMENT);
@@ -413,6 +443,12 @@ IHtmlNodeCountedPtr GumboHtmlNode::childNodeByAttributesValues(TagId tagId, cons
 	}
 
 	return IHtmlNodeCountedPtr(nullptr);
+}
+
+void* GumboHtmlNode::data() const
+{
+	ASSERT(!"Not implemented");
+	return nullptr;
 }
 
 }

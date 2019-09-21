@@ -17,6 +17,11 @@ public:
 	virtual QString attribute(const QByteArray& attributeName) const override;
 	virtual bool hasAttribute(const QByteArray& attributeName) const override;
 	virtual operator bool() const override;
+	virtual IHtmlNodeCountedPtr parent() const override;
+	virtual IHtmlNodeCountedPtr firstChild() const override;
+	virtual IHtmlNodeCountedPtr nextSibling() const override;
+	virtual IHtmlNodeCountedPtr prevSibling() const override;
+	virtual int childIndex() const override;
 	virtual IHtmlNodeCountedPtr firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent = 0) const override;
 	virtual std::vector<IHtmlNodeCountedPtr> matchSubNodes(TagId tagId) const override;
 	virtual std::vector<IHtmlNodeCountedPtr> matchSubNodesInDepth(TagId tagId) const override;
@@ -25,6 +30,8 @@ public:
 	virtual QByteArray cutSubNodesAndGetPlainText() const override;
 	IHtmlNodeCountedPtr childNodeByAttributeValue(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const override;
 	IHtmlNodeCountedPtr childNodeByAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const override;
+
+	virtual void* data() const override;
 
 private:
 	void matchSubNodesInDepthHelper(std::vector<IHtmlNodeCountedPtr>& result, GumboNode* node, const std::function<bool(const IHtmlNode&)>& predicate) const;
