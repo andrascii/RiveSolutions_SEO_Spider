@@ -333,6 +333,19 @@ IHtmlNodeCountedPtr GumboHtmlParser::findNodeWithAttributesValues(IHtmlNode::Tag
 	return m_rootNode.childNodeByAttributesValues(tagId, expectedAttributes);
 }
 
+IHtmlNodeCountedPtr GumboHtmlParser::fromData(void* data) const
+{
+	Q_UNUSED(data);
+	ASSERT(!"Not implemented!");
+	return IHtmlNodeCountedPtr();
+}
+
+IHtmlNodeCountedPtr GumboHtmlParser::root() const
+{
+	ASSERT(!"Not implemented!");
+	return IHtmlNodeCountedPtr();
+}
+
 QByteArray GumboHtmlParser::htmlPageContent() const
 {
 	return m_htmlPage;

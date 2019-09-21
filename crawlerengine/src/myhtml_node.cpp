@@ -241,6 +241,63 @@ MyHtmlNode::operator bool() const
 	return m_node != nullptr;
 }
 
+IHtmlNodeCountedPtr MyHtmlNode::parent() const
+{
+	if (!m_node)
+	{
+		return nullptr;
+	}
+
+	myhtml_tree_node_t* node = myhtml_node_parent(m_node);
+	return Common::make_counted<MyHtmlNode>(node);
+}
+
+IHtmlNodeCountedPtr MyHtmlNode::firstChild() const
+{
+	if (!m_node)
+	{
+		return nullptr;
+	}
+
+	myhtml_tree_node_t* node = myhtml_node_child(m_node);
+	return Common::make_counted<MyHtmlNode>(node);
+}
+
+IHtmlNodeCountedPtr MyHtmlNode::nextSibling() const
+{
+	if (!m_node)
+	{
+		return nullptr;
+	}
+
+	myhtml_tree_node_t* node = myhtml_node_next(m_node);
+	return Common::make_counted<MyHtmlNode>(node);
+}
+
+IHtmlNodeCountedPtr MyHtmlNode::prevSibling() const
+{
+	if (!m_node)
+	{
+		return nullptr;
+	}
+
+	myhtml_tree_node_t* node = myhtml_node_prev(m_node);
+	return Common::make_counted<MyHtmlNode>(node);
+}
+
+int MyHtmlNode::childIndex() const
+{
+	myhtml_tree_node_t* node = myhtml_node_prev(m_node);
+	int index = 0;
+	while (node != nullptr) 
+	{
+		node = myhtml_node_prev(node);
+		index += 1;
+	}
+
+	return index;
+}
+
 IHtmlNodeCountedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
 {
 	startIndexWhithinParent;
@@ -381,6 +438,11 @@ IHtmlNodeCountedPtr MyHtmlNode::childNodeByAttributesValues(TagId tagId, const s
 	}
 
 	return nullptr;
+}
+
+void* MyHtmlNode::data() const
+{
+	return (void*)m_node;
 }
 
 void MyHtmlNode::matchSubNodesInDepthHelper(myhtml_tree_node_t* node, 

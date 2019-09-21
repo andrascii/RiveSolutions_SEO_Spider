@@ -27,6 +27,8 @@ public:
 	virtual std::vector<IHtmlNodeCountedPtr> matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const override;
 	virtual IHtmlNodeCountedPtr findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const override;
 	virtual IHtmlNodeCountedPtr findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const override;
+	virtual IHtmlNodeCountedPtr fromData(void* data) const override;
+	virtual IHtmlNodeCountedPtr root() const override;
 
 private:
 	std::vector<LinkInfo> getLinkRelUrl(const GumboNode* node, const char* relValue, ResourceSource source, const char* requiredAttribute = nullptr, bool getFirstValueOnly = true) const;

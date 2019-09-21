@@ -190,6 +190,11 @@ public:
 
 	virtual operator bool() const = 0;
 
+	virtual IHtmlNodeCountedPtr parent() const = 0;
+	virtual IHtmlNodeCountedPtr firstChild() const = 0;
+	virtual IHtmlNodeCountedPtr nextSibling() const = 0;
+	virtual IHtmlNodeCountedPtr prevSibling() const = 0;
+	virtual int childIndex() const = 0;
 	virtual IHtmlNodeCountedPtr firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent = 0) const = 0;
 	virtual std::vector<IHtmlNodeCountedPtr> matchSubNodes(TagId tagId) const = 0;
 	virtual std::vector<IHtmlNodeCountedPtr> matchSubNodesInDepth(TagId tagId) const = 0;
@@ -198,6 +203,8 @@ public:
 	virtual QByteArray cutSubNodesAndGetPlainText() const = 0;
 	virtual IHtmlNodeCountedPtr childNodeByAttributeValue(TagId tagId, std::pair<const char*, const char*> expectedAttributes) const = 0;
 	virtual IHtmlNodeCountedPtr childNodeByAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const = 0;
+
+	virtual void* data() const = 0;
 };
 
 }
