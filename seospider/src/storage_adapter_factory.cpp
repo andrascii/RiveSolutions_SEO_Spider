@@ -355,6 +355,12 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumn
 				<< ParsedPageInfo::Column::SchemeColumn
 				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
+
+        case StorageAdapterType::StorageAdapterTypeDataExtraction:
+        {
+            return QVector<ParsedPageInfo::Column>()
+                << ParsedPageInfo::Column::UrlColumn;
+        }
 	}
 
 	ASSERT(!"Invalid type");

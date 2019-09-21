@@ -36,6 +36,7 @@
 #include "all_pages_page.h"
 #include "all_resources_page.h"
 #include "audit_report_page.h"
+#include "data_extraction_page.h"
 #include "yandex_metrica_settings_widget.h"
 #include "google_analytics_settings_widget.h"
 #include "data_extraction_settings_widget.h"
@@ -598,7 +599,8 @@ void MainWindow::createAndSetCentralWidget()
 	m_contentFrame->addPage(new SiteAuditPage, true);
 	m_contentFrame->addPage(new AllPagesPage);
 	m_contentFrame->addPage(new AllResourcesPage);
-	m_contentFrame->addPage(new AuditReportPage);
+    m_contentFrame->addPage(new AuditReportPage);
+    m_contentFrame->addPage(new DataExtractionPage);
 
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);
