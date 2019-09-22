@@ -30,9 +30,12 @@ TEST(XPathTests, Simple)
 	QXmlQuery xmlQuery(QXmlQuery::XQuery10);
 
 	QXmlNodeModelIndex startNode = model.rootIndex();
-	xmlQuery.bindVariable("queryRoot", startNode);
+	xmlQuery.bindVariable("doc", startNode);
+	xmlQuery.setQuery("$doc//a/string()", QUrl("https://google.com"));
 
-	xmlQuery.setQuery(QString("//a/text()"));
+	
+	//xmlQuery.setQuery(QString("//a/text()"));
+	//xmlQuery.setFocus(QXmlItem(startNode));
 
 	QString result;
 	xmlQuery.evaluateTo(&result);

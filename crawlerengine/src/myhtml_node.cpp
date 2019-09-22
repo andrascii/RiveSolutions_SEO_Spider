@@ -249,7 +249,11 @@ IHtmlNodeCountedPtr MyHtmlNode::parent() const
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_parent(m_node);
-	return Common::make_counted<MyHtmlNode>(node);
+	if (node != nullptr)
+	{
+		return Common::make_counted<MyHtmlNode>(node);
+	}
+	return IHtmlNodeCountedPtr();
 }
 
 IHtmlNodeCountedPtr MyHtmlNode::firstChild() const
@@ -260,7 +264,11 @@ IHtmlNodeCountedPtr MyHtmlNode::firstChild() const
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_child(m_node);
-	return Common::make_counted<MyHtmlNode>(node);
+	if (node != nullptr)
+	{
+		return Common::make_counted<MyHtmlNode>(node);
+	}
+	return IHtmlNodeCountedPtr();
 }
 
 IHtmlNodeCountedPtr MyHtmlNode::nextSibling() const
@@ -271,7 +279,11 @@ IHtmlNodeCountedPtr MyHtmlNode::nextSibling() const
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_next(m_node);
-	return Common::make_counted<MyHtmlNode>(node);
+	if (node != nullptr)
+	{
+		return Common::make_counted<MyHtmlNode>(node);
+	}
+	return IHtmlNodeCountedPtr();
 }
 
 IHtmlNodeCountedPtr MyHtmlNode::prevSibling() const
@@ -282,7 +294,11 @@ IHtmlNodeCountedPtr MyHtmlNode::prevSibling() const
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_prev(m_node);
-	return Common::make_counted<MyHtmlNode>(node);
+	if (node != nullptr)
+	{
+		return Common::make_counted<MyHtmlNode>(node);
+	}
+	return IHtmlNodeCountedPtr();
 }
 
 int MyHtmlNode::childIndex() const
