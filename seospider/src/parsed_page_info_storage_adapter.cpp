@@ -46,7 +46,7 @@ void ParsedPageInfoStorageAdapter::setAvailableColumns(QVector<ParsedPageInfo::C
 	m_availableColumns = availableColumns;
 }
 
-QVector<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::availableColumns() const noexcept
+const QVector<ParsedPageInfo::Column>& ParsedPageInfoStorageAdapter::availableColumns() const noexcept
 {
 	return m_availableColumns;
 }
@@ -57,7 +57,7 @@ void ParsedPageInfoStorageAdapter::setCurrentColumns(QVector<ParsedPageInfo::Col
 	m_linksToThisPageIndex = m_currentColumns.indexOf(ParsedPageInfo::Column::LinksToThisPageCountColumn);
 }
 
-QVector<ParsedPageInfo::Column> ParsedPageInfoStorageAdapter::currentColumns() const noexcept
+const QVector<ParsedPageInfo::Column>& ParsedPageInfoStorageAdapter::currentColumns() const noexcept
 {
 	return m_currentColumns;
 }

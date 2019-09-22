@@ -20,9 +20,9 @@ public:
 	);
 
 	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept override;
-	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept override;
+	virtual const QVector<ParsedPageInfo::Column>& availableColumns() const noexcept override;
 	virtual void setCurrentColumns(QVector<ParsedPageInfo::Column> currentColumns) noexcept override;
-	virtual QVector<ParsedPageInfo::Column> currentColumns() const noexcept override;
+	virtual const QVector<ParsedPageInfo::Column>& currentColumns() const noexcept override;
 	virtual void setCustomDataFeed(const QString& customDataFeed) noexcept override;
 	virtual QString columnDescription(int columnIndex) const noexcept override;
 	virtual int columnWidth(int columnNumber) const noexcept override;

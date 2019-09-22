@@ -43,10 +43,10 @@ class IParsedPageStorageAdapter : public IStorageAdapter
 {
 public:
 	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept = 0;
-	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept = 0;
+	virtual const QVector<ParsedPageInfo::Column>& availableColumns() const noexcept = 0;
 
 	virtual void setCurrentColumns(QVector<ParsedPageInfo::Column> currentColumns) noexcept = 0;
-	virtual QVector<ParsedPageInfo::Column> currentColumns() const noexcept = 0;
+	virtual const QVector<ParsedPageInfo::Column>& currentColumns() const noexcept = 0;
 
 	virtual void setCustomDataFeed(const QString& cunstomDataFeed) noexcept = 0;
 };
