@@ -24,10 +24,11 @@ TEST(XPathTests, Simple)
 		"</body>"
 		"</html>";
 
-	parser.parseHtmlPage(html, ResponseHeaders());
-	HtmlNodeModel model(&parser);
 
 	QXmlQuery xmlQuery(QXmlQuery::XQuery10);
+
+	parser.parseHtmlPage(html, ResponseHeaders());
+	HtmlNodeModel model(xmlQuery.namePool(), &parser);
 
 	QXmlNodeModelIndex startNode = model.rootIndex();
 	xmlQuery.bindVariable("doc", startNode);
@@ -39,7 +40,7 @@ TEST(XPathTests, Simple)
 
 	QString result;
 	xmlQuery.evaluateTo(&result);
-	EXPECT_EQ(QString("1"), result);
+	EXPECT_EQ(QString("1"), result.trimmed());
 }
 
 }

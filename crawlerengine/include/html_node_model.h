@@ -11,7 +11,7 @@ class IHtmlParser;
 class HtmlNodeModel : public QAbstractXmlNodeModel
 {
 public:
-	HtmlNodeModel(const IHtmlParser* parser);
+	HtmlNodeModel(QXmlNamePool pool, const IHtmlParser* parser);
 	virtual ~HtmlNodeModel() = default;
 
 	virtual QUrl baseUri(const QXmlNodeModelIndex& index) const override;
@@ -38,6 +38,7 @@ private:
 
 private:
 	const IHtmlParser* m_parser;
+	mutable QXmlNamePool m_pool;
 };
 
 }

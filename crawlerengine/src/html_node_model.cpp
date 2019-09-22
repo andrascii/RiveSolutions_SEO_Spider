@@ -25,179 +25,195 @@ QVector<void*> path(const IHtmlNodeCountedPtr& node, const IHtmlNodeCountedPtr& 
 	return result;
 }
 
-QXmlNamePool s_pool;
-/*
-TagIdHtml,
-TagIdHead,
-TagIdTitle,
-TagIdBase,
-TagIdLink,
-TagIdMeta,
-TagIdStyle,
-TagIdScript,
-TagIdNoScript,
-TagIdTemplate,
-TagIdBody,
-TagIdArticle,
-TagIdSection,
-TagIdNav,
-TagIdAside,
-TagIdH1,
-TagIdH2,
-TagIdH3,
-TagIdH4,
-TagIdH5,
-TagIdH6,
-TagIdHGroup,
-TagIdHeader,
-TagIdFooter,
-TagIdAddress,
-TagIdP,
-TagIdHr,
-TagIdPre,
-TagIdBlockQuote,
-TagIdOl,
-TagIdUl,
-TagIdLi,
-TagIdDl,
-TagIdDt,
-TagIdDd,
-TagIdFigure,
-TagIdFigCaption,
-TagIdMain,
-TagIdDiv,
-TagIdA,
-TagIdEm,
-TagIdStrong,
-TagIdSmall,
-TagIdS,
-TagIdCite,
-TagIdQ,
-TagIdDfn,
-TagIdAbbr,
-TagIdData,
-TagIdTime,
-TagIdCode,
-TagIdVar,
-TagIdSamp,
-TagIdKbd,
-TagIdSub,
-TagIdSup,
-TagIdI,
-TagIdB,
-TagIdU,
-TagIdMark,
-TagIdRuby,
-TagIdRt,
-TagIdRp,
-TagIdBdi,
-TagIdBdo,
-TagIdSpan,
-TagIdBr,
-TagIdWbr,
-TagIdIns,
-TagIdDel,
-TagIdImage,
-TagIdImg,
-TagIdIframe,
-TagIdEmbed,
-TagIdObject,
-TagIdParam,
-TagIdVideo,
-TagIdAudio,
-TagIdSource,
-TagIdTrack,
-TagIdCanvas,
-TagIdMap,
-TagIdArea,
-TagIdMath,
-TagIdMi,
-TagIdMo,
-TagIdMn,
-TagIdMs,
-TagIdMtext,
-TagIdMglyph,
-TagIdMalignMark,
-TagIdAnnotationXml,
-TagIdSvg,
-TagIdForeignObject,
-TagIdDesc,
-TagIdTable,
-TagIdCaption,
-TagIdColGroup,
-TagIdCol,
-TagIdTbody,
-TagIdThead,
-TagIdTfoot,
-TagIdTr,
-TagIdTd,
-TagIdTh,
-TagIdForm,
-TagIdFieldSet,
-TagIdLegend,
-TagIdLabel,
-TagIdInput,
-TagIdButton,
-TagIdSelect,
-TagIdDataList,
-TagIdOptGroup,
-TagIdOption,
-TagIdTextArea,
-TagIdKeygen,
-TagIdOutput,
-TagIdProgress,
-TagIdMeter,
-TagIdDetails,
-TagIdSummary,
-TagIdMenu,
-TagIdMenuItem,
-TagIdApplet,
-TagIdAcronym,
-TagIdBgSound,
-TagIdDir,
-TagIdFrame,
-TagIdFrameSet,
-TagIdNoFrames,
-TagIdIsIndex,
-TagIdListing,
-TagIdXmp,
-TagIdNextId,
-TagIdNoEmbed,
-TagIdPlainText,
-TagIdRb,
-TagIdStrike,
-TagIdBaseFont,
-TagIdBig,
-TagIdBlink,
-TagIdCenter,
-TagIdFont,
-TagIdMarquee,
-TagIdMulticol,
-TagIdNoBr,
-TagIdSpacer,
-TagIdTt,
-TagIdRtc,
-TagIdUnknown
-*/
 QMap<IHtmlNode::TagId, QString> s_tagToName
 {
-	{ IHtmlNode::TagIdA, "a" }
-	// TODO: add the rest
+	{ IHtmlNode::TagIdA, "a" },
+	{ IHtmlNode::TagIdHtml, "html" },
+	{ IHtmlNode::TagIdHead, "head" },
+	{ IHtmlNode::TagIdTitle, "title" },
+	{ IHtmlNode::TagIdBase, "base" },
+	{ IHtmlNode::TagIdBody, "body" },
+	{ IHtmlNode::TagIdLink, "link" },
+	{ IHtmlNode::TagIdMeta, "meta" },
+	{ IHtmlNode::TagIdStyle, "style" },
+	{ IHtmlNode::TagIdScript, "script" },
+	{ IHtmlNode::TagIdNoScript, "noscript" },
+	{ IHtmlNode::TagIdTemplate, "template" },
+	{ IHtmlNode::TagIdArticle, "article" },
+	{ IHtmlNode::TagIdSection, "section" },
+	{ IHtmlNode::TagIdNav, "nav" },
+	{ IHtmlNode::TagIdAside, "aside" },
+	{ IHtmlNode::TagIdH1, "h1" },
+	{ IHtmlNode::TagIdH2, "h2" },
+	{ IHtmlNode::TagIdH3, "h3" },
+	{ IHtmlNode::TagIdH4, "h4" },
+	{ IHtmlNode::TagIdH5, "h5" },
+	{ IHtmlNode::TagIdH6, "h6" },
+	{ IHtmlNode::TagIdHGroup, "group" },
+	{ IHtmlNode::TagIdHeader, "header" },
+	{ IHtmlNode::TagIdFooter, "footer" },
+	{ IHtmlNode::TagIdAddress, "address" },
+	{ IHtmlNode::TagIdP, "ip" },
+	{ IHtmlNode::TagIdHr, "hr" },
+	{ IHtmlNode::TagIdPre, "pre" },
+	{ IHtmlNode::TagIdBlockQuote, "blockquote" },
+	{ IHtmlNode::TagIdOl, "ol" },
+	{ IHtmlNode::TagIdUl, "ul" },
+	{ IHtmlNode::TagIdLi, "li" },
+	{ IHtmlNode::TagIdDl, "dl" },
+	{ IHtmlNode::TagIdDt, "dt" },
+	{ IHtmlNode::TagIdDd, "dd" },
+	{ IHtmlNode::TagIdFigure, "figure" },
+	{ IHtmlNode::TagIdFigCaption, "caption" },
+	{ IHtmlNode::TagIdMain, "main" },
+	{ IHtmlNode::TagIdDiv, "div" },
+	{ IHtmlNode::TagIdA, "a" },
+	{ IHtmlNode::TagIdEm, "em" },
+	{ IHtmlNode::TagIdStrong, "strong" },
+	{ IHtmlNode::TagIdSmall, "small" },
+	{ IHtmlNode::TagIdS, "s" },
+	{ IHtmlNode::TagIdCite, "cite" },
+	{ IHtmlNode::TagIdQ, "q" },
+	{ IHtmlNode::TagIdDfn, "fn" },
+	{ IHtmlNode::TagIdAbbr, "abbr" },
+	{ IHtmlNode::TagIdData, "data" },
+	{ IHtmlNode::TagIdTime, "time" },
+	{ IHtmlNode::TagIdCode, "code" },
+	{ IHtmlNode::TagIdVar, "var" },
+	{ IHtmlNode::TagIdSamp, "samp" },
+	{ IHtmlNode::TagIdKbd, "kbd" },
+	{ IHtmlNode::TagIdSub, "sub"},
+	{ IHtmlNode::TagIdSup, "sup"},
+	{ IHtmlNode::TagIdI, "i"},
+	{ IHtmlNode::TagIdB, "b"},
+	{ IHtmlNode::TagIdU, "u"},
+	{ IHtmlNode::TagIdMark, "mark"},
+	{ IHtmlNode::TagIdRuby, "ruby"},
+	{ IHtmlNode::TagIdRt, "rt"},
+	{ IHtmlNode::TagIdRp, "rp"},
+	{ IHtmlNode::TagIdBdi, "bdi"},
+	{ IHtmlNode::TagIdBdo, "bdo"},
+	{ IHtmlNode::TagIdSpan, "span"},
+	{ IHtmlNode::TagIdBr, "br"},
+	{ IHtmlNode::TagIdWbr, "wbr"},
+	{ IHtmlNode::TagIdIns, "ins"},
+	{ IHtmlNode::TagIdDel, "del"},
+	{ IHtmlNode::TagIdImage, "image"},
+	{ IHtmlNode::TagIdImg, "img"},
+	{ IHtmlNode::TagIdIframe, "iframe"},
+	{ IHtmlNode::TagIdEmbed, "embed"},
+	{ IHtmlNode::TagIdObject, "object"},
+	{ IHtmlNode::TagIdParam, "param"},
+	{ IHtmlNode::TagIdVideo, "video"},
+	{ IHtmlNode::TagIdAudio, "audio"},
+	{ IHtmlNode::TagIdSource, "source"},
+	{ IHtmlNode::TagIdTrack, "track"},
+	{ IHtmlNode::TagIdCanvas, "canvas"},
+	{ IHtmlNode::TagIdMap, "map"},
+	{ IHtmlNode::TagIdArea, "area"},
+	{ IHtmlNode::TagIdMath, "math"},
+	{ IHtmlNode::TagIdMi, "mi"},
+	{ IHtmlNode::TagIdMo, "mo"},
+	{ IHtmlNode::TagIdMn, "mn"},
+	{ IHtmlNode::TagIdMs, "ms"},
+	{ IHtmlNode::TagIdMtext, "mtext"},
+	{ IHtmlNode::TagIdMglyph, "mglyph"},
+	{ IHtmlNode::TagIdMalignMark, "malgnmark"},
+	{ IHtmlNode::TagIdAnnotationXml, "annotationxml"},
+	{ IHtmlNode::TagIdSvg, "svg"},
+	{ IHtmlNode::TagIdForeignObject, "foreignobject"},
+	{ IHtmlNode::TagIdDesc, "desc"},
+	{ IHtmlNode::TagIdTable, "table"},
+	{ IHtmlNode::TagIdCaption, "caption"},
+	{ IHtmlNode::TagIdColGroup, "colgroup"},
+	{ IHtmlNode::TagIdCol, "col"},
+	{ IHtmlNode::TagIdTbody, "tbody"},
+	{ IHtmlNode::TagIdThead, "thead"},
+	{ IHtmlNode::TagIdTfoot, "tfoot"},
+	{ IHtmlNode::TagIdTr, "tr"},
+	{ IHtmlNode::TagIdTd, "td"},
+	{ IHtmlNode::TagIdTh, "th"},
+	{ IHtmlNode::TagIdForm, "form"},
+	{ IHtmlNode::TagIdFieldSet, "fieldset"},
+	{ IHtmlNode::TagIdLegend, "legend"},
+	{ IHtmlNode::TagIdLabel, "label"},
+	{ IHtmlNode::TagIdInput, "input"},
+	{ IHtmlNode::TagIdButton, "button"},
+	{ IHtmlNode::TagIdSelect, "select"},
+	{ IHtmlNode::TagIdDataList, "datalist"},
+	{ IHtmlNode::TagIdOptGroup, "optgroup"},
+	{ IHtmlNode::TagIdOption, "option"},
+	{ IHtmlNode::TagIdTextArea, "textarea"},
+	{ IHtmlNode::TagIdKeygen, "keygen"},
+	{ IHtmlNode::TagIdOutput, "output"},
+	{ IHtmlNode::TagIdProgress, "progress"},
+	{ IHtmlNode::TagIdMeter, "meter"},
+	{ IHtmlNode::TagIdDetails, "details"},
+	{ IHtmlNode::TagIdSummary, "summary"},
+	{ IHtmlNode::TagIdMenu, "menu"},
+	{ IHtmlNode::TagIdMenuItem, "menuitem"},
+	{ IHtmlNode::TagIdApplet, "applet"},
+	{ IHtmlNode::TagIdAcronym, "acronym"},
+	{ IHtmlNode::TagIdBgSound, "sound"},
+	{ IHtmlNode::TagIdDir, "dir"},
+	{ IHtmlNode::TagIdFrame, "frame"},
+	{ IHtmlNode::TagIdFrameSet, "frameset"},
+	{ IHtmlNode::TagIdNoFrames, "noframes"},
+	{ IHtmlNode::TagIdIsIndex, "isindex"},
+	{ IHtmlNode::TagIdListing, "listing"},
+	{ IHtmlNode::TagIdXmp, "xmp"},
+	{ IHtmlNode::TagIdNextId, "nextid"},
+	{ IHtmlNode::TagIdNoEmbed, "noembed"},
+	{ IHtmlNode::TagIdPlainText, "plaintext"},
+	{ IHtmlNode::TagIdRb, "rgb"},
+	{ IHtmlNode::TagIdStrike, "strike"},
+	{ IHtmlNode::TagIdBaseFont, "basefont"},
+	{ IHtmlNode::TagIdBig, "big"},
+	{ IHtmlNode::TagIdBlink, "blink"},
+	{ IHtmlNode::TagIdCenter, "center"},
+	{ IHtmlNode::TagIdFont, "font"},
+	{ IHtmlNode::TagIdMarquee, "marquee"},
+	{ IHtmlNode::TagIdMulticol, "multicol"},
+	{ IHtmlNode::TagIdNoBr, "nobr"},
+	{ IHtmlNode::TagIdSpacer, "spacer"},
+	{ IHtmlNode::TagIdTt, "tt"},
+	{ IHtmlNode::TagIdRtc, "rtc"},
+	{ IHtmlNode::TagIdUnknown, "unknown"},
 };
 
-QMap<QString, IHtmlNode::TagId> s_nameToTag
+
+QMap<QString, IHtmlNode::TagId> s_nameToTag;
+
+const QString tagToName(IHtmlNode::TagId tagId)
 {
-	{ "a", IHtmlNode::TagIdA }
-	// TODO: add the rest
-};
+	const QString result = s_tagToName.value(tagId);
+	DEBUG_ASSERT(!result.isEmpty());
+	return result;
+}
+
+IHtmlNode::TagId nameToTag(const QString name)
+{
+	if (s_nameToTag.isEmpty())
+	{
+		for (auto it = s_tagToName.keyBegin(); it != s_tagToName.keyEnd(); ++it)
+		{
+			s_nameToTag.insert(s_tagToName.value(*it), *it);
+		}
+	}
+
+	DEBUG_ASSERT(s_nameToTag.contains(name));
+
+	return s_nameToTag.value(name);
+}
 
 }
 
 namespace CrawlerEngine
 {
 
-HtmlNodeModel::HtmlNodeModel(const IHtmlParser* parser)
+HtmlNodeModel::HtmlNodeModel(QXmlNamePool pool, const IHtmlParser* parser)
 	: QAbstractXmlNodeModel()
+	, m_pool(pool)
 	, m_parser(parser)
 {
 }
@@ -279,8 +295,8 @@ QUrl HtmlNodeModel::documentUri(const QXmlNodeModelIndex& n) const
 
 QXmlNodeModelIndex HtmlNodeModel::elementById(const QXmlName& id) const
 {
-	const QString tagName = id.localName(s_pool);
-	IHtmlNode::TagId tagId = s_nameToTag.value(tagName, IHtmlNode::TagIdUnknown);
+	const QString tagName = id.localName(m_pool);
+	IHtmlNode::TagId tagId = nameToTag(tagName);
 	if (tagId == IHtmlNode::TagIdUnknown)
 	{
 		return QXmlNodeModelIndex();
@@ -319,8 +335,8 @@ QXmlNodeModelIndex::NodeKind HtmlNodeModel::kind(const QXmlNodeModelIndex& ni) c
 QXmlName HtmlNodeModel::name(const QXmlNodeModelIndex& ni) const
 {
 	IHtmlNodeCountedPtr node = toHtmlNode(ni);
-	const QString name = s_tagToName.value(node->tagId(), QString());
-	return name.isEmpty() ? QXmlName() : QXmlName(s_pool, name);
+	const QString name = tagToName(node->tagId());
+	return name.isEmpty() ? QXmlName() : QXmlName(m_pool, name);
 }
 
 QVector<QXmlName> HtmlNodeModel::namespaceBindings(const QXmlNodeModelIndex& n) const
