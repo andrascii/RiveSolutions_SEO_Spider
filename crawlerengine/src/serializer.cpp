@@ -134,7 +134,51 @@ namespace
 	const QString s_yandexMetricaCounter4IdSettingsKey = QLatin1String("yandexMetricaCounter4Id");
 
 	const QString s_searchYandexMetricaCounter5SettingsKey = QLatin1String("searchYandexMetricaCounter5");
-	const QString s_yandexMetricaCounter5IdSettingsKey = QLatin1String("yandexMetricaCounter5Id");
+    const QString s_yandexMetricaCounter5IdSettingsKey = QLatin1String("yandexMetricaCounter5Id");
+
+    const QString s_extractorName1 = QLatin1String("extractorName1");
+    const QString s_extractorName2 = QLatin1String("extractorName2");
+    const QString s_extractorName3 = QLatin1String("extractorName3");
+    const QString s_extractorName4 = QLatin1String("extractorName4");
+    const QString s_extractorName5 = QLatin1String("extractorName5");
+    const QString s_extractorName6 = QLatin1String("extractorName6");
+    const QString s_extractorName7 = QLatin1String("extractorName7");
+    const QString s_extractorName8 = QLatin1String("extractorName8");
+    const QString s_extractorName9 = QLatin1String("extractorName9");
+    const QString s_extractorName10 = QLatin1String("extractorName10");
+
+    const QString s_extractorRuleType1 = QLatin1String("extractorRuleType1");
+    const QString s_extractorRuleType2 = QLatin1String("extractorRuleType2");
+    const QString s_extractorRuleType3 = QLatin1String("extractorRuleType3");
+    const QString s_extractorRuleType4 = QLatin1String("extractorRuleType4");
+    const QString s_extractorRuleType5 = QLatin1String("extractorRuleType5");
+    const QString s_extractorRuleType6 = QLatin1String("extractorRuleType6");
+    const QString s_extractorRuleType7 = QLatin1String("extractorRuleType7");
+    const QString s_extractorRuleType8 = QLatin1String("extractorRuleType8");
+    const QString s_extractorRuleType9 = QLatin1String("extractorRuleType9");
+    const QString s_extractorRuleType10 = QLatin1String("extractorRuleType10");
+
+    const QString s_extractorRule1 = QLatin1String("extractorRule1");
+    const QString s_extractorRule2 = QLatin1String("extractorRule2");
+    const QString s_extractorRule3 = QLatin1String("extractorRule3");
+    const QString s_extractorRule4 = QLatin1String("extractorRule4");
+    const QString s_extractorRule5 = QLatin1String("extractorRule5");
+    const QString s_extractorRule6 = QLatin1String("extractorRule6");
+    const QString s_extractorRule7 = QLatin1String("extractorRule7");
+    const QString s_extractorRule8 = QLatin1String("extractorRule8");
+    const QString s_extractorRule9 = QLatin1String("extractorRule9");
+    const QString s_extractorRule10 = QLatin1String("extractorRule10");
+
+    const QString s_extractionType1 = QLatin1String("extractionType1");
+    const QString s_extractionType2 = QLatin1String("extractionType2");
+    const QString s_extractionType3 = QLatin1String("extractionType3");
+    const QString s_extractionType4 = QLatin1String("extractionType4");
+    const QString s_extractionType5 = QLatin1String("extractionType5");
+    const QString s_extractionType6 = QLatin1String("extractionType6");
+    const QString s_extractionType7 = QLatin1String("extractionType7");
+    const QString s_extractionType8 = QLatin1String("extractionType8");
+    const QString s_extractionType9 = QLatin1String("extractionType9");
+    const QString s_extractionType10 = QLatin1String("extractionType10");
 
 	QString urlToString(const Url& url)
 	{
@@ -846,6 +890,46 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeTextElement(s_searchYandexMetricaCounter5SettingsKey, QString::number(static_cast<int>(m_crawlerOptionsData.searchYandexMetricaCounter5)));
 	writer.writeTextElement(s_yandexMetricaCounter5IdSettingsKey, QString::number(m_crawlerOptionsData.yandexMetricaCounter5Id));
 
+    writer.writeTextElement(s_extractorName1, m_crawlerOptionsData.extractorName1);
+    writer.writeTextElement(s_extractorName2, m_crawlerOptionsData.extractorName2);
+    writer.writeTextElement(s_extractorName3, m_crawlerOptionsData.extractorName3);
+    writer.writeTextElement(s_extractorName4, m_crawlerOptionsData.extractorName4);
+    writer.writeTextElement(s_extractorName5, m_crawlerOptionsData.extractorName5);
+    writer.writeTextElement(s_extractorName6, m_crawlerOptionsData.extractorName6);
+    writer.writeTextElement(s_extractorName7, m_crawlerOptionsData.extractorName7);
+    writer.writeTextElement(s_extractorName8, m_crawlerOptionsData.extractorName8);
+    writer.writeTextElement(s_extractorName9, m_crawlerOptionsData.extractorName9);
+    writer.writeTextElement(s_extractorName10, m_crawlerOptionsData.extractorName10);
+    writer.writeTextElement(s_extractorRuleType1, QString::number(m_crawlerOptionsData.extractorRuleType1));
+    writer.writeTextElement(s_extractorRuleType2, QString::number(m_crawlerOptionsData.extractorRuleType2));
+    writer.writeTextElement(s_extractorRuleType3, QString::number(m_crawlerOptionsData.extractorRuleType3));
+    writer.writeTextElement(s_extractorRuleType4, QString::number(m_crawlerOptionsData.extractorRuleType4));
+    writer.writeTextElement(s_extractorRuleType5, QString::number(m_crawlerOptionsData.extractorRuleType5));
+    writer.writeTextElement(s_extractorRuleType6, QString::number(m_crawlerOptionsData.extractorRuleType6));
+    writer.writeTextElement(s_extractorRuleType7, QString::number(m_crawlerOptionsData.extractorRuleType7));
+    writer.writeTextElement(s_extractorRuleType8, QString::number(m_crawlerOptionsData.extractorRuleType8));
+    writer.writeTextElement(s_extractorRuleType9, QString::number(m_crawlerOptionsData.extractorRuleType9));
+    writer.writeTextElement(s_extractorRuleType10, QString::number(m_crawlerOptionsData.extractorRuleType10));
+    writer.writeTextElement(s_extractorRule1, m_crawlerOptionsData.extractorRule1);
+    writer.writeTextElement(s_extractorRule2, m_crawlerOptionsData.extractorRule2);
+    writer.writeTextElement(s_extractorRule3, m_crawlerOptionsData.extractorRule3);
+    writer.writeTextElement(s_extractorRule4, m_crawlerOptionsData.extractorRule4);
+    writer.writeTextElement(s_extractorRule5, m_crawlerOptionsData.extractorRule5);
+    writer.writeTextElement(s_extractorRule6, m_crawlerOptionsData.extractorRule6);
+    writer.writeTextElement(s_extractorRule7, m_crawlerOptionsData.extractorRule7);
+    writer.writeTextElement(s_extractorRule8, m_crawlerOptionsData.extractorRule8);
+    writer.writeTextElement(s_extractorRule9, m_crawlerOptionsData.extractorRule9);
+    writer.writeTextElement(s_extractorRule10, m_crawlerOptionsData.extractorRule10);
+    writer.writeTextElement(s_extractionType1, QString::number(m_crawlerOptionsData.extractionType1));
+    writer.writeTextElement(s_extractionType2, QString::number(m_crawlerOptionsData.extractionType2));
+    writer.writeTextElement(s_extractionType3, QString::number(m_crawlerOptionsData.extractionType3));
+    writer.writeTextElement(s_extractionType4, QString::number(m_crawlerOptionsData.extractionType4));
+    writer.writeTextElement(s_extractionType5, QString::number(m_crawlerOptionsData.extractionType5));
+    writer.writeTextElement(s_extractionType6, QString::number(m_crawlerOptionsData.extractionType6));
+    writer.writeTextElement(s_extractionType7, QString::number(m_crawlerOptionsData.extractionType7));
+    writer.writeTextElement(s_extractionType8, QString::number(m_crawlerOptionsData.extractionType8));
+    writer.writeTextElement(s_extractionType9, QString::number(m_crawlerOptionsData.extractionType9));
+    writer.writeTextElement(s_extractionType10, QString::number(m_crawlerOptionsData.extractionType10));
 
 	writer.writeTextElement(s_robotsTxtValidKey, QString::number(
 		m_webHostInfoData.isRobotstxtValid != std::nullopt
@@ -890,226 +974,101 @@ void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 			continue;
 		}
 
-		if (reader.qualifiedName() == s_hostKey)
-		{
-			m_crawlerOptionsData.startCrawlingPage = urlFromString(reader.readElementText());
-		}
-		else if (reader.qualifiedName() == s_limitMaxUrlLengthKey)
-		{
-			m_crawlerOptionsData.limitMaxUrlLength = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_limitSearchTotalKey)
-		{
-			m_crawlerOptionsData.limitSearchTotal = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_limitTimeoutKey)
-		{
-			m_crawlerOptionsData.limitTimeout = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxRedirectsToFollowKey)
-		{
-			m_crawlerOptionsData.maxRedirectsToFollow = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxParallelConnectionsKey)
-		{
-			m_crawlerOptionsData.maxParallelConnections = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxLinksCountOnPageKey)
-		{
-			m_crawlerOptionsData.maxLinksCountOnPage = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_minTitleLengthKey)
-		{
-			m_crawlerOptionsData.minTitleLength = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxTitleLengthKey)
-		{
-			m_crawlerOptionsData.maxTitleLength = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxDescriptionLengthKey)
-		{
-			m_crawlerOptionsData.maxDescriptionLength = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_minDescriptionLengthKey)
-		{
-			m_crawlerOptionsData.minDescriptionLength = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxH1LengthCharsKey)
-		{
-			m_crawlerOptionsData.maxH1LengthChars = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxH2LengthCharsKey)
-		{
-			m_crawlerOptionsData.maxH2LengthChars = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxImageAltTextCharsKey)
-		{
-			m_crawlerOptionsData.maxImageAltTextChars = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxImageSizeKbKey)
-		{
-			m_crawlerOptionsData.maxImageSizeKb = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_maxPageSizeKbKey)
-		{
-			m_crawlerOptionsData.maxPageSizeKb = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_useProxyKey)
-		{
-			m_crawlerOptionsData.useProxy = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_proxyHostNameKey)
-		{
-			m_crawlerOptionsData.proxyHostName = reader.readElementText();
-		}
-		else if (reader.qualifiedName() == s_proxyPortKey)
-		{
-			m_crawlerOptionsData.proxyPort = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_proxyUserKey)
-		{
-			m_crawlerOptionsData.proxyUser = reader.readElementText();
-		}
-		else if (reader.qualifiedName() == s_proxyPasswordKey)
-		{
-			m_crawlerOptionsData.proxyPassword = reader.readElementText();
-		}
-		else if (reader.qualifiedName() == s_checkExternalLinksKey)
-		{
-			m_crawlerOptionsData.checkExternalLinks = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_followInternalNofollowKey)
-		{
-			m_crawlerOptionsData.followInternalNofollow = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_followExternalNofollowKey)
-		{
-			m_crawlerOptionsData.followExternalNofollow = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_checkCanonicalsKey)
-		{
-			m_crawlerOptionsData.checkCanonicals = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_checkSubdomainsKey)
-		{
-			m_crawlerOptionsData.checkSubdomains = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_crawlOutsideOfStartFolderKey)
-		{
-			m_crawlerOptionsData.crawlOutsideOfStartFolder = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_crawlMetaHrefLangLinksKey)
-		{
-			m_crawlerOptionsData.crawlMetaHrefLangLinks = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_followRobotsTxtRulesKey)
-		{
-			m_crawlerOptionsData.followRobotsTxtRules = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_userAgentToFollowKey)
-		{
-			m_crawlerOptionsData.userAgentToFollow = static_cast<UserAgentType>(reader.readElementText().toInt());
-		}
-		else if (reader.qualifiedName() == s_parserTypeFlagsKey)
-		{
-			m_crawlerOptionsData.parserTypeFlags = ParserTypeFlags(reader.readElementText().toInt());
-		}
-		else if (reader.qualifiedName() == s_pauseRangeFromKey)
-		{
-			m_crawlerOptionsData.pauseRangeFrom = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_pauseRangeToKey)
-		{
-			m_crawlerOptionsData.pauseRangeTo = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_pauseRangeEnabledKey)
-		{
-			m_crawlerOptionsData.pauseRangeEnabled = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_userAgentKey)
-		{
-			m_crawlerOptionsData.userAgent = reader.readElementText().toUtf8();
-		}
-		else if (reader.qualifiedName() == s_excludeRegExpsKey)
-		{
-		m_crawlerOptionsData.excludeUrlRegExps = reader.readElementText();
-		}
-		else if (reader.qualifiedName() == s_searchYandexMetricaCountersSettingsKey)
-		{
-			m_crawlerOptionsData.searchYandexMetricaCounters = static_cast<bool>(reader.readElementText().toInt());
-		}
-		else if (reader.qualifiedName() == s_searchYandexMetricaCounter1SettingsKey)
-		{
-			m_crawlerOptionsData.searchYandexMetricaCounter1 = static_cast<bool>(reader.readElementText().toInt());
-		}
-		else if (reader.qualifiedName() == s_yandexMetricaCounter1IdSettingsKey)
-		{
-			m_crawlerOptionsData.yandexMetricaCounter1Id = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_searchYandexMetricaCounter2SettingsKey)
-		{
-			m_crawlerOptionsData.searchYandexMetricaCounter2 = static_cast<bool>(reader.readElementText().toInt());
-		}
-		else if (reader.qualifiedName() == s_yandexMetricaCounter2IdSettingsKey)
-		{
-			m_crawlerOptionsData.yandexMetricaCounter2Id = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_searchYandexMetricaCounter3SettingsKey)
-		{
-			m_crawlerOptionsData.searchYandexMetricaCounter3 = static_cast<bool>(reader.readElementText().toInt());
-		}
-		else if (reader.qualifiedName() == s_yandexMetricaCounter3IdSettingsKey)
-		{
-			m_crawlerOptionsData.yandexMetricaCounter3Id = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_searchYandexMetricaCounter4SettingsKey)
-		{
-			m_crawlerOptionsData.searchYandexMetricaCounter4 = static_cast<bool>(reader.readElementText().toInt());
-		}
-		else if (reader.qualifiedName() == s_yandexMetricaCounter4IdSettingsKey)
-		{
-			m_crawlerOptionsData.yandexMetricaCounter4Id = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_searchYandexMetricaCounter5SettingsKey)
-		{
-			m_crawlerOptionsData.searchYandexMetricaCounter5 = static_cast<bool>(reader.readElementText().toInt());
-		}
-		else if (reader.qualifiedName() == s_yandexMetricaCounter5IdSettingsKey)
-		{
-			m_crawlerOptionsData.yandexMetricaCounter5Id = reader.readElementText().toInt();
-		}
-		else if (reader.qualifiedName() == s_robotsTxtValidKey)
-		{
-			m_webHostInfoData.isRobotstxtValid = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_robotsTxtContentKey)
-		{
-			m_webHostInfoData.robotstxtContent = reader.readElementText().toUtf8();
-		}
-		else if (reader.qualifiedName() == s_robotsTxtUrlKey)
-		{
-			m_webHostInfoData.robotstxtUrl = urlFromString(reader.readElementText());
-		}
-		else if (reader.qualifiedName() == s_siteMapValidKey)
-		{
-			m_webHostInfoData.isSiteMapValid = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_siteMapContentKey)
-		{
-			m_webHostInfoData.siteMapContent = reader.readElementText().toUtf8();
-		}
-		else if (reader.qualifiedName() == s_siteMapUrlKey)
-		{
-			m_webHostInfoData.siteMapUrl = urlFromString(reader.readElementText());
-		}
-		else if (reader.qualifiedName() == s_is404PagesSetupRightKey)
-		{
-			m_webHostInfoData.is404PagesSetupRight = reader.readElementText().toInt() == 1;
-		}
-		else if (reader.qualifiedName() == s_siteImageKey)
-		{
-			m_webHostInfoData.image = QByteArray::fromBase64(reader.readElementText().toUtf8());
-		}
+		if (reader.qualifiedName() == s_hostKey) m_crawlerOptionsData.startCrawlingPage = urlFromString(reader.readElementText());
+		else if (reader.qualifiedName() == s_limitMaxUrlLengthKey) m_crawlerOptionsData.limitMaxUrlLength = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_limitSearchTotalKey) m_crawlerOptionsData.limitSearchTotal = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_limitTimeoutKey) m_crawlerOptionsData.limitTimeout = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxRedirectsToFollowKey) m_crawlerOptionsData.maxRedirectsToFollow = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxParallelConnectionsKey) m_crawlerOptionsData.maxParallelConnections = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxLinksCountOnPageKey) m_crawlerOptionsData.maxLinksCountOnPage = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_minTitleLengthKey) m_crawlerOptionsData.minTitleLength = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxTitleLengthKey) m_crawlerOptionsData.maxTitleLength = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxDescriptionLengthKey) m_crawlerOptionsData.maxDescriptionLength = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_minDescriptionLengthKey) m_crawlerOptionsData.minDescriptionLength = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxH1LengthCharsKey) m_crawlerOptionsData.maxH1LengthChars = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxH2LengthCharsKey) m_crawlerOptionsData.maxH2LengthChars = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxImageAltTextCharsKey) m_crawlerOptionsData.maxImageAltTextChars = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxImageSizeKbKey) m_crawlerOptionsData.maxImageSizeKb = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_maxPageSizeKbKey) m_crawlerOptionsData.maxPageSizeKb = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_useProxyKey) m_crawlerOptionsData.useProxy = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_proxyHostNameKey) m_crawlerOptionsData.proxyHostName = reader.readElementText();
+		else if (reader.qualifiedName() == s_proxyPortKey) m_crawlerOptionsData.proxyPort = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_proxyUserKey) m_crawlerOptionsData.proxyUser = reader.readElementText();
+		else if (reader.qualifiedName() == s_proxyPasswordKey) m_crawlerOptionsData.proxyPassword = reader.readElementText();
+		else if (reader.qualifiedName() == s_checkExternalLinksKey) m_crawlerOptionsData.checkExternalLinks = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_followInternalNofollowKey) m_crawlerOptionsData.followInternalNofollow = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_followExternalNofollowKey) m_crawlerOptionsData.followExternalNofollow = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_checkCanonicalsKey) m_crawlerOptionsData.checkCanonicals = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_checkSubdomainsKey) m_crawlerOptionsData.checkSubdomains = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_crawlOutsideOfStartFolderKey) m_crawlerOptionsData.crawlOutsideOfStartFolder = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_crawlMetaHrefLangLinksKey) m_crawlerOptionsData.crawlMetaHrefLangLinks = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_followRobotsTxtRulesKey) m_crawlerOptionsData.followRobotsTxtRules = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_userAgentToFollowKey) m_crawlerOptionsData.userAgentToFollow = static_cast<UserAgentType>(reader.readElementText().toInt());
+		else if (reader.qualifiedName() == s_parserTypeFlagsKey) m_crawlerOptionsData.parserTypeFlags = ParserTypeFlags(reader.readElementText().toInt());
+		else if (reader.qualifiedName() == s_pauseRangeFromKey) m_crawlerOptionsData.pauseRangeFrom = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_pauseRangeToKey) m_crawlerOptionsData.pauseRangeTo = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_pauseRangeEnabledKey) m_crawlerOptionsData.pauseRangeEnabled = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_userAgentKey) m_crawlerOptionsData.userAgent = reader.readElementText().toUtf8();
+		else if (reader.qualifiedName() == s_excludeRegExpsKey) m_crawlerOptionsData.excludeUrlRegExps = reader.readElementText();
+		else if (reader.qualifiedName() == s_searchYandexMetricaCountersSettingsKey) m_crawlerOptionsData.searchYandexMetricaCounters = static_cast<bool>(reader.readElementText().toInt());
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter1SettingsKey) m_crawlerOptionsData.searchYandexMetricaCounter1 = static_cast<bool>(reader.readElementText().toInt());
+		else if (reader.qualifiedName() == s_yandexMetricaCounter1IdSettingsKey) m_crawlerOptionsData.yandexMetricaCounter1Id = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter2SettingsKey) m_crawlerOptionsData.searchYandexMetricaCounter2 = static_cast<bool>(reader.readElementText().toInt());
+		else if (reader.qualifiedName() == s_yandexMetricaCounter2IdSettingsKey) m_crawlerOptionsData.yandexMetricaCounter2Id = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter3SettingsKey) m_crawlerOptionsData.searchYandexMetricaCounter3 = static_cast<bool>(reader.readElementText().toInt());
+		else if (reader.qualifiedName() == s_yandexMetricaCounter3IdSettingsKey) m_crawlerOptionsData.yandexMetricaCounter3Id = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter4SettingsKey) m_crawlerOptionsData.searchYandexMetricaCounter4 = static_cast<bool>(reader.readElementText().toInt());
+		else if (reader.qualifiedName() == s_yandexMetricaCounter4IdSettingsKey) m_crawlerOptionsData.yandexMetricaCounter4Id = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter5SettingsKey) m_crawlerOptionsData.searchYandexMetricaCounter5 = static_cast<bool>(reader.readElementText().toInt());
+		else if (reader.qualifiedName() == s_yandexMetricaCounter5IdSettingsKey) m_crawlerOptionsData.yandexMetricaCounter5Id = reader.readElementText().toInt();
+		else if (reader.qualifiedName() == s_robotsTxtValidKey) m_webHostInfoData.isRobotstxtValid = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_robotsTxtContentKey) m_webHostInfoData.robotstxtContent = reader.readElementText().toUtf8();
+		else if (reader.qualifiedName() == s_robotsTxtUrlKey) m_webHostInfoData.robotstxtUrl = urlFromString(reader.readElementText());
+		else if (reader.qualifiedName() == s_siteMapValidKey) m_webHostInfoData.isSiteMapValid = reader.readElementText().toInt() == 1;
+		else if (reader.qualifiedName() == s_siteMapContentKey) m_webHostInfoData.siteMapContent = reader.readElementText().toUtf8();
+		else if (reader.qualifiedName() == s_siteMapUrlKey) m_webHostInfoData.siteMapUrl = urlFromString(reader.readElementText());
+		else if (reader.qualifiedName() == s_is404PagesSetupRightKey) m_webHostInfoData.is404PagesSetupRight = reader.readElementText().toInt() == 1;
+        else if (reader.qualifiedName() == s_siteImageKey) m_webHostInfoData.image = QByteArray::fromBase64(reader.readElementText().toUtf8());
+        else if (reader.qualifiedName() == s_extractorName1) m_crawlerOptionsData.extractorName1 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName2) m_crawlerOptionsData.extractorName2 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName3) m_crawlerOptionsData.extractorName3 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName4) m_crawlerOptionsData.extractorName4 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName5) m_crawlerOptionsData.extractorName5 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName6) m_crawlerOptionsData.extractorName6 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName7) m_crawlerOptionsData.extractorName7 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName8) m_crawlerOptionsData.extractorName8 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName9) m_crawlerOptionsData.extractorName9 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorName10) m_crawlerOptionsData.extractorName10 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRuleType1) m_crawlerOptionsData.extractorRuleType1 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType2) m_crawlerOptionsData.extractorRuleType2 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType3) m_crawlerOptionsData.extractorRuleType3 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType4) m_crawlerOptionsData.extractorRuleType4 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType5) m_crawlerOptionsData.extractorRuleType5 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType6) m_crawlerOptionsData.extractorRuleType6 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType7) m_crawlerOptionsData.extractorRuleType7 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType8) m_crawlerOptionsData.extractorRuleType8 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType9) m_crawlerOptionsData.extractorRuleType9 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRuleType10) m_crawlerOptionsData.extractorRuleType10 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractorRule1) m_crawlerOptionsData.extractorRule1 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule2) m_crawlerOptionsData.extractorRule2 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule3) m_crawlerOptionsData.extractorRule3 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule4) m_crawlerOptionsData.extractorRule4 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule5) m_crawlerOptionsData.extractorRule5 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule6) m_crawlerOptionsData.extractorRule6 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule7) m_crawlerOptionsData.extractorRule7 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule8) m_crawlerOptionsData.extractorRule8 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule9) m_crawlerOptionsData.extractorRule9 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractorRule10) m_crawlerOptionsData.extractorRule10 = reader.readElementText();
+        else if (reader.qualifiedName() == s_extractionType1) m_crawlerOptionsData.extractionType1 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType2) m_crawlerOptionsData.extractionType2 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType3) m_crawlerOptionsData.extractionType3 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType4) m_crawlerOptionsData.extractionType4 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType5) m_crawlerOptionsData.extractionType5 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType6) m_crawlerOptionsData.extractionType6 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType7) m_crawlerOptionsData.extractionType7 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType8) m_crawlerOptionsData.extractionType8 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType9) m_crawlerOptionsData.extractionType9 = reader.readElementText().toInt();
+        else if (reader.qualifiedName() == s_extractionType10) m_crawlerOptionsData.extractionType10 = reader.readElementText().toInt();
 	}
 }
 
