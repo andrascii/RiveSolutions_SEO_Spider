@@ -77,6 +77,7 @@
 #include <QXmlQuery>
 #include <QPointer>
 #include <QSharedMemory>
+#include <QSet>
 
 // google tests
 #include <gtest/gtest.h>
