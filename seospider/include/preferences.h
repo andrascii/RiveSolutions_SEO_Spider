@@ -692,49 +692,12 @@ private:
 	QString m_googleAnalyticsCounter5Id;
 
     // Data Extraction
-    QString m_extractorName1;
-    QString m_extractorName2;
-    QString m_extractorName3;
-    QString m_extractorName4;
-    QString m_extractorName5;
-    QString m_extractorName6;
-    QString m_extractorName7;
-    QString m_extractorName8;
-    QString m_extractorName9;
-    QString m_extractorName10;
+    static constexpr size_t c_extractorCount = 10;
 
-    int m_extractorRuleType1;
-    int m_extractorRuleType2;
-    int m_extractorRuleType3;
-    int m_extractorRuleType4;
-    int m_extractorRuleType5;
-    int m_extractorRuleType6;
-    int m_extractorRuleType7;
-    int m_extractorRuleType8;
-    int m_extractorRuleType9;
-    int m_extractorRuleType10;
-
-    QString m_extractorRule1;
-    QString m_extractorRule2;
-    QString m_extractorRule3;
-    QString m_extractorRule4;
-    QString m_extractorRule5;
-    QString m_extractorRule6;
-    QString m_extractorRule7;
-    QString m_extractorRule8;
-    QString m_extractorRule9;
-    QString m_extractorRule10;
-
-    int m_extractionType1;
-    int m_extractionType2;
-    int m_extractionType3;
-    int m_extractionType4;
-    int m_extractionType5;
-    int m_extractionType6;
-    int m_extractionType7;
-    int m_extractionType8;
-    int m_extractionType9;
-    int m_extractionType10;
+    std::array<QString, c_extractorCount> m_extractorNames;
+    std::array<int, c_extractorCount> m_extractorRuleTypes;
+    std::array<QString, c_extractorCount> m_extractorRules;
+    std::array<int, c_extractorCount> m_extractionTypes;
 };
 
 }

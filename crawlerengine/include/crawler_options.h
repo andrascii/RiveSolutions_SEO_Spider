@@ -6,6 +6,8 @@
 namespace CrawlerEngine
 {
 
+constexpr size_t c_extractorCount = 10;
+
 struct CrawlerOptionsData final
 {
 	Url startCrawlingPage;
@@ -82,51 +84,10 @@ struct CrawlerOptionsData final
 	QString googleAnalyticsCounter5Id;
 
     // Data Extraction
-    QString extractorName1;
-    QString extractorName2;
-    QString extractorName3;
-    QString extractorName4;
-    QString extractorName5;
-    QString extractorName6;
-    QString extractorName7;
-    QString extractorName8;
-    QString extractorName9;
-    QString extractorName10;
-
-    // -1 means that this extractor is disabled
-    int extractorRuleType1 = -1;
-    int extractorRuleType2 = -1;
-    int extractorRuleType3 = -1;
-    int extractorRuleType4 = -1;
-    int extractorRuleType5 = -1;
-    int extractorRuleType6 = -1;
-    int extractorRuleType7 = -1;
-    int extractorRuleType8 = -1;
-    int extractorRuleType9 = -1;
-    int extractorRuleType10 = -1;
-
-    QString extractorRule1;
-    QString extractorRule2;
-    QString extractorRule3;
-    QString extractorRule4;
-    QString extractorRule5;
-    QString extractorRule6;
-    QString extractorRule7;
-    QString extractorRule8;
-    QString extractorRule9;
-    QString extractorRule10;
-
-    // -1 means that this extractor is disabled
-    int extractionType1 = -1;
-    int extractionType2 = -1;
-    int extractionType3 = -1;
-    int extractionType4 = -1;
-    int extractionType5 = -1;
-    int extractionType6 = -1;
-    int extractionType7 = -1;
-    int extractionType8 = -1;
-    int extractionType9 = -1;
-    int extractionType10 = -1;
+    std::array<QString, c_extractorCount> extractorNames;
+    std::array<int, c_extractorCount> extractorRuleTypes;
+    std::array<QString, c_extractorCount> extractorRules;
+    std::array<int, c_extractorCount> extractionTypes;
 };
 
 class CrawlerOptions : public QObject, public ICrawlerOptions
