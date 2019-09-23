@@ -16,9 +16,6 @@ public:
 protected:
     virtual void init() override;
 
-private slots:
-    void extractorRuleTypeChanged(int index);
-
 private:
     virtual void onShow() override;
     virtual void onClose() override;

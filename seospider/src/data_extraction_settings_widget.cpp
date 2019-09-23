@@ -45,8 +45,13 @@ void DataExtractionSettingsWidget::init()
         m_dependantControls[extractorRuleTypeComboBox] =
             DependantControls{ extractorRuleLineEdit, extractionTypeComboBox };
 
+        const auto onExtractorRuleTypeChanged = [this, extractorRuleTypeComboBox](int index)
+        {
+            configureDependentControls(extractorRuleTypeComboBox, index);
+        };
+
         VERIFY(connect(extractorRuleTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &DataExtractionSettingsWidget::extractorRuleTypeChanged));
+            this, onExtractorRuleTypeChanged));
 
         extractionTypeComboBox->addItem(tr("Extract HTML Element"),
             QVariant::fromValue(CrawlerEngine::ExtractionType::TypeExtractHtmlElement));
@@ -75,14 +80,6 @@ void DataExtractionSettingsWidget::init()
         Q_UNUSED(dependantControls);
         configureDependentControls(extractorRuleType, extractorRuleType->currentIndex());
     }
-}
-
-void DataExtractionSettingsWidget::extractorRuleTypeChanged(int index)
-{
-    QComboBox* key = qobject_cast<QComboBox*>(sender());
-    ASSERT(key);
-
-    configureDependentControls(key, index);
 }
 
 void DataExtractionSettingsWidget::onShow()
