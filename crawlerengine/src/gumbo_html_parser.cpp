@@ -340,6 +340,13 @@ IHtmlNodeCountedPtr GumboHtmlParser::fromData(void* data) const
 	return IHtmlNodeCountedPtr();
 }
 
+IHtmlAttributeCountedPtr GumboHtmlParser::attributeFromData(void * data) const
+{
+	Q_UNUSED(data);
+	ASSERT(!"Not implemented!");
+	return IHtmlAttributeCountedPtr();
+}
+
 IHtmlNodeCountedPtr GumboHtmlParser::root() const
 {
 	ASSERT(!"Not implemented!");

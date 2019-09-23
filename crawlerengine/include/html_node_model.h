@@ -34,7 +34,9 @@ protected:
 
 private:
 	IHtmlNodeCountedPtr toHtmlNode(const QXmlNodeModelIndex& index) const;
+	IHtmlAttributeCountedPtr toHtmlAttribute(const QXmlNodeModelIndex& index) const;
 	QXmlNodeModelIndex fromHtmlNode(const IHtmlNodeCountedPtr& node) const;
+	QXmlNodeModelIndex fromHtmlAttribute(const IHtmlAttributeCountedPtr& attribute) const;
 
 private:
 	const IHtmlParser* m_parser;

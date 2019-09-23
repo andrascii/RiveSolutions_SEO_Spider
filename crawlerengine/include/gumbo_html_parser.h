@@ -28,6 +28,7 @@ public:
 	virtual IHtmlNodeCountedPtr findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const override;
 	virtual IHtmlNodeCountedPtr findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const override;
 	virtual IHtmlNodeCountedPtr fromData(void* data) const override;
+	virtual IHtmlAttributeCountedPtr attributeFromData(void* data) const override;
 	virtual IHtmlNodeCountedPtr root() const override;
 
 private:
