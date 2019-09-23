@@ -206,6 +206,9 @@ IHtmlNode::TagId nameToTag(const QString name)
 	return s_nameToTag.value(name);
 }
 
+int s_nodeId = 0;
+int s_attributeId = 1;
+
 }
 
 namespace CrawlerEngine
@@ -309,6 +312,11 @@ QXmlNodeModelIndex HtmlNodeModel::elementById(const QXmlName& id) const
 
 QXmlNodeModelIndex::NodeKind HtmlNodeModel::kind(const QXmlNodeModelIndex& ni) const
 {
+	if (ni.additionalData() == s_attributeId)
+	{
+		return QXmlNodeModelIndex::Attribute;
+	}
+
 	IHtmlNodeCountedPtr node = toHtmlNode(ni);
 	switch (node->type()) 
 	{
@@ -334,6 +342,13 @@ QXmlNodeModelIndex::NodeKind HtmlNodeModel::kind(const QXmlNodeModelIndex& ni) c
 
 QXmlName HtmlNodeModel::name(const QXmlNodeModelIndex& ni) const
 {
+	if (ni.additionalData() == s_attributeId)
+	{
+		IHtmlAttributeCountedPtr attribute = toHtmlAttribute(ni);
+		const QString attrName = attribute->name().toLower();
+		return  QXmlName(m_pool, attrName);
+	}
+
 	IHtmlNodeCountedPtr node = toHtmlNode(ni);
 	const QString name = tagToName(node->tagId());
 	return name.isEmpty() ? QXmlName() : QXmlName(m_pool, name);
@@ -366,6 +381,13 @@ QXmlNodeModelIndex HtmlNodeModel::root(const QXmlNodeModelIndex& n) const
 
 QString HtmlNodeModel::stringValue(const QXmlNodeModelIndex& n) const
 {
+	if (n.additionalData() == s_attributeId)
+	{
+		IHtmlAttributeCountedPtr attribute = toHtmlAttribute(n);
+		const QString attrValue = attribute->value().toLower();
+		return attrValue;
+	}
+
 	IHtmlNodeCountedPtr node = toHtmlNode(n);
 	if (node->type() == IHtmlNode::NodeTypeText)
 	{
@@ -380,19 +402,30 @@ QString HtmlNodeModel::stringValue(const QXmlNodeModelIndex& n) const
 
 QVariant HtmlNodeModel::typedValue(const QXmlNodeModelIndex& node) const
 {
+	ASSERT(node.additionalData() != s_attributeId || !"Not implemented for attributes yet");
+
 	// probably incorrect implementation
 	return stringValue(node);
 }
 
 QVector<QXmlNodeModelIndex> HtmlNodeModel::attributes(const QXmlNodeModelIndex& element) const
 {
-	Q_UNUSED(element);
-	// attributes also should be represented by QXmlNodeModelIndex, how to achieve this?
-	return QVector<QXmlNodeModelIndex>();
+	IHtmlNodeCountedPtr node = toHtmlNode(element);
+	QVector<QXmlNodeModelIndex> result;
+
+	for (int i = 0; i < node->attributesCount(); ++i)
+	{
+		IHtmlAttributeCountedPtr attr = node->attribute(i);
+		result.push_back(fromHtmlAttribute(attr));
+	}
+
+	return result;
+	
 }
 
 QXmlNodeModelIndex HtmlNodeModel::nextFromSimpleAxis(QAbstractXmlNodeModel::SimpleAxis axis, const QXmlNodeModelIndex& origin) const
 {
+	ASSERT(origin.additionalData() != s_attributeId || !"Not implemented for attributes yet");
 	IHtmlNodeCountedPtr node = toHtmlNode(origin);
 
 	switch (axis)
@@ -429,6 +462,11 @@ IHtmlNodeCountedPtr HtmlNodeModel::toHtmlNode(const QXmlNodeModelIndex& index) c
 	return m_parser->fromData((void*)index.data());
 }
 
+IHtmlAttributeCountedPtr HtmlNodeModel::toHtmlAttribute(const QXmlNodeModelIndex& index) const
+{
+	return m_parser->attributeFromData((void*)index.data());
+}
+
 QXmlNodeModelIndex HtmlNodeModel::fromHtmlNode(const IHtmlNodeCountedPtr& node) const
 {
 	if (!node) {
@@ -437,7 +475,18 @@ QXmlNodeModelIndex HtmlNodeModel::fromHtmlNode(const IHtmlNodeCountedPtr& node) 
 
 	ASSERT((void*)node->data() != nullptr);
 	
-	return createIndex(node->data());
+	return createIndex(node->data(), s_nodeId);
+}
+
+QXmlNodeModelIndex HtmlNodeModel::fromHtmlAttribute(const IHtmlAttributeCountedPtr& attribute) const
+{
+	if (!attribute) {
+		return QXmlNodeModelIndex();
+	}
+
+	ASSERT((void*)attribute->data() != nullptr);
+
+	return createIndex(attribute->data(), s_attributeId);
 }
 
 QXmlNodeModelIndex HtmlNodeModel::rootIndex() const

@@ -268,6 +268,19 @@ int GumboHtmlNode::childIndex() const
 	return 0;
 }
 
+int GumboHtmlNode::attributesCount() const
+{
+	ASSERT(!"Not implemented");
+	return 0;
+}
+
+IHtmlAttributeCountedPtr GumboHtmlNode::attribute(int index) const
+{
+	Q_UNUSED(index);
+	ASSERT(!"Not implemented");
+	return IHtmlAttributeCountedPtr();
+}
+
 IHtmlNodeCountedPtr GumboHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
 {
 	DEBUG_ASSERT(m_node->type == GUMBO_NODE_ELEMENT || m_node->type == GUMBO_NODE_DOCUMENT);

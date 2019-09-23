@@ -4,8 +4,21 @@ namespace CrawlerEngine
 {
 
 class IHtmlNode;
+class IHtmlAttribute;
 
 using IHtmlNodeCountedPtr = Common::counted_ptr<IHtmlNode>;
+using IHtmlAttributeCountedPtr = Common::counted_ptr<IHtmlAttribute>;
+
+class IHtmlAttribute
+{
+public:
+	virtual ~IHtmlAttribute() = default;
+	virtual IHtmlAttributeCountedPtr nextSibling() const = 0;
+	virtual IHtmlAttributeCountedPtr prevSibling() const = 0;
+	virtual QString name() const = 0;
+	virtual QString value() const = 0;
+	virtual void* data() const = 0;
+};
 
 class IHtmlNode
 {
@@ -195,6 +208,10 @@ public:
 	virtual IHtmlNodeCountedPtr nextSibling() const = 0;
 	virtual IHtmlNodeCountedPtr prevSibling() const = 0;
 	virtual int childIndex() const = 0;
+
+	virtual int attributesCount() const = 0;
+	virtual IHtmlAttributeCountedPtr attribute(int index) const = 0;
+
 	virtual IHtmlNodeCountedPtr firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent = 0) const = 0;
 	virtual std::vector<IHtmlNodeCountedPtr> matchSubNodes(TagId tagId) const = 0;
 	virtual std::vector<IHtmlNodeCountedPtr> matchSubNodesInDepth(TagId tagId) const = 0;

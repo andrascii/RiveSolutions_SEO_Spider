@@ -165,6 +165,49 @@ const QMap<std::size_t, IHtmlNode::TagId> s_tagIdMapping
 namespace CrawlerEngine
 {
 
+MyHtmlAttribute::MyHtmlAttribute(myhtml_tree_attr_t* attr)
+	: m_attr(attr)
+{
+	ASSERT(attr != nullptr);
+}
+
+IHtmlAttributeCountedPtr MyHtmlAttribute::nextSibling() const
+{
+	myhtml_tree_attr_t* attr = myhtml_attribute_next(m_attr);
+	if (attr == nullptr)
+	{
+		return IHtmlAttributeCountedPtr();
+	}
+
+	return Common::make_counted<MyHtmlAttribute>(attr);
+}
+
+IHtmlAttributeCountedPtr MyHtmlAttribute::prevSibling() const
+{
+	myhtml_tree_attr_t* attr = myhtml_attribute_prev(m_attr);
+	if (attr == nullptr)
+	{
+		return IHtmlAttributeCountedPtr();
+	}
+
+	return Common::make_counted<MyHtmlAttribute>(attr);
+}
+
+QString MyHtmlAttribute::name() const
+{
+	return myhtml_attribute_key(m_attr, nullptr);
+}
+
+QString MyHtmlAttribute::value() const
+{
+	return myhtml_attribute_value(m_attr, nullptr);
+}
+
+void * MyHtmlAttribute::data() const
+{
+	return (void*)m_attr;
+}
+
 MyHtmlNode::MyHtmlNode(myhtml_tree_node_t* node)
 	: m_node(node)
 {
@@ -312,6 +355,43 @@ int MyHtmlNode::childIndex() const
 	}
 
 	return index;
+}
+
+int MyHtmlNode::attributesCount() const
+{
+	if (!m_node)
+	{
+		return 0;
+	}
+	
+	myhtml_tree_attr_t* attr = myhtml_node_attribute_first(m_node);
+	int result = 0;
+	while (attr != nullptr)
+	{
+		result += 1;
+		attr = myhtml_attribute_next(attr);
+	}
+
+	return result;
+}
+
+IHtmlAttributeCountedPtr MyHtmlNode::attribute(int index) const
+{
+	DEBUG_ASSERT(index >= 0 && index < attributesCount());
+
+	myhtml_tree_attr_t* attr = myhtml_node_attribute_first(m_node);
+	while (index > 0 && attr != nullptr)
+	{
+		attr = myhtml_attribute_next(attr);
+		index -= 1;
+	}
+
+	if (attr == nullptr)
+	{
+		return IHtmlAttributeCountedPtr();
+	}
+
+	return Common::make_counted<MyHtmlAttribute>(attr);
 }
 
 IHtmlNodeCountedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const

@@ -6,6 +6,21 @@
 namespace CrawlerEngine
 {
 
+class MyHtmlAttribute final : public IHtmlAttribute
+{
+public:
+	MyHtmlAttribute(myhtml_tree_attr_t* attr);
+	~MyHtmlAttribute() = default;
+	virtual IHtmlAttributeCountedPtr nextSibling() const override;
+	virtual IHtmlAttributeCountedPtr prevSibling() const override;
+	virtual QString name() const override;
+	virtual QString value() const override;
+	virtual void* data() const override;
+
+private:
+	myhtml_tree_attr_t* m_attr;
+};
+
 class MyHtmlNode final : public IHtmlNode
 {
 public:
@@ -22,6 +37,8 @@ public:
 	virtual IHtmlNodeCountedPtr nextSibling() const override;
 	virtual IHtmlNodeCountedPtr prevSibling() const override;
 	virtual int childIndex() const override;
+	virtual int attributesCount() const override;
+	virtual IHtmlAttributeCountedPtr attribute(int index) const override;
 	virtual IHtmlNodeCountedPtr firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent = 0) const override;
 	virtual std::vector<IHtmlNodeCountedPtr> matchSubNodes(TagId tagId) const override;
 	virtual std::vector<IHtmlNodeCountedPtr> matchSubNodesInDepth(TagId tagId) const override;
