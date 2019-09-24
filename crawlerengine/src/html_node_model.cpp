@@ -402,7 +402,7 @@ QString HtmlNodeModel::stringValue(const QXmlNodeModelIndex& n) const
 
 QVariant HtmlNodeModel::typedValue(const QXmlNodeModelIndex& node) const
 {
-	ASSERT(node.additionalData() != s_attributeId || !"Not implemented for attributes yet");
+	// ASSERT(node.additionalData() != s_attributeId || !"Not implemented for attributes yet");
 
 	// probably incorrect implementation
 	return stringValue(node);
