@@ -1,6 +1,7 @@
 #include "storage_adapter_factory.h"
 #include "parsed_page_info.h"
-#include "parsed_page_info_storage_adapter.h"
+#include "flexible_links_storage_adapter.h"
+#include "data_extraction_columns.h"
 
 namespace SeoSpider
 {
@@ -11,12 +12,26 @@ IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapt
 	ASSERT(type > StorageAdapterType::StorageAdapterTypeBegin &&
 		type < StorageAdapterType::StorageAdapterTypeEnd);
 
-	const CrawlerEngine::StorageType storageType = type == StorageAdapterType::StorageAdapterTypeCustomDataFeed
-		? CrawlerEngine::CrawledUrlStorageType
-		: static_cast<CrawlerEngine::StorageType>(type);
+	const bool storageAdapterHasCustomColumns =
+		type == StorageAdapterType::StorageAdapterTypeCustomDataFeed ||
+		type == StorageAdapterType::StorageAdapterTypeDataExtraction;
 
-	IParsedPageStorageAdapter* storageAdapter = new ParsedPageInfoStorageAdapter(sequencedDataCollection,
-		sequencedDataCollection->storage(storageType), storageType);
+	const CrawlerEngine::StorageType storageType = storageAdapterHasCustomColumns ?
+		CrawlerEngine::CrawledUrlStorageType :
+		static_cast<CrawlerEngine::StorageType>(type);
+
+	IParsedPageStorageAdapter* storageAdapter = nullptr;
+
+	if (type == StorageAdapterType::StorageAdapterTypeDataExtraction)
+	{
+		storageAdapter = new FlexibleLinksStorageAdapter(sequencedDataCollection,
+			sequencedDataCollection->storage(storageType), storageType, new DataExtractionColumns);
+	}
+	else
+	{
+		storageAdapter = new ParsedPageInfoStorageAdapter(sequencedDataCollection,
+			sequencedDataCollection->storage(storageType), storageType);
+	}
 
 	storageAdapter->setCurrentColumns(defaultColumns(type));
 	storageAdapter->setAvailableColumns(parsedPageAllColumns());
@@ -356,11 +371,11 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::defaultColumns(StorageAda
 				<< ParsedPageInfo::Column::ResponseTimeColumn;
 		}
 
-        case StorageAdapterType::StorageAdapterTypeDataExtraction:
-        {
-            return QVector<ParsedPageInfo::Column>()
-                << ParsedPageInfo::Column::UrlColumn;
-        }
+		case StorageAdapterType::StorageAdapterTypeDataExtraction:
+		{
+			return QVector<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn;
+		}
 	}
 
 	ASSERT(!"Invalid type");

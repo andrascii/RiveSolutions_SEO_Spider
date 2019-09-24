@@ -41,7 +41,7 @@ ParsedPageInfoStorageAdapter::ParsedPageInfoStorageAdapter(
 		this, &ParsedPageInfoStorageAdapter::endClearData));
 }
 
-void ParsedPageInfoStorageAdapter::setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept
+void ParsedPageInfoStorageAdapter::setAvailableColumns(const QVector<ParsedPageInfo::Column>& availableColumns) noexcept
 {
 	m_availableColumns = availableColumns;
 }
@@ -51,7 +51,7 @@ const QVector<ParsedPageInfo::Column>& ParsedPageInfoStorageAdapter::availableCo
 	return m_availableColumns;
 }
 
-void ParsedPageInfoStorageAdapter::setCurrentColumns(QVector<ParsedPageInfo::Column> currentColumns) noexcept
+void ParsedPageInfoStorageAdapter::setCurrentColumns(const QVector<ParsedPageInfo::Column>& currentColumns) noexcept
 {
 	m_currentColumns = currentColumns;
 	m_linksToThisPageIndex = m_currentColumns.indexOf(ParsedPageInfo::Column::LinksToThisPageCountColumn);
@@ -62,50 +62,29 @@ const QVector<ParsedPageInfo::Column>& ParsedPageInfoStorageAdapter::currentColu
 	return m_currentColumns;
 }
 
-void ParsedPageInfoStorageAdapter::setCustomDataFeed(const QString& customDataFeed) noexcept
-{
-	if (customDataFeed.isEmpty())
-	{
-		return;
-	}
-
-	m_dataFeed = customDataFeed;
-	m_customColumns = theApp->crawler()->customDataFeedByName(customDataFeed)->columns().toVector();
-}
-
 QString ParsedPageInfoStorageAdapter::columnDescription(int columnIndex) const noexcept
 {
-	DEBUG_ASSERT(columnIndex < m_availableColumns.size() + m_customColumns.size());
-
-	if (columnIndex >= m_availableColumns.size())
-	{
-		return m_customColumns[columnIndex - m_availableColumns.size()];
-	}
+	ASSERT(columnIndex < m_availableColumns.size());
 
 	return ParsedPageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
-int ParsedPageInfoStorageAdapter::columnWidth(int columnNumber) const noexcept
+int ParsedPageInfoStorageAdapter::columnWidth(int columnIndex) const noexcept
 {
-	DEBUG_ASSERT(columnNumber < m_availableColumns.size() + m_customColumns.size());
+	ASSERT(columnIndex < m_availableColumns.size());
 
-	if (columnNumber >= m_availableColumns.size())
-	{
-		return Common::Helpers::pointsToPixels(150);
-	}
-
-	return ParsedPageInfo::columnPrefferedSize(m_availableColumns[columnNumber]);
+	return ParsedPageInfo::columnPrefferedSize(m_availableColumns[columnIndex]);
 }
 
 int ParsedPageInfoStorageAdapter::columnCount() const noexcept
 {
-	return m_availableColumns.size() + m_customColumns.size();
+	return m_availableColumns.size();
 }
 
-bool ParsedPageInfoStorageAdapter::columnEnabled(int column) const noexcept
+bool ParsedPageInfoStorageAdapter::columnEnabled(int columnIndex) const noexcept
 {
-	DEBUG_ASSERT(column < m_availableColumns.size() && column >= 0);
-	auto it = std::find(m_currentColumns.cbegin(), m_currentColumns.cend(), m_availableColumns[column]);
+	ASSERT(columnIndex < m_availableColumns.size() && columnIndex >= 0);
+	auto it = std::find(m_currentColumns.cbegin(), m_currentColumns.cend(), m_availableColumns[columnIndex]);
 	return it != m_currentColumns.cend();
 }
 
@@ -118,27 +97,15 @@ QVariant ParsedPageInfoStorageAdapter::item(const QModelIndex& index) const noex
 {
 	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 
-	DEBUG_ASSERT(index.row() < storage.size());
-	DEBUG_ASSERT(index.column() < m_availableColumns.size() + m_customColumns.size());
-
-	if (index.column() >= m_availableColumns.size())
-	{
-		const CrawlerEngine::ICustomDataFeed* dataFeed = theApp->crawler()->customDataFeedByName(m_dataFeed);
-		const QMap<int, QString>& dataFeedData = storage[index.row()]->dataFeedsData[dataFeed->dataFeedId()];
-		return dataFeedData[index.column() - m_availableColumns.size()];
-	}
+	ASSERT(index.row() < storage.size());
+	ASSERT(index.column() < m_availableColumns.size());
 
 	return ParsedPageInfo(storage[index.row()]).itemValue(m_availableColumns[index.column()]);
 }
 
 ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(const QModelIndex& index) const noexcept
 {
-	DEBUG_ASSERT(index.column() < m_availableColumns.size() + m_customColumns.size());
-
-	if (index.column() >= m_availableColumns.size())
-	{
-		return ItemType::PlainItemType;
-	}
+	ASSERT(index.column() < m_availableColumns.size());
 
 	const bool isIndexMappedToUrl =
 		m_availableColumns[index.column()] == ParsedPageInfo::Column::UrlColumn ||
@@ -148,27 +115,18 @@ ParsedPageInfoStorageAdapter::ItemType ParsedPageInfoStorageAdapter::itemType(co
 	return isIndexMappedToUrl ? ItemType::UrlItemType : ItemType::PlainItemType;
 }
 
-RowResourceType ParsedPageInfoStorageAdapter::resourceType(const QModelIndex& index) const noexcept
+RowResourceType ParsedPageInfoStorageAdapter::resourceType(int row) const noexcept
 {
 	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
 
-	DEBUG_ASSERT(index.row() < storage.size());
-	DEBUG_ASSERT(index.column() < m_availableColumns.size() + m_customColumns.size());
+	ASSERT(row < storage.size());
 
-	return resourceTypeToRowResourceType(storage[index.row()]->resourceType);
+	return resourceTypeToRowResourceType(storage[row]->resourceType);
 }
 
 ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
-	const CrawlerEngine::ParsedPage* parsedPage;
-	const int row = getUnderlyingIndex(index).row();
-
-	if (itemCount() > index.row())
-	{
-		parsedPage = (*m_associatedStorage)[row];
-	}
-
-	return std::make_shared<ParsedPageInfo>(parsedPage);
+	return Common::make_counted<ParsedPageInfo>(parsedPage(index));
 }
 
 Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
@@ -192,30 +150,30 @@ Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 
 		const CrawlerEngine::Url url = urlItem.toUrl();
 
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenUrlCommand>(url)));
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<CheckGoogleCacheCommand>(url)));
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<CheckHTMLWithW3CValidatorCommand>(url)));
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenInWaybackMachineCommand>(url)));
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenRobotsTxtFileCommand>()));
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<RefreshPageCommand>(m_storageType, row)));
+		menu.addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<OpenUrlCommand>(url)));
+		menu.addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<CheckGoogleCacheCommand>(url)));
+		menu.addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<CheckHTMLWithW3CValidatorCommand>(url)));
+		menu.addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<OpenInWaybackMachineCommand>(url)));
+		menu.addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<OpenRobotsTxtFileCommand>()));
+		menu.addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<RefreshPageCommand>(m_storageType, row)));
 
 
-		std::shared_ptr<Menu> copySubMenu = std::make_shared<Menu>(tr("Copy..."));
-		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllPagesCommand>(m_associatedStorage)));
-		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, row)));
-		copySubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<CopyToClipboardUrlCommand>(m_associatedStorage, row)));
+		Common::counted_ptr<Menu> copySubMenu = Common::make_counted<Menu>(tr("Copy..."));
+		copySubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<CopyToClipboardAllPagesCommand>(m_associatedStorage)));
+		copySubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<CopyToClipboardAllColumnsDataCommand>(m_associatedStorage, m_storageType, row)));
+		copySubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<CopyToClipboardUrlCommand>(m_associatedStorage, row)));
 		menu.addItem(copySubMenu);
 
-		std::shared_ptr<Menu> exportSubMenu = std::make_shared<Menu>(tr("Export..."));
-		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, row)));
-		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, row)));
-		exportSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, row)));
+		Common::counted_ptr<Menu> exportSubMenu = Common::make_counted<Menu>(tr("Export..."));
+		exportSubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<ExportUrlInfoToXlsxCommand>(m_associatedStorage, m_availableColumns, row)));
+		exportSubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<ExportUrlOutlinksToXlsxCommand>(m_associatedStorage, row)));
+		exportSubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<ExportUrlInlinksToXlsxCommand>(m_associatedStorage, row)));
 		menu.addItem(exportSubMenu);
 
-		std::shared_ptr<Menu> goToSubMenu = std::make_shared<Menu>(tr("Go to..."));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksOnThisPageCommand>()));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToLinksToThisPageCommand>()));
-		goToSubMenu->addItem(std::make_shared<CommandMenuItem>(std::make_shared<GoToHTTPResponseCommand>()));
+		Common::counted_ptr<Menu> goToSubMenu = Common::make_counted<Menu>(tr("Go to..."));
+		goToSubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<GoToLinksOnThisPageCommand>()));
+		goToSubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<GoToLinksToThisPageCommand>()));
+		goToSubMenu->addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<GoToHTTPResponseCommand>()));
 		menu.addItem(goToSubMenu);
 	}
 
@@ -223,7 +181,7 @@ Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const
 
 	if (!storage.empty() && ipv4Address.has_value())
 	{
-		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<ShowOtherDomainsOnIpCommand>(ipv4Address.value())));
+		menu.addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<ShowOtherDomainsOnIpCommand>(ipv4Address.value())));
 	}
 
 	return menu;
@@ -234,14 +192,15 @@ QObject* ParsedPageInfoStorageAdapter::qobject() noexcept
 	return this;
 }
 
-#ifdef QT_DEBUG
 const CrawlerEngine::ParsedPage* ParsedPageInfoStorageAdapter::parsedPage(const QModelIndex& index) const noexcept
 {
-	const CrawlerEngine::ISequencedStorage& storage = *m_associatedStorage;
-	return storage[index.row()];
-}
+	ASSERT(itemCount() > index.row());
 
-#endif
+	const int row = getUnderlyingIndex(index).row();
+	const CrawlerEngine::ParsedPage* parsedPage = (*m_associatedStorage)[row];
+
+	return parsedPage;
+}
 
 void ParsedPageInfoStorageAdapter::onStorageUpdated(int row, CrawlerEngine::StorageType type)
 {

@@ -522,7 +522,7 @@ public:
 
 	template<typename Y>
 	counted_ptr(const counted_ptr<Y>& r) noexcept
-		: _p(r.m_p)
+		: _p(r._p)
 		, _cp_count(r._cp_count)
 	{
 	}

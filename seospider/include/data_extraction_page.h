@@ -10,6 +10,7 @@ class PageDataWidget;
 class LookupLineEditWidget;
 class ColumnsLookupLineEditWidget;
 
+// TODO: we can derive this from AllPagesPage and override some methods
 class DataExtractionPage : public AbstractTablePage
 {
     Q_OBJECT
