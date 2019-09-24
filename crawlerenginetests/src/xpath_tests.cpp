@@ -54,15 +54,11 @@ TEST(XPathTests, SimpleId)
 
 	QXmlNodeModelIndex startNode = model.rootIndex();
 	xmlQuery.bindVariable("doc", startNode);
-	xmlQuery.setQuery("$doc//a/@id", QUrl("https://google.com"));
-
-
-	//xmlQuery.setQuery(QString("//a/text()"));
-	//xmlQuery.setFocus(QXmlItem(startNode));
+	xmlQuery.setQuery("$doc//a/@id/string()", QUrl("https://google.com"));
 
 	QString result;
 	xmlQuery.evaluateTo(&result);
-	EXPECT_EQ(QString("44"), result.trimmed());
+	EXPECT_EQ(QString("42"), result.trimmed());
 }
 
 }
