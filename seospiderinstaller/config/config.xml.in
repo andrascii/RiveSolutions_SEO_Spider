@@ -11,7 +11,7 @@
 	<WizardStyle>Modern</WizardStyle>
 	<RunProgram>@TargetDir@/seospider.exe</RunProgram>
 	<StartMenuDir>SEO Spider</StartMenuDir>
-	<MaintenanceToolName>Uninstall SEO Spider</MaintenanceToolName>
+	<MaintenanceToolName>uninstall</MaintenanceToolName>
 	<RemoteRepositories>
      <Repository>
              <Url>http://rivesolutions.com/</Url>
