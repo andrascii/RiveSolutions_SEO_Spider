@@ -29,13 +29,18 @@ list(APPEND PackageFileList
 		${ReleasePackageDir}/seospider.pdb
 		${ReleasePackageDir}/seospiderservice.exe
 		${ReleasePackageDir}/seospiderservice.pdb
-		${ReleasePackageDir}/screenshotmaker.exe
-		${ReleasePackageDir}/screenshotmaker.pdb
 		${ReleasePackageDir}/seospiderserviceapi.dll
 		${ReleasePackageDir}/seospiderserviceapi.pdb
 		${ReleasePackageDir}/QtXlsxWriter.dll
 		${ReleasePackageDir}/QtXlsxWriter.pdb
 )
+
+if(${ENABLE_SCREENSHOTS})
+	list(APPEND PackageFileList 
+			${ReleasePackageDir}/screenshotmaker.exe
+			${ReleasePackageDir}/screenshotmaker.pdb
+	)
+endif()
 
 file(GLOB_RECURSE OpenSslDllList "$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/*.dll")
 

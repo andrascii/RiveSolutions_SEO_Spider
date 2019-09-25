@@ -1,3 +1,4 @@
+#ifdef ENABLE_SCREENSHOTS
 #include "tests_screenshot_maker.h"
 #include "thread_message_dispatcher.h"
 #include "take_screenshot_response.h"
@@ -30,3 +31,4 @@ QObject* TestsScreenshotMaker::qobject()
 }
 
 }
+#endif

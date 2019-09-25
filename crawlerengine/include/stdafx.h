@@ -18,6 +18,7 @@
 #pragma warning(disable:4456)
 
 #define CHECK_LICENSE
+// #define ENABLE_SCREENSHOTS
 
 //
 // Qt

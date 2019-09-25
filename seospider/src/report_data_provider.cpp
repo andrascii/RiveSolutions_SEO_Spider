@@ -18,7 +18,9 @@ using namespace SeoSpider;
 const QMap<ReportDataKeys, QByteArray> s_placeHolders
 {
 	// report header
+#ifdef ENABLE_SCREENSHOTS
 	{ ReportDataKeys::SiteShortImage, "site_short_image" },
+#endif
 	{ ReportDataKeys::SiteLink, "site_link" },
 	{ ReportDataKeys::FoundProblems, "problems"},
 	{ ReportDataKeys::FoundProblemsCount, "problems_count" },
@@ -155,10 +157,12 @@ QVariant ReportDataProvider::data(ReportDataKeys dataKey) const
 	switch (dataKey)
 	{
 		// report header
+#ifdef ENABLE_SCREENSHOTS
 		case ReportDataKeys::SiteShortImage:
 		{
 			return theApp->crawler()->webHostInfo()->screenshot();
 		}
+#endif
 		case ReportDataKeys::SiteLink:
 		{
 			return theApp->crawler()->currentCrawledUrl();

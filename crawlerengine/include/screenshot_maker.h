@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef ENABLE_SCREENSHOTS
 #include "iscreenshot_maker.h"
 #include "screenshot_maker_command.h"
 #include "ipc_socket.h"
@@ -51,3 +52,4 @@ private:
 };
 
 }
+#endif

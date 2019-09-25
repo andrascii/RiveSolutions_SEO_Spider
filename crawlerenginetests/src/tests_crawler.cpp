@@ -5,7 +5,9 @@
 #include "unordered_data_collection.h"
 #include "model_controller.h"
 #include "tests_host_info_provider.h"
+#ifdef ENABLE_SCREENSHOTS
 #include "tests_screenshot_maker.h"
+#endif
 
 namespace CrawlerEngineTests
 {
@@ -280,10 +282,12 @@ IHostInfoProvider* TestsCrawler::createHostInfoProvider() const
 	return new TestsHostInfoProvider;
 }
 
+#ifdef ENABLE_SCREENSHOTS
 IScreenshotMaker* TestsCrawler::createScreenshotMaker()
 {
 	return new TestsScreenshotMaker;
 }
+#endif
 
 void TestsCrawler::waitForCrawlingDone()
 {

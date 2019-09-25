@@ -47,7 +47,7 @@ void PdfReportExporter::doExportBriefReport(QIODevice* device, const ReportDataP
 	painter.setFont(QFont("Helvetica", 9));
 
 	const QRect rect = painter.viewport();
-	const QString testText = "RiveSolutions SeoSpider Report";
+	const QString testText = "RiveSolutions SEO Spider Report";
 
 	painter.drawText(rect, Qt::AlignRight | Qt::AlignTop, testText);
 
@@ -75,7 +75,7 @@ void PdfReportExporter::doExportBriefReport(QIODevice* device, const ReportDataP
 		startDataHeaderYCoord + startDataYSpace,
 		rect.width() / 2 - columnLeftMargin - columnRightMargin,
 		400);
-
+#ifdef ENABLE_SCREENSHOTS
 	// site image
 	QPixmap image = qvariant_cast<QPixmap>(provider->data(ReportDataKeys::SiteShortImage));
 	const QRect imageRect(firstColumnRect.topLeft(), QSize(firstColumnRect.width(), 2000));
@@ -96,20 +96,26 @@ void PdfReportExporter::doExportBriefReport(QIODevice* device, const ReportDataP
 
 		painter.drawImage(imageRect, cropped.toImage());
 	}
-
 	firstColumnRect = firstColumnRect.adjusted(0, imageRect.height(), 0, imageRect.height());
 
+#endif
+#ifdef ENABLE_SCREENSHOTS
+	QRect& summaryRowRect = secondColumnRect;
+#endif
+#ifndef ENABLE_SCREENSHOTS
+	QRect& summaryRowRect = firstColumnRect;
+#endif
 
 	// summary info
 	QFont summaryFont("Helvetica", 14);
 	const int summaryRowSpacing = 400;
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::FoundProblemsExceptInfo, ReportDataKeys::FoundProblemsExceptInfoCount, &summaryFont);
+	drawOneLineInfo(provider, &painter, summaryRowRect, ReportDataKeys::FoundProblemsExceptInfo, ReportDataKeys::FoundProblemsExceptInfoCount, &summaryFont);
 
-	secondColumnRect = secondColumnRect.adjusted(0, summaryRowSpacing, 0, summaryRowSpacing);
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::Errors, ReportDataKeys::ErrorsCount, &summaryFont);
+	summaryRowRect = summaryRowRect.adjusted(0, summaryRowSpacing, 0, summaryRowSpacing);
+	drawOneLineInfo(provider, &painter, summaryRowRect, ReportDataKeys::Errors, ReportDataKeys::ErrorsCount, &summaryFont);
 
-	secondColumnRect = secondColumnRect.adjusted(0, summaryRowSpacing, 0, summaryRowSpacing);
-	drawOneLineInfo(provider, &painter, secondColumnRect, ReportDataKeys::Warnings, ReportDataKeys::WarningsCount, &summaryFont);
+	summaryRowRect = summaryRowRect.adjusted(0, summaryRowSpacing, 0, summaryRowSpacing);
+	drawOneLineInfo(provider, &painter, summaryRowRect, ReportDataKeys::Warnings, ReportDataKeys::WarningsCount, &summaryFont);
 
 	const int spacingBetweenBlocks = 800;
 

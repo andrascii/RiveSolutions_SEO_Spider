@@ -22,7 +22,9 @@ class ModelController;
 class SequencedDataCollection;
 class Requester;
 class HostInfo;
+#ifdef ENABLE_SCREENSHOTS
 class IScreenshotMaker;
+#endif
 class ICustomDataFeed;
 class IWorkerPageLoader;
 struct SiteMapSettings;
@@ -156,7 +158,9 @@ private slots:
 
 protected:
 	virtual IHostInfoProvider* createHostInfoProvider() const;
+#ifdef ENABLE_SCREENSHOTS
 	virtual IScreenshotMaker* createScreenshotMaker();
+#endif
 	virtual IDownloadHandler* createDownloader() const;
 	virtual ITaskProcessor* createTaskProcessor() const;
 	virtual void initSequencedDataCollection();

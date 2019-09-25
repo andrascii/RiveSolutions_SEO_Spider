@@ -15,7 +15,9 @@ namespace SeoSpider
 enum class ReportDataKeys
 {
 	// report header
+#ifdef ENABLE_SCREENSHOTS
 	SiteShortImage,
+#endif
 	SiteLink,
 	FoundProblems,
 	FoundProblemsCount,
