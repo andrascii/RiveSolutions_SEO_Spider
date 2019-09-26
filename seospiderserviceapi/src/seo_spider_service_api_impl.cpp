@@ -427,11 +427,11 @@ void SeoSpiderServiceApiImpl::debugReport(const char* file, int line, const char
 	text << std::string("Line: ") << line << std::endl << std::endl;
 	text << std::string("Expression: ") << expression << std::endl << std::endl;
 
-    if (additionalDumpData)
-    {
-        text << std::string("Additional dump data:\n") << separator << std::endl;
-        text << additionalDumpData << std::endl;
-    }
+	if (additionalDumpData)
+	{
+		text << std::string("Additional dump data:\n") << separator << std::endl;
+		text << additionalDumpData << std::endl;
+	}
 
 	text << separator << std::endl << std::endl;
 	text << std::string("Press Retry to debug the application");
