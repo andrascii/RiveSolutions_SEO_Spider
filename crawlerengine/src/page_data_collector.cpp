@@ -15,6 +15,7 @@
 #include "gumbo_html_parser.h"
 #include "myhtml_parser.h"
 #include "ga_parser.h"
+#include "xpath_parser.h"
 
 namespace CrawlerEngine
 {
@@ -72,6 +73,8 @@ void PageDataCollector::applyOptions()
 
 	m_parser.addParser(std::make_shared<BaseUrlParser>(m_htmlParser.get()));
 	m_parser.addParser(std::make_shared<HtmlResourcesParser>(m_htmlParser.get(), m_crawlerOptionsData.crawlMetaHrefLangLinks));
+
+	m_parser.addParser(std::make_shared<XPathParser>(m_htmlParser.get(), m_crawlerOptionsData));
 
 	if (m_crawlerOptionsData.parserTypeFlags.testFlag(JavaScriptResourcesParserType))
 	{
