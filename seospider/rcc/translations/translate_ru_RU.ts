@@ -1265,7 +1265,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Links Count On This Page</source>
-        <translation>Количество ссылок на странице</translation>
+        <translation>Кол-во ссылок на странице</translation>
     </message>
     <message>
         <source>Alt Text</source>
@@ -1721,7 +1721,7 @@ You can change this counter in the settings &quot;Settings =&gt; Google Analytic
     </message>
     <message>
         <source>Links Count To This Page</source>
-        <translation>Количество ссылок на страницу</translation>
+        <translation>Кол-во ссылок на страницу</translation>
     </message>
 </context>
 <context>
