@@ -659,12 +659,6 @@ void MainWindow::registerSettingsPages() const
         TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget),
         new GoogleAnalyticsSettingsWidget);
 
-    // TODO: change pixmap
-    SettingsPageImpl<Ui_DataExtractionSettingsWidget>::registerSettingsPage(
-        SvgRenderer::render(":/images/google-analytics.svg", 10, 10),
-        TYPE_STRING(Ui_DataExtractionSettingsWidget),
-        new DataExtractionSettingsWidget);
-
 #ifndef PRODUCTION
 	SettingsPageImpl<Ui_PageVisualSettingsWidget>::registerSettingsPage(
 		QIcon(":/images/color.png"),
@@ -815,10 +809,6 @@ void MainWindow::initSettingsActions()
     actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_googleAnalyticsSettingsAction,
         SvgRenderer::render(":/images/google-analytics.svg", 10, 10), tr("Google Analytics Settings"));
 
-    // TODO: change pixmap
-    actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_dataExtractionSettingsAction,
-        SvgRenderer::render(":/images/google-analytics.svg", 10, 10), tr("Data Extraction Settings"));
-
 	const auto settingsActionsAvailability = [](int state)
 	{
 		const auto actionsAvailabilitySetter = [](bool value)
@@ -880,9 +870,6 @@ void MainWindow::initSettingsActions()
 
     VERIFY(connect(actionRegistry.globalAction(s_googleAnalyticsSettingsAction), &QAction::triggered,
         this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget)); }));
-
-    VERIFY(connect(actionRegistry.globalAction(s_dataExtractionSettingsAction), &QAction::triggered,
-        this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_DataExtractionSettingsWidget)); }));
 }
 
 void MainWindow::initCrawlerActions()
