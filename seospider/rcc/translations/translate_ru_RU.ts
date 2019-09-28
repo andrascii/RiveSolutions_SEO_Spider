@@ -1151,8 +1151,8 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
         <source>This filter stores links to web-pages blocked by
 &quot;&lt;meta name=&quot;robots&quot; content=&quot;something&quot;&gt;&quot; or x-robots-tag response header.
 Additionally you can choose specific robot&apos;s rules to follow in the &quot;Settings =&gt; User Agent Settings&quot;.</source>
-        <translation>Здесь хранятся ссылки на страницы закрытые с помощью &quot;&lt;meta name=&quot;robots&quot; content=&quot;something&quot;&gt;&quot;.
-Или с помощью X-Robots-Tag полученного из HTTP-заголовков ответа сервера.
+        <translation>Здесь хранятся ссылки на страницы закрытые с помощью &amp;lt;meta name=&quot;robots&quot; content=&quot;something&quot;&amp;gt; 
+или с помощью X-Robots-Tag полученного из HTTP-заголовков ответа сервера.
 Также вы можете выбрать робота, правилам которого надо следовать в &quot;Настройки =&gt; Настройки User Agent&quot;.</translation>
     </message>
     <message>
