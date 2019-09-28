@@ -863,7 +863,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>This filter stores links with the server status code 301.</source>
-        <translation>Этот фильтр хранит страницы, которые переадресут с помощью 301 кода ответа сервера на другие страницы.</translation>
+        <translation>Этот фильтр хранит страницы, которые переадресуют с помощью 301 кода ответа сервера на другие страницы.</translation>
     </message>
     <message>
         <source>Web-pages with empty titles</source>
