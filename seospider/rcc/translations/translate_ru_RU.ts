@@ -291,6 +291,21 @@ Please, be sure that you entered a valid address</source>
     </message>
 </context>
 <context>
+    <name>DataExtractionSettingsWidget</name>
+    <message>
+        <source>Data Extraction Settings</source>
+        <translation>Настройки Data Extraction</translation>
+    </message>
+    <message>
+        <source>Type in the search rules according to specified rules</source>
+        <translation>Введите правило поиска в соответствии с выбранным типом поиска</translation>
+    </message>
+    <message>
+        <source>Extractor name</source>
+        <translation>Имя экстрактора</translation>
+    </message>
+</context>
+<context>
     <name>FeedbackDialog</name>
     <message>
         <source>Send feedback about RiveSolutions Seo Spider</source>
@@ -848,7 +863,7 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>This filter stores links with the server status code 301.</source>
-        <translation>Этот фильтр хранит страницы, которые переадресут с помощью 301 кода ответа сервера на другие страницы.</translation>
+        <translation>Этот фильтр хранит страницы, которые переадресуют с помощью 301 кода ответа сервера на другие страницы.</translation>
     </message>
     <message>
         <source>Web-pages with empty titles</source>
@@ -1250,7 +1265,7 @@ Additionally you can choose specific robot&apos;s rules to follow in the &quot;S
     </message>
     <message>
         <source>Links Count On This Page</source>
-        <translation>Количество ссылок на странице</translation>
+        <translation>Кол-во ссылок на странице</translation>
     </message>
     <message>
         <source>Alt Text</source>
@@ -1706,7 +1721,7 @@ You can change this counter in the settings &quot;Settings =&gt; Google Analytic
     </message>
     <message>
         <source>Links Count To This Page</source>
-        <translation>Количество ссылок на страницу</translation>
+        <translation>Кол-во ссылок на страницу</translation>
     </message>
 </context>
 <context>
@@ -1866,6 +1881,47 @@ You can change this counter in the settings &quot;Settings =&gt; Google Analytic
     <message>
         <source>No</source>
         <translation>Нет</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::DataExtractionColumns</name>
+    <message>
+        <source>Extractor %1</source>
+        <translation>Экстрактор %1</translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::DataExtractionPage</name>
+    <message>
+        <source>Export selected filter data to .xlsx file</source>
+        <translation type="unfinished">Эскпортировать данные выбранного фильтра в excel</translation>
+    </message>
+    <message>
+        <source>Data Extraction</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SeoSpider::DataExtractionSettingsWidget</name>
+    <message>
+        <source>Extract HTML Element</source>
+        <translation>Извлечь HTML элемент</translation>
+    </message>
+    <message>
+        <source>Extract Inner HTML</source>
+        <translation>Извлечь HTML внутри элемента</translation>
+    </message>
+    <message>
+        <source>Extract Text</source>
+        <translation>Извлекать только текст</translation>
+    </message>
+    <message>
+        <source>Extract Function Value</source>
+        <translation>Извлекать Function Value</translation>
+    </message>
+    <message>
+        <source>Inactive</source>
+        <translation>Неактивный</translation>
     </message>
 </context>
 <context>
@@ -2158,7 +2214,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>XML Sitemap</source>
-        <translation type="unfinished"></translation>
+        <translation>XML Карта сайта</translation>
     </message>
     <message>
         <source>To create an XML Sitemap it&apos;s needed to analyze a web-site first. Please, type a URL address of a site that you want to analyze and start its processing. When the process will be finished you&apos;ll be able to open the XML Sitemap dialog.</source>
@@ -2171,6 +2227,10 @@ please stop crawling and try again</source>
     <message>
         <source>To create an XML Sitemap you need to wait untill analyzing of a web-site will be finished or pause the process.</source>
         <translation>Для создания XML карты сайта необходимо дождаться завершения анализа сайта или поставить анализ на паузу.</translation>
+    </message>
+    <message>
+        <source>Data Extraction Settings</source>
+        <translation>Настройки Data Extraction</translation>
     </message>
 </context>
 <context>
@@ -2317,7 +2377,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Group filters by category</source>
-        <translation>Сгруппировать фильтры по категории </translation>
+        <translation>Сгруппировать фильтры по категории</translation>
     </message>
     <message>
         <source>Group filters by error level</source>
