@@ -141,7 +141,7 @@ private:
 	const CrawlerEngine::ParsedPage* m_parsedPage;
 };
 
-using ParsedPageInfoPtr = std::shared_ptr<ParsedPageInfo>;
+using ParsedPageInfoPtr = Common::counted_ptr<ParsedPageInfo>;
 
 }
 

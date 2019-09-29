@@ -14,7 +14,7 @@ using namespace CrawlerEngine;
 constexpr int c_myServiceRawDataParts = 3;
 constexpr int c_hour = 30 * 60 * 1000;
 
-const QString s_verifySerialNumberUrl("https://pay.rivesolutions.com");
+const QString s_verifySerialNumberUrl("http://pay.rivesolutions.com");
 const QString s_verifyPageName("verifykey");
 const QString s_userNameVariableName("username");
 const QString s_idVariableName("id");
@@ -25,6 +25,7 @@ const QString s_statusKey("status");
 const QString s_emailKey("email");
 const QString s_statusOk("ok");
 const QString s_statusBlocked("wrong_mac");
+const QString s_statusExpired("expired");
 const QString s_statusUserNotFound("user_not_found");
 
 Url makeVerifyUrl(const QString& userName, const QString& id, const QString& mac, const QString& secret)
@@ -206,6 +207,10 @@ void MyLicenseService::onLoadingDone(Requester*, const DownloadResponse& respons
 	{
 		m_data.states.setFlag(SerialNumberState::StateSerialNumberBlacklisted);
 	}
+    else if (statusValue == s_statusExpired)
+    {
+        m_data.states.setFlag(SerialNumberState::StateDateExpired);
+    }
 
 	respondSerialNumberData();
 }

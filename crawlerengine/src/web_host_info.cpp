@@ -2,8 +2,10 @@
 #include "web_host_info.h"
 #include "proper_404_checker.h"
 #include "ispecific_loader.h"
+#ifdef ENABLE_SCREENSHOTS
 #include "take_screenshot_response.h"
 #include "take_screenshot_request.h"
+#endif
 
 namespace CrawlerEngine
 {
@@ -18,7 +20,7 @@ WebHostInfo::WebHostInfo(QObject* parent, ISpecificLoader* xmlSiteMapLoader, ISp
 void WebHostInfo::reset(const QUrl& url)
 {
 	m_is404PagesSetupRight = std::nullopt;
-
+#ifdef ENABLE_SCREENSHOTS
 	if (m_screenshot.first != url)
 	{
         /*
@@ -28,6 +30,7 @@ void WebHostInfo::reset(const QUrl& url)
 		m_screenshotMakerRequester->start();
          */
 	}
+#endif
 
 	Check404IsProperRequest request(url);
 	m_404IsProperRequester.reset(request, this, &WebHostInfo::on404Checked);
@@ -79,13 +82,16 @@ std::optional<bool> WebHostInfo::is404PagesSetupRight() const
 	return m_is404PagesSetupRight;
 }
 
+#ifdef ENABLE_SCREENSHOTS
 const QPixmap& WebHostInfo::screenshot() const
 {
 	return m_screenshot.second;
 }
+#endif
 
 WebHostInfo::AllData WebHostInfo::allData() const
 {
+#ifdef ENABLE_SCREENSHOTS
 	QByteArray pixmapData;
 	if (!screenshot().isNull())
 	{
@@ -94,6 +100,7 @@ WebHostInfo::AllData WebHostInfo::allData() const
 		const QPixmap& pixmap = qvariant_cast<QPixmap>(screenshot());
 		pixmap.save(&buffer, "PNG");
 	}
+#endif
 
 	return 
 	{ 
@@ -103,8 +110,10 @@ WebHostInfo::AllData WebHostInfo::allData() const
 		isSiteMapValid(),
 		siteMapContent(),
 		siteMapUrl(),
-		is404PagesSetupRight(), 
+		is404PagesSetupRight(),
+#ifdef ENABLE_SCREENSHOTS
 		pixmapData
+#endif
 	};
 }
 
@@ -118,6 +127,7 @@ void WebHostInfo::setData(const AllData& data)
 	m_xmlSiteMapLoader->setHost(data.siteMapUrl);
 	m_is404PagesSetupRight = data.is404PagesSetupRight;
 
+#ifdef ENABLE_SCREENSHOTS
 	if (!data.image.isEmpty())
 	{
 		QPixmap hostImage;
@@ -130,6 +140,7 @@ void WebHostInfo::setData(const AllData& data)
 	{
 		// TODO: clear image without constructing QPixmap instance in non-main thread
 	}
+#endif
 }
 
 void WebHostInfo::on404Checked(Requester*, const Check404IsProperResponse& response)
@@ -137,6 +148,7 @@ void WebHostInfo::on404Checked(Requester*, const Check404IsProperResponse& respo
 	m_is404PagesSetupRight = response.result;
 }
 
+#ifdef ENABLE_SCREENSHOTS
 void WebHostInfo::onScreenshotCreated(Requester*, const ITakeScreenshotResponse& response)
 {
 	m_screenshotMakerRequester.reset();
@@ -145,5 +157,6 @@ void WebHostInfo::onScreenshotCreated(Requester*, const ITakeScreenshotResponse&
 
 	emit webScreenshotLoaded();
 }
+#endif
 
 }

@@ -346,7 +346,10 @@ void SequencedDataCollection::initialize()
 		std::make_pair(StorageType::GoogleAnalyticsCounter2StorageType, createSequencedStorage()),
 		std::make_pair(StorageType::GoogleAnalyticsCounter3StorageType, createSequencedStorage()),
 		std::make_pair(StorageType::GoogleAnalyticsCounter4StorageType, createSequencedStorage()),
-		std::make_pair(StorageType::GoogleAnalyticsCounter5StorageType, createSequencedStorage())
+		std::make_pair(StorageType::GoogleAnalyticsCounter5StorageType, createSequencedStorage()),
+
+        // Data Extraction
+        std::make_pair(StorageType::DataExtractionStorageType, createSequencedStorage())
 	};
 }
 

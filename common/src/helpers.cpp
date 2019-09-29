@@ -89,6 +89,7 @@ std::vector<QMetaMethod> Helpers::allUserSignals(QObject* qobject, QVector<QByte
 	return signalsCollection;
 }
 
+// TODO: this method is unnecessary, remove this and use QObject::connect instead
 void Helpers::connectMetaMethods(QObject* sender, QMetaMethod senderMethod, QObject* receiver, QMetaMethod receiverMethod)
 {
 	ASSERT(senderMethod.methodType() == QMetaMethod::Signal);

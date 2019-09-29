@@ -24,7 +24,7 @@ void ControlAdapterQComboBox::setValue(const QVariant& val)
 
 void ControlAdapterQComboBox::connectChangesObserver(SettingsPage* page)
 {
-	VERIFY(QObject::connect(m_control.data(), SIGNAL(currentIndexChanged(const QString&)), page, SLOT(somethingChangedSlot())));
+    VERIFY(QObject::connect(m_control.data(), SIGNAL(currentIndexChanged(const QString&)), page, SLOT(somethingChangedSlot())));
 }
 
 QObject* ControlAdapterQComboBox::qobject()

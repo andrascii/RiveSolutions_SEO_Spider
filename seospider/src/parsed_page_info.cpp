@@ -102,8 +102,8 @@ int ParsedPageInfo::columnPrefferedSize(Column column)
 		{ ParsedPageInfo::Column::FirstH2LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::SecondH2LengthColumn, Common::Helpers::pointsToPixels(100) },
 		{ ParsedPageInfo::Column::ImageSizeKbColumn, Common::Helpers::pointsToPixels(10) },
-		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, Common::Helpers::pointsToPixels(100) },
-		{ ParsedPageInfo::Column::LinksToThisPageCountColumn, Common::Helpers::pointsToPixels(100) },
+		{ ParsedPageInfo::Column::LinksOnThisPageCountColumn, Common::Helpers::pointsToPixels(120) },
+		{ ParsedPageInfo::Column::LinksToThisPageCountColumn, Common::Helpers::pointsToPixels(120) },
 		{ ParsedPageInfo::Column::LinksToThisPageColumn, Common::Helpers::pointsToPixels(100) },
 	};
 

@@ -7,6 +7,8 @@ namespace CrawlerEngine
 CrawlerOptions::CrawlerOptions(QObject* parent)
 	: QObject(parent)
 {
+    std::fill(m_data.extractorRuleTypes.begin(), m_data.extractorRuleTypes.end(), -1);
+    std::fill(m_data.extractionTypes.begin(), m_data.extractionTypes.end(), -1);
 }
 
 QObject* CrawlerOptions::qobject() const noexcept
@@ -719,6 +721,446 @@ void CrawlerOptions::setGoogleAnalyticsCounter5Id(const QString& value)
 	emit googleAnalyticsCounter5IdChanged(m_data.googleAnalyticsCounter5Id);
 }
 
+const QString& CrawlerOptions::extractorName1() const noexcept
+{
+    return m_data.extractorNames[0];
+}
+
+const QString& CrawlerOptions::extractorName2() const noexcept
+{
+    return m_data.extractorNames[1];
+}
+
+const QString& CrawlerOptions::extractorName3() const noexcept
+{
+    return m_data.extractorNames[2];
+}
+
+const QString& CrawlerOptions::extractorName4() const noexcept
+{
+    return m_data.extractorNames[3];
+}
+
+const QString& CrawlerOptions::extractorName5() const noexcept
+{
+    return m_data.extractorNames[4];
+}
+
+const QString& CrawlerOptions::extractorName6() const noexcept
+{
+    return m_data.extractorNames[5];
+}
+
+const QString& CrawlerOptions::extractorName7() const noexcept
+{
+    return m_data.extractorNames[6];
+}
+
+const QString& CrawlerOptions::extractorName8() const noexcept
+{
+    return m_data.extractorNames[7];
+}
+
+const QString& CrawlerOptions::extractorName9() const noexcept
+{
+    return m_data.extractorNames[8];
+}
+
+const QString& CrawlerOptions::extractorName10() const noexcept
+{
+    return m_data.extractorNames[9];
+}
+
+void CrawlerOptions::setExtractorName1(const QString& value)
+{
+    m_data.extractorNames[0] = value;
+    emit extractorName1Changed(value);
+}
+
+void CrawlerOptions::setExtractorName2(const QString& value)
+{
+    m_data.extractorNames[1] = value;
+    emit extractorName2Changed(value);
+}
+
+void CrawlerOptions::setExtractorName3(const QString& value)
+{
+    m_data.extractorNames[2] = value;
+    emit extractorName3Changed(value);
+}
+
+void CrawlerOptions::setExtractorName4(const QString& value)
+{
+    m_data.extractorNames[3] = value;
+    emit extractorName4Changed(value);
+}
+
+void CrawlerOptions::setExtractorName5(const QString& value)
+{
+    m_data.extractorNames[4] = value;
+    emit extractorName5Changed(value);
+}
+
+void CrawlerOptions::setExtractorName6(const QString& value)
+{
+    m_data.extractorNames[5] = value;
+    emit extractorName6Changed(value);
+}
+
+void CrawlerOptions::setExtractorName7(const QString& value)
+{
+    m_data.extractorNames[6] = value;
+    emit extractorName7Changed(value);
+}
+
+void CrawlerOptions::setExtractorName8(const QString& value)
+{
+    m_data.extractorNames[7] = value;
+    emit extractorName8Changed(value);
+}
+
+void CrawlerOptions::setExtractorName9(const QString& value)
+{
+    m_data.extractorNames[8] = value;
+    emit extractorName9Changed(value);
+}
+
+void CrawlerOptions::setExtractorName10(const QString& value)
+{
+    m_data.extractorNames[9] = value;
+    emit extractorName10Changed(value);
+}
+
+int CrawlerOptions::extractorRuleType1() const noexcept
+{
+    return m_data.extractorRuleTypes[0];
+}
+
+int CrawlerOptions::extractorRuleType2() const noexcept
+{
+    return m_data.extractorRuleTypes[1];
+}
+
+int CrawlerOptions::extractorRuleType3() const noexcept
+{
+    return m_data.extractorRuleTypes[2];
+}
+
+int CrawlerOptions::extractorRuleType4() const noexcept
+{
+    return m_data.extractorRuleTypes[3];
+}
+
+int CrawlerOptions::extractorRuleType5() const noexcept
+{
+    return m_data.extractorRuleTypes[4];
+}
+
+int CrawlerOptions::extractorRuleType6() const noexcept
+{
+    return m_data.extractorRuleTypes[5];
+}
+
+int CrawlerOptions::extractorRuleType7() const noexcept
+{
+    return m_data.extractorRuleTypes[6];
+}
+
+int CrawlerOptions::extractorRuleType8() const noexcept
+{
+    return m_data.extractorRuleTypes[7];
+}
+
+int CrawlerOptions::extractorRuleType9() const noexcept
+{
+    return m_data.extractorRuleTypes[8];
+}
+
+int CrawlerOptions::extractorRuleType10() const noexcept
+{
+    return m_data.extractorRuleTypes[9];
+}
+
+void CrawlerOptions::setExtractorRuleType1(int value) noexcept
+{
+    m_data.extractorRuleTypes[0] = value;
+    emit extractorRuleType1Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType2(int value) noexcept
+{
+    m_data.extractorRuleTypes[1] = value;
+    emit extractorRuleType2Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType3(int value) noexcept
+{
+    m_data.extractorRuleTypes[2] = value;
+    emit extractorRuleType3Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType4(int value) noexcept
+{
+    m_data.extractorRuleTypes[3] = value;
+    emit extractorRuleType4Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType5(int value) noexcept
+{
+    m_data.extractorRuleTypes[4] = value;
+    emit extractorRuleType5Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType6(int value) noexcept
+{
+    m_data.extractorRuleTypes[5] = value;
+    emit extractorRuleType6Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType7(int value) noexcept
+{
+    m_data.extractorRuleTypes[6] = value;
+    emit extractorRuleType7Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType8(int value) noexcept
+{
+    m_data.extractorRuleTypes[7] = value;
+    emit extractorRuleType8Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType9(int value) noexcept
+{
+    m_data.extractorRuleTypes[8] = value;
+    emit extractorRuleType9Changed(value);
+}
+
+void CrawlerOptions::setExtractorRuleType10(int value) noexcept
+{
+    m_data.extractorRuleTypes[9] = value;
+    emit extractorRuleType10Changed(value);
+}
+
+const QString& CrawlerOptions::extractorRule1() const noexcept
+{
+    return m_data.extractorRules[0];
+}
+
+const QString& CrawlerOptions::extractorRule2() const noexcept
+{
+    return m_data.extractorRules[1];
+}
+
+const QString& CrawlerOptions::extractorRule3() const noexcept
+{
+    return m_data.extractorRules[2];
+}
+
+const QString& CrawlerOptions::extractorRule4() const noexcept
+{
+    return m_data.extractorRules[3];
+}
+
+const QString& CrawlerOptions::extractorRule5() const noexcept
+{
+    return m_data.extractorRules[4];
+}
+
+const QString& CrawlerOptions::extractorRule6() const noexcept
+{
+    return m_data.extractorRules[5];
+}
+
+const QString& CrawlerOptions::extractorRule7() const noexcept
+{
+    return m_data.extractorRules[6];
+}
+
+const QString& CrawlerOptions::extractorRule8() const noexcept
+{
+    return m_data.extractorRules[7];
+}
+
+const QString& CrawlerOptions::extractorRule9() const noexcept
+{
+    return m_data.extractorRules[8];
+}
+
+const QString& CrawlerOptions::extractorRule10() const noexcept
+{
+    return m_data.extractorRules[9];
+}
+
+void CrawlerOptions::setExtractorRule1(const QString& value)
+{
+    m_data.extractorRules[0] = value;
+    emit extractorRule1Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule2(const QString& value)
+{
+    m_data.extractorRules[1] = value;
+    emit extractorRule2Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule3(const QString& value)
+{
+    m_data.extractorRules[2] = value;
+    emit extractorRule3Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule4(const QString& value)
+{
+    m_data.extractorRules[4] = value;
+    emit extractorRule4Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule5(const QString& value)
+{
+    m_data.extractorRules[4] = value;
+    emit extractorRule5Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule6(const QString& value)
+{
+    m_data.extractorRules[5] = value;
+    emit extractorRule6Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule7(const QString& value)
+{
+    m_data.extractorRules[6] = value;
+    emit extractorRule7Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule8(const QString& value)
+{
+    m_data.extractorRules[7] = value;
+    emit extractorRule8Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule9(const QString& value)
+{
+    m_data.extractorRules[8] = value;
+    emit extractorRule9Changed(value);
+}
+
+void CrawlerOptions::setExtractorRule10(const QString& value)
+{
+    m_data.extractorRules[9] = value;
+    emit extractorRule10Changed(value);
+}
+
+int CrawlerOptions::extractionType1() const noexcept
+{
+    return m_data.extractionTypes[0];
+}
+
+int CrawlerOptions::extractionType2() const noexcept
+{
+    return m_data.extractionTypes[1];
+}
+
+int CrawlerOptions::extractionType3() const noexcept
+{
+    return m_data.extractionTypes[2];
+}
+
+int CrawlerOptions::extractionType4() const noexcept
+{
+    return m_data.extractionTypes[3];
+}
+
+int CrawlerOptions::extractionType5() const noexcept
+{
+    return m_data.extractionTypes[4];
+}
+
+int CrawlerOptions::extractionType6() const noexcept
+{
+    return m_data.extractionTypes[5];
+}
+
+int CrawlerOptions::extractionType7() const noexcept
+{
+    return m_data.extractionTypes[6];
+}
+
+int CrawlerOptions::extractionType8() const noexcept
+{
+    return m_data.extractionTypes[7];
+}
+
+int CrawlerOptions::extractionType9() const noexcept
+{
+    return m_data.extractionTypes[8];
+}
+
+int CrawlerOptions::extractionType10() const noexcept
+{
+    return m_data.extractionTypes[9];
+}
+
+void CrawlerOptions::setExtractionType1(int value) noexcept
+{
+    m_data.extractionTypes[0] = value;
+    emit extractionType1Changed(value);
+}
+
+void CrawlerOptions::setExtractionType2(int value) noexcept
+{
+    m_data.extractionTypes[1] = value;
+    emit extractionType2Changed(value);
+}
+
+void CrawlerOptions::setExtractionType3(int value) noexcept
+{
+    m_data.extractionTypes[2] = value;
+    emit extractionType3Changed(value);
+}
+
+void CrawlerOptions::setExtractionType4(int value) noexcept
+{
+    m_data.extractionTypes[3] = value;
+    emit extractionType4Changed(value);
+}
+
+void CrawlerOptions::setExtractionType5(int value) noexcept
+{
+    m_data.extractionTypes[4] = value;
+    emit extractionType5Changed(value);
+}
+
+void CrawlerOptions::setExtractionType6(int value) noexcept
+{
+    m_data.extractionTypes[5] = value;
+    emit extractionType6Changed(value);
+}
+
+void CrawlerOptions::setExtractionType7(int value) noexcept
+{
+    m_data.extractionTypes[6] = value;
+    emit extractionType7Changed(value);
+}
+
+void CrawlerOptions::setExtractionType8(int value) noexcept
+{
+    m_data.extractionTypes[7] = value;
+    emit extractionType8Changed(value);
+}
+
+void CrawlerOptions::setExtractionType9(int value) noexcept
+{
+    m_data.extractionTypes[8] = value;
+    emit extractionType9Changed(value);
+}
+
+void CrawlerOptions::setExtractionType10(int value) noexcept
+{
+    m_data.extractionTypes[9] = value;
+    emit extractionType10Changed(value);
+}
+
 const CrawlerOptionsData& CrawlerOptions::data() const noexcept
 {
 	return m_data;
@@ -727,14 +1169,12 @@ const CrawlerOptionsData& CrawlerOptions::data() const noexcept
 void CrawlerOptions::setData(const CrawlerOptionsData& data) noexcept
 {
 	m_data = data;
-
 	emit dataChanged(m_data);
 }
 
 void CrawlerOptions::setData(CrawlerOptionsData&& data) noexcept
 {
 	m_data = std::move(data);
-
 	emit dataChanged(m_data);
 }
 

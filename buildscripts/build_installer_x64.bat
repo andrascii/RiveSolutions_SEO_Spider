@@ -1,5 +1,4 @@
 set SS_PLATFORM=x64
-call "./details/prepare_environment.bat"
 cd ..
 mkdir build
 cd build

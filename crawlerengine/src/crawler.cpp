@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "crawler.h"
 #include "unordered_data_collection.h"
 #include "sequenced_data_collection.h"
@@ -26,7 +25,9 @@
 #include "license_state_observer.h"
 #include "common_constants.h"
 #include "proper_404_checker.h"
+#ifdef ENABLE_SCREENSHOTS
 #include "screenshot_maker.h"
+#endif
 #include "icustom_data_feed.h"
 #include "multi_socket_download_handler.h"
 #include "multi_request_page_loader.h"
@@ -124,7 +125,9 @@ void Crawler::initialize()
 	m_downloader = createDownloader();
 	m_webHostInfo = new WebHostInfo(this, m_xmlSitemapLoader, m_robotsTxtLoader);
 
+#ifdef ENABLE_SCREENSHOTS
 	VERIFY(connect(m_webHostInfo, &WebHostInfo::webScreenshotLoaded, this, &Crawler::onSessionChanged));
+#endif
 
 	ThreadManager& threadManager = ThreadManager::instance();
 
@@ -134,9 +137,9 @@ void Crawler::initialize()
 	threadManager.moveObjectToThread(createTaskProcessor()->qobject(), "SerializerThread");
 	threadManager.moveObjectToThread(new Proper404Checker, "BackgroundThread");
 	threadManager.moveObjectToThread(new LicenseHandler, "BackgroundThread");
-
-	// disabled due first building on Mac
+#ifdef ENABLE_SCREENSHOTS
 	threadManager.moveObjectToThread(createScreenshotMaker()->qobject(), "BackgroundThread");
+#endif
 
 	m_licenseStateObserver = new LicenseStateObserver;
 
@@ -176,7 +179,7 @@ void Crawler::clearDataImpl()
 	CrawlerSharedState::instance()->clear();
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
 	m_uniqueLinkStore->clear();
-	if (m_session->hasCustomName())
+	if (m_session != nullptr && m_session->hasCustomName())
 	{
 		m_session->setState(Session::StateUnsaved);
 	}
@@ -744,10 +747,12 @@ IHostInfoProvider* Crawler::createHostInfoProvider() const
 	return new HostInfoProvider;
 }
 
+#ifdef ENABLE_SCREENSHOTS
 IScreenshotMaker* Crawler::createScreenshotMaker()
 {
     return new ScreenshotMaker;
 }
+#endif
 
 IDownloadHandler* Crawler::createDownloader() const
 {

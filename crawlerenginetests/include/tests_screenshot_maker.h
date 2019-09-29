@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef ENABLE_SCREENSHOTS
 #include "iscreenshot_maker.h"
 
 namespace CrawlerEngineTests
@@ -18,3 +18,4 @@ public:
 };
 
 }
+#endif

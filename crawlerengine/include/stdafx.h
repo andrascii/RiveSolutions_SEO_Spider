@@ -18,6 +18,7 @@
 #pragma warning(disable:4456)
 
 #define CHECK_LICENSE
+// #define ENABLE_SCREENSHOTS
 
 //
 // Qt
@@ -104,7 +105,7 @@
 
 namespace std
 {
-
+	
 //
 // In C++11 std::unary_function template are deprecated
 // In C++17 it was removed
@@ -124,10 +125,11 @@ struct unary_function
 	typedef _Arg argument_type;
 	typedef _Result result_type;
 };
-
+	
 }
 
 #endif
+
 
 #include <boost/functional/hash.hpp>
 #include <boost/process/child.hpp>

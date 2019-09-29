@@ -126,8 +126,8 @@ namespace std
 template <class _Arg, class _Result>
 struct unary_function
 {
-    typedef _Arg argument_type;
-    typedef _Result result_type;
+	typedef _Arg argument_type;
+	typedef _Result result_type;
 };
 
 }

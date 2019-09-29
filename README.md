@@ -11,11 +11,14 @@
 Для того, чтобы успешно сгенерировать и забилдить проект, надо:
 1. Скачать deps.7z отсюда https://yadi.sk/d/I4qfKFy03TFN4g
 1. Распаковать архив в корень диска `D` так, чтобы все зависимости лежали по пути `D:\\deps\`
-1. Удалить все переменные среды `BOOST*`, `CMAKE_PREFIX_PATH`, `QT*`, а так же пути к ним в `path`
-1. Создать `СИСТЕМНУЮ` переменную окружения SS_DEPS со значением d:\deps
-1. `OPENSSL_ROOT_DIR` со значением `%SS_DEPS%\openssl\openssl_%SS_PLATFORM%`
-1. `OPENSSL_INCLUDE_DIR` со значением `%SS_DEPS%\openssl\openssl_%SS_PLATFORM%\include`
-1. `IFW_BIN_DIR` со значением `%SS_DEPS%\IFW\%SS_PLATFORM%\bin`
+1. Создать `СИСТЕМНУЮ` переменную окружения `SS_DEPS` со значением `d:\deps`
+1. Добавить следующие переменные окружения в систему:
+- `BOOST_LIBRARYDIR=%SS_DEPS%\boost\%SS_PLATFORM%\lib`
+- `BOOST_ROOT=%SS_DEPS%\boost`
+- `CMAKE_PREFIX_PATH=%SS_DEPS%\qt\msvc_2017_%SS_PLATFORM%`
+- `OPENSSL_ROOT_DIR=%SS_DEPS%\openssl\openssl_%SS_PLATFORM%`
+- `OPENSSL_INCLUDE_DIR=%SS_DEPS%\openssl\openssl_%SS_PLATFORM%\include`
+- `IFW_BIN_DIR=%SS_DEPS%\IFW\%SS_PLATFORM%\bin`
 1. Добавить в PATH значения:
 - `%SS_DEPS%\qt\msvc_2017_%SS_PLATFORM%\bin`
 - `%SS_DEPS%\qt\msvc_2017_%SS_PLATFORM%\plugins\platforms`
@@ -23,7 +26,7 @@
 - `%SS_DEPS%\openssl\openssl_%SS_PLATFORM%\bin`
 - путь до cmake `C:\Program Files\CMake\bin` (но он может быть и другим, главное, чтобы путь до него был прописан в `path`)
 1. Установить `СИСТЕМНУЮ` переменную окружения `SS_PLATFORM` правильно (x64 или win32).
-1. Запустить `generate_solution_win32.bat` либо `generate_solution_x64.bat` в зависимости от желаемой сборки
+1. Запустить `vs2017_win32.bat` либо `vs2017_x64.bat` в зависимости от желаемой сборки
 
 Если нет диска D:, то нужно создать виртуальный диск: http://composs.ru/windows-10-vhd/ (необходимо примерно 20Гб)
 

@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef ENABLE_SCREENSHOTS
 #include "requester.h"
 
 namespace CrawlerEngine
@@ -16,3 +16,4 @@ public:
 };
 
 }
+#endif

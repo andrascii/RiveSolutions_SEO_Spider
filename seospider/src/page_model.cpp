@@ -48,6 +48,7 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 		disconnect(m_storageAdapter->qobject(), SIGNAL(repaintColumn(int)), this, SLOT(onRepaintColumn(int)));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData()));
 		disconnect(m_storageAdapter->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData()));
+		disconnect(m_storageAdapter->qobject(), SIGNAL(customColumnCountChanged()), this, SLOT(onColumnCountChanged()));
 	}
 
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(parsedPageInfoAdded(int)), this, SLOT(onParsedPageInfoAdded(int))));
@@ -57,6 +58,7 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(repaintColumn(int)), this, SLOT(onRepaintColumn(int))));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(beginClearData()), this, SLOT(onAboutBeginClearingData())));
 	VERIFY(connect(storageAdapter->qobject(), SIGNAL(endClearData()), this, SLOT(onAboutEndClearingData())));
+	VERIFY(connect(storageAdapter->qobject(), SIGNAL(customColumnCountChanged()), this, SLOT(onColumnCountChanged())));
 
 	m_storageAdapter = storageAdapter;
 
@@ -146,7 +148,7 @@ QVariant PageModel::data(const QModelIndex& index, int role) const
 
 	if (role == AbstractTableModel::resourceTypeRole)
 	{
-		return static_cast<int>(storageAdapter()->resourceType(validatedIndex));
+		return static_cast<int>(storageAdapter()->resourceType(validatedIndex.row()));
 	}
 
 	switch (role)
@@ -257,6 +259,13 @@ void PageModel::onAboutEndClearingData()
 {
 	emit internalDataChanged();
 	endResetModel();
+}
+
+void PageModel::onColumnCountChanged()
+{
+	// TODO: use beginInsertColumns/endInsertColumns!
+	emit beginResetModel();
+	emit endResetModel();
 }
 
 }

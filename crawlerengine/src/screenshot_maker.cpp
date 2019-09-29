@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#ifdef ENABLE_SCREENSHOTS
 #include "screenshot_maker.h"
 #include "take_screenshot_request.h"
 #include "take_screenshot_response.h"
@@ -349,3 +349,4 @@ std::pair<bool, ScreenshotMakerMessage> ScreenshotMaker::screenshotMakerResponse
 }
 
 }
+#endif

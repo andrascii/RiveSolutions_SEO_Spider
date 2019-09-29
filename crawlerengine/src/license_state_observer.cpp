@@ -112,7 +112,7 @@ void LicenseStateObserver::onLicenseStateChanged(const SerialNumberStates& state
 	else if (stateFlags.testFlag(SerialNumberState::StateRunningTimeOver))
 	{
 		setTrialLicense(true, Reason::ReasonRunningTimeOver);
-	} 
+	}
 	else if (stateFlags.testFlag(SerialNumberState::StateSuccessActivation))
 	{
 		setTrialLicense(false, ReasonSuccessActivation);

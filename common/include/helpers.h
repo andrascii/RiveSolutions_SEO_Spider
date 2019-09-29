@@ -23,6 +23,7 @@ public:
 	static double pixelsToPoints(int sizeInPixels, double dpi = 0);
 
 	static std::vector<QMetaMethod> allUserSignals(QObject* qobject, QVector<QByteArray> exclude = QVector<QByteArray>());
+
 	static void connectMetaMethods(QObject* sender, QMetaMethod senderMethod, QObject* receiver, QMetaMethod receiverMethod);
 	static void connectSignalsToMetaMethod(QObject* sender, std::vector<QMetaMethod> senderMethods, QObject* receiver, QMetaMethod receiverMethod);
 	static void connectSignalsToMetaMethods(QObject* sender, std::vector<QMetaMethod> senderMethods, QObject* receiver, std::vector<QMetaMethod> receiverMethods);

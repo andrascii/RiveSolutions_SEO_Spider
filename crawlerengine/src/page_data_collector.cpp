@@ -140,7 +140,6 @@ void PageDataCollector::applyOptions()
 
 	if (m_crawlerOptionsData.searchGoogleAnalyticsCounters)
 	{
-
 		if (m_crawlerOptionsData.searchGoogleAnalyticsCounter1)
 		{
 			m_parser.addParser(std::make_shared<GaParser>(

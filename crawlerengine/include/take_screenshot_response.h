@@ -1,4 +1,5 @@
 #pragma once
+#ifdef ENABLE_SCREENSHOTS
 
 #include "iresponse.h"
 
@@ -78,3 +79,6 @@ private:
 };
 
 }
+
+#endif
+

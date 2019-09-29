@@ -412,6 +412,7 @@ void ReportsPage::buildLayoutBrief()
 		counterElement->setRelativePosition(percentWidthPixels(1), topMargin, prevLineWidget, textElement);
 	};
 
+#ifdef ENABLE_SCREENSHOTS
 	ReportElementBase* siteImage = getWidget(Key::SiteShortImage);
 	if (siteImage == nullptr)
 	{
@@ -420,6 +421,7 @@ void ReportsPage::buildLayoutBrief()
 	}
 	siteImage->setSize(percentWidthPixels(35), percentWidthPixels(35) * 0.8);
 	siteImage->setRelativePosition(bodyMargin, bodyMargin, nullptr, nullptr);
+#endif
 
 
 	ReportElementBase* siteLink = getWidget(Key::SiteLink);
@@ -429,7 +431,12 @@ void ReportsPage::buildLayoutBrief()
 		m_reportElements[m_reportDataProvider.placeholder(Key::SiteLink)] = siteLink;
 	}
 	siteLink->setSize(percentWidthPixels(60), Common::Helpers::pointsToPixels(24));
+#ifdef ENABLE_SCREENSHOTS
 	siteLink->setRelativePosition(percentWidthPixels(3), bodyMargin + Common::Helpers::pointsToPixels(5), nullptr, siteImage);
+#endif
+#ifndef ENABLE_SCREENSHOTS
+	siteLink->setRelativePosition(percentWidthPixels(3), bodyMargin + Common::Helpers::pointsToPixels(5), nullptr, nullptr);
+#endif
 
 	ReportElementBase* problemsCount = getWidget(Key::FoundProblemsCount);
 	if (problemsCount == nullptr)
@@ -438,7 +445,12 @@ void ReportsPage::buildLayoutBrief()
 		m_reportElements[m_reportDataProvider.placeholder(Key::FoundProblemsCount)] = problemsCount;
 	}
 	problemsCount->setSize(-1, Common::Helpers::pointsToPixels(28));
+#ifdef ENABLE_SCREENSHOTS
 	problemsCount->setRelativePosition(percentWidthPixels(3), Common::Helpers::pointsToPixels(10), siteLink, siteImage);
+#endif
+#ifndef ENABLE_SCREENSHOTS
+	problemsCount->setRelativePosition(percentWidthPixels(3), Common::Helpers::pointsToPixels(10), siteLink, nullptr);
+#endif
 
 	ReportElementBase* problemsFound = getWidget("problemsFound");
 	if (problemsFound == nullptr)
@@ -450,7 +462,12 @@ void ReportsPage::buildLayoutBrief()
 	problemsFound->setSize(percentWidthPixels(35), problemsCount->height());
 	problemsFound->setRelativePosition(Common::Helpers::pointsToPixels(5), Common::Helpers::pointsToPixels(6), siteLink, problemsCount);
 
+#ifdef ENABLE_SCREENSHOTS
 	addSpacerItem("spacer1", siteImage);
+#endif
+#ifndef ENABLE_SCREENSHOTS
+	addSpacerItem("spacer1", problemsFound);
+#endif
 
 	addSummaryItem(Key::ErrorsImage, Key::Errors, Key::ErrorsCount, bodyMargin, Common::Helpers::pointsToPixels(10), getWidget("spacer1"));
 	addSummaryItem(Key::WarningsImage, Key::Warnings, Key::WarningsCount, bodyMargin + percentWidthPixels(24), Common::Helpers::pointsToPixels(10), getWidget("spacer1"));

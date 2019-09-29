@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#ifdef ENABLE_SCREENSHOTS
 #include "screenshot_maker_command.h"
 
 namespace Common
@@ -48,3 +48,5 @@ void ScreenshotMakerMessage::setExitMessage()
 }
 
 }
+
+#endif

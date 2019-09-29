@@ -1,4 +1,5 @@
 #pragma once
+#ifdef ENABLE_SCREENSHOTS
 
 namespace Common
 {
@@ -49,3 +50,5 @@ struct ScreenshotMakerMessage
 };
 
 }
+
+#endif

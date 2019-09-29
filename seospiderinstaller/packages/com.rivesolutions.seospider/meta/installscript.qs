@@ -177,10 +177,10 @@ function createMenuDirectory()
 			
 		component.addOperation(
 			"CreateShortcut", 
-			"@TargetDir@/Uninstall SeoSpider.exe", 
+			"@TargetDir@/uninstall.exe", 
 			"@StartMenuDir@/Uninstall RiveSolution SEO Spider.lnk",
 			"workingDirectory=@TargetDir@", 
-			"iconPath=@TargetDir@/Uninstall SeoSpider.exe",
+			"iconPath=@TargetDir@/uninstall.exe",
 			"iconId=0" , 
 			"description=Open SEO Spider");	
 	}
