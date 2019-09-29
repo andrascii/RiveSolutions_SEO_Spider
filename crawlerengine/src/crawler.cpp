@@ -179,7 +179,7 @@ void Crawler::clearDataImpl()
 	CrawlerSharedState::instance()->clear();
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "clearData", Qt::BlockingQueuedConnection));
 	m_uniqueLinkStore->clear();
-	if (m_session->hasCustomName())
+	if (m_session != nullptr && m_session->hasCustomName())
 	{
 		m_session->setState(Session::StateUnsaved);
 	}
