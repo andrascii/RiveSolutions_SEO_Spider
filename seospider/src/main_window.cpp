@@ -583,7 +583,7 @@ void MainWindow::init()
 
 void MainWindow::createActions()
 {
-	ActionRegistry::instance().addGlobalAction(s_createXMLSitemapAction, tr("Create XML Sitemap"));
+	ActionRegistry::instance().addGlobalAction(s_createXMLSitemapAction, SvgRenderer::render(":/images/xml-sitemap-icon.svg", 10, 10), tr("Create XML Sitemap"));
 
 	initFileActions();
 	initSettingsActions();
@@ -599,8 +599,8 @@ void MainWindow::createAndSetCentralWidget()
 	m_contentFrame->addPage(new SiteAuditPage, true);
 	m_contentFrame->addPage(new AllPagesPage);
 	m_contentFrame->addPage(new AllResourcesPage);
-    m_contentFrame->addPage(new AuditReportPage);
-    m_contentFrame->addPage(new DataExtractionPage);
+	m_contentFrame->addPage(new AuditReportPage);
+	m_contentFrame->addPage(new DataExtractionPage);
 
 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 	layout->setSpacing(0);
@@ -614,62 +614,62 @@ void MainWindow::createAndSetCentralWidget()
 void MainWindow::registerSettingsPages() const
 {
 	SettingsPageImpl<Ui_CrawlerSettingsWidget>::registerSettingsPage(
-		QIcon(":/images/crawler-settings.png"),
+		SvgRenderer::render(":/images/crawler-settings.svg", 10, 10),
 		TYPE_STRING(Ui_CrawlerSettingsWidget),
 		new CrawlerSettingsWidget);
 
 	SettingsPageImpl<Ui_ProxySettingsWidget>::registerSettingsPage(
-		QIcon(":/images/proxy-settings.png"),
+		SvgRenderer::render(":/images/proxy-settings.svg", 10, 10),
 		TYPE_STRING(Ui_ProxySettingsWidget),
 		new ProxySettingsWidget);
 
 	SettingsPageImpl<Ui_LimitsSettingsWidget>::registerSettingsPage(
-		QIcon(":/images/limits-settings.png"),
+		SvgRenderer::render(":/images/limits-settings.svg", 10, 10),
 		TYPE_STRING(Ui_LimitsSettingsWidget),
 		new LimitsSettingsWidget);
 
 	SettingsPageImpl<Ui_PreferencesSettingsWidget>::registerSettingsPage(
-		QIcon(":/images/preferences-settings-icon.png"),
+		SvgRenderer::render(":/images/preferences-settings.svg", 10, 10),
 		TYPE_STRING(Ui_PreferencesSettingsWidget));
 
 	SettingsPageImpl<Ui_LanguageSettingsWidget>::registerSettingsPage(
-		QIcon(":/images/lang-settings.png"),
+		SvgRenderer::render(":/images/lang-settings.svg", 10, 10),
 		TYPE_STRING(Ui_LanguageSettingsWidget),
 		new LanguageSettingsWidget);
 
 	SettingsPageImpl<Ui_UserAgentSettingsWidget>::registerSettingsPage(
-		QIcon(":/images/user-agent.png"),
+		SvgRenderer::render(":/images/user-agent-settings.svg", 10, 10),
 		TYPE_STRING(Ui_UserAgentSettingsWidget),
 		new UserAgentSettingsWidget);
 
 	SettingsPageImpl<Ui_CrawlerPauseSettingsWidget>::registerSettingsPage(
-		QIcon(":/images/crawler-pause.png"),
+		SvgRenderer::render(":/images/crawler-pause-settings.svg", 10, 10),
 		TYPE_STRING(Ui_CrawlerPauseSettingsWidget),
 		new CrawlerPauseSettingsWidget);
 
 	SettingsPageImpl<Ui_CompanyProfileSettingsWidget>::registerSettingsPage(
-		QIcon(":/images/company-profile.png"),
+		SvgRenderer::render(":/images/company-profile-settings.svg", 10, 10),
 		TYPE_STRING(Ui_CompanyProfileSettingsWidget));
 
 	SettingsPageImpl<Ui_YandexMetricaSettingsWidget>::registerSettingsPage(
-		SvgRenderer::render(":/images/yandex.svg", 10, 10),
+		SvgRenderer::render(":/images/yandex-metrica-settings.svg", 10, 10),
 		TYPE_STRING(Ui_YandexMetricaSettingsWidget),
 		new YandexMetricaSettingsWidget);
 
-    SettingsPageImpl<Ui_GoogleAnalyticsSettingsWidget>::registerSettingsPage(
-        SvgRenderer::render(":/images/google-analytics.svg", 10, 10),
-        TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget),
-        new GoogleAnalyticsSettingsWidget);
+	SettingsPageImpl<Ui_GoogleAnalyticsSettingsWidget>::registerSettingsPage(
+		SvgRenderer::render(":/images/google-analytics-settings.svg", 10, 10),
+		TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget),
+		new GoogleAnalyticsSettingsWidget);
 
-    // TODO: change pixmap
-    SettingsPageImpl<Ui_DataExtractionSettingsWidget>::registerSettingsPage(
-        SvgRenderer::render(":/images/google-analytics.svg", 10, 10),
-        TYPE_STRING(Ui_DataExtractionSettingsWidget),
-        new DataExtractionSettingsWidget);
+	// TODO: change pixmap
+	SettingsPageImpl<Ui_DataExtractionSettingsWidget>::registerSettingsPage(
+		SvgRenderer::render(":/images/data-extraction-settings.svg", 10, 10),
+		TYPE_STRING(Ui_DataExtractionSettingsWidget),
+		new DataExtractionSettingsWidget);
 
 #ifndef PRODUCTION
 	SettingsPageImpl<Ui_PageVisualSettingsWidget>::registerSettingsPage(
-		QIcon(":/images/color.png"),
+		SvgRenderer::render(":/images/color-settings.svg", 10, 10),
 		TYPE_STRING(Ui_PageVisualSettingsWidget),
 		new PageVisualSettingsWidget);
 #endif
@@ -743,18 +743,20 @@ void MainWindow::initFileActions()
 
 #ifdef SUPPORT_SERIALIZATION
 	actionRegistry.addActionGroup(s_fileActionGroup);
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, QIcon(QStringLiteral(":/images/open-file-icon.png")), tr("Open File"));
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, tr("Close File"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_openFileAction, SvgRenderer::render(":/images/open-file-icon.svg", 10, 10), tr("Open File"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_closeFileAction, SvgRenderer::render(":/images/close-file.svg", 10, 10), tr("Close File"));
 
 	QAction* recentFilesAction = RecentFiles::instance().subMenuAction();
-	recentFilesAction->setIcon(QIcon(QStringLiteral(":/images/actions-document-open-recent-icon.png")));
+	recentFilesAction->setIcon(SvgRenderer::render(":/images/actions-document-open-recent-icon.svg", 10, 10));
 	recentFilesAction->setText(tr("Recent Files"));
 
 	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_recentFilesAction, recentFilesAction);
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, QIcon(QStringLiteral(":/images/save-icon.png")), tr("Save File"));
-	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, QIcon(QStringLiteral(":/images/save-as-icon.png")), tr("Save File As"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAction, SvgRenderer::render(":/images/save-icon.svg", 10, 10), tr("Save File"));
+	actionRegistry.addActionToActionGroup(s_fileActionGroup, s_saveFileAsAction, SvgRenderer::render(":/images/save-as-icon.svg", 10, 10), tr("Save File As"));
 #endif
-	actionRegistry.addGlobalAction(s_exitProgramAction, tr("Exit"));
+
+	actionRegistry.addGlobalAction(s_exitProgramAction, SvgRenderer::render(":/images/exit.svg", 10, 10), tr("Exit"));
+
 #ifdef SUPPORT_SERIALIZATION
 	actionRegistry.addGlobalAction(s_saveFileAndClearDataAction, tr("Save To File And Clear Data"));
 
@@ -785,41 +787,40 @@ void MainWindow::initSettingsActions()
 	actionRegistry.addActionGroup(s_settingsActionGroup);
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerSettingsAction,
-		QIcon(QStringLiteral(":/images/crawler-settings.png")), tr("Crawler Settings"));
+		SvgRenderer::render(":/images/crawler-settings.svg", 10, 10), tr("Crawler Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLanguageSettingsAction,
-		QIcon(QStringLiteral(":/images/lang-settings.png")), tr("Language Settings"));
+		SvgRenderer::render(":/images/lang-settings.svg", 10, 10), tr("Language Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPreferencesSettingsAction,
-		QIcon(QStringLiteral(":/images/preferences-settings-icon.png")), tr("Preferences Settings"));
+		SvgRenderer::render(":/images/preferences-settings.svg", 10, 10), tr("Preferences Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openLimitsSettingsAction,
-		QIcon(QStringLiteral(":/images/limits-settings.png")), tr("Limit Settings"));
+		SvgRenderer::render(":/images/limits-settings.svg", 10, 10), tr("Limit Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openProxySettingsAction,
-		QIcon(QStringLiteral(":/images/proxy-settings.png")), tr("Proxy Settings"));
+		SvgRenderer::render(":/images/proxy-settings.svg", 10, 10), tr("Proxy Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openUserAgentSettingsAction,
-		QIcon(QStringLiteral(":/images/user-agent.png")), tr("User-Agent Settings"));
+		SvgRenderer::render(":/images/user-agent-settings.svg", 10, 10), tr("User-Agent Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCrawlerPauseTimerSettingsAction,
-		QIcon(QStringLiteral(":/images/crawler-pause.png")), tr("Crawler Pause Settings"));
+		SvgRenderer::render(":/images/crawler-pause-settings.svg", 10, 10), tr("Crawler Pause Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openCompanyProfileSettingsAction,
-		QIcon(QStringLiteral(":/images/company-profile.png")), tr("Company Profile Settings"));
+		SvgRenderer::render(":/images/company-profile-settings.svg", 10, 10), tr("Company Profile Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_openPageVisualSettingsAction,
-		QIcon(QStringLiteral(":/images/color.png")), tr("Page Visual Settings"));
+		SvgRenderer::render(":/images/color-settings.svg", 10, 10), tr("Page Visual Settings"));
 
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_yandexMetricaSettingsAction,
-		SvgRenderer::render(":/images/yandex.svg", 10, 10), tr("Yandex Metrica Settings"));
+		SvgRenderer::render(":/images/yandex-metrica-settings.svg", 10, 10), tr("Yandex Metrica Settings"));
 
-    actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_googleAnalyticsSettingsAction,
-        SvgRenderer::render(":/images/google-analytics.svg", 10, 10), tr("Google Analytics Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_googleAnalyticsSettingsAction,
+		SvgRenderer::render(":/images/google-analytics-settings.svg", 10, 10), tr("Google Analytics Settings"));
 
-    // TODO: change pixmap
-    actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_dataExtractionSettingsAction,
-        SvgRenderer::render(":/images/google-analytics.svg", 10, 10), tr("Data Extraction Settings"));
+	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_dataExtractionSettingsAction,
+		SvgRenderer::render(":/images/data-extraction-settings.svg", 10, 10), tr("Data Extraction Settings"));
 
 	const auto settingsActionsAvailability = [](int state)
 	{
@@ -880,11 +881,11 @@ void MainWindow::initSettingsActions()
 	VERIFY(connect(actionRegistry.globalAction(s_yandexMetricaSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_YandexMetricaSettingsWidget)); }));
 
-    VERIFY(connect(actionRegistry.globalAction(s_googleAnalyticsSettingsAction), &QAction::triggered,
-        this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget)); }));
+	VERIFY(connect(actionRegistry.globalAction(s_googleAnalyticsSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget)); }));
 
-    VERIFY(connect(actionRegistry.globalAction(s_dataExtractionSettingsAction), &QAction::triggered,
-        this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_DataExtractionSettingsWidget)); }));
+	VERIFY(connect(actionRegistry.globalAction(s_dataExtractionSettingsAction), &QAction::triggered,
+		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_DataExtractionSettingsWidget)); }));
 }
 
 void MainWindow::initCrawlerActions()

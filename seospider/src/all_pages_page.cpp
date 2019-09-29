@@ -204,10 +204,10 @@ QString AllPagesPage::name() const
 QIcon AllPagesPage::icon() const
 {
 	QIcon icon;
-	icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Normal, QIcon::On);
-	icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Active, QIcon::On);
-	icon.addFile(QStringLiteral(":/images/all-pages-active.png"), QSize(), QIcon::Active, QIcon::Off);
-	icon.addFile(QStringLiteral(":/images/all-pages-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+	icon.addPixmap(SvgRenderer::render(":/images/all-pages-page-icon.svg", 15, 15), QIcon::Normal, QIcon::On);
+	icon.addPixmap(SvgRenderer::render(":/images/all-pages-page-icon.svg", 15, 15), QIcon::Active, QIcon::On);
+	icon.addPixmap(SvgRenderer::render(":/images/all-pages-page-icon.svg", 15, 15), QIcon::Active, QIcon::Off);
+	icon.addPixmap(SvgRenderer::render(":/images/all-pages-page-icon.svg", 15, 15), QIcon::Normal, QIcon::Off);
 
 	return icon;
 }
