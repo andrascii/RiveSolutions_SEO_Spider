@@ -6,25 +6,6 @@ namespace
 
 using namespace CrawlerEngine;
 
-QVector<void*> path(const IHtmlNodeCountedPtr& node, const IHtmlNodeCountedPtr& root)
-{
-	QVector<void*> result;
-
-	IHtmlNodeCountedPtr current = node;
-	while (current)
-	{
-		result.push_back(current->data());
-		if (current->data() == root->data())
-		{
-			break;
-		}
-		current = current->parent();
-	}
-
-	std::reverse(result.begin(), result.end());
-	return result;
-}
-
 QMap<IHtmlNode::TagId, QString> s_tagToName
 {
 	{ IHtmlNode::TagIdA, "a" },
@@ -237,56 +218,44 @@ QXmlNodeModelIndex::DocumentOrder HtmlNodeModel::compareOrder(const QXmlNodeMode
 		return QXmlNodeModelIndex::Is;
 
 	auto root = m_parser->root();
-	auto path1 = path(node1, root);
-	auto path2 = path(node2, root);
+	calculatePath(node1, root, m_path1);
+	calculatePath(node2, root, m_path2);
 
-	QSet<void*> set1;
-	QSet<void*> set2;
+	auto it1 = m_path1.rbegin();
+	auto it2 = m_path2.rbegin();
 
-	for (auto i : path1)
+	auto itEnd1 = m_path1.rend();
+	auto itEnd2 = m_path2.rend();
+
+	while (true)
 	{
-		set1.insert(i);
-	}
+		it1 += 1;
+		it2 += 1;
 
-	for (auto i : path2)
-	{
-		set2.insert(i);
-	}
-
-	QSet<void*> intersection = set1.intersect(set2);
-	ASSERT(!intersection.isEmpty());
-
-	void* commonParent = nullptr;
-
-	// move from back to begin to find a node that contains in both paths
-	for (int i = path1.size() - 1; i >= 0; --i)
-	{
-		if (intersection.contains(path1[i]))
+		if (it1 == itEnd1)
 		{
-			commonParent = path1[i];
-			break;
+			DEBUG_ASSERT(it2 != itEnd2);
+			return QXmlNodeModelIndex::Precedes;
+		}
+
+		if (it2 == itEnd2)
+		{
+			DEBUG_ASSERT(it1 != itEnd1);
+			return QXmlNodeModelIndex::Follows;
+		}
+
+		if (*it1 != *it2)
+		{
+			auto node1 = m_parser->fromData(*it1);
+			auto node2 = m_parser->fromData(*it2);
+
+			return node1->childIndex() < node2->childIndex() ? QXmlNodeModelIndex::Precedes : QXmlNodeModelIndex::Follows;
 		}
 	}
+	
 
-	ASSERT(commonParent != nullptr);
-
-	int index = path1.indexOf(commonParent);
-	ASSERT(path2.indexOf(commonParent) == index);
-
-	if (index == path1.size() - 1 && index != path2.size() - 1)
-	{
-		return QXmlNodeModelIndex::Precedes;
-	}
-
-	if (index == path2.size() - 1 && index != path1.size() - 1)
-	{
-		return QXmlNodeModelIndex::Follows;
-	}
-
-	auto ch1 = m_parser->fromData(path1[index + 1]);
-	auto ch2 = m_parser->fromData(path2[index + 1]);
-
-	return ch1->childIndex() < ch2->childIndex() ? QXmlNodeModelIndex::Precedes : QXmlNodeModelIndex::Follows;
+	ASSERT(!"compareOrder logic error");
+	return QXmlNodeModelIndex::Follows;
 }
 
 QUrl HtmlNodeModel::documentUri(const QXmlNodeModelIndex& n) const
@@ -455,6 +424,24 @@ QXmlNodeModelIndex HtmlNodeModel::nextFromSimpleAxis(QAbstractXmlNodeModel::Simp
 	}
 
 	return QXmlNodeModelIndex();
+}
+
+void HtmlNodeModel::calculatePath(const IHtmlNodeCountedPtr& node, const IHtmlNodeCountedPtr& root, std::vector<void*>& outArray) const
+{
+	outArray.resize(0);
+	void* rootData = root->data();
+	IHtmlNodeCountedPtr current = node;
+	while (current)
+	{
+		void* currentData = current->data();
+		outArray.push_back(currentData);
+		
+		if (currentData == rootData)
+		{
+			break;
+		}
+		current = current->parent();
+	}
 }
 
 IHtmlNodeCountedPtr HtmlNodeModel::toHtmlNode(const QXmlNodeModelIndex& index) const
