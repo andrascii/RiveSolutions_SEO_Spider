@@ -22,7 +22,7 @@ signals:
 	virtual void columnCountChanged(int newColumnCount) override;
 
 private slots:
-	void onSomeExtractorRuleTypeChanged();
+	void onSomeExtractorChanged();
 
 private:
 	QVector<QString> m_columnNames;
