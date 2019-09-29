@@ -92,7 +92,10 @@ void XPathParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 	for (auto it = m_xPaths.keyBegin(); it != m_xPaths.keyEnd(); ++it)
 	{
 		QString result = evaluateXPath(m_xPaths[*it], m_htmlParser);
-		page->dataExtractions.insert(*it, result);
+		if (!result.isEmpty())
+		{
+			page->dataExtractions.insert(*it, result);
+		}
 	}
 }
 
