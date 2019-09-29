@@ -77,17 +77,18 @@ XPathParser::XPathParser(IHtmlParser* htmlParser, const CrawlerOptionsData& opti
 		{
 			m_xPaths.insert(index, correctedXPath(xpath));
 		}
+		index += 1;
 	}
 }
 
 void XPathParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 {
+	Q_UNUSED(headers);
 	if (page->resourceType != ResourceType::ResourceHtml)
 	{
 		return;
 	}
 
-	Q_UNUSED(headers);
 	for (auto it = m_xPaths.keyBegin(); it != m_xPaths.keyEnd(); ++it)
 	{
 		QString result = evaluateXPath(m_xPaths[*it], m_htmlParser);
