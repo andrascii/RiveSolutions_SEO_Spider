@@ -8,7 +8,7 @@ namespace SeoSpider
 QPixmap SvgRenderer::render(const QString& filepath, const QSize& sizeInPoints)
 {
 	const QSize sizeInPixels(
-		Common::Helpers::pointsToPixels(sizeInPoints.width()), 
+		Common::Helpers::pointsToPixels(sizeInPoints.width()),
 		Common::Helpers::pointsToPixels(sizeInPoints.height())
 	);
 
@@ -26,7 +26,9 @@ QPixmap SvgRenderer::render(const QString& filepath, const QSize& sizeInPoints)
 	QPainter painter(&pixmap);
 	QSvgRenderer renderer;
 
-	renderer.load(filepath);
+	const bool fileMustBeLoaded = renderer.load(filepath);
+	DEBUG_ASSERT_WITH_DUMP(fileMustBeLoaded && "Cannot load svg image", DUMP(filepath));
+
 	renderer.render(&painter);
 
 	QPixmapCache::insert(key, pixmap);

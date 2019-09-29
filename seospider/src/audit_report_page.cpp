@@ -33,10 +33,10 @@ QString AuditReportPage::name() const
 QIcon AuditReportPage::icon() const
 {
 	QIcon icon;
-	icon.addFile(QStringLiteral(":/images/report-active.png"), QSize(), QIcon::Normal, QIcon::On);
-	icon.addFile(QStringLiteral(":/images/report-active.png"), QSize(), QIcon::Active, QIcon::On);
-	icon.addFile(QStringLiteral(":/images/report-active.png"), QSize(), QIcon::Active, QIcon::Off);
-	icon.addFile(QStringLiteral(":/images/report-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+	icon.addPixmap(SvgRenderer::render(":/images/report-page-icon.svg", 15, 15), QIcon::Normal, QIcon::On);
+	icon.addPixmap(SvgRenderer::render(":/images/report-page-icon.svg", 15, 15), QIcon::Active, QIcon::On);
+	icon.addPixmap(SvgRenderer::render(":/images/report-page-icon.svg", 15, 15), QIcon::Active, QIcon::Off);
+	icon.addPixmap(SvgRenderer::render(":/images/report-page-icon.svg", 15, 15), QIcon::Normal, QIcon::Off);
 
 	return icon;
 }
@@ -49,7 +49,7 @@ IPage::Type AuditReportPage::type() const
 void AuditReportPage::createHeaderActionWidgets()
 {
 	QAction* saveToPdfAction = new QAction(tr("Export to PDF"), this);
-	saveToPdfAction->setIcon(SvgRenderer::render(QStringLiteral(":/images/pdf.svg"), 25, 25));
+	saveToPdfAction->setIcon(SvgRenderer::render(":/images/pdf.svg", 25, 25));
 	VERIFY(connect(saveToPdfAction, &QAction::triggered, m_reportsPage, &ReportsPage::exportToPdf));
 
 	AbstractPage::addAction(saveToPdfAction);

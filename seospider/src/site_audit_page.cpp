@@ -42,10 +42,10 @@ QString SiteAuditPage::name() const
 QIcon SiteAuditPage::icon() const
 {
 	QIcon icon;
-	icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Normal, QIcon::On);
-	icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Active, QIcon::On);
-	icon.addFile(QStringLiteral(":/images/audit-info-active.png"), QSize(), QIcon::Active, QIcon::Off);
-	icon.addFile(QStringLiteral(":/images/audit-info-normal.png"), QSize(), QIcon::Normal, QIcon::Off);
+	icon.addPixmap(SvgRenderer::render(":/images/audit-info-page-icon.svg", 15, 15), QIcon::Normal, QIcon::On);
+	icon.addPixmap(SvgRenderer::render(":/images/audit-info-page-icon.svg", 15, 15), QIcon::Active, QIcon::On);
+	icon.addPixmap(SvgRenderer::render(":/images/audit-info-page-icon.svg", 15, 15), QIcon::Active, QIcon::Off);
+	icon.addPixmap(SvgRenderer::render(":/images/audit-info-page-icon.svg", 15, 15), QIcon::Normal, QIcon::Off);
 
 	return icon;
 }

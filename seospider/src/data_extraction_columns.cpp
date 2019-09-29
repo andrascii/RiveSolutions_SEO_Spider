@@ -8,16 +8,21 @@ namespace SeoSpider
 
 DataExtractionColumns::DataExtractionColumns()
 {
-	const QMetaMethod thisSlotMetaMethod = Common::Helpers::metaMethodOfSlot(this, "onSomeExtractorRuleTypeChanged()");
+	const QMetaMethod thisSlotMetaMethod = Common::Helpers::metaMethodOfSlot(this, "onSomeExtractorChanged()");
 
 	for (size_t i = 0; i < Preferences::c_extractorCount; ++i)
 	{
-		const QByteArray propertyName = QStringLiteral("extractorRuleType%1").arg(i + 1).toLatin1();
-		const QMetaMethod signal = Common::Helpers::metaMethodOfSignal(theApp->preferences(), propertyName + "Changed(int)");
-		Common::Helpers::connectMetaMethods(theApp->preferences(), signal, this, thisSlotMetaMethod);
+		const QByteArray extractorRuleTypeSignalName = QStringLiteral("extractorRuleType%1").arg(i + 1).toLatin1();
+		const QByteArray extractorNameSignalName = QStringLiteral("extractorName%1").arg(i + 1).toLatin1();
+
+		const QMetaMethod extractorRuleTypeSignal = Common::Helpers::metaMethodOfSignal(theApp->preferences(), extractorRuleTypeSignalName + "Changed(int)");
+		const QMetaMethod extractorNameSignal = Common::Helpers::metaMethodOfSignal(theApp->preferences(), extractorNameSignalName + "Changed(QString)");
+
+		Common::Helpers::connectMetaMethods(theApp->preferences(), extractorRuleTypeSignal, this, thisSlotMetaMethod);
+		Common::Helpers::connectMetaMethods(theApp->preferences(), extractorNameSignal, this, thisSlotMetaMethod);
 	}
 
-	onSomeExtractorRuleTypeChanged();
+	onSomeExtractorChanged();
 }
 
 QString DataExtractionColumns::data(const CrawlerEngine::ParsedPage* page, int columnIndex) const noexcept
@@ -53,7 +58,7 @@ QObject* DataExtractionColumns::qobject() const
 	return const_cast<DataExtractionColumns*>(this);
 }
 
-void DataExtractionColumns::onSomeExtractorRuleTypeChanged()
+void DataExtractionColumns::onSomeExtractorChanged()
 {
 	m_columnNames.clear();
 

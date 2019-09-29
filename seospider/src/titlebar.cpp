@@ -48,12 +48,12 @@ void TitleBar::setButton(ButtonType buttonType)
 	{
 		case ButtonTypeMinimize:
 		{
-			
+
 			break;
 		}
 		case ButtonTypeMaximizeRestore:
 		{
-			
+
 			break;
 		}
 		case ButtonTypeClose:
@@ -121,7 +121,7 @@ QPushButton* TitleBar::createCloseButton()
 	return closeButton;
 }
 
-void TitleBar::mousePressEvent(QMouseEvent *mouseEvent) 
+void TitleBar::mousePressEvent(QMouseEvent *mouseEvent)
 {
 	m_startPosition = mouseEvent->globalPos();
 	m_clickPosition = mapToParent(mouseEvent->pos());

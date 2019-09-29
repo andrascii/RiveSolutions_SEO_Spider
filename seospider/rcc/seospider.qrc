@@ -1,41 +1,34 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/robot.ico</file>
-        <file>images/actions-document-open-recent-icon.png</file>
-        <file>images/open-file-icon.png</file>
-        <file>images/save-as-icon.png</file>
-        <file>images/save-icon.png</file>
-		<file>images/settings.png</file>
         <file>images/logo-big.svg</file>
-        <file>images/ui-splitter-horizontal-icon.png</file>
-        <file>images/ui-splitter-vertical-icon.png</file>
+		<file>images/application-icon.svg</file>
+        
+        <!-- Actions icons -->
+        <file>images/actions-document-open-recent-icon.svg</file>
+        <file>images/open-file-icon.svg</file>
+        <file>images/save-as-icon.svg</file>
+        <file>images/save-icon.svg</file>
         <file>images/icon-ok.svg</file>
 		<file>images/icon-info.svg</file>
         <file>images/icon-warning.svg</file>
         <file>images/icon-error.svg</file>
-		<file>images/crawler-settings.png</file>
-		<file>images/proxy-settings.png</file>
-		<file>images/limits-settings.png</file>
-		<file>images/preferences-settings-icon.png</file>
-		<file>images/lang-settings.png</file>
-		<file>images/oops.jpg</file>
+        <file>images/close-file.svg</file>
+        <file>images/exit.svg</file>
 		<file>images/up-arrow.png</file>
 		<file>images/down-arrow.png</file>
-		<file>images/close-window.png</file>
-		<file>images/minimize-window.png</file>
-		<file>images/maximize-window.png</file>
-		<file>images/restore-window.png</file>
-		<file>images/all-pages-active.png</file>
-		<file>images/all-pages-normal.png</file>
-		<file>images/all-resources-active.png</file>
-		<file>images/all-resources-normal.png</file>
-		<file>images/audit-info-active.png</file>
-		<file>images/audit-info-normal.png</file>
-		<file>images/report-normal.png</file>
-		<file>images/report-active.png</file>
-		<file>images/user-agent.png</file>
-		<file>images/crawler-pause.png</file>
-		<file>images/company-profile.png</file>
+
+        <!-- Splitters -->
+        <file>images/ui-splitter-horizontal-icon.png</file>
+        <file>images/ui-splitter-vertical-icon.png</file>
+
+        <!-- Sections icons -->
+		<file>images/all-pages-page-icon.svg</file>
+		<file>images/all-resources-page-icon.svg</file>
+		<file>images/audit-info-page-icon.svg</file>
+		<file>images/report-page-icon.svg</file>
+        <file>images/data-extraction-page-icon.svg</file>
+		
+        <!-- Controls -->
 		<file>images/no-internet-connection.png</file>
 		<file>images/internet-connection.png</file>
 		<file>images/notifications-normal.png</file>
@@ -49,14 +42,26 @@
 		<file>images/group-by-category.svg</file>
 		<file>images/group-by-level.svg</file>
 		<file>images/lookup-widget.svg</file>
-		<file>images/yandex.svg</file>
-		<file>images/google-analytics.svg</file>
-		<file>images/color.png</file>
 
+        <!-- Settings pages icons -->
+		<file>images/settings.svg</file>
+        <file>images/crawler-settings.svg</file>
+        <file>images/crawler-pause-settings.svg</file>
+		<file>images/proxy-settings.svg</file>
+		<file>images/limits-settings.svg</file>
+		<file>images/preferences-settings.svg</file>
+		<file>images/lang-settings.svg</file>
+        <file>images/user-agent-settings.svg</file>
+		<file>images/company-profile-settings.svg</file>
+        <file>images/yandex-metrica-settings.svg</file>
+		<file>images/google-analytics-settings.svg</file>
+        <file>images/data-extraction-settings.svg</file>
+        <file>images/color-settings.svg</file>
+
+        <file>images/robot.ico</file>
 		<file>images/favicon.ico</file>
-		<file>images/application-icon.svg</file>
 
-		<!-- cursors -->
+		<!-- Cursors -->
 		<file>images/arrow-cursor.svg</file>
 		<file>images/open-hand-cursor.svg</file>
 		<file>images/pointing-hand-cursor.svg</file>
@@ -73,14 +78,19 @@
 
 		<file>images/gear.svg</file>
 
+        <!-- Gifs -->
+		<file>gifs/loader.gif</file>
+
 		<file>stylesheets/styles.css</file>
-		<file>config/defaults.cfg</file>
-		<file>config/desktopUserAgents.cfg</file>
-		<file>config/mobileUserAgents.cfg</file>
-		<file>config/languages.cfg</file>
 		<file>translations/translate_ru_RU.qm</file>
 		<file>reportmaket/brief_report_maket.html</file>
 		<file>reportmaket/maket_style.css</file>
-		<file>gifs/loader.gif</file>
+
+        <!-- Configs -->
+        <file>config/defaults.cfg</file>
+		<file>config/desktopUserAgents.cfg</file>
+		<file>config/mobileUserAgents.cfg</file>
+		<file>config/languages.cfg</file>
+
     </qresource>
 </RCC>
