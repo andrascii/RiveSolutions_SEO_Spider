@@ -11,8 +11,8 @@ class IpcServer : public IRpcServer
 public:
 	IpcServer();
 
-	virtual bool listen(const QString& name) override;
-    virtual std::shared_ptr<IRpcSocket> nextPendingConnection() override;
+	virtual bool listen(const QString& name);
+	virtual std::shared_ptr<IRpcSocket> nextPendingConnection() override;
 
 	virtual QString serverName() const override { return m_serverName; }
 	virtual QString fullServerName() const override { return m_serverName; }

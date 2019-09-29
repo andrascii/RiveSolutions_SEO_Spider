@@ -72,8 +72,8 @@ public:
 
 private:
 	mutable std::mutex m_mutex;
-    std::shared_ptr<IRpcSocket> m_socket;
-    std::shared_ptr<IRpcServer> m_server;
+	std::shared_ptr<IRpcSocket> m_socket;
+	std::shared_ptr<IRpcServer> m_server;
 };
 
 }

@@ -236,7 +236,7 @@ QString Helpers::macAddress()
 
 
 #ifdef Q_OS_MACOS
-bool Helpers::amIBeingDebugged(void)
+bool Helpers::amIBeingDebugged()
 // Returns true if the current process is being debugged (either
 // running under the debugger or has a debugger attached post facto).
 {

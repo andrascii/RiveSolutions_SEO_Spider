@@ -6,7 +6,7 @@ namespace Common
 {
 
 PipeServer::PipeServer()
-    : m_server(RpcFactory::createRpcServer())
+	: m_server(RpcFactory::createRpcServer())
 {
 }
 
