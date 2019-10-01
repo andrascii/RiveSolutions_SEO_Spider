@@ -27,6 +27,9 @@ public:
 	virtual IHtmlNodeCountedPtr fromData(void* data) const = 0;
 	virtual IHtmlAttributeCountedPtr attributeFromData(void* data) const = 0;
 	virtual IHtmlNodeCountedPtr root() const = 0;
+
+	virtual IHtmlNodeCountedPtr emptyNode() const = 0;
+	virtual IHtmlAttributeCountedPtr emptyAttribute() const = 0;
 };
 
 }

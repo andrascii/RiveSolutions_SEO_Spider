@@ -238,32 +238,39 @@ GumboHtmlNode::operator bool() const
 	return m_node != nullptr;
 }
 
-IHtmlNodeCountedPtr GumboHtmlNode::parent() const
+void GumboHtmlNode::parent(IHtmlNodeCountedPtr& out) const
 {
+	Q_UNUSED(out);
 	ASSERT(!"Not implemented");
-	return IHtmlNodeCountedPtr();
 }
 
-IHtmlNodeCountedPtr GumboHtmlNode::firstChild() const
+void GumboHtmlNode::firstChild(IHtmlNodeCountedPtr& out) const
 {
+	Q_UNUSED(out);
 	ASSERT(!"Not implemented");
-	return IHtmlNodeCountedPtr();
 }
 
-IHtmlNodeCountedPtr GumboHtmlNode::nextSibling() const
+void GumboHtmlNode::nextSibling(IHtmlNodeCountedPtr& out) const
 {
+	Q_UNUSED(out);
 	ASSERT(!"Not implemented");
-	return IHtmlNodeCountedPtr();
 }
 
-IHtmlNodeCountedPtr GumboHtmlNode::prevSibling() const
+void GumboHtmlNode::prevSibling(IHtmlNodeCountedPtr & out) const
 {
+	Q_UNUSED(out);
 	ASSERT(!"Not implemented");
-	return IHtmlNodeCountedPtr();
 }
 
 int GumboHtmlNode::childIndex() const
 {
+	ASSERT(!"Not implemented");
+	return 0;
+}
+
+int GumboHtmlNode::compare(const IHtmlNodeCountedPtr& other) const
+{
+	Q_UNUSED(other);
 	ASSERT(!"Not implemented");
 	return 0;
 }
@@ -462,6 +469,12 @@ void* GumboHtmlNode::data() const
 {
 	ASSERT(!"Not implemented");
 	return nullptr;
+}
+
+void GumboHtmlNode::setData(void* data)
+{
+	Q_UNUSED(data);
+	ASSERT(!"Not implemented");
 }
 
 }

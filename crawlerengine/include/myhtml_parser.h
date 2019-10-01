@@ -30,6 +30,9 @@ public:
 	virtual IHtmlAttributeCountedPtr attributeFromData(void* data) const override;
 	virtual IHtmlNodeCountedPtr root() const override;
 
+	virtual IHtmlNodeCountedPtr emptyNode() const override;
+	virtual IHtmlAttributeCountedPtr emptyAttribute() const override;
+
 private:
 	std::vector<LinkInfo> getLinkRelUrl(const char* relValue, ResourceSource source, const char* requiredAttribute = nullptr, bool getFirstValueOnly = true) const;
 	myencoding_t htmlSetEncoding(const ResponseHeaders& headers);

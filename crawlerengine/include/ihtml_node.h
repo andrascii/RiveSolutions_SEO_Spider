@@ -18,6 +18,7 @@ public:
 	virtual QString name() const = 0;
 	virtual QString value() const = 0;
 	virtual void* data() const = 0;
+	virtual void setData(void* data) = 0;
 };
 
 class IHtmlNode
@@ -203,11 +204,14 @@ public:
 
 	virtual operator bool() const = 0;
 
-	virtual IHtmlNodeCountedPtr parent() const = 0;
-	virtual IHtmlNodeCountedPtr firstChild() const = 0;
-	virtual IHtmlNodeCountedPtr nextSibling() const = 0;
-	virtual IHtmlNodeCountedPtr prevSibling() const = 0;
+	virtual void parent(IHtmlNodeCountedPtr& out) const = 0;
+	virtual void firstChild(IHtmlNodeCountedPtr& out) const = 0;
+	virtual void nextSibling(IHtmlNodeCountedPtr& out) const = 0;
+	virtual void prevSibling(IHtmlNodeCountedPtr& out) const = 0;
 	virtual int childIndex() const = 0;
+
+	// -1 if other is before this node, 0 if nodes are the same, and 1 if other is after this node
+	virtual int compare(const IHtmlNodeCountedPtr& other) const = 0;
 
 	virtual int attributesCount() const = 0;
 	virtual IHtmlAttributeCountedPtr attribute(int index) const = 0;
@@ -222,6 +226,7 @@ public:
 	virtual IHtmlNodeCountedPtr childNodeByAttributesValues(TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const = 0;
 
 	virtual void* data() const = 0;
+	virtual void setData(void* data) = 0;
 };
 
 }

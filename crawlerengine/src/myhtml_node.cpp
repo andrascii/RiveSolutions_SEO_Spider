@@ -1,4 +1,5 @@
 #include "myhtml_node.h"
+// #include "myhtml/tree.h"
 
 namespace
 {
@@ -203,9 +204,14 @@ QString MyHtmlAttribute::value() const
 	return myhtml_attribute_value(m_attr, nullptr);
 }
 
-void * MyHtmlAttribute::data() const
+void* MyHtmlAttribute::data() const
 {
 	return (void*)m_attr;
+}
+
+void MyHtmlAttribute::setData(void* data)
+{
+	m_attr = (myhtml_tree_attr_t*)data;
 }
 
 MyHtmlNode::MyHtmlNode(myhtml_tree_node_t* node)
@@ -284,64 +290,48 @@ MyHtmlNode::operator bool() const
 	return m_node != nullptr;
 }
 
-IHtmlNodeCountedPtr MyHtmlNode::parent() const
+void MyHtmlNode::parent(IHtmlNodeCountedPtr& out) const
 {
 	if (!m_node)
 	{
-		return nullptr;
+		return out->setData(nullptr);
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_parent(m_node);
-	if (node != nullptr)
-	{
-		return Common::make_counted<MyHtmlNode>(node);
-	}
-	return IHtmlNodeCountedPtr();
+	return out->setData(node);
 }
 
-IHtmlNodeCountedPtr MyHtmlNode::firstChild() const
+void MyHtmlNode::firstChild(IHtmlNodeCountedPtr& out) const
 {
 	if (!m_node)
 	{
-		return nullptr;
+		return out->setData(nullptr);
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_child(m_node);
-	if (node != nullptr)
-	{
-		return Common::make_counted<MyHtmlNode>(node);
-	}
-	return IHtmlNodeCountedPtr();
+	return out->setData(node);
 }
 
-IHtmlNodeCountedPtr MyHtmlNode::nextSibling() const
+void MyHtmlNode::nextSibling(IHtmlNodeCountedPtr& out) const
 {
 	if (!m_node)
 	{
-		return nullptr;
+		return out->setData(nullptr);
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_next(m_node);
-	if (node != nullptr)
-	{
-		return Common::make_counted<MyHtmlNode>(node);
-	}
-	return IHtmlNodeCountedPtr();
+	return out->setData(node);
 }
 
-IHtmlNodeCountedPtr MyHtmlNode::prevSibling() const
+void MyHtmlNode::prevSibling(IHtmlNodeCountedPtr& out) const
 {
 	if (!m_node)
 	{
-		return nullptr;
+		return out->setData(nullptr);
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_prev(m_node);
-	if (node != nullptr)
-	{
-		return Common::make_counted<MyHtmlNode>(node);
-	}
-	return IHtmlNodeCountedPtr();
+	return out->setData(node);
 }
 
 int MyHtmlNode::childIndex() const
@@ -355,6 +345,20 @@ int MyHtmlNode::childIndex() const
 	}
 
 	return index;
+}
+
+int MyHtmlNode::compare(const IHtmlNodeCountedPtr& other) const
+{
+	auto begin = myhtml_node_raw_position(m_node).begin;
+	auto otherBegin = myhtml_node_raw_position((myhtml_tree_node_t*)(other->data())).begin;
+
+	// -1 if other is before this none, 0 if nodes are the same, and 1 if other is after this node
+	if (begin == otherBegin)
+	{
+		return 0;
+	}
+
+	return otherBegin < begin ? -1 : 1;
 }
 
 int MyHtmlNode::attributesCount() const
@@ -539,6 +543,11 @@ IHtmlNodeCountedPtr MyHtmlNode::childNodeByAttributesValues(TagId tagId, const s
 void* MyHtmlNode::data() const
 {
 	return (void*)m_node;
+}
+
+void MyHtmlNode::setData(void* data)
+{
+	m_node = (myhtml_tree_node_t*)data;
 }
 
 void MyHtmlNode::matchSubNodesInDepthHelper(myhtml_tree_node_t* node, 

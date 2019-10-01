@@ -199,6 +199,8 @@ HtmlNodeModel::HtmlNodeModel(QXmlNamePool pool, const IHtmlParser* parser)
 	: QAbstractXmlNodeModel()
 	, m_pool(pool)
 	, m_parser(parser)
+	, m_cachedNode1(m_parser->emptyNode())
+	, m_cachedNode2(m_parser->emptyNode())
 {
 }
 
@@ -211,51 +213,16 @@ QUrl HtmlNodeModel::baseUri(const QXmlNodeModelIndex& index) const
 
 QXmlNodeModelIndex::DocumentOrder HtmlNodeModel::compareOrder(const QXmlNodeModelIndex& ni1, const QXmlNodeModelIndex& ni2) const
 {
-	IHtmlNodeCountedPtr node1 = toHtmlNode(ni1);
-	IHtmlNodeCountedPtr node2 = toHtmlNode(ni2);
+	toHtmlNode(ni1, m_cachedNode1);
+	toHtmlNode(ni2, m_cachedNode2);
 
-	if (node1->data() == node2->data())
-		return QXmlNodeModelIndex::Is;
-
-	auto root = m_parser->root();
-	calculatePath(node1, root, m_path1);
-	calculatePath(node2, root, m_path2);
-
-	auto it1 = m_path1.rbegin();
-	auto it2 = m_path2.rbegin();
-
-	auto itEnd1 = m_path1.rend();
-	auto itEnd2 = m_path2.rend();
-
-	while (true)
+	auto compareResult = m_cachedNode1->compare(m_cachedNode2);
+	if (compareResult == 0)
 	{
-		it1 += 1;
-		it2 += 1;
-
-		if (it1 == itEnd1)
-		{
-			DEBUG_ASSERT(it2 != itEnd2);
-			return QXmlNodeModelIndex::Precedes;
-		}
-
-		if (it2 == itEnd2)
-		{
-			DEBUG_ASSERT(it1 != itEnd1);
-			return QXmlNodeModelIndex::Follows;
-		}
-
-		if (*it1 != *it2)
-		{
-			auto node1 = m_parser->fromData(*it1);
-			auto node2 = m_parser->fromData(*it2);
-
-			return node1->childIndex() < node2->childIndex() ? QXmlNodeModelIndex::Precedes : QXmlNodeModelIndex::Follows;
-		}
+		return QXmlNodeModelIndex::Is;
 	}
-	
-
-	ASSERT(!"compareOrder logic error");
-	return QXmlNodeModelIndex::Follows;
+	// -1 if node2 is before node1, 0 if nodes are the same, and 1 if node2 is after node1
+	return compareResult == 1 ? QXmlNodeModelIndex::Follows : QXmlNodeModelIndex::Precedes;
 }
 
 QUrl HtmlNodeModel::documentUri(const QXmlNodeModelIndex& n) const
@@ -286,8 +253,8 @@ QXmlNodeModelIndex::NodeKind HtmlNodeModel::kind(const QXmlNodeModelIndex& ni) c
 		return QXmlNodeModelIndex::Attribute;
 	}
 
-	IHtmlNodeCountedPtr node = toHtmlNode(ni);
-	switch (node->type()) 
+	toHtmlNode(ni, m_cachedNode1);
+	switch (m_cachedNode1->type())
 	{
 	case IHtmlNode::NodeTypeDocument:
 		return QXmlNodeModelIndex::Document;
@@ -318,8 +285,8 @@ QXmlName HtmlNodeModel::name(const QXmlNodeModelIndex& ni) const
 		return  QXmlName(m_pool, attrName);
 	}
 
-	IHtmlNodeCountedPtr node = toHtmlNode(ni);
-	const QString name = tagToName(node->tagId());
+	toHtmlNode(ni, m_cachedNode1);
+	const QString name = tagToName(m_cachedNode1->tagId());
 	return name.isEmpty() ? QXmlName() : QXmlName(m_pool, name);
 }
 
@@ -339,13 +306,13 @@ QVector<QXmlNodeModelIndex> HtmlNodeModel::nodesByIdref(const QXmlName& idref) c
 
 QXmlNodeModelIndex HtmlNodeModel::root(const QXmlNodeModelIndex& n) const
 {
-	IHtmlNodeCountedPtr node = toHtmlNode(n);
-	while (node->parent())
+	toHtmlNode(n, m_cachedNode1);
+	while (m_cachedNode1->data() != nullptr)
 	{
-		node = node->parent();
+		m_cachedNode1->parent(m_cachedNode1);
 	}
 
-	return fromHtmlNode(node);
+	return fromHtmlNode(m_cachedNode1);
 }
 
 QString HtmlNodeModel::stringValue(const QXmlNodeModelIndex& n) const
@@ -357,16 +324,16 @@ QString HtmlNodeModel::stringValue(const QXmlNodeModelIndex& n) const
 		return attrValue;
 	}
 
-	IHtmlNodeCountedPtr node = toHtmlNode(n);
-	if (node->type() == IHtmlNode::NodeTypeText)
+	toHtmlNode(n, m_cachedNode1);
+	if (m_cachedNode1->type() == IHtmlNode::NodeTypeText)
 	{
-		return node->text();
+		return m_cachedNode1->text();
 	}
 
 	// see documentation of this method, it should return different values depending on node type
 	// also text() method returns text of the first child text node what is incorrect
 
-	return node->text();
+	return m_cachedNode1->text();
 }
 
 QVariant HtmlNodeModel::typedValue(const QXmlNodeModelIndex& node) const
@@ -379,12 +346,12 @@ QVariant HtmlNodeModel::typedValue(const QXmlNodeModelIndex& node) const
 
 QVector<QXmlNodeModelIndex> HtmlNodeModel::attributes(const QXmlNodeModelIndex& element) const
 {
-	IHtmlNodeCountedPtr node = toHtmlNode(element);
+	toHtmlNode(element, m_cachedNode1);
 	QVector<QXmlNodeModelIndex> result;
 
-	for (int i = 0; i < node->attributesCount(); ++i)
+	for (int i = 0; i < m_cachedNode1->attributesCount(); ++i)
 	{
-		IHtmlAttributeCountedPtr attr = node->attribute(i);
+		IHtmlAttributeCountedPtr attr = m_cachedNode1->attribute(i);
 		result.push_back(fromHtmlAttribute(attr));
 	}
 
@@ -395,58 +362,40 @@ QVector<QXmlNodeModelIndex> HtmlNodeModel::attributes(const QXmlNodeModelIndex& 
 QXmlNodeModelIndex HtmlNodeModel::nextFromSimpleAxis(QAbstractXmlNodeModel::SimpleAxis axis, const QXmlNodeModelIndex& origin) const
 {
 	ASSERT(origin.additionalData() != s_attributeId || !"Not implemented for attributes yet");
-	IHtmlNodeCountedPtr node = toHtmlNode(origin);
+	toHtmlNode(origin, m_cachedNode1);
 
 	switch (axis)
 	{
 	case Parent:
 	{
-		const IHtmlNodeCountedPtr parent = node->parent();
-		return parent ? fromHtmlNode(parent) : QXmlNodeModelIndex();
+		m_cachedNode1->parent(m_cachedNode1);
+		break;
 	}
 		
 	case FirstChild:
 	{
-		const IHtmlNodeCountedPtr firstChild = node->firstChild();
-		return firstChild ? fromHtmlNode(firstChild) : QXmlNodeModelIndex();
+		m_cachedNode1->firstChild(m_cachedNode1);
+		break;
 	}
 		
 	case PreviousSibling:
 	{
-		const IHtmlNodeCountedPtr prevSibling = node->prevSibling();
-		return prevSibling ? fromHtmlNode(prevSibling) : QXmlNodeModelIndex();
+		m_cachedNode1->prevSibling(m_cachedNode1);
+		break;
 	}
 	case NextSibling:
 	{
-		const IHtmlNodeCountedPtr nextSibling = node->nextSibling();
-		return nextSibling ? fromHtmlNode(nextSibling) : QXmlNodeModelIndex();
+		m_cachedNode1->nextSibling(m_cachedNode1);
+		break;
 	}
 	}
 
-	return QXmlNodeModelIndex();
+	return m_cachedNode1->data() != nullptr ? fromHtmlNode(m_cachedNode1) : QXmlNodeModelIndex();
 }
 
-void HtmlNodeModel::calculatePath(const IHtmlNodeCountedPtr& node, const IHtmlNodeCountedPtr& root, std::vector<void*>& outArray) const
+void HtmlNodeModel::toHtmlNode(const QXmlNodeModelIndex& index, IHtmlNodeCountedPtr& node) const
 {
-	outArray.resize(0);
-	void* rootData = root->data();
-	IHtmlNodeCountedPtr current = node;
-	while (current)
-	{
-		void* currentData = current->data();
-		outArray.push_back(currentData);
-		
-		if (currentData == rootData)
-		{
-			break;
-		}
-		current = current->parent();
-	}
-}
-
-IHtmlNodeCountedPtr HtmlNodeModel::toHtmlNode(const QXmlNodeModelIndex& index) const
-{
-	return m_parser->fromData((void*)index.data());
+	return node->setData((void*)index.data());
 }
 
 IHtmlAttributeCountedPtr HtmlNodeModel::toHtmlAttribute(const QXmlNodeModelIndex& index) const

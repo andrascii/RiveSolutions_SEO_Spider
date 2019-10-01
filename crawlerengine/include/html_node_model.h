@@ -33,9 +33,7 @@ protected:
 	virtual QXmlNodeModelIndex nextFromSimpleAxis(QAbstractXmlNodeModel::SimpleAxis axis, const QXmlNodeModelIndex &origin) const override;
 
 private:
-	void calculatePath(const IHtmlNodeCountedPtr& node, const IHtmlNodeCountedPtr& root, std::vector<void*>& outArray) const;
-
-	IHtmlNodeCountedPtr toHtmlNode(const QXmlNodeModelIndex& index) const;
+	void toHtmlNode(const QXmlNodeModelIndex& index, IHtmlNodeCountedPtr& node) const;
 	IHtmlAttributeCountedPtr toHtmlAttribute(const QXmlNodeModelIndex& index) const;
 	QXmlNodeModelIndex fromHtmlNode(const IHtmlNodeCountedPtr& node) const;
 	QXmlNodeModelIndex fromHtmlAttribute(const IHtmlAttributeCountedPtr& attribute) const;
@@ -45,6 +43,9 @@ private:
 	mutable QXmlNamePool m_pool;
 	mutable std::vector<void*> m_path1;
 	mutable std::vector<void*> m_path2;
+
+	mutable IHtmlNodeCountedPtr m_cachedNode1;
+	mutable IHtmlNodeCountedPtr m_cachedNode2;
 };
 
 }

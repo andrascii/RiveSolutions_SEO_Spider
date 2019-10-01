@@ -353,6 +353,18 @@ IHtmlNodeCountedPtr GumboHtmlParser::root() const
 	return IHtmlNodeCountedPtr();
 }
 
+IHtmlNodeCountedPtr GumboHtmlParser::emptyNode() const
+{
+	ASSERT(!"Not implemented!");
+	return IHtmlNodeCountedPtr();
+}
+
+IHtmlAttributeCountedPtr GumboHtmlParser::emptyAttribute() const
+{
+	ASSERT(!"Not implemented!");
+	return IHtmlAttributeCountedPtr();
+}
+
 QByteArray GumboHtmlParser::htmlPageContent() const
 {
 	return m_htmlPage;
