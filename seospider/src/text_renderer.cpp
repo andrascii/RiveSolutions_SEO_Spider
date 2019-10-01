@@ -49,14 +49,14 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 		paintDecorator(&painterPixmap, underlyingIndex, viewModel()->pixmapPosition(underlyingIndex, pixmapRect));
 	}
 
-    QRect displayDataPosition = viewModel()->displayDataPosition(underlyingIndex, pixmapRect);
+	QRect displayDataPosition = viewModel()->displayDataPosition(underlyingIndex, pixmapRect);
 
-    if (devicePixelRatio > 1.0)
-    {
-        displayDataPosition.adjust(0, 0, -displayDataPosition.width() / devicePixelRatio, 0);
-    }
+	if (devicePixelRatio > 1.0)
+	{
+		displayDataPosition.adjust(0, 0, -displayDataPosition.width() / devicePixelRatio, 0);
+	}
 
-    painterPixmap.drawText(displayDataPosition, textAlignmentFlags, paintingText);
+	painterPixmap.drawText(displayDataPosition, textAlignmentFlags, paintingText);
 
 	ASSERT(m_cache.insert(underlyingIndex, pixmapPointer));
 	painter->drawPixmap(option.rect, *pixmapPointer);
