@@ -8,6 +8,11 @@ using namespace CrawlerEngine;
 
 const QMap<std::size_t, IHtmlNode::TagId> s_tagIdMapping
 {
+	{ MyHTML_TAG__UNDEF,			IHtmlNode::TagIdUndef },
+	{ MyHTML_TAG__TEXT,				IHtmlNode::TagIdText },
+	{ MyHTML_TAG__COMMENT,			IHtmlNode::TagIdComment },
+	{ MyHTML_TAG__DOCTYPE,			IHtmlNode::TagIdDocType },
+
 	{ MyHTML_TAG_HTML,               IHtmlNode::TagIdHtml },
 	{ MyHTML_TAG_HEAD,               IHtmlNode::TagIdHead },
 	{ MyHTML_TAG_TITLE,              IHtmlNode::TagIdTitle },
@@ -226,7 +231,10 @@ IHtmlNode::TagId MyHtmlNode::tagId() const
 		return IHtmlNode::TagIdUnknown;
 	}
 
-	return s_tagIdMapping[myhtml_node_tag_id(m_node)];
+	const myhtml_tag_id_t tagId = myhtml_node_tag_id(m_node);
+	auto it = s_tagIdMapping.find(tagId);
+
+	return it != s_tagIdMapping.end() ? *it : IHtmlNode::TagIdUnknown;
 }
 
 IHtmlNode::NodeType MyHtmlNode::type() const
@@ -320,7 +328,15 @@ void MyHtmlNode::nextSibling(IHtmlNodeCountedPtr& out) const
 	}
 
 	myhtml_tree_node_t* node = myhtml_node_next(m_node);
-	return out->setData(node);
+	if (node == nullptr)
+	{
+		return out->setData(node);
+		return;
+	}
+	// workaround for wrong logic
+	myhtml_tree_node_t* parent1 = myhtml_node_parent(m_node);
+	myhtml_tree_node_t* parent2 = myhtml_node_parent(node);
+	return out->setData(parent1 == parent2 ? node : nullptr);
 }
 
 void MyHtmlNode::prevSibling(IHtmlNodeCountedPtr& out) const

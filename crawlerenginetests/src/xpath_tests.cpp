@@ -60,4 +60,23 @@ TEST(XPathTests, DeepElement)
 	EXPECT_EQ(QString(""), evaluateXPath(html, "$doc/body/div[@class=\"dv\"]/span/span[@attr=\"sp\"]/string()"));
 }
 
+TEST(XPathTests, RiveSolutionsBlog)
+{
+	// empty-title.html -> empty-title-2.html
+	TestEnvironment env;
+	auto options = TestEnvironment::defaultOptions({ Url("http://xpath.com/rifesolutions-blog.html") });
+	options.limitSearchTotal = 1;
+	options.extractorRules = { "/html/body/div[2]/div/div/div[2]/h1" };
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(500000);
+		EXPECT_EQ(1, pages.size());
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }

@@ -26,6 +26,10 @@ class IHtmlNode
 public:
 	enum TagId
 	{
+		TagIdUndef,
+		TagIdText,
+		TagIdComment,
+		TagIdDocType,
 		TagIdHtml,
 		TagIdHead,
 		TagIdTitle,

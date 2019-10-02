@@ -8,6 +8,11 @@ using namespace CrawlerEngine;
 
 QMap<IHtmlNode::TagId, QString> s_tagToName
 {
+	{ IHtmlNode::TagIdUndef, "undef" },
+	{ IHtmlNode::TagIdText, "text" },
+	{ IHtmlNode::TagIdComment, "comment" },
+	{ IHtmlNode::TagIdDocType, "doctype" },
+
 	{ IHtmlNode::TagIdA, "a" },
 	{ IHtmlNode::TagIdHtml, "html" },
 	{ IHtmlNode::TagIdHead, "head" },
@@ -364,6 +369,9 @@ QXmlNodeModelIndex HtmlNodeModel::nextFromSimpleAxis(QAbstractXmlNodeModel::Simp
 	ASSERT(origin.additionalData() != s_attributeId || !"Not implemented for attributes yet");
 	toHtmlNode(origin, m_cachedNode1);
 
+	QString name = tagToName(m_cachedNode1->tagId());
+	Q_UNUSED(name);
+
 	switch (axis)
 	{
 	case Parent:
@@ -388,6 +396,13 @@ QXmlNodeModelIndex HtmlNodeModel::nextFromSimpleAxis(QAbstractXmlNodeModel::Simp
 		m_cachedNode1->nextSibling(m_cachedNode1);
 		break;
 	}
+	}
+
+	if (m_cachedNode1->data() != nullptr)
+	{
+		QString result = tagToName(m_cachedNode1->tagId());
+		Q_UNUSED(result);
+		result += "";
 	}
 
 	return m_cachedNode1->data() != nullptr ? fromHtmlNode(m_cachedNode1) : QXmlNodeModelIndex();
