@@ -624,6 +624,10 @@ void UnorderedDataCollection::initializeStorages()
 			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
 				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
 
+		std::make_pair(StorageType::GoogleAnalyticsCounter5StorageType,
+			UnorderedStorageType(0, ParsedPageHasherProxy(new ParsedPageHasherUrl),
+				ParsedPageComparatorProxy(new ParsedPageUrlComparator))),
+
         // Data Extraction
 
         std::make_pair(StorageType::DataExtractionStorageType,
