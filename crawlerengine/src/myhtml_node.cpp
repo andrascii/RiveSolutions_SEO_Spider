@@ -160,6 +160,28 @@ const QMap<std::size_t, IHtmlNode::TagId> s_tagIdMapping
 	//{ MyHTML_TAG_UNKNOWN,            IHtmlNode::TagIdUnknown }
 };
 
+
+void collectText(myhtml_tree_node_t* node, QByteArray& result)
+{
+	if (myhtml_node_tag_id(node) == MyHTML_TAG__TEXT)
+	{
+		QByteArray text = myhtml_node_text(node, nullptr);
+		if (!text.isEmpty() && !text.endsWith(' '))
+		{
+			result += " ";
+		}
+		result += text.trimmed();
+	}
+
+	myhtml_tree_node_t* child = myhtml_node_child(node);
+
+	while (child != nullptr)
+	{
+		collectText(child, result);
+		child = myhtml_node_next(child);
+	}
+}
+
 }
 
 namespace CrawlerEngine
@@ -192,19 +214,9 @@ QByteArray MyHtmlNode::text() const
 		return QByteArray();
 	}
 
-	const auto childNodes = childrenInternal(m_node);
-
-	for (auto* child : childNodes)
-	{
-		if (myhtml_node_tag_id(child) != MyHTML_TAG__TEXT)
-		{
-			continue;
-		}
-
-		return myhtml_node_text(child, nullptr);
-	}
-
-	return QByteArray();
+	QByteArray result;
+	collectText(m_node, result);
+	return result.trimmed();
 }
 
 QString MyHtmlNode::attribute(const QByteArray& attributeName) const

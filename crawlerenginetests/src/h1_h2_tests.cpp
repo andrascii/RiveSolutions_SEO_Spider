@@ -282,4 +282,22 @@ TEST(H1AndH2Tests, SeveralEqual2)
 	env.exec();
 }
 
+TEST(H1AndH2Tests, Eurodent)
+{
+	// several-equal-h2.html -> several-equal-h2-2.html
+	TestEnvironment env;
+	auto options = TestEnvironment::defaultOptions({ Url("http://h1h2.com/eurodent-krasnodar.ru.html") });
+	options.limitSearchTotal = 1;
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler()]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10000000);
+		EXPECT_EQ(QString::fromWCharArray(L"Ѕрекеты Damon Ч первый шаг к голливудской улыбке"), pages[0]->firstH1);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 }
