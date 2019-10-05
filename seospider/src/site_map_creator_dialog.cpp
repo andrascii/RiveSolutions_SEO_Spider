@@ -4,6 +4,8 @@
 #include "site_map.h"
 #include "crawler.h"
 #include "svg_renderer.h"
+#include "service_locator.h"
+#include "inotification_service.h"
 
 namespace SeoSpider
 {
@@ -198,6 +200,10 @@ void SitemapCreatorDialog::showSaveFileDialog()
 	std::ofstream siteMapXmlFile(path.toStdString());
 
 	siteMapXmlFile << theApp->crawler()->siteMapXml(sitemapSettings).toStdString();
+
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	serviceLocator->service<INotificationService>()->info(tr("Site map"), tr("Site map successefully created!"));
+	close();
 }
 
 void SitemapCreatorDialog::controlStateChanged() const
