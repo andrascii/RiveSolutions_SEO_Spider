@@ -292,8 +292,8 @@ TEST(H1AndH2Tests, Eurodent)
 
 	const auto testFunction = [cl = env.crawler()]()
 	{
-		auto pages = cl->waitForAllCrawledPageReceived(10000000);
-		EXPECT_EQ(QString::fromWCharArray(L"Ѕрекеты Damon Ч первый шаг к голливудской улыбке"), pages[0]->firstH1);
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+		EXPECT_EQ(QString("1 2 3"), pages[0]->firstH1);
 	};
 
 	env.initializeTest(testFunction);
