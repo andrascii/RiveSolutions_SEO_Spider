@@ -167,7 +167,7 @@ void collectText(myhtml_tree_node_t* node, QByteArray& result)
 	if (myhtml_node_tag_id(node) == MyHTML_TAG__TEXT)
 	{
 		QByteArray text = myhtml_node_text(node, nullptr);
-		if (!text.isEmpty() && !text.endsWith(' '))
+		if (!result.isEmpty() && !result.endsWith(' '))
 		{
 			result += " ";
 		}
@@ -265,7 +265,7 @@ QByteArray MyHtmlNode::text() const
 
 	QByteArray result;
 	collectText(m_node, result);
-	return result.trimmed();
+	return result;
 }
 
 QString MyHtmlNode::attribute(const QByteArray& attributeName) const
