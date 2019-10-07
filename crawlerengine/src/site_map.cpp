@@ -44,7 +44,12 @@ namespace
 	QString escape(const QString& url)
 	{
 		QString result = url;
-		return result.replace(QString("&"), QString("&amp;"));
+		return result
+			.replace(QString("&"), QString("&amp;"))
+			.replace(QString("<"), QString("&lt;"))
+			.replace(QString(">"), QString("&gt;"))
+			.replace(QString("\""), QString("&quot;"))
+			.replace(QString("'"), QString("&apos;"));
 	}
 }
 
