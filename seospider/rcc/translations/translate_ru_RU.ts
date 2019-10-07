@@ -2398,6 +2398,10 @@ please stop crawling and try again</source>
         <source>Site map successefully created!</source>
         <translation>Карта сайта успешно создана!</translation>
     </message>
+    <message>
+        <source>Cannot create the site map file: </source>
+        <translation>Невозможно создать файл карты сайта: </translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::WebSiteDataWidget</name>
