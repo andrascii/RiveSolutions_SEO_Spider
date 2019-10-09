@@ -19,17 +19,27 @@ void BaseUrlParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 
 	if (baseTagNode && baseTagNode->hasAttribute("href"))
 	{
-		const Url url = baseTagNode->attribute("href").remove(m_regExp);
-
-		if (url.isValid())
+		QString href = baseTagNode->attribute("href").remove(m_regExp);
+		if (href == "/")
 		{
-			page->baseUrl = url;
+			page->baseUrl = page->url.scheme() + "://" + page->url.host();
+#ifdef QT_DEBUG
+			page->baseUrl.canonizedUrlStr();
+#endif
 		}
 		else
 		{
-			WARNLOG << "On page:" << page->url.toDisplayString() << "found base tag but that tag has an invalid url address";
+			const Url url = href;
+			if (url.isValid())
+			{
+				page->baseUrl = url;
+			}
+			else
+			{
+				WARNLOG << "On page:" << page->url.toDisplayString() << "found base tag but that tag has an invalid url address";
 
-			page->baseUrl = page->url;
+				page->baseUrl = page->url;
+			}
 		}
 	}
 	else
