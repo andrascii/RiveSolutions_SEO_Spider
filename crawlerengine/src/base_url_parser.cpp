@@ -1,6 +1,13 @@
 #include "base_url_parser.h"
 #include "ihtml_parser.h"
 
+namespace
+{
+	const QString s_slash = "/";
+	const QByteArray s_href = "href";
+	const QString s_schemeSuffix = "://";
+}
+
 namespace CrawlerEngine
 {
 
@@ -17,12 +24,12 @@ void BaseUrlParser::parse(const ResponseHeaders& headers, ParsedPagePtr& page)
 	std::vector<IHtmlNodeCountedPtr> baseTagNodes = m_htmlParser->matchNodesInDepth(IHtmlNode::TagIdBase);
 	IHtmlNodeCountedPtr baseTagNode = baseTagNodes.empty() ? nullptr : baseTagNodes[0];
 
-	if (baseTagNode && baseTagNode->hasAttribute("href"))
+	if (baseTagNode && baseTagNode->hasAttribute(s_href))
 	{
-		QString href = baseTagNode->attribute("href").remove(m_regExp);
-		if (href == "/")
+		QString href = baseTagNode->attribute(s_href).remove(m_regExp);
+		if (href == s_slash)
 		{
-			page->baseUrl = page->url.scheme() + "://" + page->url.host();
+			page->baseUrl = page->url.scheme() % s_schemeSuffix % page->url.host();
 #ifdef QT_DEBUG
 			page->baseUrl.canonizedUrlStr();
 #endif
