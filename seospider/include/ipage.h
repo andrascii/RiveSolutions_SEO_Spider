@@ -13,8 +13,7 @@ public:
 		AllPagesPage,
 		AllResourcesPage,
 		DomainMetricsPage,
-		AuditReportPage,
-        DataExtractionPage
+		AuditReportPage
 	};
 
 	virtual ~IPage() = default;

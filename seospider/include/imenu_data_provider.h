@@ -17,7 +17,7 @@ public:
 
 	virtual ~IMenuItem() noexcept = default;
 
-	virtual void addItem(Common::counted_ptr<IMenuItem> item)
+	virtual void addItem(std::shared_ptr<IMenuItem> item)
 	{
 		Q_UNUSED(item);
 
@@ -66,7 +66,7 @@ private:
 class Menu : public IMenuItem
 {
 private:
-	using Items = std::vector<Common::counted_ptr<IMenuItem>>;
+	using Items = std::vector<std::shared_ptr<IMenuItem>>;
 
 public:
 	using iterator = Items::iterator;
@@ -87,7 +87,7 @@ public:
 		return m_name;
 	}
 
-	virtual void addItem(Common::counted_ptr<IMenuItem> item) override
+	virtual void addItem(std::shared_ptr<IMenuItem> item) override
 	{
 		DEBUG_ASSERT(std::find(m_items.begin(), m_items.end(), item) == m_items.end() && "This item already exists");
 
@@ -104,12 +104,12 @@ public:
 		return m_items.empty();
 	}
 
-	Common::counted_ptr<IMenuItem>& operator[](std::size_t idx) noexcept
+	std::shared_ptr<IMenuItem>& operator[](std::size_t idx) noexcept
 	{
 		return m_items[idx];
 	}
 
-	const Common::counted_ptr<IMenuItem>& operator[](std::size_t idx) const noexcept
+	const std::shared_ptr<IMenuItem>& operator[](std::size_t idx) const noexcept
 	{
 		return m_items[idx];
 	}

@@ -115,7 +115,7 @@ void AllPagesPage::createHeaderActionWidgets()
 	addWidget(m_columnsLookupLineEditWidget);
 
 	const QVector<ParsedPageInfo::Column> columns =
-		StorageAdapterFactory::defaultColumns(StorageAdapterType::StorageAdapterTypeAllPages);
+		StorageAdapterFactory::parsedPageAvailableColumns(StorageAdapterType::StorageAdapterTypeAllPages);
 
 	for (int i = 0; i < columns.size(); ++i)
 	{

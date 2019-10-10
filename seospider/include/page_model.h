@@ -37,7 +37,6 @@ private slots:
 	void onRepaintColumn(int column);
 	void onAboutBeginClearingData();
 	void onAboutEndClearingData();
-	void onColumnCountChanged();
 
 private:
 	IStorageAdapter* m_storageAdapter;

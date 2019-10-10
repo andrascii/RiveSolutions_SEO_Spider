@@ -369,7 +369,7 @@ void AbstractFilterPage::prepareColumnSearchWidget(int row)
 	m_columnsLookupLineEditWidget->setEnabled(true);
 
 	const QVector<ParsedPageInfo::Column> columns =
-		StorageAdapterFactory::defaultColumns(m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(row, 0)));
+		StorageAdapterFactory::parsedPageAvailableColumns(m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(row, 0)));
 
 	for (int i = 0; i < columns.size(); ++i)
 	{
