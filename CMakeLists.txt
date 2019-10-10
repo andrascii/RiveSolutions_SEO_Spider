@@ -124,7 +124,7 @@ ENDMACRO(add_msvc_precompiled_header)
 add_subdirectory(curl)
 add_subdirectory(${CrawlerEngineLibName})
 
-if (${TESTS})
+if ($ENV{TESTS})
 	add_subdirectory(${CrawlerEngineLibTestsName})	
 endif()
 

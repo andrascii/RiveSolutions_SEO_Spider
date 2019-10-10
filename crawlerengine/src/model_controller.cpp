@@ -683,10 +683,6 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 	if (!secondGetRequest)
 	{
 		data()->addParsedPage(workerResult, storage);
-		if (storage == StorageType::HtmlResourcesStorageType)
-		{
-			processDataExtractions(workerResult);
-		}
 	}
 
 	if (workerResult.incomingPage()->isThisExternalPage)
@@ -783,15 +779,6 @@ void ModelController::processParsedPageHtmlResources(WorkerResult& workerResult,
 
 			DEBUG_ASSERT(data()->isParsedPageExists(pendingResource, StorageType::PendingResourcesStorageType));
 		}
-	}
-}
-
-void ModelController::processDataExtractions(WorkerResult& workerResult)
-{
-	const QMap<int, QString>& extractions = workerResult.incomingPage()->dataExtractions;
-	if (!extractions.isEmpty())
-	{
-		data()->addParsedPage(workerResult, StorageType::DataExtractionStorageType);
 	}
 }
 

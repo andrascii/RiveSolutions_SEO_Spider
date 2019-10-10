@@ -30,7 +30,7 @@ QString DataExtractionColumns::data(const CrawlerEngine::ParsedPage* page, int c
 	Q_UNUSED(page);
 	Q_UNUSED(columnIndex);
 
-	return page->dataExtractions.value(columnIndex, QString());
+	return QStringLiteral("Lorem Ipsum Dolor Sit Amet");
 }
 
 int DataExtractionColumns::columnCount() const noexcept

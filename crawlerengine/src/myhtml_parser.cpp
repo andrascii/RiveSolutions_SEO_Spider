@@ -304,31 +304,6 @@ IHtmlNodeCountedPtr MyHtmlParser::findNodeWithAttributesValues(IHtmlNode::TagId 
 	return m_rootNode.childNodeByAttributesValues(tagId, expectedAttributes);
 }
 
-IHtmlNodeCountedPtr MyHtmlParser::fromData(void* data) const
-{
-	return Common::make_counted<MyHtmlNode>((myhtml_tree_node_t*)data);
-}
-
-IHtmlAttributeCountedPtr MyHtmlParser::attributeFromData(void * data) const
-{
-	return Common::make_counted<MyHtmlAttribute>((myhtml_tree_attr_t*)data);
-}
-
-IHtmlNodeCountedPtr MyHtmlParser::root() const
-{
-	return Common::make_counted<MyHtmlNode>((myhtml_tree_node_t*)m_rootNode.data());
-}
-
-IHtmlNodeCountedPtr MyHtmlParser::emptyNode() const
-{
-	return Common::make_counted<MyHtmlNode>(nullptr);
-}
-
-IHtmlAttributeCountedPtr MyHtmlParser::emptyAttribute() const
-{
-	return Common::make_counted<MyHtmlAttribute>(nullptr);
-}
-
 std::vector<LinkInfo> MyHtmlParser::getLinkRelUrl(const char* relValue, ResourceSource source, const char* requiredAttribute, bool getFirstValueOnly) const
 {
 	std::vector<LinkInfo> result;

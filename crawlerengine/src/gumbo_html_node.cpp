@@ -238,56 +238,6 @@ GumboHtmlNode::operator bool() const
 	return m_node != nullptr;
 }
 
-void GumboHtmlNode::parent(IHtmlNodeCountedPtr& out) const
-{
-	Q_UNUSED(out);
-	ASSERT(!"Not implemented");
-}
-
-void GumboHtmlNode::firstChild(IHtmlNodeCountedPtr& out) const
-{
-	Q_UNUSED(out);
-	ASSERT(!"Not implemented");
-}
-
-void GumboHtmlNode::nextSibling(IHtmlNodeCountedPtr& out) const
-{
-	Q_UNUSED(out);
-	ASSERT(!"Not implemented");
-}
-
-void GumboHtmlNode::prevSibling(IHtmlNodeCountedPtr & out) const
-{
-	Q_UNUSED(out);
-	ASSERT(!"Not implemented");
-}
-
-int GumboHtmlNode::childIndex() const
-{
-	ASSERT(!"Not implemented");
-	return 0;
-}
-
-int GumboHtmlNode::compare(const IHtmlNodeCountedPtr& other) const
-{
-	Q_UNUSED(other);
-	ASSERT(!"Not implemented");
-	return 0;
-}
-
-int GumboHtmlNode::attributesCount() const
-{
-	ASSERT(!"Not implemented");
-	return 0;
-}
-
-IHtmlAttributeCountedPtr GumboHtmlNode::attribute(int index) const
-{
-	Q_UNUSED(index);
-	ASSERT(!"Not implemented");
-	return IHtmlAttributeCountedPtr();
-}
-
 IHtmlNodeCountedPtr GumboHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
 {
 	DEBUG_ASSERT(m_node->type == GUMBO_NODE_ELEMENT || m_node->type == GUMBO_NODE_DOCUMENT);
@@ -463,18 +413,6 @@ IHtmlNodeCountedPtr GumboHtmlNode::childNodeByAttributesValues(TagId tagId, cons
 	}
 
 	return IHtmlNodeCountedPtr(nullptr);
-}
-
-void* GumboHtmlNode::data() const
-{
-	ASSERT(!"Not implemented");
-	return nullptr;
-}
-
-void GumboHtmlNode::setData(void* data)
-{
-	Q_UNUSED(data);
-	ASSERT(!"Not implemented");
 }
 
 }
