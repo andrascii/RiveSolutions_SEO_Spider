@@ -1,4 +1,5 @@
 #include "myhtml_node.h"
+// #include "myhtml/tree.h"
 
 namespace
 {
@@ -187,6 +188,54 @@ void collectText(myhtml_tree_node_t* node, QByteArray& result)
 namespace CrawlerEngine
 {
 
+MyHtmlAttribute::MyHtmlAttribute(myhtml_tree_attr_t* attr)
+	: m_attr(attr)
+{
+	ASSERT(attr != nullptr);
+}
+
+IHtmlAttributeCountedPtr MyHtmlAttribute::nextSibling() const
+{
+	myhtml_tree_attr_t* attr = myhtml_attribute_next(m_attr);
+	if (attr == nullptr)
+	{
+		return IHtmlAttributeCountedPtr();
+	}
+
+	return Common::make_counted<MyHtmlAttribute>(attr);
+}
+
+IHtmlAttributeCountedPtr MyHtmlAttribute::prevSibling() const
+{
+	myhtml_tree_attr_t* attr = myhtml_attribute_prev(m_attr);
+	if (attr == nullptr)
+	{
+		return IHtmlAttributeCountedPtr();
+	}
+
+	return Common::make_counted<MyHtmlAttribute>(attr);
+}
+
+QString MyHtmlAttribute::name() const
+{
+	return myhtml_attribute_key(m_attr, nullptr);
+}
+
+QString MyHtmlAttribute::value() const
+{
+	return myhtml_attribute_value(m_attr, nullptr);
+}
+
+void* MyHtmlAttribute::data() const
+{
+	return (void*)m_attr;
+}
+
+void MyHtmlAttribute::setData(void* data)
+{
+	m_attr = (myhtml_tree_attr_t*)data;
+}
+
 MyHtmlNode::MyHtmlNode(myhtml_tree_node_t* node)
 	: m_node(node)
 {
@@ -251,6 +300,114 @@ bool MyHtmlNode::hasAttribute(const QByteArray& attributeName) const
 MyHtmlNode::operator bool() const
 {
 	return m_node != nullptr;
+}
+
+void MyHtmlNode::parent(IHtmlNodeCountedPtr& out) const
+{
+	if (!m_node)
+	{
+		return out->setData(nullptr);
+	}
+
+	myhtml_tree_node_t* node = myhtml_node_parent(m_node);
+	return out->setData(node);
+}
+
+void MyHtmlNode::firstChild(IHtmlNodeCountedPtr& out) const
+{
+	if (!m_node)
+	{
+		return out->setData(nullptr);
+	}
+
+	myhtml_tree_node_t* node = myhtml_node_child(m_node);
+	return out->setData(node);
+}
+
+void MyHtmlNode::nextSibling(IHtmlNodeCountedPtr& out) const
+{
+	if (!m_node)
+	{
+		return out->setData(nullptr);
+	}
+
+	myhtml_tree_node_t* node = myhtml_node_next(m_node);
+	return out->setData(node);
+}
+
+void MyHtmlNode::prevSibling(IHtmlNodeCountedPtr& out) const
+{
+	if (!m_node)
+	{
+		return out->setData(nullptr);
+	}
+
+	myhtml_tree_node_t* node = myhtml_node_prev(m_node);
+	return out->setData(node);
+}
+
+int MyHtmlNode::childIndex() const
+{
+	myhtml_tree_node_t* node = myhtml_node_prev(m_node);
+	int index = 0;
+	while (node != nullptr) 
+	{
+		node = myhtml_node_prev(node);
+		index += 1;
+	}
+
+	return index;
+}
+
+int MyHtmlNode::compare(const IHtmlNodeCountedPtr& other) const
+{
+	auto begin = myhtml_node_raw_position(m_node).begin;
+	auto otherBegin = myhtml_node_raw_position((myhtml_tree_node_t*)(other->data())).begin;
+
+	// -1 if other is before this none, 0 if nodes are the same, and 1 if other is after this node
+	if (begin == otherBegin)
+	{
+		return 0;
+	}
+
+	return otherBegin < begin ? -1 : 1;
+}
+
+int MyHtmlNode::attributesCount() const
+{
+	if (!m_node)
+	{
+		return 0;
+	}
+	
+	myhtml_tree_attr_t* attr = myhtml_node_attribute_first(m_node);
+	int result = 0;
+	while (attr != nullptr)
+	{
+		result += 1;
+		attr = myhtml_attribute_next(attr);
+	}
+
+	return result;
+}
+
+IHtmlAttributeCountedPtr MyHtmlNode::attribute(int index) const
+{
+	DEBUG_ASSERT(index >= 0 && index < attributesCount());
+
+	myhtml_tree_attr_t* attr = myhtml_node_attribute_first(m_node);
+	while (index > 0 && attr != nullptr)
+	{
+		attr = myhtml_attribute_next(attr);
+		index -= 1;
+	}
+
+	if (attr == nullptr)
+	{
+		return IHtmlAttributeCountedPtr();
+	}
+
+	return Common::make_counted<MyHtmlAttribute>(attr);
 }
 
 IHtmlNodeCountedPtr MyHtmlNode::firstMatchSubNode(TagId tagId, unsigned startIndexWhithinParent) const
@@ -393,6 +550,16 @@ IHtmlNodeCountedPtr MyHtmlNode::childNodeByAttributesValues(TagId tagId, const s
 	}
 
 	return nullptr;
+}
+
+void* MyHtmlNode::data() const
+{
+	return (void*)m_node;
+}
+
+void MyHtmlNode::setData(void* data)
+{
+	m_node = (myhtml_tree_node_t*)data;
 }
 
 void MyHtmlNode::matchSubNodesInDepthHelper(myhtml_tree_node_t* node, 

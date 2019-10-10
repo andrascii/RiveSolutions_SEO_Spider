@@ -12,12 +12,8 @@ IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapt
 	ASSERT(type > StorageAdapterType::StorageAdapterTypeBegin &&
 		type < StorageAdapterType::StorageAdapterTypeEnd);
 
-	const bool storageAdapterHasCustomColumns =
-		type == StorageAdapterType::StorageAdapterTypeCustomDataFeed ||
-		type == StorageAdapterType::StorageAdapterTypeDataExtraction;
-
-	const CrawlerEngine::StorageType storageType = storageAdapterHasCustomColumns ?
-		CrawlerEngine::CrawledUrlStorageType :
+	const CrawlerEngine::StorageType storageType = type == StorageAdapterType::StorageAdapterTypeCustomDataFeed ?
+		CrawlerEngine::HtmlResourcesStorageType :
 		static_cast<CrawlerEngine::StorageType>(type);
 
 	IParsedPageStorageAdapter* storageAdapter = nullptr;
