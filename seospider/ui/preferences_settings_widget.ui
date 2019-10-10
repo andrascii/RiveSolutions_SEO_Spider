@@ -82,7 +82,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">maxH2LengthChars</string>
@@ -124,7 +124,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">maxH1LengthChars</string>
@@ -159,7 +159,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">maxImageSize</string>
@@ -181,7 +181,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">maxImageAltTextChars</string>
@@ -244,7 +244,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">minTitleLength</string>
@@ -295,7 +295,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">maxDescriptionLength</string>
@@ -330,7 +330,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">maxTitleLength</string>
@@ -382,7 +382,7 @@
            </size>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>999999999</number>
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">minDescriptionLength</string>
