@@ -261,7 +261,7 @@ RequestDescriptor* MultiSocketLoader::createRequestDescriptor(const Url& url, si
 
 	RequestDescriptor* requestDescriptor = new RequestDescriptor(requestIdDeleter);
 	requestDescriptor->easy = curl_easy_init();
-	requestDescriptor->url = url.toDisplayString().toUtf8();
+	requestDescriptor->url = url.toDisplayString(QUrl::FullyEncoded).toUtf8();
 
 	curl_easy_setopt(requestDescriptor->easy, CURLOPT_CONNECTTIMEOUT, 30);
 
