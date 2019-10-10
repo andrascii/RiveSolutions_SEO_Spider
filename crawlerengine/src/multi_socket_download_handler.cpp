@@ -409,10 +409,7 @@ void MultiSocketDownloadHandler::onUrlLoaded(int id,
 	const DownloadRequest* request = Common::Helpers::fast_cast<DownloadRequest*>(requester->request());
 	const DownloadRequestType requestType = request->requestInfo.requestType;
 
-	const bool isRedirectionStatusCode =
-		statusCode == Common::StatusCode::MovedPermanently301 ||
-		statusCode == Common::StatusCode::MovedTemporarily302;
-
+	const bool isRedirectionStatusCode = isRedirectionStatusCodeAndResponseHasLocation(statusCode);
 	const std::shared_ptr<DownloadResponse> response = responseFor(id);
 
 	const Url loadedResourceUrl(url);
