@@ -134,17 +134,7 @@ namespace
 	const QString s_yandexMetricaCounter4IdSettingsKey = QLatin1String("yandexMetricaCounter4Id");
 
 	const QString s_searchYandexMetricaCounter5SettingsKey = QLatin1String("searchYandexMetricaCounter5");
-    const QString s_yandexMetricaCounter5IdSettingsKey = QLatin1String("yandexMetricaCounter5Id");
-
-    // Data Extraction keys
-    const QString s_extractorNameBase = QLatin1String("extractorName");
-    const QString s_extractorRuleTypeBase = QLatin1String("extractorRuleType");
-    const QString s_extractorRuleBase = QLatin1String("extractorRule");
-    const QString s_extractionTypeBase = QLatin1String("extractionType");
-    const QString s_extractorNameCommonKey = s_extractorNameBase % QLatin1String("%1");
-    const QString s_extractorRuleTypeCommonKey = s_extractorRuleTypeBase % QLatin1String("%1");
-    const QString s_extractorRuleCommonKey = s_extractorRuleBase % QLatin1String("%1");
-    const QString s_extractionTypeCommonKey = s_extractionTypeBase % QLatin1String("%1");
+	const QString s_yandexMetricaCounter5IdSettingsKey = QLatin1String("yandexMetricaCounter5Id");
 
 	QString urlToString(const Url& url)
 	{
@@ -856,22 +846,6 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 	writer.writeTextElement(s_searchYandexMetricaCounter5SettingsKey, QString::number(static_cast<int>(m_crawlerOptionsData.searchYandexMetricaCounter5)));
 	writer.writeTextElement(s_yandexMetricaCounter5IdSettingsKey, QString::number(m_crawlerOptionsData.yandexMetricaCounter5Id));
 
-    for (size_t i = 1; i <= c_extractorCount; ++i)
-    {
-        writer.writeTextElement(s_extractorNameCommonKey.arg(i - 1), m_crawlerOptionsData.extractorNames[i - 1]);
-    }
-    for (size_t i = 1; i <= c_extractorCount; ++i)
-    {
-        writer.writeTextElement(s_extractorRuleTypeCommonKey.arg(i - 1), QString::number(m_crawlerOptionsData.extractorRuleTypes[i - 1]));
-    }
-    for (size_t i = 1; i <= c_extractorCount; ++i)
-    {
-        writer.writeTextElement(s_extractorRuleCommonKey.arg(i - 1), m_crawlerOptionsData.extractorRules[i - 1]);
-    }
-    for (size_t i = 1; i <= c_extractorCount; ++i)
-    {
-        writer.writeTextElement(s_extractionTypeCommonKey.arg(i - 1), QString::number(m_crawlerOptionsData.extractionTypes[i - 1]));
-    }
 
 	writer.writeTextElement(s_robotsTxtValidKey, QString::number(
 		m_webHostInfoData.isRobotstxtValid != std::nullopt
@@ -907,259 +881,235 @@ void Serializer::saveOptionsToXmlStream(QXmlStreamWriter& writer) const
 
 void Serializer::loadOptionsFromXmlStream(QXmlStreamReader& reader)
 {
-    while (!reader.isEndElement() || reader.qualifiedName() != s_optionsKey)
-    {
-        reader.readNext();
+	while (!reader.isEndElement() || reader.qualifiedName() != s_optionsKey)
+	{
+		reader.readNext();
 
-        if (!reader.isStartElement())
-        {
-            continue;
-        }
+		if (!reader.isStartElement())
+		{
+			continue;
+		}
 
-        if (reader.qualifiedName() == s_hostKey)
-        {
-            m_crawlerOptionsData.startCrawlingPage = urlFromString(reader.readElementText());
-        }
-        else if (reader.qualifiedName() == s_limitMaxUrlLengthKey)
-        {
-            m_crawlerOptionsData.limitMaxUrlLength = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_limitSearchTotalKey)
-        {
-            m_crawlerOptionsData.limitSearchTotal = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_limitTimeoutKey)
-        {
-            m_crawlerOptionsData.limitTimeout = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxRedirectsToFollowKey)
-        {
-            m_crawlerOptionsData.maxRedirectsToFollow = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxParallelConnectionsKey)
-        {
-            m_crawlerOptionsData.maxParallelConnections = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxLinksCountOnPageKey)
-        {
-            m_crawlerOptionsData.maxLinksCountOnPage = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_minTitleLengthKey)
-        {
-            m_crawlerOptionsData.minTitleLength = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxTitleLengthKey)
-        {
-            m_crawlerOptionsData.maxTitleLength = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxDescriptionLengthKey)
-        {
-            m_crawlerOptionsData.maxDescriptionLength = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_minDescriptionLengthKey)
-        {
-            m_crawlerOptionsData.minDescriptionLength = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxH1LengthCharsKey)
-        {
-            m_crawlerOptionsData.maxH1LengthChars = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxH2LengthCharsKey)
-        {
-            m_crawlerOptionsData.maxH2LengthChars = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxImageAltTextCharsKey)
-        {
-            m_crawlerOptionsData.maxImageAltTextChars = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxImageSizeKbKey)
-        {
-            m_crawlerOptionsData.maxImageSizeKb = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_maxPageSizeKbKey)
-        {
-            m_crawlerOptionsData.maxPageSizeKb = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_useProxyKey)
-        {
-            m_crawlerOptionsData.useProxy = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_proxyHostNameKey)
-        {
-            m_crawlerOptionsData.proxyHostName = reader.readElementText();
-        }
-        else if (reader.qualifiedName() == s_proxyPortKey)
-        {
-            m_crawlerOptionsData.proxyPort = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_proxyUserKey)
-        {
-            m_crawlerOptionsData.proxyUser = reader.readElementText();
-        }
-        else if (reader.qualifiedName() == s_proxyPasswordKey)
-        {
-            m_crawlerOptionsData.proxyPassword = reader.readElementText();
-        }
-        else if (reader.qualifiedName() == s_checkExternalLinksKey)
-        {
-            m_crawlerOptionsData.checkExternalLinks = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_followInternalNofollowKey)
-        {
-            m_crawlerOptionsData.followInternalNofollow = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_followExternalNofollowKey)
-        {
-            m_crawlerOptionsData.followExternalNofollow = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_checkCanonicalsKey)
-        {
-            m_crawlerOptionsData.checkCanonicals = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_checkSubdomainsKey)
-        {
-            m_crawlerOptionsData.checkSubdomains = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_crawlOutsideOfStartFolderKey)
-        {
-            m_crawlerOptionsData.crawlOutsideOfStartFolder = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_crawlMetaHrefLangLinksKey)
-        {
-            m_crawlerOptionsData.crawlMetaHrefLangLinks = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_followRobotsTxtRulesKey)
-        {
-            m_crawlerOptionsData.followRobotsTxtRules = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_userAgentToFollowKey)
-        {
-            m_crawlerOptionsData.userAgentToFollow = static_cast<UserAgentType>(reader.readElementText().toInt());
-        }
-        else if (reader.qualifiedName() == s_parserTypeFlagsKey)
-        {
-            m_crawlerOptionsData.parserTypeFlags = ParserTypeFlags(reader.readElementText().toInt());
-        }
-        else if (reader.qualifiedName() == s_pauseRangeFromKey)
-        {
-            m_crawlerOptionsData.pauseRangeFrom = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_pauseRangeToKey)
-        {
-            m_crawlerOptionsData.pauseRangeTo = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_pauseRangeEnabledKey)
-        {
-            m_crawlerOptionsData.pauseRangeEnabled = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_userAgentKey)
-        {
-            m_crawlerOptionsData.userAgent = reader.readElementText().toUtf8();
-        }
-        else if (reader.qualifiedName() == s_excludeRegExpsKey)
-        {
-            m_crawlerOptionsData.excludeUrlRegExps = reader.readElementText();
-        }
-        else if (reader.qualifiedName() == s_searchYandexMetricaCountersSettingsKey)
-        {
-            m_crawlerOptionsData.searchYandexMetricaCounters = static_cast<bool>(reader.readElementText().toInt());
-        }
-        else if (reader.qualifiedName() == s_searchYandexMetricaCounter1SettingsKey)
-        {
-            m_crawlerOptionsData.searchYandexMetricaCounter1 = static_cast<bool>(reader.readElementText().toInt());
-        }
-        else if (reader.qualifiedName() == s_yandexMetricaCounter1IdSettingsKey)
-        {
-            m_crawlerOptionsData.yandexMetricaCounter1Id = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_searchYandexMetricaCounter2SettingsKey)
-        {
-            m_crawlerOptionsData.searchYandexMetricaCounter2 = static_cast<bool>(reader.readElementText().toInt());
-        }
-        else if (reader.qualifiedName() == s_yandexMetricaCounter2IdSettingsKey)
-        {
-            m_crawlerOptionsData.yandexMetricaCounter2Id = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_searchYandexMetricaCounter3SettingsKey)
-        {
-            m_crawlerOptionsData.searchYandexMetricaCounter3 = static_cast<bool>(reader.readElementText().toInt());
-        }
-        else if (reader.qualifiedName() == s_yandexMetricaCounter3IdSettingsKey)
-        {
-            m_crawlerOptionsData.yandexMetricaCounter3Id = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_searchYandexMetricaCounter4SettingsKey)
-        {
-            m_crawlerOptionsData.searchYandexMetricaCounter4 = static_cast<bool>(reader.readElementText().toInt());
-        }
-        else if (reader.qualifiedName() == s_yandexMetricaCounter4IdSettingsKey)
-        {
-            m_crawlerOptionsData.yandexMetricaCounter4Id = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_searchYandexMetricaCounter5SettingsKey)
-        {
-            m_crawlerOptionsData.searchYandexMetricaCounter5 = static_cast<bool>(reader.readElementText().toInt());
-        }
-        else if (reader.qualifiedName() == s_yandexMetricaCounter5IdSettingsKey)
-        {
-            m_crawlerOptionsData.yandexMetricaCounter5Id = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName() == s_robotsTxtValidKey)
-        {
-            m_webHostInfoData.isRobotstxtValid = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_robotsTxtContentKey)
-        {
-            m_webHostInfoData.robotstxtContent = reader.readElementText().toUtf8();
-        }
-        else if (reader.qualifiedName() == s_robotsTxtUrlKey)
-        {
-            m_webHostInfoData.robotstxtUrl = urlFromString(reader.readElementText());
-        }
-        else if (reader.qualifiedName() == s_siteMapValidKey)
-        {
-            m_webHostInfoData.isSiteMapValid = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_siteMapContentKey)
-        {
-            m_webHostInfoData.siteMapContent = reader.readElementText().toUtf8();
-        }
-        else if (reader.qualifiedName() == s_siteMapUrlKey)
-        {
-            m_webHostInfoData.siteMapUrl = urlFromString(reader.readElementText());
-        }
-        else if (reader.qualifiedName() == s_is404PagesSetupRightKey)
-        {
-            m_webHostInfoData.is404PagesSetupRight = reader.readElementText().toInt() == 1;
-        }
-        else if (reader.qualifiedName() == s_siteImageKey)
-        {
-            m_webHostInfoData.image = QByteArray::fromBase64(reader.readElementText().toUtf8());
-        }
-        else if (reader.qualifiedName().startsWith(s_extractorNameBase))
-        {
-            QStringRef number = reader.qualifiedName().right(1);
-            const int index = number.toInt();
-            m_crawlerOptionsData.extractorNames[index] = reader.readElementText();
-        }
-        else if (reader.qualifiedName().startsWith(s_extractorRuleTypeBase))
-        {
-            QStringRef number = reader.qualifiedName().right(1);
-            const int index = number.toInt();
-            m_crawlerOptionsData.extractorRuleTypes[index] = reader.readElementText().toInt();
-        }
-        else if (reader.qualifiedName().startsWith(s_extractorRuleBase))
-        {
-            QStringRef number = reader.qualifiedName().right(1);
-            const int index = number.toInt();
-            m_crawlerOptionsData.extractorRules[index] = reader.readElementText();
-        }
-        else if (reader.qualifiedName().startsWith(s_extractionTypeBase))
-        {
-            QStringRef number = reader.qualifiedName().right(1);
-            const int index = number.toInt();
-            m_crawlerOptionsData.extractionTypes[index] = reader.readElementText().toInt();
-        }
+		if (reader.qualifiedName() == s_hostKey)
+		{
+			m_crawlerOptionsData.startCrawlingPage = urlFromString(reader.readElementText());
+		}
+		else if (reader.qualifiedName() == s_limitMaxUrlLengthKey)
+		{
+			m_crawlerOptionsData.limitMaxUrlLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_limitSearchTotalKey)
+		{
+			m_crawlerOptionsData.limitSearchTotal = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_limitTimeoutKey)
+		{
+			m_crawlerOptionsData.limitTimeout = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxRedirectsToFollowKey)
+		{
+			m_crawlerOptionsData.maxRedirectsToFollow = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxParallelConnectionsKey)
+		{
+			m_crawlerOptionsData.maxParallelConnections = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxLinksCountOnPageKey)
+		{
+			m_crawlerOptionsData.maxLinksCountOnPage = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_minTitleLengthKey)
+		{
+			m_crawlerOptionsData.minTitleLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxTitleLengthKey)
+		{
+			m_crawlerOptionsData.maxTitleLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxDescriptionLengthKey)
+		{
+			m_crawlerOptionsData.maxDescriptionLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_minDescriptionLengthKey)
+		{
+			m_crawlerOptionsData.minDescriptionLength = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxH1LengthCharsKey)
+		{
+			m_crawlerOptionsData.maxH1LengthChars = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxH2LengthCharsKey)
+		{
+			m_crawlerOptionsData.maxH2LengthChars = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxImageAltTextCharsKey)
+		{
+			m_crawlerOptionsData.maxImageAltTextChars = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxImageSizeKbKey)
+		{
+			m_crawlerOptionsData.maxImageSizeKb = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_maxPageSizeKbKey)
+		{
+			m_crawlerOptionsData.maxPageSizeKb = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_useProxyKey)
+		{
+			m_crawlerOptionsData.useProxy = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_proxyHostNameKey)
+		{
+			m_crawlerOptionsData.proxyHostName = reader.readElementText();
+		}
+		else if (reader.qualifiedName() == s_proxyPortKey)
+		{
+			m_crawlerOptionsData.proxyPort = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_proxyUserKey)
+		{
+			m_crawlerOptionsData.proxyUser = reader.readElementText();
+		}
+		else if (reader.qualifiedName() == s_proxyPasswordKey)
+		{
+			m_crawlerOptionsData.proxyPassword = reader.readElementText();
+		}
+		else if (reader.qualifiedName() == s_checkExternalLinksKey)
+		{
+			m_crawlerOptionsData.checkExternalLinks = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_followInternalNofollowKey)
+		{
+			m_crawlerOptionsData.followInternalNofollow = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_followExternalNofollowKey)
+		{
+			m_crawlerOptionsData.followExternalNofollow = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_checkCanonicalsKey)
+		{
+			m_crawlerOptionsData.checkCanonicals = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_checkSubdomainsKey)
+		{
+			m_crawlerOptionsData.checkSubdomains = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_crawlOutsideOfStartFolderKey)
+		{
+			m_crawlerOptionsData.crawlOutsideOfStartFolder = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_crawlMetaHrefLangLinksKey)
+		{
+			m_crawlerOptionsData.crawlMetaHrefLangLinks = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_followRobotsTxtRulesKey)
+		{
+			m_crawlerOptionsData.followRobotsTxtRules = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_userAgentToFollowKey)
+		{
+			m_crawlerOptionsData.userAgentToFollow = static_cast<UserAgentType>(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == s_parserTypeFlagsKey)
+		{
+			m_crawlerOptionsData.parserTypeFlags = ParserTypeFlags(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == s_pauseRangeFromKey)
+		{
+			m_crawlerOptionsData.pauseRangeFrom = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_pauseRangeToKey)
+		{
+			m_crawlerOptionsData.pauseRangeTo = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_pauseRangeEnabledKey)
+		{
+			m_crawlerOptionsData.pauseRangeEnabled = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_userAgentKey)
+		{
+			m_crawlerOptionsData.userAgent = reader.readElementText().toUtf8();
+		}
+		else if (reader.qualifiedName() == s_excludeRegExpsKey)
+		{
+		m_crawlerOptionsData.excludeUrlRegExps = reader.readElementText();
+		}
+		else if (reader.qualifiedName() == s_searchYandexMetricaCountersSettingsKey)
+		{
+			m_crawlerOptionsData.searchYandexMetricaCounters = static_cast<bool>(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter1SettingsKey)
+		{
+			m_crawlerOptionsData.searchYandexMetricaCounter1 = static_cast<bool>(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == s_yandexMetricaCounter1IdSettingsKey)
+		{
+			m_crawlerOptionsData.yandexMetricaCounter1Id = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter2SettingsKey)
+		{
+			m_crawlerOptionsData.searchYandexMetricaCounter2 = static_cast<bool>(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == s_yandexMetricaCounter2IdSettingsKey)
+		{
+			m_crawlerOptionsData.yandexMetricaCounter2Id = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter3SettingsKey)
+		{
+			m_crawlerOptionsData.searchYandexMetricaCounter3 = static_cast<bool>(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == s_yandexMetricaCounter3IdSettingsKey)
+		{
+			m_crawlerOptionsData.yandexMetricaCounter3Id = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter4SettingsKey)
+		{
+			m_crawlerOptionsData.searchYandexMetricaCounter4 = static_cast<bool>(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == s_yandexMetricaCounter4IdSettingsKey)
+		{
+			m_crawlerOptionsData.yandexMetricaCounter4Id = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_searchYandexMetricaCounter5SettingsKey)
+		{
+			m_crawlerOptionsData.searchYandexMetricaCounter5 = static_cast<bool>(reader.readElementText().toInt());
+		}
+		else if (reader.qualifiedName() == s_yandexMetricaCounter5IdSettingsKey)
+		{
+			m_crawlerOptionsData.yandexMetricaCounter5Id = reader.readElementText().toInt();
+		}
+		else if (reader.qualifiedName() == s_robotsTxtValidKey)
+		{
+			m_webHostInfoData.isRobotstxtValid = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_robotsTxtContentKey)
+		{
+			m_webHostInfoData.robotstxtContent = reader.readElementText().toUtf8();
+		}
+		else if (reader.qualifiedName() == s_robotsTxtUrlKey)
+		{
+			m_webHostInfoData.robotstxtUrl = urlFromString(reader.readElementText());
+		}
+		else if (reader.qualifiedName() == s_siteMapValidKey)
+		{
+			m_webHostInfoData.isSiteMapValid = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_siteMapContentKey)
+		{
+			m_webHostInfoData.siteMapContent = reader.readElementText().toUtf8();
+		}
+		else if (reader.qualifiedName() == s_siteMapUrlKey)
+		{
+			m_webHostInfoData.siteMapUrl = urlFromString(reader.readElementText());
+		}
+		else if (reader.qualifiedName() == s_is404PagesSetupRightKey)
+		{
+			m_webHostInfoData.is404PagesSetupRight = reader.readElementText().toInt() == 1;
+		}
+		else if (reader.qualifiedName() == s_siteImageKey)
+		{
+			m_webHostInfoData.image = QByteArray::fromBase64(reader.readElementText().toUtf8());
+		}
 	}
 }
 

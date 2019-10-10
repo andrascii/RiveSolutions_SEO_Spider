@@ -38,7 +38,6 @@
 #include "audit_report_page.h"
 #include "yandex_metrica_settings_widget.h"
 #include "google_analytics_settings_widget.h"
-#include "data_extraction_settings_widget.h"
 #include "ui_limits_settings_widget.h"
 #include "ui_preferences_settings_widget.h"
 #include "ui_language_settings_widget.h"
@@ -659,12 +658,6 @@ void MainWindow::registerSettingsPages() const
 		TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget),
 		new GoogleAnalyticsSettingsWidget);
 
-	// TODO: change pixmap
-	SettingsPageImpl<Ui_DataExtractionSettingsWidget>::registerSettingsPage(
-		SvgRenderer::render(":/images/data-extraction-settings.svg", 10, 10),
-		TYPE_STRING(Ui_DataExtractionSettingsWidget),
-		new DataExtractionSettingsWidget);
-
 #ifndef PRODUCTION
 	SettingsPageImpl<Ui_PageVisualSettingsWidget>::registerSettingsPage(
 		SvgRenderer::render(":/images/color-settings.svg", 10, 10),
@@ -817,9 +810,6 @@ void MainWindow::initSettingsActions()
 	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_googleAnalyticsSettingsAction,
 		SvgRenderer::render(":/images/google-analytics-settings.svg", 10, 10), tr("Google Analytics Settings"));
 
-	actionRegistry.addActionToActionGroup(s_settingsActionGroup, s_dataExtractionSettingsAction,
-		SvgRenderer::render(":/images/data-extraction-settings.svg", 10, 10), tr("Data Extraction Settings"));
-
 	const auto settingsActionsAvailability = [](int state)
 	{
 		const auto actionsAvailabilitySetter = [](bool value)
@@ -881,9 +871,6 @@ void MainWindow::initSettingsActions()
 
 	VERIFY(connect(actionRegistry.globalAction(s_googleAnalyticsSettingsAction), &QAction::triggered,
 		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_GoogleAnalyticsSettingsWidget)); }));
-
-	VERIFY(connect(actionRegistry.globalAction(s_dataExtractionSettingsAction), &QAction::triggered,
-		this, [this] { showApplicationSettingsDialog(TYPE_STRING(Ui_DataExtractionSettingsWidget)); }));
 }
 
 void MainWindow::initCrawlerActions()

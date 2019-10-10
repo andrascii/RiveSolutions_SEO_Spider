@@ -190,15 +190,6 @@ TEST(SerializationTests, OptionsSerialization)
 	options.searchYandexMetricaCounter5 = true;
 	options.yandexMetricaCounter5Id = 5;
 
-    // Data Extraction fields
-    for (int i = 1; i <= c_extractorCount; ++i)
-    {
-        options.extractorNames[i - 1] = QString("extractorName%1").arg(i);
-        options.extractorRuleTypes[i - 1] = i;
-        options.extractorRules[i - 1] = QString("extractorRule%1").arg(i);
-        options.extractionTypes[i - 1] = i;
-    }
-
 	env.crawler()->options()->setData(options);
 
 	const auto testFunction = [crawler = env.crawler(), &options]()
@@ -274,51 +265,7 @@ TEST(SerializationTests, OptionsSerialization)
 		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter4(), options.searchYandexMetricaCounter4);
 		EXPECT_EQ(crawler->options()->yandexMetricaCounter4Id(), options.yandexMetricaCounter4Id);
 		EXPECT_EQ(crawler->options()->searchYandexMetricaCounter5(), options.searchYandexMetricaCounter5);
-        EXPECT_EQ(crawler->options()->yandexMetricaCounter5Id(), options.yandexMetricaCounter5Id);
-
-        EXPECT_EQ(crawler->options()->extractorName1(), options.extractorNames[0]);
-        EXPECT_EQ(crawler->options()->extractorName2(), options.extractorNames[1]);
-        EXPECT_EQ(crawler->options()->extractorName3(), options.extractorNames[2]);
-        EXPECT_EQ(crawler->options()->extractorName4(), options.extractorNames[3]);
-        EXPECT_EQ(crawler->options()->extractorName5(), options.extractorNames[4]);
-        EXPECT_EQ(crawler->options()->extractorName6(), options.extractorNames[5]);
-        EXPECT_EQ(crawler->options()->extractorName7(), options.extractorNames[6]);
-        EXPECT_EQ(crawler->options()->extractorName8(), options.extractorNames[7]);
-        EXPECT_EQ(crawler->options()->extractorName9(), options.extractorNames[8]);
-        EXPECT_EQ(crawler->options()->extractorName10(), options.extractorNames[9]);
-
-        EXPECT_EQ(crawler->options()->extractorRuleType1(), options.extractorRuleTypes[0]);
-        EXPECT_EQ(crawler->options()->extractorRuleType2(), options.extractorRuleTypes[1]);
-        EXPECT_EQ(crawler->options()->extractorRuleType3(), options.extractorRuleTypes[2]);
-        EXPECT_EQ(crawler->options()->extractorRuleType4(), options.extractorRuleTypes[3]);
-        EXPECT_EQ(crawler->options()->extractorRuleType5(), options.extractorRuleTypes[4]);
-        EXPECT_EQ(crawler->options()->extractorRuleType6(), options.extractorRuleTypes[5]);
-        EXPECT_EQ(crawler->options()->extractorRuleType7(), options.extractorRuleTypes[6]);
-        EXPECT_EQ(crawler->options()->extractorRuleType8(), options.extractorRuleTypes[7]);
-        EXPECT_EQ(crawler->options()->extractorRuleType9(), options.extractorRuleTypes[8]);
-        EXPECT_EQ(crawler->options()->extractorRuleType10(), options.extractorRuleTypes[9]);
-
-        EXPECT_EQ(crawler->options()->extractorRule1(), options.extractorRules[0]);
-        EXPECT_EQ(crawler->options()->extractorRule2(), options.extractorRules[1]);
-        EXPECT_EQ(crawler->options()->extractorRule3(), options.extractorRules[2]);
-        EXPECT_EQ(crawler->options()->extractorRule4(), options.extractorRules[3]);
-        EXPECT_EQ(crawler->options()->extractorRule5(), options.extractorRules[4]);
-        EXPECT_EQ(crawler->options()->extractorRule6(), options.extractorRules[5]);
-        EXPECT_EQ(crawler->options()->extractorRule7(), options.extractorRules[6]);
-        EXPECT_EQ(crawler->options()->extractorRule8(), options.extractorRules[7]);
-        EXPECT_EQ(crawler->options()->extractorRule9(), options.extractorRules[8]);
-        EXPECT_EQ(crawler->options()->extractorRule10(), options.extractorRules[9]);
-
-        EXPECT_EQ(crawler->options()->extractionType1(), options.extractionTypes[0]);
-        EXPECT_EQ(crawler->options()->extractionType2(), options.extractionTypes[1]);
-        EXPECT_EQ(crawler->options()->extractionType3(), options.extractionTypes[2]);
-        EXPECT_EQ(crawler->options()->extractionType4(), options.extractionTypes[3]);
-        EXPECT_EQ(crawler->options()->extractionType5(), options.extractionTypes[4]);
-        EXPECT_EQ(crawler->options()->extractionType6(), options.extractionTypes[5]);
-        EXPECT_EQ(crawler->options()->extractionType7(), options.extractionTypes[6]);
-        EXPECT_EQ(crawler->options()->extractionType8(), options.extractionTypes[7]);
-        EXPECT_EQ(crawler->options()->extractionType9(), options.extractionTypes[8]);
-        EXPECT_EQ(crawler->options()->extractionType10(), options.extractionTypes[9]);
+		EXPECT_EQ(crawler->options()->yandexMetricaCounter5Id(), options.yandexMetricaCounter5Id);
 	};
 
 	env.initializeTest(testFunction);

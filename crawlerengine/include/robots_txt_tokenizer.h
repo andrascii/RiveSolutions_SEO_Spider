@@ -1,10 +1,11 @@
 #pragma once
 
 #include "url.h"
-#include "icrawler_options.h"
 
 namespace CrawlerEngine
 {
+
+enum class UserAgentType;
 
 enum class RobotsTxtToken
 {

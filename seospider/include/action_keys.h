@@ -30,7 +30,6 @@ static const QByteArray s_openCompanyProfileSettingsAction = "openCompanyProfile
 static const QByteArray s_openPageVisualSettingsAction = "openPageVisualSettingsAction";
 static const QByteArray s_yandexMetricaSettingsAction = "yandexMetricaSettingsAction";
 static const QByteArray s_googleAnalyticsSettingsAction = "googleAnalyticsSettingsAction";
-static const QByteArray s_dataExtractionSettingsAction = "dataExtractionSettingsAction";
 
 // help actions
 static const QByteArray s_showHelpAction = "showHelpAction";
