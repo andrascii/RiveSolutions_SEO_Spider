@@ -40,7 +40,7 @@ void CommandMenu::initMenu(QMenu& editingMenu, const Menu& menuData)
 		return;
 	}
 
-	for (const std::shared_ptr<IMenuItem>& menuItem : menuData)
+	for (const Common::counted_ptr<IMenuItem>& menuItem : menuData)
 	{
 		switch (menuItem->type())
 		{

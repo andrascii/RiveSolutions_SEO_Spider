@@ -374,7 +374,52 @@ void Application::onAboutCrawlerOptionsChanged()
 	preferences()->setSearchGoogleAnalyticsCounter4(crawler()->options()->searchGoogleAnalyticsCounter4());
 	preferences()->setGoogleAnalyticsCounter4Id(crawler()->options()->googleAnalyticsCounter4Id());
 	preferences()->setSearchGoogleAnalyticsCounter5(crawler()->options()->searchGoogleAnalyticsCounter5());
-	preferences()->setGoogleAnalyticsCounter5Id(crawler()->options()->googleAnalyticsCounter5Id());
+    preferences()->setGoogleAnalyticsCounter5Id(crawler()->options()->googleAnalyticsCounter5Id());
+
+    // Data Extraction
+    preferences()->setExtractorName1(crawler()->options()->extractorName1());
+    preferences()->setExtractorName2(crawler()->options()->extractorName2());
+    preferences()->setExtractorName3(crawler()->options()->extractorName3());
+    preferences()->setExtractorName4(crawler()->options()->extractorName4());
+    preferences()->setExtractorName5(crawler()->options()->extractorName5());
+    preferences()->setExtractorName6(crawler()->options()->extractorName6());
+    preferences()->setExtractorName7(crawler()->options()->extractorName7());
+    preferences()->setExtractorName8(crawler()->options()->extractorName8());
+    preferences()->setExtractorName9(crawler()->options()->extractorName9());
+    preferences()->setExtractorName10(crawler()->options()->extractorName10());
+
+    preferences()->setExtractorRuleType1(crawler()->options()->extractorRuleType1());
+    preferences()->setExtractorRuleType2(crawler()->options()->extractorRuleType2());
+    preferences()->setExtractorRuleType3(crawler()->options()->extractorRuleType3());
+    preferences()->setExtractorRuleType4(crawler()->options()->extractorRuleType4());
+    preferences()->setExtractorRuleType5(crawler()->options()->extractorRuleType5());
+    preferences()->setExtractorRuleType6(crawler()->options()->extractorRuleType6());
+    preferences()->setExtractorRuleType7(crawler()->options()->extractorRuleType7());
+    preferences()->setExtractorRuleType8(crawler()->options()->extractorRuleType8());
+    preferences()->setExtractorRuleType9(crawler()->options()->extractorRuleType9());
+    preferences()->setExtractorRuleType10(crawler()->options()->extractorRuleType10());
+
+    preferences()->setExtractorRule1(crawler()->options()->extractorRule1());
+    preferences()->setExtractorRule2(crawler()->options()->extractorRule2());
+    preferences()->setExtractorRule3(crawler()->options()->extractorRule3());
+    preferences()->setExtractorRule4(crawler()->options()->extractorRule4());
+    preferences()->setExtractorRule5(crawler()->options()->extractorRule5());
+    preferences()->setExtractorRule6(crawler()->options()->extractorRule6());
+    preferences()->setExtractorRule7(crawler()->options()->extractorRule7());
+    preferences()->setExtractorRule8(crawler()->options()->extractorRule8());
+    preferences()->setExtractorRule9(crawler()->options()->extractorRule9());
+    preferences()->setExtractorRule10(crawler()->options()->extractorRule10());
+
+    preferences()->setExtractionType1(crawler()->options()->extractionType1());
+    preferences()->setExtractionType2(crawler()->options()->extractionType2());
+    preferences()->setExtractionType3(crawler()->options()->extractionType3());
+    preferences()->setExtractionType4(crawler()->options()->extractionType4());
+    preferences()->setExtractionType5(crawler()->options()->extractionType5());
+    preferences()->setExtractionType6(crawler()->options()->extractionType6());
+    preferences()->setExtractionType7(crawler()->options()->extractionType7());
+    preferences()->setExtractionType8(crawler()->options()->extractionType8());
+    preferences()->setExtractionType9(crawler()->options()->extractionType9());
+    preferences()->setExtractionType10(crawler()->options()->extractionType10());
 
 	if (isAllGaCountersDisabled)
 	{
@@ -534,7 +579,52 @@ void Application::attachPreferencesToCrawlerOptions()
 	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter4Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter4(bool))));
 	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter4IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter4Id(const QString&))));
 	VERIFY(connect(preferences(), SIGNAL(searchGoogleAnalyticsCounter5Changed(bool)), crawler()->options()->qobject(), SLOT(setSearchGoogleAnalyticsCounter5(bool))));
-	VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter5IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter5Id(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(googleAnalyticsCounter5IdChanged(const QString&)), crawler()->options()->qobject(), SLOT(setGoogleAnalyticsCounter5Id(const QString&))));
+
+    // Data Extraction mappings
+    VERIFY(connect(preferences(), SIGNAL(extractorName1Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName1(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName2Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName2(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName3Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName3(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName4Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName4(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName5Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName5(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName6Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName6(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName7Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName7(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName8Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName8(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName9Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName9(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorName10Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorName10(const QString&))));
+
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType1Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType1(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType2Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType2(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType3Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType3(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType4Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType4(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType5Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType5(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType6Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType6(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType7Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType7(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType8Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType8(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType9Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType9(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRuleType10Changed(int)), crawler()->options()->qobject(), SLOT(setExtractorRuleType10(int))));
+
+    VERIFY(connect(preferences(), SIGNAL(extractorRule1Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule1(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule2Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule2(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule3Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule3(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule4Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule4(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule5Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule5(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule6Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule6(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule7Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule7(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule8Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule8(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule9Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule9(const QString&))));
+    VERIFY(connect(preferences(), SIGNAL(extractorRule10Changed(const QString&)), crawler()->options()->qobject(), SLOT(setExtractorRule10(const QString&))));
+
+    VERIFY(connect(preferences(), SIGNAL(extractionType1Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType1(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType2Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType2(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType3Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType3(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType4Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType4(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType5Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType5(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType6Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType6(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType7Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType7(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType8Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType8(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType9Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType9(int))));
+    VERIFY(connect(preferences(), SIGNAL(extractionType10Changed(int)), crawler()->options()->qobject(), SLOT(setExtractionType10(int))));
 
 	const auto mapVariantToUserAgentType = [this](const QVariant& value)
 	{

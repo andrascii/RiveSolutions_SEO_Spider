@@ -24,6 +24,12 @@ public:
 	virtual std::vector<IHtmlNodeCountedPtr> matchNodesInDepth(const std::function<bool(const IHtmlNode&)>& predicate) const = 0;
 	virtual IHtmlNodeCountedPtr findNodeWithAttributeValue(IHtmlNode::TagId tagId, std::pair<const char*, const char*> expectedAttributes) const = 0;
 	virtual IHtmlNodeCountedPtr findNodeWithAttributesValues(IHtmlNode::TagId tagId, const std::map<const char*, const char*>& expectedAttributes) const = 0;
+	virtual IHtmlNodeCountedPtr fromData(void* data) const = 0;
+	virtual IHtmlAttributeCountedPtr attributeFromData(void* data) const = 0;
+	virtual IHtmlNodeCountedPtr root() const = 0;
+
+	virtual IHtmlNodeCountedPtr emptyNode() const = 0;
+	virtual IHtmlAttributeCountedPtr emptyAttribute() const = 0;
 };
 
 }

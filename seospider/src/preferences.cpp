@@ -21,6 +21,8 @@ Preferences::Preferences(ISettingsAccessor* settingsAccessor, QObject* parent)
 	: QObject(parent)
 	, m_settingsAccessor(settingsAccessor)
 {
+    std::fill(m_extractorRuleTypes.begin(), m_extractorRuleTypes.end(), -1);
+    std::fill(m_extractionTypes.begin(), m_extractionTypes.end(), 0);
 }
 
 Preferences::~Preferences()
@@ -861,6 +863,446 @@ void Preferences::setGoogleAnalyticsCounter5Id(const QString& value)
 {
 	m_googleAnalyticsCounter5Id = value;
 	emit googleAnalyticsCounter5IdChanged(m_googleAnalyticsCounter5Id);
+}
+
+const QString& Preferences::extractorName1() const
+{
+    return m_extractorNames[0];
+}
+
+const QString& Preferences::extractorName2() const
+{
+    return m_extractorNames[1];
+}
+
+const QString& Preferences::extractorName3() const
+{
+    return m_extractorNames[2];
+}
+
+const QString& Preferences::extractorName4() const
+{
+    return m_extractorNames[3];
+}
+
+const QString& Preferences::extractorName5() const
+{
+    return m_extractorNames[4];
+}
+
+const QString& Preferences::extractorName6() const
+{
+    return m_extractorNames[5];
+}
+
+const QString& Preferences::extractorName7() const
+{
+    return m_extractorNames[6];
+}
+
+const QString& Preferences::extractorName8() const
+{
+    return m_extractorNames[7];
+}
+
+const QString& Preferences::extractorName9() const
+{
+    return m_extractorNames[8];
+}
+
+const QString& Preferences::extractorName10() const
+{
+    return m_extractorNames[9];
+}
+
+void Preferences::setExtractorName1(const QString& value)
+{
+    m_extractorNames[0] = value;
+    emit extractorName1Changed(value);
+}
+
+void Preferences::setExtractorName2(const QString& value)
+{
+    m_extractorNames[1] = value;
+    emit extractorName2Changed(value);
+}
+
+void Preferences::setExtractorName3(const QString& value)
+{
+    m_extractorNames[2] = value;
+    emit extractorName3Changed(value);
+}
+
+void Preferences::setExtractorName4(const QString& value)
+{
+    m_extractorNames[3] = value;
+    emit extractorName4Changed(value);
+}
+
+void Preferences::setExtractorName5(const QString& value)
+{
+    m_extractorNames[4] = value;
+    emit extractorName5Changed(value);
+}
+
+void Preferences::setExtractorName6(const QString& value)
+{
+    m_extractorNames[5] = value;
+    emit extractorName6Changed(value);
+}
+
+void Preferences::setExtractorName7(const QString& value)
+{
+    m_extractorNames[6] = value;
+    emit extractorName7Changed(value);
+}
+
+void Preferences::setExtractorName8(const QString& value)
+{
+    m_extractorNames[7] = value;
+    emit extractorName8Changed(value);
+}
+
+void Preferences::setExtractorName9(const QString& value)
+{
+    m_extractorNames[8] = value;
+    emit extractorName9Changed(value);
+}
+
+void Preferences::setExtractorName10(const QString& value)
+{
+    m_extractorNames[9] = value;
+    emit extractorName10Changed(value);
+}
+
+int Preferences::extractorRuleType1() const
+{
+    return m_extractorRuleTypes[0];
+}
+
+int Preferences::extractorRuleType2() const
+{
+    return m_extractorRuleTypes[1];
+}
+
+int Preferences::extractorRuleType3() const
+{
+    return m_extractorRuleTypes[2];
+}
+
+int Preferences::extractorRuleType4() const
+{
+    return m_extractorRuleTypes[3];
+}
+
+int Preferences::extractorRuleType5() const
+{
+    return m_extractorRuleTypes[4];
+}
+
+int Preferences::extractorRuleType6() const
+{
+    return m_extractorRuleTypes[5];
+}
+
+int Preferences::extractorRuleType7() const
+{
+    return m_extractorRuleTypes[6];
+}
+
+int Preferences::extractorRuleType8() const
+{
+    return m_extractorRuleTypes[7];
+}
+
+int Preferences::extractorRuleType9() const
+{
+    return m_extractorRuleTypes[8];
+}
+
+int Preferences::extractorRuleType10() const
+{
+    return m_extractorRuleTypes[9];
+}
+
+void Preferences::setExtractorRuleType1(int value)
+{
+    m_extractorRuleTypes[0] = value;
+    emit extractorRuleType1Changed(value);
+}
+
+void Preferences::setExtractorRuleType2(int value)
+{
+    m_extractorRuleTypes[1] = value;
+    emit extractorRuleType2Changed(value);
+}
+
+void Preferences::setExtractorRuleType3(int value)
+{
+    m_extractorRuleTypes[2] = value;
+    emit extractorRuleType3Changed(value);
+}
+
+void Preferences::setExtractorRuleType4(int value)
+{
+    m_extractorRuleTypes[3] = value;
+    emit extractorRuleType4Changed(value);
+}
+
+void Preferences::setExtractorRuleType5(int value)
+{
+    m_extractorRuleTypes[4] = value;
+    emit extractorRuleType5Changed(value);
+}
+
+void Preferences::setExtractorRuleType6(int value)
+{
+    m_extractorRuleTypes[5] = value;
+    emit extractorRuleType6Changed(value);
+}
+
+void Preferences::setExtractorRuleType7(int value)
+{
+    m_extractorRuleTypes[6] = value;
+    emit extractorRuleType7Changed(value);
+}
+
+void Preferences::setExtractorRuleType8(int value)
+{
+    m_extractorRuleTypes[7] = value;
+    emit extractorRuleType8Changed(value);
+}
+
+void Preferences::setExtractorRuleType9(int value)
+{
+    m_extractorRuleTypes[8] = value;
+    emit extractorRuleType9Changed(value);
+}
+
+void Preferences::setExtractorRuleType10(int value)
+{
+    m_extractorRuleTypes[9] = value;
+    emit extractorRuleType10Changed(value);
+}
+
+const QString& Preferences::extractorRule1() const
+{
+    return m_extractorRules[0];
+}
+
+const QString& Preferences::extractorRule2() const
+{
+    return m_extractorRules[1];
+}
+
+const QString& Preferences::extractorRule3() const
+{
+    return m_extractorRules[2];
+}
+
+const QString& Preferences::extractorRule4() const
+{
+    return m_extractorRules[3];
+}
+
+const QString& Preferences::extractorRule5() const
+{
+    return m_extractorRules[4];
+}
+
+const QString& Preferences::extractorRule6() const
+{
+    return m_extractorRules[5];
+}
+
+const QString& Preferences::extractorRule7() const
+{
+    return m_extractorRules[6];
+}
+
+const QString& Preferences::extractorRule8() const
+{
+    return m_extractorRules[7];
+}
+
+const QString& Preferences::extractorRule9() const
+{
+    return m_extractorRules[8];
+}
+
+const QString& Preferences::extractorRule10() const
+{
+    return m_extractorRules[9];
+}
+
+void Preferences::setExtractorRule1(const QString& value)
+{
+    m_extractorRules[0] = value;
+    emit extractorRule1Changed(value);
+}
+
+void Preferences::setExtractorRule2(const QString& value)
+{
+    m_extractorRules[1] = value;
+    emit extractorRule2Changed(value);
+}
+
+void Preferences::setExtractorRule3(const QString& value)
+{
+    m_extractorRules[2] = value;
+    emit extractorRule3Changed(value);
+}
+
+void Preferences::setExtractorRule4(const QString& value)
+{
+    m_extractorRules[3] = value;
+    emit extractorRule4Changed(value);
+}
+
+void Preferences::setExtractorRule5(const QString& value)
+{
+    m_extractorRules[4] = value;
+    emit extractorRule5Changed(value);
+}
+
+void Preferences::setExtractorRule6(const QString& value)
+{
+    m_extractorRules[5] = value;
+    emit extractorRule6Changed(value);
+}
+
+void Preferences::setExtractorRule7(const QString& value)
+{
+    m_extractorRules[6] = value;
+    emit extractorRule7Changed(value);
+}
+
+void Preferences::setExtractorRule8(const QString& value)
+{
+    m_extractorRules[7] = value;
+    emit extractorRule8Changed(value);
+}
+
+void Preferences::setExtractorRule9(const QString& value)
+{
+    m_extractorRules[8] = value;
+    emit extractorRule9Changed(value);
+}
+
+void Preferences::setExtractorRule10(const QString& value)
+{
+    m_extractorRules[9] = value;
+    emit extractorRule10Changed(value);
+}
+
+int Preferences::extractionType1() const
+{
+    return m_extractionTypes[0];
+}
+
+int Preferences::extractionType2() const
+{
+    return m_extractionTypes[1];
+}
+
+int Preferences::extractionType3() const
+{
+    return m_extractionTypes[2];
+}
+
+int Preferences::extractionType4() const
+{
+    return m_extractionTypes[3];
+}
+
+int Preferences::extractionType5() const
+{
+    return m_extractionTypes[4];
+}
+
+int Preferences::extractionType6() const
+{
+    return m_extractionTypes[5];
+}
+
+int Preferences::extractionType7() const
+{
+    return m_extractionTypes[6];
+}
+
+int Preferences::extractionType8() const
+{
+    return m_extractionTypes[7];
+}
+
+int Preferences::extractionType9() const
+{
+    return m_extractionTypes[8];
+}
+
+int Preferences::extractionType10() const
+{
+    return m_extractionTypes[9];
+}
+
+void Preferences::setExtractionType1(int value)
+{
+    m_extractionTypes[0] = value;
+    emit extractionType1Changed(value);
+}
+
+void Preferences::setExtractionType2(int value)
+{
+    m_extractionTypes[1] = value;
+    emit extractionType2Changed(value);
+}
+
+void Preferences::setExtractionType3(int value)
+{
+    m_extractionTypes[2] = value;
+    emit extractionType3Changed(value);
+}
+
+void Preferences::setExtractionType4(int value)
+{
+    m_extractionTypes[3] = value;
+    emit extractionType4Changed(value);
+}
+
+void Preferences::setExtractionType5(int value)
+{
+    m_extractionTypes[4] = value;
+    emit extractionType5Changed(value);
+}
+
+void Preferences::setExtractionType6(int value)
+{
+    m_extractionTypes[5] = value;
+    emit extractionType6Changed(value);
+}
+
+void Preferences::setExtractionType7(int value)
+{
+    m_extractionTypes[6] = value;
+    emit extractionType7Changed(value);
+}
+
+void Preferences::setExtractionType8(int value)
+{
+    m_extractionTypes[7] = value;
+    emit extractionType8Changed(value);
+}
+
+void Preferences::setExtractionType9(int value)
+{
+    m_extractionTypes[8] = value;
+    emit extractionType9Changed(value);
+}
+
+void Preferences::setExtractionType10(int value)
+{
+    m_extractionTypes[9] = value;
+    emit extractionType10Changed(value);
 }
 
 void Preferences::addDefaultProperty(const QByteArray& key, const QVariant& defaultValue) noexcept

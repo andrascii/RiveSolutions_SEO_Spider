@@ -8,6 +8,17 @@ namespace SeoSpider
 class IControlAdapter;
 class InternalSettingsHelper;
 
+/*
+
+When SettingsPage is in the initialization process (SettingsPage::init)
+we cannot be notified about changes of our Qt controls.
+
+It means that when controls apply data from Preferences, they do not send signals about self changes!
+
+If you have a custom logic of controls in your settings widget (derived from this class)
+you need to configure control states manually after initialization stage (after call of SettingsPage::init method).
+
+*/
 class SettingsPage : public QFrame, public ISettingsPage
 {
 	Q_OBJECT

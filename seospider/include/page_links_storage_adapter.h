@@ -19,14 +19,15 @@ public:
 	virtual void setAvailableColumns(QVector<ParsedPageInfo::PageLinksColumn> availableColumns) noexcept override;
 	virtual QVector<ParsedPageInfo::PageLinksColumn> availableColumns() const noexcept override;
 	virtual QString columnDescription(int columnIndex) const noexcept override;
-	virtual int columnWidth(int columnNumber) const noexcept override;
+	virtual int columnWidth(int columnIndex) const noexcept override;
 	virtual int columnCount() const noexcept override;
-	virtual bool columnEnabled(int column) const noexcept override;
+	virtual bool columnEnabled(int columnIndex) const noexcept override;
 	virtual int itemCount() const noexcept override;
 	virtual QVariant item(const QModelIndex& index) const noexcept override;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept override;
-	virtual RowResourceType resourceType(const QModelIndex& index) const noexcept override;
+	virtual RowResourceType resourceType(int row) const noexcept override;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept override;
+	virtual const CrawlerEngine::ParsedPage* parsedPage(const QModelIndex& index) const noexcept override;
 	virtual Menu menuFor(const QModelIndex& index) const override;
 	virtual QObject* qobject() noexcept override;
 
@@ -38,6 +39,7 @@ signals:
 	virtual void repaintColumn(int column) const override;
 	virtual void beginClearData() const override;
 	virtual void endClearData() const override;
+	virtual void customColumnCountChanged() const override;
 
 private slots:
 	void onBeginClearData();

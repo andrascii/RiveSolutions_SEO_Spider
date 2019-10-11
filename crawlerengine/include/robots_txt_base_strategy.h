@@ -1,10 +1,11 @@
 #pragma once
+
 #include "parsed_page.h"
 
 namespace CrawlerEngine
 {
-	enum class UserAgentType;
-	class RobotsTxtTokenizer;
+
+class RobotsTxtTokenizer;
 
 class RobotsTxtBaseStrategy
 {

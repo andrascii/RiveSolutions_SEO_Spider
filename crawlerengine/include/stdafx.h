@@ -65,6 +65,7 @@
 #include <QDir>
 #include <QUrlQuery>
 #include <QJsonDocument>
+#include <QAbstractXmlNodeModel>
 
 //
 // C/C++

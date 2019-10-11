@@ -73,7 +73,7 @@ void StorageExporter::exportStorage(const CrawlerEngine::SequencedDataCollection
 		xlsxDocument.write(rowNumber++, 1, headerRichString);
 
 		QVector<ParsedPageInfo::Column> columnsForType =
-			StorageAdapterFactory::parsedPageAvailableColumns(static_cast<StorageAdapterType>(storageType));
+			StorageAdapterFactory::defaultColumns(static_cast<StorageAdapterType>(storageType));
 
 		if (addLinksToThisPageColumn(storages))
 		{

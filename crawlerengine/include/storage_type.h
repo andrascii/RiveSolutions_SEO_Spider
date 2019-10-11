@@ -120,6 +120,9 @@ enum StorageType
 	GoogleAnalyticsCounter4StorageType,
 	GoogleAnalyticsCounter5StorageType,
 
+    // Data Extraction - here stores pages with found some data using XPath / CSSPath or using other rules
+    DataExtractionStorageType,
+
 	// !!!!!!!!!!!!!!!!!!! add new items above this!!!!!!!!!!!!!!!!!!!
 	EndEnumStorageType
 };

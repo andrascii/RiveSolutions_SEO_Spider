@@ -17,7 +17,7 @@ public:
 	IStorageAdapter* createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer);
 
 	static QVector<ParsedPageInfo::Column> parsedPageAllColumns();
-	static QVector<ParsedPageInfo::Column> parsedPageAvailableColumns(StorageAdapterType type);
+	static QVector<ParsedPageInfo::Column> defaultColumns(StorageAdapterType type);
 
 protected:
 	static void setupAvailablePageLinkColumns(IPageLinksStorageAdapter* storageAdapter);

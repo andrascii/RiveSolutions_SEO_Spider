@@ -42,6 +42,7 @@ private:
 	void processParsedPageImage(WorkerResult& workerResult, bool checkOnlyLastResource = false, bool secondGetRequest = false);
 	void processParsedPageStatusCode(WorkerResult& workerResult, bool secondGetRequest);
 	void processParsedPageHtmlResources(WorkerResult& workerResult, bool secondGetRequest);
+	void processDataExtractions(WorkerResult& workerResult);
 	void processParsedPageResources(WorkerResult& workerResult, bool secondGetRequest);
 	void fixParsedPageResourceType(ParsedPagePtr& incomingPage) const noexcept;
 	void removeResourceFromPendingStorageIfNeeded(ParsedPagePtr& incomingPage, int turnaround) noexcept;

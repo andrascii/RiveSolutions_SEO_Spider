@@ -8,6 +8,7 @@ namespace SeoSpider
 class AbstractTablePage: public QFrame, public AbstractPage
 {
 	Q_OBJECT
+
 public:
 	AbstractTablePage(QWidget* parent, PageDataWidget* pageDataWidget);
 	void goTo(PageDataWidget::PageDataType pageDataType);
