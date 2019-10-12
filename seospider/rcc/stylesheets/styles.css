@@ -843,7 +843,8 @@ QStackedWidget QLabel#LoadingWidget
 SeoSpider--NotificationPopupFrame
 {
 	qproperty-borderColor: #B1B1B3;
-	qproperty-backgroundColor: #F9F9F9;
+    qproperty-backgroundColor: #F9F9F9;
+    max-width: 35em;
 }
 
 SeoSpider--NotificationPopupFrame QToolButton

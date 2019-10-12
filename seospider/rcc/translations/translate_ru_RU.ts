@@ -148,7 +148,7 @@ an invalid username/password.</source>
     </message>
     <message>
         <source>The operation has not been successful</source>
-        <translation>Операция завершилась неуспешно</translation>
+        <translation type="vanished">Операция завершилась неуспешно</translation>
     </message>
     <message>
         <source>DNS Lookup Failed!</source>
@@ -179,6 +179,10 @@ Please, be sure that you entered a valid address</source>
     <message>
         <source>Cannot open a document while crawler is working!</source>
         <translation>Невозможно открыть документ пока краулинг активен!</translation>
+    </message>
+    <message>
+        <source>Could not open project file. If you opened the file from the menu of recent files, you should make sure that this file still exists.</source>
+        <translation>Не удалось открыть файл проекта. Если вы открывали файл из меню недавних файлов, стоит убедиться, что этот файл попрежнему существует.</translation>
     </message>
 </context>
 <context>

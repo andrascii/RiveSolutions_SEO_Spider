@@ -19,6 +19,7 @@
 #include "version.h"
 #include "license_state_notificator.h"
 #include "dialog.h"
+#include "recent_files.h"
 
 #ifndef PRODUCTION
 #include "style_loader.h"
@@ -82,6 +83,8 @@ Application::Application(int& argc, char** argv)
 #endif
 
 	new LicenseStateNotificator(this);
+
+	VERIFY(connect(m_crawler, &Crawler::deserializationFailed, this, &Application::onLoadingProjectFileFailed));
 }
 
 CrawlerEngine::Crawler* Application::crawler() const noexcept
@@ -447,6 +450,11 @@ void Application::onAboutUseCustomUserAgentChanged()
 void Application::closeWaitOperationFrame()
 {
 	WaitOperationFrame::finish();
+}
+
+void Application::onLoadingProjectFileFailed(const QString& fileName)
+{
+	RecentFiles::instance().forgetRecentFile(fileName);
 }
 
 void Application::registerServices()

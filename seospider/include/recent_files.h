@@ -12,6 +12,7 @@ public:
 
 	QAction* subMenuAction();
 
+	void forgetRecentFile(const QString& filePath);
 	void registerNewRecentFile(const QString& filePath);
 	void updateRecentFileActions();
 

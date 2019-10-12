@@ -526,7 +526,9 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 {
 	Q_UNUSED(requester);
 
-	SerializationTaskResponseResult* result = dynamic_cast<SerializationTaskResponseResult*>(response.result.get());
+	SerializationTaskResponseResult* result =
+		Common::Helpers::fast_cast<SerializationTaskResponseResult*>(response.result.get());
+
 	const int turnaround = CrawlerSharedState::instance()->turnaround();
 
 	ASSERT(result);
@@ -534,14 +536,17 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 	if (!result->error.isEmpty())
 	{
 		ServiceLocator* serviceLocator = ServiceLocator::instance();
-
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
 
-		serviceLocator->service<INotificationService>()->error(tr("Loading file error"), tr("The operation has not been successful"));
+		serviceLocator->service<INotificationService>()->error(tr("Loading file error"),
+			tr("Could not open project file. If you opened the file from the menu of recent files, "
+			"you should make sure that this file still exists."));
 
 		ASSERT(m_session);
-
 		m_session->deleteLater();
+
+		TaskRequest* taskRequest = Common::Helpers::fast_cast<TaskRequest*>(requester->request());
+		emit deserializationFailed(taskRequest->task->fileName());
 	}
 	else
 	{
@@ -582,14 +587,14 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 		state->setWorkersProcessedLinksCount(crawledLinksCount);
 		state->setModelControllerAcceptedLinksCount(crawledLinksCount);
 		state->setModelControllerCrawledLinksCount(crawledLinksCount);
+
+		emit deserializationProcessDone();
 	}
 
 	m_state = m_prevState;
 	emit stateChanged(m_state);
 
 	m_deSerializationRequester.reset();
-
-	emit deserializationProcessDone();
 }
 
 void Crawler::onHostInfoResponse(Requester*, const GetHostInfoResponse& response)

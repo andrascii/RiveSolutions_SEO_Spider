@@ -128,6 +128,7 @@ signals:
 	void crawlerOptionsLoaded();
 	void serializationProcessDone();
 	void deserializationProcessDone();
+	void deserializationFailed(const QString& fileName);
 	void refreshPageDone();
 	void sessionCreated();
 	void sessionDestroyed();

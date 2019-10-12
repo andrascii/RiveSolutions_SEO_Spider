@@ -39,9 +39,9 @@ private:
 
 	QPixmap m_normalPixmap;
 	QPixmap m_activePixmap;
-	
+
 	bool m_active;
-	
+
 	QPointer<NotificationPopupFrame> m_notificationPopup;
 
 	std::vector<NotificationData> m_notifications;
