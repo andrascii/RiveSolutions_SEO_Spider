@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>497</height>
+    <width>463</width>
+    <height>499</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,6 +74,13 @@
           </property>
           <property name="controlKey" stdset="0">
            <string notr="true">limitTimeout</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="0">
+         <widget class="QLabel" name="maxConnectionsLabel">
+          <property name="text">
+           <string>Maximum active connections:</string>
           </property>
          </widget>
         </item>
@@ -151,12 +158,44 @@
           </property>
          </widget>
         </item>
+        <item row="12" column="0">
+         <widget class="QSpinBox" name="maxConnectionsSpinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>24</number>
+          </property>
+          <property name="controlKey" stdset="0">
+           <string notr="true">maxParallelConnections</string>
+          </property>
+         </widget>
+        </item>
         <item row="7" column="0" colspan="2">
          <widget class="QLabel" name="label_7">
           <property name="text">
            <string>Maximum redirects to follow:</string>
           </property>
          </widget>
+        </item>
+        <item row="13" column="0">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>250</width>
+            <height>15</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item row="3" column="0" colspan="2">
          <widget class="QLabel" name="label_5">
@@ -216,45 +255,6 @@
            <string>These preferences are not available on the trial version of the application.</string>
           </property>
          </widget>
-        </item>
-        <item row="12" column="0" colspan="2">
-         <widget class="QSpinBox" name="maxConnectionsSpinBox">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>100</number>
-          </property>
-          <property name="value">
-           <number>24</number>
-          </property>
-          <property name="controlKey" stdset="0">
-           <string notr="true">maxParallelConnections</string>
-          </property>
-         </widget>
-        </item>
-        <item row="11" column="0" colspan="2">
-         <widget class="QLabel" name="maxConnectionsLabel">
-          <property name="text">
-           <string>Maximum active connections:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="13" column="0" colspan="2">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>250</width>
-            <height>15</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>

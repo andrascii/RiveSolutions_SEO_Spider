@@ -41,14 +41,14 @@ QVector<ParsedPageInfo::PageLinksColumn> PageLinksStorageAdapter::availableColum
 
 QString PageLinksStorageAdapter::columnDescription(int columnIndex) const noexcept
 {
-	ASSERT(columnIndex < m_availableColumns.size());
+	DEBUG_ASSERT(columnIndex < m_availableColumns.size());
 
 	return ParsedPageInfo::itemTypeDescription(m_availableColumns[columnIndex]);
 }
 
 int PageLinksStorageAdapter::columnWidth(int columnNumber) const noexcept
 {
-	ASSERT(columnNumber < m_availableColumns.size());
+	DEBUG_ASSERT(columnNumber < m_availableColumns.size());
 
 	return ParsedPageInfo::columnPrefferedSize(m_availableColumns[columnNumber]);
 }
@@ -58,8 +58,9 @@ int PageLinksStorageAdapter::columnCount() const noexcept
 	return m_availableColumns.size();
 }
 
-bool PageLinksStorageAdapter::columnEnabled(int) const noexcept
+bool PageLinksStorageAdapter::columnEnabled(int column) const noexcept
 {
+	Q_UNUSED(column);
 	return true;
 }
 
@@ -80,41 +81,39 @@ QVariant PageLinksStorageAdapter::item(const QModelIndex& index) const noexcept
 		return QVariant();
 	}
 
-	ASSERT(static_cast<size_t>(index.row()) < m_parsedPageInfo->linksCount(m_context));
-	ASSERT(index.column() < m_availableColumns.size());
+	DEBUG_ASSERT(static_cast<size_t>(index.row()) < m_parsedPageInfo->linksCount(m_context));
+	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
 	return m_parsedPageInfo->itemValue(m_availableColumns[index.column()], m_context, index.row());
 }
 
 PageLinksStorageAdapter::ItemType PageLinksStorageAdapter::itemType(const QModelIndex& index) const noexcept
 {
-	ASSERT(index.column() < m_availableColumns.size());
+	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
 	return m_availableColumns[index.column()] == ParsedPageInfo::PageLinksColumn::UrlColumn ?
 		ItemType::UrlItemType :
 		ItemType::PlainItemType;
 }
 
-RowResourceType PageLinksStorageAdapter::resourceType(int row) const noexcept
+RowResourceType PageLinksStorageAdapter::resourceType(const QModelIndex& index) const noexcept
 {
 	if (!m_parsedPageInfo)
 	{
 		return ResourceNone;
 	}
 
-	ASSERT(static_cast<size_t>(row) < m_parsedPageInfo->linksCount(m_context));
+	DEBUG_ASSERT(static_cast<size_t>(index.row()) < m_parsedPageInfo->linksCount(m_context));
+	DEBUG_ASSERT(index.column() < m_availableColumns.size());
 
-	return m_parsedPageInfo->resourceType(m_context, row);
+	return m_parsedPageInfo->resourceType(m_context, index.row());
 }
 
-ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex&) const noexcept
+ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
+	Q_UNUSED(index);
+
 	return m_parsedPageInfo;
-}
-
-const CrawlerEngine::ParsedPage* PageLinksStorageAdapter::parsedPage(const QModelIndex&) const noexcept
-{
-	return m_parsedPageInfo->associatedParsedPage();
 }
 
 Menu PageLinksStorageAdapter::menuFor(const QModelIndex& index) const
@@ -126,11 +125,11 @@ Menu PageLinksStorageAdapter::menuFor(const QModelIndex& index) const
 	if (urlColumnIterator != m_availableColumns.end())
 	{
 		const QVariant urlItem = m_parsedPageInfo->itemValue(*urlColumnIterator, m_context, index.row());
-		ASSERT(urlItem.type() == QVariant::Url);
+		DEBUG_ASSERT(urlItem.type() == QVariant::Url);
 
 		const Url url = urlItem.toUrl();
 
-		menu.addItem(Common::make_counted<CommandMenuItem>(Common::make_counted<OpenUrlCommand>(url)));
+		menu.addItem(std::make_shared<CommandMenuItem>(std::make_shared<OpenUrlCommand>(url)));
 	}
 
 	return menu;

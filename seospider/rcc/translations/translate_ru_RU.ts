@@ -2450,6 +2450,18 @@ please stop crawling and try again</source>
         <source>Crawler does not contain any data. It does not make sense to create empty site map. Are you agree?</source>
         <translation>Краулер не содержит никаких данных.</translation>
     </message>
+    <message>
+        <source>Site map</source>
+        <translation>Карта сайта</translation>
+    </message>
+    <message>
+        <source>Site map successefully created!</source>
+        <translation>Карта сайта успешно создана!</translation>
+    </message>
+    <message>
+        <source>Cannot create the site map file: </source>
+        <translation>Невозможно создать файл карты сайта: </translation>
+    </message>
 </context>
 <context>
     <name>SeoSpider::WebSiteDataWidget</name>

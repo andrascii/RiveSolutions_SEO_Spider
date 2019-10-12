@@ -135,7 +135,7 @@ endif()
 
 add_subdirectory(${CrawlerEngineLibName})
 
-if ($ENV{TESTS})
+if (${TESTS})
 	add_subdirectory(${CrawlerEngineLibTestsName})	
 endif()
 

@@ -24,10 +24,9 @@ public:
 	virtual int itemCount() const noexcept = 0;
 	virtual QVariant item(const QModelIndex& index) const noexcept = 0;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept = 0;
-	virtual RowResourceType resourceType(int row) const noexcept = 0;
+	virtual RowResourceType resourceType(const QModelIndex& index) const noexcept = 0;
 	virtual QString columnDescription(int columnIndex) const noexcept = 0;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept = 0;
-	virtual const CrawlerEngine::ParsedPage* parsedPage(const QModelIndex& index) const noexcept = 0;
 	virtual QObject* qobject() noexcept = 0;
 
 	// signal
@@ -38,19 +37,18 @@ public:
 	virtual void repaintColumn(int rowIndex) const = 0;
 	virtual void beginClearData() const = 0;
 	virtual void endClearData() const = 0;
-
-	// TODO: use beginInsertColumns/endInsertColumns!
-	virtual void customColumnCountChanged() const = 0;
 };
 
 class IParsedPageStorageAdapter : public IStorageAdapter
 {
 public:
-	virtual void setAvailableColumns(const QVector<ParsedPageInfo::Column>& availableColumns) noexcept = 0;
-	virtual const QVector<ParsedPageInfo::Column>& availableColumns() const noexcept = 0;
+	virtual void setAvailableColumns(QVector<ParsedPageInfo::Column> availableColumns) noexcept = 0;
+	virtual QVector<ParsedPageInfo::Column> availableColumns() const noexcept = 0;
 
-	virtual void setCurrentColumns(const QVector<ParsedPageInfo::Column>& currentColumns) noexcept = 0;
-	virtual const QVector<ParsedPageInfo::Column>& currentColumns() const noexcept = 0;
+	virtual void setCurrentColumns(QVector<ParsedPageInfo::Column> currentColumns) noexcept = 0;
+	virtual QVector<ParsedPageInfo::Column> currentColumns() const noexcept = 0;
+
+	virtual void setCustomDataFeed(const QString& cunstomDataFeed) noexcept = 0;
 };
 
 class IPageLinksStorageAdapter : public IStorageAdapter

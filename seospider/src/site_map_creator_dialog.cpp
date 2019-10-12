@@ -5,6 +5,8 @@
 #include "site_map.h"
 #include "crawler.h"
 #include "svg_renderer.h"
+#include "service_locator.h"
+#include "inotification_service.h"
 
 namespace SeoSpider
 {
@@ -133,6 +135,8 @@ void SitemapCreatorDialog::showSaveFileDialog()
 
 	const QString path = QFileDialog::getSaveFileName(theApp->mainWindow());
 
+	INFOLOG << "Site map file path:" << path;
+
 	SiteMapSettings sitemapSettings;
 
 	if (m_ui->includeNoindexPagesCheckBox->isChecked())
@@ -196,9 +200,26 @@ void SitemapCreatorDialog::showSaveFileDialog()
 	sitemapSettings.changeFreqLevelSettings[4] = static_cast<SitemapChangeFreq>(m_ui->changefreqCrawlDepth4ComboBox->currentData().toInt());
 	sitemapSettings.changeFreqLevelSettings[5] = static_cast<SitemapChangeFreq>(m_ui->changefreqCrawlDepth5PlusComboBox->currentData().toInt());
 
-	std::ofstream siteMapXmlFile(path.toStdString());
+	QFile file(path);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+	{
+		Dialog::showDeferredMessageBoxDialog(
+			tr("Error"),
+			tr("Cannot create the site map file: ") + path,
+			QDialogButtonBox::Ok
+		);
 
-	siteMapXmlFile << theApp->crawler()->siteMapXml(sitemapSettings).toStdString();
+		INFOLOG << "Cannot create the site map file:" << path;
+		return;
+	}
+
+	file.write(theApp->crawler()->siteMapXml(sitemapSettings).toUtf8());
+
+	INFOLOG << "Site map has been created:" << path;
+
+	ServiceLocator* serviceLocator = ServiceLocator::instance();
+	serviceLocator->service<INotificationService>()->info(tr("Site map"), tr("Site map successefully created!"));
+	close();
 }
 
 void SitemapCreatorDialog::controlStateChanged() const

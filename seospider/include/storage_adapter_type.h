@@ -97,9 +97,6 @@ enum class StorageAdapterType
 	StorageAdapterTypeGoogleAnalyticsCounter4 = CrawlerEngine::StorageType::GoogleAnalyticsCounter4StorageType,
 	StorageAdapterTypeGoogleAnalyticsCounter5 = CrawlerEngine::StorageType::GoogleAnalyticsCounter5StorageType,
 
-    // Data Extraction
-    StorageAdapterTypeDataExtraction = CrawlerEngine::StorageType::DataExtractionStorageType,
-
 	StorageAdapterTypeCustomDataFeed = CrawlerEngine::StorageType::EndEnumStorageType + 1,
 
 	StorageAdapterTypeNotFound, // not an actual storage but used for show QLabel that says about "has no search results"
@@ -195,10 +192,7 @@ inline QString storageAdapterTypeStringFromEnum(StorageAdapterType type)
 		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter2: return "GoogleAnalyticsCounter2";
 		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter3: return "GoogleAnalyticsCounter3";
 		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter4: return "GoogleAnalyticsCounter4";
-        case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter5: return "GoogleAnalyticsCounter5";
-
-        // Data Extraction
-        case StorageAdapterType::StorageAdapterTypeDataExtraction: return "DataExtraction";
+		case StorageAdapterType::StorageAdapterTypeGoogleAnalyticsCounter5: return "GoogleAnalyticsCounter5";
 
 		case StorageAdapterType::StorageAdapterTypeCustomDataFeed: return "CustomDataFeed";
 

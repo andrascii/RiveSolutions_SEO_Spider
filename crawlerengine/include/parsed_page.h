@@ -1,9 +1,8 @@
 #pragma once
 
-#include "url.h"
 #include "status_code.h"
+#include "url.h"
 #include "storage_type.h"
-#include "user_agent_type.h"
 
 namespace CrawlerEngine
 {
@@ -63,6 +62,21 @@ enum MetaRobotsItem
 };
 
 Q_DECLARE_FLAGS(MetaRobotsFlags, MetaRobotsItem)
+
+enum class UserAgentType
+{
+	Unknown,
+	GoogleBot,
+	YandexBot,
+	MailRuBot,
+	YahooBot,
+	MsnBot,
+	AltaVistaBot,
+	RamblerBot,
+	AportBot,
+	WebAltaBot,
+	AnyBot // used for all robots
+};
 
 using MetaRobotsFlagsSet = std::map<UserAgentType, MetaRobotsFlags>;
 
@@ -236,3 +250,4 @@ using ParsedPagePtr = std::shared_ptr<ParsedPage>;
 Q_DECLARE_METATYPE(CrawlerEngine::ParsedPagePtr)
 Q_DECLARE_METATYPE(std::vector<CrawlerEngine::ParsedPagePtr>)
 Q_DECLARE_METATYPE(CrawlerEngine::ParsedPageWeakPtr)
+Q_DECLARE_METATYPE(CrawlerEngine::UserAgentType)

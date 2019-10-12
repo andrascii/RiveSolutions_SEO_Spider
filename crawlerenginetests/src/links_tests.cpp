@@ -241,6 +241,31 @@ TEST(LinksTests, BaseUrl)
 	env.exec();
 }
 
+TEST(LinksTests, BaseUrlSlash)
+{
+	TestEnvironment env;
+
+	const Url baseUrl("http://links.com/baseurl/slash.html");
+	CrawlerOptionsData options = TestEnvironment::defaultOptions(baseUrl);
+	options.limitSearchTotal = 1;
+
+	env.crawler()->options()->setData(options);
+
+	const auto testFunction = [cl = env.crawler(), &baseUrl]()
+	{
+		auto pages = cl->waitForAllCrawledPageReceived(10);
+
+		auto firstPage = pages.at(0);
+		auto linksOnThisPage = firstPage->linksOnThisPage;
+		const QString linkUrl = linksOnThisPage[0].url.toDisplayString();
+		const bool result = linkUrl == QString("http://links.com/index.html");
+		EXPECT_TRUE(result);
+	};
+
+	env.initializeTest(testFunction);
+	env.exec();
+}
+
 TEST(LinksTests, SubdomainsMustNotBeLoaded)
 {
 	TestEnvironment env;

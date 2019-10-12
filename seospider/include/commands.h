@@ -27,7 +27,7 @@ public:
 	virtual bool isCompound() const noexcept;
 };
 
-using ICommandPointer = Common::counted_ptr<ICommand>;
+using ICommandPointer = std::shared_ptr<ICommand>;
 
 class CompoundCommand : public ICommand
 {

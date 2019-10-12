@@ -41,6 +41,17 @@ namespace
 		{ SitemapChangeFreq::Yearly, QString("yearly") },
 		{ SitemapChangeFreq::Never, QString("never") }
 	};
+
+	QString escape(const QString& url)
+	{
+		QString result = url;
+		return result
+			.replace(QString("&"), QString("&amp;"))
+			.replace(QString("<"), QString("&lt;"))
+			.replace(QString(">"), QString("&gt;"))
+			.replace(QString("\""), QString("&quot;"))
+			.replace(QString("'"), QString("&apos;"));
+	}
 }
 
 QString SiteMap::xml(const ISequencedStorage& crawledPages, const SiteMapSettings& settings) const
@@ -60,7 +71,7 @@ QString SiteMap::xml(const ISequencedStorage& crawledPages, const SiteMapSetting
 		}
 
 		result = result % tab % urlOpenTag % endLine;
-		result = result % tab % tab % locOpenTag %  page->url.toDisplayString(Url::FullyEncoded) % locCloseTag % endLine;
+		result = result % tab % tab % locOpenTag %  escape(page->url.toDisplayString(Url::FullyEncoded)) % locCloseTag % endLine;
 
 		if (settings.flags.testFlag(IncludeLastModTag))
 		{

@@ -39,12 +39,19 @@ private:
 	};
 
 	QStackedWidget* m_stackedWidget;
+
 	QSplitter* m_splitter;
+	
 	QMap<IPage::Type, int> m_pageIndexes;
+
 	NavigationPanelControls m_navigationPanel;
+
 	QPushButton* m_prevButton;
+
 	HeaderDecorationWidget* m_decorationWidget;
+
 	IPage::Type m_activePage;
+
 	QHBoxLayout* m_dynamicControlsLayout;
 };
 

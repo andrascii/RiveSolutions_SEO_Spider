@@ -142,7 +142,7 @@ private:
 };
 
 using ParsedPageInfoPtr = Common::counted_ptr<ParsedPageInfo>;
-
+    
 }
 
 Q_DECLARE_METATYPE(SeoSpider::ParsedPageInfoPtr);
