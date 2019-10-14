@@ -238,11 +238,7 @@ void QtBasedDownloadHandler::processReply(QNetworkReply* reply)
 	QByteArray body = statusCode == Common::StatusCode::Timeout ? QByteArray() : readBody(reply);
 	const Url redirectUrlAddress = redirectUrl(reply);
 
-	const bool isItRedirect =
-		statusCode == Common::StatusCode::MovedPermanently301 ||
-		statusCode == Common::StatusCode::MovedTemporarily302 ||
-		statusCode == Common::StatusCode::TemporaryRedirect307 ||
-		statusCode == Common::StatusCode::PermanentRedirect308;
+	const bool isItRedirect = isRedirectionStatusCodeAndResponseHasLocation(statusCode);
 
 	if (isItRedirect)
 	{
