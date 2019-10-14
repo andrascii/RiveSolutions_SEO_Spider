@@ -539,8 +539,8 @@ void Crawler::onDeserializationTaskDone(Requester* requester, const TaskResponse
 		ASSERT(serviceLocator->isRegistered<INotificationService>());
 
 		serviceLocator->service<INotificationService>()->error(tr("Loading file error"),
-			tr("Could not open project file. If you opened the file from the menu of recent files, "
-			"you should make sure that this file still exists."));
+			tr("The file could not be opened. If you're openning the file from "
+			"the recent files menu you should make sure that this file still exists"));
 
 		ASSERT(m_session);
 		m_session->deleteLater();

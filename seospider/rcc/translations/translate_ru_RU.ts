@@ -182,7 +182,11 @@ Please, be sure that you entered a valid address</source>
     </message>
     <message>
         <source>Could not open project file. If you opened the file from the menu of recent files, you should make sure that this file still exists.</source>
-        <translation>Не удалось открыть файл проекта. Если вы открывали файл из меню недавних файлов, стоит убедиться, что этот файл попрежнему существует.</translation>
+        <translation type="vanished">Не удалось открыть файл проекта. Если вы открывали файл из меню недавних файлов, стоит убедиться, что этот файл попрежнему существует.</translation>
+    </message>
+    <message>
+        <source>The file could not be opened. If you&apos;re openning the file from the recent files menu you should make sure that this file still exists</source>
+        <translation>Не удалось открыть файл проекта. Если вы открывали файл из меню недавних файлов, стоит убедиться, что этот файл попрежнему существует</translation>
     </message>
 </context>
 <context>
