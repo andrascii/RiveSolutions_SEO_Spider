@@ -72,6 +72,11 @@ std::unique_ptr<TaskResponseResult> SerializationTask::result()
 	return std::move(m_result);
 }
 
+const QString& SerializationTask::fileName() const
+{
+	return m_fileName;
+}
+
 DeserializatoinTask::DeserializatoinTask(std::unique_ptr<Serializer> serializer, const QString& fileName)
 	: m_result(std::make_unique<SerializationTaskResponseResult>(std::move(serializer)))
 	, m_fileName(fileName)
@@ -102,6 +107,11 @@ void DeserializatoinTask::run()
 std::unique_ptr<TaskResponseResult> DeserializatoinTask::result()
 {
 	return std::move(m_result);
+}
+
+const QString& DeserializatoinTask::fileName() const
+{
+	return m_fileName;
 }
 
 }

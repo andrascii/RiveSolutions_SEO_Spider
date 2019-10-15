@@ -12,7 +12,7 @@ const int c_maxRecentFiles = 10;
 namespace SeoSpider
 {
 
-RecentFiles::RecentFiles() 
+RecentFiles::RecentFiles()
 	: m_placeHolderAction(new QAction(QObject::tr("There is no recent files yet")))
 {
 	m_placeHolderAction->setVisible(true);
@@ -45,8 +45,16 @@ QAction* RecentFiles::subMenuAction()
 	{
 		recentFilesMenu->addAction(action);
 	}
-	
+
 	return recentFilesMenu->menuAction();
+}
+
+void RecentFiles::forgetRecentFile(const QString& filePath)
+{
+	QStringList recentFilesList = theApp->loadFromSettings("recentFilesList").toStringList();
+	recentFilesList.removeAll(filePath);
+	theApp->saveToSettings("recentFilesList", recentFilesList);
+	updateRecentFileActions();
 }
 
 void RecentFiles::registerNewRecentFile(const QString& filePath)
@@ -56,7 +64,7 @@ void RecentFiles::registerNewRecentFile(const QString& filePath)
 	recentFilesList.removeAll(filePath);
 	recentFilesList.prepend(filePath);
 
-	while(recentFilesList.size() > c_maxRecentFiles)
+	while (recentFilesList.size() > c_maxRecentFiles)
 	{
 		recentFilesList.removeLast();
 	}

@@ -67,6 +67,7 @@ private slots:
 	void onAboutCrawlerOptionsChanged();
 	void onAboutUseCustomUserAgentChanged();
 	void closeWaitOperationFrame();
+	void onLoadingProjectFileFailed(const QString& fileName);
 
 private:
 	void initialize();

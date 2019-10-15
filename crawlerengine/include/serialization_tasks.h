@@ -24,6 +24,7 @@ public:
 	SerializationTask(std::unique_ptr<Serializer> serializer, const QString& fileName);
 	virtual void run() override;
 	virtual std::unique_ptr<TaskResponseResult> result() override;
+	virtual const QString& fileName() const override;
 
 private:
 	std::unique_ptr<SerializationTaskResponseResult> m_result;
@@ -37,6 +38,7 @@ public:
 	DeserializatoinTask(std::unique_ptr<Serializer> serializer, const QString& fileName);
 	virtual void run() override;
 	virtual std::unique_ptr<TaskResponseResult> result() override;
+	virtual const QString& fileName() const override;
 
 private:
 	std::unique_ptr<SerializationTaskResponseResult> m_result;

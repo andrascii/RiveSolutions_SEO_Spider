@@ -48,7 +48,11 @@ NotificationPopupFrame::NotificationPopupFrame(Status status, const QString& hea
 	line->setObjectName("LineFrame");
 
 	layout->addWidget(line);
-	layout->addWidget(new QLabel(message));
+
+	QLabel* messageLabel = new QLabel(message);
+	messageLabel->setWordWrap(true);
+
+	layout->addWidget(messageLabel);
 
 	QSpacerItem* verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
