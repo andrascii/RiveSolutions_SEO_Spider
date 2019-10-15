@@ -135,6 +135,14 @@ void AbstractDownloadHandler::removeRequesterFromQueue(RequesterSharedPtr reques
 	}
 }
 
+bool AbstractDownloadHandler::isRedirectionStatusCodeAndResponseHasLocation(Common::StatusCode statusCode) const
+{
+	return statusCode == Common::StatusCode::MovedPermanently301 ||
+		statusCode == Common::StatusCode::MovedTemporarily302 ||
+		statusCode == Common::StatusCode::TemporaryRedirect307 ||
+		statusCode == Common::StatusCode::PermanentRedirect308;
+}
+
 void AbstractDownloadHandler::proxyAuthenticationRequired() const
 {
 	ServiceLocator* serviceLocator = ServiceLocator::instance();

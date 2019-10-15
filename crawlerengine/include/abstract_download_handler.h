@@ -25,6 +25,7 @@ protected:
 	int maxRedirectsToProcess() const noexcept;
 	int maxParrallelConnections() const noexcept;
 	void removeRequesterFromQueue(RequesterSharedPtr requester);
+	bool isRedirectionStatusCodeAndResponseHasLocation(Common::StatusCode statusCode) const;
 
 protected slots:
 	void proxyAuthenticationRequired() const;
