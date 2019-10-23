@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "message_box_dialog.h"
 #include "helpers.h"
 #include "application.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "robots_txt_yahoo_strategy.h"
 #include "meta_robots_helpers.h"
 

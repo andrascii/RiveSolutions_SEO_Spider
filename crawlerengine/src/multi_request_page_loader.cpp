@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "multi_request_page_loader.h"
 #include "reset_connections_request.h"
 #include "reset_connections_response.h"

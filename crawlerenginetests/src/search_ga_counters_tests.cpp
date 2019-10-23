@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "tests_crawler.h"
 
 namespace CrawlerEngineTests

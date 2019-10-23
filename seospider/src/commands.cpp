@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "commands.h"
 #include "xlsxdocument.h"
 #include "xlsxformat.h"
@@ -276,7 +277,7 @@ void ExportDataToXlsxCommand::execute()
 		xlsxDocument.write(rowNumber++, 1, headerRichString);
 
 		QVector<ParsedPageInfo::Column> columnsForType =
-			StorageAdapterFactory::parsedPageAvailableColumns(static_cast<StorageAdapterType>(storageType));
+			StorageAdapterFactory::defaultColumns(static_cast<StorageAdapterType>(storageType));
 
 		for (int k = 1; k <= columnsForType.size(); ++k)
 		{
@@ -516,7 +517,7 @@ void CopyToClipboardAllColumnsDataCommand::execute()
 	ParsedPageInfo parsedPageInfoProvider((*m_storage)[m_pageIndex]);
 
 	QVector<ParsedPageInfo::Column> columnsForType =
-		StorageAdapterFactory::parsedPageAvailableColumns(static_cast<StorageAdapterType>(m_storageType));
+		StorageAdapterFactory::defaultColumns(static_cast<StorageAdapterType>(m_storageType));
 
 	for (int i = 0, sz = columnsForType.size(); i < sz; ++i)
 	{

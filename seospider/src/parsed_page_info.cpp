@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parsed_page.h"
 #include "parsed_page_info.h"
 #include "helpers.h"
@@ -613,7 +614,7 @@ QVariant ParsedPageInfo::acceptWordCount() const
 
 QVariant ParsedPageInfo::acceptPageHash() const
 {
-	return m_parsedPage->pageHash;
+	return static_cast<qulonglong>(m_parsedPage->pageHash);
 }
 
 QVariant ParsedPageInfo::acceptImageSizeKb() const
@@ -624,12 +625,12 @@ QVariant ParsedPageInfo::acceptImageSizeKb() const
 
 QVariant ParsedPageInfo::acceptLinksOnThisPageCount() const
 {
-	return m_parsedPage->linksOnThisPage.size();
+	return static_cast<qulonglong>(m_parsedPage->linksOnThisPage.size());
 }
 
 QVariant ParsedPageInfo::acceptLinksToThisPageCount() const
 {
-	return m_parsedPage->linksToThisPage.size();
+	return static_cast<qulonglong>(m_parsedPage->linksToThisPage.size());
 }
 
 QVariant ParsedPageInfo::acceptLinksToThisPage() const

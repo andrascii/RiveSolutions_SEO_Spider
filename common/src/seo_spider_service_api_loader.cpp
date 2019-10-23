@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "seo_spider_service_api_loader.h"
 #include "seo_spider_service_api_stub.h"
 

@@ -1,29 +1,28 @@
 #pragma once
 
-#include "ipc_socket.h"
+#include "irpc_socket.h"
+#include "irpc_server.h"
 
 namespace Common
 {
 
-class IpcServer
+class IpcServer : public IRpcServer
 {
 public:
 	IpcServer();
 
-	bool listen(const QString& name, QIODevice::OpenModeFlag mode);
-	IpcSocket* nextPendingConnection();
+	virtual bool listen(const QString& name);
+	virtual std::shared_ptr<IRpcSocket> nextPendingConnection() override;
 
-	QString serverName() const { return m_serverName; }
-	QString fullServerName() const { return m_serverName; }
-	QString errorString() const { return m_errorString; }
+	virtual QString serverName() const override { return m_serverName; }
+	virtual QString fullServerName() const override { return m_serverName; }
+	virtual QString errorString() const override { return m_errorString; }
 
 private:
 	QString m_serverName;
 	QString m_fullServerName;
 	QString m_errorString;
 	quintptr m_descriptor;
-	std::unique_ptr<IpcSocket> m_socket;
-	QIODevice::OpenModeFlag m_openMode;
 };
 
 }

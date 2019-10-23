@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "control_adapter_radio_button.h"
 
 namespace SeoSpider

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "requester.h"
 #include "handler_registry.h"
 #include "thread_message_dispatcher.h"

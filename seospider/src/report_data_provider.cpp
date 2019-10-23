@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "report_data_provider.h"
 #include "helpers.h"
 #include "application.h"

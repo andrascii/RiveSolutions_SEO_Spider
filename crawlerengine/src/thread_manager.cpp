@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "thread_manager.h"
 #include "named_thread.h"
 

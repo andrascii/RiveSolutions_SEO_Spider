@@ -27,8 +27,6 @@ public:
 	virtual void authenticationDone(const QVariantMap& data) = 0;
 };
 
-Q_DECLARE_METATYPE(ICustomDataFeedRow*);
-
 class ICustomDataFeed
 {
 public:
@@ -59,3 +57,5 @@ inline QString dataFeedColumnValue(const ICustomDataFeedRow* dataFeedRow, int co
 }
 
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::ICustomDataFeedRow*);

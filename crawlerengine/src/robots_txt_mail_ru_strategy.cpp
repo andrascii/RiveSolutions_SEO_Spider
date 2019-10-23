@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "robots_txt_mail_ru_strategy.h"
 #include "meta_robots_helpers.h"
 

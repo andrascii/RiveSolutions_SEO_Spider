@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "report_elements.h"
 
 namespace SeoSpider

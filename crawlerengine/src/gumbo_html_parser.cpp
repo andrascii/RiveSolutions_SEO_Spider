@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "gumbo_html_parser.h"
 #include "gumbo_html_node.h"
 #include "response_headers.h"

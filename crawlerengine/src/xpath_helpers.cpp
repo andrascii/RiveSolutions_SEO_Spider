@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "xpath_helpers.h"
 
 namespace CrawlerEngine

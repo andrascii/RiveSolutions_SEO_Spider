@@ -1,3 +1,4 @@
+#include "stdafx.h"
 namespace CrawlerEngineTests
 {
 
@@ -60,7 +61,7 @@ TEST(SerializationTests, PagesSerialization)
 		firstPage->isThisExternalPage = true;
 		firstPage->isBlockedByMetaRobots = true;
 		firstPage->resourceType = ResourceType::ResourceHtml;
-		firstPage->rawResponse = "<html>...ÀÁÂÃÄ</html>";
+		firstPage->rawResponse = "<html>...Ã€ÃÃ‚ÃƒÃ„</html>";
 		firstPage->pageLevel = 3;
 		firstPage->responseTime = 100;
 		firstPage->missingYandexMetricaCounters = std::vector<StorageType>

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "summary_data_accessor.h"
 #include "application.h"
 #include "sequenced_data_collection.h"

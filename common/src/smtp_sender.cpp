@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "smtp_sender.h"
 #include "smtp_sending_result.h"
 
@@ -5,10 +6,10 @@ namespace Common
 {
 
 SmtpSettings::SmtpSettings()
-	: m_timeout(30)
-	, m_useAutentication(false)
+	: m_serverPort(25)
+    , m_timeout(30)
+    , m_useAutentication(false)
 	, m_useSsl(false)
-	, m_serverPort(25)
 {}
 
 SmtpSettings::SmtpSettings(const SmtpSettings& other)

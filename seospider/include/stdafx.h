@@ -72,7 +72,6 @@
 // C/C++
 //
 #include <cstdlib>
-#include <crtdbg.h>
 #include <vector>
 #include <deque>
 #include <queue>
@@ -99,13 +98,14 @@
 #include <limits>
 #include <fstream>
 #include <optional>
-#include <windows.h>
 #include <VMProtectSDK.h>
 #include <curl/curl.h>
 
 //
 // boost
 //
+
+#ifdef Q_OS_WIN
 
 namespace std
 {
@@ -131,6 +131,8 @@ struct unary_function
 };
 
 }
+
+#endif
 
 #include <boost/functional/hash.hpp>
 #include <boost/any.hpp>
@@ -166,6 +168,8 @@ using std::size_t;
 
 #if defined(Q_OS_WIN)
 
+#include <crtdbg.h>
+#include <windows.h>
 #include <ws2tcpip.h>
 #include <mstcpip.h>
 #include <shellapi.h>

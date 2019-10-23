@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parsed_page.h"
 
 /*** We have 3 independent storages:

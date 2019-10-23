@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.11)
-set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
+set (CMAKE_CXX_STANDARD 17)
+
 project(${SeoSpiderServiceAppName})
 
 set(SeoSpiderServiceSourcesDir src)
@@ -105,6 +107,7 @@ endif()
 if(APPLE)
     target_link_libraries(
 		${SeoSpiderServiceAppName}
+		PUBLIC
 		${CommonLibName}
 		#${QxtSmtpLibName}
 		${Boost_LIBRARIES}

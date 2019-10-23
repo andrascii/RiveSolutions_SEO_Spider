@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "menubar.h"
 #include "action_registry.h"
 #include "action_keys.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "html_resources_parser.h"
 #include "meta_parser.h"
 #include "title_parser.h"

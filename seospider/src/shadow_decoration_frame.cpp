@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "shadow_decoration_frame.h"
 #include "helpers.h"
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "storage_type.h"
 
 namespace CrawlerEngineTests

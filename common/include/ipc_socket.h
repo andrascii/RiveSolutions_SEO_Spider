@@ -1,31 +1,32 @@
 #pragma once
 
+#include "irpc_socket.h"
+
 namespace Common
 {
 
-class IpcSocket
+class IpcSocket : public IRpcSocket
 {
 public:
 	IpcSocket();
-	IpcSocket(quintptr descriptor, QIODevice::OpenModeFlag mode);
+    IpcSocket(quintptr descriptor);
 	~IpcSocket();
-	bool connectToServer(const QString& name, QIODevice::OpenModeFlag mode);
-	void disconnectFromServer();
-	QString serverName() const { return m_serverName; }
-	QString fullServerName() const { return m_fullServerName; }
-	qint64 readData(char* data, qint64 maxSize);
-	qint64 writeData(const char* data, qint64 maxSize);
-	qint64 peekData(char* data, qint64 maxSize);
-	qint64 transactData(const char* inData, qint64 inSize, char* outData, int outSize);
-	QString errorString() const { return m_errorString; }
-	bool isClosed();
-	QIODevice::OpenModeFlag openMode() const;
+
+	virtual bool connectToServer(const QString& name) override;
+	virtual void disconnectFromServer() override;
+	virtual QString serverName() const override { return m_serverName; }
+	virtual QString fullServerName() const override { return m_fullServerName; }
+	virtual qint64 readData(char* data, qint64 maxSize) override;
+	virtual qint64 writeData(const char* data, qint64 maxSize) override;
+	virtual qint64 peekData(char* data, qint64 maxSize) override;
+	virtual qint64 transactData(const char* inData, qint64 inSize, char* outData, int outSize) override;
+	virtual QString errorString() const override { return m_errorString; }
+	virtual bool isClosed() override;
 
 private:
 	quintptr m_descriptor;
 	QString m_serverName;
 	QString m_fullServerName;
-	QIODevice::OpenModeFlag m_openMode;
 	QString m_errorString;
 };
 

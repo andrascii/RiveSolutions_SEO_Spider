@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "page_links_storage_adapter.h"
 #include "application.h"
 

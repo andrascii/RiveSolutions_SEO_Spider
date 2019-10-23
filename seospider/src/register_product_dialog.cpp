@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "register_product_dialog.h"
 #include "service_locator.h"
 #include "license_state_observer.h"

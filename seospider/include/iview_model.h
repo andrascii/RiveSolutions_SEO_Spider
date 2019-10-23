@@ -43,6 +43,8 @@ public:
 	virtual void setDeselectedIndexes(const QModelIndexList& modelIndexes) noexcept = 0;
 	virtual const QModelIndexList& selectedIndexes() const noexcept = 0;
 
+    virtual double devicePixelRatio() const = 0;
+
 	virtual QObject* qobject() noexcept = 0;
 
 	// signal

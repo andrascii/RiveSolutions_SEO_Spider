@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef Q_OS_WIN
+#define _countof(array) (sizeof(array) / sizeof(array[0]))
+#endif
+
 //https://developercommunity.visualstudio.com/content/problem/185399/error-c2760-in-combaseapih-with-windows-sdk-81-and.html
 struct IUnknown;
 
@@ -31,6 +35,7 @@ struct IUnknown;
 #include <optional>
 #include <sstream>
 #include <algorithm>
+#include <cstring>
 
 #pragma warning(disable:4127)
 #pragma warning(disable:745)
@@ -87,11 +92,13 @@ struct IUnknown;
 #include <QBuffer>
 #include <QStack>
 #include <QNetworkInterface>
+#include <QStandardPaths>
+#include <QDir>
+#include <QFileInfo>
+#include <QLibrary>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
-#else
-#error You compile this code on unsupported platform!
 #endif
 
 #include "common_macro_helpers.h"
@@ -101,4 +108,10 @@ using std::size_t;
 
 #ifndef QT_DEBUG
 #define PRODUCTION
+#endif
+
+#ifdef Q_OS_UNIX
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/sysctl.h>
 #endif

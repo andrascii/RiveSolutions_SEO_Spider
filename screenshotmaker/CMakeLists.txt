@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.2)
-set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
+set (CMAKE_CXX_STANDARD 17)
+
+include(cotire)
+
 project(${ScreenshotMaker})
 
 set(AppSourcesDir src)
@@ -90,7 +94,12 @@ if(MSVC)
 		RUNTIME_OUTPUT_DIRECTORY "../seospider/"
 		LINK_FLAGS "/DEBUG /ENTRY:mainCRTStartup /MAP"
 	)
-
+else()
+    set_target_properties(
+        ${ScreenshotMaker}
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "../seospider/"
+    )
 endif()
 
 include_directories(
@@ -107,6 +116,7 @@ endif()
 
 target_link_libraries(
 	${ScreenshotMaker}
+	PUBLIC
 	${CommonLibName}
 	${Boost_LIBRARIES}
 	${Boost_SYSTEM_LIBRARY}
@@ -114,3 +124,11 @@ target_link_libraries(
 	${OPENSSL_LIBRARIES}
 	Qt5::WebEngineWidgets
 )
+
+if(NOT WIN32)
+	# to speedup compilation
+	# but qtsvg can't be compiled with cotire
+	# this is because we call cotire() here
+	set_target_properties(${ScreenshotMaker} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+	cotire(${ScreenshotMaker})
+endif()

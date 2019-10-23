@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "hop.h"
 
 namespace CrawlerEngine

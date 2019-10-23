@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "curl_http_headers_wrapper.h"
 
 namespace CrawlerEngine

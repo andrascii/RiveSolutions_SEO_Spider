@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "summary_data_accessor_factory.h"
 #include "summary_data_accessor.h"
 #include "summary_data_accessor_pixmap_decorator.h"

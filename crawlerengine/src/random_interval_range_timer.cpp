@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "random_interval_range_timer.h"
 
 namespace CrawlerEngine

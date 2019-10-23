@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "named_thread.h"
 
 #if defined (Q_OS_WIN)

@@ -26,6 +26,6 @@ public:
 	ISummaryDataAccessor* create(DataAccessorType accessorType, CrawlerEngine::SequencedDataCollection* guiStorage) const;
 };
 
-Q_DECLARE_METATYPE(SummaryDataAccessorFactory::DataAccessorType)
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::SummaryDataAccessorFactory::DataAccessorType)

@@ -19,6 +19,6 @@ private:
 	QPointer<ColorSelector> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterColorSelector);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ControlAdapterColorSelector);

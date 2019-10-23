@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "data_resources_parser.h"
 
 namespace CrawlerEngine

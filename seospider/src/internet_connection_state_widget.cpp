@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "internet_connection_state_widget.h"
 #include "internet_connection_notification_manager.h"
 #include "application.h"

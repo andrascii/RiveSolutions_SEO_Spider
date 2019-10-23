@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "response_headers.h"
 
 namespace

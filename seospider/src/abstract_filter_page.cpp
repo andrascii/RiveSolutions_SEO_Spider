@@ -31,7 +31,7 @@ AbstractFilterPage::AbstractFilterPage(WebSiteDataWidget* webSiteDataWidget, QWi
 	, m_webSiteDataWidget(webSiteDataWidget)
 	, m_summaryFilterTableView(new TableView(this, true, false, false))
 	, m_summaryFilterModel(new SummaryModel(this))
-	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterTableView, m_summaryFilterModel, this))
+	, m_summaryFilterViewModel(new SummaryViewModel(m_summaryFilterTableView, m_summaryFilterModel, devicePixelRatio(), this))
 	, m_splitter(new QSplitter(this))
 	, m_isFirstShow(true)
 	, m_info(new FilterInfoWidget(this))
@@ -369,7 +369,8 @@ void AbstractFilterPage::prepareColumnSearchWidget(int row)
 	m_columnsLookupLineEditWidget->setEnabled(true);
 
 	const QVector<ParsedPageInfo::Column> columns =
-		StorageAdapterFactory::parsedPageAvailableColumns(m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(row, 0)));
+		StorageAdapterFactory::defaultColumns(
+			m_summaryFilterModel->storageAdapterType(m_summaryFilterModel->index(row, 0)));
 
 	for (int i = 0; i < columns.size(); ++i)
 	{

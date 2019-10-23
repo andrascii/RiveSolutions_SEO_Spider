@@ -72,7 +72,7 @@ void SeoSpiderServiceApp::init()
 
 	for (int i = 0; i < c_maxConnectionAttemptCount; ++i)
 	{
-		connectionResult = m_pipeSocket.connectToServer(QString("seospiderserviceapi_log_channel"), QIODevice::ReadWrite);
+		connectionResult = m_pipeSocket.connectToServer(QString("seospiderserviceapi_log_channel"));
 
 		if (connectionResult)
 		{

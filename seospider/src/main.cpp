@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "application.h"
 #include "custom_uri_channel.h"
 

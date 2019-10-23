@@ -32,7 +32,7 @@ AllPagesPage::AllPagesPage(QWidget* parent)
 
 	TableView* tableView = new TableView(this, false, true, true);
 	PageModel* model = new PageModel;
-	PageViewModel* modelView = new PageViewModel(tableView, model);
+	PageViewModel* modelView = new PageViewModel(tableView, model, devicePixelRatio());
 
 	IStorageAdapter* storageAdapter = theApp->storageAdapterFactory()->createParsedPageInfoStorage(
 		StorageAdapterType::StorageAdapterTypeAllPages, theApp->sequencedDataCollection());
@@ -115,7 +115,7 @@ void AllPagesPage::createHeaderActionWidgets()
 	addWidget(m_columnsLookupLineEditWidget);
 
 	const QVector<ParsedPageInfo::Column> columns =
-		StorageAdapterFactory::parsedPageAvailableColumns(StorageAdapterType::StorageAdapterTypeAllPages);
+		StorageAdapterFactory::defaultColumns(StorageAdapterType::StorageAdapterTypeAllPages);
 
 	for (int i = 0; i < columns.size(); ++i)
 	{

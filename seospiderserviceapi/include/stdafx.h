@@ -62,6 +62,8 @@ struct unary_function
 
 }
 
+#define BOOST_NO_CXX98_FUNCTION_BASE
+
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -118,8 +120,6 @@ struct unary_function
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <new.h>
-#else
-#error You compile this code on unsupported platform!
 #endif
 
 #ifndef QT_DEBUG

@@ -37,8 +37,6 @@ struct CrawlingProgress
 	size_t pendingLinkCount;
 };
 
-Q_DECLARE_METATYPE(CrawlingProgress)
-
 class Crawler : public QObject
 {
 	Q_OBJECT
@@ -118,7 +116,7 @@ public:
 	bool crawlingFinished() const noexcept;
 
 signals:
-	void crawlingProgress(CrawlingProgress progress);
+	void crawlingProgress(CrawlerEngine::CrawlingProgress progress);
 	void crawlerStarted();
 	void crawlerStopped();
 	void crawlerFinished();
@@ -225,3 +223,5 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(CrawlerEngine::CrawlingProgress)

@@ -101,9 +101,11 @@
 // boost
 //
 
+#ifdef Q_OS_WIN
+
 namespace std
 {
-
+	
 //
 // In C++11 std::unary_function template are deprecated
 // In C++17 it was removed
@@ -123,8 +125,11 @@ struct unary_function
 	typedef _Arg argument_type;
 	typedef _Result result_type;
 };
-
+	
 }
+
+#endif
+
 
 #include <boost/functional/hash.hpp>
 #include <boost/process/child.hpp>
@@ -133,8 +138,6 @@ struct unary_function
 
 #ifdef Q_OS_WIN
 #include <windows.h>
-#else
-#error You compile this code on unsupported platform!
 #endif
 
 #include "common_macro_helpers.h"

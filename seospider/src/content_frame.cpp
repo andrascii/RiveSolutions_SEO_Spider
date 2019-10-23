@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "content_frame.h"
 #include "application.h"
 #include "helpers.h"

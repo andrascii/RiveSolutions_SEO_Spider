@@ -26,18 +26,18 @@ public:
 	CrawlerWorker(UniqueLinkStore* uniqueLinkStore, IWorkerPageLoader* pageLoader);
 
 signals:
-	void workerResult(WorkerResult workerResult) const;
+	void workerResult(CrawlerEngine::WorkerResult workerResult) const;
 
 public slots:
-	void reinitOptions(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
-	void start(const CrawlerOptionsData& optionsData, RobotsTxtRules robotsTxtRules);
+	void reinitOptions(const CrawlerEngine::CrawlerOptionsData& optionsData, CrawlerEngine::RobotsTxtRules robotsTxtRules);
+	void start(const CrawlerEngine::CrawlerOptionsData& optionsData, CrawlerEngine::RobotsTxtRules robotsTxtRules);
 	void stop();
 
 private slots:
 	void extractUrlAndDownload();
 	void onAllLoadedDataToBeCleared();
 
-	void onLoadingDone(const HopsChain& hopsChain,
+	void onLoadingDone(const CrawlerEngine::HopsChain& hopsChain,
 		int turnaround,
 		bool isPageReloaded,
 		const std::vector<bool>& reloadingPageStrorages,

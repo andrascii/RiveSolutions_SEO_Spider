@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "abstract_view_model.h"
 #include "irenderer.h"
 #include "model_helpers.h"
@@ -5,11 +6,12 @@
 namespace SeoSpider
 {
 
-AbstractViewModel::AbstractViewModel(AbstractTableModel* model, QObject* parent)
+AbstractViewModel::AbstractViewModel(AbstractTableModel* model, float devicePixelRatio, QObject* parent)
 	: QObject(parent)
-	, m_model(model)
 	, m_previousHoveredIndex(QModelIndex())
+    , m_model(model)
 	, m_itemRenderer(this)
+	, m_devicePixelRatio(devicePixelRatio)
 {
 }
 
@@ -171,6 +173,11 @@ void AbstractViewModel::setHoveredIndex(const QModelIndex& index) noexcept
 	m_hoveredIndex = index;
 
 	setPreviousHoveredIndex(previousHoveredIndex);
+}
+
+double AbstractViewModel::devicePixelRatio() const
+{
+    return m_devicePixelRatio;
 }
 
 QObject* AbstractViewModel::qobject() noexcept

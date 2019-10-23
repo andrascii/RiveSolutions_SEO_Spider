@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "serialization_tasks.h"
 
 namespace CrawlerEngine

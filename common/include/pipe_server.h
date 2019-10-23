@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ipc_server.h"
+#include "irpc_server.h"
+#include "irpc_socket.h"
 
 namespace Common
 {
@@ -71,8 +72,8 @@ public:
 
 private:
 	mutable std::mutex m_mutex;
-	Common::IpcServer m_server;
-	Common::IpcSocket* m_socket;
+	std::shared_ptr<IRpcSocket> m_socket;
+	std::shared_ptr<IRpcServer> m_server;
 };
 
 }

@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8.11)
-set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
+set(CMAKE_CXX_STANDARD 17)
+
+include(cotire)
+
 project(${CrawlerEngineLibName})
 
 set(CrawlerEngineSourcesDir src)
@@ -44,7 +48,6 @@ add_library(
 add_definitions(
 	${QT_DEFINITIONS}
 	-DQUAZIP_STATIC
-	-D_WINSOCK_DEPRECATED_NO_WARNINGS
 	-DCURL_STATICLIB
 )
 
@@ -57,6 +60,7 @@ if(MSVC)
 		/Zi
 		/W4
 		/WX
+		-D_WINSOCK_DEPRECATED_NO_WARNINGS
 	)
 	
 	set_target_properties(
@@ -64,42 +68,80 @@ if(MSVC)
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
 		LINK_FLAGS /DEBUG
 	)
-
 endif()
 
-message("CURL include headers directory: ${CurlHeadersDir}")
+if(APPLE OR UNIX)
+	include_directories(
+		${CrawlerEngineHeadersDir}
+		${GumboLibHeadersDir}
+		${MyHtmlLibHeadersDir}
+		${CommonLibHeadersDir}
+		${VMProtectSdkHeadersDir}
+		${SeoSpiderServiceApiHeadersDir}
+		${Boost_INCLUDE_DIRS}
+		${CMAKE_CURRENT_BINARY_DIR}
+		${CURL_INCLUDE_DIRS}
+	)
+else()
+	message("CURL include headers directory: ${CurlHeadersDir}")
 
-include_directories(
-	${CrawlerEngineHeadersDir}
-	${CurlHeadersDir}
-	${GumboLibHeadersDir}
-	${MyHtmlLibHeadersDir}
-	${CommonLibHeadersDir}
-	${VMProtectSdkHeadersDir}
-	${SeoSpiderServiceApiHeadersDir}
-	${Boost_INCLUDE_DIRS}
-	${CMAKE_CURRENT_BINARY_DIR}
-)
-
-if(WIN32)
-	set(OSSpecificDeps ws2_32.lib ntdll.lib)
+	include_directories(
+		${CrawlerEngineHeadersDir}
+		${CurlHeadersDir}
+		${GumboLibHeadersDir}
+		${MyHtmlLibHeadersDir}
+		${CommonLibHeadersDir}
+		${VMProtectSdkHeadersDir}
+		${SeoSpiderServiceApiHeadersDir}
+		${Boost_INCLUDE_DIRS}
+		${CMAKE_CURRENT_BINARY_DIR}
+	)
 endif()
 
-add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
+if(APPLE OR UNIX)
+	target_link_libraries(
+		${CrawlerEngineLibName}
+		PUBLIC
+		${GumboLibName}
+		${CommonLibName}
+		${OSSpecificDeps}
+		${CURL_LIBRARIES}
+		"${MyHtmlLibName}_static" # change this solution to that which is more reliable
+		${Boost_LIBRARIES}
+		${Boost_SYSTEM_LIBRARY}
+		${Boost_FILESYSTEM_LIBRARY}
+		${Boost_ASIO_LIBRARY}
+		${Boost_REGEX_LIBRARY}
+		Qt5::Network
+		Qt5::Xml
+		Qt5::XmlPatterns
+		Qt5::WebEngineWidgets
+	)
+else()
+	add_dependencies(${CrawlerEngineLibName} ${CurlDependency})
+	
+	target_link_libraries(
+		${CrawlerEngineLibName}
+		PUBLIC
+		${GumboLibName}
+		${CommonLibName}
+		ws2_32.lib
+		ntdll.lib
+		${CurlLibraries}
+		"${MyHtmlLibName}_static" # change this solution to that which is more reliable
+		${Boost_LIBRARIES}
+		${Boost_SYSTEM_LIBRARY}
+		${Boost_FILESYSTEM_LIBRARY}
+		${Boost_ASIO_LIBRARY}
+		${Boost_REGEX_LIBRARY}
+		Qt5::Network
+		Qt5::Xml
+		Qt5::XmlPatterns
+		Qt5::WebEngineWidgets
+	)
+endif()
 
-target_link_libraries(
-	${CrawlerEngineLibName}
-	${GumboLibName}
-	${CommonLibName}
-	${OSSpecificDeps}
-	${CurlLibraries}
-	"${MyHtmlLibName}_static" # change this solution to that which is more reliable
-	${Boost_LIBRARIES}
-	${Boost_SYSTEM_LIBRARY}
-	${Boost_FILESYSTEM_LIBRARY}
-	${Boost_ASIO_LIBRARY}
-	${Boost_REGEX_LIBRARY}
-	Qt5::Network
-	Qt5::Xml
-	Qt5::XmlPatterns
-)
+if(NOT WIN32)
+	set_target_properties(${CrawlerEngineLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+	cotire(${CrawlerEngineLibName})
+endif()

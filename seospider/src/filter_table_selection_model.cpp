@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "filter_table_selection_model.h"
 #include "isummary_data_accessor.h"
 #include "summary_model.h"

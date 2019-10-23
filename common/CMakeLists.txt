@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8.11)
-set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
+set(CMAKE_CXX_STANDARD 17)
+
+include(cotire)
 
 set(CommonSourcesDir src)
 set(CommonHeadersDir include)
@@ -11,10 +14,21 @@ set(SeoSpiderServiceApiHeadersDir ../seospiderserviceapi/include)
 set(QxtSmtpLibHeadersDir ../qxtsmtp/include)
 set(QUazipLibHeadersDir ../quazip/include)
 
-list(REMOVE_ITEM CommonSourcesList src/stdafx.cpp)
+if (APPLE OR UNIX)
+	list(REMOVE_ITEM CommonSourcesList
+		src/stdafx.cpp
+		src/ipc_socket.cpp
+		src/ipc_server.cpp
+	)
+else()
+	list(REMOVE_ITEM CommonSourcesList
+		src/stdafx.cpp
+		src/tcp_socket.cpp
+		src/tcp_server.cpp
+	)
+endif()
 
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" CommonSourcesList)
-
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
 configure_msvc_runtime()
@@ -58,14 +72,24 @@ include_directories(
 	${SeoSpiderServiceApiHeadersDir}
 	${QxtSmtpLibHeadersDir}
 	${QUazipLibHeadersDir}
+	${Boost_INCLUDE_DIRS}
 )
 
 target_link_libraries(
 	${CommonLibName}
+	PUBLIC
 	${QxtSmtpLibName}
 	${QUazipLibName}
+	Qt5::Svg
 	Qt5::Widgets
 	Qt5::Network
-	Qt5::Svg
 	Qt5::WebEngineWidgets
 )
+
+if(NOT WIN32)
+	# to speedup compilation
+	# but qtsvg can't be compiled with cotire
+	# this is because we call cotire() here
+	set_target_properties(${CommonLibName} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+	cotire(${CommonLibName})
+endif()

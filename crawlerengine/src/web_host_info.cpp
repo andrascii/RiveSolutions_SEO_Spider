@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "web_host_info.h"
 #include "proper_404_checker.h"
 #include "ispecific_loader.h"
@@ -22,10 +23,12 @@ void WebHostInfo::reset(const QUrl& url)
 #ifdef ENABLE_SCREENSHOTS
 	if (m_screenshot.first != url)
 	{
+        /*
 		m_screenshot.first = url;
 		TakeScreenshotRequest makeScreenshotRequest(url);
 		m_screenshotMakerRequester.reset(makeScreenshotRequest, this, &WebHostInfo::onScreenshotCreated);
 		m_screenshotMakerRequester->start();
+         */
 	}
 #endif
 

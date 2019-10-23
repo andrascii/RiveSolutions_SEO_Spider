@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.11)
-set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
+set (CMAKE_CXX_STANDARD 17)
+
 project(${SeoSpiderServiceApiDllName})
 
 set(SeoSpiderServiceApiDllNameSourcesDir src)
@@ -57,6 +59,7 @@ include_directories(
 
 target_link_libraries(
 	${SeoSpiderServiceApiDllName}
+	PUBLIC
 	${CommonLibName}
 	${Boost_LIBRARIES}
 	Qt5::Network

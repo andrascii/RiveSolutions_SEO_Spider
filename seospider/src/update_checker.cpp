@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "update_checker.h"
 #include "download_request.h"
 #include "download_response.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "viewport_percent_resize_policy.h"
 #include "table_view.h"
 

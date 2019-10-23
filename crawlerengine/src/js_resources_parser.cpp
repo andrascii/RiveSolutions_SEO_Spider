@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "js_resources_parser.h"
 #include "page_parser_helpers.h"
 #include "data_resources_parser.h"

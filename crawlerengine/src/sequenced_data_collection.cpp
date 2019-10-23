@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "sequenced_data_collection.h"
 #include "unordered_data_collection.h"
 #include "sequenced_storage.h"
@@ -11,17 +12,17 @@ SequencedDataCollection::SequencedDataCollection(const UnorderedDataCollection* 
 {
 	ASSERT(collection);
 
-	VERIFY(connect(collection, SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType, int)), this,
-		SLOT(addParsedPage(ParsedPagePtr, StorageType, int)), Qt::QueuedConnection));
+	VERIFY(connect(collection, SIGNAL(parsedPageAdded(CrawlerEngine::ParsedPagePtr, CrawlerEngine::StorageType, int)), this,
+                   SLOT(addParsedPage(CrawlerEngine::ParsedPagePtr, CrawlerEngine::StorageType, int)), Qt::QueuedConnection));
 
-	VERIFY(connect(collection, SIGNAL(parsedPageAdded(WorkerResult, StorageType)), this,
-		SLOT(addParsedPage(WorkerResult, StorageType)), Qt::QueuedConnection));
+	VERIFY(connect(collection, SIGNAL(parsedPageAdded(CrawlerEngine::WorkerResult, CrawlerEngine::StorageType)), this,
+		SLOT(addParsedPage(CrawlerEngine::WorkerResult, CrawlerEngine::StorageType)), Qt::QueuedConnection));
 
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageReplaced, this,
 		&SequencedDataCollection::replaceParsedPage, Qt::QueuedConnection));
 
-	VERIFY(connect(collection, SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType, int)), this,
-		SLOT(onParsedPageRemoved(ParsedPagePtr, StorageType, int)), Qt::QueuedConnection));
+	VERIFY(connect(collection, SIGNAL(parsedPageRemoved(CrawlerEngine::ParsedPagePtr, CrawlerEngine::StorageType, int)), this,
+		SLOT(onParsedPageRemoved(CrawlerEngine::ParsedPagePtr, CrawlerEngine::StorageType, int)), Qt::QueuedConnection));
 
 	VERIFY(connect(collection, &UnorderedDataCollection::parsedPageLinksToThisResourceChanged, this,
 		&SequencedDataCollection::parsedPageLinksToThisResourceChanged, Qt::QueuedConnection));

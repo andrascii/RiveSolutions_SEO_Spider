@@ -1,4 +1,4 @@
-﻿#include "header_view.h"
+#include "header_view.h"
 #include "model_helpers.h"
 #include "svg_renderer.h"
 #include "deferred_call.h"
@@ -70,8 +70,8 @@ HeaderView::HeaderView(QWidget* parent, bool showCustomizeColumnsButton)
 	: QHeaderView(Qt::Horizontal, parent)
 	, m_showCustomizeColumnsButton(showCustomizeColumnsButton)
 	, m_button(nullptr)
-	, m_tableView(qobject_cast<QTableView*>(parent))
 	, m_menu(nullptr)
+    , m_tableView(qobject_cast<QTableView*>(parent))
 {
 	setSectionsClickable(true);
 	// setFirstSectionMovable(false); // available from 5.11

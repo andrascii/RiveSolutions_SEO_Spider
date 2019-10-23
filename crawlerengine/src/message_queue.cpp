@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "message_queue.h"
 
 namespace CrawlerEngine

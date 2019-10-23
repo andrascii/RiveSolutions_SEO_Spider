@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parsed_page_receiver.h"
 #include "crawler_shared_state.h"
 #include "unordered_data_collection.h"

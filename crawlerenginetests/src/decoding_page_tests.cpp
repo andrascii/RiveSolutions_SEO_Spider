@@ -1,3 +1,4 @@
+#include "stdafx.h"
 ﻿#include "test_environment.h"
 #include "counted_ptr.h"
 #include "myhtml_parser.h"

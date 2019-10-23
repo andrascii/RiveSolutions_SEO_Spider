@@ -81,7 +81,7 @@ QMenu::separator
 
 QStatusBar
 {
-	min-height: 2.5em;
+	min-height: 3em;
 	background-color: #4D4D4D;
 	border-top: 0.05em solid #C0C0C0;
 }
@@ -358,7 +358,7 @@ QWidget#resourceTypeFilter QPushButton#filterButton
 	padding: 0px;
 	border: 0.05em solid #E3E3E3;
 	border-radius: 0px;
-	font-size: 7pt;
+	font-size: 10pt;
 	border-left: none;
 	background-color: #D0D0D0;
 }
@@ -426,7 +426,7 @@ QHeaderView
 
 QHeaderView::section
 {
-	font-size: 8pt;
+	font-size: 10pt;
 	color: #2C2D30;
 	
 	border: 0.05em solid #F3F3F3;
@@ -461,6 +461,11 @@ QHeaderView QPushButton::menu-indicator#customizeColumns
 
 /*/////////////////////////////// SettingsPage ////////////////////////////////*/
 
+QFrame#settingsFrame
+{
+	border: none;
+}
+
 SeoSpider--SettingsPage
 {
 	min-width: 20em;
@@ -487,7 +492,7 @@ SeoSpider--SettingsPage QLineEdit
 SeoSpider--SettingsPage QCheckBox,
 SeoSpider--SettingsPage QLabel
 {
-	font-size: 10pt;
+	font-size: 12pt;
 }
 
 SeoSpider--SettingsPage QSpinBox:disabled,
@@ -590,7 +595,7 @@ QFrame#ControlsFrame QCheckBox,
 QFrame#ControlsFrame QLabel
 {
 	color: #2C2D30;
-	font-size: 10pt;
+	font-size: 12pt;
 }
 
 QFrame#ControlsFrame QSpinBox,
@@ -679,7 +684,7 @@ QWidget#NavigationPanel QPushButton
 	width: 10em;	
 	text-align: left;
 	color: #2C2D30;	
-	font-size: 11pt;
+	font-size: 12pt;
 	padding-left: 1em;
 	min-width: 10em;
 	max-width: 10em;
@@ -734,7 +739,7 @@ SeoSpider--PageDataWidget QTextEdit
 	border: none;
 	color: black;
 	font-family: Helvetica;
-	font-size: 11pt;
+	font-size: 12pt;
 	padding: 0.7em;
 }
 
@@ -795,7 +800,7 @@ SeoSpider--WidgetUnderMouseInfoDialog QLabel
 QFrame#MessageBox
 {
 	min-width: 25em;
-	min-height: 7em;
+	min-height: 9em;
 	background: #EDEDED;
 	border: 0.05em solid #D2D3D5;
 	border-radius: 0.143em;
@@ -828,7 +833,7 @@ QFrame#MessageBox QPushButton:pressed
 QFrame#MessageBox QLabel
 {
 	margin-bottom: 0.5em;
-	font-size: 11pt;
+	font-size: 12pt;
 }
 
 /*/////////////////////////////// Loading Widget ///////////////////////////////*/
@@ -960,7 +965,7 @@ QFrame#UpdateLoaderDialogContent QPushButton
 {
 	border-radius: 0.143em;
 	font: bold;
-	font-size: 11pt;
+	font-size: 12pt;
 	min-height: 1.5em;
 	padding: 0em 2em;
 }
@@ -1160,6 +1165,7 @@ QScrollArea#reportScrollArea
 SeoSpider--ColumnsLookupLineEditWidget,
 SeoSpider--LookupLineEditWidget
 {
+	border: none;
 	min-width: 20em;
 }
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 namespace CrawlerEngineTests
 {
 
@@ -16,7 +17,7 @@ TEST(LinksTests, LinkAlt)
 		EXPECT_EQ(1, pages[0]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[0]->statusCode);
 
-		QString expectedTitle = QString::fromWCharArray(L"This is a broken link è ÷åòî ïî ðóññêè");
+		QString expectedTitle = QString::fromWCharArray(L"This is a broken link Ã¨ Ã·Ã¥Ã²Ã® Ã¯Ã® Ã°Ã³Ã±Ã±ÃªÃ¨");
 		EXPECT_EQ(expectedTitle, pages[0]->linksOnThisPage[0].altOrTitle);
 	};
 

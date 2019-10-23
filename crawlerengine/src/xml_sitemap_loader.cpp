@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "xml_sitemap_loader.h"
 #include "download_response.h"
 #include "download_request.h"

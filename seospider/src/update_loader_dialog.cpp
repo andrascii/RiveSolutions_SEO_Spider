@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "update_loader_dialog.h"
 #include "application.h"
 #include "widget_helpers.h"

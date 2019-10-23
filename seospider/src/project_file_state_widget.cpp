@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "project_file_state_widget.h"
 #include "application.h"
 #include "crawler.h"

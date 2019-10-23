@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "custom_uri_channel.h"
 
 namespace CrawlerEngine

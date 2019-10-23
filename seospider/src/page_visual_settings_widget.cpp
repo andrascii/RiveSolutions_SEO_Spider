@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "page_visual_settings_widget.h"
 
 

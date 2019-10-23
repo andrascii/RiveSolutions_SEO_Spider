@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "site_map.h"
 #include "xpath_helpers.h"
 #include "tests_downloader.h"

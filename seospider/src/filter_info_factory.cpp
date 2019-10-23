@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "filter_info_factory.h"
 #include "storage_adapter_type.h"
 #include "application.h"

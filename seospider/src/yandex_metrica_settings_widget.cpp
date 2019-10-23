@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "yandex_metrica_settings_widget.h"
 #include "internal_settings_helper.h"
 #include "application.h"
@@ -11,8 +12,8 @@ YandexMetricaSettingsWidget::YandexMetricaSettingsWidget(QWidget* parent)
 	: SettingsPage(parent)
 	, m_helperControl(nullptr)
 	, m_visibleLineEditCount(0)
-	, m_visibleLineEditCountApplied(true)
 	, m_visibleLineEditCountAtShow(-1)
+    , m_visibleLineEditCountApplied(true)
 	, m_applyingChanges(false)
 {
 	m_ui.setupUi(this);

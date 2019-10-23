@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "message_channel.h"
 #include "pipe_server.h"
 #include "common_constants.h"

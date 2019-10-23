@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "status_code_description.h"
 
 namespace Common

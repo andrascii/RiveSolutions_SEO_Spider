@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "site_map_creator_dialog.h"
 #include "application.h"
 #include "main_window.h"

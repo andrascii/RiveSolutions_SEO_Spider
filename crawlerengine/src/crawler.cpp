@@ -45,15 +45,15 @@ Crawler& Crawler::instance()
 
 Crawler::Crawler(QObject* parent)
 	: QObject(parent)
-	, m_robotsTxtLoader(new RobotsTxtLoader(this))
-	, m_xmlSitemapLoader(new XmlSitemapLoader(static_cast<RobotsTxtLoader*>(m_robotsTxtLoader), this))
-	, m_modelController(nullptr)
-	, m_uniqueLinkStore(nullptr)
-	, m_options(new CrawlerOptions(this))
-	, m_theradCount(0)
-	, m_crawlingStateTimer(new QTimer(this))
+    , m_sequencedDataCollection(nullptr)
+    , m_modelController(nullptr)
+    , m_robotsTxtLoader(new RobotsTxtLoader(this))
+    , m_xmlSitemapLoader(new XmlSitemapLoader(static_cast<RobotsTxtLoader*>(m_robotsTxtLoader), this))
+    , m_uniqueLinkStore(nullptr)
+    , m_options(new CrawlerOptions(this))
+    , m_theradCount(0)
+    , m_crawlingStateTimer(new QTimer(this))
 	, m_serializatonReadyStateCheckerTimer(new QTimer(this))
-	, m_sequencedDataCollection(nullptr)
 	, m_state(StatePending)
 	, m_downloader(nullptr)
 	, m_webHostInfo(nullptr)
@@ -151,8 +151,8 @@ void Crawler::initialize()
 	{
 		m_workers.push_back(new CrawlerWorker(m_uniqueLinkStore, createWorkerPageLoader()));
 
-		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(WorkerResult)),
-			m_modelController, SLOT(handleWorkerResult(WorkerResult)), Qt::QueuedConnection));
+		VERIFY(connect(m_workers.back(), SIGNAL(workerResult(CrawlerEngine::WorkerResult)),
+			m_modelController, SLOT(handleWorkerResult(CrawlerEngine::WorkerResult)), Qt::QueuedConnection));
 
 		threadManager.moveObjectToThread(m_workers.back(), QString("CrawlerWorkerThread#%1").arg(i).toLatin1());
 	}
@@ -383,7 +383,7 @@ void Crawler::onCrawlingSessionInitialized()
 	initSessionIfNeeded();
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "setWebCrawlerOptions",
-		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerOptionsData&, m_options->data())));
+		Qt::BlockingQueuedConnection, Q_ARG(const CrawlerEngine::CrawlerOptionsData&, m_options->data())));
 
 	setUserAgent(m_options->userAgent());
 
@@ -406,7 +406,8 @@ void Crawler::onCrawlingSessionInitialized()
 	for (CrawlerWorker* worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "start", Qt::QueuedConnection,
-			Q_ARG(const CrawlerOptionsData&, m_options->data()), Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content()))));
+			Q_ARG(const CrawlerEngine::CrawlerOptionsData&, m_options->data()),
+            Q_ARG(CrawlerEngine::RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content()))));
 	}
 
 	m_crawlingStateTimer->start();
@@ -451,8 +452,8 @@ void Crawler::onDeserializationProcessDone()
 	for (auto worker : m_workers)
 	{
 		VERIFY(QMetaObject::invokeMethod(worker, "reinitOptions", Qt::BlockingQueuedConnection,
-			Q_ARG(const CrawlerOptionsData&, m_options->data()),
-			Q_ARG(RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content())))
+			Q_ARG(const CrawlerEngine::CrawlerOptionsData&, m_options->data()),
+			Q_ARG(CrawlerEngine::RobotsTxtRules, RobotsTxtRules(m_robotsTxtLoader->content())))
 		);
 	}
 }
@@ -754,7 +755,7 @@ IHostInfoProvider* Crawler::createHostInfoProvider() const
 #ifdef ENABLE_SCREENSHOTS
 IScreenshotMaker* Crawler::createScreenshotMaker()
 {
-	return new ScreenshotMaker;
+    return new ScreenshotMaker;
 }
 #endif
 
@@ -934,7 +935,8 @@ void Crawler::refreshPage(StorageType storageType, int index)
 	INFOLOG << "Target storage size = " << m_sequencedDataCollection->storage(storageType)->size();
 
 	VERIFY(QMetaObject::invokeMethod(m_modelController, "preparePageForRefresh",
-		Qt::BlockingQueuedConnection, Q_ARG(ParsedPage*, parsedPage), Q_ARG(int, CrawlerEngine::CrawlerSharedState::instance()->turnaround())));
+		Qt::BlockingQueuedConnection, Q_ARG(CrawlerEngine::ParsedPage*, parsedPage),
+        Q_ARG(int, CrawlerEngine::CrawlerSharedState::instance()->turnaround())));
 
 	m_uniqueLinkStore->addRefreshUrl(parsedPage->url, DownloadRequestType::RequestTypeGet, storagesBeforeRemoving);
 

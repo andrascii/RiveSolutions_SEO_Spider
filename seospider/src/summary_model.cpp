@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "summary_model.h"
 #include "viewport_percent_resize_policy.h"
 

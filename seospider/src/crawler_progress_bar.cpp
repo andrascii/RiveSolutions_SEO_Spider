@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "crawler_progress_bar.h"
 #include "application.h"
 #include "main_window.h"
@@ -13,8 +14,8 @@ CrawlerProgressBar::CrawlerProgressBar(QWidget* parent)
 
 	VERIFY(connect(theApp->crawler(), SIGNAL(stateChanged(int)), this, SLOT(onCrawlerStateChanged(int))));
 
-	VERIFY(connect(theApp->crawler(), SIGNAL(crawlingProgress(CrawlingProgress)),
-		this, SLOT(calculatePercents(CrawlingProgress)), Qt::QueuedConnection));
+	VERIFY(connect(theApp->crawler(), SIGNAL(crawlingProgress(CrawlerEngine::CrawlingProgress)),
+		this, SLOT(calculatePercents(CrawlerEngine::CrawlingProgress)), Qt::QueuedConnection));
 
 	hide();
 }

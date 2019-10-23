@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "user_agent_settings_widget.h"
 #include "application.h"
 #include "preferences.h"

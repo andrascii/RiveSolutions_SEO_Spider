@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "page_data_widget.h"
 #include "table_view.h"
 #include "page_model.h"
@@ -34,9 +35,9 @@ namespace SeoSpider
 
 PageDataWidget::PageDataWidget(QWidget* parent)
 	: QFrame(parent)
-	, m_httpResponseLabel(new QTextEdit(this))
 	, m_stackedWidget(new MinStackedWidget(this))
 	, m_tabBar(new QTabBar(this))
+    , m_httpResponseLabel(new QTextEdit(this))
 {
 	m_tabBar->setObjectName("pageInfoTabBar");
 	m_tabBar->setContentsMargins(0, 0, 0, 0);
@@ -131,7 +132,7 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 	}));
 
 	tableView->setModel(m_models[pageDataType]);
-	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], this));
+	tableView->setViewModel(new PageViewModel(tableView, m_models[pageDataType], devicePixelRatioF(), this));
 	tableView->setShowAdditionalGrid(true);
 
 	tabStackedWidget->addWidget(tableView);

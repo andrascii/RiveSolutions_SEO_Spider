@@ -1,3 +1,4 @@
+#include "stdafx.h"
 namespace CrawlerEngineTests
 {
 
@@ -196,7 +197,7 @@ TEST(ImageTests, ImageAlt)
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[1]->statusCode);
 		EXPECT_EQ(0, cl->storageItems(StorageType::MissingAltTextImageStorageType).size());
 
-		QString expectedAlt = QString::fromWCharArray(L"Dummy Alt è ÷åòî ïî ðóññêè");
+		QString expectedAlt = QString::fromWCharArray(L"Dummy Alt Ã¨ Ã·Ã¥Ã²Ã® Ã¯Ã® Ã°Ã³Ã±Ã±ÃªÃ¨");
 		EXPECT_EQ(expectedAlt, pages[1]->linksToThisPage[0].altOrTitle);
 	};
 

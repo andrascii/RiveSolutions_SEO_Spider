@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "abstract_page.h"
 #include "header_toolbutton_creator.h"
 #include "application.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "robots_txt_tokenizer.h"
 #include "meta_robots_helpers.h"
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "control_adapter_line_edit.h"
 
 namespace SeoSpider

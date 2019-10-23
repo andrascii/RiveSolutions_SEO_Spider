@@ -141,8 +141,8 @@ private:
 	const CrawlerEngine::ParsedPage* m_parsedPage;
 };
 
-using ParsedPageInfoPtr = std::shared_ptr<ParsedPageInfo>;
-
-Q_DECLARE_METATYPE(ParsedPageInfoPtr);
-
+using ParsedPageInfoPtr = Common::counted_ptr<ParsedPageInfo>;
+    
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ParsedPageInfoPtr);

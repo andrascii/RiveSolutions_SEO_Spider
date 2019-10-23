@@ -1,14 +1,28 @@
+#include "stdafx.h"
 #include "summary_view_model.h"
 #include "summary_model.h"
 #include "text_renderer.h"
 #include "helpers.h"
 #include "model_helpers.h"
 
+namespace
+{
+
+#ifdef Q_OS_WIN
+    const int s_headerSize = 12;
+    const int s_filterTextSize = 10;
+#else
+    const int s_headerSize = 14;
+    const int s_filterTextSize = 12;
+#endif
+
+}
+
 namespace SeoSpider
 {
 
-SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QObject* parent)
-	: AbstractViewModel(model, parent)
+SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, float devicePixelRatio, QObject* parent)
+	: AbstractViewModel(model, devicePixelRatio, parent)
 	, m_selectedBackgroundColor("#E5E5E5")
 	, m_hoveredBackgroundColor("#F3F3F3")
 	, m_backgroundColor("#FFFFFF")
@@ -16,8 +30,8 @@ SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QOb
 	, m_gridLineColor("#F3F3F3")
 	, m_headerTextColor("#2C2D30")
 	, m_textColor("#2C2D30")
-	, m_headerFont("Arial", 12, QFont::DemiBold)
-	, m_textFont("Arial", 10, QFont::Medium)
+	, m_headerFont("Arial", s_headerSize, QFont::DemiBold)
+	, m_textFont("Arial", s_filterTextSize, QFont::Medium)
 	, m_itemRenderer(this)
 	, m_parentView(parentView)
 	, m_windowBlocked(false)
@@ -31,7 +45,7 @@ SummaryViewModel::SummaryViewModel(QWidget* parentView, SummaryModel* model, QOb
 
 int SummaryViewModel::marginTop(const QModelIndex&) const noexcept
 {
-	return Common::Helpers::pointsToPixels(5);
+	return Common::Helpers::pointsToPixels(2) * devicePixelRatio();
 }
 
 int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
@@ -39,14 +53,19 @@ int SummaryViewModel::marginBottom(const QModelIndex&) const noexcept
 	return Common::Helpers::pointsToPixels(0);
 }
 
-int SummaryViewModel::marginLeft(const QModelIndex&) const noexcept
+int SummaryViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
-	return Common::Helpers::pointsToPixels(6);
+	if (index.column() == 1)
+	{
+		return Common::Helpers::pointsToPixels(0);
+	}
+
+	return Common::Helpers::pointsToPixels(3) * devicePixelRatio();
 }
 
 int SummaryViewModel::marginRight(const QModelIndex&) const noexcept
 {
-	return Common::Helpers::pointsToPixels(2);
+	return Common::Helpers::pointsToPixels(3) * devicePixelRatio();
 }
 
 QPixmap SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
@@ -65,9 +84,9 @@ QPixmap SummaryViewModel::pixmap(const QModelIndex& index) const noexcept
 	return originalPixmap;
 }
 
-QRect SummaryViewModel::pixmapPosition(const QModelIndex&, const QRect& itemVisualRect) const noexcept
+QRect SummaryViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	return itemVisualRect;
+	return itemVisualRect.adjusted(marginLeft(index), marginTop(index), -marginRight(index), -marginBottom(index));
 }
 
 QString SummaryViewModel::displayData(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
@@ -81,7 +100,20 @@ QString SummaryViewModel::displayData(const QModelIndex& index, const QRect& ite
 
 QRect SummaryViewModel::displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	return itemVisualRect.adjusted(pixmap(index).width() + Common::Helpers::pointsToPixels(3), 0, 0, 0);
+    if (index.column() == 1)
+    {
+        return itemVisualRect.adjusted(
+            marginLeft(index),
+            marginTop(index),
+            -marginRight(index),
+            -marginBottom(index));
+    }
+
+	return itemVisualRect.adjusted(
+	    pixmap(index).width() + Common::Helpers::pointsToPixels(3) + marginLeft(index),
+	    marginTop(index),
+	    -marginRight(index),
+	    -marginBottom(index));
 }
 
 const QColor& SummaryViewModel::selectedBackgroundColor(const QModelIndex&) const noexcept

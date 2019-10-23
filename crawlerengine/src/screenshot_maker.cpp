@@ -6,13 +6,21 @@
 #include "handler_registry.h"
 #include "common_constants.h"
 #include "url.h"
+#include "rpc_factory.h"
+#include "irpc_socket.h"
 #include "statistic_counter.h"
 
 namespace
 {
 
 const QString s_sharedMemoryKey("shared_screenshot_memory");
+
+#ifdef Q_OS_WIN
 const QString s_screenshotMakerChannelName("screenshot_maker_channel");
+#else
+// on Unix we use plain TCP sockets to communicate between processes
+const QString s_screenshotMakerChannelName("127.0.0.1");
+#endif
 
 }
 
@@ -23,6 +31,7 @@ using namespace Common;
 
 ScreenshotMaker::ScreenshotMaker(QObject* parent)
 	: QObject(parent)
+    , m_ipcSocket(Common::RpcFactory::createRpcSocket())
 	, m_sharedMemory(s_sharedMemoryKey)
 	, m_timerId(0)
 	, m_isActive(false)
@@ -62,7 +71,7 @@ QObject* ScreenshotMaker::qobject()
 
 void ScreenshotMaker::timerEvent(QTimerEvent*)
 {
-	if (m_ipcSocket.openMode() == QIODevice::NotOpen || m_ipcSocket.isClosed())
+	if (m_ipcSocket->isClosed())
 	{
 		killTimerHelper();
 		sendScreenshotRequest(m_currentRequester);
@@ -116,11 +125,20 @@ bool ScreenshotMaker::ensureScreenshotMakerIsAlive(int attemptsCount)
 
 	for (int i = 0; i < attemptsCount; ++i)
 	{
+#ifdef Q_OS_WIN
+        const std::string binaryName = "screenshotmaker.exe";
+        const std::string currentProcessId = std::to_string(GetCurrentProcessId());
+#else
+        const std::string binaryName = "screenshotmaker";
+        const std::string currentProcessId = std::to_string(getpid());
+#endif
+
+
 		m_screenshotMakerProcess = boost::process::child(
-			std::string("screenshotmaker.exe " +
+			std::string(binaryName + " " +
 				s_screenshotMakerChannelName.toStdString() + " " +
 				s_sharedMemoryKey.toStdString() + " " +
-				std::to_string(GetCurrentProcessId()))
+				currentProcessId)
 		);
 
 		if (m_screenshotMakerProcess.running())
@@ -150,17 +168,17 @@ bool ScreenshotMaker::ensureScreenshotMakerIsAlive(int attemptsCount)
 
 bool ScreenshotMaker::ensureConnection(int attemptsCount)
 {
-	if (m_ipcSocket.openMode() != QIODevice::NotOpen && !m_ipcSocket.isClosed())
+	if (!m_ipcSocket->isClosed())
 	{
 		return true;
 	}
 
 	// to clear internal state
-	m_ipcSocket.disconnectFromServer();
+	m_ipcSocket->disconnectFromServer();
 
 	for (int i = 0; i < attemptsCount; ++i)
 	{
-		if (m_ipcSocket.connectToServer(s_screenshotMakerChannelName, QIODevice::ReadWrite))
+		if (m_ipcSocket->connectToServer(s_screenshotMakerChannelName))
 		{
 			break;
 		}
@@ -168,7 +186,7 @@ bool ScreenshotMaker::ensureConnection(int attemptsCount)
 		std::this_thread::sleep_for(1s);
 	}
 
-	return m_ipcSocket.openMode() != QIODevice::NotOpen;
+	return !m_ipcSocket->isClosed();
 }
 
 void ScreenshotMaker::sendScreenshotRequest(const RequesterSharedPtr& requester)
@@ -178,10 +196,10 @@ void ScreenshotMaker::sendScreenshotRequest(const RequesterSharedPtr& requester)
 	if (!ensureScreenshotMakerIsAlive())
 	{
 		ERRLOG << "Cannot start screenshotmaker.exe";
-		
+
 		std::shared_ptr<TakeScreenshotResponse> response = std::make_shared<TakeScreenshotResponse>();
 		response->setError(ITakeScreenshotResponse::ErrorCannotStartScreenshotMakerProcess);
-		
+
 		ThreadMessageDispatcher::forThread(requester->thread())->postResponse(requester, response);
 
 		return;
@@ -229,7 +247,8 @@ void ScreenshotMaker::logSharedMemoryAttachError()
 		}
 		case QSharedMemory::AlreadyExists:
 		{
-			ERRLOG << "A create() operation failed because a shared memory segment with the specified key already existed.";
+			ERRLOG << "A create() operation failed because a shared "
+                "memory segment with the specified key already existed.";
 			break;
 		}
 		case QSharedMemory::NotFound:
@@ -239,7 +258,8 @@ void ScreenshotMaker::logSharedMemoryAttachError()
 		}
 		case QSharedMemory::LockError:
 		{
-			ERRLOG << "The attempt to lock() the shared memory segment failed because create() or attach() failed and returned false, or because a system error occurred in QSystemSemaphore::acquire().";
+			ERRLOG << "The attempt to lock() the shared memory segment failed because create() or attach() "
+                "failed and returned false, or because a system error occurred in QSystemSemaphore::acquire().";
 			break;
 		}
 		case QSharedMemory::OutOfResources:
@@ -257,7 +277,7 @@ void ScreenshotMaker::logSharedMemoryAttachError()
 
 void ScreenshotMaker::sendTakeScreenshotMessage(TakeScreenshotRequest* request)
 {
-	if (m_ipcSocket.openMode() == QIODevice::NotOpen)
+	if (m_ipcSocket->isClosed())
 	{
 		ERRLOG << "There is no connection with screenshotmaker.exe";
 		return;
@@ -265,12 +285,12 @@ void ScreenshotMaker::sendTakeScreenshotMessage(TakeScreenshotRequest* request)
 
 	ScreenshotMakerMessage msg;
 	msg.setTakeScreenshotMessage(request->url());
-	m_ipcSocket.writeData(reinterpret_cast<const char*>(&msg), sizeof(msg));
+	m_ipcSocket->writeData(reinterpret_cast<const char*>(&msg), sizeof(msg));
 }
 
 void ScreenshotMaker::sendExitCommandToScreenshotMakerProcess()
 {
-	if (m_ipcSocket.openMode() == QIODevice::NotOpen)
+	if (m_ipcSocket->isClosed())
 	{
 		ERRLOG << "There is no connection with screenshotmaker.exe";
 		return;
@@ -279,7 +299,7 @@ void ScreenshotMaker::sendExitCommandToScreenshotMakerProcess()
 	ScreenshotMakerMessage msg;
 	msg.setExitMessage();
 
-	m_ipcSocket.writeData(reinterpret_cast<const char*>(&msg), sizeof(msg));
+	m_ipcSocket->writeData(reinterpret_cast<const char*>(&msg), sizeof(msg));
 }
 
 void ScreenshotMaker::killTimerHelper()
@@ -316,13 +336,13 @@ std::pair<bool, ScreenshotMakerMessage> ScreenshotMaker::screenshotMakerResponse
 	ScreenshotMakerMessage msg;
 
 	// wait 1 byte then read this and check value
-	if (m_ipcSocket.peekData(reinterpret_cast<char*>(&msg), sizeof(msg)) != sizeof(msg))
+	if (m_ipcSocket->peekData(reinterpret_cast<char*>(&msg), sizeof(msg)) != sizeof(msg))
 	{
 		return std::make_pair(false, ScreenshotMakerMessage{});
 	}
 	else
 	{
-		m_ipcSocket.readData(reinterpret_cast<char*>(&msg), sizeof(msg));
+		m_ipcSocket->readData(reinterpret_cast<char*>(&msg), sizeof(msg));
 	}
 
 	return std::make_pair(true, msg);

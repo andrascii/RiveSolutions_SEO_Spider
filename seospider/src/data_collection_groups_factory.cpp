@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "data_collection_groups_factory.h"
 #include "icustom_data_feed.h"
 #include "preferences.h"

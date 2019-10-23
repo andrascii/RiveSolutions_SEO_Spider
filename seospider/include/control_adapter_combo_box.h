@@ -19,6 +19,6 @@ private:
 	QPointer<QComboBox> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterQComboBox);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ControlAdapterQComboBox);

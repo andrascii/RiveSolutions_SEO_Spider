@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "smtp_sending_result.h"
 #include "smtp_sender.h"
 
@@ -22,8 +23,8 @@ SmtpSendingResult::SmtpSendingResult(const SmtpMessage& message, const QString& 
 	: m_finished(false)
 	, m_result(SmtpSender::resultUnknown)
 	, m_timeoutTime(QTime::currentTime().addSecs(message.settings.emailTimeout()))
+    , m_messageId(messageId)
 	, m_instanceId(resultInstanceId++)
-	, m_messageId(messageId)
 {
 	const QStringList recipients = splitRecipients(message.settings.emailRecipients());
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "host_info.h"
 
 namespace CrawlerEngine
@@ -174,11 +175,13 @@ void HostInfo::setAddressFamily(hostent* remoteHost)
 			m_addressFamily = AddressFamily::IPv6;
 			break;
 		}
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
 		case AF_NETBIOS:
 		{
 			m_addressFamily = AddressFamily::NetBios;
 			break;
 		}
+#endif
 		default:
 		{
 			m_addressFamily = AddressFamily::UnknownAddressFamily;
@@ -197,6 +200,8 @@ void HostInfo::setAliases(hostent* remoteHost)
 
 void HostInfo::setIpAddresses(hostent* remoteHost)
 {
+    remoteHost;
+    /*
 	if (m_addressFamily == AddressFamily::IPv4)
 	{
 		int i = 0;
@@ -230,6 +235,7 @@ void HostInfo::setIpAddresses(hostent* remoteHost)
 			m_ipv6Addresses[ipStringRepresentation] = addr;
 		}
 	}
+     */
 }
 
 }

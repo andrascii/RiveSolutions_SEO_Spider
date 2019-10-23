@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "compound_parser.h"
 
 namespace CrawlerEngine

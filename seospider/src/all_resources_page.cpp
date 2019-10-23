@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "all_resources_page.h"
 #include "page_data_widget.h"
 #include "website_data_widget.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "audit_report_page.h"
 #include "reports_page.h"
 #include "svg_renderer.h"

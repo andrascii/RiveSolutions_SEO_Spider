@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "tests_host_info_provider.h"
 #include "handler_registry.h"
 #include "host_info.h"

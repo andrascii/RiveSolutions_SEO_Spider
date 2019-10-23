@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "background_renderer.h"
 #include "iview_model.h"
 #include "model_helpers.h"

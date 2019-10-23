@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "proper_404_checker.h"
 #include "handler_registry.h"
 #include "crawler_request.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "supported_resource_type_filtering_storages.h"
 
 namespace

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "item_renderer.h"
 #include "text_renderer.h"
 #include "background_renderer.h"

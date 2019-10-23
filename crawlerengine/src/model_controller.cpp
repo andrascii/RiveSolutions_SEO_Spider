@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "model_controller.h"
 #include "unordered_data_collection.h"
 #include "page_parser_helpers.h"

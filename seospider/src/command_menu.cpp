@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "command_menu.h"
 #include "commands.h"
 #include "helpers.h"

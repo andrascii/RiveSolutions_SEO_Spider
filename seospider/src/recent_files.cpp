@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "recent_files.h"
 #include "application.h"
 #include "main_window.h"

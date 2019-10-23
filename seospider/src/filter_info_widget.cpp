@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "filter_info_widget.h"
 #include "application.h"
 #include "preferences.h"

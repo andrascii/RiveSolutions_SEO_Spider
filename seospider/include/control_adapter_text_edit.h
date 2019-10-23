@@ -18,6 +18,6 @@ private:
 	QPointer<QPlainTextEdit> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterQPlainTextEdit);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ControlAdapterQPlainTextEdit);

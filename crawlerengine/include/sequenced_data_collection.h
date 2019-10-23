@@ -31,12 +31,12 @@ public:
 	const QVector<ICustomDataFeed*>& customDataFeeds() const;
 
 signals:
-	void parsedPageAdded(int row, StorageType type);
-	void parsedPageReplaced(int row, StorageType type);
-	void parsedPageRemoved(int row, StorageType type);
-	void parsedPagesRemoved(int count, StorageType type);
-	void indicesRangeInvalidated(std::pair<int, int> indicesRange, StorageType type);
-	void parsedPageLinksToThisResourceChanged(LinksToThisResourceChanges changes);
+	void parsedPageAdded(int row, CrawlerEngine::StorageType type);
+	void parsedPageReplaced(int row, CrawlerEngine::StorageType type);
+	void parsedPageRemoved(int row, CrawlerEngine::StorageType type);
+	void parsedPagesRemoved(int count, CrawlerEngine::StorageType type);
+	void indicesRangeInvalidated(std::pair<int, int> indicesRange, CrawlerEngine::StorageType type);
+	void parsedPageLinksToThisResourceChanged(CrawlerEngine::LinksToThisResourceChanges changes);
 	void beginClearData();
 	void endClearData();
 
@@ -44,12 +44,12 @@ protected:
 	virtual std::shared_ptr<ISequencedStorage> createSequencedStorage() const;
 
 protected slots:
-	void addParsedPage(ParsedPagePtr parsedPagePtr, StorageType type, int turnaround);
-	void addParsedPage(WorkerResult workerResult, StorageType type);
-	void replaceParsedPage(ParsedPagePtr oldParsedPagePtr, ParsedPagePtr newParsedPagePtr, StorageType type, int turnaround);
-	void onParsedPageRemoved(ParsedPagePtr parsedPagePointer, StorageType type, int turnaround);
+	void addParsedPage(CrawlerEngine::ParsedPagePtr parsedPagePtr, CrawlerEngine::StorageType type, int turnaround);
+	void addParsedPage(CrawlerEngine::WorkerResult workerResult, CrawlerEngine::StorageType type);
+	void replaceParsedPage(CrawlerEngine::ParsedPagePtr oldParsedPagePtr, CrawlerEngine::ParsedPagePtr newParsedPagePtr, CrawlerEngine::StorageType type, int turnaround);
+	void onParsedPageRemoved(CrawlerEngine::ParsedPagePtr parsedPagePointer, CrawlerEngine::StorageType type, int turnaround);
 	void onDataCleared();
-	void onCustomDataFeedRowReceived(ICustomDataFeedRow* row);
+	void onCustomDataFeedRowReceived(CrawlerEngine::ICustomDataFeedRow* row);
 
 private:
 	std::unordered_map<StorageType, std::shared_ptr<ISequencedStorage>> m_sequencedStorageMap;

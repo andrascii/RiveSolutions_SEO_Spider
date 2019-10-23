@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "my_license_service.h"
 #include "download_response.h"
 #include "download_request.h"
@@ -37,9 +38,6 @@ Url makeVerifyUrl(const QString& userName, const QString& id, const QString& mac
 
 	Url url(s_verifySerialNumberUrl + "/" + s_verifyPageName);
 	url.setQuery(urlQuery);
-
-	auto var = url.toDisplayString();
-	var;
 
 	return url;
 }

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "parsed_page_info_storage_adapter.h"
 #include "isequenced_storage.h"
 #include "application.h"
@@ -168,7 +169,7 @@ ParsedPageInfoPtr ParsedPageInfoStorageAdapter::parsedPageInfoPtr(const QModelIn
 		parsedPage = (*m_associatedStorage)[row];
 	}
 
-	return std::make_shared<ParsedPageInfo>(parsedPage);
+	return Common::make_counted<ParsedPageInfo>(parsedPage);
 }
 
 Menu ParsedPageInfoStorageAdapter::menuFor(const QModelIndex& index) const

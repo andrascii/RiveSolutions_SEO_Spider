@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "storage_adapter_factory.h"
 #include "parsed_page_info.h"
 #include "parsed_page_info_storage_adapter.h"
@@ -18,7 +19,7 @@ IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapt
 	IParsedPageStorageAdapter* storageAdapter = new ParsedPageInfoStorageAdapter(sequencedDataCollection,
 		sequencedDataCollection->storage(storageType), storageType);
 
-	storageAdapter->setCurrentColumns(parsedPageAvailableColumns(type));
+	storageAdapter->setCurrentColumns(defaultColumns(type));
 	storageAdapter->setAvailableColumns(parsedPageAllColumns());
 
 	return storageAdapter;
@@ -68,7 +69,7 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAllColumns()
 		<< ParsedPageInfo::Column::PageHashColumn;
 }
 
-QVector<ParsedPageInfo::Column> StorageAdapterFactory::parsedPageAvailableColumns(StorageAdapterType type)
+QVector<ParsedPageInfo::Column> StorageAdapterFactory::defaultColumns(StorageAdapterType type)
 {
 	switch (type)
 	{

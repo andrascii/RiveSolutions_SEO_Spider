@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "yandex_metrica_data_feed.h"
 #include "custom_uri_channel.h"
 #include "crawler_worker.h"

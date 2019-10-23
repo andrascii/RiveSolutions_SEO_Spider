@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "multi_socket_download_handler.h"
 #include "random_interval_range_timer.h"
 #include "multi_socket_loader.h"

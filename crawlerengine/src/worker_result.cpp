@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "worker_result.h"
 
 namespace CrawlerEngine

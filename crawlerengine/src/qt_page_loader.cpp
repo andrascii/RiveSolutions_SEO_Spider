@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "qt_page_loader.h"
 #include "download_response.h"
 #include "helpers.h"

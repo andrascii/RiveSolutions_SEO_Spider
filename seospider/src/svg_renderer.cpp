@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "svg_renderer.h"
 #include "helpers.h"
 

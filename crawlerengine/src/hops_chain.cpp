@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "hops_chain.h"
 
 namespace CrawlerEngine

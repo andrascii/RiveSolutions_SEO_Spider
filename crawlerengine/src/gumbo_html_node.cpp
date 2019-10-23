@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "gumbo_html_node.h"
 
 namespace

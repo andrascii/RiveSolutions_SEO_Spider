@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "deferred_call.h"
 
 namespace SeoSpider

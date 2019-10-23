@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "thread_message_dispatcher.h"
 #include "common_macro_helpers.h"
 #include "common_constants.h"

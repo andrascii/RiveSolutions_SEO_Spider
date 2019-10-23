@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "pipe_connection_establisher_thread.h"
 
 namespace ScreenshotMaker

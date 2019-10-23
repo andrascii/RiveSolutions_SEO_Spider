@@ -16,7 +16,7 @@ signals:
 	void processClosed();
 
 private:
-	HANDLE m_processHandle;
+	std::uint64_t m_targetPid;
 };
 
 }

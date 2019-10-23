@@ -2,6 +2,13 @@
 
 #include "idownload_handler.h"
 
+namespace Common
+{
+
+enum class StatusCode;
+
+}
+
 namespace CrawlerEngine
 {
 

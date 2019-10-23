@@ -15,8 +15,8 @@ constexpr int s_preferredCacheSize = 500;
 namespace SeoSpider
 {
 
-PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, QObject* parent)
-	: AbstractViewModel(model, parent)
+PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, float devicePixelRaio, QObject* parent)
+	: AbstractViewModel(model, devicePixelRaio, parent)
 	, m_parentView(parentView)
 	, m_selectionBackgroundColor("#E5E5E5")
 	, m_hoveredBackgroundColor("#F3F3F3")
@@ -25,7 +25,7 @@ PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, QObject* par
 	, m_gridLineColor("#F3F3F3")
 	, m_urlTextColor("#1C51AF")
 	, m_textColor("#2C2D30")
-	, m_textFont("Arial", 10, QFont::Normal)
+	, m_textFont("Arial", devicePixelRatio() > 1 ? 12 : 10, QFont::Normal)
 	, m_itemRenderer(this)
 {
 	initializeRenderers();
@@ -39,46 +39,47 @@ PageViewModel::PageViewModel(QWidget* parentView, PageModel* model, QObject* par
 	VERIFY(connect(model, &PageModel::rowsAboutToBeMoved, this, &PageViewModel::onRowsAboutToBeMoved));
 }
 
-int PageViewModel::marginTop(const QModelIndex& index) const noexcept
+int PageViewModel::marginTop(const QModelIndex&) const noexcept
 {
-	if (index.column() == 0)
-	{
-		return Common::Helpers::pointsToPixels(0);
-	}
-
-	return Common::Helpers::pointsToPixels(0);
+	return Common::Helpers::pointsToPixels(4);
 }
 
 int PageViewModel::marginBottom(const QModelIndex&) const noexcept
 {
-	return Common::Helpers::pointsToPixels(0);
+	return Common::Helpers::pointsToPixels(6) * devicePixelRatio();
 }
 
 int PageViewModel::marginLeft(const QModelIndex& index) const noexcept
 {
 	if (index.column() == 0)
 	{
-		return Common::Helpers::pointsToPixels(2);
+		return Common::Helpers::pointsToPixels(0);
 	}
 
-	return Common::Helpers::pointsToPixels(6);
+	return Common::Helpers::pointsToPixels(3) * devicePixelRatio();
 }
 
-int PageViewModel::marginRight(const QModelIndex&) const noexcept
+
+int PageViewModel::marginRight(const QModelIndex& index) const noexcept
 {
-	return Common::Helpers::pointsToPixels(2);
+	if (index.column() == 0)
+	{
+		return Common::Helpers::pointsToPixels(0) * devicePixelRatio();
+	}
+
+	return Common::Helpers::pointsToPixels(2) * devicePixelRatio();
 }
 
 QPixmap PageViewModel::pixmap(const QModelIndex& index) const noexcept
 {
-	const PageModel* model = 
+	const PageModel* model =
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
 	static QPixmap s_emptyPixmap;
 
 	QPixmap pixmap;
 
-	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType && 
+	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType &&
 		hoveredIndex().row() == index.row() &&
 		CrawlerEngine::Url(index.data(Qt::DisplayRole).toString()).isValid())
 	{
@@ -102,16 +103,16 @@ QPixmap PageViewModel::pixmap(const QModelIndex& index) const noexcept
 QRect PageViewModel::pixmapPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
 	const PageModel* model =
-		static_cast<const PageModel*>(AbstractViewModel::model());
+	Common::Helpers::fast_cast<const PageModel*>(AbstractViewModel::model());
 
 	const QPixmap& pix = pixmap(index);
-	const int visualRectHeight = itemVisualRect.height();
 
-	const int offsetByY = (visualRectHeight - pix.height()) / 2;
+	const int offsetByY = (itemVisualRect.height() - pix.height()) / 2;
 
 	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
 	{
-		return itemVisualRect.adjusted(itemVisualRect.width() - Common::Helpers::pointsToPixels(20), offsetByY, 0, 0);
+		return itemVisualRect.adjusted(itemVisualRect.width() / devicePixelRatio() - Common::Helpers::pointsToPixels(20),
+			offsetByY / 2, 0, 0);
 	}
 
 	return itemVisualRect.adjusted(itemVisualRect.width() + Common::Helpers::pointsToPixels(3), offsetByY, 0, 0);
@@ -123,15 +124,25 @@ QString PageViewModel::displayData(const QModelIndex& index, const QRect& itemVi
 
 	const QString displayData = index.data(Qt::DisplayRole).toString();
 
-	const int pixmapOccupiedWidth = index.row() == hoveredIndex().row() ? itemVisualRect.width() - pixmapPosition(index, itemVisualRect).x() : 0;
+	const int pixmapOccupiedWidth = index.row() == hoveredIndex().row() ?
+	itemVisualRect.width() - pixmapPosition(index, itemVisualRect).x() : 0;
 
 	QFontMetrics fontMetrics(font(index));
 	return fontMetrics.elidedText(displayData, Qt::ElideRight, itemVisualRect.width() - pixmapOccupiedWidth);
 }
 
-QRect PageViewModel::displayDataPosition(const QModelIndex&, const QRect& itemVisualRect) const noexcept
+QRect PageViewModel::displayDataPosition(const QModelIndex& index, const QRect& itemVisualRect) const noexcept
 {
-	return itemVisualRect;
+	if (index.column() == 0)
+	{
+		return itemVisualRect.adjusted(
+			marginLeft(index),
+			marginTop(index),
+			-marginRight(index),
+			-marginBottom(index));
+	}
+
+	return itemVisualRect.adjusted(marginLeft(index), marginTop(index), -marginRight(index), -marginBottom(index));
 }
 
 const QColor& PageViewModel::selectedBackgroundColor(const QModelIndex&) const noexcept
@@ -168,7 +179,7 @@ int PageViewModel::textAlignment(const QModelIndex& index) const noexcept
 
 const QColor& PageViewModel::textColor(const QModelIndex& index) const noexcept
 {
-	const PageModel* model = 
+	const PageModel* model =
 		static_cast<const PageModel*>(AbstractViewModel::model());
 
 	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType)
@@ -349,8 +360,8 @@ void PageViewModel::onRowsAboutToBeMoved(const QModelIndex& sourceParent, int so
 void PageViewModel::initializeRenderers()
 {
 	AbstractViewModel::addRenderer(
-		IRenderer::PlainTextRendererType | 
-		IRenderer::SelectionBackgroundRendererType | 
+		IRenderer::PlainTextRendererType |
+		IRenderer::SelectionBackgroundRendererType |
 		IRenderer::BackgroundRendererType
 	);
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "page_data_collector.h"
 #include "crawler_options.h"
 #include "page_parser_helpers.h"

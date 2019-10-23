@@ -18,6 +18,6 @@ private:
 	QPointer<QRadioButton> m_control;
 };
 
-Q_DECLARE_METATYPE(ControlAdapterQRadioButton);
-
 }
+
+Q_DECLARE_METATYPE(SeoSpider::ControlAdapterQRadioButton);

@@ -23,7 +23,7 @@ class PageViewModel : public AbstractViewModel
 	Q_PROPERTY(QFont textFont READ textFont WRITE setTextFont NOTIFY textFontChanged)
 
 public:
-	PageViewModel(QWidget* parentView, PageModel* model, QObject* parent = nullptr);
+	PageViewModel(QWidget* parentView, PageModel* model, float devicePixelRatio, QObject* parent = nullptr);
 
 	virtual int marginTop(const QModelIndex& index) const noexcept override;
 	virtual int marginBottom(const QModelIndex& index) const noexcept override;
