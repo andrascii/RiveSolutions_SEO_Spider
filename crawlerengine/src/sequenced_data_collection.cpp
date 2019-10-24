@@ -64,7 +64,10 @@ bool SequencedDataCollection::removePage(ParsedPage* parsedPage, StorageType typ
 		if (removeEffects.removedIndex != -1)
 		{
 			emit parsedPageRemoved(removeEffects.removedIndex, type);
-			emit indicesRangeInvalidated(removeEffects.invalidatedIndicesRange, type);
+			if (removeEffects.invalidatedIndicesRange.second >= removeEffects.invalidatedIndicesRange.first)
+			{
+				emit indicesRangeInvalidated(removeEffects.invalidatedIndicesRange, type);
+			}
 
 			return true;
 		}

@@ -79,7 +79,7 @@ QPixmap PageViewModel::pixmap(const QModelIndex& index) const noexcept
 
 	QPixmap pixmap;
 
-	if (model->itemType(index) == IStorageAdapter::ItemType::UrlItemType &&
+	if (index.isValid() && model->itemType(index) == IStorageAdapter::ItemType::UrlItemType &&
 		hoveredIndex().row() == index.row() &&
 		CrawlerEngine::Url(index.data(Qt::DisplayRole).toString()).isValid())
 	{

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "selection_background_renderer.h"
 #include "iview_model.h"
+#include "model_helpers.h"
 
 namespace SeoSpider
 {
@@ -14,7 +15,11 @@ void SelectionBackgroundRenderer::draw(QPainter* painter, const QStyleOptionView
 {
 	if (option.state & QStyle::State_Selected)
 	{
-		painter->fillRect(option.rect, m_viewModel->selectedBackgroundColor(index));
+		const QModelIndex underlyingIndex = getUnderlyingIndex(index);
+		if (underlyingIndex.isValid() && underlyingIndex.row() < underlyingIndex.model()->rowCount())
+		{
+			painter->fillRect(option.rect, m_viewModel->selectedBackgroundColor(index));
+		}
 	}
 }
 

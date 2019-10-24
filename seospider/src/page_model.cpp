@@ -162,7 +162,7 @@ QVariant PageModel::data(const QModelIndex& index, int role) const
 
 QVariant PageModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (!storageAdapter())
+	if (!storageAdapter() || section < 0)
 	{
 		return QVariant();
 	}
@@ -220,8 +220,11 @@ void PageModel::onParsedPageInfoAdded(int rowIndex)
 
 void PageModel::onParsedPageInfoRemoved(int rowIndex)
 {
-	beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
-	endRemoveRows();
+	if (rowIndex > rowCount())
+	{
+		beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
+		endRemoveRows();
+	}
 }
 
 void PageModel::onParsedPageInfoReplaced(int rowIndex)
