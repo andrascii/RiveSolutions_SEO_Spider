@@ -124,6 +124,7 @@ include_directories(
 
 target_link_libraries(
 	${CrawlerEngineLibTestsName}
+	PUBLIC
 	${CurlLibraries}
 	${CrawlerEngineLibName}
 	gtest

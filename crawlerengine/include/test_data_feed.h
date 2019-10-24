@@ -98,9 +98,7 @@ public:
 	}
 
 	// signals
-	Q_SIGNAL void dataReady(ICustomDataFeedRow* row);
-
-
+	Q_SIGNAL void dataReady(CrawlerEngine::ICustomDataFeedRow* row);
 };
 
 }

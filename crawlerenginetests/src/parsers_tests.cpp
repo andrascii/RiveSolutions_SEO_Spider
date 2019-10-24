@@ -121,7 +121,8 @@ private:
 
 		EXPECT_EQ(h1Node->text(), QString("h1 tag value"));
 		EXPECT_EQ(h2Node->text(), QString("h2 tag value"));
-		EXPECT_EQ(spanNode->text(), "Значение тега span");
+		QString spanText = spanNode->text();
+		EXPECT_EQ(spanText, QString("Значение тэга span"));
 		EXPECT_EQ(spanNode->hasAttribute("color") && spanNode->attribute("color") == QString("Arial"), true);
 	}
 

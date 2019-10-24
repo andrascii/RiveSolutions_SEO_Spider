@@ -42,14 +42,14 @@ ParsedPageReceiver::ParsedPageReceiver(const TestsCrawler* crawler, const Sequen
 	VERIFY(connect(crawler->sequencedDataCollection(), &SequencedDataCollection::endClearData,
 		this, &ParsedPageReceiver::onDataCleared, Qt::QueuedConnection));
 
-	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(ParsedPagePtr, StorageType, int)),
-		this, SLOT(onUnorderedDataCollectionPageAdded(ParsedPagePtr, StorageType, int)), Qt::QueuedConnection));
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(CrawlerEngine::ParsedPagePtr, CrawlerEngine::StorageType, int)),
+		this, SLOT(onUnorderedDataCollectionPageAdded(CrawlerEngine::ParsedPagePtr, CrawlerEngine::StorageType, int)), Qt::QueuedConnection));
 
-	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(WorkerResult, StorageType)),
-		this, SLOT(onUnorderedDataCollectionPageAdded(WorkerResult, StorageType)), Qt::QueuedConnection));
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageAdded(CrawlerEngine::WorkerResult, CrawlerEngine::StorageType)),
+		this, SLOT(onUnorderedDataCollectionPageAdded(CrawlerEngine::WorkerResult, CrawlerEngine::StorageType)), Qt::QueuedConnection));
 
-	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageRemoved(ParsedPagePtr, StorageType, int)),
-		this, SLOT(onUnorderedDataCollectionPageRemoved(ParsedPagePtr, StorageType, int)), Qt::QueuedConnection));
+	VERIFY(connect(crawler->unorderedDataCollection(), SIGNAL(parsedPageRemoved(CrawlerEngine::ParsedPagePtr, CrawlerEngine::StorageType, int)),
+		this, SLOT(onUnorderedDataCollectionPageRemoved(CrawlerEngine::ParsedPagePtr, CrawlerEngine::StorageType, int)), Qt::QueuedConnection));
 }
 
 void ParsedPageReceiver::onParsedPageAdded(int row, StorageType type)

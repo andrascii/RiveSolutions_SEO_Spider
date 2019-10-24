@@ -197,7 +197,7 @@ TEST(ImageTests, ImageAlt)
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[1]->statusCode);
 		EXPECT_EQ(0, cl->storageItems(StorageType::MissingAltTextImageStorageType).size());
 
-		QString expectedAlt = QString::fromWCharArray(L"Dummy Alt è ÷åòî ïî ðóññêè");
+		QString expectedAlt = QString("Dummy Alt и чето по русски");
 		EXPECT_EQ(expectedAlt, pages[1]->linksToThisPage[0].altOrTitle);
 	};
 

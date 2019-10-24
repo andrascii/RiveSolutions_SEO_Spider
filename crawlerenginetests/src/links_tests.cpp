@@ -17,7 +17,7 @@ TEST(LinksTests, LinkAlt)
 		EXPECT_EQ(1, pages[0]->linksOnThisPage.size());
 		EXPECT_EQ(Common::StatusCode::Ok200, pages[0]->statusCode);
 
-		QString expectedTitle = QString::fromWCharArray(L"This is a broken link è ÷åòî ïî ðóññêè");
+		QString expectedTitle = QString("This is a broken link и чето по русски");
 		EXPECT_EQ(expectedTitle, pages[0]->linksOnThisPage[0].altOrTitle);
 	};
 

@@ -38,9 +38,9 @@ private slots:
 	void onDataCleared();
 	void onSerializationDone();
 	void onDeserializationDone();
-	void onUnorderedDataCollectionPageAdded(ParsedPagePtr page, StorageType type, int turnaround);
-	void onUnorderedDataCollectionPageAdded(WorkerResult result, StorageType type);
-	void onUnorderedDataCollectionPageRemoved(ParsedPagePtr page, StorageType type, int turnaround);
+	void onUnorderedDataCollectionPageAdded(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::StorageType type, int turnaround);
+	void onUnorderedDataCollectionPageAdded(CrawlerEngine::WorkerResult result, CrawlerEngine::StorageType type);
+	void onUnorderedDataCollectionPageRemoved(CrawlerEngine::ParsedPagePtr page, CrawlerEngine::StorageType type, int turnaround);
 
 private:
 	void checkWaitCondition(StorageType storageType);

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-﻿#include "test_environment.h"
+#include "test_environment.h"
 #include "counted_ptr.h"
 #include "myhtml_parser.h"
 #include "gumbo_html_parser.h"

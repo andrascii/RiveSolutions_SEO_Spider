@@ -85,8 +85,8 @@ void SequencedDataCollection::setCustomDataFeeds(const QVector<ICustomDataFeed*>
 		ASSERT(qObject != nullptr);
 
 		qObject->disconnect(this);
-		VERIFY(QObject::connect(qObject, SIGNAL(dataReady(ICustomDataFeedRow*)),
-			this, SLOT(onCustomDataFeedRowReceived(ICustomDataFeedRow*)), Qt::QueuedConnection));
+		VERIFY(QObject::connect(qObject, SIGNAL(dataReady(CrawlerEngine::ICustomDataFeedRow*)),
+			this, SLOT(onCustomDataFeedRowReceived(CrawlerEngine::ICustomDataFeedRow*)), Qt::QueuedConnection));
 	}
 }
 

@@ -79,7 +79,7 @@ TEST(RobotsTxtBaseStrategyTests, BadPatternsRobotsTxt)
 	QString robotsTxt =
 		QString("User-agent: *\n") +
 		QString("Disallow : /api*htm$l\n") +
-		QString("Disallow : /êîðçèíà");
+		QString("Disallow : /корзина$l\n");
 
 	CrawlerEngine::RobotsTxtTokenizer tokenizer;
 	tokenizer.tokenize(robotsTxt);
@@ -87,7 +87,7 @@ TEST(RobotsTxtBaseStrategyTests, BadPatternsRobotsTxt)
 	CrawlerEngine::RobotsTxtBaseStrategy baseStrategy;
 
 	EXPECT_EQ(true, baseStrategy.isUrlAllowed(Url("http://a.com/api/index.html"), CrawlerEngine::UserAgentType::GoogleBot, tokenizer)); // Disallow : /api*htm$l
-	EXPECT_EQ(true, baseStrategy.isUrlAllowed(Url(QString::fromWCharArray(L"http://a.com/êîðçèíà")), CrawlerEngine::UserAgentType::GoogleBot, tokenizer)); // "Disallow : /êîðçèíà"
+	EXPECT_EQ(true, baseStrategy.isUrlAllowed(Url("http://a.com/корзина"), CrawlerEngine::UserAgentType::GoogleBot, tokenizer)); // "Disallow : /корзина"
 }
 
 
@@ -159,9 +159,9 @@ TEST(RobotsTxtBaseStrategyTests, NonAsciiSymbolsRobotsTxt)
 	CrawlerEngine::RobotsTxtBaseStrategy baseStrategy;
 
 	EXPECT_EQ(false, baseStrategy.isUrlAllowed(Url("http://a.com/%D0%BA%D0%BE%D1%80%D0%B7%D0%B8%D0%BD%D0%B0"), CrawlerEngine::UserAgentType::GoogleBot, tokenizer));
-	EXPECT_EQ(false, baseStrategy.isUrlAllowed(Url(QString::fromWCharArray(L"http://a.com/êîðçèíà")), CrawlerEngine::UserAgentType::GoogleBot, tokenizer));
-	EXPECT_EQ(false, baseStrategy.isUrlAllowed(Url(QString::fromWCharArray(L"http://a.com/êÎðçèíà")), CrawlerEngine::UserAgentType::GoogleBot, tokenizer));
-	EXPECT_EQ(true, baseStrategy.isUrlAllowed(Url(QString::fromWCharArray(L"http://a.com/êÀðçèíà")), CrawlerEngine::UserAgentType::GoogleBot, tokenizer));
+	EXPECT_EQ(false, baseStrategy.isUrlAllowed(Url(QString("http://a.com/корзина")), CrawlerEngine::UserAgentType::GoogleBot, tokenizer));
+	EXPECT_EQ(false, baseStrategy.isUrlAllowed(Url(QString("http://a.com/кОрзина")), CrawlerEngine::UserAgentType::GoogleBot, tokenizer));
+	EXPECT_EQ(true, baseStrategy.isUrlAllowed(Url(QString("http://a.com/кАрзина")), CrawlerEngine::UserAgentType::GoogleBot, tokenizer));
 }
 
 
