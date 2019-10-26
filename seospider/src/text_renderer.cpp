@@ -32,31 +32,34 @@ void TextRenderer::draw(QPainter* painter, const QStyleOptionViewItem& option, c
 	pixmapPointer->setDevicePixelRatio(devicePixelRatio);
 	pixmapPointer->fill(Qt::transparent);
 
-	QPainter painterPixmap(pixmapPointer);
-
-	const bool isDecorationValid = !viewModel()->pixmap(underlyingIndex).isNull();
-	const int textAlignmentFlags = viewModel()->textAlignment(underlyingIndex);
-	const QFont& font = viewModel()->font(underlyingIndex);
-	const QColor& textColor = viewModel()->textColor(underlyingIndex);
-	const QString paintingText = viewModel()->displayData(underlyingIndex, pixmapRect);
-
-	painterPixmap.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
-	painterPixmap.setFont(font);
-	painterPixmap.setPen(textColor);
-
-	if (isDecorationValid)
+	if (underlyingIndex.isValid())
 	{
-		paintDecorator(&painterPixmap, underlyingIndex, viewModel()->pixmapPosition(underlyingIndex, pixmapRect));
+		QPainter painterPixmap(pixmapPointer);
+
+		const bool isDecorationValid = !viewModel()->pixmap(underlyingIndex).isNull();
+		const int textAlignmentFlags = viewModel()->textAlignment(underlyingIndex);
+		const QFont& font = viewModel()->font(underlyingIndex);
+		const QColor& textColor = viewModel()->textColor(underlyingIndex);
+		const QString paintingText = viewModel()->displayData(underlyingIndex, pixmapRect);
+
+		painterPixmap.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
+		painterPixmap.setFont(font);
+		painterPixmap.setPen(textColor);
+
+		if (isDecorationValid)
+		{
+			paintDecorator(&painterPixmap, underlyingIndex, viewModel()->pixmapPosition(underlyingIndex, pixmapRect));
+		}
+
+		QRect displayDataPosition = viewModel()->displayDataPosition(underlyingIndex, pixmapRect);
+
+		if (devicePixelRatio > 1.0)
+		{
+			displayDataPosition.adjust(0, 0, -displayDataPosition.width() / devicePixelRatio, 0);
+		}
+
+		painterPixmap.drawText(displayDataPosition, textAlignmentFlags, paintingText);
 	}
-
-	QRect displayDataPosition = viewModel()->displayDataPosition(underlyingIndex, pixmapRect);
-
-	if (devicePixelRatio > 1.0)
-	{
-		displayDataPosition.adjust(0, 0, -displayDataPosition.width() / devicePixelRatio, 0);
-	}
-
-	painterPixmap.drawText(displayDataPosition, textAlignmentFlags, paintingText);
 
 	ASSERT(m_cache.insert(underlyingIndex, pixmapPointer));
 	painter->drawPixmap(option.rect, *pixmapPointer);
