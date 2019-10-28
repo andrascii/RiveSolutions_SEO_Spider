@@ -176,12 +176,12 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::defaultColumns(StorageAda
 		}
 
 		case StorageAdapterType::StorageAdapterTypeCanonicalUrl:
+		case StorageAdapterType::StorageAdapterTypeDuplicatedCanonicalUrl:
 		{
 			return QVector<ParsedPageInfo::Column>()
 				<< ParsedPageInfo::Column::UrlColumn
 				<< ParsedPageInfo::Column::CanonicalLinkElementColumn
-				<< ParsedPageInfo::Column::TitleColumn
-				<< ParsedPageInfo::Column::FirstH1Column;
+				<< ParsedPageInfo::Column::TitleColumn;
 		}
 
 		// Title available columns

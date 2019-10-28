@@ -98,6 +98,20 @@ std::map<StorageAdapterType, FilterInfo>& FilterInfoFactory::filters()
 				{ "limitTimeout" }
 			}
 		},
+		{
+			StorageAdapterType::StorageAdapterTypeCanonicalUrl,
+			{
+				QObject::tr("Canonical URLs"),
+				QObject::tr("This filter stores links that have non empty canonical URL.")
+			}
+		},
+		{
+			StorageAdapterType::StorageAdapterTypeDuplicatedCanonicalUrl,
+			{
+				QObject::tr("Duplicated Canonical URLs"),
+				QObject::tr("This filter stores links to web-pages with duplicated canonical URLs.")
+			}
+		},
 		//////////////////////////////////////////////////////////////////////////
 		{
 			StorageAdapterType::StorageAdapterTypeEmptyTitles,

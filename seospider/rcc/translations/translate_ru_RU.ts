@@ -1731,6 +1731,22 @@ You can change this counter in the settings &quot;Settings =&gt; Google Analytic
         <source>Links Count To This Page</source>
         <translation>Кол-во ссылок на страницу</translation>
     </message>
+    <message>
+        <source>Canonical URLs</source>
+        <translation>Канонические URL</translation>
+    </message>
+    <message>
+        <source>This filter stores links that have non empty canonical URL.</source>
+        <translation>Этот фильтр хранит страницы с непустым каноническим URL.</translation>
+    </message>
+    <message>
+        <source>Duplicated Canonical URLs</source>
+        <translation>Дубликаты канонических URL</translation>
+    </message>
+    <message>
+        <source>This filter stores links to web-pages with duplicated canonical URLs.</source>
+        <translation>Этот фильтр хранит страницы с дубликатами каночических URL.</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>

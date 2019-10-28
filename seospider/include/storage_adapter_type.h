@@ -21,6 +21,7 @@ enum class StorageAdapterType
 	StorageAdapterTypeStatus301 = CrawlerEngine::StorageType::Status301StorageType,
 	StorageAdapterTypeTooManyRedirections = CrawlerEngine::StorageType::TooManyRedirectsStorageType,
 	StorageAdapterTypeCanonicalUrl = CrawlerEngine::StorageType::AllCanonicalUrlResourcesStorageType,
+	StorageAdapterTypeDuplicatedCanonicalUrl = CrawlerEngine::StorageType::DuplicatedCanonicalUrlResourcesStorageType,
 	StorageAdapterTypeTimeout = CrawlerEngine::StorageType::TimeoutStorageType,
 
 	StorageAdapterTypeEmptyTitles = CrawlerEngine::StorageType::EmptyTitleUrlStorageType,
@@ -120,6 +121,7 @@ inline QString storageAdapterTypeStringFromEnum(StorageAdapterType type)
 		case StorageAdapterType::StorageAdapterTypeTooManyRedirections: return "TooManyRedirections";
 		case StorageAdapterType::StorageAdapterTypeTimeout: return "Timeout";
 		case StorageAdapterType::StorageAdapterTypeCanonicalUrl: return "CanonicalUrl";
+		case StorageAdapterType::StorageAdapterTypeDuplicatedCanonicalUrl: return "DuplicatedCanonicalUrl";
 
 		case StorageAdapterType::StorageAdapterTypeEmptyTitles: return "EmptyTitles";
 		case StorageAdapterType::StorageAdapterTypeDuplicatedTitles: return "DuplicatedTitles";
