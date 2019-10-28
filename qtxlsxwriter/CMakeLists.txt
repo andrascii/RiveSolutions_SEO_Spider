@@ -64,7 +64,7 @@ if(NOT MSVC)
 endif()
 
 if (UNIX)
-    set_target_properties(QtXlsxWriter PROPERTIES DEBUG_POSTFIX "d" RUNTIME_OUTPUT_DIRECTORY "../seospider/")
+    set_target_properties(QtXlsxWriter PROPERTIES RUNTIME_OUTPUT_DIRECTORY "../seospider/")
 else()
     set_target_properties(QtXlsxWriter PROPERTIES DEBUG_POSTFIX "d" RUNTIME_OUTPUT_DIRECTORY "../seospider/" LINK_FLAGS /DEBUG)
 endif()
@@ -81,6 +81,20 @@ if(BUILD_EXAMPLES)
         COMMAND ${CMAKE_COMMAND}
         -E copy_directory $<CONFIGURATION> ${CMAKE_CURRENT_BINARY_DIR}/examples/xlsx/$<CONFIGURATION>)
 	add_subdirectory(examples/xlsx)
+endif()
+
+# TODO: why RUNTIME+OUTPUT_DIRECTORY doesnt work on Unix?
+# to do the best solutions to deploy this lib
+
+if(APPLE)
+  add_custom_command(
+    TARGET QtXlsxWriter
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E copy
+    ${CMAKE_BUILD_TYPE}/libQtXlsxWriter.dylib
+    "${CMAKE_CURRENT_BINARY_DIR}/../seospider/${CMAKE_BUILD_TYPE}/"
+  )
 endif()
 
 ##

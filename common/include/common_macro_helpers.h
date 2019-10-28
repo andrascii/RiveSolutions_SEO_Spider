@@ -37,7 +37,7 @@ if((condition) == false) \
 #ifdef QT_DEBUG
 #define DEBUG_ASSERT_WITH_DUMP(condition, ...) ASSERT_WITH_DUMP(condition, __VA_ARGS__)
 #else
-#define DEBUG_ASSERT_WITH_DUMP(condition)
+#define DEBUG_ASSERT_WITH_DUMP(condition, ...)
 #endif
 
 #ifdef QT_DEBUG

@@ -83,16 +83,7 @@ add_custom_command(
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy
 	${VMProctectSdkDll}
-	"${CMAKE_CURRENT_BINARY_DIR}/Release"
-)
-
-add_custom_command(
-	TARGET ${AppName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	${VMProctectSdkDll}
-	"${CMAKE_CURRENT_BINARY_DIR}/Debug"
+	"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
 )
 
 add_custom_command(
@@ -101,7 +92,7 @@ add_custom_command(
 	COMMAND ${CMAKE_COMMAND}
 	ARGS -E copy
 	${VMProtectDebugLicenseFile}
-	"${CMAKE_CURRENT_BINARY_DIR}/Debug"
+	"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
 )
 
 add_definitions(

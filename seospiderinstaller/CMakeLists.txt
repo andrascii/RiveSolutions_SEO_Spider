@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
 project(${SeoSpiderInstallerName})
 
-set(ReleasePackageDir ../seospider/Release)
+set(ReleasePackageDir ../seospider/${CMAKE_BUILD_TYPE})
 set(PackageFileList)
 set(TargetInstallerPath installer)
 set(TargetPackagePath ${TargetInstallerPath}/packages/com.rivesolutions.seospider)
@@ -12,19 +12,39 @@ set(PackageMetaDir ../../seospiderinstaller/packages/com.rivesolutions.seospider
 
 get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
-find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
+
+if(APPLE)
+	find_program(DEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
+elseif(WIN32)
+	find_program(DEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
+endif()
 
 message("qmake path: ${_qmake_executable}")
 message("Qt binary directory: ${_qt_bin_dir}")
-message("windeployqt utility path: ${WINDEPLOYQT_EXECUTABLE}")
+message("deployqt utility path: ${DEPLOYQT_EXECUTABLE}")
 
 set(QTIFW_BIN_DIR $ENV{IFW_BIN_DIR})
 find_program(BinaryCreator_executable binarycreator HINTS ${QTIFW_BIN_DIR})
 find_program(RepoGen_executable repogen HINTS ${QTIFW_BIN_DIR})
 
-#message(${QTIFW_BIN_DIR})
+message(${QTIFW_BIN_DIR})
 
-list(APPEND PackageFileList 
+if(APPLE)
+
+	list(APPEND PackageFileList 
+		${ReleasePackageDir}/seospider
+		${ReleasePackageDir}/libQtXlsxWriter.dylib
+	)
+
+	if(${ENABLE_SCREENSHOTS})
+		list(APPEND PackageFileList 
+			${ReleasePackageDir}/screenshotmaker
+		)
+	endif()
+
+elseif()
+
+	list(APPEND PackageFileList 
 		${ReleasePackageDir}/seospider.exe
 		${ReleasePackageDir}/seospider.pdb
 		${ReleasePackageDir}/seospiderservice.exe
@@ -33,13 +53,15 @@ list(APPEND PackageFileList
 		${ReleasePackageDir}/seospiderserviceapi.pdb
 		${ReleasePackageDir}/QtXlsxWriter.dll
 		${ReleasePackageDir}/QtXlsxWriter.pdb
-)
+	)
 
-if(${ENABLE_SCREENSHOTS})
-	list(APPEND PackageFileList 
+	if(${ENABLE_SCREENSHOTS})
+		list(APPEND PackageFileList 
 			${ReleasePackageDir}/screenshotmaker.exe
 			${ReleasePackageDir}/screenshotmaker.pdb
-	)
+		)
+	endif()
+
 endif()
 
 file(GLOB_RECURSE OpenSslDllList "$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/*.dll")
@@ -57,7 +79,6 @@ configure_file(
 	${InstallerConfigDir}/config.xml
 )
 
-#add_custom_target(${SeoSpiderInstallerName} ALL)
 add_custom_target(${SeoSpiderInstallerName})
 
 add_custom_command(
@@ -103,14 +124,17 @@ add_custom_command(
 	${TargetInstallerPath}/config
 )
 
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	${OpenSslDllList}
-	${TargetPackagePath}/data/
-)
+# Will HTTPS work?
+if(NOT APPLE)
+	add_custom_command(
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		${OpenSslDllList}
+		${TargetPackagePath}/data/
+	)
+endif()
 
 add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
@@ -139,64 +163,91 @@ add_custom_command(
 	${TargetPackagePath}/meta/
 )
 
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-    COMMAND "${WINDEPLOYQT_EXECUTABLE}"
-          --release --no-translations --compiler-runtime "${TargetPackagePath}/data/"
-    COMMENT "Running windeployqt..."
-)
-
-if("$ENV{SS_PLATFORM}" STREQUAL "win32")
-	set(vc_redist "vc_redist.x86.exe")	
-elseif("$ENV{SS_PLATFORM}" STREQUAL "x64")
-	set(vc_redist "vc_redist.x64.exe")
-endif()	
-
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName}
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E rename 
-	${TargetPackagePath}/data/${vc_redist}
-	${TargetPackagePath}/data/vcredist.exe
-)
-
-
-if(${RepoGen_executable})
-	
-elseif(NOT ${RepoGen_executable})
+if(APPLE)
 	add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-    COMMAND "${RepoGen_executable}"
-           -p ${TargetInstallerPath}/packages --update ${TargetInstallerPath}/repository
-    COMMENT "Running repogen..."
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND "${DEPLOYQT_EXECUTABLE}"
+			"${TargetPackagePath}/data/"
+		COMMENT "Running deployqt..."
+	)
+else()
+	add_custom_command(
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND "${DEPLOYQT_EXECUTABLE}"
+			--release --no-translations --compiler-runtime "${TargetPackagePath}/data/"
+		COMMENT "Running deployqt..."
 	)
 endif()
 
-if(${BinaryCreator_executable})
+if (NOT APPLE)
+	if("$ENV{SS_PLATFORM}" STREQUAL "win32")
+		set(vc_redist "vc_redist.x86.exe")	
+	elseif("$ENV{SS_PLATFORM}" STREQUAL "x64")
+		set(vc_redist "vc_redist.x64.exe")
+	endif()	
 
-elseif(NOT ${BinaryCreator_executable})
 	add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-    COMMAND "${BinaryCreator_executable}"
-           -f -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller-offline.exe
-    COMMENT "Running binarycreator..."
-	)	
-	
-	add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-    COMMAND "${BinaryCreator_executable}"
-           -n -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller-online.exe
-    COMMENT "Running binarycreator..."
-	)	
+		TARGET ${SeoSpiderInstallerName}
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E rename 
+		${TargetPackagePath}/data/${vc_redist}
+		${TargetPackagePath}/data/vcredist.exe
+	)
 endif()
 
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-    COMMAND start explorer.exe /n,/e,/select, ${TargetInstallerPath}\\seospiderinstaller-offline.exe
-)
+if(NOT ${RepoGen_executable})
+	add_custom_command(
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND "${RepoGen_executable}"
+			-p ${TargetInstallerPath}/packages --update ${TargetInstallerPath}/repository
+		COMMENT "Running repogen..."
+	)
+endif()
+
+if(NOT ${BinaryCreator_executable})
+	if(APPLE)
+		add_custom_command(
+			TARGET ${SeoSpiderInstallerName} 
+			POST_BUILD
+			COMMAND "${BinaryCreator_executable}"
+				-f -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller-offline.dmg
+			COMMENT "Running binarycreator..."
+		)	
+		
+		add_custom_command(
+			TARGET ${SeoSpiderInstallerName} 
+			POST_BUILD
+			COMMAND "${BinaryCreator_executable}"
+				-n -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller-online.dmg
+			COMMENT "Running binarycreator..."
+		)
+	else()
+		add_custom_command(
+			TARGET ${SeoSpiderInstallerName} 
+			POST_BUILD
+			COMMAND "${BinaryCreator_executable}"
+				-f -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller-offline.exe
+			COMMENT "Running binarycreator..."
+		)	
+		
+		add_custom_command(
+			TARGET ${SeoSpiderInstallerName} 
+			POST_BUILD
+			COMMAND "${BinaryCreator_executable}"
+				-n -c ${TargetInstallerPath}/config/config.xml -p ${TargetInstallerPath}/packages ${TargetInstallerPath}/seospiderinstaller-online.exe
+			COMMENT "Running binarycreator..."
+		)
+	endif()
+endif()
+
+if(NOT APPLE)
+	add_custom_command(
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND start explorer.exe /n,/e,/select, ${TargetInstallerPath}\\seospiderinstaller-offline.exe
+	)
+endif()

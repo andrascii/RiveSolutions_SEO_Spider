@@ -161,7 +161,8 @@ add_subdirectory(${QUazipLibName})
 
 if(NOT UNIX)
     add_subdirectory(${GoogleTestLibName})
-    add_subdirectory(${SeoSpiderInstallerName})
 endif()
+
+add_subdirectory(${SeoSpiderInstallerName})
 
 add_subdirectory(${VersionProjectName})
