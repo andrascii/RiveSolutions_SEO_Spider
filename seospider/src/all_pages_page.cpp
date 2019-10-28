@@ -46,6 +46,7 @@ AllPagesPage::AllPagesPage(QWidget* parent)
 
 	m_pageDataWidget->setPageDataType(PageDataWidget::LinksOnThisPageType);
 	m_pageDataWidget->setPageDataType(PageDataWidget::LinksToThisPageType);
+	m_pageDataWidget->setPageDataType(PageDataWidget::LinksWithSameCanonicalURLType);
 	m_pageDataWidget->setPageDataType(PageDataWidget::ServerResponseForPageType);
 
 	QLabel* noSearchResultsLabel = new QLabel(this);

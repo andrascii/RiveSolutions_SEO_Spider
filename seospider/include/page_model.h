@@ -28,6 +28,7 @@ public:
 
 signals:
 	virtual void internalDataChanged() override;
+	virtual void storageAdapterChanged() override;
 
 private slots:
 	void onParsedPageInfoAdded(int rowIndex);

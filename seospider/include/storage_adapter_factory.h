@@ -14,7 +14,7 @@ class StorageAdapterFactory
 {
 public:
 	IStorageAdapter* createParsedPageInfoStorage(StorageAdapterType type, CrawlerEngine::SequencedDataCollection* sequencedDataCollection) const;
-	IStorageAdapter* createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer);
+	IStorageAdapter* createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer, CrawlerEngine::SequencedDataCollection* sequencedDataCollection);
 
 	static QVector<ParsedPageInfo::Column> parsedPageAllColumns();
 	static QVector<ParsedPageInfo::Column> defaultColumns(StorageAdapterType type);

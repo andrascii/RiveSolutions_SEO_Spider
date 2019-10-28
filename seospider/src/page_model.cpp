@@ -82,6 +82,7 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 	endResetModel();
 
 	emit internalDataChanged();
+	emit storageAdapterChanged();
 
 	if (oldStorageAdapter)
 	{
@@ -147,6 +148,11 @@ QVariant PageModel::data(const QModelIndex& index, int role) const
 	if (role == AbstractTableModel::resourceTypeRole)
 	{
 		return static_cast<int>(storageAdapter()->resourceType(validatedIndex));
+	}
+
+	if (role == AbstractTableModel::canonicalUrlRole)
+	{
+		return storageAdapter()->canonicalUrl(validatedIndex);
 	}
 
 	switch (role)

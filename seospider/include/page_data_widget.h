@@ -6,6 +6,7 @@ namespace SeoSpider
 {
 
 class PageModel;
+class TableView;
 
 class PageDataWidget : public QFrame
 {
@@ -17,6 +18,7 @@ public:
 		BeginType,
 		LinksToThisPageType,
 		LinksOnThisPageType,
+		LinksWithSameCanonicalURLType,
 		ImagesOnThisPageType,
 		ServerResponseForPageType,
 		EndType,
@@ -56,6 +58,7 @@ private:
 	QTextEdit* m_httpResponseLabel;
 
 	QMap<PageDataType, PageModel*> m_models;
+	QMap<PageDataType, TableView*> m_tableViews;
 	QMap<PageDataType, int> m_pageIndices;
 	QMap<PageDataType, QStackedWidget*> m_stackedWidgets;
 	QMap<QWidget*, QWidget*> m_filterResourceTypeWidgets;

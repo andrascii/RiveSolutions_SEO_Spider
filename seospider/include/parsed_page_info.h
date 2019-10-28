@@ -10,6 +10,7 @@ enum class PageLinkContext
 {
 	LinksOnThisPage,
 	LinksToThisPage,
+	LinksWithSameCanonicalURL,
 	ImagesOnThisPage
 };
 
