@@ -42,6 +42,7 @@ public:
 public slots:
 	void adjustColumnSize();
 	void initSpans();
+	void initColumns();
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* event) override;

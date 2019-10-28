@@ -23,6 +23,12 @@ int TableProxyModel::acceptedResources() const
 	return m_acceptedResources;
 }
 
+void TableProxyModel::setAcceptedCanonicalUrl(const QString& acceptedCanonicalUrl)
+{
+	m_acceptedCanonicalUrl = acceptedCanonicalUrl;
+	setFilterKeyColumn(filterKeyColumn());
+}
+
 bool TableProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
 	const QModelIndex index = sourceModel()->index(sourceRow, 1);
@@ -31,6 +37,16 @@ bool TableProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceP
 	{
 		return false;
 	}
+
+	if (!m_acceptedCanonicalUrl.isEmpty())
+	{
+		const QString canonicalUrl = sourceModel()->data(index, AbstractTableModel::canonicalUrlRole).toString();
+		if (canonicalUrl != m_acceptedCanonicalUrl)
+		{
+			return false;
+		}
+	}
+
 	return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
 }
 }

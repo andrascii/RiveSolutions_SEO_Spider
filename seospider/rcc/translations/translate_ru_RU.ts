@@ -302,15 +302,15 @@ Please, be sure that you entered a valid address</source>
     <name>DataExtractionSettingsWidget</name>
     <message>
         <source>Data Extraction Settings</source>
-        <translation>Настройки Data Extraction</translation>
+        <translation type="vanished">Настройки Data Extraction</translation>
     </message>
     <message>
         <source>Type in the search rules according to specified rules</source>
-        <translation>Введите правило поиска в соответствии с выбранным типом поиска</translation>
+        <translation type="vanished">Введите правило поиска в соответствии с выбранным типом поиска</translation>
     </message>
     <message>
         <source>Extractor name</source>
-        <translation>Имя экстрактора</translation>
+        <translation type="vanished">Имя экстрактора</translation>
     </message>
 </context>
 <context>
@@ -1731,6 +1731,22 @@ You can change this counter in the settings &quot;Settings =&gt; Google Analytic
         <source>Links Count To This Page</source>
         <translation>Кол-во ссылок на страницу</translation>
     </message>
+    <message>
+        <source>Canonical URLs</source>
+        <translation>Канонические URL</translation>
+    </message>
+    <message>
+        <source>This filter stores links that have non empty canonical URL.</source>
+        <translation>Этот фильтр хранит страницы с непустым каноническим URL.</translation>
+    </message>
+    <message>
+        <source>Duplicated Canonical URLs</source>
+        <translation>Дубликаты канонических URL</translation>
+    </message>
+    <message>
+        <source>This filter stores links to web-pages with duplicated canonical URLs.</source>
+        <translation>Этот фильтр хранит страницы с дубликатами каночических URL.</translation>
+    </message>
 </context>
 <context>
     <name>RegisterProductDialog</name>
@@ -1895,41 +1911,37 @@ You can change this counter in the settings &quot;Settings =&gt; Google Analytic
     <name>SeoSpider::DataExtractionColumns</name>
     <message>
         <source>Extractor %1</source>
-        <translation>Экстрактор %1</translation>
+        <translation type="vanished">Экстрактор %1</translation>
     </message>
 </context>
 <context>
     <name>SeoSpider::DataExtractionPage</name>
     <message>
         <source>Export selected filter data to .xlsx file</source>
-        <translation type="unfinished">Эскпортировать данные выбранного фильтра в excel</translation>
-    </message>
-    <message>
-        <source>Data Extraction</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Эскпортировать данные выбранного фильтра в excel</translation>
     </message>
 </context>
 <context>
     <name>SeoSpider::DataExtractionSettingsWidget</name>
     <message>
         <source>Extract HTML Element</source>
-        <translation>Извлечь HTML элемент</translation>
+        <translation type="vanished">Извлечь HTML элемент</translation>
     </message>
     <message>
         <source>Extract Inner HTML</source>
-        <translation>Извлечь HTML внутри элемента</translation>
+        <translation type="vanished">Извлечь HTML внутри элемента</translation>
     </message>
     <message>
         <source>Extract Text</source>
-        <translation>Извлекать только текст</translation>
+        <translation type="vanished">Извлекать только текст</translation>
     </message>
     <message>
         <source>Extract Function Value</source>
-        <translation>Извлекать Function Value</translation>
+        <translation type="vanished">Извлекать Function Value</translation>
     </message>
     <message>
         <source>Inactive</source>
-        <translation>Неактивный</translation>
+        <translation type="vanished">Неактивный</translation>
     </message>
 </context>
 <context>
@@ -2238,7 +2250,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>Data Extraction Settings</source>
-        <translation>Настройки Data Extraction</translation>
+        <translation type="vanished">Настройки Data Extraction</translation>
     </message>
 </context>
 <context>
@@ -2288,6 +2300,10 @@ please stop crawling and try again</source>
     <message>
         <source>HTTP Response</source>
         <translation>HTTP ответ</translation>
+    </message>
+    <message>
+        <source>Canonical URLs</source>
+        <translation>Канонические URL</translation>
     </message>
 </context>
 <context>

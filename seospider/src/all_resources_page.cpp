@@ -17,6 +17,7 @@ AllResourcesPage::AllResourcesPage(QWidget* parent)
 	m_pageDataWidget = new PageDataWidget(this);
 	m_pageDataWidget->setPageDataType(PageDataWidget::LinksOnThisPageType);
 	m_pageDataWidget->setPageDataType(PageDataWidget::LinksToThisPageType);
+	m_pageDataWidget->setPageDataType(PageDataWidget::LinksWithSameCanonicalURLType);
 	m_pageDataWidget->setPageDataType(PageDataWidget::ServerResponseForPageType);
 
 	websiteDataWidget()->setPageDataWidget(m_pageDataWidget);

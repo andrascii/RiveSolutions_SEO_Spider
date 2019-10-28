@@ -25,6 +25,7 @@ public:
 	virtual QVariant item(const QModelIndex& index) const noexcept = 0;
 	virtual ItemType itemType(const QModelIndex& index) const noexcept = 0;
 	virtual RowResourceType resourceType(const QModelIndex& index) const noexcept = 0;
+	virtual QString canonicalUrl(const QModelIndex& index) const noexcept = 0;
 	virtual QString columnDescription(int columnIndex) const noexcept = 0;
 	virtual ParsedPageInfoPtr parsedPageInfoPtr(const QModelIndex& index) const noexcept = 0;
 	virtual QObject* qobject() noexcept = 0;
