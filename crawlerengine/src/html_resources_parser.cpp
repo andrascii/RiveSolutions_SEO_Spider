@@ -52,7 +52,7 @@ void HtmlResourcesParser::parse(const ResponseHeaders& headers, ParsedPagePtr& p
 			continue;
 		}
 
-		if (linkInfo.resourceSource == ResourceSource::SourceTagLinkRelCanonical)
+		if (linkInfo.resourceSource == ResourceSource::SourceTagLinkRelCanonical && !page->isThisExternalPage)
 		{
 			page->canonicalUrl = linkInfo.url;
 		}
