@@ -2130,7 +2130,7 @@ please stop crawling and try again</source>
     </message>
     <message>
         <source>About</source>
-        <translation>О проргамме</translation>
+        <translation>О программе</translation>
     </message>
     <message>
         <source>Start Crawler</source>
