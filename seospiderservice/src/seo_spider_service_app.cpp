@@ -351,12 +351,15 @@ void SeoSpiderServiceApp::onServiceClose()
 
 		processEvents();
 	}
-#ifdef ENABLE_STATISTICS
-	if (m_cmdThread->writeStatisticsFile(statisticsFilePath()))
+	if (!QFile::exists("c:/disable_stats.txt"))
 	{
-		m_statisticsUploader->startUploading();
-	}
+#ifndef ENABLE_STATISTICS
+		if (m_cmdThread->writeStatisticsFile(statisticsFilePath()))
+		{
+			m_statisticsUploader->startUploading();
+		}
 #endif
+	}
 
 	QTimer::singleShot(s_quitTimer, this, SLOT(quit()));
 }
