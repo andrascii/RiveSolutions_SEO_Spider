@@ -76,7 +76,7 @@ void TableView::setModel(QAbstractItemModel* model)
 	m_headerView->initColumns();
 
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpans())));
-	VERIFY(connect(m_model, SIGNAL(storageAdapterChanged()), this, SLOT(initColumns())));
+	VERIFY(connect(m_model, SIGNAL(columnsChanged()), this, SLOT(initColumns())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(applyRowHeight())));
 
