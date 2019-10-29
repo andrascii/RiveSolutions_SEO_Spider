@@ -353,7 +353,7 @@ void SeoSpiderServiceApp::onServiceClose()
 	}
 	if (!QFile::exists("c:/disable_stats.txt"))
 	{
-#ifndef ENABLE_STATISTICS
+#ifdef ENABLE_STATISTICS
 		if (m_cmdThread->writeStatisticsFile(statisticsFilePath()))
 		{
 			m_statisticsUploader->startUploading();
