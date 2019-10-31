@@ -1,51 +1,13 @@
-function Component()
-{	
-	//
-	// TODO: remake this logic when new version of QTIF released
-	//
+function isWindows()
+{
+	return systemInfo.productType === "windows";
+}
 
-	//if(isAlreadyInstalled() && needUpdate())
-	//{
-	//	if(QMessageBox["question"]("Already installed", "Installer", 
-	//	"Installer found older version of Seo Spider installed.<br> Do you want to update program?", 
-	//	QMessageBox.Ok | QMessageBox.No) == QMessageBox.No)
-	//	{
-	//		abortInstallation();
-	//		
-	//		return;
-	//	}
-	//	else
-	//	{	
-	//		var widget = gui.pageById(QInstaller.Introduction)
-	//		var installPath = installer.value("HKCU\\Software\\RiveSolutions\\Seo Spider\\MetaData\\InstallPath");	
-	//		
-	//		if(widget)
-	//		{
-	//			widget.MessageLabel.setText("Installer found older version of Seo Spider installed.");
-	//		}
-	//		
-	//		installer.setInstallerBaseBinary(installPath + "/Uninstall SeoSpider.exe")
-	//		installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
-	//		installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
-	//		
-	//		gui.clickButton(buttons.NextButton);
-	//	}
-	//}		
-	//
-	//if(isAlreadyInstalled() && (!needUpdate()))
-	//{
-	//	QMessageBox["information"]("Already installed", "Installer", 
-	//	"Installer found newer or equal verion of SeoSpider.<br> You must delete installed program for continue.", 
-	//	QMessageBox.Ok)
-	//	
-	//	abortInstallation();
-	//	
-	//	return;
-	//}
-	
+function Component()
+{
 	installer.setDefaultPageVisible(QInstaller.LicenseCheck, false);
 	
-	if(isAlreadyInstalled())
+	if(isAlreadyInstalled() /*&& !needUpdate()*/) // qt installer framework is not supporting offline updates for now, see https://bugreports.qt.io/browse/QTIFW-573
 	{
 		QMessageBox["information"]("Already installed", "Installer", 
 		"Installer found existing SEO Spider installation.<br> You must delete installed program for continue.", 
@@ -56,26 +18,30 @@ function Component()
 		return;
 	}
 
-	var programFiles = installer.environmentVariable("ProgramFiles");
-	if (programFiles != "") {
-		installer.setValue("TargetDir", programFiles + "/Rive Solutions/SEO Spider");
+	if (isWindows())
+	{
+		var programFiles = installer.environmentVariable("ProgramFiles");
+		if (programFiles != "") {
+			installer.setValue("TargetDir", programFiles + "/Rive Solutions/SEO Spider");
+			installer.setValue("RunProgram", programFiles + "/Rive Solutions/SEO Spider/seospider.exe");
+		}
 	}
 	
 	component.loaded.connect(this, addCreateMenuDirectory);
 	component.loaded.connect(this, addCreateDesktopShortcut);
-    component.unusualFileType = "ssproj";
+	component.unusualFileType = "ssproj";
 	
 }
 
 function abortInstallation()
 {
 	installer.setValue("FinishedText", "<font color='red' size=3>The installer was quit.</font>");
-    //installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
-    //installer.setDefaultPageVisible(QInstaller.ReadyForInstallation, false);
-    //installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
-    //installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
-    //installer.setDefaultPageVisible(QInstaller.PerformInstallation, false);
-    //installer.setDefaultPageVisible(QInstaller.LicenseCheck, false);
+	//installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
+	//installer.setDefaultPageVisible(QInstaller.ReadyForInstallation, false);
+	//installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
+	//installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
+	//installer.setDefaultPageVisible(QInstaller.PerformInstallation, false);
+	//installer.setDefaultPageVisible(QInstaller.LicenseCheck, false);
 	var widget = gui.pageById(QInstaller.InstallationFinished);
 		
 	if(widget)
@@ -136,7 +102,10 @@ addCreateDesktopShortcut = function()
 
 function installVCRedist()
 {
-	component.addOperation("Execute", "@TargetDir@/vcredist.exe", "/quiet", "/norestart");
+	if (isWindows())
+	{
+		component.addOperation("Execute", "@TargetDir@/vcredist.exe", "/quiet", "/norestart");
+	}
 }
 
 function addRegistryKey(key, value, data) 
@@ -153,18 +122,26 @@ function addRegistryDefaultKey(key, data)
 
 function registerCustomURI()
 {
-	// only for windows
-	addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider", "SeoSpider protocol");
-	addRegistryKey("HKEY_CLASSES_ROOT\\seospider", "URL Protocol", "");
-	addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider\\DefaultIcon", "seospider.exe,1");
-	addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider\\shell\\open\\command", "\"@TargetDir@\\seospider.exe\" \"%1\"");
+	if (isWindows())
+	{
+		// only for windows
+		addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider", "SeoSpider protocol");
+		addRegistryKey("HKEY_CLASSES_ROOT\\seospider", "URL Protocol", "");
+		addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider\\DefaultIcon", "seospider.exe,1");
+		addRegistryDefaultKey("HKEY_CLASSES_ROOT\\seospider\\shell\\open\\command", "\"@TargetDir@\\seospider.exe\" \"%1\"");
+	}
 }
 
 function createMenuDirectory()
 {
+	if (!isWindows())
+	{
+		return;
+	}
+
 	var dontCreateMenuDirChecked = component.userInterface("CreateMenuDirCheckBoxForm").CreateMenuDirCheckBox.checked;
 	
-	if(systemInfo.productType === "windows" && (!dontCreateMenuDirChecked))
+	if(!dontCreateMenuDirChecked)
 	{
 		component.addOperation(
 			"CreateShortcut", 
@@ -188,9 +165,13 @@ function createMenuDirectory()
 
 function createDesktopShortcut()
 {
+	if (!isWindows())
+	{
+		return;
+	}
 	var isCreateDesktopIconChecked = component.userInterface("CreateDesktopIconCheckBoxForm").CreateDesktopIconCheckBox.checked;
 	
-	if(systemInfo.productType === "windows" && isCreateDesktopIconChecked)
+	if(isCreateDesktopIconChecked)
 	{
 		component.addOperation(
 			"CreateShortcut", 
@@ -206,7 +187,7 @@ function createDesktopShortcut()
 // Registering new file type
 function registerSXRFileType()
 {
-	if (installer.value("os") === "win") 
+	if (isWindows()) 
 	{
         var seoSpiderPath =  "@TargetDir@\\seospider.exe";
         component.addOperation("RegisterFileType",
@@ -226,12 +207,20 @@ function isAlreadyInstalled()
 		return false;
 	}
 	
-	var version = installer.value("HKCU\\Software\\RiveSolutions\\SEO Spider\\MetaData\\Version");
-	
-	if(version)
+	if (isWindows())
 	{
-		return true;
+		var version = installer.value("HKCU\\Software\\RiveSolutions\\SEO Spider\\MetaData\\Version");
+	
+		if(version)
+		{
+			return true;
+		}
+	} else {
+		// mac
+		// TODO: implement for mac os
+		return false;
 	}
+	
 	
 	return false;
 }
@@ -239,26 +228,20 @@ function isAlreadyInstalled()
 // Check if newer version is already installed
 function needUpdate()
 {
-	var newVersion = component.value("Version");
-	var savedVersion = installer.value("HKCU\\Software\\RiveSolutions\\SEO Spider\\MetaData\\Version");
-
-	if(savedVersion)
+	if (isWindows())
 	{
-		savedVersion.trim();
-		
-		if(compareVersions(savedVersion, newVersion) > 0)
+		var newVersion = component.value("Version");
+		var savedVersion = installer.value("HKCU\\Software\\RiveSolutions\\SEO Spider\\MetaData\\Version");
+
+		if(savedVersion)
 		{
-			return false;
-		}
-		if(compareVersions(savedVersion, newVersion) < 0)
-		{
-			return true;
-		}
-		if(compareVersions(savedVersion, newVersion) == 0)
-		{
-			return false;
-		}
+			savedVersion.trim();
+
+			return compareVersions(savedVersion, newVersion) < 0;
+		}	
 	}
+
+	// TODO: add checks for mac os
 	
 	return true;
 }
@@ -266,39 +249,23 @@ function needUpdate()
 function compareVersions(localVersion, remoteVersion)
 {
 	var localVersionList = localVersion.split(".");
-	var localMajor = localVersionList[0];
-	var localMinor = localVersionList[1];
-	var localMaitenance = localVersionList[2];
+	var localMajor = parseInt(localVersionList[0]);
+	var localMinor = parseInt(localVersionList[1]);
+	var localMaitenance = parseInt(localVersionList[2]);
 	
 	var remoteVersionList = remoteVersion.split(".");
-	var remoteMajor = remoteVersionList[0];
-	var remoteMinor = remoteVersionList[1];
-	var remoteMaitenance = remoteVersionList[2];
+	var remoteMajor = parseInt(remoteVersionList[0]);
+	var remoteMinor = parseInt(remoteVersionList[1]);
+	var remoteMaitenance = parseInt(remoteVersionList[2]);
+
+	var local = localMajor * 1000000 + localMinor * 1000 + localMaitenance;
+	var remote = remoteMajor * 1000000 + remoteMinor * 1000 + remoteMaitenance;
 	
-	if(localMajor > remoteMajor)
-	{
+	if (local > remote) {
 		return 1;
 	}
-	if(localMinor > remoteMinor)
-	{
-		return 1;
-	}
-	if(localMaitenance > remoteMaitenance)
-	{
-		return 1;
-	}
-		
-	//--------------------------------------------------------------------------------------------
-	if(localMajor < remoteMajor)
-	{
-		return -1;
-	}
-	if(localMinor < remoteMinor)
-	{
-		return -1;
-	}
-	if(localMaitenance < remoteMaitenance)
-	{
+
+	if (local < remote) {
 		return -1;
 	}
 
@@ -311,10 +278,7 @@ Component.prototype.createOperations = function()
 
 	registerProgram();
 	
-	try {
-		installVCRedist();
-	} catch(e) {
-	}
+	installVCRedist();
 
 	registerCustomURI();
 	
