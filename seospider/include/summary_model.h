@@ -32,6 +32,7 @@ public:
 
 signals:
 	virtual void internalDataChanged() override;
+	virtual void columnsChanged() override;
 
 private slots:
 	void formActualUpdateDataSignal(int row, int column, Qt::ItemDataRole role);

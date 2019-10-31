@@ -75,7 +75,19 @@ void PageDataWidget::setParsedPageInfo(const ParsedPageInfoPtr& page)
 
 	for(auto beg = m_models.begin(); beg != m_models.end(); ++beg)
 	{
-		beg.value()->setStorageAdapter(factory->createPageLinksStorage(mapType(beg.key()), page));
+		IStorageAdapter* adapter = factory->createPageLinksStorage(mapType(beg.key()), page, theApp->sequencedDataCollection());
+		beg.value()->setStorageAdapter(adapter);
+
+		if (beg.key() == PageDataType::LinksWithSameCanonicalURLType)
+		{
+			TableView* tableView = m_tableViews[beg.key()];
+			TableProxyModel* filterProxyModel = qobject_cast<TableProxyModel*>(tableView->model());
+			ASSERT(filterProxyModel);
+			// TODO: make it more clever
+			const QString canonicalURL = page->itemValue(ParsedPageInfo::Column::CanonicalLinkElementColumn).toString();
+			const QString searchValue = !canonicalURL.isEmpty() ? canonicalURL : "non_existent_cheme://";
+			filterProxyModel->setAcceptedCanonicalUrl(searchValue);
+		}
 	}
 
 	setPageServerResponse(page);
@@ -112,6 +124,7 @@ void PageDataWidget::setPageDataType(PageDataType pageDataType)
 	}
 
 	TableView* tableView = new TableView(tabStackedWidget, false, true, false);
+	m_tableViews[pageDataType] = tableView;
 	tableView->setObjectName("TableView");
 	tableView->setContentsMargins(0, 0, 0, 0);
 	tableView->setMinimumWidth(0);
@@ -235,6 +248,10 @@ QString PageDataWidget::tabDescription(PageDataType pageDataType)
 		{
 			return tr("Links On This Page");
 		}
+		case LinksWithSameCanonicalURLType:
+		{
+			return tr("Canonical URLs");
+		}
 		case ImagesOnThisPageType:
 		{
 			return tr("Images On This Page");
@@ -263,6 +280,10 @@ PageLinkContext PageDataWidget::mapType(PageDataType pageDataType) noexcept
 		case LinksOnThisPageType:
 		{
 			return PageLinkContext::LinksOnThisPage;
+		}
+		case LinksWithSameCanonicalURLType:
+		{
+			return PageLinkContext::LinksWithSameCanonicalURL;
 		}
 		case ImagesOnThisPageType:
 		{

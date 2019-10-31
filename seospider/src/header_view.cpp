@@ -74,7 +74,7 @@ HeaderView::HeaderView(QWidget* parent, bool showCustomizeColumnsButton)
     , m_tableView(qobject_cast<QTableView*>(parent))
 {
 	setSectionsClickable(true);
-	// setFirstSectionMovable(false); // available from 5.11
+	// setFirstSectionMovable(false);
 
 	if (showCustomizeColumnsButton)
 	{

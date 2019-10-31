@@ -109,6 +109,13 @@ RowResourceType PageLinksStorageAdapter::resourceType(const QModelIndex& index) 
 	return m_parsedPageInfo->resourceType(m_context, index.row());
 }
 
+QString PageLinksStorageAdapter::canonicalUrl(const QModelIndex& index) const noexcept
+{
+	Q_UNUSED(index);
+	static QString s_empty;
+	return s_empty;
+}
+
 ParsedPageInfoPtr PageLinksStorageAdapter::parsedPageInfoPtr(const QModelIndex& index) const noexcept
 {
 	Q_UNUSED(index);

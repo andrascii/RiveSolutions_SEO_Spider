@@ -26,8 +26,14 @@ IStorageAdapter* StorageAdapterFactory::createParsedPageInfoStorage(StorageAdapt
 }
 
 
-IStorageAdapter* StorageAdapterFactory::createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer)
+IStorageAdapter* StorageAdapterFactory::createPageLinksStorage(PageLinkContext type, ParsedPageInfoPtr associatedPageRawInfoPointer, CrawlerEngine::SequencedDataCollection* sequencedDataCollection)
 {
+	if (type == PageLinkContext::LinksWithSameCanonicalURL)
+	{
+		IStorageAdapter* adapter = createParsedPageInfoStorage(StorageAdapterType::StorageAdapterTypeCanonicalUrl, sequencedDataCollection);
+		return adapter;
+	}
+
 	IPageLinksStorageAdapter* storageAdapter = new PageLinksStorageAdapter(associatedPageRawInfoPointer, type);;
 
 	setupAvailablePageLinkColumns(storageAdapter);
@@ -167,6 +173,15 @@ QVector<ParsedPageInfo::Column> StorageAdapterFactory::defaultColumns(StorageAda
 				<< ParsedPageInfo::Column::UrlLengthColumn
 				<< ParsedPageInfo::Column::StatusCodeColumn
 				<< ParsedPageInfo::Column::SchemeColumn;
+		}
+
+		case StorageAdapterType::StorageAdapterTypeCanonicalUrl:
+		case StorageAdapterType::StorageAdapterTypeDuplicatedCanonicalUrl:
+		{
+			return QVector<ParsedPageInfo::Column>()
+				<< ParsedPageInfo::Column::UrlColumn
+				<< ParsedPageInfo::Column::CanonicalLinkElementColumn
+				<< ParsedPageInfo::Column::TitleColumn;
 		}
 
 		// Title available columns

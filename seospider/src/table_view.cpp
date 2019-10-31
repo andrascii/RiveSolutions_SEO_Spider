@@ -76,6 +76,7 @@ void TableView::setModel(QAbstractItemModel* model)
 	m_headerView->initColumns();
 
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(initSpans())));
+	VERIFY(connect(m_model, SIGNAL(columnsChanged()), this, SLOT(initColumns())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(adjustColumnSize())));
 	VERIFY(connect(m_model, SIGNAL(internalDataChanged()), this, SLOT(applyRowHeight())));
 
@@ -354,6 +355,11 @@ void TableView::initSpans()
 			setSpan(row, column, colSpan.height(), colSpan.width());
 		}
 	}
+}
+
+void SeoSpider::TableView::initColumns()
+{
+	m_headerView->initColumns();
 }
 
 int TableView::viewportRowCapacity() const noexcept

@@ -30,6 +30,8 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			descriptions.push_back(DCStorageDescription{ StorageType::Status302StorageType, QObject::tr("Moved Temporarily 302") });
 			descriptions.push_back(DCStorageDescription{ StorageType::Status301StorageType, QObject::tr("Moved Permanently 301") });
 			descriptions.push_back(DCStorageDescription{ StorageType::TooManyRedirectsStorageType, QObject::tr("Too Many Redirections") });
+			descriptions.push_back(DCStorageDescription{ StorageType::AllCanonicalUrlResourcesStorageType, QObject::tr("Canonical URLs") });
+			descriptions.push_back(DCStorageDescription{ StorageType::DuplicatedCanonicalUrlResourcesStorageType, QObject::tr("Duplicated Canonical URLs") });
 			descriptions.push_back(DCStorageDescription{ StorageType::TimeoutStorageType, QObject::tr("Timeout") });
 			p->setDescriptions(std::move(descriptions));
 
@@ -166,6 +168,8 @@ DCStorageGroupDescriptionPtr DataCollectionGroupsFactory::create(AuditGroup grou
 			descriptions.push_back(DCStorageDescription{ StorageType::TooLongAltTextImageStorageType, QObject::tr("Too Long Image Alt Description") });
 			descriptions.push_back(DCStorageDescription{ StorageType::BlockedForSEIndexingStorageType, QObject::tr("All Not Indexed Pages") });
 			descriptions.push_back(DCStorageDescription{ StorageType::NofollowLinksStorageType, QObject::tr("Nofollow Links") });
+			descriptions.push_back(DCStorageDescription{ StorageType::AllCanonicalUrlResourcesStorageType, QObject::tr("Canonical URLs") });
+			descriptions.push_back(DCStorageDescription{ StorageType::DuplicatedCanonicalUrlResourcesStorageType, QObject::tr("Duplicated Canonical URLs") });
 			descriptions.push_back(DCStorageDescription{ StorageType::BlockedByRobotsTxtStorageType, QObject::tr("Blocked by robots.txt Pages") });
 			descriptions.push_back(DCStorageDescription{ StorageType::BlockedByXRobotsTagStorageType, QObject::tr("Blocked by x-robots-tag Pages") });
 
