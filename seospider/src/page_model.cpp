@@ -37,6 +37,8 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 		return;
 	}
 
+	IStorageAdapter* prevStorageAdapter = m_storageAdapter;
+
 	beginResetModel();
 
 	if (m_storageAdapter)
@@ -82,7 +84,31 @@ void PageModel::setStorageAdapter(IStorageAdapter* storageAdapter) noexcept
 	endResetModel();
 
 	emit internalDataChanged();
-	emit storageAdapterChanged();
+	if (prevStorageAdapter != nullptr && m_storageAdapter != nullptr)
+	{
+		if (prevStorageAdapter->columnCount() != m_storageAdapter->columnCount())
+		{
+			emit columnsChanged();
+		}
+		else
+		{
+			int columnCount = prevStorageAdapter->columnCount();
+			// dummy, we should not get description, but somehove compare the columns straightforward
+			for (int i = 0; i < columnCount; ++i)
+			{
+				if (prevStorageAdapter->columnDescription(i) != m_storageAdapter->columnDescription(i))
+				{
+					emit columnsChanged();
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		emit columnsChanged();
+	}
+	
 
 	if (oldStorageAdapter)
 	{

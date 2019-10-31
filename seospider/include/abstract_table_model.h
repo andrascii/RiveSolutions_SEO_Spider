@@ -17,7 +17,7 @@ public:
 
 	// signals
 	virtual void internalDataChanged() = 0;
-	virtual void storageAdapterChanged() = 0;
+	virtual void columnsChanged() = 0;
 
 	static constexpr int underlyingIndexRole = Qt::UserRole;
 	static constexpr int resourceTypeRole = underlyingIndexRole - 1;
