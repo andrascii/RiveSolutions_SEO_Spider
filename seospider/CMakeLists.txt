@@ -75,12 +75,32 @@ elseif(APPLE)
 		${AppHeadersMocList}
 		${AppResourcesListAdded}
 	)
+endif()
+
+if(APPLE)
+
+	add_custom_command(
+		TARGET ${AppName} 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		${VMProctectSdkDll}
+		"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
+	)
+
+	add_custom_command(
+		TARGET ${AppName} 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		${VMProtectDebugLicenseFile}
+		"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
+	)
 
 	set_target_properties(
 		${AppName}
 		PROPERTIES
-		MACOSX_BUNDLE_ICON_FILE
-		"${CMAKE_SOURCE_DIR}/seospiderinstaller/config/favicon.ico"
+		MACOSX_BUNDLE_ICON_FILE "${CMAKE_SOURCE_DIR}/seospiderinstaller/config/favicon.ico"
 	)
 
 	add_custom_command(
@@ -109,27 +129,7 @@ elseif(APPLE)
 		"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/libVMProtectSDK.dylib"
     	"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/seospider.app/Contents/MacOS"
   	)
-
-	message("${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/seospider.app/Contents/MacOS")
 endif()
-
-add_custom_command(
-	TARGET ${AppName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	${VMProctectSdkDll}
-	"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
-)
-
-add_custom_command(
-	TARGET ${AppName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	${VMProtectDebugLicenseFile}
-	"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}"
-)
 
 add_definitions(
 	${QT_DEFINITIONS}

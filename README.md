@@ -122,8 +122,13 @@
 
 1. `git clone https://github.com/andrascii/RiveSolutions_SEO_Spider.git`
 2. `git checkout macos`
-3. `cmake -B build -G Xcode`
+3. `cmake -B build -G Xcode -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14`
 4. Открыть проект с помощью `Xcode` в папке `build`
+
+## Команды для сборки проекта
+
+1. Сборка проекта `cmake --build build -j 12 --target seospider --config Release`
+2. Сборка инсталлера `cmake --build build -j 12 --target seospiderinstaller --config Release`
 
 # Сборка под OS Linux
 
