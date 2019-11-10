@@ -83,20 +83,6 @@ if(BUILD_EXAMPLES)
 	add_subdirectory(examples/xlsx)
 endif()
 
-# TODO: why RUNTIME+OUTPUT_DIRECTORY doesnt work on Unix?
-# to do the best solutions to deploy this lib
-
-if(APPLE)
-  add_custom_command(
-    TARGET QtXlsxWriter
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy
-    ${CMAKE_BUILD_TYPE}/libQtXlsxWriter.dylib
-    "${CMAKE_CURRENT_BINARY_DIR}/../seospider/${CMAKE_BUILD_TYPE}/"
-  )
-endif()
-
 ##
 #
 # QtxlsxwriterVersion.cmake creation

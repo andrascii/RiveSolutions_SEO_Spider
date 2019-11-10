@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE STRING INTERNAL FORCE)
 project(${SeoSpiderInstallerName})
 
-set(ReleasePackageDir ../seospider/${CMAKE_BUILD_TYPE})
+set(ReleasePackageDir ${CMAKE_CURRENT_BINARY_DIR}/../seospider/${CMAKE_BUILD_TYPE})
 set(PackageFileList)
 set(TargetInstallerPath installer)
 set(TargetPackagePath ${TargetInstallerPath}/packages/com.rivesolutions.seospider)
@@ -29,39 +29,25 @@ find_program(RepoGen_executable repogen HINTS ${QTIFW_BIN_DIR})
 
 message(${QTIFW_BIN_DIR})
 
-if(APPLE)
+# this ${PackageFileList} used to copy files only on OS Windows
+# on MacOS we copy seospider.app bundle whish is actually a directory
+# so it should be copied another way (see below under "files copying block")
+list(APPEND PackageFileList 
+	${ReleasePackageDir}/seospider.exe
+	${ReleasePackageDir}/seospider.pdb
+	${ReleasePackageDir}/seospiderservice.exe
+	${ReleasePackageDir}/seospiderservice.pdb
+	${ReleasePackageDir}/seospiderserviceapi.dll
+	${ReleasePackageDir}/seospiderserviceapi.pdb
+	${ReleasePackageDir}/QtXlsxWriter.dll
+	${ReleasePackageDir}/QtXlsxWriter.pdb
+)
 
+if(${ENABLE_SCREENSHOTS})
 	list(APPEND PackageFileList 
-		${ReleasePackageDir}/seospider
-		${ReleasePackageDir}/libQtXlsxWriter.dylib
+		${ReleasePackageDir}/screenshotmaker.exe
+		${ReleasePackageDir}/screenshotmaker.pdb
 	)
-
-	if(${ENABLE_SCREENSHOTS})
-		list(APPEND PackageFileList 
-			${ReleasePackageDir}/screenshotmaker
-		)
-	endif()
-
-elseif()
-
-	list(APPEND PackageFileList 
-		${ReleasePackageDir}/seospider.exe
-		${ReleasePackageDir}/seospider.pdb
-		${ReleasePackageDir}/seospiderservice.exe
-		${ReleasePackageDir}/seospiderservice.pdb
-		${ReleasePackageDir}/seospiderserviceapi.dll
-		${ReleasePackageDir}/seospiderserviceapi.pdb
-		${ReleasePackageDir}/QtXlsxWriter.dll
-		${ReleasePackageDir}/QtXlsxWriter.pdb
-	)
-
-	if(${ENABLE_SCREENSHOTS})
-		list(APPEND PackageFileList 
-			${ReleasePackageDir}/screenshotmaker.exe
-			${ReleasePackageDir}/screenshotmaker.pdb
-		)
-	endif()
-
 endif()
 
 file(GLOB_RECURSE OpenSslDllList "$ENV{SS_DEPS}/openssl/openssl_$ENV{SS_PLATFORM}/bin/*.dll")
@@ -124,8 +110,26 @@ add_custom_command(
 	${TargetInstallerPath}/config
 )
 
-# Will HTTPS work?
-if(NOT APPLE)
+message(WARNING "Possibly this build will not support HTTPS protocol because we does not deploy OpenSSL library!")
+
+if(APPLE)
+	add_custom_command(
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E make_directory
+		${TargetPackagePath}/data/seospider.app
+	)
+
+	add_custom_command(
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy_directory
+		${ReleasePackageDir}/seospider.app
+		${TargetPackagePath}/data/seospider.app
+	)
+else()
 	add_custom_command(
 		TARGET ${SeoSpiderInstallerName} 
 		POST_BUILD
@@ -134,25 +138,25 @@ if(NOT APPLE)
 		${OpenSslDllList}
 		${TargetPackagePath}/data/
 	)
+
+	add_custom_command(
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		${VMProctectSdkDll}
+		${TargetPackagePath}/data/
+	)
+
+	add_custom_command(
+		TARGET ${SeoSpiderInstallerName} 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		${PackageFileList}
+		${TargetPackagePath}/data/
+	)
 endif()
-
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	${VMProctectSdkDll}
-	${TargetPackagePath}/data/
-)
-
-add_custom_command(
-	TARGET ${SeoSpiderInstallerName} 
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E copy
-	${PackageFileList}
-	${TargetPackagePath}/data/
-)
 
 add_custom_command(
 	TARGET ${SeoSpiderInstallerName} 
@@ -168,7 +172,7 @@ if(APPLE)
 		TARGET ${SeoSpiderInstallerName} 
 		POST_BUILD
 		COMMAND "${DEPLOYQT_EXECUTABLE}"
-			"${TargetPackagePath}/data/"
+			"${TargetPackagePath}/data/seospider.app"
 		COMMENT "Running deployqt..."
 	)
 else()

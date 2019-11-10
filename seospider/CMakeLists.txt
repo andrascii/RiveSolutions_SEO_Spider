@@ -63,10 +63,10 @@ if(WIN32)
 		${AppResourcesListAdded}
 		${AppWin32Resoure}
 	)
-else()
-	configure_msvc_runtime()
+elseif(APPLE)
 	add_executable(
-		${AppName} 
+		${AppName}
+		MACOSX_BUNDLE
 		${AppSourcesList}
 		${AppHeadersList}
 		${AppFormsList} 
@@ -75,6 +75,42 @@ else()
 		${AppHeadersMocList}
 		${AppResourcesListAdded}
 	)
+
+	set_target_properties(
+		${AppName}
+		PROPERTIES
+		MACOSX_BUNDLE_ICON_FILE
+		"${CMAKE_SOURCE_DIR}/seospiderinstaller/config/favicon.ico"
+	)
+
+	add_custom_command(
+		TARGET ${AppName}
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		"${CMAKE_CURRENT_BINARY_DIR}/../qtxlsxwriter/${CMAKE_BUILD_TYPE}/libQtXlsxWriter.dylib"
+		"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/"
+	)
+
+	add_custom_command(
+		TARGET ${AppName}
+    	POST_BUILD
+    	COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/libQtXlsxWriter.dylib"
+    	"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/seospider.app/Contents/MacOS"
+	  )
+	  
+	add_custom_command(
+		TARGET ${AppName}
+    	POST_BUILD
+    	COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/libVMProtectSDK.dylib"
+    	"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/seospider.app/Contents/MacOS"
+  	)
+
+	message("${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/seospider.app/Contents/MacOS")
 endif()
 
 add_custom_command(
