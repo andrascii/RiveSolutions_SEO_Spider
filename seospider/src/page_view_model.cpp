@@ -46,7 +46,7 @@ int PageViewModel::marginTop(const QModelIndex&) const noexcept
 
 int PageViewModel::marginBottom(const QModelIndex&) const noexcept
 {
-	return Common::Helpers::pointsToPixels(6) * devicePixelRatio();
+	return Common::Helpers::pointsToPixels(10) * devicePixelRatio();
 }
 
 int PageViewModel::marginLeft(const QModelIndex& index) const noexcept
